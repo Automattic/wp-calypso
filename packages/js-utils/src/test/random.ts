@@ -1,11 +1,12 @@
+import { vi } from 'vitest';
 import random from '../random';
 
 describe( 'random', () => {
 	afterEach( () => {
-		jest.spyOn( Math, 'random' ).mockRestore();
+		vi.spyOn( Math, 'random' ).mockRestore();
 	} );
 
-	const mockRandom = ( value: number ) => jest.spyOn( Math, 'random' ).mockReturnValue( value );
+	const mockRandom = ( value: number ) => vi.spyOn( Math, 'random' ).mockReturnValue( value );
 
 	it( 'should return an integer between 0 and a single argument (inclusive)', () => {
 		mockRandom( 0 );

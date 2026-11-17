@@ -1,7 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  *
- * Tests for the pure helper functions exported from reader-chat.js.
+ * Tests for the pure helper functions exported from reader-chat.jsx.
  *
  * The file is an entry point with heavy side-effecting top-level code
  * (DOM mounting, global mutation). We mock all heavy imports and the
@@ -9,43 +9,33 @@
  */
 
 // Mock the side-effecting imports before any module load.
-jest.mock( '../config', () => {}, { virtual: true } );
-jest.mock( '@automattic/agents-manager', () => ( { default: () => null } ), { virtual: true } );
-jest.mock(
-	'@automattic/agents-manager/src/auth/calypso-auth-provider',
-	() => ( {
-		createCalypsoAuthProvider: jest.fn( ( siteId ) => async () => ( {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer test-token-${ siteId }`,
-		} ) ),
+import { vi } from 'vitest';
+vi.mock( '../config', () => ( {} ) );
+vi.mock( '@automattic/agents-manager', () => ( {
+	default: () => null,
+	AGENTS_MANAGER_STORE: 'automattic/agents-manager',
+} ) );
+vi.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => ( {
+	createCalypsoAuthProvider: vi.fn( ( siteId ) => async () => ( {
+		'Content-Type': 'application/json',
+		Authorization: `Bearer test-token-${ siteId }`,
+	} ) ),
+} ) );
+vi.mock( '@tanstack/react-query', () => ( {
+	QueryClient: vi.fn( function () {
+		return {};
 	} ),
-	{ virtual: true }
-);
-jest.mock(
-	'@tanstack/react-query',
-	() => ( {
-		QueryClient: jest.fn( () => ( {} ) ),
-		QueryClientProvider: ( { children } ) => children,
-	} ),
-	{ virtual: true }
-);
-jest.mock(
-	'@wordpress/element',
-	() => {
-		const element = jest.requireActual( '@wordpress/element' );
-		return {
-			...element,
-			useState: jest.requireActual( 'react' ).useState,
-			useEffect: jest.requireActual( 'react' ).useEffect,
-		};
-	},
-	{ virtual: true }
-);
-jest.mock(
-	'react-dom/client',
-	() => ( { createRoot: jest.fn( () => ( { render: jest.fn() } ) ) } ),
-	{ virtual: true }
-);
+	QueryClientProvider: ( { children } ) => children,
+} ) );
+vi.mock( '@wordpress/element', async () => {
+	const element = await vi.importActual( '@wordpress/element' );
+	return {
+		...element,
+		useState: ( await vi.importActual( 'react' ) ).useState,
+		useEffect: ( await vi.importActual( 'react' ) ).useEffect,
+	};
+} );
+vi.mock( 'react-dom/client', () => ( { createRoot: vi.fn( () => ( { render: vi.fn() } ) ) } ) );
 
 // Provide a minimal JetpackReaderChatConfig so the module-level readerConfig
 // is safe to read (no currentPost by default — exercises the no-post branch).
@@ -56,13 +46,12 @@ beforeAll( () => {
 	globalThis.window.JetpackReaderChatConfig = {};
 	// Suppress the top-level DOM mount — the container lookup returns null so
 	// the `if ( container )` branch is skipped entirely.
-	getElementByIdSpy = jest.spyOn( document, 'getElementById' ).mockReturnValue( null );
+	getElementByIdSpy = vi.spyOn( document, 'getElementById' ).mockReturnValue( null );
 } );
 
 // Import after mocks are registered.
-const {
-	createCalypsoAuthProvider,
-} = require( '@automattic/agents-manager/src/auth/calypso-auth-provider' );
+const { createCalypsoAuthProvider } =
+	await import( '@automattic/agents-manager/src/auth/calypso-auth-provider' );
 const {
 	parseAgentSseResponse,
 	slugify,
@@ -77,7 +66,7 @@ const {
 	getSuggestionsFetchHeaders,
 	injectScopedReset,
 	watchFirstChatOpen,
-} = require( '../reader-chat' );
+} = await import( '../reader-chat' );
 
 // ---------------------------------------------------------------------------
 // injectScopedReset
@@ -532,7 +521,7 @@ describe( 'watchFirstChatOpen', () => {
 
 	it( 'fires immediately when the chat is already open', () => {
 		const store = makeStore( true );
-		const onFirstOpen = jest.fn();
+		const onFirstOpen = vi.fn();
 		watchFirstChatOpen( onFirstOpen, store.deps );
 		expect( onFirstOpen ).toHaveBeenCalledTimes( 1 );
 		expect( store.listenerCount ).toBe( 0 );
@@ -540,7 +529,7 @@ describe( 'watchFirstChatOpen', () => {
 
 	it( 'does not fire while the chat stays closed', () => {
 		const store = makeStore( false );
-		const onFirstOpen = jest.fn();
+		const onFirstOpen = vi.fn();
 		watchFirstChatOpen( onFirstOpen, store.deps );
 		store.setOpen( false );
 		expect( onFirstOpen ).not.toHaveBeenCalled();
@@ -548,7 +537,7 @@ describe( 'watchFirstChatOpen', () => {
 
 	it( 'fires once on the first open and unsubscribes', () => {
 		const store = makeStore( false );
-		const onFirstOpen = jest.fn();
+		const onFirstOpen = vi.fn();
 		watchFirstChatOpen( onFirstOpen, store.deps );
 
 		store.setOpen( true );
@@ -562,7 +551,7 @@ describe( 'watchFirstChatOpen', () => {
 	} );
 
 	it( 'survives a store that is not registered yet', () => {
-		const onFirstOpen = jest.fn();
+		const onFirstOpen = vi.fn();
 		const deps = {
 			select: () => ( {} ), // no getAgentsManagerState selector
 			subscribe: () => () => {},
@@ -572,7 +561,7 @@ describe( 'watchFirstChatOpen', () => {
 	} );
 
 	it( 'treats a select() that throws as chat-closed instead of crashing', () => {
-		const onFirstOpen = jest.fn();
+		const onFirstOpen = vi.fn();
 		const listeners = new Set();
 		const deps = {
 			select: () => {
@@ -589,8 +578,8 @@ describe( 'watchFirstChatOpen', () => {
 	} );
 
 	it( 'handles a subscribe implementation that fires synchronously during registration', () => {
-		const onFirstOpen = jest.fn();
-		const unsubscribeSpy = jest.fn();
+		const onFirstOpen = vi.fn();
+		const unsubscribeSpy = vi.fn();
 		let isOpen = false;
 		const deps = {
 			select: () => ( { getAgentsManagerState: () => ( { isOpen } ) } ),

@@ -121,6 +121,33 @@ describe( 'parser', () => {
 		} );
 	} );
 
+	describe( 'port', () => {
+		beforeEach( () => {
+			delete process.env.PORT;
+			mockFs( { '/valid-path/_shared.json': JSON.stringify( { port: 3000 } ) } );
+		} );
+
+		test( 'should come from the config files by default', () => {
+			expect( parser( '/valid-path' ).serverData ).toHaveProperty( 'port', 3000 );
+		} );
+
+		test( "should prefer the checkout's default port over the config files", () => {
+			const { serverData, clientData } = parser( '/valid-path', { defaultPort: 21234 } );
+
+			expect( serverData ).toHaveProperty( 'port', 21234 );
+			expect( clientData ).toHaveProperty( 'port', 21234 );
+		} );
+
+		test( "should prefer the PORT env variable over the checkout's default port", () => {
+			withEnv( { PORT: '3100' } );
+
+			expect( parser( '/valid-path', { defaultPort: 21234 } ).serverData ).toHaveProperty(
+				'port',
+				'3100'
+			);
+		} );
+	} );
+
 	test( 'should ignore a __proto__ config key without polluting or crashing', () => {
 		// JSON.parse (unlike an object literal) yields a real own `__proto__` key;
 		// a naive `data[ key ] = value` would set the prototype and then crash on

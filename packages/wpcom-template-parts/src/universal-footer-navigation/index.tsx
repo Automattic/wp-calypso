@@ -303,7 +303,7 @@ const Footer2026Bottom = ( {
 		</div>
 		<ul className="lp-footer-legal" aria-label={ __( 'Legal links', __i18n_text_domain__ ) }>
 			<li className="x-nav-footer--tos">
-				<a href={ localizeUrl( 'https://wordpress.com/tos/' ) }>
+				<a href={ localizeUrl( 'https://automattic.com/tos/' ) }>
 					{ __( 'Terms of service', __i18n_text_domain__ ) }
 				</a>
 			</li>
@@ -312,6 +312,12 @@ const Footer2026Bottom = ( {
 					{ __( 'Privacy policy', __i18n_text_domain__ ) }
 				</a>
 			</li>
+			{ /* The sitemap page is English-only. */ }
+			{ locale === 'en' && (
+				<li className="x-nav-footer--sitemap">
+					<a href="https://wordpress.com/sitemap/">{ __( 'Sitemap', __i18n_text_domain__ ) }</a>
+				</li>
+			) }
 			{ showCaliforniaNotice && (
 				<li className="x-nav-footer--ccpa-privacy">
 					<a

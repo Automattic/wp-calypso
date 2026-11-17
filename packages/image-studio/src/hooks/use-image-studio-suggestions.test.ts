@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { type Mocked, vi } from 'vitest';
 import { ImageStudioMode } from '../types';
 import { useImageStudioSuggestions } from './use-image-studio-suggestions';
 
@@ -26,26 +27,26 @@ let mockCurrentScreenState: {
 
 // Mock for useAsyncSuggestionsLoader
 let mockAsyncSuggestions: any[] = [];
-const mockAbortLoading = jest.fn();
+const mockAbortLoading = vi.fn();
 let mockIsLoadingSuggestions = false;
 
-const mockSetAnnotationMode = jest.fn();
-const mockRegisterSuggestions = jest.fn();
-const mockClearSuggestions = jest.fn();
-jest.mock( '@wordpress/data', () => {
+const mockSetAnnotationMode = vi.fn();
+const mockRegisterSuggestions = vi.fn();
+const mockClearSuggestions = vi.fn();
+vi.mock( '@wordpress/data', () => {
 	const getMockSetAnnotationMode = () => mockSetAnnotationMode;
 	return {
-		select: jest.fn( () => ( {
+		select: vi.fn( () => ( {
 			getCurrentPostId: () => '123',
 		} ) ),
-		useDispatch: jest.fn( () => ( {
+		useDispatch: vi.fn( () => ( {
 			setAnnotationMode: getMockSetAnnotationMode(),
 		} ) ),
-		useSelect: jest.fn( ( callback ) =>
+		useSelect: vi.fn( ( callback ) =>
 			callback( () => ( {
 				getAnnotationCanvasRef: () => ( {
 					hasAnnotations: () => mockSelectorState.hasAnnotations,
-					clear: jest.fn(),
+					clear: vi.fn(),
 				} ),
 				getImageStudioAiProcessing: () => mockSelectorState.isAiProcessing,
 				getIsAnnotationSaving: () => mockSelectorState.isAnnotationSaving,
@@ -58,33 +59,33 @@ jest.mock( '@wordpress/data', () => {
 	};
 } );
 
-jest.mock( '@wordpress/editor', () => ( {
+vi.mock( '@wordpress/editor', () => ( {
 	store: 'core/editor',
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
-	__: jest.fn( ( str ) => str ),
+vi.mock( '@wordpress/i18n', () => ( {
+	__: vi.fn( ( str ) => str ),
 } ) );
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
-jest.mock( './use-current-screen', () => ( {
+vi.mock( './use-current-screen', () => ( {
 	__esModule: true,
 	default: () => mockCurrentScreenState,
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioSuggestionsRendered: jest.fn(),
-	trackImageStudioSuggestionClick: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioSuggestionsRendered: vi.fn(),
+	trackImageStudioSuggestionClick: vi.fn(),
 } ) );
 
-jest.mock( '../utils/agenttic-tracking', () => ( {
-	formatSuggestionIds: jest.fn(),
+vi.mock( '../utils/agenttic-tracking', () => ( {
+	formatSuggestionIds: vi.fn(),
 } ) );
 
-const trackingMocks = jest.requireMock( '../utils/tracking' ) as jest.Mocked<
+const trackingMocks = ( await import( '../utils/tracking' ) ) as unknown as Mocked<
 	typeof import( '../utils/tracking' )
 >;
 const {
@@ -92,16 +93,17 @@ const {
 	trackImageStudioSuggestionClick: mockTrackImageStudioSuggestionClick,
 } = trackingMocks;
 
-const { formatSuggestionIds: mockFormatSuggestionIds } = jest.requireMock(
-	'../utils/agenttic-tracking'
-) as jest.Mocked< typeof import( '../utils/agenttic-tracking' ) >;
+const { formatSuggestionIds: mockFormatSuggestionIds } =
+	( await import( '../utils/agenttic-tracking' ) ) as unknown as Mocked<
+		typeof import( '../utils/agenttic-tracking' )
+	>;
 
 mockFormatSuggestionIds.mockImplementation(
 	( suggestions: any[] ) =>
 		'|' + suggestions.map( ( suggestion ) => suggestion.id ).join( '|' ) + '|'
 );
 
-jest.mock( './use-async-suggestions-loader', () => ( {
+vi.mock( './use-async-suggestions-loader', () => ( {
 	useAsyncSuggestionsLoader: () => ( {
 		suggestions: mockAsyncSuggestions,
 		abortLoading: mockAbortLoading,
@@ -128,7 +130,7 @@ function createHookParams(
 
 describe( 'useImageStudioSuggestions', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		mockSelectorState = {
 			hasAnnotations: false,

@@ -1,17 +1,19 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import { queryClient } from '../query-client';
 import { siteByIdQuery } from '../site';
 import type { Site } from '@automattic/api-core';
 
 // Same-instance query client so site.ts and the test share state.
-jest.mock( '../query-client', () => {
-	const { QueryClient: QC } = jest.requireActual( '@tanstack/react-query' );
+vi.mock( '../query-client', async () => {
+	const { QueryClient: QC } =
+		await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' );
 	const qc = new QC( { defaultOptions: { queries: { retry: false } } } );
 	return { queryClient: qc };
 } );
 
 // notFound used in queryFn error handling — won't fire in success-path tests.
-jest.mock( '@tanstack/react-router', () => ( {
+vi.mock( '@tanstack/react-router', () => ( {
 	notFound: () => new Error( 'Not found' ),
 } ) );
 

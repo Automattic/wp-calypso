@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { agencyLeadMatchingQuery, queryClient } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';

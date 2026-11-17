@@ -519,21 +519,8 @@ export function WooPaymentsLandingStory() {
 				image={ DEMO_IMAGE }
 			>
 				<p>
-					{ createInterpolateElement(
-						__(
-							'Explore all of WooPayments’ benefits, browse the technical documentation, and <a>try the demo</a> to see it in action.'
-						),
-						{
-							a: (
-								<ExternalLink
-									href={ WOOPAYMENTS_PRODUCT_LINK }
-									onClick={ () =>
-										recordTracksEvent( 'calypso_a4a_woopayments_try_demo_button_click' )
-									}
-									children={ null }
-								/>
-							),
-						}
+					{ __(
+						'Explore all of WooPayments’ benefits, browse the documentation, and let us know if you have any questions.'
 					) }
 				</p>
 				<ButtonStack justify="flex-start" expanded={ false } wrap>

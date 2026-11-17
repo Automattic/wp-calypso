@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { DomainSearchControlsFilterPopover } from '../filter-popover';
 
 describe( 'DomainSearchControlsFilterPopover', () => {
@@ -9,8 +10,8 @@ describe( 'DomainSearchControlsFilterPopover', () => {
 			exactSldMatchesOnly: false,
 		},
 		availableTlds: [ 'com', 'net', 'org' ],
-		onApply: jest.fn(),
-		onClear: jest.fn(),
+		onApply: vi.fn(),
+		onClear: vi.fn(),
 	};
 
 	it( 'renders the filter popover with default state', () => {
@@ -103,7 +104,7 @@ describe( 'DomainSearchControlsFilterPopover', () => {
 	it( 'calls onApply with updated filter when Apply is clicked', async () => {
 		const fireEvent = userEvent.setup();
 
-		const onApply = jest.fn();
+		const onApply = vi.fn();
 
 		render( <DomainSearchControlsFilterPopover { ...defaultProps } onApply={ onApply } /> );
 
@@ -122,7 +123,7 @@ describe( 'DomainSearchControlsFilterPopover', () => {
 	it( 'calls onClear when Clear button is clicked', async () => {
 		const fireEvent = userEvent.setup();
 
-		const onClear = jest.fn();
+		const onClear = vi.fn();
 
 		render( <DomainSearchControlsFilterPopover { ...defaultProps } onClear={ onClear } /> );
 
@@ -134,7 +135,7 @@ describe( 'DomainSearchControlsFilterPopover', () => {
 	it( 'updates filter when TLD is selected', async () => {
 		const fireEvent = userEvent.setup();
 
-		const onApply = jest.fn();
+		const onApply = vi.fn();
 
 		render( <DomainSearchControlsFilterPopover { ...defaultProps } onApply={ onApply } /> );
 

@@ -39,6 +39,26 @@ function isAllowedDomain( hostname: string ): boolean {
 }
 
 /**
+ * Returns the `source` that checkout records on the purchase, or `none`.
+ * A Jetpack Redirect link's own `source` only names the redirect rule. The rule
+ * passes its `query` argument on to checkout, so the checkout source sits there.
+ * @param url - The upgrade link
+ * @returns The checkout source, or `none`
+ */
+export function getCheckoutSource( url: string ): string {
+	try {
+		const { hostname, pathname, searchParams } = new URL( url );
+		const checkoutParams =
+			hostname === 'jetpack.com' && pathname.startsWith( '/redirect' )
+				? new URLSearchParams( searchParams.get( 'query' ) ?? '' )
+				: searchParams;
+		return checkoutParams.get( 'source' ) || 'none';
+	} catch {
+		return 'none';
+	}
+}
+
+/**
  * Parses an error message to extract a URL and determine if it's an upgrade URL.
  * Only URLs from trusted domains are surfaced as clickable links.
  * @param errorMessage - The error message that may contain a URL

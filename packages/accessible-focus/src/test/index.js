@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { detectKeyboardNavigation } from '..';
 
 describe( 'detectKeyboardNavigation', () => {

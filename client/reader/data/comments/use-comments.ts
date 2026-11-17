@@ -29,9 +29,9 @@ export const useComments = (
 		number,
 		commentTotal,
 	}: UseCommentsParams,
-	{ enabled = true, retry = false }: UseCommentsOptions = {}
+	options: UseCommentsOptions = {}
 ) => {
-	const query = usePostCommentsQuery( { siteId, postId, status, number }, { enabled, retry } );
+	const query = usePostCommentsQuery( { siteId, postId, status, number }, options );
 
 	const comments = useMemo(
 		() => mergeComments( query.data?.pages.map( ( page ) => page.comments ) ?? [] ),

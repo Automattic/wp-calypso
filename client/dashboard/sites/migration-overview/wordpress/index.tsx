@@ -1,4 +1,4 @@
-import { isWpError } from '@automattic/api-core';
+import { fetchWordPressMigrationStatus, isWpError } from '@automattic/api-core';
 import {
 	siteQueryFilter,
 	siteWordPressMigrationConfigurationQuery,
@@ -34,6 +34,14 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		refetch,
 	} = useQuery( {
 		...siteWordPressMigrationStatusQuery( site.ID ),
+		// Once our team has the migration, read the site again: its migration state takes this page over.
+		queryFn: async () => {
+			const status = await fetchWordPressMigrationStatus( site.ID );
+			if ( status.handed_off ) {
+				await queryClient.refetchQueries( { ...siteQueryFilter( site.ID ), type: 'active' } );
+			}
+			return status;
+		},
 		refetchInterval: ( { state } ) => {
 			const status = state.data?.status;
 			if ( status === 'running' ) {
@@ -51,11 +59,13 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	const isForbidden = isUnreadable && isWpError( error ) && error.statusCode === 403;
 	const sourceHost = getSourceHost( migration?.source_url );
 
-	// Only connecting the source again gets past a refused connection, so go straight back to that step.
-	const connectionFailure =
-		migration?.status === 'failed'
-			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
-			: undefined;
+	// What's fixed by setting the source up again goes straight back to that step.
+	let connectionFailure = undefined;
+	if ( migration?.status === 'failed' ) {
+		connectionFailure = migration.findings.find(
+			( { suggested_action } ) => suggested_action === 'connect_source'
+		);
+	}
 
 	// A stopped migration can also be taken back to that step, until it's no longer stopped, wherever it was started from.
 	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
@@ -137,17 +147,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		const interval = setInterval( reloadSite, isUnlockOverdue ? 30000 : 5000 );
 		return () => clearInterval( interval );
 	}, [ isCompleted, isSiteUnlocked, isUnlockOverdue, queryClient, navigate, site.ID, site.slug ] );
-
-	// An "assisted_handoff" failure automatically switches to the assisted flow,
-	// so read the state again in case a redirect is needed.
-	const hasHandoffFinding =
-		migration?.status === 'failed' &&
-		migration.findings.some( ( { resolution } ) => resolution === 'assisted_handoff' );
-	useEffect( () => {
-		if ( hasHandoffFinding ) {
-			queryClient.invalidateQueries( siteQueryFilter( site.ID ) );
-		}
-	}, [ hasHandoffFinding, queryClient, site.ID ] );
 
 	const contactUs = (
 		<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>

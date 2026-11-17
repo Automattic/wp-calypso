@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { activeAgencyQuery, agencyLeadMatchingQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import AgencyOverview from '..';
 import { render } from '../../../test-utils';
 import {
@@ -14,7 +15,7 @@ import {
 } from '../../partner-directory/lead-matching/test/fixtures';
 import type { Agency, AgencyLeadMatchingProfile } from '@automattic/api-core';
 
-jest.mock( '../../earn/use-has-commission-activity', () => ( {
+vi.mock( '../../earn/use-has-commission-activity', () => ( {
 	useHasCommissionActivity: () => ( { hasActivity: false, isLoading: false } ),
 } ) );
 
@@ -49,10 +50,11 @@ test( 'announces missing saved contact options only to eligible native partners 
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
 	const leadMatchingQuery = agencyLeadMatchingQuery( agency.id );
-	const announcement = () => screen.queryByRole( 'link', { name: 'Update your details' } );
+	const announcement = () => screen.queryByText( 'Update your details' );
 	const view = render( <AgencyOverview />, { queryClient } );
 	expect( announcement() ).not.toBeInTheDocument();
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toHaveAttribute(
+	await screen.findByText( 'Update your details' );
+	expect( screen.getByRole( 'link', { name: 'Update your details' } ) ).toHaveAttribute(
 		'href',
 		'/partner-directory/lead-matching/preferences'
 	);
@@ -70,7 +72,7 @@ test( 'announces missing saved contact options only to eligible native partners 
 	setProfile( { ...profile, contact } );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	setProfile( { ...profile, contact: { ...contact, phone: '' } } );
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'Update your details' ) ).toBeVisible();
 
 	setProfile( {
 		...profile,
@@ -79,7 +81,7 @@ test( 'announces missing saved contact options only to eligible native partners 
 	} );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	setProfile( profile );
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'Update your details' ) ).toBeVisible();
 
 	const setAgency = ( changes: Partial< Agency > ) => {
 		act( () =>
@@ -89,7 +91,7 @@ test( 'announces missing saved contact options only to eligible native partners 
 	setAgency( { tier: { id: 'agency-partner' } } );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	setAgency( {} );
-	expect( await screen.findByRole( 'link', { name: 'Update your details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'Update your details' ) ).toBeVisible();
 	setAgency( { user: { capabilities: [] } } );
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	view.unmount();

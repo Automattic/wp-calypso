@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import { wpcom } from '../../wpcom-fetcher';
 import { createFediversePost, getFediverseNotifications } from '../fetchers';
 import type { FediverseNotificationsPage } from '../types';
@@ -91,7 +92,7 @@ describe( 'createFediversePost', () => {
 		// custom headers, and per CM-704 the composer must send a UUID per
 		// submit attempt as `Idempotency-Key` so a network retry can't
 		// double-post.
-		const post = jest
+		const post = vi
 			.spyOn( wpcom.req, 'post' )
 			.mockResolvedValue( { post: defaultServerItem() } as never );
 		await createFediversePost( {
@@ -110,7 +111,7 @@ describe( 'createFediversePost', () => {
 	} );
 
 	it( 'omits the `Idempotency-Key` header when no key is supplied', async () => {
-		const post = jest
+		const post = vi
 			.spyOn( wpcom.req, 'post' )
 			.mockResolvedValue( { post: defaultServerItem() } as never );
 		await createFediversePost( {

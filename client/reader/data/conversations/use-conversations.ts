@@ -13,11 +13,12 @@ import {
 } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
-import type { Commenter, Conversation, OwnComment } from './types';
+import type { Commenter, Conversation, ConversationPostDetails, OwnComment } from './types';
 import type {
 	ReadConversation,
 	ReadConversationOwnComment,
@@ -39,6 +40,19 @@ const toTimestamp = ( ...dates: ( string | null | undefined )[] ) => {
 	return date ? Date.parse( date ) : 0;
 };
 
+const toPostDetails = ( { post, site }: ReadConversation ): ConversationPostDetails | undefined =>
+	post.discussion && post.excerpt !== undefined
+		? {
+				siteName: site.name,
+				siteIcon: site.icon,
+				author: post.author ?? null,
+				date: post.date,
+				excerpt: decodeEntities( stripHTML( post.excerpt ) ).trim(),
+				image: post.featured_image || null,
+				discussion: post.discussion,
+			}
+		: undefined;
+
 export const adaptReadConversation = ( conversation: ReadConversation ): Conversation => ( {
 	key: conversation.id,
 	siteId: conversation.blog_id,
@@ -55,12 +69,14 @@ export const adaptReadConversation = ( conversation: ReadConversation ): Convers
 	unreadNoteIds: conversation.unread_note_ids,
 	unreadCommentIds: conversation.unread_comment_ids,
 	isFollowing: conversation.is_following,
+	postDetails: toPostDetails( conversation ),
 } );
 
 export const adaptReadConversationOwnComment = (
 	row: ReadConversationOwnComment
 ): OwnComment => ( {
-	key: row.id,
+	// Keyed by post, so a row keeps its key when a newer comment replaces it.
+	key: getConversationKey( row.blog_id, row.post_id ),
 	siteId: row.blog_id,
 	postId: row.post_id,
 	commentId: row.comment_id,
@@ -119,6 +135,22 @@ export function useConversations( {
 	} );
 }
 
+/**
+ * Lists each post once, at its first row's place, with the user's latest comment on it. The
+ * endpoint returns a row per comment, and with a search only the comments that match.
+ */
+function groupByPost( comments: OwnComment[] ): OwnComment[] {
+	const byPost = new Map< string, OwnComment >();
+	for ( const comment of comments ) {
+		const kept = byPost.get( comment.key );
+		// Comment IDs grow with each comment on a site, so the highest is the latest.
+		if ( ! kept || comment.commentId > kept.commentId ) {
+			byPost.set( comment.key, comment );
+		}
+	}
+	return [ ...byPost.values() ];
+}
+
 export function useOwnComments( {
 	sort,
 	search,
@@ -136,9 +168,11 @@ export function useOwnComments( {
 	const { data } = query;
 	const comments = useMemo(
 		() =>
-			data?.pages.flatMap( ( page ) =>
-				adaptPage( page.comments, adaptReadConversationOwnComment )
-			) ?? [],
+			groupByPost(
+				data?.pages.flatMap( ( page ) =>
+					adaptPage( page.comments, adaptReadConversationOwnComment )
+				) ?? []
+			),
 		[ data ]
 	);
 

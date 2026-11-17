@@ -1,47 +1,12 @@
-import { sitePlanSoftwareRestoreMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useAuth } from '../../app/auth';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ActionList } from '../../components/action-list';
 import { SectionHeader } from '../../components/section-header';
 import { wpcomLink } from '../../utils/link';
 import { canViewSiteActions, canDuplicateSite } from '../features';
 import type { Site } from '@automattic/api-core';
-
-const RestorePlanSoftware = ( { site }: { site: Site } ) => {
-	const mutation = useMutation(
-		withSnackbar( sitePlanSoftwareRestoreMutation( site.ID ), {
-			success: __( 'Requested restoration of plugins and themes that come with your plan.' ),
-			error: __( 'Failed to request restoration of plan plugin and themes.' ),
-		} )
-	);
-
-	const handleClick = () => {
-		mutation.mutate( undefined );
-	};
-
-	return (
-		<ActionList.ActionItem
-			title={ __( 'Re-install plugins & themes' ) }
-			description={ __(
-				'If your website is missing plugins and themes that come with your plan you can re-install them here.'
-			) }
-			actions={
-				<Button
-					variant="secondary"
-					size="compact"
-					isBusy={ mutation.isPending }
-					onClick={ handleClick }
-				>
-					{ __( 'Restore' ) }
-				</Button>
-			}
-		/>
-	);
-};
 
 const DuplicateSite = ( { site }: { site: Site } ) => {
 	return (
@@ -71,7 +36,6 @@ export default function SiteActions( { site }: { site: Site } ) {
 	}
 
 	const actions = [
-		site.is_wpcom_atomic && <RestorePlanSoftware key="restore-plan-software" site={ site } />,
 		canDuplicateSite( site, user ) && <DuplicateSite key="duplicate-site" site={ site } />,
 	].filter( Boolean );
 

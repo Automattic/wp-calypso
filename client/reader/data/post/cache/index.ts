@@ -427,6 +427,7 @@ const seedPostLikesQueries = (
 		queryClient.setQueryDefaults( query.queryKey, {
 			staleTime: query.staleTime,
 			refetchInterval: query.refetchInterval,
+			refetchOnWindowFocus: query.refetchOnWindowFocus,
 			meta: query.meta,
 		} );
 		const key = query.queryKey;

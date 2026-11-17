@@ -38,11 +38,10 @@ const QuickLinksForEcommerceSites = ( props ) => {
 	const updateToggleStatus = ( status ) => {
 		dispatch( savePreference( 'homeQuickLinksToggleStatus', status ) );
 	};
-	const [
-		debouncedUpdateHomeQuickLinksToggleStatus,
-		,
-		flushDebouncedUpdateHomeQuickLinksToggleStatus,
-	] = useDebouncedCallback( updateToggleStatus, 1000 );
+	const debouncedUpdateHomeQuickLinksToggleStatus = useDebouncedCallback(
+		updateToggleStatus,
+		1000
+	);
 
 	const quickLinks = (
 		<div className="quick-links-for-hosted-sites__boxes quick-links__boxes">
@@ -134,9 +133,9 @@ const QuickLinksForEcommerceSites = ( props ) => {
 
 	useEffect( () => {
 		return () => {
-			flushDebouncedUpdateHomeQuickLinksToggleStatus();
+			debouncedUpdateHomeQuickLinksToggleStatus.flush();
 		};
-	}, [] );
+	}, [ debouncedUpdateHomeQuickLinksToggleStatus ] );
 
 	return (
 		<FoldableCard

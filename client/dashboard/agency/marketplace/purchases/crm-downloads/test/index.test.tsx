@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../../../test-utils';
 import { CrmDownloadsContent } from '../index';
 
@@ -10,7 +11,7 @@ import { CrmDownloadsContent } from '../index';
 const originalFetch = global.fetch;
 
 function mockExtensions( extensions: object[] ) {
-	const fetchMock = jest.fn().mockResolvedValue( {
+	const fetchMock = vi.fn().mockResolvedValue( {
 		ok: true,
 		status: 200,
 		json: async () => ( { success: true, extensions } ),
@@ -48,7 +49,7 @@ describe( '<CrmDownloadsContent>', () => {
 	} );
 
 	test( 'shows the error with a retry when the extensions fail to load', async () => {
-		global.fetch = jest.fn().mockResolvedValue( { ok: false, status: 404 } );
+		global.fetch = vi.fn().mockResolvedValue( { ok: false, status: 404 } );
 
 		render( <CrmDownloadsContent licenseKey="jetpack-complete_abc" /> );
 

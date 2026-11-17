@@ -89,6 +89,8 @@ export const readConversationsQuery = ( {
 				pageParam
 			),
 		...cursorPaging,
+		// Long enough that a prefetched list isn't fetched again when the inbox mounts.
+		staleTime: 30 * 1000,
 		meta: { persist: false },
 	} );
 

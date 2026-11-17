@@ -20,7 +20,7 @@ import {
 import { SubscriptionManagerPage } from 'calypso/landing/subscriptions/components/subscription-manager-page';
 import loadDevHelpers from 'calypso/lib/load-dev-helpers';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import { createQueryClient } from 'calypso/state/query-client';

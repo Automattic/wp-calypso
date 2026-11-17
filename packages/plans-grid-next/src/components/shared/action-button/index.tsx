@@ -5,11 +5,13 @@ import {
 	PLAN_FREE,
 	isWpcomEnterpriseGridPlan,
 } from '@automattic/calypso-products';
+import { Gridicon } from '@automattic/components';
 import { AddOns, WpcomPlansUI } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useSelect } from '@wordpress/data';
 import clsx from 'clsx';
 import { type TranslateResult, useTranslate } from 'i18n-calypso';
+import { useId } from 'react';
 import { usePlansGridContext } from '../../../grid-context';
 import useIsLargeCurrency from '../../../hooks/use-is-large-currency';
 import { usePlanPricingInfoFromGridPlans } from '../../../hooks/use-plan-pricing-info-from-grid-plans';
@@ -47,10 +49,14 @@ const ActionButton = ( {
 	const translate = useTranslate();
 	const {
 		gridPlansIndex,
+		intent,
 		siteId,
 		helpers: { useAction },
 		showBillingDescriptionForIncreasedRenewalPrice,
 	} = usePlansGridContext();
+	const playgroundWarningId = useId();
+	const showPlaygroundWarning = intent === 'plans-playground' && isFreePlan( planSlug );
+	const ariaDescribedBy = showPlaygroundWarning ? playgroundWarningId : undefined;
 	const {
 		current,
 		planTitle,
@@ -145,6 +151,7 @@ const ActionButton = ( {
 			disabled={ ! callback || 'disabled' === status }
 			classes={ variant === 'secondary' ? 'is-secondary' : '' }
 			ariaLabel={ String( primaryAriaLabel || '' ) }
+			ariaDescribedBy={ ariaDescribedBy }
 		>
 			{ primaryText }
 		</PlanButton>
@@ -174,6 +181,7 @@ const ActionButton = ( {
 					href={ storageAddOnCheckoutHref }
 					busy={ busy }
 					ariaLabel={ translate( 'Upgrade storage for this plan' ).toString() }
+					ariaDescribedBy={ ariaDescribedBy }
 				>
 					{ translate( 'Upgrade' ) }
 				</PlanButton>
@@ -182,7 +190,12 @@ const ActionButton = ( {
 			const hasFreeTrialPlan = isInSignup ? !! freeTrialPlanSlug : false;
 			actionButton = hasFreeTrialPlan ? (
 				<div className="plans-grid-next-action-button__multi">
-					<PlanButton planSlug={ planSlug } onClick={ () => freeTrialCallback() } busy={ busy }>
+					<PlanButton
+						planSlug={ planSlug }
+						onClick={ () => freeTrialCallback() }
+						busy={ busy }
+						ariaDescribedBy={ ariaDescribedBy }
+					>
 						{ freeTrialText }
 					</PlanButton>
 					{ ! isStuck && ( // along side with the free trial CTA, we also provide an option for purchasing the plan directly here
@@ -192,6 +205,7 @@ const ActionButton = ( {
 							busy={ busy }
 							borderless
 							ariaLabel={ String( primaryAriaLabel || '' ) }
+							ariaDescribedBy={ ariaDescribedBy }
 						>
 							{ primaryText }
 						</PlanButton>
@@ -209,6 +223,7 @@ const ActionButton = ( {
 						// current-plan style.
 						current={ current && variant !== 'primary' }
 						ariaLabel={ String( primaryAriaLabel || '' ) }
+						ariaDescribedBy={ ariaDescribedBy }
 					>
 						{ primaryText }
 					</PlanButton>
@@ -249,6 +264,15 @@ const ActionButton = ( {
 				className="plans-grid-next-action-button__content"
 				style={ ! primaryText ? { visibility: 'hidden' } : undefined }
 			>
+				{ showPlaygroundWarning && (
+					<div
+						id={ playgroundWarningId }
+						className="plans-grid-next-action-button__playground-warning"
+					>
+						<Gridicon icon="cross" size={ 16 } aria-hidden="true" focusable="false" />
+						{ translate( 'Your Playground site won’t be imported with the Free plan.' ) }
+					</div>
+				) }
 				{ actionButton }
 			</div>
 		</div>

@@ -27,9 +27,15 @@ function buildDomainQueryArgs( siteSlug?: string ) {
 	return queryArgs;
 }
 
-function DomainOnlyAddDomainButton() {
-	const router = useRouter();
-	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+interface AddDomainButtonProps {
+	/**
+	 * The site's canonical slug. The route param can hold any domain on the site,
+	 * which the Stepper domain flow cannot resolve.
+	 */
+	siteSlug?: string;
+}
+
+function DomainOnlyAddDomainButton( { siteSlug }: AddDomainButtonProps ) {
 	const queryArgs = buildDomainQueryArgs( siteSlug );
 
 	const onSearchClick = () => {
@@ -54,9 +60,7 @@ function DomainOnlyAddDomainButton() {
 	);
 }
 
-function DefaultAddDomainButton() {
-	const router = useRouter();
-	const { siteSlug } = router.matchRoute( siteRoute.fullPath );
+function DefaultAddDomainButton( { siteSlug }: AddDomainButtonProps ) {
 	const queryArgs = buildDomainQueryArgs( siteSlug );
 
 	const onSearchClick = () => {
@@ -121,12 +125,15 @@ function AddDomainButtons( {
 	);
 }
 
-export default function AddDomainButton() {
+export default function AddDomainButton( { siteSlug: siteSlugProp }: AddDomainButtonProps ) {
 	const { supports } = useAppContext();
+	const router = useRouter();
+	const { siteSlug: routeSiteSlug } = router.matchRoute( siteRoute.fullPath );
+	const siteSlug = siteSlugProp ?? routeSiteSlug;
 
 	if ( supports.domainOnlySites ) {
-		return <DomainOnlyAddDomainButton />;
+		return <DomainOnlyAddDomainButton siteSlug={ siteSlug } />;
 	}
 
-	return <DefaultAddDomainButton />;
+	return <DefaultAddDomainButton siteSlug={ siteSlug } />;
 }

@@ -1,8 +1,6 @@
-/**
- * @jest-environment jsdom
- */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { SMOOCH_APP_ID, WIDGET_URL } from '../src/constants';
 import {
 	getZendeskConversationHistoryQueryKey,
@@ -10,20 +8,19 @@ import {
 } from '../src/use-get-zendesk-conversation-history';
 import type { ReactNode } from 'react';
 
-jest.mock( 'smooch', () => ( {} ) );
+vi.mock( 'smooch', () => ( {} ) );
 
-jest.mock( '../src/use-get-unread-conversations', () => ( {
-	useGetUnreadConversations: () => jest.fn(),
+vi.mock( '../src/use-get-unread-conversations', () => ( {
+	useGetUnreadConversations: () => vi.fn(),
 } ) );
 
-jest.mock( '../src/util', () => ( {
+vi.mock( '../src/util', () => ( {
 	isTestModeEnvironment: () => false,
 	isCsatTriggerMessage: () => false,
 	isZendeskSurveyMessage: () => false,
 } ) );
 
-const fetchMock = jest.fn();
-const originalFetch = globalThis.fetch;
+const fetchMock = vi.fn();
 
 const rawMessage = ( id: string, received: number, role = 'appMaker' ) => ( {
 	_id: id,
@@ -54,11 +51,11 @@ function renderHistoryHook() {
 describe( 'useGetZendeskConversationHistory', () => {
 	beforeEach( () => {
 		fetchMock.mockReset();
-		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		vi.stubGlobal( 'fetch', fetchMock );
 	} );
 
 	afterEach( () => {
-		globalThis.fetch = originalFetch;
+		vi.unstubAllGlobals();
 	} );
 
 	it( 'follows `hasPrevious` back to the start and returns the messages oldest first', async () => {

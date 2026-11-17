@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import extendAction from '..';
 
 describe( 'extendAction()', () => {
@@ -26,7 +27,7 @@ describe( 'extendAction()', () => {
 	} );
 
 	test( 'should return an updated action thunk, merging data on dispatch', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const action = extendAction(
 			( thunkDispatch ) =>
 				thunkDispatch( {
@@ -53,7 +54,7 @@ describe( 'extendAction()', () => {
 	} );
 
 	test( 'should return an updated action thunk, accepting also getState', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const getState = () => ( { selectedSiteId: 42 } );
 
 		const action = extendAction(
@@ -84,7 +85,7 @@ describe( 'extendAction()', () => {
 	} );
 
 	test( 'should return an updated nested action thunk, merging data on dispatch', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const action = extendAction(
 			( thunkDispatch ) =>
 				thunkDispatch( ( nestedThunkDispatch ) =>

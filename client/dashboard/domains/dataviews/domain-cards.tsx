@@ -1,9 +1,5 @@
-import { DomainSubtype } from '@automattic/api-core';
 import {
 	Button,
-	DropdownMenu,
-	MenuGroup,
-	MenuItem,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -11,7 +7,6 @@ import {
 import { useDispatch, useRegistry } from '@wordpress/data';
 import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { moreVertical } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useId, useState } from 'react';
 import { Card, CardBody, CardFooter } from '../../components/card';
@@ -51,24 +46,24 @@ function getActionLabel( action: Action< DomainSummary >, item: DomainSummary ) 
 }
 
 /*
- * Every renewable domain is eligible for "Renew", so it only moves to the footer once the domain has expired.
- * That's also when DNS stops being what the domain needs next, so it leaves the footer for the menu.
+ * The second link is the domain's next step: "Renew" once it has expired, otherwise "DNS".
+ * Renew wins: nothing else works on an expired domain until it's renewed.
  */
-function getFooterActionIds( item: DomainSummary ) {
+const NEXT_STEP_ACTION_IDS = [ 'renew', 'manage-dns-settings' ];
+
+function getFooterActions( eligibleActions: Action< DomainSummary >[] ) {
+	const findAction = ( id: string ) => eligibleActions.find( ( action ) => action.id === id );
 	return [
-		'manage-domain',
-		item.expired ? 'renew' : 'manage-dns-settings',
-		'change-primary-domain',
-	];
+		findAction( 'manage-domain' ),
+		NEXT_STEP_ACTION_IDS.map( findAction ).find( Boolean ),
+		findAction( 'change-primary-domain' ),
+		findAction( 'change-site-address' ),
+	].flatMap( ( action ) => action ?? [] );
 }
 
 function getFooterActionLabel( action: Action< DomainSummary >, item: DomainSummary ) {
 	if ( action.id === 'manage-dns-settings' ) {
 		return __( 'DNS' );
-	}
-	// A transfer's "View transfer" says where it goes, which isn't its settings.
-	if ( action.id === 'manage-domain' && item.subtype.id !== DomainSubtype.DOMAIN_TRANSFER ) {
-		return __( 'Settings' );
 	}
 	return getActionLabel( action, item );
 }
@@ -108,13 +103,7 @@ function DomainCard( {
 	const eligibleActions = actions.filter(
 		( action ) => ! action.isEligible || action.isEligible( item )
 	);
-	const footerActionIds = getFooterActionIds( item );
-	const footerActions = footerActionIds.flatMap(
-		( id ) => eligibleActions.find( ( action ) => action.id === id ) ?? []
-	);
-	const menuActions = eligibleActions.filter(
-		( action ) => ! footerActionIds.includes( action.id )
-	);
+	const footerActions = getFooterActions( eligibleActions );
 
 	return (
 		<Card className="domain-cards__card" size="small" role="group" aria-labelledby={ titleId }>
@@ -142,35 +131,6 @@ function DomainCard( {
 							</Text>
 						) }
 					</VStack>
-					{ menuActions.length > 0 && (
-						<DropdownMenu
-							icon={ moreVertical }
-							label={ __( 'Actions' ) }
-							toggleProps={ {
-								__next40pxDefaultSize: true,
-								size: 'small',
-								'aria-describedby': titleId,
-							} }
-							popoverProps={ { placement: 'bottom-end' } }
-						>
-							{ ( { onClose } ) => (
-								<MenuGroup>
-									{ menuActions.map( ( action ) => (
-										<MenuItem
-											key={ action.id }
-											disabled={ !! action.disabled }
-											onClick={ () => {
-												onClose();
-												runAction( action );
-											} }
-										>
-											{ getActionLabel( action, item ) }
-										</MenuItem>
-									) ) }
-								</MenuGroup>
-							) }
-						</DropdownMenu>
-					) }
 				</HStack>
 				<dl className="domain-cards__fields">
 					{ fields.map(

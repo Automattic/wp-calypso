@@ -1,17 +1,20 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { isEnabled } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import NotificationsSites from '../index';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	return { ...actual, __esModule: true, isEnabled: jest.fn( actual.isEnabled ) };
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
+	return { ...actual, __esModule: true, isEnabled: vi.fn( actual.isEnabled ) };
 } );
 
-const mockIsEnabled = jest.mocked( isEnabled );
+const mockIsEnabled = vi.mocked( isEnabled );
 
 function setup( enabled: boolean ) {
 	mockIsEnabled.mockImplementation(
@@ -37,7 +40,7 @@ function setup( enabled: boolean ) {
 }
 
 describe( 'NotificationsSites subscriber settings', () => {
-	it( 'hides subscriber settings when the feature is disabled', async () => {
+	test( 'hides subscriber settings when the feature is disabled', async () => {
 		const { settings, sites } = setup( false );
 		await waitFor( () => {
 			expect( settings.isDone() ).toBe( true );
@@ -51,7 +54,7 @@ describe( 'NotificationsSites subscriber settings', () => {
 		).toBeVisible();
 	} );
 
-	it( 'shows the saved subscriber preference alongside browser notifications when enabled', async () => {
+	test( 'shows the saved subscriber preference alongside browser notifications when enabled', async () => {
 		const { preferences } = setup( true );
 		await waitFor( () =>
 			expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).toBeChecked()

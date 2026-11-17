@@ -5,14 +5,19 @@
 // it for every single request.
 import config from '@automattic/calypso-config';
 import { isCalypsoLiveHostname } from '@automattic/calypso-url';
-import { makeLogstashMirrorTransport } from './logstash-transport';
+import { makeLogstashTransport } from './logstash-transport';
 import type * as SentryApi from '@sentry/react';
 
 // Static sentry configuration. We add any dynamic values when initializing Sentry.
 const SENTRY_CONFIG: SentryApi.BrowserOptions = {
-	dsn: 'https://61275d63a504465ab315245f1a379dab@o248881.ingest.sentry.io/6313676',
+	// The SDK stays disabled without a DSN, but events only go to logstash through
+	// the transport, so this one deliberately points nowhere.
+	dsn: 'https://public@sentry.invalid/1',
 	// Determine the sample of errors collected where 1.0 is 100% of errors.
 	sampleRate: 1.0, // We're disabling it for 90% of requests, so we should track 100% of errors for the remaining 10% of requests.
+	// The logstash transport drops sessions and client reports, so don't collect them.
+	autoSessionTracking: false,
+	sendClientReports: false,
 	// Don't track errors on these URLs.
 	denyUrls: [
 		// Matches browser extension URLs, like "moz-extension://..." or "safari-web-extension://..."
@@ -238,7 +243,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 				release,
 				beforeBreadcrumb,
 				beforeSend,
-				transport: makeLogstashMirrorTransport( Sentry.makeFetchTransport ),
+				transport: makeLogstashTransport,
 			} );
 			state = { state: 'loaded', params, sentry: Sentry };
 		} catch ( err ) {

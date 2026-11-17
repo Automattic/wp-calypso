@@ -40,7 +40,7 @@ export default function AppleLogin( {
 			await loadScript( APPLE_CLIENT_URL );
 		}
 
-		const oauth2State = String( Math.floor( Math.random() * 10e9 ) );
+		const oauth2State = crypto.randomUUID();
 		windowObj.sessionStorage.setItem( 'siwa_state', oauth2State );
 
 		windowObj.AppleID.auth.init( {

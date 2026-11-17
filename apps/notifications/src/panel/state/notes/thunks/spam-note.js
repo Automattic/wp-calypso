@@ -1,3 +1,4 @@
+import { reportError } from '../../../helpers/log-error';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { wpcom } from '../../../rest-client/wpcom';
 import { spamNote as spamNoteAction } from '../actions';
@@ -12,10 +13,15 @@ const spamNote = ( note, immediately, restClient ) => async ( dispatch ) => {
 	if ( immediately ) {
 		const comment = wpcom().site( note.meta.ids.site ).comment( note.meta.ids.comment );
 
-		const commentData = await comment.get();
-		commentData.status = 'spam';
+		try {
+			const commentData = await comment.get();
+			commentData.status = 'spam';
 
-		await comment.update( commentData );
+			await comment.update( commentData );
+		} catch ( error ) {
+			reportError( 'spam', error );
+			throw error;
+		}
 	} else {
 		restClient.global.updateUndoBar( 'spam', note );
 	}

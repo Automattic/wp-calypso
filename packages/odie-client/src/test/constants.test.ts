@@ -1,14 +1,12 @@
-/**
- * @jest-environment jsdom
- */
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
+import { type Mock, vi } from 'vitest';
 import { getOdieTransferMessages } from '../constants';
 
-jest.mock( '@automattic/zendesk-client', () => ( {
-	isTestModeEnvironment: jest.fn().mockReturnValue( false ),
+vi.mock( '@automattic/zendesk-client', () => ( {
+	isTestModeEnvironment: vi.fn().mockReturnValue( false ),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { PLANS_PRESALES_LAUNCHER_CONTEXT: 'plans-presales' },
 } ) );
 
@@ -18,7 +16,7 @@ const contents = ( ...args: Parameters< typeof getOdieTransferMessages > ) =>
 const ASK_FOR_DETAILS = 'Tell us what you need help with while you wait.';
 
 beforeEach( () => {
-	( isTestModeEnvironment as jest.Mock ).mockReturnValue( false );
+	( isTestModeEnvironment as Mock ).mockReturnValue( false );
 } );
 
 describe( 'getOdieTransferMessages', () => {
@@ -46,7 +44,7 @@ describe( 'getOdieTransferMessages', () => {
 	} );
 
 	it( 'shows the sandbox notice instead of the reply promise in test mode', () => {
-		( isTestModeEnvironment as jest.Mock ).mockReturnValue( true );
+		( isTestModeEnvironment as Mock ).mockReturnValue( true );
 
 		const messages = contents( () => true, true );
 

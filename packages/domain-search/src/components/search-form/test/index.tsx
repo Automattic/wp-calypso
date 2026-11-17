@@ -1,15 +1,16 @@
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
+import { vi } from 'vitest';
 import { SearchForm } from '..';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
 } ) );
 
-const mockUseViewportMatch = jest.mocked( useViewportMatch );
+const mockUseViewportMatch = vi.mocked( useViewportMatch );
 
 beforeEach( () => {
 	mockUseViewportMatch.mockReturnValue( false );
@@ -23,7 +24,7 @@ const expectPlaceholderPhrase = ( phrase: string ) => {
 
 	while ( screen.getByRole( 'searchbox' ).getAttribute( 'placeholder' ) !== phrase ) {
 		act( () => {
-			jest.advanceTimersByTime( 60 );
+			vi.advanceTimersByTime( 60 );
 		} );
 
 		expect( screen.getByRole( 'searchbox' ) ).toHaveAttribute(
@@ -41,8 +42,8 @@ describe( 'SearchForm', () => {
 	it( 'allows searching for a term', async () => {
 		const user = userEvent.setup();
 
-		const onQueryChange = jest.fn();
-		const onSearchStart = jest.fn();
+		const onQueryChange = vi.fn();
+		const onSearchStart = vi.fn();
 
 		render(
 			<TestDomainSearch events={ { onQueryChange, onSearchStart } }>
@@ -60,8 +61,8 @@ describe( 'SearchForm', () => {
 	it( 'shows the search hint on empty search', async () => {
 		const user = userEvent.setup();
 
-		const onQueryChange = jest.fn();
-		const onSearchStart = jest.fn();
+		const onQueryChange = vi.fn();
+		const onSearchStart = vi.fn();
 
 		render(
 			<TestDomainSearch events={ { onQueryChange, onSearchStart } }>
@@ -83,8 +84,8 @@ describe( 'SearchForm', () => {
 	it( 'submits via the Enter key', async () => {
 		const user = userEvent.setup();
 
-		const onQueryChange = jest.fn();
-		const onSearchStart = jest.fn();
+		const onQueryChange = vi.fn();
+		const onSearchStart = vi.fn();
 
 		render(
 			<TestDomainSearch events={ { onQueryChange, onSearchStart } }>
@@ -104,7 +105,7 @@ describe( 'SearchForm', () => {
 	it( 'renders the icon-only submit inside a field wrapper on mobile', async () => {
 		mockUseViewportMatch.mockReturnValue( true );
 		const user = userEvent.setup();
-		const onQueryChange = jest.fn();
+		const onQueryChange = vi.fn();
 
 		const { container } = render(
 			<TestDomainSearch events={ { onQueryChange } }>
@@ -124,7 +125,7 @@ describe( 'SearchForm', () => {
 	} );
 
 	it( 'cycles through placeholder phrases', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		render(
 			<TestDomainSearch>
@@ -133,22 +134,22 @@ describe( 'SearchForm', () => {
 		);
 
 		expect( expectPlaceholderPhrase( 'dailywine.blog' ) ).toBe( true );
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		act( () => vi.advanceTimersByTime( 3000 ) );
 
 		expect( expectPlaceholderPhrase( 'creatortools.shop' ) ).toBe( true );
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		act( () => vi.advanceTimersByTime( 3000 ) );
 
 		expect( expectPlaceholderPhrase( 'literatiagency.com' ) ).toBe( true );
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		act( () => vi.advanceTimersByTime( 3000 ) );
 
 		expect( expectPlaceholderPhrase( 'democratizework.org' ) ).toBe( true );
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		act( () => vi.advanceTimersByTime( 3000 ) );
 
 		expect( expectPlaceholderPhrase( 'discardedobject.art' ) ).toBe( true );
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		act( () => vi.advanceTimersByTime( 3000 ) );
 
 		expect( expectPlaceholderPhrase( 'dailywine.blog' ) ).toBe( true );
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 } );

@@ -29,6 +29,7 @@ import {
 	siteCurrentPlanQuery,
 	sitePlansQuery,
 	siteBySlugQuery,
+	siteLatestAtomicTransferQuery,
 	siteByIdQuery,
 	siteAdminBarQuery,
 	siteAdminMenuQuery,
@@ -44,6 +45,7 @@ import {
 	siteStaticFile404SettingQuery,
 	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
+	staticSiteImportSessionQuery,
 	queryClient,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
@@ -57,6 +59,7 @@ import {
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
+	isSiteMember,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
 import {
@@ -66,12 +69,17 @@ import {
 } from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
+	isAwaitingAtomicTransfer,
+	mayBeAwaitingAtomicTransfer,
+} from '../../utils/site-atomic-transfers';
+import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
 	hasPlanFeature,
 } from '../../utils/site-features';
 import { isInJetpackCriticalErrorState } from '../../utils/site-jetpack-critical-error';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { SitePermissionError } from '../../utils/site-permissions';
 import {
 	getSiteMigrationState,
 	isSiteMigrationInProgress,
@@ -116,6 +124,23 @@ export const sitesRoute = createRoute( {
 	},
 } );
 
+/**
+ * While a site turns Atomic, `/sites/<slug>` reports it without its owner's capabilities for a
+ * minute or two. Asks the site's transfer whether that is why.
+ */
+async function isOwnerAwaitingAtomicTransfer( site: Site ) {
+	const userId = queryClient.getQueryData< User >( AUTH_QUERY_KEY )?.ID;
+	if ( ! mayBeAwaitingAtomicTransfer( site, userId ) ) {
+		return false;
+	}
+	try {
+		const transfer = await queryClient.fetchQuery( siteLatestAtomicTransferQuery( site.ID ) );
+		return isAwaitingAtomicTransfer( site, userId, transfer );
+	} catch {
+		return false;
+	}
+}
+
 export const siteRoute = createRoute( {
 	head: ( { loaderData }: { loaderData?: { site: Site } } ) => ( {
 		meta: [
@@ -139,7 +164,11 @@ export const siteRoute = createRoute( {
 			return;
 		}
 
-		if ( ! canManageSite( site ) ) {
+		// While the site turns Atomic, its owner keeps its pages: their capabilities come back with it.
+		if ( ! canManageSite( site ) && ! ( await isOwnerAwaitingAtomicTransfer( site ) ) ) {
+			if ( isSiteMember( site ) ) {
+				throw new SitePermissionError();
+			}
 			throw notFound();
 		}
 
@@ -252,7 +281,8 @@ export const siteOverviewRoute = createRoute( {
 			migration: search.migration === 'completed' ? 'completed' : undefined,
 		};
 	},
-	loader: async ( { params: { siteSlug }, preload } ) => {
+	loaderDeps: ( { search: { importSessionId } } ) => ( { importSessionId } ),
+	loader: async ( { params: { siteSlug }, deps: { importSessionId }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
 			const notGroup = getActivityLogHiddenGroups( site );
@@ -278,6 +308,14 @@ export const siteOverviewRoute = createRoute( {
 			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ).catch( () => {
 				// Error gets logged at ErrorBoundary.
 			} ),
+
+			// A move's progress and notices start from where the session is, not from scratch.
+			importSessionId &&
+				queryClient
+					.ensureQueryData( staticSiteImportSessionQuery( importSessionId ) )
+					.catch( () => {
+						// The Overview reads the error from the query and says the move can't be shown.
+					} ),
 		] );
 	},
 } ).lazy( () =>

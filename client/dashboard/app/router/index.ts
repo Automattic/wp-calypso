@@ -115,7 +115,7 @@ export const getRouter = ( config: AppConfig ) => {
 		},
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
-		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+		defaultOnCatch: ( error: unknown, errorInfo: ErrorInfo ) => {
 			handleOnCatch( error, errorInfo, router, {
 				severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
 				calypso_section: 'dashboard',
@@ -138,8 +138,8 @@ export const getRouter = ( config: AppConfig ) => {
 	// instead — otherwise the tag names the route the user came from, or is
 	// absent entirely on a cold load of the crashing URL.
 	let previousRouteId: string | undefined;
-	router.subscribe( 'onBeforeLoad', () => {
-		const routeId = router.state.pendingMatches?.at( -1 )?.routeId;
+	router.subscribe( 'onBeforeLoad', ( { toLocation } ) => {
+		const routeId = router.getMatchedRoutes( toLocation.pathname )[ 0 ].at( -1 )?.id;
 		if ( ! routeId ) {
 			return;
 		}

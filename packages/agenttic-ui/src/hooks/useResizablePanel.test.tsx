@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { animate, useMotionValue } from 'framer-motion';
+import { animate, frame, useMotionValue } from 'framer-motion';
 import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -297,6 +297,11 @@ describe( 'useResizablePanel', () => {
 		await act( async () => {
 			handle.dispatchEvent( makePointerEvent( 'pointermove', 40, -20 ) );
 		} );
+		// Let a motion frame run mid-gesture: the mount size-morph spring is still
+		// in flight here and must not overwrite the dragged size.
+		await act( async () => {
+			await new Promise< void >( ( resolve ) => frame.postRender( () => resolve() ) );
+		} );
 
 		expect( onResize ).toHaveBeenLastCalledWith( {
 			width: DEFAULT_SIZE.width + 40,
@@ -312,6 +317,43 @@ describe( 'useResizablePanel', () => {
 			width: DEFAULT_SIZE.width + 40,
 			height: DEFAULT_SIZE.height + 20,
 		} );
+	} );
+
+	it( 'commits the stopped size when a handle is pressed and released mid-animation without moving', async () => {
+		const onResizeEnd = vi.fn();
+		harness = renderHook( {
+			resizable: true,
+			defaultSize: DEFAULT_SIZE,
+			minSize: MIN_SIZE,
+			maxSize: MAX_SIZE,
+			chatState: 'expanded',
+			compactHeight: 56,
+			onResizeEnd,
+		} );
+		await harness.render();
+
+		const { result } = harness.captured.current!;
+		const target = result.resetToDefaultSize()!;
+		await act( async () => {
+			await new Promise< void >( ( resolve ) => frame.postRender( () => resolve() ) );
+		} );
+		expect( result.width.get() ).not.toBe( target.width );
+
+		const handle = makeHandle( 'top-right' );
+		await act( async () => {
+			startResize( handle, 0, 0 );
+		} );
+		await act( async () => {
+			handle.dispatchEvent( makePointerEvent( 'pointerup', 0, 0 ) );
+		} );
+
+		const stopped = { width: result.width.get(), height: result.height.get() };
+		expect( stopped ).not.toEqual( target );
+		expect( onResizeEnd ).toHaveBeenCalledWith( stopped );
+		expect( result.getPanelSize() ).toEqual( stopped );
+
+		result.clampToViewport();
+		expect( { width: result.width.get(), height: result.height.get() } ).toEqual( stopped );
 	} );
 
 	it( 'does not grow past the bottom dock when dragging the bottom edge of a docked panel', async () => {

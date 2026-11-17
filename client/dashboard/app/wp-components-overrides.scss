@@ -24,6 +24,10 @@
 	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-foreground-inverted, #fff);
 }
 
+.components-menu-item__button:is(:focus, [aria-selected="true"]):not(:disabled, [aria-disabled="true"]) .components-text {
+	color: inherit;
+}
+
 // Spinner now draws `@wordpress/ui`'s neutral gray arc; keep it in the accent color it had.
 // Its gray track is gone upstream.
 .components-spinner {

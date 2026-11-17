@@ -3,6 +3,7 @@ import {
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_ADVANCED_SEO_TOOLS,
 	FEATURE_BLAZE_AD_CREDITS,
+	FEATURE_CONNECT_AI_AGENTS,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_DEV_TOOLS,
 	FEATURE_EARLY_ONBOARDING_CALLS,
@@ -47,10 +48,11 @@ import type { TranslateResult } from 'i18n-calypso';
 function getPricingDifferentiationFeatureBadgeText(
 	planSlug: string,
 	featureSlug: string,
-	translate: ( text: string ) => TranslateResult
+	translate: ( text: string ) => TranslateResult,
+	hideFreeDomainBadge?: boolean
 ): TranslateResult | undefined {
 	if ( isPersonalPlan( planSlug ) && featureSlug === FEATURE_CUSTOM_DOMAIN ) {
-		return translate( 'Free' );
+		return hideFreeDomainBadge ? undefined : translate( 'Free' );
 	}
 	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_SIMPLE_PAYMENTS ) {
 		return translate( 'New' );
@@ -145,6 +147,15 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 	return defaultFeatureSlugs;
 }
 
+function replacePremiumThemesWithAiAgents( featureSlugs: Feature[] ): Feature[] {
+	return featureSlugs.map( ( featureSlug ) =>
+		featureSlug === WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ||
+		featureSlug === FEATURE_PREMIUM_STORE_THEMES
+			? FEATURE_CONNECT_AI_AGENTS
+			: featureSlug
+	);
+}
+
 function isBusinessOrEcommercePlan( planSlug: string ): boolean {
 	return isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
 }
@@ -180,6 +191,9 @@ function getPlansGridRedesignFeatureTitleOverride(
 	}
 	if ( isBusinessOrEcommercePlan( planSlug ) && featureSlug === FEATURE_BLAZE_AD_CREDITS ) {
 		return translate( '$200 in ad credits' );
+	}
+	if ( isBusinessOrEcommercePlan( planSlug ) && featureSlug === FEATURE_SITE_STAGING_SITES ) {
+		return translate( 'Staging site' );
 	}
 	return undefined;
 }
@@ -219,6 +233,8 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
+	useMcpFeature,
+	hideFreeDomainBadge,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -228,6 +244,8 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
 	usePlansGridRedesignFeatures?: boolean;
+	useMcpFeature?: boolean;
+	hideFreeDomainBadge?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -244,6 +262,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
+	useMcpFeature,
+	hideFreeDomainBadge,
 } ) => {
 	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
@@ -269,10 +289,16 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
 						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 						[];
+					const redesignFeatureSlugs = getPlansGridRedesignFeatureSlugsForPlan(
+						planSlug,
+						featureSlugs
+					);
 
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						getPlansGridRedesignFeatureSlugsForPlan( planSlug, featureSlugs ),
+						useMcpFeature
+							? replacePremiumThemesWithAiAgents( redesignFeatureSlugs )
+							: redesignFeatureSlugs,
 						true
 					);
 
@@ -453,7 +479,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						const badgeText = getPricingDifferentiationFeatureBadgeText(
 							planSlug,
 							featureSlug,
-							translate
+							translate,
+							hideFreeDomainBadge
 						);
 
 						wpcomFeaturesTransformed.push( {
@@ -501,6 +528,8 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		allFeaturesList,
 		hasRedeemedDomainCredit,
 		usePlansGridRedesignFeatures,
+		useMcpFeature,
+		hideFreeDomainBadge,
 		translate,
 	] );
 };

@@ -5,8 +5,8 @@ import type { fetchReaderTeams } from '@automattic/api-core';
 
 type ReaderTeams = Awaited< ReturnType< typeof fetchReaderTeams > >;
 
-const isAutomatticianTeams = ( data: ReaderTeams ) =>
-	data.teams.some( ( team ) => team.slug === 'a8c' );
+const isAutomatticianTeams = ( data: ReaderTeams | undefined ) =>
+	Array.isArray( data?.teams ) && data.teams.some( ( team ) => team.slug === 'a8c' );
 
 export const isAutomatticianQuery = () =>
 	queryOptions( {

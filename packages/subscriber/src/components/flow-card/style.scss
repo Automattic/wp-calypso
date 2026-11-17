@@ -20,6 +20,10 @@ $blueberry-color: #3858e9;
 		box-shadow: 0 0 0 1px $blueberry-color;
 
 		svg path {
+			color: $blueberry-color;
+		}
+
+		svg:not([stroke]) path {
 			fill: $blueberry-color;
 		}
 

@@ -45,9 +45,8 @@ interface OneLoginLayoutProps {
 	loginUrl?: string;
 	isLostPasswordView?: boolean;
 	/**
-	 * Keeps the "Create an account" link in the top bar below 960px only. The main login view
-	 * passes this in the entry clarity treatment, where its footer carries the route to signup on
-	 * desktop.
+	 * Keeps the "Create an account" link in the top bar below 960px only. The login view passes
+	 * this when its footer carries the route to signup on desktop.
 	 */
 	signupLinkMobileOnly?: boolean;
 	noThanksRedirectUrl?: string;

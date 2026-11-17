@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { InteractiveUiActionNote } from '../action-note';
 import {
 	attachInteractiveUiPresentation,
@@ -46,7 +47,7 @@ function createPresentation( {
 		renderer: undefined,
 		hasLoadError,
 		isRetryingLoad: false,
-		retryLoad: jest.fn(),
+		retryLoad: vi.fn(),
 		revision: 0,
 		isBusy: false,
 		staleSurfaceIds: new Set( staleSurfaceIds ),
@@ -100,7 +101,7 @@ describe( 'attachInteractiveUiPresentation', () => {
 			surfaceOwnerId: 'agent',
 			staleSurfaceIds: [ 'test-surface' ],
 		} );
-		const feedback = { id: 'feedback-up', label: 'Good response', onClick: jest.fn() };
+		const feedback = { id: 'feedback-up', label: 'Good response', onClick: vi.fn() };
 
 		const [ attached ] = attachInteractiveUiPresentation(
 			[ { ...message, actions: [ feedback ] } ],

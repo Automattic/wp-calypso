@@ -1,10 +1,9 @@
 /**
- * @jest-environment jsdom
- *
  * Tests for Image Studio tracking functions
  */
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { ImageStudioEntryPoint } from '../store';
 import { ImageStudioMode } from '../types';
 import { contextProvider } from './client-context';
@@ -31,20 +30,20 @@ import {
 } from './tracking';
 
 // Mock session
-jest.mock( '../utils/session', () => ( {
-	getSessionId: jest.fn( () => 'test-session-id' ),
+vi.mock( '../utils/session', () => ( {
+	getSessionId: vi.fn( () => 'test-session-id' ),
 } ) );
 
 // The package root loads the whole chat; the credits helpers are all this file uses.
-jest.mock( '@automattic/agents-manager', () =>
-	jest.requireActual( '@automattic/agents-manager/src/utils/credits' )
+vi.mock( '@automattic/agents-manager', () =>
+	vi.importActual( '@automattic/agents-manager/src/utils/credits' )
 );
 
-jest.mock( './client-context', () => ( { contextProvider: { getClientContext: jest.fn() } } ) );
+vi.mock( './client-context', () => ( { contextProvider: { getClientContext: vi.fn() } } ) );
 
-const recordTracksEventMock = recordTracksEventBase as jest.Mock;
-const selectMock = select as jest.Mock;
-const getClientContextMock = jest.mocked( contextProvider.getClientContext );
+const recordTracksEventMock = recordTracksEventBase as Mock;
+const selectMock = select as Mock;
+const getClientContextMock = vi.mocked( contextProvider.getClientContext );
 /** The client context Image Studio's agent receives while its modal is open. */
 const IMAGE_STUDIO_CONTEXT = {
 	url: 'https://example.com/wp-admin/post.php',
@@ -76,9 +75,9 @@ describe( 'getImageStudioRequestErrorType', () => {
 
 describe( 'trackImageStudioOpened', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 		// Set up window properties for screen/post_type
 		( window as any ).pagenow = 'post';
@@ -114,7 +113,7 @@ describe( 'trackImageStudioOpened', () => {
 	it( 'should use the passed entryPoint as placement when store has no value', () => {
 		// At open time the store has not been updated yet, so it returns null
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 
 		trackImageStudioOpened( {
@@ -147,9 +146,9 @@ describe( 'trackImageStudioOpened', () => {
 
 describe( 'recordImageStudioEvent — tracking context properties', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 		delete ( window as any ).imageStudioData;
 	} );
@@ -204,7 +203,7 @@ describe( 'recordImageStudioEvent — tracking context properties', () => {
 			expect.objectContaining( { site_type: 'atomic' } )
 		);
 
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		( window as any ).imageStudioData = { siteType: 'wpcom' };
 
 		trackImageStudioClosed( { mode: 'edit' } );
@@ -244,9 +243,9 @@ describe( 'recordImageStudioEvent — tracking context properties', () => {
 
 describe( 'recordImageStudioEvent — is_test property', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 		delete ( window as any ).imageStudioData;
 		delete ( window as any ).pagenow;
@@ -302,9 +301,9 @@ describe( 'recordImageStudioEvent — is_test property', () => {
 
 describe( 'recordImageStudioEvent — unified AI property standards', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 		delete ( window as any ).imageStudioData;
 	} );
@@ -364,9 +363,9 @@ describe( 'recordImageStudioEvent — unified AI property standards', () => {
 
 describe( 'reel share tracking helpers', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => 'post_editor_feature_clip' ),
+			getEntryPoint: vi.fn( () => 'post_editor_feature_clip' ),
 		} );
 	} );
 
@@ -465,9 +464,9 @@ describe( 'reel share tracking helpers', () => {
 
 describe( 'generic share tracking helpers', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => 'post_editor_feature_clip' ),
+			getEntryPoint: vi.fn( () => 'post_editor_feature_clip' ),
 		} );
 	} );
 
@@ -524,9 +523,9 @@ describe( 'generic share tracking helpers', () => {
 
 describe( 'feature clip tracking helpers', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => 'post_editor_feature_clip' ),
+			getEntryPoint: vi.fn( () => 'post_editor_feature_clip' ),
 		} );
 	} );
 
@@ -550,7 +549,7 @@ describe( 'feature clip tracking helpers', () => {
 		// The panel mounts with the editor sidebar, before anything has opened
 		// Image Studio, so the store cannot supply the placement here.
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 
 		trackImageStudioFeatureClipPanelViewed();
@@ -566,7 +565,7 @@ describe( 'feature clip tracking helpers', () => {
 		// in the store. The panel event still came from the panel, so its own
 		// placement has to win over the fallback.
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => ImageStudioEntryPoint.EditorBlock ),
+			getEntryPoint: vi.fn( () => ImageStudioEntryPoint.EditorBlock ),
 		} );
 
 		trackImageStudioFeatureClipPanelViewed();
@@ -581,7 +580,7 @@ describe( 'feature clip tracking helpers', () => {
 		// Sharing straight from the panel never opens Image Studio, so the store
 		// has no entry point — the case that left these events unfilterable.
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 
 		trackImageStudioGenericShareClicked( { surface: 'sidebar', method: 'web-share' } );
@@ -605,7 +604,7 @@ describe( 'feature clip tracking helpers', () => {
 		// the Feature Clip flow, so a placement passed by a call site must not be
 		// able to weaken it.
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 
 		trackImageStudioGenericShareClicked( {
@@ -625,7 +624,7 @@ describe( 'feature clip tracking helpers', () => {
 		// says which entry point the flow came from. They are different properties
 		// and both have to survive.
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 
 		trackImageStudioGenericShareClicked( { surface: 'modal', method: 'web-share' } );
@@ -642,9 +641,9 @@ describe( 'feature clip tracking helpers', () => {
 
 describe( 'upgrade notice tracking', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 		getClientContextMock.mockReturnValue( IMAGE_STUDIO_CONTEXT );
 	} );
@@ -752,9 +751,9 @@ describe( 'upgrade notice tracking', () => {
 
 describe( 'credits popover tracking', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 		getClientContextMock.mockReturnValue( IMAGE_STUDIO_CONTEXT );
 	} );
@@ -788,9 +787,9 @@ describe( 'credits popover tracking', () => {
 
 describe( 'credits event details', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		selectMock.mockReturnValue( {
-			getEntryPoint: jest.fn( () => null ),
+			getEntryPoint: vi.fn( () => null ),
 		} );
 		getClientContextMock.mockReturnValue( IMAGE_STUDIO_CONTEXT );
 	} );
@@ -831,7 +830,7 @@ describe( 'credits event details', () => {
 		] );
 
 	it.each( [ 3000, 0, 'none' ] as const )(
-		'sends the top-ups balance %p on each credits event',
+		'sends the top-ups balance %o on each credits event',
 		( topUpCreditsLeft ) => {
 			recordCreditsEvents( topUpCreditsLeft );
 

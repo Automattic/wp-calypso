@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { useFields } from '../fields';
 import { filterSortAndPaginateDomains } from '../filter-sort-and-paginate';
@@ -14,8 +15,10 @@ import type { Field, Filter, Operator, View } from '@wordpress/dataviews';
 
 let mockHasEnTranslation = true;
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => () => mockHasEnTranslation,
 } ) );
 
@@ -93,17 +96,17 @@ describe( 'domains expiry field', () => {
 	const expiryLabel = ( fields: Field< DomainSummary >[] ) =>
 		fields.find( ( field ) => field.id === 'expiry' )?.label;
 
-	it( 'is labelled "Renews on"', async () => {
+	test( 'is labelled "Renews on"', async () => {
 		expect( expiryLabel( await getFields() ) ).toBe( 'Renews on' );
 	} );
 
-	it( 'keeps the "Paid until" label until "Renews on" is translated', async () => {
+	test( 'keeps the "Paid until" label until "Renews on" is translated', async () => {
 		mockHasEnTranslation = false;
 
 		expect( expiryLabel( await getFields() ) ).toBe( 'Paid until' );
 	} );
 
-	it( 'sorts by date with undated domains last in both directions', async () => {
+	test( 'sorts by date with undated domains last in both directions', async () => {
 		const fields = await getFields();
 
 		expect( names( query( fields, { sort: { field: 'expiry', direction: 'asc' } } ) ) ).toEqual( [
@@ -122,7 +125,7 @@ describe( 'domains expiry field', () => {
 		] );
 	} );
 
-	it( 'filters by expiry bucket and counts the matching rows', async () => {
+	test( 'filters by expiry bucket and counts the matching rows', async () => {
 		const fields = await getFields();
 		const filterBy = ( value?: string[] ) =>
 			query( fields, { filters: [ expiryFilter( value ) ] } );

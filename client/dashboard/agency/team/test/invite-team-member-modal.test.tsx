@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import InviteTeamMemberModal from '../invite-team-member-modal';
 
@@ -15,7 +16,7 @@ describe( '<InviteTeamMemberModal>', () => {
 		const user = userEvent.setup();
 		const request = nock( API ).post( '/wpcom/v2/agency/1/user-invites' ).reply( 200 );
 
-		render( <InviteTeamMemberModal agencyId={ 1 } onClose={ jest.fn() } onSent={ jest.fn() } /> );
+		render( <InviteTeamMemberModal agencyId={ 1 } onClose={ vi.fn() } onSent={ vi.fn() } /> );
 		await user.click( screen.getByRole( 'button', { name: 'Send invite' } ) );
 
 		const message = await screen.findByText(
@@ -33,7 +34,7 @@ describe( '<InviteTeamMemberModal>', () => {
 
 	test( 'sends the invite with the trimmed login when the field is filled', async () => {
 		const user = userEvent.setup();
-		const onSent = jest.fn();
+		const onSent = vi.fn();
 		const request = nock( API )
 			.post( '/wpcom/v2/agency/1/user-invites', {
 				login: 'ada@example.com',
@@ -41,7 +42,7 @@ describe( '<InviteTeamMemberModal>', () => {
 			} )
 			.reply( 200, { success: true } );
 
-		render( <InviteTeamMemberModal agencyId={ 1 } onClose={ jest.fn() } onSent={ onSent } /> );
+		render( <InviteTeamMemberModal agencyId={ 1 } onClose={ vi.fn() } onSent={ onSent } /> );
 		await user.type(
 			screen.getByRole( 'textbox', { name: 'Email or WordPress.com username' } ),
 			' ada@example.com '

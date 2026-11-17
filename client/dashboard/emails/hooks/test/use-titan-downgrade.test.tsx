@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { TitanMailSlugs } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';

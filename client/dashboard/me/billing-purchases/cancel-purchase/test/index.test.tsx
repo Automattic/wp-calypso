@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
+	domainQuery,
 	hasPurchaseBeenExtendedQuery,
 	plansQuery,
 	productsQuery,
@@ -12,14 +13,20 @@ import {
 } from '@automattic/api-queries';
 import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
-import type { Purchase } from '@automattic/api-core';
+import KeepSubscriptionButton from '../keep-subscription-button';
+import type { Domain, Purchase } from '@automattic/api-core';
 
-jest.mock( '../../../../app/router/me', () => ( {
+vi.mock( '../../../../app/router/domains', () => ( {
+	domainRoute: { fullPath: '/domains/$domainName' },
+} ) );
+
+vi.mock( '../../../../app/router/me', () => ( {
 	cancelPurchaseRoute: { fullPath: '__root__', useParams: () => ( { purchaseId: '123' } ) },
 	purchaseSettingsRoute: { fullPath: '/me/billing/purchases/$purchaseId' },
 	purchasesRoute: { to: '/me/billing/purchases' },
@@ -64,20 +71,43 @@ function mockSiteRequests() {
 		.reply( 200, [] );
 }
 
-function renderRemoveFlow() {
+function mockHasExtended( status: number, body: object ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/upgrades/${ purchase.ID }/has-extended` )
+		.reply( status, body );
+}
+
+function renderRemoveFlow( {
+	purchase: testPurchase = purchase,
+	seedHasExtended = true,
+}: { purchase?: Purchase; seedHasExtended?: boolean } = {} ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
-	queryClient.setQueryData( purchaseQuery( purchase.ID ).queryKey, purchase );
+	queryClient.setQueryData( purchaseQuery( purchase.ID ).queryKey, testPurchase );
 	queryClient.setQueryData( plansQuery().queryKey, [] );
 	queryClient.setQueryData( purchaseCancelFeaturesQuery( purchase.ID ).queryKey, [] );
 	queryClient.setQueryData( productsQuery().queryKey, {} );
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
-	// The page passes the blog ID as this query's purchase ID.
-	queryClient.setQueryData( hasPurchaseBeenExtendedQuery( purchase.blog_id ).queryKey, false );
+	if ( testPurchase.meta ) {
+		queryClient.setQueryData( domainQuery( testPurchase.meta ).queryKey, {
+			domain: testPurchase.meta,
+		} as Domain );
+	}
+	if ( seedHasExtended ) {
+		queryClient.setQueryData( hasPurchaseBeenExtendedQuery( purchase.ID ).queryKey, false );
+	}
 	mockSiteRequests();
 
 	return render( <CancelPurchase />, { queryClient } );
+}
+
+// The offer is decided when the reason is chosen, so let the check finish first.
+async function waitForCheck( check: nock.Scope, queryClient: QueryClient ) {
+	await waitFor( () => {
+		expect( check.isDone() ).toBe( true );
+		expect( queryClient.isFetching() ).toBe( 0 );
+	} );
 }
 
 async function startSurvey( user: ReturnType< typeof userEvent.setup > ) {
@@ -85,9 +115,16 @@ async function startSurvey( user: ReturnType< typeof userEvent.setup > ) {
 	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
 }
 
-const optionsListName = 'Before canceling, you can consider these options:';
+async function pickFoundBetterValue( user: ReturnType< typeof userEvent.setup > ) {
+	await startSurvey( user );
+	await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
+	await user.click(
+		screen.getByRole( 'radio', { name: 'I found a competitor with better pricing/value' } )
+	);
+	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+}
 
-const findOptions = () => screen.findByRole( 'list', { name: optionsListName } );
+const optionsListName = 'Before canceling, you can consider these options:';
 
 describe( '<CancelPurchase />', () => {
 	beforeEach( () => {
@@ -103,7 +140,7 @@ describe( '<CancelPurchase />', () => {
 			disable( 'purchases/cancel-options-cards' );
 		} );
 
-		test( 'shows Ask AI and Support for "Another reason" with text typed', async () => {
+		test( 'shows no options for "Another reason" with text typed', async () => {
 			const user = userEvent.setup();
 			const { recordTracksEvent } = renderRemoveFlow();
 			await startSurvey( user );
@@ -115,45 +152,203 @@ describe( '<CancelPurchase />', () => {
 			);
 			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
 
-			const options = await findOptions();
 			expect(
-				within( options ).getByRole( 'button', { name: /Ask WordPress Agent/ } )
-			).toBeVisible();
-			expect(
-				within( options ).getByRole( 'button', { name: /Speak with our support team/ } )
-			).toBeVisible();
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_cancellation_solution_cards_view',
-				expect.objectContaining( {
-					solution_ids: 'ask-ai-assistant,speak-with-support',
-					cancellation_reason: 'anotherReasonOne',
+				await screen.findByRole( 'radiogroup', {
+					name: 'Where is your next adventure taking you?',
 				} )
+			).toBeVisible();
+			expect( screen.queryByRole( 'list', { name: optionsListName } ) ).not.toBeInTheDocument();
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_cancellation_solution_cards_view',
+				expect.anything()
+			);
+		} );
+	} );
+
+	describe( 'domain removal', () => {
+		const domainPurchase = {
+			...purchase,
+			product_name: 'Domain Registration',
+			product_slug: 'dotblog_domain',
+			meta: 'example.blog',
+			is_plan: false,
+			is_domain: true,
+			is_domain_registration: true,
+			is_refundable: false,
+		} as Purchase;
+
+		test( 'returns to the domain when it was opened from the domain', async () => {
+			window.history.replaceState( {}, '', '/?intent=remove&back_to=domain' );
+			const user = userEvent.setup();
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
 			);
 		} );
 
-		test( 'shows Ask AI and Support for a "Something else" answer with text typed', async () => {
+		test( 'keeps where the domain was opened from when returning to it', async () => {
+			window.history.replaceState(
+				{},
+				'',
+				'/?intent=remove&back_to=domain&domain_back_to=site-domains'
+			);
 			const user = userEvent.setup();
-			const { recordTracksEvent } = renderRemoveFlow();
-			await startSurvey( user );
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
 
-			await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
-			await user.click(
-				screen.getByRole( 'radio', { name: 'Something else related to price/value' } )
-			);
-			await user.type(
-				screen.getByRole( 'textbox', { name: 'Can you please specify?' } ),
-				'test reason'
-			);
-			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
 
-			expect( await findOptions() ).toBeVisible();
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_cancellation_solution_cards_view',
-				expect.objectContaining( {
-					solution_ids: 'ask-ai-assistant,speak-with-support',
-					cancellation_reason: 'otherPriceValue',
-				} )
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
 			);
+			expect( router.state.location.search ).toEqual( { back_to: 'site-domains' } );
+		} );
+
+		test( 'Keep subscription returns a domain connection to the domain', async () => {
+			window.history.replaceState( {}, '', '/?intent=remove&back_to=domain' );
+			const user = userEvent.setup();
+			const { router } = render(
+				<KeepSubscriptionButton
+					purchase={ {
+						...domainPurchase,
+						product_slug: 'domain_map',
+						product_type: 'domain_map',
+						is_domain_registration: false,
+					} }
+					intent="remove"
+					onKeepSubscriptionClick={ vi.fn() }
+				/>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'Keep subscription' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/domains/example.blog' )
+			);
+		} );
+
+		test( 'returns to purchases when it was opened from billing', async () => {
+			const user = userEvent.setup();
+			const { router } = renderRemoveFlow( { purchase: domainPurchase } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Cancel' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/me/billing/purchases' )
+			);
+		} );
+	} );
+
+	describe( 'free month offer', () => {
+		const monthlyPurchase = { ...purchase, bill_period_days: 31 } as Purchase;
+
+		test( 'offers a free month when the site never had one', async () => {
+			const user = userEvent.setup();
+			const check = mockHasExtended( 200, { has_extended: false } );
+			const { queryClient } = renderRemoveFlow( {
+				purchase: monthlyPurchase,
+				seedHasExtended: false,
+			} );
+			await waitForCheck( check, queryClient );
+
+			await pickFoundBetterValue( user );
+
+			expect( await screen.findByRole( 'button', { name: 'Get a free month' } ) ).toBeVisible();
+		} );
+
+		test( 'offers Built By when the site already had a free month', async () => {
+			const user = userEvent.setup();
+			const check = mockHasExtended( 200, { has_extended: true } );
+			const { queryClient } = renderRemoveFlow( {
+				purchase: monthlyPurchase,
+				seedHasExtended: false,
+			} );
+			await waitForCheck( check, queryClient );
+
+			await pickFoundBetterValue( user );
+
+			expect(
+				await screen.findByRole( 'heading', { name: 'Let us build your site for you' } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'Get a free month' } )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'offers Built By when the free month check fails', async () => {
+			const user = userEvent.setup();
+			const check = mockHasExtended( 500, {
+				code: 'writes-disabled',
+				message: 'Purchase management is not available. Please check back shortly.',
+				data: { status: 500 },
+			} );
+			const { queryClient } = renderRemoveFlow( {
+				purchase: monthlyPurchase,
+				seedHasExtended: false,
+			} );
+			await waitForCheck( check, queryClient );
+
+			await pickFoundBetterValue( user );
+
+			expect(
+				await screen.findByRole( 'heading', { name: 'Let us build your site for you' } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'Get a free month' } )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'lets the customer retry a failed free month', async () => {
+			const user = userEvent.setup();
+			const check = mockHasExtended( 200, { has_extended: false } );
+			const extend = nock( 'https://public-api.wordpress.com' )
+				.post( `/wpcom/v2/upgrades/${ purchase.ID }/extend` )
+				.times( 2 )
+				.reply( 500, {
+					code: 'writes-disabled',
+					message: 'Purchase management is not available. Please check back shortly.',
+					data: { status: 500 },
+				} );
+			const { queryClient, router } = renderRemoveFlow( {
+				purchase: monthlyPurchase,
+				seedHasExtended: false,
+			} );
+			await waitForCheck( check, queryClient );
+
+			await pickFoundBetterValue( user );
+			const button = await screen.findByRole( 'button', { name: 'Get a free month' } );
+			await user.click( button );
+			// Continue removal re-enables once the failure clears the busy state, so the retry click goes through.
+			await waitFor( () =>
+				expect( screen.getByRole( 'button', { name: 'Continue removal' } ) ).toBeEnabled()
+			);
+			expect( router.state.location.pathname ).toBe( '/' );
+			await user.click( button );
+
+			await waitFor( () => expect( extend.isDone() ).toBe( true ) );
+		} );
+
+		test( 'takes the customer to the purchase page after a free month', async () => {
+			const user = userEvent.setup();
+			const check = mockHasExtended( 200, { has_extended: false } );
+			nock( 'https://public-api.wordpress.com' )
+				.post( `/wpcom/v2/upgrades/${ purchase.ID }/extend` )
+				.reply( 200, { status: 'completed' } );
+			const { queryClient, router } = renderRemoveFlow( {
+				purchase: monthlyPurchase,
+				seedHasExtended: false,
+			} );
+			await waitForCheck( check, queryClient );
+
+			await pickFoundBetterValue( user );
+			await user.click( await screen.findByRole( 'button', { name: 'Get a free month' } ) );
+
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( `/me/billing/purchases/${ purchase.ID }` )
+			);
+			expect( router.state.location.search ).toEqual( { free_month: true } );
 		} );
 	} );
 } );

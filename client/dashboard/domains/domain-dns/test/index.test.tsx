@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain, type DnsRecord } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainDns from '../index';
 
@@ -21,8 +22,10 @@ const defaultCnameRecord: DnsRecord = {
 	data: `${ domainName }.`,
 };
 
-jest.mock( '../../../app/router/domains', () => ( {
-	...jest.requireActual( '../../../app/router/domains' ),
+vi.mock( '../../../app/router/domains', async () => ( {
+	...( await vi.importActual< typeof import( '../../../app/router/domains' ) >(
+		'../../../app/router/domains'
+	) ),
 	domainRoute: {
 		useParams: () => ( { domainName: 'example.com' } ),
 	},

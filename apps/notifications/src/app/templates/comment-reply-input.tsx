@@ -1,16 +1,17 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Button,
 	TextareaControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { send } from '@wordpress/icons';
+import { IconButton } from '@wordpress/ui';
 import debugModule from 'debug';
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import repliesCache from '../../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { reportError } from '../../panel/helpers/log-error';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
@@ -113,6 +114,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						retryCountRef.current = 0;
 						replyInputRef.current?.focus();
 						debug( 'Failed to submit comment reply: %s', error.message );
+						reportError( 'reply', error );
 					}
 					return;
 				}
@@ -228,18 +230,16 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						onBlur={ handleBlur }
 						onChange={ handleChange }
 					/>
-					<Button
+					<IconButton
 						ref={ submitButtonRef }
 						type="submit"
-						variant="primary"
-						title={
+						tone={ value.length ? 'brand' : 'neutral' }
+						label={
 							value.length ? __( 'Submit reply' ) : __( 'Write your response in order to submit' )
 						}
 						icon={ send }
-						isBusy={ isSubmitting }
+						loading={ isSubmitting }
 						disabled={ ! value.length }
-						accessibleWhenDisabled
-						__next40pxDefaultSize
 					/>
 				</HStack>
 			</form>

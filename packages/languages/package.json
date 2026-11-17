@@ -33,7 +33,7 @@
 		"prepack": "yarn run clean && yarn run build",
 		"prepare": "yarn run build",
 		"download": "node bin/download.js",
-		"test": "yarn jest"
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"tslib": "^2.8.1"
@@ -41,12 +41,13 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"jest": "^30.5.2",
 		"postcss": "^8.5.32",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",
 		"typescript": "^6.0.3",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	}
 }

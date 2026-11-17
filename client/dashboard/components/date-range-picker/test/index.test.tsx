@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { DateRangePicker } from '..';
 import type { ComponentProps } from 'react';
 
@@ -117,6 +118,45 @@ describe( 'DateRangePicker (new)', () => {
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
 
 		expect( await findAllByRole( 'grid' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'keeps the last selected calendar day when the site is behind the browser', async () => {
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			timezoneString: 'America/New_York',
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+		const grid = within( await findByRole( 'grid', { name: /August 2025/i } ) );
+		expect( grid.getByRole( 'button', { name: /August 25, 2025/i } ) ).toHaveAccessibleName(
+			/selected/i
+		);
+	} );
+
+	test( 'returns calendar days when clicking dates in a site ahead of the browser', async () => {
+		const onChange = vi.fn();
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			timezoneString: 'Asia/Tokyo',
+			onChange,
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+		const grid = within( await findByRole( 'grid', { name: /August 2025/i } ) );
+		await userEvent.click( grid.getByRole( 'button', { name: /August 6, 2025/i } ) );
+		await userEvent.click( grid.getByRole( 'button', { name: /August 8, 2025/i } ) );
+		await userEvent.click( getByRole( 'button', { name: /^Apply$/i } ) );
+		expect( onChange ).toHaveBeenCalledWith( {
+			start: new Date( 2025, 7, 6 ),
+			end: new Date( 2025, 7, 8 ),
+		} );
+	} );
+
+	test( 'anchors the calendar in the site month without shifting today twice', async () => {
+		MockDate.set( '2025-01-01T12:00:00Z' );
+		const { getByRole, findByRole } = renderDateRangePicker( {
+			timezoneString: 'America/New_York',
+			start: new Date( 2025, 0, 1 ),
+			end: new Date( 2025, 0, 1 ),
+		} );
+		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
+		expect( await findByRole( 'grid', { name: /January 2025/i } ) ).toBeInTheDocument();
 	} );
 
 	test( 'Clear → shows “Apply last 7 days”; click applies and closes', async () => {
@@ -296,7 +336,7 @@ describe( 'DateRangePicker (new)', () => {
 
 	test( 'invalid IANA timezone falls back gracefully (no crash, label correct)', async () => {
 		// Silence and assert the Moment Timezone warning for invalid zone
-		const errorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const errorSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		try {
 			const { getByRole, findByRole } = renderDateRangePicker( {
 				timezoneString: 'Invalid/Timezone',

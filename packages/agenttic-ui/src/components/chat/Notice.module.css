@@ -21,7 +21,7 @@
 	color: var( --color-success );
 }
 
-.isSuccess .icon svg path {
+.isSuccess .icon svg:not([stroke]) path {
 	fill: var( --color-success );
 }
 
@@ -30,7 +30,7 @@
 	color: var( --color-warning );
 }
 
-.isWarning .icon svg path {
+.isWarning .icon svg:not([stroke]) path {
 	fill: var( --color-warning );
 }
 
@@ -39,7 +39,7 @@
 	color: var( --color-error );
 }
 
-.isError .icon svg path {
+.isError .icon svg:not([stroke]) path {
 	fill: var( --color-error );
 }
 

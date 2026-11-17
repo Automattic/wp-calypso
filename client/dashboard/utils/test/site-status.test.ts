@@ -8,7 +8,7 @@ const siteWith = ( site_migration: Partial< Site[ 'site_migration' ] > ) =>
 describe( 'isSiteMigrationInProgress', () => {
 	afterEach( () => config.disable( 'migration/reprint-flow' ) );
 
-	it( 'locks a WordPress migration by its own state, and the others by their flow sticker', () => {
+	test( 'locks a WordPress migration by its own state, and the others by their flow sticker', () => {
 		config.enable( 'migration/reprint-flow' );
 
 		expect(
@@ -51,7 +51,7 @@ describe( 'isSiteMigrationInProgress', () => {
 		expect( isSiteMigrationInProgress( siteWith( {} ) ) ).toBe( false );
 	} );
 
-	it( 'goes by the flow sticker for a WordPress migration until the flow is switched on', () => {
+	test( 'goes by the flow sticker for a WordPress migration until the flow is switched on', () => {
 		expect(
 			isSiteMigrationInProgress(
 				siteWith( {

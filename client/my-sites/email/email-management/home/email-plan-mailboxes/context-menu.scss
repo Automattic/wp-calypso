@@ -29,12 +29,17 @@
 		&:focus {
 			svg {
 				fill: var(--color-text-inverted);
+				color: var(--color-text-inverted);
 			}
 		}
 
 		&[disabled] {
 			svg {
-				fill: var(--color-neutral-20) !important;
+				color: var(--color-neutral-20) !important;
+
+				&:not([stroke]) {
+					fill: var(--color-neutral-20) !important;
+				}
 			}
 		}
 	}

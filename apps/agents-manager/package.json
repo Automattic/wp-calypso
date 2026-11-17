@@ -50,6 +50,8 @@
 		"copy-webpack-plugin": "^14.0.0",
 		"postcss-prefix-selector": "^1.16.1",
 		"sass": "1.77.8",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	},
 	"peerDependencies": {

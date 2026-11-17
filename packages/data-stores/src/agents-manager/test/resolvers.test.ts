@@ -1,25 +1,24 @@
 import { apiFetch } from '@wordpress/data-controls';
+import { type MockedFunction, vi } from 'vitest';
 import { canAccessWpcomApis } from '../../wpcom-request';
 import { setHasLoaded, setIsLoading } from '../actions';
 import { getAgentsManagerState } from '../resolvers';
 
-jest.mock( '../../wpcom-request', () => ( {
+vi.mock( '../../wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	canAccessWpcomApis: jest.fn(),
+	default: vi.fn(),
+	canAccessWpcomApis: vi.fn(),
 } ) );
 
-const mockCanAccessWpcomApis = canAccessWpcomApis as jest.MockedFunction<
-	typeof canAccessWpcomApis
->;
+const mockCanAccessWpcomApis = canAccessWpcomApis as MockedFunction< typeof canAccessWpcomApis >;
 
 describe( 'Agents Manager resolvers', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'skips persisted state requests when the host opts out', () => {
-		const shouldUsePersistedState = jest.fn( () => false );
+		const shouldUsePersistedState = vi.fn( () => false );
 		const resolver = getAgentsManagerState( shouldUsePersistedState );
 
 		expect( resolver.next().value ).toEqual( setHasLoaded( true ) );

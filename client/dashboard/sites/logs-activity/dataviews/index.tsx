@@ -5,7 +5,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { View, Field, Filter } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import fastDeepEqual from 'fast-deep-equal/es6';
-import { useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { useLocale } from '../../../app/locale';
@@ -38,7 +38,6 @@ function SiteActivityLogsDataViews( {
 	timezoneString,
 	site,
 	dateRange,
-	dateRangeVersion,
 	hasActivityLogsAccess,
 	searchParams,
 }: SiteActivityLogsDataViewsProps ) {
@@ -182,12 +181,6 @@ function SiteActivityLogsDataViews( {
 			page: datasetChanged ? 1 : requestedPage,
 		} );
 	};
-
-	// Reset pagination when the date range changes
-	useEffect( () => {
-		updateView( { ...view, page: 1 } );
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- reset page only when dateRange changes
-	}, [ dateRangeVersion ] );
 
 	const logData = activityLogData?.activityLogs || [];
 

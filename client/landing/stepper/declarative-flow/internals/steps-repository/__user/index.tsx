@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, STUDENT_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
@@ -23,13 +23,13 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
-import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
 import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
-import { useSelector } from 'calypso/state';
+import { useSelector, useStore } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { STUDENT_ACTIVATION_EMAIL_SOURCE } from '../../../flows/student/constants';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
@@ -74,6 +74,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const queryArgs = useQuery();
 	const dispatch = useDispatch();
+	const store = useStore();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
 	const { socialServiceResponse } = useSocialService();
@@ -88,31 +89,48 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isBrandedLayout = useBrandedAccountLayout( flow ) && ! hasCustomBranding;
 	const isEmailFirstVariant = isWooReferrer || isThemeGridLayout || isBrandedLayout;
 	const isEmailAtBottom = isThemeGridLayout || isBrandedLayout;
-	// The experiment runs on onboarding only. Woo referrers, the theme grid and the branded layout
-	// are left out: their email-first layout already has the in-form link and no email button, so
-	// the treatment would not change it.
-	const isEntryClarityTreatment = useEntryClarityExperiment(
-		flow === ONBOARDING_FLOW && ! isWooReferrer && ! isThemeGridLayout && ! isBrandedLayout
-	);
+	const isLargeViewport = useViewportMatch( 'large' );
+	// Email-first layouts have their own in-form link and no email button.
+	const isLoginLinkBelowButtons =
+		isLargeViewport && flow === ONBOARDING_FLOW && ! isEmailFirstVariant;
+
+	// Load the new account's token and fetch its user. Keyed on the account-create response only:
+	// running again would reload the proxy again, failing the `/me` it just sent.
+	useEffect( () => {
+		if ( ! ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) ) {
+			return;
+		}
+
+		wpcom.loadToken( wpAccountCreateResponse.bearer_token );
+		if ( ! config.isEnabled( 'oauth' ) ) {
+			reloadProxy();
+			requestAllBlogsAccess();
+		}
+
+		// Allow retries of fetching new users after creation. New user sign-ups go to one DC
+		// but follow-up API calls go to the closest DC, which may be different and might not
+		// have replicated the user data yet.
+		const fetchNewUser = () =>
+			dispatch(
+				fetchCurrentUser( { retry: true } ) as unknown as AnyAction
+			) as unknown as Promise< void >;
+
+		// `fetchCurrentUser` hands back a `/me` already in flight, sent before the token and failed
+		// by the proxy reload, so fetch once more if nobody is logged in after it.
+		fetchNewUser().then( () => {
+			if ( ! isUserLoggedIn( store.getState() ) ) {
+				fetchNewUser();
+			}
+		} );
+	}, [ dispatch, store, wpAccountCreateResponse ] );
 
 	useEffect( () => {
-		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
-			wpcom.loadToken( wpAccountCreateResponse.bearer_token );
-			if ( ! config.isEnabled( 'oauth' ) ) {
-				reloadProxy();
-				requestAllBlogsAccess();
-			}
-			// Allow retries of fetching new users after creation. New user sign-ups go to one DC
-			// but follow-up API calls go to the closest DC, which may be different and might not
-			// have replicated the user data yet.
-			dispatch( fetchCurrentUser( { retry: true } ) as unknown as AnyAction );
-		}
 		if ( ! isLoggedIn ) {
 			dispatch( fetchCurrentUser() as unknown as AnyAction );
 		} else {
 			navigation.submit?.();
 		}
-	}, [ dispatch, isLoggedIn, navigation, wpAccountCreateResponse ] );
+	}, [ dispatch, isLoggedIn, navigation ] );
 
 	const locale = useFlowLocale();
 	const shouldLinkLogo = flow === ONBOARDING_FLOW && ! hasCustomBranding;
@@ -144,7 +162,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	);
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
-	const isLargeViewport = useViewportMatch( 'large' );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	// Thumb-friendly compact layout for mobile signup. Woo referrers keep their
@@ -153,8 +170,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// layout never overrides them.
 	const isMobileCompactLayout =
 		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig;
-
-	const showsInFormLoginLink = isEntryClarityTreatment && ! hideLoginLink;
 
 	let emailLabelText;
 	if ( isStepContainerV2 ) {
@@ -198,10 +213,12 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isEmailFirstVariant={ isEmailFirstVariant }
 				isEmailAtBottom={ isEmailAtBottom }
 				isMobileCompactVariant={ isMobileCompactLayout }
-				showLoginLink={ showsInFormLoginLink }
-				showEnvelopeIcon={ isEntryClarityTreatment }
+				showLoginLink={ isLoginLinkBelowButtons && ! hideLoginLink }
+				showEnvelopeIcon={ isLoginLinkBelowButtons }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
+				// Only the Student flow asks for email verification, so only its link returns to it.
+				activationEmailFrom={ flow === STUDENT_FLOW ? STUDENT_ACTIVATION_EMAIL_SOURCE : undefined }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
@@ -256,7 +273,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 					// Email-first forms carry their own login link, except the compact one.
 					hideLoginLink ||
 					( isEmailFirstVariant && ! isMobileCompactLayout ) ||
-					showsInFormLoginLink ? null : (
+					isLoginLinkBelowButtons ? null : (
 						<nav className="account-template__top-bar-links">
 							<Step.LinkButton
 								href={ loginLink }
@@ -323,7 +340,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				className={ clsx( 'step-container-v2--user', {
 					'step-container-v2--user-branded': isBrandedLayout,
 					'step-container-v2--user-mobile': isMobileCompactLayout,
-					'step-container-v2--user-entry-clarity': isEntryClarityTreatment,
+					'step-container-v2--user-login-below-buttons': isLoginLinkBelowButtons,
 				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }

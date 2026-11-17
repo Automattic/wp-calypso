@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainForwardingForm from '../form';
 import type { FormData } from '../form';
@@ -19,7 +20,7 @@ interface TestFormProps {
 function renderEditForm( props: TestFormProps = {} ) {
 	const defaultProps = {
 		domainName,
-		onSubmit: jest.fn(),
+		onSubmit: vi.fn(),
 		isSubmitting: false,
 		submitButtonText: 'Update',
 		forceSubdomain: false,
@@ -95,7 +96,7 @@ test( 'forces subdomain mode when forceSubdomain is true for existing subdomain 
 
 test( 'calls onSubmit with updated data when form is submitted', async () => {
 	const user = userEvent.setup();
-	const mockOnSubmit = jest.fn();
+	const mockOnSubmit = vi.fn();
 
 	const initialData = {
 		domain_redirect_id: 123,
@@ -160,7 +161,7 @@ test( 'shows advanced settings panel expanded when initial data has non-default 
 		expect(
 			screen.getByText( 'Permanent forward. Visitors land on the matching page.' )
 		).toBeInTheDocument();
-		expect( screen.getByText( 'How permanent is this forward?' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'HTTP redirect type' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Where visitors land' ) ).toBeInTheDocument();
 	} );
 } );
@@ -208,7 +209,7 @@ test( 'handles HTTP vs HTTPS protocol correctly in pre-filled data', async () =>
 
 test( 'handles advanced settings correctly when updating', async () => {
 	const user = userEvent.setup();
-	const mockOnSubmit = jest.fn();
+	const mockOnSubmit = vi.fn();
 
 	const initialData = {
 		domain_redirect_id: 123,
@@ -235,11 +236,11 @@ test( 'handles advanced settings correctly when updating', async () => {
 	await user.click( advancedPanel );
 
 	await waitFor( () => {
-		expect( screen.getByText( 'How permanent is this forward?' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'HTTP redirect type' ) ).toBeInTheDocument();
 	} );
 
 	// Change redirect type to permanent
-	const permanentRadio = screen.getByRole( 'radio', { name: /permanent \(301\)/i } );
+	const permanentRadio = screen.getByRole( 'radio', { name: /permanent redirect \(301\)/i } );
 	await user.click( permanentRadio );
 
 	// Submit the form

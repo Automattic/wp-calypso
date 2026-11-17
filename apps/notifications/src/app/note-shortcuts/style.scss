@@ -1,7 +1,8 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
 .wpnc__keyboard-shortcuts {
-	--wp-ui-popover-z-index: 1;
+	// Above the tabs, which sit at z-index 1.
+	--wp-ui-popover-z-index: 2;
 	display: flex;
 
 	@include ui-mixins.when-dark-theme {

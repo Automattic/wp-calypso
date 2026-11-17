@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	activeAgencyQuery,
@@ -11,6 +11,7 @@ import { useMutation } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import AgencyOverview from '..';
 import { render } from '../../../test-utils';
 import {
@@ -22,7 +23,7 @@ import {
 } from '../../partner-directory/lead-matching/test/fixtures';
 import type { Agency } from '@automattic/api-core';
 
-jest.mock( '../../earn/use-has-commission-activity', () => ( {
+vi.mock( '../../earn/use-has-commission-activity', () => ( {
 	useHasCommissionActivity: () => ( { hasActivity: false, isLoading: false } ),
 } ) );
 
@@ -150,4 +151,30 @@ test( 'hides cached preferences after a failed native refetch', async () => {
 		await queryClient.refetchQueries( { queryKey: matchingKey } );
 	} );
 	await waitFor( () => expect( profileLink() ).not.toBeInTheDocument() );
+} );
+
+test( 'links VIP Pro and Premier partners to the enterprise hosting referral', async () => {
+	const referLink = () =>
+		screen.queryByRole( 'link', { name: 'Refer your client to VIP hosting' } );
+	const agency = { ...makeAgency(), user: { capabilities: [] } } as Agency;
+	renderOverview( agency );
+	await screen.findByRole( 'button', { name: 'Contact sales & support' } );
+	expect( referLink() ).not.toBeInTheDocument();
+
+	const setTier = ( id: string ) => {
+		act( () =>
+			queryClient.setQueryData( activeAgencyQuery().queryKey, {
+				...agency,
+				tier: { id },
+			} as Agency )
+		);
+	};
+	setTier( 'vip-pro-agency-partner' );
+	expect(
+		await screen.findByRole( 'link', { name: 'Refer your client to VIP hosting' } )
+	).toHaveAttribute( 'href', '/hosting/refer-enterprise-hosting' );
+	setTier( 'premier-partner' );
+	expect( referLink() ).toBeVisible();
+	setTier( 'agency-partner' );
+	await waitFor( () => expect( referLink() ).not.toBeInTheDocument() );
 } );

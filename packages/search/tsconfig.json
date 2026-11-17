@@ -4,7 +4,7 @@
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
-		"types": [ "jest" ]
+		"types": [ "vitest/globals" ]
 	},
 	"include": [ "src" ]
 }

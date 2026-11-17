@@ -3,57 +3,54 @@
  */
 import { createFeedbackActions } from '@automattic/agenttic-ui';
 import { renderHook, act } from '@testing-library/react';
+import { type Mock, type MockedFunction, vi } from 'vitest';
 import { useAgentsManagerContext } from '../../contexts';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
-import useFeedbackAction from '../use-feedback-action';
+import useFeedbackAction, { submitFeedback } from '../use-feedback-action';
 import type { UIMessage as Message } from '@automattic/agenttic-client';
 
 // Capture the onFeedback callback passed to createFeedbackActions
 let capturedOnFeedback: ( messageId: string, feedback: 'up' | 'down' ) => void;
 let capturedCondition: ( ( message: Message ) => boolean ) | undefined;
 
-jest.mock(
-	'@automattic/agenttic-ui',
-	() => ( {
-		createFeedbackActions: jest.fn( ( { onFeedback, condition } ) => {
-			capturedOnFeedback = onFeedback;
-			capturedCondition = condition;
-			return {
-				getActionsForMessage: jest.fn(),
-				onChange: jest.fn(),
-				offChange: jest.fn(),
-			};
-		} ),
-		ThumbsUpIcon: () => null,
-		ThumbsDownIcon: () => null,
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	createFeedbackActions: vi.fn( ( { onFeedback, condition } ) => {
+		capturedOnFeedback = onFeedback;
+		capturedCondition = condition;
+		return {
+			getActionsForMessage: vi.fn(),
+			onChange: vi.fn(),
+			offChange: vi.fn(),
+		};
 	} ),
-	{ virtual: true }
-);
-jest.mock( '../../utils/tracks', () => ( {
-	recordBigSkyTracksEvent: jest.fn(),
-	recordAgentsManagerTracksEvent: jest.fn(),
+	ThumbsUpIcon: () => null,
+	ThumbsDownIcon: () => null,
 } ) );
-jest.mock( '../../contexts', () => ( {
-	useAgentsManagerContext: jest.fn(),
+vi.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: vi.fn(),
+	recordAgentsManagerTracksEvent: vi.fn(),
+} ) );
+vi.mock( '../../contexts', () => ( {
+	useAgentsManagerContext: vi.fn(),
 } ) );
 
-const mockUseAgentsManagerContext = useAgentsManagerContext as jest.MockedFunction<
+const mockUseAgentsManagerContext = useAgentsManagerContext as MockedFunction<
 	typeof useAgentsManagerContext
 >;
 
-const mockFetch = jest.fn().mockResolvedValue( { ok: true } );
+const mockFetch = vi.fn().mockResolvedValue( { ok: true } );
 globalThis.fetch = mockFetch;
 
-const mockCreateFeedbackActions = createFeedbackActions as jest.Mock;
-const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
+const mockCreateFeedbackActions = createFeedbackActions as Mock;
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as MockedFunction<
 	typeof recordBigSkyTracksEvent
 >;
-const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.MockedFunction<
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as MockedFunction<
 	typeof recordAgentsManagerTracksEvent
 >;
-const mockGetTabSessionId = jest.fn();
+const mockGetTabSessionId = vi.fn();
 
-const mockAuthProvider = jest.fn().mockResolvedValue( { Authorization: 'Bearer test-token' } );
+const mockAuthProvider = vi.fn().mockResolvedValue( { Authorization: 'Bearer test-token' } );
 
 const createMessage = ( id: string, role: 'user' | 'agent', text: string ): Message => ( {
 	id,
@@ -75,7 +72,7 @@ async function triggerFeedback( messageId: string, direction: 'up' | 'down' ) {
 function findFetchCall( urlSubstring: string ) {
 	return mockFetch.mock.calls.find(
 		( call: string[] ) => typeof call[ 0 ] === 'string' && call[ 0 ].includes( urlSubstring )
-	);
+	)!;
 }
 
 describe( 'useFeedbackAction', () => {
@@ -86,7 +83,7 @@ describe( 'useFeedbackAction', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockFetch.mockResolvedValue( { ok: true } );
 		mockGetTabSessionId.mockReturnValue( 'session-abc' );
 		mockUseAgentsManagerContext.mockReturnValue( {
@@ -137,7 +134,7 @@ describe( 'useFeedbackAction', () => {
 			} );
 
 			// The hook must react to a new `getTabSessionId` reference from the provider.
-			const newGetTabSessionId = jest.fn().mockReturnValue( 'new-session' );
+			const newGetTabSessionId = vi.fn().mockReturnValue( 'new-session' );
 			mockUseAgentsManagerContext.mockReturnValue( {
 				agentConfig: { ...defaultAgentConfig, sessionId: 'new-session' },
 				isLoggedIn: true,
@@ -325,6 +322,35 @@ describe( 'useFeedbackAction', () => {
 
 			const body = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
 			expect( body.trace_id ).toBe( 'trace-123' );
+		} );
+
+		it( 'does not send `metadata` with the feedback text', async () => {
+			const { result } = renderHook( () => useFeedbackAction( defaultConfig ) );
+			await triggerFeedback( 'msg-1', 'down' );
+
+			await act( async () => {
+				await result.current.submitFeedbackText( 'Not helpful' );
+			} );
+
+			const body = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
+			expect( body ).not.toHaveProperty( 'metadata' );
+		} );
+
+		it( 'sends `metadata` with the feedback text when given', async () => {
+			const metadata = { image_url: 'https://example.com/image.png', mode: 'edit' };
+
+			await submitFeedback(
+				mockAuthProvider,
+				'session-abc',
+				'msg-1',
+				'Too dark',
+				undefined,
+				undefined,
+				metadata
+			);
+
+			const body = JSON.parse( findFetchCall( '/text' )[ 1 ].body );
+			expect( body.metadata ).toEqual( metadata );
 		} );
 
 		it( 'limits conversation context to last 4 messages', async () => {

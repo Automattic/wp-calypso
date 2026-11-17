@@ -185,9 +185,9 @@ function DomainForwarding() {
 							variant="primary"
 							__next40pxDefaultSize
 						>
-							{ hasEnTranslation( 'Add forwarding' )
-								? __( 'Add forwarding' )
-								: __( 'Add Domain Forwarding' ) }
+							{ hasEnTranslation( 'Add domain forwarding' )
+								? __( 'Add domain forwarding' )
+								: __( 'Add forwarding' ) }
 						</RouterLinkButton>
 					}
 				/>

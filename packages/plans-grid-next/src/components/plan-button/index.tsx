@@ -19,6 +19,7 @@ const PlanButton = ( {
 	isStuck = false,
 	isLargeCurrency = false,
 	ariaLabel,
+	ariaDescribedBy,
 }: {
 	planSlug?: PlanSlug;
 	children: React.ReactNode;
@@ -32,6 +33,7 @@ const PlanButton = ( {
 	isStuck?: boolean;
 	isLargeCurrency?: boolean;
 	ariaLabel?: string;
+	ariaDescribedBy?: string;
 } ) => {
 	const className = clsx(
 		classes,
@@ -54,6 +56,7 @@ const PlanButton = ( {
 			disabled={ disabled }
 			href={ href }
 			aria-label={ ariaLabel }
+			aria-describedby={ ariaDescribedBy }
 			// eslint-disable-next-line jsx-a11y/tabindex-no-positive
 			tabIndex={ 2 }
 		>

@@ -24,6 +24,8 @@ const API = 'https://public-api.wordpress.com';
 
 Element.prototype.scrollIntoView = jest.fn();
 
+afterEach( () => nock.cleanAll() );
+
 function SavedForm() {
 	const profile = useSelector( getActiveAgency )?.lead_matching?.profile;
 	const notices = useSelector( getNotices );
@@ -99,8 +101,8 @@ test( 'hydrates and saves contact-only changes on an incomplete profile, then cl
 	expect( booking ).toHaveValue( profile.contact.booking_link );
 	await user.clear( phone );
 	await user.paste( '+44 (20) 8765 4321 ext 1234567890' );
-	await userEvent.clear( booking );
-	await userEvent.type( booking, 'booking.example.com/intro?source=A4A' );
+	await user.clear( booking );
+	await user.paste( 'booking.example.com/intro?source=A4A' );
 	await userEvent.click( screen.getByRole( 'button', { name: 'Update preferences' } ) );
 	await waitFor( () => expect( phone ).toHaveValue( '02087654321 ext 1234567890' ) );
 	expect( savedProfile.contact?.phone ).toBe( '+442087654321 ext 1234567890' );
@@ -120,7 +122,8 @@ test( 'hydrates and saves contact-only changes on an incomplete profile, then cl
 	expect( screen.getByRole( 'textbox', { name: /Booking link/ } ) ).toHaveValue( '' );
 } );
 
-test( 'saves preferences while retaining skipped contacts and failed saves in the draft', async () => {
+test( 'keeps contact fields the server skipped in the draft after a partial save', async () => {
+	const user = userEvent.setup();
 	const profile = createDefaultLeadMatchingProfile();
 	profile.contact = { phone: '+442012345678 ext 12', booking_link: 'https://book.example.com' };
 	profile.geography_and_language.supported_languages = [ 'en' ];
@@ -144,10 +147,12 @@ test( 'saves preferences while retaining skipped contacts and failed saves in th
 	renderForm( profile, queryClient );
 	const phone = screen.getByRole( 'textbox', { name: 'Phone number (optional)' } );
 	const booking = screen.getByRole( 'textbox', { name: /Booking link/ } );
-	await userEvent.clear( phone );
-	await userEvent.type( phone, '+44abc1234{Enter}' );
-	await userEvent.clear( booking );
-	await userEvent.type( booking, 'not a URL{Enter}' );
+	await user.clear( phone );
+	await user.paste( '+44abc1234' );
+	await user.keyboard( '{Enter}' );
+	await user.clear( booking );
+	await user.paste( 'not a URL' );
+	await user.keyboard( '{Enter}' );
 	await userEvent.click( screen.getByRole( 'button', { name: 'Update preferences' } ) );
 	expect(
 		await screen.findByText( /Preferences saved, but.*Phone number, Booking link/ )
@@ -164,9 +169,21 @@ test( 'saves preferences while retaining skipped contacts and failed saves in th
 		'en',
 	] );
 	expect( scope.isDone() ).toBe( false );
-	await userEvent.clear( phone );
-	await userEvent.type( phone, '+1234' );
-	await userEvent.clear( booking );
+} );
+
+test( 'keeps a typed phone number in the draft after a failed save, then requires a region', async () => {
+	const user = userEvent.setup();
+	const profile = createDefaultLeadMatchingProfile();
+	profile.contact = { phone: '+442012345678 ext 12', booking_link: 'https://book.example.com' };
+	profile.geography_and_language.supported_languages = [ 'en' ];
+	const scope = nock( API )
+		.put( '/wpcom/v2/agency/123/lead-matching' )
+		.query( true )
+		.reply( 400, { code: 'invalid_contact', message: 'Invalid contact' } );
+	renderForm( profile );
+	const phone = screen.getByRole( 'textbox', { name: 'Phone number (optional)' } );
+	await user.clear( phone );
+	await user.type( phone, '+1234' );
 	await userEvent.click( screen.getByRole( 'button', { name: 'Update preferences' } ) );
 	await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	expect( await screen.findByText( 'Couldn’t save changes' ) ).toBeVisible();

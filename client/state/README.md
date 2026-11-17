@@ -36,7 +36,7 @@ There is currently an ongoing migration effort in modularizing all of Calypso st
 ## Usage
 
 ```js
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 
 const store = createReduxStore();
 ```
@@ -115,13 +115,12 @@ export default keyedReducer( 'username', userReducer );
 
 dispatch( { type: GROW, username: 'hunter02' } );
 
-state.users ===
-	{
-		hunter02: {
-			age: 1,
-			title: 'grunt',
-		},
-	};
+expect( state.users ).toEqual( {
+	hunter02: {
+		age: 1,
+		title: 'grunt',
+	},
+} );
 ```
 
 **NOTE:** There may be some cases where you wish to respond to an action by removing a key. In those cases, you may return `undefined` from the reducer to explicitly indicate there is no longer state associated with the key, and `keyedReducer` will omit that key from the state.
@@ -134,13 +133,12 @@ const deleteableUserReducer = ( state, action ) =>
 
 export default keyedReducer( 'username', deleteableUserReducer );
 
-state.users ===
-	{
-		hunter02: {
-			age: 1,
-			title: 'grunt',
-		},
-	};
+expect( state.users ).toEqual( {
+	hunter02: {
+		age: 1,
+		title: 'grunt',
+	},
+} );
 
 dispatch( { type: DELETE, username: 'hunter02' } );
 

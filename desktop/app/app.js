@@ -15,6 +15,7 @@ module.exports = function () {
 	// Stuff that runs before the main window.
 	require( './app-handlers/logging' )();
 	require( './app-handlers/crash-reporting' )();
+	require( './app-handlers/cookie-flush' )();
 	require( './app-handlers/updater' )();
 	require( './app-handlers/protocol' )();
 	require( './app-handlers/preferences' )();

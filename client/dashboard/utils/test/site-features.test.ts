@@ -3,12 +3,12 @@ import { getActivityLogHiddenGroups, hasHostingFeature, hasPlanFeature } from '.
 import type { Site } from '@automattic/api-core';
 
 describe( 'hasPlanFeature', () => {
-	it( 'should return false if the site does not have active plan', () => {
+	test( 'should return false if the site does not have active plan', () => {
 		const site = {} as Site;
 		expect( hasPlanFeature( site, DotcomFeatures.COPY_SITE ) ).toBe( false );
 	} );
 
-	it( 'should return false if the plan does not have the feature', () => {
+	test( 'should return false if the plan does not have the feature', () => {
 		const site = {
 			plan: {
 				features: {
@@ -19,7 +19,7 @@ describe( 'hasPlanFeature', () => {
 		expect( hasPlanFeature( site, DotcomFeatures.COPY_SITE ) ).toBe( false );
 	} );
 
-	it( 'should return true if the plan has the feature', () => {
+	test( 'should return true if the plan has the feature', () => {
 		const site = {
 			plan: {
 				features: {
@@ -32,12 +32,12 @@ describe( 'hasPlanFeature', () => {
 } );
 
 describe( 'hasHostingFeature', () => {
-	it( 'should return false if the site does not have active plan', () => {
+	test( 'should return false if the site does not have active plan', () => {
 		const site = {} as Site;
 		expect( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ).toBe( false );
 	} );
 
-	it( 'should return false if the plan does not have the feature', () => {
+	test( 'should return false if the plan does not have the feature', () => {
 		const site = {
 			plan: {
 				features: {
@@ -48,7 +48,7 @@ describe( 'hasHostingFeature', () => {
 		expect( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ).toBe( false );
 	} );
 
-	it( 'should return false if the site is hosted on WordPress.com but not Atomic yet, even though the plan has the feature', () => {
+	test( 'should return false if the site is hosted on WordPress.com but not Atomic yet, even though the plan has the feature', () => {
 		const site = {
 			plan: {
 				features: {
@@ -60,7 +60,7 @@ describe( 'hasHostingFeature', () => {
 		expect( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ).toBe( false );
 	} );
 
-	it( 'should return false if site is hosted on WordPress.com, and already Atomic, and the plan has the feature, but the plan already expired', () => {
+	test( 'should return false if site is hosted on WordPress.com, and already Atomic, and the plan has the feature, but the plan already expired', () => {
 		const site = {
 			plan: {
 				features: {
@@ -73,7 +73,7 @@ describe( 'hasHostingFeature', () => {
 		expect( hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) ).toBe( false );
 	} );
 
-	it( 'should return true if site is not hosted on WordPress.com, and the plan has the feature', () => {
+	test( 'should return true if site is not hosted on WordPress.com, and the plan has the feature', () => {
 		const site = {
 			plan: {
 				features: {
@@ -86,7 +86,7 @@ describe( 'hasHostingFeature', () => {
 } );
 
 describe( 'getActivityLogHiddenGroups', () => {
-	it( 'should return hidden groups when site does not have backups self-serve feature', () => {
+	test( 'should return hidden groups when site does not have backups self-serve feature', () => {
 		const site = {
 			plan: {
 				features: {
@@ -97,7 +97,7 @@ describe( 'getActivityLogHiddenGroups', () => {
 		expect( getActivityLogHiddenGroups( site ) ).toEqual( [ 'rewind', 'scan' ] );
 	} );
 
-	it( 'should return undefined when site has backups self-serve feature', () => {
+	test( 'should return undefined when site has backups self-serve feature', () => {
 		const site = {
 			plan: {
 				features: {
@@ -108,7 +108,7 @@ describe( 'getActivityLogHiddenGroups', () => {
 		expect( getActivityLogHiddenGroups( site ) ).toBeUndefined();
 	} );
 
-	it( 'should return hidden groups when site has no plan', () => {
+	test( 'should return hidden groups when site has no plan', () => {
 		const site = {} as unknown as Site;
 		expect( getActivityLogHiddenGroups( site ) ).toEqual( [ 'rewind', 'scan' ] );
 	} );

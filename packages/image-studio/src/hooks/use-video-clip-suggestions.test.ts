@@ -1,17 +1,15 @@
-/**
- * @jest-environment jsdom
- */
-
+/* eslint-disable import/order */
+import { vi } from 'vitest';
 ( globalThis as Record< string, unknown > ).__i18n_text_domain__ = 'default';
 
-const mockUseAsyncSuggestionsLoader = jest.fn();
-const mockTrackImageStudioSuggestionsRendered = jest.fn();
-const mockTrackImageStudioSuggestionClick = jest.fn();
-const mockGetCurrentPostId = jest.fn();
-const mockGetEditedPostContent = jest.fn();
-const mockGetEditedPostAttribute = jest.fn();
+const mockUseAsyncSuggestionsLoader = vi.fn();
+const mockTrackImageStudioSuggestionsRendered = vi.fn();
+const mockTrackImageStudioSuggestionClick = vi.fn();
+const mockGetCurrentPostId = vi.fn();
+const mockGetEditedPostContent = vi.fn();
+const mockGetEditedPostAttribute = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( selector: ( fn: unknown ) => unknown ) =>
 		selector( () => ( {
 			getCurrentPostId: mockGetCurrentPostId,
@@ -20,33 +18,31 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( '@wordpress/editor', () => ( {
+vi.mock( '@wordpress/editor', () => ( {
 	store: 'core/editor',
 } ) );
 
-jest.mock( './use-async-suggestions-loader', () => ( {
+vi.mock( './use-async-suggestions-loader', () => ( {
 	useAsyncSuggestionsLoader: ( opts: unknown ) => mockUseAsyncSuggestionsLoader( opts ),
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
+vi.mock( '../utils/tracking', () => ( {
 	trackImageStudioSuggestionsRendered: ( ...args: unknown[] ) =>
 		mockTrackImageStudioSuggestionsRendered( ...args ),
 	trackImageStudioSuggestionClick: ( ...args: unknown[] ) =>
 		mockTrackImageStudioSuggestionClick( ...args ),
 } ) );
 
-jest.mock( '../utils/agenttic-tracking', () => ( {
+vi.mock( '../utils/agenttic-tracking', () => ( {
 	formatSuggestionIds: ( suggestions: Array< { id?: string } > ) =>
 		suggestions.map( ( s ) => s.id ?? '' ).join( '|' ),
 } ) );
 
-jest.mock( '../types', () => ( {
+vi.mock( '../types', () => ( {
 	ImageStudioMode: { Generate: 'generate', Edit: 'edit' },
 } ) );
 
-// eslint-disable-next-line import/order
 import { renderHook } from '@testing-library/react';
-// eslint-disable-next-line import/order
 import { useVideoClipSuggestions } from './use-video-clip-suggestions';
 
 const noopAbort = () => {};
@@ -73,8 +69,8 @@ describe( 'useVideoClipSuggestions', () => {
 	it( 'enables the loader and namespaces the cache key by post id', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
-				registerSuggestions: jest.fn(),
-				clearSuggestions: jest.fn(),
+				registerSuggestions: vi.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 			} )
 		);
@@ -90,8 +86,8 @@ describe( 'useVideoClipSuggestions', () => {
 	it( 'uses the cinematic prompt', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
-				registerSuggestions: jest.fn(),
-				clearSuggestions: jest.fn(),
+				registerSuggestions: vi.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 			} )
 		);
@@ -105,8 +101,8 @@ describe( 'useVideoClipSuggestions', () => {
 	it( 'pairs the loader with the multi-axis directional system prompt', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
-				registerSuggestions: jest.fn(),
-				clearSuggestions: jest.fn(),
+				registerSuggestions: vi.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 			} )
 		);
@@ -119,11 +115,11 @@ describe( 'useVideoClipSuggestions', () => {
 	} );
 
 	it( 'disables the loader and returns no-op handlers when disabled', () => {
-		const registerSuggestions = jest.fn();
+		const registerSuggestions = vi.fn();
 		const { result } = renderHook( () =>
 			useVideoClipSuggestions( {
 				registerSuggestions,
-				clearSuggestions: jest.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 				disabled: true,
 			} )
@@ -139,7 +135,7 @@ describe( 'useVideoClipSuggestions', () => {
 	} );
 
 	it( 'registers async suggestions and fires the rendered tracking event', () => {
-		const registerSuggestions = jest.fn();
+		const registerSuggestions = vi.fn();
 		mockUseAsyncSuggestionsLoader.mockReturnValue( {
 			suggestions: [
 				{ id: 'a', label: 'Drift', prompt: 'Slow drift across the scene' },
@@ -152,7 +148,7 @@ describe( 'useVideoClipSuggestions', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
 				registerSuggestions,
-				clearSuggestions: jest.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 			} )
 		);
@@ -169,8 +165,8 @@ describe( 'useVideoClipSuggestions', () => {
 	} );
 
 	it( 'clears suggestions once the user has sent a message', () => {
-		const clearSuggestions = jest.fn();
-		const registerSuggestions = jest.fn();
+		const clearSuggestions = vi.fn();
+		const registerSuggestions = vi.fn();
 		mockUseAsyncSuggestionsLoader.mockReturnValue( {
 			suggestions: [ { id: 'a', label: 'Drift', prompt: 'Slow drift' } ],
 			isLoading: false,
@@ -198,8 +194,8 @@ describe( 'useVideoClipSuggestions', () => {
 
 		const { result } = renderHook( () =>
 			useVideoClipSuggestions( {
-				registerSuggestions: jest.fn(),
-				clearSuggestions: jest.fn(),
+				registerSuggestions: vi.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 			} )
 		);
@@ -220,8 +216,8 @@ describe( 'useVideoClipSuggestions', () => {
 
 		renderHook( () =>
 			useVideoClipSuggestions( {
-				registerSuggestions: jest.fn(),
-				clearSuggestions: jest.fn(),
+				registerSuggestions: vi.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 			} )
 		);
@@ -237,8 +233,8 @@ describe( 'useVideoClipSuggestions', () => {
 
 		renderHook( () =>
 			useVideoClipSuggestions( {
-				registerSuggestions: jest.fn(),
-				clearSuggestions: jest.fn(),
+				registerSuggestions: vi.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 			} )
 		);
@@ -251,8 +247,8 @@ describe( 'useVideoClipSuggestions', () => {
 	it( 'references page context in the loader prompt (no inlined body) and passes a video-flavored buildSystemPrompt', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
-				registerSuggestions: jest.fn(),
-				clearSuggestions: jest.fn(),
+				registerSuggestions: vi.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 			} )
 		);
@@ -271,8 +267,8 @@ describe( 'useVideoClipSuggestions', () => {
 	it( 'asks the loader for 3 rich multi-axis suggestions (60-120 words, 8 axes, optional closing direction)', () => {
 		renderHook( () =>
 			useVideoClipSuggestions( {
-				registerSuggestions: jest.fn(),
-				clearSuggestions: jest.fn(),
+				registerSuggestions: vi.fn(),
+				clearSuggestions: vi.fn(),
 				messages: [],
 			} )
 		);
@@ -305,8 +301,8 @@ describe( 'useVideoClipSuggestions', () => {
 	} );
 
 	it( 'hides chips while the user is typing and re-shows them when the input is cleared (no message sent yet)', () => {
-		const registerSuggestions = jest.fn();
-		const clearSuggestions = jest.fn();
+		const registerSuggestions = vi.fn();
+		const clearSuggestions = vi.fn();
 		mockUseAsyncSuggestionsLoader.mockReturnValue( {
 			suggestions: [ { id: 'a', label: 'Drift', prompt: 'Slow drift' } ],
 			isLoading: false,
@@ -347,8 +343,8 @@ describe( 'useVideoClipSuggestions', () => {
 	} );
 
 	it( 'keeps suggestions cleared once a message has been sent, regardless of input value', () => {
-		const clearSuggestions = jest.fn();
-		const registerSuggestions = jest.fn();
+		const clearSuggestions = vi.fn();
+		const registerSuggestions = vi.fn();
 		mockUseAsyncSuggestionsLoader.mockReturnValue( {
 			suggestions: [ { id: 'a', label: 'Drift', prompt: 'Slow drift' } ],
 			isLoading: false,

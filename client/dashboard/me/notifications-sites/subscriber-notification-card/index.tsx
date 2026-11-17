@@ -44,6 +44,7 @@ export function SubscriberNotificationCard() {
 									'calypso_dashboard_notifications_subscriber_alerts_settings_updated',
 									{
 										setting_value: value,
+										source: 'settings',
 									}
 								),
 						} )

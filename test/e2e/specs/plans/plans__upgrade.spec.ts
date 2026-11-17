@@ -9,7 +9,6 @@ import {
 	PublishedPostPage,
 	RestAPIClient,
 	SecretsManager,
-	SidebarComponent,
 	TestAccount,
 	TestFile,
 } from '@automattic/calypso-e2e';
@@ -19,14 +18,6 @@ import { apiDeleteSite } from '../shared';
 
 const postTitles = Array.from( { length: 2 }, () => DataHelper.getRandomPhrase() );
 
-// Known issue: createSite can return "user_get_blocked: The user is blocked
-// from creating a new site" for the simpleSiteFreePlanUser account. Observed
-// in local runs on 2026-06-10 (the account's leaked e2eflowtesting<epoch>
-// sites were cleaned up the same day without clearing the block locally);
-// possibly IP/throttling-related. If CI reproduces it, the account needs
-// provisioning intervention. The find_available_url option below replaces the
-// raw generated blog name, which the API rejects with "blog_name_invalid".
-// See TESTOPS-49.
 test.describe(
 	DataHelper.createSuiteTitle(
 		'Plans: Upgrade existing WordPress.com Free site to WordPress.com Premium'
@@ -58,11 +49,6 @@ test.describe(
 			page,
 			browser,
 		} ) => {
-			test.skip(
-				true,
-				'simpleSiteFreePlanUser is currently blocked from creating sites (user_get_blocked). The block is temporary and the account will be unblocked; unskip then.'
-			);
-
 			// API site/content setup (createSite + 2 posts + media) plus a 75s
 			// purchase wait and the post-upgrade validations exceed the 120s
 			// default.
@@ -142,16 +128,10 @@ test.describe(
 				}
 			} );
 
-			await test.step( 'Return to My Home dashboard', async () => {
-				// The checkout thank-you page shows a minimal masterbar without the
-				// "My Sites" button, so use the page's own "Back to dashboard" control
-				// to return to Calypso.
-				await page.getByRole( 'button', { name: 'Back to dashboard' } ).click();
-			} );
-
-			await test.step( 'Navigate to Upgrades > Plans', async () => {
-				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Upgrades', 'Plans' );
+			await test.step( 'Navigate back to Upgrades > Plans', async () => {
+				await page.goto(
+					DataHelper.getCalypsoURL( `/plans/${ newSiteDetails.blog_details.site_slug }` )
+				);
 			} );
 
 			await test.step( `Plans page states user is on WordPress.com ${ planName } plan`, async () => {

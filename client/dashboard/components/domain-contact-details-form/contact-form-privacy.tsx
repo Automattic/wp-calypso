@@ -1,13 +1,10 @@
 import { domainQuery } from '@automattic/api-queries';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-	ToggleControl,
-} from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Card, CardBody, CardDivider } from '../card';
 import InlineSupportLink from '../inline-support-link';
 
 interface ContactFormPrivacyProps {
@@ -83,41 +80,54 @@ export default function ContactFormPrivacy( {
 		);
 	};
 
-	const renderPrivacyDisclosure = () => {
-		if (
-			! domain.privacy_available ||
-			! domain.contact_info_disclosure_available ||
-			domain.private_domain ||
-			domain.is_hundred_year_domain
-		) {
-			return false;
+	const hasNewDisclosureCopy =
+		hasEnTranslation( 'Show my contact details publicly' ) &&
+		hasEnTranslation(
+			'Turn on to show your name, address, email and phone to anyone who looks up the domain.'
+		);
+
+	const getPrivacyDisclosureHelp = () => {
+		if ( domain.is_pending_icann_verification ) {
+			return __(
+				'You need to verify the contact information for the domain before you can disclose it publicly.'
+			);
 		}
 
-		return (
-			<>
-				<ToggleControl
-					__nextHasNoMarginBottom
-					checked={ domain.contact_info_disclosed }
-					onChange={ onTogglePrivacyDisclosure }
-					disabled={ isSubmitting || domain.is_pending_icann_verification }
-					label={ __( 'Display my contact information in public WHOIS' ) }
-				/>
-
-				{ domain.is_pending_icann_verification && (
-					<Text as="p" variant="muted">
-						{ __(
-							'You need to verify the contact information for the domain before you can disclose it publicly.'
-						) }
-					</Text>
-				) }
-			</>
-		);
+		return hasNewDisclosureCopy
+			? __(
+					'Turn on to show your name, address, email and phone to anyone who looks up the domain.'
+				)
+			: undefined;
 	};
 
+	const showPrivacyDisclosure =
+		domain.privacy_available &&
+		domain.contact_info_disclosure_available &&
+		! domain.private_domain &&
+		! domain.is_hundred_year_domain;
+
 	return (
-		<VStack spacing={ 4 }>
-			{ renderPrivacyProtection() }
-			{ renderPrivacyDisclosure() }
-		</VStack>
+		<Card>
+			<CardBody>{ renderPrivacyProtection() }</CardBody>
+			{ showPrivacyDisclosure && (
+				<>
+					<CardDivider />
+					<CardBody>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ domain.contact_info_disclosed }
+							onChange={ onTogglePrivacyDisclosure }
+							disabled={ isSubmitting || domain.is_pending_icann_verification }
+							label={
+								hasNewDisclosureCopy
+									? __( 'Show my contact details publicly' )
+									: __( 'Display my contact information in public WHOIS' )
+							}
+							help={ getPrivacyDisclosureHelp() }
+						/>
+					</CardBody>
+				</>
+			) }
+		</Card>
 	);
 }
