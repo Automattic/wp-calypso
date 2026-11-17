@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState, useCallback, useRef } from 'react';
 import SiteIcon from '../../components/site-icon';
 import { canManageSite } from '../../sites/features';
+import { titleFieldTextOverflowStyles } from '../../sites/site-fields';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
@@ -36,16 +37,15 @@ export function SelectSite( { attachedSiteId, filter, onSiteSelect }: SelectSite
 	);
 	const searchInputRef = useRef< HTMLInputElement >( null );
 
-	const perPage = 6;
+	const perPage = 10;
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
+		page: 1,
 		perPage,
 		search: '',
 		fields: [ 'URL' ],
 		titleField: 'name',
 		mediaField: 'icon',
-		infiniteScrollEnabled: true,
-		startPosition: 1,
 	} );
 
 	const [ selection, setSelection ] = useState< string[] >( [] );
@@ -70,7 +70,7 @@ export function SelectSite( { attachedSiteId, filter, onSiteSelect }: SelectSite
 	const fields = [
 		{
 			id: 'icon',
-			render: ( { item }: { item: Site } ) => <SiteIcon site={ item } size={ 52 } />,
+			render: ( { item }: { item: Site } ) => <SiteIcon site={ item } />,
 		},
 		{
 			id: 'name',
@@ -81,11 +81,15 @@ export function SelectSite( { attachedSiteId, filter, onSiteSelect }: SelectSite
 			id: 'URL',
 			label: 'URL',
 			getValue: ( { item }: { item: Site } ) => getSiteDisplayUrl( item ),
+			// Keep a long address on one line, ending in an ellipsis.
+			render: ( { item }: { item: Site } ) => (
+				<span style={ titleFieldTextOverflowStyles }>{ getSiteDisplayUrl( item ) }</span>
+			),
 		},
 	];
 
 	// Apply the search filter. All sites are already loaded client-side, so
-	// infinite scroll just reveals more of this in-memory list.
+	// paging just slices this in-memory list.
 	const filteredSites = useMemo( () => {
 		if ( ! view.search ) {
 			return sites;
@@ -98,12 +102,10 @@ export function SelectSite( { attachedSiteId, filter, onSiteSelect }: SelectSite
 		);
 	}, [ sites, view.search ] );
 
-	// DataViews drives infinite scroll by advancing `view.startPosition`; hand
-	// it the matching window. `useData` stitches the windows back together.
-	const startPosition = view.startPosition ?? 1;
+	const page = view.page ?? 1;
 	const displayedData = useMemo(
-		() => filteredSites.slice( startPosition - 1, startPosition - 1 + perPage ),
-		[ filteredSites, startPosition, perPage ]
+		() => filteredSites.slice( ( page - 1 ) * perPage, page * perPage ),
+		[ filteredSites, page, perPage ]
 	);
 
 	const paginationInfo = {
@@ -131,8 +133,8 @@ export function SelectSite( { attachedSiteId, filter, onSiteSelect }: SelectSite
 						size="compact"
 						value={ view.search }
 						onChange={ ( search ) => {
-							// Reset the scroll window to the top for the new result set.
-							setView( { ...view, search, startPosition: 1 } );
+							// Go back to the first page of the new result set.
+							setView( { ...view, search, page: 1 } );
 							setSelection( [] );
 							// Keep focus on search input after filtering
 							setTimeout( () => searchInputRef.current?.focus(), 0 );
@@ -146,12 +148,19 @@ export function SelectSite( { attachedSiteId, filter, onSiteSelect }: SelectSite
 					paginationInfo={ paginationInfo }
 					getItemId={ ( site: Site ) => site.ID.toString() }
 					defaultLayouts={ { list: {} } }
-					onChangeView={ setView }
+					onChangeView={ ( newView ) => {
+						// A site picked and then cancelled should not stay highlighted on another page.
+						if ( newView.page !== view.page ) {
+							setSelection( [] );
+						}
+						setView( newView );
+					} }
 					selection={ selection }
 					onChangeSelection={ handleSelectionChange }
 					empty={ <p>{ getEmptyStateMessage() }</p> }
 				>
 					<DataViews.Layout />
+					<DataViews.Footer />
 				</DataViews>
 			</VStack>
 		</div>
