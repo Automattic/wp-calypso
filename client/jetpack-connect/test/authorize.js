@@ -1218,6 +1218,30 @@ describe( 'JetpackAuthorize', () => {
 		} );
 	} );
 
+	describe( 'XML-RPC error', () => {
+		test.each( [
+			[ 'goes to', `http://${ SITE_SLUG }/wp-admin/admin.php`, 1 ],
+			[ 'ignores', `javascript://${ SITE_SLUG }/%0aalert(1)`, 0 ],
+		] )( '"Try again" %s the site\'s redirect_uri %s', async ( _, redirectUri, opens ) => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authorizationData={ {
+						...DEFAULT_PROPS.authorizationData,
+						authorizeError: { message: 'transport error' },
+						authorizationCode: 'code',
+					} }
+					authQuery={ { ...DEFAULT_PROPS.authQuery, redirectUri } }
+					hasXmlrpcError
+				/>
+			);
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+			expect( windowOpenSpy ).toHaveBeenCalledTimes( opens );
+		} );
+	} );
+
 	describe( 'expired secret', () => {
 		afterEach( () => {
 			document.cookie = 'jetpack_connect_session_url=; max-age=0; path=/';

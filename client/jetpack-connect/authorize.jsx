@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import validUrl from 'valid-url';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
@@ -366,6 +367,9 @@ export class JetpackAuthorize extends Component {
 
 	redirectToXmlRpcErrorFallbackUrl() {
 		const { state, redirectUri } = this.props.authQuery;
+		if ( ! validUrl.isWebUri( redirectUri ) ) {
+			return;
+		}
 		const code = this.props.authorizationData.authorizationCode;
 		const url = addQueryArgs( { code, state }, redirectUri );
 		debug( 'xmlrpc fallback to', url );
