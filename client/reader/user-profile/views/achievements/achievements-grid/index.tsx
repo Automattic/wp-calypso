@@ -83,9 +83,6 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 		)
 	);
 
-	const earnedSecrets = sortedEarned.filter( ( a ) => a.is_redacted );
-	const lockedSecrets = sortedLocked.filter( ( a ) => a.is_redacted );
-
 	const showYearsOfService = !! yearsOfService;
 	const showStreakCards = isOwnProfile && ( dailyPostStreaks?.length ?? 0 ) > 0;
 	const showCelebratory = isOwnProfile && earned.length > 0 && lockedAchievements.length === 0;
@@ -103,12 +100,12 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 						dailyPostStreaks.map( ( streak ) => (
 							<DailyPostStreakCard key={ streak.blog_id } streak={ streak } />
 						) ) }
-					{ sortedEarned.map( ( a ) => {
+					{ sortedEarned.map( ( a, index ) => {
 						if ( a.is_redacted ) {
 							return (
 								<SecretAchievementCard
 									key={ a.achievement_id }
-									index={ earnedSecrets.indexOf( a ) }
+									index={ index }
 									unlockedDate={ a.date_unlocked }
 								/>
 							);
@@ -144,12 +141,8 @@ export default function AchievementsGrid( { userLogin, isOwnProfile }: Achieveme
 				<>
 					<h2 className="achievements__locked-heading">{ translate( 'Locked achievements' ) }</h2>
 					<div className="achievements-grid achievements-grid--locked">
-						{ sortedLocked.map( ( a ) => (
-							<LockedAchievementCard
-								key={ a.achievement_id }
-								entry={ a }
-								index={ lockedSecrets.indexOf( a ) }
-							/>
+						{ sortedLocked.map( ( a, index ) => (
+							<LockedAchievementCard key={ a.achievement_id } entry={ a } index={ index } />
 						) ) }
 					</div>
 				</>
