@@ -308,6 +308,55 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
 	} );
 
+	test.each( [ false, true ] )(
+		'preserves individual consent when toggling site MCP from %s',
+		async ( initiallyEnabled ) => {
+			const user = userEvent.setup();
+			seedQueries( '', true, site, true, initiallyEnabled );
+			const settings = queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )!;
+			const tool = {
+				name: 'wpcom-mcp/posts-list',
+				title: 'Read posts',
+				description: 'Read posts',
+				category: 'posts',
+				type: 'tool',
+				enabled: initiallyEnabled,
+				readonly: true,
+			};
+			queryClient.setQueryData( userSettingsQuery().queryKey, {
+				...settings,
+				mcp_abilities: {
+					...settings.mcp_abilities,
+					account: {
+						'wpcom-mcp/posts-list': tool,
+						'wpcom-mcp/subscribers-list': { ...tool, requires_opt_in: true },
+						'wpcom-mcp/posts-create': { ...tool, readonly: false },
+					},
+				},
+			} );
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', ( body ) => {
+					expect( body.mcp_abilities.sites ).toEqual( [
+						{
+							blog_id: site.ID,
+							site_level_enabled: ! initiallyEnabled,
+							abilities: initiallyEnabled ? {} : { 'wpcom-mcp/posts-list': true },
+						},
+					] );
+					return true;
+				} )
+				.reply( 200, settings );
+			const { unmount } = render( <AIToolsSettings siteSlug={ site.slug } />, { queryClient } );
+
+			const control = initiallyEnabled
+				? screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+				: screen.getByRole( 'button', { name: 'Turn on MCP access' } );
+			await user.click( control );
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+			unmount();
+		}
+	);
+
 	test( 'shows the connect card while MCP is off, and turns MCP on for this site', async () => {
 		const save = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/settings', ( body ) => {
