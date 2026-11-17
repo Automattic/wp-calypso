@@ -352,6 +352,20 @@ This mixin generates alias variables for a color palette. For example, the
 		background-color: var( --wp-admin-theme-color );
 	}
 
+	// An unchecked checkbox takes its fill and border from --wpds-* tokens that
+	// only carry light values, so it reads as a white chip on a dark surface.
+	// The checked fill comes from the admin theme color and is already correct.
+	.components-checkbox-control__input[type='checkbox']:not( :checked, [aria-checked='mixed'] ) {
+		border-color: var( --dashboard-field__border-color );
+		background-color: transparent;
+	}
+
+	.components-checkbox-control__input[type='checkbox']:disabled,
+	.components-checkbox-control__input[type='checkbox'][aria-disabled='true'] {
+		background-color: transparent;
+		border-color: var( --dashboard-surface__border-color );
+	}
+
 	.components-input-control__container:has( .components-input-control__input:disabled ) {
 		background-color: var( --dashboard-surface__background-color );
 		opacity: 0.72;
