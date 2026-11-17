@@ -59,6 +59,7 @@ import {
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
+	isSiteMember,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
 import {
@@ -78,6 +79,7 @@ import {
 } from '../../utils/site-features';
 import { isInJetpackCriticalErrorState } from '../../utils/site-jetpack-critical-error';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { SitePermissionError } from '../../utils/site-permissions';
 import {
 	getSiteMigrationState,
 	isAssistedWordPressMigration,
@@ -165,6 +167,9 @@ export const siteRoute = createRoute( {
 
 		// While the site turns Atomic, its owner keeps its pages: their capabilities come back with it.
 		if ( ! canManageSite( site ) && ! ( await isOwnerAwaitingAtomicTransfer( site ) ) ) {
+			if ( isSiteMember( site ) ) {
+				throw new SitePermissionError();
+			}
 			throw notFound();
 		}
 

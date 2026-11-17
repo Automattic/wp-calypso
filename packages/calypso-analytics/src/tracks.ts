@@ -74,10 +74,7 @@ function getUrlParameter( name: string ): string {
 	if ( typeof window === 'undefined' ) {
 		return '';
 	}
-	name = name.replace( /[[]/g, '\\[' ).replace( /[\]]/g, '\\]' );
-	const regex = new RegExp( '[\\?&]' + name + '=([^&#]*)' );
-	const results = regex.exec( window.location.search );
-	return results === null ? '' : decodeURIComponent( results[ 1 ].replace( /\+/g, ' ' ) );
+	return new URLSearchParams( window.location.search ).get( name ) ?? '';
 }
 
 function checkForBlockedTracks(): Promise< void > {

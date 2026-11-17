@@ -48,7 +48,13 @@ class SessionManager extends EventEmitter {
 		// Listen for auth events
 		this.window.webContents.session.cookies.on(
 			'changed',
-			async ( _, cookie, _reason, removed ) => {
+			async ( _, cookie, changeCause, removed ) => {
+				// Re-setting a cookie removes the old one (cause 'overwrite') and then inserts the new one.
+				// That removal is not a logout.
+				if ( removed && changeCause === 'overwrite' ) {
+					return;
+				}
+
 				// Listen for logged in/out events
 				if ( cookie.name === 'wordpress_logged_in' && cookie.domain === '.wordpress.com' ) {
 					if ( removed && this.loggedIn ) {
