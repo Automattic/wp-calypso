@@ -10,7 +10,8 @@ import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import type { AddOnMeta } from '@automattic/data-stores';
+import type { AddOnMeta, AnyAddOnMeta } from '@automattic/data-stores';
+import type { ReactNode } from 'react';
 
 export interface Props {
 	actionPrimary?: ( productSlug: string, quantity?: number ) => void;
@@ -106,6 +107,61 @@ const Container = styled.div`
 	}
 `;
 
+interface LayoutProps {
+	addOnMeta: AnyAddOnMeta;
+	highlightFeatured: boolean;
+	billing?: ReactNode;
+	children: ReactNode;
+}
+
+/**
+ * The card frame that every add-on shares: icon, name, billing line, description, and a footer.
+ */
+export const AddOnCardLayout = ( {
+	addOnMeta,
+	highlightFeatured,
+	billing = addOnMeta.displayCost,
+	children,
+}: LayoutProps ) => {
+	const translate = useTranslate();
+
+	return (
+		<Container>
+			<Card className="add-ons-card">
+				<CardHeader isBorderless className="add-ons-card__header">
+					<div className="add-ons-card__icon">
+						{ addOnMeta.icon && <Icon icon={ addOnMeta.icon } size={ 24 } /> }
+					</div>
+					<div className="add-ons-card__name-and-billing">
+						<div className="add-ons-card__name-tag">
+							<div className="add-ons-card__name">{ addOnMeta.name }</div>
+							{ highlightFeatured && addOnMeta.featured && (
+								<Badge key="popular" type="info-green" className="add-ons-card__featured-badge">
+									{ translate( 'Popular' ) }
+								</Badge>
+							) }
+						</div>
+						<div className="add-ons-card__billing">{ billing }</div>
+					</div>
+				</CardHeader>
+				<CardBody as="p" className="add-ons-card__body">
+					{ addOnMeta.description }
+				</CardBody>
+				<CardFooter isBorderless className="add-ons-card__footer">
+					{ children }
+				</CardFooter>
+			</Card>
+		</Container>
+	);
+};
+
+export const AddOnCardStatus = ( { children }: { children: ReactNode } ) => (
+	<div className="add-ons-card__selected-tag">
+		<Gridicon size={ 16 } icon="checkmark" className="add-ons-card__checkmark" />
+		<span>{ children }</span>
+	</div>
+);
+
 const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatured }: Props ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
@@ -133,50 +189,22 @@ const AddOnCard = ( { addOnMeta, actionPrimary, actionSecondary, highlightFeatur
 	}
 
 	return (
-		<Container>
-			<Card className="add-ons-card">
-				<CardHeader isBorderless className="add-ons-card__header">
-					<div className="add-ons-card__icon">
-						{ addOnMeta.icon && <Icon icon={ addOnMeta.icon } size={ 24 } /> }
-					</div>
-					<div className="add-ons-card__name-and-billing">
-						<div className="add-ons-card__name-tag">
-							<div className="add-ons-card__name">{ addOnMeta.name }</div>
-							{ highlightFeatured && addOnMeta.featured && (
-								<Badge key="popular" type="info-green" className="add-ons-card__featured-badge">
-									{ translate( 'Popular' ) }
-								</Badge>
-							) }
-						</div>
-						<div className="add-ons-card__billing">{ addOnMeta.displayCost }</div>
-					</div>
-				</CardHeader>
-				<CardBody as="p" className="add-ons-card__body">
-					{ addOnMeta.description }
-				</CardBody>
-				<CardFooter isBorderless className="add-ons-card__footer">
-					{ shouldRenderLoadingState && (
-						<Spinner size={ 24 } className="spinner-button__spinner" />
-					) }
-					{ shouldRenderSecondaryAction && actionSecondary && (
-						<Button onClick={ onActionSecondary } variant="secondary">
-							{ translate( 'Manage add-on' ) }
-						</Button>
-					) }
-					{ shouldRenderPurchaseStatus && purchaseStatus?.text && (
-						<div className="add-ons-card__selected-tag">
-							<Gridicon size={ 16 } icon="checkmark" className="add-ons-card__checkmark" />
-							<span>{ purchaseStatus.text }</span>
-						</div>
-					) }
-					{ shouldRenderPrimaryAction && actionPrimary && (
-						<Button variant="primary" onClick={ onActionPrimary }>
-							{ translate( 'Buy add-on' ) }
-						</Button>
-					) }
-				</CardFooter>
-			</Card>
-		</Container>
+		<AddOnCardLayout addOnMeta={ addOnMeta } highlightFeatured={ highlightFeatured }>
+			{ shouldRenderLoadingState && <Spinner size={ 24 } className="spinner-button__spinner" /> }
+			{ shouldRenderSecondaryAction && actionSecondary && (
+				<Button onClick={ onActionSecondary } variant="secondary">
+					{ translate( 'Manage add-on' ) }
+				</Button>
+			) }
+			{ shouldRenderPurchaseStatus && purchaseStatus?.text && (
+				<AddOnCardStatus>{ purchaseStatus.text }</AddOnCardStatus>
+			) }
+			{ shouldRenderPrimaryAction && actionPrimary && (
+				<Button variant="primary" onClick={ onActionPrimary }>
+					{ translate( 'Buy add-on' ) }
+				</Button>
+			) }
+		</AddOnCardLayout>
 	);
 };
 

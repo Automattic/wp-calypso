@@ -33,3 +33,18 @@ export const STORAGE_ADD_ONS = < const >[
 	ADD_ON_300GB_STORAGE,
 	ADD_ON_350GB_STORAGE,
 ];
+
+export const WOO_BUNDLE_EXTENSIONS_FEATURE = 'woo-bundle-extensions';
+
+export const ADD_ON_WOOCOMMERCE_BOOKINGS = 'woocommerce-bookings-add-on';
+export const ADD_ON_WOOCOMMERCE_SUBSCRIPTIONS = 'woocommerce-subscriptions-add-on';
+
+export const PLUGIN_ADD_ONS = < const >[
+	ADD_ON_WOOCOMMERCE_BOOKINGS,
+	ADD_ON_WOOCOMMERCE_SUBSCRIPTIONS,
+];
+
+export const WOO_BUNDLE_PLUGIN_SLUGS = < const >[
+	'woocommerce-bookings',
+	'woocommerce-subscriptions',
+];

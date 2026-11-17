@@ -1,10 +1,10 @@
 import i18n, { useTranslate } from 'i18n-calypso';
 import * as Purchases from '../../purchases';
 import * as Site from '../../site';
-import type { AddOnMeta } from '../types';
+import type { AnyAddOnMeta } from '../types';
 
 interface Props {
-	addOnMeta: AddOnMeta;
+	addOnMeta: AnyAddOnMeta;
 	selectedSiteId?: number | null;
 }
 
@@ -24,6 +24,7 @@ type AddOnPurchaseStatus =
  */
 const useAddOnPurchaseStatus = ( { addOnMeta, selectedSiteId }: Props ): AddOnPurchaseStatus => {
 	const translate = useTranslate();
+	// A plugin add-on has no product slug, so it matches no purchase.
 	const matchingPurchases = Purchases.useSitePurchasesByProductSlug( {
 		siteId: selectedSiteId,
 		productSlug: addOnMeta.productSlug,

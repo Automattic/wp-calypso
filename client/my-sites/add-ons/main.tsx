@@ -91,7 +91,10 @@ const NoAccess = () => {
 
 const AddOnsMain = () => {
 	const selectedSite = useSelector( getSelectedSite ) ?? null;
-	const addOns = AddOns.useAddOns( { selectedSiteId: selectedSite?.ID } );
+	const addOns = AddOns.useAddOns( {
+		selectedSiteId: selectedSite?.ID,
+		includePluginAddOns: true,
+	} );
 	const queryArguments = useSelector( getCurrentQueryArguments );
 
 	const checkoutLink = AddOns.useAddOnCheckoutLink();
