@@ -361,7 +361,10 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 
 	.components-checkbox-control__input[type='checkbox']:disabled,
-	.components-checkbox-control__input[type='checkbox'][aria-disabled='true'] {
+	.components-checkbox-control__input[type='checkbox'][aria-disabled='true']:not(
+			:checked,
+			:indeterminate
+		) {
 		background-color: transparent;
 		border-color: var( --dashboard-surface__border-color );
 	}
