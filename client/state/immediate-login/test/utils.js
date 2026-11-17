@@ -3,7 +3,7 @@ import { createPathWithoutImmediateLoginInformation, createImmediateLoginMessage
 
 describe( 'immediate-login/utils', () => {
 	describe( 'createPathWithoutImmediateLoginInformation', () => {
-		// eslint-disable-next-line jest/expect-expect
+		// eslint-disable-next-line vitest/expect-expect
 		test( 'should be possible to call', () => {
 			createPathWithoutImmediateLoginInformation( '', {} );
 		} );
@@ -102,7 +102,7 @@ describe( 'immediate-login/utils', () => {
 	} );
 
 	describe( 'createImmediateLoginMessage', () => {
-		// eslint-disable-next-line jest/expect-expect
+		// eslint-disable-next-line vitest/expect-expect
 		test( 'should be possible to call', () => {
 			createImmediateLoginMessage( '', '' );
 		} );
