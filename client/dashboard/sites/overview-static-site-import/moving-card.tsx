@@ -548,6 +548,9 @@ export function StaticSiteImportProgress( {
 		<Card>
 			<CardBody>
 				<VStack spacing={ 6 }>
+					<Notice variant="info">
+						{ __( 'You can close this page. We’ll email you when it’s done.' ) }
+					</Notice>
 					<div className="static-site-import-moving">
 						<div className="static-site-import-moving__snapshot">
 							<SiteSnapshot sourceHost={ sourceHost } session={ session } step={ step } />
@@ -586,9 +589,11 @@ export function StaticSiteImportProgress( {
 							<MovingChecklist session={ session } />
 						</VStack>
 					</div>
-					<Notice variant="info">
-						{ __( 'You can close this page. We’ll email you when it’s done.' ) }
-					</Notice>
+					<Text variant="muted">
+						{ __(
+							'This can take a few minutes. You don’t need to wait here: we’ll email you as soon as your site is ready.'
+						) }
+					</Text>
 				</VStack>
 			</CardBody>
 		</Card>

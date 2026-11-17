@@ -91,14 +91,7 @@ const StaticSiteImportProgressStep: StepType< {
 			<Step.WideLayout
 				className="static-site-import-progress-step"
 				topBar={ <Step.TopBar /> }
-				heading={
-					<Step.Heading
-						text={ __( 'We’re bringing your site to WordPress.com' ) }
-						subText={ __(
-							'This can take 5 to 20 minutes. You don’t need to wait here: we’ll email you as soon as your site is ready.'
-						) }
-					/>
-				}
+				heading={ <Step.Heading text={ __( 'We’re bringing your site to WordPress.com' ) } /> }
 			>
 				{ siteImport && (
 					<StaticSiteImportProgress

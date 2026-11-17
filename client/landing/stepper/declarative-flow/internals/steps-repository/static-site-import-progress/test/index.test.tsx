@@ -49,7 +49,7 @@ describe( 'StaticSiteImportProgressStep', () => {
 		).toBeVisible();
 		expect(
 			screen.getByText(
-				'This can take 5 to 20 minutes. You don’t need to wait here: we’ll email you as soon as your site is ready.'
+				'This can take a few minutes. You don’t need to wait here: we’ll email you as soon as your site is ready.'
 			)
 		).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
