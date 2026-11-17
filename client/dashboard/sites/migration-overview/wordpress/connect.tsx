@@ -120,7 +120,7 @@ export function Connect( {
 				disabled: isStarting,
 			} }
 			actions={ actions }
-			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
+			note={ <AssistedHandoffLink site={ site } /> }
 		>
 			{ /* What stopped the last run stays until the next one, even once the source reads as connected: it may still refuse. */ }
 			{ failure && (

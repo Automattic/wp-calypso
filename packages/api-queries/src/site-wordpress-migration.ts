@@ -1,4 +1,6 @@
 import {
+	cancelWordPressMigration,
+	fetchWordPressMigrationCancellation,
 	cancelWordPressMigrationHandoff,
 	configureWordPressMigration,
 	fetchWordPressMigrationConfiguration,
@@ -10,6 +12,7 @@ import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
 import type {
+	WordPressMigrationCancelParams,
 	WordPressMigrationConfigureParams,
 	WordPressMigrationRunParams,
 } from '@automattic/api-core';
@@ -81,4 +84,30 @@ export const siteWordPressMigrationRunMutation = ( siteId: number ) =>
 			queryClient.setQueryData( queryKey, status );
 		},
 		onError: () => invalidateMigration( siteId ),
+	} );
+
+export const siteWordPressMigrationCancellationQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'wordpress-migration', 'cancellation' ],
+		queryFn: () => fetchWordPressMigrationCancellation( siteId ),
+		meta: { persist: false },
+		staleTime: 0,
+	} );
+
+export const siteWordPressMigrationCancelMutation = ( siteId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'site-wp-migration-cancel' },
+		mutationFn: ( params: WordPressMigrationCancelParams ) =>
+			cancelWordPressMigration( siteId, params ),
+		onSuccess: async ( cancellation ) => {
+			const { queryKey } = siteWordPressMigrationCancellationQuery( siteId );
+			await queryClient.cancelQueries( { queryKey } );
+			queryClient.setQueryData( queryKey, cancellation );
+			invalidateMigration( siteId );
+			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
+		},
+		onError: () => {
+			queryClient.invalidateQueries( siteWordPressMigrationCancellationQuery( siteId ) );
+			invalidateMigration( siteId );
+		},
 	} );

@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
 import Notice, { NoticeActionButton } from '../../../components/notice';
 import { isSiteMigrationInProgress } from '../../../utils/site-status';
+import { MigrationCancellation } from './cancellation';
 import { Connect } from './connect';
 import { Findings } from './findings';
 import { MigrationCard, StatusIcon } from './migration-card';
@@ -22,7 +23,15 @@ import type { Site } from '@automattic/api-core';
 // How long a completed migration can leave its site locked before we stop asking the user to wait.
 const UNLOCK_GRACE_PERIOD = 30000;
 
-const KNOWN_STATUSES = [ 'not_started', 'running', 'paused', 'failed', 'completed' ];
+const KNOWN_STATUSES = [
+	'not_started',
+	'running',
+	'paused',
+	'failed',
+	'completed',
+	'resetting',
+	'cancelled',
+];
 
 export function WordPressMigration( { site }: { site: Site } ) {
 	const navigate = useNavigate();
@@ -37,7 +46,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		// Once our team has the migration, read the site again: its migration state takes this page over.
 		queryFn: async () => {
 			const status = await fetchWordPressMigrationStatus( site.ID );
-			if ( status.handed_off ) {
+			if ( status.handed_off || status.status === 'cancelled' ) {
 				await queryClient.refetchQueries( { ...siteQueryFilter( site.ID ), type: 'active' } );
 			}
 			return status;
@@ -180,6 +189,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					actions={ contactUs }
 				/>
 			) }
+			{ isConnecting && isConfigurationPending && <MigrationCancellation site={ site } /> }
 			{ isConnecting && ! isConfigurationPending && (
 				<Connect
 					site={ site }
@@ -232,6 +242,9 @@ export function WordPressMigration( { site }: { site: Site } ) {
 						)
 					}
 				/>
+			) }
+			{ ( migration?.status === 'resetting' || migration?.status === 'cancelled' ) && (
+				<MigrationCancellation site={ site } recovering />
 			) }
 			{ /* A status this page doesn't know yet. */ }
 			{ migration && ! KNOWN_STATUSES.includes( migration.status ) && (

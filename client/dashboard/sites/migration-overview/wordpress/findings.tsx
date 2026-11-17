@@ -121,7 +121,7 @@ export function Findings( {
 					</Button>
 				</>
 			}
-			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
+			note={ <AssistedHandoffLink site={ site } /> }
 		>
 			{ findings.map( ( finding, index ) => (
 				<Notice
