@@ -36,7 +36,6 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 		isCompact,
 		currentlySelectedDomainName,
 		selectedFeature,
-		isHostingOverview,
 		hasConnectableSites,
 		sidebarMode,
 		onPointToWpcom,
@@ -95,13 +94,7 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
 
 	const domainManagementLink = isManageableDomain
-		? getDomainManagementLink(
-				domain,
-				siteSlug,
-				isAllSitesView,
-				selectedFeature,
-				isHostingOverview
-			)
+		? getDomainManagementLink( domain, siteSlug, isAllSitesView, selectedFeature )
 		: '';
 
 	const renderOwnerCell = () => {
@@ -281,7 +274,6 @@ export function DomainsTableRow( { domain }: DomainsTableRowProps ) {
 									isSiteOnFreePlan={ site?.plan?.is_free ?? true }
 									isFlexSite={ site?.is_wpcom_flex ?? false }
 									isSimpleSite={ ! site?.is_wpcom_atomic }
-									isHostingOverview={ isHostingOverview }
 									context={ context }
 								/>
 							) }

@@ -47,12 +47,12 @@ const navigation = {
 
 const defaultProps = {
 	navigation,
-	stepName: 'site-migration-instructions',
+	stepName: 'site-migration-identify',
 	flow: 'site-migration',
 	data: {
 		siteId: 123,
 		siteSlug: 'example.wordpress.com',
-		path: '/site-migration-instructions',
+		path: '/site-migration-identify',
 		intent: SiteIntent.Build,
 		previousStep: 'processing',
 	},
