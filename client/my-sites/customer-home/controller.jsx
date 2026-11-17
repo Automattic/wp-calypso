@@ -10,6 +10,7 @@ import { isRemovedFlow } from 'calypso/landing/stepper/utils/flow-redirect-handl
 import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getSiteFragment } from 'calypso/lib/route';
+import { addQueryArgs } from 'calypso/lib/url';
 import { bumpStat } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
 import isSiteBigSkyTrial from 'calypso/state/sites/plans/selectors/is-site-big-sky-trial';
@@ -66,6 +67,14 @@ export async function redirectToLandingPage( context, next ) {
 	}
 }
 
+// The wp-admin dashboard has its own launch celebration, which reads `celebrate-launch`.
+function getAdminDashboardUrl( state, siteId, celebrateLaunch ) {
+	const url = getSiteAdminUrl( state, siteId, 'index.php' );
+	return url && celebrateLaunch === 'true'
+		? addQueryArgs( { 'celebrate-launch': 'true' }, url )
+		: url;
+}
+
 export async function maybeRedirect( context, next ) {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	try {
@@ -83,7 +92,7 @@ export async function maybeRedirect( context, next ) {
 		return;
 	}
 
-	const { verified, courseSlug, from } = getQueryArgs() || {};
+	const { verified, courseSlug, from, celebrateLaunch } = getQueryArgs() || {};
 
 	// The courseSlug is to display pages with onboarding videos for learning,
 	// so we should not redirect the page to launchpad.
@@ -110,11 +119,10 @@ export async function maybeRedirect( context, next ) {
 	// stays hidden from the sidebar for these sites).
 	const aiLaunchpadStatus = site && getAiLaunchpadStatus( site );
 	if ( aiLaunchpadStatus ) {
-		const redirectUrl = getSiteAdminUrl(
-			state,
-			siteId,
-			aiLaunchpadStatus === 'active' ? 'admin.php?page=site-setup-wp-admin' : 'index.php'
-		);
+		const redirectUrl =
+			aiLaunchpadStatus === 'active'
+				? getSiteAdminUrl( state, siteId, 'admin.php?page=site-setup-wp-admin' )
+				: getAdminDashboardUrl( state, siteId, celebrateLaunch );
 		if ( redirectUrl ) {
 			window.location.replace( redirectUrl );
 			return;
@@ -127,7 +135,7 @@ export async function maybeRedirect( context, next ) {
 		site?.options?.wpcom_ai_launchpad_enabled ||
 		site?.options?.wpcom_ai_launchpad_no_guidance
 	) {
-		const redirectUrl = getSiteAdminUrl( state, siteId, 'index.php' );
+		const redirectUrl = getAdminDashboardUrl( state, siteId, celebrateLaunch );
 		if ( redirectUrl ) {
 			window.location.replace( redirectUrl );
 			return;

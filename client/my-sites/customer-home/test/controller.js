@@ -237,6 +237,22 @@ describe( 'maybeRedirect', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps the launch celebration when sending a site to the wp-admin dashboard', async () => {
+		window.location.href = 'https://wordpress.com/home/test.wordpress.com?celebrateLaunch=true';
+		getSelectedSite.mockReturnValueOnce( {
+			ID: 1,
+			launch_status: 'launched',
+			capabilities: { manage_options: true },
+			options: { wpcom_ai_launchpad_no_guidance: true },
+		} );
+
+		await maybeRedirect( buildSiteContext(), jest.fn() );
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'https://example.wordpress.com/wp-admin/index.php?celebrate-launch=true'
+		);
+	} );
+
 	it( 'sends sites with enabled+dismissed to the wp-admin dashboard', async () => {
 		getSelectedSite.mockReturnValueOnce( {
 			ID: 1,
