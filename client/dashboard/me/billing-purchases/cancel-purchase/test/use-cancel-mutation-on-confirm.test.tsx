@@ -10,10 +10,6 @@ import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
 import { useCancelMutationOnConfirm } from '../use-cancel-mutation-on-confirm';
 import type { Purchase } from '@automattic/api-core';
 
-vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
-	...( await importOriginal() ),
-} ) );
-
 vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: vi.fn(),

@@ -3,10 +3,20 @@
  */
 
 import { queryClient, siteBySlugQuery } from '@automattic/api-queries';
-import { defaultParseSearch } from '@tanstack/react-router';
+import { createRouter, defaultParseSearch } from '@tanstack/react-router';
 import nock from 'nock';
+import { SitePermissionError } from '../../../utils/site-permissions';
 import { AUTH_QUERY_KEY } from '../../auth';
-import { siteBackupsRoute, siteLogsRoute, siteOverviewRoute, siteRoute } from '../sites';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
+import { rootRoute } from '../root';
+import {
+	createSitesRoutes,
+	siteBackupsRoute,
+	siteLogsRoute,
+	siteMigrationShareAccessRoute,
+	siteOverviewRoute,
+	siteRoute,
+} from '../sites';
 import type { Site, User } from '@automattic/api-core';
 
 const site = {
@@ -130,6 +140,34 @@ describe( 'date range routes search', () => {
 	} );
 } );
 
+test( 'returns to the migration overview when Share access cannot read the site', async () => {
+	const config = {
+		...APP_CONTEXT_DEFAULT_CONFIG,
+		supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, sites: true },
+	};
+	createRouter( {
+		routeTree: rootRoute.addChildren( createSitesRoutes( config ) ),
+		context: { config },
+	} );
+
+	nock.cleanAll();
+	const request = nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/sites/${ site.slug }` )
+		.query( true )
+		.reply( 404, { error: 'unknown_blog', message: 'Unknown site' } );
+	const beforeLoad = siteMigrationShareAccessRoute.options.beforeLoad as unknown as ( options: {
+		cause: 'enter';
+		params: { siteSlug: string };
+	} ) => Promise< unknown >;
+
+	await expect(
+		beforeLoad( { cause: 'enter', params: { siteSlug: site.slug } } )
+	).rejects.toMatchObject( {
+		options: { to: '/sites/$siteSlug/migration-overview', params: { siteSlug: site.slug } },
+	} );
+	expect( request.isDone() ).toBe( true );
+} );
+
 describe( 'siteRoute while the site turns Atomic', () => {
 	const owner = { ID: 7 } as User;
 	const movingSite = {
@@ -179,26 +217,24 @@ describe( 'siteRoute while the site turns Atomic', () => {
 		await expect( runSiteGuard( owner ) ).resolves.toBeUndefined();
 	} );
 
-	test( 'shows not found to the owner when the site isn’t turning Atomic', async () => {
+	test( 'keeps the owner out when the site isn’t turning Atomic', async () => {
 		mockLatestTransfer().query( true ).reply( 200, { status: 'error' } );
 
-		await expect( runSiteGuard( owner ) ).rejects.toMatchObject( { isNotFound: true } );
+		await expect( runSiteGuard( owner ) ).rejects.toBeInstanceOf( SitePermissionError );
 	} );
 
-	test( 'shows not found to the owner when the site’s transfer can’t be read', async () => {
+	test( 'keeps the owner out when the site’s transfer can’t be read', async () => {
 		mockLatestTransfer()
 			.query( true )
 			.reply( 403, { code: 'unauthorized', message: 'Not allowed.' } );
 
-		await expect( runSiteGuard( owner ) ).rejects.toMatchObject( { isNotFound: true } );
+		await expect( runSiteGuard( owner ) ).rejects.toBeInstanceOf( SitePermissionError );
 	} );
 
-	test( 'shows not found to someone else without asking for the transfer', async () => {
+	test( 'keeps someone else out without asking for the transfer', async () => {
 		const transferRequest = mockLatestTransfer().query( true ).reply( 200, { status: 'active' } );
 
-		await expect( runSiteGuard( { ID: 8 } as User ) ).rejects.toMatchObject( {
-			isNotFound: true,
-		} );
+		await expect( runSiteGuard( { ID: 8 } as User ) ).rejects.toBeInstanceOf( SitePermissionError );
 		expect( transferRequest.isDone() ).toBe( false );
 	} );
 } );

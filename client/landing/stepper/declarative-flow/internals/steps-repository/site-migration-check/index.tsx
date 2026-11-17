@@ -9,17 +9,13 @@ import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
-import { SitePreview } from '../site-migration-instructions/site-preview';
-import { mShotConfigs } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
+import { SitePreview } from '../components/site-preview';
 import successIcon from './success.svg';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
 export type CopySiteEligibility = 'eligible' | 'ineligible' | 'loading';
-
-// The size the address step has already asked mShots to capture the source at, so it's ready sooner.
-const PREVIEW_OPTIONS = mShotConfigs.desktop;
 
 const SiteMigrationCheck: StepType< {
 	accepts: {
@@ -273,11 +269,7 @@ const SiteMigrationCheck: StepType< {
 												↗
 											</a>
 										</div>
-										<SitePreview
-											url={ from }
-											label={ translate( 'Source site to be copied' ) }
-											mshotsOptions={ PREVIEW_OPTIONS }
-										/>
+										<SitePreview url={ from } label={ translate( 'Source site to be copied' ) } />
 										{ ! isSameSite && (
 											<p className="site-migration-check__preview-description">
 												{ translate(
@@ -310,7 +302,6 @@ const SiteMigrationCheck: StepType< {
 										<SitePreview
 											url={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
 											label={ translate( 'Current destination site' ) }
-											mshotsOptions={ PREVIEW_OPTIONS }
 										/>
 										{ ! isSameSite && (
 											<p className="site-migration-check__preview-description">
@@ -320,7 +311,7 @@ const SiteMigrationCheck: StepType< {
 									</div>
 								</div>
 							) : (
-								<SitePreview mshotsOptions={ PREVIEW_OPTIONS } />
+								<SitePreview />
 							) }
 							<div className="site-migration-check__card">
 								{ showUpgrade && (

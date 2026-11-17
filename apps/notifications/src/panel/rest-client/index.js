@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import repliesCache from '../comment-replies-cache';
-import { logError } from '../helpers/log-error';
+import { reportError } from '../helpers/log-error';
 import { recordTracksEvent } from '../helpers/stats';
 import { store } from '../state';
 import actions from '../state/actions';
@@ -185,7 +185,12 @@ function getNote( note_id, livePushMessage ) {
 
 	fetchNote( note_id, parameters, ( error, data ) => {
 		if ( error ) {
-			logError( error, { request: 'getNote', note_id, status: error.status, code: error.error } );
+			reportError( 'load-note', error, {
+				request: 'getNote',
+				note_id,
+				status: error.status,
+				code: error.error,
+			} );
 			return;
 		}
 		const previousNotes = getAllNotes( store.getState() );
@@ -238,7 +243,7 @@ function getNotes( before, livePushMessages = [] ) {
 		this.gettingNotes = false;
 
 		if ( error ) {
-			logError( error, {
+			reportError( before ? 'load-more' : 'load', error, {
 				request: 'getNotes',
 				before: before ?? null,
 				retries: this.retries,
@@ -366,7 +371,7 @@ function getNotesList() {
 		debug( 'getNotesList callback:', error, data );
 		this.gettingNotes = false;
 		if ( error ) {
-			logError( error, {
+			reportError( 'refresh', error, {
 				request: 'getNotesList',
 				retries: this.retries,
 				status: error.status,
@@ -505,7 +510,7 @@ function getFilteredNotes( before ) {
 		const activeTabNeedsFetch = this.filter && this.isVisible && this.filterName !== key;
 
 		if ( error ) {
-			logError( error, {
+			reportError( 'load-filter', error, {
 				request: 'getFilteredNotes',
 				before: before ?? null,
 				status: error.status,
@@ -744,7 +749,7 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 	// Update the database only if an unseen note has become visible.
 	if ( fromNote ) {
 		debug( 'updateLastSeenTime 3', this.lastSeenTime );
-		sendLastSeenTime( this.lastSeenTime );
+		sendLastSeenTime( this.lastSeenTime ).catch( ( error ) => reportError( 'seen', error ) );
 	}
 
 	return true;

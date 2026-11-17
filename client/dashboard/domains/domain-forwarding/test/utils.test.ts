@@ -1,12 +1,7 @@
 /**
  * @vitest-environment node
  */
-import { vi } from 'vitest';
 import { isTargetUrlValid } from '../utils';
-
-vi.mock( '@wordpress/i18n', () => ( {
-	__: ( text: string ) => text,
-} ) );
 
 describe( 'domain forwarding utils', () => {
 	describe( 'isTargetUrlValid', () => {

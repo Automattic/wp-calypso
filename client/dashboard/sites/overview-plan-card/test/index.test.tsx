@@ -89,4 +89,33 @@ describe( '<PlanCard>', () => {
 		);
 		expect( purchasesLink ).toHaveAttribute( 'target', '_blank' );
 	} );
+
+	test( 'a preview offers a plan to keep it, until the date the server deletes it', async () => {
+		const preview = {
+			...site,
+			slug: 'test.wpcomstaging.com',
+			plan: { is_free: true },
+		} as Site;
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/wow-funnel/pending' )
+			.query( true )
+			.reply( 200, {
+				pending: false,
+				preview_sites: [
+					{
+						blog_id: preview.ID,
+						site_slug: preview.slug,
+						expires_at: Date.UTC( 2026, 11, 16, 12 ) / 1000,
+					},
+				],
+			} );
+
+		render( <PlanCard site={ preview } /> );
+
+		expect( await screen.findByText( /deleted on December 16, 2026/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /Preview/ } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/setup/launch-site' )
+		);
+	} );
 } );

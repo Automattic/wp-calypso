@@ -43,7 +43,7 @@ export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string 
 	);
 }
 
-// The views behind the migration flag go by the migration type the site reports, the older ones by their flow sticker.
+// The WordPress views go by the migration type the site reports, the older ones by their flow sticker.
 function MigrationView( { site }: { site: Site } ) {
 	if ( isWordPressMigration( site ) ) {
 		return <WordPressMigration site={ site } />;
@@ -55,7 +55,7 @@ function MigrationView( { site }: { site: Site } ) {
 
 	const migrationState = getSiteMigrationState( site );
 	if ( migrationState?.status === 'pending' ) {
-		return <PendingContentInfo site={ site } type={ migrationState.type } />;
+		return <PendingContentInfo site={ site } />;
 	}
 
 	if ( migrationState?.type === 'difm' ) {

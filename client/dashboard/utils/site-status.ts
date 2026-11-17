@@ -1,9 +1,8 @@
-import config from '@automattic/calypso-config';
 import type { SiteBlockingStatus, SiteMigrationStatus } from '../types';
 import type { Site } from '@automattic/api-core';
 
 const MIGRATION_STATUSES: SiteMigrationStatus[ 'status' ][] = [ 'pending', 'started', 'completed' ];
-const MIGRATION_TYPES: SiteMigrationStatus[ 'type' ][] = [ 'difm', 'diy', 'ssh' ];
+const MIGRATION_TYPES: SiteMigrationStatus[ 'type' ][] = [ 'difm', 'diy' ];
 
 export function getSiteBlockingStatus( item: Site ): SiteBlockingStatus {
 	if ( item.is_deleted ) {
@@ -59,15 +58,12 @@ export function getSiteMigrationState( item: Site ): SiteMigrationStatus | null 
 
 // A WordPress (Reprint) migration, which has its own views.
 export function isWordPressMigration( item: Site ) {
-	return config.isEnabled( 'migration/reprint-flow' ) && item.site_migration.type === 'wordpress';
+	return item.site_migration.type === 'wordpress';
 }
 
 // A WordPress migration handed to our team, which has its own views too.
 export function isAssistedWordPressMigration( item: Site ) {
-	return (
-		config.isEnabled( 'migration/reprint-flow' ) &&
-		item.site_migration.type === 'assisted-wordpress'
-	);
+	return item.site_migration.type === 'assisted-wordpress';
 }
 
 export function isSiteMigrationInProgress( item: Site ) {

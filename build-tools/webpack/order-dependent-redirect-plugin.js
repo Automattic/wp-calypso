@@ -29,7 +29,7 @@ const describe = ( item ) => {
 				`${ file } is inside a dependency, so it can't be changed here. Instead, add this rule to`,
 				'`module.rules` in the webpack config, so webpack always keeps that file in place:',
 				'',
-				`    { test: /${ display( barrel.resource ).replace( /[./]/g, '\\$&' ) }$/, sideEffects: true }`,
+				`    { test: /${ display( barrel.resource ).replace( /[.*+?^${}()|[\]\\/]/g, '\\$&' ) }$/, sideEffects: true }`,
 			]
 		: [
 				`To fix it, copy \`${ member }\` into a variable where you use it, and use that variable in`,

@@ -4,6 +4,10 @@ export function getIsConnectedForSiteId( state, siteId ) {
 	return state?.memberships?.settings?.[ siteId ]?.isConnected ?? false;
 }
 
+export function getConnectedAccountAcceptsChargesForSiteId( state, siteId ) {
+	return state?.memberships?.settings?.[ siteId ]?.connectedAccountAcceptsCharges ?? true;
+}
+
 export function getConnectedAccountDescriptionForSiteId( state, siteId ) {
 	return state?.memberships?.settings?.[ siteId ]?.connectedAccountDescription ?? null;
 }

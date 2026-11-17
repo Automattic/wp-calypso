@@ -9,6 +9,7 @@ import {
 	addCalypsoEnvQueryArg,
 	authQueryTransformer,
 	cleanUrl,
+	getRetryAuthUrl,
 	getRoleFromScope,
 	parseAuthorizationQuery,
 	redirect,
@@ -29,6 +30,30 @@ describe( 'addCalypsoEnvQueryArg', () => {
 		expect( addCalypsoEnvQueryArg( 'http://example.com' ) ).toBe(
 			'http://example.com/?calypso_env=mocked-test-env-id'
 		);
+	} );
+} );
+
+describe( 'getRetryAuthUrl', () => {
+	test( 'points at the site and keeps the query the site forwards', () => {
+		const redirectAfterAuth = 'http://example.com/wp-admin/admin.php?page=my-jetpack';
+		const url = new URL(
+			getRetryAuthUrl( 'http://example.com', {
+				from: 'my_jetpack_header',
+				redirectAfterAuth,
+				skipPricing: '1',
+			} )
+		);
+
+		expect( url.origin + url.pathname ).toBe( 'http://example.com/wp-admin/admin.php' );
+		expect( Object.fromEntries( url.searchParams ) ).toEqual( {
+			page: 'jetpack',
+			connect_url_redirect: 'true',
+			jetpack_connect_login_redirect: 'true',
+			calypso_env: 'mocked-test-env-id',
+			from: 'my_jetpack_header',
+			redirect_after_auth: redirectAfterAuth,
+			skip_pricing: '1',
+		} );
 	} );
 } );
 
@@ -140,6 +165,26 @@ describe( 'parseAuthorizationQuery', () => {
 	test( 'should return null data on valid input', () => {
 		expect( parseAuthorizationQuery( {} ) ).toBeNull();
 	} );
+
+	test.each( [ 'site', 'site_url', 'home_url' ] )(
+		'rejects a %s that is not a web URL',
+		( key ) => {
+			const data = {
+				_wp_nonce: 'foobar',
+				blogname: 'Just Another WordPress.com Site',
+				client_id: '12345',
+				home_url: 'https://yourjetpack.blog',
+				redirect_uri: 'https://yourjetpack.blog/wp-admin/admin.php',
+				scope: 'administrator:34579bf2a3185a47d1b31aab30125d',
+				secret: '640fdbd69f96a8ca9e61',
+				site: 'https://yourjetpack.blog',
+				site_url: 'https://yourjetpack.blog',
+				state: '1',
+			};
+			expect( parseAuthorizationQuery( data ) ).not.toBeNull();
+			expect( parseAuthorizationQuery( { ...data, [ key ]: 'javascript:alert(1)//' } ) ).toBeNull();
+		}
+	);
 } );
 
 describe( 'authQueryTransformer plugins param', () => {

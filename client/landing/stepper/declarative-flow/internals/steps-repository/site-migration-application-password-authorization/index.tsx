@@ -106,7 +106,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 	const title = translate( 'Get ready for blazing fast speeds' );
 	// translators: %(sourceDomain)s is the source domain that is being migrated.
 	const subHeaderText = translate(
-		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To ensure a smooth process, we need you to authorize us in your WordPress.com admin.",
+		"We're ready to migrate {{strong}}%(sourceDomain)s{{/strong}} to WordPress.com. To ensure a smooth process, we need you to authorize us in your WordPress admin.",
 		{
 			args: {
 				sourceDomain,

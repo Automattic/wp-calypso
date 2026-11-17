@@ -6,22 +6,9 @@ import userEvent from '@testing-library/user-event';
 import SiteMigrationCheck from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
-jest.mock( '../../site-migration-instructions/site-preview', () => ( {
-	SitePreview: ( {
-		url,
-		label,
-		mshotsOptions,
-	}: {
-		url?: string;
-		label?: string;
-		mshotsOptions?: { vpw: number; vph: number };
-	} ) => (
-		<div
-			role="img"
-			aria-label={ label || 'Site preview' }
-			data-url={ url }
-			data-viewport={ mshotsOptions ? `${ mshotsOptions.vpw }x${ mshotsOptions.vph }` : undefined }
-		>
+jest.mock( '../../components/site-preview', () => ( {
+	SitePreview: ( { url, label }: { url?: string; label?: string } ) => (
+		<div role="img" aria-label={ label || 'Site preview' } data-url={ url }>
 			Site preview
 		</div>
 	),
@@ -51,7 +38,6 @@ describe( 'SiteMigrationCheck', () => {
 		] ) {
 			const preview = screen.getByRole( 'img', { name: label } );
 			expect( preview ).toHaveAttribute( 'data-url', url );
-			expect( preview ).toHaveAttribute( 'data-viewport', '1440x1440' );
 		}
 		expect( screen.getByText( 'Source' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
@@ -207,10 +193,6 @@ describe( 'SiteMigrationCheck', () => {
 		expect( screen.getByRole( 'heading', { name: 'We can copy your whole site' } ) ).toBeVisible();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'Site preview' ) ).toBeVisible();
-		expect( screen.getByRole( 'img', { name: 'Site preview' } ) ).toHaveAttribute(
-			'data-viewport',
-			'1440x1440'
-		);
 		expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(
 			'href',
 			'https://example.com'

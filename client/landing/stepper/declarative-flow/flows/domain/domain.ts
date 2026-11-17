@@ -226,6 +226,7 @@ const domain: FlowV2< typeof initialize > = {
 						window.location.href = domainConnectionSetupUrl
 							? domainConnectionSetupUrl.replace( '%s', providedDependencies.domain )
 							: defaultRedirect;
+						return;
 					}
 
 					if (

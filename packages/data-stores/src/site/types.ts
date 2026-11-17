@@ -307,7 +307,6 @@ export interface SiteDetailsOptions {
 	wordads?: boolean;
 	launchpad_screen?: false | 'off' | 'full' | 'minimized' | 'skipped';
 	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
-	migration_source_site_domain?: string;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	can_blaze?: boolean;

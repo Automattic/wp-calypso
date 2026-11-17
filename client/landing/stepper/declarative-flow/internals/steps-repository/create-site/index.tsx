@@ -1,5 +1,4 @@
 import { transferDomainToSite } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import { isDomainMoveInternal, isEcommerce } from '@automattic/calypso-products';
 import { Site, Onboard } from '@automattic/data-stores';
 import {
@@ -58,7 +57,7 @@ import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useFlowState } from '../../state-manager/store';
+import { useFlowState, type AnyFlowInitialize } from '../../state-manager/store';
 import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
 import {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
@@ -246,7 +245,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	);
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const flowState = useFlowState();
+	const flowState = useFlowState< AnyFlowInitialize >();
 	const queryClient = useQueryClient();
 	const urlQueryParams = useQuery();
 
@@ -440,10 +439,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// /sites/new answers with a name of its own choosing, matches nothing outside a migration session.
 		const requestedName = siteUrl || domainItem?.domain_name || '';
 		return runOnce( requestedName, async () => {
-			const canReuseUnnamedSite =
-				flow === SITE_MIGRATION_FLOW &&
-				config.isEnabled( 'migration/reprint-flow' ) &&
-				!! flowState.sessionId;
+			const canReuseUnnamedSite = flow === SITE_MIGRATION_FLOW && !! flowState.sessionId;
 			const recordedSite = canReuseUnnamedSite
 				? queryClient.getQueryData< FlowStateManifest >( flowState.queryKey )?.createdSite
 				: flowState.get( 'createdSite' );
