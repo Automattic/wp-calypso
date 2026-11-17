@@ -182,7 +182,7 @@ describe( 'Site Migration Flow', () => {
 			( platform ) => {
 				jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
 				const { result } = renderNavigation( [
-					'/setup/site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&sessionId=escape&host=bluehost&ssh=true&isWpcom=true',
+					'/setup/site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&sessionId=escape&host=bluehost&isWpcom=true',
 				] );
 				const escape = {
 					action: 'skip_platform_identification',
@@ -266,6 +266,57 @@ describe( 'Site Migration Flow', () => {
 				expect( query.get( 'action' ) ).toBe( '' );
 				expect( query.get( 'from' ) ).toBe( from );
 				expect( query.get( 'siteId' ) ).toBe( '123' );
+			}
+		);
+
+		it.each( [ false, true ] )(
+			'takes WordPress picked from the platform list on to the Reprint site checks (destination: %s)',
+			( hasDestination ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/non-wordpress-source' );
+				const destination = hasDestination
+					? { siteId: '123', siteSlug: 'destination.wordpress.com' }
+					: {};
+				const source = 'https://source.example.com';
+				const { result } = renderNavigation( [
+					`/setup/site-migration/site-migration-identify?${ new URLSearchParams( {
+						sessionId: 'manual-wordpress',
+						...destination,
+					} ) }`,
+				] );
+
+				act( () =>
+					result.current.navigation.submit( {
+						action: 'skip_platform_identification',
+						from: source,
+					} )
+				);
+				expect( result.current.location.pathname ).toBe( '/site-migration/importList' );
+
+				act( () => result.current.navigation.submit( { platform: 'wordpress' } ) );
+				expect( result.current.location.pathname ).toBe(
+					'/site-migration/site-migration-identify'
+				);
+				expect(
+					new URLSearchParams( result.current.location.search ).get( 'manualPlatform' )
+				).toBe( 'wordpress' );
+
+				act( () =>
+					result.current.navigation.submit( {
+						action: 'continue',
+						platform: 'wordpress',
+						from: source,
+						host: 'bluehost',
+					} )
+				);
+				expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+				const query = new URLSearchParams( result.current.location.search );
+				expect( query.get( 'from' ) ).toBe( source );
+				expect( query.get( 'platform' ) ).toBe( 'wordpress' );
+				expect( query.get( 'sessionId' ) ).toBe( 'manual-wordpress' );
+				expect( query.get( 'siteId' ) ).toBe( hasDestination ? '123' : null );
+				expect( window.location.assign ).not.toHaveBeenCalled();
 			}
 		);
 
@@ -465,7 +516,7 @@ describe( 'Site Migration Flow', () => {
 			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_site_migration_hosting_detected',
-				expect.objectContaining( { hosting_provider: 'automattic', redirected_to_ssh: false } )
+				expect.objectContaining( { hosting_provider: 'automattic' } )
 			);
 			act( () => result.current.navigation.submit( { action: 'continue', ...source } ) );
 			expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
@@ -2589,7 +2640,6 @@ describe( 'Site Migration Flow', () => {
 				runNavigation( {
 					from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
 					dependencies: {
-						goToCheckout: true,
 						plan: PLAN_BUSINESS_MONTHLY,
 					},
 					query: {
@@ -2610,24 +2660,25 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
-			it( 'starts a DIY migration over at identify after the upgrade', () => {
-				const destination = runNavigation( {
+			it( 'returns an assisted migration to the credentials step after checkout', () => {
+				runNavigation( {
 					from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+					dependencies: {
+						plan: PLAN_BUSINESS_MONTHLY,
+					},
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
 						from: 'https://site-to-be-migrated.com',
+						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
 					},
 				} );
 
-				expect( destination ).toMatchDestination( {
-					step: STEPS.SITE_MIGRATION_IDENTIFY,
-					query: {
-						siteSlug: 'example.wordpress.com',
-						siteId: 123,
-						from: 'https://site-to-be-migrated.com',
-					},
-				} );
+				expect( goToCheckout ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						destination: `/setup/site-migration/${ STEPS.SITE_MIGRATION_CREDENTIALS.slug }?siteSlug=example.wordpress.com&from=https%3A%2F%2Fsite-to-be-migrated.com&siteId=123`,
+					} )
+				);
 			} );
 		} );
 

@@ -622,11 +622,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 					recordHostingDetected();
 
-					if (
-						action !== 'skip_platform_identification' &&
-						staticSiteImportable &&
-						canUseStaticSiteImport( platform, from )
-					) {
+					if ( staticSiteImportable && canUseStaticSiteImport( platform, from ) ) {
 						return exitFlow(
 							addQueryArgs(
 								{
@@ -644,7 +640,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 
 					if ( hasDestinationSite ) {
-						if ( platform !== 'wordpress' || action === 'skip_platform_identification' ) {
+						if ( platform !== 'wordpress' ) {
 							if ( isPlatformImportable( platform ) && from ) {
 								return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
 							}
@@ -1000,37 +996,29 @@ const siteMigration: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug: {
-					if ( providedDependencies?.goToCheckout ) {
-						let redirectAfterCheckout: string = STEPS.SITE_MIGRATION_IDENTIFY.slug;
-						if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-							redirectAfterCheckout = STEPS.SITE_MIGRATION_CREDENTIALS.slug;
-						}
-						const destination = addQueryArgs(
-							{
-								siteSlug,
-								from: fromQueryParam,
-								siteId,
-								host: hostQueryParam,
-							},
-							`/setup/${ flowPath }/${ redirectAfterCheckout }`
-						);
-						goToCheckout( {
-							flowName: flowPath,
-							stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
-							siteSlug: siteSlug,
-							destination: destination,
-							from: fromQueryParam ?? undefined,
-							plan: providedDependencies.plan as string,
-							historyBack: true,
-						} );
-						return;
-					}
-
-					if ( urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME ) {
-						return navigate( paths.credentialsPath( { siteId, from: fromQueryParam, siteSlug } ) );
-					}
-
-					return navigate( paths.identifyPath( { siteId, siteSlug, from: fromQueryParam } ) );
+					// Older pending-migration notifications link here with `how=myself`; those start over at identify.
+					const redirectAfterCheckout =
+						urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME
+							? STEPS.SITE_MIGRATION_CREDENTIALS.slug
+							: STEPS.SITE_MIGRATION_IDENTIFY.slug;
+					const destination = addQueryArgs(
+						{
+							siteSlug,
+							from: fromQueryParam,
+							siteId,
+							host: hostQueryParam,
+						},
+						`/setup/${ flowPath }/${ redirectAfterCheckout }`
+					);
+					return goToCheckout( {
+						flowName: flowPath,
+						stepName: STEPS.SITE_MIGRATION_UPGRADE_PLAN.slug,
+						siteSlug: siteSlug,
+						destination: destination,
+						from: fromQueryParam ?? undefined,
+						plan: providedDependencies.plan as string,
+						historyBack: true,
+					} );
 				}
 
 				case STEPS.SITE_MIGRATION_CREDENTIALS.slug: {

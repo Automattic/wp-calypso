@@ -410,11 +410,9 @@ const SiteMigrationIdentify: StepType< {
 		<>
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
-				className={ clsx(
-					'step-container-v2--site-migration-identify',
-					'site-migration-identify--reprint',
-					{ 'site-migration-identify--connection-issue': !! connectionIssue }
-				) }
+				className={ clsx( 'step-container-v2--site-migration-identify', {
+					'site-migration-identify--connection-issue': !! connectionIssue,
+				} ) }
 				columnWidth={ 4 }
 				topBar={
 					<Step.TopBar

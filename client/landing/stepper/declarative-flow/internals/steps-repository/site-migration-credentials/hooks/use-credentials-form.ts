@@ -18,7 +18,7 @@ import { CredentialsFormData, ApplicationPasswordsInfo } from '../types';
 import { useFormErrorMapping } from './use-form-error-mapping';
 import { useRequestAutomatedMigration } from './use-request-automated-migration';
 
-export const analyzeUrl = async ( domain: string ): Promise< UrlData | undefined > => {
+const analyzeUrl = async ( domain: string ): Promise< UrlData | undefined > => {
 	try {
 		return await analyzeSiteMigrationSource< UrlData >( domain );
 	} catch ( error ) {
@@ -26,7 +26,7 @@ export const analyzeUrl = async ( domain: string ): Promise< UrlData | undefined
 	}
 };
 
-export const getApplicationPasswordsInfo = async (
+const getApplicationPasswordsInfo = async (
 	siteId: number,
 	from: string
 ): Promise< ApplicationPasswordsInfo | undefined > => {

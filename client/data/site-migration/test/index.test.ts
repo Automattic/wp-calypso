@@ -42,13 +42,6 @@ describe( 'getMigrationState', () => {
 		} );
 	} );
 
-	it.each( [ 'migration-pending-ssh', 'migration-started-ssh', 'migration-completed-ssh' ] )(
-		'ignores the retired SSH migration sticker %s',
-		( migration_status ) => {
-			expect( getMigrationState( { migration_status } ) ).toBeNull();
-		}
-	);
-
 	it( 'returns type DIFM and status started when the migration was started by DAMS', () => {
 		const migrationInfo = {
 			migration_status: 'migration-in-progress',
@@ -100,8 +93,6 @@ describe( 'isMigrationInProgress', () => {
 	it.each( [
 		{ site: { site_migration: { migration_status: 'migration-started-diy' } } },
 		{ site: { site_migration: { migration_status: 'migration-pending-diy' } } },
-		{ site: { site_migration: { migration_status: 'migration-started-ssh' } } },
-		{ site: { site_migration: { migration_status: 'migration-pending-ssh' } } },
 		{ site: { site_migration: { migration_status: 'migration-in-progress' } } },
 	] )( 'returns true when the migration is in progress', ( scenario ) => {
 		return expect( isMigrationInProgress( scenario?.site as SiteExcerptData ) ).toBe( true );

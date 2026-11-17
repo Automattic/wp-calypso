@@ -10,8 +10,7 @@ export function domainManagementLink(
 	{ domain, type }: Pick< ResponseDomain, 'domain' | 'type' >,
 	siteSlug: string,
 	isAllSitesView: boolean,
-	feature?: string,
-	isHostingOverview?: boolean
+	feature?: string
 ) {
 	const viewSlug = domainManagementViewSlug( type );
 
@@ -24,16 +23,14 @@ export function domainManagementLink(
 
 	const isAllDomainManagementEnabled = config.isEnabled( 'calypso/all-domain-management' );
 
-	if ( isAllDomainManagementEnabled && ( isHostingOverview || isAllSitesView ) ) {
+	if ( isAllDomainManagementEnabled && isAllSitesView ) {
 		switch ( feature ) {
 			case 'email-management':
 				return `${ domainManagementAllRoot() }/email/${ domain }/${ siteSlug }`;
 
 			case 'domain-overview':
 			default:
-				return isAllSitesView
-					? `${ domainManagementAllRoot() }/overview/${ domain }/${ siteSlug }`
-					: `/overview/site-domain/domain/${ domain }/${ siteSlug }`;
+				return `${ domainManagementAllRoot() }/overview/${ domain }/${ siteSlug }`;
 		}
 	}
 

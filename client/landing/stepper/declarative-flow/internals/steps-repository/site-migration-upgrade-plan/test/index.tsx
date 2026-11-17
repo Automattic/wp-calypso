@@ -58,7 +58,6 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		await userEvent.click( await screen.findByRole( 'button', { name: /Get Monthly/ } ) );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
-			goToCheckout: true,
 			plan: 'business-bundle-monthly',
 		} );
 	} );
@@ -70,7 +69,6 @@ describe( 'SiteMigrationUpgradePlan', () => {
 		await userEvent.click( await screen.findByRole( 'button', { name: /Get Yearly/ } ) );
 
 		expect( navigation.submit ).toHaveBeenCalledWith( {
-			goToCheckout: true,
 			plan: 'business-bundle',
 		} );
 	} );
