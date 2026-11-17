@@ -55,7 +55,7 @@ const UseMyDomain: StepType< {
 				skipToPlan: true;
 		  }
 		| {
-				isDomainConnected: true;
+				ownershipVerificationCompleted: true;
 				domain: string;
 		  }
 		| undefined;
@@ -132,7 +132,7 @@ const UseMyDomain: StepType< {
 						...verificationData,
 					} );
 					clearQueryParams();
-					submit( { isDomainConnected: true, domain } );
+					submit( { ownershipVerificationCompleted: true, domain } );
 
 					// Early return: the default handler below would re-submit a domainCartItem.
 					return;
@@ -157,7 +157,8 @@ const UseMyDomain: StepType< {
 
 	const handleOnConnected = ( { domain }: { domain: string } ) => {
 		clearQueryParams();
-		submit?.( { isDomainConnected: true, domain } );
+		// The mapping already exists, as it does after ownership verification, so flows send the user on to its setup.
+		submit?.( { ownershipVerificationCompleted: true, domain } );
 	};
 
 	const getInitialQuery = function () {

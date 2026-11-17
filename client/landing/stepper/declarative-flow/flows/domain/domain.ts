@@ -213,11 +213,11 @@ const domain: FlowV2< typeof initialize > = {
 						} )
 					);
 				case STEPS.USE_MY_DOMAIN.slug:
-					// The domain is connected to the site, either just now after ownership verification or already before.
+					// Handle ownership verification completed
 					if (
 						providedDependencies &&
-						'isDomainConnected' in providedDependencies &&
-						providedDependencies.isDomainConnected &&
+						'ownershipVerificationCompleted' in providedDependencies &&
+						providedDependencies.ownershipVerificationCompleted &&
 						'domain' in providedDependencies
 					) {
 						const queryArgs = getQueryArgs( window.location.href );
@@ -226,7 +226,6 @@ const domain: FlowV2< typeof initialize > = {
 						window.location.href = domainConnectionSetupUrl
 							? domainConnectionSetupUrl.replace( '%s', providedDependencies.domain )
 							: defaultRedirect;
-						return;
 					}
 
 					if (
