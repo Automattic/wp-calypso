@@ -78,21 +78,29 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 	return (
 		<RewindFlowNotice
 			gridicon="notice"
-			title={ getKnownThreatsWarning( translate, knownThreats.flagged ) }
+			title={
+				// One paragraph, as on the Dashboard: the warning, then where to go instead.
+				<>
+					<span>{ getKnownThreatsWarning( translate, knownThreats.flagged ) }</span>
+					{ siteSlug && (
+						<>
+							{ ' ' }
+							<span className="rewind-flow-known-threats__instead">
+								<RestoreThatOneInsteadLink
+									siteId={ siteId }
+									siteSlug={ siteSlug }
+									latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
+									currentBackupPeriod={ counts.backupPeriod }
+									inline
+								/>
+							</span>
+						</>
+					) }
+				</>
+			}
 			type={ RewindFlowNoticeLevel.WARNING }
 		>
 			<div className="rewind-flow-known-threats">
-				{ siteSlug && (
-					<p className="rewind-flow-known-threats__instead">
-						<RestoreThatOneInsteadLink
-							siteId={ siteId }
-							siteSlug={ siteSlug }
-							latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-							currentBackupPeriod={ counts.backupPeriod }
-							inline
-						/>
-					</p>
-				) }
 				{ hasScan && (
 					// Native disclosure: the list loads the first time it's opened.
 					<details
