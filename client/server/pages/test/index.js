@@ -1636,6 +1636,19 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Student flow entry points', () => {
+		it.each( [
+			[ '/start/student', { ref: 'edu' }, '/setup/student?ref=edu' ],
+			[ '/start/student/es/', {}, '/setup/student/es' ],
+			[ '/start/student/user/fr', { ref: 'edu' }, '/setup/student/fr?ref=edu' ],
+			[ '/checkout/student', { coupon: 'SAVE10' }, '/setup/student?coupon=SAVE10' ],
+			[ '/checkout/student', {}, '/setup/student' ],
+		] )( 'redirects %s to the Student flow', async ( url, query, destination ) => {
+			const { response } = await app.run( { request: { url, query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
+		} );
+	} );
+
 	describe( 'Route /cspreport', () => {
 		let customApp;
 

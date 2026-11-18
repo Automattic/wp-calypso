@@ -1,4 +1,4 @@
-import { reportError } from '../../../helpers/log-error';
+import { reportError, reportRequestError } from '../../../helpers/log-error';
 import { bumpStat } from '../../../rest-client/bump-stat';
 import { markReadStatus, markPostAsSeen } from '../../../rest-client/wpcom';
 import * as types from '../../action-types';
@@ -43,7 +43,11 @@ export const markAsRead = ( { getState }, { noteId } ) => {
 
 	markReadStatus( noteId, true, ( error, data ) => {
 		if ( error || ! data.success ) {
-			reportError( 'read', error ?? data );
+			if ( error ) {
+				reportRequestError( 'read', error );
+			} else {
+				reportError( 'read', data );
+			}
 			try {
 				return localStorage.removeItem( `note_read_status_${ noteId }` );
 			} catch ( e ) {}

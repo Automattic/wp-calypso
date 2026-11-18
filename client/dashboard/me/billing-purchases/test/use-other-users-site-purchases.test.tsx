@@ -1,21 +1,14 @@
 /**
  * @vitest-environment jsdom
  */
-import { fetchSitePurchases } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { type ReactNode } from 'react';
-import { type MockedFunction, vi } from 'vitest';
+import { vi } from 'vitest';
 import { AuthContext } from '../../../app/auth';
 import { useOtherUsersSitePurchases } from '../use-other-users-site-purchases';
 import type { Purchase, Site, User } from '@automattic/api-core';
-
-vi.mock( '@automattic/api-core', async () => ( {
-	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
-	fetchSitePurchases: vi.fn(),
-} ) );
-
-const mockFetchSitePurchases = fetchSitePurchases as MockedFunction< typeof fetchSitePurchases >;
 
 const VIEWER_ID = 1;
 const OTHER_USER_ID = 2;
@@ -25,6 +18,13 @@ const unmanagedSite = { ID: 200, capabilities: { manage_options: false } } as Si
 
 function makePurchase( ID: number, user_id: number ) {
 	return { ID, user_id, blog_id: managedSite.ID } as Purchase;
+}
+
+function mockSitePurchases( siteId: number, purchases: Purchase[] ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.2/upgrades' )
+		.query( { site: siteId } )
+		.reply( 200, purchases );
 }
 
 function makeWrapper() {
@@ -41,13 +41,9 @@ function makeWrapper() {
 }
 
 describe( 'useOtherUsersSitePurchases', () => {
-	beforeEach( () => {
-		mockFetchSitePurchases.mockReset();
-	} );
-
 	// CHE-585: a site filter hid purchases another administrator made on the site.
 	test( 'returns purchases on a filtered site that belong to other users', async () => {
-		mockFetchSitePurchases.mockResolvedValue( [
+		const scope = mockSitePurchases( managedSite.ID, [
 			makePurchase( 1, VIEWER_ID ),
 			makePurchase( 2, OTHER_USER_ID ),
 		] );
@@ -58,13 +54,15 @@ describe( 'useOtherUsersSitePurchases', () => {
 		);
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
-		expect( mockFetchSitePurchases ).toHaveBeenCalledWith( managedSite.ID );
+		expect( scope.isDone() ).toBe( true );
 		// The viewer's own purchases come from `userPurchasesQuery()`, so they are left out here.
 		expect( result.current.purchases.map( ( purchase ) => purchase.ID ) ).toEqual( [ 2 ] );
 	} );
 
 	// The site endpoint rejects non-managers, so asking would only fill the cache with errors.
-	test( 'does not fetch for filtered sites the viewer cannot manage', () => {
+	test( 'does not fetch for filtered sites the viewer cannot manage', async () => {
+		const scope = mockSitePurchases( unmanagedSite.ID, [] );
+
 		const { result } = renderHook(
 			() =>
 				useOtherUsersSitePurchases( {
@@ -74,7 +72,8 @@ describe( 'useOtherUsersSitePurchases', () => {
 			{ wrapper: makeWrapper() }
 		);
 
-		expect( mockFetchSitePurchases ).not.toHaveBeenCalled();
 		expect( result.current ).toEqual( { purchases: [], isLoading: false } );
+		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		expect( scope.isDone() ).toBe( false );
 	} );
 } );

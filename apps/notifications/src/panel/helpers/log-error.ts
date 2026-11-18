@@ -43,3 +43,21 @@ export function reportError( action: string, error: unknown, extra?: Record< str
 	bumpStat( 'notes-error', action );
 	logError( error, { action, ...extra } );
 }
+
+/**
+ * Report a failed request with `reportError`, but only when the server responded with an HTTP error status.
+ * @param action What failed, e.g. `load`, `reply` or `like`. Used as the stat value.
+ * @param error The request error.
+ * @param extra Optional structured context to attach to the log entry.
+ */
+export function reportRequestError(
+	action: string,
+	error: unknown,
+	extra?: Record< string, unknown >
+) {
+	const status = ( error as { status?: unknown } | null )?.status;
+	if ( typeof status !== 'number' || status <= 0 ) {
+		return;
+	}
+	reportError( action, error, extra );
+}

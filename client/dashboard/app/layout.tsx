@@ -14,7 +14,6 @@ import { withColorScheme } from 'calypso/lib/color-scheme/with-color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
 import { getNormalizedPath, getSuperProps } from './analytics/super-props';
 import { AuthProvider, useAuth } from './auth';
-import { dashboardChartTheme } from './chart-theme';
 import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
@@ -116,7 +115,7 @@ function Layout( { config }: { config: AppConfig } ) {
 				<AuthProvider>
 					<I18nProvider>
 						<AnalyticsProviderWithClient router={ router }>
-							<GlobalChartsProvider theme={ dashboardChartTheme }>
+							<GlobalChartsProvider>
 								{ withColorScheme(
 									<RouterProvider key={ routerKey } router={ router } context={ { config } } />,
 									{

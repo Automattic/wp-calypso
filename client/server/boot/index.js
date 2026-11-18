@@ -10,6 +10,9 @@ import loggerMiddleware from 'calypso/server/middleware/logger';
 import pages from 'calypso/server/pages';
 import pwa from 'calypso/server/pwa';
 import geoipHeaderMiddleware from '../middleware/geoip-header.ts';
+import migrationAuthorization, {
+	migrationAuthorizationPath,
+} from '../middleware/migration-authorization';
 
 /**
  * Returns the server HTTP request handler "app".
@@ -27,6 +30,8 @@ export default function setup() {
 		res.status( 200 ).send( 'ok' );
 	} );
 
+	// WordPress can return application passwords in the callback URL. Strip them before request logging.
+	app.get( migrationAuthorizationPath, migrationAuthorization );
 	app.use( cookieParser() );
 	app.use( userAgentMiddleware() );
 	app.use( loggerMiddleware() );

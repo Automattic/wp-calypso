@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import {
+	DomainData,
 	PartialDomainData,
 	getSiteDomainsQueryObject,
 	useDomainsBulkActionsMutation,
@@ -17,6 +18,18 @@ import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query
 import { Context, DomainsDataViewsProps } from './types';
 
 export const DomainsDataViewsContext = createContext< Context | undefined >( undefined );
+
+// Outside the hook so its reference is stable, letting `useQueries` keep the result until a query changes.
+const combineSiteDomains = ( results: Array< { data?: { domains: DomainData[] } } > ) => {
+	const fetchedSiteDomains: Record< number, ResponseDomain[] > = {};
+	for ( const { data } of results ) {
+		const siteId = data?.domains?.[ 0 ]?.blog_id;
+		if ( typeof siteId === 'number' ) {
+			fetchedSiteDomains[ siteId ] = data?.domains.map( createSiteDomainObject ) ?? [];
+		}
+	}
+	return fetchedSiteDomains;
+};
 
 export const useDomainsDataViewsContext = () => useContext( DomainsDataViewsContext ) as Context;
 
@@ -68,24 +81,14 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 		...new Set( domains?.map( ( domain: PartialDomainData ) => domain.blog_id ) ?? [] ),
 	];
 
-	const allSiteDomains = useQueries( {
+	const siteDomains = useQueries( {
 		queries: allSiteIds.map( ( siteId ) =>
 			getSiteDomainsQueryObject( siteId, {
 				...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( siteId ) } ),
 			} )
 		),
+		combine: combineSiteDomains,
 	} );
-
-	const siteDomains = useMemo( () => {
-		const fetchedSiteDomains: Record< number, ResponseDomain[] > = {};
-		for ( const { data } of allSiteDomains ) {
-			const siteId = data?.domains?.[ 0 ]?.blog_id;
-			if ( typeof siteId === 'number' ) {
-				fetchedSiteDomains[ siteId ] = data?.domains.map( createSiteDomainObject ) ?? [];
-			}
-		}
-		return fetchedSiteDomains;
-	}, [ allSiteDomains ] );
 
 	const getFullDomain = ( domain: PartialDomainData ) => {
 		const domains = siteDomains[ domain.blog_id ] ?? [];
@@ -100,7 +103,7 @@ export const useGenerateDomainsDataViewsState = ( props: DomainsDataViewsProps )
 		[],
 		sitesFilterCallback,
 		'all',
-		[ 'is_a4a_dev_site', 'site_migration', 'is_vip' ],
+		[ 'is_a4a_dev_site', 'is_vip' ],
 		[ 'theme_slug' ]
 	);
 
