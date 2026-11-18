@@ -75,7 +75,7 @@ function mockSchedulesPending( response: object ) {
 }
 
 describe( '<PluginsScheduledUpdates>', () => {
-	test( 'shows a full-page empty state with one next step when there are no schedules', async () => {
+	test( 'shows a full-page empty state with two next steps when there are no schedules', async () => {
 		mockSites();
 		nock( API_BASE ).get( '/wpcom/v2/hosting/update-schedules' ).query( true ).reply( 200, {} );
 
@@ -97,6 +97,12 @@ describe( '<PluginsScheduledUpdates>', () => {
 		const newScheduleLinks = screen.getAllByRole( 'link', { name: 'New schedule' } );
 		expect( newScheduleLinks ).toHaveLength( 1 );
 		expect( newScheduleLinks[ 0 ] ).toHaveAttribute( 'href', '/plugins/scheduled-updates/new' );
+
+		expect( screen.getByText( 'Update a plugin now, or turn on auto‑updates.' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Manage plugins' } ) ).toHaveAttribute(
+			'href',
+			'/plugins/manage'
+		);
 	} );
 
 	test( 'shows the header button and the table when there are schedules', async () => {
@@ -154,7 +160,7 @@ describe( '<PluginsScheduledUpdates>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'records a Tracks event when the next step button is clicked', async () => {
+	test( 'records a Tracks event when a next step button is clicked', async () => {
 		const user = userEvent.setup();
 		mockSites();
 		nock( API_BASE ).get( '/wpcom/v2/hosting/update-schedules' ).query( true ).reply( 200, {} );
@@ -170,6 +176,13 @@ describe( '<PluginsScheduledUpdates>', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_plugins_scheduled_updates_empty_state_action_click',
 			{ action: 'new-schedule' }
+		);
+
+		await user.click( screen.getByRole( 'link', { name: 'Manage plugins' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_plugins_scheduled_updates_empty_state_action_click',
+			{ action: 'manage-plugins' }
 		);
 	} );
 

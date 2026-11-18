@@ -50,7 +50,9 @@ $compact-text-block-height: $compact-line-height + $grid-unit-05 + 2 * $compact-
 	}
 }
 
-.dashboard-empty-state__wrapper-content {
+.dashboard-empty-state__wrapper:not(.is-compact) .dashboard-empty-state__wrapper-content {
+	padding-block: $grid-unit-30;
+
 	@include break-medium {
 		padding-block: $grid-unit-40;
 	}

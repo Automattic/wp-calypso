@@ -4,12 +4,13 @@ import { FormToggle, Icon, Tooltip } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, type Field, filterSortAndPaginate, Operator, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { info, scheduled } from '@wordpress/icons';
+import { info, plugins, scheduled } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState, useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
+	pluginsManageRoute,
 	pluginsScheduledUpdatesEditRoute,
 	pluginsScheduledUpdatesNewRoute,
 } from '../../app/router/plugins';
@@ -277,6 +278,27 @@ export default function PluginsScheduledUpdates() {
 										__next40pxDefaultSize
 									>
 										{ __( 'New schedule' ) }
+									</RouterLinkButton>
+								}
+							/>
+							<EmptyState.ActionItem
+								title={ __( 'Manage plugins' ) }
+								description={ __( 'Update a plugin now, or turn on auto‑updates.' ) }
+								decoration={ <Icon icon={ plugins } size={ 24 } /> }
+								actions={
+									<RouterLinkButton
+										variant="secondary"
+										size="compact"
+										to={ pluginsManageRoute.to }
+										onClick={ () =>
+											recordTracksEvent(
+												'calypso_dashboard_plugins_scheduled_updates_empty_state_action_click',
+												{ action: 'manage-plugins' }
+											)
+										}
+										__next40pxDefaultSize
+									>
+										{ __( 'Manage plugins' ) }
 									</RouterLinkButton>
 								}
 							/>
