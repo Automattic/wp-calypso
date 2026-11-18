@@ -148,6 +148,7 @@ const NotificationApp = ( {
 	constrainTabbing = false,
 	isViewSettingsEnabled = false,
 	onOpenFullView,
+	isMarkAsUnreadEnabled = false,
 	actionHandlers = {},
 	wpcom,
 }: {
@@ -156,6 +157,7 @@ const NotificationApp = ( {
 	constrainTabbing?: boolean;
 	isViewSettingsEnabled?: boolean;
 	onOpenFullView?: ( view: FullView ) => void;
+	isMarkAsUnreadEnabled?: boolean;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
@@ -247,6 +249,7 @@ const NotificationApp = ( {
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
 					onOpenFullView={ onOpenFullView }
+					isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
 				>
 					<NotificationContent
 						isDismissible={ isDismissible }

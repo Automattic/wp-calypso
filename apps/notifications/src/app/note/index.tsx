@@ -22,6 +22,7 @@ import SimplifiedNote, { hasNoteContext } from '../note-simplified';
 import { getTemporaryNoteTitle, toSentenceCase } from '../note-simplified/labels';
 import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
+import MarkUnreadButton from '../templates/mark-unread-button';
 import NoteSummary from '../templates/note-summary';
 import './style.scss';
 import type { NoteNavigation } from './hooks';
@@ -148,6 +149,7 @@ const Note = ( {
 								onClick={ onOpenFullView }
 							/>
 						) }
+						<MarkUnreadButton note={ note } goBack={ goBack } />
 						{ ! isLargeScreen && (
 							<>
 								<Button

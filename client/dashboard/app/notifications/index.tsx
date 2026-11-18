@@ -65,6 +65,7 @@ export default function Notifications( {
 	const unseenCountRef = useRef< number | undefined >( user.has_unseen_notes ? undefined : 0 );
 	const { recordTracksEvent } = useAnalytics();
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+	const isMarkAsUnreadEnabled = config.isEnabled( 'notifications/mark-as-unread' );
 	const onNotificationCount = useCallback( ( count: number ) => {
 		unseenCountRef.current = count;
 		setHasUnseenNotifications( count > 0 );
@@ -235,6 +236,7 @@ export default function Notifications( {
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
 						onOpenFullView={ onOpenInbox }
+						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
