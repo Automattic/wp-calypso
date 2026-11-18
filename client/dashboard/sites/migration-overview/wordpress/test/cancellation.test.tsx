@@ -65,11 +65,7 @@ test( 'an old cached status hides Cancel until the normal status refresh confirm
 		siteWordPressMigrationStatusQuery( site.ID ).queryKey,
 		migration( 'paused' )
 	);
-	mockApi()
-		.get( base + '/status' )
-		.query( true )
-		.delay( 100 )
-		.reply( 200, migration( 'paused', { can_cancel: true } ) );
+	replyStatus( migration( 'paused', { can_cancel: true } ) );
 	render( <WordPressMigration site={ site } />, { queryClient } );
 	expect( screen.getByRole( 'heading', { name: 'Before we migrate your site' } ) ).toBeVisible();
 	expect( cancelButton() ).not.toBeInTheDocument();

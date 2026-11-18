@@ -320,7 +320,7 @@ function SiteOverview( {
 					/>
 				) }
 			</GuidedTourContextProvider>
-			<FlashMessage id="migration-cancelled" message={ __( 'Migration cancelled' ) } />
+			<FlashMessage id="migration-cancelled" message={ __( 'Migration cancelled.' ) } />
 			<DifmOfferThankYou />
 			<DifmOfferDeepLink site={ site } />
 			<PerformanceTrackerStop />

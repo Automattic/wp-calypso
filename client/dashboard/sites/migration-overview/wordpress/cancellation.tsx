@@ -16,6 +16,7 @@ export function MigrationCancellation( {
 	return (
 		<>
 			<Button
+				__next40pxDefaultSize
 				variant="link"
 				className="wordpress-migration__note-link"
 				disabled={ disabled }
@@ -36,10 +37,11 @@ export function MigrationCancellation( {
 							) }
 						</Text>
 						<ButtonStack justify="flex-end">
-							<Button variant="tertiary" onClick={ () => setIsOpen( false ) }>
+							<Button __next40pxDefaultSize variant="tertiary" onClick={ () => setIsOpen( false ) }>
 								{ __( 'Keep migrating' ) }
 							</Button>
 							<Button
+								__next40pxDefaultSize
 								variant="primary"
 								disabled={ disabled }
 								onClick={ () => {
