@@ -18,6 +18,7 @@ import {
 	createSite,
 	isAIBuilderOnboardingFlow,
 	isCopySiteFlow,
+	isDomainFlow,
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
@@ -503,7 +504,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 			if ( additionalCartItems.length > 0 ) {
 				await addProductsToCart( site.siteSlug, flow, additionalCartItems, {
-					throwOnError: flow === ONBOARDING_FLOW,
+					throwOnError: isOnboardingFlow( flow ) || isDomainFlow( flow ),
 				} );
 			}
 
