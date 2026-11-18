@@ -446,11 +446,9 @@ describe( '<AIToolsSettings>', () => {
 				'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
 			)
 		).toBeVisible();
-		expect(
-			screen.getByText(
-				'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
-			)
-		).toBeVisible();
+		const postByEmailNotice =
+			'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.';
+		expect( screen.queryByText( postByEmailNotice ) ).not.toBeInTheDocument();
 
 		const toggle = screen.getByRole( 'checkbox', {
 			name: 'Enable WordPress Agent email address',
@@ -472,6 +470,7 @@ describe( '<AIToolsSettings>', () => {
 		const addressInput = await screen.findByLabelText( 'WordPress Agent email address' );
 		expect( addressInput ).toHaveValue( 'agent+first-secret@post.wordpress.com' );
 		expect( toggle ).toBeChecked();
+		expect( screen.getByText( postByEmailNotice ) ).toBeVisible();
 
 		const addToContactsLink = screen.getByRole( 'link', { name: 'Add to contacts' } );
 		expect( addToContactsLink ).toHaveAttribute( 'download', 'email-assistant.wordpress.com.vcf' );
@@ -518,6 +517,7 @@ describe( '<AIToolsSettings>', () => {
 		await waitFor( () => {
 			expect( toggle ).not.toBeChecked();
 			expect( screen.queryByLabelText( 'WordPress Agent email address' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( postByEmailNotice ) ).not.toBeInTheDocument();
 		} );
 	} );
 
