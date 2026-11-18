@@ -5,7 +5,7 @@ export function getAkismetPro500ProductDisplayName( productName: string, quantit
 		/* translators: %s is the product name "Akismet Pro", %d is a number of requests/month */
 		return translate( '%(productName)s (%(requests)d requests/month)', {
 			args: {
-				productName: productName.replace( /\s*\(.*$/, '' ).trim(),
+				productName: productName.split( '(' )[ 0 ].trim(),
 				requests: 500 * quantity,
 			},
 			textOnly: true,

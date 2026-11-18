@@ -23,7 +23,9 @@ function convertUrlsToMarkdown( text: string ): string {
 		let url = match;
 
 		// Remove trailing punctuation if it's only a sentence-ending character
-		url = url.replace( /[.,!?;:]+$/g, '' );
+		while ( url && '.,!?;:'.includes( url[ url.length - 1 ] ) ) {
+			url = url.slice( 0, -1 );
+		}
 
 		if ( ! /^https?:\/\//i.test( url ) ) {
 			url = `https://${ url }`;

@@ -37,7 +37,7 @@ export interface ThrottleFlag {
 const THROTTLED_PATHS: Record< ThrottleId, RegExp > = {
 	signup: /sites\/new(?:[/?"\s]|$)/i,
 	'domain-suggestions': /domains\/suggestions(?:[/?"\s]|$)/i,
-	'domain-availability': /[^/]+\/is-available(?:[/?"\s]|$)/i,
+	'domain-availability': /[^/]\/is-available(?:[/?"\s]|$)/i,
 };
 
 /**
