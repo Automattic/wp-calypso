@@ -5,6 +5,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
 import { useFormattedTime } from '../../components/formatted-time';
 import OverviewCard from '../../components/overview-card';
+import { TextBlur } from '../../components/text-blur';
 import { useTimeSince } from '../../components/time-since';
 import { getBackupUrl } from '../../utils/site-backup';
 import { isSimple } from '../../utils/site-types';
@@ -30,9 +31,11 @@ const FAILED_BACKUP_ACTIVITIES = [ 'rewind__backup_error', 'rewind__backup_only_
 function BackupCardFailed( {
 	backupUrl,
 	backup,
+	isLoading,
 }: {
 	backupUrl: string;
 	backup?: SiteActivityLog;
+	isLoading: boolean;
 } ) {
 	const timeSinceLastSuccessful = useTimeSince( backup?.published ?? new Date( 0 ).toISOString() );
 
@@ -42,13 +45,17 @@ function BackupCardFailed( {
 				__( 'Last successful backup was %s.' ),
 				timeSinceLastSuccessful
 			)
-		: 'No successful backups found.';
+		: __( 'No successful backups found.' );
 
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
 			heading={ __( 'Backup failed' ) }
-			description={ description }
+			description={
+				<TextBlur isBlurred={ isLoading } length={ 30 }>
+					{ description }
+				</TextBlur>
+			}
 			link={ backupUrl }
 			intent="error"
 		/>
@@ -85,7 +92,7 @@ export function BackupCardContent( { siteId, backupUrl }: { siteId: number; back
 		select: ( data ) => data.activityLogs[ 0 ],
 	} );
 
-	const { data: lastSuccessfulBackup } = useQuery( {
+	const { data: lastSuccessfulBackup, isLoading: isLoadingLastSuccessfulBackup } = useQuery( {
 		...siteActivityLogQuery( siteId, { name: SUCCESSFUL_BACKUP_ACTIVITIES, number: 1 } ),
 		select: ( data ) => data.activityLogs[ 0 ],
 		// Only fetch successful backups if there are any failed backups
@@ -108,7 +115,13 @@ export function BackupCardContent( { siteId, backupUrl }: { siteId: number; back
 	}
 
 	if ( FAILED_BACKUP_ACTIVITIES.includes( lastBackup.name ) ) {
-		return <BackupCardFailed backupUrl={ backupUrl } backup={ lastSuccessfulBackup } />;
+		return (
+			<BackupCardFailed
+				backupUrl={ backupUrl }
+				backup={ lastSuccessfulBackup }
+				isLoading={ isLoadingLastSuccessfulBackup }
+			/>
+		);
 	}
 
 	return <BackupCardSuccess backupUrl={ backupUrl } lastBackup={ lastBackup } />;

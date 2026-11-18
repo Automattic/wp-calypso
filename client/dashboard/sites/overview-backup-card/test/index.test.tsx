@@ -26,9 +26,11 @@ const mockSite: Site = {
 function mockBackups( {
 	latest,
 	lastSuccessful = latest,
+	lastSuccessfulLoaded,
 }: {
 	latest: Partial< SiteActivityLog >[];
 	lastSuccessful?: Partial< SiteActivityLog >[];
+	lastSuccessfulLoaded?: Promise< void >;
 } ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
@@ -37,7 +39,10 @@ function mockBackups( {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
 		.query( ( query ) => ! query[ 'name[]' ]?.includes( 'rewind__backup_error' ) )
-		.reply( 200, { current: { orderedItems: lastSuccessful } } );
+		.reply( async () => {
+			await lastSuccessfulLoaded;
+			return [ 200, { current: { orderedItems: lastSuccessful } } ];
+		} );
 }
 
 vi.mock( '../../../app/locale', () => ( {
@@ -107,7 +112,11 @@ describe( 'BackupCard', () => {
 		} );
 	} );
 
-	test( 'shows "No successful backups found" when backup failed and no successful backup exists', async () => {
+	test( 'shows "No successful backups found" once it finds no successful backup after a failed one', async () => {
+		let resolveLastSuccessful: () => void = () => {};
+		const lastSuccessfulLoaded = new Promise< void >( ( resolve ) => {
+			resolveLastSuccessful = resolve;
+		} );
 		mockBackups( {
 			latest: [
 				{
@@ -118,13 +127,16 @@ describe( 'BackupCard', () => {
 				},
 			],
 			lastSuccessful: [],
+			lastSuccessfulLoaded,
 		} );
 
 		render( <BackupCard site={ mockSite } /> );
 
-		await waitFor( () => {
-			expect( screen.getByText( 'Backup failed' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'No successful backups found.' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByRole( 'heading', { name: 'Backup failed' } ) ).toBeVisible();
+		expect( screen.queryByText( 'No successful backups found.' ) ).not.toBeInTheDocument();
+
+		resolveLastSuccessful();
+
+		expect( await screen.findByText( 'No successful backups found.' ) ).toBeVisible();
 	} );
 } );
