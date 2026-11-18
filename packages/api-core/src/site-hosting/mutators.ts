@@ -1,4 +1,18 @@
 import { wpcom } from '../wpcom-fetcher';
+import type { WordPressPrerelease } from './types';
+
+export async function updateWordPressPrerelease(
+	siteId: number,
+	data: { opted_out: boolean }
+): Promise< WordPressPrerelease > {
+	return wpcom.req.post(
+		{
+			path: `/sites/${ siteId }/hosting/wp-version/prerelease`,
+			apiNamespace: 'wpcom/v2',
+		},
+		data
+	);
+}
 
 export async function updateStaticFile404Setting( siteId: number, setting: string ) {
 	return wpcom.req.post(
