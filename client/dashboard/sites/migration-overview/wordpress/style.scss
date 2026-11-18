@@ -1,5 +1,3 @@
-@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
-
 .wordpress-migration__progress-bar {
 	width: 100%;
 }
@@ -157,11 +155,7 @@
 	padding: 16px;
 	border: 1px solid var( --dashboard-surface__border-color );
 	border-radius: 8px;
-	background: color-mix( in srgb, var( --dashboard-surface__background-color ) 96%, #000 );
-
-	@include ui-mixins.when-dark-theme {
-		background: color-mix( in srgb, var( --dashboard-surface__background-color ) 96%, #fff );
-	}
+	background: color-mix( in srgb, var( --dashboard-surface__background-color ) 96%, var( --wpds-color-foreground-content-neutral ) );
 }
 
 // A link in the note reads as part of it, so it only turns blue on hover.
@@ -176,17 +170,13 @@
 
 // A tinted strip under the card for a side note, like the AI tools' features footer.
 .wordpress-migration__note {
-	background: color-mix( in srgb, var( --dashboard-surface__background-color ) 98%, #000 );
+	background: color-mix( in srgb, var( --dashboard-surface__background-color ) 98%, var( --wpds-color-foreground-content-neutral ) );
 	border-top-color: var( --dashboard-surface__border-color );
-
-	@include ui-mixins.when-dark-theme {
-		background: color-mix( in srgb, var( --dashboard-surface__background-color ) 98%, #fff );
-		// The filled footer covers the card's inset box-shadow border, so redraw the covered edges.
-		box-shadow:
-			inset 1px 0 0 var( --dashboard-surface__border-color ),
-			inset -1px 0 0 var( --dashboard-surface__border-color ),
-			inset 0 -1px 0 var( --dashboard-surface__border-color );
-	}
+	// The filled footer covers the card's inset box-shadow border, so redraw the covered edges.
+	box-shadow:
+		inset 1px 0 0 var( --dashboard-surface__border-color ),
+		inset -1px 0 0 var( --dashboard-surface__border-color ),
+		inset 0 -1px 0 var( --dashboard-surface__border-color );
 }
 
 // A domain is one long word, so let it break anywhere rather than run past the card.

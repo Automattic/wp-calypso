@@ -23,14 +23,13 @@
 		padding: 10px 16px;
 		font-size: 13px;
 		line-height: 20px;
-		background-color: #fff;
+		background-color: var( --wpds-color-background-surface-neutral-strong );
 		transition:
 			border-color 0.1s ease-in-out,
 			box-shadow 0.1s ease-in-out;
 
+		// Stripe renders the card fields in an iframe that can't read CSS tokens; remove once their colors come from the theme.
 		@include ui-mixins.when-dark-theme {
-			background-color: var( --dashboard-surface__background-color );
-
 			&.StripeElement--empty:not( .StripeElement--invalid ) iframe {
 				filter: grayscale( 1 ) brightness( 1.04 );
 			}

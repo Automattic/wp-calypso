@@ -64,7 +64,7 @@ Translators wrap translated text in `<font>` elements, reparenting nodes React t
 
 ### Dark mode
 
-- Shared dark-mode tokens and component-wide overrides for components used across multiple Calypso surfaces live in `client/lib/color-scheme/dark-theme.scss`. Add dashboard-only exceptions to `client/dashboard/app/_dark-theme.scss` using the existing `dashboard-dark-theme-*` mixins (or add a new one and `@include` it from `dashboard-dark-theme`) instead of writing ad-hoc `:root[data-theme='dark']` blocks elsewhere.
-- When adding a component that is not already used in a dark-mode-supported surface, verify it in dark mode and add or reuse overrides where needed. If the component is already covered by the existing dark-mode baseline, assume the shared styling holds unless the new usage introduces new variants, states, wrappers, or local CSS.
-- Prefer overriding the existing CSS custom properties (`--dashboard-*`, `--wp-components-*`, `--jp-*`) over hardcoding hex values in component styles.
-- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the shared `when-dark-theme` mixin from `calypso/assets/stylesheets/shared/mixins/dark-theme` (defined in `client/assets/stylesheets/shared/mixins/_dark-theme.scss`).
+- Dark mode comes from the WPDS `ThemeProvider` (`app/theme-provider.tsx`), which generates every `--wpds-*` token for the user's color scheme. Style with `--wpds-*` tokens (or the `--dashboard-*` aliases of them) and the component works in both modes with no dark-specific CSS.
+- Don't add `:root[data-theme='dark']` blocks, `when-dark-theme` blocks or hex colors. If a component you don't own hardcodes a light color, map it to tokens in `app/wp-components-overrides.scss` or `app/_dark-theme.scss` with a one-line comment naming the limitation and what removes it.
+- Don't set `--wpds-*` properties; Stylelint rejects it. Pass a token to the component's color prop instead (for example `Progress.Indicator color`).
+- `client/lib/color-scheme/dark-theme.scss` is the legacy dark theme for Reader and /themes, which don't have the provider yet. Don't extend it for the Dashboard.
