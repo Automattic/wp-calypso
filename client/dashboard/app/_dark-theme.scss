@@ -394,9 +394,6 @@
 /* Primary site address illustration */
 @mixin dashboard-dark-theme-primary-address-illustration {
 	.primary-address-illustration {
-		--wpds-color-background-surface-neutral-strong: var( --dashboard-surface__background-color );
-		--wpds-color-stroke-interactive-brand: var( --wp-admin-theme-color-darker-20 );
-		--wpds-color-foreground-interactive-brand: var( --wp-admin-theme-color-darker-20 );
 		background: var( --dashboard__background-color );
 	}
 
