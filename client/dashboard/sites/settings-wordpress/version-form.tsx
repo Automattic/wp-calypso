@@ -78,7 +78,7 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 		},
 	];
 
-	const canOptOut = typeof prerelease?.opted_out === 'boolean';
+	const canOptOut = prerelease?.auto_enrollable === true;
 
 	const form = {
 		layout: { type: 'regular' as const },

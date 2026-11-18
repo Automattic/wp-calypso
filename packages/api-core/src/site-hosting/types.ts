@@ -9,4 +9,5 @@ export interface WordPressPrerelease {
 	version: string;
 	auto_enrolled: boolean;
 	opted_out: boolean;
+	auto_enrollable: boolean;
 }

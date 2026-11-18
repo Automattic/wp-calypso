@@ -15,6 +15,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { hasHostingFeature } from '../../utils/site-features';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import { BetaProgramNotice } from './beta-program-notice';
@@ -47,6 +48,8 @@ function VersionManagement( { site }: { site: Site } ) {
 			<VersionSwitchNotice
 				backupState={ backupState }
 				targetVersion={ targetVersion === 'beta' ? betaVersion : latestVersion }
+				canRestoreBackup={ hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE ) }
+				switchingToBeta={ targetVersion === 'beta' }
 			/>
 		);
 	} else if ( switchedToLatest ) {

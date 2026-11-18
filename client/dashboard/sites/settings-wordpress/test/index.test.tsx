@@ -62,8 +62,9 @@ function mockApi(
 	mockedSite: Site = site,
 	prerelease: { status: number; body?: nock.Body } = {
 		status: 200,
-		body: { version: '7.0', auto_enrolled: false, opted_out: false },
-	}
+		body: { version: '7.0', auto_enrolled: false, opted_out: false, auto_enrollable: true },
+	},
+	pendingVersion: string | null = null
 ) {
 	mockSite( mockedSite );
 
@@ -82,7 +83,7 @@ function mockApi(
 		.persist()
 		.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version/pending` )
 		.query( true )
-		.reply( 200, null as unknown as nock.Body );
+		.reply( 200, JSON.stringify( pendingVersion ), { 'Content-Type': 'application/json' } );
 
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
@@ -170,7 +171,7 @@ describe( '<WordPressSettings>', () => {
 	test( 'renders the early access notice for a site auto-enrolled in the beta', async () => {
 		mockApi( 'beta', premiumSite, {
 			status: 200,
-			body: { version: '7.0', auto_enrolled: true, opted_out: false },
+			body: { version: '7.0', auto_enrolled: true, opted_out: false, auto_enrollable: true },
 		} );
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		mockTrackVersions();
@@ -218,10 +219,69 @@ describe( '<WordPressSettings>', () => {
 		expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
 	} );
 
+	test( 'hides the early access opt-out on a site enrollment never picks', async () => {
+		mockApi( 'latest', premiumSite, {
+			status: 200,
+			body: { version: '7.0', auto_enrolled: false, opted_out: false, auto_enrollable: false },
+		} );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		mockTrackVersions();
+
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect( await screen.findByRole( 'combobox', { name: 'WordPress version' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'checkbox', { name: OPT_OUT_LABEL } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'tells a site without self-serve backups that it is getting ready to switch to the beta', async () => {
+		mockApi( 'latest', premiumSite, undefined, 'beta' );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		mockTrackVersions();
+
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect( await screen.findByText( 'Switching to WordPress 7.0-RC2' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'Getting your site ready. Once it’s switched, we’ll check that your site still loads and move it back to the stable release if it doesn’t.'
+			)
+		).toBeVisible();
+	} );
+
+	test( 'tells a site with self-serve backups that it is backing up to switch to the beta', async () => {
+		mockApi( 'latest', { ...site, is_wpcom_staging_site: false } as Site, undefined, 'beta' );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		mockTrackVersions();
+
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect( await screen.findByText( 'Switching to WordPress 7.0-RC2' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'Backing up your site. Once it’s switched, we’ll check that your site still loads and move it back to the stable release if it doesn’t.'
+			)
+		).toBeVisible();
+	} );
+
+	test( 'leaves out the health check when switching back to the stable release', async () => {
+		mockApi( 'beta', premiumSite, undefined, 'latest' );
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		mockTrackVersions();
+
+		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'WordPress' } );
+
+		expect( await screen.findByText( 'Switching to WordPress 6.8.1' ) ).toBeVisible();
+		expect( screen.getByText( 'Getting your site ready.' ) ).toBeVisible();
+	} );
+
 	test( 'checks the early access opt-out for a site that opted out', async () => {
 		mockApi( 'latest', premiumSite, {
 			status: 200,
-			body: { version: '7.0', auto_enrolled: false, opted_out: true },
+			body: { version: '7.0', auto_enrolled: false, opted_out: true, auto_enrollable: true },
 		} );
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		mockTrackVersions();
@@ -237,7 +297,7 @@ describe( '<WordPressSettings>', () => {
 
 		mockApi( 'beta', premiumSite, {
 			status: 200,
-			body: { version: '7.0', auto_enrolled: true, opted_out: false },
+			body: { version: '7.0', auto_enrolled: true, opted_out: false, auto_enrollable: true },
 		} );
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		mockTrackVersions();
@@ -255,7 +315,12 @@ describe( '<WordPressSettings>', () => {
 				expect( body ).toEqual( { opted_out: true } );
 				return true;
 			} )
-			.reply( 200, { version: '7.0', auto_enrolled: true, opted_out: true } );
+			.reply( 200, {
+				version: '7.0',
+				auto_enrolled: true,
+				opted_out: true,
+				auto_enrollable: true,
+			} );
 
 		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
