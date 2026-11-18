@@ -1,6 +1,12 @@
-import { fetchSftpUsers, createSftpUser, resetSftpPassword } from '@automattic/api-core';
+import {
+	fetchSftpUsers,
+	createSftpUser,
+	deleteSftpUser,
+	resetSftpPassword,
+} from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
+import { siteSshAccessStatusQuery } from './site-ssh';
 import type { SftpUser } from '@automattic/api-core';
 
 export const siteSftpUsersQuery = ( siteId: number ) =>
@@ -46,5 +52,18 @@ export const siteSftpUsersResetPasswordMutation = ( siteId: number ) =>
 			queryClient.setQueryData( siteSftpUsersQuery( siteId ).queryKey, ( currentSftpUsers ) =>
 				updateCurrentSftpUsers( currentSftpUsers, updatedSftpUser )
 			);
+		},
+	} );
+
+export const siteSftpUsersDeleteMutation = ( siteId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'site-sftp-users-delete' },
+		mutationFn: ( sshUsername: string ) => deleteSftpUser( siteId, sshUsername ),
+		onSuccess: ( _data, deletedUsername ) => {
+			queryClient.setQueryData( siteSftpUsersQuery( siteId ).queryKey, ( currentSftpUsers ) =>
+				currentSftpUsers?.filter( ( { username } ) => username !== deletedUsername )
+			);
+			// The endpoint turns SSH access off when it removes the last SFTP user.
+			queryClient.invalidateQueries( { queryKey: siteSshAccessStatusQuery( siteId ).queryKey } );
 		},
 	} );

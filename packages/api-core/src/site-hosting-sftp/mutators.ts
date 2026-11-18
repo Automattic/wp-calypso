@@ -8,6 +8,14 @@ export async function createSftpUser( siteId: number ): Promise< SftpUser > {
 	} );
 }
 
+export async function deleteSftpUser( siteId: number, sshUsername: string ): Promise< void > {
+	return wpcom.req.post( {
+		path: `/sites/${ siteId }/hosting/ssh-user/${ sshUsername }`,
+		apiNamespace: 'wpcom/v2',
+		method: 'DELETE',
+	} );
+}
+
 export async function resetSftpPassword(
 	siteId: number,
 	sshUsername: string
