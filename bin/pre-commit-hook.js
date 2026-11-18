@@ -1,5 +1,4 @@
-const execSync = require( 'child_process' ).execSync;
-const spawnSync = require( 'child_process' ).spawnSync;
+const { execFileSync, spawnSync } = require( 'child_process' );
 const existsSync = require( 'fs' ).existsSync;
 const path = require( 'path' );
 const chalk = require( 'chalk' );
@@ -20,13 +19,6 @@ function groupBy( collection, iteratee ) {
 	}, {} );
 }
 
-function quotedPath( pathToQuote ) {
-	if ( pathToQuote.includes( ' ' ) ) {
-		return `"${ pathToQuote }"`;
-	}
-	return pathToQuote;
-}
-
 console.log(
 	'\nBy contributing to this project, you license the materials you contribute ' +
 		'under the GNU General Public License v2 (or later). All materials must have ' +
@@ -38,11 +30,11 @@ require( './validate-config-keys' );
 
 /**
  * Parses the output of a git diff command into file paths.
- * @param   {string} command Command to run. Expects output like `git diff --name-only […]`
- * @returns {Array}          Paths output from git command
+ * @param   {string[]} args Arguments for `git diff`, e.g. `[ '--name-only', … ]`
+ * @returns {Array}         Paths output from git command
  */
-function parseGitDiffToPathArray( command ) {
-	return execSync( command, { encoding: 'utf8' } )
+function parseGitDiffToPathArray( args ) {
+	return execFileSync( 'git', [ 'diff', ...args ], { encoding: 'utf8' } )
 		.split( '\n' )
 		.map( ( name ) => name.trim() )
 		.filter( ( name ) => /(?:\.json|\.[cm]?[jt]sx?|\.md|\.scss|\.php)$/.test( name ) );
@@ -90,12 +82,12 @@ function phpcsInstalled() {
 const phpcs = phpcsInstalled();
 
 // grab a list of all the files staged to commit
-const files = parseGitDiffToPathArray( 'git diff --cached --name-only --diff-filter=ACM' );
+const files = parseGitDiffToPathArray( [ '--cached', '--name-only', '--diff-filter=ACM' ] );
 
 // grab a list of all the files with changes in the working copy.
 // This list may have overlaps with the staged list if files are
 // partially staged...
-const dirtyFiles = new Set( parseGitDiffToPathArray( 'git diff --name-only --diff-filter=ACM' ) );
+const dirtyFiles = new Set( parseGitDiffToPathArray( [ '--name-only', '--diff-filter=ACM' ] ) );
 
 // we don't want to format any files that are partially staged or unstaged
 dirtyFiles.forEach( ( file ) =>
@@ -107,17 +99,13 @@ dirtyFiles.forEach( ( file ) =>
 // Remove all the dirty files from the set to format
 const toFormat = files.filter( ( file ) => ! dirtyFiles.has( file ) );
 
-// Split the set to format into things to format with stylelint and things to format with prettier.
+// Split the set to format into things to format with prettier and PHP files for PHPCBF.
 // We avoid prettier on sass files because of outstanding bugs in how prettier handles
-// single line comments. We also split on PHP files for PHPCS handling.
-const {
-	toPrettify = [],
-	toStylelintfix = [],
-	toPHPCBF = [],
-} = groupBy( toFormat, ( file ) => {
+// single line comments.
+const { toPrettify = [], toPHPCBF = [] } = groupBy( toFormat, ( file ) => {
 	switch ( true ) {
 		case file.endsWith( '.scss' ):
-			return 'toStylelintfix';
+			return 'unformatted';
 		case file.endsWith( '.php' ):
 			return 'toPHPCBF';
 		default:
@@ -131,18 +119,14 @@ if ( toPrettify.length ) {
 	// chunk this up into multiple runs if we have a lot of files to avoid E2BIG
 	for ( let i = 0; i < toPrettify.length; i += 500 ) {
 		const batch = toPrettify.slice( i, i + 500 );
-		execSync(
-			`./node_modules/.bin/prettier --ignore-path .prettierignore --write ${ batch.join( ' ' ) }`
-		);
-		execSync( `git add ${ batch.join( ' ' ) }` );
+		execFileSync( './node_modules/.bin/prettier', [
+			'--ignore-path',
+			'.prettierignore',
+			'--write',
+			...batch,
+		] );
+		execFileSync( 'git', [ 'add', ...batch ] );
 	}
-}
-
-// Format the sass files with stylelint and then re-stage them. Swallow the output.
-toStylelintfix.forEach( ( file ) => console.log( `stylelint formatting staged file: ${ file }` ) );
-if ( toStylelintfix.length ) {
-	spawnSync( `./node_modules/.bin/stylelint --fix ${ toStylelintfix.join( ' ' ) }` );
-	execSync( `git add ${ toStylelintfix.join( ' ' ) }` );
 }
 
 // Format the PHP files with PHPCBF and then re-stage them. Swallow the output.
@@ -150,11 +134,7 @@ toPHPCBF.forEach( ( file ) => console.log( `PHPCBF formatting staged file: ${ fi
 if ( toPHPCBF.length ) {
 	if ( phpcs ) {
 		try {
-			execSync(
-				`${ quotedPath( phpcbfPath ) } --standard=WordPress ${ phpcsExclusions.join(
-					' '
-				) } ${ toPHPCBF.join( ' ' ) }`
-			);
+			execFileSync( phpcbfPath, [ '--standard=WordPress', ...phpcsExclusions, ...toPHPCBF ] );
 		} catch ( error ) {
 			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
 			// https://github.com/squizlabs/PHP_CodeSniffer/blob/HEAD/src/Runner.php#L210
@@ -162,7 +142,7 @@ if ( toPHPCBF.length ) {
 				linterFailure();
 			}
 		}
-		execSync( `git add ${ toPHPCBF.join( ' ' ) }` );
+		execFileSync( 'git', [ 'add', ...toPHPCBF ] );
 	} else {
 		printPhpcsDocs();
 	}
@@ -190,11 +170,10 @@ const {
 // first stylelint
 if ( toStylelint.length ) {
 	const lintResult = spawnSync( './node_modules/.bin/stylelint', [ ...toStylelint ], {
-		shell: true,
 		stdio: 'inherit',
 	} );
 
-	if ( lintResult.status ) {
+	if ( lintResult.status !== 0 ) {
 		linterFailure();
 	}
 }
@@ -202,11 +181,10 @@ if ( toStylelint.length ) {
 // then eslint
 if ( toEslint.length ) {
 	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ], {
-		shell: true,
 		stdio: 'inherit',
 	} );
 
-	if ( lintResult.status ) {
+	if ( lintResult.status !== 0 ) {
 		linterFailure();
 	}
 }
@@ -215,15 +193,14 @@ if ( toEslint.length ) {
 if ( toPHPCS.length ) {
 	if ( phpcs ) {
 		const lintResult = spawnSync(
-			quotedPath( phpcsPath ),
+			phpcsPath,
 			[ '--standard=WordPress', ...phpcsExclusions, ...toPHPCS ],
 			{
-				shell: true,
 				stdio: 'inherit',
 			}
 		);
 
-		if ( lintResult.status ) {
+		if ( lintResult.status !== 0 ) {
 			linterFailure();
 		}
 	} else {

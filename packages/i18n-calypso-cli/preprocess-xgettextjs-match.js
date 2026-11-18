@@ -129,7 +129,7 @@ function makeDoubleQuoted( literal ) {
 			'"' +
 			literal
 				.substring( 1, literal.length - 1 )
-				.replace( /`/g, '`' )
+				.replace( /\\`/g, '`' )
 				.replace( /(\\|")/g, '\\$1' ) +
 			'"'
 		);
