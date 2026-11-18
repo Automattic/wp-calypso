@@ -170,7 +170,7 @@ export default function InfluencedRevenue( {
 				aria-label={ label }
 			>
 				<Progress.Track>
-					<Progress.Indicator />
+					<Progress.Indicator color="var( --wpds-color-background-thumb-brand )" />
 				</Progress.Track>
 			</Progress.Root>
 			<Text variant="muted" size={ 12 } lineHeight="20px" style={ { textWrap: 'balance' } }>

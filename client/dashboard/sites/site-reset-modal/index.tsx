@@ -56,7 +56,7 @@ function InProgressContent( { progress }: { progress: number | undefined } ) {
 				value={ progressValue }
 			>
 				<Progress.Track>
-					<Progress.Indicator />
+					<Progress.Indicator color="var( --wpds-color-background-thumb-brand )" />
 				</Progress.Track>
 			</Progress.Root>
 			<Text id={ messageId }>

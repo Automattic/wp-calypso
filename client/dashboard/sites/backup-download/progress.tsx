@@ -88,7 +88,7 @@ function SiteBackupDownloadProgress( {
 					value={ downloadProgress?.progress ?? 0 }
 				>
 					<Progress.Track>
-						<Progress.Indicator />
+						<Progress.Indicator color="var( --wpds-color-background-thumb-brand )" />
 					</Progress.Track>
 				</Progress.Root>
 			</VStack>

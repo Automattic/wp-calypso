@@ -78,7 +78,7 @@ function SiteBackupRestoreProgress( {
 					value={ restoreProgress?.percent ?? 0 }
 				>
 					<Progress.Track>
-						<Progress.Indicator />
+						<Progress.Indicator color="var( --wpds-color-background-thumb-brand )" />
 					</Progress.Track>
 				</Progress.Root>
 			</VStack>

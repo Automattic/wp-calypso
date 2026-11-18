@@ -78,7 +78,7 @@ export function Running( {
 								value={ index === currentStep ? null : settledValue }
 							>
 								<Progress.Track>
-									<Progress.Indicator />
+									<Progress.Indicator color="var( --wpds-color-background-thumb-brand )" />
 								</Progress.Track>
 							</Progress.Root>
 							<Text variant="muted">{ label }</Text>
