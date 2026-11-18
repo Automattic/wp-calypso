@@ -65,11 +65,12 @@ These routes are served by the module:
 
 ### Tags and conversations
 
-| Route                   | Description                                                                           |
-| ----------------------- | ------------------------------------------------------------------------------------- |
-| `/tag/:tag`             | Tag stream (requires login; logged-out visitors are redirected to `/discover/tags`)   |
-| `/tags`                 | Tags listing (requires login; logged-out visitors are redirected to `/discover/tags`) |
-| `/reader/conversations` | Conversations inbox                                                                   |
+| Route                         | Description                                                                           |
+| ----------------------------- | ------------------------------------------------------------------------------------- |
+| `/tag/:tag`                   | Tag stream (requires login; logged-out visitors are redirected to `/discover/tags`)   |
+| `/tags`                       | Tags listing (requires login; logged-out visitors are redirected to `/discover/tags`) |
+| `/reader/conversations`       | Redirects to `/reader/conversations/inbox`                                            |
+| `/reader/conversations/inbox` | Conversations inbox                                                                   |
 
 ### User profile
 
