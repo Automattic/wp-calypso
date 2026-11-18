@@ -10,21 +10,33 @@ import type { LoginPage } from '@automattic/calypso-e2e';
 import type { CDPSession, Page } from 'playwright';
 
 /**
- * Navigates to the WordPress.com login page (redirecting to the dashboard on
- * success) and submits the username and password. For an account with two-step
- * authentication enabled this lands on the relevant second-factor screen.
+ * Logs out by clearing cookies, then opens the WordPress.com login page
+ * (redirecting to the dashboard on success) and submits the username and
+ * password. For an account with two-step authentication enabled this lands on
+ * the relevant second-factor screen.
+ *
+ * The page leaves the dashboard before cookies are cleared, since a request the
+ * dashboard still has in flight can set fresh session cookies afterwards. If the
+ * login page still redirects to the logged-in dashboard, the session survived,
+ * so cookies are cleared and the login page is opened again.
  */
-async function logInWithPassword(
+async function logOutAndLogInWithPassword(
 	page: Page,
 	pageLogin: LoginPage,
 	username: string,
 	password: string
 ): Promise< void > {
-	await page.goto(
-		DataHelper.getCalypsoURL( 'log-in', {
-			redirect_to: DataHelper.getDashboardURL( '/me/security/two-step-auth' ),
-		} )
-	);
+	const usernameInput = page.locator( 'input[name="usernameOrEmail"]' );
+	await expect( async () => {
+		await page.goto( 'about:blank' );
+		await page.context().clearCookies();
+		await page.goto(
+			DataHelper.getCalypsoURL( 'log-in', {
+				redirect_to: DataHelper.getDashboardURL( '/me/security/two-step-auth' ),
+			} )
+		);
+		await expect( usernameInput ).toBeVisible( { timeout: 15_000 } );
+	} ).toPass( { timeout: 60_000 } );
 	await pageLogin.logInWithCredentials( username, password );
 }
 
@@ -295,8 +307,7 @@ test.describe(
 				// logging out: changing it invalidates the signup session that the
 				// enable and assert steps above rely on, so it cannot be done earlier.
 				await restAPIClient!.setMySettings( { password: testUser.password } );
-				await page.context().clearCookies();
-				await logInWithPassword(
+				await logOutAndLogInWithPassword(
 					page,
 					pageLogin,
 					newUserDetails!.body.username,
@@ -338,8 +349,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I log out and log in again using the security key', async function () {
-				await page.context().clearCookies();
-				await logInWithPassword(
+				await logOutAndLogInWithPassword(
 					page,
 					pageLogin,
 					newUserDetails!.body.username,
