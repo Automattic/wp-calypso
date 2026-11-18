@@ -1,4 +1,7 @@
-import { siteSftpUsersResetPasswordMutation } from '@automattic/api-queries';
+import {
+	siteSftpUsersDeleteMutation,
+	siteSftpUsersResetPasswordMutation,
+} from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
@@ -12,6 +15,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useEffect, useState } from 'react';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ClipboardInputControl from '../../components/clipboard-input-control';
@@ -44,8 +48,15 @@ export default function SftpCard( {
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
+	const disableMutation = useMutation(
+		withSnackbar( siteSftpUsersDeleteMutation( siteId ), {
+			success: __( 'SFTP disabled.' ),
+			error: __( 'Failed to disable SFTP. Please refresh the page and try again.' ),
+		} )
+	);
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ showResetPasswordConfirmDialog, setShowResetPasswordConfirmDialog ] = useState( false );
+	const [ showDisableConfirmDialog, setShowDisableConfirmDialog ] = useState( false );
 	const [ isResetPasswordRateLimited, setIsResetPasswordRateLimited ] = useState( false );
 	const formData = {
 		url: SFTP_URL,
@@ -153,6 +164,11 @@ export default function SftpCard( {
 		setShowResetPasswordConfirmDialog( false );
 	};
 
+	const handleConfirmDisable = () => {
+		disableMutation.mutate( username );
+		setShowDisableConfirmDialog( false );
+	};
+
 	useEffect( () => {
 		if ( ! isResetPasswordRateLimited ) {
 			return;
@@ -207,7 +223,20 @@ export default function SftpCard( {
 						form={ form }
 						onChange={ noop }
 					/>
-					<ButtonStack justify="flex-start">{ resetPasswordButton }</ButtonStack>
+					<ButtonStack justify="flex-start">
+						{ resetPasswordButton }
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							isDestructive
+							isBusy={ disableMutation.isPending }
+							disabled={ disableMutation.isPending }
+							accessibleWhenDisabled
+							onClick={ () => setShowDisableConfirmDialog( true ) }
+						>
+							{ __( 'Disable SFTP' ) }
+						</Button>
+					</ButtonStack>
 				</VStack>
 			</CardBody>
 			<ConfirmDialog
@@ -219,6 +248,17 @@ export default function SftpCard( {
 			>
 				{ __(
 					'After resetting your password, be sure to update it in any SFTP clients, deployment tools, or scripts that use it to connect to your site.'
+				) }
+			</ConfirmDialog>
+			<ConfirmDialog
+				isOpen={ showDisableConfirmDialog }
+				confirmButtonText={ __( 'Disable SFTP' ) }
+				size="small"
+				onConfirm={ () => handleConfirmDisable() }
+				onCancel={ () => setShowDisableConfirmDialog( false ) }
+			>
+				{ __(
+					'Disabling SFTP deletes your SFTP credentials, so SFTP clients, deployment tools, and scripts that use them will stop connecting. SSH access is turned off too. You can enable SFTP again at any time and get a new password.'
 				) }
 			</ConfirmDialog>
 		</Card>

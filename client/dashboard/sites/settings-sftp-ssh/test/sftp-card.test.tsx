@@ -47,4 +47,20 @@ describe( '<SftpCard>', () => {
 			'You reset the password recently. Please wait a minute and try again.'
 		);
 	} );
+
+	test( 'deletes the SFTP user after confirming Disable SFTP', async () => {
+		const user = userEvent.setup();
+		const deleteRequest = nock( 'https://public-api.wordpress.com' )
+			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ username }` )
+			.reply( 200, JSON.stringify( { username } ), { 'Content-Type': 'application/json' } );
+
+		render( <SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } /> );
+
+		await screen.findByText( 'Learn more' );
+		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
+		const dialog = await screen.findByRole( 'dialog' );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Disable SFTP' } ) );
+
+		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
+	} );
 } );
