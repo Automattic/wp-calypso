@@ -52,7 +52,6 @@ interface StatProps {
 }
 
 const PROGRESS_COLORS = {
-	default: 'var( --wpds-color-background-thumb-brand )',
 	'alert-yellow': 'var( --dashboard__background-color-warning )',
 	'alert-red': 'var( --dashboard__background-color-error )',
 	'alert-green': 'var( --dashboard__background-color-success )',
@@ -104,7 +103,7 @@ export function Stat( {
 					aria-hidden={ isLoading }
 				>
 					<Progress.Track>
-						<Progress.Indicator color={ PROGRESS_COLORS[ progressColor ?? 'default' ] } />
+						<Progress.Indicator color={ progressColor && PROGRESS_COLORS[ progressColor ] } />
 					</Progress.Track>
 				</Progress.Root>
 			) }
