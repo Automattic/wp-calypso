@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import domain from '../domain';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
@@ -40,6 +41,29 @@ test( 'sends an existing mapping to its connection setup without failing the sub
 	expect( window.location.href ).toBe(
 		'https://my.wordpress.com/domains/example.com/domain-connection-setup'
 	);
+} );
+
+// A cart helper that throws inside the pending action makes the processing step submit FAILURE.
+// That must land on the error step, not in checkout with an empty or partial cart.
+test( 'sends a failed processing result to the error step, not to checkout', async () => {
+	const replace = jest.fn();
+	window.location.replace = replace;
+	const navigate = jest.fn();
+	const { result } = renderHook( () =>
+		domain.useStepNavigation.call( domain, 'processing', navigate )
+	);
+
+	await result.current.submit( {
+		slug: 'processing',
+		providedDependencies: {
+			processingResult: ProcessingResult.FAILURE,
+			goToCheckout: true,
+			siteSlug: 'example.wordpress.com',
+		},
+	} );
+
+	expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'processing_failed' } );
+	expect( replace ).not.toHaveBeenCalled();
 } );
 
 test( 'ignores a connection setup URL on another site', async () => {

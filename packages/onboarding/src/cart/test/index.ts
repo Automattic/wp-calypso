@@ -1,12 +1,23 @@
 import { Visibility } from '@automattic/data-stores';
 import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
-import { createSite, getNewSiteParams } from '..';
+import { addProductsToCart, createSite, getNewSiteParams, replaceProductsInCart } from '..';
 import { HOSTING_LP_FLOW, ONBOARDING_FLOW } from '../../utils/flows';
 import wpcomRequest from '../../wpcom-request';
 
+const mockCartActions = vi.hoisted( () => ( {
+	addProductsToCart: vi.fn(),
+	replaceProductsInCart: vi.fn(),
+} ) );
+
 vi.mock( 'calypso/lib/wp', () => ( { default: { req: { post: vi.fn() } } } ) );
 vi.mock( '../../wpcom-request', () => ( { default: vi.fn() } ) );
+vi.mock( '../create-cart-manager-client', () => ( {
+	default: {
+		getCartKeyForSiteSlug: vi.fn( async () => 123 ),
+		forCartKey: () => ( { actions: mockCartActions } ),
+	},
+} ) );
 vi.mock( '@automattic/calypso-config', () => {
 	const config = ( key: string ) => `config:${ key }`;
 	config.isEnabled = () => false;
@@ -52,6 +63,46 @@ describe( 'createSite', () => {
 			siteSlug: 'example.wordpress.com',
 			domainItem: undefined,
 		} );
+	} );
+} );
+
+describe( 'cart helpers', () => {
+	const cartItems = [ { product_slug: 'personal-bundle' } ];
+	const cartError = Object.assign( new Error( 'That product cannot be added.' ), {
+		code: 'invalid-product',
+	} );
+
+	beforeEach( () => {
+		mockCartActions.addProductsToCart.mockRejectedValue( cartError );
+		mockCartActions.replaceProductsInCart.mockRejectedValue( cartError );
+	} );
+
+	afterEach( () => vi.clearAllMocks() );
+
+	test( 'addProductsToCart rejects with the cart error when throwOnError is set', async () => {
+		await expect(
+			addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+		).rejects.toBe( cartError );
+	} );
+
+	test( 'addProductsToCart resolves when the cart rejects and no options are passed', async () => {
+		await expect(
+			addProductsToCart( 'example.wordpress.com', 'domain', cartItems )
+		).resolves.toBeUndefined();
+		expect( mockCartActions.addProductsToCart ).toHaveBeenCalled();
+	} );
+
+	test( 'replaceProductsInCart rejects with the cart error when throwOnError is set', async () => {
+		await expect(
+			replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
+		).rejects.toBe( cartError );
+	} );
+
+	test( 'replaceProductsInCart resolves when the cart rejects and no options are passed', async () => {
+		await expect(
+			replaceProductsInCart( 'example.wordpress.com', cartItems )
+		).resolves.toBeUndefined();
+		expect( mockCartActions.replaceProductsInCart ).toHaveBeenCalled();
 	} );
 } );
 

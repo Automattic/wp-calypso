@@ -309,10 +309,41 @@ describe( 'create-site', () => {
 		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: true } );
 
 		expect( transferDomainToSite ).not.toHaveBeenCalled();
-		expect( addProductsToCart ).toHaveBeenCalledWith( 'brand-new.wordpress.com', 'onboarding', [
-			mockPlanCartItem,
-			registeredMove,
-		] );
+		expect( addProductsToCart ).toHaveBeenCalledWith(
+			'brand-new.wordpress.com',
+			'onboarding',
+			[ mockPlanCartItem, registeredMove ],
+			{ throwOnError: true }
+		);
+	} );
+
+	// A rejected cart in onboarding goes to the error step instead of an empty checkout.
+	it( 'asks the cart add to throw in the onboarding flow', async () => {
+		mockPlanCartItem = { product_slug: 'personal-bundle' };
+
+		await runStep( { flow: 'onboarding' } );
+
+		expect( addProductsToCart ).toHaveBeenCalledWith(
+			'brand-new.wordpress.com',
+			'onboarding',
+			[ mockPlanCartItem ],
+			{ throwOnError: true }
+		);
+	} );
+
+	// Some other flows that share this step have no failure branch after processing, so the
+	// other flows keep the old swallow-and-continue behaviour.
+	it( 'does not ask the cart add to throw in other flows', async () => {
+		mockPlanCartItem = { product_slug: 'personal-bundle' };
+
+		await runStep( { flow: 'newsletter' } );
+
+		expect( addProductsToCart ).toHaveBeenCalledWith(
+			'brand-new.wordpress.com',
+			'newsletter',
+			[ mockPlanCartItem ],
+			{ throwOnError: false }
+		);
 	} );
 
 	// The site works without the domain, so a failed move must not stop the signup.
