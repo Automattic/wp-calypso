@@ -37,6 +37,7 @@ import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { getBlueprintFromQuery } from 'calypso/landing/stepper/utils/blueprint-archive-import';
 import {
 	getWowFunnelArgs,
 	getWowFunnelFromWfm,
@@ -210,7 +211,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		partnerBundle,
 		gardenName,
 		gardenPartnerName,
-		blueprint,
+		blueprint: storedBlueprint,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
 			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
@@ -249,6 +250,10 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const flowState = useFlowState< AnyFlowInitialize >();
 	const queryClient = useQueryClient();
 	const urlQueryParams = useQuery();
+	// The onboard store is in memory only, so it is empty after the full page load that logs a
+	// newly created account in, or in the new tab an emailed login link opens. The URL still
+	// names the blueprint; without it this run got the AI launchpad and its Site Setup landing.
+	const blueprint = storedBlueprint ?? getBlueprintFromQuery( urlQueryParams );
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';

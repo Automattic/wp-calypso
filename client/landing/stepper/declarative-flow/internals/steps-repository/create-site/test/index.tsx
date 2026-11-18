@@ -409,6 +409,15 @@ describe( 'create-site', () => {
 			expect( getAiLaunchpadEnabledArg() ).toBe( false );
 		} );
 
+		// The onboard store is empty after the page load that logs a new account in; the URL
+		// still names the blueprint.
+		it( 'does not enable it when only the URL names the blueprint', async () => {
+			mockQueryParams = new URLSearchParams( 'blueprint=some-blueprint&build_dest=simple' );
+			await runStep();
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( getAiLaunchpadEnabledArg() ).toBe( false );
+		} );
+
 		it( 'does not enable it for a playground run', async () => {
 			mockQueryParams = new URLSearchParams( 'playground=some-playground' );
 			await runStep();
