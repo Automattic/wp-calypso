@@ -705,7 +705,7 @@ function MoveProgressBar( { session }: { session?: StaticSiteImportSession } ) {
 			value={ overall }
 		>
 			<Progress.Track>
-				<Progress.Indicator color="var( --wpds-color-background-thumb-brand )" />
+				<Progress.Indicator />
 			</Progress.Track>
 		</Progress.Root>
 	);

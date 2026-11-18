@@ -60,7 +60,7 @@ export function ScanStatus( { scanState }: ScanStatusProps ) {
 						className="dashboard-scan__progress-bar"
 					>
 						<Progress.Track>
-							<Progress.Indicator color="var( --wpds-color-background-thumb-brand )" />
+							<Progress.Indicator />
 						</Progress.Track>
 					</Progress.Root>
 				) }
