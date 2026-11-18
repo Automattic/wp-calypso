@@ -28,8 +28,7 @@ import type {
 } from '@automattic/charts';
 import type { ChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-type';
 
-// The tooltip renders through @visx/tooltip's portal, which appends to `document.body` —
-// outside the roots our stylesheets are scoped to — so these few rules travel with it.
+// Inline, so the tooltip's few rules need no stylesheet.
 const TOOLTIP_DATE_STYLE = { fontWeight: 600, marginBlockEnd: '4px' };
 const TOOLTIP_ROW_STYLE = { display: 'flex', justifyContent: 'space-between', gap: '12px' };
 
@@ -241,9 +240,8 @@ const CONTENTS_STYLE = { display: 'contents' } as const;
 /**
  * Opens the chart's points from the keyboard, and from the pointer on the bar chart. Enter opens
  * the point the arrow keys have moved to, which the chart reports through its tooltip. The bar
- * chart forwards no pointer events (its package does from 3.2.0; this build is on 1.x), so its
- * presses and releases are taken from the chart's own event emitter, with the bar its tooltip
- * snapped to. Both come from the providers around the chart, which it adopts in place of its own.
+ * chart's presses and releases are taken from the chart's own event emitter, with the bar its
+ * tooltip snapped to. Both come from the providers around the chart, which it adopts in place of its own.
  * @param props             Component props.
  * @param props.handlers    The click handlers.
  * @param props.fromEmitter Whether to take presses and releases from the emitter too.

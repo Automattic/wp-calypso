@@ -211,8 +211,7 @@
 	}
 }
 
-/* visx portals tooltips to the document body, outside .agenttic,
-   so these selectors must remain global. */
+/* Every chart tooltip: above the chat's layers, and narrow enough for it. */
 .visx-tooltip {
 	z-index: 10000 !important;
 	max-width: 150px !important;
