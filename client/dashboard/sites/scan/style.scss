@@ -2,10 +2,10 @@
 @import '@wordpress/base-styles/colors';
 
 .site-scan-threats__type-icon {
-	background-color: $gray-100;
+	background-color: var( --wpds-color-background-surface-neutral-weak );
 	border-radius: $radius-small;
-	color: $gray-700;
-	fill: $gray-700;
+	color: var( --wpds-color-foreground-content-neutral-weak );
+	fill: var( --wpds-color-foreground-content-neutral-weak );
 	flex-shrink: 0;
 	padding: 4px;
 }

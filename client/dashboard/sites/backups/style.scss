@@ -6,8 +6,8 @@
 	top: 50%;
 	inset-inline-start: 50%;
 	transform: translate(-50%, -50%);
-	color: $gray-700;
-	fill: $gray-700;
+	color: var( --wpds-color-foreground-content-neutral-weak );
+	fill: var( --wpds-color-foreground-content-neutral-weak );
 }
 
 .backup-details__file-browser {

@@ -24,7 +24,7 @@
 a.dataviews-url-field {
 	&,
 	&:visited {
-		color: $gray-700;
+		color: var( --wpds-color-foreground-content-neutral-weak );
 	}
 
 	&:hover {
