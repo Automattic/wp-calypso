@@ -849,6 +849,25 @@ describe( 'RestClient', () => {
 			unreadCalls()[ 0 ].callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
 			expect( unreadCalls() ).toHaveLength( 1 );
 		} );
+
+		it( 'waits for the page to be visible again when it was hidden in the meantime', () => {
+			client.subscribed = true;
+			client.setFilter( 'unread' );
+			const inFlight = getCalls[ 0 ];
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+			client.setVisibility( { isShowing: true, isVisible: false } );
+			inFlight.callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 0 );
+
+			client.setVisibility( { isShowing: true, isVisible: true } );
+			expect( unreadCalls() ).toHaveLength( 1 );
+
+			// The refresh's own answer does not ask for another one.
+			unreadCalls()[ 0 ].callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 1 );
+		} );
 	} );
 
 	describe( 'loading state', () => {
@@ -1278,6 +1297,49 @@ describe( 'RestClient', () => {
 			getCalls.length = 0;
 			openPanel();
 			expect( noteCalls() ).toHaveLength( 0 );
+		} );
+
+		it( 'keeps the note unread when the answer was asked for before the hold was over', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+
+			openPanel();
+			vi.advanceTimersByTime( 10001 );
+			noteCalls()[ 0 ].callback( null, { notes: [ { ...makeNote( NOTE_ID ), read: 1 } ] } );
+
+			expect( isRead() ).toBe( false );
+		} );
+
+		it( 'asks for nothing once the note is no longer in the list', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+			store.dispatch( actions.notes.removeNotes( [ NOTE_ID ] ) );
+
+			openPanel();
+
+			expect( noteCalls() ).toHaveLength( 0 );
+		} );
+
+		it( 'stops asking for a note the server no longer has', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+
+			openPanel();
+			noteCalls()[ 0 ].callback( null, { notes: [] } );
+
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+			openPanel();
+			expect( noteCalls() ).toHaveLength( 0 );
+		} );
+
+		it( 'asks again after a request that failed', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+
+			openPanel();
+			noteCalls()[ 0 ].callback( { status: 500 } );
+
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+			openPanel();
+			expect( noteCalls() ).toHaveLength( 1 );
 		} );
 
 		it( 'asks for nothing when no note is marked as unread here', () => {

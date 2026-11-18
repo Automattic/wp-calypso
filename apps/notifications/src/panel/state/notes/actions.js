@@ -1,8 +1,13 @@
 import * as types from '../action-types';
 
-export const addNotes = ( notes ) => ( {
+/**
+ * @param {Object[]} notes notes from the server
+ * @param {number} [requestedAt] when the request that returned them was sent, in ms
+ */
+export const addNotes = ( notes, requestedAt ) => ( {
 	type: types.NOTES_ADD,
 	notes,
+	requestedAt,
 } );
 
 export const removeNotes = ( noteIds, isComment = false ) => ( {

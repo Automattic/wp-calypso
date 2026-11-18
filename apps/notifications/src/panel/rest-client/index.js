@@ -188,6 +188,8 @@ function getNote( note_id, livePushMessage ) {
 		fields: getNoteFields.call( this ),
 	};
 
+	const requestedAt = Date.now();
+
 	fetchNote( note_id, parameters, ( error, data ) => {
 		if ( error ) {
 			reportRequestError( 'load-note', error, {
@@ -198,8 +200,15 @@ function getNote( note_id, livePushMessage ) {
 			} );
 			return;
 		}
+		// The server answers with no notes for one it no longer has, so stop asking.
+		if (
+			! data.notes.length &&
+			getStoredNotes( store.getState() ).noteReads[ note_id ] === false
+		) {
+			store.dispatch( actions.notes.resetLocalRead( note_id ) );
+		}
 		const previousNotes = getAllNotes( store.getState() );
-		store.dispatch( actions.notes.addNotes( data.notes ) );
+		store.dispatch( actions.notes.addNotes( data.notes, requestedAt ) );
 		ready.call( this, getLiveFollowCandidates( data.notes, [ livePushMessage ], previousNotes ) );
 	} );
 }
@@ -243,6 +252,8 @@ function getNotes( before, livePushMessages = [] ) {
 	if ( before || notes.length < settings.initial_limit ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
+
+	const requestedAt = Date.now();
 
 	listNotes( parameters, ( error, data ) => {
 		this.gettingNotes = false;
@@ -335,7 +346,7 @@ function getNotes( before, livePushMessages = [] ) {
 			this.noteList = pageList.concat( tail );
 		}
 
-		store.dispatch( actions.notes.addNotes( data.notes ) );
+		store.dispatch( actions.notes.addNotes( data.notes, requestedAt ) );
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 
 		if ( this.allNotesLoaded ) {
@@ -514,6 +525,8 @@ function getFilteredNotes( before ) {
 		store.dispatch( actions.ui.loadNotes( { filter: key } ) );
 	}
 
+	const requestedAt = Date.now();
+
 	listNotes( parameters, ( error, data ) => {
 		this.gettingFilteredNotes = false;
 
@@ -523,7 +536,8 @@ function getFilteredNotes( before ) {
 		// refreshFilteredNotes() asked for in the meantime.
 		const activeTabNeedsFetch =
 			this.filter && this.isVisible && ( this.filterName !== key || this.filteredRefreshPending );
-		this.filteredRefreshPending = false;
+		// A refresh asked for while the page is hidden waits for setVisibility().
+		this.filteredRefreshPending = this.filteredRefreshPending && !! this.filter && ! this.isVisible;
 
 		if ( error ) {
 			if ( ! before || ! this.loadMoreBackoff[ key ] ) {
@@ -544,7 +558,7 @@ function getFilteredNotes( before ) {
 			return;
 		}
 
-		store.dispatch( actions.notes.addNotes( data.notes ) );
+		store.dispatch( actions.notes.addNotes( data.notes, requestedAt ) );
 
 		// Apply the response to the tab it was fetched for (`key`), never the tab
 		// that happens to be active now. A response that lands after a switch away
@@ -955,10 +969,10 @@ function hasMoreNotes( filterName = this.filterName ) {
 // A note marked as unread here keeps that status until the server sends the
 // note again, which it does not do on its own while the live connection is up.
 function refreshLocalUnreads() {
-	const { noteReads } = getStoredNotes( store.getState() );
+	const { allNotes, noteReads } = getStoredNotes( store.getState() );
 
 	Object.keys( noteReads )
-		.filter( ( noteId ) => noteReads[ noteId ] === false )
+		.filter( ( noteId ) => noteReads[ noteId ] === false && allNotes[ noteId ] )
 		.forEach( ( noteId ) => this.getNote( noteId ) );
 }
 
@@ -979,6 +993,11 @@ function setVisibility( { isShowing, isVisible } ) {
 	if ( isVisible && ( ! this.lastSeenTime || isShowing ) ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
+	}
+
+	if ( isVisible && this.filteredRefreshPending ) {
+		this.filteredRefreshPending = false;
+		this.refreshFilteredNotes();
 	}
 
 	if ( isVisible && isShowing ) {

@@ -77,6 +77,16 @@ describe( 'read status from the server after marking a note as unread', () => {
 		expect( isRead() ).toBe( true );
 	} );
 
+	it( 'keeps the note unread when a copy asked for during the hold arrives after it', () => {
+		answerLastPost();
+		const requestedAt = Date.now();
+		vi.advanceTimersByTime( HOLD_MS + 1 );
+
+		store.dispatch( actions.notes.addNotes( [ { ...note, read: 1 } ], requestedAt ) );
+
+		expect( isRead() ).toBe( false );
+	} );
+
 	it( 'keeps the note unread when the server still has it as unread', () => {
 		answerLastPost();
 		vi.advanceTimersByTime( HOLD_MS + 1 );

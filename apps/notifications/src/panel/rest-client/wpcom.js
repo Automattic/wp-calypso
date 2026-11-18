@@ -6,7 +6,11 @@ const readStatusQueues = new Map();
 export const wpcom = () => wpcomInstance;
 
 export const init = ( provider ) => {
-	readStatusQueues.clear();
+	// The panel calls this each time it mounts, with the same provider: requests
+	// still waiting then must go out.
+	if ( provider !== wpcomInstance ) {
+		readStatusQueues.clear();
+	}
 	return ( wpcomInstance = provider );
 };
 
@@ -58,7 +62,7 @@ const sendNextReadStatus = ( key ) => {
 			try {
 				callback?.( error, data );
 			} finally {
-				// init() drops the queues, so only advance one that is still current.
+				// init() drops the queues for a new provider, so only advance one that is still current.
 				if ( readStatusQueues.get( key ) === queue ) {
 					queue.shift();
 					if ( queue.length ) {

@@ -79,4 +79,27 @@ describe( 'markReadStatus', () => {
 		postCalls[ 1 ].callback( null, { success: true } );
 		expect( isReadStatusPending( 5 ) ).toBe( false );
 	} );
+
+	it( 'still sends a waiting request after init() is called again with the same provider', () => {
+		const provider = {
+			req: {
+				post: ( { path }, _query, body, callback ) => postCalls.push( { path, body, callback } ),
+			},
+		};
+		init( provider );
+		const order = [];
+		markReadStatus( 5, true, () => order.push( 'read answered' ) );
+		markReadStatus( 5, false, () => order.push( 'unread answered' ) );
+
+		init( provider );
+		expect( isReadStatusPending( 5 ) ).toBe( true );
+
+		postCalls[ 0 ].callback( null, { success: true } );
+		expect( postCalls ).toHaveLength( 2 );
+		expect( postCalls[ 1 ].body ).toEqual( { counts: { 5: -1 } } );
+
+		postCalls[ 1 ].callback( null, { success: true } );
+		expect( order ).toEqual( [ 'read answered', 'unread answered' ] );
+		expect( isReadStatusPending( 5 ) ).toBe( false );
+	} );
 } );

@@ -32,17 +32,21 @@ export const holdLocalUnread = ( store, { noteId } ) => {
 	localUnreadHolds[ noteId ] = Date.now() + LOCAL_UNREAD_PERSISTENCE;
 };
 
-// Once the hold is over, a fresh copy of the note from the server decides its
-// read status again, so a note read elsewhere stops showing as unread here.
+// A copy of the note requested after the hold is over decides its read status
+// again, so a note read elsewhere stops showing as unread here.
 // Only unread overrides are released: read ones keep working as before.
-export const releaseLocalUnreads = ( { dispatch, getState }, { notes } ) => {
+export const releaseLocalUnreads = (
+	{ dispatch, getState },
+	{ notes, requestedAt = Date.now() }
+) => {
 	const { noteReads } = getNotes( getState() );
 
 	notes.forEach( ( { id } ) => {
 		if ( noteReads[ id ] !== false ) {
+			delete localUnreadHolds[ id ];
 			return;
 		}
-		if ( Date.now() < ( localUnreadHolds[ id ] ?? 0 ) || isReadStatusPending( id ) ) {
+		if ( requestedAt < ( localUnreadHolds[ id ] ?? 0 ) || isReadStatusPending( id ) ) {
 			return;
 		}
 		delete localUnreadHolds[ id ];
