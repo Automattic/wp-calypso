@@ -1,5 +1,7 @@
 import { useMediaQuery } from '@wordpress/compose';
 import { ThemeProvider } from '@wordpress/theme';
+import { useEffect, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useColorScheme } from 'calypso/lib/color-scheme/shared';
 import type { ReactNode } from 'react';
 
@@ -14,6 +16,26 @@ const DARK_SEEDS = {
 };
 
 /**
+ * Returns whether the page is being printed, updated synchronously before the print snapshot.
+ */
+function useIsPrinting() {
+	const [ isPrinting, setIsPrinting ] = useState( false );
+
+	useEffect( () => {
+		const start = () => flushSync( () => setIsPrinting( true ) );
+		const end = () => setIsPrinting( false );
+		window.addEventListener( 'beforeprint', start );
+		window.addEventListener( 'afterprint', end );
+		return () => {
+			window.removeEventListener( 'beforeprint', start );
+			window.removeEventListener( 'afterprint', end );
+		};
+	}, [] );
+
+	return isPrinting;
+}
+
+/**
  * Applies the WPDS theme for the user's color scheme to the whole document.
  */
 export function DashboardThemeProvider( {
@@ -25,7 +47,7 @@ export function DashboardThemeProvider( {
 } ) {
 	const { colorScheme } = useColorScheme();
 	const prefersDark = useMediaQuery( '(prefers-color-scheme: dark)' );
-	const isPrint = useMediaQuery( 'print' );
+	const isPrint = useIsPrinting();
 	const isDark =
 		enabled &&
 		! isPrint &&

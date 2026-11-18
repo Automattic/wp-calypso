@@ -1,3 +1,4 @@
+import { useIsomorphicLayoutEffect } from '@wordpress/compose';
 import { createContext, useContext, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 
@@ -48,7 +49,7 @@ function useDocumentColorScheme(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ restoreOnUnmount ] );
 
-	useEffect( () => {
+	useIsomorphicLayoutEffect( () => {
 		if ( typeof document === 'undefined' ) {
 			return;
 		}
