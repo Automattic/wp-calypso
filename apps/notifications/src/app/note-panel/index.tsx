@@ -9,7 +9,7 @@ import {
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { Tabs } from '@wordpress/ui';
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, type ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import { recordTracksEvent } from '../../panel/helpers/stats';
@@ -30,6 +30,9 @@ export const getNotificationTabs = () =>
 
 type NotePanelProps = {
 	isDismissible?: boolean;
+	headingLevel?: 1 | 2 | 3;
+	actions?: ReactNode;
+	openNoteOnArrowKeys?: boolean;
 	filterName: FilterName;
 	setFilterName: ( filterName: FilterName ) => void;
 	selectedNoteId: string | undefined;
@@ -38,6 +41,9 @@ type NotePanelProps = {
 
 const NotePanel = ( {
 	isDismissible,
+	headingLevel = 3,
+	actions = <NotePanelActions />,
+	openNoteOnArrowKeys,
 	filterName,
 	setFilterName,
 	selectedNoteId,
@@ -123,7 +129,7 @@ const NotePanel = ( {
 					<HStack>
 						<HStack justify="flex-start">
 							<Heading
-								level={ 3 }
+								level={ headingLevel }
 								size={ 15 }
 								weight="var(--wpds-typography-font-weight-emphasis, 600)"
 							>
@@ -131,7 +137,7 @@ const NotePanel = ( {
 							</Heading>
 						</HStack>
 						<HStack justify="flex-end">
-							<NotePanelActions />
+							{ actions }
 							{ isDismissible && <CloseButton /> }
 						</HStack>
 					</HStack>
@@ -169,6 +175,7 @@ const NotePanel = ( {
 								filterName={ filterName }
 								selectedNoteId={ selectedNoteId }
 								setSelectedNoteId={ setSelectedNoteId }
+								openNoteOnArrowKeys={ openNoteOnArrowKeys }
 							/>
 						</ErrorBoundary>
 					) }
