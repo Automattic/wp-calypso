@@ -4,7 +4,6 @@ import { HostingFeatures, type Site } from '@automattic/api-core';
 import {
 	bigSkyPluginMutation,
 	bigSkyPluginQuery,
-	isAutomatticianQuery,
 	siteAbilitiesQuery,
 	siteBySlugQuery,
 	sitePostByEmailSettingsMutation,
@@ -309,32 +308,19 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 
 	// The badges span the site-published abilities on the subpages too, so "All
 	// enabled" can't appear while those groups are still off (their default).
-	// Staff-gated like the server-side remote: path (AI-1328).
-	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const localeSlug = useLocale();
 	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
-	const savedRemoteGroups = isAutomattician
-		? getSiteRemoteGroups( userSettings || {}, site.ID )
-		: {};
+	const savedRemoteGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
 	const { data: remoteAbilities } = useQuery( {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
-		enabled:
-			!! isAutomattician &&
-			config.isEnabled( 'mcp-settings' ) &&
-			isAvailable &&
-			isMcpEnabled &&
-			!! site.jetpack,
+		enabled: config.isEnabled( 'mcp-settings' ) && isAvailable && isMcpEnabled && !! site.jetpack,
 	} );
 	// Count published abilities individually; an ability counts as enabled when
 	// its group key is allowed. Saved-only groups (catalog unreachable) fall
-	// back to counting their keys. Gated at the computation level: even a
-	// previously cached catalog must not leak into the totals for other users.
+	// back to counting their keys.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
 		const defaultEnabled =
 			isMcpEnabled && enabledToolCount( category === 'read' ? readTools : writeTools ) > 0;
-		if ( ! isAutomattician ) {
-			return { total: 0, enabled: 0 };
-		}
 		let total = 0;
 		let enabled = 0;
 		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
