@@ -304,9 +304,12 @@ const domain: FlowV2< typeof initialize > = {
 						}
 
 						setPendingAction( async () => {
-							await addProductsToCart( siteSlug, this.name, [
-								providedDependencies.domainCartItem,
-							] );
+							await addProductsToCart(
+								siteSlug,
+								this.name,
+								[ providedDependencies.domainCartItem ],
+								{ throwOnError: true }
+							);
 
 							return {
 								siteSlug,
@@ -383,12 +386,15 @@ const domain: FlowV2< typeof initialize > = {
 							}
 
 							if ( isCiab ) {
-								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems );
+								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems, {
+									throwOnError: true,
+								} );
 							} else {
 								await addProductsToCart(
 									providedDependencies.siteSlug,
 									this.name,
-									domainCartItems
+									domainCartItems,
+									{ throwOnError: true }
 								);
 							}
 						}
@@ -422,9 +428,13 @@ const domain: FlowV2< typeof initialize > = {
 							];
 
 							if ( isCiab ) {
-								await replaceProductsInCart( siteSlug, aggregatedCartItems );
+								await replaceProductsInCart( siteSlug, aggregatedCartItems, {
+									throwOnError: true,
+								} );
 							} else {
-								await addProductsToCart( siteSlug, this.name, aggregatedCartItems );
+								await addProductsToCart( siteSlug, this.name, aggregatedCartItems, {
+									throwOnError: true,
+								} );
 							}
 
 							return {

@@ -502,7 +502,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			];
 
 			if ( additionalCartItems.length > 0 ) {
-				await addProductsToCart( site.siteSlug, flow, additionalCartItems );
+				await addProductsToCart( site.siteSlug, flow, additionalCartItems, {
+					throwOnError: flow === ONBOARDING_FLOW,
+				} );
 			}
 
 			await moveDomainsToSite( freePlanDomainMoves, site.siteId, flow );
