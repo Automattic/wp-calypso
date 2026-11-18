@@ -200,12 +200,17 @@ describe( 'DomainDns', () => {
 			[ A_RECORDS_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
 			[ CNAME_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
 		} );
+		const savePreference = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences' )
+			.reply( 200, { calypso_preferences: {} } );
 
 		render( <DomainDns /> );
 
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 		expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
+		// The default records are still missing, so the dismissals stay.
+		expect( savePreference.isDone() ).toBe( false );
 	} );
 
 	test( 'forgets the default A records warning dismissal once the default records are restored', async () => {
@@ -217,7 +222,9 @@ describe( 'DomainDns', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.post( `/rest/v1.1/domains/${ domainName }/dns` )
 			.reply( 200, {} );
-		mockDnsApiRequest( [ { id: '2', type: 'A', name: domainName, data: '192.0.78.9' } ] );
+		mockDnsApiRequest( [
+			{ id: '2', type: 'A', name: domainName, data: '192.0.78.9', protected_field: true },
+		] );
 		const clearPreference = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/preferences', ( body ) => {
 				expect( body.calypso_preferences ).toEqual( { [ A_RECORDS_NOTICE_PREFERENCE ]: null } );
@@ -226,7 +233,8 @@ describe( 'DomainDns', () => {
 			.reply( 200, { calypso_preferences: {} } );
 		const user = userEvent.setup();
 
-		render( <DomainDns /> );
+		// The restore refetches the DNS records through the app's query client.
+		render( <DomainDns />, { queryClient: appQueryClient } );
 
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 		expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument();
@@ -237,6 +245,26 @@ describe( 'DomainDns', () => {
 		);
 		await user.click( await screen.findByRole( 'button', { name: 'Restore' } ) );
 
+		await waitFor( () => expect( clearPreference.isDone() ).toBe( true ) );
+	} );
+
+	test( 'forgets the WWW CNAME warning dismissal when the default record is back', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+		// The user added the default record back by hand, without the restore action.
+		mockDnsApiRequest( [ { ...defaultCnameRecord, id: '1' } ] );
+		mockPreferencesApiRequest( {
+			[ CNAME_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
+		} );
+		const clearPreference = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				expect( body.calypso_preferences ).toEqual( { [ CNAME_NOTICE_PREFERENCE ]: null } );
+				return true;
+			} )
+			.reply( 200, { calypso_preferences: {} } );
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( 'www' ) ).toBeVisible();
 		await waitFor( () => expect( clearPreference.isDone() ).toBe( true ) );
 	} );
 

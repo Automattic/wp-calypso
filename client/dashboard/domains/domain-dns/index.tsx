@@ -13,7 +13,7 @@ import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -47,24 +47,31 @@ type DnsView = ViewTable;
 type DefaultRecordsNoticePreference =
 	`hosting-dashboard-domain-dns-default-${ 'a-records' | 'cname' }-notice-dismissed-${ string }`;
 
-function useDefaultRecordsNoticeDismissal( preferenceName: DefaultRecordsNoticePreference ) {
+function useDefaultRecordsNoticeDismissal(
+	preferenceName: DefaultRecordsNoticePreference,
+	hasDefaultRecords: boolean
+) {
 	const { data: dismissedAt, isFetched } = useQuery( userPreferenceQuery( preferenceName ) );
 	const { mutate: saveDismissal } = useMutation(
 		withSnackbar( userPreferenceOptimisticMutation( preferenceName ), {
 			error: __( 'Failed to dismiss the warning.' ),
 		} )
 	);
-	const { mutate: clearDismissal } = useMutation( userPreferenceMutation( preferenceName ) );
+	const { mutate: clearDismissal, isPending: isClearing } = useMutation(
+		userPreferenceMutation( preferenceName )
+	);
+
+	// Once the default records are back, however they got there, a later change to them
+	// shows the warning again.
+	useEffect( () => {
+		if ( hasDefaultRecords && dismissedAt && ! isClearing ) {
+			clearDismissal( undefined );
+		}
+	}, [ hasDefaultRecords, dismissedAt, isClearing, clearDismissal ] );
 
 	return {
 		isHidden: ! isFetched || !! dismissedAt,
 		dismiss: () => saveDismissal( new Date().toISOString() ),
-		// Restoring the default records shows the warning again if they are changed later.
-		reset: () => {
-			if ( dismissedAt ) {
-				clearDismissal( undefined );
-			}
-		},
 	};
 }
 
@@ -120,13 +127,6 @@ export default function DomainDns() {
 	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
 	const [ importedRecords, setImportedRecords ] = useState< DnsRecord[] >( [] );
 
-	const aRecordsNoticeDismissal = useDefaultRecordsNoticeDismissal(
-		`hosting-dashboard-domain-dns-default-a-records-notice-dismissed-${ domainName }`
-	);
-	const cnameRecordNoticeDismissal = useDefaultRecordsNoticeDismissal(
-		`hosting-dashboard-domain-dns-default-cname-notice-dismissed-${ domainName }`
-	);
-
 	const actions = useDnsActions();
 	const fields = useDnsFields( domainName );
 	const [ view, setView ] = useState< DnsView >( DEFAULT_VIEW );
@@ -134,6 +134,16 @@ export default function DomainDns() {
 	const hasDefaultARecordsValue = hasDefaultARecords( dnsData?.records ?? [] );
 	const hasDefaultCnameRecordValue = hasDefaultCnameRecord( dnsData?.records ?? [], domainName );
 	const hasDefaultEmailRecordsValue = hasDefaultEmailRecords( dnsData?.records ?? [], domainName );
+
+	// `isFetching` keeps stale cached records from clearing a dismissal.
+	const aRecordsNoticeDismissal = useDefaultRecordsNoticeDismissal(
+		`hosting-dashboard-domain-dns-default-a-records-notice-dismissed-${ domainName }`,
+		! isFetching && hasDefaultARecordsValue
+	);
+	const cnameRecordNoticeDismissal = useDefaultRecordsNoticeDismissal(
+		`hosting-dashboard-domain-dns-default-cname-notice-dismissed-${ domainName }`,
+		! isFetching && hasDefaultCnameRecordValue
+	);
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		dnsData?.records ?? [],
@@ -167,7 +177,6 @@ export default function DomainDns() {
 					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_a_records_success', {
 						domain: domainName,
 					} );
-					aRecordsNoticeDismissal.reset();
 				},
 				onError: ( error ) => {
 					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_a_records_failure', {
@@ -211,7 +220,6 @@ export default function DomainDns() {
 					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_cname_record_success', {
 						domain: domainName,
 					} );
-					cnameRecordNoticeDismissal.reset();
 				},
 				onError: ( error ) => {
 					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_cname_record_failure', {
