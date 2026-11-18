@@ -267,8 +267,6 @@ class PostCommentList extends Component {
 				highlightedCommentIds={ this.props.highlightedCommentIds }
 				collapsibleThreads={ this.props.collapsibleThreads }
 				isInlineComment={ this.props.expandableView }
-				expandComments={ this.props.expandComments }
-				comments={ this.props.comments }
 			/>
 		);
 	};
