@@ -1,4 +1,4 @@
-import { webcrypto } from 'node:crypto';
+import { randomInt, webcrypto } from 'node:crypto';
 import phrase from 'asana-phrase';
 import envVariables from './env-variables';
 import { SecretsManager } from './secrets';
@@ -96,7 +96,7 @@ export function getNewTestUser( {
 export function getRandomInteger( min: number, max: number ): number {
 	min = Math.ceil( min );
 	max = Math.floor( max );
-	return Math.floor( Math.random() * ( max - min ) + min );
+	return max > min ? randomInt( min, max ) : min;
 }
 
 /**

@@ -10,13 +10,13 @@
 		grid-template-columns: minmax( 0, 1fr );
 	}
 
-	.migration-instructions-from-preview {
+	.site-migration-preview {
 		flex: none;
 		height: auto;
 		border-radius: 8px;
 		box-shadow: none;
 
-		.migration-instructions-from-preview__screenshot {
+		.site-migration-preview__screenshot {
 			height: auto;
 			min-height: 0;
 			aspect-ratio: 3 / 2;

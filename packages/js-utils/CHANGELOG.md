@@ -1,3 +1,7 @@
+## Unreleased
+
+- `normalizePhoneNumber` no longer slows down on inputs with long runs of whitespace.
+
 ## 0.1.1
 
 - Add lodash replacements so consumers can drop that dependency: `camelCase`, `capitalize`, `defaults`, `escapeRegExp`, `flow`, `groupBy`, `isEmpty`, `isError`, `kebabCase`, `mapKeys`, `mapValues`, `maxBy`, `memoize`, `merge`, `mergeWith`, `minBy`, `omit`, `omitBy`, `once`, `orderBy`, `partition`, `pick`, `pickBy`, `random`, `range`, `set`, `snakeCase`, `sortBy`, `times`, `truncate`, and `uniqBy`.

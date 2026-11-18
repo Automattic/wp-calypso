@@ -140,12 +140,12 @@
 		text-decoration: underline;
 	}
 
-	.migration-instructions-from-preview {
+	.site-migration-preview {
 		flex: none;
 		border-radius: 8px;
 		box-shadow: none;
 
-		.migration-instructions-from-preview__screenshot {
+		.site-migration-preview__screenshot {
 			height: auto;
 			min-height: 0;
 			aspect-ratio: 660 / 331;
@@ -154,10 +154,10 @@
 		}
 	}
 
-	.site-comparison .migration-instructions-from-preview {
+	.site-comparison .site-migration-preview {
 		height: auto;
 
-		.migration-instructions-from-preview__screenshot {
+		.site-migration-preview__screenshot {
 			aspect-ratio: 3 / 2;
 			border-radius: 2px;
 		}

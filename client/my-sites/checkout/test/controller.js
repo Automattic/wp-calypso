@@ -10,7 +10,11 @@ import {
 import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
-import { checkoutWpcomSiteless, redirectJetpackLegacyPlans } from '../controller';
+import {
+	checkoutWpcomSiteless,
+	redirectJetpackLegacyPlans,
+	studentCheckoutRedirect,
+} from '../controller';
 import * as utils from '../utils';
 
 jest.mock( '@automattic/calypso-router' );
@@ -84,5 +88,34 @@ describe( 'checkoutWpcomSiteless', () => {
 		expect( wrapper.props.productAliasFromUrl ).toBe( 'ak_pro5h_yearly' );
 		expect( wrapper.props.isNoSiteCart ).toBe( true );
 		expect( next ).toHaveBeenCalled();
+	} );
+} );
+
+describe( 'studentCheckoutRedirect', () => {
+	const originalLocation = window.location;
+
+	beforeEach( () => {
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: { replace: jest.fn() },
+		} );
+	} );
+
+	afterEach( () => {
+		Object.defineProperty( window, 'location', { configurable: true, value: originalLocation } );
+	} );
+
+	it( 'sends /checkout/student to the Student flow with its query', () => {
+		studentCheckoutRedirect( { querystring: 'coupon=SAVE10&ref=edu' } );
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'/setup/student?coupon=SAVE10&ref=edu'
+		);
+	} );
+
+	it( 'sends /checkout/student without a query to the Student flow', () => {
+		studentCheckoutRedirect( { querystring: '' } );
+
+		expect( window.location.replace ).toHaveBeenCalledWith( '/setup/student' );
 	} );
 } );

@@ -1,11 +1,7 @@
-import { SitePreview } from '../../steps-repository/site-migration-instructions/site-preview';
-import { mShotConfigs } from '../../steps-repository/site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
+import { SitePreview } from '../../steps-repository/components/site-preview';
 import type { ReactNode } from 'react';
 
 import './style.scss';
-
-// The size the address step has already asked mShots to capture the source at, so it's ready sooner.
-const PREVIEW_OPTIONS = mShotConfigs.desktop;
 
 export type ComparedSite = {
 	heading: ReactNode;
@@ -37,7 +33,7 @@ const ComparedSiteColumn = ( {
 				<span className="site-comparison__address-text">{ address }</span> ↗
 			</a>
 		</div>
-		<SitePreview url={ url } label={ previewLabel } mshotsOptions={ PREVIEW_OPTIONS } />
+		<SitePreview url={ url } label={ previewLabel } />
 		{ description && <p className="site-comparison__description">{ description }</p> }
 	</div>
 );

@@ -36,6 +36,8 @@ export type StaticSiteImportReadingSubmits =
 			importSessionId: string;
 			previewSiteId?: number;
 			previewSiteSlug?: string;
+			/** The source the move is copying, so a flow can tell it apart from another source's. */
+			sourceUrl?: string;
 	  }
 	| { action: 'migrate' }
 	| { action: 'choose_importer' }
@@ -60,12 +62,19 @@ type StaticSiteImportReadingProps = {
 		sourceUrl?: string;
 		/** Import onto a new preview site rather than a destination the customer paid for. */
 		buildPreview?: boolean;
+		/** A move this step started before, such as before going back, to resume instead of starting another. */
+		startedImport?: Extract< StaticSiteImportReadingSubmits, { action: 'continue' } >;
 	};
 	submits: StaticSiteImportReadingSubmits;
 };
 
 const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
-	function StaticSiteImportReading( { navigation, sourceUrl: sourceProp, buildPreview } ) {
+	function StaticSiteImportReading( {
+		navigation,
+		sourceUrl: sourceProp,
+		buildPreview,
+		startedImport,
+	} ) {
 		const { __ } = useI18n();
 		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 		const { site, siteSlug } = useSiteData();
@@ -91,6 +100,9 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 
 		const start = useEffectEvent( async () => {
 			const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
+			if ( startedImport ) {
+				return submit( startedImport );
+			}
 			if ( ! sessionId && ! sourceUrl ) {
 				return submit( { action: 'unavailable' } );
 			}
@@ -144,7 +156,10 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 			// The server delivers the import onto the preview as soon as its build lands.
 			const continueWith = async ( importSessionId: string ) => {
 				if ( ! isPreview ) {
-					return submit( { action: 'continue', importSessionId } );
+					return submit( {
+						action: 'continue',
+						importSessionId,
+					} );
 				}
 				try {
 					const preview = await startWowFunnelSite( {
@@ -156,6 +171,7 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 						importSessionId,
 						previewSiteId: preview.blogId,
 						previewSiteSlug: preview.siteSlug,
+						sourceUrl: sourceUrl || undefined,
 					} );
 				} catch {
 					return submit( { action: 'preview_failed' } );

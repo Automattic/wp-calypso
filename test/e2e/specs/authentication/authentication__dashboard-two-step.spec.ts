@@ -81,27 +81,47 @@ async function submitLoginTOTPCode(
 /**
  * Completes the security-key second factor at login. With both a TOTP app and a
  * security key registered, the login flow may default to either method, so this
- * switches to the security-key form when needed. The form auto-initiates the
- * WebAuthn ceremony on mount; the CDP virtual authenticator answers it
- * automatically, but the button is nudged in case the auto-start needs a gesture.
+ * waits for the second-factor screen and switches to the security-key form when
+ * needed. The form auto-initiates the WebAuthn ceremony on mount and the CDP
+ * virtual authenticator answers it, but a ceremony can fail transiently (the
+ * button then re-enables), so it is retried from the button until the login
+ * proceeds, failing with the on-screen error rather than an opaque timeout.
  */
 async function continueWithSecurityKey( page: Page ): Promise< void > {
+	const securityKeyButton = page.getByRole( 'button', { name: 'Continue with security key' } );
 	const switchToSecurityKey = page.getByRole( 'button', {
 		name: /Continue with your security.key/,
 	} );
-	const canSwitchToSecurityKey = await switchToSecurityKey.isVisible();
-	if ( canSwitchToSecurityKey ) {
+	await expect( securityKeyButton.or( switchToSecurityKey ).first() ).toBeVisible( {
+		timeout: 30_000,
+	} );
+	if ( await switchToSecurityKey.isVisible() ) {
 		await switchToSecurityKey.click();
 	}
 
-	// The button stays aria-disabled until the ceremony resolves and navigates away, so the
-	// nudge is best-effort; the navigation below is the real signal.
-	await page
-		.getByRole( 'button', { name: 'Continue with security key' } )
-		.click( { timeout: 5_000 } )
-		.catch( ( error ) => console.warn( `Security key nudge skipped: ${ error }` ) );
+	// Retries click before waiting, so every ceremony is awaited and its error
+	// notice is still on screen when the loop gives up.
+	for ( let attempt = 0; attempt < 4; attempt++ ) {
+		if ( attempt > 0 ) {
+			// The button stays aria-disabled while a ceremony is in flight, so this only
+			// clicks once the previous attempt has settled without logging in.
+			await securityKeyButton
+				.click( { timeout: 5_000 } )
+				.catch( ( error ) => console.warn( `Security key retry skipped: ${ error }` ) );
+		}
+		const proceeded = await page
+			.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), { timeout: 20_000 } )
+			.then( () => true )
+			.catch( () => false );
+		if ( proceeded ) {
+			return;
+		}
+	}
 
-	await page.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), { timeout: 30_000 } );
+	const notices = ( await page.locator( '.calypso-notice' ).allInnerTexts() ).join( ' | ' );
+	throw new Error(
+		`Security key login did not proceed after retries; still at ${ page.url() }. Notices: ${ notices }`
+	);
 }
 
 /**

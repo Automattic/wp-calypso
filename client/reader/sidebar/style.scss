@@ -430,11 +430,11 @@ body.is-section-reader {
 				background-color: var( --color-sidebar-menu-hover-background );
 			}
 
-			svg:not( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+			svg:not( .sidebar_svg-a8c ) {
 				fill: currentColor;
 			}
 
-			svg:is( .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+			svg.sidebar_svg-a8c {
 				fill: none;
 				g {
 					stroke: currentColor;
@@ -449,7 +449,6 @@ body.is-section-reader {
 		}
 	}
 
-	.sidebar_svg-a8c-conversations,
 	.sidebar_svg-a8c {
 		fill: none;
 		g {

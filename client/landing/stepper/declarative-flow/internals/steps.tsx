@@ -218,11 +218,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/wait-for-plugin-install' ),
 	},
 
-	SITE_MIGRATION_INSTRUCTIONS: {
-		slug: 'site-migration-instructions',
-		asyncComponent: () => import( './steps-repository/site-migration-instructions' ),
-	},
-
 	SITE_MIGRATION_CREDENTIALS: {
 		slug: 'site-migration-credentials',
 		asyncComponent: () => import( './steps-repository/site-migration-credentials' ),
@@ -273,21 +268,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/site-migration-support-instructions' ),
 	},
 
-	SITE_MIGRATION_SSH_VERIFICATION: {
-		slug: 'site-migration-ssh-verification',
-		asyncComponent: () => import( './steps-repository/site-migration-ssh-verification' ),
-	},
-
-	SITE_MIGRATION_SSH_SHARE_ACCESS: {
-		slug: 'site-migration-ssh-share-access',
-		asyncComponent: () => import( './steps-repository/site-migration-ssh-share-access' ),
-	},
-
-	SITE_MIGRATION_SSH_IN_PROGRESS: {
-		slug: 'site-migration-ssh-in-progress',
-		asyncComponent: () => import( './steps-repository/site-migration-ssh-in-progress' ),
-	},
-
 	STATIC_SITE_IMPORT_READING: {
 		slug: 'static-site-import-reading',
 		asyncComponent: () =>
@@ -301,6 +281,13 @@ export const STEPS = {
 		asyncComponent: () =>
 			import(
 				/* webpackChunkName: 'async-step-static-site-import-progress' */ './steps-repository/static-site-import-progress'
+			),
+	},
+	STATIC_SITE_IMPORT_READY: {
+		slug: 'static-site-import-ready',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-static-site-import-ready' */ './steps-repository/static-site-import-ready'
 			),
 	},
 

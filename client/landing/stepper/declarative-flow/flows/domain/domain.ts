@@ -13,6 +13,7 @@ import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
+import { resolveDomainConnectionSetupUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
@@ -223,9 +224,11 @@ const domain: FlowV2< typeof initialize > = {
 						const queryArgs = getQueryArgs( window.location.href );
 						const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
 							string | undefined;
-						window.location.href = domainConnectionSetupUrl
-							? domainConnectionSetupUrl.replace( '%s', providedDependencies.domain )
-							: defaultRedirect;
+						window.location.href =
+							resolveDomainConnectionSetupUrl(
+								domainConnectionSetupUrl,
+								providedDependencies.domain
+							) || defaultRedirect;
 						return;
 					}
 
@@ -277,9 +280,9 @@ const domain: FlowV2< typeof initialize > = {
 								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 								/// Redirect to appropriate domains page
 								const redirectUrl =
-									domainConnectionSetupUrl && domain
-										? domainConnectionSetupUrl.replace( '%s', domain )
-										: defaultRedirect;
+									( domain &&
+										resolveDomainConnectionSetupUrl( domainConnectionSetupUrl, domain ) ) ||
+									defaultRedirect;
 								return {
 									redirectTo: redirectUrl,
 								};

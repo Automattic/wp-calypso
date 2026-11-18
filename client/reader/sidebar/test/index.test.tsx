@@ -45,7 +45,6 @@ describe( 'ReaderSidebar', () => {
 	const defaultProps = {
 		path: '/reader',
 		translate: ( text: string ) => text,
-		teams: [],
 		subscribedLists: [],
 		followedTags: [],
 		organizations: null,

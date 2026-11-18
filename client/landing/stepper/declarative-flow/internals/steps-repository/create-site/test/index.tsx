@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 import { transferDomainToSite } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { addProductsToCart, createSite } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
@@ -205,30 +204,23 @@ describe( 'create-site', () => {
 		expect( result ).toMatchObject( { siteId: 222, siteSlug: 'already-made.wordpress.com' } );
 	} );
 
-	it.each( [ true, false ] )(
-		'reuses an unnamed migration site only with the flag enabled (%s)',
-		async ( enabled ) => {
-			jest
-				.spyOn( config, 'isEnabled' )
-				.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' && enabled );
-			mockSiteUrl = '';
-			( useFlowState as jest.Mock ).mockImplementation( () => ( {
-				get: () => undefined,
-				sessionId: 'migration-session',
-				queryKey: [ 'migration-session' ],
-				set: ( key: string, value: unknown ) => {
-					flowStateStore = { [ key ]: value };
-				},
-			} ) );
-			await runStep( { flow: 'site-migration' } );
-			const handoff = { from: 'https://source.example.com' };
-			flowStateStore.migrationHandoff = handoff;
-			await pendingAction!();
-			expect( createSite ).toHaveBeenCalledTimes( enabled ? 1 : 2 );
-			expect( flowStateStore.migrationHandoff ).toEqual( enabled ? handoff : undefined );
-			jest.restoreAllMocks();
-		}
-	);
+	it( 'reuses an unnamed migration site', async () => {
+		mockSiteUrl = '';
+		( useFlowState as jest.Mock ).mockImplementation( () => ( {
+			get: () => undefined,
+			sessionId: 'migration-session',
+			queryKey: [ 'migration-session' ],
+			set: ( key: string, value: unknown ) => {
+				flowStateStore = { [ key ]: value };
+			},
+		} ) );
+		await runStep( { flow: 'site-migration' } );
+		const handoff = { from: 'https://source.example.com' };
+		flowStateStore.migrationHandoff = handoff;
+		await pendingAction!();
+		expect( createSite ).toHaveBeenCalledTimes( 1 );
+		expect( flowStateStore.migrationHandoff ).toEqual( handoff );
+	} );
 
 	// Nothing scopes the record to one run — the onboarding flow doesn't declare
 	// `__experimentalUseSessions`, so its state is keyed on the flow alone and outlives the signup

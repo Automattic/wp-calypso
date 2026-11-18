@@ -49,6 +49,10 @@ import {
 } from 'calypso/lib/signup/legacy-plan-flows';
 import { getWebsiteDesignServicesRedirect } from 'calypso/lib/signup/legacy-website-design-services-flow';
 import { getWooCommercePluginPage } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
+import {
+	STUDENT_CHECKOUT_PATH,
+	getStudentFlowRedirect,
+} from 'calypso/lib/signup/student-flow-redirect';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
@@ -1444,6 +1448,18 @@ export default function pages() {
 			);
 		}
 	);
+
+	app.get( [ '/start/student', '/start/student/*' ], ( req, res ) => {
+		res.redirect(
+			302,
+			getStudentFlowRedirect( getLegacyFlowLocale( req.path ), stringify( req.query ) )
+		);
+	} );
+
+	// Registered ahead of the checkout section, which would read `student` as a product slug.
+	app.get( STUDENT_CHECKOUT_PATH, ( req, res ) => {
+		res.redirect( 302, getStudentFlowRedirect( '', stringify( req.query ) ) );
+	} );
 
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {

@@ -784,7 +784,7 @@ describe( 'onboarding flow zoom navigation', () => {
 		);
 		// The stepper's navigate merges the current query in, so only what it adds is here.
 		expect( stepQuery( navigate ) ).toEqual( {
-			blueprint: 'zoom-test',
+			blueprint: 'cards',
 			build_dest: 'simple',
 			site_title: 'My Booking Site',
 		} );

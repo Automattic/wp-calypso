@@ -19,7 +19,6 @@ import {
 	COMMENTS_API_DISABLED,
 } from 'calypso/state/action-types';
 import { getSiteComment } from 'calypso/state/comments/selectors';
-import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
 import 'calypso/state/data-layer/wpcom/comments';
@@ -334,22 +333,6 @@ export const editComment = ( siteId, postId, commentId, comment ) => ( {
 	postId,
 	commentId,
 	comment,
-} );
-
-/**
- * Expand selected comments to the level of displayType. It's important to note that a comment will
- * only get expanded and cannot unexpand from this action.
- * That means comments can only go in the direction of: hidden --> singleLine --> excerpt --> full
- * @param {Object} options options object.
- * @param {number} options.siteId siteId for the comments to expand.
- * @param {Array<number>} options.commentIds list of commentIds to expand.
- * @param {number} options.postId postId for the comments to expand.
- * @param {string} options.displayType which displayType to set the comment to.
- * @returns {Object} reader expand comments action
- */
-export const expandComments = ( { siteId, commentIds, postId, displayType } ) => ( {
-	type: READER_EXPAND_COMMENTS,
-	payload: { siteId, commentIds, postId, displayType },
 } );
 
 /**

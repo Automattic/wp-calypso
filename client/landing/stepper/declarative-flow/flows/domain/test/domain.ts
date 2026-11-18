@@ -41,3 +41,19 @@ test( 'sends an existing mapping to its connection setup without failing the sub
 		'https://my.wordpress.com/domains/example.com/domain-connection-setup'
 	);
 } );
+
+test( 'ignores a connection setup URL on another site', async () => {
+	window.location.href = `https://wordpress.com/setup/domain/use-my-domain?domainConnectionSetupUrl=${ encodeURIComponent(
+		'https://evil.example/%s'
+	) }`;
+	const { result } = renderHook( () =>
+		domain.useStepNavigation.call( domain, 'use-my-domain', jest.fn() )
+	);
+
+	await result.current.submit( {
+		slug: 'use-my-domain',
+		providedDependencies: { ownershipVerificationCompleted: true, domain: 'example.com' },
+	} );
+	expect( window.location.href ).not.toContain( 'evil.example' );
+	expect( window.location.href ).toMatch( /\/sites\/example\.wordpress\.com\/domains$/ );
+} );

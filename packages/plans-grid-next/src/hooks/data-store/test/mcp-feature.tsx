@@ -19,18 +19,9 @@ import {
 	getPlanFeaturesGroupedForComparisonGrid,
 } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
 import usePlanFeaturesForGridPlans from '../use-plan-features-for-grid-plans';
 import useRestructuredPlanFeaturesForComparisonGrid from '../use-restructured-plan-features-for-comparison-grid';
 import type { GridPlan } from '../../../types';
-
-let mockFlagEnabled = false;
-vi.mock( '@automattic/calypso-config', () => {
-	const config = () => '';
-	config.isEnabled = ( flag: string ) =>
-		flag === 'hosting/dev-tools-all-paid-plans' && mockFlagEnabled;
-	return { __esModule: true, default: config, isEnabled: config.isEnabled };
-} );
 
 const PAID_PLANS = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
@@ -116,15 +107,7 @@ describe( 'mcp_features experiment variant', () => {
 	} );
 } );
 
-describe( 'staging site once dev tools move to all paid plans', () => {
-	beforeEach( () => {
-		mockFlagEnabled = true;
-	} );
-
-	afterEach( () => {
-		mockFlagEnabled = false;
-	} );
-
+describe( 'staging site now that dev tools are on all paid plans', () => {
 	it.each( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )(
 		'replaces the dev tools on the %s card as "Staging site"',
 		( planSlug ) => {
@@ -154,14 +137,5 @@ describe( 'staging site once dev tools move to all paid plans', () => {
 		);
 
 		expect( stagingFeature?.getTitle() ).toBe( 'Free staging site' );
-	} );
-} );
-
-describe( 'dev tools on the plan cards before they move to all paid plans', () => {
-	it.each( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )( 'keeps the dev tools on %s', ( planSlug ) => {
-		const slugs = cardFeatureSlugs( planSlug, false );
-
-		expect( slugs ).toContain( FEATURE_DEV_TOOLS );
-		expect( slugs ).not.toContain( FEATURE_SITE_STAGING_SITES );
 	} );
 } );

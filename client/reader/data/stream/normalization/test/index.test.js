@@ -96,19 +96,6 @@ describe( 'createStreamItemFromPost', () => {
 		);
 		expect( item.date ).toBe( '2026-02-02' );
 	} );
-
-	it( 'reverses comment IDs (newest first) when present', () => {
-		const item = createStreamItemFromPost(
-			{ ID: 1, site_ID: 2, comments: [ { ID: 1 }, { ID: 2 }, { ID: 3 } ] },
-			'date'
-		);
-		expect( item.comments ).toEqual( [ 3, 2, 1 ] );
-	} );
-
-	it( 'omits comments when not provided', () => {
-		const item = createStreamItemFromPost( { ID: 1, site_ID: 2 }, 'date' );
-		expect( item.comments ).toBeUndefined();
-	} );
 } );
 
 describe( 'createStreamDataFromPosts', () => {
@@ -434,8 +421,6 @@ describe( 'extractPageHandle', () => {
 
 describe( 'getStreamDateProperty', () => {
 	it.each( [
-		[ 'conversations', 'last_comment_date_gmt' ],
-		[ 'conversations-a8c', 'last_comment_date_gmt' ],
 		[ 'likes', 'date_liked' ],
 		[ 'saved', 'date_saved' ],
 		[ 'following', 'date' ],

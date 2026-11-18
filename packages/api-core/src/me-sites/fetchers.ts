@@ -105,7 +105,7 @@ export async function fetchJetpackSiteUrls(): Promise< string[] > {
 			apiVersion: '1.2',
 		},
 		{
-			fields: [ 'jetpack', 'URL' ],
+			fields: 'jetpack,URL',
 			site_visibility: 'all',
 			include_domain_only: false,
 			filters: 'jetpack',

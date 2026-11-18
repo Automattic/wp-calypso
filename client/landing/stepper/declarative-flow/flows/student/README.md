@@ -1,6 +1,6 @@
 # Student Flow
 
-Self-serve signup flow for the WordPress.com Student plan: checks that the account email is a verified academic email, then sends the user through domain selection and checkout with the Student plan at its regular price. Lives at `/setup/student`. Students with an invitation code use the education flow (`/setup/education`) instead.
+Self-serve signup flow for the WordPress.com Student plan: checks that the account email is a verified academic email, then sends the user through domain selection and checkout with the Student plan at its regular price. Lives at `/setup/student`; `/start/student` and `/checkout/student` redirect there, keeping the query (and the locale, for `/start/student`). Students with an invitation code use the education flow (`/setup/education`) instead, whose invite code step links here for students without one.
 
 ## Testing instructions
 
@@ -10,6 +10,8 @@ Self-serve signup flow for the WordPress.com Student plan: checks that the accou
 4. With a non-academic email (for example Gmail) — you see "The Student plan needs a school email", with links to sign up again, wp.com/education, `/setup/education` and `/setup/onboarding`.
 5. With an active Student plan — you see "You already have the Student plan", with links to your sites and purchases.
 6. Edge: open `/setup/student/domains` directly in a fresh session — you're redirected back to the eligibility step.
+7. Open `/start/student`, `/start/student/es` and `/checkout/student` — each lands on `/setup/student` (the second one in Spanish).
+8. On `/setup/education`, the line under "Validate invite code" reads "No code? Get the Student plan with your school email" and opens `/setup/student`.
 
 ## Owned by
 
