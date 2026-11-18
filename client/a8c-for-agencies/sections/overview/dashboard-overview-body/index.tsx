@@ -72,6 +72,7 @@ export default function DashboardOverviewBody() {
 			influencedRevenue={ agency.influenced_revenue ?? 0 }
 			approvalStatus={ approvalStatus }
 			capabilities={ agency.user?.capabilities }
+			billingSystem={ agency.billing_system }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 			showMatchingProfileCard={
 				canAccessLeadMatching &&
@@ -91,6 +92,7 @@ export default function DashboardOverviewBody() {
 				referrals: A4A_REFERRALS_DASHBOARD,
 				woopayments: A4A_WOOPAYMENTS_LINK,
 				marketplace: A4A_MARKETPLACE_PRODUCTS_LINK,
+				jetpackProducts: `${ A4A_MARKETPLACE_PRODUCTS_LINK }?category=jetpack`,
 				partnerDirectory: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 				leadMatching: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
 				contactSupport: CONTACT_URL_HASH_FRAGMENT,

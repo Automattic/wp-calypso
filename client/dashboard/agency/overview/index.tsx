@@ -15,7 +15,7 @@ import MissingPaymentSettingsNotice, {
 	useMissingPaymentSettings,
 } from '../earn/missing-payment-settings-notice';
 import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
-import { getMarketplaceReferHostingRoute } from '../marketplace/paths';
+import { MARKETPLACE_PRODUCTS_ROUTE, getMarketplaceReferHostingRoute } from '../marketplace/paths';
 import { useOnboardingTour } from '../onboarding-tour';
 import WelcomeBand, { useWelcomeBandVisibility } from '../onboarding-tour/welcome-band';
 import { REQUIRED_LEAD_MATCHING_FIELDS } from '../partner-directory/lead-matching/form-data';
@@ -127,6 +127,7 @@ export default function AgencyOverview() {
 				influencedRevenue={ agency.influenced_revenue ?? 0 }
 				approvalStatus={ approvalStatus }
 				capabilities={ agency.user?.capabilities }
+				billingSystem={ agency.billing_system }
 				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 				showMatchingProfileCard={
 					canAccessLeadMatching &&
@@ -146,6 +147,7 @@ export default function AgencyOverview() {
 					referrals: '/referrals',
 					woopayments: '/woopayments',
 					marketplace: '/marketplace',
+					jetpackProducts: `${ MARKETPLACE_PRODUCTS_ROUTE }?category=jetpack`,
 					partnerDirectory: PARTNER_DIRECTORY_ROUTE,
 					leadMatching: PARTNER_DIRECTORY_LEAD_MATCHING_PREFERENCES_ROUTE,
 					contactSupport: () => openContactForm(),

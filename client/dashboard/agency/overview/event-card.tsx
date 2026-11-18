@@ -6,6 +6,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
+import { getQueryArgs } from '@wordpress/url';
 import { Fragment } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -93,10 +94,17 @@ export function SingleEventCard( {
 								},
 							};
 							if ( shouldUseRouterLink && ! cta.isExternal && isDashboardPath( cta.url ) ) {
-								// The router takes the hash separately; left in `to`, it is dropped.
-								const [ to, hash ] = cta.url.split( '#' );
+								// The router takes the search and the hash separately; left in `to`, they are dropped.
+								const [ pathAndSearch, hash ] = cta.url.split( '#' );
+								const [ to ] = pathAndSearch.split( '?' );
 								return (
-									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ to } hash={ hash }>
+									<RouterLinkButton
+										key={ cta.id }
+										{ ...buttonProps }
+										to={ to }
+										search={ getQueryArgs( pathAndSearch ) }
+										hash={ hash }
+									>
 										{ cta.label }
 									</RouterLinkButton>
 								);

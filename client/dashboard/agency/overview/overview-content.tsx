@@ -4,7 +4,11 @@ import { __ } from '@wordpress/i18n';
 import Grid from '../../components/grid';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import { SingleEventCard } from './event-card';
-import { getLeadMatchingContactAnnouncement } from './events';
+import {
+	getJetpackHolidaySaleEvent,
+	getLeadMatchingContactAnnouncement,
+	isJetpackHolidaySaleActive,
+} from './events';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
 import MatchingProfileCard from './matching-profile-card';
@@ -14,11 +18,12 @@ import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
 import type { HelpfulLink } from './helpful-links-card';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
-import type { AgencyApprovalStatus, AgencyPartnerManager } from '@automattic/api-core';
+import type { Agency, AgencyApprovalStatus, AgencyPartnerManager } from '@automattic/api-core';
 
 // The WooPayments routes gate on the referrals capability too (see
 // a8c-for-agencies/lib/permission.ts), so one capability locks both earning cards.
 const REFERRALS_CAPABILITY = 'a4a_read_referrals';
+const MARKETPLACE_CAPABILITY = 'a4a_read_marketplace';
 
 export interface AgencyOverviewLinks {
 	tiers: string;
@@ -26,6 +31,7 @@ export interface AgencyOverviewLinks {
 	referrals: string;
 	woopayments: string;
 	marketplace: string;
+	jetpackProducts: string;
 	partnerDirectory: string;
 	leadMatching: string;
 	/** A URL, or a callback that opens contact support in-app. */
@@ -41,6 +47,8 @@ export interface AgencyOverviewContentProps {
 	approvalStatus?: AgencyApprovalStatus | '';
 	/** The current user's agency capabilities; the earning cards lock without referrals access. */
 	capabilities?: string[];
+	/** The Jetpack holiday sale discount applies at checkout, which only Billing Dragon agencies use. */
+	billingSystem?: Agency[ 'billing_system' ];
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
 	showMatchingProfileCard?: boolean;
@@ -70,6 +78,7 @@ export default function AgencyOverviewContent( {
 	influencedRevenue,
 	approvalStatus,
 	capabilities,
+	billingSystem,
 	hasPartnerDirectoryListing,
 	showMatchingProfileCard = false,
 	matchingProfileAnswered = 0,
@@ -92,90 +101,106 @@ export default function AgencyOverviewContent( {
 	// A rejection is already spelled out by the tier card, so only pending accounts get the note.
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is approved' ) : undefined;
+	const canAccessMarketplace = ! capabilities || capabilities.includes( MARKETPLACE_CAPABILITY );
+	const showJetpackHolidaySale =
+		isJetpackHolidaySaleActive() &&
+		! isPending &&
+		! isRejected &&
+		canAccessMarketplace &&
+		billingSystem === 'billingdragon';
 
 	return (
-		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
-			<VStack spacing={ spacing } justify="flex-start">
-				{ isRejected && (
-					<RejectedTierCard
-						contactSupport={ links.contactSupport }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
-				{ isPending && ! hidesPendingCard && (
-					<PendingTierCard
-						onRelaunchTour={ onRelaunchTour }
-						tourLabel={ tourLabel }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
-				{ ! isRejected && ! isPending && (
-					<TierOverviewCard
-						tierId={ tierId }
-						influencedRevenue={ influencedRevenue }
-						tiersHref={ links.tiers }
-						shouldUseRouterLink={ shouldUseRouterLink }
-						onScheduleCall={ onScheduleCall }
-						isSchedulingCall={ isSchedulingCall }
-						partnerManager={ partnerManager }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
-				{ showMatchingProfileCard && (
-					<MatchingProfileCard
-						href={ links.leadMatching }
-						answered={ matchingProfileAnswered }
+		<VStack spacing={ spacing }>
+			{ showJetpackHolidaySale && (
+				<SingleEventCard
+					event={ getJetpackHolidaySaleEvent( links.jetpackProducts ) }
+					shouldUseRouterLink={ shouldUseRouterLink ?? true }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			) }
+			<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
+				<VStack spacing={ spacing } justify="flex-start">
+					{ isRejected && (
+						<RejectedTierCard
+							contactSupport={ links.contactSupport }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
+					{ isPending && ! hidesPendingCard && (
+						<PendingTierCard
+							onRelaunchTour={ onRelaunchTour }
+							tourLabel={ tourLabel }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
+					{ ! isRejected && ! isPending && (
+						<TierOverviewCard
+							tierId={ tierId }
+							influencedRevenue={ influencedRevenue }
+							tiersHref={ links.tiers }
+							shouldUseRouterLink={ shouldUseRouterLink }
+							onScheduleCall={ onScheduleCall }
+							isSchedulingCall={ isSchedulingCall }
+							partnerManager={ partnerManager }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
+					{ showMatchingProfileCard && (
+						<MatchingProfileCard
+							href={ links.leadMatching }
+							answered={ matchingProfileAnswered }
+							agencyId={ agencyId }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
+					{ showContactOptionsAnnouncement && links.leadMatching && (
+						<SingleEventCard
+							event={ getLeadMatchingContactAnnouncement( links.leadMatching ) }
+							shouldUseRouterLink={ shouldUseRouterLink ?? true }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
+					{ ! isRejected && (
+						<GrowthCard
+							isPending={ isPending }
+							capabilities={ capabilities }
+							hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+							tierId={ tierId }
+							links={ links }
+							shouldUseRouterLink={ shouldUseRouterLink }
+							recordTracksEvent={ recordTracksEvent }
+						/>
+					) }
+					<ReferralEarningsCard
 						agencyId={ agencyId }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
-				{ showContactOptionsAnnouncement && links.leadMatching && (
-					<SingleEventCard
-						event={ getLeadMatchingContactAnnouncement( links.leadMatching ) }
-						shouldUseRouterLink={ shouldUseRouterLink ?? true }
-						recordTracksEvent={ recordTracksEvent }
-					/>
-				) }
-				{ ! isRejected && (
-					<GrowthCard
-						isPending={ isPending }
-						capabilities={ capabilities }
-						hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
-						tierId={ tierId }
-						links={ links }
+						locked={ isLocked }
+						lockedNote={ lockedNote }
+						referralsHref={ links.referrals }
 						shouldUseRouterLink={ shouldUseRouterLink }
 						recordTracksEvent={ recordTracksEvent }
 					/>
-				) }
-				<ReferralEarningsCard
-					agencyId={ agencyId }
-					locked={ isLocked }
-					lockedNote={ lockedNote }
-					referralsHref={ links.referrals }
-					shouldUseRouterLink={ shouldUseRouterLink }
-					recordTracksEvent={ recordTracksEvent }
-				/>
-				<WooPaymentsRevenueCard
-					agencyId={ agencyId }
-					locked={ isLocked }
-					lockedNote={ lockedNote }
-					woopaymentsHref={ links.woopayments }
-					shouldUseRouterLink={ shouldUseRouterLink }
-					recordTracksEvent={ recordTracksEvent }
-				/>
-			</VStack>
-			<VStack spacing={ spacing } justify="flex-start">
-				<NewsCard
-					agencyId={ agencyId }
-					shouldUseRouterLink={ shouldUseRouterLink }
-					recordTracksEvent={ recordTracksEvent }
-				/>
-				<HelpfulLinksCard
-					links={ links.helpful }
-					recordTracksEvent={ recordTracksEvent }
-					shouldUseRouterLink={ shouldUseRouterLink }
-				/>
-			</VStack>
-		</Grid>
+					<WooPaymentsRevenueCard
+						agencyId={ agencyId }
+						locked={ isLocked }
+						lockedNote={ lockedNote }
+						woopaymentsHref={ links.woopayments }
+						shouldUseRouterLink={ shouldUseRouterLink }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				</VStack>
+				<VStack spacing={ spacing } justify="flex-start">
+					<NewsCard
+						agencyId={ agencyId }
+						shouldUseRouterLink={ shouldUseRouterLink }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+					<HelpfulLinksCard
+						links={ links.helpful }
+						recordTracksEvent={ recordTracksEvent }
+						shouldUseRouterLink={ shouldUseRouterLink }
+					/>
+				</VStack>
+			</Grid>
+		</VStack>
 	);
 }

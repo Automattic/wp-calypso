@@ -1,4 +1,6 @@
 import { __ } from '@wordpress/i18n';
+import JetpackLogo from 'calypso/assets/images/a8c-for-agencies/events/jetpack-logo.svg';
+import { JETPACK_HOLIDAY_SALE_ENDS_AT, JETPACK_HOLIDAY_SALE_STARTS_AT } from './constants';
 import type { CSSProperties, ReactNode } from 'react';
 
 export interface FeaturedEventCta {
@@ -68,4 +70,37 @@ export const getLeadMatchingContactAnnouncement = ( leadMatchingHref: string ): 
 			variant: 'secondary',
 		},
 	],
+} );
+
+export const isJetpackHolidaySaleActive = () => {
+	const now = new Date();
+	return (
+		now >= new Date( JETPACK_HOLIDAY_SALE_STARTS_AT ) &&
+		now < new Date( JETPACK_HOLIDAY_SALE_ENDS_AT )
+	);
+};
+
+// The sale discount applies on its own at checkout, so the banner shows no coupon code.
+export const getJetpackHolidaySaleEvent = ( jetpackProductsHref: string ): FeaturedEvent => ( {
+	id: 'a4a-jetpack-holiday-sale-2026',
+	logo: JetpackLogo,
+	logoAlt: __( 'Jetpack' ),
+	when: __( 'Limited time offer' ),
+	title: __( '25% off new yearly Jetpack licenses' ),
+	subtitle: __( 'Offer valid November 19 – December 2, 2026' ),
+	description: [
+		__(
+			'Get 25% off the first year of any new yearly Jetpack plan or product. The discount applies automatically, and you’ll see the discounted price at checkout.'
+		),
+		__( 'Renewals, monthly licenses, and add-ons are not included.' ),
+	],
+	ctas: [
+		{
+			id: 'view-jetpack-products',
+			label: __( 'View Jetpack products' ),
+			url: jetpackProductsHref,
+			variant: 'secondary',
+		},
+	],
+	endsAt: JETPACK_HOLIDAY_SALE_ENDS_AT,
 } );
