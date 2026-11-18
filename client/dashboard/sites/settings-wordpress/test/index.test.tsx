@@ -40,7 +40,7 @@ const premiumSite = {
 	},
 } as unknown as Site;
 
-const OPT_OUT_LABEL = 'Keep my site out of early access to new WordPress versions';
+const EARLY_ACCESS_LABEL = 'Allow automatic early access to new WordPress versions';
 
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
@@ -200,10 +200,12 @@ describe( '<WordPressSettings>', () => {
 
 		expect( await screen.findByText( 'Your site is running WordPress 7.0-RC2' ) ).toBeVisible();
 		expect( screen.queryByText( 'Early access to WordPress 7.0' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'checkbox', { name: OPT_OUT_LABEL } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'checkbox', { name: EARLY_ACCESS_LABEL } )
+		).not.toBeInTheDocument();
 	} );
 
-	test( 'hides the early access opt-out when the status leaves it out', async () => {
+	test( 'hides the early access checkbox when the status leaves it out', async () => {
 		mockApi( 'beta', premiumSite, {
 			status: 200,
 			body: { version: '7.0', auto_enrolled: true },
@@ -215,11 +217,13 @@ describe( '<WordPressSettings>', () => {
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
 		expect( await screen.findByText( 'Early access to WordPress 7.0' ) ).toBeVisible();
-		expect( screen.queryByRole( 'checkbox', { name: OPT_OUT_LABEL } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'checkbox', { name: EARLY_ACCESS_LABEL } )
+		).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
 	} );
 
-	test( 'hides the early access opt-out on a site enrollment never picks', async () => {
+	test( 'hides the early access checkbox on a site enrollment never picks', async () => {
 		mockApi( 'latest', premiumSite, {
 			status: 200,
 			body: { version: '7.0', auto_enrolled: false, opted_out: false, auto_enrollable: false },
@@ -231,7 +235,9 @@ describe( '<WordPressSettings>', () => {
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
 		expect( await screen.findByRole( 'combobox', { name: 'WordPress version' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'checkbox', { name: OPT_OUT_LABEL } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'checkbox', { name: EARLY_ACCESS_LABEL } )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'tells a site without self-serve backups that it is getting ready to switch to the beta', async () => {
@@ -278,7 +284,9 @@ describe( '<WordPressSettings>', () => {
 		expect( screen.getByText( 'Getting your site ready.' ) ).toBeVisible();
 	} );
 
-	test( 'checks the early access opt-out for a site that opted out', async () => {
+	test( 'opts a site back in to early access when its checkbox is ticked', async () => {
+		const user = userEvent.setup();
+
 		mockApi( 'latest', premiumSite, {
 			status: 200,
 			body: { version: '7.0', auto_enrolled: false, opted_out: true, auto_enrollable: true },
@@ -289,10 +297,31 @@ describe( '<WordPressSettings>', () => {
 		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
-		expect( await screen.findByRole( 'checkbox', { name: OPT_OUT_LABEL } ) ).toBeChecked();
+		const checkbox = await screen.findByRole( 'checkbox', { name: EARLY_ACCESS_LABEL } );
+		expect( checkbox ).not.toBeChecked();
+		await user.click( checkbox );
+
+		const optInScope = nock( 'https://public-api.wordpress.com' )
+			.post( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version/prerelease`, ( body ) => {
+				expect( body ).toEqual( { opted_out: false } );
+				return true;
+			} )
+			.reply( 200, {
+				version: '7.0',
+				auto_enrolled: false,
+				opted_out: false,
+				auto_enrollable: true,
+			} );
+
+		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		await waitFor( () => {
+			expect( optInScope.isDone() ).toBe( true );
+		} );
+		expect( screen.getByRole( 'checkbox', { name: EARLY_ACCESS_LABEL } ) ).toBeChecked();
 	} );
 
-	test( 'saves only the early access opt-out when only the checkbox changes', async () => {
+	test( 'saves only the early access setting when only the checkbox changes', async () => {
 		const user = userEvent.setup();
 
 		mockApi( 'beta', premiumSite, {
@@ -305,8 +334,8 @@ describe( '<WordPressSettings>', () => {
 		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
 
-		const checkbox = await screen.findByRole( 'checkbox', { name: OPT_OUT_LABEL } );
-		expect( checkbox ).not.toBeChecked();
+		const checkbox = await screen.findByRole( 'checkbox', { name: EARLY_ACCESS_LABEL } );
+		expect( checkbox ).toBeChecked();
 		await user.click( checkbox );
 
 		const versionScope = mockWordPressVersionSaved( 'latest' );
@@ -327,7 +356,7 @@ describe( '<WordPressSettings>', () => {
 		await waitFor( () => {
 			expect( optOutScope.isDone() ).toBe( true );
 		} );
-		expect( screen.getByRole( 'checkbox', { name: OPT_OUT_LABEL } ) ).toBeChecked();
+		expect( screen.getByRole( 'checkbox', { name: EARLY_ACCESS_LABEL } ) ).not.toBeChecked();
 		expect( screen.getByRole( 'combobox', { name: 'WordPress version' } ) ).toHaveDisplayValue(
 			'Beta (7.0-RC2)'
 		);

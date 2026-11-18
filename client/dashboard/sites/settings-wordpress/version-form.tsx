@@ -25,7 +25,7 @@ interface VersionFormProps {
 
 interface VersionFormData {
 	version: string;
-	optedOut: boolean;
+	earlyAccess: boolean;
 }
 
 export function VersionForm( { site, currentVersion, versionSwitch }: VersionFormProps ) {
@@ -47,7 +47,7 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 
 	const formData: VersionFormData = {
 		version: formEdits.version || pendingVersion || currentVersion || '',
-		optedOut: formEdits.optedOut ?? prerelease?.opted_out ?? false,
+		earlyAccess: formEdits.earlyAccess ?? ! prerelease?.opted_out,
 	};
 
 	const currentWpVersion = site.options?.software_version ?? '';
@@ -69,10 +69,10 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 			],
 		},
 		{
-			id: 'optedOut',
-			label: __( 'Keep my site out of early access to new WordPress versions' ),
+			id: 'earlyAccess',
+			label: __( 'Allow automatic early access to new WordPress versions' ),
 			description: __(
-				'We sometimes give sites early access to an upcoming WordPress release before it’s final.'
+				'We sometimes move sites to an upcoming WordPress release before it’s final. You can switch back to the stable release anytime.'
 			),
 			Edit: 'checkbox',
 		},
@@ -82,12 +82,12 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 
 	const form = {
 		layout: { type: 'regular' as const },
-		fields: canOptOut ? [ 'version', 'optedOut' ] : [ 'version' ],
+		fields: canOptOut ? [ 'version', 'earlyAccess' ] : [ 'version' ],
 	};
 
 	const isVersionDirty = formData.version !== currentVersion;
-	const isOptedOutDirty = canOptOut && formData.optedOut !== prerelease?.opted_out;
-	const isDirty = isVersionDirty || isOptedOutDirty;
+	const isEarlyAccessDirty = canOptOut && formData.earlyAccess !== ! prerelease?.opted_out;
+	const isDirty = isVersionDirty || isEarlyAccessDirty;
 	const isBusy = isSaving || isSwitching || prereleaseMutation.isPending;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -95,8 +95,8 @@ export function VersionForm( { site, currentVersion, versionSwitch }: VersionFor
 		if ( isVersionDirty ) {
 			switchVersion( formData.version );
 		}
-		if ( isOptedOutDirty ) {
-			prereleaseMutation.mutate( formData.optedOut );
+		if ( isEarlyAccessDirty ) {
+			prereleaseMutation.mutate( ! formData.earlyAccess );
 		}
 	};
 
