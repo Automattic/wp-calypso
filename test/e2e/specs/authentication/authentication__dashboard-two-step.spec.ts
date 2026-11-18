@@ -99,7 +99,16 @@ async function continueWithSecurityKey( page: Page ): Promise< void > {
 		await switchToSecurityKey.click();
 	}
 
-	for ( let attempt = 0; attempt < 3; attempt++ ) {
+	// Retries click before waiting, so every ceremony is awaited and its error
+	// notice is still on screen when the loop gives up.
+	for ( let attempt = 0; attempt < 4; attempt++ ) {
+		if ( attempt > 0 ) {
+			// The button stays aria-disabled while a ceremony is in flight, so this only
+			// clicks once the previous attempt has settled without logging in.
+			await securityKeyButton
+				.click( { timeout: 5_000 } )
+				.catch( ( error ) => console.warn( `Security key retry skipped: ${ error }` ) );
+		}
 		const proceeded = await page
 			.waitForURL( ( url ) => ! url.pathname.includes( '/log-in' ), { timeout: 20_000 } )
 			.then( () => true )
@@ -107,14 +116,9 @@ async function continueWithSecurityKey( page: Page ): Promise< void > {
 		if ( proceeded ) {
 			return;
 		}
-		// The button stays aria-disabled while a ceremony is in flight, so this only
-		// clicks once the previous attempt has settled without logging in.
-		await securityKeyButton
-			.click( { timeout: 5_000 } )
-			.catch( ( error ) => console.warn( `Security key retry skipped: ${ error }` ) );
 	}
 
-	const notices = ( await page.locator( '.notice' ).allInnerTexts() ).join( ' | ' );
+	const notices = ( await page.locator( '.calypso-notice' ).allInnerTexts() ).join( ' | ' );
 	throw new Error(
 		`Security key login did not proceed after retries; still at ${ page.url() }. Notices: ${ notices }`
 	);
