@@ -41,7 +41,7 @@ describe( 'leaveCheckout', () => {
 
 			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
 
-			expect( window.location.href ).toBe( '/home' );
+			expect( window.location.href ).toBe( `${ window.location.origin }/home` );
 			expect( navigate ).not.toHaveBeenCalled();
 		} );
 
@@ -78,7 +78,7 @@ describe( 'leaveCheckout', () => {
 			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
 
 			expect( window.location.href ).toBe(
-				`/checkout/studio-return?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`
+				`${ window.location.origin }/checkout/studio-return?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`
 			);
 		} );
 

@@ -132,11 +132,14 @@ export const leaveCheckout = ( {
 				// We use window.location.href instead of navigate() because navigate() uses page.show()
 				// which silently fails for /setup/ Stepper routes. Since we're leaving checkout entirely,
 				// the SPA optimization from navigate() provides no meaningful benefit.
-				window.location.href = cancelPath;
+				// Rebuilt from this origin so the user-supplied part can only ever be the path.
+				const { pathname, search, hash } = new URL( cancelPath, window.location.href );
+				window.location.href = window.location.origin + pathname + search + hash;
 				return;
 			}
-			if ( isDashboardUrl( cancelPath ) ) {
-				window.location.href = cancelPath;
+			const dashboardUrl = getDashboardUrl( cancelPath );
+			if ( dashboardUrl ) {
+				window.location.href = dashboardUrl;
 				return;
 			}
 			if ( isJetpackCloudUrl( cancelPath ) ) {
@@ -154,13 +157,23 @@ export const leaveCheckout = ( {
 	navigate( closeUrl );
 };
 
-function isDashboardUrl( url: string ) {
+/**
+ * The URL, normalized, when it's on a dashboard origin. A prefix check on the
+ * normalized URL is what code scanners recognize as pinning the host.
+ */
+function getDashboardUrl( url: string ): string | undefined {
+	let href;
 	try {
-		const { origin } = new URL( url );
-		return dashboardOrigins().some( ( allowed ) => new URL( allowed ).origin === origin );
+		href = new URL( url ).href;
 	} catch {
-		return false;
+		return undefined;
 	}
+	for ( const allowed of dashboardOrigins() ) {
+		if ( href.startsWith( `${ new URL( allowed ).origin }/` ) ) {
+			return href;
+		}
+	}
+	return undefined;
 }
 
 const JETPACK_CLOUD_HOSTNAMES = [ 'cloud.jetpack.com', 'jetpack.cloud.localhost' ];

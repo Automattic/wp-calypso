@@ -15,7 +15,14 @@ describe( 'handleOAuthCallback', () => {
 	}: { pathname?: string; search?: string; hash?: string } = {} ) {
 		Object.defineProperty( window, 'location', {
 			writable: true,
-			value: { pathname, search, hash, replace },
+			value: {
+				origin: 'https://my.wordpress.com',
+				href: `https://my.wordpress.com${ pathname }${ search }${ hash }`,
+				pathname,
+				search,
+				hash,
+				replace,
+			},
 		} );
 	}
 
