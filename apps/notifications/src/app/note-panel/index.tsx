@@ -34,6 +34,7 @@ type NotePanelProps = {
 	actions?: ReactNode;
 	openNoteOnArrowKeys?: boolean;
 	filterName: FilterName;
+	/** Shows another tab. The host also closes the open note, which may not be on the new tab. */
 	setFilterName: ( filterName: FilterName ) => void;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
@@ -63,13 +64,9 @@ const NotePanel = ( {
 					recordTracksEvent( 'calypso_notification_tab_select', { tab: tabId, source } );
 				}
 				setFilterName( tabId as FilterName );
-				// Clear the selection — a note from the previous filter would
-				// otherwise stay rendered in the detail pane while the list
-				// switches to the new filter's notes.
-				setSelectedNoteId( undefined );
 			}
 		},
-		[ setFilterName, setSelectedNoteId ]
+		[ setFilterName ]
 	);
 
 	useEffect( () => {
