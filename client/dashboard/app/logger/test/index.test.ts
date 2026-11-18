@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { captureException } from '@automattic/calypso-sentry';
+import { type MockInstance, vi } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../../chunk-load-recovery';
 import { getDomInterferenceReport } from '../dom-interference';
@@ -10,31 +11,31 @@ import { handleOnCatch, handleUncaughtError, initLogger } from '../index';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
-jest.mock( '@automattic/calypso-config', () => jest.fn( () => 'development' ) );
-jest.mock( '@automattic/calypso-sentry', () => ( {
-	captureException: jest.fn(),
+vi.mock( '@automattic/calypso-config', () => ( { default: vi.fn( () => 'development' ) } ) );
+vi.mock( '@automattic/calypso-sentry', () => ( {
+	captureException: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
-jest.mock( '../../chunk-load-recovery', () => ( {
-	maybeReloadForChunkError: jest.fn(),
+vi.mock( '../../chunk-load-recovery', () => ( {
+	maybeReloadForChunkError: vi.fn(),
 } ) );
-jest.mock( '../dom-interference', () => ( {
-	getDomInterferenceReport: jest.fn( () => ( {
+vi.mock( '../dom-interference', () => ( {
+	getDomInterferenceReport: vi.fn( () => ( {
 		tags: { dom_google_translate: 'true' },
 		context: { fontCount: 3 },
 	} ) ),
 } ) );
 
-const mockedLogToLogstash = jest.mocked( logToLogstash );
-const mockedCaptureException = jest.mocked( captureException );
-const mockedMaybeReloadForChunkError = jest.mocked( maybeReloadForChunkError );
+const mockedLogToLogstash = vi.mocked( logToLogstash );
+const mockedCaptureException = vi.mocked( captureException );
+const mockedMaybeReloadForChunkError = vi.mocked( maybeReloadForChunkError );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockedMaybeReloadForChunkError.mockReturnValue( false );
-	jest.mocked( getDomInterferenceReport ).mockReturnValue( {
+	vi.mocked( getDomInterferenceReport ).mockReturnValue( {
 		tags: { dom_google_translate: 'true' },
 		context: { fontCount: 3 },
 	} );
@@ -70,7 +71,7 @@ const createErrorInfo = ( stack = 'at SomeComponent' ): ErrorInfo => ( {
 } );
 
 describe( 'handleOnCatch', () => {
-	it( 'does not log or capture benign inaccessible Jetpack error', () => {
+	test( 'does not log or capture benign inaccessible Jetpack error', () => {
 		const error = new Error( 'The Jetpack site is inaccessible or returned an error' );
 		error.name = 'ParseError';
 
@@ -87,7 +88,7 @@ describe( 'handleOnCatch', () => {
 		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 
-	it( 'logs and captures a non-benign error with DOM fingerprint and component stack', () => {
+	test( 'logs and captures a non-benign error with DOM fingerprint and component stack', () => {
 		const error = new Error( 'Boom' );
 		const errorInfo = createErrorInfo( 'at SitePage' );
 		const router = createRouter( { siteSlug: 'my-site', someId: '123' } );
@@ -145,7 +146,7 @@ describe( 'handleOnCatch', () => {
 		} );
 	} );
 
-	it( 'reports no previous path when the error happens on a fresh page load', () => {
+	test( 'reports no previous path when the error happens on a fresh page load', () => {
 		const error = new Error( 'Boom' );
 		const router = createRouter( { siteSlug: 'my-site' } );
 
@@ -165,7 +166,7 @@ describe( 'handleOnCatch', () => {
 		);
 	} );
 
-	it( 'does not log or capture when a chunk load error triggers a reload', () => {
+	test( 'does not log or capture when a chunk load error triggers a reload', () => {
 		mockedMaybeReloadForChunkError.mockReturnValue( true );
 
 		const error = new Error( 'Loading chunk emails failed.' );
@@ -181,7 +182,7 @@ describe( 'handleOnCatch', () => {
 		expect( mockedCaptureException ).not.toHaveBeenCalled();
 	} );
 
-	it( 'logs but does not capture when dashboard_backport is true', () => {
+	test( 'logs but does not capture when dashboard_backport is true', () => {
 		const error = new Error( 'Backport-only error' );
 		const errorInfo = createErrorInfo();
 		const router = createRouter( { siteSlug: 'my-site' } );
@@ -198,17 +199,17 @@ describe( 'handleOnCatch', () => {
 } );
 
 describe( 'handleUncaughtError', () => {
-	let consoleError: jest.SpyInstance;
+	let consoleError: MockInstance;
 
 	beforeEach( () => {
-		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
 		consoleError.mockRestore();
 	} );
 
-	it( 'reports an uncaught error with fingerprint and component stack, and still console.errors', () => {
+	test( 'reports an uncaught error with fingerprint and component stack, and still console.errors', () => {
 		const error = new Error( 'Uncaught boom' );
 
 		handleUncaughtError( error, { componentStack: 'at DomainUpsellCardContent' } );
@@ -233,7 +234,7 @@ describe( 'handleUncaughtError', () => {
 		expect( consoleError ).toHaveBeenCalledWith( error );
 	} );
 
-	it( 'normalizes a non-Error value before reporting', () => {
+	test( 'normalizes a non-Error value before reporting', () => {
 		handleUncaughtError( 'just a string', {} );
 
 		expect( mockedCaptureException ).toHaveBeenCalledTimes( 1 );

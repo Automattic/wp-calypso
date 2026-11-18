@@ -1,10 +1,8 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { testFullDomain } from '../../test-utils';
 import { DomainsTableEmailIndicator } from '../domains-table-email-indicator';
+import '@testing-library/jest-dom/vitest';
 
 const siteSlug = 'test-domain.com';
 

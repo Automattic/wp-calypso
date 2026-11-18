@@ -1,4 +1,8 @@
-import { fetchSiteDomains, setPrimaryDomain } from '@automattic/api-core';
+import {
+	fetchSiteDomains,
+	isAtomicPrimaryDomainChangeFailed,
+	setPrimaryDomain,
+} from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
@@ -12,13 +16,21 @@ export const siteDomainsQuery = ( siteId: number ) =>
 		queryFn: () => fetchSiteDomains( siteId ),
 	} );
 
+const refetchSitePrimaryDomain = ( siteId: number ) => {
+	queryClient.invalidateQueries( siteQueryFilter( siteId ) );
+	queryClient.invalidateQueries( { queryKey: [ 'site', siteId, 'domains' ] } );
+	queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
+};
+
 export const siteSetPrimaryDomainMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'site-primary-domain-set' },
 		mutationFn: ( { siteId, domain }: { siteId: number; domain: string } ) =>
 			setPrimaryDomain( siteId, domain ),
-		onSuccess: ( data, { siteId } ) => {
-			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
-			queryClient.invalidateQueries( { queryKey: [ 'domains' ] } );
+		onSuccess: ( data, { siteId } ) => refetchSitePrimaryDomain( siteId ),
+		onError: ( error, { siteId } ) => {
+			if ( isAtomicPrimaryDomainChangeFailed( error ) ) {
+				refetchSitePrimaryDomain( siteId );
+			}
 		},
 	} );

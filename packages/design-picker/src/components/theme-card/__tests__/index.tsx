@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import ThemeCard from '../index';
+import '@testing-library/jest-dom/vitest';
 
 describe( '<ThemeCard />', () => {
 	it( 'should render only the Active badge when active and not retired', () => {

@@ -2,17 +2,18 @@
  * @jest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import Variation from '../variation-picker/variation';
 
 // Mock StylesPreview
-jest.mock( '../styles-preview', () => {
+vi.mock( '../styles-preview', () => {
 	const MockStylesPreview = () => <div data-testid="mock-styles-preview" />;
 	MockStylesPreview.displayName = 'MockStylesPreview';
-	return MockStylesPreview;
+	return { default: MockStylesPreview };
 } );
 
 const defaultProps = {
-	onSelect: jest.fn(),
+	onSelect: vi.fn(),
 };
 
 const mockVariation = {
@@ -23,7 +24,7 @@ const mockVariation = {
 
 describe( 'Variation', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'renders the variation with aria-label', () => {
@@ -32,7 +33,7 @@ describe( 'Variation', () => {
 	} );
 
 	it( 'calls onSelect when clicked', () => {
-		const onSelect = jest.fn();
+		const onSelect = vi.fn();
 		render(
 			<Variation
 				{ ...defaultProps }
@@ -49,7 +50,7 @@ describe( 'Variation', () => {
 		[ 'Enter', 'Enter' ],
 		[ 'Space', ' ' ],
 	] )( 'selects the variation on %s', ( _name, key ) => {
-		const onSelect = jest.fn();
+		const onSelect = vi.fn();
 		render(
 			<Variation
 				{ ...defaultProps }
@@ -63,7 +64,7 @@ describe( 'Variation', () => {
 	} );
 
 	it( 'ignores clicks and keys while disabled, and says so', () => {
-		const onSelect = jest.fn();
+		const onSelect = vi.fn();
 		render(
 			<Variation variation={ mockVariation } type="color" isDisabled onSelect={ onSelect } />
 		);

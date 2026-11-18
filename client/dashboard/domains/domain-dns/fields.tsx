@@ -1,5 +1,6 @@
 import { DNS_RECORD_TYPES } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
+import { Text } from '../../components/text';
 import type { DnsRecord } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';
 
@@ -20,6 +21,7 @@ export function useDnsFields( domainName: string ): Field< DnsRecord >[] {
 				operators: [ 'isAny' as Operator ],
 			},
 			getValue: ( { item } ) => item.type,
+			render: ( { item } ) => <Text weight={ 500 }>{ item.type }</Text>,
 		},
 		{
 			id: 'name',

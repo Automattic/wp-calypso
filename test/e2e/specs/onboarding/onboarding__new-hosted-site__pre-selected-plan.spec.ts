@@ -48,7 +48,7 @@ test.describe(
 				const userSignupPage = new UserSignupPage( page );
 				const promises = await Promise.all( [
 					userSignupPage.signupSocialFirstWithEmail( testUser.email ),
-					page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
+					page.waitForURL( /\/checkout\//, { timeout: 30 * 1000, waitUntil: 'commit' } ),
 				] );
 				newUserDetails = promises[ 0 ];
 			} );

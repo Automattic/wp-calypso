@@ -1,85 +1,88 @@
+import { type Mock, vi } from 'vitest';
 import { createNotificationSound } from '../notification-sound';
 
 describe( 'createNotificationSound', () => {
 	let oscillator: {
 		onended: ( () => void ) | null;
-		disconnect: jest.Mock;
+		disconnect: Mock;
 		type: string;
-		frequency: { setValueAtTime: jest.Mock };
-		connect: jest.Mock;
-		start: jest.Mock;
-		stop: jest.Mock;
+		frequency: { setValueAtTime: Mock };
+		connect: Mock;
+		start: Mock;
+		stop: Mock;
 	};
 	let gain: {
-		disconnect: jest.Mock;
-		gain: { setValueAtTime: jest.Mock; exponentialRampToValueAtTime: jest.Mock };
-		connect: jest.Mock;
+		disconnect: Mock;
+		gain: { setValueAtTime: Mock; exponentialRampToValueAtTime: Mock };
+		connect: Mock;
 	};
 	let audioContext: {
 		currentTime: number;
 		destination: object;
 		state: string;
 		onstatechange: ( () => void ) | null;
-		suspend: jest.Mock;
-		createOscillator: jest.Mock;
-		createGain: jest.Mock;
-		resume: jest.Mock;
-		close: jest.Mock;
+		suspend: Mock;
+		createOscillator: Mock;
+		createGain: Mock;
+		resume: Mock;
+		close: Mock;
 	};
-	let audioContextConstructor: jest.Mock;
+	let audioContextConstructor: Mock;
 	let originalHidden: PropertyDescriptor | undefined;
 
 	beforeEach( () => {
 		oscillator = {
 			onended: null,
-			disconnect: jest.fn(),
+			disconnect: vi.fn(),
 			type: '',
-			frequency: { setValueAtTime: jest.fn() },
-			connect: jest.fn(),
-			start: jest.fn(),
-			stop: jest.fn(),
+			frequency: { setValueAtTime: vi.fn() },
+			connect: vi.fn(),
+			start: vi.fn(),
+			stop: vi.fn(),
 		};
 		gain = {
-			disconnect: jest.fn(),
+			disconnect: vi.fn(),
 			gain: {
-				setValueAtTime: jest.fn(),
-				exponentialRampToValueAtTime: jest.fn(),
+				setValueAtTime: vi.fn(),
+				exponentialRampToValueAtTime: vi.fn(),
 			},
-			connect: jest.fn(),
+			connect: vi.fn(),
 		};
 		audioContext = {
 			currentTime: 0,
 			destination: {},
 			state: 'suspended',
 			onstatechange: null,
-			suspend: jest.fn( () =>
+			suspend: vi.fn( () =>
 				Promise.resolve().then( () => {
 					audioContext.state = 'suspended';
 					audioContext.onstatechange?.();
 				} )
 			),
-			createOscillator: jest.fn( () => oscillator ),
-			createGain: jest.fn( () => gain ),
-			resume: jest.fn( () =>
+			createOscillator: vi.fn( () => oscillator ),
+			createGain: vi.fn( () => gain ),
+			resume: vi.fn( () =>
 				Promise.resolve().then( () => {
 					audioContext.state = 'running';
 					audioContext.onstatechange?.();
 				} )
 			),
-			close: jest.fn().mockResolvedValue( undefined ),
+			close: vi.fn().mockResolvedValue( undefined ),
 		};
-		audioContextConstructor = jest.fn( () => audioContext );
+		audioContextConstructor = vi.fn( function () {
+			return audioContext;
+		} );
 		Object.defineProperty( window, 'AudioContext', {
 			configurable: true,
 			value: audioContextConstructor,
 		} );
 		originalHidden = Object.getOwnPropertyDescriptor( document, 'hidden' );
 		Object.defineProperty( document, 'hidden', { configurable: true, value: false } );
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		if ( originalHidden ) {
 			Object.defineProperty( document, 'hidden', originalHidden );
 		} else {
@@ -147,7 +150,7 @@ describe( 'createNotificationSound', () => {
 		audioContext.resume.mockImplementation( () => Promise.resolve() );
 		const sound = createNotificationSound();
 		const result = sound.play();
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		await expect( result ).resolves.toBe( 'not_activated' );
 		const resumeCalls = audioContext.resume.mock.calls.length;
 
@@ -204,7 +207,7 @@ describe( 'createNotificationSound', () => {
 		const sound = createNotificationSound();
 		const result = sound.play();
 
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		await expect( result ).resolves.toBe( 'not_activated' );
 		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
 		sound.dispose();
@@ -234,7 +237,7 @@ describe( 'createNotificationSound', () => {
 		expect( audioContext.createOscillator ).toHaveBeenCalledTimes( 1 );
 		oscillator.onended?.();
 		await Promise.resolve();
-		jest.advanceTimersByTime( 3000 );
+		vi.advanceTimersByTime( 3000 );
 		expect( await sound.play() ).toBe( 'played' );
 		expect( audioContext.createOscillator ).toHaveBeenCalledTimes( 2 );
 		sound.dispose();
@@ -254,7 +257,7 @@ describe( 'createNotificationSound', () => {
 		await sound.play();
 		expect( audioContext.createOscillator ).toHaveBeenCalledTimes( 1 );
 
-		jest.advanceTimersByTime( 3000 );
+		vi.advanceTimersByTime( 3000 );
 		await sound.play();
 		expect( audioContext.createOscillator ).toHaveBeenCalledTimes( 2 );
 		sound.dispose();
@@ -277,7 +280,7 @@ describe( 'createNotificationSound', () => {
 
 	it( 'reports an unsupported browser without an error', async () => {
 		delete ( window as { AudioContext?: typeof AudioContext } ).AudioContext;
-		const onError = jest.fn();
+		const onError = vi.fn();
 		const sound = createNotificationSound( { onError } );
 
 		document.dispatchEvent( new Event( 'pointerdown' ) );
@@ -292,7 +295,7 @@ describe( 'createNotificationSound', () => {
 		audioContext.resume.mockImplementation( () => {
 			throw error;
 		} );
-		const onError = jest.fn();
+		const onError = vi.fn();
 		const sound = createNotificationSound( { onError } );
 
 		document.dispatchEvent( new Event( 'pointerdown' ) );
@@ -304,10 +307,10 @@ describe( 'createNotificationSound', () => {
 
 	it( 'reports a failure to create the audio context and stops trying', async () => {
 		const error = new Error( 'Too many audio contexts' );
-		audioContextConstructor.mockImplementation( () => {
+		audioContextConstructor.mockImplementation( function () {
 			throw error;
 		} );
-		const onError = jest.fn();
+		const onError = vi.fn();
 		const sound = createNotificationSound( { onError } );
 
 		document.dispatchEvent( new Event( 'pointerdown' ) );
@@ -324,7 +327,7 @@ describe( 'createNotificationSound', () => {
 		const closeError = new Error( 'close failed' );
 		audioContext.resume.mockRejectedValue( resumeError );
 		audioContext.close.mockRejectedValue( closeError );
-		const onError = jest.fn();
+		const onError = vi.fn();
 		const sound = createNotificationSound( { onError } );
 
 		document.dispatchEvent( new Event( 'pointerdown' ) );
@@ -341,7 +344,7 @@ describe( 'createNotificationSound', () => {
 		audioContext.createOscillator.mockImplementation( () => {
 			throw error;
 		} );
-		const onError = jest.fn();
+		const onError = vi.fn();
 		const sound = createNotificationSound( { onError } );
 		document.dispatchEvent( new Event( 'pointerdown' ) );
 		await Promise.resolve();
@@ -423,7 +426,7 @@ describe( 'createNotificationSound', () => {
 		expect( sound.play() ).toBe( 'cooldown' );
 		expect( audioContext.resume ).toHaveBeenCalledTimes( resumeCalls );
 
-		jest.advanceTimersByTime( 3000 );
+		vi.advanceTimersByTime( 3000 );
 		expect( await sound.play() ).toBe( 'played' );
 		sound.dispose();
 		oscillator.onended?.();
@@ -434,7 +437,7 @@ describe( 'createNotificationSound', () => {
 		setHasBeenActive( true );
 		const error = new Error( 'suspend failed' );
 		audioContext.suspend.mockRejectedValue( error );
-		const onError = jest.fn();
+		const onError = vi.fn();
 		const sound = createNotificationSound( { onError } );
 		expect( await sound.play() ).toBe( 'played' );
 		oscillator.onended?.();
@@ -446,7 +449,7 @@ describe( 'createNotificationSound', () => {
 		document.dispatchEvent( new Event( 'pointerup' ) );
 		await Promise.resolve();
 		expect( audioContext.resume ).toHaveBeenCalledTimes( resumeCalls + 1 );
-		jest.advanceTimersByTime( 3000 );
+		vi.advanceTimersByTime( 3000 );
 		expect( await sound.play() ).toBe( 'played' );
 		sound.dispose();
 	} );
@@ -457,7 +460,7 @@ describe( 'createNotificationSound', () => {
 		const sound = createNotificationSound();
 		const result = sound.play();
 		expect( sound.play() ).toBe( 'cooldown' );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		await expect( result ).resolves.toBe( 'not_activated' );
 
 		audioContext.state = 'running';
@@ -502,12 +505,12 @@ describe( 'createNotificationSound', () => {
 		audioContext.resume.mockReturnValue( resume );
 		const sound = createNotificationSound();
 		const result = sound.play();
-		jest.advanceTimersByTime( 900 );
+		vi.advanceTimersByTime( 900 );
 		finishResume();
 		await expect( result ).resolves.toBe( 'played' );
-		jest.advanceTimersByTime( 2100 );
+		vi.advanceTimersByTime( 2100 );
 		expect( sound.play() ).toBe( 'cooldown' );
-		jest.advanceTimersByTime( 900 );
+		vi.advanceTimersByTime( 900 );
 		expect( await sound.play() ).toBe( 'played' );
 		sound.dispose();
 	} );

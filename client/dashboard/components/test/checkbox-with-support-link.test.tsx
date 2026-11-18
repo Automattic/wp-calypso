@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../test-utils';
 import { CheckboxWithSupportLink } from '../checkbox-with-support-link';
 
@@ -42,7 +43,7 @@ describe( '<CheckboxWithSupportLink>', () => {
 	} );
 
 	test( 'reports the new value when toggled', async () => {
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		render(
 			<CheckboxWithSupportLink
 				label={ label }

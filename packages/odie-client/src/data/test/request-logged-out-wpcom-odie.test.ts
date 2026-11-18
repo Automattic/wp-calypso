@@ -1,28 +1,20 @@
+import { vi } from 'vitest';
 import { requestLoggedOutWpcomOdie } from '../request-logged-out-wpcom-odie';
 
 describe( 'requestLoggedOutWpcomOdie', () => {
-	const originalFetch = globalThis.fetch;
-
 	beforeEach( () => {
-		globalThis.fetch = jest.fn();
+		vi.stubGlobal( 'fetch', vi.fn() );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
-	} );
-
-	afterAll( () => {
-		if ( originalFetch ) {
-			globalThis.fetch = originalFetch;
-		} else {
-			delete ( globalThis as { fetch?: typeof fetch } ).fetch;
-		}
+		vi.restoreAllMocks();
+		vi.unstubAllGlobals();
 	} );
 
 	it( 'omits credentials when fetching a logged-out chat', async () => {
 		const response = { chat_id: 123 };
-		const fetchMock = jest.mocked( globalThis.fetch ).mockResolvedValue( {
-			json: jest.fn().mockResolvedValue( response ),
+		const fetchMock = vi.mocked( globalThis.fetch ).mockResolvedValue( {
+			json: vi.fn().mockResolvedValue( response ),
 			ok: true,
 		} as unknown as Response );
 
@@ -44,8 +36,8 @@ describe( 'requestLoggedOutWpcomOdie', () => {
 
 	it( 'sends messages without credentials', async () => {
 		const response = { chat_id: 123 };
-		const fetchMock = jest.mocked( globalThis.fetch ).mockResolvedValue( {
-			json: jest.fn().mockResolvedValue( response ),
+		const fetchMock = vi.mocked( globalThis.fetch ).mockResolvedValue( {
+			json: vi.fn().mockResolvedValue( response ),
 			ok: true,
 		} as unknown as Response );
 
@@ -84,8 +76,8 @@ describe( 'requestLoggedOutWpcomOdie', () => {
 		} );
 
 		const mockFetch = () =>
-			jest.mocked( globalThis.fetch ).mockResolvedValue( {
-				json: jest.fn().mockResolvedValue( {} ),
+			vi.mocked( globalThis.fetch ).mockResolvedValue( {
+				json: vi.fn().mockResolvedValue( {} ),
 				ok: true,
 			} as unknown as Response );
 
@@ -124,8 +116,8 @@ describe( 'requestLoggedOutWpcomOdie', () => {
 	} );
 
 	it( 'throws the API error message', async () => {
-		jest.mocked( globalThis.fetch ).mockResolvedValue( {
-			json: jest.fn().mockResolvedValue( { message: 'Unable to load chat.' } ),
+		vi.mocked( globalThis.fetch ).mockResolvedValue( {
+			json: vi.fn().mockResolvedValue( { message: 'Unable to load chat.' } ),
 			ok: false,
 			statusText: 'Forbidden',
 		} as unknown as Response );

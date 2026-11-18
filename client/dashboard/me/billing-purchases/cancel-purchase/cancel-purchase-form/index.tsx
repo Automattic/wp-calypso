@@ -1,9 +1,10 @@
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { intlFormat } from 'date-fns';
+import { useLocale } from '../../../../app/locale';
 import { ButtonStack } from '../../../../components/button-stack';
 import { SectionHeader } from '../../../../components/section-header';
+import { formatDate } from '../../../../utils/datetime';
 import {
 	CANCEL_FLOW_TYPE,
 	isExpiredOrRemoved,
@@ -96,7 +97,6 @@ interface CancelPurchaseFormProps {
 	refundAmount?: number;
 	siteSlug: string;
 	solution?: string;
-	solutionsReason?: string;
 	surveyStep?: string;
 	upsell?: string;
 	willAtomicSiteRevert?: boolean;
@@ -137,7 +137,6 @@ function SurveyContent( {
 	surveyStep,
 	upsell,
 	siteSlug,
-	solutionsReason,
 	cancelBundledDomain,
 	cancellationInProgress,
 	includedDomainPurchase,
@@ -148,6 +147,7 @@ function SurveyContent( {
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
 	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment();
+	const locale = useLocale();
 	if ( surveyStep === FEEDBACK_STEP ) {
 		return (
 			<FeedbackStep
@@ -166,14 +166,14 @@ function SurveyContent( {
 	if ( surveyStep === UPSELL_STEP ) {
 		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
-		const solutions = getSolutionsForReason( solutionsReason ?? '' );
+		const solutions = getSolutionsForReason( questionOneText ?? '' );
 		const useSolutionsCards = showCancelOptionsCards && solutions && solutions.length > 0;
 
 		if ( useSolutionsCards ) {
 			return (
 				<SolutionsCardsUpsellStep
 					cancellationInProgress={ cancellationInProgress }
-					cancellationReason={ solutionsReason }
+					cancellationReason={ questionOneText }
 					closeDialog={ closeDialog }
 					intent={ intent ?? undefined }
 					onClickFreeMonthOffer={ freeMonthOfferClick }
@@ -272,9 +272,7 @@ function SurveyContent( {
 								),
 								{
 									planName: productName,
-									purchaseRenewalDate: intlFormat( purchase.expiry_date, {
-										dateStyle: 'medium',
-									} ),
+									purchaseRenewalDate: formatDate( new Date( purchase.expiry_date ), locale ),
 								}
 							),
 							{

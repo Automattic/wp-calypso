@@ -34,6 +34,7 @@ const SCREENSHOT_PATH = path.join( __dirname, '../results/screenshot.png' );
 const WP_DEBUG_LOG = path.resolve( __dirname, '../results/app.log' );
 
 const BASE_URL = process.env.WP_DESKTOP_BASE_URL?.replace( /\/$/, '' ) ?? 'https://wordpress.com';
+const BASE_ORIGIN = new URL( BASE_URL ).origin;
 const LAUNCH_ARGS = [ '--disable-http-cache', '--start-maximized' ];
 
 // Linux CI lacks Electron's SUID sandbox setup.
@@ -113,8 +114,7 @@ describe( 'User Can log in', () => {
 		// Find main window. Playwright has problems identifying the main window when using `firstWindow`, so we
 		// iterate over all windows and find it by URL.
 		for ( const window of await electronApp.windows() ) {
-			const windowUrl = await window.url();
-			if ( windowUrl.startsWith( BASE_URL ) ) {
+			if ( URL.parse( await window.url() )?.origin === BASE_ORIGIN ) {
 				mainWindow = window;
 				break;
 			}

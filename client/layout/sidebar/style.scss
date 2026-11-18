@@ -145,6 +145,7 @@
 
 		.sidebar__menu-icon {
 			fill: var(--color-sidebar-menu-hover-text);
+			color: var(--color-sidebar-menu-hover-text);
 		}
 
 		.a8c-count {
@@ -178,6 +179,7 @@
 
 		.sidebar__menu-icon {
 			fill: var(--color-sidebar-menu-selected-text);
+			color: var(--color-sidebar-menu-selected-text);
 		}
 
 		.a8c-count {
@@ -243,6 +245,7 @@
 			.sidebar__menu-icon,
 			.sidebar__expandable-arrow {
 				fill: var(--color-sidebar-menu-hover-text);
+				color: var(--color-sidebar-menu-hover-text);
 			}
 
 			.a8c-count {
@@ -272,6 +275,7 @@
 	.sidebar__expandable-arrow {
 		transition: transform 0.1s linear;
 		fill: var(--color-sidebar-gridicon-fill);
+		color: var(--color-sidebar-gridicon-fill);
 	}
 
 	&.is-toggle-open {

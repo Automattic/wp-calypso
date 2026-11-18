@@ -9,7 +9,7 @@ const noop = () => {};
 jest.mock( '@automattic/calypso-config', () => () => true );
 
 describe( 'index', () => {
-	let superagent;
+	let fetchMock;
 	let statsdUtils;
 	let logSectionResponse;
 
@@ -18,14 +18,13 @@ describe( 'index', () => {
 		// starts clean; re-acquire deps from the same registry so the spy applies.
 		jest.resetModules();
 		jest.useFakeTimers();
-		// eslint-disable-next-line no-restricted-modules -- statsd-utils calls superagent under the hood
-		superagent = require( 'superagent' );
 		statsdUtils = require( 'calypso/lib/analytics/statsd-utils' );
 		( { logSectionResponse } = require( 'calypso/server/pages/analytics' ) );
-		jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } );
+		fetchMock = jest.spyOn( globalThis, 'fetch' ).mockResolvedValue( undefined );
 	} );
 
 	afterEach( () => {
+		fetchMock.mockRestore();
 		jest.useRealTimers();
 	} );
 
@@ -46,7 +45,7 @@ describe( 'index', () => {
 
 		// Parses the beacons sent in the URL to boom.gif
 		const includesBeacon = ( partialBeacon ) => {
-			const statsdUrl = new URL( superagent.get.mock.calls[ 0 ][ 0 ] );
+			const statsdUrl = new URL( fetchMock.mock.calls[ 0 ][ 0 ] );
 			const { beacons } = JSON.parse( decodeURIComponent( statsdUrl.searchParams.get( 'json' ) ) );
 			return beacons.some( ( beacon ) => beacon.includes( partialBeacon ) );
 		};
@@ -89,7 +88,7 @@ describe( 'index', () => {
 
 			test( 'throttles calls to log analytics', () => {
 				// We only want to mock this for one test, as it will prevent our
-				// superagent spy above from working.
+				// fetch spy above from working.
 				const analyticsMock = jest.spyOn( statsdUtils, 'logServerEvent' );
 
 				logSectionResponse( request, response, next );

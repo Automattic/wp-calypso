@@ -1,4 +1,4 @@
-import { it, describe, expect } from '@jest/globals';
+import { it, describe, expect } from 'vitest';
 import { createEventMatchingPredicate } from '../editor-tracks-event-manager';
 import { TracksEvent } from '../types';
 

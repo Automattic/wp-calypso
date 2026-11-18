@@ -26,7 +26,7 @@ export function validateImportUrl( value ) {
 		);
 	}
 
-	if ( hostname.indexOf( '.wixsite.com' ) > -1 && pathname === '/' ) {
+	if ( hostname.endsWith( '.wixsite.com' ) && pathname === '/' ) {
 		return translate(
 			'Please enter the full URL and include the part that comes after %(hostname)s. See example below.',
 			{

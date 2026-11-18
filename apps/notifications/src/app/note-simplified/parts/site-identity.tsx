@@ -10,10 +10,12 @@ import type { ReactNode } from 'react';
 
 export default function SiteIdentity( {
 	site,
+	title,
 	details,
 	url,
 }: {
 	site: NoteSite;
+	title?: string;
 	details?: ReactNode;
 	url?: string;
 } ) {
@@ -55,10 +57,10 @@ export default function SiteIdentity( {
 				>
 					{ url ? (
 						<a href={ url } target="_blank" rel="noreferrer">
-							{ site.name }
+							{ title ?? site.name }
 						</a>
 					) : (
-						site.name
+						( title ?? site.name )
 					) }
 				</Text>
 				{ details && (

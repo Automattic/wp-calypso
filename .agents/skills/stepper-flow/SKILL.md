@@ -1,3 +1,8 @@
+---
+name: stepper-flow
+description: Build a Stepper signup flow from existing steps and customize step behavior.
+---
+
 # /stepper-flow
 
 Build a new Stepper signup flow from a plain-English description.

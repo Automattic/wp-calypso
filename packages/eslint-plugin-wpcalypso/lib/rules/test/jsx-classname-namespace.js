@@ -11,7 +11,9 @@
 
 import { RuleTester } from 'eslint';
 import plugin from '../../..';
-import { ERROR_MESSAGE } from '../jsx-classname-namespace';
+import rule from '../jsx-classname-namespace';
+
+const { ERROR_MESSAGE } = rule;
 
 //------------------------------------------------------------------------------
 // Tests

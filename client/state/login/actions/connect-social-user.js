@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import { reloadProxy } from 'wpcom-proxy-request';
 import wpcom from 'calypso/lib/wp';
 import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
@@ -37,7 +38,7 @@ export const connectSocialUser =
 		 * particularly after the user has logged in, but Calypso hasn't
 		 * been reloaded yet.
 		 */
-		require( 'wpcom-proxy-request' ).reloadProxy();
+		reloadProxy();
 
 		wpcom.req.post( { metaAPI: { accessAllUsersBlogs: true } } );
 

@@ -92,15 +92,15 @@ yarn workspace wp-e2e-tests build --watch
 12. Run tests
 
 ```bash
-yarn workspace wp-e2e-tests test:pw -- <test_path> --reporter=list
+yarn workspace wp-e2e-tests test:pw <test_path> --reporter=list
 ```
 
 `--reporter=list` keeps a failing run from opening the HTML report and holding the terminal. Drop it, then `yarn playwright show-report`, when you want that report.
 
-By default, tests should run on <http://calypso.localhost:3000>. If you wish to run them on another environment, such as <https://wpcalypso.wordpress.com>, you can set an environment variable:
+By default, tests run against the dev server of the checkout they run from (`yarn start`): <http://calypso.localhost:3000> in the main checkout, and the worktree's own default port in a linked git worktree. If you wish to run them on another environment, such as <https://wpcalypso.wordpress.com>, you can set an environment variable:
 
 ```bash
-CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test:pw -- <test_path> --reporter=list
+CALYPSO_BASE_URL=https://wpcalypso.wordpress.com yarn workspace wp-e2e-tests test:pw <test_path> --reporter=list
 ```
 
 13. Install and use Playwright VSCode extension

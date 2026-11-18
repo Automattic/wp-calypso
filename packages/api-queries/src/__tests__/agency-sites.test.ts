@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import nock from 'nock';
 import { agencySitesImportMutation } from '../agency-sites';
 

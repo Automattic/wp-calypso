@@ -13,7 +13,6 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
-const { sentryWebpackPlugin } = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
@@ -66,14 +65,8 @@ const shouldUseReadonlyCache = ! (
 
 const shouldProfile = process.env.PROFILE === 'true';
 
-const shouldCreateSentryRelease =
-	( process.env.MANUAL_SENTRY_RELEASE === 'true' || process.env.IS_DEFAULT_BRANCH === 'true' ) &&
-	process.env.SENTRY_AUTH_TOKEN?.length > 1;
-const sentryRelease = `calypso_${ process.env.COMMIT_SHA }`;
 let sourceMapType = process.env.SOURCEMAP;
-if ( ! sourceMapType && shouldCreateSentryRelease ) {
-	sourceMapType = 'hidden-source-map';
-} else if ( ! sourceMapType && isDevelopment ) {
+if ( ! sourceMapType && isDevelopment ) {
 	sourceMapType = 'eval';
 }
 
@@ -120,12 +113,6 @@ const webpackCacheVersion = JSON.stringify( {
 	hotReload: shouldHotReload,
 	profile: shouldProfile,
 } );
-
-if ( shouldCreateSentryRelease ) {
-	console.log(
-		"A sentry release is being created because the auth token exists and we're either on the trunk branch or the manual checkbox has been toggled."
-	);
-}
 
 function filterEntrypoints( entrypoints ) {
 	if ( ! process.env.ENTRY_LIMIT ) {
@@ -347,8 +334,6 @@ const webpackConfig = {
 			),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
-			// The Sentry SDK uses this release when `initSentry()` doesn't set one.
-			__SENTRY_RELEASE__: shouldCreateSentryRelease ? JSON.stringify( sentryRelease ) : 'undefined',
 		} ),
 		// Node polyfills
 		new webpack.ProvidePlugin( {
@@ -421,31 +406,6 @@ const webpackConfig = {
 		// Equivalent to the CLI flag --progress=profile
 		shouldProfile && new webpack.ProgressPlugin( { profile: true } ),
 
-		// NOTE: Sentry should be the last webpack plugin in the array.
-		shouldCreateSentryRelease &&
-			sentryWebpackPlugin( {
-				org: 'a8c',
-				project: 'calypso',
-				authToken: process.env.SENTRY_AUTH_TOKEN,
-				telemetry: false,
-				// Upload source maps by release and URL, without injecting debug IDs into every chunk.
-				sourcemaps: { disable: true },
-				release: {
-					name: sentryRelease,
-					// `__SENTRY_RELEASE__` covers this without prepending the release to every chunk.
-					inject: false,
-					setCommits: false,
-					uploadLegacySourcemaps: {
-						paths: [ filePaths.path ],
-						urlPrefix: `~${ filePaths.publicPath }`,
-					},
-				},
-				errorHandler: ( err ) => {
-					// Sentry should _never_ fail the webpack build, so only log here:
-					console.error( 'Sentry Webpack Plugin Error:', err.message );
-					console.error( 'Sentry Full error:', err );
-				},
-			} ),
 		shouldHotReload && new webpack.HotModuleReplacementPlugin(),
 		shouldHotReload &&
 			new ReactRefreshWebpackPlugin( {

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
@@ -8,7 +8,7 @@ import { render } from '../../../../test-utils';
 import { PausedNotificationNotice } from '../index';
 
 describe( 'PausedNotificationNotice', () => {
-	it( 'renders the notice when the browser notifications are blocked', async () => {
+	test( 'renders the notice when the browser notifications are blocked', async () => {
 		nock( 'https://public-api.wordpress.com:443' ).get( '/rest/v1.1/me/settings' ).reply( 200, {
 			subscription_delivery_email_blocked: true,
 		} );
@@ -20,7 +20,7 @@ describe( 'PausedNotificationNotice', () => {
 		).toBeVisible();
 	} );
 
-	it( 'does not render the notice when the browser notifications are not blocked', async () => {
+	test( 'does not render the notice when the browser notifications are not blocked', async () => {
 		const api = nock( 'https://public-api.wordpress.com:443' )
 			.get( '/rest/v1.1/me/settings' )
 			.reply( 200, {

@@ -1,42 +1,47 @@
-/**
- * @jest-environment jsdom
- */
 import { HelpCenter } from '@automattic/data-stores';
 import { render, screen } from '@testing-library/react';
 import { StrictMode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { OdieSendMessageButton } from '..';
 import { useOdieAssistantContext } from '../../../context';
 import { useSendChatMessage } from '../../../hooks';
 import type { Chat, Message } from '../../../types';
 
-jest.mock( '@automattic/agenttic-ui/index.css', () => ( {} ), { virtual: true } );
-jest.mock(
-	'@automattic/agenttic-ui',
-	() => ( { useInput: () => ( { textareaRef: { current: null } } ) } ),
-	{ virtual: true }
-);
-jest.mock( '@automattic/zendesk-client', () => ( {
+// Changed by each test.
+const mockState = vi.hoisted( () => ( {
+	textarea: null as HTMLTextAreaElement | null,
+	hasEnTranslation: true,
+} ) );
+
+vi.mock( '@automattic/agenttic-ui/index.css', () => ( {} ) );
+vi.mock( '@automattic/agenttic-ui', () => ( {
+	useInput: () => ( { textareaRef: { current: mockState.textarea } } ),
+} ) );
+vi.mock( '@automattic/i18n-utils', () => ( {
+	useHasEnTranslation: () => () => mockState.hasEnTranslation,
+} ) );
+vi.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 	useConnectionStatusNotice: () => undefined,
 } ) );
-jest.mock( 'smooch', () => ( {
-	__esModule: true,
-	default: { startTyping: jest.fn(), stopTyping: jest.fn() },
+vi.mock( 'smooch', () => ( {
+	default: { startTyping: vi.fn(), stopTyping: vi.fn() },
 } ) );
-jest.mock( '../../../context', () => ( { useOdieAssistantContext: jest.fn() } ) );
-jest.mock( '../../../hooks', () => ( { useSendChatMessage: jest.fn() } ) );
-jest.mock( '../../chat-footer', () => ( {
+vi.mock( '../../../context', () => ( { useOdieAssistantContext: vi.fn() } ) );
+vi.mock( '../../../hooks', () => ( { useSendChatMessage: vi.fn() } ) );
+vi.mock( '../../chat-footer', () => ( {
 	AgentUIFooter: ( { value }: { value: string } ) => (
 		<textarea aria-label="Chat input" value={ value } readOnly />
 	),
 } ) );
-jest.mock( '../../email-fallback-notice', () => ( { EmailFallbackNotice: () => null } ) );
-jest.mock( '../use-attachment-handler', () => ( {
+vi.mock( '../../email-fallback-notice', () => ( { EmailFallbackNotice: () => null } ) );
+vi.mock( '../use-attachment-handler', () => ( {
 	useAttachmentHandler: () => ( {
 		attachmentPreviews: null,
-		sendAttachments: jest.fn(),
-		handleImagePaste: jest.fn(),
+		sendAttachments: vi.fn(),
+		handleImagePaste: vi.fn(),
 		attachmentAction: {},
 		isAttachingFile: false,
 		showAttachmentButton: false,
@@ -48,7 +53,7 @@ jest.mock( '../use-attachment-handler', () => ( {
 HelpCenter.register();
 
 const QUERY = 'How do I add a domain?';
-const sendMessage = jest.fn().mockResolvedValue( undefined );
+const sendMessage = vi.fn().mockResolvedValue( undefined );
 
 function makeChat( overrides: Partial< Chat > = {} ): Chat {
 	return {
@@ -62,8 +67,8 @@ function makeChat( overrides: Partial< Chat > = {} ): Chat {
 }
 
 function mockChat( chat: Chat, { isUserEligibleForPaidSupport = false } = {} ) {
-	jest.mocked( useOdieAssistantContext ).mockReturnValue( {
-		trackEvent: jest.fn(),
+	vi.mocked( useOdieAssistantContext ).mockReturnValue( {
+		trackEvent: vi.fn(),
 		chat,
 		canConnectToZendesk: true,
 		forceEmailSupport: false,
@@ -72,10 +77,13 @@ function mockChat( chat: Chat, { isUserEligibleForPaidSupport = false } = {} ) {
 	} as unknown as ReturnType< typeof useOdieAssistantContext > );
 }
 
-function renderInput( route: string, { strict = false } = {} ) {
+function renderInput(
+	route: string,
+	{ strict = false, aiDisclosureId }: { strict?: boolean; aiDisclosureId?: string } = {}
+) {
 	const tree = (
 		<MemoryRouter initialEntries={ [ route ] }>
-			<OdieSendMessageButton />
+			<OdieSendMessageButton aiDisclosureId={ aiDisclosureId } />
 		</MemoryRouter>
 	);
 	return render( strict ? <StrictMode>{ tree }</StrictMode> : tree );
@@ -86,8 +94,8 @@ const route = ( params: Record< string, string > ) =>
 
 describe( 'OdieSendMessageButton initial query', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.mocked( useSendChatMessage ).mockReturnValue( { sendMessage, abort: jest.fn() } );
+		vi.clearAllMocks();
+		vi.mocked( useSendChatMessage ).mockReturnValue( { sendMessage, abort: vi.fn() } );
 	} );
 
 	it( 'sends the query of a new chat once', () => {
@@ -144,8 +152,8 @@ describe( 'OdieSendMessageButton initial query', () => {
 
 describe( 'OdieSendMessageButton while a chat with a human starts', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.mocked( useSendChatMessage ).mockReturnValue( { sendMessage, abort: jest.fn() } );
+		vi.clearAllMocks();
+		vi.mocked( useSendChatMessage ).mockReturnValue( { sendMessage, abort: vi.fn() } );
 	} );
 
 	it( 'holds the message while going straight to a human', () => {
@@ -168,5 +176,44 @@ describe( 'OdieSendMessageButton while a chat with a human starts', () => {
 		renderInput( route( { provider: 'zendesk', query: QUERY } ) );
 
 		expect( sendMessage ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'OdieSendMessageButton AI note', () => {
+	beforeEach( () => {
+		vi.clearAllMocks();
+		vi.mocked( useSendChatMessage ).mockReturnValue( { sendMessage, abort: vi.fn() } );
+		mockState.textarea = null;
+		mockState.hasEnTranslation = true;
+		mockChat( makeChat() );
+	} );
+
+	it( 'hides the note when the AI line is hidden', () => {
+		renderInput( '/odie' );
+
+		expect( screen.queryByText( /Responses may be inaccurate/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'says only that responses may be inaccurate', () => {
+		renderInput( '/odie', { aiDisclosureId: 'line-id' } );
+
+		expect( screen.getByText( /Responses may be inaccurate/ ) ).toBeInTheDocument();
+		expect( screen.queryByText( /chatting with/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the old note until the new one is translated', () => {
+		mockState.hasEnTranslation = false;
+		renderInput( '/odie', { aiDisclosureId: 'line-id' } );
+
+		expect( screen.getByText( /You’re chatting with an AI assistant/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'describes the input with the AI line, then the note', () => {
+		mockState.textarea = document.createElement( 'textarea' );
+		renderInput( '/odie', { aiDisclosureId: 'line-id' } );
+
+		const noteId = screen.getByText( /Responses may be inaccurate/ ).closest( '[id]' )?.id;
+		expect( noteId ).toBeTruthy();
+		expect( mockState.textarea ).toHaveAttribute( 'aria-describedby', `line-id ${ noteId }` );
 	} );
 } );

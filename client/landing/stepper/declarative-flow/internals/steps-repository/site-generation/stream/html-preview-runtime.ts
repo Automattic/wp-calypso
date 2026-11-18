@@ -30,9 +30,10 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
   let homeReady = false, homeTimer = null;
   let completeAt = null;
   let presentation = 'building', presenting = false, needsLayout = false;
-  // The walk through the finished pages while the host polishes the site.
+  // One walk down the homepage and back to its top while the host polishes
+  // the site. Once it has finished, the camera no longer moves on its own.
   const TOUR_HOLD = 5600;
-  let tour = null, tourInterrupted = false;
+  let tour = null, tourInterrupted = false, toured = false;
   // With the preview up, a lull with nothing arriving also starts the walk;
   // the next arrival ends it so the camera can follow the work instead.
   const IDLE_MS = 6000;
@@ -574,8 +575,6 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     layout(true).then(async () => {
       for (const entry of selected) {
         if (current!==version) return;
-        await follow(entry.page);
-        if (current!==version) return;
         await fly(entry,0,current);
       }
     }).finally(finishPresentation);
@@ -609,8 +608,9 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     if (count) page.fadeUntil=Math.max(page.fadeUntil,performance.now()+650);
   }
   // A picture that has just landed gets a ring that fades out, and the camera
-  // moves to it when it landed off screen (no more than once every few
-  // seconds, and never while the user or the walk has the camera).
+  // moves to it when it landed off screen on the homepage (no more than once
+  // every few seconds, never while the user or the walk has the camera, and
+  // never after the walk has finished).
   let lastImageGlide=0;
   function spotlightImage(page,image) {
     const ring=image.animate([
@@ -618,7 +618,7 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
       {boxShadow:'0 0 0 16px color-mix(in srgb,Highlight 0%,transparent)'}
     ],{duration:900,easing:'cubic-bezier(.22,1,.36,1)'});
     reveals.add(ring); ring.finished.catch(() => {}).then(() => reveals.delete(ring));
-    if (tour || tourInterrupted || presenting || page.position.hidden || !page.revealed) return;
+    if (tour || toured || tourInterrupted || presenting || page.route!=='/' || page.position.hidden || !page.revealed) return;
     const now=performance.now();
     if (now-lastImageGlide<3500) return;
     const rect=image.getBoundingClientRect(), room=viewport.clientHeight;
@@ -698,11 +698,11 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
       },Math.min(index++*90,180));
     });
   }
-  function tourPages() {
-    return Array.from(pages.values()).filter(page=>page.meaningful && page.revealed && !page.position.hidden)
-      .sort((a,b)=>a.route==='/'?-1:b.route==='/'?1:(a.y-b.y)||(a.x-b.x));
+  function tourPage() {
+    const home=pages.get('/');
+    return home && home.meaningful && home.revealed && !home.position.hidden ? home : null;
   }
-  // One camera for the walk and for following section flights; a user scroll
+  // One camera for the walk, image spotlights and chip taps; a user scroll
   // (interruptCamera) takes it back until the host moves to the finishing phase.
   // A cancelled glide still settles: flush() awaits it before the next flight.
   let cameraFrame=0, cameraSettle=null;
@@ -727,13 +727,6 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     });
   }
   function glide(top, duration) { if (tour) glideTo(top,duration); }
-  function follow(page) {
-    if (tourInterrupted || tour || media.matches || page.route==='/' || presentation!=='showcase') return Promise.resolve();
-    const offset=page.y-viewport.scrollTop, room=viewport.clientHeight;
-    if (offset>=0 && offset<room*.55) return Promise.resolve();
-    const maxTop=Math.max(0,scene.offsetHeight-room);
-    return glideTo(Math.min(maxTop,Math.max(0,page.y-40)),700);
-  }
   function stopTour() {
     if (!tour) return;
     clearTimeout(tour.timer); clearTimeout(tour.read);
@@ -746,9 +739,8 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
   }
   function tourStep() {
     if (!tour) return;
-    const list=tourPages();
-    if (!list.length) { tour.timer=setTimeout(tourStep,1000); return; }
-    const page=list[tour.index%list.length];
+    const page=tourPage();
+    if (!page) { tour.timer=setTimeout(tourStep,1000); return; }
     pages.forEach(item=>item.position.classList.toggle('is-touring',item===page));
     const visual=page.height*page.scale, room=viewport.clientHeight;
     const maxTop=Math.max(0,scene.offsetHeight-room);
@@ -760,7 +752,11 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     const lift='translate('+page.x+'px,'+(page.y-3)+'px) scale('+(page.scale*1.012)+')';
     tour.animation=page.position.animate([{transform:base},{transform:lift,offset:.5},{transform:base}],{duration:TOUR_HOLD,easing:'ease-in-out'});
     send('tour',{title:page.title.slice(0,100)});
-    tour.timer=setTimeout(()=>{ tour.index++; tourStep(); },TOUR_HOLD);
+    const current=tour;
+    tour.timer=setTimeout(()=>{
+      clearTimeout(current.read);
+      glideTo(top,900).then(()=>{ if (tour!==current) return; toured=true; stopTour(); });
+    },TOUR_HOLD);
   }
   let resumeTimer=null, focused=false;
   // The highlight a chip tap puts on a page comes off whenever the user, the
@@ -793,10 +789,10 @@ export const HTML_PREVIEW_RUNTIME = String.raw`
     if (active && !complete && !document.hidden) idleTimer=setTimeout(()=>{ idleWalk=true; startTour(); },IDLE_MS);
   }
   function startTour() {
-    if (tour || tourInterrupted || disposed || !(finishing || idleWalk) || complete || !active || document.hidden || media.matches || presenting) return;
-    if (!tourPages().length) return;
+    if (tour || toured || tourInterrupted || disposed || !(finishing || idleWalk) || complete || !active || document.hidden || media.matches || presenting) return;
+    if (!tourPage()) return;
     clearTimeout(resumeTimer); resumeTimer=null; focused=false;
-    tour={index:0,timer:null,read:null,animation:null};
+    tour={timer:null,read:null,animation:null};
     scene.classList.add('is-touring');
     tourStep();
   }

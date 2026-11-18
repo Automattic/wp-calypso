@@ -24,6 +24,7 @@ import {
 } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { wpcom } from '../../../api-core/src/wpcom-fetcher';
 import {
 	atmosphereActorFollowersInfiniteQuery,
@@ -106,7 +107,7 @@ describe( 'reader-atmosphere hooks', () => {
 			.reply( 200, { connection: { id: 101, handle: 'a', did: 'did:plc:a', avatar: null } } );
 		const client = new QueryClient();
 		client.setQueryData( readerAtmosphereKeys.connections(), 'old' );
-		const spy = jest.spyOn( client, 'invalidateQueries' );
+		const spy = vi.spyOn( client, 'invalidateQueries' );
 		const { result } = renderHook( () => useCreateConnectionMutation(), {
 			wrapper: makeWrapper( client ),
 		} );
@@ -1471,7 +1472,7 @@ describe( 'reader-atmosphere hooks', () => {
 					counts: { replies: 0, reposts: 0, likes: 5, quotes: 0 },
 				} );
 				const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
-				const cancelQueriesSpy = jest.spyOn( client, 'cancelQueries' );
+				const cancelQueriesSpy = vi.spyOn( client, 'cancelQueries' );
 				seedTimeline( client, [ { items: [ target ], cursor: null } ], [ undefined ] );
 
 				nock( BASE )
@@ -2299,7 +2300,7 @@ describe( 'reader-atmosphere hooks', () => {
 				wrapper: makeWrapper( client ),
 			} );
 
-			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+			const invalidateSpy = vi.spyOn( client, 'invalidateQueries' );
 
 			let promise: Promise< unknown > = Promise.resolve();
 			await act( async () => {
@@ -2343,7 +2344,7 @@ describe( 'reader-atmosphere hooks', () => {
 				wrapper: makeWrapper( client ),
 			} );
 
-			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+			const invalidateSpy = vi.spyOn( client, 'invalidateQueries' );
 
 			let promise: Promise< unknown > = Promise.resolve();
 			await act( async () => {
@@ -2819,7 +2820,7 @@ describe( 'reader-atmosphere hooks', () => {
 			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
 			seedTimeline( client, existing );
 
-			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+			const invalidateSpy = vi.spyOn( client, 'invalidateQueries' );
 
 			nock( BASE )
 				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
@@ -2867,7 +2868,7 @@ describe( 'reader-atmosphere hooks', () => {
 			const existing = makeFeedItem( { uri: 'at://existing', cid: 'existing-cid' } );
 			seedTimeline( client, existing );
 
-			const invalidateSpy = jest.spyOn( client, 'invalidateQueries' );
+			const invalidateSpy = vi.spyOn( client, 'invalidateQueries' );
 
 			nock( BASE )
 				.post( `/wpcom/v2/reader/atmosphere/connections/${ connectionId }/posts` )
@@ -3561,7 +3562,7 @@ describe( 'reader-atmosphere hooks', () => {
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 			seedTimeline( client, makeTargetPost() );
 
-			const onSuccess = jest.fn();
+			const onSuccess = vi.fn();
 			const { result, unmount } = renderHook(
 				() => useDeletePostMutation( connectionId, { onSuccess } ),
 				{ wrapper: makeWrapper( client ) }
@@ -3587,7 +3588,7 @@ describe( 'reader-atmosphere hooks', () => {
 			const client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 			seedTimeline( client, makeTargetPost() );
 
-			const onError = jest.fn();
+			const onError = vi.fn();
 			const { result, unmount } = renderHook(
 				() => useDeletePostMutation( connectionId, { onError } ),
 				{ wrapper: makeWrapper( client ) }
@@ -4060,10 +4061,10 @@ describe( 'uploadBlobMutation', () => {
 	// Spying on `wpcom.req.post` keeps the factory contract under test
 	// (mutationFn wiring + result propagation) without taking on the
 	// transport's stream wiring.
-	afterEach( () => jest.restoreAllMocks() );
+	afterEach( () => vi.restoreAllMocks() );
 
 	it( 'wires uploadBlob into mutationFn and returns the blob ref', async () => {
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 			blob: {
 				$type: 'blob',
 				ref: { $link: 'bafkrei' + 'a'.repeat( 50 ) },

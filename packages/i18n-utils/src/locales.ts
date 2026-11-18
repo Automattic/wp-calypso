@@ -21,6 +21,7 @@ export const localesWithWpcomDeveloperSite: Locale[] = [
 	'pt-br',
 ];
 export const localesWithPrivacyPolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
+export const localesWithTermsOfService: Locale[] = [ 'en', 'fr', 'de', 'es' ];
 export const localesWithCookiePolicy: Locale[] = [ 'en', 'fr', 'de', 'es' ];
 export const localesWithLearn: Locale[] = [ 'en', 'es' ];
 

@@ -1,19 +1,20 @@
-jest.mock( '../../editor-canvas', () => ( { getCanvasDocument: jest.fn() } ) );
-jest.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
-jest.mock( '../rasterizer', () => ( {
-	...jest.requireActual( '../rasterizer' ),
-	rasterizeCanvas: jest.fn(),
-} ) );
-
+import { vi } from 'vitest';
 import { getCanvasDocument } from '../../editor-canvas';
 import { recordBigSkyTracksEvent } from '../../tracks';
 import { captureCanvasFileParts } from '../capture';
 import { rasterizeCanvas, UnfaithfulCaptureError } from '../rasterizer';
 import type { FilePart } from '@automattic/agenttic-client';
 
-const mockGetCanvasDocument = jest.mocked( getCanvasDocument );
-const mockRasterizeCanvas = jest.mocked( rasterizeCanvas );
-const mockRecordEvent = jest.mocked( recordBigSkyTracksEvent );
+vi.mock( '../../editor-canvas', () => ( { getCanvasDocument: vi.fn() } ) );
+vi.mock( '../../tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
+vi.mock( '../rasterizer', async () => ( {
+	...( await vi.importActual< typeof import( '../rasterizer' ) >( '../rasterizer' ) ),
+	rasterizeCanvas: vi.fn(),
+} ) );
+
+const mockGetCanvasDocument = vi.mocked( getCanvasDocument );
+const mockRasterizeCanvas = vi.mocked( rasterizeCanvas );
+const mockRecordEvent = vi.mocked( recordBigSkyTracksEvent );
 
 const screenshot: FilePart = {
 	type: 'file',
@@ -22,7 +23,7 @@ const screenshot: FilePart = {
 
 // Reset, not cleared: the canvas is re-armed here and the rasterizer per test.
 beforeEach( () => {
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 	mockGetCanvasDocument.mockReturnValue( document );
 } );
 

@@ -1,3 +1,4 @@
+import { isAtomicPrimaryDomainChangeFailed } from '@automattic/api-core';
 import debugFactory from 'debug';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
@@ -6,6 +7,7 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT,
 	DOMAIN_DNSSEC_DISABLE_SUCCESS,
 	DOMAIN_DNSSEC_ENABLE_SUCCESS,
+	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_FAILURE,
 	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_SUCCESS,
 	DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_UPDATE,
 	DOMAIN_MARK_AS_PENDING_MOVE,
@@ -170,6 +172,14 @@ export function updatePrimaryDomainCompleteAction( siteId, domain ) {
 	};
 }
 
+export function updatePrimaryDomainFailureAction( siteId, domain ) {
+	return {
+		type: DOMAIN_MANAGEMENT_PRIMARY_DOMAIN_SAVE_FAILURE,
+		siteId,
+		domain,
+	};
+}
+
 /**
  * @param {number} siteId
  * @param {string} domain
@@ -177,7 +187,16 @@ export function updatePrimaryDomainCompleteAction( siteId, domain ) {
 export const setPrimaryDomain = ( siteId, domain ) => async ( dispatch ) => {
 	dispatch( updatePrimaryDomainAction( siteId, domain ) );
 	debug( 'setPrimaryDomain', siteId, domain );
-	await wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain } );
+	try {
+		await wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain } );
+	} catch ( error ) {
+		dispatch( updatePrimaryDomainFailureAction( siteId, domain ) );
+		if ( isAtomicPrimaryDomainChangeFailed( error ) ) {
+			dispatch( requestSite( siteId ) );
+			dispatch( fetchSiteDomains( siteId ) );
+		}
+		throw error;
+	}
 	await Promise.all( [
 		dispatch( requestSite( siteId ) ),
 		dispatch( fetchSiteDomains( siteId ) ),

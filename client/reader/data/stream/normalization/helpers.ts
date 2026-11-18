@@ -20,15 +20,15 @@ export const getQueryString = ( extras: Record< string, unknown > = {} ) => ( {
 // hydrate the canonical Reader post cache and render rich cards without a
 // per-card full-post request waterfall on consumePending. The
 // first argument is kept for call-site compatibility with the legacy
-// stream-type-specific extras (`date_liked`, `last_comment_date_gmt`, etc.) —
-// the API now returns those fields by default since we no longer restrict the
-// response with `fields`.
+// stream-type-specific extras (`date_liked`, etc.) — the API now returns
+// those fields by default since we no longer restrict the response with
+// `fields`.
 export const getQueryStringForPoll = (
 	// First arg kept for call-site compatibility with the legacy signature
 	// (`buildStreamQueryParams` still threads stream-type extras like
-	// `date_liked`/`last_comment_date_gmt` through here). The API now returns
-	// those fields by default since the response is no longer restricted via
-	// `fields`, so the array is effectively a no-op.
+	// `date_liked` through here). The API now returns those fields by default
+	// since the response is no longer restricted via `fields`, so the array is
+	// effectively a no-op.
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	_extraFields: string[] = [],
 	extraQueryParams: Record< string, unknown > = {}
@@ -72,7 +72,6 @@ interface RawPost {
 	description?: string;
 	site_name?: string;
 	feed_URL?: string;
-	comments?: Array< { ID: number } >;
 	[ key: string ]: unknown;
 }
 
@@ -80,8 +79,6 @@ export function createStreamItemFromPost( post: RawPost, dateProperty: string ) 
 	return {
 		...keyForPost( post ),
 		date: post[ dateProperty ],
-		// Include comments for conversations
-		...( post.comments && { comments: post.comments.map( ( comment ) => comment?.ID ).reverse() } ),
 		url: post.URL,
 		site_icon: post.site_icon?.ico,
 		site_description: post.description,
@@ -146,8 +143,6 @@ function createStreamItemFromSiteAndPost(
 	return {
 		...keyForPost( post ),
 		date: post[ dateProperty ],
-		// Include comments for conversations.
-		...( post.comments && { comments: post.comments.map( ( comment ) => comment?.ID ).reverse() } ),
 		url: post.URL,
 		site_icon: site.icon?.ico,
 		site_description: site.description,

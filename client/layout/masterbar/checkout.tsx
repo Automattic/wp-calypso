@@ -3,7 +3,6 @@ import { checkoutTheme } from '@automattic/composite-checkout';
 import { Step } from '@automattic/onboarding';
 import { ThemeProvider } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
-import { Icon, help } from '@wordpress/icons';
 import clsx from 'clsx';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import AkismetLogo from 'calypso/components/akismet-logo';
@@ -41,8 +40,7 @@ const CheckoutMasterbar = ( {
 	isGravatarDomain,
 }: Props ) => {
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
-	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter, showHelpIcon } =
-		useCheckoutHelpCenter();
+	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const getCheckoutType = () => {
@@ -166,14 +164,9 @@ const CheckoutMasterbar = ( {
 							<Step.StepCounter current={ stepCounter.current } total={ stepCounter.total } />
 						) }
 						{ loadHelpCenterIcon && (
-							<span
-								className={ clsx( 'checkout-skip-button', {
-									'has-help-entry-label': showHelpIcon,
-								} ) }
-							>
+							<span className="checkout-skip-button">
 								{ helpCenterButtonCopy && <label>{ helpCenterButtonCopy }</label> }
 								<Step.LinkButton onClick={ toggleHelpCenter }>
-									{ showHelpIcon && <Icon icon={ help } size={ 20 } /> }
 									{ helpCenterButtonLink }
 								</Step.LinkButton>
 							</span>

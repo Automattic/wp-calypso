@@ -7,11 +7,13 @@ import {
 } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { isAfter, subMinutes, subDays } from 'date-fns';
+import { isExpiring } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type {
 	Domain,
 	DomainSummary,
+	Purchase,
 	Site,
 	User,
 	WhoisDataEntry,
@@ -98,6 +100,19 @@ export function canEnableAutoRenew( domain: DomainSummary ): boolean {
 	);
 }
 
+/**
+ * Returns true if auto-renew is on for the domain but its subscription will
+ * still lapse, because there is no payment method to charge (e.g. it was paid
+ * with credits). The backend reports such a purchase as `manual-renew` or
+ * `expiring` rather than `auto-renewing`.
+ */
+export function needsPaymentMethodToAutoRenew(
+	domain: Pick< DomainSummary, 'auto_renewing' | 'expired' >,
+	purchase?: Purchase
+): boolean {
+	return domain.auto_renewing && ! domain.expired && !! purchase && isExpiring( purchase );
+}
+
 export function isDomainInGracePeriod( domain: DomainSummary ) {
 	if ( domain.expiry === null ) {
 		return true;
@@ -126,58 +141,6 @@ export function isValidNameServerSubdomain( nameServerSubdomain: string ): boole
 	}
 
 	return true;
-}
-
-export function shouldUpgradeToMakeDomainPrimary( {
-	domain,
-	site,
-	user,
-}: {
-	domain: DomainSummary;
-	site: Site;
-	user: User;
-} ) {
-	return (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ) &&
-		! domain.primary_domain &&
-		userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' ) &&
-		!! site.plan?.is_free &&
-		! hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
-	);
-}
-
-export function canSetAsPrimary( {
-	domain,
-	site,
-	user,
-}: {
-	domain: DomainSummary;
-	site: Site;
-	user: User;
-} ): boolean {
-	return (
-		domain.can_set_as_primary &&
-		! domain.primary_domain &&
-		domain.domain_status.id !== DomainStatus.CONNECTION_ERROR &&
-		! shouldUpgradeToMakeDomainPrimary( {
-			domain,
-			site,
-			user,
-		} )
-	);
-}
-
-export function canSetAsPrimaryIgnoringSsl( {
-	domain,
-	site,
-	user,
-}: {
-	domain: DomainSummary;
-	site: Site;
-	user: User;
-} ): boolean {
-	return canSetAsPrimary( { domain, site, user } ) && ! ( site.options?.is_redirect ?? false );
 }
 
 export function hasGSuiteWithUs( domain: Domain ) {

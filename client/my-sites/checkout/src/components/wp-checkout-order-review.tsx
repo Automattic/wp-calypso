@@ -27,7 +27,6 @@ import {
 } from 'calypso/state/signup/flow/selectors';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useCheckoutSite } from '../hooks/use-checkout-site';
-import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import type { OnChangeItemVariant } from './item-variation-picker';
@@ -139,7 +138,6 @@ export default function WPCheckoutOrderReview( {
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const { data: selectedSite } = useCheckoutSite( selectedSiteId );
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	// A cart without a site in its key (eg: a renewal at `/checkout/renew/:id`)
 	// can still belong to a site if the server assigned one to it.
@@ -176,30 +174,15 @@ export default function WPCheckoutOrderReview( {
 					isSummary && 'is-summary',
 				] ) }
 			>
-				{ isMobileCheckoutStickySummary ? (
-					currentUserEmail &&
-					! isGiftPurchase && (
-						<p className="checkout-review-order__signed-in">
-							{ translate( 'You’re signed in as {{em}}%(email)s{{/em}}.', {
-								args: { email: currentUserEmail },
-								components: { em: <strong /> },
-								comment: 'Shown at the top of mobile checkout under the order details heading.',
-							} ) }
-						</p>
-					)
-				) : (
-					<>
-						{ domainUrl && (
-							<SiteSummary className="checkout-review-order__site">
-								{ translate( 'Site: %s', { args: domainUrl } ) }
-							</SiteSummary>
-						) }
-						{ currentUserEmail && ! isGiftPurchase && (
-							<EmailSummary className="checkout-review-order__email">
-								{ translate( 'Account: %s', { args: currentUserEmail } ) }
-							</EmailSummary>
-						) }
-					</>
+				{ domainUrl && (
+					<SiteSummary className="checkout-review-order__site">
+						{ translate( 'Site: %s', { args: domainUrl } ) }
+					</SiteSummary>
+				) }
+				{ currentUserEmail && ! isGiftPurchase && (
+					<EmailSummary className="checkout-review-order__email">
+						{ translate( 'Account: %s', { args: currentUserEmail } ) }
+					</EmailSummary>
 				) }
 				{ planIsP2Plus && selectedSite?.name && (
 					<SiteSummary className="checkout-review-order__site">

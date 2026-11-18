@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
@@ -8,6 +8,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { BackupsListPage } from '../index';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
@@ -17,37 +18,37 @@ const siteId = 123;
 const flaggedRewindId = '1792244435.274';
 const cleanRewindId = '1792240000.5';
 
-jest.mock( '@wordpress/react-i18n', () => ( {
-	useI18n: jest.fn(),
-} ) );
+vi.mock( '@wordpress/react-i18n', () => ( ( ( m ) => ( { ...m, default: m } ) )( {
+	useI18n: vi.fn(),
+} ) ) );
 
 // The live region would repeat the warning on the page.
-jest.mock( '@wordpress/a11y', () => ( {
-	...jest.requireActual( '@wordpress/a11y' ),
-	speak: jest.fn(),
+vi.mock( '@wordpress/a11y', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/a11y' ) >( '@wordpress/a11y' ) ),
+	speak: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		createSuccessNotice: jest.fn(),
-		createErrorNotice: jest.fn(),
+		createSuccessNotice: vi.fn(),
+		createErrorNotice: vi.fn(),
 	} ),
 	useRegistry: () => ( {} ),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn( ( selector ) => selector ),
-	store: jest.fn(),
-	select: jest.fn(),
-	dispatch: jest.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn( ( selector ) => selector ),
+	store: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 let mockSelectedFilesCount = 0;
 
-jest.mock(
+vi.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 	() => ( {
 		useFileBrowserContext: () => ( {
@@ -59,19 +60,19 @@ jest.mock(
 				} ),
 			},
 			locale: 'en',
-			notices: { showError: jest.fn(), showSuccess: jest.fn() },
+			notices: { showError: vi.fn(), showSuccess: vi.fn() },
 		} ),
 	} )
 );
 
 const mockRouterParams: { siteSlug: string; rewindId?: string } = { siteSlug: 'test-site' };
 
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
-	useParams: jest.fn( () => mockRouterParams ),
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >( '@tanstack/react-router' ) ),
+	useParams: vi.fn( () => mockRouterParams ),
 } ) );
 
-jest.mock( '../../../app/router/sites', () => ( {
+vi.mock( '../../../app/router/sites', () => ( {
 	siteRoute: { useParams: () => ( { siteSlug: 'test-site' } ) },
 	siteBackupsRoute: { useSearch: () => ( {} ) },
 	siteBackupsIndexRoute: { fullPath: '/sites/$siteSlug/backups/' },
@@ -244,7 +245,7 @@ test( 'shows the badge on realtime restore points inside a flagged backup', asyn
 } );
 
 test( 'shows no badge before VaultPress ships', async () => {
-	const consoleError = jest.spyOn( console, 'error' );
+	const consoleError = vi.spyOn( console, 'error' );
 	const { listScope } = renderPage( {
 		backups: [
 			{ object: { backup_period: '1792244301' } },

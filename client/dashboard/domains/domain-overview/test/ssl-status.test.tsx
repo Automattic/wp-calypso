@@ -1,0 +1,112 @@
+/**
+ * @vitest-environment jsdom
+ */
+import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
+import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import { render } from '../../../test-utils';
+import DomainOverviewSslStatus from '../ssl-status';
+
+const mockHasEnTranslation = vi.fn( () => true );
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
+	useHasEnTranslation: () => mockHasEnTranslation,
+} ) );
+
+afterEach( () => mockHasEnTranslation.mockReturnValue( true ) );
+
+const registered = { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' };
+
+function renderStatus( props: object ) {
+	const domain = {
+		domain: 'example.com',
+		subtype: registered,
+		points_to_wpcom: true,
+		...props,
+	} as Domain;
+
+	return render(
+		<>
+			<span>Rendered</span>
+			<DomainOverviewSslStatus domain={ domain } />
+		</>
+	);
+}
+
+describe( 'DomainOverviewSslStatus', () => {
+	test.each( [
+		[ 'active', 'SSL active' ],
+		[ 'pending', 'SSL pending' ],
+		[ 'newly_registered', 'SSL pending' ],
+		[ 'inactive', 'SSL disabled' ],
+	] )( 'shows a badge without a link for %s certificates', async ( ssl_status, badge ) => {
+		renderStatus( { ssl_status } );
+
+		expect( await screen.findByText( badge ) ).toBeVisible();
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test.each( [
+		[ 'connected', { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' } ],
+		[ 'registered', registered ],
+	] )( 'shows the certificate of a %s domain not pointing here', async ( _, subtype ) => {
+		renderStatus( { ssl_status: 'pending', points_to_wpcom: false, subtype } );
+
+		expect( await screen.findByText( 'SSL pending' ) ).toBeVisible();
+	} );
+
+	test.each( [
+		[ 'pending', 'SSL Pending' ],
+		[ 'inactive', 'SSL Disabled' ],
+	] )(
+		'falls back to the old %s copy until the new one is translated',
+		async ( ssl_status, badge ) => {
+			mockHasEnTranslation.mockReturnValue( false );
+			renderStatus( { ssl_status } );
+
+			expect( await screen.findByText( badge ) ).toBeVisible();
+		}
+	);
+
+	test.each( [
+		[ 'a null status', { ssl_status: null } ],
+		[
+			'a completed transfer not pointing here',
+			{
+				ssl_status: 'inactive',
+				points_to_wpcom: false,
+				transfer_status: DomainTransferStatus.COMPLETED,
+			},
+		],
+		[
+			'a transfer',
+			{
+				ssl_status: 'active',
+				subtype: { id: DomainSubtype.DOMAIN_TRANSFER, label: 'Domain Transfer' },
+			},
+		],
+		[
+			'a pending async transfer',
+			{ ssl_status: 'active', transfer_status: DomainTransferStatus.PENDING_ASYNC },
+		],
+		[
+			'a site redirect',
+			{
+				ssl_status: 'inactive',
+				subtype: { id: DomainSubtype.SITE_REDIRECT, label: 'Site Redirect' },
+			},
+		],
+		[ 'a pending registration', { ssl_status: 'inactive', pending_registration: true } ],
+		[
+			'a registration pending at the registry',
+			{ ssl_status: 'inactive', pending_registration_at_registry: true },
+		],
+	] )( 'shows nothing for %s', async ( _, props ) => {
+		renderStatus( props );
+
+		await screen.findByText( 'Rendered' );
+		expect( screen.queryByText( /SSL/ ) ).not.toBeInTheDocument();
+	} );
+} );

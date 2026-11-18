@@ -7,7 +7,6 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import SitesDashboardBannersManager from '../sites-dashboard-banners-manager';
-import type { SiteStatus } from '../sites-dashboard-banners/use-migration-pending-sites-banner';
 
 // Mock the Banner component
 jest.mock( 'calypso/components/banner', () => {
@@ -20,45 +19,7 @@ describe( 'SitesDashboardBannersManager', () => {
 	let store;
 
 	beforeEach( () => {
-		store = mockStore( {
-			preferences: {
-				localValues: {
-					'dismissible-card-migration-pending-sites': false,
-				},
-			},
-		} );
-	} );
-
-	it( 'renders migration banner when migration pending sites is greater than 0', () => {
-		const sitesStatuses = [ { name: 'migration-pending', count: 1 } as SiteStatus ];
-
-		const { getByText } = render(
-			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } />
-			</Provider>
-		);
-
-		expect( getByText( 'Stuck on your migration?' ) ).toBeInTheDocument();
-	} );
-
-	it( 'does not render migration banner if it is dismissed', () => {
-		store = mockStore( {
-			preferences: {
-				localValues: {
-					'dismissible-card-migration-pending-sites': true,
-				},
-			},
-		} );
-
-		const sitesStatuses = [ { name: 'migration-pending', count: 1 } as SiteStatus ];
-
-		const { queryByText } = render(
-			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ sitesStatuses } />
-			</Provider>
-		);
-
-		expect( queryByText( 'Stuck on your migration?' ) ).not.toBeInTheDocument();
+		store = mockStore( { preferences: { localValues: {} } } );
 	} );
 
 	it( 'renders restore sites banner when ?restored=true param exists', () => {
@@ -70,7 +31,7 @@ describe( 'SitesDashboardBannersManager', () => {
 
 		const { getByText } = render(
 			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ [] } />
+				<SitesDashboardBannersManager />
 			</Provider>
 		);
 
@@ -83,7 +44,7 @@ describe( 'SitesDashboardBannersManager', () => {
 	it( 'does not render restore sites banner when ?restored=true param does not exist', () => {
 		const { queryByText } = render(
 			<Provider store={ store }>
-				<SitesDashboardBannersManager sitesStatuses={ [] } />
+				<SitesDashboardBannersManager />
 			</Provider>
 		);
 		expect( queryByText( 'Choose which sites you’d like to restore' ) ).not.toBeInTheDocument();

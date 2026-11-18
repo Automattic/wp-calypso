@@ -9,8 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const RuleTester = require( 'eslint' ).RuleTester;
-const plugin = require( '../../..' );
+import { RuleTester } from 'eslint';
+import plugin from '../../..';
 
 const REF = ' See wp-calypso#14024';
 const BIND_ERROR_MESSAGE = "Don't bind functions within `connect`." + REF;

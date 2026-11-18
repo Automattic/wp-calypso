@@ -12,7 +12,11 @@ import { ManagedContactDetailsFormFields } from '../managed-contact-details-form
 
 jest.mock( 'calypso/components/data/query-countries/domains', () => () => null );
 jest.mock( 'calypso/components/data/query-country-states', () => () => null );
-jest.mock( 'calypso/components/forms/form-phone-media-input', () => () => null );
+const mockPhoneInput = jest.fn( () => null );
+jest.mock(
+	'calypso/components/forms/form-phone-media-input',
+	() => ( props ) => mockPhoneInput( props )
+);
 
 const countriesList = [
 	{ code: 'GB', name: 'United Kingdom', has_postal_codes: true },
@@ -57,6 +61,30 @@ function renderForm( contactDetails = {} ) {
 }
 
 describe( 'ManagedContactDetailsFormFields', () => {
+	describe( 'phone country', () => {
+		const lastPhoneValue = () => mockPhoneInput.mock.lastCall[ 0 ].value;
+
+		beforeEach( () => mockPhoneInput.mockClear() );
+
+		it( 'uses the dialing code of a saved phone number over the detected country', () => {
+			renderForm( { countryCode: 'NZ', phone: '+64.211234567' } );
+
+			expect( lastPhoneValue().countryCode ).toBe( 'NZ' );
+		} );
+
+		it( 'uses the dialing code of a saved phone number when it differs from the address country', () => {
+			renderForm( { countryCode: 'GB', phone: '+64.211234567' } );
+
+			expect( lastPhoneValue().countryCode ).toBe( 'NZ' );
+		} );
+
+		it( 'falls back to the address country when there is no phone number', () => {
+			renderForm( { countryCode: 'GB', phone: '' } );
+
+			expect( lastPhoneValue().countryCode ).toBe( 'GB' );
+		} );
+	} );
+
 	it.each( [
 		[ 'GB', 'sw1a1aa', 'SW1A 1AA' ],
 		[ 'GB', ' sw1a 1aa ', 'SW1A 1AA' ],

@@ -1,11 +1,4 @@
-jest.mock( '@wordpress/blocks', () => ( {
-	getBlockTypes: jest.fn( () => [
-		{ name: 'core/paragraph', attributes: { content: {} } },
-		{ name: 'core/button', attributes: { url: {}, text: {} } },
-	] ),
-} ) );
-jest.mock( '../../../utils/editor-blocks', () => ( { getBlock: jest.fn() } ) );
-
+import { vi } from 'vitest';
 import { getBlock } from '../../../utils/editor-blocks';
 import {
 	captureTargets,
@@ -15,6 +8,14 @@ import {
 } from '../validation-details';
 import type { EditorBlock, PageBlocks } from '../../../utils/editor-blocks';
 import type { BlockEdits, BlockUpdate } from '../types';
+
+vi.mock( '@wordpress/blocks', () => ( {
+	getBlockTypes: vi.fn( () => [
+		{ name: 'core/paragraph', attributes: { content: {} } },
+		{ name: 'core/button', attributes: { url: {}, text: {} } },
+	] ),
+} ) );
+vi.mock( '../../../utils/editor-blocks', () => ( { getBlock: vi.fn() } ) );
 
 const block = (
 	clientId: string,
@@ -47,7 +48,7 @@ const shortIds: Record< string, string > = { para: 'paragraph', btn: 'button' };
 const resolve = ( id: string ) => shortIds[ id ] ?? id;
 
 const withEditorBlocks = ( ...blocks: EditorBlock[] ) =>
-	jest
+	vi
 		.mocked( getBlock )
 		.mockImplementation( ( clientId ) => blocks.find( ( item ) => item.clientId === clientId ) );
 
@@ -89,7 +90,7 @@ function validate(
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	withEditorBlocks();
 } );
 
@@ -170,7 +171,7 @@ describe( 'getValidationDetails', () => {
 		[ 'missing-after-apply', 'Old', null, 'New' ],
 		[ 'unresolved', null, null, 'New' ],
 	] )(
-		'marks an attribute `%s` when the page had %p, shows %p and %p was requested',
+		'marks an attribute `%s` when the page had %o, shows %o and %o was requested',
 		( status, before, after, requested ) => {
 			const details = validate(
 				edits( { updates: [ contentUpdate( requested ) ] } ),

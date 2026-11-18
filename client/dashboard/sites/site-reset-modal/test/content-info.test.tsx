@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { setLocale } from '@automattic/number-formatters';
 import { screen } from '@testing-library/react';

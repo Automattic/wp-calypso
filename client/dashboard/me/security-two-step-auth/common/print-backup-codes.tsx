@@ -6,6 +6,7 @@ import {
 	__experimentalText as Text,
 	CheckboxControl,
 	Button,
+	VisuallyHidden,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
@@ -16,8 +17,9 @@ import { useAnalytics } from '../../../app/analytics';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardFooter } from '../../../components/card';
 import Grid from '../../../components/grid';
-import { Notice } from '../../../components/notice';
+import { Notice, NoticeActionButton } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
+import { TextBlur } from '../../../components/text-blur';
 import VerifyCodeForm from './verify-code-form';
 
 export default function PrintBackupCodes( {
@@ -31,9 +33,14 @@ export default function PrintBackupCodes( {
 
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	const { mutate: generateBackupCodes, data: backupCodes } = useMutation(
-		generateTwoStepAuthBackupCodesMutation()
-	);
+	const {
+		mutate: generateBackupCodes,
+		data: backupCodes,
+		isError: isGenerateError,
+	} = useMutation( generateTwoStepAuthBackupCodesMutation() );
+
+	const isLoading = ! backupCodes;
+	const codes = backupCodes?.codes ?? Array.from( { length: 10 }, () => '' );
 
 	const [ isBackupCodesPrinted, setIsBackupCodesPrinted ] = useState( false );
 	const [ verifyBackupCodes, setVerifyBackupCodes ] = useState( false );
@@ -153,27 +160,64 @@ export default function PrintBackupCodes( {
 							'Without access to the app, your phone, or a backup code, you will lose access to your account.'
 						) }
 					</Notice>
-					{ backupCodes && (
+					{ isGenerateError && (
+						<Notice
+							variant="error"
+							actions={
+								<NoticeActionButton variant="solid" onClick={ () => generateBackupCodes() }>
+									{ __( 'Try again' ) }
+								</NoticeActionButton>
+							}
+						>
+							{ __( 'Failed to generate backup codes.' ) }
+						</Notice>
+					) }
+					{ ! isGenerateError && (
 						<>
 							<Card>
 								<CardBody>
+									{ isLoading && (
+										<VisuallyHidden role="status">
+											{ __( 'Generating backup codes…' ) }
+										</VisuallyHidden>
+									) }
 									<Grid columns={ 2 } gap="md">
-										{ backupCodes.codes.map( ( code ) => (
-											<Text key={ code } align="center" size="15px">
-												{ code }
+										{ codes.map( ( code, index ) => (
+											<Text key={ index } align="center" size="15px">
+												<TextBlur isBlurred={ isLoading } length={ 8 }>
+													{ code }
+												</TextBlur>
 											</Text>
 										) ) }
 									</Grid>
 								</CardBody>
 								<CardFooter>
 									<ButtonStack justify="center">
-										<Button variant="tertiary" icon={ page } onClick={ handlePrint }>
+										<Button
+											variant="tertiary"
+											icon={ page }
+											onClick={ handlePrint }
+											disabled={ isLoading }
+											accessibleWhenDisabled
+										>
 											{ __( 'Print' ) }
 										</Button>
-										<Button variant="tertiary" icon={ cloudDownload } onClick={ handleDownload }>
+										<Button
+											variant="tertiary"
+											icon={ cloudDownload }
+											onClick={ handleDownload }
+											disabled={ isLoading }
+											accessibleWhenDisabled
+										>
 											{ __( 'Download' ) }
 										</Button>
-										<Button variant="tertiary" icon={ copySmall } onClick={ handleCopy }>
+										<Button
+											variant="tertiary"
+											icon={ copySmall }
+											onClick={ handleCopy }
+											disabled={ isLoading }
+											accessibleWhenDisabled
+										>
 											{ __( 'Copy' ) }
 										</Button>
 									</ButtonStack>
@@ -183,6 +227,7 @@ export default function PrintBackupCodes( {
 								__nextHasNoMarginBottom
 								checked={ isBackupCodesPrinted }
 								onChange={ setIsBackupCodesPrinted }
+								disabled={ isLoading }
 								label={ __( 'I have printed or saved these codes' ) }
 							/>
 							<ButtonStack justify="flex-start">

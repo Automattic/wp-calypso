@@ -10,7 +10,7 @@ describe( 'isWooAiProvider', () => {
 		expect( isWooAiProvider( [ 'jetpack-ai-sidebar', 'woocommerce-ai' ] ) ).toBe( true );
 	} );
 
-	it.each( [ undefined, [], [ 'jetpack-ai-sidebar' ] ] )(
+	it.each( [ [ undefined ], [ [] ], [ [ 'jetpack-ai-sidebar' ] ] ] )(
 		'rejects non-Woo providers (%s)',
 		( providerIds ) => {
 			expect( isWooAiProvider( providerIds ) ).toBe( false );

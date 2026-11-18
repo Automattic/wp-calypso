@@ -13,6 +13,14 @@ import SiteMigrationCredentials from '..';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
 
+const mockFlowState = new Map< string, unknown >();
+
+jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
+	useFlowState: jest.fn( () => ( {
+		get: jest.fn( ( key: string ) => mockFlowState.get( key ) ),
+		set: jest.fn( ( key: string, value: unknown ) => mockFlowState.set( key, value ) ),
+	} ) ),
+} ) );
 jest.mock( 'calypso/lib/wp', () => ( {
 	req: {
 		get: jest.fn(),
@@ -78,6 +86,7 @@ describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockFlowState.clear();
 		( wp.req.get as jest.Mock ).mockResolvedValue( baseSiteInfo );
 	} );
 
@@ -103,6 +112,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 	it( 'creates a credentials using backup file', async () => {
 		const submit = jest.fn();
+		mockFlowState.set( 'migrationSourceUrl', 'original.example.com' );
 		render( { navigation: { submit } } );
 
 		await userEvent.click( backupOption() );
@@ -131,6 +141,7 @@ describe( 'SiteMigrationCredentials', () => {
 				action: 'submit',
 			} );
 		} );
+		expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'original.example.com' );
 	} );
 
 	it( 'sets a migration as pending automatically', async () => {
@@ -338,6 +349,209 @@ describe( 'SiteMigrationCredentials', () => {
 			action: 'site-is-not-using-wordpress',
 			from: 'https://site-url.tumblr.com',
 			platform: 'tumblr',
+		} );
+	} );
+
+	describe( 'saved source address', () => {
+		const initialEntry = '/site-migration-credentials?from=https%3A%2F%2Fredirected.example.com%2F';
+
+		beforeEach( () => {
+			mockFlowState.set( 'migrationSourceUrl', 'original.example.com' );
+			jest.mocked( wp.req.post ).mockResolvedValue( {
+				application_passwords_enabled: false,
+			} );
+		} );
+
+		it.each( [ 'edited.example.com', 'https://edited.example.com/blog/?tag=test#section' ] )(
+			'remembers the confirmed edit %s while submitting the analyzed address',
+			async ( enteredUrl ) => {
+				const user = userEvent.setup();
+				const submit = jest.fn();
+				render( { navigation: { submit } }, { initialEntry } );
+
+				await user.clear( siteAddressInput() );
+				await user.type( siteAddressInput(), enteredUrl );
+				await user.click( continueButton() );
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith( {
+						action: 'credentials-required',
+						from: baseSiteInfo.url,
+						platform: 'wordpress',
+					} )
+				);
+
+				expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( enteredUrl );
+			}
+		);
+
+		it( 'keeps the original entry when the redirected address is submitted unchanged', async () => {
+			const user = userEvent.setup();
+			const submit = jest.fn();
+			render( { navigation: { submit } }, { initialEntry } );
+
+			expect( siteAddressInput() ).toHaveValue( 'https://redirected.example.com' );
+			await user.click( continueButton() );
+			await waitFor( () => expect( submit ).toHaveBeenCalled() );
+
+			expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'original.example.com' );
+		} );
+
+		it( 'keeps the last confirmed entry while an edit is unsubmitted or invalid', async () => {
+			const user = userEvent.setup();
+			const submit = jest.fn();
+			render( { navigation: { submit } }, { initialEntry } );
+
+			await user.clear( siteAddressInput() );
+			await user.type( siteAddressInput(), 'edited.example.com' );
+			expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'original.example.com' );
+
+			await user.clear( siteAddressInput() );
+			await user.type( siteAddressInput(), 'invalid-site-address' );
+			await user.click( continueButton() );
+			expect( await screen.findByText( messages.noTLDError ) ).toBeVisible();
+
+			expect( submit ).not.toHaveBeenCalled();
+			expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'original.example.com' );
+		} );
+
+		it( 'remembers a confirmed edit back to the initial credentials address', async () => {
+			const user = userEvent.setup();
+			const submit = jest.fn();
+			render( { navigation: { submit } }, { initialEntry } );
+
+			await user.clear( siteAddressInput() );
+			await user.type( siteAddressInput(), 'edited.example.com' );
+			await user.click( continueButton() );
+			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 1 ) );
+			await waitFor( () => expect( siteAddressInput() ).toBeEnabled() );
+
+			await user.clear( siteAddressInput() );
+			await user.type( siteAddressInput(), 'https://redirected.example.com' );
+			await user.click( continueButton() );
+			await waitFor( () => expect( submit ).toHaveBeenCalledTimes( 2 ) );
+
+			expect( mockFlowState.get( 'migrationSourceUrl' ) ).toBe( 'https://redirected.example.com' );
+		} );
+	} );
+
+	describe( 'when our team can’t be sent the migration request', () => {
+		const rejectPath = ( path: string, error: object ) =>
+			( wp.req.post as jest.Mock ).mockImplementation( ( params ) =>
+				( params?.path ?? '' ).includes( path ) ? Promise.reject( error ) : Promise.resolve( {} )
+			);
+
+		it( 'tells the customer our team will reach out when wpcom refused the request', async () => {
+			const submit = jest.fn();
+			rejectPath( 'application-passwords/setup', {
+				code: 'migration_request_not_submitted',
+				message: 'Server message',
+			} );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText(
+					'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.'
+				)
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'tells the customer they reached today’s limit', async () => {
+			const submit = jest.fn();
+			rejectPath( 'application-passwords/setup', { code: 'too_many_requests' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText( /You’ve already sent us several migration requests today/ )
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'asks the customer to try again when the ticket could not be created', async () => {
+			const submit = jest.fn();
+			rejectPath( 'application-passwords/setup', { code: 'ticket_creation_failed' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText(
+					'We couldn’t send your migration request just now. Please try again in a few minutes.'
+				)
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'moves the customer on when the setup call fails for a reason unrelated to the ticket', async () => {
+			const submit = jest.fn();
+			rejectPath( 'application-passwords/setup', { code: 'rest_forbidden' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( expect.objectContaining( { action: 'submit' } ) )
+			);
+		} );
+
+		it( 'keeps the customer on the step when the ticket for a WordPress.com site fails', async () => {
+			const submit = jest.fn();
+			( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
+			rejectPath( '/help/migration-ticket/new', { code: 'internal_error' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText(
+					'We couldn’t send your migration request just now. Please try again in a few minutes.'
+				)
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps the customer on the step when the ticket for a site not on WordPress fails', async () => {
+			const submit = jest.fn();
+			( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingTumblr );
+			rejectPath( '/help/migration-ticket/new', { code: 'too_many_requests' } );
+
+			render( { navigation: { submit } } );
+			await fillAddressField();
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText( /You’ve already sent us several migration requests today/ )
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'tells the customer our team will reach out when a backup request is refused', async () => {
+			const submit = jest.fn();
+			rejectPath( '/automated-migration?', {
+				code: 'migration_request_not_submitted',
+				message: 'Server message',
+			} );
+
+			render( { navigation: { submit } } );
+			await userEvent.click( backupOption() );
+			await userEvent.type( backupFileInput(), 'backup-file.zip' );
+			await userEvent.click( continueButton() );
+
+			expect(
+				await findByText(
+					'We couldn’t submit your migration request automatically. Our team has been notified and will reach out by email.'
+				)
+			).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

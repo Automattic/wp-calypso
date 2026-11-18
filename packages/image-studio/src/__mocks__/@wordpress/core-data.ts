@@ -2,17 +2,18 @@
  * Mock for @wordpress/core-data package
  */
 
+import { vi } from 'vitest';
 export const store = {
 	name: 'core',
 };
 
-export const useEntityRecord = jest.fn( () => ( {
+export const useEntityRecord = vi.fn( () => ( {
 	record: null,
 	isResolving: false,
 	hasResolved: false,
 } ) );
 
-export const useEntityRecords = jest.fn( () => ( {
+export const useEntityRecords = vi.fn( () => ( {
 	records: [],
 	isResolving: false,
 	hasResolved: false,

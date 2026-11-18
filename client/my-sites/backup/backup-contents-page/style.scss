@@ -108,6 +108,7 @@
 
 		.components-button.has-icon.has-text svg {
 			fill: var( --theme-base-color );
+			color: var( --theme-base-color );
 		}
 
 		.components-button.is-tertiary {
@@ -135,6 +136,7 @@
 
 			&__preview-sensitive svg {
 				fill: #fff;
+				color: #fff;
 			}
 
 			&__preview-sensitive p {

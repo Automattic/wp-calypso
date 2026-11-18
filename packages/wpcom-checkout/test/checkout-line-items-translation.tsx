@@ -3,6 +3,7 @@ import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/s
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { type MockInstance, vi } from 'vitest';
 import { LineItem } from '../src/checkout-line-items';
 import { RemovedFromCartItem } from '../src/removed-from-cart-item';
 import { RestorableProductsProvider } from '../src/restorable-products-context';
@@ -44,7 +45,7 @@ function revalidateAfterTranslation(
 	cartOverrides: Partial< ResponseCart > = {}
 ) {
 	const responseCart = { ...getEmptyResponseCart(), products: [ product ], ...cartOverrides };
-	const onPageLoadError = jest.fn();
+	const onPageLoadError = vi.fn();
 	const ui = ( isValidating: boolean ) => (
 		<CheckoutProvider
 			paymentMethods={ [] }
@@ -65,9 +66,9 @@ function revalidateAfterTranslation(
 
 describe( 'LineItem under browser page-translation', () => {
 	// React logs caught render errors to console.error; keep the output readable.
-	let consoleError: jest.SpyInstance;
+	let consoleError: MockInstance;
 	beforeEach( () => {
-		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => undefined );
 	} );
 	afterEach( () => {
 		consoleError.mockRestore();
@@ -173,9 +174,9 @@ describe( 'LineItem under browser page-translation', () => {
 } );
 
 describe( 'RemovedFromCartItem under browser page-translation', () => {
-	let consoleError: jest.SpyInstance;
+	let consoleError: MockInstance;
 	beforeEach( () => {
-		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => undefined );
 	} );
 	afterEach( () => {
 		consoleError.mockRestore();
@@ -187,13 +188,13 @@ describe( 'RemovedFromCartItem under browser page-translation', () => {
 			product_name: 'WordPress.com Premium',
 		};
 		let resolveAdd: () => void = () => undefined;
-		const addProductsToCart = jest.fn(
+		const addProductsToCart = vi.fn(
 			() =>
 				new Promise< void >( ( resolve ) => {
 					resolveAdd = resolve;
 				} )
 		);
-		const onPageLoadError = jest.fn();
+		const onPageLoadError = vi.fn();
 
 		const { container } = render(
 			<CheckoutProvider
@@ -220,9 +221,9 @@ describe( 'RemovedFromCartItem under browser page-translation', () => {
 } );
 
 describe( 'LineItem upgrade credit under browser page-translation', () => {
-	let consoleError: jest.SpyInstance;
+	let consoleError: MockInstance;
 	beforeEach( () => {
-		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => undefined );
 	} );
 	afterEach( () => {
 		consoleError.mockRestore();
@@ -248,7 +249,7 @@ describe( 'LineItem upgrade credit under browser page-translation', () => {
 			],
 		};
 		const withCoupon: ResponseCartProduct = { ...planWithCredit, coupon_savings_integer: 600 };
-		const onPageLoadError = jest.fn();
+		const onPageLoadError = vi.fn();
 		const ui = ( product: ResponseCartProduct ) => (
 			<CheckoutProvider
 				paymentMethods={ [] }

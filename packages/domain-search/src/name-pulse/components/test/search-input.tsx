@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { type Mock, vi } from 'vitest';
 import { TestDomainSearch } from '../../../test-helpers/renderer';
 import { NamePulseSearchInput } from '../search-input';
 
@@ -8,8 +9,8 @@ const StatefulSearch = ( {
 	onQueryChange,
 	onQueryClear,
 }: {
-	onQueryChange: jest.Mock;
-	onQueryClear: jest.Mock;
+	onQueryChange: Mock;
+	onQueryClear: Mock;
 } ) => {
 	const [ query, setQuery ] = useState( '' );
 
@@ -30,8 +31,8 @@ const StatefulSearch = ( {
 };
 
 const renderInput = () => {
-	const onQueryChange = jest.fn();
-	const onQueryClear = jest.fn();
+	const onQueryChange = vi.fn();
+	const onQueryClear = vi.fn();
 	const user = userEvent.setup();
 
 	render( <StatefulSearch onQueryChange={ onQueryChange } onQueryClear={ onQueryClear } /> );
@@ -39,7 +40,7 @@ const renderInput = () => {
 	return { onQueryChange, onQueryClear, user, input: screen.getByRole( 'searchbox' ) };
 };
 
-const queriesSet = ( onQueryChange: jest.Mock ) =>
+const queriesSet = ( onQueryChange: Mock ) =>
 	onQueryChange.mock.calls.map( ( [ value ] ) => value );
 
 describe( 'NamePulseSearchInput', () => {
@@ -102,7 +103,7 @@ describe( 'NamePulseSearchInput', () => {
 	} );
 
 	it( 'scrolls to the top of the page when the query is edited', async () => {
-		const scrollTo = jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
+		const scrollTo = vi.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
 		const { user, input } = renderInput();
 
 		await user.type( input, 'x' );

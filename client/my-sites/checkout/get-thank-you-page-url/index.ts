@@ -845,8 +845,8 @@ function getUrlWithQueryParam( url = '/', queryParams: Record< string, string > 
 
 function modifyUrlIfAtomic( siteSlug: string | undefined, url: string ): string {
 	// If atomic site, then replace wordpress.com with wpcomstaging.com
-	if ( siteSlug?.includes( '.wpcomstaging.com' ) ) {
-		return url.replace( /\b.wordpress.com/, '.wpcomstaging.com' );
+	if ( siteSlug?.endsWith( '.wpcomstaging.com' ) ) {
+		return url.replace( '.wordpress.com', '.wpcomstaging.com' );
 	}
 	return url;
 }

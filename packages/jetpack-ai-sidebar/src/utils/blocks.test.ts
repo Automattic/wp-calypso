@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { getEditorContentBlocks, type EditorStore } from './blocks';
 import type { BlockSnapshot } from '../components/block-ref';
 
@@ -41,7 +42,7 @@ const pageSiteEditor: EditorStore = {
 
 describe( 'getEditorContentBlocks', () => {
 	it( 'returns controlled post content blocks when a post-content block exists', () => {
-		const getBlocks = jest.fn( ( rootClientId?: string ) =>
+		const getBlocks = vi.fn( ( rootClientId?: string ) =>
 			rootClientId === 'post-content' ? contentBlocks : rootBlocks
 		);
 
@@ -49,7 +50,7 @@ describe( 'getEditorContentBlocks', () => {
 			getEditorContentBlocks(
 				{
 					getBlocks,
-					getBlocksByName: jest.fn( () => [ 'post-content' ] ),
+					getBlocksByName: vi.fn( () => [ 'post-content' ] ),
 				},
 				pageSiteEditor
 			)
@@ -58,13 +59,13 @@ describe( 'getEditorContentBlocks', () => {
 	} );
 
 	it( 'returns root blocks for a post-only post editor', () => {
-		const getBlocks = jest.fn( () => rootBlocks );
+		const getBlocks = vi.fn( () => rootBlocks );
 
 		expect(
 			getEditorContentBlocks(
 				{
 					getBlocks,
-					getBlocksByName: jest.fn( () => [] ),
+					getBlocksByName: vi.fn( () => [] ),
 				},
 				postEditor
 			)
@@ -73,13 +74,13 @@ describe( 'getEditorContentBlocks', () => {
 	} );
 
 	it( 'returns no blocks when post content is missing in template-locked page editing', () => {
-		const getBlocks = jest.fn( () => rootBlocks );
+		const getBlocks = vi.fn( () => rootBlocks );
 
 		expect(
 			getEditorContentBlocks(
 				{
 					getBlocks,
-					getBlocksByName: jest.fn( () => [] ),
+					getBlocksByName: vi.fn( () => [] ),
 				},
 				pageSiteEditor
 			)
@@ -88,7 +89,7 @@ describe( 'getEditorContentBlocks', () => {
 	} );
 
 	it( 'uses the experimental global block lookup when the stable lookup is unavailable', () => {
-		const getBlocks = jest.fn( ( rootClientId?: string ) =>
+		const getBlocks = vi.fn( ( rootClientId?: string ) =>
 			rootClientId === 'post-content' ? contentBlocks : rootBlocks
 		);
 
@@ -96,7 +97,7 @@ describe( 'getEditorContentBlocks', () => {
 			getEditorContentBlocks(
 				{
 					getBlocks,
-					__experimentalGetGlobalBlocksByName: jest.fn( () => [ 'post-content' ] ),
+					__experimentalGetGlobalBlocksByName: vi.fn( () => [ 'post-content' ] ),
 				},
 				pageSiteEditor
 			)
@@ -112,11 +113,11 @@ describe( 'getEditorContentBlocks', () => {
 	it.each( [ 'wp_template', 'wp_template_part', 'wp_navigation', 'wp_global_styles' ] )(
 		'returns no post content blocks for %s entities',
 		( postType ) => {
-			const getBlocks = jest.fn( () => rootBlocks );
+			const getBlocks = vi.fn( () => rootBlocks );
 
 			expect(
 				getEditorContentBlocks(
-					{ getBlocks, getBlocksByName: jest.fn( () => [ 'post-content' ] ) },
+					{ getBlocks, getBlocksByName: vi.fn( () => [ 'post-content' ] ) },
 					{
 						getCurrentPostType: () => postType,
 						getRenderingMode: () => 'template-locked',

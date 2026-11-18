@@ -12,8 +12,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { usePrefetchPostComments } from 'calypso/reader/data/comments';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
 import { ConversationListItem, type InboxItem, type OpenSource } from './list-item';
+import { ConversationListPlaceholder } from './placeholder';
 import { ConversationListTabs, type InboxTab } from './tabs';
 import { ConversationListToolbar, type Density, type SortOrder } from './toolbar';
 
@@ -86,6 +88,18 @@ export function ConversationList( {
 			onLoadMore?.();
 		}
 	}, [ isEndInView, hasMore, isLoadingMore, isLoadMoreError, onLoadMore ] );
+
+	// j/k never hovers a row, so warm the neighbors of the open conversation instead.
+	const prefetchPostComments = usePrefetchPostComments();
+	useEffect( () => {
+		const index = items.findIndex( ( item ) => item.key === selectedKey );
+		if ( index === -1 ) {
+			return;
+		}
+		[ items[ index - 1 ], items[ index + 1 ] ].forEach(
+			( item ) => item && prefetchPostComments( { siteId: item.siteId, postId: item.postId } )
+		);
+	}, [ items, selectedKey, prefetchPostComments ] );
 
 	const listRef = useRef< HTMLDivElement >( null );
 	const refocusRef = useRef( false );
@@ -202,7 +216,7 @@ export function ConversationList( {
 					tabIndex={ -1 }
 					className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }
 				>
-					{ isLoading && <Spinner className="conversations-inbox__list-spinner" /> }
+					{ isLoading && <ConversationListPlaceholder density={ density } /> }
 					{ ! isLoading && isError && (
 						<ListMessage
 							title={ translate( 'Couldn’t load conversations' ) }

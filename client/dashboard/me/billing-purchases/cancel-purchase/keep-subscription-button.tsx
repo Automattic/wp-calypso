@@ -3,6 +3,7 @@ import { Button } from '@wordpress/components';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { DisplayVariant } from '../../../utils/purchase';
 import { getButtonLabels } from './get-confirmation-copy';
+import { useDomainReturnLocation } from './use-domain-return-location';
 import type { Purchase } from '@automattic/api-core';
 
 interface KeepSubscriptionButtonProps {
@@ -19,6 +20,7 @@ export default function KeepSubscriptionButton( {
 	disabled,
 }: KeepSubscriptionButtonProps ) {
 	const navigate = useNavigate();
+	const domainReturnLocation = useDomainReturnLocation( purchase );
 
 	const label = getButtonLabels( { purchase, intent } ).secondary;
 
@@ -27,7 +29,11 @@ export default function KeepSubscriptionButton( {
 			variant="tertiary"
 			disabled={ disabled }
 			onClick={ () => {
-				navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
+				if ( domainReturnLocation ) {
+					navigate( domainReturnLocation );
+				} else {
+					navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
+				}
 				onKeepSubscriptionClick();
 			} }
 		>

@@ -90,7 +90,7 @@ export class JetpackConnectNotices extends Component {
 						components: {
 							a: (
 								<a
-									href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+									href={ localizeUrl( 'https://automattic.com/tos/' ) }
 									rel="noopener noreferrer"
 									target="_blank"
 								/>
@@ -166,7 +166,7 @@ export class JetpackConnectNotices extends Component {
 				return noticeValues;
 
 			case SECRET_EXPIRED:
-				noticeValues.text = translate( 'Connection expired. Refresh the page and try again.' );
+				noticeValues.text = translate( 'Connection expired. Click “Try again” to continue.' );
 				noticeValues.status = 'is-error';
 				noticeValues.icon = 'notice';
 				return noticeValues;

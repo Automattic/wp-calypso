@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MockedFunction, vi } from 'vitest';
 import { renderFormattedContent, createFormattedBlock } from '../';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import type { ActivityBlockContent, ActivityBlockMeta } from '../types';
 
-jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn() );
-jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn() );
-jest.mock( '../../../utils/is-dashboard-backport', () => ( {
-	isDashboardBackport: jest.fn(),
+vi.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => ( { default: vi.fn() } ) );
+vi.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => ( { default: vi.fn() } ) );
+vi.mock( '../../../utils/is-dashboard-backport', () => ( {
+	isDashboardBackport: vi.fn(),
 } ) );
 
-const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
-const mockedIsA8CForAgencies = isA8CForAgencies as jest.MockedFunction< typeof isA8CForAgencies >;
-const mockedIsDashboardBackport = isDashboardBackport as jest.MockedFunction<
+const mockedIsJetpackCloud = isJetpackCloud as MockedFunction< typeof isJetpackCloud >;
+const mockedIsA8CForAgencies = isA8CForAgencies as MockedFunction< typeof isA8CForAgencies >;
+const mockedIsDashboardBackport = isDashboardBackport as MockedFunction<
 	typeof isDashboardBackport
 >;
 
@@ -67,7 +68,7 @@ describe( 'FormattedBlock renderer', () => {
 
 	test( 'passes onClick handlers to block elements', async () => {
 		const user = userEvent.setup();
-		const handleClick = jest.fn( ( event: unknown ) => {
+		const handleClick = vi.fn( ( event: unknown ) => {
 			if (
 				event &&
 				typeof ( event as { preventDefault?: () => void } ).preventDefault === 'function'
@@ -423,7 +424,7 @@ describe( 'createFormattedBlock', () => {
 			},
 		];
 
-		render( <MockBlockMapping content={ { children } } meta={ {} } onClick={ jest.fn() } /> );
+		render( <MockBlockMapping content={ { children } } meta={ {} } onClick={ vi.fn() } /> );
 
 		const customBlock = screen.queryByText( 'MyFakeBlock' );
 		const block = screen.getByText( /example1/ );
@@ -446,7 +447,7 @@ describe( 'createFormattedBlock', () => {
 
 		const content = { type: 'myBlock', children: [ 'children1', 'children2' ] };
 
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 
 		render( <MockBlockMapping content={ content } onClick={ onClick } meta={ {} } /> );
 
@@ -468,7 +469,7 @@ describe( 'createFormattedBlock', () => {
 
 		const content = { type: 'myBlock', children: [ 'children1', 'children2' ] };
 
-		render( <MockBlockMapping content={ content } meta={ {} } onClick={ jest.fn() } /> );
+		render( <MockBlockMapping content={ content } meta={ {} } onClick={ vi.fn() } /> );
 
 		const block = screen.getByText( /MyFakeBlock/ );
 

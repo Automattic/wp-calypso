@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import useAgentTraceIds from '../use-agent-trace-ids';
 import type { UseAgentChatConfig } from '@automattic/agenttic-client';
 
@@ -15,11 +16,11 @@ const agentUrl = `${ agentConfig.agentUrl }/${ agentConfig.agentId }`;
 
 function createResponse( body: string, contentType: string | null ) {
 	return {
-		clone: jest.fn( () => ( {
-			text: jest.fn().mockResolvedValue( body ),
+		clone: vi.fn( () => ( {
+			text: vi.fn().mockResolvedValue( body ),
 		} ) ),
 		headers: {
-			get: jest.fn( ( header: string ) =>
+			get: vi.fn( ( header: string ) =>
 				header.toLowerCase() === 'content-type' ? contentType : null
 			),
 		},
@@ -48,7 +49,7 @@ describe( 'useAgentTraceIds', () => {
 
 	afterEach( () => {
 		window.fetch = originalFetch;
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	async function fetchAndFlush( input: RequestInfo | URL ): Promise< Response > {
@@ -65,7 +66,7 @@ describe( 'useAgentTraceIds', () => {
 			JSON.stringify( createTraceEvent( 'message-json', 'trace-json' ) ),
 			'application/json'
 		);
-		const fetchSpy = jest.fn().mockResolvedValue( response );
+		const fetchSpy = vi.fn().mockResolvedValue( response );
 		window.fetch = fetchSpy as unknown as typeof window.fetch;
 
 		const { result } = renderHook( () => useAgentTraceIds( agentConfig ) );
@@ -87,7 +88,7 @@ describe( 'useAgentTraceIds', () => {
 			].join( '\n' ),
 			'text/event-stream; charset=utf-8'
 		);
-		window.fetch = jest.fn().mockResolvedValue( response ) as unknown as typeof window.fetch;
+		window.fetch = vi.fn().mockResolvedValue( response ) as unknown as typeof window.fetch;
 
 		const { result } = renderHook( () => useAgentTraceIds( agentConfig ) );
 
@@ -104,7 +105,7 @@ describe( 'useAgentTraceIds', () => {
 			JSON.stringify( createTraceEvent( 'message-other', 'trace-other' ) ),
 			'application/json'
 		);
-		window.fetch = jest.fn().mockResolvedValue( response ) as unknown as typeof window.fetch;
+		window.fetch = vi.fn().mockResolvedValue( response ) as unknown as typeof window.fetch;
 
 		const { result } = renderHook( () => useAgentTraceIds( agentConfig ) );
 
@@ -119,7 +120,7 @@ describe( 'useAgentTraceIds', () => {
 			JSON.stringify( createTraceEvent( 'message-request', 'trace-request' ) ),
 			'application/json'
 		);
-		window.fetch = jest.fn().mockResolvedValue( response ) as unknown as typeof window.fetch;
+		window.fetch = vi.fn().mockResolvedValue( response ) as unknown as typeof window.fetch;
 
 		const { result } = renderHook( () => useAgentTraceIds( agentConfig ) );
 
@@ -130,7 +131,7 @@ describe( 'useAgentTraceIds', () => {
 
 	it( 'restores calls to the previous fetch implementation on unmount', async () => {
 		const response = createResponse( '{}', 'application/json' );
-		const fetchSpy = jest.fn().mockResolvedValue( response );
+		const fetchSpy = vi.fn().mockResolvedValue( response );
 		window.fetch = fetchSpy as unknown as typeof window.fetch;
 
 		const { unmount } = renderHook( () => useAgentTraceIds( agentConfig ) );
@@ -148,7 +149,7 @@ describe( 'useAgentTraceIds', () => {
 			JSON.stringify( createTraceEvent( 'message-shared', 'trace-shared' ) ),
 			'application/json'
 		);
-		window.fetch = jest.fn().mockResolvedValue( response ) as unknown as typeof window.fetch;
+		window.fetch = vi.fn().mockResolvedValue( response ) as unknown as typeof window.fetch;
 
 		const first = renderHook( () => useAgentTraceIds( agentConfig ) );
 		const second = renderHook( () => useAgentTraceIds( agentConfig ) );
@@ -162,7 +163,7 @@ describe( 'useAgentTraceIds', () => {
 	} );
 
 	it( 'restores the original fetch only after every consumer unmounts', () => {
-		const baseFetch = jest.fn() as unknown as typeof window.fetch;
+		const baseFetch = vi.fn() as unknown as typeof window.fetch;
 		window.fetch = baseFetch;
 
 		const first = renderHook( () => useAgentTraceIds( agentConfig ) );

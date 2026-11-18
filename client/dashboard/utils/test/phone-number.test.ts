@@ -2,7 +2,7 @@ import { validatePhone } from '../phone-number';
 
 describe( 'validatePhone', () => {
 	describe( 'basic validation errors', () => {
-		it( 'should return error for empty phone number', () => {
+		test( 'should return error for empty phone number', () => {
 			const result = validatePhone( '' );
 			expect( result ).toEqual( {
 				error: 'phone_number_empty',
@@ -10,7 +10,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should return error for phone number containing letters', () => {
+		test( 'should return error for phone number containing letters', () => {
 			const result = validatePhone( '123abc456' );
 			expect( result ).toEqual( {
 				error: 'phone_number_contains_letters',
@@ -18,7 +18,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should return error for phone number that is too short', () => {
+		test( 'should return error for phone number that is too short', () => {
 			const result = validatePhone( '1234567' );
 			expect( result ).toEqual( {
 				error: 'phone_number_too_short',
@@ -26,7 +26,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should return error for phone number with special characters', () => {
+		test( 'should return error for phone number with special characters', () => {
 			const result = validatePhone( '123-456-7890' );
 			expect( result ).toEqual( {
 				error: 'phone_number_contains_special_characters',
@@ -36,7 +36,7 @@ describe( 'validatePhone', () => {
 	} );
 
 	describe( 'valid phone numbers', () => {
-		it( 'should return success for valid US phone number', () => {
+		test( 'should return success for valid US phone number', () => {
 			const result = validatePhone( '2025551234' );
 			expect( result ).toEqual( {
 				info: 'phone_number_valid',
@@ -44,7 +44,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should return success for valid US phone number with plus sign', () => {
+		test( 'should return success for valid US phone number with plus sign', () => {
 			const result = validatePhone( '+12025551234' );
 			expect( result ).toEqual( {
 				info: 'phone_number_valid',
@@ -52,7 +52,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should return success for valid phone number without country code', () => {
+		test( 'should return success for valid phone number without country code', () => {
 			const result = validatePhone( '2025551234' );
 			expect( result ).toEqual( {
 				info: 'phone_number_valid',
@@ -60,7 +60,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should return success for valid international phone number', () => {
+		test( 'should return success for valid international phone number', () => {
 			const result = validatePhone( '+447911123456' );
 			expect( result ).toEqual( {
 				info: 'phone_number_valid',
@@ -70,7 +70,7 @@ describe( 'validatePhone', () => {
 	} );
 
 	describe( 'invalid phone numbers', () => {
-		it( 'should return error for invalid phone number that passes basic validation', () => {
+		test( 'should return error for invalid phone number that passes basic validation', () => {
 			const result = validatePhone( '1234567890' );
 			expect( result ).toEqual( {
 				error: 'phone_number_invalid',
@@ -78,7 +78,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should return error for invalid area code', () => {
+		test( 'should return error for invalid area code', () => {
 			const result = validatePhone( '9995551234' );
 			expect( result ).toEqual( {
 				error: 'phone_number_invalid',
@@ -86,7 +86,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should return error for phone number too long', () => {
+		test( 'should return error for phone number too long', () => {
 			const result = validatePhone( '12345678901234567890' );
 			expect( result ).toEqual( {
 				error: 'phone_number_invalid',
@@ -96,7 +96,7 @@ describe( 'validatePhone', () => {
 	} );
 
 	describe( 'edge cases', () => {
-		it( 'should reject a valid number prefixed with multiple plus signs', () => {
+		test( 'should reject a valid number prefixed with multiple plus signs', () => {
 			const result = validatePhone( '++12025551234' );
 			expect( result ).toEqual( {
 				error: 'phone_number_contains_special_characters',
@@ -104,7 +104,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should reject a number with many leading plus signs', () => {
+		test( 'should reject a number with many leading plus signs', () => {
 			const result = validatePhone( '+++12025551234' );
 			expect( result ).toEqual( {
 				error: 'phone_number_contains_special_characters',
@@ -112,7 +112,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should handle phone number with multiple plus signs', () => {
+		test( 'should handle phone number with multiple plus signs', () => {
 			const result = validatePhone( '++1234567890' );
 			expect( result ).toEqual( {
 				error: 'phone_number_contains_special_characters',
@@ -120,7 +120,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should handle phone number with plus sign in the middle', () => {
+		test( 'should handle phone number with plus sign in the middle', () => {
 			const result = validatePhone( '123+4567890' );
 			expect( result ).toEqual( {
 				error: 'phone_number_contains_special_characters',
@@ -128,7 +128,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should reject phone number with commas', () => {
+		test( 'should reject phone number with commas', () => {
 			const result = validatePhone( '123,456,7890' );
 			expect( result ).toEqual( {
 				error: 'phone_number_contains_special_characters',
@@ -136,7 +136,7 @@ describe( 'validatePhone', () => {
 			} );
 		} );
 
-		it( 'should report special characters over length for a short misplaced-plus number', () => {
+		test( 'should report special characters over length for a short misplaced-plus number', () => {
 			const result = validatePhone( '+1+2345' );
 			expect( result ).toEqual( {
 				error: 'phone_number_contains_special_characters',
@@ -146,7 +146,7 @@ describe( 'validatePhone', () => {
 	} );
 
 	describe( 'validation order', () => {
-		it( 'should check validations in correct order', () => {
+		test( 'should check validations in correct order', () => {
 			expect( validatePhone( '' ).error ).toBe( 'phone_number_empty' );
 			expect( validatePhone( 'abc' ).error ).toBe( 'phone_number_contains_letters' );
 			expect( validatePhone( '123' ).error ).toBe( 'phone_number_too_short' );

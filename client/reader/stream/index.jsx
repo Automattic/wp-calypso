@@ -939,13 +939,8 @@ const withStreamPosts = ( WrappedComponent ) =>
 		// `saved` only changes when the user saves or unsaves, which refetches it. A
 		// poll would still hold a post the user just unsaved and offer it back as new.
 		const shouldPoll =
-			! [
-				'search',
-				'custom_recs_posts_with_images',
-				'discover',
-				'shelf_discover',
-				'saved',
-			].includes( streamType ) && ! props.forcePlaceholders;
+			! [ 'search', 'custom_recs_posts_with_images', 'discover', 'saved' ].includes( streamType ) &&
+			! props.forcePlaceholders;
 
 		const {
 			pendingCount,

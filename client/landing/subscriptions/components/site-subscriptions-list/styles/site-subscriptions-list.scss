@@ -102,10 +102,6 @@
 					color: var( --studio-gray-50 );
 					fill: currentColor;
 
-					* {
-						fill: currentColor;
-					}
-
 					@media (max-width: $break-huge) {
 						display: none;
 					}

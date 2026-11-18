@@ -84,6 +84,7 @@
 .wordpress-migration__connected-hint svg {
 	flex-shrink: 0;
 	margin-block-start: 1px;
+	color: var( --dashboard__foreground-color-success );
 	fill: var( --dashboard__foreground-color-success );
 }
 
@@ -113,6 +114,7 @@
 .dashboard-section-header.wordpress-migration__card-header .dashboard-section-header__decoration svg.wordpress-migration__status-icon {
 	width: 22px;
 	height: 22px;
+	color: var( --wp-admin-theme-color );
 	fill: var( --wp-admin-theme-color );
 }
 
@@ -150,6 +152,7 @@
 	background: color-mix( in srgb, var( --wp-admin-theme-color ) 10%, transparent );
 
 	svg {
+		color: var( --wp-admin-theme-color );
 		fill: var( --wp-admin-theme-color );
 	}
 }
@@ -193,5 +196,10 @@
 
 // A domain is one long word, so let it break anywhere rather than run past the card.
 .wordpress-migration__domain {
+	overflow-wrap: anywhere;
+}
+
+// The same for a domain in a notice's message, which comes as plain text.
+.wordpress-migration__message {
 	overflow-wrap: anywhere;
 }

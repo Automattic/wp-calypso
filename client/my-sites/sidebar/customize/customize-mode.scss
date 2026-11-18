@@ -29,8 +29,11 @@ body.is-admin-sidebar-customize-mode {
 	// Calypso's normal hover/selected icon colors cannot leak through.
 	.sidebar .sidebar__heading .sidebar__menu-icon,
 	.sidebar .sidebar__menu-link .sidebar__menu-icon {
-		fill: var( --color-sidebar-text ) !important;
 		color: var( --color-sidebar-text ) !important;
+
+		&:not([stroke]) {
+			fill: var( --color-sidebar-text ) !important;
+		}
 	}
 
 	.sidebar .sidebar__heading .sidebar__menu-icon-img,
@@ -191,8 +194,11 @@ body.is-admin-sidebar-customize-mode {
 		// Icon stays at idle color too.
 		&:hover .sidebar__menu-link .sidebar__menu-icon,
 		&.selected .sidebar__menu-link .sidebar__menu-icon {
-			fill: var( --color-sidebar-text ) !important;
 			color: var( --color-sidebar-text ) !important;
+
+			&:not([stroke]) {
+				fill: var( --color-sidebar-text ) !important;
+			}
 		}
 	}
 

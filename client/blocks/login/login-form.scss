@@ -227,3 +227,7 @@ form {
 .login__form-blackbox-challenge.has-visible-challenge {
 	margin-block-end: 8px;
 }
+
+.login__form .login__form-blackbox-challenge.has-visible-challenge {
+	margin-block-start: var(--wpds-dimension-gap-lg, 16px);
+}

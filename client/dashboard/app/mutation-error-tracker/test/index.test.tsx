@@ -1,22 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { captureException } from '@automattic/calypso-sentry';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { bumpMultipleStats } from '../../analytics';
 import MutationErrorTracker from '../index';
 
-jest.mock( '../../analytics', () => ( {
-	...jest.requireActual( '../../analytics' ),
-	bumpMultipleStats: jest.fn(),
+vi.mock( '../../analytics', async () => ( {
+	...( await vi.importActual< typeof import( '../../analytics' ) >( '../../analytics' ) ),
+	bumpMultipleStats: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-sentry', () => ( {
-	captureException: jest.fn(),
+vi.mock( '@automattic/calypso-sentry', () => ( {
+	captureException: vi.fn(),
 } ) );
 
-const mockedBumpMultipleStats = jest.mocked( bumpMultipleStats );
-const mockedCaptureException = jest.mocked( captureException );
+const mockedBumpMultipleStats = vi.mocked( bumpMultipleStats );
+const mockedCaptureException = vi.mocked( captureException );
 
 function wpError( fields: { status: number; statusCode: number; error?: string } ) {
 	return Object.assign( new Error( 'boom' ), fields );

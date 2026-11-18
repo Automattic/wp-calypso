@@ -3,6 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { HTTPS_SSL } from '@automattic/urls';
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { DomainPriceRule } from '../../../hooks/use-suggestion';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 import { buildCartItem } from '../../../test-helpers/factories/cart';
@@ -268,7 +269,7 @@ describe( 'SearchResultsItem', () => {
 			suggestions: [ suggestion ],
 		} );
 
-		const onSuggestionRender = jest.fn();
+		const onSuggestionRender = vi.fn();
 
 		render(
 			<TestDomainSearchWithSuggestions

@@ -10,9 +10,9 @@
 //------------------------------------------------------------------------------
 
 // TypeScript-only syntax (`import x = require( … )`) needs the TS parser.
+import { RuleTester } from 'eslint';
+import plugin from '../../..';
 const tsParser = require( '@typescript-eslint/parser' );
-const RuleTester = require( 'eslint' ).RuleTester;
-const plugin = require( '../../..' );
 
 //------------------------------------------------------------------------------
 // Tests

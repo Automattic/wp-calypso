@@ -1,18 +1,5 @@
-import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import {
-	atSymbol,
-	cart,
-	chartBar,
-	caution,
-	check,
-	comment,
-	info,
-	lockOutline,
-	plus,
-	thumbsUp,
-	update,
-} from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { createContext, useContext } from 'react';
@@ -21,28 +8,11 @@ import { html } from '../../panel/indices-to-html';
 import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import NoteIcon from '../note-icon';
-import trophyGridicon from '../note-icon/trophy-gridicon';
 import { getNotePreview } from '../note-simplified';
+import { getTypeIcon } from './type-icons';
 import type { LayoutStyle, Note, Range, Subject } from '../types';
 import type { Field } from '@wordpress/dataviews';
-import type { JSX } from 'react';
 import './dataviews-overrides.scss';
-
-const iconMap: { [ key in string ]: JSX.Element } = {
-	'\uf814': atSymbol,
-	'\uf300': comment,
-	'\uf801': plus,
-	'\uf455': info,
-	'\uf470': lockOutline,
-	'\uf806': chartBar, // stats
-	'\uf805': update, // reblog
-	'\uf408': thumbsUp, // star
-	'\uf804': trophyGridicon, // trophy
-	'\uf467': comment, // reply
-	'\uf414': caution, // warning
-	'\uf418': check,
-	'\uf447': cart,
-};
 
 const REPLY_NOTICON = '\uf467';
 
@@ -106,24 +76,9 @@ export const SelectedNoteIdContext = createContext< string | undefined >( undefi
 const useIsUnapproved = ( note: Note ) =>
 	useSelector( ( state ) => getIsNotePendingApproval( state, note ) );
 
-const NoteBadge = ( { note }: { note: Note } ) => {
-	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
-	const isUnapproved = useIsUnapproved( note );
-
-	return (
-		<span
-			className={ clsx( 'wpnc__gridicon', {
-				'is-unread': ! isRead,
-				'is-unapproved': isUnapproved,
-			} ) }
-		>
-			<Icon icon={ iconMap[ note.noticon ] ?? info } size={ 14 } />
-		</span>
-	);
-};
-
 const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 	const isActive = useContext( SelectedNoteIdContext ) === note.id.toString();
+	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
 	const isUnapproved = useIsUnapproved( note );
 
 	return (
@@ -132,6 +87,8 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 				className={ clsx( 'wpnc__subject', {
 					// Marks the open note's row for the active highlight (see CSS).
 					'is-active': isActive,
+					// Marks unread rows for their tint.
+					'is-unread': ! isRead,
 				} ) }
 				/* eslint-disable-next-line react/no-danger */
 				dangerouslySetInnerHTML={ { __html: subject } }
@@ -151,7 +108,11 @@ export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note 
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<NoteIcon icon={ item.icon } size={ 36 } badge={ <NoteBadge note={ item } /> } />
+				<NoteIcon
+					icon={ item.icon }
+					size={ 36 }
+					badge={ <span className="wpnc__note-type-badge">{ getTypeIcon( item ) }</span> }
+				/>
 			),
 		},
 		{

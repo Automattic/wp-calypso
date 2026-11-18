@@ -2,12 +2,13 @@
  * @jest-environment jsdom
  */
 import { act, render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { setCheckpoint } from '../../utils/checkpoints';
 import ButtonPicker from '../button-picker';
 
 // Mock VariationPicker to capture props without deep `@wordpress/components` chain.
 let mockLastPickerProps: Record< string, unknown > | null = null;
-jest.mock( '../variation-picker', () => {
+vi.mock( '../variation-picker', () => {
 	const MockVariationPicker = ( props: Record< string, unknown > ) => {
 		mockLastPickerProps = props;
 		return (
@@ -20,24 +21,24 @@ jest.mock( '../variation-picker', () => {
 		);
 	};
 	MockVariationPicker.displayName = 'MockVariationPicker';
-	return MockVariationPicker;
+	return { default: MockVariationPicker };
 } );
 
-jest.mock( '../../utils/checkpoints', () => ( {
+vi.mock( '../../utils/checkpoints', () => ( {
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
-	clearCheckpoint: jest.fn(),
-	hasCheckpoint: jest.fn(),
-	setCheckpoint: jest.fn(),
+	clearCheckpoint: vi.fn(),
+	hasCheckpoint: vi.fn(),
+	setCheckpoint: vi.fn(),
 } ) );
 
 let mockGlobalStyles: Record< string, unknown > | null = null;
-jest.mock( '../../hooks/use-global-styles', () => ( {
+vi.mock( '../../hooks/use-global-styles', () => ( {
 	__esModule: true,
 	default: () => ( { globalStylesId: null, globalStyles: mockGlobalStyles } ),
 } ) );
-jest.mock( '../../hooks/use-styles', () => ( {
+vi.mock( '../../hooks/use-styles', () => ( {
 	__esModule: true,
-	default: () => jest.fn(),
+	default: () => vi.fn(),
 } ) );
 
 const defaultProps = {

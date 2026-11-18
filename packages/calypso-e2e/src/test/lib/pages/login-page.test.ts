@@ -1,13 +1,9 @@
-import { afterEach, describe, expect, jest, test } from '@jest/globals';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { LoginPage } from '../../../lib/pages/login-page';
 import type { Page, Response } from 'playwright';
 
 const HTTP_OK = 200;
-const HTTP_NOT_FOUND = 404;
-const HTTP_INTERNAL_SERVER_ERROR = 500;
 const HTTP_BAD_GATEWAY = 502;
-const HTTP_SERVICE_UNAVAILABLE = 503;
-const HTTP_GATEWAY_TIMEOUT = 504;
 
 const buildResponse = ( status: number ) => ( { status: () => status } ) as unknown as Response;
 
@@ -16,12 +12,14 @@ const buildResponse = ( status: number ) => ( { status: () => status } ) as unkn
  * error-page detector answers with the given results in turn (false after).
  */
 const buildPage = ( responses: Array< Response | null >, errorPages: boolean[] = [] ) => {
-	const goto = jest.fn( async () => null as Response | null );
+	const goto = vi.fn< ( url: string, options?: unknown ) => Promise< Response | null > >(
+		async () => null
+	);
 	for ( const response of responses ) {
 		goto.mockResolvedValueOnce( response );
 	}
 
-	const evaluate = jest.fn< ( fn: unknown, arg?: unknown ) => Promise< boolean > >(
+	const evaluate = vi.fn< ( fn: unknown, arg?: unknown ) => Promise< boolean > >(
 		async () => false
 	);
 	for ( const errorPage of errorPages ) {
@@ -31,8 +29,8 @@ const buildPage = ( responses: Array< Response | null >, errorPages: boolean[] =
 	const page = {
 		goto,
 		evaluate,
-		route: jest.fn( async () => undefined ),
-		waitForTimeout: jest.fn( async () => undefined ),
+		route: vi.fn( async () => undefined ),
+		waitForTimeout: vi.fn( async () => undefined ),
 	};
 
 	return page;
@@ -40,86 +38,34 @@ const buildPage = ( responses: Array< Response | null >, errorPages: boolean[] =
 
 describe( 'LoginPage.visit', () => {
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
-	test.each( [ HTTP_BAD_GATEWAY, HTTP_SERVICE_UNAVAILABLE, HTTP_GATEWAY_TIMEOUT ] )(
-		'backs off and navigates again after a %d',
-		async ( status ) => {
-			const ok = buildResponse( HTTP_OK );
-			const page = buildPage( [ buildResponse( status ), ok ] );
-			const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+	// The retry itself is covered by gotoWithRetry's tests; this pins the wiring.
+	test( 'backs off and navigates to the login page again after a 502', async () => {
+		const ok = buildResponse( HTTP_OK );
+		const page = buildPage( [ buildResponse( HTTP_BAD_GATEWAY ), ok ] );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
-			await expect( new LoginPage( page as unknown as Page ).visit() ).resolves.toBe( ok );
+		await expect( new LoginPage( page as unknown as Page ).visit() ).resolves.toBe( ok );
 
-			expect( page.waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ] ] );
-			expect( page.goto ).toHaveBeenCalledTimes( 2 );
-			expect( page.route ).toHaveBeenCalledTimes( 1 );
-			expect( warn ).toHaveBeenCalledWith( expect.stringContaining( '1/4' ) );
-		}
-	);
+		expect( page.waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ] ] );
+		const loginUrl = expect.stringMatching( /\/log-in$/ );
+		expect( page.goto.mock.calls.map( ( [ url ] ) => url ) ).toEqual( [ loginUrl, loginUrl ] );
+		expect( page.route ).toHaveBeenCalledTimes( 1 );
+	} );
 
-	test( 'throws once every attempt returned a 502, waiting before each retry', async () => {
-		const badGateway = buildResponse( HTTP_BAD_GATEWAY );
-		const page = buildPage( [ badGateway, badGateway, badGateway, badGateway, badGateway ] );
-		jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+	test( 'returns a 200 response without waiting or retrying', async () => {
+		const response = buildResponse( HTTP_OK );
+		const page = buildPage( [ response, buildResponse( HTTP_BAD_GATEWAY ) ] );
 
-		await expect( new LoginPage( page as unknown as Page ).visit() ).rejects.toThrow(
-			/status 502\) after 4 attempts/
+		await expect( new LoginPage( page as unknown as Page ).visit( { path: 'new' } ) ).resolves.toBe(
+			response
 		);
 
-		expect( page.waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ], [ 10_000 ], [ 20_000 ] ] );
-		expect( page.goto ).toHaveBeenCalledTimes( 4 );
-		// Each wait sits between two navigations.
-		page.waitForTimeout.mock.invocationCallOrder.forEach( ( order, index ) => {
-			expect( page.goto.mock.invocationCallOrder[ index ] ).toBeLessThan( order );
-			expect( order ).toBeLessThan( page.goto.mock.invocationCallOrder[ index + 1 ] );
-		} );
-	} );
-
-	test( 'retries a gateway-error page served with a 200 status', async () => {
-		const ok = buildResponse( HTTP_OK );
-		const page = buildPage( [ buildResponse( HTTP_OK ), ok ], [ true ] );
-		jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
-
-		await expect( new LoginPage( page as unknown as Page ).visit() ).resolves.toBe( ok );
-
-		expect( page.waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ] ] );
-		expect( page.goto ).toHaveBeenCalledTimes( 2 );
-		// Transient-only: a 500 "Internal Server Error" page must not be retried.
-		expect( page.evaluate ).toHaveBeenCalledWith( expect.any( Function ), true );
-	} );
-
-	test( 'retries a gateway-error page that came with no response', async () => {
-		const ok = buildResponse( HTTP_OK );
-		const page = buildPage( [ null, ok ], [ true ] );
-		jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
-
-		await expect( new LoginPage( page as unknown as Page ).visit() ).resolves.toBe( ok );
-
-		expect( page.waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ] ] );
-		expect( page.goto ).toHaveBeenCalledTimes( 2 );
-	} );
-
-	test.each( [ HTTP_OK, HTTP_NOT_FOUND, HTTP_INTERNAL_SERVER_ERROR ] )(
-		'returns a %d response without waiting or retrying',
-		async ( status ) => {
-			const response = buildResponse( status );
-			const page = buildPage( [ response, buildResponse( HTTP_BAD_GATEWAY ) ] );
-
-			await expect( new LoginPage( page as unknown as Page ).visit() ).resolves.toBe( response );
-
-			expect( page.waitForTimeout ).not.toHaveBeenCalled();
-			expect( page.goto ).toHaveBeenCalledTimes( 1 );
-		}
-	);
-
-	test( 'returns a null response without waiting or retrying', async () => {
-		const page = buildPage( [ null, buildResponse( HTTP_BAD_GATEWAY ) ] );
-
-		await expect( new LoginPage( page as unknown as Page ).visit() ).resolves.toBeNull();
-
 		expect( page.waitForTimeout ).not.toHaveBeenCalled();
-		expect( page.goto ).toHaveBeenCalledTimes( 1 );
+		expect( page.goto.mock.calls.map( ( [ url ] ) => url ) ).toEqual( [
+			expect.stringMatching( /\/log-in\/new$/ ),
+		] );
 	} );
 } );

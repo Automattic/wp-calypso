@@ -237,7 +237,7 @@ export type Flow = {
  */
 export type FlowV1 = Flow;
 
-type DefaultFlowStepsConfig = (
+export type DefaultFlowStepsConfig = (
 	reduxStore: Store
 ) => StepperStep[] | false | Promise< StepperStep[] | false >;
 
@@ -428,3 +428,12 @@ type GroupBySlug< U extends StepperStep > = {
 };
 
 export type StepperStepsUnionedType = GroupBySlug< AsyncStepperStep >;
+
+/**
+ * Maps every step slug returned by a flow's `initialize` to the data that step submits.
+ */
+export type FlowStepsState< FlowStepsInitialize extends DefaultFlowStepsConfig > = ExtractSteps<
+	ReturnType< FlowStepsInitialize >
+>[ number ] extends infer U extends StepperStep
+	? GroupBySlug< U >
+	: never;

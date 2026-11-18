@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getTabId } from '../tab-id';
 
 describe( 'getTabId', () => {
@@ -23,7 +24,7 @@ describe( 'getTabId', () => {
 	} );
 
 	it( 'still returns one id per page load when storage throws', () => {
-		const getItem = jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
+		const getItem = vi.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
 			throw new Error( 'blocked' );
 		} );
 

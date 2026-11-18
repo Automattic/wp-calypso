@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ConnectRepository from '../connect-repository';
 import type { AnalyticsClient } from '../../../app/analytics';
@@ -25,8 +26,9 @@ const repository = {
 	private: false,
 };
 
-jest.mock( '@tanstack/react-router', () => {
-	const actual = jest.requireActual( '@tanstack/react-router' );
+vi.mock( '@tanstack/react-router', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@tanstack/react-router' ) >( '@tanstack/react-router' );
 	return {
 		...actual,
 		useParams: () => ( { siteSlug: 'test-site' } ),
@@ -67,7 +69,7 @@ function mockApis( { installations = [] }: { installations?: object[] } = {} ) {
 }
 
 function eventCalls( recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ], name: string ) {
-	return ( recordTracksEvent as jest.Mock ).mock.calls.filter( ( [ event ] ) => event === name );
+	return ( recordTracksEvent as Mock ).mock.calls.filter( ( [ event ] ) => event === name );
 }
 
 async function selectRepositoryAndSubmit( user: ReturnType< typeof userEvent.setup > ) {
@@ -85,11 +87,11 @@ async function selectRepositoryAndSubmit( user: ReturnType< typeof userEvent.set
 describe( '<ConnectRepository>', () => {
 	beforeEach( () => {
 		// A blocked popup: window.open returns null rather than throwing.
-		jest.spyOn( window, 'open' ).mockReturnValue( null );
+		vi.spyOn( window, 'open' ).mockReturnValue( null );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	test( 'does not record the auth popup event on render', async () => {

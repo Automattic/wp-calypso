@@ -3,6 +3,7 @@ import calypsoConfig from '@automattic/calypso-config';
 import { captureException } from '@automattic/calypso-sentry';
 import { camelToSnakeCase } from '@automattic/js-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { toError } from '../../utils/to-error';
 import { maybeReloadForChunkError } from '../chunk-load-recovery';
 import { getComponentStackFingerprint } from './component-stack';
 import { getDomInterferenceReport } from './dom-interference';
@@ -29,6 +30,7 @@ function isBenignError( error: Error ) {
 		case 'AuthorizationRequiredError':
 		case 'ReauthorizationRequiredError':
 		case 'DomainPermissionError':
+		case 'SitePermissionError':
 			return true;
 	}
 
@@ -128,7 +130,7 @@ function reportDashboardError(
 }
 
 export function handleOnCatch(
-	error: Error,
+	error: unknown,
 	errorInfo: ErrorInfo,
 	router: AnyRouter,
 	options: {
@@ -145,7 +147,7 @@ export function handleOnCatch(
 		] )
 	);
 
-	handleDashboardError( error, errorInfo.componentStack, {
+	handleDashboardError( toError( error ), errorInfo.componentStack, {
 		severity: options.severity,
 		dashboard_backport: options.dashboard_backport,
 		calypso_section: options.calypso_section,
@@ -166,8 +168,7 @@ export function handleOnCatch(
  */
 export function handleUncaughtError( error: unknown, errorInfo: { componentStack?: string } ) {
 	try {
-		const normalizedError = error instanceof Error ? error : new Error( String( error ) );
-		handleDashboardError( normalizedError, errorInfo.componentStack, {
+		handleDashboardError( toError( error ), errorInfo.componentStack, {
 			severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
 			calypso_section: 'dashboard',
 			mechanism: { type: 'react.onUncaughtError', handled: false },

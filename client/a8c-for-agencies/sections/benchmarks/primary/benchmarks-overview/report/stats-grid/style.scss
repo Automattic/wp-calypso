@@ -155,6 +155,11 @@
 
 .benchmarks-stat-trend {
 	margin-block-start: 8px;
+
+	// A light tooltip, as before @automattic/charts 4.x drew them dark.
+	.a8c-charts-scope {
+		--a8c-charts-color-tooltip-surface: var(--color-surface);
+	}
 }
 
 .benchmarks-stat-card-caption {

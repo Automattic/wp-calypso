@@ -1,11 +1,12 @@
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useGenericShare } from './index';
 
-const mockTrackClicked = jest.fn();
-const mockTrackCompleted = jest.fn();
-const mockTrackFailed = jest.fn();
-const mockAddNotice = jest.fn();
-const mockCreateCoreNotice = jest.fn();
+const mockTrackClicked = vi.fn();
+const mockTrackCompleted = vi.fn();
+const mockTrackFailed = vi.fn();
+const mockAddNotice = vi.fn();
+const mockCreateCoreNotice = vi.fn();
 
 let mockState: {
 	currentVideoUrl: string | null;
@@ -15,8 +16,8 @@ let mockState: {
 	postPermalink: string | null;
 };
 
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( ( selector ) => {
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn( ( selector ) => {
 		return selector( ( storeName: string ) => {
 			if ( storeName === 'video-studio' ) {
 				return {
@@ -38,7 +39,7 @@ jest.mock( '@wordpress/data', () => ( {
 			return {};
 		} );
 	} ),
-	useDispatch: jest.fn( ( storeName: string ) => {
+	useDispatch: vi.fn( ( storeName: string ) => {
 		if ( storeName === 'image-studio' ) {
 			return { addNotice: mockAddNotice };
 		}
@@ -49,7 +50,7 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@wordpress/element', () => {
+vi.mock( '@wordpress/element', () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const React = require( 'react' );
 	return {
@@ -59,11 +60,11 @@ jest.mock( '@wordpress/element', () => {
 	};
 } );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
-jest.mock( '../../store', () => ( {
+vi.mock( '../../store', () => ( {
 	store: 'image-studio',
 	ImageStudioEntryPoint: {
 		MediaLibrary: 'media_library',
@@ -71,11 +72,11 @@ jest.mock( '../../store', () => ( {
 	},
 } ) );
 
-jest.mock( '../../stores/video-studio', () => ( {
+vi.mock( '../../stores/video-studio', () => ( {
 	store: 'video-studio',
 } ) );
 
-jest.mock( '../../utils/tracking', () => ( {
+vi.mock( '../../utils/tracking', () => ( {
 	trackImageStudioGenericShareClicked: ( ...args: unknown[] ) => mockTrackClicked( ...args ),
 	trackImageStudioGenericShareCompleted: ( ...args: unknown[] ) => mockTrackCompleted( ...args ),
 	trackImageStudioGenericShareFailed: ( ...args: unknown[] ) => mockTrackFailed( ...args ),
@@ -100,7 +101,7 @@ function setNavigatorShare( opts: {
 }
 
 function fetchReturning( blob: Blob ): typeof fetch {
-	return jest.fn().mockResolvedValue( {
+	return vi.fn().mockResolvedValue( {
 		ok: true,
 		status: 200,
 		blob: () => Promise.resolve( blob ),
@@ -121,7 +122,7 @@ afterEach( () => {
 
 describe( 'useGenericShare', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockState = {
 			currentVideoUrl: 'https://example.com/clip.mp4',
 			currentAttachmentId: 555,
@@ -132,7 +133,7 @@ describe( 'useGenericShare', () => {
 		mockAddNotice.mockResolvedValue( undefined );
 		// The share button must never open a tab or download anything itself —
 		// spy so any such attempt fails the test.
-		window.open = jest.fn() as unknown as typeof window.open;
+		window.open = vi.fn() as unknown as typeof window.open;
 	} );
 
 	describe( 'isVisible', () => {
@@ -168,8 +169,8 @@ describe( 'useGenericShare', () => {
 
 	describe( 'handleShare — Web Share (files) path', () => {
 		it( 'fetches the file and invokes navigator.share, opening nothing else', async () => {
-			const mockShare = jest.fn().mockResolvedValue( undefined );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockResolvedValue( undefined );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'video' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
@@ -192,8 +193,8 @@ describe( 'useGenericShare', () => {
 
 		it( 'includes the post permalink as share text when available', async () => {
 			mockState.postPermalink = 'https://example.com/my-post/';
-			const mockShare = jest.fn().mockResolvedValue( undefined );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockResolvedValue( undefined );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'video' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
@@ -208,8 +209,8 @@ describe( 'useGenericShare', () => {
 
 		it( 'omits share text when no permalink is available', async () => {
 			mockState.postPermalink = null;
-			const mockShare = jest.fn().mockResolvedValue( undefined );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockResolvedValue( undefined );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
@@ -221,8 +222,8 @@ describe( 'useGenericShare', () => {
 		} );
 
 		it( 'silently exits when the user dismisses the share sheet', async () => {
-			const mockShare = jest.fn().mockRejectedValue( new DOMException( 'cancel', 'AbortError' ) );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockRejectedValue( new DOMException( 'cancel', 'AbortError' ) );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
@@ -240,8 +241,8 @@ describe( 'useGenericShare', () => {
 		} );
 
 		it( 'shows an error notice — never downloads or opens a tab — when navigator.share throws', async () => {
-			const mockShare = jest.fn().mockRejectedValue( new Error( 'NotAllowedError' ) );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockRejectedValue( new Error( 'NotAllowedError' ) );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
@@ -262,8 +263,8 @@ describe( 'useGenericShare', () => {
 		} );
 
 		it( 'tags an HTTP fetch failure as failureKind=http and shows the error notice', async () => {
-			setNavigatorShare( { share: jest.fn(), canShare: jest.fn().mockReturnValue( true ) } );
-			global.fetch = jest
+			setNavigatorShare( { share: vi.fn(), canShare: vi.fn().mockReturnValue( true ) } );
+			global.fetch = vi
 				.fn()
 				.mockResolvedValue( { ok: false, status: 404 } ) as unknown as typeof fetch;
 
@@ -286,8 +287,8 @@ describe( 'useGenericShare', () => {
 
 	describe( 'handleShare — file sharing unavailable', () => {
 		it( 'shows an error notice and never fetches or opens a tab when canShare rejects files', async () => {
-			setNavigatorShare( { share: jest.fn(), canShare: jest.fn().mockReturnValue( false ) } );
-			global.fetch = jest.fn() as unknown as typeof fetch;
+			setNavigatorShare( { share: vi.fn(), canShare: vi.fn().mockReturnValue( false ) } );
+			global.fetch = vi.fn() as unknown as typeof fetch;
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {
@@ -329,8 +330,8 @@ describe( 'useGenericShare', () => {
 
 		it( 'surfaces the error via the snackbar (core/notices) when invoked from the sidebar with a clip override', async () => {
 			mockCreateCoreNotice.mockResolvedValue( undefined );
-			const mockShare = jest.fn().mockRejectedValue( new Error( 'NotAllowedError' ) );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockRejectedValue( new Error( 'NotAllowedError' ) );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () =>
@@ -363,8 +364,8 @@ describe( 'useGenericShare', () => {
 			const sharePromise = new Promise< void >( ( resolve ) => {
 				resolveShare = resolve;
 			} );
-			const mockShare = jest.fn().mockReturnValue( sharePromise );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockReturnValue( sharePromise );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
@@ -392,8 +393,8 @@ describe( 'useGenericShare', () => {
 			const sharePromise = new Promise< void >( ( resolve ) => {
 				resolveShare = resolve;
 			} );
-			const mockShare = jest.fn().mockReturnValue( sharePromise );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockReturnValue( sharePromise );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
@@ -416,8 +417,8 @@ describe( 'useGenericShare', () => {
 		} );
 
 		it( 'resets to false after the user dismisses the share sheet (AbortError)', async () => {
-			const mockShare = jest.fn().mockRejectedValue( new DOMException( 'cancel', 'AbortError' ) );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockRejectedValue( new DOMException( 'cancel', 'AbortError' ) );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
@@ -429,8 +430,8 @@ describe( 'useGenericShare', () => {
 		} );
 
 		it( 'resets to false after navigator.share throws', async () => {
-			const mockShare = jest.fn().mockRejectedValue( new Error( 'boom' ) );
-			setNavigatorShare( { share: mockShare, canShare: jest.fn().mockReturnValue( true ) } );
+			const mockShare = vi.fn().mockRejectedValue( new Error( 'boom' ) );
+			setNavigatorShare( { share: mockShare, canShare: vi.fn().mockReturnValue( true ) } );
 			global.fetch = fetchReturning( new Blob( [ 'v' ], { type: 'video/mp4' } ) );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
@@ -442,7 +443,7 @@ describe( 'useGenericShare', () => {
 		} );
 
 		it( 'resets to false when file sharing is unavailable', async () => {
-			setNavigatorShare( { share: jest.fn(), canShare: jest.fn().mockReturnValue( false ) } );
+			setNavigatorShare( { share: vi.fn(), canShare: vi.fn().mockReturnValue( false ) } );
 
 			const { result } = renderHook( () => useGenericShare( 'modal' ) );
 			await act( async () => {

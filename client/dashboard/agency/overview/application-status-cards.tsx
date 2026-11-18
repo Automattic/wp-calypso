@@ -61,7 +61,7 @@ export function PendingTierCard( {
 	return (
 		<ApplicationStatusCard
 			decoration={
-				<Icon icon={ published } size={ 24 } style={ { fill: 'var(--wp-admin-theme-color)' } } />
+				<Icon icon={ published } size={ 24 } style={ { color: 'var(--wp-admin-theme-color)' } } />
 			}
 			label={ __( 'Welcome' ) }
 			heading={ __( 'We’re reviewing your account' ) }

@@ -369,6 +369,7 @@ const PlanSelector = styled.header`
 
 		svg {
 			fill: var( --color-link );
+			color: var( --color-link );
 			transform: rotate( 90deg );
 		}
 	}

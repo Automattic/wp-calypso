@@ -1,6 +1,6 @@
 import { readerPostQuery } from '@automattic/api-queries';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { useDispatch } from 'calypso/state';
 import { syncConversationFollowStatus, syncPostCache, useCachedPost } from './cache';
@@ -40,6 +40,7 @@ export type PostResult = Omit< UseQueryResult< Post | undefined, Error >, 'data'
 export const usePost = ( postKey: Partial< ReadPostKey > | null | undefined ): PostResult => {
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
+	const lastSyncedErrorTokenRef = useRef< string | null >( null );
 	const cachedPost = useCachedPost( postKey );
 	const hasRenderablePostContent = !! (
 		cachedPost?.content ||
@@ -68,8 +69,20 @@ export const usePost = ( postKey: Partial< ReadPostKey > | null | undefined ): P
 		if ( ! query.isError || ! postKey ) {
 			return;
 		}
+		const syncToken = `${ JSON.stringify( queryOptions.queryKey ) }:${ query.errorUpdatedAt }`;
+		if ( lastSyncedErrorTokenRef.current === syncToken ) {
+			return;
+		}
+		lastSyncedErrorTokenRef.current = syncToken;
 		syncPostCache( queryClient, [ buildErrorPost( postKey, query.error ) ] );
-	}, [ query.isError, query.error, postKey, queryClient ] );
+	}, [
+		query.isError,
+		query.error,
+		query.errorUpdatedAt,
+		postKey,
+		queryClient,
+		queryOptions.queryKey,
+	] );
 
 	return {
 		...query,

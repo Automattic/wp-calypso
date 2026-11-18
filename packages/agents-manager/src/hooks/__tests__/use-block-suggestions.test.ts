@@ -1,9 +1,10 @@
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useBlockSuggestions } from '../use-block-suggestions';
 
-const mockSelect = jest.fn();
+const mockSelect = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( mapSelect: ( select: typeof mockSelect ) => unknown ) => mapSelect( mockSelect ),
 } ) );
 

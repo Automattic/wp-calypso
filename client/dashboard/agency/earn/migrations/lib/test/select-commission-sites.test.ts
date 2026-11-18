@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 import { selectCommissionSites } from '../select-commission-sites';
 import type { MigrationCommissionSite } from '@automattic/api-core';
@@ -16,7 +16,7 @@ const site = ( overrides: Partial< MigrationCommissionSite > ): MigrationCommiss
 } );
 
 describe( 'selectCommissionSites', () => {
-	it( 'keeps sites with a known incentive status', () => {
+	test( 'keeps sites with a known incentive status', () => {
 		const sites = [
 			site( { id: 1, incentive_status: 'pending' } ),
 			site( { id: 2, incentive_status: 'verified' } ),
@@ -29,7 +29,7 @@ describe( 'selectCommissionSites', () => {
 		expect( selectCommissionSites( sites ) ).toHaveLength( 6 );
 	} );
 
-	it( 'drops sites with an unknown or empty incentive status', () => {
+	test( 'drops sites with an unknown or empty incentive status', () => {
 		const sites = [
 			site( { id: 1, incentive_status: 'pending' } ),
 			site( { id: 2, incentive_status: '' } ),
@@ -42,7 +42,7 @@ describe( 'selectCommissionSites', () => {
 		expect( result[ 0 ].id ).toBe( 1 );
 	} );
 
-	it( 'returns an empty array when nothing matches', () => {
+	test( 'returns an empty array when nothing matches', () => {
 		expect( selectCommissionSites( [ site( { incentive_status: 'unknown' } ) ] ) ).toEqual( [] );
 	} );
 } );

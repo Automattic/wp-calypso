@@ -50,6 +50,7 @@
 		&:not( :hover ) {
 			svg {
 				fill: $gray-700;
+				color: $gray-700;
 			}
 		}
 	}

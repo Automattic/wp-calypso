@@ -1,3 +1,7 @@
+## Unreleased
+
+- Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
+
 ## 1.1.2
 
 - Use an npm-installable `@wordpress/compose` dependency range for package consumers.

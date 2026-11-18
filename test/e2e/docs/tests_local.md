@@ -22,6 +22,8 @@
 
 ## Prerequisites
 
+Start the full dev server with `yarn start`, in the checkout you run the tests from. `yarn start-dashboard` isn't enough, even for the Dashboard specs: every spec that uses an account logs in on Calypso's `/log-in` page, which that server doesn't serve.
+
 Prior to running any tests, transpile TypeScript code:
 
 ```bash
@@ -49,8 +51,10 @@ yarn workspace wp-e2e-tests build --watch
 Specify the file(s) directly:
 
 ```bash
-yarn test:pw -- <path_to_file_1> <path_to_file_2> --reporter=list
+yarn test:pw <path_to_file_1> <path_to_file_2> --reporter=list
 ```
+
+Don't put `--` before the arguments. Yarn passes it on to Playwright, which then reads everything after it, flags included, as files to match.
 
 `--reporter=list` keeps a failing run from opening the HTML report and holding the terminal. Drop it, then `yarn playwright show-report`, when you want that report. Every command below takes it too.
 
@@ -128,7 +132,7 @@ yarn test:pw:mobile <path_to_spec> --reporter=list
 
 ### Target a different environment
 
-By default these tests target <http://calypso.localhost:3000>. To target a webapp running in a different environment:
+By default these tests target the dev server of the checkout they run from: <http://calypso.localhost:3000> in the main checkout, and the worktree's own default port in a linked git worktree. To target a webapp running in a different environment:
 
 1. determine the base URL to use for the appropriate environment.
 
@@ -140,7 +144,7 @@ By default these tests target <http://calypso.localhost:3000>. To target a webap
 
    a. set the variable to persist in the shell: `export CALYPSO_BASE_URL=<url>`
 
-   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn test:pw -- <test_path> --reporter=list`
+   b. set the variable for the command only: `CALYPSO_BASE_URL=<url> yarn test:pw <test_path> --reporter=list`
 
 <img alt="Local Calypso Webapp" src="https://cldup.com/1WwDmUXWen.png" />
 <sup><center>Example: webapp running on localhost.</center></sup>

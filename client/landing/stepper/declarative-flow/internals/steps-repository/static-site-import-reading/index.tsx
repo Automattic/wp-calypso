@@ -1,5 +1,6 @@
 import { getStaticSiteImportErrorCode } from '@automattic/api-core';
 import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
+import { getUrlParts } from '@automattic/calypso-url';
 import { HelpCenter, Onboard, Visibility } from '@automattic/data-stores';
 import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
@@ -10,7 +11,10 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { isCheckoutExitPreview } from 'calypso/landing/stepper/declarative-flow/flows/static-site-import-flow/helpers';
+import { SiteComparison } from 'calypso/landing/stepper/declarative-flow/internals/components/site-comparison';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSchemeIfMissing } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
@@ -24,10 +28,24 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
+import './style.scss';
+
 export type StaticSiteImportReadingSubmits =
-	| { action: 'continue'; importSessionId: string }
+	| {
+			action: 'continue';
+			importSessionId: string;
+			previewSiteId?: number;
+			previewSiteSlug?: string;
+			/** The source the move is copying, so a flow can tell it apart from another source's. */
+			sourceUrl?: string;
+	  }
 	| { action: 'migrate' }
-	| { action: 'unavailable' };
+	| { action: 'choose_importer' }
+	| { action: 'unavailable' }
+	| { action: 'preview_failed' };
+
+/** The WoW funnel that builds a preview site for an import. */
+const PREVIEW_FUNNEL = 'preview';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -38,14 +56,31 @@ const isRefusedError = ( error: unknown ) =>
 const isWordPressSourceError = ( error: unknown ) =>
 	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_is_wordpress';
 
-const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
-	function StaticSiteImportReading( { navigation } ) {
+type StaticSiteImportReadingProps = {
+	accepts: {
+		/** The source to import, in place of the `from` query param. */
+		sourceUrl?: string;
+		/** Import onto a new preview site rather than a destination the customer paid for. */
+		buildPreview?: boolean;
+		/** A move this step started before, such as before going back, to resume instead of starting another. */
+		startedImport?: Extract< StaticSiteImportReadingSubmits, { action: 'continue' } >;
+	};
+	submits: StaticSiteImportReadingSubmits;
+};
+
+const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
+	function StaticSiteImportReading( {
+		navigation,
+		sourceUrl: sourceProp,
+		buildPreview,
+		startedImport,
+	} ) {
 		const { __ } = useI18n();
 		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 		const { site, siteSlug } = useSiteData();
 		const userId = useSelector( getCurrentUserId );
 		const [ searchParams ] = useSearchParams();
-		const from = searchParams.get( 'from' )?.trim();
+		const from = ( sourceProp || searchParams.get( 'from' ) )?.trim();
 		const sourceUrl = from ? addSchemeIfMissing( from, 'https' ) : '';
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
@@ -57,12 +92,17 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		);
 		const isNewSite = isCheckoutReturn && searchParams.get( 'newSite' ) === '1';
 		const [ hasConfirmed, setHasConfirmed ] = useState( false );
-		const needsConfirmation = ! isCheckoutReturn && ! hasConfirmed;
+		// A preview site is built to take the import, so there is nothing to confirm.
+		const isPreview = Boolean( buildPreview ) || isCheckoutExitPreview( searchParams );
+		const needsConfirmation = ! isPreview && ! isCheckoutReturn && ! hasConfirmed;
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
 
 		const start = useEffectEvent( async () => {
 			const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
+			if ( startedImport ) {
+				return submit( startedImport );
+			}
 			if ( ! sessionId && ! sourceUrl ) {
 				return submit( { action: 'unavailable' } );
 			}
@@ -113,12 +153,36 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				] );
 			}
 
+			// The server delivers the import onto the preview as soon as its build lands.
+			const continueWith = async ( importSessionId: string ) => {
+				if ( ! isPreview ) {
+					return submit( {
+						action: 'continue',
+						importSessionId,
+					} );
+				}
+				try {
+					const preview = await startWowFunnelSite( {
+						funnelSlug: PREVIEW_FUNNEL,
+						funnelArgs: { import_session_id: importSessionId },
+					} );
+					return submit( {
+						action: 'continue',
+						importSessionId,
+						previewSiteId: preview.blogId,
+						previewSiteSlug: preview.siteSlug,
+						sourceUrl: sourceUrl || undefined,
+					} );
+				} catch {
+					return submit( { action: 'preview_failed' } );
+				}
+			};
+
 			if ( sessionId ) {
-				return submit( { action: 'continue', importSessionId: sessionId } );
+				return continueWith( sessionId );
 			}
 			createSession( sourceUrl, {
-				onSuccess: ( session ) =>
-					submit( { action: 'continue', importSessionId: session.session_id } ),
+				onSuccess: ( session ) => continueWith( session.session_id ),
 				onError: ( createError ) =>
 					! isRefusedError( createError ) &&
 					submit( { action: isWordPressSourceError( createError ) ? 'migrate' : 'unavailable' } ),
@@ -164,6 +228,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				<>
 					<DocumentHead title={ __( 'Import into this site' ) } />
 					<Step.CenteredColumnLayout
+						className="static-site-import-reading__confirmation"
 						columnWidth={ 6 }
 						topBar={
 							<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
@@ -179,14 +244,40 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 											)
 										: __( 'Import into this site?' )
 								}
-								subText={ __( 'Importing will change this site’s content and design.' ) }
+								subText={ __( 'Importing replaces this site’s content and design.' ) }
 							/>
 						}
 					>
-						{ sourceUrl && <p>{ sourceUrl }</p> }
-						<Step.PrimaryButton onClick={ () => setHasConfirmed( true ) }>
-							{ __( 'Import into this site' ) }
-						</Step.PrimaryButton>
+						{ sourceUrl && siteSlug && (
+							<SiteComparison
+								source={ {
+									heading: __( 'Source' ),
+									url: sourceUrl,
+									address: getUrlParts( sourceUrl ).hostname || sourceUrl,
+									previewLabel: __( 'Source site to be copied' ),
+									description: __(
+										'The content on this site will be copied. No changes will be made to the site itself.'
+									),
+								} }
+								destination={ {
+									heading: __( 'Destination' ),
+									url: site?.URL || `https://${ siteSlug }`,
+									address: siteSlug,
+									previewLabel: __( 'Current destination site' ),
+									description: __( 'All of the content on this site will be replaced.' ),
+								} }
+							/>
+						) }
+						<div className="static-site-import-reading__actions">
+							<Step.PrimaryButton onClick={ () => setHasConfirmed( true ) }>
+								{ __( 'Import into this site' ) }
+							</Step.PrimaryButton>
+							<Step.LinkButton
+								onClick={ () => navigation.submit?.( { action: 'choose_importer' } ) }
+							>
+								{ __( 'Use a different importer' ) }
+							</Step.LinkButton>
+						</div>
 					</Step.CenteredColumnLayout>
 				</>
 			);

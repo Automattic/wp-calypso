@@ -11,6 +11,7 @@ import {
 	within,
 } from '@testing-library/react';
 import { createElement } from '@wordpress/element';
+import { type Mock, vi } from 'vitest';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import useCheckpointAction, {
 	invalidateCheckpointAction,
@@ -19,11 +20,12 @@ import useCheckpointAction, {
 import type { UseCheckpointReturn } from '../../utils/load-external-providers';
 import type { UIMessage, UseAgentChatReturn } from '@automattic/agenttic-client';
 
-jest.mock( '../../utils/tracks', () => ( {
-	recordBigSkyTracksEvent: jest.fn(),
+vi.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: vi.fn(),
 } ) );
-jest.mock( '@wordpress/icons', () => {
-	const { createElement: mockCreateElement } = jest.requireActual( '@wordpress/element' );
+vi.mock( '@wordpress/icons', async () => {
+	const { createElement: mockCreateElement } =
+		await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
 
 	return {
 		check: 'check',
@@ -81,35 +83,35 @@ function getActions( registration: MessageActionsRegistration | undefined, messa
 
 function createCheckpoint(): UseCheckpointReturn {
 	return {
-		getLastEditorState: jest.fn(),
-		setCheckpoint: jest.fn(),
-		addCheckpointKeys: jest.fn(),
-		restoreCheckpoint: jest.fn().mockResolvedValue( undefined ),
-		addNewPageToCheckpoint: jest.fn(),
-		addPageRenameToCheckpoint: jest.fn(),
-		addPageRemovalToCheckpoint: jest.fn(),
-		getLatestUserMessageId: jest.fn(),
-		clearCheckpoint: jest.fn(),
-		hasCheckpoint: jest.fn().mockReturnValue( true ),
+		getLastEditorState: vi.fn(),
+		setCheckpoint: vi.fn(),
+		addCheckpointKeys: vi.fn(),
+		restoreCheckpoint: vi.fn().mockResolvedValue( undefined ),
+		addNewPageToCheckpoint: vi.fn(),
+		addPageRenameToCheckpoint: vi.fn(),
+		addPageRemovalToCheckpoint: vi.fn(),
+		getLatestUserMessageId: vi.fn(),
+		clearCheckpoint: vi.fn(),
+		hasCheckpoint: vi.fn().mockReturnValue( true ),
 	};
 }
 
 describe( 'useCheckpointAction', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'shows Reverted and removes Undo after restoring a successful block edit', async () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
 		let resolveRestore!: () => void;
-		( checkpoint.restoreCheckpoint as jest.Mock ).mockImplementation(
+		( checkpoint.restoreCheckpoint as Mock ).mockImplementation(
 			() =>
 				new Promise< void >( ( resolve ) => {
 					resolveRestore = resolve;
@@ -180,7 +182,7 @@ describe( 'useCheckpointAction', () => {
 		} );
 
 		actionState = 'disabled';
-		( checkpoint.hasCheckpoint as jest.Mock ).mockReturnValue( false );
+		( checkpoint.hasCheckpoint as Mock ).mockReturnValue( false );
 		const supersededAction = getActions( registration, message )[ 0 ];
 		expect( supersededAction ).toMatchObject( {
 			label: 'Reverted',
@@ -195,7 +197,7 @@ describe( 'useCheckpointAction', () => {
 	} );
 
 	it( 'updates a mounted resolved edit action from external checkpoint state', () => {
-		const registerMessageActions = jest.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
+		const registerMessageActions = vi.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
 		const message = createToolMessage( {
 			toolCallId: 'native-status-tool-call',
@@ -238,12 +240,12 @@ describe( 'useCheckpointAction', () => {
 
 	it( 're-enables Undo when restoring the checkpoint fails', async () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
 		let rejectRestore!: ( error: Error ) => void;
-		( checkpoint.restoreCheckpoint as jest.Mock )
+		( checkpoint.restoreCheckpoint as Mock )
 			.mockImplementationOnce(
 				() =>
 					new Promise< void >( ( _resolve, reject ) => {
@@ -251,7 +253,7 @@ describe( 'useCheckpointAction', () => {
 					} )
 			)
 			.mockResolvedValueOnce( undefined );
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation();
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const message = createToolMessage( {
 			toolCallId: 'tool-call-failure',
 			data: {
@@ -313,12 +315,12 @@ describe( 'useCheckpointAction', () => {
 
 	it( 'swaps a text checkpoint between Undo and Redo', async () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
-		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( true );
-		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		checkpoint.canSwapCheckpoint = vi.fn().mockReturnValue( true );
+		checkpoint.swapCheckpoint = vi.fn().mockResolvedValue( undefined );
 		const message = createToolMessage( {
 			toolCallId: 'swappable-tool-call',
 			data: {
@@ -354,14 +356,14 @@ describe( 'useCheckpointAction', () => {
 				outcome: 'success',
 			}
 		);
-		( checkpoint.canSwapCheckpoint as jest.Mock ).mockReturnValue( false );
+		( checkpoint.canSwapCheckpoint as Mock ).mockReturnValue( false );
 		const driftedAction = getActions( registration, message )[ 0 ];
 		expect( driftedAction ).toMatchObject( { label: 'Reverted' } );
 		if ( driftedAction?.type !== 'component' ) {
 			throw new Error( 'Expected a component action.' );
 		}
 		expect( driftedAction.componentProps ).not.toHaveProperty( 'onRedo' );
-		( checkpoint.canSwapCheckpoint as jest.Mock ).mockReturnValue( true );
+		( checkpoint.canSwapCheckpoint as Mock ).mockReturnValue( true );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Redo' } ) );
 		await waitFor( () => expect( screen.getByRole( 'button', { name: 'Undo' } ) ).toBeEnabled() );
@@ -382,12 +384,12 @@ describe( 'useCheckpointAction', () => {
 
 	it( 'uses restore-based Undo when the merged provider cannot swap this checkpoint', async () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
-		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( undefined );
-		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		checkpoint.canSwapCheckpoint = vi.fn().mockReturnValue( undefined );
+		checkpoint.swapCheckpoint = vi.fn().mockResolvedValue( undefined );
 		const message = createToolMessage( {
 			toolCallId: 'restore-only-tool-call',
 			data: {
@@ -416,14 +418,14 @@ describe( 'useCheckpointAction', () => {
 
 	it( 'invalidates a rendered Undo when the checkpoint drifts before the click', async () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
 		let canSwapCheckpoint = true;
-		checkpoint.canSwapCheckpoint = jest.fn( () => canSwapCheckpoint );
-		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
-		const onCheckpointActionInvalidated = jest.fn();
+		checkpoint.canSwapCheckpoint = vi.fn( () => canSwapCheckpoint );
+		checkpoint.swapCheckpoint = vi.fn().mockResolvedValue( undefined );
+		const onCheckpointActionInvalidated = vi.fn();
 		const message = createToolMessage( {
 			toolCallId: 'stale-rendered-tool-call',
 			data: {
@@ -474,12 +476,12 @@ describe( 'useCheckpointAction', () => {
 
 	it( 'does not offer Undo when a swappable text checkpoint has drifted', () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
-		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( false );
-		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		checkpoint.canSwapCheckpoint = vi.fn().mockReturnValue( false );
+		checkpoint.swapCheckpoint = vi.fn().mockResolvedValue( undefined );
 		const message = createToolMessage( {
 			toolCallId: 'drifted-tool-call',
 			data: {
@@ -509,10 +511,10 @@ describe( 'useCheckpointAction', () => {
 	} );
 
 	it( 'disables superseded checkpoint controls and hides invalidated ones', () => {
-		const registerMessageActions = jest.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
+		const registerMessageActions = vi.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
-		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( true );
-		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		checkpoint.canSwapCheckpoint = vi.fn().mockReturnValue( true );
+		checkpoint.swapCheckpoint = vi.fn().mockResolvedValue( undefined );
 		const message = createToolMessage( {
 			toolCallId: 'invalidated-tool-call',
 			data: {
@@ -523,7 +525,7 @@ describe( 'useCheckpointAction', () => {
 				},
 			},
 		} );
-		( checkpoint.hasCheckpoint as jest.Mock ).mockReturnValue( false );
+		( checkpoint.hasCheckpoint as Mock ).mockReturnValue( false );
 		let actionState: 'disabled' | 'enabled' | 'hidden' = 'disabled';
 		const { result, rerender } = renderHook( () =>
 			useCheckpointAction( registerMessageActions, checkpoint, () => actionState )
@@ -543,7 +545,7 @@ describe( 'useCheckpointAction', () => {
 		expect( checkpoint.swapCheckpoint ).not.toHaveBeenCalled();
 		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalled();
 
-		( checkpoint.hasCheckpoint as jest.Mock ).mockReturnValue( true );
+		( checkpoint.hasCheckpoint as Mock ).mockReturnValue( true );
 		actionState = 'enabled';
 		rerender();
 		invalidateCheckpointAction( 'invalidated-tool-call' );
@@ -561,13 +563,13 @@ describe( 'useCheckpointAction', () => {
 
 	it( 'keeps a stale Undo inert when a later message disables it', async () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
-		checkpoint.canSwapCheckpoint = jest.fn().mockReturnValue( true );
-		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
-		const onCheckpointActionInvalidated = jest.fn();
+		checkpoint.canSwapCheckpoint = vi.fn().mockReturnValue( true );
+		checkpoint.swapCheckpoint = vi.fn().mockResolvedValue( undefined );
+		const onCheckpointActionInvalidated = vi.fn();
 		const message = createToolMessage( {
 			toolCallId: 'superseded-stale-tool-call',
 			data: {
@@ -613,11 +615,11 @@ describe( 'useCheckpointAction', () => {
 	} );
 
 	it( 'keeps a successful Reverted status after its checkpoint clears', async () => {
-		const registerMessageActions = jest.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
+		const registerMessageActions = vi.fn() as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
 		let canSwapCheckpoint: boolean | undefined = true;
-		checkpoint.canSwapCheckpoint = jest.fn( () => canSwapCheckpoint );
-		checkpoint.swapCheckpoint = jest.fn().mockResolvedValue( undefined );
+		checkpoint.canSwapCheckpoint = vi.fn( () => canSwapCheckpoint );
+		checkpoint.swapCheckpoint = vi.fn().mockResolvedValue( undefined );
 		const message = createToolMessage( {
 			toolCallId: 'superseded-reverted-tool-call',
 			data: {
@@ -644,7 +646,7 @@ describe( 'useCheckpointAction', () => {
 
 		actionState = 'disabled';
 		canSwapCheckpoint = undefined;
-		( checkpoint.hasCheckpoint as jest.Mock ).mockReturnValue( false );
+		( checkpoint.hasCheckpoint as Mock ).mockReturnValue( false );
 
 		const action = result.current( message )[ 0 ];
 		expect( action ).toMatchObject( {
@@ -658,14 +660,14 @@ describe( 'useCheckpointAction', () => {
 
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Reverted' );
 		expect( screen.getByRole( 'button', { name: 'Redo' } ) ).toBeDisabled();
-		const trackCalls = ( recordBigSkyTracksEvent as jest.Mock ).mock.calls.length;
+		const trackCalls = ( recordBigSkyTracksEvent as Mock ).mock.calls.length;
 		expect( checkpoint.swapCheckpoint ).toHaveBeenCalledTimes( 1 );
 		expect( recordBigSkyTracksEvent ).toHaveBeenCalledTimes( trackCalls );
 	} );
 
 	it( 'uses the Jetpack tool call id for its block edit checkpoint', async () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
@@ -703,7 +705,7 @@ describe( 'useCheckpointAction', () => {
 
 	it( 'does not show Undo for a successful no-op block edit', () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
@@ -726,7 +728,7 @@ describe( 'useCheckpointAction', () => {
 
 	it( 'does not show the resolved edit action for a structural block edit', () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();
@@ -750,7 +752,7 @@ describe( 'useCheckpointAction', () => {
 
 	it( 'uses the resolved edit action for legacy block edit checkpoints', () => {
 		let registration: MessageActionsRegistration | undefined;
-		const registerMessageActions = jest.fn( ( nextRegistration ) => {
+		const registerMessageActions = vi.fn( ( nextRegistration ) => {
 			registration = nextRegistration;
 		} ) as UseAgentChatReturn[ 'registerMessageActions' ];
 		const checkpoint = createCheckpoint();

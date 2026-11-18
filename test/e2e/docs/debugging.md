@@ -36,7 +36,7 @@ Launch Playwright with the following parameters to:
 yarn debug <path_to_spec>
 
 # If at repo root
-yarn workspace wp-e2e-tests debug -- <path_to_spec>
+yarn workspace wp-e2e-tests debug <path_to_spec>
 ```
 
 ## Playwright Developer Console and Gutenberg iFrame

@@ -23,9 +23,8 @@ const likeId = ( value: unknown ): number | string | null =>
 	typeof value === 'number' || typeof value === 'string' ? value : null;
 
 /**
- * Commands that operate on the currently selected post, shared by the stream
- * reading shortcuts across every surface (Stream V2 and the Spaces feed
- * layouts). Reads the post cache-only (no request waterfall) and toggles likes
+ * Commands that operate on the currently selected post, for the reading
+ * shortcuts. Reads the post cache-only (no request waterfall) and toggles likes
  * through the same React Query mechanism the post-card like button uses.
  */
 export function useSelectedPostCommands(

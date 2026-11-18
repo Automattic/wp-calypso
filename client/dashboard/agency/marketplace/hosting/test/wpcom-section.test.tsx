@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import WpcomSection from '../wpcom-section';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -50,7 +51,7 @@ function renderSection( props: Partial< React.ComponentProps< typeof WpcomSectio
 			isOwnedSitesReady
 			isAgencyApproved
 			availableDevSites={ 3 }
-			onAddToCart={ jest.fn() }
+			onAddToCart={ vi.fn() }
 			{ ...props }
 		/>
 	);

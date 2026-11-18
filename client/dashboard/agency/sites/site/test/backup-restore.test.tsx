@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import AgencySiteBackupRestore from '../backup-restore';
 import type { Site } from '@automattic/api-core';
@@ -13,24 +14,24 @@ import type { Site } from '@automattic/api-core';
 const API_BASE = 'https://public-api.wordpress.com';
 const siteId = 123;
 
-jest.mock( '@wordpress/react-i18n', () => ( {
-	useI18n: jest.fn(),
-} ) );
+vi.mock( '@wordpress/react-i18n', () => ( ( ( m ) => ( { ...m, default: m } ) )( {
+	useI18n: vi.fn(),
+} ) ) );
 
-jest.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( { createSuccessNotice: jest.fn(), createErrorNotice: jest.fn() } ),
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( { createSuccessNotice: vi.fn(), createErrorNotice: vi.fn() } ),
 	useRegistry: () => ( {} ),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn( ( selector ) => selector ),
-	store: jest.fn(),
-	select: jest.fn(),
-	dispatch: jest.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn( ( selector ) => selector ),
+	store: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock(
+vi.mock(
 	'../../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 	() => ( {
 		useFileBrowserContext: () => ( {
@@ -42,9 +43,9 @@ jest.mock(
 	} )
 );
 
-jest.mock( '../../../../app/breadcrumbs', () => () => null );
+vi.mock( '../../../../app/breadcrumbs', () => ( { default: () => null } ) );
 
-jest.mock( '../../../../app/router/agency', () => ( {
+vi.mock( '../../../../app/router/agency', () => ( {
 	agencySiteBackupRestoreRoute: {
 		fullPath: '/agency/sites/$siteSlug/backups/$rewindId/restore',
 		useParams: () => ( { siteSlug: 'test-site', rewindId: '1792244294.123' } ),

@@ -1,4 +1,6 @@
-const mockUse = jest.fn();
+/* eslint-disable import/order */
+import { vi } from 'vitest';
+const mockUse = vi.fn();
 
 function mockRegisterDataPlugin( ...args: unknown[] ) {
 	return mockUse( ...args );
@@ -11,13 +13,13 @@ function mockPersistencePlugin( registry: DataRegistry ) {
 			storeOptions: ReduxStoreConfig< unknown, unknown, unknown >
 		) {
 			const store = registry.registerStore( storeName, storeOptions );
-			store.subscribe( jest.fn() );
+			store.subscribe( vi.fn() );
 			return store;
 		},
 	};
 }
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	plugins: {
 		persistence: mockPersistencePlugin,
 	},
@@ -34,7 +36,7 @@ describe( 'data store plugin registration', () => {
 	beforeEach( () => {
 		delete pluginRegistry.__automatticDataStoresPersistencePluginRegistered;
 		mockUse.mockClear();
-		jest.resetModules();
+		vi.resetModules();
 	} );
 
 	afterEach( () => {
@@ -54,7 +56,7 @@ describe( 'data store plugin registration', () => {
 		const firstBundle = await import( '../index' );
 		firstBundle.registerPlugins();
 
-		jest.resetModules();
+		vi.resetModules();
 		const secondBundle = await import( '../index' );
 		secondBundle.registerPlugins();
 
@@ -67,16 +69,16 @@ describe( 'data store plugin registration', () => {
 
 		const persistencePlugin = mockUse.mock.calls[ 0 ][ 0 ] as DataPlugin;
 		const store = {
-			getState: jest.fn( () => ( { value: 'current' } ) ),
-			subscribe: jest.fn(),
+			getState: vi.fn( () => ( { value: 'current' } ) ),
+			subscribe: vi.fn(),
 		} as unknown as ReduxStore;
-		const innerRegisterStore = jest.fn( () => store );
+		const innerRegisterStore = vi.fn( () => store );
 		const registry = {
 			registerStore: innerRegisterStore,
 		} as unknown as DataRegistry;
 		const storage = {
-			getItem: jest.fn( () => null ),
-			setItem: jest.fn(),
+			getItem: vi.fn( () => null ),
+			setItem: vi.fn(),
 		};
 		const registeredPlugin = persistencePlugin( registry, {
 			storage,

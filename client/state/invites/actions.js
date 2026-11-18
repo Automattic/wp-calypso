@@ -355,6 +355,8 @@ export function sendInvites( siteId, invitees, role, message, isExternal ) {
 		} catch ( e ) {
 			dispatch( {
 				type: INVITES_SEND_FAILURE,
+				statusCode: e?.statusCode,
+				message: e?.message,
 			} );
 			recordTracksEvent( 'calypso_invite_send_failed' );
 		}

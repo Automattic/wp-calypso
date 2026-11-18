@@ -89,48 +89,6 @@ function buildListQueryParams( extras ) {
 	return getQueryString( { ...extras, number: 40 } );
 }
 
-// Default posts per page for the shelf feed. The shelf uses its own page size
-// rather than the shared `INITIAL_FETCH`/`PER_FETCH` sizes the other streams
-// use; consumers can override it via `perPage` (e.g. the gallery layout asks for
-// 9 to fill its 3×3 grid). Always kept at or under the 15-post server cap.
-const SHELF_PER_PAGE = 10;
-
-/**
- * Shared shape for the Shelf streams (`/reader/shelves/<id>/posts` and
- * `/reader/shelves/<id>/discover`): `count` (the per-page size) plus a
- * `page_handle` cursor and `_locale`, rather than the `number`/offset shape the
- * other streams use. `cap` is the server-side per-page limit per endpoint (posts
- * 15, discover 7 — both Elasticsearch query-size limits). `perPage`, when given,
- * pins the page size (the posts feed passes its own — e.g. the gallery layout
- * asks for 9); otherwise it falls back to the shared `INITIAL_FETCH`/`PER_FETCH`
- * sizes. Always clamped to the cap so an oversized page can't silently break
- * end-of-stream detection. Locale is passed as `_locale`, the param the endpoints read.
- */
-function buildShelfStreamParams( extras, cap, perPage ) {
-	const { number, page_handle: pageHandle, lang } = extras;
-	const queryParams = { count: Math.min( perPage || number || INITIAL_FETCH, cap ) };
-	if ( pageHandle ) {
-		queryParams.page_handle = pageHandle;
-	}
-	if ( lang ) {
-		queryParams._locale = lang;
-	}
-	return queryParams;
-}
-
-// `shelf` — the posts feed (`/reader/shelves/<id>/posts`), followed feeds + tags.
-// Pins the layout's page size (`perPage`, e.g. the gallery's 9) or the default
-// `SHELF_PER_PAGE`, rather than the shared fetch sizes.
-function buildShelfQueryParams( extras, perPage ) {
-	return buildShelfStreamParams( extras, 15, perPage ?? SHELF_PER_PAGE );
-}
-
-// `shelf_discover` — recommended on-topic posts the user doesn't follow
-// (`/reader/shelves/<id>/discover`). Tighter cap (7) than the posts feed.
-function buildShelfDiscoverQueryParams( extras ) {
-	return buildShelfStreamParams( extras, 7 );
-}
-
 /**
  * `on_this_day` parses optional `month`/`day` numerics out of the streamKey
  * suffix (`on_this_day:{m}:{d}`) and always pins `number: 15`.
@@ -233,17 +191,6 @@ export function buildStreamQueryParams( {
 			// Legacy `streamApis.user.pollQuery` polled with `number: 20`.
 			return getQueryStringForPoll( [], { ...commonQueryParams, number: 20 } );
 		}
-		if ( streamType === 'conversations' ) {
-			// Legacy `streamApis.conversations.pollQuery`.
-			return getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], commonQueryParams );
-		}
-		if ( streamType === 'conversations-a8c' ) {
-			// Legacy `streamApis['conversations-a8c'].pollQuery`.
-			return getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], {
-				...commonQueryParams,
-				index: 'a8c',
-			} );
-		}
 		if ( streamType === 'likes' ) {
 			// Legacy `streamApis.likes.pollQuery`.
 			return getQueryStringForPoll( [ 'date_liked' ] );
@@ -275,16 +222,8 @@ export function buildStreamQueryParams( {
 			return buildListQueryParams( extras );
 		case 'on_this_day':
 			return buildOnThisDayQueryParams( extras, streamKey );
-		case 'shelf':
-			return buildShelfQueryParams( extras, perPage );
-		case 'shelf_discover':
-			return buildShelfDiscoverQueryParams( extras );
 		case 'saved':
 			return getQueryString( { ...extras, ...SAVED_SORT_PARAMS[ streamKey ] } );
-		case 'conversations':
-			return getQueryString( { ...extras, comments_per_post: 20 } );
-		case 'conversations-a8c':
-			return getQueryString( { ...extras, comments_per_post: 20, index: 'a8c' } );
 		case 'recommendations_posts': {
 			// Legacy first request: only seed + algorithm (no meta/orderBy/etc.).
 			const base = {

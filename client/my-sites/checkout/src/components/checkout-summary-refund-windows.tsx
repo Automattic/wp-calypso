@@ -7,6 +7,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 
 const StyledIcon = styled( Icon )`
 	fill: #1e1e1e;
+	color: #1e1e1e;
 	margin-right: 0.3em;
 
 	.rtl & {

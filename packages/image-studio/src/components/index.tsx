@@ -248,7 +248,7 @@ function ImageStudioAgentChat( {
 							leadingActions={
 								<>
 									{ mode === ImageStudioMode.Generate && ! isVideoMode && (
-										<AspectRatioPicker disabled={ isProcessing } />
+										<AspectRatioPicker disabled={ isProcessing } mode={ mode } />
 									) }
 									<StylePicker
 										disabled={ isProcessing }

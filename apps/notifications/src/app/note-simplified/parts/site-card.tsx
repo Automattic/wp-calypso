@@ -40,7 +40,7 @@ export default function SiteCard( { site, url, post }: HeaderSite ) {
 			header={ <SiteIdentity site={ site } details={ displayUrl } /> }
 		>
 			{ post && (
-				<Text size={ 15 } weight={ 600 } lineHeight="24px" truncate numberOfLines={ 1 }>
+				<Text size={ 14 } weight={ 600 } lineHeight="24px" truncate numberOfLines={ 1 }>
 					{ post.title }
 				</Text>
 			) }

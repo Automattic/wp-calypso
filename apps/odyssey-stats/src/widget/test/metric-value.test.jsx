@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import MetricValue from '../metric-value';
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Tooltip: ( { text, children } ) => (
 		<div data-testid="tooltip" data-text={ text }>
 			{ children }
@@ -17,7 +18,7 @@ const describe_ = ( count ) => `${ count } views`;
 describe( 'MetricValue', () => {
 	beforeEach( () => {
 		// Reduced motion makes the count-up land on the value straight away.
-		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
+		window.matchMedia = vi.fn().mockReturnValue( { matches: true } );
 	} );
 
 	it( 'shows the compact figure, with the full amount in a tooltip and for screen readers', () => {

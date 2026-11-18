@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import {
 	getResponseRenderedTrackingProperties,
 	trackSplitScreenGuideClick,
@@ -44,10 +45,10 @@ type WindowWithAgentsManagerActions = Window & {
 };
 
 describe( 'Jetpack AI sidebar tracking', () => {
-	const mockRecordBigSkyTracksEvent = jest.fn();
+	const mockRecordBigSkyTracksEvent = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		( window as WindowWithAgentsManagerActions ).__agentsManagerActions = {
 			recordBigSkyTracksEvent: mockRecordBigSkyTracksEvent,
 		};

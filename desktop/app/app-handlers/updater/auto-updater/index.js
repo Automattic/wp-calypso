@@ -45,6 +45,9 @@ class AutoUpdater extends Updater {
 
 		// Tracks whether an auto-update check was initiated via menu selection.
 		this.isUserRequested = false;
+		// Tracks whether the user confirmed installing a downloaded update.
+		this.isInstalling = false;
+		this.downloadedVersion = null;
 	}
 
 	ping( isUserRequested ) {
@@ -53,8 +56,11 @@ class AutoUpdater extends Updater {
 			return;
 		}
 		dialogDebug( 'Checking for update' );
-		autoUpdater.checkForUpdates();
-		this.isUserRequested = isUserRequested;
+		if ( isUserRequested ) {
+			this.isUserRequested = true;
+		}
+		// Failures are reported through the 'error' event.
+		autoUpdater.checkForUpdates().catch( () => {} );
 	}
 
 	// ignore (available), confirm (available), cancel (available)
@@ -63,7 +69,19 @@ class AutoUpdater extends Updater {
 		if ( semver.lt( app.getVersion(), info.version ) ) {
 			log.info( 'New update is available: ', info.version );
 			bumpStat( 'wpcom-desktop-update-check', `${ getStatsString( this.beta ) }-needs-update` );
-			autoUpdater.downloadUpdate();
+
+			if ( this.downloadedVersion === info.version ) {
+				this.isUserRequested = false;
+				this.notify();
+				return;
+			}
+
+			if ( this.isUserRequested ) {
+				this.setVersion( info.version );
+				this.notifyDownloading();
+			}
+			// Failures are reported through the 'error' event.
+			autoUpdater.downloadUpdate().catch( () => {} );
 		} else {
 			log.info(
 				`Latest upstream version ${
@@ -88,6 +106,8 @@ class AutoUpdater extends Updater {
 	onDownloaded( info ) {
 		log.info( 'Update downloaded: ', info.version );
 
+		this.isUserRequested = false;
+		this.downloadedVersion = info.version;
 		this.setVersion( info.version );
 		this.notify();
 
@@ -103,6 +123,7 @@ class AutoUpdater extends Updater {
 	onConfirm() {
 		log.info( `User selected 'Update & Restart'...` );
 
+		this.isInstalling = true;
 		AppQuit.allowQuit();
 		autoUpdater.quitAndInstall();
 
@@ -118,6 +139,20 @@ class AutoUpdater extends Updater {
 		log.error( 'Update error: ', event );
 
 		bumpStat( 'wpcom-desktop-update', `${ getStatsString( this.beta ) }-update-error` );
+
+		const shouldNotifyUser = this.isUserRequested || this.isInstalling;
+
+		if ( this.isInstalling ) {
+			// The app didn't quit, so closing its window should hide it again.
+			AppQuit.disallowQuit();
+		}
+
+		this.isUserRequested = false;
+		this.isInstalling = false;
+
+		if ( shouldNotifyUser ) {
+			this.notifyError();
+		}
 	}
 }
 

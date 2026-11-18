@@ -1,11 +1,12 @@
 import debugFactory from 'debug';
 import repliesCache from '../comment-replies-cache';
-import { logError } from '../helpers/log-error';
+import { reportRequestError } from '../helpers/log-error';
 import { recordTracksEvent } from '../helpers/stats';
 import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
 import getFilteredNoteIds from '../state/selectors/get-filtered-note-ids';
+import getStoredNotes from '../state/selectors/get-notes';
 import { getFilters } from '../templates/filters';
 import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from './wpcom';
 
@@ -42,6 +43,10 @@ export class Client {
 		// Per-tab load-more exhaustion, keyed by tab name.
 		this.filteredHasMore = {};
 		this.gettingFilteredNotes = false;
+		// Set when a refresh was asked for while a filtered fetch was in flight.
+		this.filteredRefreshPending = false;
+		this.loadMoreBackoff = {};
+		this.loadMoreTimer = null;
 		this.retries = 0;
 		this.subscribeTry = 0;
 		this.subscribeTries = 3;
@@ -183,13 +188,27 @@ function getNote( note_id, livePushMessage ) {
 		fields: getNoteFields.call( this ),
 	};
 
+	const requestedAt = Date.now();
+
 	fetchNote( note_id, parameters, ( error, data ) => {
 		if ( error ) {
-			logError( error, { request: 'getNote', note_id, status: error.status, code: error.error } );
+			reportRequestError( 'load-note', error, {
+				request: 'getNote',
+				note_id,
+				status: error.status,
+				code: error.error,
+			} );
 			return;
 		}
+		// The server answers with no notes for one it no longer has, so stop asking.
+		if (
+			! data.notes.length &&
+			getStoredNotes( store.getState() ).noteReads[ note_id ] === false
+		) {
+			store.dispatch( actions.notes.resetLocalRead( note_id ) );
+		}
 		const previousNotes = getAllNotes( store.getState() );
-		store.dispatch( actions.notes.addNotes( data.notes ) );
+		store.dispatch( actions.notes.addNotes( data.notes, requestedAt ) );
 		ready.call( this, getLiveFollowCandidates( data.notes, [ livePushMessage ], previousNotes ) );
 	} );
 }
@@ -234,19 +253,24 @@ function getNotes( before, livePushMessages = [] ) {
 		store.dispatch( actions.ui.loadNotes() );
 	}
 
+	const requestedAt = Date.now();
+
 	listNotes( parameters, ( error, data ) => {
 		this.gettingNotes = false;
 
 		if ( error ) {
-			logError( error, {
-				request: 'getNotes',
-				before: before ?? null,
-				retries: this.retries,
-				status: error.status,
-				code: error.error,
-			} );
-			// Load-more: clear the spinner, leave state untouched; scrolling retries.
+			if ( before ? ! this.loadMoreBackoff.all : this.retries === 0 ) {
+				reportRequestError( before ? 'load-more' : 'load', error, {
+					request: 'getNotes',
+					before: before ?? null,
+					retries: this.retries,
+					status: error.status,
+					code: error.error,
+				} );
+			}
+			// Load-more: clear the spinner, leave state untouched; retry after a backoff.
 			if ( before ) {
+				scheduleLoadMoreRetry.call( this, 'all' );
 				store.dispatch( actions.ui.loadedNotes() );
 				return;
 			}
@@ -312,6 +336,7 @@ function getNotes( before, livePushMessages = [] ) {
 			// `before` echoes back isn't double-counted.
 			const known = new Set( this.noteList.map( ( n ) => n.id ) );
 			this.noteList = this.noteList.concat( pageList.filter( ( n ) => ! known.has( n.id ) ) );
+			delete this.loadMoreBackoff.all;
 			trackLoadMore( 'all', this.noteList.length, ! this.hasMoreNotes( 'all' ) );
 		} else {
 			// Merge the head over the window, keeping the older paged-in tail.
@@ -321,7 +346,7 @@ function getNotes( before, livePushMessages = [] ) {
 			this.noteList = pageList.concat( tail );
 		}
 
-		store.dispatch( actions.notes.addNotes( data.notes ) );
+		store.dispatch( actions.notes.addNotes( data.notes, requestedAt ) );
 		this.updateLastSeenTime( Number( data.last_seen_time ) );
 
 		if ( this.allNotesLoaded ) {
@@ -366,12 +391,14 @@ function getNotesList() {
 		debug( 'getNotesList callback:', error, data );
 		this.gettingNotes = false;
 		if ( error ) {
-			logError( error, {
-				request: 'getNotesList',
-				retries: this.retries,
-				status: error.status,
-				code: error.error,
-			} );
+			if ( this.retries === 0 ) {
+				reportRequestError( 'refresh', error, {
+					request: 'getNotesList',
+					retries: this.retries,
+					status: error.status,
+					code: error.error,
+				} );
+			}
 			this.retries = this.retries + 1;
 			const backoff_ms = Math.min(
 				settings.refresh_ms * ( this.retries + 1 ),
@@ -451,6 +478,8 @@ function setFilter( filterName ) {
 	if ( this.filter && this.isVisible ) {
 		this.getFilteredNotes();
 	}
+
+	resumeLoadMoreRetry.call( this );
 }
 
 /**
@@ -496,21 +525,32 @@ function getFilteredNotes( before ) {
 		store.dispatch( actions.ui.loadNotes( { filter: key } ) );
 	}
 
+	const requestedAt = Date.now();
+
 	listNotes( parameters, ( error, data ) => {
 		this.gettingFilteredNotes = false;
 
 		// A tab switch while this was in flight left the newly-active tab's own
 		// fetch skipped (this request held the lock); run it once we're done. Its
-		// cached list, if any, keeps showing meanwhile.
-		const activeTabNeedsFetch = this.filter && this.isVisible && this.filterName !== key;
+		// cached list, if any, keeps showing meanwhile. Same for a refresh that
+		// refreshFilteredNotes() asked for in the meantime.
+		const activeTabNeedsFetch =
+			this.filter && this.isVisible && ( this.filterName !== key || this.filteredRefreshPending );
+		// A refresh asked for while the page is hidden waits for setVisibility().
+		this.filteredRefreshPending = this.filteredRefreshPending && !! this.filter && ! this.isVisible;
 
 		if ( error ) {
-			logError( error, {
-				request: 'getFilteredNotes',
-				before: before ?? null,
-				status: error.status,
-				code: error.error,
-			} );
+			if ( ! before || ! this.loadMoreBackoff[ key ] ) {
+				reportRequestError( 'load-filter', error, {
+					request: 'getFilteredNotes',
+					before: before ?? null,
+					status: error.status,
+					code: error.error,
+				} );
+			}
+			if ( before ) {
+				scheduleLoadMoreRetry.call( this, key );
+			}
 			store.dispatch( actions.ui.loadedNotes( { filter: key } ) );
 			if ( activeTabNeedsFetch ) {
 				this.getFilteredNotes();
@@ -518,7 +558,7 @@ function getFilteredNotes( before ) {
 			return;
 		}
 
-		store.dispatch( actions.notes.addNotes( data.notes ) );
+		store.dispatch( actions.notes.addNotes( data.notes, requestedAt ) );
 
 		// Apply the response to the tab it was fetched for (`key`), never the tab
 		// that happens to be active now. A response that lands after a switch away
@@ -540,6 +580,7 @@ function getFilteredNotes( before ) {
 				data.notes.length >= parameters.number &&
 				appended.length < settings.max_limit;
 
+			delete this.loadMoreBackoff[ key ];
 			trackLoadMore( key, appended.length, ! this.filteredHasMore[ key ] );
 		} else {
 			// Merge the head over the list, keeping the older paged-in tail. Drop
@@ -570,6 +611,21 @@ function getFilteredNotes( before ) {
 			this.getFilteredNotes();
 		}
 	} );
+}
+
+/**
+ * Refresh the active filtered tab after a change made here.
+ *
+ * Unlike getFilteredNotes(), a call made while a fetch is in flight is not
+ * dropped: the refresh runs once that fetch is done, so its result includes
+ * the change.
+ */
+function refreshFilteredNotes() {
+	if ( this.gettingFilteredNotes ) {
+		this.filteredRefreshPending = true;
+		return;
+	}
+	this.getFilteredNotes();
 }
 
 /**
@@ -744,7 +800,7 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 	// Update the database only if an unseen note has become visible.
 	if ( fromNote ) {
 		debug( 'updateLastSeenTime 3', this.lastSeenTime );
-		sendLastSeenTime( this.lastSeenTime );
+		sendLastSeenTime( this.lastSeenTime ).catch( ( error ) => reportRequestError( 'seen', error ) );
 	}
 
 	return true;
@@ -784,11 +840,62 @@ function handleStorageEvent( event ) {
 	if ( 'note_read_status_' === event.key.substring( 0, 17 ) ) {
 		const noteId = parseInt( event.key.slice( 17 ), 10 );
 
-		return store.dispatch( actions.notes.readNote( noteId ) );
+		if ( event.newValue === '1' ) {
+			return store.dispatch( actions.notes.readNote( noteId ) );
+		}
+		if ( event.newValue === '0' ) {
+			return store.dispatch( actions.notes.unreadNote( noteId ) );
+		}
 	}
 }
 
+/**
+ * Hold load-more on a tab for a growing backoff after one of its pages failed, then retry it.
+ * @param key The tab the failed page was fetched for.
+ */
+function scheduleLoadMoreRetry( key ) {
+	const retries = ( this.loadMoreBackoff[ key ]?.retries ?? 0 ) + 1;
+	const backoff_ms = Math.min( settings.refresh_ms * retries, settings.max_refresh_ms );
+	this.loadMoreBackoff[ key ] = { retries, retryAt: Date.now() + backoff_ms };
+	resumeLoadMoreRetry.call( this );
+}
+
+/**
+ * Arm the retry timer for the active tab's failed page, if it has one, while notifications are showing and visible.
+ */
+function resumeLoadMoreRetry() {
+	clearTimeout( this.loadMoreTimer );
+	this.loadMoreTimer = null;
+
+	const backoff = this.loadMoreBackoff[ getLoadMoreKey.call( this ) ];
+	if ( ! backoff || ! this.isShowing || ! this.isVisible ) {
+		return;
+	}
+
+	const wait_ms = backoff.retryAt - Date.now();
+	if ( wait_ms > 0 ) {
+		this.loadMoreTimer = setTimeout( () => resumeLoadMoreRetry.call( this ), wait_ms );
+		return;
+	}
+	if ( this.gettingNotes || this.gettingFilteredNotes ) {
+		this.loadMoreTimer = setTimeout( () => resumeLoadMoreRetry.call( this ), 1000 );
+		return;
+	}
+	this.loadMore();
+}
+
+/**
+ * Return the tab name load-more pages for: the active filter's name, or `all` when unfiltered.
+ */
+function getLoadMoreKey() {
+	return this.filter ? this.filterName : 'all';
+}
+
 function loadMore() {
+	if ( Date.now() < ( this.loadMoreBackoff[ getLoadMoreKey.call( this ) ]?.retryAt ?? 0 ) ) {
+		return;
+	}
+
 	// Filtered tabs paginate their own window, advancing only while the server
 	// still has matching notes.
 	if ( this.filter ) {
@@ -859,6 +966,16 @@ function hasMoreNotes( filterName = this.filterName ) {
 	return ! this.allNotesLoaded && loaded < settings.max_limit;
 }
 
+// A note marked as unread here keeps that status until the server sends the
+// note again, which it does not do on its own while the live connection is up.
+function refreshLocalUnreads() {
+	const { allNotes, noteReads } = getStoredNotes( store.getState() );
+
+	Object.keys( noteReads )
+		.filter( ( noteId ) => noteReads[ noteId ] === false && allNotes[ noteId ] )
+		.forEach( ( noteId ) => this.getNote( noteId ) );
+}
+
 function setVisibility( { isShowing, isVisible } ) {
 	if ( this.isShowing === isShowing && this.isVisible === isVisible ) {
 		return;
@@ -877,6 +994,17 @@ function setVisibility( { isShowing, isVisible } ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
 	}
+
+	if ( isVisible && this.filteredRefreshPending ) {
+		this.filteredRefreshPending = false;
+		this.refreshFilteredNotes();
+	}
+
+	if ( isVisible && isShowing ) {
+		refreshLocalUnreads.call( this );
+	}
+
+	resumeLoadMoreRetry.call( this );
 }
 
 function setLocale( locale ) {
@@ -893,6 +1021,7 @@ Client.prototype.getNote = getNote;
 Client.prototype.getNotes = getNotes;
 Client.prototype.getNotesList = getNotesList;
 Client.prototype.getFilteredNotes = getFilteredNotes;
+Client.prototype.refreshFilteredNotes = refreshFilteredNotes;
 Client.prototype.setFilter = setFilter;
 Client.prototype.updateLastSeenTime = updateLastSeenTime;
 Client.prototype.loadMore = loadMore;
