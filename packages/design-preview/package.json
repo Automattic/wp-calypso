@@ -43,10 +43,13 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@wordpress/components": "^45.0.0",
+		"@wordpress/compose": "^9.2.0",
 		"@wordpress/html-entities": "^5.2.0",
 		"@wordpress/icons": "^21.0.0",
 		"@wordpress/react-i18n": "^5.2.0",
 		"clsx": "^2.1.1",
+		"i18n-calypso": "workspace:^",
+		"photon": "workspace:^",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
