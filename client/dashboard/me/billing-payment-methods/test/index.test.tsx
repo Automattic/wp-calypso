@@ -62,7 +62,7 @@ describe( '<PaymentMethods>', () => {
 		expect(
 			screen.getByText( 'Pay for plans, domains, and renewals with a saved card.' )
 		).toBeVisible();
-		expect( screen.getByText( 'Save a credit or debit card to your account.' ) ).toBeVisible();
+		expect( screen.getByText( 'Save a credit or debit card.' ) ).toBeVisible();
 		expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
 

@@ -267,7 +267,7 @@ export default function PaymentMethods() {
 						<EmptyState.ActionList>
 							<EmptyState.ActionItem
 								title={ __( 'Add payment method' ) }
-								description={ __( 'Save a credit or debit card to your account.' ) }
+								description={ __( 'Save a credit or debit card.' ) }
 								decoration={ <Icon icon={ payment } size={ 24 } /> }
 								actions={
 									<Button
