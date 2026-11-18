@@ -70,37 +70,6 @@ This mixin generates alias variables for a color palette. For example, the
 }
 
 @mixin color-scheme-dark-theme-tokens {
-	// Overrides the default `--wp-components-*` to ensure all components that
-	// rely on it adapt to the dark theme's text color.
-	--wp-components-color-foreground: var( --dashboard__text-color );
-	--wp-components-color-foreground-inverted: #1e1e1e;
-	--wp-components-color-background: var( --dashboard-surface__background-color );
-	--wp-components-color-accent: var( --studio-blue-80 );
-	--wp-components-color-accent-darker-10: var( --studio-blue-90 );
-	--wp-components-color-accent-darker-20: var( --studio-blue-100 );
-	--wp-components-color-accent-inverted: #fff;
-	--wpds-color-foreground-interactive-brand: var( --wp-components-color-accent );
-	--wpds-color-foreground-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
-	--wpds-color-stroke-focus: var( --wp-components-color-accent );
-	--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
-	--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
-	--wpds-color-background-interactive-neutral-weak-active: var( --wp-components-color-gray-200 );
-	--wp-components-color-gray-800: #e0e0e0;
-	--wp-components-color-gray-700: #bdbdbd;
-	--wp-components-color-gray-600: #8a8a8a;
-	--wp-components-color-gray-400: #5a5a5a;
-	--wp-components-color-gray-300: #4a4a4a;
-	--wp-components-color-gray-200: #3a3a3a;
-	--wp-components-color-gray-100: #2a2a2a;
-
-	// Theme
-	--wp-admin-theme-color: #5b8ef7;
-	--wp-admin-theme-color--rgb: 91, 142, 247;
-	--wp-admin-theme-color-darker-10: #7ba5f9;
-	--wp-admin-theme-color-darker-10--rgb: 123, 165, 249;
-	--wp-admin-theme-color-darker-20: #9bbcfb;
-	--wp-admin-theme-color-darker-20--rgb: 155, 188, 251;
-
 	// Layout
 	--dashboard-inline-code__background-color: #3a3a3a;
 
@@ -216,6 +185,39 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 }
 
+@mixin color-scheme-dark-theme-component-tokens {
+	// Overrides the default `--wp-components-*` to ensure all components that
+	// rely on it adapt to the dark theme's text color.
+	--wp-components-color-foreground: var( --dashboard__text-color );
+	--wp-components-color-foreground-inverted: #1e1e1e;
+	--wp-components-color-background: var( --dashboard-surface__background-color );
+	--wp-components-color-accent: var( --studio-blue-80 );
+	--wp-components-color-accent-darker-10: var( --studio-blue-90 );
+	--wp-components-color-accent-darker-20: var( --studio-blue-100 );
+	--wp-components-color-accent-inverted: #fff;
+	--wpds-color-foreground-interactive-brand: var( --wp-components-color-accent );
+	--wpds-color-foreground-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
+	--wpds-color-stroke-focus: var( --wp-components-color-accent );
+	--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
+	--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
+	--wpds-color-background-interactive-neutral-weak-active: var( --wp-components-color-gray-200 );
+	--wp-components-color-gray-800: #e0e0e0;
+	--wp-components-color-gray-700: #bdbdbd;
+	--wp-components-color-gray-600: #8a8a8a;
+	--wp-components-color-gray-400: #5a5a5a;
+	--wp-components-color-gray-300: #4a4a4a;
+	--wp-components-color-gray-200: #3a3a3a;
+	--wp-components-color-gray-100: #2a2a2a;
+
+	// Theme
+	--wp-admin-theme-color: #5b8ef7;
+	--wp-admin-theme-color--rgb: 91, 142, 247;
+	--wp-admin-theme-color-darker-10: #7ba5f9;
+	--wp-admin-theme-color-darker-10--rgb: 123, 165, 249;
+	--wp-admin-theme-color-darker-20: #9bbcfb;
+	--wp-admin-theme-color-darker-20--rgb: 155, 188, 251;
+}
+
 @mixin color-scheme-dark-theme-wpds-bridged-tokens {
 	--dashboard__background-color: #1e1e1e;
 	--dashboard__text-color: #e0e0e0;
@@ -238,6 +240,7 @@ This mixin generates alias variables for a color palette. For example, the
 
 @mixin color-scheme-dark-theme-calypso-tokens {
 	@include color-scheme-dark-theme-tokens;
+	@include color-scheme-dark-theme-component-tokens;
 	@include color-scheme-dark-theme-wpds-bridged-tokens;
 	@include color-scheme-dark-theme-palettes;
 	@include color-scheme-dark-theme-color-scheme;
