@@ -2,11 +2,11 @@ import { STATIC_SITE_IMPORT_TERMINAL_STATES } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
 	createStaticSiteImportSessionMutation,
+	isPermanentStaticSiteImportError,
 	pollStaticSiteImportSessionUntil,
 	staticSiteImportSessionQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	Modal,
@@ -34,15 +34,17 @@ import './import-from-platform-modal.scss';
 function ImportProgress( {
 	sessionId,
 	onStartAgain,
+	onClose,
 }: {
 	sessionId: string;
 	onStartAgain: () => void;
+	onClose: () => void;
 } ) {
-	const { data: session, isError } = useQuery( {
+	const { data: session, error } = useQuery( {
 		...staticSiteImportSessionQuery( sessionId ),
 		refetchInterval: pollStaticSiteImportSessionUntil( STATIC_SITE_IMPORT_TERMINAL_STATES ),
 	} );
-	const isFailed = isError || session?.state === 'failed';
+	const isFailed = isPermanentStaticSiteImportError( error ) || session?.state === 'failed';
 	const isFinished = ! isFailed && session?.state === 'finished';
 	const isMoving = ! isFailed && ! isFinished;
 
@@ -55,7 +57,7 @@ function ImportProgress( {
 				</Text>
 				<Text variant="muted">
 					{ __(
-						'We are building it on your new development site. This usually takes a few minutes. You can close this: the site is in Sites, and we email you if the move fails.'
+						'We are building it on your new development site. This usually takes a few minutes. You can close this dialog. The site is in Sites, and we email you if the move fails.'
 					) }
 				</Text>
 			</VStack>
@@ -66,7 +68,9 @@ function ImportProgress( {
 					) }
 				</Notice>
 				<ButtonStack justify="flex-end">
-					<Link to="/sites">{ __( 'Go to Sites' ) }</Link>
+					<Button __next40pxDefaultSize variant="secondary" onClick={ onClose }>
+						{ __( 'Go to Sites' ) }
+					</Button>
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
@@ -118,14 +122,18 @@ export default function ImportFromPlatformModal( { onClose }: { onClose: () => v
 	const onSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
 		recordTracksEvent( 'calypso_a4a_sites_import_from_platform_submit' );
-		createSession.mutate( sourceUrl.trim(), {
+		const address = sourceUrl.trim();
+		const withScheme = /^https?:\/\//i.test( address ) ? address : `https://${ address }`;
+		createSession.mutate( withScheme, {
 			onSuccess: ( session ) => setSessionId( session.session_id ),
 		} );
 	};
 
 	let body;
 	if ( sessionId && isSiteCreated ) {
-		body = <ImportProgress sessionId={ sessionId } onStartAgain={ startAgain } />;
+		body = (
+			<ImportProgress sessionId={ sessionId } onStartAgain={ startAgain } onClose={ onClose } />
+		);
 	} else if ( sessionId && agency?.id ) {
 		body = (
 			<SiteConfigurationForm
@@ -155,7 +163,7 @@ export default function ImportFromPlatformModal( { onClose }: { onClose: () => v
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						label={ __( 'Current site address' ) }
-						type="url"
+						type="text"
 						required
 						placeholder="https://example.com"
 						value={ sourceUrl }
