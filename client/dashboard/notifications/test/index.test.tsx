@@ -15,20 +15,41 @@ import type { User } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 type InboxProps = {
-	filterName: string;
+	filterName: string | undefined;
+	setFilterName: ( filterName: string ) => void;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 	renderLayout: ( panes: { list: ReactNode; detail: ReactNode } ) => ReactNode;
 };
 
 // The inbox starts a notifications client that polls the API and opens a websocket.
+// Like the real one, it closes the open note when the tab changes.
 vi.mock( '@automattic/notifications/src/inbox', () => ( {
-	default: ( { filterName, selectedNoteId, setSelectedNoteId, renderLayout }: InboxProps ) =>
+	default: ( {
+		filterName = 'all',
+		setFilterName,
+		selectedNoteId,
+		setSelectedNoteId,
+		renderLayout,
+	}: InboxProps ) =>
 		renderLayout( {
 			list: (
-				<button onClick={ () => setSelectedNoteId( selectedNoteId === '42' ? '43' : '42' ) }>
-					{ `Open a note from ${ filterName }` }
-				</button>
+				<>
+					{ [ 'all', 'unread', 'comments' ].map( ( name ) => (
+						<button
+							key={ name }
+							onClick={ () => {
+								setFilterName( name );
+								setSelectedNoteId( undefined );
+							} }
+						>
+							{ `Show ${ name }` }
+						</button>
+					) ) }
+					<button onClick={ () => setSelectedNoteId( selectedNoteId === '42' ? '43' : '42' ) }>
+						{ `Open a note from ${ filterName }` }
+					</button>
+				</>
 			),
 			detail: selectedNoteId && selectedNoteId !== '999' && (
 				<button onClick={ () => setSelectedNoteId( undefined ) }>
@@ -95,33 +116,56 @@ describe( '<Notifications>', () => {
 	test( 'shows every notification by default', async () => {
 		await renderNotifications( '/notifications' );
 
-		expect( await screen.findByRole( 'heading', { name: 'Notifications' } ) ).toBeVisible();
-		expect( await screen.findByRole( 'tab', { name: 'All', selected: true } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Open a note from all' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'button', { name: 'Open a note from all' } ) ).toBeVisible();
 	} );
 
-	test( 'has no "Mark all as read" button', async () => {
+	test( 'leaves the heading to the list, with no page header of its own', async () => {
 		await renderNotifications( '/notifications' );
 
-		await screen.findByRole( 'tab', { name: 'All', selected: true } );
-		expect( screen.queryByRole( 'button', { name: 'Mark all as read' } ) ).not.toBeInTheDocument();
+		await screen.findByRole( 'button', { name: 'Open a note from all' } );
+		expect( screen.queryByRole( 'heading', { name: 'Notifications' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'keeps the Unread tab in the address', async () => {
+	test( 'keeps the chosen tab in the address', async () => {
 		const user = userEvent.setup();
 		const router = await renderNotifications( '/notifications' );
 
-		await user.click( await screen.findByRole( 'tab', { name: 'Unread' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Show comments' } ) );
 
-		expect( await screen.findByRole( 'tab', { name: 'Unread', selected: true } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Open a note from unread' } ) ).toBeVisible();
-		expect( router.state.location.href ).toBe( '/notifications?filter=unread' );
+		expect(
+			await screen.findByRole( 'button', { name: 'Open a note from comments' } )
+		).toBeVisible();
+		expect( router.state.location.href ).toBe( '/notifications?filter=comments' );
 	} );
 
-	test( 'opens on the Unread tab from an address that asks for it', async () => {
-		await renderNotifications( '/notifications?filter=unread' );
+	test( 'drops the tab from the address when going back to every notification', async () => {
+		const user = userEvent.setup();
+		const router = await renderNotifications( '/notifications?filter=unread' );
 
-		expect( await screen.findByRole( 'tab', { name: 'Unread', selected: true } ) ).toBeVisible();
+		await user.click( await screen.findByRole( 'button', { name: 'Show all' } ) );
+
+		expect( await screen.findByRole( 'button', { name: 'Open a note from all' } ) ).toBeVisible();
+		expect( router.state.location.href ).toBe( '/notifications' );
+	} );
+
+	test( 'opens on the tab an address asks for', async () => {
+		await renderNotifications( '/notifications?filter=comments' );
+
+		expect(
+			await screen.findByRole( 'button', { name: 'Open a note from comments' } )
+		).toBeVisible();
+	} );
+
+	test( 'closes the open note and keeps the new tab when the tab changes', async () => {
+		const user = userEvent.setup();
+		const router = await renderNotifications( '/notifications/42' );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Show comments' } ) );
+
+		await waitFor( () =>
+			expect( router.state.location.href ).toBe( '/notifications?filter=comments' )
+		);
+		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'opens a note at its own address and keeps the tab', async () => {

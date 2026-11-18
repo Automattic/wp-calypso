@@ -41,12 +41,12 @@ describe( 'notifications routes', () => {
 		expect( matchedRouteId( dashboardConfig( false ), '/notifications' ) ).toBe( '/$' );
 	} );
 
-	test( 'keep only the Unread filter from the address', () => {
+	test( 'keep the tab named in the address and nothing else', () => {
 		const validateSearch = notificationsRoute.options.validateSearch as (
 			search: Record< string, unknown >
 		) => unknown;
 
-		expect( validateSearch( { filter: 'unread' } ) ).toEqual( { filter: 'unread' } );
-		expect( validateSearch( { filter: 'comments' } ) ).toEqual( { filter: undefined } );
+		expect( validateSearch( { filter: 'comments', page: 2 } ) ).toEqual( { filter: 'comments' } );
+		expect( validateSearch( { filter: [ 'comments' ] } ) ).toEqual( { filter: undefined } );
 	} );
 } );

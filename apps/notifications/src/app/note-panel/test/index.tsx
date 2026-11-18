@@ -104,4 +104,33 @@ describe( 'NotePanel', () => {
 
 		expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'titles the panel with a third-level heading and shows its header actions by default', async () => {
+		renderWithProvider( <NodePanel { ...defaultProps } /> );
+
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+
+		expect( screen.getByRole( 'heading', { name: 'Notifications', level: 3 } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Keyboard shortcuts' } ) ).toBeVisible();
+	} );
+
+	it( 'can title a page and take other header actions', async () => {
+		renderWithProvider(
+			<NodePanel
+				{ ...defaultProps }
+				headingLevel={ 1 }
+				actions={ <button>Leave feedback</button> }
+			/>
+		);
+
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+
+		expect( screen.getByRole( 'heading', { name: 'Notifications', level: 1 } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Leave feedback' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Settings' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Keyboard shortcuts' } )
+		).not.toBeInTheDocument();
+	} );
 } );
