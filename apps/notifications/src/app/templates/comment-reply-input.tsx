@@ -58,6 +58,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 		getKeyboardShortcutsEnabled( state )
 	);
 
+	const formRef = useRef< HTMLFormElement | null >( null );
 	const replyInputRef = useRef< HTMLTextAreaElement | null >( null );
 	const submitButtonRef = useRef< HTMLButtonElement | null >( null );
 	const savedReplyKey = `reply_${ note.id }`;
@@ -200,6 +201,11 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 		};
 
 		const handleCtrlEnter = ( event: KeyboardEvent ) => {
+			// Only from inside the form: the full page keeps a note open while the person types elsewhere.
+			if ( ! formRef.current?.contains( event.target as Node ) ) {
+				return;
+			}
+
 			if ( ( event.ctrlKey || event.metaKey ) && 'Enter' === event.key ) {
 				stopEvent( event );
 				handleSubmit();
@@ -217,7 +223,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 
 	return (
 		<VStack style={ { width: '100%' } }>
-			<form onSubmit={ handleSubmit }>
+			<form ref={ formRef } onSubmit={ handleSubmit }>
 				<HStack spacing={ 2 } alignment="flex-start">
 					<TextareaControl
 						className="comment-reply-input__textarea"
