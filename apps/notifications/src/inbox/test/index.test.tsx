@@ -52,8 +52,16 @@ const renderInbox = (
 		setFilterName = () => {},
 		setSelectedNoteId = () => {},
 		onViewSettings,
+		isMarkAsUnreadEnabled,
 	}: Partial<
-		Pick< InboxProps, 'filterName' | 'setFilterName' | 'setSelectedNoteId' | 'onViewSettings' >
+		Pick<
+			InboxProps,
+			| 'filterName'
+			| 'setFilterName'
+			| 'setSelectedNoteId'
+			| 'onViewSettings'
+			| 'isMarkAsUnreadEnabled'
+		>
 	> = {}
 ) =>
 	render(
@@ -65,6 +73,7 @@ const renderInbox = (
 			selectedNoteId={ selectedNoteId }
 			setSelectedNoteId={ setSelectedNoteId }
 			onViewSettings={ onViewSettings }
+			isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
 			renderLayout={ ( { list, detail } ) => (
 				<>
 					<section aria-label="List">{ list }</section>
@@ -94,6 +103,21 @@ describe( 'NotificationsInbox', () => {
 		expect(
 			within( screen.getByRole( 'region', { name: 'Open note' } ) ).getByRole( 'heading', {
 				name: 'Second comment title',
+			} )
+		).toBeVisible();
+	} );
+
+	it( 'shows "Mark as unread" on the open note only when the host turns it on', () => {
+		loadNotes( makeNote( 801, 'First comment' ) );
+
+		const { unmount } = renderInbox( '801' );
+		expect( screen.queryByRole( 'button', { name: 'Mark as unread' } ) ).not.toBeInTheDocument();
+		unmount();
+
+		renderInbox( '801', { isMarkAsUnreadEnabled: true } );
+		expect(
+			within( screen.getByRole( 'region', { name: 'Open note' } ) ).getByRole( 'button', {
+				name: 'Mark as unread',
 			} )
 		).toBeVisible();
 	} );
