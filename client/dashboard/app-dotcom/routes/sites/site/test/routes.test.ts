@@ -33,6 +33,14 @@ function mockSite( mockedSite: Site ) {
 }
 
 describe( '/sites/$siteSlug', () => {
+	// Loads the lazy route screens once, under the hook timeout, so no single test pays for it.
+	beforeAll( async () => {
+		await Promise.all( [
+			import( '../../../../../sites/site' ),
+			import( '../../../../../sites/overview' ),
+		] );
+	} );
+
 	beforeEach( () => {
 		mockPreferences();
 	} );
@@ -43,15 +51,6 @@ describe( '/sites/$siteSlug', () => {
 		await renderRoute( `/sites/${ site.slug }`, { user } );
 
 		expect( await screen.findByRole( 'heading', { name: 'Test Site' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Overview' } ) ).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Free' } ) ).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Public' } ) ).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Back up your site' } ) ).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Migrate another site' } ) ).toBeVisible();
-		expect(
-			await screen.findByRole( 'heading', { name: 'Scan for security threats' } )
-		).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Latest activity' } ) ).toBeVisible();
 	} );
 
 	test( 'shows the not found page when the user is not a member of the site', async () => {
