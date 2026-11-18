@@ -51,7 +51,7 @@ vi.mock( '@wordpress/i18n', () => ( {
 	},
 } ) );
 vi.mock( '../../components/credits-meter', () => ( { default: () => null } ) );
-vi.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: vi.fn() } ) );
+vi.mock( '../../utils/tracks', { spy: true } );
 vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
 
 const authProvider = vi.fn();
@@ -270,11 +270,7 @@ describe( 'session', () => {
 	const both = ( url: string ) => ( { notice: url, popover: url } );
 	const withSession = ( url: string, aiSessionId: string ) =>
 		url.replace( 'source=wp_ai_credits', `source=wp_ai_credits&ai_session_id=${ aiSessionId }` );
-	let actualTracks: typeof import( '../../utils/tracks' );
 
-	beforeAll( async () => {
-		actualTracks = await vi.importActual( '../../utils/tracks' );
-	} );
 	beforeEach( () => {
 		// The scope the chat publishes for its Tracks events.
 		setResolvedAgentId( 'wp-orchestrator' );
@@ -286,7 +282,6 @@ describe( 'session', () => {
 		setResolvedAgentId( undefined );
 		setSessionSiteKey( NO_SITE );
 		setSessionUserId( undefined );
-		vi.mocked( recordAgentsManagerTracksEvent ).mockReset();
 	} );
 
 	it.each( LINKS )(
@@ -311,9 +306,6 @@ describe( 'session', () => {
 	);
 
 	it( 'sends the click event the session its link carries', async () => {
-		vi.mocked( recordAgentsManagerTracksEvent ).mockImplementation(
-			actualTracks.recordAgentsManagerTracksEvent
-		);
 		vi.mocked( recordTracksEvent ).mockClear();
 		saveSessionId( 'session-a' );
 		fetchMock.mockResolvedValueOnce( response( { ...exhausted(), plan_tier: 'business' } ) );

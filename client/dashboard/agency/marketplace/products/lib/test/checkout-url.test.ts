@@ -87,10 +87,31 @@ describe( 'getCheckoutUrl', () => {
 		);
 	} );
 
-	test( 'returns to the WordPress.com licenses waiting for a site when the cart holds a WordPress.com plan', () => {
-		const url = new URL( getCheckoutUrl( lines, { term: 'yearly', hasWpcomHostingPlan: true } ) );
+	test( 'returns to the WordPress.com licenses waiting for a site when the cart holds only WordPress.com plans', () => {
+		const url = new URL(
+			getCheckoutUrl( [ { product: wpcomPlan, quantity: 3 } ], { term: 'yearly' } )
+		);
 		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
 			`${ window.location.origin }/purchases?status=unassigned&search=WordPress.com&receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
+		);
+	} );
+
+	test( 'returns to every purchase when a WordPress.com plan is bought alongside other products', () => {
+		const url = new URL( getCheckoutUrl( lines, { term: 'yearly' } ) );
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
+			`${ window.location.origin }/purchases?receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
+		);
+	} );
+
+	test( 'keeps the referral cart marker on a WordPress.com-only return', () => {
+		const url = new URL(
+			getCheckoutUrl( [ { product: wpcomPlan, quantity: 1 } ], {
+				term: 'yearly',
+				cart: 'referral',
+			} )
+		);
+		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
+			`${ window.location.origin }/purchases?status=unassigned&search=WordPress.com&cart=referral&receipt_id=${ RECEIPT_ID_PLACEHOLDER }`
 		);
 	} );
 

@@ -1,17 +1,15 @@
 import { sitePurchasesQuery, staticSiteImportHandoffMutation } from '@automattic/api-queries';
 import { useLocale } from '@automattic/i18n-utils';
-import { formatNumber } from '@automattic/number-formatters';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
-	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, _n, sprintf } from '@wordpress/i18n';
-import { Icon, border, caution, published } from '@wordpress/icons';
+import { __, sprintf } from '@wordpress/i18n';
+import { Icon, caution } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -25,168 +23,10 @@ import { withJetpackSso } from '../../utils/site-sso';
 import { getPreviewPlansUrl } from '../site-fields/plan-awaiting-checkout';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
-import type { Site, StaticSiteImportSession } from '@automattic/api-core';
-
-import './style.scss';
+import type { Site } from '@automattic/api-core';
 
 export * from './use-static-site-import';
-
-/**
- * The checklist item the move is on, from what the server reports: the runner finds the source's
- * pages, copies them, builds the WordPress site from the copy, and wpcom then delivers it here.
- */
-function getCurrentStep( session?: StaticSiteImportSession ) {
-	const progress = session?.progress;
-	switch ( session?.state ) {
-		case 'capturing':
-			return progress?.pages_total && ! progress.finding_pages ? 1 : 0;
-		case 'building':
-			return 2;
-		case 'preview_ready':
-		case 'queued':
-		case 'finished':
-			return 3;
-		default:
-			return 0;
-	}
-}
-
-const formatCount = ( current: number, total: number ) =>
-	sprintf(
-		/* translators: %1$s: formatted number of pages done so far, %2$s: formatted number of pages in all. */
-		__( '%1$s of %2$s' ),
-		formatNumber( current ),
-		formatNumber( total )
-	);
-
-/**
- * What the build is doing, from the importer's own step. Steps that work page by page also say how
- * many pages are done. Servers that don't report the step show no detail.
- */
-function getBuildDetail( progress?: StaticSiteImportSession[ 'progress' ] ) {
-	if ( progress?.phase === 'exporting' ) {
-		return __( 'Packaging your site' );
-	}
-	const building = progress?.building;
-	if ( ! building ) {
-		return progress?.phase === 'building' ? __( 'Setting up WordPress' ) : '';
-	}
-	const count = building.total > 0 ? formatCount( building.current, building.total ) : '';
-	switch ( building.stage ) {
-		case 'freezing':
-		case 'prepare_shared':
-		case 'preparing_shared':
-			return __( 'Preparing your styles and layout' );
-		case 'prepare_pages':
-		case 'preparing_pages':
-			return count
-				? sprintf(
-						/* translators: %s: progress such as "3 of 12". */
-						__( 'Preparing your pages · %s' ),
-						count
-					)
-				: __( 'Preparing your pages' );
-		case 'compile_pages':
-		case 'compiling_pages':
-			return count
-				? sprintf(
-						/* translators: %s: progress such as "3 of 12". */
-						__( 'Turning your pages into blocks · %s' ),
-						count
-					)
-				: __( 'Turning your pages into blocks' );
-		case 'compose':
-		case 'composed':
-		case 'canonical_plan':
-			return __( 'Putting your theme together' );
-		case 'prepare_lifecycle':
-		case 'dependencies_prepared':
-		case 'materialize':
-		case 'materialization_claimed':
-		case 'completed':
-			return __( 'Creating your pages and theme' );
-		default:
-			return '';
-	}
-}
-
-function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
-	const progress = session?.progress;
-	const current = getCurrentStep( session );
-	const pagesTotal = progress?.pages_total;
-	// Until the capture settles on its total, the inspection's count is all that's known.
-	const pagesFoundSoFar = progress?.source?.pages_found;
-	let pagesFoundDetail = '';
-	if ( pagesTotal ) {
-		pagesFoundDetail = sprintf(
-			/* translators: %s: formatted number of pages found on the site being moved. */
-			_n( '%s page found', '%s pages found', pagesTotal ),
-			formatNumber( pagesTotal )
-		);
-	} else if ( pagesFoundSoFar ) {
-		pagesFoundDetail = sprintf(
-			/* translators: %s: formatted number of pages found so far on the site being moved; more may follow. */
-			_n( '%s page found so far', '%s pages found so far', pagesFoundSoFar ),
-			formatNumber( pagesFoundSoFar )
-		);
-	}
-	const items = [
-		{
-			label: __( 'Finding your pages' ),
-			detail: pagesFoundDetail,
-		},
-		{
-			label: __( 'Copying your pages' ),
-			detail:
-				current === 1 && pagesTotal ? formatCount( progress?.pages_captured ?? 0, pagesTotal ) : '',
-		},
-		{
-			label: __( 'Building your WordPress site' ),
-			detail: current === 2 ? getBuildDetail( progress ) : '',
-		},
-		{ label: __( 'Moving it onto your site' ), detail: '' },
-	];
-
-	return (
-		<VStack as="ul" spacing={ 4 } className="static-site-import-card__checklist">
-			{ items.map( ( item, index ) => {
-				const isDone = index < current;
-				const isCurrent = index === current;
-				return (
-					<HStack
-						as="li"
-						key={ item.label }
-						justify="flex-start"
-						spacing={ 3 }
-						aria-current={ isCurrent ? 'step' : undefined }
-					>
-						{ isDone && (
-							<Icon
-								icon={ published }
-								size={ 32 }
-								style={ { color: 'var(--dashboard__foreground-color-success)' } }
-							/>
-						) }
-						{ isCurrent && <Spinner className="static-site-import-card__spinner" /> }
-						{ ! isDone && ! isCurrent && (
-							<Icon
-								icon={ border }
-								size={ 32 }
-								style={ { color: 'var(--dashboard__text-muted-color)' } }
-							/>
-						) }
-						<Text variant={ isDone || isCurrent ? undefined : 'muted' }>{ item.label }</Text>
-						{ item.detail && (
-							<Text variant="muted" className="static-site-import-card__count">
-								{ item.detail }
-							</Text>
-						) }
-					</HStack>
-				);
-			} ) }
-		</VStack>
-	);
-}
+export { StaticSiteImportProgress } from './moving-card';
 
 /**
  * The errors wpcom returns when it refused the handoff. Our team already knows and will email the
@@ -331,44 +171,6 @@ export function useOpenPreviewWhenReady( siteImport: StaticSiteImport | null ) {
 			window.location.assign( previewUrl );
 		}
 	}, [ status, previewUrl ] );
-}
-
-/** Takes the place of the overview cards while the site is being moved. */
-export function StaticSiteImportProgress( {
-	siteImport,
-	search,
-}: {
-	siteImport: StaticSiteImport;
-	search: StaticSiteImportSearch;
-} ) {
-	const sourceHost = getSourceHost( search.from );
-
-	return (
-		<Card>
-			<CardBody>
-				<VStack spacing={ 6 }>
-					<Heading level={ 2 } size={ 20 } weight={ 600 }>
-						{ __( 'We’re moving your site' ) }
-					</Heading>
-					<Text variant="muted">
-						{ sourceHost
-							? sprintf(
-									/* translators: %s: the domain of the site being moved, e.g. example.com. */
-									__( 'We’re rebuilding %s here. Your current site stays live and unchanged.' ),
-									sourceHost
-								)
-							: __(
-									'We’re rebuilding your site here. Your current site stays live and unchanged.'
-								) }
-					</Text>
-					<MovingChecklist session={ siteImport.session } />
-					<Notice variant="info">
-						{ __( 'You can close this page. We’ll email you when it’s done.' ) }
-					</Notice>
-				</VStack>
-			</CardBody>
-		</Card>
-	);
 }
 
 /** Tops the regular overview once the move has finished or failed. */

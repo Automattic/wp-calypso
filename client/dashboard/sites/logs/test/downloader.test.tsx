@@ -4,17 +4,13 @@
 
 import '@testing-library/jest-dom';
 import { LogType, FilterType } from '@automattic/api-core';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { type Mock, type MockInstance, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { LogsDownloader } from '../downloader';
 import type { JSX } from 'react';
-
-vi.mock( '@wordpress/i18n', () => ( {
-	__: ( s: string ) => s,
-	sprintf: ( s: string ) => s,
-} ) );
 
 type VStackProps = {
 	children: React.ReactNode;
@@ -47,24 +43,9 @@ vi.mock( '@wordpress/components', () => ( {
 
 vi.mock( '@wordpress/icons', () => ( { download: 'download' } ) );
 
-vi.mock( '@automattic/api-core', async () => {
-	const actual =
-		await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' );
-	const fetchSiteLogsBatchMock = vi.fn();
-	return {
-		...actual,
-		fetchSiteLogsBatch: ( ...args: unknown[] ) => fetchSiteLogsBatchMock( ...args ),
-		__mocks: { fetchSiteLogsBatchMock },
-	};
-} );
-
 let createObjectURLMock: Mock;
 let revokeObjectURLMock: Mock;
 let anchorClickSpy: MockInstance;
-
-const { __mocks } = ( await import( '@automattic/api-core' ) ) as unknown as {
-	__mocks: { fetchSiteLogsBatchMock: Mock };
-};
 
 beforeAll( () => {
 	createObjectURLMock = vi.fn( () => 'blob:mock' );
@@ -86,33 +67,38 @@ afterAll( () => {
 } );
 
 test( 'downloads logs and records analytics', async () => {
-	__mocks.fetchSiteLogsBatchMock.mockResolvedValueOnce( {
-		logs: [
-			{
-				date: '2025-01-01T00:00:02Z',
-				request_type: 'GET',
-				status: '200',
-				request_url: '/index',
-				body_bytes_sent: 100,
-				cached: 'true',
-				http_host: 'example.com',
-				http_referer: '',
-				http2: 'h2',
-				http_user_agent: 'ua',
-				http_version: '2',
-				http_x_forwarded_for: '',
-				renderer: 'php',
-				request_completion: 'OK',
-				request_time: '10ms',
-				scheme: 'https',
-				timestamp: 1700000002,
-				type: 'access',
-				user_ip: '127.0.0.1',
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/sites/123/hosting/logs' )
+		.query( true )
+		.reply( 200, {
+			data: {
+				logs: [
+					{
+						date: '2025-01-01T00:00:02Z',
+						request_type: 'GET',
+						status: '200',
+						request_url: '/index',
+						body_bytes_sent: 100,
+						cached: 'true',
+						http_host: 'example.com',
+						http_referer: '',
+						http2: 'h2',
+						http_user_agent: 'ua',
+						http_version: '2',
+						http_x_forwarded_for: '',
+						renderer: 'php',
+						request_completion: 'OK',
+						request_time: '10ms',
+						scheme: 'https',
+						timestamp: 1700000002,
+						type: 'access',
+						user_ip: '127.0.0.1',
+					},
+				],
+				scroll_id: null,
+				total_results: 1,
 			},
-		],
-		scroll_id: null,
-		total_results: 1,
-	} );
+		} );
 
 	const onSuccess = vi.fn();
 
@@ -129,6 +115,7 @@ test( 'downloads logs and records analytics', async () => {
 	);
 
 	await userEvent.click( screen.getByRole( 'button', { name: 'Download logs' } ) );
+	await waitFor( () => expect( onSuccess ).toHaveBeenCalled() );
 
 	// Blob was created and revoked
 	expect( createObjectURLMock ).toHaveBeenCalled();

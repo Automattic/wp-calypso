@@ -4,7 +4,10 @@ import { addProductsToCart, getNewSiteParams, setThemeOnSite } from '@automattic
 import { useMutation } from '@tanstack/react-query';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
-import { useFlowState } from '../declarative-flow/internals/state-manager/store';
+import {
+	useFlowState,
+	type AnyFlowInitialize,
+} from '../declarative-flow/internals/state-manager/store';
 import { getFlowFromURL } from '../utils/get-flow-from-url';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
@@ -96,7 +99,7 @@ export const createSite = async ( {
 
 export const useCreateSite = () => {
 	const flowName = getFlowFromURL();
-	const { get, set } = useFlowState();
+	const { get, set } = useFlowState< AnyFlowInitialize >();
 	const domains = get( 'domains' );
 	const planCartItems = get( 'plans' )?.cartItems;
 	const createdSite = get( 'site' );

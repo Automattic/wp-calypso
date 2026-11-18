@@ -10,6 +10,7 @@ import { Tabs } from '@wordpress/ui';
 import { useEffect, useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { recordTracksEvent } from '../../panel/helpers/stats';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { getFilters } from '../../panel/templates/filters';
 import ErrorBoundary from '../error-boundary';
@@ -42,10 +43,15 @@ const NotePanel = ( {
 	const notificationTabs = getNotificationTabs();
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
+	const selectedTabRef = useRef< string >( filterName );
 
 	const handleSelect = useCallback(
-		( tabId: string | null | undefined ) => {
+		( tabId: string | null | undefined, source: 'tab' | 'shortcut' ) => {
 			if ( tabId ) {
+				if ( tabId !== selectedTabRef.current ) {
+					selectedTabRef.current = tabId;
+					recordTracksEvent( 'calypso_notification_tab_select', { tab: tabId, source } );
+				}
 				setFilterName( tabId as FilterName );
 				// Clear the selection — a note from the previous filter would
 				// otherwise stay rendered in the detail pane while the list
@@ -85,7 +91,7 @@ const NotePanel = ( {
 			const tabId = shortcutToTabId[ event.key ];
 			if ( tabId ) {
 				stopEvent( event );
-				handleSelect( tabId );
+				handleSelect( tabId, 'shortcut' );
 
 				// Ensure that keyboard navigation focuses on the selected tab.
 				tabRefs.current[ tabId ]?.focus();
@@ -99,7 +105,11 @@ const NotePanel = ( {
 	}, [ tabRefs, handleSelect, keyboardShortcutsAreEnabled, selectedNoteId ] );
 
 	return (
-		<Tabs.Root className="wpnc-app__tabs" value={ filterName } onValueChange={ handleSelect }>
+		<Tabs.Root
+			className="wpnc-app__tabs"
+			value={ filterName }
+			onValueChange={ ( tabId ) => handleSelect( tabId, 'tab' ) }
+		>
 			<CardHeader
 				isBorderless
 				size="small"

@@ -14,6 +14,10 @@ let EmbedContainer;
 let loadScript;
 let loadjQueryDependentScript;
 
+// Each test imports a fresh copy of the component, so load it once while the file is collected,
+// which has no timeout: its first load can outlast the hook's timeout on a busy CI agent.
+await import( '../' );
+
 beforeEach( async () => {
 	vi.resetModules();
 	EmbedContainer = ( await import( '../' ) ).default;

@@ -1,37 +1,18 @@
 import { Step } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { ReactNode, useEffect } from 'react';
-import DocumentHead from 'calypso/components/data/document-head';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../../../../hooks/use-flow-locale';
 import { withLocale } from '../../../helpers/with-locale';
+import ConfirmEmail from './confirm-email';
 import { useStudentPlanEligibility } from './hooks/use-student-plan-eligibility';
+import { Screen } from './screen';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
-
-type ScreenProps = {
-	title: string;
-	subText: ReactNode;
-	children: ReactNode;
-};
-
-const Screen = ( { title, subText, children }: ScreenProps ) => (
-	<>
-		<DocumentHead title={ title } />
-		<Step.CenteredColumnLayout
-			columnWidth={ 6 }
-			topBar={ <Step.TopBar /> }
-			heading={ <Step.Heading text={ title } subText={ subText } /> }
-			className="student-plan-eligibility"
-		>
-			{ children }
-		</Step.CenteredColumnLayout>
-	</>
-);
 
 const StudentPlanEligibility: StepType< {
 	submits: {
@@ -73,23 +54,12 @@ const StudentPlanEligibility: StepType< {
 
 	if ( reason === 'unverified' ) {
 		return (
-			<Screen
-				title={ __( 'Confirm your email to get the Student plan' ) }
-				subText={ sprintf(
-					/* translators: %s is the email address of the account. */
-					__( 'Open the confirmation link we sent to %s, then come back to this page.' ),
-					email
-				) }
-			>
-				<Step.PrimaryButton onClick={ checkAgain } isBusy={ isFetching }>
-					{ __( 'I’ve confirmed my email' ) }
-				</Step.PrimaryButton>
-				{ isRefetchError && ! isFetching && (
-					<p className="student-plan-eligibility__error" role="alert">
-						{ __( 'We couldn’t check your email. Please try again.' ) }
-					</p>
-				) }
-			</Screen>
+			<ConfirmEmail
+				email={ email }
+				onConfirmed={ checkAgain }
+				isChecking={ isFetching }
+				checkFailed={ isRefetchError }
+			/>
 		);
 	}
 

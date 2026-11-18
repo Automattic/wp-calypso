@@ -33,6 +33,7 @@ let mockOnboard: {
 } = {};
 let mockProductsList: Record< string, unknown > = {};
 let mockSite: unknown = null;
+let mockSetupError: { error?: string } = {};
 let mockDomains: unknown[] | Error = [];
 let mockCart: unknown = { products: [] };
 let mockUserId: number | null = 1;
@@ -106,6 +107,7 @@ jest.mock( '@wordpress/data', () => {
 		useSelect: ( mapSelect: ( select: () => typeof selectors ) => unknown ) =>
 			mapSelect( () => selectors ),
 		useDispatch: () => actions,
+		select: () => ( { getSiteSetupError: () => mockSetupError } ),
 		resolveSelect: () => ( {
 			getSite: () => Promise.resolve( mockSite ),
 			getSiteDomains: () =>
@@ -218,6 +220,7 @@ describe( 'launch-site flow', () => {
 		mockQuery = { siteSlug: 'example.wordpress.com' };
 		mockUserId = 1;
 		mockOnboard = {};
+		mockSetupError = {};
 		mockProductsList = {
 			domain_reg: {
 				product_slug: 'domain_reg',
@@ -488,12 +491,21 @@ describe( 'launch-site flow', () => {
 			await expect( mockOnboard.pendingAction?.() ).rejects.toThrow( 'launch failed' );
 		} );
 
-		it( 'shows the error step when the launch fails', () => {
+		it.each( [
+			[ 'shows the error step', 'launch_failed', STEPS.ERROR.slug ],
+			[
+				'offers the paid plans again for a preview nobody has bought',
+				'preview_site_unpaid',
+				`${ STEPS.UNIFIED_PLANS.slug }?siteSlug=example.wordpress.com&hide_free_plan=1`,
+			],
+		] )( 'when the launch fails, %s', ( _name, error, destination ) => {
+			setFlowSteps( ALL_STEPS );
+			mockSetupError = { error };
 			const { navigate } = submit( STEPS.PROCESSING.slug, {
 				processingResult: ProcessingResult.FAILURE,
 			} );
 
-			expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug );
+			expect( navigate ).toHaveBeenCalledWith( destination );
 			expect( window.location.replace ).not.toHaveBeenCalled();
 		} );
 

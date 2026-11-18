@@ -241,6 +241,11 @@ describe( 'LostPasswordForm', () => {
 		expect( url ).toBe( 'https://example.com/wp-login.php?action=lostpassword' );
 		expect( options.body.get( 'user_login' ) ).toBe( 'user@example.com' );
 		expect( options.body.get( 'blackbox_session_id' ) ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		expect( getBlackboxSessionId ).toHaveBeenCalledWith(
+			expect.any( String ),
+			expect.anything(),
+			'password_reset'
+		);
 	} );
 
 	test( 'omits blackbox_session_id when the lost-password feature flag is off', async () => {

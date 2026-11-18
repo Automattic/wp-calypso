@@ -5,7 +5,6 @@ import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progress';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import wasUpgradedFromTrialSite from 'calypso/state/selectors/was-upgraded-from-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -19,14 +18,13 @@ import {
 
 /**
  * Whether `siteSelection` keeps the site on a Calypso screen of its own whatever the route: an
- * expired eCommerce trial, a migration in progress, a domain-only site or a DIFM build in progress.
+ * expired eCommerce trial, a domain-only site or a DIFM build in progress.
  */
 function isHeldOnOwnScreen( state, siteId ) {
 	return (
 		( wasEcommerceTrialSite( state, siteId ) &&
 			! wasUpgradedFromTrialSite( state, siteId ) &&
 			[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( getSitePlanSlug( state, siteId ) ) ) ||
-		isSiteMigrationInProgress( state, siteId ) ||
 		isDomainOnlySite( state, siteId ) ||
 		isDIFMLiteInProgress( state, siteId )
 	);

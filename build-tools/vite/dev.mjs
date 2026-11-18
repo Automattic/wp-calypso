@@ -278,6 +278,7 @@ function withEnvironmentBadge( entries ) {
 export const entriesByEnv = {
 	development: withEnvironmentBadge( startEntries ),
 	'dashboard-development': startDashboardEntries,
+	'jetpack-cloud-development': withEnvironmentBadge( startEntries ),
 	'a8c-for-agencies-development': withEnvironmentBadge( startEntries ),
 };
 

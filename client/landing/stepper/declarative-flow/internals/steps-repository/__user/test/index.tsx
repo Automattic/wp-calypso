@@ -2,6 +2,10 @@
  * @jest-environment jsdom
  */
 
+jest.mock( 'calypso/blocks/login/blackbox-challenge' );
+jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+} ) );
 jest.mock( 'calypso/lib/partner-branding', () => ( {
 	usePartnerBranding: jest.fn(),
 } ) );
@@ -21,8 +25,9 @@ jest.mock( '../use-branded-account-layout', () => ( {
 	default: jest.fn( jest.requireActual( '../use-branded-account-layout' ).default ),
 } ) );
 
-import { fireEvent, screen } from '@testing-library/dom';
+import { fireEvent, screen, waitFor } from '@testing-library/dom';
 import { useViewportMatch } from '@wordpress/compose';
+import nock from 'nock';
 import { MemoryRouter } from 'react-router-dom';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
@@ -372,6 +377,43 @@ describe( 'User email signup step', () => {
 
 			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'link', { name: 'Log in' } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'activation email source', () => {
+		const submitAndCaptureRequest = async ( flow: string ) => {
+			let requestBody: { extra?: Record< string, unknown > } | undefined;
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/users/new', ( body ) => {
+					requestBody = body;
+					return true;
+				} )
+				.reply( 403, { error: 'throttled' } );
+
+			renderUserStep( `/${ flow }/user?user_email=student@mit.edu`, {}, flow );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			await waitFor( () => expect( requestBody ).toBeTruthy() );
+			return requestBody;
+		};
+
+		afterEach( () => nock.cleanAll() );
+
+		/**
+		 * Only the Student flow asks for email verification, so only its link returns to it.
+		 */
+		it( 'names the Student flow as the source of the activation email', async () => {
+			const body = await submitAndCaptureRequest( 'student' );
+
+			expect( body?.extra ).toEqual(
+				expect.objectContaining( { from: 'student-with-email-verification' } )
+			);
+		} );
+
+		it( 'names no source in other flows', async () => {
+			const body = await submitAndCaptureRequest( 'site-setup' );
+
+			expect( body?.extra ).not.toHaveProperty( 'from' );
 		} );
 	} );
 } );

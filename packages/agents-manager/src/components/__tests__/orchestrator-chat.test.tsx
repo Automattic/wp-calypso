@@ -819,6 +819,13 @@ const countShowComponentMessages = () => {
 	} ).length;
 };
 
+// The chat imports the interactive UI renderer and its styles on demand, which is slow from a cold
+// cache, so load them while the file is collected instead of within a test's timeout.
+await Promise.all( [
+	import( '@automattic/ai-ui-renderer' ),
+	import( '@automattic/ai-ui-renderer/style.scss' ),
+] );
+
 describe( 'OrchestratorChat', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
@@ -2116,10 +2123,6 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	describe( 'interactive UI', () => {
-		// The chat imports the renderer on demand, which is slow from a cold cache, so load it once
-		// here instead of within the first test's timeout.
-		beforeAll( () => import( '@automattic/ai-ui-renderer' ), 30000 );
-
 		const formMessage = {
 			id: 'form-message',
 			role: 'agent',

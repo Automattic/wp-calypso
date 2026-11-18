@@ -25,10 +25,11 @@ $cookie-banner-checkbox-color: $cookie-banner-link-color;
 $cookie-banner-checkbox-bg-color: rgba( 196, 195, 195, 0.55 );
 
 // Fonts
-$cookie-banner-font-size: 16px;
+$cookie-banner-font-size: 14px;
 $cookie-banner-line-height: 1.5;
-$cookie-banner-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans',
-	'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+$cookie-banner-font-family:
+	-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen-Sans', 'Ubuntu', 'Cantarell',
+	'Helvetica Neue', sans-serif;
 
 /**
  Cookie Banner styling.
@@ -51,11 +52,11 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Robo
 	transform: translate( -50% );
 	max-width: $granular-banner-max-width;
 	width: 100%;
-	bottom: 25px;
+	inset-block-end: 16px;
 	margin: 0;
 	max-height: 90vh;
 	z-index: 50001;
-	padding: 32px;
+	padding: 20px 24px;
 	background-color: $cookie-banner-bg-color;
 	box-shadow:
 		0 8px 16px rgba( 0, 0, 0, 0.2 ),
@@ -119,12 +120,13 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Robo
 		.a8c-cookie-banner__button {
 			text-wrap: nowrap;
 			width: 100%;
-			margin: 5px;
+			margin: 0;
 			max-width: initial;
 		}
 		.cookie-banner__button-container {
 			width: 100%;
 			flex-direction: column;
+			gap: 8px;
 		}
 	}
 	.cookie-banner__options-selection {
@@ -171,7 +173,7 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Robo
 	.cookie-banner__accept-selection-button {
 		min-width: 110px;
 		max-width: 500px;
-		padding: 10px;
+		padding: 6px 16px;
 		text-align: center;
 		text-decoration: none;
 		font-family: $cookie-banner-font-family;
@@ -243,5 +245,14 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Robo
 		.cookie-banner__customize-button {
 			margin-right: 10px;
 		}
+		.cookie-banner__simple-options.cookie-banner__simple-options-non-essential {
+			gap: 16px;
+		}
+	}
+
+	@media only screen and ( max-width: 600px ) {
+		inset-block-end: 8px;
+		width: calc( 100% - 16px );
+		padding: 16px;
 	}
 }

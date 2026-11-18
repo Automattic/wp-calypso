@@ -30,6 +30,7 @@ function isBenignError( error: Error ) {
 		case 'AuthorizationRequiredError':
 		case 'ReauthorizationRequiredError':
 		case 'DomainPermissionError':
+		case 'SitePermissionError':
 			return true;
 	}
 

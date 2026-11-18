@@ -87,7 +87,7 @@ export const parseBackupContentsData = ( payload: BackupLsResponse ): FileBrowse
 			hasChildren: item.has_children ?? false,
 			...( item.period && { period: item.period } ),
 			...( item.sort && { sort: item.sort } ),
-			...( item.type === 'archive' && { extensionType: name.replace( '*', '' ) } ),
+			...( item.type === 'archive' && { extensionType: name.replaceAll( '*', '' ) } ),
 			...( item.type === 'table' && { rowCount: item.row_count } ),
 			...( item.extension_version && { extensionVersion: item.extension_version } ),
 			...( item.manifest_path && { manifestPath: item.manifest_path } ),

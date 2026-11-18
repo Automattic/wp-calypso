@@ -19,8 +19,15 @@ export type StaticSiteImportCapability =
 
 export type StaticSiteImportBand = 'simple' | 'moderate' | 'complex' | 'unknown';
 
+/** A count inspection took on the pages it sampled, e.g. `{ code: 'images', value: 6 }`. */
+export interface StaticSiteImportFactor {
+	code: 'pages' | 'images' | 'embeds' | 'elements' | ( string & {} );
+	value: number;
+}
+
 export interface StaticSiteImportInspection {
 	measured: boolean;
+	factors?: StaticSiteImportFactor[];
 	error?: string;
 	band?: StaticSiteImportBand;
 	observed_band?: StaticSiteImportBand;
@@ -47,6 +54,10 @@ export interface StaticSiteImportFidelity {
 
 export interface StaticSiteImportPreviewSummary {
 	pages?: number;
+	/** Pages the source has that the build left out. */
+	routes_omitted?: number;
+	images_missing_source?: number;
+	unresolved_internal_links?: number;
 	documents?: number;
 	blocks?: number;
 	fallback_blocks?: number;
@@ -60,12 +71,53 @@ export interface StaticSiteImportPreviewSummary {
 	fidelity?: StaticSiteImportFidelity;
 }
 
+/** Where wpcom is in restoring the built site onto its destination. */
+export type StaticSiteImportDeliveryStage =
+	| 'preparing'
+	| 'convert_to_atomic'
+	| 'download_archive'
+	| 'unpack_file'
+	| 'preprocess'
+	| 'process_files'
+	| 'recreate_database'
+	| 'postprocess_database'
+	| 'verify_site_integrity'
+	| 'clean_up';
+
+/** The restore onto the destination, while the session is `queued` with one. */
+export interface StaticSiteImportDelivery {
+	stage: StaticSiteImportDeliveryStage;
+	/** 0 while preparing, then 1 to `total_steps` in the order of the stages. Stages can be skipped. */
+	step: number;
+	total_steps: number;
+	/** When wpcom first saw the stage, in Unix seconds. */
+	stage_started_at: number;
+	/** When the destination was approved, in Unix seconds. */
+	started_at?: number;
+	/** When the restore reached the site, in Unix seconds. */
+	restore_started_at?: number;
+	/** The files copied so far, from `process_files` on. */
+	files?: { done: number; total: number };
+}
+
 export interface StaticSiteImportProgress {
+	/** Present only while the built site is being restored onto its destination. */
+	delivery?: StaticSiteImportDelivery;
 	phase?: 'installing' | 'inspecting' | 'capturing' | 'comparing' | 'building' | 'exporting';
+	/** When the server first saw the current phase, in Unix seconds. */
+	phase_started_at?: number;
 	/** Capture is still discovering the source's pages. */
 	finding_pages?: boolean;
+	/** The path of the page capture saved last, percent-encoded, e.g. `/about-us/`. */
+	current_page?: string;
+	/** Every page is captured, and capture is saving the site's images, then its files. */
+	capture_stage?: 'media' | 'finalizing';
 	/** The inspection before capture: `pages_found` is how many pages it saw, before capture settles on a total. */
 	source?: { complexity?: string; pages_found?: number; issues?: number };
+	/** What capture saved, once it finishes. */
+	captured?: { files?: number; bytes?: number };
+	/** How long each finished step took, in seconds. */
+	step_seconds?: Partial< Record< 'inspecting' | 'capturing' | 'comparing', number > >;
 	/**
 	 * The importer's build step while the site is built, e.g. `compile_pages`, and its pages done of
 	 * the total. Absent before the importer starts and on servers that don't report it.
@@ -84,6 +136,10 @@ export interface StaticSiteImportSession {
 	source_digest: string;
 	/** PHP serialises an empty summary as `[]`. */
 	preview_summary: StaticSiteImportPreviewSummary | [];
+	/** What inspection found on the source before capture, or null until it has run. */
+	assessment?: StaticSiteImportInspection | null;
+	/** A short-lived link to a screenshot of the source's home page, once capture has taken it. */
+	preview_image_url?: string;
 	/** Empty until approval binds a destination. */
 	site_url: string;
 	/**

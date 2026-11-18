@@ -1,5 +1,6 @@
 const path = require( 'path' );
 const base = require( '@automattic/calypso-jest' );
+const { jestIgnorePatterns } = require( './vitest-directories' );
 
 module.exports = {
 	...base,
@@ -9,6 +10,7 @@ module.exports = {
 		...base.testPathIgnorePatterns,
 		'<rootDir>/server/',
 		'<rootDir>/dashboard/',
+		...jestIgnorePatterns,
 	],
 
 	moduleNameMapper: {

@@ -11,8 +11,9 @@ import {
 	isAwaitingAtomicTransfer,
 	mayBeAwaitingAtomicTransfer,
 } from '../../utils/site-atomic-transfers';
+import { SitePermissionError } from '../../utils/site-permissions';
 import { hasStagingSite } from '../../utils/site-staging-site';
-import { canManageSite } from '../features';
+import { canManageSite, isSiteMember } from '../features';
 import SiteLaunchCelebrationModal from '../site-launch-modal/celebration-modal';
 
 function Site() {
@@ -36,6 +37,9 @@ function Site() {
 	}
 
 	if ( ! canManage && ! isAwaitingTransfer ) {
+		if ( isSiteMember( site ) ) {
+			throw new SitePermissionError();
+		}
 		throw notFound();
 	}
 

@@ -68,6 +68,7 @@ const NOTICE_FLAGS = [
 	'upgraded',
 	'cancelled',
 	'downgraded',
+	'free_month',
 	'plan_changed',
 	'delayed_downgrade_scheduled',
 ] as const;
@@ -80,10 +81,17 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const hasEnTranslation = useHasEnTranslation();
 	const { refunded } = purchaseSettingsRoute.useSearch();
 	const router = useRouter();
-	const { upgraded, cancelled, downgraded, plan_changed, delayed_downgrade_scheduled, intent } =
-		useConsumeSearchParams( NOTICE_PARAMS, {
-			when: ( params ) => NOTICE_FLAGS.some( ( flag ) => params[ flag ] === 'true' ),
-		} );
+	const {
+		upgraded,
+		cancelled,
+		downgraded,
+		free_month,
+		plan_changed,
+		delayed_downgrade_scheduled,
+		intent,
+	} = useConsumeSearchParams( NOTICE_PARAMS, {
+		when: ( params ) => NOTICE_FLAGS.some( ( flag ) => params[ flag ] === 'true' ),
+	} );
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
 	// navigation falls through to the regular expiring notice.
@@ -92,6 +100,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		cancelled === 'true' && intent === 'auto-renew' ? ( 'auto-renew' as const ) : undefined
 	);
 	const [ showDowngradedNotice, setShowDowngradedNotice ] = useState( downgraded === 'true' );
+	const [ showFreeMonthNotice, setShowFreeMonthNotice ] = useState( free_month === 'true' );
 	// Transient success notice shown after a change-plan checkout (upgrade or
 	// downgrade) redirects back here with `?plan_changed=true`. The param is
 	// stripped immediately so it doesn't survive a refresh or back navigation.
@@ -155,6 +164,14 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<Notice variant="success" onClose={ () => setShowDowngradedNotice( false ) }>
 				{ __( 'You\u2019ve switched to monthly billing.' ) }
+			</Notice>
+		);
+	}
+
+	if ( showFreeMonthNotice ) {
+		return (
+			<Notice variant="success" onClose={ () => setShowFreeMonthNotice( false ) }>
+				{ __( 'Your free month is added to your account! Enjoy!' ) }
 			</Notice>
 		);
 	}

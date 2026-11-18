@@ -55,7 +55,7 @@ function usePrepareHelpCenterStore(
 ) {
 	useEffect( () => {
 		let isCancelled = false;
-		import( '@automattic/data-stores' ).then( ( { HelpCenter: HelpCenterStore } ) => {
+		import( '@automattic/data-stores/help-center' ).then( ( HelpCenterStore ) => {
 			if ( isCancelled ) {
 				return;
 			}

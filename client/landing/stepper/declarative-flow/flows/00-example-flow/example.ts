@@ -56,7 +56,7 @@ const exampleFlow: FlowV2< typeof initialize > = {
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
-		const { get, set } = useFlowState();
+		const { get, set } = useFlowState< typeof initialize >();
 		const { exitFlow } = useExitFlow();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
 		const { saveSiteSettings } = useDispatch( SITE_STORE );

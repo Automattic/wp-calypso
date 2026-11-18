@@ -84,6 +84,17 @@ test.describe(
 			await test.step( 'Click on Subscribers tab', async () => {
 				await statsPage.clickTab( 'Subscribers' );
 			} );
+
+			// The WooCommerce tab is only present on sites with WooCommerce.
+			if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
+				await test.step( 'Click on the WooCommerce tab', async () => {
+					await statsPage.clickTab( 'WooCommerce' );
+				} );
+
+				await test.step( 'Select the Orders metric', async () => {
+					await statsPage.showStatsOfType( { tab: 'Store', type: 'Orders' } );
+				} );
+			}
 		} );
 	}
 );

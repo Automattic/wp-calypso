@@ -126,6 +126,11 @@ const testApps = withVitestInfo( 'test-apps --maxWorkers=4', 'test_apps' );
 
 const testPackagesVitest = withVitestInfo( 'test-packages --maxWorkers=4', 'test_packages_vitest' );
 const testDashboard = withVitestInfo( 'test-dashboard --maxWorkers=4', 'test_dashboard' );
+// The client tests that have moved from Jest (see test/client/vitest-directories.js).
+const testClientVitest = withVitestInfo(
+	'test-client:vitest --maxWorkers=4',
+	'test_client_vitest'
+);
 
 // Checks for drift between the webpack and Vite configurations while both bundlers live in the repo:
 // fails when the Vite dev server can no longer serve the Dashboard, which webpack builds don't notice.
@@ -175,6 +180,7 @@ try {
 		await runVitestTask( testPackagesVitest );
 		await runTask( testWorkspaces );
 		await runVitestTask( testApps );
+		await runVitestTask( testClientVitest );
 	} )();
 
 	await completeTasks( [ testClientTask, testDashboardTask, tscTasks, otherTestTasks ] );

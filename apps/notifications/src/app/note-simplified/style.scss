@@ -104,8 +104,21 @@
 	margin-block-start: $grid-unit-05;
 }
 
+.wpnc-simplified__people .wpnc__user-icon {
+	transition: opacity var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
+
+	&:hover {
+		opacity: 0.88;
+	}
+}
+
 .wpnc-simplified__thread + .wpnc-simplified__heading {
 	margin-block-start: $grid-unit-10;
+}
+
+.wpnc-simplified__post-title {
+	overflow-wrap: anywhere;
+	text-wrap: pretty;
 }
 
 // The closing "And 7 others liked your post" line carries on from the people, in
@@ -327,8 +340,77 @@
 	}
 }
 
+// A post's headings step down from its 17px title: h1 and h2 a size above the
+// body, h3 and h4 at the body's size, and h5 and h6 a size below, in gray.
+.wpnc-simplified .wpnc-simplified__post-body.wpnc__note .wpnc__body .wpnc__body-content {
+	:is(h1, h2, .wpnc__h1, .wpnc__h2) {
+		font-size: 15px;
+		line-height: 22px;
+	}
+
+	:is(h5, h6) {
+		font-size: 13px;
+		line-height: 20px;
+		color: var(--wpds-color-foreground-content-neutral-weak, #{$gray-700});
+
+		@include ui-mixins.when-dark-theme {
+			color: var(--wp-components-color-gray-700, #{$gray-700});
+		}
+	}
+
+	p {
+		text-wrap: pretty;
+	}
+
+	// A thinner, lower underline, so a paragraph full of links stays readable.
+	a {
+		text-decoration-thickness: 1px;
+		text-underline-offset: 3px;
+	}
+
+	// Markers hang in a narrower gutter, with wrapped lines under the text.
+	:is(ul, ol) {
+		margin-inline-start: 0;
+		padding-inline-start: 20px;
+		list-style-position: outside;
+	}
+
+	// Spacer blocks are sized for the post's page, so they leave large gaps here.
+	// The separator takes the space above a heading on each side instead.
+	.wp-block-spacer,
+	p:empty {
+		display: none;
+	}
+
+	hr {
+		margin-block: $grid-unit-30;
+	}
+}
+
 // List items wrap over several of the taller lines, so they need more room
 // between them than in the detailed layout.
 .wpnc-simplified .wpnc__note .wpnc__body .wpnc__body-content li + li {
 	margin-block-start: $grid-unit-10;
+}
+
+.wpnc-simplified__reply-footer {
+	.comment-reply-input__textarea textarea,
+	button[type="submit"] {
+		border-radius: $radius-medium;
+	}
+
+	// A light border at rest that darkens on hover. The placeholder and the send
+	// button already mark it as an input.
+	.comment-reply-input__textarea textarea:not(:focus) {
+		border-color: $gray-400;
+		transition: border-color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
+
+		&:hover {
+			border-color: $gray-600;
+		}
+
+		@include ui-mixins.when-dark-theme {
+			border-color: var(--wpds-color-stroke-interactive-neutral, #8d8d8d);
+		}
+	}
 }

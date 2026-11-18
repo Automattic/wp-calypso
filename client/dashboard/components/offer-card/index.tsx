@@ -7,18 +7,35 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { wpcomLink } from '../../utils/link';
 import { Card, CardBody } from '../card';
 import abstractDotsSvg from './abstract-dots.svg';
 import devSiteBanner from './dev-site-banner.svg';
+import type { ReactNode } from 'react';
 import './style.scss';
 
 interface OfferCardProps {
 	onClick?: () => void;
 	layout?: 'inline' | 'stacked';
+	className?: string;
+	title?: ReactNode;
+	description?: string;
+	ctaLabel?: string;
+	href?: string;
+	image?: ReactNode;
 }
 
-export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProps ) {
+export default function OfferCard( {
+	onClick,
+	layout = 'inline',
+	className,
+	title,
+	description: descriptionOverride,
+	ctaLabel,
+	href: hrefOverride,
+	image: imageOverride,
+}: OfferCardProps ) {
 	const isSmallViewport = useViewportMatch( 'small', '<' );
 	const isStacked = layout === 'stacked';
 	const isInlineCollapsed = ! isStacked && isSmallViewport;
@@ -43,7 +60,7 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 
 	const Stack = isStacked || isInlineCollapsed ? VStack : HStack;
 	const image = isStacked ? devSiteBanner : abstractDotsSvg;
-	const href = wpcomLink( '/setup/onboarding' );
+	const href = hrefOverride ?? wpcomLink( '/setup/onboarding' );
 
 	const getStackProps = () => {
 		if ( isStacked ) {
@@ -57,7 +74,8 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 
 	const content = (
 		<Stack { ...getStackProps() }>
-			{ ( isStacked || ! isSmallViewport ) && (
+			{ imageOverride }
+			{ ! imageOverride && ( isStacked || ! isSmallViewport ) && (
 				<img
 					style={ isStacked ? undefined : { width: '64px', flexShrink: 0 } }
 					src={ image }
@@ -66,11 +84,15 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 				/>
 			) }
 			<VStack spacing={ 1 }>
-				<Text weight={ isStacked ? undefined : 500 } size={ isStacked ? 'title' : undefined }>
-					{ offer }
-				</Text>
+				{ typeof title === 'string' || ! title ? (
+					<Text weight={ isStacked ? undefined : 500 } size={ isStacked ? 'title' : undefined }>
+						{ title ?? offer }
+					</Text>
+				) : (
+					title
+				) }
 				<Text variant="muted" as="p">
-					{ description }
+					{ descriptionOverride ?? description }
 				</Text>
 			</VStack>
 			<div style={ { flexShrink: 0 } }>
@@ -81,7 +103,7 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 					size="compact"
 					__next40pxDefaultSize
 				>
-					{ __( 'Unlock offer' ) }
+					{ ctaLabel ?? __( 'Unlock offer' ) }
 				</Button>
 			</div>
 		</Stack>
@@ -91,7 +113,7 @@ export default function OfferCard( { onClick, layout = 'inline' }: OfferCardProp
 		<Card
 			isBorderless
 			variant="secondary"
-			className={ isStacked ? 'offer-card--stacked' : undefined }
+			className={ clsx( className, { 'offer-card--stacked': isStacked } ) }
 		>
 			<CardBody>{ content }</CardBody>
 		</Card>

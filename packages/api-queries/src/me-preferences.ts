@@ -4,6 +4,7 @@ import { queryClient } from './query-client';
 import type { UserPreferences } from '@automattic/api-core';
 
 const defaultValues: Required< UserPreferences > = {
+	'account-email-recovery-snoozed-until': 0,
 	recentSites: [],
 	'hosting-dashboard-color-scheme': 'light',
 	'hosting-dashboard-dark-mode-announcement-dismissed': '',

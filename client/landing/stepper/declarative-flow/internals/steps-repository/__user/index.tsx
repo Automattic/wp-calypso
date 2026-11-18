@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, STUDENT_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useEffect, useState } from '@wordpress/element';
@@ -29,6 +29,7 @@ import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector, useStore } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { STUDENT_ACTIVATION_EMAIL_SOURCE } from '../../../flows/student/constants';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import { Step as StepType } from '../../types';
 import { useHandleSocialResponse } from './handle-social-response';
@@ -216,6 +217,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				showEnvelopeIcon={ isLoginLinkBelowButtons }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
+				// Only the Student flow asks for email verification, so only its link returns to it.
+				activationEmailFrom={ flow === STUDENT_FLOW ? STUDENT_ACTIVATION_EMAIL_SOURCE : undefined }
 			/>
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm

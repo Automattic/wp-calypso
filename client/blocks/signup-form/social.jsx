@@ -15,6 +15,7 @@ import {
 	PayPalSocialButton,
 	UsernameOrEmailButton,
 } from 'calypso/components/social-buttons';
+import { saveEmailTrackingConsentForSocialLogin } from 'calypso/lib/signup/email-tracking-consent';
 import { isWpccFlow } from 'calypso/signup/is-flow';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
@@ -60,6 +61,8 @@ class SocialSignupForm extends Component {
 			social_account_type: service,
 			client_id: oauth2Client?.id,
 		} );
+
+		saveEmailTrackingConsentForSocialLogin();
 
 		try {
 			if ( redirectToAfterLoginUrl && typeof window !== 'undefined' ) {

@@ -5,11 +5,10 @@ import SiteIcon, { type SiteIconVariant } from 'calypso/blocks/site-icon';
 import { getFirstGrapheme } from 'calypso/lib/string';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
-import MigrationFavicon from './migration-favicon';
 
 import './style.scss';
 
-export type SiteFaviconFallback = 'color' | 'wordpress-logo' | 'first-grapheme' | 'migration';
+export type SiteFaviconFallback = 'color' | 'wordpress-logo' | 'first-grapheme';
 
 interface SiteFaviconProps {
 	blogId?: number;
@@ -53,9 +52,6 @@ const SiteFavicon = ( {
 				</div>
 			);
 			defaultFaviconClass = 'is-first-grapheme';
-			break;
-		case 'migration':
-			defaultFavicon = <MigrationFavicon size={ size } />;
 			break;
 		case 'color':
 		default:

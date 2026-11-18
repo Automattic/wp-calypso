@@ -35,37 +35,6 @@ if ( isJsdom ) {
 	}
 }
 
-// React 19's `react-dom/server.browser` build and `scheduler` need `MessageChannel` at load time.
-// Node's holds libuv handles that keep workers alive, and a microtask wouldn't yield to timers the
-// way the scheduler expects, so deliver messages with `setTimeout`.
-if ( typeof globalThis.MessageChannel === 'undefined' ) {
-	class PolyfilledMessagePort {
-		onmessage: ( ( e: { data: unknown } ) => void ) | null = null;
-		_target: PolyfilledMessagePort | null = null;
-		postMessage( data: unknown ) {
-			const target = this._target;
-			setTimeout( () => {
-				if ( target && typeof target.onmessage === 'function' ) {
-					target.onmessage( { data } );
-				}
-			}, 0 );
-		}
-		addEventListener() {}
-		removeEventListener() {}
-		start() {}
-		close() {}
-	}
-	testGlobals.MessagePort = PolyfilledMessagePort;
-	testGlobals.MessageChannel = class MessageChannel {
-		port1 = new PolyfilledMessagePort();
-		port2 = new PolyfilledMessagePort();
-		constructor() {
-			this.port1._target = this.port2;
-			this.port2._target = this.port1;
-		}
-	};
-}
-
 if ( ! nock.isActive() ) {
 	nock.activate();
 }
@@ -107,10 +76,6 @@ if ( typeof globalThis.Element !== 'undefined' ) {
 }
 if ( isJsdom ) {
 	window.scrollTo = function () {};
-}
-
-if ( typeof globalThis.structuredClone !== 'function' ) {
-	testGlobals.structuredClone = ( obj: unknown ) => JSON.parse( JSON.stringify( obj ) );
 }
 
 // @wordpress/dataviews' infinite-scroll hook needs IntersectionObserver, which jsdom lacks.

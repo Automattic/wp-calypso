@@ -129,8 +129,6 @@ blog
 	} );
 ```
 
-More pre-made examples are in the [`examples/`](./examples/) directory.
-
 ## Test
 
 The `token` and `site` vars must be given to testing scripts either using

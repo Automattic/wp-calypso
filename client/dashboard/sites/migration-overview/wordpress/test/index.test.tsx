@@ -6,7 +6,6 @@ import {
 	siteWordPressMigrationConfigurationQuery,
 	siteWordPressMigrationStatusQuery,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { focusManager } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -97,11 +96,8 @@ const configurePath = '/wpcom/v2/sites/42/wordpress-migration/configure';
 const runPath = '/wpcom/v2/sites/42/wordpress-migration/run';
 
 describe( 'WordPressMigration', () => {
-	// The site only reads as locked by its own state while the flow is switched on.
-	beforeEach( () => config.enable( 'migration/reprint-flow' ) );
 	afterEach( () => {
 		vi.useRealTimers();
-		config.disable( 'migration/reprint-flow' );
 		queryClient.clear();
 		// After clearing: going back to the default focus state refetches every query it finds, and a refetch still in
 		// flight would take the next test's mocked replies.
@@ -227,6 +223,39 @@ describe( 'WordPressMigration', () => {
 		act( () => focusManager.setFocused( true ) );
 
 		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
+	} );
+
+	test( 'warns when the plugin is active on the WordPress.com site, until the source is connected', async () => {
+		const onDestination = ( connected: boolean ) => ( {
+			...configuration,
+			available_source_connections: [
+				{
+					...configuration.available_source_connections[ 0 ],
+					connected,
+					installed_on_destination: true,
+				},
+			],
+		} );
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
+		mockApi().get( configurePath ).query( true ).reply( 200, onDestination( false ) );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect(
+			await screen.findByText( 'Install the plugin on the site you’re migrating from' )
+		).toBeVisible();
+		expect( screen.getByText( /active on your WordPress.com site/ ) ).toHaveTextContent(
+			'The Migrate to WordPress.com plugin is active on your WordPress.com site, but it needs to be on example.com. Click the button below to install it.'
+		);
+
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
+		mockApi().get( configurePath ).query( true ).reply( 200, onDestination( true ) );
+		act( () => focusManager.setFocused( true ) );
+
+		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
+		expect(
+			screen.queryByText( 'Install the plugin on the site you’re migrating from' )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'keeps an unreachable plugin up on its own until the next run, but offers to start once connected', async () => {

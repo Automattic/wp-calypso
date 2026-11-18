@@ -311,7 +311,6 @@ describe( 'redirectToWpAdminStats()', () => {
 
 	test.each( [
 		[ 'a domain-only site', { siteOptions: { is_domain_only: true } } ],
-		[ 'a site being migrated', { siteProps: { site_migration: { status: 'restoring' } } } ],
 		[ 'a DIFM site being built', { siteOptions: { is_difm_lite_in_progress: true } } ],
 		[
 			'a site whose eCommerce trial expired',

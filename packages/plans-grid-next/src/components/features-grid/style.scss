@@ -316,6 +316,12 @@ $redesign-table-cell-max-width: 280px;
 	}
 }
 
+.plan-features-2023-grid__table tr:has(.plans-grid-next-action-button__playground-warning) {
+	> .is-top-buttons {
+		vertical-align: bottom;
+	}
+}
+
 .plan-features-2023-grid__desktop-view,
 .plan-features-2023-grid__tablet-view {
 	.plan-features-2023-grid__table-item {

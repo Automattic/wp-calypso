@@ -20,6 +20,10 @@ AppQuit.prototype.allowQuit = function () {
 	this.canQuit = true;
 };
 
+AppQuit.prototype.disallowQuit = function () {
+	this.canQuit = false;
+};
+
 if ( ! quitter ) {
 	quitter = new AppQuit();
 }

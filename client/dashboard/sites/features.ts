@@ -30,6 +30,14 @@ export function canManageSite( site: Site ) {
 	return true;
 }
 
+/**
+ * Whether the user belongs to the site. The API leaves `capabilities` out of the site for
+ * anyone who isn't a member.
+ */
+export function isSiteMember( site: Site ) {
+	return !! site.capabilities && ! site.is_deleted;
+}
+
 // Settings -> General
 
 export function canViewHundredYearPlanSettings( site: Site ) {

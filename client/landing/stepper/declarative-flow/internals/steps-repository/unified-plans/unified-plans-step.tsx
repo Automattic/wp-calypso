@@ -505,10 +505,12 @@ function UnifiedPlansStep( {
 		paidDomainName = getDomainFromUrl( selectedSite.URL );
 	}
 
+	const isPlaygroundOnboarding = flowName === ONBOARDING_FLOW && intent === 'plans-playground';
 	const deemphasizeFreePlan =
-		( [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) &&
+		! isPlaygroundOnboarding &&
+		( ( [ ONBOARDING_FLOW, DOMAIN_FLOW ].includes( flowName ) &&
 			( paidDomainName != null || isPaidTheme ) ) ||
-		deemphasizeFreePlanFromProps;
+			deemphasizeFreePlanFromProps );
 
 	const shouldUseModalBackedFreePlanCTA =
 		useStepContainerV2 && deemphasizeFreePlan && ( paidDomainName != null || isPaidTheme );

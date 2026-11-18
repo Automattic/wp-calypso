@@ -20,6 +20,7 @@ import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
 import Notice from 'calypso/components/notice';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { getEmailTrackingConsentPayload } from 'calypso/lib/signup/email-tracking-consent';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
 import { isThrottledError, getThrottledErrorMessage } from 'calypso/lib/signup/is-throttled-error';
 import wpcom from 'calypso/lib/wp';
@@ -49,6 +50,8 @@ class PasswordlessSignupForm extends Component {
 		disableTosText: PropTypes.bool,
 		termsAfterActions: PropTypes.bool,
 		useConnectScreenActions: PropTypes.bool,
+		// Names the signup's origin to the backend, which picks the activation email and its link.
+		activationEmailFrom: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -106,7 +109,7 @@ class PasswordlessSignupForm extends Component {
 			username: '',
 			password: '',
 		};
-		const { flowName, queryArgs = {} } = this.props;
+		const { activationEmailFrom, flowName, queryArgs = {} } = this.props;
 
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
@@ -174,7 +177,11 @@ class PasswordlessSignupForm extends Component {
 					oauth2_redirect: oauth2_redirect && `0@${ oauth2_redirect }`,
 				} ),
 				anon_id: getTracksAnonymousUserId(),
-				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
+				extra: {
+					has_segmentation_survey: queryArgs.variationName === 'entrepreneur',
+					...( activationEmailFrom && { from: activationEmailFrom } ),
+				},
+				...getEmailTrackingConsentPayload(),
 				...( blackboxSessionId && {
 					blackbox_session_id: blackboxSessionId,
 				} ),

@@ -15,6 +15,12 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
+		"./help-center": {
+			"calypso:src": "./src/help-center/index.ts",
+			"types": "./dist/types/help-center/index.d.ts",
+			"import": "./dist/esm/help-center/index.js",
+			"require": "./dist/cjs/help-center/index.js"
+		},
 		"./src/*": {
 			"types": [
 				"./src/*.ts",

@@ -52,4 +52,4 @@ yrsb-->nbs((("node build/server.js")))
 
 ## `yarn start:vite`
 
-`yarn start:vite` is an opt-in alternative to `yarn start` that serves the client with Vite in place of webpack. `yarn start-dashboard:vite` and `yarn start-a8c-for-agencies:vite` do the same for `yarn start-dashboard` and `yarn start-a8c-for-agencies`. It's ready in seconds and uses much less memory. See [Vite dev server](vite.md) for how to run it and the known differences from `yarn start`.
+`yarn start:vite` is an opt-in alternative to `yarn start` that serves the client with Vite in place of webpack. `yarn start-dashboard:vite`, `yarn start-jetpack-cloud:vite` and `yarn start-a8c-for-agencies:vite` do the same for `yarn start-dashboard`, `yarn start-jetpack-cloud` and `yarn start-a8c-for-agencies`. It's ready in seconds and uses much less memory. See [Vite dev server](vite.md) for how to run it and the known differences from `yarn start`.

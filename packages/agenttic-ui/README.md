@@ -8,6 +8,13 @@ React UI components for AI agent chat interfaces. A pure UI layer designed to wo
 npm install @automattic/agenttic-ui
 ```
 
+### WordPress script builds
+
+Markdown charts use `@automattic/charts`, which imports `@wordpress/theme` and `@wordpress/ui`. A build that loads `@wordpress/*` packages from WordPress, as `@wordpress/dependency-extraction-webpack-plugin` does by default, breaks on sites before WordPress 7.0 in two ways:
+
+- WordPress doesn't register `wp-theme` there, so it skips any script that depends on it. Bundle `@wordpress/theme` instead.
+- The site's `@wordpress/private-apis` throws when `@wordpress/theme` and `@wordpress/ui` opt in to private APIs. Point their `@wordpress/private-apis` imports at a bundled copy, as the Agents Manager's `webpack.config.js` in wp-calypso does.
+
 ## Key Features
 
 - Pure UI components with no agent communication logic

@@ -6,7 +6,7 @@ interface WithBlackboxProtectionOptions {
 	/** Feature flag gating Blackbox for this surface. */
 	feature: string;
 	/** Collect flow sent as `X-Blackbox-Flow`. */
-	flow: 'login' | 'signup';
+	flow: 'login' | 'signup' | 'password_reset';
 }
 
 interface WithBlackboxProtectionProps {
