@@ -73,11 +73,6 @@
 	}
 }
 
-/* Card */
-@mixin dashboard-dark-theme-card {
-	@include color-scheme-dark-theme-card;
-}
-
 /* MCP connect card */
 @mixin dashboard-dark-theme-mcp-connect {
 	.mcp-connect__tile.components-card:hover {
@@ -88,38 +83,6 @@
 			var( --wp-admin-theme-color )
 		);
 		color: var( --dashboard-menu-item-active__color );
-	}
-}
-
-/* Panel */
-@mixin dashboard-dark-theme-panel {
-	// `@wordpress/components` hardcodes `#fff` background, `#e0e0e0` / `#ddd`
-	// borders, and near-black text on the PanelBody title button.
-	.components-panel {
-		background: var( --dashboard-surface__background-color );
-		border-color: var( --dashboard-surface__border-color );
-	}
-
-	.components-panel__body {
-		border-top-color: var( --dashboard-surface__border-color );
-		border-bottom-color: var( --dashboard-surface__border-color );
-	}
-
-	.components-panel__header {
-		border-bottom-color: var( --dashboard-surface__border-color );
-	}
-
-	.components-panel__body-toggle.components-button,
-	.components-panel__body-toggle.components-button .components-panel__arrow {
-		color: var( --dashboard__text-color );
-	}
-
-	.components-panel__body > .components-panel__body-title:hover {
-		background: color-mix(
-			in srgb,
-			var( --dashboard-surface__background-color ) 82%,
-			var( --wp-admin-theme-color )
-		);
 	}
 }
 
@@ -169,31 +132,6 @@
 			--a4a-sidebar-promo-icon-background-on-dark,
 			transparent
 		);
-	}
-}
-
-/* Item Group */
-@mixin dashboard-dark-theme-item-group {
-	.components-item-group {
-		// `CONFIG.surfaceBorderColor` is rgba(0, 0, 0, 0.1) — invisible on dark.
-		// Applies to the bordered wrapper and the separator between items.
-		border-color: var( --dashboard-surface__border-color );
-
-		> * > * {
-			border-bottom-color: var( --dashboard-surface__border-color );
-		}
-
-		> *:last-of-type > * {
-			border-bottom-color: transparent;
-		}
-
-		// Clickable Items render as `<button>` and pick up `svg { fill: currentColor }`
-		// from `unstyledButton` mixin. Non-clickable Items render as `<div>`
-		// and miss that rule, so their icons in dark-mode keep the SVG's default
-		// dark fill.
-		[role='listitem'] svg {
-			fill: currentColor;
-		}
 	}
 }
 
@@ -390,17 +328,14 @@
 	@include color-scheme-dark-theme-agenttic;
 	@include dashboard-dark-theme-breadcrumbs;
 	@include dashboard-dark-theme-callout;
-	@include dashboard-dark-theme-card;
 	@include dashboard-dark-theme-command-palette;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-domain-upsell-illustration;
 	@include dashboard-dark-theme-illustrations;
-	@include dashboard-dark-theme-item-group;
 	@include dashboard-dark-theme-mcp-connect;
 	@include dashboard-dark-theme-modal;
 	@include color-scheme-dark-theme-palettes;
-	@include dashboard-dark-theme-panel;
 	@include dashboard-dark-theme-plugins;
 	@include dashboard-dark-theme-primary-address-illustration;
 	@include dashboard-dark-theme-sidebar-promo;

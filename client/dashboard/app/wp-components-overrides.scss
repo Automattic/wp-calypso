@@ -43,3 +43,54 @@
 .components-dropdown__content .components-menu-group + .components-menu-group {
 	border-top-color: var(--wpds-color-stroke-surface-neutral);
 }
+
+// `@wordpress/components` Card, Panel and ItemGroup hardcode light borders and surfaces;
+// drop each block once the component uses WPDS tokens.
+:root .components-card:not([class*="__card-borderless"]) {
+	box-shadow: 0 0 0 1px var(--wpds-color-stroke-surface-neutral);
+}
+
+:root .components-card__header,
+:root .components-card__footer,
+.components-card__divider {
+	border-color: var(--wpds-color-stroke-surface-neutral);
+}
+
+.components-panel {
+	background: var(--wpds-color-background-surface-neutral-strong);
+	border-color: var(--wpds-color-stroke-surface-neutral);
+}
+
+.components-panel__body {
+	border-top-color: var(--wpds-color-stroke-surface-neutral);
+	border-bottom-color: var(--wpds-color-stroke-surface-neutral);
+}
+
+.components-panel__header {
+	border-bottom-color: var(--wpds-color-stroke-surface-neutral);
+}
+
+.components-panel__body-toggle.components-button,
+.components-panel__body-toggle.components-button .components-panel__arrow {
+	color: var(--wpds-color-foreground-content-neutral);
+}
+
+.components-panel__body > .components-panel__body-title:hover {
+	background: var(--wpds-color-background-interactive-neutral-weak-active);
+}
+
+:root .components-item-group[class*="__is-bordered"] {
+	border-color: var(--wpds-color-stroke-surface-neutral);
+}
+
+:root .components-item-group[class*="__is-separated"] > * > * {
+	border-block-end-color: var(--wpds-color-stroke-surface-neutral);
+}
+
+:root .components-item-group[class*="__is-separated"] > :last-of-type > * {
+	border-block-end-color: transparent;
+}
+
+.components-item-group [role="listitem"] svg {
+	fill: currentColor;
+}
