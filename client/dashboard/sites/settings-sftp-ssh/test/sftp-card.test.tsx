@@ -54,13 +54,27 @@ describe( '<SftpCard>', () => {
 			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ username }` )
 			.reply( 200, JSON.stringify( { username } ), { 'Content-Type': 'application/json' } );
 
+		render(
+			<SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } sshEnabled />
+		);
+
+		await screen.findByText( 'Learn more' );
+		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
+		const dialog = await screen.findByRole( 'dialog' );
+		expect( dialog ).toHaveTextContent( 'SSH access is turned off too.' );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Disable SFTP' } ) );
+
+		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
+	} );
+
+	test( 'does not mention SSH in the Disable SFTP dialog when SSH access is off', async () => {
+		const user = userEvent.setup();
+
 		render( <SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } /> );
 
 		await screen.findByText( 'Learn more' );
 		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
 		const dialog = await screen.findByRole( 'dialog' );
-		await user.click( within( dialog ).getByRole( 'button', { name: 'Disable SFTP' } ) );
-
-		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
+		expect( dialog ).not.toHaveTextContent( 'SSH' );
 	} );
 } );

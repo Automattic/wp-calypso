@@ -42,9 +42,11 @@ type SftpCardFormData = {
 export default function SftpCard( {
 	siteId,
 	sftpUsers = [],
+	sshEnabled = false,
 }: {
 	siteId: number;
 	sftpUsers: SftpUser[];
+	sshEnabled?: boolean;
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
@@ -188,6 +190,7 @@ export default function SftpCard( {
 		: undefined;
 	const resetPasswordButton = (
 		<Button
+			__next40pxDefaultSize
 			variant="secondary"
 			isBusy={ mutation.isPending }
 			disabled={ mutation.isPending || isResetPasswordRateLimited }
@@ -257,9 +260,13 @@ export default function SftpCard( {
 				onConfirm={ () => handleConfirmDisable() }
 				onCancel={ () => setShowDisableConfirmDialog( false ) }
 			>
-				{ __(
-					'Disabling SFTP deletes your SFTP credentials, so SFTP clients, deployment tools, and scripts that use them will stop connecting. SSH access is turned off too. You can enable SFTP again at any time and get a new password.'
-				) }
+				{ sshEnabled
+					? __(
+							'Disabling SFTP deletes your SFTP credentials, so SFTP clients, deployment tools, and scripts that use them will stop connecting. SSH access is turned off too. You can enable SFTP again at any time and get a new password.'
+						)
+					: __(
+							'Disabling SFTP deletes your SFTP credentials, so SFTP clients, deployment tools, and scripts that use them will stop connecting. You can enable SFTP again at any time and get a new password.'
+						) }
 			</ConfirmDialog>
 		</Card>
 	);
