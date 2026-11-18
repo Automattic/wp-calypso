@@ -20,15 +20,12 @@ const loadCharts = () =>
 		new Promise( ( resolve ) => setTimeout( resolve, RETRY_DELAY_MS ) ).then( importCharts )
 	);
 
-function lazyChart< P extends object >(
-	pick: ( charts: Charts ) => ComponentType< P >,
-	chartDataOf?: ( props: P ) => string
-): FC< P > {
+function lazyChart< P extends object >( pick: ( charts: Charts ) => ComponentType< P > ): FC< P > {
 	const Lazy = lazy( () => loadCharts().then( ( charts ) => ( { default: pick( charts ) } ) ) );
 
 	return function LazyChart( props: P ) {
 		return (
-			<ChartErrorBoundary chartData={ chartDataOf?.( props ) }>
+			<ChartErrorBoundary>
 				<Suspense fallback={ null }>
 					<Lazy { ...props } />
 				</Suspense>
@@ -38,8 +35,5 @@ function lazyChart< P extends object >(
 }
 
 export const BarChart = lazyChart< BarChartProps >( ( charts ) => charts.BarChart );
-export const ChartBlock = lazyChart< ChartBlockProps >(
-	( charts ) => charts.ChartBlock,
-	( props ) => props.data
-);
+export const ChartBlock = lazyChart< ChartBlockProps >( ( charts ) => charts.ChartBlock );
 export const LineChart = lazyChart< LineChartProps >( ( charts ) => charts.LineChart );
