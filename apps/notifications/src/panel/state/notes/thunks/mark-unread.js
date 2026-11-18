@@ -3,6 +3,13 @@ import { recordTracksEvent } from '../../../helpers/stats';
 import { markReadStatus } from '../../../rest-client/wpcom';
 import { readNote, unreadNote } from '../actions';
 
+// `success` is true even when nothing changed. `updated` lists the notes the
+// request touched that are unread afterwards, so that is the confirmation.
+const isUnreadOnServer = ( response, noteId ) =>
+	!! response?.success &&
+	( ! Array.isArray( response.updated ) ||
+		response.updated.map( String ).includes( String( noteId ) ) );
+
 /**
  * Marks a note as unread, reverting to read if the server rejects it.
  */
@@ -18,7 +25,7 @@ const markUnread = ( note, restClient ) => ( dispatch ) => {
 	dispatch( unreadNote( note.id ) );
 
 	markReadStatus( note.id, false, ( error, response ) => {
-		if ( error || ! response.success ) {
+		if ( error || ! isUnreadOnServer( response, note.id ) ) {
 			if ( error ) {
 				reportRequestError( 'unread', error );
 			} else {
@@ -32,7 +39,7 @@ const markUnread = ( note, restClient ) => ( dispatch ) => {
 			return;
 		}
 
-		restClient?.getFilteredNotes();
+		restClient?.refreshFilteredNotes();
 	} );
 };
 

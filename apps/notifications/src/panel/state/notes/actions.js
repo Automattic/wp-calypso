@@ -73,6 +73,20 @@ export const resetLocalLike = ( noteId ) => ( {
 	noteId,
 } );
 
+/**
+ * Resets the local cache override on note read status
+ *
+ * A note marked as read or unread here keeps that status over
+ * whatever the server sends. Resetting it lets the server's
+ * `read` field decide again.
+ * @param {number} noteId
+ * @returns {Object} action object
+ */
+export const resetLocalRead = ( noteId ) => ( {
+	type: types.RESET_LOCAL_READ,
+	noteId,
+} );
+
 export default {
 	addNotes,
 	approveNote,
@@ -81,6 +95,7 @@ export default {
 	removeNotes,
 	resetLocalApproval,
 	resetLocalLike,
+	resetLocalRead,
 	setFilteredNoteIds,
 	spamNote,
 	trashNote,

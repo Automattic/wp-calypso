@@ -1,8 +1,14 @@
 let wpcomInstance;
 
+// Read-status requests waiting on the server, per note. The first entry is in flight.
+const readStatusQueues = new Map();
+
 export const wpcom = () => wpcomInstance;
 
-export const init = ( provider ) => ( wpcomInstance = provider );
+export const init = ( provider ) => {
+	readStatusQueues.clear();
+	return ( wpcomInstance = provider );
+};
 
 export const fetchNote = ( noteId, query, callback ) =>
 	wpcom().req.get(
@@ -34,7 +40,10 @@ export const listNotes = ( query, callback ) =>
 		callback
 	);
 
-export const markReadStatus = ( noteId, isRead, callback ) =>
+const sendNextReadStatus = ( key ) => {
+	const queue = readStatusQueues.get( key );
+	const { isRead, callback } = queue[ 0 ];
+
 	wpcom().req.post(
 		{
 			path: '/notifications/read',
@@ -42,11 +51,46 @@ export const markReadStatus = ( noteId, isRead, callback ) =>
 		null,
 		{
 			counts: {
-				[ noteId ]: isRead ? 9999 : -1,
+				[ key ]: isRead ? 9999 : -1,
 			},
 		},
-		callback
+		( error, data ) => {
+			try {
+				callback?.( error, data );
+			} finally {
+				// init() drops the queues, so only advance one that is still current.
+				if ( readStatusQueues.get( key ) === queue ) {
+					queue.shift();
+					if ( queue.length ) {
+						sendNextReadStatus( key );
+					} else {
+						readStatusQueues.delete( key );
+					}
+				}
+			}
+		}
 	);
+};
+
+/**
+ * Mark a note as read or unread on the server.
+ *
+ * Requests for the same note are sent one at a time, in the order they were
+ * made, so the last change is the one the server ends up with.
+ */
+export const markReadStatus = ( noteId, isRead, callback ) => {
+	const key = String( noteId );
+	const queue = readStatusQueues.get( key );
+	if ( queue ) {
+		queue.push( { isRead, callback } );
+		return;
+	}
+
+	readStatusQueues.set( key, [ { isRead, callback } ] );
+	sendNextReadStatus( key );
+};
+
+export const isReadStatusPending = ( noteId ) => readStatusQueues.has( String( noteId ) );
 
 /**
  * Mark post as seen using the new more granular per post API.

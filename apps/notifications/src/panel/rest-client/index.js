@@ -42,6 +42,8 @@ export class Client {
 		// Per-tab load-more exhaustion, keyed by tab name.
 		this.filteredHasMore = {};
 		this.gettingFilteredNotes = false;
+		// Set when a refresh was asked for while a filtered fetch was in flight.
+		this.filteredRefreshPending = false;
 		this.loadMoreBackoff = {};
 		this.loadMoreTimer = null;
 		this.retries = 0;
@@ -516,8 +518,11 @@ function getFilteredNotes( before ) {
 
 		// A tab switch while this was in flight left the newly-active tab's own
 		// fetch skipped (this request held the lock); run it once we're done. Its
-		// cached list, if any, keeps showing meanwhile.
-		const activeTabNeedsFetch = this.filter && this.isVisible && this.filterName !== key;
+		// cached list, if any, keeps showing meanwhile. Same for a refresh that
+		// refreshFilteredNotes() asked for in the meantime.
+		const activeTabNeedsFetch =
+			this.filter && this.isVisible && ( this.filterName !== key || this.filteredRefreshPending );
+		this.filteredRefreshPending = false;
 
 		if ( error ) {
 			if ( ! before || ! this.loadMoreBackoff[ key ] ) {
@@ -591,6 +596,21 @@ function getFilteredNotes( before ) {
 			this.getFilteredNotes();
 		}
 	} );
+}
+
+/**
+ * Refresh the active filtered tab after a change made here.
+ *
+ * Unlike getFilteredNotes(), a call made while a fetch is in flight is not
+ * dropped: the refresh runs once that fetch is done, so its result includes
+ * the change.
+ */
+function refreshFilteredNotes() {
+	if ( this.gettingFilteredNotes ) {
+		this.filteredRefreshPending = true;
+		return;
+	}
+	this.getFilteredNotes();
 }
 
 /**
@@ -967,6 +987,7 @@ Client.prototype.getNote = getNote;
 Client.prototype.getNotes = getNotes;
 Client.prototype.getNotesList = getNotesList;
 Client.prototype.getFilteredNotes = getFilteredNotes;
+Client.prototype.refreshFilteredNotes = refreshFilteredNotes;
 Client.prototype.setFilter = setFilter;
 Client.prototype.updateLastSeenTime = updateLastSeenTime;
 Client.prototype.loadMore = loadMore;

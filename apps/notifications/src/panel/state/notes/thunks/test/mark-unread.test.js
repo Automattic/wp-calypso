@@ -47,7 +47,7 @@ describe( 'markUnread', () => {
 				post: ( { path }, _query, body, callback ) => postCalls.push( { path, body, callback } ),
 			},
 		} );
-		restClient = { getFilteredNotes: vi.fn() };
+		restClient = { refreshFilteredNotes: vi.fn() };
 
 		store.dispatch( actions.notes.addNotes( [ note ] ) );
 	} );
@@ -81,17 +81,30 @@ describe( 'markUnread', () => {
 
 	it( 'refreshes the filtered list once the server confirms', () => {
 		store.dispatch( markUnread( note, restClient ) );
-		expect( restClient.getFilteredNotes ).not.toHaveBeenCalled();
+		expect( restClient.refreshFilteredNotes ).not.toHaveBeenCalled();
 
-		lastPost().callback( null, { success: true } );
+		lastPost().callback( null, { success: true, updated: [ note.id ] } );
 
-		expect( restClient.getFilteredNotes ).toHaveBeenCalledTimes( 1 );
+		expect( restClient.refreshFilteredNotes ).toHaveBeenCalledTimes( 1 );
 		expect( isRead() ).toBe( false );
+	} );
+
+	it.each( [
+		[ 'lists the note id as a string', { success: true, updated: [ String( note.id ) ] } ],
+		[ 'sends no list of updated notes', { success: true } ],
+	] )( 'takes it as confirmed when the server %s', ( _name, response ) => {
+		store.dispatch( markUnread( note, restClient ) );
+
+		lastPost().callback( null, response );
+
+		expect( isRead() ).toBe( false );
+		expect( reportError ).not.toHaveBeenCalled();
 	} );
 
 	it.each( [
 		[ 'the request fails', [ new Error( 'offline' ), undefined ], reportRequestError ],
 		[ 'the server rejects it', [ null, { success: false } ], reportError ],
+		[ 'the server leaves the note as read', [ null, { success: true, updated: [] } ], reportError ],
 	] )( 'restores the read state when %s', ( _name, response, report ) => {
 		store.dispatch( markUnread( note, restClient ) );
 
@@ -99,7 +112,7 @@ describe( 'markUnread', () => {
 
 		expect( isRead() ).toBe( true );
 		expect( localStorage.getItem( STORAGE_KEY ) ).toBe( '1' );
-		expect( restClient.getFilteredNotes ).not.toHaveBeenCalled();
+		expect( restClient.refreshFilteredNotes ).not.toHaveBeenCalled();
 		expect( report ).toHaveBeenCalledWith( 'unread', response[ 0 ] ?? response[ 1 ] );
 		expect( report === reportError ? reportRequestError : reportError ).not.toHaveBeenCalled();
 	} );
@@ -127,5 +140,21 @@ describe( 'markUnread', () => {
 
 		expect( getIsNoteRead( store.getState(), unreadNote ) ).toBe( false );
 		expect( localStorage.getItem( `note_read_status_${ unreadNote.id }` ) ).toBe( '0' );
+	} );
+
+	it( 'waits for an earlier mark-as-read request before asking for unread', () => {
+		const unreadNote = { ...note, id: 6, read: 0, note_hash: 'hash-6' };
+		store.dispatch( actions.notes.addNotes( [ unreadNote ] ) );
+
+		store.dispatch( actions.ui.selectNote( unreadNote.id ) );
+		store.dispatch( markUnread( unreadNote, restClient ) );
+
+		expect( postCalls ).toHaveLength( 1 );
+		expect( lastPost().body ).toEqual( { counts: { [ unreadNote.id ]: 9999 } } );
+
+		lastPost().callback( null, { success: true } );
+
+		expect( postCalls ).toHaveLength( 2 );
+		expect( lastPost().body ).toEqual( { counts: { [ unreadNote.id ]: -1 } } );
 	} );
 } );

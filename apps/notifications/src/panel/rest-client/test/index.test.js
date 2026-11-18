@@ -789,6 +789,68 @@ describe( 'RestClient', () => {
 		} );
 	} );
 
+	describe( 'refreshing the filtered tab after a change made here', () => {
+		const unreadCalls = () => getCalls.filter( ( call ) => call.query.unread );
+
+		it( 'fetches straight away when no filtered fetch is in flight', () => {
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+
+			expect( unreadCalls() ).toHaveLength( 1 );
+		} );
+
+		it( 'runs once the fetch in flight is done instead of being dropped', () => {
+			client.setFilter( 'unread' );
+			const inFlight = getCalls[ 0 ];
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+			client.refreshFilteredNotes();
+			expect( unreadCalls() ).toHaveLength( 0 );
+
+			inFlight.callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 1 );
+
+			// The refresh's own answer does not ask for another one.
+			unreadCalls()[ 0 ].callback( null, {
+				notes: [ makeNote( 901 ), makeNote( 900 ) ],
+				last_seen_time: 0,
+			} );
+			expect( unreadCalls() ).toHaveLength( 1 );
+			expect( getFilteredNoteIds( store.getState(), UNREAD_KEY ) ).toEqual( [ 901, 900 ] );
+		} );
+
+		it( 'runs after a fetch in flight fails', () => {
+			client.setFilter( 'unread' );
+			const inFlight = getCalls[ 0 ];
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+			inFlight.callback( { status: 500 } );
+
+			expect( unreadCalls() ).toHaveLength( 1 );
+		} );
+
+		it( 'is dropped when the tab is no longer filtered', () => {
+			client.setFilter( 'unread' );
+			const inFlight = getCalls[ 0 ];
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+			client.setFilter( 'all' );
+			inFlight.callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 0 );
+
+			// Coming back fetches once, with no refresh left over.
+			client.setFilter( 'unread' );
+			unreadCalls()[ 0 ].callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 1 );
+		} );
+	} );
+
 	describe( 'loading state', () => {
 		// Regression: with the fixed head window, paging older notes must still flip
 		// the loading state on, so the UI shows its load-more indicator.
