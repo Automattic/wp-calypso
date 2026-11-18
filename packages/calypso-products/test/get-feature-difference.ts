@@ -1,6 +1,5 @@
 import { vi } from 'vitest';
 import {
-	FEATURE_DEV_TOOLS,
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_UPLOAD_PLUGINS,
 	getFeatureDifference,
@@ -31,14 +30,6 @@ import {
 	FEATURE_COMMISSION_FEE_WOO_FEATURES,
 } from '../src';
 
-let mockDevToolsOnAllPaidPlans = false;
-vi.mock( '@automattic/calypso-config', () => {
-	const config = () => '';
-	config.isEnabled = ( flag: string ) =>
-		flag === 'hosting/dev-tools-all-paid-plans' && mockDevToolsOnAllPaidPlans;
-	return { __esModule: true, default: config, isEnabled: config.isEnabled };
-} );
-
 describe( 'getFeatureDifference function related tests', () => {
 	it( 'get2023PricingGridSignupWpcomFeatures bundle selector extractor: Free --> Personal difference', () => {
 		expect(
@@ -68,18 +59,7 @@ describe( 'getFeatureDifference function related tests', () => {
 	it( 'get2023PricingGridSignupWpcomFeatures bundle selector: Premium --> Business difference', () => {
 		expect(
 			getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'get2023PricingGridSignupWpcomFeatures' )
-		).toEqual( [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_DEV_TOOLS ] );
-	} );
-
-	it( 'get2023PricingGridSignupWpcomFeatures bundle selector: Premium --> Business difference with dev tools on all paid plans', () => {
-		mockDevToolsOnAllPaidPlans = true;
-		try {
-			expect(
-				getFeatureDifference( PLAN_PREMIUM, PLAN_BUSINESS, 'get2023PricingGridSignupWpcomFeatures' )
-			).toEqual( [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_SITE_STAGING_SITES ] );
-		} finally {
-			mockDevToolsOnAllPaidPlans = false;
-		}
+		).toEqual( [ FEATURE_PRIORITY_24_7_SUPPORT, FEATURE_SITE_STAGING_SITES ] );
 	} );
 
 	it( 'get2023PricingGridSignupWpcomFeatures bundle selector extractor: Business --> Woo difference', () => {
