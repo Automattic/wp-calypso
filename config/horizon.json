@@ -106,6 +106,7 @@
 		"mcp-settings": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
+		"me/email-tracking-consent": true,
 		"me/legacy-contact": true,
 		"migration/non-wordpress-source": true,
 		"notifications/redesign": true,
