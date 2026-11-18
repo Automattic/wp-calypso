@@ -44,10 +44,8 @@ test( 'sends an existing mapping to its connection setup without failing the sub
 } );
 
 // A cart helper that throws inside the pending action makes the processing step submit FAILURE.
-// That must land on the error step, not in checkout with an empty or partial cart.
-test( 'sends a failed processing result to the error step, not to checkout', async () => {
-	const replace = jest.fn();
-	window.location.replace = replace;
+// The error step replaces processing, so Back does not run the failed cart request again.
+test( 'replaces processing with the error step when processing fails', async () => {
 	const navigate = jest.fn();
 	const { result } = renderHook( () =>
 		domain.useStepNavigation.call( domain, 'processing', navigate )
@@ -55,15 +53,10 @@ test( 'sends a failed processing result to the error step, not to checkout', asy
 
 	await result.current.submit( {
 		slug: 'processing',
-		providedDependencies: {
-			processingResult: ProcessingResult.FAILURE,
-			goToCheckout: true,
-			siteSlug: 'example.wordpress.com',
-		},
+		providedDependencies: { processingResult: ProcessingResult.FAILURE },
 	} );
 
-	expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'processing_failed' } );
-	expect( replace ).not.toHaveBeenCalled();
+	expect( navigate ).toHaveBeenCalledWith( 'error', { errorReason: 'processing_failed' }, true );
 } );
 
 test( 'ignores a connection setup URL on another site', async () => {
