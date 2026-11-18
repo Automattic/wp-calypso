@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { Card } from '@automattic/components';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import clsx from 'clsx';
@@ -9,6 +10,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import wpcom from 'calypso/lib/wp';
 import withCartKey from 'calypso/my-sites/checkout/with-cart-key';
+import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
@@ -25,7 +27,7 @@ import { OptionCard } from './option-card';
 
 import './style.scss';
 
-function DomainTransferOrConnect( {
+export function DomainTransferOrConnect( {
 	availability,
 	cart,
 	currencyCode,
@@ -34,6 +36,7 @@ function DomainTransferOrConnect( {
 	domainInboundTransferStatusInfo,
 	isSignupStep,
 	onConnect,
+	onAlreadyConnected,
 	onSkip,
 	onTransfer,
 	primaryWithPlansOnly,
@@ -60,6 +63,17 @@ function DomainTransferOrConnect( {
 		connectHandler( { domain, selectedSite }, () => setActionClicked( false ) );
 	};
 
+	const handleAlreadyConnected = () => {
+		recordMappingButtonClickInUseYourDomain( domain );
+		setActionClicked( true );
+
+		if ( onAlreadyConnected ) {
+			onAlreadyConnected( { domain, selectedSite } );
+		} else {
+			page( domainMappingSetup( selectedSite.slug, domain ) );
+		}
+	};
+
 	const handleTransfer = () => {
 		recordTransferButtonClickInUseYourDomain( domain );
 		setActionClicked( true );
@@ -76,6 +90,7 @@ function DomainTransferOrConnect( {
 		dashboard,
 		isSignupStep,
 		onConnect: handleConnect,
+		onAlreadyConnected: handleAlreadyConnected,
 		onSkip,
 		onTransfer: handleTransfer,
 		primaryWithPlansOnly,
@@ -147,6 +162,7 @@ DomainTransferOrConnect.propTypes = {
 	domain: PropTypes.string.isRequired,
 	isSignupStep: PropTypes.bool,
 	onConnect: PropTypes.func,
+	onAlreadyConnected: PropTypes.func,
 	onTransfer: PropTypes.func,
 	selectedSite: PropTypes.object,
 	transferDomainUrl: PropTypes.string,

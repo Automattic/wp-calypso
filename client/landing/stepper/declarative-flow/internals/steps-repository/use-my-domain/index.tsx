@@ -155,6 +155,12 @@ const UseMyDomain: StepType< {
 		submit?.( { domainCartItem } );
 	};
 
+	const handleOnAlreadyConnected = ( { domain }: { domain: string } ) => {
+		clearQueryParams();
+		// The mapping already exists, as it does after ownership verification, so flows send the user on to its setup.
+		submit?.( { ownershipVerificationCompleted: true, domain } );
+	};
+
 	const getInitialQuery = function () {
 		const lastQuery = String( getQueryArg( window.location.search, 'lastQuery' ) ?? '' );
 		const initialQuery = String( getQueryArg( window.location.search, 'initialQuery' ) ?? '' );
@@ -188,6 +194,7 @@ const UseMyDomain: StepType< {
 					isSignupStep
 					onTransfer={ handleOnTransfer }
 					onConnect={ handleOnConnect }
+					onAlreadyConnected={ handleOnAlreadyConnected }
 					onSkip={ handleOnSkip }
 					useMyDomainMode={ useMyDomainMode }
 					setUseMyDomainMode={ setUseMyDomainMode }

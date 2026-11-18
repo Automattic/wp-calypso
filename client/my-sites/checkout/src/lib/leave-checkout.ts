@@ -6,6 +6,7 @@ import {
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
+import { getUrlOnOrigins } from 'calypso/dashboard/utils/url';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import {
@@ -128,19 +129,16 @@ export const leaveCheckout = ( {
 		if ( searchParams.has( 'cancel_to' ) ) {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
 
-			if ( isRelativeUrl( cancelPath ) ) {
+			const allowedUrl = getUrlOnOrigins(
+				cancelPath,
+				[ window.location.origin, ...dashboardOrigins(), ...jetpackCloudOrigins( cancelPath ) ],
+				window.location.href
+			);
+			if ( allowedUrl ) {
 				// We use window.location.href instead of navigate() because navigate() uses page.show()
 				// which silently fails for /setup/ Stepper routes. Since we're leaving checkout entirely,
 				// the SPA optimization from navigate() provides no meaningful benefit.
-				window.location.href = cancelPath;
-				return;
-			}
-			if ( isDashboardUrl( cancelPath ) ) {
-				window.location.href = cancelPath;
-				return;
-			}
-			if ( isJetpackCloudUrl( cancelPath ) ) {
-				window.location.href = cancelPath;
+				window.location.href = allowedUrl;
 				return;
 			}
 			// If cancel_to is invalid (e.g., external URL), fall through to default close URL.
@@ -154,36 +152,15 @@ export const leaveCheckout = ( {
 	navigate( closeUrl );
 };
 
-function isDashboardUrl( url: string ) {
-	try {
-		const { origin } = new URL( url );
-		return dashboardOrigins().some( ( allowed ) => new URL( allowed ).origin === origin );
-	} catch {
-		return false;
-	}
-}
-
-const JETPACK_CLOUD_HOSTNAMES = [ 'cloud.jetpack.com', 'jetpack.cloud.localhost' ];
-
 /**
  * Jetpack Cloud sends its purchases pages here for renewals and upgrades, and
- * `cancel_to` points back at them.
+ * `cancel_to` points back at them. The local host takes any port, since its dev
+ * server needn't share this one's (`start-jetpack-cloud-p` runs on 3001).
  */
-function isJetpackCloudUrl( url: string ) {
+function jetpackCloudOrigins( url: string ) {
+	let port = '';
 	try {
-		const { protocol, hostname } = new URL( url );
-		return (
-			[ 'https:', 'http:' ].includes( protocol ) && JETPACK_CLOUD_HOSTNAMES.includes( hostname )
-		);
-	} catch {
-		return false;
-	}
-}
-
-export function isRelativeUrl( url: string ) {
-	try {
-		return new URL( url, window.location.href ).origin === window.location.origin;
-	} catch {
-		return false;
-	}
+		port = new URL( url ).port;
+	} catch {}
+	return [ 'https://cloud.jetpack.com', `http://jetpack.cloud.localhost${ port && `:${ port }` }` ];
 }

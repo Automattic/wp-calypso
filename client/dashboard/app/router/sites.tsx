@@ -82,6 +82,7 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { SitePermissionError } from '../../utils/site-permissions';
 import {
 	getSiteMigrationState,
+	isAssistedWordPressMigration,
 	isSiteMigrationInProgress,
 	isWordPressMigration,
 } from '../../utils/site-status';
@@ -1889,37 +1890,29 @@ export const siteMigrationAssistedIntroRoute = createRoute( {
 	)
 );
 
-export const siteSSHMigrationFailedRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'We hit a snag, but we’re on it' ),
-			},
-		],
-	} ),
+export const siteMigrationShareAccessRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Share access' ) } ] } ),
 	getParentRoute: () => siteRoute,
-	path: 'ssh-migration-failed',
-} ).lazy( () =>
-	import( '../../sites/ssh-migration-failed' ).then( ( d ) =>
-		createLazyRoute( 'ssh-migration-failed' )( {
-			component: () => <d.default />,
-		} )
-	)
-);
+	path: 'migration-overview/share-access',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
 
-export const siteSSHMigrationCompleteRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Welcome to your new home' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'ssh-migration-complete',
+		const site = await queryClient
+			.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 0 } )
+			.catch( () => undefined );
+		if (
+			! site ||
+			! isAssistedWordPressMigration( site ) ||
+			site.site_migration.status_v2 !== 'pending'
+		) {
+			throw dashboardRedirect( { to: siteMigrationOverviewRoute.fullPath, params: { siteSlug } } );
+		}
+	},
 } ).lazy( () =>
-	import( '../../sites/ssh-migration-complete' ).then( ( d ) =>
-		createLazyRoute( 'ssh-migration-complete' )( {
+	import( '../../sites/migration-overview/share-access' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview-share-access' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -1967,8 +1960,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
 		siteMigrationAssistedIntroRoute,
-		siteSSHMigrationCompleteRoute,
-		siteSSHMigrationFailedRoute,
+		siteMigrationShareAccessRoute,
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
 		sitePerformanceRoute.addChildren( [
 			sitePerformanceIndexRoute,

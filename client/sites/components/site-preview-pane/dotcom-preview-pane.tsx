@@ -3,7 +3,6 @@ import { SiteExcerptData } from '@automattic/sites';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useMemo } from 'react';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
-import { isMigrationInProgress } from 'calypso/data/site-migration';
 import ItemView from 'calypso/layout/hosting-dashboard/item-view';
 import { useSetTabBreadcrumb } from 'calypso/sites/hooks/breadcrumbs/use-set-tab-breadcrumb';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';
@@ -16,7 +15,6 @@ import { StagingSiteStatus } from 'calypso/state/staging-site/constants';
 import { getStagingSiteStatus } from 'calypso/state/staging-site/selectors';
 import { useBreadcrumbs } from '../../hooks/breadcrumbs/use-breadcrumbs';
 import { showSitesPage } from '../sites-dashboard';
-import { SiteStatus } from '../sites-dataviews/sites-site-status';
 import {
 	DEPLOYMENTS,
 	FEATURE_TO_ROUTE_MAP,
@@ -60,7 +58,6 @@ const DotcomPreviewPane = ( {
 }: Props ) => {
 	const dispatch = useDispatch();
 	const { __ } = useI18n();
-	const isInProgress = isMigrationInProgress( site );
 	const isA4ADevSite = !! site?.is_a4a_dev_site;
 
 	const hasStagingSitesFeature = useSelector( ( state ) =>
@@ -163,7 +160,7 @@ const DotcomPreviewPane = ( {
 	] );
 
 	const itemData: ItemData = {
-		title: isInProgress ? __( 'Incoming Migration' ) : site.title,
+		title: site.title,
 		subtitle: site.slug,
 		url: site.URL,
 		blogId: site.ID,
@@ -235,13 +232,9 @@ const DotcomPreviewPane = ( {
 			enforceTabsView
 			itemViewHeaderExtraProps={ {
 				externalIconSize: 16,
-				siteIconFallback: isInProgress ? 'migration' : 'first-grapheme',
+				siteIconFallback: 'first-grapheme',
 				headerButtons: PreviewPaneHeaderButtons,
 				subtitleExtra: () => {
-					if ( isInProgress ) {
-						return <SiteStatus site={ site } />;
-					}
-
 					if ( shouldShowProductionBadge ) {
 						return <SitesProductionBadge>{ __( 'Production' ) }</SitesProductionBadge>;
 					}

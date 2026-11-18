@@ -13,6 +13,7 @@ import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { getStudentFlowRedirect } from 'calypso/lib/signup/student-flow-redirect';
 import { addQueryArgs } from 'calypso/lib/url';
 import LicensingPendingAsyncActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-pending-async-activation';
 import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation';
@@ -873,6 +874,11 @@ export function akismetCheckoutThankYou( context, next ) {
 	);
 
 	next();
+}
+
+// The Student flow lives in Stepper, outside this router, so it takes a full page load.
+export function studentCheckoutRedirect( context ) {
+	window.location.replace( getStudentFlowRedirect( '', context.querystring ) );
 }
 
 export function studioCheckoutReturn( context, next ) {

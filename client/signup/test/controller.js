@@ -115,6 +115,20 @@ describe( 'redirectLegacyFlow', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
+	it( 'sends /start/student to the Student flow with its query and locale', () => {
+		const next = jest.fn();
+		controller.redirectLegacyFlow(
+			{
+				params: { flowName: 'student', lang: 'es' },
+				querystring: 'ref=edu',
+			},
+			next
+		);
+
+		expect( window.location.replace ).toHaveBeenCalledWith( '/setup/student/es?ref=edu' );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
 	it( 'still redirects legacy plan flows', () => {
 		run( { flowName: 'business' } );
 

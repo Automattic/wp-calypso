@@ -153,6 +153,7 @@ describe( 'POT', () => {
 
 	test( 'should handle template literals', () => {
 		expect( output ).toEqual( expect.stringContaining( 'msgid "My hat has six corners."' ) );
+		expect( output ).toEqual( expect.stringContaining( 'msgid "My hat has `eight` corners."' ) );
 		expect( output ).toEqual(
 			expect.stringContaining( 'msgid "My hat\\nhas seventeen\\ncorners."' )
 		);

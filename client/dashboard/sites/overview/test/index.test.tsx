@@ -2,7 +2,6 @@
  * @vitest-environment jsdom
  */
 
-import config from '@automattic/calypso-config';
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
@@ -176,7 +175,6 @@ describe( '<SiteOverview>', () => {
 	afterEach( () => {
 		window.localStorage.clear();
 		window.history.replaceState( null, '', '/' );
-		config.disable( 'migration/reprint-flow' );
 	} );
 
 	test( 'renders the overview when the user cannot read media storage', async () => {
@@ -434,7 +432,6 @@ describe( '<SiteOverview>', () => {
 	} );
 
 	test( 'confirms a migration that just finished alongside the notice the arbiter picks', async () => {
-		config.enable( 'migration/reprint-flow' );
 		mediaStorageResponse = [ 200, { max_storage_bytes: 1000, storage_used_bytes: 2000 } ];
 		const migratedSite = {
 			...site,

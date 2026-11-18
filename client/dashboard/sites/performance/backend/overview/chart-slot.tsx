@@ -4,7 +4,6 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { dashboardChartTheme } from '../../../../app/chart-theme';
 import { useIntlLocale } from '../../../../app/locale';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
@@ -15,17 +14,23 @@ import '@automattic/charts/style.css';
 
 const CHART_ID = 'apm-response-time-breakdown';
 
-const SERIES: Array< { key: keyof Omit< ApmTimePoint, 'timestamp' >; label: string } > = [
-	{ key: 'db', label: __( 'Database' ) },
-	{ key: 'wp_core', label: __( 'WordPress core' ) },
-	{ key: 'plugins', label: __( 'Plugins' ) },
-	{ key: 'external', label: __( 'External' ) },
-	{ key: 'cache', label: __( 'Cache' ) },
+// Colors are the @automattic/charts palette before 4.x, which derives it from the admin color scheme.
+const SERIES: Array< {
+	key: keyof Omit< ApmTimePoint, 'timestamp' >;
+	label: string;
+	color: string;
+} > = [
+	{ key: 'db', label: __( 'Database' ), color: '#98C8DF' },
+	{ key: 'wp_core', label: __( 'WordPress core' ), color: '#006DAB' },
+	{ key: 'plugins', label: __( 'Plugins' ), color: '#A6DC80' },
+	{ key: 'external', label: __( 'External' ), color: '#1F9828' },
+	{ key: 'cache', label: __( 'Cache' ), color: '#FF8C8F' },
 ];
 
 function toSeriesData( timeseries: ApmTimePoint[] ): SeriesData[] {
-	return SERIES.map( ( { key, label } ) => ( {
+	return SERIES.map( ( { key, label, color } ) => ( {
 		label,
+		options: { stroke: color },
 		data: timeseries.map( ( point ) => ( {
 			date: new Date( point.timestamp ),
 			value: point[ key ],
@@ -86,7 +91,8 @@ export default function ChartSlot( {
 				</HStack>
 			</CardHeader>
 			<CardBody>
-				<GlobalChartsProvider theme={ dashboardChartTheme }>
+				{ /* Its own provider, so series hidden from the legend reset when the card unmounts. */ }
+				<GlobalChartsProvider>
 					<AreaChart
 						chartId={ CHART_ID }
 						height={ 320 }

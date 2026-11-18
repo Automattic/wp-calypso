@@ -1,4 +1,4 @@
-import { reportError } from '../../../helpers/log-error';
+import { reportRequestError } from '../../../helpers/log-error';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { wpcom } from '../../../rest-client/wpcom';
 import { spamNote as spamNoteAction } from '../actions';
@@ -19,7 +19,7 @@ const spamNote = ( note, immediately, restClient ) => async ( dispatch ) => {
 
 			await comment.update( commentData );
 		} catch ( error ) {
-			reportError( 'spam', error );
+			reportRequestError( 'spam', error );
 			throw error;
 		}
 	} else {

@@ -262,6 +262,27 @@ describe( '<McpConnectCard />', () => {
 		expect( document.body ).toHaveFocus();
 	} );
 
+	test( 'on a site, links Manual setup to the site setup page and says the connection covers every site', () => {
+		renderCard( { siteSlug: 'example.wordpress.com' } );
+
+		expect( screen.getByRole( 'link', { name: 'Manual setup' } ) ).toHaveAttribute(
+			'href',
+			'/sites/example.wordpress.com/settings/ai-tools/setup'
+		);
+		expect( screen.getByText( /It covers every site where MCP access is on\./ ) ).toBeVisible();
+	} );
+
+	test( 'on a site, offers to turn MCP access on for that site', async () => {
+		const onTurnOn = vi.fn();
+		renderCard( { siteSlug: 'example.wordpress.com', mcpEnabled: false, onTurnOn } );
+
+		expect( screen.getByText( 'MCP access is off for this site' ) ).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Turn on MCP access' } ) );
+
+		expect( onTurnOn ).toHaveBeenCalled();
+	} );
+
 	test( 'hides the MCP-off notice while access is on', () => {
 		renderCard();
 

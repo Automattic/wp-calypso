@@ -283,6 +283,7 @@ export default function PersonalDetailsSection() {
 							isEmailVerified={ isEmailVerified }
 							onValidationChange={ setIsEmailValid }
 							serverError={ emailSaveError }
+							hasUnsavedChanges={ isDirty || ( data.user_login ?? '' ) !== currentUsername }
 						/>
 
 						{ /* About me & web address */ }

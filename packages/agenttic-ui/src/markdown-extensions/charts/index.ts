@@ -1,6 +1,7 @@
 /**
  * Chart extension for markdown processing
  */
+import '@automattic/charts/style.css';
 import './charts.css';
 import React from 'react';
 import { ChartBlock } from './ChartBlock';

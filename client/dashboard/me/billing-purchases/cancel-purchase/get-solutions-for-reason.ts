@@ -33,6 +33,7 @@ const SOLUTION_IDS = {
 	USE_MIGRATION_TOOLS: 'use-migration-tools',
 	USE_DOMAIN_GUIDE: 'use-domain-guide',
 	EXPLORE_DOMAIN_OPTIONS: 'explore-domain-options',
+	BOOK_EXPERT_SESSION: 'book-expert-session',
 } as const;
 
 /** Too expensive: Expensive for the features offered */
@@ -72,6 +73,7 @@ const SOLUTIONS_BUDGET_CONSTRAINTS: SolutionCardConfig[] = [
 
 /** Too hard to use: Dashboard / Editor (with AI option) */
 const SOLUTIONS_HARD_TO_USE_WITH_AI: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.BOOK_EXPERT_SESSION },
 	{ id: SOLUTION_IDS.BUILT_BY },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
@@ -79,6 +81,7 @@ const SOLUTIONS_HARD_TO_USE_WITH_AI: SolutionCardConfig[] = [
 
 /** Too hard to use: Takes too much time / Tutorials not helpful (no AI option) */
 const SOLUTIONS_HARD_TO_USE_SUPPORT_ONLY: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.BOOK_EXPERT_SESSION },
 	{ id: SOLUTION_IDS.BUILT_BY },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },

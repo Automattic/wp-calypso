@@ -13,8 +13,13 @@ const preventWidows = ( text: TranslateResult ): TranslateResult => {
 	if ( typeof text !== 'string' ) {
 		return text;
 	}
-	// Replace the last space with a non-breaking space to prevent widows
-	return text.replace( /\s+(\S+)$/, '\u00A0$1' );
+	// Odd indexes hold the whitespace runs, so the last one sits before the last word.
+	const parts = text.split( /(\s+)/ );
+	if ( parts.length < 3 || ! parts[ parts.length - 1 ] ) {
+		return text;
+	}
+	parts[ parts.length - 2 ] = '\u00A0';
+	return parts.join( '' );
 };
 
 const HoverAreaContainer = styled.span``;

@@ -3,7 +3,7 @@
  */
 
 import { navigate } from 'calypso/lib/navigate';
-import { leaveCheckout, isRelativeUrl } from '../lib/leave-checkout';
+import { leaveCheckout } from '../lib/leave-checkout';
 
 // Mock dependencies
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
@@ -41,7 +41,7 @@ describe( 'leaveCheckout', () => {
 
 			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
 
-			expect( window.location.href ).toBe( '/home' );
+			expect( window.location.href ).toBe( `${ window.location.origin }/home` );
 			expect( navigate ).not.toHaveBeenCalled();
 		} );
 
@@ -78,12 +78,15 @@ describe( 'leaveCheckout', () => {
 			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
 
 			expect( window.location.href ).toBe(
-				`/checkout/studio-return?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`
+				`${ window.location.origin }/checkout/studio-return?studioSiteId=${ studioSiteId }&studioReturnTo=publish-site`
 			);
 		} );
 
-		it( 'should redirect to cancel_to when it is a Jetpack Cloud URL', () => {
-			const cancelTo = 'https://cloud.jetpack.com/purchases/subscriptions/example.com/123';
+		it.each( [
+			'https://cloud.jetpack.com/purchases/subscriptions/example.com/123',
+			// Its dev server needn't share checkout's port: `start-jetpack-cloud-p` runs on 3001.
+			'http://jetpack.cloud.localhost:3001/purchases/subscriptions/example.com/123',
+		] )( 'should redirect to cancel_to when it is a Jetpack Cloud URL: %s', ( cancelTo ) => {
 			window.location.search = `?cancel_to=${ encodeURIComponent( cancelTo ) }`;
 
 			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
@@ -213,67 +216,6 @@ describe( 'leaveCheckout', () => {
 			} );
 
 			expect( navigate ).toHaveBeenCalledWith( previousPath );
-		} );
-	} );
-} );
-
-describe( 'isRelativeUrl', () => {
-	beforeEach( () => {
-		Object.defineProperty( window, 'location', {
-			value: {
-				href: 'https://wordpress.com/checkout',
-				origin: 'https://wordpress.com',
-			},
-			writable: true,
-		} );
-	} );
-
-	describe( 'relative paths', () => {
-		const testCases = [
-			'/home',
-			'/path/to/page',
-			'path',
-			'./path',
-			'../path',
-			'https://wordpress.com/path',
-			'wordpress.com/path',
-			'//wordpress.com/path',
-			'/\\wordpress.com/path',
-		];
-
-		testCases.forEach( ( path ) => {
-			it( `should return true for relative path: ${ path }`, () => {
-				expect( isRelativeUrl( path ) ).toBe( true );
-			} );
-		} );
-	} );
-
-	describe( 'absolute URLs', () => {
-		const testCases = [
-			'http://example.com',
-			'//example.com',
-			'https://example.com/path',
-			'/\\example.com',
-		];
-
-		testCases.forEach( ( url ) => {
-			it( `should return false for absolute URL: ${ url }`, () => {
-				expect( isRelativeUrl( url ) ).toBe( false );
-			} );
-		} );
-	} );
-
-	describe( 'invalid URLs', () => {
-		const testCases = [
-			'javascript:alert(1)',
-			'data:text/html,<script>alert(1)</script>',
-			'mailto:test@example.com',
-		];
-
-		testCases.forEach( ( url ) => {
-			it( `should return false for invalid URL: ${ url }`, () => {
-				expect( isRelativeUrl( url ) ).toBe( false );
-			} );
 		} );
 	} );
 } );

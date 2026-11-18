@@ -1,14 +1,14 @@
-import { exec as _exec } from 'node:child_process';
+import { execFile as _execFile } from 'node:child_process';
 import { createWriteStream, constants as fsConstants } from 'node:fs';
 import { access } from 'node:fs/promises';
 import path from 'node:path';
 import { Readable } from 'node:stream';
 import { finished } from 'node:stream/promises';
 import util from 'node:util';
-const promiseExec = util.promisify( _exec );
+const promiseExecFile = util.promisify( _execFile );
 
-const exec = async ( cmd, opts ) => {
-	return promiseExec( cmd, {
+const execFile = async ( file, args, opts ) => {
+	return promiseExecFile( file, args, {
 		encoding: 'UTF-8',
 		stdio: 'inherit',
 		...opts,
@@ -25,7 +25,7 @@ export default async function didCalypsoAppChange( { slug, dir, artifactDir } ) 
 	const normalizer = path.join( dir, 'bin/normalize-artifact.sh' );
 	try {
 		await access( normalizer, fsConstants.X_OK );
-		await exec( normalizer, { cwd: prevReleaseDir } );
+		await execFile( normalizer, [], { cwd: prevReleaseDir } );
 		console.info( `Successfully normalized ${ slug }.` );
 	} catch ( e ) {
 		if ( e.code !== 'ENOENT' ) {
@@ -35,8 +35,17 @@ export default async function didCalypsoAppChange( { slug, dir, artifactDir } ) 
 	}
 
 	try {
-		await exec(
-			`diff -qr --exclude="*.js.map" --exclude="*.asset.php" --exclude="build_meta.json" --exclude="README.md" ${ artifactDir } ${ prevReleaseDir }`,
+		await execFile(
+			'diff',
+			[
+				'-qr',
+				'--exclude=*.js.map',
+				'--exclude=*.asset.php',
+				'--exclude=build_meta.json',
+				'--exclude=README.md',
+				artifactDir,
+				prevReleaseDir,
+			],
 			{ cwd: dir, maxBuffer: 1024 * 1024 * 32 } // 32MB buffer for large diffs.
 		);
 		return false;
@@ -73,6 +82,6 @@ async function downloadPrevBuild( appSlug, dir ) {
 	console.info( `Extracting downloaded archive for ${ appSlug }...` );
 	const stream = createWriteStream( prevBuildZip );
 	await finished( Readable.fromWeb( body ).pipe( stream ) );
-	await exec( `unzip -q ${ prevBuildZip } -d ${ dir }/prev-release` );
+	await execFile( 'unzip', [ '-q', prevBuildZip, '-d', `${ dir }/prev-release` ] );
 	return true;
 }
