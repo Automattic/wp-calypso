@@ -19,12 +19,12 @@ import { Connect } from './connect';
 import { Findings } from './findings';
 import { MigrationCard, MigrationFooter, StatusIcon } from './migration-card';
 import { Running } from './running';
-import type { Site, WordPressMigrationCancellation } from '@automattic/api-core';
+import type { Site } from '@automattic/api-core';
 
 // How long a completed migration can leave its site locked before we stop asking the user to wait.
 const UNLOCK_GRACE_PERIOD = 30000;
 
-// Allow the 30-second start lock to expire and a deferred assisted handoff to run.
+// Allow the 30-second duplicate-start window to expire.
 const STOPPED_STATUS_REFRESH_DELAY = 35000;
 
 const KNOWN_STATUSES = [
@@ -73,12 +73,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	const sourceHost = getSourceHost( migration?.source_url );
 	const cancel = useMutation( siteWordPressMigrationCancelMutation( site.ID ) );
 	const canCancel = ! error && migration?.can_cancel === true;
-	const { data: cancelResult, reset: resetCancel } = cancel;
-	useEffect( () => {
-		if ( canCancel && ( cancelResult?.status === 'wait' || cancelResult?.status === 'support' ) ) {
-			resetCancel();
-		}
-	}, [ canCancel, cancelResult, resetCancel ] );
 	const cancelAction = canCancel && (
 		<MigrationCancellation disabled={ cancel.isPending } onConfirm={ () => cancel.mutate() } />
 	);
@@ -197,19 +191,21 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		</Button>
 	);
 
-	const cancelFeedback = cancel.isError
-		? __( 'We couldn’t cancel your migration.' )
-		: getCancelFeedback( cancel.data?.status );
+	const cancelFailed = cancel.isError || cancel.data?.status === 'unlock_failed';
 
 	return (
 		<>
-			{ cancelFeedback && ! isFinished && migration?.status !== 'unlock_failed' && (
+			{ cancelFailed && ! isFinished && migration?.status !== 'unlock_failed' && (
 				<Notice
 					variant="error"
 					actions={ isConnecting ? contactUs : undefined }
 					onClose={ () => cancel.reset() }
 				>
-					{ cancelFeedback }
+					{ cancel.isError
+						? __( 'We couldn’t cancel your migration.' )
+						: __(
+								'We couldn’t unlock your site dashboard. Contact support for help restoring access.'
+							) }
 				</Notice>
 			) }
 			{ isUnreadable && ! isForbidden && (
@@ -314,21 +310,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			) }
 		</>
 	);
-}
-
-function getCancelFeedback( status?: WordPressMigrationCancellation[ 'status' ] ) {
-	switch ( status ) {
-		case 'wait':
-			return __( 'Migration work is still in progress. Wait for it to finish before cancelling.' );
-		case 'support':
-			return __(
-				'This migration may have changed your destination site. Contact support for help cancelling it.'
-			);
-		case 'unlock_failed':
-			return __(
-				'We couldn’t unlock your site dashboard. Contact support for help restoring access.'
-			);
-	}
 }
 
 function getSourceHost( sourceUrl?: string | null ) {

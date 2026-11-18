@@ -56,5 +56,5 @@ export type WordPressMigrationRunParams = {
 };
 
 export type WordPressMigrationCancellation = {
-	status: 'wait' | 'support' | 'cancelled' | 'unlock_failed';
+	status: 'cancelled' | 'unlock_failed';
 };

@@ -91,12 +91,6 @@ export const siteWordPressMigrationCancelMutation = ( siteId: number ) =>
 		onSuccess: ( cancellation ) => {
 			if ( cancellation.status === 'cancelled' ) {
 				queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
-			} else if ( cancellation.status === 'wait' || cancellation.status === 'support' ) {
-				// The locked check supersedes the cached flag while status is being refreshed.
-				queryClient.setQueryData(
-					siteWordPressMigrationStatusQuery( siteId ).queryKey,
-					( status ) => status && { ...status, can_cancel: false }
-				);
 			}
 		},
 		onSettled: () => invalidateMigration( siteId ),
