@@ -8,12 +8,12 @@
 	flex-shrink: 0;
 
 	&.is-fallback {
-		border: 1px solid rgba(0, 0, 0, 0.10);
-		background: #F0F0F0;
+		border: 1px solid var(--wpds-color-stroke-surface-neutral);
+		background: var(--wpds-color-background-surface-neutral-weak);
 
 		svg {
-			color: #949494;
-			fill: #949494;
+			color: var(--wpds-color-foreground-content-neutral-weak);
+			fill: var(--wpds-color-foreground-content-neutral-weak);
 			width: 32px;
 			height: 32px;
 		}

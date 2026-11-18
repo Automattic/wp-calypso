@@ -26,17 +26,17 @@ export const DomainUpsellIllustraction = ( {
 			<Rect
 				width="318"
 				height="192"
-				style={ { fill: 'var(--dashboard-domain-upsell-canvas, white)' } }
+				style={ { fill: 'var(--wpds-color-background-surface-neutral-strong)' } }
 			/>
 			<Rect
 				width="318"
 				height="192"
 				fill="url(#pattern0_8083_30798)"
-				style={ { fillOpacity: 'var(--dashboard-domain-upsell-grid-opacity, 0.12)' } }
+				style={ { fillOpacity: 0.12 } }
 			/>
 			<Path
 				d="M37 49C37 42.3726 42.3726 37 49 37H325V196H37V49Z"
-				style={ { fill: 'var(--dashboard-domain-upsell-window, white)' } }
+				style={ { fill: 'var(--wpds-color-background-surface-neutral-strong)' } }
 			/>
 			<Rect
 				x="51"
@@ -44,7 +44,7 @@ export const DomainUpsellIllustraction = ( {
 				width="162"
 				height="20"
 				rx="4"
-				style={ { fill: 'var(--dashboard-domain-upsell-chrome, #F7F7F7)' } }
+				style={ { fill: 'var(--wpds-color-background-surface-neutral-weak)' } }
 			/>
 			<Rect
 				x="51"
@@ -52,11 +52,11 @@ export const DomainUpsellIllustraction = ( {
 				width="288"
 				height="90"
 				rx="4"
-				style={ { fill: 'var(--dashboard-domain-upsell-chrome, #F7F7F7)' } }
+				style={ { fill: 'var(--wpds-color-background-surface-neutral-weak)' } }
 			/>
 			<Path
 				d="M37 49C37 42.3726 42.3726 37 49 37H325V75H37V49Z"
-				style={ { fill: 'var(--dashboard-domain-upsell-chrome, #F7F7F7)' } }
+				style={ { fill: 'var(--wpds-color-background-surface-neutral-weak)' } }
 			/>
 			{ [ 55, 67, 79 ].map( ( cx ) => (
 				<Circle
@@ -66,8 +66,8 @@ export const DomainUpsellIllustraction = ( {
 					r="3.25"
 					strokeWidth="1.5"
 					style={ {
-						fill: 'var(--dashboard-domain-upsell-window, #F7F8FE)',
-						stroke: 'var(--dashboard-domain-upsell-dot-stroke, #C3C4C7)',
+						fill: 'var(--wpds-color-background-surface-neutral-strong)',
+						stroke: 'var(--wpds-color-stroke-surface-neutral-strong)',
 					} }
 				/>
 			) ) }
@@ -77,7 +77,7 @@ export const DomainUpsellIllustraction = ( {
 				width="240"
 				height="22"
 				rx="4"
-				style={ { fill: 'var(--dashboard-domain-upsell-window, white)' } }
+				style={ { fill: 'var(--wpds-color-background-surface-neutral-strong)' } }
 			/>
 			<text
 				x={ isRTL() ? -119 : 119 }

@@ -9,7 +9,7 @@
 	block-size: 88px;
 	overflow: hidden;
 	border-radius: $radius-medium;
-	background-color: var( --color-neutral-5 );
+	background-color: var( --wpds-color-background-surface-neutral-weak );
 
 	// Static placeholder that covers the preview until the iframe has finished
 	// loading. A loading iframe paints an opaque viewport, so the placeholder
@@ -19,7 +19,7 @@
 		position: absolute;
 		inset: 0;
 		z-index: 1;
-		background-color: var( --color-neutral-5 );
+		background-color: var( --wpds-color-background-surface-neutral-weak );
 	}
 
 	&[data-preview-loaded="true"]::before {

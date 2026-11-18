@@ -17,20 +17,20 @@
 
 		&:not(.is-current)::after {
 			content: '/';
-			color: $gray-200;
+			color: var(--wpds-color-stroke-surface-neutral, #{$gray-200});
 			margin: 0 8px;
 			@include body-medium;
 		}
 	}
 
 	.a8c-components-breadcrumbs__item {
-		color: $gray-700;
+		color: var(--wpds-color-foreground-content-neutral-weak, #{$gray-700});
 		height: auto;
 		padding: 0;
 		@include body-medium;
 
 		&:hover {
-			color: $gray-900;
+			color: var(--wpds-color-foreground-content-neutral, #{$gray-900});
 		}
 	}
 
