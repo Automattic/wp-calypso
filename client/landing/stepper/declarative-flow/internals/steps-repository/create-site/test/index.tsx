@@ -65,6 +65,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	setThemeOnSite: jest.fn(),
 	isAIBuilderOnboardingFlow: () => false,
 	isCopySiteFlow: () => false,
+	isDomainFlow: ( flow: string ) => flow === 'domain',
 	isEntrepreneurFlow: () => false,
 	isNewHostedSiteCreationFlow: () => false,
 	isNewsletterFlow: () => false,
@@ -317,22 +318,25 @@ describe( 'create-site', () => {
 		);
 	} );
 
-	// A rejected cart in onboarding goes to the error step instead of an empty checkout.
-	it( 'asks the cart add to throw in the onboarding flow', async () => {
-		mockPlanCartItem = { product_slug: 'personal-bundle' };
+	// A rejected cart goes to the error step instead of an empty checkout.
+	it.each( [ 'onboarding', 'domain' ] )(
+		'asks the cart add to throw in the %s flow',
+		async ( flow ) => {
+			mockPlanCartItem = { product_slug: 'personal-bundle' };
 
-		await runStep( { flow: 'onboarding' } );
+			await runStep( { flow } );
 
-		expect( addProductsToCart ).toHaveBeenCalledWith(
-			'brand-new.wordpress.com',
-			'onboarding',
-			[ mockPlanCartItem ],
-			{ throwOnError: true }
-		);
-	} );
+			expect( addProductsToCart ).toHaveBeenCalledWith(
+				'brand-new.wordpress.com',
+				flow,
+				[ mockPlanCartItem ],
+				{ throwOnError: true }
+			);
+		}
+	);
 
-	// Some other flows that share this step have no failure branch after processing, so the
-	// other flows keep the old swallow-and-continue behaviour.
+	// Some other flows that share this step have no failure branch after processing, so a throw
+	// there has nothing to catch it.
 	it( 'does not ask the cart add to throw in other flows', async () => {
 		mockPlanCartItem = { product_slug: 'personal-bundle' };
 
