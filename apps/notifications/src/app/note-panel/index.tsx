@@ -15,7 +15,7 @@ import { modifierKeyIsActive } from '../../panel/helpers/input';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { getFilters } from '../../panel/templates/filters';
-import { useAppContext } from '../context';
+import { useOpenFullView } from '../context';
 import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
@@ -54,7 +54,7 @@ const NotePanel = ( {
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
 	const selectedTabRef = useRef< string >( filterName );
-	const { onOpenFullView } = useAppContext();
+	const openFullView = useOpenFullView( { filterName, noteId: selectedNoteId } );
 
 	const handleSelect = useCallback(
 		( tabId: string | null | undefined, source: 'tab' | 'shortcut' ) => {
@@ -178,9 +178,9 @@ const NotePanel = ( {
 					) }
 				</Tabs.Panel>
 			) ) }
-			{ onOpenFullView && (
+			{ openFullView && (
 				<CardFooter size="small" justify="center">
-					<Button className="wpnc-app__full-view" variant="tertiary" onClick={ onOpenFullView }>
+					<Button className="wpnc-app__full-view" variant="tertiary" onClick={ openFullView }>
 						{ __( 'Open full view' ) }
 					</Button>
 				</CardFooter>

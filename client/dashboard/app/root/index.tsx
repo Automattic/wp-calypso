@@ -27,6 +27,7 @@ import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
 import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
+import { getInboxLocation, type NotificationsPanelView } from '../notifications/panel-view';
 import { useOmnibarEvent } from '../omnibar/events';
 import { useSyncOmnibarSite } from '../omnibar/site';
 import { RenewalSuccessFlashMessage } from '../renewal-success-flash-message';
@@ -112,7 +113,7 @@ function Root() {
 		select: ( state ) => state.matches.some( ( match ) => match.routeId === '/notifications' ),
 	} );
 	const openNotificationsInbox = useCallback(
-		() => router.navigate( { to: '/notifications' } ),
+		( view: NotificationsPanelView ) => router.navigate( getInboxLocation( view ) ),
 		[ router ]
 	);
 
