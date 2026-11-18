@@ -165,9 +165,9 @@ export default function SecurityConnectedApps() {
 				<EmptyState.Wrapper isCompact>
 					<EmptyState>
 						<EmptyState.Header>
-							<EmptyState.Title>{ __( 'No connected apps' ) }</EmptyState.Title>
+							<EmptyState.Title>{ __( 'No connected applications' ) }</EmptyState.Title>
 							<EmptyState.Description>
-								{ __( 'Apps you connect to your WordPress.com account will appear here.' ) }
+								{ __( 'Applications you connect to your account will appear here.' ) }
 							</EmptyState.Description>
 						</EmptyState.Header>
 					</EmptyState>

@@ -21,9 +21,11 @@ describe( '<SecurityConnectedApps>', () => {
 
 		render( <SecurityConnectedApps /> );
 
-		expect( await screen.findByRole( 'heading', { name: 'No connected apps' } ) ).toBeVisible();
 		expect(
-			screen.getByText( 'Apps you connect to your WordPress.com account will appear here.' )
+			await screen.findByRole( 'heading', { name: 'No connected applications' } )
+		).toBeVisible();
+		expect(
+			screen.getByText( 'Applications you connect to your account will appear here.' )
 		).toBeVisible();
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
 	} );
@@ -38,7 +40,7 @@ describe( '<SecurityConnectedApps>', () => {
 		expect( await screen.findByText( 'Example App' ) ).toBeVisible();
 		expect( screen.getByRole( 'table' ) ).toBeVisible();
 		expect(
-			screen.queryByRole( 'heading', { name: 'No connected apps' } )
+			screen.queryByRole( 'heading', { name: 'No connected applications' } )
 		).not.toBeInTheDocument();
 	} );
 } );

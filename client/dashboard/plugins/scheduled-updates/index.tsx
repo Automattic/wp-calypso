@@ -256,7 +256,7 @@ export default function PluginsScheduledUpdates() {
 				{ hasNoSchedules ? (
 					<DataViewsEmptyStateLayout
 						title={ __( 'Choose when your plugins update' ) }
-						description={ __( 'Set a schedule once, and your sites stay up to date.' ) }
+						description={ __( 'Updates run daily or weekly, at the time you pick.' ) }
 					>
 						<EmptyState.ActionList>
 							<EmptyState.ActionItem

@@ -56,7 +56,7 @@ describe( '<MonetizeSubscriptions>', () => {
 		).toBeVisible();
 		expect(
 			screen.getByText(
-				'Paid subscriptions and donations to other WordPress.com sites will appear here.'
+				'Paid memberships and donations to other WordPress.com sites will appear here.'
 			)
 		).toBeVisible();
 		expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();

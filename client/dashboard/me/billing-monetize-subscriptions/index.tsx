@@ -117,7 +117,7 @@ function MonetizeSubscriptions() {
 					<DataViewsEmptyStateLayout
 						title={ __( 'No memberships or donations yet' ) }
 						description={ __(
-							'Paid subscriptions and donations to other WordPress.com sites will appear here.'
+							'Paid memberships and donations to other WordPress.com sites will appear here.'
 						) }
 					/>
 				) : (

@@ -85,7 +85,7 @@ describe( '<PluginsScheduledUpdates>', () => {
 			await screen.findByRole( 'heading', { name: 'Choose when your plugins update' } )
 		).toBeVisible();
 		expect(
-			screen.getByText( 'Set a schedule once, and your sites stay up to date.' )
+			screen.getByText( 'Updates run daily or weekly, at the time you pick.' )
 		).toBeVisible();
 		expect(
 			screen.getByText( 'Select the sites, the plugins, and how often they update.' )
