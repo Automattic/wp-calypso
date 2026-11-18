@@ -5,9 +5,8 @@ import { addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding'
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
-import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
-import { getUrlOnOrigins } from 'calypso/dashboard/utils/url';
+import { resolveDomainConnectionSetupUrl } from 'calypso/dashboard/utils/url';
 import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import wpcom from 'calypso/lib/wp';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
@@ -62,20 +61,11 @@ const domainUpsell: Flow = {
 
 		const submittedDomains = useRef( false );
 
-		/**
-		 * The template arrives via the query string and ends up in `window.location.replace()`,
-		 * so accept only URLs on this origin or the dashboard's. Check the URL the domain
-		 * completes, not the template: a template of just `%s` passes any origin check.
-		 */
 		function getDomainConnectionSetupUrl( domain: string ) {
-			const url =
-				domainConnectionSetupUrlTemplate &&
-				getUrlOnOrigins(
-					domainConnectionSetupUrlTemplate.replace( '%s', domain ),
-					[ window.location.origin, ...dashboardOrigins() ],
-					window.location.origin
-				);
-			return url || domainMappingSetup( siteSlug, domain, '', false, true );
+			return (
+				resolveDomainConnectionSetupUrl( domainConnectionSetupUrlTemplate, domain ) ||
+				domainMappingSetup( siteSlug, domain, '', false, true )
+			);
 		}
 
 		function getPostCheckoutUrl( domainCartItems: MinimalRequestCartProduct[] ) {

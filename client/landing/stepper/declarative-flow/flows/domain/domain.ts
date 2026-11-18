@@ -11,9 +11,9 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
-import { getUrlOnOrigins } from 'calypso/dashboard/utils/url';
+import { resolveDomainConnectionSetupUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
@@ -53,21 +53,6 @@ function initialize() {
 	];
 
 	return stepsWithRequiredLogin( steps );
-}
-
-/**
- * The template comes from the query string, so accept the URL the domain completes
- * only on this origin or the dashboard's.
- */
-function getDomainConnectionSetupUrl( template: string | undefined, domain: string ) {
-	return (
-		template &&
-		getUrlOnOrigins(
-			template.replace( '%s', domain ),
-			[ window.location.origin, ...dashboardOrigins() ],
-			window.location.origin
-		)
-	);
 }
 
 /**
@@ -240,7 +225,7 @@ const domain: FlowV2< typeof initialize > = {
 						const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
 							string | undefined;
 						window.location.href =
-							getDomainConnectionSetupUrl(
+							resolveDomainConnectionSetupUrl(
 								domainConnectionSetupUrl,
 								providedDependencies.domain
 							) || defaultRedirect;
@@ -295,7 +280,8 @@ const domain: FlowV2< typeof initialize > = {
 								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 								/// Redirect to appropriate domains page
 								const redirectUrl =
-									( domain && getDomainConnectionSetupUrl( domainConnectionSetupUrl, domain ) ) ||
+									( domain &&
+										resolveDomainConnectionSetupUrl( domainConnectionSetupUrl, domain ) ) ||
 									defaultRedirect;
 								return {
 									redirectTo: redirectUrl,

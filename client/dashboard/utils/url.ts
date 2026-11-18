@@ -1,5 +1,5 @@
 import { determineUrlType, URL_TYPE } from '@automattic/calypso-url';
-import { wpcomLink } from './link';
+import { dashboardOrigins, wpcomLink } from './link';
 
 export function isRelativeUrl( url: string ) {
 	if ( ! url ) {
@@ -27,6 +27,25 @@ export function getUrlOnOrigins( url: string, origins: string[], base?: string )
 		}
 	}
 	return undefined;
+}
+
+/**
+ * The domain's connection setup URL from a `domainConnectionSetupUrl` template, which
+ * arrives via the query string. The URL is checked after the domain is filled in, since
+ * a template of just `%s` passes any origin check, and must be on this origin or the dashboard's.
+ */
+export function resolveDomainConnectionSetupUrl(
+	template: string | null | undefined,
+	domain: string
+) {
+	if ( ! template ) {
+		return undefined;
+	}
+	return getUrlOnOrigins(
+		template.replace( '%s', domain ),
+		[ window.location.origin, ...dashboardOrigins() ],
+		window.location.origin
+	);
 }
 
 export function isOnboardingUrl( url: string ) {
