@@ -554,8 +554,9 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 	}
 }
 
-// Chart tooltips draw their own box, so the library's is cleared.
+// Chart tooltips draw their own box, so the library's is cleared. They take the surface's font.
 .visx-tooltip:has( .ai-ui-renderer__chart-tooltip ) {
+	font-family: inherit;
 	padding: 0 !important;
 	background: none !important;
 	box-shadow: none !important;
