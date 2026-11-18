@@ -284,7 +284,8 @@ export const setUpMailboxRoute = createRoute( {
 
 		await redirectIfInvalidDomain( domainName );
 
-		const existingMailboxes = await queryClient.ensureQueryData(
+		// Intentional call to `fetchQuery`: stale cached accounts can hide a free mailbox and redirect away.
+		const existingMailboxes = await queryClient.fetchQuery(
 			mailboxAccountsQuery( domain.blog_id, domainName )
 		);
 
