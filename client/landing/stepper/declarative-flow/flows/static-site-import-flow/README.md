@@ -24,10 +24,13 @@ and immediately opens the site’s Overview in the dashboard
 tracks capture and import in the background, then offers the finished site with a way to hand the
 move to our migrations team.
 
-An existing destination requires authentication. Paid destinations skip plans and checkout;
-free destinations use site checkout to buy a plan before starting the import session.
-The reading step asks for confirmation before importing into an existing destination unless
-this tab just came back from checkout in this flow. The confirmation shows the source and the
+An existing destination requires authentication and always starts at the reading step, which
+asks for confirmation before importing into it unless this tab just came back from checkout in
+this flow. Once confirmed, a paid destination starts the import session and goes to Overview. A
+free destination, including an existing preview site, starts the session and goes on to plans
+with its `importSessionId`, then site checkout, which returns to the reading step to continue
+that session. Plans sends an existing destination back to the reading step until it has
+confirmed. The confirmation shows the source and the
 destination side by side (the same comparison as `site-migration`'s check step), says that the
 import replaces all of the destination's content (delivery restores the built site over it,
 keeping only users), and offers **Use a different importer**, which exits to the

@@ -201,19 +201,30 @@ describe( 'Static site import flow', () => {
 		} );
 
 		it.each( [
-			[ `${ plansPath }?${ new URLSearchParams( SOURCE ) }`, AssertConditionState.SUCCESS ],
-			[ `${ readingPath }?siteId=42`, AssertConditionState.CHECKING ],
-		] )( 'waits for the destination site only when the URL names one (%s)', ( url, state ) => {
-			jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: null, isFetching: true } );
+			[
+				`${ plansPath }?${ new URLSearchParams( SOURCE ) }`,
+				STEPS.UNIFIED_PLANS,
+				AssertConditionState.SUCCESS,
+			],
+			[
+				`${ readingPath }?siteId=42`,
+				STEPS.STATIC_SITE_IMPORT_READING,
+				AssertConditionState.CHECKING,
+			],
+		] )(
+			'waits for the destination site only when the URL names one (%s)',
+			( url, step, state ) => {
+				jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: null, isFetching: true } );
 
-			const result = renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
-				currentStep: STEPS.UNIFIED_PLANS.slug,
-				currentURL: url,
-			} );
+				const result = renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
+					currentStep: step.slug,
+					currentURL: url,
+				} );
 
-			expect( result.state ).toBe( state );
-			expect( window.location.assign ).not.toHaveBeenCalled();
-		} );
+				expect( result.state ).toBe( state );
+				expect( window.location.assign ).not.toHaveBeenCalled();
+			}
+		);
 	} );
 
 	describe( 'choosing a plan', () => {
@@ -270,18 +281,30 @@ describe( 'Static site import flow', () => {
 			} );
 		} );
 
-		it( 'skips plans and checkout for an existing paid destination', () => {
-			jest.mocked( useSite ).mockReturnValue( PAID_SITE );
+		it.each( [
+			{ name: 'a paid destination', site: PAID_SITE, query: '' },
+			{ name: 'a free destination before it confirms', site: undefined, query: '' },
+			{
+				name: 'a paid destination with a started session',
+				site: PAID_SITE,
+				query: '&importSessionId=abc123',
+			},
+		] )( 'sends $name from plans to confirm on the reading step', ( { site, query } ) => {
+			jest.mocked( useSite ).mockReturnValue( site );
 
-			const navigate = renderPlansNavigation( `${ plansPath }?siteId=42` );
+			const navigate = renderPlansNavigation( `${ plansPath }?siteId=42${ query }` );
 
 			expect( navigate ).toHaveBeenCalledWith(
 				STEPS.STATIC_SITE_IMPORT_READING.slug,
 				undefined,
 				true
 			);
-			expect( goToCheckout ).not.toHaveBeenCalled();
-			expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
+		} );
+
+		it( 'keeps a free destination that confirmed on plans to buy one', () => {
+			const navigate = renderPlansNavigation( `${ plansPath }?siteId=42&importSessionId=abc123` );
+
+			expect( navigate ).not.toHaveBeenCalled();
 		} );
 
 		it( 'shows an error when no plan is selected', () => {
