@@ -42,8 +42,7 @@ export class Client {
 		// Per-tab load-more exhaustion, keyed by tab name.
 		this.filteredHasMore = {};
 		this.gettingFilteredNotes = false;
-		this.loadMoreRetryAt = 0;
-		this.loadMoreRetries = 0;
+		this.loadMoreBackoff = {};
 		this.loadMoreTimer = null;
 		this.retries = 0;
 		this.subscribeTry = 0;
@@ -246,7 +245,7 @@ function getNotes( before, livePushMessages = [] ) {
 		this.gettingNotes = false;
 
 		if ( error ) {
-			if ( before ? this.loadMoreRetries === 0 : this.retries === 0 ) {
+			if ( before ? ! this.loadMoreBackoff.all : this.retries === 0 ) {
 				reportRequestError( before ? 'load-more' : 'load', error, {
 					request: 'getNotes',
 					before: before ?? null,
@@ -257,7 +256,7 @@ function getNotes( before, livePushMessages = [] ) {
 			}
 			// Load-more: clear the spinner, leave state untouched; retry after a backoff.
 			if ( before ) {
-				scheduleLoadMoreRetry.call( this );
+				scheduleLoadMoreRetry.call( this, 'all' );
 				store.dispatch( actions.ui.loadedNotes() );
 				return;
 			}
@@ -323,7 +322,7 @@ function getNotes( before, livePushMessages = [] ) {
 			// `before` echoes back isn't double-counted.
 			const known = new Set( this.noteList.map( ( n ) => n.id ) );
 			this.noteList = this.noteList.concat( pageList.filter( ( n ) => ! known.has( n.id ) ) );
-			this.loadMoreRetries = 0;
+			delete this.loadMoreBackoff.all;
 			trackLoadMore( 'all', this.noteList.length, ! this.hasMoreNotes( 'all' ) );
 		} else {
 			// Merge the head over the window, keeping the older paged-in tail.
@@ -465,6 +464,8 @@ function setFilter( filterName ) {
 	if ( this.filter && this.isVisible ) {
 		this.getFilteredNotes();
 	}
+
+	resumeLoadMoreRetry.call( this );
 }
 
 /**
@@ -519,7 +520,7 @@ function getFilteredNotes( before ) {
 		const activeTabNeedsFetch = this.filter && this.isVisible && this.filterName !== key;
 
 		if ( error ) {
-			if ( ! before || this.loadMoreRetries === 0 ) {
+			if ( ! before || ! this.loadMoreBackoff[ key ] ) {
 				reportRequestError( 'load-filter', error, {
 					request: 'getFilteredNotes',
 					before: before ?? null,
@@ -528,7 +529,7 @@ function getFilteredNotes( before ) {
 				} );
 			}
 			if ( before ) {
-				scheduleLoadMoreRetry.call( this );
+				scheduleLoadMoreRetry.call( this, key );
 			}
 			store.dispatch( actions.ui.loadedNotes( { filter: key } ) );
 			if ( activeTabNeedsFetch ) {
@@ -559,7 +560,7 @@ function getFilteredNotes( before ) {
 				data.notes.length >= parameters.number &&
 				appended.length < settings.max_limit;
 
-			this.loadMoreRetries = 0;
+			delete this.loadMoreBackoff[ key ];
 			trackLoadMore( key, appended.length, ! this.filteredHasMore[ key ] );
 		} else {
 			// Merge the head over the list, keeping the older paged-in tail. Drop
@@ -809,28 +810,49 @@ function handleStorageEvent( event ) {
 }
 
 /**
- * Hold load-more for a growing backoff after a failed page, then retry it.
+ * Hold load-more on a tab for a growing backoff after one of its pages failed, then retry it.
+ * @param key The tab the failed page was fetched for.
  */
-function scheduleLoadMoreRetry() {
-	this.loadMoreRetries = this.loadMoreRetries + 1;
-	const backoff_ms = Math.min(
-		settings.refresh_ms * this.loadMoreRetries,
-		settings.max_refresh_ms
-	);
-	this.loadMoreRetryAt = Date.now() + backoff_ms;
+function scheduleLoadMoreRetry( key ) {
+	const retries = ( this.loadMoreBackoff[ key ]?.retries ?? 0 ) + 1;
+	const backoff_ms = Math.min( settings.refresh_ms * retries, settings.max_refresh_ms );
+	this.loadMoreBackoff[ key ] = { retries, retryAt: Date.now() + backoff_ms };
+	resumeLoadMoreRetry.call( this );
+}
+
+/**
+ * Arm the retry timer for the active tab's failed page, if it has one, while notifications are showing and visible.
+ */
+function resumeLoadMoreRetry() {
 	clearTimeout( this.loadMoreTimer );
-	const retry = () => {
-		if ( this.gettingNotes || this.gettingFilteredNotes ) {
-			this.loadMoreTimer = setTimeout( retry, 1000 );
-			return;
-		}
-		this.loadMore();
-	};
-	this.loadMoreTimer = setTimeout( retry, backoff_ms );
+	this.loadMoreTimer = null;
+
+	const backoff = this.loadMoreBackoff[ getLoadMoreKey.call( this ) ];
+	if ( ! backoff || ! this.isShowing || ! this.isVisible ) {
+		return;
+	}
+
+	const wait_ms = backoff.retryAt - Date.now();
+	if ( wait_ms > 0 ) {
+		this.loadMoreTimer = setTimeout( () => resumeLoadMoreRetry.call( this ), wait_ms );
+		return;
+	}
+	if ( this.gettingNotes || this.gettingFilteredNotes ) {
+		this.loadMoreTimer = setTimeout( () => resumeLoadMoreRetry.call( this ), 1000 );
+		return;
+	}
+	this.loadMore();
+}
+
+/**
+ * Return the tab name load-more pages for: the active filter's name, or `all` when unfiltered.
+ */
+function getLoadMoreKey() {
+	return this.filter ? this.filterName : 'all';
 }
 
 function loadMore() {
-	if ( Date.now() < this.loadMoreRetryAt ) {
+	if ( Date.now() < ( this.loadMoreBackoff[ getLoadMoreKey.call( this ) ]?.retryAt ?? 0 ) ) {
 		return;
 	}
 
@@ -922,6 +944,8 @@ function setVisibility( { isShowing, isVisible } ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
 	}
+
+	resumeLoadMoreRetry.call( this );
 }
 
 function setLocale( locale ) {

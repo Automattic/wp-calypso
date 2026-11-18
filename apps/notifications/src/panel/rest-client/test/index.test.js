@@ -122,6 +122,7 @@ describe( 'RestClient', () => {
 		it( 'retries a failed page after a backoff instead of re-requesting it straight away', () => {
 			seedFirstWindow();
 			client.subscribed = true;
+			client.isShowing = true;
 
 			client.loadMore();
 			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
@@ -134,6 +135,38 @@ describe( 'RestClient', () => {
 			vi.advanceTimersByTime( 1000 );
 			expect( getCalls ).toHaveLength( 1 );
 			expect( getCalls[ 0 ].query ).toHaveProperty( 'before' );
+		} );
+
+		it( 'does not retry a failed page while notifications are closed, and retries once reopened', () => {
+			init( {
+				req: {
+					get: ( path, query, callback ) => getCalls.push( { path, query, callback } ),
+					post: () => Promise.resolve(),
+				},
+				pinghub: { connect: () => {} },
+			} );
+			seedFirstWindow();
+			client.subscribed = true;
+			client.isShowing = true;
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+
+			vi.advanceTimersByTime( 600000 );
+			expect( getCalls.filter( ( call ) => call.query.before ) ).toHaveLength( 0 );
+
+			client.setVisibility( { isShowing: true, isVisible: true } );
+			getCalls
+				.filter( ( call ) => ! call.query.before )
+				.forEach( ( call ) =>
+					call.callback( null, {
+						notes: fullPage( 10, 100 ).map( ( { id, note_hash } ) => ( { id, note_hash } ) ),
+					} )
+				);
+			vi.advanceTimersByTime( 1000 );
+			expect( getCalls.filter( ( call ) => call.query.before ) ).toHaveLength( 1 );
 		} );
 
 		it( 'does not send before on the initial window fetch', () => {
