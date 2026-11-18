@@ -5,9 +5,6 @@ import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import actions from '../../panel/state/actions';
 
-/**
- * Renders the button that asks the host to open the notification settings.
- */
 export default function NoteSettingsButton() {
 	const dispatch = useDispatch();
 
