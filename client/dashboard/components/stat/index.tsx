@@ -51,6 +51,13 @@ interface StatProps {
 	strapline?: string;
 }
 
+const PROGRESS_COLORS = {
+	default: 'var( --wpds-color-background-thumb-brand )',
+	'alert-yellow': 'var( --dashboard__background-color-warning )',
+	'alert-red': 'var( --dashboard__background-color-error )',
+	'alert-green': 'var( --dashboard__background-color-success )',
+};
+
 export function Stat( {
 	density = 'low',
 	description,
@@ -89,7 +96,7 @@ export function Stat( {
 			</HStack>
 			{ progressValue !== undefined && (
 				<Progress.Root
-					className={ `dashboard-stat__progress-bar dashboard-stat__progress-bar--${ progressColor }` }
+					className="dashboard-stat__progress-bar"
 					value={ progressValue }
 					aria-labelledby={ strapline ? straplineId : undefined }
 					aria-label={ strapline ? undefined : progressLabel }
@@ -97,7 +104,7 @@ export function Stat( {
 					aria-hidden={ isLoading }
 				>
 					<Progress.Track>
-						<Progress.Indicator />
+						<Progress.Indicator color={ PROGRESS_COLORS[ progressColor ?? 'default' ] } />
 					</Progress.Track>
 				</Progress.Root>
 			) }

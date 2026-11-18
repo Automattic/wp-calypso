@@ -2,6 +2,7 @@
 	"extends": ["../../.stylelintrc"],
 	"rules": {
 		"plugin-wpds/no-unknown-ds-tokens": true,
+		"plugin-wpds/no-setting-wpds-custom-properties": true,
 		"property-disallowed-list": [
 			[
 				"margin-left",
@@ -35,5 +36,13 @@
 				"severity": "warning"
 			}
 		]
-	}
+	},
+	"overrides": [
+		{
+			"files": ["agency/components/showcase/style.scss"],
+			"rules": {
+				"plugin-wpds/no-setting-wpds-custom-properties": null
+			}
+		}
+	]
 }
