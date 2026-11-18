@@ -34,9 +34,9 @@ require( './validate-config-keys' );
  * @returns {Array}         Paths output from git command
  */
 function parseGitDiffToPathArray( args ) {
-	return execFileSync( 'git', [ 'diff', ...args ], { encoding: 'utf8' } )
-		.split( '\n' )
-		.map( ( name ) => name.trim() )
+	// -z keeps names verbatim; without it Git quotes and escapes non-ASCII names.
+	return execFileSync( 'git', [ 'diff', '-z', ...args ], { encoding: 'utf8' } )
+		.split( '\0' )
 		.filter( ( name ) => /(?:\.json|\.[cm]?[jt]sx?|\.md|\.scss|\.php)$/.test( name ) );
 }
 

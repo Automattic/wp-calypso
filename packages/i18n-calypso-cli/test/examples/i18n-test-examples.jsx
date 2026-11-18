@@ -23,6 +23,7 @@ function test() {
 
 	// Should catch template literals
 	content = i18n.translate( `My hat has six corners.` );
+	content = i18n.translate( `My hat has \`eight\` corners.` );
 	content = i18n.translate( `My hat
 has seventeen
 corners.` );
