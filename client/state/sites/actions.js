@@ -1,3 +1,4 @@
+import { isInaccessibleJetpackError } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { omit } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
@@ -194,7 +195,7 @@ export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 					( error?.status === 400 &&
 						( error?.name === 'ApiNotFoundError' || error?.name === 'JetpackNotFoundError' ) ) ||
 					// A site that errors on every request, e.g. after a PHP fatal, is still known to WPCOM.
-					error?.message?.startsWith( 'The Jetpack site is inaccessible' )
+					isInaccessibleJetpackError( error )
 				) {
 					return doRequest( true );
 				}

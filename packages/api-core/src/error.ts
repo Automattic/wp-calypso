@@ -18,7 +18,11 @@ export function isWpError( error: unknown ): error is WPError {
 
 export function isInaccessibleJetpackError( error: unknown ): boolean {
 	if ( error instanceof Error ) {
-		if ( error.message.startsWith( 'The Jetpack site is inaccessible' ) ) {
+		if ( 'error' in error && error.error === 'inaccessible_jetpack_site' ) {
+			return true;
+		}
+		// Not every proxied Jetpack failure uses the dedicated error code, so also match the message.
+		if ( /jetpack site is inaccessible/i.test( error.message ) ) {
 			return true;
 		}
 		if (

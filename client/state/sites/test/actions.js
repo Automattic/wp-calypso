@@ -257,6 +257,18 @@ describe( 'actions', () => {
 				.reply( 400, {
 					error: 'server_error',
 					message: 'The Jetpack site is inaccessible or returned an error:  []',
+				} )
+				.get( '/rest/v1.2/sites/555555555' )
+				.query( { force: 'wpcom' } )
+				.reply( 200, {
+					ID: 555555555,
+					name: 'Jetpack Unreachable Test Site',
+					capabilities: {},
+				} )
+				.get( '/rest/v1.2/sites/555555555' )
+				.reply( 403, {
+					error: 'inaccessible_jetpack_site',
+					message: 'We couldn’t connect to this site.',
 				} );
 		} );
 
@@ -325,6 +337,22 @@ describe( 'actions', () => {
 			expect( spy ).toHaveBeenCalledWith( {
 				type: SITE_REQUEST_SUCCESS,
 				siteId: 987654321,
+			} );
+		} );
+
+		test( 'should retry with force wpcom on the inaccessible Jetpack site error code', async () => {
+			await requestSite( 555555555 )( spy, () => {} );
+
+			expect( spy ).toHaveBeenCalledWith(
+				receiveSite( {
+					ID: 555555555,
+					name: 'Jetpack Unreachable Test Site',
+					capabilities: {},
+				} )
+			);
+			expect( spy ).toHaveBeenCalledWith( {
+				type: SITE_REQUEST_SUCCESS,
+				siteId: 555555555,
 			} );
 		} );
 
