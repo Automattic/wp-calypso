@@ -2,7 +2,7 @@ import * as Charts from '@automattic/charts';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { assertUniqueSeries, getChartTable, getLabel } from '../utils/chart-data';
-import { CHART_HEIGHT, ChartFigure, ZERO_BASED_SCALE } from './chart-figure';
+import { CHART_HEIGHT, ChartFigure, getChartColor, ZERO_BASED_SCALE } from './chart-figure';
 import { getSeriesTooltipRenderer } from './chart-tooltip';
 import type { Series } from '../utils/chart-data';
 
@@ -39,9 +39,11 @@ export function BarChart( { title, series, orientation }: BarChartProps ) {
 	// The library draws a horizontal chart's first category at the bottom, so this reverses them.
 	const chartSeries = useMemo(
 		() =>
-			isHorizontal
-				? series.map( ( { label, data: points } ) => ( { label, data: [ ...points ].reverse() } ) )
-				: series,
+			series.map( ( { label, data: points }, index ) => ( {
+				label,
+				data: isHorizontal ? [ ...points ].reverse() : points,
+				options: { stroke: getChartColor( index ) },
+			} ) ),
 		[ isHorizontal, series ]
 	);
 

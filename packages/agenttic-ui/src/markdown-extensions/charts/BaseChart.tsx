@@ -1,7 +1,6 @@
 import {
 	type BaseChartProps as AutomatticBaseChartProps,
 	type DataPointDate,
-	defaultTheme,
 	type RenderTooltipParams,
 	type SeriesData,
 	ThemeProvider,
@@ -9,7 +8,7 @@ import {
 import React, { useMemo } from 'react';
 import { getCSSVariable } from '../../utils/theme';
 import { ChartError } from './ChartError';
-import type { FC } from 'react';
+import type { CSSProperties, FC } from 'react';
 
 export interface CurrencyOptions {
 	symbol: string;
@@ -45,30 +44,9 @@ interface BaseChartInternalProps {
  * @param root0.error
  */
 export const BaseChart: FC< BaseChartInternalProps > = ( { children, error } ) => {
-	const customTheme = useMemo( () => {
-		const primaryColor = getCSSVariable( '--color-primary', '#4F46E5' );
-
-		// TODO: Decide what other colors to include here
-		const colors = [ primaryColor, '#f0b849', '#00a32a', '#8c5e94' ];
-
-		return {
-			...defaultTheme,
-			colors,
-			legendLabelStyles: {
-				fontSize: '11px',
-				fontWeight: '400',
-				lineHeight: '1.2',
-				fontFamily:
-					'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
-			},
-			legendItemStyles: {
-				padding: '2px 0',
-				display: 'flex',
-				alignItems: 'center',
-			},
-			legendGlyphSize: 12,
-		};
-	}, [] );
+	// The series colors are `--a8c-charts-color-series-*` roles in `charts.css`. The first is the
+	// page's primary color, which charts.css can't reach from inside `.agenttic`.
+	const primaryColor = useMemo( () => getCSSVariable( '--color-primary', '#4F46E5' ), [] );
 
 	if ( error ) {
 		return <ChartError message={ error.message } details={ error.details } />;
@@ -76,8 +54,11 @@ export const BaseChart: FC< BaseChartInternalProps > = ( { children, error } ) =
 
 	return (
 		<div className="chart-block">
-			<div className="chart-container">
-				<ThemeProvider theme={ customTheme }>{ children }</ThemeProvider>
+			<div
+				className="chart-container"
+				style={ { '--agenttic-chart-primary-color': primaryColor } as CSSProperties }
+			>
+				<ThemeProvider>{ children }</ThemeProvider>
 			</div>
 		</div>
 	);

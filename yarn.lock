@@ -300,6 +300,7 @@ __metadata:
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^7.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/plugins": "npm:^8.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^4.1.0"
     copy-webpack-plugin: "npm:^14.0.0"
     postcss-prefix-selector: "npm:^1.16.1"
@@ -429,7 +430,7 @@ __metadata:
   resolution: "@automattic/agenttic-ui@workspace:packages/agenttic-ui"
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/charts": "npm:^1.10.0"
+    "@automattic/charts": "npm:^4.15.2"
     "@mdx-js/react": "npm:^3.1.1"
     "@radix-ui/react-popover": "npm:^1.1.15"
     "@radix-ui/react-scroll-area": "npm:^1.2.9"
@@ -480,7 +481,7 @@ __metadata:
     "@a2ui/react": "npm:0.14.0"
     "@a2ui/web_core": "npm:0.14.0"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/charts": "npm:^1.10.0"
+    "@automattic/charts": "npm:^4.15.2"
     "@automattic/number-formatters": "npm:^1.2.12"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
@@ -1012,13 +1013,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/charts@npm:^1.10.0, @automattic/charts@npm:^1.9.0":
-  version: 1.10.1
-  resolution: "@automattic/charts@npm:1.10.1"
+"@automattic/charts@npm:^4.15.2":
+  version: 4.15.2
+  resolution: "@automattic/charts@npm:4.15.2"
   dependencies:
-    "@automattic/number-formatters": "npm:^1.2.6"
-    "@babel/runtime": "npm:7.29.7"
-    "@react-spring/web": "npm:10.1.1"
+    "@automattic/number-formatters": "npm:^1.3.0"
+    "@babel/runtime": "npm:7.29.10"
+    "@date-fns/tz": "npm:1.5.0"
+    "@react-spring/web": "npm:10.1.2"
     "@visx/annotation": "npm:^4.0.0"
     "@visx/axis": "npm:^4.0.0"
     "@visx/curve": "npm:^4.0.0"
@@ -1035,10 +1037,10 @@ __metadata:
     "@visx/tooltip": "npm:^4.0.0"
     "@visx/vendor": "npm:^4.0.0"
     "@visx/xychart": "npm:^4.0.0"
-    "@wordpress/i18n": "npm:^6.0.0"
-    "@wordpress/icons": "npm:^15.0.0"
-    "@wordpress/theme": "npm:0.17.0"
-    "@wordpress/ui": "npm:0.17.0"
+    "@wordpress/i18n": "npm:^7.0.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/theme": "npm:4.0.0"
+    "@wordpress/ui": "npm:0.26.0"
     clsx: "npm:2.1.1"
     date-fns: "npm:^4.1.0"
     deepmerge: "npm:4.3.1"
@@ -1049,7 +1051,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
-  checksum: 897f0133e2a1f289bc5cd6fcdab84cf992d1efa18950196a9488537460316fe7f0b24378daf51b050d2abdce6e2f0c92c9d5c82a3783a36d87699f7fa02d40fd
+  checksum: c3f62d9073c73085962363aa178cf515a92cf2dab37acdc7a68d683ffa55cfdd9a97bfe77efa2578953cafc3aad344028dee3fd9d3d6807377f4572aabfd0ff6
   languageName: node
   linkType: hard
 
@@ -2004,13 +2006,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/number-formatters@npm:^1.2.12, @automattic/number-formatters@npm:^1.2.6":
-  version: 1.2.12
-  resolution: "@automattic/number-formatters@npm:1.2.12"
+"@automattic/number-formatters@npm:^1.2.12, @automattic/number-formatters@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@automattic/number-formatters@npm:1.3.0"
   dependencies:
-    "@wordpress/date": "npm:^5.19.0"
+    "@wordpress/date": "npm:^6.0.0"
     debug: "npm:^4.4.0"
-  checksum: 14584b0d50ae9b518570ab834d5d592c03f2b9b07f4f4dc384712f5e01fc19d19473966587cf207dbb55cf4661b717bdef554548738e814430629b5df8d0994c
+  checksum: 144c55daa47b6f5b81e21d5ed2705888a15cb319d7b0750578fb28cfd549df8246acfe950b3177915cc185f5cd97260bf043e43d4ee30ece73029cfdc8c26d69
   languageName: node
   linkType: hard
 
@@ -2118,13 +2120,13 @@ __metadata:
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/charts": "npm:^1.9.0"
+    "@automattic/charts": "npm:^4.15.2"
     "@automattic/components": "workspace:^"
     "@automattic/js-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/wp-oxc-makepot": "workspace:^"
-    "@react-spring/web": "npm:10.1.1"
+    "@react-spring/web": "npm:10.1.2"
     "@size-limit/file": "npm:^8.2.6"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.2"
@@ -4422,14 +4424,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.29.7":
-  version: 7.29.7
-  resolution: "@babel/runtime@npm:7.29.7"
-  checksum: ca11572f7146b21e0bde6a9ed4bb6a89eafbee5f0944c7eb54d0d8a2dac962c33638a1d611e14faa71dfbb92b4b5f9236232208568a6b7d5c6f3f39ddb91771e
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:7.29.10, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.6.3, @babel/runtime@npm:^7.7.6, @babel/runtime@npm:^7.9.2":
   version: 7.29.10
   resolution: "@babel/runtime@npm:7.29.10"
   checksum: 32f975da8e9c2cae6b33e1a477f8fe8bbff6722c982b5ce35f99affaf3a7a1b612c8272b43afa0e51d3000928d6f3ba38f9296301115db5640264907c027b0cd
@@ -4698,7 +4693,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@date-fns/tz@npm:^1.4.1, @date-fns/tz@npm:^1.5.0":
+"@date-fns/tz@npm:1.5.0, @date-fns/tz@npm:^1.4.1, @date-fns/tz@npm:^1.5.0":
   version: 1.5.0
   resolution: "@date-fns/tz@npm:1.5.0"
   checksum: 4ef25eedd55924938fa81b23b949a3425201597e2007f5323db54d50fc19283eca5e2a7963c3d82c99b3adf273e9ea9bc7adfd1c9076e15badd99c593a984ffa
@@ -8433,7 +8428,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/animated@npm:~10.1.1, @react-spring/animated@npm:~10.1.2":
+"@react-spring/animated@npm:~10.1.2":
   version: 10.1.2
   resolution: "@react-spring/animated@npm:10.1.2"
   dependencies:
@@ -8445,7 +8440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/core@npm:~10.1.1, @react-spring/core@npm:~10.1.2":
+"@react-spring/core@npm:~10.1.2":
   version: 10.1.2
   resolution: "@react-spring/core@npm:10.1.2"
   dependencies:
@@ -8465,7 +8460,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/shared@npm:~10.1.1, @react-spring/shared@npm:~10.1.2":
+"@react-spring/shared@npm:~10.1.2":
   version: 10.1.2
   resolution: "@react-spring/shared@npm:10.1.2"
   dependencies:
@@ -8477,30 +8472,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-spring/types@npm:~10.1.1, @react-spring/types@npm:~10.1.2":
+"@react-spring/types@npm:~10.1.2":
   version: 10.1.2
   resolution: "@react-spring/types@npm:10.1.2"
   checksum: 073f4ecd5e0cc18524ef36c8d28ef0fbd2582f8cbeb3e433680314d0df96a7a1279cbe7c13f2167132fe42f4e7bb68f50d24744b2b0d1e6c55c5eba8b6e643c2
   languageName: node
   linkType: hard
 
-"@react-spring/web@npm:10.1.1":
-  version: 10.1.1
-  resolution: "@react-spring/web@npm:10.1.1"
-  dependencies:
-    "@react-spring/animated": "npm:~10.1.1"
-    "@react-spring/core": "npm:~10.1.1"
-    "@react-spring/shared": "npm:~10.1.1"
-    "@react-spring/types": "npm:~10.1.1"
-    csstype: "npm:^3.2.3"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 86bd8f47f88ade34bb9790b30d80256da25dd58370582d7c5f44472db00b62ad267796e43c661d89fc4c8c4cc8775a8cae21e36e85b973972cd381c0cf5a6320
-  languageName: node
-  linkType: hard
-
-"@react-spring/web@npm:^10.1.2":
+"@react-spring/web@npm:10.1.2, @react-spring/web@npm:^10.1.2":
   version: 10.1.2
   resolution: "@react-spring/web@npm:10.1.2"
   dependencies:
@@ -15415,7 +15394,7 @@ __metadata:
     "@automattic/calypso-stripe": "workspace:^"
     "@automattic/calypso-support-session": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
-    "@automattic/charts": "npm:^1.9.0"
+    "@automattic/charts": "npm:^4.15.2"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/composite-checkout": "workspace:^"
@@ -32658,7 +32637,7 @@ __metadata:
     "@automattic/calypso-products": "workspace:^"
     "@automattic/calypso-router": "workspace:^"
     "@automattic/calypso-storybook": "workspace:^"
-    "@automattic/charts": "npm:^1.9.0"
+    "@automattic/charts": "npm:^4.15.2"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
