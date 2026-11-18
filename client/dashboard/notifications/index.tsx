@@ -7,6 +7,7 @@ import wpcom from 'calypso/lib/wp';
 import { useLocale } from '../app/locale';
 import { notificationRoute, notificationsRoute } from '../app/router/notifications';
 import { Card } from '../components/card';
+import EmptyState from '../components/empty-state';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 
@@ -77,6 +78,18 @@ export default function Notifications() {
 						const detailPane = detail && (
 							<div className="dashboard-notifications-inbox__detail">{ detail }</div>
 						);
+						const emptyDetailPane = ! noteId && (
+							<div className="dashboard-notifications-inbox__detail is-empty">
+								<EmptyState>
+									<EmptyState.Header>
+										<EmptyState.Title>{ __( 'No notification selected' ) }</EmptyState.Title>
+										<EmptyState.Description>
+											{ __( 'Select a notification from the list to read it here.' ) }
+										</EmptyState.Description>
+									</EmptyState.Header>
+								</EmptyState>
+							</div>
+						);
 
 						return (
 							<Card className="dashboard-notifications-inbox">
@@ -85,7 +98,7 @@ export default function Notifications() {
 								) : (
 									<div className="dashboard-notifications-inbox__panes">
 										{ listPane }
-										{ detailPane }
+										{ detailPane || emptyDetailPane }
 									</div>
 								) }
 							</Card>
