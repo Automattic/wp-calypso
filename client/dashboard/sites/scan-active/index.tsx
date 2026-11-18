@@ -1,13 +1,14 @@
 import { siteScanQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteScanActiveThreatsRoute } from '../../app/router/sites';
+import { Card, CardBody } from '../../components/card';
 import { DataViews, DataViewsEmptyStateLayout } from '../../components/dataviews';
-import { useTimeSince } from '../../components/time-since';
+import { getNoMatchingThreats } from '../scan/no-matching-threats';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
 import type { Threat, Site } from '@automattic/api-core';
@@ -60,55 +61,45 @@ export function ActiveThreatsDataViews( {
 	const fields = getFields( timezoneString, gmtOffset );
 	const actions = useMemo( () => getActions( site, selection.length ), [ site, selection.length ] );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
-	const lastScanTime = scan?.most_recent?.timestamp;
-	const recentScanRelativeTime = useTimeSince( lastScanTime || '' );
+	const hasFilters = ( view.filters?.length ?? 0 ) > 0;
+	// Known data stays known when a later refetch fails.
+	const hasLoaded = scan !== undefined;
 
-	const NoActiveThreatsFound = () => {
-		let title: string = __( 'Don’t worry about a thing' );
-		let description: string = sprintf(
-			/** translators: %s: relative time string like "2 hours ago" */
-			__( 'The last scan ran %s and found no security issues.' ),
-			recentScanRelativeTime
+	// Nothing to search or filter: the empty state takes the place of the list.
+	if ( hasLoaded && threats.length === 0 && ! view.search && ! hasFilters ) {
+		return (
+			<>
+				<PerformanceTrackerStop />
+				<DataViewsEmptyStateLayout
+					title={ __( 'No threats found' ) }
+					description={ __( 'New threats will appear here after each scan.' ) }
+				/>
+			</>
 		);
-
-		if ( view.search || view.filters ) {
-			title = __( 'No active threats found' );
-
-			if ( view.search ) {
-				description = sprintf(
-					/** translators: %s: search query string */
-					__( 'Your search for “%s” did not return any results.' ),
-					view.search
-				);
-			}
-
-			if ( view.filters ) {
-				description = __( 'No active threats found for the selected filters.' );
-			}
-		}
-
-		return <DataViewsEmptyStateLayout isBorderless title={ title } description={ description } />;
-	};
+	}
 
 	return (
-		<>
-			{ ! isLoading && <PerformanceTrackerStop /> }
-			<DataViews< Threat >
-				actions={ actions }
-				data={ filteredData }
-				defaultLayouts={ { table: {} } }
-				empty={ <NoActiveThreatsFound /> }
-				fields={ fields }
-				getItemId={ ( item ) => item.id.toString() }
-				isLoading={ isLoading }
-				onChangeSelection={ setSelection }
-				onChangeView={ updateView }
-				onReset={ resetView }
-				paginationInfo={ paginationInfo }
-				searchLabel={ __( 'Search' ) }
-				selection={ selection }
-				view={ view }
-			/>
-		</>
+		<Card>
+			<CardBody>
+				{ ! isLoading && <PerformanceTrackerStop /> }
+				<DataViews< Threat >
+					actions={ actions }
+					data={ filteredData }
+					defaultLayouts={ { table: {} } }
+					// A failed first request says nothing about threats: keep the default message.
+					empty={ hasLoaded ? getNoMatchingThreats( view.search, hasFilters ) : undefined }
+					fields={ fields }
+					getItemId={ ( item ) => item.id.toString() }
+					isLoading={ isLoading }
+					onChangeSelection={ setSelection }
+					onChangeView={ updateView }
+					onReset={ resetView }
+					paginationInfo={ paginationInfo }
+					searchLabel={ __( 'Search' ) }
+					selection={ selection }
+					view={ view }
+				/>
+			</CardBody>
+		</Card>
 	);
 }

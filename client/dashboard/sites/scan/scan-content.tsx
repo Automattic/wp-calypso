@@ -61,10 +61,12 @@ export function ScanContent( {
 	const renderActiveTab = () => {
 		if ( isScanInProgress ) {
 			return (
-				<>
-					<PerformanceTrackerStop />
-					<ScanStatus scanState={ scanState } />
-				</>
+				<Card>
+					<CardBody>
+						<PerformanceTrackerStop />
+						<ScanStatus scanState={ scanState } />
+					</CardBody>
+				</Card>
 			);
 		}
 		return (
@@ -121,18 +123,15 @@ export function ScanContent( {
 					</>
 				}
 			>
-				<Card>
-					<CardBody>
-						{ scanTab === 'active' && renderActiveTab() }
-						{ scanTab === 'history' && (
-							<ScanHistoryDataViews
-								site={ site }
-								timezoneString={ timezoneString }
-								gmtOffset={ gmtOffset }
-							/>
-						) }
-					</CardBody>
-				</Card>
+				{ /* Each tab draws its own card, so an empty list can swap it for the full-page empty state. */ }
+				{ scanTab === 'active' && renderActiveTab() }
+				{ scanTab === 'history' && (
+					<ScanHistoryDataViews
+						site={ site }
+						timezoneString={ timezoneString }
+						gmtOffset={ gmtOffset }
+					/>
+				) }
 			</PageLayout>
 			{ showBulkFixModal && (
 				<Modal

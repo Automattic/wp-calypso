@@ -18,14 +18,15 @@ import { useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { info, cautionFilled as warning } from '@wordpress/icons';
+import { info, cautionFilled as warning, payment } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { addPaymentMethodRoute } from '../../app/router/me';
-import { DataViewsCard } from '../../components/dataviews';
+import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
+import EmptyState from '../../components/empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
@@ -102,6 +103,7 @@ export default function PaymentMethods() {
 	const {
 		data: paymentMethods = [],
 		isLoading: isLoadingPaymentMethods,
+		isSuccess: hasLoadedPaymentMethods,
 		isRefetching: isUpdatingPaymentMethods,
 	} = useQuery(
 		userPaymentMethodsQuery( {
@@ -117,6 +119,8 @@ export default function PaymentMethods() {
 	);
 	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoMutation() );
 	const { recordTracksEvent } = useAnalytics();
+	// Only a successful response can tell that there is nothing to list.
+	const isEmpty = hasLoadedPaymentMethods && paymentMethods.length === 0;
 	const recordActionClick = (
 		paymentMethod: StoredPaymentMethod,
 		action: string,
@@ -237,35 +241,78 @@ export default function PaymentMethods() {
 					title={ __( 'Payment methods' ) }
 					description={ __( 'Manage your saved payment methods and billing information.' ) }
 					actions={
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_payment_method_add_click' );
-								navigate( { to: addPaymentMethodRoute.to } );
-							} }
-						>
-							{ __( 'Add payment method' ) }
-						</Button>
+						isEmpty ? null : (
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_payment_method_add_click' );
+									navigate( { to: addPaymentMethodRoute.to } );
+								} }
+							>
+								{ __( 'Add payment method' ) }
+							</Button>
+						)
 					}
 				/>
 			}
 		>
 			<div ref={ ref }>
-				<DataViewsCard>
-					{ ! isLoadingPaymentMethods && <PerformanceTrackerStop /> }
-					<DataViews
-						isLoading={ isLoadingPaymentMethods }
-						data={ filteredPaymentMethods ?? [] }
-						fields={ paymentMethodFields }
-						view={ currentView }
-						onChangeView={ setView }
-						defaultLayouts={ { table: {} } }
-						getItemId={ getItemId }
-						paginationInfo={ paginationInfo }
-						actions={ actions }
-					/>
-				</DataViewsCard>
+				{ ! isLoadingPaymentMethods && <PerformanceTrackerStop /> }
+				{ isEmpty ? (
+					<DataViewsEmptyStateLayout
+						title={ __( 'Add your first payment method' ) }
+						description={ __( 'Pay for plans, domains, and renewals with a saved card.' ) }
+					>
+						<EmptyState.ActionList>
+							<EmptyState.ActionItem
+								title={ __( 'Add payment method' ) }
+								description={ __( 'Save a credit or debit card to your account.' ) }
+								decoration={ <Icon icon={ payment } size={ 24 } /> }
+								actions={
+									<Button
+										variant="primary"
+										onClick={ () => {
+											recordTracksEvent(
+												'calypso_dashboard_payment_method_empty_state_action_click',
+												{ action: 'add-payment-method' }
+											);
+											navigate( { to: addPaymentMethodRoute.to } );
+										} }
+										size="compact"
+										__next40pxDefaultSize
+									>
+										{ __( 'Add payment method' ) }
+									</Button>
+								}
+							/>
+						</EmptyState.ActionList>
+					</DataViewsEmptyStateLayout>
+				) : (
+					<DataViewsCard>
+						<DataViews
+							isLoading={ isLoadingPaymentMethods }
+							data={ filteredPaymentMethods ?? [] }
+							fields={ paymentMethodFields }
+							view={ currentView }
+							onChangeView={ setView }
+							defaultLayouts={ { table: {} } }
+							getItemId={ getItemId }
+							paginationInfo={ paginationInfo }
+							actions={ actions }
+							empty={
+								// Without a search the list is only empty when the request failed.
+								currentView.search ? (
+									<DataViewsEmptyStateLayout
+										isBorderless
+										title={ __( 'No payment methods match your search' ) }
+										description={ __( 'Try a different search term.' ) }
+									/>
+								) : undefined
+							}
+						/>
+					</DataViewsCard>
+				) }
 				{ ! isDeletingPaymentMethod && editAddressDialogPaymentMethod && (
 					<PaymentMethodEditDialog
 						paymentMethod={ editAddressDialogPaymentMethod }

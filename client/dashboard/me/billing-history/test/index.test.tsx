@@ -99,7 +99,12 @@ const configWithMeSection: AppConfig = {
 function mockEndpoints( {
 	siteList = sites,
 	preferences = {},
-}: { siteList?: Site[]; preferences?: Record< string, unknown > } = {} ) {
+	receiptList = receipts,
+}: {
+	siteList?: Site[];
+	preferences?: Record< string, unknown >;
+	receiptList?: Receipt[];
+} = {} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.1/me/preferences' )
@@ -109,7 +114,7 @@ function mockEndpoints( {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.3/me/billing-history/past' )
 		.query( true )
-		.reply( 200, { billing_history: receipts, billing_history_total: receipts.length } );
+		.reply( 200, { billing_history: receiptList, billing_history_total: receiptList.length } );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/me/sites' )
@@ -178,5 +183,150 @@ describe( '<BillingHistory>', () => {
 			expect.stringContaining( 'Site B Business Plan' ),
 			expect.stringContaining( 'Site A Personal Plan' ),
 		] );
+	} );
+
+	describe( 'empty states', () => {
+		afterEach( () => {
+			window.history.replaceState( null, '', '/' );
+		} );
+
+		test( 'replaces the list when there are no receipts at all', async () => {
+			mockEndpoints( { receiptList: [] } );
+			render( <BillingHistory />, { user: testUser, config: configWithMeSection } );
+
+			expect( await screen.findByRole( 'heading', { name: 'No receipts yet' } ) ).toBeVisible();
+			expect(
+				screen.getByText( 'Receipts will appear here after your first purchase.' )
+			).toBeVisible();
+			expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'does not show an empty state while the receipts load', async () => {
+			let respond: () => void = () => {};
+			const response = new Promise< void >( ( resolve ) => {
+				respond = resolve;
+			} );
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.get( '/rest/v1.1/me/preferences' )
+				.query( true )
+				.reply( 200, { calypso_preferences: {} } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.2/me/sites' )
+				.query( true )
+				.reply( 200, { sites, total: sites.length } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.3/me/billing-history/past' )
+				.query( true )
+				.reply( async () => {
+					await response;
+					return [ 200, { billing_history: [], billing_history_total: 0 } ];
+				} );
+			render( <BillingHistory />, { user: testUser, config: configWithMeSection } );
+
+			// The toolbar is there, so the page is past its own loading placeholder.
+			expect( await screen.findByRole( 'searchbox' ) ).toBeVisible();
+			expect( screen.queryByRole( 'heading', { level: 2 } ) ).not.toBeInTheDocument();
+
+			respond();
+			expect( await screen.findByRole( 'heading', { name: 'No receipts yet' } ) ).toBeVisible();
+		} );
+
+		test( 'does not show an empty state when the receipts fail to load', async () => {
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.get( '/rest/v1.1/me/preferences' )
+				.query( true )
+				.reply( 200, { calypso_preferences: {} } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.2/me/sites' )
+				.query( true )
+				.reply( 200, { sites, total: sites.length } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.3/me/billing-history/past' )
+				.query( true )
+				.reply( 500, { error: 'server_error' } );
+			render( <BillingHistory />, { user: testUser, config: configWithMeSection } );
+
+			expect( await screen.findByText( 'No results' ) ).toBeVisible();
+			expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
+			expect( screen.queryByRole( 'heading', { level: 2 } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'keeps the toolbar when a search finds nothing', async () => {
+			mockEndpoints();
+			const user = userEvent.setup();
+			render( <BillingHistory />, { user: testUser, config: configWithMeSection } );
+
+			await screen.findByRole( 'table' );
+			await user.type( screen.getByRole( 'searchbox' ), 'no such receipt' );
+
+			expect(
+				await screen.findByRole( 'heading', { name: 'No receipts match your search' } )
+			).toBeVisible();
+			expect( screen.getByText( 'Try a different search term.' ) ).toBeVisible();
+			expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
+		} );
+
+		test( 'keeps the toolbar when the filters find nothing', async () => {
+			mockEndpoints( {
+				preferences: {
+					'hosting-dashboard-dataviews-view-me-billing-history': {
+						type: 'table',
+						fields: [ 'date', 'service', 'type', 'amount' ],
+						filters: [ { field: 'site', operator: 'isAny', value: [ '999' ] } ],
+					},
+				},
+			} );
+			render( <BillingHistory />, { user: testUser, config: configWithMeSection } );
+
+			expect(
+				await screen.findByRole( 'heading', { name: 'No receipts match your filters' } )
+			).toBeVisible();
+			expect( screen.getByText( 'Try different filters, or reset them.' ) ).toBeVisible();
+			expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
+		} );
+
+		test( 'says the site has no receipts when the host locks the list to a site', async () => {
+			mockEndpoints();
+			window.history.replaceState( null, '', '/?site=999' );
+			// No `me` section: the host sets the site filter and the visitor cannot reset it.
+			render( <BillingHistory />, { user: testUser } );
+
+			expect(
+				await screen.findByRole( 'heading', { name: 'No receipts for this site' } )
+			).toBeVisible();
+			expect(
+				screen.getByText( 'Receipts for purchases on this site will appear here.' )
+			).toBeVisible();
+			expect(
+				screen.queryByText( 'Try different filters, or reset them.' )
+			).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'uses the site wording on a host with no account section', async () => {
+			mockEndpoints( { receiptList: [] } );
+			// No `me` section and no site filter in the URL yet.
+			render( <BillingHistory />, { user: testUser } );
+
+			expect(
+				await screen.findByRole( 'heading', { name: 'No receipts for this site' } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'heading', { name: 'No receipts yet' } )
+			).not.toBeInTheDocument();
+		} );
+
+		test( 'lists the receipts of the site the host locks the list to', async () => {
+			mockEndpoints();
+			window.history.replaceState( null, '', `/?site=${ SITE_A_ID }` );
+			render( <BillingHistory />, { user: testUser } );
+
+			const table = await screen.findByRole( 'table' );
+			expect( within( table ).getByText( 'Site A Personal Plan' ) ).toBeVisible();
+			expect( within( table ).queryByText( 'Site B Business Plan' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );

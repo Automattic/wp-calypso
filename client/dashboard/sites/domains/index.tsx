@@ -12,6 +12,7 @@ import {
 	DataViews,
 	DataViewsActionModal,
 	DataViewsCard,
+	DataViewsEmptyStateLayout,
 	useDeepLinkedDataViewsAction,
 } from '../../components/dataviews';
 import { Notice } from '../../components/notice';
@@ -198,6 +199,21 @@ function SiteDomains() {
 					getItemId={ getDomainId }
 					defaultLayouts={ layouts }
 					config={ DOMAINS_LIST_CONFIG }
+					empty={
+						view.search ? (
+							<DataViewsEmptyStateLayout
+								isBorderless
+								title={ __( 'No domains match your search' ) }
+								description={ __( 'Try a different search term.' ) }
+							/>
+						) : (
+							<DataViewsEmptyStateLayout
+								isBorderless
+								title={ __( 'No domains match your filters' ) }
+								description={ __( 'Try different filters, or reset them.' ) }
+							/>
+						)
+					}
 				>
 					{ isCardsLayout ? (
 						<DomainCardsLayout

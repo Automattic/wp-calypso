@@ -13,7 +13,7 @@ import SiteDomains from '../index';
 import type { Site, User } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 
-let mockSearchParams: { action?: string } = {};
+let mockSearchParams: { action?: string; search?: string } = {};
 let mockHasEnTranslation = true;
 
 vi.mock( '@automattic/i18n-utils', async () => ( {
@@ -205,6 +205,37 @@ describe( '<SiteDomains>', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Use a domain name I own' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Add new domain' } ) ).toBeVisible();
+	} );
+
+	test( 'says no domain matches a search, and keeps the toolbar and the header buttons', async () => {
+		mockSearchParams = { search: 'no-such-domain' };
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No domains match your search' } )
+		).toBeVisible();
+		expect( screen.getByText( 'Try a different search term.' ) ).toBeVisible();
+		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add new domain' } ) ).toBeVisible();
+	} );
+
+	test( 'says no domain matches the filters when a saved filter finds nothing', async () => {
+		nock.cleanAll();
+		mockApis( {
+			preferences: {
+				'hosting-dashboard-dataviews-view-site-domains': {
+					...SAVED_TABLE_VIEW,
+					filters: [ { field: 'domain_status', operator: 'isAny', value: [ 'no-such-status' ] } ],
+				},
+			},
+		} );
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No domains match your filters' } )
+		).toBeVisible();
+		expect( screen.getByText( 'Try different filters, or reset them.' ) ).toBeVisible();
+		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
 	} );
 
 	test( 'shows "Use a domain name I own" and "Add new domain" buttons for non-owner', async () => {
