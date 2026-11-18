@@ -23,15 +23,7 @@ import type { Site } from '@automattic/api-core';
 // How long a completed migration can leave its site locked before we stop asking the user to wait.
 const UNLOCK_GRACE_PERIOD = 30000;
 
-const KNOWN_STATUSES = [
-	'not_started',
-	'running',
-	'paused',
-	'failed',
-	'completed',
-	'resetting',
-	'cancelled',
-];
+const KNOWN_STATUSES = [ 'not_started', 'running', 'paused', 'failed', 'completed', 'cancelled' ];
 
 export function WordPressMigration( { site }: { site: Site } ) {
 	const navigate = useNavigate();
@@ -46,7 +38,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		// Once our team has the migration, read the site again: its migration state takes this page over.
 		queryFn: async () => {
 			const status = await fetchWordPressMigrationStatus( site.ID );
-			if ( status.handed_off || status.status === 'cancelled' ) {
+			if ( status.handed_off ) {
 				await queryClient.refetchQueries( { ...siteQueryFilter( site.ID ), type: 'active' } );
 			}
 			return status;
@@ -116,12 +108,13 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
 	// and keep checking in case it lags behind the migration's own status.
 	const isCompleted = migration?.status === 'completed';
+	const isFinished = isCompleted || migration?.status === 'cancelled';
 	const isSiteUnlocked = ! isSiteMigrationInProgress( site );
 
 	// The site should unlock within moments of this page seeing the migration complete. Past that, offer a way out.
 	const [ isUnlockOverdue, setIsUnlockOverdue ] = useState( false );
 	useEffect( () => {
-		if ( ! isCompleted ) {
+		if ( ! isFinished ) {
 			return;
 		}
 
@@ -130,10 +123,10 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			clearTimeout( timeout );
 			setIsUnlockOverdue( false );
 		};
-	}, [ isCompleted ] );
+	}, [ isFinished ] );
 
 	useEffect( () => {
-		if ( ! isCompleted ) {
+		if ( ! isFinished ) {
 			return;
 		}
 
@@ -141,7 +134,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			navigate( {
 				to: '/sites/$siteSlug',
 				params: { siteSlug: site.slug },
-				search: { migration: 'completed' },
+				search: isCompleted ? { migration: 'completed' } : {},
 				replace: true,
 			} );
 			return;
@@ -155,7 +148,16 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		reloadSite();
 		const interval = setInterval( reloadSite, isUnlockOverdue ? 30000 : 5000 );
 		return () => clearInterval( interval );
-	}, [ isCompleted, isSiteUnlocked, isUnlockOverdue, queryClient, navigate, site.ID, site.slug ] );
+	}, [
+		isCompleted,
+		isFinished,
+		isSiteUnlocked,
+		isUnlockOverdue,
+		queryClient,
+		navigate,
+		site.ID,
+		site.slug,
+	] );
 
 	const contactUs = (
 		<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
@@ -218,9 +220,13 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					} }
 				/>
 			) }
-			{ isCompleted && (
+			{ isFinished && (
 				<MigrationCard
-					title={ __( 'Your site has been migrated' ) }
+					title={
+						isCompleted
+							? __( 'Your site has been migrated' )
+							: __( 'Your migration has been cancelled' )
+					}
 					decoration={ <StatusIcon status="success" /> }
 					description={
 						isUnlockOverdue
@@ -242,9 +248,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 						)
 					}
 				/>
-			) }
-			{ ( migration?.status === 'resetting' || migration?.status === 'cancelled' ) && (
-				<MigrationCancellation site={ site } recovering />
 			) }
 			{ /* A status this page doesn't know yet. */ }
 			{ migration && ! KNOWN_STATUSES.includes( migration.status ) && (

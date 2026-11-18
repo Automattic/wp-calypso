@@ -1,7 +1,6 @@
 import { wpcom } from '../wpcom-fetcher';
 import type {
 	WordPressMigrationCancellation,
-	WordPressMigrationCancelParams,
 	WordPressMigrationConfiguration,
 	WordPressMigrationConfigureParams,
 	WordPressMigrationRunParams,
@@ -53,12 +52,10 @@ export async function runWordPressMigration(
 }
 
 export async function cancelWordPressMigration(
-	siteId: number,
-	params: WordPressMigrationCancelParams
+	siteId: number
 ): Promise< WordPressMigrationCancellation > {
 	return wpcom.req.post( {
 		path: `/sites/${ siteId }/wordpress-migration/cancel`,
 		apiNamespace: 'wpcom/v2',
-		body: params,
 	} );
 }

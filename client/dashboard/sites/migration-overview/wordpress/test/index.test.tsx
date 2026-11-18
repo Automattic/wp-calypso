@@ -774,45 +774,57 @@ describe( 'WordPressMigration', () => {
 		expect( screen.queryByText( /We couldn’t load your migration/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'waits on a completed migration whose site is still locked, then offers a way out', async () => {
-		// Only the clock: faking the queues a request goes through holds the mocked replies back.
-		vi.useFakeTimers( {
-			shouldAdvanceTime: true,
-			toNotFake: [ 'nextTick', 'setImmediate', 'queueMicrotask' ],
-		} );
-		// Waiting on the site reloads the migration too.
-		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) ).persist();
+	test.each( [
+		[ 'completed', 'Your site has been migrated' ],
+		[ 'cancelled', 'Your migration has been cancelled' ],
+	] )(
+		'waits on a %s migration whose site is still locked, then offers a way out',
+		async ( status, heading ) => {
+			// Only the clock: faking the queues a request goes through holds the mocked replies back.
+			vi.useFakeTimers( {
+				shouldAdvanceTime: true,
+				toNotFake: [ 'nextTick', 'setImmediate', 'queueMicrotask' ],
+			} );
+			// Waiting on the site reloads the migration too.
+			mockApi().get( statusPath ).query( true ).reply( 200, migration( status ) ).persist();
 
-		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
+			const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect(
-			await screen.findByRole( 'heading', { name: 'Your site has been migrated' } )
-		).toBeVisible();
-		expect( screen.getByText( /One moment while we finish up/ ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Reload' } ) ).not.toBeInTheDocument();
-		expect( router.state.location.pathname ).toBe( '/' );
+			expect( await screen.findByRole( 'heading', { name: heading } ) ).toBeVisible();
+			expect( screen.getByText( /One moment while we finish up/ ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: 'Reload' } ) ).not.toBeInTheDocument();
+			expect( router.state.location.pathname ).toBe( '/' );
 
-		act( () => vi.advanceTimersByTime( 30000 ) );
+			act( () => vi.advanceTimersByTime( 30000 ) );
 
-		expect( await screen.findByRole( 'button', { name: 'Reload' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
-		expect( router.state.location.pathname ).toBe( '/' );
-	} );
+			expect( await screen.findByRole( 'button', { name: 'Reload' } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
+			expect( router.state.location.pathname ).toBe( '/' );
+		}
+	);
 
-	test( 'hands over to the site once a completed migration has unlocked it', async () => {
-		const unlockedSite = {
-			...site,
-			site_migration: { type: 'wordpress', status_v2: 'completed' },
-		} as unknown as Site;
-		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) );
+	test.each( [ 'completed', 'cancelled' ] )(
+		'hands over to the site once a %s migration has unlocked it',
+		async ( status ) => {
+			const unlockedSite = {
+				...site,
+				site_migration:
+					status === 'completed'
+						? { type: 'wordpress', status_v2: 'completed' }
+						: { migration_status: 'migration-cancelled-diy' },
+			} as unknown as Site;
+			mockApi().get( statusPath ).query( true ).reply( 200, migration( status ) );
 
-		const { router } = render( <WordPressMigration site={ unlockedSite } />, { queryClient } );
+			const { router } = render( <WordPressMigration site={ unlockedSite } />, { queryClient } );
 
-		await waitFor( () =>
-			expect( router.state.location.pathname ).toBe( '/sites/example.wordpress.com' )
-		);
-		expect( router.state.location.search ).toEqual( { migration: 'completed' } );
-	} );
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( '/sites/example.wordpress.com' )
+			);
+			expect( router.state.location.search ).toEqual(
+				status === 'completed' ? { migration: 'completed' } : {}
+			);
+		}
+	);
 
 	test( 'still says a migration is underway for a status it doesn’t know', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'assisted' ) );

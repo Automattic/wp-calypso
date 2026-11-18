@@ -12,7 +12,6 @@ import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import { siteQueryFilter } from './site';
 import type {
-	WordPressMigrationCancelParams,
 	WordPressMigrationConfigureParams,
 	WordPressMigrationRunParams,
 } from '@automattic/api-core';
@@ -97,14 +96,15 @@ export const siteWordPressMigrationCancellationQuery = ( siteId: number ) =>
 export const siteWordPressMigrationCancelMutation = ( siteId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'site-wp-migration-cancel' },
-		mutationFn: ( params: WordPressMigrationCancelParams ) =>
-			cancelWordPressMigration( siteId, params ),
+		mutationFn: () => cancelWordPressMigration( siteId ),
 		onSuccess: async ( cancellation ) => {
 			const { queryKey } = siteWordPressMigrationCancellationQuery( siteId );
 			await queryClient.cancelQueries( { queryKey } );
 			queryClient.setQueryData( queryKey, cancellation );
-			invalidateMigration( siteId );
-			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
+			if ( cancellation.status === 'cancelled' ) {
+				invalidateMigration( siteId );
+				queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
+			}
 		},
 		onError: () => {
 			queryClient.invalidateQueries( siteWordPressMigrationCancellationQuery( siteId ) );

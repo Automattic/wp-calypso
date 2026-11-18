@@ -66,17 +66,17 @@ function InProgressContent( { progress }: { progress: number | undefined } ) {
 	);
 }
 
-export function SiteResetContent( {
+function SiteResetContent( {
 	siteContent,
 	siteDomain,
 	isBusy,
 	onSubmit,
 	onClose,
 }: {
-	siteContent?: SiteResetContentSummary;
+	siteContent: SiteResetContentSummary;
 	siteDomain: string;
 	isBusy: boolean;
-	onSubmit: ( domain: string ) => void;
+	onSubmit: () => void;
 	onClose: () => void;
 } ) {
 	const [ formData, setFormData ] = useState< SiteResetFormData >( {
@@ -98,9 +98,7 @@ export function SiteResetContent( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( formData.domain === siteDomain && ! isBusy ) {
-			onSubmit( formData.domain );
-		}
+		onSubmit();
 	};
 
 	return (
@@ -129,7 +127,7 @@ export function SiteResetContent( {
 					}
 				) }
 			</Text>
-			{ siteContent && <ContentInfo siteContent={ siteContent } siteDomain={ siteDomain } /> }
+			<ContentInfo siteContent={ siteContent } siteDomain={ siteDomain } />
 
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 }>
@@ -157,7 +155,7 @@ export function SiteResetContent( {
 							variant="primary"
 							type="submit"
 							isBusy={ isBusy }
-							disabled={ isBusy || formData.domain !== siteDomain }
+							disabled={ formData.domain !== siteDomain }
 						>
 							{ __( 'Reset site' ) }
 						</Button>
