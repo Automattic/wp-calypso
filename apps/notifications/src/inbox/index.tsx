@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Provider, useSelector } from 'react-redux';
 import { getClient, initClient, showNotes } from '../app/client';
 import { AppProvider } from '../app/context';
@@ -109,17 +109,24 @@ function InboxPanes( {
 		}
 	}, [ areKeyboardShortcutsEnabled ] );
 
+	const canViewSettings = !! onViewSettings;
+	const onViewSettingsRef = useRef( onViewSettings );
+
 	useEffect( () => {
-		if ( ! onViewSettings ) {
+		onViewSettingsRef.current = onViewSettings;
+	}, [ onViewSettings ] );
+
+	useEffect( () => {
+		if ( ! canViewSettings ) {
 			return;
 		}
-		const handlers = { VIEW_SETTINGS: [ () => onViewSettings() ] };
+		const handlers = { VIEW_SETTINGS: [ () => onViewSettingsRef.current?.() ] };
 		store.dispatch( addListeners( handlers ) );
 
 		return () => {
 			store.dispatch( removeListeners( handlers ) );
 		};
-	}, [ onViewSettings ] );
+	}, [ canViewSettings ] );
 
 	return (
 		<div
@@ -132,7 +139,7 @@ function InboxPanes( {
 					<ErrorBoundary>
 						<NotePanel
 							headingLevel={ 1 }
-							actions={ onViewSettings ? <NoteSettingsButton /> : null }
+							actions={ canViewSettings ? <NoteSettingsButton /> : null }
 							filterName={ filterName }
 							setFilterName={ setFilterName }
 							selectedNoteId={ selectedNoteId }

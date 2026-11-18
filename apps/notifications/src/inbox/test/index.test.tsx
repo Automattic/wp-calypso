@@ -139,6 +139,35 @@ describe( 'NotificationsInbox', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	it( 'keeps one settings listener and calls the newest handler when the host passes a new one', async () => {
+		const user = userEvent.setup();
+		const firstHandler = vi.fn();
+		const newestHandler = vi.fn();
+		const inboxProps: Omit< InboxProps, 'onViewSettings' > = {
+			wpcom: {},
+			locale: 'en',
+			filterName: undefined,
+			setFilterName: () => {},
+			selectedNoteId: undefined,
+			setSelectedNoteId: () => {},
+			renderLayout: ( { list } ) => <section aria-label="List">{ list }</section>,
+		};
+		const { rerender } = render(
+			<NotificationsInbox { ...inboxProps } onViewSettings={ firstHandler } />
+		);
+		const dispatch = vi.spyOn( store, 'dispatch' );
+
+		rerender( <NotificationsInbox { ...inboxProps } onViewSettings={ newestHandler } /> );
+
+		expect( dispatch ).not.toHaveBeenCalled();
+		dispatch.mockRestore();
+
+		await user.click( await screen.findByRole( 'button', { name: 'Settings' } ) );
+
+		expect( newestHandler ).toHaveBeenCalledTimes( 1 );
+		expect( firstHandler ).not.toHaveBeenCalled();
+	} );
+
 	it( 'stops answering the settings button once it is unmounted', () => {
 		const onViewSettings = vi.fn();
 		const { unmount } = renderInbox( undefined, { onViewSettings } );
