@@ -140,7 +140,7 @@
 			select:invalid[data-validity-visible]
 		)
 		.components-input-control__backdrop {
-		border-color: var( --dashboard-danger__color );
+		border-color: var( --wpds-color-stroke-interactive-error );
 	}
 }
 
