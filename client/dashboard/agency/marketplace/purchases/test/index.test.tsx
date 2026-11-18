@@ -1,6 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
+import { activeAgencyQuery, queryClient as apiQueryClient } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
@@ -11,6 +12,7 @@ import { CheckoutSuccessFlashMessage } from '../../../../app/checkout-success-fl
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import CrossoverModalHost from '../../../crossover';
+import { pressableLicensesQuery } from '../../hosting/lib/pressable-products';
 import MarketplacePurchases from '../index';
 
 const API = 'https://public-api.wordpress.com';
@@ -213,6 +215,35 @@ describe( '<MarketplacePurchases>', () => {
 		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBe(
 			'jetpack-backup-t1:1'
 		);
+	} );
+
+	test( 'refreshes the Pressable plan the dashboard kept from before the checkout', async () => {
+		const licenseFor = ( licenseKey: string, productId: number ) => ( {
+			...unassignedWpcomLicense,
+			license_key: licenseKey,
+			product_id: productId,
+		} );
+		const oldPlan = licenseFor( 'pressable-signature-4_old', 4 );
+		const newPlan = licenseFor( 'pressable-signature-5_new', 5 );
+		mockAgency();
+		mockPreferences();
+		mockLicenses( [ newPlan, oldPlan ] );
+		mockPendingSites( 'pending' );
+		// Fetched on Hosting a minute before the upgrade, so still fresh when the checkout returns.
+		apiQueryClient.setQueryData( pressableLicensesQuery( AGENCY_ID ).queryKey, [ oldPlan ] );
+		// The route's loader has the agency before the page renders.
+		await apiQueryClient.fetchQuery( activeAgencyQuery() );
+		window.history.replaceState( {}, '', '/purchases?receipt_id=123' );
+
+		render( <MarketplacePurchases />, { queryClient: apiQueryClient } );
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+
+		const licenses = await apiQueryClient.fetchQuery( pressableLicensesQuery( AGENCY_ID ) );
+		expect( licenses.map( ( { license_key } ) => license_key ) ).toEqual( [
+			'pressable-signature-5_new',
+			'pressable-signature-4_old',
+		] );
+		apiQueryClient.clear();
 	} );
 
 	test( 'leaves the cart alone without a receipt', async () => {
