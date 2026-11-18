@@ -9,6 +9,13 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 let mockDomainCartItem: MinimalRequestCartProduct | undefined;
 const mockFetchDomain = jest.fn();
 
+// How the request rejects when wpcom has no record of the domain.
+const unknownDomainError = () =>
+	Object.assign( new Error( 'The domain specified is not hosted with us.' ), {
+		name: 'InvalidDomainError',
+		error: 'invalid_domain',
+	} );
+
 // The package imports itself while loading, so the real exports are read lazily rather than spread.
 jest.mock(
 	'@automattic/api-core',
@@ -222,7 +229,7 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 
 	it( 'keeps the setup chooser for a transferred domain that wpcom has no record of', async () => {
 		mockDomainCartItem = { product_slug: 'domain_transfer', meta: 'example.com' };
-		mockFetchDomain.mockRejectedValue( new Error( 'Unknown domain' ) );
+		mockFetchDomain.mockRejectedValue( unknownDomainError() );
 
 		const { navigate, replacedWith } = await submitPostCheckoutProcessing( {
 			postCheckoutBigSky: true,
@@ -235,7 +242,7 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 
 	it( 'keeps the setup chooser for a connected domain that wpcom has no record of', async () => {
 		mockDomainCartItem = { product_slug: 'domain_map', meta: 'example.com' };
-		mockFetchDomain.mockRejectedValue( new Error( 'Unknown domain' ) );
+		mockFetchDomain.mockRejectedValue( unknownDomainError() );
 
 		const { navigate, replacedWith } = await submitPostCheckoutProcessing( {
 			postCheckoutBigSky: true,
@@ -244,6 +251,26 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 		expect( mockFetchDomain ).toHaveBeenCalledWith( 'example.com' );
 		expect( navigate ).toHaveBeenCalledWith( 'setup-your-site-ai' );
 		expect( replacedWith ).toBeUndefined();
+	} );
+
+	it( 'keeps My Home for a connected domain that wpcom has no record of', async () => {
+		mockDomainCartItem = { product_slug: 'domain_map', meta: 'example.com' };
+		mockFetchDomain.mockRejectedValue( unknownDomainError() );
+
+		const { replacedWith } = await submitPostCheckoutProcessing( {} );
+
+		expect( replacedWith ).toBe( '/home/example.wordpress.com' );
+	} );
+
+	it( 'sends a connected domain to its setup when the domain request fails for another reason', async () => {
+		mockDomainCartItem = { product_slug: 'domain_map', meta: 'example.com' };
+		mockFetchDomain.mockRejectedValue( new Error( 'Network error' ) );
+
+		const { replacedWith } = await submitPostCheckoutProcessing( {} );
+
+		expect( replacedWith ).toBe(
+			'https://my.wordpress.com/domains/example.com/domain-connection-setup'
+		);
 	} );
 
 	it( 'keeps the setup chooser for a registered domain', async () => {
@@ -265,5 +292,6 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 
 		expect( navigate ).toHaveBeenCalledWith( 'setup-your-site-ai' );
 		expect( replacedWith ).toBeUndefined();
+		expect( mockFetchDomain ).not.toHaveBeenCalled();
 	} );
 } );

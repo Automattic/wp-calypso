@@ -114,8 +114,10 @@ async function isDomainKnownToWpcom( domainName: string ): Promise< boolean > {
 	try {
 		await fetchDomain( domainName );
 		return true;
-	} catch {
-		return false;
+	} catch ( error ) {
+		// The dashboard shows its 404 for this error only. After any other failure the purchase can
+		// still exist, and its setup page requests the domain again when it loads.
+		return ( error as Error )?.name !== 'InvalidDomainError';
 	}
 }
 
