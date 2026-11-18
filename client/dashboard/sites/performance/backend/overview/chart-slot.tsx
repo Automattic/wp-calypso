@@ -4,7 +4,6 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { dashboardChartTheme } from '../../../../app/chart-theme';
 import { useIntlLocale } from '../../../../app/locale';
 import { Card, CardBody, CardHeader } from '../../../../components/card';
 import { Text } from '../../../../components/text';
@@ -92,7 +91,7 @@ export default function ChartSlot( {
 				</HStack>
 			</CardHeader>
 			<CardBody>
-				<GlobalChartsProvider theme={ dashboardChartTheme }>
+				<GlobalChartsProvider>
 					<AreaChart
 						chartId={ CHART_ID }
 						height={ 320 }
