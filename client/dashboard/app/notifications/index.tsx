@@ -46,10 +46,14 @@ type LinkAction = {
 export default function Notifications( {
 	className,
 	anchor,
+	isInboxShown = false,
+	onOpenInbox,
 }: {
 	className?: string;
 	/** When true, hides the built-in toggle button (the omnibar provides its own). */
 	anchor?: boolean;
+	isInboxShown?: boolean;
+	onOpenInbox?: () => void;
 } ) {
 	const { user } = useAuth();
 	const locale = useLocale();
@@ -70,6 +74,9 @@ export default function Notifications( {
 
 	const handleToggle = useCallback(
 		( willOpen: boolean ) => {
+			if ( willOpen && isInboxShown ) {
+				return;
+			}
 			if ( willOpen ) {
 				setShowHelpCenter( false, undefined, true );
 				recordTracksEvent( 'calypso_notification_open', {
@@ -79,7 +86,7 @@ export default function Notifications( {
 			}
 			setIsOpen( willOpen );
 		},
-		[ setShowHelpCenter, recordTracksEvent ]
+		[ isInboxShown, setShowHelpCenter, recordTracksEvent ]
 	);
 
 	// Close notifications when help center opens.
@@ -88,6 +95,12 @@ export default function Notifications( {
 			setIsOpen( false );
 		}
 	}, [ isHelpCenterShown ] );
+
+	useEffect( () => {
+		if ( isInboxShown ) {
+			setIsOpen( false );
+		}
+	}, [ isInboxShown ] );
 
 	// Keep the omnibar button in sync with the panel open state.
 	useEffect( () => {
@@ -222,6 +235,7 @@ export default function Notifications( {
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
 						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+						onOpenFullView={ onOpenInbox }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>

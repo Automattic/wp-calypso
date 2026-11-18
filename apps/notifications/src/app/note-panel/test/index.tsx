@@ -1,7 +1,9 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { renderWithProvider } from '../../../testing-library';
+import { AppProvider } from '../../context';
 import NodePanel, { getNotificationTabs } from '../index';
 import type { FilterName } from '../../types';
 
@@ -80,5 +82,26 @@ describe( 'NotePanel', () => {
 				} )
 			).toBeVisible()
 		);
+	} );
+
+	it( 'offers the full view when the host provides one', async () => {
+		const onOpenFullView = vi.fn();
+		renderWithProvider(
+			<AppProvider client={ null } locale="en" onOpenFullView={ onOpenFullView }>
+				<NodePanel { ...defaultProps } />
+			</AppProvider>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
+
+		expect( onOpenFullView ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'has no full view button when the host provides none', async () => {
+		renderWithProvider( <NodePanel { ...defaultProps } /> );
+
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+
+		expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
 	} );
 } );
