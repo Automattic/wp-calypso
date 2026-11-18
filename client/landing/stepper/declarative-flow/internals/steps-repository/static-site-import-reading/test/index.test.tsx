@@ -36,7 +36,14 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	} ),
 } ) );
 
-const render = ( query: string, { afterCheckout = true, siteId = '123' } = {} ) => {
+const render = (
+	query: string,
+	{
+		afterCheckout = true,
+		siteId = '123',
+		props = {},
+	}: { afterCheckout?: boolean; siteId?: string; props?: Record< string, unknown > } = {}
+) => {
 	const url = `/setup/static-site-import-reading?${ query }${ siteId ? `&siteId=${ siteId }` : '' }`;
 	if ( afterCheckout ) {
 		setSignupCompleteFlowName( 'static-site-import' );
@@ -46,6 +53,7 @@ const render = ( query: string, { afterCheckout = true, siteId = '123' } = {} ) 
 		<MemoryRouter basename="/setup" initialEntries={ [ url ] }>
 			<StaticSiteImportReading
 				{ ...mockStepProps( { navigation: { submit }, stepName: 'static-site-import-reading' } ) }
+				{ ...props }
 			/>
 		</MemoryRouter>,
 		{
@@ -229,6 +237,7 @@ describe( 'StaticSiteImportReading', () => {
 					...continueWithSession,
 					previewSiteId: 456,
 					previewSiteSlug: 'preview.wpcomstaging.com',
+					sourceUrl: 'https://busybearscleaning.com',
 				},
 			},
 			{
@@ -254,5 +263,28 @@ describe( 'StaticSiteImportReading', () => {
 				funnelArgs: { import_session_id: 'abc123' },
 			} );
 		} );
+	} );
+
+	it( 'picks up a move it started before instead of starting another', async () => {
+		const startedImport = {
+			action: 'continue',
+			importSessionId: 'abc123',
+			previewSiteId: 456,
+			previewSiteSlug: 'preview.wpcomstaging.com',
+			sourceUrl: 'https://busybearscleaning.com',
+		};
+		const createSession = mockApi()
+			.post( '/wpcom/v2/static-site-import-session' )
+			.query( true )
+			.reply( 200, sessionResponse );
+		const submit = render( 'from=busybearscleaning.com', {
+			afterCheckout: false,
+			siteId: '',
+			props: { buildPreview: true, startedImport },
+		} );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( startedImport ) );
+		expect( createSession.isDone() ).toBe( false );
+		expect( startWowFunnelSite ).not.toHaveBeenCalled();
 	} );
 } );

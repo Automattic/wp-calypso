@@ -67,7 +67,7 @@ const catchAllRoute = createRoute( {
 	component: NotFound,
 } );
 
-const createRouteTree = ( config: AppConfig ) => {
+export const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
 	children.push( indexRoute );
