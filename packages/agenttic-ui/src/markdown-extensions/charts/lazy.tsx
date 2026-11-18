@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { lazy, Suspense } from 'react';
 import { ChartErrorBoundary } from './ChartErrorBoundary';
 import type { BarChartProps } from './BarChart';
@@ -16,9 +17,18 @@ const RETRY_DELAY_MS = 500;
 // a browser's own `import()` keeps the failure for the page.
 const importCharts = () => import( './chart-components' );
 const loadCharts = () =>
-	importCharts().catch( () =>
-		new Promise( ( resolve ) => setTimeout( resolve, RETRY_DELAY_MS ) ).then( importCharts )
-	);
+	importCharts()
+		.catch( () =>
+			new Promise( ( resolve ) => setTimeout( resolve, RETRY_DELAY_MS ) ).then( importCharts )
+		)
+		.catch( ( error ) => {
+			// The chart shows a message people can act on; the cause stays in the console.
+			// eslint-disable-next-line no-console
+			console.error( 'Charts failed to load:', error );
+			throw new Error(
+				__( 'This chart couldn’t load. Reload the page to try again.', 'a8c-agenttic' )
+			);
+		} );
 
 function lazyChart< P extends object >( pick: ( charts: Charts ) => ComponentType< P > ): FC< P > {
 	const Lazy = lazy( () => loadCharts().then( ( charts ) => ( { default: pick( charts ) } ) ) );
