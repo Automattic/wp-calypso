@@ -9,7 +9,7 @@ import {
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { Tabs } from '@wordpress/ui';
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, type ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import { recordTracksEvent } from '../../panel/helpers/stats';
@@ -30,7 +30,11 @@ export const getNotificationTabs = () =>
 
 type NotePanelProps = {
 	isDismissible?: boolean;
+	headingLevel?: 1 | 2 | 3;
+	actions?: ReactNode;
+	openNoteOnArrowKeys?: boolean;
 	filterName: FilterName;
+	/** Shows another tab. The host also closes the open note, which may not be on the new tab. */
 	setFilterName: ( filterName: FilterName ) => void;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
@@ -38,6 +42,9 @@ type NotePanelProps = {
 
 const NotePanel = ( {
 	isDismissible,
+	headingLevel = 3,
+	actions = <NotePanelActions />,
+	openNoteOnArrowKeys,
 	filterName,
 	setFilterName,
 	selectedNoteId,
@@ -57,13 +64,9 @@ const NotePanel = ( {
 					recordTracksEvent( 'calypso_notification_tab_select', { tab: tabId, source } );
 				}
 				setFilterName( tabId as FilterName );
-				// Clear the selection — a note from the previous filter would
-				// otherwise stay rendered in the detail pane while the list
-				// switches to the new filter's notes.
-				setSelectedNoteId( undefined );
 			}
 		},
-		[ setFilterName, setSelectedNoteId ]
+		[ setFilterName ]
 	);
 
 	useEffect( () => {
@@ -123,7 +126,7 @@ const NotePanel = ( {
 					<HStack>
 						<HStack justify="flex-start">
 							<Heading
-								level={ 3 }
+								level={ headingLevel }
 								size={ 15 }
 								weight="var(--wpds-typography-font-weight-emphasis, 600)"
 							>
@@ -131,7 +134,7 @@ const NotePanel = ( {
 							</Heading>
 						</HStack>
 						<HStack justify="flex-end">
-							<NotePanelActions />
+							{ actions }
 							{ isDismissible && <CloseButton /> }
 						</HStack>
 					</HStack>
@@ -169,6 +172,7 @@ const NotePanel = ( {
 								filterName={ filterName }
 								selectedNoteId={ selectedNoteId }
 								setSelectedNoteId={ setSelectedNoteId }
+								openNoteOnArrowKeys={ openNoteOnArrowKeys }
 							/>
 						</ErrorBoundary>
 					) }

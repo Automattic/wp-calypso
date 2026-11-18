@@ -1,12 +1,7 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/colors';
 
-$pane-height: calc(
-	100vh - var( --masterbar-height ) - 2 *
-		var( --page-layout-block-padding ) - var( --dashboard-page-header__row-height ) - var(
-			--dashboard-page-header__content-gap
-		)
-);
+$pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-block-padding ) );
 
 .dashboard-notifications-inbox {
 	height: $pane-height;
@@ -54,16 +49,4 @@ $pane-height: calc(
 .dashboard-notifications-inbox__detail.is-empty {
 	justify-content: center;
 	padding: $grid-unit-30;
-}
-
-.dashboard-notifications-inbox__tabs,
-.dashboard-notifications-inbox__tab-panel {
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	min-height: 0;
-}
-
-.dashboard-notifications-inbox__tab-list {
-	padding: $grid-unit-10 $grid-unit-20 0;
 }
