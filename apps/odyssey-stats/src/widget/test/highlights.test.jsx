@@ -22,7 +22,9 @@ vi.mock( '../../lib/selectors/can-current-user', () => ( { default: () => true }
 vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
 	default: () => 'https://example.com/wp-admin/',
 } ) );
-vi.mock( '../use-stats-gates', () => ( {
+const mockGates = vi.hoisted( () => ( { locked: [] } ) );
+vi.mock( '../stats-gates', () => ( {
+	isStatTypeGated: ( siteId, statType ) => mockGates.locked.includes( statType ),
 	getUpgradeUrl: ( siteId, statType ) =>
 		`https://wordpress.com/checkout/example.com/personal-bundle?stat=${ statType }`,
 } ) );
@@ -56,7 +58,7 @@ const queryState = ( { data, error, loading } = {} ) => ( {
 const items = ( ...titles ) =>
 	titles.map( ( title, id ) => ( { id, title, views: 10, url: `https://${ title }/` } ) );
 
-function highlights( { posts, referrers, gates } ) {
+function highlights( { posts, referrers } ) {
 	useTopPostsQuery.mockReturnValue( queryState( posts ) );
 	useReferrersQuery.mockReturnValue( queryState( referrers ) );
 
@@ -66,26 +68,16 @@ function highlights( { posts, referrers, gates } ) {
 			statsBaseUrl="https://example.com/wp-admin/admin.php?page=stats"
 			range={ RANGE }
 			gmtOffset={ 0 }
-			gates={ gates }
 		/>
 	);
 }
-
-/**
- * Gates that lock the given stat types.
- * @param {Array} lockedTypes The stat types the site's plan locks.
- * @param {boolean} isLoading Whether the answer is still loading.
- */
-const gatesLocking = ( lockedTypes, isLoading = false ) => ( {
-	isLoading,
-	isGated: ( statType ) => lockedTypes.includes( statType ),
-} );
 
 const renderHighlights = ( lists ) => render( highlights( lists ) );
 
 describe( 'Highlights', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
+		mockGates.locked = [];
 		global.ResizeObserver = class {
 			observe() {}
 			disconnect() {}
@@ -197,11 +189,8 @@ describe( 'Highlights', () => {
 
 	describe( 'on a plan that locks the lists', () => {
 		it( 'shows an upsell in place of both lists, and asks for neither', async () => {
-			renderHighlights( {
-				posts: { loading: true },
-				referrers: { loading: true },
-				gates: gatesLocking( [ 'statsTopPosts', 'statsReferrers' ] ),
-			} );
+			mockGates.locked = [ 'statsTopPosts', 'statsReferrers' ];
+			renderHighlights( { posts: { loading: true }, referrers: { loading: true } } );
 
 			expect( useTopPostsQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
 			expect( useReferrersQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
@@ -225,11 +214,8 @@ describe( 'Highlights', () => {
 		} );
 
 		it( 'keeps the list the plan includes, locking only the other', async () => {
-			renderHighlights( {
-				posts: { data: items( 'Hello world' ) },
-				referrers: { loading: true },
-				gates: gatesLocking( [ 'statsReferrers' ] ),
-			} );
+			mockGates.locked = [ 'statsReferrers' ];
+			renderHighlights( { posts: { data: items( 'Hello world' ) }, referrers: { loading: true } } );
 
 			expect( useTopPostsQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, true );
 			expect( useReferrersQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
@@ -238,28 +224,6 @@ describe( 'Highlights', () => {
 			await userEvent.click( screen.getByRole( 'tab', { name: 'Top Referrers' } ) );
 
 			expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toBeInTheDocument();
-		} );
-
-		it( 'keeps the section for its upsell where the open list is empty', () => {
-			renderHighlights( {
-				posts: {},
-				referrers: { loading: true },
-				gates: gatesLocking( [ 'statsReferrers' ] ),
-			} );
-
-			expect( screen.getByText( 'Popular content & referrers' ) ).toBeInTheDocument();
-		} );
-
-		it( 'asks for neither list until the gates are known', () => {
-			renderHighlights( {
-				posts: { loading: true },
-				referrers: { loading: true },
-				gates: gatesLocking( [], true ),
-			} );
-
-			expect( useTopPostsQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
-			expect( useReferrersQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
-			expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

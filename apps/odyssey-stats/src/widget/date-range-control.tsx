@@ -1,7 +1,7 @@
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { Icon, check, chevronDown, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, MouseEventHandler } from 'react';
 import {
 	DATE_RANGES,
 	DATE_RANGE_LAST_7_DAYS,
@@ -19,7 +19,6 @@ interface DateRangeControlProps {
 	onChange: ( value: DateRangeId ) => void;
 	/** Whether the site's plan locks a range, as Stats v2 locks its date shortcuts. */
 	isLocked?: ( value: DateRangeId ) => boolean;
-	/** Where the upsell under locked ranges leads. */
 	upgradeUrl?: string;
 }
 
@@ -94,17 +93,18 @@ const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( {
 					</MenuGroup>
 					{ hasLockedRanges && upgradeUrl && (
 						<MenuGroup>
-							<div className="stats-widget-date-range__upsell">
-								<p>{ translate( 'Upgrade your plan to see your stats over longer periods.' ) }</p>
-								<a
-									href={ upgradeUrl }
-									onClick={ recordWidgetEventThenFollow( 'upgrade_clicked', {
+							<MenuItem
+								href={ upgradeUrl }
+								info={ translate( 'Upgrade your plan to see your stats over longer periods.' ) }
+								// `MenuItem` renders an `<a>` when given `href`, but types its events as a button's.
+								onClick={
+									recordWidgetEventThenFollow( 'upgrade_clicked', {
 										feature: 'date_range',
-									} ) }
-								>
-									{ translate( 'Upgrade' ) }
-								</a>
-							</div>
+									} ) as MouseEventHandler< HTMLElement >
+								}
+							>
+								{ translate( 'Upgrade' ) }
+							</MenuItem>
 						</MenuGroup>
 					) }
 				</>

@@ -25,7 +25,7 @@ import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
-import useStatsGates, { DATE_RANGE_GATES, getUpgradeUrl } from './use-stats-gates';
+import { DATE_RANGE_GATES, getUpgradeUrl, isStatTypeGated } from './stats-gates';
 import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
 import type { FunctionComponent } from 'react';
@@ -94,13 +94,11 @@ export function init() {
 			const [ rangeId, setRangeId ] = useState< DateRangeId >( () =>
 				readStoredRangeId( currentSiteId )
 			);
-			const gates = useStatsGates( currentSiteId );
-			const isRangeLocked = ( id: DateRangeId ) => gates.isGated( DATE_RANGE_GATES[ id ] );
+			const isRangeLocked = ( id: DateRangeId ) =>
+				isStatTypeGated( currentSiteId, DATE_RANGE_GATES[ id ] );
 			// A range chosen before the site lost it is kept, for when the site has it again.
 			const shownRangeId = isRangeLocked( rangeId ) ? DEFAULT_DATE_RANGE_ID : rangeId;
 			const range = resolveDateRange( shownRangeId, gmtOffset );
-			// Until the plan is known, only the default range, which no plan locks, is asked for.
-			const isChartHeld = gates.isLoading && shownRangeId !== DEFAULT_DATE_RANGE_ID;
 
 			const onRangeChange = ( nextRangeId: DateRangeId ) => {
 				if ( nextRangeId !== shownRangeId ) {
@@ -124,10 +122,7 @@ export function init() {
 									value={ shownRangeId }
 									onChange={ onRangeChange }
 									isLocked={ isRangeLocked }
-									upgradeUrl={
-										getUpgradeUrl( currentSiteId, STATS_FEATURE_DATE_CONTROL ) ??
-										`${ statsBaseUrl }/stats/day/${ currentSiteId }`
-									}
+									upgradeUrl={ getUpgradeUrl( currentSiteId, STATS_FEATURE_DATE_CONTROL ) }
 								/>
 							}
 						>
@@ -136,7 +131,6 @@ export function init() {
 								statsBaseUrl={ statsBaseUrl }
 								range={ range }
 								gmtOffset={ gmtOffset }
-								isHeld={ isChartHeld }
 							/>
 						</WidgetSection>
 						<Highlights
@@ -144,7 +138,6 @@ export function init() {
 							statsBaseUrl={ statsBaseUrl }
 							range={ range }
 							gmtOffset={ gmtOffset }
-							gates={ gates }
 						/>
 						<Modules siteId={ currentSiteId } adminBaseUrl={ adminBaseUrl } />
 						<div className="stats-widget-footer">

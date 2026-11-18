@@ -45,8 +45,10 @@ describe( 'DateRangeControl', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Date range: Last 7 days' } ) );
 
-		expect( screen.getByRole( 'menuitemradio', { name: 'Last 90 days' } ) ).toBeEnabled();
-		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'menuitemradio', { name: 'Last 90 days' } ) ).not.toHaveAttribute(
+			'aria-disabled'
+		);
+		expect( screen.queryByRole( 'menuitem', { name: /^Upgrade/ } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'locks the ranges the plan does not include, with an upsell', async () => {
@@ -63,17 +65,26 @@ describe( 'DateRangeControl', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Date range: Last 7 days' } ) );
 
-		expect( screen.getByRole( 'menuitemradio', { name: 'Last 7 days' } ) ).toBeEnabled();
+		expect( screen.getByRole( 'menuitemradio', { name: 'Last 7 days' } ) ).not.toHaveAttribute(
+			'aria-disabled'
+		);
 		for ( const name of [ 'Last 30 days', 'Last 90 days', 'Last 12 months' ] ) {
-			expect( screen.getByRole( 'menuitemradio', { name } ) ).toBeDisabled();
+			expect( screen.getByRole( 'menuitemradio', { name } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
 		}
 
 		await user.click( screen.getByRole( 'menuitemradio', { name: 'Last 90 days' } ) );
 		expect( onChange ).not.toHaveBeenCalled();
 
-		expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toHaveAttribute(
+		const upgrade = screen.getByRole( 'menuitem', { name: /^Upgrade/ } );
+		expect( upgrade ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/checkout/example.com/personal-bundle'
+		);
+		expect( upgrade ).toHaveTextContent(
+			'Upgrade your plan to see your stats over longer periods.'
 		);
 		expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'upgrade_clicked', {
 			feature: 'date_range',

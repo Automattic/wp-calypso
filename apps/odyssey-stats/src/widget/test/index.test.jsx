@@ -23,18 +23,16 @@ vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
 	default: () => 'https://example.com/wp-admin/',
 } ) );
 vi.mock( 'calypso/my-sites/stats/hooks/use-wp-admin-theme', () => ( { default: () => null } ) );
-const mockGates = vi.hoisted( () => ( { locked: [], isLoading: false } ) );
-vi.mock( '../use-stats-gates', async ( importOriginal ) => ( {
+const mockGates = vi.hoisted( () => ( { locked: [] } ) );
+vi.mock( '../stats-gates', async ( importOriginal ) => ( {
 	...( await importOriginal() ),
-	default: () => ( {
-		isLoading: mockGates.isLoading,
-		isGated: ( statType ) => ! mockGates.isLoading && mockGates.locked.includes( statType ),
-	} ),
+	isStatTypeGated: ( siteId, statType ) => mockGates.locked.includes( statType ),
+	getUpgradeUrl: () => 'https://wordpress.com/checkout/example.com/personal-bundle',
 } ) );
 const mockStatsLink = vi.fn( ( url ) => url );
 vi.mock( '../use-stats-link', () => ( { default: () => mockStatsLink } ) );
 vi.mock( '../mini-chart', () => ( {
-	default: ( { range, isHeld } ) => <p>{ `Chart of ${ range.id }${ isHeld ? ', held' : '' }` }</p>,
+	default: ( { range } ) => <p>{ `Chart of ${ range.id }` }</p>,
 } ) );
 vi.mock( '../highlights', () => ( { default: () => null } ) );
 vi.mock( '../modules', () => ( { default: () => null } ) );
@@ -61,7 +59,6 @@ describe( 'Stats widget', () => {
 		vi.clearAllMocks();
 		localStorage.clear();
 		mockGates.locked = [];
-		mockGates.isLoading = false;
 	} );
 
 	it( 'opens on the range last chosen on this site', async () => {
@@ -160,36 +157,20 @@ describe( 'Stats widget', () => {
 			expect( localStorage.getItem( STORAGE_KEY ) ).toBe( 'last_90_days' );
 		} );
 
-		it( 'locks them in the menu, upselling on Stats for a site it does not know', async () => {
+		it( 'locks them in the menu, with an upgrade to checkout', async () => {
 			const user = userEvent.setup();
 			await renderWidget();
 
 			await user.click( screen.getByRole( 'button', { name: 'Date range: Last 7 days' } ) );
 
-			expect( screen.getByRole( 'menuitemradio', { name: 'Last 30 days' } ) ).toBeDisabled();
-			expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toHaveAttribute(
-				'href',
-				'https://example.com/stats/stats/day/123'
+			expect( screen.getByRole( 'menuitemradio', { name: 'Last 30 days' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
 			);
-		} );
-	} );
-
-	describe( 'while the plan is still loading', () => {
-		beforeEach( () => {
-			mockGates.isLoading = true;
-		} );
-
-		it( 'holds the chart for a remembered range a plan could lock', async () => {
-			localStorage.setItem( STORAGE_KEY, 'last_90_days' );
-			await renderWidget();
-
-			expect( screen.getByText( 'Chart of last_90_days, held' ) ).toBeInTheDocument();
-		} );
-
-		it( 'asks for the last 7 days straight away, since no plan locks them', async () => {
-			await renderWidget();
-
-			expect( screen.getByText( 'Chart of last_7_days' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'menuitem', { name: /^Upgrade/ } ) ).toHaveAttribute(
+				'href',
+				'https://wordpress.com/checkout/example.com/personal-bundle'
+			);
 		} );
 	} );
 } );

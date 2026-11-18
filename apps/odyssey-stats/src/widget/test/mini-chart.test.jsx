@@ -120,32 +120,8 @@ describe( 'MiniChart', () => {
 
 		expect( useVisitsQuery ).toHaveBeenCalledWith(
 			1,
-			expect.objectContaining( { unit: 'week', startDate: '2026-10-01', endDate: '2026-10-07' } ),
-			undefined,
-			true
+			expect.objectContaining( { unit: 'week', startDate: '2026-10-01', endDate: '2026-10-07' } )
 		);
-	} );
-
-	it( 'asks for nothing while held, showing its placeholder', () => {
-		useVisitsQuery.mockReturnValue( pending() );
-		const range = {
-			...getDateRange( DATE_RANGE_LAST_90_DAYS ),
-			startDate: '2026-07-10',
-			endDate: '2026-10-07',
-		};
-		render(
-			<MiniChart
-				siteId={ 1 }
-				statsBaseUrl="https://example.com/wp-admin/admin.php?page=stats"
-				range={ range }
-				gmtOffset={ 0 }
-				isHeld
-			/>
-		);
-
-		expect( useVisitsQuery ).toHaveBeenCalledWith( 1, expect.any( Object ), undefined, false );
-		expect( screen.getAllByText( 'Loading…' ).length ).toBeGreaterThan( 0 );
-		expect( screen.queryByText( 'Chart' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'hands the chart the weeks as keyed, with the range they are cut to', async () => {

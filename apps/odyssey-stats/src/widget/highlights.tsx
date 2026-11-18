@@ -11,7 +11,7 @@ import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
 import Skeleton from './skeleton';
-import { getUpgradeUrl, type IsGated } from './use-stats-gates';
+import { getUpgradeUrl, isStatTypeGated } from './stats-gates';
 import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
 import type { MouseEvent, ReactNode } from 'react';
@@ -39,7 +39,7 @@ interface TopColumnProps {
 
 interface LockedColumnProps {
 	description: ReactNode;
-	upgradeUrl: string;
+	upgradeUrl?: string;
 	onUpgradeClick: ClickHandler;
 }
 
@@ -48,11 +48,7 @@ interface HighlightsProps {
 	statsBaseUrl: string;
 	range: ResolvedDateRange;
 	gmtOffset: number;
-	/** What the site's plan locks, from `useStatsGates`. */
-	gates?: { isLoading: boolean; isGated: IsGated };
 }
-
-const OPEN_GATES = { isLoading: false, isGated: () => false };
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
 const HIGHLIGHT_TAB_TOP_POSTS_PAGES = 'topPostsAndPages';
@@ -149,7 +145,6 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	);
 };
 
-// In place of a list the site's plan locks, as Stats v2 puts an upsell over its card.
 const LockedColumn: FunctionComponent< LockedColumnProps > = ( {
 	description,
 	upgradeUrl,
@@ -163,22 +158,18 @@ const LockedColumn: FunctionComponent< LockedColumnProps > = ( {
 				<Icon icon={ lock } size={ 18 } />
 				{ description }
 			</p>
-			<div className="stats-widget-highlights-card__view-all">
-				<a href={ upgradeUrl } onClick={ onUpgradeClick }>
-					{ translate( 'Upgrade' ) }
-				</a>
-			</div>
+			{ upgradeUrl && (
+				<div className="stats-widget-highlights-card__view-all">
+					<a href={ upgradeUrl } onClick={ onUpgradeClick }>
+						{ translate( 'Upgrade' ) }
+					</a>
+				</div>
+			) }
 		</div>
 	);
 };
 
-export default function Highlights( {
-	siteId,
-	statsBaseUrl,
-	range,
-	gmtOffset,
-	gates = OPEN_GATES,
-}: HighlightsProps ) {
+export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: HighlightsProps ) {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
 	const { startDate, endDate } = range;
@@ -204,42 +195,28 @@ export default function Highlights( {
 		);
 	const referrerHref = ( item: HighLightItem ) => item.url || item.href;
 
-	const isTopPostsLocked = gates.isGated( STAT_TYPE_TOP_POSTS );
-	const isReferrersLocked = gates.isGated( STAT_TYPE_REFERRERS );
+	const isTopPostsLocked = isStatTypeGated( siteId, STAT_TYPE_TOP_POSTS );
+	const isReferrersLocked = isStatTypeGated( siteId, STAT_TYPE_REFERRERS );
 
-	// A locked list is never asked for, nor is either list before the gates are known.
 	const {
 		data: topPostsAndPages = [],
 		isPending: isPendingPostsAndPages,
 		isError: isPostsAndPagesError,
-	} = useTopPostsQuery(
-		siteId,
-		range,
-		HIGHLIGHT_ITEMS_LIMIT,
-		! gates.isLoading && ! isTopPostsLocked
-	);
+	} = useTopPostsQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT, ! isTopPostsLocked );
 
 	const {
 		data: topReferrers = [],
 		isPending: isPendingReferrers,
 		isError: isReferrersError,
-	} = useReferrersQuery(
-		siteId,
-		range,
-		HIGHLIGHT_ITEMS_LIMIT,
-		! gates.isLoading && ! isReferrersLocked
-	);
+	} = useReferrersQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT, ! isReferrersLocked );
 
 	// Held here rather than left to TabPanel, which remounts when the section comes back after
 	// an empty range and reports its initial tab as it does; only a change is a user's click.
 	const [ selectedTab, setSelectedTab ] = useState< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
 
 	// Drop the section only once both lists have answered empty. A failed request also falls
-	// back to `[]`, so errors are excluded: those lists say "No data to show" instead. A locked
-	// list keeps the section, for its upsell.
+	// back to `[]`, so errors are excluded: those lists say "No data to show" instead.
 	const isEmpty =
-		! isTopPostsLocked &&
-		! isReferrersLocked &&
 		! isPendingPostsAndPages &&
 		! isPendingReferrers &&
 		! isPostsAndPagesError &&
@@ -312,7 +289,7 @@ export default function Highlights( {
 						return (
 							<LockedColumn
 								description={ active.lockedDescription }
-								upgradeUrl={ getUpgradeUrl( siteId, active.statType ) ?? active.viewAllUrl }
+								upgradeUrl={ getUpgradeUrl( siteId, active.statType ) }
 								onUpgradeClick={ recordWidgetEventThenFollow( 'upgrade_clicked', {
 									feature: active.trackingName,
 								} ) }
