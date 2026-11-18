@@ -115,6 +115,11 @@ function getIndividualConfig( options = {} ) {
 					if ( request === '@wordpress/abilities' ) {
 						return null;
 					}
+					// Bundled for the same reason: @automattic/charts imports it, and not every
+					// site that loads these bundles registers `wp-theme`.
+					if ( request === '@wordpress/theme' ) {
+						return null;
+					}
 					// No branch for @wordpress/router or @wordpress/private-apis —
 					// core registers both handles and they must stay external. Each
 					// keeps module-scope state the editor already owns (the router's
