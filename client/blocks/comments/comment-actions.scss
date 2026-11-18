@@ -1,9 +1,9 @@
-@import '@automattic/typography/styles/variables';
+@import "@automattic/typography/styles/variables";
 
 // Actions for Individual Comments
 .comments__comment-actions {
 	align-items: center;
-	color: var( --color-text-subtle );
+	color: var(--color-text-subtle);
 	display: flex;
 	font-size: $font-body-small;
 	gap: 22px;
@@ -13,7 +13,7 @@
 
 	.components-button {
 		align-items: center;
-		color: var( --color-text-subtle );
+		color: var(--color-text-subtle);
 		display: flex;
 		height: auto;
 		cursor: pointer;
@@ -31,10 +31,10 @@
 		button.is-active,
 		&.like-button.is-liked,
 		&.like-button.is-pressed {
-			color: var( --color-link );
+			color: var(--color-link);
 
 			svg.reader-star path {
-				stroke: var( --color-link );
+				stroke: var(--color-link);
 			}
 		}
 
@@ -44,7 +44,7 @@
 			background: transparent;
 
 			svg.reader-star path {
-				fill: var( --color-link );
+				fill: var(--color-link);
 			}
 		}
 

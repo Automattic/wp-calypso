@@ -170,7 +170,7 @@ Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId
 
 ### Post cards
 
-Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (title, excerpt, image), `compact` (smaller layout for discovery), `photo` (image-focused), `gallery` (multiple images), and `conversation` (discussion thread).
+Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (title, excerpt, image), `compact` (smaller layout for discovery), `photo` (image-focused), and `gallery` (multiple images).
 
 ### Page entrypoints
 

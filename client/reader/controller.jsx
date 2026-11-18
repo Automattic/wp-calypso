@@ -500,11 +500,11 @@ export function setupReadRoutes() {
 		},
 		{
 			path: '/read/conversations',
-			getRedirect: () => '/reader/conversations',
+			getRedirect: () => '/reader/conversations/inbox',
 		},
 		{
 			path: '/read/conversations/a8c',
-			getRedirect: () => '/reader/conversations/a8c',
+			getRedirect: () => '/reader/conversations/inbox',
 		},
 		{
 			path: '/read/feed',

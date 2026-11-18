@@ -10,7 +10,8 @@ export * from './helpers';
 
 /**
  * Picks the field on each item that should be used as the stream's
- * chronological key. Liked and saved streams sort by the like or save timestamp, everything else by post date.
+ * chronological key. Liked and saved streams sort by the like or save
+ * timestamp, everything else by post date.
  */
 export function getStreamDateProperty( streamType: string ): string {
 	if ( streamType === 'likes' ) {

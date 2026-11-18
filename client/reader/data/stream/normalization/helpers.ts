@@ -20,15 +20,15 @@ export const getQueryString = ( extras: Record< string, unknown > = {} ) => ( {
 // hydrate the canonical Reader post cache and render rich cards without a
 // per-card full-post request waterfall on consumePending. The
 // first argument is kept for call-site compatibility with the legacy
-// stream-type-specific extras (`date_liked`, etc.) —
-// the API now returns those fields by default since we no longer restrict the
-// response with `fields`.
+// stream-type-specific extras (`date_liked`, etc.) — the API now returns
+// those fields by default since we no longer restrict the response with
+// `fields`.
 export const getQueryStringForPoll = (
 	// First arg kept for call-site compatibility with the legacy signature
 	// (`buildStreamQueryParams` still threads stream-type extras like
-	// `date_liked` through here). The API now returns
-	// those fields by default since the response is no longer restricted via
-	// `fields`, so the array is effectively a no-op.
+	// `date_liked` through here). The API now returns those fields by default
+	// since the response is no longer restricted via `fields`, so the array is
+	// effectively a no-op.
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	_extraFields: string[] = [],
 	extraQueryParams: Record< string, unknown > = {}
