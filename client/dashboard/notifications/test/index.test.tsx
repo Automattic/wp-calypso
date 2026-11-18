@@ -23,7 +23,7 @@ type InboxProps = {
 };
 
 // The inbox starts a notifications client that polls the API and opens a websocket.
-// Like the real one, it closes the open note when the tab changes.
+// Like the real one, it leaves closing the open note on a tab change to the page.
 vi.mock( '@automattic/notifications/src/inbox', () => ( {
 	default: ( {
 		filterName = 'all',
@@ -36,13 +36,7 @@ vi.mock( '@automattic/notifications/src/inbox', () => ( {
 			list: (
 				<>
 					{ [ 'all', 'unread', 'comments' ].map( ( name ) => (
-						<button
-							key={ name }
-							onClick={ () => {
-								setFilterName( name );
-								setSelectedNoteId( undefined );
-							} }
-						>
+						<button key={ name } onClick={ () => setFilterName( name ) }>
 							{ `Show ${ name }` }
 						</button>
 					) ) }
@@ -83,10 +77,10 @@ function setNarrowScreen( isNarrow: boolean ) {
 	} );
 }
 
-async function renderNotifications( initialPath: string ) {
+async function renderNotifications( ...initialPaths: string[] ) {
 	const router = createRouter( {
 		routeTree: rootRoute.addChildren( createNotificationsRoutes() ),
-		history: createMemoryHistory( { initialEntries: [ initialPath ] } ),
+		history: createMemoryHistory( { initialEntries: initialPaths } ),
 		context: { config: APP_CONTEXT_DEFAULT_CONFIG },
 	} );
 
@@ -165,6 +159,37 @@ describe( '<Notifications>', () => {
 		await waitFor( () =>
 			expect( router.state.location.href ).toBe( '/notifications?filter=comments' )
 		);
+		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'goes back past the tabs looked at, to the page before', async () => {
+		const user = userEvent.setup();
+		const router = await renderNotifications( '/notifications?filter=likes', '/notifications' );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Show comments' } ) );
+		await screen.findByRole( 'button', { name: 'Open a note from comments' } );
+		await user.click( screen.getByRole( 'button', { name: 'Show unread' } ) );
+		await screen.findByRole( 'button', { name: 'Open a note from unread' } );
+
+		router.history.back();
+
+		expect( await screen.findByRole( 'button', { name: 'Open a note from likes' } ) ).toBeVisible();
+		expect( router.state.location.href ).toBe( '/notifications?filter=likes' );
+	} );
+
+	test( 'goes back to the list a note was opened from after the tab changes', async () => {
+		const user = userEvent.setup();
+		const router = await renderNotifications( '/notifications' );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Open a note from all' } ) );
+		await screen.findByRole( 'button', { name: 'Close note 42' } );
+		await user.click( screen.getByRole( 'button', { name: 'Show comments' } ) );
+		await screen.findByRole( 'button', { name: 'Open a note from comments' } );
+
+		router.history.back();
+
+		expect( await screen.findByRole( 'button', { name: 'Open a note from all' } ) ).toBeVisible();
+		expect( router.state.location.href ).toBe( '/notifications' );
 		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
 	} );
 

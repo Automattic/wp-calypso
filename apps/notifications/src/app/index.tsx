@@ -1,7 +1,7 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useConstrainedTabbing } from '@wordpress/compose';
 import clsx from 'clsx';
-import { useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
+import { useCallback, useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
@@ -63,6 +63,14 @@ const NotificationContent = ( {
 	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
 	const isDetailOpen = selectedNoteId !== undefined;
 
+	const changeFilter = useCallback( ( name: FilterName ) => {
+		setFilterName( name );
+		// Clear the selection — a note from the previous filter would
+		// otherwise stay rendered in the detail pane while the list
+		// switches to the new filter's notes.
+		setSelectedNoteId( undefined );
+	}, [] );
+
 	// Hold the last selected note id so it keeps rendering through the
 	// slide-out animation, then clear it on transitionend.
 	const [ exitingNoteId, setExitingNoteId ] = useState< string | undefined >( undefined );
@@ -123,7 +131,7 @@ const NotificationContent = ( {
 				<NotePanel
 					isDismissible={ isDismissible }
 					filterName={ filterName }
-					setFilterName={ setFilterName }
+					setFilterName={ changeFilter }
 					selectedNoteId={ selectedNoteId }
 					setSelectedNoteId={ setSelectedNoteId }
 				/>
