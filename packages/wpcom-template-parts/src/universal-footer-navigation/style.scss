@@ -1448,11 +1448,11 @@
 
 		/* Columns hug their content with 150px gaps; the gap tracks shrink evenly when space runs out. */
 		.lp-grid--type-footer.lp-grid--gutter-y-4 {
-			grid-template-columns: repeat( 4, max-content minmax( 0, 150px ) ) max-content;
+			grid-template-columns: repeat( 5, max-content minmax( 0, 150px ) ) max-content;
 			grid-column-gap: 0;
 			justify-content: start;
 
-			@for $i from 1 through 5 {
+			@for $i from 1 through 6 {
 				> :nth-child( #{$i} ) {
 					grid-column: #{$i * 2 - 1};
 				}
