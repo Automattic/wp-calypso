@@ -23,6 +23,7 @@ export type WordPressMigrationStatus = {
 	notification_emails: string[];
 	// Our team has taken the migration over, which the site's own migration state shows once it's read again.
 	handed_off: boolean;
+	can_cancel?: boolean;
 };
 
 export type WordPressMigrationSourceConnection = {
@@ -55,5 +56,5 @@ export type WordPressMigrationRunParams = {
 };
 
 export type WordPressMigrationCancellation = {
-	status: 'ready' | 'wait' | 'support' | 'cancelled' | 'unlock_failed';
+	status: 'wait' | 'support' | 'cancelled' | 'unlock_failed';
 };

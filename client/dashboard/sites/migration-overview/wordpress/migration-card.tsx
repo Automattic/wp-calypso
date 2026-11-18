@@ -13,7 +13,6 @@ import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
 import { wpcomLink } from '../../../utils/link';
-import { MigrationCancellation } from './cancellation';
 import type { Site } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 import './style.scss';
@@ -81,10 +80,13 @@ export function MigrationCard( {
 	);
 }
 
-/**
- * The way out to an assisted migration, the same wherever the customer may want it.
- */
-export function AssistedHandoffLink( { site }: { site: Site } ) {
+export function MigrationFooter( {
+	site,
+	cancelAction,
+}: {
+	site: Site;
+	cancelAction: React.ReactNode;
+} ) {
 	return (
 		<div className="wordpress-migration__footer-actions">
 			<RouterLinkButton
@@ -94,7 +96,7 @@ export function AssistedHandoffLink( { site }: { site: Site } ) {
 			>
 				{ __( 'Have our team handle this migration for you' ) }
 			</RouterLinkButton>
-			<MigrationCancellation site={ site } />
+			{ cancelAction }
 		</div>
 	);
 }

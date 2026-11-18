@@ -1,79 +1,179 @@
 /**
  * @vitest-environment jsdom
  */
-import { queryClient } from '@automattic/api-queries';
-import { screen, waitFor, within } from '@testing-library/react';
+import { queryClient, siteWordPressMigrationStatusQuery } from '@automattic/api-queries';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
-import { MigrationCancellation } from '../cancellation';
-import type { Site, WordPressMigrationCancellation } from '@automattic/api-core';
+import { WordPressMigration } from '../index';
+import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
 
-const site = { ID: 42 } as Site;
-const cancelPath = '/wpcom/v2/sites/42/wordpress-migration/cancel';
+const { setShowHelpCenter } = vi.hoisted( () => ( { setShowHelpCenter: vi.fn() } ) );
+vi.mock( '../../../../app/help-center', () => ( {
+	useHelpCenter: () => ( { setShowHelpCenter } ),
+} ) );
+
+const site = {
+	ID: 42,
+	slug: 'example.wordpress.com',
+	site_migration: { type: 'wordpress', status_v2: 'started' },
+} as Site;
+const base = '/wpcom/v2/sites/42/wordpress-migration';
 const mockApi = () => nock( 'https://public-api.wordpress.com' );
-
-const openConfirmation = async ( status: WordPressMigrationCancellation[ 'status' ] ) => {
-	mockApi().get( cancelPath ).query( true ).reply( 200, { status } );
-	render( <MigrationCancellation site={ site } />, { queryClient } );
-	await userEvent.click( screen.getByRole( 'button', { name: 'Cancel this migration' } ) );
+const cancelButton = () => screen.queryByRole( 'button', { name: 'Cancel this migration' } );
+const migration = (
+	status: WordPressMigrationStatus[ 'status' ],
+	extra?: Partial< WordPressMigrationStatus >
+): WordPressMigrationStatus => ( {
+	status,
+	phase: null,
+	source_url: 'https://source.example',
+	progress: null,
+	findings: [],
+	started_at: null,
+	completed_at: null,
+	handed_off: false,
+	notification_emails: [],
+	...extra,
+} );
+const replyStatus = ( data: WordPressMigrationStatus ) =>
+	mockApi()
+		.get( base + '/status' )
+		.query( true )
+		.reply( 200, data );
+const openDialog = async () => {
+	await userEvent.click( await screen.findByRole( 'button', { name: 'Cancel this migration' } ) );
 	return within( await screen.findByRole( 'dialog' ) );
 };
 
-afterEach( () => queryClient.clear() );
+beforeEach( () => {
+	mockApi()
+		.get( base + '/configure' )
+		.query( true )
+		.reply( 200, { available_source_connections: [] } );
+} );
+afterEach( () => {
+	queryClient.clear();
+	vi.clearAllMocks();
+} );
 
-test( 'only cancels a clean migration after explicit confirmation', async () => {
-	let modal = await openConfirmation( 'ready' );
-	await userEvent.click( await modal.findByRole( 'button', { name: 'Keep migrating' } ) );
-	expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-
-	mockApi().get( cancelPath ).query( true ).reply( 200, { status: 'ready' } );
-	await userEvent.click( screen.getByRole( 'button', { name: 'Cancel this migration' } ) );
-	modal = within( await screen.findByRole( 'dialog' ) );
-	const cancel = mockApi().post( cancelPath ).reply( 200, { status: 'cancelled' } );
-	await waitFor( () =>
-		expect( modal.getByRole( 'button', { name: 'Cancel migration' } ) ).toBeEnabled()
+test( 'an old cached status hides Cancel until the normal status refresh confirms it', async () => {
+	queryClient.setQueryData(
+		siteWordPressMigrationStatusQuery( site.ID ).queryKey,
+		migration( 'paused' )
 	);
-	await userEvent.click( modal.getByRole( 'button', { name: 'Cancel migration' } ) );
-	expect( await modal.findByText( 'Your migration has been cancelled.' ) ).toBeVisible();
+	mockApi()
+		.get( base + '/status' )
+		.query( true )
+		.delay( 100 )
+		.reply( 200, migration( 'paused', { can_cancel: true } ) );
+	render( <WordPressMigration site={ site } />, { queryClient } );
+	expect( screen.getByRole( 'heading', { name: 'Before we migrate your site' } ) ).toBeVisible();
+	expect( cancelButton() ).not.toBeInTheDocument();
+	const dialog = await openDialog();
+	expect( dialog.getByRole( 'button', { name: 'Cancel migration' } ) ).toBeEnabled();
+
+	replyStatus( migration( 'paused', { can_cancel: false } ) );
+	await act( () => queryClient.refetchQueries( siteWordPressMigrationStatusQuery( site.ID ) ) );
+	await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+	expect( cancelButton() ).not.toBeInTheDocument();
+} );
+
+test( 'a recoverable failure offers Cancel alongside retry only when eligible', async () => {
+	const failed = migration( 'failed', {
+		findings: [
+			{
+				code: 'source_unreachable',
+				severity: 'failure',
+				resolution: 'retry',
+				suggested_action: null,
+				label: 'Source unavailable',
+				message: 'Source unavailable',
+			},
+		],
+	} );
+	replyStatus( { ...failed, can_cancel: false } );
+	render( <WordPressMigration site={ site } />, { queryClient } );
+	expect(
+		await screen.findByRole( 'button', { name: 'The site is online now, try again' } )
+	).toBeVisible();
+	expect( cancelButton() ).not.toBeInTheDocument();
+	replyStatus( { ...failed, can_cancel: true } );
+	await act( () => queryClient.refetchQueries( siteWordPressMigrationStatusQuery( site.ID ) ) );
+	expect( await screen.findByRole( 'button', { name: 'Cancel this migration' } ) ).toBeEnabled();
+} );
+
+test( 'cancels setup only after explicit confirmation and refreshes the migration', async () => {
+	replyStatus( migration( 'not_started', { can_cancel: true } ) );
+	render( <WordPressMigration site={ site } />, { queryClient } );
+	const cancel = mockApi()
+		.post( base + '/cancel' )
+		.reply( 200, { status: 'cancelled' } );
+	let dialog = await openDialog();
+	await userEvent.click( dialog.getByRole( 'button', { name: 'Keep migrating' } ) );
+	expect( cancel.isDone() ).toBe( false );
+	dialog = await openDialog();
+	replyStatus( migration( 'cancelled', { can_cancel: false } ) );
+	await userEvent.click( dialog.getByRole( 'button', { name: 'Cancel migration' } ) );
+	expect(
+		await screen.findByRole( 'heading', { name: 'Your migration has been cancelled' } )
+	).toBeVisible();
 	expect( cancel.isDone() ).toBe( true );
 } );
 
-test( 'offers support for a possibly modified site', async () => {
-	const modal = await openConfirmation( 'support' );
-	expect( await modal.findByText( /may have changed your destination/ ) ).toBeVisible();
-	expect( modal.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
-	expect( modal.queryByRole( 'button', { name: 'Cancel migration' } ) ).not.toBeInTheDocument();
-} );
+test.each( [
+	[ 'wait', /Migration work is still in progress/ ],
+	[ 'support', /may have changed your destination/ ],
+	[ 'unlock_failed', /We couldn’t unlock your site dashboard/ ],
+	[ 'error', /We couldn’t cancel your migration/ ],
+] as const )(
+	'refreshes after %s and leaves Help available outside the confirmation',
+	async ( outcome, feedback ) => {
+		replyStatus( migration( 'paused', { can_cancel: true } ) );
+		render( <WordPressMigration site={ site } />, { queryClient } );
+		const dialog = await openDialog();
+		mockApi()
+			.post( base + '/cancel' )
+			.reply( outcome === 'error' ? 409 : 200, { status: outcome } );
+		// A failed unlock can leave the saved migration step unchanged.
+		const refresh = replyStatus(
+			migration( outcome === 'wait' ? 'running' : 'paused', { can_cancel: false } )
+		);
+		await userEvent.click( dialog.getByRole( 'button', { name: 'Cancel migration' } ) );
+		expect( await screen.findByText( feedback ) ).toBeVisible();
+		await waitFor( () => expect( refresh.isDone() ).toBe( true ) );
+		await waitFor( () => expect( cancelButton() ).not.toBeInTheDocument() );
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		await userEvent.click( screen.getByRole( 'button', { name: /Contact us/ } ) );
+		expect( setShowHelpCenter ).toHaveBeenCalledWith( true );
+	}
+);
 
-test( 'offers support when cancellation cannot unlock the dashboard', async () => {
-	const modal = await openConfirmation( 'ready' );
-	mockApi().post( cancelPath ).reply( 200, { status: 'unlock_failed' } );
-	await userEvent.click( await modal.findByRole( 'button', { name: 'Cancel migration' } ) );
-	expect( await modal.findByText( /We couldn’t unlock your site dashboard/ ) ).toBeVisible();
-	expect( modal.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
-	expect( modal.queryByRole( 'button', { name: 'Cancel migration' } ) ).not.toBeInTheDocument();
-	expect( modal.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
-} );
+test( 'a new eligible status clears a previous wait notice and restores Cancel', async () => {
+	replyStatus( migration( 'paused', { can_cancel: true } ) );
+	render( <WordPressMigration site={ site } />, { queryClient } );
+	const dialog = await openDialog();
+	mockApi()
+		.post( base + '/cancel' )
+		.reply( 200, { status: 'wait' } );
+	mockApi()
+		.get( base + '/status' )
+		.query( true )
+		.delay( 150 )
+		.reply( 200, migration( 'paused', { can_cancel: false } ) );
+	await userEvent.click( dialog.getByRole( 'button', { name: 'Cancel migration' } ) );
+	expect( await screen.findByText( /Migration work is still in progress/ ) ).toBeVisible();
+	expect( cancelButton() ).not.toBeInTheDocument();
+	await waitFor( () =>
+		expect( queryClient.isFetching( siteWordPressMigrationStatusQuery( site.ID ) ) ).toBe( 0 )
+	);
 
-test( 'keeps the site locked when work resumes between the check and confirmation', async () => {
-	const modal = await openConfirmation( 'ready' );
-	mockApi().post( cancelPath ).reply( 200, { status: 'wait' } );
-	await userEvent.click( await modal.findByRole( 'button', { name: 'Cancel migration' } ) );
-	expect( await modal.findByText( /Migration work is still in progress/ ) ).toBeVisible();
-	expect( modal.queryByRole( 'button', { name: 'Cancel migration' } ) ).not.toBeInTheDocument();
-
-	mockApi().get( cancelPath ).query( true ).reply( 200, { status: 'ready' } );
-	await userEvent.click( modal.getByRole( 'button', { name: 'Try again' } ) );
-	expect( await modal.findByRole( 'button', { name: 'Cancel migration' } ) ).toBeEnabled();
-} );
-
-test( 'withholds confirmation when the readiness check fails', async () => {
-	mockApi().get( cancelPath ).query( true ).reply( 503 );
-	render( <MigrationCancellation site={ site } />, { queryClient } );
-	await userEvent.click( screen.getByRole( 'button', { name: 'Cancel this migration' } ) );
-	const modal = within( await screen.findByRole( 'dialog' ) );
-	expect( await modal.findByText( /We couldn’t check/ ) ).toBeVisible();
-	expect( modal.queryByRole( 'button', { name: 'Cancel migration' } ) ).not.toBeInTheDocument();
-	expect( modal.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+	replyStatus( migration( 'paused', { can_cancel: true } ) );
+	await act( () => queryClient.refetchQueries( siteWordPressMigrationStatusQuery( site.ID ) ) );
+	expect( await screen.findByRole( 'button', { name: 'Cancel this migration' } ) ).toBeEnabled();
+	await waitFor( () =>
+		expect( screen.queryByText( /Migration work is still in progress/ ) ).not.toBeInTheDocument()
+	);
 } );

@@ -1,9 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type {
-	WordPressMigrationConfiguration,
-	WordPressMigrationStatus,
-	WordPressMigrationCancellation,
-} from './types';
+import type { WordPressMigrationConfiguration, WordPressMigrationStatus } from './types';
 
 export async function fetchWordPressMigrationStatus(
 	siteId: number
@@ -19,15 +15,6 @@ export async function fetchWordPressMigrationConfiguration(
 ): Promise< WordPressMigrationConfiguration > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/wordpress-migration/configure`,
-		apiNamespace: 'wpcom/v2',
-	} );
-}
-
-export async function fetchWordPressMigrationCancellation(
-	siteId: number
-): Promise< WordPressMigrationCancellation > {
-	return wpcom.req.get( {
-		path: `/sites/${ siteId }/wordpress-migration/cancel`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }

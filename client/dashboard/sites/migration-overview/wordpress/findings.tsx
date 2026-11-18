@@ -9,12 +9,7 @@ import { getCurrentDashboard } from '../../../app/routing';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
 import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
-import {
-	AssistedHandoffLink,
-	MigrationCard,
-	StatusIcon,
-	getChangeSourceUrl,
-} from './migration-card';
+import { MigrationCard, StatusIcon, getChangeSourceUrl } from './migration-card';
 import type {
 	Site,
 	WordPressMigrationFinding,
@@ -23,10 +18,12 @@ import type {
 
 export function Findings( {
 	site,
+	note,
 	migration,
 	onBackToSetup,
 }: {
 	site: Site;
+	note: React.ReactNode;
 	migration: WordPressMigrationStatus;
 	onBackToSetup: () => void;
 } ) {
@@ -121,7 +118,7 @@ export function Findings( {
 					</Button>
 				</>
 			}
-			note={ <AssistedHandoffLink site={ site } /> }
+			note={ note }
 		>
 			{ findings.map( ( finding, index ) => (
 				<Notice

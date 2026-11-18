@@ -1,11 +1,12 @@
 import { fetchWordPressMigrationStatus, isWpError } from '@automattic/api-core';
 import {
 	siteQueryFilter,
+	siteWordPressMigrationCancelMutation,
 	siteWordPressMigrationConfigurationQuery,
 	siteWordPressMigrationStatusQuery,
 } from '@automattic/api-queries';
 import { invokeSurvicateEventOnce } from '@automattic/survicate';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -16,9 +17,9 @@ import { isSiteMigrationInProgress } from '../../../utils/site-status';
 import { MigrationCancellation } from './cancellation';
 import { Connect } from './connect';
 import { Findings } from './findings';
-import { MigrationCard, StatusIcon } from './migration-card';
+import { MigrationCard, MigrationFooter, StatusIcon } from './migration-card';
 import { Running } from './running';
-import type { Site } from '@automattic/api-core';
+import type { Site, WordPressMigrationCancellation } from '@automattic/api-core';
 
 // How long a completed migration can leave its site locked before we stop asking the user to wait.
 const UNLOCK_GRACE_PERIOD = 30000;
@@ -67,6 +68,18 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	const isUnreadable = ! migration && !! error;
 	const isForbidden = isUnreadable && isWpError( error ) && error.statusCode === 403;
 	const sourceHost = getSourceHost( migration?.source_url );
+	const cancel = useMutation( siteWordPressMigrationCancelMutation( site.ID ) );
+	const canCancel = ! error && migration?.can_cancel === true;
+	const { data: cancelResult, reset: resetCancel } = cancel;
+	useEffect( () => {
+		if ( canCancel && ( cancelResult?.status === 'wait' || cancelResult?.status === 'support' ) ) {
+			resetCancel();
+		}
+	}, [ canCancel, cancelResult, resetCancel ] );
+	const cancelAction = canCancel && (
+		<MigrationCancellation disabled={ cancel.isPending } onConfirm={ () => cancel.mutate() } />
+	);
+	const note = <MigrationFooter site={ site } cancelAction={ cancelAction } />;
 
 	// What's fixed by setting the source up again goes straight back to that step.
 	let connectionFailure = undefined;
@@ -173,8 +186,21 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		</Button>
 	);
 
+	const cancelFeedback = cancel.isError
+		? __( 'We couldn’t cancel your migration.' )
+		: getCancelFeedback( cancel.data?.status );
+
 	return (
 		<>
+			{ cancelFeedback && ! isFinished && migration?.status !== 'unlock_failed' && (
+				<Notice
+					variant="error"
+					actions={ isConnecting ? contactUs : undefined }
+					onClose={ () => cancel.reset() }
+				>
+					{ cancelFeedback }
+				</Notice>
+			) }
 			{ isUnreadable && ! isForbidden && (
 				<Notice
 					variant="error"
@@ -199,9 +225,10 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					actions={ contactUs }
 				/>
 			) }
-			{ isConnecting && isConfigurationPending && <MigrationCancellation site={ site } /> }
+			{ isConnecting && isConfigurationPending && cancelAction }
 			{ isConnecting && ! isConfigurationPending && (
 				<Connect
+					note={ note }
 					site={ site }
 					sourceHost={ sourceHost }
 					failure={ connectionFailure ?? backToSetupFailure }
@@ -217,6 +244,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			) }
 			{ migration && isStopped && ! isConnecting && (
 				<Findings
+					note={ note }
 					site={ site }
 					migration={ migration }
 					onBackToSetup={ () => {
@@ -275,6 +303,21 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			) }
 		</>
 	);
+}
+
+function getCancelFeedback( status?: WordPressMigrationCancellation[ 'status' ] ) {
+	switch ( status ) {
+		case 'wait':
+			return __( 'Migration work is still in progress. Wait for it to finish before cancelling.' );
+		case 'support':
+			return __(
+				'This migration may have changed your destination site. Contact support for help cancelling it.'
+			);
+		case 'unlock_failed':
+			return __(
+				'We couldn’t unlock your site dashboard. Contact support for help restoring access.'
+			);
+	}
 }
 
 function getSourceHost( sourceUrl?: string | null ) {

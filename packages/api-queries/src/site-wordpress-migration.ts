@@ -1,6 +1,5 @@
 import {
 	cancelWordPressMigration,
-	fetchWordPressMigrationCancellation,
 	cancelWordPressMigrationHandoff,
 	configureWordPressMigration,
 	fetchWordPressMigrationConfiguration,
@@ -85,31 +84,20 @@ export const siteWordPressMigrationRunMutation = ( siteId: number ) =>
 		onError: () => invalidateMigration( siteId ),
 	} );
 
-export const siteWordPressMigrationCancellationQuery = ( siteId: number ) =>
-	queryOptions( {
-		queryKey: [ 'site', siteId, 'wordpress-migration', 'cancellation' ],
-		queryFn: () => fetchWordPressMigrationCancellation( siteId ),
-		meta: { persist: false },
-		staleTime: 0,
-	} );
-
 export const siteWordPressMigrationCancelMutation = ( siteId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'site-wp-migration-cancel' },
 		mutationFn: () => cancelWordPressMigration( siteId ),
-		onSuccess: async ( cancellation ) => {
-			const { queryKey } = siteWordPressMigrationCancellationQuery( siteId );
-			await queryClient.cancelQueries( { queryKey } );
-			queryClient.setQueryData( queryKey, cancellation );
+		onSuccess: ( cancellation ) => {
 			if ( cancellation.status === 'cancelled' ) {
-				invalidateMigration( siteId );
 				queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
-			} else if ( cancellation.status === 'unlock_failed' ) {
-				queryClient.invalidateQueries( siteWordPressMigrationStatusQuery( siteId ) );
+			} else if ( cancellation.status === 'wait' || cancellation.status === 'support' ) {
+				// The locked check supersedes the cached flag while status is being refreshed.
+				queryClient.setQueryData(
+					siteWordPressMigrationStatusQuery( siteId ).queryKey,
+					( status ) => status && { ...status, can_cancel: false }
+				);
 			}
 		},
-		onError: () => {
-			queryClient.invalidateQueries( siteWordPressMigrationCancellationQuery( siteId ) );
-			invalidateMigration( siteId );
-		},
+		onSettled: () => invalidateMigration( siteId ),
 	} );
