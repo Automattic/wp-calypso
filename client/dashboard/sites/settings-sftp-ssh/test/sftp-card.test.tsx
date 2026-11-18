@@ -109,10 +109,15 @@ describe( '<SftpCard>', () => {
 
 	test( 'disables Reset password while SFTP is being disabled', async () => {
 		const user = userEvent.setup();
-		nock( 'https://public-api.wordpress.com' )
+		let release!: () => void;
+		const pending = new Promise< void >( ( resolve ) => {
+			release = resolve;
+		} );
+		const deleteRequest = nock( 'https://public-api.wordpress.com' )
 			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ username }` )
-			.delay( 1000 )
-			.reply( 200, JSON.stringify( { username } ), { 'Content-Type': 'application/json' } );
+			.reply( 200, () => pending.then( () => JSON.stringify( { username } ) ), {
+				'Content-Type': 'application/json',
+			} );
 
 		render( <SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } /> );
 
@@ -127,5 +132,8 @@ describe( '<SftpCard>', () => {
 				'true'
 			)
 		);
+
+		release();
+		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
 	} );
 } );
