@@ -35,7 +35,7 @@ export default function Notifications() {
 
 	const setFilterName = ( filterName: string ) => {
 		navigate( {
-			to: '.',
+			to: notificationsRoute.fullPath,
 			search: { filter: filterName === 'all' ? undefined : filterName },
 			replace: true,
 		} );

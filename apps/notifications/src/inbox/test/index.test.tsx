@@ -135,7 +135,7 @@ describe( 'NotificationsInbox', () => {
 		expect( getClient().setFilter ).toHaveBeenLastCalledWith( 'all' );
 	} );
 
-	it( 'tells the host the chosen tab and closes the open note', async () => {
+	it( 'tells the host the chosen tab and leaves closing the open note to it', async () => {
 		const user = userEvent.setup();
 		const setFilterName = vi.fn();
 		const setSelectedNoteId = vi.fn();
@@ -145,7 +145,7 @@ describe( 'NotificationsInbox', () => {
 		await user.click( await screen.findByRole( 'tab', { name: 'Comments' } ) );
 
 		expect( setFilterName ).toHaveBeenCalledWith( 'comments' );
-		expect( setSelectedNoteId ).toHaveBeenLastCalledWith( undefined );
+		expect( setSelectedNoteId ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows no open note until one is selected', () => {

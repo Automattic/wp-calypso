@@ -26,6 +26,7 @@ type NotificationsInboxProps = {
 	locale: string;
 	/** The tab to show, as named in the host's address. An unknown name shows every notification. */
 	filterName: string | undefined;
+	/** Shows another tab. The host closes the open note in the same step. */
 	setFilterName: ( filterName: FilterName ) => void;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
