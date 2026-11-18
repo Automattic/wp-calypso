@@ -137,6 +137,49 @@ describe( 'onboarding flow side effects', () => {
 		expect( clearSessionStorageQuery ).not.toHaveBeenCalled();
 	} );
 
+	// The plans skip and the destination read the slug the blueprint step stored, which a fresh
+	// page load on the domain step does not have: the run would fall through to the plans grid.
+	describe( 'a blueprint build reaching the domain step without the stored slug', () => {
+		afterEach( () => {
+			window.history.replaceState( null, '', '/' );
+		} );
+
+		it( 'runs the blueprint step again, in place', () => {
+			window.history.replaceState(
+				null,
+				'',
+				'/setup/onboarding/domains?blueprint=cards&build_dest=simple'
+			);
+			( useSelect as jest.Mock ).mockReturnValue( {} );
+
+			renderSideEffect( 'domains' );
+
+			expect( navigate ).toHaveBeenCalledWith( 'blueprint', undefined, true );
+		} );
+
+		it( 'stays on the domain step once the blueprint step has stored the slug', () => {
+			window.history.replaceState(
+				null,
+				'',
+				'/setup/onboarding/domains?blueprint=cards&build_dest=simple'
+			);
+			( useSelect as jest.Mock ).mockReturnValue( { blueprint: 'cards' } );
+
+			renderSideEffect( 'domains' );
+
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves an ordinary run alone', () => {
+			window.history.replaceState( null, '', '/setup/onboarding/domains' );
+			( useSelect as jest.Mock ).mockReturnValue( {} );
+
+			renderSideEffect( 'domains' );
+
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+	} );
+
 	describe( 'post-checkout hand-off from the site-selected signup flow', () => {
 		afterEach( () => {
 			window.history.replaceState( null, '', '/' );

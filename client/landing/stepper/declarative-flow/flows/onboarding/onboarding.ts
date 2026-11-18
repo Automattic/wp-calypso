@@ -1073,13 +1073,19 @@ const onboarding: FlowV2< typeof initialize > = {
 
 		return { submit, goBack };
 	},
-	useSideEffect( currentStepSlug ) {
+	useSideEffect( currentStepSlug, navigate ) {
 		const reduxDispatch = useReduxDispatch();
 		const { resetOnboardStore, setPlanCartItem, setProductCartItems } = useDispatch(
 			ONBOARD_STORE
 		) as OnboardActions;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const user = useSelector( getCurrentUser );
+		const { blueprint } = useSelect(
+			( select ) => ( {
+				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
+			} ),
+			[]
+		);
 
 		/**
 		 * Clears every state we're persisting during the flow
@@ -1120,6 +1126,34 @@ const onboarding: FlowV2< typeof initialize > = {
 			setPlanCartItem,
 			setProductCartItems,
 		] );
+
+		/**
+		 * A standalone blueprint build (build_dest=simple or wow) skips the plans grid and lands
+		 * on its own destination by the slug the blueprint step verified and stored, and the
+		 * store does not persist that slug. A fresh page load on the domain step — a direct link,
+		 * a reload, a social-login round trip during signup — arrives without it, and the run
+		 * would fall through to the plans grid as an ordinary signup. Run the blueprint step
+		 * again rather than trust the URL: it verifies the blueprint, or strips `build_dest`
+		 * when there is nothing to build.
+		 */
+		useEffect( () => {
+			const stepsAfterBlueprint: string[] = [ STEPS.DOMAIN_SEARCH.slug, STEPS.USE_MY_DOMAIN.slug ];
+			if ( blueprint || ! currentStepSlug || ! stepsAfterBlueprint.includes( currentStepSlug ) ) {
+				return;
+			}
+
+			const query = getCurrentQueryParams();
+			const blueprintParam = query.get( 'blueprint' );
+			const playgroundId = query.get( 'playground' );
+			const buildDest = query.get( 'build_dest' );
+			const namesStandaloneBuild =
+				getStandaloneBlueprintArchiveSlug( blueprintParam, playgroundId, buildDest ) ||
+				getStandaloneBlueprintSimpleSlug( blueprintParam, playgroundId, buildDest );
+
+			if ( namesStandaloneBuild ) {
+				navigate( STEPS.BLUEPRINT.slug, undefined, true );
+			}
+		}, [ currentStepSlug, blueprint, navigate ] );
 
 		/**
 		 * The `site-selected` signup flow hands its purchase over to post-checkout-onboarding
