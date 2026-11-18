@@ -27,7 +27,10 @@ move to our migrations team.
 An existing destination requires authentication. Paid destinations skip plans and checkout;
 free destinations use site checkout to buy a plan before starting the import session.
 The reading step asks for confirmation before importing into an existing destination unless
-this tab just came back from checkout in this flow. When unified checkout created the site
+this tab just came back from checkout in this flow. The confirmation shows the source and the
+destination side by side (the same comparison as `site-migration`'s check step), says what the
+import changes on the destination, and offers **Use a different importer**, which exits to the
+content importer list for that destination. When unified checkout created the site
 (`newSite=1`), the step also records the signup and applies the flow’s site settings.
 
 If the session API refuses the source, the reading step says so and stops there. If it finds
@@ -78,6 +81,9 @@ its previous behavior.
    the ready email: it names a store, events, bookings, memberships, or forms found on the old site,
    or gives a general note for a site inspection rated moderate or complex.
 7. Repeat with an existing destination: a free site requires checkout and a paid site skips it.
+   For a paid site, open its Overview, choose **Import Site**, and enter a Wix or Squarespace URL:
+   confirm the source and destination show side by side, **Import into this site** starts the
+   import, and **Use a different importer** opens the importer list for that site.
    Confirm that a direct reading link shows the destination and requires clicking **Import into
    this site**, even with `newSite=1` or an existing `importSessionId` in the URL.
 

@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import { SiteComparison } from 'calypso/landing/stepper/declarative-flow/internals/components/site-comparison';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
 import { SitePreview } from '../site-migration-instructions/site-preview';
@@ -254,71 +255,28 @@ const SiteMigrationCheck: StepType< {
 					) : (
 						<>
 							{ hasDestination ? (
-								<div className="site-migration-check__comparison">
-									<div className="site-migration-check__comparison-site">
-										<div className="site-migration-check__preview-label">
-											<span className="site-migration-check__preview-heading">
-												{ translate( 'Source' ) }
-											</span>
-											<a
-												className="site-migration-check__preview-address"
-												href={ from }
-												target="_blank"
-												rel="noopener noreferrer"
-												title={ hostname }
-											>
-												<span className="site-migration-check__preview-address-text">
-													{ hostname }
-												</span>{ ' ' }
-												↗
-											</a>
-										</div>
-										<SitePreview
-											url={ from }
-											label={ translate( 'Source site to be copied' ) }
-											mshotsOptions={ PREVIEW_OPTIONS }
-										/>
-										{ ! isSameSite && (
-											<p className="site-migration-check__preview-description">
-												{ translate(
-													'The content on this site will be copied. No changes will be made to the site itself.'
-												) }
-											</p>
-										) }
-									</div>
-									<span className="site-migration-check__comparison-arrow" aria-hidden="true">
-										→
-									</span>
-									<div className="site-migration-check__comparison-site">
-										<div className="site-migration-check__preview-label">
-											<span className="site-migration-check__preview-heading">
-												{ translate( 'Destination' ) }
-											</span>
-											<a
-												className="site-migration-check__preview-address"
-												href={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
-												target="_blank"
-												rel="noopener noreferrer"
-												title={ destinationSiteSlug }
-											>
-												<span className="site-migration-check__preview-address-text">
-													{ destinationSiteSlug }
-												</span>{ ' ' }
-												↗
-											</a>
-										</div>
-										<SitePreview
-											url={ destinationSiteUrl || `https://${ destinationSiteSlug }` }
-											label={ translate( 'Current destination site' ) }
-											mshotsOptions={ PREVIEW_OPTIONS }
-										/>
-										{ ! isSameSite && (
-											<p className="site-migration-check__preview-description">
-												{ translate( 'All of the content on this site will be replaced.' ) }
-											</p>
-										) }
-									</div>
-								</div>
+								<SiteComparison
+									source={ {
+										heading: translate( 'Source' ),
+										url: from,
+										address: hostname ?? '',
+										previewLabel: translate( 'Source site to be copied' ),
+										description:
+											! isSameSite &&
+											translate(
+												'The content on this site will be copied. No changes will be made to the site itself.'
+											),
+									} }
+									destination={ {
+										heading: translate( 'Destination' ),
+										url: destinationSiteUrl || `https://${ destinationSiteSlug }`,
+										address: destinationSiteSlug ?? '',
+										previewLabel: translate( 'Current destination site' ),
+										description:
+											! isSameSite &&
+											translate( 'All of the content on this site will be replaced.' ),
+									} }
+								/>
 							) : (
 								<SitePreview mshotsOptions={ PREVIEW_OPTIONS } />
 							) }

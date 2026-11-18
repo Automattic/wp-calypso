@@ -72,95 +72,6 @@
 		gap: 10px;
 	}
 
-	.site-migration-check__comparison {
-		display: grid;
-		grid-template-columns: minmax( 0, 1fr ) 24px minmax( 0, 1fr );
-		gap: 16px;
-
-		@media ( max-width: $break-medium ) {
-			grid-template-columns: minmax( 0, 1fr );
-		}
-	}
-
-	.site-migration-check__comparison-site {
-		display: grid;
-		grid-template-rows: subgrid;
-		grid-row: 1 / span 3;
-		gap: 8px;
-		min-width: 0;
-		overflow-wrap: anywhere;
-
-		&:last-child {
-			grid-column: 3;
-		}
-
-		@media ( max-width: $break-medium ) {
-			grid-template-rows: auto;
-			grid-row: auto;
-
-			&:last-child {
-				grid-column: 1;
-			}
-		}
-	}
-
-	.site-migration-check__preview-label,
-	.site-migration-check__preview-description {
-		margin: 0;
-		font-size: $font-size-medium;
-		line-height: 1.5;
-	}
-
-	.site-migration-check__preview-label {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.site-migration-check__preview-heading {
-		font-size: 1rem;
-		font-weight: 500;
-	}
-
-	.site-migration-check__preview-address {
-		display: flex;
-		gap: 4px;
-		max-width: 100%;
-		align-self: flex-start;
-		white-space: nowrap;
-		color: var( --color-neutral-50 );
-		text-decoration: none;
-
-		&:hover,
-		&:focus-visible {
-			color: var( --color-link );
-			text-decoration: underline;
-		}
-	}
-
-	.site-migration-check__preview-address-text {
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.site-migration-check__preview-description {
-		color: var( --color-neutral-50 );
-	}
-
-	.site-migration-check__comparison-arrow {
-		grid-column: 2;
-		grid-row: 2;
-		align-self: center;
-		justify-self: center;
-		color: var( --color-neutral-50 );
-		font-size: $font-size-large;
-
-		@media ( max-width: $break-medium ) {
-			grid-column: 1;
-			grid-row: auto;
-			transform: rotate( 90deg );
-		}
-	}
-
 	.site-migration-check__choice.components-button {
 		box-sizing: border-box;
 		width: 100%;
@@ -243,7 +154,7 @@
 		}
 	}
 
-	.site-migration-check__comparison .migration-instructions-from-preview {
+	.site-comparison .migration-instructions-from-preview {
 		height: auto;
 
 		.migration-instructions-from-preview__screenshot {

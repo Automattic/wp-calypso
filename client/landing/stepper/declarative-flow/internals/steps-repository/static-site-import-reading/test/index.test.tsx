@@ -92,6 +92,28 @@ describe( 'StaticSiteImportReading', () => {
 		}
 	);
 
+	it( 'shows what the import does to each site and offers the other importers', async () => {
+		const submit = render( 'from=busybearscleaning.com', { afterCheckout: false } );
+
+		expect( screen.getByRole( 'link', { name: /busybearscleaning\.com/ } ) ).toHaveAttribute(
+			'href',
+			'https://busybearscleaning.com'
+		);
+		expect( screen.getByRole( 'link', { name: /destination\.example\.com/ } ) ).toHaveAttribute(
+			'href',
+			'https://destination.example.com'
+		);
+		expect(
+			screen.getByText(
+				'Its theme, homepage, and site title will change to match the source. Existing posts and pages stay.'
+			)
+		).toBeVisible();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different importer' } ) );
+
+		expect( submit ).toHaveBeenCalledWith( { action: 'choose_importer' } );
+	} );
+
 	it( 'does not treat a checkout from another flow as this one', () => {
 		setSignupCompleteFlowName( 'onboarding' );
 		const submit = render( 'from=busybearscleaning.com&newSite=1', { afterCheckout: false } );

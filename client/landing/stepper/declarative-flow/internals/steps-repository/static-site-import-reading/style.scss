@@ -1,0 +1,16 @@
+.step-container-v2:has( .static-site-import-reading__confirmation ) {
+	.static-site-import-reading__confirmation {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+		max-width: 660px;
+	}
+
+	.static-site-import-reading__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+	}
+}

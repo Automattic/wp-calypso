@@ -1,5 +1,6 @@
 import { getStaticSiteImportErrorCode } from '@automattic/api-core';
 import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
+import { getUrlParts } from '@automattic/calypso-url';
 import { HelpCenter, Onboard, Visibility } from '@automattic/data-stores';
 import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
@@ -11,6 +12,7 @@ import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { isCheckoutExitPreview } from 'calypso/landing/stepper/declarative-flow/flows/static-site-import-flow/helpers';
+import { SiteComparison } from 'calypso/landing/stepper/declarative-flow/internals/components/site-comparison';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -26,6 +28,8 @@ import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
+import './style.scss';
+
 export type StaticSiteImportReadingSubmits =
 	| {
 			action: 'continue';
@@ -34,6 +38,7 @@ export type StaticSiteImportReadingSubmits =
 			previewSiteSlug?: string;
 	  }
 	| { action: 'migrate' }
+	| { action: 'choose_importer' }
 	| { action: 'unavailable' }
 	| { action: 'preview_failed' };
 
@@ -207,6 +212,7 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 				<>
 					<DocumentHead title={ __( 'Import into this site' ) } />
 					<Step.CenteredColumnLayout
+						className="static-site-import-reading__confirmation"
 						columnWidth={ 6 }
 						topBar={
 							<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
@@ -226,10 +232,38 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 							/>
 						}
 					>
-						{ sourceUrl && <p>{ sourceUrl }</p> }
-						<Step.PrimaryButton onClick={ () => setHasConfirmed( true ) }>
-							{ __( 'Import into this site' ) }
-						</Step.PrimaryButton>
+						{ sourceUrl && siteSlug && (
+							<SiteComparison
+								source={ {
+									heading: __( 'Source' ),
+									url: sourceUrl,
+									address: getUrlParts( sourceUrl ).hostname || sourceUrl,
+									previewLabel: __( 'Source site to be copied' ),
+									description: __(
+										'The content on this site will be copied. No changes will be made to the site itself.'
+									),
+								} }
+								destination={ {
+									heading: __( 'Destination' ),
+									url: site?.URL || `https://${ siteSlug }`,
+									address: siteSlug,
+									previewLabel: __( 'Current destination site' ),
+									description: __(
+										'Its theme, homepage, and site title will change to match the source. Existing posts and pages stay.'
+									),
+								} }
+							/>
+						) }
+						<div className="static-site-import-reading__actions">
+							<Step.PrimaryButton onClick={ () => setHasConfirmed( true ) }>
+								{ __( 'Import into this site' ) }
+							</Step.PrimaryButton>
+							<Step.LinkButton
+								onClick={ () => navigation.submit?.( { action: 'choose_importer' } ) }
+							>
+								{ __( 'Use a different importer' ) }
+							</Step.LinkButton>
+						</div>
 					</Step.CenteredColumnLayout>
 				</>
 			);

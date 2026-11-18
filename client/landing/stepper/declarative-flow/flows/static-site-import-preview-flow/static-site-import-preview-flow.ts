@@ -182,6 +182,8 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 					switch ( providedDependencies.action ) {
 						case 'migrate':
 							return goToWordPressMigration( from );
+						// A preview has no destination to confirm, so its reading step never offers importers.
+						case 'choose_importer':
 						case 'unavailable':
 							return navigate( STEPS.ERROR.slug );
 						// The server won't build a preview, so the customer can still move the site by
