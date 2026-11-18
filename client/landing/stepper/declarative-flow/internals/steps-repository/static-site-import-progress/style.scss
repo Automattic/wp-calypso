@@ -10,7 +10,7 @@
 	--dashboard__foreground-color-error: var( --color-error );
 }
 
-// The steps on the left; on wide screens, the window onto the site fills a dark panel on the right.
+// The steps on the left; on wide screens, the window onto the site fills a blue panel on the right.
 .static-site-import-progress-step__split {
 	display: flex;
 	flex-direction: column;
@@ -47,46 +47,19 @@
 	position: relative;
 	isolation: isolate;
 	overflow: hidden;
-	background-color: var( --studio-gray-100 );
+	background-color: var( --wp-admin-theme-color );
 
-	// The dots, and a brighter copy of them that a band of light sweeps across like a wave.
-	&::before,
-	&::after {
+	// A grid of dotted lines with a cross where they meet, drawn by a mask so its color stays a variable.
+	&::before {
 		content: '';
 		position: absolute;
 		inset: 0;
 		z-index: -1;
-		background-image: radial-gradient(
-			color-mix( in srgb, var( --studio-white ) 14%, transparent ) 1px,
-			transparent 1px
-		);
-		background-size: 20px 20px;
-	}
-
-	&::after {
-		background-image: radial-gradient(
-			color-mix( in srgb, var( --studio-white ) 28%, transparent ) 1.2px,
-			transparent 1.2px
-		);
-		-webkit-mask-image: linear-gradient(
-			115deg,
-			transparent 35%,
-			var( --studio-white ) 50%,
-			transparent 65%
-		);
-		mask-image: linear-gradient(
-			115deg,
-			transparent 35%,
-			var( --studio-white ) 50%,
-			transparent 65%
-		);
-		-webkit-mask-size: 300% 300%;
-		mask-size: 300% 300%;
-		-webkit-mask-repeat: no-repeat;
-		mask-repeat: no-repeat;
-		-webkit-mask-position: 100% 100%;
-		mask-position: 100% 100%;
-		opacity: 0;
+		background-color: color-mix( in srgb, var( --studio-white ) 35%, transparent );
+		-webkit-mask-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpath d='M0 36.5h72M36.5 0v72' stroke='%23000' stroke-opacity='.5' stroke-dasharray='1 3'/%3E%3Cpath d='M31 36.5h11M36.5 31v11' stroke='%23000'/%3E%3C/svg%3E" );
+		mask-image: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpath d='M0 36.5h72M36.5 0v72' stroke='%23000' stroke-opacity='.5' stroke-dasharray='1 3'/%3E%3Cpath d='M31 36.5h11M36.5 31v11' stroke='%23000'/%3E%3C/svg%3E" );
+		-webkit-mask-size: 72px 72px;
+		mask-size: 72px 72px;
 	}
 
 	@include break-large {
@@ -104,30 +77,11 @@
 }
 
 .static-site-import-progress-step__panel .static-site-import-preview-window__caption {
-	color: var( --studio-gray-5 );
+	color: var( --studio-white );
 }
 
 .static-site-import-progress-step__panel .static-site-import-snapshot__viewport {
 	aspect-ratio: 2 / 1;
-}
-
-@media ( prefers-reduced-motion: no-preference ) {
-	.static-site-import-progress-step__panel::after {
-		opacity: 1;
-		animation: static-site-import-progress-step__wave 5s ease-in-out infinite;
-	}
-}
-
-@keyframes static-site-import-progress-step__wave {
-	from {
-		-webkit-mask-position: 100% 100%;
-		mask-position: 100% 100%;
-	}
-
-	to {
-		-webkit-mask-position: 0% 0%;
-		mask-position: 0% 0%;
-	}
 }
 
 // Every step keeps room for its activity line, so the markers stay evenly spaced.

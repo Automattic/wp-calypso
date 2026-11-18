@@ -729,16 +729,13 @@ function MoveProgressBar( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
-/** The move's overall progress and its steps, for a page of its own while a preview is built. */
+/** The move’s steps, for a page of its own while a preview is built. */
 export function StaticSiteImportPreviewSteps( { siteImport }: { siteImport: StaticSiteImport } ) {
 	return (
-		<VStack spacing={ 8 } className="static-site-import-preview-steps">
-			<MoveProgressBar session={ siteImport.session } />
-			<MovingChecklist
-				session={ siteImport.session }
-				lastLabel={ __( 'Getting your preview ready' ) }
-			/>
-		</VStack>
+		<MovingChecklist
+			session={ siteImport.session }
+			lastLabel={ __( 'Getting your preview ready' ) }
+		/>
 	);
 }
 
