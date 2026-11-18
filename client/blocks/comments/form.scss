@@ -1,8 +1,8 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
-@import "calypso/assets/stylesheets/shared/functions/z-index";
+@import 'calypso/assets/stylesheets/shared/functions/z-index';
 
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 
 // Add a New Comment Form
 .comments__form {
@@ -22,7 +22,7 @@
 		padding: 5px 10px;
 	}
 
-	button:not(.components-button):not(.follow-button) {
+	button:not( .components-button ):not( .follow-button ) {
 		opacity: 0;
 		position: absolute;
 		margin: 16px 0 0;
@@ -35,7 +35,7 @@
 		&.is-visible,
 		&.is-reserved {
 			position: relative;
-			z-index: z-index("root", ".comments__form .button:not(.components-button)");
+			z-index: z-index( 'root', '.comments__form .button:not(.components-button)' );
 			float: right;
 		}
 
@@ -45,14 +45,14 @@
 
 		// Holding its place under an open editor, so it fades in with the first word instead of
 		// pushing the page down.
-		&.is-reserved:not(.is-visible) {
+		&.is-reserved:not( .is-visible ) {
 			visibility: hidden;
 		}
 	}
 
 	button:focus {
-		outline: dotted 1px var(--color-link);
-		color: var(--color-link);
+		outline: dotted 1px var( --color-link );
+		color: var( --color-link );
 	}
 
 	// The block editor's side padding, so the words don't shift over when it takes over. The
@@ -80,25 +80,13 @@
 	}
 }
 
-// On /reader/conversations, balance the space below and
-// above the "Send" button.  The default negative margin
-// of -19px is intended for the pages like
-// /reader/feeds/:feed_id/posts/:post_id.
-.conversations__comment-list {
-	.comments__form {
-		button {
-			margin-bottom: -9px;
-		}
-	}
-}
-
 .comments__form-closed {
-	color: var(--color-text-subtle);
+	color: var( --color-text-subtle );
 	margin-top: 20px;
 	margin-bottom: -3px;
 	font-family: $sans;
 	text-align: center;
-	border-top: 1px solid var(--color-neutral-0);
+	border-top: 1px solid var( --color-neutral-0 );
 	padding-top: 22px;
 	font-size: $font-body-small;
 }

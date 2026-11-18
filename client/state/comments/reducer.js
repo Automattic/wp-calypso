@@ -19,13 +19,8 @@ import {
 	COMMENTS_SET_ACTIVE_REPLY,
 	COMMENTS_API_DISABLED,
 } from 'calypso/state/action-types';
-import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
 import { combineReducers } from 'calypso/state/utils';
-import {
-	PLACEHOLDER_STATE,
-	NUMBER_OF_COMMENTS_PER_FETCH,
-	POST_COMMENT_DISPLAY_TYPES,
-} from './constants';
+import { PLACEHOLDER_STATE, NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 import ui from './ui/reducer';
 import { getStateKey, getErrorKey, commentHasLink, getCommentDate } from './utils';
 
@@ -220,63 +215,6 @@ export const fetchStatusInitialState = {
 	after: true,
 	hasReceivedBefore: false,
 	hasReceivedAfter: false,
-};
-
-const isValidExpansionsAction = ( action ) => {
-	const { siteId, postId, commentIds, displayType } = action.payload;
-	return (
-		siteId &&
-		postId &&
-		Array.isArray( commentIds ) &&
-		Object.values( POST_COMMENT_DISPLAY_TYPES ).includes( displayType )
-	);
-};
-
-const expansionValue = ( type ) => {
-	const { full, excerpt, singleLine } = POST_COMMENT_DISPLAY_TYPES;
-	switch ( type ) {
-		case full:
-			return 3;
-		case excerpt:
-			return 2;
-		case singleLine:
-			return 1;
-	}
-};
-
-export const expansions = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case READER_EXPAND_COMMENTS: {
-			const { siteId, postId, commentIds, displayType } = action.payload;
-
-			if ( ! isValidExpansionsAction( action ) ) {
-				return state;
-			}
-
-			const stateKey = getStateKey( siteId, postId );
-			const currentExpansions = state[ stateKey ] || {};
-
-			// generate object of { [ commentId ]: displayType }
-			const newVal = Object.fromEntries(
-				commentIds.map( ( id ) => {
-					if (
-						! Object.hasOwn( currentExpansions, id ) ||
-						expansionValue( displayType ) > expansionValue( currentExpansions[ id ] )
-					) {
-						return [ id, displayType ];
-					}
-					return [ id, currentExpansions[ id ] ];
-				} )
-			);
-
-			return {
-				...state,
-				[ stateKey ]: Object.assign( {}, state[ stateKey ], newVal ),
-			};
-		}
-	}
-
-	return state;
 };
 
 /**
@@ -580,7 +518,6 @@ const combinedReducer = combineReducers( {
 	pendingItems,
 	fetchStatus,
 	errors,
-	expansions,
 	totalCommentsCount,
 	activeReplies,
 	ui,

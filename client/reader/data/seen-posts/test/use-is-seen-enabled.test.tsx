@@ -203,7 +203,7 @@ describe( 'useIsSeenEnabled', () => {
 	describe( 'disabled routes', () => {
 		const eligible = { subscriptions: [ organizationSubscription ] };
 
-		it.each( [ '/activities/likes', '/reader/conversations', '/reader/conversations/a8c' ] )(
+		it.each( [ '/activities/likes' ] )(
 			'returns false on %s even when the post already carries the seen flag',
 			( route ) => {
 				const { result } = renderHook(
@@ -220,16 +220,13 @@ describe( 'useIsSeenEnabled', () => {
 			}
 		);
 
-		it.each( [ '/activities/likes', '/reader/conversations', '/reader/conversations/a8c' ] )(
-			'returns false on %s for an automattician',
-			( route ) => {
-				const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
-					wrapper: createSeenPostsWrapper( { isAutomattician: true, route } ),
-				} );
+		it.each( [ '/activities/likes' ] )( 'returns false on %s for an automattician', ( route ) => {
+			const { result } = renderHook( () => useIsSeenEnabled( { feedId: FEED_ID } ), {
+				wrapper: createSeenPostsWrapper( { isAutomattician: true, route } ),
+			} );
 
-				expect( result.current ).toBe( false );
-			}
-		);
+			expect( result.current ).toBe( false );
+		} );
 
 		it( 'returns true on non-disabled route route when the user is otherwise eligible', () => {
 			const { result } = renderHook(

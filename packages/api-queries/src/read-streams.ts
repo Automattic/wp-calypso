@@ -1,6 +1,5 @@
 import {
 	fetchReadA8c,
-	fetchReadConversations,
 	fetchReadDiscoverFreshlyPressed,
 	fetchReadDiscoverLatest,
 	fetchReadDiscoverRecommended,
@@ -101,9 +100,6 @@ export const fetchReadStream = (
 			return fetchReadUserPosts( suffix, queryParams );
 		case 'on_this_day':
 			return fetchReadOnThisDay( queryParams );
-		case 'conversations':
-		case 'conversations-a8c':
-			return fetchReadConversations( queryParams );
 		case 'likes':
 			return fetchReadLiked( queryParams );
 		case 'saved':
