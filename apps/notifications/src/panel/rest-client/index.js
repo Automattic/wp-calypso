@@ -43,6 +43,8 @@ export class Client {
 		this.filteredHasMore = {};
 		this.gettingFilteredNotes = false;
 		this.loadMoreRetryAt = 0;
+		this.loadMoreRetries = 0;
+		this.loadMoreTimer = null;
 		this.retries = 0;
 		this.subscribeTry = 0;
 		this.subscribeTries = 3;
@@ -244,7 +246,7 @@ function getNotes( before, livePushMessages = [] ) {
 		this.gettingNotes = false;
 
 		if ( error ) {
-			if ( before || this.retries === 0 ) {
+			if ( before ? this.loadMoreRetries === 0 : this.retries === 0 ) {
 				reportRequestError( before ? 'load-more' : 'load', error, {
 					request: 'getNotes',
 					before: before ?? null,
@@ -253,9 +255,9 @@ function getNotes( before, livePushMessages = [] ) {
 					code: error.error,
 				} );
 			}
-			// Load-more: clear the spinner, leave state untouched; scrolling retries.
+			// Load-more: clear the spinner, leave state untouched; retry after a backoff.
 			if ( before ) {
-				this.loadMoreRetryAt = Date.now() + settings.refresh_ms;
+				scheduleLoadMoreRetry.call( this );
 				store.dispatch( actions.ui.loadedNotes() );
 				return;
 			}
@@ -321,6 +323,7 @@ function getNotes( before, livePushMessages = [] ) {
 			// `before` echoes back isn't double-counted.
 			const known = new Set( this.noteList.map( ( n ) => n.id ) );
 			this.noteList = this.noteList.concat( pageList.filter( ( n ) => ! known.has( n.id ) ) );
+			this.loadMoreRetries = 0;
 			trackLoadMore( 'all', this.noteList.length, ! this.hasMoreNotes( 'all' ) );
 		} else {
 			// Merge the head over the window, keeping the older paged-in tail.
@@ -516,14 +519,16 @@ function getFilteredNotes( before ) {
 		const activeTabNeedsFetch = this.filter && this.isVisible && this.filterName !== key;
 
 		if ( error ) {
-			reportRequestError( 'load-filter', error, {
-				request: 'getFilteredNotes',
-				before: before ?? null,
-				status: error.status,
-				code: error.error,
-			} );
+			if ( ! before || this.loadMoreRetries === 0 ) {
+				reportRequestError( 'load-filter', error, {
+					request: 'getFilteredNotes',
+					before: before ?? null,
+					status: error.status,
+					code: error.error,
+				} );
+			}
 			if ( before ) {
-				this.loadMoreRetryAt = Date.now() + settings.refresh_ms;
+				scheduleLoadMoreRetry.call( this );
 			}
 			store.dispatch( actions.ui.loadedNotes( { filter: key } ) );
 			if ( activeTabNeedsFetch ) {
@@ -554,6 +559,7 @@ function getFilteredNotes( before ) {
 				data.notes.length >= parameters.number &&
 				appended.length < settings.max_limit;
 
+			this.loadMoreRetries = 0;
 			trackLoadMore( key, appended.length, ! this.filteredHasMore[ key ] );
 		} else {
 			// Merge the head over the list, keeping the older paged-in tail. Drop
@@ -800,6 +806,27 @@ function handleStorageEvent( event ) {
 
 		return store.dispatch( actions.notes.readNote( noteId ) );
 	}
+}
+
+/**
+ * Hold load-more for a growing backoff after a failed page, then retry it.
+ */
+function scheduleLoadMoreRetry() {
+	this.loadMoreRetries = this.loadMoreRetries + 1;
+	const backoff_ms = Math.min(
+		settings.refresh_ms * this.loadMoreRetries,
+		settings.max_refresh_ms
+	);
+	this.loadMoreRetryAt = Date.now() + backoff_ms;
+	clearTimeout( this.loadMoreTimer );
+	const retry = () => {
+		if ( this.gettingNotes || this.gettingFilteredNotes ) {
+			this.loadMoreTimer = setTimeout( retry, 1000 );
+			return;
+		}
+		this.loadMore();
+	};
+	this.loadMoreTimer = setTimeout( retry, backoff_ms );
 }
 
 function loadMore() {

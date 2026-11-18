@@ -119,18 +119,19 @@ describe( 'RestClient', () => {
 			expect( ids ).toContain( 71 ); // older page added
 		} );
 
-		it( 'waits before retrying a failed page instead of re-requesting it straight away', () => {
+		it( 'retries a failed page after a backoff instead of re-requesting it straight away', () => {
 			seedFirstWindow();
+			client.subscribed = true;
 
 			client.loadMore();
 			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
 			getCalls.length = 0;
 
 			client.loadMore();
+			vi.advanceTimersByTime( 29000 );
 			expect( getCalls ).toHaveLength( 0 );
 
-			vi.setSystemTime( Date.now() + 30000 );
-			client.loadMore();
+			vi.advanceTimersByTime( 1000 );
 			expect( getCalls ).toHaveLength( 1 );
 			expect( getCalls[ 0 ].query ).toHaveProperty( 'before' );
 		} );
