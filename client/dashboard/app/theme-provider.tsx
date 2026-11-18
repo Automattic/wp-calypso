@@ -3,6 +3,11 @@ import { ThemeProvider } from '@wordpress/theme';
 import { useColorScheme } from 'calypso/lib/color-scheme/shared';
 import type { ReactNode } from 'react';
 
+const LIGHT_SEEDS = {
+	background: '#fcfcfc',
+	primary: '#3858e9',
+};
+
 const DARK_SEEDS = {
 	background: '#181818',
 	primary: '#93aef8',
@@ -27,7 +32,7 @@ export function DashboardThemeProvider( {
 		( colorScheme === 'dark' || ( colorScheme === 'system' && prefersDark ) );
 
 	return (
-		<ThemeProvider isRoot color={ isDark ? DARK_SEEDS : undefined }>
+		<ThemeProvider isRoot color={ isDark ? DARK_SEEDS : LIGHT_SEEDS }>
 			{ children }
 		</ThemeProvider>
 	);
