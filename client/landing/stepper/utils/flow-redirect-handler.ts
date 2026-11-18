@@ -101,7 +101,6 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'flex-site', to: '/sites' },
 	{ flow: 'connect-domain', to: '/start:lang?' },
 	{ flow: 'reblogging', to: '/setup/onboarding:lang?' },
-	{ flow: 'readymade-template', to: toSiteHome },
 	{ flow: 'update-options', to: toSiteHome },
 	// Still linked from the store admin, so don't leave a Back button that bounces here.
 	{ flow: 'woo-hosted-plans', to: '/setup/plan-upgrade', replace: true },
