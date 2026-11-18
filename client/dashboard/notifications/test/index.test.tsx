@@ -19,6 +19,7 @@ type InboxProps = {
 	setFilterName: ( filterName: string ) => void;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
+	onViewSettings: () => void;
 	renderLayout: ( panes: { list: ReactNode; detail: ReactNode } ) => ReactNode;
 };
 
@@ -30,6 +31,7 @@ vi.mock( '@automattic/notifications/src/inbox', () => ( {
 		setFilterName,
 		selectedNoteId,
 		setSelectedNoteId,
+		onViewSettings,
 		renderLayout,
 	}: InboxProps ) =>
 		renderLayout( {
@@ -43,6 +45,7 @@ vi.mock( '@automattic/notifications/src/inbox', () => ( {
 					<button onClick={ () => setSelectedNoteId( selectedNoteId === '42' ? '43' : '42' ) }>
 						{ `Open a note from ${ filterName }` }
 					</button>
+					<button onClick={ onViewSettings }>Settings</button>
 				</>
 			),
 			detail: selectedNoteId && selectedNoteId !== '999' && (
@@ -118,6 +121,15 @@ describe( '<Notifications>', () => {
 
 		await screen.findByRole( 'button', { name: 'Open a note from all' } );
 		expect( screen.queryByRole( 'heading', { name: 'Notifications' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'opens the notification settings from the list', async () => {
+		const user = userEvent.setup();
+		const router = await renderNotifications( '/notifications/42?filter=comments' );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Settings' } ) );
+
+		await waitFor( () => expect( router.state.location.href ).toBe( '/me/notifications' ) );
 	} );
 
 	test( 'keeps the chosen tab in the address', async () => {
