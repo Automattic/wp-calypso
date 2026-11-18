@@ -38,16 +38,22 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/color-studio": "^4.1.0",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@wordpress/i18n": "^7.2.0",
+		"@wordpress/react-i18n": "^5.2.0",
 		"@wordpress/url": "^5.2.0",
+		"clsx": "^2.1.1",
 		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@automattic/languages": "workspace:^",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/react": "^16.3.3",
 		"jsdom": "^20.0.3",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.7",

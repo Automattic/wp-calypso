@@ -77,6 +77,7 @@
 		"@wordpress/primitives": "^5.2.0",
 		"@wordpress/url": "^5.2.0",
 		"debug": "^4.4.3",
+		"history": "^5.3.0",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.17.1",
 		"redux": "^5.0.1",
@@ -91,6 +92,8 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@testing-library/dom": "^10.4.2",
+		"@testing-library/react": "^16.3.3",
 		"jsdom": "^20.0.3",
 		"nock": "^14.0.17",
 		"react": "^18.3.1",
