@@ -1,17 +1,5 @@
 @import 'calypso/lib/color-scheme/dark-theme';
 
-/* Callout */
-@mixin dashboard-dark-theme-callout {
-	.dashboard-callout__content > :first-child {
-		color: var( --dashboard__text-color );
-		fill: currentColor;
-
-		svg {
-			fill: currentColor;
-		}
-	}
-}
-
 /* Command Palette */
 @mixin dashboard-dark-theme-command-palette {
 	.commands-command-menu__header .components-button {
@@ -124,73 +112,11 @@
 	}
 }
 
-/* Agency sidebar promo */
-@mixin dashboard-dark-theme-sidebar-promo {
-	.a4a-sidebar-promo-card {
-		--a4a-sidebar-promo-icon-color: var( --a4a-sidebar-promo-icon-color-on-dark, currentColor );
-		--a4a-sidebar-promo-icon-background: var(
-			--a4a-sidebar-promo-icon-background-on-dark,
-			transparent
-		);
-	}
-}
-
 /* Emails */
 @mixin dashboard-dark-theme-emails {
+	// The provider logo ships as a dark image; drop once it has a light variant.
 	.email-provider-powered-by {
 		filter: brightness( 0 ) invert( 1 );
-	}
-
-	.dashboard-page-layout:has( .components-form-token-field ),
-	.dashboard-page-layout:has( .email-providers ),
-	.dashboard-page-layout:has( .mailbox-input ),
-	.dashboard-page-layout:has( .mailboxes-ready__item-group ) {
-		.components-notice {
-			background-color: var( --dashboard-surface__background-color );
-			color: var( --dashboard__text-color );
-		}
-
-		.components-notice.is-success {
-			background-color: color-mix(
-				in srgb,
-				var( --dashboard-surface__background-color ) 86%,
-				var( --dashboard__foreground-color-success )
-			);
-			border-inline-start-color: var( --dashboard__foreground-color-success );
-		}
-
-		.components-notice.is-warning {
-			background-color: color-mix(
-				in srgb,
-				var( --dashboard-surface__background-color ) 84%,
-				var( --dashboard__foreground-color-warning )
-			);
-			border-inline-start-color: var( --dashboard__foreground-color-warning );
-		}
-
-		.components-notice.is-error {
-			background-color: color-mix(
-				in srgb,
-				var( --dashboard-surface__background-color ) 84%,
-				var( --dashboard__foreground-color-error )
-			);
-			border-inline-start-color: var( --dashboard__foreground-color-error );
-		}
-
-		.components-notice__dismiss {
-			color: var( --dashboard__text-muted-color );
-		}
-
-		.components-notice__dismiss:not( :disabled ):not( [aria-disabled='true'] ):not(
-				.is-secondary
-			) {
-			&:hover,
-			&:active,
-			&:focus {
-				background-color: transparent;
-				color: var( --dashboard__text-color );
-			}
-		}
 	}
 }
 
@@ -247,19 +173,6 @@
 			var( --dashboard__text-muted-color )
 		);
 		box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
-	}
-}
-
-/* Modal */
-@mixin dashboard-dark-theme-modal {
-	.components-modal__frame {
-		.dataforms-layouts-panel__field-label {
-			color: var( --dashboard__text-muted-color );
-		}
-
-		.dataforms-layouts-panel__field-trigger.is-disabled .dataforms-layouts-panel__field-control {
-			color: var( --dashboard__text-muted-color );
-		}
 	}
 }
 
@@ -327,19 +240,14 @@
 	@include color-scheme-dark-theme-color-scheme;
 	@include color-scheme-dark-theme-agenttic;
 	@include dashboard-dark-theme-breadcrumbs;
-	@include dashboard-dark-theme-callout;
 	@include dashboard-dark-theme-command-palette;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-domain-upsell-illustration;
 	@include dashboard-dark-theme-illustrations;
 	@include dashboard-dark-theme-mcp-connect;
-	@include dashboard-dark-theme-modal;
 	@include color-scheme-dark-theme-palettes;
 	@include dashboard-dark-theme-plugins;
 	@include dashboard-dark-theme-primary-address-illustration;
-	@include dashboard-dark-theme-sidebar-promo;
-	@include color-scheme-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-launch-modal;
-	@include color-scheme-dark-theme-dataviews-filters-search-widget;
 }
