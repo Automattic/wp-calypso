@@ -178,6 +178,21 @@ describe( 'onboarding flow side effects', () => {
 
 			expect( navigate ).not.toHaveBeenCalled();
 		} );
+
+		// The blueprint step never submits for a value it cannot parse, so bouncing there would
+		// leave the run on its loading screen.
+		it( 'leaves a blueprint value the blueprint step would refuse alone', () => {
+			window.history.replaceState(
+				null,
+				'',
+				'/setup/onboarding/domains?blueprint=not%20a%20slug&build_dest=simple'
+			);
+			( useSelect as jest.Mock ).mockReturnValue( {} );
+
+			renderSideEffect( 'domains' );
+
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'post-checkout hand-off from the site-selected signup flow', () => {

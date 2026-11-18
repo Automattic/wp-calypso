@@ -96,6 +96,7 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
+import { getBlueprintArchiveIdentifier } from '../../internals/steps-repository/playground/lib/blueprint';
 import { TRACKS_FLUSH_DELAY } from '../../internals/steps-repository/playground/lib/constants';
 import {
 	getProcessingErrorReason,
@@ -1143,7 +1144,9 @@ const onboarding: FlowV2< typeof initialize > = {
 			}
 
 			const query = getCurrentQueryParams();
-			const blueprintParam = query.get( 'blueprint' );
+			// The same parse as the blueprint step: a value it would refuse would leave it on its
+			// loading screen, so that run is left to fall through as it always has.
+			const blueprintParam = getBlueprintArchiveIdentifier( query );
 			const playgroundId = query.get( 'playground' );
 			const buildDest = query.get( 'build_dest' );
 			const namesStandaloneBuild =
