@@ -1,12 +1,23 @@
 /**
  * @vitest-environment jsdom
  */
-import { screen, within } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import PaymentMethods from '../index';
+import type { AppConfig } from '../../../app/context';
 import type { StoredPaymentMethod } from '@automattic/api-core';
+
+// Hosts that scope the billing screens to a site have no `me` section of their own.
+const configWithMeSection: AppConfig = {
+	...APP_CONTEXT_DEFAULT_CONFIG,
+	supports: {
+		...APP_CONTEXT_DEFAULT_CONFIG.supports,
+		me: { billing: { monetizeSubscriptions: false }, security: false, apps: false },
+	},
+};
 
 const API = 'https://public-api.wordpress.com';
 
@@ -79,6 +90,33 @@ describe( '<PaymentMethods>', () => {
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
 			'calypso_dashboard_payment_method_add_click'
 		);
+	} );
+
+	test( 'offers Active upgrades as a second next step', async () => {
+		mockPaymentMethods( [] );
+		const { recordTracksEvent } = render( <PaymentMethods />, { config: configWithMeSection } );
+
+		await screen.findByRole( 'heading', { name: 'Add your first payment method' } );
+		expect( screen.getByText( 'See the plans and purchases on your account.' ) ).toBeVisible();
+		const link = screen.getByRole( 'link', { name: 'View active upgrades' } );
+
+		// The test router has no such route, the click only has to reach the handler.
+		fireEvent.click( link );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_payment_method_empty_state_action_click',
+			{ action: 'view-active-upgrades' }
+		);
+	} );
+
+	test( 'leaves Active upgrades out on a host with no account section', async () => {
+		mockPaymentMethods( [] );
+		render( <PaymentMethods /> );
+
+		await screen.findByRole( 'heading', { name: 'Add your first payment method' } );
+		expect( screen.getByRole( 'button', { name: 'Add payment method' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'link', { name: 'View active upgrades' } )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'does not show an empty state while the payment methods load', async () => {

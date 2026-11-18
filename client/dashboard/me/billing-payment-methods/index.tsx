@@ -18,17 +18,19 @@ import { useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { info, cautionFilled as warning, payment } from '@wordpress/icons';
+import { info, cautionFilled as warning, payment, receipt } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { useAppContext } from '../../app/context';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { addPaymentMethodRoute } from '../../app/router/me';
+import { addPaymentMethodRoute, purchasesRoute } from '../../app/router/me';
 import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import EmptyState from '../../components/empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { adjustDataViewFieldsForWidth } from '../../utils/dataviews-width';
 import { formatCreditCardExpiry } from '../../utils/datetime';
@@ -81,6 +83,8 @@ function getItemId( item: StoredPaymentMethod ): string {
 
 export default function PaymentMethods() {
 	const navigate = useNavigate();
+	// Hosts without a `me` section scope Active upgrades to a site and link to it themselves.
+	const supportsMe = Boolean( useAppContext().supports.me );
 	const [ removeDialogPaymentMethod, setRemoveDialogPaymentMethod ] = useState<
 		StoredPaymentMethod | undefined
 	>();
@@ -286,6 +290,29 @@ export default function PaymentMethods() {
 									</Button>
 								}
 							/>
+							{ supportsMe && (
+								<EmptyState.ActionItem
+									title={ __( 'Active upgrades' ) }
+									description={ __( 'See the plans and purchases on your account.' ) }
+									decoration={ <Icon icon={ receipt } size={ 24 } /> }
+									actions={
+										<RouterLinkButton
+											variant="secondary"
+											to={ purchasesRoute.fullPath }
+											onClick={ () =>
+												recordTracksEvent(
+													'calypso_dashboard_payment_method_empty_state_action_click',
+													{ action: 'view-active-upgrades' }
+												)
+											}
+											size="compact"
+											__next40pxDefaultSize
+										>
+											{ __( 'View active upgrades' ) }
+										</RouterLinkButton>
+									}
+								/>
+							) }
 						</EmptyState.ActionList>
 					</DataViewsEmptyStateLayout>
 				) : (
