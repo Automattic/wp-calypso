@@ -6,6 +6,7 @@ import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
 import getFilteredNoteIds from '../state/selectors/get-filtered-note-ids';
+import getStoredNotes from '../state/selectors/get-notes';
 import { getFilters } from '../templates/filters';
 import { fetchNote, listNotes, sendLastSeenTime, subscribeToNoteStream } from './wpcom';
 
@@ -951,6 +952,16 @@ function hasMoreNotes( filterName = this.filterName ) {
 	return ! this.allNotesLoaded && loaded < settings.max_limit;
 }
 
+// A note marked as unread here keeps that status until the server sends the
+// note again, which it does not do on its own while the live connection is up.
+function refreshLocalUnreads() {
+	const { noteReads } = getStoredNotes( store.getState() );
+
+	Object.keys( noteReads )
+		.filter( ( noteId ) => noteReads[ noteId ] === false )
+		.forEach( ( noteId ) => this.getNote( noteId ) );
+}
+
 function setVisibility( { isShowing, isVisible } ) {
 	if ( this.isShowing === isShowing && this.isVisible === isVisible ) {
 		return;
@@ -968,6 +979,10 @@ function setVisibility( { isShowing, isVisible } ) {
 	if ( isVisible && ( ! this.lastSeenTime || isShowing ) ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
+	}
+
+	if ( isVisible && isShowing ) {
+		refreshLocalUnreads.call( this );
 	}
 
 	resumeLoadMoreRetry.call( this );

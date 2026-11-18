@@ -69,7 +69,7 @@ describe( 'RestClient', () => {
 		init( {
 			req: {
 				get: ( path, query, callback ) => getCalls.push( { path, query, callback } ),
-				post: () => {},
+				post: () => Promise.resolve(),
 			},
 			pinghub: {
 				connect: ( _path, callback ) => {
@@ -1235,6 +1235,66 @@ describe( 'RestClient', () => {
 			receiveStorageEvent( null );
 
 			expect( isRead() ).toBe( false );
+		} );
+	} );
+
+	describe( 'notes marked as unread here, when the panel opens', () => {
+		const NOTE_ID = 100;
+		const noteCalls = () =>
+			getCalls.filter( ( call ) => call.path.path === `/notifications/${ NOTE_ID }` );
+		const isRead = () =>
+			getIsNoteRead(
+				store.getState(),
+				getAllNotes( store.getState() ).find( ( note ) => note.id === NOTE_ID )
+			);
+		const openPanel = () => client.setVisibility( { isShowing: true, isVisible: true } );
+
+		beforeEach( () => {
+			seedFirstWindow();
+			// A live connection: nothing is fetched unless the client asks.
+			client.subscribed = true;
+		} );
+
+		it( 'asks the server for them again', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+
+			openPanel();
+
+			expect( noteCalls() ).toHaveLength( 1 );
+		} );
+
+		it( 'shows what the server has once the hold is over', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+			expect( isRead() ).toBe( false );
+			vi.advanceTimersByTime( 10001 );
+
+			openPanel();
+			noteCalls()[ 0 ].callback( null, { notes: [ { ...makeNote( NOTE_ID ), read: 1 } ] } );
+
+			expect( isRead() ).toBe( true );
+
+			// The override is gone, so the next time the panel opens nothing is asked.
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+			openPanel();
+			expect( noteCalls() ).toHaveLength( 0 );
+		} );
+
+		it( 'asks for nothing when no note is marked as unread here', () => {
+			store.dispatch( actions.notes.readNote( NOTE_ID ) );
+
+			openPanel();
+
+			expect( noteCalls() ).toHaveLength( 0 );
+		} );
+
+		it( 'asks for nothing while the page is hidden', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+			client.isVisible = false;
+
+			client.setVisibility( { isShowing: true, isVisible: false } );
+
+			expect( noteCalls() ).toHaveLength( 0 );
 		} );
 	} );
 } );
