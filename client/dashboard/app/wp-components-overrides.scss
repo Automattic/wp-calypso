@@ -25,6 +25,11 @@
 .components-button.is-primary:is(:disabled, [aria-disabled="true"]):not(.is-busy) {
 	color: var(--wpds-color-foreground-interactive-brand-strong-disabled);
 	background: var(--wpds-color-background-interactive-brand-strong-disabled);
+
+	&.is-destructive {
+		color: var(--wpds-color-foreground-interactive-error-strong-disabled);
+		background: var(--wpds-color-background-interactive-error-strong-disabled);
+	}
 }
 
 .components-button.is-destructive:not(.is-primary):not(.is-secondary):not(.is-tertiary):not(.is-link):not(:disabled, [aria-disabled="true"]) {
