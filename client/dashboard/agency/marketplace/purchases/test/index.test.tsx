@@ -139,6 +139,7 @@ describe( '<MarketplacePurchases>', () => {
 		nock.cleanAll();
 		sessionStorage.clear();
 		window.history.replaceState( {}, '', '/purchases' );
+		apiQueryClient.clear();
 	} );
 
 	test( 'empties the cart and drops the receipt when a checkout returns here', async () => {
@@ -243,7 +244,6 @@ describe( '<MarketplacePurchases>', () => {
 			'pressable-signature-5_new',
 			'pressable-signature-4_old',
 		] );
-		apiQueryClient.clear();
 	} );
 
 	test( 'leaves the cart alone without a receipt', async () => {
