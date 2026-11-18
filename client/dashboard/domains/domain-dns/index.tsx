@@ -3,6 +3,7 @@ import {
 	domainDnsMutation,
 	domainDnsQuery,
 	domainDnsEmailMutation,
+	userPreferenceMutation,
 	userPreferenceOptimisticMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
@@ -42,6 +43,30 @@ function getDnsRecordId( record: DnsRecord ) {
 }
 
 type DnsView = ViewTable;
+
+type DefaultRecordsNoticePreference =
+	`hosting-dashboard-domain-dns-default-${ 'a-records' | 'cname' }-notice-dismissed-${ string }`;
+
+function useDefaultRecordsNoticeDismissal( preferenceName: DefaultRecordsNoticePreference ) {
+	const { data: dismissedAt, isFetched } = useQuery( userPreferenceQuery( preferenceName ) );
+	const { mutate: saveDismissal } = useMutation(
+		withSnackbar( userPreferenceOptimisticMutation( preferenceName ), {
+			error: __( 'Failed to dismiss the warning.' ),
+		} )
+	);
+	const { mutate: clearDismissal } = useMutation( userPreferenceMutation( preferenceName ) );
+
+	return {
+		isHidden: ! isFetched || !! dismissedAt,
+		dismiss: () => saveDismissal( new Date().toISOString() ),
+		// Restoring the default records shows the warning again if they are changed later.
+		reset: () => {
+			if ( dismissedAt ) {
+				clearDismissal( undefined );
+			}
+		},
+	};
+}
 
 const DEFAULT_VIEW: DnsView = {
 	type: 'table',
@@ -95,19 +120,11 @@ export default function DomainDns() {
 	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
 	const [ importedRecords, setImportedRecords ] = useState< DnsRecord[] >( [] );
 
-	const aRecordsNoticePreference =
-		`hosting-dashboard-domain-dns-default-a-records-notice-dismissed-${ domainName }` as const;
-	const cnameRecordNoticePreference =
-		`hosting-dashboard-domain-dns-default-cname-notice-dismissed-${ domainName }` as const;
-	const { data: aRecordsNoticeDismissedAt, isFetched: isARecordsNoticePreferenceFetched } =
-		useQuery( userPreferenceQuery( aRecordsNoticePreference ) );
-	const { data: cnameRecordNoticeDismissedAt, isFetched: isCnameRecordNoticePreferenceFetched } =
-		useQuery( userPreferenceQuery( cnameRecordNoticePreference ) );
-	const { mutate: dismissARecordsNotice } = useMutation(
-		userPreferenceOptimisticMutation( aRecordsNoticePreference )
+	const aRecordsNoticeDismissal = useDefaultRecordsNoticeDismissal(
+		`hosting-dashboard-domain-dns-default-a-records-notice-dismissed-${ domainName }`
 	);
-	const { mutate: dismissCnameRecordNotice } = useMutation(
-		userPreferenceOptimisticMutation( cnameRecordNoticePreference )
+	const cnameRecordNoticeDismissal = useDefaultRecordsNoticeDismissal(
+		`hosting-dashboard-domain-dns-default-cname-notice-dismissed-${ domainName }`
 	);
 
 	const actions = useDnsActions();
@@ -150,6 +167,7 @@ export default function DomainDns() {
 					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_a_records_success', {
 						domain: domainName,
 					} );
+					aRecordsNoticeDismissal.reset();
 				},
 				onError: ( error ) => {
 					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_a_records_failure', {
@@ -193,6 +211,7 @@ export default function DomainDns() {
 					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_cname_record_success', {
 						domain: domainName,
 					} );
+					cnameRecordNoticeDismissal.reset();
 				},
 				onError: ( error ) => {
 					recordTracksEvent( 'calypso_dashboard_domain_dns_restore_default_cname_record_failure', {
@@ -242,8 +261,7 @@ export default function DomainDns() {
 			isFetching ||
 			! domain.has_wpcom_nameservers ||
 			hasDefaultARecordsValue ||
-			! isARecordsNoticePreferenceFetched ||
-			aRecordsNoticeDismissedAt
+			aRecordsNoticeDismissal.isHidden
 		) {
 			return null;
 		}
@@ -252,7 +270,7 @@ export default function DomainDns() {
 			recordTracksEvent( 'calypso_dashboard_domain_dns_default_a_records_notice_dismiss', {
 				domain: domainName,
 			} );
-			dismissARecordsNotice( new Date().toISOString() );
+			aRecordsNoticeDismissal.dismiss();
 		};
 
 		if ( domain.is_gravatar_domain ) {
@@ -296,8 +314,7 @@ export default function DomainDns() {
 			isFetching ||
 			! domain.has_wpcom_nameservers ||
 			hasDefaultCnameRecordValue ||
-			! isCnameRecordNoticePreferenceFetched ||
-			cnameRecordNoticeDismissedAt
+			cnameRecordNoticeDismissal.isHidden
 		) {
 			return null;
 		}
@@ -310,7 +327,7 @@ export default function DomainDns() {
 					recordTracksEvent( 'calypso_dashboard_domain_dns_default_cname_record_notice_dismiss', {
 						domain: domainName,
 					} );
-					dismissCnameRecordNotice( new Date().toISOString() );
+					cnameRecordNoticeDismissal.dismiss();
 				} }
 			>
 				{ createInterpolateElement(

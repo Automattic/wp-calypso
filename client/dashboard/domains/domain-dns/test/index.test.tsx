@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain, type DnsRecord } from '@automattic/api-core';
-import { queryClient as appQueryClient } from '@automattic/api-queries';
+import { queryClient as appQueryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -54,6 +54,15 @@ const mockDnsApiRequest = ( records: DnsRecord[] ) =>
 		.get( `/rest/v1.1/domains/${ domainName }/dns` )
 		.reply( 200, { records } );
 
+// Seeds preferences without the dismissals, so only the DNS loading state can hide the warnings.
+const createQueryClientWithPreferences = () => {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false, staleTime: 0 } },
+	} );
+	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
+	return queryClient;
+};
+
 const mockPreferencesApiRequest = ( preferences: Record< string, unknown > = {} ) =>
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/preferences' )
@@ -100,8 +109,9 @@ describe( 'DomainDns', () => {
 		// The domain already has the default WWW CNAME record, so the warning must
 		// never appear — not even during the window where the DNS query is loading.
 		const release = mockDnsApiRequestPending( [ defaultCnameRecord ] );
+		mockPreferencesApiRequest();
 
-		render( <DomainDns /> );
+		render( <DomainDns />, { queryClient: createQueryClientWithPreferences() } );
 
 		// The page chrome renders once the domain (suspense) query resolves, but the
 		// DNS query is still in flight at this point.
@@ -122,15 +132,14 @@ describe( 'DomainDns', () => {
 		// the component mounts and `isLoading` is false. With `staleTime: 0` a
 		// background refetch then runs. Seed the cache with stale records that lack
 		// the default WWW CNAME record to mirror that scenario.
-		const queryClient = new QueryClient( {
-			defaultOptions: { queries: { retry: false, staleTime: 0 } },
-		} );
+		const queryClient = createQueryClientWithPreferences();
 		queryClient.setQueryData( dnsQueryKey, { records: [] } );
 
 		// The server actually has the default WWW CNAME record, so the warning must
 		// never appear — not even while the background refetch is in flight over the
 		// stale records.
 		const release = mockDnsApiRequestPending( [ defaultCnameRecord ] );
+		mockPreferencesApiRequest();
 
 		render( <DomainDns />, { queryClient } );
 
@@ -197,6 +206,38 @@ describe( 'DomainDns', () => {
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 		expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'forgets the default A records warning dismissal once the default records are restored', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+		mockDnsApiRequest( [ { id: '1', type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		mockPreferencesApiRequest( {
+			[ A_RECORDS_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
+		} );
+		nock( 'https://public-api.wordpress.com' )
+			.post( `/rest/v1.1/domains/${ domainName }/dns` )
+			.reply( 200, {} );
+		mockDnsApiRequest( [ { id: '2', type: 'A', name: domainName, data: '192.0.78.9' } ] );
+		const clearPreference = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				expect( body.calypso_preferences ).toEqual( { [ A_RECORDS_NOTICE_PREFERENCE ]: null } );
+				return true;
+			} )
+			.reply( 200, { calypso_preferences: {} } );
+		const user = userEvent.setup();
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+		expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'DNS actions' } ) );
+		await user.click(
+			await screen.findByRole( 'menuitem', { name: 'Restore default A records' } )
+		);
+		await user.click( await screen.findByRole( 'button', { name: 'Restore' } ) );
+
+		await waitFor( () => expect( clearPreference.isDone() ).toBe( true ) );
 	} );
 
 	test( 'filters DNS records by type', async () => {
