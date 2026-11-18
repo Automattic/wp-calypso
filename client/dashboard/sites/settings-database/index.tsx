@@ -130,21 +130,21 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 							</VStack>
 							<ButtonStack justify="flex-start" expanded={ false } as="span">
 								<Button
+									__next40pxDefaultSize
 									variant="primary"
 									isBusy={ isFetchingToken }
 									onClick={ handleOpenPhpMyAdmin }
 								>
 									{ __( 'Open phpMyAdmin ↗' ) }
 								</Button>
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									onClick={ handleResetPasswordClick }
+								>
+									{ __( 'Reset password' ) }
+								</Button>
 							</ButtonStack>
-							<Text variant="muted" lineHeight="20px">
-								{ createInterpolateElement(
-									__( 'Having problems with access? Try <link>resetting the password</link>.' ),
-									{
-										link: <Button variant="link" onClick={ handleResetPasswordClick } />,
-									}
-								) }
-							</Text>
 						</VStack>
 					</CardBody>
 				</Card>
