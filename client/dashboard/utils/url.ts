@@ -44,7 +44,7 @@ export function resolveDomainConnectionSetupUrl(
 	return getUrlOnOrigins(
 		template.replace( '%s', domain ),
 		[ window.location.origin, ...dashboardOrigins() ],
-		window.location.origin
+		window.location.href
 	);
 }
 
