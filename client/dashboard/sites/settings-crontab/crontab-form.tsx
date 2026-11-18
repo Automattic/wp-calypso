@@ -14,6 +14,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -142,9 +143,16 @@ export default function CrontabForm( { crontab }: CrontabFormProps ) {
 	);
 
 	const pageTitle = isEditMode ? __( 'Edit scheduled job' ) : __( 'Add scheduled job' );
-	const pageDescription = isEditMode
-		? __( 'Update the schedule or command for this job.' )
-		: __( 'Schedule a command to run automatically at specified intervals on your site.' );
+	const pageDescription = createInterpolateElement(
+		isEditMode
+			? __( 'Update the schedule or command for this job. <learnMoreLink />' )
+			: __(
+					'Schedule a command to run automatically at specified intervals on your site. <learnMoreLink />'
+				),
+		{
+			learnMoreLink: <InlineSupportLink supportContext="hosting-cron" />,
+		}
+	);
 	const submitButtonLabel = isEditMode ? __( 'Save changes' ) : __( 'Add scheduled job' );
 
 	return (
