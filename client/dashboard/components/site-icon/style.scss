@@ -19,7 +19,7 @@
 
 .site-letter {
 	align-items: center;
-	background: var(--wpds-color-background-interactive-brand-strong);
+	background: color-mix(in srgb, var(--wpds-color-background-interactive-brand-strong) 68%, var(--wpds-color-background-surface-neutral-strong));
 	color: var(--wpds-color-foreground-interactive-brand-strong);
 	display: flex;
 	flex-shrink: 0;
