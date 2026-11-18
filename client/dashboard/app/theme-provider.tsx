@@ -1,19 +1,10 @@
 import { useMediaQuery } from '@wordpress/compose';
 import { ThemeProvider } from '@wordpress/theme';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useColorScheme } from 'calypso/lib/color-scheme/shared';
+import { COLOR_SCHEME_STORAGE_KEY, DARK_SEEDS, LIGHT_SEEDS } from './theme-pre-paint';
 import type { ReactNode } from 'react';
-
-const LIGHT_SEEDS = {
-	background: '#fcfcfc',
-	primary: '#3858e9',
-};
-
-const DARK_SEEDS = {
-	background: '#181818',
-	primary: '#93aef8',
-};
 
 /**
  * Returns whether the page is being printed, updated synchronously before the print snapshot.
@@ -52,6 +43,16 @@ export function DashboardThemeProvider( {
 		enabled &&
 		! isPrint &&
 		( colorScheme === 'dark' || ( colorScheme === 'system' && prefersDark ) );
+
+	useEffect( () => {
+		try {
+			window.localStorage.setItem( COLOR_SCHEME_STORAGE_KEY, enabled ? colorScheme : 'light' );
+		} catch {}
+	}, [ enabled, colorScheme ] );
+
+	useLayoutEffect( () => {
+		delete document.documentElement.dataset.prePaintTheme;
+	}, [] );
 
 	return (
 		<ThemeProvider isRoot color={ isDark ? DARK_SEEDS : LIGHT_SEEDS }>
