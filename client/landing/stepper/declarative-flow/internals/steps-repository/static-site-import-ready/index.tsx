@@ -58,6 +58,7 @@ const StaticSiteImportReadyStep: StepType< {
 
 	// The welcome asks first; looking around moves it to a card in the corner, which can fold away.
 	const [ view, setView ] = useState< 'welcome' | 'card' | 'folded' >( 'welcome' );
+	const lookAround = () => setView( 'card' );
 	const choosePlan = () => navigation.submit?.( { action: 'choose_plan' } );
 
 	const addresses = (
@@ -113,27 +114,24 @@ const StaticSiteImportReadyStep: StepType< {
 					className="static-site-import-ready-step__modal"
 					title={ __( 'Your site is on WordPress.com' ) }
 					size="medium"
-					isDismissible={ false }
 					shouldCloseOnClickOutside={ false }
-					shouldCloseOnEsc={ false }
-					onRequestClose={ () => {} }
+					onRequestClose={ lookAround }
 				>
 					<p>
 						{ sourceHost
 							? sprintf(
 									/* translators: %s: the domain of the site that was copied, e.g. example.com. */
 									__(
-										'We copied %s onto a private preview. Click around: every page is here and works. Launch it when you’re happy.'
+										'We copied %s to WordPress.com. Every page is here and works. Look around: you can choose a plan from the card in the corner whenever you’re ready.'
 									),
 									sourceHost
 								)
 							: __(
-									'We copied your site onto a private preview. Click around: every page is here and works. Launch it when you’re happy.'
+									'We copied your site to WordPress.com. Every page is here and works. Look around: you can choose a plan from the card in the corner whenever you’re ready.'
 								) }
 					</p>
-					{ addresses }
 					<HStack justify="flex-end" spacing={ 3 }>
-						<Button __next40pxDefaultSize variant="primary" onClick={ () => setView( 'card' ) }>
+						<Button __next40pxDefaultSize variant="primary" onClick={ lookAround }>
 							{ __( 'Look around' ) }
 						</Button>
 					</HStack>

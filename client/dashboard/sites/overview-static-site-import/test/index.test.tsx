@@ -182,6 +182,15 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getAllByRole( 'listitem' )[ 0 ] ).toHaveTextContent( '12 pages found' );
 	} );
 
+	test( 'says it is on the first page before any page is copied', () => {
+		const current = currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', pages_captured: 0, pages_total: 12 },
+		} );
+
+		expect( current ).toHaveTextContent( 'Working on the first page' );
+		expect( current ).not.toHaveTextContent( '0 of 12' );
+	} );
+
 	test.each( [
 		[ { phase: 'building' }, 'Setting up WordPress' ],
 		[
@@ -191,6 +200,14 @@ describe( 'StaticSiteImportCard', () => {
 		[
 			{ phase: 'building', building: { stage: 'compile_pages', current: 5, total: 13 } },
 			'Turning your pages into blocks · 5 of 13',
+		],
+		[
+			{ phase: 'building', building: { stage: 'prepare_pages', current: 0, total: 13 } },
+			'Preparing your pages · Working on the first page',
+		],
+		[
+			{ phase: 'building', building: { stage: 'compile_pages', current: 0, total: 13 } },
+			'Turning your pages into blocks · Working on the first block',
 		],
 		[
 			{ phase: 'building', building: { stage: 'compose', current: 13, total: 13 } },
@@ -276,6 +293,46 @@ describe( 'StaticSiteImportCard', () => {
 		} );
 
 		expect( within( current ).getByRole( 'status' ) ).toHaveTextContent( activity );
+	} );
+
+	// The page list is decoration beside the checklist, hidden from assistive technology.
+	const pageList = () =>
+		document.querySelector< HTMLElement >( '.static-site-import-snapshot__pages' ) as HTMLElement;
+
+	test( 'lists every page found and ticks only the copied ones', () => {
+		currentStepOf( 'capturing', {
+			progress: {
+				phase: 'capturing',
+				pages_captured: 1,
+				pages_total: 3,
+				current_page: '/about/',
+				pages: [
+					{ path: '/', captured: false },
+					{ path: '/about/', captured: true },
+					{ path: '/caf%C3%A9/', captured: false },
+				],
+			},
+		} );
+
+		const list = within( pageList() );
+		const rows = [ 'Home page', '/about/', '/café/' ].map( ( name ) =>
+			list.getByText( name ).closest( 'li' )
+		);
+		expect( rows.map( ( row ) => row?.classList.contains( 'is-captured' ) ) ).toEqual( [
+			false,
+			true,
+			false,
+		] );
+	} );
+
+	test( 'lists the pages copied while watching when the server lists none', () => {
+		currentStepOf( 'capturing', {
+			progress: { phase: 'capturing', pages_captured: 1, pages_total: 3, current_page: '/about/' },
+		} );
+
+		const list = within( pageList() );
+		expect( list.getByText( '/about/' ).closest( 'li' ) ).toHaveClass( 'is-captured' );
+		expect( list.queryByText( 'Home page' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'says how long each finished step took', () => {

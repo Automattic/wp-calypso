@@ -1,8 +1,13 @@
 import * as types from '../action-types';
 
-export const addNotes = ( notes ) => ( {
+/**
+ * @param {Object[]} notes notes from the server
+ * @param {number} [requestedAt] when the request that returned them was sent, in ms
+ */
+export const addNotes = ( notes, requestedAt ) => ( {
 	type: types.NOTES_ADD,
 	notes,
+	requestedAt,
 } );
 
 export const removeNotes = ( noteIds, isComment = false ) => ( {
@@ -27,6 +32,7 @@ export const noteAction = ( action ) => ( noteId ) => ( {
 export const readNote = noteAction( types.READ_NOTE );
 export const spamNote = noteAction( types.SPAM_NOTE );
 export const trashNote = noteAction( types.TRASH_NOTE );
+export const unreadNote = noteAction( types.UNREAD_NOTE );
 
 export const approveNote = ( noteId, isApproved ) => ( {
 	type: types.APPROVE_NOTE,
@@ -72,6 +78,20 @@ export const resetLocalLike = ( noteId ) => ( {
 	noteId,
 } );
 
+/**
+ * Resets the local cache override on note read status
+ *
+ * A note marked as read or unread here keeps that status over
+ * whatever the server sends. Resetting it lets the server's
+ * `read` field decide again.
+ * @param {number} noteId
+ * @returns {Object} action object
+ */
+export const resetLocalRead = ( noteId ) => ( {
+	type: types.RESET_LOCAL_READ,
+	noteId,
+} );
+
 export default {
 	addNotes,
 	approveNote,
@@ -80,7 +100,9 @@ export default {
 	removeNotes,
 	resetLocalApproval,
 	resetLocalLike,
+	resetLocalRead,
 	setFilteredNoteIds,
 	spamNote,
 	trashNote,
+	unreadNote,
 };

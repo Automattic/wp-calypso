@@ -57,6 +57,9 @@ const formatCount = ( current: number, total: number ) =>
 		formatNumber( total )
 	);
 
+const getCopyCount = ( captured: number, total: number ) =>
+	captured === 0 ? __( 'Working on the first page' ) : formatCount( captured, total );
+
 function formatDuration( seconds: number ) {
 	const whole = Math.max( 0, Math.floor( seconds ) );
 	if ( whole < 60 ) {
@@ -73,8 +76,6 @@ function formatDuration( seconds: number ) {
 		String( whole % 60 ).padStart( 2, '0' )
 	);
 }
-
-const COPIED_PAGES_SHOWN = 6;
 
 /** A page path as the reader would type it, e.g. `/café/` rather than `/caf%C3%A9/`. */
 function readablePath( path: string ) {
@@ -97,7 +98,8 @@ function getBuildDetail( progress?: StaticSiteImportProgress ) {
 	if ( ! building ) {
 		return progress?.phase === 'building' ? __( 'Setting up WordPress' ) : '';
 	}
-	const count = building.total > 0 ? formatCount( building.current, building.total ) : '';
+	const hasCount = building.total > 0;
+	const isFirst = building.current === 0;
 	switch ( building.stage ) {
 		case 'freezing':
 		case 'prepare_shared':
@@ -105,22 +107,28 @@ function getBuildDetail( progress?: StaticSiteImportProgress ) {
 			return __( 'Preparing your styles and layout' );
 		case 'prepare_pages':
 		case 'preparing_pages':
-			return count
-				? sprintf(
+			if ( ! hasCount ) {
+				return __( 'Preparing your pages' );
+			}
+			return isFirst
+				? __( 'Preparing your pages · Working on the first page' )
+				: sprintf(
 						/* translators: %s: progress such as "3 of 12". */
 						__( 'Preparing your pages · %s' ),
-						count
-					)
-				: __( 'Preparing your pages' );
+						formatCount( building.current, building.total )
+					);
 		case 'compile_pages':
 		case 'compiling_pages':
-			return count
-				? sprintf(
+			if ( ! hasCount ) {
+				return __( 'Turning your pages into blocks' );
+			}
+			return isFirst
+				? __( 'Turning your pages into blocks · Working on the first block' )
+				: sprintf(
 						/* translators: %s: progress such as "3 of 12". */
 						__( 'Turning your pages into blocks · %s' ),
-						count
-					)
-				: __( 'Turning your pages into blocks' );
+						formatCount( building.current, building.total )
+					);
 		case 'compose':
 		case 'composed':
 		case 'canonical_plan':
@@ -334,14 +342,18 @@ function SiteSnapshot( {
 		step === 1 && progress?.current_page && ! progress.capture_stage
 			? readablePath( progress.current_page )
 			: '/';
-	// The pages seen copied while watching, newest first. The server only names the latest one.
+	// The pages seen copied while watching, newest first, for servers that only name the latest one.
 	const [ copied, setCopied ] = useState< string[] >( [] );
+	const listed = progress?.pages?.length ? progress.pages : undefined;
+	const isListed = Boolean( listed );
+	const pages = listed ?? copied.map( ( path ) => ( { path, captured: true } ) );
 	const pagesRef = useRef< HTMLOListElement >( null );
 	// Each new page pushes the list down by one row, which snaps into place.
 	useLayoutEffect( () => {
 		const list = pagesRef.current;
 		const newest = list?.firstElementChild as HTMLElement | null;
 		if (
+			isListed ||
 			! list ||
 			! newest ||
 			copied.length < 2 ||
@@ -358,7 +370,7 @@ function SiteSnapshot( {
 				easing: 'cubic-bezier( 0.34, 1.56, 0.64, 1 )',
 			} )
 		);
-	}, [ copied.length ] );
+	}, [ copied.length, isListed ] );
 	if ( step === 1 && progress?.current_page && ! copied.includes( progress.current_page ) ) {
 		setCopied( [ progress.current_page, ...copied ] );
 	}
@@ -369,7 +381,7 @@ function SiteSnapshot( {
 				'is-copying': step <= 1,
 				'is-building': step === 2,
 				'has-image': hasLoaded,
-				'has-pages': copied.length > 0,
+				'has-pages': pages.length > 0,
 			} ) }
 		>
 			<div className="static-site-import-snapshot__bar" aria-hidden="true">
@@ -389,12 +401,16 @@ function SiteSnapshot( {
 					<span />
 					<span />
 				</div>
-				{ copied.length > 0 && (
-					<ol ref={ pagesRef } className="static-site-import-snapshot__pages" aria-hidden="true">
-						{ copied.slice( 0, COPIED_PAGES_SHOWN ).map( ( page ) => (
-							<li key={ page }>
+				{ pages.length > 0 && (
+					<ol
+						ref={ pagesRef }
+						className={ clsx( 'static-site-import-snapshot__pages', { 'is-listed': isListed } ) }
+						aria-hidden="true"
+					>
+						{ pages.map( ( { path, captured } ) => (
+							<li key={ path } className={ clsx( { 'is-captured': captured } ) }>
 								<Icon icon={ check } size={ 20 } />
-								<span>{ page === '/' ? __( 'Home page' ) : readablePath( page ) }</span>
+								<span>{ path === '/' ? __( 'Home page' ) : readablePath( path ) }</span>
 							</li>
 						) ) }
 					</ol>
@@ -622,7 +638,9 @@ function MovingChecklist( {
 			label: __( 'Copying your pages' ),
 			activity: current === 1 ? getCopyActivity( progress ) : '',
 			count:
-				current === 1 && pagesTotal ? formatCount( progress?.pages_captured ?? 0, pagesTotal ) : '',
+				current === 1 && pagesTotal
+					? getCopyCount( progress?.pages_captured ?? 0, pagesTotal )
+					: '',
 			seconds: progress?.step_seconds?.capturing,
 		},
 		{
@@ -711,16 +729,13 @@ function MoveProgressBar( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
-/** The move's overall progress and its steps, for a page of its own while a preview is built. */
+/** The move’s steps, for a page of its own while a preview is built. */
 export function StaticSiteImportPreviewSteps( { siteImport }: { siteImport: StaticSiteImport } ) {
 	return (
-		<VStack spacing={ 8 } className="static-site-import-preview-steps">
-			<MoveProgressBar session={ siteImport.session } />
-			<MovingChecklist
-				session={ siteImport.session }
-				lastLabel={ __( 'Getting your preview ready' ) }
-			/>
-		</VStack>
+		<MovingChecklist
+			session={ siteImport.session }
+			lastLabel={ __( 'Getting your preview ready' ) }
+		/>
 	);
 }
 

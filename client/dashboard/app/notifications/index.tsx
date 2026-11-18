@@ -16,6 +16,7 @@ import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import { NOTIFICATIONS_ICON_CLASS } from '../omnibar/notifications-node/icon-class';
 import useSubscriberAlerts from './use-subscriber-alerts';
 import './style.scss';
+import type { NotificationsPanelView } from './panel-view';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
@@ -46,10 +47,14 @@ type LinkAction = {
 export default function Notifications( {
 	className,
 	anchor,
+	isInboxShown = false,
+	onOpenInbox,
 }: {
 	className?: string;
 	/** When true, hides the built-in toggle button (the omnibar provides its own). */
 	anchor?: boolean;
+	isInboxShown?: boolean;
+	onOpenInbox?: ( view: NotificationsPanelView ) => void;
 } ) {
 	const { user } = useAuth();
 	const locale = useLocale();
@@ -60,6 +65,7 @@ export default function Notifications( {
 	const unseenCountRef = useRef< number | undefined >( user.has_unseen_notes ? undefined : 0 );
 	const { recordTracksEvent } = useAnalytics();
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+	const isMarkAsUnreadEnabled = config.isEnabled( 'notifications/mark-as-unread' );
 	const onNotificationCount = useCallback( ( count: number ) => {
 		unseenCountRef.current = count;
 		setHasUnseenNotifications( count > 0 );
@@ -69,6 +75,9 @@ export default function Notifications( {
 
 	const handleToggle = useCallback(
 		( willOpen: boolean ) => {
+			if ( willOpen && isInboxShown ) {
+				return;
+			}
 			if ( willOpen ) {
 				setShowHelpCenter( false, undefined, true );
 				recordTracksEvent( 'calypso_notification_open', {
@@ -78,7 +87,7 @@ export default function Notifications( {
 			}
 			setIsOpen( willOpen );
 		},
-		[ setShowHelpCenter, recordTracksEvent ]
+		[ isInboxShown, setShowHelpCenter, recordTracksEvent ]
 	);
 
 	// Close notifications when help center opens.
@@ -87,6 +96,12 @@ export default function Notifications( {
 			setIsOpen( false );
 		}
 	}, [ isHelpCenterShown ] );
+
+	useEffect( () => {
+		if ( isInboxShown ) {
+			setIsOpen( false );
+		}
+	}, [ isInboxShown ] );
 
 	// Keep the omnibar button in sync with the panel open state.
 	useEffect( () => {
@@ -220,6 +235,8 @@ export default function Notifications( {
 						locale={ locale }
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
+						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+						onOpenFullView={ onOpenInbox }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>

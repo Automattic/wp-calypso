@@ -40,9 +40,40 @@ type NoteListProps = {
 	filterName: FilterName;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
+	openNoteOnArrowKeys?: boolean;
 };
 
-const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
+const ARROW_KEYS = [ 'ArrowUp', 'ArrowDown' ];
+
+/**
+ * Returns the tab's notes with the open note kept at its chronological position.
+ *
+ * Opening a note marks it read, so it would otherwise leave Unread while still open beside the list.
+ */
+function keepSelectedNote(
+	notes: Note[],
+	allNotes: Note[],
+	selectedNoteId: string | undefined
+): Note[] {
+	const isSelected = ( note: Note ) => String( note.id ) === selectedNoteId;
+	const selectedIndex = allNotes.findIndex( isSelected );
+	if ( selectedIndex < 0 || notes.some( isSelected ) ) {
+		return notes;
+	}
+
+	const olderNoteIds = new Set( allNotes.slice( selectedIndex + 1 ).map( ( note ) => note.id ) );
+	const firstOlderIndex = notes.findIndex( ( note ) => olderNoteIds.has( note.id ) );
+	const insertAt = firstOlderIndex < 0 ? notes.length : firstOlderIndex;
+
+	return [ ...notes.slice( 0, insertAt ), allNotes[ selectedIndex ], ...notes.slice( insertAt ) ];
+}
+
+const NoteList = ( {
+	filterName,
+	selectedNoteId,
+	setSelectedNoteId,
+	openNoteOnArrowKeys = false,
+}: NoteListProps ) => {
 	const filter = getFilters()[ filterName ];
 	const isAllTab = filterName === 'all';
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
@@ -84,8 +115,10 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 		return { notes, isLoading: loading, hasInitiallyLoaded };
 	}, [ isAllTab, allNotes, cachedNoteIds, isLoading, filteredLoading, filterName ] );
 
+	const notes = keepSelectedNote( tab.notes, allNotes, selectedNoteId );
+
 	// Filter out hidden notes, i.e. notes that have been just marked as spam or moved to the trash.
-	const visibleNotes = tab.notes.filter( ( note ) => hiddenNoteIds[ note.id ] !== true );
+	const visibleNotes = notes.filter( ( note ) => hiddenNoteIds[ note.id ] !== true );
 
 	// DataViews binds its infinite-scroll listener once, on mount, and only after it
 	// first renders as not-loading (with its scroll container present). So mount it
@@ -103,6 +136,18 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	}, [ client, filterName ] );
 
 	const isModifierClickRef = useRef( false );
+	const isArrowKeyNavigationRef = useRef( false );
+
+	const openFocusedNote = ( event: React.FocusEvent< HTMLDivElement > ) => {
+		if ( ! openNoteOnArrowKeys || ! isArrowKeyNavigationRef.current ) {
+			return;
+		}
+		isArrowKeyNavigationRef.current = false;
+		const noteId = event.target.id.match( /-(\d+)-item-wrapper$/ )?.[ 1 ];
+		if ( noteId && noteId !== selectedNoteId ) {
+			setSelectedNoteId( noteId );
+		}
+	};
 
 	const onChangeSelection = ( selection: string[] ) => {
 		const noteId = selection[ 0 ];
@@ -196,7 +241,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
-	useNoteListFocusOnNoteClose( { noteListRef, notes: tab.notes, selectedNoteId } );
+	useNoteListFocusOnNoteClose( { noteListRef, notes, selectedNoteId } );
 	useNoteListNavigationKeyboardShortcuts( {
 		noteListRef,
 		visibleNotes,
@@ -235,6 +280,18 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 			onClickCapture={ ( event ) => {
 				isModifierClickRef.current = event.metaKey || event.ctrlKey || event.shiftKey;
 			} }
+			onKeyDownCapture={ ( event ) => {
+				isArrowKeyNavigationRef.current = ARROW_KEYS.includes( event.key );
+			} }
+			// An arrow key that cannot move focus, like Up on the first row, must not
+			// make a later focus open a note.
+			onKeyUpCapture={ () => {
+				isArrowKeyNavigationRef.current = false;
+			} }
+			onPointerDownCapture={ () => {
+				isArrowKeyNavigationRef.current = false;
+			} }
+			onFocus={ openFocusedNote }
 		>
 			<SelectedNoteIdContext.Provider value={ selectedNoteId }>
 				<DataViews< Note >

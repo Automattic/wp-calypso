@@ -42,7 +42,7 @@ describe( 'StaticSiteImportReadyStep', () => {
 			.reply( 200, [ { code: 'abc' } ] );
 	} );
 
-	it( 'shows where the site was copied from and to, over the preview', async () => {
+	it( 'welcomes the customer over the preview', async () => {
 		render();
 
 		expect(
@@ -50,22 +50,33 @@ describe( 'StaticSiteImportReadyStep', () => {
 		).toBeVisible();
 		expect(
 			screen.getByText(
-				'We copied source.example.com onto a private preview. Click around: every page is here and works. Launch it when you’re happy.'
+				'We copied source.example.com to WordPress.com. Every page is here and works. Look around: you can choose a plan from the card in the corner whenever you’re ready.'
 			)
 		).toBeVisible();
 		expect( await screen.findByTitle( 'Your site on WordPress.com' ) ).toHaveAttribute(
 			'src',
 			SHARE_URL
 		);
-		expect( screen.getByRole( 'link', { name: /preview\.wordpress\.com/ } ) ).toHaveAttribute(
-			'href',
-			SHARE_URL
-		);
+		expect(
+			screen.queryByRole( 'link', { name: /preview\.wordpress\.com/ } )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'closes the welcome the same way as looking around', async () => {
+		render();
+		await screen.findByTitle( 'Your site on WordPress.com' );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		expect(
+			await screen.findByRole( 'region', { name: 'This is your site on WordPress.com' } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'moves the welcome to a card in the corner to look around', async () => {
 		const submit = render();
-		await screen.findByRole( 'link', { name: /preview\.wordpress\.com/ } );
+		await screen.findByTitle( 'Your site on WordPress.com' );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Look around' } ) );
 
@@ -73,6 +84,10 @@ describe( 'StaticSiteImportReadyStep', () => {
 		expect(
 			screen.getByRole( 'region', { name: 'This is your site on WordPress.com' } )
 		).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /preview\.wordpress\.com/ } ) ).toHaveAttribute(
+			'href',
+			SHARE_URL
+		);
 		expect(
 			screen.getByText( 'Private for now. Look around, then launch it when you’re ready.' )
 		).toBeVisible();
@@ -83,7 +98,7 @@ describe( 'StaticSiteImportReadyStep', () => {
 
 	it( 'folds the card away and back', async () => {
 		render();
-		await screen.findByRole( 'link', { name: /preview\.wordpress\.com/ } );
+		await screen.findByTitle( 'Your site on WordPress.com' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Look around' } ) );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Minimize' } ) );
@@ -100,7 +115,7 @@ describe( 'StaticSiteImportReadyStep', () => {
 
 	it( 'offers no way to launch before looking around', async () => {
 		render();
-		await screen.findByRole( 'link', { name: /preview\.wordpress\.com/ } );
+		await screen.findByTitle( 'Your site on WordPress.com' );
 
 		expect( screen.getByRole( 'button', { name: 'Look around' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Launch site' } ) ).not.toBeInTheDocument();

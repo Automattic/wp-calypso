@@ -98,8 +98,6 @@ const Routes: RoutesMapping[] = [
 	{ route: matches( /discover\/.*/ ), tracking: 'discover_unknown' },
 
 	// Conversations
-	{ route: exactMatch( '/reader/conversations' ), tracking: 'conversations' },
-	{ route: exactMatch( '/reader/conversations/a8c' ), tracking: 'conversations_a8c' },
 	{ route: startsWith( '/reader/conversations/inbox' ), tracking: 'conversations_inbox' },
 
 	// ATmosphere (Bluesky / ATProto)
