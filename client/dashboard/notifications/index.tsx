@@ -52,6 +52,7 @@ export default function Notifications() {
 					setFilterName={ setFilterName }
 					selectedNoteId={ noteId }
 					setSelectedNoteId={ setSelectedNoteId }
+					onViewSettings={ () => navigate( { to: '/me/notifications' } ) }
 					renderLayout={ ( { list, detail } ) => {
 						const listPane = <div className="dashboard-notifications-inbox__list">{ list }</div>;
 						const detailPane = detail && (
