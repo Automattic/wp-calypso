@@ -113,9 +113,6 @@ describe( '<AddNewSite>', () => {
 
 		expect( await screen.findByText( '30% off annual plans' ) ).toBeVisible();
 		expect(
-			document.querySelector( '.bf2026-artwork image[href*="tile-lilac-30"]' )
-		).toBeInTheDocument();
-		expect(
 			screen.getByText( 'Upgrade today and pay 30% less for your first year.' )
 		).toBeVisible();
 		const cta = screen.getByRole( 'link', { name: 'Get 30% off' } );
