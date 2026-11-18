@@ -51,7 +51,10 @@ const renderInbox = (
 		filterName,
 		setFilterName = () => {},
 		setSelectedNoteId = () => {},
-	}: Partial< Pick< InboxProps, 'filterName' | 'setFilterName' | 'setSelectedNoteId' > > = {}
+		onViewSettings,
+	}: Partial<
+		Pick< InboxProps, 'filterName' | 'setFilterName' | 'setSelectedNoteId' | 'onViewSettings' >
+	> = {}
 ) =>
 	render(
 		<NotificationsInbox
@@ -61,6 +64,7 @@ const renderInbox = (
 			setFilterName={ setFilterName }
 			selectedNoteId={ selectedNoteId }
 			setSelectedNoteId={ setSelectedNoteId }
+			onViewSettings={ onViewSettings }
 			renderLayout={ ( { list, detail } ) => (
 				<>
 					<section aria-label="List">{ list }</section>
@@ -111,7 +115,7 @@ describe( 'NotificationsInbox', () => {
 		] );
 	} );
 
-	it( 'leaves out the panel settings and keyboard shortcuts buttons', async () => {
+	it( 'leaves out the panel settings and keyboard shortcuts buttons when the host cannot open the settings', async () => {
 		renderInbox();
 
 		await screen.findByRole( 'tab', { name: 'All', selected: true } );
@@ -119,6 +123,30 @@ describe( 'NotificationsInbox', () => {
 		expect(
 			screen.queryByRole( 'button', { name: 'Keyboard shortcuts' } )
 		).not.toBeInTheDocument();
+	} );
+
+	it( 'asks the host to open the settings from the list header', async () => {
+		const user = userEvent.setup();
+		const onViewSettings = vi.fn();
+		renderInbox( undefined, { onViewSettings } );
+
+		const list = within( screen.getByRole( 'region', { name: 'List' } ) );
+		await user.click( await list.findByRole( 'button', { name: 'Settings' } ) );
+
+		expect( onViewSettings ).toHaveBeenCalledTimes( 1 );
+		expect(
+			screen.queryByRole( 'button', { name: 'Keyboard shortcuts' } )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'stops answering the settings button once it is unmounted', () => {
+		const onViewSettings = vi.fn();
+		const { unmount } = renderInbox( undefined, { onViewSettings } );
+
+		unmount();
+		store.dispatch( actions.ui.viewSettings() );
+
+		expect( onViewSettings ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens on the tab the host names', async () => {

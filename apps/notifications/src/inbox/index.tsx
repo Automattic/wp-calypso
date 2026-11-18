@@ -6,6 +6,7 @@ import ErrorBoundary from '../app/error-boundary';
 import Note from '../app/note';
 import { useNoteNavigation } from '../app/note/hooks';
 import NotePanel, { getNotificationTabs } from '../app/note-panel';
+import NoteSettingsButton from '../app/note-panel/settings-button';
 import { store } from '../panel/state';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
@@ -30,6 +31,8 @@ type NotificationsInboxProps = {
 	setFilterName: ( filterName: FilterName ) => void;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
+	/** Opens the host's notification settings. Without it, the list header has no settings button. */
+	onViewSettings?: () => void;
 	renderLayout: ( panes: InboxPaneElements ) => ReactNode;
 };
 
@@ -81,6 +84,7 @@ function InboxPanes( {
 	setFilterName,
 	selectedNoteId,
 	setSelectedNoteId,
+	onViewSettings,
 	renderLayout,
 }: Omit< NotificationsInboxProps, 'wpcom' | 'locale' > ) {
 	const filterName = toFilterName( requestedFilterName );
@@ -105,6 +109,18 @@ function InboxPanes( {
 		}
 	}, [ areKeyboardShortcutsEnabled ] );
 
+	useEffect( () => {
+		if ( ! onViewSettings ) {
+			return;
+		}
+		const handlers = { VIEW_SETTINGS: [ () => onViewSettings() ] };
+		store.dispatch( addListeners( handlers ) );
+
+		return () => {
+			store.dispatch( removeListeners( handlers ) );
+		};
+	}, [ onViewSettings ] );
+
 	return (
 		<div
 			className="wpnc-app"
@@ -116,7 +132,7 @@ function InboxPanes( {
 					<ErrorBoundary>
 						<NotePanel
 							headingLevel={ 1 }
-							actions={ null }
+							actions={ onViewSettings ? <NoteSettingsButton /> : null }
 							filterName={ filterName }
 							setFilterName={ setFilterName }
 							selectedNoteId={ selectedNoteId }
