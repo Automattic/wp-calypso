@@ -235,6 +235,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-jest": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
+		"@automattic/create-calypso-config": "workspace:^",
 		"@automattic/eslint-plugin-json": "workspace:^",
 		"@babel/code-frame": "^8.0.6",
 		"@babel/core": "^8.1.0",

@@ -32763,6 +32763,7 @@ __metadata:
     "@automattic/charts": "npm:^4.15.2"
     "@automattic/color-studio": "npm:^4.1.0"
     "@automattic/components": "workspace:^"
+    "@automattic/create-calypso-config": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/domain-search": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
