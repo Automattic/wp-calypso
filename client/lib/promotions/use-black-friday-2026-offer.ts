@@ -8,7 +8,7 @@ import {
 
 /**
  * The Black Friday 2026 offer for the current user, or null when there is none to show:
- * outside the sale, while the assignment loads, and for the lifecycle control group.
+ * outside the sale and while the assignment loads.
  */
 export function useBlackFriday2026Offer(): BlackFriday2026Offer | null {
 	const isActive = isBlackFriday2026Active();

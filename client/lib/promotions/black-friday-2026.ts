@@ -23,8 +23,8 @@ export function isBlackFriday2026Active( now: number = Date.now() ): boolean {
 
 /**
  * The lifecycle email experiment. Its treatment group gets the 30% offer in emails and in
- * the product, its control group gets no in-product offer. Calypso only reads assignments,
- * users are assigned when the first email is sent.
+ * the product, everyone else gets the public offer. Calypso only reads assignments, users
+ * are assigned when the first email is sent.
  */
 export const BLACK_FRIDAY_2026_LIFECYCLE_EXPERIMENT =
 	'test_guides_wpcom_black_friday_sale_20261127';
@@ -50,19 +50,15 @@ export const BLACK_FRIDAY_2026_LIFECYCLE_OFFER: BlackFriday2026Offer = {
 };
 
 /**
- * The offer for a lifecycle experiment variation: 30% for treatment, none for control,
- * and the public 25% for everyone outside the experiment.
+ * The offer for a lifecycle experiment variation: 30% for treatment, the public 25% for
+ * the control group and everyone outside the experiment.
  */
 export function getBlackFriday2026OfferForVariation(
 	variationName: string | null | undefined
-): BlackFriday2026Offer | null {
-	if ( variationName === 'treatment' ) {
-		return BLACK_FRIDAY_2026_LIFECYCLE_OFFER;
-	}
-	if ( variationName === 'control' ) {
-		return null;
-	}
-	return BLACK_FRIDAY_2026_PUBLIC_OFFER;
+): BlackFriday2026Offer {
+	return variationName === 'treatment'
+		? BLACK_FRIDAY_2026_LIFECYCLE_OFFER
+		: BLACK_FRIDAY_2026_PUBLIC_OFFER;
 }
 
 /**

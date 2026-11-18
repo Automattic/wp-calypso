@@ -124,14 +124,15 @@ describe( '<AddNewSite>', () => {
 		expect( screen.queryByText( /25%/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows the regular offer to the control group during the sale', async () => {
+	test( 'shows the public offer to the control group during the sale', async () => {
 		mockExplat.state.variation = 'control';
 		vi.useFakeTimers( { toFake: [ 'Date' ] } );
 		vi.setSystemTime( Date.UTC( 2026, 10, 28, 12 ) );
 
 		render( <AddNewSite context="sites-dashboard" /> );
 
-		expect( await screen.findByRole( 'link', { name: 'Unlock offer' } ) ).toBeVisible();
-		expect( document.querySelector( '.bf2026-artwork' ) ).not.toBeInTheDocument();
+		const cta = await screen.findByRole( 'link', { name: 'Get 25% off' } );
+		expect( cta ).toHaveAttribute( 'href', expect.stringContaining( 'coupon=BFWPCOM2026' ) );
+		expect( screen.queryByText( /30%/ ) ).not.toBeInTheDocument();
 	} );
 } );

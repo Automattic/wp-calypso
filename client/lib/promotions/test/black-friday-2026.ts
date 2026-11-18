@@ -52,12 +52,8 @@ describe( 'getBlackFriday2026OfferForVariation', () => {
 		} );
 	} );
 
-	it( 'gives the lifecycle control group no offer', () => {
-		expect( getBlackFriday2026OfferForVariation( 'control' ) ).toBeNull();
-	} );
-
-	it.each( [ null, undefined, 'something_else' ] )(
-		'gives everyone outside the experiment the public offer (%s)',
+	it.each( [ 'control', null, undefined, 'something_else' ] )(
+		'gives the control group and everyone outside the experiment the public offer (%s)',
 		( variation ) => {
 			expect( getBlackFriday2026OfferForVariation( variation ) ).toBe(
 				BLACK_FRIDAY_2026_PUBLIC_OFFER

@@ -138,11 +138,18 @@ describe( '<BlackFridaySidebarPromo>', () => {
 		expect( screen.queryByText( /25%/ ) ).not.toBeInTheDocument();
 	} );
 
-	test.each( [
-		[ 'the control group', { isLoading: false, variation: 'control' } ],
-		[ 'a loading assignment', { isLoading: true, variation: null } ],
-	] )( 'renders nothing for %s', ( _label, state ) => {
-		mockExplat.state = state;
+	test( 'shows the public offer to the control group', () => {
+		mockExplat.state.variation = 'control';
+		vi.setSystemTime( insideSale );
+		renderPromo();
+
+		const link = screen.getByRole( 'link', { name: /25% off annual and multi-year plans/ } );
+		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/black-friday-2026/' );
+		expect( screen.queryByText( /30%/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders nothing while the assignment loads', () => {
+		mockExplat.state = { isLoading: true, variation: null };
 		vi.setSystemTime( insideSale );
 		renderPromo();
 
