@@ -3,6 +3,8 @@ import {
 	domainDnsMutation,
 	domainDnsQuery,
 	domainDnsEmailMutation,
+	userPreferenceOptimisticMutation,
+	userPreferenceQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -92,6 +94,21 @@ export default function DomainDns() {
 		useState( false );
 	const [ isImportDialogOpen, setIsImportDialogOpen ] = useState( false );
 	const [ importedRecords, setImportedRecords ] = useState< DnsRecord[] >( [] );
+
+	const aRecordsNoticePreference =
+		`hosting-dashboard-domain-dns-default-a-records-notice-dismissed-${ domainName }` as const;
+	const cnameRecordNoticePreference =
+		`hosting-dashboard-domain-dns-default-cname-notice-dismissed-${ domainName }` as const;
+	const { data: aRecordsNoticeDismissedAt, isFetched: isARecordsNoticePreferenceFetched } =
+		useQuery( userPreferenceQuery( aRecordsNoticePreference ) );
+	const { data: cnameRecordNoticeDismissedAt, isFetched: isCnameRecordNoticePreferenceFetched } =
+		useQuery( userPreferenceQuery( cnameRecordNoticePreference ) );
+	const { mutate: dismissARecordsNotice } = useMutation(
+		userPreferenceOptimisticMutation( aRecordsNoticePreference )
+	);
+	const { mutate: dismissCnameRecordNotice } = useMutation(
+		userPreferenceOptimisticMutation( cnameRecordNoticePreference )
+	);
 
 	const actions = useDnsActions();
 	const fields = useDnsFields( domainName );
@@ -221,13 +238,30 @@ export default function DomainDns() {
 		// Gating on `isFetching` — which is true during both the initial load and any
 		// background revalidation — prevents the warning from flashing against stale or
 		// not-yet-loaded data, matching the legacy "hide while requesting" behavior.
-		if ( isFetching || ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
+		if (
+			isFetching ||
+			! domain.has_wpcom_nameservers ||
+			hasDefaultARecordsValue ||
+			! isARecordsNoticePreferenceFetched ||
+			aRecordsNoticeDismissedAt
+		) {
 			return null;
 		}
 
+		const onClose = () => {
+			recordTracksEvent( 'calypso_dashboard_domain_dns_default_a_records_notice_dismiss', {
+				domain: domainName,
+			} );
+			dismissARecordsNotice( new Date().toISOString() );
+		};
+
 		if ( domain.is_gravatar_domain ) {
 			return (
-				<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
+				<Notice
+					variant="warning"
+					title={ __( 'Your domain is not using default A records' ) }
+					onClose={ onClose }
+				>
 					{ createInterpolateElement(
 						__(
 							'This means it may not be pointing to your Gravatar profile correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <learnMoreLink />'
@@ -240,7 +274,11 @@ export default function DomainDns() {
 			);
 		}
 		return (
-			<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
+			<Notice
+				variant="warning"
+				title={ __( 'Your domain is not using default A records' ) }
+				onClose={ onClose }
+			>
 				{ createInterpolateElement(
 					__(
 						'This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <learnMoreLink />'
@@ -254,7 +292,13 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultCnameRecordNotice = () => {
-		if ( isFetching || ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
+		if (
+			isFetching ||
+			! domain.has_wpcom_nameservers ||
+			hasDefaultCnameRecordValue ||
+			! isCnameRecordNoticePreferenceFetched ||
+			cnameRecordNoticeDismissedAt
+		) {
 			return null;
 		}
 
@@ -262,6 +306,12 @@ export default function DomainDns() {
 			<Notice
 				variant="warning"
 				title={ __( 'Your domain is not using the default WWW CNAME record' ) }
+				onClose={ () => {
+					recordTracksEvent( 'calypso_dashboard_domain_dns_default_cname_record_notice_dismiss', {
+						domain: domainName,
+					} );
+					dismissCnameRecordNotice( new Date().toISOString() );
+				} }
 			>
 				{ createInterpolateElement(
 					__(

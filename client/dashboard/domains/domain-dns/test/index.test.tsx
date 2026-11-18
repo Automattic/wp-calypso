@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain, type DnsRecord } from '@automattic/api-core';
+import { queryClient as appQueryClient } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -14,7 +15,11 @@ const domainName = 'example.com';
 
 const dnsQueryKey = [ 'domains', domainName, 'dns' ];
 
+const A_RECORDS_WARNING = 'Your domain is not using default A records';
 const CNAME_WARNING = 'Your domain is not using the default WWW CNAME record';
+
+const A_RECORDS_NOTICE_PREFERENCE = `hosting-dashboard-domain-dns-default-a-records-notice-dismissed-${ domainName }`;
+const CNAME_NOTICE_PREFERENCE = `hosting-dashboard-domain-dns-default-cname-notice-dismissed-${ domainName }`;
 
 const defaultCnameRecord: DnsRecord = {
 	type: 'CNAME',
@@ -49,6 +54,11 @@ const mockDnsApiRequest = ( records: DnsRecord[] ) =>
 		.get( `/rest/v1.1/domains/${ domainName }/dns` )
 		.reply( 200, { records } );
 
+const mockPreferencesApiRequest = ( preferences: Record< string, unknown > = {} ) =>
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( 200, { calypso_preferences: preferences } );
+
 // Mocks the DNS request but holds the response pending until the returned
 // `release` callback is invoked, letting tests assert on the in-flight state
 // without relying on `nock.delay()` (which leaves open handles).
@@ -64,6 +74,10 @@ const mockDnsApiRequestPending = ( records: DnsRecord[] ) => {
 };
 
 describe( 'DomainDns', () => {
+	afterEach( () => {
+		appQueryClient.clear();
+	} );
+
 	test( 'shows EmailSetup when domain has WordPress.com nameservers', async () => {
 		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
 
@@ -132,10 +146,57 @@ describe( 'DomainDns', () => {
 		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
 		// No default WWW CNAME record present, so the warning is expected after load.
 		mockDnsApiRequest( [ { type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		mockPreferencesApiRequest();
 
 		render( <DomainDns /> );
 
 		expect( await screen.findByText( CNAME_WARNING ) ).toBeVisible();
+	} );
+
+	test( 'hides only the dismissed default records warning and remembers the dismissal', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+		mockDnsApiRequest( [ { type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		mockPreferencesApiRequest();
+		const savePreference = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				expect( body.calypso_preferences ).toEqual( {
+					[ A_RECORDS_NOTICE_PREFERENCE ]: expect.any( String ),
+				} );
+				return true;
+			} )
+			.reply( 200, ( _uri, body ) => body );
+		const user = userEvent.setup();
+
+		// The dismissal is saved optimistically into the app's query client.
+		render( <DomainDns />, { queryClient: appQueryClient } );
+
+		expect( await screen.findByText( A_RECORDS_WARNING ) ).toBeVisible();
+		expect( screen.getByText( CNAME_WARNING ) ).toBeVisible();
+
+		// The A records warning is shown above the WWW CNAME one.
+		const [ dismissARecordsWarning ] = screen.getAllByRole( 'button', { name: 'Dismiss' } );
+		await user.click( dismissARecordsWarning );
+
+		await waitFor( () =>
+			expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument()
+		);
+		await waitFor( () => expect( savePreference.isDone() ).toBe( true ) );
+		expect( screen.getByText( CNAME_WARNING ) ).toBeVisible();
+	} );
+
+	test( 'does not show the default records warnings the user already dismissed', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+		mockDnsApiRequest( [ { type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		mockPreferencesApiRequest( {
+			[ A_RECORDS_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
+			[ CNAME_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
+		} );
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+		expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'filters DNS records by type', async () => {
