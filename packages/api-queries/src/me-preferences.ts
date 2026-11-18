@@ -93,6 +93,8 @@ const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-tours': 'tours',
 	'hosting-dashboard-time-mismatch-warning-dismissed': 'timewrn',
 	'hosting-dashboard-wp-beta-notice-dismissed': 'wpbeta',
+	'hosting-dashboard-domain-dns-default-a-records-notice-dismissed': 'dnsarec',
+	'hosting-dashboard-domain-dns-default-cname-notice-dismissed': 'dnscnam',
 	'cancel-purchase-survey-completed': 'cncsvy',
 	'cancellation-offer-accepted-notice-dismissed': 'cncofr',
 	'site-migration-completed-notice-dismissed': 'migdone',
