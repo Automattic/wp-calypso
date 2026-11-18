@@ -1930,7 +1930,7 @@ describe( 'Site Migration Flow', () => {
 					expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( checkout.destination );
 					Object.assign( window.location, { href: checkoutUrl.href, search: checkoutUrl.search } );
 					leaveCheckout( { siteSlug: destination.siteSlug, tracksEvent: 'checkout_cancel' } );
-					expect( window.location.href ).toBe( checkout.cancelDestination );
+					expect( window.location.href ).toBe( cancelUrl.href );
 					window.location.search = '';
 					expect( window.location.assign ).not.toHaveBeenCalled();
 				}
