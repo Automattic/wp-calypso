@@ -7,11 +7,7 @@ import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { useSeenPostsPreferenceEnabled } from './use-seen-posts-preference-enabled';
 
-const SEEN_DISABLED_ROUTES = [
-	'/activities/likes',
-	'/reader/conversations',
-	'/reader/conversations/a8c',
-];
+const SEEN_DISABLED_ROUTES = [ '/activities/likes' ];
 
 export interface SeenArgs {
 	feedId?: number | string;

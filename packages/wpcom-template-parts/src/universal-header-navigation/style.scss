@@ -1448,6 +1448,22 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		display: contents;
 	}
 
+	// The second row takes whatever a stacked group needs beyond the shared rows,
+	// so the group's height never stretches the first row.
+	.x-dropdown-subcategories--has-stacked-group {
+		grid-template-rows: auto 1fr;
+	}
+
+	// A stacked group is one grid item spanning every row: its subcategories
+	// follow their own heights instead of lining up with the other columns.
+	.x-dropdown-column-group--stacked {
+		display: flex;
+		flex-direction: column;
+		row-gap: 32px;
+		grid-column: var( --column-index, auto );
+		grid-row: 1 / -1;
+	}
+
 	.x-dropdown-subcategory {
 		grid-column: var( --column-index, auto );
 		grid-row: var( --row-index, auto );
@@ -1530,6 +1546,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		background: $x-nav-2026-badge-new-bg;
 		border-radius: 4px;
 		vertical-align: 2px;
+	}
+
+	.x-dropdown-subcategory-title .x-dropdown-badge-new {
+		text-transform: none;
+		letter-spacing: normal;
 	}
 
 }
@@ -1967,6 +1988,11 @@ $x-menu-2026-admin-bar-mobile: 46px;
 		background: $x-nav-2026-badge-new-bg;
 		border-radius: 4px;
 		vertical-align: 1px;
+	}
+
+	.x-menu-mobile-dropdown-subtitle .x-menu-mobile-dropdown-badge-new {
+		text-transform: none;
+		letter-spacing: normal;
 	}
 
 	/* Footer overlays the scroller's bottom (translucent + blurred, like the header) so the nav list scrolls beneath; the scroller pads its bottom by the footer's measured height. */

@@ -1,5 +1,3 @@
-import { removeStreamItemFromCache } from 'calypso/reader/data/stream';
-import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
@@ -44,17 +42,6 @@ export function muteConversation( { siteId, postId } ) {
 				} ),
 			},
 		} );
-		const queryClient = getCalypsoQueryClient();
-		if ( queryClient ) {
-			removeStreamItemFromCache( queryClient, {
-				item: { blogId: siteId, postId },
-				streamKey: 'conversations-a8c',
-			} );
-			removeStreamItemFromCache( queryClient, {
-				item: { blogId: siteId, postId },
-				streamKey: 'conversations',
-			} );
-		}
 	};
 }
 

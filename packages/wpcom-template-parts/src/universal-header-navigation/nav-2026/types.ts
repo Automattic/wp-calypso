@@ -9,11 +9,16 @@ export interface Nav2026Item {
 
 export interface Nav2026Group {
 	title: string;
+	// Pill shown next to the group title.
+	badge?: string;
 	items: Nav2026Item[];
 	// Groups sharing a key stack vertically in one desktop column; unset = own column.
 	columnGroup?: string;
 	// Desktop column order; the array order stays the mobile list order.
 	columnIndex?: number;
+	// The group's column lays out on its own instead of on the rows shared across
+	// columns, so a long list in it does not push the other columns' second row down.
+	isStackedColumn?: boolean;
 }
 
 export type Nav2026Menu =

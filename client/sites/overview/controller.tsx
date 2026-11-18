@@ -1,15 +1,11 @@
 import page from '@automattic/calypso-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
-import { isMigrationInProgress } from 'calypso/data/site-migration';
 import { bumpStat } from 'calypso/lib/analytics/mc';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { fetchPreferences } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getRouteFromContext } from 'calypso/utils';
 import DashboardBackportSiteOverview from '../v2/site-overview';
-import HostingOverview from './components/hosting-overview';
 import type { Context as PageJSContext } from '@automattic/calypso-router';
 import type { SiteExcerptData } from '@automattic/sites';
 import type { CalypsoDispatch, IAppState } from 'calypso/state/types';
@@ -27,16 +23,6 @@ const waitForPrefs = () => async ( dispatch: CalypsoDispatch, getState: () => IA
 		// if the fetching of preferences fails, return gracefully and proceed to the next landing page candidate
 	}
 };
-
-function overview( context: PageJSContext, next: () => void ) {
-	context.primary = (
-		<>
-			<PageViewTracker title="Sites > Overview" path={ getRouteFromContext( context ) } />
-			<HostingOverview />
-		</>
-	);
-	next();
-}
 
 export function redirectToSiteOverview( context: PageJSContext ) {
 	const { dispatch, getState } = context.store;
@@ -59,14 +45,12 @@ export async function dashboardBackportSiteOverview( context: PageJSContext, nex
 	const { site: siteSlug } = context.params;
 	const site = getSelectedSite( context.store.getState() ) as SiteExcerptData;
 
-	const queryParams = new URLSearchParams( window.location.search );
-	const sshMigration = [ 'completed', 'failed' ].includes(
-		queryParams.get( 'ssh-migration' ) ?? ''
-	);
-	if ( isMigrationInProgress( site ) || sshMigration ) {
-		// Temporarily show the v1 site migration overview page.
-		// @todo implement the page in v2.
-		return overview( context, next );
+	const migrationStatus = site?.site_migration?.status_v2;
+	if ( migrationStatus && migrationStatus !== 'completed' ) {
+		bumpStat( 'dashboard-redirect', 'site-migration-overview' );
+		// Just send them to the site overview, it'll go to the migration overview from there if still needed.
+		window.location.replace( dashboardLink( `/sites/${ siteSlug }` ) );
+		return;
 	}
 
 	// Route doesn't require a <PageViewTracker /> because the dashboard

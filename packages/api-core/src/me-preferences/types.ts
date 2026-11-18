@@ -38,6 +38,7 @@ export interface A4AFeedbackEntry {
 }
 
 export interface UserPreferences {
+	'account-email-recovery-snoozed-until'?: number;
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;

@@ -9,6 +9,7 @@ import getAllNotes from '../../state/selectors/get-all-notes';
 import getFilteredLoading from '../../state/selectors/get-filtered-loading';
 import getFilteredNoteIds from '../../state/selectors/get-filtered-note-ids';
 import getIsLoading from '../../state/selectors/get-is-loading';
+import getIsNoteRead from '../../state/selectors/get-is-note-read';
 import Client from '../index';
 import { init } from '../wpcom';
 
@@ -117,6 +118,56 @@ describe( 'RestClient', () => {
 			expect( ids ).toContain( 100 ); // first window kept
 			expect( ids ).toContain( 91 ); // first window kept
 			expect( ids ).toContain( 71 ); // older page added
+		} );
+
+		it( 'retries a failed page after a backoff instead of re-requesting it straight away', () => {
+			seedFirstWindow();
+			client.subscribed = true;
+			client.isShowing = true;
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
+			getCalls.length = 0;
+
+			client.loadMore();
+			vi.advanceTimersByTime( 29000 );
+			expect( getCalls ).toHaveLength( 0 );
+
+			vi.advanceTimersByTime( 1000 );
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query ).toHaveProperty( 'before' );
+		} );
+
+		it( 'does not retry a failed page while notifications are closed, and retries once reopened', () => {
+			init( {
+				req: {
+					get: ( path, query, callback ) => getCalls.push( { path, query, callback } ),
+					post: () => Promise.resolve(),
+				},
+				pinghub: { connect: () => {} },
+			} );
+			seedFirstWindow();
+			client.subscribed = true;
+			client.isShowing = true;
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+
+			vi.advanceTimersByTime( 600000 );
+			expect( getCalls.filter( ( call ) => call.query.before ) ).toHaveLength( 0 );
+
+			client.setVisibility( { isShowing: true, isVisible: true } );
+			getCalls
+				.filter( ( call ) => ! call.query.before )
+				.forEach( ( call ) =>
+					call.callback( null, {
+						notes: fullPage( 10, 100 ).map( ( { id, note_hash } ) => ( { id, note_hash } ) ),
+					} )
+				);
+			vi.advanceTimersByTime( 1000 );
+			expect( getCalls.filter( ( call ) => call.query.before ) ).toHaveLength( 1 );
 		} );
 
 		it( 'does not send before on the initial window fetch', () => {
@@ -1089,6 +1140,39 @@ describe( 'RestClient', () => {
 				'subscriberNotifications'
 			);
 			subscriberActionListener.stop();
+		} );
+	} );
+
+	describe( 'read status changed in another tab', () => {
+		const note = { ...makeNote( 100 ), read: 1 };
+		const isRead = () => getIsNoteRead( store.getState(), note );
+		const receiveStorageEvent = ( newValue ) =>
+			window.dispatchEvent(
+				new StorageEvent( 'storage', { key: `note_read_status_${ note.id }`, newValue } )
+			);
+
+		beforeEach( () => {
+			store.dispatch( actions.notes.addNotes( [ note ] ) );
+		} );
+
+		it( 'marks the note as unread when the other tab stores it as unread', () => {
+			receiveStorageEvent( '0' );
+
+			expect( isRead() ).toBe( false );
+		} );
+
+		it( 'marks the note as read when the other tab stores it as read', () => {
+			receiveStorageEvent( '0' );
+			receiveStorageEvent( '1' );
+
+			expect( isRead() ).toBe( true );
+		} );
+
+		it( 'keeps the note unread when the other tab clears its stored status', () => {
+			receiveStorageEvent( '0' );
+			receiveStorageEvent( null );
+
+			expect( isRead() ).toBe( false );
 		} );
 	} );
 } );

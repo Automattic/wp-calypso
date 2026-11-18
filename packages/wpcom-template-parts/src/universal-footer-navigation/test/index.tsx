@@ -12,6 +12,16 @@ describe( 'PureUniversalNavbarFooter', () => {
 		}
 	} );
 
+	test( 'the 2026 footer links the English-only sitemap on the English site alone', () => {
+		const { rerender } = render(
+			<PureUniversalNavbarFooter isLoggedIn={ false } locale="en" colorway="white" />
+		);
+		expect( screen.getByRole( 'link', { name: 'Sitemap' } ) ).toBeInTheDocument();
+
+		rerender( <PureUniversalNavbarFooter isLoggedIn={ false } locale="es" colorway="white" /> );
+		expect( screen.queryByRole( 'link', { name: 'Sitemap' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'renders the language picker for logged-out visitors only', () => {
 		const { rerender } = render( <PureUniversalNavbarFooter isLoggedIn={ false } locale="en" /> );
 		expect( screen.getByTitle( 'Change Language' ) ).toBeVisible();

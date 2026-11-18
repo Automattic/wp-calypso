@@ -241,6 +241,13 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 		font-weight: 600;
 	}
 
+	// Labels and the legend use the surface's text color. The library outlines hovered points with
+	// the background.
+	.ai-ui-renderer__chart .a8c-charts-scope {
+		--a8c-charts-color-background: transparent;
+		--a8c-charts-color-label: currentColor;
+	}
+
 	// The library colors the grid and axes itself, the grid with an inline style, so these take over
 	// with the surface's text color, faintly.
 	.ai-ui-renderer__chart :is( .visx-rows, .visx-columns, .visx-axis ) line {
@@ -270,7 +277,7 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 	}
 
 	// The chart's keyboard focus, which moves its tooltip between points.
-	.ai-ui-renderer__chart [role='grid']:focus-visible {
+	.ai-ui-renderer__chart [role='application']:focus-visible {
 		outline: 2px solid var( --ai-ui-renderer-accent-line );
 		outline-offset: 2px;
 	}
@@ -547,8 +554,7 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 	}
 }
 
-// Chart tooltips render in a portal on the page, so each copies its surface's theme (`copyTheme()`),
-// and the portal's own box is cleared.
+// Chart tooltips draw their own box, so the library's is cleared.
 .visx-tooltip:has( .ai-ui-renderer__chart-tooltip ) {
 	padding: 0 !important;
 	background: none !important;

@@ -54,7 +54,7 @@ describe( 'isPurchaseMovableToAnotherSite', () => {
 } );
 
 describe( 'canSiteReceivePurchase', () => {
-	test( 'a plan can only go to a Simple site without a paid plan', () => {
+	test( 'a plan can only go to a site without a paid plan', () => {
 		const purchase = makePurchase();
 		expect( canSiteReceivePurchase( purchase, makeSite() ) ).toBe( true );
 		expect(
@@ -63,9 +63,10 @@ describe( 'canSiteReceivePurchase', () => {
 				makeSite( { plan: { is_free: false } } as Partial< Site > )
 			)
 		).toBe( false );
+		// A preview site is Atomic on the Free plan; the preview decides whether it can take the plan.
 		expect(
 			canSiteReceivePurchase( purchase, makeSite( { is_wpcom_atomic: true, jetpack: true } ) )
-		).toBe( false );
+		).toBe( true );
 	} );
 
 	test( 'a domain can go to sites with plans, including Atomic ones', () => {
