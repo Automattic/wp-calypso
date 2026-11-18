@@ -9,6 +9,7 @@ import getAllNotes from '../../state/selectors/get-all-notes';
 import getFilteredLoading from '../../state/selectors/get-filtered-loading';
 import getFilteredNoteIds from '../../state/selectors/get-filtered-note-ids';
 import getIsLoading from '../../state/selectors/get-is-loading';
+import getIsNoteRead from '../../state/selectors/get-is-note-read';
 import Client from '../index';
 import { init } from '../wpcom';
 
@@ -1139,6 +1140,39 @@ describe( 'RestClient', () => {
 				'subscriberNotifications'
 			);
 			subscriberActionListener.stop();
+		} );
+	} );
+
+	describe( 'read status changed in another tab', () => {
+		const note = { ...makeNote( 100 ), read: 1 };
+		const isRead = () => getIsNoteRead( store.getState(), note );
+		const receiveStorageEvent = ( newValue ) =>
+			window.dispatchEvent(
+				new StorageEvent( 'storage', { key: `note_read_status_${ note.id }`, newValue } )
+			);
+
+		beforeEach( () => {
+			store.dispatch( actions.notes.addNotes( [ note ] ) );
+		} );
+
+		it( 'marks the note as unread when the other tab stores it as unread', () => {
+			receiveStorageEvent( '0' );
+
+			expect( isRead() ).toBe( false );
+		} );
+
+		it( 'marks the note as read when the other tab stores it as read', () => {
+			receiveStorageEvent( '0' );
+			receiveStorageEvent( '1' );
+
+			expect( isRead() ).toBe( true );
+		} );
+
+		it( 'keeps the note unread when the other tab clears its stored status', () => {
+			receiveStorageEvent( '0' );
+			receiveStorageEvent( null );
+
+			expect( isRead() ).toBe( false );
 		} );
 	} );
 } );
