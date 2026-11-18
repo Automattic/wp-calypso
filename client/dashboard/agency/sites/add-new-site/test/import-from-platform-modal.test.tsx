@@ -30,7 +30,10 @@ function mockAgencyAndAddress() {
 		.reply( 200, [ { domain_name: 'ramblingthoughts.wordpress.com' } ] );
 }
 
-async function startImportAndCreateSite( sessionReply: [ number, Record< string, string > ] ) {
+async function startImportAndCreateSite(
+	sessionReply: [ number, Record< string, string > ],
+	onClose = vi.fn()
+) {
 	mockAgencyAndAddress();
 	const create = nock( API )
 		.post( '/wpcom/v2/static-site-import-session', { source_url: 'https://example.wixsite.com' } )
@@ -47,7 +50,7 @@ async function startImportAndCreateSite( sessionReply: [ number, Record< string,
 	const sessionRead = nock( API )
 		.get( `/wpcom/v2/static-site-import-session/${ SESSION_ID }` )
 		.reply( ...sessionReply );
-	render( <ImportFromPlatformModal onClose={ vi.fn() } /> );
+	render( <ImportFromPlatformModal onClose={ onClose } /> );
 	const user = userEvent.setup();
 
 	await user.type( screen.getByLabelText( 'Current site address' ), 'example.wixsite.com' );
@@ -113,5 +116,19 @@ describe( '<ImportFromPlatformModal>', () => {
 
 		expect( screen.getByText( 'Moving your site…' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Start again' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'can be closed while the move is still running', async () => {
+		const onClose = vi.fn();
+		const { user } = await startImportAndCreateSite(
+			[ 200, { session_id: SESSION_ID, state: 'building', site_url: '' } ],
+			onClose
+		);
+		await screen.findByText( 'Moving your site…' );
+
+		expect( screen.getByRole( 'button', { name: 'Close' } ) ).toBeVisible();
+		await user.click( screen.getByRole( 'button', { name: 'Go to Sites' } ) );
+
+		expect( onClose ).toHaveBeenCalled();
 	} );
 } );

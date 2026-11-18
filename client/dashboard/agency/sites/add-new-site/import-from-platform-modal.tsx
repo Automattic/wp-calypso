@@ -57,9 +57,14 @@ function ImportProgress( {
 				</Text>
 				<Text variant="muted">
 					{ __(
-						'We are building it on your new development site. This usually takes a few minutes. You can close this dialog. The site is in Sites, and we email you if the move fails.'
+						'We are building it on your new development site. This usually takes a few minutes. The site is in Sites, and we email you if the move fails.'
 					) }
 				</Text>
+				<ButtonStack justify="flex-end">
+					<Button __next40pxDefaultSize variant="secondary" onClick={ onClose }>
+						{ __( 'Go to Sites' ) }
+					</Button>
+				</ButtonStack>
 			</VStack>
 			<VStack spacing={ 4 } className="a4a-import-from-platform__state" hidden={ ! isFinished }>
 				<Notice variant="success" title={ __( 'Your site is ready to review' ) }>
@@ -142,7 +147,11 @@ export default function ImportFromPlatformModal( { onClose }: { onClose: () => v
 				importSessionId={ sessionId }
 				closeModal={ onClose }
 				onCreatingChange={ setIsCreating }
-				onCreated={ () => setIsSiteCreated( true ) }
+				onCreated={ () => {
+					// The form unmounts here, before it can report that creation ended.
+					setIsCreating( false );
+					setIsSiteCreated( true );
+				} }
 			/>
 		);
 	} else {
