@@ -27,7 +27,7 @@
 }
 
 .plugin-switcher-item {
-	border-top: 1px solid #f0f0f0;
+	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak);
 	border-radius: 0;
 	padding: calc(4px * 4) calc(4px * 6);
 
@@ -49,7 +49,7 @@
 	}
 
 	&:hover {
-		background-color: #f8f8f8;
+		background-color: var(--wpds-color-background-interactive-neutral-weak-active);
 
 		.switcher-item__description {
 			color: var(--wp-admin-theme-color);

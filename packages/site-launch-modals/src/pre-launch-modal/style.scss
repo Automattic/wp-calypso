@@ -14,7 +14,7 @@
 
 .site-launch-pre-launch-modal__preview-card {
 	padding: $grid-unit-20 $grid-unit-20;
-	background-color: var( --studio-blue-5 );
+	background-color: var( --wpds-color-background-surface-brand, var( --studio-blue-5 ) );
 	border-radius: $radius-medium;
 }
 
