@@ -13,6 +13,9 @@ import { useLocale } from '../../../app/locale';
 import { formatDate } from '../../../utils/datetime';
 import type { DeploymentRunWithDeploymentInfo, LogEntry } from '@automattic/api-core';
 
+const LOG_TEXT_COLOR = '#f0f0f0';
+const LOG_TIMESTAMP_COLOR = '#949494';
+
 export const DeploymentLogsEntry = ( {
 	entry,
 	deployment,
@@ -88,12 +91,12 @@ export const DeploymentLogsEntry = ( {
 			<VStack spacing={ 2 }>
 				<Text
 					style={ {
-						color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
+						color: LOG_TEXT_COLOR,
 						whiteSpace: 'pre-wrap',
 					} }
 					as="code"
 				>
-					<Text style={ { color: 'var(--wp-components-color-gray-700, #757575)' } }>
+					<Text style={ { color: LOG_TIMESTAMP_COLOR } }>
 						{ formatDate( new Date( entry.timestamp ), locale, { timeStyle: 'medium' } ) }
 					</Text>{ ' ' }
 					{ entry.level.toUpperCase() } { entry.message }
@@ -101,7 +104,7 @@ export const DeploymentLogsEntry = ( {
 						<Button
 							variant="link"
 							style={ {
-								color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
+								color: LOG_TEXT_COLOR,
 								marginInlineStart: '4px',
 							} }
 							onClick={ toggleExpandDetail }
@@ -114,7 +117,7 @@ export const DeploymentLogsEntry = ( {
 				{ detailExpanded && (
 					<Text
 						style={ {
-							color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
+							color: LOG_TEXT_COLOR,
 							whiteSpace: 'pre-wrap',
 						} }
 						as="code"
