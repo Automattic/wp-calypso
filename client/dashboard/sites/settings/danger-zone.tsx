@@ -8,6 +8,7 @@ import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ActionList } from '../../components/action-list';
 import { ButtonStack } from '../../components/button-stack';
+import InlineSupportLink from '../../components/inline-support-link';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
@@ -37,15 +38,18 @@ const RestorePlanSoftwareAction = ( { site }: { site: Site } ) => {
 			<ActionList.ActionItem
 				title={ __( 'Re-install plugins & themes' ) }
 				description={
-					hasEnTranslation(
-						'Install any missing plugins and themes that come with your plan, and activate the plugins included with it.'
-					)
-						? __(
-								'Install any missing plugins and themes that come with your plan, and activate the plugins included with it.'
-							)
-						: __(
-								'If your website is missing plugins and themes that come with your plan you can re-install them here.'
-							)
+					<>
+						{ hasEnTranslation(
+							'Install any missing plugins and themes that come with your plan, and activate the plugins included with it.'
+						)
+							? __(
+									'Install any missing plugins and themes that come with your plan, and activate the plugins included with it.'
+								)
+							: __(
+									'If your website is missing plugins and themes that come with your plan you can re-install them here.'
+								) }{ ' ' }
+						<InlineSupportLink supportContext="hosting-restore-plan-software" />
+					</>
 				}
 				actions={
 					<Button

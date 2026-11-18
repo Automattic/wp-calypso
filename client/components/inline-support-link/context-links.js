@@ -178,6 +178,10 @@ const contextLinks = {
 		post_id: 99387,
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
+	'hosting-restore-plan-software': {
+		link: 'https://wordpress.com/support/restore-default-plugins-and-themes/',
+		post_id: 276526,
+	},
 	import: {
 		link: 'https://wordpress.com/support/import/',
 		post_id: 41,
