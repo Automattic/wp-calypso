@@ -283,6 +283,14 @@ const NoteList = ( {
 			onKeyDownCapture={ ( event ) => {
 				isArrowKeyNavigationRef.current = ARROW_KEYS.includes( event.key );
 			} }
+			// An arrow key that cannot move focus, like Up on the first row, must not
+			// make a later focus open a note.
+			onKeyUpCapture={ () => {
+				isArrowKeyNavigationRef.current = false;
+			} }
+			onPointerDownCapture={ () => {
+				isArrowKeyNavigationRef.current = false;
+			} }
 			onFocus={ openFocusedNote }
 		>
 			<SelectedNoteIdContext.Provider value={ selectedNoteId }>
