@@ -261,3 +261,25 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	color: var(--wp-components-color-gray-900, #{$gray-900});
 	font-weight: 500;
 }
+
+// Sits between the tabs and the list, lined up with the rows' 16px edge.
+.wpnc-app__mark-all-read {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+
+	> .components-button.is-link {
+		align-self: flex-start;
+		margin: 8px 16px;
+		font-size: 13px;
+		line-height: 20px;
+
+		&:not(:hover, :active, [aria-disabled="true"]) {
+			color: var(--wp-components-color-gray-900, #{$gray-900});
+		}
+	}
+}
+
+.wpnc-app__mark-all-read-error {
+	margin: 8px 16px;
+}

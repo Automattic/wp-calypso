@@ -2,6 +2,7 @@ import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { getClient, showNotes } from '../../app/client';
+import { listNotes } from '../../panel/rest-client/wpcom';
 import { store, init as initState } from '../../panel/state';
 import actions from '../../panel/state/actions';
 import getIsPanelOpen from '../../panel/state/selectors/get-is-panel-open';
@@ -25,6 +26,7 @@ vi.mock( '../../panel/rest-client', () => ( {
 } ) );
 vi.mock( '../../panel/rest-client/wpcom', () => ( {
 	init: vi.fn(),
+	listNotes: vi.fn( async () => ( { notes: [] } ) ),
 	markReadStatus: vi.fn(),
 	markPostAsSeen: vi.fn(),
 } ) );
@@ -137,6 +139,19 @@ describe( 'NotificationsInbox', () => {
 			'Subscribers',
 			'Likes',
 		] );
+	} );
+
+	it( 'offers to mark every unread notification as read', async () => {
+		vi.mocked( listNotes ).mockResolvedValueOnce( { notes: [ { id: 801 }, { id: 900 } ] } );
+		loadNotes( makeNote( 801, 'First comment' ) );
+
+		renderInbox();
+
+		expect(
+			await within( screen.getByRole( 'region', { name: 'List' } ) ).findByRole( 'button', {
+				name: 'Mark 2 as read',
+			} )
+		).toBeVisible();
 	} );
 
 	it( 'leaves out the panel settings and keyboard shortcuts buttons when the host cannot open the settings', async () => {

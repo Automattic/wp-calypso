@@ -1,3 +1,4 @@
+export { default as markAllRead } from './mark-all-read';
 export { default as markUnread } from './mark-unread';
 export { default as setApproveStatus } from './set-approve-status';
 export { default as setLikeStatus } from './set-like-status';

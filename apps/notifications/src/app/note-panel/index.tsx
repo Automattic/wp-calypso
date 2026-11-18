@@ -20,6 +20,7 @@ import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
 import NotePanelActions from './actions';
+import MarkAllAsRead from './mark-all-read';
 import type { FilterName } from '../types';
 
 export const getNotificationTabs = () =>
@@ -33,6 +34,8 @@ type NotePanelProps = {
 	headingLevel?: 1 | 2 | 3;
 	actions?: ReactNode;
 	openNoteOnArrowKeys?: boolean;
+	/** Offers to mark every unread notification as read, on the tabs that list them all. */
+	showMarkAllAsRead?: boolean;
 	filterName: FilterName;
 	/** Shows another tab. The host also closes the open note, which may not be on the new tab. */
 	setFilterName: ( filterName: FilterName ) => void;
@@ -45,6 +48,7 @@ const NotePanel = ( {
 	headingLevel = 3,
 	actions = <NotePanelActions />,
 	openNoteOnArrowKeys,
+	showMarkAllAsRead,
 	filterName,
 	setFilterName,
 	selectedNoteId,
@@ -153,6 +157,9 @@ const NotePanel = ( {
 					</Tabs.List>
 				</VStack>
 			</CardHeader>
+			{ showMarkAllAsRead && ( filterName === 'all' || filterName === 'unread' ) && (
+				<MarkAllAsRead onFocusLost={ () => tabRefs.current[ filterName ]?.focus() } />
+			) }
 			{ notificationTabs.map( ( { name } ) => (
 				// The list inside is focusable, so the panel needn't be a tab stop of its own.
 				<Tabs.Panel key={ name } value={ name } className="wpnc-app__tab-panel" tabIndex={ -1 }>
