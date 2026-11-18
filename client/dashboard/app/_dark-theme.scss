@@ -1,12 +1,5 @@
 @import 'calypso/lib/color-scheme/dark-theme';
 
-/* Links */
-@mixin dashboard-dark-theme-links {
-	@at-root :where( & ) a {
-		color: var( --wpds-color-foreground-interactive-brand );
-	}
-}
-
 /* Callout */
 @mixin dashboard-dark-theme-callout {
 	.dashboard-callout__content > :first-child {
@@ -132,8 +125,7 @@
 
 /* Form Controls */
 @mixin dashboard-dark-theme-form-controls {
-	@include color-scheme-dark-theme-form-controls;
-
+	// `@wordpress/components` hardcodes the invalid field border color; drop once it uses tokens.
 	.components-validated-control:has( :is( input, select ):invalid[data-validity-visible] )
 		.components-input-control__backdrop,
 	.components-validated-control__wrapper-with-error-delegate:has(
@@ -166,18 +158,6 @@
 				var( --dashboard__background-color )
 			);
 		}
-	}
-}
-
-/* Section Header */
-@mixin dashboard-dark-theme-section-header {
-	.dashboard-section-header__description {
-		color: var( --dashboard-subtle__color );
-	}
-
-	.dashboard-section-header__decoration svg {
-		color: var( --dashboard-subtle__color );
-		fill: var( --dashboard-subtle__color );
 	}
 }
 
@@ -465,17 +445,13 @@
 	@include dashboard-dark-theme-domain-upsell-illustration;
 	@include dashboard-dark-theme-illustrations;
 	@include dashboard-dark-theme-item-group;
-	@include dashboard-dark-theme-links;
 	@include dashboard-dark-theme-mcp-connect;
-	@include color-scheme-dark-theme-modal;
 	@include dashboard-dark-theme-modal;
 	@include color-scheme-dark-theme-palettes;
 	@include dashboard-dark-theme-panel;
 	@include dashboard-dark-theme-plugins;
 	@include dashboard-dark-theme-primary-address-illustration;
-	@include color-scheme-dark-theme-popover;
 	@include dashboard-dark-theme-scan;
-	@include dashboard-dark-theme-section-header;
 	@include dashboard-dark-theme-sidebar-promo;
 	@include color-scheme-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-launch-modal;
