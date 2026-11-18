@@ -55,13 +55,13 @@ describe( '<SftpCard>', () => {
 			.reply( 200, JSON.stringify( { username } ), { 'Content-Type': 'application/json' } );
 
 		render(
-			<SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } sshEnabled />
+			<SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } sshMayBeEnabled />
 		);
 
 		await screen.findByText( 'Learn more' );
 		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
 		const dialog = await screen.findByRole( 'dialog' );
-		expect( dialog ).toHaveTextContent( 'SSH access is turned off too.' );
+		expect( dialog ).toHaveTextContent( 'SSH access is turned off too' );
 		await user.click( within( dialog ).getByRole( 'button', { name: 'Disable SFTP' } ) );
 
 		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
@@ -76,5 +76,56 @@ describe( '<SftpCard>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
 		const dialog = await screen.findByRole( 'dialog' );
 		expect( dialog ).not.toHaveTextContent( 'SSH' );
+	} );
+
+	test( 'deletes every SFTP user when a site has more than one', async () => {
+		const user = userEvent.setup();
+		const secondUsername = 'example.wordpress.com_ab12';
+		const deleteRequests = nock( 'https://public-api.wordpress.com' )
+			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ username }` )
+			.reply( 200, JSON.stringify( { username } ), { 'Content-Type': 'application/json' } )
+			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ secondUsername }` )
+			.reply( 200, JSON.stringify( { username: secondUsername } ), {
+				'Content-Type': 'application/json',
+			} );
+
+		render(
+			<SftpCard
+				siteId={ siteId }
+				sftpUsers={ [
+					{ username, password: '' },
+					{ username: secondUsername, password: '' },
+				] }
+			/>
+		);
+
+		await screen.findByText( 'Learn more' );
+		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
+		const dialog = await screen.findByRole( 'dialog' );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Disable SFTP' } ) );
+
+		await waitFor( () => expect( deleteRequests.isDone() ).toBe( true ) );
+	} );
+
+	test( 'disables Reset password while SFTP is being disabled', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ username }` )
+			.delay( 1000 )
+			.reply( 200, JSON.stringify( { username } ), { 'Content-Type': 'application/json' } );
+
+		render( <SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } /> );
+
+		await screen.findByText( 'Learn more' );
+		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
+		const dialog = await screen.findByRole( 'dialog' );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Disable SFTP' } ) );
+
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: 'Reset password' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			)
+		);
 	} );
 } );

@@ -42,11 +42,11 @@ type SftpCardFormData = {
 export default function SftpCard( {
 	siteId,
 	sftpUsers = [],
-	sshEnabled = false,
+	sshMayBeEnabled = false,
 }: {
 	siteId: number;
 	sftpUsers: SftpUser[];
-	sshEnabled?: boolean;
+	sshMayBeEnabled?: boolean;
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
@@ -167,7 +167,7 @@ export default function SftpCard( {
 	};
 
 	const handleConfirmDisable = () => {
-		disableMutation.mutate( username );
+		disableMutation.mutate( sftpUsers.map( ( sftpUser ) => sftpUser.username ) );
 		setShowDisableConfirmDialog( false );
 	};
 
@@ -193,7 +193,7 @@ export default function SftpCard( {
 			__next40pxDefaultSize
 			variant="secondary"
 			isBusy={ mutation.isPending }
-			disabled={ mutation.isPending || isResetPasswordRateLimited }
+			disabled={ mutation.isPending || isResetPasswordRateLimited || disableMutation.isPending }
 			accessibleWhenDisabled
 			label={ resetPasswordLabel }
 			description={ resetPasswordDescription }
@@ -233,7 +233,7 @@ export default function SftpCard( {
 							variant="secondary"
 							isDestructive
 							isBusy={ disableMutation.isPending }
-							disabled={ disableMutation.isPending }
+							disabled={ disableMutation.isPending || mutation.isPending }
 							accessibleWhenDisabled
 							onClick={ () => setShowDisableConfirmDialog( true ) }
 						>
@@ -260,9 +260,9 @@ export default function SftpCard( {
 				onConfirm={ () => handleConfirmDisable() }
 				onCancel={ () => setShowDisableConfirmDialog( false ) }
 			>
-				{ sshEnabled
+				{ sshMayBeEnabled
 					? __(
-							'Disabling SFTP deletes your SFTP credentials, so SFTP clients, deployment tools, and scripts that use them will stop connecting. SSH access is turned off too. You can enable SFTP again at any time and get a new password.'
+							'Disabling SFTP deletes your SFTP credentials, so SFTP clients, deployment tools, and scripts that use them will stop connecting. SSH access is turned off too, including for SSH keys attached to this site. You can enable SFTP again at any time and get a new password.'
 						)
 					: __(
 							'Disabling SFTP deletes your SFTP credentials, so SFTP clients, deployment tools, and scripts that use them will stop connecting. You can enable SFTP again at any time and get a new password.'
