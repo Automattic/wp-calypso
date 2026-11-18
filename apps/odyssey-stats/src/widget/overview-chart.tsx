@@ -2,12 +2,7 @@ import { BarChart, LineChart } from '@automattic/charts';
 // Without the package's own styles the chart collapses to zero width.
 import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
-import {
-	EventEmitterProvider,
-	TooltipContext,
-	TooltipProvider,
-	useEventEmitter,
-} from '@visx/xychart';
+import { TooltipContext, TooltipProvider } from '@visx/xychart';
 import moment from 'moment';
 import {
 	FunctionComponent,
@@ -238,22 +233,17 @@ function useBucketClick( onBucketClick?: ( date: Date ) => void ): BucketClickHa
 const CONTENTS_STYLE = { display: 'contents' } as const;
 
 /**
- * Opens the chart's points from the keyboard, and from the pointer on the bar chart. Enter opens
- * the point the arrow keys have moved to, which the chart reports through its tooltip. The bar
- * chart's presses and releases are taken from the chart's own event emitter, with the bar its
- * tooltip snapped to. Both come from the providers around the chart, which it adopts in place of its own.
- * @param props             Component props.
- * @param props.handlers    The click handlers.
- * @param props.fromEmitter Whether to take presses and releases from the emitter too.
- * @param props.children    The chart.
+ * Opens the point the arrow keys have moved to on Enter, which the chart reports through its
+ * tooltip. The tooltip comes from the providers around the chart, which it adopts in place of its own.
+ * @param props          Component props.
+ * @param props.open     Opens a point.
+ * @param props.children The chart.
  */
 function ClickableChart( {
-	handlers,
-	fromEmitter,
+	open,
 	children,
 }: {
-	handlers: BucketClickHandlers;
-	fromEmitter: boolean;
+	open: ( datum: unknown ) => void;
 	children: ReactNode;
 } ) {
 	// Read when asked, not when the handler was made: the tooltip moves in between.
@@ -261,24 +251,6 @@ function ClickableChart( {
 	const tooltipRef = useRef( tooltip );
 	tooltipRef.current = tooltip;
 	const focusedDatum = () => tooltipRef.current?.tooltipData?.nearestDatum?.datum;
-
-	const { onPointerDown, onPointerUp, open } = handlers;
-	useEventEmitter(
-		'pointerdown',
-		useCallback(
-			( params ) =>
-				fromEmitter && onPointerDown( { svgPoint: params?.svgPoint, event: params?.event } ),
-			[ fromEmitter, onPointerDown ]
-		)
-	);
-	useEventEmitter(
-		'pointerup',
-		useCallback(
-			( params ) =>
-				fromEmitter && onPointerUp( { datum: focusedDatum(), svgPoint: params?.svgPoint } ),
-			[ fromEmitter, onPointerUp ]
-		)
-	);
 
 	const onKeyDown = ( event: KeyboardEvent ) => {
 		if ( 'Enter' === event.key && ! hasModifier( event ) ) {
@@ -373,6 +345,8 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 				renderTooltip={ renderTooltipForRange }
 				margin={ MARGIN }
 				options={ options }
+				onPointerDown={ clickHandlers?.onPointerDown }
+				onPointerUp={ clickHandlers?.onPointerUp }
 			/>
 		) : (
 			<LineChart
@@ -395,13 +369,9 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 	}
 
 	return (
-		<EventEmitterProvider>
-			<TooltipProvider>
-				<ClickableChart handlers={ clickHandlers } fromEmitter={ 'bar' === chartType }>
-					{ chart }
-				</ClickableChart>
-			</TooltipProvider>
-		</EventEmitterProvider>
+		<TooltipProvider>
+			<ClickableChart open={ clickHandlers.open }>{ chart }</ClickableChart>
+		</TooltipProvider>
 	);
 };
 
