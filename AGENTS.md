@@ -21,7 +21,7 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
   - Shared infra: client/components, client/state, client/lib, client/layout
 - **Jetpack Cloud** (client/jetpack-cloud) — reuses Calypso shared infra (client/state, client/components).
 - **A8C for Agencies** (client/a8c-for-agencies) — reuses Calypso shared infra.
-- **Dashboard** (client/dashboard) — the new multi-site dashboard. Self-contained: does not reuse Calypso client code. Has its own components, data fetching (TanStack Query), and routing (TanStack Router).
+- **Dashboard** (client/dashboard) — the new multi-site dashboard. Self-contained: does not reuse Calypso client code. Has its own components, data fetching (TanStack Query), and routing (TanStack Router). Before changing it, read [client/dashboard/AGENTS.md](client/dashboard/AGENTS.md).
   - client/dashboard/me/billing-purchases — billing & purchase management
 
 ## Packages
@@ -61,6 +61,8 @@ If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation
 ## Testing instructions
 
 > **Note**: E2E tests require a local Calypso development instance to be running, started with `yarn start`: `yarn start-dashboard` doesn't serve the login page they use.
+
+Before writing or changing a Dashboard test, read [client/dashboard/docs/testing.md](client/dashboard/docs/testing.md). It holds the rules for Dashboard tests and says which of them lint reports.
 
 ```bash
 # JavaScript tests
