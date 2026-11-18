@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { VisuallyHidden } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -79,6 +80,7 @@ export default function Notifications() {
 							selectedNoteId={ noteId }
 							setSelectedNoteId={ setSelectedNoteId }
 							onViewSettings={ () => navigate( { to: '/me/notifications' } ) }
+							isMarkAsUnreadEnabled={ config.isEnabled( 'notifications/mark-as-unread' ) }
 							renderLayout={ ( { list, detail } ) => {
 								const listPane = (
 									<div className="dashboard-notifications-inbox__list">{ list }</div>

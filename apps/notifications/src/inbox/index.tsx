@@ -33,6 +33,8 @@ type NotificationsInboxProps = {
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 	/** Opens the host's notification settings. Without it, the list header has no settings button. */
 	onViewSettings?: () => void;
+	/** Shows the open note's "Mark as unread" button. */
+	isMarkAsUnreadEnabled?: boolean;
 	renderLayout: ( panes: InboxPaneElements ) => ReactNode;
 };
 
@@ -86,7 +88,7 @@ function InboxPanes( {
 	setSelectedNoteId,
 	onViewSettings,
 	renderLayout,
-}: Omit< NotificationsInboxProps, 'wpcom' | 'locale' > ) {
+}: Omit< NotificationsInboxProps, 'wpcom' | 'locale' | 'isMarkAsUnreadEnabled' > ) {
 	const filterName = toFilterName( requestedFilterName );
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
 	const isSelectedNoteLoaded = useSelector( ( state ) =>
@@ -168,6 +170,7 @@ function InboxPanes( {
 export default function NotificationsInbox( {
 	wpcom,
 	locale,
+	isMarkAsUnreadEnabled = false,
 	...paneProps
 }: NotificationsInboxProps ) {
 	const isReady = useInboxClient( wpcom, locale );
@@ -178,7 +181,12 @@ export default function NotificationsInbox( {
 
 	return (
 		<Provider store={ store }>
-			<AppProvider client={ getClient() } locale={ locale } isViewSettingsEnabled>
+			<AppProvider
+				client={ getClient() }
+				locale={ locale }
+				isViewSettingsEnabled
+				isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+			>
 				<InboxPanes { ...paneProps } />
 			</AppProvider>
 		</Provider>
