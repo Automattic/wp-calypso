@@ -49,8 +49,9 @@ a {
 	color: var( --wp-admin-theme-color );
 }
 
-// Charts and their tooltips in dashboard colors, in light and dark mode.
-.a8c-charts-scope {
+// Charts and their tooltips in dashboard colors, in light and dark mode. The chat's charts
+// (`.agenttic`) keep their own.
+.a8c-charts-scope:not( .agenttic * ) {
 	--a8c-charts-color-background: var( --dashboard-surface__background-color );
 	--a8c-charts-color-grid: var( --dashboard-surface__border-color );
 	--a8c-charts-color-axis-x: var( --dashboard-surface__border-color );
@@ -62,7 +63,7 @@ a {
 }
 
 // A light tooltip needs an edge to stand off the chart.
-.visx-tooltip.a8c-charts-tooltip-scope {
+.visx-tooltip.a8c-charts-tooltip-scope:not( .agenttic * ) {
 	background: var( --dashboard-surface__background-color );
 	color: var( --dashboard__text-color );
 	border: 1px solid var( --dashboard-surface__border-color );

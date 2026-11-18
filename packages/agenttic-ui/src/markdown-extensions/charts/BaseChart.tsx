@@ -1,7 +1,6 @@
 import {
 	type BaseChartProps as AutomatticBaseChartProps,
 	type DataPointDate,
-	defaultTheme,
 	type RenderTooltipParams,
 	type SeriesData,
 	ThemeProvider,
@@ -38,23 +37,6 @@ interface BaseChartInternalProps {
 	} | null;
 }
 
-const CHART_THEME = {
-	...defaultTheme,
-	legendLabelStyles: {
-		fontSize: '11px',
-		fontWeight: '400',
-		lineHeight: '1.2',
-		fontFamily:
-			'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif',
-	},
-	legendItemStyles: {
-		padding: '2px 0',
-		display: 'flex',
-		alignItems: 'center',
-	},
-	legendGlyphSize: 12,
-};
-
 /**
  * Base chart component with shared logic for all chart types
  * @param root0
@@ -76,7 +58,7 @@ export const BaseChart: FC< BaseChartInternalProps > = ( { children, error } ) =
 				className="chart-container"
 				style={ { '--agenttic-chart-primary-color': primaryColor } as CSSProperties }
 			>
-				<ThemeProvider theme={ CHART_THEME }>{ children }</ThemeProvider>
+				<ThemeProvider>{ children }</ThemeProvider>
 			</div>
 		</div>
 	);
