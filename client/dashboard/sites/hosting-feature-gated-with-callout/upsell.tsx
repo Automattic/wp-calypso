@@ -1,5 +1,4 @@
 import { DotcomFeatures, DotcomPlans, getPlanNames } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
@@ -37,11 +36,7 @@ const DEV_TOOLS_FEATURES: HostingFeatureSlug[] = [
 function getDefaultPlanRequirement(
 	feature?: HostingFeatureSlug
 ): UpsellCalloutProps[ 'upsellPlanRequirement' ] {
-	if (
-		feature &&
-		DEV_TOOLS_FEATURES.includes( feature ) &&
-		config.isEnabled( 'hosting/dev-tools-all-paid-plans' )
-	) {
+	if ( feature && DEV_TOOLS_FEATURES.includes( feature ) ) {
 		return 'any';
 	}
 	return 'business-or-commerce';

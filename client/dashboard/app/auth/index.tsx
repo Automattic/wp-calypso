@@ -17,6 +17,7 @@ import { createContext, useContext, useMemo, useEffect, useRef, useCallback } fr
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
+import { getSavedToken, markOAuthFlow } from './token-storage';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
@@ -54,12 +55,8 @@ interface AuthBounceRecord {
 function trackAuthBounceLoop() {
 	try {
 		const now = Date.now();
-		const storedRecord: unknown = JSON.parse(
-			window.sessionStorage.getItem( AUTH_BOUNCE_COUNT_KEY ) ?? 'null'
-		);
-		const previousRecord = isAuthBounceRecord( storedRecord ) ? storedRecord : null;
-		const withinWindow = previousRecord !== null && now - previousRecord.at < AUTH_LOOP_WINDOW_MS;
-		const count = withinWindow ? previousRecord.count + 1 : 1;
+		const previousRecord = readRecentAuthBounce( now );
+		const count = previousRecord ? previousRecord.count + 1 : 1;
 
 		window.sessionStorage.setItem(
 			AUTH_BOUNCE_COUNT_KEY,
@@ -72,6 +69,22 @@ function trackAuthBounceLoop() {
 		}
 	} catch {
 		// sessionStorage can be unavailable in private contexts or JSON.parse may fail.
+	}
+}
+
+function readRecentAuthBounce( now: number ): AuthBounceRecord | null {
+	const storedRecord: unknown = JSON.parse(
+		window.sessionStorage.getItem( AUTH_BOUNCE_COUNT_KEY ) ?? 'null'
+	);
+	const record = isAuthBounceRecord( storedRecord ) ? storedRecord : null;
+	return record !== null && now - record.at < AUTH_LOOP_WINDOW_MS ? record : null;
+}
+
+function hasRecentAuthBounce(): boolean {
+	try {
+		return readRecentAuthBounce( Date.now() ) !== null;
+	} catch {
+		return false;
 	}
 }
 
@@ -152,6 +165,56 @@ function getOAuthAuthorizeUrl( {
 	} ).toString();
 
 	return authUri.toString();
+}
+
+function redirectToOAuth() {
+	const state = crypto.randomUUID();
+	sessionStorage.setItem( 'wpcom_oauth_state', state );
+	markOAuthFlow();
+
+	window.location.replace(
+		getOAuthAuthorizeUrl( {
+			state,
+			next: window.location.pathname + window.location.search,
+		} )
+	);
+}
+
+/**
+ * The token an OAuth dashboard sends with every request. Must run before the support session
+ * replaces localStorage, which would hide a saved token.
+ */
+export function getOAuthToken(): string | undefined {
+	return config.isEnabled( 'oauth' ) ? getSavedToken() : undefined;
+}
+
+/**
+ * Sends an OAuth dashboard to get a token. Returns true when it redirects.
+ *
+ * A support session can load the user without a token, so a failed user request can't be the
+ * only thing that starts the OAuth flow: endpoints that only accept OAuth requests would then
+ * refuse a session that otherwise looks signed in.
+ */
+export function requestOAuthToken(): boolean {
+	if ( ! config.isEnabled( 'oauth' ) ) {
+		return false;
+	}
+
+	// A recent bounce means the last trip through OAuth came back without a token, so another one would loop.
+	if ( hasRecentAuthBounce() ) {
+		return false;
+	}
+
+	try {
+		redirectToOAuth();
+	} catch {
+		// Storage can be unavailable; the user fetch below reports the problem instead.
+		return false;
+	}
+
+	trackAuthBounceLoop();
+	bumpStat( 'dashboard-auth', 'bounce:no-token' );
+	return true;
 }
 
 interface AuthContextType {
@@ -250,15 +313,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		trackAuthBounceLoop();
 
 		if ( config.isEnabled( 'oauth' ) ) {
-			const state = crypto.randomUUID();
-			sessionStorage.setItem( 'wpcom_oauth_state', state );
-
-			window.location.replace(
-				getOAuthAuthorizeUrl( {
-					state,
-					next: window.location.pathname + window.location.search,
-				} )
-			);
+			redirectToOAuth();
 			return;
 		}
 
@@ -348,6 +403,7 @@ async function endSession( user: User ): Promise< string > {
 	if ( config.isEnabled( 'oauth' ) && ! configLogoutUrl ) {
 		const state = crypto.randomUUID();
 		sessionStorage.setItem( 'wpcom_oauth_state', state );
+		markOAuthFlow();
 
 		return getOAuthAuthorizeUrl( { state, isLogout: true } );
 	}

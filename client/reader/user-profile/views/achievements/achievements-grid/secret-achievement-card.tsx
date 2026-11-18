@@ -1,9 +1,10 @@
 import { TimeSince } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
 import AchievementCard from './achievement-card';
 
 interface SecretAchievementCardProps {
+	/** The card's position in its grid, so any ten cards in a row show different descriptions. */
+	index: number;
 	/** Render the locked variant — faded card. Omit for unlocked masked secrets. */
 	locked?: boolean;
 	/** Profile owner's unlock date. Present only for masked secrets in the earned list. */
@@ -11,6 +12,7 @@ interface SecretAchievementCardProps {
 }
 
 export default function SecretAchievementCard( {
+	index,
 	locked,
 	unlockedDate,
 }: SecretAchievementCardProps ) {
@@ -28,8 +30,7 @@ export default function SecretAchievementCard( {
 		translate( 'Mystery achievement. Keep going — it’ll reveal itself.' ),
 		translate( 'Hidden in plain sight. Keep at it to unlock the details.' ),
 	];
-	const [ descriptionIndex ] = useState( () => Math.floor( Math.random() * descriptions.length ) );
-	const description = descriptions[ descriptionIndex ];
+	const description = descriptions[ index % descriptions.length ];
 	const caption = unlockedDate
 		? translate( 'Unlocked: {{timeSince/}}', {
 				components: { timeSince: <TimeSince date={ unlockedDate } /> },

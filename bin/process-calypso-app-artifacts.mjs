@@ -1,14 +1,12 @@
-import { exec as _exec } from 'node:child_process';
+import { execFile } from 'node:child_process';
 import { createHmac } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import util from 'node:util';
 import didCalypsoAppChange from './did-calypso-app-change.mjs';
 
 checkEnvVars();
 
-const exec = util.promisify( _exec );
 const SKIP_BUILD_DIFF = process.env.skip_build_diff === 'true';
 const IS_DEFAULT_BRANCH = process.env.is_default_branch === 'true';
 const dirname = fileURLToPath( new URL( '.', import.meta.url ) );
@@ -105,31 +103,31 @@ async function tagBuild( _changedApps ) {
 async function addGitHubComment( _changedApps ) {
 	const notifyApps = _changedApps.filter( ( { ghNotify = true } ) => ghNotify );
 
-	const commentWatermark = 'calypso-app-artifacts';
-	const ghCommentCmd = `./bin/add-pr-comment.sh ${ process.env.git_branch } ${ commentWatermark }`;
-
 	if ( ! notifyApps.length ) {
 		console.info( 'No apps to notify about. Deleting existing comment if exists.' );
 		// Delete the existing comment, since there are no apps to notify about.
-		return await exec( `${ ghCommentCmd } delete <<< "" || true`, {
-			encoding: 'UTF-8',
-			stdio: 'inherit',
-		} );
+		return await runPrComment( [ 'delete' ], '\n' );
 	}
 
 	const header = '**This PR modifies the release build for the following Calypso Apps:**';
 	const docsMsg = '_For info about this notification, see here: PCYsg-OT6-p2_';
 	const changedAppsMsg = notifyApps.map( ( { slug } ) => `* ${ slug }` ).join( '\n' );
-	// Note: extra escaping is necessary because the message is passed to bash.
-	const testMsg =
-		'To test WordPress.com changes, run \\`install-plugin.sh \\$pluginSlug ' +
-		process.env.git_branch +
-		'\\` on your sandbox.';
+	const testMsg = `To test WordPress.com changes, run \`install-plugin.sh $pluginSlug ${ process.env.git_branch }\` on your sandbox.`;
 
 	const appMsg = `${ header }\n\n${ docsMsg }\n\n${ changedAppsMsg }\n\n${ testMsg }`;
 
-	await exec( `${ ghCommentCmd } <<- EOF || true\n${ appMsg }\nEOF`, {
-		encoding: 'UTF-8',
+	await runPrComment( [], `${ appMsg }\n` );
+}
+
+// Runs add-pr-comment.sh with the message on stdin. A failed comment mustn't fail the build.
+function runPrComment( args, message ) {
+	return new Promise( ( resolve ) => {
+		const child = execFile(
+			'./bin/add-pr-comment.sh',
+			[ process.env.git_branch, 'calypso-app-artifacts', ...args ],
+			() => resolve()
+		);
+		child.stdin.end( message );
 	} );
 }
 

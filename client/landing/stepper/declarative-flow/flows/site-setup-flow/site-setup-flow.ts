@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
@@ -270,26 +269,19 @@ const siteSetupFlow: Flow = {
 					const entryPoint = get( 'flow' )?.entryPoint;
 
 					if ( shouldRedirectToSiteMigration( currentStep, platform, origin, entryPoint ) ) {
-						const useReprint = config.isEnabled( 'migration/reprint-flow' );
-						const step = useReprint
-							? STEPS.SITE_MIGRATION_IDENTIFY
-							: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE;
 						return window.location.assign(
 							addQueryArgs(
 								{
 									siteSlug,
 									siteId,
 									from,
-									ref: entryPoint,
-									...( useReprint && {
-										manualPlatform: 'wordpress',
-										ref: entryPoint || urlQueryParams.get( 'ref' ),
-										sessionId: urlQueryParams.get( 'sessionId' ),
-										source: urlQueryParams.get( 'source' ),
-										flags: urlQueryParams.get( 'flags' ),
-									} ),
+									manualPlatform: 'wordpress',
+									ref: entryPoint || urlQueryParams.get( 'ref' ),
+									sessionId: urlQueryParams.get( 'sessionId' ),
+									source: urlQueryParams.get( 'source' ),
+									flags: urlQueryParams.get( 'flags' ),
 								},
-								`/setup/${ SITE_MIGRATION_FLOW }/${ step.slug }`
+								`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
 							)
 						);
 					}

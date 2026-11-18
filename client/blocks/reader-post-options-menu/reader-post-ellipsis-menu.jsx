@@ -9,7 +9,6 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow-conversation-icon';
 import { useCanMarkSeen, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
-import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_POST_OPTIONS_MENU } from 'calypso/reader/follow-sources';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
@@ -19,6 +18,7 @@ import * as PostUtils from 'calypso/state/posts/utils';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { blockSite } from 'calypso/state/reader/site-blocks/actions';
 import ReaderPostOptionsMenuBlogStickers from './blog-stickers';
+import FollowButtonWithUndo from './follow-button-with-undo';
 
 const noop = () => {};
 
@@ -249,11 +249,12 @@ class ReaderPostEllipsisMenu extends Component {
 				onClick={ this.stopPropagation }
 			>
 				{ this.props.showFollow && (
-					<ReaderFollowButton
+					<FollowButtonWithUndo
 						tagName={ PopoverMenuItem }
 						feedId={ feedId }
 						siteId={ siteId }
 						siteUrl={ post.feed_URL || post.site_URL }
+						siteName={ post.site_name }
 						followSource={ followSource }
 						iconSize={ 24 }
 						followingLabel={ translate( 'Subscribed' ) }

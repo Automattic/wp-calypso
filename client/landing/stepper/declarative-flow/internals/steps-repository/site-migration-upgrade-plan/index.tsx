@@ -19,9 +19,7 @@ const SiteMigrationUpgradePlan: StepType< {
 		headerText?: string;
 	};
 	submits: {
-		goToCheckout?: boolean;
-		plan?: string;
-		verifyEmail?: boolean;
+		plan: string;
 	};
 } > = ( { navigation } ) => {
 	const siteItem = useSite();
@@ -34,10 +32,7 @@ const SiteMigrationUpgradePlan: StepType< {
 			const planCartItem = cartItems?.[ 0 ];
 
 			if ( planCartItem ) {
-				navigation?.submit?.( {
-					goToCheckout: true,
-					plan: planCartItem.product_slug,
-				} );
+				navigation?.submit?.( { plan: planCartItem.product_slug } );
 			}
 		},
 		[ navigation ]

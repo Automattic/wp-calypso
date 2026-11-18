@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { isFreePlan, isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
@@ -40,11 +39,7 @@ const BusinessPlanBanner = () => {
 					{ __( 'Get full control and priority support with our Business plan.' ) }
 				</p>
 				<ul className="business-plan-banner__features">
-					<li>
-						{ isEnabled( 'hosting/dev-tools-all-paid-plans' )
-							? __( 'Test changes safely on a staging site before they go live' )
-							: __( 'Use custom code, with SFTP/SSH, WP-CLI, and GitHub deployments' ) }
-					</li>
+					<li>{ __( 'Test changes safely on a staging site before they go live' ) }</li>
 					<li>{ __( 'Get priority 24/7 support from our expert team' ) }</li>
 					<li>{ __( 'Peace of mind with real-time backups and one-click restores' ) }</li>
 				</ul>

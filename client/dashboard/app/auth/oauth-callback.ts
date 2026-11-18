@@ -1,5 +1,5 @@
-import store from 'store';
-import { isRelativeUrl } from '../../utils/url';
+import { getUrlOnOrigins, isRelativeUrl } from '../../utils/url';
+import { saveToken } from './token-storage';
 
 export const OAUTH_CALLBACK_PATH = '/oauth/token';
 
@@ -21,26 +21,23 @@ export function handleOAuthCallback(): boolean {
 	const expectedState = sessionStorage.getItem( 'wpcom_oauth_state' );
 	sessionStorage.removeItem( 'wpcom_oauth_state' );
 	if ( ! returnedState || ! expectedState || returnedState !== expectedState ) {
-		document.location.replace( '/' );
+		window.location.replace( '/' );
 		return true;
 	}
 
 	const accessToken = hash.get( 'access_token' );
 	if ( accessToken ) {
-		store.set( 'wpcom_token', accessToken );
-	}
-
-	const expiresIn = hash.get( 'expires_in' );
-	if ( expiresIn ) {
-		store.set( 'wpcom_token_expires_in', expiresIn );
+		saveToken( accessToken, hash.get( 'expires_in' ) );
 	}
 
 	const next = params.get( 'next' ) || '/';
 
 	// Validate that next is a safe same-origin relative path to prevent DOM XSS
 	// and open redirect via javascript: URIs or absolute URLs to external domains.
-	const safeNext = isRelativeUrl( next ) ? next : '/';
-	document.location.replace( safeNext );
+	const { origin, href } = window.location;
+	window.location.replace(
+		( isRelativeUrl( next ) && getUrlOnOrigins( next, [ origin ], href ) ) || '/'
+	);
 
 	return true;
 }

@@ -15,8 +15,7 @@ import { SpecialInstructions } from './special-instructions';
 interface CredentialsFormProps {
 	onSubmit: (
 		siteInfo?: UrlData | undefined,
-		applicationPasswordsInfo?: ApplicationPasswordsInfo,
-		hostingProviderSlug?: string
+		applicationPasswordsInfo?: ApplicationPasswordsInfo
 	) => void;
 }
 

@@ -17,22 +17,18 @@ beforeEach( () => {
 } );
 
 const expectPlaceholderPhrase = ( phrase: string ) => {
+	// Querying by role is slow, so look the searchbox up once per phrase.
+	const searchbox = screen.getByRole( 'searchbox' );
+
 	// Initial state
-	expect( screen.getByRole( 'searchbox' ) ).toHaveAttribute( 'placeholder', '' );
+	expect( searchbox ).toHaveAttribute( 'placeholder', '' );
 
-	let i = 1;
-
-	while ( screen.getByRole( 'searchbox' ).getAttribute( 'placeholder' ) !== phrase ) {
+	for ( let i = 1; i <= phrase.length; i++ ) {
 		act( () => {
 			vi.advanceTimersByTime( 60 );
 		} );
 
-		expect( screen.getByRole( 'searchbox' ) ).toHaveAttribute(
-			'placeholder',
-			phrase.substring( 0, i )
-		);
-
-		i++;
+		expect( searchbox ).toHaveAttribute( 'placeholder', phrase.substring( 0, i ) );
 	}
 
 	return true;
