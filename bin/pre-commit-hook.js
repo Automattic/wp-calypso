@@ -63,6 +63,17 @@ function linterFailure() {
 	process.exit( 1 );
 }
 
+// Aborts the commit when the linter reports problems or can't run at all, e.g. E2BIG.
+function runLinter( command, args ) {
+	const { status, error } = spawnSync( command, args, { stdio: 'inherit' } );
+	if ( error ) {
+		console.error( error.message );
+	}
+	if ( status !== 0 ) {
+		linterFailure();
+	}
+}
+
 function printPhpcsDocs() {
 	console.log(
 		chalk.red( 'COMMIT ABORTED:' ),
@@ -134,7 +145,13 @@ toPHPCBF.forEach( ( file ) => console.log( `PHPCBF formatting staged file: ${ fi
 if ( toPHPCBF.length ) {
 	if ( phpcs ) {
 		try {
-			execFileSync( phpcbfPath, [ '--standard=WordPress', ...phpcsExclusions, ...toPHPCBF ] );
+			// Run Composer's proxy through `php`: Windows can't execute it directly without a shell.
+			execFileSync( 'php', [
+				phpcbfPath,
+				'--standard=WordPress',
+				...phpcsExclusions,
+				...toPHPCBF,
+			] );
 		} catch ( error ) {
 			// PHPCBF returns a `0` or `1` exit code on success, and `2` on failures. ¯\_(ツ)_/¯
 			// https://github.com/squizlabs/PHP_CodeSniffer/blob/HEAD/src/Runner.php#L210
@@ -169,40 +186,18 @@ const {
 
 // first stylelint
 if ( toStylelint.length ) {
-	const lintResult = spawnSync( './node_modules/.bin/stylelint', [ ...toStylelint ], {
-		stdio: 'inherit',
-	} );
-
-	if ( lintResult.status !== 0 ) {
-		linterFailure();
-	}
+	runLinter( './node_modules/.bin/stylelint', toStylelint );
 }
 
 // then eslint
 if ( toEslint.length ) {
-	const lintResult = spawnSync( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ], {
-		stdio: 'inherit',
-	} );
-
-	if ( lintResult.status !== 0 ) {
-		linterFailure();
-	}
+	runLinter( './node_modules/.bin/eslint', [ '--quiet', ...toEslint ] );
 }
 
 // and finally PHPCS
 if ( toPHPCS.length ) {
 	if ( phpcs ) {
-		const lintResult = spawnSync(
-			phpcsPath,
-			[ '--standard=WordPress', ...phpcsExclusions, ...toPHPCS ],
-			{
-				stdio: 'inherit',
-			}
-		);
-
-		if ( lintResult.status !== 0 ) {
-			linterFailure();
-		}
+		runLinter( 'php', [ phpcsPath, '--standard=WordPress', ...phpcsExclusions, ...toPHPCS ] );
 	} else {
 		printPhpcsDocs();
 	}
