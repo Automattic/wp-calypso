@@ -53,7 +53,7 @@
 		"sass": "1.77.8",
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0",
-		"webpack": "^5.111.1"
+		"webpack": "^5.112.2"
 	},
 	"peerDependencies": {
 		"@automattic/calypso-router": "workspace:^",
