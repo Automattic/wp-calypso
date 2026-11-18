@@ -291,10 +291,12 @@ function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownF
 	};
 }
 
+type CartHelperOptions = { throwOnError?: boolean };
+
 export async function replaceProductsInCart(
 	siteSlug: string,
 	cartItems: MinimalRequestCartProduct[],
-	options: { throwOnError?: boolean } = {}
+	options: CartHelperOptions = {}
 ) {
 	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
 
@@ -316,7 +318,7 @@ export async function addProductsToCart(
 	siteSlug: string,
 	flowName: string,
 	cartItems: MinimalRequestCartProduct[] | null,
-	options: { throwOnError?: boolean } = {}
+	options: CartHelperOptions = {}
 ) {
 	if ( Array.isArray( cartItems ) ) {
 		const cartItemsToAdd = cartItems.map( ( cartItem ) =>
