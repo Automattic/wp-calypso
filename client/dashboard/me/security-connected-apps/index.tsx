@@ -17,6 +17,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { useIntlCollator } from '../../app/locale';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
+import EmptyState from '../../components/empty-state';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -160,22 +161,34 @@ export default function SecurityConnectedApps() {
 				/>
 			}
 		>
-			<DataViewsCard>
-				<DataViews< ConnectedApplication >
-					getItemId={ ( item ) => item.ID }
-					data={ sortedConnectedApplications }
-					fields={ totalItems > 0 ? fields : [] }
-					actions={ actions }
-					view={ view }
-					isLoading={ isLoading }
-					onChangeView={ () => {} }
-					defaultLayouts={ { table: {} } }
-					paginationInfo={ { totalItems, totalPages: 1 } }
-					empty={ <p>{ __( 'You haven’t connected any apps yet.' ) }</p> }
-				>
-					<DataViews.Layout />
-				</DataViews>
-			</DataViewsCard>
+			{ ! isLoading && totalItems === 0 ? (
+				<EmptyState.Wrapper isCompact>
+					<EmptyState>
+						<EmptyState.Header>
+							<EmptyState.Title>{ __( 'No connected apps' ) }</EmptyState.Title>
+							<EmptyState.Description>
+								{ __( 'Apps you connect to your WordPress.com account will appear here.' ) }
+							</EmptyState.Description>
+						</EmptyState.Header>
+					</EmptyState>
+				</EmptyState.Wrapper>
+			) : (
+				<DataViewsCard>
+					<DataViews< ConnectedApplication >
+						getItemId={ ( item ) => item.ID }
+						data={ sortedConnectedApplications }
+						fields={ totalItems > 0 ? fields : [] }
+						actions={ actions }
+						view={ view }
+						isLoading={ isLoading }
+						onChangeView={ () => {} }
+						defaultLayouts={ { table: {} } }
+						paginationInfo={ { totalItems, totalPages: 1 } }
+					>
+						<DataViews.Layout />
+					</DataViews>
+				</DataViewsCard>
+			) }
 			<ConfirmModal
 				isOpen={ !! selectedApplicationToRemove }
 				confirmButtonProps={ {

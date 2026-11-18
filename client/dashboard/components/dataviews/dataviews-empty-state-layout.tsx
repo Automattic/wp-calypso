@@ -27,7 +27,7 @@ export function DataViewsEmptyStateLayout( {
 					<EmptyState.Title>{ title }</EmptyState.Title>
 					<EmptyState.Description>{ description }</EmptyState.Description>
 				</EmptyState.Header>
-				{ ( ! isCompact || !! children ) && <EmptyState.Content>{ children }</EmptyState.Content> }
+				{ !! children && <EmptyState.Content>{ children }</EmptyState.Content> }
 			</EmptyState>
 		</EmptyState.Wrapper>
 	);

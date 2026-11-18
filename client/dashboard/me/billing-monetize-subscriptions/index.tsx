@@ -115,7 +115,6 @@ function MonetizeSubscriptions() {
 			<div ref={ ref }>
 				{ hasLoadedMonetize && ! monetizeSubscriptions?.length ? (
 					<DataViewsEmptyStateLayout
-						isCompact
 						title={ __( 'No memberships or donations yet' ) }
 						description={ __(
 							'Paid subscriptions and donations to other WordPress.com sites will appear here.'
@@ -137,7 +136,6 @@ function MonetizeSubscriptions() {
 								currentView.search ? (
 									<DataViewsEmptyStateLayout
 										isBorderless
-										isCompact
 										title={ __( 'No memberships or donations match your search' ) }
 										description={ __( 'Try a different search term.' ) }
 									/>

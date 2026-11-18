@@ -4,9 +4,10 @@ import { FormToggle, Icon, Tooltip } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, type Field, filterSortAndPaginate, Operator, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { info } from '@wordpress/icons';
+import { info, scheduled } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState, useCallback } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
 	pluginsScheduledUpdatesEditRoute,
@@ -14,6 +15,7 @@ import {
 } from '../../app/router/plugins';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
+import EmptyState from '../../components/empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -186,7 +188,8 @@ export default function PluginsScheduledUpdates() {
 		[ locale, handleToggleActive ]
 	);
 
-	const { isLoading, isError, scheduledUpdates } = useScheduledUpdates();
+	const { isLoading, isSuccess, scheduledUpdates } = useScheduledUpdates();
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutateAsync: deleteSchedules } = useDeleteSchedules(
 		scheduleToDelete ? [ scheduleToDelete.site.ID ] : [],
@@ -197,8 +200,20 @@ export default function PluginsScheduledUpdates() {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
 	}, [ scheduledUpdates, view, fields ] );
 
-	// Filters are active and nothing was typed in the search field.
-	const hasOnlyFilters = ! view.search && !! view.filters?.length;
+	const hasSchedules = scheduledUpdates.length > 0;
+	const hasNoSchedules = isSuccess && ! hasSchedules;
+	const hasSearch = !! view.search;
+	const hasFilters = !! view.filters?.length;
+
+	const newScheduleButton = (
+		<RouterLinkButton
+			variant="primary"
+			to={ pluginsScheduledUpdatesNewRoute.to }
+			__next40pxDefaultSize
+		>
+			{ __( 'New schedule' ) }
+		</RouterLinkButton>
+	);
 
 	const handleDeleteClick = ( schedule: ScheduledUpdateRow ) => {
 		setScheduleToDelete( schedule );
@@ -233,25 +248,40 @@ export default function PluginsScheduledUpdates() {
 					<PageHeader
 						title={ __( 'Scheduled updates' ) }
 						description={ __( 'Schedule automatic plugin updates for your sites.' ) }
-						actions={
-							<RouterLinkButton
-								variant="primary"
-								to={ pluginsScheduledUpdatesNewRoute.to }
-								__next40pxDefaultSize
-							>
-								{ __( 'New schedule' ) }
-							</RouterLinkButton>
-						}
+						actions={ hasNoSchedules ? null : newScheduleButton }
 					/>
 				}
 			>
 				{ ! isLoading && <PerformanceTrackerStop /> }
-				{ ! isLoading && ! isError && scheduledUpdates.length === 0 ? (
+				{ hasNoSchedules ? (
 					<DataViewsEmptyStateLayout
-						isCompact
 						title={ __( 'Choose when your plugins update' ) }
-						description={ __( 'Select the sites, the plugins, and how often they update.' ) }
-					/>
+						description={ __( 'Set a schedule once, and your sites stay up to date.' ) }
+					>
+						<EmptyState.ActionList>
+							<EmptyState.ActionItem
+								title={ __( 'New schedule' ) }
+								description={ __( 'Select the sites, the plugins, and how often they update.' ) }
+								decoration={ <Icon icon={ scheduled } size={ 24 } /> }
+								actions={
+									<RouterLinkButton
+										variant="primary"
+										size="compact"
+										to={ pluginsScheduledUpdatesNewRoute.to }
+										onClick={ () =>
+											recordTracksEvent(
+												'calypso_dashboard_plugins_scheduled_updates_empty_state_action_click',
+												{ action: 'new-schedule' }
+											)
+										}
+										__next40pxDefaultSize
+									>
+										{ __( 'New schedule' ) }
+									</RouterLinkButton>
+								}
+							/>
+						</EmptyState.ActionList>
+					</DataViewsEmptyStateLayout>
 				) : (
 					<DataViewsCard>
 						<DataViews
@@ -263,24 +293,21 @@ export default function PluginsScheduledUpdates() {
 							onChangeView={ setView }
 							isLoading={ isLoading }
 							empty={
-								scheduledUpdates.length === 0 ? (
-									<p>{ __( 'No scheduled updates yet.' ) }</p>
-								) : (
+								hasSchedules && ( hasSearch || hasFilters ) ? (
 									<DataViewsEmptyStateLayout
 										isBorderless
-										isCompact
 										title={
-											hasOnlyFilters
-												? __( 'No schedules match your filters' )
-												: __( 'No schedules match your search' )
+											hasSearch
+												? __( 'No schedules match your search' )
+												: __( 'No schedules match your filters' )
 										}
 										description={
-											hasOnlyFilters
-												? __( 'Try different filters, or reset them.' )
-												: __( 'Try a different search term.' )
+											hasSearch
+												? __( 'Try a different search term.' )
+												: __( 'Try different filters, or reset them.' )
 										}
 									/>
-								)
+								) : undefined
 							}
 							actions={ [
 								{

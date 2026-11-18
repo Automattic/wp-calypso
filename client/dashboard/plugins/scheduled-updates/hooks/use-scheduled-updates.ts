@@ -11,14 +11,14 @@ export function useScheduledUpdates() {
 	const {
 		data: scheduledUpdates,
 		isLoading: isLoadingSchedules,
-		isError: isErrorSchedules,
+		isSuccess: isSuccessSchedules,
 	} = useQuery( hostingUpdateSchedulesQuery() );
 	const {
 		data: sites,
 		isLoading: isLoadingSites,
-		isError: isErrorSites,
+		isSuccess: isSuccessSites,
 	} = useQuery( sitesQuery() );
-	const isError = isErrorSchedules || isErrorSites;
+	const isSuccess = isSuccessSchedules && isSuccessSites;
 	const siteIds = Object.keys( scheduledUpdates?.sites ?? [] );
 	const { pluginsData, isLoadingPlugins } = useQueries( {
 		queries: siteIds.map( ( id ) => siteCorePluginsQuery( Number( id ) ) ),
@@ -32,14 +32,14 @@ export function useScheduledUpdates() {
 		if ( ! scheduledUpdates || ! sites ) {
 			return {
 				isLoading: isLoadingSchedules || isLoadingSites,
-				isError,
+				isSuccess,
 				scheduledUpdates: [],
 			};
 		}
 		if ( ! scheduledUpdates.sites ) {
 			return {
 				isLoading: isLoadingSchedules || isLoadingSites,
-				isError,
+				isSuccess,
 				scheduledUpdates: [],
 			};
 		}
@@ -92,7 +92,7 @@ export function useScheduledUpdates() {
 		} );
 		return {
 			isLoading: isLoadingSchedules || isLoadingSites || isLoadingPlugins,
-			isError,
+			isSuccess,
 			scheduledUpdates: result,
 		};
 	}, [
@@ -100,7 +100,7 @@ export function useScheduledUpdates() {
 		sites,
 		isLoadingSchedules,
 		isLoadingSites,
-		isError,
+		isSuccess,
 		pluginsData,
 		isLoadingPlugins,
 	] );
