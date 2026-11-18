@@ -12,13 +12,15 @@ import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { useLocale } from '../../../app/locale';
 import { Callout } from '../../../components/callout';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import Divider from '../../../components/divider';
 import { TextBlur } from '../../../components/text-blur';
 import { DomainUpsellIllustraction } from '../../../sites/domains/components/domain-upsell-card/upsell-illustration';
+import { formatDate } from '../../../utils/datetime';
 import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
-import { getWpcomTieredPrice } from '../products/lib/product-pricing';
+import { getWpcomTieredPrice, getWpcomTierPrices } from '../products/lib/product-pricing';
 import { MAX_CART_ITEM_QUANTITY } from '../products/use-shopping-cart';
 import { DevSiteConfigurationModal } from '../purchases/site-configuration-modal';
 import { CheckGrid, HostingFeatures, Testimonials } from './content-sections';
@@ -26,8 +28,9 @@ import { getTermPrice } from './lib/term-price';
 import SelectedPlanCard from './selected-plan-card';
 import StepHeading from './step-heading';
 import { useSessionState } from './use-session-state';
+import type { WpcomTierPrice } from '../products/lib/product-pricing';
 import type { TermPricing } from '../use-term-pricing';
-import type { AgencyProduct } from '@automattic/api-core';
+import type { AgencyProduct, AgencyProductPromotion } from '@automattic/api-core';
 import type { CSSProperties } from 'react';
 
 // Past this many owned sites the volume tiers are all reached; the picker goes away.
@@ -47,39 +50,28 @@ interface WpcomSectionProps {
 	onAddToCart: ( plan: AgencyProduct, quantity: number ) => void;
 }
 
-interface VolumeTier {
-	units: number;
-	pricePerUnit: number;
-	discountPercentage: number;
-}
-
-const getBasePrice = ( plan: AgencyProduct, term: TermPricing ) =>
-	term === 'yearly' ? ( plan.yearly_price ?? 0 ) : ( plan.monthly_price ?? 0 );
-
-// The volume tiers for the term, with the single-site tier always first.
-function getVolumeTiers( plan: AgencyProduct, term: TermPricing ): VolumeTier[] {
-	const basePrice = getBasePrice( plan, term );
-	const tiers = ( term === 'yearly' ? plan.tier_yearly_prices : plan.tier_monthly_prices ) ?? [];
-	const options = tiers.map( ( tier ) => ( {
-		units: tier.units,
-		pricePerUnit: tier.price,
-		discountPercentage:
-			basePrice > 0 ? Math.round( ( ( basePrice - tier.price ) / basePrice ) * 100 ) : 0,
-	} ) );
-	if ( options[ 0 ]?.units !== 1 ) {
-		options.unshift( { units: 1, pricePerUnit: basePrice, discountPercentage: 0 } );
-	}
-	return options;
-}
-
 // The next cheaper tier above the current total, if any.
 function getNextTier(
-	tiers: VolumeTier[],
+	tiers: WpcomTierPrice[],
 	totalSites: number,
 	currentPricePerUnit: number
-): VolumeTier | undefined {
+): WpcomTierPrice | undefined {
 	return tiers.find(
 		( tier ) => tier.units > totalSites && tier.pricePerUnit < currentPricePerUnit
+	);
+}
+
+function PromotionFootnote( { promotion }: { promotion: AgencyProductPromotion } ) {
+	const locale = useLocale();
+	return (
+		<Text variant="muted" size={ 12 }>
+			{ sprintf(
+				/* translators: %1$d is the promotion's discount percentage, %2$s the day it ends, e.g. "Dec 4". */
+				__( '*Includes %1$d%% off for a limited time. Ends %2$s.' ),
+				promotion.discount,
+				formatDate( new Date( promotion.ends_at ), locale, { month: 'short', day: 'numeric' } )
+			) }
+		</Text>
 	);
 }
 
@@ -163,8 +155,22 @@ export default function WpcomSection( {
 	const pricing = getWpcomTieredPrice( plan, quantity, term, ownedSites );
 	const termPrice = getTermPrice( pricing.discountedCost, plan.currency, term );
 	const savedAmount = formatCurrency( pricing.actualCost - pricing.discountedCost, plan.currency );
-	const saveNote =
-		term === 'monthly'
+	const { promotion } = pricing;
+	const getSaveNote = () => {
+		if ( promotion ) {
+			return term === 'monthly'
+				? sprintf(
+						/* translators: %s is the amount saved, e.g. "US$300.00". The asterisk marks a limited time offer. */
+						__( 'Save %s* · billed monthly' ),
+						savedAmount
+					)
+				: sprintf(
+						/* translators: %s is the amount saved, e.g. "US$300.00". The asterisk marks a limited time offer. */
+						__( 'Save %s*' ),
+						savedAmount
+					);
+		}
+		return term === 'monthly'
 			? sprintf(
 					/* translators: %s is the amount saved, e.g. "US$300.00". */
 					__( 'Save %s · billed monthly' ),
@@ -175,11 +181,13 @@ export default function WpcomSection( {
 					__( 'Save %s' ),
 					savedAmount
 				);
+	};
+	const saveNote = getSaveNote();
 	// Per-site prices read per month too.
 	const getMonthlyUnitPrice = ( amount: number ) =>
 		formatCurrency( term === 'yearly' ? amount / 12 : amount, plan.currency );
 
-	const allTiers = getVolumeTiers( plan, term );
+	const allTiers = getWpcomTierPrices( plan, term );
 	const tiers = allTiers.filter(
 		( tier ) => TIER_CARD_UNITS.includes( tier.units ) && tier.units > ownedSites
 	);
@@ -376,7 +384,13 @@ export default function WpcomSection( {
 																			) }
 																		</Text>
 																		<Text variant="muted" size={ 12 }>
-																			{ getMonthlyUnitPrice( tier.pricePerUnit ) }
+																			<span>{ getMonthlyUnitPrice( tier.pricePerUnit ) }</span>
+																			{ tier.pricePerUnit < tier.regularPricePerUnit && (
+																				<span>
+																					{ ' ' }
+																					<s>{ getMonthlyUnitPrice( tier.regularPricePerUnit ) }</s>
+																				</span>
+																			) }
 																		</Text>
 																		<Text
 																			size={ 12 }
@@ -483,6 +497,11 @@ export default function WpcomSection( {
 						isReferralMode
 							? __( 'Commission on every payment your client makes, paid out quarterly.' )
 							: __( 'Cancel anytime.' )
+					}
+					footnote={
+						promotion && isOwnedSitesReady ? (
+							<PromotionFootnote promotion={ promotion } />
+						) : undefined
 					}
 				/>
 			</div>

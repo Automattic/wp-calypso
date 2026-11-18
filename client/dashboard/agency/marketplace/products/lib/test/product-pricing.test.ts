@@ -2,6 +2,8 @@ import {
 	getProductBillingTerm,
 	getProductPriceInfo,
 	getTermAvailabilityNote,
+	getWpcomTieredPrice,
+	getWpcomTierPrices,
 	isFreeProduct,
 } from '../product-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
@@ -118,5 +120,51 @@ describe( 'getTermAvailabilityNote', () => {
 		expect(
 			getTermAvailabilityNote( product( { yearly_product_id: 5, yearly_price: 0 } ), 'monthly' )
 		).toBeUndefined();
+	} );
+} );
+
+describe( 'WordPress.com promotions', () => {
+	const wpcom = ( overrides: Partial< AgencyProduct > = {} ) =>
+		product( {
+			slug: 'wpcom-hosting-business',
+			family_slug: 'wpcom-hosting',
+			yearly_product_id: 3,
+			yearly_price: 300,
+			tier_yearly_prices: [
+				{ units: 2, price: 300, promotional_price: 225 },
+				{ units: 5, price: 150, promotional_price: 112.5 },
+			],
+			...overrides,
+		} );
+	const promotion = { price: 225, discount: 25, ends_at: '2999-12-04T00:00:00+00:00' };
+
+	test( 'prices every tier, including a single site, at its promotional price', () => {
+		expect( getWpcomTierPrices( wpcom( { yearly_promotion: promotion } ), 'yearly' ) ).toEqual( [
+			{ units: 1, pricePerUnit: 225, regularPricePerUnit: 300, discountPercentage: 25 },
+			{ units: 2, pricePerUnit: 225, regularPricePerUnit: 300, discountPercentage: 25 },
+			{ units: 5, pricePerUnit: 112.5, regularPricePerUnit: 150, discountPercentage: 63 },
+		] );
+	} );
+
+	test( 'strikes through the regular price and returns the promotion', () => {
+		expect(
+			getWpcomTieredPrice( wpcom( { yearly_promotion: promotion } ), 3, 'yearly', 3 )
+		).toEqual( {
+			basePricePerUnit: 300,
+			pricePerUnit: 112.5,
+			actualCost: 900,
+			discountedCost: 337.5,
+			discountPercentage: 63,
+			promotion,
+		} );
+	} );
+
+	test( 'ignores promotional tier prices without an active promotion', () => {
+		const ended = { ...promotion, ends_at: '2000-01-01T00:00:00+00:00' };
+		for ( const plan of [ wpcom(), wpcom( { yearly_promotion: ended } ) ] ) {
+			const pricing = getWpcomTieredPrice( plan, 5, 'yearly' );
+			expect( pricing.pricePerUnit ).toBe( 150 );
+			expect( pricing.promotion ).toBeUndefined();
+		}
 	} );
 } );

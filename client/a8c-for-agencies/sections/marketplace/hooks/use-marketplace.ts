@@ -13,6 +13,7 @@ import type { TermPricingType } from '../types';
 import type {
 	APIProductFamily,
 	APIProductFamilyProduct,
+	APIProductPromotion,
 	SelectedLicenseProp,
 } from 'calypso/a8c-for-agencies/types/products';
 import type { ProductListItem } from 'calypso/state/products-list/selectors/get-products-list';
@@ -33,45 +34,69 @@ export const calculateDiscountPercentage = (
 	return Math.round( ( ( originalPrice - discountedPrice ) / originalPrice ) * 100 );
 };
 
+export const getActivePromotion = (
+	product: APIProductFamilyProduct,
+	termPricing: TermPricingType,
+	now = Date.now()
+): APIProductPromotion | undefined => {
+	const promotion = termPricing === 'yearly' ? product.yearly_promotion : product.monthly_promotion;
+	if ( ! promotion || new Date( promotion.ends_at ).getTime() <= now ) {
+		return undefined;
+	}
+	return promotion;
+};
+
+/**
+ * The WordPress.com volume tiers for the term, with the single-site tier always first.
+ * While a promotion is active every tier, including a single site, sells at its promotional price.
+ */
+export const getWPCOMTierPrices = (
+	product: APIProductFamilyProduct,
+	termPricing: TermPricingType
+) => {
+	const basePrice =
+		termPricing === 'yearly' ? ( product.yearly_price ?? 0 ) : ( product.monthly_price ?? 0 );
+	const promotion = getActivePromotion( product, termPricing );
+	const tierPrices =
+		( termPricing === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices ) ?? [];
+	const toTierPrice = ( units: number, pricePerUnit: number ) => ( {
+		units,
+		pricePerUnit,
+		discountPercentage: calculateDiscountPercentage( basePrice, pricePerUnit ),
+	} );
+	const tiers = tierPrices.map( ( tier ) =>
+		toTierPrice( tier.units, promotion ? ( tier.promotional_price ?? tier.price ) : tier.price )
+	);
+	if ( tiers[ 0 ]?.units !== 1 ) {
+		tiers.unshift( toTierPrice( 1, promotion?.price ?? basePrice ) );
+	}
+	return tiers;
+};
+
 export const getWPCOMTieredPrice = (
 	product: APIProductFamilyProduct,
 	quantity: number,
 	termPricing: TermPricingType,
 	ownedPlans = 0
 ) => {
-	// Calculate actual cost (base product price * quantity)
 	const basePricePerUnit =
 		termPricing === 'yearly' ? ( product.yearly_price ?? 0 ) : ( product.monthly_price ?? 0 );
-	const actualCost = basePricePerUnit * quantity;
-	const tierPrices =
-		termPricing === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices;
 	const tierQuantity = quantity + ownedPlans;
 
-	// Find tier for exact quantity, or get the greatest unit that is less than or equal to tierQuantity
-	const tier =
-		tierPrices?.find( ( t ) => t.units === tierQuantity ) ||
-		tierPrices
-			?.filter( ( t ) => t.units <= tierQuantity )
-			.sort( ( a, b ) => b.units - a.units )[ 0 ];
+	// The greatest tier the total number of sites reaches.
+	const tier = getWPCOMTierPrices( product, termPricing )
+		.filter( ( t ) => t.units <= tierQuantity )
+		.sort( ( a, b ) => b.units - a.units )[ 0 ];
+	const pricePerUnit = tier?.pricePerUnit ?? basePricePerUnit;
 
-	// Get price per unit from tier if found, otherwise from product
-	let pricePerUnit: number;
-	if ( tier ) {
-		pricePerUnit = tier.price;
-	} else {
-		pricePerUnit = basePricePerUnit;
-	}
-
-	const discountedCost = pricePerUnit * quantity;
 	// Calculate discount percentage from per-unit prices for consistency
 	// This ensures the percentage matches the tier structure and is consistent across quantities
 	// and currencies, avoiding rounding errors from multiplication
-	const discountPercentage = calculateDiscountPercentage( basePricePerUnit, pricePerUnit );
-
 	return {
-		actualCost,
-		discountedCost,
-		discountPercentage,
+		actualCost: basePricePerUnit * quantity,
+		discountedCost: pricePerUnit * quantity,
+		discountPercentage: calculateDiscountPercentage( basePricePerUnit, pricePerUnit ),
+		promotion: getActivePromotion( product, termPricing ),
 	};
 };
 
