@@ -11,15 +11,32 @@ import type { AgencyClientSupports, AgencySupports } from '../../context';
 
 const mockConfig = vi.hoisted( () => {
 	const state = { flag: false };
-	const config = Object.assign( () => undefined, {
-		isEnabled: ( key: string ) => key === 'black-friday-2026' && state.flag,
-	} );
+	const config = Object.assign(
+		( key: string ) => ( key === 'wpcom_url' ? 'https://wordpress.com' : undefined ),
+		{
+			isEnabled: ( key: string ) => key === 'black-friday-2026' && state.flag,
+		}
+	);
 	return { state, config };
 } );
 
 vi.mock( '@automattic/calypso-config', () => ( {
 	default: mockConfig.config,
 	...mockConfig.config,
+} ) );
+
+const mockExplat = vi.hoisted( () => ( {
+	state: { isLoading: false, variation: null as string | null },
+} ) );
+
+vi.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: ( _name: string, options?: { isEligible?: boolean } ) =>
+		options?.isEligible === false
+			? [ false, null ]
+			: [
+					mockExplat.state.isLoading,
+					mockExplat.state.isLoading ? null : { variationName: mockExplat.state.variation },
+				],
 } ) );
 
 const insideSale = Date.UTC( 2026, 10, 28, 12 );
@@ -52,6 +69,7 @@ function renderPromo( {
 describe( '<BlackFridaySidebarPromo>', () => {
 	beforeEach( () => {
 		mockConfig.state.flag = false;
+		mockExplat.state = { isLoading: false, variation: null };
 		vi.useFakeTimers( { toFake: [ 'Date' ] } );
 	} );
 
@@ -102,4 +120,40 @@ describe( '<BlackFridaySidebarPromo>', () => {
 			expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 		}
 	);
+
+	test( 'shows the lifecycle offer to the treatment group', () => {
+		mockExplat.state.variation = 'treatment';
+		vi.setSystemTime( insideSale );
+		renderPromo();
+
+		const link = screen.getByRole( 'link', { name: /30% off annual plans/ } );
+		expect( link ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/plans?coupon=BF30WPCOM2026' )
+		);
+		expect(
+			screen.getByText( 'Upgrade today and pay 30% less for your first year.' )
+		).toBeVisible();
+		expect( screen.getByText( 'Get 30% off' ) ).toBeVisible();
+		expect( screen.queryByText( /25%/ ) ).not.toBeInTheDocument();
+	} );
+
+	test.each( [
+		[ 'the control group', { isLoading: false, variation: 'control' } ],
+		[ 'a loading assignment', { isLoading: true, variation: null } ],
+	] )( 'renders nothing for %s', ( _label, state ) => {
+		mockExplat.state = state;
+		vi.setSystemTime( insideSale );
+		renderPromo();
+
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders nothing for the treatment group outside the sale', () => {
+		mockExplat.state.variation = 'treatment';
+		vi.setSystemTime( afterSale );
+		renderPromo();
+
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+	} );
 } );

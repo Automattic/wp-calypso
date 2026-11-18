@@ -17,9 +17,24 @@ vi.mock( '@automattic/calypso-config', async ( importActual ) => {
 	};
 } );
 
+const mockExplat = vi.hoisted( () => ( {
+	state: { isLoading: false, variation: null as string | null },
+} ) );
+
+vi.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: ( _name: string, options?: { isEligible?: boolean } ) =>
+		options?.isEligible === false
+			? [ false, null ]
+			: [
+					mockExplat.state.isLoading,
+					mockExplat.state.isLoading ? null : { variationName: mockExplat.state.variation },
+				],
+} ) );
+
 describe( '<AddNewSite>', () => {
 	beforeEach( () => {
 		vi.mocked( config.isEnabled ).mockReturnValue( false );
+		mockExplat.state = { isLoading: false, variation: null };
 	} );
 
 	afterEach( () => {
@@ -50,12 +65,16 @@ describe( '<AddNewSite>', () => {
 		const { recordTracksEvent } = render( <AddNewSite context="sites-dashboard" /> );
 
 		const cta = await screen.findByRole( 'link', { name: 'Get 25% off' } );
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_bf2026_add_site_promo_view' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_bf2026_add_site_promo_view', {
+			discount_percent: 25,
+		} );
 
 		cta.addEventListener( 'click', ( event ) => event.preventDefault() );
 		await userEvent.click( cta );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_bf2026_add_site_promo_click' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_bf2026_add_site_promo_click', {
+			discount_percent: 25,
+		} );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_sites_new_site_action_click_item',
 			{ action: 'offer' }
@@ -83,5 +102,36 @@ describe( '<AddNewSite>', () => {
 
 		expect( await screen.findByText( '25% off annual and multi-year plans' ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Unlock offer' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the lifecycle offer with its coupon to the treatment group', async () => {
+		mockExplat.state.variation = 'treatment';
+		vi.useFakeTimers( { toFake: [ 'Date' ] } );
+		vi.setSystemTime( Date.UTC( 2026, 10, 28, 12 ) );
+
+		render( <AddNewSite context="sites-dashboard" /> );
+
+		expect( await screen.findByText( '30% off annual plans' ) ).toBeVisible();
+		expect(
+			document.querySelector( '.bf2026-artwork image[href*="tile-lilac-30"]' )
+		).toBeInTheDocument();
+		expect(
+			screen.getByText( 'Upgrade today and pay 30% less for your first year.' )
+		).toBeVisible();
+		const cta = screen.getByRole( 'link', { name: 'Get 30% off' } );
+		expect( cta ).toHaveAttribute( 'href', expect.stringContaining( '/setup/onboarding' ) );
+		expect( cta ).toHaveAttribute( 'href', expect.stringContaining( 'coupon=BF30WPCOM2026' ) );
+		expect( screen.queryByText( /25%/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the regular offer to the control group during the sale', async () => {
+		mockExplat.state.variation = 'control';
+		vi.useFakeTimers( { toFake: [ 'Date' ] } );
+		vi.setSystemTime( Date.UTC( 2026, 10, 28, 12 ) );
+
+		render( <AddNewSite context="sites-dashboard" /> );
+
+		expect( await screen.findByRole( 'link', { name: 'Unlock offer' } ) ).toBeVisible();
+		expect( document.querySelector( '.bf2026-artwork' ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -1,23 +1,26 @@
 import { __experimentalText as Text } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import {
-	BLACK_FRIDAY_2026_COUPON,
-	BLACK_FRIDAY_2026_DISCOUNT_PERCENT,
-	BLACK_FRIDAY_2026_MONTHLY_SAVINGS_PERCENT,
-} from 'calypso/lib/promotions/black-friday-2026';
 import { useAnalytics } from '../../app/analytics';
 import BlackFriday2026Artwork from '../../components/black-friday-2026-artwork';
 import OfferCard from '../../components/offer-card';
+import { getBlackFriday2026CardCopy } from '../../utils/black-friday-2026';
 import { wpcomLink } from '../../utils/link';
+import type { BlackFriday2026Offer } from 'calypso/lib/promotions/black-friday-2026';
 
-export default function BlackFridayOfferCard( { onClick }: { onClick?: () => void } ) {
+export default function BlackFridayOfferCard( {
+	offer,
+	onClick,
+}: {
+	offer: BlackFriday2026Offer;
+	onClick?: () => void;
+} ) {
 	const { recordTracksEvent } = useAnalytics();
-	const percent = BLACK_FRIDAY_2026_DISCOUNT_PERCENT;
+	const { title, description, ctaLabel } = getBlackFriday2026CardCopy( offer );
+	const eventProps = { discount_percent: offer.percent };
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_bf2026_add_site_promo_view' );
+		recordTracksEvent( 'calypso_bf2026_add_site_promo_view', eventProps );
 		// Record once per mount.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
@@ -26,32 +29,18 @@ export default function BlackFridayOfferCard( { onClick }: { onClick?: () => voi
 		<OfferCard
 			layout="stacked"
 			className="offer-card--bf2026"
-			image={ <BlackFriday2026Artwork /> }
+			image={ <BlackFriday2026Artwork percent={ offer.isLifecycle ? 30 : 25 } /> }
 			title={
 				<Text size={ 14 } weight={ 600 } lineHeight="20px">
-					{ sprintf(
-						/* translators: %(percent)d is the discount percentage, e.g. 25 */
-						__( '%(percent)d%% off annual and multi-year plans' ),
-						{ percent }
-					) }
+					{ title }
 				</Text>
 			}
-			description={ sprintf(
-				/* translators: %(savings)d is the largest saving compared with monthly billing, as a percentage, e.g. 66 */
-				__( 'That’s up to %(savings)d%% less than paying monthly. Sale ends December 1.' ),
-				{ savings: BLACK_FRIDAY_2026_MONTHLY_SAVINGS_PERCENT }
-			) }
-			ctaLabel={ sprintf(
-				/* translators: %(percent)d is the discount percentage, e.g. 25 */
-				__( 'Get %(percent)d%% off' ),
-				{ percent }
-			) }
-			href={ addQueryArgs( wpcomLink( '/setup/onboarding' ), {
-				coupon: BLACK_FRIDAY_2026_COUPON,
-			} ) }
+			description={ description }
+			ctaLabel={ ctaLabel }
+			href={ addQueryArgs( wpcomLink( '/setup/onboarding' ), { coupon: offer.coupon } ) }
 			onClick={ () => {
 				onClick?.();
-				recordTracksEvent( 'calypso_bf2026_add_site_promo_click' );
+				recordTracksEvent( 'calypso_bf2026_add_site_promo_click', eventProps );
 			} }
 		/>
 	);

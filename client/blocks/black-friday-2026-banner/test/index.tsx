@@ -6,6 +6,8 @@ import userEvent from '@testing-library/user-event';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	BLACK_FRIDAY_2026_END,
+	BLACK_FRIDAY_2026_LIFECYCLE_OFFER,
+	BLACK_FRIDAY_2026_PUBLIC_OFFER,
 	BLACK_FRIDAY_2026_START,
 } from 'calypso/lib/promotions/black-friday-2026';
 import BlackFriday2026Banner from '..';
@@ -37,21 +39,25 @@ describe( 'BlackFriday2026Banner', () => {
 	} );
 
 	it( 'renders during the sale and records a view', async () => {
-		render( <BlackFriday2026Banner /> );
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } /> );
 
 		expect( await screen.findByText( HEADLINE, { exact: false } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: /off/ } ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_bf2026_plans_banner_view' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_bf2026_plans_banner_view', {
+			discount_percent: 25,
+		} );
 	} );
 
 	it( 'does not render before or after the sale', () => {
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_START - 1 );
-		const { unmount } = render( <BlackFriday2026Banner /> );
+		const { unmount } = render(
+			<BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } />
+		);
 		expect( screen.queryByText( HEADLINE, { exact: false } ) ).not.toBeInTheDocument();
 		unmount();
 
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_END );
-		render( <BlackFriday2026Banner /> );
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } /> );
 		expect( screen.queryByText( HEADLINE, { exact: false } ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
@@ -60,7 +66,7 @@ describe( 'BlackFriday2026Banner', () => {
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_START - 1 );
 		mockIsEnabled.mockReturnValue( true );
 
-		render( <BlackFriday2026Banner /> );
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } /> );
 
 		expect( await screen.findByText( HEADLINE, { exact: false } ) ).toBeVisible();
 	} );
@@ -68,7 +74,7 @@ describe( 'BlackFriday2026Banner', () => {
 	it( 'shows the time left until the sale ends', async () => {
 		mockIsEnabled.mockReturnValue( true );
 		nowSpy.mockReturnValue( TEN_DAYS_LEFT );
-		render( <BlackFriday2026Banner /> );
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } /> );
 
 		expect( await screen.findByText( '10 days' ) ).toBeVisible();
 		expect( screen.getByText( '06:23:54' ) ).toBeVisible();
@@ -76,7 +82,7 @@ describe( 'BlackFriday2026Banner', () => {
 
 	it( 'uses the singular for one day', async () => {
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_END - ( DAY + 1000 ) );
-		render( <BlackFriday2026Banner /> );
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } /> );
 
 		expect( await screen.findByText( '1 day' ) ).toBeVisible();
 		expect( screen.getByText( '00:00:01' ) ).toBeVisible();
@@ -84,7 +90,7 @@ describe( 'BlackFriday2026Banner', () => {
 
 	it( 'shows only the clock on the last day', async () => {
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_END - 3661000 );
-		render( <BlackFriday2026Banner /> );
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } /> );
 
 		expect( await screen.findByText( '01:01:01' ) ).toBeVisible();
 		expect( screen.queryByText( /day/ ) ).not.toBeInTheDocument();
@@ -93,7 +99,7 @@ describe( 'BlackFriday2026Banner', () => {
 	it( 'hides when the sale ends while the page is open', () => {
 		jest.useFakeTimers( { doNotFake: [ 'Date' ] } );
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_END - 5000 );
-		render( <BlackFriday2026Banner /> );
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } /> );
 		expect( screen.getByText( HEADLINE, { exact: false } ) ).toBeVisible();
 
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_END );
@@ -108,7 +114,9 @@ describe( 'BlackFriday2026Banner', () => {
 		jest.useFakeTimers( { doNotFake: [ 'Date' ] } );
 		mockIsEnabled.mockReturnValue( true );
 		nowSpy.mockReturnValue( TEN_DAYS_LEFT );
-		const { unmount } = render( <BlackFriday2026Banner /> );
+		const { unmount } = render(
+			<BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } />
+		);
 		expect( screen.getByText( '06:23:54' ) ).toBeVisible();
 
 		nowSpy.mockReturnValue( TEN_DAYS_LEFT + 1000 );
@@ -125,13 +133,15 @@ describe( 'BlackFriday2026Banner', () => {
 	it( 'never goes negative', async () => {
 		mockIsEnabled.mockReturnValue( true );
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_END + DAY );
-		render( <BlackFriday2026Banner /> );
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } /> );
 
 		expect( await screen.findByText( '00:00:00' ) ).toBeVisible();
 	} );
 
 	it( 'keeps the decorative tiles out of the accessibility tree', async () => {
-		const { container } = render( <BlackFriday2026Banner /> );
+		const { container } = render(
+			<BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } />
+		);
 		await screen.findByText( HEADLINE, { exact: false } );
 
 		const tiles = container.querySelector( '.black-friday-2026-banner__tiles' );
@@ -141,14 +151,30 @@ describe( 'BlackFriday2026Banner', () => {
 	} );
 
 	it( 'hides when dismissed and shows again on the next visit', async () => {
-		const { unmount } = render( <BlackFriday2026Banner /> );
+		const { unmount } = render(
+			<BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } />
+		);
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Dismiss' } ) );
 
 		expect( screen.queryByText( HEADLINE, { exact: false } ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_bf2026_plans_banner_dismiss' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_bf2026_plans_banner_dismiss', {
+			discount_percent: 25,
+		} );
 		unmount();
 
-		render( <BlackFriday2026Banner /> );
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_PUBLIC_OFFER } /> );
 		expect( await screen.findByText( HEADLINE, { exact: false } ) ).toBeVisible();
+	} );
+
+	it( 'shows the lifecycle offer', async () => {
+		render( <BlackFriday2026Banner offer={ BLACK_FRIDAY_2026_LIFECYCLE_OFFER } /> );
+
+		expect(
+			await screen.findByText( 'Until December 1: 30% off annual plans.', { exact: false } )
+		).toBeVisible();
+		expect( screen.queryByText( HEADLINE, { exact: false } ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_bf2026_plans_banner_view', {
+			discount_percent: 30,
+		} );
 	} );
 } );

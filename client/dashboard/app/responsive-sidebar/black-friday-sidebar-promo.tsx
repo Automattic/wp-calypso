@@ -1,12 +1,10 @@
-import { __, sprintf } from '@wordpress/i18n';
-import {
-	BLACK_FRIDAY_2026_DISCOUNT_PERCENT,
-	BLACK_FRIDAY_2026_MONTHLY_SAVINGS_PERCENT,
-	BLACK_FRIDAY_2026_LANDING_URL,
-	isBlackFriday2026Active,
-} from 'calypso/lib/promotions/black-friday-2026';
+import { useBlackFriday2026Offer } from 'calypso/lib/promotions/use-black-friday-2026-offer';
 import SidebarPromoCard from '../../agency/components/sidebar-promo/sidebar-promo-card';
 import BlackFriday2026Artwork from '../../components/black-friday-2026-artwork';
+import {
+	getBlackFriday2026CardCopy,
+	getBlackFriday2026SidebarHref,
+} from '../../utils/black-friday-2026';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 
@@ -16,32 +14,34 @@ import { useAppContext } from '../context';
  */
 export function BlackFridaySidebarPromo() {
 	const { supports } = useAppContext();
-	const { recordTracksEvent } = useAnalytics();
+	const isAgency = !! ( supports.agency || supports.agencyClient );
+	return isAgency ? null : <BlackFridaySidebarPromoCard />;
+}
 
-	if ( supports.agency || supports.agencyClient || ! isBlackFriday2026Active() ) {
+function BlackFridaySidebarPromoCard() {
+	const { recordTracksEvent } = useAnalytics();
+	const offer = useBlackFriday2026Offer();
+
+	if ( ! offer ) {
 		return null;
 	}
 
-	const percent = BLACK_FRIDAY_2026_DISCOUNT_PERCENT;
-	/* translators: %(percent)d is the discount percentage, e.g. 25 */
-	const title = sprintf( __( '%(percent)d%% off annual and multi-year plans' ), { percent } );
-	const description = sprintf(
-		/* translators: %(savings)d is the largest saving compared with monthly billing, as a percentage, e.g. 66 */
-		__( 'That’s up to %(savings)d%% less than paying monthly. Sale ends December 1.' ),
-		{ savings: BLACK_FRIDAY_2026_MONTHLY_SAVINGS_PERCENT }
-	);
-	/* translators: %(percent)d is the discount percentage, e.g. 25 */
-	const ctaLabel = sprintf( __( 'Get %(percent)d%% off' ), { percent } );
+	const { title, description, ctaLabel } = getBlackFriday2026CardCopy( offer );
+	const eventProps = { discount_percent: offer.percent };
 
 	return (
 		<SidebarPromoCard
 			id="bf2026-dashboard-sidebar-promo"
-			media={ <BlackFriday2026Artwork /> }
+			media={ <BlackFriday2026Artwork percent={ offer.isLifecycle ? 30 : 25 } /> }
 			title={ title }
 			description={ description }
-			cta={ { label: ctaLabel, href: BLACK_FRIDAY_2026_LANDING_URL } }
-			onView={ () => recordTracksEvent( 'calypso_bf2026_dashboard_sidebar_promo_view' ) }
-			onClick={ () => recordTracksEvent( 'calypso_bf2026_dashboard_sidebar_promo_click' ) }
+			cta={ { label: ctaLabel, href: getBlackFriday2026SidebarHref( offer ) } }
+			onView={ () =>
+				recordTracksEvent( 'calypso_bf2026_dashboard_sidebar_promo_view', eventProps )
+			}
+			onClick={ () =>
+				recordTracksEvent( 'calypso_bf2026_dashboard_sidebar_promo_click', eventProps )
+			}
 		/>
 	);
 }
