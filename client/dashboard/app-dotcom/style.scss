@@ -27,12 +27,14 @@
 	--dashboard-danger__color-hover: var( --wpds-color-foreground-interactive-error-active );
 	--dashboard-danger__color-active: var( --wpds-color-foreground-interactive-error-active );
 	--dashboard__foreground-color-error: var( --wpds-color-foreground-content-error-weak );
-	--dashboard-inline-code__background-color: #{$gray-100};
+	--dashboard-inline-code__background-color: var( --wpds-color-background-surface-neutral-weak );
 	--dashboard__text-color: var( --wpds-color-foreground-content-neutral );
-	--dashboard__text-muted-color: #757575;
+	--dashboard__text-muted-color: var( --wpds-color-foreground-content-neutral-weak );
 	--dashboard-subtle__color: var( --dashboard__text-muted-color );
 	--dashboard-surface__background-color: var( --wpds-color-background-surface-neutral-strong );
 	--dashboard-surface__border-color: var( --wpds-color-stroke-surface-neutral );
+	--dashboard-field__border-color: var( --wpds-color-stroke-interactive-neutral );
+	--dashboard-item-selected__border-color: var( --wpds-color-stroke-interactive-brand );
 
 	// Header bar
 	--dashboard-header__background-color: color-mix( in srgb, var( --wpds-color-background-surface-neutral ) 90%, transparent );

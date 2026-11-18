@@ -70,28 +70,7 @@ This mixin generates alias variables for a color palette. For example, the
 }
 
 @mixin color-scheme-dark-theme-tokens {
-	// Layout
-	--dashboard-inline-code__background-color: #3a3a3a;
-
-	// Shared surfaces and controls
-	--dashboard-field__border-color: #949494;
-	--dashboard__text-muted-color: #bdbdbd;
-	--dashboard-subtle__color: #bdbdbd;
-	--dashboard-item-selected__background-color: rgba( var( --wp-admin-theme-color--rgb ), 0.12 );
-	--dashboard-item-selected-hover__background-color: rgba(
-		var( --wp-admin-theme-color--rgb ),
-		0.24
-	);
-	--dashboard-item-selected__border-color: var( --wp-admin-theme-color );
-	--dashboard-warning__background-color: rgba( 212, 118, 8, 0.18 );
-	--dashboard-warning__border-color: var( --dashboard__background-color-warning );
-	--dashboard-warning__action-color: var( --dashboard__text-color );
-	--dashboard-warning__action-color-hover: #f0f0f0;
-	--dashboard-warning__action-color-active: #fff;
-
-	// Secondary menu
-	--dashboard-secondary-menu-item__color: #e0e0e0;
-
+	// Compatibility values for shared Calypso components rendered in the Dashboard; drop once they read WPDS tokens.
 	// Shared border tokens
 	--color-border: var( --dashboard-surface__border-color );
 	--color-border-subtle: var( --dashboard-surface__border-color );
@@ -219,6 +198,22 @@ This mixin generates alias variables for a color palette. For example, the
 }
 
 @mixin color-scheme-dark-theme-wpds-bridged-tokens {
+	--dashboard-inline-code__background-color: #3a3a3a;
+	--dashboard-field__border-color: #949494;
+	--dashboard__text-muted-color: #bdbdbd;
+	--dashboard-subtle__color: #bdbdbd;
+	--dashboard-item-selected__background-color: rgba( var( --wp-admin-theme-color--rgb ), 0.12 );
+	--dashboard-item-selected-hover__background-color: rgba(
+		var( --wp-admin-theme-color--rgb ),
+		0.24
+	);
+	--dashboard-item-selected__border-color: var( --wp-admin-theme-color );
+	--dashboard-warning__background-color: rgba( 212, 118, 8, 0.18 );
+	--dashboard-warning__border-color: var( --dashboard__background-color-warning );
+	--dashboard-warning__action-color: var( --dashboard__text-color );
+	--dashboard-warning__action-color-hover: #f0f0f0;
+	--dashboard-warning__action-color-active: #fff;
+	--dashboard-secondary-menu-item__color: #e0e0e0;
 	--dashboard__background-color: #1e1e1e;
 	--dashboard__text-color: #e0e0e0;
 	--dashboard-header__background-color: rgba( 30, 30, 30, 0.9 );
