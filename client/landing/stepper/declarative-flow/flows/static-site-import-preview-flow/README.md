@@ -33,7 +33,7 @@ The progress step tracks the move with the dashboard’s own progress steps, sit
 
 The preview stays Coming Soon like every unpaid preview: WordPress.com keeps it hidden until a plan
 is bought. When the move finishes, the ready step shows the preview at its `?share=` link, which
-gets past Coming Soon, under **Your site is on WordPress.com**. **Look around** moves the welcome to a
+gets past Coming Soon, under **Your site is on WordPress.com**. **Look around**, or closing the welcome, moves it to a
 card in the corner, which folds to a pill, and lets the customer click around the preview; and the card’s **Choose a plan** goes straight to checkout with the Personal plan. Paying, leaving or
 **Pay later** in checkout all come back to the preview’s Overview.
 

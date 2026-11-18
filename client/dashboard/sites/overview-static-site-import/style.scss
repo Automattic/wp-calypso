@@ -101,7 +101,8 @@
 	overflow: hidden;
 }
 
-// The pages copied while watching, newest on top, over the stand-in page.
+// The pages capture found, ticked once copied, over the stand-in page. Servers that don't list
+// them get the pages copied while watching, newest on top.
 .static-site-import-snapshot__pages {
 	position: absolute;
 	inset: 0;
@@ -110,12 +111,13 @@
 	gap: 8px;
 	margin: 0;
 	padding: 8%;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 	list-style: none;
 	background: var( --color-surface );
-	-webkit-mask-image: linear-gradient( to bottom, var( --color-text ) 55%, transparent );
-	mask-image: linear-gradient( to bottom, var( --color-text ) 55%, transparent );
 
 	li {
+		flex: none;
 		display: flex;
 		align-items: center;
 		gap: 8px;
@@ -131,6 +133,14 @@
 			color: var( --dashboard__foreground-color-success );
 		}
 
+		&:not( .is-captured ) {
+			color: var( --color-text-subtle );
+
+			svg {
+				visibility: hidden;
+			}
+		}
+
 		span {
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -139,7 +149,7 @@
 }
 
 @media ( prefers-reduced-motion: no-preference ) {
-	.static-site-import-snapshot__pages li:first-child {
+	.static-site-import-snapshot__pages:not( .is-listed ) li:first-child {
 		animation: static-site-import__page-in 0.5s cubic-bezier( 0.2, 0.7, 0.2, 1 );
 	}
 }
