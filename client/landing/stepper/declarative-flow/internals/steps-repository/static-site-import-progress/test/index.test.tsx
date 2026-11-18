@@ -41,18 +41,17 @@ describe( 'StaticSiteImportProgressStep', () => {
 		jest.useRealTimers();
 	} );
 
-	it( 'shows the dashboard’s progress while the site moves', () => {
+	it( 'shows the move’s steps beside a window onto the site', () => {
 		const submit = render( { status: 'moving' } );
 
-		expect(
-			screen.getByRole( 'heading', { name: 'We’re bringing your site to WordPress.com' } )
-		).toBeVisible();
-		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Copying your site' } ) ).toBeVisible();
 		expect(
 			screen.getByText(
-				'We’re rebuilding source.example.com here. Your current site stays live and unchanged.'
+				'We’re copying source.example.com into a private preview on WordPress.com. Your original site stays as it is.'
 			)
 		).toBeVisible();
+		expect( screen.getByText( 'Copying from source.example.com' ) ).toBeVisible();
+		expect( screen.getByText( 'Getting your preview ready' ) ).toBeVisible();
 		expect( useStaticSiteImport ).toHaveBeenCalledWith( 456, 'abc123', { approve: false } );
 		expect( submit ).not.toHaveBeenCalled();
 	} );
