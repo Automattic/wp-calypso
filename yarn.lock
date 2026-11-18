@@ -300,6 +300,7 @@ __metadata:
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^7.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/plugins": "npm:^8.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
     "@wordpress/readable-js-assets-webpack-plugin": "npm:^4.1.0"
     copy-webpack-plugin: "npm:^14.0.0"
     postcss-prefix-selector: "npm:^1.16.1"

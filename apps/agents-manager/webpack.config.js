@@ -69,6 +69,13 @@ function getIndividualConfig( options = {} ) {
 						filename: 'images/[name].[contenthash:8][ext]',
 					},
 				},
+				{
+					// @wordpress/ui and @wordpress/theme (bundled, via @automattic/charts) opt in to
+					// private APIs under names WordPress before 7.0 rejects with a throw. They only
+					// unlock each other, so they share a bundled private-apis; the rest use core's.
+					test: /node_modules\/@wordpress\/(ui|theme)\/build-module\/lock-unlock\.mjs$/,
+					use: path.join( __dirname, 'bundle-private-apis-loader.js' ),
+				},
 			],
 		},
 		resolve: {
