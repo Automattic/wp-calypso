@@ -20,7 +20,15 @@
 		// The panel is pinned to the window, so the steps keep to the left half.
 		width: calc( 50% - 24px );
 		margin-inline-end: auto;
-		padding-block-start: 96px;
+		// Centered in the window, like the panel, by leaving the same room below as the top bar takes above.
+		min-height: calc(
+			100vh - 2 *
+				(
+					var( --step-container-v2-top-bar-height, 0px ) +
+						var( --step-container-v2-content-block-padding, 0px )
+				)
+		);
+		justify-content: center;
 	}
 }
 
