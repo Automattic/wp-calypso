@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
+import { VisuallyHidden } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Suspense, lazy } from 'react';
@@ -72,7 +73,12 @@ export default function Notifications() {
 						return (
 							<Card className="dashboard-notifications-inbox">
 								{ isSmallViewport ? (
-									detailPane || listPane
+									<>
+										{ detailPane && (
+											<VisuallyHidden as="h1">{ __( 'Notifications' ) }</VisuallyHidden>
+										) }
+										{ detailPane || listPane }
+									</>
 								) : (
 									<div className="dashboard-notifications-inbox__panes">
 										{ listPane }

@@ -244,6 +244,19 @@ describe( '<Notifications>', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	test( 'keeps a page heading on a narrow screen while a notification covers the list', async () => {
+		setNarrowScreen( true );
+		await renderNotifications( '/notifications/42' );
+
+		await screen.findByRole( 'button', { name: 'Close note 42' } );
+		expect(
+			screen.getByRole( 'heading', { name: 'Notifications', level: 1 } )
+		).toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Open a note from all' } )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'goes back to the list in one step after moving between notes', async () => {
 		const user = userEvent.setup();
 		const router = await renderNotifications( '/notifications' );
