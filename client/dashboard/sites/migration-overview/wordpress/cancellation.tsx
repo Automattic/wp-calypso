@@ -78,6 +78,13 @@ export function MigrationCancellation( { site }: { site: Site } ) {
 										) }
 									</Text>
 								) }
+								{ data?.status === 'unlock_failed' && (
+									<Text>
+										{ __(
+											'We couldn’t unlock your site dashboard. Contact support for help restoring access.'
+										) }
+									</Text>
+								) }
 								{ data?.status === 'ready' && (
 									<Text>
 										{ __(
@@ -91,7 +98,9 @@ export function MigrationCancellation( { site }: { site: Site } ) {
 							</>
 						) }
 						<ButtonStack justify="flex-end">
-							{ ( requestFailed || data?.status === 'support' ) && (
+							{ ( requestFailed ||
+								data?.status === 'support' ||
+								data?.status === 'unlock_failed' ) && (
 								<Button
 									variant="secondary"
 									onClick={ () => {

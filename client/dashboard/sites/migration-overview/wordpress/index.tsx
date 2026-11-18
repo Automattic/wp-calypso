@@ -23,7 +23,15 @@ import type { Site } from '@automattic/api-core';
 // How long a completed migration can leave its site locked before we stop asking the user to wait.
 const UNLOCK_GRACE_PERIOD = 30000;
 
-const KNOWN_STATUSES = [ 'not_started', 'running', 'paused', 'failed', 'completed', 'cancelled' ];
+const KNOWN_STATUSES = [
+	'not_started',
+	'running',
+	'paused',
+	'failed',
+	'completed',
+	'cancelled',
+	'unlock_failed',
+];
 
 export function WordPressMigration( { site }: { site: Site } ) {
 	const navigate = useNavigate();
@@ -218,6 +226,14 @@ export function WordPressMigration( { site }: { site: Site } ) {
 						} );
 						setIsBackToSetup( true );
 					} }
+				/>
+			) }
+			{ migration?.status === 'unlock_failed' && (
+				<MigrationCard
+					title={ __( 'We couldn’t unlock your site dashboard' ) }
+					description={ __( 'Contact support for help restoring access to your dashboard.' ) }
+					decoration={ <StatusIcon status="error" /> }
+					actions={ contactUs }
 				/>
 			) }
 			{ isFinished && (

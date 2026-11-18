@@ -46,6 +46,16 @@ test( 'offers support for a possibly modified site', async () => {
 	expect( modal.queryByRole( 'button', { name: 'Cancel migration' } ) ).not.toBeInTheDocument();
 } );
 
+test( 'offers support when cancellation cannot unlock the dashboard', async () => {
+	const modal = await openConfirmation( 'ready' );
+	mockApi().post( cancelPath ).reply( 200, { status: 'unlock_failed' } );
+	await userEvent.click( await modal.findByRole( 'button', { name: 'Cancel migration' } ) );
+	expect( await modal.findByText( /We couldn’t unlock your site dashboard/ ) ).toBeVisible();
+	expect( modal.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
+	expect( modal.queryByRole( 'button', { name: 'Cancel migration' } ) ).not.toBeInTheDocument();
+	expect( modal.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
+} );
+
 test( 'keeps the site locked when work resumes between the check and confirmation', async () => {
 	const modal = await openConfirmation( 'ready' );
 	mockApi().post( cancelPath ).reply( 200, { status: 'wait' } );

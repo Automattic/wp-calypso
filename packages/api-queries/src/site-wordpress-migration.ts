@@ -104,6 +104,8 @@ export const siteWordPressMigrationCancelMutation = ( siteId: number ) =>
 			if ( cancellation.status === 'cancelled' ) {
 				invalidateMigration( siteId );
 				queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
+			} else if ( cancellation.status === 'unlock_failed' ) {
+				queryClient.invalidateQueries( siteWordPressMigrationStatusQuery( siteId ) );
 			}
 		},
 		onError: () => {

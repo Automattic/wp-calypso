@@ -11,7 +11,8 @@ export type WordPressMigrationFinding = {
 };
 
 export type WordPressMigrationStatus = {
-	status: 'not_started' | 'running' | 'paused' | 'failed' | 'completed' | 'cancelled';
+	status:
+		'not_started' | 'running' | 'paused' | 'failed' | 'completed' | 'cancelled' | 'unlock_failed';
 	phase: 'prepare-source' | 'prepare-destination' | 'preflight' | 'migration' | 'cleanup' | null;
 	findings: WordPressMigrationFinding[];
 	progress: { message: string } | null;
@@ -54,5 +55,5 @@ export type WordPressMigrationRunParams = {
 };
 
 export type WordPressMigrationCancellation = {
-	status: 'ready' | 'wait' | 'support' | 'cancelled';
+	status: 'ready' | 'wait' | 'support' | 'cancelled' | 'unlock_failed';
 };
