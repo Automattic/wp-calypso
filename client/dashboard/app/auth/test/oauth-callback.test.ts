@@ -58,7 +58,7 @@ describe( 'handleOAuthCallback', () => {
 		expect( store.get( 'wpcom_token' ) ).toBe( 'token' );
 		expect( store.get( 'wpcom_token_expires_in' ) ).toBe( '3600' );
 		expect( window.sessionStorage.getItem( 'wpcom_oauth_state' ) ).toBeNull();
-		expect( replace ).toHaveBeenCalledWith( '/overview' );
+		expect( replace ).toHaveBeenCalledWith( 'https://my.wordpress.com/overview' );
 	} );
 
 	test( 'keeps a token obtained in a support session in the tab', () => {
@@ -87,5 +87,13 @@ describe( 'handleOAuthCallback', () => {
 
 		expect( handleOAuthCallback() ).toBe( true );
 		expect( replace ).toHaveBeenCalledWith( '/' );
+	} );
+
+	test( 'keeps a next page whose path starts with two slashes on this site', () => {
+		window.sessionStorage.setItem( 'wpcom_oauth_state', 'abc' );
+		visit( { search: '?next=%2F.%2F%2Fevil.example' } );
+
+		expect( handleOAuthCallback() ).toBe( true );
+		expect( replace ).toHaveBeenCalledWith( 'https://my.wordpress.com//evil.example' );
 	} );
 } );

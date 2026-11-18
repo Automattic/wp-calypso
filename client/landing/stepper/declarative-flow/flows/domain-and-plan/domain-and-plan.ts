@@ -7,6 +7,7 @@ import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
+import { getUrlOnOrigins } from 'calypso/dashboard/utils/url';
 import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import wpcom from 'calypso/lib/wp';
 import { domainMappingSetup } from 'calypso/my-sites/domains/paths';
@@ -22,24 +23,6 @@ import type { Flow } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.PLANS ];
-
-/**
- * The `domainConnectionSetupUrl` template arrives via the query string and ends up in
- * `window.location.replace()`, so resolve it the way the browser will and accept only
- * this origin and the dashboard's. Substring checks are bypassable
- * (`https://my.wordpress.com.evil.example`, `/\evil.example`), hence parsed origins.
- */
-function isSafeDomainConnectionSetupUrl( value: string ) {
-	try {
-		const resolvedOrigin = new URL( value, window.location.origin ).origin;
-
-		return (
-			resolvedOrigin === window.location.origin || dashboardOrigins().includes( resolvedOrigin )
-		);
-	} catch {
-		return false;
-	}
-}
 
 const domainUpsell: Flow = {
 	name: DOMAIN_AND_PLAN_FLOW,
@@ -61,12 +44,7 @@ const domainUpsell: Flow = {
 			( !! site?.plan && ! site.plan.is_free ) ||
 			( !! site && hasPlanFeature( site, DotcomFeatures.DOMAIN_MAPPING ) );
 
-		const domainConnectionSetupUrlParam = useQuery().get( 'domainConnectionSetupUrl' );
-		const domainConnectionSetupUrl =
-			domainConnectionSetupUrlParam &&
-			isSafeDomainConnectionSetupUrl( domainConnectionSetupUrlParam )
-				? domainConnectionSetupUrlParam
-				: null;
+		const domainConnectionSetupUrlTemplate = useQuery().get( 'domainConnectionSetupUrl' );
 		const { getDomainCartItems, getPlanCartItem } = useSelect(
 			( select ) => ( {
 				getDomainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems,
@@ -84,10 +62,20 @@ const domainUpsell: Flow = {
 
 		const submittedDomains = useRef( false );
 
+		/**
+		 * The template arrives via the query string and ends up in `window.location.replace()`,
+		 * so accept only URLs on this origin or the dashboard's. Check the URL the domain
+		 * completes, not the template: a template of just `%s` passes any origin check.
+		 */
 		function getDomainConnectionSetupUrl( domain: string ) {
-			return domainConnectionSetupUrl
-				? domainConnectionSetupUrl.replace( '%s', domain )
-				: domainMappingSetup( siteSlug, domain, '', false, true );
+			const url =
+				domainConnectionSetupUrlTemplate &&
+				getUrlOnOrigins(
+					domainConnectionSetupUrlTemplate.replace( '%s', domain ),
+					[ window.location.origin, ...dashboardOrigins() ],
+					window.location.origin
+				);
+			return url || domainMappingSetup( siteSlug, domain, '', false, true );
 		}
 
 		function getPostCheckoutUrl( domainCartItems: MinimalRequestCartProduct[] ) {

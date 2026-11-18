@@ -35,11 +35,10 @@ export function handleOAuthCallback(): boolean {
 	// Validate that next is a safe same-origin relative path to prevent DOM XSS
 	// and open redirect via javascript: URIs or absolute URLs to external domains.
 	// The prefix check on the resolved URL is what code scanners recognize as pinning the host.
+	// Keep the whole URL: slicing the origin off would turn a path like `//host` into another host.
 	const { origin, href } = window.location;
 	const resolved = isRelativeUrl( next ) ? new URL( next, href ).href : '';
-	window.location.replace(
-		resolved.startsWith( `${ origin }/` ) ? resolved.slice( origin.length ) : '/'
-	);
+	window.location.replace( resolved.startsWith( `${ origin }/` ) ? resolved : '/' );
 
 	return true;
 }

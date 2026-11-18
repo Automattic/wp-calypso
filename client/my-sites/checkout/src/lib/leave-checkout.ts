@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	isTailoredSignupFlow,
 	SITE_MIGRATION_FLOW,
@@ -6,6 +7,7 @@ import {
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import debugFactory from 'debug';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
+import { getUrlOnOrigins } from 'calypso/dashboard/utils/url';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import {
@@ -137,13 +139,12 @@ export const leaveCheckout = ( {
 				window.location.href = window.location.origin + pathname + search + hash;
 				return;
 			}
-			const dashboardUrl = getDashboardUrl( cancelPath );
-			if ( dashboardUrl ) {
-				window.location.href = dashboardUrl;
-				return;
-			}
-			if ( isJetpackCloudUrl( cancelPath ) ) {
-				window.location.href = cancelPath;
+			const allowedUrl = getUrlOnOrigins( cancelPath, [
+				...dashboardOrigins(),
+				...jetpackCloudOrigins(),
+			] );
+			if ( allowedUrl ) {
+				window.location.href = allowedUrl;
 				return;
 			}
 			// If cancel_to is invalid (e.g., external URL), fall through to default close URL.
@@ -157,40 +158,17 @@ export const leaveCheckout = ( {
 	navigate( closeUrl );
 };
 
-/**
- * The URL, normalized, when it's on a dashboard origin. A prefix check on the
- * normalized URL is what code scanners recognize as pinning the host.
- */
-function getDashboardUrl( url: string ): string | undefined {
-	let href;
-	try {
-		href = new URL( url ).href;
-	} catch {
-		return undefined;
-	}
-	for ( const allowed of dashboardOrigins() ) {
-		if ( href.startsWith( `${ new URL( allowed ).origin }/` ) ) {
-			return href;
-		}
-	}
-	return undefined;
-}
-
 const JETPACK_CLOUD_HOSTNAMES = [ 'cloud.jetpack.com', 'jetpack.cloud.localhost' ];
 
 /**
  * Jetpack Cloud sends its purchases pages here for renewals and upgrades, and
- * `cancel_to` points back at them.
+ * `cancel_to` points back at them. Local hosts run on the dev server's port.
  */
-function isJetpackCloudUrl( url: string ) {
-	try {
-		const { protocol, hostname } = new URL( url );
-		return (
-			[ 'https:', 'http:' ].includes( protocol ) && JETPACK_CLOUD_HOSTNAMES.includes( hostname )
-		);
-	} catch {
-		return false;
-	}
+function jetpackCloudOrigins() {
+	const port = config( 'port' ) ?? 3000;
+	return JETPACK_CLOUD_HOSTNAMES.map( ( hostname ) =>
+		hostname.endsWith( '.localhost' ) ? `http://${ hostname }:${ port }` : `https://${ hostname }`
+	);
 }
 
 export function isRelativeUrl( url: string ) {
