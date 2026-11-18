@@ -68,3 +68,12 @@ a.dataviews-url-field {
 .dataviews-view-table tbody .dataviews-item-actions .components-button.is-compact {
 	height: var( --wpds-dimension-size-sm, 24px );
 }
+
+// `@wordpress/dataviews` hardcodes these light colors; remove once it uses WPDS tokens.
+.dataviews__view-actions--infinite-scroll {
+	background-color: var( --wpds-color-background-surface-neutral-strong );
+}
+
+.dataviews-filters__search-widget-filter-combobox__wrapper .dataviews-filters__search-widget-filter-combobox__input::placeholder {
+	color: var( --wpds-color-foreground-content-neutral-weak );
+}
