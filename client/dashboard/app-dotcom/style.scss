@@ -16,6 +16,7 @@
 	--wp-admin-theme-color-darker-20--rgb: 24, 58, 214;
 	--wp-admin-border-width-focus: 2px;
 
+	// Aliases of WPDS tokens kept for existing consumers; use `--wpds-*` in new code.
 	// Layout
 	--dashboard__background-color: var( --wpds-color-background-surface-neutral );
 	--dashboard__background-color-success: #3ca758;

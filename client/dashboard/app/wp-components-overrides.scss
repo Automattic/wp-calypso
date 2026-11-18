@@ -9,6 +9,8 @@
 	color: inherit;
 }
 
+// `@wordpress/components` pins destructive buttons to a hardcoded red and disabled primary
+// buttons to a hardcoded label color; drop these blocks once Button uses WPDS tokens.
 .components-button.is-destructive {
 	--wp-components-color-accent: var(--wpds-color-foreground-interactive-error);
 	--wp-components-color-accent-darker-10: var(--wpds-color-foreground-interactive-error-active);
@@ -40,6 +42,7 @@
 	}
 }
 
+// `@wordpress/components` hardcodes the menu group separator; drop once it uses WPDS tokens.
 .components-dropdown__content .components-menu-group + .components-menu-group {
 	border-top-color: var(--wpds-color-stroke-surface-neutral);
 }
