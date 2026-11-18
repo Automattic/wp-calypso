@@ -38,11 +38,13 @@ export interface A4AFeedbackEntry {
 }
 
 export interface UserPreferences {
+	'account-email-recovery-snoozed-until'?: number;
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
 	'hosting-dashboard-dark-mode-announcement-dismissed'?: string; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-dataviews-view-${ string }` ]: View | undefined;
+	[ key: `hosting-dashboard-dataviews-layout-chosen-${ string }` ]: boolean | undefined; // Whether the user picked a layout, kept even when it matches the default
 	[ key: `hosting-dashboard-visit-count-${ string }` ]: VisitCounter | undefined;
 	[ key: `hosting-dashboard-overview-storage-notice-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
@@ -72,8 +74,6 @@ export interface UserPreferences {
 	'a4a-marketplace-term-pricing'?: 'monthly' | 'yearly';
 	/** Shared with the classic A4A dashboard: a milestone answered there is not asked again here. */
 	'a4a-feedback'?: Record< string, A4AFeedbackEntry >;
-	'notifications-layout-style'?: 'detailed' | 'simplified';
-	'notifications-view-settings-seen'?: boolean;
 	'notifications-subscriber-alerts-enabled'?: boolean;
 	/** Timestamp of the Pressable usage-limit notification the user dismissed. */
 	'pressable-limit-notification-dismissed'?: number;

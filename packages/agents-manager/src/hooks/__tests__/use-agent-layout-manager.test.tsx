@@ -2,20 +2,21 @@
  * @jest-environment jsdom
  */
 import { renderHook, act, render as rtlRender } from '@testing-library/react';
+import { type MockInstance, vi } from 'vitest';
 import useAgentLayoutManager from '../use-agent-layout-manager/index';
 import { useResponsiveUndock } from '../use-agent-layout-manager/responsive-undock-context';
 
 // Stub out viewport/responsive deps so `canDock` depends only on the hook's
 // own logic (viewport defaults to desktop).
 let mockIsDesktop = true;
-jest.mock( '@wordpress/compose', () => ( {
+vi.mock( '@wordpress/compose', () => ( {
 	useMediaQuery: () => mockIsDesktop,
 } ) );
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: () => null,
 } ) );
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
 	createPortal: ( children: React.ReactNode ) => children,
 } ) );
 
@@ -30,7 +31,7 @@ type Options = NonNullable< Parameters< typeof useAgentLayoutManager >[ 0 ] >;
 
 let container: HTMLElement;
 // The package stylesheet is not loaded in jsdom, so the hook reports it missing.
-let consoleError: jest.SpyInstance;
+let consoleError: MockInstance;
 
 // Render the hook against the shared `container`. Defaults to a docked-open
 // sidebar (the common case); pass overrides here or to the returned `rerender`.
@@ -63,7 +64,7 @@ beforeEach( () => {
 	mockIsDesktop = true;
 	container = document.createElement( 'div' );
 	document.body.appendChild( container );
-	consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+	consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 } );
 
 afterEach( () => {
@@ -100,10 +101,10 @@ describe( 'useAgentLayoutManager — docking gate', () => {
 } );
 
 describe( 'useAgentLayoutManager — open / close', () => {
-	beforeEach( () => jest.useFakeTimers() );
+	beforeEach( () => vi.useFakeTimers() );
 	afterEach( () => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
+		vi.runOnlyPendingTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'toggles the sidebar-open class via open/close', () => {
@@ -122,7 +123,7 @@ describe( 'useAgentLayoutManager — open / close', () => {
 
 	it( 'cancels the pending dock-open when the layout undocks before it fires', async () => {
 		document.body.classList.add( 'post-php', FULLSCREEN_BODY_CLASS );
-		const onOpenSidebar = jest.fn();
+		const onOpenSidebar = vi.fn();
 		const { result } = render( { defaultDocked: false, defaultOpen: false, onOpenSidebar } );
 
 		// dock() schedules the open ~100ms later (its captured `canDock` is true).
@@ -131,7 +132,7 @@ describe( 'useAgentLayoutManager — open / close', () => {
 		// Dockability is lost via the layout path — not undock() — before it fires.
 		await setBodyClass( FULLSCREEN_BODY_CLASS, false );
 
-		act( () => jest.advanceTimersByTime( DOCK_OPEN_DELAY_MS ) );
+		act( () => vi.advanceTimersByTime( DOCK_OPEN_DELAY_MS ) );
 		expect( onOpenSidebar ).not.toHaveBeenCalled();
 		expect( container.classList.contains( OPEN_CLASS ) ).toBe( false );
 	} );
@@ -169,8 +170,8 @@ describe( 'useAgentLayoutManager — open-state sync on dock transition', () => 
 describe( 'useAgentLayoutManager — lifecycle callbacks', () => {
 	it( 'fires onDock when the layout docks and onUndock when it undocks', async () => {
 		document.body.classList.add( 'post-php' ); // not dockable yet
-		const onDock = jest.fn();
-		const onUndock = jest.fn();
+		const onDock = vi.fn();
+		const onUndock = vi.fn();
 		render( { onDock, onUndock } );
 
 		await setBodyClass( FULLSCREEN_BODY_CLASS, true );
@@ -182,8 +183,8 @@ describe( 'useAgentLayoutManager — lifecycle callbacks', () => {
 	} );
 
 	it( 'fires onOpenSidebar and onCloseSidebar when the docked sidebar is toggled', () => {
-		const onOpenSidebar = jest.fn();
-		const onCloseSidebar = jest.fn();
+		const onOpenSidebar = vi.fn();
+		const onCloseSidebar = vi.fn();
 		const { result } = render( { onOpenSidebar, onCloseSidebar } );
 
 		act( () => result.current.closeSidebar() );
@@ -222,8 +223,8 @@ describe( 'useAgentLayoutManager — split-screen class', () => {
 
 describe( 'useAgentLayoutManager — portal node', () => {
 	it( 'returns the node the chat renders into, without firing the lifecycle callbacks', () => {
-		const onDock = jest.fn();
-		const onUndock = jest.fn();
+		const onDock = vi.fn();
+		const onUndock = vi.fn();
 
 		const { result } = render( { onDock, onUndock } );
 
@@ -245,7 +246,7 @@ describe( 'useAgentLayoutManager — stylesheet gate', () => {
 	} );
 
 	it( 'reports nothing when the stylesheet reveals the node', () => {
-		const getComputedStyle = jest
+		const getComputedStyle = vi
 			.spyOn( window, 'getComputedStyle' )
 			.mockReturnValue( { display: 'block' } as CSSStyleDeclaration );
 

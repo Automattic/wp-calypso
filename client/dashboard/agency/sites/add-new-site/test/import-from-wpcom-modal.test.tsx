@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import ImportFromWPCOMModal from '../import-from-wpcom-modal';
@@ -68,7 +69,7 @@ function mockEndpoints( {
 			.reply( 200, { sites: managedSites, total: managedSites.length } );
 	}
 
-	const onClose = jest.fn();
+	const onClose = vi.fn();
 	render(
 		<>
 			<ImportFromWPCOMModal onClose={ onClose } />
@@ -200,8 +201,6 @@ describe( 'ImportFromWPCOMModal', () => {
 	} );
 
 	test( 'reports the server’s reason when the import fails', async () => {
-		// Snackbar needs this, and jsdom has no scrolling.
-		window.scrollTo = jest.fn();
 		mockEndpoints( { withSnackbars: true } );
 		nock( BASE )
 			.post( `/wpcom/v2/agency/${ AGENCY_ID }/sites` )

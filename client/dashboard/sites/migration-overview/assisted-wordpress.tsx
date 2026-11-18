@@ -5,10 +5,9 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
-import { wpcomLink } from '../../utils/link';
 import { WhatToExpect } from './what-to-expect';
 import { MigrationCard, StatusIcon } from './wordpress/migration-card';
 import { MIGRATION_STEPS } from './wordpress/running';
@@ -77,18 +76,6 @@ function getCancelLabel( status: Site[ 'site_migration' ][ 'status_v2' ] ) {
 }
 
 /**
- * Where the customer gives our team access to their site: the Stepper's credentials step.
- */
-export function getShareAccessUrl( site: Site, sourceUrl?: string | null ) {
-	return addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-credentials' ), {
-		siteId: site.ID,
-		siteSlug: site.slug,
-		from: sourceUrl ?? undefined,
-		ref: 'hosting-migration-overview',
-	} );
-}
-
-/**
  * Waiting on the customer to give our team access to their site.
  */
 function Pending( { site, cancelButton }: { site: Site; cancelButton: React.ReactNode } ) {
@@ -99,10 +86,10 @@ function Pending( { site, cancelButton }: { site: Site; cancelButton: React.Reac
 		return null;
 	}
 
-	// A failed run handed our migration over. The customer sees what stopped it if they take it back and try again.
-	const stoppedBy = migration?.findings.find(
-		( { resolution } ) => resolution === 'assisted_handoff'
-	);
+	let stoppedBy = undefined;
+	if ( migration?.status === 'failed' ) {
+		stoppedBy = migration.findings.find( ( { severity } ) => severity === 'failure' );
+	}
 	const isAfterFailure = !! stoppedBy;
 
 	return (
@@ -124,13 +111,14 @@ function Pending( { site, cancelButton }: { site: Site; cancelButton: React.Reac
 			decoration={ <StatusIcon status={ isAfterFailure ? 'error' : 'pending' } /> }
 			actions={
 				<>
-					<Button
+					<RouterLinkButton
 						__next40pxDefaultSize
 						variant="primary"
-						href={ getShareAccessUrl( site, migration?.source_url ) }
+						to="/sites/$siteSlug/migration-overview/share-access"
+						params={ { siteSlug: site.slug } }
 					>
 						{ __( 'Share access' ) }
-					</Button>
+					</RouterLinkButton>
 					{ cancelButton }
 				</>
 			}

@@ -2,21 +2,22 @@
  * Tests for getImageData utility
  */
 import { resolveSelect } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { getImageData } from './get-image-data';
 
 // Mock WordPress data
-jest.mock( '@wordpress/data', () => ( {
-	resolveSelect: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	resolveSelect: vi.fn(),
 } ) );
 
 // Mock i18n
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
 // Mock extract-filename
-jest.mock( './extract-filename', () => ( {
-	extractFilenameFromUrl: jest.fn( ( url, fallback ) => {
+vi.mock( './extract-filename', () => ( {
+	extractFilenameFromUrl: vi.fn( ( url, fallback ) => {
 		if ( ! url ) {
 			return fallback;
 		}
@@ -26,15 +27,15 @@ jest.mock( './extract-filename', () => ( {
 } ) );
 
 const mockCoreStore = {
-	getEntityRecord: jest.fn(),
+	getEntityRecord: vi.fn(),
 };
 
-const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 describe( 'getImageData', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( resolveSelect as unknown as jest.Mock ).mockReturnValue( mockCoreStore );
+		vi.clearAllMocks();
+		( resolveSelect as unknown as Mock ).mockReturnValue( mockCoreStore );
 	} );
 
 	afterAll( () => {
@@ -171,7 +172,7 @@ describe( 'getImageData', () => {
 
 	describe( 'filename extraction', () => {
 		it( 'should extract filename from source_url', async () => {
-			const { extractFilenameFromUrl } = require( './extract-filename' );
+			const { extractFilenameFromUrl } = await import( './extract-filename' );
 
 			const mockMedia = {
 				id: 123,

@@ -1,4 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useInputValue } from '../use-input-value';
 import type { ComponentContext } from '@a2ui/web_core';
 
@@ -26,7 +27,7 @@ function createContext( value: number | { '@path': string } ) {
 
 it( 'preserves literal numeric edits across unrelated updates and accepts a new server value', () => {
 	const { context, update } = createContext( 25 );
-	const setValue = jest.fn();
+	const setValue = vi.fn();
 	const { result } = renderHook( () => useInputValue< number >( 25, setValue, context ) );
 
 	act( () => result.current[ 1 ]( 50 ) );
@@ -45,7 +46,7 @@ it( 'preserves literal numeric edits across unrelated updates and accepts a new 
 
 it( 'writes bound numbers and reads subsequent data model updates', () => {
 	const { context } = createContext( { '@path': '/volume' } );
-	const setValue = jest.fn();
+	const setValue = vi.fn();
 	const { result, rerender } = renderHook(
 		( { value } ) => useInputValue( value, setValue, context ),
 		{ initialProps: { value: 25 } }

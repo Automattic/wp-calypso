@@ -117,7 +117,7 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 						</Text>
 						<Text>{ item.description }</Text>
 						<HStack alignment="left" spacing={ 1 }>
-							<Icon icon={ item.locationIcon } size={ 16 } style={ { fill: '#757575' } } />
+							<Icon icon={ item.locationIcon } size={ 16 } style={ { color: '#757575' } } />
 							{ item.link ? (
 								<Text variant="muted">
 									<a href={ item.link } style={ { textDecoration: 'none' } }>

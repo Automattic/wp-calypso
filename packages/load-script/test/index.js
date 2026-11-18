@@ -1,7 +1,6 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
+import { vi } from 'vitest';
 import { JQUERY_URL, loadjQueryDependentScript, loadScript } from '../src';
 import {
 	executeCallbacks,
@@ -10,9 +9,9 @@ import {
 } from '../src/callback-handler';
 import { attachToHead, createScriptElement } from '../src/dom-operations';
 
-jest.mock( '../src/dom-operations', () => ( {
-	attachToHead: jest.fn(),
-	createScriptElement: jest.fn(),
+vi.mock( '../src/dom-operations', () => ( {
+	attachToHead: vi.fn(),
+	createScriptElement: vi.fn(),
 } ) );
 
 describe( 'loadScript', () => {
@@ -20,9 +19,9 @@ describe( 'loadScript', () => {
 		const url = '/';
 		const args = { id: 'scriptId' };
 
-		const callback = jest.fn();
+		const callback = vi.fn();
 
-		beforeAll( function () {
+		beforeEach( function () {
 			removeAllScriptCallbacks();
 			loadScript( url, callback, args );
 		} );
@@ -61,9 +60,9 @@ describe( 'loadScript', () => {
 		} );
 
 		test( 'should use window.jQuery if available', () => {
-			window.jQuery = {};
+			vi.stubGlobal( 'jQuery', {} );
 
-			const callback = jest.fn();
+			const callback = vi.fn();
 			loadjQueryDependentScript( url, callback, args );
 
 			expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
@@ -72,17 +71,16 @@ describe( 'loadScript', () => {
 			executeCallbacks( url );
 			expect( callback ).toHaveBeenCalledTimes( 1 );
 
-			delete window.jQuery;
+			vi.unstubAllGlobals();
 		} );
 
 		test( 'should sequentially load the jQuery script and the script from the URL (in that order)', () => {
 			return new Promise( ( done ) => {
 				// NOTE: jsdom has jQuery attached to the window. We temporarily replace this
 				// jQuery instance fir this test.
-				const jQueryBackup = global.window.jQuery;
-				global.window.jQuery = false;
+				vi.stubGlobal( 'jQuery', false );
 
-				const callback = jest.fn();
+				const callback = vi.fn();
 				loadjQueryDependentScript( url ).then( callback );
 
 				expect( createScriptElement ).toHaveBeenCalledTimes( 1 );
@@ -101,7 +99,7 @@ describe( 'loadScript', () => {
 					setTimeout( () => {
 						expect( callback ).toHaveBeenCalledTimes( 1 );
 
-						global.window.jQuery = jQueryBackup;
+						vi.unstubAllGlobals();
 						done();
 					}, 0 );
 				}, 0 );

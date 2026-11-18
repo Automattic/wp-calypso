@@ -3,8 +3,6 @@ import {
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_HOSTING_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
-import { translate } from 'i18n-calypso';
-import { isMigrationInProgress } from 'calypso/data/site-migration';
 import type { SiteExcerptData, SiteExcerptNetworkData } from '@automattic/sites';
 
 export const getLaunchpadUrl = ( slug: string, flow: string ) => {
@@ -31,10 +29,6 @@ export const getSiteDisplayUrl = ( site: SiteExcerptData ) => {
 };
 
 export const getSiteDisplayName = ( site: SiteExcerptData ) => {
-	if ( isMigrationInProgress( site ) ) {
-		return translate( 'Incoming Migration' );
-	}
-
 	return site.name || getSiteDisplayUrl( site );
 };
 

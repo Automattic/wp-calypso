@@ -1,0 +1,22 @@
+diff --git a/index.js b/index.js
+index 6ece037ed8d983abd3f2a2b4ad75f1066e4645b0..bde25d09a4d333ef45020f1a3d67f0f541d7f086 100644
+--- a/index.js
++++ b/index.js
+@@ -1,7 +1,7 @@
+ var unicode = require('./lib/wemoji.json')
+ var name = {}
+ 
+-for ( emoji in unicode ) {
++for ( var emoji in unicode ) {
+ 
+   var data = unicode[ emoji ]
+ 
+@@ -10,7 +10,7 @@ for ( emoji in unicode ) {
+ 
+   // Add variations to index
+   if (data.variations) {
+-    for (i in data.variations) {
++    for (var i in data.variations) {
+       var variation = data.variations[i]
+       unicode[ variation ] = data
+     }

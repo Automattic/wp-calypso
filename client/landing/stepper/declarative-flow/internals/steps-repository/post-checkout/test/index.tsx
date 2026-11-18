@@ -13,6 +13,8 @@ const mockGetSite = jest.fn();
 const mockSetPendingAction = jest.fn();
 const mockSetIntentOnSite = jest.fn();
 const mockSetGoalsOnSite = jest.fn();
+const mockSaveSiteSettings = jest.fn();
+const mockWaitForLatestSiteData = jest.fn( async () => {} );
 const mockOnboardState = { intent: '', goals: [] as string[] };
 const mockSiteTransferStatus = { isTransferring: false };
 
@@ -50,6 +52,7 @@ jest.mock( '@wordpress/data', () =>
 			setPendingAction: mockSetPendingAction,
 			setIntentOnSite: mockSetIntentOnSite,
 			setGoalsOnSite: mockSetGoalsOnSite,
+			saveSiteSettings: mockSaveSiteSettings,
 		} ),
 	} )
 );
@@ -79,7 +82,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-wait-for-atomic', () => ( {
 	useWaitForAtomic: () => ( {
 		waitForTransfer: async () => {},
 		waitForFeature: async () => {},
-		waitForLatestSiteData: async () => {},
+		waitForLatestSiteData: () => mockWaitForLatestSiteData(),
 	} ),
 } ) );
 
@@ -105,10 +108,10 @@ describe( 'PostCheckoutOnboarding', () => {
 		mockSiteTransferStatus.isTransferring = false;
 	} );
 
-	const renderWithFreshSite = ( site: unknown, flow = 'onboarding' ) => {
+	const renderWithFreshSite = ( site: unknown, flow = 'onboarding', enableAiLaunchpad = false ) => {
 		mockGetSite.mockResolvedValue( site );
 		const props = mockStepProps( { flow, stepName: 'post-checkout-onboarding' } );
-		renderStep( <PostCheckoutOnboarding { ...props } />, {
+		renderStep( <PostCheckoutOnboarding { ...props } enableAiLaunchpad={ enableAiLaunchpad } />, {
 			queryClient: new QueryClient( { defaultOptions: { queries: { retry: false } } } ),
 		} );
 		return props;
@@ -211,6 +214,30 @@ describe( 'PostCheckoutOnboarding', () => {
 		expect( waitForPluginsActive ).not.toHaveBeenCalled();
 	} );
 
+	it( 'turns on the AI Launchpad when the flow asks for it', async () => {
+		const props = renderWithFreshSite(
+			siteWithPlan( 'business-bundle' ),
+			'onboarding-unified',
+			true
+		);
+		await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+
+		await mockSetPendingAction.mock.calls[ 0 ][ 0 ]();
+
+		expect( mockSaveSiteSettings ).toHaveBeenCalledWith( 123, {
+			wpcom_ai_launchpad_enabled: true,
+		} );
+	} );
+
+	it( 'leaves the AI Launchpad alone when the flow does not ask for it', async () => {
+		const props = renderWithFreshSite( siteWithPlan( 'business-bundle' ) );
+		await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+
+		await mockSetPendingAction.mock.calls[ 0 ][ 0 ]();
+
+		expect( mockSaveSiteSettings ).not.toHaveBeenCalled();
+	} );
+
 	describe( 'while the site is moving to Atomic', () => {
 		beforeEach( () => {
 			mockSiteTransferStatus.isTransferring = true;
@@ -236,6 +263,24 @@ describe( 'PostCheckoutOnboarding', () => {
 
 			expect( mockSetIntentOnSite ).toHaveBeenCalledWith( 'example.wordpress.com', 'build' );
 			expect( mockSetGoalsOnSite ).toHaveBeenCalledWith( 'example.wordpress.com', [ 'write' ] );
+		} );
+
+		it( 'turns on the AI Launchpad once the transfer is done', async () => {
+			const props = renderWithFreshSite(
+				siteWithPlan( 'ecommerce-bundle' ),
+				'onboarding-unified',
+				true
+			);
+			await waitFor( () => expect( props.navigation.submit ).toHaveBeenCalled() );
+
+			await mockSetPendingAction.mock.calls[ 0 ][ 0 ]();
+
+			expect( mockSaveSiteSettings ).toHaveBeenCalledWith( 123, {
+				wpcom_ai_launchpad_enabled: true,
+			} );
+			expect( mockWaitForLatestSiteData.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+				mockSaveSiteSettings.mock.invocationCallOrder[ 0 ]
+			);
 		} );
 	} );
 } );

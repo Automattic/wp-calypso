@@ -1,7 +1,7 @@
 import { NextButton, Step } from '@automattic/onboarding';
 import { canInstallPlugins } from '@automattic/sites';
 import { Button } from '@wordpress/components';
-import { copy, lockOutline } from '@wordpress/icons';
+import { copy, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useMemo } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -41,7 +41,7 @@ const SiteMigrationHowToMigrate: StepType< {
 	const checklistItems = useMemo(
 		() => [
 			{
-				icon: lockOutline,
+				icon: lock,
 				text: translate( 'Upgrade your site and securely share access to your current site.' ),
 			},
 			{

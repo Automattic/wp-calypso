@@ -188,7 +188,7 @@ const RecurringPaymentsCouponAddEditModal = ( {
 
 	/** Email address functions */
 	const validateEmailAddress = ( email: string ): boolean =>
-		/^[\w.\-+*]+@(?:(?:[\w\-*]+(?:\.[\w\-*]+)+)+|(?:[\w\-*]*\*[\w\-*]*)+)+$/.test( email );
+		/^[\w.\-+*]+@(?:[\w\-*]+(?:\.[\w\-*]+)+|[\w-]*\*[\w\-*]*)$/.test( email );
 
 	/** Form event handlers */
 	const onCouponCodeChange = useCallback( ( event: ChangeEvent< HTMLInputElement > ) => {

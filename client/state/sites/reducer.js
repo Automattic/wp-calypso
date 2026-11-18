@@ -24,7 +24,6 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
-	SITE_MIGRATION_STATUS_UPDATE,
 	SITE_RESET,
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
@@ -277,28 +276,6 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 						...frontPageOptions,
 					},
 				} ),
-			};
-		}
-
-		case SITE_MIGRATION_STATUS_UPDATE: {
-			const { siteId, migrationStatus, lastModified } = action;
-			const site = state[ siteId ];
-			if ( ! site ) {
-				return state;
-			}
-
-			const siteMigrationMeta = state[ siteId ].site_migration || {};
-			const newMeta = { status: migrationStatus };
-			if ( lastModified ) {
-				newMeta.last_modified = lastModified;
-			}
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					site_migration: merge( {}, siteMigrationMeta, newMeta ),
-				},
 			};
 		}
 

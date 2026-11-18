@@ -45,6 +45,20 @@
 			prPriority: 2,
 		},
 		{
+			// react-router depends on exact router-core and history versions, so
+			// separate PRs would install a pair it doesn't ask for.
+			groupName: 'TanStack Router packages',
+			matchPackageNames: [ '@tanstack/history', '@tanstack/react-router', '@tanstack/router-core' ],
+			reviewers: [ 'team:@automattic/lego' ],
+		},
+		{
+			// react-store depends on an exact store version. react-router only accepts a
+			// range of react-store, so store updates stay out of the router group.
+			groupName: 'TanStack Store packages',
+			matchPackageNames: [ '@tanstack/react-store', '@tanstack/store' ],
+			reviewers: [ 'team:@automattic/lego' ],
+		},
+		{
 			groupName: 'webpack packages',
 			extends: [ ':widenPeerDependencies' ],
 			matchPackageNames: [ 'html-loader', 'postcss-loader', 'css-loader' ],
@@ -75,10 +89,59 @@
 			matchFileNames: [ 'packages/wp-babel-makepot/**' ],
 			enabled: false,
 		},
+		// Packages only the desktop app uses. The `desktop-` branch prefix runs the
+		// desktop builds in Buildkite (see `.buildkite/pipeline.yml`). Packages shared
+		// with other workspaces stay out, so their updates aren't split per workspace.
+		{
+			matchFileNames: [ 'desktop/**' ],
+			matchPackageNames: [
+				'@electron/notarize',
+				'cross-env',
+				'electron',
+				'electron-builder',
+				'electron-fetch',
+				'electron-store',
+				'electron-updater',
+				'js-yaml',
+				'winston',
+				'ws',
+			],
+			additionalBranchPrefix: 'desktop-',
+			reviewers: [ 'team:@automattic/yolo' ],
+		},
+		{
+			matchFileNames: [ 'desktop/**' ],
+			matchManagers: [ 'bundler', 'ruby-version' ],
+			additionalBranchPrefix: 'desktop-',
+			reviewers: [ 'team:@automattic/yolo' ],
+		},
+		// Packages only Agents Manager and agenttic use. Packages shared with other
+		// workspaces, or updated in a repo-wide group such as Storybook's, stay out,
+		// so repo-wide updates keep the default reviewers.
+		{
+			matchFileNames: [
+				'packages/agents-manager/**',
+				'packages/agenttic-client/**',
+				'packages/agenttic-ui/**',
+			],
+			matchPackageNames: [
+				'@mdx-js/react',
+				'@radix-ui/react-popover',
+				'@radix-ui/react-scroll-area',
+				'@radix-ui/react-slot',
+				'@radix-ui/react-tooltip',
+				'class-variance-authority',
+				'fast-average-color',
+				'history',
+				'react-textarea-autosize',
+				'remark-gfm',
+				'unified',
+				'vite-plugin-lib-inject-css',
+			],
+			reviewers: [ 'team:@automattic/agent' ],
+		},
 	],
 	ignoreDeps: [
-		'electron-builder',
-
 		// The current latest version of TraceKit (0.4.7) creates a lot of noise due to mishandling
 		// of nullish unhandled rejected promise values.
 		// See: https://github.com/csnover/TraceKit/issues/86

@@ -1,8 +1,6 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
 import Smooch from 'smooch';
+import { type Mock, vi } from 'vitest';
 import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../use-create-zendesk-conversation';
 
@@ -10,29 +8,28 @@ import { useCreateZendeskConversation } from '../use-create-zendesk-conversation
  * Mutable state backing the mocked dependencies. Each test mutates these in
  * `beforeEach` (or inline) to drive the hook through the scenario under test.
  */
-const mockTrackEvent = jest.fn();
-const mockSetChat = jest.fn();
-const mockSubmitUserFields = jest.fn();
-const mockAddEventToInteraction = jest.fn();
-const mockStartNewInteraction = jest.fn();
-const mockGetOdieTransferMessages = jest.fn().mockReturnValue( [] );
+const mockTrackEvent = vi.fn();
+const mockSetChat = vi.fn();
+const mockSubmitUserFields = vi.fn();
+const mockAddEventToInteraction = vi.fn();
+const mockStartNewInteraction = vi.fn();
+const mockGetOdieTransferMessages = vi.fn().mockReturnValue( [] );
 let mockHasReachedLimit = false;
 
-jest.mock( 'smooch', () => ( {
-	__esModule: true,
+vi.mock( 'smooch', () => ( {
 	default: {
-		createConversation: jest.fn(),
-		updateConversation: jest.fn(),
-		loadConversation: jest.fn(),
+		createConversation: vi.fn(),
+		updateConversation: vi.fn(),
+		loadConversation: vi.fn(),
 	},
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useLocation: () => ( { search: '', pathname: '/' } ),
-	useNavigate: () => jest.fn(),
+	useNavigate: () => vi.fn(),
 } ) );
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	useUpdateZendeskUserFields: () => ( {
 		isPending: false,
 		mutateAsync: mockSubmitUserFields,
@@ -42,32 +39,32 @@ jest.mock( '@automattic/zendesk-client', () => ( {
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID: 23752099174548,
 } ) );
 
-jest.mock( '../../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '../../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 } ) );
 
-jest.mock( '../../data', () => ( {
+vi.mock( '../../data', () => ( {
 	useManageSupportInteraction: () => ( {
 		addEventToInteraction: mockAddEventToInteraction,
 		startNewInteraction: mockStartNewInteraction,
 	} ),
 } ) );
 
-jest.mock( '../../data/use-current-support-interaction', () => ( {
+vi.mock( '../../data/use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( {
 		data: { uuid: 'int-1', bot_slug: 'wpcom-support-chat' },
 	} ),
 } ) );
 
-jest.mock( '../../utils/get-open-live-interactions', () => ( {
+vi.mock( '../../utils/get-open-live-interactions', () => ( {
 	getOpenLiveInteractions: () => ( { hasReachedLimit: mockHasReachedLimit } ),
 } ) );
 
-jest.mock( '../use-open-interaction-status-map', () => ( {
+vi.mock( '../use-open-interaction-status-map', () => ( {
 	useOpenInteractionStatusMap: () => ( {} ),
 } ) );
 
-jest.mock( '../../constants', () => ( {
+vi.mock( '../../constants', () => ( {
 	getErrorTryAgainLaterMessage: () => ( { content: 'try-again', role: 'bot', type: 'message' } ),
 	getOdieTransferMessages: ( ...args: unknown[] ) => mockGetOdieTransferMessages( ...args ),
 	getZendeskChatStartedMetaMessage: () => ( {
@@ -77,7 +74,7 @@ jest.mock( '../../constants', () => ( {
 	} ),
 } ) );
 
-const smoochCreateConversation = Smooch.createConversation as jest.Mock;
+const smoochCreateConversation = Smooch.createConversation as Mock;
 
 const notReadyError = () => new TypeError( 'i(...).createConversation is not a function' );
 
@@ -86,14 +83,14 @@ const lastTrackedProps = ( name: string ) =>
 	mockTrackEvent.mock.calls.filter( ( [ event ] ) => event === name ).at( -1 )?.[ 1 ];
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	jest.useFakeTimers();
+	vi.clearAllMocks();
+	vi.useFakeTimers();
 	mockHasReachedLimit = false;
 	mockSubmitUserFields.mockResolvedValue( undefined );
 	// activeInteractionId === interaction.uuid, so updateConversation is skipped.
 	mockAddEventToInteraction.mockResolvedValue( { uuid: 'int-1' } );
 	mockStartNewInteraction.mockResolvedValue( { uuid: 'int-1' } );
-	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		selectedSiteId: 1,
 		selectedSiteURL: 'https://example.com',
 		userFieldMessage: 'help',
@@ -114,7 +111,7 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => {
@@ -131,8 +128,8 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		const promise = result.current( { createdFrom: 'automatic_escalation' } );
 
 		// Two backoff intervals of 250ms drive the two retries.
-		await jest.advanceTimersByTimeAsync( 250 );
-		await jest.advanceTimersByTimeAsync( 250 );
+		await vi.advanceTimersByTimeAsync( 250 );
+		await vi.advanceTimersByTimeAsync( 250 );
 
 		await expect( promise ).resolves.toBe( 'conv-1' );
 		expect( smoochCreateConversation ).toHaveBeenCalledTimes( 3 );
@@ -163,7 +160,7 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		const promise = result.current( { createdFrom: 'automatic_escalation' } );
 
 		// Past the 10s cap; the loop stops scheduling further retries.
-		await jest.advanceTimersByTimeAsync( 10_500 );
+		await vi.advanceTimersByTimeAsync( 10_500 );
 
 		await expect( promise ).resolves.toBeUndefined();
 
@@ -189,7 +186,7 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 			ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
 			ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
 			ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
-		} = jest.requireMock( '@automattic/zendesk-client' );
+		} = await import( '@automattic/zendesk-client' );
 
 		expect( smoochCreateConversation ).toHaveBeenCalledWith( {
 			metadata: expect.objectContaining( {
@@ -253,8 +250,8 @@ describe( 'useCreateZendeskConversation — conversation tags', () => {
 	} );
 
 	it( 'writes the configured tags on the conversation', async () => {
-		const context = ( useOdieAssistantContext as jest.Mock )();
-		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+		const context = ( useOdieAssistantContext as Mock )();
+		( useOdieAssistantContext as Mock ).mockReturnValue( {
 			...context,
 			zendeskConversationTags: [ 'woo_support_flow_help_center', 'second_tag' ],
 		} );
@@ -272,8 +269,8 @@ describe( 'useCreateZendeskConversation — conversation tags', () => {
 	it.each( [ 'control', 'human_only', 'hybrid' ] )(
 		'tags a chat from the checkout support experiment with its %s variation',
 		async ( variation ) => {
-			const context = ( useOdieAssistantContext as jest.Mock )();
-			( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+			const context = ( useOdieAssistantContext as Mock )();
+			( useOdieAssistantContext as Mock ).mockReturnValue( {
 				...context,
 				checkoutSupportVariation: variation,
 			} );
@@ -290,8 +287,8 @@ describe( 'useCreateZendeskConversation — conversation tags', () => {
 	);
 
 	it( 'keeps the configured tags next to the checkout support tags', async () => {
-		const context = ( useOdieAssistantContext as jest.Mock )();
-		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+		const context = ( useOdieAssistantContext as Mock )();
+		( useOdieAssistantContext as Mock ).mockReturnValue( {
 			...context,
 			zendeskConversationTags: [ 'woo_support_flow_help_center' ],
 			checkoutSupportVariation: 'hybrid',

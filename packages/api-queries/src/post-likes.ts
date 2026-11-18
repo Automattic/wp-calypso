@@ -24,6 +24,7 @@ export const postLikesQuery = ( siteId?: number | null, postId?: number | null )
 		enabled: Boolean( siteId && postId ),
 		staleTime: STALE_TIME,
 		refetchInterval: REFRESH_INTERVAL,
+		refetchOnWindowFocus: false,
 		meta: { persist: false },
 	} );
 
@@ -37,6 +38,7 @@ const ensurePostLikesQueryDefaults = (
 	queryClient.setQueryDefaults( queryKey( siteId, postId ), {
 		staleTime: STALE_TIME,
 		refetchInterval: REFRESH_INTERVAL,
+		refetchOnWindowFocus: false,
 		meta: { persist: false },
 	} );
 };

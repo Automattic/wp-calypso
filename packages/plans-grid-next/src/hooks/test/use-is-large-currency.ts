@@ -2,16 +2,17 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import useIsLargeCurrency from '../use-is-large-currency';
 
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
-	useMemo: jest.fn().mockImplementation( ( fn ) => fn() ),
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
+	useMemo: vi.fn().mockImplementation( ( fn ) => fn() ),
 } ) );
 
 describe( 'useIsLargeCurrency', () => {
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	const smallPrices = [ 0, 0, 100, 0, 2500, 0 ];

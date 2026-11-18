@@ -37,9 +37,23 @@ analyzer saw only as a hosting notice, the user continues to `site-migration`'s 
 back to the content importer for the destination site.
 
 The source, platform, and entry parameters survive checkout in the return URL. The receipt
-resolves the new destination’s `siteId`. Cancelling checkout returns to plans with the source
-and any existing destination retained. Once the session starts, Overview receives its
-`importSessionId` so it can resume tracking after a reload.
+resolves the new destination’s `siteId`. Cancelling site checkout for an existing destination
+returns to plans with the source and destination retained. Once the session starts, Overview
+receives its `importSessionId` so it can resume tracking after a reload.
+
+## Preview site on leaving checkout
+
+Cancelling unified checkout for a new destination returns to the reading step with
+`checkoutExit=1` instead of plans. The step starts the import session, then builds a preview site
+through the `preview` WoW funnel (`/sites/new` with `wow_funnel=preview` and the session’s
+`import_session_id`). WordPress.com delivers the import onto the preview as soon as the build
+lands, so the flow goes straight to the preview’s Overview. If the server won’t build a preview,
+the customer goes back to plans as before.
+
+Overview tracks the import as usual. When it finishes while the customer is watching, Overview
+opens the preview at its share URL, which gets past Coming Soon. Coming back later shows **Your
+preview is ready** with **View site** and **Choose a plan**: buying a plan keeps the site, and an
+unpaid preview is removed when its review window ends.
 
 ## Feature flag
 
@@ -52,14 +66,18 @@ its previous behavior.
 2. Enter a Wix or Squarespace URL. Confirm analysis finishes and opens
    `/setup/static-site-import/plans` without signup or login.
 3. Pick a plan. Confirm unified checkout includes account creation, and no import-session request
-   has run. Cancel checkout and confirm the source is retained on plans.
-4. In a test account, complete checkout. Confirm the reading step starts a session, then opens
+   has run.
+4. Cancel checkout with an account allowed to create preview sites. Confirm the reading step
+   starts a session, builds a preview site, and opens its Overview with **We’re moving your
+   site**. When it finishes, confirm the browser opens the preview at its `?share=` URL, and that
+   its Overview then shows **Your preview is ready** with **View site** and **Choose a plan**.
+5. In a test account, complete checkout. Confirm the reading step starts a session, then opens
    the destination’s Overview with **We’re moving your site**. Reload and confirm it resumes.
-5. Once it’s ready, click **Something not right? Let our team fix it** and confirm it files a migration
+6. Once it’s ready, click **Something not right? Let our team fix it** and confirm it files a migration
    ticket. Above it, the notice shows the session's `review_note`, the sentence wpcom also puts in
    the ready email: it names a store, events, bookings, memberships, or forms found on the old site,
    or gives a general note for a site inspection rated moderate or complex.
-6. Repeat with an existing destination: a free site requires checkout and a paid site skips it.
+7. Repeat with an existing destination: a free site requires checkout and a paid site skips it.
    Confirm that a direct reading link shows the destination and requires clicking **Import into
    this site**, even with `newSite=1` or an existing `importSessionId` in the URL.
 

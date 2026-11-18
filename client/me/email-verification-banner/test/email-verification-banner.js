@@ -5,7 +5,7 @@ import { render, screen, act } from '@testing-library/react';
 import Modal from 'react-modal';
 import { Provider as ReduxProvider } from 'react-redux';
 import { combineReducers } from 'redux';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import currentUser from 'calypso/state/current-user/reducer';
 import userSettings from 'calypso/state/user-settings/reducer';
 import EmailVerificationBanner from '../index.tsx';

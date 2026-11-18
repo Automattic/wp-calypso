@@ -1,13 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import { withAbilityCompletionBroadcast } from '../ability-completion-broadcast';
 import { ABILITY_COMPLETED_EVENT, type AbilityCompletedDetail } from '../agent-activity-events';
 import { recordAgentsManagerTracksEvent } from '../tracks';
 import type { ToolProvider } from '../../types';
 import type { Ability } from '@wordpress/abilities';
 
-jest.mock( '../tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
+vi.mock( '../tracks', () => ( { recordAgentsManagerTracksEvent: vi.fn() } ) );
 
 function listen() {
 	const events: AbilityCompletedDetail[] = [];
@@ -24,10 +25,10 @@ function listen() {
 
 function createToolProvider(
 	abilities: Ability[] = [],
-	executeAbility: jest.Mock = jest.fn( () => Promise.resolve( { success: true } ) )
+	executeAbility: Mock = vi.fn( () => Promise.resolve( { success: true } ) )
 ): ToolProvider {
 	return {
-		getAbilities: jest.fn( () => Promise.resolve( abilities ) ),
+		getAbilities: vi.fn( () => Promise.resolve( abilities ) ),
 		executeAbility,
 	} as unknown as ToolProvider;
 }
@@ -53,7 +54,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 			const wrapped = withAbilityCompletionBroadcast(
 				createToolProvider(
 					[],
-					jest.fn( () => Promise.resolve( { success: true, data: 42 } ) )
+					vi.fn( () => Promise.resolve( { success: true, data: 42 } ) )
 				)
 			)!;
 
@@ -72,7 +73,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 			const wrapped = withAbilityCompletionBroadcast(
 				createToolProvider(
 					[],
-					jest.fn( () => new Promise( ( resolve ) => ( finish = () => resolve( {} ) ) ) )
+					vi.fn( () => new Promise( ( resolve ) => ( finish = () => resolve( {} ) ) ) )
 				)
 			)!;
 
@@ -91,7 +92,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 			const wrapped = withAbilityCompletionBroadcast(
 				createToolProvider(
 					[],
-					jest.fn( () => Promise.resolve( { success: false } ) )
+					vi.fn( () => Promise.resolve( { success: false } ) )
 				)
 			)!;
 
@@ -106,7 +107,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 			const wrapped = withAbilityCompletionBroadcast(
 				createToolProvider(
 					[],
-					jest.fn( () => Promise.reject( new Error( 'boom' ) ) )
+					vi.fn( () => Promise.reject( new Error( 'boom' ) ) )
 				)
 			)!;
 
@@ -118,8 +119,8 @@ describe( 'withAbilityCompletionBroadcast', () => {
 	} );
 
 	it( 'records each completion in Tracks, with the outcome', async () => {
-		( recordAgentsManagerTracksEvent as jest.Mock ).mockClear();
-		const failing = jest.fn( () => Promise.resolve( { success: false } ) );
+		( recordAgentsManagerTracksEvent as Mock ).mockClear();
+		const failing = vi.fn( () => Promise.resolve( { success: false } ) );
 
 		await withAbilityCompletionBroadcast( createToolProvider() )!.executeAbility( 'woo/ok', {} );
 		await withAbilityCompletionBroadcast( createToolProvider( [], failing ) )!.executeAbility(
@@ -127,7 +128,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 			{}
 		);
 
-		expect( ( recordAgentsManagerTracksEvent as jest.Mock ).mock.calls ).toEqual( [
+		expect( ( recordAgentsManagerTracksEvent as Mock ).mock.calls ).toEqual( [
 			[
 				'calypso_agents_manager_ability_completed',
 				{ ability_name: 'woo/ok', outcome: 'success' },
@@ -142,7 +143,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 			// never reaches executeAbility for it, so wrapping that path alone
 			// would miss every Big Sky ability.
 			const { events, cleanup } = listen();
-			const callback = jest.fn( () => Promise.resolve( { success: true } ) );
+			const callback = vi.fn( () => Promise.resolve( { success: true } ) );
 			const wrapped = withAbilityCompletionBroadcast(
 				createToolProvider( [ { name: 'big-sky/add-pages', callback } as unknown as Ability ] )
 			)!;

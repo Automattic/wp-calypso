@@ -6,7 +6,6 @@ export type StatsSettings = {
 	admin_bar: boolean;
 	roles: string[];
 	count_roles: string[];
-	wpcom_reader_views_enabled: boolean;
 };
 
 export type StatsSettingsResponse = {

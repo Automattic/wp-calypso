@@ -8,6 +8,7 @@
  * - Upgrade URLs show persistent warning notice with correct label
  */
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { ImageStudioMode } from '../types';
 import {
 	trackImageStudioUpgradeNoticeShown,
@@ -15,18 +16,18 @@ import {
 } from '../utils/tracking';
 import { useErrorNotice } from './use-error-notice';
 
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
 	useEffect: ( fn: () => void ) => fn(),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( str: string ) => str,
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioUpgradeNoticeShown: jest.fn(),
-	trackImageStudioUpgradeNoticeClick: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioUpgradeNoticeShown: vi.fn(),
+	trackImageStudioUpgradeNoticeClick: vi.fn(),
 } ) );
 
 /** The old Jetpack AI quota has no balance or plan to report. */
@@ -41,11 +42,11 @@ const jetpackAiQuotaCredits = {
 };
 
 describe( 'useErrorNotice', () => {
-	let mockAddNotice: jest.Mock;
+	let mockAddNotice: Mock;
 
 	beforeEach( () => {
-		mockAddNotice = jest.fn();
-		jest.clearAllMocks();
+		mockAddNotice = vi.fn();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'no error', () => {
@@ -371,6 +372,26 @@ describe( 'useErrorNotice', () => {
 			} );
 
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it( 'tracks the source the upgrade link passes on to checkout', () => {
+			renderHook( () =>
+				useErrorNotice(
+					'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge&query=source%3Dimage-studio',
+					mockAddNotice,
+					ImageStudioMode.Generate
+				)
+			);
+
+			const expected = {
+				mode: ImageStudioMode.Generate,
+				trigger: 'error',
+				...jetpackAiQuotaCredits,
+				ref: 'image-studio',
+			};
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( expected );
+			mockAddNotice.mock.calls[ 0 ][ 2 ][ 0 ].onClick();
+			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( expected );
 		} );
 
 		it( 'does not track impressions for non-upgrade URL errors', () => {

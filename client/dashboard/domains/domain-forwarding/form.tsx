@@ -83,19 +83,19 @@ export default function DomainForwardingForm( {
 
 	const isPermanentField = {
 		id: 'isPermanent',
-		label: __( 'How permanent is this forward?' ),
+		label: __( 'HTTP redirect type' ),
 		type: 'text' as const,
 		Edit: 'radio',
 		elements: [
 			{
-				label: __( 'Temporary (307)' ),
+				label: __( 'Temporary redirect (307)' ),
 				value: 'false',
 				description: __(
 					'Search results keep pointing at this domain name, and a change you make later takes effect straight away. Choose this if you might turn the forward off again.'
 				),
 			},
 			{
-				label: __( 'Permanent (301)' ),
+				label: __( 'Permanent redirect (301)' ),
 				value: 'true',
 				description: __(
 					'Search results move across to the new address over time, and browsers remember the forward. Choose this if the move is for good. A change you make later can take a while to reach people who have already visited.'
@@ -272,60 +272,61 @@ export default function DomainForwardingForm( {
 			<form onSubmit={ handleSubmit }>
 				<Card>
 					<CardBody>
-						<DataForm< FormData >
-							data={ formData }
-							fields={ fields }
-							validity={ validity }
-							form={ currentForm }
-							onChange={ ( edits: Partial< FormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
-							} }
-						/>
-					</CardBody>
-					<PanelBody
-						className="domain-forwarding-form-options"
-						title={ getForwardingSummary( formData.isPermanent, formData.forwardPaths ) }
-						initialOpen={ hasNonDefaultAdvancedValues }
-					>
-						<PanelRow>
-							<VStack spacing={ 6 }>
-								<RadioControl
-									label={ isPermanentField.label }
-									selected={ formData.isPermanent ? 'true' : 'false' }
-									options={ isPermanentField.elements }
-									onChange={ ( value: string ) => {
-										setFormData( ( data ) => ( {
-											...data,
-											isPermanent: value === 'true',
-										} ) );
-									} }
-								/>
-								<RadioControl
-									label={ forwardPathsField.label }
-									selected={ formData.forwardPaths ? 'true' : 'false' }
-									options={ forwardPathsField.elements }
-									onChange={ ( value: string ) => {
-										setFormData( ( data ) => ( {
-											...data,
-											forwardPaths: value === 'true',
-										} ) );
-									} }
-								/>
-							</VStack>
-						</PanelRow>
-					</PanelBody>
-					<CardBody>
-						<ButtonStack justify="start">
-							<Button
-								variant="primary"
-								type="submit"
-								isBusy={ isSubmitting }
-								disabled={ isSubmitting }
-								__next40pxDefaultSize
-							>
-								{ submitButtonText }
-							</Button>
-						</ButtonStack>
+						<VStack spacing={ 4 }>
+							<DataForm< FormData >
+								data={ formData }
+								fields={ fields }
+								validity={ validity }
+								form={ currentForm }
+								onChange={ ( edits: Partial< FormData > ) => {
+									setFormData( ( data ) => ( { ...data, ...edits } ) );
+								} }
+							/>
+							<Card className="domain-forwarding-form-options">
+								<PanelBody
+									title={ getForwardingSummary( formData.isPermanent, formData.forwardPaths ) }
+									initialOpen={ hasNonDefaultAdvancedValues }
+								>
+									<PanelRow>
+										<VStack spacing={ 6 }>
+											<RadioControl
+												label={ isPermanentField.label }
+												selected={ formData.isPermanent ? 'true' : 'false' }
+												options={ isPermanentField.elements }
+												onChange={ ( value: string ) => {
+													setFormData( ( data ) => ( {
+														...data,
+														isPermanent: value === 'true',
+													} ) );
+												} }
+											/>
+											<RadioControl
+												label={ forwardPathsField.label }
+												selected={ formData.forwardPaths ? 'true' : 'false' }
+												options={ forwardPathsField.elements }
+												onChange={ ( value: string ) => {
+													setFormData( ( data ) => ( {
+														...data,
+														forwardPaths: value === 'true',
+													} ) );
+												} }
+											/>
+										</VStack>
+									</PanelRow>
+								</PanelBody>
+							</Card>
+							<ButtonStack justify="start">
+								<Button
+									variant="primary"
+									type="submit"
+									isBusy={ isSubmitting }
+									disabled={ isSubmitting }
+									__next40pxDefaultSize
+								>
+									{ submitButtonText }
+								</Button>
+							</ButtonStack>
+						</VStack>
 					</CardBody>
 				</Card>
 			</form>

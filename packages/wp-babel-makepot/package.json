@@ -22,14 +22,7 @@
 	"bin": "./cli.js",
 	"scripts": {
 		"start": "./cli.js",
-		"test": "rm -rf test/output && jest"
-	},
-	"jest": {
-		"preset": "../../test/packages/jest-preset.js",
-		"testMatch": [
-			"<rootDir>/**/test/*.[jt]s?(x)",
-			"!**/examples/**"
-		]
+		"test": "rm -rf test/output && vitest run"
 	},
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
@@ -46,8 +39,9 @@
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"i18n-calypso": "workspace:^",
-		"jest": "^30.5.2",
 		"react": "^18.3.1",
-		"rimraf": "^3.0.2"
+		"rimraf": "^3.0.2",
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

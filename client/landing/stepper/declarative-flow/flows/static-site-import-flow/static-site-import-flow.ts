@@ -28,7 +28,7 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { withLocale } from '../../helpers/with-locale';
 import { siteSetupImportListPath } from '../site-migration-flow/paths';
-import { canUseStaticSiteImport } from './helpers';
+import { canUseStaticSiteImport, isCheckoutExitPreview } from './helpers';
 import type { OnboardActions } from '@automattic/data-stores';
 import type {
 	AssertConditionResult,
@@ -69,8 +69,12 @@ function initialize() {
 		return stepsWithRequiredLogin( BASE_STEPS );
 	}
 
-	// A new destination comes from checkout, so reading starts at the public plans step.
-	if ( pathname.includes( `/${ STEPS.STATIC_SITE_IMPORT_READING.slug }` ) ) {
+	// A new destination comes from checkout, so reading starts at the public plans step. Leaving
+	// checkout is the exception: reading builds a preview site for the import instead.
+	if (
+		pathname.includes( `/${ STEPS.STATIC_SITE_IMPORT_READING.slug }` ) &&
+		! isCheckoutExitPreview( query )
+	) {
 		window.location.replace(
 			pathname.replace( STEPS.STATIC_SITE_IMPORT_READING.slug, STEPS.UNIFIED_PLANS.slug ) + search
 		);
@@ -184,6 +188,10 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 							)
 						);
 					}
+					// Without a preview, leaving checkout goes back to plans as before.
+					if ( providedDependencies.action === 'preview_failed' ) {
+						return navigate( STEPS.UNIFIED_PLANS.slug );
+					}
 					if ( providedDependencies.action === 'unavailable' ) {
 						if ( ! hasSite ) {
 							return navigate( STEPS.UNIFIED_PLANS.slug );
@@ -202,12 +210,14 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						);
 					}
 
-					const { importSessionId } = providedDependencies;
-					if ( isSiteOnPaidPlan ) {
+					const { importSessionId, previewSiteSlug } = providedDependencies;
+					// A preview is built to take the import, so its Overview tracks it from here.
+					const overviewSlug = previewSiteSlug || ( isSiteOnPaidPlan ? siteSlug : '' );
+					if ( overviewSlug ) {
 						return exitFlow(
 							addQueryArgs(
 								{ importSessionId, from, platform },
-								dashboardLink( `/sites/${ siteSlug }` )
+								dashboardLink( `/sites/${ overviewSlug }` )
 							)
 						);
 					}
@@ -225,8 +235,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug, { errorReason: 'no_plan_selected' } );
 					}
 					setPlanCartItem( planCartItem );
-					const cancelDestination = stepUrl( STEPS.UNIFIED_PLANS.slug );
-
 					if ( hasSite ) {
 						return goToCheckout( {
 							flowName: flowPath,
@@ -234,7 +242,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 							siteSlug,
 							plan: planCartItem.product_slug,
 							destination: stepUrl( STEPS.STATIC_SITE_IMPORT_READING.slug ),
-							cancelDestination,
+							cancelDestination: stepUrl( STEPS.UNIFIED_PLANS.slug ),
 						} );
 					}
 
@@ -246,7 +254,10 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						destination: `${ stepUrl( STEPS.STATIC_SITE_IMPORT_READING.slug, {
 							newSite: '1',
 						} ) }&siteId=:siteId`,
-						cancelDestination,
+						// Leaving checkout builds a preview of the import instead of returning to plans.
+						cancelDestination: stepUrl( STEPS.STATIC_SITE_IMPORT_READING.slug, {
+							checkoutExit: '1',
+						} ),
 						siteIntent: Onboard.SiteIntent.SiteMigration,
 					} );
 				}

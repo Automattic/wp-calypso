@@ -8,7 +8,7 @@ import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';

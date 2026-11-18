@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-import { sslDetailsQuery } from '@automattic/api-queries';
+import { domainsQuery, sslDetailsQuery } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { SITE_CONTEXT_VIEW } from '../../../domains/dataviews/views';
 import { render } from '../../../test-utils';
 import SiteDomains from '../index';
@@ -15,13 +16,17 @@ import type { QueryClient } from '@tanstack/react-query';
 let mockSearchParams: { action?: string } = {};
 let mockHasEnTranslation = true;
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => () => mockHasEnTranslation,
 } ) );
 
-jest.mock( '../../../app/router/sites', () => {
-	const actual = jest.requireActual( '../../../app/router/sites' );
+vi.mock( '../../../app/router/sites', async () => {
+	const actual = await vi.importActual< typeof import( '../../../app/router/sites' ) >(
+		'../../../app/router/sites'
+	);
 	return {
 		...actual,
 		siteRoute: {
@@ -220,6 +225,10 @@ describe( '<SiteDomains>', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Add domain name' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Add new domain' } ) ).not.toBeInTheDocument();
+		const defaultAddressCard = screen.getByRole( 'group', { name: defaultAddressDomain.domain } );
+		expect(
+			within( defaultAddressCard ).getByRole( 'button', { name: 'Change site address' } )
+		).toBeVisible();
 	} );
 
 	test( 'opens the change site address modal when deep linked', async () => {
@@ -230,20 +239,36 @@ describe( '<SiteDomains>', () => {
 		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
 	} );
 
-	test( 'shows "Change site address" action for the default address', async () => {
+	test( 'opens the change site address modal from "Rename address" on the default address card', async () => {
 		const user = userEvent.setup();
 		nock.cleanAll();
 		mockApis( { domains: [ defaultAddressDomain ] } );
 
 		render( <SiteDomains />, { user: ownerUser } );
 
-		await user.click( await screen.findByLabelText( 'Actions' ) );
+		const card = await screen.findByRole( 'group', { name: defaultAddressDomain.domain } );
+		await user.click( within( card ).getByRole( 'button', { name: 'Rename address' } ) );
 
-		const action = await screen.findByText( 'Change site address' );
-		await waitFor( () => expect( action ).toBeVisible() );
+		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
 	} );
 
-	test( 'hides "Change site address" action when the site is suspended', async () => {
+	test( 'opens the change site address modal from "Rename address" on the default address row of the table', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ defaultAddressDomain ],
+			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		await user.click( within( table ).getByRole( 'button', { name: 'Rename address' } ) );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
+	} );
+
+	test( 'hides "Rename address" when the site is suspended', async () => {
 		nock.cleanAll();
 		mockApis( { domains: [ { ...defaultAddressDomain, is_suspended_site: true } ] } );
 
@@ -251,7 +276,7 @@ describe( '<SiteDomains>', () => {
 
 		await screen.findByRole( 'group', { name: 'test-site.wordpress.com' } );
 
-		expect( screen.queryByLabelText( 'Actions' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Rename address' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'sorts domains by whether they are primary', async () => {
@@ -292,8 +317,42 @@ describe( '<SiteDomains>', () => {
 		const card = await screen.findByRole( 'group', { name: domain.domain } );
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
 		expect( within( card ).getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
 		expect( within( card ).getByRole( 'button', { name: 'DNS' } ) ).toBeVisible();
+	} );
+
+	test( 'shows cards with the layout switch when the site has 16 domains', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: Array.from( { length: 16 }, ( _, index ) => ( {
+				...domain,
+				domain: `domain${ index }.com`,
+				primary_domain: index === 0,
+			} ) ),
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'group', { name: 'domain0.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+	} );
+
+	test( 'shows a table by default when the site has 17 domains', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: Array.from( { length: 17 }, ( _, index ) => ( {
+				...domain,
+				domain: `domain${ index }.com`,
+				primary_domain: index === 0,
+			} ) ),
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByRole( 'table' ) ).toBeVisible();
+		expect( screen.queryByRole( 'group', { name: 'domain0.com' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'marks the primary address on its card, with its www prefix', async () => {
@@ -361,7 +420,7 @@ describe( '<SiteDomains>', () => {
 	test( 'keeps the way back to this list when opening a domain’s settings', async () => {
 		const user = userEvent.setup();
 		const { router } = render( <SiteDomains />, { user: ownerUser } );
-		const navigate = jest.spyOn( router, 'navigate' );
+		const navigate = vi.spyOn( router, 'navigate' );
 
 		const card = await screen.findByRole( 'group', { name: domain.domain } );
 		await user.click( within( card ).getByRole( 'button', { name: 'Settings' } ) );
@@ -374,7 +433,7 @@ describe( '<SiteDomains>', () => {
 		);
 	} );
 
-	test( 'keeps a saved table view, with bulk selection', async () => {
+	test( 'keeps a saved table view, with Settings and no actions menu or bulk selection', async () => {
 		nock.cleanAll();
 		mockApis( {
 			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
@@ -386,7 +445,22 @@ describe( '<SiteDomains>', () => {
 		expect(
 			within( table ).queryByRole( 'columnheader', { name: 'SSL' } )
 		).not.toBeInTheDocument();
-		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
+		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( within( table ).getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
+		expect( within( table ).queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+	} );
+
+	test( 'keeps the layout switch for a layout choice', async () => {
+		nock.cleanAll();
+		mockApis( {
+			preferences: { 'hosting-dashboard-dataviews-layout-chosen-site-domains': true },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'group', { name: domain.domain } );
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
 	} );
 
 	test( 'does not leave a blank column for a saved view that lists the SSL field', async () => {
@@ -493,7 +567,7 @@ describe( '<SiteDomains>', () => {
 			await waitFor( () => expect( select ).toBeDisabled() );
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_dashboard_site_domains_primary_domain_selector_submit',
-				{ site: site.slug, domain: 'candidate.com' }
+				{ site: site.slug, domain: 'candidate.com', www: false }
 			);
 
 			finishSaving();
@@ -501,43 +575,6 @@ describe( '<SiteDomains>', () => {
 			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 			expect( saveRequest.isDone() ).toBe( true );
 		} );
-	} );
-
-	test( 'hides "Make primary site address" action while SSL is still pending', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( {
-			domains: [ primaryCandidateDomain ],
-			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: false },
-		} );
-
-		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
-
-		await waitForSslDetails( queryClient, primaryCandidateDomain.domain );
-
-		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
-		await user.click( actionsButtons[ 0 ] );
-
-		expect( screen.queryByText( 'Make primary site address' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'shows "Make primary site address" action once SSL is active', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( {
-			domains: [ primaryCandidateDomain ],
-			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: true },
-		} );
-
-		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
-
-		await waitForSslDetails( queryClient, primaryCandidateDomain.domain );
-
-		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
-		await user.click( actionsButtons[ 0 ] );
-
-		const action = await screen.findByText( 'Make primary site address' );
-		await waitFor( () => expect( action ).toBeVisible() );
 	} );
 
 	test( 'shows a newly registered domain as activating until its certificate is issued', async () => {
@@ -648,6 +685,219 @@ describe( '<SiteDomains>', () => {
 		expect( within( card ).getByText( 'Active' ) ).toBeVisible();
 		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'www address in the primary site address modal', () => {
+		const atomicSite = { ...siteWithPrimaryDomainFeature, is_wpcom_atomic: true } as Site;
+
+		async function openModal( domains: unknown[], siteResponse: Site = atomicSite ) {
+			nock.cleanAll();
+			mockApis( { domains, siteResponse } );
+			const user = userEvent.setup();
+			const { recordTracksEvent, queryClient } = render( <SiteDomains />, { user: ownerUser } );
+			await user.click(
+				await screen.findByRole( 'button', { name: 'Change primary site address' } )
+			);
+			const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
+			const select = within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } );
+			const submit = async ( value: string ) => {
+				await user.selectOptions( select, value );
+				await user.click( within( dialog ).getByRole( 'button', { name: 'Change address' } ) );
+			};
+			return { dialog, select, submit, user, recordTracksEvent, queryClient };
+		}
+
+		function optionValues( select: HTMLElement ) {
+			return within( select )
+				.getAllByRole( 'option' )
+				.map( ( option ) => ( option as HTMLOptionElement ).value );
+		}
+
+		test( 'offers www right after each custom domain on an Atomic site', async () => {
+			const { select } = await openModal( [ primaryCandidateDomain, domain ] );
+
+			expect( optionValues( select ) ).toEqual( [
+				'test-site.com',
+				'www.test-site.com',
+				'candidate.com',
+				'www.candidate.com',
+			] );
+			expect( select ).toHaveValue( 'test-site.com' );
+		} );
+
+		test( 'does not offer www on a Simple site', async () => {
+			const { select } = await openModal(
+				[ primaryCandidateDomain, domain ],
+				siteWithPrimaryDomainFeature
+			);
+
+			expect( optionValues( select ) ).toEqual( [ 'test-site.com', 'candidate.com' ] );
+		} );
+
+		test( 'does not offer www for the default address', async () => {
+			const { select } = await openModal( [
+				primaryCandidateDomain,
+				{ ...defaultAddressDomain, primary_domain: true },
+			] );
+
+			expect( optionValues( select ) ).toEqual( [
+				'test-site.wordpress.com',
+				'candidate.com',
+				'www.candidate.com',
+			] );
+		} );
+
+		test( 'does not offer www for a subdomain', async () => {
+			const { select } = await openModal( [
+				primaryCandidateDomain,
+				{ ...domain, domain: 'blog.test-site.com' },
+			] );
+
+			expect( optionValues( select ) ).toEqual( [
+				'blog.test-site.com',
+				'candidate.com',
+				'www.candidate.com',
+			] );
+		} );
+
+		test( 'shows www as the current address when www is on', async () => {
+			const { dialog, select } = await openModal( [
+				primaryCandidateDomain,
+				{ ...domain, primary_is_www: true },
+			] );
+
+			expect( select ).toHaveValue( 'www.test-site.com' );
+			expect( dialog ).toHaveTextContent(
+				'The current primary site address for this site is www.test-site.com.'
+			);
+			expect( within( dialog ).getByRole( 'button', { name: 'Change address' } ) ).toBeDisabled();
+		} );
+
+		test.each( [
+			{ primary_is_www: false, value: 'www.test-site.com', enabled: true },
+			{ primary_is_www: true, value: 'test-site.com', enabled: false },
+		] )(
+			'sends enabled: $enabled when $value is submitted',
+			async ( { primary_is_www, value, enabled } ) => {
+				const { submit, recordTracksEvent } = await openModal( [
+					primaryCandidateDomain,
+					{ ...domain, primary_is_www },
+				] );
+				const wwwRequest = nock( 'https://public-api.wordpress.com' )
+					.post( '/wpcom/v2/domains/www-primary/test-site.com', { enabled } )
+					.reply( 200, { success: true } );
+
+				await submit( value );
+
+				await waitFor( () => expect( wwwRequest.isDone() ).toBe( true ) );
+				await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_dashboard_site_domains_primary_domain_selector_submit',
+					{ site: site.slug, domain: 'test-site.com', www: enabled }
+				);
+			}
+		);
+
+		test( 'still sets another domain as primary', async () => {
+			const { submit } = await openModal( [ primaryCandidateDomain, domain ] );
+			const primaryRequest = nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
+				.reply( 200, {} );
+
+			await submit( 'candidate.com' );
+
+			await waitFor( () => expect( primaryRequest.isDone() ).toBe( true ) );
+		} );
+
+		test( 'sets another domain as primary, then turns www on, for its www address', async () => {
+			const { submit } = await openModal( [ primaryCandidateDomain, domain ] );
+			const requests: string[] = [];
+			nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
+				.reply( 200, () => {
+					requests.push( 'primary' );
+					return {};
+				} )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com', { enabled: true } )
+				.reply( 200, () => {
+					requests.push( 'www' );
+					return { success: true };
+				} );
+
+			await submit( 'www.candidate.com' );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( requests ).toEqual( [ 'primary', 'www' ] );
+		} );
+
+		test( 'explains that the primary changed when turning www on fails, and retries only www', async () => {
+			const { dialog, submit, user, queryClient } = await openModal( [
+				primaryCandidateDomain,
+				domain,
+			] );
+			const api = nock( 'https://public-api.wordpress.com' );
+			api
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
+				.reply( 200, {} )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com', { enabled: true } )
+				.reply( 400, { code: 'www_dns_record_missing', message: 'Add a CNAME record for www.' } );
+
+			await submit( 'www.candidate.com' );
+
+			await waitFor( () =>
+				expect( dialog ).toHaveTextContent(
+					'candidate.com is now the primary site address, but it could not be changed to www.candidate.com.'
+				)
+			);
+			expect( dialog ).toHaveTextContent( 'Add a CNAME record for www.' );
+
+			// The mutations refresh the app's own query client, so the test refreshes its client here.
+			api
+				.get( '/rest/v1.2/all-domains' )
+				.query( true )
+				.reply( 200, {
+					domains: [
+						{ ...primaryCandidateDomain, primary_domain: true },
+						{ ...domain, primary_domain: false, can_set_as_primary: true },
+					],
+				} );
+			await queryClient.invalidateQueries( domainsQuery() );
+			await waitFor( () =>
+				expect( dialog ).toHaveTextContent(
+					'The current primary site address for this site is candidate.com.'
+				)
+			);
+
+			const retryPrimaryRequest = nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary` )
+				.reply( 200, {} );
+			const retryWwwRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com', { enabled: true } )
+				.reply( 200, { enabled: true, primary_domain: 'www.candidate.com' } );
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Change address' } ) );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( retryWwwRequest.isDone() ).toBe( true );
+			expect( retryPrimaryRequest.isDone() ).toBe( false );
+		} );
+
+		test( 'offers www from "Change primary" on the primary domain row', async () => {
+			nock.cleanAll();
+			mockApis( { domains: [ primaryCandidateDomain, domain ], siteResponse: atomicSite } );
+			const user = userEvent.setup();
+			render( <SiteDomains />, { user: ownerUser } );
+
+			const primaryCard = await screen.findByRole( 'group', { name: domain.domain } );
+			await user.click(
+				await within( primaryCard ).findByRole( 'button', { name: 'Change primary' } )
+			);
+
+			const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
+			expect(
+				optionValues( within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } ) )
+			).toEqual( [ 'test-site.com', 'www.test-site.com', 'candidate.com', 'www.candidate.com' ] );
+		} );
 	} );
 
 	test( 'shows an expired domain notice instead of the primary site address notice', async () => {

@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import config, { optionalConfig } from '../config-api';
 import hasSiteProtection from '../has-site-protection';
 
-jest.mock( '../config-api', () => {
-	const configApi = jest.fn();
-	configApi.isEnabled = jest.fn();
-	return { __esModule: true, default: configApi, optionalConfig: jest.fn() };
+vi.mock( '../config-api', () => {
+	const configApi = vi.fn();
+	configApi.isEnabled = vi.fn();
+	return { __esModule: true, default: configApi, optionalConfig: vi.fn() };
 } );
 
 describe( 'hasSiteProtection', () => {

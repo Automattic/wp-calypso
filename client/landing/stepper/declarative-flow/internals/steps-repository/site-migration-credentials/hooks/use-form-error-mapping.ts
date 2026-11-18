@@ -1,6 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { FieldErrors } from 'react-hook-form';
+import {
+	MIGRATION_TICKET_REFUSED_CODES,
+	useMigrationTicketErrorMessage,
+} from 'calypso/landing/stepper/hooks/use-migration-ticket-error-message';
 import { ApiError, CredentialsFormData } from '../types';
 
 // This function is used to map the error message to the correct field in the form.
@@ -16,6 +20,7 @@ export const useFormErrorMapping = (
 	variables?: CredentialsFormData | null
 ): FieldErrors< CredentialsFormData > | undefined => {
 	const translate = useTranslate();
+	const getTicketErrorMessage = useMigrationTicketErrorMessage();
 
 	const fieldMapping: Record< string, { type: string; message: string } | null > = useMemo(
 		() => ( {
@@ -90,6 +95,10 @@ export const useFormErrorMapping = (
 				};
 			}
 
+			if ( MIGRATION_TICKET_REFUSED_CODES.includes( code ) ) {
+				return { root: { type: 'manual', message: getTicketErrorMessage( error ) } };
+			}
+
 			if ( code !== 'rest_invalid_param' || ! data?.params ) {
 				return { root: { type: 'manual', message } };
 			}
@@ -107,7 +116,7 @@ export const useFormErrorMapping = (
 				{} as Record< string, { type: string; message: string } >
 			);
 		},
-		[ getTranslatedMessage, translate, getCredentialsErrorMessage ]
+		[ getTranslatedMessage, translate, getCredentialsErrorMessage, getTicketErrorMessage ]
 	);
 
 	return useMemo( () => {

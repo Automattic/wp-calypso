@@ -1,9 +1,5 @@
+import { requestSiteMigrationHelp } from '@automattic/api-core';
 import { useMutation, type UseMutationOptions } from '@tanstack/react-query';
-import wpcom from 'calypso/lib/wp';
-
-interface migrationTicketAPIResponse {
-	success: boolean;
-}
 
 interface APIError {
 	status: number;
@@ -11,35 +7,15 @@ interface APIError {
 	message: string;
 }
 
-interface TicketRequest {
-	locale: string;
-	blog_url: string;
-	from_url: string;
-	context?: string;
-}
-
-export const useSubmitMigrationTicket = <
-	TData = migrationTicketAPIResponse | APIError,
-	TError = APIError,
-	TContext = unknown,
->(
-	options: UseMutationOptions< TData, TError, TicketRequest, TContext > = {}
+export const useSubmitMigrationTicket = (
+	options: UseMutationOptions<
+		{ success: boolean },
+		APIError,
+		Parameters< typeof requestSiteMigrationHelp >[ 0 ]
+	> = {}
 ) => {
 	const { mutate, mutateAsync, ...rest } = useMutation( {
-		mutationFn: ( { locale, blog_url, from_url, context } ) =>
-			wpcom.req.post(
-				{
-					path: '/help/migration-ticket/new',
-					apiNamespace: 'wpcom/v2',
-				},
-				{},
-				{
-					locale,
-					blog_url,
-					from_url,
-					context,
-				}
-			),
+		mutationFn: requestSiteMigrationHelp,
 		...options,
 	} );
 

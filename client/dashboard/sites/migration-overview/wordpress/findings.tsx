@@ -9,7 +9,12 @@ import { getCurrentDashboard } from '../../../app/routing';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
 import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
-import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
+import {
+	AssistedHandoffLink,
+	MigrationCard,
+	StatusIcon,
+	getChangeSourceUrl,
+} from './migration-card';
 import type {
 	Site,
 	WordPressMigrationFinding,
@@ -35,12 +40,31 @@ export function Findings( {
 	const { findings } = migration;
 	const codes = findings.map( ( { code } ) => code );
 	const isFailed = migration.status === 'failed';
-	const isRetry = findings.some( ( { resolution } ) =>
-		[ 'retry', 'assisted_handoff' ].includes( resolution )
-	);
+	const isRetry = findings.some( ( { resolution } ) => resolution !== 'accept' );
 	// Only warnings mean the migration could read the source. Anything worse may be its connection.
 	const hasError = isFailed || findings.some( ( { severity } ) => severity === 'failure' );
-	const needsPlan = codes.includes( 'destination_needs_plan' );
+
+	const suggestsSourceChange = findings.some(
+		( { suggested_action } ) => suggested_action === 'change_source'
+	);
+
+	const suggestsPlanChange = findings.some(
+		( { suggested_action } ) => suggested_action === 'upgrade_plan'
+	);
+	const requiresPlanChange = findings.some(
+		( { suggested_action, resolution } ) =>
+			suggested_action === 'upgrade_plan' && resolution === 'retry'
+	);
+
+	const planButton = suggestsPlanChange && (
+		<Button
+			__next40pxDefaultSize
+			variant={ requiresPlanChange ? 'primary' : 'secondary' }
+			href={ getPlanUpgradeUrl( site ) }
+		>
+			{ requiresPlanChange ? __( 'Choose a plan' ) : __( 'Upgrade your plan' ) }
+		</Button>
+	);
 
 	const getDescription = () => {
 		if ( isFailed ) {
@@ -73,19 +97,24 @@ export function Findings( {
 			}
 			actions={
 				<>
-					{ needsPlan && (
-						<Button __next40pxDefaultSize variant="primary" href={ getPlanUpgradeUrl( site ) }>
-							{ __( 'Choose a plan' ) }
+					{ suggestsSourceChange && (
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							href={ getChangeSourceUrl( site, migration.source_url ) }
+						>
+							{ getChangeSourceLabel( findings ) }
 						</Button>
 					) }
+					{ planButton }
 					<Button
 						__next40pxDefaultSize
-						variant={ needsPlan ? 'secondary' : 'primary' }
+						variant={ requiresPlanChange || suggestsSourceChange ? 'secondary' : 'primary' }
 						isBusy={ run.isPending }
 						disabled={ run.isPending }
 						onClick={ () => run.mutate( { accept_findings: codes } ) }
 					>
-						{ isRetry ? __( 'Try again' ) : __( 'Continue' ) }
+						{ getRunLabel( findings, isRetry ) }
 					</Button>
 					<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
 						{ __( 'Contact us' ) }
@@ -100,7 +129,7 @@ export function Findings( {
 					variant={ finding.severity === 'failure' ? 'error' : 'warning' }
 					title={ finding.label }
 				>
-					{ getMessage( finding ) }
+					<div className="wordpress-migration__message">{ getMessage( finding ) }</div>
 				</Notice>
 			) ) }
 		</MigrationCard>
@@ -116,6 +145,35 @@ function getPlanUpgradeUrl( site: Site ) {
 		redirect_to: backUrl,
 		dashboard: getCurrentDashboard(),
 	} );
+}
+
+// A site that isn't WordPress goes back the same way, to pick the platform it's built on.
+function getChangeSourceLabel( findings: WordPressMigrationFinding[] ) {
+	const isNotWordPress = findings.some(
+		( { code, data } ) => code === 'source_not_wordpress' && data?.platform !== 'parked'
+	);
+	return isNotWordPress ? __( 'Change the address or platform' ) : __( 'Change the address' );
+}
+
+// Trying again says what was fixed, for the finding that stopped the run.
+function getRunLabel( findings: WordPressMigrationFinding[], isRetry: boolean ) {
+	if ( ! isRetry ) {
+		return __( 'Continue' );
+	}
+
+	const stoppedBy = findings.find( ( { severity } ) => severity === 'failure' );
+	switch ( stoppedBy?.code ) {
+		case 'source_not_wordpress':
+			return stoppedBy.data?.platform === 'parked'
+				? __( 'The site is live now, try again' )
+				: __( 'Try again' );
+		case 'source_unreachable':
+			return __( 'The site is online now, try again' );
+		case 'destination_needs_plan':
+			return __( 'I’ve purchased a plan, continue' );
+		default:
+			return __( 'Try again' );
+	}
 }
 
 // The server's message, except where the finding's data reads better set apart from the text.

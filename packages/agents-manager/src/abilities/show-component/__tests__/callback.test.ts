@@ -1,21 +1,22 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import { hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';
 import { showComponentCallback } from '../callback';
 import type { ShowComponentInput } from '../callback';
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	select: () => ( { getCurrentPostId: () => 42 } ),
 } ) );
-jest.mock( '../../../utils/checkpoints', () => ( {
+vi.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
-	hasCheckpoint: jest.fn( () => false ),
-	setCheckpoint: jest.fn(),
+	hasCheckpoint: vi.fn( () => false ),
+	setCheckpoint: vi.fn(),
 } ) );
-jest.mock( '../../../utils/tool-call-history', () => ( {
-	getToolCallIdFromConversationHistory: jest.fn( () => null ),
+vi.mock( '../../../utils/tool-call-history', () => ( {
+	getToolCallIdFromConversationHistory: vi.fn( () => null ),
 } ) );
 
 const makeInput = ( overrides: Partial< ShowComponentInput > = {} ): ShowComponentInput => ( {
@@ -24,7 +25,7 @@ const makeInput = ( overrides: Partial< ShowComponentInput > = {} ): ShowCompone
 	...overrides,
 } );
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'showComponentCallback', () => {
 	it( 'returns a successful `agentMessage` with correct structure', async () => {
@@ -72,7 +73,7 @@ describe( 'showComponentCallback', () => {
 		[ 'font-picker', [ 'font' ] ],
 		[ 'button-picker', [ 'button' ] ],
 	] as const )( 'checkpoints the pre-pick state for %s', async ( type, keys ) => {
-		jest.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
+		vi.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
 
 		await showComponentCallback( makeInput( { type } ) );
 
@@ -89,8 +90,8 @@ describe( 'showComponentCallback', () => {
 	} );
 
 	it( 'keeps an existing snapshot instead of overwriting it', async () => {
-		jest.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
-		jest.mocked( hasCheckpoint ).mockReturnValueOnce( true );
+		vi.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
+		vi.mocked( hasCheckpoint ).mockReturnValueOnce( true );
 
 		await showComponentCallback( makeInput() );
 
@@ -98,7 +99,7 @@ describe( 'showComponentCallback', () => {
 	} );
 
 	it( 'skips the checkpoint for an unknown component type', async () => {
-		jest.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
+		vi.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
 
 		await showComponentCallback(
 			makeInput( { type: 'pattern-picker' as ShowComponentInput[ 'type' ] } )
@@ -108,9 +109,9 @@ describe( 'showComponentCallback', () => {
 	} );
 
 	it( 'logs and returns an error result when showing the component throws', async () => {
-		const error = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		jest.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
-		jest.mocked( setCheckpoint ).mockImplementationOnce( () => {
+		const error = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.mocked( getToolCallIdFromConversationHistory ).mockReturnValueOnce( 'toolu_9' );
+		vi.mocked( setCheckpoint ).mockImplementationOnce( () => {
 			throw new Error( 'Snapshot exploded.' );
 		} );
 

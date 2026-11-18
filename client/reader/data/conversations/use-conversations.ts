@@ -13,11 +13,12 @@ import {
 } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { useDispatch } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
-import type { Commenter, Conversation, OwnComment } from './types';
+import type { Commenter, Conversation, ConversationPostDetails, OwnComment } from './types';
 import type {
 	ReadConversation,
 	ReadConversationOwnComment,
@@ -39,6 +40,19 @@ const toTimestamp = ( ...dates: ( string | null | undefined )[] ) => {
 	return date ? Date.parse( date ) : 0;
 };
 
+const toPostDetails = ( { post, site }: ReadConversation ): ConversationPostDetails | undefined =>
+	post.discussion && post.excerpt !== undefined
+		? {
+				siteName: site.name,
+				siteIcon: site.icon,
+				author: post.author ?? null,
+				date: post.date,
+				excerpt: decodeEntities( stripHTML( post.excerpt ) ).trim(),
+				image: post.featured_image || null,
+				discussion: post.discussion,
+			}
+		: undefined;
+
 export const adaptReadConversation = ( conversation: ReadConversation ): Conversation => ( {
 	key: conversation.id,
 	siteId: conversation.blog_id,
@@ -55,6 +69,7 @@ export const adaptReadConversation = ( conversation: ReadConversation ): Convers
 	unreadNoteIds: conversation.unread_note_ids,
 	unreadCommentIds: conversation.unread_comment_ids,
 	isFollowing: conversation.is_following,
+	postDetails: toPostDetails( conversation ),
 } );
 
 export const adaptReadConversationOwnComment = (

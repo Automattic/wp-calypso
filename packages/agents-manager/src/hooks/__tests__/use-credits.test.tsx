@@ -2,13 +2,17 @@
  * @jest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits, useCreditsVisit } from '../use-credits';
 import type { CreditsPool } from '../../utils/credits';
 
-jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
-jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock(
+	'@wordpress/element',
+	async () => await vi.importActual< typeof import( 'react' ) >( 'react' )
+);
+vi.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	sprintf: ( format: string, ...args: unknown[] ) => {
 		let index = 0;
@@ -17,15 +21,15 @@ jest.mock( '@wordpress/i18n', () => ( {
 			.replace( /%%/g, '%' );
 	},
 } ) );
-jest.mock( '../../components/credits-meter', () => () => null );
-jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
+vi.mock( '../../components/credits-meter', () => ( { default: () => null } ) );
+vi.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: vi.fn() } ) );
 // A visit with no site, where the seeded mock balance applies. The credits hooks read it
 // from the Agents Manager context.
 const mockVisit = {
 	agentConfig: { agentId: 'mock', agentUrl: '', sessionId: '' },
 	siteKey: 'no-site',
 };
-jest.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockVisit } ) );
+vi.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockVisit } ) );
 
 function useMockCredits( {
 	enabled,
@@ -79,7 +83,7 @@ describe( 'useCredits', () => {
 	it( 'leaves the popover’s credits button out of a mock balance, which `/credits` can’t answer', () => {
 		seed( '?am_credits=25&am_plan=free' );
 		const { result } = renderHook( () =>
-			useMockCredits( { enabled: true, onShowCredits: jest.fn() } )
+			useMockCredits( { enabled: true, onShowCredits: vi.fn() } )
 		);
 		const meter = result.current.trailingActions as React.ReactElement< {
 			onShowCredits?: () => void;
@@ -177,7 +181,7 @@ describe( 'useCredits', () => {
 	} );
 
 	it.each( [ 'free', 'paid' ] )( 'sends no credits events from a %s demo balance', ( plan ) => {
-		jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+		vi.mocked( recordAgentsManagerTracksEvent ).mockClear();
 		seed( `?am_credits=15&am_plan=${ plan }` );
 		const { result, rerender } = renderCredits();
 		const meter = () =>
@@ -200,7 +204,7 @@ describe( 'useCredits', () => {
 	it.each( [ 'free', 'paid' ] )(
 		'records nothing when a %s demo balance drains and opens the popover by itself',
 		( plan ) => {
-			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			vi.mocked( recordAgentsManagerTracksEvent ).mockClear();
 			seed( `?am_credits=5&am_plan=${ plan }` );
 			const { result, rerender } = renderCredits();
 			completeRequest( rerender );

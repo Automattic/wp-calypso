@@ -1,4 +1,5 @@
 import { memo } from '@wordpress/element';
+import { vi } from 'vitest';
 import { BASIC_CATALOG_ID } from '../../capabilities';
 import { createInteractiveUiCatalog } from '../catalog';
 import type { InteractiveUiCatalogDefinition } from '../definitions';
@@ -20,7 +21,7 @@ const hostCatalog: InteractiveUiCatalogDefinition = {
 		},
 	},
 	components: { HostColorPicker: () => null },
-	functions: { hostOpenHelpCenter: jest.fn() },
+	functions: { hostOpenHelpCenter: vi.fn() },
 };
 
 it( 'builds A2UI’s Basic catalog by default', () => {

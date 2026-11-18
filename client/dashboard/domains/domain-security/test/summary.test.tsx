@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
@@ -17,26 +17,40 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
 };
 
 describe( '<DomainSecuritySettingsSummary>', () => {
-	test( 'does not show an SSL badge when the certificate is active', async () => {
+	test( 'shows the Domain security title and DNSSEC status for a registration', async () => {
 		render( <DomainSecuritySettingsSummary domain={ getMockedDomainData() } /> );
 
 		expect( await screen.findByText( 'Domain security' ) ).toBeVisible();
-		expect( screen.queryByText( /SSL/ ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'DNSSEC disabled' ) ).toBeVisible();
 	} );
 
-	test( 'shows a pending badge when the certificate is pending', async () => {
+	test( 'shows the Domain security title without a badge for a connection', async () => {
 		render(
-			<DomainSecuritySettingsSummary domain={ getMockedDomainData( { ssl_status: 'pending' } ) } />
+			<DomainSecuritySettingsSummary
+				domain={ getMockedDomainData( {
+					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
+				} ) }
+			/>
 		);
 
-		expect( await screen.findByText( 'SSL Pending' ) ).toBeVisible();
+		expect( await screen.findByText( 'Domain security' ) ).toBeVisible();
+		expect( screen.queryByText( /DNSSEC/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows a disabled badge when the certificate is inactive', async () => {
-		render(
-			<DomainSecuritySettingsSummary domain={ getMockedDomainData( { ssl_status: 'inactive' } ) } />
-		);
+	test.each( [ 'pending', 'inactive' ] as const )(
+		'does not show an SSL badge when the certificate is %s',
+		async ( sslStatus ) => {
+			render(
+				<DomainSecuritySettingsSummary
+					domain={ getMockedDomainData( {
+						subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
+						ssl_status: sslStatus,
+					} ) }
+				/>
+			);
 
-		expect( await screen.findByText( 'SSL Disabled' ) ).toBeVisible();
-	} );
+			expect( await screen.findByText( 'Domain security' ) ).toBeVisible();
+			expect( screen.queryByText( /SSL/ ) ).not.toBeInTheDocument();
+		}
+	);
 } );

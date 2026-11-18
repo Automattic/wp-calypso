@@ -4,51 +4,51 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import '@testing-library/jest-dom';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { type Mock, type MockedFunction, vi } from 'vitest';
 import FeedbackList, { type FeedbackListItem } from './feedback-list';
 import SplitScreenGuide from './split-screen-guide';
 
-const mockApplyReviewEdit = jest.fn();
-const mockUndoBlockEdit = jest.fn();
+const mockApplyReviewEdit = vi.fn();
+const mockUndoBlockEdit = vi.fn();
 let mockCurrentPostId = 1;
 const mockBlocks = [
 	{ clientId: 'block-1', name: 'core/paragraph', attributes: { content: 'First source' } },
 	{ clientId: 'block-2', name: 'core/paragraph', attributes: { content: 'Second source' } },
 ];
 
-jest.mock( '../utils/block-actions', () => ( {
+vi.mock( '../utils/block-actions', () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
-	clearActiveBlockFocus: jest.fn(),
-	clearActiveBlockFocusUnlessBlockReferenceClick: jest.fn(),
+	clearActiveBlockFocus: vi.fn(),
+	clearActiveBlockFocusUnlessBlockReferenceClick: vi.fn(),
 	countCurrentTextOccurrences: () => 1,
 	getEditableBlockContent: ( block: any ) => block.attributes.content,
 	hasEditableBlockTarget: () => true,
-	toggleBlockReferenceFocus: jest.fn(),
+	toggleBlockReferenceFocus: vi.fn(),
 	undoBlockEdit: ( ...args: any[] ) => mockUndoBlockEdit( ...args ),
 } ) );
 
-jest.mock( '../utils/blocks', () => ( {
+vi.mock( '../utils/blocks', () => ( {
 	flattenBlocks: ( blocks: any[] ) => blocks,
 	getEditorContentBlocks: ( blockEditor: { getBlocks: () => any[] } ) => blockEditor.getBlocks(),
 } ) );
 
-jest.mock( '../utils/use-copy-to-clipboard', () => ( {
+vi.mock( '../utils/use-copy-to-clipboard', () => ( {
 	useCopyToClipboard: () => ( {
 		clipboardSupported: false,
 		copiedKey: null,
-		copy: jest.fn(),
+		copy: vi.fn(),
 	} ),
 } ) );
 
-jest.mock( './split-screen-guide', () => ( {
+vi.mock( './split-screen-guide', () => ( {
 	__esModule: true,
-	default: jest.fn( () => null ),
+	default: vi.fn( () => null ),
 } ) );
 
-jest.mock( './review-card', () => {
-	const ReactModule = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( './review-card', async () => {
+	const ReactModule = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	return {
 		__esModule: true,
 		default: ( { status, onApply, onDismiss, onUndo }: any ) =>
@@ -75,7 +75,7 @@ jest.mock( './review-card', () => {
 	};
 } );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( mapSelect: any ) =>
 		mapSelect( ( store: string ) => {
 			if ( store === 'core/block-editor' ) {
@@ -88,8 +88,8 @@ jest.mock( '@wordpress/data', () => ( {
 		} ),
 } ) );
 
-jest.mock( '@wordpress/components', () => {
-	const ReactModule = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '@wordpress/components', async () => {
+	const ReactModule = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children }: any ) => ReactModule.createElement( 'div', null, children ),
 		PanelBody: ( { children }: any ) => ReactModule.createElement( 'section', null, children ),
@@ -116,7 +116,7 @@ const items: FeedbackListItem[] = [
 ];
 
 function feedbackList(
-	onResponseAction: jest.Mock | undefined,
+	onResponseAction: Mock | undefined,
 	listItems = items,
 	props: Partial< React.ComponentProps< typeof FeedbackList > > = {}
 ) {
@@ -136,7 +136,7 @@ function feedbackList(
 	);
 }
 
-function renderFeedbackList( onResponseAction: jest.Mock, listItems = items ) {
+function renderFeedbackList( onResponseAction: Mock, listItems = items ) {
 	return render( feedbackList( onResponseAction, listItems ) );
 }
 
@@ -157,8 +157,8 @@ afterEach( () => {
 } );
 
 it( 'passes the tool call through to the split-screen guide', () => {
-	const mockSplitScreenGuide = SplitScreenGuide as jest.MockedFunction< typeof SplitScreenGuide >;
-	render( feedbackList( jest.fn(), items, { toolCallId: 'tool-call-1' } ) );
+	const mockSplitScreenGuide = SplitScreenGuide as MockedFunction< typeof SplitScreenGuide >;
+	render( feedbackList( vi.fn(), items, { toolCallId: 'tool-call-1' } ) );
 
 	expect( mockSplitScreenGuide.mock.calls.at( -1 )?.[ 0 ] ).toMatchObject( {
 		componentType: 'proofread',
@@ -167,7 +167,7 @@ it( 'passes the tool call through to the split-screen guide', () => {
 } );
 
 it( 'reports an individual apply and its inline undo from existing operation results', async () => {
-	const onResponseAction = jest.fn();
+	const onResponseAction = vi.fn();
 	mockApplyReviewEdit.mockResolvedValueOnce( {
 		success: true,
 		clientId: 'block-1',
@@ -204,7 +204,7 @@ it( 'reports an individual apply and its inline undo from existing operation res
 } );
 
 it( 'reports one aggregate action for a partial bulk apply', async () => {
-	const onResponseAction = jest.fn();
+	const onResponseAction = vi.fn();
 	mockApplyReviewEdit
 		.mockResolvedValueOnce( {
 			success: true,
@@ -229,7 +229,7 @@ it( 'reports one aggregate action for a partial bulk apply', async () => {
 } );
 
 it( 'does not report an in-flight action after the host revokes tracking', async () => {
-	const onResponseAction = jest.fn();
+	const onResponseAction = vi.fn();
 	let resolveApply: ( value: {
 		success: boolean;
 		clientId: string;
@@ -260,7 +260,7 @@ it( 'does not report an in-flight action after the host revokes tracking', async
 } );
 
 it( 'does not report an in-flight action after the response unmounts', async () => {
-	const onResponseAction = jest.fn();
+	const onResponseAction = vi.fn();
 	let resolveApply: ( value: {
 		success: boolean;
 		clientId: string;
@@ -290,7 +290,7 @@ it( 'does not report an in-flight action after the response unmounts', async () 
 } );
 
 it( 'stops bulk reporting when the post changes during an apply', async () => {
-	const onResponseAction = jest.fn();
+	const onResponseAction = vi.fn();
 	let resolveFirstApply: ( value: { success: boolean } ) => void = () => {};
 	mockApplyReviewEdit.mockImplementationOnce(
 		() =>
@@ -312,7 +312,7 @@ it( 'stops bulk reporting when the post changes during an apply', async () => {
 } );
 
 it( 'does not report a failed undo when the post is stale', async () => {
-	const onResponseAction = jest.fn();
+	const onResponseAction = vi.fn();
 	mockApplyReviewEdit.mockResolvedValueOnce( {
 		success: true,
 		clientId: 'block-1',

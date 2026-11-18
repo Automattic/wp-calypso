@@ -2,6 +2,7 @@ import { queryClient } from '@automattic/api-queries';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { buildCart } from '../../test-helpers/factories/cart';
 import { mockGetSuggestionsQuery } from '../../test-helpers/queries/suggestions';
 import { DomainSearch } from '../index';
@@ -37,9 +38,9 @@ describe( 'DomainSearch', () => {
 	} );
 
 	it( 'sends no Name Pulse events from the classic results page', async () => {
-		const onNamePulseTracksEvent = jest.fn();
-		const onNamePulseSearch = jest.fn();
-		const onSuggestionsReceive = jest.fn();
+		const onNamePulseTracksEvent = vi.fn();
+		const onNamePulseSearch = vi.fn();
+		const onSuggestionsReceive = vi.fn();
 
 		mockGetSuggestionsQuery( { params: { query: 'coffee' }, suggestions: [] } );
 
@@ -57,7 +58,7 @@ describe( 'DomainSearch', () => {
 	} );
 
 	it( 'fires the onPageView event when the component mounts', () => {
-		const onPageView = jest.fn();
+		const onPageView = vi.fn();
 
 		render( <DomainSearch cart={ buildCart() } events={ { onPageView } } /> );
 
@@ -66,7 +67,7 @@ describe( 'DomainSearch', () => {
 
 	describe( 'mount search', () => {
 		it( 'reports a prefilled search when mounting with an uncached query', () => {
-			const onSearchStart = jest.fn();
+			const onSearchStart = vi.fn();
 
 			mockGetSuggestionsQuery( { params: { query: 'coffee' }, suggestions: [] } );
 
@@ -77,8 +78,8 @@ describe( 'DomainSearch', () => {
 		} );
 
 		it( 'reports a cached search when the results are already in the client-side cache', async () => {
-			const onSearchStart = jest.fn();
-			const onSuggestionsReceive = jest.fn();
+			const onSearchStart = vi.fn();
+			const onSuggestionsReceive = vi.fn();
 
 			mockGetSuggestionsQuery( { params: { query: 'coffee' }, suggestions: [] } );
 
@@ -102,7 +103,7 @@ describe( 'DomainSearch', () => {
 		} );
 
 		it( 'does not report a search when mounting without a query', () => {
-			const onSearchStart = jest.fn();
+			const onSearchStart = vi.fn();
 
 			render( <DomainSearch cart={ buildCart() } events={ { onSearchStart } } /> );
 
@@ -111,7 +112,7 @@ describe( 'DomainSearch', () => {
 
 		it( 'only reports the submit when the first search starts from the empty state', async () => {
 			const user = userEvent.setup();
-			const onSearchStart = jest.fn();
+			const onSearchStart = vi.fn();
 
 			mockGetSuggestionsQuery( { params: { query: 'coffee' }, suggestions: [] } );
 
@@ -137,7 +138,7 @@ describe( 'DomainSearch', () => {
 		} );
 
 		it( 'does not report a mount search again when the query prop changes', () => {
-			const onSearchStart = jest.fn();
+			const onSearchStart = vi.fn();
 
 			mockGetSuggestionsQuery( { params: { query: 'coffee' }, suggestions: [] } );
 			mockGetSuggestionsQuery( { params: { query: 'tea' }, suggestions: [] } );

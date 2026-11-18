@@ -2,7 +2,7 @@ import * as Charts from '@automattic/charts';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { assertUniqueSeries, getChartTable, getLabel } from '../utils/chart-data';
-import { CHART_HEIGHT, ChartFigure } from './chart-figure';
+import { CHART_HEIGHT, ChartFigure, getChartColor } from './chart-figure';
 import { ChartTooltip } from './chart-tooltip';
 
 // The legend shows each slice's share, so the tooltip shows its value.
@@ -28,11 +28,16 @@ export function PieChart( { title, data }: PieChartProps ) {
 		return getChartTable( __( 'Category', 'default' ), series, getLabel );
 	}, [ data ] );
 
+	const coloredData = useMemo(
+		() => data.map( ( point, index ) => ( { ...point, color: getChartColor( index ) } ) ),
+		[ data ]
+	);
+
 	// The legend names the slices and their shares, since labels on narrow slices would overlap.
 	return (
 		<ChartFigure className="ai-ui-renderer__chart--pie" title={ title } table={ table }>
 			<Charts.PieChart
-				data={ data }
+				data={ coloredData }
 				height={ CHART_HEIGHT }
 				renderTooltip={ renderPieTooltip }
 				showLabels={ false }

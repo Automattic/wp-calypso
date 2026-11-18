@@ -1,6 +1,6 @@
 import { useEffect, useRef } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { parseErrorUrl } from '../utils/parse-error-url';
+import { getCheckoutSource, parseErrorUrl } from '../utils/parse-error-url';
 import {
 	trackImageStudioUpgradeNoticeShown,
 	trackImageStudioUpgradeNoticeClick,
@@ -12,14 +12,13 @@ import type { UpgradeNoticeCredits } from '../utils/tracking';
 type AddNoticeFunc = ( content: string, type: NoticeType, actions?: NoticeAction[] ) => void;
 
 /** The old Jetpack AI quota only refuses at zero, with no balance or plan to report. */
-const JETPACK_AI_QUOTA_NOTICE: UpgradeNoticeCredits = {
+const JETPACK_AI_QUOTA_NOTICE: Omit< UpgradeNoticeCredits, 'ref' > = {
 	meter: 'jetpack_ai',
 	state: 'zero',
 	planTier: 'none',
 	creditsLeft: 'none',
 	topUpCreditsLeft: 'none',
 	ctaType: 'upgrade',
-	ref: 'none',
 };
 
 /**
@@ -52,14 +51,16 @@ export function useErrorNotice(
 		const { content, url, isUpgradeUrl, isPlansPageUrl } = parseErrorUrl( errorMessage );
 
 		if ( url && isUpgradeUrl ) {
+			const noticeEvent = {
+				mode,
+				trigger: 'error' as const,
+				...JETPACK_AI_QUOTA_NOTICE,
+				ref: getCheckoutSource( url ),
+			};
 			// Show upgrade notices as persistent warning notices
 			if ( ! trackedImpressions.current.has( content ) ) {
 				trackedImpressions.current.add( content );
-				trackImageStudioUpgradeNoticeShown( {
-					mode,
-					trigger: 'error',
-					...JETPACK_AI_QUOTA_NOTICE,
-				} );
+				trackImageStudioUpgradeNoticeShown( noticeEvent );
 			}
 			addNotice( content, 'warning', [
 				{
@@ -68,12 +69,7 @@ export function useErrorNotice(
 						: __( 'Upgrade plan', __i18n_text_domain__ ),
 					url,
 					openInNewTab: true,
-					onClick: () =>
-						trackImageStudioUpgradeNoticeClick( {
-							mode,
-							trigger: 'error',
-							...JETPACK_AI_QUOTA_NOTICE,
-						} ),
+					onClick: () => trackImageStudioUpgradeNoticeClick( noticeEvent ),
 				},
 			] );
 		} else if ( url ) {

@@ -1,6 +1,3 @@
-/**
- * @jest-environment node
- */
 import { generatePassword } from '../';
 
 describe( 'generatePassword in Node', () => {

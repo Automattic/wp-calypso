@@ -214,8 +214,8 @@
 .domain-search--results__compact-banner-chevron {
 	flex-shrink: 0;
 	// rgba(0,0,0,0.32) is Figma-exact. No semantic token matches this value.
-	// `fill` (not `color`) is required: @wordpress/icons chevron-down has no
-	// explicit `fill="currentColor"`, so SVG fill must be set directly.
+	// Filled icons ignore `color` and stroke-drawn ones ignore `fill`, so set both.
+	color: rgba( 0, 0, 0, 0.32 );
 	fill: rgba( 0, 0, 0, 0.32 );
 }
 

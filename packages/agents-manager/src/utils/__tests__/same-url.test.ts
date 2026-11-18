@@ -8,7 +8,7 @@ describe( 'urlKey', () => {
 		[ '  ', null ],
 		// A string the URL parser rejects.
 		[ 'http://', null ],
-	] )( 'reduces %p to %p', ( url, expected ) => {
+	] )( 'reduces %o to %o', ( url, expected ) => {
 		expect( urlKey( url ) ).toBe( expected );
 	} );
 } );
@@ -20,7 +20,7 @@ describe( 'sameUrl', () => {
 		[ '/about/?p=1', '/about/', false ],
 		// Not a url on either side is never the same place.
 		[ undefined, undefined, false ],
-	] )( 'compares %p and %p as %p', ( a, b, expected ) => {
+	] )( 'compares %o and %o as %o', ( a, b, expected ) => {
 		expect( sameUrl( a, b ) ).toBe( expected );
 	} );
 } );

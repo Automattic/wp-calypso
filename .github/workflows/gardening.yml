@@ -9,6 +9,11 @@ concurrency:
   group: gardening-${{ github.event_name }}-${{ github.event.action }}-${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  actions: read # turnstyle lists this workflow's runs.
+  contents: read
+  pull-requests: write
+
 jobs:
   repo-gardening:
     name: 'Clean up PR labels, notify Design/Editorial when necessary, and flag OSS PRs'

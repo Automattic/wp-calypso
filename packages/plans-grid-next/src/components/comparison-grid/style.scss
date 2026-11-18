@@ -282,6 +282,11 @@
 		}
 	}
 
+	tr:has(.plans-grid-next-action-button__playground-warning) .plans-grid-next-action-button {
+		margin-top: auto;
+		margin-bottom: 0;
+	}
+
 	.plans-grid-next-header-price {
 		padding: 0;
 		display: flex;

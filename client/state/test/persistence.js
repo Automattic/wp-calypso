@@ -1,4 +1,4 @@
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import reducer from 'calypso/state/reducer';
 import { serialize, deserialize } from 'calypso/state/utils';
 

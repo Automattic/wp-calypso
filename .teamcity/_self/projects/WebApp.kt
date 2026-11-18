@@ -94,14 +94,6 @@ object BuildDockerImage : BuildType({
 		text("cache_seed_image", "registry.a8c.com/calypso/cache-seed:latest", label = "Cache seed image", description = "Cache-only image used when cache_mode=seed", allowEmpty = false)
 		text("base_image_publish_tag", "latest", label = "Tag to use for the published base image", description = "Base docker image tag", allowEmpty = false)
 		checkbox(
-			name = "MANUAL_SENTRY_RELEASE",
-			value = "false",
-			label = "Create a sentry release.",
-			description = "Generate and upload sourcemaps to Sentry as a new release for this commit.",
-			checked = "true",
-			unchecked = "false"
-		)
-		checkbox(
 			name = "UPDATE_BASE_IMAGE_CACHE",
 			value = "false",
 			label = "Update the base image from the cache.",
@@ -203,7 +195,7 @@ object BuildDockerImage : BuildType({
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
 				Calypso Live links are being generated...
-				Please wait a few minutes and refresh this page.
+				Please wait a few minutes until the Docker image is built.
 				EOF
 			"""
 		}
@@ -239,9 +231,7 @@ object BuildDockerImage : BuildType({
 			--build-arg commit_sha=${Settings.WpCalypso.paramRefs.buildVcsNumber}
 			--build-arg calypso_live_image=$imageBase:build-%build.number%
 			--build-arg profile=%PROFILE%
-			--build-arg manual_sentry_release=%MANUAL_SENTRY_RELEASE%
 			--build-arg is_default_branch=%teamcity.build.branch.is_default%
-			--build-arg sentry_auth_token=%SENTRY_AUTH_TOKEN%
 			--build-arg generate_cache_image=%UPDATE_BASE_IMAGE_CACHE%
 		""".trimIndent().replace("\n"," ")
 

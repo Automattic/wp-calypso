@@ -10,7 +10,9 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { isCheckoutExitPreview } from 'calypso/landing/stepper/declarative-flow/flows/static-site-import-flow/helpers';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSchemeIfMissing } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
@@ -25,9 +27,20 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
 export type StaticSiteImportReadingSubmits =
-	| { action: 'continue'; importSessionId: string }
+	| {
+			action: 'continue';
+			importSessionId: string;
+			previewSiteId?: number;
+			previewSiteSlug?: string;
+			/** The source the move is copying, so a flow can tell it apart from another source's. */
+			sourceUrl?: string;
+	  }
 	| { action: 'migrate' }
-	| { action: 'unavailable' };
+	| { action: 'unavailable' }
+	| { action: 'preview_failed' };
+
+/** The WoW funnel that builds a preview site for an import. */
+const PREVIEW_FUNNEL = 'preview';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -38,14 +51,31 @@ const isRefusedError = ( error: unknown ) =>
 const isWordPressSourceError = ( error: unknown ) =>
 	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_is_wordpress';
 
-const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
-	function StaticSiteImportReading( { navigation } ) {
+type StaticSiteImportReadingProps = {
+	accepts: {
+		/** The source to import, in place of the `from` query param. */
+		sourceUrl?: string;
+		/** Import onto a new preview site rather than a destination the customer paid for. */
+		buildPreview?: boolean;
+		/** A move this step started before, such as before going back, to resume instead of starting another. */
+		startedImport?: Extract< StaticSiteImportReadingSubmits, { action: 'continue' } >;
+	};
+	submits: StaticSiteImportReadingSubmits;
+};
+
+const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
+	function StaticSiteImportReading( {
+		navigation,
+		sourceUrl: sourceProp,
+		buildPreview,
+		startedImport,
+	} ) {
 		const { __ } = useI18n();
 		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 		const { site, siteSlug } = useSiteData();
 		const userId = useSelector( getCurrentUserId );
 		const [ searchParams ] = useSearchParams();
-		const from = searchParams.get( 'from' )?.trim();
+		const from = ( sourceProp || searchParams.get( 'from' ) )?.trim();
 		const sourceUrl = from ? addSchemeIfMissing( from, 'https' ) : '';
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
@@ -57,12 +87,17 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		);
 		const isNewSite = isCheckoutReturn && searchParams.get( 'newSite' ) === '1';
 		const [ hasConfirmed, setHasConfirmed ] = useState( false );
-		const needsConfirmation = ! isCheckoutReturn && ! hasConfirmed;
+		// A preview site is built to take the import, so there is nothing to confirm.
+		const isPreview = Boolean( buildPreview ) || isCheckoutExitPreview( searchParams );
+		const needsConfirmation = ! isPreview && ! isCheckoutReturn && ! hasConfirmed;
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
 
 		const start = useEffectEvent( async () => {
 			const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
+			if ( startedImport ) {
+				return submit( startedImport );
+			}
 			if ( ! sessionId && ! sourceUrl ) {
 				return submit( { action: 'unavailable' } );
 			}
@@ -113,12 +148,36 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				] );
 			}
 
+			// The server delivers the import onto the preview as soon as its build lands.
+			const continueWith = async ( importSessionId: string ) => {
+				if ( ! isPreview ) {
+					return submit( {
+						action: 'continue',
+						importSessionId,
+					} );
+				}
+				try {
+					const preview = await startWowFunnelSite( {
+						funnelSlug: PREVIEW_FUNNEL,
+						funnelArgs: { import_session_id: importSessionId },
+					} );
+					return submit( {
+						action: 'continue',
+						importSessionId,
+						previewSiteId: preview.blogId,
+						previewSiteSlug: preview.siteSlug,
+						sourceUrl: sourceUrl || undefined,
+					} );
+				} catch {
+					return submit( { action: 'preview_failed' } );
+				}
+			};
+
 			if ( sessionId ) {
-				return submit( { action: 'continue', importSessionId: sessionId } );
+				return continueWith( sessionId );
 			}
 			createSession( sourceUrl, {
-				onSuccess: ( session ) =>
-					submit( { action: 'continue', importSessionId: session.session_id } ),
+				onSuccess: ( session ) => continueWith( session.session_id ),
 				onError: ( createError ) =>
 					! isRefusedError( createError ) &&
 					submit( { action: isWordPressSourceError( createError ) ? 'migrate' : 'unavailable' } ),

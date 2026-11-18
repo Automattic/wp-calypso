@@ -1,34 +1,33 @@
-/**
- * @jest-environment jsdom
- */
-
-jest.mock( '@automattic/load-script', () => ( {
-	loadScript: jest.fn( () => Promise.resolve() ),
-} ) );
-
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn(),
-	subscribe: jest.fn( () => jest.fn() ),
-} ) );
-
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
-
-// This suite covers the modal and Help Center suppressors only: the script is
-// never loaded in a support session, so `load-script.ts` can never see one.
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: () => false,
-} ) );
+// @vitest-environment jsdom
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import { select, subscribe } from '@wordpress/data';
+import { vi } from 'vitest';
 import { loadSurvicateScript } from '../load-script';
 
-const mockSelect = select as jest.Mock;
-const mockSubscribe = subscribe as unknown as jest.Mock;
-const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
+vi.mock( '@automattic/load-script', () => ( {
+	loadScript: vi.fn( () => Promise.resolve() ),
+} ) );
+
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn(),
+	subscribe: vi.fn( () => vi.fn() ),
+} ) );
+
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
+} ) );
+
+// This suite covers the modal and Help Center suppressors only: the script is
+// never loaded in a support session, so `load-script.ts` can never see one.
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: () => false,
+} ) );
+
+const mockSelect = vi.mocked( select, { partial: true } );
+const mockSubscribe = vi.mocked( subscribe );
+const mockRecordTracksEvent = vi.mocked( recordTracksEvent );
 
 function setHelpCenterOpen( open: boolean ) {
 	mockSelect.mockReturnValue( { isHelpCenterShown: () => open } );
@@ -69,7 +68,7 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should propagate errors from loadScript', async () => {
-		( loadScript as jest.Mock ).mockRejectedValueOnce( new Error( 'load failed' ) );
+		vi.mocked( loadScript ).mockRejectedValueOnce( new Error( 'load failed' ) );
 
 		await expect( loadSurvicateScript( 'test-id', controller.signal ) ).rejects.toThrow(
 			'load failed'
@@ -77,8 +76,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should close the survey when it is displayed while the Help Center is open', () => {
-		const closeSurvey = jest.fn();
-		const addEventListener = jest.fn();
+		const closeSurvey = vi.fn();
+		const addEventListener = vi.fn();
 		window._sva = { closeSurvey, addEventListener };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
@@ -96,8 +95,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should not close the survey when the Help Center is closed', () => {
-		const closeSurvey = jest.fn();
-		const addEventListener = jest.fn();
+		const closeSurvey = vi.fn();
+		const addEventListener = vi.fn();
 		window._sva = { closeSurvey, addEventListener };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
@@ -112,8 +111,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should close the survey when it is displayed while a modal is open', () => {
-		const closeSurvey = jest.fn();
-		const addEventListener = jest.fn();
+		const closeSurvey = vi.fn();
+		const addEventListener = vi.fn();
 		window._sva = { closeSurvey, addEventListener };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
@@ -136,8 +135,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should close a visible survey when a modal opens', async () => {
-		const closeSurvey = jest.fn();
-		window._sva = { closeSurvey, addEventListener: jest.fn() };
+		const closeSurvey = vi.fn();
+		window._sva = { closeSurvey, addEventListener: vi.fn() };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -152,8 +151,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should record a suppression when a modal opens over a visible survey', async () => {
-		const closeSurvey = jest.fn();
-		window._sva = { closeSurvey, addEventListener: jest.fn() };
+		const closeSurvey = vi.fn();
+		window._sva = { closeSurvey, addEventListener: vi.fn() };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -181,8 +180,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should not record a suppression when a modal opens with no survey visible', async () => {
-		const closeSurvey = jest.fn();
-		window._sva = { closeSurvey, addEventListener: jest.fn() };
+		const closeSurvey = vi.fn();
+		window._sva = { closeSurvey, addEventListener: vi.fn() };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -197,8 +196,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should pause targeting when a survey displays while a modal is open', () => {
-		const closeSurvey = jest.fn();
-		const addEventListener = jest.fn();
+		const closeSurvey = vi.fn();
+		const addEventListener = vi.fn();
 		window._sva = { closeSurvey, addEventListener };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
@@ -217,8 +216,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should pause targeting for a Help Center suppression', () => {
-		const closeSurvey = jest.fn();
-		const addEventListener = jest.fn();
+		const closeSurvey = vi.fn();
+		const addEventListener = vi.fn();
 		window._sva = { closeSurvey, addEventListener };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
@@ -233,8 +232,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should pause targeting and close the survey when the Help Center opens', () => {
-		const closeSurvey = jest.fn();
-		window._sva = { closeSurvey, addEventListener: jest.fn() };
+		const closeSurvey = vi.fn();
+		window._sva = { closeSurvey, addEventListener: vi.fn() };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -247,8 +246,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should resume targeting when the Help Center closes', () => {
-		const retarget = jest.fn();
-		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
+		const retarget = vi.fn();
+		window._sva = { closeSurvey: vi.fn(), addEventListener: vi.fn(), retarget };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -265,8 +264,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should not resume targeting when the Help Center closes while a modal is open', () => {
-		const retarget = jest.fn();
-		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
+		const retarget = vi.fn();
+		window._sva = { closeSurvey: vi.fn(), addEventListener: vi.fn(), retarget };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -290,7 +289,7 @@ describe( 'loadSurvicateScript', () => {
 
 	test( 'should pause targeting up front when the Help Center is already open at SDK-ready time', () => {
 		setHelpCenterOpen( true );
-		window._sva = { addEventListener: jest.fn() };
+		window._sva = { addEventListener: vi.fn() };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -299,7 +298,7 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should record a suppression when the Help Center opens over a visible survey', () => {
-		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn() };
+		window._sva = { closeSurvey: vi.fn(), addEventListener: vi.fn() };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -328,7 +327,7 @@ describe( 'loadSurvicateScript', () => {
 		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
 		document.body.appendChild( modal );
 
-		window._sva = { addEventListener: jest.fn() };
+		window._sva = { addEventListener: vi.fn() };
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
 
@@ -336,8 +335,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should resume targeting when the last modal closes', async () => {
-		const retarget = jest.fn();
-		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
+		const retarget = vi.fn();
+		window._sva = { closeSurvey: vi.fn(), addEventListener: vi.fn(), retarget };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -358,8 +357,8 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should resume targeting when the consumer aborts while paused', async () => {
-		const retarget = jest.fn();
-		window._sva = { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget };
+		const retarget = vi.fn();
+		window._sva = { closeSurvey: vi.fn(), addEventListener: vi.fn(), retarget };
 
 		loadSurvicateScript( 'test-workspace-id', controller.signal );
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
@@ -379,13 +378,13 @@ describe( 'loadSurvicateScript', () => {
 	} );
 
 	test( 'should re-establish modal suppression when reloaded after the SDK is ready', async () => {
-		const closeSurvey = jest.fn();
+		const closeSurvey = vi.fn();
 		const firstController = new AbortController();
 
 		// First load waits for SurvicateReady (SDK not yet present), then the SDK
 		// becomes ready and wires the observer.
 		loadSurvicateScript( 'test-workspace-id', firstController.signal );
-		window._sva = { closeSurvey, addEventListener: jest.fn() };
+		window._sva = { closeSurvey, addEventListener: vi.fn() };
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
 
 		// The consumer effect re-runs: its cleanup aborts, tearing the first

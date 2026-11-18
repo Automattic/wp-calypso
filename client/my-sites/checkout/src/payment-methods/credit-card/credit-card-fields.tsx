@@ -6,7 +6,6 @@ import { Fragment, useState, useEffect, useRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { LeftColumn, RightColumn } from 'calypso/my-sites/checkout/src/components/ie-fallback';
 import Spinner from 'calypso/my-sites/checkout/src/components/spinner';
-import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import { logStashEvent } from 'calypso/my-sites/checkout/src/lib/analytics';
 import AssignToAllPaymentMethods from './assign-to-all-payment-methods';
 import ContactFields from './contact-fields';
@@ -14,7 +13,6 @@ import CreditCardCvvField from './credit-card-cvv-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardLoading from './credit-card-loading';
 import CreditCardNumberField from './credit-card-number-field';
-import CVVImage from './cvv-image';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import { useCreditCardStoreState } from './store';
 import { VgsCreditCardFields } from './vgs-credit-card-fields';
@@ -115,15 +113,10 @@ export default function CreditCardFields( {
 	const shouldShowContactFields = shouldUseEbanx || shouldShowTaxFields;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 
 	const stripeElementStyle = {
 		base: {
-			// Under the mobile sticky experiment the rest of the form sits
-			// on a 13px rhythm (Figma 3971:13272); match it inside the
-			// Stripe iframe so card-number / expiry / CVC value text reads
-			// the same height as the Cardholder name input.
-			fontSize: isMobileCheckoutStickySummary ? '13px' : '14px',
+			fontSize: '14px',
 			color: theme.colors.textColor,
 			fontFamily: theme.fonts.body,
 			fontWeight: theme.weights.normal,
@@ -258,26 +251,20 @@ export default function CreditCardFields( {
 						disabled={ isDisabled }
 					/>
 
-					{ isMobileCheckoutStickySummary ? (
-						/* Under the experiment, the credit-card-fields-inner-wrapper
-						   is a flex column with a 16px gap — hoist Card number and
-						   the Expiry/CVC row out of the default outer FieldRow so
-						   each row becomes a direct child of the inner wrapper and
-						   participates in the shared 16px rhythm (Figma 3971:13266). */
-						<>
-							<CreditCardNumberField
-								store={ store }
-								setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
-								handleStripeFieldChange={ handleStripeFieldChange }
-								stripeElementStyle={ stripeElementStyle }
-								shouldUseEbanx={ shouldUseEbanx }
-								getErrorMessagesForField={ getErrorMessagesForField }
-								setFieldValue={ setFieldValue }
-								getFieldValue={ getFieldValue }
-							/>
-							{ /* Figma 3971:13274 lays Expiry + CVC + a 38px CVC card-back
-							     hint on one flex row. */ }
-							<div className="credit-card-fields__expiry-cvc-row">
+					<FieldRow>
+						<CreditCardNumberField
+							store={ store }
+							setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
+							handleStripeFieldChange={ handleStripeFieldChange }
+							stripeElementStyle={ stripeElementStyle }
+							shouldUseEbanx={ shouldUseEbanx }
+							getErrorMessagesForField={ getErrorMessagesForField }
+							setFieldValue={ setFieldValue }
+							getFieldValue={ getFieldValue }
+						/>
+
+						<FieldRow gap="4%" columnWidths="48% 48%">
+							<LeftColumn>
 								<CreditCardExpiryField
 									store={ store }
 									handleStripeFieldChange={ handleStripeFieldChange }
@@ -287,6 +274,8 @@ export default function CreditCardFields( {
 									setFieldValue={ setFieldValue }
 									getFieldValue={ getFieldValue }
 								/>
+							</LeftColumn>
+							<RightColumn>
 								<CreditCardCvvField
 									store={ store }
 									handleStripeFieldChange={ handleStripeFieldChange }
@@ -296,50 +285,9 @@ export default function CreditCardFields( {
 									setFieldValue={ setFieldValue }
 									getFieldValue={ getFieldValue }
 								/>
-								<span className="credit-card-fields__cvc-hint" aria-hidden="true">
-									<CVVImage />
-								</span>
-							</div>
-						</>
-					) : (
-						<FieldRow>
-							<CreditCardNumberField
-								store={ store }
-								setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
-								handleStripeFieldChange={ handleStripeFieldChange }
-								stripeElementStyle={ stripeElementStyle }
-								shouldUseEbanx={ shouldUseEbanx }
-								getErrorMessagesForField={ getErrorMessagesForField }
-								setFieldValue={ setFieldValue }
-								getFieldValue={ getFieldValue }
-							/>
-
-							<FieldRow gap="4%" columnWidths="48% 48%">
-								<LeftColumn>
-									<CreditCardExpiryField
-										store={ store }
-										handleStripeFieldChange={ handleStripeFieldChange }
-										stripeElementStyle={ stripeElementStyle }
-										shouldUseEbanx={ shouldUseEbanx }
-										getErrorMessagesForField={ getErrorMessagesForField }
-										setFieldValue={ setFieldValue }
-										getFieldValue={ getFieldValue }
-									/>
-								</LeftColumn>
-								<RightColumn>
-									<CreditCardCvvField
-										store={ store }
-										handleStripeFieldChange={ handleStripeFieldChange }
-										stripeElementStyle={ stripeElementStyle }
-										shouldUseEbanx={ shouldUseEbanx }
-										getErrorMessagesForField={ getErrorMessagesForField }
-										setFieldValue={ setFieldValue }
-										getFieldValue={ getFieldValue }
-									/>
-								</RightColumn>
-							</FieldRow>
+							</RightColumn>
 						</FieldRow>
-					) }
+					</FieldRow>
 
 					{ shouldShowContactFields && (
 						<ContactFields

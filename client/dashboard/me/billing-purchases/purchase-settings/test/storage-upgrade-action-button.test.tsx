@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { JetpackPlans, type Purchase } from '@automattic/api-core';

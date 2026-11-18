@@ -73,4 +73,49 @@ describe( 'LightweightMarkdownRenderer', () => {
 
 		expect( container.querySelector( 'pre code' )?.textContent ).toBe( 'unfinished' );
 	} );
+
+	it( 'renders headings and list items after extra or tab whitespace', async () => {
+		await renderMarkdown( [ '###   Spaced', '#\tTabbed', '-\t  item', '1.  first' ].join( '\n' ) );
+
+		expect( container.querySelector( 'h3' )?.textContent ).toBe( 'Spaced' );
+		expect( container.querySelector( 'h1' )?.textContent ).toBe( 'Tabbed' );
+		expect( container.querySelector( 'ul li' )?.textContent ).toBe( 'item' );
+		expect( container.querySelector( 'ol li' )?.textContent ).toBe( 'first' );
+	} );
+
+	it( 'links URLs with brackets or balanced parentheses', async () => {
+		await renderMarkdown(
+			'[Edit](https://example.com/wp-admin/edit.php?ids[]=1) [Foo](https://en.wikipedia.org/wiki/Foo_(bar))'
+		);
+
+		expect( Array.from( container.querySelectorAll( 'a' ), ( link ) => link.href ) ).toEqual( [
+			'https://example.com/wp-admin/edit.php?ids[]=1',
+			'https://en.wikipedia.org/wiki/Foo_(bar)',
+		] );
+	} );
+
+	it( 'links only the innermost bracket text', async () => {
+		await renderMarkdown( 'a [b [c](https://example.com) d' );
+
+		expect( container.querySelector( 'a' )?.textContent ).toBe( 'c' );
+		expect( container.textContent ).toBe( 'a [b c d' );
+	} );
+
+	const LINE_SEPARATOR = String.fromCharCode( 0x2028 );
+	const REPEATS = 100_000;
+	const MAX_RENDER_MS = 1_000;
+
+	it.each( [
+		[ 'brackets', '['.repeat( REPEATS ) ],
+		[ 'unclosed links', '[a](' + '[(]('.repeat( REPEATS / 2 ) ],
+		[ 'a list marker and tabs', '*' + '\t'.repeat( REPEATS ) + LINE_SEPARATOR ],
+		[ 'an ordered list marker and tabs', '0.' + '\t'.repeat( REPEATS ) + LINE_SEPARATOR ],
+		[ 'a heading marker and tabs', '#' + '\t'.repeat( REPEATS ) + LINE_SEPARATOR ],
+	] )( 'renders %s without catastrophic backtracking', async ( _name, markdown ) => {
+		const start = performance.now();
+
+		await renderMarkdown( markdown );
+
+		expect( performance.now() - start ).toBeLessThan( MAX_RENDER_MS );
+	} );
 } );

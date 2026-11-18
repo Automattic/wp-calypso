@@ -53,6 +53,17 @@ yarn run ci:build-mac
 echo "--- :lock: Verifying code signing"
 bundle exec fastlane verify_code_signing
 
+echo "--- :lock: Verifying code signing of the update zips"
+# Squirrel.Mac extracts the `.zip` and checks the app's signature before it
+# installs an update, so check the zip the same way. A zip that stores
+# `.framework` symlinks as copies fails with "bundle format is ambiguous".
+for zip in release/wordpress.com-macOS-app-*.zip; do
+	extract_dir="$(mktemp -d)"
+	ditto -x -k "$zip" "$extract_dir"
+	codesign --verify --deep --strict --verbose=2 "$extract_dir/WordPress.com.app"
+	rm -rf "$extract_dir"
+done
+
 echo "--- Running E2E smoke tests"
 yarn run test:e2e
 

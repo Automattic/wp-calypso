@@ -27,6 +27,8 @@ const Subheader = styled.p< {
 					color: inherit;
 					text-decoration: underline;
 					font-size: inherit;
+					line-height: inherit;
+					vertical-align: baseline;
 					padding: 0;
 				}
 				@media ( min-width: 600px ) {
@@ -34,9 +36,6 @@ const Subheader = styled.p< {
 				}
 				@media ( min-width: 960px ) {
 					font-size: 1rem;
-					button.is-borderless {
-						padding: 1px 0;
-					}
 				}
 			`
 			: `
@@ -49,6 +48,8 @@ const Subheader = styled.p< {
 					color: var( --studio-gray-90 );
 					text-decoration: underline;
 					font-size: 16px;
+					line-height: inherit;
+					vertical-align: baseline;
 					padding: 0;
 				}
 				@media ( max-width: 960px ) {
@@ -56,11 +57,6 @@ const Subheader = styled.p< {
 				}
 				@media ( min-width: 600px ) {
 					text-align: center;
-				}
-				@media ( min-width: 960px ) {
-					button.is-borderless {
-						padding: 1px 0;
-					}
 				}
 			` }
 `;

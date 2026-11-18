@@ -85,19 +85,14 @@ test.describe(
 				await statsPage.clickTab( 'Subscribers' );
 			} );
 
-			// The Store tab is not present unless Business or higher plan is on the site and the
-			// site has gone AT.
+			// The WooCommerce tab is only present on sites with WooCommerce.
 			if ( accountName === 'jetpackAtomicEcommPlanUser' ) {
-				await test.step( 'Click on the Store tab', async () => {
-					await statsPage.clickTab( 'Store' );
+				await test.step( 'Click on the WooCommerce tab', async () => {
+					await statsPage.clickTab( 'WooCommerce' );
 				} );
 
-				await test.step( 'Select "Years" stats period', async () => {
-					await statsPage.selectStatsPeriod( 'Years' );
-				} );
-
-				await test.step( 'Select "Gross sales" stats type', async () => {
-					await statsPage.showStatsOfType( { tab: 'Store', type: 'Gross Sales' } );
+				await test.step( 'Select the Orders metric', async () => {
+					await statsPage.showStatsOfType( { tab: 'Store', type: 'Orders' } );
 				} );
 			}
 		} );

@@ -18,40 +18,6 @@ export const PRICE_MOTIVATED_REASONS: ReadonlySet< string > = new Set( [
 	'budgetConstraints',
 ] );
 
-/**
- * "Another reason…" and the "Something else…" answers that keep offering cards
- * once text is typed. The typed text replaces the answer, so their cards are
- * looked up by answer.
- */
-const OTHER_REASONS: ReadonlySet< string > = new Set( [
-	'anotherReasonOne',
-	'otherPriceValue',
-	'otherTooHardToUse',
-	'otherMissingFeatures',
-	'otherTechnicalIssues',
-	'otherDomain',
-	'otherWrongPlanOrSite',
-	'otherBadSupport',
-] );
-
-/**
- * Returns the reason to look up solution cards for. For the answers in OTHER_REASONS
- * that is the answer, not the typed text in `value`.
- */
-export function getSolutionsReason(
-	value: string,
-	details: string | undefined,
-	selectedReason: string | undefined
-): string {
-	if ( details && OTHER_REASONS.has( details ) ) {
-		return details;
-	}
-	if ( selectedReason && OTHER_REASONS.has( selectedReason ) ) {
-		return selectedReason;
-	}
-	return value;
-}
-
 const SOLUTION_IDS = {
 	CHANGE_PLAN: 'change-plan',
 	RENEW_NOW_PAY_LESS: 'renew-now-pay-less',
@@ -67,6 +33,7 @@ const SOLUTION_IDS = {
 	USE_MIGRATION_TOOLS: 'use-migration-tools',
 	USE_DOMAIN_GUIDE: 'use-domain-guide',
 	EXPLORE_DOMAIN_OPTIONS: 'explore-domain-options',
+	BOOK_EXPERT_SESSION: 'book-expert-session',
 } as const;
 
 /** Too expensive: Expensive for the features offered */
@@ -106,6 +73,7 @@ const SOLUTIONS_BUDGET_CONSTRAINTS: SolutionCardConfig[] = [
 
 /** Too hard to use: Dashboard / Editor (with AI option) */
 const SOLUTIONS_HARD_TO_USE_WITH_AI: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.BOOK_EXPERT_SESSION },
 	{ id: SOLUTION_IDS.BUILT_BY },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
@@ -113,6 +81,7 @@ const SOLUTIONS_HARD_TO_USE_WITH_AI: SolutionCardConfig[] = [
 
 /** Too hard to use: Takes too much time / Tutorials not helpful (no AI option) */
 const SOLUTIONS_HARD_TO_USE_SUPPORT_ONLY: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.BOOK_EXPERT_SESSION },
 	{ id: SOLUTION_IDS.BUILT_BY },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
@@ -226,9 +195,9 @@ const SOLUTIONS_SLOW_OR_UNHELPFUL: SolutionCardConfig[] = [
 
 /** No human support */
 const SOLUTIONS_NO_HUMAN_SUPPORT: SolutionCardConfig[] = [
+	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.FIND_GUIDES },
-	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
 /** AI insufficient */
@@ -240,12 +209,6 @@ const SOLUTIONS_AI_INSUFFICIENT: SolutionCardConfig[] = [
 /** Project changed */
 const SOLUTIONS_PROJECT_CHANGED: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.CHANGE_PLAN },
-	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
-	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
-];
-
-/** Another reason / Something else */
-const SOLUTIONS_OTHER: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
@@ -275,10 +238,6 @@ const SOLUTIONS_NO_LONGER_NEED: SolutionCardConfig[] = [
  * or null when this reason has no solutions step.
  */
 export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | null {
-	if ( OTHER_REASONS.has( reason ) ) {
-		return [ ...SOLUTIONS_OTHER ];
-	}
-
 	switch ( reason ) {
 		// Too expensive
 		case 'tooExpensive':

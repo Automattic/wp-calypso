@@ -29,6 +29,7 @@ import {
 	siteCurrentPlanQuery,
 	sitePlansQuery,
 	siteBySlugQuery,
+	siteLatestAtomicTransferQuery,
 	siteByIdQuery,
 	siteAdminBarQuery,
 	siteAdminMenuQuery,
@@ -42,8 +43,10 @@ import {
 	siteSftpUsersQuery,
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
+	siteWordPressPrereleaseQuery,
 	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
+	staticSiteImportSessionQuery,
 	queryClient,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
@@ -53,10 +56,10 @@ import { __ } from '@wordpress/i18n';
 import { ensureSiteExpiryNoticeData } from '../../components/site-expiry-notice';
 import {
 	canManageSite,
-	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
+	isSiteMember,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
 import {
@@ -66,14 +69,20 @@ import {
 } from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
+	isAwaitingAtomicTransfer,
+	mayBeAwaitingAtomicTransfer,
+} from '../../utils/site-atomic-transfers';
+import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
 	hasPlanFeature,
 } from '../../utils/site-features';
 import { isInJetpackCriticalErrorState } from '../../utils/site-jetpack-critical-error';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { SitePermissionError } from '../../utils/site-permissions';
 import {
 	getSiteMigrationState,
+	isAssistedWordPressMigration,
 	isSiteMigrationInProgress,
 	isWordPressMigration,
 } from '../../utils/site-status';
@@ -116,6 +125,23 @@ export const sitesRoute = createRoute( {
 	},
 } );
 
+/**
+ * While a site turns Atomic, `/sites/<slug>` reports it without its owner's capabilities for a
+ * minute or two. Asks the site's transfer whether that is why.
+ */
+async function isOwnerAwaitingAtomicTransfer( site: Site ) {
+	const userId = queryClient.getQueryData< User >( AUTH_QUERY_KEY )?.ID;
+	if ( ! mayBeAwaitingAtomicTransfer( site, userId ) ) {
+		return false;
+	}
+	try {
+		const transfer = await queryClient.fetchQuery( siteLatestAtomicTransferQuery( site.ID ) );
+		return isAwaitingAtomicTransfer( site, userId, transfer );
+	} catch {
+		return false;
+	}
+}
+
 export const siteRoute = createRoute( {
 	head: ( { loaderData }: { loaderData?: { site: Site } } ) => ( {
 		meta: [
@@ -139,7 +165,11 @@ export const siteRoute = createRoute( {
 			return;
 		}
 
-		if ( ! canManageSite( site ) ) {
+		// While the site turns Atomic, its owner keeps its pages: their capabilities come back with it.
+		if ( ! canManageSite( site ) && ! ( await isOwnerAwaitingAtomicTransfer( site ) ) ) {
+			if ( isSiteMember( site ) ) {
+				throw new SitePermissionError();
+			}
 			throw notFound();
 		}
 
@@ -252,7 +282,8 @@ export const siteOverviewRoute = createRoute( {
 			migration: search.migration === 'completed' ? 'completed' : undefined,
 		};
 	},
-	loader: async ( { params: { siteSlug }, preload } ) => {
+	loaderDeps: ( { search: { importSessionId } } ) => ( { importSessionId } ),
+	loader: async ( { params: { siteSlug }, deps: { importSessionId }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
 			const notGroup = getActivityLogHiddenGroups( site );
@@ -278,6 +309,14 @@ export const siteOverviewRoute = createRoute( {
 			queryClient.ensureQueryData( siteMediaStorageQuery( site.ID ) ).catch( () => {
 				// Error gets logged at ErrorBoundary.
 			} ),
+
+			// A move's progress and notices start from where the session is, not from scratch.
+			importSessionId &&
+				queryClient
+					.ensureQueryData( staticSiteImportSessionQuery( importSessionId ) )
+					.catch( () => {
+						// The Overview reads the error from the query and says the move can't be shown.
+					} ),
 		] );
 	},
 } ).lazy( () =>
@@ -1123,12 +1162,16 @@ export const siteSettingsWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
+		if ( canSwitchWordPressVersion( site ) ) {
 			// Fire-and-forget the track versions so a slow site or wp.org
 			// doesn't hang navigation; the component suspends on them via
 			// useSuspenseQuery and falls back to the route's Suspense boundary.
 			queryClient.prefetchQuery( siteWordPressTrackVersionsQuery( site.ID ) );
-			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
+				// Settles even if the request fails, so the page then shows the generic beta notice.
+				queryClient.prefetchQuery( siteWordPressPrereleaseQuery( site.ID ) ),
+			] );
 		}
 	},
 } ).lazy( () =>
@@ -1851,37 +1894,29 @@ export const siteMigrationAssistedIntroRoute = createRoute( {
 	)
 );
 
-export const siteSSHMigrationFailedRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'We hit a snag, but we’re on it' ),
-			},
-		],
-	} ),
+export const siteMigrationShareAccessRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Share access' ) } ] } ),
 	getParentRoute: () => siteRoute,
-	path: 'ssh-migration-failed',
-} ).lazy( () =>
-	import( '../../sites/ssh-migration-failed' ).then( ( d ) =>
-		createLazyRoute( 'ssh-migration-failed' )( {
-			component: () => <d.default />,
-		} )
-	)
-);
+	path: 'migration-overview/share-access',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
 
-export const siteSSHMigrationCompleteRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Welcome to your new home' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'ssh-migration-complete',
+		const site = await queryClient
+			.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 0 } )
+			.catch( () => undefined );
+		if (
+			! site ||
+			! isAssistedWordPressMigration( site ) ||
+			site.site_migration.status_v2 !== 'pending'
+		) {
+			throw dashboardRedirect( { to: siteMigrationOverviewRoute.fullPath, params: { siteSlug } } );
+		}
+	},
 } ).lazy( () =>
-	import( '../../sites/ssh-migration-complete' ).then( ( d ) =>
-		createLazyRoute( 'ssh-migration-complete' )( {
+	import( '../../sites/migration-overview/share-access' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview-share-access' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -1929,8 +1964,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
 		siteMigrationAssistedIntroRoute,
-		siteSSHMigrationCompleteRoute,
-		siteSSHMigrationFailedRoute,
+		siteMigrationShareAccessRoute,
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
 		sitePerformanceRoute.addChildren( [
 			sitePerformanceIndexRoute,

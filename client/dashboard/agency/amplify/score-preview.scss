@@ -1,0 +1,522 @@
+.dashboard-amplify-score-preview__anchor {
+	position: relative;
+	width: min( 100%, 760px );
+	height: clamp( 100px, calc( 100dvh - 900px ), 370px );
+	margin-inline: auto;
+	transition:
+		width 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
+		height 420ms cubic-bezier( 0.45, 0, 0.55, 1 );
+}
+
+.dashboard-amplify-score-preview__anchor[data-mode='full'] {
+	height: min( 260px, clamp( 100px, calc( 100dvh - 900px ), 370px ) );
+}
+
+.dashboard-amplify-score-preview__cards {
+	position: absolute;
+	z-index: 1;
+	inset: 0;
+	clip-path: inset( -64px -160px 0 -160px );
+	text-align: start;
+	cursor: zoom-in;
+}
+
+.dashboard-amplify-score-preview__cards[data-mode='full'] {
+	--score-card-scale: 0.68;
+}
+
+.dashboard-amplify-score-preview__open {
+	position: absolute;
+	z-index: 3;
+	inset: 0;
+	width: 100%;
+	border: 0;
+	background: transparent;
+	pointer-events: none;
+}
+
+.dashboard-amplify-score-preview__open:focus-visible {
+	outline: 2px solid var( --color-primary );
+	outline-offset: -3px;
+}
+
+.dashboard-amplify-score-preview__sheet {
+	position: absolute;
+	inset-block-start: 32px;
+	inset-inline-start: 50%;
+	// The card transforms are physical X offsets, so their positioning axis must stay LTR.
+	direction: ltr;
+	width: 540px;
+	height: 340px;
+	min-width: 0;
+	border-radius: 8px;
+	transform-origin: top left;
+	transition:
+		inset-inline-start 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
+		inset-block-start 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
+		transform 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
+		width 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
+		height 420ms cubic-bezier( 0.45, 0, 0.55, 1 ),
+		box-shadow 420ms ease;
+}
+
+.dashboard-amplify-score-preview__cards[data-mode='human']
+	.dashboard-amplify-score-preview__sheet[data-perspective='human'],
+.dashboard-amplify-score-preview__cards[data-mode='ai']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+	z-index: 2;
+	transform: translateX( -50% ) rotate( -1deg );
+	box-shadow:
+		0 12px 32px color-mix( in srgb, var( --color-neutral-100 ) 12%, transparent ),
+		0 2px 6px color-mix( in srgb, var( --color-neutral-100 ) 8%, transparent );
+}
+
+.dashboard-amplify-score-preview__cards[data-mode='human']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'],
+.dashboard-amplify-score-preview__cards[data-mode='ai']
+	.dashboard-amplify-score-preview__sheet[data-perspective='human'] {
+	z-index: 1;
+	transform: translate( calc( -50% + 26px ), -10px ) rotate( 2deg );
+	box-shadow: 0 8px 24px color-mix( in srgb, var( --color-neutral-100 ) 6%, transparent );
+}
+
+.dashboard-amplify-score-preview__cards[data-mode='full']
+	.dashboard-amplify-score-preview__sheet[data-perspective='human'] {
+	inset-inline-start: 0;
+	z-index: 2;
+	transform: scale( var( --score-card-scale ) );
+}
+
+.dashboard-amplify-score-preview__cards[data-mode='full']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+	inset-inline-start: calc( 50% + 10px );
+	z-index: 1;
+	transform: scale( var( --score-card-scale ) );
+}
+
+.dashboard-amplify-score-preview__cards[data-mode='full'] .dashboard-amplify-score-preview__sheet {
+	box-shadow:
+		0 12px 32px color-mix( in srgb, var( --color-neutral-100 ) 12%, transparent ),
+		0 2px 6px color-mix( in srgb, var( --color-neutral-100 ) 8%, transparent );
+}
+
+.dashboard-amplify-score-preview__card {
+	min-width: 0;
+	height: 100%;
+	box-sizing: border-box;
+	overflow: hidden;
+	border: 0;
+	border-radius: 8px;
+	background: var( --color-surface );
+}
+
+html[dir='rtl'] .dashboard-amplify-score-preview__card {
+	direction: rtl;
+}
+
+.dashboard-amplify-score-preview__card-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 18px 20px 14px;
+	border-block-end: 1px solid var( --color-border-subtle );
+	background: var( --color-surface );
+}
+
+.dashboard-amplify-score-preview__illustration {
+	flex: none;
+	width: 32px;
+	height: 32px;
+	color: var( --color-neutral-20 );
+}
+
+.dashboard-amplify-score-preview__heading {
+	margin: 0;
+	color: var( --color-text );
+}
+
+.dashboard-amplify-score-preview__card-title {
+	flex: 1;
+	min-width: 0;
+}
+
+.dashboard-amplify-score-preview__card-title p {
+	margin: 3px 0 0;
+	color: var( --color-text-subtle );
+	font-size: 12px;
+	line-height: 1.35;
+	text-wrap: balance;
+}
+
+.dashboard-amplify-score-preview__score {
+	align-self: flex-end;
+	font-size: 16px;
+	white-space: nowrap;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+}
+
+.dashboard-amplify-score-preview__score[data-severity='good'] {
+	color: var( --color-success );
+}
+
+.dashboard-amplify-score-preview__score[data-severity='warn'] {
+	color: var( --color-warning-50 );
+}
+
+.dashboard-amplify-score-preview__score[data-severity='danger'] {
+	color: var( --color-error );
+}
+
+.dashboard-amplify-score-preview__metrics {
+	display: grid;
+	gap: 10px;
+	padding: 14px 20px 20px;
+}
+
+.dashboard-amplify-score-preview__metric {
+	display: grid;
+	grid-template-columns: minmax( 138px, 1fr ) minmax( 0, 2fr ) 40px;
+	align-items: center;
+	gap: 10px;
+	font-size: 12px;
+}
+
+.dashboard-amplify-score-preview__metric > :first-child {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var( --color-neutral-60 );
+	font: inherit;
+	text-align: start;
+}
+
+.dashboard-amplify-score-preview__cards[data-expanded='true']
+	.dashboard-amplify-score-preview__metric
+	> :first-child {
+	cursor: help;
+}
+
+.dashboard-amplify-score-preview__metric > strong {
+	font-size: 12px;
+	text-align: end;
+	white-space: nowrap;
+	font-weight: 500;
+	font-variant-numeric: tabular-nums;
+}
+
+.dashboard-amplify-score-preview__metric > strong[data-severity='good'] {
+	color: var( --color-success );
+}
+
+.dashboard-amplify-score-preview__metric > strong[data-severity='warn'] {
+	color: var( --color-warning-50 );
+}
+
+.dashboard-amplify-score-preview__metric > strong[data-severity='danger'] {
+	color: var( --color-error );
+}
+
+.dashboard-amplify-score-preview__bar {
+	height: 4px;
+	overflow: hidden;
+	border-radius: 2px;
+	background: var( --color-neutral-5 );
+}
+
+.dashboard-amplify-score-preview__bar > span {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: var( --color-success );
+}
+
+.dashboard-amplify-score-preview__bar > span[data-severity='warn'] {
+	background: var( --color-warning-50 );
+}
+
+.dashboard-amplify-score-preview__bar > span[data-severity='danger'] {
+	background: var( --color-error );
+}
+
+@media ( max-width: 900px ) {
+	.dashboard-amplify-score-preview__cards {
+		clip-path: none;
+	}
+
+	.dashboard-amplify-score-preview__sheet {
+		width: 100%;
+		height: 100%;
+	}
+
+	.dashboard-amplify-score-preview__card-header {
+		display: grid;
+		grid-template-columns: 32px minmax( 0, 1fr ) auto;
+		gap: 8px;
+		padding: 12px 14px;
+	}
+
+	.dashboard-amplify-score-preview__card {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.dashboard-amplify-score-preview__illustration {
+		grid-column: 1;
+		grid-row: 1;
+		width: 32px;
+		height: 32px;
+	}
+
+	.dashboard-amplify-score-preview__card-title {
+		display: contents;
+	}
+
+	.dashboard-amplify-score-preview__heading {
+		grid-column: 2;
+		grid-row: 1;
+		align-self: center;
+	}
+
+	.dashboard-amplify-score-preview__card-title p {
+		grid-column: 1 / -1;
+		grid-row: 2;
+		margin-block-start: 0;
+	}
+
+	.dashboard-amplify-score-preview__score {
+		grid-column: 3;
+		grid-row: 1;
+		align-self: center;
+	}
+
+	.dashboard-amplify-score-preview__metrics {
+		flex: 1;
+		grid-template-rows: repeat( 8, minmax( 0, 1fr ) );
+		gap: 4px;
+		min-height: 0;
+		padding: 12px 14px 16px;
+	}
+
+	.dashboard-amplify-score-preview__metric {
+		grid-template-columns: minmax( 100px, 1fr ) minmax( 48px, 1.3fr ) 36px;
+		gap: 8px;
+		font-size: 11px;
+	}
+}
+
+.dashboard-amplify-score-preview__cards[data-expanded='true'] {
+	clip-path: none;
+	cursor: zoom-out;
+}
+
+.dashboard-amplify-score-preview__cards[data-expanded='true']
+	.dashboard-amplify-score-preview__sheet[data-perspective='human'],
+.dashboard-amplify-score-preview__cards[data-expanded='true']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+	inset-block-start: 40px;
+	box-shadow: 0 16px 40px color-mix( in srgb, var( --color-neutral-100 ) 18%, transparent );
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.dashboard-amplify-score-preview__cards,
+	.dashboard-amplify-score-preview__anchor,
+	.dashboard-amplify-score-preview__sheet {
+		animation: none;
+		transition: none;
+	}
+}
+
+/* Sizes and positions inside the overview hero. */
+
+.dashboard-amplify-overview__hero-preview .dashboard-amplify-score-preview__anchor,
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__anchor[data-mode='full'] {
+	width: min( 100%, 900px );
+	height: 300px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='false'] {
+	width: min( 100%, 800px );
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__anchor[data-expanded='true'] {
+	width: min( 100%, 1120px );
+	height: 540px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'] {
+	--score-card-scale: 0.8;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full']
+	.dashboard-amplify-score-preview__sheet {
+	inset-block-start: 40px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards:not( [data-mode='full'] )[data-expanded='false']
+	.dashboard-amplify-score-preview__sheet[data-perspective='human'],
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards:not( [data-mode='full'] )[data-expanded='false']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+	scale: 1.08;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+	.dashboard-amplify-score-preview__sheet {
+	width: 540px;
+	height: 340px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+	.dashboard-amplify-score-preview__sheet[data-perspective='human'] {
+	inset-inline-start: 0;
+	inset-block-start: 40px;
+	z-index: 1;
+	transform: scale( var( --score-card-scale ) ) rotate( -1deg );
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+	inset-inline-start: 368px;
+	inset-block-start: 40px;
+	z-index: 2;
+	transform: scale( var( --score-card-scale ) ) rotate( 1deg );
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true'] {
+	--score-card-scale: 1;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='true'] {
+	width: min( calc( 100% - 48px ), 1120px );
+	height: 440px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+	inset-inline-start: calc( 100% - 540px );
+	z-index: 3;
+}
+
+@container amplify-preview ( max-width: 1179px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='true'] {
+		width: min( calc( 100% - 48px ), 840px );
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true'] {
+		--score-card-scale: 0.75;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: calc( 100% - 405px );
+	}
+}
+
+@container amplify-preview ( max-width: 899px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='true'] {
+		width: min( 100%, 540px );
+		height: 780px;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true'] {
+		--score-card-scale: 1;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='human'],
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: 0;
+		width: 100%;
+		height: 340px;
+		transform: none;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='human'] {
+		inset-block-start: 24px;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-block-start: 380px;
+	}
+}
+
+@container amplify-preview ( max-width: 799px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='false'] {
+		width: min( 100%, 680px );
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false'] {
+		--score-card-scale: 0.65;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: 329px;
+	}
+}
+
+@container amplify-preview ( max-width: 679px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='false'] {
+		width: min( 100%, 320px );
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false'] {
+		--score-card-scale: 0.55;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+		.dashboard-amplify-score-preview__sheet[data-perspective='human'] {
+		inset-block-start: 24px;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: 23px;
+		inset-block-start: 112px;
+	}
+}
+
+@container amplify-preview ( max-width: 319px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false'] {
+		--score-card-scale: 0.5;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: 18px;
+	}
+}

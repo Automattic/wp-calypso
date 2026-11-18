@@ -3,8 +3,8 @@
  * products they add to a shared site cart: getShoppingCart reads the cart, and
  * removeCartProducts posts it back without the products matching a keyword.
  */
-import { describe, expect, test, jest, beforeEach, afterAll } from '@jest/globals';
 import nock from 'nock';
+import { describe, expect, test, beforeEach, afterAll, vi } from 'vitest';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';
@@ -16,7 +16,7 @@ const fakeSecrets = {
 	},
 } as unknown as Secrets;
 
-jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
+vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 const SITE_ID = 5;
 // Differs from SITE_ID to prove the posted blog_id comes from the read cart.

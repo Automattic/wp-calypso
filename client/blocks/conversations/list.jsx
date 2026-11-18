@@ -18,6 +18,8 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 
 import './list.scss';
 
+const REFETCH_ON_SHOW = { staleTime: 0, refetchOnWindowFocus: true };
+
 /**
  * ConversationsCommentList is the component that represents all of the comments for a conversations-stream
  * Some of it is boilerplate stolen from PostCommentList (all the activeXCommentId bits) but the special
@@ -342,14 +344,18 @@ const ConversationCommentListWithData = ( props ) => {
 		postId,
 		commentIds: commentIdsToLoad,
 	} );
-	const comments = useComments( {
-		siteId,
-		postId,
-		status: 'approved',
-		displayStatus: 'all',
-		commentTotal: post.discussion.comment_count,
-		authorId: currentUserId,
-	} );
+	const comments = useComments(
+		{
+			siteId,
+			postId,
+			status: 'approved',
+			displayStatus: 'all',
+			commentTotal: post.discussion.comment_count,
+			authorId: currentUserId,
+		},
+		// These threads don't poll for newer comments, so they keep refetching when shown again.
+		REFETCH_ON_SHOW
+	);
 	const sortedComments = useMemo(
 		() => mergeCommentLists( comments.comments, additionalComments ),
 		[ additionalComments, comments.comments ]

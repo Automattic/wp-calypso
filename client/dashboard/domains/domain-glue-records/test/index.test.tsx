@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainGlueRecord } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainGlueRecords from '../index';
 
 const domainName = 'example.com';
 
-jest.mock( '../../../app/router/domains', () => ( {
-	...jest.requireActual( '../../../app/router/domains' ),
+vi.mock( '../../../app/router/domains', async () => ( {
+	...( await vi.importActual< typeof import( '../../../app/router/domains' ) >(
+		'../../../app/router/domains'
+	) ),
 	domainRoute: {
 		useParams: () => ( { domainName: 'example.com' } ),
 	},
@@ -49,10 +52,10 @@ test( 'renders glue records table with data', async () => {
 
 	// Check if the table rows are rendered
 	expect( await screen.findByText( 'ns1' ) ).toBeInTheDocument();
-	expect( screen.getByRole( 'link', { name: 'ns1' } ) );
+	expect( screen.getByRole( 'link', { name: 'ns1' } ) ).toBeInTheDocument();
 	expect( screen.getByText( '1.2.3.4' ) ).toBeInTheDocument();
 	expect( screen.getByText( 'ns2' ) ).toBeInTheDocument();
-	expect( screen.getByRole( 'link', { name: 'ns2' } ) );
+	expect( screen.getByRole( 'link', { name: 'ns2' } ) ).toBeInTheDocument();
 	expect( screen.getByText( '2.3.4.5' ) ).toBeInTheDocument();
 } );
 

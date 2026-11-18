@@ -4,7 +4,9 @@ export const MCP_SERVER_NAME = 'wpcom-mcp';
 export const MCP_SERVER_URL = 'https://public-api.wordpress.com/wpcom/v2/mcp/v1';
 export const CLAUDE_CODE_COMMAND = `claude mcp add --transport http ${ MCP_SERVER_NAME } ${ MCP_SERVER_URL }`;
 
-// The WordPress.com plugin on the Cursor Marketplace, which has a one-click install.
+// The WordPress listings in each client's directory.
+export const CLAUDE_CONNECTOR_URL = 'https://wp.me/claude';
+export const CHATGPT_PLUGIN_URL = 'https://wp.me/chatgpt';
 export const CURSOR_PLUGIN_URL = 'https://cursor.com/marketplace/wordpress';
 
 // Opens VS Code's own install prompt, so there is no shell command to quote.
@@ -38,7 +40,7 @@ export function getConnectAgents(): ConnectAgent[] {
 			description: __( 'OpenAI’s chat app' ),
 			logo: LOGO_BASE_URL + 'chatgpt.svg',
 			actionLabel: __( 'Add plugin' ),
-			href: 'https://wp.me/chatgpt',
+			href: CHATGPT_PLUGIN_URL,
 		},
 		{
 			key: 'claude',
@@ -46,7 +48,7 @@ export function getConnectAgents(): ConnectAgent[] {
 			description: __( 'App and desktop' ),
 			logo: LOGO_BASE_URL + 'claude.svg',
 			actionLabel: __( 'Add connector' ),
-			href: 'https://wp.me/claude',
+			href: CLAUDE_CONNECTOR_URL,
 		},
 		{
 			key: 'claude-code',

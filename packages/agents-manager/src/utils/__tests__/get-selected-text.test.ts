@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getAttributePlainText, getSelectedTextContext } from '../get-selected-text';
 
-const mockGetSelectionStart = jest.fn();
-const mockGetSelectionEnd = jest.fn();
-const mockGetBlockAttributes = jest.fn();
+const mockGetSelectionStart = vi.fn();
+const mockGetSelectionEnd = vi.fn();
+const mockGetBlockAttributes = vi.fn();
 
 const select = () => ( {
 	getSelectionStart: () => mockGetSelectionStart(),
@@ -33,7 +34,7 @@ describe( 'getAttributePlainText', () => {
 
 describe( 'getSelectedTextContext', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetBlockAttributes.mockReturnValue( {
 			content: { text: 'Welcome to our new product page' },
 		} );

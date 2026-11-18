@@ -47,7 +47,6 @@ const settingsResponse = {
 		admin_bar: true,
 		roles: [ 'administrator' ],
 		count_roles: [ 'administrator' ],
-		wpcom_reader_views_enabled: true,
 	},
 	roles: [
 		{ slug: 'administrator', name: 'Administrator' },
@@ -111,7 +110,7 @@ describe( 'StatsSettingsPage saving', () => {
 		await userEvent.click( countedViewsToggle( 'Editor' ) );
 
 		await waitFor( () => expect( countedViewsToggle( 'Administrator' ) ).toBeDisabled() );
-		expect( screen.getByLabelText( 'Show post views for this site.' ) ).toBeDisabled();
+		expect( adminBarToggle() ).toBeDisabled();
 
 		finishSave( {
 			...settingsResponse,
@@ -152,7 +151,7 @@ describe( 'StatsSettingsPage saving', () => {
 		mockPost.mockResolvedValue( settingsResponse );
 		await renderPage();
 
-		await userEvent.click( screen.getByLabelText( 'Show post views for this site.' ) );
+		await userEvent.click( countedViewsToggle( 'Editor' ) );
 
 		await waitFor( () => expect( mockDispatch ).toHaveBeenCalledWith( SAVED_NOTICE ) );
 		expect( reloadPage ).not.toHaveBeenCalled();
@@ -186,7 +185,7 @@ describe( 'StatsSettingsPage saving', () => {
 		await waitFor( () => expect( reloadPage ).toHaveBeenCalled() );
 		await waitFor( () => expect( queryClient.isMutating() ).toBe( 0 ) );
 
-		expect( screen.getByLabelText( 'Show post views for this site.' ) ).toBeDisabled();
+		expect( countedViewsToggle( 'Editor' ) ).toBeDisabled();
 	} );
 
 	it( 'shows the reason the site gives when it refuses a save', async () => {
@@ -250,12 +249,12 @@ describe( 'StatsSettingsPage saving', () => {
 		mockPost.mockResolvedValue( settingsResponse );
 		await renderPage();
 
-		await userEvent.click( screen.getByLabelText( 'Show post views for this site.' ) );
+		await userEvent.click( countedViewsToggle( 'Editor' ) );
 
 		await waitFor( () =>
 			expect( mockPost ).toHaveBeenCalledWith( {
 				...SETTINGS_REQUEST,
-				body: { wpcom_reader_views_enabled: false },
+				body: { count_roles: [ 'administrator', 'editor' ] },
 			} )
 		);
 		expect( mockGet ).toHaveBeenCalledWith( SETTINGS_REQUEST );

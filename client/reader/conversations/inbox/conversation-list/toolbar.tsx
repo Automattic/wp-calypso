@@ -5,6 +5,7 @@ import {
 	MenuGroup,
 	MenuItemsChoice,
 	SearchControl,
+	__experimentalDropdownContentWrapper as DropdownContentWrapper,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalToggleGroupControl as ToggleGroupControl,
@@ -43,9 +44,10 @@ export function ConversationListToolbar( {
 	];
 
 	return (
-		<HStack spacing={ 1 } expanded={ false } className="conversations-inbox__toolbar">
+		<HStack spacing={ 2 } expanded={ false } className="conversations-inbox__toolbar">
 			<SearchControl
 				__next40pxDefaultSize
+				size="compact"
 				__nextHasNoMarginBottom
 				value={ search }
 				onChange={ onSearchChange }
@@ -54,7 +56,7 @@ export function ConversationListToolbar( {
 			<DropdownMenu
 				icon={ funnel }
 				label={ translate( 'Sort conversations' ) }
-				toggleProps={ { __next40pxDefaultSize: true } }
+				toggleProps={ { __next40pxDefaultSize: true, size: 'compact' } }
 				popoverProps={ { placement: 'bottom-end' } }
 			>
 				{ ( { onClose } ) => (
@@ -76,6 +78,7 @@ export function ConversationListToolbar( {
 				renderToggle={ ( { isOpen, onToggle } ) => (
 					<Button
 						__next40pxDefaultSize
+						size="compact"
 						icon={ <Icon icon={ cog } /> }
 						label={ translate( 'Settings' ) }
 						showTooltip
@@ -84,28 +87,38 @@ export function ConversationListToolbar( {
 					/>
 				) }
 				renderContent={ () => (
-					<VStack spacing={ 4 } className="conversations-inbox__settings">
-						<HStack>
-							<Heading level={ 2 } size={ 15 } weight={ 500 } color="inherit">
-								{ translate( 'Appearance' ) }
-							</Heading>
-							<Button variant="link" onClick={ () => onDensityChange( 'comfortable' ) }>
-								{ translate( 'Reset view' ) }
-							</Button>
-						</HStack>
-						<ToggleGroupControl
-							__next40pxDefaultSize
-							__nextHasNoMarginBottom
-							isBlock
-							label={ translate( 'Density' ) }
-							value={ density }
-							onChange={ ( next ) => onDensityChange( next as Density ) }
-						>
-							<ToggleGroupControlOption value="comfortable" label={ translate( 'Comfortable' ) } />
-							<ToggleGroupControlOption value="balanced" label={ translate( 'Balanced' ) } />
-							<ToggleGroupControlOption value="compact" label={ translate( 'Compact' ) } />
-						</ToggleGroupControl>
-					</VStack>
+					<DropdownContentWrapper paddingSize="medium">
+						<VStack spacing={ 6 } className="conversations-inbox__settings">
+							<HStack>
+								<Heading level={ 2 } size={ 15 } lineHeight="24px" color="inherit">
+									{ translate( 'Appearance' ) }
+								</Heading>
+								<Button
+									__next40pxDefaultSize
+									variant="tertiary"
+									size="compact"
+									onClick={ () => onDensityChange( 'comfortable' ) }
+								>
+									{ translate( 'Reset view' ) }
+								</Button>
+							</HStack>
+							<ToggleGroupControl
+								__next40pxDefaultSize
+								__nextHasNoMarginBottom
+								isBlock
+								label={ translate( 'Density' ) }
+								value={ density }
+								onChange={ ( next ) => onDensityChange( next as Density ) }
+							>
+								<ToggleGroupControlOption
+									value="comfortable"
+									label={ translate( 'Comfortable' ) }
+								/>
+								<ToggleGroupControlOption value="balanced" label={ translate( 'Balanced' ) } />
+								<ToggleGroupControlOption value="compact" label={ translate( 'Compact' ) } />
+							</ToggleGroupControl>
+						</VStack>
+					</DropdownContentWrapper>
 				) }
 			/>
 		</HStack>

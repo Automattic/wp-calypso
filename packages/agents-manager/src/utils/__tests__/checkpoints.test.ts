@@ -1,42 +1,53 @@
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '../tool-call-history', () => ( {
-	getToolCallIdFromConversationHistory: jest.fn( () => 'call-1' ),
+import * as wpBlocks from '@wordpress/blocks';
+import * as wpData from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
+import * as checkpoints from '../checkpoints';
+import * as editorBlocksModule from '../editor-blocks';
+import * as toolCallHistory from '../tool-call-history';
+import * as tracksModule from '../tracks';
+
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '../tool-call-history', () => ( {
+	getToolCallIdFromConversationHistory: vi.fn( () => 'call-1' ),
 } ) );
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn(),
-	dispatch: jest.fn(),
-	resolveSelect: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn(),
+	dispatch: vi.fn(),
+	resolveSelect: vi.fn(),
 } ) );
-jest.mock( '../editor-blocks', () => {
-	const getRootBlocks = jest.fn( () => [] );
-	const getTemplatePartBlocks = jest.fn( () => [] );
+vi.mock( '../editor-blocks', () => {
+	const getRootBlocks = vi.fn( () => [] );
+	const getTemplatePartBlocks = vi.fn( () => [] );
 
 	return {
-		findTemplatePartClientId: jest.fn(),
-		getBlocks: jest.fn( () => [] ),
-		getPageBlocks: jest.fn( () => ( {
+		findTemplatePartClientId: vi.fn(),
+		getBlocks: vi.fn( () => [] ),
+		getPageBlocks: vi.fn( () => ( {
 			blocks: getRootBlocks(),
 			templateParts: getTemplatePartBlocks(),
 		} ) ),
 		getRootBlocks,
 		getTemplatePartBlocks,
-		replaceRootBlocks: jest.fn(),
-		resolveBlocksRoot: jest.fn( () => ( {
+		replaceRootBlocks: vi.fn(),
+		resolveBlocksRoot: vi.fn( () => ( {
 			kind: 'post-content',
 			clientId: 'pc',
 			post: { id: 7, type: 'page', title: 'About' },
 		} ) ),
-		stageRootBlocks: jest.fn(),
+		stageRootBlocks: vi.fn(),
 	};
 } );
-jest.mock( '../tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
+vi.mock( '../tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
 // Reached through the navigation domain, and it registers a store on import —
 // which the mocked `@wordpress/data` above cannot serve.
-jest.mock( '@wordpress/blocks', () => ( {
-	createBlock: jest.fn(),
-	parse: jest.fn( () => [] ),
-	serialize: jest.fn( () => '' ),
+vi.mock( '@wordpress/blocks', () => ( {
+	createBlock: vi.fn(),
+	parse: vi.fn( () => [] ),
+	serialize: vi.fn( () => '' ),
 } ) );
+
+// The factories above swap these modules for loose fakes, which the real types don't fit.
+const mocked = ( module: object ) => module as unknown as Record< string, Mock >;
 
 const GLOBAL_STYLES_RECORD = {
 	settings: { color: { palette: [ { slug: 'primary', color: '#111111' } ] } },
@@ -45,23 +56,23 @@ const GLOBAL_STYLES_RECORD = {
 
 const SITE_RECORD = { site_logo: 42 };
 
-// The record store is module state — each test loads a fresh module (and the
-// matching mock instances) to start clean.
-async function loadCheckpoints() {
-	jest.resetModules();
-	const { select, dispatch } = jest.requireMock( '@wordpress/data' );
-	const getGlobalStylesId = jest.fn().mockReturnValue( 'global-styles-1' );
-	const getEditedEntityRecord = jest.fn(
+// Empties the record store, which is module state, and puts the mocks back to
+// their factory defaults.
+function setUpCheckpoints() {
+	checkpoints.getCheckpoints().forEach( ( { id } ) => checkpoints.clearCheckpoint( id ) );
+	vi.resetAllMocks();
+	const { select, dispatch } = mocked( wpData );
+	const getGlobalStylesId = vi.fn().mockReturnValue( 'global-styles-1' );
+	const getEditedEntityRecord = vi.fn(
 		( _kind: string, name: string ): Record< string, unknown > | undefined =>
 			name === 'site' ? SITE_RECORD : GLOBAL_STYLES_RECORD
 	);
-	const editEntityRecord = jest.fn();
+	const editEntityRecord = vi.fn();
 	select.mockReturnValue( {
 		__experimentalGetCurrentGlobalStylesId: getGlobalStylesId,
 		getEditedEntityRecord,
 	} );
 	dispatch.mockReturnValue( { editEntityRecord } );
-	const checkpoints = await import( '../checkpoints' );
 	return {
 		...checkpoints,
 		getGlobalStylesId,
@@ -72,15 +83,15 @@ async function loadCheckpoints() {
 
 /** What `resolveSelect` serves for every record read. */
 const withRecord = ( record: unknown ) =>
-	jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
-		getEditedEntityRecord: jest.fn().mockResolvedValue( record ),
+	mocked( wpData ).resolveSelect.mockReturnValue( {
+		getEditedEntityRecord: vi.fn().mockResolvedValue( record ),
 	} );
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 describe( 'setCheckpoint', () => {
-	it( 'captures the global-styles snapshot with keys and metadata', async () => {
-		const { setCheckpoint, getCheckpoints, checkpointKeys } = await loadCheckpoints();
+	it( 'captures the global-styles snapshot with keys and metadata', () => {
+		const { setCheckpoint, getCheckpoints, checkpointKeys } = setUpCheckpoints();
 
 		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ], {
 			toolId: 'big_sky__set_styles',
@@ -99,8 +110,8 @@ describe( 'setCheckpoint', () => {
 		] );
 	} );
 
-	it( 'snapshots by value, not by reference to the edited record', async () => {
-		const { setCheckpoint, getCheckpoints, getEditedEntityRecord } = await loadCheckpoints();
+	it( 'snapshots by value, not by reference to the edited record', () => {
+		const { setCheckpoint, getCheckpoints, getEditedEntityRecord } = setUpCheckpoints();
 		const liveRecord: { settings: Record< string, unknown >; styles: object } = {
 			settings: { color: {} },
 			styles: {},
@@ -113,16 +124,16 @@ describe( 'setCheckpoint', () => {
 		expect( getCheckpoints()[ 0 ].themeBeforeUpdate?.settings ).toEqual( { color: {} } );
 	} );
 
-	it( 'is a no-op without an id', async () => {
-		const { setCheckpoint, getCheckpoints } = await loadCheckpoints();
+	it( 'is a no-op without an id', () => {
+		const { setCheckpoint, getCheckpoints } = setUpCheckpoints();
 
 		setCheckpoint( '', [] );
 
 		expect( getCheckpoints() ).toEqual( [] );
 	} );
 
-	it( 'stores the checkpoint without a snapshot when there is no global-styles id', async () => {
-		const { setCheckpoint, getCheckpoints, getGlobalStylesId } = await loadCheckpoints();
+	it( 'stores the checkpoint without a snapshot when there is no global-styles id', () => {
+		const { setCheckpoint, getCheckpoints, getGlobalStylesId } = setUpCheckpoints();
 		getGlobalStylesId.mockReturnValue( undefined );
 
 		setCheckpoint( 'toolu_1', [] );
@@ -132,8 +143,8 @@ describe( 'setCheckpoint', () => {
 		] );
 	} );
 
-	it( 'stores the checkpoint without a snapshot when there is no edited record', async () => {
-		const { setCheckpoint, getCheckpoints, getEditedEntityRecord } = await loadCheckpoints();
+	it( 'stores the checkpoint without a snapshot when there is no edited record', () => {
+		const { setCheckpoint, getCheckpoints, getEditedEntityRecord } = setUpCheckpoints();
 		getEditedEntityRecord.mockReturnValue( undefined );
 
 		setCheckpoint( 'toolu_1', [] );
@@ -143,8 +154,8 @@ describe( 'setCheckpoint', () => {
 		] );
 	} );
 
-	it( 'overwrites an existing checkpoint in place', async () => {
-		const { setCheckpoint, getCheckpoints, checkpointKeys } = await loadCheckpoints();
+	it( 'overwrites an existing checkpoint in place', () => {
+		const { setCheckpoint, getCheckpoints, checkpointKeys } = setUpCheckpoints();
 		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ], { summary: 'First.' } );
 		setCheckpoint( 'toolu_2', [ checkpointKeys.FONT ] );
 		setCheckpoint( 'toolu_1', [ checkpointKeys.BUTTON ], { summary: 'Second.' } );
@@ -159,8 +170,8 @@ describe( 'setCheckpoint', () => {
 } );
 
 describe( 'theme domain', () => {
-	it( 'snapshots the global styles only for theme checkpoints', async () => {
-		const { setCheckpoint, getCheckpoint, checkpointKeys } = await loadCheckpoints();
+	it( 'snapshots the global styles only for theme checkpoints', () => {
+		const { setCheckpoint, getCheckpoint, checkpointKeys } = setUpCheckpoints();
 
 		setCheckpoint( 'color-call', [ checkpointKeys.COLOR ] );
 		setCheckpoint( 'title-call', [ checkpointKeys.SITE_TITLE ] );
@@ -171,8 +182,8 @@ describe( 'theme domain', () => {
 } );
 
 describe( 'logo domain', () => {
-	it( 'snapshots the current logo only for logo checkpoints', async () => {
-		const { setCheckpoint, getCheckpoint, checkpointKeys } = await loadCheckpoints();
+	it( 'snapshots the current logo only for logo checkpoints', () => {
+		const { setCheckpoint, getCheckpoint, checkpointKeys } = setUpCheckpoints();
 
 		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
 		setCheckpoint( 'color-call', [ checkpointKeys.COLOR ] );
@@ -181,9 +192,9 @@ describe( 'logo domain', () => {
 		expect( getCheckpoint( 'color-call' )?.logoBeforeUpdate ).toBeUndefined();
 	} );
 
-	it( 'snapshots an unset logo, so restoring can clear it again', async () => {
+	it( 'snapshots an unset logo, so restoring can clear it again', () => {
 		const { setCheckpoint, getCheckpoint, checkpointKeys, getEditedEntityRecord } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 		getEditedEntityRecord.mockReturnValue( {} );
 
 		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
@@ -193,7 +204,7 @@ describe( 'logo domain', () => {
 
 	it( 'restores the snapshotted logo without touching the editor undo stack', async () => {
 		const { setCheckpoint, restoreCheckpoint, checkpointKeys, editEntityRecord } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
 
 		await restoreCheckpoint( 'logo-call' );
@@ -209,7 +220,7 @@ describe( 'logo domain', () => {
 
 	it( 'leaves the logo alone when the checkpoint does not scope it', async () => {
 		const { setCheckpoint, restoreCheckpoint, checkpointKeys, editEntityRecord } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 		setCheckpoint( 'color-call', [ checkpointKeys.COLOR ] );
 
 		await restoreCheckpoint( 'color-call' );
@@ -223,8 +234,8 @@ describe( 'logo domain', () => {
 		);
 	} );
 
-	it( 'keeps the logo snapshot out of the model-facing list', async () => {
-		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
+	it( 'keeps the logo snapshot out of the model-facing list', () => {
+		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = setUpCheckpoints();
 		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
 
 		expect( getAvailableCheckpoints()[ 0 ] ).not.toHaveProperty( 'logoBeforeUpdate' );
@@ -232,7 +243,7 @@ describe( 'logo domain', () => {
 
 	it( 'throws rather than silently skipping a logo restore with no snapshot', async () => {
 		const { setCheckpoint, restoreCheckpoint, checkpointKeys, getEditedEntityRecord } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 		getEditedEntityRecord.mockReturnValue( undefined );
 		setCheckpoint( 'logo-call', [ checkpointKeys.LOGO ] );
 
@@ -249,7 +260,7 @@ describe( 'site domains', () => {
 		[ 'site_title', 'Checkpoint has no site-title snapshot to restore.' ],
 		[ 'site_metadata', 'Checkpoint has no site-metadata snapshot to restore.' ],
 	] )( 'throws rather than skipping a %s restore with no snapshot', async ( key, message ) => {
-		const { setCheckpoint, restoreCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const { setCheckpoint, restoreCheckpoint, getEditedEntityRecord } = setUpCheckpoints();
 		getEditedEntityRecord.mockReturnValue( undefined );
 		setCheckpoint( 'site-call', [ key ] );
 
@@ -258,9 +269,9 @@ describe( 'site domains', () => {
 } );
 
 describe( 'hasCheckpoint / clearCheckpoint / getCheckpoints', () => {
-	it( 'tracks and clears checkpoints by id, oldest first', async () => {
+	it( 'tracks and clears checkpoints by id, oldest first', () => {
 		const { setCheckpoint, hasCheckpoint, getCheckpoint, clearCheckpoint, getCheckpoints } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 
 		setCheckpoint( 'toolu_1', [] );
 		setCheckpoint( 'toolu_2', [] );
@@ -279,8 +290,8 @@ describe( 'hasCheckpoint / clearCheckpoint / getCheckpoints', () => {
 
 describe( 'getAvailableCheckpoints', () => {
 	// The backend reads `createdByRequestIntentType` to handle redo.
-	it( 'sends a restore checkpoint with its own intent and the one that created it', async () => {
-		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
+	it( 'sends a restore checkpoint with its own intent and the one that created it', () => {
+		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = setUpCheckpoints();
 		setCheckpoint( 'call-1', [ checkpointKeys.COLOR ], {
 			toolId: 'big_sky__restore_checkpoint',
 			requestIntentType: 'redo',
@@ -297,7 +308,7 @@ describe( 'getAvailableCheckpoints', () => {
 	// global-styles records, menu block trees and site metadata.
 	it( 'sends no snapshot fields to the model', async () => {
 		const { withCheckpoint, getCheckpoint, getAvailableCheckpoints, checkpointKeys } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 		const write = { toolId: 'tool', keys: Object.values( checkpointKeys ), summary: 'x' };
 		withRecord( { blocks: [] } );
 
@@ -333,14 +344,14 @@ describe( 'getAvailableCheckpoints', () => {
 		] );
 	} );
 
-	it( 'returns an empty list without checkpoints', async () => {
-		const { getAvailableCheckpoints } = await loadCheckpoints();
+	it( 'returns an empty list without checkpoints', () => {
+		const { getAvailableCheckpoints } = setUpCheckpoints();
 
 		expect( getAvailableCheckpoints() ).toEqual( [] );
 	} );
 
-	it( 'lists checkpoint metadata without snapshots and marks the latest per tool', async () => {
-		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = await loadCheckpoints();
+	it( 'lists checkpoint metadata without snapshots and marks the latest per tool', () => {
+		const { setCheckpoint, getAvailableCheckpoints, checkpointKeys } = setUpCheckpoints();
 		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ], {
 			toolId: 'big_sky__show_component',
 			summary: 'Color picker shown.',
@@ -386,7 +397,7 @@ describe( 'getAvailableCheckpoints', () => {
 
 describe( 'restoreCheckpoint', () => {
 	it( 'rejects for an unknown checkpoint id', async () => {
-		const { restoreCheckpoint } = await loadCheckpoints();
+		const { restoreCheckpoint } = setUpCheckpoints();
 
 		await expect( restoreCheckpoint( 'missing' ) ).rejects.toThrow(
 			'Checkpoint not found: missing'
@@ -396,7 +407,7 @@ describe( 'restoreCheckpoint', () => {
 	it.each( [ [ 'color' ], [ 'font' ], [ 'button' ] ] )(
 		'restores the global-styles snapshot for the `%s` key',
 		async ( key ) => {
-			const { setCheckpoint, restoreCheckpoint, editEntityRecord } = await loadCheckpoints();
+			const { setCheckpoint, restoreCheckpoint, editEntityRecord } = setUpCheckpoints();
 			setCheckpoint( 'toolu_1', [ key ] );
 
 			await restoreCheckpoint( 'toolu_1' );
@@ -412,7 +423,7 @@ describe( 'restoreCheckpoint', () => {
 	);
 
 	it( 'skips the global-styles restore when the keys scope another domain', async () => {
-		const { setCheckpoint, restoreCheckpoint, editEntityRecord } = await loadCheckpoints();
+		const { setCheckpoint, restoreCheckpoint, editEntityRecord } = setUpCheckpoints();
 		setCheckpoint( 'toolu_1', [ 'another' ] );
 
 		await restoreCheckpoint( 'toolu_1' );
@@ -427,7 +438,7 @@ describe( 'restoreCheckpoint', () => {
 			editEntityRecord,
 			getEditedEntityRecord,
 			checkpointKeys,
-		} = await loadCheckpoints();
+		} = setUpCheckpoints();
 		getEditedEntityRecord.mockReturnValue( undefined );
 		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ] );
 
@@ -438,9 +449,9 @@ describe( 'restoreCheckpoint', () => {
 	} );
 
 	it( 'rejects when the editor data store is gone', async () => {
-		const { setCheckpoint, restoreCheckpoint, checkpointKeys } = await loadCheckpoints();
+		const { setCheckpoint, restoreCheckpoint, checkpointKeys } = setUpCheckpoints();
 		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ] );
-		jest.requireMock( '@wordpress/data' ).dispatch.mockReturnValue( undefined );
+		mocked( wpData ).dispatch.mockReturnValue( undefined );
 
 		await expect( restoreCheckpoint( 'toolu_1' ) ).rejects.toThrow(
 			'Global styles are unavailable to edit.'
@@ -454,7 +465,7 @@ describe( 'restoreCheckpoint', () => {
 			editEntityRecord,
 			getGlobalStylesId,
 			checkpointKeys,
-		} = await loadCheckpoints();
+		} = setUpCheckpoints();
 		setCheckpoint( 'toolu_1', [ checkpointKeys.COLOR ] );
 		getGlobalStylesId.mockReturnValue( undefined );
 
@@ -471,7 +482,7 @@ describe( 'withCheckpoint', () => {
 	// Every restore is key-gated, so a keyless checkpoint would offer an undo
 	// that silently does nothing.
 	it( 'records nothing when the write claims no domain', async () => {
-		const { withCheckpoint, getCheckpoints } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoints } = setUpCheckpoints();
 
 		await withCheckpoint( { toolId: 'tool', toolCallId: 'call-1', keys: [], summary: 'x' }, () =>
 			Promise.resolve( 'done' )
@@ -481,7 +492,7 @@ describe( 'withCheckpoint', () => {
 	} );
 
 	it( 'snapshots under the tool call id before writing, and returns the write', async () => {
-		const { withCheckpoint, getCheckpoints } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoints } = setUpCheckpoints();
 		let checkpointsAtWrite = 0;
 
 		const result = await withCheckpoint( LOGO_WRITE, () => {
@@ -503,18 +514,16 @@ describe( 'withCheckpoint', () => {
 	} );
 
 	it( 'keys the snapshot by the call id it is given, without reading the history', async () => {
-		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
+		const { withCheckpoint, hasCheckpoint } = setUpCheckpoints();
 
 		await withCheckpoint( { ...LOGO_WRITE, toolCallId: 'call-2' }, () => {} );
 
 		expect( hasCheckpoint( 'call-2' ) ).toBe( true );
-		expect(
-			jest.requireMock( '../tool-call-history' ).getToolCallIdFromConversationHistory
-		).not.toHaveBeenCalled();
+		expect( mocked( toolCallHistory ).getToolCallIdFromConversationHistory ).not.toHaveBeenCalled();
 	} );
 
 	it( 'keeps the first snapshot when the same call writes again', async () => {
-		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = setUpCheckpoints();
 
 		await withCheckpoint( LOGO_WRITE, () => {} );
 		getEditedEntityRecord.mockReturnValue( { site_logo: 99 } );
@@ -524,11 +533,9 @@ describe( 'withCheckpoint', () => {
 	} );
 
 	it( 'writes without a checkpoint when the tool call id is unknown', async () => {
-		const { withCheckpoint, getCheckpoints } = await loadCheckpoints();
-		jest
-			.requireMock( '../tool-call-history' )
-			.getToolCallIdFromConversationHistory.mockReturnValueOnce( null );
-		const write = jest.fn();
+		const { withCheckpoint, getCheckpoints } = setUpCheckpoints();
+		mocked( toolCallHistory ).getToolCallIdFromConversationHistory.mockReturnValueOnce( null );
+		const write = vi.fn();
 
 		await withCheckpoint( LOGO_WRITE, write );
 
@@ -545,7 +552,7 @@ describe( 'withCheckpoint', () => {
 		],
 		[ 'rejects', () => Promise.reject( new Error( 'The site record is unavailable to edit.' ) ) ],
 	] )( 'drops the checkpoint and rethrows when the write %s', async ( _case, write ) => {
-		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
+		const { withCheckpoint, hasCheckpoint } = setUpCheckpoints();
 
 		await expect( withCheckpoint( LOGO_WRITE, write ) ).rejects.toThrow(
 			'The site record is unavailable to edit.'
@@ -556,7 +563,7 @@ describe( 'withCheckpoint', () => {
 	// The first run snapshots; a repeat of the same call still records the
 	// page or menu it reaches, or an undo would leave that change behind.
 	it( 'still records what a repeat of the same call touches', async () => {
-		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint } = setUpCheckpoints();
 		const write = { toolId: 'tool', toolCallId: 'call-1', keys: [ 'page' ], summary: 'x' };
 		const first = { pageId: 7, from: 'Old', to: 'New' };
 		const second = { pageId: 8, from: 'Then', to: 'Now' };
@@ -570,7 +577,7 @@ describe( 'withCheckpoint', () => {
 	// A partial first run drops the domains it never reached; a repeat must be
 	// able to record them, or its rename would apply with no way back.
 	it( 'lets a repeat record a domain the first run dropped as unrecorded', async () => {
-		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint } = setUpCheckpoints();
 		const write = { ...LOGO_WRITE, keys: [ ...LOGO_WRITE.keys, 'page' ] };
 		const rename = { pageId: 7, from: 'Old', to: 'New' };
 
@@ -584,7 +591,7 @@ describe( 'withCheckpoint', () => {
 
 	// The first run's snapshot must not stand in for a fresh one that failed.
 	it( 'refuses a repeat whose re-added domain cannot be snapshotted again', async () => {
-		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = setUpCheckpoints();
 		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
 
 		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
@@ -593,7 +600,7 @@ describe( 'withCheckpoint', () => {
 		);
 
 		getEditedEntityRecord.mockReturnValue( undefined );
-		await expect( withCheckpoint( write, jest.fn() ) ).rejects.toThrow(
+		await expect( withCheckpoint( write, vi.fn() ) ).rejects.toThrow(
 			'Cannot record a way back for site_title'
 		);
 		expect( getCheckpoint( 'call-1' )?.checkpointKeys ).toEqual( [ 'page' ] );
@@ -602,8 +609,8 @@ describe( 'withCheckpoint', () => {
 	// A domain that snapshots up front and cannot be read would leave the
 	// change with no way back, so the write is refused instead.
 	it( 'refuses a write whose eager domain cannot be snapshotted', async () => {
-		const { withCheckpoint, hasCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
-		const write = jest.fn();
+		const { withCheckpoint, hasCheckpoint, getEditedEntityRecord } = setUpCheckpoints();
+		const write = vi.fn();
 
 		getEditedEntityRecord.mockReturnValue( undefined );
 
@@ -617,7 +624,7 @@ describe( 'withCheckpoint', () => {
 	// The first run never wrote the domain it dropped, so the snapshot it left
 	// behind may predate a change made since; the repeat's own is the true one.
 	it( 'snapshots a re-added eager domain afresh', async () => {
-		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = setUpCheckpoints();
 		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
 		const rename = { pageId: 7, from: 'Old', to: 'New' };
 
@@ -633,7 +640,7 @@ describe( 'withCheckpoint', () => {
 	// Site title and metadata snapshot up front but are written mid-batch, so a
 	// batch that fails before reaching them must not keep an undo for them.
 	it( 'drops an eager site domain the write never reached', async () => {
-		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = setUpCheckpoints();
 		getEditedEntityRecord.mockReturnValue( { title: 'Old' } );
 		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
 
@@ -645,7 +652,7 @@ describe( 'withCheckpoint', () => {
 	} );
 
 	it( "puts a repeat's re-declared domains back when it throws", async () => {
-		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint, getEditedEntityRecord } = setUpCheckpoints();
 		const write = { ...LOGO_WRITE, keys: [ 'page', 'site_title' ] };
 
 		// The first run never reaches the site title, so the domain is dropped.
@@ -664,7 +671,7 @@ describe( 'withCheckpoint', () => {
 	} );
 
 	it( 'keeps the first snapshot when a repeat write throws', async () => {
-		const { withCheckpoint, hasCheckpoint } = await loadCheckpoints();
+		const { withCheckpoint, hasCheckpoint } = setUpCheckpoints();
 		await withCheckpoint( LOGO_WRITE, () => {} );
 
 		await expect(
@@ -681,7 +688,7 @@ describe( 'restore by domain', () => {
 
 	it( 'puts the menus back as they were, out of the undo stack', async () => {
 		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 		withRecord( { id: 19, blocks: [] } );
 		setCheckpoint( 'call-1', [ 'navigation' ] );
 		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
@@ -703,9 +710,9 @@ describe( 'restore by domain', () => {
 	// after the others were already put back.
 	it( 'writes no menu when one of them no longer exists', async () => {
 		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
-			await loadCheckpoints();
-		jest.requireMock( '@wordpress/data' ).resolveSelect.mockReturnValue( {
-			getEditedEntityRecord: jest.fn( ( _kind: string, _name: string, id: number ) =>
+			setUpCheckpoints();
+		mocked( wpData ).resolveSelect.mockReturnValue( {
+			getEditedEntityRecord: vi.fn( ( _kind: string, _name: string, id: number ) =>
 				Promise.resolve( id === 19 ? { id, blocks: [] } : null )
 			),
 		} );
@@ -726,7 +733,7 @@ describe( 'restore by domain', () => {
 	// Newest first, so a page renamed twice in one call ends at its first title.
 	it( 'puts page titles back newest first', async () => {
 		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 		withRecord( { title: 'C' } );
 		setCheckpoint( 'call-1', [ 'page' ] );
 		Object.assign( getCheckpoint( 'call-1' ) ?? {}, {
@@ -758,7 +765,7 @@ describe( 'restore by domain', () => {
 
 	it( 'puts the site title and metadata back as pending edits', async () => {
 		const { setCheckpoint, restoreCheckpoint, getEditedEntityRecord, editEntityRecord } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 		getEditedEntityRecord.mockReturnValue( {
 			title: 'Old',
 			big_sky_site_metadata: '{"personality":"calm"}',
@@ -800,7 +807,7 @@ describe( 'blocks domain', () => {
 	} );
 	const page = ( count: number ) =>
 		Array.from( { length: count }, ( _, index ) => paragraph( `p${ index }` ) );
-	const editorBlocks = () => jest.requireMock( '../editor-blocks' );
+	const editorBlocks = () => mocked( editorBlocksModule );
 
 	// The post the mocked editor holds, under a post-content root.
 	const post = { id: 7, type: 'page', title: 'About' };
@@ -817,8 +824,8 @@ describe( 'blocks domain', () => {
 		},
 	} as never;
 
-	it( 'snapshots the root by kind, its blocks by value, and the post', async () => {
-		const { setCheckpoint, getCheckpoint } = await loadCheckpoints();
+	it( 'snapshots the root by kind, its blocks by value, and the post', () => {
+		const { setCheckpoint, getCheckpoint } = setUpCheckpoints();
 		const live = page( 1 );
 		editorBlocks().getRootBlocks.mockReturnValue( live );
 
@@ -835,7 +842,7 @@ describe( 'blocks domain', () => {
 
 	// A missing snapshot means the capture failed, so the restore is refused.
 	it( 'snapshots nothing while the canvas has no root, and refuses to restore it', async () => {
-		const { setCheckpoint, getCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		const { setCheckpoint, getCheckpoint, restoreCheckpoint } = setUpCheckpoints();
 		editorBlocks().resolveBlocksRoot.mockReturnValue( null );
 
 		setCheckpoint( 'call-1', [ 'blocks' ] );
@@ -847,7 +854,7 @@ describe( 'blocks domain', () => {
 	// The root is resolved again: its clientId does not survive the editor
 	// remounting, and the post id may come back as a string.
 	it( 'puts the blocks back under the root as it is now, outside the undo stack', async () => {
-		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		const { setCheckpoint, restoreCheckpoint } = setUpCheckpoints();
 		editorBlocks().getRootBlocks.mockReturnValueOnce( page( 2 ) );
 		setCheckpoint( 'call-1', [ 'blocks' ] );
 		editorBlocks().resolveBlocksRoot.mockReturnValue( {
@@ -870,7 +877,7 @@ describe( 'blocks domain', () => {
 		{ case: 'a view showing another root', root: { kind: 'section', clientId: 's', post } },
 		{ case: 'an editor still loading', root: null },
 	] )( 'refuses to restore into $case', async ( { root } ) => {
-		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		const { setCheckpoint, restoreCheckpoint } = setUpCheckpoints();
 		setCheckpoint( 'call-1', [ 'blocks' ] );
 		editorBlocks().resolveBlocksRoot.mockReturnValue( root );
 
@@ -880,8 +887,8 @@ describe( 'blocks domain', () => {
 
 	// A snapshot taken before the canvas had loaded would wipe the page.
 	it( 'refuses a restore that would collapse the page, and records it', async () => {
-		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
-		const { recordBigSkyTracksEvent } = jest.requireMock( '../tracks' );
+		const { setCheckpoint, restoreCheckpoint } = setUpCheckpoints();
+		const { recordBigSkyTracksEvent } = mocked( tracksModule );
 		editorBlocks().getRootBlocks.mockReturnValueOnce( page( 1 ) );
 		setCheckpoint( 'call-1', [ 'blocks' ] );
 		editorBlocks().getRootBlocks.mockReturnValue( page( 6 ) );
@@ -902,12 +909,11 @@ describe( 'blocks domain', () => {
 
 	// Measured on the block markup, as Big Sky measures it.
 	it( 'refuses a restore that would shrink the page to under a fifth of its markup', async () => {
-		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
-		jest
-			.requireMock( '@wordpress/blocks' )
-			.serialize.mockImplementation( ( blocks: { attributes: { content: string } }[] ) =>
+		const { setCheckpoint, restoreCheckpoint } = setUpCheckpoints();
+		mocked( wpBlocks ).serialize.mockImplementation(
+			( blocks: { attributes: { content: string } }[] ) =>
 				blocks.map( ( block ) => block.attributes.content ).join( '' )
-			);
+		);
 		const shortPage = Array.from( { length: 3 }, ( _, index ) => ( {
 			...paragraph( `s${ index }` ),
 			attributes: { content: 'x' },
@@ -921,7 +927,7 @@ describe( 'blocks domain', () => {
 
 	// Each design checkpoints the page it replaced, so undoing twice walks back.
 	it( 'undoes two designs in turn, back to the original page', async () => {
-		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
+		const { setCheckpoint, restoreCheckpoint } = setUpCheckpoints();
 		const original = page( 3 );
 		const first = page( 4 );
 		editorBlocks().getRootBlocks.mockReturnValueOnce( original );
@@ -942,7 +948,7 @@ describe( 'blocks domain', () => {
 
 	// The redo puts back the page as the undo is about to overwrite it.
 	it( 'records the current blocks in the reciprocal', async () => {
-		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const { setReciprocalCheckpoint, getCheckpoint } = setUpCheckpoints();
 		editorBlocks().getRootBlocks.mockReturnValue( page( 2 ) );
 
 		await setReciprocalCheckpoint( 'redo', target, {} );
@@ -956,8 +962,8 @@ describe( 'blocks domain', () => {
 	} );
 
 	it( 'refuses a restore from another page, and records it', async () => {
-		const { setCheckpoint, restoreCheckpoint } = await loadCheckpoints();
-		const { recordBigSkyTracksEvent } = jest.requireMock( '../tracks' );
+		const { setCheckpoint, restoreCheckpoint } = setUpCheckpoints();
+		const { recordBigSkyTracksEvent } = mocked( tracksModule );
 		setCheckpoint( 'call-1', [ 'blocks' ] );
 		editorBlocks().resolveBlocksRoot.mockReturnValue( {
 			kind: 'post-content',
@@ -979,7 +985,7 @@ describe( 'blocks domain', () => {
 	} );
 
 	it( 'refuses a reciprocal from another page', async () => {
-		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const { setReciprocalCheckpoint, getCheckpoint } = setUpCheckpoints();
 		editorBlocks().resolveBlocksRoot.mockReturnValue( {
 			kind: 'post-content',
 			clientId: 'pc',
@@ -996,8 +1002,8 @@ describe( 'blocks domain', () => {
 describe( 'restore order', () => {
 	// The page guard refuses before any site-wide domain is written.
 	it( 'restores blocks before the site-wide domains, so a page guard fails first', async () => {
-		const { setCheckpoint, restoreCheckpoint, editEntityRecord } = await loadCheckpoints();
-		const editorBlocks = jest.requireMock( '../editor-blocks' );
+		const { setCheckpoint, restoreCheckpoint, editEntityRecord } = setUpCheckpoints();
+		const editorBlocks = mocked( editorBlocksModule );
 		editorBlocks.resolveBlocksRoot.mockReturnValue( {
 			kind: 'post-content',
 			clientId: 'pc',
@@ -1018,7 +1024,7 @@ describe( 'restore order', () => {
 	// been rewritten by then, or the failure leaves a half-restored site.
 	it( 'restores page titles before menus, so a missing page fails first', async () => {
 		const { setCheckpoint, restoreCheckpoint, getCheckpoint, editEntityRecord } =
-			await loadCheckpoints();
+			setUpCheckpoints();
 		withRecord( null );
 
 		setCheckpoint( 'call-1', [ 'page', 'navigation' ] );
@@ -1044,7 +1050,7 @@ describe( 'setReciprocalCheckpoint', () => {
 
 	// The redo returns to the title the undo is about to overwrite.
 	it( 'records each renamed page once, at its current title', async () => {
-		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const { setReciprocalCheckpoint, getCheckpoint } = setUpCheckpoints();
 		withRecord( { title: 'Renamed since' } );
 
 		await setReciprocalCheckpoint(
@@ -1063,7 +1069,7 @@ describe( 'setReciprocalCheckpoint', () => {
 
 	// The redo puts back the menu as the undo is about to overwrite it.
 	it( 'snapshots each menu as it is now', async () => {
-		const { setReciprocalCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const { setReciprocalCheckpoint, getCheckpoint } = setUpCheckpoints();
 		const item = { name: 'core/navigation-link', attributes: { label: 'Now' }, innerBlocks: [] };
 		withRecord( { id: 19, blocks: [ item ] } );
 
@@ -1073,7 +1079,7 @@ describe( 'setReciprocalCheckpoint', () => {
 	} );
 
 	it( 'records nothing when a menu it must snapshot cannot be read', async () => {
-		const { setReciprocalCheckpoint, hasCheckpoint } = await loadCheckpoints();
+		const { setReciprocalCheckpoint, hasCheckpoint } = setUpCheckpoints();
 		withRecord( null );
 
 		await expect(
@@ -1083,8 +1089,7 @@ describe( 'setReciprocalCheckpoint', () => {
 	} );
 
 	it( 'records nothing when a claimed domain cannot be snapshotted', async () => {
-		const { setReciprocalCheckpoint, hasCheckpoint, getEditedEntityRecord } =
-			await loadCheckpoints();
+		const { setReciprocalCheckpoint, hasCheckpoint, getEditedEntityRecord } = setUpCheckpoints();
 		const siteTitleTarget = { id: 'target', checkpointKeys: [ 'site_title' ], createdAt: 0 };
 		getEditedEntityRecord.mockReturnValue( undefined );
 
@@ -1103,7 +1108,7 @@ describe( 'checkpoint recorder', () => {
 	// key gate has to hold there too — a restore must never touch a domain the
 	// write did not declare.
 	it( 'ignores a rename from a write that never claimed the page domain', async () => {
-		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint } = setUpCheckpoints();
 
 		await withCheckpoint( write( [ 'logo' ] ), ( recorder ) =>
 			recorder.capturePageRename( RENAME )
@@ -1113,7 +1118,7 @@ describe( 'checkpoint recorder', () => {
 	} );
 
 	it( 'refuses the write when the menu it must snapshot cannot be read', async () => {
-		const { withCheckpoint } = await loadCheckpoints();
+		const { withCheckpoint } = setUpCheckpoints();
 		withRecord( null );
 
 		await expect(
@@ -1124,7 +1129,7 @@ describe( 'checkpoint recorder', () => {
 	// The caller discards the snapshot it took when its write fails; a second
 	// write to the same menu must not take the first one's snapshot with it.
 	it( 'reports only the call that added the menu snapshot', async () => {
-		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint } = setUpCheckpoints();
 		withRecord( { blocks: [] } );
 		const captured: boolean[] = [];
 
@@ -1138,7 +1143,7 @@ describe( 'checkpoint recorder', () => {
 	} );
 
 	it( 'ignores a menu from a write that never claimed the navigation domain', async () => {
-		const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+		const { withCheckpoint, getCheckpoint } = setUpCheckpoints();
 
 		await withCheckpoint( write( [ 'logo' ] ), ( recorder ) => recorder.captureMenu( 19 ) );
 
@@ -1147,7 +1152,7 @@ describe( 'checkpoint recorder', () => {
 } );
 
 describe( 'template parts', () => {
-	const editorBlocks = () => jest.requireMock( '../editor-blocks' );
+	const editorBlocks = () => mocked( editorBlocksModule );
 	const part = ( slug: string, content: string ) => ( {
 		slug,
 		blocks: [
@@ -1155,11 +1160,11 @@ describe( 'template parts', () => {
 		],
 	} );
 
-	// The page shows every part under `<slug>-part`; loaded after the module
-	// reset, which hands out fresh mock instances.
+	// The page shows every part under `<slug>-part`; set after the module
+	// reset, which puts the mocks back to their factory defaults.
 	async function loadWithParts() {
-		const checkpoints = await loadCheckpoints();
-		jest.requireMock( '@wordpress/blocks' ).serialize.mockImplementation( JSON.stringify );
+		const checkpoints = setUpCheckpoints();
+		mocked( wpBlocks ).serialize.mockImplementation( JSON.stringify );
 		editorBlocks().findTemplatePartClientId.mockImplementation(
 			( slug: string ) => `${ slug }-part`
 		);
@@ -1196,7 +1201,7 @@ describe( 'template parts', () => {
 	// it. The rest of the page is still restored.
 	it( 'leaves a part alone whose snapshot is empty while it has content, and records it', async () => {
 		const { setCheckpoint, restoreCheckpoint } = await loadWithParts();
-		const { recordBigSkyTracksEvent } = jest.requireMock( '../tracks' );
+		const { recordBigSkyTracksEvent } = mocked( tracksModule );
 		editorBlocks().getTemplatePartBlocks.mockReturnValue( [ { slug: 'header', blocks: [] } ] );
 		setCheckpoint( 'call-1', [ 'blocks' ] );
 		editorBlocks().getBlocks.mockReturnValue( part( 'header', 'Loaded' ).blocks );
@@ -1235,7 +1240,7 @@ describe( 'custom CSS domain', () => {
 			getCheckpoint,
 			getEditedEntityRecord,
 			editEntityRecord,
-		} = await loadCheckpoints();
+		} = setUpCheckpoints();
 		getEditedEntityRecord.mockReturnValue( record );
 		setCheckpoint( 'call-1', [ 'custom_css' ] );
 		getEditedEntityRecord.mockReturnValue( { styles: { css: 'b{}', color: {} } } );
@@ -1253,9 +1258,9 @@ describe( 'custom CSS domain', () => {
 	} );
 
 	it( 'refuses the write when the global styles cannot be read', async () => {
-		const { withCheckpoint, getEditedEntityRecord } = await loadCheckpoints();
+		const { withCheckpoint, getEditedEntityRecord } = setUpCheckpoints();
 		getEditedEntityRecord.mockReturnValue( undefined );
-		const write = jest.fn();
+		const write = vi.fn();
 
 		await expect(
 			withCheckpoint( { toolId: 'tool', keys: [ 'custom_css' ], summary: 'x' }, write )
@@ -1271,7 +1276,7 @@ describe( 'mid-batch domains', () => {
 	it.each( [ 'blocks', 'custom_css' ] )(
 		'keeps the %s domain only when the write marks it written',
 		async ( key ) => {
-			const { withCheckpoint, getCheckpoint } = await loadCheckpoints();
+			const { withCheckpoint, getCheckpoint } = setUpCheckpoints();
 			const write = { toolId: 'tool', keys: [ key ], summary: 'x' };
 
 			await withCheckpoint( { ...write, toolCallId: 'unwritten' }, () => undefined );
@@ -1286,7 +1291,7 @@ describe( 'mid-batch domains', () => {
 } );
 
 describe( 'inline swap', () => {
-	const editorBlocks = () => jest.requireMock( '../editor-blocks' );
+	const editorBlocks = () => mocked( editorBlocksModule );
 	const paragraph = ( content: string ) => ( {
 		clientId: 'p1',
 		name: 'core/paragraph',
@@ -1299,8 +1304,8 @@ describe( 'inline swap', () => {
 	// A sealed checkpoint of `before`, with the page now showing `after`; a
 	// tracked write shows what it wrote, as the store does.
 	async function sealedEdit() {
-		const checkpoints = await loadCheckpoints();
-		jest.requireMock( '@wordpress/blocks' ).serialize.mockImplementation( JSON.stringify );
+		const checkpoints = setUpCheckpoints();
+		mocked( wpBlocks ).serialize.mockImplementation( JSON.stringify );
 		editorBlocks().replaceRootBlocks.mockImplementation( ( _: string, blocks: unknown ) =>
 			editorBlocks().getRootBlocks.mockReturnValue( blocks )
 		);

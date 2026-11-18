@@ -195,4 +195,45 @@ describe( 'selectors', () => {
 			expect( getPartnerRequestError( state ) ).toEqual( state.partnerPortal.partner.error );
 		} );
 	} );
+
+	describe( '#isJetpackManageStoreClosed()', () => {
+		test( 'should return false when there is no current partner', () => {
+			const { isJetpackManageStoreClosed } = selectors;
+			const state = {
+				partnerPortal: {
+					partner: {
+						current: null,
+					},
+				},
+			};
+
+			expect( isJetpackManageStoreClosed( state ) ).toBe( false );
+		} );
+
+		test( 'should return false when the partner does not report the store as closed', () => {
+			const { isJetpackManageStoreClosed } = selectors;
+			const state = {
+				partnerPortal: {
+					partner: {
+						current: { keys: [], jetpack_manage_store_closed: false },
+					},
+				},
+			};
+
+			expect( isJetpackManageStoreClosed( state ) ).toBe( false );
+		} );
+
+		test( 'should return true when the partner reports the store as closed', () => {
+			const { isJetpackManageStoreClosed } = selectors;
+			const state = {
+				partnerPortal: {
+					partner: {
+						current: { keys: [], jetpack_manage_store_closed: true },
+					},
+				},
+			};
+
+			expect( isJetpackManageStoreClosed( state ) ).toBe( true );
+		} );
+	} );
 } );

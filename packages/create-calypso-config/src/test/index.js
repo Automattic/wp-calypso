@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import createConfig from '../';
 
 describe( 'index', () => {
@@ -40,13 +41,12 @@ describe( 'index', () => {
 		} );
 
 		describe( 'error cases', () => {
-			const NODE_ENV = process.env.NODE_ENV;
 			const fakeKey = 'where did all the errors go?';
 
-			afterEach( () => ( process.env.NODE_ENV = NODE_ENV ) );
+			afterEach( () => vi.unstubAllEnvs() );
 
 			test( "should throw an error when given key doesn't exist (NODE_ENV == development)", () => {
-				process.env.NODE_ENV = 'development';
+				vi.stubEnv( 'NODE_ENV', 'development' );
 
 				expect( () => config( fakeKey ) ).toThrow( ReferenceError );
 			} );
@@ -55,7 +55,7 @@ describe( 'index', () => {
 				const envs = [ 'client', 'desktop', 'horizon', 'production', 'stage', 'test', 'wpcalypso' ];
 
 				envs.forEach( ( env ) => {
-					process.env.NODE_ENV = env;
+					vi.stubEnv( 'NODE_ENV', env );
 
 					expect( process.env.NODE_ENV ).toEqual( env );
 					expect( () => config( fakeKey ) ).not.toThrow( Error );

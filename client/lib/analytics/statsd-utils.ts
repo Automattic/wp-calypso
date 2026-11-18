@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import superagent from 'superagent';
 
 const IS_SERVER = typeof document === 'undefined';
 
@@ -63,7 +62,7 @@ export function createStatsdURL( calypsoSection: string, events: BeaconData[] | 
 }
 
 /**
- * Logs server events to statsd. Uses superagent for server-side network requests
+ * Logs server events to statsd. Uses fetch for server-side network requests
  * and can disable statsd events with the server_side_boom_analytics_enabled
  * config flag. Does nothing if called on the client.
  * @param calypsoSection The Calypso section the event occurred under.
@@ -72,6 +71,6 @@ export function createStatsdURL( calypsoSection: string, events: BeaconData[] | 
 export function logServerEvent( calypsoSection: string, events: BeaconData[] | BeaconData ) {
 	calypsoSection ??= 'unknown';
 	if ( typeof window === 'undefined' && config( 'server_side_boom_analytics_enabled' ) ) {
-		superagent.get( createStatsdURL( calypsoSection, events ) ).end();
+		fetch( createStatsdURL( calypsoSection, events ) ).catch( () => {} );
 	}
 }

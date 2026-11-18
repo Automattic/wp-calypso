@@ -70,6 +70,9 @@ function createServer() {
 }
 
 const server = createServer();
+// Lets a bundler attach to the server, e.g. to share its port for hot module replacement.
+app.set( 'http-server', server );
+app.emit( 'http-server-created', server );
 if ( process.env.NODE_ENV !== 'development' ) {
 	server.timeout = 50 * 1000; //50 seconds, in ms;
 }

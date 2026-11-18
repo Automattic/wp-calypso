@@ -1,5 +1,5 @@
 import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { createReduxStore } from '../';
+import { createReduxStore } from '../create-store';
 
 const noop = () => {};
 

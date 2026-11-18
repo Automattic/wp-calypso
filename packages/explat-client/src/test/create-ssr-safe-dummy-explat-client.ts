@@ -1,20 +1,20 @@
+import { vi } from 'vitest';
 import { createSsrSafeDummyExPlatClient } from '../create-explat-client';
 import * as Timing from '../internal/timing';
 import type { Config } from '../types';
 
-const spiedMonotonicNow = jest.spyOn( Timing, 'monotonicNow' );
+const spiedMonotonicNow = vi.spyOn( Timing, 'monotonicNow' );
 
-type MockedFunction = ReturnType< typeof jest.fn >;
 const createMockedConfig = ( override: Partial< Config > = {} ): Config => ( {
-	logError: jest.fn(),
-	fetchExperimentAssignment: jest.fn(),
-	getAnonId: jest.fn(),
+	logError: vi.fn(),
+	fetchExperimentAssignment: vi.fn(),
+	getAnonId: vi.fn(),
 	isDevelopmentMode: false,
 	...override,
 } );
 
 beforeEach( () => {
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 } );
 
 describe( 'loadExperimentAssignment', () => {
@@ -31,20 +31,18 @@ describe( 'loadExperimentAssignment', () => {
 			variationName: null,
 		} );
 
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			0
-		);
-		expect( ( mockedConfig.getAnonId as MockedFunction ).mock.calls ).toHaveLength( 0 );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name",
-		      "message": "Attempting to load ExperimentAssignment in SSR context",
-		    },
-		  ],
-		]
-	` );
+		expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls ).toHaveLength( 0 );
+		expect( vi.mocked( mockedConfig.getAnonId ).mock.calls ).toHaveLength( 0 );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name",
+			      "message": "Attempting to load ExperimentAssignment in SSR context",
+			    },
+			  ],
+			]
+		` );
 	} );
 } );
 
@@ -61,19 +59,17 @@ describe( 'dangerouslyGetExperimentAssignment', () => {
 			variationName: null,
 		} );
 
-		expect( ( mockedConfig.fetchExperimentAssignment as MockedFunction ).mock.calls ).toHaveLength(
-			0
-		);
-		expect( ( mockedConfig.getAnonId as MockedFunction ).mock.calls ).toHaveLength( 0 );
-		expect( ( mockedConfig.logError as MockedFunction ).mock.calls ).toMatchInlineSnapshot( `
-		Array [
-		  Array [
-		    Object {
-		      "experimentName": "experiment_name",
-		      "message": "Attempting to dangerously get ExperimentAssignment in SSR context",
-		    },
-		  ],
-		]
-	` );
+		expect( vi.mocked( mockedConfig.fetchExperimentAssignment ).mock.calls ).toHaveLength( 0 );
+		expect( vi.mocked( mockedConfig.getAnonId ).mock.calls ).toHaveLength( 0 );
+		expect( vi.mocked( mockedConfig.logError ).mock.calls ).toMatchInlineSnapshot( `
+			[
+			  [
+			    {
+			      "experimentName": "experiment_name",
+			      "message": "Attempting to dangerously get ExperimentAssignment in SSR context",
+			    },
+			  ],
+			]
+		` );
 	} );
 } );

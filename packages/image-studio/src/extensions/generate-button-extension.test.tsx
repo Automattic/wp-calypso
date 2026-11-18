@@ -1,55 +1,52 @@
-/**
- * @jest-environment jsdom
- */
-
-// eslint-disable-next-line import/order
+/* eslint-disable import/order */
 import React from 'react';
+import { vi } from 'vitest';
 
 // Webpack global injected at build time, used at render time by __().
 ( globalThis as Record< string, unknown > ).__i18n_text_domain__ = 'default';
 
-jest.mock( '@wordpress/block-editor', () => ( {
-	useBlockEditContext: jest.fn( () => ( { name: 'core/image' } ) ),
+vi.mock( '@wordpress/block-editor', () => ( {
+	useBlockEditContext: vi.fn( () => ( { name: 'core/image' } ) ),
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( { children }: { children: React.ReactNode } ) => <button>{ children }</button>,
 } ) );
 
-jest.mock( '@wordpress/compose', () => ( {
+vi.mock( '@wordpress/compose', () => ( {
 	createHigherOrderComponent: ( fn: ( component: React.ComponentType ) => React.ComponentType ) =>
 		fn,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn( () => ( { openImageStudio: jest.fn() } ) ),
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: vi.fn( () => ( { openImageStudio: vi.fn() } ) ),
 } ) );
 
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 	ImageStudioEntryPoint: { EditorBlock: 'editor-block' },
 } ) );
 
-jest.mock( '../types', () => ( {
+vi.mock( '../types', () => ( {
 	ImageStudioMode: { Edit: 'edit' },
 } ) );
 
-jest.mock( '../utils/get-image-data', () => ( {} ) );
+vi.mock( '../utils/get-image-data', () => ( {} ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioOpened: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioOpened: vi.fn(),
 } ) );
 
-jest.mock( './utils', () => ( {
-	handleImageSelection: jest.fn(),
+vi.mock( './utils', () => ( {
+	handleImageSelection: vi.fn(),
 } ) );
 
 // Must import after jest.mock() calls to receive the mocked dependencies.

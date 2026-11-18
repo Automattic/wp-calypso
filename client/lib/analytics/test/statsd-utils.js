@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import superagent from 'superagent';
 import { createStatsdURL, logServerEvent } from '../statsd-utils';
 
 jest.mock( '@automattic/calypso-config' );
@@ -70,36 +69,41 @@ describe( 'StatsD Analytics Utils', () => {
 	} );
 
 	describe( 'logServerEvent', () => {
+		const originalFetch = globalThis.fetch;
+
 		beforeAll( () => {
-			jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } );
+			globalThis.fetch = jest.fn().mockResolvedValue( undefined );
 		} );
 
 		afterAll( () => {
+			globalThis.fetch = originalFetch;
 			config.mockRestore();
 		} );
 
 		afterEach( () => {
-			superagent.get.mockClear();
+			globalThis.fetch.mockClear();
 		} );
 
 		test( 'sends an HTTP request to the statsd URL', () => {
 			config.mockReturnValue( true ); // server_side_boom_analytics_enabled
 			logServerEvent( 'test-section', { name: 'foo', type: 'counting' } );
 
-			expect( superagent.get ).toHaveBeenCalledWith( expect.stringContaining( 'u=test_section' ) );
+			expect( globalThis.fetch ).toHaveBeenCalledWith(
+				expect.stringContaining( 'u=test_section' )
+			);
 		} );
 
 		test( 'does not record event if statsd analytics is not allowed', () => {
 			config.mockReturnValue( false ); // server_side_boom_analytics_enabled
 			logServerEvent( { name: 'foo', type: 'counting' } );
 
-			expect( superagent.get ).not.toHaveBeenCalled();
+			expect( globalThis.fetch ).not.toHaveBeenCalled();
 		} );
 
 		test( 'sets calypso section to unknown if undefined', () => {
 			config.mockReturnValue( true ); // server_side_boom_analytics_enabled
 			logServerEvent( undefined, { name: 'foo', type: 'counting' } );
-			expect( superagent.get ).toHaveBeenCalledWith( expect.stringContaining( 'u=unknown' ) );
+			expect( globalThis.fetch ).toHaveBeenCalledWith( expect.stringContaining( 'u=unknown' ) );
 		} );
 	} );
 } );

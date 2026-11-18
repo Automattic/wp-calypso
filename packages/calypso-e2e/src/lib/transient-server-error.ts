@@ -1,4 +1,4 @@
-import type { Page } from 'playwright';
+import type { Page, Response } from 'playwright';
 
 // Upstream gateway statuses that indicate a transient infra failure rather than
 // the app itself. 500 (Internal Server Error) and 501 are deliberately excluded:
@@ -56,4 +56,55 @@ export async function isServerErrorPage(
 			return transient.test( haystack ) || /Internal Server Error/i.test( haystack );
 		}, transientOnly )
 		.catch( () => false );
+}
+
+/**
+ * Navigates to a URL, retrying with backoff while it lands on a transient
+ * upstream error (502/503/504). Once the retries run out this throws rather
+ * than return the error page.
+ *
+ * @param {Page} page The page to navigate.
+ * @param {string} url The URL to navigate to.
+ * @param options Options for each `page.goto` attempt, e.g. its timeout.
+ * @returns {Promise<Response | null>} The response of the last navigation.
+ */
+export async function gotoWithRetry(
+	page: Page,
+	url: string,
+	options?: Parameters< Page[ 'goto' ] >[ 1 ]
+): Promise< Response | null > {
+	// A deploy rollout serves a stock 502 for a few seconds; back off and
+	// navigate again rather than let the caller time out on a missing locator.
+	const maxAttempts = TRANSIENT_RETRY_DELAYS.length + 1;
+	for ( let attempt = 1; ; attempt++ ) {
+		const response = await page.goto( url, options );
+		if ( ! ( await isTransientFailure( page, response ) ) ) {
+			return response;
+		}
+
+		const status = response?.status();
+		if ( attempt >= maxAttempts ) {
+			throw new Error(
+				`${ url } still returned a transient server error (status ${ status }) after ${ maxAttempts } attempts.`
+			);
+		}
+
+		const delay = TRANSIENT_RETRY_DELAYS[ attempt - 1 ];
+		console.warn(
+			`${ url } attempt ${ attempt }/${ maxAttempts } returned a transient server error (status ${ status }), retrying in ${ delay }ms.`
+		);
+		await page.waitForTimeout( delay );
+	}
+}
+
+/**
+ * Whether a navigation landed on a transient upstream error: a 502/503/504
+ * status, or a gateway-error page served with another status.
+ */
+async function isTransientFailure( page: Page, response: Response | null ): Promise< boolean > {
+	if ( response && TRANSIENT_UPSTREAM_STATUSES.includes( response.status() ) ) {
+		return true;
+	}
+
+	return isServerErrorPage( page );
 }

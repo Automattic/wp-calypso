@@ -60,8 +60,11 @@ import {
 import { dashboardRedirect, redirectIfTwoStepReauthRequired } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
+import type { SnackbarBackTo } from '../snackbar-back-button';
 import type { Purchase } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
+
+type DomainBackTo = Extract< SnackbarBackTo, 'site-overview' | 'site-domains' >;
 
 export const meRoute = createRoute( {
 	head: () => ( {
@@ -486,8 +489,20 @@ export const cancelPurchaseRoute = createRoute( {
 	},
 	getParentRoute: () => purchaseSettingsRoute,
 	path: 'cancel',
-	validateSearch: ( search ): { intent?: CancelIntent; additionalPurchaseIds?: string } => {
+	validateSearch: (
+		search
+	): {
+		intent?: CancelIntent;
+		additionalPurchaseIds?: string;
+		back_to?: 'domain';
+		domain_back_to?: DomainBackTo;
+	} => {
 		return {
+			...( search.back_to === 'domain' ? { back_to: search.back_to } : {} ),
+			...( search.back_to === 'domain' &&
+			( search.domain_back_to === 'site-overview' || search.domain_back_to === 'site-domains' )
+				? { domain_back_to: search.domain_back_to }
+				: {} ),
 			...( search.intent === 'cancel' ||
 			search.intent === 'remove' ||
 			search.intent === 'auto-renew'
@@ -1289,24 +1304,6 @@ export const profileLegacyRedirectRoute = createRoute( {
 	},
 } );
 
-const validateAgentConnectionSearch = (
-	search: Record< string, unknown >
-): {
-	pair_token?: string;
-	slack?: string;
-	telegram_id?: string;
-	token?: string;
-	ts?: string;
-	bot?: string;
-} => ( {
-	...( typeof search.pair_token === 'string' ? { pair_token: search.pair_token } : {} ),
-	...( typeof search.slack === 'string' ? { slack: search.slack } : {} ),
-	...( typeof search.telegram_id === 'string' ? { telegram_id: search.telegram_id } : {} ),
-	...( typeof search.token === 'string' ? { token: search.token } : {} ),
-	...( typeof search.ts === 'string' ? { ts: search.ts } : {} ),
-	...( typeof search.bot === 'string' ? { bot: search.bot } : {} ),
-} );
-
 export const agentRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1317,7 +1314,6 @@ export const agentRoute = createRoute( {
 	} ),
 	getParentRoute: () => meRoute,
 	path: 'agent',
-	validateSearch: validateAgentConnectionSearch,
 	loader: async () => queryClient.ensureQueryData( isAutomatticianQuery() ),
 } ).lazy( () =>
 	import( '../../me/agent' ).then( ( d ) =>

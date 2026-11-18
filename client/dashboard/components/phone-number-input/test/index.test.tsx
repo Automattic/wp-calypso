@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import PhoneNumberInput, { type SecuritySMSNumber } from '../index';
 
 // ComboboxControl scrolls the highlighted option into view; jsdom doesn't implement it.
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 const SMS_COUNTRY_CODES = [
 	{ code: 'US', country_name: 'United States', name: 'United States (+1)', numeric_code: '+1' },
@@ -27,7 +28,7 @@ describe( '<PhoneNumberInput>', () => {
 			.get( '/rest/v1.1/meta/sms-country-codes/' )
 			.reply( 200, SMS_COUNTRY_CODES );
 		const user = userEvent.setup();
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 
 		render( <PhoneNumberInput data={ emptyData } onChange={ onChange } /> );
 

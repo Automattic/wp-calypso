@@ -1,13 +1,14 @@
 import { select } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { getBlockTreeCallback } from '../callback';
 
-jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn() } ) );
 
-const mockedSelect = select as jest.Mock;
+const mockedSelect = select as Mock;
 
 describe( 'getBlockTreeCallback', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'returns a serializable recursive tree and the current selection', async () => {

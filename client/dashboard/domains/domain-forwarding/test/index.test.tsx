@@ -1,20 +1,33 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain, type DomainForwarding } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainForwardingList from '../index';
 
 const domainName = 'example.com';
 
-jest.mock( '../../../app/router/domains', () => ( {
-	...jest.requireActual( '../../../app/router/domains' ),
+const mockHasEnTranslation = vi.fn( () => true );
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
+	useHasEnTranslation: () => mockHasEnTranslation,
+} ) );
+
+vi.mock( '../../../app/router/domains', async () => ( {
+	...( await vi.importActual< typeof import( '../../../app/router/domains' ) >(
+		'../../../app/router/domains'
+	) ),
 	domainRoute: {
 		useParams: () => ( { domainName: 'example.com' } ),
 	},
 } ) );
+
+afterEach( () => mockHasEnTranslation.mockReturnValue( true ) );
 
 const mockApiRequests = ( forwardings: DomainForwarding[] ) => {
 	nock( 'https://public-api.wordpress.com' )
@@ -65,3 +78,18 @@ test( 'describes each forward in plain words under its destination', async () =>
 		screen.getByText( 'Temporary forward. Everyone lands on the same address.' )
 	).toBeVisible();
 } );
+
+test.each( [
+	[ true, 'Add domain forwarding' ],
+	[ false, 'Add forwarding' ],
+] )(
+	'labels the add button, falling back to the old copy until translated (translated: %s)',
+	async ( hasTranslation, label ) => {
+		mockHasEnTranslation.mockReturnValue( hasTranslation );
+		mockApiRequests( [] );
+
+		render( <DomainForwardingList /> );
+
+		expect( await screen.findByRole( 'link', { name: label } ) ).toBeVisible();
+	}
+);

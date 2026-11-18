@@ -7,19 +7,26 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 export function useInvitingNotifications( tokenValues: string[] ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { error, errorType, success, failure, progress } = useSelector( getSendInviteState );
+	const { error, errorType, success, failure, failureStatusCode, failureMessage, progress } =
+		useSelector( getSendInviteState );
 	const [ prevProgress, setPrevProgress ] = useState( progress );
 	const noticeConfig = { displayOnNextPage: true };
 
 	useEffect( () => setPrevProgress( progress ), [ progress ] );
 	useEffect( () => {
-		prevProgress && error && showInvitingErrorNotice();
+		if ( prevProgress && error ) {
+			showInvitingErrorNotice();
+		}
 	}, [ error ] );
 	useEffect( () => {
-		prevProgress && success && showInvitingSuccessNotice();
+		if ( prevProgress && success ) {
+			showInvitingSuccessNotice();
+		}
 	}, [ success ] );
 	useEffect( () => {
-		prevProgress && failure && showInvitingFailureNotice();
+		if ( prevProgress && failure ) {
+			showInvitingFailureNotice();
+		}
 	}, [ failure ] );
 
 	function showInvitingErrorNotice() {
@@ -37,7 +44,10 @@ export function useInvitingNotifications( tokenValues: string[] ) {
 	}
 
 	function showInvitingFailureNotice() {
-		const msg = translate( "Sorry, we couldn't process your invitations. Please try again later." );
+		const msg =
+			failureStatusCode === 403 && failureMessage
+				? failureMessage
+				: translate( "Sorry, we couldn't process your invitations. Please try again later." );
 		dispatch( errorNotice( msg, noticeConfig ) );
 	}
 

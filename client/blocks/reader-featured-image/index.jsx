@@ -179,7 +179,7 @@ const ReaderFeaturedImage = ( {
 		// Since there is no children in props, we need to create a new image tag to ensure the correct size is rendered
 		children = (
 			<img
-				src={ safeCssUrl }
+				src={ resizedImageUrl }
 				alt={ translate( 'Featured image' ) }
 				style={ { height: containerHeight } }
 			/>

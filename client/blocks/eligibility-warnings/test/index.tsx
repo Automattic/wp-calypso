@@ -284,6 +284,19 @@ describe( '<EligibilityWarnings>', () => {
 		);
 	} );
 
+	it( 'upsells the Personal plan for a partner theme', () => {
+		const state = createState( { holds: [ 'NO_BUSINESS_PLAN' ] } );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings context="themes" isMarketplace onProceed={ noop } />,
+			state
+		);
+
+		expect( getByText( 'Upgrade to a Personal plan' ) ).toBeVisible();
+		expect( queryByText( 'Upgrade to a Business plan' ) ).not.toBeInTheDocument();
+		expect( getByText( /install custom plugins/ ) ).toBeVisible();
+	} );
+
 	it( 'disables the "Continue" button if holds can\'t be handled automatically', async () => {
 		const state = createState( {
 			holds: [ 'NON_ADMIN_USER', 'SITE_PRIVATE' ],

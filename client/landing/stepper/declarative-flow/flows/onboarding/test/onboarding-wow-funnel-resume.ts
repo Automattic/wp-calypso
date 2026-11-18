@@ -247,8 +247,8 @@ describe( 'wow funnel resume', () => {
 
 /**
  * A preview site's badge sends every share-link viewer to /start with the site in `preview_site`,
- * because the preview's own domain can't tell its owner from a visitor. The owner goes to the
- * site's plans; everyone else signs up as before.
+ * because the preview's own domain can't tell its owner from a visitor. The owner goes to launch
+ * the site; everyone else signs up as before.
  */
 describe( 'preview site owner from a share link', () => {
 	const search = '?preview_site=preview.wpcomstaging.com&utm_source=share_link_preview';
@@ -266,10 +266,10 @@ describe( 'preview site owner from a share link', () => {
 
 	it.each( [
 		[
-			'sends the owner to the site plans',
+			'sends the owner to launch the site',
 			true,
 			true,
-			'/plans/preview.wpcomstaging.com?utm_source=share_link_preview',
+			'/setup/launch-site?siteSlug=preview.wpcomstaging.com&hide_free_plan=1&utm_source=share_link_preview',
 		],
 		[ 'starts signup for someone else', true, false, undefined ],
 		[ 'starts signup for a signed-out viewer', false, true, undefined ],

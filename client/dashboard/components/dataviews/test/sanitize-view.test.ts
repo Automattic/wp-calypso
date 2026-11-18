@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { sanitizeView } from '../sanitize-view';
@@ -23,12 +23,12 @@ describe( 'sanitizeView', () => {
 		],
 	};
 
-	it( 'should keep view unchanged when valid', () => {
+	test( 'should keep view unchanged when valid', () => {
 		const sanitizedView = sanitizeView( validView, fields );
 		expect( sanitizedView ).toEqual( validView );
 	} );
 
-	it( 'should remove filter with "is" operator and non-scalar value', () => {
+	test( 'should remove filter with "is" operator and non-scalar value', () => {
 		const view: View = {
 			...validView,
 			filters: [
@@ -44,7 +44,7 @@ describe( 'sanitizeView', () => {
 		} );
 	} );
 
-	it( 'should remove filter with "isAny" operator and non-array value', () => {
+	test( 'should remove filter with "isAny" operator and non-array value', () => {
 		const view: View = {
 			...validView,
 			filters: [

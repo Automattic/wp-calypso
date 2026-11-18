@@ -1,7 +1,5 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { vi } from 'vitest';
 import {
 	recordNavItemHover,
 	recordSubmenuShow,
@@ -14,11 +12,11 @@ import {
 	resetNavHoverDedupe,
 } from '../tracks';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-const mockRecord = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
+const mockRecord = vi.mocked( recordTracksEvent );
 
 describe( 'nav-2026 tracks', () => {
 	beforeEach( () => {

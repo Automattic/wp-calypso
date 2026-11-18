@@ -1,5 +1,5 @@
 /**
- * @jest-environment <rootDir>/../test/client/jest-environment-timezone.js
+ * @vitest-environment jsdom
  */
 import { TitanMailSlugs } from '@automattic/api-core';
 import MockDate from 'mockdate';

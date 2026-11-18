@@ -1,0 +1,14 @@
+// The real rows hold controls the placeholders don't render, so they set their heights.
+.conversations-inbox__pane-title.is-placeholder {
+	min-height: 24px;
+	box-sizing: content-box;
+}
+
+.conversations-inbox__tabs.is-placeholder {
+	min-height: 47px;
+}
+
+.conversations-inbox__placeholder-text {
+	flex: 1;
+	min-width: 0;
+}

@@ -121,8 +121,10 @@ test.describe(
 				} );
 			} );
 
-			await test.step( 'Then I see my WordPress.com account home page', async function () {
-				await expect( flowLOHPThemeSignup.myHomePage.heading ).toBeVisible( { timeout: 60000 } );
+			await test.step( 'Then I land on Site Setup', async function () {
+				await page.waitForURL( /wp-admin\/admin\.php\?page=site-setup-wp-admin/, {
+					timeout: 60000,
+				} );
 			} );
 
 			await test.step( 'And my site is using the theme I selected at sign up', async function () {

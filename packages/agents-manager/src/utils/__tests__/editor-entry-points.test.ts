@@ -1,8 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( '../is-editor-page', () => ( {
-	isEditorPage: jest.fn(),
+import { type Mock, vi } from 'vitest';
+vi.mock( '../is-editor-page', () => ( {
+	isEditorPage: vi.fn(),
 } ) );
 
 const ADMIN_BAR_IN_EDITOR_CLASS = 'has-admin-bar-in-editor';
@@ -19,12 +20,12 @@ function setOmnibarActive( active: boolean ) {
 // re-run those tests against a fresh snapshot.
 let isAdminBarInEditor: () => boolean;
 let isEditorAiEntryEnabled: () => boolean;
-let mockIsEditorPage: jest.Mock;
+let mockIsEditorPage: Mock;
 
 beforeEach( async () => {
-	jest.resetModules();
+	vi.resetModules();
 	( { isAdminBarInEditor, isEditorAiEntryEnabled } = await import( '../editor-entry-points' ) );
-	mockIsEditorPage = ( await import( '../is-editor-page' ) ).isEditorPage as unknown as jest.Mock;
+	mockIsEditorPage = ( await import( '../is-editor-page' ) ).isEditorPage as unknown as Mock;
 } );
 
 describe( 'isAdminBarInEditor', () => {
@@ -78,7 +79,7 @@ describe( 'isAdminBarInEditor', () => {
 
 describe( 'isEditorAiEntryEnabled', () => {
 	function setDesktop( matches: boolean ) {
-		window.matchMedia = jest
+		window.matchMedia = vi
 			.fn()
 			.mockReturnValue( { matches } ) as unknown as typeof window.matchMedia;
 	}

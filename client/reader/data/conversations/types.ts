@@ -1,8 +1,22 @@
-import type { ReadConversationReason } from '@automattic/api-core';
+import type {
+	ReadConversationPostAuthor,
+	ReadConversationPostDiscussion,
+	ReadConversationReason,
+} from '@automattic/api-core';
 
 export interface Commenter {
 	name: string;
 	avatar: string;
+}
+
+export interface ConversationPostDetails {
+	siteName: string;
+	siteIcon: string | null;
+	author: ReadConversationPostAuthor | null;
+	date: string | null;
+	excerpt: string;
+	image: string | null;
+	discussion: ReadConversationPostDiscussion;
 }
 
 export interface Conversation {
@@ -23,6 +37,7 @@ export interface Conversation {
 	/** The comments of `unreadNoteIds`, in the same order. */
 	unreadCommentIds: number[];
 	isFollowing: boolean;
+	postDetails?: ConversationPostDetails;
 }
 
 /** A comment the current user left. Your comments lists the latest one on each post. */

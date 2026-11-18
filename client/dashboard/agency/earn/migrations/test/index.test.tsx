@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  *
  * Run: yarn test-client client/dashboard/agency/earn/migrations/test/index.test.tsx
  */

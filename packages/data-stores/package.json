@@ -15,6 +15,12 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
+		"./help-center": {
+			"calypso:src": "./src/help-center/index.ts",
+			"types": "./dist/types/help-center/index.d.ts",
+			"import": "./dist/esm/help-center/index.js",
+			"require": "./dist/cjs/help-center/index.js"
+		},
 		"./src/*": {
 			"types": [
 				"./src/*.ts",
@@ -46,7 +52,8 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && run -T copy-assets",
 		"prepare": "yarn run build",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch",
+		"test": "vitest run"
 	},
 	"dependencies": {
 		"@automattic/api-core": "workspace:^",
@@ -84,10 +91,12 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"jsdom": "^20.0.3",
 		"nock": "^14.0.17",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3",
-		"wait-for-expect": "^3.0.2"
+		"vite": "^8.3.7",
+		"vitest": "^5.1.0"
 	}
 }

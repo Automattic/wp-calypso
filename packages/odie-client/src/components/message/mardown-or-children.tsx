@@ -1,5 +1,6 @@
 import Markdown from 'react-markdown';
 import CustomALink from './custom-a-link';
+import { removeNewlineAfterBreak } from './remove-newline-after-break';
 import { uriTransformer } from './uri-transformer';
 import type { Message } from '../../types';
 
@@ -14,7 +15,11 @@ export const MarkdownOrChildren = ( {
 	components?: React.ComponentProps< typeof Markdown >[ 'components' ];
 } ) => {
 	return typeof messageContent === 'string' ? (
-		<Markdown urlTransform={ uriTransformer } components={ components }>
+		<Markdown
+			urlTransform={ uriTransformer }
+			components={ components }
+			rehypePlugins={ [ removeNewlineAfterBreak ] }
+		>
 			{ messageContent }
 		</Markdown>
 	) : (

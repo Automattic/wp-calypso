@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { notificationPushPermissionStateQuery } from '@automattic/api-queries';
@@ -21,7 +21,7 @@ describe( 'BrowserNotificationNotice', () => {
 		);
 	};
 
-	it( 'renders the notice when the browser notifications are blocked', async () => {
+	test( 'renders the notice when the browser notifications are blocked', async () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'denied' );
 
@@ -32,7 +32,7 @@ describe( 'BrowserNotificationNotice', () => {
 		} );
 	} );
 
-	it( 'does not render the notice when the browser notifications are not blocked', async () => {
+	test( 'does not render the notice when the browser notifications are not blocked', async () => {
 		const queryClient = new QueryClient();
 		mockServiceWorkState( queryClient, 'granted' );
 

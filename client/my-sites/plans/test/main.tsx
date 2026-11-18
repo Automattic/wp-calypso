@@ -96,7 +96,7 @@ describe( 'Plans page', () => {
 
 		expect( jest.mocked( PlansFeaturesMain ).mock.lastCall?.[ 0 ] ).toMatchObject( {
 			hideFreePlan: isPreview,
-			redirectTo: isPreview ? 'https://example.wordpress.com' : undefined,
+			redirectTo: isPreview ? '/home/example.wordpress.com?celebrateLaunch=true' : undefined,
 		} );
 	} );
 } );

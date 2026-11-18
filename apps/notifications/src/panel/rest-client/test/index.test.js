@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { store, init as initState } from '../../state';
 import actions from '../../state/actions';
 import { addListeners, removeListeners } from '../../state/create-listener-middleware';
@@ -56,7 +57,7 @@ describe( 'RestClient', () => {
 	let pinghubCallback;
 
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		// The redux store is a shared singleton; re-init it so each test starts empty,
 		// including the per-tab cached filtered id lists.
@@ -83,8 +84,8 @@ describe( 'RestClient', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllTimers();
-		jest.useRealTimers();
+		vi.clearAllTimers();
+		vi.useRealTimers();
 	} );
 
 	// Seed the first window via the polling path and return its callback's notes.
@@ -116,6 +117,56 @@ describe( 'RestClient', () => {
 			expect( ids ).toContain( 100 ); // first window kept
 			expect( ids ).toContain( 91 ); // first window kept
 			expect( ids ).toContain( 71 ); // older page added
+		} );
+
+		it( 'retries a failed page after a backoff instead of re-requesting it straight away', () => {
+			seedFirstWindow();
+			client.subscribed = true;
+			client.isShowing = true;
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
+			getCalls.length = 0;
+
+			client.loadMore();
+			vi.advanceTimersByTime( 29000 );
+			expect( getCalls ).toHaveLength( 0 );
+
+			vi.advanceTimersByTime( 1000 );
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query ).toHaveProperty( 'before' );
+		} );
+
+		it( 'does not retry a failed page while notifications are closed, and retries once reopened', () => {
+			init( {
+				req: {
+					get: ( path, query, callback ) => getCalls.push( { path, query, callback } ),
+					post: () => Promise.resolve(),
+				},
+				pinghub: { connect: () => {} },
+			} );
+			seedFirstWindow();
+			client.subscribed = true;
+			client.isShowing = true;
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+
+			vi.advanceTimersByTime( 600000 );
+			expect( getCalls.filter( ( call ) => call.query.before ) ).toHaveLength( 0 );
+
+			client.setVisibility( { isShowing: true, isVisible: true } );
+			getCalls
+				.filter( ( call ) => ! call.query.before )
+				.forEach( ( call ) =>
+					call.callback( null, {
+						notes: fullPage( 10, 100 ).map( ( { id, note_hash } ) => ( { id, note_hash } ) ),
+					} )
+				);
+			vi.advanceTimersByTime( 1000 );
+			expect( getCalls.filter( ( call ) => call.query.before ) ).toHaveLength( 1 );
 		} );
 
 		it( 'does not send before on the initial window fetch', () => {
@@ -838,7 +889,7 @@ describe( 'RestClient', () => {
 
 		const receiveMessagesTogether = ( ...messages ) => {
 			const main = client.main;
-			client.main = jest.fn();
+			client.main = vi.fn();
 			messages.forEach( receiveMessage );
 			client.main = main;
 		};
@@ -850,7 +901,7 @@ describe( 'RestClient', () => {
 			const subscriberActionListener = listenForRenderNotes();
 			const receivedAt = Date.now();
 			receivePush( 99001 );
-			jest.setSystemTime( receivedAt + 1000 );
+			vi.setSystemTime( receivedAt + 1000 );
 
 			client.main();
 			expect( getCalls ).toHaveLength( 1 );
@@ -920,9 +971,9 @@ describe( 'RestClient', () => {
 			const subscriberActionListener = listenForRenderNotes();
 			const firstReceivedAt = Date.now();
 			const main = client.main;
-			client.main = jest.fn();
+			client.main = vi.fn();
 			receivePush( 99001 );
-			jest.setSystemTime( firstReceivedAt + 1000 );
+			vi.setSystemTime( firstReceivedAt + 1000 );
 			receivePush( 99001 );
 			client.main = main;
 
@@ -959,7 +1010,7 @@ describe( 'RestClient', () => {
 			const firstReceivedAt = Date.now();
 			receivePush( 99001 );
 			client.main();
-			jest.setSystemTime( firstReceivedAt + 1000 );
+			vi.setSystemTime( firstReceivedAt + 1000 );
 			const secondReceivedAt = Date.now();
 			receivePush( 99001 );
 			client.main();

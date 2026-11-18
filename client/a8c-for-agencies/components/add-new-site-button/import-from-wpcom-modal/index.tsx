@@ -1,10 +1,12 @@
 import { Button } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { Modal } from '@wordpress/components';
 import { Icon, close } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import useImportWPCOMSitesMutation from 'calypso/a8c-for-agencies/data/sites/use-import-wpcom-sites';
 import useMinimizeHelpCenterOnMount from 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount';
+import { DASHBOARD_SITES_QUERY_KEY } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import { useDispatch } from 'calypso/state';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import WPCOMSitesTable from './wpcom-sites-table';
@@ -19,6 +21,7 @@ type Props = {
 export default function ImportFromWPCOMModal( { onImport, onClose }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	useMinimizeHelpCenterOnMount();
 
 	const [ selectedSites, setSelectedSites ] = useState< number[] | [] >( [] );
@@ -34,6 +37,7 @@ export default function ImportFromWPCOMModal( { onImport, onClose }: Props ) {
 					setIsPendingImport( true );
 					// Wait for a second before calling the onImport callback to give the site profiler to finish re-indexing.
 					setTimeout( () => {
+						queryClient.invalidateQueries( { queryKey: [ DASHBOARD_SITES_QUERY_KEY ] } );
 						onImport?.( selectedSites );
 						onClose();
 						setIsPendingImport( false );

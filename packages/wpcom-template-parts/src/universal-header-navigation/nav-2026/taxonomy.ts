@@ -113,21 +113,10 @@ export function getNav2026Menus( {
 					],
 				},
 				{
-					title: __( 'Affiliates', __i18n_text_domain__ ),
-					columnGroup: 'affiliates',
-					columnIndex: 3,
-					items: [
-						{
-							label: __( 'Affiliate program', __i18n_text_domain__ ),
-							url: localizeUrl( '//wordpress.com/affiliates/' ),
-							target: '_self',
-						},
-					],
-				},
-				{
 					title: __( 'Domains', __i18n_text_domain__ ),
 					columnGroup: 'domains',
 					columnIndex: 2,
+					isStackedColumn: true,
 					items: [
 						{
 							label: __( 'Find a domain', __i18n_text_domain__ ),
@@ -145,11 +134,55 @@ export function getNav2026Menus( {
 					title: __( 'Email', __i18n_text_domain__ ),
 					columnGroup: 'domains',
 					columnIndex: 2,
+					isStackedColumn: true,
 					items: [
 						{
 							label: __( 'Professional email', __i18n_text_domain__ ),
 							url: localizeUrl( '//wordpress.com/professional-email/' ),
 							target: '_self',
+						},
+					],
+				},
+				{
+					title: __( 'Affiliates', __i18n_text_domain__ ),
+					columnGroup: 'domains',
+					columnIndex: 2,
+					isStackedColumn: true,
+					items: [
+						{
+							label: __( 'Affiliate program', __i18n_text_domain__ ),
+							url: localizeUrl( '//wordpress.com/affiliates/' ),
+							target: '_self',
+						},
+					],
+				},
+				{
+					title: __( 'AI', __i18n_text_domain__ ),
+					badge: __( 'New', __i18n_text_domain__ ),
+					columnGroup: 'ai',
+					columnIndex: 3,
+					isStackedColumn: true,
+					items: [
+						{
+							label: __( 'AI tools', __i18n_text_domain__ ),
+							url: localizeUrl( '//wordpress.com/ai/' ),
+							target: '_self',
+						},
+						{
+							label: 'MCP',
+							url: localizeUrl( '//wordpress.com/ai/mcp/' ),
+							target: '_self',
+						},
+						{
+							label: __( 'WordPress Agent', __i18n_text_domain__ ),
+							url: localizeUrl( '//wordpress.com/ai/wordpress-agent/' ),
+							target: '_self',
+						},
+						{
+							label: __( 'WordPress Studio', __i18n_text_domain__ ),
+							url: 'https://wordpress.studio/',
+							target: '_self',
+							isExternal: true,
 						},
 					],
 				},
@@ -231,11 +264,6 @@ export function getNav2026Menus( {
 						{
 							label: __( 'Patterns', __i18n_text_domain__ ),
 							url: localizeUrl( '//wordpress.com/patterns', locale, isLoggedIn, true ),
-						},
-						{
-							label: __( 'AI features', __i18n_text_domain__ ),
-							url: localizeUrl( '//wordpress.com/ai/' ),
-							target: '_self',
 						},
 						{
 							label: __( 'View all features', __i18n_text_domain__ ),

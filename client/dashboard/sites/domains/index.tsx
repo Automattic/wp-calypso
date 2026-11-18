@@ -20,16 +20,19 @@ import PageLayout from '../../components/page-layout';
 import { usePendingPrimaryDomain } from '../../components/pending-primary-domain-notice';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
+	DOMAINS_TABLE_CLASS_NAME,
 	DomainCardsLayout,
 	filterSortAndPaginateDomains,
+	getTableActions,
 	useActions,
 	useFields,
 	DOMAINS_LIST_CONFIG,
-	DOMAINS_LIST_LAYOUTS,
 	SITE_CONTEXT_VIEW,
 	sanitizeDomainFields,
 	sanitizeDomainsListPageSize,
 	useBulkActionsProgressNotice,
+	useDomainsListLayouts,
+	withDomainsListDefaultLayout,
 } from '../../domains/dataviews';
 import {
 	canUserSetPrimaryDomain,
@@ -94,21 +97,31 @@ function SiteDomains() {
 		resetView,
 	} = usePersistentView( {
 		slug: 'site-domains',
-		defaultView: SITE_CONTEXT_VIEW,
+		defaultView: withDomainsListDefaultLayout( SITE_CONTEXT_VIEW, siteDomains.length ),
 		queryParams: searchParams,
 		sanitizeFields: sanitizeDomainFields,
 	} );
 	const view = sanitizeDomainsListPageSize( persistentView );
+	const {
+		layouts,
+		recordLayoutChoice,
+		resetView: resetViewAndLayoutChoice,
+	} = useDomainsListLayouts( {
+		slug: 'site-domains',
+		domainCount: siteDomains.length,
+		view,
+		resetView,
+	} );
 	const isCardsLayout = view.type === 'grid';
 
 	const actions = useActions( {
-		user,
 		site,
 		sites,
-		domains: siteDomains,
 		layout: view.type,
 		onChangePrimaryDomain: canChangePrimaryDomain ? openChangePrimaryDomain : undefined,
 	} );
+
+	const tableActions = useMemo( () => getTableActions( actions ), [ actions ] );
 
 	const deepLinkedAction = useDeepLinkedDataViewsAction( {
 		queryParams: searchParams,
@@ -125,12 +138,17 @@ function SiteDomains() {
 
 	// Hide actions column when no domain has eligible actions.
 	const hasEligibleActions = siteDomains.some( ( item ) =>
-		actions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
+		tableActions.some( ( action ) => action.isEligible === undefined || action.isEligible( item ) )
 	);
 
 	return (
 		<PageLayout
-			header={ <PageHeader title={ __( 'Domains' ) } actions={ <AddDomainButton /> } /> }
+			header={
+				<PageHeader
+					title={ __( 'Domains' ) }
+					actions={ <AddDomainButton siteSlug={ site.slug } /> }
+				/>
+			}
 			notices={
 				<>
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
@@ -163,19 +181,22 @@ function SiteDomains() {
 				</>
 			}
 		>
-			<DataViewsCard>
+			<DataViewsCard className={ DOMAINS_TABLE_CLASS_NAME }>
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
-					onChangeView={ updateView }
-					onReset={ resetView }
+					onChangeView={ ( nextView ) => {
+						recordLayoutChoice( view, nextView );
+						updateView( nextView );
+					} }
+					onReset={ resetViewAndLayoutChoice }
 					view={ view }
-					// The cards render their own actions, and DataViews would add a bulk selection footer.
-					actions={ isCardsLayout || ! hasEligibleActions ? [] : actions }
+					// The cards render their own actions.
+					actions={ isCardsLayout || ! hasEligibleActions ? [] : tableActions }
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					defaultLayouts={ DOMAINS_LIST_LAYOUTS }
+					defaultLayouts={ layouts }
 					config={ DOMAINS_LIST_CONFIG }
 				>
 					{ isCardsLayout ? (
@@ -193,7 +214,7 @@ function SiteDomains() {
 			{ isChangePrimaryDomainOpen && (
 				<ChangePrimaryDomainModal
 					site={ site }
-					currentPrimaryDomain={ siteDomains.find( ( domain ) => domain.primary_domain )?.domain }
+					currentPrimaryDomain={ siteDomains.find( ( domain ) => domain.primary_domain ) }
 					eligibleDomains={ siteDomains.filter( isPrimaryDomainCandidate ) }
 					onClose={ () => setIsChangePrimaryDomainOpen( false ) }
 				/>

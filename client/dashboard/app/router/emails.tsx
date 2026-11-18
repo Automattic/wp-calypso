@@ -8,12 +8,14 @@ import {
 	rawUserPreferencesQuery,
 	siteByIdQuery,
 	siteProductsQuery,
+	titanDkimStatusQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { createLazyRoute, createRoute, Outlet } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../emails/types';
+import { hasTitanAccount } from '../../emails/utils/has-titan-account';
 import { isTitanPlanTier } from '../../emails/utils/titan-tiers';
 import { accountHasWarningWithSlug } from '../../utils/email-utils';
 import { dashboardRedirect } from './redirect';
@@ -41,11 +43,16 @@ export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
 	loader: async () => {
-		await Promise.all( [
+		const [ accounts ] = await Promise.all( [
 			queryClient.ensureQueryData( userMailboxesQuery() ),
 			queryClient.ensureQueryData( domainsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
+		// Settles the DKIM notice before first paint. `prefetchQuery` ignores a failed request,
+		// which leaves the page without the notice.
+		if ( hasTitanAccount( accounts ) ) {
+			await queryClient.prefetchQuery( titanDkimStatusQuery() );
+		}
 	},
 } ).lazy( () =>
 	import( '../../emails' ).then( ( d ) =>

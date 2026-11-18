@@ -8,7 +8,7 @@ import { notFound, useRouter } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { domainRoute, domainForwardingRoute } from '../../app/router/domains';
+import { domainForwardingRoute, domainForwardingEditRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -20,7 +20,7 @@ import type { DomainForwardingSaveData } from '@automattic/api-core';
 
 export default function EditDomainForwarding() {
 	const router = useRouter();
-	const { domainName, forwardingId } = domainRoute.useParams();
+	const { domainName, forwardingId } = domainForwardingEditRoute.useParams();
 	const { data: forwardingData } = useSuspenseQuery( domainForwardingQuery( domainName ) );
 	const saveMutation = useMutation(
 		withSnackbar( domainForwardingSaveMutation( domainName ), {

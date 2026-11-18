@@ -1,21 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
+import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import BackupCard from '../index';
-import type { Site, ActivityLogsData } from '@automattic/api-core';
+import type { Site, SiteActivityLog } from '@automattic/api-core';
 
 const mockSiteId = 123;
-
-const mockFetchSiteActivityLog = jest.fn();
-
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	fetchSiteActivityLog: ( ...args: unknown[] ) => mockFetchSiteActivityLog( ...args ),
-} ) );
 
 const mockSite: Site = {
 	ID: mockSiteId,
@@ -27,25 +22,37 @@ const mockSite: Site = {
 	is_wpcom_atomic: true,
 } as Site;
 
-jest.mock( '@wordpress/i18n', () => ( {
-	...jest.requireActual( '@wordpress/i18n' ),
-	__: ( text: string ) => text,
-} ) );
+// The card asks for the latest backup, failed or not, and for the latest successful one.
+function mockBackups( {
+	latest,
+	lastSuccessful = latest,
+	lastSuccessfulLoaded,
+}: {
+	latest: Partial< SiteActivityLog >[];
+	lastSuccessful?: Partial< SiteActivityLog >[];
+	lastSuccessfulLoaded?: Promise< void >;
+} ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
+		.query( ( query ) => !! query[ 'name[]' ]?.includes( 'rewind__backup_error' ) )
+		.reply( 200, { current: { orderedItems: latest } } );
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/sites/${ mockSiteId }/activity` )
+		.query( ( query ) => ! query[ 'name[]' ]?.includes( 'rewind__backup_error' ) )
+		.reply( async () => {
+			await lastSuccessfulLoaded;
+			return [ 200, { current: { orderedItems: lastSuccessful } } ];
+		} );
+}
 
-jest.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );
 
 describe( 'BackupCard', () => {
 	test( 'shows "No backups yet" when there are no backups', async () => {
-		mockFetchSiteActivityLog.mockResolvedValue( {
-			activityLogs: [],
-			totalItems: 0,
-			pages: 0,
-			itemsPerPage: 0,
-			totalPages: 0,
-		} as ActivityLogsData );
+		mockBackups( { latest: [] } );
 
 		render( <BackupCard site={ mockSite } /> );
 
@@ -58,21 +65,16 @@ describe( 'BackupCard', () => {
 	test( 'shows successful backup information', async () => {
 		const twoHoursAgo = new Date( Date.now() - 2 * 60 * 60 * 1000 ).toISOString();
 
-		mockFetchSiteActivityLog.mockResolvedValue( {
-			activityLogs: [
+		mockBackups( {
+			latest: [
 				{
-					id: '1',
 					activity_id: '1',
 					name: 'rewind__backup_complete_full',
 					published: twoHoursAgo,
 					status: 'success',
 				},
 			],
-			totalItems: 1,
-			pages: 1,
-			itemsPerPage: 1,
-			totalPages: 1,
-		} as ActivityLogsData );
+		} );
 
 		render( <BackupCard site={ mockSite } /> );
 
@@ -83,37 +85,24 @@ describe( 'BackupCard', () => {
 	} );
 
 	test( 'shows failed backup with last successful backup time', async () => {
-		mockFetchSiteActivityLog
-			.mockResolvedValueOnce( {
-				activityLogs: [
-					{
-						id: '2',
-						activity_id: '2',
-						name: 'rewind__backup_error',
-						published: new Date().toISOString(),
-						status: 'error',
-					},
-				],
-				totalItems: 1,
-				pages: 1,
-				itemsPerPage: 1,
-				totalPages: 1,
-			} as ActivityLogsData )
-			.mockResolvedValueOnce( {
-				activityLogs: [
-					{
-						id: '1',
-						activity_id: '1',
-						name: 'rewind__backup_complete_full',
-						published: new Date( Date.now() - 3 * 24 * 60 * 60 * 1000 ).toISOString(), // 3 days ago
-						status: 'success',
-					},
-				],
-				totalItems: 1,
-				pages: 1,
-				itemsPerPage: 1,
-				totalPages: 1,
-			} as ActivityLogsData );
+		mockBackups( {
+			latest: [
+				{
+					activity_id: '2',
+					name: 'rewind__backup_error',
+					published: new Date().toISOString(),
+					status: 'error',
+				},
+			],
+			lastSuccessful: [
+				{
+					activity_id: '1',
+					name: 'rewind__backup_complete_full',
+					published: new Date( Date.now() - 3 * 24 * 60 * 60 * 1000 ).toISOString(), // 3 days ago
+					status: 'success',
+				},
+			],
+		} );
 
 		render( <BackupCard site={ mockSite } /> );
 
@@ -123,36 +112,31 @@ describe( 'BackupCard', () => {
 		} );
 	} );
 
-	test( 'shows "No successful backups found" when backup failed and no successful backup exists', async () => {
-		mockFetchSiteActivityLog
-			.mockResolvedValueOnce( {
-				activityLogs: [
-					{
-						id: '2',
-						activity_id: '2',
-						name: 'rewind__backup_error',
-						published: new Date().toISOString(),
-						status: 'error',
-					},
-				],
-				totalItems: 1,
-				pages: 1,
-				itemsPerPage: 1,
-				totalPages: 1,
-			} as ActivityLogsData )
-			.mockResolvedValueOnce( {
-				activityLogs: [],
-				totalItems: 0,
-				pages: 0,
-				itemsPerPage: 0,
-				totalPages: 0,
-			} as ActivityLogsData );
+	test( 'shows "No successful backups found" once it finds no successful backup after a failed one', async () => {
+		let resolveLastSuccessful: () => void = () => {};
+		const lastSuccessfulLoaded = new Promise< void >( ( resolve ) => {
+			resolveLastSuccessful = resolve;
+		} );
+		mockBackups( {
+			latest: [
+				{
+					activity_id: '2',
+					name: 'rewind__backup_error',
+					published: new Date().toISOString(),
+					status: 'error',
+				},
+			],
+			lastSuccessful: [],
+			lastSuccessfulLoaded,
+		} );
 
 		render( <BackupCard site={ mockSite } /> );
 
-		await waitFor( () => {
-			expect( screen.getByText( 'Backup failed' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'No successful backups found.' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByRole( 'heading', { name: 'Backup failed' } ) ).toBeVisible();
+		expect( screen.queryByText( 'No successful backups found.' ) ).not.toBeInTheDocument();
+
+		resolveLastSuccessful();
+
+		expect( await screen.findByText( 'No successful backups found.' ) ).toBeVisible();
 	} );
 } );

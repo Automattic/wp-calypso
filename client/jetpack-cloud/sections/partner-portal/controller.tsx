@@ -17,6 +17,7 @@ import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/lice
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
 import PaymentMethodList from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-list';
+import ProgramSunset from 'calypso/jetpack-cloud/sections/partner-portal/primary/program-sunset';
 import TermsOfServiceConsent from 'calypso/jetpack-cloud/sections/partner-portal/primary/terms-of-service-consent';
 import {
 	LicenseFilter,
@@ -30,6 +31,7 @@ import {
 	getCurrentPartner,
 	hasActivePartnerKey,
 	doesPartnerRequireAPaymentMethod,
+	isJetpackManageStoreClosed,
 } from 'calypso/state/partner-portal/partner/selectors';
 import { ToSConsent } from 'calypso/state/partner-portal/types';
 import getSites from 'calypso/state/selectors/get-sites';
@@ -47,6 +49,15 @@ const setSidebar = ( context: Context, isLicenseContext: boolean = false ): void
 	) : (
 		<PurchasesSidebar path={ context.path } />
 	);
+};
+
+/**
+ * Replace the license store with the Automattic for Agencies promo for partners whose store is closed.
+ */
+const setProgramSunset = ( context: Context ): void => {
+	context.header = <Header />;
+	setSidebar( context, true );
+	context.primary = <ProgramSunset />;
 };
 
 export const allSitesContext: Callback = ( context, next ) => {
@@ -81,6 +92,12 @@ export const billingDashboardContext: Callback = ( context, next ) => {
 };
 
 export const licensesContext: Callback = ( context, next ) => {
+	if ( isJetpackManageStoreClosed( context.store.getState() ) ) {
+		setProgramSunset( context );
+		next();
+		return;
+	}
+
 	const { s: search, sort_field, sort_direction, page } = context.query;
 	const filter = publicToInternalLicenseFilter( context.params.filter, LicenseFilter.NotRevoked );
 	const currentPage = parseInt( page ) || 1;
@@ -106,8 +123,15 @@ export const licensesContext: Callback = ( context, next ) => {
 };
 
 export const issueLicenseContext: Callback = ( context, next ) => {
-	const { site_id: siteId, product_slug: suggestedProduct } = context.query;
 	const state = context.store.getState();
+
+	if ( isJetpackManageStoreClosed( state ) ) {
+		setProgramSunset( context );
+		next();
+		return;
+	}
+
+	const { site_id: siteId, product_slug: suggestedProduct } = context.query;
 	const sites = getSites( state );
 	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
