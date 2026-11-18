@@ -10,6 +10,7 @@ export const SELECT_NOTE = 'SELECT_NOTE';
 export const READ_NOTE = 'READ_NOTE';
 export const RESET_LOCAL_APPROVAL = 'RESET_LOCAL_APPROVAL';
 export const RESET_LOCAL_LIKE = 'RESET_LOCAL_LIKE';
+export const RESET_LOCAL_READ = 'RESET_LOCAL_READ';
 export const SET_IS_SHOWING = 'SET_IS_SHOWING'; // special! do not use
 export const SET_LAYOUT = 'SET_LAYOUT';
 export const SPAM_NOTE = 'SPAM_NOTE';

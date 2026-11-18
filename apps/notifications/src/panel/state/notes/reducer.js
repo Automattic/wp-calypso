@@ -81,6 +81,12 @@ export const noteReads = ( state = {}, { type, noteId } ) => {
 		return { ...state, [ noteId ]: false };
 	}
 
+	if ( types.RESET_LOCAL_READ === type ) {
+		const nextState = { ...state };
+		delete nextState[ noteId ];
+		return nextState;
+	}
+
 	return state;
 };
 
