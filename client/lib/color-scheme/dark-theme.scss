@@ -164,6 +164,7 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 }
 
+// Reader and Themes only: the Dashboard gets these from its ThemeProvider. Drop once they have one.
 @mixin color-scheme-dark-theme-component-tokens {
 	// Overrides the default `--wp-components-*` to ensure all components that
 	// rely on it adapt to the dark theme's text color.
@@ -197,6 +198,7 @@ This mixin generates alias variables for a color palette. For example, the
 	--wp-admin-theme-color-darker-20--rgb: 155, 188, 251;
 }
 
+// Reader and Themes only: the Dashboard derives these from WPDS tokens. Drop once they have a ThemeProvider.
 @mixin color-scheme-dark-theme-wpds-bridged-tokens {
 	--dashboard-inline-code__background-color: #3a3a3a;
 	--dashboard-field__border-color: #949494;
