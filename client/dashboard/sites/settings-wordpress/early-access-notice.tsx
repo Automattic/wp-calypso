@@ -32,9 +32,9 @@ export function EarlyAccessNotice( { site, release, build }: EarlyAccessNoticePr
 			{ site.is_wpcom_staging_site ||
 			! hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE )
 				? createInterpolateElement(
-						/* translators: <version /> is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
+						/* translators: <version/> is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
 						__(
-							'We moved your site to WordPress <version /> ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release anytime.'
+							'We moved your site to WordPress <version/> ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release anytime.'
 						),
 						{
 							version: <>{ build }</>,
@@ -42,9 +42,9 @@ export function EarlyAccessNotice( { site, release, build }: EarlyAccessNoticePr
 						}
 					)
 				: createInterpolateElement(
-						/* translators: <version /> is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
+						/* translators: <version/> is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
 						__(
-							'We moved your site to WordPress <version /> ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release or <backup>restore your backup</backup> anytime.'
+							'We moved your site to WordPress <version/> ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release or <backup>restore your backup</backup> anytime.'
 						),
 						{
 							version: <>{ build }</>,
