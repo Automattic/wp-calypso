@@ -228,7 +228,7 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 											)
 										: __( 'Import into this site?' )
 								}
-								subText={ __( 'Importing will change this site’s content and design.' ) }
+								subText={ __( 'Importing replaces this site’s content and design.' ) }
 							/>
 						}
 					>
@@ -248,9 +248,7 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 									url: site?.URL || `https://${ siteSlug }`,
 									address: siteSlug,
 									previewLabel: __( 'Current destination site' ),
-									description: __(
-										'Its theme, homepage, and site title will change to match the source. Existing posts and pages stay.'
-									),
+									description: __( 'All of the content on this site will be replaced.' ),
 								} }
 							/>
 						) }

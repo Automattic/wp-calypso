@@ -28,8 +28,9 @@ An existing destination requires authentication. Paid destinations skip plans an
 free destinations use site checkout to buy a plan before starting the import session.
 The reading step asks for confirmation before importing into an existing destination unless
 this tab just came back from checkout in this flow. The confirmation shows the source and the
-destination side by side (the same comparison as `site-migration`'s check step), says what the
-import changes on the destination, and offers **Use a different importer**, which exits to the
+destination side by side (the same comparison as `site-migration`'s check step), says that the
+import replaces all of the destination's content (delivery restores the built site over it,
+keeping only users), and offers **Use a different importer**, which exits to the
 content importer list for that destination. When unified checkout created the site
 (`newSite=1`), the step also records the signup and applies the flow’s site settings.
 

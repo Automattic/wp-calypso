@@ -103,11 +103,7 @@ describe( 'StaticSiteImportReading', () => {
 			'href',
 			'https://destination.example.com'
 		);
-		expect(
-			screen.getByText(
-				'Its theme, homepage, and site title will change to match the source. Existing posts and pages stay.'
-			)
-		).toBeVisible();
+		expect( screen.getByText( 'All of the content on this site will be replaced.' ) ).toBeVisible();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different importer' } ) );
 
