@@ -10,7 +10,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, border, caution, check, published } from '@wordpress/icons';
 import { Badge, Progress } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
@@ -336,6 +336,29 @@ function SiteSnapshot( {
 			: '/';
 	// The pages seen copied while watching, newest first. The server only names the latest one.
 	const [ copied, setCopied ] = useState< string[] >( [] );
+	const pagesRef = useRef< HTMLOListElement >( null );
+	// Each new page pushes the list down by one row, which snaps into place.
+	useLayoutEffect( () => {
+		const list = pagesRef.current;
+		const newest = list?.firstElementChild as HTMLElement | null;
+		if (
+			! list ||
+			! newest ||
+			copied.length < 2 ||
+			typeof list.animate !== 'function' ||
+			window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches
+		) {
+			return;
+		}
+		const row = newest.offsetHeight + parseFloat( getComputedStyle( list ).rowGap || '0' );
+		// The rows move, not the list, so the list's fade at the bottom stays put.
+		Array.from( list.children ).forEach( ( item ) =>
+			item.animate( [ { transform: `translateY( -${ row }px )` }, { transform: 'none' } ], {
+				duration: 500,
+				easing: 'cubic-bezier( 0.34, 1.56, 0.64, 1 )',
+			} )
+		);
+	}, [ copied.length ] );
 	if ( step === 1 && progress?.current_page && ! copied.includes( progress.current_page ) ) {
 		setCopied( [ progress.current_page, ...copied ] );
 	}
@@ -367,7 +390,7 @@ function SiteSnapshot( {
 					<span />
 				</div>
 				{ copied.length > 0 && (
-					<ol className="static-site-import-snapshot__pages" aria-hidden="true">
+					<ol ref={ pagesRef } className="static-site-import-snapshot__pages" aria-hidden="true">
 						{ copied.slice( 0, COPIED_PAGES_SHOWN ).map( ( page ) => (
 							<li key={ page }>
 								<Icon icon={ check } size={ 20 } />
