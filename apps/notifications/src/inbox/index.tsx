@@ -5,7 +5,7 @@ import { AppProvider } from '../app/context';
 import ErrorBoundary from '../app/error-boundary';
 import Note from '../app/note';
 import { useNoteNavigation } from '../app/note/hooks';
-import NoteList from '../app/note-list';
+import NotePanel, { getNotificationTabs } from '../app/note-panel';
 import { store } from '../panel/state';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
@@ -13,6 +13,8 @@ import getAllNotes from '../panel/state/selectors/get-all-notes';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { interceptLinks } from '../panel/utils/link-interceptor';
 import type { FilterName, Note as NoteObject } from '../app/types';
+
+import '../app/style.scss';
 
 type InboxPaneElements = {
 	list: ReactNode;
@@ -22,7 +24,9 @@ type InboxPaneElements = {
 type NotificationsInboxProps = {
 	wpcom: unknown;
 	locale: string;
-	filterName: FilterName;
+	/** The tab to show, as named in the host's address. An unknown name shows every notification. */
+	filterName: string | undefined;
+	setFilterName: ( filterName: FilterName ) => void;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 	renderLayout: ( panes: InboxPaneElements ) => ReactNode;
@@ -68,12 +72,17 @@ function useInboxClient( wpcom: unknown, locale: string ): boolean {
 	return isReady;
 }
 
+const toFilterName = ( name: string | undefined ): FilterName =>
+	( getNotificationTabs().find( ( tab ) => tab.name === name )?.name ?? 'all' ) as FilterName;
+
 function InboxPanes( {
-	filterName,
+	filterName: requestedFilterName,
+	setFilterName,
 	selectedNoteId,
 	setSelectedNoteId,
 	renderLayout,
 }: Omit< NotificationsInboxProps, 'wpcom' | 'locale' > ) {
+	const filterName = toFilterName( requestedFilterName );
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
 	const isSelectedNoteLoaded = useSelector( ( state ) =>
 		( ( getAllNotes( state ) || [] ) as NoteObject[] ).some(
@@ -104,9 +113,11 @@ function InboxPanes( {
 			{ renderLayout( {
 				list: (
 					<ErrorBoundary>
-						<NoteList
-							key={ filterName }
+						<NotePanel
+							headingLevel={ 1 }
+							actions={ null }
 							filterName={ filterName }
+							setFilterName={ setFilterName }
 							selectedNoteId={ selectedNoteId }
 							setSelectedNoteId={ setSelectedNoteId }
 							openNoteOnArrowKeys
@@ -128,7 +139,7 @@ function InboxPanes( {
 }
 
 /**
- * Renders the notes list and the selected note on a full page, laid out by the host.
+ * Renders the panel's heading, tabs and notes list, and the selected note, on a full page laid out by the host.
  */
 export default function NotificationsInbox( {
 	wpcom,

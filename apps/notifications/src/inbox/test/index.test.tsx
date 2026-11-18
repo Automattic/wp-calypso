@@ -1,4 +1,5 @@
 import { act, render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { getClient, showNotes } from '../../app/client';
 import { store, init as initState } from '../../panel/state';
@@ -6,6 +7,9 @@ import actions from '../../panel/state/actions';
 import getIsPanelOpen from '../../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import NotificationsInbox from '../index';
+import type { ComponentProps } from 'react';
+
+type InboxProps = ComponentProps< typeof NotificationsInbox >;
 
 vi.mock( '../../panel/rest-client', () => ( {
 	default: vi.fn( function () {
@@ -41,14 +45,22 @@ const loadNotes = ( ...notes: ReturnType< typeof makeNote >[] ) => {
 	store.dispatch( actions.ui.loadedNotes() );
 };
 
-const renderInbox = ( selectedNoteId?: string ) =>
+const renderInbox = (
+	selectedNoteId?: string,
+	{
+		filterName,
+		setFilterName = () => {},
+		setSelectedNoteId = () => {},
+	}: Partial< Pick< InboxProps, 'filterName' | 'setFilterName' | 'setSelectedNoteId' > > = {}
+) =>
 	render(
 		<NotificationsInbox
 			wpcom={ {} }
 			locale="en"
-			filterName="all"
+			filterName={ filterName }
+			setFilterName={ setFilterName }
 			selectedNoteId={ selectedNoteId }
-			setSelectedNoteId={ () => {} }
+			setSelectedNoteId={ setSelectedNoteId }
 			renderLayout={ ( { list, detail } ) => (
 				<>
 					<section aria-label="List">{ list }</section>
@@ -80,6 +92,60 @@ describe( 'NotificationsInbox', () => {
 				name: 'Second comment title',
 			} )
 		).toBeVisible();
+	} );
+
+	it( 'titles the list with the page heading and the same tabs as the panel', async () => {
+		loadNotes( makeNote( 801, 'First comment' ) );
+
+		renderInbox();
+
+		const list = within( screen.getByRole( 'region', { name: 'List' } ) );
+		expect( list.getByRole( 'heading', { name: 'Notifications', level: 1 } ) ).toBeVisible();
+		expect( await list.findByRole( 'tab', { name: 'All', selected: true } ) ).toBeVisible();
+		expect( list.getAllByRole( 'tab' ).map( ( tab ) => tab.textContent ) ).toEqual( [
+			'All',
+			'Unread',
+			'Comments',
+			'Subscribers',
+			'Likes',
+		] );
+	} );
+
+	it( 'leaves out the panel settings and keyboard shortcuts buttons', async () => {
+		renderInbox();
+
+		await screen.findByRole( 'tab', { name: 'All', selected: true } );
+		expect( screen.queryByRole( 'button', { name: 'Settings' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Keyboard shortcuts' } )
+		).not.toBeInTheDocument();
+	} );
+
+	it( 'opens on the tab the host names', async () => {
+		renderInbox( undefined, { filterName: 'likes' } );
+
+		expect( await screen.findByRole( 'tab', { name: 'Likes', selected: true } ) ).toBeVisible();
+		expect( getClient().setFilter ).toHaveBeenLastCalledWith( 'likes' );
+	} );
+
+	it( 'shows every notification when the host names a tab that does not exist', async () => {
+		renderInbox( undefined, { filterName: 'mentions' } );
+
+		expect( await screen.findByRole( 'tab', { name: 'All', selected: true } ) ).toBeVisible();
+		expect( getClient().setFilter ).toHaveBeenLastCalledWith( 'all' );
+	} );
+
+	it( 'tells the host the chosen tab and closes the open note', async () => {
+		const user = userEvent.setup();
+		const setFilterName = vi.fn();
+		const setSelectedNoteId = vi.fn();
+		loadNotes( makeNote( 801, 'First comment' ) );
+		renderInbox( '801', { setFilterName, setSelectedNoteId } );
+
+		await user.click( await screen.findByRole( 'tab', { name: 'Comments' } ) );
+
+		expect( setFilterName ).toHaveBeenCalledWith( 'comments' );
+		expect( setSelectedNoteId ).toHaveBeenLastCalledWith( undefined );
 	} );
 
 	it( 'shows no open note until one is selected', () => {

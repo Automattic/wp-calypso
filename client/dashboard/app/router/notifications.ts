@@ -12,8 +12,8 @@ export const notificationsRoute = createRoute( {
 	} ),
 	getParentRoute: () => rootRoute,
 	path: 'notifications',
-	validateSearch: ( search ): { filter?: 'unread' } => ( {
-		filter: search.filter === 'unread' ? 'unread' : undefined,
+	validateSearch: ( search ): { filter?: string } => ( {
+		filter: typeof search.filter === 'string' ? search.filter : undefined,
 	} ),
 } ).lazy( () =>
 	import( '../../notifications' ).then( ( d ) =>
