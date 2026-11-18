@@ -1,4 +1,4 @@
-import { AreaChart, GlobalChartsProvider, type SeriesData } from '@automattic/charts';
+import { AreaChart, type SeriesData } from '@automattic/charts';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -91,76 +91,74 @@ export default function ChartSlot( {
 				</HStack>
 			</CardHeader>
 			<CardBody>
-				<GlobalChartsProvider>
-					<AreaChart
-						chartId={ CHART_ID }
-						height={ 320 }
-						data={ data }
-						stacked
-						curveType="monotone"
-						zoomable
-						showLegend
-						legend={ { interactive: true } }
-						withTooltips
-						renderTooltip={ ( { tooltipData, colorScale } ) => {
-							const date = tooltipData?.nearestDatum?.datum?.date;
-							if ( ! date ) {
-								return null;
-							}
-							const series = Object.values( tooltipData?.datumByKey ?? {} );
-							return (
-								<VStack spacing={ 3 } style={ { padding: '4px 2px', minWidth: 240 } }>
-									<HStack spacing={ 2 } expanded={ false } justify="flex-start">
-										<Text weight={ 600 }>{ formatTooltipDate( date, locale ) }</Text>
-										<span
-											aria-hidden
-											style={ {
-												flex: '0 0 auto',
-												width: 3,
-												height: 3,
-												borderRadius: '50%',
-												background: 'currentColor',
-												opacity: 0.4,
-											} }
-										/>
-										<Text variant="muted">{ formatTooltipTime( date, locale ) }</Text>
-									</HStack>
-									<VStack spacing={ 1 }>
-										{ series.map( ( entry ) => {
-											const value = ( entry.datum as { value?: number } ).value ?? 0;
-											return (
-												<HStack key={ entry.key } justify="space-between" spacing={ 3 }>
-													<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
-														<span
-															aria-hidden
-															style={ {
-																display: 'inline-block',
-																flex: '0 0 auto',
-																width: 8,
-																height: 8,
-																borderRadius: 2,
-																background: colorScale ? colorScale( entry.key ) : 'currentColor',
-															} }
-														/>
-														<Text style={ { whiteSpace: 'nowrap' } }>{ entry.key }</Text>
-													</HStack>
-													<Text weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
-														{ formatMsValue( value, locale ) }
-													</Text>
+				<AreaChart
+					chartId={ CHART_ID }
+					height={ 320 }
+					data={ data }
+					stacked
+					curveType="monotone"
+					zoomable
+					showLegend
+					legend={ { interactive: true } }
+					withTooltips
+					renderTooltip={ ( { tooltipData, colorScale } ) => {
+						const date = tooltipData?.nearestDatum?.datum?.date;
+						if ( ! date ) {
+							return null;
+						}
+						const series = Object.values( tooltipData?.datumByKey ?? {} );
+						return (
+							<VStack spacing={ 3 } style={ { padding: '4px 2px', minWidth: 240 } }>
+								<HStack spacing={ 2 } expanded={ false } justify="flex-start">
+									<Text weight={ 600 }>{ formatTooltipDate( date, locale ) }</Text>
+									<span
+										aria-hidden
+										style={ {
+											flex: '0 0 auto',
+											width: 3,
+											height: 3,
+											borderRadius: '50%',
+											background: 'currentColor',
+											opacity: 0.4,
+										} }
+									/>
+									<Text variant="muted">{ formatTooltipTime( date, locale ) }</Text>
+								</HStack>
+								<VStack spacing={ 1 }>
+									{ series.map( ( entry ) => {
+										const value = ( entry.datum as { value?: number } ).value ?? 0;
+										return (
+											<HStack key={ entry.key } justify="space-between" spacing={ 3 }>
+												<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
+													<span
+														aria-hidden
+														style={ {
+															display: 'inline-block',
+															flex: '0 0 auto',
+															width: 8,
+															height: 8,
+															borderRadius: 2,
+															background: colorScale ? colorScale( entry.key ) : 'currentColor',
+														} }
+													/>
+													<Text style={ { whiteSpace: 'nowrap' } }>{ entry.key }</Text>
 												</HStack>
-											);
-										} ) }
-									</VStack>
+												<Text weight={ 500 } style={ { whiteSpace: 'nowrap' } }>
+													{ formatMsValue( value, locale ) }
+												</Text>
+											</HStack>
+										);
+									} ) }
 								</VStack>
-							);
-						} }
-						options={ {
-							axis: {
-								y: { tickFormat: ( value ) => formatMsValue( value as number, locale ) },
-							},
-						} }
-					/>
-				</GlobalChartsProvider>
+							</VStack>
+						);
+					} }
+					options={ {
+						axis: {
+							y: { tickFormat: ( value ) => formatMsValue( value as number, locale ) },
+						},
+					} }
+				/>
 			</CardBody>
 		</Card>
 	);
