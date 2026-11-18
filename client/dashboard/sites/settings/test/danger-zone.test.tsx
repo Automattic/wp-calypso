@@ -5,6 +5,7 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DangerZone from '../danger-zone';
 import type { Site } from '@automattic/api-core';
@@ -92,6 +93,37 @@ describe( '<DangerZone>', () => {
 
 		requests.respond();
 		await waitFor( expectDialogClosed );
+	} );
+
+	test( 'links the restoration guide to Help Center without requesting a restore', async () => {
+		const setShowSupportDoc = vi.fn();
+		Object.defineProperty( window, 'wp', {
+			configurable: true,
+			value: { data: { dispatch: () => ( { setShowSupportDoc } ) } },
+		} );
+		const user = userEvent.setup();
+		const requests = mockRestoreRequest();
+
+		try {
+			render( <DangerZone site={ site } /> );
+			const link = await screen.findByRole( 'link', { name: 'Learn more' } );
+
+			expect( link ).toHaveAttribute(
+				'href',
+				'https://wordpress.com/support/restore-default-plugins-and-themes/'
+			);
+			await user.click( link );
+
+			expect( setShowSupportDoc ).toHaveBeenCalledWith(
+				'https://wordpress.com/support/restore-default-plugins-and-themes/',
+				276526,
+				undefined
+			);
+			expect( requests.count ).toBe( 0 );
+			expectDialogClosed();
+		} finally {
+			Reflect.deleteProperty( window, 'wp' );
+		}
 	} );
 
 	test( 'does not offer the restore action on non-Atomic sites', async () => {

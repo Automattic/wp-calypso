@@ -139,6 +139,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/sftp/',
 		post_id: 159771,
 	},
+	'hosting-restore-plan-software': {
+		link: 'https://wordpress.com/support/restore-default-plugins-and-themes/',
+		post_id: 276526,
+	},
 	'hosting-staging-site': {
 		link: 'https://wordpress.com/support/how-to-create-a-staging-site/',
 		post_id: 239448,
