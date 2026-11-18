@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
 import JetpackLogo from 'calypso/assets/images/a8c-for-agencies/events/jetpack-logo.svg';
-import { JETPACK_HOLIDAY_SALE_ENDS_AT, JETPACK_HOLIDAY_SALE_STARTS_AT } from './constants';
 import type { CSSProperties, ReactNode } from 'react';
 
 export interface FeaturedEventCta {
@@ -72,12 +71,10 @@ export const getLeadMatchingContactAnnouncement = ( leadMatchingHref: string ): 
 	],
 } );
 
+// The Jetpack holiday sale runs from November 19 00:00 UTC through December 2 23:59 UTC.
 export const isJetpackHolidaySaleActive = () => {
 	const now = new Date();
-	return (
-		now >= new Date( JETPACK_HOLIDAY_SALE_STARTS_AT ) &&
-		now < new Date( JETPACK_HOLIDAY_SALE_ENDS_AT )
-	);
+	return now >= new Date( '2026-11-19T00:00:00Z' ) && now < new Date( '2026-12-03T00:00:00Z' );
 };
 
 // The sale discount applies on its own at checkout, so the banner shows no coupon code.
@@ -99,8 +96,6 @@ export const getJetpackHolidaySaleEvent = ( jetpackProductsHref: string ): Featu
 			id: 'view-jetpack-products',
 			label: __( 'View Jetpack products' ),
 			url: jetpackProductsHref,
-			variant: 'secondary',
 		},
 	],
-	endsAt: JETPACK_HOLIDAY_SALE_ENDS_AT,
 } );

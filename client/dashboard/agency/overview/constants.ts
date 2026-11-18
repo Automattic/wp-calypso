@@ -17,11 +17,6 @@ export const PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL =
 export const PRESSABLE_EXPANSION_OFFER_TERMS_URL =
 	'https://pressable.com/legal/summer-2026-expansion-incentive-terms-and-conditions/';
 
-// The Jetpack holiday sale runs from November 19 00:00 UTC through December 2 23:59 UTC.
-export const JETPACK_HOLIDAY_SALE_STARTS_AT = '2026-11-19T00:00:00Z';
-// The moment after the sale ends: the banner stops showing at this time.
-export const JETPACK_HOLIDAY_SALE_ENDS_AT = '2026-12-03T00:00:00Z';
-
 interface TierOverviewContent {
 	description: string;
 	hasPartnerManager: boolean;
