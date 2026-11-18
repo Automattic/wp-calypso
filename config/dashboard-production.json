@@ -54,6 +54,7 @@
 		"me/legacy-contact": false,
 		"notifications/subscriber-alerts": true,
 		"notifications/subscriber-alerts-default-on": true,
+		"notifications/view-settings": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,
 		"plans/migration-trial": true,
