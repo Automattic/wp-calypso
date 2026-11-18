@@ -90,6 +90,10 @@ export const siteWordPressMigrationCancelMutation = ( siteId: number ) =>
 		mutationFn: () => cancelWordPressMigration( siteId ),
 		onSuccess: ( cancellation ) => {
 			if ( cancellation.status === 'cancelled' ) {
+				queryClient.setQueryData(
+					siteWordPressMigrationStatusQuery( siteId ).queryKey,
+					( status ) => status && { ...status, status: cancellation.status, can_cancel: false }
+				);
 				queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
 			}
 		},

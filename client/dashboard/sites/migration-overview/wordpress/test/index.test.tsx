@@ -770,31 +770,32 @@ describe( 'WordPressMigration', () => {
 		expect( screen.queryByText( /We couldn’t load your migration/ ) ).not.toBeInTheDocument();
 	} );
 
-	test.each( [
-		[ 'completed', 'Your site has been migrated' ],
-		[ 'cancelled', 'Your migration has been cancelled' ],
-	] )(
-		'waits on a %s migration whose site is still locked, then offers a way out',
-		async ( status, heading ) => {
-			// Only the clock: faking the queues a request goes through holds the mocked replies back.
+	test.each( [ 'completed', 'cancelled' ] )(
+		'waits for the dashboard to unlock after a %s migration',
+		async ( status ) => {
 			vi.useFakeTimers( {
 				shouldAdvanceTime: true,
 				toNotFake: [ 'nextTick', 'setImmediate', 'queueMicrotask' ],
 			} );
-			// Waiting on the site reloads the migration too.
 			mockApi().get( statusPath ).query( true ).reply( 200, migration( status ) ).persist();
+			await queryClient.ensureQueryData( siteWordPressMigrationStatusQuery( site.ID ) );
 
 			const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
-
-			expect( await screen.findByRole( 'heading', { name: heading } ) ).toBeVisible();
-			expect( screen.getByText( /One moment while we finish up/ ) ).toBeVisible();
+			const isCompleted = status === 'completed';
+			expect(
+				screen.queryAllByRole( 'heading' ).map( ( heading ) => heading.textContent )
+			).toEqual( isCompleted ? [ 'Your site has been migrated' ] : [] );
 			expect( screen.queryByRole( 'button', { name: 'Reload' } ) ).not.toBeInTheDocument();
-			expect( router.state.location.pathname ).toBe( '/' );
 
 			act( () => vi.advanceTimersByTime( 30000 ) );
+			await waitFor( () => expect( queryClient.isFetching() ).toBe( 0 ) );
 
-			expect( await screen.findByRole( 'button', { name: 'Reload' } ) ).toBeVisible();
-			expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
+			expect( screen.queryAllByRole( 'button' ).map( ( button ) => button.textContent ) ).toEqual(
+				isCompleted ? [ 'Reload', 'Contact us' ] : []
+			);
+			expect( !! screen.queryByText( 'Loading your site is taking longer than it should.' ) ).toBe(
+				isCompleted
+			);
 			expect( router.state.location.pathname ).toBe( '/' );
 		}
 	);
@@ -817,7 +818,7 @@ describe( 'WordPressMigration', () => {
 				expect( router.state.location.pathname ).toBe( '/sites/example.wordpress.com' )
 			);
 			expect( router.state.location.search ).toEqual(
-				status === 'completed' ? { migration: 'completed' } : {}
+				status === 'completed' ? { migration: 'completed' } : { flash: 'migration-cancelled' }
 			);
 		}
 	);
@@ -826,7 +827,7 @@ describe( 'WordPressMigration', () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'unlock_failed' ) );
 		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
 		expect(
-			await screen.findByRole( 'heading', { name: 'We couldn’t unlock your site dashboard' } )
+			await screen.findByRole( 'heading', { name: 'We couldn’t cancel your migration' } )
 		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
 		expect(

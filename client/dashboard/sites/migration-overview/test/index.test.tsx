@@ -2,12 +2,12 @@
  * @vitest-environment jsdom
  */
 
-import { siteBySlugQuery } from '@automattic/api-queries';
+import { siteBySlugQuery, siteWordPressMigrationStatusQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SiteMigrationOverview from '../index';
-import type { Site } from '@automattic/api-core';
+import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
 
 const siteSlug = 'test-site.wordpress.com';
 
@@ -42,18 +42,31 @@ describe( '<SiteMigrationOverview>', () => {
 		expect( router.state.location.pathname ).toBe( '/' );
 	} );
 
-	test( 'redirects to site overview when migration is no longer in progress', async () => {
-		mockSiteApi( createSite( 'migration-started-diy' ) );
+	test.each( [ 'cancelled', 'unlock_failed' ] as const )(
+		'redirects after the migration status changes to %s',
+		async ( status ) => {
+			mockSiteApi( createSite( 'migration-started-diy' ) );
 
-		const { queryClient, router } = render( <SiteMigrationOverview siteSlug={ siteSlug } /> );
+			const { queryClient, router } = render( <SiteMigrationOverview siteSlug={ siteSlug } /> );
 
-		await waitFor( () => expect( screen.getByText( 'Your migration is underway' ) ).toBeVisible() );
+			await waitFor( () =>
+				expect( screen.getByText( 'Your migration is underway' ) ).toBeVisible()
+			);
 
-		const historyLength = router.history.length;
-		mockSiteApi( createSite( null ) );
-		await queryClient.invalidateQueries( { queryKey: siteBySlugQuery( siteSlug ).queryKey } );
+			const historyLength = router.history.length;
+			queryClient.setQueryData( siteWordPressMigrationStatusQuery( 1 ).queryKey, {
+				status,
+			} as WordPressMigrationStatus );
+			mockSiteApi( createSite( 'migration-cancelled-diy' ) );
+			await queryClient.invalidateQueries( { queryKey: siteBySlugQuery( siteSlug ).queryKey } );
 
-		await waitFor( () => expect( router.state.location.pathname ).toBe( `/sites/${ siteSlug }` ) );
-		expect( router.history.length ).toBe( historyLength );
-	} );
+			await waitFor( () =>
+				expect( router.state.location.pathname ).toBe( `/sites/${ siteSlug }` )
+			);
+			expect( router.state.location.search ).toEqual(
+				status === 'cancelled' ? { flash: 'migration-cancelled' } : {}
+			);
+			expect( router.history.length ).toBe( historyLength );
+		}
+	);
 } );

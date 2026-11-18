@@ -160,7 +160,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			navigate( {
 				to: '/sites/$siteSlug',
 				params: { siteSlug: site.slug },
-				search: isCompleted ? { migration: 'completed' } : {},
+				search: isCompleted ? { migration: 'completed' } : { flash: 'migration-cancelled' },
 				replace: true,
 			} );
 			return;
@@ -201,11 +201,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					actions={ isConnecting ? contactUs : undefined }
 					onClose={ () => cancel.reset() }
 				>
-					{ cancel.isError
-						? __( 'We couldn’t cancel your migration.' )
-						: __(
-								'We couldn’t unlock your site dashboard. Contact support for help restoring access.'
-							) }
+					{ __( 'We couldn’t cancel your migration.' ) }
 				</Notice>
 			) }
 			{ isUnreadable && ! isForbidden && (
@@ -265,19 +261,15 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			) }
 			{ migration?.status === 'unlock_failed' && (
 				<MigrationCard
-					title={ __( 'We couldn’t unlock your site dashboard' ) }
-					description={ __( 'Contact support for help restoring access to your dashboard.' ) }
+					title={ __( 'We couldn’t cancel your migration' ) }
+					description={ __( 'Contact support for help cancelling your migration.' ) }
 					decoration={ <StatusIcon status="error" /> }
 					actions={ contactUs }
 				/>
 			) }
-			{ isFinished && (
+			{ isCompleted && (
 				<MigrationCard
-					title={
-						isCompleted
-							? __( 'Your site has been migrated' )
-							: __( 'Your migration has been cancelled' )
-					}
+					title={ __( 'Your site has been migrated' ) }
 					decoration={ <StatusIcon status="success" /> }
 					description={
 						isUnlockOverdue

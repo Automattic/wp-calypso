@@ -120,20 +120,20 @@ test( 'cancels setup only after explicit confirmation and refreshes the migratio
 	await userEvent.click( dialog.getByRole( 'button', { name: 'Keep migrating' } ) );
 	expect( cancel.isDone() ).toBe( false );
 	dialog = await openDialog();
-	replyStatus( migration( 'cancelled', { can_cancel: false } ) );
+	const refresh = mockApi()
+		.get( base + '/status' )
+		.query( true )
+		.reply( 503 );
 	await userEvent.click( dialog.getByRole( 'button', { name: 'Cancel migration' } ) );
-	expect(
-		await screen.findByRole( 'heading', { name: 'Your migration has been cancelled' } )
-	).toBeVisible();
+	await waitFor( () => expect( cancelButton() ).not.toBeInTheDocument() );
+	expect( screen.queryByRole( 'heading' ) ).not.toBeInTheDocument();
 	expect( cancel.isDone() ).toBe( true );
+	await waitFor( () => expect( refresh.isDone() ).toBe( true ) );
 } );
 
-test.each( [
-	[ 'unlock_failed', /We couldn’t unlock your site dashboard/ ],
-	[ 'conflict', /We couldn’t cancel your migration/ ],
-] as const )(
+test.each( [ 'unlock_failed', 'conflict' ] as const )(
 	'refreshes after %s and leaves Help available outside the confirmation',
-	async ( outcome, feedback ) => {
+	async ( outcome ) => {
 		replyStatus( migration( 'paused', { can_cancel: true } ) );
 		render( <WordPressMigration site={ site } />, { queryClient } );
 		const dialog = await openDialog();
@@ -146,7 +146,7 @@ test.each( [
 		// A failed unlock can leave the saved migration step unchanged.
 		const refresh = replyStatus( migration( 'paused', { can_cancel: false } ) );
 		await userEvent.click( dialog.getByRole( 'button', { name: 'Cancel migration' } ) );
-		expect( await screen.findByText( feedback ) ).toBeVisible();
+		expect( await screen.findByText( 'We couldn’t cancel your migration.' ) ).toBeVisible();
 		await waitFor( () => expect( refresh.isDone() ).toBe( true ) );
 		await waitFor( () => expect( cancelButton() ).not.toBeInTheDocument() );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
