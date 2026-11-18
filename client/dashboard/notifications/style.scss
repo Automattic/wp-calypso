@@ -3,8 +3,20 @@
 
 $pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-block-padding ) );
 
-.dashboard-notifications-inbox {
+.dashboard-notifications-page {
+	display: flex;
+	flex-direction: column;
+	gap: var( --dashboard-page-header__content-gap );
 	height: $pane-height;
+}
+
+.dashboard-notifications-page__inbox {
+	flex: 1;
+	min-height: 0;
+}
+
+.dashboard-notifications-inbox {
+	height: 100%;
 	overflow: hidden;
 
 	> div {

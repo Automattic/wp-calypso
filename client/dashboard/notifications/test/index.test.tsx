@@ -80,6 +80,8 @@ function setNarrowScreen( isNarrow: boolean ) {
 	} );
 }
 
+const recordTracksEvent = vi.fn();
+
 async function renderNotifications( ...initialPaths: string[] ) {
 	const router = createRouter( {
 		routeTree: rootRoute.addChildren( createNotificationsRoutes() ),
@@ -93,7 +95,7 @@ async function renderNotifications( ...initialPaths: string[] ) {
 	render(
 		<QueryClientProvider client={ new QueryClient() }>
 			<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
-				<AnalyticsProvider client={ { recordTracksEvent: vi.fn(), recordPageView: vi.fn() } }>
+				<AnalyticsProvider client={ { recordTracksEvent, recordPageView: vi.fn() } }>
 					<AuthContext.Provider value={ { user: { ID: 1 } as User, logout: vi.fn() } }>
 						<RouterProvider router={ router } />
 					</AuthContext.Provider>
@@ -292,5 +294,29 @@ describe( '<Notifications>', () => {
 
 		await waitFor( () => expect( router.state.location.href ).toBe( '/notifications' ) );
 		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'says that the page is a work in progress', async () => {
+		await renderNotifications( '/notifications/42' );
+
+		expect( await screen.findByText( 'This page is a work in progress' ) ).toBeVisible();
+	} );
+
+	test( 'links to the feedback post in a new tab and records the click', async () => {
+		const user = userEvent.setup();
+		await renderNotifications( '/notifications' );
+
+		const feedbackLink = await screen.findByRole( 'link', { name: /Leave feedback/ } );
+		expect( feedbackLink ).toHaveAttribute(
+			'href',
+			expect.stringMatching( /^https:\/\/wp\.me\// )
+		);
+		expect( feedbackLink ).toHaveAttribute( 'target', '_blank' );
+
+		await user.click( feedbackLink );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_notifications_inbox_feedback_click'
+		);
 	} );
 } );
