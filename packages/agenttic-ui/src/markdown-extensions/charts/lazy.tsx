@@ -5,9 +5,17 @@ import type { ChartBlockProps } from './ChartBlock';
 import type { LineChartProps } from './LineChart';
 import type { FC } from 'react';
 
+const RETRY_DELAY_MS = 500;
+
 // The charts and @automattic/charts load the first time one renders, so pages that never show
-// a chart don't download them. A failed load shows the chart's error instead of the chart.
-const loadCharts = () => import( './chart-components' );
+// a chart don't download them. `lazy()` caches a rejected import, so a failed load retries once,
+// after a pause (a CDN edge may not have a freshly deployed chunk yet), and then shows the
+// chart's error until the page reloads.
+const importCharts = () => import( './chart-components' );
+const loadCharts = () =>
+	importCharts().catch( () =>
+		new Promise( ( resolve ) => setTimeout( resolve, RETRY_DELAY_MS ) ).then( importCharts )
+	);
 
 const LazyBarChart = lazy( () =>
 	loadCharts().then( ( charts ) => ( { default: charts.BarChart } ) )
