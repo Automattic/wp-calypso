@@ -32,26 +32,22 @@ export function EarlyAccessNotice( { site, release, build }: EarlyAccessNoticePr
 			{ site.is_wpcom_staging_site ||
 			! hasHostingFeature( site, HostingFeatures.BACKUPS_SELF_SERVE )
 				? createInterpolateElement(
-						sprintf(
-							/* translators: %s is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
-							__(
-								'We moved your site to WordPress %s ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release anytime.'
-							),
-							build
+						/* translators: <version /> is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
+						__(
+							'We moved your site to WordPress <version /> ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release anytime.'
 						),
 						{
+							version: <>{ build }</>,
 							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
 						}
 					)
 				: createInterpolateElement(
-						sprintf(
-							/* translators: %s is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
-							__(
-								'We moved your site to WordPress %s ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release or <backup>restore your backup</backup> anytime.'
-							),
-							build
+						/* translators: <version /> is the WordPress pre-release the site runs, e.g. "7.2-beta5" */
+						__(
+							'We moved your site to WordPress <version /> ahead of the final release. Your feedback helps shape WordPress, so <support>let us know</support> if you notice anything unexpected. You can switch back to the stable release or <backup>restore your backup</backup> anytime.'
 						),
 						{
+							version: <>{ build }</>,
 							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
 							backup: isRelativeUrl( backupUrl ) ? (
 								<Link to={ backupUrl } />
