@@ -104,15 +104,13 @@ $static-site-import-grid: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.o
 
 .static-site-import-preview-window {
 	width: 100%;
-	max-width: 640px;
+	// The site shows at the engine's 4:3 screenshot, so on short screens the window narrows to keep
+	// it, with its caption and address bar, inside the panel.
+	max-width: min( 640px, calc( ( 100vh - 200px ) * 4 / 3 ) );
 }
 
 .static-site-import-progress-step__panel .static-site-import-preview-window__caption {
 	color: var( --studio-white );
-}
-
-.static-site-import-progress-step__panel .static-site-import-snapshot__viewport {
-	aspect-ratio: 2 / 1;
 }
 
 @media ( prefers-reduced-motion: no-preference ) {
