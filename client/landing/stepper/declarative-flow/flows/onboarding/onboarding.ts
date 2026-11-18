@@ -1,3 +1,4 @@
+import { fetchDomain } from '@automattic/api-core';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	isDomainMapping,
@@ -106,6 +107,17 @@ import { getOnboardingStepperPosition } from './step-counter-config';
 import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
+
+// The onboard store keeps a domain the user removed at checkout, so the cart item alone does not
+// prove the domain was bought. Its setup pages are a 404 when wpcom has no record of it.
+async function isDomainKnownToWpcom( domainName: string ): Promise< boolean > {
+	try {
+		await fetchDomain( domainName );
+		return true;
+	} catch {
+		return false;
+	}
+}
 
 /**
  * Where a funnel run lands once it is paid for.
@@ -983,13 +995,21 @@ const onboarding: FlowV2< typeof initialize > = {
 							// plan), and a paid funnel order's checkout redirect_to is the funnel
 							// destination itself, so it never comes back through here.
 							window.location.replace( destination );
-						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
+						} else if (
+							domainCartItem?.meta &&
+							isDomainMapping( domainCartItem ) &&
+							( await isDomainKnownToWpcom( domainCartItem.meta ) )
+						) {
 							// A connected domain still has to be pointed at the site once it is paid
 							// for, so finish on the setup instructions rather than the chooser or My Home.
 							window.location.replace(
 								dashboardLink( `/domains/${ domainCartItem.meta }/domain-connection-setup` )
 							);
-						} else if ( domainCartItem?.meta && isDomainTransfer( domainCartItem ) ) {
+						} else if (
+							domainCartItem?.meta &&
+							isDomainTransfer( domainCartItem ) &&
+							( await isDomainKnownToWpcom( domainCartItem.meta ) )
+						) {
 							window.location.replace(
 								dashboardLink( `/domains/${ domainCartItem.meta }/domain-transfer-setup` )
 							);

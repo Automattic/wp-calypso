@@ -7,6 +7,22 @@ import onboarding from '../onboarding';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 let mockDomainCartItem: MinimalRequestCartProduct | undefined;
+const mockFetchDomain = jest.fn();
+
+// The package imports itself while loading, so the real exports are read lazily rather than spread.
+jest.mock(
+	'@automattic/api-core',
+	() =>
+		new Proxy(
+			{ fetchDomain: ( ...args: unknown[] ) => mockFetchDomain( ...args ) },
+			{
+				get: ( target, key: string ) =>
+					key in target
+						? target[ key as keyof typeof target ]
+						: jest.requireActual( '@automattic/api-core' )[ key ],
+			}
+		)
+);
 
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
 	clearSessionStorageQuery: jest.fn(),
@@ -155,6 +171,7 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 	beforeEach( () => {
 		mockDomainCartItem = undefined;
 		jest.clearAllMocks();
+		mockFetchDomain.mockResolvedValue( { domain: 'example.com' } );
 	} );
 
 	it( 'sends a connected domain to the domain connection setup instead of the setup chooser', async () => {
@@ -203,6 +220,32 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 		);
 	} );
 
+	it( 'keeps the setup chooser for a transferred domain that wpcom has no record of', async () => {
+		mockDomainCartItem = { product_slug: 'domain_transfer', meta: 'example.com' };
+		mockFetchDomain.mockRejectedValue( new Error( 'Unknown domain' ) );
+
+		const { navigate, replacedWith } = await submitPostCheckoutProcessing( {
+			postCheckoutBigSky: true,
+		} );
+
+		expect( mockFetchDomain ).toHaveBeenCalledWith( 'example.com' );
+		expect( navigate ).toHaveBeenCalledWith( 'setup-your-site-ai' );
+		expect( replacedWith ).toBeUndefined();
+	} );
+
+	it( 'keeps the setup chooser for a connected domain that wpcom has no record of', async () => {
+		mockDomainCartItem = { product_slug: 'domain_map', meta: 'example.com' };
+		mockFetchDomain.mockRejectedValue( new Error( 'Unknown domain' ) );
+
+		const { navigate, replacedWith } = await submitPostCheckoutProcessing( {
+			postCheckoutBigSky: true,
+		} );
+
+		expect( mockFetchDomain ).toHaveBeenCalledWith( 'example.com' );
+		expect( navigate ).toHaveBeenCalledWith( 'setup-your-site-ai' );
+		expect( replacedWith ).toBeUndefined();
+	} );
+
 	it( 'keeps the setup chooser for a registered domain', async () => {
 		mockDomainCartItem = { product_slug: 'domain_reg', meta: 'example.com' };
 
@@ -212,6 +255,7 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 
 		expect( navigate ).toHaveBeenCalledWith( 'setup-your-site-ai' );
 		expect( replacedWith ).toBeUndefined();
+		expect( mockFetchDomain ).not.toHaveBeenCalled();
 	} );
 
 	it( 'keeps the setup chooser when no domain is in the cart', async () => {
