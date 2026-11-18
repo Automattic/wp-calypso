@@ -11,8 +11,9 @@ import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
+import { getUrlOnOrigins } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
 import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
@@ -52,6 +53,21 @@ function initialize() {
 	];
 
 	return stepsWithRequiredLogin( steps );
+}
+
+/**
+ * The template comes from the query string, so accept the URL the domain completes
+ * only on this origin or the dashboard's.
+ */
+function getDomainConnectionSetupUrl( template: string | undefined, domain: string ) {
+	return (
+		template &&
+		getUrlOnOrigins(
+			template.replace( '%s', domain ),
+			[ window.location.origin, ...dashboardOrigins() ],
+			window.location.origin
+		)
+	);
 }
 
 /**
@@ -223,9 +239,11 @@ const domain: FlowV2< typeof initialize > = {
 						const queryArgs = getQueryArgs( window.location.href );
 						const domainConnectionSetupUrl = queryArgs.domainConnectionSetupUrl as
 							string | undefined;
-						window.location.href = domainConnectionSetupUrl
-							? domainConnectionSetupUrl.replace( '%s', providedDependencies.domain )
-							: defaultRedirect;
+						window.location.href =
+							getDomainConnectionSetupUrl(
+								domainConnectionSetupUrl,
+								providedDependencies.domain
+							) || defaultRedirect;
 						return;
 					}
 
@@ -277,9 +295,8 @@ const domain: FlowV2< typeof initialize > = {
 								await wpcom.req.post( `/sites/${ site.ID }/add-domain-mapping`, { domain } );
 								/// Redirect to appropriate domains page
 								const redirectUrl =
-									domainConnectionSetupUrl && domain
-										? domainConnectionSetupUrl.replace( '%s', domain )
-										: defaultRedirect;
+									( domain && getDomainConnectionSetupUrl( domainConnectionSetupUrl, domain ) ) ||
+									defaultRedirect;
 								return {
 									redirectTo: redirectUrl,
 								};

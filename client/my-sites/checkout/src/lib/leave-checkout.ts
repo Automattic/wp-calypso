@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	isTailoredSignupFlow,
 	SITE_MIGRATION_FLOW,
@@ -130,20 +129,15 @@ export const leaveCheckout = ( {
 		if ( searchParams.has( 'cancel_to' ) ) {
 			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
 
-			if ( isRelativeUrl( cancelPath ) ) {
+			const allowedUrl = getUrlOnOrigins(
+				cancelPath,
+				[ window.location.origin, ...dashboardOrigins(), ...jetpackCloudOrigins( cancelPath ) ],
+				window.location.href
+			);
+			if ( allowedUrl ) {
 				// We use window.location.href instead of navigate() because navigate() uses page.show()
 				// which silently fails for /setup/ Stepper routes. Since we're leaving checkout entirely,
 				// the SPA optimization from navigate() provides no meaningful benefit.
-				// Rebuilt from this origin so the user-supplied part can only ever be the path.
-				const { pathname, search, hash } = new URL( cancelPath, window.location.href );
-				window.location.href = window.location.origin + pathname + search + hash;
-				return;
-			}
-			const allowedUrl = getUrlOnOrigins( cancelPath, [
-				...dashboardOrigins(),
-				...jetpackCloudOrigins(),
-			] );
-			if ( allowedUrl ) {
 				window.location.href = allowedUrl;
 				return;
 			}
@@ -158,23 +152,15 @@ export const leaveCheckout = ( {
 	navigate( closeUrl );
 };
 
-const JETPACK_CLOUD_HOSTNAMES = [ 'cloud.jetpack.com', 'jetpack.cloud.localhost' ];
-
 /**
  * Jetpack Cloud sends its purchases pages here for renewals and upgrades, and
- * `cancel_to` points back at them. Local hosts run on the dev server's port.
+ * `cancel_to` points back at them. The local host takes any port, since its dev
+ * server needn't share this one's (`start-jetpack-cloud-p` runs on 3001).
  */
-function jetpackCloudOrigins() {
-	const port = config( 'port' ) ?? 3000;
-	return JETPACK_CLOUD_HOSTNAMES.map( ( hostname ) =>
-		hostname.endsWith( '.localhost' ) ? `http://${ hostname }:${ port }` : `https://${ hostname }`
-	);
-}
-
-export function isRelativeUrl( url: string ) {
+function jetpackCloudOrigins( url: string ) {
+	let port = '';
 	try {
-		return new URL( url, window.location.href ).origin === window.location.origin;
-	} catch {
-		return false;
-	}
+		port = new URL( url ).port;
+	} catch {}
+	return [ 'https://cloud.jetpack.com', `http://jetpack.cloud.localhost${ port && `:${ port }` }` ];
 }
