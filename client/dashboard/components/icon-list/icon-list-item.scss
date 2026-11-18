@@ -9,8 +9,8 @@
 
 		svg {
 			flex-shrink: 0;
-			color: $gray-700;
-			fill: $gray-700;
+			color: var( --wpds-color-foreground-content-neutral-weak );
+			fill: var( --wpds-color-foreground-content-neutral-weak );
 		}
 	}
 

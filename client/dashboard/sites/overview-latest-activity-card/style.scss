@@ -9,7 +9,7 @@
 
         div[role="row"]:hover {
             .dataviews-view-list__fields {
-                color: $gray-700;
+                color: var( --wpds-color-foreground-content-neutral-weak );
             }
         }
     }
@@ -21,6 +21,6 @@
     top: 50%;
     inset-inline-start: 50%;
     transform: translate(-50%, -50%);
-    color: $gray-700;
-    fill: $gray-700;
+    color: var( --wpds-color-foreground-content-neutral-weak );
+    fill: var( --wpds-color-foreground-content-neutral-weak );
 }
