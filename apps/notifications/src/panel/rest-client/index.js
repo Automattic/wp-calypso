@@ -1,6 +1,6 @@
 import debugFactory from 'debug';
 import repliesCache from '../comment-replies-cache';
-import { reportError } from '../helpers/log-error';
+import { reportRequestError } from '../helpers/log-error';
 import { recordTracksEvent } from '../helpers/stats';
 import { store } from '../state';
 import actions from '../state/actions';
@@ -42,6 +42,7 @@ export class Client {
 		// Per-tab load-more exhaustion, keyed by tab name.
 		this.filteredHasMore = {};
 		this.gettingFilteredNotes = false;
+		this.loadMoreRetryAt = 0;
 		this.retries = 0;
 		this.subscribeTry = 0;
 		this.subscribeTries = 3;
@@ -185,7 +186,7 @@ function getNote( note_id, livePushMessage ) {
 
 	fetchNote( note_id, parameters, ( error, data ) => {
 		if ( error ) {
-			reportError( 'load-note', error, {
+			reportRequestError( 'load-note', error, {
 				request: 'getNote',
 				note_id,
 				status: error.status,
@@ -243,15 +244,18 @@ function getNotes( before, livePushMessages = [] ) {
 		this.gettingNotes = false;
 
 		if ( error ) {
-			reportError( before ? 'load-more' : 'load', error, {
-				request: 'getNotes',
-				before: before ?? null,
-				retries: this.retries,
-				status: error.status,
-				code: error.error,
-			} );
+			if ( before || this.retries === 0 ) {
+				reportRequestError( before ? 'load-more' : 'load', error, {
+					request: 'getNotes',
+					before: before ?? null,
+					retries: this.retries,
+					status: error.status,
+					code: error.error,
+				} );
+			}
 			// Load-more: clear the spinner, leave state untouched; scrolling retries.
 			if ( before ) {
+				this.loadMoreRetryAt = Date.now() + settings.refresh_ms;
 				store.dispatch( actions.ui.loadedNotes() );
 				return;
 			}
@@ -371,12 +375,14 @@ function getNotesList() {
 		debug( 'getNotesList callback:', error, data );
 		this.gettingNotes = false;
 		if ( error ) {
-			reportError( 'refresh', error, {
-				request: 'getNotesList',
-				retries: this.retries,
-				status: error.status,
-				code: error.error,
-			} );
+			if ( this.retries === 0 ) {
+				reportRequestError( 'refresh', error, {
+					request: 'getNotesList',
+					retries: this.retries,
+					status: error.status,
+					code: error.error,
+				} );
+			}
 			this.retries = this.retries + 1;
 			const backoff_ms = Math.min(
 				settings.refresh_ms * ( this.retries + 1 ),
@@ -510,12 +516,15 @@ function getFilteredNotes( before ) {
 		const activeTabNeedsFetch = this.filter && this.isVisible && this.filterName !== key;
 
 		if ( error ) {
-			reportError( 'load-filter', error, {
+			reportRequestError( 'load-filter', error, {
 				request: 'getFilteredNotes',
 				before: before ?? null,
 				status: error.status,
 				code: error.error,
 			} );
+			if ( before ) {
+				this.loadMoreRetryAt = Date.now() + settings.refresh_ms;
+			}
 			store.dispatch( actions.ui.loadedNotes( { filter: key } ) );
 			if ( activeTabNeedsFetch ) {
 				this.getFilteredNotes();
@@ -749,7 +758,7 @@ function updateLastSeenTime( proposedTime, fromStorage ) {
 	// Update the database only if an unseen note has become visible.
 	if ( fromNote ) {
 		debug( 'updateLastSeenTime 3', this.lastSeenTime );
-		sendLastSeenTime( this.lastSeenTime ).catch( ( error ) => reportError( 'seen', error ) );
+		sendLastSeenTime( this.lastSeenTime ).catch( ( error ) => reportRequestError( 'seen', error ) );
 	}
 
 	return true;
@@ -794,6 +803,10 @@ function handleStorageEvent( event ) {
 }
 
 function loadMore() {
+	if ( Date.now() < this.loadMoreRetryAt ) {
+		return;
+	}
+
 	// Filtered tabs paginate their own window, advancing only while the server
 	// still has matching notes.
 	if ( this.filter ) {

@@ -119,6 +119,22 @@ describe( 'RestClient', () => {
 			expect( ids ).toContain( 71 ); // older page added
 		} );
 
+		it( 'waits before retrying a failed page instead of re-requesting it straight away', () => {
+			seedFirstWindow();
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
+			getCalls.length = 0;
+
+			client.loadMore();
+			expect( getCalls ).toHaveLength( 0 );
+
+			vi.setSystemTime( Date.now() + 30000 );
+			client.loadMore();
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query ).toHaveProperty( 'before' );
+		} );
+
 		it( 'does not send before on the initial window fetch', () => {
 			client.getNotes();
 			expect( getCalls[ 0 ].query ).not.toHaveProperty( 'before' );
