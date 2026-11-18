@@ -55,6 +55,7 @@ beforeEach( () => {
 		.reply( 200, { available_source_connections: [] } );
 } );
 afterEach( () => {
+	vi.useRealTimers();
 	queryClient.clear();
 	vi.clearAllMocks();
 } );
@@ -81,7 +82,11 @@ test( 'an old cached status hides Cancel until the normal status refresh confirm
 	expect( cancelButton() ).not.toBeInTheDocument();
 } );
 
-test( 'a recoverable failure offers Cancel alongside retry only when eligible', async () => {
+test( 'a recoverable failure offers Cancel when the start cooldown expires', async () => {
+	vi.useFakeTimers( {
+		shouldAdvanceTime: true,
+		toNotFake: [ 'nextTick', 'setImmediate', 'queueMicrotask' ],
+	} );
 	const failed = migration( 'failed', {
 		findings: [
 			{
@@ -101,7 +106,7 @@ test( 'a recoverable failure offers Cancel alongside retry only when eligible', 
 	).toBeVisible();
 	expect( cancelButton() ).not.toBeInTheDocument();
 	replyStatus( { ...failed, can_cancel: true } );
-	await act( () => queryClient.refetchQueries( siteWordPressMigrationStatusQuery( site.ID ) ) );
+	act( () => vi.advanceTimersByTime( 35000 ) );
 	expect( await screen.findByRole( 'button', { name: 'Cancel this migration' } ) ).toBeEnabled();
 } );
 

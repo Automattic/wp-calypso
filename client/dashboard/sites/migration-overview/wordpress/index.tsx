@@ -24,6 +24,9 @@ import type { Site, WordPressMigrationCancellation } from '@automattic/api-core'
 // How long a completed migration can leave its site locked before we stop asking the user to wait.
 const UNLOCK_GRACE_PERIOD = 30000;
 
+// Allow the 30-second start lock to expire and a deferred assisted handoff to run.
+const STOPPED_STATUS_REFRESH_DELAY = 35000;
+
 const KNOWN_STATUSES = [
 	'not_started',
 	'running',
@@ -91,6 +94,14 @@ export function WordPressMigration( { site }: { site: Site } ) {
 
 	// A stopped migration can also be taken back to that step, until it's no longer stopped, wherever it was started from.
 	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
+	const awaitingCooldown = isStopped && migration.can_cancel === false && ! migration.handed_off;
+	useEffect( () => {
+		if ( awaitingCooldown ) {
+			const timeout = setTimeout( () => refetch(), STOPPED_STATUS_REFRESH_DELAY );
+			return () => clearTimeout( timeout );
+		}
+	}, [ awaitingCooldown, migration?.started_at, refetch, site.ID ] );
+
 	const [ isBackToSetup, setIsBackToSetup ] = useState( false );
 	useEffect( () => {
 		if ( ! isStopped ) {
