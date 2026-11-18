@@ -51,6 +51,11 @@ $pane-height: calc(
 	}
 }
 
+.dashboard-notifications-inbox__detail.is-empty {
+	justify-content: center;
+	padding: $grid-unit-30;
+}
+
 .dashboard-notifications-inbox__tabs,
 .dashboard-notifications-inbox__tab-panel {
 	display: flex;

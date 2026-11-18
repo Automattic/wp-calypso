@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createMemoryHistory, createRouter } from '@tanstack/react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import { AnalyticsProvider } from '../../app/analytics';
 import { AuthContext } from '../../app/auth';
 import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from '../../app/context';
@@ -30,13 +30,37 @@ vi.mock( '@automattic/notifications/src/inbox', () => ( {
 					{ `Open a note from ${ filterName }` }
 				</button>
 			),
-			detail: selectedNoteId && (
+			detail: selectedNoteId && selectedNoteId !== '999' && (
 				<button onClick={ () => setSelectedNoteId( undefined ) }>
 					{ `Close note ${ selectedNoteId }` }
 				</button>
 			),
 		} ),
 } ) );
+
+/**
+ * The shared test setup stubs matchMedia to never match, which this page reads as a wide screen.
+ * `useMediaQuery` caches each MediaQueryList, so a narrow screen is set on the lists already handed out.
+ */
+const mediaQueryLists: { matches: boolean }[] = [];
+let isNarrowScreen = false;
+
+function trackMediaQueryLists() {
+	const matchMedia = ( window.matchMedia as Mock ).getMockImplementation();
+	( window.matchMedia as Mock ).mockImplementation( ( query: string ) => {
+		const mediaQueryList = matchMedia?.( query );
+		mediaQueryList.matches = isNarrowScreen;
+		mediaQueryLists.push( mediaQueryList );
+		return mediaQueryList;
+	} );
+}
+
+function setNarrowScreen( isNarrow: boolean ) {
+	isNarrowScreen = isNarrow;
+	mediaQueryLists.forEach( ( mediaQueryList ) => {
+		mediaQueryList.matches = isNarrow;
+	} );
+}
 
 async function renderNotifications( initialPath: string ) {
 	const router = createRouter( {
@@ -64,6 +88,10 @@ async function renderNotifications( initialPath: string ) {
 }
 
 describe( '<Notifications>', () => {
+	beforeAll( trackMediaQueryLists );
+
+	afterEach( () => setNarrowScreen( false ) );
+
 	test( 'shows every notification by default', async () => {
 		await renderNotifications( '/notifications' );
 
@@ -110,6 +138,41 @@ describe( '<Notifications>', () => {
 		await renderNotifications( '/notifications/42' );
 
 		expect( await screen.findByRole( 'button', { name: 'Close note 42' } ) ).toBeVisible();
+	} );
+
+	test( 'says that no notification is selected until one is opened', async () => {
+		const user = userEvent.setup();
+		await renderNotifications( '/notifications' );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No notification selected' } )
+		).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Open a note from all' } ) );
+
+		await screen.findByRole( 'button', { name: 'Close note 42' } );
+		expect(
+			screen.queryByRole( 'heading', { name: 'No notification selected' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'does not say that no notification is selected while a linked note loads', async () => {
+		await renderNotifications( '/notifications/999' );
+
+		await screen.findByRole( 'button', { name: 'Open a note from all' } );
+		expect(
+			screen.queryByRole( 'heading', { name: 'No notification selected' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows only the list on a narrow screen with no notification open', async () => {
+		setNarrowScreen( true );
+		await renderNotifications( '/notifications' );
+
+		expect( await screen.findByRole( 'button', { name: 'Open a note from all' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'No notification selected' } )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'goes back to the list in one step after moving between notes', async () => {
