@@ -1,26 +1,26 @@
 @import 'calypso/lib/color-scheme/dark-theme';
 
-/* Command Palette */
 @mixin dashboard-dark-theme-command-palette {
+	// `@wordpress/commands` hardcodes light colors; drop once it uses WPDS tokens.
 	.commands-command-menu__header .components-button {
-		border-color: var( --dashboard-field__border-color );
+		border-color: var( --wpds-color-stroke-interactive-neutral );
 	}
 
 	.commands-command-menu__container {
 		[cmdk-input] {
 			background: transparent;
-			color: var( --dashboard__text-color );
+			color: var( --wpds-color-foreground-content-neutral );
 
 			&::placeholder {
-				color: var( --dashboard__text-muted-color );
+				color: var( --wpds-color-foreground-content-neutral-weak );
 			}
 		}
 
 		[cmdk-item] {
-			color: var( --dashboard__text-color );
+			color: var( --wpds-color-foreground-content-neutral );
 
 			&[aria-disabled='true'] {
-				color: var( --dashboard__text-muted-color );
+				color: var( --wpds-color-foreground-content-neutral-weak );
 			}
 
 			svg {
@@ -29,39 +29,38 @@
 
 			&[aria-selected='true'] > div,
 			&:active > div {
-				color: var( --wp-components-color-foreground-inverted );
+				color: var( --wpds-color-foreground-interactive-brand-strong );
 			}
 		}
 
 		[cmdk-root] > [cmdk-list] {
 			&:has( [cmdk-group-items]:not( :empty ) ),
 			&:has( [cmdk-empty] ) {
-				border-top-color: var( --dashboard-surface__border-color );
+				border-top-color: var( --wpds-color-stroke-surface-neutral );
 			}
 
 			[cmdk-group-heading] {
-				color: var( --dashboard__text-color );
+				color: var( --wpds-color-foreground-content-neutral );
 			}
 		}
 
 		[cmdk-empty] {
-			color: var( --dashboard__text-color );
+			color: var( --wpds-color-foreground-content-neutral );
 		}
 	}
 
 	.commands-command-menu__item-category {
-		color: var( --dashboard__text-muted-color );
+		color: var( --wpds-color-foreground-content-neutral-weak );
 	}
 
 	.commands-command-menu__container
 		[cmdk-item][aria-selected='true']
 		.commands-command-menu__item-category,
 	.commands-command-menu__container [cmdk-item]:active .commands-command-menu__item-category {
-		color: var( --wp-components-color-foreground-inverted );
+		color: var( --wpds-color-foreground-interactive-brand-strong );
 	}
 }
 
-/* Form Controls */
 @mixin dashboard-dark-theme-form-controls {
 	// `@wordpress/components` hardcodes the invalid field border color; drop once it uses tokens.
 	.components-validated-control:has( :is( input, select ):invalid[data-validity-visible] )
@@ -74,7 +73,24 @@
 	}
 }
 
-/* Emails */
+@mixin dashboard-dark-theme-agenttic {
+	// `@automattic/agenttic-ui` declares its own light tokens on `.agenttic`; drop once it reads WPDS tokens.
+	.agenttic {
+		--color-background: var( --wpds-color-background-surface-neutral );
+		--color-foreground: var( --wpds-color-foreground-content-neutral );
+		--color-popover: var( --wpds-color-background-surface-neutral );
+		--color-popover-muted: var( --wpds-color-background-surface-neutral-strong );
+		--color-primary: var( --wpds-color-background-interactive-brand-strong );
+		--color-primary-foreground: var( --wpds-color-foreground-interactive-brand-strong );
+		--color-muted: var( --wpds-color-stroke-surface-neutral );
+		--color-muted-foreground: var( --wpds-color-foreground-content-neutral-weak );
+		--color-input-border: var( --wpds-color-stroke-surface-neutral );
+		--color-input-border-focused: var( --wpds-color-stroke-interactive-neutral );
+		--color-ring: var( --wpds-color-stroke-focus );
+		--color-link: var( --wpds-color-foreground-interactive-brand );
+	}
+}
+
 @mixin dashboard-dark-theme-emails {
 	// The provider logo ships as a dark image; drop once it has a light variant.
 	.email-provider-powered-by {
@@ -82,6 +98,7 @@
 	}
 }
 
+// Shows the dark variant of `ThemedIllustration` assets; this is the swap itself, not an override.
 @mixin dashboard-dark-theme-illustrations {
 	.dashboard-themed-illustration--light {
 		display: none;
@@ -92,12 +109,11 @@
 	}
 }
 
-// :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	@include color-scheme-dark-theme-tokens;
 	@include color-scheme-dark-theme-calypso-properties;
 	@include color-scheme-dark-theme-color-scheme;
-	@include color-scheme-dark-theme-agenttic;
+	@include dashboard-dark-theme-agenttic;
 	@include dashboard-dark-theme-command-palette;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
