@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import routeReducer from 'calypso/state/route/reducer';
@@ -8,6 +9,11 @@ import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { leaveCheckout } from '../../lib/leave-checkout';
 import CheckoutPayLaterButton from '../checkout-pay-later-button';
+
+jest.mock( '@automattic/composite-checkout', () => ( {
+	FormStatus: { READY: 'ready', SUBMITTING: 'submitting' },
+	useFormStatus: jest.fn(),
+} ) );
 
 jest.mock( '../../lib/leave-checkout', () => ( {
 	leaveCheckout: jest.fn(),
@@ -34,6 +40,7 @@ const render = ( query: Record< string, string > ) =>
 describe( 'CheckoutPayLaterButton', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		( useFormStatus as jest.Mock ).mockReturnValue( { formStatus: FormStatus.READY } );
 	} );
 
 	it( 'leaves for the Dashboard back URL and keeps the cart', async () => {
@@ -47,6 +54,13 @@ describe( 'CheckoutPayLaterButton', () => {
 			forceCheckoutBackUrl: OVERVIEW_URL,
 			tracksEvent: 'calypso_checkout_pay_later_clicked',
 		} );
+	} );
+
+	it( 'is disabled while the payment is submitting', () => {
+		( useFormStatus as jest.Mock ).mockReturnValue( { formStatus: FormStatus.SUBMITTING } );
+		render( { pay_later: '1', checkoutBackUrl: OVERVIEW_URL } );
+
+		expect( screen.getByRole( 'button', { name: 'Pay later' } ) ).toBeDisabled();
 	} );
 
 	it( 'is hidden unless the checkout asks for it', () => {

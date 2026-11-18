@@ -1,3 +1,4 @@
+import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -22,6 +23,7 @@ export default function CheckoutPayLaterButton() {
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? undefined;
 	const queryArgs = useSelector( getInitialQueryArguments ) ?? {};
 	const backUrl = useValidCheckoutBackUrl( siteSlug );
+	const { formStatus } = useFormStatus();
 
 	if ( queryArgs.pay_later !== '1' || ! backUrl ) {
 		return null;
@@ -32,6 +34,7 @@ export default function CheckoutPayLaterButton() {
 			<Button
 				__next40pxDefaultSize
 				variant="secondary"
+				disabled={ formStatus === FormStatus.SUBMITTING }
 				onClick={ () =>
 					leaveCheckout( {
 						siteSlug,
