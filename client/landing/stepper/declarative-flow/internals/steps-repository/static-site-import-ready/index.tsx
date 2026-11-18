@@ -1,21 +1,19 @@
-import { wowFunnelPendingQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
-import { Button, Modal, __experimentalHStack as HStack } from '@wordpress/components';
+import { sitePreviewLinkCreateMutation, sitePreviewLinksQuery } from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { Button, Modal, Spinner, __experimentalHStack as HStack } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, chevronDown, external, wordpress } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useState } from 'react';
+import { addQueryArgs } from '@wordpress/url';
+import { useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { getSourceHost } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
-export type StaticSiteImportReadyStepSubmits = { action: 'launch' };
-
-// The share link is made when the build lands, so it can come a little after the move finishes.
-const SHARE_URL_POLL_INTERVAL = 3000;
-const SHARE_URL_MAX_POLLS = 40;
+export type StaticSiteImportReadyStepSubmits = { action: 'choose_plan' };
 
 const StaticSiteImportReadyStep: StepType< {
 	accepts: {
@@ -28,27 +26,39 @@ const StaticSiteImportReadyStep: StepType< {
 	submits: StaticSiteImportReadyStepSubmits;
 } > = function StaticSiteImportReadyStep( { navigation, siteId, siteSlug, from } ) {
 	const { __ } = useI18n();
-	const { data: pending } = useQuery( {
-		...wowFunnelPendingQuery(),
-		staleTime: 0,
-		refetchInterval: ( query ) => {
-			const found = query.state.data?.preview_sites?.find( ( p ) => p.blog_id === siteId );
-			// Until the preview is listed with its share link, which can lag the move by a little.
-			return ! found?.share_url && query.state.dataUpdateCount < SHARE_URL_MAX_POLLS
-				? SHARE_URL_POLL_INTERVAL
-				: false;
-		},
+	// The share link gets past Coming Soon, for the preview and for anyone it's opened in. Use the
+	// one the preview has, or make one.
+	const { data: links, isError: hasLinksError } = useQuery( {
+		...sitePreviewLinksQuery( siteId ?? 0 ),
+		enabled: Boolean( siteId ),
 	} );
-	const preview = pending?.preview_sites?.find( ( p ) => p.blog_id === siteId );
-	const shareUrl = preview?.share_url || undefined;
+	const {
+		mutate: createLink,
+		data: createdLink,
+		isError: hasCreateError,
+	} = useMutation( sitePreviewLinkCreateMutation( siteId ?? 0 ) );
+	const hasAskedForLink = useRef( false );
+	useEffect( () => {
+		if ( links?.length === 0 && ! hasAskedForLink.current ) {
+			hasAskedForLink.current = true;
+			createLink();
+		}
+	}, [ links, createLink ] );
+	const site = useSite( siteId );
+	const siteHome = site?.URL || ( siteSlug ? `https://${ siteSlug }` : '' );
+	const shareCode = links?.[ 0 ]?.code ?? createdLink?.code;
+	const shareUrl =
+		shareCode && siteHome
+			? addQueryArgs( `${ siteHome.replace( /\/+$/, '' ) }/`, { share: shareCode } )
+			: undefined;
+	const hasGivenUp = ! siteId || hasLinksError || hasCreateError;
 	const sourceHost = getSourceHost( from );
-	// The share link gets past Coming Soon, for the preview and for anyone it's opened in.
-	const siteUrl = shareUrl || ( siteSlug ? `https://${ siteSlug }` : '' );
+	const siteUrl = shareUrl || siteHome;
 	const destinationHost = getSourceHost( siteUrl );
 
 	// The welcome asks first; looking around moves it to a card in the corner, which can fold away.
 	const [ view, setView ] = useState< 'welcome' | 'card' | 'folded' >( 'welcome' );
-	const launch = () => navigation.submit?.( { action: 'launch' } );
+	const choosePlan = () => navigation.submit?.( { action: 'choose_plan' } );
 
 	const addresses = (
 		<dl className="static-site-import-ready-step__addresses">
@@ -77,12 +87,25 @@ const StaticSiteImportReadyStep: StepType< {
 			<DocumentHead title={ __( 'Your site is on WordPress.com' ) } />
 			<div className="static-site-import-ready-step">
 				{ /* Only the share link gets past Coming Soon, so the preview waits for it. */ }
-				{ shareUrl && (
+				{ shareUrl ? (
 					<iframe
 						className="static-site-import-ready-step__site"
 						src={ shareUrl }
 						title={ __( 'Your site on WordPress.com' ) }
 					/>
+				) : (
+					<div className="static-site-import-ready-step__loading" role="status">
+						{ hasGivenUp ? (
+							<span>
+								{ __( 'We couldn’t load your site here. You can still choose a plan for it.' ) }
+							</span>
+						) : (
+							<>
+								<Spinner />
+								<span>{ __( 'Loading your site…' ) }</span>
+							</>
+						) }
+					</div>
 				) }
 			</div>
 			{ view === 'welcome' && (
@@ -110,15 +133,7 @@ const StaticSiteImportReadyStep: StepType< {
 					</p>
 					{ addresses }
 					<HStack justify="flex-end" spacing={ 3 }>
-						<Button __next40pxDefaultSize variant="secondary" onClick={ launch }>
-							{ __( 'Launch site' ) }
-						</Button>
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							onClick={ () => setView( 'card' ) }
-							disabled={ ! shareUrl }
-						>
+						<Button __next40pxDefaultSize variant="primary" onClick={ () => setView( 'card' ) }>
 							{ __( 'Look around' ) }
 						</Button>
 					</HStack>
@@ -143,8 +158,8 @@ const StaticSiteImportReadyStep: StepType< {
 					</HStack>
 					{ addresses }
 					<p>{ __( 'Private for now. Look around, then launch it when you’re ready.' ) }</p>
-					<Button __next40pxDefaultSize variant="primary" onClick={ launch }>
-						{ __( 'Launch site' ) }
+					<Button __next40pxDefaultSize variant="primary" onClick={ choosePlan }>
+						{ __( 'Choose a plan' ) }
 					</Button>
 				</section>
 			) }
@@ -162,8 +177,8 @@ const StaticSiteImportReadyStep: StepType< {
 					>
 						{ __( 'Your site on WordPress.com' ) }
 					</Button>
-					<Button size="compact" __next40pxDefaultSize variant="primary" onClick={ launch }>
-						{ __( 'Launch site' ) }
+					<Button size="compact" __next40pxDefaultSize variant="primary" onClick={ choosePlan }>
+						{ __( 'Choose a plan' ) }
 					</Button>
 				</section>
 			) }

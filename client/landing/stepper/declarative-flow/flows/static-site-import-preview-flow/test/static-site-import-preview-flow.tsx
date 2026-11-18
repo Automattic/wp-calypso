@@ -307,7 +307,11 @@ describe( 'Static site import preview flow', () => {
 				dependencies,
 			} );
 
-			expect( destination ).toMatchDestination( { step: STEPS.STATIC_SITE_IMPORT_READY } );
+			// The URL names the preview too, in case the flow state is dropped on the way.
+			expect( destination ).toMatchDestination( {
+				step: STEPS.STATIC_SITE_IMPORT_READY,
+				query: { previewSiteId: '456', previewSiteSlug: 'preview.wpcomstaging.com' },
+			} );
 			expect( window.location.replace ).not.toHaveBeenCalled();
 		} );
 
@@ -352,8 +356,33 @@ describe( 'Static site import preview flow', () => {
 			} );
 		} );
 
+		it( 'reads the preview from the URL when the flow state has lost it', () => {
+			identify();
+			delete flowState[ STEPS.STATIC_SITE_IMPORT_READING.slug ];
+			const props = renderHookWithProvider( () => staticSiteImportPreviewFlow.useStepsProps(), {
+				wrapper: ( { children } ) => (
+					<MemoryRouter
+						initialEntries={ [
+							'/ready?previewSiteId=456&previewSiteSlug=preview.wpcomstaging.com',
+						] }
+					>
+						{ children }
+					</MemoryRouter>
+				),
+			} ).result.current[ STEPS.STATIC_SITE_IMPORT_READY.slug ];
+
+			expect( props ).toEqual( {
+				siteId: 456,
+				siteSlug: 'preview.wpcomstaging.com',
+				from: SOURCE.from,
+			} );
+		} );
+
 		it( 'goes straight to checkout with the Personal plan, coming back to the Overview', () => {
-			runNavigation( { from: STEPS.STATIC_SITE_IMPORT_READY, dependencies: { action: 'launch' } } );
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READY,
+				dependencies: { action: 'choose_plan' },
+			} );
 
 			const overview = dashboardLink( '/sites/preview.wpcomstaging.com' );
 			const [ url ] = jest.mocked( window.location.replace ).mock.calls.at( -1 );
@@ -368,11 +397,25 @@ describe( 'Static site import preview flow', () => {
 			} );
 		} );
 
+		it( 'goes to checkout for the preview named on the URL when the flow state has lost it', () => {
+			delete flowState[ STEPS.STATIC_SITE_IMPORT_READING.slug ];
+			window.location.search = '?previewSiteId=456&previewSiteSlug=preview.wpcomstaging.com';
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READY,
+				dependencies: { action: 'choose_plan' },
+			} );
+
+			const [ url ] = jest.mocked( window.location.replace ).mock.calls.at( -1 );
+			expect( String( url ).split( '?' )[ 0 ] ).toBe(
+				'/checkout/preview.wpcomstaging.com/personal-bundle'
+			);
+		} );
+
 		it( 'shows the error step without a started move', () => {
 			delete flowState[ STEPS.STATIC_SITE_IMPORT_READING.slug ];
 			const destination = runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READY,
-				dependencies: { action: 'launch' },
+				dependencies: { action: 'choose_plan' },
 			} );
 
 			expect( destination ).toMatchDestination( { step: STEPS.ERROR } );

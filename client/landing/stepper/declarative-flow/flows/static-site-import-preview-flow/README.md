@@ -34,7 +34,7 @@ The progress step tracks the move with the dashboard’s own progress steps, sit
 The preview stays Coming Soon like every unpaid preview: WordPress.com keeps it hidden until a plan
 is bought. When the move finishes, the ready step shows the preview at its `?share=` link, which
 gets past Coming Soon, under **Your site is on WordPress.com**. **Look around** moves the welcome to a
-card in the corner, which folds to a pill, and lets the customer click around the preview; and **Launch site** goes straight to checkout with the Personal plan. Paying, leaving or
+card in the corner, which folds to a pill, and lets the customer click around the preview; and the card’s **Choose a plan** goes straight to checkout with the Personal plan. Paying, leaving or
 **Pay later** in checkout all come back to the preview’s Overview.
 
 ## Failures
@@ -64,7 +64,7 @@ registered.
 3. Go back in the browser. Confirm the flow returns to **Copying your site** for the same move,
    and no other preview site is created.
 4. Wait for the move to finish. Confirm **Your site is on WordPress.com** shows over the preview.
-   **Look around** moves the welcome to the corner card, and **Launch site** opens checkout with the
+   **Look around** moves the welcome to the corner card, and its **Choose a plan** opens checkout with the
    Personal plan.
 5. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
    skips the address step and shows the move’s progress the same way.

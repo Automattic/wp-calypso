@@ -37,6 +37,21 @@ const ALL_STEPS = [
 const normalizeSource = ( source = '' ) =>
 	source.trim() ? addSchemeIfMissing( source.trim(), 'https' ).replace( /\/+$/, '' ) : '';
 
+/**
+ * The preview a finished move was copied onto. The flow state can be dropped on the way, e.g. by a
+ * visit to checkout, so the ready step's URL names the preview too.
+ */
+function getPreview(
+	started: { action: string; previewSiteId?: number; previewSiteSlug?: string } | undefined,
+	query: URLSearchParams
+) {
+	const fromState = started?.action === 'continue' ? started : undefined;
+	return {
+		siteId: fromState?.previewSiteId || Number( query.get( 'previewSiteId' ) ) || undefined,
+		siteSlug: fromState?.previewSiteSlug || query.get( 'previewSiteSlug' ) || undefined,
+	};
+}
+
 /** A source named on the flow's URL. */
 const getSource = ( query: URLSearchParams ) => query.get( 'from' )?.trim() || '';
 
@@ -80,6 +95,7 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const { get } = useFlowState< typeof initialize >();
 		const { from, platform } = useSource();
+		const query = useQuery();
 		const started = get( STEPS.STATIC_SITE_IMPORT_READING.slug );
 		return {
 			[ STEPS.STATIC_SITE_IMPORT_READING.slug ]: {
@@ -100,8 +116,7 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 				platform,
 			},
 			[ STEPS.STATIC_SITE_IMPORT_READY.slug ]: {
-				siteId: started?.action === 'continue' ? started.previewSiteId : undefined,
-				siteSlug: started?.action === 'continue' ? started.previewSiteSlug : undefined,
+				...getPreview( started, query ),
 				from,
 			},
 		};
@@ -230,23 +245,37 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 
 				case STEPS.STATIC_SITE_IMPORT_PROGRESS.slug: {
 					if ( providedDependencies.action === 'finished' ) {
-						return navigate( STEPS.STATIC_SITE_IMPORT_READY.slug );
+						const { siteId, siteSlug } = getPreview(
+							get( STEPS.STATIC_SITE_IMPORT_READING.slug ),
+							new URLSearchParams()
+						);
+						const query = new URLSearchParams( window.location.search );
+						if ( siteId && siteSlug ) {
+							query.set( 'previewSiteId', String( siteId ) );
+							query.set( 'previewSiteSlug', siteSlug );
+						}
+						return navigate(
+							`${ STEPS.STATIC_SITE_IMPORT_READY.slug }?${ query.toString() }` as typeof _currentStep
+						);
 					}
 					// The preview's Overview shows how a move ended, and what can be done next.
 					return goToPreviewOverview();
 				}
 
 				case STEPS.STATIC_SITE_IMPORT_READY.slug: {
-					const started = get( STEPS.STATIC_SITE_IMPORT_READING.slug );
-					if ( started?.action !== 'continue' || ! started.previewSiteSlug ) {
+					const { siteSlug: previewSiteSlug } = getPreview(
+						get( STEPS.STATIC_SITE_IMPORT_READING.slug ),
+						new URLSearchParams( window.location.search )
+					);
+					if ( ! previewSiteSlug ) {
 						return navigate( STEPS.ERROR.slug );
 					}
 					// Paying, leaving or paying later all come back to the preview's Overview.
-					const overview = dashboardLink( `/sites/${ started.previewSiteSlug }` );
+					const overview = dashboardLink( `/sites/${ previewSiteSlug }` );
 					return goToCheckout( {
 						flowName: STATIC_SITE_IMPORT_PREVIEW_FLOW,
 						stepName: STEPS.STATIC_SITE_IMPORT_READY.slug,
-						siteSlug: started.previewSiteSlug,
+						siteSlug: previewSiteSlug,
 						plan: PLAN_PERSONAL,
 						destination: overview,
 						cancelDestination: overview,
