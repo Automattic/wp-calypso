@@ -106,6 +106,72 @@ $ui: ":is(.mcp-post-editor :is(#{$ui-roots}), .components-popover)";
 	background-color: #fff;
 }
 
+// The loader, as the host shell's inline CSS draws it before the script runs: the bar eases
+// towards 90% and holds there until the post is ready.
+#mcp-post-editor .mcp-post-editor-loader {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 24px;
+	height: 100vh;
+	min-height: 240px;
+	position: relative;
+	padding: 16px;
+	background: #e5e5e5;
+}
+
+// Under the bar, out of the flow, so the logo and the bar stay where the shell drew them: the
+// logo, the gap and the bar are 80px tall, centred.
+#mcp-post-editor .mcp-post-editor-loader__status {
+	position: absolute;
+	top: calc(50% + 52px);
+	right: 16px;
+	left: 16px;
+	margin: 0;
+	color: #757575;
+	font: $chrome-font;
+	text-align: center;
+}
+
+#mcp-post-editor .mcp-post-editor-loader__logo {
+	display: block;
+	width: 48px;
+	height: 48px;
+	fill: #3c434a;
+}
+
+#mcp-post-editor .mcp-post-editor-loader__bar {
+	width: 360px;
+	max-width: 70%;
+	height: 8px;
+	overflow: hidden;
+	border-radius: 4px;
+	background: #fff;
+}
+
+#mcp-post-editor .mcp-post-editor-loader__fill {
+	width: 90%;
+	height: 100%;
+	border-radius: 4px;
+	background: #1e1e1e;
+	animation: mcp-post-editor-loader 8s cubic-bezier(0.2, 0.6, 0.3, 1) both;
+}
+
+@keyframes mcp-post-editor-loader {
+	from {
+		width: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#mcp-post-editor .mcp-post-editor-loader__fill {
+		width: 40%;
+		animation: none;
+	}
+}
+
 // The page: a slim bar, then the canvas, which scrolls inside the panel's height, and a dock
 // floating over its bottom.
 .mcp-post-editor {

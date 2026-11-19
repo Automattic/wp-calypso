@@ -4,6 +4,7 @@ import { PostEditor, type EditorPost, type TitleSuggestions } from './editor';
 import { type Prompt, type TextSelection } from './editor/assistant';
 import { joinBlocks, splitBlocks } from './editor/blocks';
 import { changeLabel, type AgentChange, type Decision } from './editor/changes';
+import { Loader } from './editor/loader';
 import { mergePost } from './editor/merge';
 import { type ProofreadIssue } from './editor/proofread';
 import sanitize from './editor/sanitize';
@@ -45,6 +46,12 @@ type ConfigResult = {
 	font_faces_html?: string;
 };
 type Post = { title: string; content: string };
+// ChatGPT's own bridge, next to the MCP Apps one.
+declare global {
+	interface Window {
+		openai?: { sendFollowUpMessage?: ( args: { prompt: string } ) => Promise< void > };
+	}
+}
 
 const POLL_INTERVAL = 2000;
 const SAVE_DELAY = 1000;
@@ -108,6 +115,9 @@ let channel: BroadcastChannel | undefined;
 const persistentErrors: { open?: string; config?: string; host?: string; save?: string } = {};
 let styles: ConfigResult[ 'styles' ] = [];
 let hostContext: HostContext = {};
+let connected = false;
+// The loader shows until the page has connected and shown the first post, or an error.
+let loading = true;
 
 // The post the server and this page last agreed on, the user's latest, and what the editor shows.
 let base: Post = { title: '', content: '' };
@@ -179,6 +189,13 @@ function previewPost() {
 }
 
 function render() {
+	if ( loading && ( error || ( connected && editorPost ) ) ) {
+		loading = false;
+	}
+	if ( loading ) {
+		reactRoot.render( createElement( Loader, { status: statusMessage } ) );
+		return;
+	}
 	const { displayMode, availableDisplayModes, containerDimensions } = hostContext;
 	const isFullscreen = displayMode === 'fullscreen';
 	const fixedHeight =
@@ -222,7 +239,7 @@ function render() {
 			onSave: () => savePost(),
 			conflict: conflict === dismissedConflict ? undefined : conflict,
 			onConflict: resolveConflict,
-			canMessage: !! post && !! app.getHostCapabilities()?.message,
+			canMessage: !! post && canSendMessage(),
 			onPrompt: sendPrompt,
 			onAsk: ask,
 			onSelect: reportSelection,
@@ -799,6 +816,15 @@ const quoted = ( text: string ) =>
 		( quotes ) => '”'.repeat( quotes.length )
 	) }\n"""`;
 
+// ChatGPT's `window.openai.sendFollowUpMessage`, or the MCP Apps host's `ui/message`.
+function hasFollowUp() {
+	return typeof window.openai?.sendFollowUpMessage === 'function';
+}
+
+function canSendMessage() {
+	return hasFollowUp() || !! app.getHostCapabilities()?.message;
+}
+
 // The model reads the post from the server, so the typing goes there first.
 async function sendMessage( text: string, sent: string ) {
 	await flushUpdates();
@@ -808,8 +834,15 @@ async function sendMessage( text: string, sent: string ) {
 		return;
 	}
 	try {
-		const result = await app.sendMessage( { role: 'user', content: [ { type: 'text', text } ] } );
-		if ( result.isError ) {
+		let refused = false;
+		// ChatGPT's own call for a follow-up message, which returns nothing to check.
+		if ( hasFollowUp() ) {
+			await window.openai?.sendFollowUpMessage?.( { prompt: text } );
+		} else {
+			const result = await app.sendMessage( { role: 'user', content: [ { type: 'text', text } ] } );
+			refused = !! result.isError;
+		}
+		if ( refused ) {
 			error = 'refused';
 			showStatus(
 				'The host didn’t send the message. If it asks you to allow messages from this app, allow them and try again.'
@@ -1156,6 +1189,7 @@ showStatus( 'Connecting to the host…' );
 // autoResize (on by default) reports the page height to the host after every change.
 app.connect().then(
 	() => {
+		connected = true;
 		hostContext = app.getHostContext() ?? {};
 		if ( ! post && ! error ) {
 			statusMessage = 'Connected. Waiting for the post…';

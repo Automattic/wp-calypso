@@ -9,6 +9,9 @@ type Listener = ( result: unknown ) => void;
 // The page's host and the server's post, in place of the MCP host.
 const host = vi.hoisted( () => ( {
 	listeners: {} as Record< string, Listener >,
+	// The component the page last rendered.
+	rendered: '',
+	messages: [] as unknown[],
 	editor: undefined as
 		| undefined
 		| {
@@ -20,6 +23,8 @@ const host = vi.hoisted( () => ( {
 				titleSuggestions?: { id: string; titles: string[] };
 				onTitleSuggestionsDone: ( id: string ) => void;
 				onConflict: ( choice: string ) => void;
+				onPrompt: ( prompt: string ) => void;
+				canMessage: boolean;
 				readOnly: boolean;
 				status: string;
 				conflict?: string;
@@ -51,6 +56,10 @@ vi.mock( '@modelcontextprotocol/ext-apps/app-with-deps', () => ( {
 			return {};
 		}
 		getHostCapabilities() {
+			return {};
+		}
+		async sendMessage( params: unknown ) {
+			host.messages.push( params );
 			return {};
 		}
 		async callServerTool( { name, arguments: args }: { name: string; arguments: Args } ) {
@@ -94,7 +103,12 @@ vi.mock( '@modelcontextprotocol/ext-apps/app-with-deps', () => ( {
 vi.mock( '@wordpress/element', async ( importOriginal ) => ( {
 	...( await importOriginal< object >() ),
 	createRoot: () => ( {
-		render: ( element: { props: typeof host.editor } ) => ( host.editor = element.props ),
+		render: ( element: { type: { name: string }; props: typeof host.editor } ) => {
+			host.rendered = element.type.name;
+			if ( host.rendered !== 'Loader' ) {
+				host.editor = element.props;
+			}
+		},
 	} ),
 	flushSync: ( callback: () => void ) => callback(),
 } ) );
@@ -149,11 +163,65 @@ describe( 'the page', () => {
 		host.saveResults = [];
 		host.saves = [];
 		host.calls = [];
+		host.rendered = '';
+		host.messages = [];
 	} );
 
 	afterEach( () => {
 		vi.useRealTimers();
 		vi.unstubAllGlobals();
+	} );
+
+	it( 'shows the loader until the first post is in the editor', async () => {
+		await import( '../index' );
+		await vi.advanceTimersByTimeAsync( 0 );
+		expect( host.rendered ).toBe( 'Loader' );
+
+		await openPost( paragraph( 'Hi.' ) );
+		expect( host.rendered ).toBe( 'PostEditor' );
+	} );
+
+	it( 'replaces the loader with the error when the tool result fails', async () => {
+		await import( '../index' );
+		host.listeners.toolresult( { isError: true, content: [ { type: 'text', text: 'No post.' } ] } );
+		await vi.advanceTimersByTimeAsync( 0 );
+		expect( host.rendered ).toBe( 'PostEditor' );
+		expect( host.editor?.status ).toBe( 'Couldn’t open the post: No post.' );
+	} );
+
+	it( 'sends a chip’s prompt through ChatGPT’s follow-up call when it has one', async () => {
+		const prompts: unknown[] = [];
+		vi.stubGlobal( 'openai', {
+			sendFollowUpMessage: async ( args: unknown ) => void prompts.push( args ),
+		} );
+		await openPost( paragraph( 'Hi.' ) );
+		host.editor?.onPrompt( 'proofread' );
+		await vi.advanceTimersByTimeAsync( 0 );
+		expect( prompts ).toEqual( [ { prompt: expect.stringContaining( 'Proofread my post' ) } ] );
+		expect( host.messages ).toEqual( [] );
+		expect( host.editor?.status ).toBe( 'Asked: Proofread' );
+	} );
+
+	it( 'enables the chips with ChatGPT’s follow-up call when the host has no message capability', async () => {
+		await openPost( paragraph( 'Hi.' ) );
+		expect( host.editor?.canMessage ).toBe( false );
+
+		vi.resetModules();
+		vi.stubGlobal( 'openai', { sendFollowUpMessage: async () => {} } );
+		await openPost( paragraph( 'Hi.' ) );
+		expect( host.editor?.canMessage ).toBe( true );
+	} );
+
+	it( 'sends a chip’s prompt as a user message elsewhere', async () => {
+		await openPost( paragraph( 'Hi.' ) );
+		host.editor?.onPrompt( 'proofread' );
+		await vi.advanceTimersByTimeAsync( 0 );
+		expect( host.messages ).toEqual( [
+			{
+				role: 'user',
+				content: [ { type: 'text', text: expect.stringContaining( 'Proofread my post' ) } ],
+			},
+		] );
 	} );
 
 	it( 'keeps the markup the user didn’t edit byte for byte', async () => {
