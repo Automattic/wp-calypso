@@ -225,12 +225,15 @@ function chooseAddHandler( {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
-	// Akismet and some Marketplace products can be renewed in a "siteless" context.
-	// Without a product slug in the URL there is nothing for `addRenewalItems` to
-	// build a cart product from, so fall back to the subscription ID and let the
-	// backend derive the product from the subscription record.
+	// Akismet, some Marketplace and WordPress.com siteless products can be renewed
+	// in a "siteless" context. Without a product slug in the URL there is nothing
+	// for `addRenewalItems` to build a cart product from, so fall back to the
+	// subscription ID and let the backend derive the product from the subscription
+	// record.
 	if (
-		( sitelessCheckoutType === 'akismet' || sitelessCheckoutType === 'marketplace' ) &&
+		( sitelessCheckoutType === 'akismet' ||
+			sitelessCheckoutType === 'marketplace' ||
+			sitelessCheckoutType === 'wpcom' ) &&
 		originalPurchaseId
 	) {
 		return productAliasFromUrl ? 'addRenewalItems' : 'addRenewalBySubscriptionId';
@@ -513,8 +516,11 @@ function useAddRenewalBySubscriptionId( {
 					purchaseType: 'renewal',
 					// The backend decides whether the cart is a siteless one from these
 					// flags alone, and rejects Akismet plans in a cart without them.
+					// Without the WordPress.com flag it attaches the holding site's
+					// blog_id and then strips the product as not sold on a site.
 					isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 					isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
+					isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
 				},
 			} )
 		);
@@ -704,6 +710,7 @@ function createRenewalItemToAddToCart( {
 		purchaseId: String( purchaseId ),
 		isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 		isMarketplaceSitelessCheckout: sitelessCheckoutType === 'marketplace',
+		isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
 		purchaseType: 'renewal',
 		isGiftPurchase,
 	};

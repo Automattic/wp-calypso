@@ -94,6 +94,7 @@ describe( 'checkout routes', () => {
 			[ '/checkout/akismet/renew/:subscriptionId', checkoutAkismetSiteless ],
 			[ '/checkout/marketplace/renew/:subscriptionId', checkoutMarketplaceSiteless ],
 			[ '/checkout/passport/renew/:subscriptionId', checkoutMarketplaceSiteless ],
+			[ '/checkout/wpcom/renew/:subscriptionId', checkoutWpcomSiteless ],
 		] )( 'registers %s with its siteless handler', ( path, handler ) => {
 			registerCheckoutRoutes();
 
@@ -114,6 +115,7 @@ describe( 'checkout routes', () => {
 			'/checkout/akismet/renew/:subscriptionId',
 			'/checkout/marketplace/renew/:subscriptionId',
 			'/checkout/passport/renew/:subscriptionId',
+			'/checkout/wpcom/renew/:subscriptionId',
 		] )( 'registers %s ahead of the generic renewal route', ( path ) => {
 			registerCheckoutRoutes();
 

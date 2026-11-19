@@ -371,6 +371,18 @@ export function isStudioCodeHoldingSitePurchase( purchase: Purchase ): boolean {
 	return purchase.is_attached_to_holding_site && purchase.product_type === 'studio_code';
 }
 
+const WPCOM_HOLDING_SITE_DOMAIN = 'siteless.wp.com';
+
+/**
+ * Whether the purchase sits on the user's WordPress.com siteless holding site,
+ * where every product bought through `/checkout/wpcom/` lands. Purchases carry
+ * no holding-site kind, so the blog's domain is what tells it apart from the
+ * Akismet, Marketplace and A4A holding sites.
+ */
+export function isWpcomHoldingSitePurchase( purchase: Purchase ): boolean {
+	return purchase.is_attached_to_holding_site && purchase.domain === WPCOM_HOLDING_SITE_DOMAIN;
+}
+
 /**
  * Whether site-scoped endpoints can be called for this purchase's `blog_id`.
  *
@@ -716,6 +728,9 @@ function getServicePathForCheckoutFromPurchase( purchase: Purchase ): string {
 	if ( isMarketplaceHoldingSitePurchase( purchase ) ) {
 		return 'marketplace/';
 	}
+	if ( isWpcomHoldingSitePurchase( purchase ) ) {
+		return 'wpcom/';
+	}
 	return '';
 }
 
@@ -737,8 +752,8 @@ export function getRenewUrlForPurchases( purchases: Purchase[], backUrl?: string
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
 	const purchaseIds = purchases.map( ( purchase ) => purchase.ID ).join( ',' );
-	// Siteless Akismet and Marketplace renewals keep the service in the path
-	// because the route is what selects the service-specific checkout
+	// Siteless Akismet, Marketplace and WordPress.com renewals keep the service in
+	// the path because the route is what selects the service-specific checkout
 	// experience. Everything else renews from the subscription ID alone.
 	const servicePath = getServicePathForCheckoutFromPurchase( purchases[ 0 ] );
 

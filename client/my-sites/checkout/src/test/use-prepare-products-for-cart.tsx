@@ -95,7 +95,7 @@ describe( 'usePrepareProductsForCart for WordPress.com siteless checkout', () =>
 } );
 
 describe( 'usePrepareProductsForCart for siteless renewals', () => {
-	it.each( [ 'akismet', 'marketplace' ] as const )(
+	it.each( [ 'akismet', 'marketplace', 'wpcom' ] as const )(
 		'renews a %s subscription from the subscription ID alone',
 		( sitelessCheckoutType ) => {
 			const { result } = renderPrepareProducts( {
@@ -128,6 +128,7 @@ describe( 'usePrepareProductsForCart for siteless renewals', () => {
 	it.each( [
 		[ 'akismet', 'isAkismetSitelessCheckout' ],
 		[ 'marketplace', 'isMarketplaceSitelessCheckout' ],
+		[ 'wpcom', 'isWpcomSitelessCheckout' ],
 	] as const )(
 		'flags a %s renewal as siteless so the backend keeps it in the cart',
 		( sitelessCheckoutType, extraKey ) => {
@@ -139,6 +140,19 @@ describe( 'usePrepareProductsForCart for siteless renewals', () => {
 			expect( result.current.productsForCart[ 0 ].extra[ extraKey ] ).toBe( true );
 		}
 	);
+
+	it( 'flags a WordPress.com renewal that carries a product slug', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'studio-plus-monthly',
+			purchaseId: '12345',
+			sitelessCheckoutType: 'wpcom',
+		} );
+
+		expect( result.current.productsForCart ).toHaveLength( 1 );
+		expect( result.current.productsForCart[ 0 ].extra.purchaseType ).toBe( 'renewal' );
+		expect( result.current.productsForCart[ 0 ].extra.purchaseId ).toBe( '12345' );
+		expect( result.current.productsForCart[ 0 ].extra.isWpcomSitelessCheckout ).toBe( true );
+	} );
 
 	it( 'renews several subscriptions from a comma-separated list of IDs', () => {
 		const { result } = renderPrepareProducts( {

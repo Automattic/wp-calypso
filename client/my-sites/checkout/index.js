@@ -293,6 +293,18 @@ export default function () {
 		clientRender
 	);
 
+	// Must be registered before the generic /checkout/:product/renew/:purchaseId
+	// route, which would otherwise read "wpcom" as the product slug.
+	page(
+		'/checkout/wpcom/renew/:subscriptionId',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutWpcomSiteless,
+		makeLayout,
+		clientRender
+	);
+
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
 	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );

@@ -26,6 +26,7 @@ import {
 	isWithinRefundWindowDowngradeEligible,
 	isA4ASubscriptionMeta,
 	isA4ABillingDragonPurchase,
+	isWpcomHoldingSitePurchase,
 	isJetpackCrmProduct,
 } from '../purchase';
 import type { Purchase } from '@automattic/api-core';
@@ -512,6 +513,33 @@ describe( 'isA4ABillingDragonPurchase', () => {
 	} );
 } );
 
+describe( 'isWpcomHoldingSitePurchase', () => {
+	test( 'is true for a purchase on the WordPress.com holding site', () => {
+		expect(
+			isWpcomHoldingSitePurchase(
+				makePurchase( { is_attached_to_holding_site: true, domain: 'siteless.wp.com' } )
+			)
+		).toBe( true );
+	} );
+
+	test.each( [ 'siteless.akismet.com', 'siteless.marketplace.wp.com', 'example.wordpress.com' ] )(
+		'is false for a purchase on %s',
+		( domain ) => {
+			expect(
+				isWpcomHoldingSitePurchase( makePurchase( { is_attached_to_holding_site: true, domain } ) )
+			).toBe( false );
+		}
+	);
+
+	test( 'is false when the purchase is not on a holding site', () => {
+		expect(
+			isWpcomHoldingSitePurchase(
+				makePurchase( { is_attached_to_holding_site: false, domain: 'siteless.wp.com' } )
+			)
+		).toBe( false );
+	} );
+} );
+
 describe( 'getRenewalUrlFromPurchase', () => {
 	test( 'uses the subscription-ID-only format', () => {
 		const url = getRenewalUrlFromPurchase(
@@ -567,6 +595,37 @@ describe( 'getRenewalUrlFromPurchase', () => {
 
 		expect( url ).toContain( '/checkout/marketplace/renew/54321?' );
 		expect( url ).not.toContain( 'wpcom_dotcompatch_yearly' );
+	} );
+
+	test( 'keeps the service in the URL for a WordPress.com siteless purchase', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 24680,
+				product_slug: 'studio-plus-monthly',
+				product_type: 'studio_code',
+				is_attached_to_holding_site: true,
+				domain: 'siteless.wp.com',
+				site_slug: 'siteless.wp.com::abcdefghijklmnopqrstuvwx',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/wpcom/renew/24680?' );
+		expect( url ).not.toContain( 'studio-plus-monthly' );
+		expect( url ).not.toContain( 'siteless.wp.com' );
+	} );
+
+	test( 'picks the WordPress.com route from the holding site, whatever the product', () => {
+		const url = getRenewalUrlFromPurchase(
+			makePurchase( {
+				ID: 13579,
+				product_slug: 'some-future-siteless-product',
+				product_type: 'some_future_type',
+				is_attached_to_holding_site: true,
+				domain: 'siteless.wp.com',
+			} )
+		);
+
+		expect( url ).toContain( '/checkout/wpcom/renew/13579?' );
 	} );
 } );
 
