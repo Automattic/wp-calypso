@@ -108,12 +108,24 @@ function stripPlanChoiceReturnArgsFromCurrentUrl() {
 // from and back to the traffic page, and one POST per page load is enough.
 let hasRecordedPlanChoice = false;
 
+/*
+ * Kept laid out at full width rather than `display: none`: the traffic chart measures its
+ * width once on mount and afterwards only on window resize. Opacity, not `visibility`, which
+ * descendants such as the date navigation arrows can switch back on.
+ */
+const HIDDEN_WHILE_DECIDING = {
+	opacity: 0,
+	height: 'calc( 100vh - 100px )',
+	overflow: 'hidden',
+} as const;
+
 /**
  * Replaces the Stats dashboard with the pricing grid for newly connected sites
  * that haven't picked a plan yet. Everyone else falls straight through to the
  * dashboard: the connection-date and site-type checks are synchronous against
  * site options, so those sites never wait on the purchase and notice lookups
- * this gate needs before it can decide.
+ * this gate needs before it can decide. While an applicable site waits, the
+ * dashboard is mounted hidden so its stats requests run alongside those lookups.
  */
 function PricingGridGate( { children }: { children: ReactNode } ) {
 	const siteId = useSelector( getSelectedSiteId );
@@ -157,27 +169,35 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 		return <>{ children }</>;
 	}
 
+	const isDeciding = isLoading || isLoadingVisibility;
+
+	if ( ! isDeciding && isEligible && isVisible ) {
+		return (
+			<>
+				<QuerySitePurchases siteId={ siteId } />
+				<QueryProductsList type="jetpack" />
+				<AsyncLoad
+					require={ loadPricingGrid }
+					placeholder={ PageLoading }
+					onDismiss={ () => setHasChosen( true ) }
+				/>
+			</>
+		);
+	}
+
 	return (
 		<>
 			<QuerySitePurchases siteId={ siteId } />
-			{ ( () => {
-				if ( isLoading || isLoadingVisibility ) {
-					return PageLoading;
-				}
-				if ( ! isEligible || ! isVisible ) {
-					return children;
-				}
-				return (
-					<>
-						<QueryProductsList type="jetpack" />
-						<AsyncLoad
-							require={ loadPricingGrid }
-							placeholder={ PageLoading }
-							onDismiss={ () => setHasChosen( true ) }
-						/>
-					</>
-				);
-			} )() }
+			<div style={ { position: 'relative' } }>
+				<div style={ isDeciding ? HIDDEN_WHILE_DECIDING : undefined } inert={ isDeciding }>
+					{ children }
+				</div>
+				{ isDeciding && (
+					<div style={ { position: 'absolute', insetBlockStart: 0, insetInline: 0 } }>
+						{ PageLoading }
+					</div>
+				) }
+			</div>
 		</>
 	);
 }
