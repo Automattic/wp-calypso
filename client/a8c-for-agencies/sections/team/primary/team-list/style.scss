@@ -17,10 +17,10 @@
 		--wpds-dimension-padding-2xl: 64px;
 	}
 
-	// Components 45 pads the card body with the same token; keep the card's own 24px.
+	// Components 45 pads the card body with the same token on every side; keep the card's own 24px.
 	.components-card__body {
 		@include break-medium {
-			padding-inline: 24px;
+			padding: 24px;
 		}
 	}
 
