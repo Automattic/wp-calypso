@@ -86,6 +86,8 @@ This mixin generates alias variables for a color palette. For example, the
 	--wpds-color-stroke-focus: var( --wp-components-color-accent );
 	--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
 	--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
+	// Input placeholders and a toggle's off mark. Without it they keep the light default, too dim here.
+	--wpds-color-foreground-interactive-neutral-weak: var( --dashboard__text-muted-color );
 	--wpds-color-background-interactive-neutral-weak-active: var( --wp-components-color-gray-200 );
 	// Field fill and border, e.g. checkboxes. Without these they fall back to light values.
 	--wpds-color-background-interactive-neutral: transparent;
