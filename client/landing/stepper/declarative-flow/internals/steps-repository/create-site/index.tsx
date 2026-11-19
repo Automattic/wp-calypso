@@ -1,6 +1,7 @@
 import { transferDomainToSite } from '@automattic/api-core';
 import { isDomainMoveInternal, isEcommerce } from '@automattic/calypso-products';
 import { Site, Onboard } from '@automattic/data-stores';
+import { isFreeSubdomainQuery } from '@automattic/domain-search';
 import {
 	AI_SITE_BUILDER_FLOW,
 	DIRECT_TO_CART_FLOW,
@@ -158,12 +159,13 @@ function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise
 	return result;
 }
 
-// The site an unnamed request made before its cart add threw. A retry of the step adds to that
-// site's cart instead of asking /sites/new for a second site. The `createdSite` record in the flow
-// state cannot do this for an unnamed request: the flow state outlives a run, so an unnamed record
-// could belong to an earlier signup. A page load does not outlive the run, and a rejected cart
-// goes to the error step without a page load.
-let unnamedSiteAfterCartFailure: { siteId: number; siteSlug: string } | undefined;
+// The site a run made before its cart add threw. A retry of the step adds to that site's cart
+// instead of asking /sites/new for a second site, also when the retry asks for another domain.
+// The `createdSite` record in the flow state cannot do this: it matches on the requested name, and
+// the flow state outlives a run, so a record without that match could belong to an earlier
+// signup. A page load does not outlive the run, and a rejected cart goes to the error step
+// without a page load.
+let siteAfterCartFailure: { siteId: number; siteSlug: string } | undefined;
 
 // The domain search records the site a moved domain is on now. The move call needs it.
 function getMoveSourceSiteId( item: MinimalRequestCartProduct ): number | undefined {
@@ -463,8 +465,11 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				( requestedName || canReuseUnnamedSite ) && recordedSite?.requestedName === requestedName
 					? recordedSite
 					: undefined;
+			// A free subdomain is the address of the site itself, so a request for one that the
+			// record does not match needs a site of its own. A paid domain is added to the site.
 			const siteToReuse =
-				siteFromThisRun ?? ( requestedName ? undefined : unnamedSiteAfterCartFailure );
+				siteFromThisRun ??
+				( isFreeSubdomainQuery( requestedName ) ? undefined : siteAfterCartFailure );
 
 			const site = siteToReuse
 				? { siteId: siteToReuse.siteId, siteSlug: siteToReuse.siteSlug }
@@ -526,9 +531,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				try {
 					await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
 				} catch ( error ) {
-					if ( ! requestedName ) {
-						unnamedSiteAfterCartFailure = { siteId: site.siteId, siteSlug: site.siteSlug };
-					}
+					siteAfterCartFailure = { siteId: site.siteId, siteSlug: site.siteSlug };
 					throw error;
 				}
 			}
@@ -540,7 +543,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 			if ( isEntrepreneurFlow( flow ) ) {
 				await addEcommerceTrial( { siteId: site.siteId } );
-				unnamedSiteAfterCartFailure = undefined;
+				siteAfterCartFailure = undefined;
 
 				return {
 					siteId: site.siteId,
@@ -550,7 +553,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				};
 			}
 
-			unnamedSiteAfterCartFailure = undefined;
+			siteAfterCartFailure = undefined;
 
 			return {
 				siteId: site.siteId,
