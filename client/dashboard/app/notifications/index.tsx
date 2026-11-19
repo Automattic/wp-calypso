@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
-import { bellUnread, bell } from '@wordpress/icons';
+import { bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
@@ -214,12 +214,14 @@ export default function Notifications( {
 			renderToggle={ ( { isOpen, onToggle } ) =>
 				anchor ? null : (
 					<Button
-						className={ clsx( className, 'dashboard-notifications__icon' ) }
+						className={ clsx( className, 'dashboard-notifications__icon', {
+							'is-unread': hasUnseenNotifications,
+						} ) }
 						onClick={ onToggle }
 						aria-expanded={ isOpen }
 						variant="tertiary"
 						label={ __( 'Notifications' ) }
-						icon={ hasUnseenNotifications ? bellUnread : bell }
+						icon={ bell }
 					/>
 				)
 			}

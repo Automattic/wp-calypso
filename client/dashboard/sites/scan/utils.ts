@@ -1,12 +1,5 @@
 import { Threat } from '@automattic/api-core';
-import {
-	wordpress,
-	code,
-	plugins,
-	brush,
-	blockTable,
-	cautionFilled as warning,
-} from '@wordpress/icons';
+import { wordpress, code, plugins, brush, blockTable, caution as warning } from '@wordpress/icons';
 
 export function getThreatType(
 	threat: Threat
