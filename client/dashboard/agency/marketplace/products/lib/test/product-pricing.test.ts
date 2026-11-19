@@ -1,4 +1,5 @@
 import {
+	applyPromotionToTotal,
 	getProductBillingTerm,
 	getProductPriceInfo,
 	getTermAvailabilityNote,
@@ -188,5 +189,16 @@ describe( 'WordPress.com promotions', () => {
 			expect( pricing.pricePerUnit ).toBe( 150 );
 			expect( pricing.promotion ).toBeUndefined();
 		}
+	} );
+} );
+
+describe( 'applyPromotionToTotal', () => {
+	test.each( [
+		[ 'JPY', 43854, 32890 ],
+		[ 'JPY', 87708, 65781 ],
+		[ 'EUR', 634, 475.5 ],
+		[ 'GBP', 562.5, 421.87 ],
+	] )( 'takes 25%% off %s %s and rounds down to %s', ( currency, amount, expected ) => {
+		expect( applyPromotionToTotal( amount, 25, currency ) ).toBe( expected );
 	} );
 } );

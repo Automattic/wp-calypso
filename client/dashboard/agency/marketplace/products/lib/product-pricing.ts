@@ -162,7 +162,11 @@ export interface WpcomTieredPrice {
 
 // Checkout takes the coupon off the line total and rounds down to the currency's smallest unit,
 // so a total built from rounded per-site prices can come out a little lower.
-function applyPromotionToTotal( amount: number, discount: number, currency: string ): number {
+export function applyPromotionToTotal(
+	amount: number,
+	discount: number,
+	currency: string
+): number {
 	const precision =
 		new Intl.NumberFormat( 'en-US', { style: 'currency', currency } ).resolvedOptions()
 			.maximumFractionDigits ?? 2;

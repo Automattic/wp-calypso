@@ -6,6 +6,7 @@ import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-prod
 import useWPCOMOwnedSites from 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites';
 import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-options';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-values-utils';
+import { applyPromotionToTotal } from 'calypso/dashboard/agency/marketplace/products/lib/product-pricing';
 import { isWooCommerceProduct } from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license/lib/woocommerce-product-slug-mapping';
 import { MarketplaceTypeContext } from '../context';
 import usePressableOwnershipType from '../hosting-overview/hooks/use-pressable-ownership-type';
@@ -76,18 +77,6 @@ export const getWPCOMTierPrices = (
 		tiers.unshift( toTierPrice( 1, basePrice, promotion?.price ?? basePrice ) );
 	}
 	return tiers;
-};
-
-// Checkout takes the coupon off the line total and rounds down to the currency's smallest unit,
-// so a total built from rounded per-site prices can come out a little lower.
-const applyPromotionToTotal = ( amount: number, discount: number, currency: string ): number => {
-	const precision =
-		new Intl.NumberFormat( 'en-US', { style: 'currency', currency } ).resolvedOptions()
-			.maximumFractionDigits ?? 2;
-	const factor = 10 ** precision;
-	return (
-		Math.floor( Number( ( ( amount * ( 100 - discount ) * factor ) / 100 ).toFixed( 6 ) ) ) / factor
-	);
 };
 
 export const getWPCOMTieredPrice = (
