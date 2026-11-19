@@ -121,6 +121,24 @@ export const useESPlugin = (
 
 type PageParam = string | number;
 
+/**
+ * Elasticsearch rejects any request whose `from + size` goes past this window.
+ */
+export const ES_MAX_RESULT_WINDOW = 10000;
+
+/**
+ * Build the `page_handle` that starts a search at the given page.
+ *
+ * The search API's `page_handle` is a base64-encoded query string whose `from`
+ * field sets the result offset, so any page can be requested directly instead
+ * of only by following the handle of the previous page.
+ * @param page The 1-based page number
+ * @param pageSize The number of results per page
+ * @returns The page param for the first page to fetch
+ */
+export const getESPageHandle = ( page: number, pageSize: number = DEFAULT_PAGE_SIZE ): PageParam =>
+	page > 1 ? btoa( `from=${ ( page - 1 ) * pageSize }` ) : 1;
+
 export const getESPluginsInfiniteQueryParams = (
 	options: PluginQueryOptions,
 	locale: string
@@ -144,7 +162,7 @@ export const getESPluginsInfiniteQueryParams = (
 			locale: getWpLocaleBySlug( ( options.locale || locale ) as LanguageSlug ),
 			slugs: options.slugs,
 		} );
-	return { queryKey, queryFn, initialPageParam: 1 };
+	return { queryKey, queryFn, initialPageParam: getESPageHandle( options.page ?? 1, pageSize ) };
 };
 
 export const useESPluginsInfinite = (

@@ -34,12 +34,14 @@ const usePlugins = ( {
 	infinite = false,
 	locale = '',
 	slugs,
+	page,
 }: {
 	category: string;
 	search?: string;
 	infinite?: boolean;
 	locale?: string;
 	slugs?: string[];
+	page?: number;
 } ) => {
 	let plugins = [];
 	let isFetching = false;
@@ -56,6 +58,7 @@ const usePlugins = ( {
 		tag,
 		searchTerm: search,
 		slugs,
+		page: page && page > 1 ? page : undefined,
 	};
 
 	// This is triggered for searches OR any other category than paid, featured
@@ -113,13 +116,14 @@ const usePlugins = ( {
 			return;
 		}
 
-		fetchNextPage && fetchNextPage();
+		fetchNextPage?.();
 	}
 
 	return {
 		plugins,
 		isFetching,
 		fetchNextPage: fetchNextPageAndStop,
+		hasNextPage: !! hasNextPage,
 		pagination: {
 			page: ESPagination?.page,
 			pages: ESPagination?.pages,
