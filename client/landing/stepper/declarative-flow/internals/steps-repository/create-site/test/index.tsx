@@ -364,6 +364,54 @@ describe( 'create-site', () => {
 		expect( transferDomainToSite ).toHaveBeenCalledWith( 'owned-domain.com', 555, 111 );
 	} );
 
+	describe( 'retry after a rejected cart', () => {
+		beforeEach( () => {
+			mockPlanCartItem = { product_slug: 'personal-bundle' };
+		} );
+
+		// The flow state record cannot match an unnamed request, so without this the retry from the
+		// error step gives the account a second site.
+		it( 'adds to the cart of the first site when an unnamed request is retried', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+			expect( addProductsToCart ).toHaveBeenLastCalledWith(
+				'brand-new.wordpress.com',
+				'onboarding',
+				[ mockPlanCartItem ],
+				{ throwOnError: true }
+			);
+		} );
+
+		// A run that finished has handed its site to checkout. The next unnamed run is a new signup.
+		it( 'creates a new site for an unnamed request after a run that succeeded', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await pendingAction!();
+			await pendingAction!();
+
+			expect( createSite ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it( 'adopts the recorded site when a named request is retried', async () => {
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+			expect( flowStateStore.createdSite ).toMatchObject( {
+				requestedName: 'my-site.wordpress.com',
+			} );
+		} );
+	} );
+
 	// The site works without the domain, so a failed move must not stop the signup.
 	it( 'finishes the signup and records the failure when the move fails', async () => {
 		mockDomainCartItems = [ registeredMove ];
