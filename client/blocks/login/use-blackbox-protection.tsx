@@ -25,7 +25,7 @@ interface UseBlackboxProtectionOptions {
 	 */
 	feature: string;
 	/** Collect flow sent as `X-Blackbox-Flow`. */
-	flow: 'login' | 'signup';
+	flow: 'login' | 'signup' | 'password_reset';
 	/**
 	 * Keep Blackbox off while the host form is mounted but not the active
 	 * surface (e.g. hidden behind another step). No collect happens and no

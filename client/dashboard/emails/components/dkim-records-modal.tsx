@@ -1,6 +1,6 @@
 import { Button, Modal } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { check, copySmall } from '@wordpress/icons';
+import { check, copy } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
 import { Text } from '../../components/text';
 import type { DkimMissingEntry } from '../hooks/use-dkim-record-checks';
@@ -22,7 +22,7 @@ const CopyableText = ( { text, label }: { text: string; label: string } ) => {
 			<span className="dkim-records-modal__copyable-text">{ text }</span>
 			<Button
 				size="small"
-				icon={ isCopied ? check : copySmall }
+				icon={ isCopied ? check : copy }
 				label={ isCopied ? __( 'Copied' ) : label }
 				onClick={ () => {
 					navigator.clipboard.writeText( text );

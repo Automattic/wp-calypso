@@ -26,6 +26,7 @@ import { AgencyNotices } from '../components/agency-notices';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
 import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
+import ImportFromPlatformModal from './add-new-site/import-from-platform-modal';
 import ImportFromWPCOMModal from './add-new-site/import-from-wpcom-modal';
 import { useAgencyFields, useAgencyActions } from './dataviews';
 import { hasWpcomLicenseWithoutSite } from './lib';
@@ -200,6 +201,9 @@ export default function AgencySites() {
 				<ConnectSiteModal action={ activeModal } onClose={ closeModal } />
 			) }
 			{ activeModal === 'import-from-wpcom' && <ImportFromWPCOMModal onClose={ closeModal } /> }
+			{ activeModal === 'import-from-platform' && (
+				<ImportFromPlatformModal onClose={ closeModal } />
+			) }
 			{ ! isLoading && <PerformanceTrackerStop /> }
 			<DataViewsCard>
 				<DataViews< AgencySite >

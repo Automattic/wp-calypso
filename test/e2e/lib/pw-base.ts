@@ -49,15 +49,11 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	GitHubLoginPage,
-	ImportContentFromAnotherPlatformOrFilePage,
 	ImportContentFromMediumPage,
 	ImportContentFromSquarespacePage,
 	ImportContentFromSubstackPage,
 	ImportContentFromWordPressPage,
 	ImportContentPage,
-	ImportLetsFindYourSitePage,
-	ImportLetUsMigrateYourSitePage,
-	ImportPlansPage,
 	IncognitoPage,
 	JetpackTrafficPage,
 	LaunchCelebrationComponent,
@@ -369,10 +365,6 @@ export const test = base.extend<
 		 */
 		pageImportContent: ImportContentPage;
 		/**
-		 * Page object representing the Import Plans page.
-		 */
-		pageImportPlans: ImportPlansPage;
-		/**
 		 * Page object representing the Import Content from Medium page.
 		 */
 		pageImportContentFromMedium: ImportContentFromMediumPage;
@@ -388,18 +380,6 @@ export const test = base.extend<
 		 * Page object representing the Import Content from WordPress page.
 		 */
 		pageImportContentFromWordPress: ImportContentFromWordPressPage;
-		/**
-		 * Page object representing the Import Content from Another Platform or File page.
-		 */
-		pageImportContentFromAnotherPlatformOrFile: ImportContentFromAnotherPlatformOrFilePage;
-		/**
-		 * Page object representing the Let's Find Your Site page for importing content.
-		 */
-		pageImportLetsFindYourSite: ImportLetsFindYourSitePage;
-		/**
-		 * Page object representing the Let Us Migrate Your Site page for importing content.
-		 */
-		pageImportLetUsMigrateYourSite: ImportLetUsMigrateYourSitePage;
 		/**
 		 * Playwright `Page` representing an incognito browser context with no signed in state.
 		 */
@@ -660,11 +640,6 @@ export const test = base.extend<
 		const importContentPage = new ImportContentPage( page );
 		await use( importContentPage );
 	},
-	pageImportContentFromAnotherPlatformOrFile: async ( { page }, use ) => {
-		const importContentFromAnotherPlatformOrFilePage =
-			new ImportContentFromAnotherPlatformOrFilePage( page );
-		await use( importContentFromAnotherPlatformOrFilePage );
-	},
 	pageImportContentFromMedium: async ( { page }, use ) => {
 		const importContentFromMediumPage = new ImportContentFromMediumPage( page );
 		await use( importContentFromMediumPage );
@@ -680,18 +655,6 @@ export const test = base.extend<
 	pageImportContentFromWordPress: async ( { page }, use ) => {
 		const importContentFromWordPressPage = new ImportContentFromWordPressPage( page );
 		await use( importContentFromWordPressPage );
-	},
-	pageImportLetsFindYourSite: async ( { page }, use ) => {
-		const letsFindYourSitePage = new ImportLetsFindYourSitePage( page );
-		await use( letsFindYourSitePage );
-	},
-	pageImportLetUsMigrateYourSite: async ( { page }, use ) => {
-		const importLetUsMigrateYourSitePage = new ImportLetUsMigrateYourSitePage( page );
-		await use( importLetUsMigrateYourSitePage );
-	},
-	pageImportPlans: async ( { page }, use ) => {
-		const importPlansPage = new ImportPlansPage( page );
-		await use( importPlansPage );
 	},
 	pageIncognito: async ( { browser }, use ) => {
 		const incognitoPage = new IncognitoPage( browser );
@@ -805,7 +768,11 @@ export const test = base.extend<
 			const activationLink = links.find( ( link: string ) =>
 				link.includes( 'activate' )
 			) as string;
-			await page.goto( activationLink );
+			// Activation lands on My Home, which can move on to wp-admin after it loads. In the
+			// test's page, that late redirect would abort whatever the test opens first.
+			const activationPage = await page.context().newPage();
+			await activationPage.goto( activationLink );
+			await activationPage.close();
 			await apiWaitForEmailVerification( restAPIClient, testUser.email );
 			// Fresh accounts have no recovery method set up, so the dashboard's
 			// account-recovery interstitial would mount over every route and block

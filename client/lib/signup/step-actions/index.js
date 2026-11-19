@@ -28,6 +28,10 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { logToLogstash } from 'calypso/lib/logstash';
+import {
+	forgetSavedEmailTrackingConsent,
+	getEmailTrackingConsentPayloadForSocialLogin,
+} from 'calypso/lib/signup/email-tracking-consent';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
@@ -798,6 +802,7 @@ export function createAccount(
 		const bearerToken = {};
 		if ( response && response.bearer_token ) {
 			bearerToken.bearer_token = response.bearer_token;
+			forgetSavedEmailTrackingConsent();
 		} else {
 			// something odd happened...
 			// eslint-disable-next-line no-console
@@ -866,6 +871,7 @@ export function createAccount(
 				...userData,
 				tos: getToSAcceptancePayload(),
 				anon_id: getTracksAnonymousUserId(),
+				...getEmailTrackingConsentPayloadForSocialLogin(),
 			},
 			responseHandler( SIGNUP_TYPE_SOCIAL )
 		);

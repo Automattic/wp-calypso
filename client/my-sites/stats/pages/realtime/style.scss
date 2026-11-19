@@ -2,6 +2,11 @@
 	position: relative;
 	margin: 32px 0;
 
+	// A light tooltip, as before @automattic/charts 4.x drew them dark.
+	.a8c-charts-scope {
+		--a8c-charts-color-tooltip-surface: var(--studio-white);
+	}
+
 	.line-chart {
 		background-color: var(--studio-white);
 		border: 1px solid var(--studio-gray-5);

@@ -10,13 +10,22 @@ describe( 'getPurchasedWPCOMPlanSlug', () => {
 		);
 	} );
 
-	it( 'matches a WordPress.com plan alongside other products, as the legacy flow did', () => {
+	it( 'returns a slug when the cart holds several WordPress.com plans only', () => {
+		expect(
+			getPurchasedWPCOMPlanSlug( [
+				cartItem( 'wpcom-hosting-business' ),
+				cartItem( 'wpcom-hosting-ecommerce' ),
+			] )
+		).toBe( 'wpcom-hosting-business' );
+	} );
+
+	it( 'returns null when a WordPress.com plan is bought alongside other products', () => {
 		expect(
 			getPurchasedWPCOMPlanSlug( [
 				cartItem( 'jetpack-backup' ),
 				cartItem( 'wpcom-hosting-business' ),
 			] )
-		).toBe( 'wpcom-hosting-business' );
+		).toBeNull();
 	} );
 
 	it( 'returns null when no WordPress.com plan is in the cart', () => {

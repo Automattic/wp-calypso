@@ -10,7 +10,7 @@ import {
 	TextareaControl,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { customLink, Icon, send, cautionFilled as warning } from '@wordpress/icons';
+import { customLink, Icon, send, caution as warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';

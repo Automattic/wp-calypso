@@ -11,8 +11,7 @@
 
 	@include break-medium {
 		grid-template-columns: minmax( 0, 5fr ) minmax( 0, 6fr );
-		grid-template-rows: auto 1fr;
-		grid-template-areas: 'snapshot main' 'facts main';
+		grid-template-areas: 'snapshot main' 'facts facts';
 	}
 }
 
@@ -102,7 +101,8 @@
 	overflow: hidden;
 }
 
-// The pages copied while watching, newest on top, over the stand-in page.
+// The pages capture found, ticked once copied, over the stand-in page. Servers that don't list
+// them get the pages copied while watching, newest on top.
 .static-site-import-snapshot__pages {
 	position: absolute;
 	inset: 0;
@@ -111,12 +111,13 @@
 	gap: 8px;
 	margin: 0;
 	padding: 8%;
+	overflow-y: auto;
+	overscroll-behavior: contain;
 	list-style: none;
 	background: var( --color-surface );
-	-webkit-mask-image: linear-gradient( to bottom, var( --color-text ) 55%, transparent );
-	mask-image: linear-gradient( to bottom, var( --color-text ) 55%, transparent );
 
 	li {
+		flex: none;
 		display: flex;
 		align-items: center;
 		gap: 8px;
@@ -132,6 +133,14 @@
 			color: var( --dashboard__foreground-color-success );
 		}
 
+		&:not( .is-captured ) {
+			color: var( --color-text-subtle );
+
+			svg {
+				visibility: hidden;
+			}
+		}
+
 		span {
 			overflow: hidden;
 			text-overflow: ellipsis;
@@ -140,7 +149,7 @@
 }
 
 @media ( prefers-reduced-motion: no-preference ) {
-	.static-site-import-snapshot__pages li:first-child {
+	.static-site-import-snapshot__pages:not( .is-listed ) li:first-child {
 		animation: static-site-import__page-in 0.5s cubic-bezier( 0.2, 0.7, 0.2, 1 );
 	}
 }
@@ -177,6 +186,13 @@
 	span:nth-child( 4 ) {
 		width: 45%;
 	}
+}
+
+.static-site-import-snapshot__collage {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
 }
 
 .static-site-import-snapshot__image {
@@ -311,7 +327,7 @@
 
 .static-site-import-facts {
 	display: grid;
-	grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	grid-template-columns: repeat( auto-fit, minmax( 160px, 1fr ) );
 	gap: 12px;
 	margin: 0;
 }
@@ -324,6 +340,30 @@
 	dd {
 		margin: 4px 0 0;
 		font-variant-numeric: tabular-nums;
+	}
+}
+
+.static-site-import-checks {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+}
+
+.static-site-import-checks__icon {
+	flex-shrink: 0;
+	color: var( --dashboard__foreground-color-warning );
+
+	&.is-passed {
+		color: var( --dashboard__foreground-color-success );
 	}
 }
 

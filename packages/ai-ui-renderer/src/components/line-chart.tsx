@@ -2,7 +2,7 @@ import * as Charts from '@automattic/charts';
 import { useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { assertUniqueSeries, formatDate, getChartTable, getPageLocale } from '../utils/chart-data';
-import { CHART_HEIGHT, ChartFigure, ZERO_BASED_SCALE } from './chart-figure';
+import { CHART_HEIGHT, ChartFigure, getChartColor, ZERO_BASED_SCALE } from './chart-figure';
 import { getSeriesTooltipRenderer } from './chart-tooltip';
 import type { Series } from '../utils/chart-data';
 
@@ -34,8 +34,9 @@ export function LineChart( { title, series }: LineChartProps ) {
 	const chartSeries = useMemo( () => {
 		assertUniqueSeries( series, ( { date } ) => date );
 
-		return series.map( ( { label, data: points } ) => ( {
+		return series.map( ( { label, data: points }, index ) => ( {
 			label,
+			options: { stroke: getChartColor( index ) },
 			data: points
 				.map( ( { date, value } ) => {
 					const parsed = Charts.parseAsLocalDate( date );

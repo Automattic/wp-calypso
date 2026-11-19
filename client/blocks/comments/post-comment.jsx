@@ -11,13 +11,11 @@ import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl } from 'calypso/lib/paths';
-import withDimensions from 'calypso/lib/with-dimensions';
-import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/reader/comments/constants';
+import { PLACEHOLDER_STATE } from 'calypso/reader/comments/constants';
 import { getStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent, recordPermalinkClick } from 'calypso/reader/stats';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
@@ -32,23 +30,6 @@ import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback';
 
 const noop = () => {};
-
-/**
- * A PostComment is the visual representation for a comment within a tree of comments.
- * Each comment may have a different displayType.  It will be one of:
- *  1. full: display the full content.  no max-height.
- *  2. excerpt: show 3 lines.  max-height clipping is involved.  if the content overflows
- *       then show a "Read More" button that will the comment to full
- *  3. singleLine: show only 1 line of the comment and then show a Read More if the content overflows.
- *  4. hidden: do not show at all.  this is implied by a lack of displayType.
- *
- * - An individual PostComment determines its displayType by looking at the prop commentsToShow.
- *      displayType = commentsToShow[ commentId ] || hidden;
- * - If a PostComment has caterpillars enabled, it will show a caterpillar if it has hidden children.
- *
- * As of the time of this comment writing, ReaderFullPost uses exclusively 'full' comments, whereas
- *   conversations tool uses a mix depending on the situation.
- */
 
 class PostComment extends PureComponent {
 	static contextType = CommentLabelsContext;
@@ -66,26 +47,8 @@ class PostComment extends PureComponent {
 		onCommentSubmit: PropTypes.func,
 		maxDepth: PropTypes.number,
 		showNestingReplyArrow: PropTypes.bool,
-		showReadMoreInActions: PropTypes.bool,
 		hidePingbacksAndTrackbacks: PropTypes.bool,
 		isInlineComment: PropTypes.bool,
-		expandComments: PropTypes.func,
-		comments: PropTypes.array,
-
-		/**
-		 * If commentsToShow is not provided then it is assumed that all child comments should be displayed.
-		 * If it is provided then it should have the following shape:
-		 * {
-		 *   [ commentId ]: POST_COMMENT_DISPLAY_TYPE // (full, excerpt, singleLine, etc.)
-		 * }
-		 * - it specifies exactly which comments to display and with which displayType.
-		 * - if a comment's id is not in the object it is assumed that it should be hidden
-		 *
-		 */
-		commentsToShow: PropTypes.object,
-
-		enableCaterpillar: PropTypes.bool,
-
 		// connect()ed props:
 		currentUser: PropTypes.object,
 		shouldHighlightNew: PropTypes.bool,
@@ -101,18 +64,14 @@ class PostComment extends PureComponent {
 		maxChildrenToShow: 5,
 		onCommentSubmit: noop,
 		showNestingReplyArrow: false,
-		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
 		shouldHighlightNew: false,
 		highlightedCommentIds: [],
 		collapsibleThreads: false,
-		expandComments: noop,
-		comments: [],
 	};
 
 	state = {
 		showReplies: false,
-		showFull: false,
 		isCollapsed: false,
 	};
 
@@ -197,42 +156,15 @@ class PostComment extends PureComponent {
 		);
 	};
 
-	// has hidden child --> true
-	shouldRenderCaterpillar = () => {
-		const { enableCaterpillar, commentsToShow, commentId } = this.props;
-		const childIds = this.getAllChildrenIds( commentId );
-
-		return enableCaterpillar && commentsToShow && childIds.some( ( id ) => ! commentsToShow[ id ] );
-	};
-
-	// has visisble child --> true
-	shouldRenderReplies = () => {
-		const { commentsToShow, commentId } = this.props;
-		const childIds = this.getAllChildrenIds( commentId );
-
-		return commentsToShow && childIds.some( ( id ) => commentsToShow[ id ] );
-	};
-
 	renderRepliesList() {
-		const {
-			commentsToShow,
-			depth,
-			commentId,
-			commentsTree,
-			maxChildrenToShow,
-			enableCaterpillar,
-			post,
-			maxDepth,
-		} = this.props;
+		const { depth, commentId, commentsTree, maxChildrenToShow, post, maxDepth } = this.props;
 
 		const commentChildrenIds = commentsTree?.[ commentId ]?.children;
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < maxChildrenToShow;
 		const canCollapse = this.canCollapse();
-		const showReplies =
-			this.state.showReplies || exceedsMaxChildrenToShow || enableCaterpillar || canCollapse;
-		const childDepth = ! commentsToShow || commentsToShow[ commentId ] ? depth + 1 : depth;
+		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow || canCollapse;
 
 		// No children to show
 		if ( ! commentChildrenIds || commentChildrenIds.length < 1 ) {
@@ -262,7 +194,7 @@ class PostComment extends PureComponent {
 		);
 
 		let replyVisibilityText = null;
-		if ( ! exceedsMaxChildrenToShow && ! enableCaterpillar && ! canCollapse ) {
+		if ( ! exceedsMaxChildrenToShow && ! canCollapse ) {
 			replyVisibilityText = this.state.showReplies ? hideRepliesText : showRepliesText;
 		}
 
@@ -279,14 +211,11 @@ class PostComment extends PureComponent {
 							// eslint-disable-next-line no-use-before-define
 							<ConnectedPostComment
 								showNestingReplyArrow={ this.props.showNestingReplyArrow }
-								showReadMoreInActions={ this.props.showReadMoreInActions }
-								enableCaterpillar={ enableCaterpillar }
-								depth={ childDepth }
+								depth={ depth + 1 }
 								maxDepth={ maxDepth }
 								key={ childId }
 								commentId={ childId }
 								commentsTree={ commentsTree }
-								commentsToShow={ commentsToShow }
 								post={ post }
 								onReplyClick={ this.props.onReplyClick }
 								onReplyCancel={ this.props.onReplyCancel }
@@ -298,8 +227,6 @@ class PostComment extends PureComponent {
 								highlightedCommentIds={ this.props.highlightedCommentIds }
 								collapsibleThreads={ this.props.collapsibleThreads }
 								isInlineComment={ this.props.isInlineComment }
-								expandComments={ this.props.expandComments }
-								comments={ this.props.comments }
 							/>
 						) ) }
 					</ol>
@@ -387,39 +314,12 @@ class PostComment extends PureComponent {
 		);
 	};
 
-	onReadMore = () => {
-		this.setState( { showFull: true } );
-		this.props.post &&
-			this.props.expandComments( {
-				siteId: this.props.post.site_ID,
-				commentIds: [ this.props.commentId ],
-				postId: this.props.post.ID,
-				displayType: POST_COMMENT_DISPLAY_TYPES.full,
-			} );
-		recordAction( 'comment_read_more_click' );
-		recordGaEvent( 'Clicked Comment Read More' );
-		this.props.recordReaderTracksEvent(
-			'calypso_reader_comment_read_more_click',
-			{
-				comment_id: this.props.commentId,
-			},
-			{
-				post: this.props.post,
-			}
-		);
-	};
-
 	render() {
 		const {
 			commentsTree,
 			commentId,
 			depth,
-			enableCaterpillar,
 			maxDepth,
-			post,
-			commentsToShow,
-			overflowY,
-			showReadMoreInActions,
 			hidePingbacksAndTrackbacks,
 			shouldHighlightNew,
 			highlightedCommentIds,
@@ -430,15 +330,7 @@ class PostComment extends PureComponent {
 
 		if ( ! comment || ( hidePingbacksAndTrackbacks && isPingbackOrTrackback ) ) {
 			return null;
-		} else if ( commentsToShow && ! commentsToShow[ commentId ] ) {
-			// this comment should be hidden so just render children
-			return this.shouldRenderReplies() && <div>{ this.renderRepliesList() }</div>;
 		}
-
-		const displayType =
-			this.state.showFull || ! enableCaterpillar
-				? POST_COMMENT_DISPLAY_TYPES.full
-				: commentsToShow[ commentId ];
 
 		// todo: connect this constants to the state (new selector)
 		const haveReplyWithError = ( commentsTree?.[ this.props.commentId ]?.children ?? [] ).some(
@@ -571,12 +463,7 @@ class PostComment extends PureComponent {
 					</p>
 				) : null }
 
-				<PostCommentContent
-					content={ comment.content }
-					setWithDimensionsRef={ this.props.setWithDimensionsRef }
-					isPlaceholder={ comment.isPlaceholder }
-					className={ displayType }
-				/>
+				<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />
 
 				<CommentActions
 					post={ this.props.post || {} }
@@ -585,23 +472,9 @@ class PostComment extends PureComponent {
 					handleReply={ this.handleReply }
 					onLikeToggle={ this.onLikeToggle }
 					onReplyCancel={ this.props.onReplyCancel }
-					showReadMore={ overflowY && ! this.state.showFull && showReadMoreInActions }
-					onReadMore={ this.onReadMore }
 				/>
 
 				{ haveReplyWithError ? null : this.renderCommentForm() }
-				{ this.shouldRenderCaterpillar() && (
-					<ConversationCaterpillar
-						blogId={ post.site_ID }
-						postId={ post.ID }
-						parentCommentId={ commentId }
-						comments={ this.props.comments }
-						commentsTree={ commentsTree }
-						commentsToShow={ commentsToShow }
-						expandComments={ this.props.expandComments }
-						recordReaderTracksEvent={ this.props.recordReaderTracksEvent }
-					/>
-				) }
 				{ this.renderRepliesList() }
 			</li>
 		);
@@ -614,6 +487,6 @@ const ConnectedPostComment = connect(
 		isLoggedIn: isUserLoggedIn( state ),
 	} ),
 	{ recordReaderTracksEvent, registerLastActionRequiresLogin }
-)( withDimensions( PostComment ) );
+)( PostComment );
 
 export default ConnectedPostComment;

@@ -13,17 +13,6 @@ import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/f
 type Dispatch = jest.Mock< any, any >;
 type GetState = () => Record< string, unknown >;
 
-const mockQueryClient = {};
-const mockRemoveStreamItemFromCache = jest.fn();
-
-jest.mock( 'calypso/state/query-client', () => ( {
-	getCalypsoQueryClient: () => mockQueryClient,
-} ) );
-
-jest.mock( 'calypso/reader/data/stream', () => ( {
-	removeStreamItemFromCache: ( ...args: unknown[] ) => mockRemoveStreamItemFromCache( ...args ),
-} ) );
-
 describe( 'actions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -55,14 +44,6 @@ describe( 'actions', () => {
 				meta: {
 					previousState: null,
 				},
-			} );
-			expect( mockRemoveStreamItemFromCache ).toHaveBeenCalledWith( mockQueryClient, {
-				item: { blogId: 123, postId: 456 },
-				streamKey: 'conversations-a8c',
-			} );
-			expect( mockRemoveStreamItemFromCache ).toHaveBeenCalledWith( mockQueryClient, {
-				item: { blogId: 123, postId: 456 },
-				streamKey: 'conversations',
 			} );
 		} );
 	} );

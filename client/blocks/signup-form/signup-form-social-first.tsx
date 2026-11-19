@@ -14,6 +14,7 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
+import { EmailTrackingConsent, useEmailTrackingConsent } from './email-tracking-consent';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
@@ -136,6 +137,14 @@ const SignupFormSocialFirst = ( {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
+	const emailTrackingConsent = useEmailTrackingConsent();
+	// One answer for every signup option, so it is shown on each screen.
+	const emailTrackingConsentCheckbox = emailTrackingConsent.isAsked && (
+		<EmailTrackingConsent
+			checked={ emailTrackingConsent.hasAgreed }
+			onChange={ emailTrackingConsent.setHasAgreed }
+		/>
+	);
 
 	const renderTermsOfService = () => {
 		// Custom ToS element takes priority (from partner branding)
@@ -252,6 +261,7 @@ const SignupFormSocialFirst = ( {
 
 	const emailScreen = (
 		<div className="signup-form-social-first-email">
+			{ emailTrackingConsentCheckbox }
 			<PasswordlessSignupForm
 				{ ...passwordlessFormProps }
 				blackboxSuspended={ currentStep !== 'email' }
@@ -286,6 +296,7 @@ const SignupFormSocialFirst = ( {
 		return (
 			<div className="signup-form signup-form-social-first signup-form-social-first--mobile-compact">
 				{ notice }
+				{ emailTrackingConsentCheckbox }
 				<SocialSignupForm
 					handleResponse={ handleSocialResponse }
 					setCurrentStep={ setCurrentStep }
@@ -311,6 +322,7 @@ const SignupFormSocialFirst = ( {
 			<div className={ getVisibilityClassName( 'initial' ) }>
 				{ notice }
 				{ renderTermsOfService() }
+				{ emailTrackingConsentCheckbox }
 				{ emailLoginBlock && ! isEmailAtBottom && (
 					<>
 						{ emailLoginBlock }

@@ -31,12 +31,6 @@ import './style.scss';
 
 const useIsomorphicEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-const defaultOnLanguageChange: React.ChangeEventHandler< HTMLSelectElement > = ( event ) => {
-	const pathWithoutLocale = removeLocaleFromPathLocaleInFront( window.location.pathname );
-
-	window.location.href = `/${ event.target.value }${ pathWithoutLocale }`;
-};
-
 // Locale list and order per the WPCOM twin's language picker; English last.
 // Exported for the drift test against @automattic/languages.
 export const languageEntries: [ string, string ][] = [
@@ -64,6 +58,16 @@ export const languageEntries: [ string, string ][] = [
 	[ 'zh-tw', '繁體中文' ],
 	[ 'en', 'English' ],
 ];
+
+const defaultOnLanguageChange: React.ChangeEventHandler< HTMLSelectElement > = ( event ) => {
+	const locale = languageEntries.find( ( [ code ] ) => code === event.target.value )?.[ 0 ];
+	if ( ! locale ) {
+		return;
+	}
+	const pathWithoutLocale = removeLocaleFromPathLocaleInFront( window.location.pathname );
+
+	window.location.href = `/${ locale }${ pathWithoutLocale }`;
+};
 
 // eslint-disable-next-line wpcalypso/i18n-unlocalized-url -- Must match the shared QR code; localized /store routes are not part of this destination.
 const APP_DOWNLOAD_URL = 'https://apps.wordpress.com/store?campaign=qrcode-apps';
@@ -312,12 +316,6 @@ const Footer2026Bottom = ( {
 					{ __( 'Privacy policy', __i18n_text_domain__ ) }
 				</a>
 			</li>
-			{ /* The sitemap page is English-only. */ }
-			{ locale === 'en' && (
-				<li className="x-nav-footer--sitemap">
-					<a href="https://wordpress.com/sitemap/">{ __( 'Sitemap', __i18n_text_domain__ ) }</a>
-				</li>
-			) }
 			{ showCaliforniaNotice && (
 				<li className="x-nav-footer--ccpa-privacy">
 					<a

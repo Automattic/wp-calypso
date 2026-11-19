@@ -89,15 +89,15 @@ export class AppleLoginButton extends Component {
 			await loadScript( appleClientUrl );
 		}
 
-		const oauth2State = crypto.randomUUID();
-		window.sessionStorage.setItem( 'siwa_state', oauth2State );
+		const nonce = crypto.randomUUID();
+		window.sessionStorage.setItem( 'siwa_state', nonce );
 
 		window.AppleID.auth.init( {
 			clientId: config( 'apple_oauth_client_id' ),
 			scope: this.props.scope,
 			redirectURI: this.props.redirectUri,
 			state: JSON.stringify( {
-				oauth2State,
+				oauth2State: nonce,
 				originalUrlPath: this.props.isLogin ? null : window?.location?.pathname,
 				queryString: this.props.queryString,
 			} ),

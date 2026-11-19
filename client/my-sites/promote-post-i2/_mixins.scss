@@ -1,0 +1,107 @@
+@import "@automattic/typography/styles/variables";
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+
+@mixin promote-post-i2-font {
+	color: $studio-gray-60;
+	font-family: $font-sf-pro-text;
+	font-weight: 400;
+	font-size: 0.875rem;
+	font-style: normal;
+	letter-spacing: -0.15px;
+	line-height: 1.43;
+}
+
+@mixin blazepress-data-row-font-mobile {
+	color: var(--studio-gray-40);
+	font-size: 0.75rem;
+	font-weight: 400;
+	line-height: 1.5;
+}
+
+@mixin blazepress-data-row-font-buttons-mobile {
+	color: var(--studio-gray-60);
+	font-size: 0.75rem;
+	font-weight: 500;
+	line-height: 1.5;
+}
+
+@mixin blazepress-data-row {
+	&data-row {
+		align-items: center;
+		display: flex;
+		width: 100%;
+
+		&-mobile {
+			display: none;
+			margin-top: 20px;
+
+			.post-item__actions-mobile {
+				display: flex;
+				align-items: flex-end;
+				justify-content: space-between;
+			}
+
+			.post-item__stats-mobile {
+				@include blazepress-data-row-font-mobile;
+				align-items: center;
+				display: flex;
+				justify-content: space-between;
+				width: 100%;
+			}
+
+			.campaign-item__stats-mobile {
+				align-self: start;
+				@include blazepress-data-row-font-mobile;
+			}
+		}
+	}
+}
+
+@mixin blazepress-search-component {
+	.search-component {
+		border: 1px solid #ddd;
+		border-radius: 4px;
+
+		&.is-open {
+			width: 100%;
+
+			svg,
+			form,
+			.search-component__input-fade {
+				border-radius: 4px;
+			}
+
+			input.search-component__input[type="search"] {
+				@include promote-post-i2-font;
+
+				border-radius: 4px;
+				color: var(--studio-gray-100); // Change text color
+				width: 100%;
+
+				// Prevent zoom in iPhone/Safari (ios only)
+				@supports (-webkit-overflow-scrolling: touch) {
+					font-size: 1rem;
+				}
+			}
+
+			&.promote-post-i2__search-bar-search {
+				height: 44px;
+			}
+		}
+	}
+}
+
+@mixin blazepress-animated-skeleton {
+	background-color: hsl(200, 20%, 90%);
+	animation: skeleton-loading 1s linear infinite alternate;
+
+	@keyframes skeleton-loading {
+		0% {
+			background-color: #eceded;
+		}
+		100% {
+			background-color: #e6e7e7;
+		}
+	}
+}

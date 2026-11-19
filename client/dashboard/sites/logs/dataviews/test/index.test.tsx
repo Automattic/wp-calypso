@@ -32,13 +32,6 @@ vi.mock( '@wordpress/data', () => ( {
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-vi.mock( '@wordpress/i18n', () => ( {
-	__: ( text: string ) => text,
-	_x: ( text: string ) => text,
-	isRTL: () => false,
-	sprintf: ( text: string ) => text,
-} ) );
-
 const mockSite: DeepPartial< Site > = {
 	ID: mockSiteId,
 	slug: 'test-site',

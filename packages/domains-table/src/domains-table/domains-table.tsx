@@ -75,7 +75,6 @@ interface BaseDomainsTableProps {
 	sidebarMode?: boolean;
 	selectedDomainName?: string;
 	selectedFeature?: string;
-	isHostingOverview?: boolean;
 	hasConnectableSites?: boolean;
 	context?: DomainsTableContext;
 }
@@ -139,9 +138,20 @@ type Value = {
 	isCompact: boolean;
 	currentlySelectedDomainName?: string;
 	selectedFeature?: string;
-	isHostingOverview?: boolean;
 	hasConnectableSites: boolean;
 	context?: DomainsTableContext;
+};
+
+// Outside the component so its reference is stable, letting `useQueries` keep the result until a query changes.
+const combineSiteDomains = ( results: Array< { data?: { domains?: DomainData[] } } > ) => {
+	const fetchedSiteDomains: Record< number, DomainData[] > = {};
+	for ( const { data } of results ) {
+		const siteId = data?.domains?.[ 0 ]?.blog_id;
+		if ( typeof siteId === 'number' ) {
+			fetchedSiteDomains[ siteId ] = data?.domains ?? [];
+		}
+	}
+	return fetchedSiteDomains;
 };
 
 export const DomainsTableStateContext = createContext< Value | undefined >( undefined );
@@ -168,7 +178,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		sidebarMode = false,
 		selectedDomainName,
 		selectedFeature,
-		isHostingOverview = false,
 		hasConnectableSites = false,
 		context,
 	} = props;
@@ -210,23 +219,14 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 	}, [ allDomains, isAllSitesView ] );
 
 	const allSiteIds = [ ...new Set( domains?.map( ( { blog_id } ) => blog_id ) ?? [] ) ];
-	const allSiteDomains = useQueries( {
+	const fetchedSiteDomains = useQueries( {
 		queries: allSiteIds.map( ( siteId ) =>
 			getSiteDomainsQueryObject( siteId, {
 				...( fetchSiteDomains && { queryFn: () => fetchSiteDomains( siteId ) } ),
 			} )
 		),
+		combine: combineSiteDomains,
 	} );
-	const fetchedSiteDomains = useMemo( () => {
-		const fetchedSiteDomains: Record< number, DomainData[] > = {};
-		for ( const { data } of allSiteDomains ) {
-			const siteId = data?.domains?.[ 0 ]?.blog_id;
-			if ( typeof siteId === 'number' ) {
-				fetchedSiteDomains[ siteId ] = data?.domains ?? [];
-			}
-		}
-		return fetchedSiteDomains;
-	}, [ allSiteDomains ] );
 
 	const { setAutoRenew } = useDomainsBulkActionsMutation(
 		createBulkAction && { mutationFn: createBulkAction }
@@ -476,7 +476,6 @@ export const useGenerateDomainsTableState = ( props: DomainsTableProps ) => {
 		isCompact,
 		currentlySelectedDomainName: selectedDomainName,
 		selectedFeature,
-		isHostingOverview,
 		hasConnectableSites,
 		context,
 	};

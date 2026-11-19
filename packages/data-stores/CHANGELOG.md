@@ -5,6 +5,7 @@
 ### Breaking changes
 
 - Move the Launchpad query and mutation hooks (`useLaunchpad`, `useSortedLaunchpadTasks`, `updateLaunchpadSettings`, `useLaunchpadDismisser`, `fetchLaunchpad`, and their types) to `@automattic/launchpad`.
+- Remove the onboard store's readymade-template state: the `setSelectedReadymadeTemplate` action, the `getSelectedReadymadeTemplate` selector, the `ReadymadeTemplate` type and `SiteIntent.ReadyMadeTemplate`. The flow they served has been removed.
 
 ## 3.2.2
 

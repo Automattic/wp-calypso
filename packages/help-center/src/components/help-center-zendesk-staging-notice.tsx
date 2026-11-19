@@ -1,6 +1,6 @@
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Button } from '@wordpress/components';
-import { Icon, cautionFilled as warning, close } from '@wordpress/icons';
+import { Icon, caution as warning, close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
