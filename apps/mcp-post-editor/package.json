@@ -1,0 +1,43 @@
+{
+	"name": "@automattic/mcp-post-editor-app",
+	"version": "1.0.0",
+	"description": "Post editor MCP App for ChatGPT and Claude, served from widgets.wp.com.",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"sideEffects": [
+		"*.css",
+		"*.scss",
+		"./index.ts"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "apps/mcp-post-editor"
+	},
+	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"scripts": {
+		"clean": "rm -rf dist",
+		"teamcity:build-app": "yarn run build",
+		"build": "NODE_ENV=production yarn dev && find dist -maxdepth 1 -type f ! -name '*.min.js' -name '*.js' -delete",
+		"build:app": "calypso-build",
+		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/mcp-post-editor",
+		"prepack": "yarn run clean && yarn run build"
+	},
+	"dependencies": {
+		"@modelcontextprotocol/ext-apps": "2.0.4",
+		"dompurify": "3.4.17"
+	},
+	"devDependencies": {
+		"@automattic/calypso-apps-builder": "workspace:^",
+		"@automattic/calypso-build": "workspace:^",
+		"@modelcontextprotocol/client": "2.0.0",
+		"@wordpress/dependency-extraction-webpack-plugin": "^7.1.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^4.1.0",
+		"webpack": "^5.111.1"
+	},
+	"peerDependencies": {
+		"postcss": "*"
+	},
+	"private": true
+}

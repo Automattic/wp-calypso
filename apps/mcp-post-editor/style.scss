@@ -1,0 +1,45 @@
+// The site's own CSS styles the post; these rules are only for this page's chrome.
+.mcp-post-editor__status {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	margin: 0;
+	padding: 4px 16px;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+	color: #1e1e1e;
+	font:
+		12px/1.5 -apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		Roboto,
+		sans-serif;
+
+	&.is-error {
+		color: #cc1818;
+	}
+}
+
+.mcp-post-editor__error {
+	margin: 0;
+	padding: 4px 16px;
+	background: #fcf0f1;
+	border-bottom: 1px solid #ddd;
+	color: #cc1818;
+	font:
+		12px/1.5 -apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		Roboto,
+		sans-serif;
+	white-space: pre-line;
+}
+
+.editor-styles-wrapper {
+	overflow-wrap: break-word;
+}
+
+:where( .editor-styles-wrapper ) img {
+	max-width: 100%;
+	height: auto;
+}
