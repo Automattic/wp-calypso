@@ -21,11 +21,15 @@ $blueberry-color: #3858e9;
 
 	.plan-storage__bar {
 		width: 100%;
+		/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
 		--wpds-color-background-track-neutral: color-mix(in srgb, #{$blueberry-color} 8%, transparent);
 		--wpds-color-background-indicator-neutral: #{$blueberry-color};
+		/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 
 		&.is-alert {
+			/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
 			--wpds-color-background-indicator-neutral: var(--studio-red-30);
+			/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 		}
 	}
 

@@ -6,9 +6,11 @@
 	display: flex;
 
 	@include ui-mixins.when-dark-theme {
+		/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
 		--wpds-color-background-surface-neutral-strong: var(--dashboard-surface__background-color);
 		--wpds-color-foreground-content-neutral: var(--dashboard__text-color);
 		--wpds-color-stroke-surface-neutral: var(--dashboard-surface__border-color);
+		/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	}
 
 	.wpnc__keyboard-shortcuts-title {

@@ -290,7 +290,9 @@
 // Launchpad - Processing Screens
 .processing {
 	.wpcom__loading-progress-bar {
+		/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
 		--wpds-color-background-track-neutral: #fff;
+		/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	}
 
 	.step-container {
