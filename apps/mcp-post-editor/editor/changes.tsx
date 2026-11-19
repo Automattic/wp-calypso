@@ -47,9 +47,6 @@ function ChangeCard( {
 	const label = changeLabel( change );
 	return (
 		<li className="mcp-post-editor__change">
-			<p className="mcp-post-editor__change-label">
-				{ label.charAt( 0 ).toUpperCase() + label.slice( 1 ) }
-			</p>
 			<p className="mcp-post-editor__diff">
 				{ parts.every( ( part ) => part.type === 'same' ) && (
 					<em>Only the formatting or media changed.</em>
@@ -66,21 +63,24 @@ function ChangeCard( {
 						return <span key={ i }>{ shorten( text, i === 0, i === parts.length - 1 ) }</span>;
 					} ) }
 			</p>
-			<div className="mcp-post-editor__change-actions">
-				<Button
-					size="compact"
-					variant="primary"
-					onClick={ () => onDecide( 'accept', [ change.change_id ] ) }
-				>
-					Accept
-				</Button>
-				<Button
-					size="compact"
-					variant="secondary"
-					onClick={ () => onDecide( 'reject', [ change.change_id ] ) }
-				>
-					Reject
-				</Button>
+			<div className="mcp-post-editor__change-foot">
+				<span>{ label.charAt( 0 ).toUpperCase() + label.slice( 1 ) }</span>
+				<span className="mcp-post-editor__change-actions">
+					<Button
+						size="compact"
+						variant="tertiary"
+						onClick={ () => onDecide( 'reject', [ change.change_id ] ) }
+					>
+						Reject
+					</Button>
+					<Button
+						size="compact"
+						variant="primary"
+						onClick={ () => onDecide( 'accept', [ change.change_id ] ) }
+					>
+						Accept
+					</Button>
+				</span>
 			</div>
 		</li>
 	);
@@ -111,12 +111,12 @@ export function AgentChanges( {
 				</p>
 			) }
 			{ changes.length > 1 && (
-				<div className="mcp-post-editor__change-actions">
+				<div className="mcp-post-editor__change-actions is-all">
+					<Button size="compact" variant="tertiary" onClick={ () => onDecide( 'reject', ids ) }>
+						Reject all
+					</Button>
 					<Button size="compact" variant="secondary" onClick={ () => onDecide( 'accept', ids ) }>
 						Accept all
-					</Button>
-					<Button size="compact" variant="secondary" onClick={ () => onDecide( 'reject', ids ) }>
-						Reject all
 					</Button>
 				</div>
 			) }

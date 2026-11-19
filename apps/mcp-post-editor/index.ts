@@ -61,7 +61,7 @@ const CONTEXT_DELAY = 400;
 const NO_TOOLS = 'Don’t use the browser or wp-admin.';
 const PROMPTS: Record< Prompt, [ string, string ] > = {
 	review: [
-		'Editorial review',
+		'Editorial feedback',
 		'Read the post with wpcom-post-editor-read and give editorial feedback here in chat: structure, headings, paragraph length and flow. Don’t change the post.',
 	],
 	title: [
@@ -191,6 +191,9 @@ function render() {
 			readOnly,
 			status: statusMessage,
 			statusTitle: `Polls: ${ polls }, version ${ version }`,
+			location: post
+				? `${ siteUrl.replace( /^https?:\/\//, '' ) } · post ${ post.post_id }`
+				: undefined,
 			isError: !! error,
 			notices: Object.values( persistentErrors ).filter( ( message ): message is string =>
 				Boolean( message )

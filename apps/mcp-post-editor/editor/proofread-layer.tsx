@@ -172,23 +172,23 @@ export function ProofreadLayer( {
 			style={ { top: card.top, left: card.left, width: CARD_WIDTH } }
 		>
 			<p>
-				<b>{ KIND_LABEL[ issue.kind ] ?? issue.kind }:</b> “{ issue.quote }” → “
-				<b>{ issue.replacement }</b>”
+				<b>{ KIND_LABEL[ issue.kind ] ?? issue.kind }:</b> “{ issue.quote }” →{ ' ' }
+				{ issue.replacement ? <b>“{ issue.replacement }”</b> : <b>remove</b> }
 			</p>
 			<p className="mcp-post-editor__fix-reason">{ issue.reason }</p>
-			<div className="mcp-post-editor__change-actions">
-				<Button size="compact" variant="primary" onClick={ () => apply( [ issue ] ) }>
-					Apply
-				</Button>
+			<div className="mcp-post-editor__fix-actions">
 				<Button
 					size="compact"
-					variant="secondary"
+					variant="tertiary"
 					onClick={ () => {
 						setCard( undefined );
 						onDone( [ issue.id ], 0 );
 					} }
 				>
 					Dismiss
+				</Button>
+				<Button size="compact" variant="primary" onClick={ () => apply( [ issue ] ) }>
+					Apply
 				</Button>
 			</div>
 		</div>

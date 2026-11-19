@@ -19,7 +19,7 @@ import {
 } from '@wordpress/element';
 import { isKeyboardEvent } from '@wordpress/keycodes';
 import { createUndoManager, type UndoManager } from '@wordpress/undo-manager';
-import { AssistantBar, type Prompt, type TextSelection } from './assistant';
+import { AskAssistant, AssistantChips, type Prompt, type TextSelection } from './assistant';
 import './blocks';
 import { AgentChanges, ChangedBlocks, type AgentChange, type Decision } from './changes';
 import { ProofreadLayer } from './proofread-layer';
@@ -38,6 +38,8 @@ type Props = {
 	readOnly: boolean;
 	status: string;
 	statusTitle?: string;
+	// The site and post, as "example.com · post 42".
+	location?: string;
 	isError: boolean;
 	notices: string[];
 	isFullscreen: boolean;
@@ -302,6 +304,7 @@ export function PostEditor( {
 	post,
 	status,
 	statusTitle,
+	location,
 	isError,
 	notices,
 	isFullscreen,
@@ -341,44 +344,34 @@ export function PostEditor( {
 					>
 						{ status }
 					</p>
-					{ ! readOnly && visible.length > 0 && (
-						<div className="mcp-post-editor__issues">
-							<span>
-								{ visible.length } { visible.length === 1 ? 'issue' : 'issues' }
-							</span>
-							<Button size="compact" variant="link" onClick={ () => applyRef.current?.( visible ) }>
-								Apply all
-							</Button>
-							<Button
-								size="compact"
-								variant="link"
-								onClick={ () =>
-									canvas.onProofreadDone(
-										visible.map( ( issue ) => issue.id ),
-										0
-									)
-								}
+					{ location && (
+						<p className="mcp-post-editor__location" title={ location }>
+							{ location }
+						</p>
+					) }
+					<div className="mcp-post-editor__actions">
+						{ ! readOnly && <AssistantChips canMessage={ canMessage } onPrompt={ onPrompt } /> }
+						{ ! readOnly && (
+							<button
+								type="button"
+								className="mcp-post-editor__chip is-primary"
+								aria-busy={ isSaving }
+								disabled={ isSaving || ! post }
+								onClick={ onSave }
 							>
-								Dismiss all
-							</Button>
-						</div>
-					) }
-					{ ! readOnly && (
-						<Button
-							size="compact"
-							variant="primary"
-							isBusy={ isSaving }
-							disabled={ isSaving || ! post }
-							onClick={ onSave }
-						>
-							Save
-						</Button>
-					) }
-					{ canFullscreen && (
-						<Button size="compact" variant="secondary" onClick={ onToggleFullscreen }>
-							{ isFullscreen ? 'Collapse' : 'Expand' }
-						</Button>
-					) }
+								Save
+							</button>
+						) }
+						{ canFullscreen && (
+							<button
+								type="button"
+								className="mcp-post-editor__chip"
+								onClick={ onToggleFullscreen }
+							>
+								{ isFullscreen ? 'Collapse' : 'Expand' }
+							</button>
+						) }
+					</div>
 				</div>
 				{ ! readOnly && conflict && (
 					<div className="mcp-post-editor__conflict" role="alert">
@@ -414,14 +407,6 @@ export function PostEditor( {
 						{ notices.join( '\n' ) }
 					</p>
 				) }
-				{ ! readOnly && (
-					<AssistantBar
-						canMessage={ canMessage }
-						onPrompt={ onPrompt }
-						onAsk={ onAsk }
-						onSelect={ onSelect }
-					/>
-				) }
 				<AgentChanges changes={ canvas.changes } accepted={ accepted } onDecide={ onDecide } />
 				{ /* Read-only gets a new editor, as its post is a sanitized copy. */ }
 				{ post && (
@@ -433,6 +418,34 @@ export function PostEditor( {
 						{ ...canvas }
 					/>
 				) }
+				<div className="mcp-post-editor__dock">
+					{ ! readOnly && (
+						<AskAssistant canMessage={ canMessage } onAsk={ onAsk } onSelect={ onSelect } />
+					) }
+					{ ! readOnly && visible.length > 0 && (
+						<div className="mcp-post-editor__pill">
+							<span>
+								{ visible.length } { visible.length === 1 ? 'issue' : 'issues' }
+							</span>
+							<span aria-hidden="true">·</span>
+							<button type="button" onClick={ () => applyRef.current?.( visible ) }>
+								Apply all
+							</button>
+							<span aria-hidden="true">·</span>
+							<button
+								type="button"
+								onClick={ () =>
+									canvas.onProofreadDone(
+										visible.map( ( issue ) => issue.id ),
+										0
+									)
+								}
+							>
+								Dismiss all
+							</button>
+						</div>
+					) }
+				</div>
 			</div>
 			<Popover.Slot />
 		</SlotFillProvider>
