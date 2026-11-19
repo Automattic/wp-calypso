@@ -262,6 +262,16 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	font-weight: 500;
 }
 
+// The divider under the tabs, drawn by the header so the active tab's indicator sits on it
+// even when "Mark N as read" comes between the tabs and the list.
+.wpnc-app__tabs > .components-card__header {
+	border-bottom: 1px solid color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
+
+	@include ui-mixins.when-dark-theme {
+		border-bottom-color: color-mix(in srgb, #f0f0f0 8%, transparent);
+	}
+}
+
 // Sits between the tabs and the list, lined up with the rows' 16px edge.
 .wpnc-app__mark-all-read {
 	display: flex;
