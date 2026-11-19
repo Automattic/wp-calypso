@@ -809,7 +809,6 @@ function setUpCSP( req, res, next ) {
 			'https://bat.bing.com', // Bing Ads API
 			'https://px.ads.linkedin.com', // LinkedIn ads pixel
 			'https://*.survicate.com', // Survicate API
-			'*.sentry.io',
 			'*.reddit.com',
 			'https://video.bsky.app', // Bluesky video manifests (hls.js fetches the HLS playlist for Reader ATmosphere thread view)
 			'https://video.cdn.bsky.app', // Bluesky video CDN (segment URLs 302-redirect here)
