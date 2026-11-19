@@ -5,6 +5,7 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import SftpCard from '../sftp-card';
 
@@ -57,7 +58,12 @@ describe( '<SftpCard>', () => {
 			} );
 
 		render(
-			<SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } hasSshFeature />
+			<SftpCard
+				siteId={ siteId }
+				sftpUsers={ [ { username, password: '' } ] }
+				hasSshFeature
+				sshMayBeEnabled
+			/>
 		);
 
 		await screen.findByText( 'Learn more' );
@@ -113,5 +119,52 @@ describe( '<SftpCard>', () => {
 
 		release();
 		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
+	} );
+
+	test( 'only mentions the SSH keys when SSH access is known to be off', async () => {
+		const user = userEvent.setup();
+
+		render(
+			<SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } hasSshFeature />
+		);
+
+		await screen.findByText( 'Learn more' );
+		await user.click( screen.getByRole( 'button', { name: 'Delete credentials' } ) );
+		const dialog = await screen.findByRole( 'dialog' );
+		expect( dialog ).toHaveTextContent( 'Every SSH key attached to this site is also detached.' );
+		expect( dialog ).not.toHaveTextContent( 'SSH access is also turned off' );
+	} );
+
+	test( 'shows an error and lets the user try again when deleting fails', async () => {
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-users` )
+			.reply( 500, JSON.stringify( { code: 'rest_unexpected_error', message: 'Error' } ), {
+				'Content-Type': 'application/json',
+			} );
+
+		render(
+			<>
+				<SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } />
+				<Snackbars />
+			</>
+		);
+
+		await screen.findByText( 'Learn more' );
+		await user.click( screen.getByRole( 'button', { name: 'Delete credentials' } ) );
+		const dialog = await screen.findByRole( 'dialog' );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Delete credentials' } ) );
+
+		// The notice text also lands in the a11y live region, so this matches twice.
+		const [ notice ] = await screen.findAllByText(
+			'Failed to delete SFTP/SSH credentials. Please refresh the page and try again.'
+		);
+		expect( notice ).toBeVisible();
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: 'Delete credentials' } ) ).not.toHaveAttribute(
+				'aria-disabled',
+				'true'
+			)
+		);
 	} );
 } );

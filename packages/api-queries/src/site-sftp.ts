@@ -13,6 +13,9 @@ export const siteSftpUsersQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'sftp-users' ],
 		queryFn: () => fetchSftpUsers( siteId ),
+		// WP Cloud's user list can lag a few seconds behind an add or delete, so a refetch right after one (on
+		// window focus, say) could bring back a user that is gone.
+		staleTime: 10 * 1000,
 		meta: {
 			persist: false,
 		},
@@ -63,8 +66,7 @@ export const siteSftpUsersDeleteMutation = ( siteId: number ) =>
 			queryClient.setQueryData( siteSftpUsersQuery( siteId ).queryKey, [] );
 		},
 		onSettled: ( _data, error ) => {
-			// After a failure some users may already be gone. After a success the list is left empty as set
-			// above: it can lag behind a delete for a few seconds.
+			// After a failure some users may already be gone. After a success the list stays empty as set above.
 			if ( error ) {
 				queryClient.invalidateQueries( { queryKey: siteSftpUsersQuery( siteId ).queryKey } );
 			}

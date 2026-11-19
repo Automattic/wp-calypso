@@ -44,10 +44,12 @@ export default function SftpCard( {
 	siteId,
 	sftpUsers = [],
 	hasSshFeature = false,
+	sshMayBeEnabled = false,
 }: {
 	siteId: number;
 	sftpUsers: SftpUser[];
 	hasSshFeature?: boolean;
+	sshMayBeEnabled?: boolean;
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
@@ -269,9 +271,13 @@ export default function SftpCard( {
 					</Text>
 					{ hasSshFeature && (
 						<Text>
-							{ __(
-								'SSH access is also turned off, and every SSH key attached to this site is detached. To use SSH again, create new credentials, turn SSH access on, and attach your keys again.'
-							) }
+							{ sshMayBeEnabled
+								? __(
+										'SSH access is also turned off, and every SSH key attached to this site is detached. To use SSH again, create new credentials, turn SSH access on, and attach your keys again.'
+									)
+								: __(
+										'Every SSH key attached to this site is also detached. To use SSH later, create new credentials, turn SSH access on, and attach your keys again.'
+									) }
 						</Text>
 					) }
 				</VStack>
