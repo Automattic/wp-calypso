@@ -267,7 +267,7 @@ export default function Sites() {
 			<PageLayout
 				header={
 					<PageHeader
-						title={ __( 'Sites' ) }
+						title={ __( 'Site List' ) }
 						actions={
 							userHasSites && (
 								<Button
