@@ -876,6 +876,63 @@ describe( 'CheckoutMain', () => {
 		expect( errorNotice ).not.toHaveBeenCalled();
 	} );
 
+	it.each( [
+		[ 'isAkismetSitelessCheckout', 'akismet_siteless_checkout' ],
+		[ 'isMarketplaceSitelessCheckout', 'marketplace_siteless_checkout' ],
+		[ 'isWpcomSitelessCheckout', 'wpcom_siteless_checkout' ],
+	] )(
+		'records the checkout flow of a renewal by subscription ID from the cart flag %s',
+		async ( cartFlag, expectedCheckoutFlow ) => {
+			const recordTracksEvent = jest.spyOn( Tracks, 'recordTracksEvent' );
+			// The server flags a renewal of a purchase on a holding site; the URL has no product.
+			const setCartWithHoldingSiteRenewal: typeof mockSetCartEndpoint = ( cartKey, requestCart ) =>
+				mockSetCartEndpoint( cartKey, {
+					...requestCart,
+					products: requestCart.products.map( ( product ) =>
+						product.extra.purchaseType === 'renewal'
+							? {
+									...product,
+									product_slug: 'personal-bundle',
+									extra: { ...product.extra, [ cartFlag ]: true },
+								}
+							: product
+					),
+				} );
+			( useCartKey as jest.Mock ).mockImplementation( () => 'no-site' );
+
+			try {
+				render(
+					<MockCheckout
+						cartChanges={ { products: [] } }
+						additionalProps={ {
+							purchaseId: '12345',
+							productAliasFromUrl: undefined,
+							siteId: 0,
+							siteSlug: 'no-site',
+							sitelessCheckoutType: undefined,
+						} }
+						initialCart={ initialCart }
+						setCart={ setCartWithHoldingSiteRenewal }
+					/>
+				);
+
+				expect(
+					await screen.findByText( /WordPress.com Personal/, {
+						ignore: '.cost-overrides-list-product__title',
+					} )
+				).toBeInTheDocument();
+				await waitFor( () => {
+					expect( recordTracksEvent ).toHaveBeenCalledWith(
+						'calypso_checkout_page_view',
+						expect.objectContaining( { checkout_flow: expectedCheckoutFlow } )
+					);
+				} );
+			} finally {
+				recordTracksEvent.mockRestore();
+			}
+		}
+	);
+
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = {

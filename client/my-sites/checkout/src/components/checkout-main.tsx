@@ -49,6 +49,7 @@ import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
+import { getSitelessCheckoutTypeFromCart } from '../lib/get-siteless-checkout-type-from-cart';
 import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
@@ -236,14 +237,6 @@ export default function CheckoutMain( {
 		[ reduxDispatch, translate ]
 	);
 
-	const checkoutFlow = useCheckoutFlowTrackKey( {
-		hasJetpackSiteSlug: !! jetpackSiteSlug,
-		sitelessCheckoutType,
-		isJetpackNotAtomic,
-		isLoggedOutCart,
-		isUserComingFromLoginForm,
-	} );
-
 	const countriesList = useCountryList();
 
 	const {
@@ -297,6 +290,23 @@ export default function CheckoutMain( {
 		applyCoupon,
 		addProductsToCart,
 		addingRenewals,
+	} );
+
+	// A renewal by subscription ID alone has no siteless type in its URL, so
+	// checkout's own analytics take it from the cart. Google Analytics still
+	// follows the URL: its Akismet property is only configured on Akismet paths.
+	const isRenewalBySubscriptionId =
+		!! purchaseId && ! productAliasFromUrl && ! sitelessCheckoutType;
+	const analyticsSitelessCheckoutType = isRenewalBySubscriptionId
+		? getSitelessCheckoutTypeFromCart( responseCart )
+		: sitelessCheckoutType;
+
+	const checkoutFlow = useCheckoutFlowTrackKey( {
+		hasJetpackSiteSlug: !! jetpackSiteSlug,
+		sitelessCheckoutType: analyticsSitelessCheckoutType,
+		isJetpackNotAtomic,
+		isLoggedOutCart,
+		isUserComingFromLoginForm,
 	} );
 
 	useRecordCartLoaded( {
@@ -469,10 +479,11 @@ export default function CheckoutMain( {
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
-		updatedSiteSlug,
+		// Siteless checkouts have no site slug, as on their own renewal paths.
+		analyticsSitelessCheckoutType !== sitelessCheckoutType ? undefined : updatedSiteSlug,
 		feature,
 		plan,
-		sitelessCheckoutType,
+		analyticsSitelessCheckoutType,
 		checkoutFlow
 	);
 
@@ -856,15 +867,18 @@ export default function CheckoutMain( {
 
 	return (
 		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
-			<PageViewTracker
-				path={ analyticsPath }
-				title="Checkout"
-				properties={ analyticsProps }
-				options={ {
-					useJetpackGoogleAnalytics: sitelessCheckoutType === 'jetpack' || isJetpackNotAtomic,
-					useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
-				} }
-			/>
+			{ /* Waits for the cart when the path depends on it: a later path change records a second view. */ }
+			{ ( ! isRenewalBySubscriptionId || ! isInitialCartLoading ) && (
+				<PageViewTracker
+					path={ analyticsPath }
+					title="Checkout"
+					properties={ analyticsProps }
+					options={ {
+						useJetpackGoogleAnalytics: sitelessCheckoutType === 'jetpack' || isJetpackNotAtomic,
+						useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
+					} }
+				/>
+			) }
 			<VGSCollectProvider>
 				<CheckoutProvider
 					onPaymentComplete={ handlePaymentSubmitted }
