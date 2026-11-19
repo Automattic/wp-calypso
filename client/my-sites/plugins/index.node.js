@@ -9,6 +9,7 @@ import {
 	fetchPlugins,
 	fetchCategoryPlugins,
 	fetchPlugin,
+	redirectInvalidCategoryPage,
 	validatePlugin,
 	skipIfLoggedIn,
 	setBrowsePluginsNoindex,
@@ -33,6 +34,7 @@ export default function ( router ) {
 	router(
 		`/${ langParam }/plugins/browse/:category`,
 		skipIfLoggedIn,
+		redirectInvalidCategoryPage,
 		ssrSetupLocale,
 		setupPreferences,
 		fetchCategoryPlugins,

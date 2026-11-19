@@ -3,7 +3,13 @@
  */
 import { getWPCOMPluginQueryParams } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { fetchPluginInformation } from 'calypso/lib/wporg';
-import { fetchPlugin, fetchPlugins, setBrowsePluginsNoindex } from '../controller-logged-out';
+import {
+	fetchCategoryPlugins,
+	fetchPlugin,
+	fetchPlugins,
+	redirectInvalidCategoryPage,
+	setBrowsePluginsNoindex,
+} from '../controller-logged-out';
 
 jest.mock( 'calypso/lib/wporg', () => ( {
 	fetchPluginInformation: jest.fn(),
@@ -323,5 +329,177 @@ describe( 'fetchPlugins prefetch error logging', () => {
 			'featured-plugins',
 		] );
 		jest.useRealTimers();
+	} );
+} );
+
+describe( 'redirectInvalidCategoryPage', () => {
+	function makePageContext( originalUrl, query ) {
+		return {
+			isServerSide: true,
+			originalUrl,
+			query,
+			res: { redirect: jest.fn() },
+		};
+	}
+
+	test( 'continues when there is no page query arg', () => {
+		const next = jest.fn();
+		const context = makePageContext( '/plugins/browse/seo', {} );
+
+		redirectInvalidCategoryPage( context, next );
+
+		expect( next ).toHaveBeenCalledTimes( 1 );
+		expect( context.res.redirect ).not.toHaveBeenCalled();
+	} );
+
+	test( 'continues for a page past the first', () => {
+		const next = jest.fn();
+		const context = makePageContext( '/plugins/browse/seo?page=3', { page: '3' } );
+
+		redirectInvalidCategoryPage( context, next );
+
+		expect( next ).toHaveBeenCalledTimes( 1 );
+		expect( context.res.redirect ).not.toHaveBeenCalled();
+	} );
+
+	test.each( [ '1', '0', '-2', 'abc', '2.5', '02' ] )(
+		'redirects page=%s to the URL without the page query arg',
+		( page ) => {
+			const next = jest.fn();
+			const context = makePageContext( `/de/plugins/browse/seo?page=${ page }&ref=nav`, {
+				page,
+				ref: 'nav',
+			} );
+
+			redirectInvalidCategoryPage( context, next );
+
+			expect( context.res.redirect ).toHaveBeenCalledWith( 301, '/de/plugins/browse/seo?ref=nav' );
+			expect( next ).not.toHaveBeenCalled();
+		}
+	);
+
+	test( 'redirects a repeated page query arg', () => {
+		const context = makePageContext( '/plugins/browse/seo?page=2&page=3', {
+			page: [ '2', '3' ],
+		} );
+
+		redirectInvalidCategoryPage( context, jest.fn() );
+
+		expect( context.res.redirect ).toHaveBeenCalledWith( 301, '/plugins/browse/seo' );
+	} );
+} );
+
+describe( 'fetchCategoryPlugins pagination', () => {
+	function makeCategoryContext( { page, firstPage } = {} ) {
+		const dispatched = [];
+		const infiniteQueries = new Map();
+
+		return {
+			isServerSide: true,
+			path: '/plugins/browse/seo',
+			pathname: '/plugins/browse/seo',
+			lang: 'en',
+			params: { category: 'seo' },
+			query: page === undefined ? {} : { page },
+			queryClient: {
+				fetchQuery: () => Promise.resolve( {} ),
+				prefetchQuery: () => Promise.resolve(),
+				prefetchInfiniteQuery: jest.fn( ( { queryKey, initialPageParam } ) => {
+					infiniteQueries.set( JSON.stringify( queryKey ), {
+						pages: [ { data: firstPage } ],
+						pageParams: [ initialPageParam ],
+					} );
+					return Promise.resolve();
+				} ),
+				getQueryData: ( key ) => infiniteQueries.get( JSON.stringify( key ) ),
+			},
+			store: {
+				getState: () => ( { currentUser: { id: null }, documentHead: { meta: [] } } ),
+				dispatch: ( action ) => dispatched.push( action ),
+			},
+			res: {
+				status: jest.fn(),
+				req: { logger: { error: jest.fn() }, useragent: { isBot: false } },
+			},
+			dispatched,
+		};
+	}
+
+	const headLinks = ( context ) =>
+		context.dispatched.filter( ( action ) => action.link ).flatMap( ( action ) => action.link );
+
+	const plugins = ( count ) =>
+		Array.from( { length: count }, ( _, i ) => ( { fields: { slug: `plugin-${ i }` } } ) );
+
+	test( 'prefetches the first page and links to the next page', async () => {
+		const context = makeCategoryContext( {
+			firstPage: { results: plugins( 20 ), total: 300, page_handle: 'handle' },
+		} );
+		const next = jest.fn();
+
+		await fetchCategoryPlugins( context, next );
+
+		expect( context.queryClient.prefetchInfiniteQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( { initialPageParam: 1 } )
+		);
+		expect( headLinks( context ) ).toEqual( [
+			{ rel: 'next', href: 'https://wordpress.com/plugins/browse/seo?page=2' },
+		] );
+		expect( context.res.status ).not.toHaveBeenCalled();
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'prefetches the requested page and links to the previous and next pages', async () => {
+		const context = makeCategoryContext( {
+			page: '3',
+			firstPage: { results: plugins( 20 ), total: 300, page_handle: 'handle' },
+		} );
+
+		await fetchCategoryPlugins( context, jest.fn() );
+
+		expect( context.queryClient.prefetchInfiniteQuery ).toHaveBeenCalledWith(
+			expect.objectContaining( { initialPageParam: btoa( 'from=40' ) } )
+		);
+		expect( headLinks( context ) ).toEqual( [
+			{ rel: 'prev', href: 'https://wordpress.com/plugins/browse/seo?page=2' },
+			{ rel: 'next', href: 'https://wordpress.com/plugins/browse/seo?page=4' },
+		] );
+	} );
+
+	test( 'links the second page back to the first page without a page query arg', async () => {
+		const context = makeCategoryContext( {
+			page: '2',
+			firstPage: { results: plugins( 5 ), total: 25, page_handle: false },
+		} );
+
+		await fetchCategoryPlugins( context, jest.fn() );
+
+		expect( headLinks( context ) ).toEqual( [
+			{ rel: 'prev', href: 'https://wordpress.com/plugins/browse/seo' },
+		] );
+	} );
+
+	test( 'responds 404 with noindex for a page past the last result', async () => {
+		const context = makeCategoryContext( {
+			page: '40',
+			firstPage: { results: [], total: 25, page_handle: false },
+		} );
+		const next = jest.fn();
+
+		await fetchCategoryPlugins( context, next );
+
+		expect( context.res.status ).toHaveBeenCalledWith( 404 );
+		expect( robotsMeta( context ) ).toEqual( [ { name: 'robots', content: 'noindex' } ] );
+		expect( headLinks( context ) ).toEqual( [] );
+		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'responds 404 without querying the search for a page past the search window', async () => {
+		const context = makeCategoryContext( { page: '501' } );
+
+		await fetchCategoryPlugins( context, jest.fn() );
+
+		expect( context.queryClient.prefetchInfiniteQuery ).not.toHaveBeenCalled();
+		expect( context.res.status ).toHaveBeenCalledWith( 404 );
 	} );
 } );

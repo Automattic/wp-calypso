@@ -73,7 +73,7 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isL
 	return null;
 };
 
-const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
+const PluginsBrowser = ( { trackPageViews = true, category, search, page = 1, pathname } ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
@@ -124,6 +124,14 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 
 	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
 
+	const getCategoryTitle = () =>
+		page > 1
+			? translate( '%(categoryName)s Plugins – Page %(page)d', {
+					args: { categoryName, page },
+					comment: 'Title of a page of a plugins category listing, e.g. "SEO Plugins – Page 2".',
+				} )
+			: translate( '%(categoryName)s Plugins', { args: { categoryName } } );
+
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
 		if ( search ) {
@@ -147,7 +155,13 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 
 		if ( category ) {
 			return (
-				<PluginsCategoryResultsPage category={ category } sites={ sites } siteSlug={ siteSlug } />
+				<PluginsCategoryResultsPage
+					category={ category }
+					sites={ sites }
+					siteSlug={ siteSlug }
+					page={ page }
+					pathname={ pathname }
+				/>
 			);
 		}
 
@@ -186,11 +200,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search } ) => {
 				isLoggedIn={ isLoggedIn }
 			/>
 			<DocumentHead
-				title={
-					category && ! search
-						? translate( '%(categoryName)s Plugins', { args: { categoryName } } )
-						: translate( 'Plugins' )
-				}
+				title={ category && ! search ? getCategoryTitle() : translate( 'Plugins' ) }
 				meta={
 					! category && ! search
 						? [

@@ -18,6 +18,7 @@ import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plan
 import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
+import { getCategoryPage } from './category-pagination';
 import { UNLISTED_PLUGINS } from './constants';
 import PlanSetup from './jetpack-plugins-setup';
 import { MailPoetUpgradePage } from './mailpoet-upgrade';
@@ -74,8 +75,10 @@ function renderPluginsBrowser( context ) {
 
 	context.primary = createElement( PluginBrowser, {
 		path: context.path,
+		pathname: context.pathname,
 		category,
 		search: searchTerm,
+		page: getCategoryPage( context.query.page ),
 	} );
 }
 

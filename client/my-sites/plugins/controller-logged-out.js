@@ -8,13 +8,19 @@ import {
 import { getSiteFragment } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import { setDocumentHeadLink, setDocumentHeadMeta } from 'calypso/state/document-head/actions';
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
+import {
+	CATEGORY_PAGE_QUERY_ARG,
+	MAX_CATEGORY_PAGE,
+	getCategoryPaginationUrls,
+	parseCategoryPage,
+} from './category-pagination';
 import { UNLISTED_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
@@ -189,6 +195,53 @@ export async function fetchPlugins( context, next ) {
 	next();
 }
 
+/**
+ * Redirect a plugins category page whose `page` query arg is not a page past the
+ * first to the URL without it, so each page of results has a single URL.
+ */
+export function redirectInvalidCategoryPage( context, next ) {
+	const rawPage = context.query?.[ CATEGORY_PAGE_QUERY_ARG ];
+
+	if ( ! context.isServerSide || rawPage === undefined ) {
+		return next();
+	}
+
+	const page = parseCategoryPage( rawPage );
+	if ( page && page > 1 ) {
+		return next();
+	}
+
+	const url = new URL( context.originalUrl, 'https://wordpress.com' );
+	url.searchParams.delete( CATEGORY_PAGE_QUERY_ARG );
+	context.res.redirect( 301, url.pathname + url.search );
+}
+
+const markCategoryPageNotFound = ( context ) => {
+	context.res.status( 404 );
+
+	const meta = getDocumentHeadMeta( context.store.getState() )
+		.filter( ( { name } ) => name !== 'robots' )
+		.concat( { name: 'robots', content: 'noindex' } );
+	context.store.dispatch( setDocumentHeadMeta( meta ) );
+};
+
+const setCategoryPaginationLinks = ( context, { page, hasNextPage } ) => {
+	const { prev, next } = getCategoryPaginationUrls( {
+		pathname: context.pathname,
+		page,
+		hasNextPage,
+	} );
+
+	const links = [
+		prev && { rel: 'prev', href: new URL( prev, 'https://wordpress.com' ).href },
+		next && { rel: 'next', href: new URL( next, 'https://wordpress.com' ).href },
+	].filter( Boolean );
+
+	if ( links.length ) {
+		context.store.dispatch( setDocumentHeadLink( links ) );
+	}
+};
+
 export async function fetchCategoryPlugins( context, next ) {
 	const { queryClient, store } = context;
 
@@ -202,20 +255,50 @@ export async function fetchCategoryPlugins( context, next ) {
 	const categoryTags = categories[ category || '' ]?.tags || [ category ];
 	const tag = categoryTags.join( ',' );
 
+	const page = parseCategoryPage( context.query?.[ CATEGORY_PAGE_QUERY_ARG ] ) ?? 1;
+	const isPageInRange = page <= MAX_CATEGORY_PAGE;
+
 	const options = {
 		...getQueryOptions( context ),
 		category,
 		tag,
+		page: page > 1 && isPageInRange ? page : undefined,
 	};
 
-	await prefetchTimebox(
+	const dataOrError = await prefetchTimebox(
 		[
 			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
 			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
-			{ name: 'category-plugins', promise: prefetchCategoryPlugins( queryClient, options ) },
+			...( isPageInRange
+				? [
+						{
+							name: 'category-plugins',
+							promise: prefetchCategoryPlugins( queryClient, options ),
+						},
+					]
+				: [] ),
 		],
 		context
 	);
+
+	if ( ! isPageInRange ) {
+		markCategoryPageNotFound( context );
+		return next();
+	}
+
+	if ( ! ( dataOrError instanceof Error ) ) {
+		const firstPage = queryClient.getQueryData(
+			getESPluginsInfiniteQueryParams( { ...options, infinite: true }, true ).queryKey
+		)?.pages?.[ 0 ]?.data;
+
+		if ( firstPage ) {
+			if ( page > 1 && ! firstPage.results?.length ) {
+				markCategoryPageNotFound( context );
+			} else {
+				setCategoryPaginationLinks( context, { page, hasNextPage: !! firstPage.page_handle } );
+			}
+		}
+	}
 
 	next();
 }
