@@ -1,55 +1,64 @@
 import { App } from '@modelcontextprotocol/ext-apps/app-with-deps';
-import DOMPurify from 'dompurify';
-import { applySiteStyles, type SiteStyle } from './site-styles';
+import { createElement, createRoot, flushSync } from '@wordpress/element';
+import { PostEditor, type EditorPost } from './editor';
+import { joinBlocks, splitBlocks } from './editor/blocks';
+import { mergePost } from './editor/merge';
+import sanitize from './editor/sanitize';
+import { applySiteStyles } from './site-styles';
 import './style.scss';
 
 type ToolResult = Awaited< ReturnType< App[ 'callServerTool' ] > >;
+type HostContext = NonNullable< ReturnType< App[ 'getHostContext' ] > >;
 type OpenResult = {
 	site: { id: number; url: string };
 	post: { id: number; title: string };
 	content: string;
 	version: number;
 };
-type StateResult = { version: number; changed: boolean; title?: string; content?: string };
-type ConfigResult = { styles?: SiteStyle[]; assets_styles?: string; font_faces_html?: string };
+type StateResult = {
+	version: number;
+	changed: boolean;
+	title?: string;
+	content?: string;
+	changes?: unknown[];
+	proofread?: unknown[];
+	conflict?: unknown;
+};
+type UpdateResult = { version: number; conflict?: boolean };
+type ConfigResult = {
+	styles?: { css: string }[];
+	assets_styles?: string;
+	font_faces_html?: string;
+};
+type Post = { title: string; content: string };
 
 const POLL_INTERVAL = 2000;
+const SAVE_DELAY = 1000;
+const SAVE_RETRIES = 2;
 const CONFIG_ATTEMPTS = 3;
 const CONFIG_TIMEOUT = 10000;
+// The inline panel's height when the host doesn't fix it; the canvas scrolls inside.
+const INLINE_HEIGHT = 560;
 const LINK_PROTOCOLS = [ 'http:', 'https:', 'mailto:' ];
-// Post content is the site's saved HTML; nothing in it should run or navigate this page.
-const PURIFY_CONFIG = {
-	FORBID_TAGS: [ 'iframe', 'object', 'embed', 'form', 'base', 'meta', 'style', 'script', 'link' ],
-	ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|[^a-z]|[a-z+.-]+(?:[^a-z+.\-:]|$))/i,
-};
 
 const root =
 	document.getElementById( 'mcp-post-editor' ) ??
 	document.body.appendChild(
 		Object.assign( document.createElement( 'div' ), { id: 'mcp-post-editor' } )
 	);
-root.innerHTML = `
-	<p class="mcp-post-editor__status" role="status"></p>
-	<p class="mcp-post-editor__error" role="alert" hidden></p>
-	<div class="editor-styles-wrapper">
-		<div class="is-layout-constrained has-global-padding">
-			<h1 class="wp-block-post-title editor-post-title"></h1>
-		</div>
-		<div class="is-root-container is-layout-constrained has-global-padding wp-block-post-content"></div>
-	</div>
-`;
-const status = root.querySelector( '.mcp-post-editor__status' ) as HTMLElement;
-const errorNotice = root.querySelector( '.mcp-post-editor__error' ) as HTMLElement;
-const title = root.querySelector( '.wp-block-post-title' ) as HTMLElement;
-const content = root.querySelector( '.is-root-container' ) as HTMLElement;
+const reactRoot = createRoot( root );
 
-const app = new App( { name: 'wpcom-post-editor', version: '0.0.1' } );
+const app = new App(
+	{ name: 'wpcom-post-editor', version: '0.0.1' },
+	{ availableDisplayModes: [ 'inline', 'fullscreen' ] }
+);
 const panelId = `${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`;
 let post: { wpcom_site: string; post_id: number } | undefined;
 let siteUrl = '';
 let version = 0;
 let polls = 0;
 let error = '';
+let statusMessage = '';
 let timer: ReturnType< typeof setTimeout > | undefined;
 let polling = false;
 let stopped = false;
@@ -59,17 +68,80 @@ let noServerTools = false;
 let channel: BroadcastChannel | undefined;
 // Errors the poll status must not overwrite, shown until their cause is resolved.
 const persistentErrors: { open?: string; config?: string; host?: string } = {};
+let styles: ConfigResult[ 'styles' ] = [];
+let hostContext: HostContext = {};
 
-function showStatus( message?: string ) {
-	status.textContent = message ?? `Polls: ${ polls }, version ${ version }`;
-	status.classList.toggle( 'is-error', !! error );
+// The post the server and this page last agreed on, the user's latest, and what the editor shows.
+let base: Post = { title: '', content: '' };
+let local: Post = base;
+let editorPost: EditorPost | undefined;
+// The user changed the title since the last update, so the next one sends it.
+let titleChanged = false;
+let saveTimer: ReturnType< typeof setTimeout > | undefined;
+let saving = false;
+let saveQueued = false;
+let saveStarts = 0;
+// The post the last update sent when the page couldn't tell whether the server took it.
+let unconfirmed: Post | undefined;
+// The update in flight, so a save stopped behind it can still send the typing after it.
+let lastUpdate: Promise< UpdateResult > | undefined;
+// The read-only view shows a sanitized copy: it never saves, so nothing sends it back.
+let preview: { source?: EditorPost; post?: EditorPost } = {};
+
+function previewPost() {
+	if ( preview.source !== editorPost ) {
+		preview = {
+			source: editorPost,
+			post: editorPost && { ...editorPost, content: sanitize( editorPost.content ) },
+		};
+	}
+	return preview.post;
+}
+
+function render() {
+	const { displayMode, availableDisplayModes, containerDimensions } = hostContext;
+	const isFullscreen = displayMode === 'fullscreen';
+	const fixedHeight =
+		containerDimensions && 'height' in containerDimensions ? containerDimensions.height : undefined;
+	const maxHeight =
+		containerDimensions && 'maxHeight' in containerDimensions
+			? containerDimensions.maxHeight
+			: undefined;
+	let height = '100vh';
+	if ( fixedHeight ) {
+		height = `${ fixedHeight }px`;
+	} else if ( ! isFullscreen ) {
+		height = `${ Math.min( maxHeight ?? INLINE_HEIGHT, INLINE_HEIGHT ) }px`;
+	}
+	const readOnly = noServerTools || stopped;
+	reactRoot.render(
+		createElement( PostEditor, {
+			post: readOnly ? previewPost() : editorPost,
+			styles: styles ?? [],
+			readOnly,
+			status: statusMessage,
+			statusTitle: `Polls: ${ polls }, version ${ version }`,
+			isError: !! error,
+			notices: Object.values( persistentErrors ).filter( ( message ): message is string =>
+				Boolean( message )
+			),
+			isFullscreen,
+			canFullscreen: !! availableDisplayModes?.includes( 'fullscreen' ),
+			height,
+			onChange: onEditorChange,
+			onToggleFullscreen: toggleFullscreen,
+		} )
+	);
+}
+
+function showStatus( message = '' ) {
+	statusMessage = message;
+	render();
 }
 
 function showPersistentError( key: keyof typeof persistentErrors, message?: string ) {
 	persistentErrors[ key ] = message;
-	const messages = Object.values( persistentErrors ).filter( Boolean );
-	errorNotice.textContent = messages.join( '\n' );
-	errorNotice.hidden = ! messages.length;
+	render();
 }
 
 const errorMessage = ( e: unknown ) => ( e instanceof Error ? e.message : String( e ) );
@@ -95,30 +167,20 @@ function resultData( result: ToolResult ): Record< string, unknown > | undefined
 	}
 }
 
-function render( next: { title?: string; content?: string } ) {
-	if ( next.title !== undefined ) {
-		title.textContent = next.title;
-	}
-	if ( next.content !== undefined ) {
-		const template = document.createElement( 'template' );
-		template.innerHTML = DOMPurify.sanitize( next.content, PURIFY_CONFIG );
-		content.replaceChildren( template.content );
-	}
-}
-
 // The host's JSON-RPC error when it can't run tools at all ("IPC not available for MCP tool
 // call"). Its code, -32603, also covers any failure in the host's handler, and a tool error
 // may say "not available", so only this message tells them apart.
 const isHostToolError = ( e: unknown ) => /IPC not available/i.test( errorMessage( e ) );
 
-async function callTool< T >( name: string, timeout?: number ) {
+async function callTool< T >(
+	name: string,
+	args: Record< string, unknown > = {},
+	timeout?: number
+) {
 	let result: ToolResult;
 	try {
 		result = await app.callServerTool(
-			{
-				name,
-				arguments: name === 'wpcom-post-editor-state' ? { ...post, since_version: version } : post,
-			},
+			{ name, arguments: { ...post, ...args } },
 			timeout ? { timeout } : undefined
 		);
 	} catch ( e ) {
@@ -126,10 +188,11 @@ async function callTool< T >( name: string, timeout?: number ) {
 			noServerTools = true;
 			clearTimeout( timer );
 			timer = undefined;
-			showPersistentError( 'config' );
+			clearTimeout( saveTimer );
+			persistentErrors.config = undefined;
 			showPersistentError(
 				'host',
-				'This host can’t call tools from the panel, so site styles and live updates are off.'
+				'This host can’t call tools from the panel, so site styles, live updates and saving are off.'
 			);
 		}
 		throw e;
@@ -144,6 +207,173 @@ async function callTool< T >( name: string, timeout?: number ) {
 	return data as T;
 }
 
+const normalize = ( content: string ) => joinBlocks( splitBlocks( content ) );
+const isDirty = () => titleChanged || local.content !== base.content;
+
+// Synchronous, so typing that follows is reported against the post shown here.
+function showInEditor( next: Post ) {
+	local = next;
+	editorPost = {
+		...next,
+		id: `${ post?.wpcom_site }:${ post?.post_id }`,
+		revision: ( editorPost?.revision ?? 0 ) + 1,
+	};
+	flushSync( render );
+}
+
+function onEditorChange( next: Post ) {
+	if ( next.title !== local.title ) {
+		titleChanged = true;
+	}
+	local = next;
+	scheduleSave();
+}
+
+function scheduleSave() {
+	clearTimeout( saveTimer );
+	saveTimer = undefined;
+	if ( isDirty() && ! noServerTools && ! stopped ) {
+		saveTimer = setTimeout( save, SAVE_DELAY );
+	}
+}
+
+// One update at a time: a save asked for during another runs when that one ends.
+async function save() {
+	saveTimer = undefined;
+	if ( saving ) {
+		saveQueued = true;
+		return;
+	}
+	if ( ! isDirty() || noServerTools || stopped || ! post ) {
+		return;
+	}
+	saving = true;
+	saveStarts++;
+	const current = opens;
+	let sendTitle = false;
+	error = '';
+	showStatus( 'Saving…' );
+	try {
+		// The server refuses an update on a stale version: take in its post, then try again.
+		for ( let attempt = 0; ; attempt++ ) {
+			const sent = local;
+			sendTitle = titleChanged;
+			titleChanged = false;
+			// A conflict shows only that this update wasn't taken, not an earlier one.
+			const prior = unconfirmed;
+			unconfirmed = sent;
+			lastUpdate = callTool< UpdateResult >( 'wpcom-post-editor-update', {
+				base_version: version,
+				content: sent.content,
+				...( sendTitle && { title: sent.title } ),
+			} );
+			const result = await lastUpdate;
+			if ( current !== opens || stopped ) {
+				return;
+			}
+			if ( ! result.conflict ) {
+				base = { title: sendTitle ? sent.title : base.title, content: sent.content };
+				version = result.version;
+				unconfirmed = undefined;
+				break;
+			}
+			unconfirmed = prior;
+			titleChanged ||= sendTitle;
+			sendTitle = false;
+			if ( attempt >= SAVE_RETRIES ) {
+				throw new Error( 'the post keeps changing on the server.' );
+			}
+			const state = await callTool< StateResult >( 'wpcom-post-editor-state', {
+				since_version: version,
+			} );
+			if ( current !== opens || stopped ) {
+				return;
+			}
+			receiveState( state );
+			clearTimeout( saveTimer );
+			saveTimer = undefined;
+			if ( ! isDirty() ) {
+				break;
+			}
+		}
+		showStatus( 'Saved' );
+	} catch ( e ) {
+		if ( current !== opens ) {
+			return;
+		}
+		titleChanged ||= sendTitle;
+		if ( ! noServerTools && ! stopped ) {
+			error = errorMessage( e );
+			showStatus( `Couldn’t save: ${ error }` );
+		}
+	} finally {
+		saving = false;
+		if ( statusMessage === 'Saving…' ) {
+			showStatus();
+		}
+		if ( saveQueued ) {
+			saveQueued = false;
+			save();
+		}
+	}
+}
+
+// Sends a debounced save now, before the page stops or switches posts. Best effort.
+function flushSave() {
+	if ( saving && ( saveTimer || saveQueued ) ) {
+		const args = {
+			...post,
+			content: local.content,
+			...( titleChanged && { title: local.title } ),
+		};
+		lastUpdate
+			?.then(
+				( result ) =>
+					! result.conflict &&
+					callTool( 'wpcom-post-editor-update', { ...args, base_version: result.version } )
+			)
+			.catch( () => {} );
+	} else if ( saveTimer ) {
+		clearTimeout( saveTimer );
+		save();
+	}
+}
+
+// Merges the server's post into the user's typing, and sends the result back when it differs.
+function applyRemote( state: StateResult ) {
+	const remote = {
+		title: state.title ?? base.title,
+		content: state.content === undefined ? base.content : normalize( state.content ),
+	};
+	if ( remote.title === base.title && remote.content === base.content ) {
+		return;
+	}
+	const merged = mergePost(
+		{ title: base.title, blocks: splitBlocks( base.content ) },
+		{ title: local.title, blocks: splitBlocks( local.content ) },
+		{ title: remote.title, blocks: splitBlocks( remote.content ) },
+		unconfirmed && { title: unconfirmed.title, blocks: splitBlocks( unconfirmed.content ) }
+	);
+	const next = { title: merged.title, content: joinBlocks( merged.blocks ) };
+	base = remote;
+	unconfirmed = undefined;
+	titleChanged = next.title !== remote.title;
+	if ( next.title !== local.title || next.content !== local.content ) {
+		showInEditor( next );
+	}
+	scheduleSave();
+}
+
+// A save that ended during a state call already has that version or a newer one.
+function receiveState( state: StateResult ) {
+	if ( state.version > version ) {
+		version = state.version;
+		if ( state.changed ) {
+			applyRemote( state );
+		}
+	}
+}
+
 function schedule() {
 	if ( ! timer && ! polling && ! stopped && ! noServerTools && post && ! document.hidden ) {
 		timer = setTimeout( poll, POLL_INTERVAL );
@@ -154,24 +384,32 @@ async function poll() {
 	timer = undefined;
 	polling = true;
 	const current = opens;
+	const starts = saveStarts;
 	try {
-		const state = await callTool< StateResult >( 'wpcom-post-editor-state' );
-		if ( current !== opens || stopped ) {
+		const state = await callTool< StateResult >( 'wpcom-post-editor-state', {
+			since_version: version,
+		} );
+		// A save's own state call merges; this one may already hold the save, against an old base.
+		if ( current !== opens || stopped || saving || starts !== saveStarts ) {
 			return;
 		}
 		polls++;
-		error = '';
-		if ( state.version > version ) {
-			render( state );
+		receiveState( state );
+		// Retries a failed save.
+		if ( ! saveTimer ) {
+			scheduleSave();
 		}
-		version = state.version;
-		showStatus();
+		if ( /^(Poll failed|Couldn’t save)/.test( statusMessage ) ) {
+			error = '';
+			statusMessage = '';
+		}
+		render();
 	} catch ( e ) {
 		if ( current !== opens || stopped || noServerTools ) {
 			return;
 		}
 		error = errorMessage( e );
-		showStatus( `Polls: ${ polls }, version ${ version }. Poll failed: ${ error }` );
+		showStatus( `Poll failed: ${ error }` );
 	} finally {
 		polling = false;
 		schedule();
@@ -188,16 +426,18 @@ document.addEventListener( 'visibilitychange', () => {
 } );
 
 function stopPolling( message: string ) {
+	flushSave();
 	stopped = true;
 	clearTimeout( timer );
 	timer = undefined;
+	clearTimeout( saveTimer );
 	channel?.close();
 	channel = undefined;
 	error = '';
 	showStatus( message );
 }
 
-// Only the newest panel showing a post polls it: each panel announces the post it
+// Only the newest panel showing a post polls and edits it: each panel announces the post it
 // opens, and an older panel that hears a newer announcement stops.
 function claimPost( site: string, postId: number ) {
 	channel?.close();
@@ -225,7 +465,7 @@ function claimPost( site: string, postId: number ) {
 async function loadConfig( current: number ) {
 	for ( let attempt = 1; ; attempt++ ) {
 		try {
-			return await callTool< ConfigResult >( 'wpcom-post-editor-config', CONFIG_TIMEOUT );
+			return await callTool< ConfigResult >( 'wpcom-post-editor-config', {}, CONFIG_TIMEOUT );
 		} catch ( e ) {
 			if ( attempt >= CONFIG_ATTEMPTS || current !== opens || noServerTools ) {
 				throw e;
@@ -240,13 +480,22 @@ async function open( result: OpenResult ) {
 	if ( stopped ) {
 		return;
 	}
+	const next = { wpcom_site: String( result.site.id ), post_id: result.post.id };
+	if ( next.wpcom_site !== post?.wpcom_site || next.post_id !== post.post_id ) {
+		flushSave();
+	}
 	const current = ++opens;
-	post = { wpcom_site: String( result.site.id ), post_id: result.post.id };
+	post = next;
 	siteUrl = result.site.url;
 	version = result.version;
 	error = '';
-	showPersistentError( 'open' );
-	render( { title: result.post.title, content: result.content } );
+	clearTimeout( saveTimer );
+	saveQueued = false;
+	titleChanged = false;
+	unconfirmed = undefined;
+	base = { title: result.post.title, content: normalize( result.content ) };
+	showInEditor( base );
+	persistentErrors.open = undefined;
 	showStatus();
 	claimPost( post.wpcom_site, post.post_id );
 	schedule();
@@ -259,6 +508,7 @@ async function open( result: OpenResult ) {
 			// Set first: a retry after a partial apply would append the same nodes again.
 			stylesLoaded = true;
 			applySiteStyles( config );
+			styles = config.styles?.filter( ( style ) => style.css ) ?? [];
 			showPersistentError( 'config' );
 		}
 	} catch ( e ) {
@@ -277,6 +527,20 @@ function openFailed( message: string ) {
 	showStatus( `Couldn’t open the post: ${ message }` );
 }
 
+function toggleFullscreen() {
+	const mode = hostContext.displayMode === 'fullscreen' ? 'inline' : 'fullscreen';
+	app.requestDisplayMode( { mode } ).then(
+		( result ) => {
+			hostContext = { ...hostContext, displayMode: result.mode };
+			render();
+		},
+		( e ) => {
+			error = errorMessage( e );
+			showStatus( `Couldn’t change the panel size: ${ error }` );
+		}
+	);
+}
+
 app.addEventListener( 'toolresult', ( result ) => {
 	if ( result.isError ) {
 		openFailed( resultText( result ) );
@@ -289,14 +553,21 @@ app.addEventListener( 'toolresult', ( result ) => {
 		openFailed( 'The tool result has no post.' );
 	}
 } );
+app.addEventListener( 'hostcontextchanged', ( context ) => {
+	hostContext = { ...hostContext, ...context };
+	render();
+} );
 app.onteardown = () => {
+	flushSave();
 	stopped = true;
 	clearTimeout( timer );
+	clearTimeout( saveTimer );
 	channel?.close();
 	return {};
 };
 
-// Links open through the host: navigating would replace this page in its iframe.
+// Links open through the host: navigating would replace this page in its iframe. Links in
+// editable text are left to the editor, where a click places the caret.
 function openLinkThroughHost( event: MouseEvent ) {
 	// Other buttons (right-click) keep the browser's own menu.
 	if ( event.button > 1 ) {
@@ -304,7 +575,8 @@ function openLinkThroughHost( event: MouseEvent ) {
 	}
 	// `a` matches HTML and SVG anchors; `area` is an image map link.
 	const link = event.target instanceof Element ? event.target.closest( 'a, area' ) : null;
-	if ( ! link ) {
+	// Not `[contenteditable]`: the editor makes the whole canvas editable while selecting.
+	if ( ! link || link.closest( '.rich-text' ) ) {
 		return;
 	}
 	event.preventDefault();
@@ -320,13 +592,15 @@ function openLinkThroughHost( event: MouseEvent ) {
 		} catch {}
 		const id = CSS.escape( fragment );
 		if ( id ) {
-			content.querySelector( `[id="${ id }"], a[name="${ id }"]` )?.scrollIntoView();
+			document
+				.querySelector( '.editor-styles-wrapper' )
+				?.querySelector( `[id="${ id }"], a[name="${ id }"]` )
+				?.scrollIntoView();
 		}
 		return;
 	}
 	let url: URL;
 	try {
-		// Relative links resolve against the post's site, as they would on the site.
 		url = new URL( href.startsWith( '//' ) ? `https:${ href }` : href, siteUrl );
 	} catch {
 		return;
@@ -343,17 +617,19 @@ function openLinkThroughHost( event: MouseEvent ) {
 		( e ) => linkFailed( errorMessage( e ) )
 	);
 }
-content.addEventListener( 'click', openLinkThroughHost );
+document.addEventListener( 'click', openLinkThroughHost );
 // Middle-click fires `auxclick`, not `click`.
-content.addEventListener( 'auxclick', openLinkThroughHost );
+document.addEventListener( 'auxclick', openLinkThroughHost );
 
 showStatus( 'Connecting to the host…' );
 // autoResize (on by default) reports the page height to the host after every change.
 app.connect().then(
 	() => {
+		hostContext = app.getHostContext() ?? {};
 		if ( ! post && ! error ) {
-			showStatus( 'Connected. Waiting for the post…' );
+			statusMessage = 'Connected. Waiting for the post…';
 		}
+		render();
 	},
 	( e ) => {
 		error = errorMessage( e );

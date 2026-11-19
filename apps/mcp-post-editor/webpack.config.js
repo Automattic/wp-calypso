@@ -2,6 +2,7 @@ const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
+const webpack = require( 'webpack' );
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -42,6 +43,19 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				useDefaults: false,
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
+			// The shell loads only the entry script, and an async chunk would load from the host's
+			// origin, not widgets.wp.com, so everything goes in the entry.
+			new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
+			// Client-side image processing (about 17 MB of WebAssembly), loaded only on upload,
+			// which the editor doesn't offer.
+			new webpack.IgnorePlugin( { resourceRegExp: /^@wordpress\/vips\/worker$/ } ),
+			// The editor renders raw HTML (Custom HTML, unknown and invalid blocks) through
+			// safeHTML, in this document: see editor/sanitize.ts.
+			new webpack.NormalModuleReplacementPlugin( /^\.\/safe-html\.mjs$/, ( resource ) => {
+				if ( /@wordpress[\\/]dom[\\/]/.test( resource.context ) ) {
+					resource.request = path.join( __dirname, 'editor/sanitize.ts' );
+				}
+			} ),
 		],
 	};
 }

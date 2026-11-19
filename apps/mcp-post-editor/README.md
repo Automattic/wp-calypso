@@ -2,7 +2,13 @@
 
 The WordPress.com post editor as an MCP App, shown inside ChatGPT and Claude. wpcom's MCP server returns the `ui://wpcom/post-editor/<version>` resource for the `wpcom-post-editor-open` tool. That resource is a small HTML shell that loads both `https://widgets.wp.com/mcp-post-editor/mcp-post-editor.css` and `https://widgets.wp.com/mcp-post-editor/mcp-post-editor.min.js`. wpcom reads `version` from `mcp-post-editor.asset.json`.
 
-The page shows the post read-only in the site's look. It loads the site's styles with `wpcom-post-editor-config` and polls `wpcom-post-editor-state` every 2 seconds. Every dependency, including `@modelcontextprotocol/ext-apps`, is bundled: the page runs in the host's sandboxed iframe, with no WordPress scripts.
+The page is a block editor for the post, in the site's look, without the block editor's iframe (MCP hosts' CSP blocks it). It loads the site's styles with `wpcom-post-editor-config` and polls `wpcom-post-editor-state` every 2 seconds. Typing is sent with `wpcom-post-editor-update` after a 1 second pause. Changes from the server are merged into the user's typing by `editor/merge.ts`, which documents its rules. When the host can't call tools from the panel, the post shows read-only.
+
+The panel opens inline, and Expand asks the host for fullscreen.
+
+Every dependency, including `@modelcontextprotocol/ext-apps` and the block editor, is bundled into the one script and stylesheet: the page runs in the host's sandboxed iframe, with no WordPress scripts.
+
+`yarn test-apps apps/mcp-post-editor` runs the merge tests.
 
 ## Development
 
