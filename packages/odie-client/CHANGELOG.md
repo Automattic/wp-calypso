@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Show the `close` icon on attachment previews, since `@wordpress/icons` 21 removes `cancelCircleFilled`.
 - Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## 1.0.1

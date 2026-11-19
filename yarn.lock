@@ -1100,7 +1100,7 @@ __metadata:
     "@wordpress/element": "npm:^8.0.0"
     "@wordpress/html-entities": "npm:4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/icons": "npm:^21.0.0"
     "@wordpress/primitives": "npm:^4.56.0"
     "@wordpress/private-apis": "npm:^1.51.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
