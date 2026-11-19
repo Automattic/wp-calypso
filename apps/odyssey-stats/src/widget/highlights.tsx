@@ -1,6 +1,6 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { TabPanel } from '@wordpress/components';
-import { Icon, chartBar, external, lock } from '@wordpress/icons';
+import { Icon, chartBar, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
 import { STAT_TYPE_REFERRERS, STAT_TYPE_TOP_POSTS } from 'calypso/my-sites/stats/constants';
@@ -11,10 +11,10 @@ import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
 import Skeleton from './skeleton';
-import { getUpgradeUrl, isStatTypeGated } from './stats-gates';
+import { isStatTypeGated } from './stats-gates';
 import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
-import type { MouseEvent, ReactNode } from 'react';
+import type { MouseEvent } from 'react';
 
 import './highlights.scss';
 
@@ -35,12 +35,6 @@ interface TopColumnProps {
 	viewAllUrl: string;
 	onItemClick: ClickHandler;
 	onViewAllClick: ClickHandler;
-}
-
-interface LockedColumnProps {
-	description: ReactNode;
-	upgradeUrl?: string;
-	onUpgradeClick: ClickHandler;
 }
 
 interface HighlightsProps {
@@ -145,30 +139,6 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	);
 };
 
-const LockedColumn: FunctionComponent< LockedColumnProps > = ( {
-	description,
-	upgradeUrl,
-	onUpgradeClick,
-} ) => {
-	const translate = useTranslate();
-
-	return (
-		<div className="stats-widget-highlights-card stats-widget-highlights-card__locked">
-			<p className="stats-widget-highlights-card__locked-text">
-				<Icon icon={ lock } size={ 18 } />
-				{ description }
-			</p>
-			{ upgradeUrl && (
-				<div className="stats-widget-highlights-card__view-all">
-					<a href={ upgradeUrl } onClick={ onUpgradeClick }>
-						{ translate( 'Upgrade' ) }
-					</a>
-				</div>
-			) }
-		</div>
-	);
-};
-
 export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: HighlightsProps ) {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
@@ -214,32 +184,15 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 	// an empty range and reports its initial tab as it does; only a change is a user's click.
 	const [ selectedTab, setSelectedTab ] = useState< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
 
-	// Drop the section only once both lists have answered empty. A failed request also falls
-	// back to `[]`, so errors are excluded: those lists say "No data to show" instead.
-	const isEmpty =
-		! isPendingPostsAndPages &&
-		! isPendingReferrers &&
-		! isPostsAndPagesError &&
-		! isReferrersError &&
-		topPostsAndPages.length === 0 &&
-		topReferrers.length === 0;
-
-	if ( isEmpty ) {
-		return null;
-	}
-
 	const tabs = [
 		{
 			name: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
 			title: translate( 'Top Posts & Pages' ),
 			items: topPostsAndPages,
 			isLoading: isPendingPostsAndPages,
+			isError: isPostsAndPagesError,
 			viewAllUrl: viewAllPostsStatsUrl,
 			isLocked: isTopPostsLocked,
-			statType: STAT_TYPE_TOP_POSTS,
-			lockedDescription: translate(
-				'Upgrade your plan to see which posts and pages get the most views.'
-			),
 			itemHref: postHref,
 			isExternal: false,
 			trackingName: 'top_posts' as const,
@@ -250,16 +203,26 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 			title: translate( 'Top Referrers' ),
 			items: topReferrers,
 			isLoading: isPendingReferrers,
+			isError: isReferrersError,
 			viewAllUrl: viewAllReferrerStatsUrl,
 			isLocked: isReferrersLocked,
-			statType: STAT_TYPE_REFERRERS,
-			lockedDescription: translate( 'Upgrade your plan to see where your visitors come from.' ),
 			itemHref: referrerHref,
 			isExternal: true,
 			trackingName: 'top_referrers' as const,
 			itemEvent: 'referrer_clicked' as const,
 		},
-	];
+	].filter( ( tab ) => ! tab.isLocked );
+
+	// Drop the section once every list the plan includes has answered empty, or when the plan
+	// includes none. A failed request also falls back to `[]`, so errors are excluded: those
+	// lists say "No data to show" instead.
+	const isEmpty = tabs.every(
+		( tab ) => ! tab.isLoading && ! tab.isError && tab.items.length === 0
+	);
+
+	if ( isEmpty ) {
+		return null;
+	}
 
 	return (
 		<WidgetSection
@@ -284,18 +247,6 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 			>
 				{ ( tab ) => {
 					const active = tabs.find( ( candidate ) => candidate.name === tab.name ) ?? tabs[ 0 ];
-
-					if ( active.isLocked ) {
-						return (
-							<LockedColumn
-								description={ active.lockedDescription }
-								upgradeUrl={ getUpgradeUrl( siteId, active.statType ) }
-								onUpgradeClick={ recordWidgetEventThenFollow( 'upgrade_clicked', {
-									feature: active.trackingName,
-								} ) }
-							/>
-						);
-					}
 
 					return (
 						<TopColumn

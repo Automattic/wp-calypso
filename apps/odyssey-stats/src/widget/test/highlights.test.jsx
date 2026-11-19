@@ -25,8 +25,6 @@ vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
 const mockGates = vi.hoisted( () => ( { locked: [] } ) );
 vi.mock( '../stats-gates', () => ( {
 	isStatTypeGated: ( siteId, statType ) => mockGates.locked.includes( statType ),
-	getUpgradeUrl: ( siteId, statType ) =>
-		`https://wordpress.com/checkout/example.com/personal-bundle?stat=${ statType }`,
 } ) );
 vi.mock( '../record-widget-event', () => ( {
 	__esModule: true,
@@ -188,42 +186,34 @@ describe( 'Highlights', () => {
 	} );
 
 	describe( 'on a plan that locks the lists', () => {
-		it( 'shows an upsell in place of both lists, and asks for neither', async () => {
+		it( 'drops the section when the plan locks both lists, and asks for neither', () => {
 			mockGates.locked = [ 'statsTopPosts', 'statsReferrers' ];
-			renderHighlights( { posts: { loading: true }, referrers: { loading: true } } );
+			const { container } = renderHighlights( {
+				posts: { loading: true },
+				referrers: { loading: true },
+			} );
 
 			expect( useTopPostsQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
 			expect( useReferrersQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
-			expect(
-				screen.getByText( 'Upgrade your plan to see which posts and pages get the most views.' )
-			).toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toHaveAttribute(
-				'href',
-				'https://wordpress.com/checkout/example.com/personal-bundle?stat=statsTopPosts'
-			);
-			expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'upgrade_clicked', {
-				feature: 'top_posts',
-			} );
-
-			await userEvent.click( screen.getByRole( 'tab', { name: 'Top Referrers' } ) );
-
-			expect(
-				screen.getByText( 'Upgrade your plan to see where your visitors come from.' )
-			).toBeInTheDocument();
-			expect( screen.queryByRole( 'link', { name: 'See more' } ) ).not.toBeInTheDocument();
+			expect( container ).toBeEmptyDOMElement();
 		} );
 
-		it( 'keeps the list the plan includes, locking only the other', async () => {
+		it( 'shows only the list the plan includes, without a tab for the locked one', () => {
 			mockGates.locked = [ 'statsReferrers' ];
 			renderHighlights( { posts: { data: items( 'Hello world' ) }, referrers: { loading: true } } );
 
 			expect( useTopPostsQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, true );
 			expect( useReferrersQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
 			expect( screen.getByRole( 'link', { name: /Hello world/ } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'tab', { name: 'Top Posts & Pages' } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'tab', { name: 'Top Referrers' } ) ).not.toBeInTheDocument();
+		} );
 
-			await userEvent.click( screen.getByRole( 'tab', { name: 'Top Referrers' } ) );
+		it( 'drops the section when the only list the plan includes comes back empty', () => {
+			mockGates.locked = [ 'statsReferrers' ];
+			const { container } = renderHighlights( { posts: {}, referrers: { loading: true } } );
 
-			expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toBeInTheDocument();
+			expect( container ).toBeEmptyDOMElement();
 		} );
 	} );
 } );
