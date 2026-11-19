@@ -17,6 +17,12 @@ const WALK_SPEED = 0.045;
 /** How far in front of the decorator the roller is, and half its length. */
 const ROLLER_REACH = 16;
 const ROLLER_HALF = 10;
+/** How fast the decorator mends a tear: slower and more careful than rolling out bubbles. */
+const MEND_SPEED = 0.025;
+/** How far off the page the decorator walks to turn round between rows. */
+const OFF_PAGE = 30;
+/** How long the decorator rests off the page before strolling over it again from the top. */
+const REST_DURATION = 4000;
 
 type Point = { x: number; y: number };
 
@@ -32,6 +38,18 @@ type Piece = {
 
 /** A finished row, and when the decorator sets off along it to roll out its bubbles. */
 type Row = { y: number; walkAt: number; pieces: Piece[] };
+
+/** A stretch of the decorator's walk while mending: to a tear, or along one, mending it. */
+type Leg = {
+	points: Point[];
+	/** How far along the leg each of its points is. */
+	marks: number[];
+	start: number;
+	duration: number;
+	speed: number;
+	/** For a leg along a tear, the tear itself, the way it's walked, and how far along each point is. */
+	tear?: { points: Point[]; marks: number[] };
+};
 
 type Colors = { paper: string; ink: string; accent: string };
 
@@ -109,7 +127,7 @@ function trapAir( outline: Point[], lineY: number ): Bubble[] {
  * Cuts the page into torn pieces that fit back together, and sets them going row by row, left to
  * right, with a decorator rolling along each row once it's done.
  */
-function cutPieces( width: number, height: number, start: number ): Row[] {
+function cutPieces( width: number, height: number, start: number ) {
 	const cellWidth = width / COLUMNS;
 	const cellHeight = height / ROWS;
 	const corners: Point[][] = [];
@@ -166,7 +184,104 @@ function cutPieces( width: number, height: number, start: number ): Row[] {
 		const last = pieces[ pieces.length - 1 ];
 		rows.push( { y: lineY, walkAt: last.stickAt + UNROLL_DURATION + 500, pieces } );
 	}
-	return rows;
+	// The tears inside the page, which the decorator mends once the bubbles are out.
+	const tears = [
+		...across.slice( 1, -1 ).flat(),
+		...down.flatMap( ( line ) => line.slice( 1, -1 ) ),
+	];
+	return { rows, tears };
+}
+
+/** How far along a line each of its points is. */
+function measure( points: Point[] ) {
+	const marks = [ 0 ];
+	for ( let i = 1; i < points.length; i++ ) {
+		marks.push(
+			marks[ i - 1 ] +
+				Math.hypot( points[ i ].x - points[ i - 1 ].x, points[ i ].y - points[ i - 1 ].y )
+		);
+	}
+	return marks;
+}
+
+/** The point a given distance along a line, and the way the line runs there. */
+function pointAlong( points: Point[], marks: number[], distance: number ) {
+	let index = 1;
+	while ( index < points.length - 1 && marks[ index ] < distance ) {
+		index++;
+	}
+	const from = points[ index - 1 ];
+	const to = points[ index ];
+	const span = marks[ index ] - marks[ index - 1 ] || 1;
+	const t = Math.min( Math.max( ( distance - marks[ index - 1 ] ) / span, 0 ), 1 );
+	return {
+		point: { x: from.x + ( to.x - from.x ) * t, y: from.y + ( to.y - from.y ) * t },
+		heading: Math.atan2( to.y - from.y, to.x - from.x ),
+	};
+}
+
+/** Traces a line up to a given distance along it. */
+function traceAlong(
+	context: CanvasRenderingContext2D,
+	points: Point[],
+	marks: number[],
+	distance: number
+) {
+	context.beginPath();
+	context.moveTo( points[ 0 ].x, points[ 0 ].y );
+	for ( let i = 1; i < points.length && marks[ i - 1 ] < distance; i++ ) {
+		const end = marks[ i ] <= distance ? points[ i ] : pointAlong( points, marks, distance ).point;
+		context.lineTo( end.x, end.y );
+	}
+}
+
+/**
+ * The decorator's round of the tears once the bubbles are out: always on to the nearest tear not yet
+ * mended, from whichever end is closer, and along it, roller first. Then off the page to the right.
+ */
+function planMending( tears: Point[][], from: Point, reach: number, width: number ) {
+	const legs: Leg[] = [];
+	let at = from;
+	let time = 0;
+	const addLeg = ( points: Point[], speed: number, tear?: Point[] ) => {
+		const marks = measure( points );
+		const duration = marks[ marks.length - 1 ] / speed;
+		legs.push( {
+			points,
+			marks,
+			start: time,
+			duration,
+			speed,
+			tear: tear && { points: tear, marks: measure( tear ) },
+		} );
+		time += duration;
+		at = points[ points.length - 1 ];
+	};
+	const distanceTo = ( point: Point ) => Math.hypot( point.x - at.x, point.y - at.y );
+	const left = [ ...tears ];
+	while ( left.length ) {
+		let best = { index: 0, isReversed: false, distance: Infinity };
+		left.forEach( ( tear, index ) => {
+			[ false, true ].forEach( ( isReversed ) => {
+				const distance = distanceTo( isReversed ? tear[ tear.length - 1 ] : tear[ 0 ] );
+				if ( distance < best.distance ) {
+					best = { index, isReversed, distance };
+				}
+			} );
+		} );
+		const [ tear ] = left.splice( best.index, 1 );
+		const points = best.isReversed ? [ ...tear ].reverse() : tear;
+		// Stand a roller's reach short of the tear, so the roller starts on its end.
+		const angle = Math.atan2( points[ 1 ].y - points[ 0 ].y, points[ 1 ].x - points[ 0 ].x );
+		const start = {
+			x: points[ 0 ].x - Math.cos( angle ) * reach,
+			y: points[ 0 ].y - Math.sin( angle ) * reach,
+		};
+		addLeg( [ at, start ], WALK_SPEED );
+		addLeg( [ start, ...points ], MEND_SPEED, points );
+	}
+	addLeg( [ at, { x: width + OFF_PAGE + 20, y: at.y } ], WALK_SPEED );
+	return { legs, duration: time };
 }
 
 function trace( context: CanvasRenderingContext2D, outline: Point[] ) {
@@ -223,32 +338,20 @@ function drawBubble(
 	context.restore();
 }
 
-/** How far off the page the decorator walks to turn round between rows. */
-const OFF_PAGE = 30;
-/** How long the decorator rests off the page before going over it again from the top. */
-const REST_DURATION = 4000;
-
 /**
- * Where the decorator is once the page is done: going over the whole page again, row by row from
- * the top, back and forth, turning off the page, with a rest before starting over.
+ * Where the decorator is once the tears are mended: strolling across the page, left to right, a row
+ * at a time from the top, going back round out of view, with a rest before starting over.
  */
-function getFinalWalk( walked: number, rows: Row[], width: number ) {
+function getStroll( walked: number, rows: Row[], width: number ) {
 	const across = width + OFF_PAGE * 2;
 	const gap = rows.length > 1 ? rows[ 1 ].y - rows[ 0 ].y : 0;
-	const round = rows.length * across + ( rows.length - 1 ) * gap + REST_DURATION * WALK_SPEED;
+	const round = rows.length * ( across + gap ) + REST_DURATION * WALK_SPEED;
 	let left = walked % round;
-	for ( let index = 0; index < rows.length; index++ ) {
-		const isRightward = index % 2 === 0;
+	for ( const row of rows ) {
 		if ( left < across ) {
-			return {
-				at: {
-					x: isRightward ? -OFF_PAGE + left : width + OFF_PAGE - left,
-					y: rows[ index ].y,
-				},
-				heading: isRightward ? 0 : Math.PI,
-			};
+			return { x: -OFF_PAGE + left, y: row.y };
 		}
-		// Turning round off the page, out of view.
+		// Going back round to the left, out of view.
 		left -= across + gap;
 		if ( left < 0 ) {
 			return undefined;
@@ -422,8 +525,9 @@ function fitShot( image: HTMLImageElement, width: number, height: number, ratio:
 
 /**
  * The site's home page, torn into pieces that unroll into place one at a time, row by row, left to
- * right. After each row, a tiny decorator rolls out its bubbles, and once the page is done they
- * keep going over it, top to bottom, so there's something moving while the first page is copied.
+ * right. After each row, a tiny decorator rolls out its bubbles. Once the page is done, they mend
+ * the tears one by one, then stroll across it, so there's something moving while the first page is
+ * copied.
  */
 export function TornCollage( { url }: { url: string } ) {
 	const canvasRef = useRef< HTMLCanvasElement >( null );
@@ -451,6 +555,10 @@ export function TornCollage( { url }: { url: string } ) {
 			let shot: CanvasImageSource = image;
 			let rows: Row[] = [];
 			let pieces: Piece[] = [];
+			let tears: Point[][] = [];
+			let mending: ReturnType< typeof planMending > = { legs: [], duration: 0 };
+			let mendPattern: CanvasPattern | null = null;
+			let scale = 1;
 			let finishedAt = 0;
 			const colors = getColors( canvas );
 
@@ -467,14 +575,26 @@ export function TornCollage( { url }: { url: string } ) {
 				context.setTransform( ratio, 0, 0, ratio, 0, 0 );
 				shot = fitShot( image, width, height, ratio );
 				const now = performance.now();
-				rows = cutPieces( width, height, isStill ? -Infinity : now );
+				( { rows, tears } = cutPieces( width, height, isStill ? -Infinity : now ) );
+				scale = Math.min( Math.max( width / 640, 0.8 ), 1.2 );
+				// The site's own pixels, to paint over a tear once it's mended.
+				mendPattern =
+					shot instanceof HTMLCanvasElement ? context.createPattern( shot, 'no-repeat' ) : null;
+				mendPattern?.setTransform( new DOMMatrix().scaleSelf( 1 / ratio ) );
 				pieces = rows.flatMap( ( row ) => row.pieces );
 				if ( isStill ) {
 					pieces.forEach( ( piece ) => ( piece.bubbles = [] ) );
 				}
-				// Once the last row has been rolled, the decorator goes over the whole page.
+				// Once the last row has been rolled, the decorator mends the tears, then strolls.
 				finishedAt =
 					Math.max( ...rows.map( ( row ) => row.walkAt ) ) + ( width + OFF_PAGE + 40 ) / WALK_SPEED;
+				const lastRow = rows[ rows.length - 1 ];
+				mending = planMending(
+					mendPattern ? tears : [],
+					{ x: width + OFF_PAGE, y: lastRow.y },
+					ROLLER_REACH * scale,
+					width
+				);
 			};
 
 			const draw = ( now: number ) => {
@@ -492,8 +612,25 @@ export function TornCollage( { url }: { url: string } ) {
 					.sort( ( a, b ) => a.stickAt - b.stickAt )
 					.forEach( ( piece ) => drawPiece( context, piece, shot, width, height, now, colors ) );
 
+				// The tears mended so far, painted over with the site itself.
+				const mended = now - finishedAt;
+				if ( mendPattern && mended > 0 ) {
+					context.save();
+					context.strokeStyle = mendPattern;
+					context.lineWidth = 6;
+					context.lineCap = 'round';
+					context.lineJoin = 'round';
+					mending.legs.forEach( ( leg ) => {
+						if ( leg.tear && mended > leg.start ) {
+							const distance = Math.min( mended - leg.start, leg.duration ) * leg.speed;
+							traceAlong( context, leg.tear.points, leg.tear.marks, distance );
+							context.stroke();
+						}
+					} );
+					context.restore();
+				}
+
 				// Along each finished row, the decorator walks the roller over the bubbles.
-				const scale = Math.min( Math.max( width / 640, 0.8 ), 1.2 );
 				rows.forEach( ( row ) => {
 					if ( isStill || now < row.walkAt ) {
 						return;
@@ -513,11 +650,20 @@ export function TornCollage( { url }: { url: string } ) {
 					);
 					drawDecorator( context, at, 0, stride, scale, colors );
 				} );
-				if ( ! isStill && now >= finishedAt ) {
-					const walked = ( now - finishedAt ) * WALK_SPEED;
-					const walk = getFinalWalk( walked, rows, width );
-					if ( walk ) {
-						drawDecorator( context, walk.at, walk.heading, walked, scale, colors );
+				if ( ! isStill && mended > 0 && mended < mending.duration ) {
+					const leg = mending.legs.find(
+						( candidate ) => mended < candidate.start + candidate.duration
+					);
+					if ( leg ) {
+						const along = ( mended - leg.start ) * leg.speed;
+						const { point, heading } = pointAlong( leg.points, leg.marks, along );
+						drawDecorator( context, point, heading, along + leg.start, scale, colors );
+					}
+				} else if ( ! isStill && mended >= mending.duration ) {
+					const walked = ( mended - mending.duration ) * WALK_SPEED;
+					const at = getStroll( walked, rows, width );
+					if ( at ) {
+						drawDecorator( context, at, 0, walked, scale, colors );
 					}
 				}
 				if ( ! isStill ) {
