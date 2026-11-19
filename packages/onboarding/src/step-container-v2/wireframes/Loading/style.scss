@@ -22,5 +22,7 @@
 		// foreground color, as ProgressBar did before.
 		--wpds-color-background-indicator-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
 		--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
+		// `@wordpress/ui` before 0.27, which this package still accepts, fills with the thumb token.
+		--wpds-color-background-thumb-neutral: var(--wpds-color-background-indicator-neutral);
 	}
 }

@@ -34,6 +34,8 @@
 .dataviews-view-table__checkbox-column [role="checkbox"],
 .dataviews-bulk-actions [role="checkbox"] {
 	--wpds-color-background-interactive-brand-strong: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	/* A checked toggle's thumb ring. */
+	--wpds-color-stroke-interactive-brand: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 }
 
 /* Text fields, input controls (search, select, number…), checkboxes, radios, token and
@@ -54,7 +56,7 @@
 /* Buttons read these tokens where components 44 read the accent variables, which color
  * schemes and sections set on a button or its ancestors (see the button rules below).
  * Mapping them on the button keeps those accents; disabled buttons keep upstream's colors.
- * Zero specificity, so a section that maps the tokens on its own buttons still wins. */
+ * Zero specificity, so a rule that maps the tokens on the buttons themselves still wins. */
 :where(.components-button) {
 	--wpds-color-background-interactive-brand-strong: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 	--wpds-color-background-interactive-brand-strong-active: var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
@@ -68,9 +70,13 @@
 }
 
 /* Focused menu items, autocomplete results and token suggestions fill with this token,
- * which is pinned the same way; match the fallback components uses with the theme color. */
+ * which is pinned the same way; match the fallback components uses with the theme color.
+ * Menu items and results are buttons, so name them too: the button mapping above is set on
+ * the button, where it beats a value inherited from the popover. */
 .components-dropdown__content,
+.components-dropdown__content .components-button[role^="menuitem"],
 .components-autocomplete__results,
+.components-autocomplete__results .components-button,
 .components-form-token-field__suggestions-list {
 	--wpds-color-background-interactive-brand-strong-active: color-mix(in oklch, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 93%, #000);
 	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-foreground-inverted, #fff);

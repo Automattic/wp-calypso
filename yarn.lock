@@ -12777,7 +12777,7 @@ __metadata:
 
 "@wordpress/global-styles-ui@patch:@wordpress/global-styles-ui@npm%3A2.2.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-2.2.0-8c6abc373a.patch":
   version: 2.2.0
-  resolution: "@wordpress/global-styles-ui@patch:@wordpress/global-styles-ui@npm%3A2.2.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-2.2.0-8c6abc373a.patch::version=2.2.0&hash=994a85"
+  resolution: "@wordpress/global-styles-ui@patch:@wordpress/global-styles-ui@npm%3A2.2.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-2.2.0-8c6abc373a.patch::version=2.2.0&hash=818cea"
   dependencies:
     "@wordpress/a11y": "npm:^5.2.0"
     "@wordpress/api-fetch": "npm:^8.2.0"
@@ -12806,7 +12806,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 2d89e9f24d11d9d8b321853d38d27367b352e7910b0107e434a0f9dc357f7129380ba0c249f0aeedacbc2b4a12d576d959aa6ed0fc36988a37d49814b1d8d7e7
+  checksum: d396f04420842a2e838883045beb53b0ad6f482d9b67740c0220eaa3327ff5ce2d50c0aea99acab3168713d1b088db106f3757c811c9ae143adaaee8484d6a74
   languageName: node
   linkType: hard
 

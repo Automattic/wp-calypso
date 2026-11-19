@@ -224,10 +224,17 @@
 
 /* Destructive Secondary Button */
 @mixin dashboard-dark-theme-destructive-secondary-button {
+	// Destructive buttons read the error tokens, which stay at their light-mode reds.
 	.components-button.is-secondary.is-destructive:not( :disabled ) {
-		--wp-components-color-accent: var( --dashboard-danger__color );
-		--wp-components-color-accent-darker-10: var( --dashboard-danger__color-hover );
-		--wp-components-color-accent-darker-20: var( --dashboard-danger__color-active );
+		--wpds-color-foreground-interactive-error: var( --dashboard-danger__color );
+		--wpds-color-foreground-interactive-error-active: var( --dashboard-danger__color-active );
+		--wpds-color-stroke-interactive-error: var( --dashboard-danger__color );
+		--wpds-color-stroke-interactive-error-active: var( --dashboard-danger__color-active );
+		--wpds-color-background-interactive-error-weak-active: color-mix(
+			in srgb,
+			var( --dashboard-danger__color ) 4%,
+			transparent
+		);
 	}
 }
 
