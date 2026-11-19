@@ -48,83 +48,61 @@ describe( '<SftpCard>', () => {
 		);
 	} );
 
-	test( 'deletes the SFTP user after confirming Disable SFTP', async () => {
+	test( 'deletes the credentials after confirming Delete credentials', async () => {
 		const user = userEvent.setup();
 		const deleteRequest = nock( 'https://public-api.wordpress.com' )
-			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ username }` )
-			.reply( 200, JSON.stringify( { username } ), { 'Content-Type': 'application/json' } );
+			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-users` )
+			.reply( 200, JSON.stringify( { removed_users: [ username ], detached_keys: [] } ), {
+				'Content-Type': 'application/json',
+			} );
 
 		render(
-			<SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } sshMayBeEnabled />
+			<SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } hasSshFeature />
 		);
 
 		await screen.findByText( 'Learn more' );
-		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Delete credentials' } ) );
 		const dialog = await screen.findByRole( 'dialog' );
-		expect( dialog ).toHaveTextContent( 'SSH access is turned off too' );
-		await user.click( within( dialog ).getByRole( 'button', { name: 'Disable SFTP' } ) );
+		expect( dialog ).toHaveTextContent( 'every SSH key attached to this site is detached' );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Delete credentials' } ) );
 
 		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
 	} );
 
-	test( 'does not mention SSH in the Disable SFTP dialog when SSH access is off', async () => {
+	test( 'does not mention SSH in the Delete credentials dialog on a site without SSH', async () => {
 		const user = userEvent.setup();
 
 		render( <SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } /> );
 
 		await screen.findByText( 'Learn more' );
-		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Delete credentials' } ) );
 		const dialog = await screen.findByRole( 'dialog' );
 		expect( dialog ).not.toHaveTextContent( 'SSH' );
 	} );
 
-	test( 'deletes every SFTP user when a site has more than one', async () => {
-		const user = userEvent.setup();
-		const secondUsername = 'example.wordpress.com_ab12';
-		const deleteRequests = nock( 'https://public-api.wordpress.com' )
-			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ username }` )
-			.reply( 200, JSON.stringify( { username } ), { 'Content-Type': 'application/json' } )
-			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ secondUsername }` )
-			.reply( 200, JSON.stringify( { username: secondUsername } ), {
-				'Content-Type': 'application/json',
-			} );
-
-		render(
-			<SftpCard
-				siteId={ siteId }
-				sftpUsers={ [
-					{ username, password: '' },
-					{ username: secondUsername, password: '' },
-				] }
-			/>
-		);
-
-		await screen.findByText( 'Learn more' );
-		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
-		const dialog = await screen.findByRole( 'dialog' );
-		await user.click( within( dialog ).getByRole( 'button', { name: 'Disable SFTP' } ) );
-
-		await waitFor( () => expect( deleteRequests.isDone() ).toBe( true ) );
-	} );
-
-	test( 'disables Reset password while SFTP is being disabled', async () => {
+	test( 'disables Reset password while the credentials are being deleted', async () => {
 		const user = userEvent.setup();
 		let release!: () => void;
 		const pending = new Promise< void >( ( resolve ) => {
 			release = resolve;
 		} );
 		const deleteRequest = nock( 'https://public-api.wordpress.com' )
-			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-user/${ username }` )
-			.reply( 200, () => pending.then( () => JSON.stringify( { username } ) ), {
-				'Content-Type': 'application/json',
-			} );
+			.delete( `/wpcom/v2/sites/${ siteId }/hosting/ssh-users` )
+			.reply(
+				200,
+				() =>
+					pending.then( () =>
+						JSON.stringify( { removed_users: [ username ], detached_keys: [] } )
+					),
+				{ 'Content-Type': 'application/json' }
+			);
 
 		render( <SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } /> );
 
 		await screen.findByText( 'Learn more' );
-		await user.click( screen.getByRole( 'button', { name: 'Disable SFTP' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Delete credentials' } ) );
 		const dialog = await screen.findByRole( 'dialog' );
-		await user.click( within( dialog ).getByRole( 'button', { name: 'Disable SFTP' } ) );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Delete credentials' } ) );
 
 		await waitFor( () =>
 			expect( screen.getByRole( 'button', { name: 'Reset password' } ) ).toHaveAttribute(

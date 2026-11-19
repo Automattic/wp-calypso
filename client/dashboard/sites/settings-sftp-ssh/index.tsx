@@ -37,8 +37,6 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
 	const sshEnabled = sshAccessStatus?.setting === 'ssh';
-	// Until the status loads, or if it fails to, assume SSH may be on so Disable SFTP still warns about it.
-	const sshMayBeEnabled = hasSshFeature && sshAccessStatus?.setting !== 'sftp';
 
 	return (
 		<PageLayout
@@ -67,11 +65,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 				) }
 			>
 				{ sftpEnabled ? (
-					<SftpCard
-						siteId={ site.ID }
-						sftpUsers={ sftpUsers }
-						sshMayBeEnabled={ sshMayBeEnabled }
-					/>
+					<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } hasSshFeature={ hasSshFeature } />
 				) : (
 					<EnableSftpCard siteId={ site.ID } canUseSsh={ hasSshFeature } />
 				) }

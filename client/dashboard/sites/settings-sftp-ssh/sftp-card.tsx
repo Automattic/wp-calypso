@@ -5,6 +5,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import {
 	__experimentalConfirmDialog as ConfirmDialog,
+	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	BaseControl,
 	Button,
@@ -42,23 +43,23 @@ type SftpCardFormData = {
 export default function SftpCard( {
 	siteId,
 	sftpUsers = [],
-	sshMayBeEnabled = false,
+	hasSshFeature = false,
 }: {
 	siteId: number;
 	sftpUsers: SftpUser[];
-	sshMayBeEnabled?: boolean;
+	hasSshFeature?: boolean;
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
-	const disableMutation = useMutation(
+	const deleteMutation = useMutation(
 		withSnackbar( siteSftpUsersDeleteMutation( siteId ), {
-			success: __( 'SFTP disabled.' ),
-			error: __( 'Failed to disable SFTP. Please refresh the page and try again.' ),
+			success: __( 'SFTP/SSH credentials deleted.' ),
+			error: __( 'Failed to delete SFTP/SSH credentials. Please refresh the page and try again.' ),
 		} )
 	);
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ showResetPasswordConfirmDialog, setShowResetPasswordConfirmDialog ] = useState( false );
-	const [ showDisableConfirmDialog, setShowDisableConfirmDialog ] = useState( false );
+	const [ showDeleteConfirmDialog, setShowDeleteConfirmDialog ] = useState( false );
 	const [ isResetPasswordRateLimited, setIsResetPasswordRateLimited ] = useState( false );
 	const formData = {
 		url: SFTP_URL,
@@ -166,9 +167,9 @@ export default function SftpCard( {
 		setShowResetPasswordConfirmDialog( false );
 	};
 
-	const handleConfirmDisable = () => {
-		disableMutation.mutate( sftpUsers.map( ( sftpUser ) => sftpUser.username ) );
-		setShowDisableConfirmDialog( false );
+	const handleConfirmDelete = () => {
+		deleteMutation.mutate();
+		setShowDeleteConfirmDialog( false );
 	};
 
 	useEffect( () => {
@@ -193,7 +194,7 @@ export default function SftpCard( {
 			__next40pxDefaultSize
 			variant="secondary"
 			isBusy={ mutation.isPending }
-			disabled={ mutation.isPending || isResetPasswordRateLimited || disableMutation.isPending }
+			disabled={ mutation.isPending || isResetPasswordRateLimited || deleteMutation.isPending }
 			accessibleWhenDisabled
 			label={ resetPasswordLabel }
 			description={ resetPasswordDescription }
@@ -232,12 +233,12 @@ export default function SftpCard( {
 							__next40pxDefaultSize
 							variant="secondary"
 							isDestructive
-							isBusy={ disableMutation.isPending }
-							disabled={ disableMutation.isPending || mutation.isPending }
+							isBusy={ deleteMutation.isPending }
+							disabled={ deleteMutation.isPending || mutation.isPending }
 							accessibleWhenDisabled
-							onClick={ () => setShowDisableConfirmDialog( true ) }
+							onClick={ () => setShowDeleteConfirmDialog( true ) }
 						>
-							{ __( 'Disable SFTP' ) }
+							{ __( 'Delete credentials' ) }
 						</Button>
 					</ButtonStack>
 				</VStack>
@@ -254,19 +255,26 @@ export default function SftpCard( {
 				) }
 			</ConfirmDialog>
 			<ConfirmDialog
-				isOpen={ showDisableConfirmDialog }
-				confirmButtonText={ __( 'Disable SFTP' ) }
+				isOpen={ showDeleteConfirmDialog }
+				confirmButtonText={ __( 'Delete credentials' ) }
 				size="small"
-				onConfirm={ () => handleConfirmDisable() }
-				onCancel={ () => setShowDisableConfirmDialog( false ) }
+				onConfirm={ () => handleConfirmDelete() }
+				onCancel={ () => setShowDeleteConfirmDialog( false ) }
 			>
-				{ sshMayBeEnabled
-					? __(
-							'Disabling SFTP deletes your SFTP credentials, so SFTP clients, deployment tools, and scripts that use them will stop connecting. SSH access is turned off too, including for SSH keys attached to this site. You can enable SFTP again at any time and get a new password.'
-						)
-					: __(
-							'Disabling SFTP deletes your SFTP credentials, so SFTP clients, deployment tools, and scripts that use them will stop connecting. You can enable SFTP again at any time and get a new password.'
+				<VStack spacing={ 3 }>
+					<Text>
+						{ __(
+							'This deletes your SFTP user, so SFTP clients, deployment tools, and scripts that use it will stop connecting. You can create new credentials at any time, with a new password.'
 						) }
+					</Text>
+					{ hasSshFeature && (
+						<Text>
+							{ __(
+								'SSH access is also turned off, and every SSH key attached to this site is detached. To use SSH again, create new credentials, turn SSH access on, and attach your keys again.'
+							) }
+						</Text>
+					) }
+				</VStack>
 			</ConfirmDialog>
 		</Card>
 	);
