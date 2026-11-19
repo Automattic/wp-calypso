@@ -55,6 +55,9 @@ describe( 'Checkout contact step', () => {
 		initialCart,
 	};
 
+	const getTracksCalls = ( eventName: string ) =>
+		( recordTracksEvent as jest.Mock ).mock.calls.filter( ( [ event ] ) => event === eventName );
+
 	getPlansBySiteId.mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
 	} ) );
@@ -114,10 +117,43 @@ describe( 'Checkout contact step', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByTestId( 'payment-method-step--visible' );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_checkout_composite_first_step_complete',
-			{ payment_method: 'WPCOM_Billing_PayPal_Express' }
-		);
+		expect( getTracksCalls( 'calypso_checkout_composite_first_step_complete' ) ).toEqual( [
+			[
+				'calypso_checkout_composite_first_step_complete',
+				{ payment_method: 'WPCOM_Billing_PayPal_Express' },
+			],
+		] );
+	} );
+
+	it( 'records the first step complete event again only when the contact step is edited after autocompleting', async () => {
+		const user = userEvent.setup();
+		mockCachedContactDetailsEndpoint( {
+			country_code: 'US',
+			postal_code: '10001',
+		} );
+		// The contact step is validated on autocomplete, when editing the payment
+		// method, and when continuing from the contact step.
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		const cartChanges = { products: [ planWithoutDomain ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		await screen.findByTestId( 'payment-method-step--visible' );
+
+		await user.click( await screen.findByLabelText( 'Edit the payment method' ) );
+		await waitFor( () => {
+			expect( getTracksCalls( 'calypso_checkout_composite_step_complete' ) ).toHaveLength( 2 );
+		} );
+
+		expect( getTracksCalls( 'calypso_checkout_composite_first_step_complete' ) ).toHaveLength( 1 );
+
+		await user.click( await screen.findByLabelText( 'Edit the contact details' ) );
+		await user.click( await screen.findByLabelText( 'Continue with the entered contact details' ) );
+		await waitFor( () => {
+			expect( getTracksCalls( 'calypso_checkout_composite_step_complete' ) ).toHaveLength( 3 );
+		} );
+
+		expect( getTracksCalls( 'calypso_checkout_composite_first_step_complete' ) ).toHaveLength( 2 );
 	} );
 
 	it( 'records the first step complete event when the contact step is completed manually', async () => {
@@ -128,18 +164,17 @@ describe( 'Checkout contact step', () => {
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
 		await user.type( await screen.findByLabelText( 'Postal code' ), '10001' );
-		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_checkout_composite_first_step_complete',
-			expect.anything()
-		);
+		expect( getTracksCalls( 'calypso_checkout_composite_first_step_complete' ) ).toEqual( [] );
 
 		await user.click( screen.getByLabelText( 'Continue with the entered contact details' ) );
 		await screen.findByTestId( 'payment-method-step--visible' );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_checkout_composite_first_step_complete',
-			{ payment_method: 'WPCOM_Billing_PayPal_Express' }
-		);
+		expect( getTracksCalls( 'calypso_checkout_composite_first_step_complete' ) ).toEqual( [
+			[
+				'calypso_checkout_composite_first_step_complete',
+				{ payment_method: 'WPCOM_Billing_PayPal_Express' },
+			],
+		] );
 	} );
 
 	it( 'does not autocomplete the contact step when there are invalid cached details', async () => {
