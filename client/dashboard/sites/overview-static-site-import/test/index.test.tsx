@@ -333,6 +333,25 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getAllByRole( 'listitem' )[ 1 ] ).toHaveTextContent( '12 pages copied' );
 	} );
 
+	test( 'keeps the collage up, not the page list, until the first page is copied', () => {
+		currentStepOf( 'capturing', {
+			progress: {
+				phase: 'capturing',
+				pages_captured: 0,
+				pages_total: 2,
+				pages: [
+					{ path: '/', captured: false },
+					{ path: '/about/', captured: false },
+				],
+			},
+		} );
+
+		expect( document.querySelector( '.static-site-import-snapshot__collage' ) ).toBeInTheDocument();
+		expect(
+			document.querySelector( '.static-site-import-snapshot__pages' )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'lists the pages copied while watching when the server lists none', () => {
 		currentStepOf( 'capturing', {
 			progress: { phase: 'capturing', pages_captured: 1, pages_total: 3, current_page: '/about/' },

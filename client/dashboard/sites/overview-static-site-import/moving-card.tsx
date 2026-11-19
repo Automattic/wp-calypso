@@ -378,6 +378,11 @@ function SiteSnapshot( {
 	if ( step === 1 && progress?.current_page && ! copied.includes( progress.current_page ) ) {
 		setCopied( [ progress.current_page, ...copied ] );
 	}
+	// The collage keeps going until the first page is copied, which can take minutes, and the list
+	// of pages takes over from there.
+	const isCollage =
+		Boolean( sourceUrl ) && step <= 1 && ! hasLoaded && ! pages.some( ( page ) => page.captured );
+	const isListShown = pages.length > 0 && ! isCollage;
 
 	return (
 		<figure
@@ -385,7 +390,7 @@ function SiteSnapshot( {
 				'is-copying': step <= 1,
 				'is-building': step === 2,
 				'has-image': hasLoaded,
-				'has-pages': pages.length > 0,
+				'has-pages': isListShown,
 			} ) }
 		>
 			<div className="static-site-import-snapshot__bar" aria-hidden="true">
@@ -405,10 +410,8 @@ function SiteSnapshot( {
 					<span />
 					<span />
 				</div>
-				{ sourceUrl && step <= 1 && pages.length === 0 && ! hasLoaded && (
-					<TornCollage url={ sourceUrl } />
-				) }
-				{ pages.length > 0 && (
+				{ isCollage && sourceUrl && <TornCollage url={ sourceUrl } /> }
+				{ isListShown && (
 					<ol
 						ref={ pagesRef }
 						className={ clsx( 'static-site-import-snapshot__pages', { 'is-listed': isListed } ) }
