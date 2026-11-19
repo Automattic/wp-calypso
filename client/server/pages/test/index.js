@@ -1191,6 +1191,11 @@ describe( 'main app', () => {
 			expect( response.redirect ).toHaveBeenCalledWith( '/posts/my-site/drafts?s=x' );
 		} );
 
+		it( 'redirects a Jetpack site installed in a subdirectory', async () => {
+			const { response } = await app.run( { request: { url: '/sites/example.com::blog/posts' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( '/posts/example.com::blog' );
+		} );
+
 		it( 'does not redirect a site it cannot rewrite back to itself', async () => {
 			const { response } = await app.run( { request: { url: '/sites/a@b/posts' } } );
 			expect( response.redirect ).not.toHaveBeenCalledWith( '/sites/a@b/posts' );
