@@ -1,3 +1,4 @@
+import { fetchDomain } from '@automattic/api-core';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	isDomainMapping,
@@ -107,6 +108,36 @@ import { getOnboardingStepperPosition } from './step-counter-config';
 import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
+
+const DOMAIN_LOOKUP_TIMEOUT_MS = 5000;
+
+// The onboard store keeps a domain the user removed at checkout, so the cart item alone does not
+// prove the domain was bought for this site. Its setup pages are an error page when wpcom has no
+// record of the domain or refuses the request, and they belong to another site when the domain
+// is already on one.
+async function isDomainOnSite( domainName: string, siteId: number ): Promise< boolean > {
+	let timer: ReturnType< typeof setTimeout > | undefined;
+	// A stalled request must not keep a paying customer on the processing screen.
+	const timeout = new Promise< boolean >( ( resolve ) => {
+		timer = setTimeout( () => resolve( true ), DOMAIN_LOOKUP_TIMEOUT_MS );
+	} );
+	const lookup = fetchDomain( domainName ).then(
+		( domain ) => ! siteId || Number( domain.blog_id ) === siteId,
+		( error ) => {
+			// wpcom answered and refused: the setup page gets the same answer. After a network error
+			// or a 5xx the purchase can still exist, and the setup page requests the domain again.
+			const status = Number( ( error as { status?: number } )?.status );
+			const isClientError = status >= 400 && status < 500;
+			return ! isClientError && ( error as Error )?.name !== 'InvalidDomainError';
+		}
+	);
+
+	try {
+		return await Promise.race( [ lookup, timeout ] );
+	} finally {
+		clearTimeout( timer );
+	}
+}
 
 /**
  * Where a funnel run lands once it is paid for.
@@ -925,6 +956,8 @@ const onboarding: FlowV2< typeof initialize > = {
 							locale,
 							siteSlug: dependencies.siteSlug as string,
 						} );
+					// 0 when the run has no site ID, which skips the site comparison.
+					const purchasedSiteId = Number( dependencies.siteId ?? siteIdParam ) || 0;
 					const destination = await getPostCheckoutDestination(
 						providedDependencies,
 						planCartItem,
@@ -1020,13 +1053,21 @@ const onboarding: FlowV2< typeof initialize > = {
 							// plan), and a paid funnel order's checkout redirect_to is the funnel
 							// destination itself, so it never comes back through here.
 							window.location.replace( destination );
-						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
+						} else if (
+							domainCartItem?.meta &&
+							isDomainMapping( domainCartItem ) &&
+							( await isDomainOnSite( domainCartItem.meta, purchasedSiteId ) )
+						) {
 							// A connected domain still has to be pointed at the site once it is paid
 							// for, so finish on the setup instructions rather than the chooser or My Home.
 							window.location.replace(
 								dashboardLink( `/domains/${ domainCartItem.meta }/domain-connection-setup` )
 							);
-						} else if ( domainCartItem?.meta && isDomainTransfer( domainCartItem ) ) {
+						} else if (
+							domainCartItem?.meta &&
+							isDomainTransfer( domainCartItem ) &&
+							( await isDomainOnSite( domainCartItem.meta, purchasedSiteId ) )
+						) {
 							window.location.replace(
 								dashboardLink( `/domains/${ domainCartItem.meta }/domain-transfer-setup` )
 							);
