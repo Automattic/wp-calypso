@@ -45,6 +45,7 @@ function removeSurfaceBodyClasses() {
 describe( 'ClassicColorSchemeProvider', () => {
 	beforeEach( () => {
 		delete document.documentElement.dataset.theme;
+		window.localStorage.clear();
 	} );
 
 	test( 'renders children', () => {
@@ -65,6 +66,17 @@ describe( 'ClassicColorSchemeProvider', () => {
 			</ClassicColorSchemeProvider>
 		);
 		expect( document.documentElement.dataset.theme ).toBeUndefined();
+	} );
+
+	test( 'applies the last seen scheme while remote preferences load', () => {
+		window.localStorage.setItem( 'wpcom-color-scheme', 'dark' );
+		renderWithStore(
+			buildState( { received: false } ),
+			<ClassicColorSchemeProvider>
+				<span>child</span>
+			</ClassicColorSchemeProvider>
+		);
+		expect( document.documentElement.dataset.theme ).toBe( 'dark' );
 	} );
 
 	test( 'falls back to light when no scheme is saved', () => {
@@ -158,6 +170,7 @@ describe( 'ClassicColorSchemeProvider', () => {
 describe( 'withColorScheme', () => {
 	beforeEach( () => {
 		delete document.documentElement.dataset.theme;
+		window.localStorage.clear();
 		removeSurfaceBodyClasses();
 	} );
 
