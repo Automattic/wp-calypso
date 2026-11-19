@@ -319,8 +319,11 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// its group key is allowed. Saved-only groups (catalog unreachable) fall
 	// back to counting their keys.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
+		const categoryTools = category === 'read' ? readTools : writeTools;
 		const defaultEnabled =
-			isMcpEnabled && enabledToolCount( category === 'read' ? readTools : writeTools ) > 0;
+			isMcpEnabled &&
+			categoryTools.length > 0 &&
+			enabledToolCount( categoryTools ) === categoryTools.length;
 		let total = 0;
 		let enabled = 0;
 		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
