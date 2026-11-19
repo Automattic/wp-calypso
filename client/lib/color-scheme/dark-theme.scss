@@ -208,6 +208,20 @@ This mixin generates alias variables for a color palette. For example, the
 			color: var( --wp-components-color-accent-disabled-text );
 		}
 	}
+
+	// Disabled destructive primary buttons fill with these tokens; dim the danger red the same way.
+	.components-button.is-primary.is-destructive {
+		--wpds-color-background-interactive-error-strong-disabled: color-mix(
+			in srgb,
+			var( --dashboard-danger__color ) 35%,
+			var( --dashboard-surface__background-color )
+		);
+		--wpds-color-foreground-interactive-error-strong-disabled: color-mix(
+			in srgb,
+			var( --dashboard-danger__color ) 50%,
+			#fff
+		);
+	}
 }
 
 // Pressed buttons fill with these tokens, which stay dark; keep the light pill they had.

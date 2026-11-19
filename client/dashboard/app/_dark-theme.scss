@@ -225,7 +225,7 @@
 /* Destructive Secondary Button */
 @mixin dashboard-dark-theme-destructive-secondary-button {
 	// Destructive buttons read the error tokens, which stay at their light-mode reds.
-	.components-button.is-secondary.is-destructive:not( :disabled ) {
+	.components-button.is-destructive:is( .is-secondary, .is-tertiary ):not( :disabled ) {
 		--wpds-color-foreground-interactive-error: var( --dashboard-danger__color );
 		--wpds-color-foreground-interactive-error-active: var( --dashboard-danger__color-active );
 		--wpds-color-stroke-interactive-error: var( --dashboard-danger__color );
