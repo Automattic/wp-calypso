@@ -318,7 +318,6 @@ describe( 'SiteMigrationCredentials', () => {
 		await fillAddressField();
 		await userEvent.click( continueButton() );
 
-		// The label lets wpcom add a repeat of this request to the customer's waiting ticket.
 		expect( wp.req.post ).toHaveBeenCalledWith(
 			{
 				path: '/help/migration-ticket/new',

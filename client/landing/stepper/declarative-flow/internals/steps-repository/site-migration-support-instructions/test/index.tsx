@@ -1,12 +1,18 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import wp from 'calypso/lib/wp';
 import SiteMigrationSupportInstructions from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
+
+jest.mock( '@automattic/calypso-analytics', () => ( {
+	...jest.requireActual( '@automattic/calypso-analytics' ),
+	recordTracksEvent: jest.fn(),
+} ) );
 
 jest.mock( 'calypso/lib/wp', () => ( {
 	req: {
@@ -70,6 +76,10 @@ describe( 'SiteMigrationSupportInstructions', () => {
 		// Let the page's effects run, so a request would have gone out by now.
 		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
 		expect( wp.req.post ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'wpcom_support_free_migration_request_click',
+			expect.objectContaining( { automated_migration: true } )
+		);
 		expect( screen.getByText( 'We’ll take it from here!' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 	} );
