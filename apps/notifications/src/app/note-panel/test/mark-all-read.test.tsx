@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { vi } from 'vitest';
@@ -181,7 +181,7 @@ describe( 'MarkAllAsRead', () => {
 
 		await user.click( await findLink( `Mark ${ CONFIRM_ABOVE } as read` ) );
 
-		expect( screen.queryByRole( 'group' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 		await waitFor( () => expect( markAll ).toHaveBeenCalledTimes( 1 ) );
 	} );
 
@@ -193,16 +193,19 @@ describe( 'MarkAllAsRead', () => {
 			store.dispatch( actions.notes.addNotes( [ makeNote( 1 ) ] ) );
 		} );
 
-		it( 'asks first, with the focus on the confirm button', async () => {
+		it( 'asks first, in a dialog', async () => {
 			const user = userEvent.setup();
 			renderLink();
 
 			await user.click( await findLink( `Mark ${ count } as read` ) );
 
+			const dialog = screen.getByRole( 'dialog' );
 			expect(
-				screen.getByRole( 'group', { name: `Mark all ${ count } notifications as read?` } )
+				within( dialog ).getByRole( 'heading', {
+					name: `Mark all ${ count } notifications as read?`,
+				} )
 			).toBeVisible();
-			expect( screen.getByRole( 'button', { name: 'Mark as read' } ) ).toHaveFocus();
+			expect( within( dialog ).getByRole( 'button', { name: 'Mark as read' } ) ).toBeVisible();
 			expect( markAll ).not.toHaveBeenCalled();
 		} );
 
@@ -224,14 +227,14 @@ describe( 'MarkAllAsRead', () => {
 					user.click( screen.getByRole( 'button', { name: 'Cancel' } ) ),
 			],
 			[ 'Escape', ( user: ReturnType< typeof userEvent.setup > ) => user.keyboard( '{Escape}' ) ],
-		] )( 'puts the link back on %s, with the focus on it', async ( _, cancel ) => {
+		] )( 'closes on %s and returns the focus to the link', async ( _, cancel ) => {
 			const user = userEvent.setup();
 			renderLink();
 
 			await user.click( await findLink( `Mark ${ count } as read` ) );
 			await cancel( user );
 
-			expect( screen.queryByRole( 'group' ) ).not.toBeInTheDocument();
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 			expect( await findLink( `Mark ${ count } as read` ) ).toHaveFocus();
 			expect( markAll ).not.toHaveBeenCalled();
 		} );
@@ -246,7 +249,7 @@ describe( 'MarkAllAsRead', () => {
 		await user.click( await findLink( `Mark ${ UNREAD_IDS_LIMIT }+ as read` ) );
 
 		expect(
-			screen.getByRole( 'group', {
+			within( screen.getByRole( 'dialog' ) ).getByRole( 'heading', {
 				name: `Mark all ${ UNREAD_IDS_LIMIT }+ notifications as read?`,
 			} )
 		).toBeVisible();

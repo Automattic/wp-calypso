@@ -1,8 +1,14 @@
-import { Button } from '@wordpress/components';
+import {
+	__experimentalConfirmDialog as ConfirmDialog,
+	__experimentalHeading as Heading,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { reportRequestError } from '../../panel/helpers/log-error';
 import { recordTracksEvent } from '../../panel/helpers/stats';
@@ -12,7 +18,6 @@ import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import { useAppContext } from '../context';
 import type { Note } from '../types';
-import type { KeyboardEvent } from 'react';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
@@ -80,7 +85,7 @@ type MarkAllAsReadProps = {
 
 /**
  * A "Mark N as read" link that marks every unread note on the account as read. Above
- * `CONFIRM_ABOVE` notes it asks first, in place of the link.
+ * `CONFIRM_ABOVE` notes it asks first, in a confirm dialog.
  */
 export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 	const { client } = useAppContext();
@@ -90,16 +95,13 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 	const [ hasError, setHasError ] = useState( false );
 	const [ isConfirming, setIsConfirming ] = useState( false );
 	const wrapperRef = useRef< HTMLDivElement >( null );
-	const linkRef = useRef< HTMLButtonElement >( null );
-	const confirmRef = useRef< HTMLButtonElement >( null );
 	const refocusRef = useRef( false );
-	const refocusLinkRef = useRef( false );
-	const questionId = useId();
 
 	const needsConfirm = hasMore || count > CONFIRM_ABOVE;
 
-	const markAll = async () => {
-		refocusRef.current = !! wrapperRef.current?.contains( document.activeElement );
+	const markAll = async ( { fromDialog = false } = {} ) => {
+		// The dialog returns the focus to the link as it closes, after this runs.
+		refocusRef.current = fromDialog || !! wrapperRef.current?.contains( document.activeElement );
 		setIsBusy( true );
 		setHasError( false );
 
@@ -124,9 +126,8 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 	};
 
 	const handleConfirm = () => {
-		refocusLinkRef.current = true;
 		setIsConfirming( false );
-		markAll();
+		markAll( { fromDialog: true } );
 	};
 
 	const handleCancel = () => {
@@ -134,26 +135,8 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 			count,
 			has_more: hasMore,
 		} );
-		refocusLinkRef.current = true;
 		setIsConfirming( false );
 	};
-
-	const cancelOnEscape = ( event: KeyboardEvent ) => {
-		if ( event.key === 'Escape' ) {
-			event.stopPropagation();
-			handleCancel();
-		}
-	};
-
-	// The question takes the link's place, so the focus moves to its button and back.
-	useEffect( () => {
-		if ( isConfirming ) {
-			confirmRef.current?.focus();
-		} else if ( refocusLinkRef.current ) {
-			refocusLinkRef.current = false;
-			linkRef.current?.focus();
-		}
-	}, [ isConfirming ] );
 
 	// The link goes away once nothing is unread, which would drop its focus.
 	useEffect( () => {
@@ -193,35 +176,8 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 
 	return (
 		<div ref={ wrapperRef } className="wpnc-app__mark-all-read">
-			{ count > 0 && isConfirming && (
-				<div
-					role="group"
-					aria-labelledby={ questionId }
-					className="wpnc-app__mark-all-read-confirm"
-				>
-					<span id={ questionId }>{ question }</span>
-					<Button
-						ref={ confirmRef }
-						variant="secondary"
-						size="compact"
-						onClick={ handleConfirm }
-						onKeyDown={ cancelOnEscape }
-					>
-						{ __( 'Mark as read' ) }
-					</Button>
-					<Button
-						variant="tertiary"
-						size="compact"
-						onClick={ handleCancel }
-						onKeyDown={ cancelOnEscape }
-					>
-						{ __( 'Cancel' ) }
-					</Button>
-				</div>
-			) }
-			{ count > 0 && ! isConfirming && (
+			{ count > 0 && (
 				<Button
-					ref={ linkRef }
 					__next40pxDefaultSize
 					variant="link"
 					disabled={ isBusy }
@@ -231,6 +187,19 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 					<span>{ createInterpolateElement( label, { strong: <strong /> } ) }</span>
 				</Button>
 			) }
+			<ConfirmDialog
+				isOpen={ isConfirming }
+				confirmButtonText={ __( 'Mark as read' ) }
+				onConfirm={ handleConfirm }
+				onCancel={ handleCancel }
+			>
+				<VStack spacing={ 3 }>
+					<Heading level={ 2 } size={ 20 }>
+						{ question }
+					</Heading>
+					<Text>{ __( 'This includes the ones you haven’t opened. You can’t undo this.' ) }</Text>
+				</VStack>
+			</ConfirmDialog>
 			<Notice.List>
 				{ hasError && (
 					<Notice.Root
