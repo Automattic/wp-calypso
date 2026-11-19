@@ -4,6 +4,7 @@ import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
 import { getTld, isFreeSubdomainQuery } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
+import { CartActionResponseError } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
@@ -16,7 +17,11 @@ import {
 import wpcomRequest from '../wpcom-request';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type {
+	CartKey,
+	MinimalRequestCartProduct,
+	ResponseCartProduct,
+} from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -293,6 +298,34 @@ function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownF
 
 type CartHelperOptions = { throwOnError?: boolean };
 
+// A response error can be about another item in the cart, such as a stale invalid product. The
+// server keeps the valid items, so the flow can continue when every requested item is present.
+// When the cart state cannot be read, treat the items as missing so the caller still sees the error.
+function isRequestedItemMissingFromCart(
+	cartKey: CartKey,
+	requestedItems: MinimalRequestCartProduct[]
+): boolean {
+	let cartProducts: ResponseCartProduct[];
+	try {
+		cartProducts = cartManagerClient.forCartKey( cartKey ).getState().responseCart.products;
+	} catch {
+		return true;
+	}
+
+	if ( ! Array.isArray( cartProducts ) ) {
+		return true;
+	}
+
+	return requestedItems.some(
+		( requestedItem ) =>
+			! cartProducts.some(
+				( cartProduct ) =>
+					cartProduct.product_slug === requestedItem.product_slug &&
+					( ! requestedItem.meta || cartProduct.meta === requestedItem.meta )
+			)
+	);
+}
+
 export async function replaceProductsInCart(
 	siteSlug: string,
 	cartItems: MinimalRequestCartProduct[],
@@ -309,7 +342,13 @@ export async function replaceProductsInCart(
 	} catch ( error ) {
 		debug( 'product replace request had an error', error );
 		if ( options.throwOnError ) {
-			throw error;
+			if (
+				! ( error instanceof CartActionResponseError ) ||
+				isRequestedItemMissingFromCart( cartKey, cartItems )
+			) {
+				throw error;
+			}
+			debug( 'the cart holds every requested item, so the response error does not throw' );
 		}
 	}
 }
@@ -337,7 +376,13 @@ export async function addProductsToCart(
 		} catch ( error ) {
 			debug( 'product add request had an error', error );
 			if ( options.throwOnError ) {
-				throw error;
+				if (
+					! ( error instanceof CartActionResponseError ) ||
+					isRequestedItemMissingFromCart( cartKey, cartItemsToAdd )
+				) {
+					throw error;
+				}
+				debug( 'the cart holds every requested item, so the response error does not throw' );
 			}
 		}
 	}
