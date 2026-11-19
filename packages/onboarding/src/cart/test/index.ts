@@ -123,6 +123,11 @@ describe( 'cart helpers', () => {
 			mockCartActions.replaceProductsInCart.mockRejectedValue( responseError );
 		} );
 
+		// clearAllMocks keeps a mocked return value, so the cart of one test would stay for the next.
+		afterEach( () => {
+			mockGetCartState.mockReset();
+		} );
+
 		test( 'addProductsToCart resolves when the cart holds every requested item', async () => {
 			cartHolds( [
 				{ product_slug: 'personal-bundle', meta: '' },
@@ -167,6 +172,14 @@ describe( 'cart helpers', () => {
 					{ throwOnError: true }
 				)
 			).resolves.toBeUndefined();
+		} );
+
+		test( 'addProductsToCart rejects when the cart state cannot be read', async () => {
+			mockGetCartState.mockReturnValue( undefined );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).rejects.toBe( responseError );
 		} );
 
 		test( 'replaceProductsInCart resolves when the cart holds every requested item', async () => {
