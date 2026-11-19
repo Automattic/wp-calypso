@@ -133,10 +133,12 @@ const TELEGRAM_CONNECTION_PATH = '/me/agent';
 function EmailAssistantCard( {
 	site,
 	recordTracksEvent,
+	isAgentEnabled = false,
 	disabled = false,
 }: {
 	site: Site;
 	recordTracksEvent: ReturnType< typeof useAnalytics >[ 'recordTracksEvent' ];
+	isAgentEnabled?: boolean;
 	disabled?: boolean;
 } ) {
 	const { data: postByEmailSettings, isLoading: isPostByEmailSettingsLoading } = useQuery( {
@@ -219,7 +221,7 @@ function EmailAssistantCard( {
 						label={ __( 'Enable WordPress Agent email address' ) }
 						onChange={ handleEmailAddressToggle }
 					/>
-					{ isAgentEmailEnabled && (
+					{ ( isAgentEnabled || isAgentEmailEnabled ) && (
 						<Notice>
 							{ __(
 								'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
@@ -491,6 +493,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				<EmailAssistantCard
 					site={ site }
 					recordTracksEvent={ recordTracksEvent }
+					isAgentEnabled={ isEnabled }
 					disabled={ ! isAvailable }
 				/>
 				{ config.isEnabled( 'dolly/telegram' ) && (

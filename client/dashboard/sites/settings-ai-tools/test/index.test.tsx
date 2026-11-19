@@ -521,6 +521,38 @@ describe( '<AIToolsSettings>', () => {
 		} );
 	} );
 
+	test( 'shows the Post by Email notice once WordPress Agent is enabled', async () => {
+		const user = userEvent.setup();
+		renderAIToolsSettings();
+
+		const postByEmailNotice =
+			'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.';
+		expect( screen.queryByText( postByEmailNotice ) ).not.toBeInTheDocument();
+
+		const pluginStatus = {
+			blog_id: site.ID,
+			enabled: true,
+			available: true,
+			on_free_trial: false,
+		};
+		const enableScope = nock( 'https://public-api.wordpress.com' )
+			.post( `/rest/v1.1/sites/${ site.ID }/big-sky-plugin` )
+			.reply( 200, pluginStatus )
+			.get( `/rest/v1.1/sites/${ site.ID }/big-sky-plugin` )
+			.reply( 200, pluginStatus );
+		mockJetpackPostByEmailSettings();
+
+		await user.click( screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } ) );
+
+		await waitFor( () => {
+			expect( enableScope.isDone() ).toBe( true );
+		} );
+		expect( await screen.findByText( postByEmailNotice ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent email address' } )
+		).not.toBeChecked();
+	} );
+
 	test( 'uses Jetpack settings for an external Jetpack site', async () => {
 		const user = userEvent.setup();
 		renderAIToolsSettings( '', true, jetpackSite );
