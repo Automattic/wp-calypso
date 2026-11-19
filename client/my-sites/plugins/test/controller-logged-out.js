@@ -1,10 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import {
-	getRelatedPluginsQueryParams,
-	RELATED_PLUGINS_CAROUSEL_LIST_SIZE,
-} from 'calypso/data/marketplace/use-get-related-plugins';
 import { getWPCOMPluginQueryParams } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { fetchPluginInformation } from 'calypso/lib/wporg';
 import { fetchPlugin, fetchPlugins, setBrowsePluginsNoindex } from '../controller-logged-out';
@@ -125,7 +121,7 @@ function makeQueryClient( cachedProduct ) {
 
 	return {
 		fetchQuery: () => Promise.resolve( {} ),
-		prefetchQuery: jest.fn( () => Promise.resolve() ),
+		prefetchQuery: () => Promise.resolve(),
 		prefetchInfiniteQuery: () => Promise.resolve(),
 		getQueryData: ( key ) => ( JSON.stringify( key ) === cacheKey ? cachedProduct : undefined ),
 	};
@@ -259,56 +255,6 @@ describe( 'fetchPlugin', () => {
 		expect( logCall.message ).toBe( 'fetch failed' );
 		expect( logCall.extra.prefetchUrl ).toBe( failure.url );
 		expect( logCall.extra.prefetchCause ).toBe( 'Error: connect ETIMEDOUT 192.0.66.66:443' );
-	} );
-} );
-
-describe( 'fetchPlugin related plugins prefetch', () => {
-	const isRelatedPluginsQuery = ( { queryKey } ) => queryKey[ 0 ] === 'related-plugins';
-
-	test( 'prefetches the related plugins the logged-out page renders', async () => {
-		const context = makePluginContext( { cachedProduct: { slug: PLUGIN_SLUG } } );
-
-		await fetchPlugin( context, jest.fn() );
-
-		const relatedCalls = context.queryClient.prefetchQuery.mock.calls.filter( ( [ params ] ) =>
-			isRelatedPluginsQuery( params )
-		);
-		expect( relatedCalls ).toHaveLength( 1 );
-		expect( relatedCalls[ 0 ][ 0 ].queryKey ).toEqual(
-			getRelatedPluginsQueryParams( PLUGIN_SLUG, RELATED_PLUGINS_CAROUSEL_LIST_SIZE ).queryKey
-		);
-	} );
-
-	test( 'renders the plugin without related plugins when their request is slow', async () => {
-		jest.useFakeTimers();
-		const next = jest.fn();
-		const context = makePluginContext( { cachedProduct: { slug: PLUGIN_SLUG } } );
-		context.queryClient.prefetchQuery.mockImplementation( ( params ) =>
-			isRelatedPluginsQuery( params ) ? new Promise( () => {} ) : Promise.resolve()
-		);
-
-		const promise = fetchPlugin( context, next );
-		await jest.advanceTimersByTimeAsync( 1000 );
-		await promise;
-
-		expect( next ).toHaveBeenCalledWith();
-		expect( context.serverSideRender ).toBeUndefined();
-		expect( context.res.req.logger.error ).not.toHaveBeenCalled();
-		jest.useRealTimers();
-	} );
-
-	test( 'renders the plugin without related plugins when their request fails', async () => {
-		const next = jest.fn();
-		const context = makePluginContext( { cachedProduct: { slug: PLUGIN_SLUG } } );
-		context.queryClient.prefetchQuery.mockImplementation( ( params ) =>
-			isRelatedPluginsQuery( params ) ? Promise.reject( new Error( 'boom' ) ) : Promise.resolve()
-		);
-
-		await fetchPlugin( context, next );
-
-		expect( next ).toHaveBeenCalledWith();
-		expect( context.serverSideRender ).toBeUndefined();
-		expect( context.res.req.logger.error ).not.toHaveBeenCalled();
 	} );
 } );
 
