@@ -160,6 +160,13 @@ export interface WpcomTieredPrice {
 	promotion?: AgencyProductPromotion;
 }
 
+// Checkout takes the coupon off the line total and rounds down to the cent,
+// so a total built from rounded per-site prices can come out a cent or two lower.
+function applyPromotionToTotal( amount: number, discount: number ): number {
+	const cents = Number( ( amount * ( 100 - discount ) ).toFixed( 6 ) );
+	return Math.floor( cents ) / 100;
+}
+
 // Mirrors the classic dashboard: sites the agency already owns count towards
 // the volume tier, but only the new sites are charged.
 export function getWpcomTieredPrice(
@@ -175,14 +182,18 @@ export function getWpcomTieredPrice(
 		.filter( ( candidate ) => candidate.units <= tierQuantity )
 		.sort( ( a, b ) => b.units - a.units )[ 0 ];
 	const pricePerUnit = tier?.pricePerUnit ?? basePricePerUnit;
+	const promotion = getActivePromotion( product, term );
+	const regularCost = ( tier?.regularPricePerUnit ?? basePricePerUnit ) * quantity;
 
 	return {
 		basePricePerUnit,
 		pricePerUnit,
 		actualCost: basePricePerUnit * quantity,
-		discountedCost: pricePerUnit * quantity,
+		discountedCost: promotion
+			? applyPromotionToTotal( regularCost, promotion.discount )
+			: pricePerUnit * quantity,
 		discountPercentage: calculateDiscountPercentage( basePricePerUnit, pricePerUnit ),
-		promotion: getActivePromotion( product, term ),
+		promotion,
 	};
 }
 

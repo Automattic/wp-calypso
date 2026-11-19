@@ -159,6 +159,16 @@ describe( 'WordPress.com promotions', () => {
 		} );
 	} );
 
+	test( 'prices the promotion like checkout, off the line total', () => {
+		const plan = wpcom( {
+			yearly_price: 264,
+			yearly_promotion: { ...promotion, price: 198 },
+			tier_yearly_prices: [ { units: 4, price: 158.5, promotional_price: 118.87 } ],
+		} );
+		// 4 × 118.87 would be 475.48; checkout charges 25% off 634.
+		expect( getWpcomTieredPrice( plan, 4, 'yearly' ).discountedCost ).toBe( 475.5 );
+	} );
+
 	test( 'ignores promotional tier prices without an active promotion', () => {
 		const ended = { ...promotion, ends_at: '2000-01-01T00:00:00+00:00' };
 		for ( const plan of [ wpcom(), wpcom( { yearly_promotion: ended } ) ] ) {

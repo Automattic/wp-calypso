@@ -59,18 +59,30 @@ export const getWPCOMTierPrices = (
 	const promotion = getActivePromotion( product, termPricing );
 	const tierPrices =
 		( termPricing === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices ) ?? [];
-	const toTierPrice = ( units: number, pricePerUnit: number ) => ( {
+	const toTierPrice = ( units: number, regularPricePerUnit: number, pricePerUnit: number ) => ( {
 		units,
 		pricePerUnit,
+		regularPricePerUnit,
 		discountPercentage: calculateDiscountPercentage( basePrice, pricePerUnit ),
 	} );
 	const tiers = tierPrices.map( ( tier ) =>
-		toTierPrice( tier.units, promotion ? ( tier.promotional_price ?? tier.price ) : tier.price )
+		toTierPrice(
+			tier.units,
+			tier.price,
+			promotion ? ( tier.promotional_price ?? tier.price ) : tier.price
+		)
 	);
 	if ( tiers[ 0 ]?.units !== 1 ) {
-		tiers.unshift( toTierPrice( 1, promotion?.price ?? basePrice ) );
+		tiers.unshift( toTierPrice( 1, basePrice, promotion?.price ?? basePrice ) );
 	}
 	return tiers;
+};
+
+// Checkout takes the coupon off the line total and rounds down to the cent,
+// so a total built from rounded per-site prices can come out a cent or two lower.
+const applyPromotionToTotal = ( amount: number, discount: number ): number => {
+	const cents = Number( ( amount * ( 100 - discount ) ).toFixed( 6 ) );
+	return Math.floor( cents ) / 100;
 };
 
 export const getWPCOMTieredPrice = (
@@ -88,15 +100,19 @@ export const getWPCOMTieredPrice = (
 		.filter( ( t ) => t.units <= tierQuantity )
 		.sort( ( a, b ) => b.units - a.units )[ 0 ];
 	const pricePerUnit = tier?.pricePerUnit ?? basePricePerUnit;
+	const promotion = getActivePromotion( product, termPricing );
+	const regularCost = ( tier?.regularPricePerUnit ?? basePricePerUnit ) * quantity;
 
 	// Calculate discount percentage from per-unit prices for consistency
 	// This ensures the percentage matches the tier structure and is consistent across quantities
 	// and currencies, avoiding rounding errors from multiplication
 	return {
 		actualCost: basePricePerUnit * quantity,
-		discountedCost: pricePerUnit * quantity,
+		discountedCost: promotion
+			? applyPromotionToTotal( regularCost, promotion.discount )
+			: pricePerUnit * quantity,
 		discountPercentage: calculateDiscountPercentage( basePricePerUnit, pricePerUnit ),
-		promotion: getActivePromotion( product, termPricing ),
+		promotion,
 	};
 };
 
