@@ -1030,7 +1030,7 @@ function wpcomPages( app ) {
 			next();
 			return;
 		}
-		const match = /^\/sites\/([0-9a-zA-Z\-.:]+)\/[^/?]+(.*)$/.exec( req.originalUrl );
+		const match = /^\/sites\/([\w\-.:]+)\/[^/?]+(.*)$/.exec( req.originalUrl );
 		if ( ! match ) {
 			next();
 			return;

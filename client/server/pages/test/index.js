@@ -1192,8 +1192,10 @@ describe( 'main app', () => {
 		} );
 
 		it( 'redirects a Jetpack site installed in a subdirectory', async () => {
-			const { response } = await app.run( { request: { url: '/sites/example.com::blog/posts' } } );
-			expect( response.redirect ).toHaveBeenCalledWith( '/posts/example.com::blog' );
+			const { response } = await app.run( {
+				request: { url: '/sites/example.com::my_blog/posts' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( '/posts/example.com::my_blog' );
 		} );
 
 		it( 'passes a site it cannot rewrite on instead of redirecting it to itself', async () => {
