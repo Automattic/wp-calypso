@@ -40,6 +40,34 @@ describe( 'handlers', () => {
 		expect( dispatch ).toHaveBeenCalledWith( expect.objectContaining( action ) );
 	} );
 
+	test( 'should keep dashboard URLs and pin them', () => {
+		const dispatch = jest.fn();
+		const menu = [
+			{
+				slug: 'hosting',
+				title: 'Hosting',
+				type: 'menu-item',
+				url: 'https://my.wordpress.com/sites/example.wordpress.com',
+			},
+			{
+				slug: 'lookalike',
+				title: 'Lookalike',
+				type: 'menu-item',
+				url: 'https://my.wordpress.com.example.com/sites/example.wordpress.com',
+			},
+		];
+
+		handleSuccess( { siteId: 73738 }, menu )( dispatch, getState );
+
+		const [ hosting, lookalike ] = dispatch.mock.calls[ 0 ][ 0 ].menu;
+		expect( hosting ).toMatchObject( {
+			url: 'https://my.wordpress.com/sites/example.wordpress.com',
+			group_id: null,
+			reassignable: false,
+		} );
+		expect( lookalike.url ).toBe( '' );
+	} );
+
 	test( 'should sanitize menu URLs', () => {
 		const dispatch = jest.fn();
 		const unsafeMenu = [
