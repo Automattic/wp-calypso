@@ -1,6 +1,6 @@
-import { DARK_SEEDS } from 'calypso/lib/color-scheme/seeds';
+import { DARK_SEEDS } from './seeds';
 
-export const COLOR_SCHEME_STORAGE_KEY = 'dashboard-color-scheme';
+export const COLOR_SCHEME_STORAGE_KEY = 'wpcom-color-scheme';
 
 /**
  * Paints the page dark before the app loads when the last color scheme the user saw was dark.
@@ -19,4 +19,11 @@ export function ThemePrePaint( { nonce }: { nonce?: string } ) {
 			<script nonce={ nonce } dangerouslySetInnerHTML={ { __html: script } } />
 		</>
 	);
+}
+
+/**
+ * Removes the pre-paint dark background once the theme provider has applied its tokens.
+ */
+export function clearPrePaintTheme() {
+	delete document.documentElement.dataset.prePaintTheme;
 }

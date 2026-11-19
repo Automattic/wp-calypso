@@ -1,6 +1,7 @@
-import { useCallback } from 'react';
+import { useCallback, useLayoutEffect } from 'react';
 import { useSelector } from 'calypso/state';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { clearPrePaintTheme } from './pre-paint';
 import {
 	ColorSchemeContextProvider,
 	DEFAULT_SCHEME,
@@ -26,6 +27,12 @@ export function ClassicColorSchemeProvider( {
 		() => undefined,
 		[]
 	);
+
+	useLayoutEffect( () => {
+		if ( ! enabled ) {
+			clearPrePaintTheme();
+		}
+	}, [ enabled ] );
 
 	return (
 		<ColorSchemeContextProvider
