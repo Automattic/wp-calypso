@@ -56,6 +56,12 @@ export const link = withSchemaValidation( linkSchema, ( state = [], action ) => 
 			// Works with action.link being a single link object or an array of link objects.
 			const links = Array.isArray( action.link ) ? action.link : [ action.link ];
 			return links.reduce( ( accuState, newLink ) => {
+				// A document can only have one canonical URL, so a new one replaces the old one.
+				if ( newLink.rel === 'canonical' ) {
+					accuState = accuState.filter(
+						( accuLink ) => accuLink.rel !== 'canonical' || isEqual( accuLink, newLink )
+					);
+				}
 				const isNew = ! accuState.some( ( accuLink ) => isEqual( accuLink, newLink ) );
 				return isNew ? [ ...accuState, newLink ] : accuState;
 			}, state );

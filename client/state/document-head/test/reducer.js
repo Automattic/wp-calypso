@@ -114,5 +114,31 @@ describe( 'reducer', () => {
 
 			expect( newState ).toEqual( expectedState );
 		} );
+
+		test( 'should replace an existing canonical link tag', () => {
+			const state = deepFreeze( [
+				{ rel: 'canonical', href: 'https://wordpress.com/plugins' },
+				{ rel: 'alternate', hrefLang: 'en', href: 'https://wordpress.com/plugins' },
+			] );
+			const newState = link( state, {
+				type: DOCUMENT_HEAD_LINK_SET,
+				link: { rel: 'canonical', href: 'https://wordpress.com/plugins/browse/seo' },
+			} );
+
+			expect( newState ).toEqual( [
+				{ rel: 'alternate', hrefLang: 'en', href: 'https://wordpress.com/plugins' },
+				{ rel: 'canonical', href: 'https://wordpress.com/plugins/browse/seo' },
+			] );
+		} );
+
+		test( 'should keep a single canonical link tag when setting the same one again', () => {
+			const state = deepFreeze( [ { rel: 'canonical', href: 'https://wordpress.com/plugins' } ] );
+			const newState = link( state, {
+				type: DOCUMENT_HEAD_LINK_SET,
+				link: { rel: 'canonical', href: 'https://wordpress.com/plugins' },
+			} );
+
+			expect( newState ).toEqual( [ { rel: 'canonical', href: 'https://wordpress.com/plugins' } ] );
+		} );
 	} );
 } );
