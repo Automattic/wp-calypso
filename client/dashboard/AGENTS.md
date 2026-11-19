@@ -30,13 +30,17 @@ Every `@automattic/api-queries` mutation carries a `meta.statId` naming its fail
 If the mutation needs other options too, wrap only the factory:
 
 ```ts
+const mutation = withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } );
 useMutation( {
-	...withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ),
-	onSuccess: () => {
+	...mutation,
+	onSuccess: ( ...args ) => {
+		mutation.onSuccess?.( ...args );
 		/* … */
 	},
 } );
 ```
+
+Put component-specific `onSuccess` and `onError` handling on the `mutate()` call by default. Set it on `useMutation()` only when it must run even if the component unmounts first, and then call the factory's own callback too, as above. See [Adding mutations](../../packages/api-queries/README.md#adding-mutations) for why.
 
 ### Internationalization
 
