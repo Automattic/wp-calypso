@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { TRANSFERRING_HOSTED_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
-import { CartActionResponseError } from '@automattic/shopping-cart';
+import { CartActionConnectionError, CartActionResponseError } from '@automattic/shopping-cart';
 import { act, screen, waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
 import React from 'react';
@@ -109,6 +109,13 @@ describe( 'ProcessingStep', () => {
 				error: 'domain_unavailable',
 				message: 'This domain is not available.',
 			} );
+		} );
+
+		it( 'reports a failed cart request to Sentry', async () => {
+			const error = new CartActionConnectionError( 'Failed to fetch', 'SET_SERVER_CART_ERROR' );
+			await runFailingAction( error );
+
+			expect( mockCaptureFlowException ).toHaveBeenCalledWith( error );
 		} );
 
 		it( 'reports any other error to Sentry', async () => {
