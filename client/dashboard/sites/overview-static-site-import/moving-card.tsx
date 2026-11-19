@@ -15,6 +15,7 @@ import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { formatStorage } from '../../utils/site-storage';
+import { TornCollage } from './torn-collage';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type {
@@ -318,11 +319,14 @@ function RollingLine( { text, className }: { text: string; className?: string } 
  * capture has a screenshot of the home page, that fills the window.
  */
 function SiteSnapshot( {
+	sourceUrl,
 	sourceHost,
 	destinationHost,
 	session,
 	step,
 }: {
+	/** The address the customer gave, whose screenshot is torn up and stuck back together while pages are found. */
+	sourceUrl?: string;
 	sourceHost: string;
 	/** Shown in the address bar once the copy is being built there, when given. */
 	destinationHost?: string;
@@ -374,6 +378,11 @@ function SiteSnapshot( {
 	if ( step === 1 && progress?.current_page && ! copied.includes( progress.current_page ) ) {
 		setCopied( [ progress.current_page, ...copied ] );
 	}
+	// The collage keeps going until the first page is copied, which can take minutes, and the list
+	// of pages takes over from there.
+	const isCollage =
+		Boolean( sourceUrl ) && step <= 1 && ! hasLoaded && ! pages.some( ( page ) => page.captured );
+	const isListShown = pages.length > 0 && ! isCollage;
 
 	return (
 		<figure
@@ -381,7 +390,7 @@ function SiteSnapshot( {
 				'is-copying': step <= 1,
 				'is-building': step === 2,
 				'has-image': hasLoaded,
-				'has-pages': pages.length > 0,
+				'has-pages': isListShown,
 			} ) }
 		>
 			<div className="static-site-import-snapshot__bar" aria-hidden="true">
@@ -401,7 +410,8 @@ function SiteSnapshot( {
 					<span />
 					<span />
 				</div>
-				{ pages.length > 0 && (
+				{ isCollage && sourceUrl && <TornCollage url={ sourceUrl } /> }
+				{ isListShown && (
 					<ol
 						ref={ pagesRef }
 						className={ clsx( 'static-site-import-snapshot__pages', { 'is-listed': isListed } ) }
@@ -627,6 +637,15 @@ function MovingChecklist( {
 			formatNumber( pagesFoundSoFar )
 		);
 	}
+	const pagesCopied = progress?.pages_captured || pagesTotal;
+	const pagesCopiedDetail =
+		current > 1 && pagesCopied
+			? sprintf(
+					/* translators: %s: formatted number of pages copied from the site being moved. */
+					_n( '%s page copied', '%s pages copied', pagesCopied ),
+					formatNumber( pagesCopied )
+				)
+			: '';
 	const items = [
 		{
 			label: __( 'Finding your pages' ),
@@ -636,7 +655,7 @@ function MovingChecklist( {
 		},
 		{
 			label: __( 'Copying your pages' ),
-			activity: current === 1 ? getCopyActivity( progress ) : '',
+			activity: current === 1 ? getCopyActivity( progress ) : pagesCopiedDetail,
 			count:
 				current === 1 && pagesTotal
 					? getCopyCount( progress?.pages_captured ?? 0, pagesTotal )
@@ -747,33 +766,18 @@ export function StaticSiteImportPreviewWindow( {
 	siteImport: StaticSiteImport;
 	search: StaticSiteImportSearch;
 } ) {
-	const sourceHost = getSourceHost( search.from );
 	const session = siteImport.session;
-	const step = getCurrentStep( session );
-	const destinationHost = getSourceHost( session?.site_url );
-	let caption: string = sourceHost
-		? sprintf(
-				/* translators: %s: the domain of the site being copied, e.g. example.com. */
-				__( 'Copying from %s' ),
-				sourceHost
-			)
-		: __( 'Copying your site' );
-	if ( step === 2 ) {
-		caption = __( 'Building your copy on WordPress.com' );
-	} else if ( step === 3 ) {
-		caption = __( 'Your copy on WordPress.com' );
-	}
 
 	return (
-		<VStack spacing={ 2 } className="static-site-import-preview-window">
-			<Text className="static-site-import-preview-window__caption">{ caption }</Text>
+		<div className="static-site-import-preview-window">
 			<SiteSnapshot
-				sourceHost={ sourceHost }
-				destinationHost={ destinationHost }
+				sourceUrl={ search.from }
+				sourceHost={ getSourceHost( search.from ) }
+				destinationHost={ getSourceHost( session?.site_url ) }
 				session={ session }
-				step={ step }
+				step={ getCurrentStep( session ) }
 			/>
-		</VStack>
+		</div>
 	);
 }
 
@@ -800,7 +804,12 @@ export function StaticSiteImportProgress( {
 			<CardBody>
 				<div className="static-site-import-moving">
 					<div className="static-site-import-moving__snapshot">
-						<SiteSnapshot sourceHost={ sourceHost } session={ session } step={ step } />
+						<SiteSnapshot
+							sourceUrl={ search.from }
+							sourceHost={ sourceHost }
+							session={ session }
+							step={ step }
+						/>
 					</div>
 					<div className="static-site-import-moving__facts">
 						<MoveFacts session={ session } locale={ locale } />

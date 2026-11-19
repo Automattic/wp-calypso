@@ -199,7 +199,9 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	// Clip the panes that slide off-screen (the closed detail sits at
 	// translateX(100%), past the inline-end edge) so they don't cause horizontal
 	// overflow. The panes carry no shadow at this breakpoint, so nothing is cut.
-	.wpnc-app {
+	// Only the panel has sliding panes: the inbox sits in the host's card, whose
+	// border this would cut off.
+	.wpnc-app:has(> .wpnc-app__detail-pane) {
 		overflow: hidden;
 	}
 
@@ -256,8 +258,28 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 }
 
 .wpnc-app__full-view.components-button {
-	width: 100%;
-	justify-content: center;
 	color: var(--wp-components-color-gray-900, #{$gray-900});
 	font-weight: 500;
+}
+
+// Sits between the tabs and the list, lined up with the rows' 16px edge.
+.wpnc-app__mark-all-read {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+
+	> .components-button.is-link {
+		align-self: flex-start;
+		margin: 8px 16px;
+		font-size: 13px;
+		line-height: 20px;
+
+		&:not(:hover, :active, [aria-disabled="true"]) {
+			color: var(--wp-components-color-gray-900, #{$gray-900});
+		}
+	}
+}
+
+.wpnc-app__mark-all-read-error {
+	margin: 8px 16px;
 }

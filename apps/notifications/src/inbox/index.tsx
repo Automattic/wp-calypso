@@ -142,6 +142,7 @@ function InboxPanes( {
 						<NotePanel
 							headingLevel={ 1 }
 							actions={ canViewSettings ? <NoteSettingsButton /> : null }
+							showMarkAllAsRead
 							filterName={ filterName }
 							setFilterName={ setFilterName }
 							selectedNoteId={ selectedNoteId }

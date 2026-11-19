@@ -24,7 +24,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { SitesNoticeArbiter } from '../notice-arbiter';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
 import AgencySiteShareCard from '../overview-agency-site-share-card';
 import BackupCard from '../overview-backup-card';
 import DIFMOfferCard from '../overview-difm-offer-card';

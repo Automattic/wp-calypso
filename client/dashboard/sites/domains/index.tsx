@@ -40,7 +40,7 @@ import {
 	isPendingPrimaryDomain,
 	isPrimaryDomainCandidate,
 } from '../../utils/domain';
-import { SitesNoticeArbiter } from '../notice-arbiter';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
 import ChangePrimaryDomainModal from './change-primary-domain-modal';
 import ExpiredDomainNotice from './expired-domain-notice';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';

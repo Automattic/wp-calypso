@@ -50,7 +50,6 @@ export function register(): typeof STORE_KEY {
 			'selectedGlobalStyles',
 			'selectedFeatures',
 			'selectedSite',
-			'readymadeTemplate',
 			'siteTitle',
 			'siteDescription',
 			'siteLogo',

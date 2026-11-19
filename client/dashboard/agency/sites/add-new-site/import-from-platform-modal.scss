@@ -1,0 +1,4 @@
+// VStack sets display: flex, which beats the hidden attribute's display: none.
+.a4a-import-from-platform__state[hidden] {
+	display: none;
+}

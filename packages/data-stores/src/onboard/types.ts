@@ -1,4 +1,3 @@
-import { GlobalStyles } from '../site';
 import type { DomainSuggestion } from '@automattic/api-core';
 
 export type DomainForm = {
@@ -40,29 +39,4 @@ export type DomainTransferData = Record<
 
 export type DomainTransferForm = {
 	domains: DomainTransferData;
-};
-
-type ReadymadeTemplatePattern = {
-	id: number;
-	source_site_sid: number;
-};
-type ReadymadeTemplateStyles = {
-	colors?: string;
-	typography?: string;
-};
-
-export type ReadymadeTemplate = {
-	template_id: number;
-	slug: string;
-	title: string;
-	description: string;
-	home: {
-		header: string;
-		content: string;
-		footer: string;
-	};
-	patterns: ReadymadeTemplatePattern[];
-	styles: ReadymadeTemplateStyles;
-	globalStyles?: GlobalStyles;
-	previewUrl: string;
 };

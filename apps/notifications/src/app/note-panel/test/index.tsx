@@ -1,12 +1,16 @@
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { vi } from 'vitest';
 import { recordTracksEvent } from '../../../panel/helpers/stats';
+import { init as initWpcom } from '../../../panel/rest-client/wpcom';
+import { store } from '../../../panel/state';
+import actions from '../../../panel/state/actions';
 import { renderWithProvider } from '../../../testing-library';
 import { AppProvider } from '../../context';
 import NodePanel, { getNotificationTabs } from '../index';
 import type { FilterName } from '../../types';
+import type { ComponentProps } from 'react';
 
 vi.mock( '../../../panel/helpers/stats', () => ( { recordTracksEvent: vi.fn() } ) );
 
@@ -152,5 +156,48 @@ describe( 'NotePanel', () => {
 		expect(
 			screen.queryByRole( 'button', { name: 'Keyboard shortcuts' } )
 		).not.toBeInTheDocument();
+	} );
+
+	describe( 'with unread notifications', () => {
+		const unreadNote = {
+			id: 5,
+			type: 'comment',
+			read: 0,
+			timestamp: '2026-06-05T00:00:00+00:00',
+			subject: [ { text: 'An unread comment' } ],
+			body: [],
+		};
+
+		const renderPanel = ( props: Partial< ComponentProps< typeof NodePanel > > ) => {
+			initWpcom( { req: { get: async () => ( { notes: [ { id: unreadNote.id } ] } ) } } );
+			renderWithProvider( <NodePanel { ...defaultProps } { ...props } /> );
+			act( () => {
+				store.dispatch( actions.notes.addNotes( [ unreadNote ] ) );
+				store.dispatch( actions.ui.loadedNotes() );
+			} );
+		};
+
+		it.each( [ 'all', 'unread' ] as const )(
+			'offers to mark them all as read on the "%s" tab when the host asks for it',
+			async ( filterName ) => {
+				renderPanel( { showMarkAllAsRead: true, filterName } );
+
+				expect( await screen.findByRole( 'button', { name: 'Mark 1 as read' } ) ).toBeVisible();
+			}
+		);
+
+		it( 'does not offer it on a tab that lists only some of them', async () => {
+			renderPanel( { showMarkAllAsRead: true, filterName: 'comments' } );
+
+			await screen.findByRole( 'tab', { name: 'Comments', selected: true } );
+			expect( screen.queryByRole( 'button', { name: /as read$/ } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'does not offer it unless the host asks for it', async () => {
+			renderPanel( {} );
+
+			expect( await screen.findByText( 'An unread comment' ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /as read$/ } ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );

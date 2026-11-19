@@ -72,9 +72,13 @@ export const filteredNoteIds = ( state = {}, { type, filterKey, noteIds } ) => {
 	return state;
 };
 
-export const noteReads = ( state = {}, { type, noteId } ) => {
+export const noteReads = ( state = {}, { type, noteId, noteIds } ) => {
 	if ( ( types.READ_NOTE === type || types.SELECT_NOTE === type ) && noteId ) {
 		return { ...state, [ noteId ]: true };
+	}
+
+	if ( types.READ_NOTES === type ) {
+		return { ...state, ...Object.fromEntries( noteIds.map( ( id ) => [ id, true ] ) ) };
 	}
 
 	if ( types.UNREAD_NOTE === type && noteId ) {
