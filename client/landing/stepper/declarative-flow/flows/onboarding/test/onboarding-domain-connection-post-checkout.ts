@@ -178,7 +178,7 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 	beforeEach( () => {
 		mockDomainCartItem = undefined;
 		jest.clearAllMocks();
-		mockFetchDomain.mockResolvedValue( { domain: 'example.com' } );
+		mockFetchDomain.mockResolvedValue( { domain: 'example.com', blog_id: 123 } );
 	} );
 
 	it( 'sends a connected domain to the domain connection setup instead of the setup chooser', async () => {
@@ -271,6 +271,44 @@ describe( 'onboarding post-checkout destination for a connected domain', () => {
 		expect( replacedWith ).toBe(
 			'https://my.wordpress.com/domains/example.com/domain-connection-setup'
 		);
+	} );
+
+	it( 'keeps My Home for a connected domain that is on another site', async () => {
+		mockDomainCartItem = { product_slug: 'domain_map', meta: 'example.com' };
+		mockFetchDomain.mockResolvedValue( { domain: 'example.com', blog_id: 999 } );
+
+		const { replacedWith } = await submitPostCheckoutProcessing( {} );
+
+		expect( replacedWith ).toBe( '/home/example.wordpress.com' );
+	} );
+
+	it( 'keeps My Home for a connected domain when wpcom refuses the domain request', async () => {
+		mockDomainCartItem = { product_slug: 'domain_map', meta: 'example.com' };
+		mockFetchDomain.mockRejectedValue(
+			Object.assign( new Error( 'Forbidden' ), { name: 'UnauthorizedError', status: 403 } )
+		);
+
+		const { replacedWith } = await submitPostCheckoutProcessing( {} );
+
+		expect( replacedWith ).toBe( '/home/example.wordpress.com' );
+	} );
+
+	it( 'sends a connected domain to its setup when the domain request stalls', async () => {
+		mockDomainCartItem = { product_slug: 'domain_map', meta: 'example.com' };
+		mockFetchDomain.mockReturnValue( new Promise( () => undefined ) );
+		jest.useFakeTimers();
+
+		try {
+			const pending = submitPostCheckoutProcessing( {} );
+			await jest.advanceTimersByTimeAsync( 5000 );
+			const { replacedWith } = await pending;
+
+			expect( replacedWith ).toBe(
+				'https://my.wordpress.com/domains/example.com/domain-connection-setup'
+			);
+		} finally {
+			jest.useRealTimers();
+		}
 	} );
 
 	it( 'keeps the setup chooser for a registered domain', async () => {
