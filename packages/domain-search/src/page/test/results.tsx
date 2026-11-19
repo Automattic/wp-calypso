@@ -2000,6 +2000,56 @@ describe( 'ResultsPage', () => {
 				container.querySelector( '.domain-search--results__featured-inline-bundles' )
 			).toBeNull();
 		} );
+
+		// The displaced recommended suggestion is in the regular list, so a featured
+		// inline row for it would show its bundle twice.
+		it( 'offers the displaced recommended suggestion its inline row only in the regular list', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'flowers' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'flowers.blog' } ),
+					buildSuggestion( { domain_name: 'flowers.com' } ),
+					buildSuggestion( { domain_name: 'flowers.org' } ),
+				],
+			} );
+			mockGetBundleMetadataQuery( {
+				params: { query: 'flowers' },
+				bundleSuggestion: flowersBundle,
+				bundleTriggers: [ 'com', 'blog' ],
+			} );
+			mockGetBundleForDomainQuery( {
+				fqdn: 'flowers.blog',
+				bundleSuggestion: {
+					...flowersBundle,
+					domains: [
+						{ ...flowersBundle.domains[ 0 ], domain: 'flowers.blog' },
+						{ ...flowersBundle.domains[ 1 ], domain: 'flowers.online' },
+					],
+					bundle_id: 'flowers-blog-bundle',
+					bundle_group_id: 'v1.flowers.blog',
+				},
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( {
+						items: [ buildCartItem( { domain: 'flowers', tld: 'blog' } ) ],
+					} ) }
+					config={ { showBundleSuggestions: true } }
+					query="flowers"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await findBundleCta() ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( container.querySelectorAll( '.inline-bundle-row' ) ).toHaveLength( 1 );
+			} );
+			expect(
+				container.querySelector( '.domain-search--results__featured-inline-bundles' )
+			).toBeNull();
+		} );
 	} );
 
 	describe( 'bundle card when the queried FQDN is taken', () => {

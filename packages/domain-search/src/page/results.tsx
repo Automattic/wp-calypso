@@ -227,7 +227,7 @@ export const ResultsPage = () => {
 	// the featured section.
 	const visibleBundlePrimaryFqdn = visibleBundleSuggestion ? bundlePrimaryFqdn : undefined;
 
-	const featuredInlineBundles = featuredSuggestions
+	const featuredInlineBundles = renderedFeaturedSuggestions
 		.map( ( { suggestion } ) => {
 			const inlineBundle = getInlineBundle( suggestion );
 
