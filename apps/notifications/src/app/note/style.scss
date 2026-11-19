@@ -544,6 +544,13 @@
 		box-shadow: 0 0 0 1.5px var(--wp-components-color-background, #{$white});
 		transform: translate(-50%, -50%);
 		pointer-events: none;
+
+		// Forced colors would drop the dot's background and ring; draw them in system colors.
+		@media (forced-colors: active) {
+			forced-color-adjust: none;
+			background: ButtonText;
+			box-shadow: 0 0 0 1.5px Canvas;
+		}
 	}
 }
 

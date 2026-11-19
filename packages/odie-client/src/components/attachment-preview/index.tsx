@@ -1,6 +1,6 @@
 import { animations } from '@automattic/agenttic-ui';
 import { Button } from '@wordpress/components';
-import { close, Icon } from '@wordpress/icons';
+import { closeSmall, Icon } from '@wordpress/icons';
 import clsx from 'clsx';
 import { motion, Transition } from 'framer-motion';
 import './style.scss';
@@ -37,7 +37,7 @@ export const AttachmentPreview = ( {
 				) }
 			</div>
 			<Button className="odie-attachment-preview-cancel" onClick={ onCancel }>
-				<Icon icon={ close } />
+				<Icon icon={ closeSmall } size={ 16 } />
 			</Button>
 		</motion.div>
 	);

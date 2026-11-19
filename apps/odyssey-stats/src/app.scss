@@ -19,6 +19,12 @@
 		display: none;
 	}
 
+	// Where Odyssey loads its own components stylesheet (newer than wp-admin's toggle), that
+	// stylesheet fills a checked toggle on a layer older toggles don't render; fill the track.
+	.components-form-toggle.is-checked .components-form-toggle__track {
+		background-color: var(--wpds-color-background-interactive-brand-strong, var(--wp-admin-theme-color, #3858e9));
+	}
+
 	// Checked: secondary-button-like outline style, matching the accent chain the
 	// @wordpress/components controls (e.g. the chart type toggle) already follow.
 	.form-checkbox:checked {
