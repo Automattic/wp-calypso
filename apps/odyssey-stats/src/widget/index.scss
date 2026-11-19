@@ -26,7 +26,7 @@
 // set `--wp-admin-theme-color`. The date range menu renders outside the widget, in a popover.
 .stats-widget-content,
 .stats-widget-date-range__popover {
-	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
+	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 	--wpds-color-stroke-focus: var(--wp-admin-theme-color, #3858e9);
 	/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 }

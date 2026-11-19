@@ -1,6 +1,6 @@
 @import 'calypso/lib/color-scheme/dark-theme';
 
-/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
+/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 
 /* Links */
 @mixin dashboard-dark-theme-links {

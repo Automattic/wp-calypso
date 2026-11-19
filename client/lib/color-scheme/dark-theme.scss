@@ -1,6 +1,6 @@
 @import '@automattic/color-studio/dist/color-variables';
 
-/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
+/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 
 /*
 This mixin generates a color palette for the dark theme. Low indexes are subtle

@@ -143,7 +143,7 @@ $data-view-border-color: #f1f1f1;
 		}
 
 		.redesigned-a8c-table {
-			/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
+			/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 			--wpds-dimension-padding-lg: 4px;
 			/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 		}

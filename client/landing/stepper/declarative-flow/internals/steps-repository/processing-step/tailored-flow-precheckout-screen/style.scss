@@ -48,7 +48,7 @@
 		}
 
 		.wpcom__loading-progress-bar {
-			/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
+			/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 			--wpds-color-background-track-neutral: var(--studio-gray-5);
 			/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 		}

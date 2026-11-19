@@ -6,7 +6,7 @@
 	// Setting them here re-skins the entire popover without specificity wars.
 	--wp-components-color-background: var( --omnibar-submenu-background );
 	--wp-components-color-foreground: var( --omnibar-submenu-text-color );
-	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
+	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 	--wpds-color-foreground-interactive-neutral: var( --omnibar-submenu-text-color ); // item text
 	--wpds-color-background-interactive-brand-strong-active: transparent; // hover/active item bg
 	--wpds-color-foreground-interactive-brand-strong-active: var(
