@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { page, cloudDownload, copySmall } from '@wordpress/icons';
+import { page, cloudDownload, copy } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
@@ -213,7 +213,7 @@ export default function PrintBackupCodes( {
 										</Button>
 										<Button
 											variant="tertiary"
-											icon={ copySmall }
+											icon={ copy }
 											onClick={ handleCopy }
 											disabled={ isLoading }
 											accessibleWhenDisabled
