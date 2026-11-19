@@ -272,12 +272,12 @@
 			color: var( --color-text-inverted );
 
 			&::before {
-				background-color: var( --studio-blue-50 );
+				background-color: var( --color-accent );
 			}
 		}
 
 		&.is-selected {
-			background-color: var( --studio-blue-50 );
+			background-color: var( --color-accent );
 			color: var( --color-text-inverted );
 		}
 	}

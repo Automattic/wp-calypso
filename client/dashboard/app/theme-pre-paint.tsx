@@ -1,14 +1,6 @@
+import { DARK_SEEDS } from 'calypso/lib/color-scheme/seeds';
+
 export const COLOR_SCHEME_STORAGE_KEY = 'dashboard-color-scheme';
-
-export const LIGHT_SEEDS = {
-	background: '#fcfcfc',
-	primary: '#3858e9',
-};
-
-export const DARK_SEEDS = {
-	background: '#181818',
-	primary: '#93aef8',
-};
 
 /**
  * Paints the page dark before the app loads when the last color scheme the user saw was dark.
