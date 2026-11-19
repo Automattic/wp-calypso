@@ -91,15 +91,24 @@ async function submitLoginTOTPCode(
  * virtual authenticator answers it, but a ceremony can fail transiently (the
  * button then re-enables), so it is retried from the button until the login
  * proceeds, failing with the on-screen error rather than an opaque timeout.
+ * Returns at once if the login already completed on its own.
  */
 async function continueWithSecurityKey( page: Page ): Promise< void > {
 	const securityKeyButton = page.getByRole( 'button', { name: 'Continue with security key' } );
 	const switchToSecurityKey = page.getByRole( 'button', {
 		name: /Continue with your security.key/,
 	} );
-	await expect( securityKeyButton.or( switchToSecurityKey ).first() ).toBeVisible( {
-		timeout: 30_000,
-	} );
+	const loggedIn = () => ! new URL( page.url() ).pathname.includes( '/log-in' );
+	await expect
+		.poll(
+			async () =>
+				loggedIn() || ( await securityKeyButton.or( switchToSecurityKey ).first().isVisible() ),
+			{ timeout: 30_000 }
+		)
+		.toBe( true );
+	if ( loggedIn() ) {
+		return;
+	}
 	if ( await switchToSecurityKey.isVisible() ) {
 		await switchToSecurityKey.click();
 	}
@@ -342,6 +351,14 @@ test.describe(
 			} );
 
 			await test.step( 'When I log out and log in again using the security key', async function () {
+				const securityKeyAccepted = page.waitForResponse(
+					( response ) =>
+						response.request().method() === 'POST' &&
+						response.url().includes( 'action=webauthn-authentication-endpoint' ) &&
+						response.ok(),
+					{ timeout: 0 }
+				);
+				securityKeyAccepted.catch( () => {} );
 				await logOutAndLogInWithPassword(
 					page,
 					pageLogin,
@@ -349,6 +366,7 @@ test.describe(
 					testUser.password
 				);
 				await continueWithSecurityKey( page );
+				await securityKeyAccepted;
 			} );
 
 			await test.step( 'Then I am logged in with the security key', async function () {
