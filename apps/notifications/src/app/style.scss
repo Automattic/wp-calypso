@@ -280,6 +280,22 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	}
 }
 
+// Takes the link's place at the same 36px height, so the list doesn't move. Wraps on narrow panes.
+.wpnc-app__mark-all-read-confirm {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0 8px;
+	margin: 2px 16px;
+	font-size: 13px;
+	line-height: 20px;
+	color: var(--wp-components-color-gray-900, #{$gray-900});
+
+	> span {
+		margin-inline-end: 4px;
+	}
+}
+
 .wpnc-app__mark-all-read-error {
 	margin: 8px 16px;
 }
