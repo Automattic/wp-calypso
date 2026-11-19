@@ -1,5 +1,5 @@
 import { Children, useState } from 'react';
-import { useSiteExpiryNoticeCandidate } from '../components/site-expiry-notice';
+import { useSiteExpiryNoticeCandidate } from '../../../components/site-expiry-notice';
 import type { ReactNode } from 'react';
 
 /**
