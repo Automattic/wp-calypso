@@ -1,5 +1,5 @@
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
-import { Icon, cautionFilled as warning } from '@wordpress/icons';
+import { Icon, caution as warning } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 
 import './help-center-zendesk-staging-badge.scss';
