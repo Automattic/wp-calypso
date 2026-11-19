@@ -5,11 +5,13 @@ import {
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import { Tooltip } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useCallback } from 'react';
+import { cloneElement, useCallback } from 'react';
 import { useIntlLocale } from '../../../app/locale';
 import { formatDate, formatDateWithOffset } from '../../../utils/datetime';
+import type { ReactElement, ReactNode } from 'react';
 
 // The Activity Log entries a successful backup ends with.
 const BACKUP_COMPLETE_ACTIVITIES = [
@@ -87,6 +89,24 @@ function useBackupCompletedAt( siteId: number, period: number | null ): Date | n
 	return entry ? new Date( Number( entry.rewind_id ) * 1000 ) : null;
 }
 
+/**
+ * The link, with the backup's date and time in a tooltip on hover and focus once they're known.
+ * createInterpolateElement() passes the link text in as children.
+ */
+function LinkWithTooltip( {
+	link,
+	tooltip,
+	children,
+}: {
+	link: ReactElement;
+	tooltip?: string;
+	children?: ReactNode;
+} ) {
+	// Always in the Tooltip, which shows nothing without text: wrapping the link only once the time
+	// loads would remount it, and lose focus if it had it.
+	return <Tooltip text={ tooltip }>{ cloneElement( link, undefined, children ) }</Tooltip>;
+}
+
 export function RestoreThatOneInsteadLink( {
 	siteId,
 	siteSlug,
@@ -106,8 +126,7 @@ export function RestoreThatOneInsteadLink( {
 		hasTarget ? ( latestWithoutKnownThreats as number ) : null
 	);
 
-	// Wait for the lookup rather than flash a label that then changes.
-	if ( ! hasTarget || completedAt === undefined || ! siteSettings ) {
+	if ( ! hasTarget ) {
 		return null;
 	}
 
@@ -119,28 +138,25 @@ export function RestoreThatOneInsteadLink( {
 		},
 	};
 
-	if ( ! completedAt ) {
-		return createInterpolateElement(
-			__( 'Instead, <link>restore the latest backup without known threats</link>.' ),
-			{ link: <Link { ...target } /> }
+	// The backup's date and time, in a tooltip: in the sentence they made the link too long to read.
+	let title: string | undefined;
+	if ( completedAt && siteSettings ) {
+		const timezoneString = siteSettings.timezone_string || undefined;
+		const format = ( options: Intl.DateTimeFormatOptions ) =>
+			timezoneString
+				? formatDate( completedAt, locale, { ...options, timeZone: timezoneString } )
+				: formatDateWithOffset( completedAt, siteSettings.gmt_offset ?? 0, locale, options );
+		title = sprintf(
+			// translators: %1$s is a backup's date, e.g. "Oct 17, 2026"; %2$s its time, e.g. "2:30 PM". Shown when hovering the link to that backup.
+			__( 'Backup from %1$s at %2$s' ),
+			format( { dateStyle: 'medium' } ),
+			format( { timeStyle: 'short' } )
 		);
 	}
 
-	const timezoneString = siteSettings.timezone_string || undefined;
-	const format = ( options: Intl.DateTimeFormatOptions ) =>
-		timezoneString
-			? formatDate( completedAt, locale, { ...options, timeZone: timezoneString } )
-			: formatDateWithOffset( completedAt, siteSettings.gmt_offset ?? 0, locale, options );
-
 	return createInterpolateElement(
-		sprintf(
-			// translators: %1$s is a backup's date, e.g. "Oct 17, 2026"; %2$s its time, e.g. "2:30 PM". Follows the warning that the backup being viewed has known threats.
-			__(
-				'Instead, <link>restore the latest backup without known threats, from %1$s at %2$s</link>.'
-			),
-			format( { dateStyle: 'medium' } ),
-			format( { timeStyle: 'short' } )
-		),
-		{ link: <Link { ...target } /> }
+		// translators: Follows the warning that the backup being viewed has known threats.
+		__( 'Instead, restore the <link>latest backup without known threats</link>.' ),
+		{ link: <LinkWithTooltip link={ <Link { ...target } /> } tooltip={ title } /> }
 	);
 }

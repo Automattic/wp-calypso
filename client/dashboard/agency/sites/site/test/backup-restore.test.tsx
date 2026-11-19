@@ -14,9 +14,11 @@ import type { Site } from '@automattic/api-core';
 const API_BASE = 'https://public-api.wordpress.com';
 const siteId = 123;
 
-vi.mock( '@wordpress/react-i18n', () => ( ( ( m ) => ( { ...m, default: m } ) )( {
-	useI18n: vi.fn(),
-} ) ) );
+vi.mock( '@wordpress/react-i18n', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useI18n: vi.fn(),
+	} )
+);
 
 vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { createSuccessNotice: vi.fn(), createErrorNotice: vi.fn() } ),
@@ -100,7 +102,7 @@ test( 'links to the agency restore route, not the sites one', async () => {
 	render( <AgencySiteBackupRestore /> );
 
 	expect(
-		await screen.findByRole( 'link', { name: /^restore the latest backup without known threats/ } )
+		await screen.findByRole( 'link', { name: 'latest backup without known threats' } )
 	).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/agency/sites/test-site/backups/1792240000/restore' )

@@ -75,7 +75,7 @@ export default function KnownThreatsNotice( {
 			<VStack spacing={ 3 }>
 				{ /* One paragraph: the warning, then where to go instead. */ }
 				<Text>
-					{ warning }{ ' ' }
+					<span>{ warning }</span>{ ' ' }
 					<RestoreThatOneInsteadLink
 						siteId={ site.ID }
 						siteSlug={ site.slug }

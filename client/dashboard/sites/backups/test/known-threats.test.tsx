@@ -18,9 +18,11 @@ const siteId = 123;
 const flaggedRewindId = '1792244435.274';
 const cleanRewindId = '1792240000.5';
 
-vi.mock( '@wordpress/react-i18n', () => ( ( ( m ) => ( { ...m, default: m } ) )( {
-	useI18n: vi.fn(),
-} ) ) );
+vi.mock( '@wordpress/react-i18n', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useI18n: vi.fn(),
+	} )
+);
 
 // The live region would repeat the warning on the page.
 vi.mock( '@wordpress/a11y', async () => ( {
@@ -68,7 +70,9 @@ vi.mock(
 const mockRouterParams: { siteSlug: string; rewindId?: string } = { siteSlug: 'test-site' };
 
 vi.mock( '@tanstack/react-router', async () => ( {
-	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >( '@tanstack/react-router' ) ),
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useParams: vi.fn( () => mockRouterParams ),
 } ) );
 
@@ -183,7 +187,7 @@ afterEach( () => {
 } );
 
 // No Activity Log mock, so the clean backup's completion time is unknown.
-const fallbackRestoreLink = 'restore the latest backup without known threats';
+const fallbackRestoreLink = 'latest backup without known threats';
 
 const expectInOrder = ( ...elements: HTMLElement[] ) =>
 	elements

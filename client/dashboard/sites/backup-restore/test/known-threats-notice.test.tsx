@@ -19,9 +19,11 @@ const API_BASE = 'https://public-api.wordpress.com';
 const siteId = 123;
 const rewindId = '1792244435.274';
 
-vi.mock( '@wordpress/react-i18n', () => ( ( ( m ) => ( { ...m, default: m } ) )( {
-	useI18n: vi.fn(),
-} ) ) );
+vi.mock( '@wordpress/react-i18n', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useI18n: vi.fn(),
+	} )
+);
 
 vi.mock( '@wordpress/a11y', async () => ( {
 	...( await vi.importActual< typeof import( '@wordpress/a11y' ) >( '@wordpress/a11y' ) ),
@@ -316,16 +318,19 @@ test( 'links to the latest backup without known threats', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	renderForm();
 
-	const link = await screen.findByRole( 'link', {
-		name: 'restore the latest backup without known threats, from Oct 17, 2026 at 12:28 PM',
-	} );
+	const link = await screen.findByRole( 'link', { name: 'latest backup without known threats' } );
 	expect( link ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
 	);
+	// The backup's date and time are in a tooltip, not the sentence, once the backup's time loads.
+	await userEvent.hover( link );
+	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+		'Backup from Oct 17, 2026 at 12:28 PM'
+	);
 	// One sentence with the warning: the link finishes it.
 	expect( link.parentElement ).toHaveTextContent(
-		'This backup contains 3 known security threats and may restore malware on your site. Instead, restore the latest backup without known threats, from Oct 17, 2026 at 12:28 PM.'
+		'This backup contains 3 known security threats and may restore malware on your site. Instead, restore the latest backup without known threats.'
 	);
 } );
 
@@ -349,9 +354,7 @@ test( 'moves focus to the restore point after opening the clean backup', async (
 	}
 	render( <RoutedForm /> );
 
-	const link = await screen.findByRole( 'link', {
-		name: /^restore the latest backup without known threats/,
-	} );
+	const link = await screen.findByRole( 'link', { name: 'latest backup without known threats' } );
 	expect( screen.getByText( /Choose what to restore/ ) ).not.toHaveFocus();
 	await user.click( link );
 
@@ -385,9 +388,7 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	).toBeVisible();
 	expect( summary.closest( 'details' ) ).toHaveAttribute( 'open' );
 	expect(
-		await screen.findAllByRole( 'link', {
-			name: /^restore the latest backup without known threats/,
-		} )
+		await screen.findAllByRole( 'link', { name: 'latest backup without known threats' } )
 	).toHaveLength( 1 );
 	expect( threatsScope.isDone() ).toBe( true );
 } );
