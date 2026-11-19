@@ -42,6 +42,9 @@ jest.mock( '@automattic/data-stores', () => ( {
 	Onboard: { SiteIntent: { Sell: 'sell', Build: 'build' } },
 } ) );
 
+jest.mock( '@automattic/domain-search', () => ( {
+	isFreeSubdomainQuery: ( query: string ) => query.endsWith( '.wordpress.com' ),
+} ) );
 jest.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_FLOW: 'ai-site-builder',
 	SITE_MIGRATION_FLOW: 'site-migration',
@@ -362,6 +365,10 @@ describe( 'create-site', () => {
 		await expect( runStep() ).rejects.toThrow( 'cart rejected' );
 
 		expect( transferDomainToSite ).toHaveBeenCalledWith( 'owned-domain.com', 555, 111 );
+
+		// The step keeps the site of a rejected cart for the next run in this page load. A run that
+		// succeeds clears it, so the next test starts without one.
+		await pendingAction!();
 	} );
 
 	describe( 'retry after a rejected cart', () => {
@@ -413,8 +420,8 @@ describe( 'create-site', () => {
 			expect( createSite ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		// /sites/new chose the address of the first site. A request that names its site must not get it.
-		it( 'creates a new site when the retry asks for a name', async () => {
+		// A free subdomain is the address of the site. The first site has another address.
+		it( 'creates a new site when the retry asks for a free subdomain', async () => {
 			mockSiteUrl = '';
 			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
 			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
@@ -426,6 +433,24 @@ describe( 'create-site', () => {
 			expect( createSite ).toHaveBeenCalledTimes( 2 );
 			expect( flowStateStore.createdSite ).toMatchObject( {
 				requestedName: 'my-site.wordpress.com',
+			} );
+		} );
+
+		// The flow state record matches on the name, so without this a retry with another domain
+		// gives the account a second site and leaves the first one unused.
+		it( 'adds to the cart of the first site when the retry asks for another paid domain', async () => {
+			mockSiteUrl = 'example.com';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			mockSiteUrl = 'example.net';
+			pendingAction = undefined;
+			await expect( runStep() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+			expect( flowStateStore.createdSite ).toMatchObject( {
+				siteId: 111,
+				requestedName: 'example.net',
 			} );
 		} );
 
