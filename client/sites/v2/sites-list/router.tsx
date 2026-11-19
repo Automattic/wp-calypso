@@ -17,9 +17,9 @@ const sitesRoute = createRoute( {
 	...appRouterSites.sitesRoute.options,
 	getParentRoute: () => rootRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites' ).then( ( d ) =>
 		createLazyRoute( 'sites' )( {
-			component: d.default,
+			component: () => <d.default search={ sitesRoute.useSearch() } />,
 		} )
 	)
 );

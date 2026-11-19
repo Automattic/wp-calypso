@@ -2053,9 +2053,9 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	return [
 		sitesRoute.lazy( () =>
-			import( '../../sites' ).then( ( d ) =>
+			import( '../../app-dotcom/routes/sites' ).then( ( d ) =>
 				createLazyRoute( 'sites' )( {
-					component: d.default,
+					component: () => <d.default search={ sitesRoute.useSearch() } />,
 				} )
 			)
 		),

@@ -1,36 +1,27 @@
-import {
-	dashboardSiteFiltersQuery,
-	isAutomatticianQuery,
-	paginatedSitesQuery,
-	siteBySlugQuery,
-	siteByIdQuery,
-} from '@automattic/api-queries';
-import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { getISOWeek, getISOWeekYear } from 'date-fns';
-import deepmerge from 'deepmerge';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Experiment } from 'calypso/lib/explat';
 import AccountEmailBouncingNotice, {
 	useShouldShowAccountEmailBouncingNotice,
-} from '../app/account-email-bouncing-notice';
-import { useAnalytics } from '../app/analytics';
-import { useAuth } from '../app/auth';
-import { useAppContext } from '../app/context';
-import { usePersistentView } from '../app/hooks/use-persistent-view';
+} from '../../../app/account-email-bouncing-notice';
+import { useAnalytics } from '../../../app/analytics';
+import { useAuth } from '../../../app/auth';
+import { useAppContext } from '../../../app/context';
+import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import RecoveryEmailMatchesAccountEmailNotice, {
 	useShouldShowRecoveryEmailMatchesAccountEmailNotice,
-} from '../app/recovery-email-matches-account-email-notice';
-import { sitesRoute } from '../app/router/sites';
+} from '../../../app/recovery-email-matches-account-email-notice';
 import SecurityKeyReregisterNotice, {
 	useShouldShowSecurityKeyReregisterNotice,
-} from '../app/security-key-reregister-notice';
-import { DataViewsEmptyStateLayout } from '../components/dataviews';
-import { PageHeader } from '../components/page-header';
-import PageLayout from '../components/page-layout';
-import { isDashboardBackport } from '../utils/is-dashboard-backport';
-import AddNewSite from './add-new-site';
+} from '../../../app/security-key-reregister-notice';
+import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
+import { PageHeader } from '../../../components/page-header';
+import PageLayout from '../../../components/page-layout';
+import AddNewSite from '../../../sites/add-new-site';
 import {
 	SitesDataViews,
 	useActions,
@@ -38,130 +29,22 @@ import {
 	getDefaultView,
 	recordViewChanges,
 	sanitizeFields,
-	STAGING_FILTER_FIELD,
-} from './dataviews';
-import { useHasOnlyDeletedSites } from './deleted-sites';
+} from '../../../sites/dataviews';
+import { useHasOnlyDeletedSites } from '../../../sites/deleted-sites';
 import {
 	EmptyDeletedSitesStateContent,
 	EmptySitesStateContent,
 	EmptySitesSearchStateContent,
-} from './empty-sites-state';
-import { InviteAcceptedFlashMessage } from './invite-accepted-flash-message';
-import { SitesNoticeArbiter } from './notice-arbiter';
-import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
-import type { View, Filter } from '@wordpress/dataviews';
+} from '../../../sites/empty-sites-state';
+import { useSiteListQuery } from '../../../sites/hooks/use-site-list-query';
+import { InviteAcceptedFlashMessage } from '../../../sites/invite-accepted-flash-message';
+import { SitesNoticeArbiter } from '../../../sites/notice-arbiter';
+import type { Site } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
 
-type SiteListQueryOptions = {
-	isDefaultView?: boolean;
-	isRestoringAccount: boolean;
-	isAutomattician: boolean;
-};
+export type SitesSearch = Record< string, unknown >;
 
-function isDeletedFilterActive( filters: Filter[] ): boolean {
-	return filters.some( ( filter ) => filter.field === 'is_deleted' && filter.value === true );
-}
-
-function getIncludeStaging( filters: Filter[] ): boolean {
-	const stagingFilter = filters.find( ( filter ) => filter.field === STAGING_FILTER_FIELD );
-	return stagingFilter ? stagingFilter.value === true : false;
-}
-
-const getFetchPaginatedSitesOptions = (
-	view: View,
-	{ isDefaultView, isRestoringAccount, isAutomattician }: SiteListQueryOptions,
-	siteFilters: DashboardFilters = {}
-): FetchPaginatedSitesOptions => {
-	const filters = view.filters ?? [];
-
-	const isA8COwnedIncludedByFilter = ! filters.some(
-		( item: Filter ) => item.field === 'is_a8c' && item.value === false
-	);
-
-	// Non-Automatticians can be members of a8c-owned sites but have no filter to
-	// control their visibility, so always include them.
-	const shouldIncludeA8COwned = ! isAutomattician || isA8COwnedIncludedByFilter;
-
-	// Hidden sites are only returned under 'all', which we opt into when the user
-	// searches, is restoring their account, or is an Automattician who wants a8c-owned
-	// sites — some P2s are not retrievable otherwise.
-	// See: https://github.com/Automattic/wp-calypso/pull/104220.
-	const shouldRequestAllVisibility =
-		!! view.search || isRestoringAccount || ( isAutomattician && isA8COwnedIncludedByFilter );
-
-	const options: FetchPaginatedSitesOptions = {
-		source: isDashboardBackport() && isDefaultView ? 'dashboard-site-list-default' : undefined,
-
-		site_visibility: shouldRequestAllVisibility ? 'all' : 'visible',
-		include_a8c_owned: shouldIncludeA8COwned,
-		include_staging: getIncludeStaging( filters ),
-		search: view.search,
-		sort_field: view.sort?.field,
-		sort_direction: view.sort?.direction,
-		page: view.page,
-		per_page: view.perPage,
-	};
-
-	if ( isDeletedFilterActive( filters ) ) {
-		options.site_visibility = 'all';
-	}
-
-	view.filters?.forEach( ( filter ) => {
-		if ( filter.field === 'plan' && filter.value ) {
-			const planSlugsByName = siteFilters.plan?.reduce(
-				( acc, current ) => ( {
-					...acc,
-					[ current.name_en ]: [ ...( acc[ current.name_en ] || [] ), current.value ],
-				} ),
-				{} as Record< string, string[] >
-			);
-			options.plan = filter.value.map( ( v: string ) => planSlugsByName?.[ v ] ).flat();
-		} else if ( filter.field === 'visibility' && filter.value ) {
-			options.visibility = filter.value;
-		}
-	} );
-
-	return options;
-};
-
-/**
- * Enables the correct site query based on feature flags.
- */
-export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
-	const queryClient = useQueryClient();
-
-	const { data: siteFilters } = useQuery( {
-		...dashboardSiteFiltersQuery( 'all', [ 'plan' ] ),
-		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
-		enabled: !! view.filters?.find( ( filter ) => filter.field === 'plan' ),
-	} );
-
-	const paginatedSitesQueryResult = useQuery( {
-		...paginatedSitesQuery( 'all', getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
-		meta: {
-			fullPageLoader: true,
-		},
-	} );
-
-	const result = {
-		sites: paginatedSitesQueryResult.data?.sites,
-		isLoadingSites: paginatedSitesQueryResult.isLoading,
-		totalItems: paginatedSitesQueryResult.data?.total,
-	};
-
-	useEffect( () => {
-		if ( result.sites ) {
-			result.sites.forEach( ( site ) => {
-				const updater = ( oldData?: Site ) => ( oldData ? deepmerge( oldData, site ) : site );
-				queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, updater );
-				queryClient.setQueryData( siteByIdQuery( site.ID ).queryKey, updater );
-			} );
-		}
-	}, [ result.sites, queryClient ] );
-
-	return result;
-}
-
-export function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: number ) {
+function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: number ) {
 	return {
 		data: sites,
 		paginationInfo: {
@@ -171,10 +54,9 @@ export function filterSortAndPaginateSites( sites: Site[], view: View, totalItem
 	};
 }
 
-export default function Sites() {
+export default function Sites( { search }: { search: SitesSearch } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const currentSearchParams = sitesRoute.useSearch();
-	const isRestoringAccount = !! currentSearchParams.restored;
+	const isRestoringAccount = !! search.restored;
 
 	const { user } = useAuth();
 	const { supports } = useAppContext();
@@ -200,7 +82,7 @@ export default function Sites() {
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'sites',
 		defaultView,
-		queryParams: currentSearchParams,
+		queryParams: search,
 		queryParamFilterFields: [ 'is_deleted' ],
 		sanitizeFields,
 	} );
