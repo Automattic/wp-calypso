@@ -58,11 +58,6 @@ vi.mock(
 	} )
 );
 
-vi.mock( '../../../app/router/sites', () => ( {
-	siteRoute: { useParams: () => ( { siteSlug: 'test-site' } ) },
-	siteBackupRestoreRoute: { fullPath: '/sites/$siteSlug/backups/$rewindId/restore' },
-} ) );
-
 const site = {
 	ID: siteId,
 	slug: 'test-site',

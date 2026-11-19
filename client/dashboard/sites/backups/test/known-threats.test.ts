@@ -4,13 +4,15 @@
 
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
+import { createRootRoute, createRoute } from '@tanstack/react-router';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { render } from '../../../test-utils';
+import { siteBackupsRoute } from '../../../app/router/sites';
 import { BackupsListPage } from '../index';
+import { buildRealRoutes, renderAtPath } from './render-at-path';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 const API_BASE = 'https://public-api.wordpress.com';
@@ -67,21 +69,41 @@ vi.mock(
 	} )
 );
 
-const mockRouterParams: { siteSlug: string; rewindId?: string } = { siteSlug: 'test-site' };
+beforeAll( () => buildRealRoutes( 'sites' ) );
 
-vi.mock( '@tanstack/react-router', async () => ( {
-	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
-		'@tanstack/react-router'
-	) ),
-	useParams: vi.fn( () => mockRouterParams ),
-} ) );
+// The backups pages' routes, at the app's paths, without the app's loaders: the page fetches what it
+// needs, which the tests mock.
+function backupsRoutes() {
+	const root = createRootRoute();
+	const site = createRoute( { getParentRoute: () => root, path: 'sites/$siteSlug' } );
+	const backups = createRoute( {
+		getParentRoute: () => site,
+		path: 'backups',
+		validateSearch: siteBackupsRoute.options.validateSearch,
+	} );
+	const backupsIndex = createRoute( {
+		getParentRoute: () => backups,
+		path: '/',
+		component: BackupsListPage,
+	} );
+	const detail = createRoute( { getParentRoute: () => backups, path: '$rewindId' } );
+	const detailIndex = createRoute( {
+		getParentRoute: () => detail,
+		path: '/',
+		component: BackupsListPage,
+	} );
+	const restore = createRoute( { getParentRoute: () => detail, path: 'restore' } );
+	const download = createRoute( { getParentRoute: () => detail, path: 'download' } );
 
-vi.mock( '../../../app/router/sites', () => ( {
-	siteRoute: { useParams: () => ( { siteSlug: 'test-site' } ) },
-	siteBackupsRoute: { useSearch: () => ( {} ) },
-	siteBackupsIndexRoute: { fullPath: '/sites/$siteSlug/backups/' },
-	siteBackupRestoreRoute: { fullPath: '/sites/$siteSlug/backups/$rewindId/restore' },
-} ) );
+	return root.addChildren( [
+		site.addChildren( [
+			backups.addChildren( [
+				backupsIndex,
+				detail.addChildren( [ detailIndex, restore, download ] ),
+			] ),
+		] ),
+	] );
+}
 
 const buildSite = ( withScan: boolean ) =>
 	( {
@@ -141,7 +163,6 @@ function renderPage( {
 	selected?: string;
 	latestWithout?: number;
 } ) {
-	mockRouterParams.rewindId = selected;
 	nock( API_BASE )
 		.get( '/rest/v1.1/sites/test-site' )
 		.query( true )
@@ -178,7 +199,13 @@ function renderPage( {
 			latest_without_known_threats: latestWithout,
 			backups,
 		} );
-	return { ...render( <BackupsListPage /> ), listScope };
+	return {
+		...renderAtPath(
+			backupsRoutes(),
+			selected ? `/sites/test-site/backups/${ selected }` : '/sites/test-site/backups'
+		),
+		listScope,
+	};
 }
 
 afterEach( () => {
