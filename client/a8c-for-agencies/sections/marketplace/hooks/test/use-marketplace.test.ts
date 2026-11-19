@@ -117,6 +117,18 @@ describe( 'WordPress.com promotions', () => {
 		);
 	} );
 
+	it( 'rounds the promotional total down to whole yen for JPY', () => {
+		const plan = wpcom( {
+			currency: 'JPY',
+			yearly_price: 43854,
+			yearly_promotion: { ...promotion, price: 32890 },
+			tier_yearly_prices: [ { units: 2, price: 43854, promotional_price: 32890 } ],
+		} );
+		expect( getWPCOMTieredPrice( plan, 1, 'yearly' ).discountedCost ).toBe( 32890 );
+		// 2 × 32890 would be 65780; checkout charges 25% off 87708.
+		expect( getWPCOMTieredPrice( plan, 2, 'yearly' ).discountedCost ).toBe( 65781 );
+	} );
+
 	it( 'ignores promotional tier prices once the promotion has ended', () => {
 		const ended = { ...promotion, ends_at: '2000-01-01T00:00:00+00:00' };
 		const pricing = getWPCOMTieredPrice( wpcom( { yearly_promotion: ended } ), 4, 'yearly' );

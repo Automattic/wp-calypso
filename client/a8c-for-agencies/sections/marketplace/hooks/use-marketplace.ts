@@ -78,11 +78,16 @@ export const getWPCOMTierPrices = (
 	return tiers;
 };
 
-// Checkout takes the coupon off the line total and rounds down to the cent,
-// so a total built from rounded per-site prices can come out a cent or two lower.
-const applyPromotionToTotal = ( amount: number, discount: number ): number => {
-	const cents = Number( ( amount * ( 100 - discount ) ).toFixed( 6 ) );
-	return Math.floor( cents ) / 100;
+// Checkout takes the coupon off the line total and rounds down to the currency's smallest unit,
+// so a total built from rounded per-site prices can come out a little lower.
+const applyPromotionToTotal = ( amount: number, discount: number, currency: string ): number => {
+	const precision =
+		new Intl.NumberFormat( 'en-US', { style: 'currency', currency } ).resolvedOptions()
+			.maximumFractionDigits ?? 2;
+	const factor = 10 ** precision;
+	return (
+		Math.floor( Number( ( ( amount * ( 100 - discount ) * factor ) / 100 ).toFixed( 6 ) ) ) / factor
+	);
 };
 
 export const getWPCOMTieredPrice = (
@@ -109,7 +114,7 @@ export const getWPCOMTieredPrice = (
 	return {
 		actualCost: basePricePerUnit * quantity,
 		discountedCost: promotion
-			? applyPromotionToTotal( regularCost, promotion.discount )
+			? applyPromotionToTotal( regularCost, promotion.discount, product.currency )
 			: pricePerUnit * quantity,
 		discountPercentage: calculateDiscountPercentage( basePricePerUnit, pricePerUnit ),
 		promotion,

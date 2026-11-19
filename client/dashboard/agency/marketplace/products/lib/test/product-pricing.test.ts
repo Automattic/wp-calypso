@@ -169,6 +169,18 @@ describe( 'WordPress.com promotions', () => {
 		expect( getWpcomTieredPrice( plan, 4, 'yearly' ).discountedCost ).toBe( 475.5 );
 	} );
 
+	test( 'rounds the promotional total down to whole yen for JPY', () => {
+		const plan = wpcom( {
+			currency: 'JPY',
+			yearly_price: 43854,
+			yearly_promotion: { ...promotion, price: 32890 },
+			tier_yearly_prices: [ { units: 2, price: 43854, promotional_price: 32890 } ],
+		} );
+		expect( getWpcomTieredPrice( plan, 1, 'yearly' ).discountedCost ).toBe( 32890 );
+		// 2 × 32890 would be 65780; checkout charges 25% off 87708.
+		expect( getWpcomTieredPrice( plan, 2, 'yearly' ).discountedCost ).toBe( 65781 );
+	} );
+
 	test( 'ignores promotional tier prices without an active promotion', () => {
 		const ended = { ...promotion, ends_at: '2000-01-01T00:00:00+00:00' };
 		for ( const plan of [ wpcom(), wpcom( { yearly_promotion: ended } ) ] ) {
