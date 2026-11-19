@@ -12,6 +12,7 @@ import {
 	CheckoutStep,
 	CheckoutStepGroup,
 	CheckoutStepBody,
+	createCheckoutStepGroupStore,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -617,6 +618,7 @@ export default function CheckoutMainContent( {
 	// A ref so the contact step's async callback reads the current method, not a stale one.
 	const paymentMethodIdRef = useRef( paymentMethod?.id );
 	paymentMethodIdRef.current = paymentMethod?.id;
+	const [ stepGroupStore ] = useState( createCheckoutStepGroupStore );
 
 	const hasMarketplaceProduct =
 		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
@@ -870,6 +872,7 @@ export default function CheckoutMainContent( {
 					</WPCheckoutTitle>
 				) }
 				<CheckoutStepGroup
+					store={ stepGroupStore }
 					loadingHeader={ loadingHeader }
 					onStepChanged={ onStepChanged }
 					scrollToStepOnForwardNavigation={ ! isLargeViewport }
@@ -979,16 +982,29 @@ export default function CheckoutMainContent( {
 										prepareDomainContactValidationRequest( contactInfo )
 									);
 
+									// This callback also runs when the contact step isn't active: clicking
+									// Edit on a later step after every step is complete re-validates this
+									// one first. To avoid recording an extra "first step complete" event
+									// when the user didn't actually go back and touch the first step, we
+									// skip recording calypso_checkout_composite_first_step_complete unless
+									// the contact step is actually active. (It might make sense to do that
+									// for calypso_checkout_composite_step_complete too, but for backwards
+									// compatibility reasons we currently aren't.)
+									const isContactStepActive =
+										stepGroupStore.state.activeStepNumber ===
+										stepGroupStore.actions.getStepNumberFromId( 'contact-form' );
 									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
 										step: 1,
 										step_name: 'contact-form',
 									} );
-									recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
-										payment_method:
-											translateCheckoutPaymentMethodToWpcomPaymentMethod(
-												paymentMethodIdRef.current ?? ''
-											) || '',
-									} );
+									if ( isContactStepActive ) {
+										recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
+											payment_method:
+												translateCheckoutPaymentMethodToWpcomPaymentMethod(
+													paymentMethodIdRef.current ?? ''
+												) || '',
+										} );
+									}
 								}
 								return validationResponse;
 							} }
