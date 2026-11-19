@@ -271,7 +271,9 @@ describe( 'KnownThreatsNotice', () => {
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
 		// The backup's date and time are in a tooltip, not the sentence.
 		await userEvent.hover( link );
-		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( /^Backup from .+ at .+$/ );
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+			/^Backup from [A-Z][a-z]{3,} \d{1,2}, \d{4} at .+$/
+		);
 		await userEvent.unhover( link );
 		const heading = screen.getByText( NOTICE ).parentElement;
 		expect( heading ).toContainElement( link );

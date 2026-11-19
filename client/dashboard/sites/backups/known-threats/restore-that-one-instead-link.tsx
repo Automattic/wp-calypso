@@ -147,9 +147,9 @@ export function RestoreThatOneInsteadLink( {
 				? formatDate( completedAt, locale, { ...options, timeZone: timezoneString } )
 				: formatDateWithOffset( completedAt, siteSettings.gmt_offset ?? 0, locale, options );
 		title = sprintf(
-			// translators: %1$s is a backup's date, e.g. "Oct 17, 2026"; %2$s its time, e.g. "2:30 PM". Shown when hovering the link to that backup.
+			// translators: %1$s is a backup's date, e.g. "October 17, 2026"; %2$s its time, e.g. "2:30 PM". Shown when hovering the link to that backup.
 			__( 'Backup from %1$s at %2$s' ),
-			format( { dateStyle: 'medium' } ),
+			format( { dateStyle: 'long' } ),
 			format( { timeStyle: 'short' } )
 		);
 	}
