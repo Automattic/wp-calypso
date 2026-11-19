@@ -178,6 +178,7 @@ function moduleVisibilityWithUserConfiguration( userConfig, hasVideoPress ) {
 
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
 	const dispatch = useDispatch();
+	const isHidden = useContext( DashboardHiddenContext );
 	const {
 		supportsPlanUsage,
 		supportsUTMStats: supportsUTMStatsFeature,
@@ -809,11 +810,15 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 			) }
 			{ ! shouldShowUpsells ? null : <AsyncLoad require={ loadJetpackUpsellSection } /> }
-			{ ! wpcomShowUpsell && (
-				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+			{ ! isHidden && (
+				<>
+					{ ! wpcomShowUpsell && (
+						<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+					) }
+					{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
+					<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
+				</>
 			) }
-			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
-			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</div>
 	);
 }
