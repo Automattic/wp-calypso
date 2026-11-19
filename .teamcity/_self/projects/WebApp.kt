@@ -494,7 +494,7 @@ object RunAllUnitTests : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Check for yarn.lock changes and duplicated packages"
+			name = "Check for yarn.lock changes, duplicated packages and unverified resolutions"
 			scriptContent = """
 				function prevent_uncommitted_changes {
 					DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
@@ -523,8 +523,31 @@ object RunAllUnitTests : BuildType({
 					fi
 				}
 
-				prevent_uncommitted_changes & prevent_duplicated_packages
-				wait
+				# Yarn's hardened mode checks that every yarn.lock entry is what the registry resolves for its
+				# range, with the registry's checksum, so a hand-edited lockfile can't swap in another package.
+				# `--immutable` can't be combined with `--mode=update-lockfile`, so a rewritten entry shows up
+				# in prevent_uncommitted_changes, which runs after it.
+				function prevent_unverified_resolutions {
+					if ! RESOLUTION_ERRORS=${'$'}(
+						set +e
+						YARN_ENABLE_HARDENED_MODE=1 yarn install --mode=update-lockfile 2>&1
+					); then
+						echo "yarn.lock doesn't match what the registry resolves: "
+						echo ""
+						echo "${'$'}RESOLUTION_ERRORS"
+						echo ""
+						echo "Regenerate the affected entries with 'yarn' instead of editing yarn.lock by hand."
+						return 1
+					else
+						echo "yarn.lock resolutions match the registry."
+					fi
+				}
+
+				status=0
+				prevent_unverified_resolutions || status=1
+				prevent_uncommitted_changes || status=1
+				prevent_duplicated_packages || status=1
+				exit ${'$'}status
 			""".trimIndent()
 		}
 		bashNodeScript {
