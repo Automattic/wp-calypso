@@ -59,6 +59,8 @@ export type AppConfig = {
 		domainOnlySites: boolean;
 		colorScheme: boolean;
 		darkMode: boolean;
+		/** Opens a backup's details at `/sites/$siteSlug/backups/$rewindId` from an Activity Log backup range. */
+		backupDetailsLinks: boolean;
 	};
 	components: {
 		/** Replaces the WordPress.com omnibar, whose nodes come from the admin bar endpoint. */
@@ -90,6 +92,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		domainOnlySites: false,
 		colorScheme: false,
 		darkMode: false,
+		backupDetailsLinks: false,
 	},
 	components: {},
 };

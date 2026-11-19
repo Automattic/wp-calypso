@@ -32,10 +32,19 @@ export const siteBackupRestoreInitiateMutation = ( siteId: number ) =>
 		mutationFn: ( {
 			timestamp,
 			config: restoreConfig,
+			acknowledgeThreats,
 		}: {
 			timestamp: string | number;
 			config?: RestoreConfig;
-		} ) => initiateSiteBackupRestore( siteId, timestamp, configApi( 'env_id' ), restoreConfig ),
+			acknowledgeThreats?: boolean;
+		} ) =>
+			initiateSiteBackupRestore(
+				siteId,
+				timestamp,
+				configApi( 'env_id' ),
+				restoreConfig,
+				acknowledgeThreats
+			),
 		onSuccess: ( restoreId ) => {
 			// Start polling restore progress
 			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );
@@ -53,10 +62,19 @@ export const siteBackupGranularRestoreMutation = ( siteId: number ) =>
 		mutationFn: ( {
 			timestamp,
 			config: granularConfig,
+			acknowledgeThreats,
 		}: {
 			timestamp: string | number;
 			config: GranularRestoreConfig;
-		} ) => initiateSiteGranularRestore( siteId, timestamp, configApi( 'env_id' ), granularConfig ),
+			acknowledgeThreats?: boolean;
+		} ) =>
+			initiateSiteGranularRestore(
+				siteId,
+				timestamp,
+				configApi( 'env_id' ),
+				granularConfig,
+				acknowledgeThreats
+			),
 		onSuccess: ( restoreId ) => {
 			// Start polling restore progress
 			queryClient.prefetchQuery( siteBackupRestoreProgressQuery( siteId, restoreId ) );
