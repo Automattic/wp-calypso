@@ -71,6 +71,8 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 			? sslDetails.certificate_status === 'failed'
 			: domain.ssl_status === 'failed' );
 
+	const lastError = sslDetails.last_error?.message;
+
 	const getSslStatusMessage = ( sslDetails: SslDetails ) => {
 		const hasFailureReasons =
 			!! sslDetails.failure_reasons && sslDetails.failure_reasons.length > 0;
@@ -146,6 +148,26 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 			);
 		}
 
+		if ( lastError ) {
+			return createInterpolateElement(
+				__(
+					'The last attempt to issue an SSL certificate for this domain did not succeed. We will try again automatically. <learnMoreLink />'
+				),
+				{
+					learnMoreLink: (
+						<InlineSupportLink
+							supportContext="https-ssl"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_domain_security_learn_more_click', {
+									domain: domainName,
+								} );
+							} }
+						/>
+					),
+				}
+			);
+		}
+
 		// If we get here, there is an issue with the certificate that can be fixed by the user.
 		return createInterpolateElement(
 			__( 'There is an issue with your certificate. Contact us to <learnMoreLink />.' ),
@@ -171,14 +193,14 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		! sslDetails.is_newly_registered &&
 		! sslDetails.is_expired;
 
-	const shouldShowProvisionButton = canRetry && ( showFailureReasons || isFailed );
+	const hasKnownIssue = showFailureReasons || !! lastError;
+	const shouldShowProvisionButton = canRetry && ( hasKnownIssue || isFailed );
 
 	const renderAttemptDetails = () => {
 		if ( ! canRetry ) {
 			return null;
 		}
 
-		const lastError = sslDetails.last_error?.message;
 		const hasNextAttempt = ! isFailed && !! sslDetails.next_attempt;
 		if ( ! lastError && ! hasNextAttempt ) {
 			return null;
@@ -315,7 +337,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 						<Text>{ getSslStatusMessage( sslDetails ) }</Text>
 						{ renderAttemptDetails() }
 						{ showFailureReasons && renderFailureReasons( sslDetails.failure_reasons ?? [] ) }
-						{ shouldShowProvisionButton && (
+						{ shouldShowProvisionButton && hasKnownIssue && (
 							<Text>
 								{ __(
 									'Once you have fixed all the issues, you can request a new certificate by clicking the button below.'

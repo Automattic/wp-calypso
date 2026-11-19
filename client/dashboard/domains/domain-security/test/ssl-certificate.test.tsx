@@ -77,6 +77,17 @@ describe( '<SslCertificate>', () => {
 			`Next attempt: ${ expected }`
 		);
 		expect( screen.getByText( lastError.message ) ).toBeVisible();
+		expect( screen.getByText( /We will try again automatically/ ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Provision certificate' } ) ).toBeVisible();
+	} );
+
+	test( 'offers a retry without naming issues when a failed certificate has none', async () => {
+		renderCertificate( { certificate_status: 'failed', last_error: null, next_attempt: null } );
+
+		expect( await screen.findByText( 'SSL failed' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Provision certificate' } ) ).toBeVisible();
+		expect( screen.queryByText( /Once you have fixed all the issues/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Last error:' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows the next attempt without an error when none was recorded', async () => {
@@ -88,6 +99,10 @@ describe( '<SslCertificate>', () => {
 
 		expect( await screen.findByText( 'Next attempt:' ) ).toBeVisible();
 		expect( screen.queryByText( 'Last error:' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( /There is an issue with your certificate/ ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Provision certificate' } )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'shows no attempt details for an active certificate', async () => {
