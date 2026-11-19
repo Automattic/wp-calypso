@@ -13,12 +13,14 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { ReactElement } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useIntlLocale } from '../../app/locale';
 import { domainSecurityRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
+import { parseDateAsUTC } from '../../utils/datetime';
 import { useSslStatusLabels } from './use-ssl-status-labels';
 import type { Domain, SslDetails } from '@automattic/api-core';
 
@@ -28,8 +30,32 @@ interface SslCertificateProps {
 	sslDetails: SslDetails;
 }
 
+const MINUTE_IN_MS = 60 * 1000;
+const HOUR_IN_MS = 60 * MINUTE_IN_MS;
+const DAY_IN_MS = 24 * HOUR_IN_MS;
+
+/**
+ * Returns a string like "in 5 minutes", or null when the date is less than a minute away or has passed.
+ */
+function getTimeUntil( date: Date, locale: string ): string | null {
+	const diff = date.getTime() - Date.now();
+	if ( Number.isNaN( diff ) || diff < MINUTE_IN_MS ) {
+		return null;
+	}
+
+	const formatter = new Intl.RelativeTimeFormat( locale, { numeric: 'always' } );
+	if ( diff < HOUR_IN_MS ) {
+		return formatter.format( Math.round( diff / MINUTE_IN_MS ), 'minute' );
+	}
+	if ( diff < 2 * DAY_IN_MS ) {
+		return formatter.format( Math.round( diff / HOUR_IN_MS ), 'hour' );
+	}
+	return formatter.format( Math.round( diff / DAY_IN_MS ), 'day' );
+}
+
 export default function SslCertificate( { domainName, domain, sslDetails }: SslCertificateProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const locale = useIntlLocale();
 	const sslStatusLabels = useSslStatusLabels();
 	const mutation = useMutation(
 		withSnackbar( provisionSslCertificateMutation( domainName ), {
@@ -38,6 +64,12 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 			error: { source: 'server' },
 		} )
 	);
+
+	const isFailed =
+		! sslDetails.certificate_provisioned &&
+		( sslDetails.certificate_status
+			? sslDetails.certificate_status === 'failed'
+			: domain.ssl_status === 'failed' );
 
 	const getSslStatusMessage = ( sslDetails: SslDetails ) => {
 		const hasFailureReasons =
@@ -72,6 +104,26 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 
 		if ( sslDetails.is_expired ) {
 			return __( 'Your domain has expired. Renew your domain to issue a new SSL certificate.' );
+		}
+
+		if ( isFailed ) {
+			return createInterpolateElement(
+				__(
+					'We could not issue an SSL certificate for this domain and have stopped retrying automatically. <learnMoreLink />'
+				),
+				{
+					learnMoreLink: (
+						<InlineSupportLink
+							supportContext="https-ssl"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_domain_security_learn_more_click', {
+									domain: domainName,
+								} );
+							} }
+						/>
+					),
+				}
+			);
 		}
 
 		if ( hasFailureReasons ) {
@@ -114,11 +166,56 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 
 	const showFailureReasons = !! sslDetails.failure_reasons && sslDetails.failure_reasons.length > 0;
 
-	const shouldShowProvisionButton =
+	const canRetry =
 		! sslDetails.certificate_provisioned &&
 		! sslDetails.is_newly_registered &&
-		! sslDetails.is_expired &&
-		showFailureReasons;
+		! sslDetails.is_expired;
+
+	const shouldShowProvisionButton = canRetry && ( showFailureReasons || isFailed );
+
+	const renderAttemptDetails = () => {
+		if ( ! canRetry ) {
+			return null;
+		}
+
+		const lastError = sslDetails.last_error?.message;
+		const hasNextAttempt = ! isFailed && !! sslDetails.next_attempt;
+		if ( ! lastError && ! hasNextAttempt ) {
+			return null;
+		}
+
+		const timeUntilNextAttempt = sslDetails.next_attempt
+			? getTimeUntil( parseDateAsUTC( sslDetails.next_attempt ), locale )
+			: null;
+
+		return (
+			<VStack spacing={ 1 }>
+				{ lastError && (
+					<Text>
+						{ createInterpolateElement(
+							/* translators: <error/> is the reason the last attempt to issue the SSL certificate failed */
+							__( '<strong>Last error:</strong> <error/>' ),
+							{ strong: <strong />, error: <>{ lastError }</> }
+						) }
+					</Text>
+				) }
+				{ hasNextAttempt && (
+					<Text>
+						{ createInterpolateElement(
+							timeUntilNextAttempt
+								? sprintf(
+										/* translators: %s is a relative time like "in 5 minutes" or "in 2 days" */
+										__( '<strong>Next attempt:</strong> %s' ),
+										timeUntilNextAttempt
+									)
+								: __( '<strong>Next attempt:</strong> soon' ),
+							{ strong: <strong /> }
+						) }
+					</Text>
+				) }
+			</VStack>
+		);
+	};
 
 	const handleOnClick = ( e: React.FormEvent ) => {
 		e.preventDefault();
@@ -195,7 +292,14 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		if ( sslDetails.certificate_provisioned || domain.wpcom_domain ) {
 			return <Badge intent="stable">{ sslStatusLabels.active }</Badge>;
 		}
-		if ( domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending' ) {
+		if ( isFailed ) {
+			return <Badge intent="high">{ sslStatusLabels.failed }</Badge>;
+		}
+		if (
+			sslDetails.certificate_status === 'pending' ||
+			domain.ssl_status === 'newly_registered' ||
+			domain.ssl_status === 'pending'
+		) {
 			return <Badge intent="low">{ sslStatusLabels.pending }</Badge>;
 		}
 		return <Badge intent="high">{ sslStatusLabels.disabled }</Badge>;
@@ -209,8 +313,9 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 					<VStack spacing={ 6 }>
 						<HStack justify="flex-start">{ renderBadge() }</HStack>
 						<Text>{ getSslStatusMessage( sslDetails ) }</Text>
+						{ renderAttemptDetails() }
 						{ showFailureReasons && renderFailureReasons( sslDetails.failure_reasons ?? [] ) }
-						{ showFailureReasons && (
+						{ shouldShowProvisionButton && (
 							<Text>
 								{ __(
 									'Once you have fixed all the issues, you can request a new certificate by clicking the button below.'

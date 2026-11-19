@@ -12,7 +12,7 @@ export const provisionSslCertificateMutation = ( domainName: string ) =>
 	mutationOptions( {
 		meta: { statId: 'domain-ssl-provision' },
 		mutationFn: () => provisionSslCertificate( domainName ),
-		onSuccess: () => {
+		onSettled: () => {
 			queryClient.invalidateQueries( sslDetailsQuery( domainName ) );
 		},
 	} );
