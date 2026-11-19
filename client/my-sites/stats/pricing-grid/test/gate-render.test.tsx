@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useNoticeVisibilityQuery } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
+import DashboardHiddenContext from '../dashboard-hidden-context';
 import PricingGridGate from '../gate';
 import useIsPricingGridEligible from '../hooks/use-eligibility';
 
@@ -21,11 +22,17 @@ jest.mock( '../hooks/use-dismiss-pricing-grid', () => ( {
 
 const mounts = jest.fn();
 const Dashboard = () => {
+	const isHidden = useContext( DashboardHiddenContext );
 	useEffect( () => mounts(), [] );
-	return <div>dashboard</div>;
+	return <div>{ isHidden ? 'hidden dashboard' : 'dashboard' }</div>;
 };
 
-const decide = ( { isLoading = false, isEligible = false, isVisible = false } ) => {
+const decide = ( {
+	isLoading = false,
+	isLoadingVisibility = false,
+	isEligible = false,
+	isVisible = false,
+} ) => {
 	( useIsPricingGridEligible as jest.Mock ).mockReturnValue( {
 		isApplicable: true,
 		isEligible,
@@ -33,7 +40,7 @@ const decide = ( { isLoading = false, isEligible = false, isVisible = false } ) 
 	} );
 	( useNoticeVisibilityQuery as jest.Mock ).mockReturnValue( {
 		data: isVisible,
-		isLoading: false,
+		isLoading: isLoadingVisibility,
 	} );
 };
 
@@ -47,22 +54,25 @@ const renderGate = () =>
 describe( 'PricingGridGate while purchases load', () => {
 	beforeEach( () => mounts.mockClear() );
 
-	it( 'mounts the dashboard hidden, then reveals it without remounting', () => {
-		decide( { isLoading: true } );
-		const { rerender } = renderGate();
+	it.each( [ { isLoading: true }, { isLoadingVisibility: true } ] )(
+		'mounts the dashboard hidden while deciding (%o), then reveals it without remounting',
+		( deciding ) => {
+			decide( deciding );
+			const { rerender } = renderGate();
 
-		expect( screen.getByText( 'dashboard' ).parentElement ).toHaveAttribute( 'inert' );
+			expect( screen.getByText( 'hidden dashboard' ).parentElement ).toHaveAttribute( 'inert' );
 
-		decide( { isEligible: false } );
-		rerender(
-			<PricingGridGate>
-				<Dashboard />
-			</PricingGridGate>
-		);
+			decide( { isEligible: false } );
+			rerender(
+				<PricingGridGate>
+					<Dashboard />
+				</PricingGridGate>
+			);
 
-		expect( screen.getByText( 'dashboard' ).parentElement ).not.toHaveAttribute( 'inert' );
-		expect( mounts ).toHaveBeenCalledTimes( 1 );
-	} );
+			expect( screen.getByText( 'dashboard' ).parentElement ).not.toHaveAttribute( 'inert' );
+			expect( mounts ).toHaveBeenCalledTimes( 1 );
+		}
+	);
 
 	it( 'drops the hidden dashboard when the site turns out to need the grid', () => {
 		decide( { isLoading: true } );

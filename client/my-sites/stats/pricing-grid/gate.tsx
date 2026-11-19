@@ -9,6 +9,7 @@ import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageLoading from '../pages/shared/page-loading';
+import DashboardHiddenContext from './dashboard-hidden-context';
 import useDismissPricingGrid, { PLAN_CHOSEN_QUERY_ARG } from './hooks/use-dismiss-pricing-grid';
 import useIsPricingGridEligible from './hooks/use-eligibility';
 import type { Callback } from '@automattic/calypso-router';
@@ -109,15 +110,11 @@ function stripPlanChoiceReturnArgsFromCurrentUrl() {
 let hasRecordedPlanChoice = false;
 
 /*
- * Kept laid out at full width rather than `display: none`: the traffic chart measures its
- * width once on mount and afterwards only on window resize. Opacity, not `visibility`, which
- * descendants such as the date navigation arrows can switch back on.
+ * Laid out in full rather than `display: none`: the traffic chart measures its width once on
+ * mount and afterwards only on window resize. Opacity, not `visibility`, which descendants such
+ * as the date navigation arrows can switch back on.
  */
-const HIDDEN_WHILE_DECIDING = {
-	opacity: 0,
-	height: 'calc( 100vh - 100px )',
-	overflow: 'hidden',
-} as const;
+const HIDDEN_WHILE_DECIDING = { opacity: 0 } as const;
 
 /**
  * Replaces the Stats dashboard with the pricing grid for newly connected sites
@@ -140,6 +137,7 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 		'pricing_grid',
 		isApplicable
 	);
+	const isDeciding = isLoading || isLoadingVisibility;
 
 	useEffect( () => {
 		stripPlanChoiceReturnArgsFromCurrentUrl();
@@ -169,8 +167,6 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 		return <>{ children }</>;
 	}
 
-	const isDeciding = isLoading || isLoadingVisibility;
-
 	if ( ! isDeciding && isEligible && isVisible ) {
 		return (
 			<>
@@ -189,8 +185,16 @@ function PricingGridGate( { children }: { children: ReactNode } ) {
 		<>
 			<QuerySitePurchases siteId={ siteId } />
 			<div style={ { position: 'relative' } }>
-				<div style={ isDeciding ? HIDDEN_WHILE_DECIDING : undefined } inert={ isDeciding }>
-					{ children }
+				<div
+					// Set by hand: Odyssey runs on WordPress's React, and React 18 drops `inert={ true }`.
+					ref={ ( node ) => {
+						node?.toggleAttribute( 'inert', isDeciding );
+					} }
+					style={ isDeciding ? HIDDEN_WHILE_DECIDING : undefined }
+				>
+					<DashboardHiddenContext.Provider value={ isDeciding }>
+						{ children }
+					</DashboardHiddenContext.Provider>
 				</div>
 				{ isDeciding && (
 					<div style={ { position: 'absolute', insetBlockStart: 0, insetInline: 0 } }>
