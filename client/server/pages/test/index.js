@@ -1196,9 +1196,9 @@ describe( 'main app', () => {
 			expect( response.redirect ).toHaveBeenCalledWith( '/posts/example.com::blog' );
 		} );
 
-		it( 'does not redirect a site it cannot rewrite back to itself', async () => {
+		it( 'passes a site it cannot rewrite on instead of redirecting it to itself', async () => {
 			const { response } = await app.run( { request: { url: '/sites/a@b/posts' } } );
-			expect( response.redirect ).not.toHaveBeenCalledWith( '/sites/a@b/posts' );
+			expect( response.redirect ).not.toHaveBeenCalled();
 		} );
 	} );
 
