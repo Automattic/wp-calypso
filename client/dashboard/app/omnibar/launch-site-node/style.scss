@@ -1,4 +1,6 @@
 .omnibar .omnibar__menu.omnibar__launch-site {
+	--omnibar-icon-color: var( --wpds-color-foreground-interactive-brand-strong );
+	--omnibar-highlight-color: var( --wpds-color-foreground-interactive-brand-strong );
 	background-color: var( --wpds-color-background-interactive-brand-strong );
 	color: var( --wpds-color-foreground-interactive-brand-strong );
 
@@ -7,10 +9,6 @@
 	&:active:not( [aria-disabled='true'] ) {
 		background-color: var( --wpds-color-background-interactive-brand-strong-active );
 		color: var( --wpds-color-foreground-interactive-brand-strong );
-
-		svg {
-			color: var( --wpds-color-foreground-interactive-brand-strong );
-		}
 	}
 
 	&[aria-disabled='true'] {
