@@ -76,17 +76,6 @@ function SiteLogsDataViews( {
 		queryParamFilterFields: logType === LogType.PHP ? [ 'severity' ] : [],
 	} );
 
-	// Where DataViews' infinite scroll has advanced the window to. Deliberately
-	// not persisted, so it lives here rather than in the persisted view.
-	const [ startPosition, setStartPosition ] = useState( 1 );
-
-	// Infinite scroll is how this screen works, not a user preference, so force it
-	// on rather than inheriting it from a view persisted before it existed.
-	const view = useMemo(
-		() => ( { ...persistedView, infiniteScrollEnabled: true, startPosition } ),
-		[ persistedView, startPosition ]
-	);
-
 	const { from: urlFrom, to: urlTo } = useSearch( { strict: false } );
 	const parseUrlSeconds =
 		urlFrom !== undefined && urlTo !== undefined ? { from: urlFrom, to: urlTo } : null;
@@ -117,13 +106,29 @@ function SiteLogsDataViews( {
 	};
 
 	// The loaded pages restart whenever the query params change (a new date range,
-	// filter, or sort — including the range shifting under auto-refresh), so the
-	// window goes back to the beginning with them. Keyed by value: the view object
-	// identity changes on every render, so `filter` can't be a dependency.
+	// filter, or sort — including the range shifting under auto-refresh). Keyed by
+	// value: the view object identity changes on every render, so `filter` can't be
+	// a dependency.
 	const datasetKey = `${ startSec }|${ endSec }|${ sortOrder }|${ JSON.stringify( filter ) }`;
+
+	// Where DataViews' infinite scroll has advanced the window to, and in which
+	// dataset: a position only means something in the dataset it was reached in.
+	// Deliberately not persisted, so it lives here rather than in the persisted view.
+	const [ scroll, setScroll ] = useState( { datasetKey, startPosition: 1 } );
+	const isNewDataset = scroll.datasetKey !== datasetKey;
+	const startPosition = isNewDataset ? 1 : scroll.startPosition;
+	const setStartPosition = ( position: number ) =>
+		setScroll( { datasetKey, startPosition: position } );
 	useEffect( () => {
-		setStartPosition( 1 );
+		setScroll( { datasetKey, startPosition: 1 } );
 	}, [ datasetKey ] );
+
+	// Infinite scroll is how this screen works, not a user preference, so force it
+	// on rather than inheriting it from a view persisted before it existed.
+	const view = useMemo(
+		() => ( { ...persistedView, infiniteScrollEnabled: true, startPosition } ),
+		[ persistedView, startPosition ]
+	);
 
 	const {
 		data,
@@ -319,7 +324,11 @@ function SiteLogsDataViews( {
 		totalPages: 1,
 	};
 
-	const dataViewsView = isPlaceholderData ? { ...view, infiniteScrollEnabled: false } : view;
+	// DataViews keeps the rows it has accumulated until it renders once without
+	// infinite scroll. A dataset still in the cache arrives without placeholder data,
+	// so its first render has to turn infinite scroll off too.
+	const dataViewsView =
+		isPlaceholderData || isNewDataset ? { ...view, infiniteScrollEnabled: false } : view;
 	const isLoadingDataViews = isFetchingNextPage || ( isPlaceholderData && isFetching );
 
 	const emptyState = (

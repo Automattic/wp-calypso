@@ -204,6 +204,60 @@ describe( '<SiteLogs>', () => {
 		expect( screen.queryByText( /paths aren’t shown here/ ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'drops the rows outside a date range that is still cached', async () => {
+		const DAY_MS = 86_400_000;
+		const phpError = ( daysAgo: number ) => ( {
+			timestamp: new Date( Date.now() - daysAgo * DAY_MS ).toISOString(),
+			severity: 'Warning',
+			message: `Logged ${ daysAgo } days ago`,
+			kind: 'warning',
+			name: 'E_WARNING',
+			file: '/wp-content/plugins/example/example.php',
+			line: daysAgo,
+			atomic_site_id: mockSiteId,
+		} );
+		const allLogs = [ phpError( 2 ), phpError( 20 ) ];
+
+		// Answers like the real endpoint: only the logs inside the requested range.
+		const requestedRanges: string[] = [];
+		nock( API_BASE )
+			.persist()
+			.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/error-logs` )
+			.query( true )
+			.reply( 200, ( uri ) => {
+				const query = new URL( uri, API_BASE ).searchParams;
+				requestedRanges.push( `${ query.get( 'start' ) }-${ query.get( 'end' ) }` );
+				const startMs = Number( query.get( 'start' ) ) * 1000;
+				const endMs = Number( query.get( 'end' ) ) * 1000;
+				const logs = allLogs.filter( ( log ) => {
+					const time = Date.parse( log.timestamp );
+					return time >= startMs && time <= endMs;
+				} );
+				return { data: { total_results: logs.length, logs, scroll_id: null } };
+			} );
+
+		const pickRange = async ( name: string ) => {
+			await userEvent.click( await screen.findByRole( 'button', { name: /^Date range:/ } ) );
+			const listbox = await screen.findByRole( 'listbox', { name: 'Date range presets' } );
+			await userEvent.click( within( listbox ).getByRole( 'option', { name } ) );
+		};
+
+		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
+		expect( await screen.findByText( 'Logged 2 days ago' ) ).toBeVisible();
+		expect( screen.queryByText( 'Logged 20 days ago' ) ).not.toBeInTheDocument();
+
+		await pickRange( 'Last 30 days' );
+		expect( await screen.findByText( 'Logged 20 days ago' ) ).toBeVisible();
+
+		await pickRange( 'Last 7 days' );
+		await waitFor( () =>
+			expect( screen.queryByText( 'Logged 20 days ago' ) ).not.toBeInTheDocument()
+		);
+		expect( screen.getByText( 'Logged 2 days ago' ) ).toBeVisible();
+		// The cache answered the return to the last 7 days, without a new request.
+		expect( requestedRanges ).toHaveLength( 2 );
+	} );
+
 	test( 'auto-refresh is blocked for non-last-7 range and shows warning notice', async () => {
 		render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
 
