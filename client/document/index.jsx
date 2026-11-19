@@ -202,6 +202,18 @@ class Document extends Component {
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
 					) ) }
+					{ /* The bilmur script looks its configuration up by this `id`. */ }
+					{ isBilmurEnabled() && (
+						<meta
+							id="bilmur"
+							property="bilmur:data"
+							content=""
+							data-provider="wordpress.com"
+							data-service="calypso"
+							data-customproperties={ `{"route_name": "${ sectionName }"}` }
+							data-site-tz="Etc/UTC"
+						/>
+					) }
 					{ head.links.map( ( props, index ) => (
 						<link { ...props } key={ index } />
 					) ) }
@@ -308,16 +320,7 @@ class Document extends Component {
 						) ) }
 
 					{ isBilmurEnabled() && (
-						<script
-							nonce={ inlineScriptNonce }
-							defer
-							id="bilmur"
-							src={ getBilmurUrl() }
-							data-provider="wordpress.com"
-							data-service="calypso"
-							data-customproperties={ `{"route_name": "${ sectionName }"}` }
-							data-site-tz="Etc/UTC"
-						/>
+						<script nonce={ inlineScriptNonce } defer src={ getBilmurUrl() } />
 					) }
 
 					{ entrypoint?.language?.manifest && (
