@@ -298,6 +298,11 @@ function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownF
 
 type CartHelperOptions = { throwOnError?: boolean };
 
+// The server lower-cases the domain in a cart item's meta, so the comparison ignores case.
+function isSameMeta( cartMeta: string | undefined, requestedMeta: string ): boolean {
+	return ( cartMeta ?? '' ).toLowerCase() === requestedMeta.toLowerCase();
+}
+
 // A response error can be about another item in the cart, such as a stale invalid product. The
 // server keeps the valid items, so the flow can continue when every requested item is present.
 // When the cart state cannot be read, treat the items as missing so the caller still sees the error.
@@ -321,7 +326,7 @@ function isRequestedItemMissingFromCart(
 			! cartProducts.some(
 				( cartProduct ) =>
 					cartProduct.product_slug === requestedItem.product_slug &&
-					( ! requestedItem.meta || cartProduct.meta === requestedItem.meta )
+					( ! requestedItem.meta || isSameMeta( cartProduct.meta, requestedItem.meta ) )
 			)
 	);
 }

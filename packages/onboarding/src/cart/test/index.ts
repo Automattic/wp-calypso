@@ -156,6 +156,19 @@ describe( 'cart helpers', () => {
 			).rejects.toBe( responseError );
 		} );
 
+		test( 'addProductsToCart resolves when the cart holds the meta in another letter case', async () => {
+			cartHolds( [ { product_slug: 'domain_map', meta: 'example.com' } ] );
+
+			await expect(
+				addProductsToCart(
+					'example.wordpress.com',
+					'domain',
+					[ { product_slug: 'domain_map', meta: 'Example.com' } ],
+					{ throwOnError: true }
+				)
+			).resolves.toBeUndefined();
+		} );
+
 		test( 'replaceProductsInCart resolves when the cart holds every requested item', async () => {
 			cartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
 
