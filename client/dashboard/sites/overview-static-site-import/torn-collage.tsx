@@ -8,7 +8,7 @@ const MSHOT_TRIES = 10;
 
 const COLUMNS = 5;
 const ROWS = 4;
-/** How long a piece takes to unroll into place, or to roll back up. */
+/** How long a piece takes to unroll into place. */
 const UNROLL_DURATION = 1800;
 /** The radius of a piece still fully rolled up. */
 const ROLL_RADIUS = 13;
@@ -26,7 +26,6 @@ type Piece = {
 	outline: Point[];
 	center: Point;
 	stickAt: number;
-	peelAt?: number;
 	/** Air trapped under the piece, along the line the decorator walks. */
 	bubbles: Bubble[];
 };
@@ -180,10 +179,6 @@ function trace( context: CanvasRenderingContext2D, outline: Point[] ) {
 
 /** How much of a piece is unrolled, left to right, from none (0) to flat (1). */
 function getUnrolled( piece: Piece, now: number ) {
-	if ( piece.peelAt !== undefined && now >= piece.peelAt && now < piece.stickAt ) {
-		const rollUp = easeInCubic( clamp( ( now - piece.peelAt ) / UNROLL_DURATION ) );
-		return 1 - rollUp;
-	}
 	return easeInCubic( clamp( ( now - piece.stickAt ) / UNROLL_DURATION ) );
 }
 
@@ -228,6 +223,40 @@ function drawBubble(
 	context.restore();
 }
 
+/** How far off the page the decorator walks to turn round between rows. */
+const OFF_PAGE = 30;
+/** How long the decorator rests off the page before going over it again from the top. */
+const REST_DURATION = 4000;
+
+/**
+ * Where the decorator is once the page is done: going over the whole page again, row by row from
+ * the top, back and forth, turning off the page, with a rest before starting over.
+ */
+function getFinalWalk( walked: number, rows: Row[], width: number ) {
+	const across = width + OFF_PAGE * 2;
+	const gap = rows.length > 1 ? rows[ 1 ].y - rows[ 0 ].y : 0;
+	const round = rows.length * across + ( rows.length - 1 ) * gap + REST_DURATION * WALK_SPEED;
+	let left = walked % round;
+	for ( let index = 0; index < rows.length; index++ ) {
+		const isRightward = index % 2 === 0;
+		if ( left < across ) {
+			return {
+				at: {
+					x: isRightward ? -OFF_PAGE + left : width + OFF_PAGE - left,
+					y: rows[ index ].y,
+				},
+				heading: isRightward ? 0 : Math.PI,
+			};
+		}
+		// Turning round off the page, out of view.
+		left -= across + gap;
+		if ( left < 0 ) {
+			return undefined;
+		}
+	}
+	return undefined;
+}
+
 /**
  * A tiny decorator seen from above, in a WordPress-blue hard hat, pushing a roller along a row.
  * `stride` is how far they've walked, which sets their steps and sway.
@@ -235,6 +264,7 @@ function drawBubble(
 function drawDecorator(
 	context: CanvasRenderingContext2D,
 	at: Point,
+	heading: number,
 	stride: number,
 	scale: number,
 	colors: Colors
@@ -242,6 +272,7 @@ function drawDecorator(
 	const step = Math.sin( stride / 5 );
 	context.save();
 	context.transform( 1, 0, 0, 1, at.x, at.y );
+	context.rotate( heading );
 	context.scale( scale, scale );
 	context.rotate( step * 0.04 );
 	context.lineCap = 'round';
@@ -391,8 +422,8 @@ function fitShot( image: HTMLImageElement, width: number, height: number, ratio:
 
 /**
  * The site's home page, torn into pieces that unroll into place one at a time, row by row, left to
- * right. After each row, a tiny decorator rolls out its bubbles. Pieces then roll back up and
- * unroll again, so there's something moving while the site's pages are found.
+ * right. After each row, a tiny decorator rolls out its bubbles, and once the page is done they
+ * keep going over it, top to bottom, so there's something moving while the first page is copied.
  */
 export function TornCollage( { url }: { url: string } ) {
 	const canvasRef = useRef< HTMLCanvasElement >( null );
@@ -420,7 +451,7 @@ export function TornCollage( { url }: { url: string } ) {
 			let shot: CanvasImageSource = image;
 			let rows: Row[] = [];
 			let pieces: Piece[] = [];
-			let nextPeel = 0;
+			let finishedAt = 0;
 			const colors = getColors( canvas );
 
 			const layout = () => {
@@ -441,8 +472,9 @@ export function TornCollage( { url }: { url: string } ) {
 				if ( isStill ) {
 					pieces.forEach( ( piece ) => ( piece.bubbles = [] ) );
 				}
-				nextPeel =
-					Math.max( ...pieces.map( ( piece ) => piece.stickAt ) ) + UNROLL_DURATION + getPause();
+				// Once the last row has been rolled, the decorator goes over the whole page.
+				finishedAt =
+					Math.max( ...rows.map( ( row ) => row.walkAt ) ) + ( width + OFF_PAGE + 40 ) / WALK_SPEED;
 			};
 
 			const draw = ( now: number ) => {
@@ -454,15 +486,6 @@ export function TornCollage( { url }: { url: string } ) {
 				context.fillStyle = colors.ink;
 				context.fillRect( 0, 0, width, height );
 				context.globalAlpha = 1;
-
-				if ( ! isStill && now >= nextPeel && pieces.length ) {
-					// One piece rolls back up, then unrolls again.
-					const piece = pieces[ Math.floor( Math.random() * pieces.length ) ];
-					piece.peelAt = now;
-					piece.bubbles = [];
-					piece.stickAt = now + UNROLL_DURATION + 250;
-					nextPeel = piece.stickAt + UNROLL_DURATION + getPause();
-				}
 
 				// The most recently stuck pieces go on top of the older ones.
 				[ ...pieces ]
@@ -476,7 +499,7 @@ export function TornCollage( { url }: { url: string } ) {
 						return;
 					}
 					const stride = ( now - row.walkAt ) * WALK_SPEED;
-					const at = { x: -30 + stride, y: row.y };
+					const at = { x: -OFF_PAGE + stride, y: row.y };
 					if ( at.x > width + 40 ) {
 						return;
 					}
@@ -488,8 +511,15 @@ export function TornCollage( { url }: { url: string } ) {
 							}
 						} )
 					);
-					drawDecorator( context, at, stride, scale, colors );
+					drawDecorator( context, at, 0, stride, scale, colors );
 				} );
+				if ( ! isStill && now >= finishedAt ) {
+					const walked = ( now - finishedAt ) * WALK_SPEED;
+					const walk = getFinalWalk( walked, rows, width );
+					if ( walk ) {
+						drawDecorator( context, walk.at, walk.heading, walked, scale, colors );
+					}
+				}
 				if ( ! isStill ) {
 					frame = requestAnimationFrame( draw );
 				}
