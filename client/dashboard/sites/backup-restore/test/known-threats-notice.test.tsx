@@ -326,7 +326,7 @@ test( 'links to the latest backup without known threats', async () => {
 	// The backup's date and time are in a tooltip, not the sentence, once the backup's time loads.
 	await userEvent.hover( link );
 	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
-		'Backup from Oct 17, 2026 at 12:28 PM'
+		'Backup from October 17, 2026 at 12:28 PM'
 	);
 	// One sentence with the warning: the link finishes it.
 	expect( link.parentElement ).toHaveTextContent(

@@ -132,9 +132,9 @@ export function RestoreThatOneInsteadLink( {
 	if ( inline ) {
 		// The backup's date and time, in a tooltip: in the sentence they made the link too long to read.
 		const title = translate( 'Backup from %(date)s at %(time)s', {
-			args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
+			args: { date: siteCompletedAt.format( 'LL' ), time: siteCompletedAt.format( 'LT' ) },
 			comment:
-				'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Shown when hovering the link to that backup.',
+				'%(date)s is the date of a backup, e.g. "October 17, 2026"; %(time)s its time, e.g. "2:30 PM". Shown when hovering the link to that backup.',
 		} ) as string;
 
 		return (
