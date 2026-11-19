@@ -37,10 +37,12 @@
 	font-size: var(--wpds-typography-font-size-sm, 13px);
 }
 
-// The divider under the tabs is the panel header's (see `.wpnc-app__tabs`), so the first
-// group header drops its border so they don't stack. The dark text override below sits
-// inside the list, so set it here too.
+// Persistent divider under the tabs, drawn by the list container so it's there
+// while a tab loads too; the first group header drops its border so they don't
+// stack. The dark text override below sits inside the list, so set it here too.
 .wpnc__note-list {
+	border-top: 1px solid color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
+
 	@include ui-mixins.when-dark-theme {
 		--wpds-color-foreground-content-neutral: #f0f0f0;
 	}
