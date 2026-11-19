@@ -222,7 +222,7 @@ test( 'shows validation error when subdomain starts with dash and is blurred', a
 	} );
 } );
 
-test( 'shows the missing target URL error on submit, not when the empty field loses focus', async () => {
+test( 'shows validation error when target URL is empty and blurred', async () => {
 	const user = userEvent.setup();
 
 	renderForm();
@@ -238,15 +238,12 @@ test( 'shows the missing target URL error on submit, not when the empty field lo
 	// Focus on target URL field but leave it empty, then blur
 	const targetUrlInput = screen.getByRole( 'textbox', { name: /forward to/i } );
 	await user.click( targetUrlInput );
-	await user.tab();
+	await user.tab(); // This will blur the field
 
-	expect( screen.queryByText( /constraints not satisfied/i ) ).not.toBeInTheDocument();
-
-	await user.click( screen.getByRole( 'button', { name: 'Add' } ) );
-
-	// jsdom says "Constraints not satisfied"; browsers say e.g. "Please fill out this field".
+	// Validation error should appear after blur
+	// Note: jsdom uses "Constraints not satisfied" while browsers use locale-specific messages like "Please fill out this field"
 	await waitFor( () => {
-		expect( screen.getByText( /constraints not satisfied/i ) ).toBeVisible();
+		expect( screen.getByText( /constraints not satisfied/i ) ).toBeInTheDocument();
 	} );
 } );
 

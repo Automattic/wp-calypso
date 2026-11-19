@@ -1,0 +1,32 @@
+diff --git a/build/form/primitives/control-with-error/control-with-error.cjs b/build/form/primitives/control-with-error/control-with-error.cjs
+index 63f0004aa4cb2abf6768c99a84252f486f738384..73cbc0759ff9fb7c58817a7deb690d89d6c169db 100644
+--- a/build/form/primitives/control-with-error/control-with-error.cjs
++++ b/build/form/primitives/control-with-error/control-with-error.cjs
+@@ -110,8 +110,9 @@ const ControlWithError = (0, _wordpress_element.forwardRef)(function Unforwarded
+ 		if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) return;
+ 		const validityTarget = getValidityTarget();
+ 		const targetValidity = validityTarget?.validity;
+-		const isLeftEmpty = targetValidity?.valueMissing && !targetValidity.badInput;
+-		if (!isTouched && !isLeftEmpty) {
++		// Calypso: also mark a field left empty, so its missing-value message shows on blur. Forms
++		// that disable submit until valid would otherwise never explain an empty required field.
++		if (!isTouched) {
+ 			setIsTouched(true);
+ 			validityTarget?.setAttribute(VALIDITY_VISIBLE_ATTRIBUTE, "");
+ 		}
+diff --git a/build-module/form/primitives/control-with-error/control-with-error.mjs b/build-module/form/primitives/control-with-error/control-with-error.mjs
+index 038db074ad17721597d4b8337cca1bf617a5398b..abad69520a5b5f7b300f50ad8048f696f703eefb 100644
+--- a/build-module/form/primitives/control-with-error/control-with-error.mjs
++++ b/build-module/form/primitives/control-with-error/control-with-error.mjs
+@@ -105,8 +105,9 @@ const ControlWithError = forwardRef(function UnforwardedControlWithError({ requi
+ 		if (event.relatedTarget && event.currentTarget.contains(event.relatedTarget)) return;
+ 		const validityTarget = getValidityTarget();
+ 		const targetValidity = validityTarget?.validity;
+-		const isLeftEmpty = targetValidity?.valueMissing && !targetValidity.badInput;
+-		if (!isTouched && !isLeftEmpty) {
++		// Calypso: also mark a field left empty, so its missing-value message shows on blur. Forms
++		// that disable submit until valid would otherwise never explain an empty required field.
++		if (!isTouched) {
+ 			setIsTouched(true);
+ 			validityTarget?.setAttribute(VALIDITY_VISIBLE_ATTRIBUTE, "");
+ 		}
