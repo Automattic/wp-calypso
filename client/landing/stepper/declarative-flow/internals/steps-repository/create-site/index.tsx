@@ -158,6 +158,13 @@ function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise
 	return result;
 }
 
+// The site an unnamed request made before its cart add threw. A retry of the step adds to that
+// site's cart instead of asking /sites/new for a second site. The `createdSite` record in the flow
+// state cannot do this for an unnamed request: the flow state outlives a run, so an unnamed record
+// could belong to an earlier signup. A page load does not outlive the run, and a rejected cart
+// goes to the error step without a page load.
+let unnamedSiteAfterCartFailure: { siteId: number; siteSlug: string } | undefined;
+
 // The domain search records the site a moved domain is on now. The move call needs it.
 function getMoveSourceSiteId( item: MinimalRequestCartProduct ): number | undefined {
 	const extra = item.extra;
@@ -456,9 +463,11 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				( requestedName || canReuseUnnamedSite ) && recordedSite?.requestedName === requestedName
 					? recordedSite
 					: undefined;
+			const siteToReuse =
+				siteFromThisRun ?? ( requestedName ? undefined : unnamedSiteAfterCartFailure );
 
-			const site = siteFromThisRun
-				? { siteId: siteFromThisRun.siteId, siteSlug: siteFromThisRun.siteSlug }
+			const site = siteToReuse
+				? { siteId: siteToReuse.siteId, siteSlug: siteToReuse.siteSlug }
 				: await createSite(
 						flow,
 						theme,
@@ -514,7 +523,14 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			await moveDomainsToSite( freePlanDomainMoves, site.siteId, flow );
 
 			if ( additionalCartItems.length > 0 ) {
-				await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
+				try {
+					await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
+				} catch ( error ) {
+					if ( ! requestedName ) {
+						unnamedSiteAfterCartFailure = { siteId: site.siteId, siteSlug: site.siteSlug };
+					}
+					throw error;
+				}
 			}
 
 			// Poll for garden provisioning status if this is a garden site
@@ -524,6 +540,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 			if ( isEntrepreneurFlow( flow ) ) {
 				await addEcommerceTrial( { siteId: site.siteId } );
+				unnamedSiteAfterCartFailure = undefined;
 
 				return {
 					siteId: site.siteId,
@@ -532,6 +549,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 					siteCreated: true,
 				};
 			}
+
+			unnamedSiteAfterCartFailure = undefined;
 
 			return {
 				siteId: site.siteId,
