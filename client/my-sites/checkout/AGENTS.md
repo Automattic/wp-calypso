@@ -47,6 +47,10 @@ The sidebar/summary view is NOT a step — visibility is manually managed via
   validation errors; read with `useContactDetails()`, changed with `contactDetailsActions`),
   the VAT details in the form, and the reCAPTCHA client id. Tests call
   `resetCheckoutStores()` in `beforeEach`. Don't use `@wordpress/data` for new state.
+  `checkout-main.tsx` and `checkout-main-content.tsx` render all of checkout, so they
+  don't subscribe with `useContactDetails()`, which would re-render it on every
+  keystroke: they read `contactDetailsStore.get()` at the moment the value is needed
+  (processing a payment, completing the contact step).
 - **`useFormStatus()`** from `composite-checkout` — LOADING, READY, SUBMITTING
 - **`useTransactionStatus()`** — NOT_STARTED, PENDING, COMPLETE, REDIRECTING, ERROR
 

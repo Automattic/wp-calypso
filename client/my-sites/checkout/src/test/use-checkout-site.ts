@@ -1,12 +1,28 @@
+/**
+ * @jest-environment jsdom
+ */
+import { fetchSite } from '@automattic/api-core';
+import { queryClient } from '@automattic/api-queries';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+import { createElement } from 'react';
 import {
 	getActivePlanSlug,
 	getJetpackCheckoutRedirectUrl,
 	getSiteAdminUrl,
 	isJetpackNotAtomicSite,
 	siteHasPaidPlan,
+	useCheckoutSite,
 } from '../hooks/use-checkout-site';
+import { earlyRequestKeys, resetEarlyRequests, startEarlyRequest } from '../lib/early-requests';
 import { createTestSite } from './util';
 import type { Site } from '@automattic/api-core';
+import type { PropsWithChildren } from 'react';
+
+jest.mock( '@automattic/api-core', () => ( {
+	...jest.requireActual( '@automattic/api-core' ),
+	fetchSite: jest.fn(),
+} ) );
 
 const withPlugins = ( plugins: string[], overrides: Partial< Site > = {} ) =>
 	createTestSite( {
@@ -113,5 +129,50 @@ describe( 'getSiteAdminUrl', () => {
 
 	it( 'returns undefined without a site', () => {
 		expect( getSiteAdminUrl( undefined, 'update-core.php' ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'useCheckoutSite', () => {
+	const wrapper = ( { children }: PropsWithChildren ) =>
+		createElement( QueryClientProvider, { client: queryClient }, children );
+
+	beforeEach( () => {
+		resetEarlyRequests();
+		queryClient.clear();
+		jest.mocked( fetchSite ).mockReset();
+		jest
+			.mocked( fetchSite )
+			.mockImplementation( ( siteIdOrSlug ) =>
+				Promise.resolve( createTestSite( { ID: Number( siteIdOrSlug ) } ) )
+			);
+	} );
+
+	it( 'uses the site the checkout route asked for by slug when it is the same site', async () => {
+		startEarlyRequest( earlyRequestKeys.site, () =>
+			Promise.resolve( createTestSite( { ID: 123 } ) )
+		);
+
+		const { result } = renderHook( () => useCheckoutSite( 123 ), { wrapper } );
+
+		await waitFor( () => expect( result.current.data?.ID ).toBe( 123 ) );
+		expect( fetchSite ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fetches the site when the one the checkout route asked for is another site', async () => {
+		startEarlyRequest( earlyRequestKeys.site, () =>
+			Promise.resolve( createTestSite( { ID: 999 } ) )
+		);
+
+		const { result } = renderHook( () => useCheckoutSite( 124 ), { wrapper } );
+
+		await waitFor( () => expect( result.current.data?.ID ).toBe( 124 ) );
+		expect( fetchSite ).toHaveBeenCalledWith( 124 );
+	} );
+
+	it( 'fetches the site when the checkout route asked for none', async () => {
+		const { result } = renderHook( () => useCheckoutSite( 125 ), { wrapper } );
+
+		await waitFor( () => expect( result.current.data?.ID ).toBe( 125 ) );
+		expect( fetchSite ).toHaveBeenCalledWith( 125 );
 	} );
 } );

@@ -1486,13 +1486,19 @@ export const expectedCreateAccountRequest = {
 	},
 };
 
-export function mockCachedContactDetailsEndpoint( responseData, responseCode = 200 ): void {
+export function mockCachedContactDetailsEndpoint(
+	responseData,
+	responseCode = 200,
+	holdUntil?: Promise< void >
+): void {
 	const endpoint = jest.fn();
 	endpoint.mockReturnValue( true );
 	const mockDomainContactResponse = () => [ responseCode, responseData ];
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.1/me/domain-contact-information' )
-		.reply( mockDomainContactResponse );
+		.reply(
+			holdUntil ? () => holdUntil.then( mockDomainContactResponse ) : mockDomainContactResponse
+		);
 }
 
 export function mockSetCachedContactDetailsEndpoint() {

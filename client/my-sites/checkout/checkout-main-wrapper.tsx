@@ -13,11 +13,18 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from './checkout-query-client-provider';
 import CheckoutMain from './src/components/checkout-main';
 import { logStashLoadErrorEvent } from './src/lib/analytics';
+import { earlyRequestKeys, withEarlyRequest } from './src/lib/early-requests';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
 	logStashLoadErrorEvent( 'checkout_system_decider', error );
 };
+
+// The checkout route may already have asked for the Stripe configuration.
+const fetchStripeConfigurationStartedEarly: typeof fetchStripeConfiguration = ( requestArgs ) =>
+	withEarlyRequest( earlyRequestKeys.stripeConfiguration( requestArgs ), () =>
+		fetchStripeConfiguration( requestArgs )
+	);
 
 export default function CheckoutMainWrapper( {
 	productAliasFromUrl,
@@ -112,7 +119,7 @@ export default function CheckoutMainWrapper( {
 				<CheckoutQueryClientProvider>
 					<CalypsoShoppingCartProvider shouldShowPersistentErrors>
 						<StripeHookProvider
-							fetchStripeConfiguration={ fetchStripeConfiguration }
+							fetchStripeConfiguration={ fetchStripeConfigurationStartedEarly }
 							locale={ locale }
 						>
 							<CheckoutMain

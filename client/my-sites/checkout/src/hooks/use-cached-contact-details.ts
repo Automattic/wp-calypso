@@ -3,6 +3,7 @@ import {
 	domainContactInformationQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { earlyRequestKeys, withEarlyQueryRequest } from '../lib/early-requests';
 import type {
 	RawCachedDomainContactDetails,
 	DomainContactValidationRequest,
@@ -72,15 +73,23 @@ function convertSnakeCaseContactDetailsExtraToCamelCase(
 	};
 }
 
+// Checkout starts this request when it mounts and the contact form reads the
+// result when it mounts a moment later. Without a stale time the form would
+// fetch the same details a second time.
+const CACHED_CONTACT_DETAILS_STALE_TIME = 60 * 1000;
+
 export function useCachedContactDetails( { isLoggedOut }: { isLoggedOut?: boolean } ): {
 	contactDetails: PossiblyCompleteDomainContactDetails | null;
 	isError: boolean;
 } {
+	const query = domainContactInformationQuery();
 	const result = useQuery( {
-		...domainContactInformationQuery(),
+		...query,
+		queryFn: withEarlyQueryRequest( earlyRequestKeys.contactDetails, query.queryFn ),
 		select: convertSnakeCaseContactDetailsToCamelCase,
 		enabled: ! isLoggedOut,
 		refetchOnWindowFocus: false,
+		staleTime: CACHED_CONTACT_DETAILS_STALE_TIME,
 	} );
 
 	return {
