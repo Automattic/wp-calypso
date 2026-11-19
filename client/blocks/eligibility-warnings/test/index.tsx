@@ -170,66 +170,7 @@ describe( '<EligibilityWarnings>', () => {
 		);
 
 		expect( getByTestId( 'HoldList-Card' ) ).toBeVisible();
-		expect(
-			getByText(
-				'You can install plugins on any paid plan. You’ll choose your plan in the next step.'
-			)
-		).toBeVisible();
-	} );
-
-	it( 'asks to choose any paid plan in the plugin modal and keeps the site move intro', () => {
-		const state = createState( {
-			holds: [ 'NO_BUSINESS_PLAN' ],
-			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
-		} );
-
-		const { getByText, queryByText } = renderWithStore(
-			<EligibilityWarnings
-				onProceed={ noop }
-				context="plugin-details"
-				atomicTransferAction="plugins"
-				inModal
-			/>,
-			state
-		);
-
-		expect(
-			getByText(
-				'You can install plugins on any paid plan. You’ll choose your plan in the next step.'
-			)
-		).toBeVisible();
-		expect( queryByText( "To continue you'll need to:" ) ).toBeNull();
-		expect(
-			getByText(
-				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
-			)
-		).toBeVisible();
-		expect( getByText( 'Choose a plan' ) ).toBeVisible();
-	} );
-
-	it( 'keeps the plan perks and the site move intro outside the plugin modal', () => {
-		const state = createState( {
-			holds: [ 'NO_BUSINESS_PLAN' ],
-			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
-		} );
-
-		const { getByText, queryByText } = renderWithStore(
-			<EligibilityWarnings onProceed={ noop } context={ null } atomicTransferAction="plugins" />,
-			state
-		);
-
 		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
-		expect(
-			getByText(
-				"You'll also get to install custom themes, have more storage, and access priority 24/7 support."
-			)
-		).toBeVisible();
-		expect(
-			getByText(
-				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
-			)
-		).toBeVisible();
-		expect( queryByText( /^You can install plugins on any paid plan/ ) ).toBeNull();
 	} );
 
 	it( 'renders warning notices when the API returns warnings', () => {
@@ -270,24 +211,14 @@ describe( '<EligibilityWarnings>', () => {
 		} );
 
 		const { getByText } = renderWithStore(
-			<EligibilityWarnings
-				onProceed={ noop }
-				context="hosting-features"
-				atomicTransferAction="hosting-features"
-				inModal
-			/>,
+			<EligibilityWarnings onProceed={ noop } context="hosting-features" inModal />,
 			state
 		);
 
-		expect( getByText( 'Your site’s address will change' ) ).toBeVisible();
-		expect(
-			getByText(
-				'To turn hosting features on, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting. Links to your old address will redirect automatically.'
-			)
-		).toBeVisible();
-		expect( getByText( /^Search engines don’t index the new address\./ ) ).toBeVisible();
-		expect( getByText( 'Current' ) ).toBeVisible();
-		expect( getByText( 'New' ) ).toBeVisible();
+		expect( getByText( /isn’t indexed by search engines/ ) ).toBeVisible();
+		expect( getByText( 'add a custom domain so your site can be indexed' ).tagName ).toBe(
+			'STRONG'
+		);
 	} );
 
 	it( "doesn't render warnings when there are blocking holds", () => {

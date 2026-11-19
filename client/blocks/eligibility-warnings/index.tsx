@@ -325,7 +325,7 @@ function getProceedButtonText(
 ) {
 	if ( holds.includes( 'NO_BUSINESS_PLAN' ) ) {
 		if ( context === 'plugin-details' ) {
-			return translate( 'Choose a plan' );
+			return translate( 'Upgrade and activate plugin' );
 		}
 		if ( showFreeTrial ) {
 			return translate( 'Start your free trial' );
