@@ -1,12 +1,12 @@
 import {
 	fetchSftpUsers,
 	createSftpUser,
-	deleteSftpUser,
+	deleteSftpUsers,
 	resetSftpPassword,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
-import { siteSshAccessStatusQuery } from './site-ssh';
+import { siteSshAccessStatusQuery, siteSshKeysQuery } from './site-ssh';
 import type { SftpUser } from '@automattic/api-core';
 
 export const siteSftpUsersQuery = ( siteId: number ) =>
@@ -58,24 +58,18 @@ export const siteSftpUsersResetPasswordMutation = ( siteId: number ) =>
 export const siteSftpUsersDeleteMutation = ( siteId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'site-sftp-users-delete' },
-		mutationFn: async ( sshUsernames: string[] ) => {
-			// One at a time: the endpoint turns SSH access off when it removes the last SFTP user.
-			for ( const sshUsername of sshUsernames ) {
-				await deleteSftpUser( siteId, sshUsername );
-			}
-		},
-		onSuccess: ( _data, deletedUsernames ) => {
-			queryClient.setQueryData( siteSftpUsersQuery( siteId ).queryKey, ( currentSftpUsers ) =>
-				currentSftpUsers?.filter( ( { username } ) => ! deletedUsernames.includes( username ) )
-			);
+		mutationFn: () => deleteSftpUsers( siteId ),
+		onSuccess: () => {
+			queryClient.setQueryData( siteSftpUsersQuery( siteId ).queryKey, [] );
 		},
 		onSettled: ( _data, error ) => {
-			// After a failure some users may already be gone. After a success the list is left as
-			// set above: it can lag behind a delete for a few seconds.
+			// After a failure some users may already be gone. After a success the list is left empty as set
+			// above: it can lag behind a delete for a few seconds.
 			if ( error ) {
 				queryClient.invalidateQueries( { queryKey: siteSftpUsersQuery( siteId ).queryKey } );
 			}
-			// The last removal turns SSH access off.
+			// The endpoint also turns SSH access off and detaches the site's SSH keys.
 			queryClient.invalidateQueries( { queryKey: siteSshAccessStatusQuery( siteId ).queryKey } );
+			queryClient.invalidateQueries( { queryKey: siteSshKeysQuery( siteId ).queryKey } );
 		},
 	} );
