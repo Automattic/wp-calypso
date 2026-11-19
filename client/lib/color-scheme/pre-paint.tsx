@@ -1,14 +1,6 @@
-export const COLOR_SCHEME_STORAGE_KEY = 'dashboard-color-scheme';
+import { DARK_SEEDS } from './seeds';
 
-export const LIGHT_SEEDS = {
-	background: '#fcfcfc',
-	primary: '#3858e9',
-};
-
-export const DARK_SEEDS = {
-	background: '#181818',
-	primary: '#93aef8',
-};
+export const COLOR_SCHEME_STORAGE_KEY = 'wpcom-color-scheme';
 
 /**
  * Paints the page dark before the app loads when the last color scheme the user saw was dark.
@@ -27,4 +19,22 @@ export function ThemePrePaint( { nonce }: { nonce?: string } ) {
 			<script nonce={ nonce } dangerouslySetInnerHTML={ { __html: script } } />
 		</>
 	);
+}
+
+/**
+ * Removes the pre-paint dark background once the theme provider has applied its tokens.
+ */
+export function clearPrePaintTheme() {
+	delete document.documentElement.dataset.prePaintTheme;
+}
+
+/**
+ * Returns the color scheme the user last saw, saved by the theme provider, or null.
+ */
+export function readColorSchemeHint(): string | null {
+	try {
+		return window.localStorage.getItem( COLOR_SCHEME_STORAGE_KEY );
+	} catch {
+		return null;
+	}
 }

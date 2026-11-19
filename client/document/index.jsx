@@ -23,13 +23,13 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
-import { ThemePrePaint } from 'calypso/dashboard/app/theme-pre-paint';
 import { A4AOmnibarHomeIcon } from 'calypso/dashboard/app-a4a/omnibar-home-icon';
 import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import { WooTopBarLogo } from 'calypso/landing/stepper/declarative-flow/internals/components/woo-top-bar-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { ThemePrePaint } from 'calypso/lib/color-scheme/pre-paint';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { getCachedRuntimeStyles } from 'calypso/server/render/runtime-styles';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -200,9 +200,8 @@ class Document extends Component {
 					// Firefox can reuse the anonymous REST proxy prefetch after login; see https://github.com/Automattic/wp-calypso/pull/111842.
 					shouldPrefetchRestProxy={ ! app?.isFirefox }
 				>
-					{ sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name && (
-						<ThemePrePaint nonce={ inlineScriptNonce } />
-					) }
+					{ ( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
+						sectionName === 'reader' ) && <ThemePrePaint nonce={ inlineScriptNonce } /> }
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
 					) ) }
