@@ -8,8 +8,40 @@ import ReaderFullPostFeaturedImage from '../featured-image';
 jest.mock( 'calypso/lib/resize-image-url', () => jest.fn( ( url ) => url ) );
 
 describe( 'ReaderFullPostFeaturedImage', () => {
+	const photonFeaturedImage = 'https://i0.wp.com/example.com/wp-content/uploads/featured.jpg?w=600';
+	const postWithImageInContent = {
+		featured_image: photonFeaturedImage,
+		post_thumbnail: { URL: 'https://example.com/wp-content/uploads/featured.jpg' },
+		images: [
+			{ src: photonFeaturedImage },
+			{ src: 'https://i0.wp.com/example.com/wp-content/uploads/featured.jpg?fit=600%2C300' },
+		],
+	};
+
 	beforeEach( () => {
 		resizeImageUrl.mockImplementation( ( url ) => url );
+	} );
+
+	test( 'returns null when the content shows a copy of the featured image', () => {
+		const { container } = render(
+			<ReaderFullPostFeaturedImage post={ postWithImageInContent } maxWidth={ 600 } />
+		);
+
+		expect( container ).toBeEmptyDOMElement();
+	} );
+
+	test( 'renders the featured image of an excerpt-only post whose content has a copy of it', () => {
+		const { container } = render(
+			<ReaderFullPostFeaturedImage
+				post={ { ...postWithImageInContent, use_excerpt: true } }
+				maxWidth={ 600 }
+			/>
+		);
+
+		expect( container.querySelector( '.reader-full-post__featured-image img' ) ).toHaveAttribute(
+			'src',
+			photonFeaturedImage
+		);
 	} );
 
 	test( 'returns null when the post has no featured_image', () => {

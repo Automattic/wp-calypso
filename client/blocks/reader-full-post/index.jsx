@@ -25,7 +25,7 @@ import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import { isFeaturedImageInContent, safeLink } from 'calypso/lib/post-normalizer/utils';
+import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
@@ -824,9 +824,7 @@ export class FullPostView extends Component {
 								/>
 							) }
 
-							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<ReaderFullPostFeaturedImage post={ post } maxWidth={ contentWidth } />
-							) }
+							<ReaderFullPostFeaturedImage post={ post } maxWidth={ contentWidth } />
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (
 								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
