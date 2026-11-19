@@ -50,8 +50,9 @@ body {
 .mcp-post-editor__bar {
 	display: flex;
 	flex: none;
+	flex-wrap: wrap;
 	align-items: center;
-	gap: 8px;
+	gap: 4px 8px;
 	min-height: 40px;
 	padding: 0 8px 0 16px;
 	background: #fff;
@@ -59,7 +60,7 @@ body {
 }
 
 .mcp-post-editor__status {
-	flex: 1;
+	flex: 1 1 120px;
 	min-width: 0;
 	margin: 0;
 	overflow: hidden;
@@ -130,37 +131,37 @@ body {
 
 .mcp-post-editor__title {
 	padding-top: 32px;
+}
 
-	textarea {
-		display: block;
-		box-sizing: border-box;
-		width: 100%;
-		margin: 0;
-		padding: 0;
-		border: 0;
-		border-radius: 0;
+// The theme styles the title through its classes; only the editing chrome is reset here.
+.editor-post-title {
+	min-height: 1em;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+	cursor: text;
+
+	&:focus:not(:focus-visible) {
 		outline: none;
-		resize: none;
-		overflow: hidden;
-		background: transparent;
-		box-shadow: none;
-		color: inherit;
-		font: inherit;
-		letter-spacing: inherit;
-		text-transform: inherit;
+	}
 
-		&::placeholder {
-			color: inherit;
-			opacity: 0.55;
-		}
+	&.is-empty::before {
+		content: attr(data-placeholder);
+		opacity: 0.55;
+		pointer-events: none;
 	}
 }
 
-// In a narrow panel, the block toolbar scrolls sideways instead of running off the edge.
-.block-editor-block-contextual-toolbar {
-	max-width: calc(100vw - 2px);
+// The selected block's toolbar, in a row of its own so it never covers the post. The row keeps
+// its height without a selection, so the canvas doesn't jump; in a narrow panel it scrolls
+// sideways.
+.mcp-post-editor__toolbar {
+	flex: none;
+	box-sizing: border-box;
+	min-height: 49px;
 	overflow-x: auto;
 	overflow-y: hidden;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
 }
 
 // Read-only, links still open (through the host).
@@ -231,4 +232,76 @@ body {
 .mcp-post-editor .wp-block-post-title.is-agent-changed {
 	outline: 2px solid #3858e9;
 	outline-offset: 4px;
+}
+
+// Save, the conflict notice, and the prompts for the assistant.
+.mcp-post-editor__issues {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font: $chrome-font;
+}
+
+.mcp-post-editor__conflict {
+	flex: none;
+	padding: 8px 16px;
+	background: #fcf9e8;
+	border-bottom: 1px solid #ddd;
+	font: $chrome-font;
+
+	p {
+		margin: 0 0 8px;
+	}
+}
+
+.mcp-post-editor__chips {
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 8px;
+	padding: 4px 16px;
+	border-bottom: 1px solid #ddd;
+}
+
+.mcp-post-editor__ask-input {
+	flex: 1 1 160px;
+	min-width: 0;
+	padding: 4px 8px;
+	border: 1px solid #949494;
+	border-radius: 2px;
+	font: $chrome-font;
+}
+
+// Proofreading: underlines on the quoted text, and the card a click on one opens.
+::highlight(mcp-proofread-error) {
+	text-decoration: underline wavy #cc1818;
+	text-decoration-skip-ink: none;
+}
+
+::highlight(mcp-proofread-style) {
+	text-decoration: underline wavy #3858e9;
+	text-decoration-skip-ink: none;
+}
+
+.mcp-post-editor__fix {
+	position: fixed;
+	z-index: 100000;
+	box-sizing: border-box;
+	max-width: calc(100vw - 16px);
+	padding: 8px 12px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 2px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	font: $chrome-font;
+	overflow-wrap: anywhere;
+
+	p {
+		margin: 0 0 8px;
+	}
+}
+
+.mcp-post-editor__fix-reason {
+	color: #757575;
 }
