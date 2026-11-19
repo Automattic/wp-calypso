@@ -9,7 +9,7 @@ import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
-import { SitesNoticeArbiter } from '../notice-arbiter';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
 import { useCanViewApm } from '../performance/backend-access';
 import AgencySettingsSummary from '../settings-agency/summary';
 import AISiteToolsSettingsSummary from '../settings-ai-tools/summary';

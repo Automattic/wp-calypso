@@ -22,6 +22,8 @@ import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import AddNewSite from '../../../sites/add-new-site';
+import { InviteAcceptedFlashMessage } from '../../../sites/components/invite-accepted-flash-message';
+import { SitesNoticeArbiter } from '../../../sites/components/notice-arbiter';
 import {
 	SitesDataViews,
 	useActions,
@@ -37,8 +39,6 @@ import {
 	EmptySitesSearchStateContent,
 } from '../../../sites/empty-sites-state';
 import { useSiteListQuery } from '../../../sites/hooks/use-site-list-query';
-import { InviteAcceptedFlashMessage } from '../../../sites/invite-accepted-flash-message';
-import { SitesNoticeArbiter } from '../../../sites/notice-arbiter';
 import type { Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 
