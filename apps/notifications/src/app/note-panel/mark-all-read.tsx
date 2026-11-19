@@ -193,11 +193,14 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 				onConfirm={ handleConfirm }
 				onCancel={ handleCancel }
 			>
-				<VStack spacing={ 3 }>
-					<Heading level={ 2 } size={ 20 }>
+				{ /* Laid out like the Dashboard's SectionHeader at level 2, which its own dialogs use. */ }
+				<VStack spacing={ 2 }>
+					<Heading level={ 2 } size={ 20 } lineHeight="24px" weight={ 600 }>
 						{ question }
 					</Heading>
-					<Text>{ __( 'This includes the ones you haven’t opened. You can’t undo this.' ) }</Text>
+					<Text variant="muted">
+						{ __( 'This includes the ones you haven’t opened. You can’t undo this.' ) }
+					</Text>
 				</VStack>
 			</ConfirmDialog>
 			<Notice.List>
