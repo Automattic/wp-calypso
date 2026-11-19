@@ -51,6 +51,22 @@
 	--wpds-color-stroke-focus: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 }
 
+/* Buttons read these tokens where components 44 read the accent variables, which color
+ * schemes and sections set on a button or its ancestors (see the button rules below).
+ * Mapping them on the button keeps those accents; disabled buttons keep upstream's colors.
+ * Zero specificity, so a section that maps the tokens on its own buttons still wins. */
+:where(.components-button) {
+	--wpds-color-background-interactive-brand-strong: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	--wpds-color-background-interactive-brand-strong-active: var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
+	--wpds-color-background-interactive-brand-weak-active: color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 4%, transparent);
+	--wpds-color-foreground-interactive-brand-strong: var(--wp-components-color-accent-inverted, #fff);
+	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-accent-inverted, #fff);
+	--wpds-color-foreground-interactive-brand: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	--wpds-color-foreground-interactive-brand-active: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+	--wpds-color-stroke-interactive-brand: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	--wpds-color-stroke-interactive-brand-active: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+}
+
 /* Focused menu items, autocomplete results and token suggestions fill with this token,
  * which is pinned the same way; match the fallback components uses with the theme color. */
 .components-dropdown__content,
