@@ -13,6 +13,7 @@ import OneTapAuthLoaderOverlay from 'calypso/blocks/login/one-tap-auth-loader-ov
 import SignupFormSocialFirst from 'calypso/blocks/signup-form/signup-form-social-first';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import Notice from 'calypso/dashboard/components/notice';
 import {
 	THEME_GRID_SIGNUP_LAYOUT,
 	WOO_HOSTING_SOLUTIONS_REF,
@@ -27,6 +28,7 @@ import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
 import { useSelector, useStore } from 'calypso/state';
+import { recordTracksEventWithClientId } from 'calypso/state/analytics/actions';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { STUDENT_ACTIVATION_EMAIL_SOURCE } from '../../../flows/student/constants';
@@ -77,6 +79,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const store = useStore();
 	const { handleSocialResponse, notice, accountCreateResponse } = useHandleSocialResponse( flow );
 	const [ wpAccountCreateResponse, setWpAccountCreateResponse ] = useState< AccountCreateReturn >();
+	const [ isNewUserMissing, setIsNewUserMissing ] = useState( false );
 	const { socialServiceResponse } = useSocialService();
 	const { hasCustomBranding, topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
@@ -116,12 +119,25 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			) as unknown as Promise< void >;
 
 		// `fetchCurrentUser` hands back a `/me` already in flight, sent before the token and failed
-		// by the proxy reload, so fetch once more if nobody is logged in after it.
+		// by the proxy reload, so fetch once more if nobody is logged in after it. If that fails too,
+		// the account exists but this session can't load it: offer to log in instead.
+		// `ignore` drops the fetches of a response replaced by a newer one, or of an unmounted step.
+		let ignore = false;
 		fetchNewUser().then( () => {
-			if ( ! isUserLoggedIn( store.getState() ) ) {
-				fetchNewUser();
+			if ( ignore || isUserLoggedIn( store.getState() ) ) {
+				return;
 			}
+
+			fetchNewUser().then( () => {
+				if ( ! ignore && ! isUserLoggedIn( store.getState() ) ) {
+					setIsNewUserMissing( true );
+				}
+			} );
 		} );
+
+		return () => {
+			ignore = true;
+		};
 	}, [ dispatch, store, wpAccountCreateResponse ] );
 
 	useEffect( () => {
@@ -193,33 +209,60 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const stepContent = (
 		<>
 			{ !! queryArgs.get( 'oneTapAuth' ) && ! notice && <OneTapAuthLoaderOverlay /> }
-			<SignupFormSocialFirst
-				stepName={ stepName }
-				flowName={ flow }
-				goToNextStep={ setWpAccountCreateResponse }
-				passDataToNextStep
-				logInUrl={ loginLink }
-				onLogInClick={ () => recordLoginLinkClick( 'form' ) }
-				handleSocialResponse={ handleSocialResponse }
-				socialServiceResponse={ socialServiceResponse }
-				redirectToAfterLoginUrl={ window.location.href }
-				queryArgs={ {} }
-				userEmail={ queryArgs.get( 'user_email' ) || '' }
-				notice={ notice }
-				isSocialFirst
-				onCreateAccountSuccess={ handleCreateAccountSuccess }
-				backButtonInFooter={ ! isStepContainerV2 }
-				emailLabelText={ emailLabelText }
-				isEmailFirstVariant={ isEmailFirstVariant }
-				isEmailAtBottom={ isEmailAtBottom }
-				isMobileCompactVariant={ isMobileCompactLayout }
-				showLoginLink={ isLoginLinkBelowButtons && ! hideLoginLink }
-				showEnvelopeIcon={ isLoginLinkBelowButtons }
-				allowedSocialServices={ allowedSocialServices }
-				customTosElement={ signupTosElement }
-				// Only the Student flow asks for email verification, so only its link returns to it.
-				activationEmailFrom={ flow === STUDENT_FLOW ? STUDENT_ACTIVATION_EMAIL_SOURCE : undefined }
-			/>
+			{ /* The account exists: the form can only fail, its button stuck on "Creating your account…". */ }
+			{ isNewUserMissing ? (
+				// `Notice` isn't announced outside a list, and the form it replaces had focus.
+				<div role="alert">
+					<Notice variant="info">
+						{ translate( '{{a}}Log in now{{/a}} to finish signing up.', {
+							components: {
+								a: (
+									<a
+										href={ loginLink }
+										onClick={ () =>
+											dispatch(
+												recordTracksEventWithClientId(
+													'calypso_signup_login_midflow'
+												) as unknown as AnyAction
+											)
+										}
+									/>
+								),
+							},
+						} ) }
+					</Notice>
+				</div>
+			) : (
+				<SignupFormSocialFirst
+					stepName={ stepName }
+					flowName={ flow }
+					goToNextStep={ setWpAccountCreateResponse }
+					passDataToNextStep
+					logInUrl={ loginLink }
+					onLogInClick={ () => recordLoginLinkClick( 'form' ) }
+					handleSocialResponse={ handleSocialResponse }
+					socialServiceResponse={ socialServiceResponse }
+					redirectToAfterLoginUrl={ window.location.href }
+					queryArgs={ {} }
+					userEmail={ queryArgs.get( 'user_email' ) || '' }
+					notice={ notice }
+					isSocialFirst
+					onCreateAccountSuccess={ handleCreateAccountSuccess }
+					backButtonInFooter={ ! isStepContainerV2 }
+					emailLabelText={ emailLabelText }
+					isEmailFirstVariant={ isEmailFirstVariant }
+					isEmailAtBottom={ isEmailAtBottom }
+					isMobileCompactVariant={ isMobileCompactLayout }
+					showLoginLink={ isLoginLinkBelowButtons && ! hideLoginLink }
+					showEnvelopeIcon={ isLoginLinkBelowButtons }
+					allowedSocialServices={ allowedSocialServices }
+					customTosElement={ signupTosElement }
+					// Only the Student flow asks for email verification, so only its link returns to it.
+					activationEmailFrom={
+						flow === STUDENT_FLOW ? STUDENT_ACTIVATION_EMAIL_SOURCE : undefined
+					}
+				/>
+			) }
 			{ accountCreateResponse && 'bearer_token' in accountCreateResponse && (
 				<WpcomLoginForm
 					authorization={ 'Bearer ' + accountCreateResponse.bearer_token }
