@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { bellUnread } from '@wordpress/icons';
+import { bell } from '@wordpress/icons';
 import { useDispatch } from 'react-redux';
 import { markUnread } from '../../panel/state/notes/thunks';
 import { useAppContext } from '../context';
@@ -25,7 +25,7 @@ const MarkUnreadButton = ( { note, goBack }: { note: Note; goBack: () => void } 
 		<Button
 			size="small"
 			className="wpnc__mark-unread"
-			icon={ bellUnread }
+			icon={ bell }
 			label={ __( 'Mark as unread' ) }
 			onClick={ handleMarkUnread }
 		/>

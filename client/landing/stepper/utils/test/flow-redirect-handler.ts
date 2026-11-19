@@ -113,8 +113,8 @@ describe( 'flow redirect handler', () => {
 			'/home/example.wordpress.com?siteSlug=example.wordpress.com',
 		],
 		[ '', '/home' ],
-	] )( 'sends readymade-template links with %p to that site’s Home', ( search, expected ) => {
-		redirectPathIfNecessary( '/setup/readymade-template/launchpad', search );
+	] )( 'sends update-options links with %p to that site’s Home', ( search, expected ) => {
+		redirectPathIfNecessary( '/setup/update-options', search );
 
 		expect( window.location.href ).toBe( expected );
 	} );

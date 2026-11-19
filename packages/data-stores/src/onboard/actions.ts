@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { Visibility, GlobalStyles } from '../site/types';
 import { SiteGoal, STORE_KEY } from './constants';
-import { ProfilerData, ReadymadeTemplate } from './types';
+import { ProfilerData } from './types';
 import type { DomainTransferData, State } from '.';
 import type { FeatureId } from '../shared-types';
 import type { DomainSuggestion } from '@automattic/api-core';
@@ -159,11 +159,6 @@ export const setSelectedStyleVariation = (
 export const setSelectedGlobalStyles = ( selectedGlobalStyles: GlobalStyles | undefined ) => ( {
 	type: 'SET_SELECTED_GLOBAL_STYLES' as const,
 	selectedGlobalStyles,
-} );
-
-export const setSelectedReadymadeTemplate = ( readymadeTemplate: ReadymadeTemplate ) => ( {
-	type: 'SET_READYMADE_TEMPLATE' as const,
-	readymadeTemplate,
 } );
 
 export const setSelectedSite = ( selectedSite: number | undefined ) => ( {
@@ -417,7 +412,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedGlobalStyles
 	| typeof setSelectedSite
-	| typeof setSelectedReadymadeTemplate
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
 	| typeof startOnboarding

@@ -6,7 +6,6 @@ import type {
 	ProfilerData,
 	DomainTransferNames,
 	DomainTransferAuthCodes,
-	ReadymadeTemplate,
 } from './types';
 import type { FeatureId } from '../shared-types';
 import type { GlobalStyles } from '../site';
@@ -145,22 +144,6 @@ const selectedGlobalStyles: Reducer< GlobalStyles | undefined, OnboardAction > =
 	switch ( action.type ) {
 		case 'SET_SELECTED_GLOBAL_STYLES':
 			return action.selectedGlobalStyles;
-
-		case 'RESET_ONBOARD_STORE':
-			return undefined;
-
-		default:
-			return state;
-	}
-};
-
-const readymadeTemplate: Reducer< ReadymadeTemplate | undefined, OnboardAction > = (
-	state = undefined, // Initial state is set to undefined
-	action
-) => {
-	switch ( action.type ) {
-		case 'SET_READYMADE_TEMPLATE':
-			return action.readymadeTemplate;
 
 		case 'RESET_ONBOARD_STORE':
 			return undefined;
@@ -709,7 +692,6 @@ const reducer = combineReducers( {
 	siteDescription,
 	siteLogo,
 	siteAccentColor,
-	readymadeTemplate,
 	ecommerceFlowRecurType,
 	couponCode,
 	storageAddonSlug,

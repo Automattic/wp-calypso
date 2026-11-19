@@ -5,10 +5,10 @@
 import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { mockPreferences, renderRoute } from '../../test-utils/render-route';
-import '../../../../sites';
+import '..';
 import type { Site, User } from '@automattic/api-core';
 
-const mockSites = [
+const sites = [
 	{
 		ID: 1,
 		name: 'My First Site',
@@ -36,7 +36,7 @@ describe( '/sites', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.3/me/sites' )
 			.query( true )
-			.reply( 200, { sites: mockSites } );
+			.reply( 200, { sites } );
 
 		await renderRoute( '/sites', { user: { site_count: 2 } as User } );
 

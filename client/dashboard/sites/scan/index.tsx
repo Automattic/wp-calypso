@@ -9,8 +9,8 @@ import { ThemedIllustration } from '../../components/themed-illustration';
 import TimeMismatchNotice, {
 	useShouldShowTimeMismatchNotice,
 } from '../../components/time-mismatch-notice';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { SitesNoticeArbiter } from '../notice-arbiter';
 import illustrationDarkUrl from './scan-callout-illustration-dark.svg';
 import illustrationUrl from './scan-callout-illustration.svg';
 import { ScanContent } from './scan-content';

@@ -30,6 +30,10 @@ export const noteAction = ( action ) => ( noteId ) => ( {
 } );
 
 export const readNote = noteAction( types.READ_NOTE );
+export const readNotes = ( noteIds ) => ( {
+	type: types.READ_NOTES,
+	noteIds,
+} );
 export const spamNote = noteAction( types.SPAM_NOTE );
 export const trashNote = noteAction( types.TRASH_NOTE );
 export const unreadNote = noteAction( types.UNREAD_NOTE );
@@ -97,6 +101,7 @@ export default {
 	approveNote,
 	likeNote,
 	readNote,
+	readNotes,
 	removeNotes,
 	resetLocalApproval,
 	resetLocalLike,
