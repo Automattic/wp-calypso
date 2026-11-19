@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { TRANSFERRING_HOSTED_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
+import { CartActionResponseError } from '@automattic/shopping-cart';
 import { act, screen, waitFor } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
@@ -9,14 +10,20 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import ProcessingStep from '../';
+import { ProcessingResult } from '../constants';
 import { recordStepComponentType, recordStepRouteMount } from '../../../step-mount-registry';
 import { mockStepProps, renderStep } from '../../test/helpers/index';
 import type { OnboardActions } from '@automattic/data-stores';
 
 const mockRecordSignupComplete = jest.fn();
+const mockCaptureFlowException = jest.fn();
 
 jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
 	useRecordSignupComplete: () => mockRecordSignupComplete,
+} ) );
+jest.mock( 'calypso/landing/stepper/hooks/use-capture-flow-exception', () => ( {
+	__esModule: true,
+	default: () => mockCaptureFlowException,
 } ) );
 jest.mock( 'calypso/landing/stepper/declarative-flow/registered-flows', () => ( {
 	onboarding: async () => ( { default: { isSignupFlow: true } } ),
@@ -68,6 +75,39 @@ describe( 'ProcessingStep', () => {
 			await runPendingAction( { skipSignupComplete: true } );
 
 			expect( mockRecordSignupComplete ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'a failed pending action', () => {
+		const runFailingAction = async ( error: Error ) => {
+			onboardActions().setPendingAction( async () => {
+				throw error;
+			} );
+			const stepProps = mockStepProps( { flow: ONBOARDING_FLOW } ) as ProcessingStepProps;
+			renderStep( <ProcessingStep { ...stepProps } /> );
+			await waitFor( () => expect( stepProps.navigation.submit ).toHaveBeenCalled() );
+			return stepProps;
+		};
+
+		it( 'does not report a cart rejection to Sentry', async () => {
+			const stepProps = await runFailingAction(
+				new CartActionResponseError( 'This domain is not available.', 'domain_unavailable' )
+			);
+
+			expect( mockCaptureFlowException ).not.toHaveBeenCalled();
+			expect( stepProps.navigation.submit ).toHaveBeenCalledWith( {
+				processingResult: ProcessingResult.FAILURE,
+			} );
+		} );
+
+		it( 'reports any other error to Sentry', async () => {
+			const error = new Error( 'Site creation failed.' );
+			const stepProps = await runFailingAction( error );
+
+			expect( mockCaptureFlowException ).toHaveBeenCalledWith( error );
+			expect( stepProps.navigation.submit ).toHaveBeenCalledWith( {
+				processingResult: ProcessingResult.FAILURE,
+			} );
 		} );
 	} );
 

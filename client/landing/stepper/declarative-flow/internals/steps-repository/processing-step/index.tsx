@@ -10,6 +10,7 @@ import {
 	isTransferringHostedSiteCreationFlow,
 	Step,
 } from '@automattic/onboarding';
+import { CartActionResponseError } from '@automattic/shopping-cart';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
@@ -209,7 +210,11 @@ const ProcessingStep: StepType< {
 					waitProperties.outcome = 'failure';
 					// eslint-disable-next-line no-console
 					console.error( 'ProcessingStep failed:', e );
-					captureFlowException( e );
+					// A cart rejection is the server's answer about a product, such as an unavailable
+					// domain, not a fault in the step.
+					if ( ! ( e instanceof CartActionResponseError ) ) {
+						captureFlowException( e );
+					}
 					setSiteSetupError( e.error || e.code, e.message );
 					submit?.( {
 						processingResult: ProcessingResult.FAILURE,
