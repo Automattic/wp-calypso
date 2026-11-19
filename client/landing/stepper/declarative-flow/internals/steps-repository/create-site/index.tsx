@@ -294,8 +294,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow ) && ! isImport;
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
-	// These flows have a failure branch after processing, so a rejected cart goes to the error
-	// step. The other flows that share this step do not, so the cart add stays quiet there.
+	// A rejected cart goes to the error step in these two flows. The other flows that share this
+	// step are not checked for a safe failure path yet, and some have none, so the cart add stays
+	// quiet there.
 	const cartHelperOptions = { throwOnError: isOnboardingFlow( flow ) || isDomainFlow( flow ) };
 
 	async function createSiteAction() {
@@ -317,8 +318,11 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				await moveDomainsToSite( freePlanDomainMoves, Number( signupCompleteSiteId ), flow );
 			}
 
+			// No throw here. The first pass already put these items in the cart, so an error on
+			// this add does not mean the cart is empty. This branch also runs again on every retry,
+			// so a throw would leave no way back to checkout.
 			if ( manageFlowCartItems.length > 0 && slug ) {
-				await addProductsToCart( slug, flow, manageFlowCartItems, cartHelperOptions );
+				await addProductsToCart( slug, flow, manageFlowCartItems );
 			}
 
 			return {
