@@ -378,18 +378,7 @@ describe( 'ConversationsInbox', () => {
 		expect( await findRow( '10-p-300' ) ).toBeVisible();
 	} );
 
-	it( 'marks a comment read on a post the list has not loaded', async () => {
-		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '300' } );
-
-		await findRow( '10-p-300' );
-		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
-		await user.click( await findRow( '10-p-400' ) );
-
-		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 3 ] ] ) );
-	} );
-
-	it( 'clears the new count and the unread badge of a post only Your comments lists', async () => {
+	it( 'marks a post only Your comments lists read and clears its count and the badge', async () => {
 		const user = userEvent.setup();
 		// The total counts post 400, which All hasn't paged to.
 		replyConversations = () => ( { ...conversationsPage(), unread_total: 3 } );
