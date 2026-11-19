@@ -9,7 +9,7 @@ Prove the change works with evidence, not by reading the code. Pick the checks t
 
 ## 1. Static checks
 
-- **Types.** `yarn typecheck-client`, `yarn typecheck-packages` or `yarn typecheck-apps`, for the code you touched. If it runs out of memory, prefix `NODE_OPTIONS=--max-old-space-size=12288`. If it fails on a package with no `dist/` yet, build it first (`cd packages/<name> && yarn build`). It takes minutes, so start it first, in a subagent that reports only the errors (the Agent tool in Claude Code) or else in the background, and do the other checks while it runs.
+- **Types.** `yarn typecheck-client`, `yarn typecheck-packages` or `yarn typecheck-apps`, for the code you touched. If it runs out of memory, prefix `NODE_OPTIONS=--max-old-space-size=12288`. If it fails on a package with no `dist/` yet, build it first (`cd packages/<name> && yarn build`). `yarn typecheck-client` reads package types from each package's built `dist/`, which `yarn install` rebuilds only when a dependency changed. So if it reports an error your change doesn't explain after you pulled `trunk`, run `yarn typecheck-packages` to rebuild them, then check again. The type check takes minutes, so start it first, in a subagent that reports only the errors (the Agent tool in Claude Code) or else in the background, and do the other checks while it runs.
 - **Lint** only the files you changed: `yarn eslint <files>`, `yarn stylelint <files>` for styles.
 
 ## 2. Unit tests

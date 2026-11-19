@@ -5,7 +5,6 @@ import { getQueryArgs } from '@wordpress/url';
 import { useCallback } from 'react';
 import { useBasePersistentView } from 'calypso/dashboard/app/hooks/use-persistent-view';
 import { DataViews } from 'calypso/dashboard/components/dataviews';
-import { useSiteListQuery, filterSortAndPaginateSites } from 'calypso/dashboard/sites';
 import {
 	DEFAULT_CONFIG,
 	useFields,
@@ -14,6 +13,7 @@ import {
 	sanitizeFields,
 } from 'calypso/dashboard/sites/dataviews';
 import { canManageSite } from 'calypso/dashboard/sites/features';
+import { useSiteListQuery } from 'calypso/dashboard/sites/hooks/use-site-list-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
@@ -37,6 +37,16 @@ const navigate = ( { search, replace }: { search: any; replace?: boolean } ) => 
 		page.show( url );
 	}
 };
+
+function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: number ) {
+	return {
+		data: sites,
+		paginationInfo: {
+			totalItems,
+			totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
+		},
+	};
+}
 
 export default function DefaultSitesDataViews( {
 	selectedSiteId,

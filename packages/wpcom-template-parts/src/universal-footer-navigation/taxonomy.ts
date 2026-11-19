@@ -217,8 +217,7 @@ export function getFooterColumns( {
 				{
 					slug: 'press',
 					label: __( 'Press', __i18n_text_domain__ ),
-					url: 'https://automattic.com/press/',
-					chevron: true,
+					url: localizeUrl( 'https://wordpress.com/press/' ),
 				},
 				{
 					slug: 'tos',
@@ -471,15 +470,9 @@ export function getFooterColumns2026( {
 					chevron: true,
 				},
 				{
-					slug: 'partners',
-					label: __( 'Partners', __i18n_text_domain__ ),
-					url: localizeUrl( 'https://wordpress.com/partners/' ),
-				},
-				{
 					slug: 'press',
 					label: __( 'Press', __i18n_text_domain__ ),
-					url: 'https://automattic.com/press/',
-					chevron: true,
+					url: localizeUrl( 'https://wordpress.com/press/' ),
 				},
 			],
 		},

@@ -120,6 +120,7 @@
 		"onboarding/import-from-wix": true,
 		"onboarding/import-from-wordpress": true,
 		"onboarding/interval-dropdown": true,
+		"onboarding/setup-your-site-ai-tool": false,
 		"onboarding/woo-hosting-post-purchase-setup-choice": true,
 		"p2/p2-plus": true,
 		"performance/apm": false,

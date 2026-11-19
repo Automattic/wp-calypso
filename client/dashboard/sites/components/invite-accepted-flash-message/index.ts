@@ -1,8 +1,8 @@
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useConsumeSearchParams } from '../app/hooks/use-consume-search-params';
-import { FLASH_QUERY_PARAM } from '../components/flash-message';
+import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
+import { FLASH_QUERY_PARAM } from '../../../components/flash-message';
 
 function getInviteAcceptedMessage( role: string, siteTitle: string ) {
 	// Construct role-based message (simplified for snackbar)

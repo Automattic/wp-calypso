@@ -64,14 +64,14 @@ export const makeOwnComment = ( {
 	commentId = 5000,
 	title = 'A post title',
 	excerpt = 'My comment',
-	newCommentCount = 0,
+	unreadNoteIds = [],
 }: {
 	blogId?: number;
 	postId?: number;
 	commentId?: number;
 	title?: string;
 	excerpt?: string;
-	newCommentCount?: number | null;
+	unreadNoteIds?: number[];
 } = {} ): ReadConversationOwnComment => ( {
 	id: `${ blogId }-p-${ postId }-c-${ commentId }`,
 	blog_id: blogId,
@@ -86,5 +86,8 @@ export const makeOwnComment = ( {
 		url: `https://example.com/${ postId }#comment-${ commentId }`,
 		author: person( 'Me' ),
 	},
-	new_comment_count: newCommentCount,
+	unread_count: unreadNoteIds.length || null,
+	unread_note_ids: unreadNoteIds,
+	// Other people's comments, which the fixtures never name.
+	unread_comment_ids: unreadNoteIds.map( ( id ) => id * 100 ),
 } );

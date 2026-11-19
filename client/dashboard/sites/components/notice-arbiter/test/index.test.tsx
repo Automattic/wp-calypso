@@ -6,12 +6,12 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { vi } from 'vitest';
-import Notice from '../../components/notice';
-import { useSiteExpiryNoticeCandidate } from '../../components/site-expiry-notice';
-import { render } from '../../test-utils';
-import { SitesNoticeArbiter } from '../notice-arbiter';
+import Notice from '../../../../components/notice';
+import { useSiteExpiryNoticeCandidate } from '../../../../components/site-expiry-notice';
+import { render } from '../../../../test-utils';
+import { SitesNoticeArbiter } from '../index';
 
-vi.mock( '../../components/site-expiry-notice', () => ( {
+vi.mock( '../../../../components/site-expiry-notice', () => ( {
 	useSiteExpiryNoticeCandidate: vi.fn( () => null ),
 } ) );
 const mockCandidate = vi.mocked( useSiteExpiryNoticeCandidate );

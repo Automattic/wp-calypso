@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Show the stroke-drawn `caution` icon on unavailable results and suggestion errors, since `@wordpress/icons` 21 removes `cautionFilled`.
 - Trim hyphens from domain input without a regular expression that slows down on long runs of hyphens.
 - Set `color` alongside `fill` on the search button, suggestion, match-reason, bundle and banner chevron icons, so icons drawn with `currentColor` (such as stroke-drawn `@wordpress/icons`) keep their colors.
 - Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.

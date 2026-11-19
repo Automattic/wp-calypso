@@ -1,6 +1,5 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useSearch } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -11,55 +10,65 @@ import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useRef } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { useAuth } from '../../app/auth';
-import { useAppContext } from '../../app/context';
-import { useIntlLocale } from '../../app/locale';
-import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import TwoStepRequiredNotice, { useSiteRequiresTwoStep } from '../../app/two-step-required-notice';
-import Divider from '../../components/divider';
-import Grid, { type GapSize } from '../../components/grid';
-import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { getSiteDisplayName } from '../../utils/site-name';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { SitesNoticeArbiter } from '../notice-arbiter';
-import AgencySiteShareCard from '../overview-agency-site-share-card';
-import BackupCard from '../overview-backup-card';
-import DIFMOfferCard from '../overview-difm-offer-card';
-import DifmOfferDeepLink from '../overview-difm-offer-card/deep-link';
-import DifmOfferThankYou from '../overview-difm-offer-card/thank-you';
-import DomainsCard from '../overview-domains-card';
-import LatestActivityCard from '../overview-latest-activity-card';
-import MigrateSiteCard from '../overview-migrate-site-card';
-import PerformanceCard from '../overview-performance-card';
-import PlanCard from '../overview-plan-card';
-import ScanCard from '../overview-scan-card';
-import SiteActionMenu from '../overview-site-action-menu';
-import SiteOverviewFields from '../overview-site-fields';
+import { useAnalytics } from '../../../../app/analytics';
+import { useAuth } from '../../../../app/auth';
+import { useAppContext } from '../../../../app/context';
+import { useIntlLocale } from '../../../../app/locale';
+import { PerformanceTrackerStop } from '../../../../app/performance-tracking';
+import TwoStepRequiredNotice, {
+	useSiteRequiresTwoStep,
+} from '../../../../app/two-step-required-notice';
+import Divider from '../../../../components/divider';
+import Grid, { type GapSize } from '../../../../components/grid';
+import { GuidedTourContextProvider, GuidedTourStep } from '../../../../components/guided-tour';
+import { PageHeader } from '../../../../components/page-header';
+import PageLayout from '../../../../components/page-layout';
+import { SitesNoticeArbiter } from '../../../../sites/components/notice-arbiter';
+import { EmailBlockNotice, getEmailBlock } from '../../../../sites/overview/email-block-notice';
+import {
+	MigrationCompletedNotice,
+	useShouldShowMigrationCompletedNotice,
+} from '../../../../sites/overview/migration-completed-notice';
+import {
+	StorageWarningBanner,
+	useShouldShowStorageWarningBanner,
+} from '../../../../sites/overview/storage-warning-banner';
+import AgencySiteShareCard from '../../../../sites/overview-agency-site-share-card';
+import BackupCard from '../../../../sites/overview-backup-card';
+import DIFMOfferCard from '../../../../sites/overview-difm-offer-card';
+import DifmOfferDeepLink from '../../../../sites/overview-difm-offer-card/deep-link';
+import DifmOfferThankYou from '../../../../sites/overview-difm-offer-card/thank-you';
+import DomainsCard from '../../../../sites/overview-domains-card';
+import LatestActivityCard from '../../../../sites/overview-latest-activity-card';
+import MigrateSiteCard from '../../../../sites/overview-migrate-site-card';
+import PerformanceCard from '../../../../sites/overview-performance-card';
+import PlanCard from '../../../../sites/overview-plan-card';
+import ScanCard from '../../../../sites/overview-scan-card';
+import SiteActionMenu from '../../../../sites/overview-site-action-menu';
+import SiteOverviewFields from '../../../../sites/overview-site-fields';
 import {
 	StaticSiteImportFailed,
 	StaticSiteImportNotice,
 	StaticSiteImportProgress,
 	useOpenPreviewWhenReady,
 	useStaticSiteImport,
-} from '../overview-static-site-import';
-import SubscribersCard from '../overview-subscribers-card';
-import VisibilityCard from '../overview-visibility-card';
-import { InaccessibleJetpackNotice } from '../site/notices';
-import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
-import { StagingSiteSyncNotice, useStagingSiteSyncForNotice } from '../staging-site-sync-notice';
-import { EmailBlockNotice, getEmailBlock } from './email-block-notice';
+} from '../../../../sites/overview-static-site-import';
+import SubscribersCard from '../../../../sites/overview-subscribers-card';
+import VisibilityCard from '../../../../sites/overview-visibility-card';
+import { InaccessibleJetpackNotice } from '../../../../sites/site/notices';
+import StagingSiteSyncDropdown from '../../../../sites/staging-site-sync-dropdown';
 import {
-	MigrationCompletedNotice,
-	useShouldShowMigrationCompletedNotice,
-} from './migration-completed-notice';
-import { StorageWarningBanner, useShouldShowStorageWarningBanner } from './storage-warning-banner';
-import type { MigrationCompletedSearch } from './migration-completed-notice';
-import type { StaticSiteImportSearch } from '../overview-static-site-import';
+	StagingSiteSyncNotice,
+	useStagingSiteSyncForNotice,
+} from '../../../../sites/staging-site-sync-notice';
+import { getSiteDisplayName } from '../../../../utils/site-name';
+import { isSelfHostedJetpackConnected } from '../../../../utils/site-types';
+import type { MigrationCompletedSearch } from '../../../../sites/overview/migration-completed-notice';
+import type { StaticSiteImportSearch } from '../../../../sites/overview-static-site-import';
 import type { Site } from '@automattic/api-core';
 import './style.scss';
+
+export type SiteOverviewSearch = StaticSiteImportSearch & MigrationCompletedSearch;
 
 type WPBreakpoint = Parameters< typeof useViewportMatch >[ 0 ];
 
@@ -169,9 +178,11 @@ function SiteOverviewSecondaryCards( {
 
 function SiteOverview( {
 	siteSlug,
+	search = {},
 	breakpoints,
 }: {
 	siteSlug: string;
+	search?: SiteOverviewSearch;
 	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
 } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
@@ -194,14 +205,10 @@ function SiteOverview( {
 	const isMigrationCompletedNoticeVisible = useShouldShowMigrationCompletedNotice( site );
 	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
-	const importSearch: StaticSiteImportSearch = useSearch( { strict: false } );
-	const siteImport = useStaticSiteImport( site.ID, importSearch.importSessionId );
+	const siteImport = useStaticSiteImport( site.ID, search.importSessionId );
 	const locale = useIntlLocale();
 	const { user } = useAuth();
 	useOpenPreviewWhenReady( siteImport );
-	const { migration: migrationCompletedSearch }: MigrationCompletedSearch = useSearch( {
-		strict: false,
-	} );
 	const migrationCompletedNotice = isMigrationCompletedNoticeVisible && (
 		<MigrationCompletedNotice key={ site.ID } site={ site } />
 	);
@@ -253,14 +260,10 @@ function SiteOverview( {
 						<StagingSiteSyncNotice site={ site } syncState={ stagingSiteSyncForNotice } />
 					) }
 					{ siteImport && siteImport.status !== 'moving' && ! showImportFailed && (
-						<StaticSiteImportNotice
-							site={ site }
-							siteImport={ siteImport }
-							search={ importSearch }
-						/>
+						<StaticSiteImportNotice site={ site } siteImport={ siteImport } search={ search } />
 					) }
 					{ /* With the query string, show the notice even when the arbiter picks another. */ }
-					{ migrationCompletedSearch === 'completed' && migrationCompletedNotice }
+					{ search.migration === 'completed' && migrationCompletedNotice }
 					<SitesNoticeArbiter>
 						{ site.__inaccessible_jetpack_error && (
 							<InaccessibleJetpackNotice
@@ -271,7 +274,7 @@ function SiteOverview( {
 						{ showTwoStepRequiredNotice && <TwoStepRequiredNotice site={ site } /> }
 						{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
 						{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
-						{ migrationCompletedSearch !== 'completed' && migrationCompletedNotice }
+						{ search.migration !== 'completed' && migrationCompletedNotice }
 					</SitesNoticeArbiter>
 				</>
 			}
@@ -279,12 +282,12 @@ function SiteOverview( {
 			{ siteImport?.status === 'moving' && (
 				<StaticSiteImportProgress
 					siteImport={ siteImport }
-					search={ importSearch }
+					search={ search }
 					locale={ locale }
 					email={ user.email }
 				/>
 			) }
-			{ showImportFailed && <StaticSiteImportFailed site={ site } search={ importSearch } /> }
+			{ showImportFailed && <StaticSiteImportFailed site={ site } search={ search } /> }
 			{ siteImport?.status !== 'moving' && ! showImportFailed && (
 				<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 					<Grid { ...gridLayout } gap={ gap }>

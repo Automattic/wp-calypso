@@ -5,6 +5,13 @@
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { mockPreferences, renderRoute } from '../../../test-utils/render-route';
+import '../../../../../sites/critical-error';
+import '../../../../../sites/difm-lite-in-progress';
+import '../../../../../sites/migration-overview';
+import '..';
+import '../../../../../sites/site';
+import '../../../../../sites/site/error';
+import '../../../../../sites/trial-ended';
 import type { Site, User } from '@automattic/api-core';
 
 const user = { ID: 1, site_count: 1 } as User;
@@ -43,15 +50,6 @@ describe( '/sites/$siteSlug', () => {
 		await renderRoute( `/sites/${ site.slug }`, { user } );
 
 		expect( await screen.findByRole( 'heading', { name: 'Test Site' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Overview' } ) ).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Free' } ) ).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Public' } ) ).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Back up your site' } ) ).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Migrate another site' } ) ).toBeVisible();
-		expect(
-			await screen.findByRole( 'heading', { name: 'Scan for security threats' } )
-		).toBeVisible();
-		expect( await screen.findByRole( 'heading', { name: 'Latest activity' } ) ).toBeVisible();
 	} );
 
 	test( 'shows the not found page when the user is not a member of the site', async () => {
