@@ -1,0 +1,116 @@
+diff --git a/package.json b/package.json
+index 603f1cf9eff0f3b88705168e392e52cf1cb7e09d..5c253a647bbe6d54ab4698a12f1f294f810cb408 100644
+--- a/package.json
++++ b/package.json
+@@ -38,7 +38,17 @@
+ 			"default": "./build/index.cjs"
+ 		},
+ 		"./package.json": "./package.json",
+-		"./build-style/*": "./build-style/*"
++		"./build-style/*": "./build-style/*",
++		"./build-module/hooks": {
++			"types": "./build-types/hooks.d.ts",
++			"import": "./build-module/hooks.mjs",
++			"default": "./build/hooks.cjs"
++		},
++		"./build-module/context": {
++			"types": "./build-types/context.d.ts",
++			"import": "./build-module/context.mjs",
++			"default": "./build/context.cjs"
++		}
+ 	},
+ 	"types": "build-types",
+ 	"dependencies": {
+diff --git a/package.json.orig b/package.json.orig
+new file mode 100644
+index 0000000000000000000000000000000000000000..603f1cf9eff0f3b88705168e392e52cf1cb7e09d
+--- /dev/null
++++ b/package.json.orig
+@@ -0,0 +1,87 @@
++{
++	"name": "@wordpress/global-styles-ui",
++	"version": "2.2.0",
++	"description": "Global Styles UI components for WordPress.",
++	"author": "The WordPress Contributors",
++	"license": "GPL-2.0-or-later",
++	"keywords": [
++		"wordpress",
++		"gutenberg",
++		"global-styles",
++		"design-system"
++	],
++	"homepage": "https://github.com/WordPress/gutenberg/tree/HEAD/packages/global-styles-ui/README.md",
++	"repository": {
++		"type": "git",
++		"url": "https://github.com/WordPress/gutenberg.git",
++		"directory": "packages/global-styles-ui"
++	},
++	"bugs": {
++		"url": "https://github.com/WordPress/gutenberg/issues"
++	},
++	"engines": {
++		"node": ">=22.13.0"
++	},
++	"files": [
++		"src",
++		"build",
++		"build-module",
++		"build-style",
++		"build-types"
++	],
++	"main": "build/index.cjs",
++	"module": "build-module/index.mjs",
++	"exports": {
++		".": {
++			"types": "./build-types/index.d.ts",
++			"import": "./build-module/index.mjs",
++			"default": "./build/index.cjs"
++		},
++		"./package.json": "./package.json",
++		"./build-style/*": "./build-style/*"
++	},
++	"types": "build-types",
++	"dependencies": {
++		"@wordpress/a11y": "^5.2.0",
++		"@wordpress/api-fetch": "^8.2.0",
++		"@wordpress/base-styles": "^15.1.0",
++		"@wordpress/block-editor": "^20.1.0",
++		"@wordpress/blocks": "^17.2.0",
++		"@wordpress/components": "^45.0.0",
++		"@wordpress/compose": "^9.2.0",
++		"@wordpress/core-data": "^9.2.0",
++		"@wordpress/data": "^11.2.0",
++		"@wordpress/dataviews": "^22.1.0",
++		"@wordpress/date": "^6.2.0",
++		"@wordpress/element": "^10.2.0",
++		"@wordpress/global-styles-engine": "^2.2.0",
++		"@wordpress/i18n": "^7.2.0",
++		"@wordpress/icons": "^21.0.0",
++		"@wordpress/kebab-case": "^2.2.0",
++		"@wordpress/keycodes": "^5.2.0",
++		"@wordpress/private-apis": "^3.2.0",
++		"@wordpress/ui": "^0.27.0",
++		"clsx": "^2.1.1"
++	},
++	"devDependencies": {
++		"@testing-library/dom": "^10.4.2",
++		"@testing-library/react": "^16.3.3",
++		"@testing-library/user-event": "^14.6.8",
++		"vitest": "^5.1.0",
++		"vitest-browser-react": "^2.3.0"
++	},
++	"peerDependencies": {
++		"@types/react": "^18 || ^19",
++		"react": "^18 || ^19",
++		"react-dom": "^18 || ^19"
++	},
++	"peerDependenciesMeta": {
++		"@types/react": {
++			"optional": true
++		}
++	},
++	"publishConfig": {
++		"access": "public"
++	},
++	"gitHead": "1000cdf1dffd5b5e69f75cc4360aa76db8252264"
++}
