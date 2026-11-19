@@ -1183,6 +1183,18 @@ describe( 'main app', () => {
 				expect( response.redirect ).toHaveBeenCalledWith( url );
 			} );
 		} );
+
+		it( 'keeps the rest of the path and the query', async () => {
+			const { response } = await app.run( {
+				request: { url: '/sites/my-site/posts/drafts?s=x' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( '/posts/my-site/drafts?s=x' );
+		} );
+
+		it( 'does not redirect a site it cannot rewrite back to itself', async () => {
+			const { response } = await app.run( { request: { url: '/sites/a@b/posts' } } );
+			expect( response.redirect ).not.toHaveBeenCalledWith( '/sites/a@b/posts' );
+		} );
 	} );
 
 	describe( 'Route /plans', () => {
