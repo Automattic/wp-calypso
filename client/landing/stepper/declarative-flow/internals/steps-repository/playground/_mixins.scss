@@ -1,5 +1,7 @@
 @mixin playground-woo-focus {
+	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
 	--wpds-color-stroke-focus: var( --studio-woocommerce-purple-40 );
+	/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 
 	// Buttons get a focus ring on any `:focus`, including the programmatic focus a modal
 	// moves to its first button, so limit it to keyboard focus.

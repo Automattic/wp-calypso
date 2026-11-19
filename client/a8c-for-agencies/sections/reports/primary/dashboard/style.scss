@@ -46,7 +46,9 @@
 		}
 
 		.redesigned-a8c-table {
+			/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
 			--wpds-dimension-padding-lg: 4px;
+			/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 		}
 
 		.hosting-dashboard-layout__top-wrapper > * {

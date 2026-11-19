@@ -1,5 +1,7 @@
 @use '@wordpress/base-styles/colors' as *;
 
+/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
+
 // A2UI's mode classes, on the surface or an ancestor. Otherwise the surface follows the page.
 :where( .a2ui-dark ) {
 	color-scheme: dark;

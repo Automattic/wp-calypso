@@ -313,7 +313,9 @@ $theme-card-info-margin-top: 16px;
 }
 
 .theme-card__image-overlay {
+	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- Existing overrides of design system tokens. */
 	--wpds-color-stroke-focus: var( --studio-white );
+	/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	align-items: center;
 	background: color-mix( in srgb, var( --studio-black ) 70%, transparent );
 	display: flex;
