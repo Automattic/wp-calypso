@@ -63,6 +63,9 @@ export function Nav2026DesktopDropdown( {
 				}
 				// Reading-order counter for the slide-in stagger.
 				let staggerIndex = 0;
+				const columns = toColumns( menu.groups );
+				const isStacked = ( column: Nav2026Group[] ) =>
+					column.some( ( group ) => group.isStackedColumn );
 				return (
 					<div
 						className="x-dropdown-content x-dropdown--2026"
@@ -73,9 +76,19 @@ export function Nav2026DesktopDropdown( {
 						aria-hidden={ activeDropdown !== menu.name }
 						key={ menu.name }
 					>
-						<div className="x-dropdown-subcategories">
-							{ toColumns( menu.groups ).map( ( column, columnIndex ) => (
-								<div className="x-dropdown-column-group" key={ column[ 0 ].title }>
+						<div
+							className={ clsx( 'x-dropdown-subcategories', {
+								'x-dropdown-subcategories--has-stacked-group': columns.some( isStacked ),
+							} ) }
+						>
+							{ columns.map( ( column, columnIndex ) => (
+								<div
+									className={ clsx( 'x-dropdown-column-group', {
+										'x-dropdown-column-group--stacked': isStacked( column ),
+									} ) }
+									key={ column[ 0 ].title }
+									style={ { '--column-index': columnIndex + 1 } as React.CSSProperties }
+								>
 									{ column.map( ( group, rowIndex ) => (
 										<div
 											className="x-dropdown-subcategory"
@@ -93,6 +106,9 @@ export function Nav2026DesktopDropdown( {
 												style={ { '--stagger-index': staggerIndex++ } as React.CSSProperties }
 											>
 												{ group.title }
+												{ group.badge && (
+													<span className="x-dropdown-badge-new">{ group.badge }</span>
+												) }
 											</h4>
 											<ul>
 												{ group.items.map( ( item ) => (

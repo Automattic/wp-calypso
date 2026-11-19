@@ -9,7 +9,6 @@ import {
 	PublishedPostPage,
 	RestAPIClient,
 	SecretsManager,
-	SidebarComponent,
 	TestAccount,
 	TestFile,
 } from '@automattic/calypso-e2e';
@@ -129,16 +128,10 @@ test.describe(
 				}
 			} );
 
-			await test.step( 'Return to My Home dashboard', async () => {
-				// The checkout thank-you page shows a minimal masterbar without the
-				// "My Sites" button, so use the page's own "Back to dashboard" control
-				// to return to Calypso.
-				await page.getByRole( 'button', { name: 'Back to dashboard' } ).click();
-			} );
-
-			await test.step( 'Navigate to Upgrades > Plans', async () => {
-				const sidebarComponent = new SidebarComponent( page );
-				await sidebarComponent.navigate( 'Upgrades', 'Plans' );
+			await test.step( 'Navigate back to Upgrades > Plans', async () => {
+				await page.goto(
+					DataHelper.getCalypsoURL( `/plans/${ newSiteDetails.blog_details.site_slug }` )
+				);
 			} );
 
 			await test.step( `Plans page states user is on WordPress.com ${ planName } plan`, async () => {

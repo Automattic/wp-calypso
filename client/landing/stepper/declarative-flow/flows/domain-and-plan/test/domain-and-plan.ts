@@ -289,6 +289,21 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 		);
 	} );
 
+	it( 'checks the connection setup URL after the domain is filled in', async () => {
+		mockQueryArgs = 'domainConnectionSetupUrl=%25s';
+		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
+
+		await submitUseMyDomain( {
+			ownershipVerificationCompleted: true,
+			domain: 'javascript:alert(1)',
+		} );
+
+		expect( window.location.replace ).not.toHaveBeenCalledWith( 'javascript:alert(1)' );
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			expect.stringMatching( /^\/domains\/mapping\// )
+		);
+	} );
+
 	it( 'uses the connection setup URL supplied by the entry point when there is one', async () => {
 		mockQueryArgs =
 			'domainConnectionSetupUrl=https%3A%2F%2Fmy.wordpress.com%2Fdomains%2F%25s%2Fdomain-connection-setup';

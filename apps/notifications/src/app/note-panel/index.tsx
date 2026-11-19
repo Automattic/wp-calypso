@@ -2,16 +2,20 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
+	Button,
+	CardFooter,
 	CardHeader,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
 import { __ } from '@wordpress/i18n';
 import { Tabs } from '@wordpress/ui';
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, type ReactNode } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { recordTracksEvent } from '../../panel/helpers/stats';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { getFilters } from '../../panel/templates/filters';
+import { useOpenFullView } from '../context';
 import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
@@ -26,7 +30,11 @@ export const getNotificationTabs = () =>
 
 type NotePanelProps = {
 	isDismissible?: boolean;
+	headingLevel?: 1 | 2 | 3;
+	actions?: ReactNode;
+	openNoteOnArrowKeys?: boolean;
 	filterName: FilterName;
+	/** Shows another tab. The host also closes the open note, which may not be on the new tab. */
 	setFilterName: ( filterName: FilterName ) => void;
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
@@ -34,6 +42,9 @@ type NotePanelProps = {
 
 const NotePanel = ( {
 	isDismissible,
+	headingLevel = 3,
+	actions = <NotePanelActions />,
+	openNoteOnArrowKeys,
 	filterName,
 	setFilterName,
 	selectedNoteId,
@@ -42,18 +53,20 @@ const NotePanel = ( {
 	const notificationTabs = getNotificationTabs();
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
+	const selectedTabRef = useRef< string >( filterName );
+	const openFullView = useOpenFullView( { filterName, noteId: selectedNoteId } );
 
 	const handleSelect = useCallback(
-		( tabId: string | null | undefined ) => {
+		( tabId: string | null | undefined, source: 'tab' | 'shortcut' ) => {
 			if ( tabId ) {
+				if ( tabId !== selectedTabRef.current ) {
+					selectedTabRef.current = tabId;
+					recordTracksEvent( 'calypso_notification_tab_select', { tab: tabId, source } );
+				}
 				setFilterName( tabId as FilterName );
-				// Clear the selection — a note from the previous filter would
-				// otherwise stay rendered in the detail pane while the list
-				// switches to the new filter's notes.
-				setSelectedNoteId( undefined );
 			}
 		},
-		[ setFilterName, setSelectedNoteId ]
+		[ setFilterName ]
 	);
 
 	useEffect( () => {
@@ -85,7 +98,7 @@ const NotePanel = ( {
 			const tabId = shortcutToTabId[ event.key ];
 			if ( tabId ) {
 				stopEvent( event );
-				handleSelect( tabId );
+				handleSelect( tabId, 'shortcut' );
 
 				// Ensure that keyboard navigation focuses on the selected tab.
 				tabRefs.current[ tabId ]?.focus();
@@ -99,7 +112,11 @@ const NotePanel = ( {
 	}, [ tabRefs, handleSelect, keyboardShortcutsAreEnabled, selectedNoteId ] );
 
 	return (
-		<Tabs.Root className="wpnc-app__tabs" value={ filterName } onValueChange={ handleSelect }>
+		<Tabs.Root
+			className="wpnc-app__tabs"
+			value={ filterName }
+			onValueChange={ ( tabId ) => handleSelect( tabId, 'tab' ) }
+		>
 			<CardHeader
 				isBorderless
 				size="small"
@@ -109,7 +126,7 @@ const NotePanel = ( {
 					<HStack>
 						<HStack justify="flex-start">
 							<Heading
-								level={ 3 }
+								level={ headingLevel }
 								size={ 15 }
 								weight="var(--wpds-typography-font-weight-emphasis, 600)"
 							>
@@ -117,7 +134,7 @@ const NotePanel = ( {
 							</Heading>
 						</HStack>
 						<HStack justify="flex-end">
-							<NotePanelActions />
+							{ actions }
 							{ isDismissible && <CloseButton /> }
 						</HStack>
 					</HStack>
@@ -155,11 +172,19 @@ const NotePanel = ( {
 								filterName={ filterName }
 								selectedNoteId={ selectedNoteId }
 								setSelectedNoteId={ setSelectedNoteId }
+								openNoteOnArrowKeys={ openNoteOnArrowKeys }
 							/>
 						</ErrorBoundary>
 					) }
 				</Tabs.Panel>
 			) ) }
+			{ openFullView && (
+				<CardFooter size="small" justify="center">
+					<Button className="wpnc-app__full-view" variant="tertiary" onClick={ openFullView }>
+						{ __( 'Open full view' ) }
+					</Button>
+				</CardFooter>
+			) }
 		</Tabs.Root>
 	);
 };

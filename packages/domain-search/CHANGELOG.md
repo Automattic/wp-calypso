@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Trim hyphens from domain input without a regular expression that slows down on long runs of hyphens.
 - Set `color` alongside `fill` on the search button, suggestion, match-reason, bundle and banner chevron icons, so icons drawn with `currentColor` (such as stroke-drawn `@wordpress/icons`) keep their colors.
 - Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 

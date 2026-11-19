@@ -62,13 +62,14 @@ export class MyHomePage {
 	/**
 	 * Visits the `/home` endpoint.
 	 *
-	 * A transient upstream error (502/503/504) is retried with backoff; once the
-	 * retries run out this throws rather than leave the error page.
+	 * `legacyHome=1` keeps sites created since the AI Launchpad rollout on My Home instead of
+	 * sending them to wp-admin. A transient upstream error (502/503/504) is retried with backoff;
+	 * once the retries run out this throws rather than leave the error page.
 	 *
 	 * @param {string} siteSlug Site URL.
 	 */
 	async visit( siteSlug: string ): Promise< void > {
-		await gotoWithRetry( this.page, getCalypsoURL( `/home/${ siteSlug }` ), {
+		await gotoWithRetry( this.page, getCalypsoURL( `/home/${ siteSlug }`, { legacyHome: '1' } ), {
 			timeout: 20 * 1000,
 		} );
 	}

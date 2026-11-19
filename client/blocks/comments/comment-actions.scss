@@ -52,17 +52,6 @@
 			padding-right: 0;
 		}
 
-		&.comments__comment-actions-read-more {
-			color: var(--color-link);
-			margin: 0 10px 0 -3px;
-			padding-left: 0;
-
-			.comments__comment-actions-read-more-icon {
-				fill: var(--color-link);
-				vertical-align: bottom;
-			}
-		}
-
 		&.like-button {
 			position: relative;
 		}

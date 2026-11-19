@@ -1,5 +1,8 @@
 import { addQueryArgs } from 'calypso/lib/url';
-import { normalizeWpcomAdminSidebarHostLinks } from 'calypso/my-sites/sidebar/utils/normalize-wpcom-admin-sidebar-host-links';
+import {
+	isDashboardHostLink,
+	normalizeWpcomAdminSidebarHostLinks,
+} from 'calypso/my-sites/sidebar/utils/normalize-wpcom-admin-sidebar-host-links';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { receiveAdminSidebarLayout } from 'calypso/state/admin-sidebar/layout/actions';
@@ -37,7 +40,12 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 		);
 	}
 
-	if ( isSafeInternalUrl || isSafeWpAdminUrl || isSafeJetpackRedirectUrl ) {
+	if (
+		isSafeInternalUrl ||
+		isSafeWpAdminUrl ||
+		isSafeJetpackRedirectUrl ||
+		isDashboardHostLink( url )
+	) {
 		return url;
 	}
 

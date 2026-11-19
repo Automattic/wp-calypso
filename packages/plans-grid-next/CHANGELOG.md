@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Keep the last word of a tooltip on its line without a regular expression that slows down on long whitespace.
 - Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## 1.0.3

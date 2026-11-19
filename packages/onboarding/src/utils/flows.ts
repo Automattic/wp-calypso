@@ -12,6 +12,7 @@ export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const STATIC_SITE_IMPORT_FLOW = 'static-site-import';
+export const STATIC_SITE_IMPORT_PREVIEW_FLOW = 'static-site-import-preview';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';

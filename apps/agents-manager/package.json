@@ -46,6 +46,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/wp-oxc-makepot": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^7.1.0",
+		"@wordpress/private-apis": "^3.1.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^4.1.0",
 		"copy-webpack-plugin": "^14.0.0",
 		"postcss-prefix-selector": "^1.16.1",

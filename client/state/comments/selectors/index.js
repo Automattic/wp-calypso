@@ -4,8 +4,6 @@ export { getCommentById } from 'calypso/state/comments/selectors/get-comment-by-
 export { getCommentErrors } from 'calypso/state/comments/selectors/get-comment-errors';
 export { getCommentLike } from 'calypso/state/comments/selectors/get-comment-like';
 export { getDateSortedPostComments } from 'calypso/state/comments/selectors/get-date-sorted-post-comments';
-export { getExpansionsForPost } from 'calypso/state/comments/selectors/get-expansions-for-post';
-export { getHiddenCommentsForPost } from 'calypso/state/comments/selectors/get-hidden-comments-for-post';
 export { getParentComment } from 'calypso/state/comments/selectors/get-parent-comment';
 export { getPostCommentItems } from 'calypso/state/comments/selectors/get-post-comment-items';
 export { getPostCommentsCountAtDate } from 'calypso/state/comments/selectors/get-post-comments-count-at-date';

@@ -11,6 +11,7 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import repliesCache from '../../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { reportRequestError } from '../../panel/helpers/log-error';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
@@ -57,6 +58,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 		getKeyboardShortcutsEnabled( state )
 	);
 
+	const formRef = useRef< HTMLFormElement | null >( null );
 	const replyInputRef = useRef< HTMLTextAreaElement | null >( null );
 	const submitButtonRef = useRef< HTMLButtonElement | null >( null );
 	const savedReplyKey = `reply_${ note.id }`;
@@ -113,6 +115,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 						retryCountRef.current = 0;
 						replyInputRef.current?.focus();
 						debug( 'Failed to submit comment reply: %s', error.message );
+						reportRequestError( 'reply', error );
 					}
 					return;
 				}
@@ -198,6 +201,11 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 		};
 
 		const handleCtrlEnter = ( event: KeyboardEvent ) => {
+			// Only from inside the form: the full page keeps a note open while the person types elsewhere.
+			if ( ! formRef.current?.contains( event.target as Node ) ) {
+				return;
+			}
+
 			if ( ( event.ctrlKey || event.metaKey ) && 'Enter' === event.key ) {
 				stopEvent( event );
 				handleSubmit();
@@ -215,7 +223,7 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 
 	return (
 		<VStack style={ { width: '100%' } }>
-			<form onSubmit={ handleSubmit }>
+			<form ref={ formRef } onSubmit={ handleSubmit }>
 				<HStack spacing={ 2 } alignment="flex-start">
 					<TextareaControl
 						className="comment-reply-input__textarea"

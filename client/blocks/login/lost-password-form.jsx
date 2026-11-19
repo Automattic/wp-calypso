@@ -26,7 +26,7 @@ const LostPasswordForm = ( {
 	const dispatch = useDispatch();
 	const blackbox = useBlackboxProtection( {
 		feature: 'blackbox-lost-password',
-		flow: 'login',
+		flow: 'password_reset',
 	} );
 
 	const inputRef = useRef( null );

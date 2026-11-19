@@ -1,4 +1,5 @@
 import { logToLogstash } from '@automattic/api-core';
+import { bumpStat } from '../rest-client/bump-stat';
 
 /**
  * Send an error to logstash. Fire-and-forget: logging must never throw and
@@ -30,4 +31,39 @@ export function logError( error: unknown, extra?: Record< string, unknown > ) {
 	} catch {
 		// Never let logging crash the app.
 	}
+}
+
+/**
+ * Count a failed notifications request or action in the `notes-error` stat, and send its details to logstash.
+ * @param action What failed, e.g. `load`, `reply` or `like`. Used as the stat value.
+ * @param error The error (or error-like value) to report.
+ * @param extra Optional structured context to attach to the log entry.
+ */
+export function reportError( action: string, error: unknown, extra?: Record< string, unknown > ) {
+	bumpStat( 'notes-error', action );
+	logError( error, { action, ...extra } );
+}
+
+/**
+ * Report a failed request with `reportError`, but only when the server responded with an HTTP error status.
+ * A missing access token is counted under the `auth` stat value instead of `action`.
+ * @param action What failed, e.g. `load`, `reply` or `like`. Used as the stat value.
+ * @param error The request error.
+ * @param extra Optional structured context to attach to the log entry.
+ */
+export function reportRequestError(
+	action: string,
+	error: unknown,
+	extra?: Record< string, unknown >
+) {
+	const { status, error: code } = ( error ?? {} ) as { status?: unknown; error?: unknown };
+	if ( typeof status !== 'number' || status <= 0 ) {
+		return;
+	}
+	if ( code === 'authorization_required' ) {
+		bumpStat( 'notes-error', 'auth' );
+		logError( error, { action, ...extra } );
+		return;
+	}
+	reportError( action, error, extra );
 }

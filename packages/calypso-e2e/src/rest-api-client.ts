@@ -347,7 +347,7 @@ export class RestAPIClient {
 			value
 				.trim()
 				.replace( /^https?:\/\//i, '' )
-				.replace( /\/.*$/, '' )
+				.split( '/' )[ 0 ]
 				.toLowerCase();
 		const targetDomain = normalizeDomain( targetSite.domain );
 

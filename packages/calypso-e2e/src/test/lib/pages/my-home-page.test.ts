@@ -74,7 +74,7 @@ describe( 'MyHomePage', () => {
 			await new MyHomePage( page as unknown as Page ).visit( SITE_SLUG );
 
 			const attempt = [
-				expect.stringMatching( /\/home\/example\.wordpress\.com$/ ),
+				expect.stringMatching( /\/home\/example\.wordpress\.com\?legacyHome=1$/ ),
 				{ timeout: GOTO_TIMEOUT_MS },
 			];
 			expect( page.goto.mock.calls ).toEqual( [ attempt, attempt ] );

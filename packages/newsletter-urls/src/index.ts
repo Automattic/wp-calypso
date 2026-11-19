@@ -74,11 +74,13 @@ const MINIMUM_SUBSCRIBERS_JETPACK_VERSION = [ 16, 1 ];
 function isAtLeastVersion( jetpackVersion: string, minimum: number[] ): boolean {
 	// Split the release number from any prerelease suffix before parsing: the digits inside
 	// `16.1-beta2` or `16.1-a.1` are part of the suffix, not a third release segment.
-	const [ , release, suffix ] = jetpackVersion.match( /^(\d+(?:\.\d+)*)(.*)$/ ) ?? [];
+	const [ release ] = jetpackVersion.match( /^\d+(?:\.\d+)*/ ) ?? [];
 
 	if ( ! release ) {
 		return false;
 	}
+
+	const suffix = jetpackVersion.slice( release.length );
 
 	const parts = release.split( '.' ).map( Number );
 

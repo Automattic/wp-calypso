@@ -49,9 +49,7 @@ describe( 'Site Setup Flow', () => {
 				jest
 					.mocked( config.isEnabled )
 					.mockImplementation(
-						( flag ) =>
-							flag === 'migration/reprint-flow' ||
-							( staticImport && flag === 'migration/non-wordpress-source' )
+						( flag ) => staticImport && flag === 'migration/non-wordpress-source'
 					);
 				const ref = fromWpAdmin ? 'wp-admin-importers-list' : 'new-site-popover';
 				jest.mocked( useFlowState ).mockReturnValue( {
@@ -64,7 +62,7 @@ describe( 'Site Setup Flow', () => {
 					ref,
 					sessionId: 'fallback-selection',
 					source: 'sites-dashboard',
-					flags: 'migration/reprint-flow',
+					flags: 'migration/non-wordpress-source',
 					manualPlatform: 'wordpress',
 				};
 				const stale = {
@@ -72,7 +70,6 @@ describe( 'Site Setup Flow', () => {
 					platform: 'unknown',
 					host: 'bluehost',
 					isWpcom: 'true',
-					ssh: 'true',
 					action: 'import',
 					how: 'difm',
 					start: 'true',
@@ -93,7 +90,7 @@ describe( 'Site Setup Flow', () => {
 			}
 		);
 
-		it( 'redirects the user to the migration offer when the origin param is set as site-migration-identify', async () => {
+		it( 'redirects the user to address entry when the origin param is set as site-migration-identify', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
 			runUseStepNavigationSubmit( {
@@ -106,33 +103,28 @@ describe( 'Site Setup Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-migration/site-migration-how-to-migrate?siteSlug=example.wordpress.com&siteId=123'
+				'/setup/site-migration/site-migration-identify?siteSlug=example.wordpress.com&siteId=123&manualPlatform=wordpress'
 			);
 		} );
 
-		it.each( [ false, true ] )(
-			'keeps the file importer without a migration origin (Reprint: %s)',
-			( enabled ) => {
-				jest.mocked( config.isEnabled ).mockReturnValue( enabled );
-				const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+		it( 'keeps the file importer without a migration origin', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
-				runUseStepNavigationSubmit( {
-					currentStep: STEPS.IMPORT_LIST.slug,
-					dependencies: {
-						platform: 'wordpress',
-						url: 'importerWordpress',
-					},
-				} );
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.IMPORT_LIST.slug,
+				dependencies: {
+					platform: 'wordpress',
+					url: 'importerWordpress',
+				},
+			} );
 
-				expect( window.location.assign ).not.toHaveBeenCalledWith(
-					expect.stringContaining( '/setup/site-migration/' )
-				);
-				expect( getFlowLocation().path ).toBe( '/importerWordpress' );
-			}
-		);
+			expect( window.location.assign ).not.toHaveBeenCalledWith(
+				expect.stringContaining( '/setup/site-migration/' )
+			);
+			expect( getFlowLocation().path ).toBe( '/importerWordpress' );
+		} );
 
-		it( 'keeps other platforms on their importer with Reprint enabled', () => {
-			jest.mocked( config.isEnabled ).mockReturnValue( true );
+		it( 'keeps other platforms on their importer', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 			runUseStepNavigationSubmit( {
 				currentURL: '/some-path?origin=site-migration-identify&siteSlug=example.wordpress.com',
