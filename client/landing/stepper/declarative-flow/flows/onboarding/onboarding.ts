@@ -51,6 +51,7 @@ import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
 	BLUEPRINT_BUILD_DEST_SIMPLE,
 	getBlueprintArchiveSiteSpecUrl,
+	getBlueprintFromQuery,
 	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
 	getStandaloneBlueprintSimpleSlug,
@@ -445,18 +446,28 @@ const onboarding: FlowV2< typeof initialize > = {
 			setHideFreePlan,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const locale = useFlowLocale();
-		const { signupDomainOrigin, planCartItem, domainCartItem, domainCartItems, blueprint } =
-			useSelect(
-				( select ) => ( {
-					signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
-					planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
-					domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-					domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
-					blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
-				} ),
-				[]
-			);
+		const {
+			signupDomainOrigin,
+			planCartItem,
+			domainCartItem,
+			domainCartItems,
+			blueprint: storedBlueprint,
+		} = useSelect(
+			( select ) => ( {
+				signupDomainOrigin: ( select( ONBOARD_STORE ) as OnboardSelect ).getSignupDomainOrigin(),
+				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+				domainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems(),
+				blueprint: ( select( ONBOARD_STORE ) as OnboardSelect ).getBlueprint(),
+			} ),
+			[]
+		);
 		const queryParams = useQuery();
+		// The blueprint step keeps the blueprint in the onboard store, which is in memory only. A
+		// visitor who creates an account on the way is logged in with a full page load, so the
+		// store comes back empty while the URL still names the blueprint. Without this the run
+		// carried on as a plain signup: plans grid, no import, a default site.
+		const blueprint = storedBlueprint ?? getBlueprintFromQuery( queryParams );
 		const shouldSkipPlans = shouldSkipPlansStep( queryParams, planCartItem );
 		const coupon = queryParams.get( 'coupon' );
 		const refParameter = queryParams.get( 'ref' );
