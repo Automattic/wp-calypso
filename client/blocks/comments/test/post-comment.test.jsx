@@ -27,7 +27,7 @@ const commentsTree = {
 	3: { data: comment( 3, 'Nested reply', 2 ), children: [] },
 };
 
-const renderThread = () =>
+const renderThread = ( props = {} ) =>
 	render(
 		<Provider store={ createStore( ( state = { currentUser: { id: 1 } } ) => state ) }>
 			<ul>
@@ -37,6 +37,7 @@ const renderThread = () =>
 					commentId={ 1 }
 					depth={ 0 }
 					collapsibleThreads
+					{ ...props }
 				/>
 			</ul>
 		</Provider>
@@ -64,5 +65,22 @@ describe( 'PostComment', () => {
 
 		expect( screen.getByText( 'Nested reply' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Hide replies' } ) ).toHaveTextContent( /^$/ );
+	} );
+
+	it( 'highlights the comments it’s given as new', () => {
+		renderThread( { highlightedCommentIds: [ 2 ] } );
+
+		const highlighted = screen.getByText( 'First reply' ).closest( 'li' );
+		expect( highlighted ).toHaveClass( 'is-highlighted' );
+		expect( highlighted ).toHaveTextContent( 'New' );
+		expect( screen.getByText( 'Top-level comment' ).closest( 'li' ) ).not.toHaveClass(
+			'is-highlighted'
+		);
+	} );
+
+	it( 'highlights nothing without new comment ids', () => {
+		const { container } = renderThread();
+
+		expect( container.querySelector( '.is-highlighted' ) ).not.toBeInTheDocument();
 	} );
 } );

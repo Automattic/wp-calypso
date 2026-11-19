@@ -293,6 +293,33 @@ describe( 'ConversationDetail', () => {
 		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 77' } ) ).toBeVisible();
 	} );
 
+	it( 'starts the thread at the oldest unread comment and keeps it there as more come in', () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+
+		const { rerender } = renderDetail( { highlightedCommentIds: [ 52, 51 ] } );
+
+		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 51' } ) ).toBeVisible();
+
+		rerender(
+			<ConversationDetail
+				siteId={ 10 }
+				postId={ 100 }
+				conversation={ conversation }
+				highlightedCommentIds={ [ 52, 51, 53 ] }
+			/>
+		);
+
+		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 51' } ) ).toBeVisible();
+	} );
+
+	it( 'starts the thread at the given comment over the unread ones', () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+
+		renderDetail( { startingCommentId: 77, highlightedCommentIds: [ 51 ] } );
+
+		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 77' } ) ).toBeVisible();
+	} );
+
 	it.each( [
 		[ 'reply', 'Replied to you' ],
 		[ 'mention', 'You were mentioned' ],

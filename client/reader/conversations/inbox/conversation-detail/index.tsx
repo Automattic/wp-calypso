@@ -64,7 +64,7 @@ interface Props {
 	onBack?: () => void;
 	onPrevious?: () => void;
 	onNext?: () => void;
-	/** Starts the thread at this comment instead of the latest one. */
+	/** Starts the thread at this comment instead of the oldest unread or latest one. */
 	startingCommentId?: number;
 	highlightedCommentIds?: number[];
 }
@@ -143,8 +143,12 @@ export function ConversationDetail( {
 		: !! conversation?.isFollowing;
 	const isMuted = followStatus === CONVERSATION_FOLLOW_STATUS.muting;
 	const anchorKey = `${ getConversationKey( siteId, postId ) }-${ startingCommentId ?? '' }`;
-	const anchorId = startingCommentId ?? conversation?.latestCommentId;
-	// Keeps the thread anchored when a list refresh brings in a newer latest comment.
+	// Unread comments start at the oldest, so the thread reads down from where the reader left off.
+	const oldestUnreadId = highlightedCommentIds?.length
+		? Math.min( ...highlightedCommentIds )
+		: undefined;
+	const anchorId = startingCommentId ?? oldestUnreadId ?? conversation?.latestCommentId;
+	// Keeps the thread anchored when a list refresh brings in a newer latest or unread comment.
 	const [ startingComment, setStartingComment ] = useState( { key: anchorKey, id: anchorId } );
 	if ( startingComment.key !== anchorKey || ( ! startingComment.id && anchorId ) ) {
 		setStartingComment( { key: anchorKey, id: anchorId } );

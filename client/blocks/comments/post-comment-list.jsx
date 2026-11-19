@@ -455,7 +455,13 @@ class PostCommentList extends Component {
 	};
 
 	scrollToComment = () => {
-		const comment = window.document.getElementById( window.location.hash.substring( 1 ) );
+		const { highlightedCommentIds } = this.props;
+		// Lands on the first highlighted comment on the page, so reading down passes every one.
+		const comment = highlightedCommentIds?.length
+			? window.document.querySelector(
+					highlightedCommentIds.map( ( id ) => `#comment-${ id }` ).join( ',' )
+				)
+			: window.document.getElementById( window.location.hash.substring( 1 ) );
 		if ( ! comment ) {
 			return;
 		}

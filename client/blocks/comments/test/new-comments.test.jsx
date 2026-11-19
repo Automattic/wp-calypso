@@ -128,3 +128,22 @@ describe( 'PostComments polling for new comments', () => {
 		expect( document.getElementById( 'comment-4' ).closest( 'li' ) ).toHaveFocus();
 	} );
 } );
+
+describe( 'PostComments starting at a comment', () => {
+	beforeAll( () => {
+		nock.disableNetConnect();
+	} );
+
+	it( 'scrolls to the first highlighted comment on the page', async () => {
+		const scrollIntoView = jest.fn();
+		Element.prototype.scrollIntoView = function () {
+			scrollIntoView( this.id );
+		};
+		mockComments();
+
+		renderComments( { startingCommentId: 1, highlightedCommentIds: [ 1, 2 ] } );
+
+		await waitFor( () => expect( scrollIntoView ).toHaveBeenCalledWith( 'comment-2' ) );
+		expect( scrollIntoView ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
