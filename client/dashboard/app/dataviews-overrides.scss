@@ -70,6 +70,14 @@ a.dataviews-url-field {
 }
 
 // `@wordpress/dataviews` hardcodes these light colors; remove once it uses WPDS tokens.
+.dataviews-view-grid .dataviews-view-grid__media::after,
+.dataviews-view-grid-infinite-scroll .dataviews-view-grid__media::after,
+.dataviews-view-list .dataviews-view-list__media-wrapper::after,
+.dataviews-column-primary__media::after,
+.dataviews-view-picker-grid .dataviews-view-picker-grid__media::after {
+	box-shadow: inset 0 0 0 var(--wpds-border-width-xs, 1px) var(--wpds-color-stroke-surface-neutral);
+}
+
 .dataviews__view-actions--infinite-scroll {
 	background-color: var( --wpds-color-background-surface-neutral-strong );
 }

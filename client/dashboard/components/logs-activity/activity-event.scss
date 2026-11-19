@@ -4,7 +4,8 @@
 .site-activity-logs__event-icon {
 	color: var(--dashboard__text-muted-color);
 	fill: var(--dashboard__text-muted-color);
-	background-color: var(--wpds-color-background-surface-neutral-weak);
+	background-color: var(--wpds-color-background-surface-neutral-strong);
+	box-shadow: inset 0 0 0 1px var(--wpds-color-stroke-surface-neutral);
 	border-radius: $radius-small;
 	padding: 4px;
 	// The icon box is taller than a text line, so pull it up to sit centred on the
