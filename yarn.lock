@@ -13589,7 +13589,7 @@ __metadata:
 
 "@wordpress/ui@patch:@wordpress/ui@npm%3A0.27.0#~/.yarn/patches/@wordpress-ui-npm-0.27.0-91caa5b31d.patch":
   version: 0.27.0
-  resolution: "@wordpress/ui@patch:@wordpress/ui@npm%3A0.27.0#~/.yarn/patches/@wordpress-ui-npm-0.27.0-91caa5b31d.patch::version=0.27.0&hash=254d4c"
+  resolution: "@wordpress/ui@patch:@wordpress/ui@npm%3A0.27.0#~/.yarn/patches/@wordpress-ui-npm-0.27.0-91caa5b31d.patch::version=0.27.0&hash=21edd4"
   dependencies:
     "@base-ui/react": "npm:^1.9.0"
     "@daypicker/react": "npm:^10.0.2"
@@ -13615,7 +13615,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: d69f0a4cc8d71c30a9c3b4309d2070b0c91e15d6bb8a8afff7dbf831bf401248bd402a86559707db9f43266c1aa1e5b1ed0dfe382f067e5cb7f7ea1766484497
+  checksum: 608ceb0ea0b8f64e8b8eec83c66059d060a9cda80af9cc23368216e2403ed59d1b572ef222d753e97773ff0abf15b2a57f6265caf2ee3ed41c569654fc0c438a
   languageName: node
   linkType: hard
 
