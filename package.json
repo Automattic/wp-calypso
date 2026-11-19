@@ -430,8 +430,11 @@
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
-		"@react-spring/core@9.3.0": {
-			"built": false
+		"@playwright/browser-chromium": {
+			"built": true
+		},
+		"@playwright/browser-firefox": {
+			"built": true
 		}
 	}
 }
