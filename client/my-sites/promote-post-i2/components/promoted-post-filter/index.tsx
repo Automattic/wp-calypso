@@ -16,14 +16,21 @@ import { getAdvertisingDashboardPath, getCreditExpirationInfo } from '../../util
 
 import './style.scss';
 
+type CreditHistory = Array< { amount: number; expires: string } >;
+
 type Props = {
 	tabs: TabOption[];
 	selectedTab: TabType;
 };
 
-function CreditBalanceContent( { formattedBalance }: { formattedBalance: string } ) {
+function CreditBalanceContent( {
+	formattedBalance,
+	creditsHistory,
+}: {
+	formattedBalance: string;
+	creditsHistory: CreditHistory;
+} ) {
 	const translate = useTranslate();
-	const { data: { history: creditsHistory = [] } = {} } = useCreditBalanceQuery();
 	const [ isVisible, setIsVisible ] = useState( false );
 	const [ popoverAnchor, setPopoverAnchor ] = useState< HTMLSpanElement | null >( null );
 
@@ -82,7 +89,9 @@ function CreditBalanceContent( { formattedBalance }: { formattedBalance: string 
 export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
-	const { data: { balance: creditBalance = '0.00' } = {} } = useCreditBalanceQuery();
+	// Pass history down: a second useCreditBalanceQuery() mounting after the fetch would refetch it.
+	const { data: { balance: creditBalance = '0.00', history: creditsHistory = [] } = {} } =
+		useCreditBalanceQuery();
 
 	// Smooth horizontal scrolling on mobile views
 	const tabsRef = useRef< { [ key: string ]: HTMLSpanElement | null } >( {} );
@@ -134,7 +143,10 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 				{ parseFloat( creditBalance ) > 0 && (
 					<div className="blaze-credits-container blaze-credits-desktop-only">
 						<div className="blaze-credits-container__label">
-							<CreditBalanceContent formattedBalance={ formattedBalance } />
+							<CreditBalanceContent
+								formattedBalance={ formattedBalance }
+								creditsHistory={ creditsHistory }
+							/>
 						</div>
 					</div>
 				) }
@@ -142,7 +154,10 @@ export default function PromotePostTabBar( { tabs, selectedTab }: Props ) {
 			{ parseFloat( creditBalance ) > 0 && (
 				<div className="blaze-credits-container blaze-credits-mobile-only">
 					<div className="blaze-credits-container__label">
-						<CreditBalanceContent formattedBalance={ mobileFormattedBalance } />
+						<CreditBalanceContent
+							formattedBalance={ mobileFormattedBalance }
+							creditsHistory={ creditsHistory }
+						/>
 					</div>
 				</div>
 			) }
