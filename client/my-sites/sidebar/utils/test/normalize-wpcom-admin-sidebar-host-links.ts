@@ -24,7 +24,7 @@ describe( 'isWpcomAdminSidebarHostLink()', () => {
 		).toBe( true );
 	} );
 
-	it( 'recognizes the dashboard site page', () => {
+	it( 'recognizes dashboard links', () => {
 		expect(
 			isWpcomAdminSidebarHostLink( {
 				slug: 'hosting',
@@ -51,6 +51,15 @@ describe( 'isWpcomAdminSidebarHostLink()', () => {
 				title: 'Sites',
 				type: 'menu-item',
 				url: 'https://example.com/sites/example.wordpress.com',
+			} )
+		).toBe( false );
+
+		expect(
+			isWpcomAdminSidebarHostLink( {
+				slug: 'dashboard',
+				title: 'Dashboard',
+				type: 'menu-item',
+				url: 'https://my.wordpress.com.example.com/sites/example.wordpress.com',
 			} )
 		).toBe( false );
 	} );

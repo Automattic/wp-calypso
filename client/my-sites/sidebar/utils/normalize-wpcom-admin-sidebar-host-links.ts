@@ -12,19 +12,15 @@ const WPCOM_HOST_ROUTE_PREFIXES = [
 ];
 
 const DASHBOARD_HOST = 'my.wordpress.com';
-const DASHBOARD_HOST_ROUTE_PREFIXES = [ '/sites/' ];
 
-function isDashboardHostLink( url: unknown ): boolean {
+export function isDashboardHostLink( url: unknown ): boolean {
 	if ( typeof url !== 'string' ) {
 		return false;
 	}
 
 	try {
-		const { hostname, pathname } = new URL( url.trim() );
-		return (
-			hostname === DASHBOARD_HOST &&
-			DASHBOARD_HOST_ROUTE_PREFIXES.some( ( prefix ) => pathname.startsWith( prefix ) )
-		);
+		const { protocol, hostname } = new URL( url.trim() );
+		return protocol === 'https:' && hostname === DASHBOARD_HOST;
 	} catch {
 		return false;
 	}
