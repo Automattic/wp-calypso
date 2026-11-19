@@ -1930,7 +1930,9 @@ describe( 'ResultsPage', () => {
 			).toBeNull();
 		} );
 
-		it( 'renders the bundle card when the primary is the best-alternative suggestion and moves it to the top of the regular list', async () => {
+		// Without the swap, flowers.blog stays top-left beside a flowers.com bundle,
+		// which reads as a bundle for flowers.blog.
+		it( 'moves a best-alternative bundle primary to the top-left card and the recommended suggestion to the top of the regular list', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'flowers' },
 				suggestions: [
@@ -1951,7 +1953,7 @@ describe( 'ResultsPage', () => {
 			);
 
 			expect( await findBundleCta() ).toBeInTheDocument();
-			expect( screen.getByTitle( 'flowers.blog' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.getByTitle( 'flowers.com' ) ).toHaveTextContent( 'Recommended' );
 			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
 
 			// flowers.org is regular-only, so its role="list" ancestor is the regular list.
@@ -1959,8 +1961,9 @@ describe( 'ResultsPage', () => {
 			const regularTitles = Array.from(
 				regularList?.querySelectorAll( '[role="listitem"][title]' ) ?? []
 			).map( ( element ) => element.getAttribute( 'title' ) );
-			expect( regularTitles[ 0 ] ).toBe( 'flowers.com' );
+			expect( regularTitles[ 0 ] ).toBe( 'flowers.blog' );
 			expect( regularTitles ).toContain( 'flowers.org' );
+			expect( screen.getByTitle( 'flowers.blog' ) ).not.toHaveTextContent( 'Recommended' );
 		} );
 
 		it( 'does not offer an inline row for the displaced primary that the card already shows', async () => {

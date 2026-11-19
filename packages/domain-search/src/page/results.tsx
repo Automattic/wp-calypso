@@ -185,17 +185,33 @@ export const ResultsPage = () => {
 	// there is a Recommended card. Next to an exact-match card, it is added
 	// beside it instead. The displaced suggestion is still
 	// purchasable on its own, so once the card is visible it leads the regular list instead of
-	// leaving the page — when a .blog is Recommended, the displaced card is the
-	// .com itself. While the placeholder shows it is withheld, so it does not
+	// leaving the page. While the placeholder shows it is withheld, so it does not
 	// jump from the list back into the featured row if no bundle arrives.
 	const bundleTakesRightSlot =
 		recommendedFqdn !== undefined && ( !! visibleBundleSuggestion || showBundleSlotPlaceholder );
-	const displacedSuggestion = bundleTakesRightSlot
-		? featuredSuggestions.find( ( { reason } ) => reason === 'best-alternative' )?.suggestion
-		: undefined;
-	const renderedFeaturedSuggestions = displacedSuggestion
-		? featuredSuggestions.filter( ( { suggestion } ) => suggestion !== displacedSuggestion )
-		: featuredSuggestions;
+	const bestAlternativeSuggestion = featuredSuggestions.find(
+		( { reason } ) => reason === 'best-alternative'
+	)?.suggestion;
+	// A bundle built on Best alternative (`example.com` when `example.blog` is
+	// Recommended) must sit next to its own domain, so Best alternative becomes
+	// Recommended and the old Recommended card is the one displaced.
+	const bundlePrimaryIsBestAlternative =
+		!! visibleBundleSuggestion && bestAlternativeSuggestion?.toLowerCase() === bundlePrimaryFqdn;
+	let displacedSuggestion: string | undefined;
+	if ( bundlePrimaryIsBestAlternative ) {
+		displacedSuggestion = featuredSuggestions.find(
+			( { reason } ) => reason === 'recommended'
+		)?.suggestion;
+	} else if ( bundleTakesRightSlot ) {
+		displacedSuggestion = bestAlternativeSuggestion;
+	}
+	const renderedFeaturedSuggestions = featuredSuggestions
+		.filter( ( { suggestion } ) => suggestion !== displacedSuggestion )
+		.map( ( featured ) =>
+			bundlePrimaryIsBestAlternative && featured.reason === 'best-alternative'
+				? { ...featured, reason: 'recommended' as const }
+				: featured
+		);
 	const renderedRegularSuggestions =
 		displacedSuggestion && visibleBundleSuggestion
 			? [ displacedSuggestion, ...regularSuggestions ]
