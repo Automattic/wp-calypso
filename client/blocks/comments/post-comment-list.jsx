@@ -235,8 +235,12 @@ class PostCommentList extends Component {
 	commentIsOnDOM = ( commentId ) => !! window.document.getElementById( `comment-${ commentId }` );
 
 	scrollWhenDOMReady = () => {
-		if ( this.props.startingCommentId && ! this.hasScrolledToComment ) {
-			if ( this.commentIsOnDOM( this.props.startingCommentId ) ) {
+		const { startingCommentId, highlightedCommentIds } = this.props;
+		if ( startingCommentId && ! this.hasScrolledToComment ) {
+			const isReady = highlightedCommentIds?.length
+				? highlightedCommentIds.some( this.commentIsOnDOM )
+				: this.commentIsOnDOM( startingCommentId );
+			if ( isReady ) {
 				setTimeout( () => this.scrollToComment(), 50 );
 			}
 			setTimeout( this.scrollWhenDOMReady, 100 );

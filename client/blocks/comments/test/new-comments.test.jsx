@@ -140,4 +140,17 @@ describe( 'PostComments polling for new comments', () => {
 			).toEqual( [ 'comment-2' ] )
 		);
 	} );
+
+	it( 'scrolls to a highlighted comment when the starting one is missing', async () => {
+		Element.prototype.scrollIntoView.mockClear();
+		mockComments();
+
+		renderComments( { startingCommentId: 99, highlightedCommentIds: [ 99, 2 ] } );
+
+		await waitFor( () =>
+			expect(
+				Element.prototype.scrollIntoView.mock.contexts.map( ( element ) => element.id )
+			).toEqual( [ 'comment-2' ] )
+		);
+	} );
 } );
