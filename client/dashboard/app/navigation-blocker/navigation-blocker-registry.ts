@@ -1,22 +1,13 @@
 import { useBlocker } from '@tanstack/react-router';
-import { useSyncExternalStore } from 'react';
+import { confirmLeave } from './leave-page';
 import { navigationStore } from './navigation-blocker-store';
 
 export function NavigationBlockerRegistry() {
-	const { shouldBlock, message } = useSyncExternalStore(
-		( callback ) => navigationStore.subscribe( callback ),
-		() => navigationStore.getSnapshot()
-	);
-
+	// Both read the store when they run rather than when this renders, so `leavePage()`
+	// skips the prompt for a page load it starts in the same task.
 	useBlocker( {
-		enableBeforeUnload: shouldBlock,
-		shouldBlockFn: () => {
-			if ( ! shouldBlock ) {
-				return false;
-			}
-
-			return ! confirm( message );
-		},
+		enableBeforeUnload: () => navigationStore.shouldBlockBeforeUnload(),
+		shouldBlockFn: () => ! confirmLeave(),
 	} );
 
 	return null;

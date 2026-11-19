@@ -28,7 +28,7 @@ Mount `NavigationBlockerRegistry` at a high level in your app (for example, in y
 
 ```jsx
 // root.jsx
-import { NavigationBlockerRegistry } from 'client/dashboard/components/navigation-blocker';
+import { NavigationBlockerRegistry } from 'client/dashboard/app/navigation-blocker';
 
 const Root = () => {
 	return (
@@ -48,7 +48,7 @@ Use `NavigationBlocker` in any component that needs to prevent navigation (e.g. 
 
 ```jsx
 // form.jsx
-import { NavigationBlocker } from 'client/dashboard/components/navigation-blocker';
+import { NavigationBlocker } from 'client/dashboard/app/navigation-blocker';
 
 const Form = () => {
 	const isDirty = true;
@@ -63,3 +63,22 @@ const Form = () => {
 
 export default Form;
 ```
+
+### 3. Leave the page outside the router
+
+The router asks before in-app navigation, and the browser shows its "Leave site?" prompt before the page unloads. Code that loads another page itself, such as logging out from the omnibar, should ask before any step it can't undo, then leave without a second prompt:
+
+```js
+import { confirmLeave, leavePage } from 'client/dashboard/app/navigation-blocker';
+
+async function logout() {
+	if ( ! confirmLeave() ) {
+		return; // The user stayed to keep their changes.
+	}
+
+	const destination = await endSession();
+	leavePage( destination );
+}
+```
+
+Inside the router, `router.navigate( { href, reloadDocument: true } )` asks the same way, and `ignoreBlocker: true` skips the blockers.

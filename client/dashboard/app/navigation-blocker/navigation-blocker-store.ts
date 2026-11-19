@@ -1,48 +1,40 @@
 import { __ } from '@wordpress/i18n';
 
-type Callback = () => void;
-
 class NavigationBlockerStore {
-	private subscribers = new Set< Callback >();
 	private registry = new Map< string, string >();
-	private snapshot: { shouldBlock: boolean; message: string } | null = null;
-
-	subscribe( callback: Callback ) {
-		this.subscribers.add( callback );
-		return () => this.subscribers.delete( callback );
-	}
+	private skipBeforeUnload = false;
 
 	set( id: string, message: string = '' ) {
 		this.registry.set( id, message );
-		this.updateSnapshot();
-		this.emit();
 	}
 
 	delete( id: string ) {
 		this.registry.delete( id );
-		this.updateSnapshot();
-		this.emit();
 	}
 
 	getSnapshot() {
-		if ( ! this.snapshot ) {
-			this.updateSnapshot();
-		}
-
-		return this.snapshot!;
-	}
-
-	private updateSnapshot() {
 		const shouldBlock = this.registry.size > 0;
 		const message =
 			Array.from( this.registry.values() ).find( Boolean ) ??
 			__( 'You have unsaved changes. Are you sure you want to leave?' );
 
-		this.snapshot = { shouldBlock, message };
+		return { shouldBlock, message };
 	}
 
-	private emit() {
-		this.subscribers.forEach( ( callback ) => callback() );
+	/**
+	 * Lets the next page unload go ahead without the browser's "Leave site?" prompt.
+	 */
+	skipNextBeforeUnload() {
+		this.skipBeforeUnload = true;
+	}
+
+	shouldBlockBeforeUnload() {
+		if ( this.skipBeforeUnload ) {
+			this.skipBeforeUnload = false;
+			return false;
+		}
+
+		return this.getSnapshot().shouldBlock;
 	}
 }
 

@@ -16,6 +16,8 @@ import {
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
+// Not the barrel: the omnibar and classic Calypso import logout and don't need the router.
+import { confirmLeave, leavePage } from '../navigation-blocker/leave-page';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import { getSavedToken, markOAuthFlow } from './token-storage';
 import type { WPError } from '@automattic/api-core';
@@ -429,7 +431,16 @@ async function endWpcomSession( logoutUrl: string ): Promise< string > {
 	}
 }
 
+/**
+ * Ends the session and leaves the dashboard. Unsaved changes are confirmed before the
+ * session ends, while the user can still stay and keep them; once it has ended, nothing
+ * can save them, so leaving skips the prompt.
+ */
 export async function logout( user: User ): Promise< void > {
+	if ( ! confirmLeave() ) {
+		return;
+	}
+
 	const destination = await endSession( user );
 
 	disablePersistQueryClient();
@@ -441,7 +452,7 @@ export async function logout( user: User ): Promise< void > {
 	disablePersistence();
 	clearStore();
 
-	window.location.href = destination;
+	leavePage( destination );
 }
 
 /**
