@@ -4,10 +4,10 @@
 
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
-import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
-import { render } from '../../../test-utils';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../../../app/context';
+import { render } from '../../../../../test-utils';
 import SiteOverview from '../index';
-import type { AppConfig } from '../../../app/context';
+import type { AppConfig } from '../../../../../app/context';
 import type { Site, User } from '@automattic/api-core';
 
 const site = {
@@ -174,7 +174,6 @@ describe( '<SiteOverview>', () => {
 
 	afterEach( () => {
 		window.localStorage.clear();
-		window.history.replaceState( null, '', '/' );
 	} );
 
 	test( 'renders the overview when the user cannot read media storage', async () => {
@@ -449,9 +448,8 @@ describe( '<SiteOverview>', () => {
 		expect( screen.queryByText( 'Your site is ready' ) ).not.toBeInTheDocument();
 		unmount();
 
-		window.history.replaceState( null, '', '/?migration=completed' );
 		mockSite( migratedSite );
-		render( <SiteOverview siteSlug={ site.slug } /> );
+		render( <SiteOverview siteSlug={ site.slug } search={ { migration: 'completed' } } /> );
 		expect( await screen.findByText( 'Your site is out of storage' ) ).toBeVisible();
 		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
 	} );
