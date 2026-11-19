@@ -84,7 +84,9 @@ export const adaptReadConversationOwnComment = (
 	excerpt: row.comment.excerpt,
 	timestamp: toTimestamp( row.comment.date ),
 	author: toCommenter( row.comment.author ),
-	newCommentCount: row.new_comment_count ?? 0,
+	unreadCount: row.unread_count ?? 0,
+	unreadNoteIds: row.unread_note_ids,
+	unreadCommentIds: row.unread_comment_ids,
 } );
 
 // Adapting each page's rows once keeps rows of untouched pages identical across cache updates.
@@ -154,16 +156,19 @@ function groupByPost( comments: OwnComment[] ): OwnComment[] {
 export function useOwnComments( {
 	sort,
 	search,
+	refetchInterval,
 	enabled = true,
 }: {
 	sort: ReadConversationsSort;
 	search?: string;
+	refetchInterval?: number;
 	enabled?: boolean;
 } ) {
 	const query = useInfiniteQuery( {
 		...readConversationsCommentsQuery( { sort, search } ),
 		placeholderData: keepPreviousData,
 		enabled,
+		refetchInterval: ( query ) => ! hasLoadedMorePages( query ) && ( refetchInterval ?? false ),
 	} );
 	const { data } = query;
 	const comments = useMemo(
