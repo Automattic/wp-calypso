@@ -350,6 +350,17 @@ describe( 'create-site', () => {
 		);
 	} );
 
+	// The move needs no checkout, so a rejected cart must not skip it.
+	it( 'moves a registered domain on the Free plan when the cart add rejects', async () => {
+		const newDomain = { product_slug: 'domain_reg', meta: 'new-domain.com' };
+		mockDomainCartItems = [ registeredMove, newDomain ];
+		( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+		await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+		expect( transferDomainToSite ).toHaveBeenCalledWith( 'owned-domain.com', 555, 111 );
+	} );
+
 	// The site works without the domain, so a failed move must not stop the signup.
 	it( 'finishes the signup and records the failure when the move fails', async () => {
 		mockDomainCartItems = [ registeredMove ];

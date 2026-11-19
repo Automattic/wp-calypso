@@ -294,6 +294,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow ) && ! isImport;
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
+	// These flows have a failure branch after processing, so a rejected cart goes to the error
+	// step. The other flows that share this step do not, so the cart add stays quiet there.
+	const cartHelperOptions = { throwOnError: isOnboardingFlow( flow ) || isDomainFlow( flow ) };
 
 	async function createSiteAction() {
 		if ( isManageSiteFlow ) {
@@ -308,13 +311,14 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...( productCartItems ?? [] ),
 				...cartDomainItems,
 			];
-			if ( manageFlowCartItems.length > 0 && slug ) {
-				await addProductsToCart( slug, flow, manageFlowCartItems );
-			}
-
+			// The moves need no checkout, so they run before a cart add that can throw.
 			const signupCompleteSiteId = getSignupCompleteSiteID();
 			if ( freePlanDomainMoves.length > 0 && signupCompleteSiteId ) {
 				await moveDomainsToSite( freePlanDomainMoves, Number( signupCompleteSiteId ), flow );
+			}
+
+			if ( manageFlowCartItems.length > 0 && slug ) {
+				await addProductsToCart( slug, flow, manageFlowCartItems, cartHelperOptions );
 			}
 
 			return {
@@ -360,7 +364,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...mergedDomainCartItems,
 			];
 			if ( funnelCartItems.length > 0 ) {
-				await addProductsToCart( funnelSite.siteSlug, flow, funnelCartItems );
+				await addProductsToCart( funnelSite.siteSlug, flow, funnelCartItems, cartHelperOptions );
 			}
 
 			return {
@@ -498,13 +502,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...cartDomainItems,
 			];
 
-			if ( additionalCartItems.length > 0 ) {
-				await addProductsToCart( site.siteSlug, flow, additionalCartItems, {
-					throwOnError: isOnboardingFlow( flow ) || isDomainFlow( flow ),
-				} );
-			}
-
+			// The moves need no checkout, so they run before a cart add that can throw.
 			await moveDomainsToSite( freePlanDomainMoves, site.siteId, flow );
+
+			if ( additionalCartItems.length > 0 ) {
+				await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
+			}
 
 			// Poll for garden provisioning status if this is a garden site
 			if ( gardenName ) {
