@@ -1,4 +1,4 @@
-import { getLaunchpadDestination } from '../index';
+import { getLaunchpadDestination, getSiteSetupDestination } from '../index';
 
 describe( 'getLaunchpadDestination', () => {
 	const adminUrl = 'https://example.com/wp-admin/';
@@ -36,5 +36,31 @@ describe( 'getLaunchpadDestination', () => {
 				adminUrl
 			)
 		).toBe( 'https://example.com/wp-admin/' );
+	} );
+} );
+
+describe( 'getSiteSetupDestination', () => {
+	const adminUrl = 'https://example.com/wp-admin/';
+
+	it( 'returns Site Setup for AI Launchpad sites', () => {
+		expect( getSiteSetupDestination( { wpcom_ai_launchpad_enabled: true }, adminUrl ) ).toBe(
+			'https://example.com/wp-admin/admin.php?page=site-setup-wp-admin'
+		);
+	} );
+
+	it.each( [
+		[ 'no launchpad option', {} ],
+		[ 'no site options', undefined ],
+		[
+			'a skipped AI Launchpad',
+			{ wpcom_ai_launchpad_enabled: true, wpcom_ai_launchpad_dismissed: true },
+		],
+		[ 'no guidance', { wpcom_ai_launchpad_enabled: true, wpcom_ai_launchpad_no_guidance: true } ],
+		[
+			'a completed AI Launchpad',
+			{ wpcom_ai_launchpad_enabled: true, wpcom_ai_launchpad_completed: true },
+		],
+	] )( 'returns null for a site with %s', ( _, options ) => {
+		expect( getSiteSetupDestination( options, adminUrl ) ).toBeNull();
 	} );
 } );

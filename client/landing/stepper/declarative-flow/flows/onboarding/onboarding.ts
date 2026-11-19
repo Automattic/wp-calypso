@@ -25,7 +25,7 @@ import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	WOO_HOSTING_SOLUTIONS_REF,
 } from 'calypso/landing/stepper/constants';
-import { getLaunchpadDestination } from 'calypso/lib/ai-launchpad';
+import { getLaunchpadDestination, getSiteSetupDestination } from 'calypso/lib/ai-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -844,12 +844,23 @@ const onboarding: FlowV2< typeof initialize > = {
 							);
 							return;
 						}
+						case 'ai-tool':
 						case 'blank-site': {
 							const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 							const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 
 							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
 								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
+								return;
+							}
+
+							const siteSetupDestination =
+								setupChoice === 'ai-tool' && getSiteSetupDestination( site?.options, adminUrl );
+							if ( siteSetupDestination ) {
+								// Site Setup opens its AI tool view on `start=ai-tool`.
+								window.location.assign(
+									addQueryArgs( siteSetupDestination, { start: 'ai-tool' } )
+								);
 								return;
 							}
 
