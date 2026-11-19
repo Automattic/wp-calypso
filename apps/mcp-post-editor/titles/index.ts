@@ -98,23 +98,47 @@ function sizeToContent() {
 	document.documentElement.classList.add( 'has-mcp-post-editor-titles' );
 }
 
+// A 16px icon as inline SVG, built without markup strings.
+const CHECK = 'M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z';
+const CLOSE =
+	'M12 13.06l3.712 3.713 1.061-1.06L13.061 12l3.712-3.712-1.06-1.06L12 10.938 8.288 7.227l-1.061 1.06L10.939 12l-3.712 3.712 1.06 1.061L12 13.061z';
+function icon( path: string ) {
+	const ns = 'http://www.w3.org/2000/svg';
+	const svg = document.createElementNS( ns, 'svg' );
+	svg.setAttribute( 'class', 'mcp-post-editor-titles__icon' );
+	svg.setAttribute( 'viewBox', '0 0 24 24' );
+	svg.setAttribute( 'aria-hidden', 'true' );
+	svg.setAttribute( 'focusable', 'false' );
+	const d = document.createElementNS( ns, 'path' );
+	d.setAttribute( 'd', path );
+	svg.append( d );
+	return svg;
+}
+
 function showCard( suggestions: Suggestions ) {
 	const card = element( 'div', { className: 'mcp-post-editor-titles' } );
 	sizeToContent();
 	const header = element( 'div', { className: 'mcp-post-editor-titles__header' } );
-	const heading = element( 'p', {
-		className: 'mcp-post-editor-titles__heading',
-		textContent: suggestions.postTitle
-			? `Title ideas for “${ suggestions.postTitle }”`
-			: 'Title ideas',
-	} );
+	const heading = element( 'div', { className: 'mcp-post-editor-titles__heading' } );
+	heading.append(
+		element( 'p', { className: 'mcp-post-editor-titles__title', textContent: 'Title ideas' } )
+	);
+	if ( suggestions.postTitle ) {
+		heading.append(
+			element( 'p', {
+				className: 'mcp-post-editor-titles__subtitle',
+				textContent: `for “${ suggestions.postTitle }”`,
+				title: suggestions.postTitle,
+			} )
+		);
+	}
 	const close = element( 'button', {
 		type: 'button',
 		className: 'mcp-post-editor-titles__close',
-		textContent: '×',
 		onclick: () => root.replaceChildren(),
 	} );
 	close.setAttribute( 'aria-label', 'Hide the title ideas' );
+	close.append( icon( CLOSE ) );
 	header.append( heading, close );
 
 	const list = element( 'div', { className: 'mcp-post-editor-titles__list' } );
@@ -122,25 +146,26 @@ function showCard( suggestions: Suggestions ) {
 	list.setAttribute( 'aria-label', 'Suggested titles' );
 	const message = element( 'p', { className: 'mcp-post-editor-titles__message' } );
 	message.setAttribute( 'role', 'status' );
-	const pills = suggestions.titles.map( ( title ) =>
+	const options = suggestions.titles.map( ( title ) =>
 		element( 'button', {
 			type: 'button',
-			className: 'mcp-post-editor-titles__pill',
+			className: 'mcp-post-editor-titles__option',
 			textContent: title,
 			onclick: () => pick( title ),
 		} )
 	);
-	list.append( ...pills );
+	list.append( ...options );
 	card.append( header, list, message );
 	root.replaceChildren( card );
 
 	const setMessage = ( text: string, isError = false ) => {
 		message.textContent = text;
 		message.classList.toggle( 'is-error', isError );
+		message.classList.remove( 'is-success' );
 	};
 
 	async function pick( title: string ) {
-		pills.forEach( ( pill ) => ( pill.disabled = true ) );
+		options.forEach( ( option ) => ( option.disabled = true ) );
 		setMessage( 'Updating the title…' );
 		let failure: string;
 		try {
@@ -154,14 +179,17 @@ function showCard( suggestions: Suggestions ) {
 				},
 			} );
 			if ( ! result.isError ) {
-				pills.forEach( ( pill ) => {
-					if ( pill.textContent === title ) {
-						pill.classList.add( 'is-chosen' );
-						pill.setAttribute( 'aria-pressed', 'true' );
+				options.forEach( ( option ) => {
+					if ( option.textContent === title ) {
+						option.classList.add( 'is-chosen' );
+						option.setAttribute( 'aria-pressed', 'true' );
+						option.prepend( icon( CHECK ) );
 					}
 				} );
 				// The title is in the editing session, and on the site once the user saves.
-				setMessage( 'Title set in the editor' );
+				setMessage( 'Title set in the editor. Save it from the editor panel.' );
+				message.classList.add( 'is-success' );
+				message.prepend( icon( CHECK ) );
 				return;
 			}
 			failure = `Couldn’t set the title: ${ resultText( result ) }`;
@@ -171,7 +199,7 @@ function showCard( suggestions: Suggestions ) {
 				? 'Can’t set the title from here. Ask in the chat instead.'
 				: `Couldn’t set the title: ${ errorMessage( e ) }`;
 		}
-		pills.forEach( ( pill ) => ( pill.disabled = false ) );
+		options.forEach( ( option ) => ( option.disabled = false ) );
 		setMessage( failure, true );
 	}
 }

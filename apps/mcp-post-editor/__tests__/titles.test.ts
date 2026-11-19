@@ -32,8 +32,8 @@ const RESULT = {
 	titles: [ 'First', 'Second <img src=x onerror=alert(1)>', 'Third' ],
 };
 
-const pills = () =>
-	Array.from( document.querySelectorAll< HTMLButtonElement >( '.mcp-post-editor-titles__pill' ) );
+const rows = () =>
+	Array.from( document.querySelectorAll< HTMLButtonElement >( '.mcp-post-editor-titles__option' ) );
 const message = () => document.querySelector( '.mcp-post-editor-titles__message' );
 
 async function showCard( result: unknown = { structuredContent: RESULT } ) {
@@ -48,19 +48,22 @@ describe( 'the title suggestions card', () => {
 		host.callServerTool = vi.fn();
 	} );
 
-	it( 'shows the post title and a pill for each title, as text', async () => {
+	it( 'shows the post title and a row for each title, as text', async () => {
 		await showCard();
 
-		expect( document.querySelector( '.mcp-post-editor-titles__heading' )?.textContent ).toBe(
-			'Title ideas for “Old <b>title</b>”'
+		expect( document.querySelector( '.mcp-post-editor-titles__title' )?.textContent ).toBe(
+			'Title ideas'
 		);
-		expect( pills().map( ( pill ) => pill.textContent ) ).toEqual( RESULT.titles );
+		expect( document.querySelector( '.mcp-post-editor-titles__subtitle' )?.textContent ).toBe(
+			'for “Old <b>title</b>”'
+		);
+		expect( rows().map( ( row ) => row.textContent ) ).toEqual( RESULT.titles );
 		expect( document.querySelector( 'img, b' ) ).toBeNull();
 	} );
 
 	it( 'reads the result from its text when it has no structured content', async () => {
 		await showCard( { content: [ { type: 'text', text: JSON.stringify( RESULT ) } ] } );
-		expect( pills() ).toHaveLength( 3 );
+		expect( rows() ).toHaveLength( 3 );
 	} );
 
 	it( 'takes numeric string ids, and sends the post id as a number', async () => {
@@ -69,53 +72,57 @@ describe( 'the title suggestions card', () => {
 			structuredContent: { ...RESULT, site: { id: '7' }, post: { id: '42', title: 'Old' } },
 		} );
 
-		pills()[ 0 ].click();
+		rows()[ 0 ].click();
 		expect( host.callServerTool ).toHaveBeenCalledWith( {
 			name: 'wpcom-post-editor-set-title',
 			arguments: { wpcom_site: '7', post_id: 42, title: 'First', suggestions_id: 's1' },
 		} );
 	} );
 
-	it( 'sets the clicked title, then marks it and disables the pills', async () => {
+	it( 'sets the clicked title, then marks it and disables the rows', async () => {
 		host.callServerTool.mockResolvedValue( { content: [], structuredContent: { version: 6 } } );
 		await showCard();
 
-		pills()[ 2 ].click();
+		rows()[ 2 ].click();
 		expect( host.callServerTool ).toHaveBeenCalledWith( {
 			name: 'wpcom-post-editor-set-title',
 			arguments: { wpcom_site: '7', post_id: 42, title: 'Third', suggestions_id: 's1' },
 		} );
-		await vi.waitFor( () => expect( message()?.textContent ).toBe( 'Title set in the editor' ) );
-		expect( pills().every( ( pill ) => pill.disabled ) ).toBe( true );
-		expect( pills()[ 2 ].classList.contains( 'is-chosen' ) ).toBe( true );
+		await vi.waitFor( () =>
+			expect( message()?.textContent ).toBe(
+				'Title set in the editor. Save it from the editor panel.'
+			)
+		);
+		expect( rows().every( ( row ) => row.disabled ) ).toBe( true );
+		expect( rows()[ 2 ].classList.contains( 'is-chosen' ) ).toBe( true );
 	} );
 
-	it( 'shows the tool’s error and keeps the pills usable', async () => {
+	it( 'shows the tool’s error and keeps the rows usable', async () => {
 		host.callServerTool.mockResolvedValue( {
 			isError: true,
 			content: [ { type: 'text', text: 'No session.' } ],
 		} );
 		await showCard();
 
-		pills()[ 0 ].click();
+		rows()[ 0 ].click();
 		await vi.waitFor( () =>
 			expect( message()?.textContent ).toBe( 'Couldn’t set the title: No session.' )
 		);
 		expect( message()?.classList.contains( 'is-error' ) ).toBe( true );
-		expect( pills().some( ( pill ) => pill.disabled ) ).toBe( false );
+		expect( rows().some( ( row ) => row.disabled ) ).toBe( false );
 	} );
 
 	it( 'says it can’t set the title when the host can’t call tools', async () => {
 		host.callServerTool.mockRejectedValue( new Error( 'IPC not available for MCP tool call' ) );
 		await showCard();
 
-		pills()[ 0 ].click();
+		rows()[ 0 ].click();
 		await vi.waitFor( () =>
 			expect( message()?.textContent ).toBe(
 				'Can’t set the title from here. Ask in the chat instead.'
 			)
 		);
-		expect( pills().some( ( pill ) => pill.disabled ) ).toBe( false );
+		expect( rows().some( ( row ) => row.disabled ) ).toBe( false );
 	} );
 
 	it( 'hides when closed', async () => {
