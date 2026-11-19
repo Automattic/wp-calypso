@@ -214,6 +214,7 @@ function SurveyContent( {
 				onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 				plans={ plans }
 				purchase={ purchase }
+				recordEvent={ recordEvent }
 				refundAmount={ refundAmount }
 				upsell={ upsell ?? '' }
 			/>
@@ -335,7 +336,6 @@ function StepButtons( {
 			( getSolutionsForReason( questionOneText ?? '' )?.length ?? 0 ) > 0
 		) {
 			recordEvent?.( 'calypso_purchases_cancel_options_eligible', {
-				purchase_id: purchase.ID,
 				cancellation_reason: questionOneText,
 			} );
 		}

@@ -466,47 +466,49 @@ describe( '<CancelPurchaseForm />', () => {
 	} );
 
 	describe( 'offer clicks', () => {
-		test( 'records the purchase ID with the built-by click', async () => {
-			const user = userEvent.setup();
-			const { recordTracksEvent } = render(
-				<CancelPurchaseForm { ...upsellStepProps } upsell="built-by" />
-			);
-
-			await user.click( screen.getByRole( 'button', { name: 'Get help building my site' } ) );
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
+		test.each( [
+			[
+				'built-by',
+				'button',
+				'Get help building my site',
 				'calypso_cancellation_upsell_step_buily_by_click',
-				{ purchase_id: 123 }
-			);
-		} );
-
-		test( 'records the purchase ID with the upgrade click', async () => {
-			const user = userEvent.setup();
-			const { recordTracksEvent } = render(
-				<CancelPurchaseForm { ...upsellStepProps } upsell="upgrade-atomic" />
-			);
-
-			await user.click( screen.getByRole( 'link', { name: /I want the/ } ) );
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
+			],
+			[
+				'upgrade-atomic',
+				'link',
+				/I want the/,
 				'calypso_cancellation_upgrade_at_step_upgrade_click',
-				{ purchase_id: 123 }
+			],
+		] as const )( 'sends the %s click to recordEvent', async ( upsell, role, name, event ) => {
+			const user = userEvent.setup();
+			const recordEvent = vi.fn();
+			render(
+				<CancelPurchaseForm { ...upsellStepProps } upsell={ upsell } recordEvent={ recordEvent } />
 			);
+
+			await user.click( screen.getByRole( role, { name } ) );
+
+			expect( recordEvent ).toHaveBeenCalledWith( event );
 		} );
 
-		test( 'records the purchase ID and upsell type with the live chat click', async () => {
+		test( 'sends the live chat click and its upsell type to recordEvent', async () => {
 			const user = userEvent.setup();
-			const { recordTracksEvent } = render(
-				<CancelPurchaseForm { ...upsellStepProps } upsell="live-chat:plans" />
+			const recordEvent = vi.fn();
+			render(
+				<CancelPurchaseForm
+					{ ...upsellStepProps }
+					upsell="live-chat:plans"
+					recordEvent={ recordEvent }
+				/>
 			);
 
 			await user.click(
 				screen.getByRole( 'button', { name: 'Connect with a Happiness Engineer' } )
 			);
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
+			expect( recordEvent ).toHaveBeenCalledWith(
 				'calypso_cancellation_upsell_step_live_chat_click',
-				{ type: 'live-chat:plans', purchase_id: 123 }
+				{ type: 'live-chat:plans' }
 			);
 		} );
 	} );
@@ -544,7 +546,6 @@ describe( '<CancelPurchaseForm />', () => {
 
 			expect( recordEvent ).toHaveBeenCalledTimes( 1 );
 			expect( recordEvent ).toHaveBeenCalledWith( EXPOSURE, {
-				purchase_id: 123,
 				cancellation_reason: 'tooExpensive',
 			} );
 			expect( clickNext ).toHaveBeenCalledTimes( 1 );
@@ -566,7 +567,6 @@ describe( '<CancelPurchaseForm />', () => {
 			expect( clickNext ).toHaveBeenCalledTimes( 1 );
 			expect( recordEvent ).toHaveBeenCalledTimes( 1 );
 			expect( recordEvent ).toHaveBeenCalledWith( EXPOSURE, {
-				purchase_id: 123,
 				cancellation_reason: 'wrongPlan',
 			} );
 		} );

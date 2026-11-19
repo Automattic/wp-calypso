@@ -135,6 +135,7 @@ const personalAnnual: Partial< Purchase > = {
 	product_id: 1009,
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
+	is_refundable: false,
 };
 
 const personalAnnualPlan = {
@@ -224,6 +225,24 @@ describe( '<CancelPurchase />', () => {
 			);
 		} );
 
+		test( 'records the purchase ID with the form start and reason pick events', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderPersonalFlow();
+
+			await answerTooExpensive( user );
+
+			expect( await findOptions() ).toBeVisible();
+			const purchaseProps = { purchase_id: 123, is_refundable: false };
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_purchases_cancel_form_start',
+				expect.objectContaining( purchaseProps )
+			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_purchases_cancel_form_select_radio_option',
+				expect.objectContaining( { ...purchaseProps, option: 'radio_1_2', value: 'tooExpensive' } )
+			);
+		} );
+
 		test( 'records the exposure with the purchase and flow details when the reason has options', async () => {
 			const user = userEvent.setup();
 			const { recordTracksEvent } = renderPersonalFlow();
@@ -240,6 +259,7 @@ describe( '<CancelPurchase />', () => {
 						cancellation_flow: 'remove',
 						product_slug: 'personal-bundle',
 						is_atomic: false,
+						is_refundable: false,
 					},
 				],
 			] );
@@ -284,6 +304,7 @@ describe( '<CancelPurchase />', () => {
 						cancellation_flow: 'remove',
 						product_slug: 'personal-bundle',
 						is_atomic: false,
+						is_refundable: false,
 					},
 				],
 			] );
