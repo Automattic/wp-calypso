@@ -67,9 +67,7 @@ up to six series or slices.
   chart library. A load that fails twice shows the surface's `fallback` until the page reloads.
 - **Theming:** the axes, grid, legend and tooltips follow the surface's colors in light and dark
   mode. The series colors are fixed, each with at least 3:1 contrast on white and on #1e1e1e.
-  Tooltips render in a portal on the page, outside the surface, so they copy its theme, stay within
-  its edges, or a modal's for a chart in one, and need a `z-index` above your UI
-  ([Rendering](#rendering)).
+  Tooltips render inside the chart and stay within the nearest scrolling area, such as the chat.
 - **Language:** dates follow the page's language (`<html lang>`), and numbers
   `@automattic/number-formatters`' locale: the one the host sets, else WordPress's user locale,
   else the browser's.
@@ -203,9 +201,8 @@ content. Its second argument is the owner of the rejected message's batch or of 
 - `className` adds classes to the surface and its modal overlay ([Theming](#theming)).
 
 Import `@automattic/ai-ui-renderer/style.scss` (Sass) with the renderer, in the same lazy
-`import()` when you load it on demand, and give the modal overlay (`ai-ui-renderer__modal`), chart
-tooltips (`.visx-tooltip:has( .ai-ui-renderer__chart-tooltip )`) and the points they mark
-(`.visx-tooltip-glyph`) a `z-index` above your UI, since they render outside the surface.
+`import()` when you load it on demand, and give the modal overlay (`ai-ui-renderer__modal`) a
+`z-index` above your UI, since it renders outside the surface.
 WordPress UI components load their own styles.
 
 ### Action modes
@@ -272,8 +269,7 @@ An unset primary or input token, or its `on-` pair, keeps the host's WordPress c
 token gets that palette default directly. The input, surface and border defaults follow the light
 or dark mode. A custom `--a2ui-color-primary` without its own `-hover` and `-dark` gets them derived
 from it, as A2UI does.
-The modal and chart tooltips render outside the host, so they copy their surface's theme when they
-open.
+The modal renders outside the host, so it copies its surface's theme when it opens.
 
 The renderer derives its own colors from those, which follow the light or dark mode:
 

@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Show the stroke-drawn `caution` icon in the logo generator upgrade nudge, since `@wordpress/icons` 21 removes `cautionFilled`.
 - Remove the optional `@babel/runtime` peer dependency. The built package doesn't use it.
 - Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 

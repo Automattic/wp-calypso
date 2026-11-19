@@ -1,20 +1,19 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useConstrainedTabbing } from '@wordpress/compose';
 import clsx from 'clsx';
-import { useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
+import { useCallback, useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
 import { modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
 import { store } from '../panel/state';
-import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { interceptLinks } from '../panel/utils/link-interceptor';
-import { getClient, initClient } from './client';
-import { AppProvider } from './context';
+import { getClient, initClient, showNotes } from './client';
+import { AppProvider, useOpenFullView, type FullView } from './context';
 import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
@@ -64,6 +63,14 @@ const NotificationContent = ( {
 	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
 	const isDetailOpen = selectedNoteId !== undefined;
 
+	const changeFilter = useCallback( ( name: FilterName ) => {
+		setFilterName( name );
+		// Clear the selection — a note from the previous filter would
+		// otherwise stay rendered in the detail pane while the list
+		// switches to the new filter's notes.
+		setSelectedNoteId( undefined );
+	}, [] );
+
 	// Hold the last selected note id so it keeps rendering through the
 	// slide-out animation, then clear it on transitionend.
 	const [ exitingNoteId, setExitingNoteId ] = useState< string | undefined >( undefined );
@@ -87,6 +94,7 @@ const NotificationContent = ( {
 	};
 
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
+	const openFullView = useOpenFullView( { filterName, noteId: selectedNoteId } );
 	const constrainedTabbingRef = useConstrainedTabbing();
 
 	return (
@@ -117,6 +125,7 @@ const NotificationContent = ( {
 						noteId={ displayedNoteId }
 						setSelectedNoteId={ setSelectedNoteId }
 						noteNavigation={ noteNavigation }
+						onOpenFullView={ openFullView }
 					/>
 				</ErrorBoundary>
 			</div>
@@ -124,7 +133,7 @@ const NotificationContent = ( {
 				<NotePanel
 					isDismissible={ isDismissible }
 					filterName={ filterName }
-					setFilterName={ setFilterName }
+					setFilterName={ changeFilter }
 					selectedNoteId={ selectedNoteId }
 					setSelectedNoteId={ setSelectedNoteId }
 				/>
@@ -138,6 +147,8 @@ const NotificationApp = ( {
 	isDismissible = false,
 	constrainTabbing = false,
 	isViewSettingsEnabled = false,
+	isMarkAsUnreadEnabled = false,
+	onOpenFullView,
 	actionHandlers = {},
 	wpcom,
 }: {
@@ -145,6 +156,8 @@ const NotificationApp = ( {
 	isDismissible?: boolean;
 	constrainTabbing?: boolean;
 	isViewSettingsEnabled?: boolean;
+	isMarkAsUnreadEnabled?: boolean;
+	onOpenFullView?: ( view: FullView ) => void;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
@@ -155,13 +168,8 @@ const NotificationApp = ( {
 		setIsReady( true );
 
 		store.dispatch( { type: 'APP_IS_READY' } );
-		store.dispatch( { type: SET_IS_SHOWING, isShowing: true } );
-		getClient()?.setVisibility( { isShowing: true, isVisible: ! document.hidden } );
 
-		return () => {
-			store.dispatch( { type: SET_IS_SHOWING, isShowing: false } );
-			getClient()?.setVisibility( { isShowing: false, isVisible: ! document.hidden } );
-		};
+		return showNotes();
 	}, [ wpcom, isViewSettingsEnabled ] );
 
 	useEffect( () => {
@@ -240,6 +248,8 @@ const NotificationApp = ( {
 					client={ getClient() }
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
+					isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+					onOpenFullView={ onOpenFullView }
 				>
 					<NotificationContent
 						isDismissible={ isDismissible }

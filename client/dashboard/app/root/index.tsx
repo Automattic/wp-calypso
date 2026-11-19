@@ -27,8 +27,10 @@ import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
 import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
+import { getInboxLocation, type NotificationsPanelView } from '../notifications/panel-view';
 import { useOmnibarEvent } from '../omnibar/events';
 import { useSyncOmnibarSite } from '../omnibar/site';
+import { RenewalSuccessFlashMessage } from '../renewal-success-flash-message';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
@@ -106,6 +108,14 @@ function Root() {
 			isInitialLoad: ! state.resolvedLocation,
 		} ),
 	} );
+
+	const isNotificationsInboxShown = useRouterState( {
+		select: ( state ) => state.matches.some( ( match ) => match.routeId === '/notifications' ),
+	} );
+	const openNotificationsInbox = useCallback(
+		( view: NotificationsPanelView ) => router.navigate( getInboxLocation( view ) ),
+		[ router ]
+	);
 
 	const [ navigationTime, setNavigationTime ] = useState< 'none' | 'slow' | 'veryslow' >( 'none' );
 	const isSlowNavigation = isNavigating && navigationTime === 'slow';
@@ -189,11 +199,20 @@ function Root() {
 			{ ( isInitialLoad || isVerySlowNavigation ) && <LoadingLogo className="wpcom-site__logo" /> }
 			{ renderBody() }
 			{ supports.commandPalette && <CommandPalette /> }
-			{ supports.notifications && <Notifications anchor /> }
+			{ supports.notifications && (
+				<Notifications
+					anchor
+					isInboxShown={ isNotificationsInboxShown }
+					onOpenInbox={
+						isEnabled( 'dashboard/notifications-inbox' ) ? openNotificationsInbox : undefined
+					}
+				/>
+			) }
 			{ supports.help && <HelpCenter /> }
 			<AgentsManagerLoader pathname={ pathname } />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
+			<RenewalSuccessFlashMessage />
 			{ isResurrectedWelcomeModalEnabled && (
 				<ResurrectedWelcomeModalGate onEligibilityResolved={ handleResurrectedModalEligibility } />
 			) }

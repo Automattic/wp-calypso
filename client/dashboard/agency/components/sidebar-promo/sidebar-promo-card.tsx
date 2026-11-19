@@ -22,8 +22,10 @@ export interface SidebarPromoCardProps {
 	className?: string;
 	/** The sidebar behind the card, so a promo can adjust colors that would vanish on it. */
 	tone?: SidebarPromoTone;
-	/** Shown in a 32px tile, sized to hold a 20px icon. */
-	icon: ReactNode;
+	/** Shown in a 32px tile, sized to hold a 20px icon. Without one, no tile is rendered. */
+	icon?: ReactNode;
+	/** Full-width artwork above the text. Gives the card a gray surface of its own. */
+	media?: ReactNode;
 	title: string;
 	/** A short label beside the title, such as "New". */
 	badge?: string;
@@ -47,6 +49,7 @@ export default function SidebarPromoCard( {
 	className,
 	tone = 'light',
 	icon,
+	media,
 	title,
 	badge,
 	description,
@@ -60,13 +63,17 @@ export default function SidebarPromoCard( {
 
 	return (
 		<a
-			className={ clsx( 'a4a-sidebar-promo-card', className, { 'is-tone-dark': tone === 'dark' } ) }
+			className={ clsx( 'a4a-sidebar-promo-card', className, {
+				'is-tone-dark': tone === 'dark',
+				'is-card': !! media,
+			} ) }
 			href={ cta.href }
 			{ ...( isExternal && { target: '_blank', rel: 'noreferrer' } ) }
 			onClick={ onClick }
 		>
+			{ media && <span className="a4a-sidebar-promo-card__media">{ media }</span> }
 			<HStack as="span" spacing={ 3 } alignment="topLeft">
-				<span className="a4a-sidebar-promo-card__icon">{ icon }</span>
+				{ icon && <span className="a4a-sidebar-promo-card__icon">{ icon }</span> }
 				<VStack as="span" spacing={ 1 }>
 					<HStack as="span" spacing={ 2 } justify="flex-start">
 						<Text color="inherit" size={ 13 } weight={ 500 } lineHeight="20px">

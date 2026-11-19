@@ -24,6 +24,46 @@ describe( 'isWpcomAdminSidebarHostLink()', () => {
 		).toBe( true );
 	} );
 
+	it( 'recognizes dashboard links', () => {
+		expect(
+			isWpcomAdminSidebarHostLink( {
+				slug: 'hosting',
+				title: 'Hosting',
+				type: 'menu-item',
+				url: 'https://my.wordpress.com/sites/example.wordpress.com',
+			} )
+		).toBe( true );
+	} );
+
+	it( 'does not treat a /sites/ path on another host as a WordPress.com admin shell path', () => {
+		expect(
+			isWpcomAdminSidebarHostLink( {
+				slug: 'sites',
+				title: 'Sites',
+				type: 'menu-item',
+				url: '/sites/example.wordpress.com',
+			} )
+		).toBe( false );
+
+		expect(
+			isWpcomAdminSidebarHostLink( {
+				slug: 'sites',
+				title: 'Sites',
+				type: 'menu-item',
+				url: 'https://example.com/sites/example.wordpress.com',
+			} )
+		).toBe( false );
+
+		expect(
+			isWpcomAdminSidebarHostLink( {
+				slug: 'dashboard',
+				title: 'Dashboard',
+				type: 'menu-item',
+				url: 'https://my.wordpress.com.example.com/sites/example.wordpress.com',
+			} )
+		).toBe( false );
+	} );
+
 	it( 'recognizes the legacy Upgrades item id', () => {
 		expect(
 			isWpcomAdminSidebarHostLink( {
@@ -79,5 +119,25 @@ describe( 'normalizeWpcomAdminSidebarHostLinks()', () => {
 			group_id: 'plugins',
 			reassignable: true,
 		} );
+	} );
+
+	it( 'keeps the Hosting item pinned with both its old and new URLs', () => {
+		const menuItems = normalizeWpcomAdminSidebarHostLinks(
+			[
+				'https://wordpress.com/overview/example.wordpress.com',
+				'https://my.wordpress.com/sites/example.wordpress.com',
+			].map( ( url ) => ( {
+				slug: 'hosting',
+				title: 'Hosting',
+				type: 'menu-item',
+				url,
+				group_id: 'plugins',
+				reassignable: true,
+			} ) )
+		);
+
+		for ( const item of menuItems ) {
+			expect( item ).toMatchObject( { group_id: null, reassignable: false } );
+		}
 	} );
 } );

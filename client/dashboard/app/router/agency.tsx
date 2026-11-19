@@ -43,6 +43,7 @@ import {
 	siteSftpUsersQuery,
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
+	siteWordPressPrereleaseQuery,
 	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
 	referralsQuery,
@@ -91,7 +92,6 @@ import { isPressableSite } from '../../agency/sites/lib';
 import { isTeamMemberWithoutSiteAccess } from '../../agency/sites/site/access';
 import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
 import {
-	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
@@ -2024,12 +2024,16 @@ const agencySiteSettingsWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
+		if ( canSwitchWordPressVersion( site ) ) {
 			// Fire-and-forget the track versions so a slow site or wp.org
 			// doesn't hang navigation; the component suspends on them via
 			// useSuspenseQuery and falls back to the route's Suspense boundary.
 			queryClient.prefetchQuery( siteWordPressTrackVersionsQuery( site.ID ) );
-			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
+				// Settles even if the request fails, so the page then shows the generic beta notice.
+				queryClient.prefetchQuery( siteWordPressPrereleaseQuery( site.ID ) ),
+			] );
 		}
 	},
 } ).lazy( () =>

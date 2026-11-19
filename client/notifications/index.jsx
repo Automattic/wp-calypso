@@ -54,6 +54,7 @@ const getIsVisible = () => {
 const isDesktop = config.isEnabled( 'desktop' );
 
 const isRedesignEnabled = config.isEnabled( 'notifications/redesign' );
+const isMarkAsUnreadEnabled = config.isEnabled( 'notifications/mark-as-unread' );
 
 let notificationAppModule;
 
@@ -147,6 +148,7 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
+						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -189,6 +191,7 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
+						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>

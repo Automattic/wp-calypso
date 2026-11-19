@@ -11,6 +11,8 @@ import PageLayout from '../../../components/page-layout';
 import { Text } from '../../../components/text';
 import { BackupFileBrowserProvider } from '../../../sites/backups/backup-file-browser-provider';
 
+import '../../../sites/backups/style.scss';
+
 export default function AgencySiteBackups() {
 	const { siteSlug } = agencySiteRoute.useParams();
 	const { data: site } = useSuspenseQuery( agencySiteQuery( siteSlug ) );

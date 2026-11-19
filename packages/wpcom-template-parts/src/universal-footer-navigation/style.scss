@@ -950,7 +950,7 @@
 		padding: 0;
 	}
 
-	/* Mobile accordion headings follow the 26px line and 20px gap. */
+	/* Mobile accordion: 26px lines, 22px around headings, 10px between links. */
 	@media ( max-width: 1151px ) {
 		.lp-flex--justify-center {
 			justify-content: flex-start;
@@ -961,7 +961,16 @@
 		}
 
 		.lp-grid--type-footer.lp-grid--gutter-y-4 {
-			grid-row-gap: 20px;
+			grid-row-gap: 22px;
+		}
+
+		.lp-footer-stack__content {
+			padding-top: 22px;
+			padding-bottom: 0;
+		}
+
+		.lp-footer-stack__content li + li {
+			margin-top: 10px;
 		}
 	}
 
@@ -992,7 +1001,7 @@
 		}
 	}
 
-	/* Figma type ramp: headers 18/26 medium (16/26 semibold from L), links 14/28, 1% tracking. */
+	/* Figma type ramp: headers 18/26 medium (16/26 semibold from L), links 16/26 (14/28 from L), 1% tracking. */
 	.lp-footer-stack__summary__content.lp-bold.lp-bold {
 		font-weight: 500;
 		font-size: 18px;
@@ -1007,9 +1016,14 @@
 
 	.lp-footer-stack__content__item {
 		padding: 0;
-		font-size: 14px;
-		line-height: 28px;
+		font-size: 16px;
+		line-height: 26px;
 		letter-spacing: 0.01em;
+
+		@media ( min-width: 1152px ) {
+			font-size: 14px;
+			line-height: 28px;
+		}
 	}
 
 	.lp-language-picker__chevron {
@@ -1448,11 +1462,11 @@
 
 		/* Columns hug their content with 150px gaps; the gap tracks shrink evenly when space runs out. */
 		.lp-grid--type-footer.lp-grid--gutter-y-4 {
-			grid-template-columns: repeat( 4, max-content minmax( 0, 150px ) ) max-content;
+			grid-template-columns: repeat( 5, max-content minmax( 0, 150px ) ) max-content;
 			grid-column-gap: 0;
 			justify-content: start;
 
-			@for $i from 1 through 5 {
+			@for $i from 1 through 6 {
 				> :nth-child( #{$i} ) {
 					grid-column: #{$i * 2 - 1};
 				}
@@ -1496,6 +1510,7 @@
 	:is( a:active .lp-link-chevron-external.lp-link-chevron-external )::after {
 		font-size: 12px;
 		font-weight: 400;
+		line-height: 1; // Keeps arrow rows the same height as the others.
 		position: relative;
 		margin-right: 0;
 		top: -2px;

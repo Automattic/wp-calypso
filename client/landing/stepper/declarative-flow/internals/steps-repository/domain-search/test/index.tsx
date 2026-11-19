@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	DOMAIN_FLOW,
@@ -17,6 +18,10 @@ import DomainSearchStep from '../index';
 import type { ReactNode } from 'react';
 
 jest.mock( '../../../../../hooks/use-site', () => ( { useSite: jest.fn() } ) );
+jest.mock( '@automattic/calypso-config', () => {
+	const actual = jest.requireActual( '@automattic/calypso-config' );
+	return Object.assign( jest.fn( actual ), actual, { isEnabled: jest.fn( actual.isEnabled ) } );
+} );
 jest.mock( 'calypso/state/dashboard/selectors', () => ( { hasDashboardOptIn: () => false } ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( '../results-experiment', () => ( {
@@ -26,10 +31,12 @@ jest.mock( '../results-experiment', () => ( {
 jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: ( {
 		isFirstDomainFreeForFirstYear,
+		config,
 		slots,
 		events,
 	}: {
 		isFirstDomainFreeForFirstYear: boolean;
+		config: { showNamePulseSearch?: boolean };
 		slots: { BeforeResults: () => ReactNode; BeforeFullCartItems: () => ReactNode };
 		events: {
 			onSearchNoticeSkipClick?: ( domainName: string, status: DomainAvailabilityStatus ) => void;
@@ -37,6 +44,7 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	} ) => (
 		<div>
 			{ isFirstDomainFreeForFirstYear && <span>first year free pricing</span> }
+			<span>{ config.showNamePulseSearch ? 'name pulse results' : 'classic results' }</span>
 			<slots.BeforeResults />
 			<slots.BeforeFullCartItems />
 			{ events.onSearchNoticeSkipClick && (
@@ -97,6 +105,45 @@ describe( 'DomainSearchStep free domain promo', () => {
 
 		expect( screen.queryByText( 'promo banner' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'promo text' ) ).not.toBeInTheDocument();
+	} );
+} );
+
+describe( 'DomainSearchStep Name Pulse flag', () => {
+	const { isEnabled: actualIsEnabled } = jest.requireActual( '@automattic/calypso-config' );
+	const setFlag = ( on: boolean ) =>
+		jest
+			.mocked( isEnabled )
+			.mockImplementation( ( name: string ) =>
+				name === 'domain-search/name-pulse-onboarding' ? on : actualIsEnabled( name )
+			);
+
+	beforeEach( () => {
+		jest.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
+	} );
+
+	afterEach( () => {
+		jest.mocked( isEnabled ).mockImplementation( actualIsEnabled );
+	} );
+
+	it( 'keeps the classic results in onboarding while the flag is off', () => {
+		setFlag( false );
+		renderDomainSearch( ONBOARDING_FLOW );
+
+		expect( screen.getByText( 'classic results' ) ).toBeVisible();
+	} );
+
+	it( 'shows Name Pulse in onboarding when the flag is on', () => {
+		setFlag( true );
+		renderDomainSearch( ONBOARDING_FLOW );
+
+		expect( screen.getByText( 'name pulse results' ) ).toBeVisible();
+	} );
+
+	it( 'keeps the classic results in other flows when the flag is on', () => {
+		setFlag( true );
+		renderDomainSearch( LAUNCH_SITE_FLOW );
+
+		expect( screen.getByText( 'classic results' ) ).toBeVisible();
 	} );
 } );
 

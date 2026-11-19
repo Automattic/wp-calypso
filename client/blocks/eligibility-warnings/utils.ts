@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import type { EligibilityContext } from './index';
 import type { EligibilityHold } from 'calypso/state/automated-transfer/constants';
 
@@ -21,8 +20,5 @@ export function shouldUpsellPersonalPlan(
 	if ( context === 'themes' && isMarketplace ) {
 		return true;
 	}
-	return (
-		( context === 'hosting' || context === 'hosting-features' ) &&
-		isEnabled( 'hosting/dev-tools-all-paid-plans' )
-	);
+	return context === 'hosting' || context === 'hosting-features';
 }

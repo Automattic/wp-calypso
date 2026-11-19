@@ -14,7 +14,7 @@ export interface FooterLink {
 }
 
 export interface FooterColumn {
-	id: 'products' | 'features' | 'resources' | 'help' | 'support' | 'company';
+	id: 'products' | 'ai' | 'features' | 'resources' | 'help' | 'support' | 'company';
 	title: string;
 	links: FooterLink[];
 }
@@ -217,8 +217,7 @@ export function getFooterColumns( {
 				{
 					slug: 'press',
 					label: __( 'Press', __i18n_text_domain__ ),
-					url: 'https://automattic.com/press/',
-					chevron: true,
+					url: localizeUrl( 'https://wordpress.com/press/' ),
 				},
 				{
 					slug: 'tos',
@@ -267,6 +266,11 @@ export function getFooterColumns2026( {
 					url: localizeUrl( 'https://wordpress.com/create-blog/' ),
 				},
 				{
+					slug: 'ai-website-builder-footer',
+					label: __( 'AI website builder', __i18n_text_domain__ ),
+					url: localizeUrl( 'https://wordpress.com/ai-website-builder/' ),
+				},
+				{
 					slug: 'newsletter',
 					label: __( 'Newsletter', __i18n_text_domain__ ),
 					url: localizeUrl( 'https://wordpress.com/newsletter/' ),
@@ -288,7 +292,7 @@ export function getFooterColumns2026( {
 				},
 				{
 					slug: 'vip',
-					label: __( 'Enterprise hosting', __i18n_text_domain__ ),
+					label: __( 'WordPress VIP', __i18n_text_domain__ ),
 					url: 'https://wpvip.com/',
 					chevron: true,
 				},
@@ -315,6 +319,33 @@ export function getFooterColumns2026( {
 			],
 		},
 		{
+			id: 'ai',
+			title: __( 'AI', __i18n_text_domain__ ),
+			links: [
+				{
+					slug: 'ai-tools',
+					label: __( 'AI tools', __i18n_text_domain__ ),
+					url: localizeUrl( 'https://wordpress.com/ai/' ),
+				},
+				{
+					slug: 'ai-mcp',
+					label: 'MCP',
+					url: localizeUrl( 'https://wordpress.com/ai/mcp/' ),
+				},
+				{
+					slug: 'ai-wordpress-agent',
+					label: __( 'WordPress Agent', __i18n_text_domain__ ),
+					url: localizeUrl( 'https://wordpress.com/ai/wordpress-agent/' ),
+				},
+				{
+					slug: 'wp-studio',
+					label: __( 'WordPress Studio', __i18n_text_domain__ ),
+					url: 'https://developer.wordpress.com/studio/',
+					chevron: true,
+				},
+			],
+		},
+		{
 			id: 'features',
 			title: __( 'Features', __i18n_text_domain__ ),
 			links: [
@@ -333,22 +364,12 @@ export function getFooterColumns2026( {
 					label: __( 'Patterns', __i18n_text_domain__ ),
 					url: localizeUrl( 'https://wordpress.com/patterns', locale, isLoggedIn ),
 				},
-				{
-					slug: 'ai',
-					label: __( 'AI features', __i18n_text_domain__ ),
-					url: localizeUrl( 'https://wordpress.com/ai' ),
-				},
 			],
 		},
 		{
 			id: 'resources',
 			title: __( 'Resources', __i18n_text_domain__ ),
 			links: [
-				{
-					slug: 'ai-website-builder-footer',
-					label: __( 'AI website builder', __i18n_text_domain__ ),
-					url: localizeUrl( 'https://wordpress.com/ai-website-builder/' ),
-				},
 				{
 					slug: 'blog-support',
 					label: __( 'Latest news', __i18n_text_domain__ ),
@@ -378,12 +399,6 @@ export function getFooterColumns2026( {
 					slug: 'dev-resources',
 					label: __( 'Developer resources', __i18n_text_domain__ ),
 					url: 'https://developer.wordpress.com/',
-					chevron: true,
-				},
-				{
-					slug: 'wp-studio',
-					label: __( 'Studio', __i18n_text_domain__ ),
-					url: 'https://developer.wordpress.com/studio/',
 					chevron: true,
 				},
 			],
@@ -429,21 +444,35 @@ export function getFooterColumns2026( {
 					url: localizeUrl( 'https://wordpress.com/about/' ),
 				},
 				{
+					slug: 'accessibility',
+					label: __( 'Accessibility', __i18n_text_domain__ ),
+					url: localizeUrl( 'https://wordpress.com/accessibility/' ),
+				},
+				// The sitemap page is English-only.
+				...( locale === 'en'
+					? [
+							{
+								slug: 'sitemap',
+								label: __( 'Sitemap', __i18n_text_domain__ ),
+								url: 'https://wordpress.com/sitemap/',
+							},
+						]
+					: [] ),
+				{
+					slug: 'compare',
+					label: __( 'Compare', __i18n_text_domain__ ),
+					url: localizeUrl( 'https://wordpress.com/compare/' ),
+				},
+				{
 					slug: 'careers',
 					label: __( 'Careers', __i18n_text_domain__ ),
 					url: 'https://automattic.com/work-with-us/',
 					chevron: true,
 				},
 				{
-					slug: 'partners',
-					label: __( 'Partners', __i18n_text_domain__ ),
-					url: localizeUrl( 'https://wordpress.com/partners/' ),
-				},
-				{
 					slug: 'press',
 					label: __( 'Press', __i18n_text_domain__ ),
-					url: 'https://automattic.com/press/',
-					chevron: true,
+					url: localizeUrl( 'https://wordpress.com/press/' ),
 				},
 			],
 		},

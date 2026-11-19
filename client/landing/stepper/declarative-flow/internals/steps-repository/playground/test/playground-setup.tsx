@@ -7,13 +7,13 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { appStates } from 'calypso/state/imports/constants';
 import { mockStepProps, renderStep } from '../../test/helpers';
 import PlaygroundSetupStep from '../components/playground-setup';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../lib/constants';
 import { useImportBlueprint } from '../lib/import-blueprint';
 import {
 	ImportFailureError,
 	ImportTimeoutError,
 	UnsupportedExportError,
 	importPlaygroundSite,
+	removeSandboxPlugins,
 } from '../lib/import-playground';
 import type { PlaygroundImportProgress } from '../lib/import-playground';
 import type { ImportJob } from 'calypso/blocks/importer/types';
@@ -67,7 +67,7 @@ const importBlueprintMock = jest.fn();
 /**
  * Renders the step while the import reports the given phase and never finishes.
  */
-async function renderDuring( progress: PlaygroundImportProgress ) {
+async function renderDuring( progress: PlaygroundImportProgress, search?: string ) {
 	importPlaygroundSiteMock.mockImplementation(
 		( _slug, _siteId, onProgress: ( p: PlaygroundImportProgress ) => void ) => {
 			onProgress( progress );
@@ -75,7 +75,7 @@ async function renderDuring( progress: PlaygroundImportProgress ) {
 		}
 	);
 
-	return renderSetupStep();
+	return renderSetupStep( search );
 }
 
 async function renderSetupStep( search = 'playground=abc&siteSlug=example.wordpress.com' ) {
@@ -98,11 +98,11 @@ async function renderSetupStep( search = 'playground=abc&siteSlug=example.wordpr
 }
 
 const BLUEPRINT_SEARCH = 'blueprint=my-blueprint&siteSlug=example.wordpress.com';
+const STORE_SEARCH = 'playground=abc&intent=woocommerce&siteSlug=example.wordpress.com';
 
 describe( 'PlaygroundSetupStep', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		sessionStorage.clear();
 		delete mockBoot.isNewPlayground;
 		mockSiteData.siteSlug = 'example.wordpress.com';
 	} );
@@ -127,8 +127,7 @@ describe( 'PlaygroundSetupStep', () => {
 	} );
 
 	it( 'calls a WooCommerce launch a store', async () => {
-		sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
-		await renderDuring( { phase: 'packing' } );
+		await renderDuring( { phase: 'packing' }, STORE_SEARCH );
 
 		expect( screen.getByText( 'Packing up your store...' ) ).toBeVisible();
 	} );
@@ -174,19 +173,33 @@ describe( 'PlaygroundSetupStep', () => {
 	} );
 
 	it.each( [
-		[ 'a site launch', null ],
-		[ 'a WooCommerce publish launch', SESSION_KEY_FROM_PLAYGROUND_PUBLISH ],
-	] )( 'hands %s back to its flow when the import finishes', async ( _name, flag ) => {
-		if ( flag ) {
-			sessionStorage.setItem( flag, '1' );
-		}
+		[ 'a site launch', undefined ],
+		[ 'a WooCommerce publish launch', STORE_SEARCH ],
+	] )( 'hands %s back to its flow when the import finishes', async ( _name, search ) => {
 		importPlaygroundSiteMock.mockResolvedValue( 'import-id' );
-		const props = await renderSetupStep();
+		const props = await renderSetupStep( search );
 
 		expect( props.navigation.submit ).toHaveBeenCalledWith( {
 			siteSlug: 'example.wordpress.com',
 			siteId: 123,
 		} );
+	} );
+
+	it( 'removes the sandbox plugins from a store and records store import events', async () => {
+		importPlaygroundSiteMock.mockResolvedValue( 'import-id' );
+		await renderSetupStep( STORE_SEARCH );
+
+		expect( removeSandboxPlugins ).toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_playground_woo_import_started', {
+			site_id: 123,
+		} );
+	} );
+
+	it( 'keeps the sandbox plugins of any other Playground site', async () => {
+		importPlaygroundSiteMock.mockResolvedValue( 'import-id' );
+		await renderSetupStep();
+
+		expect( removeSandboxPlugins ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows an error with a retry when the import fails', async () => {

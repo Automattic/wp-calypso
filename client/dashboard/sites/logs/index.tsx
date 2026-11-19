@@ -18,9 +18,9 @@ import TimeMismatchNotice, {
 	useShouldShowTimeMismatchNotice,
 } from '../../components/time-mismatch-notice';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SiteActivityLogsDataViews from '../logs-activity/dataviews';
-import { SitesNoticeArbiter } from '../notice-arbiter';
 import SiteLogsDataViews from './dataviews';
 import { getLogsCalloutProps } from './logs-callout';
 import './style.scss';

@@ -1,6 +1,7 @@
 import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useQuery as useDataQuery } from '@tanstack/react-query';
 import {
@@ -10,7 +11,7 @@ import {
 	Icon,
 	TextareaControl,
 } from '@wordpress/components';
-import { arrowUp, layout } from '@wordpress/icons';
+import { arrowUp, comment, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
@@ -18,18 +19,26 @@ import {
 	planBuildsStoreOnBuildWow,
 	planSupportsBuildWow,
 } from 'calypso/landing/stepper/utils/build-wow-plans';
+import { getSiteSetupDestination } from 'calypso/lib/ai-launchpad';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../hooks/use-plan-cart-item';
 import { useQuery } from '../../../../hooks/use-query';
+import { useSiteQuery } from '../../../../hooks/use-site';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { usePurchasePlanNotification } from '../../hooks/use-purchase-plan-notification';
+import { useAiToolExperiment } from './ai-tool-experiment';
 import type { Step as StepType } from '../../types';
 import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
+
 import './style.scss';
+
+const CHATGPT_LOGO_URL =
+	'https://s2.wp.com/wp-content/themes/a8c/jetpack-2026/assets/home/agents/chatgpt.svg';
 
 const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const { site, siteSlug, siteId } = useSiteData();
+	const { isLoading: isLoadingSite } = useSiteQuery();
 	const translate = useTranslate();
 	const ref = useQuery().get( 'ref' );
 
@@ -61,6 +70,24 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		enabled: canOfferBuildWowBlocksFirst,
 	} );
 	const offerBuildWowBlocksFirst = canOfferBuildWowBlocksFirst && isAutomattician;
+
+	const isAiToolEligible =
+		config.isEnabled( 'onboarding/setup-your-site-ai-tool' ) && ! showPromptInput;
+	const { isLoading: isLoadingAiToolExperiment, isTreatment: isAiToolTreatment } =
+		useAiToolExperiment( isAiToolEligible );
+	const hasEnTranslation = useHasEnTranslation();
+	// Treatment sites with an active AI Launchpad only, held back until its description and the
+	// custom design card's new title are translated, so two cards never both read "Build with AI".
+	const offerAiTool =
+		isAiToolEligible &&
+		isAiToolTreatment &&
+		hasEnTranslation( 'Create a custom design' ) &&
+		hasEnTranslation( 'Connect ChatGPT or Claude and build your site by chatting.' ) &&
+		!! getSiteSetupDestination(
+			site?.options,
+			site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`
+		);
+	const [ isAiToolLogoBroken, setIsAiToolLogoBroken ] = useState( false );
 
 	// One choice per visit: submitting navigates away, so the controls disable and
 	// later clicks are ignored. The ref covers clicks landing before the re-render.
@@ -159,6 +186,21 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		submitBuildWithAI();
 	};
 
+	const handleAiToolClick = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
+		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
+			selection: 'ai-tool',
+			...( ref ? { ref } : {} ),
+		} );
+
+		navigation.submit( {
+			setupChoice: 'ai-tool',
+			siteSlug,
+		} );
+	};
+
 	const handleCustomDesignBlocksFirstClick = () => {
 		if ( ! claimSubmit() ) {
 			return;
@@ -209,7 +251,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		</form>
 	);
 
-	const buildWithAISummary = (
+	const customDesignCard = (
 		<SummaryButton
 			title={ i18n.fixMe( {
 				text: 'Create a custom design',
@@ -227,7 +269,23 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		/>
 	);
 
-	const buildWithAIBlocksFirstSummary = offerBuildWowBlocksFirst && (
+	const aiToolCard = offerAiTool && (
+		<SummaryButton
+			title={ translate( 'Build with AI' ) }
+			description={ translate( 'Connect ChatGPT or Claude and build your site by chatting.' ) }
+			decoration={
+				isAiToolLogoBroken ? (
+					<Icon icon={ comment } />
+				) : (
+					<img src={ CHATGPT_LOGO_URL } alt="" onError={ () => setIsAiToolLogoBroken( true ) } />
+				)
+			}
+			onClick={ handleAiToolClick }
+			disabled={ isSubmitting }
+		/>
+	);
+
+	const customDesignBlocksFirstCard = offerBuildWowBlocksFirst && (
 		<SummaryButton
 			title="Create a custom design (blocks-first)"
 			description="Automatticians only: build the site on the blocks-first graph."
@@ -255,22 +313,40 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		/>
 	);
 
-	const stepContent = (
-		<VStack alignment="top" spacing={ 3 }>
-			{ showPromptInput ? (
-				<>
-					{ buildWithAIPromptCard }
-					{ startWithTemplateCard }
-				</>
-			) : (
-				<>
-					{ buildWithAISummary }
-					{ startWithTemplateCard }
-					{ buildWithAIBlocksFirstSummary }
-				</>
-			) }
-		</VStack>
-	);
+	// The cards wait for the assignment, and in treatment for the site that decides the third
+	// card, so nobody picks one before the full set shows.
+	const stepContent =
+		isLoadingAiToolExperiment || ( isAiToolTreatment && isLoadingSite ) ? null : (
+			<VStack alignment="top" spacing={ 3 }>
+				{ showPromptInput ? (
+					<>
+						{ buildWithAIPromptCard }
+						{ startWithTemplateCard }
+					</>
+				) : (
+					<>
+						{ customDesignCard }
+						{ startWithTemplateCard }
+						{ aiToolCard }
+						{ customDesignBlocksFirstCard }
+					</>
+				) }
+			</VStack>
+		);
+
+	const areCardsShown = stepContent !== null;
+	const hasRecordedViewRef = useRef( false );
+	// Like Site Setup's own viewed event, this tells Data which group actually saw the card.
+	useEffect( () => {
+		if ( ! isAiToolEligible || ! areCardsShown || hasRecordedViewRef.current ) {
+			return;
+		}
+		hasRecordedViewRef.current = true;
+		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_view', {
+			ai_tool_shown: offerAiTool,
+			...( ref ? { ref } : {} ),
+		} );
+	}, [ isAiToolEligible, areCardsShown, offerAiTool, ref ] );
 
 	return (
 		<Step.CenteredColumnLayout

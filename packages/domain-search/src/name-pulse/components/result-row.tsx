@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Tooltip, __experimentalText as Text } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
-import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
+import { caution, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
@@ -278,7 +278,7 @@ export const NamePulseResultRow = ( {
 					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button
 							className="name-pulse-row__cart name-pulse-row__cart--error"
-							icon={ cautionFilled }
+							icon={ caution }
 							label={ error.message }
 							showTooltip={ false }
 							isDestructive

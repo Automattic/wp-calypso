@@ -3,6 +3,9 @@ import {
 	domainDnsMutation,
 	domainDnsQuery,
 	domainDnsEmailMutation,
+	userPreferenceMutation,
+	userPreferenceOptimisticMutation,
+	userPreferenceQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
@@ -10,7 +13,7 @@ import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
@@ -40,6 +43,37 @@ function getDnsRecordId( record: DnsRecord ) {
 }
 
 type DnsView = ViewTable;
+
+type DefaultRecordsNoticePreference =
+	`hosting-dashboard-domain-dns-default-${ 'a-records' | 'cname' }-notice-dismissed-${ string }`;
+
+function useDefaultRecordsNoticeDismissal(
+	preferenceName: DefaultRecordsNoticePreference,
+	hasDefaultRecords: boolean
+) {
+	const { data: dismissedAt, isFetched } = useQuery( userPreferenceQuery( preferenceName ) );
+	const { mutate: saveDismissal } = useMutation(
+		withSnackbar( userPreferenceOptimisticMutation( preferenceName ), {
+			error: __( 'Failed to dismiss the warning.' ),
+		} )
+	);
+	const { mutate: clearDismissal, isPending: isClearing } = useMutation(
+		userPreferenceMutation( preferenceName )
+	);
+
+	// Once the default records are back, however they got there, a later change to them
+	// shows the warning again.
+	useEffect( () => {
+		if ( hasDefaultRecords && dismissedAt && ! isClearing ) {
+			clearDismissal( undefined );
+		}
+	}, [ hasDefaultRecords, dismissedAt, isClearing, clearDismissal ] );
+
+	return {
+		isHidden: ! isFetched || !! dismissedAt,
+		dismiss: () => saveDismissal( new Date().toISOString() ),
+	};
+}
 
 const DEFAULT_VIEW: DnsView = {
 	type: 'table',
@@ -100,6 +134,16 @@ export default function DomainDns() {
 	const hasDefaultARecordsValue = hasDefaultARecords( dnsData?.records ?? [] );
 	const hasDefaultCnameRecordValue = hasDefaultCnameRecord( dnsData?.records ?? [], domainName );
 	const hasDefaultEmailRecordsValue = hasDefaultEmailRecords( dnsData?.records ?? [], domainName );
+
+	// `isFetching` keeps stale cached records from clearing a dismissal.
+	const aRecordsNoticeDismissal = useDefaultRecordsNoticeDismissal(
+		`hosting-dashboard-domain-dns-default-a-records-notice-dismissed-${ domainName }`,
+		! isFetching && hasDefaultARecordsValue
+	);
+	const cnameRecordNoticeDismissal = useDefaultRecordsNoticeDismissal(
+		`hosting-dashboard-domain-dns-default-cname-notice-dismissed-${ domainName }`,
+		! isFetching && hasDefaultCnameRecordValue
+	);
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate(
 		dnsData?.records ?? [],
@@ -221,13 +265,29 @@ export default function DomainDns() {
 		// Gating on `isFetching` — which is true during both the initial load and any
 		// background revalidation — prevents the warning from flashing against stale or
 		// not-yet-loaded data, matching the legacy "hide while requesting" behavior.
-		if ( isFetching || ! domain.has_wpcom_nameservers || hasDefaultARecordsValue ) {
+		if (
+			isFetching ||
+			! domain.has_wpcom_nameservers ||
+			hasDefaultARecordsValue ||
+			aRecordsNoticeDismissal.isHidden
+		) {
 			return null;
 		}
 
+		const onClose = () => {
+			recordTracksEvent( 'calypso_dashboard_domain_dns_default_a_records_notice_dismiss', {
+				domain: domainName,
+			} );
+			aRecordsNoticeDismissal.dismiss();
+		};
+
 		if ( domain.is_gravatar_domain ) {
 			return (
-				<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
+				<Notice
+					variant="warning"
+					title={ __( 'Your domain is not using default A records' ) }
+					onClose={ onClose }
+				>
 					{ createInterpolateElement(
 						__(
 							'This means it may not be pointing to your Gravatar profile correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <learnMoreLink />'
@@ -240,7 +300,11 @@ export default function DomainDns() {
 			);
 		}
 		return (
-			<Notice variant="warning" title={ __( 'Your domain is not using default A records' ) }>
+			<Notice
+				variant="warning"
+				title={ __( 'Your domain is not using default A records' ) }
+				onClose={ onClose }
+			>
 				{ createInterpolateElement(
 					__(
 						'This means it may not be pointing to your WordPress.com site correctly. To restore default A records, click on the three dots menu and select “Restore default A records”. <learnMoreLink />'
@@ -254,7 +318,12 @@ export default function DomainDns() {
 	};
 
 	const renderDefaultCnameRecordNotice = () => {
-		if ( isFetching || ! domain.has_wpcom_nameservers || hasDefaultCnameRecordValue ) {
+		if (
+			isFetching ||
+			! domain.has_wpcom_nameservers ||
+			hasDefaultCnameRecordValue ||
+			cnameRecordNoticeDismissal.isHidden
+		) {
 			return null;
 		}
 
@@ -262,6 +331,12 @@ export default function DomainDns() {
 			<Notice
 				variant="warning"
 				title={ __( 'Your domain is not using the default WWW CNAME record' ) }
+				onClose={ () => {
+					recordTracksEvent( 'calypso_dashboard_domain_dns_default_cname_record_notice_dismiss', {
+						domain: domainName,
+					} );
+					cnameRecordNoticeDismissal.dismiss();
+				} }
 			>
 				{ createInterpolateElement(
 					__(

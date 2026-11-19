@@ -1,0 +1,178 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+$static-site-import-grid: url( "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpath d='M0 36.5h72M36.5 0v72' stroke='%23000' stroke-opacity='.5' stroke-dasharray='1 3'/%3E%3Cpath d='M31 36.5h11M36.5 31v11' stroke='%23000'/%3E%3C/svg%3E" );
+
+// The steps and window come from the dashboard, which defines these on its root.
+.static-site-import-progress-step {
+	--dashboard__text-color: var( --color-text );
+	--dashboard__text-muted-color: var( --color-text-subtle );
+	--dashboard__foreground-color-success: var( --color-success );
+	--dashboard__foreground-color-warning: var( --color-warning );
+	--dashboard__foreground-color-error: var( --color-error );
+}
+
+// The steps on the left; on wide screens, the window onto the site fills a blue panel on the right.
+.static-site-import-progress-step__split {
+	display: flex;
+	flex-direction: column;
+	gap: 48px;
+
+	@include break-large {
+		// The panel is pinned to the window, so the steps keep to the left half.
+		width: calc( 50% - 24px );
+		margin-inline-end: auto;
+		// Centered in the window, like the panel, by leaving the same room below as the top bar takes above.
+		min-height: calc(
+			100vh - 2 *
+				(
+					var( --step-container-v2-top-bar-height, 0px ) +
+						var( --step-container-v2-content-block-padding, 0px )
+				)
+		);
+		justify-content: center;
+	}
+}
+
+.static-site-import-progress-step__main {
+	width: 100%;
+	max-width: 432px;
+	margin-inline: auto;
+}
+
+.static-site-import-progress-step__panel {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px 16px;
+	border-radius: 16px;
+	position: relative;
+	isolation: isolate;
+	overflow: hidden;
+	background-color: var( --wp-admin-theme-color );
+
+	// A grid of dotted lines with a cross where they meet, drawn by a mask so its color stays a
+	// variable, and a slightly brighter copy of it that a band of light sweeps across like a wave.
+	&::before,
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		background-color: color-mix( in srgb, var( --studio-white ) 14%, transparent );
+		-webkit-mask-image: $static-site-import-grid;
+		mask-image: $static-site-import-grid;
+		-webkit-mask-size: 72px 72px;
+		mask-size: 72px 72px;
+	}
+
+	&::after {
+		background-color: color-mix( in srgb, var( --studio-white ) 18%, transparent );
+		-webkit-mask-image:
+			$static-site-import-grid,
+			linear-gradient( 115deg, transparent 35%, var( --studio-white ) 50%, transparent 65% );
+		mask-image:
+			$static-site-import-grid,
+			linear-gradient( 115deg, transparent 35%, var( --studio-white ) 50%, transparent 65% );
+		-webkit-mask-size:
+			72px 72px,
+			300% 300%;
+		mask-size:
+			72px 72px,
+			300% 300%;
+		-webkit-mask-repeat: repeat, no-repeat;
+		mask-repeat: repeat, no-repeat;
+		-webkit-mask-position:
+			0 0,
+			100% 100%;
+		mask-position:
+			0 0,
+			100% 100%;
+		-webkit-mask-composite: source-in;
+		mask-composite: intersect;
+		opacity: 0;
+	}
+
+	@include break-large {
+		position: fixed;
+		inset-block: 24px;
+		inset-inline-end: 24px;
+		width: calc( 50% - 36px );
+		box-sizing: border-box;
+	}
+}
+
+.static-site-import-preview-window {
+	width: 100%;
+	// The site shows at the engine's 4:3 screenshot, so on short screens the window narrows to keep
+	// it, with its address bar, inside the panel.
+	max-width: min( 640px, calc( ( 100vh - 160px ) * 4 / 3 ) );
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	.static-site-import-progress-step__panel::after {
+		opacity: 1;
+		animation: static-site-import-progress-step__wave 6s ease-in-out infinite;
+	}
+}
+
+@keyframes static-site-import-progress-step__wave {
+	from {
+		-webkit-mask-position:
+			0 0,
+			100% 100%;
+		mask-position:
+			0 0,
+			100% 100%;
+	}
+
+	to {
+		-webkit-mask-position:
+			0 0,
+			0% 0%;
+		mask-position:
+			0 0,
+			0% 0%;
+	}
+}
+
+// Every step keeps room for its activity line, so the markers stay evenly spaced.
+.static-site-import-progress-step .static-site-import-steps__item:not( :last-child ) {
+	min-height: 58px;
+}
+
+.static-site-import-progress-step__email {
+	margin: 0;
+	padding-block-start: 24px;
+	border-block-start: 1px solid var( --color-border-subtle );
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+
+	strong {
+		color: var( --color-text );
+	}
+}
+
+// While the copy is built, a frosted curtain with a blue edge comes down over the site and reveals it.
+@media ( prefers-reduced-motion: no-preference ) {
+	.static-site-import-progress-step__panel
+		.static-site-import-snapshot.is-building
+		.static-site-import-snapshot__scan {
+		opacity: 1;
+		background: color-mix( in srgb, var( --color-surface ) 20%, transparent );
+		-webkit-backdrop-filter: blur( 2px );
+		backdrop-filter: blur( 2px );
+		border-block-start: 1px solid var( --wp-admin-theme-color );
+		animation: static-site-import-progress-step__curtain 12s ease-in-out forwards;
+	}
+}
+
+@keyframes static-site-import-progress-step__curtain {
+	from {
+		transform: translateY( 0 );
+	}
+
+	to {
+		transform: translateY( calc( 100% + 24px ) );
+	}
+}

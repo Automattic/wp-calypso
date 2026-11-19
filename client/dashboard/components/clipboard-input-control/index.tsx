@@ -4,7 +4,7 @@ import {
 	Button,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
-import { copySmall } from '@wordpress/icons';
+import { copy } from '@wordpress/icons';
 import React, { useState, useEffect } from 'react';
 
 export default function ClipboardInputControl( {
@@ -47,7 +47,7 @@ export default function ClipboardInputControl( {
 				<InputControlSuffixWrapper variant="control">
 					<Button
 						size="small"
-						icon={ copySmall }
+						icon={ copy }
 						label={ isCopied ? __( 'Copied' ) : label }
 						onClick={ handleCopy }
 					/>

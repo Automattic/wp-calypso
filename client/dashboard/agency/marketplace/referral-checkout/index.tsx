@@ -82,7 +82,6 @@ export default function ReferralCheckout() {
 			? getLegacyCheckoutUrl( checkoutLines )
 			: getCheckoutUrl( checkoutLines, {
 					term: termPricing,
-					hasWpcomHostingPlan: cart.hasWpcomHostingPlan,
 					cart: 'referral',
 				} );
 

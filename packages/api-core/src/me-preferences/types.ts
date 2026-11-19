@@ -38,6 +38,7 @@ export interface A4AFeedbackEntry {
 }
 
 export interface UserPreferences {
+	'account-email-recovery-snoozed-until'?: number;
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;
@@ -49,6 +50,10 @@ export interface UserPreferences {
 	[ key: `hosting-dashboard-tours-${ string }` ]: string; // ISO date string when the user completed the tours
 	[ key: `hosting-dashboard-time-mismatch-warning-dismissed-${ number }` ]: string | undefined; // Timestamp when the user dismissed the notice
 	[ key: `hosting-dashboard-wp-beta-notice-dismissed-${ number }` ]: string | undefined; // ISO timestamp when the user dismissed the beta notice for a site
+	[ key: `hosting-dashboard-domain-dns-default-a-records-notice-dismissed-${ string }` ]:
+		string | undefined; // ISO timestamp when the user dismissed the default A records notice for a domain
+	[ key: `hosting-dashboard-domain-dns-default-cname-notice-dismissed-${ string }` ]:
+		string | undefined; // ISO timestamp when the user dismissed the default WWW CNAME record notice for a domain
 	'hosting-dashboard-welcome-notice-dismissed'?: string; // Timestamp when the user dismissed the notice
 	'hosting-dashboard-difm-offer-dismissed'?: string; // ISO timestamp when the user dismissed the free DIFM offer, on any site
 	'wordpress-labs-opt-in'?: WordPressLabsOptIn;

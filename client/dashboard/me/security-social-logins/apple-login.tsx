@@ -40,15 +40,15 @@ export default function AppleLogin( {
 			await loadScript( APPLE_CLIENT_URL );
 		}
 
-		const oauth2State = crypto.randomUUID();
-		windowObj.sessionStorage.setItem( 'siwa_state', oauth2State );
+		const nonce = crypto.randomUUID();
+		windowObj.sessionStorage.setItem( 'siwa_state', nonce );
 
 		windowObj.AppleID.auth.init( {
 			clientId: config( 'apple_oauth_client_id' ),
 			scope: 'name email',
 			redirectURI: wpcomLink( '/start/user' ),
 			state: JSON.stringify( {
-				oauth2State,
+				oauth2State: nonce,
 				originalUrlPath: dashboardLink( window?.location?.pathname ),
 			} ),
 		} );

@@ -15,13 +15,12 @@ import {
 	COMMENTS_TOGGLE_INLINE_EXPANDED,
 	COMMENTS_API_DISABLED,
 } from '../../action-types';
-import { expandComments, setActiveReply } from '../actions';
+import { setActiveReply } from '../actions';
 import { PLACEHOLDER_STATE } from '../constants';
 import {
 	counts,
 	items,
 	pendingItems,
-	expansions,
 	totalCommentsCount,
 	fetchStatus,
 	fetchStatusInitialState,
@@ -325,93 +324,6 @@ describe( 'reducer', () => {
 			);
 
 			expect( response[ '1-1' ] ).toEqual( 2 );
-		} );
-	} );
-
-	describe( '#expansions', () => {
-		test( 'should default to an empty object', () => {
-			const nextState = expansions( undefined, { type: '@@test/INIT' } );
-			expect( nextState ).toEqual( {} );
-		} );
-
-		test( 'should ignore invalid display type', () => {
-			const invalidDisplayType = expandComments( {
-				siteId: 1,
-				postId: 2,
-				commentIds: [ 3 ],
-				displayType: 'invalidDisplayType',
-			} );
-
-			const nextState = expansions( undefined, invalidDisplayType );
-			expect( nextState ).toEqual( {} );
-		} );
-
-		test( 'should set commentIds to specified displayType', () => {
-			const action = expandComments( {
-				siteId: 1,
-				postId: 2,
-				commentIds: [ 3, 4, 5 ],
-				displayType: 'is-full',
-			} );
-
-			const nextState = expansions( undefined, action );
-			expect( nextState ).toEqual( {
-				[ '1-2' ]: {
-					3: 'is-full',
-					4: 'is-full',
-					5: 'is-full',
-				},
-			} );
-		} );
-
-		test( 'setting new commentIds for a post should merge with what was already there', () => {
-			const prevState = {
-				[ '1-2' ]: {
-					3: 'is-full',
-					4: 'is-full',
-				},
-			};
-
-			const action = expandComments( {
-				siteId: 1,
-				postId: 2,
-				commentIds: [ 5, 6 ],
-				displayType: 'is-single-line',
-			} );
-
-			const nextState = expansions( prevState, action );
-			expect( nextState ).toEqual( {
-				[ '1-2' ]: {
-					3: 'is-full',
-					4: 'is-full',
-					5: 'is-single-line',
-					6: 'is-single-line',
-				},
-			} );
-		} );
-
-		test( 'expandComments should only expand them, never unexpand', () => {
-			const prevState = {
-				[ '1-2' ]: {
-					3: 'is-full',
-					4: 'is-single-line',
-				},
-			};
-
-			const action = expandComments( {
-				siteId: 1,
-				postId: 2,
-				commentIds: [ 3, 4 ],
-				displayType: 'is-excerpt',
-			} );
-
-			const nextState = expansions( prevState, action );
-			expect( nextState ).toEqual( {
-				[ '1-2' ]: {
-					3: 'is-full',
-					4: 'is-excerpt',
-				},
-			} );
 		} );
 	} );
 
