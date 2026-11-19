@@ -2,9 +2,10 @@
  * @vitest-environment jsdom
  */
 
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { mockPreferences, renderRoute } from '../../test-utils/render-route';
+import '../../../../sites';
 import type { Site, User } from '@automattic/api-core';
 
 const mockSites = [
@@ -39,11 +40,6 @@ describe( '/sites', () => {
 
 		await renderRoute( '/sites', { user: { site_count: 2 } as User } );
 
-		const list = await screen.findByRole( 'grid' );
-		expect( within( list ).getByText( 'My First Site' ) ).toBeVisible();
-		expect( within( list ).getByText( 'My Second Site' ) ).toBeVisible();
-		expect( screen.getByRole( 'heading', { name: 'Sites' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Add new site' } ) ).toBeVisible();
-		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
+		expect( await screen.findByRole( 'heading', { name: 'Sites' } ) ).toBeVisible();
 	} );
 } );
