@@ -15,20 +15,6 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 
-let mockDevToolsAllPaidPlans = true;
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const actualConfig = actual.default ?? actual;
-	const isEnabled = ( flag: string ) =>
-		flag === 'hosting/dev-tools-all-paid-plans'
-			? mockDevToolsAllPaidPlans
-			: actualConfig.isEnabled( flag );
-	const config = Object.assign( ( key: string ) => actualConfig( key ), actualConfig, {
-		isEnabled,
-	} );
-	return { __esModule: true, ...actual, default: config, isEnabled };
-} );
-
 jest.mock( '@automattic/odie-client/src/data', () => ( {
 	useManageSupportInteraction: () => ( {
 		startNewInteraction: jest.fn().mockResolvedValue( undefined ),
@@ -79,7 +65,6 @@ function createState( {
 describe( '<EligibilityWarnings>', () => {
 	beforeEach( () => {
 		page.redirect.mockReset();
-		mockDevToolsAllPaidPlans = true;
 	} );
 
 	afterAll( () => {
@@ -220,33 +205,6 @@ describe( '<EligibilityWarnings>', () => {
 			)
 		).toBeVisible();
 		expect( getByText( 'Choose a plan' ) ).toBeVisible();
-	} );
-
-	it( 'keeps the Business plan wording in the plugin modal when not all paid plans qualify', () => {
-		mockDevToolsAllPaidPlans = false;
-		const state = createState( {
-			holds: [ 'NO_BUSINESS_PLAN' ],
-			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
-		} );
-
-		const { getByText, queryByText } = renderWithStore(
-			<EligibilityWarnings
-				onProceed={ noop }
-				context="plugin-details"
-				atomicTransferAction="plugins"
-				inModal
-			/>,
-			state
-		);
-
-		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
-		expect(
-			getByText(
-				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
-			)
-		).toBeVisible();
-		expect( queryByText( /^You can install plugins on any paid plan/ ) ).toBeNull();
-		expect( getByText( 'Upgrade and activate plugin' ) ).toBeVisible();
 	} );
 
 	it( 'keeps the plan perks and the site move intro outside the plugin modal', () => {

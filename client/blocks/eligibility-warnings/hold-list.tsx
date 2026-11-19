@@ -13,11 +13,7 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import { useSelector } from 'calypso/state';
 import { eligibilityHolds, type EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import {
-	isAtomicSiteWithoutBusinessPlan,
-	shouldUpsellAnyPaidPlan,
-	shouldUpsellPersonalPlan,
-} from './utils';
+import { isAtomicSiteWithoutBusinessPlan, shouldUpsellPersonalPlan } from './utils';
 import type { EligibilityContext } from './index';
 
 const displayableHolds = [
@@ -321,7 +317,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		hasEnTranslation,
 	} );
 	const showsPaidPlanNote =
-		! isPlaceholder && shouldUpsellAnyPaidPlan( context ) && holds.includes( 'NO_BUSINESS_PLAN' );
+		! isPlaceholder && context === 'plugin-details' && holds.includes( 'NO_BUSINESS_PLAN' );
 	const listedHolds = showsPaidPlanNote
 		? holds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' )
 		: holds;
