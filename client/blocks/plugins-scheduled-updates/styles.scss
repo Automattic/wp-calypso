@@ -91,17 +91,6 @@
 		.components-form-toggle__track {
 			border-color: var(--color-text) !important;
 		}
-
-		&.is-checked {
-			.components-form-toggle__track {
-				background-color: var(--color-text) !important;
-			}
-
-			.components-form-toggle__thumb {
-				background-color: #fff !important;
-			}
-		}
-
 	}
 
 	table {
