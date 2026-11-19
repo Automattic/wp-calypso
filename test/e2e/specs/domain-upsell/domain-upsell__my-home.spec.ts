@@ -10,16 +10,13 @@ test.describe(
 		skipIfMailosaurLimitReached();
 
 		test( 'As a user, I can see domain upsell on Home dashboard and proceed to checkout', async ( {
-			helperData,
 			page,
 			pageMyHome,
 			pagePlans,
 			sitePublic,
 		} ) => {
 			await test.step( 'When I navigate to the Home dashboard on a new Free public site', async function () {
-				await page.goto(
-					helperData.getCalypsoURL( `/home/${ sitePublic.blog_details.site_slug }` )
-				);
+				await pageMyHome.visit( sitePublic.blog_details.site_slug );
 			} );
 
 			await test.step( 'And domain upsell card has a suggested domain', async function () {

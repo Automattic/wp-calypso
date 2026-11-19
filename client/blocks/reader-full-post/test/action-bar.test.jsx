@@ -2,12 +2,10 @@
  * @jest-environment jsdom
  */
 import { render } from '@testing-library/react';
-import { SubscribeWithShelfButton } from 'calypso/reader/shelves/subscribe-with-shelf';
+import ReaderFollowButton from 'calypso/reader/follow-button';
 import ReaderFullPostActionBar from '../action-bar';
 
-jest.mock( 'calypso/reader/shelves/subscribe-with-shelf', () => ( {
-	SubscribeWithShelfButton: jest.fn( () => null ),
-} ) );
+jest.mock( 'calypso/reader/follow-button', () => jest.fn( () => null ) );
 jest.mock( 'calypso/blocks/comment-button', () => () => null );
 jest.mock( 'calypso/blocks/post-edit-button', () => () => null );
 jest.mock( 'calypso/reader/like-button', () => () => null );
@@ -26,7 +24,7 @@ describe( 'ReaderFullPostActionBar', () => {
 			/>
 		);
 
-		expect( SubscribeWithShelfButton ).toHaveBeenCalledWith(
+		expect( ReaderFollowButton ).toHaveBeenCalledWith(
 			expect.objectContaining( { onFollowToggle, onFollowSuccess } ),
 			undefined
 		);

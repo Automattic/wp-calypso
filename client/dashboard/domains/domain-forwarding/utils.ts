@@ -5,7 +5,7 @@ import type { FormData } from './form';
 import type { DomainForwarding, DomainForwardingSaveData } from '@automattic/api-core';
 
 const SOFT_URL_REGEX =
-	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*){0,}(:[0-9/a-z-#]*)?$/i;
+	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*)?(:[0-9/a-z-#]*)?$/i;
 const SUBDOMAIN_LABEL_REGEX = /^(?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]$|^[a-zA-Z0-9]$/i;
 
 export function normalizeUrlWithDefaultProtocol( input: string ): string {

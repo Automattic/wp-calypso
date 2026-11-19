@@ -12,19 +12,19 @@ const LOG = [
 ];
 
 describe( 'findBackup', () => {
-	it( 'finds the entry with the rewind id', () => {
+	test( 'finds the entry with the rewind id', () => {
 		expect( findBackup( LOG, '1792244500.5' ) ).toBe( LOG[ 1 ] );
 	} );
 
-	it( 'finds the backup that completed after a backup period', () => {
+	test( 'finds the backup that completed after a backup period', () => {
 		expect( findBackup( LOG, '1792244301' ) ).toBe( LOG[ 2 ] );
 	} );
 
-	it( 'finds nothing for a period no backup completed within a day of', () => {
+	test( 'finds nothing for a period no backup completed within a day of', () => {
 		expect( findBackup( LOG, '1792000000' ) ).toBeNull();
 	} );
 
-	it( 'does not stand in another backup for an unknown restore point', () => {
+	test( 'does not stand in another backup for an unknown restore point', () => {
 		expect( findBackup( LOG, '1792244301.5' ) ).toBeNull();
 	} );
 } );

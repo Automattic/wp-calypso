@@ -23,7 +23,9 @@ test.describe(
 
 			await test.step( 'When I navigate to the Home dashboard on a new Free public site', async function () {
 				await page.goto(
-					helperData.getCalypsoURL( `/home/${ sitePublic.blog_details.site_slug }` )
+					helperData.getCalypsoURL( `/home/${ sitePublic.blog_details.site_slug }`, {
+						legacyHome: '1',
+					} )
 				);
 			} );
 

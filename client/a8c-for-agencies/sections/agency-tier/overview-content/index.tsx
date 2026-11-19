@@ -2,19 +2,24 @@ import { Card, CardBody, Button, __experimentalVStack as VStack } from '@wordpre
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import {
+	A4A_PROSPECT_REPORTS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_PURCHASES_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_SITES_LINK,
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
+import { NEW_REPORT_ACTION } from 'calypso/dashboard/agency/amplify/constants';
+import { useProspectReportsBenefit } from 'calypso/dashboard/agency/amplify/use-prospect-reports-benefit';
 import CertificationTierPageCard from 'calypso/dashboard/agency/certification/tier-page-card';
 import InfluencedRevenue from 'calypso/dashboard/agency/tiers/influenced-revenue';
 import TierBenefits from 'calypso/dashboard/agency/tiers/tier-benefits';
 import TierCards from 'calypso/dashboard/agency/tiers/tier-cards';
 import Divider from 'calypso/dashboard/components/divider';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useScheduleCall from '../../../hooks/use-schedule-call';
@@ -35,6 +40,23 @@ const BENEFIT_LINKS: TierBenefitLinks = {
 	'manage-profile': A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 };
 
+const BENEFIT_LINKS_WITH_AMPLIFY: TierBenefitLinks = {
+	...BENEFIT_LINKS,
+	'generate-prospect-report': `${ A4A_PROSPECT_REPORTS_LINK }?action=${ NEW_REPORT_ACTION }`,
+};
+
+const BENEFIT_LINKS_WITH_AMPLIFY_REPORTS: TierBenefitLinks = {
+	...BENEFIT_LINKS_WITH_AMPLIFY,
+	'view-prospect-reports': A4A_PROSPECT_REPORTS_LINK,
+};
+
+function getBenefitLinks( hasProspectReports: boolean, hasReports: boolean ) {
+	if ( ! hasProspectReports ) {
+		return BENEFIT_LINKS;
+	}
+	return hasReports ? BENEFIT_LINKS_WITH_AMPLIFY_REPORTS : BENEFIT_LINKS_WITH_AMPLIFY;
+}
+
 export default function AgencyTierOverviewContent( {
 	currentAgencyTierId,
 	totalInfluencedRevenue,
@@ -45,6 +67,12 @@ export default function AgencyTierOverviewContent( {
 	tierStatus?: AgencyTierStatus;
 } ) {
 	const dispatch = useDispatch();
+	const agency = useSelector( getActiveAgency );
+	const hasProspectReports = isPathAllowed( A4A_PROSPECT_REPORTS_LINK, agency );
+	const prospectReports = useProspectReportsBenefit( {
+		agencyId: agency?.id,
+		allowed: hasProspectReports,
+	} );
 	const { scheduleCall, isLoading } = useScheduleCall();
 
 	const recordTracks = useCallback(
@@ -89,7 +117,8 @@ export default function AgencyTierOverviewContent( {
 				recordTracksEvent={ recordTracks }
 				onScheduleCall={ scheduleCall }
 				isSchedulingCall={ isLoading }
-				links={ BENEFIT_LINKS }
+				links={ getBenefitLinks( hasProspectReports, prospectReports.hasReports ) }
+				prospectReports={ prospectReports }
 				shouldUseRouterLink={ false }
 				renderDownloadBadges={ ( buttonProps: ComponentProps< typeof Button > ) => (
 					<DownloadBadges buttonProps={ { ...buttonProps, icon: null } } />

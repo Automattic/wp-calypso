@@ -2,28 +2,29 @@
  * Tests for uploadAnnotation utility
  */
 import { uploadMedia } from '@wordpress/media-utils';
+import { type Mock, vi } from 'vitest';
 import { uploadAnnotation } from './upload-annotation';
 
 // Mock uploadMedia
-jest.mock( '@wordpress/media-utils', () => ( {
-	uploadMedia: jest.fn(),
+vi.mock( '@wordpress/media-utils', () => ( {
+	uploadMedia: vi.fn(),
 } ) );
 
 // Mock Date.now() for deterministic timestamps
 const mockNow = 1234567890000;
-jest.spyOn( Date, 'now' ).mockReturnValue( mockNow );
+vi.spyOn( Date, 'now' ).mockReturnValue( mockNow );
 
 describe( 'uploadAnnotation', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'filename generation', () => {
 		it( 'should generate default filename with timestamp when no original filename', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ { id: 123, url: 'https://example.com/uploaded.jpg' } ] );
 			} );
 
@@ -32,7 +33,7 @@ describe( 'uploadAnnotation', () => {
 				onSuccess: mockOnSuccess,
 			} );
 
-			const uploadCall = ( uploadMedia as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			const uploadCall = ( uploadMedia as Mock ).mock.calls[ 0 ][ 0 ];
 			const uploadedFile = uploadCall.filesList[ 0 ];
 
 			expect( uploadedFile.name ).toBe( `annotated-image-${ mockNow }.png` );
@@ -40,9 +41,9 @@ describe( 'uploadAnnotation', () => {
 
 		it( 'should preserve original extension when provided', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ { id: 123, url: 'https://example.com/uploaded.jpg' } ] );
 			} );
 
@@ -52,7 +53,7 @@ describe( 'uploadAnnotation', () => {
 				onSuccess: mockOnSuccess,
 			} );
 
-			const uploadCall = ( uploadMedia as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			const uploadCall = ( uploadMedia as Mock ).mock.calls[ 0 ][ 0 ];
 			const uploadedFile = uploadCall.filesList[ 0 ];
 
 			expect( uploadedFile.name ).toBe( `original-image-${ mockNow }.jpg` );
@@ -60,9 +61,9 @@ describe( 'uploadAnnotation', () => {
 
 		it( 'should handle filename with multiple dots', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ { id: 123, url: 'https://example.com/uploaded.jpg' } ] );
 			} );
 
@@ -72,7 +73,7 @@ describe( 'uploadAnnotation', () => {
 				onSuccess: mockOnSuccess,
 			} );
 
-			const uploadCall = ( uploadMedia as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			const uploadCall = ( uploadMedia as Mock ).mock.calls[ 0 ][ 0 ];
 			const uploadedFile = uploadCall.filesList[ 0 ];
 
 			expect( uploadedFile.name ).toBe( `my.image.file-${ mockNow }.png` );
@@ -80,9 +81,9 @@ describe( 'uploadAnnotation', () => {
 
 		it( 'should handle filename without extension', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ { id: 123, url: 'https://example.com/uploaded.jpg' } ] );
 			} );
 
@@ -92,7 +93,7 @@ describe( 'uploadAnnotation', () => {
 				onSuccess: mockOnSuccess,
 			} );
 
-			const uploadCall = ( uploadMedia as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			const uploadCall = ( uploadMedia as Mock ).mock.calls[ 0 ][ 0 ];
 			const uploadedFile = uploadCall.filesList[ 0 ];
 
 			// When no dots exist, the entire filename becomes the "extension"
@@ -104,9 +105,9 @@ describe( 'uploadAnnotation', () => {
 	describe( 'file creation', () => {
 		it( 'should create File from Blob with correct type', async () => {
 			const mockBlob = new Blob( [ 'test-data' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ { id: 123, url: 'https://example.com/uploaded.jpg' } ] );
 			} );
 
@@ -115,7 +116,7 @@ describe( 'uploadAnnotation', () => {
 				onSuccess: mockOnSuccess,
 			} );
 
-			const uploadCall = ( uploadMedia as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			const uploadCall = ( uploadMedia as Mock ).mock.calls[ 0 ][ 0 ];
 			const uploadedFile = uploadCall.filesList[ 0 ];
 
 			expect( uploadedFile ).toBeInstanceOf( File );
@@ -124,9 +125,9 @@ describe( 'uploadAnnotation', () => {
 
 		it( 'should pass file to uploadMedia', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ { id: 123, url: 'https://example.com/uploaded.jpg' } ] );
 			} );
 
@@ -149,14 +150,14 @@ describe( 'uploadAnnotation', () => {
 	describe( 'upload success', () => {
 		it( 'should call onSuccess and resolve when upload completes', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 			const mockUploadedMedia = {
 				id: 123,
 				url: 'https://example.com/uploaded.jpg',
 				title: 'Uploaded image',
 			};
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ mockUploadedMedia ] );
 			} );
 
@@ -171,10 +172,10 @@ describe( 'uploadAnnotation', () => {
 
 		it( 'should handle async onSuccess callback', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn().mockResolvedValue( undefined );
+			const mockOnSuccess = vi.fn().mockResolvedValue( undefined );
 			const mockUploadedMedia = { id: 123, url: 'https://example.com/uploaded.jpg' };
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ mockUploadedMedia ] );
 			} );
 
@@ -189,9 +190,9 @@ describe( 'uploadAnnotation', () => {
 
 		it( 'should ignore intermediate blob URLs (only process final media)', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				// First call with blob URL (intermediate)
 				onFileChange( [ { url: 'blob:http://localhost/temp-id' } ] );
 				// Second call with actual media
@@ -217,11 +218,11 @@ describe( 'uploadAnnotation', () => {
 	describe( 'upload errors', () => {
 		it( 'should call onError callback when upload fails', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
-			const mockOnError = jest.fn();
+			const mockOnSuccess = vi.fn();
+			const mockOnError = vi.fn();
 			const uploadError = new Error( 'Upload failed' );
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onError } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onError } ) => {
 				onError( uploadError );
 			} );
 
@@ -239,10 +240,10 @@ describe( 'uploadAnnotation', () => {
 
 		it( 'should reject promise when upload fails even without onError callback', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 			const uploadError = new Error( 'Network error' );
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onError } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onError } ) => {
 				onError( uploadError );
 			} );
 
@@ -259,10 +260,10 @@ describe( 'uploadAnnotation', () => {
 		it( 'should reject if onSuccess throws error', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
 			const successError = new Error( 'onSuccess error' );
-			const mockOnSuccess = jest.fn().mockRejectedValue( successError );
+			const mockOnSuccess = vi.fn().mockRejectedValue( successError );
 			const mockUploadedMedia = { id: 123, url: 'https://example.com/uploaded.jpg' };
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ mockUploadedMedia ] );
 			} );
 
@@ -278,7 +279,7 @@ describe( 'uploadAnnotation', () => {
 	describe( 'metadata handling', () => {
 		it( 'should accept metadata parameter (for future use)', async () => {
 			const mockBlob = new Blob( [ 'test' ], { type: 'image/png' } );
-			const mockOnSuccess = jest.fn();
+			const mockOnSuccess = vi.fn();
 			const metadata = {
 				title: 'Test Title',
 				alt_text: 'Test alt',
@@ -286,7 +287,7 @@ describe( 'uploadAnnotation', () => {
 				description: 'Test description',
 			};
 
-			( uploadMedia as jest.Mock ).mockImplementation( ( { onFileChange } ) => {
+			( uploadMedia as Mock ).mockImplementation( ( { onFileChange } ) => {
 				onFileChange( [ { id: 123, url: 'https://example.com/uploaded.jpg' } ] );
 			} );
 

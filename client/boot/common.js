@@ -32,7 +32,7 @@ import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { onDisablePersistence } from 'calypso/lib/user/store';
 import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
 import { setupRoutes } from 'calypso/sections-middleware';
-import { createReduxStore } from 'calypso/state';
+import { createReduxStore } from 'calypso/state/create-store';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
@@ -128,12 +128,12 @@ function saveOauthFlags() {
 		return;
 	}
 
-	const oauthFlag = flags.split( ',' ).find( ( flag ) => /^[+-]?oauth$/.test( flag ) );
-	if ( ! oauthFlag ) {
+	const loginModeFlag = flags.split( ',' ).find( ( flag ) => /^[+-]?oauth$/.test( flag ) );
+	if ( ! loginModeFlag ) {
 		return;
 	}
 
-	window.sessionStorage.setItem( 'flags', oauthFlag );
+	window.sessionStorage.setItem( 'flags', loginModeFlag );
 }
 
 function authorizePath() {

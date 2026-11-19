@@ -56,57 +56,6 @@ describe( 'readStreamQuery', () => {
 		expect( result.current.data?.date_range?.after ).toBe( '2026-01-01' );
 	} );
 
-	it( 'fetches conversations posts from /read/conversations', async () => {
-		const scope = nock( BASE )
-			.get( '/rest/v1.2/read/conversations' )
-			.query( ( query ) => query.comments_per_post === '20' )
-			.reply( 200, {
-				posts: [
-					{
-						ID: 1,
-						site_ID: 100,
-						last_comment_date_gmt: '2026-04-30',
-						URL: 'https://example.com/a',
-					},
-				],
-				date_range: { after: '2026-04-30' },
-			} );
-
-		const client = newClient();
-		const { result } = renderHook(
-			() =>
-				useQuery( readStreamQuery( 'conversations', { number: 4, comments_per_post: 20 }, null ) ),
-			{ wrapper: makeWrapper( client ) }
-		);
-
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-		expect( scope.isDone() ).toBe( true );
-		expect( result.current.data?.posts ).toHaveLength( 1 );
-	} );
-
-	it( 'fetches conversations-a8c posts with the a8c index filter', async () => {
-		const scope = nock( BASE )
-			.get( '/rest/v1.2/read/conversations' )
-			.query( ( query ) => query.index === 'a8c' && query.comments_per_post === '20' )
-			.reply( 200, { posts: [], date_range: { after: null } } );
-
-		const client = newClient();
-		const { result } = renderHook(
-			() =>
-				useQuery(
-					readStreamQuery(
-						'conversations-a8c',
-						{ number: 4, comments_per_post: 20, index: 'a8c' },
-						null
-					)
-				),
-			{ wrapper: makeWrapper( client ) }
-		);
-
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-		expect( scope.isDone() ).toBe( true );
-	} );
-
 	it( 'fetches liked posts from /read/liked', async () => {
 		const scope = nock( BASE )
 			.get( '/rest/v1.2/read/liked' )
@@ -171,60 +120,6 @@ describe( 'readStreamQuery', () => {
 		expect( scope.isDone() ).toBe( true );
 		expect( result.current.data?.posts?.[ 0 ].date_saved ).toBe( '2026-10-15T12:00:00+00:00' );
 		expect( result.current.data?.next_page_handle ).toBe( 'def' );
-	} );
-
-	it( 'fetches a shelf feed from /wpcom/v2/reader/shelves/<id>/posts', async () => {
-		const scope = nock( BASE )
-			.get( '/wpcom/v2/reader/shelves/6/posts' )
-			.query( true )
-			.reply( 200, {
-				cards: [
-					{
-						type: 'post',
-						date: 1718000000,
-						data: { ID: 7, site_ID: 700, date: '2026-06-10', URL: 'https://example.com/shelf' },
-					},
-				],
-				next_page_handle: 'NEXT',
-			} );
-
-		const client = newClient();
-		const { result } = renderHook(
-			() => useQuery( readStreamQuery( 'shelf:6', { count: 4 }, null ) ),
-			{ wrapper: makeWrapper( client ) }
-		);
-
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-		expect( scope.isDone() ).toBe( true );
-		expect( result.current.data?.cards ).toHaveLength( 1 );
-		expect( result.current.data?.next_page_handle ).toBe( 'NEXT' );
-	} );
-
-	it( 'fetches a shelf Discover feed from /wpcom/v2/reader/shelves/<id>/discover', async () => {
-		const scope = nock( BASE )
-			.get( '/wpcom/v2/reader/shelves/6/discover' )
-			.query( true )
-			.reply( 200, {
-				cards: [
-					{
-						type: 'post',
-						date: 1718000000,
-						data: { ID: 9, site_ID: 900, date: '2026-06-10', URL: 'https://example.com/discover' },
-					},
-				],
-				next_page_handle: 'NEXT',
-			} );
-
-		const client = newClient();
-		const { result } = renderHook(
-			() => useQuery( readStreamQuery( 'shelf_discover:6', { count: 4 }, null ) ),
-			{ wrapper: makeWrapper( client ) }
-		);
-
-		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
-		expect( scope.isDone() ).toBe( true );
-		expect( result.current.data?.cards ).toHaveLength( 1 );
-		expect( result.current.data?.next_page_handle ).toBe( 'NEXT' );
 	} );
 
 	it( 'throws when called for an unsupported streamType', () => {

@@ -2,13 +2,14 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useGlobalStyles from '../use-global-styles';
 
 let mockGlobalStylesId: string | null = 'global-styles-1';
 const mockRecord = { styles: { color: { text: '#000' } } };
 
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( callback: ( select: ( store: string ) => unknown ) => unknown ) =>
 		callback( () => ( {
 			__experimentalGetCurrentGlobalStylesId: () => mockGlobalStylesId,

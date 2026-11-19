@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getClientId } from '../utils';
 import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
 
-jest.mock( 'smooch', () => ( {} ) );
+vi.mock( 'smooch', () => ( {} ) );
 
 const conversation = ( sources: Partial< ZendeskMessage[ 'source' ] >[] ) =>
 	( {

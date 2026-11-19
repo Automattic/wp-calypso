@@ -1,6 +1,7 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { DomainSuggestionCTA } from '..';
 import { convertAvailabilityToSuggestion } from '../../../helpers/convert-availability-to-suggestion';
 import { DomainPriceRule } from '../../../hooks/use-suggestion';
@@ -39,9 +40,9 @@ describe( 'DomainSuggestionCTA', () => {
 				availability,
 			} );
 
-			const onAddDomainToCart = jest.fn();
-			const onDomainAddAvailabilityPreCheck = jest.fn();
-			const onSuggestionInteract = jest.fn();
+			const onAddDomainToCart = vi.fn();
+			const onDomainAddAvailabilityPreCheck = vi.fn();
+			const onSuggestionInteract = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -98,7 +99,7 @@ describe( 'DomainSuggestionCTA', () => {
 				} ),
 			} );
 
-			const onAddDomainToCart = jest.fn();
+			const onAddDomainToCart = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -158,9 +159,9 @@ describe( 'DomainSuggestionCTA', () => {
 				availability,
 			} );
 
-			const onAddDomainToCart = jest.fn();
-			const onDomainAddAvailabilityPreCheck = jest.fn();
-			const onSuggestionInteract = jest.fn();
+			const onAddDomainToCart = vi.fn();
+			const onDomainAddAvailabilityPreCheck = vi.fn();
+			const onSuggestionInteract = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -275,8 +276,8 @@ describe( 'DomainSuggestionCTA', () => {
 				} ),
 			} );
 
-			const onTrademarkClaimsNoticeShown = jest.fn();
-			const onAddDomainToCart = jest.fn();
+			const onTrademarkClaimsNoticeShown = vi.fn();
+			const onAddDomainToCart = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -326,8 +327,8 @@ describe( 'DomainSuggestionCTA', () => {
 				} ),
 			} );
 
-			const onTrademarkClaimsNoticeClosed = jest.fn();
-			const onAddDomainToCart = jest.fn();
+			const onTrademarkClaimsNoticeClosed = vi.fn();
+			const onAddDomainToCart = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -386,10 +387,10 @@ describe( 'DomainSuggestionCTA', () => {
 				} ),
 			} );
 
-			const onTrademarkClaimsNoticeAccepted = jest.fn();
-			const onTrademarkClaimsNoticeClosed = jest.fn();
-			const onAddDomainToCart = jest.fn();
-			const onDomainAddAvailabilityPreCheck = jest.fn();
+			const onTrademarkClaimsNoticeAccepted = vi.fn();
+			const onTrademarkClaimsNoticeClosed = vi.fn();
+			const onAddDomainToCart = vi.fn();
+			const onDomainAddAvailabilityPreCheck = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions
@@ -441,7 +442,7 @@ describe( 'DomainSuggestionCTA', () => {
 				suggestions: [ buildSuggestion( { domain_name: 'test-regular-price.com' } ) ],
 			} );
 
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions

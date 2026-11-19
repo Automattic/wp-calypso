@@ -1,3 +1,4 @@
+import { type Mock, vi } from 'vitest';
 import { createExPlatClient } from '../../create-explat-client';
 import { setBrowserContext } from '../test-common';
 import type { Config } from '../../types';
@@ -21,12 +22,12 @@ function makeClient(
 	attributes: Record< string, string > = {}
 ): { client: ReturnType< typeof createExPlatClient >; config: Config } {
 	const config: Config = {
-		fetchExperimentAssignment: jest.fn(),
-		getAnonId: jest.fn().mockResolvedValue( attributes.anon_id ?? null ),
-		fetchFlagPayload: jest.fn().mockResolvedValue( payload ),
-		logFeatureAssignment: jest.fn().mockResolvedValue( undefined ),
-		getAttributes: jest.fn().mockResolvedValue( attributes ),
-		logError: jest.fn(),
+		fetchExperimentAssignment: vi.fn(),
+		getAnonId: vi.fn().mockResolvedValue( attributes.anon_id ?? null ),
+		fetchFlagPayload: vi.fn().mockResolvedValue( payload ),
+		logFeatureAssignment: vi.fn().mockResolvedValue( undefined ),
+		getAttributes: vi.fn().mockResolvedValue( attributes ),
+		logError: vi.fn(),
 		isDevelopmentMode: false,
 	};
 
@@ -45,7 +46,7 @@ function setRuntime( runtime: Record< string, unknown > | undefined ) {
 
 describe( 'getFeatureValue', () => {
 	beforeEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		setBrowserContext();
 	} );
 
@@ -311,7 +312,7 @@ describe( 'getFeatureValue', () => {
 			},
 			{ wpcom_user_id: '777' }
 		);
-		( config.logFeatureAssignment as jest.Mock ).mockRejectedValueOnce( new Error( 'network' ) );
+		( config.logFeatureAssignment as Mock ).mockRejectedValueOnce( new Error( 'network' ) );
 
 		const value = await client.getFeatureValue( 'f', false );
 		expect( value ).toBe( true );
@@ -326,7 +327,7 @@ describe( 'getFeatureValue', () => {
 			can_create_assignment: true,
 		} );
 		const { client, config } = makeClient( null, { wpcom_user_id: '1' } );
-		( config.fetchFlagPayload as jest.Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
+		( config.fetchFlagPayload as Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
 		const value = await client.getFeatureValue( 'anything', 'fallback' );
 		expect( value ).toBe( 'fallback' );
 	} );
@@ -354,7 +355,7 @@ describe( 'getFeatureValue', () => {
 
 describe( 'prefetchFlagPayload', () => {
 	beforeEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		setBrowserContext();
 	} );
 
@@ -408,9 +409,9 @@ describe( 'prefetchFlagPayload', () => {
 	test( 'no-op (no fetch, no throw) when fetchFlagPayload is not configured', async () => {
 		setBrowserContext();
 		const config: Config = {
-			fetchExperimentAssignment: jest.fn(),
-			getAnonId: jest.fn().mockResolvedValue( null ),
-			logError: jest.fn(),
+			fetchExperimentAssignment: vi.fn(),
+			getAnonId: vi.fn().mockResolvedValue( null ),
+			logError: vi.fn(),
 			isDevelopmentMode: false,
 		};
 		const client = createExPlatClient( config );
@@ -419,7 +420,7 @@ describe( 'prefetchFlagPayload', () => {
 
 	test( 'swallows fetch errors so callers can fire-and-forget', async () => {
 		const { client, config } = makeClient( null );
-		( config.fetchFlagPayload as jest.Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
+		( config.fetchFlagPayload as Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
 		await expect( client.prefetchFlagPayload() ).resolves.toBeUndefined();
 	} );
 } );

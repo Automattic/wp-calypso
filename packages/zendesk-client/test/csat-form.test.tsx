@@ -1,13 +1,12 @@
-/**
- * @jest-environment jsdom
- */
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { CSATForm } from '../src/components/csat-form';
 
 // jsdom doesn't implement scrollIntoView; CSATForm calls it when the feedback step mounts.
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
-jest.mock( '../src/util', () => ( {
+vi.mock( '../src/util', () => ( {
 	getBadRatingReasons: () => [
 		{ label: 'No reason provided', value: '' },
 		{ label: 'Static reason', value: 'static-reason' },
@@ -15,10 +14,10 @@ jest.mock( '../src/util', () => ( {
 	isTestModeEnvironment: () => false,
 } ) );
 
-const mockMutateAsync = jest.fn();
+const mockMutateAsync = vi.fn();
 let mockIsPending = false;
 
-jest.mock( '../src/use-rate-chat', () => ( {
+vi.mock( '../src/use-rate-chat', () => ( {
 	useRateChat: () => ( {
 		isPending: mockIsPending,
 		mutateAsync: mockMutateAsync,
@@ -39,7 +38,7 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'shows the rating message after a thumb is clicked when no score is predetermined', async () => {
-		const onSendFeedback = jest.fn();
+		const onSendFeedback = vi.fn();
 		render( <CSATForm ticketId={ 1 } onSendFeedback={ onSendFeedback } /> );
 
 		const { thumbsUp } = getThumbsButtons();
@@ -52,7 +51,7 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'does not show the rating message when preDeterminedScore is set', () => {
-		render( <CSATForm ticketId={ 1 } preDeterminedScore="good" onSendFeedback={ jest.fn() } /> );
+		render( <CSATForm ticketId={ 1 } preDeterminedScore="good" onSendFeedback={ vi.fn() } /> );
 
 		expect( screen.queryByText( 'Good 👍' ) ).not.toBeInTheDocument();
 	} );
@@ -63,7 +62,7 @@ describe( 'CSATForm', () => {
 				ticketId={ 1 }
 				preDeterminedScore="bad"
 				showRatingMessageWithPreDeterminedScore
-				onSendFeedback={ jest.fn() }
+				onSendFeedback={ vi.fn() }
 			/>
 		);
 
@@ -71,14 +70,14 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'does not render the thumbs buttons at all when preDeterminedScore is set', () => {
-		render( <CSATForm ticketId={ 1 } preDeterminedScore="good" onSendFeedback={ jest.fn() } /> );
+		render( <CSATForm ticketId={ 1 } preDeterminedScore="good" onSendFeedback={ vi.fn() } /> );
 
 		expect( document.querySelectorAll( '.zendesk-csat-form__thumbs-button' ) ).toHaveLength( 0 );
 	} );
 
 	it( 'ignores a second click on the thumbs while the first submission is still in flight', async () => {
 		let resolveFeedback: () => void = () => undefined;
-		const onSendFeedback = jest.fn(
+		const onSendFeedback = vi.fn(
 			() =>
 				new Promise< void >( ( resolve ) => {
 					resolveFeedback = resolve;
@@ -101,7 +100,7 @@ describe( 'CSATForm', () => {
 
 	it( 'disables the thumbs buttons while the score submission is pending', async () => {
 		let resolveFeedback: () => void = () => undefined;
-		const onSendFeedback = jest.fn(
+		const onSendFeedback = vi.fn(
 			() =>
 				new Promise< void >( ( resolve ) => {
 					resolveFeedback = resolve;
@@ -127,10 +126,8 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'hides the form without submitting anything when Send is clicked with no comment or reason', async () => {
-		const onFormHidden = jest.fn();
-		render(
-			<CSATForm ticketId={ 1 } onSendFeedback={ jest.fn() } onFormHidden={ onFormHidden } />
-		);
+		const onFormHidden = vi.fn();
+		render( <CSATForm ticketId={ 1 } onSendFeedback={ vi.fn() } onFormHidden={ onFormHidden } /> );
 
 		const { thumbsUp } = getThumbsButtons();
 		await act( async () => {
@@ -147,10 +144,8 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'calls onFormHidden when No thanks is clicked', async () => {
-		const onFormHidden = jest.fn();
-		render(
-			<CSATForm ticketId={ 1 } onSendFeedback={ jest.fn() } onFormHidden={ onFormHidden } />
-		);
+		const onFormHidden = vi.fn();
+		render( <CSATForm ticketId={ 1 } onSendFeedback={ vi.fn() } onFormHidden={ onFormHidden } /> );
 
 		const { thumbsUp } = getThumbsButtons();
 		await act( async () => {
@@ -165,7 +160,7 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'calls rateChat with the ticket_id when a comment is submitted without onSendComment', async () => {
-		render( <CSATForm ticketId={ 42 } onSendFeedback={ jest.fn() } /> );
+		render( <CSATForm ticketId={ 42 } onSendFeedback={ vi.fn() } /> );
 
 		const { thumbsUp } = getThumbsButtons();
 		await act( async () => {
@@ -191,9 +186,9 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'calls onSendComment instead of rateChat when onSendComment is provided', async () => {
-		const onSendComment = jest.fn().mockResolvedValue( undefined );
+		const onSendComment = vi.fn().mockResolvedValue( undefined );
 		render(
-			<CSATForm ticketId={ 1 } onSendFeedback={ jest.fn() } onSendComment={ onSendComment } />
+			<CSATForm ticketId={ 1 } onSendFeedback={ vi.fn() } onSendComment={ onSendComment } />
 		);
 
 		const { thumbsDown } = getThumbsButtons();
@@ -215,9 +210,9 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'does not call rateChat when ticketId is null and onSendComment is not provided, but still hides the form', async () => {
-		const onFormHidden = jest.fn();
+		const onFormHidden = vi.fn();
 		render(
-			<CSATForm ticketId={ null } onSendFeedback={ jest.fn() } onFormHidden={ onFormHidden } />
+			<CSATForm ticketId={ null } onSendFeedback={ vi.fn() } onFormHidden={ onFormHidden } />
 		);
 
 		const { thumbsDown } = getThumbsButtons();
@@ -239,7 +234,7 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'falls back to the static reason options when reasonOptions is not provided', async () => {
-		render( <CSATForm ticketId={ 1 } onSendFeedback={ jest.fn() } /> );
+		render( <CSATForm ticketId={ 1 } onSendFeedback={ vi.fn() } /> );
 
 		const { thumbsDown } = getThumbsButtons();
 		await act( async () => {
@@ -250,7 +245,7 @@ describe( 'CSATForm', () => {
 	} );
 
 	it( 'uses the provided reasonOptions, including an empty array, instead of the static list', async () => {
-		render( <CSATForm ticketId={ 1 } onSendFeedback={ jest.fn() } reasonOptions={ [] } /> );
+		render( <CSATForm ticketId={ 1 } onSendFeedback={ vi.fn() } reasonOptions={ [] } /> );
 
 		const { thumbsDown } = getThumbsButtons();
 		await act( async () => {

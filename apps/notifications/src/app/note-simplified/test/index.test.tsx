@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -129,5 +129,28 @@ describe( 'SimplifiedNote', () => {
 		);
 
 		expect( container.querySelector( 'img[src="https://img.example/a.png"]' ) ).not.toBeNull();
+	} );
+
+	it( 'shows a mention in a post under its site, without a card for the same post', () => {
+		const { container } = renderNote(
+			makeNote( {
+				type: 'automattcher',
+				meta: {
+					ids: { site: SITE, post: POST },
+					site: { name: 'Team Site', icon: '' },
+					post: {
+						title: 'Quarterly plan',
+						url: 'https://site.example/post/',
+						date: null,
+						author_name: 'Kwame',
+					},
+					actor: { name: 'Kwame', avatar: '' },
+				},
+			} )
+		);
+
+		expect( screen.getByText( 'Team Site' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Quarterly plan' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.wpnc-simplified__card' ) ).toBeNull();
 	} );
 } );

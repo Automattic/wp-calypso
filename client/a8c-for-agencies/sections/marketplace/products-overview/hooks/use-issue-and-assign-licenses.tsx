@@ -176,9 +176,13 @@ function useIssueAndAssignLicenses(
 			// then, redirect to somewhere more appropriate
 			const selectedSiteId = selectedSite?.ID;
 			if ( ! selectedSiteId ) {
-				const wpcomPlan = issuedLicenses.find( ( license ) =>
+				// Other products bought alongside a WordPress.com plan need assigning too,
+				// and only the licenses list shows them all, so only a WordPress.com-only
+				// purchase goes to "Needs setup".
+				const isWPCOMPlanOnly = issuedLicenses.every( ( license ) =>
 					license.slug?.startsWith( 'wpcom-hosting' )
 				);
+				const wpcomPlan = isWPCOMPlanOnly ? issuedLicenses[ 0 ] : undefined;
 				const hasPurchaseWPCOMPlan = !! wpcomPlan;
 
 				if ( ! hasPurchaseWPCOMPlan ) {

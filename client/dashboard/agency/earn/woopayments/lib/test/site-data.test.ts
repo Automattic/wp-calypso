@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import * as payoutDateModule from '../../../referrals/lib/get-next-payout-date';
 import { getSiteData } from '../site-data';
 import type { WooPaymentsData } from '@automattic/api-core';
 
-jest.mock( '../../../referrals/lib/get-next-payout-date' );
+vi.mock( '../../../referrals/lib/get-next-payout-date' );
 
 describe( 'getSiteData', () => {
 	const mockWooPaymentsData: WooPaymentsData = {
@@ -55,11 +56,11 @@ describe( 'getSiteData', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
-	it( 'includes only current quarter transactions when next and current payout dates are equal', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
+	test( 'includes only current quarter transactions when next and current payout dates are equal', () => {
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
 
 		const result = getSiteData( mockWooPaymentsData, 123 );
 
@@ -68,8 +69,8 @@ describe( 'getSiteData', () => {
 		expect( result.payout ).toBe( 500 );
 	} );
 
-	it( 'includes both current and previous quarter transactions when payout dates differ', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
+	test( 'includes both current and previous quarter transactions when payout dates differ', () => {
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
 
 		const result = getSiteData( mockWooPaymentsData, 123 );
 
@@ -78,8 +79,8 @@ describe( 'getSiteData', () => {
 		expect( result.payout ).toBe( 500 );
 	} );
 
-	it( 'returns null transactions when site has no data', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
+	test( 'returns null transactions when site has no data', () => {
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
 
 		const result = getSiteData( mockWooPaymentsData, 999 );
 
@@ -88,8 +89,8 @@ describe( 'getSiteData', () => {
 		expect( result.payout ).toBe( 0 );
 	} );
 
-	it( 'handles missing estimated data gracefully', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
+	test( 'handles missing estimated data gracefully', () => {
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
 
 		const dataWithoutEstimates: WooPaymentsData = {
 			...mockWooPaymentsData,
@@ -120,8 +121,8 @@ describe( 'getSiteData', () => {
 		expect( result.payout ).toBe( 500 );
 	} );
 
-	it( 'returns estimated transactions even when completed transactions are zero (regression test)', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
+	test( 'returns estimated transactions even when completed transactions are zero (regression test)', () => {
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
 
 		const newMerchantData: WooPaymentsData = {
 			...mockWooPaymentsData,

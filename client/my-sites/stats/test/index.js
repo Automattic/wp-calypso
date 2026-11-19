@@ -17,6 +17,7 @@ jest.mock( 'calypso/my-sites/controller', () => ( {
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
+jest.mock( '../redirect-to-wp-admin-stats', () => jest.fn() );
 jest.mock( 'calypso/controller', () => ( {
 	makeLayout: jest.fn(),
 	render: jest.fn(),
@@ -39,6 +40,7 @@ import {
 	redirectToDefaultWordAdsPeriod,
 } from '../controller';
 import router from '../index';
+import redirectToWpAdminStats from '../redirect-to-wp-admin-stats';
 
 const validModules = [
 	'posts',
@@ -61,15 +63,31 @@ const validTrafficPagePeriods = [ 'hour', 'day', 'week', 'month', 'year' ].join(
 
 const routes = {
 	[ `/stats/:period(${ validPeriods })` ]: [
+		redirectToWpAdminStats,
 		siteSelection,
 		navigation,
 		overview,
 		makeLayout,
 		clientRender,
 	],
-	'/stats/insights': [ siteSelection, navigation, sites, makeLayout, clientRender ],
-	'/stats/insights/:site': [ siteSelection, navigation, insights, makeLayout, clientRender ],
+	'/stats/insights': [
+		redirectToWpAdminStats,
+		siteSelection,
+		navigation,
+		sites,
+		makeLayout,
+		clientRender,
+	],
+	'/stats/insights/:site': [
+		redirectToWpAdminStats,
+		siteSelection,
+		navigation,
+		insights,
+		makeLayout,
+		clientRender,
+	],
 	[ `/stats/:period(${ validTrafficPagePeriods })/:site` ]: [
+		redirectToWpAdminStats,
 		siteSelection,
 		navigation,
 		site,
@@ -78,16 +96,39 @@ const routes = {
 	],
 	[ `/stats/:module(${ validModules })/:site` ]: [ redirectToDefaultModulePage ],
 	[ `/stats/:period(${ validPeriods })/:module(${ validModules })/:site` ]: [
+		redirectToWpAdminStats,
 		siteSelection,
 		navigation,
 		summary,
 		makeLayout,
 		clientRender,
 	],
-	'/stats/post/:post_id/:site': [ siteSelection, navigation, post, makeLayout, clientRender ],
-	'/stats/page/:post_id/:site': [ siteSelection, navigation, post, makeLayout, clientRender ],
-	'/stats/follows/comment/:site': [ siteSelection, navigation, follows, makeLayout, clientRender ],
+	'/stats/post/:post_id/:site': [
+		redirectToWpAdminStats,
+		siteSelection,
+		navigation,
+		post,
+		makeLayout,
+		clientRender,
+	],
+	'/stats/page/:post_id/:site': [
+		redirectToWpAdminStats,
+		siteSelection,
+		navigation,
+		post,
+		makeLayout,
+		clientRender,
+	],
+	'/stats/follows/comment/:site': [
+		redirectToWpAdminStats,
+		siteSelection,
+		navigation,
+		follows,
+		makeLayout,
+		clientRender,
+	],
 	'/stats/follows/comment/:page_num/:site': [
+		redirectToWpAdminStats,
 		siteSelection,
 		navigation,
 		follows,
@@ -96,6 +137,7 @@ const routes = {
 	],
 	'/stats/activity/:site?': [ redirectToActivity ],
 	[ `/stats/ads/:period(${ validPeriods })/:site` ]: [
+		redirectToWpAdminStats,
 		siteSelection,
 		navigation,
 		wordAds,

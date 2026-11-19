@@ -1,9 +1,8 @@
+import { vi } from 'vitest';
 import { getTaskUpdateOutcome, isSuccessfulTaskUpdate, isTerminalTaskUpdate } from '../task-update';
 import type { TaskUpdate } from '@automattic/agenttic-client';
 
-jest.mock( '@automattic/agenttic-client', () => ( { extractToolCallsFromMessage: jest.fn() } ), {
-	virtual: true,
-} );
+vi.mock( '@automattic/agenttic-client', () => ( { extractToolCallsFromMessage: vi.fn() } ) );
 
 function taskUpdate( state: string, final?: boolean ) {
 	return { id: 'task-1', final, status: { state } } as unknown as TaskUpdate;

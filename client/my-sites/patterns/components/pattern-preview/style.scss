@@ -99,10 +99,6 @@
 			background-color: var(--button-color-hover);
 			border-color: var(--button-color-hover);
 		}
-
-		path {
-			fill: currentColor;
-		}
 	}
 
 	&.is-server .pattern-preview__copy {
@@ -126,10 +122,6 @@
 		&:focus {
 			border-color: currentColor;
 			color: var(--button-color-hover);
-		}
-
-		path {
-			fill: currentColor;
 		}
 	}
 }

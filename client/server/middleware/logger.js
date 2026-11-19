@@ -20,7 +20,10 @@ const logRequest = ( req, res, options ) => {
 	const { requestStart } = options;
 
 	// Let's not log static file requests in dev mode, since it adds a ton of unhelpful noise.
-	if ( process.env.NODE_ENV === 'development' && isStaticRequest( req ) ) {
+	if (
+		process.env.NODE_ENV === 'development' &&
+		( isStaticRequest( req ) || res.locals.servedByBundler )
+	) {
 		return;
 	}
 

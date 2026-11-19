@@ -13,7 +13,6 @@ import {
 	isSitePlanBigSkyTrial,
 	isSitePlanPaid,
 } from '../plans';
-import { getPreviewPlansUrl, useSiteIsPreview } from '../site-fields/plan-awaiting-checkout';
 import SiteLaunchModal from '../site-launch-modal';
 import type { Site } from '@automattic/api-core';
 
@@ -79,7 +78,6 @@ export function useSiteLaunch(
 
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ isExperimentLoading, variant ] = useSiteLaunchGatingVariant();
-	const { isLoading: isPreviewLoading, isPreview } = useSiteIsPreview( site );
 
 	const isSitePlanHostingTrial = site.plan?.product_slug === DotcomPlans.HOSTING_TRIAL_MONTHLY;
 	const hasCustomDomain = domains.some( ( domain ) => domain.subscription_id !== null );
@@ -113,17 +111,10 @@ export function useSiteLaunch(
 		recordTracksEvent( 'calypso_dashboard_site_launch_button_click', { context: tracksContext } );
 	};
 
-	const redirectAfterLaunch = ( options: { celebrate?: boolean } = {} ) => {
-		const targetUrl = addQueryArgs( postLaunchUrl ?? window.location.href, {
-			...( options.celebrate ? { celebrateLaunch: 'true' } : {} ),
-		} );
-
+	const redirectAfterLaunch = () => {
 		if ( postLaunchUrl ) {
-			window.location.assign( targetUrl );
-			return;
+			window.location.assign( postLaunchUrl );
 		}
-
-		window.history.replaceState( null, '', targetUrl );
 	};
 
 	const launchForModal = () => {
@@ -144,24 +135,12 @@ export function useSiteLaunch(
 	};
 
 	const baseResult = {
-		isLoading: isDomainsLoading || isPreviewLoading,
+		isLoading: isDomainsLoading,
 		isExperimentLoading,
 		isDisabled,
 		isBusy: launchMutation.isPending,
 		modal: null as ReactElement | null,
 	};
-
-	// A preview site is launched by buying it: any plan that includes Atomic keeps the site, and
-	// a free launch would only be undone by its next build.
-	if ( isPreview ) {
-		return {
-			...baseResult,
-			isHidden: false,
-			isDisabled: false,
-			href: getPreviewPlansUrl( site ),
-			onClick: track,
-		};
-	}
 
 	if ( site.is_a4a_dev_site ) {
 		if ( a4aLaunchUrl ) {

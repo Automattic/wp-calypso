@@ -1,28 +1,24 @@
-import { translate } from 'i18n-calypso';
-import { getSiteId } from 'calypso/state/sites/selectors';
-import SectionMigrate from './section-migrate';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { goToMigrationFlow } from './utils';
 
-export function migrateSite( context, next ) {
-	const sourceSiteId =
-		context.params.sourceSiteId &&
-		getSiteId( context.store.getState(), context.params.sourceSiteId );
-	const fromSite = context.query[ 'from-site' ];
+// The source site in the URL is a site slug, or a site ID that only resolves through Redux.
+function getFromSite( context ) {
+	const { sourceSiteId } = context.params;
+	const sourceSiteSlug =
+		sourceSiteId && ! /^\d+$/.test( sourceSiteId )
+			? sourceSiteId.replaceAll( '::', '/' )
+			: undefined;
 
-	context.primary = (
-		<SectionMigrate sourceSiteId={ sourceSiteId } step={ context.migrationStep } url={ fromSite } />
+	return context.query[ 'from-site' ] ?? sourceSiteSlug;
+}
+
+// The migration overview sends a site that isn't migrating on to its overview.
+export function redirectToMigrationOverview( context ) {
+	window.location.replace(
+		dashboardLink( `/sites/${ context.params.site_id }/migration-overview` )
 	);
-
-	next();
 }
 
-export function setStep( migrationStep ) {
-	return ( context, next ) => {
-		context.migrationStep = migrationStep;
-		next();
-	};
-}
-
-export function setSiteSelectionHeader( context, next ) {
-	context.getSiteSelectionHeaderText = () => translate( 'Select a site to import into' );
-	next();
+export function redirectToMigrationFlow( context ) {
+	goToMigrationFlow( context.params.site_id, getFromSite( context ) );
 }

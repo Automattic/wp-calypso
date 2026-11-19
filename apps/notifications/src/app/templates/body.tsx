@@ -117,7 +117,7 @@ export const ReplyFooter = ( { note }: { note: Note } ) => {
 	}
 
 	return (
-		<CardFooter size="small">
+		<CardFooter className="wpnc-simplified__reply-footer" size="small">
 			<NoteReply note={ note } />
 		</CardFooter>
 	);

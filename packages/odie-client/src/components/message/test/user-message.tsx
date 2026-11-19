@@ -1,7 +1,6 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import {
 	getOdieEmailFallbackMessage,
 	getOdieZendeskConnectionErrorMessage,
@@ -12,60 +11,60 @@ import type { Message } from '../../../types';
 
 let mockHasReachedLimit = false;
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { PLANS_PRESALES_LAUNCHER_CONTEXT: 'plans-presales' },
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	localizeUrl: ( url: string ) => url,
 	translationExists: () => true,
 } ) );
 
-jest.mock( '@wordpress/icons', () => ( {
+vi.mock( '@wordpress/icons', () => ( {
 	Icon: () => null,
 	chevronRight: 'chevron-right',
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useLocation: () => ( { search: '', pathname: '/' } ),
-	useNavigate: () => jest.fn(),
+	useNavigate: () => vi.fn(),
 } ) );
 
-jest.mock( '../../../context', () => ( {
-	useOdieAssistantContext: jest.fn(),
+vi.mock( '../../../context', () => ( {
+	useOdieAssistantContext: vi.fn(),
 } ) );
 
-jest.mock( '../../../data', () => ( {
+vi.mock( '../../../data', () => ( {
 	useGetSupportInteractionById: () => ( { data: null } ),
 } ) );
 
-jest.mock( '../../../data/use-current-support-interaction', () => ( {
+vi.mock( '../../../data/use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: () => ( { data: undefined } ),
 } ) );
 
-jest.mock( '../../../hooks', () => ( {
-	useCreateZendeskConversation: () => jest.fn(),
-	useRequestHumanSupport: () => jest.fn(),
+vi.mock( '../../../hooks', () => ( {
+	useCreateZendeskConversation: () => vi.fn(),
+	useRequestHumanSupport: () => vi.fn(),
 } ) );
 
-jest.mock( '../../../hooks/use-open-interaction-status-map', () => ( {
+vi.mock( '../../../hooks/use-open-interaction-status-map', () => ( {
 	useOpenLiveInteractions: () => ( {
 		mostRecentSupportInteractionId: null,
 		hasReachedLimit: mockHasReachedLimit,
 	} ),
 } ) );
 
-jest.mock( '../mardown-or-children', () => ( {
+vi.mock( '../mardown-or-children', () => ( {
 	MarkdownOrChildren: ( { messageContent }: { messageContent: string } ) => (
 		<p>{ messageContent }</p>
 	),
 } ) );
-jest.mock( '../bot-message-actions', () => ( { __esModule: true, default: () => null } ) );
-jest.mock( '../sources', () => ( { __esModule: true, default: () => null } ) );
+vi.mock( '../bot-message-actions', () => ( { default: () => null } ) );
+vi.mock( '../sources', () => ( { default: () => null } ) );
 
 const LIMIT_TEXT = 'We noticed you have other open conversations. Would you like to see them?';
 
@@ -74,14 +73,14 @@ const renderMessage = (
 	{ isUserEligibleForPaidSupport = true, forceEmailSupport = false, isChatLoaded = true } = {}
 ) => {
 	const shownMessage = { ...message, message_id: 1 };
-	( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		chat: { provider: 'odie', status: 'loaded', messages: [ shownMessage ] },
 		isUserEligibleForPaidSupport,
 		canConnectToZendesk: true,
 		forceEmailSupport,
 		isChatRestricted: false,
 		isChatLoaded,
-		trackEvent: jest.fn(),
+		trackEvent: vi.fn(),
 	} );
 
 	render( <UserMessage message={ shownMessage } isMessageWithEscalationOption /> );

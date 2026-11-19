@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -14,6 +14,7 @@ import {
 import { render as testingLibraryRender, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { AnalyticsProvider } from '../../../app/analytics';
 import { AuthContext } from '../../../app/auth';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
@@ -51,8 +52,8 @@ function renderAtPluginUrl( pluginSlug: string ) {
 			client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
 		>
 			<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
-				<AnalyticsProvider client={ { recordTracksEvent: jest.fn(), recordPageView: jest.fn() } }>
-					<AuthContext.Provider value={ { user: { ID: 1 } as User, logout: jest.fn() } }>
+				<AnalyticsProvider client={ { recordTracksEvent: vi.fn(), recordPageView: vi.fn() } }>
+					<AuthContext.Provider value={ { user: { ID: 1 } as User, logout: vi.fn() } }>
 						<RouterProvider router={ router } />
 					</AuthContext.Provider>
 				</AnalyticsProvider>

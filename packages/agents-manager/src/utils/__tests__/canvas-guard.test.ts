@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { select } from '@wordpress/data';
+import { type Mock, type MockedFunction, vi } from 'vitest';
 import {
 	bindToOpenCanvas,
 	blockCurrentRequest,
@@ -17,9 +18,9 @@ import {
 } from '../canvas-guard';
 import type { ClientContextType, ToolProvider } from '../../types';
 
-jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn() } ) );
 
-const mockSelect = select as jest.MockedFunction< typeof select >;
+const mockSelect = select as MockedFunction< typeof select >;
 
 /**
  * Point the mocked `core/editor` store at a given post.
@@ -39,9 +40,9 @@ function setOpenPost( post: { id?: number | string; type?: string; title?: strin
 	} );
 }
 
-function createToolProvider( executeAbility = jest.fn() ): ToolProvider {
+function createToolProvider( executeAbility = vi.fn() ): ToolProvider {
 	return {
-		getAbilities: jest.fn( () => Promise.resolve( [] ) ),
+		getAbilities: vi.fn( () => Promise.resolve( [] ) ),
 		executeAbility,
 	} as unknown as ToolProvider;
 }
@@ -70,7 +71,7 @@ describe( 'withCanvasGuard', () => {
 		bindToOpenCanvas();
 		setOpenPost( CONTACT_PAGE );
 
-		const executeAbility = jest.fn();
+		const executeAbility = vi.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		const result = await guarded!.executeAbility( 'big_sky__apply_block_edits', {} );
@@ -94,7 +95,7 @@ describe( 'withCanvasGuard', () => {
 		bindToOpenCanvas();
 		setOpenPost( CONTACT_PAGE );
 
-		const executeAbility = jest.fn();
+		const executeAbility = vi.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await guarded!.executeAbility( 'big-sky/stream-page-design', {} );
@@ -109,7 +110,7 @@ describe( 'withCanvasGuard', () => {
 		bindToOpenCanvas();
 		setOpenPost( null );
 
-		const executeAbility = jest.fn();
+		const executeAbility = vi.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		const result = await guarded!.executeAbility( 'big_sky__stream_page_design', {} );
@@ -128,7 +129,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const executeAbility = vi.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await guarded!.executeAbility( 'big_sky__editor_navigate', {} );
@@ -143,7 +144,7 @@ describe( 'withCanvasGuard', () => {
 		bindToOpenCanvas();
 		setOpenPost( CONTACT_PAGE );
 
-		const executeAbility = jest.fn();
+		const executeAbility = vi.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await guarded!.executeAbility( 'big_sky__restore_checkpoint', {} );
@@ -156,7 +157,7 @@ describe( 'withCanvasGuard', () => {
 		bindToOpenCanvas();
 		setOpenPost( CONTACT_PAGE );
 
-		const executeAbility = jest.fn();
+		const executeAbility = vi.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await guarded!.executeAbility( 'big_sky__apply_block_edits', {} );
@@ -173,7 +174,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const executeAbility = vi.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await expect(
@@ -191,7 +192,7 @@ describe( 'withCanvasGuard', () => {
 		bindToOpenCanvas();
 		setOpenPost( CONTACT_PAGE );
 
-		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const executeAbility = vi.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await guarded!.executeAbility( 'big_sky__edit_entity_record', {} );
@@ -203,7 +204,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockImplementation( async () => {
+		const executeAbility = vi.fn().mockImplementation( async () => {
 			setOpenPost( CONTACT_PAGE );
 			return { ok: true };
 		} );
@@ -224,7 +225,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const executeAbility = vi.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		// `add-page` created page 34 server-side and asked the client to open it.
@@ -245,7 +246,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const executeAbility = vi.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
@@ -265,7 +266,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest
+		const executeAbility = vi
 			.fn()
 			.mockResolvedValue( { result: { success: false, message: 'Could not open that page.' } } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
@@ -284,7 +285,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockResolvedValue( {
+		const executeAbility = vi.fn().mockResolvedValue( {
 			result: { success: false, details: { path: '/page/34', navigated: true } },
 		} );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
@@ -299,7 +300,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockRejectedValue( new Error( 'Network error' ) );
+		const executeAbility = vi.fn().mockRejectedValue( new Error( 'Network error' ) );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		// The failure still reaches the caller: the guard restores the binding, it
@@ -319,7 +320,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockResolvedValue( { result: { success: false } } );
+		const executeAbility = vi.fn().mockResolvedValue( { result: { success: false } } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
@@ -336,7 +337,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockImplementation( async () => {
+		const executeAbility = vi.fn().mockImplementation( async () => {
 			setOpenPost( CONTACT_PAGE );
 			return { result: { success: false } };
 		} );
@@ -354,7 +355,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockResolvedValue( { result: { success: false } } );
+		const executeAbility = vi.fn().mockResolvedValue( { result: { success: false } } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await guarded!.executeAbility( 'wp_admin__navigate', { path: '/wp-admin/plugins.php' } );
@@ -370,7 +371,7 @@ describe( 'withCanvasGuard', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
+		const executeAbility = vi.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await guarded!.executeAbility( 'wp_admin__navigate', { path: '/wp-admin/plugins.php' } );
@@ -385,7 +386,7 @@ describe( 'withCanvasGuard', () => {
 } );
 
 describe.each( [ 'executeAbility', 'callback' ] as const )( 'save guard through %s', ( path ) => {
-	const save = jest.fn().mockResolvedValue( { result: { success: true }, returnToAgent: true } );
+	const save = vi.fn().mockResolvedValue( { result: { success: true }, returnToAgent: true } );
 	const provider = {
 		getAbilities: async () => [ { name: 'big-sky/save-changes', callback: save } ],
 		executeAbility: save,
@@ -419,7 +420,7 @@ describe.each( [ 'executeAbility', 'callback' ] as const )( 'save guard through 
 
 	it( 'refuses saves after an edit was refused, even after the continuation rebinds', async () => {
 		setOpenPost( CONTACT_PAGE );
-		const edit = jest.fn();
+		const edit = vi.fn();
 		await withCanvasGuard( createToolProvider( edit ) )!.executeAbility(
 			'big-sky/apply-block-edits',
 			{}
@@ -472,15 +473,15 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 		return ability!.callback!( input as never );
 	}
 
-	function createCallbackProvider( callback: jest.Mock ): ToolProvider {
+	function createCallbackProvider( callback: Mock ): ToolProvider {
 		return {
-			getAbilities: jest.fn( () =>
+			getAbilities: vi.fn( () =>
 				Promise.resolve( [
 					{ name: 'big-sky/editor-navigate', callback },
 					{ name: 'big-sky/stream-page-design', callback },
 				] )
 			),
-			executeAbility: jest.fn(),
+			executeAbility: vi.fn(),
 		} as unknown as ToolProvider;
 	}
 
@@ -496,7 +497,7 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 		setOpenPost( ABOUT_PAGE );
 		bindToOpenCanvas();
 
-		const callback = jest.fn().mockResolvedValue( { result: { success: true }, ok: true } );
+		const callback = vi.fn().mockResolvedValue( { result: { success: true }, ok: true } );
 		const guarded = withCanvasGuard( createCallbackProvider( callback ) );
 
 		await callAbility( guarded!, 'big-sky/editor-navigate', { path: '/page/34' } );
@@ -516,7 +517,7 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 		bindToOpenCanvas();
 		setOpenPost( CONTACT_PAGE );
 
-		const callback = jest.fn();
+		const callback = vi.fn();
 		const guarded = withCanvasGuard( createCallbackProvider( callback ) );
 
 		const result = await callAbility( guarded!, 'big-sky/stream-page-design', {} );
@@ -541,7 +542,7 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 			result: { success: false, message: 'Could not open that page.' },
 			returnToAgent: true,
 		};
-		const callback = jest.fn().mockResolvedValue( failure );
+		const callback = vi.fn().mockResolvedValue( failure );
 		const guarded = withCanvasGuard( createCallbackProvider( callback ) );
 
 		const navigation = await callAbility( guarded!, 'big-sky/editor-navigate', {
@@ -565,8 +566,8 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 		// Nothing to wrap, and wrapping it would invent a callback that makes
 		// agenttic-client stop falling back to `executeAbility` for it.
 		const provider = {
-			getAbilities: jest.fn( () => Promise.resolve( [ { name: 'big-sky/editor-navigate' } ] ) ),
-			executeAbility: jest.fn(),
+			getAbilities: vi.fn( () => Promise.resolve( [ { name: 'big-sky/editor-navigate' } ] ) ),
+			executeAbility: vi.fn(),
 		} as unknown as ToolProvider;
 
 		const abilities = await withCanvasGuard( provider )!.getAbilities();
@@ -637,7 +638,7 @@ describe( 'withCanvasBinding', () => {
 
 	it( 'binds to the open canvas on every outgoing message', () => {
 		setOpenPost( ABOUT_PAGE );
-		const getClientContext = jest.fn().mockReturnValue( createClientContext() );
+		const getClientContext = vi.fn().mockReturnValue( createClientContext() );
 
 		const wrapped = withCanvasBinding( { getClientContext } );
 		wrapped!.getClientContext();

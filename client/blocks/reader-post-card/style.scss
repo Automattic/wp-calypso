@@ -50,6 +50,10 @@
 	&:focus {
 		svg:not( .reader-follow-feed, .reader-following-feed, .reader-following-conversation ) {
 			path {
+				color: var(--color-text-inverted);
+			}
+
+			&:not([stroke]) path {
 				fill: var(--color-text-inverted);
 			}
 		}
@@ -337,14 +341,6 @@
 		@include breakpoint-deprecated( "<660px" ) {
 			margin: 20px 0 0;
 		}
-	}
-}
-
-.reader-post-card__conversation-post {
-	.comments__comment-actions {
-		display: flex;
-		justify-content: flex-start;
-		padding-top: 8px;
 	}
 }
 
@@ -694,6 +690,7 @@
 
 	.gridicon {
 		fill: var(--color-primary);
+		color: var(--color-primary);
 	}
 
 	.follow-button__label {
@@ -705,6 +702,7 @@
 
 		.gridicon {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 
 		svg {
@@ -721,6 +719,7 @@
 
 			.gridicon {
 				fill: var( --color-link-dark );
+				color: var( --color-link-dark );
 			}
 
 			.follow-button__label {
@@ -738,6 +737,7 @@
 	&.is-following {
 		.gridicon {
 			fill: var(--color-success);
+			color: var(--color-success);
 		}
 
 		.follow-button__label {

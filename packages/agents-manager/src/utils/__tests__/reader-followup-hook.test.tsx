@@ -2,18 +2,15 @@
  * @jest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useReaderFollowupSuggestions } from '../reader-followup-hook';
 
 // reader-followup-hook imports from @wordpress/element, mock it with the real React
 // hooks so the hook behaviour is actually exercised.
-jest.mock(
-	'@wordpress/element',
-	() => ( {
-		useState: jest.requireActual( 'react' ).useState,
-		useEffect: jest.requireActual( 'react' ).useEffect,
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@wordpress/element', async () => ( {
+	useState: ( await vi.importActual< typeof import( 'react' ) >( 'react' ) ).useState,
+	useEffect: ( await vi.importActual< typeof import( 'react' ) >( 'react' ) ).useEffect,
+} ) );
 
 type FollowupWindow = Window & {
 	__jetpackReaderFollowupChips?: Array< { id: string; label: string; prompt?: string } >;
@@ -67,7 +64,7 @@ describe( 'useReaderFollowupSuggestions', () => {
 	} );
 
 	it( 'removes the event listener on unmount', () => {
-		const removeListenerSpy = jest.spyOn( window, 'removeEventListener' );
+		const removeListenerSpy = vi.spyOn( window, 'removeEventListener' );
 
 		const { unmount } = renderHook( () => useReaderFollowupSuggestions() );
 

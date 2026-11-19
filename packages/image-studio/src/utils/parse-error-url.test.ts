@@ -1,4 +1,36 @@
-import { parseErrorUrl } from './parse-error-url';
+import { getCheckoutSource, parseErrorUrl } from './parse-error-url';
+
+describe( 'getCheckoutSource', () => {
+	it( 'reads the source from a plans link', () => {
+		expect(
+			getCheckoutSource( 'https://wordpress.com/plans/example.com?source=image-studio' )
+		).toBe( 'image-studio' );
+	} );
+
+	it( 'reads the source that a Jetpack Redirect link passes on to checkout', () => {
+		expect(
+			getCheckoutSource(
+				'https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge&site=example.com&path=jetpack_ai_yearly&query=source%3Dimage-studio'
+			)
+		).toBe( 'image-studio' );
+	} );
+
+	it( 'ignores the redirect rule name on a Jetpack Redirect link', () => {
+		expect(
+			getCheckoutSource(
+				'https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge&site=example.com'
+			)
+		).toBe( 'none' );
+	} );
+
+	it( 'returns none for a link without a source', () => {
+		expect( getCheckoutSource( 'https://wordpress.com/plans/example.com' ) ).toBe( 'none' );
+	} );
+
+	it( 'returns none for an invalid URL', () => {
+		expect( getCheckoutSource( 'not a url' ) ).toBe( 'none' );
+	} );
+} );
 
 describe( 'parseErrorUrl', () => {
 	describe( 'Streaming error prefix stripping', () => {

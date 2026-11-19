@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { queryClient } from '@automattic/api-queries';
 import { createRouter } from '@tanstack/react-router';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import { rootRoute } from '../root';
 import {
@@ -14,10 +15,10 @@ import {
 	siteSettingsApmRoute,
 } from '../sites';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn( () => '' );
-	const isEnabled = jest.fn( ( flag: string ) => flag === 'performance/apm' );
-	return Object.assign( fn, { __esModule: true, default: fn, isEnabled } );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn( () => '' );
+	const isEnabled = vi.fn( ( flag: string ) => flag === 'performance/apm' );
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled } ) };
 } );
 
 const siteSlug = 'test-site.wordpress.com';
@@ -73,10 +74,11 @@ describe( 'sitePerformanceBackendRoute', () => {
 		mockIsAutomattician( false );
 
 		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
-			isRedirect: true,
-			to: '/sites/$siteSlug/performance/frontend',
-			params: { siteSlug },
-			search: { flash: 'route-not-allowed' },
+			options: {
+				to: '/sites/$siteSlug/performance/frontend',
+				params: { siteSlug },
+				search: { flash: 'route-not-allowed' },
+			},
 		} );
 	} );
 
@@ -86,10 +88,11 @@ describe( 'sitePerformanceBackendRoute', () => {
 			.reply( 403, { error: 'unauthorized', message: 'User cannot read teams' } );
 
 		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
-			isRedirect: true,
-			to: '/sites/$siteSlug/performance/frontend',
-			params: { siteSlug },
-			search: { flash: 'route-not-allowed' },
+			options: {
+				to: '/sites/$siteSlug/performance/frontend',
+				params: { siteSlug },
+				search: { flash: 'route-not-allowed' },
+			},
 		} );
 	} );
 
@@ -138,10 +141,11 @@ describe( 'siteSettingsApmRoute', () => {
 		mockIsAutomattician( false );
 
 		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
-			isRedirect: true,
-			to: '/sites/$siteSlug/settings',
-			params: { siteSlug },
-			search: { flash: 'route-not-allowed' },
+			options: {
+				to: '/sites/$siteSlug/settings',
+				params: { siteSlug },
+				search: { flash: 'route-not-allowed' },
+			},
 		} );
 	} );
 

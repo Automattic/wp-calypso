@@ -1,3 +1,4 @@
+import { type Mock, vi } from 'vitest';
 import {
 	extractPartialJsonStringProperty,
 	finalizePendingStreams,
@@ -24,17 +25,17 @@ const update = ( parts: Part[], sessionId?: string ): TaskUpdate =>
 const streamed = ( toolCallId: string, markup: string, sessionId?: string ) =>
 	handlePageDesignTaskUpdate( update( [ streamPart( toolCallId, { markup } ) ], sessionId ) );
 
-let handler: jest.Mock;
+let handler: Mock;
 
 beforeEach( () => {
-	handler = jest.fn();
+	handler = vi.fn();
 	setStreamHandler( handler );
 } );
 
 // Unregistering forgets every stream, so each test starts from nothing.
 afterEach( () => {
 	setStreamHandler( undefined );
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 describe( 'extractPartialJsonStringProperty', () => {
@@ -157,7 +158,7 @@ describe( 'handlePageDesignTaskUpdate', () => {
 	// The listener has to uncover the editor before the first frame lands.
 	it( 'announces the start of each tool call once, before the first frame', async () => {
 		const order: string[] = [];
-		const listener = jest.fn( () => order.push( 'announced' ) );
+		const listener = vi.fn( () => order.push( 'announced' ) );
 		handler.mockImplementation( () => order.push( 'frame' ) );
 		window.addEventListener( PAGE_DESIGN_STREAM_STARTED_EVENT, listener );
 
@@ -184,7 +185,7 @@ describe( 'handlePageDesignTaskUpdate', () => {
 	} );
 
 	it( 'announces a tool call again once its session was forgotten', async () => {
-		const listener = jest.fn();
+		const listener = vi.fn();
 		window.addEventListener( PAGE_DESIGN_STREAM_STARTED_EVENT, listener );
 
 		await streamed( 'call-1', '<p>a', 'session-1' );
@@ -281,7 +282,7 @@ describe( 'finalizePendingStreams', () => {
 
 	// The design is on the canvas already; failing the round trip would hang the agent.
 	it( 'logs a renderer that fails to finalize and goes on', async () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		await streamed( 'call-1', '<p>a' );
 		await streamed( 'call-2', '<p>b' );
 		handler.mockImplementationOnce( () => {

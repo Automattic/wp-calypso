@@ -54,6 +54,7 @@
 
 			svg {
 				fill: var( --color-error );
+				color: var( --color-error );
 				transform: rotate( 180deg );
 			}
 		}
@@ -140,9 +141,7 @@
 			}
 		}
 	}
-}
 
-.step-container-v2:has( .site-migration-identify--reprint ) {
 	.step-container-v2__content-wrapper {
 		gap: 32px;
 

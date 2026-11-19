@@ -1,19 +1,5 @@
-const mockGetRenderingMode = jest.fn();
-
-jest.mock( '@wordpress/blocks', () => ( { serialize: jest.fn() } ) );
-jest.mock( '@wordpress/data', () => ( {
-	select: () => ( { getRenderingMode: mockGetRenderingMode } ),
-} ) );
-jest.mock( '../editor-blocks', () => ( {
-	DOCUMENT_ROOT_CLIENT_ID: '__agents-manager-document-root__',
-	findPostContentClientId: jest.fn(),
-	getCurrentPost: jest.fn(),
-	getRootBlocks: jest.fn(),
-} ) );
-jest.mock( '../is-editor-page', () => ( { isEditorPage: jest.fn() } ) );
-jest.mock( '../site-editor-context', () => ( { isSiteEditorContext: jest.fn() } ) );
-
 import { serialize } from '@wordpress/blocks';
+import { vi } from 'vitest';
 import {
 	DOCUMENT_ROOT_CLIENT_ID,
 	findPostContentClientId,
@@ -24,25 +10,40 @@ import { isEditorPage } from '../is-editor-page';
 import { getPageContentMarkup } from '../page-content-markup';
 import { isSiteEditorContext } from '../site-editor-context';
 
+const mockGetRenderingMode = vi.fn();
+
+vi.mock( '@wordpress/blocks', () => ( { serialize: vi.fn() } ) );
+vi.mock( '@wordpress/data', () => ( {
+	select: () => ( { getRenderingMode: mockGetRenderingMode } ),
+} ) );
+vi.mock( '../editor-blocks', () => ( {
+	DOCUMENT_ROOT_CLIENT_ID: '__agents-manager-document-root__',
+	findPostContentClientId: vi.fn(),
+	getCurrentPost: vi.fn(),
+	getRootBlocks: vi.fn(),
+} ) );
+vi.mock( '../is-editor-page', () => ( { isEditorPage: vi.fn() } ) );
+vi.mock( '../site-editor-context', () => ( { isSiteEditorContext: vi.fn() } ) );
+
 const body = [
 	{ clientId: 'heading', name: 'core/heading', attributes: {}, innerBlocks: [] },
 	{ clientId: 'paragraph', name: 'core/paragraph', attributes: {}, innerBlocks: [] },
 ];
 
 beforeEach( () => {
-	jest.resetAllMocks();
-	jest.mocked( serialize ).mockReturnValue( '<!-- wp:paragraph /-->' );
-	jest.mocked( getRootBlocks ).mockReturnValue( body );
-	jest.mocked( getCurrentPost ).mockReturnValue( { id: 211, type: 'page' } );
-	jest.mocked( isEditorPage ).mockReturnValue( true );
-	jest.mocked( isSiteEditorContext ).mockReturnValue( false );
+	vi.resetAllMocks();
+	vi.mocked( serialize ).mockReturnValue( '<!-- wp:paragraph /-->' );
+	vi.mocked( getRootBlocks ).mockReturnValue( body );
+	vi.mocked( getCurrentPost ).mockReturnValue( { id: 211, type: 'page' } );
+	vi.mocked( isEditorPage ).mockReturnValue( true );
+	vi.mocked( isSiteEditorContext ).mockReturnValue( false );
 	mockGetRenderingMode.mockReturnValue( 'post-only' );
 } );
 
 it( 'prefers post-content inside a site-editor template', () => {
-	jest.mocked( isSiteEditorContext ).mockReturnValue( true );
+	vi.mocked( isSiteEditorContext ).mockReturnValue( true );
 	mockGetRenderingMode.mockReturnValue( 'template-locked' );
-	jest.mocked( findPostContentClientId ).mockReturnValue( 'pc' );
+	vi.mocked( findPostContentClientId ).mockReturnValue( 'pc' );
 
 	expect( getPageContentMarkup() ).toBe( '<!-- wp:paragraph /-->' );
 	expect( getRootBlocks ).toHaveBeenCalledTimes( 1 );
@@ -57,21 +58,21 @@ it( 'serializes the live document root in the ordinary page editor', () => {
 } );
 
 it( 'excludes the site editor document root', () => {
-	jest.mocked( isSiteEditorContext ).mockReturnValue( true );
+	vi.mocked( isSiteEditorContext ).mockReturnValue( true );
 
 	expect( getPageContentMarkup() ).toBe( '' );
 	expect( getRootBlocks ).not.toHaveBeenCalled();
 } );
 
 it( 'excludes document roots outside an editor', () => {
-	jest.mocked( isEditorPage ).mockReturnValue( false );
+	vi.mocked( isEditorPage ).mockReturnValue( false );
 
 	expect( getPageContentMarkup() ).toBe( '' );
 	expect( getRootBlocks ).not.toHaveBeenCalled();
 } );
 
 it( 'excludes non-page document roots', () => {
-	jest.mocked( getCurrentPost ).mockReturnValue( { id: 211, type: 'post' } );
+	vi.mocked( getCurrentPost ).mockReturnValue( { id: 211, type: 'post' } );
 
 	expect( getPageContentMarkup() ).toBe( '' );
 	expect( getRootBlocks ).not.toHaveBeenCalled();

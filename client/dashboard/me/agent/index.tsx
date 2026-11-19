@@ -1,9 +1,8 @@
 import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
-import { agentRoute } from '../../app/router/me';
+import { useConsumeSearchParams } from '../../app/hooks/use-consume-search-params';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -15,34 +14,14 @@ import './style.scss';
 
 export default function WordPressAgent() {
 	const tracksAudienceProps = useMcpTracksAudienceProps();
-	const {
-		pair_token: pairTokenParam,
-		slack: slackStatusParam,
-		telegram_id: telegramIdParam,
-		token: telegramTokenParam,
-		ts: telegramTimestampParam,
-		bot: telegramBotParam,
-	} = agentRoute.useSearch();
-	const [ connectionCallbacks ] = useState( () => ( {
-		pairToken: pairTokenParam,
-		slackStatus: slackStatusParam,
-		telegramId: telegramIdParam,
-		telegramToken: telegramTokenParam,
-		telegramTimestamp: telegramTimestampParam,
-		telegramBot: telegramBotParam,
-	} ) );
-
-	useEffect( () => {
-		if ( ! Object.values( connectionCallbacks ).some( Boolean ) ) {
-			return;
-		}
-
-		const url = new URL( window.location.href );
-		[ 'pair_token', 'slack', 'telegram_id', 'token', 'ts', 'bot' ].forEach( ( parameter ) =>
-			url.searchParams.delete( parameter )
-		);
-		window.history.replaceState( window.history.state, '', url.toString() );
-	}, [ connectionCallbacks ] );
+	const { pair_token, slack, telegram_id, token, ts, bot } = useConsumeSearchParams( [
+		'pair_token',
+		'slack',
+		'telegram_id',
+		'token',
+		'ts',
+		'bot',
+	] );
 
 	return (
 		<PageLayout
@@ -64,17 +43,14 @@ export default function WordPressAgent() {
 				<WordPressAgentEmail />
 				{ config.isEnabled( 'dolly/telegram' ) && (
 					<WordPressAgentTelegram
-						telegramId={ connectionCallbacks.telegramId }
-						token={ connectionCallbacks.telegramToken }
-						timestamp={ connectionCallbacks.telegramTimestamp }
-						bot={ connectionCallbacks.telegramBot }
+						telegramId={ telegram_id }
+						token={ token }
+						timestamp={ ts }
+						bot={ bot }
 					/>
 				) }
 				{ config.isEnabled( 'wordpress-agent-slack' ) && (
-					<WordPressAgentSlack
-						pairToken={ connectionCallbacks.pairToken }
-						slackStatus={ connectionCallbacks.slackStatus }
-					/>
+					<WordPressAgentSlack pairToken={ pair_token } slackStatus={ slack } />
 				) }
 			</VStack>
 		</PageLayout>

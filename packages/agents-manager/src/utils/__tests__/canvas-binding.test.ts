@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { select } from '@wordpress/data';
+import { type MockedFunction, vi } from 'vitest';
 import {
 	bindToNavigationTarget,
 	bindToOpenCanvas,
@@ -15,9 +16,9 @@ import {
 	startNewUserRequest,
 } from '../canvas-binding';
 
-jest.mock( '@wordpress/data', () => ( { select: jest.fn() } ) );
+vi.mock( '@wordpress/data', () => ( { select: vi.fn() } ) );
 
-const mockSelect = select as jest.MockedFunction< typeof select >;
+const mockSelect = select as MockedFunction< typeof select >;
 
 /**
  * Point the mocked `core/editor` store at a given post.

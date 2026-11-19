@@ -5,7 +5,6 @@ import { checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import { render, screen } from '@testing-library/react';
-import { useMobileCheckoutStickySummaryExperiment } from '../../../hooks/use-mobile-checkout-sticky-summary-experiment';
 import { ItemVariantRadioPrice } from '../variant-radio-price';
 import type { WPCOMProductVariant } from '../types';
 
@@ -14,9 +13,6 @@ jest.mock( '@automattic/shopping-cart', () => ( {
 	useShoppingCart: jest.fn(),
 } ) );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => () => 'no-site' );
-jest.mock( '../../../hooks/use-mobile-checkout-sticky-summary-experiment', () => ( {
-	useMobileCheckoutStickySummaryExperiment: jest.fn(),
-} ) );
 
 const yearly: WPCOMProductVariant = {
 	priceInteger: 12000,
@@ -57,10 +53,6 @@ describe( 'ItemVariantRadioPrice', () => {
 	} );
 
 	it( 'shows the per-month price with a space before /mo and the discount badge after it', () => {
-		( useMobileCheckoutStickySummaryExperiment as jest.Mock ).mockReturnValue( {
-			isMobileCheckoutStickySummary: false,
-		} );
-
 		renderPrice();
 
 		const price = screen.getByText( '$10 /mo' );
@@ -69,21 +61,6 @@ describe( 'ItemVariantRadioPrice', () => {
 		expect( badge ).toBeVisible();
 		expect(
 			price.compareDocumentPosition( badge ) & Node.DOCUMENT_POSITION_FOLLOWING
-		).toBeTruthy();
-	} );
-
-	it( 'in the sticky-summary arm splits /mo into its own span and puts the badge before the price', () => {
-		( useMobileCheckoutStickySummaryExperiment as jest.Mock ).mockReturnValue( {
-			isMobileCheckoutStickySummary: true,
-		} );
-
-		renderPrice();
-
-		const price = screen.getByText( '$10' );
-		const badge = screen.getByText( /^Save \d+%$/ );
-		expect( screen.getByText( '/mo' ) ).toBeVisible();
-		expect(
-			badge.compareDocumentPosition( price ) & Node.DOCUMENT_POSITION_FOLLOWING
 		).toBeTruthy();
 	} );
 } );

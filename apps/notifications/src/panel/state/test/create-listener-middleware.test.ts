@@ -1,4 +1,5 @@
 import { legacy_createStore as createStore, applyMiddleware } from 'redux';
+import { vi } from 'vitest';
 import {
 	createListenerMiddleware,
 	addListeners,
@@ -16,7 +17,7 @@ describe( 'createListenerMiddleware', () => {
 		const middleware = createListenerMiddleware();
 		const store = createStore( ( state ) => state, applyMiddleware( middleware ) );
 
-		const listener = jest.fn();
+		const listener = vi.fn();
 
 		store.dispatch(
 			addListeners( {
@@ -36,7 +37,7 @@ describe( 'createListenerMiddleware', () => {
 		const middleware = createListenerMiddleware();
 		const store = createStore( ( state ) => state, applyMiddleware( middleware ) );
 
-		const listener = jest.fn();
+		const listener = vi.fn();
 
 		store.dispatch(
 			addListeners( {
@@ -53,7 +54,7 @@ describe( 'createListenerMiddleware', () => {
 		const middleware = createListenerMiddleware();
 		const store = createStore( ( state ) => state, applyMiddleware( middleware ) );
 
-		const listener = jest.fn();
+		const listener = vi.fn();
 
 		store.dispatch(
 			addListeners( {
@@ -74,7 +75,7 @@ describe( 'createListenerMiddleware', () => {
 		const middleware = createListenerMiddleware();
 		const store = createStore( ( state ) => state, applyMiddleware( middleware ) );
 
-		const listener = jest.fn();
+		const listener = vi.fn();
 
 		store.dispatch(
 			addListeners( {

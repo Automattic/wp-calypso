@@ -25,8 +25,9 @@ export default function useDefineConversionAction(
 
 	const isDomainAvailable = siteProfilerData?.is_domain_available;
 
-	const isWpDomain = domain.toLowerCase().includes( 'wordpress.com' );
-	const isWpAtomicDomain = domain.toLowerCase().includes( 'wpcomstaging.com' );
+	const host = domain.toLowerCase();
+	const isWpDomain = host === 'wordpress.com' || host.endsWith( '.wordpress.com' );
+	const isWpAtomicDomain = host.endsWith( '.wpcomstaging.com' );
 	const isWpPlatform = urlData?.platform === 'wordpress';
 
 	const isA8cRegistrar = normalizeWhoisField( siteProfilerData?.whois?.registrar )
@@ -36,7 +37,9 @@ export default function useDefineConversionAction(
 	const isA8cHosting = hostingProviderData?.hosting_provider?.slug === 'automattic';
 
 	useEffect( () => {
-		! domain && setConversionAction( undefined );
+		if ( ! domain ) {
+			setConversionAction( undefined );
+		}
 	}, [ domain ] );
 
 	useEffect( () => {
@@ -51,15 +54,13 @@ export default function useDefineConversionAction(
 		if ( isDomainAvailable ) {
 			setConversionAction( 'register-domain' );
 		} else if ( isA8cDomain && ! isA8cHosting ) {
-			isWpPlatform
-				? setConversionAction( 'transfer-hosting-wp' )
-				: setConversionAction( 'transfer-hosting' );
+			setConversionAction( isWpPlatform ? 'transfer-hosting-wp' : 'transfer-hosting' );
 		} else if ( ! isA8cDomain && isA8cHosting ) {
 			setConversionAction( 'transfer-domain' );
 		} else if ( ! isA8cDomain && ! isA8cHosting ) {
-			isWpPlatform
-				? setConversionAction( 'transfer-domain-hosting-wp' )
-				: setConversionAction( 'transfer-domain-hosting' );
+			setConversionAction(
+				isWpPlatform ? 'transfer-domain-hosting-wp' : 'transfer-domain-hosting'
+			);
 		} else {
 			setConversionAction( 'idle' );
 		}

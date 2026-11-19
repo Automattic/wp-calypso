@@ -1,12 +1,13 @@
 import { Visibility } from '@automattic/data-stores';
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 import { createSite, getNewSiteParams } from '..';
 import { HOSTING_LP_FLOW, ONBOARDING_FLOW } from '../../utils/flows';
 import wpcomRequest from '../../wpcom-request';
 
-jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn() } } ), { virtual: true } );
-jest.mock( '../../wpcom-request', () => jest.fn() );
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( 'calypso/lib/wp', () => ( { default: { req: { post: vi.fn() } } } ) );
+vi.mock( '../../wpcom-request', () => ( { default: vi.fn() } ) );
+vi.mock( '@automattic/calypso-config', () => {
 	const config = ( key: string ) => `config:${ key }`;
 	config.isEnabled = () => false;
 	return { __esModule: true, default: config, isEnabled: config.isEnabled };
@@ -17,10 +18,10 @@ jest.mock( '@automattic/calypso-config', () => {
 // login cookie instead, which any login, logout or second signup in the browser invalidates. So
 // site creation must go through the shared client, as the other site-creation paths do.
 describe( 'createSite', () => {
-	afterEach( () => jest.clearAllMocks() );
+	afterEach( () => vi.clearAllMocks() );
 
 	test( 'posts /sites/new through the shared wpcom client, not the bare proxy', async () => {
-		( wpcom.req.post as jest.Mock ).mockResolvedValue( {
+		( wpcom.req.post as Mock ).mockResolvedValue( {
 			success: true,
 			blog_details: { url: 'https://example.wordpress.com', blogid: 123 },
 		} );

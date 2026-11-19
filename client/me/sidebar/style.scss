@@ -24,6 +24,7 @@
 	.sidebar__menu-link {
 		svg.sidebar__menu-icon {
 			fill: var(--color-sidebar-text);
+			color: var(--color-sidebar-text);
 
 			&.gridicons-plans {
 				height: 20px;
@@ -34,12 +35,14 @@
 		&:focus {
 			svg.sidebar__menu-icon {
 				fill: var(--color-sidebar-gridicon-fill);
+				color: var(--color-sidebar-gridicon-fill);
 			}
 		}
 	}
 
 	.selected .sidebar__menu-link svg.sidebar__menu-icon {
 		fill: var(--color-sidebar-menu-selected-text);
+		color: var(--color-sidebar-menu-selected-text);
 	}
 }
 

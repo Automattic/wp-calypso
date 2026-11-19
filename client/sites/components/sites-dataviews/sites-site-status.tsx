@@ -1,7 +1,6 @@
-import { useSiteLaunchStatusLabel } from '@automattic/sites';
+import { getSiteLaunchStatus, useSiteLaunchStatusLabel } from '@automattic/sites';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { getMigrationStatus } from 'calypso/data/site-migration';
 import { SiteLaunchNag } from 'calypso/sites-dashboard/components/sites-site-launch-nag';
 import TransferNoticeWrapper from 'calypso/sites-dashboard/components/sites-transfer-notice-wrapper';
 import { WithAtomicTransfer } from 'calypso/sites-dashboard/components/with-atomic-transfer';
@@ -32,33 +31,6 @@ const DeletedStatus = styled.div`
 	}
 `;
 
-const MigrationInProgressStatus = styled.span`
-	display: inline-block;
-	padding: 0px 10px;
-	font-size: 12px;
-	border-radius: 4px;
-	background-color: var( --color-primary-0 );
-	line-height: 20px;
-	font-weight: 500;
-	color: var( --color-primary-90 );
-`;
-
-const MigrationStatusElement = ( {
-	status,
-	children,
-}: {
-	status: string | null;
-	children: React.ReactNode;
-} ) => {
-	switch ( status ) {
-		case 'pending':
-		case 'started':
-			return <MigrationInProgressStatus>{ children }</MigrationInProgressStatus>;
-	}
-
-	return children;
-};
-
 interface SiteStatusProps {
 	site: SiteExcerptData;
 }
@@ -67,9 +39,7 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 	const { __ } = useI18n();
 
 	const translatedStatus = useSiteLaunchStatusLabel( site );
-	const migrationStatus = getMigrationStatus( site );
-	const isPending = migrationStatus === 'pending';
-	const isStarted = migrationStatus === 'started';
+	const isMigrating = getSiteLaunchStatus( site ).startsWith( 'migration' );
 
 	const isDIFMInProgress = useSelector( ( state ) => isDIFMLiteInProgress( state, site.ID ) );
 
@@ -93,10 +63,8 @@ export const SiteStatus = ( { site }: SiteStatusProps ) => {
 							<BadgeDIFM className="site__badge">{ __( 'Express Service' ) }</BadgeDIFM>
 						) : (
 							<div>
-								<MigrationStatusElement status={ migrationStatus }>
-									{ translatedStatus }
-								</MigrationStatusElement>
-								{ ! isPending && ! isStarted && <SiteLaunchNag site={ site } /> }
+								{ translatedStatus }
+								{ ! isMigrating && <SiteLaunchNag site={ site } /> }
 							</div>
 						) }
 					</>

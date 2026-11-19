@@ -2,19 +2,18 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	AGENT_TURN_ENDED_EVENT,
 	AGENT_TURN_STARTED_EVENT,
 } from '../../utils/agent-activity-events';
 import { useBroadcastTurnActivity } from '../use-broadcast-turn-activity';
 
-const mockIsTurnInFlight = jest.fn();
+const mockIsTurnInFlight = vi.fn();
 
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( { getAgentManager: () => ( { isTurnInFlight: mockIsTurnInFlight } ) } ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/agenttic-client', () => ( {
+	getAgentManager: () => ( { isTurnInFlight: mockIsTurnInFlight } ),
+} ) );
 
 const AGENT_ID = 'wpcom-orchestrator';
 
@@ -29,8 +28,8 @@ beforeEach( () => {
 } );
 
 function render( isProcessing = false ) {
-	const started = jest.fn();
-	const ended = jest.fn();
+	const started = vi.fn();
+	const ended = vi.fn();
 	window.addEventListener( AGENT_TURN_STARTED_EVENT, started );
 	window.addEventListener( AGENT_TURN_ENDED_EVENT, ended );
 

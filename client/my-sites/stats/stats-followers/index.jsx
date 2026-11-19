@@ -6,6 +6,7 @@ import InlineSupportLink from 'calypso/components/inline-support-link';
 import { getSubscribersUrl } from 'calypso/lib/subscribers/get-subscribers-url';
 import StatsInfoArea from 'calypso/my-sites/stats/features/modules/shared/stats-info-area';
 import { useSelector, useStore } from 'calypso/state';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { SUBSCRIBERS_SUPPORT_URL } from '../const';
@@ -21,6 +22,9 @@ const StatModuleFollowers = ( { className } ) => {
 
 	// Selectors
 	const siteId = useSelector( getSelectedSiteId );
+	const canUserManageOptions = useSelector( ( state ) =>
+		canCurrentUser( state, siteId, 'manage_options' )
+	);
 	const isSiteJetpackNotAtomic = useSelector( ( state ) =>
 		isJetpackSite( state, siteId, { treatAtomicAsJetpackSite: false } )
 	);
@@ -117,10 +121,14 @@ const StatModuleFollowers = ( { className } ) => {
 			mainItemLabel={ translate( 'Subscriber' ) }
 			metricLabel={ translate( 'Since' ) }
 			splitHeader
-			showMore={ {
-				url: subscriberManagementUrl,
-				label: translate( 'Manage subscribers' ),
-			} }
+			showMore={
+				canUserManageOptions
+					? {
+							url: subscriberManagementUrl,
+							label: translate( 'Manage subscribers' ),
+						}
+					: undefined
+			}
 			error={
 				noData &&
 				! hasError &&

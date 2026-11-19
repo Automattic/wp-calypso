@@ -44,7 +44,7 @@ const embedsConfig = {
 				height: height + 'px',
 			};
 		},
-		urlRegex: /\/\/embed.spotify.com/,
+		urlRegex: /\/\/embed\.spotify\.com/,
 	},
 	soundcloud: {
 		sizingFunction: function soundcloudEmbedSizingFunction( embed, availableWidth ) {

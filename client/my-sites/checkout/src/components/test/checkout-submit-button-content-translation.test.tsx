@@ -11,9 +11,6 @@ jest.mock( '@automattic/shopping-cart', () => ( {
 	...jest.requireActual( '@automattic/shopping-cart' ),
 	useShoppingCart: () => ( { responseCart: { total_cost_integer: 1000 } } ),
 } ) );
-jest.mock( '../../hooks/use-mobile-checkout-sticky-summary-experiment', () => ( {
-	useMobileCheckoutStickySummaryExperiment: () => ( { isMobileCheckoutStickySummary: false } ),
-} ) );
 
 /**
  * Mimics browser page-translation: replaces text nodes React manages with a

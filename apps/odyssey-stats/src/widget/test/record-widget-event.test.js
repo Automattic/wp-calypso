@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import recordWidgetEvent, {
 	recordWidgetEventThenFollow,
 	recordWidgetEventThenOpen,
 } from '../record-widget-event';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
 
 const clickOn = ( { href = 'https://example.test/next', target = '_self', ...keys } = {} ) => ( {
 	metaKey: false,
@@ -16,18 +17,18 @@ const clickOn = ( { href = 'https://example.test/next', target = '_self', ...key
 	altKey: false,
 	...keys,
 	currentTarget: { href, target },
-	preventDefault: jest.fn(),
+	preventDefault: vi.fn(),
 } );
 
 describe( 'recordWidgetEvent', () => {
 	beforeEach( () => {
 		recordTracksEvent.mockClear();
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		delete window.location;
 		window.location = { href: 'https://example.test/wp-admin/' };
 	} );
 
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'prefixes the event name and passes the properties through', () => {
 		recordWidgetEvent( 'date_range_changed', { range: 'last_30_days' } );
@@ -51,7 +52,7 @@ describe( 'recordWidgetEvent', () => {
 			);
 			expect( window.location.href ).toBe( 'https://example.test/wp-admin/' );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 			expect( window.location.href ).toBe( 'https://example.test/next' );
 		} );
 
@@ -61,7 +62,7 @@ describe( 'recordWidgetEvent', () => {
 
 			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 			expect( window.location.href ).toBe( 'https://example.test/next' );
 		} );
 	} );
@@ -78,7 +79,7 @@ describe( 'recordWidgetEvent', () => {
 			expect( event.preventDefault ).toHaveBeenCalled();
 			expect( window.location.href ).toBe( 'https://example.test/wp-admin/' );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 			expect( window.location.href ).toBe( 'https://example.test/next' );
 		} );
 
@@ -91,7 +92,7 @@ describe( 'recordWidgetEvent', () => {
 			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 			expect( second.preventDefault ).toHaveBeenCalled();
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 			expect( window.location.href ).toBe( 'https://example.test/next' );
 
 			follow( clickOn() );

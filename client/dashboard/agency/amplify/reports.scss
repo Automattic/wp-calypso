@@ -1,0 +1,5 @@
+// DataViews tops its cells, which leaves the scores and actions level with the site title
+// instead of the middle of the row beside the screenshot.
+.dashboard-amplify-reports .dataviews-view-table tbody td {
+	vertical-align: middle;
+}

@@ -4,35 +4,36 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import AiEditorialReview from './ai-editorial-review';
 
 // Mock scrollIntoView for JSDOM compatibility.
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 // Mock requestAnimationFrame to run synchronously.
-global.requestAnimationFrame = jest.fn( ( cb ) => {
+global.requestAnimationFrame = vi.fn( ( cb ) => {
 	cb( 0 );
 	return 0;
 } );
 
-const mockApplyReviewEdit = jest.fn();
-const mockClearActiveBlockFocus = jest.fn();
-const mockClearActiveBlockFocusUnlessBlockReferenceClick = jest.fn();
-const mockToggleBlockReferenceFocus = jest.fn();
-const mockUndoBlockEdit = jest.fn();
+const mockApplyReviewEdit = vi.fn();
+const mockClearActiveBlockFocus = vi.fn();
+const mockClearActiveBlockFocusUnlessBlockReferenceClick = vi.fn();
+const mockToggleBlockReferenceFocus = vi.fn();
+const mockUndoBlockEdit = vi.fn();
 
-jest.mock( '../utils/block-actions', () => ( {
+vi.mock( '../utils/block-actions', async () => ( {
 	applyReviewEdit: ( ...args: any[] ) => mockApplyReviewEdit( ...args ),
 	clearActiveBlockFocus: ( ...args: any[] ) => mockClearActiveBlockFocus( ...args ),
 	clearActiveBlockFocusUnlessBlockReferenceClick: ( ...args: any[] ) =>
 		mockClearActiveBlockFocusUnlessBlockReferenceClick( ...args ),
 	// Real implementation: the card must gate Apply on the same count the apply
 	// itself uses, so a stub would hide the mismatch this guards against.
-	countCurrentTextOccurrences:
-		jest.requireActual( '../utils/block-actions' ).countCurrentTextOccurrences,
+	countCurrentTextOccurrences: (
+		await vi.importActual< typeof import( '../utils/block-actions' ) >( '../utils/block-actions' )
+	).countCurrentTextOccurrences,
 	getEditableBlockContent: ( block: any, attributeName?: string, currentText?: string ) => {
 		if ( attributeName ) {
 			return block?.attributes?.[ attributeName ] ?? '';
@@ -71,11 +72,11 @@ jest.mock( '../utils/block-actions', () => ( {
 	undoBlockEdit: ( ...args: any[] ) => mockUndoBlockEdit( ...args ),
 } ) );
 
-const mockSelectBlock = jest.fn();
+const mockSelectBlock = vi.fn();
 let mockBlocks: any[] = [];
 let mockCurrentPostId: number | null | undefined = 1;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( fn: any ) =>
 		fn( ( store: string ) => {
 			if ( store === 'core/block-editor' ) {
@@ -101,30 +102,32 @@ jest.mock( '@wordpress/data', () => ( {
 // BlockRef renders the block-type icon via BlockIcon; stub it and the block
 // registry so the real block-editor module (which needs @wordpress/data) is not
 // pulled in under the mocked data store.
-jest.mock( '@wordpress/block-editor', () => ( {
-	store: 'core/block-editor',
-	BlockIcon: () => null,
-	RichText: {
-		Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
-			const react = jest.requireActual< typeof import( 'react' ) >( 'react' );
-			const { RawHTML } =
-				jest.requireActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
-			return react.createElement(
-				tagName as string,
-				props,
-				react.createElement( RawHTML, null, value as string )
-			);
+vi.mock( '@wordpress/block-editor', async () => {
+	const react = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	const { RawHTML } =
+		await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' );
+	return {
+		store: 'core/block-editor',
+		BlockIcon: () => null,
+		RichText: {
+			Content: ( { tagName = 'div', value, ...props }: Record< string, unknown > ) => {
+				return react.createElement(
+					tagName as string,
+					props,
+					react.createElement( RawHTML, null, value as string )
+				);
+			},
 		},
-	},
-} ) );
-jest.mock( '@wordpress/blocks', () => ( {
+	};
+} );
+vi.mock( '@wordpress/blocks', () => ( {
 	getBlockType: () => undefined,
 } ) );
 
 // Stub @wordpress/components: real one transitively boots rich-text + data.
 // PanelBody honours the controlled `opened` prop so toggle tests work.
-jest.mock( '@wordpress/components', () => {
-	const React = jest.requireActual< typeof import( 'react' ) >( 'react' );
+vi.mock( '@wordpress/components', async () => {
+	const React = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	return {
 		Panel: ( { children, className }: any ) =>
 			React.createElement(
@@ -701,7 +704,7 @@ describe( 'AiEditorialReview — stats strip', () => {
 			/>
 		);
 
-		const scrollSpy = ( window as any ).HTMLElement.prototype.scrollIntoView as jest.Mock;
+		const scrollSpy = ( window as any ).HTMLElement.prototype.scrollIntoView as Mock;
 		scrollSpy.mockClear();
 
 		fireEvent.click( screen.getByTitle( 'Jump to suggested edits' ) );
@@ -726,7 +729,7 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 
 	it( 'applies the edit and collapses the card on Accept', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: true } );
-		const onResponseAction = jest.fn();
+		const onResponseAction = vi.fn();
 
 		render( <AiEditorialReview { ...editsPayload } onResponseAction={ onResponseAction } /> );
 
@@ -881,7 +884,7 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 			contentAfter: 'The council voted on Tuesday on the procedural matter.',
 		} );
 		mockUndoBlockEdit.mockReturnValueOnce( false ).mockReturnValueOnce( true );
-		const onResponseAction = jest.fn();
+		const onResponseAction = vi.fn();
 
 		render( <AiEditorialReview { ...editsPayload } onResponseAction={ onResponseAction } /> );
 
@@ -919,7 +922,7 @@ describe( 'AiEditorialReview — suggested-edit accept flow', () => {
 
 	it( 'marks the row failed (and not collapsed) when applyReviewEdit rejects', async () => {
 		mockApplyReviewEdit.mockResolvedValueOnce( { success: false } );
-		const onResponseAction = jest.fn();
+		const onResponseAction = vi.fn();
 
 		render( <AiEditorialReview { ...editsPayload } onResponseAction={ onResponseAction } /> );
 
@@ -1199,7 +1202,7 @@ describe( 'AiEditorialReview — guideline violations', () => {
 	} );
 
 	it( 'collapses to a Dismissed row on Dismiss and restores the card on Undo', () => {
-		const onResponseAction = jest.fn();
+		const onResponseAction = vi.fn();
 		render( <AiEditorialReview { ...violationsPayload } onResponseAction={ onResponseAction } /> );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
@@ -1646,7 +1649,7 @@ describe( 'AiEditorialReview — conflict resolutions', () => {
 describe( 'AiEditorialReview — bulk Apply all', () => {
 	it( 'applies only supported pending edits sequentially', async () => {
 		mockApplyReviewEdit.mockResolvedValue( { success: true } );
-		const onResponseAction = jest.fn();
+		const onResponseAction = vi.fn();
 		mockBlocks = [
 			...blocks,
 			{ clientId: 'b3', name: 'core/list', attributes: { content: 'List content' } },

@@ -1,14 +1,15 @@
 import { store as blockEditorStore } from '@wordpress/block-editor';
 import { dispatch, select } from '@wordpress/data';
+import { vi } from 'vitest';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { addImageStudioMediaSource } from './external-media-source-extension';
 import { handleImageSelection } from './utils';
 
-jest.mock( '@automattic/agenttic-ui', () => ( {
+vi.mock( '@automattic/agenttic-ui', () => ( {
 	BigSkyIcon: () => null,
 } ) );
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 	ImageStudioEntryPoint: {
 		JetpackExternalMediaBlock: 'jetpack_external_media_block',
@@ -16,30 +17,30 @@ jest.mock( '../store', () => ( {
 	},
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioOpened: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioOpened: vi.fn(),
 } ) );
 
-jest.mock( './utils', () => ( {
-	handleImageSelection: jest.fn(),
+vi.mock( './utils', () => ( {
+	handleImageSelection: vi.fn(),
 } ) );
 
 describe( 'addImageStudioMediaSource', () => {
-	const getSettings = jest.fn();
-	const openImageStudio = jest.fn();
+	const getSettings = vi.fn();
+	const openImageStudio = vi.fn();
 	const args = {
-		onSelect: jest.fn(),
+		onSelect: vi.fn(),
 		multiple: false,
 		isFeatured: false,
 		allowedTypes: [ 'image' ],
-		onClick: jest.fn(),
+		onClick: vi.fn(),
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		getSettings.mockReturnValue( { mediaUpload: jest.fn() } );
-		jest.mocked( select ).mockReturnValue( { getSettings } as ReturnType< typeof select > );
-		jest.mocked( dispatch ).mockReturnValue( { openImageStudio } as ReturnType< typeof dispatch > );
+		vi.clearAllMocks();
+		getSettings.mockReturnValue( { mediaUpload: vi.fn() } );
+		vi.mocked( select ).mockReturnValue( { getSettings } as ReturnType< typeof select > );
+		vi.mocked( dispatch ).mockReturnValue( { openImageStudio } as ReturnType< typeof dispatch > );
 	} );
 
 	it.each( [ false, undefined ] )(
@@ -66,7 +67,7 @@ describe( 'addImageStudioMediaSource', () => {
 		getSettings.mockReturnValue( {} );
 		expect( addImageStudioMediaSource( [], args ) ).toEqual( [] );
 
-		getSettings.mockReturnValue( { mediaUpload: jest.fn() } );
+		getSettings.mockReturnValue( { mediaUpload: vi.fn() } );
 		expect( addImageStudioMediaSource( [], args ) ).toHaveLength( 1 );
 
 		getSettings.mockReturnValue( {} );

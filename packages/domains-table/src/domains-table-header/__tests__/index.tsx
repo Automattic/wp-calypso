@@ -1,12 +1,11 @@
-/**
- * @jest-environment jsdom
- */
 import { screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { renderWithProvider } from '../../test-utils';
 import { DomainsTableColumn, DomainsTableHeader } from '../index';
 
-const noop = jest.fn();
+const noop = vi.fn();
 
 const render = ( el ) =>
 	renderWithProvider( el, {
@@ -34,7 +33,7 @@ test( 'domain columns are rendered in the header', () => {
 			columns={ domainsTableColumns }
 			activeSortKey="domain"
 			activeSortDirection="asc"
-			onChangeSortOrder={ jest.fn() }
+			onChangeSortOrder={ vi.fn() }
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
 			canSelectAnyDomains
@@ -63,7 +62,7 @@ test( 'renders custom header component', () => {
 			columns={ columns }
 			activeSortKey="domain"
 			activeSortDirection="asc"
-			onChangeSortOrder={ jest.fn() }
+			onChangeSortOrder={ vi.fn() }
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
 			domainCount={ 1 }
@@ -81,7 +80,7 @@ test( 'renders a chevron next to sortable columns', () => {
 			columns={ domainsTableColumns }
 			activeSortKey="domain"
 			activeSortDirection="asc"
-			onChangeSortOrder={ jest.fn() }
+			onChangeSortOrder={ vi.fn() }
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
 			domainCount={ 1 }
@@ -102,7 +101,7 @@ test( 'columns that are not sortable do not renders a chevron', () => {
 			columns={ domainsTableColumns }
 			activeSortKey="domain"
 			activeSortDirection="asc"
-			onChangeSortOrder={ jest.fn() }
+			onChangeSortOrder={ vi.fn() }
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
 			domainCount={ 1 }
@@ -123,7 +122,7 @@ test( 'no checkbox is rendered if no domains are selectable', () => {
 			columns={ domainsTableColumns }
 			activeSortKey="domain"
 			activeSortDirection="asc"
-			onChangeSortOrder={ jest.fn() }
+			onChangeSortOrder={ vi.fn() }
 			bulkSelectionStatus="no-domains"
 			onBulkSelectionChange={ noop }
 			canSelectAnyDomains={ false }

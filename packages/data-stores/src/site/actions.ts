@@ -308,6 +308,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			blogname?: string;
 			blogdescription?: string;
 			launchpad_screen?: string;
+			wpcom_ai_launchpad_enabled?: boolean;
 			site_vertical_id?: string;
 			woocommerce_store_address?: string;
 			woocommerce_store_address_2?: string;

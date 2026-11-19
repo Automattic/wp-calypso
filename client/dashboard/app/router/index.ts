@@ -1,4 +1,4 @@
-import calypsoConfig from '@automattic/calypso-config';
+import calypsoConfig, { isEnabled } from '@automattic/calypso-config';
 import { addBreadcrumb, setTag } from '@automattic/calypso-sentry';
 import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
@@ -10,6 +10,7 @@ import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
+import { createNotificationsRoutes } from './notifications';
 import { createPluginsRoutes } from './plugins';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
@@ -67,7 +68,7 @@ const catchAllRoute = createRoute( {
 	component: NotFound,
 } );
 
-const createRouteTree = ( config: AppConfig ) => {
+export const createRouteTree = ( config: AppConfig ) => {
 	const children = [];
 
 	children.push( indexRoute );
@@ -100,6 +101,10 @@ const createRouteTree = ( config: AppConfig ) => {
 		children.push( ...createMeRoutes( config ) );
 	}
 
+	if ( config.supports.notifications && isEnabled( 'dashboard/notifications-inbox' ) ) {
+		children.push( ...createNotificationsRoutes() );
+	}
+
 	children.push( catchAllRoute );
 
 	return rootRoute.addChildren( children );
@@ -115,7 +120,7 @@ export const getRouter = ( config: AppConfig ) => {
 		},
 		defaultErrorComponent: UnknownError,
 		defaultNotFoundComponent: NotFound,
-		defaultOnCatch: ( error: Error, errorInfo: ErrorInfo ) => {
+		defaultOnCatch: ( error: unknown, errorInfo: ErrorInfo ) => {
 			handleOnCatch( error, errorInfo, router, {
 				severity: calypsoConfig( 'env_id' ) === 'dashboard-production' ? 'error' : 'debug',
 				calypso_section: 'dashboard',
@@ -138,8 +143,8 @@ export const getRouter = ( config: AppConfig ) => {
 	// instead — otherwise the tag names the route the user came from, or is
 	// absent entirely on a cold load of the crashing URL.
 	let previousRouteId: string | undefined;
-	router.subscribe( 'onBeforeLoad', () => {
-		const routeId = router.state.pendingMatches?.at( -1 )?.routeId;
+	router.subscribe( 'onBeforeLoad', ( { toLocation } ) => {
+		const routeId = router.getMatchedRoutes( toLocation.pathname )[ 0 ].at( -1 )?.id;
 		if ( ! routeId ) {
 			return;
 		}

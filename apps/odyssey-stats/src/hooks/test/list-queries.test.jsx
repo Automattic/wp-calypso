@@ -1,14 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import useReferrersQuery from '../use-referrers-query';
 import useTopPostsQuery from '../use-top-posts-query';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: { get: jest.fn( () => Promise.resolve( { summary: { postviews: [], groups: [] } } ) ) },
+vi.mock( 'calypso/lib/wp', () => ( {
+	default: {
+		req: { get: vi.fn( () => Promise.resolve( { summary: { postviews: [], groups: [] } } ) ) },
+	},
 } ) );
 
 const SITE_ID = 123;

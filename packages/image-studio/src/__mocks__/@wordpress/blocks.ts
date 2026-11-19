@@ -3,6 +3,7 @@
  * The real package needs the unmocked @wordpress/data, so `parse` runs the block grammar only.
  */
 import { parse as parseGrammar } from '@wordpress/block-serialization-default-parser';
+import { vi } from 'vitest';
 
 interface Block {
 	name: string | null;
@@ -20,6 +21,6 @@ function toBlock( rawBlock: RawBlock ): Block {
 	};
 }
 
-export const parse = jest.fn( ( content: string ): Block[] =>
+export const parse = vi.fn( ( content: string ): Block[] =>
 	parseGrammar( content ).map( toBlock )
 );

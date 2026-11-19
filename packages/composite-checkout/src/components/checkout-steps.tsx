@@ -68,7 +68,6 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
 		stepSkipValidationOnSubmitMap: {},
-		suppressNextForwardScroll: false,
 		hasUserInteractedWithSteps: false,
 	},
 	actions: {
@@ -81,7 +80,6 @@ const CheckoutStepGroupContext = createContext< CheckoutStepGroupStore >( {
 		getStepCompleteCallback: noopPromise,
 		getStepNumberFromId: noop,
 		setTotalSteps: noop,
-		setSuppressNextForwardScroll: noop,
 		setHasUserInteractedWithSteps: noop,
 	},
 	subscription: new SubscriptionManager(),
@@ -106,7 +104,6 @@ function createCheckoutStepGroupState(): CheckoutStepGroupState {
 		stepIdMap: {},
 		stepCompleteCallbackMap: {},
 		stepSkipValidationOnSubmitMap: {},
-		suppressNextForwardScroll: false,
 		hasUserInteractedWithSteps: false,
 	};
 }
@@ -262,14 +259,6 @@ function createCheckoutStepGroupActions(
 		return true;
 	};
 
-	// Allows a consumer to opt the next forward step change out of the
-	// scroll-into-view behavior below (e.g. a step auto-completing on load
-	// rather than the shopper pressing "Continue"). Consumed once by the
-	// scroll effect the next time it runs.
-	const setSuppressNextForwardScroll = ( value: boolean ) => {
-		state.suppressNextForwardScroll = value;
-	};
-
 	// Records that the shopper has touched the step content at least once. Read
 	// synchronously at click time, so it deliberately does not notify subscribers.
 	const setHasUserInteractedWithSteps = ( value: boolean ) => {
@@ -286,7 +275,6 @@ function createCheckoutStepGroupActions(
 		setStepComplete,
 		completeAllSteps,
 		makeStepActive,
-		setSuppressNextForwardScroll,
 		setHasUserInteractedWithSteps,
 	};
 }
@@ -545,15 +533,11 @@ function CheckoutStepGroupWrapper( {
 			// view. This corrects the viewport position on mobile after the previous
 			// step's content collapses and causes the layout to shift.
 			if ( scrollToStepOnForwardNavigation && newStep > prevStep ) {
-				if ( store.state.suppressNextForwardScroll ) {
-					store.state.suppressNextForwardScroll = false;
-				} else {
-					const newStepId = Object.entries( store.state.stepIdMap ).find(
-						( [ , num ] ) => num === newStep
-					)?.[ 0 ];
-					if ( newStepId ) {
-						document.getElementById( newStepId )?.scrollIntoView?.( { block: 'start' } );
-					}
+				const newStepId = Object.entries( store.state.stepIdMap ).find(
+					( [ , num ] ) => num === newStep
+				)?.[ 0 ];
+				if ( newStepId ) {
+					document.getElementById( newStepId )?.scrollIntoView?.( { block: 'start' } );
 				}
 			}
 		}
@@ -1260,17 +1244,6 @@ export function useSetStepComplete(): SetStepComplete {
 export function useCompleteAllSteps(): CompleteAllSteps {
 	const store = useContext( CheckoutStepGroupContext );
 	return store.actions.completeAllSteps;
-}
-
-/**
- * Opts the next forward step change out of the scroll-into-view behavior
- * (see `scrollToStepOnForwardNavigation`). Intended for step changes caused
- * by something other than the shopper pressing "Continue" (e.g. a step
- * auto-completing on load), where jumping the viewport would be surprising.
- */
-export function useSuppressNextForwardScroll(): ( value: boolean ) => void {
-	const store = useContext( CheckoutStepGroupContext );
-	return store.actions.setSuppressNextForwardScroll;
 }
 
 export function useMakeStepActive(): MakeStepActive {

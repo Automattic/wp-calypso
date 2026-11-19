@@ -112,10 +112,6 @@
 }
 
 // Centered in the empty list while the first page loads.
-.conversations-inbox__list .conversations-inbox__list-spinner {
-	margin: auto;
-}
-
 .conversations-inbox__day {
 	padding: 6px 16px;
 	border-block-start: 1px solid var( --conversations-line );
@@ -302,5 +298,14 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 @media ( prefers-color-scheme: dark ) {
 	:root[data-theme='system'] body.color-scheme.is-reader-dark-mode {
 		@include conversations-inbox-list-dark;
+	}
+}
+
+.conversations-inbox__placeholder {
+	pointer-events: none;
+
+	// The rows are divs here rather than buttons, which are border-box by default.
+	.conversations-inbox__item {
+		box-sizing: border-box;
 	}
 }

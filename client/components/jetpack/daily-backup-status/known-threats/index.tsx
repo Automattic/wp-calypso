@@ -11,6 +11,7 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 	Spinner,
+	Tooltip,
 	VisuallyHidden,
 } from '@wordpress/components';
 import { chevronDown, chevronUp } from '@wordpress/icons';
@@ -38,6 +39,26 @@ interface RestoreThatOneInsteadLinkProps {
 	currentBackupPeriod?: number | null;
 	/** A sentence to follow the warning ("Instead, restore …"), rather than a link with its reason. */
 	inline?: boolean;
+}
+
+/**
+ * A link with the backup's date and time in a tooltip on hover and focus. translate() passes the
+ * link text in as children.
+ */
+function LinkWithTooltip( {
+	href,
+	tooltip,
+	children,
+}: {
+	href: string;
+	tooltip: string;
+	children?: ReactNode;
+} ) {
+	return (
+		<Tooltip text={ tooltip }>
+			<a href={ href }>{ children }</a>
+		</Tooltip>
+	);
 }
 
 export function RestoreThatOneInsteadLink( {
@@ -109,17 +130,19 @@ export function RestoreThatOneInsteadLink( {
 	const href = backupRestorePath( siteSlug, resolvedRewindId );
 
 	if ( inline ) {
+		// The backup's date and time, in a tooltip: in the sentence they made the link too long to read.
+		const title = translate( 'Backup from %(date)s at %(time)s', {
+			args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
+			comment:
+				'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Shown when hovering the link to that backup.',
+		} ) as string;
+
 		return (
 			<>
-				{ translate(
-					'Instead, {{link}}restore the latest backup without known threats, from %(date)s at %(time)s{{/link}}.',
-					{
-						args: { date: siteCompletedAt.format( 'll' ), time: siteCompletedAt.format( 'LT' ) },
-						components: { link: <a href={ href } /> },
-						comment:
-							'%(date)s is the date of a backup, e.g. "Oct 17, 2026"; %(time)s its time, e.g. "2:30 PM". Follows the warning that the backup being viewed has known threats.',
-					}
-				) }
+				{ translate( 'Instead, restore the {{link}}latest backup without known threats{{/link}}.', {
+					components: { link: <LinkWithTooltip href={ href } tooltip={ title } /> },
+					comment: 'Follows the warning that the backup being viewed has known threats.',
+				} ) }
 			</>
 		);
 	}

@@ -1,9 +1,14 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { vi } from 'vitest';
+import { recordTracksEvent } from '../../../panel/helpers/stats';
 import { renderWithProvider } from '../../../testing-library';
+import { AppProvider } from '../../context';
 import NodePanel, { getNotificationTabs } from '../index';
 import type { FilterName } from '../../types';
+
+vi.mock( '../../../panel/helpers/stats', () => ( { recordTracksEvent: vi.fn() } ) );
 
 const noop = () => {};
 
@@ -80,5 +85,72 @@ describe( 'NotePanel', () => {
 				} )
 			).toBeVisible()
 		);
+	} );
+
+	it( 'offers the full view when the host provides one', async () => {
+		const onOpenFullView = vi.fn();
+		renderWithProvider(
+			<AppProvider client={ null } locale="en" onOpenFullView={ onOpenFullView }>
+				<NodePanel { ...defaultProps } />
+			</AppProvider>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
+
+		expect( onOpenFullView ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'opens the full view on the selected tab and records the click', async () => {
+		const onOpenFullView = vi.fn();
+		renderWithProvider(
+			<AppProvider client={ null } locale="en" onOpenFullView={ onOpenFullView }>
+				<NodePanel { ...defaultProps } filterName="unread" />
+			</AppProvider>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
+
+		expect( onOpenFullView ).toHaveBeenCalledWith( { filterName: 'unread', noteId: undefined } );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_notification_full_view_click', {
+			tab: 'unread',
+			is_note_open: false,
+		} );
+	} );
+
+	it( 'has no full view button when the host provides none', async () => {
+		renderWithProvider( <NodePanel { ...defaultProps } /> );
+
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+
+		expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'titles the panel with a third-level heading and shows its header actions by default', async () => {
+		renderWithProvider( <NodePanel { ...defaultProps } /> );
+
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+
+		expect( screen.getByRole( 'heading', { name: 'Notifications', level: 3 } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Keyboard shortcuts' } ) ).toBeVisible();
+	} );
+
+	it( 'can title a page and take other header actions', async () => {
+		renderWithProvider(
+			<NodePanel
+				{ ...defaultProps }
+				headingLevel={ 1 }
+				actions={ <button>Leave feedback</button> }
+			/>
+		);
+
+		await waitForComponentToBeInitializedWithSelectedTab( getNotificationTabs()[ 0 ].title );
+
+		expect( screen.getByRole( 'heading', { name: 'Notifications', level: 1 } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Leave feedback' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Settings' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Keyboard shortcuts' } )
+		).not.toBeInTheDocument();
 	} );
 } );

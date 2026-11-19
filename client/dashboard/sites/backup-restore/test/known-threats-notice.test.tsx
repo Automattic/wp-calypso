@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
@@ -9,6 +9,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import SiteBackupRestoreForm from '../form';
 import SiteBackupGranularRestoreForm from '../granular-form';
@@ -18,34 +19,36 @@ const API_BASE = 'https://public-api.wordpress.com';
 const siteId = 123;
 const rewindId = '1792244435.274';
 
-jest.mock( '@wordpress/react-i18n', () => ( {
-	useI18n: jest.fn(),
+vi.mock( '@wordpress/react-i18n', () => ( {
+	default: ( ( m ) => ( { ...m, default: m } ) )( {
+		useI18n: vi.fn(),
+	} ),
 } ) );
 
-jest.mock( '@wordpress/a11y', () => ( {
-	...jest.requireActual( '@wordpress/a11y' ),
-	speak: jest.fn(),
+vi.mock( '@wordpress/a11y', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/a11y' ) >( '@wordpress/a11y' ) ),
+	speak: vi.fn(),
 } ) );
 
-const mockCreateErrorNotice = jest.fn();
+const mockCreateErrorNotice = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		createSuccessNotice: jest.fn(),
+		createSuccessNotice: vi.fn(),
 		createErrorNotice: mockCreateErrorNotice,
 	} ),
 	useRegistry: () => ( {} ),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn( ( selector ) => selector ),
-	store: jest.fn(),
-	select: jest.fn(),
-	dispatch: jest.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn( ( selector ) => selector ),
+	store: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock(
+vi.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 	() => ( {
 		useFileBrowserContext: () => ( {
@@ -56,11 +59,6 @@ jest.mock(
 		} ),
 	} )
 );
-
-jest.mock( '../../../app/router/sites', () => ( {
-	siteRoute: { useParams: () => ( { siteSlug: 'test-site' } ) },
-	siteBackupRestoreRoute: { fullPath: '/sites/$siteSlug/backups/$rewindId/restore' },
-} ) );
 
 const site = {
 	ID: siteId,
@@ -142,7 +140,7 @@ const renderForm = () =>
 			siteId={ siteId }
 			rewindId={ rewindId }
 			restorePointDate="Oct 16"
-			onRestoreInitiate={ jest.fn() }
+			onRestoreInitiate={ vi.fn() }
 		/>
 	);
 
@@ -150,7 +148,7 @@ const restoreButton = () => screen.getByRole( 'button', { name: 'Restore now' } 
 
 afterEach( () => {
 	nock.cleanAll();
-	jest.mocked( speak ).mockClear();
+	vi.mocked( speak ).mockClear();
 	mockCreateErrorNotice.mockClear();
 } );
 
@@ -193,7 +191,7 @@ test( 'disables Restore now until the box is ticked', async () => {
 
 test( 'keeps the unacknowledged Restore now focusable but inert', async () => {
 	const user = userEvent.setup();
-	const onRestoreInitiate = jest.fn();
+	const onRestoreInitiate = vi.fn();
 	const restoreScope = nock( API_BASE )
 		.post( new RegExp( `/activity-log/${ siteId }/rewind/to/` ) )
 		.query( true )
@@ -305,7 +303,7 @@ test( 'does nothing for backups without known threats', async () => {
 } );
 
 test( 'does nothing before VaultPress ships', async () => {
-	const consoleError = jest.spyOn( console, 'error' );
+	const consoleError = vi.spyOn( console, 'error' );
 	mockBackups( {}, null );
 	renderForm();
 
@@ -320,16 +318,19 @@ test( 'links to the latest backup without known threats', async () => {
 	mockBackups( { known_threats: knownThreats( 3 ) } );
 	renderForm();
 
-	const link = await screen.findByRole( 'link', {
-		name: 'restore the latest backup without known threats, from Oct 17, 2026 at 12:28 PM',
-	} );
+	const link = await screen.findByRole( 'link', { name: 'latest backup without known threats' } );
 	expect( link ).toHaveAttribute(
 		'href',
 		expect.stringContaining( '/backups/1792240000/restore' )
 	);
+	// The backup's date and time are in a tooltip, not the sentence, once the backup's time loads.
+	await userEvent.hover( link );
+	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+		'Backup from Oct 17, 2026 at 12:28 PM'
+	);
 	// One sentence with the warning: the link finishes it.
 	expect( link.parentElement ).toHaveTextContent(
-		'This backup contains 3 known security threats and may restore malware on your site. Instead, restore the latest backup without known threats, from Oct 17, 2026 at 12:28 PM.'
+		'This backup contains 3 known security threats and may restore malware on your site. Instead, restore the latest backup without known threats.'
 	);
 } );
 
@@ -347,15 +348,13 @@ test( 'moves focus to the restore point after opening the clean backup', async (
 				siteId={ siteId }
 				rewindId={ opened ?? rewindId }
 				restorePointDate={ opened ? 'Oct 17' : 'Oct 16' }
-				onRestoreInitiate={ jest.fn() }
+				onRestoreInitiate={ vi.fn() }
 			/>
 		);
 	}
 	render( <RoutedForm /> );
 
-	const link = await screen.findByRole( 'link', {
-		name: /^restore the latest backup without known threats/,
-	} );
+	const link = await screen.findByRole( 'link', { name: 'latest backup without known threats' } );
 	expect( screen.getByText( /Choose what to restore/ ) ).not.toHaveFocus();
 	await user.click( link );
 
@@ -389,9 +388,7 @@ test( 'shows the restore link once when the threats are expanded', async () => {
 	).toBeVisible();
 	expect( summary.closest( 'details' ) ).toHaveAttribute( 'open' );
 	expect(
-		await screen.findAllByRole( 'link', {
-			name: /^restore the latest backup without known threats/,
-		} )
+		await screen.findAllByRole( 'link', { name: 'latest backup without known threats' } )
 	).toHaveLength( 1 );
 	expect( threatsScope.isDone() ).toBe( true );
 } );
@@ -405,7 +402,7 @@ test( 'shows no threat details without Scan', async () => {
 			siteId={ siteId }
 			rewindId={ rewindId }
 			restorePointDate="Oct 16"
-			onRestoreInitiate={ jest.fn() }
+			onRestoreInitiate={ vi.fn() }
 		/>
 	);
 
@@ -416,7 +413,7 @@ test( 'shows no threat details without Scan', async () => {
 
 test( 'granular form requires the acknowledgement before restoring selected files', async () => {
 	const user = userEvent.setup();
-	const onRestoreInitiate = jest.fn();
+	const onRestoreInitiate = vi.fn();
 	const restoreScope = nock( API_BASE )
 		.post( new RegExp( `/activity-log/${ siteId }/rewind/to/` ) )
 		.query( true )
@@ -475,7 +472,7 @@ test( 'renders no link when the caller supplies no restore route', async () => {
 			siteId={ siteId }
 			rewindId={ rewindId }
 			restorePointDate="Oct 16"
-			onRestoreInitiate={ jest.fn() }
+			onRestoreInitiate={ vi.fn() }
 		/>
 	);
 
@@ -569,7 +566,7 @@ const renderGranularForm = () =>
 			siteId={ siteId }
 			rewindId={ rewindId }
 			restorePointDate="Oct 16"
-			onRestoreInitiate={ jest.fn() }
+			onRestoreInitiate={ vi.fn() }
 		/>
 	);
 

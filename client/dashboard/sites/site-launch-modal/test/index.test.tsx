@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import SiteLaunchModal from '..';
 import { render } from '../../../test-utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -163,7 +164,7 @@ describe( '<SiteLaunchModal variant="pre-launch">', () => {
 
 	test( 'calls onLaunch when the launch button is clicked', async () => {
 		const user = userEvent.setup();
-		const onLaunch = jest.fn();
+		const onLaunch = vi.fn();
 		render(
 			<SiteLaunchModal
 				variant="pre-launch"
@@ -181,7 +182,7 @@ describe( '<SiteLaunchModal variant="pre-launch">', () => {
 
 	test( 'closes the modal when dismissed without launching', async () => {
 		const user = userEvent.setup();
-		const onLaunch = jest.fn();
+		const onLaunch = vi.fn();
 
 		function Harness() {
 			const [ open, setOpen ] = useState( true );

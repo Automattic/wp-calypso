@@ -12,6 +12,7 @@
 	margin-right: 8px;
 	margin-top: -4px;
 	flex-shrink: 0;
+	color: var( --color-accent, var( --wp-admin-theme-color, #3858e9 ) );
 	fill: var( --color-accent, var( --wp-admin-theme-color, #3858e9 ) );
 }
 

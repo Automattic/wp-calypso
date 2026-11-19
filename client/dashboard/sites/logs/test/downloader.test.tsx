@@ -1,19 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import '@testing-library/jest-dom';
 import { LogType, FilterType } from '@automattic/api-core';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { type Mock, type MockInstance, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { LogsDownloader } from '../downloader';
 import type { JSX } from 'react';
-
-jest.mock( '@wordpress/i18n', () => ( {
-	__: ( s: string ) => s,
-	sprintf: ( s: string ) => s,
-} ) );
 
 type VStackProps = {
 	children: React.ReactNode;
@@ -32,7 +29,7 @@ interface MockButtonProps {
 	'aria-label'?: string;
 }
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	__experimentalVStack: ( { children }: VStackProps ) => <div>{ children }</div>,
 	__experimentalHStack: ( { children }: HStackProps ) => <div>{ children }</div>,
 	Tooltip: ( { children }: ChildrenProps ) => <div>{ children }</div>,
@@ -44,29 +41,15 @@ jest.mock( '@wordpress/components', () => ( {
 	),
 } ) );
 
-jest.mock( '@wordpress/icons', () => ( { download: 'download' } ) );
+vi.mock( '@wordpress/icons', () => ( { download: 'download' } ) );
 
-jest.mock( '@automattic/api-core', () => {
-	const actual = jest.requireActual( '@automattic/api-core' );
-	const fetchSiteLogsBatchMock = jest.fn();
-	return {
-		...actual,
-		fetchSiteLogsBatch: ( ...args: unknown[] ) => fetchSiteLogsBatchMock( ...args ),
-		__mocks: { fetchSiteLogsBatchMock },
-	};
-} );
-
-let createObjectURLMock: jest.Mock;
-let revokeObjectURLMock: jest.Mock;
-let anchorClickSpy: jest.SpyInstance;
-
-const { __mocks } = jest.requireMock( '@automattic/api-core' ) as {
-	__mocks: { fetchSiteLogsBatchMock: jest.Mock };
-};
+let createObjectURLMock: Mock;
+let revokeObjectURLMock: Mock;
+let anchorClickSpy: MockInstance;
 
 beforeAll( () => {
-	createObjectURLMock = jest.fn( () => 'blob:mock' );
-	revokeObjectURLMock = jest.fn();
+	createObjectURLMock = vi.fn( () => 'blob:mock' );
+	revokeObjectURLMock = vi.fn();
 	// JSDOM: polyfill URL methods used in tests
 	if ( ! window.URL ) {
 		// @ts-expect-error test-only polyfill
@@ -76,9 +59,7 @@ beforeAll( () => {
 	window.URL.revokeObjectURL = revokeObjectURLMock;
 
 	// Avoid JSDOM navigation errors when clicking the fake download link
-	anchorClickSpy = jest
-		.spyOn( HTMLAnchorElement.prototype, 'click' )
-		.mockImplementation( () => {} );
+	anchorClickSpy = vi.spyOn( HTMLAnchorElement.prototype, 'click' ).mockImplementation( () => {} );
 } );
 
 afterAll( () => {
@@ -86,35 +67,40 @@ afterAll( () => {
 } );
 
 test( 'downloads logs and records analytics', async () => {
-	__mocks.fetchSiteLogsBatchMock.mockResolvedValueOnce( {
-		logs: [
-			{
-				date: '2025-01-01T00:00:02Z',
-				request_type: 'GET',
-				status: '200',
-				request_url: '/index',
-				body_bytes_sent: 100,
-				cached: 'true',
-				http_host: 'example.com',
-				http_referer: '',
-				http2: 'h2',
-				http_user_agent: 'ua',
-				http_version: '2',
-				http_x_forwarded_for: '',
-				renderer: 'php',
-				request_completion: 'OK',
-				request_time: '10ms',
-				scheme: 'https',
-				timestamp: 1700000002,
-				type: 'access',
-				user_ip: '127.0.0.1',
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/sites/123/hosting/logs' )
+		.query( true )
+		.reply( 200, {
+			data: {
+				logs: [
+					{
+						date: '2025-01-01T00:00:02Z',
+						request_type: 'GET',
+						status: '200',
+						request_url: '/index',
+						body_bytes_sent: 100,
+						cached: 'true',
+						http_host: 'example.com',
+						http_referer: '',
+						http2: 'h2',
+						http_user_agent: 'ua',
+						http_version: '2',
+						http_x_forwarded_for: '',
+						renderer: 'php',
+						request_completion: 'OK',
+						request_time: '10ms',
+						scheme: 'https',
+						timestamp: 1700000002,
+						type: 'access',
+						user_ip: '127.0.0.1',
+					},
+				],
+				scroll_id: null,
+				total_results: 1,
 			},
-		],
-		scroll_id: null,
-		total_results: 1,
-	} );
+		} );
 
-	const onSuccess = jest.fn();
+	const onSuccess = vi.fn();
 
 	const { recordTracksEvent } = render(
 		<LogsDownloader
@@ -129,6 +115,7 @@ test( 'downloads logs and records analytics', async () => {
 	);
 
 	await userEvent.click( screen.getByRole( 'button', { name: 'Download logs' } ) );
+	await waitFor( () => expect( onSuccess ).toHaveBeenCalled() );
 
 	// Blob was created and revoked
 	expect( createObjectURLMock ).toHaveBeenCalled();

@@ -22,8 +22,8 @@
 
 	// Invert the check icon when the row is highlighted so it stays
 	// readable against the theme primary background.
-	.is-selected .social-site-handoff-check path {
-		fill: var(--color-text-inverted);
+	.is-selected .social-site-handoff-check {
+		color: var(--color-text-inverted);
 	}
 }
 

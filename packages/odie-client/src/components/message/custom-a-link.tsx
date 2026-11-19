@@ -32,6 +32,15 @@ const CustomALink = ( {
 	);
 	const effectiveTarget = wrapsImage ? '_blank' : target;
 
+	// A `blob:` link is a file the user just sent, held by the browser. Save it under its name
+	// rather than open it in place of the page.
+	const downloadName =
+		transformedHref.startsWith( 'blob:' ) && ! wrapsImage
+			? Children.toArray( children )
+					.filter( ( child ) => typeof child === 'string' )
+					.join( '' )
+			: undefined;
+
 	const classNames = clsx( 'odie-sources', {
 		'odie-sources-inline': inline,
 	} );
@@ -43,6 +52,7 @@ const CustomALink = ( {
 				href={ transformedHref }
 				target={ effectiveTarget }
 				rel="noopener noreferrer"
+				download={ downloadName }
 				onClick={ ( e ) => {
 					// Open support article links in the Help Center.
 					if ( isThisASupportArticleLink( transformedHref ) ) {

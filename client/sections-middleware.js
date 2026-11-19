@@ -121,7 +121,8 @@ export const setupRoutes = () => {
 	}
 };
 
-if ( module.hot ) {
+// `module` only exists in CommonJS-style bundles such as webpack's.
+if ( typeof module !== 'undefined' && module.hot ) {
 	module.hot.accept( './sections', () => {
 		const updatedSections = require( './sections' ).default;
 		receiveSections( updatedSections );

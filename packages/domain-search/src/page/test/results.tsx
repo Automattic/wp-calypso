@@ -1,6 +1,7 @@
 import { DomainAvailabilityStatus, type BundleSuggestion } from '@automattic/api-core';
 import { act, getByText, queryByText, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { buildAvailability } from '../../test-helpers/factories/availability';
 import { buildCart, buildCartItem } from '../../test-helpers/factories/cart';
 import { buildFreeSuggestion, buildSuggestion } from '../../test-helpers/factories/suggestions';
@@ -34,6 +35,17 @@ const buildBundleSuggestion = ( sld: string ): BundleSuggestion => ( {
 	bundle_group_id: `mock-${ sld }-group`,
 	catalogue_version: 'mock',
 } );
+
+// The exact-match card for a searched FQDN needs its availability. The bundle
+// card shows only next to a featured card for its primary domain.
+const mockAvailableFqdn = ( domainName: string ) =>
+	mockGetAvailabilityQuery( {
+		params: { domainName },
+		availability: buildAvailability( {
+			domain_name: domainName,
+			status: DomainAvailabilityStatus.AVAILABLE,
+		} ),
+	} );
 
 // The restyled bundle card renders each member domain as its SLD plus a separate
 // `.tld` span, so a full member domain is no longer a single text node. Match on
@@ -182,7 +194,7 @@ describe( 'ResultsPage', () => {
 		] )(
 			'reports the suggestion positions after the %s FQDN when searching for it',
 			async ( status, expectedPositions ) => {
-				const onSuggestionRender = jest.fn();
+				const onSuggestionRender = vi.fn();
 
 				mockGetAvailabilityQuery( {
 					params: { domainName: 'test.com' },
@@ -1025,7 +1037,7 @@ describe( 'ResultsPage', () => {
 	describe( 'bundle suggestion', () => {
 		it( 'calls cart.onAddBundle once with the bundle suggestion when "Get bundle" is clicked', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockResolvedValue( undefined );
+			const onAddBundle = vi.fn().mockResolvedValue( undefined );
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-add.com' },
@@ -1035,6 +1047,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-add.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-add' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-add.com' );
 
 			render(
 				<TestDomainSearch
@@ -1070,7 +1083,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'shows the server error message on the bundle card when adding the bundle fails', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest
+			const onAddBundle = vi
 				.fn()
 				.mockRejectedValue(
 					new Error(
@@ -1086,6 +1099,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-error.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-error' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-error.com' );
 
 			// Scoped to the render container because the error Notice also announces
 			// the message through the a11y-speak live region on document.body.
@@ -1113,7 +1127,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'shows a generic error message when the rejection has no usable message', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue( new Error( '' ) );
+			const onAddBundle = vi.fn().mockRejectedValue( new Error( '' ) );
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-fallback.com' },
@@ -1123,6 +1137,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-fallback.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-fallback' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-fallback.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -1148,7 +1163,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'keeps the bundle card and shows a notice when the bundle is no longer available', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue(
+			const onAddBundle = vi.fn().mockRejectedValue(
 				Object.assign( new Error( 'The domain bundle could not be added to the cart.' ), {
 					code: 'domain_bundle_unavailable',
 				} )
@@ -1162,6 +1177,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-permanent.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-permanent' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-permanent.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -1199,7 +1215,7 @@ describe( 'ResultsPage', () => {
 				...buildBundleSuggestion( 'test-bundle-late-fresh' ),
 				bundle_group_id: staleBundle.bundle_group_id,
 			};
-			const onAddBundle = jest.fn(
+			const onAddBundle = vi.fn(
 				() =>
 					new Promise< void >( ( _resolve, reject ) => {
 						rejectAddBundle = reject;
@@ -1214,6 +1230,8 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-late-stale.com' },
 				bundleSuggestion: staleBundle,
 			} );
+			mockAvailableFqdn( 'test-bundle-late-stale.com' );
+			mockAvailableFqdn( 'test-bundle-late-fresh.com' );
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-late-fresh.com' },
@@ -1273,7 +1291,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'clears the error when retrying succeeds', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest
+			const onAddBundle = vi
 				.fn()
 				.mockRejectedValueOnce( new Error( 'Transient bundle error' ) )
 				.mockResolvedValueOnce( undefined );
@@ -1286,6 +1304,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-retry.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-retry' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-retry.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -1314,7 +1333,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'clears the error when the search query changes', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Stale bundle error' ) );
+			const onAddBundle = vi.fn().mockRejectedValue( new Error( 'Stale bundle error' ) );
 			const cart = buildCart( { onAddBundle } );
 
 			mockGetSuggestionsQuery( {
@@ -1325,6 +1344,8 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-stale.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-stale' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-stale.com' );
+			mockAvailableFqdn( 'test-bundle-fresh.com' );
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-fresh.com' },
 				suggestions: [ buildSuggestion( { domain_name: 'test-bundle-fresh.com' } ) ],
@@ -1372,7 +1393,7 @@ describe( 'ResultsPage', () => {
 		it( 'disables the CTA while the bundle add is pending', async () => {
 			const user = userEvent.setup();
 			let resolveAdd = () => {};
-			const onAddBundle = jest.fn().mockImplementation(
+			const onAddBundle = vi.fn().mockImplementation(
 				() =>
 					new Promise< void >( ( resolve ) => {
 						resolveAdd = resolve;
@@ -1387,6 +1408,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'test-bundle-pending.com' },
 				bundleSuggestion: buildBundleSuggestion( 'test-bundle-pending' ),
 			} );
+			mockAvailableFqdn( 'test-bundle-pending.com' );
 
 			render(
 				<TestDomainSearch
@@ -1415,7 +1437,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'yields the bundle error when another add-to-cart mutation starts', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
+			const onAddBundle = vi.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-bundle-supersede.com' },
@@ -1462,7 +1484,7 @@ describe( 'ResultsPage', () => {
 	describe( 'bundle continue state', () => {
 		it( 'shows Continue instead of Get bundle when every bundle member is in the cart', async () => {
 			const user = userEvent.setup();
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-added.com' },
@@ -1472,6 +1494,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-added.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-added' ),
 			} );
+			mockAvailableFqdn( 'bundle-added.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -1505,6 +1528,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-partial.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-partial' ),
 			} );
+			mockAvailableFqdn( 'bundle-partial.com' );
 
 			render(
 				<TestDomainSearch
@@ -1733,7 +1757,7 @@ describe( 'ResultsPage', () => {
 		];
 
 		it( 'renders the bundle card beside the recommended suggestion and drops best-alternative', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 			mockGetSuggestionsQuery( { params: { query: 'flowers' }, suggestions: flowersSuggestions } );
 			mockGetBundleSuggestionQuery( {
 				params: { query: 'flowers' },
@@ -1975,9 +1999,119 @@ describe( 'ResultsPage', () => {
 		} );
 	} );
 
+	describe( 'bundle card when the queried FQDN is taken', () => {
+		const mockTakenTulipsDotCom = () => {
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'tulips.com' },
+				availability: buildAvailability( {
+					domain_name: 'tulips.com',
+					status: DomainAvailabilityStatus.NOT_AVAILABLE,
+				} ),
+			} );
+			mockGetSuggestionsQuery( {
+				params: { query: 'tulips.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'gettulips.com' } ),
+					buildSuggestion( { domain_name: 'tulips.net' } ),
+					buildSuggestion( { domain_name: 'tulips.org' } ),
+				],
+			} );
+		};
+
+		it( 'renders the card beside the recommended suggestion when the bundle primary is featured', async () => {
+			mockTakenTulipsDotCom();
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'tulips.com' },
+				bundleSuggestion: buildBundleSuggestion( 'gettulips' ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="tulips.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await findBundleCta() ).toBeInTheDocument();
+			expect( await screen.findByTitle( 'gettulips.com' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
+			expect( await screen.findByTitle( 'tulips.net' ) ).toBeInTheDocument();
+		} );
+
+		it( 'hides the card when the bundle primary is not a featured suggestion', async () => {
+			mockTakenTulipsDotCom();
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'tulips.com' },
+				bundleSuggestion: buildBundleSuggestion( 'mytulips' ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="tulips.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByText( 'Best alternative' ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows a placeholder in the right slot, then best-alternative when no bundle arrives', async () => {
+			mockTakenTulipsDotCom();
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'tulips.com' },
+				bundleSuggestion: null,
+				delayMs: 300,
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="tulips.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'gettulips.com' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.getAllByLabelText( 'Loading featured domain suggestion' ) ).toHaveLength( 1 );
+			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
+
+			expect( await screen.findByTitle( 'tulips.net' ) ).toHaveTextContent( 'Best alternative' );
+			expect(
+				screen.queryByLabelText( 'Loading featured domain suggestion' )
+			).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'hides the card for the searched FQDN when it is not shown as the exact match', async () => {
+			// Without an availability result, tulips.com is not shown as the exact match.
+			mockGetAvailabilityQuery( {
+				params: { domainName: 'tulips.com' },
+				availability: new Error( 'Availability check failed' ),
+			} );
+			mockGetSuggestionsQuery( {
+				params: { query: 'tulips.com' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'gettulips.com' } ),
+					buildSuggestion( { domain_name: 'tulips.net' } ),
+				],
+			} );
+			mockGetBundleSuggestionQuery( {
+				params: { query: 'tulips.com' },
+				bundleSuggestion: buildBundleSuggestion( 'tulips' ),
+			} );
+
+			render(
+				<TestDomainSearch config={ { showBundleSuggestions: true } } query="tulips.com">
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await screen.findByTitle( 'tulips.net' ) ).toHaveTextContent( 'Best alternative' );
+			expect( screen.getByTitle( 'gettulips.com' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.queryByRole( 'button', { name: 'Get bundle' } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'tracking', () => {
 		it( 'fires the onSuggestionsReceive event when the suggestions are received', async () => {
-			const onSuggestionsReceive = jest.fn();
+			const onSuggestionsReceive = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test-receive' },
@@ -2005,7 +2139,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'fires the onShowMoreResults event when the show more results button is clicked', async () => {
 			const user = userEvent.setup();
-			const onShowMoreResults = jest.fn();
+			const onShowMoreResults = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'test query' },
@@ -2038,7 +2172,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'fires the onBundleShown event once when a bundle suggestion renders', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-shown.com' },
@@ -2048,6 +2182,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-shown.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-shown' ),
 			} );
+			mockAvailableFqdn( 'bundle-shown.com' );
 
 			render(
 				<TestDomainSearch
@@ -2075,7 +2210,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'does not fire the onBundleShown event when bundles are disabled', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-off' },
@@ -2093,7 +2228,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'fires the onBundleShown event with placement "card" for the top bundle card', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-card-shown.com' },
@@ -2103,6 +2238,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-card-shown.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-card-shown' ),
 			} );
+			mockAvailableFqdn( 'bundle-card-shown.com' );
 
 			render(
 				<TestDomainSearch
@@ -2124,7 +2260,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'fires the onBundleShown event with placement "inline" once per rendered inline bundle', async () => {
-			const onBundleShown = jest.fn();
+			const onBundleShown = vi.fn();
 
 			// petals.com leads the list, so it is promoted to the featured section and
 			// its inline offer is the featured-inline row (the Phase 3 path). A domain
@@ -2168,13 +2304,13 @@ describe( 'ResultsPage', () => {
 		it( 'fires the onBundleAddToCart event after the bundle add succeeds', async () => {
 			const user = userEvent.setup();
 			let resolveAddBundle: () => void = () => {};
-			const onAddBundle = jest.fn(
+			const onAddBundle = vi.fn(
 				() =>
 					new Promise< void >( ( resolve ) => {
 						resolveAddBundle = resolve;
 					} )
 			);
-			const onBundleAddToCart = jest.fn();
+			const onBundleAddToCart = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-accept.com' },
@@ -2184,6 +2320,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-accept.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-accept' ),
 			} );
+			mockAvailableFqdn( 'bundle-accept.com' );
 
 			render(
 				<TestDomainSearch
@@ -2216,8 +2353,8 @@ describe( 'ResultsPage', () => {
 
 		it( 'does not fire the onBundleAddToCart event when the bundle add fails', async () => {
 			const user = userEvent.setup();
-			const onAddBundle = jest.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
-			const onBundleAddToCart = jest.fn();
+			const onAddBundle = vi.fn().mockRejectedValue( new Error( 'Bundle add failed' ) );
+			const onBundleAddToCart = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-reject.com' },
@@ -2227,6 +2364,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-reject.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-reject' ),
 			} );
+			mockAvailableFqdn( 'bundle-reject.com' );
 
 			const { container } = render(
 				<TestDomainSearch
@@ -2252,7 +2390,7 @@ describe( 'ResultsPage', () => {
 
 		it( 'does not fire the onBundleAddToCart event when no bundle add handler exists', async () => {
 			const user = userEvent.setup();
-			const onBundleAddToCart = jest.fn();
+			const onBundleAddToCart = vi.fn();
 
 			mockGetSuggestionsQuery( {
 				params: { query: 'bundle-no-handler.com' },
@@ -2262,6 +2400,7 @@ describe( 'ResultsPage', () => {
 				params: { query: 'bundle-no-handler.com' },
 				bundleSuggestion: buildBundleSuggestion( 'bundle-no-handler' ),
 			} );
+			mockAvailableFqdn( 'bundle-no-handler.com' );
 
 			render(
 				<TestDomainSearch
@@ -2283,7 +2422,7 @@ describe( 'ResultsPage', () => {
 		} );
 
 		it( 'fires the onQueryAvailabilityCheck event when the availability is checked', async () => {
-			const onQueryAvailabilityCheck = jest.fn();
+			const onQueryAvailabilityCheck = vi.fn();
 
 			mockGetAvailabilityQuery( {
 				params: { domainName: 'test-available.com' },

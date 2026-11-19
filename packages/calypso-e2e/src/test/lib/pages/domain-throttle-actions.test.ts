@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals';
+import { afterEach, beforeEach, describe, expect, test, type Mock, vi } from 'vitest';
 import { DomainSearchComponent } from '../../../lib/components/domain-search-component';
 import { UseADomainIOwnPage } from '../../../lib/pages/use-a-domain-i-own-page';
 import * as teamcity from '../../../lib/teamcity';
@@ -18,16 +18,16 @@ const EXPIRATION_VARIABLES = [
 	'THROTTLE_DOMAIN_AVAILABILITY_EXPIRATION',
 ] as const;
 
-let actionHandler: jest.Mock;
+let actionHandler: Mock;
 let unregister: () => void;
 
 beforeEach( () => {
 	// These tests raise flags through the real helpers. Left alone, the helpers
 	// tag the build running the unit tests and write the ban to its log, and
 	// every E2E build in the project reads that for the next six hours.
-	jest.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
-	jest.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
-	actionHandler = jest.fn();
+	vi.spyOn( teamcity, 'tagOwnBuild' ).mockResolvedValue( 200 );
+	vi.spyOn( teamcity, 'appendOwnBuildLog' ).mockResolvedValue( 200 );
+	actionHandler = vi.fn();
 	unregister = registerThrottleActionHandler( actionHandler );
 	[ ...ACTION_VARIABLES, ...EXPIRATION_VARIABLES ].forEach( ( name ) => {
 		delete process.env[ name ];
@@ -41,7 +41,7 @@ afterEach( async () => {
 	[ ...ACTION_VARIABLES, ...EXPIRATION_VARIABLES ].forEach( ( name ) => {
 		delete process.env[ name ];
 	} );
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 /** Builds the response shape used by the domain helpers. */
@@ -62,42 +62,42 @@ const noNamePulseRows = () => ( {
 /** A page whose "Bring it over" button never appears. */
 function bringItOverPage(): Page {
 	const button = {
-		click: jest.fn( async () => {
+		click: vi.fn( async () => {
 			throw new Error( 'locator timeout' );
 		} ),
 	};
-	return { getByRole: jest.fn( () => button ) } as unknown as Page;
+	return { getByRole: vi.fn( () => button ) } as unknown as Page;
 }
 
 /** A page whose "Skip purchase" button never appears. */
 function skipPurchasePage(): Page {
 	const button = {
-		waitFor: jest.fn( async () => {
+		waitFor: vi.fn( async () => {
 			throw new Error( 'locator timeout' );
 		} ),
 	};
-	return { getByRole: jest.fn( () => button ) } as unknown as Page;
+	return { getByRole: vi.fn( () => button ) } as unknown as Page;
 }
 
 /** A page whose first suggestion row never appears. */
 function suggestionRowPage(): Page {
 	const row = {
-		waitFor: jest.fn( async () => {
+		waitFor: vi.fn( async () => {
 			throw new Error( 'locator timeout' );
 		} ),
 	};
-	const listitem = { first: jest.fn( () => row ) };
+	const listitem = { first: vi.fn( () => row ) };
 	return {
-		getByRole: jest.fn( () => listitem ),
+		getByRole: vi.fn( () => listitem ),
 		locator: noNamePulseRows,
 	} as unknown as Page;
 }
 
 describe( 'domain throttle actions', () => {
 	test( 'domain availability acts before sending a request for a known throttle', async () => {
-		const waitForResponse = jest.fn();
+		const waitForResponse = vi.fn();
 		const page = {
-			locator: jest.fn(),
+			locator: vi.fn(),
 			waitForResponse,
 		} as unknown as Page;
 		process.env.THROTTLE_DOMAIN_AVAILABILITY_EXPIRATION = String( Date.now() + 60_000 );
@@ -113,12 +113,12 @@ describe( 'domain throttle actions', () => {
 
 	test( 'domain availability records a new throttle and acts on the same call', async () => {
 		const input = {
-			fill: jest.fn( async () => undefined ),
-			press: jest.fn( async () => undefined ),
+			fill: vi.fn( async () => undefined ),
+			press: vi.fn( async () => undefined ),
 		};
 		const page = {
-			locator: jest.fn( () => input ),
-			waitForResponse: jest.fn( async () =>
+			locator: vi.fn( () => input ),
+			waitForResponse: vi.fn( async () =>
 				response(
 					'https://public-api.wordpress.com/rest/v1.3/domains/example.com/is-available',
 					'{"error":"domain_availability_throttle"}',
@@ -133,27 +133,27 @@ describe( 'domain throttle actions', () => {
 
 	test( 'an expired suggestions signal leaves the search unchanged', async () => {
 		const listitem = {
-			count: jest.fn( async () => 0 ),
-			getAttribute: jest.fn( async () => 'example.com' ),
-			first: jest.fn(),
+			count: vi.fn( async () => 0 ),
+			getAttribute: vi.fn( async () => 'example.com' ),
+			first: vi.fn(),
 		};
 		listitem.first.mockReturnValue( listitem );
 		const searchbox = {
-			inputValue: jest.fn( async () => '' ),
-			fill: jest.fn( async () => undefined ),
-			press: jest.fn< ( value: string ) => Promise< void > >( async () => undefined ),
+			inputValue: vi.fn( async () => '' ),
+			fill: vi.fn( async () => undefined ),
+			press: vi.fn< ( value: string ) => Promise< void > >( async () => undefined ),
 		};
 		const heading = {};
 		const page = {
-			getByRole: jest.fn( ( role: string ) => {
+			getByRole: vi.fn( ( role: string ) => {
 				if ( role === 'listitem' ) {
 					return listitem;
 				}
 				return role === 'searchbox' ? searchbox : heading;
 			} ),
 			locator: noNamePulseRows,
-			reload: jest.fn(),
-			waitForResponse: jest.fn( async () =>
+			reload: vi.fn(),
+			waitForResponse: vi.fn( async () =>
 				response(
 					'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=example',
 					'{"suggestions":[]}'
@@ -169,26 +169,26 @@ describe( 'domain throttle actions', () => {
 
 	test( 'domain suggestions record a throttled search without acting on it', async () => {
 		const listitem = {
-			count: jest.fn( async () => 0 ),
-			getAttribute: jest.fn( async () => 'example.com' ),
-			first: jest.fn(),
+			count: vi.fn( async () => 0 ),
+			getAttribute: vi.fn( async () => 'example.com' ),
+			first: vi.fn(),
 		};
 		listitem.first.mockReturnValue( listitem );
 		const searchbox = {
-			inputValue: jest.fn( async () => '' ),
-			fill: jest.fn( async () => undefined ),
-			press: jest.fn( async () => undefined ),
+			inputValue: vi.fn( async () => '' ),
+			fill: vi.fn( async () => undefined ),
+			press: vi.fn( async () => undefined ),
 		};
 		const page = {
-			getByRole: jest.fn( ( role: string ) => {
+			getByRole: vi.fn( ( role: string ) => {
 				if ( role === 'listitem' ) {
 					return listitem;
 				}
 				return role === 'searchbox' ? searchbox : {};
 			} ),
 			locator: noNamePulseRows,
-			reload: jest.fn(),
-			waitForResponse: jest.fn( async () =>
+			reload: vi.fn(),
+			waitForResponse: vi.fn( async () =>
 				response(
 					'https://public-api.wordpress.com/rest/v1.1/domains/suggestions?query=example',
 					'{"error":"domain_suggestions_throttled"}',

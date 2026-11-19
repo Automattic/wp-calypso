@@ -1,0 +1,36 @@
+// Fills its container's width; the viewBox keeps the 896:312 shape.
+.bf2026-artwork {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+}
+
+// Loads still, then the lettering drifts along its ribbon. One period per loop,
+// so the end of a loop matches its start.
+.bf2026-artwork__lettering.is-green {
+	animation: bf2026-artwork-drift-green 11s linear 1.4s infinite;
+}
+
+.bf2026-artwork__lettering.is-lilac {
+	animation: bf2026-artwork-drift-lilac 16s linear 0.8s infinite;
+}
+
+@keyframes bf2026-artwork-drift-green {
+	to {
+		transform: translateX( 484px );
+	}
+}
+
+@keyframes bf2026-artwork-drift-lilac {
+	to {
+		transform: translateX( 754px );
+	}
+}
+
+// Same specificity as the rules above, so this wins.
+@media ( prefers-reduced-motion: reduce ) {
+	.bf2026-artwork__lettering.is-green,
+	.bf2026-artwork__lettering.is-lilac {
+		animation: none;
+	}
+}

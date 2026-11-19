@@ -10,7 +10,7 @@ export const getRandomSiteBaseUrl = async ( title: string ) => {
 		} );
 		const urlSuggestions = response.body || response;
 		const validUrlWpComUrl = urlSuggestions.find( ( suggestion: { domain_name: string } ) =>
-			suggestion.domain_name.includes( 'wordpress.com' )
+			suggestion.domain_name.endsWith( '.wordpress.com' )
 		);
 		if ( validUrlWpComUrl ) {
 			return validUrlWpComUrl.domain_name.split( '.' )[ 0 ];

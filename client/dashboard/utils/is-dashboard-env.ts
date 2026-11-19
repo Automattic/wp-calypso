@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { serverEnvId } from '@automattic/calypso-config';
 
 const dashboardEnvironments = [
 	'dashboard-development',
@@ -7,6 +7,7 @@ const dashboardEnvironments = [
 	'dashboard-production',
 ];
 
-const isDashboardEnv = (): boolean => dashboardEnvironments.includes( config( 'env_id' ) );
+const isDashboardEnv = (): boolean =>
+	!! serverEnvId && dashboardEnvironments.includes( serverEnvId );
 
 export default isDashboardEnv;

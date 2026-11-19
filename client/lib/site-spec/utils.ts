@@ -456,7 +456,7 @@ export function getBuildWowSiteSpecConfig( {
 			// it so this flow keeps offering social links and nothing else if
 			// that default ever moves.
 			links: 'social',
-			...( designPicker ? { designPicker: true } : {} ),
+			designPicker: !! designPicker,
 		},
 	};
 }

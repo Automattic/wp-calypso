@@ -1,7 +1,7 @@
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect } from 'react';
+import { useConsumeSearchParams } from '../../app/hooks/use-consume-search-params';
 
 interface FlashMessageProps {
 	id: string;
@@ -17,37 +17,20 @@ export function reloadWithFlashMessage( messageId: string ) {
 }
 
 /**
- * Allows a snackbar to be shown on page load based on a query parameter.
- * Clears the query parameter when done.
+ * Shows a snackbar when the `flash` query parameter equals `id`, then removes the parameter.
+ * Instances with other ids leave it alone, so several can share a page, and one that stays
+ * mounted also catches a flash added by a later redirect.
  */
 export default function FlashMessage( { id, message, type = 'success' }: FlashMessageProps ) {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
-	useEffect( () => {
-		if ( typeof window === 'undefined' ) {
-			return;
-		}
-		const params = new URLSearchParams( window.location.search );
-		if ( params.get( FLASH_QUERY_PARAM ) === id ) {
-			switch ( type ) {
-				case 'error':
-					createErrorNotice( message, { type: 'snackbar' } );
-					break;
-				case 'success':
-					createSuccessNotice( message, { type: 'snackbar' } );
-					break;
-			}
-
-			params.delete( FLASH_QUERY_PARAM );
-			const newUrl =
-				window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
-			window.history.replaceState( {}, '', newUrl );
-		}
-
-		// This effect has side effects, like editing the URL. We only ever
-		// want to run it once on mount.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+	useConsumeSearchParams( [ FLASH_QUERY_PARAM ], {
+		when: ( params ) => params[ FLASH_QUERY_PARAM ] === id,
+		onConsume: () => {
+			const createNotice = type === 'error' ? createErrorNotice : createSuccessNotice;
+			createNotice( message, { type: 'snackbar' } );
+		},
+	} );
 
 	return null;
 }

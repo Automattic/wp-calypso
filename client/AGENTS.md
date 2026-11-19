@@ -19,6 +19,7 @@ yarn prettier --write <file>                # Format
 yarn typecheck-client                       # Type-check (slow)
 yarn test-client <file>                     # Run specific test
 yarn test-client --findRelatedTests <file>  # Find + run related tests
+yarn test-dashboard <file>                  # Run specific Dashboard test (Vitest)
 ```
 
 ## Conventions
@@ -64,4 +65,4 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 ### Testing
 
 - Prefer `userEvent` over `fireEvent` in tests.
-- Prefer `toBeVisible()` over `toBeInTheDocument()`.
+- Prefer `toBeVisible()` over `toBeInTheDocument()`. To assert that an element is absent, use `.not.toBeInTheDocument()`.

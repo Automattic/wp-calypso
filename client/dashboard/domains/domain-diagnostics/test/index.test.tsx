@@ -1,16 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { type DomainDiagnostics as DomainDiagnosticsData } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainDiagnostics from '../index';
 
 const domainName = 'example.com';
 
-jest.mock( '../../../app/router/domains', () => ( {
-	...jest.requireActual( '../../../app/router/domains' ),
+vi.mock( '../../../app/router/domains', async () => ( {
+	...( await vi.importActual< typeof import( '../../../app/router/domains' ) >(
+		'../../../app/router/domains'
+	) ),
 	domainRoute: {
 		useParams: () => ( { domainName: 'example.com' } ),
 	},

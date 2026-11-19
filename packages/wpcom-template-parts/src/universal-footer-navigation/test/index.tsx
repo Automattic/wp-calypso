@@ -1,9 +1,7 @@
-/**
- * @jest-environment jsdom
- */
 import languages from '@automattic/languages';
 import { render, screen } from '@testing-library/react';
 import { languageEntries, PureUniversalNavbarFooter } from '../index';
+import '@testing-library/jest-dom/vitest';
 
 describe( 'PureUniversalNavbarFooter', () => {
 	test( 'renders the five link columns', () => {
@@ -12,6 +10,16 @@ describe( 'PureUniversalNavbarFooter', () => {
 		for ( const column of [ 'Products', 'Features', 'Resources', 'Help', 'Company' ] ) {
 			expect( screen.getByText( column ) ).toBeVisible();
 		}
+	} );
+
+	test( 'the 2026 footer links the English-only sitemap on the English site alone', () => {
+		const { rerender } = render(
+			<PureUniversalNavbarFooter isLoggedIn={ false } locale="en" colorway="white" />
+		);
+		expect( screen.getByRole( 'link', { name: 'Sitemap' } ) ).toBeInTheDocument();
+
+		rerender( <PureUniversalNavbarFooter isLoggedIn={ false } locale="es" colorway="white" /> );
+		expect( screen.queryByRole( 'link', { name: 'Sitemap' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'renders the language picker for logged-out visitors only', () => {

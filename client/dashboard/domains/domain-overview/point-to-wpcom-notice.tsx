@@ -14,6 +14,14 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice, { NoticeActionButton } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 
+export function isCompletedTransferNotPointingToWpcom( domain: Domain ) {
+	return (
+		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
+		domain.transfer_status === DomainTransferStatus.COMPLETED &&
+		! domain.points_to_wpcom
+	);
+}
+
 export default function PointToWpcomNotice( {
 	domain,
 	isDisabled,
@@ -31,12 +39,7 @@ export default function PointToWpcomNotice( {
 		} )
 	);
 
-	const isCompletedTransferNotPointingToWpcom =
-		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
-		domain.transfer_status === DomainTransferStatus.COMPLETED &&
-		! domain.points_to_wpcom;
-
-	if ( ! isCompletedTransferNotPointingToWpcom ) {
+	if ( ! isCompletedTransferNotPointingToWpcom( domain ) ) {
 		return null;
 	}
 

@@ -56,6 +56,12 @@ export interface OverviewCardProps {
 	shouldUseRouterLink?: boolean;
 
 	bottom?: ReactNode;
+
+	/**
+	 * A control pinned to the card's bottom corner, outside its link, so it acts on its own and
+	 * leaves the card's height as it is.
+	 */
+	action?: ReactNode;
 	onClick?: () => void;
 }
 
@@ -74,6 +80,7 @@ export default function OverviewCard( {
 	upsellFeatureId,
 	shouldUseRouterLink = true,
 	bottom,
+	action,
 	onClick,
 }: OverviewCardProps ) {
 	const { recordTracksEvent } = useAnalytics();
@@ -276,6 +283,7 @@ export default function OverviewCard( {
 				[ `dashboard-overview-card--${ intent }` ]: intent,
 				'dashboard-overview-card--disabled': isLoading || disabled,
 				'dashboard-overview-card--has-bottom': bottom,
+				'dashboard-overview-card--has-action': action,
 			} ) }
 		>
 			<CardBody>
@@ -295,6 +303,7 @@ export default function OverviewCard( {
 						/>
 					) ) }
 				{ renderContent() }
+				{ action && <div className="dashboard-overview-card__action">{ action }</div> }
 				{ bottom && (
 					<>
 						<Divider style={ { color: 'var(--dashboard-header__divider-color)' } } />

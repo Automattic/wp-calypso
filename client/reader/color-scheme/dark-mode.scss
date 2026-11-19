@@ -41,9 +41,9 @@
 	}
 
 	:where( a, button, [role='button'] ) {
-		> svg:not( .reader-facebook, .reader-x, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ),
+		> svg:not( .reader-facebook, .reader-x, .sidebar_svg-a8c ),
 		> .components-button__icon
-			> svg:not( .reader-facebook, .reader-x, .sidebar_svg-a8c, .sidebar_svg-a8c-conversations ) {
+			> svg:not( .reader-facebook, .reader-x, .sidebar_svg-a8c ) {
 			fill: currentColor;
 		}
 	}

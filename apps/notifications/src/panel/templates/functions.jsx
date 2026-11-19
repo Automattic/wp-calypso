@@ -254,15 +254,6 @@ export function getSignature( blocks, note ) {
 	} );
 }
 
-export function formatString() {
-	const args = [].slice.apply( arguments );
-	const str = args.shift();
-
-	return str.replace( /{(\d+)}/g, function ( match, number ) {
-		return typeof args[ number ] !== 'undefined' ? args[ number ] : match;
-	} );
-}
-
 export function zipWithSignature( blocks, note ) {
 	const signature = getSignature( blocks, note );
 
@@ -274,8 +265,26 @@ export function zipWithSignature( blocks, note ) {
 	} );
 }
 
-export const validURL =
-	/^(?:http(?:s?):\/\/|~\/|\/)?(?:\w+:\w+@)?((?:(?:[-\w\d{1-3}]+\.)+(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|edu|co\.uk|ac\.uk|it|fr|tv|museum|asia|local|travel|blog|[a-z]{2}))|((\b25[0-5]\b|\b[2][0-4][0-9]\b|\b[0-1]?[0-9]?[0-9]\b)(\.(\b25[0-5]\b|\b[2][0-4][0-9]\b|\b[0-1]?[0-9]?[0-9]\b)){3}))(?::[\d]{1,5})?(?:(?:(?:\/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|\/)+|\?|#)?(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=?(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?:#(?:[-\w~!$ |/.,*:;=]|%[a-f\d]{2})*)?$/i;
+/**
+ * A new-tab link to an http(s) URL as HTML, or null for any other URL. Built with the DOM, like
+ * indices-to-html, so serializing it escapes quotes in the URL and text.
+ */
+export function getLinkHtml( url, text ) {
+	try {
+		const { protocol } = new URL( url );
+		if ( protocol !== 'http:' && protocol !== 'https:' ) {
+			return null;
+		}
+	} catch {
+		return null;
+	}
+
+	const link = document.createElement( 'a' );
+	link.setAttribute( 'target', '_blank' );
+	link.setAttribute( 'href', url );
+	link.textContent = text;
+	return link.outerHTML;
+}
 
 export const linkProps = ( note, block ) => {
 	const { site: noteSite, comment, post } = note?.meta?.ids ?? {};

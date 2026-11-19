@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -16,6 +16,7 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import AIToolsSettings, { getAgentEmailAddress, getAgentEmailVCard } from '../index';
 import type { Site, UserSettings } from '@automattic/api-core';
@@ -48,7 +49,7 @@ const jetpackSite = {
 	jetpack: true,
 } as Site;
 
-let clipboardWriteText: jest.Mock;
+let clipboardWriteText: Mock;
 
 beforeAll( () => {
 	enable( 'dolly/telegram' );
@@ -186,7 +187,7 @@ function mockClipboard() {
 }
 
 beforeEach( () => {
-	clipboardWriteText = jest.fn().mockResolvedValue( undefined );
+	clipboardWriteText = vi.fn().mockResolvedValue( undefined );
 	queryClient.clear();
 	queryClient.setDefaultOptions( {
 		queries: {
@@ -286,7 +287,7 @@ describe( '<AIToolsSettings>', () => {
 			screen.queryByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
 		).not.toBeInTheDocument();
 		expect(
-			screen.queryByRole( 'link', { name: /^Connect external AI agent/ } )
+			screen.queryByRole( 'heading', { name: 'Connect an external AI agent' } )
 		).not.toBeInTheDocument();
 	} );
 
@@ -300,8 +301,35 @@ describe( '<AIToolsSettings>', () => {
 		).toBeEnabled();
 		expect( screen.getByRole( 'link', { name: /^Read/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /^Write/ } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /^Connect external AI agent/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Connect an external AI agent' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Manual setup' } ) ).toHaveAttribute(
+			'href',
+			`/sites/${ site.slug }/settings/ai-tools/setup`
+		);
+		expect( screen.queryByText( 'MCP access is off for this site' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the connect card while MCP is off, and turns MCP on for this site', async () => {
+		const save = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', ( body ) => {
+				expect( body.mcp_abilities.sites ).toEqual( [
+					expect.objectContaining( { blog_id: site.ID, site_level_enabled: true } ),
+				] );
+				return true;
+			} )
+			.reply( 200, {} );
+		renderAIToolsSettings( '', true, site, true, false );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Connect an external AI agent' } )
+		).toBeVisible();
+		expect( screen.getByText( 'MCP access is off for this site' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Manual setup' } ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Turn on MCP access' } ) );
+
+		await waitFor( () => expect( save.isDone() ).toBe( true ) );
 	} );
 
 	test( 'counts site-published groups in the badges so they cannot claim All enabled while those are off', () => {

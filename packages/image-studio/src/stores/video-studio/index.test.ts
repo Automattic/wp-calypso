@@ -1,17 +1,15 @@
-/**
- * @jest-environment jsdom
- */
 /* eslint-disable import/order */
+import { vi } from 'vitest';
 import type { VideoStudioState } from './index';
 
 // Mock @wordpress/data
-jest.mock( '@wordpress/data', () => ( {
-	createReduxStore: jest.fn( ( storeName: string, config: Record< string, unknown > ) => ( {
+vi.mock( '@wordpress/data', () => ( {
+	createReduxStore: vi.fn( ( storeName: string, config: Record< string, unknown > ) => ( {
 		name: storeName,
 		...config,
 	} ) ),
-	register: jest.fn(),
-	select: jest.fn( () => null ),
+	register: vi.fn(),
+	select: vi.fn( () => null ),
 } ) );
 
 // Import store module after mocks are set up — must come after jest.mock
@@ -25,7 +23,7 @@ describe( 'Video Studio Store', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'Initial State', () => {

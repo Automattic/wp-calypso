@@ -1,26 +1,27 @@
+import { type MockedFunction, vi } from 'vitest';
 import { getHelpCenterRouterHistory, isHelpCenterShown } from '../resolvers';
 import { getPersistedPreference } from '../utils';
 import type { HelpCenterThunkProps } from '../types';
 
-jest.mock( '../utils', () => ( {
-	getPersistedPreference: jest.fn(),
+vi.mock( '../utils', () => ( {
+	getPersistedPreference: vi.fn(),
 } ) );
 
-const mockGetPersistedPreference = getPersistedPreference as jest.MockedFunction<
+const mockGetPersistedPreference = getPersistedPreference as MockedFunction<
 	typeof getPersistedPreference
 >;
 
 describe( 'Help Center resolvers', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'opens at home when a logged-out session is persisted', async () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const select = {
-			hasLoggedOutOdieChat: jest.fn( () => true ),
-			getHelpCenterOptions: jest.fn( () => ( {} ) ),
-			getLoggedOutOdieChat: jest.fn(),
+			hasLoggedOutOdieChat: vi.fn( () => true ),
+			getHelpCenterOptions: vi.fn( () => ( {} ) ),
+			getLoggedOutOdieChat: vi.fn(),
 		};
 
 		await isHelpCenterShown()( {
@@ -42,14 +43,14 @@ describe( 'Help Center resolvers', () => {
 	} );
 
 	it( 'reopens the saved conversation of the presales bot for the plans-presales launcher', async () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const select = {
-			hasLoggedOutOdieChat: jest.fn( () => true ),
-			getHelpCenterOptions: jest.fn( () => ( {
+			hasLoggedOutOdieChat: vi.fn( () => true ),
+			getHelpCenterOptions: vi.fn( () => ( {
 				launcherContext: 'plans-presales',
 				loggedOutBotSlug: 'wpcom-workflow-presales',
 			} ) ),
-			getLoggedOutOdieChat: jest.fn( () => ( {
+			getLoggedOutOdieChat: vi.fn( () => ( {
 				odieId: 123,
 				sessionId: 'abc-def',
 				botSlug: 'wpcom-workflow-presales',
@@ -74,14 +75,14 @@ describe( 'Help Center resolvers', () => {
 	} );
 
 	it( 'opens the presales launcher on a fresh chat when the saved conversation belongs to another bot', async () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const select = {
-			hasLoggedOutOdieChat: jest.fn( () => true ),
-			getHelpCenterOptions: jest.fn( () => ( {
+			hasLoggedOutOdieChat: vi.fn( () => true ),
+			getHelpCenterOptions: vi.fn( () => ( {
 				launcherContext: 'plans-presales',
 				loggedOutBotSlug: 'wpcom-workflow-presales',
 			} ) ),
-			getLoggedOutOdieChat: jest.fn( () => undefined ),
+			getLoggedOutOdieChat: vi.fn( () => undefined ),
 		};
 
 		await isHelpCenterShown()( {
@@ -97,11 +98,11 @@ describe( 'Help Center resolvers', () => {
 	} );
 
 	it( 'opens the presales launcher on a fresh chat when no bot slug was provided', async () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const select = {
-			hasLoggedOutOdieChat: jest.fn( () => true ),
-			getHelpCenterOptions: jest.fn( () => ( { launcherContext: 'plans-presales' } ) ),
-			getLoggedOutOdieChat: jest.fn(),
+			hasLoggedOutOdieChat: vi.fn( () => true ),
+			getHelpCenterOptions: vi.fn( () => ( { launcherContext: 'plans-presales' } ) ),
+			getLoggedOutOdieChat: vi.fn(),
 		};
 
 		await isHelpCenterShown()( {
@@ -119,10 +120,10 @@ describe( 'Help Center resolvers', () => {
 
 	it( 'uses the open preference when there is no logged-out session', async () => {
 		mockGetPersistedPreference.mockResolvedValue( true );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const select = {
-			hasLoggedOutOdieChat: jest.fn( () => false ),
-			isHelpCenterShown: jest.fn( () => undefined ),
+			hasLoggedOutOdieChat: vi.fn( () => false ),
+			isHelpCenterShown: vi.fn( () => undefined ),
 		};
 
 		await isHelpCenterShown()( {
@@ -140,10 +141,10 @@ describe( 'Help Center resolvers', () => {
 		'leaves the Help Center as it is when it was set to %s while the preference loaded',
 		async ( shownMeanwhile ) => {
 			mockGetPersistedPreference.mockResolvedValue( true );
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			const select = {
-				hasLoggedOutOdieChat: jest.fn( () => false ),
-				isHelpCenterShown: jest.fn( () => shownMeanwhile ),
+				hasLoggedOutOdieChat: vi.fn( () => false ),
+				isHelpCenterShown: vi.fn( () => shownMeanwhile ),
 			};
 
 			await isHelpCenterShown()( {
@@ -161,9 +162,9 @@ describe( 'Help Center resolvers', () => {
 			index: 0,
 		};
 		mockGetPersistedPreference.mockResolvedValue( routerHistory );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const select = {
-			getNavigateToRoute: jest.fn( () => undefined ),
+			getNavigateToRoute: vi.fn( () => undefined ),
 		};
 
 		await getHelpCenterRouterHistory()( {
@@ -188,10 +189,10 @@ describe( 'Help Center resolvers', () => {
 				resolvePreference = resolve;
 			} )
 		);
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const route = { current: undefined as string | undefined };
 		const select = {
-			getNavigateToRoute: jest.fn( () => ( route.current ? { route: route.current } : undefined ) ),
+			getNavigateToRoute: vi.fn( () => ( route.current ? { route: route.current } : undefined ) ),
 		};
 
 		const resolution = getHelpCenterRouterHistory()( {

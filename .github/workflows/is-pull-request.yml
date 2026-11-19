@@ -16,6 +16,8 @@ on:
   pull_request:
     types: [ opened, synchronize ]
 
+permissions: {}
+
 jobs:
   is-pull-request:
     name: 'Protect Trunk Branch'

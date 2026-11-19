@@ -273,13 +273,17 @@ describe( 'KnownThreatsNotice', () => {
 		expect( banner ).toContainElement( screen.getByRole( 'checkbox', { name: CHECKBOX } ) );
 		// In the same paragraph as the warning: where to go instead.
 		const link = await screen.findByRole( 'link', {
-			name: /^restore the latest backup without known threats, from .+ at .+$/,
+			name: 'latest backup without known threats',
 		} );
 		expect( link ).toHaveAttribute( 'href', '/backup/example.wordpress.com/restore/150.817' );
-		const title = screen.getByText( NOTICE ).parentElement;
-		expect( title ).toContainElement( link );
-		expect( title ).toHaveTextContent(
-			`${ NOTICE } Instead, restore the latest backup without known threats, from`
+		// The backup's date and time are in a tooltip, not the sentence.
+		await userEvent.hover( link );
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( /^Backup from .+ at .+$/ );
+		await userEvent.unhover( link );
+		const heading = screen.getByText( NOTICE ).parentElement;
+		expect( heading ).toContainElement( link );
+		expect( heading ).toHaveTextContent(
+			`${ NOTICE } Instead, restore the latest backup without known threats.`
 		);
 		expect( banner ).toContainElement( link );
 		expectInOrder( screen.getByText( NOTICE ), link, summary );
@@ -287,9 +291,9 @@ describe( 'KnownThreatsNotice', () => {
 		expect( await screen.findByText( 'Evil.Sig' ) ).toBeVisible();
 		expect( details ).toHaveAttribute( 'open' );
 		expect( details ).toContainElement( screen.getByText( 'Evil.Sig' ) );
-		expect( screen.getAllByRole( 'link', { name: /^restore the latest backup/ } ) ).toHaveLength(
-			1
-		);
+		expect(
+			screen.getAllByRole( 'link', { name: 'latest backup without known threats' } )
+		).toHaveLength( 1 );
 	} );
 
 	it( 'shows a loading, then failed, state inside the open threat details', async () => {

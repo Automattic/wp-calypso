@@ -1,7 +1,8 @@
+import { vi } from 'vitest';
 import { ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../../constants';
 import { getBotSlug } from '../get-bot-slug';
 
-jest.mock( '../../constants', () => ( {
+vi.mock( '../../constants', () => ( {
 	ODIE_DEFAULT_BOT_SLUG_LEGACY: 'wpcom-support-chat',
 } ) );
 

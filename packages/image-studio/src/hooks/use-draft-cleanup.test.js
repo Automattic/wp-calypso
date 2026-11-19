@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useDraftCleanup } from './use-draft-cleanup';
 
 /**
@@ -14,11 +15,11 @@ import { useDraftCleanup } from './use-draft-cleanup';
 // Mutable selector state used by the `select` mock.
 let mockSelectorState;
 
-const mockSetDraftIds = jest.fn();
-const mockDeleteEntityRecord = jest.fn();
+const mockSetDraftIds = vi.fn();
+const mockDeleteEntityRecord = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn( ( storeName ) => {
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn( ( storeName ) => {
 		if ( storeName === 'image-studio' ) {
 			return {
 				getDraftIds: () => mockSelectorState.draftIds,
@@ -30,7 +31,7 @@ jest.mock( '@wordpress/data', () => ( {
 		}
 		return {};
 	} ),
-	useDispatch: jest.fn( ( storeName ) => {
+	useDispatch: vi.fn( ( storeName ) => {
 		if ( storeName === 'image-studio' ) {
 			return {
 				setDraftIds: mockSetDraftIds,
@@ -45,26 +46,25 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@wordpress/core-data', () => ( {
+vi.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
-jest.mock( '@wordpress/element', () => ( {
+vi.mock( '@wordpress/element', () => ( {
 	useCallback: ( fn ) => fn,
 } ) );
 
-jest.mock( '../store', () => ( {
+vi.mock( '../store', () => ( {
 	store: 'image-studio',
 } ) );
 
-jest.mock( '../utils/tracking', () => ( {
-	trackImageStudioError: jest.fn(),
+vi.mock( '../utils/tracking', () => ( {
+	trackImageStudioError: vi.fn(),
 } ) );
 
-const { trackImageStudioError: mockTrackImageStudioError } =
-	jest.requireMock( '../utils/tracking' );
+const { trackImageStudioError: mockTrackImageStudioError } = await import( '../utils/tracking' );
 
-jest.mock( '../types', () => ( {
+vi.mock( '../types', () => ( {
 	ImageStudioMode: {
 		Edit: 'edit',
 		Generate: 'generate',
@@ -73,7 +73,7 @@ jest.mock( '../types', () => ( {
 
 describe( 'useDraftCleanup – cleanupOnExit', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSelectorState = {
 			draftIds: [],
 			annotatedAttachmentIds: [],
@@ -245,7 +245,7 @@ describe( 'useDraftCleanup – cleanupOnExit', () => {
 			return Promise.resolve();
 		} );
 
-		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+		const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation();
 
 		const { result } = renderHook( () => useDraftCleanup() );
 
@@ -281,7 +281,7 @@ describe( 'useDraftCleanup – cleanupOnExit', () => {
 			return Promise.resolve();
 		} );
 
-		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+		const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation();
 
 		const { result } = renderHook( () => useDraftCleanup() );
 
@@ -310,7 +310,7 @@ describe( 'useDraftCleanup – cleanupOnExit', () => {
 			throw new Error( 'Synchronous failure' );
 		} );
 
-		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation();
+		const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation();
 
 		const { result } = renderHook( () => useDraftCleanup() );
 

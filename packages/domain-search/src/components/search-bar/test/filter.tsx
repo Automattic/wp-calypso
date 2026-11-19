@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestions';
 import { mockGetAvailableTldsQuery } from '../../../test-helpers/queries/tlds';
 import { TestDomainSearch, TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
@@ -24,8 +25,8 @@ describe( 'SearchBar#Filter', () => {
 			tlds: [ 'com', 'net', 'org' ],
 		} );
 
-		const onFilterApplied = jest.fn();
-		const onSearchStart = jest.fn();
+		const onFilterApplied = vi.fn();
+		const onSearchStart = vi.fn();
 
 		render(
 			<TestDomainSearchWithSuggestions query="test" events={ { onFilterApplied, onSearchStart } }>
@@ -74,7 +75,7 @@ describe( 'SearchBar#Filter', () => {
 			tlds: [ 'com', 'net', 'org' ],
 		} );
 
-		const onFilterApplied = jest.fn();
+		const onFilterApplied = vi.fn();
 
 		render(
 			<TestDomainSearchWithSuggestions query="test" events={ { onFilterApplied } }>
@@ -125,8 +126,8 @@ describe( 'SearchBar#Filter', () => {
 			tlds: [ 'com', 'net', 'org' ],
 		} );
 
-		const onFilterReset = jest.fn();
-		const onSearchStart = jest.fn();
+		const onFilterReset = vi.fn();
+		const onSearchStart = vi.fn();
 
 		render(
 			<TestDomainSearch query="test" events={ { onFilterReset, onSearchStart } }>
@@ -265,7 +266,7 @@ describe( 'SearchBar#Filter', () => {
 				tlds: [ 'com', 'net', 'org' ],
 			} );
 
-			const onFilterApplied = jest.fn();
+			const onFilterApplied = vi.fn();
 
 			render(
 				<TestDomainSearchWithSuggestions

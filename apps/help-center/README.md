@@ -55,9 +55,12 @@ After every change to the Help Center, the development process is two parts:
 This simply means deploying Calypso as you normally would.
 
 #### Deploy the Help Center for Jetpack consumption
+
 1. Connect to your sandbox and run: `install-plugin.sh hc --release`
-2. This will create a patch which you will need to land: `arc land`
-3. Deploy wpcom: `deploy wpcom`
+2. When prompted where to push the branch, select the WPCOM repository.
+3. This will create a PR on the WPCOM repository.
+4. Once checks pass, merge the PR.
+5. Deploy wpcom: `deploy wpcom`
 
 This will deploy the Help Center app for Jetpack consumption. Along with the languages files.
 

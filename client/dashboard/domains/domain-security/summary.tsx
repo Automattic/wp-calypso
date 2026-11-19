@@ -4,7 +4,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import type { Domain } from '@automattic/api-core';
 import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
 
-export default function NameServersSettingsSummary( {
+export default function DomainSecuritySettingsSummary( {
 	domain,
 	isDisabled,
 	onClick,
@@ -13,20 +13,14 @@ export default function NameServersSettingsSummary( {
 	isDisabled?: boolean;
 	onClick?: () => void;
 } ) {
+	// SSL problems are shown in the domain overview header instead.
 	const badges: SummaryButtonBadgeProps[] = [];
-	// An active certificate is shown in the domain overview header instead.
-	if ( domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending' ) {
-		badges.push( { text: __( 'SSL Pending' ), intent: 'low' as const } );
-	} else if ( domain.ssl_status !== 'active' ) {
-		badges.push( { text: __( 'SSL Disabled' ), intent: 'high' as const } );
-	}
-
 	if ( DomainSubtype.DOMAIN_REGISTRATION === domain.subtype.id ) {
-		if ( domain.is_dnssec_enabled ) {
-			badges.push( { text: __( 'DNSSEC enabled' ), intent: 'stable' as const } );
-		} else {
-			badges.push( { text: __( 'DNSSEC disabled' ), intent: 'draft' as const } );
-		}
+		badges.push(
+			domain.is_dnssec_enabled
+				? { text: __( 'DNSSEC enabled' ), intent: 'stable' as const }
+				: { text: __( 'DNSSEC disabled' ), intent: 'none' as const }
+		);
 	}
 
 	return (

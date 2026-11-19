@@ -1,4 +1,4 @@
-const { buildPotData } = require( '../src' );
+import { buildPotData } from '../src';
 
 // The base POT data seeds the header block in the empty context / empty msgid
 // entry; extracted strings are keyed by context, then by msgid.

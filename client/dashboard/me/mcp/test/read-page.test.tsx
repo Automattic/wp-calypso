@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { isAutomatticianQuery, queryClient, userSettingsQuery } from '@automattic/api-queries';
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import McpRead from '../read';
 import type { UserSettings } from '@automattic/api-core';
@@ -56,13 +57,29 @@ function seed() {
 }
 
 function mockClipboard() {
-	const writeText = jest.fn().mockResolvedValue( undefined );
+	const writeText = vi.fn().mockResolvedValue( undefined );
 	Object.defineProperty( window.navigator, 'clipboard', {
 		value: { writeText },
 		configurable: true,
 	} );
 	return writeText;
 }
+
+// jsdom doesn't implement scrollIntoView, so define it for the test and
+// remove it again afterwards.
+function mockScrollIntoView() {
+	const scrollIntoView = vi.fn();
+	Object.defineProperty( Element.prototype, 'scrollIntoView', {
+		value: scrollIntoView,
+		configurable: true,
+		writable: true,
+	} );
+	return scrollIntoView;
+}
+
+afterEach( () => {
+	delete ( Element.prototype as Partial< Element > ).scrollIntoView;
+} );
 
 beforeEach( () => {
 	window.location.hash = '';
@@ -101,6 +118,36 @@ describe( '<McpRead> search and anchors', () => {
 		expect( screen.getByRole( 'checkbox', { name: 'List pages' } ) ).toBeVisible();
 		expect( screen.getByRole( 'checkbox', { name: 'List posts' } ) ).toBeVisible();
 		expect( document.getElementById( 'wpcom-mcp/pages-list' ) ).not.toBeNull();
+	} );
+
+	test( 'a tool anchor in a collapsed group scrolls to that tool once it renders', () => {
+		const scrollIntoView = mockScrollIntoView();
+		window.location.hash = '#wpcom-mcp/pages-list';
+		seed();
+		render( <McpRead />, { queryClient } );
+
+		expect( scrollIntoView ).toHaveBeenCalledTimes( 1 );
+		expect( scrollIntoView.mock.contexts[ 0 ] ).toBe(
+			document.getElementById( 'wpcom-mcp/pages-list' )
+		);
+	} );
+
+	test( 'a tool anchor focuses the linked tool, and Tab moves to its toggle', async () => {
+		const user = userEvent.setup();
+		mockScrollIntoView();
+		window.location.hash = '#wpcom-mcp/pages-list';
+		seed();
+		render( <McpRead />, { queryClient } );
+
+		expect( document.getElementById( 'wpcom-mcp/pages-list' ) ).toHaveFocus();
+
+		await user.tab();
+
+		expect( screen.getByRole( 'checkbox', { name: 'List pages' } ) ).toHaveFocus();
+
+		await user.click( screen.getByText( 'List pages on your sites.' ) );
+
+		expect( document.getElementById( 'wpcom-mcp/pages-list' ) ).not.toHaveFocus();
 	} );
 
 	test( 'an anchor copy button copies that tool’s anchor URL', async () => {

@@ -65,7 +65,7 @@ test.describe(
 				const plansPage = new PlansPage( page );
 				await Promise.all( [
 					plansPage.selectPlan( planName ),
-					page.waitForURL( /.*\/checkout\/.*/, { timeout: 30 * 1000 } ),
+					page.waitForURL( /\/checkout\//, { timeout: 30 * 1000, waitUntil: 'commit' } ),
 				] );
 			} );
 

@@ -1,3 +1,3 @@
 export default function cssSafeUrl( url ) {
-	return url && url.replace( /([()])/g, '\\$1' );
+	return url && url.replace( /([()\\])/g, '\\$1' );
 }

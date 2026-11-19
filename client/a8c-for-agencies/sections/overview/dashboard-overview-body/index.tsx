@@ -1,14 +1,10 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
-import useIsEligibleForExpansionOffer from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-is-eligible-for-expansion-offer';
-import usePressableOfferEligibility from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-pressable-offer-eligibility';
 import { getDashboardOptInLink } from 'calypso/a8c-for-agencies/components/dashboard-opt-in-modal';
 import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import {
 	A4A_AGENCY_TIER_LINK,
-	A4A_AI_MCP_LINK,
-	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 	A4A_PARTNER_DIRECTORY_LINK,
@@ -20,10 +16,7 @@ import useLeadMatchingProfile from 'calypso/a8c-for-agencies/data/partner-direct
 import useDashboardOptIn from 'calypso/a8c-for-agencies/hooks/use-dashboard-opt-in';
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import { PARTNER_DIRECTORY_LEAD_MATCHING_SLUG } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
-import {
-	PRESSABLE_OFFER_ENDS_AT,
-	PROGRAM_INCENTIVES_URL,
-} from 'calypso/dashboard/agency/overview/constants';
+import { PROGRAM_INCENTIVES_URL } from 'calypso/dashboard/agency/overview/constants';
 import { getAnsweredMatchingProfileCount } from 'calypso/dashboard/agency/overview/matching-profile-visibility';
 import AgencyOverviewContent from 'calypso/dashboard/agency/overview/overview-content';
 import { REQUIRED_LEAD_MATCHING_FIELDS } from 'calypso/dashboard/agency/partner-directory/lead-matching/form-data';
@@ -31,18 +24,12 @@ import { isProPartnerOrHigher } from 'calypso/dashboard/agency/tiers/get-current
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { successNotice } from 'calypso/state/notices/actions';
 
-function DashboardOverviewBodyContent( {
-	isEligibleForPressableExpansionOffer,
-}: {
-	isEligibleForPressableExpansionOffer: boolean;
-} ) {
+export default function DashboardOverviewBody() {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
 	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
-	const { isEligibleForIntroductoryOffer } = usePressableOfferEligibility();
 	const hasPartnerDirectoryListing =
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
@@ -69,10 +56,6 @@ function DashboardOverviewBodyContent( {
 		},
 		[ dispatch ]
 	);
-
-	const handleCertificationShareCopy = useCallback( () => {
-		dispatch( successNotice( __( 'Message copied. Paste it into a chat or email.' ) ) );
-	}, [ dispatch ] );
 
 	const handleRelaunchTour = useCallback( () => {
 		window.location.hash = ONBOARDING_TOUR_HASH;
@@ -102,8 +85,6 @@ function DashboardOverviewBodyContent( {
 				( ! contact?.phone?.trim() || ! contact?.booking_link?.trim() )
 			}
 			matchingProfileAnswered={ answeredRequiredFieldCount }
-			isEligibleForPressableIntroOffer={ isEligibleForIntroductoryOffer }
-			isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 			links={ {
 				tiers: A4A_AGENCY_TIER_LINK,
 				sites: A4A_SITES_LINK,
@@ -113,8 +94,6 @@ function DashboardOverviewBodyContent( {
 				partnerDirectory: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
 				leadMatching: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
 				contactSupport: CONTACT_URL_HASH_FRAGMENT,
-				aiMcp: A4A_AI_MCP_LINK,
-				pressableHosting: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 				helpful: [
 					...( canOptIn
 						? [
@@ -149,33 +128,7 @@ function DashboardOverviewBodyContent( {
 			isSchedulingCall={ isSchedulingCall }
 			onRelaunchTour={ handleRelaunchTour }
 			partnerManager={ agency.partner_manager }
-			onCertificationShareCopy={ handleCertificationShareCopy }
 			recordTracksEvent={ handleRecordTracksEvent }
 		/>
 	);
-}
-
-function ContentWithExpansionOfferCheck() {
-	const isEligibleForExpansionOffer = useIsEligibleForExpansionOffer();
-
-	return (
-		<DashboardOverviewBodyContent
-			isEligibleForPressableExpansionOffer={ isEligibleForExpansionOffer }
-		/>
-	);
-}
-
-export default function DashboardOverviewBody() {
-	const { mayBeEligibleForExpansionOffer } = usePressableOfferEligibility();
-	// Once the offer ends the card can never render, so don't pay for the
-	// license fetch either.
-	const isOfferActive = new Date() < new Date( PRESSABLE_OFFER_ENDS_AT );
-
-	// Gate before rendering so the license fetch behind the expansion offer
-	// check only runs for agencies that own a Pressable plan through A4A.
-	if ( isOfferActive && mayBeEligibleForExpansionOffer ) {
-		return <ContentWithExpansionOfferCheck />;
-	}
-
-	return <DashboardOverviewBodyContent isEligibleForPressableExpansionOffer={ false } />;
 }

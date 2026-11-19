@@ -1,5 +1,5 @@
-import { describe, expect, test, jest } from '@jest/globals';
 import nock from 'nock';
+import { describe, expect, test, vi } from 'vitest';
 import { RestAPIClient, BEARER_TOKEN_URL } from '../rest-api-client';
 import { SecretsManager } from '../secrets';
 import type { Secrets } from '../secrets';
@@ -22,7 +22,7 @@ const fakeSecrets = {
 	},
 } as unknown as Secrets;
 
-jest.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
+vi.spyOn( SecretsManager, 'secrets', 'get' ).mockImplementation( () => fakeSecrets );
 
 describe( 'RestAPIClient: getBearerToken', function () {
 	test( 'Bearer Token is returned upon successful request', async function () {

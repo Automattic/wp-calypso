@@ -5,20 +5,23 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { HelpCenterRequiredContextProvider } from '../../contexts/HelpCenterContext';
 import { useRedirectToArticle } from '../use-redirect-to-article';
 import type { SearchResult } from '../../types';
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 
-jest.mock( 'react-router-dom', () => ( {
-	...jest.requireActual( 'react-router-dom' ),
+vi.mock( 'react-router-dom', async () => ( {
+	...( await vi.importActual< typeof import( 'react-router-dom' ) >( 'react-router-dom' ) ),
 	useNavigate: () => mockNavigate,
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >(
+		'@automattic/calypso-analytics'
+	) ),
+	recordTracksEvent: vi.fn(),
 } ) );
 
 const site = { ID: 111, URL: 'https://example.com', name: 'Example' };
@@ -40,7 +43,7 @@ function wrapper( { children }: { children: React.ReactNode } ) {
 }
 
 function clickEvent() {
-	return { preventDefault: jest.fn() } as unknown as React.MouseEvent<
+	return { preventDefault: vi.fn() } as unknown as React.MouseEvent<
 		HTMLAnchorElement,
 		MouseEvent
 	>;
@@ -54,8 +57,8 @@ const resultWithoutPostId = {
 
 describe( 'useRedirectToArticle', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		window.open = jest.fn();
+		vi.clearAllMocks();
+		window.open = vi.fn();
 	} );
 
 	it( 'reports the article blog separately from the support site', () => {

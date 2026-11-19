@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  *
  * Tests the gutenberg entry's registerPlugin wiring: the Jetpack AI Sidebar
  * preview gate decides whether the Agents Manager mounts. The entry has
@@ -7,28 +7,24 @@
  * and only the registered render function is exercised.
  */
 
-jest.mock( '../config', () => ( {} ), { virtual: true } );
-jest.mock( '../agents-manager-with-provider', () => ( {
+import { vi } from 'vitest';
+vi.mock( '../config', () => ( {} ) );
+vi.mock( '../agents-manager-with-provider', () => ( {
 	__esModule: true,
 	default: function AgentsManagerWithProvider() {
 		return null;
 	},
 } ) );
 
-const mockRegisterPlugin = jest.fn();
-jest.mock( '@wordpress/plugins', () => ( { registerPlugin: mockRegisterPlugin } ) );
+const mockRegisterPlugin = vi.fn();
+vi.mock( '@wordpress/plugins', () => ( { registerPlugin: mockRegisterPlugin } ) );
 
 const JETPACK_PROVIDER = 'https://widgets.wp.com/agents-manager/jetpack-ai-sidebar.provider.mjs';
 
-const loadRender = () => {
-	let render;
-
-	jest.isolateModules( () => {
-		require( '../agents-manager-gutenberg' );
-		render = mockRegisterPlugin.mock.calls.at( -1 )?.[ 1 ]?.render;
-	} );
-
-	return render;
+const loadRender = async () => {
+	vi.resetModules();
+	await import( '../agents-manager-gutenberg' );
+	return mockRegisterPlugin.mock.calls.at( -1 )?.[ 1 ]?.render;
 };
 
 describe( 'agents-manager-gutenberg entry', () => {
@@ -43,8 +39,8 @@ describe( 'agents-manager-gutenberg entry', () => {
 		delete window._currentSiteType;
 	} );
 
-	it( 'registers the jetpack-agents-manager plugin with a render function', () => {
-		loadRender();
+	it( 'registers the jetpack-agents-manager plugin with a render function', async () => {
+		await loadRender();
 
 		expect( mockRegisterPlugin ).toHaveBeenCalledWith(
 			'jetpack-agents-manager',
@@ -52,26 +48,26 @@ describe( 'agents-manager-gutenberg entry', () => {
 		);
 	} );
 
-	it( 'renders nothing when the gate suppresses the mount', () => {
+	it( 'renders nothing when the gate suppresses the mount', async () => {
 		globalThis.agentsManagerData = {
 			sectionName: 'gutenberg',
 			agentProviders: [ JETPACK_PROVIDER ],
 		};
 
-		const render = loadRender();
+		const render = await loadRender();
 
 		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [] );
 		expect( render() ).toBeNull();
 	} );
 
-	it( 'renders the Agents Manager when the gate allows the mount', () => {
+	it( 'renders the Agents Manager when the gate allows the mount', async () => {
 		window._currentSiteType = 'simple';
 		globalThis.agentsManagerData = {
 			sectionName: 'gutenberg',
 			agentProviders: [ JETPACK_PROVIDER ],
 		};
 
-		const render = loadRender();
+		const render = await loadRender();
 
 		expect( globalThis.agentsManagerData.agentProviders ).toEqual( [ JETPACK_PROVIDER ] );
 		const result = render();

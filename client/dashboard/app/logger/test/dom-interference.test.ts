@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { getDomInterferenceReport } from '../dom-interference';
 
 afterEach( () => {
@@ -12,7 +13,7 @@ afterEach( () => {
 } );
 
 describe( 'getDomInterferenceReport', () => {
-	it( 'reports no interference on a clean document', () => {
+	test( 'reports no interference on a clean document', () => {
 		const { tags } = getDomInterferenceReport();
 
 		expect( tags.dom_google_translate ).toBe( 'false' );
@@ -22,25 +23,25 @@ describe( 'getDomInterferenceReport', () => {
 		expect( tags.dom_dark_reader ).toBe( 'false' );
 	} );
 
-	it( 'detects Google Translate via the html class', () => {
+	test( 'detects Google Translate via the html class', () => {
 		document.documentElement.classList.add( 'translated-ltr' );
 
 		expect( getDomInterferenceReport().tags.dom_google_translate ).toBe( 'true' );
 	} );
 
-	it( 'detects Edge translate via _msttexthash attributes', () => {
+	test( 'detects Edge translate via _msttexthash attributes', () => {
 		document.body.innerHTML = '<span _msttexthash="123">Hello</span>';
 
 		expect( getDomInterferenceReport().tags.dom_ms_translate ).toBe( 'true' );
 	} );
 
-	it( 'detects Grammarly', () => {
+	test( 'detects Grammarly', () => {
 		document.body.setAttribute( 'data-gr-ext-installed', '' );
 
 		expect( getDomInterferenceReport().tags.dom_grammarly ).toBe( 'true' );
 	} );
 
-	it( 'reports the document language and font count in the context', () => {
+	test( 'reports the document language and font count in the context', () => {
 		document.documentElement.setAttribute( 'lang', 'es' );
 		document.body.innerHTML = '<font>a</font><font>b</font>';
 
@@ -50,8 +51,8 @@ describe( 'getDomInterferenceReport', () => {
 		expect( context.fontCount ).toBe( 2 );
 	} );
 
-	it( 'flags partial probe coverage on engines with undetectable built-in translation', () => {
-		const userAgent = jest.spyOn( navigator, 'userAgent', 'get' );
+	test( 'flags partial probe coverage on engines with undetectable built-in translation', () => {
+		const userAgent = vi.spyOn( navigator, 'userAgent', 'get' );
 
 		userAgent.mockReturnValue(
 			'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36'

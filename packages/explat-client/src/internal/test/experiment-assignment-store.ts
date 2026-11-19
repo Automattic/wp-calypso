@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+// @vitest-environment jsdom
 
 import {
 	retrieveExperimentAssignment,
@@ -49,7 +47,7 @@ describe( 'storeExperimentAssignment and retrieveExperimentAssignment', () => {
 				retrievedTimestamp: validFallbackExperimentAssignment.retrievedTimestamp - 1,
 			} )
 		).toThrowErrorMatchingInlineSnapshot(
-			'"Trying to store an older experiment assignment than is present in the store, likely a race condition."'
+			'[Error: Trying to store an older experiment assignment than is present in the store, likely a race condition.]'
 		);
 	} );
 
@@ -59,7 +57,7 @@ describe( 'storeExperimentAssignment and retrieveExperimentAssignment', () => {
 				...validFallbackExperimentAssignment,
 				experimentName: undefined,
 			} )
-		).toThrowErrorMatchingInlineSnapshot( '"Invalid ExperimentAssignment"' );
+		).toThrowErrorMatchingInlineSnapshot( '[Error: Invalid ExperimentAssignment]' );
 	} );
 } );
 

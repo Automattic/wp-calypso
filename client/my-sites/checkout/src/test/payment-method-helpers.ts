@@ -9,7 +9,7 @@ import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-se
 import { createAccount } from '../payment-method-helpers';
 
 jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
-	getBlackboxApiKey: jest.fn( () => 'signup-key' ),
+	getBlackboxApiKey: jest.fn( () => 'blackbox-api-key' ),
 } ) );
 
 jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
@@ -39,11 +39,20 @@ describe( 'createAccount', () => {
 		config.enable( 'blackbox' );
 		config.enable( 'blackbox-userless-checkout' );
 		( getBlackboxApiKey as jest.Mock ).mockReset();
-		( getBlackboxApiKey as jest.Mock ).mockReturnValue( 'signup-key' );
+		( getBlackboxApiKey as jest.Mock ).mockReturnValue( 'blackbox-api-key' );
 		( getBlackboxSessionId as jest.Mock ).mockReset();
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( undefined );
 		delete window.Blackbox;
 		nock.cleanAll();
+	} );
+
+	it( 'cancels account creation when checkout becomes inactive', async () => {
+		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( null );
+		const getRequestBody = interceptUsersNew();
+		await expect( createAccount( createAccountArgs ) ).rejects.toMatchObject( {
+			name: 'AbortError',
+		} );
+		expect( getRequestBody() ).toBeUndefined();
 	} );
 
 	it( 'attaches blackbox_session_id when available', async () => {
@@ -52,12 +61,11 @@ describe( 'createAccount', () => {
 
 		await createAccount( createAccountArgs );
 
-		expect( getBlackboxApiKey ).toHaveBeenCalledWith( 'blackbox-userless-checkout' );
-		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'signup-key' );
+		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'blackbox-api-key', undefined, 'signup' );
 		expect( getRequestBody()?.blackbox_session_id ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
 	} );
 
-	it( 'omits blackbox_session_id when the signup api key is missing', async () => {
+	it( 'omits blackbox_session_id when the Blackbox api key is missing', async () => {
 		( getBlackboxApiKey as jest.Mock ).mockReturnValue( '' );
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		const getRequestBody = interceptUsersNew();
@@ -93,6 +101,9 @@ describe( 'createAccount', () => {
 			configure: jest.fn(),
 			collect: jest.fn(),
 			getSessionId: jest.fn(),
+			flush: jest.fn(),
+			getSnapshot: jest.fn(),
+			subscribe: jest.fn(),
 			reset,
 		};
 		interceptUsersNew( 500, { error: 'internal_server_error', message: 'fail' } );

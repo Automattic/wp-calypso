@@ -5,8 +5,6 @@ import {
 	NOTES_LOADING,
 	SELECT_NOTE,
 	SET_LAYOUT,
-	SET_LAYOUT_STYLE,
-	SET_VIEW_SETTINGS_SEEN,
 	UNDO_ACTION,
 	VIEW_SETTINGS,
 	CLOSE_SHORTCUTS_POPOVER,
@@ -47,22 +45,6 @@ export const selectNote = ( noteId ) => ( {
 export const setLayout = ( layout ) => ( {
 	type: SET_LAYOUT,
 	layout,
-} );
-
-/**
- * @param {'detailed' | 'simplified'} layoutStyle
- */
-export const setLayoutStyle = ( layoutStyle ) => ( {
-	type: SET_LAYOUT_STYLE,
-	layoutStyle,
-} );
-
-/**
- * @param {boolean} viewSettingsSeen
- */
-export const setViewSettingsSeen = ( viewSettingsSeen ) => ( {
-	type: SET_VIEW_SETTINGS_SEEN,
-	viewSettingsSeen,
 } );
 
 export const undoAction = ( noteId ) => ( {
@@ -112,8 +94,6 @@ export default {
 	loadedNotes,
 	selectNote,
 	setLayout,
-	setLayoutStyle,
-	setViewSettingsSeen,
 	undoAction,
 	unselectNote,
 	viewSettings,

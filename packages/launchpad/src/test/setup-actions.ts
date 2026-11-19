@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import { setUpActionsForTasks } from '../setup-actions';
 import type { LaunchpadTaskActionsProps } from '../types';
 
-jest.mock( '@automattic/viewport', () => ( { isMobile: jest.fn( () => false ) } ) );
-jest.mock( '../use-launchpad', () => ( { updateLaunchpadSettings: jest.fn() } ) );
+vi.mock( '@automattic/viewport', () => ( { isMobile: vi.fn( () => false ) } ) );
+vi.mock( '../use-launchpad', () => ( { updateLaunchpadSettings: vi.fn() } ) );
 
 const runDriveTraffic = ( calypso_path: string ) => {
 	const props: LaunchpadTaskActionsProps = {
@@ -14,7 +15,7 @@ const runDriveTraffic = ( calypso_path: string ) => {
 		tracksData: {
 			checklistSlug: 'test',
 			launchpadContext: 'test',
-			recordTracksEvent: jest.fn(),
+			recordTracksEvent: vi.fn(),
 			tasklistCompleted: false,
 		},
 		extraActions: {},

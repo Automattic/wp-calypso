@@ -12,12 +12,18 @@ class PostCommentContent extends Component {
 		content: PropTypes.string.isRequired,
 		isPlaceholder: PropTypes.bool,
 		className: PropTypes.string,
-		setWithDimensionsRef: PropTypes.func,
 	};
 
-	static defaultProps = {
-		setWithDimensionsRef: () => {},
-	};
+	// Cached so a pending comment's markup is only sanitized again when it changes.
+	getInnerHtml( content, isPlaceholder ) {
+		if ( this.innerHtmlContent !== content || this.innerHtmlIsPlaceholder !== isPlaceholder ) {
+			this.innerHtmlContent = content;
+			this.innerHtmlIsPlaceholder = isPlaceholder;
+			// A pending comment from the block editor shows its markup sanitized, as the API will render it.
+			this.innerHtml = { __html: isPlaceholder ? DOMPurify.sanitize( content ) : content };
+		}
+		return this.innerHtml;
+	}
 
 	render() {
 		// Don't trust comment content unless it was provided by the API
@@ -36,19 +42,16 @@ class PostCommentContent extends Component {
 				</div>
 			);
 		}
-		// A pending comment from the block editor shows its markup sanitized, as the API will render it.
-		const content = this.props.isPlaceholder
-			? DOMPurify.sanitize( this.props.content )
-			: this.props.content;
-
 		/*eslint-disable react/no-danger*/
 		return (
 			<AutoDirection>
 				<div className={ clsx( 'comments__comment-content-wrapper', this.props.className ) }>
 					<div
 						className="comments__comment-content"
-						ref={ this.props.setWithDimensionsRef }
-						dangerouslySetInnerHTML={ { __html: content } }
+						dangerouslySetInnerHTML={ this.getInnerHtml(
+							this.props.content,
+							this.props.isPlaceholder
+						) }
 					/>
 				</div>
 			</AutoDirection>

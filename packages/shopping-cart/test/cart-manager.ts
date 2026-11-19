@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { createShoppingCartManagerClient, getEmptyResponseCart } from '../src/index';
 import { getCart, setCart, mainCartKey, planOne, planTwo } from './utils/mock-cart-api';
 import type { ResponseCart } from '../src/types';
@@ -31,7 +32,7 @@ describe( 'ShoppingCartManager', () => {
 	} );
 
 	it( 'clearMessages removes messages from the cart', async () => {
-		const mockGetCart = jest.fn().mockResolvedValue( {
+		const mockGetCart = vi.fn().mockResolvedValue( {
 			...getEmptyResponseCart(),
 			messages: { errors: [ { code: 'test-error', message: 'Test Error' } ] },
 		} );
@@ -67,7 +68,7 @@ describe( 'ShoppingCartManager', () => {
 	it( 'addProductsToCart rejects its promise if there are error messages in the response', async () => {
 		const errorCode = 'test-error';
 		const errorMessage = 'test error message';
-		const mockSetCart = jest.fn().mockResolvedValue( {
+		const mockSetCart = vi.fn().mockResolvedValue( {
 			...getEmptyResponseCart(),
 			messages: { errors: [ { code: errorCode, message: errorMessage } ] },
 		} );
@@ -87,7 +88,7 @@ describe( 'ShoppingCartManager', () => {
 	it( 'addProductsToCart rejects its promise if there is a connection error', async () => {
 		const errorCode = 'SET_SERVER_CART_ERROR';
 		const errorMessage = 'test error message';
-		const mockSetCart = jest.fn().mockRejectedValue( { message: errorMessage } );
+		const mockSetCart = vi.fn().mockRejectedValue( { message: errorMessage } );
 		const cartManagerClient = createShoppingCartManagerClient( {
 			getCart,
 			setCart: mockSetCart,
@@ -139,7 +140,7 @@ describe( 'ShoppingCartManager', () => {
 	} );
 
 	it( 'reloadFromServer forces the cart data to be overwritten by the server copy', async () => {
-		const mockGetCart = jest
+		const mockGetCart = vi
 			.fn()
 			.mockResolvedValue( { ...getEmptyResponseCart(), products: [ planOne ] } );
 		const cartManagerClient = createShoppingCartManagerClient( {
@@ -155,7 +156,7 @@ describe( 'ShoppingCartManager', () => {
 	} );
 
 	it( 'actions taken before calling fetchInitialCart fetch the cart anyway', async () => {
-		const mockGetCart = jest
+		const mockGetCart = vi
 			.fn()
 			.mockResolvedValue( { ...getEmptyResponseCart(), products: [ planTwo ] } );
 		const cartManagerClient = createShoppingCartManagerClient( {
@@ -176,7 +177,7 @@ describe( 'ShoppingCartManager', () => {
 		const errorCode = 'test-error';
 		const errorMessage = 'test error message';
 		const countryCode = 'CA';
-		const mockSetCart = jest.fn().mockResolvedValue( {
+		const mockSetCart = vi.fn().mockResolvedValue( {
 			...getEmptyResponseCart(),
 			messages: { errors: [ { code: errorCode, message: errorMessage } ] },
 			tax: {
@@ -202,13 +203,13 @@ describe( 'ShoppingCartManager', () => {
 		// updateLocation with the same data should be a noop.
 		const p1 = manager.actions.updateLocation( { countryCode } );
 		const completeCart = await p1;
-		expect( p1 ).resolves.toEqual( completeCart );
+		await expect( p1 ).resolves.toEqual( completeCart );
 	} );
 
 	it( 'noop actions taken when the cart has a loading error are not rejected', async () => {
 		const errorMessage = 'test error message';
 		const countryCode = 'CA';
-		const mockGetCart = jest.fn().mockResolvedValue( {
+		const mockGetCart = vi.fn().mockResolvedValue( {
 			...getEmptyResponseCart(),
 			tax: {
 				location: {
@@ -216,7 +217,7 @@ describe( 'ShoppingCartManager', () => {
 				},
 			},
 		} as ResponseCart );
-		const mockSetCart = jest.fn().mockRejectedValue( new Error( errorMessage ) );
+		const mockSetCart = vi.fn().mockRejectedValue( new Error( errorMessage ) );
 		const cartManagerClient = createShoppingCartManagerClient( {
 			getCart: mockGetCart,
 			setCart: mockSetCart,
@@ -227,7 +228,7 @@ describe( 'ShoppingCartManager', () => {
 		// updateLocation with the same data should be a noop.
 		const p1 = manager.actions.updateLocation( { countryCode } );
 		const completeCart = await p1;
-		expect( p1 ).resolves.toEqual( completeCart );
+		await expect( p1 ).resolves.toEqual( completeCart );
 	} );
 
 	it( 'multiple actions triggered sequentially all modify the cart', async () => {
@@ -249,7 +250,7 @@ describe( 'ShoppingCartManager', () => {
 	} );
 
 	it( 'multiple actions only trigger one server sync', async () => {
-		const setCartSpy = jest.fn().mockImplementation( setCart );
+		const setCartSpy = vi.fn().mockImplementation( setCart );
 		const cartManagerClient = createShoppingCartManagerClient( {
 			getCart,
 			setCart: setCartSpy,
@@ -286,65 +287,67 @@ describe( 'ShoppingCartManager', () => {
 		expect( p1 ).toEqual( p2 );
 	} );
 
-	it( 'queues actions that occur while the initial cart is loading and plays them when the cart has loaded', ( done ) => {
-		const setCartSpy = jest.fn().mockImplementation( setCart );
-		const cartManagerClient = createShoppingCartManagerClient( {
-			getCart,
-			setCart: setCartSpy,
-		} );
-		const manager = cartManagerClient.forCartKey( mainCartKey );
+	it( 'queues actions that occur while the initial cart is loading and plays them when the cart has loaded', () =>
+		new Promise< void >( ( resolve, reject ) => {
+			const setCartSpy = vi.fn().mockImplementation( setCart );
+			const cartManagerClient = createShoppingCartManagerClient( {
+				getCart,
+				setCart: setCartSpy,
+			} );
+			const manager = cartManagerClient.forCartKey( mainCartKey );
 
-		const subscriberCallback = () => {
-			const state = manager.getState();
-			if ( ! state.isLoading && ! state.isPendingUpdate ) {
-				try {
-					expect( state.responseCart.products.map( ( prod ) => prod.product_slug ) ).toContain(
-						planOne.product_slug
-					);
-					done();
-				} catch ( error ) {
-					done( error );
+			const subscriberCallback = () => {
+				const state = manager.getState();
+				if ( ! state.isLoading && ! state.isPendingUpdate ) {
+					try {
+						expect( state.responseCart.products.map( ( prod ) => prod.product_slug ) ).toContain(
+							planOne.product_slug
+						);
+						resolve();
+					} catch ( error ) {
+						reject( error );
+					}
 				}
-			}
-		};
-		manager.subscribe( subscriberCallback );
+			};
+			manager.subscribe( subscriberCallback );
 
-		// Trigger the initial fetch; this is async
-		manager.fetchInitialCart();
-		// While the fetch is still in-progress, trigger an action
-		manager.actions.addProductsToCart( [ planOne ] );
-	} );
+			// Trigger the initial fetch; this is async
+			manager.fetchInitialCart();
+			// While the fetch is still in-progress, trigger an action
+			manager.actions.addProductsToCart( [ planOne ] );
+		} ) );
 
-	it( 'queues actions that occur after initial cart has loaded when queued actions remain and plays them when the cart is loaded', ( done ) => {
-		const setCartSpy = jest.fn().mockImplementation( setCart );
-		const cartManagerClient = createShoppingCartManagerClient( {
-			getCart,
-			setCart: setCartSpy,
-		} );
-		const manager = cartManagerClient.forCartKey( mainCartKey );
+	it( 'queues actions that occur after initial cart has loaded when queued actions remain and plays them when the cart is loaded', () =>
+		new Promise< void >( ( resolve, reject ) => {
+			const setCartSpy = vi.fn().mockImplementation( setCart );
+			const cartManagerClient = createShoppingCartManagerClient( {
+				getCart,
+				setCart: setCartSpy,
+			} );
+			const manager = cartManagerClient.forCartKey( mainCartKey );
 
-		let hasAddedSecondProduct = false;
-		const subscriberCallback = () => {
-			const state = manager.getState();
-			if ( ! state.isLoading && ! hasAddedSecondProduct ) {
-				hasAddedSecondProduct = true;
-				manager.actions.addProductsToCart( [ planTwo ] );
-			}
-
-			if ( ! state.isLoading && ! state.isPendingUpdate ) {
-				try {
-					const slugsInCart = state.responseCart.products.map( ( prod ) => prod.product_slug );
-					expect( slugsInCart ).toContain( planOne.product_slug );
-					expect( slugsInCart ).toContain( planTwo.product_slug );
-					done();
-				} catch ( err ) {
-					done( err );
+			let hasAddedSecondProduct = false;
+			const subscriberCallback = () => {
+				const state = manager.getState();
+				if ( ! state.isLoading && ! hasAddedSecondProduct ) {
+					hasAddedSecondProduct = true;
+					manager.actions.addProductsToCart( [ planTwo ] );
 				}
-			}
-		};
 
-		manager.subscribe( subscriberCallback );
-		manager.fetchInitialCart();
-		manager.actions.addProductsToCart( [ planOne ] );
-	} );
+				if ( ! state.isLoading && ! state.isPendingUpdate ) {
+					try {
+						const slugsInCart = state.responseCart.products.map( ( prod ) => prod.product_slug );
+						expect( slugsInCart ).toContain( planOne.product_slug );
+						expect( slugsInCart ).toContain( planTwo.product_slug );
+						resolve();
+					} catch ( err ) {
+						reject( err );
+					}
+				}
+			};
+
+			manager.subscribe( subscriberCallback );
+			manager.fetchInitialCart();
+			manager.actions.addProductsToCart( [ planOne ] );
+		} ) );
 } );
