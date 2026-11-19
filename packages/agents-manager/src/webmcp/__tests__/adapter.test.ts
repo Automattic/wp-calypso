@@ -1,4 +1,5 @@
 import * as blocks from '@wordpress/blocks';
+import { select } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';
 import { createWebMcpAdapter, normalizeInputSchema, shouldExposeWebMcpAbility } from '../adapter';
 import { WEBMCP_SERVER_ABILITY_NAMES } from '../contracts';
@@ -10,6 +11,18 @@ vi.mock( '@wordpress/blocks', async () => ( {
 	...( await vi.importActual< typeof import( '@wordpress/blocks' ) >( '@wordpress/blocks' ) ),
 	parse: vi.fn(),
 } ) );
+
+vi.mock( '@wordpress/data', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' ) ),
+	select: vi.fn(),
+} ) );
+
+function openInEditor( postType: string, postId: number ) {
+	vi.mocked( select ).mockReturnValue( {
+		getCurrentPostType: () => postType,
+		getCurrentPostId: () => postId,
+	} as unknown as ReturnType< typeof select > );
+}
 
 const createAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 	name: 'big-sky/apply-block-edits',
@@ -48,6 +61,14 @@ const createShowTemplateAbility = (): Ability => ( {
 		annotations: { clientRegistered: true, readonly: false, idempotent: true },
 	},
 } );
+
+const createEditEntityRecordAbility = (): Ability =>
+	createAbility( {
+		name: 'big-sky/edit-entity-record',
+		label: 'Manage Entity Records',
+		description: 'Create, edit, or delete WordPress data entity records using the data layer',
+		input_schema: { type: 'object', properties: { addEntities: { type: 'array' } } },
+	} );
 
 const createServerAbility = ( name: string, overrides: Partial< Ability > = {} ): Ability => ( {
 	name,
@@ -119,6 +140,16 @@ describe( 'WebMCP adapter', () => {
 		expect( shouldExposeWebMcpAbility( createAbility() ) ).toBe( true );
 		expect( shouldExposeWebMcpAbility( createBlockTreeAbility() ) ).toBe( true );
 		expect( shouldExposeWebMcpAbility( createShowTemplateAbility() ) ).toBe( true );
+		expect( shouldExposeWebMcpAbility( createEditEntityRecordAbility() ) ).toBe( true );
+		expect(
+			shouldExposeWebMcpAbility( createAbility( { name: 'big-sky/apply-update-theme' } ) )
+		).toBe( true );
+		expect(
+			shouldExposeWebMcpAbility( createAbility( { name: 'big-sky/editor-navigate' } ) )
+		).toBe( false );
+		expect(
+			shouldExposeWebMcpAbility( createAbility( { name: 'big-sky/restore-checkpoint' } ) )
+		).toBe( false );
 		for ( const name of WEBMCP_SERVER_ABILITY_NAMES ) {
 			expect( shouldExposeWebMcpAbility( createServerAbility( name ) ) ).toBe( true );
 		}
@@ -138,14 +169,14 @@ describe( 'WebMCP adapter', () => {
 		expect( shouldExposeWebMcpAbility( createServerAbility( 'wpcom/delete-site' ) ) ).toBe( false );
 		expect(
 			shouldExposeWebMcpAbility(
-				createServerAbility( 'wpcom/get-posts', {
+				createServerAbility( 'wpcom/get-block-schemas', {
 					meta: { annotations: { clientRegistered: true } },
 				} )
 			)
 		).toBe( false );
 		expect(
 			shouldExposeWebMcpAbility(
-				createServerAbility( 'wpcom/get-posts', {
+				createServerAbility( 'wpcom/get-block-schemas', {
 					meta: { annotations: { serverRegistered: true, readonly: false } },
 				} )
 			)
@@ -156,7 +187,7 @@ describe( 'WebMCP adapter', () => {
 					meta: { annotations: { serverRegistered: true, readonly: false } },
 				} )
 			)
-		).toBe( true );
+		).toBe( false );
 		expect(
 			shouldExposeWebMcpAbility(
 				createAbility( { meta: { annotations: {} }, callback: undefined } )
@@ -165,7 +196,7 @@ describe( 'WebMCP adapter', () => {
 	} );
 
 	it( 'registers a server ability with its schema and executes through the provider', async () => {
-		const ability = createServerAbility( 'wpcom/get-posts', {
+		const ability = createServerAbility( 'wpcom/get-block-schemas', {
 			input_schema: {
 				type: 'object',
 				properties: { fields: { type: 'string', enum: [ 'summary', 'full' ] } },
@@ -174,14 +205,14 @@ describe( 'WebMCP adapter', () => {
 		const harness = createHarness( [ ability ] );
 		await harness.adapter.sync();
 
-		const tool = harness.tools.get( 'wpcom__get_posts' );
+		const tool = harness.tools.get( 'wpcom__get_block_schemas' );
 		expect( tool ).toMatchObject( {
-			description: expect.stringContaining( 'Instructions for wpcom/get-posts' ),
+			description: expect.stringContaining( 'Instructions for wpcom/get-block-schemas' ),
 			inputSchema: ability.input_schema,
 			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
 		} );
 		await tool?.execute( { fields: 'summary' } );
-		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith( 'wpcom/get-posts', {
+		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith( 'wpcom/get-block-schemas', {
 			fields: 'summary',
 		} );
 	} );
@@ -387,6 +418,57 @@ describe( 'WebMCP adapter', () => {
 				inserts: [ { blockMarkup: '' } ],
 			} )
 		).rejects.toThrow( 'did not contain any Gutenberg blocks' );
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'exposes only title and excerpt edits for the entity record tool', async () => {
+		const harness = createHarness( [ createEditEntityRecordAbility() ] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'big_sky__edit_entity_record' ) ).toMatchObject( {
+			description: expect.stringContaining( 'post or page open in the editor' ),
+			inputSchema: {
+				properties: { title: { type: 'string' }, excerpt: { type: 'string' } },
+				additionalProperties: false,
+			},
+		} );
+	} );
+
+	it( 'targets the open post when editing its title', async () => {
+		openInEditor( 'page', 42 );
+		const harness = createHarness( [ createEditEntityRecordAbility() ] );
+		await harness.adapter.sync();
+
+		await harness.tools.get( 'big_sky__edit_entity_record' )?.execute( { title: 'About us' } );
+
+		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith(
+			'big-sky/edit-entity-record',
+			{
+				editEntities: [
+					{
+						entityType: 'postType',
+						entityName: 'page',
+						recordId: 42,
+						record: { title: 'About us' },
+					},
+				],
+			}
+		);
+	} );
+
+	it.each( [
+		[ 'a template is open', 'wp_template', { title: 'Home' }, 'does not have a post or page open' ],
+		[ 'a field is not allowed', 'post', { status: 'publish' }, 'Unknown field: status' ],
+		[ 'a field is not a string', 'post', { title: 7 }, 'must be strings' ],
+		[ 'no field is given', 'post', {}, 'Provide a title or an excerpt' ],
+	] )( 'refuses an entity record edit when %s', async ( _case, postType, input, message ) => {
+		openInEditor( postType, 42 );
+		const harness = createHarness( [ createEditEntityRecordAbility() ] );
+		await harness.adapter.sync();
+
+		await expect(
+			harness.tools.get( 'big_sky__edit_entity_record' )?.execute( input )
+		).rejects.toThrow( message );
 		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
