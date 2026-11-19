@@ -128,7 +128,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 									) }
 								</Notice>
 							</VStack>
-							<ButtonStack justify="flex-start" expanded={ false } as="span">
+							<ButtonStack justify="flex-start" expanded={ false } as="span" wrap>
 								<Button
 									__next40pxDefaultSize
 									variant="primary"
