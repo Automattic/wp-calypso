@@ -325,6 +325,14 @@ describe( 'StaticSiteImportCard', () => {
 		] );
 	} );
 
+	test( 'says how many pages were copied once copying is done', () => {
+		currentStepOf( 'building', {
+			progress: { phase: 'building', pages_captured: 12, pages_total: 12 },
+		} );
+
+		expect( screen.getAllByRole( 'listitem' )[ 1 ] ).toHaveTextContent( '12 pages copied' );
+	} );
+
 	test( 'lists the pages copied while watching when the server lists none', () => {
 		currentStepOf( 'capturing', {
 			progress: { phase: 'capturing', pages_captured: 1, pages_total: 3, current_page: '/about/' },

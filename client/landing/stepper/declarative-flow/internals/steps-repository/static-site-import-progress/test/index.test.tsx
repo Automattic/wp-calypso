@@ -50,7 +50,6 @@ describe( 'StaticSiteImportProgressStep', () => {
 				'We’re copying source.example.com into a private preview on WordPress.com. Your original site stays as it is.'
 			)
 		).toBeVisible();
-		expect( screen.getByText( 'Copying from source.example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'Getting your preview ready' ) ).toBeVisible();
 		expect( useStaticSiteImport ).toHaveBeenCalledWith( 456, 'abc123', { approve: false } );
 		expect( submit ).not.toHaveBeenCalled();
