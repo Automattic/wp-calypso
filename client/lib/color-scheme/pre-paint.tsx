@@ -27,3 +27,14 @@ export function ThemePrePaint( { nonce }: { nonce?: string } ) {
 export function clearPrePaintTheme() {
 	delete document.documentElement.dataset.prePaintTheme;
 }
+
+/**
+ * Returns the color scheme the user last saw, saved by the theme provider, or null.
+ */
+export function readColorSchemeHint(): string | null {
+	try {
+		return window.localStorage.getItem( COLOR_SCHEME_STORAGE_KEY );
+	} catch {
+		return null;
+	}
+}
