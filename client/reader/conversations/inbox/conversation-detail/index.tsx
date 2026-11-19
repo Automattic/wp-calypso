@@ -143,7 +143,6 @@ export function ConversationDetail( {
 		: !! conversation?.isFollowing;
 	const isMuted = followStatus === CONVERSATION_FOLLOW_STATUS.muting;
 	const anchorKey = `${ getConversationKey( siteId, postId ) }-${ startingCommentId ?? '' }`;
-	// Unread comments start at the oldest, so the thread reads down from where the reader left off.
 	const oldestUnreadId = highlightedCommentIds?.length
 		? Math.min( ...highlightedCommentIds )
 		: undefined;

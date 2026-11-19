@@ -285,10 +285,10 @@ describe( 'ConversationDetail', () => {
 		expect( onNext ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'starts the thread at the given comment instead of the latest one', () => {
+	it( 'starts the thread at the given comment instead of the unread or latest one', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
-		renderDetail( { startingCommentId: 77 } );
+		renderDetail( { startingCommentId: 77, highlightedCommentIds: [ 51 ] } );
 
 		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 77' } ) ).toBeVisible();
 	} );
@@ -310,14 +310,6 @@ describe( 'ConversationDetail', () => {
 		);
 
 		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 51' } ) ).toBeVisible();
-	} );
-
-	it( 'starts the thread at the given comment over the unread ones', () => {
-		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-
-		renderDetail( { startingCommentId: 77, highlightedCommentIds: [ 51 ] } );
-
-		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 77' } ) ).toBeVisible();
 	} );
 
 	it.each( [

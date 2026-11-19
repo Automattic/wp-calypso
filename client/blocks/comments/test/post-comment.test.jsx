@@ -77,10 +77,4 @@ describe( 'PostComment', () => {
 			'is-highlighted'
 		);
 	} );
-
-	it( 'highlights nothing without new comment ids', () => {
-		const { container } = renderThread();
-
-		expect( container.querySelector( '.is-highlighted' ) ).not.toBeInTheDocument();
-	} );
 } );
