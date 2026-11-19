@@ -16,7 +16,9 @@ import { getAdvertisingDashboardPath, getCreditExpirationInfo } from '../../util
 
 import './style.scss';
 
-type CreditHistory = Array< { amount: number; expires: string } >;
+type CreditHistory = NonNullable<
+	ReturnType< typeof useCreditBalanceQuery >[ 'data' ]
+>[ 'history' ];
 
 type Props = {
 	tabs: TabOption[];
