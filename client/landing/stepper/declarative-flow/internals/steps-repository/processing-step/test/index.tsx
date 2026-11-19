@@ -8,6 +8,7 @@ import { dispatch, select } from '@wordpress/data';
 import React from 'react';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import ProcessingStep from '../';
 import { recordStepComponentType, recordStepRouteMount } from '../../../step-mount-registry';
@@ -33,6 +34,9 @@ jest.mock( 'calypso/lib/analytics/signup', () => ( {
 } ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
+} ) );
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn( () => Promise.resolve() ),
 } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( { siteSlug: 'example.wordpress.com' } ),
@@ -100,6 +104,20 @@ describe( 'ProcessingStep', () => {
 			} );
 		} );
 
+		// Some flows do not go to the error step, so this line is their only record of the rejection.
+		it( 'logs a cart rejection to Logstash with its code', async () => {
+			await runFailingAction(
+				new CartActionResponseError( 'This domain is not available.', 'domain_unavailable' )
+			);
+
+			expect( logToLogstash ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					message: 'Cart rejection in Stepper processing step',
+					properties: { flow: ONBOARDING_FLOW, error: 'domain_unavailable' },
+				} )
+			);
+		} );
+
 		it( 'stores the code and the message of a cart rejection for the error step', async () => {
 			await runFailingAction(
 				new CartActionResponseError( 'This domain is not available.', 'domain_unavailable' )
@@ -116,6 +134,7 @@ describe( 'ProcessingStep', () => {
 			await runFailingAction( error );
 
 			expect( mockCaptureFlowException ).toHaveBeenCalledWith( error );
+			expect( logToLogstash ).not.toHaveBeenCalled();
 		} );
 
 		it( 'reports any other error to Sentry', async () => {

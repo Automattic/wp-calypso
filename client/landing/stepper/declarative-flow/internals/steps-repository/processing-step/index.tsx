@@ -24,6 +24,7 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
+import { logToLogstash } from 'calypso/lib/logstash';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
@@ -210,9 +211,20 @@ const ProcessingStep: StepType< {
 					waitProperties.outcome = 'failure';
 					// eslint-disable-next-line no-console
 					console.error( 'ProcessingStep failed:', e );
-					// A cart rejection is the server's answer about a product, such as an unavailable
-					// domain, not a fault in the step.
-					if ( ! ( e instanceof CartActionResponseError ) ) {
+					if ( e instanceof CartActionResponseError ) {
+						// The cart endpoint answered the request and refused it, for example for an
+						// unavailable domain. The step did not fail, so the error does not go to Sentry.
+						// It is logged here, with its code, because some flows do not go to the error
+						// step after a failure, and the error step writes the only other record.
+						logToLogstash( {
+							feature: 'calypso_client',
+							message: 'Cart rejection in Stepper processing step',
+							extra: { error: e.code, message: e.message, flow },
+							properties: { flow, error: e.code },
+						} ).catch( () => {
+							// A failed log request must not become an unhandled rejection.
+						} );
+					} else {
 						captureFlowException( e );
 					}
 					setSiteSetupError( e.error || e.code, e.message );
