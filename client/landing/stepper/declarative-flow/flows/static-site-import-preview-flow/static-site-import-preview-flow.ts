@@ -194,15 +194,18 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 						staticSiteImportable,
 					} = providedDependencies ?? { action: 'skip_platform_identification' };
 
-					if ( action === 'continue' && identifiedPlatform === 'wordpress' && source ) {
+					// A site already on WordPress.com is moved by a site migration.
+					if ( action === 'continue' && identifiedPlatform === 'wordpress' && source && isWpcom ) {
 						return goToWordPressMigration( source, host, isWpcom );
 					}
 
-					if (
-						action === 'continue' &&
-						staticSiteImportable &&
-						canUseStaticSiteImport( identifiedPlatform as ImporterPlatform, source )
-					) {
+					// Any other WordPress site is copied like a site on another platform.
+					const canCopy =
+						identifiedPlatform === 'wordpress'
+							? Boolean( source )
+							: staticSiteImportable &&
+								canUseStaticSiteImport( identifiedPlatform as ImporterPlatform, source );
+					if ( action === 'continue' && canCopy ) {
 						set( STEPS.SITE_MIGRATION_IDENTIFY.slug, providedDependencies );
 						return navigate( STEPS.STATIC_SITE_IMPORT_READING.slug );
 					}

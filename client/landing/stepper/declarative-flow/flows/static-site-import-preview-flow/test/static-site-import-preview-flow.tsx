@@ -180,14 +180,26 @@ describe( 'Static site import preview flow', () => {
 			expect( flowState[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] ).toEqual( IDENTIFIED );
 		} );
 
-		it( 'continues a WordPress source as a migration', () => {
+		it( 'reads a WordPress source like any other', () => {
+			const identified = { action: 'continue', from: 'wp.example.com', platform: 'wordpress' };
+			const destination = runNavigation( {
+				from: STEPS.SITE_MIGRATION_IDENTIFY,
+				dependencies: identified,
+			} );
+
+			expect( destination ).toMatchDestination( { step: STEPS.STATIC_SITE_IMPORT_READING } );
+			expect( flowState[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] ).toEqual( identified );
+			expect( window.location.replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'continues a WordPress.com source as a migration', () => {
 			runNavigation( {
 				from: STEPS.SITE_MIGRATION_IDENTIFY,
 				dependencies: {
 					action: 'continue',
 					from: 'wp.example.com',
 					platform: 'wordpress',
-					host: 'pressable',
+					isWpcom: true,
 				},
 			} );
 
@@ -196,7 +208,7 @@ describe( 'Static site import preview flow', () => {
 				query: {
 					from: 'wp.example.com',
 					platform: 'wordpress',
-					host: 'pressable',
+					isWpcom: 'true',
 					ref: 'static-site-import-preview',
 				},
 			} );

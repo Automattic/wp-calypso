@@ -1,6 +1,6 @@
 # static-site-import-preview flow
 
-Moves a site built on another platform (Wix, Squarespace, and similar) onto a free preview site
+Moves a site, whether on WordPress or another platform (Wix, Squarespace, and similar), onto a free preview site
 on WordPress.com, and shows the move as it happens. Unlike `static-site-import`, there is no plan
 or checkout before the move: the customer sees their site on WordPress.com first, and buys a plan
 to keep it.
@@ -39,7 +39,9 @@ card in the corner, which folds to a pill, and lets the customer click around th
 
 ## Failures
 
-- Identification finds WordPress: the customer continues to `site-migration`'s check step.
+- Identification finds a site already on WordPress.com: the customer continues to
+  `site-migration`'s check step. Any other WordPress site is copied like the rest, with the
+  session's `copy_wordpress`.
 - Identification finds a source the static import can’t take (parked, unhealthy, or skipped):
   the customer continues to `site-migration`'s identify step, which offers its usual paths.
 - The session API finds WordPress behind the source: as above, `site-migration`'s check step.
@@ -68,7 +70,9 @@ registered.
    Personal plan.
 5. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
    skips the address step and shows the move’s progress the same way.
-6. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
+6. Enter a self-hosted WordPress site’s URL. Confirm the flow stays in signup on **Copying your
+   site**, like a Wix site.
+7. Enter a WordPress.com site’s URL. Confirm the flow continues to `/setup/site-migration`.
 
 ## Owned by
 

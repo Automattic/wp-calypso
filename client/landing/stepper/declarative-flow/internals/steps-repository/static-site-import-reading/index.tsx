@@ -96,7 +96,10 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 		const isPreview = Boolean( buildPreview ) || isCheckoutExitPreview( searchParams );
 		const needsConfirmation = ! isPreview && ! isCheckoutReturn && ! hasConfirmed;
 
-		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
+		// A preview copies a WordPress source too, rather than sending it to a site migration.
+		const { mutate: createSession, error } = useMutation(
+			createStaticSiteImportSessionMutation( { copyWordPress: Boolean( buildPreview ) } )
+		);
 
 		const start = useEffectEvent( async () => {
 			const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
