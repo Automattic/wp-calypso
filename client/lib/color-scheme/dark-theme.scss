@@ -79,6 +79,8 @@ This mixin generates alias variables for a color palette. For example, the
 	--wp-components-color-accent-darker-10: var( --studio-blue-90 );
 	--wp-components-color-accent-darker-20: var( --studio-blue-100 );
 	--wp-components-color-accent-inverted: #fff;
+	--wpds-color-foreground-interactive-brand-strong: var( --wp-components-color-accent-inverted );
+	--wpds-color-foreground-interactive-brand-strong-active: var( --wp-components-color-accent-inverted );
 	--wpds-color-foreground-interactive-brand: var( --wp-components-color-accent );
 	--wpds-color-foreground-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
 	--wpds-color-stroke-focus: var( --wp-components-color-accent );

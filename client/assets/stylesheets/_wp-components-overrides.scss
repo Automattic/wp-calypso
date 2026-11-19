@@ -61,8 +61,6 @@
 	--wpds-color-background-interactive-brand-strong: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 	--wpds-color-background-interactive-brand-strong-active: var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
 	--wpds-color-background-interactive-brand-weak-active: color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 4%, transparent);
-	--wpds-color-foreground-interactive-brand-strong: var(--wp-components-color-accent-inverted, #fff);
-	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-accent-inverted, #fff);
 	--wpds-color-foreground-interactive-brand: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 	--wpds-color-foreground-interactive-brand-active: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
 	--wpds-color-stroke-interactive-brand: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
@@ -109,6 +107,8 @@
 	--wp-components-color-accent: var(--color-accent);
 	// Text color
 	--wp-components-color-accent-inverted: var(--color-text-inverted);
+	--wpds-color-foreground-interactive-brand-strong: var(--color-text-inverted);
+	--wpds-color-foreground-interactive-brand-strong-active: var(--color-text-inverted);
 	// Hover background color
 	--wp-components-color-accent-darker-10: var(--color-accent-60);
 	// Active and busy states background color
@@ -231,6 +231,8 @@
 			--wp-components-color-accent-darker-10: var(--color-passport-base);
 			--wp-components-color-accent-darker-20: var(--color-passport-base);
 			--wp-components-color-accent-inverted: var(--color-passport-contrast);
+			--wpds-color-foreground-interactive-brand-strong: var(--color-passport-contrast);
+			--wpds-color-foreground-interactive-brand-strong-active: var(--color-passport-contrast);
 			&:hover {
 				color: var(--color-passport-accent);
 			}
@@ -287,6 +289,8 @@
 
 		--wp-components-color-accent: var(--color-blaze-pro);
 		--wp-components-color-accent-inverted: var(--studio-black);
+		--wpds-color-foreground-interactive-brand-strong: var(--studio-black);
+		--wpds-color-foreground-interactive-brand-strong-active: var(--studio-black);
 		--wp-components-color-accent-darker-10: var(--color-blaze-pro-darker);
 		--wp-components-color-accent-darker-20: var(--color-blaze-pro-darker);
 
