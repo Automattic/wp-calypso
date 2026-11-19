@@ -11,6 +11,25 @@ const WPCOM_HOST_ROUTE_PREFIXES = [
 	'/purchases/subscriptions/',
 ];
 
+const DASHBOARD_HOST = 'my.wordpress.com';
+const DASHBOARD_HOST_ROUTE_PREFIXES = [ '/sites/' ];
+
+function isDashboardHostLink( url: unknown ): boolean {
+	if ( typeof url !== 'string' ) {
+		return false;
+	}
+
+	try {
+		const { hostname, pathname } = new URL( url.trim() );
+		return (
+			hostname === DASHBOARD_HOST &&
+			DASHBOARD_HOST_ROUTE_PREFIXES.some( ( prefix ) => pathname.startsWith( prefix ) )
+		);
+	} catch {
+		return false;
+	}
+}
+
 function getPathname( url: unknown ): string | null {
 	if ( typeof url !== 'string' || url.trim() === '' ) {
 		return null;
@@ -35,6 +54,10 @@ export function isWpcomAdminSidebarHostLink( item: AdminMenuItem | null | undefi
 
 	const itemId = typeof item.itemId === 'string' ? item.itemId : '';
 	if ( itemId.endsWith( ':paid-upgrades.php' ) ) {
+		return true;
+	}
+
+	if ( isDashboardHostLink( item.url ) ) {
 		return true;
 	}
 
