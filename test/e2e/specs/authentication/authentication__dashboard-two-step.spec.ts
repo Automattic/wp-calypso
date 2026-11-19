@@ -10,15 +10,8 @@ import type { LoginPage } from '@automattic/calypso-e2e';
 import type { CDPSession, Page } from 'playwright';
 
 /**
- * Logs out by clearing cookies, then opens the WordPress.com login page
- * (redirecting to the dashboard on success) and submits the username and
- * password. For an account with two-step authentication enabled this lands on
- * the relevant second-factor screen.
- *
- * The page leaves the dashboard before cookies are cleared, since a request the
- * dashboard still has in flight can set fresh session cookies afterwards. If the
- * login page still redirects to the logged-in dashboard, the session survived,
- * so cookies are cleared and the login page is opened again.
+ * Leaves the dashboard, clears cookies and opens the login page until its form
+ * appears, then submits the username and password.
  */
 async function logOutAndLogInWithPassword(
 	page: Page,
