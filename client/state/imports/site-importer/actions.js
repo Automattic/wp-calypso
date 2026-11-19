@@ -152,7 +152,7 @@ export const importSite =
 
 				const data = fromApi( response );
 				// Note: We're creating the finishUpload action using the locally generated ID here
-				// as opposed to the new import ID recieved in the API response.
+				// as opposed to the new import ID received in the API response.
 				dispatch( finishUpload( importerStatus.importerId, data ) );
 
 				dispatch(
