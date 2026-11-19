@@ -320,9 +320,14 @@ export const siteOverviewRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/overview' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			component: () => (
+				<d.default
+					siteSlug={ siteRoute.useParams().siteSlug }
+					search={ siteOverviewRoute.useSearch() }
+				/>
+			),
 		} )
 	)
 );

@@ -8,7 +8,7 @@ import { mockPreferences, renderRoute } from '../../../test-utils/render-route';
 import '../../../../../sites/critical-error';
 import '../../../../../sites/difm-lite-in-progress';
 import '../../../../../sites/migration-overview';
-import '../../../../../sites/overview';
+import '..';
 import '../../../../../sites/site';
 import '../../../../../sites/site/error';
 import '../../../../../sites/trial-ended';
