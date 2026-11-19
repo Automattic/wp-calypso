@@ -225,16 +225,17 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 					</Text>
 				) }
 				{ hasNextAttempt && (
-					<Text>
 						{ createInterpolateElement(
 							timeUntilNextAttempt
-								? sprintf(
-										/* translators: %s is a relative time like "in 5 minutes" or "in 2 days" */
-										__( '<strong>Next attempt:</strong> %s' ),
-										timeUntilNextAttempt
-									)
+								? __( '<strong>Next attempt:</strong> <time/>' )
 								: __( '<strong>Next attempt:</strong> soon' ),
-							{ strong: <strong /> }
+							{
+								strong: <strong />,
+								...( timeUntilNextAttempt
+									? { time: <>{ timeUntilNextAttempt }</> }
+									: {} ),
+							}
+						) }
 						) }
 					</Text>
 				) }
