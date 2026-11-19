@@ -8,9 +8,9 @@ import {
 	BUILD_FLOW,
 	ENTREPRENEUR_FLOW,
 	NEW_HOSTED_SITE_FLOW,
+	ONBOARDING_FLOW,
 	WRITE_FLOW,
 } from '@automattic/onboarding';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 type RedirectRule = {
@@ -49,9 +49,33 @@ const ENTREPRENEUR_POST_SITE_CREATION_STEPS = [
 	'processing',
 	'waitForAtomic',
 	'waitForPluginInstall',
-	'importerPlayground',
 	'error',
 ];
+
+// A WooCommerce Playground store that started its trial before onboarding took the store path
+// over was imported on this step. The site-setup flow runs the same importer.
+const ENTREPRENEUR_PLAYGROUND_IMPORT_REDIRECT: RedirectRule = {
+	flow: ENTREPRENEUR_FLOW,
+	to: '/setup/site-setup/importerPlayground:lang?',
+	query: { intent: 'woocommerce' },
+	keepAnyLocale: true,
+	shouldRedirect: ( searchParams, pathname ) => pathname.split( '/' )[ 3 ] === 'importerPlayground',
+	replace: true,
+};
+
+// A store saved from the WooCommerce Playground used to start a trial here. Onboarding now saves
+// it with a Commerce purchase, and the Playground's ID keeps the store to import.
+const ENTREPRENEUR_PLAYGROUND_STORE_REDIRECT: RedirectRule = {
+	flow: ENTREPRENEUR_FLOW,
+	to: `/setup/${ ONBOARDING_FLOW }/playground:lang?`,
+	query: { intent: 'woocommerce' },
+	keepAnyLocale: true,
+	shouldRedirect: ( searchParams, pathname ) =>
+		searchParams.get( 'from' ) === 'playground-publish' &&
+		searchParams.has( 'playground' ) &&
+		! ENTREPRENEUR_POST_SITE_CREATION_STEPS.includes( pathname.split( '/' )[ 3 ] ?? '' ),
+	replace: true,
+};
 
 // The Commerce free trial is closed, so new visitors buy the plan instead (DOTPM-571).
 const ENTREPRENEUR_REDIRECT: RedirectRule = {
@@ -64,14 +88,9 @@ const ENTREPRENEUR_REDIRECT: RedirectRule = {
 			return false;
 		}
 
-		// The Woo Playground A/B test still creates trials until it ends (DOTPM-565). The session
-		// flag covers the login round trip, which can drop the query string.
-		const isPlaygroundPublish =
-			searchParams.get( 'from' ) === 'playground-publish' ||
-			window.sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 		const step = pathname.split( '/' )[ 3 ] ?? '';
 
-		return ! isPlaygroundPublish && ! ENTREPRENEUR_POST_SITE_CREATION_STEPS.includes( step );
+		return ! ENTREPRENEUR_POST_SITE_CREATION_STEPS.includes( step );
 	},
 	replace: true,
 };
@@ -110,6 +129,8 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 const FLOW_REDIRECTS = [
 	AI_SITE_BUILDER_REDIRECT,
 	WRITE_REDIRECT,
+	ENTREPRENEUR_PLAYGROUND_IMPORT_REDIRECT,
+	ENTREPRENEUR_PLAYGROUND_STORE_REDIRECT,
 	ENTREPRENEUR_REDIRECT,
 	...REMOVED_TAILORED_FLOWS,
 ];
