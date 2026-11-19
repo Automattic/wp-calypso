@@ -108,7 +108,7 @@ export const sitesRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Sites' ),
+				title: __( 'Site List' ),
 			},
 		],
 	} ),
