@@ -4,7 +4,11 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo, type JSX } from 'react';
 import FullWidthSection from 'calypso/components/full-width-section';
 import { RelatedPlugin } from 'calypso/data/marketplace/types';
-import { useGetRelatedPlugins } from 'calypso/data/marketplace/use-get-related-plugins';
+import {
+	RELATED_PLUGINS_CAROUSEL_LIST_SIZE,
+	RELATED_PLUGINS_DEFAULT_LIST_SIZE,
+	useGetRelatedPlugins,
+} from 'calypso/data/marketplace/use-get-related-plugins';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
@@ -16,9 +20,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getFirstCategoryFromTags } from '../categories/use-categories';
 
 import './style.scss';
-
-const DEFAULT_LIST_SIZE = 4;
-const CAROUSEL_LIST_SIZE = 18;
 
 type RelatedPluginProps = {
 	slug: string;
@@ -52,7 +53,9 @@ export function RelatedPlugins( { slug, size, seeAllLink, options }: RelatedPlug
 	const isWideOrAbove = useViewportMatch( 'wide' );
 
 	// Use the size prop if provided, otherwise use the appropriate default based on the flag
-	const listSize = size ?? ( isUseCarousel ? CAROUSEL_LIST_SIZE : DEFAULT_LIST_SIZE );
+	const listSize =
+		size ??
+		( isUseCarousel ? RELATED_PLUGINS_CAROUSEL_LIST_SIZE : RELATED_PLUGINS_DEFAULT_LIST_SIZE );
 
 	const { data: relatedPlugins } = useGetRelatedPlugins( slug, listSize, {
 		...options,

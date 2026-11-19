@@ -1,6 +1,11 @@
 import config from '@automattic/calypso-config';
 import { getESPluginsInfiniteQueryParams } from 'calypso/data/marketplace/use-es-query';
 import {
+	getRelatedPluginsQueryParams,
+	RELATED_PLUGINS_CAROUSEL_LIST_SIZE,
+	RELATED_PLUGINS_DEFAULT_LIST_SIZE,
+} from 'calypso/data/marketplace/use-get-related-plugins';
+import {
 	getWPCOMFeaturedPluginsQueryParams,
 	getWPCOMPluginsQueryParams,
 	getWPCOMPluginQueryParams,
@@ -21,6 +26,7 @@ import { getCategoryForPluginsBrowser } from './controller';
 const PREFETCH_TIMEOUT = 2000;
 const PREFETCH_TIMEOUT_BOTS = 10000;
 const PREFETCH_TIMEOUT_ERROR = 'plugins prefetch timeout';
+const RELATED_PLUGINS_PREFETCH_TIMEOUT = 1000;
 
 const formatCause = ( cause ) => {
 	if ( ! cause ) {
@@ -104,6 +110,35 @@ const prefetchPlugin = async ( queryClient, store, { locale, pluginSlug } ) => {
 	}
 
 	return data;
+};
+
+/**
+ * Prefetch the related plugins so their links are in the server-rendered HTML.
+ *
+ * The section is optional, so it waits at most `RELATED_PLUGINS_PREFETCH_TIMEOUT`
+ * and never rejects: a slow or failing request must not hold up or disable the
+ * render of the plugin itself. The size must match the one `RelatedPlugins`
+ * requests for a logged-out visitor, because it is part of the query key.
+ * @param {Object} queryClient The react-query client to prefetch into
+ * @param {string} pluginSlug The decoded plugin slug
+ * @returns {Promise<void>} Resolves once the data is cached or the wait is over
+ */
+const prefetchRelatedPlugins = ( queryClient, pluginSlug ) => {
+	const size = config.isEnabled( 'marketplace-redesign' )
+		? RELATED_PLUGINS_CAROUSEL_LIST_SIZE
+		: RELATED_PLUGINS_DEFAULT_LIST_SIZE;
+
+	let timeoutId;
+	const timeout = new Promise( ( resolve ) => {
+		timeoutId = setTimeout( resolve, RELATED_PLUGINS_PREFETCH_TIMEOUT );
+	} );
+
+	return Promise.race( [
+		prefetchPluginsData( queryClient, getRelatedPluginsQueryParams( pluginSlug, size ) ),
+		timeout,
+	] )
+		.catch( () => {} )
+		.finally( () => clearTimeout( timeoutId ) );
 };
 
 /**
@@ -279,6 +314,10 @@ export async function fetchPlugin( context, next ) {
 				promise: prefetchProductList( queryClient, store ).then( () =>
 					prefetchPlugin( queryClient, store, options )
 				),
+			},
+			{
+				name: 'related-plugins',
+				promise: prefetchRelatedPlugins( queryClient, pluginSlug ),
 			},
 		],
 		context
