@@ -111,6 +111,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		sort,
 		search: debouncedSearch,
 		enabled: tab === 'yours',
+		refetchInterval: REFRESH_INTERVAL,
 	} );
 	const conversationsShownQuery = tab === 'unread' ? unreadQuery : conversationsQuery;
 	const { conversations } = conversationsShownQuery;

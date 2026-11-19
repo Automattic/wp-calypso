@@ -156,16 +156,19 @@ function groupByPost( comments: OwnComment[] ): OwnComment[] {
 export function useOwnComments( {
 	sort,
 	search,
+	refetchInterval,
 	enabled = true,
 }: {
 	sort: ReadConversationsSort;
 	search?: string;
+	refetchInterval?: number;
 	enabled?: boolean;
 } ) {
 	const query = useInfiniteQuery( {
 		...readConversationsCommentsQuery( { sort, search } ),
 		placeholderData: keepPreviousData,
 		enabled,
+		refetchInterval: ( query ) => ! hasLoadedMorePages( query ) && ( refetchInterval ?? false ),
 	} );
 	const { data } = query;
 	const comments = useMemo(
