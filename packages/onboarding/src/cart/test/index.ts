@@ -9,6 +9,7 @@ import wpcomRequest from '../../wpcom-request';
 const mockCartActions = vi.hoisted( () => ( {
 	addProductsToCart: vi.fn(),
 	replaceProductsInCart: vi.fn(),
+	reloadFromServer: vi.fn(),
 } ) );
 const mockGetCartState = vi.hoisted( () => vi.fn() );
 
@@ -199,17 +200,67 @@ describe( 'cart helpers', () => {
 		} );
 	} );
 
-	test( 'addProductsToCart rejects with a connection error without reading the cart', async () => {
+	describe( 'with a cart connection error', () => {
 		const connectionError = new CartActionConnectionError(
 			'Network failure.',
-			'GET_SERVER_CART_ERROR'
+			'SET_SERVER_CART_ERROR'
 		);
-		mockCartActions.addProductsToCart.mockRejectedValue( connectionError );
 
-		await expect(
-			addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
-		).rejects.toBe( connectionError );
-		expect( mockGetCartState ).not.toHaveBeenCalled();
+		beforeEach( () => {
+			mockCartActions.addProductsToCart.mockRejectedValue( connectionError );
+			mockCartActions.replaceProductsInCart.mockRejectedValue( connectionError );
+		} );
+
+		// clearAllMocks keeps a mocked implementation, so the reload of one test would stay for the next.
+		afterEach( () => {
+			mockGetCartState.mockReset();
+			mockCartActions.reloadFromServer.mockReset();
+		} );
+
+		// The state before the reload is the cart the client asked for. Only the reload makes the
+		// state the server cart, so these mocks set the state from inside the reload.
+		function serverCartHolds( products: Array< { product_slug: string; meta: string } > ) {
+			mockGetCartState.mockReturnValue( { responseCart: { products: cartItems } } );
+			mockCartActions.reloadFromServer.mockImplementation( async () => {
+				mockGetCartState.mockReturnValue( { responseCart: { products } } );
+			} );
+		}
+
+		test( 'addProductsToCart resolves when the server cart holds every requested item', async () => {
+			serverCartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).resolves.toBeUndefined();
+			expect( mockCartActions.reloadFromServer ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'addProductsToCart rejects when the server cart does not hold a requested item', async () => {
+			serverCartHolds( [] );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).rejects.toBe( connectionError );
+		} );
+
+		test( 'addProductsToCart rejects when the cart fetch fails too', async () => {
+			mockGetCartState.mockReturnValue( { responseCart: { products: cartItems } } );
+			mockCartActions.reloadFromServer.mockRejectedValue(
+				new CartActionConnectionError( 'Network failure.', 'GET_SERVER_CART_ERROR' )
+			);
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).rejects.toBe( connectionError );
+		} );
+
+		test( 'replaceProductsInCart resolves when the server cart holds every requested item', async () => {
+			serverCartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
+
+			await expect(
+				replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
+			).resolves.toBeUndefined();
+		} );
 	} );
 } );
 

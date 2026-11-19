@@ -4,7 +4,7 @@ import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
 import { getTld, isFreeSubdomainQuery } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
-import { CartActionResponseError } from '@automattic/shopping-cart';
+import { CartActionConnectionError, CartActionResponseError } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
@@ -331,6 +331,34 @@ function isRequestedItemMissingFromCart(
 	);
 }
 
+// A failed request does not tell whether the server applied the change. After that failure the
+// manager state is the cart the client asked for, not the cart the server has, so the helper
+// fetches the server cart before it looks for the requested items. Every other error that is not
+// a response error stops the caller.
+async function shouldThrowCartError(
+	error: unknown,
+	cartKey: CartKey,
+	requestedItems: MinimalRequestCartProduct[]
+): Promise< boolean > {
+	if ( error instanceof CartActionConnectionError ) {
+		try {
+			await cartManagerClient.forCartKey( cartKey ).actions.reloadFromServer();
+		} catch ( reloadError ) {
+			// A response error still comes with the server cart. A second failed request does not.
+			if ( ! ( reloadError instanceof CartActionResponseError ) ) {
+				return true;
+			}
+		}
+		return isRequestedItemMissingFromCart( cartKey, requestedItems );
+	}
+
+	if ( error instanceof CartActionResponseError ) {
+		return isRequestedItemMissingFromCart( cartKey, requestedItems );
+	}
+
+	return true;
+}
+
 export async function replaceProductsInCart(
 	siteSlug: string,
 	cartItems: MinimalRequestCartProduct[],
@@ -347,13 +375,10 @@ export async function replaceProductsInCart(
 	} catch ( error ) {
 		debug( 'product replace request had an error', error );
 		if ( options.throwOnError ) {
-			if (
-				! ( error instanceof CartActionResponseError ) ||
-				isRequestedItemMissingFromCart( cartKey, cartItems )
-			) {
+			if ( await shouldThrowCartError( error, cartKey, cartItems ) ) {
 				throw error;
 			}
-			debug( 'the cart holds every requested item, so the response error does not throw' );
+			debug( 'the cart holds every requested item, so the cart error does not throw' );
 		}
 	}
 }
@@ -381,13 +406,10 @@ export async function addProductsToCart(
 		} catch ( error ) {
 			debug( 'product add request had an error', error );
 			if ( options.throwOnError ) {
-				if (
-					! ( error instanceof CartActionResponseError ) ||
-					isRequestedItemMissingFromCart( cartKey, cartItemsToAdd )
-				) {
+				if ( await shouldThrowCartError( error, cartKey, cartItemsToAdd ) ) {
 					throw error;
 				}
-				debug( 'the cart holds every requested item, so the response error does not throw' );
+				debug( 'the cart holds every requested item, so the cart error does not throw' );
 			}
 		}
 	}
