@@ -24,7 +24,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
-import { SitesNoticeArbiter } from '../notice-arbiter';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS, useFields } from './dataviews';
 import { DeploymentLogsModalContent } from './deployment-logs/deployment-logs-modal-content';
 import { TriggerDeploymentModalForm } from './trigger-deployment-modal-form';
