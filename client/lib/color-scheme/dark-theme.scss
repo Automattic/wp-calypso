@@ -210,6 +210,14 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 }
 
+// Pressed buttons fill with these tokens, which stay dark; keep the light pill they had.
+@mixin color-scheme-dark-theme-pressed-button {
+	.components-button.is-pressed {
+		--wpds-color-background-interactive-neutral-strong-active: var( --wp-components-color-foreground );
+		--wpds-color-foreground-interactive-neutral-strong-active: var( --wp-components-color-foreground-inverted );
+	}
+}
+
 @mixin color-scheme-dark-theme-secondary-tertiary-and-link-buttons {
 	// Calypso's default WP button overrides set action tokens on the button
 	// itself, so root-level dark theme tokens do not reach these variants.
@@ -346,6 +354,10 @@ This mixin generates alias variables for a color palette. For example, the
 
 	.components-card__header {
 		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.components-card__footer {
+		border-top-color: var( --dashboard-surface__border-color );
 	}
 }
 
@@ -876,6 +888,7 @@ This mixin generates alias variables for a color palette. For example, the
 	@include color-scheme-dark-theme-site-icon;
 	@include color-scheme-dark-theme-primary-button;
 	@include color-scheme-dark-theme-secondary-tertiary-and-link-buttons;
+	@include color-scheme-dark-theme-pressed-button;
 	@include color-scheme-dark-theme-agenttic;
 }
 
