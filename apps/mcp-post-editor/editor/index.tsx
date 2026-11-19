@@ -19,6 +19,7 @@ import {
 import { isKeyboardEvent } from '@wordpress/keycodes';
 import { createUndoManager, type UndoManager } from '@wordpress/undo-manager';
 import './blocks';
+import { AgentChanges, ChangedBlocks, type AgentChange, type Decision } from './changes';
 import type { CSSProperties, KeyboardEvent } from 'react';
 
 // `revision` changes when the post comes from outside the editor: opened, or merged with the
@@ -41,6 +42,10 @@ type Props = {
 	height: string;
 	onChange: ( post: { title: string; content: string } ) => void;
 	onToggleFullscreen: () => void;
+	// The assistant's pending changes, and the ones just accepted, which can still be undone.
+	changes: AgentChange[];
+	accepted?: { ids: string[]; label: string };
+	onDecide: ( decision: Decision, ids: string[] ) => void;
 };
 
 // Reuses each current block whose markup is unchanged, so a merge doesn't remount the block
@@ -92,10 +97,12 @@ function historyReducer( state: History, action: HistoryAction ): History {
 function TitleField( {
 	value,
 	readOnly,
+	isChanged,
 	onChange,
 }: {
 	value: string;
 	readOnly: boolean;
+	isChanged: boolean;
 	onChange: ( title: string ) => void;
 } ) {
 	const ref = useRef< HTMLTextAreaElement >( null );
@@ -117,7 +124,7 @@ function TitleField( {
 	}, [ value ] );
 	return (
 		<div className="mcp-post-editor__title is-layout-constrained has-global-padding">
-			<h1 className="wp-block wp-block-post-title">
+			<h1 className={ `wp-block wp-block-post-title${ isChanged ? ' is-agent-changed' : '' }` }>
 				<textarea
 					ref={ ref }
 					aria-label="Add title"
@@ -136,8 +143,9 @@ function Canvas( {
 	post,
 	styles,
 	readOnly,
+	changes,
 	onChange,
-}: Pick< Props, 'styles' | 'readOnly' | 'onChange' > & { post: EditorPost } ) {
+}: Pick< Props, 'styles' | 'readOnly' | 'onChange' | 'changes' > & { post: EditorPost } ) {
 	const [ history, dispatch ] = useReducer( historyReducer, post.content, ( content ) =>
 		newHistory( parse( content ) )
 	);
@@ -215,11 +223,13 @@ function Canvas( {
 					scope=":where(.editor-styles-wrapper)"
 					transformOptions={ { ignoredSelectors: [ /\.editor-styles-wrapper/gi ] } }
 				/>
+				<ChangedBlocks indexes={ changes.flatMap( ( change ) => change.block_index ?? [] ) } />
 				<WritingFlow className="editor-styles-wrapper" onKeyDown={ onKeyDown }>
 					<ObserveTyping>
 						<TitleField
 							value={ title }
 							readOnly={ readOnly }
+							isChanged={ changes.some( ( change ) => change.block_index === null ) }
 							onChange={ ( next ) => setTitle( next ) }
 						/>
 						<BlockList className="is-layout-constrained has-global-padding" />
@@ -240,6 +250,8 @@ export function PostEditor( {
 	canFullscreen,
 	height,
 	onToggleFullscreen,
+	accepted,
+	onDecide,
 	...canvas
 }: Props ) {
 	return (
@@ -267,6 +279,7 @@ export function PostEditor( {
 						{ notices.join( '\n' ) }
 					</p>
 				) }
+				<AgentChanges changes={ canvas.changes } accepted={ accepted } onDecide={ onDecide } />
 				{ /* Read-only gets a new editor, as its post is a sanitized copy. */ }
 				{ post && (
 					<Canvas

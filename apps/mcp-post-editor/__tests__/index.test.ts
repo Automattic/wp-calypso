@@ -14,6 +14,7 @@ const host = vi.hoisted( () => ( {
 		| {
 				post?: { title: string; content: string };
 				onChange: ( post: { title: string; content: string } ) => void;
+				onDecide: ( decision: string, ids: string[] ) => void;
 		  },
 	server: { version: 1, title: 'Title', content: '' },
 	updates: [] as Args[],
@@ -128,6 +129,36 @@ describe( 'the page', () => {
 
 		await type( content.replace( 'tpyo', 'typo' ) );
 		expect( lastUpdate().content ).toBe( content.replace( 'tpyo', 'typo' ) );
+	} );
+
+	it( 'sends a decision with the typing, and again after a conflict', async () => {
+		await openPost( paragraph( 'a' ) );
+		host.server.version++;
+		host.editor?.onChange( { title: 'Title', content: paragraph( 'b' ) } );
+		host.editor?.onDecide( 'reject', [ 'c1' ] );
+		await vi.advanceTimersByTimeAsync( 0 );
+
+		expect( host.updates ).toHaveLength( 2 );
+		expect( host.updates[ 0 ] ).toMatchObject( { reject_change_ids: [ 'c1' ] } );
+		expect( lastUpdate() ).toMatchObject( {
+			content: paragraph( 'b' ),
+			reject_change_ids: [ 'c1' ],
+		} );
+		expect( host.server.content ).toBe( paragraph( 'b' ) );
+	} );
+
+	it( 'sends an Undo that travels with its own Accept as a reject', async () => {
+		await openPost( paragraph( 'a' ) );
+		// The first decision's update is in flight, so the next ones wait for one update.
+		host.editor?.onDecide( 'reject', [ 'c0' ] );
+		host.editor?.onDecide( 'accept', [ 'c1' ] );
+		host.editor?.onDecide( 'undo', [ 'c1' ] );
+		await vi.advanceTimersByTimeAsync( 0 );
+
+		expect( host.updates ).toHaveLength( 2 );
+		expect( lastUpdate().reject_change_ids ).toEqual( [ 'c1' ] );
+		expect( lastUpdate() ).not.toHaveProperty( 'accept_change_ids' );
+		expect( lastUpdate() ).not.toHaveProperty( 'undo_change_ids' );
 	} );
 
 	it( 'replaces its own lost update when a later one conflicts', async () => {

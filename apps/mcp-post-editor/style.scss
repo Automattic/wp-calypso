@@ -115,6 +115,14 @@ body {
 	margin-right: auto;
 }
 
+:where(.editor-styles-wrapper .is-layout-constrained) > .alignwide {
+	max-width: var(--wp--style--global--wide-size, 1200px);
+}
+
+:where(.editor-styles-wrapper .is-layout-constrained) > .alignfull {
+	max-width: none;
+}
+
 :where(.editor-styles-wrapper) img {
 	max-width: 100%;
 	height: auto;
@@ -158,4 +166,69 @@ body {
 // Read-only, links still open (through the host).
 .mcp-post-editor .is-preview-mode .block-editor-block-list__block :is(a, area) {
 	pointer-events: auto;
+}
+
+// The assistant's changes: cards under the bar, and an outline on each changed block and title.
+.mcp-post-editor__changes {
+	flex: none;
+	max-height: 40%;
+	overflow-y: auto;
+	padding: 8px 16px;
+	background: #f6f7fb;
+	border-bottom: 1px solid #ddd;
+	font: $chrome-font;
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+}
+
+.mcp-post-editor__change {
+	margin-top: 8px;
+	padding: 8px;
+	background: #fff;
+	border: 1px solid #c3cbf3;
+	border-left: 3px solid #3858e9;
+	border-radius: 2px;
+}
+
+.mcp-post-editor__change-label {
+	margin: 0;
+	font-weight: 600;
+}
+
+.mcp-post-editor__diff {
+	margin: 4px 0 8px;
+	overflow-wrap: anywhere;
+
+	del {
+		background: #fde8e8;
+		color: #cc1818;
+	}
+
+	ins {
+		background: #e6f4ea;
+		color: #007017;
+		text-decoration: none;
+	}
+}
+
+.mcp-post-editor__change-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.mcp-post-editor__accepted {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0 0 8px;
+}
+
+.mcp-post-editor .wp-block-post-title.is-agent-changed {
+	outline: 2px solid #3858e9;
+	outline-offset: 4px;
 }

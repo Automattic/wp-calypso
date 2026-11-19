@@ -2,6 +2,7 @@ import { App } from '@modelcontextprotocol/ext-apps/app-with-deps';
 import { createElement, createRoot, flushSync } from '@wordpress/element';
 import { PostEditor, type EditorPost } from './editor';
 import { joinBlocks, splitBlocks } from './editor/blocks';
+import { changeLabel, type AgentChange, type Decision } from './editor/changes';
 import { mergePost } from './editor/merge';
 import sanitize from './editor/sanitize';
 import { applySiteStyles } from './site-styles';
@@ -20,7 +21,7 @@ type StateResult = {
 	changed: boolean;
 	title?: string;
 	content?: string;
-	changes?: unknown[];
+	changes?: ( AgentChange & { status?: string } )[];
 	proofread?: unknown[];
 	conflict?: unknown;
 };
@@ -39,6 +40,8 @@ const CONFIG_ATTEMPTS = 3;
 const CONFIG_TIMEOUT = 10000;
 // The inline panel's height when the host doesn't fix it; the canvas scrolls inside.
 const INLINE_HEIGHT = 560;
+// How long Undo stays after Accept, unless the assistant changes the post first.
+const UNDO_TIME = 30000;
 const LINK_PROTOCOLS = [ 'http:', 'https:', 'mailto:' ];
 
 const root =
@@ -88,6 +91,23 @@ let lastUpdate: Promise< UpdateResult > | undefined;
 // The read-only view shows a sanitized copy: it never saves, so nothing sends it back.
 let preview: { source?: EditorPost; post?: EditorPost } = {};
 
+// The assistant's pending changes, as the last state listed them.
+let changes: AgentChange[] = [];
+// Changes the page has shown, and those it decided, which stay hidden until the server agrees.
+const seenChanges = new Map< string, AgentChange >();
+const decided = new Set< string >();
+type Decisions = Record< Decision, string[] >;
+const noDecisions = (): Decisions => ( { accept: [], reject: [], undo: [] } );
+// Decisions the next update sends, with the typing.
+let decisions = noDecisions();
+let accepted: { ids: string[]; label: string; timer: ReturnType< typeof setTimeout > } | undefined;
+const hasDecisions = ( list: Decisions ) => Object.values( list ).some( ( ids ) => ids.length );
+const decisionArgs = ( list: Decisions ) => ( {
+	...( list.accept.length && { accept_change_ids: list.accept } ),
+	...( list.reject.length && { reject_change_ids: list.reject } ),
+	...( list.undo.length && { undo_change_ids: list.undo } ),
+} );
+
 function previewPost() {
 	if ( preview.source !== editorPost ) {
 		preview = {
@@ -130,8 +150,25 @@ function render() {
 			height,
 			onChange: onEditorChange,
 			onToggleFullscreen: toggleFullscreen,
+			changes: readOnly
+				? []
+				: placeChanges( changes.filter( ( change ) => ! decided.has( change.change_id ) ) ),
+			accepted: readOnly ? undefined : accepted,
+			onDecide: decide,
 		} )
 	);
+}
+
+// Where each change's block is now: the user may have added or removed blocks above it.
+function placeChanges( list: AgentChange[] ) {
+	const blocks = list.length ? splitBlocks( local.content ) : [];
+	return list.map( ( change ) => {
+		const found =
+			change.block_index === null ? -1 : blocks.indexOf( splitBlocks( change.after )[ 0 ] );
+		return found < 0 || found + 1 === change.block_index
+			? change
+			: { ...change, block_index: found + 1 };
+	} );
 }
 
 function showStatus( message = '' ) {
@@ -208,7 +245,7 @@ async function callTool< T >(
 }
 
 const normalize = ( content: string ) => joinBlocks( splitBlocks( content ) );
-const isDirty = () => titleChanged || local.content !== base.content;
+const isDirty = () => titleChanged || local.content !== base.content || hasDecisions( decisions );
 
 // Synchronous, so typing that follows is reported against the post shown here.
 function showInEditor( next: Post ) {
@@ -227,6 +264,10 @@ function onEditorChange( next: Post ) {
 	}
 	local = next;
 	scheduleSave();
+	// The outlines and labels follow the blocks the user adds or removes.
+	if ( changes.length ) {
+		render();
+	}
 }
 
 function scheduleSave() {
@@ -251,6 +292,10 @@ async function save() {
 	saveStarts++;
 	const current = opens;
 	let sendTitle = false;
+	// Decisions sent in an update that didn't succeed, to send again.
+	let sentDecisions: Decisions | undefined;
+	// The server took the update, so a failure after it isn't a failed save.
+	let taken = false;
 	error = '';
 	showStatus( 'Saving…' );
 	try {
@@ -262,10 +307,15 @@ async function save() {
 			// A conflict shows only that this update wasn't taken, not an earlier one.
 			const prior = unconfirmed;
 			unconfirmed = sent;
+			sentDecisions = decisions;
+			decisions = noDecisions();
 			lastUpdate = callTool< UpdateResult >( 'wpcom-post-editor-update', {
 				base_version: version,
-				content: sent.content,
+				// Unchanged content stays out: the editor's serialization of a block can differ from
+				// the server's markup, which would make a reject find the block changed.
+				...( sent.content !== base.content && { content: sent.content } ),
 				...( sendTitle && { title: sent.title } ),
+				...decisionArgs( sentDecisions ),
 			} );
 			const result = await lastUpdate;
 			if ( current !== opens || stopped ) {
@@ -273,10 +323,30 @@ async function save() {
 			}
 			if ( ! result.conflict ) {
 				base = { title: sendTitle ? sent.title : base.title, content: sent.content };
-				version = result.version;
 				unconfirmed = undefined;
+				if ( ! hasDecisions( sentDecisions ) ) {
+					version = result.version;
+					break;
+				}
+				// The server applied the decisions after the content, so its post can differ from
+				// the one sent: take it in from the version before.
+				const undone = [ ...sentDecisions.reject, ...sentDecisions.undo ];
+				sentDecisions = undefined;
+				sendTitle = false;
+				taken = true;
+				const state = await callTool< StateResult >( 'wpcom-post-editor-state', {
+					since_version: version,
+				} );
+				if ( current !== opens || stopped ) {
+					return;
+				}
+				receiveState( state );
+				reportUnreverted( undone );
+				render();
 				break;
 			}
+			restoreDecisions( sentDecisions );
+			sentDecisions = undefined;
 			unconfirmed = prior;
 			titleChanged ||= sendTitle;
 			sendTitle = false;
@@ -290,19 +360,24 @@ async function save() {
 				return;
 			}
 			receiveState( state );
+			render();
 			clearTimeout( saveTimer );
 			saveTimer = undefined;
 			if ( ! isDirty() ) {
 				break;
 			}
 		}
-		showStatus( 'Saved' );
+		// Keeps a message about the assistant's changes that came in with the save.
+		if ( statusMessage === 'Saving…' ) {
+			showStatus( 'Saved' );
+		}
 	} catch ( e ) {
 		if ( current !== opens ) {
 			return;
 		}
 		titleChanged ||= sendTitle;
-		if ( ! noServerTools && ! stopped ) {
+		restoreDecisions( sentDecisions );
+		if ( ! noServerTools && ! stopped && ! taken ) {
 			error = errorMessage( e );
 			showStatus( `Couldn’t save: ${ error }` );
 		}
@@ -325,6 +400,7 @@ function flushSave() {
 			...post,
 			content: local.content,
 			...( titleChanged && { title: local.title } ),
+			...decisionArgs( decisions ),
 		};
 		lastUpdate
 			?.then(
@@ -364,11 +440,78 @@ function applyRemote( state: StateResult ) {
 	scheduleSave();
 }
 
+function restoreDecisions( sent?: Decisions ) {
+	if ( sent ) {
+		( Object.keys( sent ) as Decision[] ).forEach( ( decision ) =>
+			decisions[ decision ].unshift( ...sent[ decision ] )
+		);
+	}
+}
+
+function clearAccepted() {
+	clearTimeout( accepted?.timer );
+	accepted = undefined;
+}
+
+// Accept, Reject or Undo, sent with the typing in the next update.
+function decide( decision: Decision, ids: string[] ) {
+	// The server takes only the first of accept, reject and undo listing a change, so an Undo
+	// that travels with its own Accept is a reject.
+	const unsent = decision === 'undo' ? ids.filter( ( id ) => decisions.accept.includes( id ) ) : [];
+	decisions.accept = decisions.accept.filter( ( id ) => ! unsent.includes( id ) );
+	decisions.reject.push( ...unsent );
+	decisions[ decision ].push( ...ids.filter( ( id ) => ! unsent.includes( id ) ) );
+	ids.forEach( ( id ) => decided.add( id ) );
+	if ( decision !== 'reject' ) {
+		clearAccepted();
+	}
+	if ( decision === 'accept' ) {
+		const one = changes.find( ( change ) => change.change_id === ids[ 0 ] );
+		accepted = {
+			ids,
+			label: ids.length === 1 && one ? changeLabel( one ) : `${ ids.length } changes`,
+			timer: setTimeout( () => {
+				accepted = undefined;
+				render();
+			}, UNDO_TIME ),
+		};
+	}
+	render();
+	clearTimeout( saveTimer );
+	save();
+}
+
+// A reject or undo the server found stale leaves the block as the assistant wrote it.
+function reportUnreverted( ids: string[] ) {
+	const blocks = splitBlocks( local.content );
+	const kept = ids
+		.map( ( id ) => seenChanges.get( id ) )
+		.find( ( change ) => change?.after && blocks.includes( splitBlocks( change.after )[ 0 ] ) );
+	if ( kept && kept.block_index !== null ) {
+		statusMessage = `Couldn’t reject ${ changeLabel( kept ) }: it changed since`;
+	}
+}
+
+function receiveChanges( list: StateResult[ 'changes' ] = [] ) {
+	changes = list.filter( ( change ) => ( change.status ?? 'pending' ) === 'pending' );
+	const fresh = changes.filter( ( change ) => ! seenChanges.has( change.change_id ) );
+	if ( ! fresh.length ) {
+		return;
+	}
+	fresh.forEach( ( change ) => seenChanges.set( change.change_id, change ) );
+	clearAccepted();
+	statusMessage =
+		fresh.length === 1
+			? `The assistant changed ${ changeLabel( fresh[ 0 ] ) }`
+			: `The assistant made ${ fresh.length } changes`;
+}
+
 // A save that ended during a state call already has that version or a newer one.
 function receiveState( state: StateResult ) {
 	if ( state.version > version ) {
 		version = state.version;
 		if ( state.changed ) {
+			receiveChanges( state.changes );
 			applyRemote( state );
 		}
 	}
@@ -475,6 +618,19 @@ async function loadConfig( current: number ) {
 	}
 }
 
+// `version` is the latest, so polls list only newer changes: asks once for those already pending.
+async function loadChanges( current: number ) {
+	try {
+		const state = await callTool< StateResult >( 'wpcom-post-editor-state', { since_version: 0 } );
+		if ( current === opens && ! stopped ) {
+			receiveChanges( state.changes );
+			render();
+		}
+	} catch {
+		// The polls show the tools' errors.
+	}
+}
+
 let stylesLoaded = false;
 async function open( result: OpenResult ) {
 	if ( stopped ) {
@@ -493,12 +649,20 @@ async function open( result: OpenResult ) {
 	saveQueued = false;
 	titleChanged = false;
 	unconfirmed = undefined;
+	changes = [];
+	decisions = noDecisions();
+	decided.clear();
+	seenChanges.clear();
+	clearAccepted();
 	base = { title: result.post.title, content: normalize( result.content ) };
 	showInEditor( base );
 	persistentErrors.open = undefined;
 	showStatus();
 	claimPost( post.wpcom_site, post.post_id );
 	schedule();
+	if ( ! noServerTools ) {
+		loadChanges( current );
+	}
 	if ( stylesLoaded || noServerTools ) {
 		return;
 	}
