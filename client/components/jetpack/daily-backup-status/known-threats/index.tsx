@@ -212,7 +212,7 @@ export function BackupKnownThreatsList( {
 	const rows = threats.threats.filter( ( threat ) => threat.kind !== 'vulnerable' );
 
 	const formatDate = ( value: string | null ) =>
-		value ? moment.utc( value ).local().format( 'll' ) : '';
+		value ? moment.utc( value ).local().format( 'LL' ) : '';
 
 	const getWhere = ( threat: BackupThreat ) =>
 		threat.slug
@@ -235,7 +235,7 @@ export function BackupKnownThreatsList( {
 			? translate( 'First detected %1$s · %2$s', {
 					args: [ reportedOn, String( getStatus( threat ) ) ],
 					comment:
-						'1: the date Scan first detected a threat, 2: its status now, such as "Open" or "Fixed Oct 17, 2026".',
+						'1: the date Scan first detected a threat, 2: its status now, such as "Open" or "Fixed October 17, 2026".',
 				} )
 			: getStatus( threat );
 	};
