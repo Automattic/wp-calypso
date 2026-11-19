@@ -1183,6 +1183,25 @@ describe( 'main app', () => {
 				expect( response.redirect ).toHaveBeenCalledWith( url );
 			} );
 		} );
+
+		it( 'keeps the rest of the path and the query', async () => {
+			const { response } = await app.run( {
+				request: { url: '/sites/my-site/posts/drafts?s=x' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( '/posts/my-site/drafts?s=x' );
+		} );
+
+		it( 'redirects a Jetpack site installed in a subdirectory', async () => {
+			const { response } = await app.run( {
+				request: { url: '/sites/example.com::my_blog/posts' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( '/posts/example.com::my_blog' );
+		} );
+
+		it( 'passes a site it cannot rewrite on instead of redirecting it to itself', async () => {
+			const { response } = await app.run( { request: { url: '/sites/a@b/posts' } } );
+			expect( response.redirect ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'Route /plans', () => {

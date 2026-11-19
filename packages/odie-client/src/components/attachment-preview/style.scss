@@ -36,9 +36,10 @@
 		}
 	}
 
-	// A round badge on the card's corner, as the filled cancel icon drew it before.
+	// A round badge on the card's corner, the size the filled cancel icon drew it, so the preview
+	// row's scroll clipping doesn't cut its top.
 	.odie-attachment-preview-cancel.components-button {
-		$size: 18px;
+		$size: 16px;
 		position: absolute;
 		height: $size;
 		width: $size;

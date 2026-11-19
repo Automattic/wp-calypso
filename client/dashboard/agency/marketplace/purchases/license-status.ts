@@ -168,9 +168,7 @@ export function isRecentlyTransferred( license: JetpackLicense ): boolean {
 
 // Classic lists every WordPress.com hosting product under one name.
 export function getLicenseProductName( license: JetpackLicense ): string {
-	return license.product.startsWith( 'WordPress.com' )
-		? __( 'WordPress.com Site' )
-		: license.product;
+	return /^WordPress\.com\b/.test( license.product ) ? __( 'WordPress.com Site' ) : license.product;
 }
 
 export function getSiteHostname( siteUrl: string ): string {

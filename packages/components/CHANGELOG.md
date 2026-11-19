@@ -1,6 +1,6 @@
 ## Unreleased
 
-- `NoticeBanner`: show the stroke-drawn `caution` icon for warnings, since `@wordpress/icons` 21 removes `cautionFilled`.
+- `NoticeBanner`: show the stroke-drawn `caution` icon for a `level` it doesn't recognize, since `@wordpress/icons` 21 removes `cautionFilled`. Warnings keep the `info` icon.
 - `HorizontalBarList`: draw folder rows with the `folder` icon, the drawing `@wordpress/icons` 20 called `file`.
 - Require `@wordpress/icons` ^21.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`, and which adds `folder`.
 - `SummaryButton`: set `color` alongside `fill` on the navigation and decoration icons, so icons drawn with `currentColor` (such as stroke-drawn `@wordpress/icons`) take the same grey, and the accent color on hover.

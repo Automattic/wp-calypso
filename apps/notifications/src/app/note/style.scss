@@ -530,19 +530,20 @@
 	position: relative;
 	color: var(--wp-components-color-gray-600, #{$gray-600});
 
-	// The unread dot, where `@wordpress/icons` 20's `bellUnread` drew it (17, 7 in the 24px icon),
-	// with a ring in the background color to separate it from the bell.
+	// The unread dot where `bellUnread` drew it, 5px right of and above the icon's center, with
+	// a ring in the background color to separate it from the bell.
 	&::after {
 		content: "";
 		position: absolute;
-		inset-block-start: calc(50% - 5px);
-		inset-inline-start: calc(50% + 5px);
-		width: 3.5px;
-		height: 3.5px;
+		inset: 0;
+		width: 5px;
+		height: 5px;
+		margin: auto;
 		border-radius: 50%;
 		background: currentColor;
 		box-shadow: 0 0 0 1.5px var(--wp-components-color-background, #{$white});
-		transform: translate(-50%, -50%);
+		// Physical, since the bell isn't mirrored; the RTL build doesn't flip `translate`.
+		translate: 5px -5px;
 		pointer-events: none;
 
 		// Forced colors would drop the dot's background and ring; draw them in system colors.
