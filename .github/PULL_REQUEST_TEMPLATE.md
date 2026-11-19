@@ -14,7 +14,7 @@ For a change users can see (UI, or new or changed translatable strings), add "Be
 ## Why
 
 <!--
-What was wrong or missing, in the past tense. It's easy to see what a PR does but much harder to find out why it was made, particularly when researching old changes in history.
+What was wrong or missing, in the past tense, and for a bug, what caused it. Write it for someone who didn't work on this code, with the context they need to follow the cause. It's easy to see what a PR does but much harder to find out why it was made, particularly when researching old changes in history.
 -->
 
 ## Details
