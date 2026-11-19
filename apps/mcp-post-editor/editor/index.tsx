@@ -19,11 +19,18 @@ import {
 } from '@wordpress/element';
 import { isKeyboardEvent } from '@wordpress/keycodes';
 import { createUndoManager, type UndoManager } from '@wordpress/undo-manager';
-import { AskAssistant, AssistantChips, type Prompt, type TextSelection } from './assistant';
+import {
+	AskAssistant,
+	AssistantChips,
+	SelectionReporter,
+	type Prompt,
+	type TextSelection,
+} from './assistant';
 import './blocks';
 import { AgentChanges, ChangedBlocks, type AgentChange, type Decision } from './changes';
 import { KIND_LABEL, ProofreadLayer } from './proofread-layer';
 import type { ProofreadIssue } from './proofread';
+import type { EditorSelection } from './selection-context';
 import type { ClipboardEvent, CSSProperties, KeyboardEvent } from 'react';
 
 // `revision` changes when the post comes from outside the editor: opened, or merged with the
@@ -59,7 +66,7 @@ type Props = {
 	canMessage: boolean;
 	onPrompt: ( prompt: Prompt ) => void;
 	onAsk: ( question: string, selection: TextSelection ) => void;
-	onSelect: ( selection?: TextSelection ) => void;
+	onSelect: ( selection?: EditorSelection ) => void;
 	// The open proofreading issues; `failed` counts those whose text was no longer there.
 	issues: ProofreadIssue[];
 	onProofreadDone: ( ids: string[], failed: number ) => void;
@@ -189,7 +196,11 @@ function Canvas( {
 	onVisibleIssues,
 	applyRef,
 	openRef,
-}: Pick< Props, 'styles' | 'readOnly' | 'onChange' | 'changes' | 'issues' | 'onProofreadDone' > & {
+	onSelect,
+}: Pick<
+	Props,
+	'styles' | 'readOnly' | 'onChange' | 'changes' | 'issues' | 'onProofreadDone' | 'onSelect'
+> & {
 	post: EditorPost;
 	onVisibleIssues: ( ids: string[] ) => void;
 	applyRef: Parameters< typeof ProofreadLayer >[ 0 ][ 'applyRef' ];
@@ -266,6 +277,7 @@ function Canvas( {
 				dispatch( { type: 'record', value: next, isStaged: false } )
 			}
 		>
+			{ ! readOnly && <SelectionReporter onSelect={ onSelect } /> }
 			{ ! readOnly && (
 				<div className="mcp-post-editor__toolbar">
 					<BlockToolbar hideDragHandle />
@@ -444,13 +456,12 @@ export function PostEditor( {
 						onVisibleIssues={ onVisibleIssues }
 						applyRef={ applyRef }
 						openRef={ openRef }
+						onSelect={ onSelect }
 						{ ...canvas }
 					/>
 				) }
 				<div className="mcp-post-editor__dock">
-					{ ! readOnly && (
-						<AskAssistant canMessage={ canMessage } onAsk={ onAsk } onSelect={ onSelect } />
-					) }
+					{ ! readOnly && <AskAssistant canMessage={ canMessage } onAsk={ onAsk } /> }
 					{ ! readOnly && isListOpen && visible.length > 0 && (
 						<ul
 							ref={ listRef }

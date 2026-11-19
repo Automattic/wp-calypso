@@ -1,4 +1,8 @@
+import { store as blockEditorStore } from '@wordpress/block-editor';
+import { getBlockContent, getBlockType, type Block } from '@wordpress/blocks';
+import { useRegistry } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
+import type { EditorSelection } from './selection-context';
 import type { FormEvent, MouseEvent } from 'react';
 
 export type Prompt = 'review' | 'title' | 'proofread';
@@ -29,6 +33,81 @@ function readSelection(): TextSelection | undefined {
 		child.matches( '[data-block]' )
 	);
 	return text ? { block: blocks.indexOf( block ) + 1, text } : undefined;
+}
+
+const CONTEXT_DELAY = 400;
+
+// The text of a block's markup, with a space at each line break and cell, so words don't join.
+const plainText = ( html: string ) =>
+	(
+		new DOMParser().parseFromString(
+			html.replace( /<br\s*\/?>|<\/(?:p|li|td|th|tr|h[1-6]|div|figcaption|dt|dd)>/gi, '$& ' ),
+			'text/html'
+		).body.textContent ?? ''
+	)
+		.replace( /\s+/g, ' ' )
+		.trim();
+
+const typeTitle = ( name: string ) => getBlockType( name )?.title ?? name;
+
+// The selected blocks, and the text highlighted in one; nothing while the title has the focus.
+export function readEditorSelection(
+	registry: ReturnType< typeof useRegistry >
+): EditorSelection | undefined {
+	if ( document.activeElement?.closest( '.mcp-post-editor__title' ) ) {
+		return undefined;
+	}
+	const editor = registry.select( blockEditorStore );
+	const order = editor.getBlockOrder();
+	const blocks = editor.getSelectedBlockClientIds().flatMap( ( clientId ) => {
+		const block: Block | null = editor.getBlock( clientId );
+		if ( ! block ) {
+			return [];
+		}
+		const top = editor.getBlockParents( clientId )[ 0 ] ?? clientId;
+		return {
+			index: order.indexOf( top ) + 1,
+			type: typeTitle( block.name ),
+			parent: top === clientId ? undefined : typeTitle( editor.getBlockName( top ) ?? '' ),
+			text: plainText( getBlockContent( block ) ),
+		};
+	} );
+	if ( ! blocks.length ) {
+		return undefined;
+	}
+	const text = blocks.length === 1 ? readSelection()?.text : undefined;
+	return { blocks, text };
+}
+
+// Reports the selection once it has settled, and nothing once the canvas goes. Inside the
+// editor's provider, whose registry has the canvas's block editor store.
+export function SelectionReporter( {
+	onSelect,
+}: {
+	onSelect: ( selection?: EditorSelection ) => void;
+} ) {
+	const registry = useRegistry();
+	const onSelectRef = useRef( onSelect );
+	onSelectRef.current = onSelect;
+	useEffect( () => {
+		let timer: ReturnType< typeof setTimeout > | undefined;
+		const report = () => {
+			clearTimeout( timer );
+			timer = setTimeout(
+				() => onSelectRef.current( readEditorSelection( registry ) ),
+				CONTEXT_DELAY
+			);
+		};
+		const unsubscribe = registry.subscribe( report, blockEditorStore );
+		document.addEventListener( 'selectionchange', report );
+		return () => {
+			clearTimeout( timer );
+			unsubscribe();
+			document.removeEventListener( 'selectionchange', report );
+			onSelectRef.current( undefined );
+		};
+	}, [ registry ] );
+	return null;
 }
 
 // Prompts for the assistant, sent to the chat, as pills in the bar.
@@ -87,19 +166,15 @@ function chipPlace() {
 export function AskAssistant( {
 	canMessage,
 	onAsk,
-	onSelect,
 }: {
 	canMessage: boolean;
 	onAsk: ( question: string, selection: TextSelection ) => void;
-	onSelect: ( selection?: TextSelection ) => void;
 } ) {
 	const [ selection, setSelection ] = useState< TextSelection >();
 	const [ place, setPlace ] = useState< { top: number; left: number } >();
 	// The selection Ask is about, kept while its input has the focus.
 	const [ asking, setAsking ] = useState< TextSelection >();
 	const [ question, setQuestion ] = useState( '' );
-	const onSelectRef = useRef( onSelect );
-	onSelectRef.current = onSelect;
 
 	useEffect( () => {
 		// The chip follows the text as the canvas scrolls, or moves when the panel or the rows
@@ -120,7 +195,6 @@ export function AskAssistant( {
 			}
 			setSelection( next );
 			setPlace( next && chipPlace() );
-			onSelectRef.current( next );
 		};
 		document.addEventListener( 'selectionchange', onSelectionChange );
 		document.addEventListener( 'scroll', onMove, true );
