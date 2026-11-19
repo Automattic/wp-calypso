@@ -1,11 +1,13 @@
 import { siteScanHistoryQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteScanHistoryRoute } from '../../app/router/sites';
+import { Card, CardBody } from '../../components/card';
 import { DataViews, DataViewsEmptyStateLayout } from '../../components/dataviews';
+import { getNoMatchingThreats } from '../scan/no-matching-threats';
 import { getActions } from './dataviews/actions';
 import { getFields } from './dataviews/fields';
 import type { Threat, Site } from '@automattic/api-core';
@@ -61,46 +63,43 @@ export function ScanHistoryDataViews( {
 	const actions = getActions( site );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( threats, view, fields );
 
-	const NoArchivedThreatsFound = () => {
-		let title: string = __( 'No history yet' );
-		let description: string = __( 'So far, there are no archived threats on your site.' );
+	const hasFilters = ( view.filters?.length ?? 0 ) > 0;
+	// Known data stays known when a later refetch fails.
+	const hasLoaded = scanHistory !== undefined;
 
-		if ( view.search || view.filters ) {
-			title = __( 'No history found' );
-
-			if ( view.search ) {
-				description = sprintf(
-					/** translators: %s: search query string */
-					__( 'Your search for “%s” did not return any results.' ),
-					view.search
-				);
-			}
-
-			if ( view.filters ) {
-				description = __( 'No archived threats found for the selected filters.' );
-			}
-		}
-
-		return <DataViewsEmptyStateLayout isBorderless title={ title } description={ description } />;
-	};
+	// Nothing to search or filter: the empty state takes the place of the list.
+	if ( hasLoaded && threats.length === 0 && ! view.search && ! hasFilters ) {
+		return (
+			<>
+				<PerformanceTrackerStop />
+				<DataViewsEmptyStateLayout
+					title={ __( 'No history yet' ) }
+					description={ __( 'Fixed and ignored threats will appear here.' ) }
+				/>
+			</>
+		);
+	}
 
 	return (
-		<>
-			{ ! isLoading && <PerformanceTrackerStop /> }
-			<DataViews< Threat >
-				actions={ actions }
-				data={ filteredData }
-				defaultLayouts={ { table: {} } }
-				empty={ <NoArchivedThreatsFound /> }
-				fields={ fields }
-				getItemId={ ( item ) => item.id.toString() }
-				isLoading={ isLoading }
-				onChangeView={ updateView }
-				onReset={ resetView }
-				paginationInfo={ paginationInfo }
-				searchLabel={ __( 'Search' ) }
-				view={ view }
-			/>
-		</>
+		<Card>
+			<CardBody>
+				{ ! isLoading && <PerformanceTrackerStop /> }
+				<DataViews< Threat >
+					actions={ actions }
+					data={ filteredData }
+					defaultLayouts={ { table: {} } }
+					// A failed first request says nothing about the history: keep the default message.
+					empty={ hasLoaded ? getNoMatchingThreats( view.search, hasFilters ) : undefined }
+					fields={ fields }
+					getItemId={ ( item ) => item.id.toString() }
+					isLoading={ isLoading }
+					onChangeView={ updateView }
+					onReset={ resetView }
+					paginationInfo={ paginationInfo }
+					searchLabel={ __( 'Search' ) }
+					view={ view }
+				/>
+			</CardBody>
+		</Card>
 	);
 }

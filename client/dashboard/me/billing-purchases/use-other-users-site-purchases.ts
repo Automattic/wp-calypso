@@ -25,7 +25,7 @@ export function useOtherUsersSitePurchases( {
 }: {
 	siteIds: number[];
 	sites: Site[];
-} ): { purchases: Purchase[]; isLoading: boolean } {
+} ): { purchases: Purchase[]; isLoading: boolean; isSuccess: boolean } {
 	const { user } = useAuth();
 	const managedSiteIds =
 		siteIds.length > MAX_SITES
@@ -41,11 +41,14 @@ export function useOtherUsersSitePurchases( {
 				data.filter( ( purchase ) => String( purchase.user_id ) !== String( user.ID ) )
 			),
 			isLoading: results.some( ( { isLoading } ) => isLoading ),
+			// A failed or paused request leaves it unknown whether the site has more purchases.
+			isSuccess: results.every( ( { isSuccess } ) => isSuccess ),
+			count: results.length,
 		} ),
 		[ user.ID ]
 	);
 
-	return useQueries( {
+	const { purchases, isLoading, isSuccess, count } = useQueries( {
 		queries: managedSiteIds.map( ( siteId ) => ( {
 			...sitePurchasesQuery( siteId ),
 			// The user may have lost manage rights since `sitesQuery()` loaded;
@@ -54,4 +57,12 @@ export function useOtherUsersSitePurchases( {
 		} ) ),
 		combine,
 	} );
+
+	return {
+		purchases,
+		isLoading,
+		// The combined result can lag one render behind a change in the sites to
+		// fetch, so it only counts once it covers all of them.
+		isSuccess: isSuccess && count === managedSiteIds.length,
+	};
 }

@@ -22,8 +22,9 @@ import {
 	monetizeSubscriptionsRoute,
 	purchasesRoute,
 } from '../../app/router/me';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
+import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import Notice from '../../components/notice';
+import OfferCard from '../../components/offer-card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -41,6 +42,29 @@ import {
 import { PurchaseRemovedNotice } from './purchase-removed-notice';
 import { useOtherUsersSitePurchases } from './use-other-users-site-purchases';
 
+function getEmptyResults( hasSearch: boolean, hasOwnFilters: boolean ) {
+	if ( hasSearch ) {
+		return (
+			<DataViewsEmptyStateLayout
+				isBorderless
+				title={ __( 'No upgrades match your search' ) }
+				description={ __( 'Try a different search term.' ) }
+			/>
+		);
+	}
+	if ( hasOwnFilters ) {
+		return (
+			<DataViewsEmptyStateLayout
+				isBorderless
+				title={ __( 'No upgrades match your filters' ) }
+				description={ __( 'Try different filters, or reset them.' ) }
+			/>
+		);
+	}
+	// Neither narrowed the list, so the request failed: keep the default message.
+	return undefined;
+}
+
 export default function PurchasesList() {
 	const { supports } = useAppContext();
 	// Hosts without a `me` section embed these screens already scoped to a site,
@@ -52,7 +76,11 @@ export default function PurchasesList() {
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const currentSearchParams = purchasesRoute.useSearch();
 
-	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
+	const {
+		data: purchases = [],
+		isLoading: isLoadingPurchases,
+		isSuccess: hasLoadedPurchases,
+	} = useQuery( userPurchasesQuery() );
 	const [ isRemovedNoticeHidden, setIsRemovedNoticeHidden ] = useState( false );
 	const removedNotice = useConsumeSearchParams( [ 'removed', 'removedDomain', 'removedId' ], {
 		when: ( params ) => Boolean( params.removed ),
@@ -61,10 +89,16 @@ export default function PurchasesList() {
 			setIsRemovedNoticeHidden( purchases.some( ( p ) => p.ID === Number( removedId ) ) ),
 	} );
 	const removedPurchaseId = removedNotice.removedId ? Number( removedNotice.removedId ) : null;
-	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
-		userTransferredPurchasesQuery()
-	);
-	const { data: sites = [], isLoading: isLoadingSites } = useQuery( sitesQuery() );
+	const {
+		data: transferredPurchases = [],
+		isLoading: isLoadingTransferredPurchases,
+		isSuccess: hasLoadedTransferredPurchases,
+	} = useQuery( userTransferredPurchasesQuery() );
+	const {
+		data: sites = [],
+		isLoading: isLoadingSites,
+		isSuccess: hasLoadedSites,
+	} = useQuery( sitesQuery() );
 
 	// Dismiss the success notice when the background mutation rolls back —
 	// detected by the captured purchase reappearing in the userPurchasesQuery
@@ -107,8 +141,11 @@ export default function PurchasesList() {
 		() => ( Array.isArray( siteFilterValue ) ? siteFilterValue.map( Number ) : [] ),
 		[ siteFilterValue ]
 	);
-	const { purchases: otherUsersPurchases, isLoading: isLoadingOtherUsersPurchases } =
-		useOtherUsersSitePurchases( { siteIds: siteFilterIds, sites } );
+	const {
+		purchases: otherUsersPurchases,
+		isLoading: isLoadingOtherUsersPurchases,
+		isSuccess: hasLoadedOtherUsersPurchases,
+	} = useOtherUsersSitePurchases( { siteIds: siteFilterIds, sites } );
 
 	const isLoading =
 		isLoadingPurchases ||
@@ -139,6 +176,35 @@ export default function PurchasesList() {
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( allSubscriptions, view, purchasesDataFields );
 	}, [ allSubscriptions, view, purchasesDataFields ] );
+
+	// A locked filter is set by the surrounding page, so it is part of what the
+	// list is, not of what the user narrowed it down to.
+	const lockedFilters = useMemo(
+		() => view.filters?.filter( ( filter ) => filter.isLocked ) ?? [],
+		[ view.filters ]
+	);
+	const isSiteLocked = lockedFilters.length > 0;
+	const hasOwnFilters = ( view.filters?.length ?? 0 ) > lockedFilters.length;
+	const hasSubscriptions = useMemo( () => {
+		if ( ! isSiteLocked ) {
+			return allSubscriptions.length > 0;
+		}
+		const { data } = filterSortAndPaginate(
+			allSubscriptions,
+			{ ...view, search: '', filters: lockedFilters, page: 1 },
+			purchasesDataFields
+		);
+		return data.length > 0;
+	}, [ allSubscriptions, isSiteLocked, lockedFilters, view, purchasesDataFields ] );
+	// Only successful responses can tell that there is nothing to list, and the
+	// queries fall back to an empty list when they fail.
+	const hasLoaded =
+		! isLoading &&
+		hasLoadedPurchases &&
+		hasLoadedTransferredPurchases &&
+		hasLoadedSites &&
+		hasLoadedOtherUsersPurchases;
+	const isEmpty = hasLoaded && ! hasSubscriptions;
 
 	const actions = usePurchasesListActions( {
 		transferredPurchases,
@@ -217,21 +283,48 @@ export default function PurchasesList() {
 				</Notice>
 			) }
 			<div ref={ ref }>
-				<DataViewsCard className="purchases-list__wrapper">
-					{ ! isLoading && <PerformanceTrackerStop /> }
-					<DataViews
-						isLoading={ isLoading }
-						data={ filteredSubscriptions }
-						fields={ purchasesDataFields }
-						view={ view }
-						onChangeView={ updateView }
-						onReset={ resetView }
-						defaultLayouts={ { table: {} } }
-						actions={ actions }
-						getItemId={ getItemId }
-						paginationInfo={ paginationInfo }
+				{ ! isLoading && <PerformanceTrackerStop /> }
+				{ isEmpty && ! supportsMe && (
+					<DataViewsEmptyStateLayout
+						title={ __( 'No active upgrades for this site' ) }
+						description={ __(
+							'Plans, domains, and other purchases for this site will appear here.'
+						) }
 					/>
-				</DataViewsCard>
+				) }
+				{ isEmpty && supportsMe && (
+					<DataViewsEmptyStateLayout
+						title={ __( 'No active upgrades' ) }
+						description={ __(
+							'Plans, domains, and other purchases for your sites will appear here.'
+						) }
+					>
+						<OfferCard
+							onClick={ () =>
+								recordTracksEvent( 'calypso_dashboard_purchases_empty_state_action_click', {
+									action: 'offer',
+								} )
+							}
+						/>
+					</DataViewsEmptyStateLayout>
+				) }
+				{ ! isEmpty && (
+					<DataViewsCard className="purchases-list__wrapper">
+						<DataViews
+							isLoading={ isLoading }
+							data={ filteredSubscriptions }
+							fields={ purchasesDataFields }
+							view={ view }
+							onChangeView={ updateView }
+							onReset={ resetView }
+							defaultLayouts={ { table: {} } }
+							actions={ actions }
+							getItemId={ getItemId }
+							paginationInfo={ paginationInfo }
+							empty={ getEmptyResults( Boolean( view.search ), hasOwnFilters ) }
+						/>
+					</DataViewsCard>
+				) }
 			</div>
 		</PageLayout>
 	);

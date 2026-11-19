@@ -55,6 +55,7 @@ describe( 'useOtherUsersSitePurchases', () => {
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 		expect( scope.isDone() ).toBe( true );
+		expect( result.current.isSuccess ).toBe( true );
 		// The viewer's own purchases come from `userPurchasesQuery()`, so they are left out here.
 		expect( result.current.purchases.map( ( purchase ) => purchase.ID ) ).toEqual( [ 2 ] );
 	} );
@@ -72,8 +73,24 @@ describe( 'useOtherUsersSitePurchases', () => {
 			{ wrapper: makeWrapper() }
 		);
 
-		expect( result.current ).toEqual( { purchases: [], isLoading: false } );
+		expect( result.current ).toEqual( { purchases: [], isLoading: false, isSuccess: true } );
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 		expect( scope.isDone() ).toBe( false );
+	} );
+
+	test( 'does not report success when a site request fails', async () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/upgrades' )
+			.query( { site: managedSite.ID } )
+			.reply( 500, { error: 'server_error' } );
+
+		const { result } = renderHook(
+			() => useOtherUsersSitePurchases( { siteIds: [ managedSite.ID ], sites: [ managedSite ] } ),
+			{ wrapper: makeWrapper() }
+		);
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		expect( result.current ).toEqual( { purchases: [], isLoading: false, isSuccess: false } );
 	} );
 } );
