@@ -58,6 +58,7 @@
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^20.0.0",
+		"@wordpress/ui": "^0.26.0",
 		"clsx": "^2.1.1",
 		"debug": "^4.4.3",
 		"tslib": "^2.8.1",
