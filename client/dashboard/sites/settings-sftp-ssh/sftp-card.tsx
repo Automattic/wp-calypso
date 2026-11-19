@@ -33,6 +33,8 @@ const RESET_PASSWORD_RATE_LIMIT_MILLISECONDS = 60 * 1000;
 
 const noop = () => {};
 
+export type SftpCardSshState = 'unavailable' | 'disabled' | 'maybe-enabled';
+
 type SftpCardFormData = {
 	url: string;
 	port: string;
@@ -43,13 +45,11 @@ type SftpCardFormData = {
 export default function SftpCard( {
 	siteId,
 	sftpUsers = [],
-	hasSshFeature = false,
-	sshMayBeEnabled = false,
+	sshState = 'unavailable',
 }: {
 	siteId: number;
 	sftpUsers: SftpUser[];
-	hasSshFeature?: boolean;
-	sshMayBeEnabled?: boolean;
+	sshState?: SftpCardSshState;
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
 	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
@@ -266,12 +266,12 @@ export default function SftpCard( {
 				<VStack spacing={ 3 }>
 					<Text>
 						{ __(
-							'This deletes your SFTP user, so SFTP clients, deployment tools, and scripts that use it will stop connecting. You can create new credentials at any time, with a new password.'
+							'This deletes the SFTP credentials for this site, so SFTP clients, deployment tools, and scripts that use them will stop connecting. You can create new credentials at any time, with a new password.'
 						) }
 					</Text>
-					{ hasSshFeature && (
+					{ sshState !== 'unavailable' && (
 						<Text>
-							{ sshMayBeEnabled
+							{ sshState === 'maybe-enabled'
 								? __(
 										'SSH access is also turned off, and every SSH key attached to this site is detached. To use SSH again, create new credentials, turn SSH access on, and attach your keys again.'
 									)

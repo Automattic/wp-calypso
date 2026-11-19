@@ -58,12 +58,14 @@ describe( '<SftpCard>', () => {
 			} );
 
 		render(
-			<SftpCard
-				siteId={ siteId }
-				sftpUsers={ [ { username, password: '' } ] }
-				hasSshFeature
-				sshMayBeEnabled
-			/>
+			<>
+				<SftpCard
+					siteId={ siteId }
+					sftpUsers={ [ { username, password: '' } ] }
+					sshState="maybe-enabled"
+				/>
+				<Snackbars />
+			</>
 		);
 
 		await screen.findByText( 'Learn more' );
@@ -73,6 +75,9 @@ describe( '<SftpCard>', () => {
 		await user.click( within( dialog ).getByRole( 'button', { name: 'Delete credentials' } ) );
 
 		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
+		// The notice text also lands in the a11y live region, so this matches twice.
+		const [ notice ] = await screen.findAllByText( 'SFTP/SSH credentials deleted.' );
+		expect( notice ).toBeVisible();
 	} );
 
 	test( 'does not mention SSH in the Delete credentials dialog on a site without SSH', async () => {
@@ -125,7 +130,11 @@ describe( '<SftpCard>', () => {
 		const user = userEvent.setup();
 
 		render(
-			<SftpCard siteId={ siteId } sftpUsers={ [ { username, password: '' } ] } hasSshFeature />
+			<SftpCard
+				siteId={ siteId }
+				sftpUsers={ [ { username, password: '' } ] }
+				sshState="disabled"
+			/>
 		);
 
 		await screen.findByText( 'Learn more' );
