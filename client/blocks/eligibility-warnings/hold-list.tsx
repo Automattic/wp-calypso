@@ -316,28 +316,14 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		isMarketplace,
 		hasEnTranslation,
 	} );
-	const showsPaidPlanNote =
-		! isPlaceholder && context === 'plugin-details' && holds.includes( 'NO_BUSINESS_PLAN' );
-	const listedHolds = showsPaidPlanNote
-		? holds.filter( ( hold ) => hold !== 'NO_BUSINESS_PLAN' )
-		: holds;
 
 	return (
 		<div className="eligibility-warnings__hold-list" data-testid="HoldList-Card">
-			{ showsPaidPlanNote && (
-				<p className="eligibility-warnings__paid-plan-note">
-					{ translate(
-						'You can install plugins on any paid plan. You’ll choose your plan in the next step.'
-					) }
-				</p>
-			) }
-			{ ( isPlaceholder || listedHolds.some( isDisplayableHoldType ) ) && (
-				<CardHeading>
-					<span className="eligibility-warnings__hold-heading">
-						{ getCardHeading( context, translate ) }
-					</span>
-				</CardHeading>
-			) }
+			<CardHeading>
+				<span className="eligibility-warnings__hold-heading">
+					{ getCardHeading( context, translate ) }
+				</span>
+			</CardHeading>
 			{ isPlaceholder && (
 				<div>
 					<div className="eligibility-warnings__hold">
@@ -351,7 +337,7 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 				</div>
 			) }
 			{ ! isPlaceholder &&
-				listedHolds.map( ( hold ) =>
+				holds.map( ( hold ) =>
 					! isDisplayableHoldType( hold ) ? null : (
 						<div className="eligibility-warnings__hold" key={ hold }>
 							<div className="eligibility-warnings__message">
