@@ -697,6 +697,17 @@ This mixin generates alias variables for a color palette. For example, the
 }
 
 @mixin color-scheme-dark-theme-common-components {
+	// `@wordpress/components` hardcodes disabled primary button colors; drop once Button uses WPDS tokens.
+	.components-button.is-primary:is( :disabled, [aria-disabled='true'] ):not( .is-busy ) {
+		color: var( --wpds-color-foreground-interactive-brand-strong-disabled );
+		background: var( --wpds-color-background-interactive-brand-strong-disabled );
+
+		&.is-destructive {
+			color: var( --wpds-color-foreground-interactive-error-strong-disabled );
+			background: var( --wpds-color-background-interactive-error-strong-disabled );
+		}
+	}
+
 	@include color-scheme-dark-theme-card;
 	@include color-scheme-dark-theme-form-controls;
 	@include color-scheme-dark-theme-dataviews;

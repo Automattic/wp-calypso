@@ -139,7 +139,11 @@
 
 	.button.is-primary,
 	.components-button.is-primary {
-		border-color: var( --wp-components-color-accent-darker-20 );
+		border-color: var( --wpds-color-background-interactive-brand-strong );
+
+		&:is( :disabled, [aria-disabled='true'] ) {
+			border-color: var( --wpds-color-background-interactive-brand-strong-disabled );
+		}
 	}
 
 	.button.follow-button.is-following {
