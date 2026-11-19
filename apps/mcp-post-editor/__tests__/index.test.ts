@@ -20,8 +20,9 @@ const host = vi.hoisted( () => ( {
 				onDecide: ( decision: string, ids: string[] ) => void;
 				onSave: () => void;
 				onProofreadDone: ( ids: string[], failed: number ) => void;
-				titleSuggestions?: { id: string; titles: string[] };
-				onTitleSuggestionsDone: ( id: string ) => void;
+				isCovered: boolean;
+				styles: { css: string }[];
+				notices: string[];
 				onConflict: ( choice: string ) => void;
 				onPrompt: ( prompt: string ) => void;
 				canMessage: boolean;
@@ -42,6 +43,10 @@ const host = vi.hoisted( () => ( {
 	saveResults: [] as Args[],
 	saves: [] as Args[],
 	calls: [] as string[],
+	// Settles when the site's styles have loaded.
+	stylesApplied: Promise.resolve() as Promise< void >,
+	// What the config tool returns, unless it throws.
+	config: {} as Args | Error,
 } ) );
 
 vi.mock( '@modelcontextprotocol/ext-apps/app-with-deps', () => ( {
@@ -87,6 +92,11 @@ vi.mock( '@modelcontextprotocol/ext-apps/app-with-deps', () => ( {
 			} else if ( name === 'wpcom-post-editor-discard' && host.failNextDiscard ) {
 				host.failNextDiscard = false;
 				throw new Error( 'discard failed' );
+			} else if ( name === 'wpcom-post-editor-config' ) {
+				if ( host.config instanceof Error ) {
+					throw host.config;
+				}
+				data = host.config;
 			} else if ( name === 'wpcom-post-editor-state' ) {
 				data =
 					server.version > ( args.since_version as number )
@@ -99,14 +109,18 @@ vi.mock( '@modelcontextprotocol/ext-apps/app-with-deps', () => ( {
 		}
 	},
 } ) );
-// Each render's props, at once: React would render them later.
+// Each render's props, at once: React would render them later. The page renders the editor and
+// the loader over it, each when shown; `rendered` names those shown.
+type Rendered = { type: { name: string }; props: typeof host.editor };
 vi.mock( '@wordpress/element', async ( importOriginal ) => ( {
 	...( await importOriginal< object >() ),
 	createRoot: () => ( {
-		render: ( element: { type: { name: string }; props: typeof host.editor } ) => {
-			host.rendered = element.type.name;
-			if ( host.rendered !== 'Loader' ) {
-				host.editor = element.props;
+		render: ( element: { props: { children: ( Rendered | null )[] } } ) => {
+			const shown = element.props.children.filter( ( child ): child is Rendered => !! child );
+			host.rendered = shown.map( ( child ) => child.type.name ).join( '+' );
+			const editor = shown.find( ( child ) => child.type.name !== 'Loader' );
+			if ( editor ) {
+				host.editor = editor.props;
 			}
 		},
 	} ),
@@ -124,7 +138,7 @@ vi.mock( '../editor/blocks', () => ( {
 	splitBlocks: ( content: string ) => ( content ? content.split( '\n\n' ) : [] ),
 	joinBlocks: ( blocks: string[] ) => blocks.join( '\n\n' ),
 } ) );
-vi.mock( '../site-styles', () => ( { applySiteStyles: () => {} } ) );
+vi.mock( '../site-styles', () => ( { applySiteStyles: () => host.stylesApplied } ) );
 vi.mock( '../style.scss', () => ( {} ) );
 
 const paragraph = ( text: string ) =>
@@ -165,6 +179,8 @@ describe( 'the page', () => {
 		host.calls = [];
 		host.rendered = '';
 		host.messages = [];
+		host.stylesApplied = Promise.resolve();
+		host.config = {};
 	} );
 
 	afterEach( () => {
@@ -179,6 +195,42 @@ describe( 'the page', () => {
 
 		await openPost( paragraph( 'Hi.' ) );
 		expect( host.rendered ).toBe( 'PostEditor' );
+	} );
+
+	it( 'keeps the loader over the editor until the site’s styles have loaded', async () => {
+		let stylesLoaded = () => {};
+		host.stylesApplied = new Promise( ( resolve ) => ( stylesLoaded = resolve ) );
+		host.config = { styles: [ { css: 'h1 { font-family: serif; }' } ] };
+		await openPost( paragraph( 'Hi.' ) );
+
+		expect( host.rendered ).toBe( 'PostEditor+Loader' );
+		expect( host.editor?.styles ).toEqual( [ { css: 'h1 { font-family: serif; }' } ] );
+		expect( host.editor?.isCovered ).toBe( true );
+
+		stylesLoaded();
+		await vi.advanceTimersByTimeAsync( 0 );
+		expect( host.rendered ).toBe( 'PostEditor' );
+		expect( host.editor?.isCovered ).toBe( false );
+	} );
+
+	it( 'shows the post without the site’s styles after 4 seconds', async () => {
+		host.stylesApplied = new Promise( () => {} );
+		await openPost( paragraph( 'Hi.' ) );
+		await vi.advanceTimersByTimeAsync( 3900 );
+		expect( host.rendered ).toBe( 'PostEditor+Loader' );
+
+		await vi.advanceTimersByTimeAsync( 100 );
+		expect( host.rendered ).toBe( 'PostEditor' );
+	} );
+
+	it( 'shows the post with the error when the site’s styles fail', async () => {
+		host.config = new Error( 'down' );
+		await openPost( paragraph( 'Hi.' ) );
+		// Three attempts, a second apart and then two.
+		await vi.advanceTimersByTimeAsync( 3000 );
+
+		expect( host.rendered ).toBe( 'PostEditor' );
+		expect( host.editor?.notices ).toEqual( [ 'Couldn’t load the site’s styles: down' ] );
 	} );
 
 	it( 'replaces the loader with the error when the tool result fails', async () => {
@@ -363,20 +415,14 @@ describe( 'the page', () => {
 		} );
 	} );
 
-	it( 'sends a picked title with its suggestions’ id in one update, and hides them', async () => {
-		const titleSuggestions = { id: 't1', titles: [ 'Better', 'Best' ] };
-		await openPost( paragraph( 'text' ), { title_suggestions: titleSuggestions } );
-		expect( host.editor?.titleSuggestions ).toEqual( titleSuggestions );
+	it( 'leaves title suggestions to the chat’s card, and sends no decision on them', async () => {
+		await openPost( paragraph( 'text' ), {
+			title_suggestions: { id: 't1', titles: [ 'Better', 'Best' ] },
+		} );
 
-		// The pick types the title in, then reports the set done.
-		host.editor?.onChange( { title: 'Best', content: paragraph( 'text' ) } );
-		host.editor?.onTitleSuggestionsDone( 't1' );
-		expect( host.editor?.titleSuggestions ).toBeUndefined();
-		await vi.advanceTimersByTimeAsync( 1000 );
-
+		await type( paragraph( 'more text' ) );
 		expect( host.updates ).toHaveLength( 1 );
-		expect( lastUpdate() ).toMatchObject( { title: 'Best', title_suggestions_done_id: 't1' } );
-		expect( lastUpdate() ).not.toHaveProperty( 'content' );
+		expect( lastUpdate() ).not.toHaveProperty( 'title_suggestions_done_id' );
 	} );
 
 	it( 'shows the user’s post, editable, when Reload fails during an update', async () => {

@@ -55,7 +55,7 @@ body {
 // the site's element rules. Later rules here still set their own sizes. The popovers (the
 // toolbar's menus, the link editor) render outside the panel.
 $ui-roots:
-	".mcp-post-editor__bar, .mcp-post-editor__changes, .mcp-post-editor__conflict, .mcp-post-editor__dock, .mcp-post-editor__fix, .mcp-post-editor__titles, .mcp-post-editor__toolbar";
+	".mcp-post-editor__bar, .mcp-post-editor__changes, .mcp-post-editor__conflict, .mcp-post-editor__dock, .mcp-post-editor__fix, .mcp-post-editor__toolbar";
 $ui: ":is(.mcp-post-editor :is(#{$ui-roots}), .components-popover)";
 
 #{$ui} {
@@ -120,6 +120,14 @@ $ui: ":is(.mcp-post-editor :is(#{$ui-roots}), .components-popover)";
 	position: relative;
 	padding: 16px;
 	background: #e5e5e5;
+}
+
+// Over the editor, which renders underneath while the site's styles load.
+#mcp-post-editor .mcp-post-editor ~ .mcp-post-editor-loader {
+	position: fixed;
+	inset: 0;
+	z-index: 1000000;
+	height: auto;
 }
 
 // Under the bar, out of the flow, so the logo and the bar stay where the shell drew them: the
@@ -692,42 +700,4 @@ $ui: ":is(.mcp-post-editor :is(#{$ui-roots}), .components-popover)";
 	display: flex;
 	flex: none;
 	gap: 4px;
-}
-
-// The model's title options, under the title: chips that wrap, and a dismiss.
-.mcp-post-editor .mcp-post-editor__titles {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 6px;
-	margin-top: 12px;
-
-	.mcp-post-editor__chip {
-		max-width: 100%;
-		white-space: normal;
-		text-align: left;
-	}
-}
-
-.mcp-post-editor .mcp-post-editor__titles-dismiss {
-	min-height: 0;
-	margin: 0;
-	padding: 2px 6px;
-	background: none;
-	border: 0;
-	border-radius: 4px;
-	box-shadow: none;
-	color: #757575;
-	font-size: 16px;
-	line-height: 1;
-	cursor: pointer;
-
-	&:hover {
-		background: #f0f0f0;
-		color: #1e1e1e;
-	}
-
-	&:focus-visible {
-		outline: 2px solid #3858e9;
-	}
 }

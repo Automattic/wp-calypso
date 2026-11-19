@@ -1,0 +1,130 @@
+// The card's own UI theme, as the editor's chrome: system type at 13px and blueberry pills.
+$chrome-font:
+	13px/1.4 -apple-system,
+	BlinkMacSystemFont,
+	"Segoe UI",
+	Roboto,
+	sans-serif;
+$blueberry: #3858e9;
+
+body {
+	margin: 0;
+}
+
+// Once the card has replaced the shell's loader, the page is as tall as its content.
+.has-mcp-post-editor-titles,
+.has-mcp-post-editor-titles body,
+.has-mcp-post-editor-titles #mcp-post-editor-titles {
+	height: auto;
+	min-height: 0;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles {
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 10px 12px 12px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	color: #1e1e1e;
+	font: $chrome-font;
+	letter-spacing: normal;
+	text-align: left;
+	text-transform: none;
+
+	* {
+		box-sizing: border-box;
+		font: inherit;
+	}
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__header {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__heading {
+	flex: 1 1 0;
+	min-width: 0;
+	margin: 0;
+	color: #757575;
+	overflow-wrap: anywhere;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__close {
+	flex: none;
+	margin: -2px -4px 0 0;
+	padding: 2px 6px;
+	background: none;
+	border: 0;
+	border-radius: 4px;
+	color: #757575;
+	font-size: 16px;
+	line-height: 1;
+	cursor: pointer;
+
+	&:hover {
+		background: #f0f0f0;
+		color: #1e1e1e;
+	}
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-top: 8px;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__pill {
+	max-width: 100%;
+	margin: 0;
+	padding: 2px 8px;
+	background: #fff;
+	border: 1px solid $blueberry;
+	border-radius: 4px;
+	color: $blueberry;
+	text-align: left;
+	overflow-wrap: anywhere;
+	cursor: pointer;
+
+	&:hover:not(:disabled) {
+		background: #eef1fd;
+	}
+
+	&:disabled {
+		border-color: #ccc;
+		color: #949494;
+		cursor: default;
+	}
+
+	&.is-chosen {
+		background: $blueberry;
+		border-color: $blueberry;
+		color: #fff;
+	}
+}
+
+#mcp-post-editor-titles :is(.mcp-post-editor-titles__pill, .mcp-post-editor-titles__close):focus-visible {
+	outline: 2px solid $blueberry;
+	outline-offset: 1px;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__message {
+	margin: 8px 0 0;
+	color: #757575;
+
+	&:empty {
+		display: none;
+	}
+
+	&.is-error {
+		color: #cc1818;
+	}
+}
+
+// The message alone, when the card couldn't load.
+#mcp-post-editor-titles .mcp-post-editor-titles__message:first-child {
+	margin-top: 0;
+}

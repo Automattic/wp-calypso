@@ -4,7 +4,9 @@ The WordPress.com post editor as an MCP App, shown inside ChatGPT and Claude. wp
 
 The page is a block editor for the post, in the site's look, without the block editor's iframe (MCP hosts' CSP blocks it). It loads the site's styles with `wpcom-post-editor-config` and polls `wpcom-post-editor-state` every 2 seconds. Typing is sent with `wpcom-post-editor-update` after a 1 second pause. Changes from the server are merged into the user's typing by `editor/merge.ts`, which documents its rules. When the host can't call tools from the panel, the post shows read-only.
 
-The panel opens inline, and Expand asks the host for fullscreen.
+The panel opens inline. Fullscreen is the host's own control; the panel follows the host's display mode and size.
+
+A second entry, `mcp-post-editor-titles`, is the title suggestions card that `wpcom-post-editor-suggest-titles` shows in the chat. Its pills call `wpcom-post-editor-set-title`.
 
 Every dependency, including `@modelcontextprotocol/ext-apps` and the block editor, is bundled into the one script and stylesheet: the page runs in the host's sandboxed iframe, with no WordPress scripts.
 

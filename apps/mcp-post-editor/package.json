@@ -9,6 +9,7 @@
 		"*.css",
 		"*.scss",
 		"./index.ts",
+		"./titles/index.ts",
 		"./editor/blocks.ts"
 	],
 	"repository": {

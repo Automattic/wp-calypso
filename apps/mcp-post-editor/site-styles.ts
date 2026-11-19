@@ -2,8 +2,10 @@
 // blob: iframe the block editor's canvas uses, so the post renders in this document.
 // The editor scopes the site's editor `styles` to its canvas; this adds the rest.
 
-// Rebuilds each server `<link>` and `<style>` with only the attributes it needs.
+// Rebuilds each server `<link>` and `<style>` with only the attributes it needs. Settles when
+// each stylesheet has loaded or failed.
 function appendHtml( html: string, selector: string ) {
+	const loads: Promise< unknown >[] = [];
 	const template = document.createElement( 'template' );
 	template.innerHTML = html;
 	for ( const node of template.content.querySelectorAll( selector ) ) {
@@ -30,12 +32,26 @@ function appendHtml( html: string, selector: string ) {
 		if ( media ) {
 			link.media = media;
 		}
+		loads.push(
+			new Promise( ( resolve ) => {
+				link.onload = link.onerror = resolve;
+			} )
+		);
 		document.head.append( link );
 	}
+	return Promise.all( loads );
 }
 
-export function applySiteStyles( config: { assets_styles?: string; font_faces_html?: string } ) {
+// Settles once the stylesheets have loaded or failed, and then the fonts the page uses by the next
+// frame have loaded.
+export async function applySiteStyles( config: {
+	assets_styles?: string;
+	font_faces_html?: string;
+} ) {
 	// Block and theme CSS, written for the canvas document, which this page stands in for.
-	appendHtml( config.assets_styles ?? '', 'link[rel="stylesheet"], style' );
+	const loaded = appendHtml( config.assets_styles ?? '', 'link[rel="stylesheet"], style' );
 	appendHtml( config.font_faces_html ?? '', 'style' );
+	await loaded;
+	await new Promise( ( resolve ) => requestAnimationFrame( resolve ) );
+	await document.fonts?.ready;
 }

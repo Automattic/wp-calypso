@@ -1,6 +1,6 @@
 import { App } from '@modelcontextprotocol/ext-apps/app-with-deps';
-import { createElement, createRoot, flushSync } from '@wordpress/element';
-import { PostEditor, type EditorPost, type TitleSuggestions } from './editor';
+import { createElement, createRoot, flushSync, Fragment } from '@wordpress/element';
+import { PostEditor, type EditorPost } from './editor';
 import { type Prompt, type TextSelection } from './editor/assistant';
 import { joinBlocks, splitBlocks } from './editor/blocks';
 import { changeLabel, type AgentChange, type Decision } from './editor/changes';
@@ -28,7 +28,6 @@ type StateResult = {
 	content?: string;
 	changes?: ( AgentChange & { status?: string } )[];
 	proofread?: ProofreadIssue[];
-	title_suggestions?: TitleSuggestions | null;
 	conflict?: Conflict;
 };
 type SaveResult = {
@@ -58,6 +57,9 @@ const SAVE_DELAY = 1000;
 const SAVE_RETRIES = 2;
 const CONFIG_ATTEMPTS = 3;
 const CONFIG_TIMEOUT = 10000;
+// How long the loader waits for the site's styles once the post is ready, before showing the
+// post without them.
+const STYLES_WAIT = 4000;
 // The inline panel's height when the host doesn't fix it; the canvas scrolls inside.
 const INLINE_HEIGHT = 560;
 // How long Undo stays after Accept, unless the assistant changes the post first.
@@ -77,7 +79,7 @@ const PROMPTS: Record< Prompt, [ string, ( where: string ) => string ] > = {
 	title: [
 		'Optimize title',
 		( where ) =>
-			`Suggest 3 better titles for my post (${ where }). Read it with wpcom-post-editor-read, then send the 3 titles with wpcom-post-editor-suggest-titles so they show as buttons in my editor. Don’t list them in chat, and don’t use the browser or wp-admin.`,
+			`Suggest 3 better titles for my post (${ where }). Read it with wpcom-post-editor-read, then call wpcom-post-editor-suggest-titles with the 3 titles. I’ll pick one in the card it shows; don’t list them in chat, and don’t use the browser or wp-admin.`,
 	],
 	proofread: [
 		'Proofread',
@@ -116,8 +118,13 @@ const persistentErrors: { open?: string; config?: string; host?: string; save?: 
 let styles: ConfigResult[ 'styles' ] = [];
 let hostContext: HostContext = {};
 let connected = false;
-// The loader shows until the page has connected and shown the first post, or an error.
+// The loader shows until the page has connected and shown the first post with the site's styles,
+// or an error. The editor renders under it once it has the post, so the reveal waits only on the
+// styles.
 let loading = true;
+// The site's styles have applied, failed, or taken too long.
+let stylesReady = false;
+let stylesTimer: ReturnType< typeof setTimeout > | undefined;
 
 // The post the server and this page last agreed on, the user's latest, and what the editor shows.
 let base: Post = { title: '', content: '' };
@@ -143,10 +150,9 @@ let changes: AgentChange[] = [];
 // Changes the page has shown, and those it decided, which stay hidden until the server agrees.
 const seenChanges = new Map< string, AgentChange >();
 const decided = new Set< string >();
-// With the proofreading issues the user applied or dismissed, `done`, and the title suggestions
-// the user picked from or dismissed, `titles`.
-type Decisions = Record< Decision | 'done' | 'titles', string[] >;
-const noDecisions = (): Decisions => ( { accept: [], reject: [], undo: [], done: [], titles: [] } );
+// With the proofreading issues the user applied or dismissed, `done`.
+type Decisions = Record< Decision | 'done', string[] >;
+const noDecisions = (): Decisions => ( { accept: [], reject: [], undo: [], done: [] } );
 // Decisions the next update sends, with the typing.
 let decisions = noDecisions();
 let accepted: { ids: string[]; label: string; timer: ReturnType< typeof setTimeout > } | undefined;
@@ -156,16 +162,12 @@ const decisionArgs = ( list: Decisions ) => ( {
 	...( list.reject.length && { reject_change_ids: list.reject } ),
 	...( list.undo.length && { undo_change_ids: list.undo } ),
 	...( list.done.length && { proofread_done_ids: list.done } ),
-	...( list.titles.length && { title_suggestions_done_id: list.titles[ list.titles.length - 1 ] } ),
 } );
 
 // The open proofreading issues, as the last state listed them, and those the user finished,
 // which stay hidden until the server agrees.
 let issues: ProofreadIssue[] = [];
 const doneIssues = new Set< string >();
-// The model's title options, as the last state listed them, and the sets the user finished.
-let titleSuggestions: TitleSuggestions | undefined;
-const doneTitles = new Set< string >();
 // The conflict with WordPress.com, by its stamp, and the one the user dismissed.
 let conflict: string | undefined;
 let dismissedConflict: string | undefined;
@@ -189,14 +191,32 @@ function previewPost() {
 }
 
 function render() {
-	if ( loading && ( error || ( connected && editorPost ) ) ) {
+	if ( loading && ( error || ( connected && editorPost && stylesReady ) ) ) {
 		loading = false;
+		clearTimeout( stylesTimer );
 	}
-	if ( loading ) {
-		reactRoot.render( createElement( Loader, { status: statusMessage } ) );
-		return;
-	}
-	const { displayMode, availableDisplayModes, containerDimensions } = hostContext;
+	// The same two places each time, so neither remounts when the other comes or goes.
+	reactRoot.render(
+		createElement(
+			Fragment,
+			null,
+			loading && ! editorPost ? null : renderEditor(),
+			loading
+				? createElement( Loader, {
+						status: editorPost ? 'Loading the site’s styles…' : statusMessage,
+					} )
+				: null
+		)
+	);
+}
+
+function revealStyles() {
+	stylesReady = true;
+	render();
+}
+
+function renderEditor() {
+	const { displayMode, containerDimensions } = hostContext;
 	const isFullscreen = displayMode === 'fullscreen';
 	const fixedHeight =
 		containerDimensions && 'height' in containerDimensions ? containerDimensions.height : undefined;
@@ -211,47 +231,39 @@ function render() {
 		height = `${ Math.min( maxHeight ?? INLINE_HEIGHT, INLINE_HEIGHT ) }px`;
 	}
 	const readOnly = noServerTools || stopped || reloading;
-	reactRoot.render(
-		createElement( PostEditor, {
-			post: readOnly ? previewPost() : editorPost,
-			styles: styles ?? [],
-			readOnly,
-			status: statusMessage,
-			statusTitle: `Polls: ${ polls }, version ${ version }`,
-			location: post
-				? `${ siteUrl.replace( /^https?:\/\//, '' ) } · post ${ post.post_id }`
-				: undefined,
-			isError: !! error,
-			notices: Object.values( persistentErrors ).filter( ( message ): message is string =>
-				Boolean( message )
-			),
-			isFullscreen,
-			canFullscreen: !! availableDisplayModes?.includes( 'fullscreen' ),
-			height,
-			onChange: onEditorChange,
-			onToggleFullscreen: toggleFullscreen,
-			changes: readOnly
-				? []
-				: placeChanges( changes.filter( ( change ) => ! decided.has( change.change_id ) ) ),
-			accepted: readOnly ? undefined : accepted,
-			onDecide: decide,
-			isSaving: savingPost,
-			onSave: () => savePost(),
-			conflict: conflict === dismissedConflict ? undefined : conflict,
-			onConflict: resolveConflict,
-			canMessage: !! post && canSendMessage(),
-			onPrompt: sendPrompt,
-			onAsk: ask,
-			onSelect: reportSelection,
-			issues: readOnly ? [] : issues.filter( ( issue ) => ! doneIssues.has( issue.id ) ),
-			onProofreadDone: finishIssues,
-			titleSuggestions:
-				readOnly || ! titleSuggestions || doneTitles.has( titleSuggestions.id )
-					? undefined
-					: titleSuggestions,
-			onTitleSuggestionsDone: finishTitleSuggestions,
-		} )
-	);
+	return createElement( PostEditor, {
+		post: readOnly ? previewPost() : editorPost,
+		styles: styles ?? [],
+		readOnly,
+		status: statusMessage,
+		statusTitle: `Polls: ${ polls }, version ${ version }`,
+		location: post
+			? `${ siteUrl.replace( /^https?:\/\//, '' ) } · post ${ post.post_id }`
+			: undefined,
+		isError: !! error,
+		notices: Object.values( persistentErrors ).filter( ( message ): message is string =>
+			Boolean( message )
+		),
+		isFullscreen,
+		height,
+		onChange: onEditorChange,
+		changes: readOnly
+			? []
+			: placeChanges( changes.filter( ( change ) => ! decided.has( change.change_id ) ) ),
+		accepted: readOnly ? undefined : accepted,
+		onDecide: decide,
+		isSaving: savingPost,
+		onSave: () => savePost(),
+		conflict: conflict === dismissedConflict ? undefined : conflict,
+		onConflict: resolveConflict,
+		canMessage: !! post && canSendMessage(),
+		onPrompt: sendPrompt,
+		onAsk: ask,
+		onSelect: reportSelection,
+		issues: readOnly ? [] : issues.filter( ( issue ) => ! doneIssues.has( issue.id ) ),
+		onProofreadDone: finishIssues,
+		isCovered: loading,
+	} );
 }
 
 // Where each change's block is now: the user may have added or removed blocks above it.
@@ -610,12 +622,6 @@ function receiveIssues( list?: StateResult[ 'proofread' ] ) {
 	}
 }
 
-function receiveTitleSuggestions( next?: TitleSuggestions | null ) {
-	if ( next !== undefined ) {
-		titleSuggestions = next ?? undefined;
-	}
-}
-
 // `state` reports the conflict on every poll while it holds.
 function receiveConflict( next?: Conflict ) {
 	conflict = next?.remote_modified;
@@ -632,7 +638,6 @@ function receiveState( state: StateResult ) {
 		if ( state.changed ) {
 			receiveChanges( state.changes );
 			receiveIssues( state.proofread );
-			receiveTitleSuggestions( state.title_suggestions );
 			applyRemote( state );
 		}
 	}
@@ -649,15 +654,6 @@ function finishIssues( ids: string[], failed: number ) {
 				? 'Couldn’t apply a fix: its text changed. Edit it by hand.'
 				: `Couldn’t apply ${ failed } fixes: their text changed. Edit them by hand.`;
 	}
-	render();
-	scheduleSave();
-}
-
-// Title suggestions the user picked from or dismissed, sent in the next update. A pick's title
-// reaches onEditorChange as the user's typing, so the same update carries it.
-function finishTitleSuggestions( id: string ) {
-	doneTitles.add( id );
-	decisions.titles.push( id );
 	render();
 	scheduleSave();
 }
@@ -1015,7 +1011,6 @@ async function loadChanges( current: number ) {
 		if ( current === opens && ! stopped ) {
 			receiveChanges( state.changes );
 			receiveIssues( state.proofread );
-			receiveTitleSuggestions( state.title_suggestions );
 			receiveConflict( state.conflict );
 			render();
 		}
@@ -1034,6 +1029,10 @@ async function open( result: OpenResult ) {
 		flushSave();
 	}
 	const current = ++opens;
+	// Set before anything here can throw, so the loader can't stay up for good.
+	if ( ! stylesReady && ! stylesTimer ) {
+		stylesTimer = setTimeout( revealStyles, STYLES_WAIT );
+	}
 	post = next;
 	siteUrl = result.site.url;
 	version = result.version;
@@ -1049,8 +1048,6 @@ async function open( result: OpenResult ) {
 	clearAccepted();
 	issues = [];
 	doneIssues.clear();
-	titleSuggestions = undefined;
-	doneTitles.clear();
 	conflict = result.conflict?.remote_modified;
 	dismissedConflict = undefined;
 	persistentErrors.save = undefined;
@@ -1064,6 +1061,7 @@ async function open( result: OpenResult ) {
 		loadChanges( current );
 	}
 	if ( stylesLoaded || noServerTools ) {
+		revealStyles();
 		return;
 	}
 	try {
@@ -1071,14 +1069,21 @@ async function open( result: OpenResult ) {
 		if ( current === opens ) {
 			// Set first: a retry after a partial apply would append the same nodes again.
 			stylesLoaded = true;
-			applySiteStyles( config );
+			const applied = applySiteStyles( config );
 			styles = config.styles?.filter( ( style ) => style.css ) ?? [];
-			showPersistentError( 'config' );
+			persistentErrors.config = undefined;
+			// The canvas takes the scoped styles now, under the loader, so its fonts start loading.
+			flushSync( render );
+			await applied;
 		}
 	} catch ( e ) {
 		if ( current === opens && ! noServerTools ) {
-			showPersistentError( 'config', `Couldn’t load the site’s styles: ${ errorMessage( e ) }` );
+			persistentErrors.config = `Couldn’t load the site’s styles: ${ errorMessage( e ) }`;
 		}
+	}
+	// A newer open's styles reveal its post.
+	if ( current === opens ) {
+		revealStyles();
 	}
 }
 
@@ -1089,20 +1094,6 @@ function openFailed( message: string ) {
 	}
 	error = message;
 	showStatus( `Couldn’t open the post: ${ message }` );
-}
-
-function toggleFullscreen() {
-	const mode = hostContext.displayMode === 'fullscreen' ? 'inline' : 'fullscreen';
-	app.requestDisplayMode( { mode } ).then(
-		( result ) => {
-			hostContext = { ...hostContext, displayMode: result.mode };
-			render();
-		},
-		( e ) => {
-			error = errorMessage( e );
-			showStatus( `Couldn’t change the panel size: ${ error }` );
-		}
-	);
 }
 
 app.addEventListener( 'toolresult', ( result ) => {

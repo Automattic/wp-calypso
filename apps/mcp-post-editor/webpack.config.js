@@ -21,7 +21,12 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	return {
 		...webpackConfig,
 		mode: isDevelopment ? 'development' : 'production',
-		entry: { 'mcp-post-editor': path.join( __dirname, 'index.ts' ) },
+		entry: {
+			'mcp-post-editor': path.join( __dirname, 'index.ts' ),
+			// The title suggestions card in the chat: ext-apps and plain DOM only. About 526 KB
+			// minified, nearly all ext-apps' bundled dependencies (zod, the MCP client).
+			'mcp-post-editor-titles': path.join( __dirname, 'titles/index.ts' ),
+		},
 		output: {
 			...webpackConfig.output,
 			path: path.join( __dirname, 'dist' ),
@@ -43,8 +48,8 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				useDefaults: false,
 			} ),
 			new ReadableJsAssetsWebpackPlugin(),
-			// The shell loads only the entry script, and an async chunk would load from the host's
-			// origin, not widgets.wp.com, so everything goes in the entry.
+			// Each shell loads only its entry script, and an async chunk would load from the host's
+			// origin, not widgets.wp.com, so everything goes in the entry. Entry chunks never merge.
 			new webpack.optimize.LimitChunkCountPlugin( { maxChunks: 1 } ),
 			// Client-side image processing (about 17 MB of WebAssembly), loaded only on upload,
 			// which the editor doesn't offer.

@@ -1,5 +1,4 @@
 import {
-	store as blockEditorStore,
 	BlockEditorProvider,
 	BlockList,
 	BlockToolbar,
@@ -10,7 +9,6 @@ import {
 } from '@wordpress/block-editor';
 import { parse, serialize, type Block as BlockInstance } from '@wordpress/blocks';
 import { Button, Popover, SlotFillProvider } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import {
 	useEffect,
 	useLayoutEffect,
@@ -32,8 +30,6 @@ import type { ClipboardEvent, CSSProperties, KeyboardEvent } from 'react';
 // server's changes. The editor then shows it, keeping the blocks that didn't change. `id` is the
 // site and post: another post gets a new editor.
 export type EditorPost = { id: string; title: string; content: string; revision: number };
-// The model's title options, from `wpcom-post-editor-state`.
-export type TitleSuggestions = { id: string; titles: string[] };
 
 type Props = {
 	post?: EditorPost;
@@ -47,11 +43,9 @@ type Props = {
 	isError: boolean;
 	notices: string[];
 	isFullscreen: boolean;
-	canFullscreen: boolean;
 	// The panel's height in CSS; the canvas scrolls inside it.
 	height: string;
 	onChange: ( post: { title: string; content: string } ) => void;
-	onToggleFullscreen: () => void;
 	// The assistant's pending changes, and the ones just accepted, which can still be undone.
 	changes: AgentChange[];
 	accepted?: { ids: string[]; label: string };
@@ -69,9 +63,8 @@ type Props = {
 	// The open proofreading issues; `failed` counts those whose text was no longer there.
 	issues: ProofreadIssue[];
 	onProofreadDone: ( ids: string[], failed: number ) => void;
-	// The model's title options, and a pick or a dismiss of them.
-	titleSuggestions?: TitleSuggestions;
-	onTitleSuggestionsDone: ( id: string ) => void;
+	// Under the loader, while the site's styles load: out of reach of the keyboard and clicks.
+	isCovered: boolean;
 };
 
 // Reuses each current block whose markup is unchanged, so a merge doesn't remount the block
@@ -139,18 +132,13 @@ export function TitleField( {
 	readOnly,
 	isChanged,
 	onChange,
-	suggestions,
-	onSuggestionsDone,
 }: {
 	value: string;
 	readOnly: boolean;
 	isChanged: boolean;
 	onChange: ( title: string ) => void;
-	suggestions?: TitleSuggestions;
-	onSuggestionsDone: ( id: string ) => void;
 } ) {
 	const ref = useRef< HTMLHeadingElement >( null );
-	const { clearSelectedBlock } = useDispatch( blockEditorStore );
 	// Only a title from outside: rewriting what the user typed would move the caret.
 	useLayoutEffect( () => {
 		if ( ref.current && ref.current.textContent !== value ) {
@@ -161,29 +149,6 @@ export function TitleField( {
 		event.preventDefault();
 		const text = event.clipboardData.getData( 'text/plain' ).replace( /\s*\n\s*/g, ' ' );
 		document.execCommand( 'insertText', false, text );
-	};
-	// Types the title in, as the user would, so it saves like typing and the title's own undo
-	// takes it back. A selected block keeps the writing flow as the editing host, so the block is
-	// unselected first, and the title focused once that has rendered. The change is reported here
-	// too, in case the input event still goes elsewhere.
-	const pick = ( id: string, next: string ) => {
-		clearSelectedBlock();
-		requestAnimationFrame( () => {
-			const element = ref.current;
-			if ( element ) {
-				element.focus();
-				document.getSelection()?.selectAllChildren( element );
-				document.execCommand( 'insertText', false, next );
-				if ( element.textContent !== next ) {
-					element.textContent = next;
-				}
-				if ( document.activeElement !== element ) {
-					element.focus();
-				}
-			}
-			onChange( next );
-			onSuggestionsDone( id );
-		} );
 	};
 	return (
 		<div className="mcp-post-editor__title is-layout-constrained has-global-padding">
@@ -209,28 +174,6 @@ export function TitleField( {
 				}
 				onPaste={ onPaste }
 			/>
-			{ ! readOnly && suggestions && (
-				<div className="mcp-post-editor__titles" role="group" aria-label="Suggested titles">
-					{ suggestions.titles.map( ( title ) => (
-						<button
-							key={ title }
-							type="button"
-							className="mcp-post-editor__chip"
-							onClick={ () => pick( suggestions.id, title ) }
-						>
-							{ title }
-						</button>
-					) ) }
-					<button
-						type="button"
-						className="mcp-post-editor__titles-dismiss"
-						aria-label="Dismiss the suggested titles"
-						onClick={ () => onSuggestionsDone( suggestions.id ) }
-					>
-						×
-					</button>
-				</div>
-			) }
 		</div>
 	);
 }
@@ -246,19 +189,7 @@ function Canvas( {
 	onVisibleIssues,
 	applyRef,
 	openRef,
-	titleSuggestions,
-	onTitleSuggestionsDone,
-}: Pick<
-	Props,
-	| 'styles'
-	| 'readOnly'
-	| 'onChange'
-	| 'changes'
-	| 'issues'
-	| 'onProofreadDone'
-	| 'titleSuggestions'
-	| 'onTitleSuggestionsDone'
-> & {
+}: Pick< Props, 'styles' | 'readOnly' | 'onChange' | 'changes' | 'issues' | 'onProofreadDone' > & {
 	post: EditorPost;
 	onVisibleIssues: ( ids: string[] ) => void;
 	applyRef: Parameters< typeof ProofreadLayer >[ 0 ][ 'applyRef' ];
@@ -363,8 +294,6 @@ function Canvas( {
 							readOnly={ readOnly }
 							isChanged={ changes.some( ( change ) => change.block_index === null ) }
 							onChange={ ( next ) => setTitle( next ) }
-							suggestions={ titleSuggestions }
-							onSuggestionsDone={ onTitleSuggestionsDone }
 						/>
 						<BlockList className="is-layout-constrained has-global-padding" />
 					</ObserveTyping>
@@ -382,9 +311,7 @@ export function PostEditor( {
 	isError,
 	notices,
 	isFullscreen,
-	canFullscreen,
 	height,
-	onToggleFullscreen,
 	accepted,
 	onDecide,
 	isSaving,
@@ -395,6 +322,7 @@ export function PostEditor( {
 	onPrompt,
 	onAsk,
 	onSelect,
+	isCovered,
 	...canvas
 }: Props ) {
 	// The issues whose quote the canvas still has; the others are out of view.
@@ -443,6 +371,7 @@ export function PostEditor( {
 			<div
 				className={ `mcp-post-editor${ isFullscreen ? ' is-fullscreen' : '' }` }
 				style={ { '--mcp-post-editor-height': height } as CSSProperties }
+				inert={ isCovered }
 			>
 				<div className="mcp-post-editor__bar">
 					<p
@@ -468,15 +397,6 @@ export function PostEditor( {
 								onClick={ onSave }
 							>
 								Save
-							</button>
-						) }
-						{ canFullscreen && (
-							<button
-								type="button"
-								className="mcp-post-editor__chip"
-								onClick={ onToggleFullscreen }
-							>
-								{ isFullscreen ? 'Collapse' : 'Expand' }
 							</button>
 						) }
 					</div>
