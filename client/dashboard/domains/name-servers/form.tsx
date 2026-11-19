@@ -272,7 +272,7 @@ export default function NameServersForm( {
 								form={ nameServersForm }
 								onChange={ onChange }
 							/>
-							<Text>
+							<Text variant="muted">
 								{ createInterpolateElement(
 									/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
 									hasEnTranslation(

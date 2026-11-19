@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { domainsQuery, sslDetailsQuery } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { SITE_CONTEXT_VIEW } from '../../../domains/dataviews/views';
 import { render } from '../../../test-utils';
 import SiteDomains from '../index';
@@ -15,13 +16,17 @@ import type { QueryClient } from '@tanstack/react-query';
 let mockSearchParams: { action?: string } = {};
 let mockHasEnTranslation = true;
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => () => mockHasEnTranslation,
 } ) );
 
-jest.mock( '../../../app/router/sites', () => {
-	const actual = jest.requireActual( '../../../app/router/sites' );
+vi.mock( '../../../app/router/sites', async () => {
+	const actual = await vi.importActual< typeof import( '../../../app/router/sites' ) >(
+		'../../../app/router/sites'
+	);
 	return {
 		...actual,
 		siteRoute: {
@@ -415,7 +420,7 @@ describe( '<SiteDomains>', () => {
 	test( 'keeps the way back to this list when opening a domain’s settings', async () => {
 		const user = userEvent.setup();
 		const { router } = render( <SiteDomains />, { user: ownerUser } );
-		const navigate = jest.spyOn( router, 'navigate' );
+		const navigate = vi.spyOn( router, 'navigate' );
 
 		const card = await screen.findByRole( 'group', { name: domain.domain } );
 		await user.click( within( card ).getByRole( 'button', { name: 'Settings' } ) );
@@ -428,7 +433,7 @@ describe( '<SiteDomains>', () => {
 		);
 	} );
 
-	test( 'keeps a saved table view, without bulk selection', async () => {
+	test( 'keeps a saved table view, with Settings and no actions menu or bulk selection', async () => {
 		nock.cleanAll();
 		mockApis( {
 			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
@@ -441,6 +446,8 @@ describe( '<SiteDomains>', () => {
 			within( table ).queryByRole( 'columnheader', { name: 'SSL' } )
 		).not.toBeInTheDocument();
 		expect( within( table ).queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( within( table ).getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
+		expect( within( table ).queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
 	} );
 
@@ -568,63 +575,6 @@ describe( '<SiteDomains>', () => {
 			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 			expect( saveRequest.isDone() ).toBe( true );
 		} );
-	} );
-
-	test( 'does not offer www actions in the row menu of the primary domain', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( {
-			domains: [ domain, primaryCandidateDomain ],
-			siteResponse: { ...siteWithPrimaryDomainFeature, is_wpcom_atomic: true } as Site,
-			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
-		} );
-
-		render( <SiteDomains />, { user: ownerUser } );
-
-		const table = await screen.findByRole( 'table' );
-		const primaryRow = within( table ).getByText( 'test-site.com' ).closest( 'tr' ) as HTMLElement;
-		await user.click( within( primaryRow ).getByLabelText( 'Actions' ) );
-
-		const menuItems = await screen.findAllByRole( 'menuitem' );
-		expect( menuItems.length ).toBeGreaterThan( 0 );
-		expect( screen.queryByRole( 'menuitem', { name: /www/ } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'hides "Make primary site address" action while SSL is still pending', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( {
-			domains: [ primaryCandidateDomain ],
-			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: false },
-		} );
-
-		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
-
-		await waitForSslDetails( queryClient, primaryCandidateDomain.domain );
-
-		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
-		await user.click( actionsButtons[ 0 ] );
-
-		expect( screen.queryByText( 'Make primary site address' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'shows "Make primary site address" action once SSL is active', async () => {
-		const user = userEvent.setup();
-		nock.cleanAll();
-		mockApis( {
-			domains: [ primaryCandidateDomain ],
-			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: true },
-		} );
-
-		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
-
-		await waitForSslDetails( queryClient, primaryCandidateDomain.domain );
-
-		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
-		await user.click( actionsButtons[ 0 ] );
-
-		const action = await screen.findByText( 'Make primary site address' );
-		await waitFor( () => expect( action ).toBeVisible() );
 	} );
 
 	test( 'shows a newly registered domain as activating until its certificate is issued', async () => {

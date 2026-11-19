@@ -41,7 +41,7 @@ describe( 'isAtomicPrimaryDomainChangeFailed', () => {
 		[ { error: 'domain_not_active', message: ATOMIC_ERROR_MESSAGE }, false ],
 		[ new Error( ATOMIC_ERROR_MESSAGE ), false ],
 		[ null, false ],
-	] )( 'checks the error code of %p', ( error, expected ) => {
+	] )( 'checks the error code of %o', ( error, expected ) => {
 		expect( isAtomicPrimaryDomainChangeFailed( error ) ).toBe( expected );
 	} );
 } );

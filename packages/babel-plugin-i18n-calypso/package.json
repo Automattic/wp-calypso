@@ -15,7 +15,7 @@
 		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {
-		"@babel/core": "^7.29.7"
+		"@babel/core": "^7.29.13"
 	},
 	"publishConfig": {
 		"access": "public"

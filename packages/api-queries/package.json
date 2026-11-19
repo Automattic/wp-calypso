@@ -46,7 +46,7 @@
 		"@tanstack/query-sync-storage-persister": "^5.83.0",
 		"@tanstack/react-query": "^5.83.0",
 		"@tanstack/react-query-persist-client": "^5.83.0",
-		"@tanstack/react-router": "^1.170.42",
+		"@tanstack/react-router": "^1.170.46",
 		"@wordpress/html-entities": "^5.1.0",
 		"deepmerge": "^4.3.1",
 		"fast-deep-equal": "^3.1.3",

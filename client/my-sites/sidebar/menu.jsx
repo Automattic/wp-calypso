@@ -133,7 +133,7 @@ export const MySitesSidebarUnifiedMenu = ( menuProps ) => {
 		if ( ! isUnifiedSiteSidebarVisible ) {
 			return false;
 		}
-		return item?.parent === 'jetpack' && item?.url?.startsWith( 'https://jetpack.com' );
+		return item?.parent === 'jetpack' && item?.url?.startsWith( 'https://jetpack.com/' );
 	};
 
 	return (

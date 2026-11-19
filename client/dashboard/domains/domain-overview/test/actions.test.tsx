@@ -1,21 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain, type Purchase } from '@automattic/api-core';
 import { domainQuery, purchaseQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import Actions from '../actions';
 
-jest.mock( '../../../app/router/domains', () => ( {
-	...jest.requireActual( '../../../app/router/domains' ),
+vi.mock( '../../../app/router/domains', async () => ( {
+	...( await vi.importActual< typeof import( '../../../app/router/domains' ) >(
+		'../../../app/router/domains'
+	) ),
 	domainRoute: {
 		useParams: () => ( { domainName: 'example.com' } ),
 	},
 } ) );
 
-function renderActions( domainProps: Partial< Domain > ) {
+function renderActions(
+	domainProps: Partial< Domain >,
+	purchaseProps: Partial< Purchase > = { is_renewable: true }
+) {
 	const domain = {
 		domain: 'example.com',
 		subscription_id: '456',
@@ -27,7 +33,10 @@ function renderActions( domainProps: Partial< Domain > ) {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
 	queryClient.setQueryData( domainQuery( domain.domain ).queryKey, domain );
-	queryClient.setQueryData( purchaseQuery( 456 ).queryKey, { is_renewable: true } as Purchase );
+	queryClient.setQueryData( purchaseQuery( 456 ).queryKey, {
+		ID: 456,
+		...purchaseProps,
+	} as Purchase );
 	return render(
 		<>
 			<Actions />
@@ -54,5 +63,37 @@ describe( 'domain overview actions', () => {
 
 		await screen.findByText( 'Rendered' );
 		expect( screen.queryByRole( 'heading', { name: 'Danger zone' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'links Delete to the remove screen when auto-renew is off', async () => {
+		renderActions( {}, { ID: 456, is_auto_renew_enabled: false } as Partial< Purchase > );
+
+		expect( await screen.findByRole( 'link', { name: 'Delete' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'intent=remove&back_to=domain' )
+		);
+	} );
+
+	test( 'links Delete to the remove screen when auto-renew is on', async () => {
+		renderActions( {}, {
+			ID: 456,
+			is_auto_renew_enabled: true,
+			subscription_status: 'active',
+		} as Partial< Purchase > );
+
+		expect( await screen.findByRole( 'link', { name: 'Delete' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'intent=remove&back_to=domain' )
+		);
+	} );
+
+	test( 'passes on where the domain was opened from to the remove screen', async () => {
+		window.history.replaceState( {}, '', '/?back_to=site-domains' );
+		renderActions( {}, { ID: 456, is_auto_renew_enabled: false } as Partial< Purchase > );
+
+		expect( await screen.findByRole( 'link', { name: 'Delete' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'back_to=domain&domain_back_to=site-domains' )
+		);
 	} );
 } );

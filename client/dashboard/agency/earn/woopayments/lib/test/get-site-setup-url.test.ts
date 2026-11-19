@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 import { getSiteSetupUrl } from '../get-site-setup-url';
 

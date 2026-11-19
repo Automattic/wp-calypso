@@ -1,15 +1,16 @@
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { calypsoLiveRedirectorLink } from '../link';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn();
-	return Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn();
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: vi.fn() } ) };
 } );
 
 const IMAGE = 'registry.a8c.com/calypso/app:build-123';
 
 function setConfig( values: Record< string, unknown > ) {
-	jest.mocked( config ).mockImplementation( ( key: string ) => values[ key ] as never );
+	vi.mocked( config ).mockImplementation( ( key: string ) => values[ key ] as never );
 }
 
 describe( 'calypsoLiveRedirectorLink', () => {

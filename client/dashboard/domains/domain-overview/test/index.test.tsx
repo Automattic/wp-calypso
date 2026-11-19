@@ -1,15 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain } from '@automattic/api-core';
 import { domainQuery, siteByIdQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainOverview from '../index';
 
-jest.mock( '../../../app/router/domains', () => ( {
-	...jest.requireActual( '../../../app/router/domains' ),
+vi.mock( '../../../app/router/domains', async () => ( {
+	...( await vi.importActual< typeof import( '../../../app/router/domains' ) >(
+		'../../../app/router/domains'
+	) ),
 	domainRoute: {
 		useParams: () => ( { domainName: 'example.com' } ),
 	},
@@ -36,5 +39,6 @@ test( 'shows an SSL problem in the header without opening advanced settings', as
 
 	render( <DomainOverview />, { queryClient } );
 
-	expect( await screen.findByRole( 'link', { name: 'View SSL details' } ) ).toBeVisible();
+	expect( await screen.findByText( 'SSL disabled' ) ).toBeVisible();
+	expect( screen.queryByRole( 'link', { name: 'View SSL details' } ) ).not.toBeInTheDocument();
 } );

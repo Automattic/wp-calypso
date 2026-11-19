@@ -88,7 +88,7 @@ Callers then pass config explicitly — `useReadFoo( id, { enabled: ! isCreate, 
 
 ### Mutation factories must accept the consumer's `QueryClient`
 
-Calypso boots its own `QueryClient` (see `client/state/query-client.ts`, with a per-user persistence key) and injects it via `<QueryClientProvider>` in `client/controller/index.web.js`. The Dashboard, in contrast, uses the singleton exported by `@automattic/api-queries` (`packages/api-queries/src/query-client.ts`).
+Calypso boots its own `QueryClient` (see `client/state/query-client.ts`, with a per-user persistence key) and injects it via `<QueryClientProvider>` in `client/controller/index.web.jsx`. The Dashboard, in contrast, uses the singleton exported by `@automattic/api-queries` (`packages/api-queries/src/query-client.ts`).
 
 Because of that, **mutation factories defined in `@automattic/api-queries` must not reference the singleton `queryClient`** when used from the Reader. If they do, `onSuccess` handlers invalidate cache on the Dashboard's client instead of Calypso's, the active sidebar/page never sees the invalidation, and the underlying endpoint is never refetched after a mutation.
 
@@ -162,7 +162,7 @@ patches React Query caches, walk this list:
 
 ### Stream keys
 
-Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `conversations`, `conversations-a8c`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, and `custom_recs_*`. These keys index state in `state.reader.streams`.
+Stream types are identified by unique keys. Examples of stream keys include `following`, `feed:{feedId}`, `site:{siteId}`, `tag:{tagSlug}`, `search:{json}`, `discover:*`, `p2`, `a8c`, `likes`, `recommendations_posts`, `recent`, `recent:{feedId}`, `list:{...}`, `user:{id}`, `tag_popular:{tag}`, and `custom_recs_*`. These keys index state in `state.reader.streams`.
 
 ### Post keys
 
@@ -170,7 +170,7 @@ Posts are identified by objects with `{blogId, postId}` (blog posts) or `{feedId
 
 ### Post cards
 
-Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (title, excerpt, image), `compact` (smaller layout for discovery), `photo` (image-focused), `gallery` (multiple images), and `conversation` (discussion thread).
+Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (title, excerpt, image), `compact` (smaller layout for discovery), `photo` (image-focused), and `gallery` (multiple images).
 
 ### Page entrypoints
 

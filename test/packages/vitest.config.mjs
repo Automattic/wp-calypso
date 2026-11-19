@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { configDefaults, defineConfig } from 'vitest/config';
 
 // Workspace packages resolve to their source, as in Jest: CI doesn't build them before the tests.
@@ -24,5 +25,17 @@ export default defineConfig( {
 		exclude: [ ...configDefaults.exclude, '**/dist/**' ],
 		// Vitest otherwise cuts `$name` test titles at 40 characters.
 		taskTitleValueFormatTruncate: 0,
+		// Like Jest, reuse each worker and give every test file a fresh VM context. The default
+		// `forks` pool starts a process per file, which more than doubles the run's time.
+		pool: 'vmForks',
+		vmMemoryLimit: '1.5GB',
+		setupFiles: [ path.join( import.meta.dirname, 'vitest-setup.ts' ) ],
+		server: {
+			deps: {
+				// Each test file then gets its own nock, patched onto its own VM context, rather than
+				// sharing one with every other file in the worker.
+				inline: [ 'nock' ],
+			},
+		},
 	},
 } );

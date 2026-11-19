@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { SiteTransferReview } from '../site-transfer-review';
 import type { Purchase, Site, SiteTransferPreview } from '@automattic/api-core';
@@ -100,7 +101,7 @@ describe( '<SiteTransferReview />', () => {
 			<SiteTransferReview
 				purchase={ purchase }
 				targetSite={ targetSite }
-				onChangeSite={ jest.fn() }
+				onChangeSite={ vi.fn() }
 			/>
 		);
 
@@ -120,7 +121,7 @@ describe( '<SiteTransferReview />', () => {
 			<SiteTransferReview
 				purchase={ purchase }
 				targetSite={ targetSite }
-				onChangeSite={ jest.fn() }
+				onChangeSite={ vi.fn() }
 			/>
 		);
 
@@ -159,7 +160,7 @@ describe( '<SiteTransferReview />', () => {
 			<SiteTransferReview
 				purchase={ domainPurchase }
 				targetSite={ { ...targetSite, plan: { is_free: true } } as Site }
-				onChangeSite={ jest.fn() }
+				onChangeSite={ vi.fn() }
 			/>
 		);
 
@@ -175,7 +176,7 @@ describe( '<SiteTransferReview />', () => {
 			<SiteTransferReview
 				purchase={ purchase }
 				targetSite={ { ...targetSite, plan: { is_free: true } } as Site }
-				onChangeSite={ jest.fn() }
+				onChangeSite={ vi.fn() }
 			/>
 		);
 
@@ -197,7 +198,7 @@ describe( '<SiteTransferReview />', () => {
 			<SiteTransferReview
 				purchase={ purchase }
 				targetSite={ targetSite }
-				onChangeSite={ jest.fn() }
+				onChangeSite={ vi.fn() }
 			/>
 		);
 
@@ -225,7 +226,7 @@ describe( '<SiteTransferReview />', () => {
 			<SiteTransferReview
 				purchase={ purchase }
 				targetSite={ targetSite }
-				onChangeSite={ jest.fn() }
+				onChangeSite={ vi.fn() }
 			/>
 		);
 

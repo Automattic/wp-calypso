@@ -5,12 +5,14 @@ export const NEW_HOSTED_SITE_FLOW = 'new-hosted-site';
 export const TRANSFERRING_HOSTED_SITE_FLOW = 'transferring-hosted-site';
 export const DIRECT_TO_CART_FLOW = 'direct-to-cart';
 export const EDUCATION_FLOW = 'education';
+export const STUDENT_FLOW = 'student';
 export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const DOMAIN_FLOW = 'domain';
 export const ENTREPRENEUR_FLOW = 'entrepreneur';
 export const FREE_FLOW = 'free';
 export const SITE_MIGRATION_FLOW = 'site-migration';
 export const STATIC_SITE_IMPORT_FLOW = 'static-site-import';
+export const STATIC_SITE_IMPORT_PREVIEW_FLOW = 'static-site-import-preview';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
@@ -21,8 +23,6 @@ export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const ECOMMERCE_FLOW = 'ecommerce';
 export const ECOMMERCE_MONTHLY_FLOW = 'ecommerce-monthly';
-
-export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
 
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_AND_PLAN_FLOW = 'domain-and-plan';
@@ -127,8 +127,6 @@ export const isOnboardingFlow = ( flowName: string | null ) => {
 export const isDomainAndPlanFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ DOMAIN_AND_PLAN_FLOW ].includes( flowName ) );
 };
-
-export const isReadymadeFlow = ( flowName: string | null ) => flowName === READYMADE_TEMPLATE_FLOW;
 
 export const isWithThemeFlow = ( flowName: string | null ) => {
 	const WITH_THEME_FLOWS = [ WITH_THEME_FLOW ];

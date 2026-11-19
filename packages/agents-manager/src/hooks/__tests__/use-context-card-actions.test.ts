@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	removeExternalContextCard,
 	removeExternalContextEntry,
@@ -9,9 +10,9 @@ import {
 import { useContextCardActions } from '../use-context-card-actions';
 import type { ExternalContextCard } from '../../utils/external-context';
 
-jest.mock( '../../utils/external-context', () => ( {
-	removeExternalContextCard: jest.fn(),
-	removeExternalContextEntry: jest.fn(),
+vi.mock( '../../utils/external-context', () => ( {
+	removeExternalContextCard: vi.fn(),
+	removeExternalContextEntry: vi.fn(),
 } ) );
 
 const card: ExternalContextCard = {
@@ -22,9 +23,9 @@ const card: ExternalContextCard = {
 
 function renderContextCardActions() {
 	const options = {
-		beforeSubmit: jest.fn( () => true ),
-		submitChatMessage: jest.fn( async () => {} ),
-		setChatInput: jest.fn(),
+		beforeSubmit: vi.fn( () => true ),
+		submitChatMessage: vi.fn( async () => {} ),
+		setChatInput: vi.fn(),
 	};
 	const { result } = renderHook( () => useContextCardActions( options ) );
 
@@ -33,7 +34,7 @@ function renderContextCardActions() {
 
 describe( 'useContextCardActions', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'puts a prefill action’s prompt in the composer, keeping its context, without sending it', () => {
@@ -53,7 +54,7 @@ describe( 'useContextCardActions', () => {
 		dismissContextCard( card );
 
 		expect( removeExternalContextCard ).toHaveBeenCalledWith( 'card-1' );
-		expect( jest.mocked( removeExternalContextEntry ).mock.calls ).toEqual( [
+		expect( vi.mocked( removeExternalContextEntry ).mock.calls ).toEqual( [
 			[ 'entry-1' ],
 			[ 'entry-2' ],
 		] );

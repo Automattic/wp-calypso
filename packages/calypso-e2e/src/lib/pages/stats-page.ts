@@ -3,7 +3,7 @@ import { envVariables } from '../..';
 import { getCalypsoURL } from '../../data-helper';
 import { clickNavTab } from '../../element-helper';
 
-export type StatsTabs = 'Traffic' | 'Insights' | 'Subscribers' | 'Store';
+export type StatsTabs = 'Traffic' | 'Insights' | 'Subscribers' | 'Store' | 'WooCommerce';
 type TrafficActivityType = 'Views' | 'Visitors' | 'Likes' | 'Comments';
 type StoreActivityType = 'Gross Sales' | 'Net sales' | 'Orders' | 'Avg. Order Value';
 // Discriminated Union type.
@@ -53,6 +53,10 @@ export class StatsPage {
 	 */
 	async visit( siteSlug?: string ) {
 		await this.page.goto( getCalypsoURL( `/stats/${ siteSlug }` ) );
+
+		// Calypso may send the link on to wp-admin, and from there to Stats v2, so wait for a page
+		// with tabs to settle before checking which one it is.
+		await this.anchor.getByRole( 'tab' ).first().waitFor( { timeout: STATS_V2_BOOT_TIMEOUT } );
 	}
 
 	/**

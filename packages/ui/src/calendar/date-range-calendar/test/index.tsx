@@ -15,7 +15,8 @@ import {
 } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { useState, default as React } from 'react';
-import '@testing-library/jest-dom';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { usePreviewRange } from '../';
 import { DateRangeCalendar, TZDate } from '../..';
 import { getDateButton, getDateCell, monthNameFormatter } from '../../utils/test-utils';
@@ -63,12 +64,6 @@ const ControlledDateRangeCalendar = (
 	);
 };
 
-function setupUserEvent() {
-	// The `advanceTimersByTime` is needed since we're using jest
-	// fake timers to simulate a fixed date for tests.
-	return userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-}
-
 describe( 'DateRangeCalendar', () => {
 	let today: Date;
 	let tomorrow: Date;
@@ -80,10 +75,11 @@ describe( 'DateRangeCalendar', () => {
 	let prevPrevMonth: Date;
 
 	beforeAll( () => {
-		jest.useFakeTimers();
+		// Only `Date` is faked: Testing Library can't see Vitest's fake timers, so its waits would stall.
+		vi.useFakeTimers( { toFake: [ 'Date' ] } );
 		// For consistent tests, set the system time to a fixed date:
 		// Thursday, May 15, 2025, 20:00 UTC
-		jest.setSystemTime( 1747339200000 );
+		vi.setSystemTime( 1747339200000 );
 
 		today = startOfDay( new Date() );
 		tomorrow = addDays( today, 1 );
@@ -96,7 +92,7 @@ describe( 'DateRangeCalendar', () => {
 	} );
 
 	afterAll( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	describe( 'Semantics and basic behavior', () => {
@@ -220,8 +216,8 @@ describe( 'DateRangeCalendar', () => {
 			[ 'Controlled', ControlledDateRangeCalendar ],
 		] )( '[`%s`]', ( _mode, Component ) => {
 			it( 'should start selecting a range when a date button is clicked', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } /> );
 
@@ -240,8 +236,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should complete a range selection when a second date button is clicked', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } /> );
 
@@ -275,8 +271,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should handle selecting dates in reverse order (end date first)', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } /> );
 
@@ -310,8 +306,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should expand the current range when clicking a third date after the existing range end', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } /> );
 
@@ -356,8 +352,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should update the current range when clicking a third date in between the existing range start and end', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } /> );
 
@@ -402,8 +398,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should expand the current range when clicking a third date before the existing range start', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } /> );
 
@@ -447,8 +443,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should not select a disabled date when a date button is clicked', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } disabled={ tomorrow } /> );
 
@@ -460,8 +456,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should clear the range when defining a one-day range and clicking on the same date again', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				const dayAfterTomorrow = addDays( today, 2 );
 
@@ -499,8 +495,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should not clear the range when clicking a selected date if the `required` prop is set to `true`', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				const dayAfterTomorrow = addDays( today, 2 );
 
@@ -539,8 +535,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should complete a range selection even if there are disabled dates in the range', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } disabled={ tomorrow } /> );
 
@@ -573,8 +569,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should not complete a range selection if the `excludeDisabled` prop is set to `true` and there is at least one disabled date in the range', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } disabled={ tomorrow } excludeDisabled /> );
 
@@ -607,8 +603,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should not complete a range selection if the range has a duration of less than the value of the `min` prop', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } min={ 3 } /> );
 
@@ -654,8 +650,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should not complete a range selection if the range has a duration of more than the value of the `max` prop', async () => {
-				const user = setupUserEvent();
-				const onSelect = jest.fn();
+				const user = userEvent.setup();
+				const onSelect = vi.fn();
 
 				render( <Component onSelect={ onSelect } max={ 2 } /> );
 
@@ -727,8 +723,8 @@ describe( 'DateRangeCalendar', () => {
 			[ 'Controlled', ControlledDateRangeCalendar ],
 		] )( '[`%s`]', ( _mode, Component ) => {
 			it( 'should navigate to the previous and next months when the previous and next month buttons are clicked', async () => {
-				const user = setupUserEvent();
-				const onMonthChange = jest.fn();
+				const user = userEvent.setup();
+				const onMonthChange = vi.fn();
 
 				render( <Component onMonthChange={ onMonthChange } /> );
 
@@ -769,8 +765,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should not navigate to a month that is before the `startMonth` prop', async () => {
-				const user = setupUserEvent();
-				const onMonthChange = jest.fn();
+				const user = userEvent.setup();
+				const onMonthChange = vi.fn();
 
 				render( <Component startMonth={ nextMonth } onMonthChange={ onMonthChange } /> );
 
@@ -806,8 +802,8 @@ describe( 'DateRangeCalendar', () => {
 			} );
 
 			it( 'should not navigate to a month that is after the `endMonth` prop', async () => {
-				const user = setupUserEvent();
-				const onMonthChange = jest.fn();
+				const user = userEvent.setup();
+				const onMonthChange = vi.fn();
 
 				render( <Component endMonth={ prevMonth } onMonthChange={ onMonthChange } /> );
 
@@ -858,7 +854,7 @@ describe( 'DateRangeCalendar', () => {
 		} );
 
 		it( 'should focus each arrow as a tab stop, but treat the grid as a 2d composite widget', async () => {
-			const user = setupUserEvent();
+			const user = userEvent.setup();
 			render( <DateRangeCalendar /> );
 
 			// Focus previous month button
@@ -940,7 +936,7 @@ describe( 'DateRangeCalendar', () => {
 		// Note: the following test is not testing advanced keyboard interactions
 		// (pageUp, pageDown, shift+pageUp, shift+pageDown, home, end)
 		it( 'should not focus disabled dates and skip over them when navigating using arrow keys', async () => {
-			const user = setupUserEvent();
+			const user = userEvent.setup();
 
 			render(
 				<DateRangeCalendar
@@ -972,7 +968,7 @@ describe( 'DateRangeCalendar', () => {
 		} );
 
 		it( 'should focus the selected date when tabbing into the calendar', async () => {
-			const user = setupUserEvent();
+			const user = userEvent.setup();
 			render( <DateRangeCalendar selected={ { from: today, to: tomorrow } } /> );
 
 			// Tab to the calendar grid
@@ -986,7 +982,7 @@ describe( 'DateRangeCalendar', () => {
 
 	describe( 'Disabled states', () => {
 		it( 'should support disabling all dates via the `disabled` prop', async () => {
-			const user = setupUserEvent();
+			const user = userEvent.setup();
 
 			render( <DateRangeCalendar disabled /> );
 
@@ -1111,7 +1107,7 @@ describe( 'DateRangeCalendar', () => {
 		} );
 
 		it( 'should disable the previous and next months buttons if the `disableNavigation` is set to `true`', async () => {
-			const user = setupUserEvent();
+			const user = userEvent.setup();
 
 			render( <DateRangeCalendar disableNavigation /> );
 
@@ -1133,7 +1129,7 @@ describe( 'DateRangeCalendar', () => {
 	// that the date formatting, computed dir, and calendar format are correct.
 	describe( 'Localization', () => {
 		it( 'should localize the calendar based on the `locale` prop', async () => {
-			const user = setupUserEvent();
+			const user = userEvent.setup();
 
 			render( <DateRangeCalendar locale={ ar } /> );
 
@@ -1162,8 +1158,8 @@ describe( 'DateRangeCalendar', () => {
 		} );
 
 		it( 'should support timezones according to the `timeZone` prop', async () => {
-			const user = setupUserEvent();
-			const onSelect = jest.fn();
+			const user = userEvent.setup();
+			const onSelect = vi.fn();
 
 			render( <DateRangeCalendar timeZone="Asia/Tokyo" onSelect={ onSelect } /> );
 

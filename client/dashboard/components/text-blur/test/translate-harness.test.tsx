@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 /**
@@ -18,11 +18,12 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { useState } from 'react';
+import { vi } from 'vitest';
 import OverviewCard from '../../overview-card';
 import { Stat } from '../../stat';
 import { TextBlur } from '../index';
 
-jest.mock( '../../../app/analytics', () => ( {
+vi.mock( '../../../app/analytics', () => ( {
 	useAnalytics: () => ( { recordTracksEvent: () => {} } ),
 } ) );
 

@@ -1,47 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-/**
- * Default mock implementations
- */
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn(),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	createSelector: jest.fn(),
-	register: jest.fn(),
-	registerStore: jest.fn(),
-	useDispatch: jest.fn(),
-} ) );
-jest.mock( '@wordpress/element', () => ( {
-	...jest.requireActual( '@wordpress/element' ),
-	useCallback: jest.fn(),
-} ) );
-jest.mock( '@automattic/data-stores', () => ( {
-	WpcomPlansUI: {
-		store: null,
-	},
-	AddOns: {
-		useStorageAddOns: jest.fn(),
-	},
-	Purchases: {
-		useSitePurchasesByProductSlug: jest.fn(),
-	},
-	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePricingMetaForGridPlans: jest.fn(),
-	},
-} ) );
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-} ) );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn( ( selector ) => selector() ),
-	useDispatch: jest.fn(),
-} ) );
-jest.mock( '../../grid-context', () => ( { usePlansGridContext: jest.fn() } ) );
-
 import {
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
@@ -57,13 +16,60 @@ import {
 import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
+import { vi } from 'vitest';
 import { usePlansGridContext } from '../../grid-context';
 import ActionButton from '../shared/action-button';
 
+/**
+ * Default mock implementations
+ */
+vi.mock( '@wordpress/data', () => ( {
+	use: vi.fn(),
+	useSelect: vi.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	createSelector: vi.fn(),
+	register: vi.fn(),
+	registerStore: vi.fn(),
+	useDispatch: vi.fn(),
+} ) );
+vi.mock( '@wordpress/element', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/element' ) >( '@wordpress/element' ) ),
+	useCallback: vi.fn(),
+} ) );
+vi.mock( '@automattic/data-stores', async () => ( {
+	WpcomPlansUI: {
+		store: null,
+	},
+	AddOns: {
+		useStorageAddOns: vi.fn(),
+	},
+	Purchases: {
+		useSitePurchasesByProductSlug: vi.fn(),
+	},
+	Plans: {
+		...(
+			await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+				'@automattic/data-stores'
+			)
+		).Plans,
+		usePricingMetaForGridPlans: vi.fn(),
+	},
+} ) );
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
+} ) );
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual< typeof import( 'react-redux' ) >( 'react-redux' ) ),
+	useSelector: vi.fn( ( selector ) => selector() ),
+	useDispatch: vi.fn(),
+} ) );
+vi.mock( '../../grid-context', () => ( { usePlansGridContext: vi.fn() } ) );
+
 describe( 'ActionButton', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		useDispatch.mockImplementation( jest.fn( () => ( { setShowDomainUpsellDialog: jest.fn() } ) ) );
+		vi.clearAllMocks();
+		useDispatch.mockImplementation( vi.fn( () => ( { setShowDomainUpsellDialog: vi.fn() } ) ) );
 	} );
 
 	describe( 'Upgrade button', () => {
@@ -78,7 +84,7 @@ describe( 'ActionButton', () => {
 			current: false,
 			freePlan: false,
 			isInSignup: false,
-			onUpgradeClick: jest.fn(),
+			onUpgradeClick: vi.fn(),
 			isStuck: false,
 			showMonthlyPrice: true,
 			visibleGridPlans: [],

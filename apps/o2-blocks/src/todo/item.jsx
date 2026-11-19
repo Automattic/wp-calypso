@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { RichText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
-import { Icon, check, cancelCircleFilled, arrowDown, arrowUp } from '@wordpress/icons';
+import { Icon, check, close, arrowDown, arrowUp } from '@wordpress/icons';
 
 export class ItemEditor extends Component {
 	constructor() {
@@ -77,7 +77,7 @@ export class ItemEditor extends Component {
 						</Button>
 					) }
 					<Button onClick={ onDelete }>
-						<Icon icon={ cancelCircleFilled } />
+						<Icon icon={ close } />
 					</Button>
 				</span>
 			</li>

@@ -1,8 +1,14 @@
-import { isDotComPlan, isFreeHostingTrial, PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
+import {
+	isDotComPlan,
+	isFreeHostingTrial,
+	PLAN_ECOMMERCE,
+	PRODUCT_1GB_SPACE,
+} from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';
 import { getAddOn } from '@automattic/data-stores/src/add-ons/add-ons-list';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { isPreselectablePlan, supportsStorageAddOn } from 'calypso/lib/signup/legacy-plan-flows';
+import { isPlaygroundStoreRun } from './playground-woo-intent';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 type StorageAddOnSlug = ( typeof AddOns.STORAGE_ADD_ONS )[ number ];
@@ -17,6 +23,9 @@ function isStorageAddOnSlug( slug: string ): slug is StorageAddOnSlug {
  * is what an unrecognised flow name already did on the `/start` side.
  *
  * The new-hosted-site flow accepts any of its valid non-trial plans instead of that allowlist.
+ *
+ * A store saved from the WooCommerce Playground names no plan but always buys Commerce: the
+ * import needs a plan that runs WooCommerce.
  */
 export function getPreselectedPlan( query: URLSearchParams, flow?: string ): string | null {
 	const productSlug = query.get( 'plan' );
@@ -27,6 +36,10 @@ export function getPreselectedPlan( query: URLSearchParams, flow?: string ): str
 			! isFreeHostingTrial( productSlug )
 			? productSlug
 			: null;
+	}
+
+	if ( isPlaygroundStoreRun( query ) ) {
+		return PLAN_ECOMMERCE;
 	}
 
 	return productSlug && isPreselectablePlan( productSlug ) ? productSlug : null;

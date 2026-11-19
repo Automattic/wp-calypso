@@ -162,9 +162,8 @@ describe( 'useInfiniteStream — fetching', () => {
 	} );
 
 	it( 'stops paginating when a page returns no posts even if `meta.next_page` is set', async () => {
-		const CONVERSATIONS_PATH = '/rest/v1.2/read/conversations';
 		nock( BASE )
-			.get( CONVERSATIONS_PATH )
+			.get( LIKES_PATH )
 			.query( ( q: Record< string, string | string[] | undefined > ) => ! ( 'page_handle' in q ) )
 			.reply( 200, {
 				posts: [ apiPost( 1 ) ],
@@ -172,18 +171,18 @@ describe( 'useInfiniteStream — fetching', () => {
 			} );
 
 		nock( BASE )
-			.get( CONVERSATIONS_PATH )
+			.get( LIKES_PATH )
 			.query( ( q: Record< string, string | string[] | undefined > ) => 'page_handle' in q )
 			.reply( 200, {
 				posts: [],
-				// Conversations keeps echoing a cursor past the end of the stream;
+				// An endpoint can keep echoing a cursor past the end of the stream;
 				// without the empty-page guard the infinite query would loop here.
 				meta: { next_page: 'algorithm=read:comments:recent/1' },
 			} );
 
 		const queryClient = makeQueryClient();
 		const { Wrapper } = makeWrapper( queryClient );
-		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'conversations' } ), {
+		const { result } = renderHook( () => useInfiniteStream( { streamKey: 'likes' } ), {
 			wrapper: Wrapper,
 		} );
 

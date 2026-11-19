@@ -1,4 +1,5 @@
 import React, { useMemo, type JSX } from 'react';
+import { stripHTML } from 'calypso/lib/formatting';
 import LinkPreview from './link-preview';
 
 interface ContentProcessorProps {
@@ -66,7 +67,7 @@ export function detectUrls( content: string ): string | null {
 			! linkText.trim().startsWith( '#' )
 		) {
 			// Check if link text looks like a URL (strip HTML tags first)
-			const linkTextTrimmed = linkText.replace( /<[^>]*>/g, '' ).trim();
+			const linkTextTrimmed = stripHTML( linkText ).trim();
 			if ( linkTextTrimmed.match( /^https?:\/\// ) ) {
 				return url;
 			}
@@ -106,7 +107,6 @@ function isUrlInHtmlTag( content: string, position: number ): boolean {
  * @returns {React.Component} Processed content with link previews.
  */
 export default function ContentProcessor( { content }: ContentProcessorProps ): JSX.Element | null {
-	// React 19 rewrites innerHTML whenever this prop is a new object, which reloads embeds.
 	const innerHtml = useMemo( () => ( { __html: content ?? '' } ), [ content ] );
 
 	// If no content, return null

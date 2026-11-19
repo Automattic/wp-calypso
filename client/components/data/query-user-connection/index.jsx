@@ -2,13 +2,6 @@ import PropTypes from 'prop-types';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { isUserConnected } from 'calypso/state/jetpack-connect/actions';
-import { isRequestingSite } from 'calypso/state/sites/selectors';
-
-const request = ( siteId, siteIsOnSitesList ) => ( dispatch, getState ) => {
-	if ( ! isRequestingSite( getState(), siteId ) ) {
-		dispatch( isUserConnected( siteId, siteIsOnSitesList ) );
-	}
-};
 
 function QueryUserConnection( { siteId, siteIsOnSitesList = false } ) {
 	// save the `siteIsOnSitesList` flag to a ref so that it can be used by the request effect,
@@ -20,7 +13,9 @@ function QueryUserConnection( { siteId, siteIsOnSitesList = false } ) {
 
 	const dispatch = useDispatch();
 	useEffect( () => {
-		dispatch( request( siteId, savedSiteIsOnSitesList.current ) );
+		// Runs even while another request for the site is in flight: the authorize
+		// page waits for this check before offering "Return to your site".
+		dispatch( isUserConnected( siteId, savedSiteIsOnSitesList.current ) );
 	}, [ dispatch, siteId ] );
 
 	return null;

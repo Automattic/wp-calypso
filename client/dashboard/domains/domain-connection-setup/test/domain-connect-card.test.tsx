@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainConnectCard from '../domain-connect-card';
 
 // Mock InlineSupportLink to avoid async state updates warnings
-jest.mock( '../../../components/inline-support-link', () => ( {
+vi.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
 	default: ( { children }: { children: React.ReactNode } ) => <button>{ children }</button>,
 } ) );
 
 describe( 'DomainConnectCard', () => {
 	const defaultProps = {
-		onChangeSetupMode: jest.fn(),
-		onVerifyConnection: jest.fn(),
+		onChangeSetupMode: vi.fn(),
+		onVerifyConnection: vi.fn(),
 		isUpdatingConnectionMode: false,
 		registrar: null,
 		registrar_url: null,
@@ -32,7 +33,7 @@ describe( 'DomainConnectCard', () => {
 
 		test( 'calls onVerifyConnection when Start setup is clicked', async () => {
 			const user = userEvent.setup();
-			const onVerifyConnection = jest.fn();
+			const onVerifyConnection = vi.fn();
 
 			render( <DomainConnectCard { ...defaultProps } onVerifyConnection={ onVerifyConnection } /> );
 
@@ -44,7 +45,7 @@ describe( 'DomainConnectCard', () => {
 
 		test( 'calls onChangeSetupMode when Use manual setup is clicked', async () => {
 			const user = userEvent.setup();
-			const onChangeSetupMode = jest.fn();
+			const onChangeSetupMode = vi.fn();
 
 			render( <DomainConnectCard { ...defaultProps } onChangeSetupMode={ onChangeSetupMode } /> );
 

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  *
  * Run: yarn test-client client/dashboard/agency/earn/migrations/commissions-list/test/commission-columns.test.tsx
  */

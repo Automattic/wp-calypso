@@ -106,35 +106,18 @@ if ( process.argv.length !== 3 ) {
 	const helpText = `
 ${ chalk.yellow.bold( 'Usage: yarn feature-search {flag-search}' ) }
 ${ chalk.cyan(
-	'\nThis script makes it easy to search for particular feature flags across config environments. The value of {flag-search} can be a simple string (letters and numbers, no special characters) or a valid regular expression.'
+	'\nThis script makes it easy to search for particular feature flags across config environments. It lists every flag whose name contains {flag-search}.'
 ) }
 
-${ chalk.cyan( 'Example: Searching by simple string' ) }
+${ chalk.cyan( 'Example' ) }
 ${ chalk.bgBlue( '\tyarn feature-search plugin' ) }
-
-${ chalk.cyan( 'Example: Searching by regex' ) }
-${ chalk.bgBlue( `\tyarn feature-search 'bundl(e|ing)'` ) }
-${ chalk.cyan.italic( 'Note: Regular expression searches should be surrounded by quotes.' ) }
 	`;
 
 	console.log( helpText );
 	process.exit( 1 );
 }
 
-let searchRe = null;
-try {
-	searchRe = new RegExp( process.argv[ 2 ], 'g' );
-} catch ( e ) {
-	console.log( chalk.red( `Error processing search term '${ process.argv[ 2 ] }'` ) );
-	console.log(
-		chalk.red( `
-Please make sure your search is a valid regular expression or does not contain any special characters (for simple string searches).
-
-[${ e.name }] ${ e.message }
-		` )
-	);
-	process.exit( 1 );
-}
+const searchTerm = process.argv[ 2 ];
 
 const main = async () => {
 	const results = {};
@@ -144,7 +127,7 @@ const main = async () => {
 		const features = await getConfigFeatures( config );
 
 		for ( const flag in features ) {
-			if ( flag.match( searchRe ) ) {
+			if ( flag.includes( searchTerm ) ) {
 				if ( ! results.hasOwnProperty( flag ) ) {
 					results[ flag ] = [];
 				}

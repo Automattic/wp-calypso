@@ -1,0 +1,64 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/colors';
+
+$pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-block-padding ) );
+
+.dashboard-notifications-page {
+	display: flex;
+	flex-direction: column;
+	gap: var( --dashboard-page-header__content-gap );
+	height: $pane-height;
+}
+
+.dashboard-notifications-page__inbox {
+	flex: 1;
+	min-height: 0;
+}
+
+.dashboard-notifications-inbox {
+	height: 100%;
+	overflow: hidden;
+
+	> div {
+		height: 100%;
+	}
+}
+
+.dashboard-notifications-inbox__panes {
+	display: grid;
+	grid-template-columns: minmax( 360px, 480px ) minmax( 0, 1fr );
+	height: 100%;
+}
+
+.dashboard-notifications-inbox__list,
+.dashboard-notifications-inbox__detail {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 0;
+}
+
+.dashboard-notifications-inbox__panes .dashboard-notifications-inbox__list {
+	border-inline-end: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
+}
+
+.dashboard-notifications-inbox__detail {
+	overflow-y: auto;
+
+	.components-card__body {
+		padding-block: $grid-unit-30;
+	}
+
+	.components-card__header > *,
+	.components-card__body > *,
+	.components-card__footer > * {
+		width: 100%;
+		max-width: 640px;
+		margin-inline: auto;
+	}
+}
+
+.dashboard-notifications-inbox__detail.is-empty {
+	justify-content: center;
+	padding: $grid-unit-30;
+}

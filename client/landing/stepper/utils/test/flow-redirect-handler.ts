@@ -1,8 +1,17 @@
 /**
  * @jest-environment jsdom
  */
+import { isEnabled } from '@automattic/calypso-config';
+import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import redirectPathIfNecessary, { isRemovedFlow } from '../flow-redirect-handler';
+
+// `@automattic/calypso-products` calls `isEnabled` while it loads, before a top-level
+// `mockIsEnabled` would exist, so the mock is created inside the factory.
+jest.mock( '@automattic/calypso-config', () =>
+	Object.assign( jest.fn(), { isEnabled: jest.fn( () => false ) } )
+);
+const mockIsEnabled = isEnabled as jest.Mock;
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -13,6 +22,8 @@ describe( 'flow redirect handler', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockIsEnabled.mockReturnValue( false );
+		window.sessionStorage.clear();
 		Object.defineProperty( window, 'location', {
 			value: { href: '', replace },
 			writable: true,
@@ -102,8 +113,8 @@ describe( 'flow redirect handler', () => {
 			'/home/example.wordpress.com?siteSlug=example.wordpress.com',
 		],
 		[ '', '/home' ],
-	] )( 'sends readymade-template links with %p to that site’s Home', ( search, expected ) => {
-		redirectPathIfNecessary( '/setup/readymade-template/launchpad', search );
+	] )( 'sends update-options links with %p to that site’s Home', ( search, expected ) => {
+		redirectPathIfNecessary( '/setup/update-options', search );
 
 		expect( window.location.href ).toBe( expected );
 	} );
@@ -129,4 +140,166 @@ describe( 'flow redirect handler', () => {
 	it( 'does not classify existing AI Site Builder sites as removed', () => {
 		expect( isRemovedFlow( 'ai-site-builder' ) ).toBe( false );
 	} );
+
+	describe( 'entrepreneur flow', () => {
+		beforeEach( () => {
+			mockIsEnabled.mockImplementation(
+				( flag: string ) => flag === 'entrepreneur/redirect-to-commerce-purchase'
+			);
+		} );
+
+		it( 'sends a survey visit to the Commerce purchase path, keeping the query and replacing plan', () => {
+			const didRedirect = redirectPathIfNecessary(
+				'/setup/entrepreneur/start',
+				'?ref=partner&utm_source=ads&plan=personal-bundle'
+			);
+
+			expect( didRedirect ).toBe( true );
+			expect( replace ).toHaveBeenCalledWith(
+				'/setup/new-hosted-site?ref=partner&utm_source=ads&plan=ecommerce-bundle'
+			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_tailored_flows_redirect',
+				expect.objectContaining( {
+					redirect_to_url:
+						'/setup/new-hosted-site?ref=partner&utm_source=ads&plan=ecommerce-bundle',
+				} )
+			);
+		} );
+
+		it.each( [
+			'/setup/entrepreneur',
+			'/setup/entrepreneur/user',
+			`/setup/entrepreneur/${ STEPS.TRIAL_ACKNOWLEDGE.slug }`,
+			`/setup/entrepreneur/${ STEPS.SITE_CREATION_STEP.slug }`,
+		] )( 'redirects %s before site creation', ( pathname ) => {
+			redirectPathIfNecessary( pathname, '' );
+
+			expect( replace ).toHaveBeenCalledWith( '/setup/new-hosted-site?plan=ecommerce-bundle' );
+		} );
+
+		it.each( [
+			[ '/setup/entrepreneur/start/es', '/setup/new-hosted-site/es?plan=ecommerce-bundle' ],
+			[ '/setup/entrepreneur/es', '/setup/new-hosted-site/es?plan=ecommerce-bundle' ],
+			[
+				'/setup/entrepreneur/start/sr_latin',
+				'/setup/new-hosted-site/sr_latin?plan=ecommerce-bundle',
+			],
+		] )( 'keeps the locale when redirecting %s', ( pathname, expected ) => {
+			redirectPathIfNecessary( pathname, '' );
+
+			expect( replace ).toHaveBeenCalledWith( expected );
+		} );
+
+		it.each( [
+			STEPS.PROCESSING.slug,
+			STEPS.WAIT_FOR_ATOMIC.slug,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL.slug,
+			STEPS.ERROR.slug,
+		] )( 'lets a trial already being set up finish on the %s step', ( step ) => {
+			const didRedirect = redirectPathIfNecessary( `/setup/entrepreneur/${ step }`, '?siteId=123' );
+
+			expect( didRedirect ).toBe( false );
+			expect( replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'lets a trial already being set up finish on a localized step', () => {
+			const didRedirect = redirectPathIfNecessary(
+				`/setup/entrepreneur/${ STEPS.WAIT_FOR_ATOMIC.slug }/es`,
+				'?siteId=123'
+			);
+
+			expect( didRedirect ).toBe( false );
+			expect( replace ).not.toHaveBeenCalled();
+		} );
+
+		// Without the Playground's ID there is no store left to import, so the link buys Commerce
+		// like any other entrepreneur link.
+		it.each( [ '/setup/entrepreneur', `/setup/entrepreneur/${ STEPS.SITE_CREATION_STEP.slug }` ] )(
+			'redirects the old Playground publish path at %s',
+			( pathname ) => {
+				redirectPathIfNecessary( pathname, '?from=playground-publish' );
+
+				expect( replace ).toHaveBeenCalledWith(
+					'/setup/new-hosted-site?from=playground-publish&plan=ecommerce-bundle'
+				);
+			}
+		);
+
+		it( 'does not redirect while the feature flag is off', () => {
+			mockIsEnabled.mockReturnValue( false );
+
+			const didRedirect = redirectPathIfNecessary( '/setup/entrepreneur/start', '' );
+
+			expect( didRedirect ).toBe( false );
+			expect( replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not classify the entrepreneur flow as removed', () => {
+			expect( isRemovedFlow( 'entrepreneur' ) ).toBe( false );
+		} );
+	} );
+
+	// A visitor who saved a store just before the deploy still has the old trial link.
+	describe.each( [ true, false ] )(
+		'old Playground store links, with the redirect flag %s',
+		( flagEnabled ) => {
+			beforeEach( () => {
+				mockIsEnabled.mockReturnValue( flagEnabled );
+			} );
+
+			it.each( [
+				[ '/setup/entrepreneur', '/setup/onboarding/playground' ],
+				[ '/setup/entrepreneur/create-site', '/setup/onboarding/playground' ],
+				[ '/setup/entrepreneur/es', '/setup/onboarding/playground/es' ],
+			] )( 'save the store through onboarding from %s', ( pathname, expected ) => {
+				redirectPathIfNecessary( pathname, '?from=playground-publish&playground=abc' );
+
+				expect( replace ).toHaveBeenCalledWith(
+					`${ expected }?from=playground-publish&playground=abc&intent=woocommerce`
+				);
+			} );
+
+			it( 'let a trial already being set up finish', () => {
+				const didRedirect = redirectPathIfNecessary(
+					`/setup/entrepreneur/${ STEPS.WAIT_FOR_ATOMIC.slug }`,
+					'?from=playground-publish&playground=abc&siteId=123'
+				);
+
+				expect( didRedirect ).toBe( false );
+			} );
+		}
+	);
+
+	// A store whose trial started before onboarding took the store path over is still importing.
+	describe.each( [ true, false ] )(
+		'old Playground store imports, with the redirect flag %s',
+		( flagEnabled ) => {
+			beforeEach( () => {
+				mockIsEnabled.mockReturnValue( flagEnabled );
+			} );
+
+			it( 'finish on the site-setup importer as a store', () => {
+				redirectPathIfNecessary(
+					`/setup/entrepreneur/${ STEPS.IMPORTER_PLAYGROUND.slug }`,
+					'?siteSlug=example.wordpress.com&playground=abc&siteId=123'
+				);
+
+				expect( replace ).toHaveBeenCalledWith(
+					'/setup/site-setup/importerPlayground?siteSlug=example.wordpress.com&playground=abc&siteId=123&intent=woocommerce'
+				);
+			} );
+
+			it( 'keep the locale', () => {
+				redirectPathIfNecessary(
+					`/setup/entrepreneur/${ STEPS.IMPORTER_PLAYGROUND.slug }/es`,
+					'?siteSlug=example.wordpress.com&playground=abc'
+				);
+
+				expect( replace ).toHaveBeenCalledWith(
+					'/setup/site-setup/importerPlayground/es?siteSlug=example.wordpress.com&playground=abc&intent=woocommerce'
+				);
+			} );
+		}
+	);
 } );

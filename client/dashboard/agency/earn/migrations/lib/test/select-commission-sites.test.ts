@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 import { selectCommissionSites } from '../select-commission-sites';
 import type { MigrationCommissionSite } from '@automattic/api-core';

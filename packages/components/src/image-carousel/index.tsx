@@ -128,9 +128,7 @@ const ImageCarouselModal = ( {
 						</span>
 					</div>
 				) }
-				<div className="reader-image-carousel-caption">
-					{ images[ currentIndex ].caption?.replace( /<[^>]*>/g, '' ) }
-				</div>
+				<div className="reader-image-carousel-caption">{ images[ currentIndex ].caption }</div>
 			</div>
 		</div>
 	);
@@ -149,7 +147,10 @@ export const addImageCarousel = ( imageBlocks: Element[] ) => {
 		return {
 			src: img.src,
 			originalFile: img.dataset.origFile,
-			caption: img.dataset.imageCaption || '',
+			// Jetpack's caption is HTML with entities, e.g. `<p>Harbour&#8217;s view</p>`.
+			caption:
+				new DOMParser().parseFromString( img.dataset.imageCaption || '', 'text/html' ).body
+					.textContent ?? '',
 			alt: img.alt || '',
 		};
 	} );

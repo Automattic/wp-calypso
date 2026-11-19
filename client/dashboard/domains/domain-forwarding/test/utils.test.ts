@@ -1,10 +1,6 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
-jest.mock( '@wordpress/i18n', () => ( {
-	__: ( text: string ) => text,
-} ) );
-
 import { isTargetUrlValid } from '../utils';
 
 describe( 'domain forwarding utils', () => {

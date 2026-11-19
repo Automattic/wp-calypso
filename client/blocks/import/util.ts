@@ -13,7 +13,7 @@ export const CAPTURE_URL_RGX =
  * - http://somecampaing#withhash?andquery
  */
 export const CAPTURE_URL_RGX_SOFT =
-	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*){0,}(:[0-9/a-z-#]*)?$/i;
+	/^(https?:)?(?:[a-zA-Z0-9-.]+\.)?[a-zA-Z]{0,}(?:\/[^\s]*)?(:[0-9/a-z-#]*)?$/i;
 
 const platformMap: { [ key in ImporterPlatform ]: string } = {
 	wordpress: 'WordPress',
@@ -66,12 +66,6 @@ export function convertToFriendlyWebsiteName( website: string ): string {
 /**
  * Importer URL helpers
  */
-export function getWpComMigrateUrl( siteSlug: string, fromSite?: string ): string {
-	return '/migrate/{siteSlug}?from-site={fromSite}'
-		.replace( '{siteSlug}', siteSlug )
-		.replace( '{fromSite}', fromSite || '' );
-}
-
 export function getWpComOnboardingUrl(
 	siteSlug: string,
 	platform: ImporterPlatform,
@@ -111,9 +105,7 @@ export function getImporterUrl(
 	platform: ImporterPlatform,
 	fromSite?: string
 ): string {
-	if ( platform === 'wordpress' ) {
-		return getWpComMigrateUrl( siteSlug, fromSite );
-	} else if ( orgImporters.includes( platform ) ) {
+	if ( orgImporters.includes( platform ) ) {
 		return getWpOrgImporterUrl( siteSlug, platform );
 	}
 

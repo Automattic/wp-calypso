@@ -305,11 +305,10 @@ function patchFileObjects( formData ) {
 
 function install() {
 	debug( 'install()' );
-	if ( iframe ) {
-		uninstall();
-	}
+	const orphaned = iframe ? uninstall() : [];
 
-	buffered = [];
+	// Requests buffered for a replaced iframe that never got ready are sent by this one.
+	buffered ??= [];
 
 	// listen to messages sent to `window`
 	window.addEventListener( 'message', onmessage );
@@ -326,6 +325,15 @@ function install() {
 
 	// inject the <iframe> into the <body>
 	document.body.appendChild( iframe );
+
+	// Failed only now, so a callback that retries is buffered for the new iframe.
+	orphaned.forEach( ( xhr ) =>
+		reject(
+			xhr,
+			WPError( { status_code: 500, error_description: 'proxy iframe was reloaded' } ),
+			{}
+		)
+	);
 }
 
 /**
@@ -337,6 +345,7 @@ const reloadProxy = () => {
 
 /**
  * Removes the <iframe> proxy instance from the <body> of the page.
+ * @returns {window.XMLHttpRequest[]} requests sent to the removed iframe, which will never answer them
  */
 function uninstall() {
 	debug( 'uninstall()' );
@@ -344,6 +353,20 @@ function uninstall() {
 	document.body.removeChild( iframe );
 	loaded = false;
 	iframe = null;
+
+	// Buffered requests haven't reached the iframe yet, so they stay for the next one.
+	const bufferedIds = new Set( ( buffered ?? [] ).map( ( params ) => params.callback ) );
+	const orphaned = [];
+	for ( const id of Object.keys( requests ) ) {
+		if ( bufferedIds.has( id ) ) {
+			continue;
+		}
+
+		orphaned.push( requests[ id ] );
+		delete requests[ id ];
+	}
+
+	return orphaned;
 }
 
 /**

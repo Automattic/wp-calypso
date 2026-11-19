@@ -49,7 +49,9 @@ apply_result() {
 		def list: if length == 0 then "none" else join(", ") end;
 		.signals as $s
 		| "\($marker) sha=\(.sha) fix_here=\($s.unresolved_fix_here_comments) -->",
-		"**AI confidence: \(.level)**",
+		"**AI confidence: \(.level)** · _Experimental_",
+		"",
+		"> This is an experimental AI estimate of how much careful review this PR needs. It is not an approval and does not change what merging requires: the PR still needs the usual review and approval.",
 		"",
 		"<details>",
 		"<summary>Details</summary>",
@@ -106,8 +108,8 @@ summarize() {
 
 if [ "$DRY_RUN" != "true" ]; then
 	for spec in Low:d93f0b Medium:fbca04 High:0e8a16; do
-		gh label create "$LABEL_PREFIX ${spec%%:*}" --repo "$REPO" --color "${spec##*:}" \
-			--description "AI estimate of how much careful review this PR needs" >/dev/null 2>&1 || true
+		gh label create "$LABEL_PREFIX ${spec%%:*}" --repo "$REPO" --color "${spec##*:}" --force \
+			--description "Experimental AI estimate of how much review this PR needs. Not an approval." >/dev/null 2>&1 || true
 	done
 fi
 

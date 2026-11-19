@@ -1,5 +1,4 @@
 import { DotcomPlans, getPlanNames } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Fragment } from 'react';
@@ -92,12 +91,7 @@ const HoldingMessages: Partial< Record< EligibilityErrors, HoldingMessage > > = 
 				// translators: %(planName)s is the name of the plan
 				__( '%(planName)s plan required' ),
 				{
-					planName:
-						getPlanNames()[
-							config.isEnabled( 'hosting/dev-tools-all-paid-plans' )
-								? DotcomPlans.PERSONAL
-								: DotcomPlans.BUSINESS
-						],
+					planName: getPlanNames()[ DotcomPlans.PERSONAL ],
 				}
 			);
 		},

@@ -328,7 +328,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		expect( screen.queryByText( /How it works/ ) ).toBeInTheDocument();
 	} );
 
-	it( 'should render <DIYOption /> component', () => {
+	it( 'should render the "I\'ll do it myself" option', () => {
 		render( { navigation } );
 
 		expect( screen.queryByText( /I'll do it myself/ ) ).toBeInTheDocument();

@@ -61,7 +61,6 @@ export interface NewUserRequest {
 	'g-recaptcha-error'?: string;
 	'g-recaptcha-response'?: string;
 	blackbox_session_id?: string;
-	blackbox_key_version?: number;
 }
 
 export interface NewUserResponse {

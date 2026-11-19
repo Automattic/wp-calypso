@@ -4,6 +4,7 @@ App handlers are bits of code that run before the app is started and the main wi
 
 The following handlers are available:
 
+- [Cookie Flush](cookie-flush/README.md)
 - [Crash Reporting](crash-reporting/README.md)
 - [Exceptions](exceptions/README.md)
 - [Preferences](preferences/README.md)

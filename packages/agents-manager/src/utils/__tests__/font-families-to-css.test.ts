@@ -1,16 +1,17 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import { fontFamiliesToCSS, injectFontFamiliesIntoEditorIframe } from '../font-families-to-css';
 
-const mockGetCurrentTheme = jest.fn();
-jest.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
-jest.mock( '@wordpress/data', () => ( {
+const mockGetCurrentTheme = vi.fn();
+vi.mock( '@wordpress/core-data', () => ( { store: 'core' } ) );
+vi.mock( '@wordpress/data', () => ( {
 	select: () => ( { getCurrentTheme: mockGetCurrentTheme } ),
 } ) );
 
 describe( 'fontFamiliesToCSS', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'generates `@font-face` CSS for font families with `fontFace`', () => {
 		const css = fontFamiliesToCSS( [
@@ -182,7 +183,7 @@ describe( 'injectFontFamiliesIntoEditorIframe', () => {
 	];
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		document.body.innerHTML = '<iframe name="editor-canvas"></iframe>';
 	} );
 

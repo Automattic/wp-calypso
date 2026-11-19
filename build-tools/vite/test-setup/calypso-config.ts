@@ -26,3 +26,4 @@ const config = Object.assign( createConfig( serverData ), {
 export default config;
 export const { isEnabled, enabledFeatures, enable, disable } = config;
 export const clientData = config.clientData;
+export const serverEnvId = clientData.env_id;

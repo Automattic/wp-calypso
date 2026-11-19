@@ -37,6 +37,8 @@ export type OdieAssistantContextInterface = {
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
 	launcherContext?: string;
+	// The product's AI disclosure line, already translated.
+	aiDisclosureLine?: string;
 	// Set while the Help Center is open from checkout as part of the checkout support experiment.
 	checkoutSupportVariation?: CheckoutSupportVariation;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
@@ -70,6 +72,7 @@ export type OdieAssistantProviderProps = {
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
 	launcherContext?: string;
+	aiDisclosureLine?: string;
 	children?: ReactNode;
 	setChatStatus?: ( status: ChatStatus ) => void;
 } & PropsWithChildren;

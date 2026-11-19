@@ -12,14 +12,9 @@ class PostCommentContent extends Component {
 		content: PropTypes.string.isRequired,
 		isPlaceholder: PropTypes.bool,
 		className: PropTypes.string,
-		setWithDimensionsRef: PropTypes.func,
 	};
 
-	static defaultProps = {
-		setWithDimensionsRef: () => {},
-	};
-
-	// React 19 rewrites innerHTML whenever this prop is a new object, which reloads embeds.
+	// Cached so a pending comment's markup is only sanitized again when it changes.
 	getInnerHtml( content, isPlaceholder ) {
 		if ( this.innerHtmlContent !== content || this.innerHtmlIsPlaceholder !== isPlaceholder ) {
 			this.innerHtmlContent = content;
@@ -53,7 +48,6 @@ class PostCommentContent extends Component {
 				<div className={ clsx( 'comments__comment-content-wrapper', this.props.className ) }>
 					<div
 						className="comments__comment-content"
-						ref={ this.props.setWithDimensionsRef }
 						dangerouslySetInnerHTML={ this.getInnerHtml(
 							this.props.content,
 							this.props.isPlaceholder

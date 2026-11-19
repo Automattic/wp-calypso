@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { JetpackLicenseFilter, JetpackLicenseSortField } from '@automattic/api-core';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { DEFAULT_VIEW, ProductCell, RenewalCell, SiteCell, toFetchOptions } from '../dataviews';
 import type { JetpackLicense } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
@@ -121,12 +122,7 @@ describe( 'Titan inbox license', () => {
 
 	test( 'shows the domain in the Site column', () => {
 		render(
-			<SiteCell
-				license={ titan }
-				isAgencyOwner
-				isProvisioning={ false }
-				onManageSite={ jest.fn() }
-			/>
+			<SiteCell license={ titan } isAgencyOwner isProvisioning={ false } onManageSite={ vi.fn() } />
 		);
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.queryByText( 'Manage in Pressable' ) ).not.toBeInTheDocument();
@@ -138,7 +134,7 @@ describe( 'Titan inbox license', () => {
 				license={ { ...titan, meta: null } }
 				isAgencyOwner
 				isProvisioning={ false }
-				onManageSite={ jest.fn() }
+				onManageSite={ vi.fn() }
 			/>
 		);
 		expect( screen.getByText( '—' ) ).toBeVisible();

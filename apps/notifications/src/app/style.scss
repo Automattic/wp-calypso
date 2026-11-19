@@ -1,4 +1,5 @@
 @use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
+@import "@wordpress/base-styles/colors";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 @import "calypso/dashboard/app/wp-components-overrides.scss";
@@ -198,7 +199,9 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	// Clip the panes that slide off-screen (the closed detail sits at
 	// translateX(100%), past the inline-end edge) so they don't cause horizontal
 	// overflow. The panes carry no shadow at this breakpoint, so nothing is cut.
-	.wpnc-app {
+	// Only the panel has sliding panes: the inbox sits in the host's card, whose
+	// border this would cut off.
+	.wpnc-app:has(> .wpnc-app__detail-pane) {
 		overflow: hidden;
 	}
 
@@ -254,56 +257,29 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	}
 }
 
-.wpnc-app__new-badge {
-	margin-inline-start: 6px;
+.wpnc-app__full-view.components-button {
+	color: var(--wp-components-color-gray-900, #{$gray-900});
+	font-weight: 500;
 }
 
-.wpnc-app__beta-badge,
-.wpnc-app__beta-badge:visited {
-	color: var(--wpds-color-foreground-content-info, #001b4f);
-}
-
-// Marks the gear while the simplified layout is the one in use.
-.wpnc-app__settings-toggle.is-simplified {
-	position: relative;
-}
-
-.wpnc-app__settings-toggle.is-simplified::after {
-	content: "";
-	position: absolute;
-	inset-block-start: -2px;
-	inset-inline-end: -2px;
-	width: 6px;
-	height: 6px;
-	border-radius: 50%;
-	background: var(--color-accent);
-	// A ring in the panel's own background colour, so the dot reads against the gear
-	// rather than disappearing into its strokes.
-	box-shadow: 0 0 0 1px var(--color-surface);
-}
-
-
-.wpnc-app__layout-tour .components-popover__content {
-	width: 300px;
-	padding: 16px;
-	border-radius: 4px;
-}
-
-.wpnc-app__layout-tour-title {
-	margin: 0 0 8px;
-	font-size: 14px;
-	line-height: 20px;
-}
-
-.wpnc-app__layout-tour-text {
-	margin: 0 0 16px;
-	font-size: 13px;
-	line-height: 20px;
-	color: var(--color-text-subtle, #50575e);
-}
-
-.wpnc-app__layout-tour-body {
+// Sits between the tabs and the list, lined up with the rows' 16px edge.
+.wpnc-app__mark-all-read {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	flex-shrink: 0;
+
+	> .components-button.is-link {
+		align-self: flex-start;
+		margin: 8px 16px;
+		font-size: 13px;
+		line-height: 20px;
+
+		&:not(:hover, :active, [aria-disabled="true"]) {
+			color: var(--wp-components-color-gray-900, #{$gray-900});
+		}
+	}
+}
+
+.wpnc-app__mark-all-read-error {
+	margin: 8px 16px;
 }

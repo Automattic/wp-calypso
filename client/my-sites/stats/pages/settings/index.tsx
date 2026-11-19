@@ -197,20 +197,6 @@ function StatsSettingsPage() {
 							>
 								{ renderRoleToggles( data, 'roles' ) }
 							</SettingsCard>
-							<SettingsCard title={ translate( 'WordPress.com Reader' ) }>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									label={ translate( 'Show post views for this site.' ) }
-									checked={ data.settings.wpcom_reader_views_enabled }
-									disabled={ isBusy }
-									onChange={ ( isOn ) =>
-										save(
-											{ wpcom_reader_views_enabled: isOn },
-											{ setting: 'wpcom_reader_views_enabled', enabled: isOn }
-										)
-									}
-								/>
-							</SettingsCard>
 						</>
 					) }
 				</div>

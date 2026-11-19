@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -101,12 +101,6 @@ const buildEmailNotificationSettings = (
 };
 
 describe( 'EmailSettings', () => {
-	beforeEach( () => {
-		// nock.ls
-		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
-	} );
-
 	test( 'renders the email settings values', async () => {
 		mockGetSettingsApiAndReply(
 			buildEmailNotificationSettings( 1, {

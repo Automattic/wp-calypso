@@ -13,21 +13,17 @@ interface UnsubscribeWithUndoParams {
 }
 
 /**
- * Unsubscribes from a site and offers an Undo in the success notice.
+ * Shows the unsubscribed notice whose Undo re-subscribes.
  */
-export const useUnsubscribeWithUndo = () => {
+export const useUnsubscribeUndoNotice = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const { mutate: followSite } = useFollowSite();
-	const { mutate: unfollowSite } = useUnfollowSite();
 
 	return ( { feedUrl, siteName, source }: UnsubscribeWithUndoParams ): void => {
 		const target = { feedUrl };
 		const eventProps = { feed_url: target.feedUrl, source };
-
-		recordReaderTracksEvent( 'calypso_reader_unsubscribe_clicked', eventProps );
-		unfollowSite( target );
 
 		dispatch(
 			successNotice(
@@ -44,5 +40,23 @@ export const useUnsubscribeWithUndo = () => {
 				}
 			)
 		);
+	};
+};
+
+/**
+ * Unsubscribes from a site and offers an Undo in the success notice.
+ */
+export const useUnsubscribeWithUndo = () => {
+	const recordReaderTracksEvent = useRecordReaderTracksEvent();
+	const { mutate: unfollowSite } = useUnfollowSite();
+	const showUndoNotice = useUnsubscribeUndoNotice();
+
+	return ( params: UnsubscribeWithUndoParams ): void => {
+		recordReaderTracksEvent( 'calypso_reader_unsubscribe_clicked', {
+			feed_url: params.feedUrl,
+			source: params.source,
+		} );
+		unfollowSite( { feedUrl: params.feedUrl } );
+		showUndoNotice( params );
 	};
 };

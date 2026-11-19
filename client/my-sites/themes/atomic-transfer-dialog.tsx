@@ -10,6 +10,7 @@ import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	acceptAtomicTransferDialog,
+	addExternalManagedThemeToCart,
 	dismissAtomicTransferDialog,
 	activate as activateTheme,
 	initiateThemeTransfer,
@@ -19,6 +20,7 @@ import {
 	getCanonicalTheme,
 	getThemeForAtomicTransferDialog,
 	isExternallyManagedTheme,
+	isMarketplaceThemeSubscribed,
 	shouldShowAtomicTransferDialog,
 } from 'calypso/state/themes/selectors';
 import { isUploadInProgress, getUploadError } from 'calypso/state/themes/upload-theme/selectors';
@@ -35,12 +37,14 @@ interface AtomicTransferDialogProps {
 	theme: Theme;
 	siteSlug?: string | null;
 	isMarketplaceProduct?: boolean;
+	needsSubscription?: boolean;
 	activeTheme?: string | null;
 	uploadError?: boolean;
 	isJetpack?: boolean;
 	dispatchAcceptAtomicTransferDialog: typeof acceptAtomicTransferDialog;
 	dispatchDismissAtomicTransferDialog: typeof dismissAtomicTransferDialog;
 	dispatchActivateTheme: typeof activateTheme;
+	dispatchAddExternalManagedThemeToCart: ( themeId: string, siteId: number ) => void;
 	dispatchInitiateThemeTransfer: typeof initiateThemeTransfer;
 	dispatchRequestSite: typeof requestSite;
 }
@@ -53,7 +57,7 @@ type AtomicTransferDialogState = {
 	errorMessage: string | null;
 };
 
-class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
+export class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	state: AtomicTransferDialogState;
 
 	maxRequestActiveThemeAttempts = 30;
@@ -70,6 +74,21 @@ class AtomicTransferDialog extends Component< AtomicTransferDialogProps > {
 	}
 
 	handleAccept() {
+		const {
+			siteId,
+			theme,
+			needsSubscription,
+			dispatchAcceptAtomicTransferDialog,
+			dispatchAddExternalManagedThemeToCart,
+		} = this.props;
+
+		// The theme purchase transfers the site, so go to checkout instead of transferring now.
+		if ( needsSubscription && siteId && theme?.id ) {
+			dispatchAcceptAtomicTransferDialog( theme.id );
+			dispatchAddExternalManagedThemeToCart( theme.id, siteId );
+			return;
+		}
+
 		this.setState( { errorMessage: null } );
 		this.initiateTransfer();
 	}
@@ -297,12 +316,16 @@ export default connect(
 			return {};
 		}
 
+		const isMarketplaceProduct = isExternallyManagedTheme( state, themeId );
+
 		return {
 			siteId,
 			transferStatus: getAutomatedTransferStatus( state, siteId ),
 			theme: themeId && getCanonicalTheme( state, siteId, themeId ),
 			showEligibility: shouldShowAtomicTransferDialog( state, themeId ),
-			isMarketplaceProduct: isExternallyManagedTheme( state, themeId ),
+			isMarketplaceProduct,
+			needsSubscription:
+				isMarketplaceProduct && ! isMarketplaceThemeSubscribed( state, themeId, siteId ),
 			inProgress: isUploadInProgress( state, siteId ),
 			siteSlug: getSiteSlug( state, siteId ),
 			activeTheme: getActiveTheme( state, siteId ),
@@ -314,6 +337,7 @@ export default connect(
 		dispatchAcceptAtomicTransferDialog: acceptAtomicTransferDialog,
 		dispatchDismissAtomicTransferDialog: dismissAtomicTransferDialog,
 		dispatchActivateTheme: activateTheme,
+		dispatchAddExternalManagedThemeToCart: addExternalManagedThemeToCart,
 		dispatchInitiateThemeTransfer: initiateThemeTransfer,
 		dispatchRequestSite: requestSite,
 	}

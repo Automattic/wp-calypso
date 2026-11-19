@@ -2,6 +2,7 @@
 
 ## trunk
 
+- Breaking: Remove the Jest `matchMedia` mock, `@automattic/calypso-build/jest/mocks/match-media`. No package in this repository uses it any more; Jest setups that do can define `window.matchMedia` themselves.
 - Breaking: Move to Babel 8 (`@babel/core`, `@babel/cli` and `@babel/compat-data` 8), which needs Node.js `^22.18.0 || >=24.11.0`. `transpile` and the webpack config compile with `@automattic/calypso-babel-config`'s Babel 8 presets.
 - Fixed: Depend on `@babel/cli`, which `transpile` runs. It was only found when `@automattic/calypso-babel-config`'s copy was hoisted, so `transpile` failed under pnpm and other installs that don't hoist.
 - Breaking: `--env WP` no longer compiles JSX to `createElement` imported from `@wordpress/element`. JSX now uses React's automatic runtime (`react/jsx-runtime`) as in every other build, which WordPress registers as the `react-jsx-runtime` script since 6.6.

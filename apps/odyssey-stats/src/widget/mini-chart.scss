@@ -27,11 +27,6 @@
 
 		&.is-views {
 			background-color: var(--chart-series-views);
-
-			// The views bar is drawn behind the visitors bar at the chart's comparison opacity.
-			&.is-bar {
-				opacity: 0.5;
-			}
 		}
 
 		&.is-visitors {
@@ -61,6 +56,11 @@
 	.stats-widget-chart {
 		inline-size: 100%;
 		overflow: hidden;
+
+		// A light tooltip, as before @automattic/charts 4.x drew them dark.
+		.a8c-charts-scope {
+			--a8c-charts-color-tooltip-surface: #fff;
+		}
 
 		// The plot answers a click, so the cursor says so; the axes, which answer nothing, keep theirs.
 		&.is-clickable svg {

@@ -20,12 +20,12 @@ export default defineConfig( ( { mode } ) => {
 				{
 					find: '@automattic/agenttic-ui',
 					replacement: useUiBuild
-						? resolve( __dirname, '../agenttic-ui/dist/index.js' )
-						: resolve( __dirname, '../agenttic-ui/src' ),
+						? resolve( import.meta.dirname, '../agenttic-ui/dist/index.js' )
+						: resolve( import.meta.dirname, '../agenttic-ui/src' ),
 				},
 				{
 					find: '@automattic/agenttic-client',
-					replacement: resolve( __dirname, '../agenttic-client/src' ),
+					replacement: resolve( import.meta.dirname, '../agenttic-client/src' ),
 				},
 			],
 		},

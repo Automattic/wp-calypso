@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import '@testing-library/jest-dom';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import TierBenefits, { getProspectReportsUsageText } from '../tier-benefits';
 
@@ -18,7 +19,7 @@ describe( '<TierBenefits>', () => {
 		render(
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				links={ {
 					'manage-sites': '/sites',
 					'manage-purchases': '/purchases',
@@ -51,11 +52,11 @@ describe( '<TierBenefits>', () => {
 	} );
 
 	test( 'records the action click with the tier and action id', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		render(
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				recordTracksEvent={ recordTracksEvent }
 				links={ { 'manage-sites': '/sites' } }
 			/>
@@ -70,12 +71,12 @@ describe( '<TierBenefits>', () => {
 	} );
 
 	test( 'opens contact support through the host callback instead of the link', async () => {
-		const recordTracksEvent = jest.fn();
-		const onContactSupport = jest.fn();
+		const recordTracksEvent = vi.fn();
+		const onContactSupport = vi.fn();
 		render(
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				onContactSupport={ onContactSupport }
 				recordTracksEvent={ recordTracksEvent }
 				links={ { 'contact-support': '#contact-support' } }
@@ -98,7 +99,7 @@ describe( '<TierBenefits>', () => {
 		render(
 			<TierBenefits
 				currentAgencyTierId="agency-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				links={ { 'manage-profile': '/partner-directory' } }
 				renderDownloadBadges={ ( buttonProps ) => (
 					<button { ...( buttonProps as object ) }>Badges here</button>
@@ -117,7 +118,7 @@ describe( '<TierBenefits>', () => {
 		render(
 			<TierBenefits
 				currentAgencyTierId="agency-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				links={ { 'manage-profile': '/partner-directory' } }
 			/>
 		);
@@ -126,11 +127,11 @@ describe( '<TierBenefits>', () => {
 	} );
 
 	test( 'renders plain links for hosts without the dashboard router', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		render(
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				recordTracksEvent={ recordTracksEvent }
 				links={ { 'manage-sites': '/sites' } }
 				shouldUseRouterLink={ false }
@@ -153,7 +154,7 @@ describe( '<TierBenefits>', () => {
 		const { unmount } = render(
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				links={ { 'manage-sites': '/sites' } }
 			/>
 		);
@@ -163,7 +164,7 @@ describe( '<TierBenefits>', () => {
 		render(
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				links={ { 'generate-prospect-report': '/prospect-reports?action=new-report' } }
 				shouldUseRouterLink={ false }
 			/>
@@ -180,7 +181,7 @@ describe( '<TierBenefits>', () => {
 		render(
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				links={ {
 					'generate-prospect-report': '/prospect-reports?action=new-report',
 					'view-prospect-reports': '/prospect-reports',
@@ -203,7 +204,7 @@ describe( '<TierBenefits>', () => {
 		render(
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				links={ {
 					'generate-prospect-report': '/prospect-reports?action=new-report',
 					'view-prospect-reports': '/prospect-reports',
@@ -225,7 +226,7 @@ describe( '<TierBenefits>', () => {
 
 	test( 'shows bigger report allowances on higher tiers only when the agency has access', () => {
 		const { unmount } = render(
-			<TierBenefits currentAgencyTierId="emerging-partner" onScheduleCall={ jest.fn() } />
+			<TierBenefits currentAgencyTierId="emerging-partner" onScheduleCall={ vi.fn() } />
 		);
 		expect( screen.queryByText( '15 Prospect Reports a month' ) ).not.toBeInTheDocument();
 		unmount();
@@ -233,7 +234,7 @@ describe( '<TierBenefits>', () => {
 		render(
 			<TierBenefits
 				currentAgencyTierId="emerging-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				links={ { 'generate-prospect-report': '/prospect-reports?action=new-report' } }
 				shouldUseRouterLink={ false }
 			/>
@@ -247,7 +248,7 @@ describe( '<TierBenefits>', () => {
 		render(
 			<TierBenefits
 				currentAgencyTierId="pro-agency-partner"
-				onScheduleCall={ jest.fn() }
+				onScheduleCall={ vi.fn() }
 				links={ { 'generate-prospect-report': '/prospect-reports?action=new-report' } }
 				shouldUseRouterLink={ false }
 			/>

@@ -5,10 +5,6 @@ import { resolveBlackboxApiKey } from 'calypso/lib/blackbox-helper/api-key';
 
 let loadPromise = null;
 
-// Sent with a signup session so wpcom verifies it with `blackbox_api_key`.
-// A signup that sends no version is verified with `blackbox_signup_api_key`.
-export const BLACKBOX_KEY_VERSION = 2;
-
 /**
  * Public key for Blackbox collects.
  * @returns {string|undefined} Configured public key.
@@ -31,7 +27,7 @@ export function getBlackboxApiKey() {
  * Callers are responsible for calling window.Blackbox.configure() after this resolves.
  * The script loads once, and this key is what auto-init collects with.
  * @param {string} apiKey Public key stamped on the script tag.
- * @param {'login'|'signup'} flow Collect flow for `data-flow` on the script tag.
+ * @param {'login'|'signup'|'password_reset'} flow Collect flow for `data-flow` on the script tag.
  * @returns {Promise<void>}
  */
 export function loadBlackboxSdk( apiKey, flow ) {

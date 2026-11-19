@@ -57,7 +57,7 @@ function getHoldMessages( {
 	hasEnTranslation: ( arg: string ) => boolean;
 } ): HoldMessages {
 	const upsellPersonalPlan =
-		shouldUpsellPersonalPlan( context ) ||
+		shouldUpsellPersonalPlan( context, isMarketplace ) ||
 		( isMarketplace && isEnabled( 'marketplace-personal-premium' ) );
 
 	return {

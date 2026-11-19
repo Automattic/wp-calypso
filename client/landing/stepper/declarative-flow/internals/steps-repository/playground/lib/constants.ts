@@ -3,8 +3,6 @@ export const PLAYGROUND_HOST = 'https://playground.wordpress.net';
 // doesn't expose it, so this copy must follow any change to it there.
 export const PLAYGROUND_ORIGINS = [ PLAYGROUND_HOST, 'https://wpsandbox.wordpress.net' ];
 
-export const SESSION_KEY_FROM_PLAYGROUND_PUBLISH = 'entrepreneur_from_playground_publish';
-export const SESSION_KEY_PLAYGROUND_ID = 'entrepreneur_playground_id';
 export const BLUEPRINT_LIB_HOST = 'blueprintlibrary.wordpress.com';
 export const FALLBACK_PHP_VERSION = '8.4';
 

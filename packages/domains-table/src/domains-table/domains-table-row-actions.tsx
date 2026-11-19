@@ -38,7 +38,6 @@ interface DomainsTableRowActionsProps {
 	isSiteOnFreePlan: boolean;
 	isFlexSite: boolean;
 	isSimpleSite: boolean;
-	isHostingOverview?: boolean;
 	context?: DomainsTableContext;
 }
 
@@ -50,7 +49,6 @@ export const DomainsTableRowActions = ( {
 	isSiteOnFreePlan,
 	isFlexSite,
 	isSimpleSite,
-	isHostingOverview,
 	context,
 }: DomainsTableRowActionsProps ) => {
 	const {
@@ -107,13 +105,7 @@ export const DomainsTableRowActions = ( {
 				<MenuItemLink
 					key="actionDetails"
 					onClick={ handleMenuItemClick }
-					href={ domainManagementLink(
-						domain,
-						siteSlug,
-						isAllSitesView,
-						undefined,
-						isHostingOverview
-					) }
+					href={ domainManagementLink( domain, siteSlug, isAllSitesView ) }
 				>
 					{ domain.type === domainTypes.TRANSFER ? __( 'View transfer' ) : __( 'View settings' ) }
 				</MenuItemLink>

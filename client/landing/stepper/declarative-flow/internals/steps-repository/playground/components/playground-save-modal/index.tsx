@@ -1,7 +1,9 @@
 import { __experimentalHeading as Heading } from '@wordpress/components';
-import { Icon, cloud, gift, payment } from '@wordpress/icons';
+import { Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { PlaygroundConfirmModal } from '../playground-confirm-modal';
+import { cloud } from '../playground-intro/icons';
+import { shieldCheck, shoppingBag } from './icons';
 
 import './style.scss';
 
@@ -22,17 +24,17 @@ export function PlaygroundSaveModal( {
 		{
 			icon: cloud,
 			title: __( 'Your store, everywhere' ),
-			description: __( 'Access it anytime from your account' ),
+			description: __( 'Access it anytime from your account to continue building' ),
 		},
 		{
-			icon: gift,
-			title: __( 'Time to explore' ),
-			description: __( '14-day free trial. No credit card needed' ),
+			icon: shoppingBag,
+			title: __( 'Everything for selling online' ),
+			description: __( 'Built-in payments, shipping, and inventory management' ),
 		},
 		{
-			icon: payment,
-			title: __( 'Only pay when you’re ready' ),
-			description: __( 'Launch on your own timeline' ),
+			icon: shieldCheck,
+			title: __( 'Professional hosting & support' ),
+			description: __( 'Security, updates, and expert help included' ),
 		},
 	];
 
@@ -41,7 +43,7 @@ export function PlaygroundSaveModal( {
 			className="playground-save-modal"
 			title={ __( 'Save my store' ) }
 			description={ __(
-				'Your store will be saved to WordPress.com. Access it anytime from your account to continue building or go live.'
+				'Your store will be saved to WordPress.com with a Commerce plan. Build and launch on your own timeline.'
 			) }
 			confirmLabel={ __( 'Continue to WordPress.com' ) }
 			cancelLabel={ __( 'Keep building' ) }

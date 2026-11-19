@@ -357,7 +357,7 @@ fires correctly. The rule lives in the Survicate panel, not in our code.
 ## Commands
 
 ```bash
-yarn test-packages:vitest packages/survicate   # run all package tests
+yarn test-packages packages/survicate          # run all package tests
 cd packages/survicate && npx tsc --build ./tsconfig.json   # typecheck
 yarn eslint packages/survicate/src/<file>       # lint
 ```

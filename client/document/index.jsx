@@ -81,6 +81,7 @@ class Document extends Component {
 			useTranslationChunks,
 			showStepContainerV2Loader,
 			isPlaygroundWoo,
+			useViteDevServer,
 		} = this.props;
 
 		const theme = config( 'theme' );
@@ -201,6 +202,18 @@ class Document extends Component {
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
 					) ) }
+					{ /* The bilmur script looks its configuration up by this `id`. */ }
+					{ isBilmurEnabled() && (
+						<meta
+							id="bilmur"
+							property="bilmur:data"
+							content=""
+							data-provider="wordpress.com"
+							data-service="calypso"
+							data-customproperties={ `{"route_name": "${ sectionName }"}` }
+							data-site-tz="Etc/UTC"
+						/>
+					) }
 					{ head.links.map( ( props, index ) => (
 						<link { ...props } key={ index } />
 					) ) }
@@ -292,7 +305,7 @@ class Document extends Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && (
+					{ env === 'development' && ! useViteDevServer && (
 						<script nonce={ inlineScriptNonce } src={ `/calypso/${ target }/runtime.js` } />
 					) }
 					{ env !== 'development' &&
@@ -307,16 +320,7 @@ class Document extends Component {
 						) ) }
 
 					{ isBilmurEnabled() && (
-						<script
-							nonce={ inlineScriptNonce }
-							defer
-							id="bilmur"
-							src={ getBilmurUrl() }
-							data-provider="wordpress.com"
-							data-service="calypso"
-							data-customproperties={ `{"route_name": "${ sectionName }"}` }
-							data-site-tz="Etc/UTC"
-						/>
+						<script nonce={ inlineScriptNonce } defer src={ getBilmurUrl() } />
 					) }
 
 					{ entrypoint?.language?.manifest && (
@@ -327,8 +331,19 @@ class Document extends Component {
 						<script key={ translationChunk } nonce={ inlineScriptNonce } src={ translationChunk } />
 					) ) }
 
+					{ useViteDevServer && (
+						<script nonce={ inlineScriptNonce } type="module" src="/@vite/client" />
+					) }
+					{ useViteDevServer && (
+						<script nonce={ inlineScriptNonce } type="module" src="/@calypso/react-preamble.js" />
+					) }
 					{ entrypoint.js.map( ( asset ) => (
-						<script key={ asset } nonce={ inlineScriptNonce } src={ asset } />
+						<script
+							key={ asset }
+							nonce={ inlineScriptNonce }
+							type={ useViteDevServer ? 'module' : undefined }
+							src={ asset }
+						/>
 					) ) }
 					<script
 						nonce={ inlineScriptNonce }

@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { siteHourlyViewsQuery } from '@automattic/api-queries';
 import { Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { createStatsSparklineNodeBuilder } from '../index';
 import type { AdminBarNode } from '@automattic/omnibar';
@@ -60,7 +61,7 @@ describe( '<Omnibar> stats sparkline node', () => {
 
 	test( 'hides the node when the views fail to load', async () => {
 		mockHourlyViews( 500 );
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		const { queryClient } = render( <StatsSparklineNodeOmnibar /> );
 

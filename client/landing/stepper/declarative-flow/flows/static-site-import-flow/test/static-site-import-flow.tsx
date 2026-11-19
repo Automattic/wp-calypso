@@ -304,7 +304,7 @@ describe( 'Static site import flow', () => {
 			} );
 
 			expect( lastExit() ).toMatchObject( {
-				path: expect.stringMatching( new RegExp( `/sites/${ SITE.siteSlug }$` ) ),
+				path: expect.stringMatching( /\/sites\/destination\.example\.com$/ ),
 				query: { ...SOURCE, importSessionId: 'abc123', ref: 'static-site-import' },
 			} );
 		} );
@@ -368,15 +368,18 @@ describe( 'Static site import flow', () => {
 			} );
 		} );
 
-		it( 'falls back to the content importer when the session cannot start', () => {
+		it.each( [
+			{ action: 'unavailable', path: '/setup/site-setup/importerWix' },
+			{ action: 'choose_importer', path: `/setup/site-setup/${ STEPS.IMPORT_LIST.slug }` },
+		] )( 'exits to the content importers on $action', ( { action, path } ) => {
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
-				dependencies: { action: 'unavailable' },
+				dependencies: { action },
 				query: { ...SOURCE, platform: 'wix', ...SITE },
 			} );
 
 			expect( lastExit() ).toMatchObject( {
-				path: '/setup/site-setup/importerWix',
+				path,
 				query: { from: SOURCE.from, siteSlug: SITE.siteSlug },
 			} );
 		} );

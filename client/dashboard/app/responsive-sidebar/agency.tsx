@@ -1,12 +1,14 @@
 import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
 import { getFeatureName as getAmplifyFeatureName } from '../../agency/amplify/constants';
+import SidebarPromo from '../../agency/components/sidebar-promo';
 import { crossoverLinkProps } from '../../agency/crossover/store';
 import { canSwitchAgencyDashboard } from '../../agency/lib/dashboard-opt-in';
 import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
+import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 import {
 	agencyPartnerDirectoryRoute,
@@ -181,4 +183,18 @@ export default function AgencySidebar() {
 			) }
 		</>
 	);
+}
+
+/**
+ * Sits outside the sidebar navigator so it stays put across screens. `Sidebar`
+ * renders it in every dashboard variant, hence the non-suspense query.
+ */
+export function AgencySidebarPromo() {
+	const { supports } = useAppContext();
+	const { recordTracksEvent } = useAnalytics();
+	const { data: agency } = useQuery( { ...agencyQuery(), enabled: !! supports.agency } );
+	if ( ! supports.agency || ! agency || agency.isClientUser ) {
+		return null;
+	}
+	return <SidebarPromo recordTracksEvent={ recordTracksEvent } />;
 }

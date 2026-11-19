@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import ConnectSiteModal from '../connect-site-modal';
 import type { ConnectSiteAction } from '../types';
 
 function renderModal( action: ConnectSiteAction ) {
-	const onClose = jest.fn();
+	const onClose = vi.fn();
 
 	render( <ConnectSiteModal action={ action } onClose={ onClose } /> );
 

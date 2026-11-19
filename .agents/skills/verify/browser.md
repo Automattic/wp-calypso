@@ -32,7 +32,7 @@
 
 ## Setup
 
-- Local targets need a running dev server (`yarn start` or `yarn start-dashboard`). Don't start it yourself unless asked or [running unattended](#running-unattended). The script waits up to 90s for its first build; hosted URLs skip this check.
+- Local targets need a running dev server (`yarn start` or `yarn start-dashboard`). Use one that already serves this checkout, never another checkout's, which runs that checkout's code. If none does, the script stops and says whether another checkout's server is running. If none is, start one in the background with the command in [Running unattended](#running-unattended), and stop it once your checks are done. If one is, ask before starting a second one, since each takes several GB of memory, unless no one can answer. Never stop, restart or take the port of a server you didn't start. The script waits up to 90s for its first build; hosted URLs skip this check.
 - Ask the user directly, with your question tool if you have one (`AskUserQuestion` in Claude Code), without narrating the skill's steps, and give the exact command for anything they have to run. In Claude Code, prefix it with `!` so it runs in the session, except `setup-test-accounts.sh`, which goes in the user's own terminal to keep the key out of the conversation. For a failed login, offer these, each described in plain words by what it does (e.g. "a headless Playwright browser, logged in as a shared test account"), not by its command or setup details:
   1. **Playwright with the E2E test accounts:** the user runs `.agents/skills/verify/scripts/setup-test-accounts.sh` in their own terminal.
   2. **Playwright with their own account:** the user runs `! node .agents/skills/verify/scripts/auth.cjs me`.
@@ -117,6 +117,7 @@ node .agents/skills/verify/scripts/browse.cjs '/sites/{site}' --screenshot /tmp/
 - **The local Dashboard (`my.localhost`) keeps returning to the wordpress.com “Continue as …” login screen after you sign in** when the browser blocks third-party cookies for the local origin, as incognito windows and automated Chrome profiles do by default. Allow them for the origin, e.g. `http://my.localhost:3000`, or for `https://public-api.wordpress.com` (see `docs/install.md`).
 - **Don't wait for `networkidle`.** The dashboard keeps polling. Wait for a visible element.
 - **Tour popovers** can cover parts of a screenshot. Dismiss them in `--eval` if they get in the way.
+- **Don't count Dashboard snackbars by page text.** A hidden screen-reader region repeats the message and keeps it after the snackbar closes. Count `.components-snackbar` elements right after the action: most snackbars close after 6 seconds.
 - **Sandboxes.** Headless Chromium can reach production even when `/etc/hosts` points at a sandbox. Responses from the edge have an `x-ac` header; sandbox responses don't. To reach the sandbox, start the `--eval` with:
 
   ```js
@@ -133,3 +134,5 @@ When you drive a browser yourself (Claude in Chrome, Playwright MCP, an automate
 - Sign in on `wordpress.com/log-in`, then open `calypso.localhost:<port>/read?flags=oauth` once, with the port the dev server printed when it started (3000 in the main checkout). Signing in on the calypso.localhost form doesn't stick: the cookie is refused as cross-site.
 - An automated Chrome profile or an incognito window blocks third-party cookies by default; allow them, or the login loops (see [Gotchas](#gotchas)).
 - Playwright MCP's browser starts logged out, so it doesn't help when `browse.cjs` can't log in.
+
+On Calypso Live, make the checks in [Calypso Live](#calypso-live) by hand. Read the preview commit from `window.COMMIT_SHA` while the tab is still on the preview host. If the container answers `502` or `504 Gateway Time-out` while it starts, reload after a few seconds.

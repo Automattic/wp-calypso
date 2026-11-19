@@ -2,28 +2,29 @@
  * @jest-environment jsdom
  */
 
+import { type Mock, vi } from 'vitest';
 import { PREFERENCES_KEY } from '../constants';
 
-jest.mock( '@wordpress/data', () => ( {
-	select: jest.fn(),
+vi.mock( '@wordpress/data', () => ( {
+	select: vi.fn(),
 } ) );
 
-jest.mock( '../../wpcom-request', () => ( {
+vi.mock( '../../wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	canAccessWpcomApis: jest.fn(),
+	default: vi.fn(),
+	canAccessWpcomApis: vi.fn(),
 } ) );
 
-jest.mock( 'wpcom-proxy-request', () => ( {
+vi.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
-	isCookieAuthMissing: jest.fn( () => false ),
+	isCookieAuthMissing: vi.fn( () => false ),
 } ) );
 
 describe( 'help-center utils — localStorage persistence (logged out)', () => {
 	let utils: typeof import( '../utils' );
 
 	beforeEach( async () => {
-		jest.resetModules();
+		vi.resetModules();
 		window.localStorage.clear();
 		utils = await import( '../utils' );
 	} );
@@ -77,14 +78,14 @@ describe( 'getPersistedPreference — server preferences (logged in)', () => {
 	async function setup(
 		preferences: Record< string, unknown >
 	): Promise< typeof import( '../utils' ) > {
-		jest.resetModules();
+		vi.resetModules();
 
 		const { select } = await import( '@wordpress/data' );
-		( select as jest.Mock ).mockReturnValue( { getIsLoggedIn: () => true } );
+		( select as Mock ).mockReturnValue( { getIsLoggedIn: () => true } );
 
 		const wpcomRequest = await import( '../../wpcom-request' );
-		( wpcomRequest.canAccessWpcomApis as jest.Mock ).mockReturnValue( true );
-		( wpcomRequest.default as jest.Mock ).mockResolvedValue( {
+		( wpcomRequest.canAccessWpcomApis as Mock ).mockReturnValue( true );
+		( wpcomRequest.default as Mock ).mockResolvedValue( {
 			calypso_preferences: preferences,
 		} );
 
@@ -118,7 +119,7 @@ describe( 'getPersistedPreference — server preferences (logged in)', () => {
 		window.localStorage.setItem( PREFERENCES_KEY + 'help_center_open', 'true' );
 
 		const { isCookieAuthMissing } = await import( 'wpcom-proxy-request' );
-		( isCookieAuthMissing as jest.Mock ).mockReturnValue( true );
+		( isCookieAuthMissing as Mock ).mockReturnValue( true );
 		const wpcomRequest = await import( '../../wpcom-request' );
 
 		await expect( utils.getPersistedPreference( 'help_center_open' ) ).resolves.toBe( true );
@@ -126,17 +127,17 @@ describe( 'getPersistedPreference — server preferences (logged in)', () => {
 	} );
 
 	it( 'does not cache a failed preferences request — a later read retries', async () => {
-		jest.resetModules();
+		vi.resetModules();
 
 		const { select } = await import( '@wordpress/data' );
-		( select as jest.Mock ).mockReturnValue( { getIsLoggedIn: () => true } );
+		( select as Mock ).mockReturnValue( { getIsLoggedIn: () => true } );
 
 		const { isCookieAuthMissing } = await import( 'wpcom-proxy-request' );
-		( isCookieAuthMissing as jest.Mock ).mockReturnValue( false );
+		( isCookieAuthMissing as Mock ).mockReturnValue( false );
 
 		const wpcomRequest = await import( '../../wpcom-request' );
-		( wpcomRequest.canAccessWpcomApis as jest.Mock ).mockReturnValue( true );
-		( wpcomRequest.default as jest.Mock )
+		( wpcomRequest.canAccessWpcomApis as Mock ).mockReturnValue( true );
+		( wpcomRequest.default as Mock )
 			.mockRejectedValueOnce( new Error( '401' ) )
 			.mockResolvedValueOnce( { calypso_preferences: { help_center_open: true } } );
 

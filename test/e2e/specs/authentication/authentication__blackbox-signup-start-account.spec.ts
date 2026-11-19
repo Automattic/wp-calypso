@@ -88,7 +88,6 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 
 			const request = await usersNewRequest;
 			expect( request.postDataJSON()?.blackbox_session_id ).toBe( 'bbtest_allow__________' );
-			expect( request.postDataJSON()?.blackbox_key_version ).toBe( 2 );
 		} );
 
 		await test.step( 'Then the account is created', async function () {

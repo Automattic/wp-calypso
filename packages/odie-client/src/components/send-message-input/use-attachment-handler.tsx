@@ -65,13 +65,14 @@ const getFileType = ( file: File ) => {
 
 const getPlaceholderAttachmentMessage = ( file: File ) => {
 	return zendeskMessageConverter( {
-		id: String( new Date().getTime() ),
+		id: crypto.randomUUID(),
 		role: 'user',
 		type: getFileType( file ),
 		text: '',
 		received: new Date().getTime(),
+		// No `temporary_id`: the file is uploaded already, so this isn't a message waiting to be sent.
+		// A chat refresh keeps only those, so it swaps this placeholder for the file Zendesk returns.
 		metadata: {
-			temporary_id: crypto.randomUUID() as string,
 			local_timestamp: Date.now() / 1000,
 		},
 		source: { type: 'web', id: '', integrationId: '' },
@@ -239,12 +240,17 @@ export const useAttachmentHandler = () => {
 			input.accept = SUPPORTED_ATTACHMENT_MIME_TYPES.concat( SUPPORTED_ATTACHMENT_EXTENSIONS ).join(
 				', '
 			);
-			input.onchange = ( e ) => {
-				const files = ( e.target as HTMLInputElement ).files;
+			// iOS Safari never fires `change` on a file input that isn't in the document.
+			input.style.display = 'none';
+			document.body.appendChild( input );
+			input.onchange = () => {
+				const files = input.files;
+				input.remove();
 				if ( files?.length ) {
 					handleFileUpload( Array.from( files ) );
 				}
 			};
+			input.addEventListener( 'cancel', () => input.remove() );
 			input.click();
 		},
 		variant: 'ghost' as const,

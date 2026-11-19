@@ -7,9 +7,6 @@ jest.mock( '@automattic/calypso-config', () => {
 		if ( key === 'blackbox_api_key' ) {
 			return 'login-key';
 		}
-		if ( key === 'blackbox_signup_api_key' ) {
-			return 'signup-key';
-		}
 		if ( key === 'blackbox_url' ) {
 			return 'https://blackbox-api.wp.com/v.js';
 		}

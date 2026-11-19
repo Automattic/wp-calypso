@@ -1,6 +1,6 @@
-import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
+import { domainsQuery, userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { invokeSurvicateEventOnce } from '@automattic/survicate';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
@@ -8,6 +8,7 @@ import { useAnalytics } from '../../app/analytics';
 import { getCurrentDashboard } from '../../app/routing';
 import Notice, { NoticeActionLinkButton } from '../../components/notice';
 import { getDomainConnectionSetupTemplateUrl } from '../../utils/domain-url';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { isWordPressMigration } from '../../utils/site-status';
 import type { Site } from '@automattic/api-core';
@@ -66,21 +67,38 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 		[ site.ID, completedAt ]
 	);
 
+	const sourceDomain = site.site_migration.source_domain ?? '';
+
+	// Once the domain is on the site, the use-my-domain flow has nothing left to choose.
+	const { data: isSourceDomainOnSite } = useQuery( {
+		...domainsQuery(),
+		select: ( domains ) =>
+			domains.some( ( domain ) => domain.domain === sourceDomain && domain.blog_id === site.ID ),
+	} );
+
 	if ( isDismissed ) {
 		return null;
 	}
 
-	const sourceDomain = site.site_migration.source_domain ?? '';
 	const isSourceDomainPrimary = getPrimaryDomain( site ) === sourceDomain;
 
-	const connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-		initialQuery: sourceDomain,
-		step: 'transfer-or-connect',
-		siteSlug: site.slug,
-		domainConnectionSetupUrl: getDomainConnectionSetupTemplateUrl(),
-		dashboard: getCurrentDashboard(),
-		back_to: redirectToDashboardLink(),
-	} );
+	const domainConnectionSetupUrl = getDomainConnectionSetupTemplateUrl();
+
+	let connectDomainUrl;
+	if ( isSourceDomainOnSite && isDashboardBackport() ) {
+		connectDomainUrl = `/domains/mapping/${ site.slug }/setup/${ sourceDomain }`;
+	} else if ( isSourceDomainOnSite && domainConnectionSetupUrl ) {
+		connectDomainUrl = domainConnectionSetupUrl.replace( '%s', sourceDomain );
+	} else {
+		connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+			initialQuery: sourceDomain,
+			step: 'transfer-or-connect',
+			siteSlug: site.slug,
+			domainConnectionSetupUrl,
+			dashboard: getCurrentDashboard(),
+			back_to: redirectToDashboardLink(),
+		} );
+	}
 
 	return (
 		<Notice

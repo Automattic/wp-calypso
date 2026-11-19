@@ -19,8 +19,6 @@ const CommentActions = ( {
 	activeReplyCommentId,
 	handleReply,
 	onReplyCancel,
-	showReadMore,
-	onReadMore,
 	onLikeToggle,
 } ) => {
 	const translate = useTranslate();
@@ -51,16 +49,6 @@ const CommentActions = ( {
 
 	return (
 		<div className="comments__comment-actions">
-			{ showReadMore && (
-				<Button className="comments__comment-actions-read-more" onClick={ onReadMore }>
-					<Gridicon
-						icon="chevron-down"
-						size={ 18 }
-						className="comments__comment-actions-read-more-icon"
-					/>
-					{ translate( 'Read More' ) }
-				</Button>
-			) }
 			{ showReplyButton && (
 				<Button
 					className="comments__comment-actions-reply"
@@ -83,7 +71,7 @@ const CommentActions = ( {
 					tagName="div"
 					iconSize={ 18 }
 					isReblogSelection
-					showReblogLabel
+					showReblogLabel={ spellOutLabels }
 				/>
 			) }
 			{ showCancelReplyButton && ! swapReplyForCancel && (

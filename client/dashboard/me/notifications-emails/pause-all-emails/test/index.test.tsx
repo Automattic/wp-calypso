@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -30,11 +30,6 @@ const pauseCheckbox = () => {
 };
 
 describe( 'PauseAllEmails', () => {
-	beforeAll( () => {
-		// Snackbar component requires it to work and jest doesn't mock it
-		window.scrollTo = jest.fn();
-	} );
-
 	const Wrapper = ( { children }: PropsWithChildren ) => {
 		const queryClient = new QueryClient();
 		return (

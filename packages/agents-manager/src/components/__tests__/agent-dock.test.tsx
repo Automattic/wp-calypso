@@ -1,19 +1,24 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
+import { type Mock, vi } from 'vitest';
+import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
+import { getSessionId } from '../../utils/agent-session';
+import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
+import AgentDock from '../agent-dock';
 import type { AgentsManagerContextType } from '../../contexts';
 
-const mockSetIsOpen = jest.fn();
-const mockSetIsDocked = jest.fn();
-const mockSetIsMinimized = jest.fn();
-const mockSetIsSplitScreen = jest.fn();
-const mockUseAgentLayoutManager = jest.fn();
-const mockResumeChat = jest.fn();
-const mockCloseSidebar = jest.fn();
-const mockUseRaiseOnFocus = jest.fn();
+const mockSetIsOpen = vi.fn();
+const mockSetIsDocked = vi.fn();
+const mockSetIsMinimized = vi.fn();
+const mockSetIsSplitScreen = vi.fn();
+const mockUseAgentLayoutManager = vi.fn();
+const mockResumeChat = vi.fn();
+const mockCloseSidebar = vi.fn();
+const mockUseRaiseOnFocus = vi.fn();
 const mockPortalNode = document.createElement( 'div' );
 let mockLayoutIsDocked = false;
 // Overrides the layout mock's `canDock` (which otherwise follows
@@ -28,8 +33,8 @@ let mockAgentsManagerState: {
 } = { isOpen: true, isDocked: false };
 let mockHasAdminBar = false;
 
-jest.mock( '@automattic/agenttic-client', () => ( {} ), { virtual: true } );
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@automattic/agenttic-client', () => ( {} ) );
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setIsOpen: mockSetIsOpen,
 		setIsDocked: mockSetIsDocked,
@@ -38,8 +43,8 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 	useSelect: () => mockAgentsManagerState,
 } ) );
-jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
-jest.mock( '@wordpress/icons', () => ( {
+vi.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
+vi.mock( '@wordpress/icons', () => ( {
 	backup: 'backup',
 	cog: 'cog',
 	columns: 'columns',
@@ -47,45 +52,47 @@ jest.mock( '@wordpress/icons', () => ( {
 	drawerRight: 'drawerRight',
 	heading: 'heading',
 } ) );
-jest.mock( '../../contexts', () => ( {
+vi.mock( '../../contexts', () => ( {
 	useAgentsManagerContext: () => mockContext,
 } ) );
-jest.mock( '../../utils/tracks', () => ( {
-	recordBigSkyTracksEvent: jest.fn(),
-	recordAgentsManagerTracksEvent: jest.fn(),
+vi.mock( '../../utils/tracks', () => ( {
+	recordBigSkyTracksEvent: vi.fn(),
+	recordAgentsManagerTracksEvent: vi.fn(),
 } ) );
-jest.mock( '../../hooks/use-admin-bar-integration', () => ( {
+vi.mock( '../../hooks/use-admin-bar-integration', () => ( {
 	__esModule: true,
 	default: () => mockHasAdminBar,
 } ) );
-jest.mock( '../../hooks/use-agent-layout-manager', () => ( options: unknown ) => {
-	mockUseAgentLayoutManager( options );
-	return {
-		isDocked: mockLayoutIsDocked,
-		isSidebarOpen: mockLayoutIsDocked && mockAgentsManagerState.isOpen !== false,
-		canDock: mockCanDock ?? mockLayoutIsDocked,
-		dock: jest.fn(),
-		undock: jest.fn(),
-		openSidebar: jest.fn(),
-		closeSidebar: mockCloseSidebar,
-		portalNode: mockPortalNode,
-		createAgentPortal: ( children: React.ReactNode ) => children,
-	};
-} );
-jest.mock( '../../hooks/use-raise-on-focus', () => ( {
+vi.mock( '../../hooks/use-agent-layout-manager', () => ( {
+	default: ( options: unknown ) => {
+		mockUseAgentLayoutManager( options );
+		return {
+			isDocked: mockLayoutIsDocked,
+			isSidebarOpen: mockLayoutIsDocked && mockAgentsManagerState.isOpen !== false,
+			canDock: mockCanDock ?? mockLayoutIsDocked,
+			dock: vi.fn(),
+			undock: vi.fn(),
+			openSidebar: vi.fn(),
+			closeSidebar: mockCloseSidebar,
+			portalNode: mockPortalNode,
+			createAgentPortal: ( children: React.ReactNode ) => children,
+		};
+	},
+} ) );
+vi.mock( '../../hooks/use-raise-on-focus', () => ( {
 	__esModule: true,
 	default: ( node: HTMLElement | null, isOpen: boolean ) => mockUseRaiseOnFocus( node, isOpen ),
 } ) );
-jest.mock( '../../hooks/custom-actions', () => ( {
+vi.mock( '../../hooks/custom-actions', () => ( {
 	useSetupCustomActions: () => {},
 } ) );
-jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
-jest.mock( '../agent-dock/style.scss', () => ( {} ) );
-jest.mock( '../editor-ai-chat-button', () => ( {
+vi.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+vi.mock( '../agent-dock/style.scss', () => ( {} ) );
+vi.mock( '../editor-ai-chat-button', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
-jest.mock( '../orchestrator-chat', () => ( {
+vi.mock( '../orchestrator-chat', () => ( {
 	__esModule: true,
 	default: ( {
 		chatHeaderOptions,
@@ -118,7 +125,7 @@ jest.mock( '../orchestrator-chat', () => ( {
 	),
 } ) );
 
-jest.mock( '../zendesk-chat', () => ( {
+vi.mock( '../zendesk-chat', () => ( {
 	__esModule: true,
 	default: ( { onExpand }: { onExpand: () => void } ) => {
 		return (
@@ -129,7 +136,7 @@ jest.mock( '../zendesk-chat', () => ( {
 		);
 	},
 } ) );
-jest.mock( '../agent-history', () => ( {
+vi.mock( '../agent-history', () => ( {
 	__esModule: true,
 	default: ( {
 		onExpand,
@@ -154,19 +161,13 @@ jest.mock( '../agent-history', () => ( {
 		</div>
 	),
 } ) );
-jest.mock( '../support-guide', () => ( {
+vi.mock( '../support-guide', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="support-guide">Support guide</div>,
 } ) );
 
-import AgentDock from '../agent-dock';
-import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
-import { getSessionId } from '../../utils/agent-session';
-import { setLoadedProviderIds } from '../../utils/loaded-provider-ids';
-import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
-
-const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.Mock;
-const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.Mock;
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as Mock;
+const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as Mock;
 
 function LocationProbe() {
 	const { pathname, state } = useLocation();
@@ -206,7 +207,7 @@ function useWpAdminAgent() {
 describe( 'AgentDock', () => {
 	beforeEach( () => {
 		delete window.__agentsManagerConfig;
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		setLoadedProviderIds( undefined );
 		takeActionOrigin( 'open' );
 		takeActionOrigin( 'send' );
@@ -292,7 +293,7 @@ describe( 'AgentDock', () => {
 		useWpAdminAgent();
 
 		renderAgentDock( '/history' );
-		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
+		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )![ 0 ];
 		act( () => onOpenSidebar() );
 
 		// Opening the docked sidebar must not override the route the WP admin bar chose.
@@ -552,7 +553,7 @@ describe( 'AgentDock', () => {
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 			site: { domain: 'example.com' },
 		};
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		renderAgentDock();
 		fireEvent.click( screen.getByText( 'Knowledge and memory' ) );
@@ -578,7 +579,7 @@ describe( 'AgentDock', () => {
 			site: { domain: 'example.com' },
 			isWpcomPlatform: true,
 		};
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		renderAgentDock();
 		fireEvent.click( screen.getByText( 'AI Agent settings' ) );

@@ -3,20 +3,25 @@
  */
 /* eslint-disable react/no-danger */
 import { render, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 
-jest.mock( '@automattic/load-script', () => ( {
-	loadScript: jest.fn(),
-	loadjQueryDependentScript: jest.fn(),
+vi.mock( '@automattic/load-script', () => ( {
+	loadScript: vi.fn(),
+	loadjQueryDependentScript: vi.fn(),
 } ) );
 
 let EmbedContainer;
 let loadScript;
 let loadjQueryDependentScript;
 
-beforeEach( () => {
-	jest.resetModules();
-	EmbedContainer = require( '../' ).default;
-	( { loadScript, loadjQueryDependentScript } = require( '@automattic/load-script' ) );
+// Each test imports a fresh copy of the component, so load it once while the file is collected,
+// which has no timeout: its first load can outlast the hook's timeout on a busy CI agent.
+await import( '../' );
+
+beforeEach( async () => {
+	vi.resetModules();
+	EmbedContainer = ( await import( '../' ) ).default;
+	( { loadScript, loadjQueryDependentScript } = await import( '@automattic/load-script' ) );
 } );
 
 afterEach( () => {
@@ -62,7 +67,7 @@ describe( 'exact carriers from the HackerOne reports', () => {
 		expect( value ).toBeNull();
 		// Replay the runtime's builder on whatever is left.
 		const built = `${ String( value ).replace( /^(.*?)\/?(\?.*|#|$)/, '$1/' ) }embed/`;
-		expect( built.startsWith( 'javascript:' ) ).toBe( false );
+		expect( built ).not.toMatch( /^(javascript|data|vbscript):/i );
 	} );
 
 	// READ-753 / report 4032482
@@ -70,7 +75,7 @@ describe( 'exact carriers from the HackerOne reports', () => {
 		let galleryAtInit = null;
 		loadScript.mockImplementation( ( url, cb ) => cb() );
 		loadjQueryDependentScript.mockImplementation( ( url, cb ) => cb() );
-		const jQuery = jest.fn( () => ( {
+		const jQuery = vi.fn( () => ( {
 			trigger: () => {
 				galleryAtInit = document
 					.querySelector( '.jetpack-slideshow' )

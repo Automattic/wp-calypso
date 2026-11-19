@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 import { getRRsetTtl } from '../utils';
 import type { DnsRecord } from '@automattic/api-core';

@@ -1,3 +1,4 @@
+import { type Mock, vi } from 'vitest';
 import { recallImagePixels } from '../image-pixels';
 import {
 	buildSvg,
@@ -29,10 +30,10 @@ const asWindow = ( value: unknown ) => value as Window;
 // wholesale rather than fail visibly.
 const abortSignal = AbortSignal as unknown as { timeout?: ( milliseconds: number ) => unknown };
 const globals = globalThis as { fetch?: unknown };
-const fetchMock = () => globals.fetch as jest.Mock;
+const fetchMock = () => globals.fetch as Mock;
 
 function stubFetch( implementation: ( ...args: unknown[] ) => unknown = () => undefined ) {
-	globals.fetch = jest.fn( implementation );
+	globals.fetch = vi.fn( implementation );
 }
 
 function stubFont() {
@@ -44,7 +45,7 @@ function stubFont() {
 }
 
 beforeEach( () => {
-	abortSignal.timeout = jest.fn( ( milliseconds ) => `deadline:${ milliseconds }` );
+	abortSignal.timeout = vi.fn( ( milliseconds ) => `deadline:${ milliseconds }` );
 } );
 
 afterEach( () => {
@@ -72,7 +73,7 @@ type Boxes = Record< string, ReturnType< typeof box > >;
 
 // A canvas whose blocks sit at the given boxes; anything else is missing.
 const canvasWith = ( boxesByClientId: Boxes ) => ( {
-	querySelector: jest.fn( ( selector: string ) => {
+	querySelector: vi.fn( ( selector: string ) => {
 		const rect = boxesByClientId[ selector.match( /"(.*)"/ )?.[ 1 ] ?? '' ];
 
 		return rect ? { getBoundingClientRect: () => rect } : null;
@@ -563,21 +564,21 @@ describe( 'inlineBlockImages', () => {
 	} );
 
 	describe( 'with a raster image', () => {
-		const drawImage = jest.fn();
+		const drawImage = vi.fn();
 		const globalsWithBitmap = globalThis as { createImageBitmap?: unknown };
 		let restore: () => void;
 
 		beforeEach( () => {
 			drawImage.mockClear();
-			globalsWithBitmap.createImageBitmap = jest.fn( async () => ( {
+			globalsWithBitmap.createImageBitmap = vi.fn( async () => ( {
 				width: 2000,
 				height: 1000,
-				close: jest.fn(),
+				close: vi.fn(),
 			} ) );
-			const getContext = jest
+			const getContext = vi
 				.spyOn( HTMLCanvasElement.prototype, 'getContext' )
 				.mockReturnValue( { drawImage } as unknown as CanvasRenderingContext2D );
-			const toBlob = jest
+			const toBlob = vi
 				.spyOn( HTMLCanvasElement.prototype, 'toBlob' )
 				.mockImplementation( ( resolve ) =>
 					resolve( {
@@ -655,18 +656,18 @@ describe( 'inlineBlockImages', () => {
 	} );
 
 	it( 'downscales a raster image to the box it renders in', async () => {
-		const close = jest.fn();
-		const drawImage = jest.fn();
+		const close = vi.fn();
+		const drawImage = vi.fn();
 		const globalsWithBitmap = globalThis as { createImageBitmap?: unknown };
-		globalsWithBitmap.createImageBitmap = jest.fn( async () => ( {
+		globalsWithBitmap.createImageBitmap = vi.fn( async () => ( {
 			width: 2000,
 			height: 1000,
 			close,
 		} ) );
-		const getContext = jest
+		const getContext = vi
 			.spyOn( HTMLCanvasElement.prototype, 'getContext' )
 			.mockReturnValue( { drawImage } as unknown as CanvasRenderingContext2D );
-		const toBlob = jest
+		const toBlob = vi
 			.spyOn( HTMLCanvasElement.prototype, 'toBlob' )
 			.mockImplementation( ( resolve ) =>
 				resolve( {
@@ -1198,8 +1199,8 @@ describe( 'whenStill', () => {
 
 		const block = { getBoundingClientRect: () => ( { top, left: 0, width: 300, height: 200 } ) };
 		const canvasDocument = {
-			querySelector: jest.fn( () => block ),
-			querySelectorAll: jest.fn( () => [ block ] ),
+			querySelector: vi.fn( () => block ),
+			querySelectorAll: vi.fn( () => [ block ] ),
 		};
 
 		return {

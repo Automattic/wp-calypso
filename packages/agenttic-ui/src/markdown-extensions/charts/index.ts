@@ -1,9 +1,10 @@
 /**
  * Chart extension for markdown processing
  */
+import '@automattic/charts/style.css';
 import './charts.css';
 import React from 'react';
-import { ChartBlock } from './ChartBlock';
+import { ChartBlock } from './lazy';
 import type { ChartExtensionConfig } from '../types';
 
 interface CodeProps extends React.HTMLAttributes< HTMLElement > {
@@ -39,12 +40,7 @@ export function createChartBlock( config?: ChartConfig ) {
 }
 
 // Export chart components
-export { BarChart } from './BarChart';
-export { BaseChart } from './BaseChart';
-export { ChartBlock } from './ChartBlock';
-export { ChartError } from './ChartError';
-export { ChartErrorBoundary } from './ChartErrorBoundary';
-export { LineChart } from './LineChart';
+export { BarChart, ChartBlock, LineChart } from './lazy';
 
 // Export types
 export type { BarChartProps } from './BarChart';

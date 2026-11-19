@@ -2,12 +2,13 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ResponsiveUndockContext } from '../use-agent-layout-manager/responsive-undock-context';
 import useFloatingPanelProps from '../use-floating-panel-props';
 
-const mockSetFloatingPosition = jest.fn();
-const mockSetFreeDragPosition = jest.fn();
-const mockSetFloatingSize = jest.fn();
+const mockSetFloatingPosition = vi.fn();
+const mockSetFreeDragPosition = vi.fn();
+const mockSetFloatingSize = vi.fn();
 
 interface FloatingState {
 	floatingPosition?: 'left' | 'right';
@@ -23,7 +24,7 @@ const PERSISTED_STATE: FloatingState = {
 
 let mockAgentsManagerState: FloatingState;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setFloatingPosition: mockSetFloatingPosition,
 		setFreeDragPosition: mockSetFreeDragPosition,
@@ -31,7 +32,7 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 	useSelect: () => mockAgentsManagerState,
 } ) );
-jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+vi.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
 
 // Returns the props as the chat components spread them onto `AgentUI.Container`.
 function render( { isResponsiveUndocked = false, undockCount = 0 } = {} ) {

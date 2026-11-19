@@ -4,7 +4,7 @@ import {
 	clearStepPersistedState,
 	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
-import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
+import { resolveSelect, select, useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
@@ -43,7 +43,6 @@ import { getProductsList } from 'calypso/state/products-list/selectors/get-produ
 import { STEPS } from '../../internals/steps';
 import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import { getLaunchSiteSteps } from './get-launch-site-steps';
-import { isPreviewSite, useIsPreviewSite } from './preview-site';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { OnboardActions, OnboardSelect, SiteSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
@@ -179,6 +178,7 @@ function useLaunchParams(): LaunchParams {
 		coupon: query.get( 'coupon' ),
 		dashboard: query.get( 'dashboard' ),
 		checkoutSource: query.get( 'checkout_source' ),
+		hideFreePlan: query.get( 'hide_free_plan' ) === '1',
 	};
 }
 
@@ -230,18 +230,9 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const launchParams = useLaunchParams();
 		const isPlansFirstStep = ! getStepSlugs( this ).includes( STEPS.DOMAIN_SEARCH.slug );
-		const site = useSelect(
-			( select ) =>
-				launchParams.siteSlug
-					? ( select( SITE_STORE ) as SiteSelect ).getSite( launchParams.siteSlug )
-					: undefined,
-			[ launchParams.siteSlug ]
-		);
-		// A preview is kept by buying a plan, so it is offered only paid ones; hidden while asked, so
-		// Free never shows on a preview. The step ignores `hideFreePlan` when Free is de-emphasized,
-		// and offers it as a link in the subheader instead.
-		const { isLoading: isPreviewLoading, isPreview } = useIsPreviewSite( site );
-		const hideFreePlan = isPreviewLoading || isPreview;
+		// The step ignores `hideFreePlan` when Free is de-emphasized, and offers it as a link in the
+		// subheader instead.
+		const { hideFreePlan } = launchParams;
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
@@ -282,14 +273,13 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 			setProgressTitle,
 			setSignupDomainOrigin,
 		} = useDispatch( ONBOARD_STORE ) as OnboardActions;
-		const site = useSelect(
+		const siteId = useSelect(
 			( select ) =>
 				launchParams.siteSlug
-					? ( select( SITE_STORE ) as SiteSelect ).getSite( launchParams.siteSlug )
+					? ( select( SITE_STORE ) as SiteSelect ).getSite( launchParams.siteSlug )?.ID
 					: undefined,
 			[ launchParams.siteSlug ]
 		);
-		const siteId = site?.ID;
 
 		// The processing step runs the launch and submits its result.
 		const launch = () => {
@@ -299,10 +289,16 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 					throw new Error( 'Unknown site' );
 				}
 
-				// A preview goes on to checkout unlaunched: buying its plan launches it.
-				if ( ! ( await isPreviewSite( site ) ) ) {
-					await launchSite( siteId );
-				}
+				// WordPress.com refuses to launch a preview site nobody has bought: buying its plan at
+				// checkout launches it, so with a plan in the cart the flow goes on to checkout. Without
+				// one, such as Free picked, the refusal stands, and the plans are offered again.
+				await launchSite( siteId ).catch( ( error ) => {
+					const isBuyingPlan =
+						stepSlugs.includes( STEPS.UNIFIED_PLANS.slug ) && !! getPlanCartItem();
+					if ( error?.error !== 'preview_site_unpaid' || ! isBuyingPlan ) {
+						throw error;
+					}
+				} );
 
 				return { siteSlug: launchParams.siteSlug };
 			} );
@@ -457,6 +453,21 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 				case STEPS.PROCESSING.slug: {
 					if ( providedDependencies?.processingResult === ProcessingResult.FAILURE ) {
+						// A preview nobody has bought launches only with a paid plan, so offer those.
+						const { error } = ( select( SITE_STORE ) as SiteSelect ).getSiteSetupError() ?? {};
+
+						if (
+							error === 'preview_site_unpaid' &&
+							stepSlugs.includes( STEPS.UNIFIED_PLANS.slug )
+						) {
+							return navigate(
+								addQueryArgs( STEPS.UNIFIED_PLANS.slug, {
+									...getQueryArgs( window.location.href ),
+									hide_free_plan: 1,
+								} ) as typeof currentStepSlug
+							);
+						}
+
 						return navigate( STEPS.ERROR.slug );
 					}
 

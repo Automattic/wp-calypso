@@ -172,6 +172,14 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 		return { submit };
 	},
 
+	useStepsProps() {
+		return {
+			[ STEPS.POST_CHECKOUT_ONBOARDING.slug ]: {
+				enableAiLaunchpad: true,
+			},
+		};
+	},
+
 	useSideEffect() {
 		// Load Hotjar if source is 'affiliate'
 		useEffect( () => {

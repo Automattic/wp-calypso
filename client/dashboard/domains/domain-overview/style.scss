@@ -1,0 +1,28 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+.domain-overview-title {
+	word-break: break-word;
+	hyphens: none;
+
+	@include break-medium {
+		font-size: 40px;
+	}
+}
+
+.domain-overview-title-tld {
+	white-space: nowrap;
+}
+
+.dashboard-section-header.domain-overview-section-header.is-level-3
+	.dashboard-section-header__heading {
+	font-weight: 500;
+}
+
+.domain-overview-section-header .components-button.is-link {
+	text-decoration: none;
+}
+
+.domain-overview-action-title {
+	font-weight: var( --wpds-typography-font-weight-emphasis, 600 );
+}

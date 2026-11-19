@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Remove the obsolete Twitter color custom property; use the existing X color instead.
 - Clean up all definitions and usages of CSS variables ending with -rgb.
 - Updated dependencies:
   - postcss-custom-properties to ^12.0.0

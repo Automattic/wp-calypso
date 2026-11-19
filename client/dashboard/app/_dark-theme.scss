@@ -83,6 +83,13 @@
 /* Card */
 @mixin dashboard-dark-theme-card {
 	@include color-scheme-dark-theme-card;
+
+	// The card border above is a box-shadow, which outranks the single-class rule
+	// that `isBorderless` relies on. Borderless cards would otherwise gain a border
+	// in dark mode only, and nested ones would read as cramped, stacked panels.
+	.components-surface.components-card.dashboard-card-borderless {
+		box-shadow: none;
+	}
 }
 
 /* MCP connect card */
@@ -208,14 +215,6 @@
 		--wpds-color-foreground-content-neutral-weak: var( --dashboard__text-muted-color );
 		--wpds-color-foreground-interactive-neutral-weak: var( --dashboard__text-muted-color );
 		--wpds-color-foreground-interactive-neutral-disabled: var( --dashboard__text-muted-color );
-		--wpds-color-background-interactive-neutral: transparent;
-		--wpds-color-background-interactive-neutral-active: transparent;
-		--wpds-color-background-interactive-neutral-disabled: var(
-			--dashboard-surface__background-color
-		);
-		--wpds-color-stroke-interactive-neutral: var( --dashboard-field__border-color );
-		--wpds-color-stroke-interactive-neutral-active: var( --wp-components-color-gray-700 );
-		--wpds-color-stroke-interactive-neutral-disabled: var( --dashboard-surface__border-color );
 		--wpds-color-stroke-interactive-error: var( --dashboard-danger__color );
 		--wpds-color-stroke-interactive-error-active: var( --dashboard-danger__color-hover );
 		--wpds-color-foreground-content-error-weak: var( --dashboard-danger__color-hover );
@@ -266,6 +265,17 @@
 	.dashboard-section-header__decoration svg {
 		color: var( --dashboard-subtle__color );
 		fill: var( --dashboard-subtle__color );
+	}
+}
+
+/* Agency sidebar promo */
+@mixin dashboard-dark-theme-sidebar-promo {
+	.a4a-sidebar-promo-card {
+		--a4a-sidebar-promo-icon-color: var( --a4a-sidebar-promo-icon-color-on-dark, currentColor );
+		--a4a-sidebar-promo-icon-background: var(
+			--a4a-sidebar-promo-icon-background-on-dark,
+			transparent
+		);
 	}
 }
 
@@ -579,6 +589,7 @@
 	@include color-scheme-dark-theme-primary-button;
 	@include dashboard-dark-theme-scan;
 	@include dashboard-dark-theme-section-header;
+	@include dashboard-dark-theme-sidebar-promo;
 	@include color-scheme-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-launch-modal;
 	@include color-scheme-dark-theme-summary-button;

@@ -3,6 +3,15 @@ import { validateAllFields } from '../utils';
 
 describe( 'utils', () => {
 	describe( '#validateAllFields', () => {
+		test.each( [
+			[ 'ns1.wordpress.com', false ],
+			[ 'ns1.mywordpress.com', true ],
+		] )( 'only rejects NS records on a wordpress.com subdomain: %p', ( data, isValid ) => {
+			const errors = validateAllFields( { type: 'NS', name: 'example.foo.com', data } );
+
+			expect( Object.values( errors ).every( isEmpty ) ).toBe( isValid );
+		} );
+
 		test( 'should return no errors for a valid A record', () => {
 			const initialData = {
 				type: 'A',

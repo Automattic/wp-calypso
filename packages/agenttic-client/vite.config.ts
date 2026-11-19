@@ -7,9 +7,9 @@ export default defineConfig( {
 	build: {
 		lib: {
 			entry: {
-				index: resolve( __dirname, 'src/index.ts' ),
-				mocks: resolve( __dirname, 'src/mocks/index.ts' ),
-				'agents-api/index': resolve( __dirname, 'src/agents-api/index.ts' ),
+				index: resolve( import.meta.dirname, 'src/index.ts' ),
+				mocks: resolve( import.meta.dirname, 'src/mocks/index.ts' ),
+				'agents-api/index': resolve( import.meta.dirname, 'src/agents-api/index.ts' ),
 			},
 			name: 'AgentticClient',
 			fileName: ( format, entryName ) => `${ entryName }.js`,

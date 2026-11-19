@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import { addDays, formatISO } from 'date-fns';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { PurchaseExpiringNotice } from '../purchase-expiring-notice';
 import type { Purchase } from '@automattic/api-core';
@@ -34,11 +35,11 @@ function makeTrialOffer( overrides = {} ) {
 
 describe( '<PurchaseExpiringNotice />', () => {
 	beforeAll( () => {
-		jest.useFakeTimers( { now: new Date( '2026-10-23T12:00:00+00:00' ), advanceTimers: true } );
+		vi.useFakeTimers( { now: new Date( '2026-10-23T12:00:00+00:00' ), shouldAdvanceTime: true } );
 	} );
 
 	afterAll( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	test( 'shows the free trial end date when the trial has no payment method', () => {

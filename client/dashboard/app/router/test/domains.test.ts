@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype, DomainTransferStatus } from '@automattic/api-core';
 import { domainQuery, queryClient } from '@automattic/api-queries';

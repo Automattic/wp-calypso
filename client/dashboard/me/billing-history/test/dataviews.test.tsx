@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import { filterSortAndPaginate, type SortDirection } from '@wordpress/dataviews';

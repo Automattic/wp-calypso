@@ -153,6 +153,7 @@ describe( 'POT', () => {
 
 	test( 'should handle template literals', () => {
 		expect( output ).toEqual( expect.stringContaining( 'msgid "My hat has six corners."' ) );
+		expect( output ).toEqual( expect.stringContaining( 'msgid "My hat has `eight` corners."' ) );
 		expect( output ).toEqual(
 			expect.stringContaining( 'msgid "My hat\\nhas seventeen\\ncorners."' )
 		);
@@ -293,16 +294,16 @@ describe( 'PHP with an additional textdomain parameter', () => {
 	} );
 
 	describe( 'that has double quotes', () => {
-		test( 'should escape double quotes', () => {
+		test( 'should escape double quotes and backslashes', () => {
 			const output = i18n( {
 				projectName: 'i18nTest',
 				inputPaths: sourceFiles,
 				phpArrayName: 'arrayName',
 				format: 'PHP',
 				extras: [ 'date' ],
-				textdomain: '"some"weird-!=domain"',
+				textdomain: '"some"weird-!=domain\\"',
 			} );
-			expect( output ).toEqual( expect.stringContaining( '"\\"some\\"weird-!=domain\\""' ) );
+			expect( output ).toEqual( expect.stringContaining( '"\\"some\\"weird-!=domain\\\\\\""' ) );
 		} );
 	} );
 } );

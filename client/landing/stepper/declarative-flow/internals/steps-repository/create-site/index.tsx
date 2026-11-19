@@ -1,12 +1,18 @@
-import config from '@automattic/calypso-config';
-import { isEcommerce } from '@automattic/calypso-products';
+import { transferDomainToSite } from '@automattic/api-core';
+import { isDomainMoveInternal, isEcommerce } from '@automattic/calypso-products';
 import { Site, Onboard } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
+	DIRECT_TO_CART_FLOW,
 	EDUCATION_FLOW,
 	ENTREPRENEUR_FLOW,
+	NEWSLETTER_FLOW,
+	ONBOARDING_FLOW,
+	WRITE_NEW_SITE_FLOW,
+	WRITE_ON_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
 	SITE_MIGRATION_FLOW,
+	STUDENT_FLOW,
 	StepContainer,
 	addProductsToCart,
 	createSite,
@@ -30,6 +36,7 @@ import Loading from 'calypso/components/loading';
 import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { isPlaygroundStoreRun } from 'calypso/landing/stepper/utils/playground-woo-intent';
 import {
 	getWowFunnelArgs,
 	getWowFunnelFromWfm,
@@ -45,13 +52,13 @@ import {
 	getSignupCompleteFlowName,
 	wasSignupCheckoutPageUnloaded,
 	getSignupCompleteSlug,
+	getSignupCompleteSiteID,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getUrlData } from 'calypso/state/imports/url-analyzer/selectors';
 import { useSimplifiedOnboarding } from '../../../../hooks/use-simplified-onboarding';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
-import { useFlowState } from '../../state-manager/store';
-import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../playground/lib/constants';
+import { useFlowState, type AnyFlowInitialize } from '../../state-manager/store';
 import {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC,
 	getEarlyCreatedSiteId,
@@ -60,11 +67,24 @@ import {
 import type { FlowStateManifest } from '../../state-manager/stepper-state-manifest';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import './styles.scss';
 
 const DEFAULT_SITE_MIGRATION_THEME = 'pub/zoologist';
 const DEFAULT_ENTREPRENEUR_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
+
+// Flows whose new sites get the wp-admin AI Launchpad (Site Setup). The rest of the flows that
+// use this step bring in an existing site or have a setup of their own.
+const AI_LAUNCHPAD_FLOWS = [
+	ONBOARDING_FLOW,
+	NEWSLETTER_FLOW,
+	EDUCATION_FLOW,
+	STUDENT_FLOW,
+	DIRECT_TO_CART_FLOW,
+	WRITE_ON_FLOW,
+	WRITE_NEW_SITE_FLOW,
+];
 
 function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
 	if ( data && ( data as { sourceSlug: string } ).sourceSlug ) {
@@ -137,6 +157,40 @@ function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise
 	return result;
 }
 
+// The domain search records the site a moved domain is on now. The move call needs it.
+function getMoveSourceSiteId( item: MinimalRequestCartProduct ): number | undefined {
+	const extra = item.extra;
+	return extra && 'move_source_site_id' in extra && typeof extra.move_source_site_id === 'number'
+		? extra.move_source_site_id
+		: undefined;
+}
+
+/**
+ * Moves registered domains to the new site directly. A move on the Free plan costs nothing, so a
+ * checkout only adds a step. A failed move does not stop the signup: the site works without the
+ * domain, and the user can move it later from domain management.
+ */
+async function moveDomainsToSite(
+	domainMoves: MinimalRequestCartProduct[],
+	siteId: number,
+	flow: string
+) {
+	for ( const domainMove of domainMoves ) {
+		const sourceSiteId = getMoveSourceSiteId( domainMove );
+		try {
+			if ( ! domainMove.meta || ! sourceSiteId ) {
+				throw new Error( 'missing_move_source' );
+			}
+			await transferDomainToSite( domainMove.meta, sourceSiteId, siteId );
+		} catch ( error ) {
+			recordTracksEvent( 'calypso_signup_free_plan_domain_move_failed', {
+				flow,
+				error: ( error as { error?: string } )?.error ?? ( error as Error )?.message,
+			} );
+		}
+	}
+}
+
 const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
@@ -182,9 +236,16 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	if ( domainCartItem ) {
 		mergedDomainCartItems.push( domainCartItem );
 	}
+	// On the Free plan a registered domain moves without checkout. It stays out of the cart.
+	const freePlanDomainMoves = planCartItem
+		? []
+		: mergedDomainCartItems.filter( isDomainMoveInternal );
+	const cartDomainItems = mergedDomainCartItems.filter(
+		( item ) => ! freePlanDomainMoves.includes( item )
+	);
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
-	const flowState = useFlowState();
+	const flowState = useFlowState< AnyFlowInitialize >();
 	const queryClient = useQueryClient();
 	const urlQueryParams = useQuery();
 
@@ -212,6 +273,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		flow === AI_SITE_BUILDER_FLOW ||
 		isAIBuilderOnboardingFlow( flow ) ||
 		flow === EDUCATION_FLOW ||
+		flow === STUDENT_FLOW ||
 		flow === STATIC_SITE_IMPORT_FLOW
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -243,10 +305,15 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			const manageFlowCartItems = [
 				...( planCartItem ? [ planCartItem ] : [] ),
 				...( productCartItems ?? [] ),
-				...mergedDomainCartItems,
+				...cartDomainItems,
 			];
 			if ( manageFlowCartItems.length > 0 && slug ) {
 				await addProductsToCart( slug, flow, manageFlowCartItems );
+			}
+
+			const signupCompleteSiteId = getSignupCompleteSiteID();
+			if ( freePlanDomainMoves.length > 0 && signupCompleteSiteId ) {
+				await moveDomainsToSite( freePlanDomainMoves, Number( signupCompleteSiteId ), flow );
 			}
 
 			return {
@@ -345,15 +412,11 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		}
 
 		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
-		const isPlaygroundPublish =
-			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
-
 		// Playground, blueprint and import runs bring in an existing site, so they keep the regular
 		// landing. A reblog's site is launched at creation, so the launchpad's launch task could
 		// never complete.
 		const aiLaunchpadEnabled =
-			isOnboardingFlow( flow ) &&
-			! isPlaygroundPublish &&
+			AI_LAUNCHPAD_FLOWS.includes( flow ) &&
 			! urlQueryParams.get( 'playground' ) &&
 			! urlQueryParams.get( 'blog_post' ) &&
 			! isImport &&
@@ -372,10 +435,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// /sites/new answers with a name of its own choosing, matches nothing outside a migration session.
 		const requestedName = siteUrl || domainItem?.domain_name || '';
 		return runOnce( requestedName, async () => {
-			const canReuseUnnamedSite =
-				flow === SITE_MIGRATION_FLOW &&
-				config.isEnabled( 'migration/reprint-flow' ) &&
-				!! flowState.sessionId;
+			const canReuseUnnamedSite = flow === SITE_MIGRATION_FLOW && !! flowState.sessionId;
 			const recordedSite = canReuseUnnamedSite
 				? queryClient.getQueryData< FlowStateManifest >( flowState.queryKey )?.createdSite
 				: flowState.get( 'createdSite' );
@@ -405,7 +465,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 						gardenName,
 						gardenPartnerName,
 						urlQueryParams.get( 'spec_id' ),
-						isPlaygroundPublish ? 'playground-publish' : undefined,
+						isPlaygroundStoreRun( urlQueryParams ) ? 'playground-publish' : undefined,
 						undefined, // provisionTarget
 						aiLaunchpadEnabled
 					);
@@ -434,12 +494,14 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			const additionalCartItems = [
 				...( planCartItem ? [ planCartItem ] : [] ),
 				...( productCartItems ?? [] ),
-				...mergedDomainCartItems,
+				...cartDomainItems,
 			];
 
 			if ( additionalCartItems.length > 0 ) {
 				await addProductsToCart( site.siteSlug, flow, additionalCartItems );
 			}
+
+			await moveDomainsToSite( freePlanDomainMoves, site.siteId, flow );
 
 			// Poll for garden provisioning status if this is a garden site
 			if ( gardenName ) {

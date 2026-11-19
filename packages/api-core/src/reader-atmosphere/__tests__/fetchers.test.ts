@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import { wpcom } from '../../wpcom-fetcher';
 import {
 	createConnection,
@@ -1170,11 +1171,11 @@ describe( 'atmosphere fetchers', () => {
 		// `wpcom.req.post` keeps the fetcher contract under test (path,
 		// namespace, formData shape, error classification) without taking on
 		// the transport's stream wiring.
-		afterEach( () => jest.restoreAllMocks() );
+		afterEach( () => vi.restoreAllMocks() );
 
 		it( 'POSTs to /connections/{id}/blobs with a multipart file field', async () => {
 			const file = new Blob( [ new Uint8Array( [ 0xff, 0xd8, 0xff ] ) ], { type: 'image/jpeg' } );
-			const post = jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
+			const post = vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( {
 				blob: {
 					$type: 'blob',
 					ref: { $link: 'bafkrei' + 'a'.repeat( 50 ) },
@@ -1201,7 +1202,7 @@ describe( 'atmosphere fetchers', () => {
 			// (oversize, unsupported MIME, undecodable bytes, …) into
 			// `atmosphere_bad_request` rather than a specific subtype. The
 			// classifier mirrors that shape.
-			jest.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
+			vi.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
 				code: 'atmosphere_bad_request',
 				message: 'Image is too large.',
 				statusCode: 400,

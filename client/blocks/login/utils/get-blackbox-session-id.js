@@ -6,7 +6,7 @@ import { configureBlackbox, getBlackboxSignal } from 'calypso/blocks/login/utils
  * Undefined permits submission without a session; null cancels an obsolete submission.
  * @param {string} apiKey Public key for this surface.
  * @param {AbortSignal} [signal] Lifetime of the submitting form.
- * @param {'login'|'signup'} collectFlow Collect flow sent as `X-Blackbox-Flow`.
+ * @param {'login'|'signup'|'password_reset'} collectFlow Collect flow sent as `X-Blackbox-Flow`.
  * @returns {Promise<string|undefined|null>} Current ID, no session, or cancellation.
  */
 export async function getBlackboxSessionId(

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	canExposeWebMcpTools,
 	getWebMcpModelContext,
@@ -30,8 +31,8 @@ describe( 'WebMCP eligibility', () => {
 	} );
 
 	it( 'prefers document.modelContext and falls back to navigator.modelContext', () => {
-		const documentContext = { registerTool: jest.fn() };
-		const navigatorContext = { registerTool: jest.fn() };
+		const documentContext = { registerTool: vi.fn() };
+		const navigatorContext = { registerTool: vi.fn() };
 
 		expect(
 			getWebMcpModelContext( { modelContext: documentContext }, { modelContext: navigatorContext } )
@@ -56,7 +57,7 @@ describe( 'WebMCP eligibility', () => {
 		document.body.className = 'wp-admin';
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,
-			value: { registerTool: jest.fn() },
+			value: { registerTool: vi.fn() },
 		} );
 		expect( canExposeWebMcpTools() ).toBe( false );
 	} );
@@ -67,7 +68,7 @@ describe( 'WebMCP eligibility', () => {
 		};
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,
-			value: { registerTool: jest.fn() },
+			value: { registerTool: vi.fn() },
 		} );
 		expect( canExposeWebMcpTools() ).toBe( true );
 	} );

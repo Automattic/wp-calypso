@@ -1,9 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import { withChatResponseTracking } from '../with-chat-response-tracking';
 import type { ChatResponseAction } from '../../components/chat-response-tracking';
 
-jest.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: jest.fn() } ) );
+vi.mock( '../../utils/tracks', () => ( { recordBigSkyTracksEvent: vi.fn() } ) );
 
 function ExampleCard( {
 	onResponseAction,
@@ -25,7 +26,7 @@ function ExampleCard( {
 const TrackedExampleCard = withChatResponseTracking( 'ExampleCard', ExampleCard );
 
 describe( 'withChatResponseTracking', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'records a current surface’s render and its component’s actions', () => {
 		render( <TrackedExampleCard surfaceId="surface-1" /> );
@@ -38,7 +39,7 @@ describe( 'withChatResponseTracking', () => {
 			tool_call_id: 'surface-1',
 		};
 
-		expect( jest.mocked( recordBigSkyTracksEvent ).mock.calls ).toEqual( [
+		expect( vi.mocked( recordBigSkyTracksEvent ).mock.calls ).toEqual( [
 			[ 'jetpack_big_sky_chat_response_rendered', identifiers ],
 			[
 				'jetpack_big_sky_chat_response_action',

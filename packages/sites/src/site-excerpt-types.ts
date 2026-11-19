@@ -24,5 +24,6 @@ export type SiteExcerptData = Pick<
 	site_migration?: {
 		migration_status?: string;
 		in_progress?: boolean;
+		status_v2?: 'pending' | 'started' | 'in_progress' | 'completed';
 	};
 };

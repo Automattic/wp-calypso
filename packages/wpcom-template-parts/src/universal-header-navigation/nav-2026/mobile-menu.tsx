@@ -189,6 +189,9 @@ export function Nav2026MobileMenu( {
 										>
 											<li className="x-menu-mobile-dropdown-subtitle" role="presentation">
 												{ group.title }
+												{ group.badge && (
+													<span className="x-menu-mobile-dropdown-badge-new">{ group.badge }</span>
+												) }
 											</li>
 											{ group.items.map( ( item, itemIndex ) => (
 												<ClickableItem

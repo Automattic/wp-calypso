@@ -18,7 +18,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { info, cautionFilled as warning } from '@wordpress/icons';
+import { info, caution as warning } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';

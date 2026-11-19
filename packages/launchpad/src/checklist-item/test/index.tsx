@@ -1,16 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import ChecklistItem from '..';
 import { buildTask } from '../../test/lib/fixtures';
-import '@testing-library/jest-dom';
 
 describe( 'ChecklistItem', () => {
 	const defaultProps = {
 		task: buildTask( {
 			completed: false,
 			disabled: false,
-			actionDispatch: jest.fn(),
+			actionDispatch: vi.fn(),
 		} ),
 	};
 
@@ -32,7 +32,7 @@ describe( 'ChecklistItem', () => {
 	} );
 
 	it( 'renders a button when it has the onClick event', () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		renderComponent( { onClick } );
 
 		const taskButton = screen.getByRole( 'button' );
@@ -41,7 +41,7 @@ describe( 'ChecklistItem', () => {
 	} );
 
 	it( 'calls onClick when the task is clicked', async () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		renderComponent( { onClick } );
 
 		const taskButton = screen.getByRole( 'button' );
@@ -51,7 +51,7 @@ describe( 'ChecklistItem', () => {
 	} );
 
 	it( 'uses the task action dispatch when the task is clicked and no custom onClick prop is used', async () => {
-		const actionDispatch = jest.fn();
+		const actionDispatch = vi.fn();
 		renderComponent( {
 			task: buildTask( { actionDispatch, completed: false, disabled: false } ),
 		} );
@@ -63,7 +63,7 @@ describe( 'ChecklistItem', () => {
 	} );
 
 	it( 'calls the onclick when calypso path is available', async () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		renderComponent( {
 			onClick,
 			isPrimaryAction: true,
@@ -81,7 +81,7 @@ describe( 'ChecklistItem', () => {
 	} );
 
 	it( 'calls the task action dispatch when calypso path is available', async () => {
-		const actionDispatch = jest.fn();
+		const actionDispatch = vi.fn();
 		renderComponent( {
 			isPrimaryAction: true,
 			task: buildTask( {

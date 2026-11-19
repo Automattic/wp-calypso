@@ -38,7 +38,7 @@ export function load( sectionName, moduleName ) {
 		);
 	}
 
-	// section.load() loads the module synchronously (using require()) in environments without
+	// section.load() loads the module synchronously, with `require`, in environments without
 	// code splitting. The return value must be explicitly resolved to Promise.
 	return Promise.resolve( section.load() );
 }

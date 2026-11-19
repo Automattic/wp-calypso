@@ -69,6 +69,10 @@ const build = ( mode ) =>
 		);
 	} );
 
+// The first build in a process also loads webpack, which can take longer than Jest's default
+// 5 s on a busy CI machine.
+jest.setTimeout( 60000 );
+
 describe( 'OrderDependentRedirectPlugin', () => {
 	test( 'fails only a member read through a barrel in an import cycle', async () => {
 		expect( await build( 'production' ) ).toEqual( [
