@@ -50,5 +50,7 @@ export interface OwnComment {
 	excerpt: string;
 	timestamp: number;
 	author: Commenter;
-	newCommentCount: number;
+	unreadCount: number;
+	unreadNoteIds: number[];
+	unreadCommentIds: number[];
 }

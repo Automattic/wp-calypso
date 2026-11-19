@@ -67,11 +67,10 @@ export function ConversationListItem( {
 }: Props ) {
 	const translate = useTranslate();
 	const locale = useLocale();
-	const { siteId, postId, excerpt, timestamp } = item;
+	const { siteId, postId, excerpt, timestamp, unreadCount } = item;
 	const isOwnComment = 'commentId' in item;
 	const { data: post } = usePost( item.title ? null : { blogId: siteId, postId } );
 	const title = item.title || String( post?.title ?? '' );
-	const unreadCount = isOwnComment ? item.newCommentCount : item.unreadCount;
 	const newCount = unreadCount > 0 && (
 		<Text
 			size={ 12 }
@@ -125,8 +124,7 @@ export function ConversationListItem( {
 				type="button"
 				className={ clsx( 'conversations-inbox__item', {
 					'is-selected': isSelected,
-					// Your comments count newer replies, which opening doesn't clear, so they aren't unread.
-					'is-unread': ! isOwnComment && unreadCount > 0,
+					'is-unread': unreadCount > 0,
 				} ) }
 				aria-current={ isSelected || undefined }
 				onClick={ () => {

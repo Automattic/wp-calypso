@@ -105,7 +105,7 @@ export interface ReadConversationsParams {
 export interface ReadConversationsResponse {
 	conversations: ReadConversation[];
 	next_cursor: string | null;
-	/** An upper bound on the conversations with unread comment notes. */
+	/** The conversations with unread comment notes the list can show, give or take the ones it drops at hydration. */
 	unread_total: number;
 }
 
@@ -120,6 +120,10 @@ export interface ReadConversationOwnComment {
 	comment: ReadConversationComment;
 	/** Comments by others on the post newer than this one. Null when it couldn't be read. */
 	new_comment_count: number | null;
+	/** The post's unread comment notes, as on `ReadConversation`. */
+	unread_count: number | null;
+	unread_note_ids: number[];
+	unread_comment_ids: number[];
 }
 
 export type ReadConversationsCommentsParams = Omit< ReadConversationsParams, 'scope' >;

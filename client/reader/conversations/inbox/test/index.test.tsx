@@ -28,7 +28,7 @@ jest.mock( 'calypso/state/notices/actions', () => ( {
 
 jest.mock( '../conversation-list', () => ( {
 	ConversationList: ( props: {
-		items: { key: string }[];
+		items: { key: string; unreadCount: number }[];
 		unreadCount: number;
 		selectedKey?: string;
 		followFocus: boolean;
@@ -43,13 +43,15 @@ jest.mock( '../conversation-list', () => ( {
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
 			<p>Follows focus: { props.followFocus ? 'yes' : 'no' }</p>
+			<p>Unread: { props.unreadCount }</p>
 			{ props.markAllCount > 0 && (
 				<button onClick={ props.onMarkAllRead }>Mark { props.markAllCount } as read</button>
 			) }
 			{ props.items.map( ( item ) => (
-				<button key={ item.key } onClick={ () => props.onSelect( item, 'click' ) }>
-					{ item.key }
-				</button>
+				<div key={ item.key }>
+					<button onClick={ () => props.onSelect( item, 'click' ) }>{ item.key }</button>
+					<span>{ `${ item.key }: ${ item.unreadCount } new` }</span>
+				</div>
 			) ) }
 			<button onClick={ () => props.onTabChange( 'yours' ) }>Your comments</button>
 			<button onClick={ () => props.onTabChange( 'unread' ) }>Unread</button>
@@ -155,7 +157,7 @@ beforeEach( () => {
 				comments: [
 					makeOwnComment( { postId: 300, commentId: 31 } ),
 					makeOwnComment( { postId: 300, commentId: 32 } ),
-					makeOwnComment( { postId: 400, commentId: 41 } ),
+					makeOwnComment( { postId: 400, commentId: 41, unreadNoteIds: [ 3 ] } ),
 				],
 				next_cursor: null,
 			};
@@ -385,6 +387,25 @@ describe( 'ConversationsInbox', () => {
 		await user.click( await findRow( '10-p-400' ) );
 
 		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 3 ] ] ) );
+	} );
+
+	it( 'clears the new count and the unread badge of a post only Your comments lists', async () => {
+		const user = userEvent.setup();
+		// The total counts post 400, which All hasn't paged to.
+		replyConversations = () => ( { ...conversationsPage(), unread_total: 3 } );
+		renderInbox( { siteId: '10', postId: '300' } );
+
+		await findRow( '10-p-300' );
+		expect( screen.getByText( 'Unread: 3' ) ).toBeVisible();
+		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
+		await findRow( '10-p-400' );
+		expect( screen.getByText( '10-p-400: 1 new' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: '10-p-400' } ) );
+
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 3 ] ] ) );
+		expect( screen.getByText( '10-p-400: 0 new' ) ).toBeVisible();
+		expect( screen.getByText( 'Unread: 2' ) ).toBeVisible();
 	} );
 
 	it( 'lists each post once on Your comments and opens it at your latest comment', async () => {
