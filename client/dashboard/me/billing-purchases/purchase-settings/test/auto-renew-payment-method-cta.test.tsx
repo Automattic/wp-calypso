@@ -114,12 +114,11 @@ describe( 'auto-renew without a payment method', () => {
 	} );
 } );
 
-describe( 'auto-renew turned on event', () => {
+describe( 'auto-renew enabled event', () => {
 	const EVENT = 'calypso_purchases_auto_renew_enabled';
 	const offPurchase = makePurchase( { can_reenable_auto_renewal: true, is_rechargeable: true } );
 
-	// The toggle stays disabled until the request settles.
-	// It remounts on every render, so query it fresh.
+	// The toggle stays disabled until the request settles, and it remounts on every render, so query it fresh.
 	async function waitForRequestToSettle( scope: nock.Scope ) {
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		await waitFor( () =>
@@ -127,7 +126,7 @@ describe( 'auto-renew turned on event', () => {
 		);
 	}
 
-	test( 'turning auto-renew on records the event once, with the purchase ID and slug', async () => {
+	test( 'records the event once with the purchase ID and product slug when auto-renew is enabled', async () => {
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/upgrades/1/enable-auto-renew' )
 			.reply( 200, { success: true, upgrade: { ID: 1 } } );
@@ -157,7 +156,7 @@ describe( 'auto-renew turned on event', () => {
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
-	test( 'records nothing when a 200 reply says success is false', async () => {
+	test( 'records nothing when the reply has success: false', async () => {
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/upgrades/1/enable-auto-renew' )
 			.reply( 200, { success: false, upgrade: { ID: 1 } } );
@@ -169,7 +168,7 @@ describe( 'auto-renew turned on event', () => {
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
-	test( 'records nothing when auto-renew is turned off', async () => {
+	test( 'records nothing when auto-renew is disabled', async () => {
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/upgrades/1/disable-auto-renew' )
 			.reply( 200, { success: true, upgrade: { ID: 1 } } );

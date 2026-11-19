@@ -466,7 +466,7 @@ describe( '<CancelPurchaseForm />', () => {
 	} );
 
 	describe( 'offer clicks', () => {
-		test( 'adds the purchase ID to the built-by click', async () => {
+		test( 'records the purchase ID with the built-by click', async () => {
 			const user = userEvent.setup();
 			const { recordTracksEvent } = render(
 				<CancelPurchaseForm { ...upsellStepProps } upsell="built-by" />
@@ -480,7 +480,7 @@ describe( '<CancelPurchaseForm />', () => {
 			);
 		} );
 
-		test( 'adds the purchase ID to the upgrade click', async () => {
+		test( 'records the purchase ID with the upgrade click', async () => {
 			const user = userEvent.setup();
 			const { recordTracksEvent } = render(
 				<CancelPurchaseForm { ...upsellStepProps } upsell="upgrade-atomic" />
@@ -494,7 +494,7 @@ describe( '<CancelPurchaseForm />', () => {
 			);
 		} );
 
-		test( 'adds the purchase ID to the live chat click and keeps its type', async () => {
+		test( 'records the purchase ID and upsell type with the live chat click', async () => {
 			const user = userEvent.setup();
 			const { recordTracksEvent } = render(
 				<CancelPurchaseForm { ...upsellStepProps } upsell="live-chat:plans" />
@@ -536,7 +536,7 @@ describe( '<CancelPurchaseForm />', () => {
 			return { ...result, recordEvent, clickNext, onSubmit };
 		}
 
-		test( 'records the exposure before leaving the reason step', async () => {
+		test( 'records the exposure from "Continue removal" before moving to the next step', async () => {
 			const user = userEvent.setup();
 			const { recordEvent, clickNext } = renderReasonStep();
 
@@ -571,9 +571,9 @@ describe( '<CancelPurchaseForm />', () => {
 			} );
 		} );
 
-		test( 'skips the exposure when "Continue" leaves question two', async () => {
+		test( 'skips the exposure from "Continue" on the next adventure step', async () => {
 			const user = userEvent.setup();
-			// An Atomic revert step after question two gives question two a "Continue" button.
+			// An Atomic revert step after it shows "Continue" on the next adventure step.
 			const { recordEvent, clickNext } = renderReasonStep( {
 				intent: 'cancel',
 				allSteps: [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP, ATOMIC_REVERT_STEP ],
@@ -587,9 +587,8 @@ describe( '<CancelPurchaseForm />', () => {
 			expect( recordEvent ).not.toHaveBeenCalled();
 		} );
 
-
 		test.each( [
-			[ 'a reason without options', 'technicalIssues', 'pluginOrThemeConflicts' ],
+			[ 'a reason with zero options', 'technicalIssues', 'pluginOrThemeConflicts' ],
 			[
 				'"Something else related to changed needs" with text typed',
 				'noLongerNeedSite',

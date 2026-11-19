@@ -13,7 +13,7 @@ import {
 } from '@automattic/api-queries';
 import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
@@ -174,7 +174,7 @@ const exposureCalls = (
 	recordTracksEvent: ( name: string, properties?: Record< string, unknown > ) => void
 ) => vi.mocked( recordTracksEvent ).mock.calls.filter( ( [ name ] ) => name === EXPOSURE );
 
-// Holds the reply until `release()`, so a test can check what fires before the API result.
+// Delays the reply until `release()`, so a test can check events recorded before the request finishes.
 function mockHeldPurchaseRequest( action: 'extend' ) {
 	let release!: () => void;
 	const pending = new Promise< void >( ( resolve ) => {
@@ -263,7 +263,6 @@ describe( '<CancelPurchase />', () => {
 			expect( await screen.findByRole( 'button', { name: 'Complete removal' } ) ).toBeVisible();
 			expect( exposureCalls( recordTracksEvent ) ).toHaveLength( 0 );
 		} );
-
 	} );
 
 	describe( 'with the cards flag off', () => {
@@ -297,8 +296,7 @@ describe( '<CancelPurchase />', () => {
 			expect( offerIndex ).toBeGreaterThan( exposureIndex );
 		} );
 
-
-		test( 'adds the purchase ID to the free month offer event, before the API result', async () => {
+		test( 'records the purchase ID with the free month offer event before the extend request finishes', async () => {
 			const user = userEvent.setup();
 			const freeMonth = mockHeldPurchaseRequest( 'extend' );
 			const { recordTracksEvent, router } = renderRemoveFlow( {

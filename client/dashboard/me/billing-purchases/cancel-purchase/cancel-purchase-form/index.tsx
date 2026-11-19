@@ -327,7 +327,7 @@ function StepButtons( {
 
 	const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
-	// Cancel options experiment exposure, recorded the same way with the cards flag on or off.
+	// Records the cancel options exposure whether the cards flag is on or off.
 	const onClickNext = () => {
 		if (
 			surveyStep === FEEDBACK_STEP &&
