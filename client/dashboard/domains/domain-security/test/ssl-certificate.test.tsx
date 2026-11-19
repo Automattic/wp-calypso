@@ -105,6 +105,31 @@ describe( '<SslCertificate>', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	test( 'offers a retry when the next attempt is hours overdue', async () => {
+		renderCertificate( {
+			certificate_status: 'pending',
+			last_error: null,
+			next_attempt: '2026-11-14 08:00:00',
+		} );
+
+		expect( await screen.findByText( 'SSL pending' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Provision certificate' } ) ).toBeVisible();
+		expect( screen.queryByText( 'Next attempt:' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'offers no retry when the next attempt is only slightly overdue', async () => {
+		renderCertificate( {
+			certificate_status: 'pending',
+			last_error: null,
+			next_attempt: '2026-11-14 10:00:00',
+		} );
+
+		expect( await screen.findByText( 'Next attempt:' ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Provision certificate' } )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'shows no attempt details for an active certificate', async () => {
 		renderCertificate( { certificate_provisioned: true, certificate_status: 'active' } );
 

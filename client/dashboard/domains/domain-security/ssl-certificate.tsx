@@ -33,6 +33,7 @@ interface SslCertificateProps {
 const MINUTE_IN_MS = 60 * 1000;
 const HOUR_IN_MS = 60 * MINUTE_IN_MS;
 const DAY_IN_MS = 24 * HOUR_IN_MS;
+const OVERDUE_ATTEMPT_IN_MS = 3 * HOUR_IN_MS;
 
 /**
  * Returns a string like "in 5 minutes", or null when the date is less than a minute away or has passed.
@@ -194,21 +195,23 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 		! sslDetails.is_expired;
 
 	const hasKnownIssue = showFailureReasons || !! lastError;
-	const shouldShowProvisionButton = canRetry && ( hasKnownIssue || isFailed );
+	const nextAttempt = sslDetails.next_attempt ? parseDateAsUTC( sslDetails.next_attempt ) : null;
+	const isNextAttemptOverdue =
+		! isFailed && !! nextAttempt && Date.now() - nextAttempt.getTime() > OVERDUE_ATTEMPT_IN_MS;
+	const shouldShowProvisionButton =
+		canRetry && ( hasKnownIssue || isFailed || isNextAttemptOverdue );
 
 	const renderAttemptDetails = () => {
 		if ( ! canRetry ) {
 			return null;
 		}
 
-		const hasNextAttempt = ! isFailed && !! sslDetails.next_attempt;
+		const hasNextAttempt = ! isFailed && !! nextAttempt && ! isNextAttemptOverdue;
 		if ( ! lastError && ! hasNextAttempt ) {
 			return null;
 		}
 
-		const timeUntilNextAttempt = sslDetails.next_attempt
-			? getTimeUntil( parseDateAsUTC( sslDetails.next_attempt ), locale )
-			: null;
+		const timeUntilNextAttempt = nextAttempt ? getTimeUntil( nextAttempt, locale ) : null;
 
 		return (
 			<VStack spacing={ 1 }>
