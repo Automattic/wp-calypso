@@ -37,7 +37,7 @@ export function KnownThreatsList( { threats }: KnownThreatsListProps ) {
 	const rows = threats.threats.filter( ( threat ) => threat.kind !== 'vulnerable' );
 
 	const formatThreatDate = ( value: string | null ) =>
-		value ? formatDate( parseDateAsUTC( value ), locale ) : '';
+		value ? formatDate( parseDateAsUTC( value ), locale, { dateStyle: 'long' } ) : '';
 
 	const getStatus = ( threat: BackupThreat ) => {
 		if ( threat.state === 'fixed' ) {
@@ -51,7 +51,7 @@ export function KnownThreatsList( { threats }: KnownThreatsListProps ) {
 		const reportedOn = formatThreatDate( threat.reported_on );
 		return reportedOn
 			? sprintf(
-					/* translators: 1: the date Scan first detected a threat, 2: its status now, such as "Open" or "Fixed Oct 17, 2026". */
+					/* translators: 1: the date Scan first detected a threat, 2: its status now, such as "Open" or "Fixed October 17, 2026". */
 					__( 'First detected %1$s · %2$s' ),
 					reportedOn,
 					getStatus( threat )

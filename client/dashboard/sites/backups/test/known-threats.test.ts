@@ -226,7 +226,7 @@ const expectInOrder = ( ...elements: HTMLElement[] ) =>
 		);
 
 const localDate = ( utcMs: number ) =>
-	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
+	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'long' } ).format( new Date( utcMs ) );
 
 // The text of the smallest ancestor holding a backup title: the badge's own list row.
 const closestRowText = ( element: HTMLElement ): string => {

@@ -87,7 +87,7 @@ const expectInOrder = ( ...elements: HTMLElement[] ) =>
 		);
 
 const localDate = ( utcMs: number ) =>
-	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'medium' } ).format( new Date( utcMs ) );
+	new Intl.DateTimeFormat( 'en-US', { dateStyle: 'long' } ).format( new Date( utcMs ) );
 
 const threatsBody = {
 	backup_id: 200,
