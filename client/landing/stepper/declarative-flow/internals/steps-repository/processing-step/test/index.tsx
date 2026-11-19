@@ -4,9 +4,9 @@
 import { TRANSFERRING_HOSTED_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { CartActionResponseError } from '@automattic/shopping-cart';
 import { act, screen, waitFor } from '@testing-library/react';
-import { dispatch } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 import React from 'react';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import ProcessingStep from '../';
@@ -97,6 +97,17 @@ describe( 'ProcessingStep', () => {
 			expect( mockCaptureFlowException ).not.toHaveBeenCalled();
 			expect( stepProps.navigation.submit ).toHaveBeenCalledWith( {
 				processingResult: ProcessingResult.FAILURE,
+			} );
+		} );
+
+		it( 'stores the code and the message of a cart rejection for the error step', async () => {
+			await runFailingAction(
+				new CartActionResponseError( 'This domain is not available.', 'domain_unavailable' )
+			);
+
+			expect( select( SITE_STORE ).getSiteSetupError() ).toEqual( {
+				error: 'domain_unavailable',
+				message: 'This domain is not available.',
 			} );
 		} );
 
