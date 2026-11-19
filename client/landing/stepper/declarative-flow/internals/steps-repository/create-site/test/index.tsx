@@ -399,6 +399,36 @@ describe( 'create-site', () => {
 			expect( createSite ).toHaveBeenCalledTimes( 2 );
 		} );
 
+		// Only a run that reaches its end forgets the site. A retry that fails must not.
+		it( 'adds to the cart of the first site again when the cart rejects the retry too', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock )
+				.mockRejectedValueOnce( new Error( 'cart rejected' ) )
+				.mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		// /sites/new chose the address of the first site. A request that names its site must not get it.
+		it( 'creates a new site when the retry asks for a name', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			mockSiteUrl = 'my-site.wordpress.com';
+			pendingAction = undefined;
+			await runStep();
+
+			expect( createSite ).toHaveBeenCalledTimes( 2 );
+			expect( flowStateStore.createdSite ).toMatchObject( {
+				requestedName: 'my-site.wordpress.com',
+			} );
+		} );
+
 		it( 'adopts the recorded site when a named request is retried', async () => {
 			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
 
