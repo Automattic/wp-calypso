@@ -10,9 +10,9 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import ProcessingStep from '../';
-import { ProcessingResult } from '../constants';
 import { recordStepComponentType, recordStepRouteMount } from '../../../step-mount-registry';
 import { mockStepProps, renderStep } from '../../test/helpers/index';
+import { ProcessingResult } from '../constants';
 import type { OnboardActions } from '@automattic/data-stores';
 
 const mockRecordSignupComplete = jest.fn();
