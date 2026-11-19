@@ -3,6 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
+import { onlineManager } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import nock from 'nock';
@@ -159,20 +160,84 @@ describe( '<AccountDeletionSection>', () => {
 			);
 		} );
 
+		test( 'skips the unsaved-changes prompt once the account is closed', async () => {
+			const user = userEvent.setup();
+			const { router } = render( <AccountDeletionSection /> );
+			// What the profile form registers while it has unsaved edits.
+			const unblock = router.history.block( {
+				blockerFn: () => true,
+				enableBeforeUnload: true,
+			} );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/account/close' )
+				.reply( 200, { success: true, token: 'restore-token' } );
+
+			try {
+				await confirmDeletion( user );
+
+				await waitFor( () =>
+					expect( window.location.href ).toBe(
+						'https://wordpress.com/me/account/closed?token=restore-token'
+					)
+				);
+				const unload = new Event( 'beforeunload', { cancelable: true } );
+				window.dispatchEvent( unload );
+				expect( unload.defaultPrevented ).toBe( false );
+			} finally {
+				unblock();
+			}
+		} );
+
+		test( 'sends the request right away when the browser is offline', async () => {
+			const user = userEvent.setup();
+			const { unmount } = render( <AccountDeletionSection /> );
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/account/close' )
+				.replyWithError( 'Failed to fetch' );
+
+			await openConfirmation( user );
+			await user.type( screen.getByRole( 'textbox' ), 'testuser' );
+			onlineManager.setOnline( false );
+
+			try {
+				await user.click( screen.getByRole( 'button', { name: 'Delete account' } ) );
+
+				await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+				await waitFor( () =>
+					expect( screen.getByRole( 'button', { name: 'Delete account' } ) ).toBeEnabled()
+				);
+				expect( window.location.href ).toBe( DASHBOARD_URL );
+			} finally {
+				// Unmount first: coming back online refetches mounted queries, which would
+				// take the next test's responses.
+				unmount();
+				onlineManager.setOnline( true );
+			}
+		} );
+
 		test( 'stays on the page and lets the user retry when the account cannot be closed', async () => {
 			const user = userEvent.setup();
 			render( <AccountDeletionSection /> );
-			const scope = nock( 'https://public-api.wordpress.com' )
+			nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/me/account/close' )
-				.reply( 403, { error: 'atomic-site', message: 'Cannot close this account.' } );
+				.reply( 403, { error: 'atomic-site', message: 'Cannot close this account.' } )
+				.post( '/rest/v1.1/me/account/close' )
+				.reply( 200, { success: true, token: 'restore-token' } );
 
 			await confirmDeletion( user );
 
-			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 			await waitFor( () =>
 				expect( screen.getByRole( 'button', { name: 'Delete account' } ) ).toBeEnabled()
 			);
 			expect( window.location.href ).toBe( DASHBOARD_URL );
+
+			await user.click( screen.getByRole( 'button', { name: 'Delete account' } ) );
+
+			await waitFor( () =>
+				expect( window.location.href ).toBe(
+					'https://wordpress.com/me/account/closed?token=restore-token'
+				)
+			);
 		} );
 	} );
 

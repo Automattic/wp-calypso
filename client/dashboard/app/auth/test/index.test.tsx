@@ -16,6 +16,7 @@ import {
 	authQueryFn,
 	getOAuthToken,
 	logout,
+	redirectAfterSessionEnd,
 	requestOAuthToken,
 	sessionStateQuery,
 	updateCurrentUser,
@@ -30,6 +31,11 @@ vi.mock( '../../analytics', async () => ( {
 } ) );
 
 const mockedBumpStat = vi.mocked( bumpStat );
+
+vi.mock( 'calypso/lib/user/store', async ( importOriginal ) => {
+	const actual = await importOriginal< typeof import( 'calypso/lib/user/store' ) >();
+	return { ...actual, clearStore: vi.fn( actual.clearStore ) };
+} );
 
 const testUser = { ID: 1, username: 'testuser', language: 'en' } as User;
 
@@ -616,5 +622,57 @@ describe( 'logout', () => {
 
 		expect( scope.isDone() ).toBe( true );
 		expect( window.location.href ).toBe( user.logout_URL );
+	} );
+} );
+
+describe( 'redirectAfterSessionEnd', () => {
+	beforeEach( () => {
+		Object.defineProperty( window, 'location', {
+			writable: true,
+			value: { href: 'https://my.wordpress.com/me/account', origin: 'https://my.wordpress.com' },
+		} );
+	} );
+
+	afterEach( () => {
+		vi.useRealTimers();
+	} );
+
+	test( 'still clears the classic user store when an earlier step fails', async () => {
+		store.set( 'wpcom_user_id', 1 );
+		const removeItem = vi.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {
+			throw new Error( 'storage is unavailable' );
+		} );
+
+		try {
+			await redirectAfterSessionEnd( 'https://wordpress.com/me/account/closed' );
+		} finally {
+			removeItem.mockRestore();
+		}
+
+		expect( store.get( 'wpcom_user_id' ) ).toBeUndefined();
+		expect( window.location.href ).toBe( 'https://wordpress.com/me/account/closed' );
+	} );
+
+	test( 'leaves after a few seconds when the cleanup stalls', async () => {
+		vi.useFakeTimers();
+		const { clearStore } = await import( 'calypso/lib/user/store' );
+		vi.mocked( clearStore ).mockReturnValueOnce( new Promise( () => {} ) );
+
+		const done = redirectAfterSessionEnd( 'https://wordpress.com/me/account/closed' );
+		await vi.advanceTimersByTimeAsync( 2900 );
+		expect( window.location.href ).toBe( 'https://my.wordpress.com/me/account' );
+
+		await vi.advanceTimersByTimeAsync( 100 );
+		await done;
+		expect( window.location.href ).toBe( 'https://wordpress.com/me/account/closed' );
+	} );
+
+	test( 'leaves the way the caller asks', async () => {
+		const leave = vi.fn();
+
+		await redirectAfterSessionEnd( 'https://wordpress.com/me/account/closed', leave );
+
+		expect( leave ).toHaveBeenCalledWith( 'https://wordpress.com/me/account/closed' );
+		expect( window.location.href ).toBe( 'https://my.wordpress.com/me/account' );
 	} );
 } );
