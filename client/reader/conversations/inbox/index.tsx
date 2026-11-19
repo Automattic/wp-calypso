@@ -206,8 +206,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		setHasOpened( true );
 		const key = getConversationKey( item.siteId, item.postId );
 		const conversation = findConversation( key );
-		const unread: Unread = conversation ?? item;
-		const { unreadNoteIds } = unread;
+		const row = conversation ?? item;
 		const previous = key === opened?.key ? opened.unread : undefined;
 		open(
 			{
@@ -215,14 +214,14 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 				// Opening it again adds any notes that came in since, such as past the route's 50 ids.
 				unread: previous
 					? {
-							unreadNoteIds: union( previous.unreadNoteIds, unread.unreadNoteIds ),
-							unreadCommentIds: union( previous.unreadCommentIds, unread.unreadCommentIds ),
+							unreadNoteIds: union( previous.unreadNoteIds, row.unreadNoteIds ),
+							unreadCommentIds: union( previous.unreadCommentIds, row.unreadCommentIds ),
 						}
-					: unread,
+					: row,
 				anchor: 'commentId' in item ? { commentId: item.commentId } : undefined,
 				conversation,
 			},
-			unreadNoteIds
+			row.unreadNoteIds
 		);
 		if ( key === selectedKey ) {
 			return;
@@ -230,7 +229,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_conversation_opened', {
 				source,
-				unread_count: ( conversation ?? item ).unreadCount,
+				unread_count: row.unreadCount,
 			} )
 		);
 		page.show( getConversationPath( item ) );

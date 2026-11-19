@@ -66,7 +66,17 @@ export interface ReadConversationComment {
 	author: ReadConversationPerson;
 }
 
-export interface ReadConversation {
+/** The user's unread comment notes on a post. */
+export interface ReadConversationUnread {
+	/** Null when the user has no comment notes for the post, which is unknown, not zero. */
+	unread_count: number | null;
+	/** At most 50; `unread_count` counts the rest. */
+	unread_note_ids: number[];
+	/** The comments of `unread_note_ids`, in the same order. */
+	unread_comment_ids: number[];
+}
+
+export interface ReadConversation extends ReadConversationUnread {
 	/** `{blog_id}-p-{post_id}` */
 	id: string;
 	blog_id: number;
@@ -80,12 +90,6 @@ export interface ReadConversation {
 	commenter_count: number;
 	latest_comment: ReadConversationComment | null;
 	reason: ReadConversationReason;
-	/** Null when the user has no comment notes for the post, which is unknown, not zero. */
-	unread_count: number | null;
-	/** At most 50; `unread_count` counts the rest. */
-	unread_note_ids: number[];
-	/** The comments of `unread_note_ids`, in the same order. */
-	unread_comment_ids: number[];
 	/** Whether the user explicitly follows the conversation. */
 	is_following: boolean;
 }
@@ -109,7 +113,7 @@ export interface ReadConversationsResponse {
 	unread_total: number;
 }
 
-export interface ReadConversationOwnComment {
+export interface ReadConversationOwnComment extends ReadConversationUnread {
 	/** `{blog_id}-p-{post_id}-c-{comment_id}` */
 	id: string;
 	blog_id: number;
@@ -118,12 +122,6 @@ export interface ReadConversationOwnComment {
 	post: ReadConversationPost;
 	site: ReadConversationSite;
 	comment: ReadConversationComment;
-	/** Comments by others on the post newer than this one. Null when it couldn't be read. */
-	new_comment_count: number | null;
-	/** The post's unread comment notes, as on `ReadConversation`. */
-	unread_count: number | null;
-	unread_note_ids: number[];
-	unread_comment_ids: number[];
 }
 
 export type ReadConversationsCommentsParams = Omit< ReadConversationsParams, 'scope' >;

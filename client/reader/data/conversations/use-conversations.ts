@@ -85,8 +85,8 @@ export const adaptReadConversationOwnComment = (
 	timestamp: toTimestamp( row.comment.date ),
 	author: toCommenter( row.comment.author ),
 	unreadCount: row.unread_count ?? 0,
-	unreadNoteIds: row.unread_note_ids ?? [],
-	unreadCommentIds: row.unread_comment_ids ?? [],
+	unreadNoteIds: row.unread_note_ids,
+	unreadCommentIds: row.unread_comment_ids,
 } );
 
 // Adapting each page's rows once keeps rows of untouched pages identical across cache updates.

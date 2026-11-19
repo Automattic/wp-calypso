@@ -4,6 +4,7 @@ import {
 	markNotificationsRead,
 	unfollowReadConversation,
 	type ReadConversation,
+	type ReadConversationUnread,
 	type ReadConversationsCommentsResponse,
 	type ReadConversationsResponse,
 	type ReadConversationsScope,
@@ -126,10 +127,7 @@ export const readConversationsCommentsQuery = ( {
 		meta: { persist: false },
 	} );
 
-type UnreadRow = Pick<
-	ReadConversation,
-	'blog_id' | 'post_id' | 'unread_count' | 'unread_note_ids' | 'unread_comment_ids'
->;
+type UnreadRow = Pick< ReadConversation, 'blog_id' | 'post_id' > & ReadConversationUnread;
 
 const getConversationKey = ( { blog_id, post_id }: UnreadRow ) => `${ blog_id }-p-${ post_id }`;
 
@@ -174,26 +172,41 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 		} );
 		return { rows: changed ? result : rows, cleared };
 	};
+	/** Like clearRows() over pages. Structural sharing keeps untouched pages and rows at their old references. */
+	const clearPages = < Page, Row extends UnreadRow >(
+		pages: Page[],
+		getRows: ( page: Page ) => Row[],
+		setRows: ( page: Page, rows: Row[] ) => Page
+	) => {
+		const cleared: string[] = [];
+		let changed = false;
+		const result = pages.map( ( page ) => {
+			const rows = getRows( page );
+			const next = clearRows( rows );
+			cleared.push( ...next.cleared );
+			if ( next.rows === rows ) {
+				return page;
+			}
+			changed = true;
+			return setRows( page, next.rows );
+		} );
+		return { pages: changed ? result : pages, cleared };
+	};
 
 	const clearedComments = new Set< string >();
 	queryClient.setQueriesData< ReadConversationsCommentsInfiniteData >(
 		{ queryKey: getReadConversationsCommentsQueryKey() },
 		( data ) => {
-			if ( ! data?.pages.length ) {
+			if ( ! data ) {
 				return data;
 			}
-			let changed = false;
-			const pages = data.pages.map( ( page ) => {
-				const { rows, cleared } = clearRows( page.comments );
-				cleared.forEach( ( key ) => clearedComments.add( key ) );
-				if ( rows === page.comments ) {
-					return page;
-				}
-				changed = true;
-				return { ...page, comments: rows };
-			} );
-			// Structural sharing keeps unchanged pages and rows at their old references.
-			return changed ? { ...data, pages } : data;
+			const { pages, cleared } = clearPages(
+				data.pages,
+				( page ) => page.comments,
+				( page, comments ) => ( { ...page, comments } )
+			);
+			cleared.forEach( ( key ) => clearedComments.add( key ) );
+			return pages === data.pages ? data : { ...data, pages };
 		}
 	);
 
@@ -206,26 +219,24 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 			const listed = new Set(
 				data.pages.flatMap( ( page ) => page.conversations.map( getConversationKey ) )
 			);
-			let cleared = [ ...clearedComments ].filter( ( key ) => ! listed.has( key ) ).length;
-			let changed = cleared > 0;
-			const pages = data.pages.map( ( page ) => {
-				const result = clearRows( page.conversations );
-				cleared += result.cleared.length;
-				if ( result.rows === page.conversations ) {
-					return page;
-				}
-				changed = true;
-				return { ...page, conversations: result.rows };
-			} );
-			if ( ! changed ) {
+			const unlisted = [ ...clearedComments ].filter( ( key ) => ! listed.has( key ) ).length;
+			const { pages, cleared } = clearPages(
+				data.pages,
+				( page ) => page.conversations,
+				( page, conversations ) => ( { ...page, conversations } )
+			);
+			if ( pages === data.pages && ! unlisted ) {
 				return data;
 			}
 			// Only the first page's total is read.
-			pages[ 0 ] = {
-				...pages[ 0 ],
-				unread_total: Math.max( 0, pages[ 0 ].unread_total - cleared ),
+			const [ first, ...rest ] = pages;
+			return {
+				...data,
+				pages: [
+					{ ...first, unread_total: Math.max( 0, first.unread_total - cleared.length - unlisted ) },
+					...rest,
+				],
 			};
-			return { ...data, pages };
 		}
 	);
 	return hasUnlisted;

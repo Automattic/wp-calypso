@@ -34,7 +34,6 @@ const ownComments = [
 		postId: 300,
 		commentId: 31,
 		title: 'Commented post',
-		newCommentCount: 5,
 		unreadNoteIds: [ 7, 8, 9 ],
 	} ),
 	makeOwnComment( { postId: 301, commentId: 32, title: 'Commented post', excerpt: 'Again' } ),
