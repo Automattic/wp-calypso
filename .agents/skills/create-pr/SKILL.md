@@ -18,7 +18,7 @@ This is a public repository: follow the Confidentiality section of `AGENTS.md` i
 
 ## 2. Write the commit body
 
-Two plain paragraphs of one or two sentences each, with no labels, lists or headings. The first states the problem: what was wrong or missing, in the past tense. The second states the fix: how this change solves it, in the present tense.
+Two plain paragraphs, with no labels, lists or headings. The first states the problem, in the past tense: what was wrong or missing and, for a bug, what caused it. This paragraph becomes the PR's Why, the part hardest to recover later, so write it for someone who didn't work on this code and make it as clear and easy to read as you can. A simple cause needs a sentence or two; when the cause is complex, take as many sentences as it needs to be clear. The second states the fix in one or two sentences: how this change solves it, in the present tense.
 
 Example:
 
