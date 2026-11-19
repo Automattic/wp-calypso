@@ -187,7 +187,12 @@ const NotePanel = ( {
 			) ) }
 			{ openFullView && (
 				<CardFooter size="small" justify="center">
-					<Button className="wpnc-app__full-view" variant="tertiary" onClick={ openFullView }>
+					<Button
+						className="wpnc-app__full-view"
+						variant="tertiary"
+						size="compact"
+						onClick={ openFullView }
+					>
 						{ __( 'Open full view' ) }
 					</Button>
 				</CardFooter>
