@@ -128,24 +128,14 @@ describe( 'PostComments polling for new comments', () => {
 		expect( document.getElementById( 'comment-4' ).closest( 'li' ) ).toHaveFocus();
 	} );
 
-	it( 'scrolls to the first highlighted comment on the page', async () => {
+	it.each( [
+		[ 'the starting comment is loaded', 1 ],
+		[ 'the starting comment is missing', 99 ],
+	] )( 'scrolls to the first highlighted comment when %s', async ( _, startingCommentId ) => {
 		Element.prototype.scrollIntoView.mockClear();
 		mockComments();
 
-		renderComments( { startingCommentId: 1, highlightedCommentIds: [ 1, 2 ] } );
-
-		await waitFor( () =>
-			expect(
-				Element.prototype.scrollIntoView.mock.contexts.map( ( element ) => element.id )
-			).toEqual( [ 'comment-2' ] )
-		);
-	} );
-
-	it( 'scrolls to a highlighted comment when the starting one is missing', async () => {
-		Element.prototype.scrollIntoView.mockClear();
-		mockComments();
-
-		renderComments( { startingCommentId: 99, highlightedCommentIds: [ 99, 2 ] } );
+		renderComments( { startingCommentId, highlightedCommentIds: [ startingCommentId, 2 ] } );
 
 		await waitFor( () =>
 			expect(
