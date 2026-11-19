@@ -78,6 +78,16 @@ describe( 'getBlackboxSessionId', () => {
 		expect( jest.getTimerCount() ).toBe( 0 );
 	} );
 
+	test( 'bounds a flush that never settles and clears the timer', async () => {
+		sdk.setState( { status: 'loading' } );
+		sdk.api.flush.mockReturnValue( new Promise( () => {} ) );
+		const result = getBlackboxSessionId( 'login-key', undefined, 'login' );
+		await jest.advanceTimersByTimeAsync( 6000 );
+		await expect( result ).resolves.toBeUndefined();
+		expect( sdk.listeners.size ).toBe( 0 );
+		expect( jest.getTimerCount() ).toBe( 0 );
+	} );
+
 	test( 'waits for a challenge without limiting user interaction time', async () => {
 		sdk.api.flush.mockImplementation( async () => {
 			expect( sdk.listeners.size ).toBeGreaterThan( 0 );
