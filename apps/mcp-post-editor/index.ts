@@ -1,6 +1,6 @@
 import { App } from '@modelcontextprotocol/ext-apps/app-with-deps';
 import { createElement, createRoot, flushSync } from '@wordpress/element';
-import { PostEditor, type EditorPost } from './editor';
+import { PostEditor, type EditorPost, type TitleSuggestions } from './editor';
 import { type Prompt, type TextSelection } from './editor/assistant';
 import { joinBlocks, splitBlocks } from './editor/blocks';
 import { changeLabel, type AgentChange, type Decision } from './editor/changes';
@@ -27,6 +27,7 @@ type StateResult = {
 	content?: string;
 	changes?: ( AgentChange & { status?: string } )[];
 	proofread?: ProofreadIssue[];
+	title_suggestions?: TitleSuggestions | null;
 	conflict?: Conflict;
 };
 type SaveResult = {
@@ -58,19 +59,23 @@ const LINK_PROTOCOLS = [ 'http:', 'https:', 'mailto:' ];
 // Claude caps a message at 8,000 characters.
 const MAX_QUOTE = 1000;
 const CONTEXT_DELAY = 400;
-const NO_TOOLS = 'Don’t use the browser or wp-admin.';
-const PROMPTS: Record< Prompt, [ string, string ] > = {
+// The user's own requests, in the first person: a host can read a message framed as the app's
+// instruction as something to confirm first. `where` is "site …, post …".
+const PROMPTS: Record< Prompt, [ string, ( where: string ) => string ] > = {
 	review: [
 		'Editorial feedback',
-		'Read the post with wpcom-post-editor-read and give editorial feedback here in chat: structure, headings, paragraph length and flow. Don’t change the post.',
+		( where ) =>
+			`Review my post (${ where }, open in the editor) for structure, headings, paragraph length and flow, and give me the feedback here. Read it with wpcom-post-editor-read. Don’t change the post, and don’t use the browser or wp-admin.`,
 	],
 	title: [
 		'Optimize title',
-		'Read the post with wpcom-post-editor-read, then suggest 3 better titles here in chat. When I pick one, set it with wpcom-post-editor-edit (title).',
+		( where ) =>
+			`Suggest 3 better titles for my post (${ where }). Read it with wpcom-post-editor-read, then send the 3 titles with wpcom-post-editor-suggest-titles so they show as buttons in my editor. Don’t list them in chat, and don’t use the browser or wp-admin.`,
 	],
 	proofread: [
 		'Proofread',
-		'Call wpcom-post-editor-read, then call wpcom-post-editor-proofread with the spelling, grammar, style and clarity issues you find (block_index, the exact quote from that block, replacement, a short reason and kind), so the editor underlines them. Don’t edit the post. Answer in chat with one short line.',
+		( where ) =>
+			`Proofread my post (${ where }): read it with wpcom-post-editor-read, then mark the spelling, grammar, style and clarity issues with wpcom-post-editor-proofread so they’re underlined in my editor. Don’t edit the text yourself, and don’t use the browser or wp-admin.`,
 	],
 };
 
@@ -128,9 +133,10 @@ let changes: AgentChange[] = [];
 // Changes the page has shown, and those it decided, which stay hidden until the server agrees.
 const seenChanges = new Map< string, AgentChange >();
 const decided = new Set< string >();
-// With the proofreading issues the user applied or dismissed, `done`.
-type Decisions = Record< Decision | 'done', string[] >;
-const noDecisions = (): Decisions => ( { accept: [], reject: [], undo: [], done: [] } );
+// With the proofreading issues the user applied or dismissed, `done`, and the title suggestions
+// the user picked from or dismissed, `titles`.
+type Decisions = Record< Decision | 'done' | 'titles', string[] >;
+const noDecisions = (): Decisions => ( { accept: [], reject: [], undo: [], done: [], titles: [] } );
 // Decisions the next update sends, with the typing.
 let decisions = noDecisions();
 let accepted: { ids: string[]; label: string; timer: ReturnType< typeof setTimeout > } | undefined;
@@ -140,12 +146,16 @@ const decisionArgs = ( list: Decisions ) => ( {
 	...( list.reject.length && { reject_change_ids: list.reject } ),
 	...( list.undo.length && { undo_change_ids: list.undo } ),
 	...( list.done.length && { proofread_done_ids: list.done } ),
+	...( list.titles.length && { title_suggestions_done_id: list.titles[ list.titles.length - 1 ] } ),
 } );
 
 // The open proofreading issues, as the last state listed them, and those the user finished,
 // which stay hidden until the server agrees.
 let issues: ProofreadIssue[] = [];
 const doneIssues = new Set< string >();
+// The model's title options, as the last state listed them, and the sets the user finished.
+let titleSuggestions: TitleSuggestions | undefined;
+const doneTitles = new Set< string >();
 // The conflict with WordPress.com, by its stamp, and the one the user dismissed.
 let conflict: string | undefined;
 let dismissedConflict: string | undefined;
@@ -218,6 +228,11 @@ function render() {
 			onSelect: reportSelection,
 			issues: readOnly ? [] : issues.filter( ( issue ) => ! doneIssues.has( issue.id ) ),
 			onProofreadDone: finishIssues,
+			titleSuggestions:
+				readOnly || ! titleSuggestions || doneTitles.has( titleSuggestions.id )
+					? undefined
+					: titleSuggestions,
+			onTitleSuggestionsDone: finishTitleSuggestions,
 		} )
 	);
 }
@@ -578,6 +593,12 @@ function receiveIssues( list?: StateResult[ 'proofread' ] ) {
 	}
 }
 
+function receiveTitleSuggestions( next?: TitleSuggestions | null ) {
+	if ( next !== undefined ) {
+		titleSuggestions = next ?? undefined;
+	}
+}
+
 // `state` reports the conflict on every poll while it holds.
 function receiveConflict( next?: Conflict ) {
 	conflict = next?.remote_modified;
@@ -594,6 +615,7 @@ function receiveState( state: StateResult ) {
 		if ( state.changed ) {
 			receiveChanges( state.changes );
 			receiveIssues( state.proofread );
+			receiveTitleSuggestions( state.title_suggestions );
 			applyRemote( state );
 		}
 	}
@@ -610,6 +632,15 @@ function finishIssues( ids: string[], failed: number ) {
 				? 'Couldn’t apply a fix: its text changed. Edit it by hand.'
 				: `Couldn’t apply ${ failed } fixes: their text changed. Edit them by hand.`;
 	}
+	render();
+	scheduleSave();
+}
+
+// Title suggestions the user picked from or dismissed, sent in the next update. A pick's title
+// reaches onEditorChange as the user's typing, so the same update carries it.
+function finishTitleSuggestions( id: string ) {
+	doneTitles.add( id );
+	decisions.titles.push( id );
 	render();
 	scheduleSave();
 }
@@ -755,6 +786,7 @@ async function resolveConflict( choice: 'reload' | 'keep' | 'dismiss' ) {
 	}
 }
 
+const myPost = () => `site ${ post?.wpcom_site }, post ${ post?.post_id }`;
 const postLine = () =>
 	`The post is wpcom_site "${ post?.wpcom_site }", post_id ${ post?.post_id }, open in the editor.`;
 const clip = ( text: string ) =>
@@ -794,14 +826,16 @@ async function sendMessage( text: string, sent: string ) {
 
 function sendPrompt( prompt: Prompt ) {
 	const [ label, text ] = PROMPTS[ prompt ];
-	sendMessage( `${ text } ${ postLine() } ${ NO_TOOLS }`, `Asked: ${ label }` );
+	sendMessage( text( myPost() ), `Asked: ${ label }` );
 }
 
 function ask( question: string, selection: TextSelection ) {
 	sendMessage(
-		`${ question }\n\nAbout this text in block ${ selection.block }.\n${ quoted(
+		`${ question }\n\nThis is about this text in block ${
+			selection.block
+		} of my post (${ myPost() }):\n${ quoted(
 			selection.text
-		) }\n\n${ postLine() } Use the wpcom-post-editor tools, not the browser or wp-admin.`,
+		) }\n\nUse the wpcom-post-editor tools, not the browser or wp-admin.`,
 		'Asked about the selection'
 	);
 }
@@ -948,6 +982,7 @@ async function loadChanges( current: number ) {
 		if ( current === opens && ! stopped ) {
 			receiveChanges( state.changes );
 			receiveIssues( state.proofread );
+			receiveTitleSuggestions( state.title_suggestions );
 			receiveConflict( state.conflict );
 			render();
 		}
@@ -981,6 +1016,8 @@ async function open( result: OpenResult ) {
 	clearAccepted();
 	issues = [];
 	doneIssues.clear();
+	titleSuggestions = undefined;
+	doneTitles.clear();
 	conflict = result.conflict?.remote_modified;
 	dismissedConflict = undefined;
 	persistentErrors.save = undefined;

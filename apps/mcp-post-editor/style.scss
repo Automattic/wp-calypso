@@ -37,6 +37,75 @@ body {
 	margin: 0;
 }
 
+// The panel's own UI theme, whatever the site's styles set: the site's CSS loads unscoped into
+// this page (see site-styles.ts), so its `--wp-admin-theme-color`, which colours the components'
+// buttons, and its rules on body, `p`, `button` and the like would reach the UI. The popovers
+// render outside the panel, so they get the colours too.
+.mcp-post-editor,
+.components-popover {
+	--wp-admin-theme-color: #3858e9;
+	--wp-admin-theme-color--rgb: 56, 88, 233;
+	--wp-admin-theme-color-darker-10: #2145e6;
+	--wp-admin-theme-color-darker-10--rgb: 33, 69, 230;
+	--wp-admin-theme-color-darker-20: #183ad6;
+	--wp-admin-theme-color-darker-20--rgb: 24, 58, 214;
+}
+
+// Each piece of UI sets its type at its root, and everything inside takes it from there, over
+// the site's element rules. Later rules here still set their own sizes. The popovers (the
+// toolbar's menus, the link editor) render outside the panel.
+$ui-roots:
+	".mcp-post-editor__bar, .mcp-post-editor__changes, .mcp-post-editor__conflict, .mcp-post-editor__dock, .mcp-post-editor__fix, .mcp-post-editor__titles, .mcp-post-editor__toolbar";
+$ui: ":is(.mcp-post-editor :is(#{$ui-roots}), .components-popover)";
+
+#{$ui} {
+	color: #1e1e1e;
+	font: $chrome-font;
+	letter-spacing: normal;
+	text-align: left;
+	text-transform: none;
+}
+
+// At the specificity of two element selectors: over a site's element rules, as `p` or `button`,
+// and under any class rule, so the components and the rules below keep their own type.
+:where(#{$ui}) *:not(svg):not(path) {
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	letter-spacing: inherit;
+	text-transform: inherit;
+}
+
+// By the root's id: themes style text fields with long selectors, as Assembler's
+// `input:not([type=submit]):not([type=checkbox]):not([type=radio]):not([type=range])`. Only what
+// such a rule sets, back to the components' own look: an input control draws its border and
+// background around the input; a text control's input has them itself.
+#mcp-post-editor .components-popover :is(.components-input-control__input, .components-text-control__input) {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 0;
+	border-radius: 2px;
+	box-shadow: none;
+	color: inherit;
+	font-size: 16px;
+	line-height: normal;
+
+	@media (min-width: 600px) {
+		font-size: 13px;
+	}
+}
+
+#mcp-post-editor .components-popover .components-input-control__input {
+	padding-block: 0;
+	background: none;
+	border: 0;
+}
+
+#mcp-post-editor .components-popover .components-text-control__input {
+	padding: 6px 12px;
+	background-color: #fff;
+}
+
 // The page: a slim bar, then the canvas, which scrolls inside the panel's height, and a dock
 // floating over its bottom.
 .mcp-post-editor {
@@ -295,6 +364,7 @@ body {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
+	font-size: 13px;
 
 	&.is-all {
 		justify-content: flex-end;
@@ -430,8 +500,12 @@ body {
 	}
 }
 
-.mcp-post-editor .mcp-post-editor__ask-input {
+// By the root's id: themes style text fields with long selectors, as Assembler's
+// `input:not([type=submit]):not([type=checkbox]):not([type=radio]):not([type=range])`.
+#mcp-post-editor .mcp-post-editor__ask-input {
 	flex: 1;
+	box-sizing: border-box;
+	width: auto;
 	min-width: 0;
 	min-height: 0;
 	margin: 0 4px 0 0;
@@ -498,4 +572,96 @@ body {
 	justify-content: flex-end;
 	gap: 8px;
 	margin-top: 8px;
+}
+
+// The proofreading issues, listed over the dock's pill.
+.mcp-post-editor .mcp-post-editor__issues {
+	box-sizing: border-box;
+	width: 360px;
+	max-width: 100%;
+	max-height: calc(var(--mcp-post-editor-height, 100vh) * 0.4);
+	margin: 0;
+	padding: 4px 0;
+	overflow-y: auto;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	list-style: none;
+	pointer-events: auto;
+
+	li {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		margin: 0;
+		padding: 4px 8px 4px 12px;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__issue {
+	flex: 1;
+	min-width: 0;
+	margin: 0;
+	padding: 2px 0;
+	background: none;
+	border: 0;
+	box-shadow: none;
+	color: inherit;
+	text-align: left;
+	overflow-wrap: anywhere;
+	cursor: pointer;
+
+	&:hover {
+		color: #3858e9;
+	}
+
+	&:focus-visible {
+		outline: 2px solid #3858e9;
+		border-radius: 2px;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__issue-actions {
+	display: flex;
+	flex: none;
+	gap: 4px;
+}
+
+// The model's title options, under the title: chips that wrap, and a dismiss.
+.mcp-post-editor .mcp-post-editor__titles {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin-top: 12px;
+
+	.mcp-post-editor__chip {
+		max-width: 100%;
+		white-space: normal;
+		text-align: left;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__titles-dismiss {
+	min-height: 0;
+	margin: 0;
+	padding: 2px 6px;
+	background: none;
+	border: 0;
+	border-radius: 4px;
+	box-shadow: none;
+	color: #757575;
+	font-size: 16px;
+	line-height: 1;
+	cursor: pointer;
+
+	&:hover {
+		background: #f0f0f0;
+		color: #1e1e1e;
+	}
+
+	&:focus-visible {
+		outline: 2px solid #3858e9;
+	}
 }

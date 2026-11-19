@@ -1,4 +1,5 @@
 import {
+	store as blockEditorStore,
 	BlockEditorProvider,
 	BlockList,
 	BlockToolbar,
@@ -9,6 +10,7 @@ import {
 } from '@wordpress/block-editor';
 import { parse, serialize, type Block as BlockInstance } from '@wordpress/blocks';
 import { Button, Popover, SlotFillProvider } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import {
 	useEffect,
 	useLayoutEffect,
@@ -22,7 +24,7 @@ import { createUndoManager, type UndoManager } from '@wordpress/undo-manager';
 import { AskAssistant, AssistantChips, type Prompt, type TextSelection } from './assistant';
 import './blocks';
 import { AgentChanges, ChangedBlocks, type AgentChange, type Decision } from './changes';
-import { ProofreadLayer } from './proofread-layer';
+import { KIND_LABEL, ProofreadLayer } from './proofread-layer';
 import type { ProofreadIssue } from './proofread';
 import type { ClipboardEvent, CSSProperties, KeyboardEvent } from 'react';
 
@@ -30,6 +32,8 @@ import type { ClipboardEvent, CSSProperties, KeyboardEvent } from 'react';
 // server's changes. The editor then shows it, keeping the blocks that didn't change. `id` is the
 // site and post: another post gets a new editor.
 export type EditorPost = { id: string; title: string; content: string; revision: number };
+// The model's title options, from `wpcom-post-editor-state`.
+export type TitleSuggestions = { id: string; titles: string[] };
 
 type Props = {
 	post?: EditorPost;
@@ -65,6 +69,9 @@ type Props = {
 	// The open proofreading issues; `failed` counts those whose text was no longer there.
 	issues: ProofreadIssue[];
 	onProofreadDone: ( ids: string[], failed: number ) => void;
+	// The model's title options, and a pick or a dismiss of them.
+	titleSuggestions?: TitleSuggestions;
+	onTitleSuggestionsDone: ( id: string ) => void;
 };
 
 // Reuses each current block whose markup is unchanged, so a merge doesn't remount the block
@@ -127,18 +134,23 @@ const PLAIN_TEXT_ONLY = ( () => {
 
 // A heading like the block editor's post title, so the theme's title styles apply, instead of a
 // form control. Plain text only; it wraps and grows with the text.
-function TitleField( {
+export function TitleField( {
 	value,
 	readOnly,
 	isChanged,
 	onChange,
+	suggestions,
+	onSuggestionsDone,
 }: {
 	value: string;
 	readOnly: boolean;
 	isChanged: boolean;
 	onChange: ( title: string ) => void;
+	suggestions?: TitleSuggestions;
+	onSuggestionsDone: ( id: string ) => void;
 } ) {
 	const ref = useRef< HTMLHeadingElement >( null );
+	const { clearSelectedBlock } = useDispatch( blockEditorStore );
 	// Only a title from outside: rewriting what the user typed would move the caret.
 	useLayoutEffect( () => {
 		if ( ref.current && ref.current.textContent !== value ) {
@@ -149,6 +161,29 @@ function TitleField( {
 		event.preventDefault();
 		const text = event.clipboardData.getData( 'text/plain' ).replace( /\s*\n\s*/g, ' ' );
 		document.execCommand( 'insertText', false, text );
+	};
+	// Types the title in, as the user would, so it saves like typing and the title's own undo
+	// takes it back. A selected block keeps the writing flow as the editing host, so the block is
+	// unselected first, and the title focused once that has rendered. The change is reported here
+	// too, in case the input event still goes elsewhere.
+	const pick = ( id: string, next: string ) => {
+		clearSelectedBlock();
+		requestAnimationFrame( () => {
+			const element = ref.current;
+			if ( element ) {
+				element.focus();
+				document.getSelection()?.selectAllChildren( element );
+				document.execCommand( 'insertText', false, next );
+				if ( element.textContent !== next ) {
+					element.textContent = next;
+				}
+				if ( document.activeElement !== element ) {
+					element.focus();
+				}
+			}
+			onChange( next );
+			onSuggestionsDone( id );
+		} );
 	};
 	return (
 		<div className="mcp-post-editor__title is-layout-constrained has-global-padding">
@@ -174,6 +209,28 @@ function TitleField( {
 				}
 				onPaste={ onPaste }
 			/>
+			{ ! readOnly && suggestions && (
+				<div className="mcp-post-editor__titles" role="group" aria-label="Suggested titles">
+					{ suggestions.titles.map( ( title ) => (
+						<button
+							key={ title }
+							type="button"
+							className="mcp-post-editor__chip"
+							onClick={ () => pick( suggestions.id, title ) }
+						>
+							{ title }
+						</button>
+					) ) }
+					<button
+						type="button"
+						className="mcp-post-editor__titles-dismiss"
+						aria-label="Dismiss the suggested titles"
+						onClick={ () => onSuggestionsDone( suggestions.id ) }
+					>
+						×
+					</button>
+				</div>
+			) }
 		</div>
 	);
 }
@@ -188,10 +245,24 @@ function Canvas( {
 	onProofreadDone,
 	onVisibleIssues,
 	applyRef,
-}: Pick< Props, 'styles' | 'readOnly' | 'onChange' | 'changes' | 'issues' | 'onProofreadDone' > & {
+	openRef,
+	titleSuggestions,
+	onTitleSuggestionsDone,
+}: Pick<
+	Props,
+	| 'styles'
+	| 'readOnly'
+	| 'onChange'
+	| 'changes'
+	| 'issues'
+	| 'onProofreadDone'
+	| 'titleSuggestions'
+	| 'onTitleSuggestionsDone'
+> & {
 	post: EditorPost;
 	onVisibleIssues: ( ids: string[] ) => void;
 	applyRef: Parameters< typeof ProofreadLayer >[ 0 ][ 'applyRef' ];
+	openRef: Parameters< typeof ProofreadLayer >[ 0 ][ 'openRef' ];
 } ) {
 	const [ history, dispatch ] = useReducer( historyReducer, post.content, ( content ) =>
 		newHistory( parse( content ) )
@@ -283,6 +354,7 @@ function Canvas( {
 					onDone={ onProofreadDone }
 					onVisible={ onVisibleIssues }
 					applyRef={ applyRef }
+					openRef={ openRef }
 				/>
 				<WritingFlow className="editor-styles-wrapper" onKeyDown={ onKeyDown }>
 					<ObserveTyping>
@@ -291,6 +363,8 @@ function Canvas( {
 							readOnly={ readOnly }
 							isChanged={ changes.some( ( change ) => change.block_index === null ) }
 							onChange={ ( next ) => setTitle( next ) }
+							suggestions={ titleSuggestions }
+							onSuggestionsDone={ onTitleSuggestionsDone }
 						/>
 						<BlockList className="is-layout-constrained has-global-padding" />
 					</ObserveTyping>
@@ -326,9 +400,43 @@ export function PostEditor( {
 	// The issues whose quote the canvas still has; the others are out of view.
 	const [ visibleIds, setVisibleIds ] = useState< string[] >( [] );
 	const applyRef = useRef< ( list: ProofreadIssue[] ) => void >( undefined );
+	const openRef = useRef< ( id: string ) => void >( undefined );
+	const [ isListOpen, setListOpen ] = useState( false );
 	const onVisibleIssues = ( ids: string[] ) =>
 		setVisibleIds( ( current ) => ( current.join() === ids.join() ? current : ids ) );
 	const visible = canvas.issues.filter( ( issue ) => visibleIds.includes( issue.id ) );
+	// The list closes itself when the last issue goes.
+	useEffect( () => {
+		if ( ! visible.length ) {
+			setListOpen( false );
+		}
+	}, [ visible.length ] );
+	// After a row's Apply or Dismiss, the focus goes to the row now in its place, or the last one,
+	// or the canvas when none is left, once the row has gone. An Apply that couldn't apply leaves
+	// the row, and nothing to move.
+	const listRef = useRef< HTMLUListElement >( null );
+	const focusAfter = useRef< { index: number; id: string } >( undefined );
+	useLayoutEffect( () => {
+		const after = focusAfter.current;
+		if ( ! after || visible.some( ( issue ) => issue.id === after.id ) ) {
+			return;
+		}
+		focusAfter.current = undefined;
+		const rows =
+			listRef.current?.querySelectorAll< HTMLButtonElement >( '.mcp-post-editor__issue' );
+		const row = rows?.[ Math.min( after.index, rows.length - 1 ) ];
+		( row ?? document.querySelector< HTMLElement >( '.editor-styles-wrapper' ) )?.focus();
+	} );
+	const finishRow = ( index: number, id: string, finish: () => void ) => {
+		focusAfter.current = { index, id };
+		finish();
+		// Unarmed if the row stays: the update that removes it renders before this runs.
+		setTimeout( () => {
+			if ( focusAfter.current?.id === id ) {
+				focusAfter.current = undefined;
+			}
+		} );
+	};
 	const { readOnly } = canvas;
 	return (
 		<SlotFillProvider>
@@ -415,6 +523,7 @@ export function PostEditor( {
 						post={ post }
 						onVisibleIssues={ onVisibleIssues }
 						applyRef={ applyRef }
+						openRef={ openRef }
 						{ ...canvas }
 					/>
 				) }
@@ -422,11 +531,57 @@ export function PostEditor( {
 					{ ! readOnly && (
 						<AskAssistant canMessage={ canMessage } onAsk={ onAsk } onSelect={ onSelect } />
 					) }
+					{ ! readOnly && isListOpen && visible.length > 0 && (
+						<ul
+							ref={ listRef }
+							className="mcp-post-editor__issues"
+							aria-label="Proofreading issues"
+						>
+							{ visible.map( ( issue, index ) => (
+								<li key={ issue.id }>
+									<button
+										type="button"
+										className="mcp-post-editor__issue"
+										onClick={ () => openRef.current?.( issue.id ) }
+									>
+										<b>{ KIND_LABEL[ issue.kind ] ?? issue.kind }</b> · “{ issue.quote }” →{ ' ' }
+										{ issue.replacement ? `“${ issue.replacement }”` : 'remove' }
+									</button>
+									<span className="mcp-post-editor__issue-actions">
+										<Button
+											size="small"
+											variant="tertiary"
+											onClick={ () =>
+												finishRow( index, issue.id, () =>
+													canvas.onProofreadDone( [ issue.id ], 0 )
+												)
+											}
+										>
+											Dismiss
+										</Button>
+										<Button
+											size="small"
+											variant="primary"
+											onClick={ () =>
+												finishRow( index, issue.id, () => applyRef.current?.( [ issue ] ) )
+											}
+										>
+											Apply
+										</Button>
+									</span>
+								</li>
+							) ) }
+						</ul>
+					) }
 					{ ! readOnly && visible.length > 0 && (
 						<div className="mcp-post-editor__pill">
-							<span>
+							<button
+								type="button"
+								aria-expanded={ isListOpen }
+								onClick={ () => setListOpen( ! isListOpen ) }
+							>
 								{ visible.length } { visible.length === 1 ? 'issue' : 'issues' }
-							</span>
+							</button>
 							<span aria-hidden="true">·</span>
 							<button type="button" onClick={ () => applyRef.current?.( visible ) }>
 								Apply all

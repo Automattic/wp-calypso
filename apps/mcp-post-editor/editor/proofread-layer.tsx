@@ -5,7 +5,12 @@ import { useEffect, useLayoutEffect, useRef, useState } from '@wordpress/element
 import { findQuote, locate, richTextOf, type Bindings, type ProofreadIssue } from './proofread';
 import type { MutableRefObject } from 'react';
 
-const KIND_LABEL = { spelling: 'Spelling', grammar: 'Grammar', style: 'Style', clarity: 'Clarity' };
+export const KIND_LABEL: Record< string, string > = {
+	spelling: 'Spelling',
+	grammar: 'Grammar',
+	style: 'Style',
+	clarity: 'Clarity',
+};
 // Underlined in red, and the others in blue.
 const ERROR_KINDS = [ 'spelling', 'grammar' ];
 const HIGHLIGHTS = [ 'mcp-proofread-error', 'mcp-proofread-style' ];
@@ -22,6 +27,17 @@ function caretAt( x: number, y: number ) {
 	return range && { node: range.startContainer, offset: range.startOffset };
 }
 
+// Below the text, or above it (`above` is the text's top) when it would overflow the panel.
+function cardAt( { issue, range }: { issue: ProofreadIssue; range: Range } ) {
+	const rect = range.getBoundingClientRect();
+	return {
+		id: issue.id,
+		top: rect.bottom + 6,
+		above: rect.top - 6,
+		left: Math.max( 8, Math.min( rect.left, window.innerWidth - CARD_WIDTH - 8 ) ),
+	};
+}
+
 // Underlines each issue's quote in its block with the CSS Custom Highlight API, which leaves the
 // content alone; a click on one opens a card to apply or dismiss it. Inside the editor's provider.
 export function ProofreadLayer( {
@@ -29,12 +45,15 @@ export function ProofreadLayer( {
 	onDone,
 	onVisible,
 	applyRef,
+	openRef,
 }: {
 	issues: ProofreadIssue[];
 	onDone: ( ids: string[], failed: number ) => void;
 	onVisible: ( ids: string[] ) => void;
 	// Apply all, from the bar outside the provider.
 	applyRef: MutableRefObject< ( ( list: ProofreadIssue[] ) => void ) | undefined >;
+	// Scrolls to an issue's underline and opens its card, from the issues list.
+	openRef: MutableRefObject< ( ( id: string ) => void ) | undefined >;
 } ) {
 	const registry = useRegistry();
 	// The blocks, so the underlines follow edits, and the selected block, which can re-render.
@@ -47,7 +66,6 @@ export function ProofreadLayer( {
 	}, [] );
 	const found = useRef< { issue: ProofreadIssue; range: Range }[] >( [] );
 	const bindings = useRef< Bindings >( new Map() );
-	// Below the text, or above it (`above` is the text's top) when it would overflow the panel.
 	const [ card, setCard ] = useState< { id: string; top: number; above: number; left: number } >();
 	const cardRef = useRef< HTMLDivElement >( null );
 	const onVisibleRef = useRef( onVisible );
@@ -100,17 +118,7 @@ export function ProofreadLayer( {
 			const hit =
 				point &&
 				found.current.find( ( { range } ) => range.isPointInRange( point.node, point.offset ) );
-			if ( ! hit ) {
-				setCard( undefined );
-				return;
-			}
-			const rect = hit.range.getBoundingClientRect();
-			setCard( {
-				id: hit.issue.id,
-				top: rect.bottom + 6,
-				above: rect.top - 6,
-				left: Math.max( 8, Math.min( rect.left, window.innerWidth - CARD_WIDTH - 8 ) ),
-			} );
+			setCard( hit ? cardAt( hit ) : undefined );
 		};
 		// The card is placed for where the text was.
 		const onScroll = () => setCard( undefined );
@@ -122,14 +130,34 @@ export function ProofreadLayer( {
 		};
 	}, [] );
 
-	// Flips the card above the text when it would overflow the panel's bottom.
+	openRef.current = ( id ) => {
+		const hit = found.current.find( ( { issue } ) => issue.id === id );
+		const canvas = document.querySelector( '.mcp-post-editor__canvas' );
+		if ( ! hit || ! canvas ) {
+			return;
+		}
+		// Only the canvas scrolls: scrollIntoView would scroll the host's page too.
+		const box = canvas.getBoundingClientRect();
+		canvas.scrollTop += hit.range.getBoundingClientRect().top - box.top - box.height / 2;
+		// After the scroll's own event, which closes a card.
+		requestAnimationFrame( () => setCard( cardAt( hit ) ) );
+	};
+
+	// Flips the card above the text when it would overflow the panel's bottom or reach the dock.
 	useLayoutEffect( () => {
 		const element = cardRef.current;
 		if ( ! card || ! element ) {
 			return;
 		}
 		const panel = element.closest( '.mcp-post-editor' )?.getBoundingClientRect().bottom;
-		const bottom = Math.min( window.innerHeight, panel ?? window.innerHeight ) - 8;
+		// Above the dock's pill and the issues list too.
+		const dock = document.querySelector( '.mcp-post-editor__dock' )?.getBoundingClientRect();
+		const bottom =
+			Math.min(
+				window.innerHeight,
+				panel ?? window.innerHeight,
+				dock?.height ? dock.top : Infinity
+			) - 8;
 		const height = element.offsetHeight;
 		element.style.top = `${
 			card.top + height > bottom && card.above - height >= 8 ? card.above - height : card.top

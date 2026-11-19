@@ -17,12 +17,18 @@ const host = vi.hoisted( () => ( {
 				onDecide: ( decision: string, ids: string[] ) => void;
 				onSave: () => void;
 				onProofreadDone: ( ids: string[], failed: number ) => void;
+				titleSuggestions?: { id: string; titles: string[] };
+				onTitleSuggestionsDone: ( id: string ) => void;
 				onConflict: ( choice: string ) => void;
 				readOnly: boolean;
 				status: string;
 				conflict?: string;
 		  },
-	server: { version: 1, title: 'Title', content: '' },
+	server: { version: 1, title: 'Title', content: '' } as Args & {
+		version: number;
+		title: string;
+		content: string;
+	},
 	updates: [] as Args[],
 	// The next update is taken, but its reply is lost.
 	loseNextReply: false,
@@ -111,8 +117,8 @@ const paragraph = ( text: string ) =>
 	`<!-- wp:paragraph -->\n<p>${ text }</p>\n<!-- /wp:paragraph -->`;
 const lastUpdate = () => host.updates[ host.updates.length - 1 ];
 
-async function openPost( content: string ) {
-	host.server = { version: 1, title: 'Title', content };
+async function openPost( content: string, state: Args = {} ) {
+	host.server = { version: 1, title: 'Title', content, ...state };
 	await import( '../index' );
 	host.listeners.toolresult( {
 		structuredContent: {
@@ -287,6 +293,22 @@ describe( 'the page', () => {
 			content: paragraph( 'a typo' ),
 			proofread_done_ids: [ 'p1' ],
 		} );
+	} );
+
+	it( 'sends a picked title with its suggestions’ id in one update, and hides them', async () => {
+		const titleSuggestions = { id: 't1', titles: [ 'Better', 'Best' ] };
+		await openPost( paragraph( 'text' ), { title_suggestions: titleSuggestions } );
+		expect( host.editor?.titleSuggestions ).toEqual( titleSuggestions );
+
+		// The pick types the title in, then reports the set done.
+		host.editor?.onChange( { title: 'Best', content: paragraph( 'text' ) } );
+		host.editor?.onTitleSuggestionsDone( 't1' );
+		expect( host.editor?.titleSuggestions ).toBeUndefined();
+		await vi.advanceTimersByTimeAsync( 1000 );
+
+		expect( host.updates ).toHaveLength( 1 );
+		expect( lastUpdate() ).toMatchObject( { title: 'Best', title_suggestions_done_id: 't1' } );
+		expect( lastUpdate() ).not.toHaveProperty( 'content' );
 	} );
 
 	it( 'shows the user’s post, editable, when Reload fails during an update', async () => {
