@@ -10,7 +10,7 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useLocale } from '../../../app/locale';
 import { Callout } from '../../../components/callout';
@@ -20,6 +20,7 @@ import { TextBlur } from '../../../components/text-blur';
 import { DomainUpsellIllustraction } from '../../../sites/domains/components/domain-upsell-card/upsell-illustration';
 import { formatDate } from '../../../utils/datetime';
 import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
+import { useRecordViewOnce } from '../../lib/use-record-view-once';
 import { getWpcomTieredPrice, getWpcomTierPrices } from '../products/lib/product-pricing';
 import { MAX_CART_ITEM_QUANTITY } from '../products/use-shopping-cart';
 import { DevSiteConfigurationModal } from '../purchases/site-configuration-modal';
@@ -61,8 +62,30 @@ function getNextTier(
 	);
 }
 
-function PromotionFootnote( { promotion }: { promotion: AgencyProductPromotion } ) {
+function PromotionFootnote( {
+	promotion,
+	term,
+	isReferralMode,
+}: {
+	promotion: AgencyProductPromotion;
+	term: TermPricing;
+	isReferralMode: boolean;
+} ) {
 	const locale = useLocale();
+	const { recordTracksEvent } = useAnalytics();
+	const purchaseMode = isReferralMode ? 'referral' : 'regular';
+	useRecordViewOnce(
+		`wpcom-promotion:${ term }:${ purchaseMode }`,
+		useCallback(
+			() =>
+				recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_promotion_view', {
+					discount: promotion.discount,
+					term,
+					purchase_mode: purchaseMode,
+				} ),
+			[ recordTracksEvent, promotion.discount, term, purchaseMode ]
+		)
+	);
 	return (
 		<Text variant="muted" size={ 12 }>
 			{ sprintf(
@@ -500,7 +523,11 @@ export default function WpcomSection( {
 					}
 					footnote={
 						promotion && isOwnedSitesReady ? (
-							<PromotionFootnote promotion={ promotion } />
+							<PromotionFootnote
+								promotion={ promotion }
+								term={ term }
+								isReferralMode={ isReferralMode }
+							/>
 						) : undefined
 					}
 				/>

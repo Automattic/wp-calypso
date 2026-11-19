@@ -11,6 +11,8 @@ import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketpla
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-values-utils';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useWPCOMDiscountTiers from '../../../hooks/use-wpcom-discount-tiers';
 import type { TermPricingType } from 'calypso/a8c-for-agencies/sections/marketplace/types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
@@ -76,6 +78,21 @@ export default function WPCOMPlanSelector( {
 			};
 
 	const actualPrice = pricingInfo.discountedCost;
+
+	const dispatch = useDispatch();
+	const promotionDiscount = pricingInfo.promotion?.discount;
+	useEffect( () => {
+		if ( promotionDiscount === undefined ) {
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_promotion_view', {
+				discount: promotionDiscount,
+				term: termPricing,
+				purchase_mode: isReferralMode ? 'referral' : 'regular',
+			} )
+		);
+	}, [ dispatch, promotionDiscount, termPricing, isReferralMode ] );
 
 	const { name: planName } = useWPCOMPlanDescription( plan?.slug ?? '' );
 
