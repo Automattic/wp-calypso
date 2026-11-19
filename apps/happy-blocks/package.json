@@ -35,7 +35,7 @@
 		"@automattic/wpcom-template-parts": "workspace:^",
 		"@emotion/styled": "^11.11.0",
 		"@wordpress/base-styles": "^15.0.0",
-		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A20.1.0#~/.yarn/patches/@wordpress-block-editor-npm-20.1.0-e4d7d29bcc.patch",
+		"@wordpress/block-editor": "^20.0.0",
 		"@wordpress/blocks": "^17.1.0",
 		"@wordpress/components": "^45.0.0",
 		"@wordpress/data": "^11.1.0",

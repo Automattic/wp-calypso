@@ -427,9 +427,7 @@
 		"@wordpress/worker-threads": "2.2.0",
 		"nwsapi": "2.2.28",
 		"marked@npm:^18.0.3": "18.1.1",
-		"wemoji": "patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch",
-		"@wordpress/block-editor@npm:^20.1.0": "patch:@wordpress/block-editor@npm%3A20.1.0#~/.yarn/patches/@wordpress-block-editor-npm-20.1.0-e4d7d29bcc.patch",
-		"@wordpress/global-styles-ui@npm:^2.2.0": "patch:@wordpress/global-styles-ui@npm%3A2.2.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-2.2.0-8c6abc373a.patch"
+		"wemoji": "patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
