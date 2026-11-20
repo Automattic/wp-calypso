@@ -53,6 +53,10 @@ vi.mock( '../../panel/rest-client/wpcom', () => ( {
 	markPostAsSeen: vi.fn(),
 } ) );
 
+// Booting a fresh copy of the whole app can take seconds while the rest of the suite runs alongside.
+const BOOT_WAIT = { timeout: 15000 };
+const TEST_TIMEOUT = 30000;
+
 // Boots the iframe app with the given `features` in its address, as the host page loads it, and opens the panel.
 const openPanel = async ( features: string ) => {
 	vi.resetModules();
@@ -79,8 +83,9 @@ const openPanel = async ( features: string ) => {
 	store.dispatch( actions.ui.loadedNotes() );
 
 	await act( () => import( '../index' ) );
-	await waitFor( () => expect( host.received ).toContain( 'iFrameReady' ) );
+	await waitFor( () => expect( host.received ).toContain( 'iFrameReady' ), BOOT_WAIT );
 	act( () => host.send( { action: 'togglePanel', showing: true } ) );
+	await screen.findByRole( 'button', { name: 'First comment' }, BOOT_WAIT );
 };
 
 // Opens the note from the list and returns the pane it opens in.
@@ -105,60 +110,76 @@ describe( 'Notifications iframe app', () => {
 		vi.restoreAllMocks();
 	} );
 
-	it( 'opens the full page on the current tab, in a new browser tab and with the panel left open, when the host turns the full view on', async () => {
-		const user = userEvent.setup();
-		await openPanel( 'view-settings,full-view' );
+	it(
+		'opens the full page on the current tab, in a new browser tab and with the panel left open, when the host turns the full view on',
+		async () => {
+			const user = userEvent.setup();
+			await openPanel( 'view-settings,full-view' );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Open full view' } ) );
-		expect( window.open ).toHaveBeenLastCalledWith(
-			'https://my.wordpress.com/notifications',
-			'_blank',
-			'noopener'
-		);
-		expect( host.received ).not.toContain( 'togglePanel' );
+			await user.click( await screen.findByRole( 'button', { name: 'Open full view' } ) );
+			expect( window.open ).toHaveBeenLastCalledWith(
+				'https://my.wordpress.com/notifications',
+				'_blank',
+				'noopener'
+			);
+			expect( host.received ).not.toContain( 'togglePanel' );
 
-		await user.click( screen.getByRole( 'tab', { name: 'Unread' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
-		expect( window.open ).toHaveBeenLastCalledWith(
-			'https://my.wordpress.com/notifications?filter=unread',
-			'_blank',
-			'noopener'
-		);
-		expect( host.received ).not.toContain( 'togglePanel' );
-	} );
+			await user.click( screen.getByRole( 'tab', { name: 'Unread' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
+			expect( window.open ).toHaveBeenLastCalledWith(
+				'https://my.wordpress.com/notifications?filter=unread',
+				'_blank',
+				'noopener'
+			);
+			expect( host.received ).not.toContain( 'togglePanel' );
+		},
+		TEST_TIMEOUT
+	);
 
-	it( 'hands the open note to the full page and leaves the panel open', async () => {
-		const user = userEvent.setup();
-		await openPanel( 'view-settings,full-view' );
+	it(
+		'hands the open note to the full page and leaves the panel open',
+		async () => {
+			const user = userEvent.setup();
+			await openPanel( 'view-settings,full-view' );
 
-		const note = await openNote( user );
-		await user.click( note.getByRole( 'button', { name: 'Open full view' } ) );
+			const note = await openNote( user );
+			await user.click( note.getByRole( 'button', { name: 'Open full view' } ) );
 
-		expect( window.open ).toHaveBeenLastCalledWith(
-			'https://my.wordpress.com/notifications?note=801',
-			'_blank',
-			'noopener'
-		);
-		expect( host.received ).not.toContain( 'togglePanel' );
-	} );
+			expect( window.open ).toHaveBeenLastCalledWith(
+				'https://my.wordpress.com/notifications?note=801',
+				'_blank',
+				'noopener'
+			);
+			expect( host.received ).not.toContain( 'togglePanel' );
+		},
+		TEST_TIMEOUT
+	);
 
-	it( 'shows "Mark as unread" on the open note when the host turns it on', async () => {
-		const user = userEvent.setup();
-		await openPanel( 'view-settings,mark-as-unread' );
+	it(
+		'shows "Mark as unread" on the open note when the host turns it on',
+		async () => {
+			const user = userEvent.setup();
+			await openPanel( 'view-settings,mark-as-unread' );
 
-		const note = await openNote( user );
+			const note = await openNote( user );
 
-		expect( note.getByRole( 'button', { name: 'Mark as unread' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
-	} );
+			expect( note.getByRole( 'button', { name: 'Mark as unread' } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
+		},
+		TEST_TIMEOUT
+	);
 
-	it( 'has neither button when the host names neither feature', async () => {
-		const user = userEvent.setup();
-		await openPanel( 'view-settings' );
+	it(
+		'has neither button when the host names neither feature',
+		async () => {
+			const user = userEvent.setup();
+			await openPanel( 'view-settings' );
 
-		await openNote( user );
+			await openNote( user );
 
-		expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Mark as unread' } ) ).not.toBeInTheDocument();
-	} );
+			expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Mark as unread' } ) ).not.toBeInTheDocument();
+		},
+		TEST_TIMEOUT
+	);
 } );
