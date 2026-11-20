@@ -1,13 +1,16 @@
 import { CardFooter, __experimentalHStack as HStack } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelector } from 'react-redux';
 import { getActions, getReferenceId } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../../panel/state/selectors/get-is-note-liked';
+import { useAppContext } from '../context';
 import { getInitialReplyValue } from './actions';
 import ActionsMenu from './actions-menu';
 import AnswerPromptButton from './button-answer-prompt';
 import ApproveButton from './button-approve';
 import LikeButton from './button-like';
+import SpamButton from './button-spam';
 import ReplyInput from './comment-reply-input';
 import type { Note } from '../types';
 
@@ -22,16 +25,38 @@ export const NoteReply = ( { note }: { note: Note } ) => (
 export default function SimplifiedActions( { note, goBack }: { note: Note; goBack: () => void } ) {
 	const isApproved = useSelector( ( state ) => getIsNoteApproved( state, note ) );
 	const isLiked = useSelector( ( state ) => getIsNoteLiked( state, note ) );
+	const { hasExpandedActions } = useAppContext();
+	const isLargeScreen = useViewportMatch( 'large' );
 	const actions = getActions( note );
 	const hasAction = ( ...types: string[] ) => types.some( ( type ) => type in actions );
 
+	// With room for them, Unapprove and Spam join Like and Approve as buttons. Below the
+	// two-pane width they go back into the menu.
+	const isExpanded = hasExpandedActions && isLargeScreen;
+
 	const hasLike = hasAction( 'like-post', 'like-comment' );
 	const hasAnswerPrompt = hasAction( 'answer-prompt' );
-	// Approve sits beside Like while the comment is pending; Unapprove is in the menu.
+	// Approve sits beside Like while the comment is pending; Unapprove is in the menu unless
+	// the actions are expanded.
 	const canApprove = hasAction( 'approve-comment' ) && ! isApproved;
-	const hasMenu = hasAction( ...MENU_ACTIONS ) || ( hasAction( 'approve-comment' ) && isApproved );
+	const canUnapprove = isExpanded && hasAction( 'approve-comment' ) && isApproved;
+	const canSpam = isExpanded && hasAction( 'spam-comment' );
 
-	if ( ! hasLike && ! canApprove && ! hasAnswerPrompt && ! hasMenu ) {
+	// The menu leaves out what's a button, along with its shortcut.
+	const shownAsButton = [ canUnapprove && 'approve-comment', canSpam && 'spam-comment' ];
+	const hasMenuAction = ( ...types: string[] ) =>
+		hasAction( ...types.filter( ( type ) => ! shownAsButton.includes( type ) ) );
+	const hasMenu =
+		hasMenuAction( ...MENU_ACTIONS ) || ( hasMenuAction( 'approve-comment' ) && isApproved );
+
+	if (
+		! hasLike &&
+		! canApprove &&
+		! canUnapprove &&
+		! canSpam &&
+		! hasAnswerPrompt &&
+		! hasMenu
+	) {
 		return null;
 	}
 
@@ -57,11 +82,15 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 							isMinimal
 						/>
 					) }
+					{ canUnapprove && (
+						<ApproveButton className="wpnc__unapprove-action" note={ note } isApproved isMinimal />
+					) }
+					{ canSpam && <SpamButton note={ note } goBack={ goBack } isMinimal /> }
 					{ hasAnswerPrompt && <AnswerPromptButton note={ note } /> }
 				</HStack>
 				{ hasMenu && (
 					<ActionsMenu
-						hasAction={ hasAction }
+						hasAction={ hasMenuAction }
 						isApproved={ isApproved }
 						note={ note }
 						goBack={ goBack }

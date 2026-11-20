@@ -187,6 +187,7 @@ export default function NotificationsInbox( {
 				locale={ locale }
 				isViewSettingsEnabled
 				isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+				hasExpandedActions
 			>
 				<InboxPanes { ...paneProps } />
 			</AppProvider>

@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { closeSmall } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getReferenceId } from '../../panel/helpers/notes';
@@ -14,12 +15,21 @@ const check = (
 
 const ApproveButton = ( { className, isApproved, isMinimal, note, setApproveStatus } ) => {
 	const { client } = useAppContext();
+	// A minimal button names what it does, so an approved comment's reads "Unapprove".
+	const isUnapprove = isMinimal && isApproved;
+
+	const getText = () => {
+		if ( isUnapprove ) {
+			return __( 'Unapprove' );
+		}
+		return isApproved ? __( 'Approved' ) : __( 'Approve' );
+	};
 
 	return (
 		<ActionButton
 			className={ className }
-			icon={ check }
-			isActive={ isApproved }
+			icon={ isUnapprove ? closeSmall : check }
+			isActive={ isApproved && ! isMinimal }
 			isMinimal={ isMinimal }
 			hotkey="a"
 			onToggle={ () =>
@@ -32,7 +42,7 @@ const ApproveButton = ( { className, isApproved, isMinimal, note, setApproveStat
 					client
 				)
 			}
-			text={ isApproved ? __( 'Approved' ) : __( 'Approve' ) }
+			text={ getText() }
 			title={ isApproved ? __( 'Unapprove comment' ) : __( 'Approve comment' ) }
 		/>
 	);
