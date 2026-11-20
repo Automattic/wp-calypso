@@ -75,6 +75,7 @@ import {
 } from './cancel-purchase-form/options-for-product';
 import {
 	CANCELLATION_OFFER_STEP,
+	FEEDBACK_STEP,
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
@@ -821,6 +822,14 @@ function CancelPurchaseInner() {
 	};
 
 	const clickNext = () => {
+		if (
+			state.surveyStep === FEEDBACK_STEP &&
+			( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0
+		) {
+			recordEvent( 'calypso_purchases_cancel_options_eligible', {
+				cancellation_reason: state.questionOneText,
+			} );
+		}
 		changeSurveyStep( nextStep( state.surveyStep ?? '', allSteps ) );
 	};
 

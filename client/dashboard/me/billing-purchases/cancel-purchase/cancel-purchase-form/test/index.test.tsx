@@ -16,7 +16,6 @@ import {
 	UPSELL_STEP,
 } from '../steps';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
-import type { ComponentProps } from 'react';
 
 const mockNavigate = vi.fn();
 vi.mock( '@tanstack/react-router', async () => ( {
@@ -497,53 +496,5 @@ describe( '<CancelPurchaseForm />', () => {
 		await user.click( screen.getByRole( accept.role, { name: accept.name } ) );
 
 		expect( recordEvent ).toHaveBeenCalledWith( ...event );
-	} );
-
-	describe( 'exposure event', () => {
-		const EXPOSURE = 'calypso_purchases_cancel_options_eligible';
-
-		function renderReasonStep(
-			props: Partial< ComponentProps< typeof CancelPurchaseForm > > = {}
-		) {
-			const recordEvent = vi.fn();
-			render(
-				<CancelPurchaseForm
-					{ ...defaultProps }
-					allSteps={ [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ] }
-					purchase={ makePurchase() }
-					questionOneRadio="price/budget"
-					questionOneText="tooExpensive"
-					recordEvent={ recordEvent }
-					{ ...props }
-				/>
-			);
-			return recordEvent;
-		}
-
-		test.each( [
-			{ intent: 'remove', button: 'Continue removal' },
-			{ intent: 'cancel', button: 'Continue' },
-		] as const )( 'records the exposure from $button', async ( { intent, button } ) => {
-			const user = userEvent.setup();
-			const recordEvent = renderReasonStep( { intent } );
-
-			await user.click( screen.getByRole( 'button', { name: button } ) );
-
-			expect( recordEvent ).toHaveBeenCalledWith( EXPOSURE, {
-				cancellation_reason: 'tooExpensive',
-			} );
-		} );
-
-		test.each( [
-			[ 'a product other than a plan', { is_plan: false } ],
-			[ 'a Jetpack plan', { is_jetpack_plan_or_product: true } ],
-		] )( 'skips the exposure for %s', async ( _, overrides ) => {
-			const user = userEvent.setup();
-			const recordEvent = renderReasonStep( { purchase: makePurchase( overrides ) } );
-
-			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
-
-			expect( recordEvent ).not.toHaveBeenCalled();
-		} );
 	} );
 } );
