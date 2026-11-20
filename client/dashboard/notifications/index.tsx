@@ -86,7 +86,9 @@ export default function Notifications() {
 									<div className="dashboard-notifications-inbox__list">{ list }</div>
 								);
 								const detailPane = detail && (
-									<div className="dashboard-notifications-inbox__detail">{ detail }</div>
+									<div key={ noteId } className="dashboard-notifications-inbox__detail">
+										{ detail }
+									</div>
 								);
 								const emptyDetailPane = ! noteId && (
 									<div className="dashboard-notifications-inbox__detail is-empty">
