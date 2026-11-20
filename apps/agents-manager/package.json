@@ -35,7 +35,7 @@
 		"@automattic/image-studio": "workspace:^",
 		"@automattic/jetpack-ai-sidebar": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/components": "^28.23.0",
+		"@wordpress/components": "^45.0.0",
 		"@wordpress/compose": "^9.2.0",
 		"@wordpress/data": "^11.2.0",
 		"@wordpress/i18n": "^7.2.0",
