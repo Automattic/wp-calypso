@@ -670,8 +670,12 @@
 }
 
 // Below the two-pane width the note's title is also its Back button, in the heading's type
-// and color.
-.wpnc__note-back.components-button {
+// and color. Without the start padding a text button takes, and past its 1px transparent
+// border, its arrow's 24px box starts on the header's padding edge, like the icon buttons'
+// boxes at the other end.
+.components-card__header .wpnc__note-back.components-button {
+	margin-inline-start: -1px;
+	padding-inline-start: 0;
 	color: inherit;
 	font: inherit;
 }
