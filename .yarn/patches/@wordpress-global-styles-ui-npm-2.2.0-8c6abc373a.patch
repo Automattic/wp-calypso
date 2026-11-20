@@ -1,4 +1,5 @@
 diff --git a/package.json b/package.json
+index 603f1cf9eff0f3b88705168e392e52cf1cb7e09d..5c253a647bbe6d54ab4698a12f1f294f810cb408 100644
 --- a/package.json
 +++ b/package.json
 @@ -38,7 +38,17 @@
@@ -18,5 +19,5 @@ diff --git a/package.json b/package.json
 +			"default": "./build/context.cjs"
 +		}
  	},
+ 	"types": "build-types",
  	"dependencies": {
- 		"@wordpress/a11y": "^5.1.0",

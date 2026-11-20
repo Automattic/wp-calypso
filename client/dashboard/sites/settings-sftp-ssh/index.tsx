@@ -6,7 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { file } from '@wordpress/icons';
+import { folder } from '@wordpress/icons';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -54,7 +54,7 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 				site={ site }
 				feature={ HostingFeatures.SFTP }
 				upsellId="site-settings-sftp-ssh"
-				upsellIcon={ file }
+				upsellIcon={ folder }
 				upsellImage={
 					<ThemedIllustration light={ upsellIllustrationUrl } dark={ upsellIllustrationDarkUrl } />
 				}
