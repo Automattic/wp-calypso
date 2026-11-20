@@ -1,5 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import { closeSmall } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getReferenceId } from '../../panel/helpers/notes';
@@ -10,6 +9,21 @@ import ActionButton from './action-button';
 const check = (
 	<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 		<path d="M18.2446 8.03027L9.71436 16.5605L5.75537 12.6016L6.81592 11.541L9.71436 14.4395L17.1841 6.96973L18.2446 8.03027Z" />
+	</svg>
+);
+
+// The `closeSmall` icon's 1.5px stroke, a little wider so it holds its own beside the check.
+const cross = (
+	<svg
+		width="24"
+		height="24"
+		viewBox="0 0 24 24"
+		xmlns="http://www.w3.org/2000/svg"
+		style={ { fill: 'none' } }
+		stroke="currentColor"
+		strokeWidth="1.5"
+	>
+		<path d="M7.25 16.75L16.75 7.25M16.75 16.75L7.25 7.25" />
 	</svg>
 );
 
@@ -28,7 +42,7 @@ const ApproveButton = ( { className, isApproved, isMinimal, note, setApproveStat
 	return (
 		<ActionButton
 			className={ className }
-			icon={ isUnapprove ? closeSmall : check }
+			icon={ isUnapprove ? cross : check }
 			isActive={ isApproved && ! isMinimal }
 			isMinimal={ isMinimal }
 			hotkey="a"

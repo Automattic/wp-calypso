@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { removeBug } from '@wordpress/icons';
+import { caution } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { connect } from 'react-redux';
@@ -18,7 +18,7 @@ const SpamButton = ( { isMinimal, note, spamNote, goBack } ) => {
 
 	return (
 		<ActionButton
-			icon={ removeBug }
+			icon={ caution }
 			isActive={ false }
 			// Beside Like and Approve it takes their gray, as in the Actions menu, where only
 			// Move to trash is destructive.
