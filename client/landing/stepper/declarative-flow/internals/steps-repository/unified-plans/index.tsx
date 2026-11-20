@@ -8,7 +8,7 @@ import {
 	useStepPersistedState,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
-import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { type TranslateResult } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
@@ -40,7 +40,6 @@ import './style.scss';
 
 type ProvidedDependencies = {
 	stepName: 'plans';
-	action?: 'select-existing-site';
 	cartItems: MinimalRequestCartProduct[] | null;
 };
 
@@ -53,7 +52,6 @@ const PlansStepAdaptor: StepType< {
 		displayedIntervals?: SupportedIntervalTypes[];
 		headerText?: string;
 		subHeaderText?: string;
-		showExistingSiteLink?: boolean;
 		hideFreePlan?: boolean;
 		hideEnterprisePlan?: boolean;
 		hidePersonalPlan?: boolean;
@@ -84,7 +82,6 @@ const PlansStepAdaptor: StepType< {
 		wrapperProps,
 		headerText,
 		subHeaderText,
-		showExistingSiteLink,
 		hideFreePlan: hideFreePlanOverride,
 		hideEnterprisePlan: hideEnterprisePlanOverride,
 		hidePersonalPlan: hidePersonalPlanOverride,
@@ -100,7 +97,6 @@ const PlansStepAdaptor: StepType< {
 		deemphasizeFreePlan,
 		intent: intentOverride,
 	} = props;
-	const translate = useTranslate();
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const query = useQuery();
 	const isMigrationFlow = isNewSiteMigrationFlow( props.flow );
@@ -259,31 +255,7 @@ const PlansStepAdaptor: StepType< {
 			hideEcommercePlan={ hideEcommercePlanOverride || blueprintHideProps.hideEcommercePlan }
 			hidePlanTypeSelector={ hidePlanTypeSelectorOverride }
 			headerText={ headerText }
-			subHeaderText={
-				showExistingSiteLink ? (
-					<>
-						{ subHeaderText }
-						<br />
-						{ translate( 'Or {{link}}migrate to a site you already have{{/link}}.', {
-							components: {
-								link: (
-									<Step.LinkButton
-										onClick={ () =>
-											props.navigation.submit?.( {
-												stepName: 'plans',
-												cartItems: null,
-												action: 'select-existing-site',
-											} )
-										}
-									/>
-								),
-							},
-						} ) }
-					</>
-				) : (
-					subHeaderText
-				)
-			}
+			subHeaderText={ subHeaderText }
 			highlightLabelOverrides={ highlightLabelOverrides }
 			titleBadgeOverrides={ titleBadgeOverrides }
 			taglineOverrides={ taglineOverrides }

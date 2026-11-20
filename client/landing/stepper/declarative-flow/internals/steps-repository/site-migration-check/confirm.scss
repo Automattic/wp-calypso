@@ -1,0 +1,192 @@
+@import '@wordpress/theme/design-tokens.css';
+@import '@wordpress/base-styles/mixins';
+@import '../../components/site-preview-panel/mixins';
+
+.site-migration-confirm__split {
+	@include site-preview-split;
+}
+
+.site-migration-confirm__main {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+	width: 100%;
+	max-width: 440px;
+	margin-inline: auto;
+	container-type: inline-size;
+	@include body-large();
+
+	.step-container-v2__heading {
+		h1 {
+			line-height: 1.18;
+			text-wrap: balance;
+		}
+
+		p {
+			margin-top: 8px;
+		}
+	}
+
+	.step-container-v2__link-button.components-button {
+		height: auto;
+		padding: 0;
+		@include body-medium();
+		font-weight: 400;
+		text-decoration: underline;
+	}
+}
+
+.site-migration-confirm__route {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding-block-end: 24px;
+	border-block-end: 1px solid var( --color-neutral-5 );
+}
+
+// The label and address on the left, the Change link beside them.
+.site-migration-confirm__site {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr ) auto;
+	column-gap: 16px;
+
+	> * {
+		grid-column: 1;
+	}
+
+	.site-migration-confirm__change {
+		grid-column: 2;
+		grid-row: 1 / span 2;
+		align-self: start;
+	}
+}
+
+// Side by side when the layout has room.
+@container ( min-width: 428px ) {
+	.site-migration-confirm__route--side-by-side {
+		display: grid;
+		// Each site only as wide as its text, so the arrow sits midway between them.
+		grid-template-columns: minmax( 0, max-content ) auto minmax( 0, max-content );
+		justify-content: start;
+		column-gap: 16px;
+		align-items: start;
+
+		.site-migration-confirm__site {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.site-migration-confirm__change {
+			margin-block-start: 4px;
+		}
+
+		.site-migration-confirm__arrow {
+			// Level with the addresses, below their labels.
+			margin-block-start: 20px;
+			margin-inline-start: 0;
+			transform: rotate( -90deg );
+		}
+	}
+}
+
+.site-migration-confirm__label {
+	@include body-medium();
+	color: var( --color-neutral-60 );
+}
+
+.site-migration-confirm__address {
+	// Breaks before dots first (see wrappableAddress), anywhere only when a part is still too long.
+	overflow-wrap: anywhere;
+}
+
+.site-migration-confirm__warning,
+.site-migration-confirm__error {
+	@include body-medium();
+}
+
+.site-migration-confirm__warning {
+	color: var( --wpds-color-foreground-content-warning-weak );
+}
+
+.site-migration-confirm__error {
+	color: var( --wpds-color-foreground-content-error-weak );
+}
+
+.site-migration-confirm__route--last {
+	padding-block-end: 0;
+	border-block-end: 0;
+}
+
+.site-migration-confirm__arrow {
+	// The arrow sits 7px inside its 24px box, so pull it back to line up with the text.
+	margin-inline-start: -6px;
+	color: var( --color-neutral-60 );
+}
+
+.site-migration-confirm__includes ul {
+	margin: 8px 0 0;
+	list-style: none;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	svg {
+		flex: none;
+		color: var( --color-success );
+	}
+}
+
+.site-migration-confirm__primary.step-container-v2__primary-button {
+	width: 100%;
+	margin-block-start: 8px;
+	justify-content: center;
+}
+
+// Two windows, the site to copy over the site it replaces, so each is shorter to fit the panel.
+.site-migration-confirm__panel--compare {
+	.site-preview-panel__content {
+		align-items: stretch;
+		max-width: clamp( 360px, calc( 100vh - 340px ), 640px );
+	}
+
+	.site-window .site-window__screenshot {
+		aspect-ratio: 2 / 1;
+	}
+}
+
+.site-migration-confirm__caption {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin: 0;
+	@include body-medium();
+	color: var( --studio-white );
+	// Long addresses break anywhere rather than widening the panel.
+	overflow-wrap: anywhere;
+
+	p {
+		min-width: 0;
+		margin: 0;
+	}
+}
+
+.site-migration-confirm__tag {
+	padding: 2px var( --wpds-dimension-padding-sm );
+	border-radius: var( --wpds-border-radius-sm );
+	background: var( --wpds-color-background-surface-warning-weak );
+	color: var( --wpds-color-foreground-content-warning-weak );
+	@include body-small();
+	font-weight: 500;
+}
+
+.site-migration-confirm__panel-arrow {
+	flex: none;
+	align-self: center;
+	color: var( --studio-white );
+}
