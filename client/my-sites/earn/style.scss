@@ -74,8 +74,10 @@ body.is-section-jetpack-monetize {
 
 .theme-jetpack-cloud {
 	.components-form-toggle.is-checked {
+		/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 		--wpds-color-background-interactive-brand-strong: var(--studio-jetpack-green-50);
 		--wpds-color-stroke-interactive-brand: var(--studio-jetpack-green-50);
+		/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	}
 
 	h2.formatted-header__title {
