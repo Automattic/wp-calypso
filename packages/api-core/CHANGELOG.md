@@ -1,5 +1,6 @@
 ## Unreleased
 
+- Breaking: Require `@wordpress/dataviews` ^22.1.0, `@wordpress/html-entities` ^5.2.0, `@wordpress/i18n` ^7.2.0 and `@wordpress/url` ^5.2.0.
 - Breaking: Removed `'commerce-garden'` from `FetchSiteType`.
 - Breaking: Removed the `garden` option from `fetchDomains()` and the `FetchDomainsOptions` type.
 - Breaking: Removed `is_garden`, `garden_name`, `garden_partner` and `garden_is_provisioned` from `Site` and `SITE_FIELDS`.
