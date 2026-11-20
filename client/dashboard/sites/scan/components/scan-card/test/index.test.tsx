@@ -1,197 +1,62 @@
 /**
  * @vitest-environment jsdom
  */
-import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import nock from 'nock';
-import { vi } from 'vitest';
 import { render } from '../../../../../test-utils';
 import ScanCard from '../index';
-import type { Site, SiteScan, Threat } from '@automattic/api-core';
+import type { Site, Threat } from '@automattic/api-core';
 
-const mockSiteId = 123;
+const site = {
+	ID: 123,
+	plan: { features: { active: [ HostingFeatures.SCAN_SELF_SERVE ] } },
+} as unknown as Site;
 
-const mockSite: Site = {
-	ID: mockSiteId,
-	plan: {
-		features: {
-			active: [ HostingFeatures.SCAN_SELF_SERVE ],
-		},
-	},
-	is_wpcom_atomic: true,
-} as Site;
+const fixableThreat = { fixable: { fixer: 'update' } } as unknown as Threat;
+const nonFixableThreat = {} as Threat;
 
-function mockSiteScan( scan: SiteScan ) {
+function mockScan( threats: Threat[] ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/wpcom/v2/sites/${ mockSiteId }/scan` )
-		.reply( 200, scan );
+		.get( `/wpcom/v2/sites/${ site.ID }/scan` )
+		.reply( 200, {
+			threats,
+		} );
 }
 
-vi.mock( '../../../../../app/locale', () => ( {
-	useLocale: () => 'en',
-	useIntlLocale: () => 'en',
-} ) );
+describe( '<ScanCard>', () => {
+	test( 'shows that no risks were found when there are no threats', async () => {
+		mockScan( [] );
 
-describe( 'ScanCard', () => {
-	test( 'shows "No risks found" when there are no threats', async () => {
-		mockSiteScan( {
-			state: 'idle',
-			threats: [],
-			has_cloud: true,
-			current: {
-				is_initial: false,
-				timestamp: new Date().toISOString(),
-				progress: 100,
-			},
-			most_recent: {
-				is_initial: false,
-				timestamp: new Date().toISOString(),
-				duration: 30,
-				progress: 100,
-				error: false,
-			},
-		} as SiteScan );
+		render( <ScanCard site={ site } /> );
 
-		render( <ScanCard site={ mockSite } /> );
-
-		await waitFor( () => {
-			expect( screen.getByText( 'No risks found' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByRole( 'heading', { name: 'No risks found' } ) ).toBeVisible();
 	} );
 
-	test( 'shows "Auto fixes are available" when threats are fixable', async () => {
-		const fixableThreat: Threat = {
-			id: 1,
-			signature: 'Vulnerable.WP.Core',
-			title: 'WordPress outdated',
-			description: 'WordPress is outdated',
-			first_detected: new Date().toISOString(),
-			severity: 5,
-			status: 'current',
-			fixable: {
-				fixer: 'update',
-				extras: {
-					is_bulk_fixable: true,
-				},
-			},
-		};
+	test( 'shows that auto fixes are available when a threat is fixable', async () => {
+		mockScan( [ fixableThreat ] );
 
-		mockSiteScan( {
-			state: 'idle',
-			threats: [ fixableThreat ],
-			has_cloud: true,
-			current: {
-				is_initial: false,
-				timestamp: new Date().toISOString(),
-				progress: 100,
-			},
-			most_recent: {
-				is_initial: false,
-				timestamp: new Date().toISOString(),
-				duration: 30,
-				progress: 100,
-				error: false,
-			},
-		} as SiteScan );
+		render( <ScanCard site={ site } /> );
 
-		render( <ScanCard site={ mockSite } /> );
-
-		await waitFor( () => {
-			expect( screen.getByText( '1 risk found' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Auto fixes are available.' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByRole( 'heading', { name: '1 risk found' } ) ).toBeVisible();
+		expect( screen.getByText( 'Auto fixes are available.' ) ).toBeVisible();
 	} );
 
-	test( 'shows "Manual review required" when threats are not fixable', async () => {
-		const nonFixableThreat: Threat = {
-			id: 2,
-			signature: 'Vulnerable.WP.Plugin',
-			title: 'Vulnerable plugin',
-			description: 'Plugin has known vulnerability',
-			first_detected: new Date().toISOString(),
-			severity: 5,
-			status: 'current',
-			// No fixable property means it cannot be auto-fixed
-		};
+	test( 'shows that a manual review is required when no threat is fixable', async () => {
+		mockScan( [ nonFixableThreat ] );
 
-		mockSiteScan( {
-			state: 'idle',
-			threats: [ nonFixableThreat ],
-			has_cloud: true,
-			current: {
-				is_initial: false,
-				timestamp: new Date().toISOString(),
-				progress: 100,
-			},
-			most_recent: {
-				is_initial: false,
-				timestamp: new Date().toISOString(),
-				duration: 30,
-				progress: 100,
-				error: false,
-			},
-		} as SiteScan );
+		render( <ScanCard site={ site } /> );
 
-		render( <ScanCard site={ mockSite } /> );
-
-		await waitFor( () => {
-			expect( screen.getByText( '1 risk found' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Manual review required.' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByRole( 'heading', { name: '1 risk found' } ) ).toBeVisible();
+		expect( screen.getByText( 'Manual review required.' ) ).toBeVisible();
 	} );
 
-	test( 'shows "Auto fixes are available" when at least one threat is fixable among multiple threats', async () => {
-		const fixableThreat: Threat = {
-			id: 1,
-			signature: 'Vulnerable.WP.Core',
-			title: 'WordPress outdated',
-			description: 'WordPress is outdated',
-			first_detected: new Date().toISOString(),
-			severity: 5,
-			status: 'current',
-			fixable: {
-				fixer: 'update',
-				extras: {
-					is_bulk_fixable: true,
-				},
-			},
-		};
+	test( 'shows that auto fixes are available when one of several threats is fixable', async () => {
+		mockScan( [ nonFixableThreat, fixableThreat ] );
 
-		const nonFixableThreat: Threat = {
-			id: 2,
-			signature: 'Vulnerable.WP.Plugin',
-			title: 'Vulnerable plugin',
-			description: 'Plugin has known vulnerability',
-			first_detected: new Date().toISOString(),
-			severity: 5,
-			status: 'current',
-			// No fixable property
-		};
+		render( <ScanCard site={ site } /> );
 
-		mockSiteScan( {
-			state: 'idle',
-			threats: [ fixableThreat, nonFixableThreat ],
-			has_cloud: true,
-			current: {
-				is_initial: false,
-				timestamp: new Date().toISOString(),
-				progress: 100,
-			},
-			most_recent: {
-				is_initial: false,
-				timestamp: new Date().toISOString(),
-				duration: 30,
-				progress: 100,
-				error: false,
-			},
-		} as SiteScan );
-
-		render( <ScanCard site={ mockSite } /> );
-
-		await waitFor( () => {
-			expect( screen.getByText( '2 risks found' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Auto fixes are available.' ) ).toBeInTheDocument();
-		} );
+		expect( await screen.findByRole( 'heading', { name: '2 risks found' } ) ).toBeVisible();
+		expect( screen.getByText( 'Auto fixes are available.' ) ).toBeVisible();
 	} );
 } );

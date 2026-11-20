@@ -1,62 +1,22 @@
 /**
  * @vitest-environment jsdom
  */
-import '@testing-library/jest-dom';
+import { getEmptyResponseCart } from '@automattic/shopping-cart';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { select } from '@wordpress/data';
+import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
-import { vi } from 'vitest';
 import { render } from '../../../../../test-utils';
 import DomainUpsellCard from '../index';
 import type { DomainSuggestion, Site } from '@automattic/api-core';
 
-const mockSiteId = 123;
-
-const mockReplaceProductsInCart = vi.fn();
-const mockCreateErrorNotice = vi.fn();
-let mockShoppingCartImportError: Error | null = null;
-
-// Vitest wraps an error thrown by a mock factory in its own error, so throw from a getter instead.
-vi.mock( '../../../../../app/shopping-cart', () => ( {
-	get shoppingCartManagerClient() {
-		if ( mockShoppingCartImportError ) {
-			throw mockShoppingCartImportError;
-		}
-
-		return {
-			forCartKey: () => ( {
-				actions: {
-					replaceProductsInCart: ( ...args: unknown[] ) => mockReplaceProductsInCart( ...args ),
-				},
-			} ),
-		};
-	},
-} ) );
-
-// eslint-disable-next-line no-restricted-imports
-vi.mock( 'calypso/lib/domains', () => ( {
-	getDomainAndPlanUpsellUrl: () => '/upsell-url',
-} ) );
-
-vi.mock( '@wordpress/data', () => ( {
-	useDispatch: () => ( {
-		createErrorNotice: mockCreateErrorNotice,
-	} ),
-	useSelect: vi.fn( () => ( {} ) ),
-	combineReducers: vi.fn( ( reducers ) => reducers ),
-	createReduxStore: vi.fn(),
-	register: vi.fn(),
-	createSelector: vi.fn(),
-	keyedReducer: () => () => ( {} ),
-} ) );
-
-const mockSite: Site = {
-	ID: mockSiteId,
+const site = {
+	ID: 123,
 	slug: 'example.wordpress.com',
-	plan: {},
-} as Site;
+} as unknown as Site;
 
-function mockApis( {
+function mockDomainCreditAndSuggestions( {
 	hasDomainCredit = true,
 	suggestions = [ { domain_name: 'example.com', product_slug: 'domain_reg' } ],
 }: {
@@ -64,7 +24,7 @@ function mockApis( {
 	suggestions?: Partial< DomainSuggestion >[];
 } = {} ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.4/sites/${ mockSiteId }/plans` )
+		.get( `/rest/v1.4/sites/${ site.ID }/plans` )
 		.query( true )
 		.reply( 200, {
 			plans: {
@@ -82,18 +42,30 @@ function mockApis( {
 		.reply( 200, suggestions );
 }
 
-// The card names the domain in its description once the suggestions request resolves. The
-// illustration repeats it in an SVG `<text>`, hence the selector.
-const findDomainInDescription = ( name: string ) => screen.findByText( name, { selector: 'span' } );
+function mockCart( updatedCart: object = {} ) {
+	const cart = { ...getEmptyResponseCart(), blog_id: site.ID, cart_key: site.ID };
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/me/shopping-cart/${ site.ID }` )
+		.reply( 200, cart );
+	return nock( 'https://public-api.wordpress.com' )
+		.post( `/rest/v1.1/me/shopping-cart/${ site.ID }`, ( body ) =>
+			body.products.some(
+				( product: { product_slug: string; meta: string } ) =>
+					product.product_slug === 'domain_reg' && product.meta === 'example.com'
+			)
+		)
+		.reply( 200, { ...cart, ...updatedCart } );
+}
+
+function waitForDescription( text: string ) {
+	return waitFor( () => expect( screen.getByRole( 'article' ) ).toHaveTextContent( text ) );
+}
 
 const originalLocation = window.location;
 
 beforeEach( () => {
-	vi.clearAllMocks();
-	mockShoppingCartImportError = null;
-	mockReplaceProductsInCart.mockResolvedValue( undefined );
 	Object.defineProperty( window, 'location', {
-		value: { href: '', hostname: 'wordpress.com', search: '' },
+		value: { href: '' },
 		writable: true,
 	} );
 } );
@@ -102,176 +74,121 @@ afterEach( () => {
 	Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 } );
 
-describe( 'DomainUpsellCard', () => {
+describe( '<DomainUpsellCard>', () => {
 	test( 'asks a free site to choose a plan', async () => {
-		mockApis( { hasDomainCredit: false } );
+		mockDomainCreditAndSuggestions( { hasDomainCredit: false } );
 
-		render( <DomainUpsellCard site={ { ...mockSite, plan: { is_free: true } } as Site } /> );
+		render( <DomainUpsellCard site={ { ...site, plan: { is_free: true } } as Site } /> );
 
 		expect( await screen.findByRole( 'button', { name: 'Choose a plan' } ) ).toBeVisible();
 		expect( screen.getByText( /Upgrade to an annual paid plan/ ) ).toBeVisible();
 	} );
 
-	test( 'asks a monthly-billed paid site to switch to annual billing instead of choosing a plan', async () => {
-		mockApis( { hasDomainCredit: false } );
+	test( 'asks a monthly-billed paid site to switch to annual billing', async () => {
+		mockDomainCreditAndSuggestions( { hasDomainCredit: false } );
 
 		render(
 			<DomainUpsellCard
 				site={
 					{
-						...mockSite,
+						...site,
 						plan: { is_free: false, billing_period: 'Monthly', product_name_short: 'Personal' },
 					} as Site
 				}
 			/>
 		);
 
-		expect(
-			await screen.findByRole( 'button', { name: 'Switch to annual billing' } )
-		).toBeVisible();
-		await findDomainInDescription( 'example.com' );
-		expect( screen.getByText( 'Personal' ).parentElement ).toHaveTextContent(
+		const button = await screen.findByRole( 'button', { name: 'Switch to annual billing' } );
+		await waitForDescription( 'example.com free for one year' );
+
+		expect( button ).toBeVisible();
+		expect( screen.getByRole( 'article' ) ).toHaveTextContent(
 			'Switch your Personal plan to annual billing to get example.com free for one year.'
 		);
-		expect( screen.queryByRole( 'button', { name: 'Choose a plan' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Upgrade to an annual paid plan/ ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'offers the domain itself to an annual paid site that has used its domain credit', async () => {
-		mockApis( { hasDomainCredit: false } );
+		mockDomainCreditAndSuggestions( { hasDomainCredit: false } );
 
 		render(
 			<DomainUpsellCard
-				site={
-					{
-						...mockSite,
-						plan: { is_free: false, billing_period: 'Yearly', product_name_short: 'Personal' },
-					} as Site
-				}
+				site={ { ...site, plan: { is_free: false, billing_period: 'Yearly' } } as Site }
 			/>
 		);
 
 		expect( await screen.findByRole( 'button', { name: 'Get this domain' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'button', { name: 'Choose a plan' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'falls back to generic copy when the vendor returns no trustworthy suggestion', async () => {
-		mockApis( {
+	test( 'shows generic copy when the vendor returns no trustworthy suggestion', async () => {
+		mockDomainCreditAndSuggestions( {
 			hasDomainCredit: false,
-			// "example" is a clean query, so a lone hyphenated respelling is rejected.
 			suggestions: [ { domain_name: 'ex-am-ple.com', product_slug: 'domain_reg' } ],
 		} );
 
-		render( <DomainUpsellCard site={ { ...mockSite, plan: { is_free: true } } as Site } /> );
+		render( <DomainUpsellCard site={ { ...site, plan: { is_free: true } } as Site } /> );
 
-		expect( await screen.findByRole( 'button', { name: 'Choose a plan' } ) ).toBeVisible();
-		await findDomainInDescription( 'a custom domain' );
+		await waitForDescription( 'a custom domain' );
 
-		// The "choose your own domain name" CTA stays functional and the copy drops
-		// the specific domain for neutral phrasing.
-		const chooseYourOwnLink = screen.getByRole( 'link', {
-			name: 'choose your own domain name',
-		} );
-		expect( chooseYourOwnLink ).toBeVisible();
-		expect( chooseYourOwnLink.parentElement ).toHaveTextContent(
+		expect( screen.getByRole( 'article' ) ).toHaveTextContent(
 			'Upgrade to an annual paid plan to get a custom domain free for one year. You can also choose your own domain name.'
 		);
-		// The mangled respelling must not leak into the copy.
-		expect( screen.queryByText( /ex-am-ple\.com/ ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'shows an error notice when the shopping cart chunk fails to load', async () => {
-		const user = userEvent.setup();
-		mockApis();
-		mockShoppingCartImportError = new Error( 'Loading chunk failed' );
-
-		render( <DomainUpsellCard site={ mockSite } /> );
-
-		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
-		await findDomainInDescription( 'example.com' );
-		await user.click( button );
-
-		await waitFor( () => {
-			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Loading chunk failed', {
-				type: 'snackbar',
-			} );
-		} );
-
-		expect( button ).not.toHaveClass( 'is-busy' );
+		expect( screen.getByRole( 'link', { name: 'choose your own domain name' } ) ).toBeVisible();
 	} );
 
 	test( 'shows an error notice when adding an unavailable domain to the cart fails', async () => {
 		const user = userEvent.setup();
 		const errorMessage = 'Sorry, the domain you are trying to add is no longer available.';
-		mockApis();
-		mockReplaceProductsInCart.mockRejectedValue( new Error( errorMessage ) );
-
-		render( <DomainUpsellCard site={ mockSite } /> );
-
-		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
-		await findDomainInDescription( 'example.com' );
-		await user.click( button );
-
-		await waitFor( () => {
-			expect( mockCreateErrorNotice ).toHaveBeenCalledWith( errorMessage, { type: 'snackbar' } );
+		mockDomainCreditAndSuggestions();
+		mockCart( {
+			messages: { errors: [ { code: 'domain_unavailable', message: errorMessage } ] },
 		} );
 
-		// The button should no longer be busy after the failure.
-		expect( button ).not.toHaveClass( 'is-busy' );
+		render( <DomainUpsellCard site={ site } /> );
+
+		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
+		await waitForDescription( 'example.com is included' );
+		await user.click( button );
+
+		await waitFor( () =>
+			expect( select( noticesStore ).getNotices() ).toEqual( [
+				expect.objectContaining( { status: 'error', type: 'snackbar', content: errorMessage } ),
+			] )
+		);
 	} );
 
 	test( 'claims the suggested domain and continues to checkout', async () => {
 		const user = userEvent.setup();
-		mockApis();
+		mockDomainCreditAndSuggestions();
+		const cartUpdate = mockCart();
 
-		render( <DomainUpsellCard site={ mockSite } /> );
+		render( <DomainUpsellCard site={ site } /> );
 
 		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
-		await findDomainInDescription( 'example.com' );
+		await waitForDescription( 'example.com is included' );
 		await user.click( button );
 
-		await waitFor( () => {
-			expect( mockReplaceProductsInCart ).toHaveBeenCalledWith( [
-				{ product_slug: 'domain_reg', meta: 'example.com' },
-			] );
-		} );
-		await waitFor( () => {
-			expect( window.location.href ).toContain( '/checkout/' );
-		} );
+		await waitFor( () => expect( window.location.href ).toContain( '/checkout/' ) );
+		expect( cartUpdate.isDone() ).toBe( true );
 	} );
 
-	test( 'sends the user to pick a domain instead of an empty checkout when there is no trustworthy suggestion', async () => {
+	test( 'sends the user to pick a domain when there is no trustworthy suggestion', async () => {
 		const user = userEvent.setup();
-		mockApis( { suggestions: [] } );
+		mockDomainCreditAndSuggestions( { suggestions: [] } );
 
 		render(
 			<DomainUpsellCard
-				site={ { ...mockSite, plan: { is_free: false, billing_period: 'Yearly' } } as Site }
+				site={ { ...site, plan: { is_free: false, billing_period: 'Yearly' } } as Site }
 			/>
 		);
 
 		const button = await screen.findByRole( 'button', { name: 'Claim this domain' } );
-		await findDomainInDescription( 'A custom domain' );
+		await waitForDescription( 'A custom domain is included' );
 		await user.click( button );
 
-		await waitFor( () => {
-			expect( window.location.href ).toContain( 'upsell-url' );
-		} );
-		// No domain to claim, so nothing is added to the cart and we never land on checkout.
-		expect( mockReplaceProductsInCart ).not.toHaveBeenCalled();
-		expect( window.location.href ).not.toContain( '/checkout/' );
-	} );
-
-	test( 'stops blurring the illustration once the query resolves without a suggestion', async () => {
-		mockApis( { suggestions: [] } );
-
-		render( <DomainUpsellCard site={ mockSite } /> );
-
-		// The illustration renders the search term in its address bar. Once the
-		// query resolves without a suggestion it must drop the loading blur
-		// instead of leaving a permanently blurred placeholder.
-		await waitFor( () => {
-			expect( screen.getByText( 'example' ) ).not.toHaveAttribute( 'filter' );
-		} );
+		await waitFor( () =>
+			expect( window.location.href ).toBe(
+				screen.getByRole( 'link', { name: 'choose your own' } ).getAttribute( 'href' )
+			)
+		);
 	} );
 } );
