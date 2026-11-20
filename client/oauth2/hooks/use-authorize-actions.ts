@@ -13,7 +13,7 @@ export const decodeHtmlEntities = ( html: string ): string => {
 
 /**
  * Checks if a redirect URI uses a custom protocol (not http/https).
- * Custom protocols are used by apps like Studio (wpcom-local-dev://).
+ * Custom protocols are used by apps like Studio.
  * @param redirectUri - The redirect URI to check
  * @returns True if the URI uses a custom protocol
  */

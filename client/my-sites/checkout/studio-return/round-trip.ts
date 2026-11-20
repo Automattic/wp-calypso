@@ -42,6 +42,70 @@ export function getStudioCheckoutParams(
 	};
 }
 
+function parseSiteId( value: unknown ): number | null {
+	if ( typeof value !== 'string' || ! /^[1-9]\d*$/.test( value ) ) {
+		return null;
+	}
+	const siteId = Number( value );
+	return Number.isSafeInteger( siteId ) ? siteId : null;
+}
+
+export interface StudioSyncConnectParams {
+	studioSiteId: string;
+	remoteSiteId: number;
+	autoOpenPush: boolean;
+}
+
+export type StudioSyncConnectRejection = 'site_id' | 'studio_site_id';
+
+/**
+ * Reads the params of Studio's publish flow off a `/checkout/studio-return` URL, or returns null
+ * when the URL belongs to the checkout round trip instead.
+ *
+ * `remoteSiteId` alone picks this mode, whatever its value. A malformed link is rejected rather
+ * than handled as a cancelled checkout, which would hand Studio the wrong result.
+ */
+export function getStudioSyncConnectParams(
+	query: Record< string, unknown > | undefined
+):
+	| { params: StudioSyncConnectParams; rejection?: never }
+	| { params?: never; rejection: StudioSyncConnectRejection }
+	| null {
+	if ( ! query || ! ( 'remoteSiteId' in query ) ) {
+		return null;
+	}
+
+	const remoteSiteId = parseSiteId( query.remoteSiteId );
+	if ( ! remoteSiteId ) {
+		return { rejection: 'site_id' };
+	}
+
+	const studioSiteId = query.studioSiteId;
+	if ( ! isUsableStudioId( studioSiteId ) ) {
+		return { rejection: 'studio_site_id' };
+	}
+
+	return {
+		params: { studioSiteId, remoteSiteId, autoOpenPush: query.autoOpenPush === 'true' },
+	};
+}
+
+/**
+ * Where Studio's publish flow should land once the new site is ready, so the page can connect it
+ * to the local site.
+ */
+export function buildStudioSyncConnectPath( {
+	studioSiteId,
+	remoteSiteId,
+	autoOpenPush,
+}: StudioSyncConnectParams ): string {
+	return addQueryArgs( STUDIO_RETURN_PATH, {
+		studioSiteId,
+		remoteSiteId,
+		...( autoOpenPush ? { autoOpenPush: 'true' } : {} ),
+	} );
+}
+
 /**
  * Where checkout should send the user after a successful purchase.
  *

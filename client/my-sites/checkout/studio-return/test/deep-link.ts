@@ -2,7 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { buildStudioCheckoutReturnUrl, openStudioCheckoutReturn } from '../deep-link';
+import {
+	buildStudioCheckoutReturnUrl,
+	buildStudioSyncConnectUrl,
+	openStudioCheckoutReturn,
+	openStudioSyncConnect,
+} from '../deep-link';
 
 const STUDIO_SITE_ID = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
 
@@ -85,5 +90,63 @@ describe( 'openStudioCheckoutReturn', () => {
 		expect( window.location.href ).toBe(
 			`wp-studio://checkout-return?studioSiteId=${ STUDIO_SITE_ID }&checkoutResult=cancelled`
 		);
+	} );
+} );
+
+describe( 'buildStudioSyncConnectUrl', () => {
+	it( 'builds a wp-studio:// URL for the sync-connect-site action', () => {
+		expect(
+			buildStudioSyncConnectUrl( {
+				studioSiteId: 'abc',
+				remoteSiteId: 123,
+				autoOpenPush: true,
+			} )
+		).toBe( 'wp-studio://sync-connect-site?studioSiteId=abc&remoteSiteId=123&autoOpenPush=true' );
+	} );
+
+	it( 'omits autoOpenPush entirely when it is off', () => {
+		const url = buildStudioSyncConnectUrl( {
+			studioSiteId: 'abc',
+			remoteSiteId: 123,
+			autoOpenPush: false,
+		} );
+
+		expect( url ).toBe( 'wp-studio://sync-connect-site?studioSiteId=abc&remoteSiteId=123' );
+	} );
+
+	it( 'percent-encodes values so they cannot inject extra params', () => {
+		const hostile = 'abc&remoteSiteId=1&autoOpenPush=true';
+		const url = buildStudioSyncConnectUrl( {
+			studioSiteId: hostile,
+			remoteSiteId: 123,
+			autoOpenPush: false,
+		} );
+
+		const query = new URLSearchParams( url.slice( url.indexOf( '?' ) + 1 ) );
+		expect( query.get( 'studioSiteId' ) ).toBe( hostile );
+		expect( query.getAll( 'remoteSiteId' ) ).toEqual( [ '123' ] );
+		expect( query.get( 'autoOpenPush' ) ).toBeNull();
+	} );
+} );
+
+describe( 'openStudioSyncConnect', () => {
+	beforeEach( () => {
+		Object.defineProperty( window, 'location', {
+			value: { href: 'https://wordpress.com/checkout/studio-return' },
+			writable: true,
+		} );
+	} );
+
+	it( 'navigates to the deep link once, with no legacy-scheme retry', () => {
+		jest.useFakeTimers();
+
+		openStudioSyncConnect( { studioSiteId: 'abc', remoteSiteId: 123, autoOpenPush: false } );
+		jest.runAllTimers();
+
+		expect( window.location.href ).toBe(
+			'wp-studio://sync-connect-site?studioSiteId=abc&remoteSiteId=123'
+		);
+
+		jest.useRealTimers();
 	} );
 } );

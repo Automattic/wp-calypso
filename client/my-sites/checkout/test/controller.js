@@ -9,16 +9,24 @@ import {
 } from '@automattic/calypso-products';
 import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
 import {
 	checkoutWpcomSiteless,
 	redirectJetpackLegacyPlans,
 	studentCheckoutRedirect,
+	studioCheckoutReturn,
 } from '../controller';
+import StudioReturn from '../studio-return';
+import StudioSyncConnect from '../studio-return/sync-connect';
 import * as utils from '../utils';
 
 jest.mock( '@automattic/calypso-router' );
 jest.mock( '../utils' );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
+	recordTracksEvent: jest.fn(),
+} ) );
 
 const mockStore = configureStore();
 
@@ -117,5 +125,77 @@ describe( 'studentCheckoutRedirect', () => {
 		studentCheckoutRedirect( { querystring: '' } );
 
 		expect( window.location.replace ).toHaveBeenCalledWith( '/setup/student' );
+	} );
+} );
+
+describe( 'studioCheckoutReturn', () => {
+	const STUDIO_SITE_ID = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
+	let next;
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		next = jest.fn();
+	} );
+
+	it( 'renders the sync-connect page for a usable publish-flow link', () => {
+		const context = {
+			query: { studioSiteId: STUDIO_SITE_ID, remoteSiteId: '123', autoOpenPush: 'true' },
+		};
+
+		studioCheckoutReturn( context, next );
+
+		expect( context.primary.type ).toBe( StudioSyncConnect );
+		expect( context.primary.props ).toEqual( {
+			studioSiteId: STUDIO_SITE_ID,
+			remoteSiteId: 123,
+			autoOpenPush: true,
+		} );
+		expect( next ).toHaveBeenCalled();
+		expect( page.default.redirect ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sends a link with an unusable remoteSiteId to /sites without opening Studio', () => {
+		const context = { query: { studioSiteId: STUDIO_SITE_ID, remoteSiteId: 'undefined' } };
+
+		studioCheckoutReturn( context, next );
+
+		expect( page.default.redirect ).toHaveBeenCalledWith( '/sites' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_studio_sync_landing_invalid', {
+			reason: 'site_id',
+		} );
+		expect( context.primary ).toBeUndefined();
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not fall back to the cancelled-checkout page when studioSiteId is unusable', () => {
+		const context = { query: { remoteSiteId: '123' } };
+
+		studioCheckoutReturn( context, next );
+
+		expect( page.default.redirect ).toHaveBeenCalledWith( '/sites' );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_studio_sync_landing_invalid', {
+			reason: 'studio_site_id',
+		} );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps rendering the cancelled-checkout page without remoteSiteId', () => {
+		const context = { query: { studioSiteId: STUDIO_SITE_ID } };
+
+		studioCheckoutReturn( context, next );
+
+		expect( context.primary.type ).toBe( StudioReturn );
+		expect( next ).toHaveBeenCalled();
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'still sends a link with neither id to /sites without a sync event', () => {
+		const context = { query: {} };
+
+		studioCheckoutReturn( context, next );
+
+		expect( page.default.redirect ).toHaveBeenCalledWith( '/sites' );
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+		expect( next ).not.toHaveBeenCalled();
 	} );
 } );

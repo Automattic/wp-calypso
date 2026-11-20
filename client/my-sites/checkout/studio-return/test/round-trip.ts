@@ -1,4 +1,10 @@
-import { buildStudioCancelTo, buildStudioRedirectTo, getStudioCheckoutParams } from '../round-trip';
+import {
+	buildStudioCancelTo,
+	buildStudioRedirectTo,
+	buildStudioSyncConnectPath,
+	getStudioCheckoutParams,
+	getStudioSyncConnectParams,
+} from '../round-trip';
 
 const STUDIO_SITE_ID = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
 
@@ -100,5 +106,87 @@ describe( 'buildStudioCancelTo', () => {
 
 	it( 'stays relative so it passes the cancel_to check in leaveCheckout', () => {
 		expect( buildStudioCancelTo( { studioSiteId: STUDIO_SITE_ID } ) ).toMatch( /^\/(?!\/)/ );
+	} );
+} );
+
+describe( 'getStudioSyncConnectParams', () => {
+	it( 'returns null without remoteSiteId, leaving the URL to the checkout round trip', () => {
+		expect( getStudioSyncConnectParams( { studioSiteId: STUDIO_SITE_ID } ) ).toBeNull();
+		expect( getStudioSyncConnectParams( undefined ) ).toBeNull();
+	} );
+
+	it( 'reads a usable link', () => {
+		expect(
+			getStudioSyncConnectParams( {
+				studioSiteId: STUDIO_SITE_ID,
+				remoteSiteId: '123',
+				autoOpenPush: 'true',
+			} )
+		).toEqual( {
+			params: { studioSiteId: STUDIO_SITE_ID, remoteSiteId: 123, autoOpenPush: true },
+		} );
+	} );
+
+	it( 'rejects a remoteSiteId that is not a positive integer', () => {
+		[ '', 'undefined', '0', '-1', '12a', '1.5', '99999999999999999999', [ '1', '2' ] ].forEach(
+			( remoteSiteId ) => {
+				expect(
+					getStudioSyncConnectParams( { studioSiteId: STUDIO_SITE_ID, remoteSiteId } )
+				).toEqual( { rejection: 'site_id' } );
+			}
+		);
+	} );
+
+	it( 'rejects an unusable studioSiteId instead of falling back to the checkout round trip', () => {
+		[ undefined, '', 'a'.repeat( 65 ), [ STUDIO_SITE_ID, STUDIO_SITE_ID ] ].forEach(
+			( studioSiteId ) => {
+				expect( getStudioSyncConnectParams( { studioSiteId, remoteSiteId: '123' } ) ).toEqual( {
+					rejection: 'studio_site_id',
+				} );
+			}
+		);
+	} );
+
+	it( 'turns auto-push on only for autoOpenPush=true', () => {
+		[ undefined, 'false', '1', 'TRUE' ].forEach( ( autoOpenPush ) => {
+			expect(
+				getStudioSyncConnectParams( {
+					studioSiteId: STUDIO_SITE_ID,
+					remoteSiteId: '123',
+					autoOpenPush,
+				} )?.params?.autoOpenPush
+			).toBe( false );
+		} );
+	} );
+} );
+
+describe( 'buildStudioSyncConnectPath', () => {
+	it( 'targets the return page with the sync-connect params', () => {
+		expect(
+			buildStudioSyncConnectPath( {
+				studioSiteId: 'abc',
+				remoteSiteId: 123,
+				autoOpenPush: true,
+			} )
+		).toBe( '/checkout/studio-return?studioSiteId=abc&remoteSiteId=123&autoOpenPush=true' );
+	} );
+
+	it( 'omits autoOpenPush when it is off', () => {
+		expect(
+			buildStudioSyncConnectPath( {
+				studioSiteId: 'abc',
+				remoteSiteId: 123,
+				autoOpenPush: false,
+			} )
+		).toBe( '/checkout/studio-return?studioSiteId=abc&remoteSiteId=123' );
+	} );
+
+	it( 'round-trips through the parser', () => {
+		const params = { studioSiteId: STUDIO_SITE_ID, remoteSiteId: 123, autoOpenPush: true };
+		const url = new URL( buildStudioSyncConnectPath( params ), 'https://wordpress.com' );
+
+		expect( getStudioSyncConnectParams( Object.fromEntries( url.searchParams ) ) ).toEqual( {
+			params,
+		} );
 	} );
 } );
