@@ -60,7 +60,7 @@ const normalizeWhitespace = ( str ) => {
 const escapeHtmlText = ( str ) => str.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' );
 
 /**
- * Gets the writing prompt text which was inserted as a pullquote at the begining of the post's content.
+ * Gets the writing prompt text which was inserted as a pullquote at the beginning of the post's content.
  * @param {Object} post the post object
  * @returns writing prompt text
  */
