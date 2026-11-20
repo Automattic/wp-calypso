@@ -1,7 +1,7 @@
 import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { useIntlLocale } from '../../app/locale';
-import { formatStorage } from '../../utils/site-storage';
+import { useIntlLocale } from '../../../../app/locale';
+import { formatStorage } from '../../../../utils/site-storage';
 import './storage-capacity-stat.scss';
 
 const MINIMUM_SEGMENT_WIDTH = 0.5; // Minimum width in % to ensure visibility

@@ -4,13 +4,13 @@ import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { getCurrentDashboard } from '../../app/routing';
-import Notice, { NoticeActionLinkButton } from '../../components/notice';
-import { getDomainConnectionSetupTemplateUrl } from '../../utils/domain-url';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
-import { isWordPressMigration } from '../../utils/site-status';
+import { useAnalytics } from '../../../../app/analytics';
+import { getCurrentDashboard } from '../../../../app/routing';
+import Notice, { NoticeActionLinkButton } from '../../../../components/notice';
+import { getDomainConnectionSetupTemplateUrl } from '../../../../utils/domain-url';
+import { isDashboardBackport } from '../../../../utils/is-dashboard-backport';
+import { redirectToDashboardLink, wpcomLink } from '../../../../utils/link';
+import { isWordPressMigration } from '../../../../utils/site-status';
 import type { Site } from '@automattic/api-core';
 
 export interface MigrationCompletedSearch {

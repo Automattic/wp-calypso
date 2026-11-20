@@ -6,11 +6,11 @@ import {
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { useIntlLocale } from '../../app/locale';
-import Notice from '../../components/notice';
-import UpsellCTAButton from '../../components/upsell-cta-button';
-import { formatStorage, getStorageAlertLevel } from '../../utils/site-storage';
-import { AddStorageModal } from '../storage/add-storage-modal';
+import { useIntlLocale } from '../../../../app/locale';
+import Notice from '../../../../components/notice';
+import UpsellCTAButton from '../../../../components/upsell-cta-button';
+import { formatStorage, getStorageAlertLevel } from '../../../../utils/site-storage';
+import { AddStorageModal } from '../add-storage-modal';
 import type { Site } from '@automattic/api-core';
 
 /**

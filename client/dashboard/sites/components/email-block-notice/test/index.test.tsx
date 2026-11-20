@@ -2,8 +2,8 @@
  * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
-import { render } from '../../../test-utils';
-import { EmailBlockNotice, getEmailBlock } from '../email-block-notice';
+import { render } from '../../../../test-utils';
+import { EmailBlockNotice, getEmailBlock } from '../index';
 import type { Site } from '@automattic/api-core';
 
 function createSite( atomic_email_block: Site[ 'atomic_email_block' ] ) {

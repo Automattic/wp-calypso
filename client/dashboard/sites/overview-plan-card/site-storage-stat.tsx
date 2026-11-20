@@ -18,7 +18,7 @@ import {
 	getStorageUsagePercent,
 } from '../../utils/site-storage';
 import { isStagingSite } from '../../utils/site-types';
-import { AddStorageModal } from '../storage/add-storage-modal';
+import { AddStorageModal } from '../storage/components/add-storage-modal';
 import type { Site } from '@automattic/api-core';
 
 const MINIMUM_DISPLAYED_USAGE = 2.5;
