@@ -20,6 +20,7 @@ import { useAnalytics } from '../../../../app/analytics';
 import { ButtonStack } from '../../../../components/button-stack';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { Text } from '../../../../components/text';
+import { parseHtmlMessage } from '../../../../utils/html-message';
 import { useContactSupport } from '../../../support/use-contact-support';
 
 import './style.scss';
@@ -161,11 +162,6 @@ function getBenefits(): Benefit[][] {
 			},
 		],
 	];
-}
-
-/** The benefit as plain text, for copying into an email or proposal. */
-function toPlainText( text: string ) {
-	return new DOMParser().parseFromString( text, 'text/html' ).body.textContent ?? '';
 }
 
 function CheckList( { items }: { items: ReactNode[] } ) {
@@ -399,7 +395,7 @@ function Benefits() {
 	const columns = getBenefits();
 	const plainText = columns
 		.flat()
-		.map( ( benefit ) => `• ${ toPlainText( benefit.text ) }` )
+		.map( ( benefit ) => `• ${ parseHtmlMessage( benefit.text ).text }` )
 		.join( '\n' );
 	const copyRef = useCopyToClipboard< HTMLButtonElement >( plainText, () => {
 		recordTracksEvent( 'calypso_a4a_woopayments_copy_benefits_button_click' );

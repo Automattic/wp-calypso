@@ -16,12 +16,11 @@ import {
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
+import { parseHtmlMessage } from '../../utils/html-message';
 import { isWebUrl } from '../../utils/is-web-url';
 
-// wp.org/marketplace ship `author` as an HTML anchor (e.g.
-// `<a href="…">Automattic</a>`). DOMParser's document is inert, unlike `innerHTML`.
-const stripAuthorMarkup = ( author = '' ) =>
-	( new DOMParser().parseFromString( author, 'text/html' ).body.textContent ?? '' ).trim();
+// wp.org/marketplace ship `author` as an HTML anchor (e.g. `<a href="…">Automattic</a>`).
+const stripAuthorMarkup = ( author = '' ) => parseHtmlMessage( author ).text;
 
 const toAuthorUrl = ( url?: string | null ) => ( url && isWebUrl( url ) ? url : null );
 
