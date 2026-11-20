@@ -487,17 +487,6 @@
 	}
 }
 
-// Approving is the job on a pending comment, so it takes the Pending badge's
-// amber text rather than Like's gray.
-.wpnc__action-link.wpnc__approve-action {
-	--wpnc-action__color: oklch(from var(--wpnc-pending) 0.44 c h);
-	--wpnc-action__color-hover: var(--wpnc-action__color);
-
-	@include ui-mixins.when-dark-theme {
-		--wpnc-action__color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
-	}
-}
-
 .wpnc__actions-menu-dropdown {
 	flex-shrink: 0;
 
@@ -667,4 +656,30 @@
 			border-color: var( --wpnc-divider__color );
 		}
 	}
+}
+
+// Below the two-pane width the title is also the Back button, in the heading's type. Its arrow's
+// box starts on the padding edge (past the 1px button border), and as a block it keeps the
+// heading at 24px, centred on the icons at the other end. A long title wraps and the button
+// grows with it, as the heading did, breaking a word too long for the line. Four classes, to outweigh Button's own size and padding
+// rules whichever stylesheet loads last.
+.components-card__header .wpnc__note-back.components-button.has-text {
+	display: flex;
+	height: auto;
+	min-height: var(--wpds-dimension-size-sm, 24px);
+	margin-inline-start: -1px;
+	padding-block: 0;
+	padding-inline-start: 0;
+	font: inherit;
+	text-align: start;
+	overflow-wrap: anywhere;
+
+	svg {
+		margin-block: -1px;
+	}
+}
+
+// Lighter than Button's hover and pressed rules, so those still show.
+.wpnc__note-back.components-button {
+	color: inherit;
 }
