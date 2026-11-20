@@ -492,7 +492,7 @@ describe( 'launch-site flow', () => {
 			expect( mockOnboard.pendingAction ).toBeUndefined();
 		} );
 
-		it( 'returns to where the user came from when a skipped preview has no share link yet', () => {
+		it( 'opens the preview’s Overview when a skipped preview has no share link yet', () => {
 			mockSite = freeSite;
 			mockPending = { preview_sites: [ { blog_id: 1 } ] };
 			mockQuery.back_to = '/sites';
@@ -503,7 +503,7 @@ describe( 'launch-site flow', () => {
 				action: 'skip_plan',
 			} );
 
-			expect( assigned() ).toBe( '/sites' );
+			expect( assigned() ).toBe( buildDashboardLink( 'dotcom', '/sites/example.wordpress.com' ) );
 		} );
 
 		it( 'returns to where the user came from on Back when plans is the first step', () => {

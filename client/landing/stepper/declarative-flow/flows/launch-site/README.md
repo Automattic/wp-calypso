@@ -20,7 +20,7 @@ Logged-out users log in first; the steps are then worked out for their site.
 
 A preview site nobody has bought is launched by buying a plan: WordPress.com refuses to launch it unpaid (`preview_site_unpaid`), so the launch step takes that refusal as its cue to go on to checkout, where buying the plan launches the site. With Free picked, the refusal brings back the plans step with `hide_free_plan=1`, however the user arrived. The badge on the preview links here with `hide_free_plan=1` and `checkout_source`. The flow doesn't look up whether a site is a preview to decide how it launches; it goes by its URL and that refusal.
 
-The plans step does look the site up in the user's preview sites (`/wow-funnel/pending`). For a preview, it's `skippable`: its **Skip** button leaves the flow without launching, for the preview at its `share_url`, which gets past Coming Soon. A preview whose first build hasn't given it a share link yet goes back to where the user came from, as Back does.
+The plans step does look the site up in the user's preview sites (`/wow-funnel/pending`). For a preview, it's `skippable`: its **Skip** button leaves the flow without launching, for the preview at its `share_url`, which gets past Coming Soon. A preview whose first build hasn't given it a share link yet goes to its Overview in the Dashboard instead.
 
 ## Query parameters
 

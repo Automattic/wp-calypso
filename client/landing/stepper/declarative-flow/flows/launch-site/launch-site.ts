@@ -466,10 +466,12 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.UNIFIED_PLANS.slug: {
-					// Skipping leaves the preview unlaunched, so it goes back to the preview itself.
+					// Skipping leaves the preview unlaunched, so it goes back to the preview itself, or to its
+					// Overview until its first build gives it a share link.
 					if ( providedDependencies?.action === 'skip_plan' ) {
 						return window.location.assign(
-							previewSite?.share_url || getLaunchReturnUrl( launchParams )
+							previewSite?.share_url ||
+								buildDashboardLink( 'dotcom', `/sites/${ launchParams.siteSlug }` )
 						);
 					}
 
