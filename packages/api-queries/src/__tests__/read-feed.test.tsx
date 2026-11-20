@@ -8,6 +8,8 @@ import {
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
+	readFeedLatestPostQuery,
+	readFeedLatestPostQueryKey,
 	readFeedQuery,
 	readFeedQueryKey,
 	readFeedSearchInfiniteQuery,
@@ -174,5 +176,53 @@ describe( 'read feed queries', () => {
 		await result.current.fetchNextPage();
 		await waitFor( () => expect( result.current.hasNextPage ).toBe( false ) );
 		expect( result.current.data?.pages.flatMap( ( page ) => page.feeds ) ).toHaveLength( 2 );
+	} );
+
+	it( 'keys the latest post query outside the feed metadata prefix', () => {
+		const options = readFeedLatestPostQuery( 123 );
+
+		expect( readFeedLatestPostQueryKey( 123 ) ).toEqual( [ 'read', 'feed-latest-post', 123 ] );
+		expect( options.queryKey ).toEqual( readFeedLatestPostQueryKey( 123 ) );
+		expect( options.enabled ).toBe( true );
+		expect( options.meta ).toEqual( { persist: false } );
+	} );
+
+	it( 'disables the latest post query for missing or invalid feed ids', () => {
+		expect( readFeedLatestPostQuery( null ).enabled ).toBe( false );
+		expect( readFeedLatestPostQuery( undefined ).enabled ).toBe( false );
+		expect( readFeedLatestPostQuery( 0 ).enabled ).toBe( false );
+		expect( readFeedLatestPostQuery( 'abc' ).enabled ).toBe( false );
+	} );
+
+	it( 'fetches one post from the feed stream for the latest post', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/feed/123/posts' )
+			.query( { number: '1' } )
+			.reply( 200, { posts: [ { ID: 9, feed_ID: 123, date: '2026-11-18T10:00:00+00:00' } ] } );
+		const client = newClient();
+		const { result } = renderHook( () => useQuery( readFeedLatestPostQuery( 123 ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data ).toEqual( {
+			ID: 9,
+			feed_ID: 123,
+			date: '2026-11-18T10:00:00+00:00',
+		} );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'resolves the latest post to null for a feed with no posts', async () => {
+		nock( BASE ).get( '/rest/v1.2/read/feed/123/posts' ).query( { number: '1' } ).reply( 200, {
+			posts: [],
+		} );
+		const client = newClient();
+		const { result } = renderHook( () => useQuery( readFeedLatestPostQuery( 123 ) ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data ).toBeNull();
 	} );
 } );

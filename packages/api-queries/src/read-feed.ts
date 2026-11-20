@@ -1,8 +1,14 @@
-import { fetchReadFeedSearch, fetchReadFeed, ReadFeedSearchSort } from '@automattic/api-core';
+import {
+	fetchReadFeedPosts,
+	fetchReadFeedSearch,
+	fetchReadFeed,
+	ReadFeedSearchSort,
+} from '@automattic/api-core';
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
-import type { ReadFeedSearchResponse } from '@automattic/api-core';
+import type { ReadFeedSearchResponse, ReadStreamPost } from '@automattic/api-core';
 
 const FEED_STALE_TIME = 1000 * 60; // 1 minute
+const FEED_LATEST_POST_STALE_TIME = 1000 * 60 * 30; // 30 minutes
 const FEED_SEARCH_STALE_TIME = 1000 * 60; // 1 minute
 
 const isValidFeedId = ( feedId?: number | string | null ) =>
@@ -18,6 +24,28 @@ export const readFeedQuery = ( feedId?: number | string | null ) => {
 		queryFn: () => fetchReadFeed( feedId! ),
 		enabled: isValidFeedId( feedId ),
 		meta: { persist: true },
+	} );
+};
+
+// Not under `[ 'read', 'feed' ]`: `findCachedFeedByFeedUrl` treats every entry
+// under that prefix as feed metadata.
+export const readFeedLatestPostQueryKey = ( feedId?: number | string | null ) =>
+	[ 'read', 'feed-latest-post', Number( feedId ) ] as const;
+
+/**
+ * The newest post in a feed, as a one-post page of `/read/feed/{feedId}/posts`.
+ * Resolves to `null` when the feed has no posts.
+ */
+export const readFeedLatestPostQuery = ( feedId?: number | string | null ) => {
+	return queryOptions( {
+		queryKey: readFeedLatestPostQueryKey( feedId ),
+		staleTime: FEED_LATEST_POST_STALE_TIME,
+		queryFn: async (): Promise< ReadStreamPost | null > => {
+			const response = await fetchReadFeedPosts( feedId!, { number: 1 } );
+			return response.posts?.[ 0 ] ?? null;
+		},
+		enabled: isValidFeedId( feedId ) && Number( feedId ) > 0,
+		meta: { persist: false },
 	} );
 };
 

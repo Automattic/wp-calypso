@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { readSiteQuery } from '../read-site';
+import { readSiteLatestPostQuery, readSiteLatestPostQueryKey, readSiteQuery } from '../read-site';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -182,5 +182,55 @@ describe( 'readSiteQuery', () => {
 		expect( options.staleTime ).toBe( 24 * 60 * 60 * 1000 );
 		expect( options.retry ).toBe( false );
 		expect( options.retryOnMount ).toBe( false );
+	} );
+} );
+
+describe( 'readSiteLatestPostQuery', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'uses its own key and memory-only options', () => {
+		const options = readSiteLatestPostQuery( 123 );
+
+		expect( readSiteLatestPostQueryKey( 123 ) ).toEqual( [ 'read', 'site-latest-post', 123 ] );
+		expect( options.queryKey ).toEqual( readSiteLatestPostQueryKey( 123 ) );
+		expect( options.enabled ).toBe( true );
+		expect( options.meta ).toEqual( { persist: false } );
+	} );
+
+	it( 'is disabled for missing or invalid site ids', () => {
+		expect( readSiteLatestPostQuery( null ).enabled ).toBe( false );
+		expect( readSiteLatestPostQuery( undefined ).enabled ).toBe( false );
+		expect( readSiteLatestPostQuery( 0 ).enabled ).toBe( false );
+		expect( readSiteLatestPostQuery( 'abc' ).enabled ).toBe( false );
+	} );
+
+	it( 'fetches one post from the site stream', async () => {
+		const scope = nock( BASE )
+			.get( '/rest/v1.2/read/sites/123/posts' )
+			.query( { number: '1' } )
+			.reply( 200, { posts: [ { ID: 9, site_ID: 123, date: '2026-11-18T10:00:00+00:00' } ] } );
+		const { result } = renderHook( () => useQuery( readSiteLatestPostQuery( 123 ) ), {
+			wrapper: makeWrapper( newClient() ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data ).toEqual( {
+			ID: 9,
+			site_ID: 123,
+			date: '2026-11-18T10:00:00+00:00',
+		} );
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'resolves to null for a site with no posts', async () => {
+		nock( BASE ).get( '/rest/v1.2/read/sites/123/posts' ).query( { number: '1' } ).reply( 200, {
+			posts: null,
+		} );
+		const { result } = renderHook( () => useQuery( readSiteLatestPostQuery( 123 ) ), {
+			wrapper: makeWrapper( newClient() ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data ).toBeNull();
 	} );
 } );
