@@ -3,9 +3,11 @@ import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { isCookieAuthMissing } from 'wpcom-proxy-request';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
+import { hasCookieAccess, StorageAccessPrompt } from './storage-access';
 
 import '../panel/boot/stylesheets/style.scss';
 
@@ -175,13 +177,6 @@ const NotesWrapper = ( { wpcom } ) => {
 	);
 };
 
-const render = ( wpcom ) => {
-	document.body.classList.add( 'font-smoothing-antialiased' );
-
-	const root = createRoot( document.getElementsByClassName( 'wpnc__main' )[ 0 ] );
-	root.render( <NotesWrapper wpcom={ wpcom } /> );
-};
-
 const setTracksUser = ( wpcom ) => {
 	wpcom.req
 		.get( '/me', { fields: 'ID,username' } )
@@ -192,12 +187,43 @@ const setTracksUser = ( wpcom ) => {
 		.catch( () => {} );
 };
 
-const init = ( wpcom ) => {
+const renderStorageAccessPrompt = ( root, { canRequestAccess, onAccessGranted } ) => {
+	root.render(
+		<StorageAccessPrompt
+			canRequestAccess={ canRequestAccess }
+			onAccessGranted={ onAccessGranted }
+		/>
+	);
+	sendMessage( { action: 'iFrameReady' } );
+};
+
+const renderNotifications = async ( root ) => {
+	const wpcom = await createClient();
+	if ( isCookieAuthMissing() ) {
+		renderStorageAccessPrompt( root, { canRequestAccess: false } );
+		return;
+	}
+
 	setTracksUser( wpcom );
+	root.render( <NotesWrapper wpcom={ wpcom } /> );
+};
+
+const boot = async () => {
+	document.body.classList.add( 'font-smoothing-antialiased' );
 	if ( locale && 'en' !== locale ) {
 		fetchLocale( locale );
 	}
-	render( wpcom );
+
+	const root = createRoot( document.getElementsByClassName( 'wpnc__main' )[ 0 ] );
+	if ( ! ( await hasCookieAccess() ) ) {
+		renderStorageAccessPrompt( root, {
+			canRequestAccess: true,
+			onAccessGranted: () => renderNotifications( root ),
+		} );
+		return;
+	}
+
+	renderNotifications( root );
 };
 
-createClient().then( init );
+boot();
