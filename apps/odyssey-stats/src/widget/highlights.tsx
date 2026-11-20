@@ -3,6 +3,7 @@ import { TabPanel } from '@wordpress/components';
 import { Icon, chartBar, external } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState } from 'react';
+import { STAT_TYPE_REFERRERS, STAT_TYPE_TOP_POSTS } from 'calypso/my-sites/stats/constants';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
 import { ResolvedDateRange } from '../lib/date-ranges';
@@ -10,6 +11,7 @@ import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
 import Skeleton from './skeleton';
+import { isStatTypeGated } from './stats-gates';
 import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
 import type { MouseEvent } from 'react';
@@ -163,35 +165,24 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 		);
 	const referrerHref = ( item: HighLightItem ) => item.url || item.href;
 
+	const isTopPostsLocked = isStatTypeGated( siteId, STAT_TYPE_TOP_POSTS );
+	const isReferrersLocked = isStatTypeGated( siteId, STAT_TYPE_REFERRERS );
+
 	const {
 		data: topPostsAndPages = [],
 		isPending: isPendingPostsAndPages,
 		isError: isPostsAndPagesError,
-	} = useTopPostsQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT );
+	} = useTopPostsQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT, ! isTopPostsLocked );
 
 	const {
 		data: topReferrers = [],
 		isPending: isPendingReferrers,
 		isError: isReferrersError,
-	} = useReferrersQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT );
+	} = useReferrersQuery( siteId, range, HIGHLIGHT_ITEMS_LIMIT, ! isReferrersLocked );
 
 	// Held here rather than left to TabPanel, which remounts when the section comes back after
 	// an empty range and reports its initial tab as it does; only a change is a user's click.
 	const [ selectedTab, setSelectedTab ] = useState< string >( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
-
-	// Drop the section only once both lists have answered empty. A failed request also falls
-	// back to `[]`, so errors are excluded: those lists say "No data to show" instead.
-	const isEmpty =
-		! isPendingPostsAndPages &&
-		! isPendingReferrers &&
-		! isPostsAndPagesError &&
-		! isReferrersError &&
-		topPostsAndPages.length === 0 &&
-		topReferrers.length === 0;
-
-	if ( isEmpty ) {
-		return null;
-	}
 
 	const tabs = [
 		{
@@ -199,7 +190,9 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 			title: translate( 'Top Posts & Pages' ),
 			items: topPostsAndPages,
 			isLoading: isPendingPostsAndPages,
+			isError: isPostsAndPagesError,
 			viewAllUrl: viewAllPostsStatsUrl,
+			isLocked: isTopPostsLocked,
 			itemHref: postHref,
 			isExternal: false,
 			trackingName: 'top_posts' as const,
@@ -210,13 +203,26 @@ export default function Highlights( { siteId, statsBaseUrl, range, gmtOffset }: 
 			title: translate( 'Top Referrers' ),
 			items: topReferrers,
 			isLoading: isPendingReferrers,
+			isError: isReferrersError,
 			viewAllUrl: viewAllReferrerStatsUrl,
+			isLocked: isReferrersLocked,
 			itemHref: referrerHref,
 			isExternal: true,
 			trackingName: 'top_referrers' as const,
 			itemEvent: 'referrer_clicked' as const,
 		},
-	];
+	].filter( ( tab ) => ! tab.isLocked );
+
+	// Drop the section once every list the plan includes has answered empty, or when the plan
+	// includes none. A failed request also falls back to `[]`, so errors are excluded: those
+	// lists say "No data to show" instead.
+	const isEmpty = tabs.every(
+		( tab ) => ! tab.isLoading && ! tab.isError && tab.items.length === 0
+	);
+
+	if ( isEmpty ) {
+		return null;
+	}
 
 	return (
 		<WidgetSection

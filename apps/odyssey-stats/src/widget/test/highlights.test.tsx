@@ -32,6 +32,7 @@ vi.mock( '../../lib/selectors/can-current-user', () => ( { default: () => true }
 vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
 	default: () => 'https://example.com/wp-admin/',
 } ) );
+vi.mock( '../stats-gates', () => ( { isStatTypeGated: () => false } ) );
 
 const RANGE = {
 	id: 'last_12_months',
