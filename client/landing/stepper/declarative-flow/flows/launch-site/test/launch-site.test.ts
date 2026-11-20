@@ -37,6 +37,7 @@ let mockSetupError: { error?: string } = {};
 let mockDomains: unknown[] | Error = [];
 let mockCart: unknown = { products: [] };
 let mockUserId: number | null = 1;
+let mockPending: { preview_sites?: { blog_id: number; share_url?: string }[] } | undefined;
 
 // Both packages import themselves while loading, so the real exports are read lazily rather than spread.
 const lazilyOverride = ( moduleName: string, overrides: Record< string, unknown > ) =>
@@ -59,6 +60,14 @@ jest.mock( '@automattic/api-core', () =>
 	lazilyOverride( '@automattic/api-core', {
 		launchSite: jest.fn( () => Promise.resolve() ),
 		fetchShoppingCart: jest.fn( () => Promise.resolve( mockCart ) ),
+	} )
+);
+
+jest.mock( '@tanstack/react-query', () =>
+	lazilyOverride( '@tanstack/react-query', {
+		useQuery: ( { enabled }: { enabled?: boolean } ) => ( {
+			data: enabled ? mockPending : undefined,
+		} ),
 	} )
 );
 
@@ -242,6 +251,7 @@ describe( 'launch-site flow', () => {
 			writable: true,
 		} );
 		mockSite = null;
+		mockPending = undefined;
 		mockDomains = [];
 		mockCart = { products: [] };
 		setFlowSteps( ALL_STEPS );
@@ -440,6 +450,60 @@ describe( 'launch-site flow', () => {
 				deemphasizeFreePlan: false,
 				hideFreePlan: true,
 			} );
+		} );
+
+		it( 'lets a preview site skip the plans', () => {
+			mockSite = freeSite;
+			mockPending = {
+				preview_sites: [ { blog_id: 1, share_url: 'https://example.com/?share=x' } ],
+			};
+
+			expect( launchSiteFlow.useStepsProps?.()[ STEPS.UNIFIED_PLANS.slug ] ).toMatchObject( {
+				skippable: true,
+			} );
+		} );
+
+		it.each( [
+			[ 'a site that is not a preview', { preview_sites: [ { blog_id: 2 } ] } ],
+			[ 'a user without previews', { preview_sites: undefined } ],
+		] )( 'does not let %s skip the plans', ( _name, pending ) => {
+			mockSite = freeSite;
+			mockPending = pending;
+
+			expect( launchSiteFlow.useStepsProps?.()[ STEPS.UNIFIED_PLANS.slug ] ).not.toHaveProperty(
+				'skippable'
+			);
+		} );
+
+		it( 'opens the preview at its share link when the plans are skipped', () => {
+			mockSite = freeSite;
+			mockPending = {
+				preview_sites: [ { blog_id: 1, share_url: 'https://example.com/?share=x' } ],
+			};
+
+			const { navigate } = submit( STEPS.UNIFIED_PLANS.slug, {
+				stepName: 'plans',
+				cartItems: null,
+				action: 'skip_plan',
+			} );
+
+			expect( assigned() ).toBe( 'https://example.com/?share=x' );
+			expect( navigate ).not.toHaveBeenCalled();
+			expect( mockOnboard.pendingAction ).toBeUndefined();
+		} );
+
+		it( 'opens the preview’s Overview when a skipped preview has no share link yet', () => {
+			mockSite = freeSite;
+			mockPending = { preview_sites: [ { blog_id: 1 } ] };
+			mockQuery.back_to = '/sites';
+
+			submit( STEPS.UNIFIED_PLANS.slug, {
+				stepName: 'plans',
+				cartItems: null,
+				action: 'skip_plan',
+			} );
+
+			expect( assigned() ).toBe( buildDashboardLink( 'dotcom', '/sites/example.wordpress.com' ) );
 		} );
 
 		it( 'returns to where the user came from on Back when plans is the first step', () => {
