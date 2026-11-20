@@ -263,6 +263,11 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	justify-content: center;
 	color: var(--wp-components-color-gray-900, #{$gray-900});
 	font-weight: 500;
+
+	&:focus:not(:disabled) {
+		box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus)
+			var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	}
 }
 
 // Sits between the tabs and the list, lined up with the rows' 16px edge.
