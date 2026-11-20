@@ -146,6 +146,30 @@ describe( '<NewsCard>', () => {
 		expect( screen.getByText( 'Nov 5' ) ).toBeVisible();
 	} );
 
+	test( 'maps dashboard paths with getCtaUrl and leaves external links alone', async () => {
+		const user = userEvent.setup();
+		mockAnnouncements( [ event, announcement ] );
+		render(
+			<NewsCard
+				agencyId={ AGENCY_ID }
+				shouldUseRouterLink={ false }
+				getCtaUrl={ ( url ) => `/marketplace${ url }` }
+			/>
+		);
+
+		expect( await screen.findByRole( 'link', { name: /Save your spot/ } ) ).toHaveAttribute(
+			'href',
+			'https://example.com/register'
+		);
+
+		const [ row ] = await screen.findAllByRole( 'button', { name: /Free Pressable\shosting/ } );
+		await user.click( row );
+		expect( screen.getByRole( 'link', { name: 'View promo details' } ) ).toHaveAttribute(
+			'href',
+			'/marketplace/hosting/pressable'
+		);
+	} );
+
 	test( 'shows nothing when there are no announcements', async () => {
 		const scope = mockAnnouncements( [] );
 		render( <NewsCard agencyId={ AGENCY_ID } /> );

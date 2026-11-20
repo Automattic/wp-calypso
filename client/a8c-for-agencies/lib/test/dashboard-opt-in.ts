@@ -1,4 +1,4 @@
-import { getDashboardPath } from '../dashboard-opt-in';
+import { getClassicPath, getDashboardPath } from '../dashboard-opt-in';
 
 describe( 'getDashboardPath', () => {
 	it.each( [
@@ -57,5 +57,21 @@ describe( 'getDashboardPath', () => {
 		'/feedback',
 	] )( 'keeps %s here', ( pathname ) => {
 		expect( getDashboardPath( pathname ) ).toBeNull();
+	} );
+} );
+
+describe( 'getClassicPath', () => {
+	it.each( [
+		[ '/products?category=jetpack', '/marketplace/products?category=jetpack' ],
+		[ '/tiers', '/agency-tier' ],
+		[ '/tiers#certification', '/agency-tier#certification' ],
+		[ '/library', '/resources-and-tools/learn' ],
+		[ '/hosting/pressable#plans', '/marketplace/hosting/pressable#plans' ],
+		[ '/overview', '/overview' ],
+		[ '/unknown', '/unknown' ],
+		[ 'https://example.com/products', 'https://example.com/products' ],
+		[ '//example.com/products', '//example.com/products' ],
+	] )( 'sends %s to %s', ( url, expected ) => {
+		expect( getClassicPath( url ) ).toBe( expected );
 	} );
 } );
