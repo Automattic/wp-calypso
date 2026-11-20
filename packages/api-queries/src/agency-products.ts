@@ -17,8 +17,8 @@ export const agencyProductsQuery = ( agencyId: number ) =>
 		staleTime: 5 * 60 * 1000,
 	} );
 
-// A purchase can change the listed prices: a first WordPress.com Business plan
-// ends the agency's promotion.
+// A purchase can change the listed prices, e.g. by ending a promotion the
+// agency was eligible for.
 export function invalidateAgencyProducts( agencyId: number | undefined ) {
 	queryClient.invalidateQueries( { queryKey: [ 'agency', agencyId, 'products' ] } );
 }
