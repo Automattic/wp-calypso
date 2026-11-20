@@ -1,8 +1,9 @@
 import { Locator, Page } from 'playwright';
 
-// Normal processing takes about 5 s. The budget also covers one WordPress.com database lock wait,
-// which stalls an upload for 50 s before the upload carries on.
-const UPLOAD_PROCESSING_TIMEOUT = 60 * 1000;
+// Normal processing takes 5–10 s. The budget also covers one WordPress.com database lock wait,
+// which stalls a file save for 50 s before it carries on. Importers that convert the export save
+// twice, so two stalls (about 105 s) still fail.
+const UPLOAD_PROCESSING_TIMEOUT = 75 * 1000;
 
 /**
  * Represents the Import File Content page.
