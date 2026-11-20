@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { approveNote } from '../../../panel/state/notes/actions';
@@ -13,18 +13,17 @@ import SimplifiedActions from '../simplified-actions';
 const noop = () => {};
 
 let isLargeScreen = true;
-let footerWidth: number | undefined;
+// Reports the footer's width as a ResizeObserver does in a browser: after layout, outside React.
+let reportFooterWidth: ( width: number ) => void = () => {};
 vi.mock( '@wordpress/compose', async ( importOriginal ) => ( {
 	...( await importOriginal< typeof import( '@wordpress/compose' ) >() ),
 	useViewportMatch: () => isLargeScreen,
-	// Reports the footer's width as it mounts, as a ResizeObserver would in a browser.
-	useResizeObserver:
-		( callback: ( entries: Array< { contentRect: { width: number } } > ) => void ) =>
-		( element: HTMLElement | null ) => {
-			if ( element && footerWidth !== undefined ) {
-				callback( [ { contentRect: { width: footerWidth } } ] );
-			}
-		},
+	useResizeObserver: (
+		callback: ( entries: Array< { contentRect: { width: number } } > ) => void
+	) => {
+		reportFooterWidth = ( width ) => callback( [ { contentRect: { width } } ] );
+		return () => {};
+	},
 } ) );
 
 // Approving only updates the store, and marking as spam is up to each test, so no request is made.
@@ -140,7 +139,6 @@ describe( 'comment action placement', () => {
 
 		beforeEach( () => {
 			isLargeScreen = true;
-			footerWidth = undefined;
 			spamNote.mockReset();
 		} );
 
@@ -249,8 +247,8 @@ describe( 'comment action placement', () => {
 		} );
 
 		it( 'keeps them in the Actions menu while the note is too narrow for them', async () => {
-			footerWidth = 300;
 			renderExpanded( note );
+			act( () => reportFooterWidth( 300 ) );
 
 			expect(
 				screen.queryByRole( 'button', { name: 'Mark comment as spam' } )
@@ -263,11 +261,23 @@ describe( 'comment action placement', () => {
 		} );
 
 		it( 'shows them as buttons once the note is wide enough', () => {
-			footerWidth = 400;
 			renderExpanded( note );
+			act( () => reportFooterWidth( 400 ) );
 
 			expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toBeVisible();
 			expect( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) ).toBeVisible();
+		} );
+
+		it( 'moves them into the menu before a note too narrow for them is painted', () => {
+			renderExpanded( note );
+
+			act( () => {
+				reportFooterWidth( 300 );
+				// Checked inside the observer's turn, before anything scheduled for later renders.
+				expect(
+					screen.queryByRole( 'button', { name: 'Mark comment as spam' } )
+				).not.toBeInTheDocument();
+			} );
 		} );
 
 		it( 'leaves the panel as it is', () => {

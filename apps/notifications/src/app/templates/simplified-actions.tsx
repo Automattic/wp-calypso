@@ -1,6 +1,7 @@
 import { CardFooter, __experimentalHStack as HStack } from '@wordpress/components';
 import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
 import { useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useSelector } from 'react-redux';
 import { getActions, getReferenceId } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
@@ -33,8 +34,9 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 	const { hasExpandedActions } = useAppContext();
 	const isLargeScreen = useViewportMatch( 'large' );
 	const [ footerWidth, setFooterWidth ] = useState< number >();
+	// Committed before the browser paints, so a note too narrow for the buttons never shows them.
 	const footerRef = useResizeObserver( ( [ entry ]: ResizeObserverEntry[] ) =>
-		setFooterWidth( entry.contentRect.width )
+		flushSync( () => setFooterWidth( entry.contentRect.width ) )
 	);
 	const actions = getActions( note );
 	const hasAction = ( ...types: string[] ) => types.some( ( type ) => type in actions );

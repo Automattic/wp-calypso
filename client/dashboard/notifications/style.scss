@@ -44,6 +44,10 @@ $pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-b
 
 .dashboard-notifications-inbox__detail {
 	overflow-y: auto;
+	// The note keeps its width whether it scrolls or not. Its footer's width decides whether
+	// the comment actions show as buttons, and a scrollbar coming and going with them would
+	// switch them back and forth.
+	scrollbar-gutter: stable;
 
 	.components-card__body:not( .components-card__body * ) {
 		padding-block: $grid-unit-30;
