@@ -12,6 +12,7 @@ import { getStudioCheckoutParams } from 'calypso/my-sites/checkout/studio-return
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getSiteId } from 'calypso/state/sites/selectors';
+import { getAllowedCancelToUrl } from '../lib/leave-checkout';
 import { isJetpackNotAtomicSite, useCheckoutSite } from './use-checkout-site';
 
 const getAllowedHosts = ( siteSlug?: string ): string[] => {
@@ -66,11 +67,12 @@ const useValidCheckoutBackUrl = (
 				return 'https://akismet.com/pricing';
 			}
 			// `leaveCheckout` prefers a back URL to `cancel_to`, so the Studio default must not
-			// hide the desktop app's own cancel target.
+			// hide a `cancel_to` it would follow, such as the desktop app's own cancel target.
 			const searchParams = new URLSearchParams( window.location.search );
+			const cancelTo = searchParams.get( 'cancel_to' );
 			if (
 				isStudioCheckoutPath( window.location.pathname ) &&
-				! searchParams.has( 'cancel_to' ) &&
+				! ( cancelTo && getAllowedCancelToUrl( cancelTo ) ) &&
 				! getStudioCheckoutParams( Object.fromEntries( searchParams ) )
 			) {
 				return STUDIO_DEFAULT_BACK_URL;

@@ -128,18 +128,7 @@ export const leaveCheckout = ( {
 		}
 
 		if ( searchParams.has( 'cancel_to' ) ) {
-			const cancelPath = searchParams.get( 'cancel_to' ) ?? '';
-
-			const allowedUrl = getUrlOnOrigins(
-				cancelPath,
-				[
-					window.location.origin,
-					...dashboardOrigins(),
-					...jetpackCloudOrigins( cancelPath ),
-					...STUDIO_WEB_ORIGINS,
-				],
-				window.location.href
-			);
+			const allowedUrl = getAllowedCancelToUrl( searchParams.get( 'cancel_to' ) ?? '' );
 			if ( allowedUrl ) {
 				// We use window.location.href instead of navigate() because navigate() uses page.show()
 				// which silently fails for /setup/ Stepper routes. Since we're leaving checkout entirely,
@@ -157,6 +146,22 @@ export const leaveCheckout = ( {
 
 	navigate( closeUrl );
 };
+
+/**
+ * Returns the absolute `cancel_to` URL when checkout may send the buyer there.
+ */
+export function getAllowedCancelToUrl( cancelTo: string ): string | undefined {
+	return getUrlOnOrigins(
+		cancelTo,
+		[
+			window.location.origin,
+			...dashboardOrigins(),
+			...jetpackCloudOrigins( cancelTo ),
+			...STUDIO_WEB_ORIGINS,
+		],
+		window.location.href
+	);
+}
 
 /**
  * Jetpack Cloud sends its purchases pages here for renewals and upgrades, and

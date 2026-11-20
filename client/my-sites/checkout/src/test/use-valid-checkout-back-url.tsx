@@ -90,6 +90,28 @@ describe( 'useValidCheckoutBackUrl on the Studio checkout', () => {
 		}
 	);
 
+	it( 'leaves an allowed cancel_to to leaveCheckout', () => {
+		window.history.pushState(
+			{},
+			'',
+			'/checkout/studio/studio-cloud-monthly?cancel_to=https%3A%2F%2Fapp.wordpress.studio%2F'
+		);
+
+		expect( renderSiteless().result.current ).toBeUndefined();
+	} );
+
+	// leaveCheckout ignores a cancel_to on another host, which would leave a Studio buyer on
+	// WordPress.com's plans page.
+	it( 'keeps the default when cancel_to is on a host checkout does not allow', () => {
+		window.history.pushState(
+			{},
+			'',
+			'/checkout/studio/studio-cloud-monthly?cancel_to=https%3A%2F%2Fwordpress.studio.example.com%2F'
+		);
+
+		expect( renderSiteless().result.current ).toBe( 'https://wordpress.studio/' );
+	} );
+
 	it( 'keeps the default when studioSiteId is not one the round trip accepts', () => {
 		window.history.pushState( {}, '', '/checkout/studio/studio-cloud-monthly?studioSiteId=' );
 
