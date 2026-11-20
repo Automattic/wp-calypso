@@ -165,7 +165,7 @@ function getBenefits(): Benefit[][] {
 
 /** The benefit as plain text, for copying into an email or proposal. */
 function toPlainText( text: string ) {
-	return text.replace( /<\/?[a-z0-9]+>/gi, '' );
+	return new DOMParser().parseFromString( text, 'text/html' ).body.textContent ?? '';
 }
 
 function CheckList( { items }: { items: ReactNode[] } ) {
