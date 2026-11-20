@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAnalytics } from '../app/analytics';
+import { useConsumeSearchParams } from '../app/hooks/use-consume-search-params';
 import { useLocale } from '../app/locale';
 import { notificationsRoute } from '../app/router/notifications';
 import { Card } from '../components/card';
@@ -27,7 +28,9 @@ export default function Notifications() {
 	const handedOffNoteId = useRouterState( {
 		select: ( state ) => state.location.state.notificationsNoteId,
 	} );
-	const [ noteId, setSelectedNoteId ] = useState( handedOffNoteId );
+	// A panel outside the Dashboard opens this page in a new tab, where there is no history entry to hand its note over in.
+	const { note: linkedNoteId } = useConsumeSearchParams( [ 'note' ] );
+	const [ noteId, setSelectedNoteId ] = useState( handedOffNoteId ?? linkedNoteId );
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 
 	useEffect( () => {
