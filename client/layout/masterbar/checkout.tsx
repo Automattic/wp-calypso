@@ -19,7 +19,7 @@ import {
 	useCheckoutLeaveModal,
 } from 'calypso/my-sites/checkout/src/components/leave-checkout-modal';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
-import { renewalSitelessCheckoutTypeStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
+import { resolvedRenewalDataStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 import { useValueStore } from 'calypso/my-sites/checkout/src/lib/value-store';
 import Masterbar from './masterbar';
 
@@ -44,16 +44,16 @@ const CheckoutMasterbar = ( {
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
-	const renewalSitelessCheckoutType = useValueStore( renewalSitelessCheckoutTypeStore );
+	const resolvedRenewalData = useValueStore( resolvedRenewalDataStore );
 
 	const getCheckoutType = () => {
 		// A renewal by subscription ID alone doesn't name its brand in the URL,
 		// so wait for the cart rather than show the wrong one.
 		if ( window.location.pathname.startsWith( '/checkout/renew/' ) ) {
-			if ( ! renewalSitelessCheckoutType ) {
+			if ( ! resolvedRenewalData ) {
 				return 'pending';
 			}
-			if ( renewalSitelessCheckoutType.sitelessCheckoutType === 'akismet' ) {
+			if ( resolvedRenewalData.sitelessCheckoutType === 'akismet' ) {
 				return 'akismet';
 			}
 		}

@@ -72,12 +72,12 @@ export const vatDetailsInFormStore = createValueStore< VatDetails >( {} );
 export const recaptchaClientIdStore = createValueStore< number >( -1 );
 
 /**
- * The siteless checkout type of a renewal by subscription ID alone, whose URL
- * does not say which kind of purchase it is, as found in the cart. `null`
- * until the cart has loaded, so the checkout header can wait for it rather
- * than show the wrong brand.
+ * What the cart says about a renewal by subscription ID alone, whose URL does
+ * not say which kind of purchase it is. `null` until the cart has loaded, so
+ * the checkout header can wait for it rather than show the wrong brand. A
+ * renewal on a site is `{ sitelessCheckoutType: undefined }`.
  */
-export const renewalSitelessCheckoutTypeStore = createValueStore< {
+export const resolvedRenewalDataStore = createValueStore< {
 	sitelessCheckoutType: SitelessCheckoutType;
 } | null >( null );
 
@@ -85,5 +85,5 @@ export function resetCheckoutStores(): void {
 	contactDetailsStore.reset();
 	vatDetailsInFormStore.reset();
 	recaptchaClientIdStore.reset();
-	renewalSitelessCheckoutTypeStore.reset();
+	resolvedRenewalDataStore.reset();
 }

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
-import { renewalSitelessCheckoutTypeStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
+import { resolvedRenewalDataStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 import CheckoutMasterbar from '../checkout';
 import type { PropsWithChildren } from 'react';
 
@@ -30,7 +30,7 @@ function renderAt( url: string ) {
 
 describe( 'CheckoutMasterbar', () => {
 	beforeEach( () => {
-		renewalSitelessCheckoutTypeStore.reset();
+		resolvedRenewalDataStore.reset();
 	} );
 
 	it( 'links Back to the agency dashboard page the cart came from', () => {
@@ -108,7 +108,7 @@ describe( 'CheckoutMasterbar', () => {
 		it( 'shows the Akismet logo once the cart says it is an Akismet renewal', () => {
 			const { container } = renderAt( '/checkout/renew/12345' );
 
-			act( () => renewalSitelessCheckoutTypeStore.set( { sitelessCheckoutType: 'akismet' } ) );
+			act( () => resolvedRenewalDataStore.set( { sitelessCheckoutType: 'akismet' } ) );
 
 			expect( container.querySelector( '.akismet-logo' ) ).toBeVisible();
 			expect( container.querySelector( wordPressLogoSelector ) ).not.toBeInTheDocument();
@@ -118,14 +118,14 @@ describe( 'CheckoutMasterbar', () => {
 		it( 'shows the WordPress logo and Back button once the cart says it is a site renewal', () => {
 			const { container } = renderAt( '/checkout/renew/12345' );
 
-			act( () => renewalSitelessCheckoutTypeStore.set( { sitelessCheckoutType: undefined } ) );
+			act( () => resolvedRenewalDataStore.set( { sitelessCheckoutType: undefined } ) );
 
 			expect( container.querySelector( wordPressLogoSelector ) ).toBeVisible();
 			expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
 		} );
 
 		it( 'ignores the cart on other checkout paths', () => {
-			renewalSitelessCheckoutTypeStore.set( { sitelessCheckoutType: 'akismet' } );
+			resolvedRenewalDataStore.set( { sitelessCheckoutType: 'akismet' } );
 			const { container } = renderAt( '/checkout/example.com' );
 
 			expect( container.querySelector( wordPressLogoSelector ) ).toBeVisible();

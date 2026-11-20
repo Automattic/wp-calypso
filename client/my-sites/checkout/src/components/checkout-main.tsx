@@ -46,7 +46,7 @@ import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../
 import blikProcessor from '../lib/blik-processor';
 import {
 	recaptchaClientIdStore,
-	renewalSitelessCheckoutTypeStore,
+	resolvedRenewalDataStore,
 	useContactDetails,
 } from '../lib/checkout-stores';
 import existingCardProcessor from '../lib/existing-card-processor';
@@ -310,8 +310,8 @@ export default function CheckoutMain( {
 		if ( ! isRenewalBySubscriptionId || isInitialCartLoading ) {
 			return;
 		}
-		renewalSitelessCheckoutTypeStore.set( { sitelessCheckoutType: resolvedSitelessCheckoutType } );
-		return () => renewalSitelessCheckoutTypeStore.reset();
+		resolvedRenewalDataStore.set( { sitelessCheckoutType: resolvedSitelessCheckoutType } );
+		return () => resolvedRenewalDataStore.reset();
 	}, [ isRenewalBySubscriptionId, isInitialCartLoading, resolvedSitelessCheckoutType ] );
 
 	const checkoutFlow = useCheckoutFlowTrackKey( {

@@ -18,7 +18,7 @@ import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-
 import * as PrePurchaseNotices from '../components/prepurchase-notices';
 import {
 	contactDetailsActions,
-	renewalSitelessCheckoutTypeStore,
+	resolvedRenewalDataStore,
 	resetCheckoutStores,
 } from '../lib/checkout-stores';
 import {
@@ -932,13 +932,13 @@ describe( 'CheckoutMain', () => {
 					);
 				} );
 				// The checkout header brands itself from this.
-				expect( renewalSitelessCheckoutTypeStore.get() ).toEqual( {
+				expect( resolvedRenewalDataStore.get() ).toEqual( {
 					sitelessCheckoutType: expectedSitelessCheckoutType,
 				} );
 
 				// A later checkout must not take this renewal's brand.
 				unmount();
-				expect( renewalSitelessCheckoutTypeStore.get() ).toBeNull();
+				expect( resolvedRenewalDataStore.get() ).toBeNull();
 			} finally {
 				recordTracksEvent.mockRestore();
 			}
