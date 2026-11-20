@@ -32,8 +32,9 @@ The progress step tracks the move with the dashboard’s own progress steps, sit
 
 The preview stays Coming Soon like every unpaid preview: WordPress.com keeps it hidden until a plan
 is bought. When the move finishes, the flow opens the preview at its `?share=` link, which gets
-past Coming Soon. If the move finishes without a share link, the flow opens the preview’s
-Overview instead.
+past Coming Soon. Until WordPress.com reports the link it made for the preview, the progress step
+uses a share link the preview already has, or makes one, and only goes on once it has one. If no
+link can be read or made, the flow opens the preview’s Overview instead.
 
 ## Failures
 

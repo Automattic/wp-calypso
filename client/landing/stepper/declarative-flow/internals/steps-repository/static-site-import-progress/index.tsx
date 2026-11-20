@@ -1,9 +1,12 @@
+import { sitePreviewLinkCreateMutation, sitePreviewLinksQuery } from '@automattic/api-queries';
 import { Step } from '@automattic/onboarding';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useEffectEvent, useRef, useState } from 'react';
+import { addQueryArgs } from '@wordpress/url';
+import { useEffect, useEffectEvent, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
 	StaticSiteImportPreviewSteps,
@@ -22,13 +25,11 @@ import './style.scss';
 export type StaticSiteImportProgressStepSubmits =
 	{ action: 'finished'; previewUrl?: string } | { action: 'stopped' };
 
-// The share link is made when the build lands, so wait a little for it before going on without it.
-const PREVIEW_URL_WAIT = 30_000;
-
 const StaticSiteImportProgressStep: StepType< {
 	accepts: {
 		/** The site the import is delivered onto. */
 		siteId?: number;
+		siteSlug?: string;
 		importSessionId?: string;
 		/** The source being moved, as the customer gave it. */
 		from?: string;
@@ -38,6 +39,7 @@ const StaticSiteImportProgressStep: StepType< {
 } > = function StaticSiteImportProgressStep( {
 	navigation,
 	siteId,
+	siteSlug,
 	importSessionId,
 	from,
 	platform,
@@ -46,13 +48,40 @@ const StaticSiteImportProgressStep: StepType< {
 	const email = useSelector( getCurrentUserEmail );
 	// The preview was built for this move, which already names it as the destination.
 	const siteImport = useStaticSiteImport( siteId ?? 0, importSessionId, { approve: false } );
-	const [ hasWaitedForPreviewUrl, setHasWaitedForPreviewUrl ] = useState( false );
 	const hasSubmitted = useRef( false );
 
 	const status = siteImport?.status;
 	const isRefused = siteImport?.isRefused;
-	const isPreview = siteImport?.isPreview;
-	const previewUrl = siteImport?.previewUrl;
+	const isFinished = status === 'finished';
+
+	// The share link gets past Coming Soon. WordPress.com reports the one it made for the preview, and
+	// until it does, the step uses one the preview already has, or makes one.
+	const reportedUrl = siteImport?.previewUrl;
+	const needsShareLink = isFinished && ! reportedUrl && !! siteId && !! siteSlug;
+	const { data: links, isError: hasLinksError } = useQuery( {
+		...sitePreviewLinksQuery( siteId ?? 0 ),
+		enabled: needsShareLink,
+	} );
+	const {
+		mutate: createLink,
+		data: createdLink,
+		isError: hasCreateError,
+	} = useMutation( sitePreviewLinkCreateMutation( siteId ?? 0 ) );
+	const hasAskedForLink = useRef( false );
+	useEffect( () => {
+		if ( needsShareLink && links?.length === 0 && ! hasAskedForLink.current ) {
+			hasAskedForLink.current = true;
+			createLink();
+		}
+	}, [ needsShareLink, links, createLink ] );
+	const shareCode = links?.[ 0 ]?.code ?? createdLink?.code;
+	const previewUrl =
+		reportedUrl ||
+		( shareCode && siteSlug
+			? addQueryArgs( `https://${ siteSlug }/`, { share: shareCode } )
+			: undefined );
+	// Without a share link to make, the move still finished, so the flow goes on without one.
+	const hasNoShareLink = ! siteSlug || hasLinksError || hasCreateError;
 
 	const submit = useEffectEvent( ( result: StaticSiteImportProgressStepSubmits ) => {
 		if ( hasSubmitted.current ) {
@@ -62,22 +91,15 @@ const StaticSiteImportProgressStep: StepType< {
 		navigation.submit?.( result );
 	} );
 
-	const isFinished = status === 'finished';
-	useEffect( () => {
-		if ( ! isFinished || previewUrl ) {
-			return;
-		}
-		const timer = setTimeout( () => setHasWaitedForPreviewUrl( true ), PREVIEW_URL_WAIT );
-		return () => clearTimeout( timer );
-	}, [ isFinished, previewUrl ] );
-
 	useEffect( () => {
 		if ( ! siteId || ! importSessionId ) {
 			return submit( { action: 'stopped' } );
 		}
-		if ( status === 'finished' ) {
-			if ( previewUrl || isPreview === false || hasWaitedForPreviewUrl ) {
+		if ( isFinished ) {
+			if ( previewUrl ) {
 				submit( { action: 'finished', previewUrl } );
+			} else if ( hasNoShareLink ) {
+				submit( { action: 'finished' } );
 			}
 			return;
 		}
@@ -85,15 +107,7 @@ const StaticSiteImportProgressStep: StepType< {
 		if ( isRefused || ( status && status !== 'moving' ) ) {
 			submit( { action: 'stopped' } );
 		}
-	}, [
-		siteId,
-		importSessionId,
-		status,
-		isRefused,
-		isPreview,
-		previewUrl,
-		hasWaitedForPreviewUrl,
-	] );
+	}, [ siteId, importSessionId, status, isFinished, isRefused, previewUrl, hasNoShareLink ] );
 
 	const sourceHost = getSourceHost( from );
 	const search = { importSessionId, from, platform };
