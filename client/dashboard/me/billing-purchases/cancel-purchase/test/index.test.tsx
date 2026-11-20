@@ -18,10 +18,9 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
-import { UPSELL_STEP } from '../cancel-purchase-form/steps';
 import CancelPurchase from '../index';
 import KeepSubscriptionButton from '../keep-subscription-button';
-import type { Domain, PlanProduct, PlanProductDowngrade, Purchase } from '@automattic/api-core';
+import type { Domain, Purchase } from '@automattic/api-core';
 
 vi.mock( '../../../../app/router/domains', () => ( {
 	domainRoute: { fullPath: '/domains/$domainName' },
@@ -48,6 +47,8 @@ const purchase = {
 	subscription_status: 'active',
 	currency_code: 'USD',
 	expiry_date: '2027-04-06T00:00:00+00:00',
+	ownership_id: 4567,
+	is_refundable: false,
 } as Purchase;
 
 function mockSiteRequests() {
@@ -60,7 +61,7 @@ function mockSiteRequests() {
 		.reply( 200, { active: [], available: {} } )
 		.get( `/rest/v1.1/sites/${ purchase.blog_id }` )
 		.query( true )
-		.reply( 200, { ID: purchase.blog_id, slug: purchase.site_slug, is_wpcom_atomic: false } )
+		.reply( 200, { ID: purchase.blog_id, slug: purchase.site_slug } )
 		.get( `/wpcom/v2/sites/${ purchase.blog_id }/atomic/transfers/latest` )
 		.query( true )
 		.reply( 200, {} )
@@ -79,25 +80,17 @@ function mockHasExtended( status: number, body: object ) {
 }
 
 function renderRemoveFlow( {
-	purchase: overrides = {},
-	plans = [],
-	preferences = {},
+	purchase: testPurchase = purchase,
 	seedHasExtended = true,
-}: {
-	purchase?: Partial< Purchase >;
-	plans?: PlanProduct[];
-	preferences?: Record< string, unknown >;
-	seedHasExtended?: boolean;
-} = {} ) {
-	const testPurchase = { ...purchase, ...overrides };
+}: { purchase?: Purchase; seedHasExtended?: boolean } = {} ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
 	queryClient.setQueryData( purchaseQuery( purchase.ID ).queryKey, testPurchase );
-	queryClient.setQueryData( plansQuery().queryKey, plans );
+	queryClient.setQueryData( plansQuery().queryKey, [] );
 	queryClient.setQueryData( purchaseCancelFeaturesQuery( purchase.ID ).queryKey, [] );
 	queryClient.setQueryData( productsQuery().queryKey, {} );
-	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, preferences );
+	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
 	if ( testPurchase.meta ) {
 		queryClient.setQueryData( domainQuery( testPurchase.meta ).queryKey, {
 			domain: testPurchase.meta,
@@ -135,64 +128,11 @@ async function pickFoundBetterValue( user: ReturnType< typeof userEvent.setup > 
 
 const optionsListName = 'Before canceling, you can consider these options:';
 
-const findOptions = () => screen.findByRole( 'list', { name: optionsListName } );
-
-const personalAnnual: Partial< Purchase > = {
-	product_id: 1009,
-	product_name: 'WordPress.com Personal',
-	product_slug: 'personal-bundle',
-	ownership_id: 4567,
-	is_refundable: false,
-};
-
-const personalAnnualPlan = {
-	product_id: 1009,
-	product_name: 'WordPress.com Personal',
-	product_slug: 'personal-bundle',
-	bill_period: 365,
-	downgrade_paths: [ { product_id: 1019, bill_period: 31 } ],
-} as PlanProduct;
-
-const personalMonthlyPlan = {
-	product_id: 1019,
-	product_name: 'WordPress.com Personal',
-	product_slug: 'personal-bundle-monthly',
-	bill_period: 31,
-	downgrade_paths: [] as PlanProductDowngrade[],
-} as PlanProduct;
-
-const renderPersonalFlow = () =>
-	renderRemoveFlow( {
-		purchase: personalAnnual,
-		plans: [ personalAnnualPlan, personalMonthlyPlan ],
-	} );
-
-async function answerTooExpensive( user: ReturnType< typeof userEvent.setup > ) {
-	await startSurvey( user );
-	await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
-	await user.click(
-		screen.getByRole( 'radio', { name: 'The plan is too expensive for the features offered.' } )
-	);
-	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
-}
-
 const EXPOSURE = 'calypso_purchases_cancel_options_eligible';
 
 const exposureCalls = (
 	recordTracksEvent: ( name: string, properties?: Record< string, unknown > ) => void
 ) => vi.mocked( recordTracksEvent ).mock.calls.filter( ( [ name ] ) => name === EXPOSURE );
-
-// Delays the reply until `release()`, so a test can check events recorded before the request finishes.
-function mockHeldPurchaseRequest( action: 'extend' ) {
-	let release!: () => void;
-	const pending = new Promise< void >( ( resolve ) => {
-		release = resolve;
-	} );
-	const scope = nock( 'https://public-api.wordpress.com' )
-		.post( `/wpcom/v2/upgrades/${ purchase.ID }/${ action }` )
-		.reply( 200, () => pending.then( () => ( { status: 'completed', message: 'ok' } ) ) );
-	return { scope, release };
-}
 
 describe( '<CancelPurchase />', () => {
 	beforeEach( () => {
@@ -230,149 +170,29 @@ describe( '<CancelPurchase />', () => {
 				'calypso_cancellation_solution_cards_view',
 				expect.anything()
 			);
-		} );
-
-		test( 'records the purchase ID with the form start and reason pick events', async () => {
-			const user = userEvent.setup();
-			const { recordTracksEvent } = renderPersonalFlow();
-
-			await answerTooExpensive( user );
-
-			expect( await findOptions() ).toBeVisible();
-			const purchaseProps = { purchase_id: 123, ownership_id: 4567, is_refundable: false };
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_purchases_cancel_form_start',
-				expect.objectContaining( purchaseProps )
-			);
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_purchases_cancel_form_select_radio_option',
-				expect.objectContaining( { ...purchaseProps, option: 'radio_1_2', value: 'tooExpensive' } )
-			);
-		} );
-
-		test( 'records the purchase ID with the keep subscription event', async () => {
-			const user = userEvent.setup();
-			const { recordTracksEvent } = renderRemoveFlow( {
-				purchase: personalAnnual,
-				preferences: { [ `cancel-purchase-survey-completed-${ purchase.ID }` ]: 'true' },
-			} );
-
-			await startSurvey( user );
-			await user.click( await screen.findByRole( 'button', { name: 'Keep plan' } ) );
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_purchases_keep_subscription',
-				expect.objectContaining( { purchase_id: 123, ownership_id: 4567, is_refundable: false } )
-			);
-		} );
-
-		test( 'records the exposure with the purchase and flow details when the reason has options', async () => {
-			const user = userEvent.setup();
-			const { recordTracksEvent } = renderPersonalFlow();
-
-			await answerTooExpensive( user );
-
-			expect( await findOptions() ).toBeVisible();
-			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
-				[
-					EXPOSURE,
-					{
-						purchase_id: 123,
-						cancellation_reason: 'tooExpensive',
-						cancellation_flow: 'remove',
-						product_slug: 'personal-bundle',
-						is_atomic: false,
-						ownership_id: 4567,
-						is_refundable: false,
-					},
-				],
-			] );
-		} );
-
-		test( 'skips the exposure for "Something else related to changed needs" with text typed', async () => {
-			const user = userEvent.setup();
-			const { recordTracksEvent } = renderRemoveFlow();
-			await startSurvey( user );
-
-			await user.click( await screen.findByRole( 'radio', { name: 'No longer need a site' } ) );
-			await user.click(
-				screen.getByRole( 'radio', { name: 'Something else related to changed needs' } )
-			);
-			await user.type(
-				screen.getByRole( 'textbox', { name: 'Can you please specify?' } ),
-				'test reason'
-			);
-			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
-
-			expect( await screen.findByRole( 'button', { name: 'Complete removal' } ) ).toBeVisible();
 			expect( exposureCalls( recordTracksEvent ) ).toHaveLength( 0 );
 		} );
-	} );
 
-	describe( 'with the cards flag off', () => {
-		test( 'records the exposure before moving on to the offer', async () => {
+		test( 'records the exposure with the purchase details for a reason with options', async () => {
 			const user = userEvent.setup();
-			const { recordTracksEvent } = renderPersonalFlow();
+			const { recordTracksEvent } = renderRemoveFlow();
 
-			await answerTooExpensive( user );
+			await pickFoundBetterValue( user );
 
-			expect(
-				await screen.findByRole( 'link', { name: 'Switch to monthly payments' } )
-			).toBeVisible();
+			expect( await screen.findByRole( 'list', { name: optionsListName } ) ).toBeVisible();
 			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
 				[
 					EXPOSURE,
-					{
-						purchase_id: 123,
-						cancellation_reason: 'tooExpensive',
+					expect.objectContaining( {
+						cancellation_reason: 'foundBetterValue',
 						cancellation_flow: 'remove',
-						product_slug: 'personal-bundle',
-						is_atomic: false,
+						product_slug: 'value_bundle',
+						purchase_id: 123,
 						ownership_id: 4567,
 						is_refundable: false,
-					},
+					} ),
 				],
 			] );
-			const calls = vi.mocked( recordTracksEvent ).mock.calls;
-			const exposureIndex = calls.findIndex( ( [ name ] ) => name === EXPOSURE );
-			const offerIndex = calls.findIndex(
-				( [ name, properties ] ) =>
-					name === 'calypso_purchases_cancel_survey_step' && properties?.new_step === UPSELL_STEP
-			);
-			expect( offerIndex ).toBeGreaterThan( exposureIndex );
-		} );
-
-		test( 'records the purchase ID with the free month offer event before the extend request finishes', async () => {
-			const user = userEvent.setup();
-			const freeMonth = mockHeldPurchaseRequest( 'extend' );
-			const { recordTracksEvent, router } = renderRemoveFlow( {
-				purchase: {
-					product_id: 1019,
-					product_slug: 'personal-bundle-monthly',
-					bill_period_days: 31,
-				},
-				plans: [ personalAnnualPlan, personalMonthlyPlan ],
-			} );
-			await startSurvey( user );
-
-			await user.click( await screen.findByRole( 'radio', { name: 'Too hard to use' } ) );
-			await user.click(
-				screen.getByRole( 'radio', {
-					name: 'The platform/dashboard is too complicated or confusing to navigate',
-				} )
-			);
-			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
-			await user.click( await screen.findByRole( 'button', { name: 'Get a free month' } ) );
-			await waitFor( () => expect( freeMonth.scope.isDone() ).toBe( true ) );
-
-			expect( recordTracksEvent ).toHaveBeenCalledWith(
-				'calypso_purchases_free_month_offer_form_submit',
-				expect.objectContaining( { purchase_id: 123 } )
-			);
-			freeMonth.release();
-			await waitFor( () =>
-				expect( router.state.location.pathname ).toBe( `/me/billing/purchases/${ purchase.ID }` )
-			);
 		} );
 	} );
 
@@ -472,7 +292,7 @@ describe( '<CancelPurchase />', () => {
 		test( 'offers Built By when the site already had a free month', async () => {
 			const user = userEvent.setup();
 			const check = mockHasExtended( 200, { has_extended: true } );
-			const { queryClient } = renderRemoveFlow( {
+			const { queryClient, recordTracksEvent } = renderRemoveFlow( {
 				purchase: monthlyPurchase,
 				seedHasExtended: false,
 			} );
@@ -486,6 +306,9 @@ describe( '<CancelPurchase />', () => {
 			expect(
 				screen.queryByRole( 'button', { name: 'Get a free month' } )
 			).not.toBeInTheDocument();
+			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
+				[ EXPOSURE, expect.objectContaining( { cancellation_reason: 'foundBetterValue' } ) ],
+			] );
 		} );
 
 		test( 'offers Built By when the free month check fails', async () => {

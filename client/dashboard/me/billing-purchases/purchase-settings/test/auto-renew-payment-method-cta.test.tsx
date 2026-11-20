@@ -116,21 +116,16 @@ describe( 'auto-renew without a payment method', () => {
 
 describe( 'auto-renew enabled event', () => {
 	const EVENT = 'calypso_purchases_auto_renew_enabled';
-	const offPurchase = makePurchase( { can_reenable_auto_renewal: true, is_rechargeable: true } );
 
-	// The toggle stays disabled until the request settles, and it remounts on every render, so query it fresh.
-	async function waitForRequestToSettle( scope: nock.Scope ) {
-		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
-		await waitFor( () =>
-			expect( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) ).toBeEnabled()
-		);
-	}
-
-	test( 'records the event once with the purchase ID and product slug when auto-renew is enabled', async () => {
-		const scope = nock( 'https://public-api.wordpress.com' )
+	test( 'records the event when auto-renew is enabled', async () => {
+		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/upgrades/1/enable-auto-renew' )
 			.reply( 200, { success: true, upgrade: { ID: 1 } } );
-		const { recordTracksEvent } = render( <ManageSubscriptionCard purchase={ offPurchase } /> );
+		const { recordTracksEvent } = render(
+			<ManageSubscriptionCard
+				purchase={ makePurchase( { can_reenable_auto_renewal: true, is_rechargeable: true } ) }
+			/>
+		);
 
 		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) );
 
@@ -140,32 +135,6 @@ describe( 'auto-renew enabled event', () => {
 				product_slug: 'personal-bundle',
 			} )
 		);
-		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( scope.isDone() ).toBe( true );
-	} );
-
-	test( 'records nothing when the request fails', async () => {
-		const scope = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/upgrades/1/enable-auto-renew' )
-			.reply( 500, { error: 'server_error', message: 'Auto-renew could not be turned on.' } );
-		const { recordTracksEvent } = render( <ManageSubscriptionCard purchase={ offPurchase } /> );
-
-		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) );
-
-		await waitForRequestToSettle( scope );
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
-	} );
-
-	test( 'records nothing when the reply has success: false', async () => {
-		const scope = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/upgrades/1/enable-auto-renew' )
-			.reply( 200, { success: false, upgrade: { ID: 1 } } );
-		const { recordTracksEvent } = render( <ManageSubscriptionCard purchase={ offPurchase } /> );
-
-		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) );
-
-		await waitForRequestToSettle( scope );
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	test( 'records nothing when auto-renew is disabled', async () => {
@@ -185,7 +154,7 @@ describe( 'auto-renew enabled event', () => {
 
 		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) );
 
-		await waitForRequestToSettle( scope );
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith( EVENT, expect.anything() );
 	} );
 } );

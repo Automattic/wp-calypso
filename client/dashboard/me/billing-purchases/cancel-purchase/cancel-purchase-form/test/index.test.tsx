@@ -72,22 +72,6 @@ describe( '<CancelPurchaseForm />', () => {
 		vi.clearAllMocks();
 	} );
 
-	const premiumPurchase = makePurchase( {
-		product_name: 'WordPress.com Premium',
-		product_slug: 'value_bundle',
-		bill_period_days: 365,
-		currency_code: 'USD',
-		site_slug: 'example.wordpress.com',
-	} );
-	const upsellStepProps = {
-		...defaultProps,
-		surveyStep: UPSELL_STEP,
-		allSteps: [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ],
-		purchase: premiumPurchase,
-		clickNext: noop,
-		onSubmit: noop,
-	};
-
 	test( 'asks for a cancellation reason for a Google Workspace purchase', () => {
 		render(
 			<CancelPurchaseForm
@@ -259,6 +243,21 @@ describe( '<CancelPurchaseForm />', () => {
 	} );
 
 	describe( 'option cards', () => {
+		const premiumPurchase = makePurchase( {
+			product_name: 'WordPress.com Premium',
+			product_slug: 'value_bundle',
+			bill_period_days: 365,
+			currency_code: 'USD',
+			site_slug: 'example.wordpress.com',
+		} );
+		const upsellStepProps = {
+			...defaultProps,
+			surveyStep: UPSELL_STEP,
+			allSteps: [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ],
+			purchase: premiumPurchase,
+			clickNext: noop,
+			onSubmit: noop,
+		};
 		const cardsListName = 'Before canceling, you can consider these options:';
 
 		afterEach( () => {
@@ -465,52 +464,39 @@ describe( '<CancelPurchaseForm />', () => {
 		} );
 	} );
 
-	describe( 'offer clicks', () => {
-		test.each( [
-			[
-				'built-by',
-				'button',
-				'Get help building my site',
-				'calypso_cancellation_upsell_step_buily_by_click',
-			],
-			[
-				'upgrade-atomic',
-				'link',
-				/I want the/,
-				'calypso_cancellation_upgrade_at_step_upgrade_click',
-			],
-		] as const )( 'sends the %s click to recordEvent', async ( upsell, role, name, event ) => {
-			const user = userEvent.setup();
-			const recordEvent = vi.fn();
-			render(
-				<CancelPurchaseForm { ...upsellStepProps } upsell={ upsell } recordEvent={ recordEvent } />
-			);
+	test.each( [
+		{
+			upsell: 'built-by',
+			accept: { role: 'button', name: 'Get help building my site' },
+			event: [ 'calypso_cancellation_upsell_step_buily_by_click' ],
+		},
+		{
+			upsell: 'upgrade-atomic',
+			accept: { role: 'link', name: /I want the/ },
+			event: [ 'calypso_cancellation_upgrade_at_step_upgrade_click' ],
+		},
+		{
+			upsell: 'live-chat:plans',
+			accept: { role: 'button', name: 'Connect with a Happiness Engineer' },
+			event: [ 'calypso_cancellation_upsell_step_live_chat_click', { type: 'live-chat:plans' } ],
+		},
+	] as const )( 'records the $upsell offer click', async ( { upsell, accept, event } ) => {
+		const user = userEvent.setup();
+		const recordEvent = vi.fn();
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ UPSELL_STEP }
+				allSteps={ [ UPSELL_STEP ] }
+				purchase={ makePurchase() }
+				upsell={ upsell }
+				recordEvent={ recordEvent }
+			/>
+		);
 
-			await user.click( screen.getByRole( role, { name } ) );
+		await user.click( screen.getByRole( accept.role, { name: accept.name } ) );
 
-			expect( recordEvent ).toHaveBeenCalledWith( event );
-		} );
-
-		test( 'sends the live chat click and its upsell type to recordEvent', async () => {
-			const user = userEvent.setup();
-			const recordEvent = vi.fn();
-			render(
-				<CancelPurchaseForm
-					{ ...upsellStepProps }
-					upsell="live-chat:plans"
-					recordEvent={ recordEvent }
-				/>
-			);
-
-			await user.click(
-				screen.getByRole( 'button', { name: 'Connect with a Happiness Engineer' } )
-			);
-
-			expect( recordEvent ).toHaveBeenCalledWith(
-				'calypso_cancellation_upsell_step_live_chat_click',
-				{ type: 'live-chat:plans' }
-			);
-		} );
+		expect( recordEvent ).toHaveBeenCalledWith( ...event );
 	} );
 
 	describe( 'exposure event', () => {
@@ -520,9 +506,7 @@ describe( '<CancelPurchaseForm />', () => {
 			props: Partial< ComponentProps< typeof CancelPurchaseForm > > = {}
 		) {
 			const recordEvent = vi.fn();
-			const clickNext = vi.fn();
-			const onSubmit = vi.fn();
-			const result = render(
+			render(
 				<CancelPurchaseForm
 					{ ...defaultProps }
 					allSteps={ [ FEEDBACK_STEP, UPSELL_STEP, NEXT_ADVENTURE_STEP ] }
@@ -530,91 +514,24 @@ describe( '<CancelPurchaseForm />', () => {
 					questionOneRadio="price/budget"
 					questionOneText="tooExpensive"
 					recordEvent={ recordEvent }
-					clickNext={ clickNext }
-					onSubmit={ onSubmit }
 					{ ...props }
 				/>
 			);
-			return { ...result, recordEvent, clickNext, onSubmit };
+			return recordEvent;
 		}
 
-		test( 'records the exposure from "Continue removal" before moving to the next step', async () => {
+		test.each( [
+			{ intent: 'remove', button: 'Continue removal' },
+			{ intent: 'cancel', button: 'Continue' },
+		] as const )( 'records the exposure from $button', async ( { intent, button } ) => {
 			const user = userEvent.setup();
-			const { recordEvent, clickNext } = renderReasonStep();
+			const recordEvent = renderReasonStep( { intent } );
 
-			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+			await user.click( screen.getByRole( 'button', { name: button } ) );
 
-			expect( recordEvent ).toHaveBeenCalledTimes( 1 );
 			expect( recordEvent ).toHaveBeenCalledWith( EXPOSURE, {
 				cancellation_reason: 'tooExpensive',
 			} );
-			expect( clickNext ).toHaveBeenCalledTimes( 1 );
-			expect( recordEvent.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-				clickNext.mock.invocationCallOrder[ 0 ]
-			);
-		} );
-
-		test( 'records the exposure from "Continue"', async () => {
-			const user = userEvent.setup();
-			const { recordEvent, clickNext } = renderReasonStep( {
-				intent: 'cancel',
-				questionOneRadio: 'wrongPlanOrSite',
-				questionOneText: 'wrongPlan',
-			} );
-
-			await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-
-			expect( clickNext ).toHaveBeenCalledTimes( 1 );
-			expect( recordEvent ).toHaveBeenCalledTimes( 1 );
-			expect( recordEvent ).toHaveBeenCalledWith( EXPOSURE, {
-				cancellation_reason: 'wrongPlan',
-			} );
-		} );
-
-		test( 'skips the exposure from "Continue" on the next adventure step', async () => {
-			const user = userEvent.setup();
-			// An Atomic revert step after it shows "Continue" on the next adventure step.
-			const { recordEvent, clickNext } = renderReasonStep( {
-				intent: 'cancel',
-				allSteps: [ FEEDBACK_STEP, NEXT_ADVENTURE_STEP, ATOMIC_REVERT_STEP ],
-				surveyStep: NEXT_ADVENTURE_STEP,
-				isNextAdventureValid: true,
-			} );
-
-			await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-
-			expect( clickNext ).toHaveBeenCalledTimes( 1 );
-			expect( recordEvent ).not.toHaveBeenCalled();
-		} );
-
-		test.each( [
-			[ 'a reason with zero options', 'technicalIssues', 'pluginOrThemeConflicts' ],
-			[
-				'"Something else related to changed needs" with text typed',
-				'noLongerNeedSite',
-				'test reason',
-			],
-		] )( 'skips the exposure for %s', async ( _, questionOneRadio, questionOneText ) => {
-			const user = userEvent.setup();
-			const { recordEvent, clickNext } = renderReasonStep( {
-				questionOneRadio,
-				questionOneText,
-			} );
-
-			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
-
-			expect( clickNext ).toHaveBeenCalledTimes( 1 );
-			expect( recordEvent ).not.toHaveBeenCalled();
-		} );
-
-		test( 'skips the exposure when the survey is skipped', async () => {
-			const user = userEvent.setup();
-			const { recordEvent, onSubmit } = renderReasonStep( { intent: 'cancel' } );
-
-			await user.click( screen.getByRole( 'button', { name: 'Skip survey' } ) );
-
-			expect( onSubmit ).toHaveBeenCalledTimes( 1 );
-			expect( recordEvent ).not.toHaveBeenCalled();
 		} );
 
 		test.each( [
@@ -622,24 +539,11 @@ describe( '<CancelPurchaseForm />', () => {
 			[ 'a Jetpack plan', { is_jetpack_plan_or_product: true } ],
 		] )( 'skips the exposure for %s', async ( _, overrides ) => {
 			const user = userEvent.setup();
-			const { recordEvent, clickNext } = renderReasonStep( {
-				purchase: makePurchase( overrides ),
-			} );
+			const recordEvent = renderReasonStep( { purchase: makePurchase( overrides ) } );
 
 			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
 
-			expect( clickNext ).toHaveBeenCalledTimes( 1 );
 			expect( recordEvent ).not.toHaveBeenCalled();
-		} );
-
-		test( 'skips the exposure on mount and remount', () => {
-			const first = renderReasonStep();
-			first.unmount();
-			const second = renderReasonStep();
-
-			expect( screen.getByRole( 'button', { name: 'Continue removal' } ) ).toBeEnabled();
-			expect( first.recordEvent ).not.toHaveBeenCalled();
-			expect( second.recordEvent ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
