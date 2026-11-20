@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- Breaking: Require `@wordpress/data` ^11.0.0.
+- Breaking: Require `@wordpress/data` ^11.2.0.
 - Drop the parenthesised suffix from Akismet Pro 500 product names without a regular expression that slows down on long inputs.
 
 ## [1.4.0]

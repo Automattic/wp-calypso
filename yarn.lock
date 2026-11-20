@@ -900,7 +900,7 @@ __metadata:
     "@automattic/number-formatters": "npm:^1.2.12"
     "@automattic/shopping-cart": "workspace:^"
     "@automattic/urls": "workspace:^"
-    "@wordpress/data": "npm:^10.48.0"
+    "@wordpress/data": "npm:^11.2.0"
     i18n-calypso: "workspace:^"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -909,7 +909,7 @@ __metadata:
     vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
   peerDependencies:
-    "@wordpress/data": ^11.0.0
+    "@wordpress/data": ^11.2.0
     react: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
@@ -1332,7 +1332,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.1.0"
     "@wordpress/components": "npm:^45.0.0"
     "@wordpress/compose": "npm:^9.2.0"
     "@wordpress/data": "npm:^11.2.0"
@@ -2205,7 +2205,7 @@ __metadata:
     "@storybook/addon-a11y": "npm:^10.6.5"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.1.0"
     "@wordpress/components": "npm:^45.0.0"
     "@wordpress/compose": "npm:^9.2.0"
     "@wordpress/data": "npm:^11.2.0"
@@ -2356,9 +2356,9 @@ __metadata:
     "@wordpress/base-styles": "npm:^15.1.0"
     "@wordpress/components": "npm:^45.0.0"
     "@wordpress/compose": "npm:^9.2.0"
-    "@wordpress/data": "npm:^10.48.0"
+    "@wordpress/data": "npm:^11.2.0"
     "@wordpress/icons": "npm:^21.0.0"
-    "@wordpress/is-shallow-equal": "npm:^5.48.0"
+    "@wordpress/is-shallow-equal": "npm:^6.2.0"
     "@wordpress/react-i18n": "npm:^5.2.0"
     clsx: "npm:^2.1.1"
     fuse.js: "npm:^6.6.2"
@@ -2449,7 +2449,7 @@ __metadata:
     vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
   peerDependencies:
-    "@wordpress/data": ^11.0.0
+    "@wordpress/data": ^11.2.0
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
     redux: ^5.0.1
