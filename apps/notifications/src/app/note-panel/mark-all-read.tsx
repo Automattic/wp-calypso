@@ -1,9 +1,9 @@
 import {
-	__experimentalConfirmDialog as ConfirmDialog,
-	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
+	Modal,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -85,7 +85,7 @@ type MarkAllAsReadProps = {
 
 /**
  * A "Mark N as read" link that marks every unread note on the account as read. Above
- * `CONFIRM_ABOVE` notes it asks first, in a confirm dialog.
+ * `CONFIRM_ABOVE` notes it asks first, in a modal.
  */
 export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 	const { client } = useAppContext();
@@ -187,22 +187,26 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 					<span>{ createInterpolateElement( label, { strong: <strong /> } ) }</span>
 				</Button>
 			) }
-			<ConfirmDialog
-				isOpen={ isConfirming }
-				confirmButtonText={ __( 'Mark as read' ) }
-				onConfirm={ handleConfirm }
-				onCancel={ handleCancel }
-			>
-				{ /* Laid out like the Dashboard's SectionHeader at level 2, which its own dialogs use. */ }
-				<VStack spacing={ 2 }>
-					<Heading level={ 2 } size={ 20 } lineHeight="24px" weight={ 600 }>
-						{ question }
-					</Heading>
-					<Text variant="muted">
-						{ __( 'This includes the ones you haven’t opened. You can’t undo this.' ) }
-					</Text>
-				</VStack>
-			</ConfirmDialog>
+			{ /* Laid out like the Dashboard's site delete modal (client/dashboard/sites/site-delete-modal);
+			   the HStack matches its ButtonStack, which this app can't import. The modal returns the
+			   focus to the link as it closes. */ }
+			{ isConfirming && (
+				<Modal title={ question } size="medium" onRequestClose={ handleCancel }>
+					<VStack spacing={ 4 }>
+						<Text as="p">
+							{ __( 'This includes the ones you haven’t opened. You can’t undo this.' ) }
+						</Text>
+						<HStack justify="flex-end" spacing={ 3 }>
+							<Button __next40pxDefaultSize variant="tertiary" onClick={ handleCancel }>
+								{ __( 'Cancel' ) }
+							</Button>
+							<Button __next40pxDefaultSize variant="primary" onClick={ handleConfirm }>
+								{ __( 'Mark as read' ) }
+							</Button>
+						</HStack>
+					</VStack>
+				</Modal>
+			) }
 			<Notice.List>
 				{ hasError && (
 					<Notice.Root
