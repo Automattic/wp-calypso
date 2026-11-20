@@ -64,6 +64,7 @@ describe( 'getClassicPath', () => {
 	it.each( [
 		[ '/products?category=jetpack', '/marketplace/products?category=jetpack' ],
 		[ '/tiers', '/agency-tier' ],
+		[ '/tiers#certification', '/agency-tier#certification' ],
 		[ '/library', '/resources-and-tools/learn' ],
 		[ '/hosting/pressable#plans', '/marketplace/hosting/pressable#plans' ],
 		[ '/overview', '/overview' ],
