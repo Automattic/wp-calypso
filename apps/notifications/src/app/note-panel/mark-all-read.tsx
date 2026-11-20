@@ -32,10 +32,12 @@ export const CONFIRM_ABOVE = 20;
  * Counts the unread notes on the account, loaded or not.
  *
  * The server's list of unread notes is fetched again whenever a newer note arrives. Between
- * fetches, notes read or left unread on this device adjust the count.
+ * fetches, notes read or left unread on this device adjust the count. Until the first list
+ * arrives the count is 0, since the loaded notes alone would undercount the account.
  */
 function useUnreadCount() {
 	const [ unreadIds, setUnreadIds ] = useState< number[] >( [] );
+	const [ isCounted, setIsCounted ] = useState( false );
 	const requestRef = useRef( 0 );
 
 	const newestNote = useSelector( ( state ) => ( getAllNotes( state ) as Note[] )[ 0 ] );
@@ -47,6 +49,7 @@ function useUnreadCount() {
 			const { notes } = await listNotes( { unread: 1, fields: 'id', number: UNREAD_IDS_LIMIT } );
 			if ( request === requestRef.current ) {
 				setUnreadIds( notes.map( ( { id }: { id: number } ) => id ) );
+				setIsCounted( true );
 			}
 		} catch ( error ) {
 			reportRequestError( 'load-unread-count', error );
@@ -72,7 +75,7 @@ function useUnreadCount() {
 	} );
 
 	return {
-		count: newestNote ? count : 0,
+		count: newestNote && isCounted ? count : 0,
 		hasMore: unreadIds.length >= UNREAD_IDS_LIMIT,
 		refresh,
 	};
@@ -96,6 +99,9 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 	const [ isConfirming, setIsConfirming ] = useState( false );
 	const wrapperRef = useRef< HTMLDivElement >( null );
 	const refocusRef = useRef( false );
+	// The modal's close button, Esc and outside click call `onRequestClose` after its exit
+	// animation, so one of them can arrive after another close. Only the first one counts.
+	const isConfirmingRef = useRef( false );
 
 	const needsConfirm = hasMore || count > CONFIRM_ABOVE;
 
@@ -119,23 +125,33 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 	const handleClick = () => {
 		if ( needsConfirm ) {
 			setHasError( false );
+			isConfirmingRef.current = true;
 			setIsConfirming( true );
 			return;
 		}
 		markAll();
 	};
 
-	const handleConfirm = () => {
+	const closeModal = () => {
+		const wasConfirming = isConfirmingRef.current;
+		isConfirmingRef.current = false;
 		setIsConfirming( false );
-		markAll( { fromModal: true } );
+		return wasConfirming;
+	};
+
+	const handleConfirm = () => {
+		if ( closeModal() ) {
+			markAll( { fromModal: true } );
+		}
 	};
 
 	const handleCancel = () => {
-		recordTracksEvent( 'calypso_notification_mark_all_read_cancel', {
-			count,
-			has_more: hasMore,
-		} );
-		setIsConfirming( false );
+		if ( closeModal() ) {
+			recordTracksEvent( 'calypso_notification_mark_all_read_cancel', {
+				count,
+				has_more: hasMore,
+			} );
+		}
 	};
 
 	// The link goes away once nothing is unread, which would drop its focus.

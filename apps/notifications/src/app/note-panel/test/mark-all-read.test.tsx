@@ -1,7 +1,8 @@
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { vi } from 'vitest';
+import { recordTracksEvent } from '../../../panel/helpers/stats';
 import { init as initWpcom } from '../../../panel/rest-client/wpcom';
 import { store, init as initState } from '../../../panel/state';
 import actions from '../../../panel/state/actions';
@@ -47,6 +48,7 @@ describe( 'MarkAllAsRead', () => {
 
 	beforeEach( () => {
 		localStorage.clear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		// The redux store is a shared singleton; re-init it so each test starts empty.
 		initState();
 
@@ -107,6 +109,24 @@ describe( 'MarkAllAsRead', () => {
 
 		expect( getCalls ).toEqual( [] );
 		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows nothing until the unread notes on the account are counted', async () => {
+		let answer: ( response: unknown ) => void = () => {};
+		initWpcom( {
+			req: {
+				get: () => new Promise( ( resolve ) => ( answer = resolve ) ),
+				post: ( _params: unknown, _query: unknown, body: unknown ) => markAll( body ),
+			},
+		} );
+		store.dispatch( actions.notes.addNotes( [ makeNote( 1 ) ] ) );
+		renderLink();
+
+		expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+
+		await act( async () => answer( { notes: range( 30 ).map( ( id ) => ( { id } ) ) } ) );
+
+		expect( await findLink( 'Mark 30 as read' ) ).toBeVisible();
 	} );
 
 	it( 'counts down when a note is opened', async () => {
@@ -209,15 +229,21 @@ describe( 'MarkAllAsRead', () => {
 			expect( markAll ).not.toHaveBeenCalled();
 		} );
 
-		it( 'marks them all once confirmed', async () => {
+		it( 'marks them all once confirmed, and hands the focus back as the link goes', async () => {
 			const user = userEvent.setup();
-			renderLink();
+			const onFocusLost = vi.fn();
+			renderLink( onFocusLost );
 
 			await user.click( await findLink( `Mark ${ count } as read` ) );
 			await user.click( screen.getByRole( 'button', { name: 'Mark all as read' } ) );
 
 			await waitFor( () => expect( markAll ).toHaveBeenCalledTimes( 1 ) );
 			await waitFor( () => expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument() );
+			await waitFor( () => expect( onFocusLost ).toHaveBeenCalledTimes( 1 ) );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_notification_mark_all_read_cancel',
+				expect.anything()
+			);
 		} );
 
 		it.each( [
@@ -237,10 +263,33 @@ describe( 'MarkAllAsRead', () => {
 			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 			expect( await findLink( `Mark ${ count } as read` ) ).toHaveFocus();
 			expect( markAll ).not.toHaveBeenCalled();
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_notification_mark_all_read_cancel',
+				{
+					count,
+					has_more: false,
+				}
+			);
+		} );
+
+		it( 'records one cancel when the modal is closed twice', async () => {
+			const user = userEvent.setup();
+			renderLink();
+
+			await user.click( await findLink( `Mark ${ count } as read` ) );
+			// Both presses land before the modal's exit animation ends.
+			const dialog = screen.getByRole( 'dialog' );
+			fireEvent.keyDown( dialog, { key: 'Escape' } );
+			fireEvent.keyDown( dialog, { key: 'Escape' } );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
-	it( 'asks first when there are more than one request lists', async () => {
+	it( 'asks first when the account has more unread notes than one request lists', async () => {
 		const user = userEvent.setup();
 		serverUnreadIds = range( UNREAD_IDS_LIMIT );
 		store.dispatch( actions.notes.addNotes( [ makeNote( 1 ) ] ) );

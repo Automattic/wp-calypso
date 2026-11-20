@@ -264,14 +264,14 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	font-weight: 500;
 }
 
-// Sits between the tabs and the list, lined up with the rows' 16px edge. While the link shows,
-// it draws the divider under the tabs; the list's own divider then runs below it.
+// Sits between the tabs and the list, lined up with the rows' 16px edge. While it shows the
+// link or its error, it draws the divider under the tabs; the list's own divider then runs below it.
 .wpnc-app__mark-all-read {
 	display: flex;
 	flex-direction: column;
 	flex-shrink: 0;
 
-	&:has(> .components-button) {
+	&:has(> .components-button, .wpnc-app__mark-all-read-error) {
 		border-top: 1px solid color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
 
 		@include ui-mixins.when-dark-theme {
