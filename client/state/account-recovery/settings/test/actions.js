@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
@@ -47,7 +48,7 @@ import { generateSuccessAndFailedTestsForThunk } from './utils';
 describe( 'account-recovery actions', () => {
 	let spy;
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	const errorResponse = { status: 400, message: 'Something wrong!' };

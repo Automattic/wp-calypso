@@ -1,5 +1,9 @@
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
+import { vi } from 'vitest';
+import { getActivePromotions, isRequestingActivePromotions } from '../selectors';
+import { ACTIVE_PROMOTIONS, getStateInstance } from './fixture';
+
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-products' ) ),
 	GROUP_WPCOM: 'GROUP_WPCOM',
 	GROUP_JETPACK: 'GROUP_JETPACK',
 
@@ -24,9 +28,6 @@ jest.mock( '@automattic/calypso-products', () => ( {
 		},
 	},
 } ) );
-
-import { getActivePromotions, isRequestingActivePromotions } from '../selectors';
-import { ACTIVE_PROMOTIONS, getStateInstance } from './fixture';
 
 describe( 'selectors', () => {
 	describe( '#getActivePromotions()', () => {

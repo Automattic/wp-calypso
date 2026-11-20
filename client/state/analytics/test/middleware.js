@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	trackCustomFacebookConversionEvent,
 	trackCustomAdWordsRemarketingEvent,
@@ -26,31 +27,31 @@ import { analyticsMiddleware } from '../middleware.js';
 
 const noop = () => {};
 
-jest.mock( 'calypso/lib/analytics/page-view', () => ( {
-	recordPageView: jest.fn(),
+vi.mock( 'calypso/lib/analytics/page-view', () => ( {
+	recordPageView: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	setTracksOptOut: jest.fn(),
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	setTracksOptOut: vi.fn(),
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
-	trackCustomFacebookConversionEvent: jest.fn(),
-	trackCustomAdWordsRemarketingEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
+	trackCustomFacebookConversionEvent: vi.fn(),
+	trackCustomAdWordsRemarketingEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/mc', () => ( {
-	bumpStat: jest.fn(),
+vi.mock( 'calypso/lib/analytics/mc', () => ( {
+	bumpStat: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/ga', () => ( {
-	gaRecordPageView: jest.fn(),
-	gaRecordEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/ga', () => ( {
+	gaRecordPageView: vi.fn(),
+	gaRecordEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/hotjar', () => ( {
-	addHotJarScript: jest.fn(),
+vi.mock( 'calypso/lib/analytics/hotjar', () => ( {
+	addHotJarScript: vi.fn(),
 } ) );
 
 const dispatch = analyticsMiddleware()( noop );
@@ -58,7 +59,7 @@ const dispatch = analyticsMiddleware()( noop );
 describe( 'middleware', () => {
 	describe( 'analytics dispatching', () => {
 		beforeEach( () => {
-			jest.resetAllMocks();
+			vi.resetAllMocks();
 		} );
 
 		test( 'should call mc.bumpStat', () => {

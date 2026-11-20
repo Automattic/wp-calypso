@@ -3,7 +3,49 @@
 // runner. Delete this file once every directory has moved and `yarn test-client` runs Vitest.
 const path = require( 'node:path' );
 
-const directories = [];
+const directories = [
+	'state/a8c-for-agencies',
+	'state/account',
+	'state/account-recovery',
+	'state/action-log',
+	'state/action-watchers',
+	'state/active-promotions',
+	'state/activity-log',
+	'state/admin-menu',
+	'state/admin-sidebar',
+	'state/analytics',
+	'state/atomic-transfer',
+	'state/automated-transfer',
+	'state/cancellation-offers',
+	'state/comments',
+	'state/concierge',
+	'state/connected-applications',
+	'state/country-states',
+	'state/currency-code',
+	'state/current-user',
+	'state/difm',
+	'state/document-head',
+	'state/domains',
+	'state/editor',
+	'state/email-accounts',
+	'state/global-sidebar',
+	'state/google-my-business',
+	'state/gravatar-status',
+	'state/guided-tours',
+	'state/hosting',
+	'state/i18n',
+	'state/immediate-login',
+	'state/imports',
+	'state/invites',
+	'state/jetpack',
+	'state/jetpack-connect',
+	'state/jetpack-connection-health',
+	'state/jetpack-product-install',
+	'state/jetpack-remote-install',
+	'state/jetpack-review-prompt',
+	'state/jetpack-sync',
+	'state/login',
+];
 
 // Test files in `directories` that stay on Jest until a fix lands, relative to `client/`.
 const onJest = [];

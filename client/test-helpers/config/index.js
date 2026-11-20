@@ -1,17 +1,14 @@
 import config from '@automattic/calypso-config';
 
 export const setFeatureFlag = ( feature, val ) => {
-	const c = config;
-	let spy;
+	let previous;
 
 	beforeAll( () => {
-		spy = jest
-			.spyOn( config, 'isEnabled' )
-			.mockImplementation( ( feat ) => ( feat === feature ? val : c.isEnabled( feat ) ) );
+		previous = config.isEnabled( feature );
+		( val ? config.enable : config.disable )( feature );
 	} );
 
 	afterAll( () => {
-		spy.mockReset();
-		spy.mockRestore();
+		( previous ? config.enable : config.disable )( feature );
 	} );
 };

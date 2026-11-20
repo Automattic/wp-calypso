@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`selectors #getPostCommentsTree filters other pending posts 1`] = `
+exports[`selectors > #getPostCommentsTree > filters other pending posts 1`] = `
 Object {
   "1": Object {
     "children": Array [
@@ -58,7 +58,7 @@ Object {
 }
 `;
 
-exports[`selectors #getPostCommentsTree should return the tree structure 1`] = `
+exports[`selectors > #getPostCommentsTree > should return the tree structure 1`] = `
 Object {
   "1": Object {
     "children": Array [
@@ -133,7 +133,7 @@ Object {
 }
 `;
 
-exports[`selectors #getPostCommentsTree should reverse children 1`] = `
+exports[`selectors > #getPostCommentsTree > should reverse children 1`] = `
 Object {
   "1": Object {
     "children": Array [

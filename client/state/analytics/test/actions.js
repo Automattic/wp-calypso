@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { ANALYTICS_MULTI_TRACK, ANALYTICS_STAT_BUMP } from 'calypso/state/action-types';
 import {
 	composeAnalytics,
@@ -21,7 +22,7 @@ describe( 'middleware', () => {
 		} );
 
 		test( 'should trigger analytics and run passed thunks', () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			const testAction = ( dispatcher ) => dispatcher( { type: 'test' } );
 			const statBump = bumpStat( 'splines', 'reticulated_count' );
 
