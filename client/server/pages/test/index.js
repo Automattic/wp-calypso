@@ -82,10 +82,6 @@ jest.mock( 'calypso/lib/paths', () => ( {
 	login: jest.fn(),
 } ) );
 
-jest.mock( './analytics', () => ( {
-	logSectionResponse: jest.fn(),
-} ) );
-
 jest.mock( 'calypso/server/lib/analytics', () => ( {
 	tracks: {
 		recordEvent: jest.fn(),

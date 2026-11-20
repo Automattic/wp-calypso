@@ -68,8 +68,7 @@ describe( 'SiteThumbnail', () => {
 		);
 	} );
 
-	// eslint-disable-next-line jest/no-disabled-tests
-	test.skip( 'should generate responsive size alternatives 2x and 3x srcset', async () => {
+	test( 'should generate responsive size alternatives 2x and 3x srcset', async () => {
 		const dimension = { width: 200, height: 100 };
 		render( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } { ...dimension } /> );
 		await waitFor( () => {
@@ -79,8 +78,7 @@ describe( 'SiteThumbnail', () => {
 		} );
 	} );
 
-	// eslint-disable-next-line jest/no-disabled-tests
-	test.skip( 'should add dimensionsSrcSet array prop to srcset string attribute', async () => {
+	test( 'should add dimensionsSrcSet array prop to srcset string attribute', async () => {
 		const alternativeDimensions = [
 			{
 				width: 777,

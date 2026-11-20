@@ -10,13 +10,6 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import RemoveContactForm from '../remove';
 
-jest.mock( 'calypso/data/geo/use-geolocation-query', () => ( {
-	useGeoLocationQuery: () => ( {
-		isLoading: false,
-		data: {},
-	} ),
-} ) );
-
 describe( 'RemoveContactForm', () => {
 	const initialState = {};
 

@@ -1,4 +1,4 @@
-import { mapToRequestBody } from 'state/data-layer/wpcom/sites/atomic/transfers';
+import { mapToRequestBody } from 'calypso/state/data-layer/wpcom/sites/atomic/transfers';
 
 describe( 'AtomicTransfers', () => {
 	test( 'Should map the InitiateTransfer to request body', () => {

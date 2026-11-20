@@ -3,8 +3,6 @@ import { Provider } from 'react-redux';
 import { RouteProvider } from 'calypso/components/route';
 import LayoutLoggedOut from '../logged-out';
 
-jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
-
 const store = {
 	dispatch: () => {},
 	getState: () => ( {
