@@ -15,6 +15,12 @@ yarn typecheck-packages
 yarn eslint packages/api-queries/src/<file>
 ```
 
+## Reuse existing query caches
+
+Reuse the existing query and mutation factories for a resource. When a component needs only part of a query's response, use `select` on the existing query. Use distinct keys for distinct cached results, such as lists with different server-side filters. When separate queries contain overlapping data, make sure mutations update or invalidate the affected entries.
+
+For example, use `userPreferenceQuery( key )` and `userPreferenceMutation( key )` for individual preferences. The query selects one value from the full preferences cache at `rawUserPreferencesQuery().queryKey`, and the mutation updates that same cache. A separate query key for the same preference can go stale unless the mutation also updates or invalidates it.
+
 ## Adding a query: `meta.persist`
 
 Queries are persisted to `localStorage` by default. Set `meta: { persist: false }` in the query factory when the response carries sensitive data, for example:
