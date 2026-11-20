@@ -17,6 +17,7 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 	env.WP = true;
 
 	const webpackConfig = getBaseWebpackConfig( env, argv );
+	let safeHtmlReplaced = 0;
 
 	return {
 		...webpackConfig,
@@ -59,8 +60,24 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 			new webpack.NormalModuleReplacementPlugin( /^\.\/safe-html\.mjs$/, ( resource ) => {
 				if ( /@wordpress[\\/]dom[\\/]/.test( resource.context ) ) {
 					resource.request = path.join( __dirname, 'editor/sanitize.ts' );
+					safeHtmlReplaced++;
 				}
 			} ),
+			// Fails the build if @wordpress/dom renamed the file and the replacement matched nothing.
+			{
+				apply: ( compiler ) =>
+					compiler.hooks.afterCompile.tap( 'SafeHtmlReplaced', ( compilation ) => {
+						// Child compilers (one per style.scss) inherit this tap and can run first.
+						if ( compilation.compiler.isChild() ) {
+							return;
+						}
+						if ( ! safeHtmlReplaced ) {
+							compilation.errors.push(
+								new webpack.WebpackError( "@wordpress/dom's safe-html.mjs wasn't replaced" )
+							);
+						}
+					} ),
+			},
 		],
 	};
 }

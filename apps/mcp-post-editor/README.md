@@ -10,7 +10,7 @@ A second entry, `mcp-post-editor-titles`, is the title suggestions card that `wp
 
 Every dependency, including `@modelcontextprotocol/ext-apps` and the block editor, is bundled into the one script and stylesheet: the page runs in the host's sandboxed iframe, with no WordPress scripts.
 
-`yarn test-apps apps/mcp-post-editor` runs the merge tests.
+`yarn test-apps apps/mcp-post-editor` runs the app's tests.
 
 ## Development
 

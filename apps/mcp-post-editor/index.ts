@@ -54,6 +54,7 @@ declare global {
 }
 
 const POLL_INTERVAL = 2000;
+const MAX_POLL_INTERVAL = 30000;
 const SAVE_DELAY = 1000;
 const SAVE_RETRIES = 2;
 const CONFIG_ATTEMPTS = 3;
@@ -105,6 +106,9 @@ let polls = 0;
 let error = '';
 let statusMessage = '';
 let timer: ReturnType< typeof setTimeout > | undefined;
+let pollDelay = POLL_INTERVAL;
+// Whether this open has the changes already pending: see loadChanges.
+let changesLoaded = false;
 let polling = false;
 let stopped = false;
 let opens = 0;
@@ -141,7 +145,7 @@ let unconfirmed: Post | undefined;
 // The update in flight, so a save stopped behind it can still send the typing after it.
 let lastUpdate: Promise< UpdateResult > | undefined;
 // The read-only view shows a sanitized copy: it never saves, so nothing sends it back.
-let preview: { source?: EditorPost; post?: EditorPost } = {};
+let preview: { source?: Post; editor?: EditorPost; post?: EditorPost } = {};
 
 // The assistant's pending changes, as the last state listed them.
 let changes: AgentChange[] = [];
@@ -178,10 +182,11 @@ let reloading = false;
 let lastContext: string | undefined = '';
 
 function previewPost() {
-	if ( preview.source !== editorPost ) {
+	if ( preview.source !== local || preview.editor !== editorPost ) {
 		preview = {
-			source: editorPost,
-			post: editorPost && { ...editorPost, content: sanitize( editorPost.content ) },
+			source: local,
+			editor: editorPost,
+			post: editorPost && { ...editorPost, ...local, content: sanitize( local.content ) },
 		};
 	}
 	return preview.post;
@@ -887,7 +892,7 @@ function schedule() {
 		post &&
 		! document.hidden
 	) {
-		timer = setTimeout( poll, POLL_INTERVAL );
+		timer = setTimeout( poll, pollDelay );
 	}
 }
 
@@ -900,9 +905,13 @@ async function poll() {
 	const current = opens;
 	const starts = saveStarts;
 	try {
+		if ( ! changesLoaded ) {
+			await loadChanges( current );
+		}
 		const state = await callTool< StateResult >( 'wpcom-post-editor-state', {
 			since_version: version,
 		} );
+		pollDelay = POLL_INTERVAL;
 		// A save's own state call merges; this one may already hold the save, against an old base.
 		if ( current !== opens || stopped || saving || reloading || starts !== saveStarts ) {
 			return;
@@ -923,6 +932,7 @@ async function poll() {
 		if ( current !== opens || stopped || noServerTools ) {
 			return;
 		}
+		pollDelay = Math.min( pollDelay * 2, MAX_POLL_INTERVAL );
 		error = errorMessage( e );
 		showStatus( `Poll failed: ${ error }` );
 	} finally {
@@ -990,18 +1000,16 @@ async function loadConfig( current: number ) {
 	}
 }
 
-// `version` is the latest, so polls list only newer changes: asks once for those already pending.
+// `version` is the latest, so polls list only newer changes: asks for those already pending,
+// then again before each poll until it gets them.
 async function loadChanges( current: number ) {
-	try {
-		const state = await callTool< StateResult >( 'wpcom-post-editor-state', { since_version: 0 } );
-		if ( current === opens && ! stopped ) {
-			receiveChanges( state.changes );
-			receiveIssues( state.proofread );
-			receiveConflict( state.conflict );
-			render();
-		}
-	} catch {
-		// The polls show the tools' errors.
+	const state = await callTool< StateResult >( 'wpcom-post-editor-state', { since_version: 0 } );
+	if ( current === opens && ! stopped ) {
+		changesLoaded = true;
+		receiveChanges( state.changes );
+		receiveIssues( state.proofread );
+		receiveConflict( state.conflict );
+		render();
 	}
 }
 
@@ -1042,9 +1050,15 @@ async function open( result: OpenResult ) {
 	persistentErrors.open = undefined;
 	showStatus();
 	claimPost( post.wpcom_site, post.post_id );
+	changesLoaded = false;
+	// A new post or a Reload polls soon, whatever the last post's failed polls left.
+	clearTimeout( timer );
+	timer = undefined;
+	pollDelay = POLL_INTERVAL;
 	schedule();
 	if ( ! noServerTools ) {
-		loadChanges( current );
+		// The polls ask again, and show the error.
+		loadChanges( current ).catch( () => {} );
 	}
 	if ( stylesLoaded || noServerTools ) {
 		revealStyles();
@@ -1108,7 +1122,7 @@ app.onteardown = () => {
 };
 
 // Links open through the host: navigating would replace this page in its iframe. Links in
-// editable text are left to the editor, where a click places the caret.
+// editable text don't open: a click there places the caret.
 function openLinkThroughHost( event: MouseEvent ) {
 	// Other buttons (right-click) keep the browser's own menu.
 	if ( event.button > 1 ) {
@@ -1116,11 +1130,14 @@ function openLinkThroughHost( event: MouseEvent ) {
 	}
 	// `a` matches HTML and SVG anchors; `area` is an image map link.
 	const link = event.target instanceof Element ? event.target.closest( 'a, area' ) : null;
-	// Not `[contenteditable]`: the editor makes the whole canvas editable while selecting.
-	if ( ! link || link.closest( '.rich-text' ) ) {
+	if ( ! link ) {
 		return;
 	}
 	event.preventDefault();
+	// Not `[contenteditable]`: the editor makes the whole canvas editable while selecting.
+	if ( link.closest( '.rich-text' ) ) {
+		return;
+	}
 	const href =
 		link.getAttribute( 'href' ) ?? link.getAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
 	if ( href === null ) {

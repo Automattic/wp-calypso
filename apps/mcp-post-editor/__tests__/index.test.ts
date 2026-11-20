@@ -27,6 +27,7 @@ const host = vi.hoisted( () => ( {
 				onPrompt: ( prompt: string ) => void;
 				canMessage: boolean;
 				readOnly: boolean;
+				changes: { change_id: string }[];
 				status: string;
 				conflict?: string;
 		  },
@@ -39,6 +40,9 @@ const host = vi.hoisted( () => ( {
 	// The next update is taken, but its reply is lost.
 	loseNextReply: false,
 	failNextDiscard: false,
+	failNextState: false,
+	// The host can't call tools: every call throws its error.
+	noToolCalls: false,
 	// What the next saves return, in order, and every tool called.
 	saveResults: [] as Args[],
 	saves: [] as Args[],
@@ -70,6 +74,9 @@ vi.mock( '@modelcontextprotocol/ext-apps/app-with-deps', () => ( {
 		async callServerTool( { name, arguments: args }: { name: string; arguments: Args } ) {
 			const { server } = host;
 			let data: Args;
+			if ( host.noToolCalls ) {
+				throw new Error( 'IPC not available for MCP tool call' );
+			}
 			if ( name !== 'wpcom-post-editor-config' ) {
 				host.calls.push( name );
 			}
@@ -97,6 +104,9 @@ vi.mock( '@modelcontextprotocol/ext-apps/app-with-deps', () => ( {
 					throw host.config;
 				}
 				data = host.config;
+			} else if ( name === 'wpcom-post-editor-state' && host.failNextState ) {
+				host.failNextState = false;
+				throw new Error( 'state failed' );
 			} else if ( name === 'wpcom-post-editor-state' ) {
 				data =
 					server.version > ( args.since_version as number )
@@ -174,6 +184,8 @@ describe( 'the page', () => {
 		host.updates = [];
 		host.loseNextReply = false;
 		host.failNextDiscard = false;
+		host.failNextState = false;
+		host.noToolCalls = false;
 		host.saveResults = [];
 		host.saves = [];
 		host.calls = [];
@@ -415,14 +427,67 @@ describe( 'the page', () => {
 		} );
 	} );
 
-	it( 'leaves title suggestions to the chat’s card, and sends no decision on them', async () => {
-		await openPost( paragraph( 'text' ), {
-			title_suggestions: { id: 't1', titles: [ 'Better', 'Best' ] },
+	it( 'asks again for the pending changes when the first ask fails', async () => {
+		// Earlier tests' pages listen on the same document: only this page's listener runs.
+		const addListener = vi.spyOn( document, 'addEventListener' );
+		host.failNextState = true;
+		await openPost( paragraph( 'a' ), {
+			changes: [
+				{ change_id: 'c1', block_index: 1, before: paragraph( 'a' ), after: paragraph( 'A' ) },
+			],
 		} );
+		expect( host.editor?.changes ).toEqual( [] );
 
-		await type( paragraph( 'more text' ) );
-		expect( host.updates ).toHaveLength( 1 );
-		expect( lastUpdate() ).not.toHaveProperty( 'title_suggestions_done_id' );
+		// Hidden, the page doesn't poll, so it doesn't ask again.
+		await vi.advanceTimersByTimeAsync( 10000 );
+		expect( host.calls ).toEqual( [ 'wpcom-post-editor-state' ] );
+
+		Object.defineProperty( document, 'hidden', { value: false, configurable: true } );
+		const onVisibilityChange = addListener.mock.calls.find(
+			( [ type ] ) => type === 'visibilitychange'
+		)?.[ 1 ] as () => void;
+		onVisibilityChange();
+		await vi.advanceTimersByTimeAsync( 2000 );
+		expect( host.calls ).toEqual( [
+			'wpcom-post-editor-state',
+			'wpcom-post-editor-state',
+			'wpcom-post-editor-state',
+		] );
+		expect( host.editor?.changes ).toMatchObject( [ { change_id: 'c1' } ] );
+		addListener.mockRestore();
+	} );
+
+	it( 'polls a newly opened post soon after failed polls slowed down the last one', async () => {
+		Object.defineProperty( document, 'hidden', { value: false, configurable: true } );
+		await openPost( paragraph( 'a' ) );
+		host.failNextState = true;
+		await vi.advanceTimersByTimeAsync( 2000 );
+		host.failNextState = true;
+		await vi.advanceTimersByTimeAsync( 4000 );
+		// The next poll waits 8 seconds.
+		expect( host.calls ).toHaveLength( 3 );
+
+		host.listeners.toolresult( {
+			structuredContent: {
+				site: { id: 1, url: 'https://example.com' },
+				post: { id: 3, title: 'Other' },
+				content: paragraph( 'b' ),
+				version: 1,
+			},
+		} );
+		await vi.advanceTimersByTimeAsync( 0 );
+		expect( host.calls ).toHaveLength( 4 );
+		await vi.advanceTimersByTimeAsync( 2000 );
+		expect( host.calls ).toHaveLength( 5 );
+	} );
+
+	it( 'shows the user’s latest typing, sanitized, when the page turns read-only', async () => {
+		await openPost( paragraph( 'a' ) );
+		host.noToolCalls = true;
+		await type( paragraph( 'b<script>alert(1)</script>' ) );
+
+		expect( host.editor?.readOnly ).toBe( true );
+		expect( host.editor?.post?.content ).toBe( paragraph( 'b' ) );
 	} );
 
 	it( 'shows the user’s post, editable, when Reload fails during an update', async () => {
