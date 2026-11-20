@@ -364,9 +364,10 @@ function CancelPurchaseInner() {
 			recordTracksEvent( 'calypso_cancel_purchase_purchase_view', {
 				product_slug: productSlug,
 				purchase_id: purchase.ID,
+				ownership_id: purchase.ownership_id,
 			} );
 		}
-	}, [ productSlug, purchase.ID, recordTracksEvent ] );
+	}, [ productSlug, purchase.ID, purchase.ownership_id, recordTracksEvent ] );
 	const cancelPurchaseSurveyCompleted = () => {
 		surveyCompletedMutator.mutate( 'true' );
 	};
@@ -514,6 +515,7 @@ function CancelPurchaseInner() {
 				product_slug: purchase.product_slug,
 				is_atomic: site?.is_wpcom_atomic,
 				purchase_id: purchase.ID,
+				ownership_id: purchase.ownership_id,
 				is_refundable: purchase.is_refundable,
 
 				...properties,
@@ -523,6 +525,7 @@ function CancelPurchaseInner() {
 			flowType,
 			purchase.product_slug,
 			purchase.ID,
+			purchase.ownership_id,
 			purchase.is_refundable,
 			recordTracksEvent,
 			site,
@@ -830,18 +833,11 @@ function CancelPurchaseInner() {
 		} ) );
 
 		// Record tracks event for domain confirmation checkbox
-		recordTracksEvent( 'calypso_purchases_domain_confirmation_checkbox', {
-			product_slug: purchase.product_slug,
-			purchase_id: purchase.ID,
-			checked,
-		} );
+		recordEvent( 'calypso_purchases_domain_confirmation_checkbox', { checked } );
 	};
 
 	const onKeepSubscriptionClick = () => {
-		recordTracksEvent( 'calypso_purchases_keep_subscription', {
-			product_slug: purchase.product_slug,
-			purchase_id: purchase.ID,
-		} );
+		recordEvent( 'calypso_purchases_keep_subscription' );
 	};
 
 	const handleMarketplaceDialogContinue = () => {

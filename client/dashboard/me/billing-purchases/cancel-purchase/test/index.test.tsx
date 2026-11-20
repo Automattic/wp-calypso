@@ -81,8 +81,14 @@ function mockHasExtended( status: number, body: object ) {
 function renderRemoveFlow( {
 	purchase: overrides = {},
 	plans = [],
+	preferences = {},
 	seedHasExtended = true,
-}: { purchase?: Partial< Purchase >; plans?: PlanProduct[]; seedHasExtended?: boolean } = {} ) {
+}: {
+	purchase?: Partial< Purchase >;
+	plans?: PlanProduct[];
+	preferences?: Record< string, unknown >;
+	seedHasExtended?: boolean;
+} = {} ) {
 	const testPurchase = { ...purchase, ...overrides };
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
@@ -91,7 +97,7 @@ function renderRemoveFlow( {
 	queryClient.setQueryData( plansQuery().queryKey, plans );
 	queryClient.setQueryData( purchaseCancelFeaturesQuery( purchase.ID ).queryKey, [] );
 	queryClient.setQueryData( productsQuery().queryKey, {} );
-	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
+	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, preferences );
 	if ( testPurchase.meta ) {
 		queryClient.setQueryData( domainQuery( testPurchase.meta ).queryKey, {
 			domain: testPurchase.meta,
@@ -135,6 +141,7 @@ const personalAnnual: Partial< Purchase > = {
 	product_id: 1009,
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
+	ownership_id: 4567,
 	is_refundable: false,
 };
 
@@ -232,7 +239,7 @@ describe( '<CancelPurchase />', () => {
 			await answerTooExpensive( user );
 
 			expect( await findOptions() ).toBeVisible();
-			const purchaseProps = { purchase_id: 123, is_refundable: false };
+			const purchaseProps = { purchase_id: 123, ownership_id: 4567, is_refundable: false };
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_purchases_cancel_form_start',
 				expect.objectContaining( purchaseProps )
@@ -240,6 +247,22 @@ describe( '<CancelPurchase />', () => {
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_purchases_cancel_form_select_radio_option',
 				expect.objectContaining( { ...purchaseProps, option: 'radio_1_2', value: 'tooExpensive' } )
+			);
+		} );
+
+		test( 'records the purchase ID with the keep subscription event', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow( {
+				purchase: personalAnnual,
+				preferences: { [ `cancel-purchase-survey-completed-${ purchase.ID }` ]: 'true' },
+			} );
+
+			await startSurvey( user );
+			await user.click( await screen.findByRole( 'button', { name: 'Keep plan' } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_purchases_keep_subscription',
+				expect.objectContaining( { purchase_id: 123, ownership_id: 4567, is_refundable: false } )
 			);
 		} );
 
@@ -259,6 +282,7 @@ describe( '<CancelPurchase />', () => {
 						cancellation_flow: 'remove',
 						product_slug: 'personal-bundle',
 						is_atomic: false,
+						ownership_id: 4567,
 						is_refundable: false,
 					},
 				],
@@ -304,6 +328,7 @@ describe( '<CancelPurchase />', () => {
 						cancellation_flow: 'remove',
 						product_slug: 'personal-bundle',
 						is_atomic: false,
+						ownership_id: 4567,
 						is_refundable: false,
 					},
 				],
