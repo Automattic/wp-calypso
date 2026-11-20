@@ -1,5 +1,7 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
 
 $pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-block-padding ) );
 
@@ -50,9 +52,12 @@ $pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-b
 	}
 
 	// The header spans the pane, unlike the reading column below it: the title starts at the
-	// pane's edge and the actions sit at its far end.
+	// pane's edge and the actions sit at its far end. Below the two-pane width it keeps the
+	// panel's padding.
 	.components-card__header {
-		padding-inline: $grid-unit-30;
+		@include break-large {
+			padding-inline: $grid-unit-30;
+		}
 	}
 
 	// The bell's dome carries its weight above the middle of its box, so it reads high next
