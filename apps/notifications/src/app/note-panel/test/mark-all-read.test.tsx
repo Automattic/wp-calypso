@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { vi } from 'vitest';
@@ -6,7 +6,7 @@ import { init as initWpcom } from '../../../panel/rest-client/wpcom';
 import { store, init as initState } from '../../../panel/state';
 import actions from '../../../panel/state/actions';
 import { AppProvider } from '../../context';
-import MarkAllAsRead, { UNREAD_IDS_LIMIT } from '../mark-all-read';
+import MarkAllAsRead, { CONFIRM_ABOVE, UNREAD_IDS_LIMIT } from '../mark-all-read';
 import type { Client } from '../../types';
 import type { Mock } from 'vitest';
 
@@ -14,6 +14,8 @@ vi.mock( '../../../panel/helpers/log-error', () => ( {
 	reportError: vi.fn(),
 	reportRequestError: vi.fn(),
 } ) );
+
+vi.mock( '../../../panel/helpers/stats', () => ( { recordTracksEvent: vi.fn() } ) );
 
 const makeNote = ( id: number, read = 0 ) => ( {
 	id,
@@ -169,6 +171,88 @@ describe( 'MarkAllAsRead', () => {
 		expect( link ).not.toHaveClass( 'is-busy' );
 
 		await act( async () => finish( { success: true, count: 1 } ) );
+	} );
+
+	it( `marks them without asking at ${ CONFIRM_ABOVE } or fewer`, async () => {
+		const user = userEvent.setup();
+		serverUnreadIds = range( CONFIRM_ABOVE );
+		store.dispatch( actions.notes.addNotes( [ makeNote( 1 ) ] ) );
+		renderLink();
+
+		await user.click( await findLink( `Mark ${ CONFIRM_ABOVE } as read` ) );
+
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( markAll ).toHaveBeenCalledTimes( 1 ) );
+	} );
+
+	describe( `above ${ CONFIRM_ABOVE }`, () => {
+		const count = CONFIRM_ABOVE + 1;
+
+		beforeEach( () => {
+			serverUnreadIds = range( count );
+			store.dispatch( actions.notes.addNotes( [ makeNote( 1 ) ] ) );
+		} );
+
+		it( 'asks first, in a modal', async () => {
+			const user = userEvent.setup();
+			renderLink();
+
+			await user.click( await findLink( `Mark ${ count } as read` ) );
+
+			const dialog = screen.getByRole( 'dialog' );
+			expect(
+				within( dialog ).getByRole( 'heading', {
+					name: `Mark all ${ count } notifications as read?`,
+				} )
+			).toBeVisible();
+			expect( within( dialog ).getByRole( 'button', { name: 'Mark all as read' } ) ).toBeVisible();
+			expect( markAll ).not.toHaveBeenCalled();
+		} );
+
+		it( 'marks them all once confirmed', async () => {
+			const user = userEvent.setup();
+			renderLink();
+
+			await user.click( await findLink( `Mark ${ count } as read` ) );
+			await user.click( screen.getByRole( 'button', { name: 'Mark all as read' } ) );
+
+			await waitFor( () => expect( markAll ).toHaveBeenCalledTimes( 1 ) );
+			await waitFor( () => expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument() );
+		} );
+
+		it.each( [
+			[
+				'Cancel',
+				( user: ReturnType< typeof userEvent.setup > ) =>
+					user.click( screen.getByRole( 'button', { name: 'Cancel' } ) ),
+			],
+			[ 'Escape', ( user: ReturnType< typeof userEvent.setup > ) => user.keyboard( '{Escape}' ) ],
+		] )( 'closes on %s and returns the focus to the link', async ( _, cancel ) => {
+			const user = userEvent.setup();
+			renderLink();
+
+			await user.click( await findLink( `Mark ${ count } as read` ) );
+			await cancel( user );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( await findLink( `Mark ${ count } as read` ) ).toHaveFocus();
+			expect( markAll ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	it( 'asks first when there are more than one request lists', async () => {
+		const user = userEvent.setup();
+		serverUnreadIds = range( UNREAD_IDS_LIMIT );
+		store.dispatch( actions.notes.addNotes( [ makeNote( 1 ) ] ) );
+		renderLink();
+
+		await user.click( await findLink( `Mark ${ UNREAD_IDS_LIMIT }+ as read` ) );
+
+		expect(
+			within( screen.getByRole( 'dialog' ) ).getByRole( 'heading', {
+				name: `Mark all ${ UNREAD_IDS_LIMIT }+ notifications as read?`,
+			} )
+		).toBeVisible();
 	} );
 
 	it( 'keeps the notes unread and says so when the request fails', async () => {
