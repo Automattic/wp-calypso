@@ -26,6 +26,7 @@ const thread: RawNote = {
 function makeIO( overrides: Partial< GetBlockNotesIO > = {} ): GetBlockNotesIO {
 	return {
 		getPostId: () => 5,
+		getPostAuthor: () => ( { authorName: 'Sam', authorIsCurrentUser: false } ),
 		getBlocksWithNoteIds: () => [ { clientId: 'b1', noteIds: [ 10 ] } ],
 		fetchNotes: () =>
 			Promise.resolve( [
@@ -55,6 +56,26 @@ describe( 'getBlockNotes', () => {
 				],
 			},
 		] );
+	} );
+
+	it( 'says who wrote the post, so the agent knows where feedback goes', async () => {
+		const { result } = await getBlockNotes( makeIO() );
+
+		expect( result.details?.post ).toEqual( { authorName: 'Sam', authorIsCurrentUser: false } );
+	} );
+
+	it( 'says who wrote an unsaved post too', async () => {
+		const { result } = await getBlockNotes(
+			makeIO( {
+				getPostId: () => 'auto-draft',
+				getPostAuthor: () => ( { authorName: 'Me', authorIsCurrentUser: true } ),
+			} )
+		);
+
+		expect( result.details ).toEqual( {
+			notes: [],
+			post: { authorName: 'Me', authorIsCurrentUser: true },
+		} );
 	} );
 
 	it( 'reports an approved thread as resolved', async () => {
@@ -215,5 +236,23 @@ describe( 'getBlockNotesCallback wiring', () => {
 			'comment',
 			expect.objectContaining( { post: 5, per_page: -1 } )
 		);
+	} );
+	it( 'compares the post author with the current user', async () => {
+		( isEditorPage as Mock ).mockReturnValue( true );
+		( resolveSelect as Mock ).mockReturnValue( {
+			getEntityRecords: () => Promise.resolve( [] ),
+		} );
+		( select as Mock ).mockImplementation( ( store: string ) =>
+			store === 'core'
+				? { getCurrentUser: () => ( { id: 7 } ), getUser: () => ( { name: 'Ana' } ) }
+				: {
+						getCurrentPostId: () => 5,
+						getCurrentPostAttribute: ( name: string ) => ( name === 'author' ? 7 : 'draft' ),
+					}
+		);
+
+		const { result } = await getBlockNotesCallback();
+
+		expect( result.details?.post ).toEqual( { authorName: 'Ana', authorIsCurrentUser: true } );
 	} );
 } );

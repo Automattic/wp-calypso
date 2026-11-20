@@ -23,8 +23,11 @@ export type BlockNote = {
 	replies: { author: string; text: string }[];
 };
 
+export type PostAuthor = { authorName: string; authorIsCurrentUser: boolean };
+
 export interface GetBlockNotesIO {
 	getPostId(): PostRef;
+	getPostAuthor(): PostAuthor | undefined;
 	getBlocksWithNoteIds(): { clientId: string; noteIds: number[] }[];
 	fetchNotes( postId: number ): Promise< RawNote[] >;
 }
@@ -55,7 +58,7 @@ export async function getBlockNotes( io: GetBlockNotesIO ): Promise< AbilityResu
 			result: {
 				success: true,
 				message: __( 'I read the notes on this post.', __i18n_text_domain__ ),
-				details: { notes: [] },
+				details: { notes: [], post: io.getPostAuthor() },
 			},
 			returnToAgent: true,
 		};
@@ -115,7 +118,7 @@ export async function getBlockNotes( io: GetBlockNotesIO ): Promise< AbilityResu
 		result: {
 			success: true,
 			message: __( 'I read the notes on this post.', __i18n_text_domain__ ),
-			details: { notes },
+			details: { notes, post: io.getPostAuthor() },
 		},
 		returnToAgent: true,
 	};
@@ -129,6 +132,11 @@ type BlockEditorSelectors = {
 type EditorSelectors = {
 	getCurrentPostId?: () => number | string | undefined;
 	getCurrentPostAttribute?: ( name: string ) => unknown;
+};
+
+type CoreSelectors = {
+	getCurrentUser?: () => { id?: number } | undefined;
+	getUser?: ( id: number ) => { name?: string } | undefined;
 };
 
 type CoreResolvers = {
@@ -148,6 +156,22 @@ function getBlocksWithNoteIds() {
 	}
 
 	return blocks;
+}
+
+// Whose post it is decides where review feedback goes when the user doesn't say.
+function getPostAuthor( editor: EditorSelectors | undefined ): PostAuthor | undefined {
+	const authorId = Number( editor?.getCurrentPostAttribute?.( 'author' ) );
+	const core = select( 'core' ) as CoreSelectors | undefined;
+	const currentUserId = core?.getCurrentUser?.()?.id;
+
+	if ( ! authorId || ! currentUserId ) {
+		return undefined;
+	}
+
+	return {
+		authorName: core?.getUser?.( authorId )?.name ?? '',
+		authorIsCurrentUser: authorId === currentUserId,
+	};
 }
 
 async function fetchNotes( postId: number ): Promise< RawNote[] > {
@@ -179,6 +203,7 @@ export async function getBlockNotesCallback(): Promise< AbilityResult > {
 	return getBlockNotes( {
 		getPostId: () =>
 			toPostRef( editor?.getCurrentPostId?.(), editor?.getCurrentPostAttribute?.( 'status' ) ),
+		getPostAuthor: () => getPostAuthor( editor ),
 		getBlocksWithNoteIds,
 		fetchNotes,
 	} );
