@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import { vi } from 'vitest';
+import { addTracksSurface } from '../../helpers/stats';
 import { store, init as initState } from '../../state';
 import actions from '../../state/actions';
 import { addListeners, removeListeners } from '../../state/create-listener-middleware';
@@ -383,6 +384,19 @@ describe( 'RestClient', () => {
 			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } ); // all known
 
 			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 10, reached_end: true } ] );
+		} );
+
+		it( 'names the surface shown when the load-more started, even if it has closed since', () => {
+			seedFirstWindow();
+			const removePanel = addTracksSurface( 'dashboard_panel' );
+
+			client.loadMore();
+			removePanel();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 91 ), last_seen_time: 0 } );
+
+			expect( trackedEvents() ).toEqual( [
+				{ surface: 'dashboard_panel', filter: 'all', total: 19, reached_end: false },
+			] );
 		} );
 
 		it( 'records nothing for the initial window or a poll refresh', () => {

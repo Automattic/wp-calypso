@@ -3,6 +3,7 @@
  */
 import { vi } from 'vitest';
 import { reportError, reportRequestError } from '../../../../helpers/log-error';
+import { addTracksSurface } from '../../../../helpers/stats';
 import { init as initWpcom } from '../../../../rest-client/wpcom';
 import { store, init as initState } from '../../../../state';
 import actions from '../../../actions';
@@ -120,6 +121,22 @@ describe( 'markAllRead', () => {
 
 		expect( window._tkq ).toEqual( [
 			[ 'recordEvent', 'calypso_notification_mark_all_read', { count: 40 } ],
+		] );
+	} );
+
+	it( 'names the surface shown when the person confirmed, even if it has closed since', async () => {
+		const removePanel = addTracksSurface( 'dashboard_panel' );
+		const marking = store.dispatch( markAllRead( restClient ) );
+		removePanel();
+		respond.resolve( { success: true, count: 40 } );
+		await marking;
+
+		expect( window._tkq ).toEqual( [
+			[
+				'recordEvent',
+				'calypso_notification_mark_all_read',
+				{ surface: 'dashboard_panel', count: 40 },
+			],
 		] );
 	} );
 

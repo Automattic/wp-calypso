@@ -1,7 +1,7 @@
 import debugFactory from 'debug';
 import repliesCache from '../comment-replies-cache';
 import { reportRequestError } from '../helpers/log-error';
-import { recordTracksEvent } from '../helpers/stats';
+import { getTracksSurface, recordTracksEvent } from '../helpers/stats';
 import { store } from '../state';
 import actions from '../state/actions';
 import getAllNotes from '../state/selectors/get-all-notes';
@@ -268,6 +268,7 @@ function getNotes( before, livePushMessages = [] ) {
 	}
 
 	const requestedAt = Date.now();
+	const tracksSurface = getTracksSurface();
 
 	listNotes( parameters, ( error, data ) => {
 		this.gettingNotes = false;
@@ -351,7 +352,7 @@ function getNotes( before, livePushMessages = [] ) {
 			const known = new Set( this.noteList.map( ( n ) => n.id ) );
 			this.noteList = this.noteList.concat( pageList.filter( ( n ) => ! known.has( n.id ) ) );
 			delete this.loadMoreBackoff.all;
-			trackLoadMore( 'all', this.noteList.length, ! this.hasMoreNotes( 'all' ) );
+			trackLoadMore( 'all', this.noteList.length, ! this.hasMoreNotes( 'all' ), tracksSurface );
 		} else {
 			// Merge the head over the window, keeping the older paged-in tail.
 			const headIds = new Set( pageList.map( ( n ) => n.id ) );
@@ -540,6 +541,7 @@ function getFilteredNotes( before ) {
 	}
 
 	const requestedAt = Date.now();
+	const tracksSurface = getTracksSurface();
 
 	listNotes( parameters, ( error, data ) => {
 		this.gettingFilteredNotes = false;
@@ -595,7 +597,7 @@ function getFilteredNotes( before ) {
 				appended.length < settings.max_limit;
 
 			delete this.loadMoreBackoff[ key ];
-			trackLoadMore( key, appended.length, ! this.filteredHasMore[ key ] );
+			trackLoadMore( key, appended.length, ! this.filteredHasMore[ key ], tracksSurface );
 		} else {
 			// Merge the head over the list, keeping the older paged-in tail. Drop
 			// within-head ids the server no longer returns (read/deleted elsewhere).
@@ -952,8 +954,9 @@ function loadMore() {
 
 // Depth telemetry, recorded once an older page has merged: how far down the tab
 // the reader got, and whether that exhausted the list.
-function trackLoadMore( filter, total, reachedEnd ) {
+function trackLoadMore( filter, total, reachedEnd, surface ) {
 	recordTracksEvent( 'calypso_notification_load_more', {
+		surface,
 		filter,
 		total,
 		reached_end: reachedEnd,

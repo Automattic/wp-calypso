@@ -20,6 +20,8 @@ import type { NotificationsPanelView } from './panel-view';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
 
+const TRACKS_SURFACE = 'dashboard_panel';
+
 /**
  * Returns the position of the omnibar bell, or the end of the omnibar when the bell is missing.
  */
@@ -78,6 +80,7 @@ export default function Notifications( {
 			if ( willOpen ) {
 				setShowHelpCenter( false, undefined, true );
 				recordTracksEvent( 'calypso_notification_open', {
+					surface: TRACKS_SURFACE,
 					unread_notifications: unseenCountRef.current,
 					unread_notifications_known: unseenCountRef.current !== undefined,
 					on_full_page: isInboxShown,
@@ -117,7 +120,12 @@ export default function Notifications( {
 
 	const trackAndOpen = ( name: string ) => ( store: unknown, action: LinkAction ) => {
 		const { siteId, postId, commentId } = action;
-		recordTracksEvent( name, { site_id: siteId, post_id: postId, comment_id: commentId } );
+		recordTracksEvent( name, {
+			surface: TRACKS_SURFACE,
+			site_id: siteId,
+			post_id: postId,
+			comment_id: commentId,
+		} );
 		openInNewTab( store, action );
 	};
 
@@ -141,7 +149,10 @@ export default function Notifications( {
 			( store: unknown, action: LinkAction ) => {
 				if ( action.tracksEvent ) {
 					const suffix = action.tracksEvent.toLowerCase().replace( /[^a-z0-9_]+/g, '_' );
-					recordTracksEvent( 'calypso_notifications_' + suffix, { link: action.href } );
+					recordTracksEvent( 'calypso_notifications_' + suffix, {
+						surface: TRACKS_SURFACE,
+						link: action.href,
+					} );
 				}
 				openInNewTab( store, action );
 			},
@@ -239,6 +250,7 @@ export default function Notifications( {
 						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
 						// There's no full view to open from the full page.
 						onOpenFullView={ isInboxShown ? undefined : onOpenInbox }
+						tracksSurface={ TRACKS_SURFACE }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>

@@ -83,6 +83,7 @@ export default function Notifications() {
 							setSelectedNoteId={ setSelectedNoteId }
 							onViewSettings={ () => navigate( { to: '/me/notifications' } ) }
 							isMarkAsUnreadEnabled={ config.isEnabled( 'notifications/mark-as-unread' ) }
+							tracksSurface="dashboard_page"
 							renderLayout={ ( { list, detail } ) => {
 								const listPane = (
 									<div className="dashboard-notifications-inbox__list">{ list }</div>
