@@ -141,12 +141,16 @@ function SurveyContent( {
 	cancellationInProgress,
 	includedDomainPurchase,
 	isAkismet,
+	isVisible,
 	intent,
 	recordEvent,
 	yearlyPlanSlug,
 }: CancelPurchaseFormProps ) {
 	const { product_name: productName } = purchase;
-	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment();
+	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment(
+		purchase,
+		Boolean( isVisible )
+	);
 	const locale = useLocale();
 	if ( surveyStep === FEEDBACK_STEP ) {
 		return (
