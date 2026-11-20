@@ -112,9 +112,9 @@ function InboxPanes( {
 		let isCurrent = true;
 		getClient()
 			?.getNote( Number( selectedNoteId ) )
-			?.then( ( found: boolean ) => {
-				// A note that can't be loaded would leave an empty pane, so show the host's empty state instead.
-				if ( isCurrent && ! found ) {
+			?.then( ( found: boolean | undefined ) => {
+				// A note the server doesn't have would leave an empty pane, so show the host's empty state instead.
+				if ( isCurrent && found === false ) {
 					setSelectedNoteIdRef.current( undefined );
 				}
 			} );

@@ -1279,11 +1279,22 @@ describe( 'RestClient', () => {
 			await expect( found ).resolves.toBe( false );
 		} );
 
-		it( 'says the note was not found when the request fails', async () => {
+		it( 'says the note was not found when the server refuses it', async () => {
 			const found = client.getNote( 100 );
 			answerNote( { status: 404, error: 'not_found' } );
 
 			await expect( found ).resolves.toBe( false );
+		} );
+
+		it( 'does not say either way when the request fails for another reason', async () => {
+			const serverError = client.getNote( 100 );
+			answerNote( { status: 502 } );
+			getCalls.length = 0;
+			const networkError = client.getNote( 100 );
+			answerNote( new Error( 'offline' ) );
+
+			await expect( serverError ).resolves.toBeUndefined();
+			await expect( networkError ).resolves.toBeUndefined();
 		} );
 	} );
 

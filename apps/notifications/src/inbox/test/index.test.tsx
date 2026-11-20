@@ -284,6 +284,18 @@ describe( 'NotificationsInbox', () => {
 		expect( setSelectedNoteId ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps the selection when the note may still load', async () => {
+		initClient( {} );
+		const found = Promise.resolve( undefined );
+		vi.mocked( getClient().getNote ).mockReturnValueOnce( found );
+		const setSelectedNoteId = vi.fn();
+
+		renderInbox( '999', { setSelectedNoteId } );
+		await act( () => found );
+
+		expect( setSelectedNoteId ).not.toHaveBeenCalled();
+	} );
+
 	it( 'keeps the newer selection when a note that cannot be loaded was selected before it', async () => {
 		initClient( {} );
 		let answer: ( found: boolean ) => void = () => {};

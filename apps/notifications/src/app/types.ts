@@ -188,7 +188,7 @@ export interface Client {
 
 	main: () => void;
 	reschedule: ( refresh_ms?: number ) => void;
-	getNote: ( note_id: number ) => void;
+	getNote: ( note_id: number ) => Promise< boolean | undefined >;
 	getNotes: () => void;
 	getNotesList: () => void;
 	getFilteredNotes: ( before?: number ) => void;

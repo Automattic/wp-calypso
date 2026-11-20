@@ -182,7 +182,8 @@ function pinghubCallback( err, event ) {
  * Fetches one note into the store.
  * @param {number} note_id
  * @param {Object} [livePushMessage] the push message that announced the note
- * @returns {Promise<boolean>} whether the server returned the note
+ * @returns {Promise<boolean|undefined>} whether the server returned the note, or undefined when
+ *   the request failed in a way that doesn't say, such as a network or server error
  */
 function getNote( note_id, livePushMessage ) {
 	// initialize the list if it's empty
@@ -206,7 +207,8 @@ function getNote( note_id, livePushMessage ) {
 				status: error.status,
 				code: error.error,
 			} );
-			resolveFound( false );
+			const isClientError = error.status >= 400 && error.status < 500 && error.status !== 429;
+			resolveFound( isClientError ? false : undefined );
 			return;
 		}
 		// The server answers with no notes for one it no longer has, so stop asking.
