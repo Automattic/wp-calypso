@@ -52,15 +52,15 @@ describe( '<PurchaseExpiryStatus>', () => {
 		);
 
 		expect( screen.getByText( /expires on/i ) ).toBeVisible();
-		expect( screen.queryByText( /expires in/i ) ).toBeNull();
-		expect( renewLink() ).toBeNull();
+		expect( screen.queryByText( /expires in/i ) ).not.toBeInTheDocument();
+		expect( renewLink() ).not.toBeInTheDocument();
 	} );
 
 	test( 'counts the days exactly rather than rounding to months', () => {
 		render( <PurchaseExpiryStatus purchase={ createPurchase() } /> );
 
 		expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
-		expect( screen.queryByText( /1 month/i ) ).toBeNull();
+		expect( screen.queryByText( /1 month/i ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'offers renewal, named for what the reader can see', () => {
@@ -105,7 +105,7 @@ describe( '<PurchaseExpiryStatus>', () => {
 			);
 
 			expect( screen.getByText( /expires in 20 days/i ) ).toBeVisible();
-			expect( renewLink() ).toBeNull();
+			expect( renewLink() ).not.toBeInTheDocument();
 		} );
 
 		test( 'can be renewed once it is nearly up', () => {
@@ -143,7 +143,7 @@ describe( '<PurchaseExpiryStatus>', () => {
 				<PurchaseExpiryStatus purchase={ freeTrial( { expiry_date: daysFromNow( 395 ) } ) } />
 			);
 
-			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.queryByText( /free trial/i ) ).not.toBeInTheDocument();
 			expect( screen.getByText( /expires on/i ) ).toBeVisible();
 			expect( screen.getByText( 'March 26, 2027' ) ).toBeVisible();
 		} );
@@ -161,7 +161,7 @@ describe( '<PurchaseExpiryStatus>', () => {
 				/>
 			);
 
-			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.queryByText( /free trial/i ) ).not.toBeInTheDocument();
 			expect( screen.getByText( /renews yearly at \$35/i ) ).toBeVisible();
 		} );
 	} );
@@ -237,7 +237,7 @@ describe( '<PurchaseExpiryStatus>', () => {
 			);
 
 			expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
-			expect( renewLink() ).toBeNull();
+			expect( renewLink() ).not.toBeInTheDocument();
 		} );
 	} );
 } );
@@ -273,6 +273,6 @@ describe( 'getPurchaseExpiryStatusText()', () => {
 		);
 
 		expect( screen.getByText( text ) ).toBeVisible();
-		expect( renewLink() ).toBeNull();
+		expect( renewLink() ).not.toBeInTheDocument();
 	} );
 } );
