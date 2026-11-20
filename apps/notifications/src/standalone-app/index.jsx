@@ -22,6 +22,22 @@ const locale = match ? match[ 1 ] : 'en';
 const features =
 	new URLSearchParams( document.location.search ).get( 'features' )?.split( ',' ) ?? [];
 const isViewSettingsEnabled = features.includes( 'view-settings' );
+const isMarkAsUnreadEnabled = features.includes( 'mark-as-unread' );
+const isFullViewEnabled = features.includes( 'full-view' );
+
+const FULL_VIEW_URL = 'https://my.wordpress.com/notifications';
+
+// Opens in a new tab: the panel sits over pages where a same-tab navigation would lose unsaved work.
+const openFullView = ( { filterName, noteId } ) => {
+	const url = new URL( FULL_VIEW_URL );
+	if ( filterName !== 'all' ) {
+		url.searchParams.set( 'filter', filterName );
+	}
+	if ( noteId ) {
+		url.searchParams.set( 'note', noteId );
+	}
+	window.open( url.href, '_blank', 'noopener' );
+};
 
 const fetchLocale = async ( localeSlug ) => {
 	try {
@@ -212,6 +228,8 @@ const NotesWrapper = ( { wpcom } ) => {
 			isDismissible={ isMobileViewport }
 			constrainTabbing
 			isViewSettingsEnabled={ isViewSettingsEnabled }
+			isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+			onOpenFullView={ isFullViewEnabled ? openFullView : undefined }
 		/>
 	);
 };
