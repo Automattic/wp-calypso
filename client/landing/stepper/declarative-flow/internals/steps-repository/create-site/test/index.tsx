@@ -454,6 +454,34 @@ describe( 'create-site', () => {
 			} );
 		} );
 
+		// The first site has the theme and visibility of the flow that created it.
+		it( 'creates a new site when a run in another flow follows the rejected cart', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			pendingAction = undefined;
+			await runStep( { flow: 'domain' } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 2 );
+			expect( ( createSite as jest.Mock ).mock.calls[ 1 ][ 0 ] ).toBe( 'domain' );
+		} );
+
+		// The intent applies only when it is set at creation, so the first site cannot get it later.
+		it( 'creates a new site when the retry needs another site intent', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			mockIsSimplifiedOnboarding = true;
+			pendingAction = undefined;
+			await runStep();
+
+			expect( createSite ).toHaveBeenCalledTimes( 2 );
+			// The step passes the site intent to createSite as its eleventh argument.
+			expect( ( createSite as jest.Mock ).mock.calls[ 1 ][ 10 ] ).toBe( 'build' );
+		} );
+
 		it( 'adopts the recorded site when a named request is retried', async () => {
 			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
 
