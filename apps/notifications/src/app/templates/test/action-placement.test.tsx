@@ -13,9 +13,18 @@ import SimplifiedActions from '../simplified-actions';
 const noop = () => {};
 
 let isLargeScreen = true;
+let footerWidth: number | undefined;
 vi.mock( '@wordpress/compose', async ( importOriginal ) => ( {
 	...( await importOriginal< typeof import( '@wordpress/compose' ) >() ),
 	useViewportMatch: () => isLargeScreen,
+	// Reports the footer's width as it mounts, as a ResizeObserver would in a browser.
+	useResizeObserver:
+		( callback: ( entries: Array< { contentRect: { width: number } } > ) => void ) =>
+		( element: HTMLElement | null ) => {
+			if ( element && footerWidth !== undefined ) {
+				callback( [ { contentRect: { width: footerWidth } } ] );
+			}
+		},
 } ) );
 
 // Approving only updates the store, and marking as spam is up to each test, so no request is made.
@@ -131,6 +140,7 @@ describe( 'comment action placement', () => {
 
 		beforeEach( () => {
 			isLargeScreen = true;
+			footerWidth = undefined;
 			spamNote.mockReset();
 		} );
 
@@ -236,6 +246,28 @@ describe( 'comment action placement', () => {
 
 			expect( await screen.findByRole( 'menuitem', { name: 'Unapprove' } ) ).toBeVisible();
 			expect( screen.getByRole( 'menuitem', { name: 'Mark as spam' } ) ).toBeVisible();
+		} );
+
+		it( 'keeps them in the Actions menu while the note is too narrow for them', async () => {
+			footerWidth = 300;
+			renderExpanded( note );
+
+			expect(
+				screen.queryByRole( 'button', { name: 'Mark comment as spam' } )
+			).not.toBeInTheDocument();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
+
+			expect( await screen.findByRole( 'menuitem', { name: 'Unapprove' } ) ).toBeVisible();
+			expect( screen.getByRole( 'menuitem', { name: 'Mark as spam' } ) ).toBeVisible();
+		} );
+
+		it( 'shows them as buttons once the note is wide enough', () => {
+			footerWidth = 400;
+			renderExpanded( note );
+
+			expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) ).toBeVisible();
 		} );
 
 		it( 'leaves the panel as it is', () => {

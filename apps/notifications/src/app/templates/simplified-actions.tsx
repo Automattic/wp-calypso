@@ -1,5 +1,6 @@
 import { CardFooter, __experimentalHStack as HStack } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
+import { useResizeObserver, useViewportMatch } from '@wordpress/compose';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getActions, getReferenceId } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
@@ -16,6 +17,10 @@ import type { Note } from '../types';
 
 const MENU_ACTIONS = [ 'edit-comment', 'spam-comment', 'trash-comment' ];
 
+// The footer's content width that fits Like, Unapprove, Spam and Actions side by side, with
+// some room for longer labels. The two-pane page gives the note less than this up to about 1230px.
+const EXPANDED_MIN_WIDTH = 400;
+
 export const canReply = ( note: Note ): boolean => 'replyto-comment' in getActions( note );
 
 export const NoteReply = ( { note }: { note: Note } ) => (
@@ -27,12 +32,19 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 	const isLiked = useSelector( ( state ) => getIsNoteLiked( state, note ) );
 	const { hasExpandedActions } = useAppContext();
 	const isLargeScreen = useViewportMatch( 'large' );
+	const [ footerWidth, setFooterWidth ] = useState< number >();
+	const footerRef = useResizeObserver( ( [ entry ]: ResizeObserverEntry[] ) =>
+		setFooterWidth( entry.contentRect.width )
+	);
 	const actions = getActions( note );
 	const hasAction = ( ...types: string[] ) => types.some( ( type ) => type in actions );
 
 	// With room for them, Unapprove and Spam join Like and Approve as buttons. Below the
-	// two-pane width they go back into the menu.
-	const isExpanded = hasExpandedActions && isLargeScreen;
+	// two-pane width, or in a note too narrow for them, they go back into the menu.
+	const isExpanded =
+		hasExpandedActions &&
+		isLargeScreen &&
+		( footerWidth === undefined || footerWidth >= EXPANDED_MIN_WIDTH );
 
 	const hasLike = hasAction( 'like-post', 'like-comment' );
 	const hasAnswerPrompt = hasAction( 'answer-prompt' );
@@ -63,9 +75,10 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 	// A footer outside the scrolling body, like the reply below it, so the actions
 	// stay pinned to the bottom of the panel.
 	return (
-		<CardFooter size="small" style={ { paddingBlock: '12px' } }>
-			<HStack spacing={ 2 }>
-				<HStack spacing={ 0.5 } justify="flex-start" expanded={ false }>
+		<CardFooter ref={ footerRef } size="small" style={ { paddingBlock: '12px' } }>
+			{ /* Wrapping, so longer labels in a narrow note move down a line instead of overlapping. */ }
+			<HStack spacing={ 2 } wrap>
+				<HStack spacing={ 0.5 } justify="flex-start" expanded={ false } wrap>
 					{ hasLike && (
 						<LikeButton
 							note={ note }
