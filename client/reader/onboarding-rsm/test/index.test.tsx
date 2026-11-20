@@ -117,6 +117,14 @@ jest.mock( 'calypso/reader/onboarding-rsm/interests-modal', () => ( {
 	),
 } ) );
 
+jest.mock( 'calypso/reader/onboarding-rsm/recommended-blogs-step', () => ( {
+	RecommendedBlogsStep: ( { onFinish }: { onFinish: () => void } ) => (
+		<div data-testid="recommended-blogs-step-content">
+			<button onClick={ onFinish }>Finish</button>
+		</div>
+	),
+} ) );
+
 jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 	__esModule: true,
 	default: ( { onFinish }: { onFinish: () => void } ) => (
@@ -124,6 +132,13 @@ jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 			<button onClick={ onFinish }>Finish</button>
 		</div>
 	),
+} ) );
+
+const mockGetLocaleSlug = jest.fn( () => 'en' );
+
+jest.mock( 'i18n-calypso', () => ( {
+	...jest.requireActual( 'i18n-calypso' ),
+	getLocaleSlug: () => mockGetLocaleSlug(),
 } ) );
 
 // ── Redux / selectors ─────────────────────────────────────────────────────────
@@ -201,6 +216,7 @@ jest.mock( '@automattic/calypso-config', () => {
 
 beforeEach( () => {
 	mockRefreshFollowingStreams.mockClear();
+	mockGetLocaleSlug.mockReturnValue( 'en' );
 	jest.mocked( flushOnboardingWelcomeDigest ).mockClear();
 	jest.mocked( savePreference ).mockClear();
 	jest.mocked( recordTracksEvent ).mockClear();
@@ -271,12 +287,42 @@ describe( 'ReaderOnboardingRsm – back button navigation', () => {
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
-		expect( await screen.findByTestId( 'subscribe-modal-content' ) ).toBeVisible();
+		expect( await screen.findByTestId( 'recommended-blogs-step-content' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 
 		expect( await screen.findByTestId( 'interests-modal-content' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'ReaderOnboardingRsm – discover step by locale', () => {
+	const openDiscoverStep = async ( user: ReturnType< typeof userEvent.setup > ) => {
+		await screen.findByTestId( 'welcome-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
+		await screen.findByTestId( 'interests-modal-content' );
+		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+	};
+
+	it( 'shows the recommended blogs step in English', async () => {
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await openDiscoverStep( user );
+
+		expect( await screen.findByTestId( 'recommended-blogs-step-content' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'subscribe-modal-content' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'keeps the earlier discover step in other languages', async () => {
+		mockGetLocaleSlug.mockReturnValue( 'de' );
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await openDiscoverStep( user );
+
+		expect( await screen.findByTestId( 'subscribe-modal-content' ) ).toBeVisible();
+		expect( screen.queryByTestId( 'recommended-blogs-step-content' ) ).not.toBeInTheDocument();
 	} );
 } );
 
@@ -304,7 +350,7 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 
 		mockRefreshFollowingStreams.mockClear();
 
@@ -347,7 +393,7 @@ describe( 'ReaderOnboardingRsm – stream refresh on step close', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 
 		mockRefreshFollowingStreams.mockClear();
 
@@ -422,7 +468,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 
 		jest.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
@@ -441,7 +487,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 
 		jest.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
@@ -487,7 +533,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 
 		jest.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
@@ -506,7 +552,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 	};
 
 	it( 'calls flushOnboardingWelcomeDigest when the user clicks Finish on the discover step', async () => {
@@ -559,7 +605,7 @@ describe( 'ReaderOnboardingRsm – welcome digest flush', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
@@ -575,7 +621,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 	};
 
 	it( 'saves the completion preference and records completed when Finish is clicked', async () => {
@@ -989,7 +1035,7 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 
 		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
 			key === READER_ONBOARDING_PREFERENCE_KEY ? true : null
@@ -1002,7 +1048,7 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 		await waitFor( () => {
 			expect( onRender ).toHaveBeenLastCalledWith( false );
 		} );
-		expect( screen.queryByTestId( 'subscribe-modal-content' ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'recommended-blogs-step-content' ) ).not.toBeInTheDocument();
 	} );
 
 	afterEach( () => {
@@ -1035,7 +1081,7 @@ describe( 'ReaderOnboardingRsm – interests-step "has followed" state lifted to
 
 		// Advance to discover and then Back to interests; the modal remounts.
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
-		await screen.findByTestId( 'subscribe-modal-content' );
+		await screen.findByTestId( 'recommended-blogs-step-content' );
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 
 		// Fresh `InterestsModal` instance, but the parent still reports

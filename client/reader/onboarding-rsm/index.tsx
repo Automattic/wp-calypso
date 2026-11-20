@@ -7,7 +7,7 @@ import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { Button, Modal } from '@wordpress/components';
 import { chevronLeft, close } from '@wordpress/icons';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { getLocaleSlug, translate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
 import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
@@ -25,6 +25,7 @@ import {
 import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
 import { getPackBlogs } from 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs';
 import { getTopicGroups } from 'calypso/reader/onboarding-rsm/interests-modal/topic-groups';
+import { RecommendedBlogsStep } from 'calypso/reader/onboarding-rsm/recommended-blogs-step';
 import SubscribeModal from 'calypso/reader/onboarding-rsm/subscribe-modal';
 import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -411,6 +412,10 @@ const ReaderOnboardingRsm = ( {
 		},
 	];
 
+	// The researched recommendations are English blogs, so other locales keep
+	// the earlier discover step.
+	const showRecommendedBlogs = getLocaleSlug()?.startsWith( 'en' ) ?? false;
+
 	let modalBackButton = null;
 	if ( currentStep === 'interests' ) {
 		modalBackButton = (
@@ -499,10 +504,16 @@ const ReaderOnboardingRsm = ( {
 				<Modal
 					onRequestClose={ handleStepClose }
 					size="medium"
-					className={ clsx( 'reader-onboarding-rsm-modal', STEP_FRAME_CLASS[ currentStep ], {
-						'is-disabled':
-							( currentStep === 'discover' || currentStep === 'interests' ) && promptVerification,
-					} ) }
+					className={ clsx(
+						'reader-onboarding-rsm-modal',
+						currentStep === 'discover' && showRecommendedBlogs
+							? 'recommended-blogs-step'
+							: STEP_FRAME_CLASS[ currentStep ],
+						{
+							'is-disabled':
+								( currentStep === 'discover' || currentStep === 'interests' ) && promptVerification,
+						}
+					) }
 					headerActions={ modalBackButton }
 				>
 					{ currentStep === 'welcome' && (
@@ -519,12 +530,18 @@ const ReaderOnboardingRsm = ( {
 							onPackSubscribed={ handlePackSubscribed }
 						/>
 					) }
-					{ currentStep === 'discover' && (
-						<SubscribeModal
-							onFinish={ handleDiscoverFinish }
-							promptVerification={ promptVerification }
-						/>
-					) }
+					{ currentStep === 'discover' &&
+						( showRecommendedBlogs ? (
+							<RecommendedBlogsStep
+								onFinish={ handleDiscoverFinish }
+								promptVerification={ promptVerification }
+							/>
+						) : (
+							<SubscribeModal
+								onFinish={ handleDiscoverFinish }
+								promptVerification={ promptVerification }
+							/>
+						) ) }
 				</Modal>
 			) }
 		</>
