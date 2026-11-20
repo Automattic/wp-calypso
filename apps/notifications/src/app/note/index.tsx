@@ -10,7 +10,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, arrowUp, arrowDown, fullscreen } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
@@ -83,7 +83,21 @@ const Note = ( {
 }: NoteProps ) => {
 	const dispatch = useDispatch();
 	const isLargeScreen = useViewportMatch( 'large' );
-	const goBack = () => setSelectedNoteId( undefined );
+
+	// Spam and trash go back once their request lands, and by then another note may be open, in
+	// this Note or in a new one.
+	const shownNoteIdRef = useRef< string >( undefined );
+	useEffect( () => {
+		shownNoteIdRef.current = noteId;
+		return () => {
+			shownNoteIdRef.current = undefined;
+		};
+	}, [ noteId ] );
+	const goBack = () => {
+		if ( shownNoteIdRef.current === noteId ) {
+			setSelectedNoteId( undefined );
+		}
+	};
 
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
@@ -207,11 +221,11 @@ const Note = ( {
 			</CardBody>
 			{ isSimplifiedNote ? (
 				<>
-					<SimplifiedActionBlock note={ note } goBack={ goBack } />
+					<SimplifiedActionBlock key={ note.id } note={ note } goBack={ goBack } />
 					<ReplyFooter note={ note } />
 				</>
 			) : (
-				<ActionBlock note={ note } goBack={ goBack } />
+				<ActionBlock key={ note.id } note={ note } goBack={ goBack } />
 			) }
 		</>
 	);
