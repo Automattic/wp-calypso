@@ -11,14 +11,15 @@
 	flex-direction: column;
 	gap: 24px;
 	width: 100%;
-	max-width: 432px;
+	max-width: 440px;
 	margin-inline: auto;
+	container-type: inline-size;
 	@include body-large();
 
 	.step-container-v2__heading {
 		h1 {
 			line-height: 1.18;
-			text-wrap: wrap;
+			text-wrap: balance;
 		}
 
 		p {
@@ -49,6 +50,10 @@
 	grid-template-columns: minmax( 0, 1fr ) auto;
 	column-gap: 16px;
 
+	> * {
+		grid-column: 1;
+	}
+
 	.site-migration-confirm__change {
 		grid-column: 2;
 		grid-row: 1 / span 2;
@@ -56,9 +61,33 @@
 	}
 }
 
-.site-migration-confirm__label,
-.site-migration-confirm__address {
-	grid-column: 1;
+// Side by side when the layout has room.
+@container ( min-width: 428px ) {
+	.site-migration-confirm__route--side-by-side {
+		display: grid;
+		// Each site only as wide as its text, so the arrow sits midway between them.
+		grid-template-columns: minmax( 0, max-content ) auto max-content;
+		justify-content: start;
+		column-gap: 16px;
+		align-items: start;
+
+		.site-migration-confirm__site {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.site-migration-confirm__change {
+			margin-block-start: 4px;
+		}
+
+		.site-migration-confirm__arrow {
+			// Level with the addresses, below their labels.
+			margin-block-start: 20px;
+			margin-inline-start: 0;
+			transform: rotate( -90deg );
+		}
+	}
 }
 
 .site-migration-confirm__label {
@@ -67,12 +96,12 @@
 }
 
 .site-migration-confirm__address {
+	// Breaks before dots first (see wrappableAddress), anywhere only when a part is still too long.
 	overflow-wrap: anywhere;
 }
 
 .site-migration-confirm__warning,
 .site-migration-confirm__error {
-	grid-column: 1;
 	@include body-medium();
 }
 
@@ -113,6 +142,7 @@
 
 .site-migration-confirm__primary.step-container-v2__primary-button {
 	width: 100%;
+	margin-block-start: 8px;
 	justify-content: center;
 }
 

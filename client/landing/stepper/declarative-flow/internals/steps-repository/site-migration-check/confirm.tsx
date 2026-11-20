@@ -3,12 +3,12 @@ import { arrowDown, check, Icon } from '@wordpress/icons';
 import { Notice } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { Fragment, type ReactNode } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
 	SitePreviewPanel,
 	SiteWindow,
 } from 'calypso/landing/stepper/declarative-flow/internals/components/site-preview-panel';
-import type { ReactNode } from 'react';
 
 import './confirm.scss';
 
@@ -22,6 +22,21 @@ export type SourceIssue =
 			/** The platform the analyzer saw instead, when it recognized one. */
 			platformName?: string;
 	  };
+
+/**
+ * Lets a long address wrap before its dots instead of mid-word.
+ */
+const wrappableAddress = ( address: string ) =>
+	address.split( '.' ).map( ( part, index ) => (
+		<Fragment key={ index }>
+			{ index > 0 && (
+				<>
+					<wbr />.
+				</>
+			) }
+			{ part }
+		</Fragment>
+	) );
 
 /**
  * The WordPress source and where it's going, with what happens to each, before the migration is set up.
@@ -66,6 +81,8 @@ export const SiteMigrationConfirm = ( {
 		shownSourceIssue?.type === 'unconfirmed' ? shownSourceIssue.platformName : undefined;
 	const hasNotice = isSameSite || showLoadError || showUnreachable || showNotWordPress;
 	const destinationAddress = destinationSiteSlug ?? '';
+	// A new site sits beside a short source. A picked destination, or a long source address, stacks.
+	const isSideBySide = ! hasDestination && hostname.length <= 26;
 
 	let title = translate( 'We can copy your whole site' );
 	if ( isSameSite ) {
@@ -154,6 +171,7 @@ export const SiteMigrationConfirm = ( {
 						) }
 						<div
 							className={ clsx( 'site-migration-confirm__route', {
+								'site-migration-confirm__route--side-by-side': isSideBySide,
 								'site-migration-confirm__route--last': isSameSite || showLoadError,
 							} ) }
 						>
@@ -166,7 +184,9 @@ export const SiteMigrationConfirm = ( {
 											} )
 										: translate( 'From your WordPress site' ) }
 								</span>
-								<span className="site-migration-confirm__address">{ hostname }</span>
+								<span className="site-migration-confirm__address">
+									{ wrappableAddress( hostname ) }
+								</span>
 								{ showUnreachable && (
 									<span className="site-migration-confirm__error">
 										{ translate( 'Not loading right now' ) }
@@ -195,7 +215,9 @@ export const SiteMigrationConfirm = ( {
 										: translate( 'To' ) }
 								</span>
 								<span className="site-migration-confirm__address">
-									{ hasDestination ? destinationAddress : translate( 'A new WordPress.com site' ) }
+									{ hasDestination
+										? wrappableAddress( destinationAddress )
+										: translate( 'A new WordPress.com site' ) }
 								</span>
 								{ onChangeDestination && (
 									<Step.LinkButton
