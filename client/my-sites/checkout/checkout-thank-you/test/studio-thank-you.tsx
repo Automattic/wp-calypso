@@ -38,6 +38,12 @@ describe( 'StudioThankYou', () => {
 		expect( screen.getByRole( 'img', { name: "Studio Cloud's icon" } ) ).toHaveClass(
 			'thank-you__product-icon'
 		);
+		// A siteless purchase has no site-scoped purchases page.
+		expect( product ).toContainElement( screen.getByRole( 'link', { name: 'Manage purchase' } ) );
+		expect( screen.getByRole( 'link', { name: 'Manage purchase' } ) ).toHaveAttribute(
+			'href',
+			'/me/purchases'
+		);
 		expect( container.querySelector( '.thank-you__header-title' ) ).toHaveTextContent(
 			'Thank you for your purchase'
 		);

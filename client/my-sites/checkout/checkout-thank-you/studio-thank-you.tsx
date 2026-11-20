@@ -5,6 +5,7 @@ import ThankYouV2 from 'calypso/components/thank-you-v2';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { STUDIO_WEB_APP_URL } from 'calypso/lib/studio/checkout-urls';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
 import { openStudioApp } from '../studio-return/deep-link';
 import { useStudioCheckoutReturn } from './studio-handoff';
 import type { ReceiptPurchase } from './receipt';
@@ -79,6 +80,9 @@ const StudioThankYou: FunctionComponent< StudioThankYouProps > = ( { purchases, 
 								key={ purchase.productSlug }
 								name={ purchase.productName }
 								icon={ studioAppLogo }
+								actions={
+									<Button href={ purchasesRoot }>{ translate( 'Manage purchase' ) }</Button>
+								}
 							/>
 						) )
 					: undefined
