@@ -669,11 +669,9 @@
 	}
 }
 
-// Below the two-pane width the note's title is also its Back button, in the heading's type
-// and color. Without the start padding a text button takes, and past its 1px transparent
-// border, its arrow's 24px box starts on the header's padding edge, like the icon buttons'
-// boxes at the other end. As a block, it sizes the heading to its own 24px instead of sitting
-// high in a taller line of text, so it centres on the icons at the other end.
+// Below the two-pane width the title is also the Back button, in the heading's type. Its arrow's
+// box starts on the padding edge (past the 1px button border), and as a block it keeps the
+// heading at 24px, centred on the icons at the other end.
 .components-card__header .wpnc__note-back.components-button {
 	display: flex;
 	margin-inline-start: -1px;
