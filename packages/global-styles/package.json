@@ -59,7 +59,6 @@
 		"@wordpress/components": "^45.0.0",
 		"@wordpress/compose": "^9.2.0",
 		"@wordpress/global-styles-engine": "^2.2.0",
-		"@wordpress/global-styles-ui": "^2.2.0",
 		"@wordpress/keycodes": "^5.2.0",
 		"@wordpress/private-apis": "^3.2.0",
 		"clsx": "^2.1.1",
