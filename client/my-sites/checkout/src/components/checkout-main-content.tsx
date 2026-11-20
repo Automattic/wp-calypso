@@ -97,7 +97,7 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useSiteDomains from '../hooks/use-site-domains';
 import {
 	contactDetailsActions,
-	useContactDetails,
+	contactDetailsStore,
 	vatDetailsInFormStore,
 } from '../lib/checkout-stores';
 import { validateContactDetails } from '../lib/contact-validation';
@@ -539,8 +539,6 @@ export default function CheckoutMainContent( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useContactDetails();
-
 	const vatDetailsInForm = useValueStore( vatDetailsInFormStore );
 	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
@@ -909,6 +907,10 @@ export default function CheckoutMainContent( {
 							stepId="contact-form"
 							onPageLoadError={ onPageLoadError }
 							isCompleteCallback={ async () => {
+								// Read the contact details now rather than subscribing to them:
+								// a subscription here would re-render all of checkout on every
+								// keystroke in the contact form.
+								const contactInfo = contactDetailsStore.get();
 								// Read from the ref: autocomplete suppresses errors by setting the
 								// flag to `false` immediately before invoking this callback, and the
 								// state update would not yet be visible in this closure.

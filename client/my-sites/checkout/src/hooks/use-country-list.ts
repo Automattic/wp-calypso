@@ -1,5 +1,6 @@
 import { transactionSupportedCountriesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { earlyRequestKeys, withEarlyQueryRequest } from '../lib/early-requests';
 import type { CountryListItem, CountryListItemWithVat } from '@automattic/wpcom-checkout';
 
 const emptyList: CountryListItem[] = [];
@@ -8,12 +9,17 @@ export const isVatSupported = ( country: CountryListItem ): country is CountryLi
 	country.vat_supported;
 
 export default function useCountryList( locale?: string ): CountryListItem[] {
+	const query = transactionSupportedCountriesQuery( locale );
 	const result = useQuery( {
-		...transactionSupportedCountriesQuery( locale ),
+		...query,
+		queryFn: withEarlyQueryRequest( earlyRequestKeys.countries( locale ), query.queryFn ),
 		meta: {
 			persist: false,
 		},
 		refetchOnWindowFocus: false,
+		// The list does not change while checkout is open. Without a stale time,
+		// each component that mounts later and reads it fetches it again.
+		staleTime: Infinity,
 	} );
 	return result.data ?? emptyList;
 }

@@ -13,12 +13,15 @@ import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrad
 import {
 	checkoutWpcomSiteless,
 	redirectJetpackLegacyPlans,
+	startCheckoutRequests,
 	studentCheckoutRedirect,
 } from '../controller';
+import { startEarlyCheckoutRequests } from '../src/lib/early-requests';
 import * as utils from '../utils';
 
 jest.mock( '@automattic/calypso-router' );
 jest.mock( '../utils' );
+jest.mock( '../src/lib/early-requests' );
 
 const mockStore = configureStore();
 
@@ -87,6 +90,67 @@ describe( 'checkoutWpcomSiteless', () => {
 		expect( wrapper.props.sitelessCheckoutType ).toBe( 'wpcom' );
 		expect( wrapper.props.productAliasFromUrl ).toBe( 'ak_pro5h_yearly' );
 		expect( wrapper.props.isNoSiteCart ).toBe( true );
+		expect( next ).toHaveBeenCalled();
+	} );
+} );
+
+describe( 'startCheckoutRequests', () => {
+	const loggedInState = {
+		currentUser: { id: 7 },
+		sites: { items: { 1: { ID: 1, URL: 'https://known.example.com' } } },
+	};
+
+	beforeEach( () => {
+		startEarlyCheckoutRequests.mockClear();
+	} );
+
+	it( 'asks for the cart and the site by slug when the site still has to be looked up', () => {
+		const next = jest.fn();
+
+		startCheckoutRequests(
+			{ path: '/checkout/unknown.example.com/personal', store: mockStore( loggedInState ) },
+			next
+		);
+
+		expect( startEarlyCheckoutRequests ).toHaveBeenCalledWith( {
+			siteSlug: 'unknown.example.com',
+		} );
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'leaves the cart and the site to checkout when the site is already in the store', () => {
+		const next = jest.fn();
+
+		startCheckoutRequests(
+			{ path: '/checkout/known.example.com/personal', store: mockStore( loggedInState ) },
+			next
+		);
+
+		expect( startEarlyCheckoutRequests ).toHaveBeenCalledWith( { siteSlug: undefined } );
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'leaves the cart and the site to checkout when the URL names no site', () => {
+		startCheckoutRequests(
+			{ path: '/checkout/personal', store: mockStore( loggedInState ) },
+			jest.fn()
+		);
+
+		expect( startEarlyCheckoutRequests ).toHaveBeenCalledWith( { siteSlug: undefined } );
+	} );
+
+	it( 'starts nothing for a logged-out visitor', () => {
+		const next = jest.fn();
+
+		startCheckoutRequests(
+			{
+				path: '/checkout/unknown.example.com/personal',
+				store: mockStore( { currentUser: { id: null } } ),
+			},
+			next
+		);
+
+		expect( startEarlyCheckoutRequests ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();
 	} );
 } );

@@ -1,9 +1,20 @@
 import { siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { earlyRequestKeys, withEarlyQueryRequest } from '../lib/early-requests';
 import type { Site } from '@automattic/api-core';
 
 export function useCheckoutSite( siteId: number | null | undefined ) {
-	return useQuery( { ...siteByIdQuery( siteId ?? 0 ), enabled: !! siteId } );
+	const query = siteByIdQuery( siteId ?? 0 );
+	return useQuery( {
+		...query,
+		// The checkout route may already have asked for this site, by slug.
+		queryFn: withEarlyQueryRequest(
+			earlyRequestKeys.site,
+			query.queryFn,
+			( site ) => site.ID === siteId
+		),
+		enabled: !! siteId,
+	} );
 }
 
 export function getJetpackConnectionActivePlugins( site: Site | undefined ): string[] {

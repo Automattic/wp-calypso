@@ -21,10 +21,14 @@ import {
 	mockGetVatInfoEndpoint,
 	countryList,
 	mockCachedContactDetailsEndpoint,
+	mockContactDetailsValidationEndpoint,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
+	mockSetCachedContactDetailsEndpoint,
+	mockTransactionsEndpoint,
+	mockTransactionsSuccessResponse,
 	oneTimePurchase,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
@@ -102,14 +106,61 @@ describe( 'Checkout contact step', () => {
 	it( 'disables the sidebar Continue button until cached contact details have prefilled', async () => {
 		// The sidebar submit area, which renders this Continue, is only used at large viewports.
 		( useViewportMatch as jest.Mock ).mockReturnValue( true );
+		// Checkout asks for the cached contact details before the form mounts. Hold
+		// the response back until the form has been seen waiting for it.
+		let sendContactDetails = () => {};
+		nock.removeInterceptor( {
+			proto: 'https',
+			hostname: 'public-api.wordpress.com',
+			path: '/rest/v1.1/me/domain-contact-information',
+		} );
+		mockCachedContactDetailsEndpoint(
+			{},
+			200,
+			new Promise( ( resolve ) => ( sendContactDetails = resolve ) )
+		);
 		render( <MockCheckout { ...defaultPropsForMockCheckout } /> );
 		expect( await screen.findByText( 'Retrieving contact details…' ) ).toBeInTheDocument();
 		expect( await screen.findByLabelText( 'Continue to the next step' ) ).toBeDisabled();
+		sendContactDetails();
 		await waitFor( () => {
 			expect( screen.queryByText( 'Retrieving contact details…' ) ).not.toBeInTheDocument();
 		} );
 		await waitFor( () => {
 			expect( screen.getByLabelText( 'Continue to the next step' ) ).not.toBeDisabled();
+		} );
+	} );
+
+	it( 'sends the billing details typed into the form with the purchase', async () => {
+		const user = userEvent.setup();
+		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
+		mockSetCachedContactDetailsEndpoint();
+		const transactionsEndpoint = mockTransactionsEndpoint( mockTransactionsSuccessResponse );
+		// Credits cover this purchase, so it needs billing details but no payment details.
+		const cartPaidWithCredits = {
+			...initialCart,
+			total_cost_integer: 0,
+			credits_integer: initialCart.sub_total_integer + initialCart.total_tax_integer,
+			allowed_payment_methods: [ 'WPCOM_Billing_WPCOM' ],
+		};
+		const setCart = async ( cartKey, requestCart ) => ( {
+			...cartPaidWithCredits,
+			tax: { display_taxes: true, location: requestCart.tax?.location ?? {} },
+		} );
+		render( <MockCheckout initialCart={ cartPaidWithCredits } setCart={ setCart } /> );
+
+		await screen.findByLabelText( 'Continue with the entered contact details' );
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
+		await user.type( await screen.findByLabelText( 'Postal code' ), '10001' );
+		await user.click( screen.getByText( 'Continue to payment' ) );
+		await user.click( await screen.findByText( 'Complete Checkout' ) );
+
+		await waitFor( () => {
+			expect( transactionsEndpoint ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					payment: expect.objectContaining( { country_code: 'US', postal_code: '10001' } ),
+				} )
+			);
 		} );
 	} );
 

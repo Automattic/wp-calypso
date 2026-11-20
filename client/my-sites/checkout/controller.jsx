@@ -13,6 +13,7 @@ import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { getQueryArgs } from 'calypso/lib/query-args';
+import { getSiteFragment } from 'calypso/lib/route';
 import { getStudentFlowRedirect } from 'calypso/lib/signup/student-flow-redirect';
 import { addQueryArgs } from 'calypso/lib/url';
 import LicensingPendingAsyncActivation from 'calypso/my-sites/checkout/checkout-thank-you/licensing-pending-async-activation';
@@ -54,6 +55,7 @@ import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import HundredYearThankYou from './checkout-thank-you/hundred-year-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
+import { startEarlyCheckoutRequests } from './src/lib/early-requests';
 import StudioReturn from './studio-return';
 import {
 	buildStudioCancelTo,
@@ -316,6 +318,25 @@ export function checkoutA4AAgencySite( context, next ) {
 			/>
 		</>
 	);
+
+	next();
+}
+
+/**
+ * Starts the requests checkout makes when it mounts, without waiting for the
+ * site in the URL to be looked up first. Place it before `siteSelection`.
+ */
+export function startCheckoutRequests( context, next ) {
+	const state = context.store.getState();
+
+	if ( isUserLoggedIn( state ) ) {
+		const siteFragment = getSiteFragment( context.path );
+		// A site that is already in the store needs no lookup, so checkout mounts
+		// at once and asks for the site's own data itself.
+		const isSiteLookupPending =
+			typeof siteFragment === 'string' && ! getSiteId( state, siteFragment );
+		startEarlyCheckoutRequests( { siteSlug: isSiteLookupPending ? siteFragment : undefined } );
+	}
 
 	next();
 }

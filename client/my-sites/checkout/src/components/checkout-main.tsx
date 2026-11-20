@@ -26,6 +26,7 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
+import { useCachedContactDetails } from '../hooks/use-cached-contact-details';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
 import useCountryList from '../hooks/use-country-list';
@@ -44,7 +45,7 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import blikProcessor from '../lib/blik-processor';
-import { recaptchaClientIdStore, useContactDetails } from '../lib/checkout-stores';
+import { contactDetailsStore, recaptchaClientIdStore } from '../lib/checkout-stores';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
@@ -238,6 +239,10 @@ export default function CheckoutMain( {
 	);
 
 	const countriesList = useCountryList();
+
+	// The contact form stays hidden until the saved contact details arrive. Ask
+	// for them now, alongside the cart, instead of when the form mounts.
+	useCachedContactDetails( { isLoggedOut: isLoggedOutCart } );
 
 	const {
 		productsForCart,
@@ -465,7 +470,6 @@ export default function CheckoutMain( {
 		// Only wait for stored cards to load if we are using cards
 		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
-	const contactDetails = useContactDetails();
 	const recaptchaClientId = useValueStore( recaptchaClientIdStore );
 
 	const paymentMethods = arePaymentMethodsLoading
@@ -529,7 +533,11 @@ export default function CheckoutMain( {
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
-			contactDetails,
+			// Read when a payment is processed. Subscribing to the contact details
+			// here would re-render all of checkout on every keystroke in the form.
+			get contactDetails() {
+				return contactDetailsStore.get();
+			},
 			createUserAndSiteBeforeTransaction,
 			getThankYouUrl,
 			includeDomainDetails,
@@ -546,7 +554,6 @@ export default function CheckoutMain( {
 			isAkismetSitelessCheckout,
 		} ),
 		[
-			contactDetails,
 			createUserAndSiteBeforeTransaction,
 			getThankYouUrl,
 			includeDomainDetails,

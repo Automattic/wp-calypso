@@ -1,6 +1,7 @@
 import { userPaymentMethodsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
+import { earlyRequestKeys, withEarlyQueryRequest } from '../lib/early-requests';
 import type { PaymentMethodRequestType, StoredPaymentMethod } from '@automattic/api-core';
 
 export type { PaymentMethodRequestType };
@@ -46,8 +47,13 @@ export function useStoredPaymentMethods( {
 	 */
 	isForBusiness?: boolean | null;
 } = {} ): StoredPaymentMethodsState {
+	const query = userPaymentMethodsQuery( { type, expired, isForBusiness } );
 	const { data, isLoading, error } = useQuery( {
-		...userPaymentMethodsQuery( { type, expired, isForBusiness } ),
+		...query,
+		queryFn: withEarlyQueryRequest(
+			earlyRequestKeys.paymentMethods( type, expired ),
+			query.queryFn
+		),
 		enabled: ! isLoggedOut,
 	} );
 
