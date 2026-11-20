@@ -69,7 +69,7 @@
 		"qs": "^6.17.1"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^6.21.0 || ^7.0.0",
+		"@wordpress/i18n": "^7.2.0",
 		"react": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {

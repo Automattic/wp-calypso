@@ -4,7 +4,7 @@
 
 ### Breaking changes
 
-- Require `@wordpress/components` ^45.0.0, `@wordpress/compose` ^9.2.0, `@wordpress/data` ^11.2.0, `@wordpress/ui` ^0.27.0 and `@wordpress/url` ^5.2.0.
+- Require `@wordpress/components` ^45.0.0, `@wordpress/compose` ^9.2.0, `@wordpress/data` ^11.2.0, `@wordpress/i18n` ^7.2.0, `@wordpress/react-i18n` ^5.2.0, `@wordpress/ui` ^0.27.0 and `@wordpress/url` ^5.2.0.
 - Remove `READYMADE_TEMPLATE_FLOW` and `isReadymadeFlow`. The flow they named has been removed.
 
 ### Other changes

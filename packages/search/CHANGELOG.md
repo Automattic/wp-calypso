@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Breaking: Require `@wordpress/base-styles` ^15.1.0, `@wordpress/components` ^45.0.0 and `@wordpress/compose` ^9.2.0.
+- Breaking: Require `@wordpress/base-styles` ^15.1.0, `@wordpress/components` ^45.0.0, `@wordpress/compose` ^9.2.0 and `@wordpress/react-i18n` ^5.2.0.
 - Require `@wordpress/icons` ^21.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## 1.1.2

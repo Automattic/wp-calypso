@@ -1354,7 +1354,7 @@ __metadata:
     vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
   peerDependencies:
-    "@wordpress/i18n": ^6.21.0 || ^7.0.0
+    "@wordpress/i18n": ^7.2.0
     react: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
@@ -1892,7 +1892,7 @@ __metadata:
     webpack: "npm:^5.111.1"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/i18n": ^6.21.0 || ^7.0.0
+    "@wordpress/i18n": ^7.2.0
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
   languageName: unknown
@@ -2232,7 +2232,7 @@ __metadata:
     webpack: "npm:^5.111.1"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
-    "@wordpress/i18n": ^6.21.0 || ^7.0.0
+    "@wordpress/i18n": ^7.2.0
     react: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
@@ -2281,7 +2281,7 @@ __metadata:
     vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
   peerDependencies:
-    "@wordpress/i18n": ^6.21.0 || ^7.0.0
+    "@wordpress/i18n": ^7.2.0
     postcss: ^8.5.32
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
