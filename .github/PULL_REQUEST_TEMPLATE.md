@@ -14,7 +14,7 @@ For a change users can see (UI, or new or changed translatable strings), add "Be
 ## Why
 
 <!--
-What was wrong or missing, in the past tense, and for a bug, what caused it. Write it for someone who didn't work on this code, as clearly and readably as you can: a sentence or two for a simple cause, and as long as it needs to be clear for a complex one. It's easy to see what a PR does but much harder to find out why it was made, particularly when researching old changes in history.
+Why this change was needed, in the past tense. Start with how the code worked before, enough for someone who has never seen it, then what was wrong with that. For a bug, say what caused it. For any change, give the context a reader needs to judge it: who was affected and how often (say so if they rarely were), what the existing approach cost, and the goal the change serves. Don't stop at the symptom, and don't leave the reason behind a link: a linked issue or discussion may be private or stop working. Write it for someone who didn't work on this code, as clearly and readably as you can, and take as long as that needs. It's easy to see what a PR does but much harder to find out why it was made, particularly when researching old changes in history.
 -->
 
 ## Details

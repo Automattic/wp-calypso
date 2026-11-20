@@ -18,9 +18,9 @@ This is a public repository: follow the Confidentiality section of `AGENTS.md` i
 
 ## 2. Write the commit body
 
-Two plain paragraphs, with no labels, lists or headings. The first states the problem, in the past tense: what was wrong or missing and, for a bug, what caused it. This paragraph becomes the PR's Why, the part hardest to recover later, so write it for someone who didn't work on this code and make it as clear and easy to read as you can. A simple cause needs a sentence or two; when the cause is complex, take as many sentences as it needs to be clear. The second states the fix in one or two sentences: how this change solves it, in the present tense.
+Plain paragraphs, with no labels, lists or headings. All but the last state why the change was needed, in the past tense; they become the PR's Why, the part hardest to recover later. Start with how the code worked before, enough for someone who has never seen it, then what was wrong with that. For a bug, say what caused it. For any change, give the context a reader needs to judge it: who was affected and how often (say so if they rarely were), what the existing approach cost, and the goal the change serves. Don't stop at the symptom. Before writing them, reread the linked issue and any earlier PRs in the same effort, and carry their motivation over in your own words: Why must make sense without opening a link, which may be private or stop working. Write for someone who didn't work on this code, as clearly and easily read as you can, and take as many sentences or paragraphs as that needs. The last paragraph states the fix in one or two sentences: how this change solves it, in the present tense.
 
-Example:
+A bug fix:
 
 ```
 Sites: Show the PHP version for Simple sites
@@ -28,6 +28,18 @@ Sites: Show the PHP version for Simple sites
 The Sites list and site overview showed `-` for the PHP version of Simple sites, even though they run PHP. The version was only fetched for sites with the PHP hosting feature, which Simple sites don't have.
 
 Simple sites now read their PHP version from Core's `core/get-environment-info` ability, for users who can manage the site's options. Other sites still use the hosting PHP endpoint.
+```
+
+A change of approach, where the problem rarely reached users:
+
+```
+Checkout: Take the renewal header's branding from the cart
+
+Checkout has a main renewal URL, `/checkout/renew/:subscriptionId`, which renews any purchase from its subscription ID, and service-specific ones such as `/checkout/akismet/renew/:subscriptionId`. The checkout header chose its brand from the URL alone, so an Akismet renewal at the main URL showed the WordPress.com logo instead of the Akismet one. Users rarely saw this, because Akismet renewal links go to the Akismet URL, but keeping a route like that for each service is a lot of special-case work when the server already knows what is being renewed. Checkout should work for any renewal from the main URL.
+
+Since an earlier server change, the cart flags a renewal of a purchase on a holding site with that site's siteless type, but the header renders outside checkout, before the cart has loaded, and had no way to wait for it.
+
+Checkout now shares the siteless type it finds in the cart once the cart has loaded, and on that route the header shows no logo until then, so it never shows the wrong brand.
 ```
 
 ## 3. Write the PR description
@@ -43,7 +55,7 @@ If the change adds new translatable strings, add this warning next, so a human r
 > This PR introduces new translatable strings. Remember to add the `[Status] String Freeze` label before merging.
 ```
 
-The description then reuses the commit body's two paragraphs in reverse order, each under its own heading. `## What` holds the fix paragraph rewritten to start with a verb in the imperative, then `## Why` holds the problem paragraph as is.
+The description then reuses the commit body's paragraphs, each part under its own heading. `## What` holds the last, fix paragraph rewritten to start with a verb in the imperative, then `## Why` holds the paragraphs before it as is.
 
 For a change users can see (UI, or new or changed translatable strings), add before/after screenshots under `## What`, after its paragraph. Take and upload them as in [verify/screenshots.md](../verify/screenshots.md).
 
