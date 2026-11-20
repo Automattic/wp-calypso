@@ -52,15 +52,15 @@ describe( '<PurchaseExpiryStatus>', () => {
 		);
 
 		expect( screen.getByText( /expires on/i ) ).toBeVisible();
-		expect( screen.queryByText( /expires in/i ) ).toBeNull();
-		expect( renewLink() ).toBeNull();
+		expect( screen.queryByText( /expires in/i ) ).not.toBeInTheDocument();
+		expect( renewLink() ).not.toBeInTheDocument();
 	} );
 
 	test( 'counts the days exactly rather than rounding to months', () => {
 		render( <PurchaseExpiryStatus purchase={ createPurchase() } /> );
 
 		expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
-		expect( screen.queryByText( /1 month/i ) ).toBeNull();
+		expect( screen.queryByText( /1 month/i ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'offers renewal, named for what the reader can see', () => {
@@ -105,7 +105,7 @@ describe( '<PurchaseExpiryStatus>', () => {
 			);
 
 			expect( screen.getByText( /expires in 20 days/i ) ).toBeVisible();
-			expect( renewLink() ).toBeNull();
+			expect( renewLink() ).not.toBeInTheDocument();
 		} );
 
 		test( 'can be renewed once it is nearly up', () => {
@@ -143,7 +143,7 @@ describe( '<PurchaseExpiryStatus>', () => {
 				<PurchaseExpiryStatus purchase={ freeTrial( { expiry_date: daysFromNow( 395 ) } ) } />
 			);
 
-			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.queryByText( /free trial/i ) ).not.toBeInTheDocument();
 			expect( screen.getByText( /expires on/i ) ).toBeVisible();
 			expect( screen.getByText( 'March 26, 2027' ) ).toBeVisible();
 		} );
@@ -161,8 +161,69 @@ describe( '<PurchaseExpiryStatus>', () => {
 				/>
 			);
 
-			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.queryByText( /free trial/i ) ).not.toBeInTheDocument();
 			expect( screen.getByText( /renews yearly at \$35/i ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'a renewal that failed', () => {
+		const failedRenewal = ( overrides: Partial< Purchase > = {} ) =>
+			createPurchase( {
+				expiry_status: 'auto-renewing',
+				is_past_first_auto_renew_attempt_date: true,
+				might_still_auto_renew: true,
+				renew_date: daysFromNow( 3 ),
+				price_integer: 3500,
+				currency_code: 'USD',
+				...overrides,
+			} );
+
+		test( 'says so before its expiry, rather than that it renews', () => {
+			render( <PurchaseExpiryStatus purchase={ failedRenewal() } /> );
+
+			expect( screen.getByText( 'Payment failed, retrying on February 27, 2026' ) ).toBeVisible();
+			expect( screen.queryByText( /renews yearly/i ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'says so after its expiry, rather than that it expired', () => {
+			render(
+				<PurchaseExpiryStatus
+					purchase={ failedRenewal( { expiry_status: 'expired', expiry_date: daysFromNow( -3 ) } ) }
+				/>
+			);
+
+			expect( screen.getByText( 'Payment failed, retrying on February 27, 2026' ) ).toBeVisible();
+			expect( screen.queryByText( /expired/i ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'still says a retry is coming when its date is unknown', () => {
+			render(
+				<PurchaseExpiryStatus
+					purchase={ failedRenewal( {
+						expiry_status: 'expired',
+						expiry_date: daysFromNow( -3 ),
+						renew_date: '',
+					} ) }
+				/>
+			);
+
+			expect( screen.getByText( 'Payment failed, we’ll retry' ) ).toBeVisible();
+		} );
+
+		test( 'reads as expired once no attempts are left', () => {
+			render(
+				<PurchaseExpiryStatus
+					purchase={ failedRenewal( {
+						expiry_status: 'expired',
+						expiry_date: daysFromNow( -3 ),
+						might_still_auto_renew: false,
+						is_past_last_auto_renew_attempt_date: true,
+					} ) }
+				/>
+			);
+
+			expect( screen.getByText( /expired 3 days ago/i ) ).toBeVisible();
+			expect( screen.queryByText( /payment failed/i ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -176,7 +237,7 @@ describe( '<PurchaseExpiryStatus>', () => {
 			);
 
 			expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
-			expect( renewLink() ).toBeNull();
+			expect( renewLink() ).not.toBeInTheDocument();
 		} );
 	} );
 } );
@@ -212,6 +273,6 @@ describe( 'getPurchaseExpiryStatusText()', () => {
 		);
 
 		expect( screen.getByText( text ) ).toBeVisible();
-		expect( renewLink() ).toBeNull();
+		expect( renewLink() ).not.toBeInTheDocument();
 	} );
 } );

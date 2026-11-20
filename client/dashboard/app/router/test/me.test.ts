@@ -16,6 +16,7 @@ import {
 	mcpLegacySubpageRedirectRoute,
 	meRoute,
 	purchaseSettingsIndexRoute,
+	purchasesIndexRoute,
 } from '../me';
 import { rootRoute } from '../root';
 
@@ -118,6 +119,25 @@ test( 'does not register the appearance route when color scheme is not supported
 			'appearance'
 		)
 	).toBe( false );
+} );
+
+function validatePurchasesSearch( search: Record< string, unknown > ) {
+	const validateSearch = purchasesIndexRoute.options.validateSearch as (
+		search: Record< string, unknown >
+	) => Record< string, unknown >;
+	return validateSearch( search );
+}
+
+test( 'keeps a failed renewal payment filter on the purchases list', () => {
+	expect( validatePurchasesSearch( { renewalPayment: 'failed' } ) ).toEqual(
+		expect.objectContaining( { renewalPayment: 'failed' } )
+	);
+} );
+
+test( 'drops other renewal payment values on the purchases list', () => {
+	expect( validatePurchasesSearch( { renewalPayment: 'ok' } ) ).toEqual(
+		expect.objectContaining( { renewalPayment: undefined } )
+	);
 } );
 
 test( 'loads the purchase settings when the user cannot read media storage', async () => {
