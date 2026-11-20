@@ -7,9 +7,16 @@ export const getWooPaymentsCardCopy = () => ( {
 	),
 } );
 
-export function getCartActionLabel( isReferralMode: boolean, inCart: boolean ): string {
+export function getCartActionLabel(
+	isReferralMode: boolean,
+	inCart: boolean,
+	opensCart: boolean
+): string {
 	if ( isReferralMode ) {
 		return inCart ? __( 'Added to referral' ) : __( 'Add to referral' );
+	}
+	if ( inCart && opensCart ) {
+		return __( 'View in cart' );
 	}
 	return inCart ? __( 'Added to cart' ) : __( 'Add to cart' );
 }
