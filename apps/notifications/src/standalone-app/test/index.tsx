@@ -4,11 +4,13 @@ import { vi } from 'vitest';
 import type { Root } from 'react-dom/client';
 
 type HostMessage = { action: string; showing?: boolean };
+type TracksWindow = Window & { _tkq: unknown[][] };
 
 const host = vi.hoisted( () => ( {
 	send: ( () => {} ) as ( message: HostMessage ) => void,
 	received: [] as string[],
 	roots: [] as Root[],
+	me: Promise.resolve( { ID: 1, username: 'example' } ),
 } ) );
 
 vi.mock( 'react-dom/client', async ( importOriginal ) => {
@@ -24,7 +26,7 @@ vi.mock( 'react-dom/client', async ( importOriginal ) => {
 } );
 
 vi.mock( '../../standalone/client', () => ( {
-	createClient: async () => ( { req: { get: async () => ( { ID: 1, username: 'example' } ) } } ),
+	createClient: async () => ( { req: { get: () => host.me } } ),
 } ) );
 vi.mock( '../../standalone/messaging', () => ( {
 	receiveMessage: ( receiver: ( message: HostMessage ) => void ) => {
@@ -33,7 +35,6 @@ vi.mock( '../../standalone/messaging', () => ( {
 	},
 	sendMessage: ( message: HostMessage ) => host.received.push( message.action ),
 } ) );
-vi.mock( '../../panel/helpers/stats', () => ( { recordTracksEvent: vi.fn() } ) );
 vi.mock( '../../panel/rest-client', () => ( {
 	default: vi.fn( function () {
 		return {
@@ -57,10 +58,30 @@ vi.mock( '../../panel/rest-client/wpcom', () => ( {
 const BOOT_WAIT = { timeout: 15000 };
 const TEST_TIMEOUT = 30000;
 
+const tracksQueue = () => {
+	const tracksWindow = window as unknown as TracksWindow;
+	tracksWindow._tkq = tracksWindow._tkq ?? [];
+	return tracksWindow._tkq;
+};
+
+const recordedEvents = ( name: string ) =>
+	tracksQueue()
+		.filter( ( [ command, event ] ) => command === 'recordEvent' && event === name )
+		.map( ( [ , , properties ] ) => properties );
+
 // Boots the iframe app with the given `features` in its address, as the host page loads it, and opens the panel.
-const openPanel = async ( features: string ) => {
+// The current user loads once `me` resolves, which is at once unless a test holds it back.
+const openPanel = async (
+	features: string,
+	me: Promise< { ID: number; username: string } > = Promise.resolve( {
+		ID: 1,
+		username: 'example',
+	} )
+) => {
 	vi.resetModules();
 	host.received = [];
+	host.me = me;
+	tracksQueue().length = 0;
 	window.history.replaceState( {}, '', `/?features=${ features }` );
 	document.body.innerHTML = '<div class="wpnc__main"></div>';
 
@@ -151,6 +172,44 @@ describe( 'Notifications iframe app', () => {
 				'noopener'
 			);
 			expect( host.received ).not.toContain( 'togglePanel' );
+		},
+		TEST_TIMEOUT
+	);
+
+	it(
+		'records each opening of the panel once Tracks knows the user, and names the wpcom panel in every event',
+		async () => {
+			const user = userEvent.setup();
+			let loadUser = () => {};
+			await openPanel(
+				'view-settings,full-view',
+				new Promise( ( resolve ) => {
+					loadUser = () => resolve( { ID: 1, username: 'example' } );
+				} )
+			);
+
+			expect( recordedEvents( 'calypso_notification_open' ) ).toEqual( [] );
+			loadUser();
+			await waitFor( () =>
+				expect( recordedEvents( 'calypso_notification_open' ) ).toEqual( [
+					{ surface: 'wpcom_panel' },
+				] )
+			);
+			expect( tracksQueue()[ 0 ] ).toEqual( [ 'identifyUser', 1, 'example' ] );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Open full view' } ) );
+			expect( recordedEvents( 'calypso_notification_full_view_click' ) ).toEqual( [
+				{ surface: 'wpcom_panel', tab: 'all', is_note_open: false },
+			] );
+
+			act( () => host.send( { action: 'togglePanel', showing: false } ) );
+			await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+			expect( recordedEvents( 'calypso_notification_open' ) ).toHaveLength( 1 );
+
+			act( () => host.send( { action: 'togglePanel', showing: true } ) );
+			await waitFor( () =>
+				expect( recordedEvents( 'calypso_notification_open' ) ).toHaveLength( 2 )
+			);
 		},
 		TEST_TIMEOUT
 	);

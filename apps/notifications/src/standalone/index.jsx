@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client';
 import Notifications, { refreshNotes } from '../panel/Notifications';
 import { createClient } from './client';
 import { receiveMessage, sendMessage } from './messaging';
+import { initTracks, recordPanelOpen } from './tracks';
 
 import '../panel/boot/stylesheets/style.scss';
 
@@ -149,6 +150,12 @@ const NotesWrapper = ( { wpcom } ) => {
 	};
 
 	useEffect( () => {
+		if ( isShowing ) {
+			recordPanelOpen();
+		}
+	}, [ isShowing ] );
+
+	useEffect( () => {
 		document.addEventListener( 'visibilitychange', refresh );
 
 		window.addEventListener( 'message', receiveMessage( handleMessages ) );
@@ -182,18 +189,8 @@ const render = ( wpcom ) => {
 	root.render( <NotesWrapper wpcom={ wpcom } /> );
 };
 
-const setTracksUser = ( wpcom ) => {
-	wpcom.req
-		.get( '/me', { fields: 'ID,username' } )
-		.then( ( { ID, username } ) => {
-			window._tkq = window._tkq || [];
-			window._tkq.push( [ 'identifyUser', ID, username ] );
-		} )
-		.catch( () => {} );
-};
-
 const init = ( wpcom ) => {
-	setTracksUser( wpcom );
+	initTracks( wpcom );
 	if ( locale && 'en' !== locale ) {
 		fetchLocale( locale );
 	}

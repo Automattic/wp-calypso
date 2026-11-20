@@ -11,6 +11,7 @@ import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { createClient } from '../standalone/client';
 import { receiveMessage, sendMessage } from '../standalone/messaging';
+import { initTracks, recordPanelOpen } from '../standalone/tracks';
 
 import './style.scss';
 
@@ -136,6 +137,12 @@ const NotesWrapper = ( { wpcom } ) => {
 		}
 		store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	}, [ isShowing, isVisible ] );
+
+	useEffect( () => {
+		if ( isShowing ) {
+			recordPanelOpen();
+		}
+	}, [ isShowing ] );
 
 	// The card sits inside a wider iframe, so the host can't detect clicks on
 	// the empty area around it. Dismiss from inside instead: close on any click
@@ -267,18 +274,8 @@ const render = ( wpcom ) => {
 	root.render( <NotesWrapper wpcom={ wpcom } /> );
 };
 
-const setTracksUser = ( wpcom ) => {
-	wpcom.req
-		.get( '/me', { fields: 'ID,username' } )
-		.then( ( { ID, username } ) => {
-			window._tkq = window._tkq || [];
-			window._tkq.push( [ 'identifyUser', ID, username ] );
-		} )
-		.catch( () => {} );
-};
-
 const init = ( wpcom ) => {
-	setTracksUser( wpcom );
+	initTracks( wpcom );
 	render( wpcom );
 };
 

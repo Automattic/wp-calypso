@@ -16,7 +16,10 @@ vi.mock( '../../../panel/helpers/log-error', () => ( {
 	reportRequestError: vi.fn(),
 } ) );
 
-vi.mock( '../../../panel/helpers/stats', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '../../../panel/helpers/stats', () => ( {
+	getTracksSurface: vi.fn(),
+	recordTracksEvent: vi.fn(),
+} ) );
 
 const makeNote = ( id: number, read = 0 ) => ( {
 	id,

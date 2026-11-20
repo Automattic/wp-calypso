@@ -1,5 +1,5 @@
 import { reportError, reportRequestError } from '../../../helpers/log-error';
-import { recordTracksEvent } from '../../../helpers/stats';
+import { getTracksSurface, recordTracksEvent } from '../../../helpers/stats';
 import { markAllAsRead } from '../../../rest-client/wpcom';
 import getAllNotes from '../../selectors/get-all-notes';
 import getIsNoteRead from '../../selectors/get-is-note-read';
@@ -18,6 +18,7 @@ const markAllRead = ( restClient ) => async ( dispatch, getState ) => {
 		return false;
 	}
 	const time = toSeconds( newestNote.timestamp );
+	const surface = getTracksSurface();
 
 	let response;
 	try {
@@ -31,7 +32,7 @@ const markAllRead = ( restClient ) => async ( dispatch, getState ) => {
 		return false;
 	}
 
-	recordTracksEvent( 'calypso_notification_mark_all_read', { count: response.count } );
+	recordTracksEvent( 'calypso_notification_mark_all_read', { surface, count: response.count } );
 
 	const state = getState();
 	const noteIds = getAllNotes( state )

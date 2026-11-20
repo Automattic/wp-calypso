@@ -18,6 +18,7 @@ import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
+import { useTracksSurface, type TracksSurface } from './use-tracks-surface';
 import type { FilterName } from './types';
 
 import './style.scss';
@@ -149,6 +150,7 @@ const NotificationApp = ( {
 	isViewSettingsEnabled = false,
 	isMarkAsUnreadEnabled = false,
 	onOpenFullView,
+	tracksSurface,
 	actionHandlers = {},
 	wpcom,
 }: {
@@ -158,10 +160,14 @@ const NotificationApp = ( {
 	isViewSettingsEnabled?: boolean;
 	isMarkAsUnreadEnabled?: boolean;
 	onOpenFullView?: ( view: FullView ) => void;
+	/** Where the host shows the panel, added to the Tracks events the panel records. */
+	tracksSurface?: TracksSurface;
 	actionHandlers?: any;
 	wpcom: any;
 } ) => {
 	const [ isReady, setIsReady ] = useState( !! getClient() );
+
+	useTracksSurface( tracksSurface );
 
 	useEffect( () => {
 		initClient( wpcom, { includeNoteContext: isViewSettingsEnabled } );
