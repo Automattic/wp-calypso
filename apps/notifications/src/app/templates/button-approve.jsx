@@ -5,6 +5,7 @@ import { getReferenceId } from '../../panel/helpers/notes';
 import { setApproveStatus as setApproveStatusAction } from '../../panel/state/notes/thunks';
 import { useAppContext } from '../context';
 import ActionButton from './action-button';
+import usePendingNotes from './use-pending-notes';
 
 const check = (
 	<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -12,34 +13,68 @@ const check = (
 	</svg>
 );
 
-const ApproveButton = ( { className, isApproved, isMinimal, note, setApproveStatus } ) => {
+// The `closeSmall` icon's 1.5px stroke, a little wider so it holds its own beside the check.
+const cross = (
+	<svg
+		width="24"
+		height="24"
+		viewBox="0 0 24 24"
+		xmlns="http://www.w3.org/2000/svg"
+		style={ { fill: 'none' } }
+		stroke="currentColor"
+		strokeWidth="1.5"
+	>
+		<path d="M7.25 16.75L16.75 7.25M16.75 16.75L7.25 7.25" />
+	</svg>
+);
+
+const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 	const { client } = useAppContext();
+	const { isPending, start, finish } = usePendingNotes();
+	const isBusy = isPending( note.id );
+	// A minimal button names what it does, so an approved comment's reads "Unapprove".
+	const isUnapprove = isMinimal && isApproved;
+
+	// The button stays in place as it toggles, so a second press waits for the first to land,
+	// which keeps them from reaching the server out of order.
+	const handleToggle = async () => {
+		if ( isBusy ) {
+			return;
+		}
+		start( note.id );
+		await setApproveStatus(
+			note.id,
+			getReferenceId( note, 'site' ),
+			getReferenceId( note, 'comment' ),
+			! isApproved,
+			note.type,
+			client
+		);
+		finish( note.id );
+	};
+
+	const getText = () => {
+		if ( isUnapprove ) {
+			return __( 'Unapprove' );
+		}
+		return isApproved ? __( 'Approved' ) : __( 'Approve' );
+	};
 
 	return (
 		<ActionButton
-			className={ className }
-			icon={ check }
-			isActive={ isApproved }
+			icon={ isUnapprove ? cross : check }
+			isActive={ isApproved && ! isMinimal }
 			isMinimal={ isMinimal }
+			isBusy={ isBusy }
 			hotkey="a"
-			onToggle={ () =>
-				setApproveStatus(
-					note.id,
-					getReferenceId( note, 'site' ),
-					getReferenceId( note, 'comment' ),
-					! isApproved,
-					note.type,
-					client
-				)
-			}
-			text={ isApproved ? __( 'Approved' ) : __( 'Approve' ) }
+			onToggle={ handleToggle }
+			text={ getText() }
 			title={ isApproved ? __( 'Unapprove comment' ) : __( 'Approve comment' ) }
 		/>
 	);
 };
 
 ApproveButton.propTypes = {
-	className: PropTypes.string,
 	isApproved: PropTypes.bool.isRequired,
 	isMinimal: PropTypes.bool,
 	note: PropTypes.object.isRequired,

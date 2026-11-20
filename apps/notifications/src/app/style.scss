@@ -84,8 +84,8 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 }
 
 .wpnc-app {
-	// One amber for everything pending: the list's type badge, the Pending badge
-	// and the note detail's Approve action, at lighter and darker steps of its hue.
+	// One amber for everything pending: the list's type badge and the Pending badge,
+	// at lighter and darker steps of its hue.
 	--wpnc-pending: #967023;
 	position: relative;
 	width: 100%;
@@ -264,11 +264,20 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 	font-weight: 500;
 }
 
-// Sits between the tabs and the list, lined up with the rows' 16px edge.
+// Sits between the tabs and the list, lined up with the rows' 16px edge. While it shows the
+// link or its error, it draws the divider under the tabs; the list's own divider then runs below it.
 .wpnc-app__mark-all-read {
 	display: flex;
 	flex-direction: column;
 	flex-shrink: 0;
+
+	&:has(> .components-button, .wpnc-app__mark-all-read-error) {
+		border-top: 1px solid color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
+
+		@include ui-mixins.when-dark-theme {
+			border-top-color: color-mix(in srgb, #f0f0f0 8%, transparent);
+		}
+	}
 
 	> .components-button.is-link {
 		align-self: flex-start;
