@@ -53,5 +53,7 @@ export const useLatestPostDate = (
 		retry: false,
 		select: getLatestPostDate,
 	} );
-	return ( hasSite ? site.data : feed.data ) ?? null;
+	// A failed refetch keeps the last good data, which may be stale.
+	const active = hasSite ? site : feed;
+	return active.isError ? null : ( active.data ?? null );
 };

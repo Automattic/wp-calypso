@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { readFeedLatestPostQueryKey, readSiteLatestPostQueryKey } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -11,12 +12,15 @@ const API = 'https://public-api.wordpress.com';
 const FEED_POSTS_PATH = '/rest/v1.2/read/feed/123/posts';
 const SITE_POSTS_PATH = '/rest/v1.2/read/sites/456/posts';
 
-const renderLatestPostDate = ( ...args: Parameters< typeof useLatestPostDate > ) => {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+const renderLatestPostDate = (
+	blog: Parameters< typeof useLatestPostDate >[ 0 ],
+	options?: Parameters< typeof useLatestPostDate >[ 1 ],
+	queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } )
+) => {
 	const wrapper = ( { children }: { children: ReactNode } ) => (
 		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 	);
-	return renderHook( () => useLatestPostDate( ...args ), { wrapper } );
+	return renderHook( () => useLatestPostDate( blog, options ), { wrapper } );
 };
 
 describe( 'getLatestPostDate', () => {
@@ -95,6 +99,45 @@ describe( 'useLatestPostDate', () => {
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		expect( result.current ).toBeNull();
 	} );
+
+	it.each( [
+		{
+			route: 'feed',
+			blog: { feed_ID: 123, site_ID: 0 },
+			key: readFeedLatestPostQueryKey( 123 ),
+			path: FEED_POSTS_PATH,
+		},
+		{
+			route: 'site',
+			blog: { feed_ID: 123, site_ID: 456 },
+			key: readSiteLatestPostQueryKey( 456 ),
+			path: SITE_POSTS_PATH,
+		},
+	] )(
+		'returns null when refreshing a stale cached $route date fails',
+		async ( { blog, key, path } ) => {
+			const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			queryClient.setQueryData(
+				key,
+				{ ID: 1, date: '2026-11-18T10:00:00+00:00' },
+				{ updatedAt: Date.now() - 1000 * 60 * 31 }
+			);
+			const scope = nock( API )
+				.get( path )
+				.query( { number: '1' } )
+				.reply( 500, { error: 'server_error' } );
+
+			const { result } = renderLatestPostDate( blog, undefined, queryClient );
+
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+			await waitFor( () => expect( queryClient.getQueryState( key )?.status ).toBe( 'error' ) );
+			expect( queryClient.getQueryData( key ) ).toEqual( {
+				ID: 1,
+				date: '2026-11-18T10:00:00+00:00',
+			} );
+			await waitFor( () => expect( result.current ).toBeNull() );
+		}
+	);
 
 	it( 'makes no request until enabled', () => {
 		const scope = nock( API ).get( FEED_POSTS_PATH ).query( true ).reply( 200, { posts: [] } );
