@@ -14,8 +14,8 @@ test.describe(
 	},
 	() => {
 		skipIfMailosaurLimitReached();
-		// Setup signs up a new account, and the upload wait alone can take a minute.
-		test.slow();
+		// Setup signs up a new account, and the upload wait alone can take over a minute.
+		test.describe.configure( { timeout: 180 * 1000 } );
 
 		test( 'One: As a New WordPress.com free plan user with a simple site, I can use the "WordPress Run Importer" link on the wp-admin Importers List page to import my content from my WordPress site', async ( {
 			pageImportContentFromWordPress,
@@ -37,9 +37,7 @@ test.describe(
 
 			await test.step( 'Then I see an Import confirmation page showing the authorship of the content to be imported', async function () {
 				await expect( pageImportContentFromWordPress.heading ).toBeVisible();
-				await pageImportContentFromWordPress.importFileContentPage.waitForUploadProcessed(
-					pageImportContentFromWordPress.importFileContentPage.yourFileIsReadyText
-				);
+				await pageImportContentFromWordPress.importFileContentPage.waitForUploadProcessed();
 				await expect(
 					pageImportContentFromWordPress.importFileContentPage.importButton
 				).toBeVisible();
@@ -80,9 +78,7 @@ test.describe(
 			await test.step( 'Then I see an Import confirmation page showing the authorship of the content to be imported', async function () {
 				await expect( pageImportContent.heading ).toBeVisible();
 				await expect( pageImportContent.wordPressHeading ).toBeVisible();
-				await pageImportContent.importFileContentPage.waitForUploadProcessed(
-					pageImportContent.importFileContentPage.yourFileIsReadyText
-				);
+				await pageImportContent.importFileContentPage.waitForUploadProcessed();
 				await expect( pageImportContent.importFileContentPage.importButton ).toBeVisible();
 				await expect( pageImportContent.importFileContentPage.importButton ).toBeEnabled();
 			} );

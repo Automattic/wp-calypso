@@ -50,7 +50,7 @@ export class ImportFileContentPage {
 	 * so a stall there isn't mistaken for a test bug.
 	 * @param nextStep The element shown once the upload is processed.
 	 */
-	async waitForUploadProcessed( nextStep: Locator ): Promise< void > {
+	async waitForUploadProcessed( nextStep: Locator = this.yourFileIsReadyText ): Promise< void > {
 		try {
 			await nextStep.waitFor( { timeout: UPLOAD_PROCESSING_TIMEOUT } );
 		} catch ( error ) {
