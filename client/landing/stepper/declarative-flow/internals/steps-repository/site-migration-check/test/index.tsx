@@ -4,9 +4,14 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import SiteMigrationCheck from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
+jest.mock( 'calypso/state/current-user/selectors', () => ( {
+	...jest.requireActual( 'calypso/state/current-user/selectors' ),
+	isUserLoggedIn: jest.fn(),
+} ) );
 jest.mock( 'calypso/data/site-profiler/use-analyze-url-query', () => ( {
 	useAnalyzeUrlQuery: jest.fn( () => ( { data: undefined, error: null } ) ),
 } ) );
@@ -35,6 +40,7 @@ jest.mock( '../../../components/site-preview-panel', () => ( {
 
 describe( 'SiteMigrationCheck', () => {
 	beforeEach( () => {
+		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
 		jest.mocked( useAnalyzeUrlQuery ).mockReturnValue( {
 			data: undefined,
 			error: null,
@@ -256,6 +262,26 @@ describe( 'SiteMigrationCheck', () => {
 			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
 			expect( screen.getByText( 'What we’ll copy over' ) ).toBeVisible();
 		} );
+	} );
+
+	it( 'keeps a signed-out visitor’s source Change link only while a warning shows', () => {
+		jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+		const { unmount } = renderStep(
+			<SiteMigrationCheck { ...mockStepProps() } canPickDestination={ false } />,
+			{ initialEntry: '/site-migration-check?from=https://example.com&platform=wordpress' }
+		);
+		expect( screen.queryByRole( 'button', { name: /^Change/ } ) ).not.toBeInTheDocument();
+		unmount();
+
+		jest.mocked( useAnalyzeUrlQuery ).mockReturnValue( {
+			data: undefined,
+			error: { code: 'http_request_failed' },
+		} as unknown as ReturnType< typeof useAnalyzeUrlQuery > );
+		renderStep( <SiteMigrationCheck { ...mockStepProps() } canPickDestination={ false } />, {
+			initialEntry:
+				'/site-migration-check?from=https://example.com&platform=wordpress&manualPlatform=wordpress',
+		} );
+		expect( screen.getByRole( 'button', { name: 'Change the site to copy' } ) ).toBeVisible();
 	} );
 
 	it( 'waits for destination eligibility before offering Continue', () => {

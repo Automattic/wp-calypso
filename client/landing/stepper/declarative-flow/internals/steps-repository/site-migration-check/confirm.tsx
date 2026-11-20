@@ -47,7 +47,8 @@ export const SiteMigrationConfirm = ( {
 	destinationSiteUrl?: string;
 	destinationFailed?: boolean;
 	isSameSite: boolean;
-	onChangeSource: () => void;
+	/** Without it, the source has no Change link. */
+	onChangeSource?: () => void;
 	/** Without it, the destination has no Change link. */
 	onChangeDestination?: () => void;
 	onContinue: () => void;
@@ -83,7 +84,10 @@ export const SiteMigrationConfirm = ( {
 		onClick: onContinue,
 	};
 	if ( isSameSite ) {
-		primaryAction = { label: translate( 'Change the address' ), onClick: onChangeSource };
+		primaryAction = onChangeSource && {
+			label: translate( 'Change the address' ),
+			onClick: onChangeSource,
+		};
 	} else if ( showLoadError ) {
 		primaryAction = onRetryDestination && {
 			label: translate( 'Try again' ),
@@ -173,13 +177,15 @@ export const SiteMigrationConfirm = ( {
 										{ translate( 'Same as the destination' ) }
 									</span>
 								) }
-								<Step.LinkButton
-									className="site-migration-confirm__change"
-									onClick={ onChangeSource }
-									aria-label={ translate( 'Change the site to copy' ) }
-								>
-									{ translate( 'Change' ) }
-								</Step.LinkButton>
+								{ onChangeSource && (
+									<Step.LinkButton
+										className="site-migration-confirm__change"
+										onClick={ onChangeSource }
+										aria-label={ translate( 'Change the site to copy' ) }
+									>
+										{ translate( 'Change' ) }
+									</Step.LinkButton>
+								) }
 							</div>
 							<Icon className="site-migration-confirm__arrow" icon={ arrowDown } size={ 24 } />
 							<div className="site-migration-confirm__site">

@@ -56,6 +56,11 @@
 	}
 }
 
+.site-migration-confirm__label,
+.site-migration-confirm__address {
+	grid-column: 1;
+}
+
 .site-migration-confirm__label {
 	@include body-medium();
 	color: var( --color-neutral-60 );

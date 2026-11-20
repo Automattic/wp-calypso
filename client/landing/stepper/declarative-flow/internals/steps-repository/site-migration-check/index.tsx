@@ -10,6 +10,8 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isSourceUnreachable } from '../site-migration-identify/is-source-unreachable';
 import { SiteMigrationConfirm, type SourceIssue } from './confirm';
 import type { Step as StepType } from '../../types';
@@ -60,6 +62,7 @@ const SiteMigrationCheck: StepType< {
 } ) => {
 	const translate = useTranslate();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 	const query = useQuery();
 	const from = query.get( 'from' ) || '';
 	const host = query.get( 'host' ) || undefined;
@@ -132,7 +135,8 @@ const SiteMigrationCheck: StepType< {
 				destinationSiteUrl={ destinationSiteUrl }
 				destinationFailed={ destinationFailed }
 				isSameSite={ isSameSite }
-				onChangeSource={ returnToAddress }
+				// Signed out with nothing to fix, Back is enough; a warning keeps it close at hand.
+				onChangeSource={ isLoggedIn || sourceIssue ? returnToAddress : undefined }
 				onChangeDestination={
 					canPickDestination
 						? () =>
