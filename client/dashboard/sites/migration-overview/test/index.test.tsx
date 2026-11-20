@@ -42,31 +42,22 @@ describe( '<SiteMigrationOverview>', () => {
 		expect( router.state.location.pathname ).toBe( '/' );
 	} );
 
-	test.each( [ 'cancelled', 'unlock_failed' ] as const )(
-		'redirects after the migration status changes to %s',
-		async ( status ) => {
-			mockSiteApi( createSite( 'migration-started-diy' ) );
+	test( 'redirects to the overview with a notice after cancellation', async () => {
+		mockSiteApi( createSite( 'migration-started-diy' ) );
 
-			const { queryClient, router } = render( <SiteMigrationOverview siteSlug={ siteSlug } /> );
+		const { queryClient, router } = render( <SiteMigrationOverview siteSlug={ siteSlug } /> );
 
-			await waitFor( () =>
-				expect( screen.getByText( 'Your migration is underway' ) ).toBeVisible()
-			);
+		await waitFor( () => expect( screen.getByText( 'Your migration is underway' ) ).toBeVisible() );
 
-			const historyLength = router.history.length;
-			queryClient.setQueryData( siteWordPressMigrationStatusQuery( 1 ).queryKey, {
-				status,
-			} as WordPressMigrationStatus );
-			mockSiteApi( createSite( 'migration-cancelled-diy' ) );
-			await queryClient.invalidateQueries( { queryKey: siteBySlugQuery( siteSlug ).queryKey } );
+		const historyLength = router.history.length;
+		queryClient.setQueryData( siteWordPressMigrationStatusQuery( 1 ).queryKey, {
+			status: 'cancelled',
+		} as WordPressMigrationStatus );
+		mockSiteApi( createSite( 'migration-cancelled-diy' ) );
+		await queryClient.invalidateQueries( { queryKey: siteBySlugQuery( siteSlug ).queryKey } );
 
-			await waitFor( () =>
-				expect( router.state.location.pathname ).toBe( `/sites/${ siteSlug }` )
-			);
-			expect( router.state.location.search ).toEqual(
-				status === 'cancelled' ? { flash: 'migration-cancelled' } : {}
-			);
-			expect( router.history.length ).toBe( historyLength );
-		}
-	);
+		await waitFor( () => expect( router.state.location.pathname ).toBe( `/sites/${ siteSlug }` ) );
+		expect( router.state.location.search ).toEqual( { flash: 'migration-cancelled' } );
+		expect( router.history.length ).toBe( historyLength );
+	} );
 } );

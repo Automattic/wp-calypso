@@ -823,20 +823,6 @@ describe( 'WordPressMigration', () => {
 		}
 	);
 
-	test( 'shows support after reopening a site whose cancellation could not unlock the dashboard', async () => {
-		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'unlock_failed' ) );
-		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
-		expect(
-			await screen.findByRole( 'heading', { name: 'We couldn’t cancel your migration' } )
-		).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'button', { name: 'Cancel this migration' } )
-		).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
-		expect( router.state.location.pathname ).toBe( '/' );
-	} );
-
 	test( 'still says a migration is underway for a status it doesn’t know', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'assisted' ) );
 

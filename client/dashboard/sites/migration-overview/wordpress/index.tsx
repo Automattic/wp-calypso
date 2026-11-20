@@ -24,18 +24,7 @@ import type { Site } from '@automattic/api-core';
 // How long a completed migration can leave its site locked before we stop asking the user to wait.
 const UNLOCK_GRACE_PERIOD = 30000;
 
-// Allow the 30-second duplicate-start window to expire.
-const STOPPED_STATUS_REFRESH_DELAY = 35000;
-
-const KNOWN_STATUSES = [
-	'not_started',
-	'running',
-	'paused',
-	'failed',
-	'completed',
-	'cancelled',
-	'unlock_failed',
-];
+const KNOWN_STATUSES = [ 'not_started', 'running', 'paused', 'failed', 'completed', 'cancelled' ];
 
 export function WordPressMigration( { site }: { site: Site } ) {
 	const navigate = useNavigate();
@@ -88,14 +77,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 
 	// A stopped migration can also be taken back to that step, until it's no longer stopped, wherever it was started from.
 	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
-	const awaitingCooldown = isStopped && migration.can_cancel === false && ! migration.handed_off;
-	useEffect( () => {
-		if ( awaitingCooldown ) {
-			const timeout = setTimeout( () => refetch(), STOPPED_STATUS_REFRESH_DELAY );
-			return () => clearTimeout( timeout );
-		}
-	}, [ awaitingCooldown, migration?.started_at, refetch, site.ID ] );
-
 	const [ isBackToSetup, setIsBackToSetup ] = useState( false );
 	useEffect( () => {
 		if ( ! isStopped ) {
@@ -191,11 +172,9 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		</Button>
 	);
 
-	const cancelFailed = cancel.isError || cancel.data?.status === 'unlock_failed';
-
 	return (
 		<>
-			{ cancelFailed && ! isFinished && migration?.status !== 'unlock_failed' && (
+			{ cancel.isError && ! isFinished && (
 				<Notice
 					variant="error"
 					actions={ isConnecting ? contactUs : undefined }
@@ -257,14 +236,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 						} );
 						setIsBackToSetup( true );
 					} }
-				/>
-			) }
-			{ migration?.status === 'unlock_failed' && (
-				<MigrationCard
-					title={ __( 'We couldn’t cancel your migration' ) }
-					description={ __( 'Contact support for help cancelling your migration.' ) }
-					decoration={ <StatusIcon status="error" /> }
-					actions={ contactUs }
 				/>
 			) }
 			{ isCompleted && (
