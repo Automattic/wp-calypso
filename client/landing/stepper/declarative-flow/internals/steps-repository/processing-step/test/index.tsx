@@ -93,12 +93,37 @@ describe( 'ProcessingStep', () => {
 			return stepProps;
 		};
 
-		it( 'does not report a cart rejection to Sentry', async () => {
-			const stepProps = await runFailingAction(
-				new CartActionResponseError( 'This domain is not available.', 'domain_unavailable' )
+		// The WordPress.com cart validator returns this code when the chosen domain is taken.
+		const unavailableDomainRejection = () =>
+			new CartActionResponseError(
+				'Sorry, the domain you are trying to add is no longer available.',
+				'domain-not-available'
 			);
 
+		it( 'does not report a cart rejection with an expected code to Sentry', async () => {
+			const stepProps = await runFailingAction( unavailableDomainRejection() );
+
 			expect( mockCaptureFlowException ).not.toHaveBeenCalled();
+			expect( logToLogstash ).toHaveBeenCalled();
+			expect( stepProps.navigation.submit ).toHaveBeenCalledWith( {
+				processingResult: ProcessingResult.FAILURE,
+			} );
+		} );
+
+		// An unknown code can mean Calypso sent a bad cart item, which only Sentry makes visible.
+		it( 'reports a cart rejection with an unexpected code to Sentry', async () => {
+			const error = new CartActionResponseError(
+				'Sorry, there is a problem adding your product to cart.',
+				'invalid-product-not-valid-domain'
+			);
+			const stepProps = await runFailingAction( error );
+
+			expect( mockCaptureFlowException ).toHaveBeenCalledWith( error );
+			expect( logToLogstash ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					properties: { flow: ONBOARDING_FLOW, error: 'invalid-product-not-valid-domain' },
+				} )
+			);
 			expect( stepProps.navigation.submit ).toHaveBeenCalledWith( {
 				processingResult: ProcessingResult.FAILURE,
 			} );
@@ -106,26 +131,22 @@ describe( 'ProcessingStep', () => {
 
 		// Some flows do not go to the error step, so this line is their only record of the rejection.
 		it( 'logs a cart rejection to Logstash with its code', async () => {
-			await runFailingAction(
-				new CartActionResponseError( 'This domain is not available.', 'domain_unavailable' )
-			);
+			await runFailingAction( unavailableDomainRejection() );
 
 			expect( logToLogstash ).toHaveBeenCalledWith(
 				expect.objectContaining( {
 					message: 'Cart rejection in Stepper processing step',
-					properties: { flow: ONBOARDING_FLOW, error: 'domain_unavailable' },
+					properties: { flow: ONBOARDING_FLOW, error: 'domain-not-available' },
 				} )
 			);
 		} );
 
 		it( 'stores the code and the message of a cart rejection for the error step', async () => {
-			await runFailingAction(
-				new CartActionResponseError( 'This domain is not available.', 'domain_unavailable' )
-			);
+			await runFailingAction( unavailableDomainRejection() );
 
 			expect( select( SITE_STORE ).getSiteSetupError() ).toEqual( {
-				error: 'domain_unavailable',
-				message: 'This domain is not available.',
+				error: 'domain-not-available',
+				message: 'Sorry, the domain you are trying to add is no longer available.',
 			} );
 		} );
 
