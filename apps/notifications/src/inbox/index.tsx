@@ -7,6 +7,7 @@ import Note from '../app/note';
 import { useNoteNavigation } from '../app/note/hooks';
 import NotePanel, { getNotificationTabs } from '../app/note-panel';
 import NoteSettingsButton from '../app/note-panel/settings-button';
+import { useTracksSurface, type TracksSurface } from '../app/use-tracks-surface';
 import { store } from '../panel/state';
 import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
@@ -35,6 +36,8 @@ type NotificationsInboxProps = {
 	onViewSettings?: () => void;
 	/** Shows the open note's "Mark as unread" button. */
 	isMarkAsUnreadEnabled?: boolean;
+	/** Where the host shows the inbox, added to the Tracks events it records. */
+	tracksSurface?: TracksSurface;
 	renderLayout: ( panes: InboxPaneElements ) => ReactNode;
 };
 
@@ -88,7 +91,10 @@ function InboxPanes( {
 	setSelectedNoteId,
 	onViewSettings,
 	renderLayout,
-}: Omit< NotificationsInboxProps, 'wpcom' | 'locale' | 'isMarkAsUnreadEnabled' > ) {
+}: Omit<
+	NotificationsInboxProps,
+	'wpcom' | 'locale' | 'isMarkAsUnreadEnabled' | 'tracksSurface'
+> ) {
 	const filterName = toFilterName( requestedFilterName );
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
 	const isSelectedNoteLoaded = useSelector( ( state ) =>
@@ -190,9 +196,11 @@ export default function NotificationsInbox( {
 	wpcom,
 	locale,
 	isMarkAsUnreadEnabled = false,
+	tracksSurface,
 	...paneProps
 }: NotificationsInboxProps ) {
 	const isReady = useInboxClient( wpcom, locale );
+	useTracksSurface( tracksSurface );
 
 	if ( ! isReady ) {
 		return null;

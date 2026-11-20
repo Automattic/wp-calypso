@@ -55,6 +55,7 @@ const renderInbox = (
 		setSelectedNoteId = () => {},
 		onViewSettings,
 		isMarkAsUnreadEnabled,
+		tracksSurface,
 	}: Partial<
 		Pick<
 			InboxProps,
@@ -63,6 +64,7 @@ const renderInbox = (
 			| 'setSelectedNoteId'
 			| 'onViewSettings'
 			| 'isMarkAsUnreadEnabled'
+			| 'tracksSurface'
 		>
 	> = {}
 ) =>
@@ -76,6 +78,7 @@ const renderInbox = (
 			setSelectedNoteId={ setSelectedNoteId }
 			onViewSettings={ onViewSettings }
 			isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+			tracksSurface={ tracksSurface }
 			renderLayout={ ( { list, detail } ) => (
 				<>
 					<section aria-label="List">{ list }</section>
@@ -242,6 +245,30 @@ describe( 'NotificationsInbox', () => {
 
 		expect( setFilterName ).toHaveBeenCalledWith( 'comments' );
 		expect( setSelectedNoteId ).not.toHaveBeenCalled();
+	} );
+
+	it( 'names the surface the host gives in the events it records, until it is unmounted', async () => {
+		const user = userEvent.setup();
+		const tracks = window as unknown as { _tkq: unknown[][] };
+		tracks._tkq = [];
+		loadNotes( makeNote( 801, 'First comment' ) );
+		const { unmount } = renderInbox( undefined, { tracksSurface: 'dashboard_page' } );
+
+		await user.click( await screen.findByRole( 'tab', { name: 'Comments' } ) );
+		expect( tracks._tkq ).toContainEqual( [
+			'recordEvent',
+			'calypso_notification_tab_select',
+			{ tab: 'comments', source: 'tab', surface: 'dashboard_page' },
+		] );
+
+		unmount();
+		renderInbox();
+		await user.click( await screen.findByRole( 'tab', { name: 'Likes' } ) );
+		expect( tracks._tkq ).toContainEqual( [
+			'recordEvent',
+			'calypso_notification_tab_select',
+			{ tab: 'likes', source: 'tab' },
+		] );
 	} );
 
 	it( 'shows no open note until one is selected', () => {
