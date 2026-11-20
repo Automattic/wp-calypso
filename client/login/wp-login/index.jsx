@@ -26,6 +26,7 @@ import {
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { isStudioCheckoutRedirect } from 'calypso/lib/studio/checkout-urls';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -121,6 +122,7 @@ export class Login extends Component {
 			'isBlazePro',
 			'isFromAkismet',
 			'isFromPassport',
+			'isFromStudioCheckout',
 			'isFromAutomatticForAgenciesPlugin',
 			'isUnifiedConnectionFlow',
 			'connectorPlugins',
@@ -243,7 +245,8 @@ export class Login extends Component {
 
 	/**
 	 * The main WordPress.com login, for logged-out visitors, stacks the social buttons above the
-	 * form. Partner, OAuth2, connection and Akismet logins keep the side-by-side layout.
+	 * form. Partner, OAuth2, connection, Akismet and Studio checkout logins keep the side-by-side
+	 * layout.
 	 */
 	isStackedLogin() {
 		return (
@@ -254,7 +257,8 @@ export class Login extends Component {
 			! this.props.isUnifiedConnectionFlow &&
 			! this.props.oauth2Client &&
 			! this.props.isWoo &&
-			! this.props.isFromAkismet
+			! this.props.isFromAkismet &&
+			! this.props.isFromStudioCheckout
 		);
 	}
 
@@ -506,6 +510,7 @@ function getInitialHeadingState( props, translate ) {
 		isBlazePro,
 		isFromAkismet,
 		isFromPassport,
+		isFromStudioCheckout,
 		isFromAutomatticForAgenciesPlugin,
 		isUnifiedConnectionFlow,
 		connectorPlugins,
@@ -532,6 +537,7 @@ function getInitialHeadingState( props, translate ) {
 		isBlazePro,
 		isFromAkismet,
 		isFromPassport,
+		isFromStudioCheckout,
 		isFromAutomatticForAgenciesPlugin,
 		isUnifiedConnectionFlow,
 		connectorPlugins,
@@ -607,6 +613,7 @@ export default connect(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			),
 			isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
+			isFromStudioCheckout: isStudioCheckoutRedirect( getRedirectToOriginal( state ) ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),
