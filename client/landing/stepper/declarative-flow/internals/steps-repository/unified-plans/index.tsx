@@ -41,6 +41,8 @@ import './style.scss';
 type ProvidedDependencies = {
 	stepName: 'plans';
 	cartItems: MinimalRequestCartProduct[] | null;
+	/** Set when the customer skipped the step, offered by `skippable`, without picking a plan. */
+	action?: 'skip_plan';
 };
 
 const PlansStepAdaptor: StepType< {
@@ -65,6 +67,8 @@ const PlansStepAdaptor: StepType< {
 		isLaunchPage?: boolean;
 		isCustomDomainAllowedOnFreePlan?: boolean;
 		deemphasizeFreePlan?: boolean;
+		/** Offers a Skip button, which submits `{ action: 'skip_plan' }` without a plan. */
+		skippable?: boolean;
 		intent?: PlansIntent;
 		wrapperProps?: {
 			hideBack?: boolean;
@@ -95,6 +99,7 @@ const PlansStepAdaptor: StepType< {
 		isLaunchPage,
 		isCustomDomainAllowedOnFreePlan,
 		deemphasizeFreePlan,
+		skippable,
 		intent: intentOverride,
 	} = props;
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
@@ -304,6 +309,16 @@ const PlansStepAdaptor: StepType< {
 			isLaunchPage={ isLaunchPage }
 			isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 			deemphasizeFreePlan={ deemphasizeFreePlan }
+			onSkip={
+				skippable
+					? () =>
+							props.navigation.submit?.( {
+								stepName: 'plans',
+								cartItems: null,
+								action: 'skip_plan',
+							} )
+					: undefined
+			}
 		/>
 	);
 };

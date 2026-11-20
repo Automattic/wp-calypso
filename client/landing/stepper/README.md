@@ -406,7 +406,8 @@ flows keep working unchanged:
   `useGridPlans`. Both are honored by the features grid only — the comparison grid renders neither
   field), plus the launch-page props `isLaunchPage` (launch-page CTAs — "Keep this plan" /
   "Select X"), `isCustomDomainAllowedOnFreePlan` (picking Free keeps a paid domain via a dialog)
-  and `deemphasizeFreePlan` (de-emphasizes the Free plan). All optional and default-safe. See
+  and `deemphasizeFreePlan` (de-emphasizes the Free plan), and `skippable` (a Skip button in the
+  top bar that submits `{ action: 'skip_plan' }` without a plan). All optional and default-safe. See
   [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
 - The `__user` (`user`) step exposes `headerText`, `subHeaderText`, `hideLoginLink` (hides the
   "Log in" link: the V2 top bar's, the V2 in-form "Have an account? Log in" line that

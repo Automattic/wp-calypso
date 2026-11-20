@@ -18,7 +18,9 @@ Logged-out users log in first; the steps are then worked out for their site.
 
 ## Preview sites
 
-A preview site nobody has bought is launched by buying a plan: WordPress.com refuses to launch it unpaid (`preview_site_unpaid`), so the launch step takes that refusal as its cue to go on to checkout, where buying the plan launches the site. With Free picked, the refusal brings back the plans step with `hide_free_plan=1`, however the user arrived. The badge on the preview links here with `hide_free_plan=1` and `checkout_source`. The flow doesn't look up whether a site is a preview; it goes by its URL and that refusal.
+A preview site nobody has bought is launched by buying a plan: WordPress.com refuses to launch it unpaid (`preview_site_unpaid`), so the launch step takes that refusal as its cue to go on to checkout, where buying the plan launches the site. With Free picked, the refusal brings back the plans step with `hide_free_plan=1`, however the user arrived. The badge on the preview links here with `hide_free_plan=1` and `checkout_source`. The flow doesn't look up whether a site is a preview to decide how it launches; it goes by its URL and that refusal.
+
+The plans step does look the site up in the user's preview sites (`/wow-funnel/pending`). For a preview, it's `skippable`: its **Skip** button leaves the flow without launching, for the preview at its `share_url`, which gets past Coming Soon. A preview whose first build hasn't given it a share link yet goes back to where the user came from, as Back does.
 
 ## Query parameters
 
@@ -48,3 +50,5 @@ The site is launched **before** checkout, as in legacy `/start/launch-site`. The
 2. Go to `/setup/launch-site?siteSlug=<site>`.
 3. Pick a domain and a paid plan; the site launches and you land in checkout with both in the cart.
 4. Repeat with a new site, skipping the domain and keeping the free plan; the site launches and you land on My Home.
+5. Open the flow for an unpaid preview site, e.g. from `/setup/static-site-import-preview`. On the plans step, **Skip** opens the preview at its `?share=` link, and the site stays unlaunched.
+6. Open the flow for a site that isn't a preview; the plans step has no **Skip** button.

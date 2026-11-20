@@ -1,9 +1,11 @@
 import { DomainProductSlugs, fetchShoppingCart, launchSite } from '@automattic/api-core';
+import { wowFunnelPendingQuery } from '@automattic/api-queries';
 import {
 	addProductsToCart,
 	clearStepPersistedState,
 	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
+import { useQuery as useApiQuery } from '@tanstack/react-query';
 import { resolveSelect, select, useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
@@ -182,6 +184,24 @@ function useLaunchParams(): LaunchParams {
 	};
 }
 
+/**
+ * The site being launched, when it's an unpaid preview: WordPress.com lists those apart, each with
+ * the address that gets past Coming Soon.
+ */
+function usePreviewSite() {
+	const siteSlug = useQuery().get( 'siteSlug' ) ?? '';
+	const siteId = useSelect(
+		( select ) =>
+			siteSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug )?.ID : undefined,
+		[ siteSlug ]
+	);
+	const { data } = useApiQuery( { ...wowFunnelPendingQuery(), enabled: !! siteId } );
+
+	return siteId
+		? data?.preview_sites?.find( ( preview ) => preview.blog_id === siteId )
+		: undefined;
+}
+
 const launchSiteFlow: FlowV2< typeof initialize > = {
 	name: LAUNCH_SITE_FLOW,
 	title: __( 'Launch your site' ),
@@ -229,6 +249,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 	useStepsProps() {
 		const launchParams = useLaunchParams();
+		const previewSite = usePreviewSite();
 		const isPlansFirstStep = ! getStepSlugs( this ).includes( STEPS.DOMAIN_SEARCH.slug );
 		// The step ignores `hideFreePlan` when Free is de-emphasized, and offers it as a link in the
 		// subheader instead.
@@ -241,6 +262,8 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				isCustomDomainAllowedOnFreePlan: true,
 				deemphasizeFreePlan: ! hideFreePlan,
 				...( hideFreePlan && { hideFreePlan } ),
+				// A preview can be looked around without a plan, so it can leave the plans for now.
+				...( previewSite && { skippable: true } ),
 				...( isPlansFirstStep && {
 					wrapperProps: {
 						goBack: () => window.location.assign( getLaunchReturnUrl( launchParams ) ),
@@ -252,6 +275,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const launchParams = useLaunchParams();
+		const previewSite = usePreviewSite();
 		const stepSlugs = getStepSlugs( this );
 		const productsList = useSelector( getProductsList );
 		const { getDomainCartItem, getDomainCartItems, getPlanCartItem, getProductCartItems } =
@@ -442,6 +466,13 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.UNIFIED_PLANS.slug: {
+					// Skipping leaves the preview unlaunched, so it goes back to the preview itself.
+					if ( providedDependencies?.action === 'skip_plan' ) {
+						return window.location.assign(
+							previewSite?.share_url || getLaunchReturnUrl( launchParams )
+						);
+					}
+
 					const [ planCartItem, ...productCartItems ] = providedDependencies?.cartItems ?? [];
 
 					setPlanCartItem( planCartItem ?? null );
