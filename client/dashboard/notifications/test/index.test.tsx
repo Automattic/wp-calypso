@@ -243,6 +243,16 @@ describe( '<Notifications>', () => {
 		);
 	} );
 
+	test( 'ignores an address that names a note in a form the panel never writes', async () => {
+		const router = await renderNotifications( '/notifications?note=00042' );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No notification selected' } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( router.state.location.href ).toBe( '/notifications' ) );
+	} );
+
 	test( 'says that no notification is selected until one is opened', async () => {
 		const user = userEvent.setup();
 		await renderNotifications( '/notifications' );

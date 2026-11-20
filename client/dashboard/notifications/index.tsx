@@ -29,7 +29,9 @@ export default function Notifications() {
 		select: ( state ) => state.location.state.notificationsNoteId,
 	} );
 	// A panel outside the Dashboard opens this page in a new tab, where there is no history entry to hand its note over in.
-	const { note: linkedNoteId } = useConsumeSearchParams( [ 'note' ] );
+	const { note: linkedNote } = useConsumeSearchParams( [ 'note' ] );
+	// The inbox matches the selection to loaded notes by their ID as text, so `042` would never match note 42.
+	const linkedNoteId = linkedNote && /^[1-9]\d*$/.test( linkedNote ) ? linkedNote : undefined;
 	const [ noteId, setSelectedNoteId ] = useState( handedOffNoteId ?? linkedNoteId );
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 
