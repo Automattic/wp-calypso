@@ -294,7 +294,7 @@ __metadata:
     "@automattic/jetpack-ai-sidebar": "workspace:^"
     "@automattic/wp-oxc-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
-    "@wordpress/components": "npm:^28.23.0"
+    "@wordpress/components": "npm:^45.0.0"
     "@wordpress/compose": "npm:^9.2.0"
     "@wordpress/data": "npm:^11.2.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^7.2.0"
