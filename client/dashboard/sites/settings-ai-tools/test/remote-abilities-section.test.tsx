@@ -2,12 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import {
-	isAutomatticianQuery,
-	queryClient,
-	siteAbilitiesQuery,
-	userSettingsQuery,
-} from '@automattic/api-queries';
+import { queryClient, siteAbilitiesQuery, userSettingsQuery } from '@automattic/api-queries';
 import '@testing-library/jest-dom';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -66,12 +61,10 @@ function seed( {
 	activeSite = JETPACK_SITE,
 	remoteGroups = {},
 	abilities,
-	isAutomattician = true,
 }: {
 	activeSite?: Site;
 	remoteGroups?: Record< string, boolean >;
 	abilities?: SiteAbility[];
-	isAutomattician?: boolean;
 } ) {
 	queryClient.setQueryData( userSettingsQuery().queryKey, {
 		mcp_abilities: {
@@ -84,10 +77,6 @@ function seed( {
 			],
 		},
 	} as unknown as UserSettings );
-	queryClient.setQueryData( isAutomatticianQuery().queryKey, {
-		number: 0,
-		teams: isAutomattician ? [ { slug: 'a8c' } ] : [],
-	} );
 	if ( abilities ) {
 		// The default test user's language is 'en', which maps to wpLocale 'en_US'.
 		queryClient.setQueryData( siteAbilitiesQuery( activeSite.ID, 'en_US' ).queryKey, abilities );
@@ -429,16 +418,10 @@ describe( '<RemoteAbilitiesSection>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'hides for non-Automattician users until launch', () => {
-		seed( {
-			abilities: catalog,
-			remoteGroups: { 'write:akismet': true },
-			isAutomattician: false,
-		} );
+	test( 'shows for non-Automattician users', () => {
+		seed( { abilities: catalog } );
 		render( <RemoteAbilitiesSection site={ JETPACK_SITE } category="write" />, { queryClient } );
 
-		expect(
-			screen.queryByRole( 'heading', { name: 'Site-published abilities' } )
-		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'Site-published abilities' } ) ).toBeVisible();
 	} );
 } );
