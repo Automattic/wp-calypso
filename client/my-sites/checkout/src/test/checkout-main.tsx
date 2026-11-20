@@ -881,12 +881,18 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it.each( [
-		[ 'isAkismetSitelessCheckout', 'akismet_siteless_checkout', 'akismet' ],
-		[ 'isMarketplaceSitelessCheckout', 'marketplace_siteless_checkout', 'marketplace' ],
-		[ 'isWpcomSitelessCheckout', 'wpcom_siteless_checkout', 'wpcom' ],
+		[ [ 'isAkismetSitelessCheckout' ], 'akismet_siteless_checkout', 'akismet' ],
+		[ [ 'isMarketplaceSitelessCheckout' ], 'marketplace_siteless_checkout', 'marketplace' ],
+		[ [ 'isWpcomSitelessCheckout' ], 'wpcom_siteless_checkout', 'wpcom' ],
+		// The server sends both flags on a Studio product.
+		[
+			[ 'isWpcomSitelessCheckout', 'isStudioSitelessCheckout' ],
+			'wpcom_siteless_checkout',
+			'studio',
+		],
 	] )(
-		'takes the siteless type of a renewal by subscription ID from the cart flag %s',
-		async ( cartFlag, expectedCheckoutFlow, expectedSitelessCheckoutType ) => {
+		'takes the siteless type of a renewal by subscription ID from the cart flags %s',
+		async ( cartFlags, expectedCheckoutFlow, expectedSitelessCheckoutType ) => {
 			const recordTracksEvent = jest.spyOn( Tracks, 'recordTracksEvent' );
 			// The server flags a renewal of a purchase on a holding site; the URL has no product.
 			const setCartWithHoldingSiteRenewal: typeof mockSetCartEndpoint = ( cartKey, requestCart ) =>
@@ -897,7 +903,10 @@ describe( 'CheckoutMain', () => {
 							? {
 									...product,
 									product_slug: 'personal-bundle',
-									extra: { ...product.extra, [ cartFlag ]: true },
+									extra: {
+										...product.extra,
+										...Object.fromEntries( cartFlags.map( ( flag ) => [ flag, true ] ) ),
+									},
 								}
 							: product
 					),

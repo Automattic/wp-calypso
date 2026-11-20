@@ -5,10 +5,12 @@ import { ThemeProvider } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
+import studioAppLogo from 'calypso/assets/images/icons/studio-app-logo.svg';
 import AkismetLogo from 'calypso/components/akismet-logo';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import PassportLogo from 'calypso/components/passport-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isStudioCheckoutPath } from 'calypso/lib/studio/checkout-urls';
 import {
 	AGENCY_CHECKOUT_PATH,
 	getAllowedA4ADashboardUrl,
@@ -56,6 +58,9 @@ const CheckoutMasterbar = ( {
 			if ( resolvedRenewalData.sitelessCheckoutType === 'akismet' ) {
 				return 'akismet';
 			}
+			if ( resolvedRenewalData.sitelessCheckoutType === 'studio' ) {
+				return 'studio';
+			}
 		}
 
 		// Check the siteless brand paths first: they have no site, so the site
@@ -70,6 +75,10 @@ const CheckoutMasterbar = ( {
 
 		if ( window.location.pathname.startsWith( '/checkout/passport' ) ) {
 			return 'passport';
+		}
+
+		if ( isStudioCheckoutPath( window.location.pathname ) ) {
+			return 'studio';
 		}
 
 		// Woo Hosted sites are supposed to default to WPcom colors, but without
@@ -93,7 +102,10 @@ const CheckoutMasterbar = ( {
 
 	const showCloseButton =
 		isLeavingAllowed &&
-		( checkoutType === 'wpcom' || checkoutType === 'gravatar' || checkoutType === 'woo-hosted' );
+		( checkoutType === 'wpcom' ||
+			checkoutType === 'gravatar' ||
+			checkoutType === 'woo-hosted' ||
+			checkoutType === 'studio' );
 
 	// Optional step indicator. The redirecting flow may pass its position via the
 	// `steps_current` / `steps_total` query params — checkout has no per-flow
@@ -149,6 +161,13 @@ const CheckoutMasterbar = ( {
 				return <AkismetLogo className="masterbar__akismet-wordmark" />;
 			case 'passport':
 				return <PassportLogo className="masterbar__passport-wordmark" />;
+			case 'studio':
+				return (
+					<span className="masterbar__studio-logo">
+						<img src={ studioAppLogo } alt="" width={ 24 } height={ 24 } />
+						WordPress Studio
+					</span>
+				);
 			case 'gravatar':
 				return <GravatarTextLogo />;
 			case 'a4a':
@@ -166,6 +185,7 @@ const CheckoutMasterbar = ( {
 				'masterbar--is-akismet': checkoutType === 'akismet',
 				'masterbar--is-a4a': checkoutType === 'a4a',
 				'masterbar--is-passport': checkoutType === 'passport',
+				'masterbar--is-studio': checkoutType === 'studio',
 			} ) }
 		>
 			<Step.TopBar

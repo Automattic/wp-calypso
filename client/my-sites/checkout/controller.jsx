@@ -57,6 +57,7 @@ import CheckoutPending from './checkout-thank-you/pending';
 import StudioReturn from './studio-return';
 import {
 	buildStudioCancelTo,
+	buildStudioCheckoutRedirectTo,
 	buildStudioRedirectTo,
 	getStudioCheckoutParams,
 } from './studio-return/round-trip';
@@ -148,6 +149,13 @@ export function checkoutUnifiedSiteless( context, next ) {
 
 export function checkoutWpcomSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'wpcom' } );
+}
+
+export function checkoutStudioSiteless( context, next ) {
+	sitelessCheckout( context, next, {
+		sitelessCheckoutType: 'studio',
+		redirectTo: context.query.redirect_to || buildStudioCheckoutRedirectTo( context.query ),
+	} );
 }
 
 export function checkoutRenewalBySubscriptionId( context, next ) {

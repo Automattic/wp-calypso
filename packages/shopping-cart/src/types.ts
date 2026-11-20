@@ -959,6 +959,11 @@ export interface ResponseCartProductExtra {
 	isAkismetSitelessCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
 	isWpcomSitelessCheckout?: boolean;
+	/**
+	 * Marks a product as added by the Studio-branded `/checkout/studio` route. Always
+	 * comes with `isWpcomSitelessCheckout`.
+	 */
+	isStudioSitelessCheckout?: boolean;
 	isA4ASitelessCheckout?: boolean;
 	isA4ADevSiteCheckout?: boolean;
 	referral_id?: number;
@@ -1011,7 +1016,15 @@ export interface ResponseCartGiftDetails {
 }
 
 export type SitelessCheckoutType =
-	'domainonly' | 'jetpack' | 'akismet' | 'marketplace' | 'a4a' | 'unified' | 'wpcom' | undefined;
+	| 'domainonly'
+	| 'jetpack'
+	| 'akismet'
+	| 'marketplace'
+	| 'a4a'
+	| 'unified'
+	| 'wpcom'
+	| 'studio'
+	| undefined;
 
 /**
  * Miscellaneous data requested to be added to the shopping cart item in a
@@ -1045,6 +1058,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 * Marks a product as having been added by the siteless `/checkout/wpcom` route.
 	 */
 	isWpcomSitelessCheckout?: boolean;
+	/**
+	 * Marks a product as added by the Studio-branded `/checkout/studio` route. Always
+	 * comes with `isWpcomSitelessCheckout`.
+	 */
+	isStudioSitelessCheckout?: boolean;
 
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;

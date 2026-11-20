@@ -55,6 +55,7 @@ import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
 import { getSitelessCheckoutTypeFromCart } from '../lib/get-siteless-checkout-type-from-cart';
 import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
+import { isWpcomSitelessCheckoutType } from '../lib/is-wpcom-siteless-checkout-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
@@ -222,7 +223,10 @@ export default function CheckoutMain( {
 
 		// Unified and WordPress.com siteless checkout have no site, so siteSlug would
 		// otherwise fall back to "no-user".
-		if ( sitelessCheckoutType === 'unified' || sitelessCheckoutType === 'wpcom' ) {
+		if (
+			sitelessCheckoutType === 'unified' ||
+			isWpcomSitelessCheckoutType( sitelessCheckoutType )
+		) {
 			return undefined;
 		}
 
