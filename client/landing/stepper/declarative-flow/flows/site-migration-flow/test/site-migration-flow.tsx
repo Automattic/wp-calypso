@@ -39,7 +39,9 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import {
 	getCurrentUserId,
+	getCurrentUserJetpackVisibleSiteCount,
 	getCurrentUserSiteCount,
+	getCurrentUserVisibleSiteCount,
 	isUserLoggedIn,
 } from 'calypso/state/current-user/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
@@ -495,7 +497,7 @@ describe( 'Site Migration Flow', () => {
 			expect( window.location.assign ).not.toHaveBeenCalled();
 		} );
 
-		it( 'returns through picker, plans, result, address and the entry page without a loop', () => {
+		it( 'returns through result, address and the entry page without keeping the picker', () => {
 			jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
 			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
 			const browserBack = jest.spyOn( window.history, 'back' ).mockImplementation( () => {} );
@@ -518,16 +520,9 @@ describe( 'Site Migration Flow', () => {
 				'calypso_site_migration_hosting_detected',
 				expect.objectContaining( { hosting_provider: 'automattic' } )
 			);
-			act( () => result.current.navigation.submit( { action: 'continue', ...source } ) );
-			expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
-			expect( Object.fromEntries( new URLSearchParams( result.current.location.search ) ) ).toEqual(
-				expect.objectContaining( {
-					...Object.fromEntries( new URLSearchParams( search ) ),
-					...source,
-					isWpcom: 'false',
-				} )
+			act( () =>
+				result.current.navigation.submit( { action: 'select-existing-site', ...source } )
 			);
-			act( () => result.current.navigation.submit( { action: 'select-existing-site' } ) );
 			expect( result.current.location.pathname ).toBe( '/site-migration/sitePicker' );
 			act( () =>
 				result.current.navigation.submit( {
@@ -544,18 +539,59 @@ describe( 'Site Migration Flow', () => {
 				} )
 			);
 			act( () => result.current.navigation.goBack() );
-			expect( result.current.location.pathname ).toBe( '/site-migration/sitePicker' );
-			expect( new URLSearchParams( result.current.location.search ).get( 'siteSlug' ) ).toBeFalsy();
-			act( () => result.current.navigation.goBack() );
-			expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
-			act( () => result.current.navigation.goBack() );
 			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+			expect( new URLSearchParams( result.current.location.search ).get( 'siteSlug' ) ).toBeFalsy();
 			act( () => result.current.navigation.goBack() );
 			expect( result.current.location.pathname ).toBe( addressPath );
 			expect( result.current.location.search ).toBe( search );
 			act( () => result.current.navigation.goBack() );
 			expect( result.current.location.pathname ).toBe( '/previous-page' );
 			expect( browserBack ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves the picker out of history after choosing to create a site', () => {
+			jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+			const source = {
+				from: 'https://wordpress.org/',
+				platform: 'wordpress',
+				host: 'automattic',
+				isWpcom: false,
+			};
+			const { result } = renderNavigation(
+				[
+					'/setup/previous-page',
+					`/setup/site-migration/site-migration-check?${ new URLSearchParams( {
+						from: source.from,
+						platform: source.platform,
+						siteId: '123',
+						siteSlug: 'destination.wordpress.com',
+					} ) }`,
+				],
+				1
+			);
+			act( () =>
+				result.current.navigation.submit( { action: 'select-existing-site', ...source } )
+			);
+			expect( result.current.location.pathname ).toBe( '/site-migration/sitePicker' );
+			act( () => result.current.navigation.submit( { action: 'create-site' } ) );
+			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+			expect( new URLSearchParams( result.current.location.search ).get( 'siteSlug' ) ).toBeFalsy();
+			act( () => result.current.navigation.goBack() );
+			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+			expect( new URLSearchParams( result.current.location.search ).get( 'siteSlug' ) ).toBe(
+				'destination.wordpress.com'
+			);
+		} );
+
+		it( 'returns a direct picker entry to the site checks when there is no history', () => {
+			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
+			const search = '?from=https%3A%2F%2Fwordpress.org%2F&platform=wordpress&siteId=&siteSlug=';
+			window.location.search = search;
+			const { result } = renderNavigation( [ `/setup/site-migration/sitePicker${ search }` ] );
+			act( () => result.current.navigation.goBack?.() );
+			expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+			expect( result.current.navigationType ).toBe( 'REPLACE' );
 		} );
 
 		it( 'replaces a direct result entry with address entry when there is no history', () => {
@@ -1714,11 +1750,11 @@ describe( 'Site Migration Flow', () => {
 						canUseAsDestination: false,
 						destinationSiteSlug: 'example.wordpress.com',
 						destinationSiteUrls: [ 'example.wordpress.com' ],
-						destinationPlanName: plan?.product_name_short,
 						needsUpgrade: !! plan,
 						isLoadingDestination: ! plan,
 						destinationFailed: false,
 						onRetryDestination: expect.any( Function ),
+						canPickDestination: expect.any( Boolean ),
 					} );
 					const result = runNavigation( {
 						from: STEPS.SITE_MIGRATION_CHECK,
@@ -1754,18 +1790,18 @@ describe( 'Site Migration Flow', () => {
 				const result = runNavigation( {
 					from: STEPS.UNIFIED_PLANS,
 					query: { ...context, from: '' },
-					dependencies: { action: 'select-existing-site' },
+					dependencies: { cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ] },
 				} );
 				expect( result ).toMatchDestination( { step: STEPS.SITE_MIGRATION_IDENTIFY } );
 			} );
 
-			it( 'returns to plans when creating a site from the picker', () => {
+			it( 'returns to the site checks when creating a site from the picker', () => {
 				const result = runNavigation( {
 					from: STEPS.PICK_SITE,
 					query: context,
 					dependencies: { action: 'create-site' },
 				} );
-				expect( result ).toMatchDestination( { step: STEPS.UNIFIED_PLANS } );
+				expect( result ).toMatchDestination( { step: STEPS.SITE_MIGRATION_CHECK } );
 				expect( goToCheckout ).not.toHaveBeenCalled();
 			} );
 
@@ -1794,6 +1830,44 @@ describe( 'Site Migration Flow', () => {
 				);
 			} );
 
+			it.each( [
+				[ 'no sites', 0, 0, false ],
+				[ 'only self-hosted Jetpack sites', 2, 2, false ],
+				[ 'a WordPress.com or Atomic site', 3, 2, true ],
+				[ 'counts not loaded', null, null, true ],
+			] )(
+				'offers picking another destination only with a site the picker lists (%s)',
+				( _, visibleSiteCount, jetpackVisibleSiteCount, canPickDestination ) => {
+					jest.mocked( getCurrentUserVisibleSiteCount ).mockReturnValue( visibleSiteCount );
+					jest
+						.mocked( getCurrentUserJetpackVisibleSiteCount )
+						.mockReturnValue( jetpackVisibleSiteCount );
+					const { result: props } = renderHookWithProvider(
+						() => siteMigrationFlow.useStepsProps(),
+						{ wrapper: MemoryRouter }
+					);
+					expect( props.current[ STEPS.SITE_MIGRATION_CHECK.slug ] ).toEqual(
+						expect.objectContaining( { canPickDestination } )
+					);
+				}
+			);
+
+			it( 'keeps the destination’s Change link while a destination is shown, whatever the site count', () => {
+				jest.mocked( getCurrentUserVisibleSiteCount ).mockReturnValue( 0 );
+				jest.mocked( getCurrentUserJetpackVisibleSiteCount ).mockReturnValue( 0 );
+				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+					siteId: 123,
+					siteSlug: 'example.wordpress.com',
+					site: null,
+				} as unknown as ReturnType< typeof siteData.useSiteData > );
+				const { result: props } = renderHookWithProvider( () => siteMigrationFlow.useStepsProps(), {
+					wrapper: MemoryRouter,
+				} );
+				expect( props.current[ STEPS.SITE_MIGRATION_CHECK.slug ] ).toEqual(
+					expect.objectContaining( { canPickDestination: true } )
+				);
+			} );
+
 			it( 'configures an eligible destination before handing off to MSD with original entry context', async () => {
 				jest.mocked( useFlowState().get ).mockReturnValue( { entryPoint: 'move-lp' } );
 				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
@@ -1811,11 +1885,11 @@ describe( 'Site Migration Flow', () => {
 					canUseAsDestination: false,
 					destinationSiteSlug: destination.siteSlug,
 					destinationSiteUrls: [ destination.siteSlug ],
-					destinationPlanName: 'Personal',
 					needsUpgrade: false,
 					isLoadingDestination: false,
 					destinationFailed: false,
 					onRetryDestination: expect.any( Function ),
+					canPickDestination: expect.any( Boolean ),
 				} );
 				const configure = nock( 'https://public-api.wordpress.com' )
 					.post( '/wpcom/v2/sites/123/wordpress-migration/configure', { source_url: context.from } )

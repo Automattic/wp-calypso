@@ -1,6 +1,7 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
+import { useQueryClient } from '@tanstack/react-query';
 import { Notice, VisuallyHidden } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
@@ -9,7 +10,10 @@ import { type FC, useEffect, useState, useCallback, useRef } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import { CAPTURE_URL_RGX, convertPlatformName } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
+import {
+	analyzeUrlQueryKey,
+	useAnalyzeUrlQuery,
+} from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
@@ -17,6 +21,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useFlowState, type AnyFlowInitialize } from '../../state-manager/store';
 import { createSitePreviewScreenshot } from '../components/site-preview/mshot';
+import { isSourceUnreachable } from './is-source-unreachable';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
@@ -55,6 +60,7 @@ export const Analyzer: FC< Props > = ( {
 	const enteredURL = /^https?:\/\//i.test( siteURL ) ? siteURL : `https://${ siteURL }`;
 	const isDestinationUrl = ( sourceUrl: string ) => isSiteAddress( sourceUrl, destinationSiteUrls );
 	const isDestinationSite = isDestinationUrl( siteURL );
+	const queryClient = useQueryClient();
 	const onCompleteRef = useRef( onComplete );
 	onCompleteRef.current = onComplete;
 	const {
@@ -66,31 +72,9 @@ export const Analyzer: FC< Props > = ( {
 		error,
 	} = useAnalyzeUrlQuery( siteURL, siteURL !== '' && ! isDestinationSite );
 
-	const errorHealth =
-		error &&
-		'data' in error &&
-		error.data &&
-		typeof error.data === 'object' &&
-		'site_health' in error.data
-			? error.data.site_health
-			: undefined;
-	const siteHealth = hasError ? errorHealth : siteInfo?.site_health;
-	// The health is from our own fetch of the homepage, not from how the migration will reach the site.
-	let isUnhealthy = typeof siteHealth === 'string' && siteHealth !== 'ok';
-	// A site we know is WordPress can still be migrated when its homepage is a 404.
-	if ( isUnhealthy && ! hasError && siteInfo?.platform === 'wordpress' ) {
-		isUnhealthy = siteHealth !== 'not_found';
-	}
 	let connectionIssue: ConnectionIssue | undefined;
 	if ( ! isManualWordPress && ! isDestinationSite && siteURL && ! isFetching ) {
-		if (
-			( ! siteInfo || hasError || [ 'wordpress', 'unknown' ].includes( siteInfo.platform ) ) &&
-			( isUnhealthy ||
-				( hasError &&
-					error &&
-					'code' in error &&
-					( error.code === 'http_request_failed' || error.code === 'rest_invalid_param' ) ) )
-		) {
+		if ( isSourceUnreachable( siteInfo, error ) ) {
 			connectionIssue = 'unreachable';
 		}
 	}
@@ -142,6 +126,10 @@ export const Analyzer: FC< Props > = ( {
 			! isFetchingHosting &&
 			( hostingProviderData || hasHostingError || ( isManualWordPress && hasError ) )
 		) {
+			// The next step looks the source up by the address the analyzer settled on.
+			if ( siteInfo ) {
+				queryClient.setQueryData( analyzeUrlQueryKey( siteInfo.url ), siteInfo );
+			}
 			onCompleteRef.current(
 				siteInfo ?? { url: enteredURL, platform: 'wordpress' },
 				hostingProviderData?.hosting_provider?.slug
@@ -160,6 +148,7 @@ export const Analyzer: FC< Props > = ( {
 		isFetching,
 		isFetchingHosting,
 		connectionIssue,
+		queryClient,
 	] );
 
 	useEffect( () => {

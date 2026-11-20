@@ -2,9 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import type { UrlData } from 'calypso/blocks/import/types';
 
-export const useAnalyzeUrlQuery = ( domain: string, isValid?: boolean ) => {
+export const analyzeUrlQueryKey = ( domain: string ) => [ 'analyze-url-', domain ];
+
+export const useAnalyzeUrlQuery = ( domain: string, isValid?: boolean, staleTime = 5000 ) => {
 	return useQuery( {
-		queryKey: [ 'analyze-url-', domain ],
+		queryKey: analyzeUrlQueryKey( domain ),
 		queryFn: (): Promise< UrlData > =>
 			wp.req.get( {
 				path: '/imports/analyze-url?site_url=' + encodeURIComponent( domain ),
@@ -13,7 +15,7 @@ export const useAnalyzeUrlQuery = ( domain: string, isValid?: boolean ) => {
 		meta: {
 			persist: false,
 		},
-		staleTime: 5000, // 5 seconds
+		staleTime,
 		enabled: !! domain && isValid,
 		retry: false,
 		refetchOnWindowFocus: false,

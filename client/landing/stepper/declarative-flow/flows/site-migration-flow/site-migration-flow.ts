@@ -40,7 +40,12 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserJetpackVisibleSiteCount,
+	getCurrentUserSiteCount,
+	getCurrentUserVisibleSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { withLocale } from '../../helpers/with-locale';
 import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
 import * as paths from './paths';
@@ -200,6 +205,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const { __ } = useI18n();
 		const { siteId, siteSlug, site } = useSiteData();
 		const { isError: hasSiteError, refetch: refetchSite } = useSiteQuery();
+		// The picker lists WordPress.com and Atomic sites, not self-hosted Jetpack ones.
+		const pickableSiteCount = useSelector( ( state ) => {
+			const visibleSiteCount = getCurrentUserVisibleSiteCount( state );
+			return visibleSiteCount === null
+				? null
+				: visibleSiteCount - ( getCurrentUserJetpackVisibleSiteCount( state ) ?? 0 );
+		} );
 		const query = useQuery();
 		const flowState = useFlowState< typeof initialize >();
 		const handoff = flowState.get( 'migrationHandoff' );
@@ -259,11 +271,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 				destinationSiteSlug: hasDestination ? siteSlug : undefined,
 				destinationSiteUrl: hasDestination ? site?.URL : undefined,
 				destinationSiteUrls,
-				destinationPlanName: site?.plan?.product_name_short || site?.plan?.product_name,
 				needsUpgrade: hasDestination && !! site?.plan && ! canInstallPlugins( site ),
 				isLoadingDestination: hasDestination && ! site?.plan && ! hasSiteError,
 				destinationFailed: hasDestination && hasSiteError,
 				onRetryDestination: refetchSite,
+				// With nothing to pick, the picker can only make a new site, which is already the default.
+				canPickDestination: hasDestination || pickableSiteCount === null || pickableSiteCount > 0,
 			},
 			plans: {
 				headerText: __( 'Ready to migrate' ),
@@ -271,7 +284,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					? __( 'Choose a plan to upgrade your site and continue the migration.' )
 					: __( 'Choose a plan for your new site. Every paid plan includes the migration.' ),
 				isInSignup: ! hasDestination,
-				showExistingSiteLink: ! hasDestination,
 				defaultInterval: 'yearly',
 			},
 		};
@@ -420,13 +432,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 			from: string
 		) => {
 			if ( currentStep !== STEPS.SITE_MIGRATION_CHECK.slug ) {
+				// The picker is a detour from the site checks, so it doesn't stay in history.
 				return navigate(
 					paths.siteCheckPath( {
 						from,
 						siteId: destinationId,
 						siteSlug: destinationSlug,
 						isWpcom: false,
-					} )
+					} ),
+					undefined,
+					currentStep === STEPS.PICK_SITE.slug
 				);
 			}
 			if ( ! site?.plan || isSiteAddress( from, getSiteAddresses( destinationSlug, site ) ) ) {
@@ -708,15 +723,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if ( ! isReprintSource ) {
 						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 					}
-					if ( providedDependencies?.action === 'select-existing-site' ) {
-						return navigate(
-							paths.sitePickerPath( {
-								siteId: '',
-								siteSlug: '',
-								from: fromQueryParam,
-							} )
-						);
-					}
 					const planCartItem = providedDependencies?.cartItems?.[ 0 ];
 					if ( ! planCartItem ) {
 						return;
@@ -805,7 +811,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 						case 'create-site': {
 							if ( isReprintSource && fromQueryParam ) {
-								return navigate( paths.plansPath( { from: fromQueryParam } ) );
+								return replace( paths.siteCheckPath( { from: fromQueryParam, isWpcom: false } ) );
 							}
 							const detectedHost = providedDependencies.host as string | undefined;
 							const host = detectedHost || hostQueryParam;
@@ -1155,12 +1161,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 			fromQueryParam &&
 			( currentStep === STEPS.UNIFIED_PLANS.slug || currentStep === STEPS.PICK_SITE.slug )
 		) {
-			goBack = () =>
-				replace(
-					currentStep === STEPS.PICK_SITE.slug
-						? paths.plansPath( { from: fromQueryParam } )
-						: paths.siteCheckPath( { from: fromQueryParam } )
-				);
+			goBack = () => replace( paths.siteCheckPath( { from: fromQueryParam } ) );
 		}
 		return { submit, exitFlow, goBack };
 	},
