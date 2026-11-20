@@ -669,10 +669,9 @@
 	}
 }
 
-// Below the two-pane width the note's title is also its Back button. It keeps the heading's
-// type and color, and its arrow keeps the place the icon-only button had.
+// Below the two-pane width the note's title is also its Back button, in the heading's type
+// and color.
 .wpnc__note-back.components-button {
-	padding-inline-start: 0;
 	color: inherit;
 	font: inherit;
 }

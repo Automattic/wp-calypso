@@ -51,12 +51,22 @@ $pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-b
 		padding-block: $grid-unit-30;
 	}
 
-	// The header spans the pane, unlike the reading column below it: the title starts at the
-	// pane's edge and the actions sit at its far end. Below the two-pane width it keeps the
-	// panel's padding.
+	// The header spans the pane, unlike the reading column below it, with the body's padding.
+	// Its icons' glyphs sit inside 24px boxes, so the outer ones are pulled out to put their
+	// ink on the same edges as the body's text: the back arrow's starts 10px in, the trailing
+	// icon's ends 5px in (the bell) or, below the two-pane width, 7px in (Next notification).
 	.components-card__header {
-		@include break-large {
-			padding-inline: $grid-unit-30;
+		.wpnc__note-back.components-button {
+			padding-inline-start: 0;
+			margin-inline-start: -10px;
+		}
+
+		.components-button:not(.wpnc__note-back):last-child {
+			margin-inline-end: -7px;
+
+			@include break-large {
+				margin-inline-end: -5px;
+			}
 		}
 	}
 
