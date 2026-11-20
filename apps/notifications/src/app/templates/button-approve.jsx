@@ -1,11 +1,12 @@
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+import { useRef } from 'react';
 import { connect } from 'react-redux';
 import { getReferenceId } from '../../panel/helpers/notes';
+import { approveNote as approveNoteAction } from '../../panel/state/notes/actions';
 import { setApproveStatus as setApproveStatusAction } from '../../panel/state/notes/thunks';
 import { useAppContext } from '../context';
 import ActionButton from './action-button';
-import usePendingNotes from './use-pending-notes';
 
 const check = (
 	<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -28,29 +29,39 @@ const cross = (
 	</svg>
 );
 
-const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
+const ApproveButton = ( { approveNote, isApproved, isMinimal, note, setApproveStatus } ) => {
 	const { client } = useAppContext();
-	const { isPending, start, finish } = usePendingNotes();
-	const isBusy = isPending( note.id );
+	// The approval last asked for on each note whose request is still out. It is per note,
+	// since the same button shows the next note opened meanwhile.
+	const wantedRef = useRef( new Map() );
 	// A minimal button names what it does, so an approved comment's reads "Unapprove".
 	const isUnapprove = isMinimal && isApproved;
 
-	// The button stays in place as it toggles, so a second press waits for the first to land,
-	// which keeps them from reaching the server out of order.
+	// The button toggles in place, so it can be pressed again before the server answers. A press
+	// while a request is out shows at once, and the last one is sent once that request lands, so
+	// the requests reach the server in order and the last press wins.
 	const handleToggle = async () => {
-		if ( isBusy ) {
+		const wanted = wantedRef.current;
+		const isQueued = wanted.has( note.id );
+		wanted.set( note.id, ! isApproved );
+		if ( isQueued ) {
+			approveNote( note.id, ! isApproved );
 			return;
 		}
-		start( note.id );
-		await setApproveStatus(
-			note.id,
-			getReferenceId( note, 'site' ),
-			getReferenceId( note, 'comment' ),
-			! isApproved,
-			note.type,
-			client
-		);
-		finish( note.id );
+
+		let sent;
+		do {
+			sent = wanted.get( note.id );
+			await setApproveStatus(
+				note.id,
+				getReferenceId( note, 'site' ),
+				getReferenceId( note, 'comment' ),
+				sent,
+				note.type,
+				client
+			);
+		} while ( wanted.get( note.id ) !== sent );
+		wanted.delete( note.id );
 	};
 
 	const getText = () => {
@@ -65,7 +76,6 @@ const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 			icon={ isUnapprove ? cross : check }
 			isActive={ isApproved && ! isMinimal }
 			isMinimal={ isMinimal }
-			isBusy={ isBusy }
 			hotkey="a"
 			onToggle={ handleToggle }
 			text={ getText() }
@@ -80,4 +90,7 @@ ApproveButton.propTypes = {
 	note: PropTypes.object.isRequired,
 };
 
-export default connect( null, { setApproveStatus: setApproveStatusAction } )( ApproveButton );
+export default connect( null, {
+	approveNote: approveNoteAction,
+	setApproveStatus: setApproveStatusAction,
+} )( ApproveButton );
