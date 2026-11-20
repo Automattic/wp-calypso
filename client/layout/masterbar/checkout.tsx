@@ -19,6 +19,8 @@ import {
 	useCheckoutLeaveModal,
 } from 'calypso/my-sites/checkout/src/components/leave-checkout-modal';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
+import { resolvedRenewalDataStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
+import { useValueStore } from 'calypso/my-sites/checkout/src/lib/value-store';
 import Masterbar from './masterbar';
 
 interface Props {
@@ -42,8 +44,20 @@ const CheckoutMasterbar = ( {
 	const leaveModalProps = useCheckoutLeaveModal( { siteUrl: siteSlug ?? '' } );
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const resolvedRenewalData = useValueStore( resolvedRenewalDataStore );
 
 	const getCheckoutType = () => {
+		// A renewal by subscription ID alone doesn't name its brand in the URL,
+		// so wait for the cart rather than show the wrong one.
+		if ( window.location.pathname.startsWith( '/checkout/renew/' ) ) {
+			if ( ! resolvedRenewalData ) {
+				return 'pending';
+			}
+			if ( resolvedRenewalData.sitelessCheckoutType === 'akismet' ) {
+				return 'akismet';
+			}
+		}
+
 		// Check the siteless brand paths first: they have no site, so the site
 		// props describe whichever site was last selected, not this checkout.
 		if ( window.location.pathname.startsWith( '/checkout/akismet' ) ) {
@@ -156,7 +170,7 @@ const CheckoutMasterbar = ( {
 		>
 			<Step.TopBar
 				logo={ getBrandLogo() }
-				hideLogo={ checkoutType === 'woo-hosted' }
+				hideLogo={ checkoutType === 'woo-hosted' || checkoutType === 'pending' }
 				leftElement={ agencyBackButton || leaveCheckoutButton || undefined }
 				rightElement={
 					<>
