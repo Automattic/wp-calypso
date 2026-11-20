@@ -206,17 +206,25 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 				count
 			);
 
-	const question = hasMore
-		? sprintf(
+	const getQuestion = () => {
+		if ( hasMore ) {
+			return sprintf(
 				/* translators: %d is a number of notifications. The plus sign means "or more". */
 				__( 'Mark all %d+ notifications as read?' ),
 				count
-			)
-		: sprintf(
-				/* translators: %d is the number of unread notifications, usually more than 20. */
-				_n( 'Mark %d notification as read?', 'Mark all %d notifications as read?', count ),
-				count
 			);
+		}
+		// The count can drop to one while the modal is open. It is checked here, not left to `_n`,
+		// since some languages use the singular form for 21, 31 and so on.
+		if ( count === 1 ) {
+			return __( 'Mark 1 notification as read?' );
+		}
+		return sprintf(
+			/* translators: %d is the number of unread notifications, usually more than 20. */
+			_n( 'Mark all %d notifications as read?', 'Mark all %d notifications as read?', count ),
+			count
+		);
+	};
 
 	return (
 		<div ref={ wrapperRef } className="wpnc-app__mark-all-read">
@@ -236,7 +244,7 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 			   labels don't fit side by side. The modal returns the focus to the link as it closes. */ }
 			{ isConfirming && (
 				<Modal
-					title={ question }
+					title={ getQuestion() }
 					size="medium"
 					onRequestClose={ handleCancel }
 					onKeyDown={ handleModalKeyDown }
