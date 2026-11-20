@@ -19,6 +19,7 @@ import { SEARCH_TAB } from 'calypso/reader/discover/helper';
 import { recordAction } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import PostResults from './post-results';
+import { SearchRecommendedBlogs } from './recommended-blogs';
 import Suggestion from './suggestion';
 import SuggestionProvider from './suggestion-provider';
 import { getSearchPlaceholderText } from './utils';
@@ -163,6 +164,7 @@ class SearchStream extends React.Component {
 						/>
 					) }
 				</div>
+				{ ! query && <SearchRecommendedBlogs /> }
 				<div className="search-stream__post-results">
 					<PostResults { ...this.props } fixedHeaderHeight={ fixedAreaHeight } />
 				</div>

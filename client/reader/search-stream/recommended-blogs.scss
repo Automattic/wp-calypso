@@ -1,0 +1,15 @@
+.search-stream__recommended-blogs {
+	margin-block-end: 32px;
+	padding-inline: 16px;
+}
+
+.search-stream__recommended-blogs-title {
+	margin-block: 0 24px;
+	color: var( --color-text );
+}
+
+@media ( min-width: 600px ) {
+	.search-stream__recommended-blogs {
+		padding-inline: 0;
+	}
+}

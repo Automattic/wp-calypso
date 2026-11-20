@@ -4,12 +4,9 @@ import { Icon, check, info, plus } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import {
-	useFollowSite,
-	useIsSubscribed,
-	useUnfollowSite,
-} from 'calypso/reader/data/site-subscriptions';
+import { useIsSubscribed } from 'calypso/reader/data/site-subscriptions';
 import { useLatestPostDate } from 'calypso/reader/onboarding-rsm/recommended-blogs/use-latest-post-date';
+import { useRecommendedBlogFollowActions } from './use-follow-actions';
 import type {
 	RecommendedBlog,
 	RecommendedBlogGroup,
@@ -30,10 +27,14 @@ type FollowModeProps = {
 	followSource?: string;
 };
 
-type RecommendedBlogGroupsProps = {
+type GroupProps = {
 	groups: RecommendedBlogGroup[];
 	headingLevel?: 2 | 3;
-} & ( SelectModeProps | FollowModeProps );
+};
+
+type RecommendedBlogGroupsProps = GroupProps & ( SelectModeProps | FollowModeProps );
+type FollowActions = ReturnType< typeof useRecommendedBlogFollowActions >;
+type BlogGroupsProps = GroupProps & ( SelectModeProps | ( FollowModeProps & FollowActions ) );
 
 const getDomain = ( url: string ) => {
 	try {
@@ -244,31 +245,23 @@ function SelectablePill( {
 
 function FollowablePill( {
 	blog,
-	followSource,
+	isBusy,
+	onToggleFollow,
 	onIconError,
 }: {
 	blog: RecommendedBlog;
-	followSource?: string;
+	isBusy: boolean;
+	onToggleFollow: FollowActions[ 'onToggleFollow' ];
 	onIconError: () => void;
 } ) {
 	const isFollowing = useIsSubscribed( { feedId: blog.feed_ID, feedUrl: blog.feed_URL } );
-	const follow = useFollowSite();
-	const unfollow = useUnfollowSite();
-	const isBusy = follow.isPending || unfollow.isPending;
 
 	return (
 		<BlogPill
 			blog={ blog }
 			isSelected={ isFollowing }
 			isBusy={ isBusy }
-			onClick={ () => {
-				const params = { feedUrl: blog.feed_URL, source: followSource };
-				if ( isFollowing ) {
-					unfollow.mutate( params );
-				} else {
-					follow.mutate( params );
-				}
-			} }
+			onClick={ () => onToggleFollow( blog, isFollowing ) }
 			onIconError={ onIconError }
 		/>
 	);
@@ -282,7 +275,7 @@ function FollowablePill( {
  * In `select` mode the parent owns the selection (e.g. to follow in a batch);
  * in `follow` mode each pill follows or unfollows straight away.
  */
-export function RecommendedBlogGroups( props: RecommendedBlogGroupsProps ) {
+function BlogGroups( props: BlogGroupsProps ) {
 	const { groups, headingLevel = 3 } = props;
 	const [ brokenIcons, setBrokenIcons ] = useState< ReadonlySet< number > >( () => new Set() );
 	const Heading = headingLevel === 2 ? 'h2' : 'h3';
@@ -325,7 +318,8 @@ export function RecommendedBlogGroups( props: RecommendedBlogGroupsProps ) {
 									<FollowablePill
 										key={ blog.feed_ID }
 										blog={ blog }
-										followSource={ props.followSource }
+										isBusy={ props.pendingFeedIds.has( blog.feed_ID ) }
+										onToggleFollow={ props.onToggleFollow }
 										onIconError={ () => hideBlog( blog ) }
 									/>
 								)
@@ -335,5 +329,18 @@ export function RecommendedBlogGroups( props: RecommendedBlogGroupsProps ) {
 				);
 			} ) }
 		</div>
+	);
+}
+
+function FollowableBlogGroups( props: GroupProps & FollowModeProps ) {
+	const actions = useRecommendedBlogFollowActions( props.followSource );
+	return <BlogGroups { ...props } { ...actions } />;
+}
+
+export function RecommendedBlogGroups( props: RecommendedBlogGroupsProps ) {
+	return props.mode === 'follow' ? (
+		<FollowableBlogGroups { ...props } />
+	) : (
+		<BlogGroups { ...props } />
 	);
 }
