@@ -42,6 +42,9 @@ jest.mock( '@automattic/data-stores', () => ( {
 	Onboard: { SiteIntent: { Sell: 'sell', Build: 'build' } },
 } ) );
 
+jest.mock( '@automattic/domain-search', () => ( {
+	isFreeSubdomainQuery: ( query: string ) => query.endsWith( '.wordpress.com' ),
+} ) );
 jest.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_FLOW: 'ai-site-builder',
 	SITE_MIGRATION_FLOW: 'site-migration',
@@ -362,6 +365,134 @@ describe( 'create-site', () => {
 		await expect( runStep() ).rejects.toThrow( 'cart rejected' );
 
 		expect( transferDomainToSite ).toHaveBeenCalledWith( 'owned-domain.com', 555, 111 );
+
+		// The step keeps the site of a rejected cart for the next run in this page load. A run that
+		// succeeds clears it, so the next test starts without one.
+		await pendingAction!();
+	} );
+
+	describe( 'retry after a rejected cart', () => {
+		beforeEach( () => {
+			mockPlanCartItem = { product_slug: 'personal-bundle' };
+		} );
+
+		// The flow state record cannot match an unnamed request, so without this the retry from the
+		// error step gives the account a second site.
+		it( 'adds to the cart of the first site when an unnamed request is retried', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+			expect( addProductsToCart ).toHaveBeenLastCalledWith(
+				'brand-new.wordpress.com',
+				'onboarding',
+				[ mockPlanCartItem ],
+				{ throwOnError: true }
+			);
+		} );
+
+		// A run that finished has handed its site to checkout. The next unnamed run is a new signup.
+		it( 'creates a new site for an unnamed request after a run that succeeded', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await pendingAction!();
+			await pendingAction!();
+
+			expect( createSite ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		// Only a run that reaches its end forgets the site. A retry that fails must not.
+		it( 'adds to the cart of the first site again when the cart rejects the retry too', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock )
+				.mockRejectedValueOnce( new Error( 'cart rejected' ) )
+				.mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		// A free subdomain is the address of the site. The first site has another address.
+		it( 'creates a new site when the retry asks for a free subdomain', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			mockSiteUrl = 'my-site.wordpress.com';
+			pendingAction = undefined;
+			await runStep();
+
+			expect( createSite ).toHaveBeenCalledTimes( 2 );
+			expect( flowStateStore.createdSite ).toMatchObject( {
+				requestedName: 'my-site.wordpress.com',
+			} );
+		} );
+
+		// The flow state record matches on the name, so without this a retry with another domain
+		// gives the account a second site and leaves the first one unused.
+		it( 'adds to the cart of the first site when the retry asks for another paid domain', async () => {
+			mockSiteUrl = 'example.com';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			mockSiteUrl = 'example.net';
+			pendingAction = undefined;
+			await expect( runStep() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+			expect( flowStateStore.createdSite ).toMatchObject( {
+				siteId: 111,
+				requestedName: 'example.net',
+			} );
+		} );
+
+		// The first site has the theme and visibility of the flow that created it.
+		it( 'creates a new site when a run in another flow follows the rejected cart', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			pendingAction = undefined;
+			await runStep( { flow: 'domain' } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 2 );
+			expect( ( createSite as jest.Mock ).mock.calls[ 1 ][ 0 ] ).toBe( 'domain' );
+		} );
+
+		// The intent applies only when it is set at creation, so the first site cannot get it later.
+		it( 'creates a new site when the retry needs another site intent', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			mockIsSimplifiedOnboarding = true;
+			pendingAction = undefined;
+			await runStep();
+
+			expect( createSite ).toHaveBeenCalledTimes( 2 );
+			// The step passes the site intent to createSite as its eleventh argument.
+			expect( ( createSite as jest.Mock ).mock.calls[ 1 ][ 10 ] ).toBe( 'build' );
+		} );
+
+		it( 'adopts the recorded site when a named request is retried', async () => {
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+			expect( flowStateStore.createdSite ).toMatchObject( {
+				requestedName: 'my-site.wordpress.com',
+			} );
+		} );
 	} );
 
 	// The site works without the domain, so a failed move must not stop the signup.

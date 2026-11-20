@@ -1,6 +1,7 @@
 import { transferDomainToSite } from '@automattic/api-core';
 import { isDomainMoveInternal, isEcommerce } from '@automattic/calypso-products';
 import { Site, Onboard } from '@automattic/data-stores';
+import { isFreeSubdomainQuery } from '@automattic/domain-search';
 import {
 	AI_SITE_BUILDER_FLOW,
 	DIRECT_TO_CART_FLOW,
@@ -157,6 +158,18 @@ function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise
 
 	return result;
 }
+
+// The site a run made before its cart add threw. A retry of the step adds to that site's cart
+// instead of asking /sites/new for a second site, also when the retry asks for another domain.
+// The `createdSite` record in the flow state cannot do this: it matches on the requested name, and
+// the flow state outlives a run, so a record without that match could belong to an earlier
+// signup. A page load does not outlive the run, and a rejected cart goes to the error step
+// without a page load.
+//
+// A site keeps the theme, visibility, title and intent it was created with, and some of them only
+// apply at creation. So only a run with the same site choices can use the site. A run in another
+// flow of the same tab, or a retry with a plan that needs another intent, creates its own site.
+let siteAfterCartFailure: { siteId: number; siteSlug: string; siteChoices: string } | undefined;
 
 // The domain search records the site a moved domain is on now. The move call needs it.
 function getMoveSourceSiteId( item: MinimalRequestCartProduct ): number | undefined {
@@ -435,6 +448,26 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			! isImport &&
 			! blueprint;
 
+		const siteTitle = urlData?.meta.title ?? selectedSiteTitle;
+		const specId = urlQueryParams.get( 'spec_id' );
+		const ref = isPlaygroundPublish ? 'playground-publish' : undefined;
+		// The requested name is left out: a paid domain is added to the site, so a retry can change it.
+		const siteChoices = JSON.stringify( [
+			flow,
+			theme,
+			siteVisibility,
+			siteTitle,
+			useThemeHeadstart,
+			partnerBundle,
+			sourceSlug,
+			siteIntent,
+			gardenName,
+			gardenPartnerName,
+			specId,
+			ref,
+			aiLaunchpadEnabled,
+		] );
+
 		// A run creates one site. Arriving here again — Back onto a step that advances by itself, a
 		// reload, a second tab landing on the flow — has to adopt the site this run already made
 		// rather than ask for another. /sites/new is not idempotent, and the free-subdomain path
@@ -456,14 +489,21 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				( requestedName || canReuseUnnamedSite ) && recordedSite?.requestedName === requestedName
 					? recordedSite
 					: undefined;
+			// A free subdomain is the address of the site itself, so a request for one that the
+			// record does not match needs a site of its own. A paid domain is added to the site.
+			const siteToReuse =
+				siteFromThisRun ??
+				( isFreeSubdomainQuery( requestedName ) || siteAfterCartFailure?.siteChoices !== siteChoices
+					? undefined
+					: siteAfterCartFailure );
 
-			const site = siteFromThisRun
-				? { siteId: siteFromThisRun.siteId, siteSlug: siteFromThisRun.siteSlug }
+			const site = siteToReuse
+				? { siteId: siteToReuse.siteId, siteSlug: siteToReuse.siteSlug }
 				: await createSite(
 						flow,
 						theme,
 						siteVisibility,
-						urlData?.meta.title ?? selectedSiteTitle,
+						siteTitle,
 						// We removed the color option during newsletter onboarding.
 						// But backend still expects/needs a value, so supplying the default.
 						// Ideally should remove this and update code downstream to handle this.
@@ -477,8 +517,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 						undefined, // siteGoals
 						gardenName,
 						gardenPartnerName,
-						urlQueryParams.get( 'spec_id' ),
-						isPlaygroundPublish ? 'playground-publish' : undefined,
+						specId,
+						ref,
 						undefined, // provisionTarget
 						aiLaunchpadEnabled
 					);
@@ -514,7 +554,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			await moveDomainsToSite( freePlanDomainMoves, site.siteId, flow );
 
 			if ( additionalCartItems.length > 0 ) {
-				await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
+				try {
+					await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
+				} catch ( error ) {
+					siteAfterCartFailure = { siteId: site.siteId, siteSlug: site.siteSlug, siteChoices };
+					throw error;
+				}
 			}
 
 			// Poll for garden provisioning status if this is a garden site
@@ -524,6 +569,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 			if ( isEntrepreneurFlow( flow ) ) {
 				await addEcommerceTrial( { siteId: site.siteId } );
+				siteAfterCartFailure = undefined;
 
 				return {
 					siteId: site.siteId,
@@ -532,6 +578,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 					siteCreated: true,
 				};
 			}
+
+			siteAfterCartFailure = undefined;
 
 			return {
 				siteId: site.siteId,
