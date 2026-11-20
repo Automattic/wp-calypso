@@ -11,6 +11,7 @@ import { useCreateZendeskConversation } from '../use-create-zendesk-conversation
 const mockTrackEvent = vi.fn();
 const mockSetChat = vi.fn();
 const mockSubmitUserFields = vi.fn();
+const mockRequestClassificationTags = vi.fn();
 const mockAddEventToInteraction = vi.fn();
 const mockStartNewInteraction = vi.fn();
 const mockGetOdieTransferMessages = vi.fn().mockReturnValue( [] );
@@ -30,6 +31,7 @@ vi.mock( 'react-router-dom', () => ( {
 } ) );
 
 vi.mock( '@automattic/zendesk-client', () => ( {
+	requestClassificationTags: ( ...args: unknown[] ) => mockRequestClassificationTags( ...args ),
 	useUpdateZendeskUserFields: () => ( {
 		isPending: false,
 		mutateAsync: mockSubmitUserFields,
@@ -87,6 +89,7 @@ beforeEach( () => {
 	vi.useFakeTimers();
 	mockHasReachedLimit = false;
 	mockSubmitUserFields.mockResolvedValue( undefined );
+	mockRequestClassificationTags.mockResolvedValue( [] );
 	// activeInteractionId === interaction.uuid, so updateConversation is skipped.
 	mockAddEventToInteraction.mockResolvedValue( { uuid: 'int-1' } );
 	mockStartNewInteraction.mockResolvedValue( { uuid: 'int-1' } );
@@ -312,5 +315,111 @@ describe( 'useCreateZendeskConversation — conversation tags', () => {
 		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata ).not.toHaveProperty(
 			'zen:ticket:tags'
 		);
+	} );
+} );
+
+describe( 'useCreateZendeskConversation — classification tags', () => {
+	beforeEach( () => {
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+	} );
+
+	it( 'writes the classification tags next to the configured and checkout tags, each once', async () => {
+		const context = ( useOdieAssistantContext as Mock )();
+		( useOdieAssistantContext as Mock ).mockReturnValue( {
+			...context,
+			zendeskConversationTags: [ 'woo_support_flow_help_center', 'cl_classified' ],
+			checkoutSupportVariation: 'hybrid',
+		} );
+		mockRequestClassificationTags.mockResolvedValue( [ 'cl_category_billing', 'cl_classified' ] );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await expect( result.current( { createdFrom: 'automatic_escalation' } ) ).resolves.toBe(
+			'conv-1'
+		);
+
+		expect( mockRequestClassificationTags ).toHaveBeenCalledWith( 'odie-1' );
+		expect( smoochCreateConversation ).toHaveBeenCalledWith( {
+			metadata: expect.objectContaining( {
+				'zen:ticket:tags':
+					'woo_support_flow_help_center,cl_classified,cl_category_billing,wpcom_checkout_chat,wpcom_checkout_chat_hybrid',
+			} ),
+		} );
+		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_tags_count: 2,
+			classification_timed_out: false,
+		} );
+	} );
+
+	it( 'requests the tags alongside the user fields, not after them', async () => {
+		let resolveUserFields: () => void = () => {};
+		mockSubmitUserFields.mockReturnValue(
+			new Promise< void >( ( resolve ) => {
+				resolveUserFields = resolve;
+			} )
+		);
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		const promise = result.current( { createdFrom: 'automatic_escalation' } );
+
+		expect( mockRequestClassificationTags ).toHaveBeenCalledTimes( 1 );
+		expect( mockSubmitUserFields ).toHaveBeenCalledTimes( 1 );
+
+		resolveUserFields();
+		await expect( promise ).resolves.toBe( 'conv-1' );
+	} );
+
+	it( 'creates the chat without classification tags once the time limit passes', async () => {
+		mockRequestClassificationTags.mockReturnValue( new Promise( () => {} ) );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		const promise = result.current( { createdFrom: 'automatic_escalation' } );
+
+		await vi.advanceTimersByTimeAsync( 4999 );
+		expect( smoochCreateConversation ).not.toHaveBeenCalled();
+
+		await vi.advanceTimersByTimeAsync( 1 );
+		await expect( promise ).resolves.toBe( 'conv-1' );
+
+		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata ).not.toHaveProperty(
+			'zen:ticket:tags'
+		);
+		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_tags_count: 0,
+			classification_wait_ms: 5000,
+			classification_timed_out: true,
+		} );
+	} );
+
+	it( 'does not wait for the tags when the user fields fail', async () => {
+		mockRequestClassificationTags.mockReturnValue( new Promise( () => {} ) );
+		mockSubmitUserFields.mockRejectedValue( new Error( 'user fields failed' ) );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+
+		await expect(
+			result.current( { createdFrom: 'automatic_escalation' } )
+		).resolves.toBeUndefined();
+
+		expect( smoochCreateConversation ).not.toHaveBeenCalled();
+		expect( lastTrackedProps( 'error_submitting_zendesk_user_fields' ) ).toBeDefined();
+		expect( vi.getTimerCount() ).toBe( 0 );
+	} );
+
+	it( 'makes no classification request without an Odie chat', async () => {
+		const context = ( useOdieAssistantContext as Mock )();
+		( useOdieAssistantContext as Mock ).mockReturnValue( {
+			...context,
+			chat: { ...context.chat, odieId: null },
+		} );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await expect( result.current( { createdFrom: 'direct_url' } ) ).resolves.toBe( 'conv-1' );
+
+		expect( mockRequestClassificationTags ).not.toHaveBeenCalled();
+		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_tags_count: 0,
+			classification_wait_ms: 0,
+			classification_timed_out: false,
+		} );
 	} );
 } );
