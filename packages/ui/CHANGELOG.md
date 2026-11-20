@@ -4,7 +4,7 @@
 
 - `Badge`: Remove component. Use `Badge` from `@wordpress/ui` instead.
 - Require `@wordpress/icons` ^21.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
-- Require `@wordpress/ui` ^0.27.0, `@wordpress/element` ^10.1.0, `@wordpress/i18n` ^7.1.0, `@wordpress/primitives` ^5.1.0 and `@wordpress/base-styles` 15.1.0.
+- Require `@wordpress/ui` ^0.27.0, `@wordpress/element` ^10.2.0, `@wordpress/i18n` ^7.2.0, `@wordpress/primitives` ^5.2.0 and `@wordpress/base-styles` 15.1.0.
 
 ## 2.0.0
 
