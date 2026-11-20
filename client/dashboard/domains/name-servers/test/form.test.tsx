@@ -116,6 +116,22 @@ describe( 'NameServersForm', () => {
 		} );
 	} );
 
+	test( 'explains an empty required name server instead of submitting', async () => {
+		const onSubmit = vi.fn();
+		render( <NameServersForm { ...defaultProps } onSubmit={ onSubmit } /> );
+
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: /Name server 1/ } ),
+			'ns1.example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		expect( screen.getByRole( 'textbox', { name: /Name server 2/ } ) ).toHaveAccessibleDescription(
+			/Constraints not satisfied/
+		);
+		expect( onSubmit ).not.toHaveBeenCalled();
+	} );
+
 	describe( 'Submit Button State', () => {
 		test( 'disables submit button when form is empty', () => {
 			render( <NameServersForm { ...defaultProps } /> );

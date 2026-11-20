@@ -82,7 +82,7 @@ export default function TransferDomainToAnyUser() {
 
 	const hasEmailWithUs = hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain );
 
-	const { isValid } = useFormValidity( formData, fields, form );
+	const { validity, isValid } = useFormValidity( formData, fields, form );
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -159,6 +159,7 @@ export default function TransferDomainToAnyUser() {
 							data={ formData }
 							fields={ fields }
 							form={ form }
+							validity={ validity }
 							onChange={ ( edits: Partial< TransferFormData > ) => {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
