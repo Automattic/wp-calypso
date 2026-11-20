@@ -15,8 +15,8 @@ import {
 } from '../../app/router/sites';
 import { ThemedIllustration } from '../../components/themed-illustration';
 import { hasHostingFeature } from '../../utils/site-features';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { SitesNoticeArbiter } from '../notice-arbiter';
 import { BackupFileBrowserProvider } from './backup-file-browser-provider';
 import illustrationDarkUrl from './backups-callout-illustration-dark.svg';
 import illustrationUrl from './backups-callout-illustration.svg';

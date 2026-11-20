@@ -103,7 +103,7 @@ describe( '<PluginSites> – author link XSS regression', () => {
 		// No anchor on the page may carry the javascript: URI as its href.
 		const links = document.querySelectorAll( 'a[href]' );
 		const unsafeLinks = Array.from( links ).filter( ( a ) =>
-			( a as HTMLAnchorElement ).href.startsWith( 'javascript:' )
+			/^(javascript|data|vbscript):/i.test( ( a as HTMLAnchorElement ).href )
 		);
 
 		expect( unsafeLinks ).toHaveLength( 0 );

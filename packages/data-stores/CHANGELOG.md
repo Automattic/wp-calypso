@@ -4,7 +4,9 @@
 
 ### Breaking changes
 
+- Require `@wordpress/api-fetch` ^8.2.0, `@wordpress/data` ^11.2.0, `@wordpress/data-controls` ^5.2.0, `@wordpress/deprecated` ^5.2.0, `@wordpress/element` ^10.2.0, `@wordpress/i18n` ^7.2.0, `@wordpress/primitives` ^5.2.0 and `@wordpress/url` ^5.2.0.
 - Move the Launchpad query and mutation hooks (`useLaunchpad`, `useSortedLaunchpadTasks`, `updateLaunchpadSettings`, `useLaunchpadDismisser`, `fetchLaunchpad`, and their types) to `@automattic/launchpad`.
+- Remove the onboard store's readymade-template state: the `setSelectedReadymadeTemplate` action, the `getSelectedReadymadeTemplate` selector, the `ReadymadeTemplate` type and `SiteIntent.ReadyMadeTemplate`. The flow they served has been removed.
 
 ## 3.2.2
 

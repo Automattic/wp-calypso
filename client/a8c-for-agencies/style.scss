@@ -244,9 +244,9 @@
 		height: 40px;
 	}
 
-	.components-form-toggle.is-checked .components-form-toggle__track {
-		background-color: var(--color-primary-50);
-		border-color: var(--color-primary-50);
+	.components-form-toggle.is-checked {
+		--wpds-color-background-interactive-brand-strong: var(--color-primary-50);
+		--wpds-color-stroke-interactive-brand: var(--color-primary-50);
 	}
 
 	.components-checkbox-control__input {

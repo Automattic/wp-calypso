@@ -1,9 +1,7 @@
 import { decodeSiteDomain } from 'calypso/dashboard/agency/marketplace/products/lib/pressable-memory-addon';
 import { MAX_CART_ITEM_QUANTITY } from 'calypso/dashboard/agency/marketplace/products/use-shopping-cart';
-import {
-	buildA4ADashboardLink,
-	isAllowedA4ADashboardHostname,
-} from 'calypso/dashboard/app-a4a/routing';
+import { buildA4ADashboardLink } from 'calypso/dashboard/app-a4a/routing';
+import { getUrlOnOrigins } from 'calypso/dashboard/utils/url';
 import type { AgencyCheckoutTerm } from './billing-product-id';
 
 /** The checkout an agency pays its own dashboard cart on. */
@@ -58,15 +56,24 @@ export function getAllowedA4ADashboardUrl( url: string | null | undefined ): str
 	if ( ! url ) {
 		return undefined;
 	}
+	return getUrlOnOrigins( url, a4aDashboardOrigins( url ) );
+}
+
+/**
+ * The local dev server takes any port, and a Calypso Live preview its own host,
+ * since neither is known to the checkout.
+ */
+function a4aDashboardOrigins( url: string ) {
+	let hostname = '';
+	let port = '';
 	try {
-		const { protocol, hostname } = new URL( url );
-		if ( [ 'http:', 'https:' ].includes( protocol ) && isAllowedA4ADashboardHostname( hostname ) ) {
-			return url;
-		}
-	} catch {
-		// Not an absolute URL.
-	}
-	return undefined;
+		( { hostname, port } = new URL( url ) );
+	} catch {}
+	return [
+		'https://agencies-beta.automattic.com',
+		`http://my.a4a.localhost${ port && `:${ port }` }`,
+		...( hostname.endsWith( '-a4a.calypso.live' ) ? [ `https://${ hostname }` ] : [] ),
+	];
 }
 
 function parseAgencyCheckoutTerm( term: string | null ): AgencyCheckoutTerm {

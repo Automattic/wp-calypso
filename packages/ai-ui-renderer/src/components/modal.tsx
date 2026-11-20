@@ -1,16 +1,12 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { ComponentIdSchema } from '@a2ui/web_core/v1_0';
-import { useCallback, useMemo, useRef, useState } from '@wordpress/element';
+import { useCallback, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import { Dialog } from '@wordpress/ui';
 import clsx from 'clsx';
 import { z } from 'zod';
-import {
-	InteractiveUiSurfaceContext,
-	ModalTriggerContext,
-	useInteractiveUiSurface,
-} from '../contexts/surface';
+import { ModalTriggerContext, useInteractiveUiSurface } from '../contexts/surface';
 import { StringValueSchema } from '../utils/schemas';
 import { copyTheme } from '../utils/theme';
 
@@ -27,10 +23,7 @@ export const Modal = createComponentImplementation(
 		const [ isOpen, setIsOpen ] = useState( false );
 		const triggerRef = useRef< HTMLElement | null >( null );
 		const popupRef = useRef< HTMLDivElement | null >( null );
-		const contentRef = useRef< HTMLDivElement | null >( null );
-		const surface = useInteractiveUiSurface();
-		const { className, rootRef } = surface;
-		const contentSurface = useMemo( () => ( { ...surface, rootRef: contentRef } ), [ surface ] );
+		const { className, rootRef } = useInteractiveUiSurface();
 
 		// The modal renders outside the host, so it takes the theme its surface resolved.
 		const copySurfaceTheme = useCallback(
@@ -59,8 +52,8 @@ export const Modal = createComponentImplementation(
 					initialFocus={ popupRef }
 					finalFocus={ triggerRef }
 					portal={
-						// On `<body>`, not ui's overlay layer, which stacks above the chart tooltips
-						// that portal there.
+						// On `<body>`, so the host's z-index for the modal applies, which it can't
+						// within ui's overlay layer, a stacking context of its own.
 						<Dialog.Portal
 							container={ document.body }
 							ref={ copySurfaceTheme }
@@ -84,11 +77,7 @@ export const Modal = createComponentImplementation(
 						</Dialog.Action>
 					</Dialog.Header>
 					<Dialog.Content>
-						<InteractiveUiSurfaceContext.Provider value={ contentSurface }>
-							<div ref={ contentRef } className="ai-ui-renderer">
-								{ buildChild( props.content ) }
-							</div>
-						</InteractiveUiSurfaceContext.Provider>
+						<div className="ai-ui-renderer">{ buildChild( props.content ) }</div>
 					</Dialog.Content>
 				</Dialog.Popup>
 			</Dialog.Root>

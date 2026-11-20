@@ -22,6 +22,10 @@ import {
 	LEGACY_WOOCOMMERCE_INSTALL_FLOW,
 	getWooCommercePluginPage,
 } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
+import {
+	STUDENT_START_FLOW,
+	getStudentFlowRedirect,
+} from 'calypso/lib/signup/student-flow-redirect';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -151,6 +155,11 @@ export default {
 
 		if ( flowName === LEGACY_WEBSITE_DESIGN_SERVICES_FLOW ) {
 			window.location.replace( getWebsiteDesignServicesRedirect( lang, context.querystring ) );
+			return;
+		}
+
+		if ( flowName === STUDENT_START_FLOW ) {
+			window.location.replace( getStudentFlowRedirect( lang, context.querystring ) );
 			return;
 		}
 

@@ -157,26 +157,27 @@ describe( 'CommentLikeButtonContainer', () => {
 			],
 			pageParams: [ undefined ],
 		} );
+		let releaseLike = () => {};
+		const likeReleased = new Promise( ( resolve ) => {
+			releaseLike = resolve;
+		} );
 		const likeScope = nock( BASE )
 			.post( '/rest/v1.1/sites/100/comments/5/likes/new', {} )
-			.delay( 1000 )
-			.reply( 200, {
-				success: true,
-				like_count: '8',
+			.reply( async () => {
+				await likeReleased;
+				return [ 200, { success: true, like_count: '8' } ];
 			} );
 
 		renderWithRedux( <CommentsBackedLikeButton />, { queryClient } );
 
 		screen.getByRole( 'button', { name: 'Like' } ).click();
 
-		await waitFor(
-			() => {
-				expect( screen.getByRole( 'button', { name: 'Liked' } ) ).toHaveClass( 'is-liked' );
-				expect( screen.getByText( '8' ) ).toBeVisible();
-			},
-			{ timeout: 50 }
-		);
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Liked' } ) ).toHaveClass( 'is-liked' );
+			expect( screen.getByText( '8' ) ).toBeVisible();
+		} );
 
+		releaseLike();
 		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
 	} );
 

@@ -1,6 +1,6 @@
 export interface SiteMigrationStatus {
 	status: 'pending' | 'started' | 'completed';
-	type: 'difm' | 'diy' | 'ssh';
+	type: 'difm' | 'diy';
 }
 
 export type SiteVisibility = 'public' | 'private' | 'coming_soon';

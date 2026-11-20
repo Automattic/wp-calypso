@@ -1,9 +1,10 @@
 import { Plans } from '@automattic/data-stores';
 import { translate, TranslateResult } from 'i18n-calypso';
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { trackStatsAnalyticsEvent } from 'calypso/my-sites/stats/utils';
 import { useSelector } from 'calypso/state';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import DashboardHiddenContext from '../pricing-grid/dashboard-hidden-context';
 import { statTypeToPlan } from '../stat-type-to-plan';
 import StatsCardUpsellJetpack from './stats-card-upsell-jetpack';
 import StatsCardUpsellWPCOM from './stats-card-upsell-wpcom';
@@ -36,12 +37,17 @@ const StatsCardUpsell: React.FC< Props > = ( { className, statType, siteId, butt
 		upsellButtonLabel = buttonLabel ?? translate( 'Upgrade plan' );
 	}
 
+	const isHidden = useContext( DashboardHiddenContext );
+
 	useEffect( () => {
+		if ( isHidden ) {
+			return;
+		}
 		trackStatsAnalyticsEvent( 'stats_card_upsell_view', {
 			stat_type: statType,
 			blog_id: siteId,
 		} );
-	}, [ statType, siteId ] );
+	}, [ statType, siteId, isHidden ] );
 
 	return (
 		<UpsellComponent

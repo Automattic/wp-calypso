@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain, type DnsRecord } from '@automattic/api-core';
+import { queryClient as appQueryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -14,7 +15,11 @@ const domainName = 'example.com';
 
 const dnsQueryKey = [ 'domains', domainName, 'dns' ];
 
+const A_RECORDS_WARNING = 'Your domain is not using default A records';
 const CNAME_WARNING = 'Your domain is not using the default WWW CNAME record';
+
+const A_RECORDS_NOTICE_PREFERENCE = `hosting-dashboard-domain-dns-default-a-records-notice-dismissed-${ domainName }`;
+const CNAME_NOTICE_PREFERENCE = `hosting-dashboard-domain-dns-default-cname-notice-dismissed-${ domainName }`;
 
 const defaultCnameRecord: DnsRecord = {
 	type: 'CNAME',
@@ -49,6 +54,20 @@ const mockDnsApiRequest = ( records: DnsRecord[] ) =>
 		.get( `/rest/v1.1/domains/${ domainName }/dns` )
 		.reply( 200, { records } );
 
+// Seeds preferences without the dismissals, so only the DNS loading state can hide the warnings.
+const createQueryClientWithPreferences = () => {
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false, staleTime: 0 } },
+	} );
+	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
+	return queryClient;
+};
+
+const mockPreferencesApiRequest = ( preferences: Record< string, unknown > = {} ) =>
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.reply( 200, { calypso_preferences: preferences } );
+
 // Mocks the DNS request but holds the response pending until the returned
 // `release` callback is invoked, letting tests assert on the in-flight state
 // without relying on `nock.delay()` (which leaves open handles).
@@ -64,6 +83,10 @@ const mockDnsApiRequestPending = ( records: DnsRecord[] ) => {
 };
 
 describe( 'DomainDns', () => {
+	afterEach( () => {
+		appQueryClient.clear();
+	} );
+
 	test( 'shows EmailSetup when domain has WordPress.com nameservers', async () => {
 		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
 
@@ -86,8 +109,9 @@ describe( 'DomainDns', () => {
 		// The domain already has the default WWW CNAME record, so the warning must
 		// never appear — not even during the window where the DNS query is loading.
 		const release = mockDnsApiRequestPending( [ defaultCnameRecord ] );
+		mockPreferencesApiRequest();
 
-		render( <DomainDns /> );
+		render( <DomainDns />, { queryClient: createQueryClientWithPreferences() } );
 
 		// The page chrome renders once the domain (suspense) query resolves, but the
 		// DNS query is still in flight at this point.
@@ -108,15 +132,14 @@ describe( 'DomainDns', () => {
 		// the component mounts and `isLoading` is false. With `staleTime: 0` a
 		// background refetch then runs. Seed the cache with stale records that lack
 		// the default WWW CNAME record to mirror that scenario.
-		const queryClient = new QueryClient( {
-			defaultOptions: { queries: { retry: false, staleTime: 0 } },
-		} );
+		const queryClient = createQueryClientWithPreferences();
 		queryClient.setQueryData( dnsQueryKey, { records: [] } );
 
 		// The server actually has the default WWW CNAME record, so the warning must
 		// never appear — not even while the background refetch is in flight over the
 		// stale records.
 		const release = mockDnsApiRequestPending( [ defaultCnameRecord ] );
+		mockPreferencesApiRequest();
 
 		render( <DomainDns />, { queryClient } );
 
@@ -132,10 +155,117 @@ describe( 'DomainDns', () => {
 		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
 		// No default WWW CNAME record present, so the warning is expected after load.
 		mockDnsApiRequest( [ { type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		mockPreferencesApiRequest();
 
 		render( <DomainDns /> );
 
 		expect( await screen.findByText( CNAME_WARNING ) ).toBeVisible();
+	} );
+
+	test( 'hides only the dismissed default records warning and remembers the dismissal', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+		mockDnsApiRequest( [ { type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		mockPreferencesApiRequest();
+		const savePreference = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				expect( body.calypso_preferences ).toEqual( {
+					[ A_RECORDS_NOTICE_PREFERENCE ]: expect.any( String ),
+				} );
+				return true;
+			} )
+			.reply( 200, ( _uri, body ) => body );
+		const user = userEvent.setup();
+
+		// The dismissal is saved optimistically into the app's query client.
+		render( <DomainDns />, { queryClient: appQueryClient } );
+
+		expect( await screen.findByText( A_RECORDS_WARNING ) ).toBeVisible();
+		expect( screen.getByText( CNAME_WARNING ) ).toBeVisible();
+
+		// The A records warning is shown above the WWW CNAME one.
+		const [ dismissARecordsWarning ] = screen.getAllByRole( 'button', { name: 'Dismiss' } );
+		await user.click( dismissARecordsWarning );
+
+		await waitFor( () =>
+			expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument()
+		);
+		await waitFor( () => expect( savePreference.isDone() ).toBe( true ) );
+		expect( screen.getByText( CNAME_WARNING ) ).toBeVisible();
+	} );
+
+	test( 'does not show the default records warnings the user already dismissed', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+		mockDnsApiRequest( [ { type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		mockPreferencesApiRequest( {
+			[ A_RECORDS_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
+			[ CNAME_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
+		} );
+		const savePreference = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences' )
+			.reply( 200, { calypso_preferences: {} } );
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+		expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
+		// The default records are still missing, so the dismissals stay.
+		expect( savePreference.isDone() ).toBe( false );
+	} );
+
+	test( 'forgets the default A records warning dismissal once the default records are restored', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+		mockDnsApiRequest( [ { id: '1', type: 'A', name: domainName, data: '192.0.2.1' } ] );
+		mockPreferencesApiRequest( {
+			[ A_RECORDS_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
+		} );
+		nock( 'https://public-api.wordpress.com' )
+			.post( `/rest/v1.1/domains/${ domainName }/dns` )
+			.reply( 200, {} );
+		mockDnsApiRequest( [
+			{ id: '2', type: 'A', name: domainName, data: '192.0.78.9', protected_field: true },
+		] );
+		const clearPreference = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				expect( body.calypso_preferences ).toEqual( { [ A_RECORDS_NOTICE_PREFERENCE ]: null } );
+				return true;
+			} )
+			.reply( 200, { calypso_preferences: {} } );
+		const user = userEvent.setup();
+
+		// The restore refetches the DNS records through the app's query client.
+		render( <DomainDns />, { queryClient: appQueryClient } );
+
+		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
+		expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'DNS actions' } ) );
+		await user.click(
+			await screen.findByRole( 'menuitem', { name: 'Restore default A records' } )
+		);
+		await user.click( await screen.findByRole( 'button', { name: 'Restore' } ) );
+
+		await waitFor( () => expect( clearPreference.isDone() ).toBe( true ) );
+	} );
+
+	test( 'forgets the WWW CNAME warning dismissal when the default record is back', async () => {
+		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
+		// The user added the default record back by hand, without the restore action.
+		mockDnsApiRequest( [ { ...defaultCnameRecord, id: '1' } ] );
+		mockPreferencesApiRequest( {
+			[ CNAME_NOTICE_PREFERENCE ]: '2026-11-18T00:00:00.000Z',
+		} );
+		const clearPreference = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences', ( body ) => {
+				expect( body.calypso_preferences ).toEqual( { [ CNAME_NOTICE_PREFERENCE ]: null } );
+				return true;
+			} )
+			.reply( 200, { calypso_preferences: {} } );
+
+		render( <DomainDns /> );
+
+		expect( await screen.findByText( 'www' ) ).toBeVisible();
+		await waitFor( () => expect( clearPreference.isDone() ).toBe( true ) );
 	} );
 
 	test( 'filters DNS records by type', async () => {

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { getFeaturedImageAlt } from 'calypso/reader/get-helpers';
 
@@ -8,6 +9,12 @@ const hideImageOnError = ( event ) => {
 
 export default function ReaderFullPostFeaturedImage( { post, maxWidth } ) {
 	if ( ! post?.featured_image ) {
+		return null;
+	}
+
+	// The content shows its own copy of the featured image, except on excerpt-only posts,
+	// which render their excerpt instead of their content.
+	if ( ! post.use_excerpt && isFeaturedImageInContent( post ) ) {
 		return null;
 	}
 

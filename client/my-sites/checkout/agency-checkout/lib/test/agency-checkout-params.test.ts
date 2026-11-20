@@ -68,6 +68,7 @@ describe( 'getAllowedA4ADashboardUrl', () => {
 		expect(
 			getAllowedA4ADashboardUrl( 'https://agencies.automattic.com/purchases' )
 		).toBeUndefined();
+		expect( getAllowedA4ADashboardUrl( 'https://abc123.calypso.live/hosting' ) ).toBeUndefined();
 		expect(
 			getAllowedA4ADashboardUrl( 'javascript://agencies-beta.automattic.com/%0aalert(1)' )
 		).toBeUndefined();

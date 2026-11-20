@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { check, Icon } from '@wordpress/icons';
 import { useState } from 'react';
-import { reportError } from '../../panel/helpers/log-error';
+import { reportRequestError } from '../../panel/helpers/log-error';
 import useSafe from '../../panel/helpers/use-safe';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
@@ -45,7 +45,7 @@ export const FollowLink = ( {
 			safeSetIsRequestRunning( false );
 			if ( error ) {
 				safeSetIsFollowing( previousState );
-				reportError( 'follow', error );
+				reportRequestError( 'follow', error );
 				return;
 			}
 			safeSetIsFollowing( data.is_following );

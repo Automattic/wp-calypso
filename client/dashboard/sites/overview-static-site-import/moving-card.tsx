@@ -10,11 +10,12 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, border, caution, check, published } from '@wordpress/icons';
 import { Badge, Progress } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { formatStorage } from '../../utils/site-storage';
+import { TornCollage } from './torn-collage';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type {
@@ -57,6 +58,9 @@ const formatCount = ( current: number, total: number ) =>
 		formatNumber( total )
 	);
 
+const getCopyCount = ( captured: number, total: number ) =>
+	captured === 0 ? __( 'Working on the first page' ) : formatCount( captured, total );
+
 function formatDuration( seconds: number ) {
 	const whole = Math.max( 0, Math.floor( seconds ) );
 	if ( whole < 60 ) {
@@ -73,8 +77,6 @@ function formatDuration( seconds: number ) {
 		String( whole % 60 ).padStart( 2, '0' )
 	);
 }
-
-const COPIED_PAGES_SHOWN = 6;
 
 /** A page path as the reader would type it, e.g. `/café/` rather than `/caf%C3%A9/`. */
 function readablePath( path: string ) {
@@ -97,7 +99,8 @@ function getBuildDetail( progress?: StaticSiteImportProgress ) {
 	if ( ! building ) {
 		return progress?.phase === 'building' ? __( 'Setting up WordPress' ) : '';
 	}
-	const count = building.total > 0 ? formatCount( building.current, building.total ) : '';
+	const hasCount = building.total > 0;
+	const isFirst = building.current === 0;
 	switch ( building.stage ) {
 		case 'freezing':
 		case 'prepare_shared':
@@ -105,22 +108,28 @@ function getBuildDetail( progress?: StaticSiteImportProgress ) {
 			return __( 'Preparing your styles and layout' );
 		case 'prepare_pages':
 		case 'preparing_pages':
-			return count
-				? sprintf(
+			if ( ! hasCount ) {
+				return __( 'Preparing your pages' );
+			}
+			return isFirst
+				? __( 'Preparing your pages · Working on the first page' )
+				: sprintf(
 						/* translators: %s: progress such as "3 of 12". */
 						__( 'Preparing your pages · %s' ),
-						count
-					)
-				: __( 'Preparing your pages' );
+						formatCount( building.current, building.total )
+					);
 		case 'compile_pages':
 		case 'compiling_pages':
-			return count
-				? sprintf(
+			if ( ! hasCount ) {
+				return __( 'Turning your pages into blocks' );
+			}
+			return isFirst
+				? __( 'Turning your pages into blocks · Working on the first block' )
+				: sprintf(
 						/* translators: %s: progress such as "3 of 12". */
 						__( 'Turning your pages into blocks · %s' ),
-						count
-					)
-				: __( 'Turning your pages into blocks' );
+						formatCount( building.current, building.total )
+					);
 		case 'compose':
 		case 'composed':
 		case 'canonical_plan':
@@ -310,11 +319,17 @@ function RollingLine( { text, className }: { text: string; className?: string } 
  * capture has a screenshot of the home page, that fills the window.
  */
 function SiteSnapshot( {
+	sourceUrl,
 	sourceHost,
+	destinationHost,
 	session,
 	step,
 }: {
+	/** The address the customer gave, whose screenshot is torn up and stuck back together while pages are found. */
+	sourceUrl?: string;
 	sourceHost: string;
+	/** Shown in the address bar once the copy is being built there, when given. */
+	destinationHost?: string;
 	session?: StaticSiteImportSession;
 	step: number;
 } ) {
@@ -331,11 +346,43 @@ function SiteSnapshot( {
 		step === 1 && progress?.current_page && ! progress.capture_stage
 			? readablePath( progress.current_page )
 			: '/';
-	// The pages seen copied while watching, newest first. The server only names the latest one.
+	// The pages seen copied while watching, newest first, for servers that only name the latest one.
 	const [ copied, setCopied ] = useState< string[] >( [] );
+	const listed = progress?.pages?.length ? progress.pages : undefined;
+	const isListed = Boolean( listed );
+	const pages = listed ?? copied.map( ( path ) => ( { path, captured: true } ) );
+	const pagesRef = useRef< HTMLOListElement >( null );
+	// Each new page pushes the list down by one row, which snaps into place.
+	useLayoutEffect( () => {
+		const list = pagesRef.current;
+		const newest = list?.firstElementChild as HTMLElement | null;
+		if (
+			isListed ||
+			! list ||
+			! newest ||
+			copied.length < 2 ||
+			typeof list.animate !== 'function' ||
+			window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches
+		) {
+			return;
+		}
+		const row = newest.offsetHeight + parseFloat( getComputedStyle( list ).rowGap || '0' );
+		// The rows move, not the list, so the list's fade at the bottom stays put.
+		Array.from( list.children ).forEach( ( item ) =>
+			item.animate( [ { transform: `translateY( -${ row }px )` }, { transform: 'none' } ], {
+				duration: 500,
+				easing: 'cubic-bezier( 0.34, 1.56, 0.64, 1 )',
+			} )
+		);
+	}, [ copied.length, isListed ] );
 	if ( step === 1 && progress?.current_page && ! copied.includes( progress.current_page ) ) {
 		setCopied( [ progress.current_page, ...copied ] );
 	}
+	// The collage keeps going until the first page is copied, which can take minutes, and the list
+	// of pages takes over from there.
+	const isCollage =
+		Boolean( sourceUrl ) && step <= 1 && ! hasLoaded && ! pages.some( ( page ) => page.captured );
+	const isListShown = pages.length > 0 && ! isCollage;
 
 	return (
 		<figure
@@ -343,14 +390,14 @@ function SiteSnapshot( {
 				'is-copying': step <= 1,
 				'is-building': step === 2,
 				'has-image': hasLoaded,
-				'has-pages': copied.length > 0,
+				'has-pages': isListShown,
 			} ) }
 		>
 			<div className="static-site-import-snapshot__bar" aria-hidden="true">
 				<span className="static-site-import-snapshot__dots" />
 				<span className="static-site-import-snapshot__address">
 					<span className="static-site-import-snapshot__host">
-						{ sourceHost || __( 'Your site' ) }
+						{ ( step >= 2 && destinationHost ) || sourceHost || __( 'Your site' ) }
 					</span>
 					<RollingLine text={ path === '/' ? '' : path } />
 				</span>
@@ -363,12 +410,17 @@ function SiteSnapshot( {
 					<span />
 					<span />
 				</div>
-				{ copied.length > 0 && (
-					<ol className="static-site-import-snapshot__pages" aria-hidden="true">
-						{ copied.slice( 0, COPIED_PAGES_SHOWN ).map( ( page ) => (
-							<li key={ page }>
+				{ isCollage && sourceUrl && <TornCollage url={ sourceUrl } /> }
+				{ isListShown && (
+					<ol
+						ref={ pagesRef }
+						className={ clsx( 'static-site-import-snapshot__pages', { 'is-listed': isListed } ) }
+						aria-hidden="true"
+					>
+						{ pages.map( ( { path, captured } ) => (
+							<li key={ path } className={ clsx( { 'is-captured': captured } ) }>
 								<Icon icon={ check } size={ 20 } />
-								<span>{ page === '/' ? __( 'Home page' ) : readablePath( page ) }</span>
+								<span>{ path === '/' ? __( 'Home page' ) : readablePath( path ) }</span>
 							</li>
 						) ) }
 					</ol>
@@ -553,7 +605,13 @@ function MoveFacts( { session, locale }: { session?: StaticSiteImportSession; lo
 	);
 }
 
-function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
+function MovingChecklist( {
+	session,
+	lastLabel = __( 'Moving it onto your site' ),
+}: {
+	session?: StaticSiteImportSession;
+	lastLabel?: string;
+} ) {
 	const progress = session?.progress;
 	const current = getCurrentStep( session );
 	const delivery = progress?.delivery;
@@ -579,6 +637,15 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 			formatNumber( pagesFoundSoFar )
 		);
 	}
+	const pagesCopied = progress?.pages_captured || pagesTotal;
+	const pagesCopiedDetail =
+		current > 1 && pagesCopied
+			? sprintf(
+					/* translators: %s: formatted number of pages copied from the site being moved. */
+					_n( '%s page copied', '%s pages copied', pagesCopied ),
+					formatNumber( pagesCopied )
+				)
+			: '';
 	const items = [
 		{
 			label: __( 'Finding your pages' ),
@@ -588,9 +655,11 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 		},
 		{
 			label: __( 'Copying your pages' ),
-			activity: current === 1 ? getCopyActivity( progress ) : '',
+			activity: current === 1 ? getCopyActivity( progress ) : pagesCopiedDetail,
 			count:
-				current === 1 && pagesTotal ? formatCount( progress?.pages_captured ?? 0, pagesTotal ) : '',
+				current === 1 && pagesTotal
+					? getCopyCount( progress?.pages_captured ?? 0, pagesTotal )
+					: '',
 			seconds: progress?.step_seconds?.capturing,
 		},
 		{
@@ -600,7 +669,7 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 			seconds: undefined,
 		},
 		{
-			label: __( 'Moving it onto your site' ),
+			label: lastLabel,
 			activity: current === 3 ? getDeliveryActivity( delivery ) : '',
 			count:
 				current === 3 && delivery?.stage === 'process_files' && delivery.files?.total
@@ -664,6 +733,54 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
+function MoveProgressBar( { session }: { session?: StaticSiteImportSession } ) {
+	const overall = useHighWater( getOverallProgress( session ) );
+	return (
+		<Progress.Root
+			className="static-site-import-moving__progress"
+			aria-label={ __( 'Move progress' ) }
+			value={ overall }
+		>
+			<Progress.Track>
+				<Progress.Indicator />
+			</Progress.Track>
+		</Progress.Root>
+	);
+}
+
+/** The move’s steps, for a page of its own while a preview is built. */
+export function StaticSiteImportPreviewSteps( { siteImport }: { siteImport: StaticSiteImport } ) {
+	return (
+		<MovingChecklist
+			session={ siteImport.session }
+			lastLabel={ __( 'Getting your preview ready' ) }
+		/>
+	);
+}
+
+/** A window onto the site as it's copied, then onto the copy as it's built. */
+export function StaticSiteImportPreviewWindow( {
+	siteImport,
+	search,
+}: {
+	siteImport: StaticSiteImport;
+	search: StaticSiteImportSearch;
+} ) {
+	const session = siteImport.session;
+
+	return (
+		<div className="static-site-import-preview-window">
+			<SiteSnapshot
+				sourceUrl={ search.from }
+				sourceHost={ getSourceHost( search.from ) }
+				destinationHost={ getSourceHost( session?.site_url ) }
+				session={ session }
+				step={ getCurrentStep( session ) }
+			/>
+		</div>
+	);
+}
+
 /** Takes the place of the overview cards while the site is being moved. */
 export function StaticSiteImportProgress( {
 	siteImport,
@@ -681,14 +798,18 @@ export function StaticSiteImportProgress( {
 	const sourceHost = getSourceHost( search.from );
 	const session = siteImport.session;
 	const step = getCurrentStep( session );
-	const overall = useHighWater( getOverallProgress( session ) );
 
 	return (
 		<Card>
 			<CardBody>
 				<div className="static-site-import-moving">
 					<div className="static-site-import-moving__snapshot">
-						<SiteSnapshot sourceHost={ sourceHost } session={ session } step={ step } />
+						<SiteSnapshot
+							sourceUrl={ search.from }
+							sourceHost={ sourceHost }
+							session={ session }
+							step={ step }
+						/>
 					</div>
 					<div className="static-site-import-moving__facts">
 						<MoveFacts session={ session } locale={ locale } />
@@ -724,15 +845,7 @@ export function StaticSiteImportProgress( {
 									)
 								: __( 'You can close this page. We’ll email you when it’s done.' ) }
 						</Notice>
-						<Progress.Root
-							className="static-site-import-moving__progress"
-							aria-label={ __( 'Move progress' ) }
-							value={ overall }
-						>
-							<Progress.Track>
-								<Progress.Indicator />
-							</Progress.Track>
-						</Progress.Root>
+						<MoveProgressBar session={ session } />
 						<MovingChecklist session={ session } />
 					</VStack>
 				</div>

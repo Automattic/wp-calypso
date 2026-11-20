@@ -1,4 +1,4 @@
-import { reportError } from '../../../helpers/log-error';
+import { reportRequestError } from '../../../helpers/log-error';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { wpcom } from '../../../rest-client/wpcom';
 import { approveNote } from '../actions';
@@ -10,7 +10,7 @@ const setApproveStatus =
 
 		comment.update( { status: isApproved ? 'approved' : 'unapproved' }, ( error ) => {
 			if ( error ) {
-				reportError( 'approve', error );
+				reportRequestError( 'approve', error );
 			}
 			// getNote() updates the redux store with a fresh object from the API
 			restClient.getNote( noteId );

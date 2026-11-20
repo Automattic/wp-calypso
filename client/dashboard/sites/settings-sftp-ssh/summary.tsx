@@ -3,7 +3,7 @@ import { siteSftpUsersQuery, siteSshAccessStatusQuery } from '@automattic/api-qu
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { file } from '@wordpress/icons';
+import { folder } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { hasHostingFeature } from '../../utils/site-features';
 import type { Site } from '@automattic/api-core';
@@ -49,7 +49,7 @@ export default function SftpSshSettingsSummary( {
 			to={ `/sites/${ site.slug }/settings/sftp-ssh` }
 			title={ __( 'SFTP/SSH' ) }
 			density={ density }
-			decoration={ <Icon icon={ file } /> }
+			decoration={ <Icon icon={ folder } /> }
 			badges={ badges }
 		/>
 	);

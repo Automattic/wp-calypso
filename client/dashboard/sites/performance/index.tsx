@@ -9,8 +9,8 @@ import EmptyState from '../../components/empty-state';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { SitesNoticeArbiter } from '../notice-arbiter';
 import { SiteLaunchButton } from '../site-launch-button';
 import { getPerformanceCalloutProps } from './performance-callout';
 

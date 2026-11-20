@@ -14,7 +14,9 @@ import { ChangeEvent, FormEvent, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useFlowLocale } from '../../../../hooks/use-flow-locale';
 import { useQuery } from '../../../../hooks/use-query';
+import { withLocale } from '../../../helpers/with-locale';
 import { EduBackdrop } from './edu-backdrop';
 import { EduProgramLogo } from './edu-program-logo';
 import { useValidateEducationStudentCode } from './hooks/use-validate-education-student-code';
@@ -56,6 +58,7 @@ const EducationStudentValidation: StepType< {
 	};
 } > = function EducationStudentValidation( { navigation, flow } ) {
 	const { __ } = useI18n();
+	const locale = useFlowLocale();
 	const codeFromUrl = useQuery().get( 'code' )?.trim() ?? '';
 	const [ code, setCode ] = useState( codeFromUrl );
 	const [ error, setError ] = useState< ValidationError | null >( null );
@@ -87,9 +90,9 @@ const EducationStudentValidation: StepType< {
 		unknown: __( 'Something went wrong. Please try again.' ),
 	};
 	const enrollNote = createInterpolateElement(
-		__( 'Don’t have a code? <link>Learn more about the program at wp.com/edu</link>' ),
+		__( 'No code? <link>Get the Student plan with your school email</link>' ),
 		{
-			link: <a href="https://wp.com/edu" target="_blank" rel="noopener noreferrer" />,
+			link: <a href={ withLocale( '/setup/student', locale ) } />,
 		}
 	);
 

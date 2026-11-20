@@ -49,6 +49,10 @@ import {
 } from 'calypso/lib/signup/legacy-plan-flows';
 import { getWebsiteDesignServicesRedirect } from 'calypso/lib/signup/legacy-website-design-services-flow';
 import { getWooCommercePluginPage } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
+import {
+	STUDENT_CHECKOUT_PATH,
+	getStudentFlowRedirect,
+} from 'calypso/lib/signup/student-flow-redirect';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
@@ -91,6 +95,7 @@ const WOO_MOBILE_LOGIN_FALLBACK_URL = 'https://woocommerce.com/mobilelogin/';
 const WOO_MOBILE_LOGIN_LOCAL_FALLBACK_URL = 'https://woocommerce.test/mobilelogin/';
 const WOO_MOBILE_LOGIN_AUTH_MISSING_QUERY = 'wpcom_auth';
 const WOO_MOBILE_LOGIN_RETURN_TO_QUERY = 'return_to';
+const QR_LOGIN_PATH = '/me/security/qr-login';
 
 let branchName;
 function getCurrentBranchName() {
@@ -134,7 +139,7 @@ function setupLoggedInContext( req, res, next ) {
 }
 
 function isWooCommerceQrLoginRequest( req ) {
-	return req.path === '/me/security/qr-login' && req.query?.origin === 'woocommerce';
+	return req.path === QR_LOGIN_PATH && req.query?.origin === 'woocommerce';
 }
 
 function getAllowedWooMobileLoginHosts() {
@@ -210,7 +215,7 @@ function maybeRedirectWooMobileLoginCleanUrl( req, res ) {
 	delete cleanQuery[ WOO_MOBILE_LOGIN_RETURN_TO_QUERY ];
 
 	const queryString = stringify( cleanQuery );
-	res.redirect( queryString ? `${ req.path }?${ queryString }` : req.path );
+	res.redirect( queryString ? `${ QR_LOGIN_PATH }?${ queryString }` : QR_LOGIN_PATH );
 	return true;
 }
 
@@ -804,7 +809,6 @@ function setUpCSP( req, res, next ) {
 			'https://bat.bing.com', // Bing Ads API
 			'https://px.ads.linkedin.com', // LinkedIn ads pixel
 			'https://*.survicate.com', // Survicate API
-			'*.sentry.io',
 			'*.reddit.com',
 			'https://video.bsky.app', // Bluesky video manifests (hls.js fetches the HLS playlist for Reader ATmosphere thread view)
 			'https://video.cdn.bsky.app', // Bluesky video CDN (segment URLs 302-redirect here)
@@ -1020,21 +1024,22 @@ function wpcomPages( app ) {
 			'checkout',
 			'change-theme',
 		];
-		let redirectUrl;
 
 		if ( -1 === redirectedSections.indexOf( req.params.section ) ) {
 			next();
 			return;
 		}
-		if ( 'change-theme' === req.params.section ) {
-			redirectUrl = req.originalUrl.replace( /^\/sites\/[0-9a-zA-Z\-.]+\/change-theme/, '/themes' );
-		} else {
-			redirectUrl = req.originalUrl.replace(
-				/^\/sites\/[0-9a-zA-Z\-.]+\/\w+/,
-				'/' + req.params.section + '/' + req.params.site
-			);
+		const match = /^\/sites\/([\w\-.:]+)\/[^/?]+(.*)$/.exec( req.originalUrl );
+		if ( ! match ) {
+			next();
+			return;
 		}
-		res.redirect( redirectUrl );
+		const [ , site, rest ] = match;
+		res.redirect(
+			'change-theme' === req.params.section
+				? `/themes${ rest }`
+				: `/${ req.params.section }/${ site }${ rest }`
+		);
 	} );
 
 	app.get( `/:locale([a-z]{2,3}|[a-z]{2}-[a-z]{2})?/plans`, function ( req, res, next ) {
@@ -1444,6 +1449,18 @@ export default function pages() {
 			);
 		}
 	);
+
+	app.get( [ '/start/student', '/start/student/*' ], ( req, res ) => {
+		res.redirect(
+			302,
+			getStudentFlowRedirect( getLegacyFlowLocale( req.path ), stringify( req.query ) )
+		);
+	} );
+
+	// Registered ahead of the checkout section, which would read `student` as a product slug.
+	app.get( STUDENT_CHECKOUT_PATH, ( req, res ) => {
+		res.redirect( 302, getStudentFlowRedirect( '', stringify( req.query ) ) );
+	} );
 
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {

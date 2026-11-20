@@ -1,4 +1,4 @@
-import { reportError } from '../../../helpers/log-error';
+import { reportRequestError } from '../../../helpers/log-error';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { wpcom } from '../../../rest-client/wpcom';
 import { trashNote as trashNoteAction } from '../actions';
@@ -14,7 +14,7 @@ const trashNote = ( note, immediately, restClient ) => async ( dispatch ) => {
 		try {
 			await wpcom().site( note.meta.ids.site ).comment( note.meta.ids.comment ).del();
 		} catch ( error ) {
-			reportError( 'trash', error );
+			reportRequestError( 'trash', error );
 			throw error;
 		}
 	} else {

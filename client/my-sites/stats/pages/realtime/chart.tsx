@@ -131,6 +131,8 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 		{
 			label: 'Views',
 			data: chartData,
+			// The first color @automattic/charts drew before 4.x; style.scss repaints the line itself.
+			options: { stroke: '#98C8DF' },
 		},
 	];
 

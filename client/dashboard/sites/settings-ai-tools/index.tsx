@@ -30,7 +30,6 @@ import {
 	brush,
 	check,
 	comment,
-	connection,
 	help,
 	image,
 	pencil,
@@ -69,6 +68,7 @@ import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { ThemedIllustration } from '../../components/themed-illustration';
 import { isWriteTool } from '../../me/mcp/categories';
+import McpConnectCard from '../../me/mcp/connect-card';
 import {
 	getAgentEmailAddress,
 	getAgentEmailVCardDataUrl,
@@ -133,10 +133,12 @@ const TELEGRAM_CONNECTION_PATH = '/me/agent';
 function EmailAssistantCard( {
 	site,
 	recordTracksEvent,
+	isAgentEnabled = false,
 	disabled = false,
 }: {
 	site: Site;
 	recordTracksEvent: ReturnType< typeof useAnalytics >[ 'recordTracksEvent' ];
+	isAgentEnabled?: boolean;
 	disabled?: boolean;
 } ) {
 	const { data: postByEmailSettings, isLoading: isPostByEmailSettingsLoading } = useQuery( {
@@ -219,11 +221,13 @@ function EmailAssistantCard( {
 						label={ __( 'Enable WordPress Agent email address' ) }
 						onChange={ handleEmailAddressToggle }
 					/>
-					<Notice>
-						{ __(
-							'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
-						) }
-					</Notice>
+					{ ( isAgentEnabled || isAgentEmailEnabled ) && (
+						<Notice>
+							{ __(
+								'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
+							) }
+						</Notice>
+					) }
 					{ agentEmailAddress && (
 						<VStack spacing={ 3 }>
 							<ClipboardInputControl
@@ -489,6 +493,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				<EmailAssistantCard
 					site={ site }
 					recordTracksEvent={ recordTracksEvent }
+					isAgentEnabled={ isEnabled }
 					disabled={ ! isAvailable }
 				/>
 				{ config.isEnabled( 'dolly/telegram' ) && (
@@ -512,6 +517,12 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				) }
 				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
 					<>
+						<McpConnectCard
+							siteSlug={ siteSlug }
+							mcpEnabled={ isMcpEnabled }
+							onTurnOn={ () => handleMcpToggle( true ) }
+							isTurningOn={ mcpMutation.isPending }
+						/>
 						<Card className="mcp-settings__access-card">
 							<CardBody>
 								<VStack spacing={ 4 }>
@@ -549,14 +560,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 								</>
 							) }
 						</Card>
-						{ isMcpEnabled && (
-							<RouterLinkSummaryButton
-								to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
-								title={ __( 'Connect external AI agent' ) }
-								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-								decoration={ <Icon icon={ connection } size={ 24 } /> }
-							/>
-						) }
 					</>
 				) }
 				{ isFreeTrial && (

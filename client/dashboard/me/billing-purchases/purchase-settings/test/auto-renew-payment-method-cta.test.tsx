@@ -85,6 +85,21 @@ describe( 'auto-renew without a payment method', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	test( 'a one-time purchase has no subscription to manage, so the card is not shown', () => {
+		render(
+			<>
+				<span>Purchase settings</span>
+				<ManageSubscriptionCard
+					purchase={ makePurchase( { expiry_status: 'one-time-purchase' } ) }
+				/>
+			</>
+		);
+
+		expect( screen.getByText( 'Purchase settings' ) ).toBeVisible();
+		expect( screen.queryByText( 'Enable auto-renew' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Auto-renew needs a payment method.' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'a re-enableable purchase keeps the toggle, so the CTA does not take over', () => {
 		render(
 			<ManageSubscriptionCard

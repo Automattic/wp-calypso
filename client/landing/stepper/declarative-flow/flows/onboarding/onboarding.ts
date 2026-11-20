@@ -1,8 +1,10 @@
+import { fetchDomain } from '@automattic/api-core';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	isDomainMapping,
 	isDomainMoveInternal,
 	isDomainTransfer,
+	PLAN_ECOMMERCE,
 } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
@@ -14,7 +16,7 @@ import {
 } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
-import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { matchPath } from 'react-router';
@@ -25,7 +27,7 @@ import {
 	STEPPER_TRACKS_EVENT_SIGNUP_START,
 	WOO_HOSTING_SOLUTIONS_REF,
 } from 'calypso/landing/stepper/constants';
-import { getLaunchpadDestination } from 'calypso/lib/ai-launchpad';
+import { getLaunchpadDestination, getSiteSetupDestination } from 'calypso/lib/ai-launchpad';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -66,6 +68,7 @@ import {
 } from '../../../utils/build-wow';
 import { goToCheckout } from '../../../utils/checkout';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
+import { isPlaygroundStoreRun, isPlaygroundStoreVisit } from '../../../utils/playground-woo-intent';
 import {
 	getPreselectedPlan,
 	getPreselectedStorageAddOn,
@@ -96,7 +99,6 @@ import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboardi
 import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import { TRACKS_FLUSH_DELAY } from '../../internals/steps-repository/playground/lib/constants';
 import {
 	getProcessingErrorReason,
 	ProcessingResult,
@@ -106,6 +108,36 @@ import { getOnboardingStepperPosition } from './step-counter-config';
 import type { WowFunnelDest } from '../../../utils/wow-funnel';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { Store } from 'redux';
+
+const DOMAIN_LOOKUP_TIMEOUT_MS = 5000;
+
+// The onboard store keeps a domain the user removed at checkout, so the cart item alone does not
+// prove the domain was bought for this site. Its setup pages are an error page when wpcom has no
+// record of the domain or refuses the request, and they belong to another site when the domain
+// is already on one.
+async function isDomainOnSite( domainName: string, siteId: number ): Promise< boolean > {
+	let timer: ReturnType< typeof setTimeout > | undefined;
+	// A stalled request must not keep a paying customer on the processing screen.
+	const timeout = new Promise< boolean >( ( resolve ) => {
+		timer = setTimeout( () => resolve( true ), DOMAIN_LOOKUP_TIMEOUT_MS );
+	} );
+	const lookup = fetchDomain( domainName ).then(
+		( domain ) => ! siteId || Number( domain.blog_id ) === siteId,
+		( error ) => {
+			// wpcom answered and refused: the setup page gets the same answer. After a network error
+			// or a 5xx the purchase can still exist, and the setup page requests the domain again.
+			const status = Number( ( error as { status?: number } )?.status );
+			const isClientError = status >= 400 && status < 500;
+			return ! isClientError && ( error as Error )?.name !== 'InvalidDomainError';
+		}
+	);
+
+	try {
+		return await Promise.race( [ lookup, timeout ] );
+	} finally {
+		clearTimeout( timer );
+	}
+}
 
 /**
  * Where a funnel run lands once it is paid for.
@@ -395,11 +427,14 @@ const onboarding: FlowV2< typeof initialize > = {
 	initialize,
 	useTracksEventProps() {
 		const query = useQuery();
-		const preselectedPlan = getPreselectedPlan( query );
+		// A Playground store reports Commerce from the Playground step on. Read from the URL alone,
+		// its plan would change once the Playground adds its ID, and record a second signup start.
+		const isPlaygroundStore = isPlaygroundStoreVisit( query );
+		const preselectedPlan = isPlaygroundStore ? PLAN_ECOMMERCE : getPreselectedPlan( query );
 		// Reported raw, as the legacy flows reported their declared query dependencies. The
 		// coupon stands alone too: WordCamp coupon links name no plan.
 		const couponParam = query.get( 'coupon' );
-		const storageParam = preselectedPlan ? query.get( 'storage' ) : null;
+		const storageParam = preselectedPlan && ! isPlaygroundStore ? query.get( 'storage' ) : null;
 		// The legacy flow a link came from, such as `import` or `reblogging`.
 		const fromFlow = query.get( 'flow' );
 
@@ -468,6 +503,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		const { setShouldShowNotification } = usePurchasePlanNotification();
 
 		const playgroundId = queryParams.get( 'playground' );
+		const isPlaygroundStore = isPlaygroundStoreRun( queryParams );
+		const playgroundStoreQueryArgs = isPlaygroundStore ? { intent: 'woocommerce' } : {};
 		const buildDest = queryParams.get( 'build_dest' );
 		const blueprintArchiveSlug = getStandaloneBlueprintArchiveSlug(
 			blueprint,
@@ -598,7 +635,7 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 
 				if ( playgroundId ) {
-					params.playground = playgroundId;
+					Object.assign( params, { playground: playgroundId }, playgroundStoreQueryArgs );
 				} else if ( blueprint ) {
 					params.blueprint = blueprint;
 				}
@@ -628,11 +665,29 @@ const onboarding: FlowV2< typeof initialize > = {
 		};
 
 		/**
+		 * A Playground store buys Commerce, which the import needs. Its run starts on the Playground
+		 * step, so the entry reset doesn't seed the cart, and the cart can still hold an earlier
+		 * run's items.
+		 */
+		const seedPlaygroundStoreCart = () => {
+			setPlanCartItem( { product_slug: PLAN_ECOMMERCE } );
+			setProductCartItems( [] );
+		};
+
+		/**
 		 * With a plan already in the cart the plans step has nothing left to ask, so the flow
 		 * goes straight to site creation. The free-plan branch in the plans handler below only
 		 * applies when no plan was picked, so nothing is skipped here.
 		 */
 		const navigateAfterDomain = ( { requiresPaidPlan = false } = {} ) => {
+			// Seeded again here: a run continued in another tab starts with that tab's cart.
+			if ( isPlaygroundStore ) {
+				seedPlaygroundStoreCart();
+				setSignupCompleteFlowName( flowName );
+
+				return navigate( 'create-site', undefined, false );
+			}
+
 			// A Simple blueprint build is a free-plan run by definition, so the plans grid has
 			// nothing to ask either. Same bookkeeping as the free branch of the plans handler
 			// below. A connected or transferred domain is the exception: it needs a paid plan, so
@@ -844,12 +899,23 @@ const onboarding: FlowV2< typeof initialize > = {
 							);
 							return;
 						}
+						case 'ai-tool':
 						case 'blank-site': {
 							const site = await resolveSelect( SITE_STORE ).getSite( siteSlug );
 							const adminUrl = site?.options?.admin_url ?? `https://${ siteSlug }/wp-admin/`;
 
 							if ( refParameter === WOO_HOSTING_SOLUTIONS_REF ) {
 								window.location.assign( `${ adminUrl }admin.php?page=wc-admin` );
+								return;
+							}
+
+							const siteSetupDestination =
+								setupChoice === 'ai-tool' && getSiteSetupDestination( site?.options, adminUrl );
+							if ( siteSetupDestination ) {
+								// Site Setup opens its AI tool view on `start=ai-tool`.
+								window.location.assign(
+									addQueryArgs( siteSetupDestination, { start: 'ai-tool' } )
+								);
 								return;
 							}
 
@@ -890,6 +956,8 @@ const onboarding: FlowV2< typeof initialize > = {
 							locale,
 							siteSlug: dependencies.siteSlug as string,
 						} );
+					// 0 when the run has no site ID, which skips the site comparison.
+					const purchasedSiteId = Number( dependencies.siteId ?? siteIdParam ) || 0;
 					const destination = await getPostCheckoutDestination(
 						providedDependencies,
 						planCartItem,
@@ -907,7 +975,6 @@ const onboarding: FlowV2< typeof initialize > = {
 							 * If the user comes from the Playground onboarding flow,
 							 * redirect the user back to Playground to start the import.
 							 */
-							const playgroundId = getQueryArg( window.location.href, 'playground' );
 							const redirectTo: string =
 								playgroundId &&
 								! isPlanProductFree( {} as unknown as State, planCartItem?.product_id )
@@ -915,6 +982,7 @@ const onboarding: FlowV2< typeof initialize > = {
 											siteSlug,
 											siteId: providedDependencies.siteId,
 											playground: playgroundId,
+											...playgroundStoreQueryArgs,
 										} )
 									: addQueryArgs(
 											withLocale( '/setup/onboarding/post-checkout-onboarding', locale ),
@@ -932,6 +1000,8 @@ const onboarding: FlowV2< typeof initialize > = {
 								...( playgroundId ? { playground: playgroundId } : {} ),
 								...( hasCustomDestination && refParameter ? { ref: refParameter } : {} ),
 								...( coupon ? { coupon } : {} ),
+								// Without it, the domain step loses the store's plan and its import.
+								...playgroundStoreQueryArgs,
 							};
 
 							const checkoutStepperPosition = getOnboardingStepperPosition(
@@ -983,13 +1053,21 @@ const onboarding: FlowV2< typeof initialize > = {
 							// plan), and a paid funnel order's checkout redirect_to is the funnel
 							// destination itself, so it never comes back through here.
 							window.location.replace( destination );
-						} else if ( domainCartItem?.meta && isDomainMapping( domainCartItem ) ) {
+						} else if (
+							domainCartItem?.meta &&
+							isDomainMapping( domainCartItem ) &&
+							( await isDomainOnSite( domainCartItem.meta, purchasedSiteId ) )
+						) {
 							// A connected domain still has to be pointed at the site once it is paid
 							// for, so finish on the setup instructions rather than the chooser or My Home.
 							window.location.replace(
 								dashboardLink( `/domains/${ domainCartItem.meta }/domain-connection-setup` )
 							);
-						} else if ( domainCartItem?.meta && isDomainTransfer( domainCartItem ) ) {
+						} else if (
+							domainCartItem?.meta &&
+							isDomainTransfer( domainCartItem ) &&
+							( await isDomainOnSite( domainCartItem.meta, purchasedSiteId ) )
+						) {
 							window.location.replace(
 								dashboardLink( `/domains/${ domainCartItem.meta }/domain-transfer-setup` )
 							);
@@ -1018,17 +1096,8 @@ const onboarding: FlowV2< typeof initialize > = {
 				}
 				case 'playground':
 				case 'blueprint': {
-					const locationParams = new URLSearchParams( window.location.search );
-					if ( locationParams.get( 'intent' ) === 'woocommerce' ) {
-						const playgroundId = locationParams.get( 'playground' );
-						const destination = addQueryArgs( '/setup/entrepreneur', {
-							from: 'playground-publish',
-							...( playgroundId ? { playground: playgroundId } : {} ),
-						} );
-						// This leaves Stepper with a full page load, so give Tracks time to send the
-						// step's events and Stepper's submit event first.
-						setTimeout( () => window.location.assign( destination ), TRACKS_FLUSH_DELAY );
-						return;
+					if ( isPlaygroundStore ) {
+						seedPlaygroundStoreCart();
 					}
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
@@ -1153,7 +1222,9 @@ const onboarding: FlowV2< typeof initialize > = {
 		// Skip the preload when this visit skips the plans step: enrolling someone in a
 		// plans-page test they never see only dilutes it.
 		useEffect( () => {
-			if ( getPreselectedPlan( getCurrentQueryParams() ) ) {
+			const query = getCurrentQueryParams();
+
+			if ( getPreselectedPlan( query ) || isPlaygroundStoreVisit( query ) ) {
 				return;
 			}
 

@@ -112,6 +112,30 @@ export const FlowRenderer: React.FC< {
 
 	flow.useSideEffect?.( currentStepRoute, navigate );
 
+	// The `nextStep` is available only when logged-out users go to the step that requires auth
+	// and are redirected to the user step.
+	const postAuthStepSlug = stepData?.nextStep ?? '';
+	const previousAuthStepSlug = stepData?.previousStep;
+
+	// Memoised: the account step submits from an effect keyed on this object, so a new one on
+	// every render would repeat the hand-off. The target rides along in the step data because
+	// that navigate replaces it, and the user route can render once more before the router
+	// leaves it; without a next step that render would send the run to the flow root, where a
+	// flow such as onboarding clears its store as if the customer had just arrived.
+	const userStepNavigation = useMemo(
+		() => ( {
+			submit() {
+				navigate( postAuthStepSlug, { nextStep: postAuthStepSlug }, true );
+			},
+			...( previousAuthStepSlug && {
+				goBack() {
+					navigate( previousAuthStepSlug, { nextStep: postAuthStepSlug }, true );
+				},
+			} ),
+		} ),
+		[ navigate, postAuthStepSlug, previousAuthStepSlug ]
+	);
+
 	useSyncRoute();
 
 	useEffect( () => {
@@ -155,12 +179,8 @@ export const FlowRenderer: React.FC< {
 			return null;
 		}
 
-		// The `nextStep` is available only when logged-out users go to the step that requires auth
-		// and are redirected to the user step.
-		const postAuthStepSlug = stepData?.nextStep ?? '';
 		if ( step.slug === PRIVATE_STEPS.USER.slug && postAuthStepSlug ) {
 			const flowSlug = flow.variantSlug ?? flow.name;
-			const previousAuthStepSlug = stepData?.previousStep;
 			const postAuthStepPath = createPath( {
 				pathname: generatePath( '/setup/:flow/:step/:lang?', {
 					flow: flowSlug,
@@ -179,16 +199,7 @@ export const FlowRenderer: React.FC< {
 
 			return (
 				<StepComponent
-					navigation={ {
-						submit() {
-							navigate( postAuthStepSlug, undefined, true );
-						},
-						...( previousAuthStepSlug && {
-							goBack() {
-								navigate( previousAuthStepSlug, undefined, true );
-							},
-						} ),
-					} }
+					navigation={ userStepNavigation }
 					flow={ flow.name }
 					variantSlug={ flow.variantSlug }
 					stepName="user"

@@ -110,6 +110,11 @@ export interface StaticSiteImportProgress {
 	finding_pages?: boolean;
 	/** The path of the page capture saved last, percent-encoded, e.g. `/about-us/`. */
 	current_page?: string;
+	/**
+	 * The pages capture will copy, in its order, and whether each is copied yet. Paths are
+	 * percent-encoded like `current_page`. Capped at 100; absent when the runner doesn't list them.
+	 */
+	pages?: { path: string; captured: boolean }[];
 	/** Every page is captured, and capture is saving the site's images, then its files. */
 	capture_stage?: 'media' | 'finalizing';
 	/** The inspection before capture: `pages_found` is how many pages it saw, before capture settles on a total. */

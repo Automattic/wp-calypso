@@ -2,7 +2,7 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../helpers/input';
-import { reportError } from '../helpers/log-error';
+import { reportError, reportRequestError } from '../helpers/log-error';
 import { recordTracksEvent } from '../helpers/stats';
 import { bumpStat } from '../rest-client/bump-stat';
 import { wpcom } from '../rest-client/wpcom';
@@ -91,7 +91,7 @@ export class UndoListItem extends Component {
 
 		const updateSpamStatus = function ( error, data ) {
 			if ( error ) {
-				reportError( 'spam', error );
+				reportRequestError( 'spam', error );
 				return;
 			}
 
@@ -102,7 +102,7 @@ export class UndoListItem extends Component {
 
 		comment.get( function ( error, data ) {
 			if ( error ) {
-				reportError( 'spam', error );
+				reportRequestError( 'spam', error );
 				return;
 			}
 
@@ -122,7 +122,7 @@ export class UndoListItem extends Component {
 			.comment( this.props.note.meta.ids.comment )
 			.del( ( error ) => {
 				if ( error ) {
-					reportError( 'trash', error );
+					reportRequestError( 'trash', error );
 				}
 			} );
 

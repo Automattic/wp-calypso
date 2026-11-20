@@ -306,7 +306,7 @@ export class PluginsPage {
 			await Promise.all( [ this.page.waitForResponse( /eligibility/ ), button.click() ] );
 			// Modal will appear to re-confirm to the user that an upgrade is necessary.
 			// Accept the confirmation.
-			await this.page.getByRole( 'button', { name: 'Upgrade and activate plugin' } ).click();
+			await this.page.getByRole( 'button', { name: 'Choose a plan' } ).click();
 		} else {
 			await Promise.all( [ this.page.waitForResponse( /.*install\?.*/ ), button.click() ] );
 		}

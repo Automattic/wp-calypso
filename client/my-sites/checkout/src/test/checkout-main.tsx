@@ -9,6 +9,7 @@ import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import React from 'react';
+import * as Tracks from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -205,6 +206,33 @@ describe( 'CheckoutMain', () => {
 		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		expect( await screen.findByText( 'Purchase Details' ) ).toBeInTheDocument();
 		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'records a Tracks event each time the checkout summary is toggled', async () => {
+		const recordTracksEvent = jest.spyOn( Tracks, 'recordTracksEvent' );
+		const toggleEvents = () =>
+			recordTracksEvent.mock.calls.filter(
+				( [ eventName ] ) => eventName === 'calypso_checkout_summary_toggle'
+			);
+		const user = userEvent.setup();
+		try {
+			render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
+			const summaryButton = await screen.findByRole( 'button', { name: /Purchase Details/ } );
+			expect( toggleEvents() ).toEqual( [] );
+
+			await user.click( summaryButton );
+			expect( toggleEvents() ).toEqual( [
+				[ 'calypso_checkout_summary_toggle', { is_open: true } ],
+			] );
+
+			await user.click( summaryButton );
+			expect( toggleEvents() ).toEqual( [
+				[ 'calypso_checkout_summary_toggle', { is_open: true } ],
+				[ 'calypso_checkout_summary_toggle', { is_open: false } ],
+			] );
+		} finally {
+			recordTracksEvent.mockRestore();
+		}
 	} );
 
 	it( 'omits the plan step for opted-in Commerce checkout', async () => {
@@ -847,6 +875,63 @@ describe( 'CheckoutMain', () => {
 		expect( ( await screen.findAllByText( 'Gift' ) ).length ).toBeGreaterThan( 0 );
 		expect( errorNotice ).not.toHaveBeenCalled();
 	} );
+
+	it.each( [
+		[ 'isAkismetSitelessCheckout', 'akismet_siteless_checkout' ],
+		[ 'isMarketplaceSitelessCheckout', 'marketplace_siteless_checkout' ],
+		[ 'isWpcomSitelessCheckout', 'wpcom_siteless_checkout' ],
+	] )(
+		'records the checkout flow of a renewal by subscription ID from the cart flag %s',
+		async ( cartFlag, expectedCheckoutFlow ) => {
+			const recordTracksEvent = jest.spyOn( Tracks, 'recordTracksEvent' );
+			// The server flags a renewal of a purchase on a holding site; the URL has no product.
+			const setCartWithHoldingSiteRenewal: typeof mockSetCartEndpoint = ( cartKey, requestCart ) =>
+				mockSetCartEndpoint( cartKey, {
+					...requestCart,
+					products: requestCart.products.map( ( product ) =>
+						product.extra.purchaseType === 'renewal'
+							? {
+									...product,
+									product_slug: 'personal-bundle',
+									extra: { ...product.extra, [ cartFlag ]: true },
+								}
+							: product
+					),
+				} );
+			( useCartKey as jest.Mock ).mockImplementation( () => 'no-site' );
+
+			try {
+				render(
+					<MockCheckout
+						cartChanges={ { products: [] } }
+						additionalProps={ {
+							purchaseId: '12345',
+							productAliasFromUrl: undefined,
+							siteId: 0,
+							siteSlug: 'no-site',
+							sitelessCheckoutType: undefined,
+						} }
+						initialCart={ initialCart }
+						setCart={ setCartWithHoldingSiteRenewal }
+					/>
+				);
+
+				expect(
+					await screen.findByText( /WordPress.com Personal/, {
+						ignore: '.cost-overrides-list-product__title',
+					} )
+				).toBeInTheDocument();
+				await waitFor( () => {
+					expect( recordTracksEvent ).toHaveBeenCalledWith(
+						'calypso_checkout_page_view',
+						expect.objectContaining( { checkout_flow: expectedCheckoutFlow } )
+					);
+				} );
+			} finally {
+				recordTracksEvent.mockRestore();
+			}
+		}
+	);
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
