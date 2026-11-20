@@ -29,6 +29,9 @@ export const useViewTitanDnsRecordsAction = (): Action< Email > => {
 			return <TitanDnsRecords domain={ items[ 0 ].domainName } />;
 		},
 		isEligible: ( item: Email ) =>
-			item.type === 'mailbox' && item.provider === 'titan' && item.status !== 'no_subscription',
+			item.type === 'mailbox' &&
+			item.provider === 'titan' &&
+			item.status !== 'no_subscription' &&
+			item.status !== 'domain_not_connected',
 	};
 };

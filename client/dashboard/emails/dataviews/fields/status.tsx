@@ -23,11 +23,7 @@ export const statusField: Field< Email > = {
 						'This domain is no longer connected to WordPress.com, so this mailbox may not receive mail.'
 					) }
 				>
-					<Text
-						intent="error"
-						tabIndex={ 0 }
-						style={ { textDecoration: 'underline', textDecorationStyle: 'dotted' } }
-					>
+					<Text intent="error" tabIndex={ 0 } className="emails-status-with-tooltip">
 						{ __( 'Disconnected' ) }
 					</Text>
 				</Tooltip>

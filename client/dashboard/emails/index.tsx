@@ -95,7 +95,12 @@ function Emails() {
 
 	const actions = useActions();
 
-	const emailFields = getFields( domainsWithEmails, domainNameFilter );
+	const mailboxDomainNames = useMemo(
+		() => [ ...new Set( emails.map( ( email ) => email.domainName ) ) ],
+		[ emails ]
+	);
+
+	const emailFields = getFields( mailboxDomainNames, domainNameFilter );
 
 	const { data: filteredData, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( emails, view, emailFields );

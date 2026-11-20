@@ -20,6 +20,8 @@ vi.mock( '@automattic/calypso-config', async () => {
 	return { ...config, default: config, serverEnvId };
 } );
 
+let mockSearch: { domainName?: string } = {};
+
 vi.mock( '../../app/router/emails', async () => {
 	const actual =
 		await vi.importActual< typeof import( '../../app/router/emails' ) >(
@@ -29,7 +31,7 @@ vi.mock( '../../app/router/emails', async () => {
 		...actual,
 		emailsRoute: {
 			...actual.emailsRoute,
-			useSearch: () => ( {} ),
+			useSearch: () => mockSearch,
 		},
 	};
 } );
@@ -98,6 +100,10 @@ function mockApi( {
 }
 
 describe( '<Emails>', () => {
+	beforeEach( () => {
+		mockSearch = {};
+	} );
+
 	// DOTMSD-1477
 	test( 'lists forwards on a domain the user administers but does not own', async () => {
 		mockApi( { domains: [ nonOwnedDomain ], accounts: [ forwardingAccount ] } );
@@ -279,6 +285,45 @@ describe( '<Emails>', () => {
 
 			expect( await screen.findByText( 'hello@removed.example' ) ).toBeVisible();
 			expect( screen.queryByText( 'You need a domain to set up email' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'can filter by the removed domain', async () => {
+			mockSearch = { domainName: 'removed.example' };
+			mockApi( {
+				domains: [],
+				accounts: [ disconnectedAccount( [ { warning_slug: 'domain_not_connected' } ] ) ],
+			} );
+			render( <Emails /> );
+
+			expect(
+				await screen.findByRole( 'button', { name: 'Domain includes: removed.example' } )
+			).toBeVisible();
+		} );
+
+		test( 'hides Titan actions that need the domain', async () => {
+			mockApi( {
+				domains: [ nonOwnedDomain ],
+				accounts: [
+					{
+						...disconnectedAccount( [ { warning_slug: 'domain_not_connected' } ] ),
+						account_type: EmailProvider.Titan,
+						product_slug: 'wp_titan_mail_premium_yearly',
+					} as EmailAccount,
+				],
+			} );
+			render( <Emails /> );
+
+			await userEvent.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
+			expect( await screen.findByRole( 'menuitem', { name: /^Delete mailbox/ } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'menuitem', { name: /^Manage all mailboxes/ } )
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'menuitem', { name: /^Upgrade mailbox/ } )
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'menuitem', { name: /^View DNS records/ } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 
