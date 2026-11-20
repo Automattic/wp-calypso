@@ -9,6 +9,7 @@ import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { getUrlOnOrigins } from 'calypso/dashboard/utils/url';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
+import { STUDIO_WEB_ORIGINS } from 'calypso/lib/studio/checkout-urls';
 import {
 	clearSignupDestinationCookie,
 	getSignupCompleteFlowName,
@@ -131,7 +132,12 @@ export const leaveCheckout = ( {
 
 			const allowedUrl = getUrlOnOrigins(
 				cancelPath,
-				[ window.location.origin, ...dashboardOrigins(), ...jetpackCloudOrigins( cancelPath ) ],
+				[
+					window.location.origin,
+					...dashboardOrigins(),
+					...jetpackCloudOrigins( cancelPath ),
+					...STUDIO_WEB_ORIGINS,
+				],
 				window.location.href
 			);
 			if ( allowedUrl ) {

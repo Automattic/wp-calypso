@@ -63,10 +63,17 @@ describe( 'CheckoutMasterbar', () => {
 		expect( screen.queryByRole( 'link', { name: 'Back' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'offers the leave prompt on the Studio checkout', () => {
+		renderAt( '/checkout/studio/studio-cloud-monthly' );
+
+		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
+	} );
+
 	it.each( [
 		[ '/checkout/akismet/ak_plus_yearly_2', '.akismet-logo' ],
 		[ '/checkout/jetpack/jetpack_backup_t1_yearly', '.jetpack-logo' ],
 		[ '/checkout/passport/passport_yearly', '.passport-logo' ],
+		[ '/checkout/studio/studio-cloud-monthly', '.masterbar__studio-logo' ],
 	] )( 'shows the brand logo instead of the WordPress logo at %s', ( url, logoSelector ) => {
 		const { container } = renderAt( url );
 

@@ -52,3 +52,62 @@ describe( 'useValidCheckoutBackUrl', () => {
 		expect( result.current ).toBeUndefined();
 	} );
 } );
+
+describe( 'useValidCheckoutBackUrl on the Studio checkout', () => {
+	function renderSiteless() {
+		const queryClient = new QueryClient();
+		const wrapper = ( { children }: { children: ReactNode } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+		return renderHook( () => useValidCheckoutBackUrl( undefined ), { wrapper } );
+	}
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		( useSelector as jest.Mock ).mockImplementation( ( selector ) => selector( {} ) );
+		( getInitialQueryArguments as jest.Mock ).mockReturnValue( {} );
+		( getSiteId as jest.Mock ).mockReturnValue( null );
+	} );
+
+	afterEach( () => {
+		window.history.pushState( {}, '', '/' );
+	} );
+
+	it( 'defaults to the Studio website', () => {
+		window.history.pushState( {}, '', '/checkout/studio/studio-cloud-monthly' );
+
+		expect( renderSiteless().result.current ).toBe( 'https://wordpress.studio/' );
+	} );
+
+	// leaveCheckout takes a back URL over cancel_to, so a default here would swallow the
+	// desktop app's own cancel target.
+	it.each( [ '?cancel_to=%2Fcheckout%2Fstudio-return%3FstudioSiteId%3Dabc', '?studioSiteId=abc' ] )(
+		'leaves the desktop round trip its own cancel target (%s)',
+		( search ) => {
+			window.history.pushState( {}, '', `/checkout/studio/studio-cloud-monthly${ search }` );
+
+			expect( renderSiteless().result.current ).toBeUndefined();
+		}
+	);
+
+	it( 'keeps the default when studioSiteId is not one the round trip accepts', () => {
+		window.history.pushState( {}, '', '/checkout/studio/studio-cloud-monthly?studioSiteId=' );
+
+		expect( renderSiteless().result.current ).toBe( 'https://wordpress.studio/' );
+	} );
+
+	it( 'gives the WordPress.com siteless checkout no default', () => {
+		window.history.pushState( {}, '', '/checkout/wpcom/studio-cloud-monthly' );
+
+		expect( renderSiteless().result.current ).toBeUndefined();
+	} );
+
+	it( 'accepts a checkoutBackUrl on a Studio host', () => {
+		window.history.pushState( {}, '', '/checkout/studio/studio-cloud-monthly' );
+		( getInitialQueryArguments as jest.Mock ).mockReturnValue( {
+			checkoutBackUrl: 'https://wordpress.studio/pricing',
+		} );
+
+		expect( renderSiteless().result.current ).toBe( 'https://wordpress.studio/pricing' );
+	} );
+} );

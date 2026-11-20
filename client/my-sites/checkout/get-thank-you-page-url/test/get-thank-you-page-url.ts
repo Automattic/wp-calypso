@@ -1549,6 +1549,26 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/no-site/12342424241' );
 	} );
 
+	it( 'returns a Studio redirectTo as is, keeping the receipt placeholder for the pending page', () => {
+		const redirectTo = 'https://app.wordpress.studio/purchase-complete?receipt=:receiptId';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( redirectTo );
+	} );
+
+	it( 'ignores a redirectTo on a host that only starts with a Studio host', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			receiptId: 12342424241,
+			redirectTo: 'https://wordpress.studio.example.com/',
+			sitelessCheckoutType: 'wpcom',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site/12342424241' );
+	} );
+
 	it( 'redirects to the jetpack checkout thank you with `no_product` when jetpack checkout arg is set and the cart is empty', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
@@ -2247,6 +2267,13 @@ describe( 'getAllowedExternalRedirectHosts', () => {
 		const hosts = getAllowedExternalRedirectHosts();
 		expect( hosts ).toContain( 'my.wordpress.com' );
 		expect( hosts ).toContain( 'jetpack.com' );
+	} );
+
+	it( 'includes the Studio return hosts in every environment', () => {
+		mockConfig( undefined );
+		const hosts = getAllowedExternalRedirectHosts();
+		expect( hosts ).toContain( 'wordpress.studio' );
+		expect( hosts ).toContain( 'app.wordpress.studio' );
 	} );
 
 	it( 'appends entries from checkout_additional_allowed_redirect_hosts', () => {

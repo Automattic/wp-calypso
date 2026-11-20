@@ -46,3 +46,12 @@ export function buildStudioCheckoutReturnUrl( {
 export function openStudioCheckoutReturn( params: StudioCheckoutReturnParams ): void {
 	window.location.href = buildStudioCheckoutReturnUrl( params );
 }
+
+/**
+ * Opens the Studio desktop app with no action, for a buyer who did not start in the app.
+ * When Studio is not installed the browser cannot open the URL, and Safari shows an "invalid
+ * address" alert, so callers must offer the web app first and this only on request.
+ */
+export function openStudioApp(): void {
+	window.location.href = `${ STUDIO_URL_SCHEME }://`;
+}

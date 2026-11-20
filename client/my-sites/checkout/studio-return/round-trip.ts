@@ -71,3 +71,24 @@ export function buildStudioRedirectTo(
 export function buildStudioCancelTo( studioCheckoutParams: StudioCheckoutParams ): string {
 	return addQueryArgs( STUDIO_RETURN_PATH, toStudioQueryArgs( studioCheckoutParams ) );
 }
+
+/**
+ * The `checkout_type` that makes the thank-you page show its Studio variant.
+ */
+export const STUDIO_CHECKOUT_TYPE = 'studio';
+
+/**
+ * Where the Studio-branded checkout sends the buyer after paying when the URL names no
+ * `redirect_to`: the Studio thank-you page, carrying the desktop round-trip params when Studio
+ * sent them. The pending page keeps the query through its hop.
+ */
+export function buildStudioCheckoutRedirectTo(
+	query: Record< string, unknown > | undefined
+): string {
+	const studioCheckoutParams = getStudioCheckoutParams( query );
+	const thankYouPath = studioCheckoutParams
+		? buildStudioRedirectTo( undefined, studioCheckoutParams )
+		: '/checkout/thank-you/no-site/:receiptId';
+
+	return addQueryArgs( thankYouPath, { checkout_type: STUDIO_CHECKOUT_TYPE } );
+}

@@ -44,6 +44,7 @@ import {
 	has100YearDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { STUDIO_WEB_HOSTS } from 'calypso/lib/studio/checkout-urls';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -84,6 +85,7 @@ const allowedExternalSites = [
 	'akismet.com',
 	'gravatar.com',
 	'difmrequest.com',
+	...STUDIO_WEB_HOSTS,
 ];
 
 /**

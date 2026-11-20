@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 
-import { buildStudioCheckoutReturnUrl, openStudioCheckoutReturn } from '../deep-link';
+import {
+	buildStudioCheckoutReturnUrl,
+	openStudioApp,
+	openStudioCheckoutReturn,
+} from '../deep-link';
 
 const STUDIO_SITE_ID = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
 
@@ -94,5 +98,15 @@ describe( 'openStudioCheckoutReturn', () => {
 		expect( window.location.href ).toBe(
 			`wp-studio://checkout-return?studioSiteId=${ STUDIO_SITE_ID }&checkoutResult=cancelled`
 		);
+	} );
+} );
+
+describe( 'openStudioApp', () => {
+	it( 'opens the Studio app with no action', () => {
+		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
+
+		openStudioApp();
+
+		expect( window.location.href ).toBe( 'wp-studio://' );
 	} );
 } );

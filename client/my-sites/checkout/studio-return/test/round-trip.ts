@@ -1,4 +1,9 @@
-import { buildStudioCancelTo, buildStudioRedirectTo, getStudioCheckoutParams } from '../round-trip';
+import {
+	buildStudioCancelTo,
+	buildStudioCheckoutRedirectTo,
+	buildStudioRedirectTo,
+	getStudioCheckoutParams,
+} from '../round-trip';
 
 const STUDIO_SITE_ID = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
 
@@ -137,5 +142,24 @@ describe( 'buildStudioCancelTo', () => {
 
 	it( 'stays relative so it passes the cancel_to check in leaveCheckout', () => {
 		expect( buildStudioCancelTo( { studioSiteId: STUDIO_SITE_ID } ) ).toMatch( /^\/(?!\/)/ );
+	} );
+} );
+
+describe( 'buildStudioCheckoutRedirectTo', () => {
+	it( 'lands on the Studio thank-you page when Studio sent no round-trip params', () => {
+		expect( buildStudioCheckoutRedirectTo( {} ) ).toBe(
+			'/checkout/thank-you/no-site/:receiptId?checkout_type=studio'
+		);
+	} );
+
+	it( 'keeps the desktop round-trip params next to the Studio flag', () => {
+		expect(
+			buildStudioCheckoutRedirectTo( {
+				studioSiteId: STUDIO_SITE_ID,
+				studioReturnTo: 'plan-purchased',
+			} )
+		).toBe(
+			`/checkout/thank-you/no-site/:receiptId?studioSiteId=${ STUDIO_SITE_ID }&studioReturnTo=plan-purchased&checkout_type=studio`
+		);
 	} );
 } );
