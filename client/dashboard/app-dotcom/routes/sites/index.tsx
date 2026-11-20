@@ -54,7 +54,7 @@ function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: numb
 	};
 }
 
-export default function Sites( { search }: { search: SitesSearch } ) {
+export default function Sites( { search = {} }: { search?: SitesSearch } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isRestoringAccount = !! search.restored;
 
