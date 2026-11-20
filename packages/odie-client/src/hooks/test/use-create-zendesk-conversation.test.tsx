@@ -374,7 +374,7 @@ describe( 'useCreateZendeskConversation — classification tags', () => {
 		const { result } = renderHook( () => useCreateZendeskConversation() );
 		const promise = result.current( { createdFrom: 'automatic_escalation' } );
 
-		await vi.advanceTimersByTimeAsync( 4999 );
+		await vi.advanceTimersByTimeAsync( 9999 );
 		expect( smoochCreateConversation ).not.toHaveBeenCalled();
 
 		await vi.advanceTimersByTimeAsync( 1 );
@@ -385,7 +385,7 @@ describe( 'useCreateZendeskConversation — classification tags', () => {
 		);
 		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
 			classification_tags_count: 0,
-			classification_wait_ms: 5000,
+			classification_wait_ms: 10_000,
 			classification_timed_out: true,
 		} );
 	} );

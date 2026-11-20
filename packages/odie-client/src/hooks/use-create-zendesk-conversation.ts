@@ -25,7 +25,7 @@ const CHECKOUT_SUPPORT_TAG = 'wpcom_checkout_chat';
 
 // How long chat creation waits for the classification tags. Past it, the chat is created
 // without them and Zendesk classifies the ticket itself.
-const CLASSIFICATION_TIME_LIMIT_MS = 5000;
+const CLASSIFICATION_TIME_LIMIT_MS = 10000;
 
 type ClassificationResult = { tags: string[]; timedOut: boolean };
 
