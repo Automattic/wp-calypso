@@ -100,6 +100,9 @@ test( 'explains empty fields instead of submitting', async () => {
 
 	await userEvent.click( screen.getByRole( 'button', { name: 'Add record' } ) );
 
+	expect( screen.getByRole( 'textbox', { name: /Name server/ } ) ).toHaveAccessibleDescription(
+		'Please enter a valid name server.'
+	);
 	expect( screen.getByRole( 'textbox', { name: /IP address/ } ) ).toHaveAccessibleDescription(
 		/Constraints not satisfied/
 	);
