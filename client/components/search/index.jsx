@@ -156,7 +156,7 @@ class Search extends Component {
 			return;
 		}
 		// if there's a keyword change and mode is search-on-write: trigger search
-		// The empty string must be handled always becuase it can be triggered:
+		// The empty string must be handled always because it can be triggered:
 		// - by the user clicking on the clear icon
 		// - by the user pressing the ESC key
 		// Additionally, the search can be triggered on demand by using the boolean prop `applySearch`
