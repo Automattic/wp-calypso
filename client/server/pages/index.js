@@ -1088,7 +1088,8 @@ function wpcomPages( app ) {
 				next();
 				return;
 			}
-			const localePrefix = req.params.locale ? '/' + req.params.locale : '';
+			const locale = getLanguageSlugs().find( ( slug ) => slug === req.params.locale );
+			const localePrefix = locale ? '/' + locale : '';
 			const selectedTag = req.params.tag ? encodeURIComponent( req.params.tag ) : 'dailyprompt';
 			res.redirect( 302, `${ localePrefix }/discover/tags?selectedTag=${ selectedTag }` );
 		}
