@@ -84,26 +84,24 @@ export function enabledSections() {
 	);
 }
 
+// Characters `JSON.stringify` leaves as is that can end a line or a script elsewhere.
 const unsafeCharEscapes = {
 	'<': '\\u003C',
 	'>': '\\u003E',
-	'\b': '\\b',
-	'\f': '\\f',
-	'\n': '\\n',
-	'\r': '\\r',
-	'\t': '\\t',
-	'\0': '\\0',
 	'\u2028': '\\u2028',
 	'\u2029': '\\u2029',
 };
 
 /**
- * `JSON.stringify` leaves characters that can end a `<script>` or a line of code, such as `<` and U+2028.
- * @param {string} json
+ * A value as a JavaScript literal for generated code.
+ * @param {unknown} value
  * @returns {string}
  */
-function escapeUnsafeChars( json ) {
-	return json.replace( /[<>\b\f\n\r\t\0\u2028\u2029]/g, ( char ) => unsafeCharEscapes[ char ] );
+function toCodeString( value ) {
+	return JSON.stringify( value ).replace(
+		/[<>\u2028\u2029]/g,
+		( char ) => unsafeCharEscapes[ char ]
+	);
 }
 
 /**
@@ -120,9 +118,9 @@ function sectionsPlugin( sections ) {
 				return;
 			}
 			const list = sections.map( ( section ) =>
-				JSON.stringify( section ).replace(
+				toCodeString( section ).replace(
 					/}$/,
-					`, "load": () => import( ${ escapeUnsafeChars( JSON.stringify( section.module ) ) } ) }`
+					`, "load": () => import( ${ toCodeString( section.module ) } ) }`
 				)
 			);
 			return { code: `export default [\n${ list.join( ',\n' ) }\n];`, map: null };
