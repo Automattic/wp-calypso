@@ -74,8 +74,10 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 							isMinimal
 						/>
 					) }
-					{ canApprove && <ApproveButton note={ note } isApproved={ false } isMinimal /> }
-					{ canUnapprove && <ApproveButton note={ note } isApproved isMinimal /> }
+					{ /* One button for both, so it keeps the focus as it flips. */ }
+					{ ( canApprove || canUnapprove ) && (
+						<ApproveButton note={ note } isApproved={ isApproved } isMinimal />
+					) }
 					{ canSpam && <SpamButton note={ note } goBack={ goBack } isMinimal /> }
 					{ hasAnswerPrompt && <AnswerPromptButton note={ note } /> }
 				</HStack>

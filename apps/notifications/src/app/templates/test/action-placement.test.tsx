@@ -1,9 +1,10 @@
 /**
  * @vitest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import { approveNote } from '../../../panel/state/notes/actions';
 import { renderWithProvider } from '../../../testing-library';
 import { AppProvider } from '../../context';
 import NoteActions from '../actions';
@@ -15,6 +16,18 @@ let isLargeScreen = true;
 vi.mock( '@wordpress/compose', async ( importOriginal ) => ( {
 	...( await importOriginal< typeof import( '@wordpress/compose' ) >() ),
 	useViewportMatch: () => isLargeScreen,
+} ) );
+
+// Approving only updates the store, and marking as spam is up to each test, so no request is made.
+const { spamNote } = vi.hoisted( () => ( { spamNote: vi.fn() } ) );
+vi.mock( '../../../panel/state/notes/thunks', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '../../../panel/state/notes/thunks' ) >() ),
+	setApproveStatus: ( noteId: number, _siteId: number, _commentId: number, isApproved: boolean ) =>
+		approveNote( noteId, isApproved ),
+	spamNote:
+		( ...args: unknown[] ) =>
+		() =>
+			spamNote( ...args ),
 } ) );
 
 const note = {
@@ -118,6 +131,57 @@ describe( 'comment action placement', () => {
 
 		beforeEach( () => {
 			isLargeScreen = true;
+			spamNote.mockReset();
+		} );
+
+		it( 'keeps the focus on the button as Approve and Unapprove swap', async () => {
+			const user = userEvent.setup();
+			renderExpanded( pendingNote( { 'approve-comment': false, 'spam-comment': true } ) );
+
+			await user.click( screen.getByRole( 'button', { name: 'Approve comment' } ) );
+
+			expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toHaveFocus();
+
+			await user.click( screen.getByRole( 'button', { name: 'Unapprove comment' } ) );
+
+			expect( screen.getByRole( 'button', { name: 'Approve comment' } ) ).toHaveFocus();
+		} );
+
+		it( 'goes back once the comment is marked as spam', async () => {
+			const user = userEvent.setup();
+			const goBack = vi.fn();
+			spamNote.mockResolvedValue( undefined );
+			renderWithProvider(
+				<AppProvider client={ null } locale="en" hasExpandedActions>
+					<SimplifiedActions note={ note } goBack={ goBack } />
+				</AppProvider>
+			);
+
+			await user.click( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) );
+
+			await waitFor( () => expect( goBack ).toHaveBeenCalledTimes( 1 ) );
+			expect( spamNote ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'lets Spam be tried again when it fails', async () => {
+			const user = userEvent.setup();
+			const goBack = vi.fn();
+			spamNote.mockRejectedValue( { status: 500 } );
+			renderWithProvider(
+				<AppProvider client={ null } locale="en" hasExpandedActions>
+					<SimplifiedActions note={ note } goBack={ goBack } />
+				</AppProvider>
+			);
+			const spam = screen.getByRole( 'button', { name: 'Mark comment as spam' } );
+
+			await user.click( spam );
+
+			await waitFor( () => expect( spam ).not.toHaveAttribute( 'aria-disabled', 'true' ) );
+			expect( goBack ).not.toHaveBeenCalled();
+
+			await user.click( spam );
+
+			expect( spamNote ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		it( 'puts Unapprove and Spam beside Like on an approved comment', async () => {

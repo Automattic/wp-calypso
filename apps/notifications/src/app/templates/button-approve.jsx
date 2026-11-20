@@ -27,7 +27,7 @@ const cross = (
 	</svg>
 );
 
-const ApproveButton = ( { className = '', isApproved, isMinimal, note, setApproveStatus } ) => {
+const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 	const { client } = useAppContext();
 	// A minimal button names what it does, so an approved comment's reads "Unapprove".
 	const isUnapprove = isMinimal && isApproved;
@@ -41,7 +41,6 @@ const ApproveButton = ( { className = '', isApproved, isMinimal, note, setApprov
 
 	return (
 		<ActionButton
-			className={ className }
 			icon={ isUnapprove ? cross : check }
 			isActive={ isApproved && ! isMinimal }
 			isMinimal={ isMinimal }
@@ -63,7 +62,6 @@ const ApproveButton = ( { className = '', isApproved, isMinimal, note, setApprov
 };
 
 ApproveButton.propTypes = {
-	className: PropTypes.string,
 	isApproved: PropTypes.bool.isRequired,
 	isMinimal: PropTypes.bool,
 	note: PropTypes.object.isRequired,

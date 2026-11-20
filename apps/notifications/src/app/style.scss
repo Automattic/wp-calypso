@@ -84,8 +84,8 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 }
 
 .wpnc-app {
-	// One amber for everything pending: the list's type badge, the Pending badge
-	// and the note detail's Approve action, at lighter and darker steps of its hue.
+	// One amber for everything pending: the list's type badge and the Pending badge,
+	// at lighter and darker steps of its hue.
 	--wpnc-pending: #967023;
 	position: relative;
 	width: 100%;

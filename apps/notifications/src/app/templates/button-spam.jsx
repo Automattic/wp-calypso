@@ -27,8 +27,16 @@ const SpamButton = ( { isMinimal, note, spamNote, goBack } ) => {
 	const [ isBusy, setIsBusy ] = useState( false );
 
 	const handleSpam = async () => {
+		if ( isBusy ) {
+			return;
+		}
 		setIsBusy( true );
-		await spamNote( note, true );
+		try {
+			await spamNote( note, true );
+		} catch {
+			setIsBusy( false );
+			return;
+		}
 		goBack();
 	};
 
