@@ -259,14 +259,9 @@ $wpnc-slide-easing: cubic-bezier(0.33, 0, 0, 1);
 
 .wpnc-app__full-view.components-button {
 	width: 100%;
-	height: 48px;
 	justify-content: center;
 	color: var(--wp-components-color-gray-900, #{$gray-900});
 	font-weight: 500;
-
-	&:focus:not(:active):not(.components-panel__body-toggle) {
-		outline-offset: calc(-1 * var(--wpds-border-width-focus, var(--wp-admin-border-width-focus, 2px)));
-	}
 }
 
 // Sits between the tabs and the list, lined up with the rows' 16px edge.
