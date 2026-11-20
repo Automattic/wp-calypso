@@ -134,6 +134,7 @@ export const getRouter = ( config: AppConfig ) => {
 		// areas.
 		defaultViewTransition: true,
 		scrollRestoration: true,
+		scrollToTopSelectors: [ '.dashboard-notifications-inbox__detail' ],
 	} );
 
 	initLogger( router );

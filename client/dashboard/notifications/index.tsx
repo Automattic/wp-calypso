@@ -3,7 +3,7 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 import { VisuallyHidden } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Suspense, lazy, useLayoutEffect, useRef } from 'react';
+import { Suspense, lazy } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAnalytics } from '../app/analytics';
 import { useLocale } from '../app/locale';
@@ -26,13 +26,6 @@ export default function Notifications() {
 	const { noteId } = useParams( { strict: false } );
 	const { filter } = notificationsRoute.useSearch();
 	const isSmallViewport = useViewportMatch( 'large', '<' );
-	const detailPaneRef = useRef< HTMLDivElement >( null );
-
-	useLayoutEffect( () => {
-		if ( detailPaneRef.current ) {
-			detailPaneRef.current.scrollTop = 0;
-		}
-	}, [ noteId ] );
 
 	const setSelectedNoteId = ( selectedNoteId: string | undefined ) => {
 		if ( selectedNoteId ) {
@@ -93,9 +86,7 @@ export default function Notifications() {
 									<div className="dashboard-notifications-inbox__list">{ list }</div>
 								);
 								const detailPane = detail && (
-									<div ref={ detailPaneRef } className="dashboard-notifications-inbox__detail">
-										{ detail }
-									</div>
+									<div className="dashboard-notifications-inbox__detail">{ detail }</div>
 								);
 								const emptyDetailPane = ! noteId && (
 									<div className="dashboard-notifications-inbox__detail is-empty">
