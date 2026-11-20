@@ -61,4 +61,25 @@ describe( 'NotificationApp', () => {
 		expect( screen.getByRole( 'tab', { name: 'Likes', selected: true } ) ).toBeVisible();
 		expect( openNote ).not.toHaveClass( 'is-open' );
 	} );
+
+	it( 'goes back to the list from the note title below the two-pane width', async () => {
+		const user = userEvent.setup();
+		store.dispatch( actions.notes.addNotes( [ makeNote( 801, 'First comment' ) ] ) );
+		store.dispatch( actions.ui.loadedNotes() );
+		render( <NotificationApp wpcom={ {} } /> );
+
+		await user.click( await screen.findByRole( 'button', { name: 'First comment' } ) );
+
+		const back = screen.getByRole( 'button', {
+			name: 'First comment title, back to notifications',
+		} );
+		const openNote = back.closest( '.wpnc-app__detail-pane' );
+		expect( back ).toHaveTextContent( 'First comment title' );
+		expect( back.closest( 'h3' ) ).toBeInTheDocument();
+		expect( openNote ).toHaveClass( 'is-open' );
+
+		await user.click( back );
+
+		expect( openNote ).not.toHaveClass( 'is-open' );
+	} );
 } );
