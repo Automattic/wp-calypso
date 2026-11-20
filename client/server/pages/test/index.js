@@ -1243,6 +1243,11 @@ describe( 'main app', () => {
 			);
 		} );
 
+		it( 'drops a locale prefix Calypso does not know', async () => {
+			const { response } = await app.run( { request: { url: '/xx/tag/travel' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, '/discover/tags?selectedTag=travel' );
+		} );
+
 		it( 'does not redirect logged-in users', async () => {
 			const { response } = await app.run( {
 				request: { url: '/tags', cookies: { wordpress_logged_in: true } },
