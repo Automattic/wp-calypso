@@ -45,19 +45,23 @@ export class ImportFileContentPage {
 
 	/**
 	 * Waits for the step that follows the backend's processing of the uploaded file.
-	 * If the page is still processing when the wait ends, the error says the backend is slow,
-	 * so the failure isn't mistaken for a Calypso or test bug.
+	 * If the page is still processing when the wait ends, the error points at the backend first,
+	 * so a stall there isn't mistaken for a test bug.
 	 * @param nextStep The element shown once the upload is processed.
 	 */
 	async waitForUploadProcessed( nextStep: Locator ): Promise< void > {
 		try {
 			await nextStep.waitFor( { timeout: UPLOAD_PROCESSING_TIMEOUT } );
 		} catch ( error ) {
-			if ( await this.page.getByText( 'Processing uploaded file…' ).isVisible() ) {
+			// The site setup importers show this text; the /import importers show only a progress bar.
+			const stillProcessing = this.page
+				.getByText( 'Processing uploaded file…' )
+				.or( this.page.getByRole( 'progressbar', { name: 'Loading…' } ) );
+			if ( await stillProcessing.isVisible() ) {
 				throw new Error(
-					`WordPress.com was still processing the uploaded file after ${
+					`The page was still processing the uploaded file after ${
 						UPLOAD_PROCESSING_TIMEOUT / 1000
-					} s. This usually means the backend is slow or stuck (for example, database lock waits on file uploads), not a Calypso or test bug. Check WordPress.com upload health before changing this test.`,
+					} s. This usually means the WordPress.com backend is slow or stuck (for example, database lock waits on file uploads), so check WordPress.com upload health first. If that looks normal, check Calypso's import status polling.`,
 					{ cause: error }
 				);
 			}
