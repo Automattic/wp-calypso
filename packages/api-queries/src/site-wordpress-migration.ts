@@ -1,4 +1,5 @@
 import {
+	cancelWordPressMigration,
 	cancelWordPressMigrationHandoff,
 	configureWordPressMigration,
 	fetchWordPressMigrationConfiguration,
@@ -81,4 +82,18 @@ export const siteWordPressMigrationRunMutation = ( siteId: number ) =>
 			queryClient.setQueryData( queryKey, status );
 		},
 		onError: () => invalidateMigration( siteId ),
+	} );
+
+export const siteWordPressMigrationCancelMutation = ( siteId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'site-wp-migration-cancel' },
+		mutationFn: () => cancelWordPressMigration( siteId ),
+		onSuccess: ( cancellation ) => {
+			queryClient.setQueryData(
+				siteWordPressMigrationStatusQuery( siteId ).queryKey,
+				( status ) => status && { ...status, status: cancellation.status, can_cancel: false }
+			);
+			queryClient.invalidateQueries( { queryKey: [ 'sites' ] } );
+		},
+		onSettled: () => invalidateMigration( siteId ),
 	} );

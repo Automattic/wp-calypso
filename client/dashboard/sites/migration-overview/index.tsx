@@ -1,5 +1,5 @@
-import { siteBySlugQuery } from '@automattic/api-queries';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { siteBySlugQuery, siteWordPressMigrationStatusQuery } from '@automattic/api-queries';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { PageHeader } from '../../components/page-header';
@@ -16,25 +16,30 @@ import { InProgressContentInfo } from './in-progress-content-info';
 import { PendingContentInfo } from './pending-content-info';
 import { StartedDIFMContentInfo } from './started-difm-content-info';
 import { WordPressMigration } from './wordpress';
-import type { Site } from '@automattic/api-core';
+import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
 
 export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const migrationInProgress = isSiteMigrationInProgress( site );
 
 	// The `beforeLoad` redirect only runs on navigation, so this handles the
 	// migration completing while the page is open (e.g. refetch on window focus).
 	useEffect( () => {
 		if ( ! migrationInProgress ) {
+			const migration = queryClient.getQueryData< WordPressMigrationStatus >(
+				siteWordPressMigrationStatusQuery( site.ID ).queryKey
+			);
 			navigate( {
 				to: '/sites/$siteSlug',
 				params: { siteSlug },
+				search: migration?.status === 'cancelled' ? { flash: 'migration-cancelled' } : {},
 				replace: true,
 				viewTransition: false,
 			} );
 		}
-	}, [ migrationInProgress, navigate, siteSlug ] );
+	}, [ migrationInProgress, navigate, siteSlug, site.ID, queryClient ] );
 
 	return (
 		<PageLayout size="small" header={ <PageHeader title={ getSiteDisplayName( site ) } /> }>

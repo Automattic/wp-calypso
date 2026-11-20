@@ -19,6 +19,7 @@ import TwoStepRequiredNotice, {
 	useSiteRequiresTwoStep,
 } from '../../../../app/two-step-required-notice';
 import Divider from '../../../../components/divider';
+import FlashMessage from '../../../../components/flash-message';
 import Grid, { type GapSize } from '../../../../components/grid';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../../../components/guided-tour';
 import { PageHeader } from '../../../../components/page-header';
@@ -322,6 +323,7 @@ function SiteOverview( {
 					/>
 				) }
 			</GuidedTourContextProvider>
+			<FlashMessage id="migration-cancelled" message={ __( 'Migration cancelled.' ) } />
 			<DifmOfferThankYou />
 			<DifmOfferDeepLink site={ site } />
 			<PerformanceTrackerStop />

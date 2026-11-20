@@ -203,3 +203,15 @@
 .wordpress-migration__message {
 	overflow-wrap: anywhere;
 }
+
+.wordpress-migration__footer-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: center;
+
+	@media ( max-width: 660px ) {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}

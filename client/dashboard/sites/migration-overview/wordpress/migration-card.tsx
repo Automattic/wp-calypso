@@ -80,18 +80,24 @@ export function MigrationCard( {
 	);
 }
 
-/**
- * The way out to an assisted migration, the same wherever the customer may want it.
- */
-export function AssistedHandoffLink( { siteSlug }: { siteSlug: string } ) {
+export function MigrationFooter( {
+	site,
+	cancelAction,
+}: {
+	site: Site;
+	cancelAction: React.ReactNode;
+} ) {
 	return (
-		<RouterLinkButton
-			variant="link"
-			className="wordpress-migration__note-link"
-			to={ `/sites/${ siteSlug }/migration-overview/assisted` }
-		>
-			{ __( 'Have our team handle this migration for you, included in your plan.' ) }
-		</RouterLinkButton>
+		<div className="wordpress-migration__footer-actions">
+			<RouterLinkButton
+				variant="link"
+				className="wordpress-migration__note-link"
+				to={ `/sites/${ site.slug }/migration-overview/assisted` }
+			>
+				{ __( 'Have our team handle this migration for you' ) }
+			</RouterLinkButton>
+			{ cancelAction }
+		</div>
 	);
 }
 
