@@ -909,7 +909,7 @@ __metadata:
     vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
   peerDependencies:
-    "@wordpress/data": ^11.2.0
+    "@wordpress/data": ^11.0.0
     react: ^18.3.1 || ^19.0.0
   languageName: unknown
   linkType: soft
@@ -2449,7 +2449,7 @@ __metadata:
     vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
   peerDependencies:
-    "@wordpress/data": ^11.2.0
+    "@wordpress/data": ^11.0.0
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
     redux: ^5.0.1
