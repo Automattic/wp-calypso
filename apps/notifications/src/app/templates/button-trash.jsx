@@ -8,10 +8,11 @@ import ActionButton from './action-button';
 
 // eslint-disable-next-line no-shadow
 const TrashButton = ( { note, trashNote, goBack } ) => {
-	const [ isBusy, setIsBusy ] = useState( false );
+	// Busy for the note it was pressed on, since the same button shows the next note opened meanwhile.
+	const [ busyNoteId, setBusyNoteId ] = useState();
 
 	const handleTrash = async () => {
-		setIsBusy( true );
+		setBusyNoteId( note.id );
 		await trashNote( note, true );
 		goBack();
 	};
@@ -21,7 +22,7 @@ const TrashButton = ( { note, trashNote, goBack } ) => {
 			icon={ trash }
 			isActive={ false }
 			isDestructive
-			isBusy={ isBusy }
+			isBusy={ busyNoteId === note.id }
 			hotkey="t"
 			onToggle={ handleTrash }
 			text={ __( 'Trash' ) }

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { store, init as initState } from '../../panel/state';
@@ -19,6 +19,7 @@ vi.mock( '../../panel/rest-client', () => ( {
 } ) );
 vi.mock( '../../panel/rest-client/wpcom', () => ( {
 	init: vi.fn(),
+	listNotes: vi.fn( async () => ( { notes: [] } ) ),
 	markReadStatus: vi.fn(),
 	markPostAsSeen: vi.fn(),
 } ) );
@@ -32,6 +33,21 @@ const makeNote = ( id: number, label: string ) => ( {
 	title: `${ label } title`,
 	subject: [ { text: label, ranges: [], media: [] } ],
 	body: [],
+} );
+
+const makeComment = ( id: number, name: string ) => ( {
+	...makeNote( id, `${ name } commented` ),
+	read: 1,
+	body: [
+		{ text: name, type: 'user', ranges: [] },
+		{
+			text: `${ name }’s comment`,
+			type: 'comment',
+			actions: { 'approve-comment': true, 'edit-comment': true },
+			meta: { ids: { site: 1, post: 2, comment: id } },
+		},
+	],
+	meta: { ids: { site: 1, post: 2, comment: id } },
 } );
 
 describe( 'NotificationApp', () => {
@@ -82,4 +98,25 @@ describe( 'NotificationApp', () => {
 
 		expect( openNote ).not.toHaveClass( 'is-open' );
 	} );
+
+	it.each( [ false, true ] )(
+		'keeps the focus in the note when `j` opens the next one (view settings %s)',
+		async ( isViewSettingsEnabled ) => {
+			const user = userEvent.setup();
+			store.dispatch(
+				actions.notes.addNotes( [ makeComment( 802, 'Eve' ), makeComment( 801, 'Ada' ) ] )
+			);
+			store.dispatch( actions.ui.loadedNotes() );
+			render( <NotificationApp wpcom={ {} } isViewSettingsEnabled={ isViewSettingsEnabled } /> );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Eve commented' } ) );
+			const note = document.querySelector( '.wpnc-app__detail-pane' ) as HTMLElement;
+			act( () => note.querySelector< HTMLElement >( '.components-card__footer button' )?.focus() );
+
+			await user.keyboard( 'j' );
+
+			expect( note ).toHaveTextContent( 'Ada’s comment' );
+			expect( note ).toContainElement( document.activeElement as HTMLElement );
+		}
+	);
 } );

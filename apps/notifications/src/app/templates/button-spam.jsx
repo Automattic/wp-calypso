@@ -24,17 +24,19 @@ const caution = (
 
 // eslint-disable-next-line no-shadow
 const SpamButton = ( { isMinimal, note, spamNote, goBack } ) => {
-	const [ isBusy, setIsBusy ] = useState( false );
+	// Busy for the note it was pressed on, since the same button shows the next note opened meanwhile.
+	const [ busyNoteId, setBusyNoteId ] = useState();
+	const isBusy = busyNoteId === note.id;
 
 	const handleSpam = async () => {
 		if ( isBusy ) {
 			return;
 		}
-		setIsBusy( true );
+		setBusyNoteId( note.id );
 		try {
 			await spamNote( note, true );
 		} catch {
-			setIsBusy( false );
+			setBusyNoteId( ( id ) => ( id === note.id ? undefined : id ) );
 			return;
 		}
 		goBack();

@@ -35,18 +35,20 @@ export default function ActionsMenu( {
 } ) {
 	const dispatch = useDispatch< ThunkDispatch< unknown, unknown, UnknownAction > >();
 	const { client } = useAppContext();
-	const [ isBusy, setIsBusy ] = useState( false );
+	// Busy for the note it was pressed on, since the same button shows the next note opened meanwhile.
+	const [ busyNoteId, setBusyNoteId ] = useState< Note[ 'id' ] >();
+	const isBusy = busyNoteId === note.id;
 	const { site: siteId, post: postId, comment: commentId } = note.meta?.ids ?? {};
 
 	const removeWith = ( remove: RemoveNote ) => async () => {
 		if ( isBusy ) {
 			return;
 		}
-		setIsBusy( true );
+		setBusyNoteId( note.id );
 		try {
 			await dispatch( remove( note, true ) );
 		} catch {
-			setIsBusy( false );
+			setBusyNoteId( ( id ) => ( id === note.id ? undefined : id ) );
 			return;
 		}
 		goBack();

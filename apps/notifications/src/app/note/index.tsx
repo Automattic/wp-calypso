@@ -221,11 +221,11 @@ const Note = ( {
 			</CardBody>
 			{ isSimplifiedNote ? (
 				<>
-					<SimplifiedActionBlock key={ note.id } note={ note } goBack={ goBack } />
+					<SimplifiedActionBlock note={ note } goBack={ goBack } />
 					<ReplyFooter note={ note } />
 				</>
 			) : (
-				<ActionBlock key={ note.id } note={ note } goBack={ goBack } />
+				<ActionBlock note={ note } goBack={ goBack } />
 			) }
 		</>
 	);

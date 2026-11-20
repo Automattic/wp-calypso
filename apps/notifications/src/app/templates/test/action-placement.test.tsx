@@ -3,7 +3,10 @@
  */
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
 import { vi } from 'vitest';
+import { store } from '../../../panel/state';
+import actions from '../../../panel/state/actions';
 import { approveNote } from '../../../panel/state/notes/actions';
 import { renderWithProvider } from '../../../testing-library';
 import { AppProvider } from '../../context';
@@ -33,9 +36,10 @@ vi.mock( '@wordpress/compose', async ( importOriginal ) => ( {
 
 // Approving updates the store, and when the request lands and whether marking as spam works are
 // up to each test, so no request is made.
-const { approveRequest, spamNote } = vi.hoisted( () => ( {
+const { approveRequest, spamNote, trashNote } = vi.hoisted( () => ( {
 	approveRequest: vi.fn(),
 	spamNote: vi.fn(),
+	trashNote: vi.fn(),
 } ) );
 vi.mock( '../../../panel/state/notes/thunks', async ( importOriginal ) => ( {
 	...( await importOriginal< typeof import( '../../../panel/state/notes/thunks' ) >() ),
@@ -49,6 +53,10 @@ vi.mock( '../../../panel/state/notes/thunks', async ( importOriginal ) => ( {
 		( ...args: unknown[] ) =>
 		() =>
 			spamNote( ...args ),
+	trashNote:
+		( ...args: unknown[] ) =>
+		() =>
+			trashNote( ...args ),
 } ) );
 
 const note = {
@@ -142,6 +150,73 @@ describe( 'comment action placement', () => {
 		expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 	} );
 
+	// The same footer shows the next note opened while a request is out, as with j or k in the panel.
+	const otherNote = ( shown: never ) => ( { ...( shown as object ), id: 2 } ) as never;
+	const show = ( ui: React.ReactElement ) => (
+		<Provider store={ store }>
+			<AppProvider client={ null } locale="en">
+				{ ui }
+			</AppProvider>
+		</Provider>
+	);
+
+	it( 'shows a pending Mark as spam as busy only on the note it was chosen on', async () => {
+		const user = userEvent.setup();
+		spamNote.mockReset().mockImplementation( () => new Promise( () => {} ) );
+		const { rerender } = renderWithProvider(
+			<AppProvider client={ null } locale="en">
+				<SimplifiedActions note={ note } goBack={ noop } />
+			</AppProvider>
+		);
+		const toggle = () => screen.getByRole( 'button', { name: 'Actions' } );
+		await user.click( toggle() );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Mark as spam' } ) );
+		expect( toggle() ).toHaveAttribute( 'aria-disabled', 'true' );
+
+		rerender( show( <SimplifiedActions note={ otherNote( note ) } goBack={ noop } /> ) );
+
+		expect( toggle() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+
+		rerender( show( <SimplifiedActions note={ note } goBack={ noop } /> ) );
+
+		expect( toggle() ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	it( 'shows a pending Trash as busy only on the note it was pressed on', async () => {
+		const user = userEvent.setup();
+		trashNote.mockReset().mockImplementation( () => new Promise( () => {} ) );
+		const { rerender } = renderWithProvider(
+			<AppProvider client={ null } locale="en">
+				<NoteActions note={ note } goBack={ noop } />
+			</AppProvider>
+		);
+		const trash = () => screen.getByRole( 'button', { name: 'Trash comment' } );
+		await user.click( trash() );
+		expect( trash() ).toHaveAttribute( 'aria-disabled', 'true' );
+
+		rerender( show( <NoteActions note={ otherNote( note ) } goBack={ noop } /> ) );
+
+		expect( trash() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	it( 'sends one approval at a time from the a shortcut', async () => {
+		const user = userEvent.setup();
+		approveRequest.mockReset().mockImplementation( () => new Promise( () => {} ) );
+		renderWithProvider(
+			<AppProvider client={ null } locale="en">
+				<NoteActions note={ pendingNote( { 'approve-comment': false } ) } goBack={ noop } />
+			</AppProvider>
+		);
+		act( () => {
+			store.dispatch( actions.ui.enableKeyboardShortcuts() );
+		} );
+
+		await user.keyboard( 'a' );
+		await user.keyboard( 'a' );
+
+		expect( approveRequest.mock.calls ).toEqual( [ [ true ] ] );
+	} );
+
 	describe( 'with expanded actions, as on the full page', () => {
 		const approve = () => screen.getByRole( 'button', { name: 'Approve comment' } );
 		const renderExpanded = ( expandedNote: never ) =>
@@ -201,6 +276,38 @@ describe( 'comment action placement', () => {
 			await user.click( unapprove );
 
 			expect( approveRequest.mock.calls ).toEqual( [ [ true ], [ false ] ] );
+		} );
+
+		it( 'shows a pending Approve or Spam as busy only on the note it was pressed on', async () => {
+			const user = userEvent.setup();
+			approveRequest.mockImplementation( () => new Promise( () => {} ) );
+			spamNote.mockImplementation( () => new Promise( () => {} ) );
+			const first = pendingNote( { 'approve-comment': false, 'spam-comment': true } );
+			const { rerender } = renderExpanded( first );
+			const showExpanded = ( shown: never ) =>
+				rerender(
+					<Provider store={ store }>
+						<AppProvider client={ null } locale="en" hasExpandedActions>
+							<SimplifiedActions note={ shown } goBack={ noop } />
+						</AppProvider>
+					</Provider>
+				);
+			const spam = () => screen.getByRole( 'button', { name: 'Mark comment as spam' } );
+			await user.click( approve() );
+			await user.click( spam() );
+
+			showExpanded( otherNote( first ) );
+
+			expect( approve() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+			expect( spam() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+
+			showExpanded( first );
+
+			expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
+			expect( spam() ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
 
 		it( 'goes back once the comment is marked as spam', async () => {
@@ -331,14 +438,18 @@ describe( 'comment action placement', () => {
 		);
 
 		it( 'leaves the focus where it is when it isn’t on a button that moves', () => {
-			renderExpanded( note );
+			renderExpanded(
+				pendingNote( { 'approve-comment': false, 'spam-comment': true, 'edit-comment': true } )
+			);
 			act( () => reportFooterWidth( 500 ) );
-			const actionsToggle = screen.getByRole( 'button', { name: 'Actions' } );
-			actionsToggle.focus();
+			approve().focus();
 
 			act( () => reportFooterWidth( 300 ) );
 
-			expect( actionsToggle ).toHaveFocus();
+			expect(
+				screen.queryByRole( 'button', { name: 'Mark comment as spam' } )
+			).not.toBeInTheDocument();
+			expect( approve() ).toHaveFocus();
 		} );
 
 		it( 'moves them into the menu before a note too narrow for them is painted', () => {

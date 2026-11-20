@@ -30,7 +30,9 @@ const cross = (
 
 const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 	const { client } = useAppContext();
-	const [ isBusy, setIsBusy ] = useState( false );
+	// Busy for the note it was pressed on, since the same button shows the next note opened meanwhile.
+	const [ busyNoteId, setBusyNoteId ] = useState();
+	const isBusy = busyNoteId === note.id;
 	// A minimal button names what it does, so an approved comment's reads "Unapprove".
 	const isUnapprove = isMinimal && isApproved;
 
@@ -40,7 +42,7 @@ const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 		if ( isBusy ) {
 			return;
 		}
-		setIsBusy( true );
+		setBusyNoteId( note.id );
 		await setApproveStatus(
 			note.id,
 			getReferenceId( note, 'site' ),
@@ -49,7 +51,7 @@ const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 			note.type,
 			client
 		);
-		setIsBusy( false );
+		setBusyNoteId( ( id ) => ( id === note.id ? undefined : id ) );
 	};
 
 	const getText = () => {
