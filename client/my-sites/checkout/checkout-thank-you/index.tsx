@@ -824,18 +824,10 @@ function CheckoutThankYouWithReceipt(
 		return <Loading />;
 	}
 
-	const receiptCheckoutType = checkoutReceipt.data?.checkoutType;
-	// Receipts record the server's cart type, which is `wpcom` for a Studio checkout.
-	const checkoutType =
-		props.checkoutType === STUDIO_CHECKOUT_TYPE &&
-		( ! receiptCheckoutType || receiptCheckoutType === 'wpcom' )
-			? STUDIO_CHECKOUT_TYPE
-			: ( receiptCheckoutType ?? props.checkoutType );
-
 	return (
 		<ConnectedCheckoutThankYou
 			{ ...props }
-			checkoutType={ checkoutType }
+			checkoutType={ checkoutReceipt.data?.checkoutType ?? props.checkoutType }
 			receipt={ checkoutReceipt.data }
 			gsuiteReceipt={ gsuiteReceipt.data }
 			isWooCommerceInstalled={ isWooCommerceInstalled }

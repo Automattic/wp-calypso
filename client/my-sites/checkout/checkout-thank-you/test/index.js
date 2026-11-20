@@ -339,38 +339,22 @@ describe( 'CheckoutThankYou', () => {
 				);
 			}
 
-			it( 'keeps the Studio page when the receipt records a wpcom checkout', () => {
-				renderWithReceiptCheckoutType( 'wpcom' );
+			it( 'renders the Studio page when the receipt records a studio checkout', () => {
+				renderWithReceiptCheckoutType( 'studio', { checkoutType: undefined } );
 
 				expect( screen.getByTestId( 'component--studio-thank-you' ) ).toBeVisible();
 			} );
 
-			it( 'keeps the Studio page when the receipt records no checkout type', () => {
+			it( 'lets a wpcom receipt win over a studio flag in the URL', () => {
+				renderWithReceiptCheckoutType( 'wpcom' );
+
+				expect( screen.queryByTestId( 'component--studio-thank-you' ) ).not.toBeInTheDocument();
+			} );
+
+			it( 'keeps the URL flag until the receipt says otherwise', () => {
 				renderWithReceiptCheckoutType( undefined );
 
 				expect( screen.getByTestId( 'component--studio-thank-you' ) ).toBeVisible();
-			} );
-
-			it( "keeps a site's own thank-you page when the receipt records a wpcom checkout", () => {
-				store = configureStore( [ thunk ] )( {
-					...initialState,
-					sites: { plans: { 12: { data: [], hasLoadedFromServer: true } } },
-					atomicTransfer: {},
-				} );
-				renderWithReceiptCheckoutType( 'wpcom', {
-					domainOnlySiteFlow: false,
-					selectedSite: { ID: 12, slug: 'example.com' },
-				} );
-
-				expect( screen.queryByTestId( 'component--studio-thank-you' ) ).not.toBeInTheDocument();
-				expect( screen.getByTestId( 'component--generic-thank-you' ) ).toBeVisible();
-			} );
-
-			it( 'lets any other checkout type on the receipt win', () => {
-				renderWithReceiptCheckoutType( 'jetpack' );
-
-				expect( screen.queryByTestId( 'component--studio-thank-you' ) ).not.toBeInTheDocument();
-				expect( screen.getByTestId( 'component--generic-thank-you' ) ).toBeVisible();
 			} );
 		} );
 	} );

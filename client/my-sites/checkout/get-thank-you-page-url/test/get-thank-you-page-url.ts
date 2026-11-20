@@ -1554,7 +1554,7 @@ describe( 'getThankYouPageUrl', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			redirectTo,
-			sitelessCheckoutType: 'wpcom',
+			sitelessCheckoutType: 'studio',
 		} );
 		expect( url ).toBe( redirectTo );
 	} );
@@ -1564,7 +1564,7 @@ describe( 'getThankYouPageUrl', () => {
 			...defaultArgs,
 			receiptId: 12342424241,
 			redirectTo: 'https://wordpress.studio.example.com/',
-			sitelessCheckoutType: 'wpcom',
+			sitelessCheckoutType: 'studio',
 		} );
 		expect( url ).toBe( '/checkout/thank-you/no-site/12342424241' );
 	} );

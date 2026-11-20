@@ -107,10 +107,10 @@ describe( 'checkoutStudioSiteless', () => {
 		return { wrapper: context.primary?.props.children[ 1 ], next };
 	};
 
-	it( 'renders the WordPress.com siteless checkout', () => {
+	it( 'renders the Studio siteless checkout', () => {
 		const { wrapper, next } = renderStudioCheckout( {} );
 
-		expect( wrapper.props.sitelessCheckoutType ).toBe( 'wpcom' );
+		expect( wrapper.props.sitelessCheckoutType ).toBe( 'studio' );
 		expect( wrapper.props.productAliasFromUrl ).toBe( 'studio-cloud-monthly' );
 		expect( wrapper.props.isNoSiteCart ).toBe( true );
 		expect( next ).toHaveBeenCalled();

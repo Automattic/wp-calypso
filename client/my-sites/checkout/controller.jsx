@@ -153,7 +153,7 @@ export function checkoutWpcomSiteless( context, next ) {
 
 export function checkoutStudioSiteless( context, next ) {
 	sitelessCheckout( context, next, {
-		sitelessCheckoutType: 'wpcom',
+		sitelessCheckoutType: 'studio',
 		redirectTo: context.query.redirect_to || buildStudioCheckoutRedirectTo( context.query ),
 	} );
 }

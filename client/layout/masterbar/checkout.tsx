@@ -58,6 +58,9 @@ const CheckoutMasterbar = ( {
 			if ( resolvedRenewalData.sitelessCheckoutType === 'akismet' ) {
 				return 'akismet';
 			}
+			if ( resolvedRenewalData.sitelessCheckoutType === 'studio' ) {
+				return 'studio';
+			}
 		}
 
 		// Check the siteless brand paths first: they have no site, so the site

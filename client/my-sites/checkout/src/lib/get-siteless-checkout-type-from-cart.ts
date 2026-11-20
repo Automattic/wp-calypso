@@ -15,6 +15,10 @@ export function getSitelessCheckoutTypeFromCart(
 		if ( product.extra.isMarketplaceSitelessCheckout ) {
 			return 'marketplace';
 		}
+		// A Studio product carries both flags, so check this one first.
+		if ( product.extra.isStudioSitelessCheckout ) {
+			return 'studio';
+		}
 		if ( product.extra.isWpcomSitelessCheckout ) {
 			return 'wpcom';
 		}

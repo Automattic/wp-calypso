@@ -122,6 +122,15 @@ describe( 'CheckoutMasterbar', () => {
 			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
 		} );
 
+		it( 'shows the Studio logo once the cart says it is a Studio renewal', () => {
+			const { container } = renderAt( '/checkout/renew/12345' );
+
+			act( () => resolvedRenewalDataStore.set( { sitelessCheckoutType: 'studio' } ) );
+
+			expect( container.querySelector( '.masterbar__studio-logo' ) ).toBeVisible();
+			expect( container.querySelector( wordPressLogoSelector ) ).not.toBeInTheDocument();
+		} );
+
 		it( 'shows the WordPress logo and Back button once the cart says it is a site renewal', () => {
 			const { container } = renderAt( '/checkout/renew/12345' );
 
