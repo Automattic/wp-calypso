@@ -1,13 +1,27 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import type { Root } from 'react-dom/client';
 
 type HostMessage = { action: string; showing?: boolean };
 
 const host = vi.hoisted( () => ( {
 	send: ( () => {} ) as ( message: HostMessage ) => void,
 	received: [] as string[],
+	roots: [] as Root[],
 } ) );
+
+vi.mock( 'react-dom/client', async ( importOriginal ) => {
+	const client = await importOriginal< typeof import( 'react-dom/client' ) >();
+	return {
+		...client,
+		createRoot: ( ...args: Parameters< typeof client.createRoot > ) => {
+			const root = client.createRoot( ...args );
+			host.roots.push( root );
+			return root;
+		},
+	};
+} );
 
 vi.mock( '../../standalone/client', () => ( {
 	createClient: async () => ( { req: { get: async () => ( { ID: 1, username: 'example' } ) } } ),
@@ -86,6 +100,8 @@ describe( 'Notifications iframe app', () => {
 	} );
 
 	afterEach( () => {
+		// Each test boots a fresh copy of the app, so unmount the last one to drop its document listeners.
+		act( () => host.roots.splice( 0 ).forEach( ( root ) => root.unmount() ) );
 		vi.restoreAllMocks();
 	} );
 
