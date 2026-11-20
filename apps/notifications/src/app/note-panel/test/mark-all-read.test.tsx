@@ -193,7 +193,7 @@ describe( 'MarkAllAsRead', () => {
 			store.dispatch( actions.notes.addNotes( [ makeNote( 1 ) ] ) );
 		} );
 
-		it( 'asks first, in a dialog', async () => {
+		it( 'asks first, in a modal', async () => {
 			const user = userEvent.setup();
 			renderLink();
 

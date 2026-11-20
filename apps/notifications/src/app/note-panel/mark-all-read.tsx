@@ -99,9 +99,9 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 
 	const needsConfirm = hasMore || count > CONFIRM_ABOVE;
 
-	const markAll = async ( { fromDialog = false } = {} ) => {
-		// The dialog returns the focus to the link as it closes, after this runs.
-		refocusRef.current = fromDialog || !! wrapperRef.current?.contains( document.activeElement );
+	const markAll = async ( { fromModal = false } = {} ) => {
+		// The modal returns the focus to the link as it closes, after this runs.
+		refocusRef.current = fromModal || !! wrapperRef.current?.contains( document.activeElement );
 		setIsBusy( true );
 		setHasError( false );
 
@@ -127,7 +127,7 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 
 	const handleConfirm = () => {
 		setIsConfirming( false );
-		markAll( { fromDialog: true } );
+		markAll( { fromModal: true } );
 	};
 
 	const handleCancel = () => {
