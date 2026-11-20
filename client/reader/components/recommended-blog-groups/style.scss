@@ -1,0 +1,127 @@
+.recommended-blog-groups {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.recommended-blog-groups__title {
+	margin: 0 0 12px;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+.recommended-blog-groups__pills {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.recommended-blog-groups__pill {
+	display: inline-flex;
+	align-items: center;
+	max-width: 100%;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 24px;
+	background: var( --color-surface );
+
+	&:hover {
+		border-color: var( --color-neutral-40 );
+	}
+
+	&.is-selected {
+		border-color: var( --color-primary );
+		background: var( --color-primary-0 );
+	}
+}
+
+.recommended-blog-groups__pill-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 0;
+	min-height: 40px;
+	padding-block: 4px;
+	padding-inline: 6px 8px;
+	border: 0;
+	border-radius: 24px;
+	background: transparent;
+	color: var( --color-text );
+	font-size: 0.875rem;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid var( --color-primary );
+		outline-offset: 2px;
+	}
+
+	&[aria-disabled='true'] {
+		cursor: default;
+	}
+}
+
+.recommended-blog-groups__pill-icon {
+	flex-shrink: 0;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.recommended-blog-groups__pill-name {
+	max-width: 14rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.recommended-blog-groups__pill-mark {
+	flex-shrink: 0;
+	fill: var( --color-text-subtle );
+
+	.is-selected & {
+		fill: var( --color-primary );
+	}
+}
+
+.recommended-blog-groups__pill-info.components-button {
+	flex-shrink: 0;
+	margin-inline-end: 4px;
+	border-radius: 50%;
+	color: var( --color-text-subtle );
+}
+
+.recommended-blog-groups__popover .components-popover__content {
+	width: 280px;
+	max-width: calc( 100vw - 24px );
+}
+
+.recommended-blog-groups__details {
+	padding: 16px;
+
+	p {
+		margin: 0;
+	}
+}
+
+.recommended-blog-groups__details-name {
+	font-weight: 600;
+}
+
+.recommended-blog-groups__details-domain,
+.recommended-blog-groups__details-date {
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+}
+
+.recommended-blog-groups__details .recommended-blog-groups__details-description {
+	margin-block: 8px;
+	font-size: 0.875rem;
+}
+
+.recommended-blog-groups__details-date {
+	padding-block-start: 8px;
+	border-block-start: 1px solid var( --color-border-subtle );
+}
