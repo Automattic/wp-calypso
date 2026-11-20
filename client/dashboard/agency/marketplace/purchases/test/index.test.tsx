@@ -1,7 +1,11 @@
 /**
  * @vitest-environment jsdom
  */
-import { activeAgencyQuery, queryClient as apiQueryClient } from '@automattic/api-queries';
+import {
+	activeAgencyQuery,
+	agencyProductsQuery,
+	queryClient as apiQueryClient,
+} from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
@@ -244,6 +248,41 @@ describe( '<MarketplacePurchases>', () => {
 			'pressable-signature-5_new',
 			'pressable-signature-4_old',
 		] );
+	} );
+
+	test( 'refreshes the products the dashboard kept from before the checkout', async () => {
+		const plan = {
+			name: 'WordPress.com Business',
+			slug: 'wpcom-hosting-business',
+			product_id: 1,
+			currency: 'USD',
+			yearly_price: 300,
+		};
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		nock( API )
+			.get( '/wpcom/v2/agency/products' )
+			.query( true )
+			.reply( 200, [ { name: 'WordPress.com', slug: 'wpcom-hosting', products: [ plan ] } ] )
+			.persist();
+		// Fetched on Hosting before the purchase ended the agency's promotion, so still fresh.
+		apiQueryClient.setQueryData( agencyProductsQuery( AGENCY_ID ).queryKey, [
+			{
+				...plan,
+				family_slug: 'wpcom-hosting',
+				yearly_promotion: { price: 225, discount: 25, ends_at: '2999-12-04T00:00:00+00:00' },
+			},
+		] );
+		await apiQueryClient.fetchQuery( activeAgencyQuery() );
+		window.history.replaceState( {}, '', '/purchases?receipt_id=123' );
+
+		render( <MarketplacePurchases />, { queryClient: apiQueryClient } );
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+
+		const products = await apiQueryClient.fetchQuery( agencyProductsQuery( AGENCY_ID ) );
+		expect( products[ 0 ].yearly_promotion ).toBeUndefined();
 	} );
 
 	test( 'leaves the cart alone without a receipt', async () => {

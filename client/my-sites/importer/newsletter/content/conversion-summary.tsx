@@ -1,7 +1,18 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { video, verse, page, file, Icon, audio, gallery, post, code, help } from '@wordpress/icons';
+import {
+	video,
+	verse,
+	page,
+	folder,
+	Icon,
+	audio,
+	gallery,
+	post,
+	code,
+	help,
+} from '@wordpress/icons';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { useResetMutation } from 'calypso/data/paid-newsletter/use-reset-mutation';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
@@ -257,7 +268,7 @@ const ConversionSummary = ( {
 					{ posts > 0 && <SummaryStat count={ posts } label={ __( 'Posts' ) } icon={ verse } /> }
 					{ pages > 0 && <SummaryStat count={ pages } label={ __( 'Pages' ) } icon={ page } /> }
 					{ attachments > 0 && (
-						<SummaryStat count={ attachments } label={ __( 'Media items' ) } icon={ file } />
+						<SummaryStat count={ attachments } label={ __( 'Media items' ) } icon={ folder } />
 					) }
 				</div>
 			</div>

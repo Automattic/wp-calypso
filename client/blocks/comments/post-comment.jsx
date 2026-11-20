@@ -369,11 +369,11 @@ class PostComment extends PureComponent {
 				commentId: parentCommentId,
 			} );
 
-		// highlight comments not older than 10s
-		const isHighlighted =
-			shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000;
-
 		const isNew = highlightedCommentIds.includes( commentId );
+		// The animation runs once when the class is added, so unread comments flash as they mount.
+		const isHighlighted =
+			isNew ||
+			( shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000 );
 		const canCollapse = this.canCollapse();
 		const { isCollapsed } = this.state;
 		const collapsedCount = canCollapse ? this.getAllChildrenIds( commentId ).length : 0;

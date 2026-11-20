@@ -2,10 +2,6 @@
  * Unlock the private apis for the global styles related functionalities and re-export them
  * on our own as this kind of internal apis might be drastically changed from time to time.
  * See https://github.com/Automattic/wp-calypso/issues/77048
- *
- * The deep imports from `@wordpress/global-styles-ui/build-module/*` rely on a
- * yarn patch that widens the package's `exports` field; they aren't reachable
- * through the package's public entry.
  */
 import { captureException } from '@automattic/calypso-sentry';
 import { privateApis as blockEditorPrivateApis, transformStyles } from '@wordpress/block-editor';
@@ -14,16 +10,13 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import {
 	areGlobalStylesEqual as areGlobalStyleConfigsEqual,
 	generateGlobalStyles,
+	getSetting,
+	getStyle,
 } from '@wordpress/global-styles-engine';
-import { GlobalStylesContext as UntypedGSContext } from '@wordpress/global-styles-ui/build-module/context';
-import {
-	useSetting as useGlobalSetting,
-	useStyle as useGlobalStyle,
-} from '@wordpress/global-styles-ui/build-module/hooks';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import deepmerge from 'deepmerge';
 import { isPlainObject } from 'is-plain-object';
-import { useContext } from 'react';
+import { createContext, useContext } from 'react';
 import { DEFAULT_GLOBAL_STYLES_VARIATION_SLUG } from '../constants';
 import type { GlobalStylesObject, GlobalStylesContextObject } from '../types';
 
@@ -34,8 +27,25 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 
 const { cleanEmptyObject, ExperimentalBlockEditorProvider } = unlock( blockEditorPrivateApis );
 
-const GlobalStylesContext: React.Context< GlobalStylesContextObject > =
-	UntypedGSContext as unknown as React.Context< GlobalStylesContextObject >;
+const GlobalStylesContext = createContext< GlobalStylesContextObject >( {
+	user: { settings: {}, styles: {} },
+	base: { settings: {}, styles: {} },
+	merged: { settings: {}, styles: {} },
+} );
+
+type GlobalStylesConfig = Parameters< typeof getSetting >[ 0 ];
+
+// Read-only versions of `@wordpress/global-styles-ui`'s `useSetting` and `useStyle`, which
+// it doesn't export publicly.
+const useGlobalSetting = ( path: string, blockName?: string ) => {
+	const { merged } = useContext( GlobalStylesContext );
+	return [ getSetting( ( merged ?? {} ) as GlobalStylesConfig, path, blockName ) ];
+};
+
+const useGlobalStyle = ( path: string, blockName?: string ) => {
+	const { merged } = useContext( GlobalStylesContext );
+	return [ getStyle( ( merged ?? {} ) as GlobalStylesConfig, path, blockName, true ) ];
+};
 
 const mergeBaseAndUserConfigs = ( base: GlobalStylesObject, user?: GlobalStylesObject ) => {
 	const mergedConfig = user ? deepmerge( base, user, { isMergeableObject: isPlainObject } ) : base;

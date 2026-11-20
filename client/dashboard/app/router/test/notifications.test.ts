@@ -19,13 +19,11 @@ describe( 'notifications routes', () => {
 		config.disable( 'dashboard/notifications-inbox' );
 	} );
 
-	test( 'serve the inbox and its notes when the flag is on', () => {
+	test( 'serve the inbox, with no address for a note, when the flag is on', () => {
 		config.enable( 'dashboard/notifications-inbox' );
 
-		expect( matchedRouteId( dashboardConfig( true ), '/notifications' ) ).toBe( '/notifications/' );
-		expect( matchedRouteId( dashboardConfig( true ), '/notifications/123' ) ).toBe(
-			'/notifications/$noteId'
-		);
+		expect( matchedRouteId( dashboardConfig( true ), '/notifications' ) ).toBe( '/notifications' );
+		expect( matchedRouteId( dashboardConfig( true ), '/notifications/123' ) ).toBe( '/$' );
 	} );
 
 	test( 'leave the inbox address unmatched when the flag is off', () => {

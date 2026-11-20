@@ -15,6 +15,8 @@ test.describe(
 	},
 	() => {
 		skipIfMailosaurLimitReached();
+		// Setup signs up a new account, and the upload wait alone can take over a minute.
+		test.describe.configure( { timeout: 180 * 1000 } );
 
 		const substackSiteURL = 'https://test.substack.com/';
 		const substackSiteName = 'Testing Product';

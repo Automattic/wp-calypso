@@ -1,6 +1,18 @@
 export interface AgencyProductTierPrice {
 	units: number;
 	price: number;
+	/** The per-site price while a promotion is active; absent otherwise. */
+	promotional_price?: number;
+}
+
+/** A limited-time promotion every buyer gets; absent when none is active. */
+export interface AgencyProductPromotion {
+	/** The promotional price for one site, in the product's currency. */
+	price: number;
+	/** Percent off, e.g. 25. */
+	discount: number;
+	/** When the promotion ends, ISO 8601 in UTC. */
+	ends_at: string;
 }
 
 /** Plan limits the Pressable products carry; only the fields the dashboard reads. */
@@ -28,6 +40,8 @@ export interface AgencyProduct {
 	yearly_price?: number;
 	monthly_introductory_price?: number;
 	yearly_introductory_price?: number;
+	monthly_promotion?: AgencyProductPromotion;
+	yearly_promotion?: AgencyProductPromotion;
 	tier_monthly_prices?: AgencyProductTierPrice[];
 	tier_yearly_prices?: AgencyProductTierPrice[];
 	metadata?: AgencyProductMetadata;

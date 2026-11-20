@@ -17,6 +17,8 @@ import type { RecordTracksEvent } from '../../tiers/types';
 export interface AnnouncementActionProps {
 	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
+	/** Maps a CTA's dashboard path to the page of the app rendering the card. */
+	getCtaUrl?: ( url: string ) => string;
 }
 
 /**
@@ -199,19 +201,22 @@ export function AnnouncementCtas( {
 	announcement,
 	shouldUseRouterLink = true,
 	recordTracksEvent,
+	getCtaUrl,
 }: { announcement: Announcement } & AnnouncementActionProps ) {
 	const { primaryCta, secondaryCta } = announcement;
+	const resolveCta = ( cta: AnnouncementCta ) =>
+		getCtaUrl && ! cta.isExternal ? { ...cta, url: getCtaUrl( cta.url ) } : cta;
 	return (
 		<ButtonStack justify="flex-start" wrap>
 			<CtaButton
-				cta={ primaryCta }
+				cta={ resolveCta( primaryCta ) }
 				variant="secondary"
 				shouldUseRouterLink={ shouldUseRouterLink }
 				onClick={ () => trackCta( recordTracksEvent, announcement, primaryCta, 'primary' ) }
 			/>
 			{ secondaryCta && (
 				<CtaButton
-					cta={ secondaryCta }
+					cta={ resolveCta( secondaryCta ) }
 					variant="tertiary"
 					shouldUseRouterLink={ shouldUseRouterLink }
 					onClick={ () => trackCta( recordTracksEvent, announcement, secondaryCta, 'secondary' ) }

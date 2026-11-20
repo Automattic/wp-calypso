@@ -127,4 +127,20 @@ describe( 'PostComments polling for new comments', () => {
 		expect( pill ).not.toBeInTheDocument();
 		expect( document.getElementById( 'comment-4' ).closest( 'li' ) ).toHaveFocus();
 	} );
+
+	it.each( [
+		[ 'the starting comment is loaded', 1 ],
+		[ 'the starting comment is missing', 99 ],
+	] )( 'scrolls to the first highlighted comment when %s', async ( _, startingCommentId ) => {
+		Element.prototype.scrollIntoView.mockClear();
+		mockComments();
+
+		renderComments( { startingCommentId, highlightedCommentIds: [ startingCommentId, 2 ] } );
+
+		await waitFor( () =>
+			expect(
+				Element.prototype.scrollIntoView.mock.contexts.map( ( element ) => element.id )
+			).toEqual( [ 'comment-2' ] )
+		);
+	} );
 } );

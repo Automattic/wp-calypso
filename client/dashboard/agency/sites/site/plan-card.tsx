@@ -4,7 +4,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { isRouteAllowedByCapabilities, marketplaceHostingRoute } from '../../../app/router/agency';
 import OverviewCard from '../../../components/overview-card';
-import PlanCard from '../../../sites/overview-plan-card';
+import PlanCard from '../../../sites/plan/components/plan-card';
 import { calculateEffectiveCapacity } from '../../marketplace/hosting/lib/pressable-capacity';
 import PressableUsageStats from '../../marketplace/hosting/pressable-usage-stats';
 import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';

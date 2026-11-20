@@ -1,7 +1,7 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { agencySiteRoute } from '../../../app/router/agency';
-import LatestActivityCard from '../../../sites/overview-latest-activity-card';
+import LatestActivityCard from '../../../sites/activity/components/latest-activity-card';
 
 export default function ActivityCard() {
 	const { siteSlug } = agencySiteRoute.useParams();

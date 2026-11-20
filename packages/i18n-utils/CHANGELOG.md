@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Breaking: Require `@wordpress/compose` ^9.2.0 and `@wordpress/i18n` ^7.2.0.
+
 ## 1.3.0
 
 - Add `getNumericFirstDayOfWeek` method as a wrapper for native (but not yet fully supported) `new Intl.Locale( locale ).getWeekInfo()`.

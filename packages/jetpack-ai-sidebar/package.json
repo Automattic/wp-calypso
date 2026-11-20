@@ -47,14 +47,14 @@
 		"@automattic/agenttic-client": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/components": "workspace:^",
-		"@wordpress/abilities": "^0.25.0",
-		"@wordpress/block-editor": "^20.0.0",
-		"@wordpress/blocks": "^17.1.0",
-		"@wordpress/components": "^44.0.0",
-		"@wordpress/compose": "^9.1.0",
-		"@wordpress/hooks": "^5.1.0",
-		"@wordpress/i18n": "^7.1.0",
-		"@wordpress/icons": "^20.0.0"
+		"@wordpress/abilities": "^0.26.0",
+		"@wordpress/block-editor": "^20.1.0",
+		"@wordpress/blocks": "^17.2.0",
+		"@wordpress/components": "^45.0.0",
+		"@wordpress/compose": "^9.2.0",
+		"@wordpress/hooks": "^5.2.0",
+		"@wordpress/i18n": "^7.2.0",
+		"@wordpress/icons": "^21.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
@@ -68,8 +68,8 @@
 		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^11.1.0",
-		"@wordpress/element": "^10.1.0",
+		"@wordpress/data": "^11.2.0",
+		"@wordpress/element": "^10.2.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},

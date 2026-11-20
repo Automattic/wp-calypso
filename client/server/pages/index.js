@@ -809,7 +809,6 @@ function setUpCSP( req, res, next ) {
 			'https://bat.bing.com', // Bing Ads API
 			'https://px.ads.linkedin.com', // LinkedIn ads pixel
 			'https://*.survicate.com', // Survicate API
-			'*.sentry.io',
 			'*.reddit.com',
 			'https://video.bsky.app', // Bluesky video manifests (hls.js fetches the HLS playlist for Reader ATmosphere thread view)
 			'https://video.cdn.bsky.app', // Bluesky video CDN (segment URLs 302-redirect here)
@@ -1089,7 +1088,8 @@ function wpcomPages( app ) {
 				next();
 				return;
 			}
-			const localePrefix = req.params.locale ? '/' + req.params.locale : '';
+			const locale = getLanguageSlugs().find( ( slug ) => slug === req.params.locale );
+			const localePrefix = locale ? '/' + locale : '';
 			const selectedTag = req.params.tag ? encodeURIComponent( req.params.tag ) : 'dailyprompt';
 			res.redirect( 302, `${ localePrefix }/discover/tags?selectedTag=${ selectedTag }` );
 		}

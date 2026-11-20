@@ -186,7 +186,7 @@ const NotePanel = ( {
 				</Tabs.Panel>
 			) ) }
 			{ openFullView && (
-				<CardFooter size="small" justify="center">
+				<CardFooter size="xSmall" justify="center">
 					<Button
 						className="wpnc-app__full-view"
 						variant="tertiary"

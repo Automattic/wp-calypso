@@ -2,7 +2,7 @@ import { Icon } from '@wordpress/components';
 import {
 	blockTable,
 	brush,
-	file,
+	folder,
 	image,
 	pages,
 	plugins,
@@ -19,7 +19,7 @@ interface FileTypeIconProps {
 }
 
 const fileTypeToIcon: Record< FileType, JSX.Element > = {
-	dir: file,
+	dir: folder,
 	image: image,
 	text: preformatted,
 	plugin: plugins,
@@ -32,7 +32,7 @@ const fileTypeToIcon: Record< FileType, JSX.Element > = {
 	code: pages,
 	wordpress: wordpress,
 	other: pages,
-	archive: file,
+	archive: folder,
 };
 
 function FileTypeIcon( { type }: FileTypeIconProps ) {

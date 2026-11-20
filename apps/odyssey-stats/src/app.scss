@@ -150,3 +150,10 @@
 .jitm-card.jitm-banner {
 	display: none;
 }
+
+// Where Odyssey loads its own components stylesheet (newer than wp-admin's toggle), that
+// stylesheet fills a checked toggle on a layer older toggles don't render; fill the track. Also
+// in `.color-scheme`, the portal popovers such as Modules visibility render into.
+:where(.jp-stats-dashboard, .color-scheme) .components-form-toggle.is-checked:not(.is-disabled) .components-form-toggle__track {
+	background-color: var(--wpds-color-background-interactive-brand-strong, var(--wp-admin-theme-color, #3858e9));
+}

@@ -1,13 +1,13 @@
 import config from '@automattic/calypso-config';
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { VisuallyHidden } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import { useAnalytics } from '../app/analytics';
 import { useLocale } from '../app/locale';
-import { notificationRoute, notificationsRoute } from '../app/router/notifications';
+import { notificationsRoute } from '../app/router/notifications';
 import { Card } from '../components/card';
 import EmptyState from '../components/empty-state';
 import { Notice, NoticeActionLink } from '../components/notice';
@@ -23,24 +23,21 @@ export default function Notifications() {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
-	const { noteId } = useParams( { strict: false } );
 	const { filter } = notificationsRoute.useSearch();
+	const handedOffNoteId = useRouterState( {
+		select: ( state ) => state.location.state.notificationsNoteId,
+	} );
+	const [ noteId, setSelectedNoteId ] = useState( handedOffNoteId );
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 
-	const setSelectedNoteId = ( selectedNoteId: string | undefined ) => {
-		if ( selectedNoteId ) {
-			navigate( {
-				to: notificationRoute.fullPath,
-				params: { noteId: selectedNoteId },
-				search: true,
-				replace: !! noteId,
-			} );
-		} else {
-			navigate( { to: notificationsRoute.fullPath, search: true } );
+	useEffect( () => {
+		if ( handedOffNoteId ) {
+			navigate( { to: notificationsRoute.fullPath, search: true, state: {}, replace: true } );
 		}
-	};
+	}, [ handedOffNoteId, navigate ] );
 
 	const setFilterName = ( filterName: string ) => {
+		setSelectedNoteId( undefined );
 		navigate( {
 			to: notificationsRoute.fullPath,
 			search: { filter: filterName === 'all' ? undefined : filterName },

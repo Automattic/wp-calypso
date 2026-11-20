@@ -76,8 +76,8 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { getPlanExpiryUrgency, hasPlanExpiryNotice } from '../../../components/plan-expiry-notice';
 import SiteIcon from '../../../components/site-icon';
-import SiteBandwidthStat from '../../../sites/overview-plan-card/site-bandwidth-stat';
-import SiteStorageStat from '../../../sites/overview-plan-card/site-storage-stat';
+import SiteBandwidthStat from '../../../sites/plan/components/plan-card/site-bandwidth-stat';
+import SiteStorageStat from '../../../sites/storage/components/site-storage-stat';
 import { formatDate } from '../../../utils/datetime';
 import { isJetpackCloud } from '../../../utils/jetpack';
 import { wpcomLink } from '../../../utils/link';
@@ -1118,14 +1118,18 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 
+	if ( String( user.ID ) !== String( purchase.user_id ) ) {
+		return null;
+	}
+
 	// Auto-renew and the payment method are the partner's to manage rather than
 	// the customer's, so the whole card goes for a partner-managed subscription.
 	// The classic purchases page hides its equivalent block for the same reason.
-	if (
-		String( user.ID ) !== String( purchase.user_id ) ||
-		isIncludedWithPlan( purchase ) ||
-		purchase.is_partner_managed
-	) {
+	if ( purchase.is_partner_managed ) {
+		return null;
+	}
+
+	if ( isIncludedWithPlan( purchase ) || isOneTimePurchase( purchase ) ) {
 		return null;
 	}
 

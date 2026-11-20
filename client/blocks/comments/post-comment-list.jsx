@@ -235,8 +235,12 @@ class PostCommentList extends Component {
 	commentIsOnDOM = ( commentId ) => !! window.document.getElementById( `comment-${ commentId }` );
 
 	scrollWhenDOMReady = () => {
-		if ( this.props.startingCommentId && ! this.hasScrolledToComment ) {
-			if ( this.commentIsOnDOM( this.props.startingCommentId ) ) {
+		const { startingCommentId, highlightedCommentIds } = this.props;
+		if ( startingCommentId && ! this.hasScrolledToComment ) {
+			const isReady = highlightedCommentIds?.length
+				? highlightedCommentIds.some( this.commentIsOnDOM )
+				: this.commentIsOnDOM( startingCommentId );
+			if ( isReady ) {
 				setTimeout( () => this.scrollToComment(), 50 );
 			}
 			setTimeout( this.scrollWhenDOMReady, 100 );
@@ -455,7 +459,13 @@ class PostCommentList extends Component {
 	};
 
 	scrollToComment = () => {
-		const comment = window.document.getElementById( window.location.hash.substring( 1 ) );
+		const { highlightedCommentIds } = this.props;
+		// Lands on the first highlighted comment on the page, so reading down passes every one.
+		const comment = highlightedCommentIds?.length
+			? window.document.querySelector(
+					highlightedCommentIds.map( ( id ) => `#comment-${ id }` ).join( ',' )
+				)
+			: window.document.getElementById( window.location.hash.substring( 1 ) );
 		if ( ! comment ) {
 			return;
 		}
