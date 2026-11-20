@@ -16,7 +16,7 @@ import { Callout } from '../../../components/callout';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import Divider from '../../../components/divider';
 import { TextBlur } from '../../../components/text-blur';
-import { DomainUpsellIllustraction } from '../../../sites/overview-domain-upsell-card/upsell-illustration';
+import { DomainUpsellIllustraction } from '../../../sites/domains/components/domain-upsell-card/upsell-illustration';
 import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import { getWpcomTieredPrice } from '../products/lib/product-pricing';
 import { MAX_CART_ITEM_QUANTITY } from '../products/use-shopping-cart';

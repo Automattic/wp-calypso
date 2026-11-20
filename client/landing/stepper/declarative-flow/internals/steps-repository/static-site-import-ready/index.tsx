@@ -7,7 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
-import { getSourceHost } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
+import { getSourceHost } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import type { Step as StepType } from '../../types';
 

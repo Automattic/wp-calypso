@@ -8,11 +8,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import {
 	StaticSiteImportPreviewSteps,
 	StaticSiteImportPreviewWindow,
-} from 'calypso/dashboard/sites/overview-static-site-import/moving-card';
+} from 'calypso/dashboard/sites/static-site-import/moving-card';
 import {
 	getSourceHost,
 	useStaticSiteImport,
-} from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
+} from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';

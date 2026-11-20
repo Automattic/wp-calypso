@@ -23,34 +23,26 @@ import Grid, { type GapSize } from '../../../../components/grid';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../../../components/guided-tour';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
+import LatestActivityCard from '../../../../sites/activity/components/latest-activity-card';
+import BackupCard from '../../../../sites/backups/components/backup-card';
+import AgencySiteShareCard from '../../../../sites/components/agency-site-share-card';
 import { EmailBlockNotice, getEmailBlock } from '../../../../sites/components/email-block-notice';
 import { SitesNoticeArbiter } from '../../../../sites/components/notice-arbiter';
+import SiteActionMenu from '../../../../sites/components/site-action-menu';
+import SiteOverviewFields from '../../../../sites/components/site-overview-fields';
+import SubscribersCard from '../../../../sites/components/subscribers-card';
+import DIFMOfferCard from '../../../../sites/difm/components/difm-offer-card';
+import DifmOfferDeepLink from '../../../../sites/difm/components/difm-offer-card/deep-link';
+import DifmOfferThankYou from '../../../../sites/difm/components/difm-offer-card/thank-you';
+import DomainsCard from '../../../../sites/domains/components/domains-card';
+import MigrateSiteCard from '../../../../sites/migration/components/migrate-site-card';
 import {
 	MigrationCompletedNotice,
 	useShouldShowMigrationCompletedNotice,
 } from '../../../../sites/migration/components/migration-completed-notice';
-import AgencySiteShareCard from '../../../../sites/overview-agency-site-share-card';
-import BackupCard from '../../../../sites/overview-backup-card';
-import DIFMOfferCard from '../../../../sites/overview-difm-offer-card';
-import DifmOfferDeepLink from '../../../../sites/overview-difm-offer-card/deep-link';
-import DifmOfferThankYou from '../../../../sites/overview-difm-offer-card/thank-you';
-import DomainsCard from '../../../../sites/overview-domains-card';
-import LatestActivityCard from '../../../../sites/overview-latest-activity-card';
-import MigrateSiteCard from '../../../../sites/overview-migrate-site-card';
-import PerformanceCard from '../../../../sites/overview-performance-card';
-import PlanCard from '../../../../sites/overview-plan-card';
-import ScanCard from '../../../../sites/overview-scan-card';
-import SiteActionMenu from '../../../../sites/overview-site-action-menu';
-import SiteOverviewFields from '../../../../sites/overview-site-fields';
-import {
-	StaticSiteImportFailed,
-	StaticSiteImportNotice,
-	StaticSiteImportProgress,
-	useOpenPreviewWhenReady,
-	useStaticSiteImport,
-} from '../../../../sites/overview-static-site-import';
-import SubscribersCard from '../../../../sites/overview-subscribers-card';
-import VisibilityCard from '../../../../sites/overview-visibility-card';
+import PerformanceCard from '../../../../sites/performance/components/performance-card';
+import PlanCard from '../../../../sites/plan/components/plan-card';
+import ScanCard from '../../../../sites/scan/components/scan-card';
 import { InaccessibleJetpackNotice } from '../../../../sites/site/notices';
 import StagingSiteSyncDropdown from '../../../../sites/staging-site-sync-dropdown';
 import {
@@ -58,13 +50,21 @@ import {
 	useStagingSiteSyncForNotice,
 } from '../../../../sites/staging-site-sync-notice';
 import {
+	StaticSiteImportFailed,
+	StaticSiteImportNotice,
+	StaticSiteImportProgress,
+	useOpenPreviewWhenReady,
+	useStaticSiteImport,
+} from '../../../../sites/static-site-import';
+import {
 	StorageWarningBanner,
 	useShouldShowStorageWarningBanner,
 } from '../../../../sites/storage/components/storage-warning-banner';
+import VisibilityCard from '../../../../sites/visibility/components/visibility-card';
 import { getSiteDisplayName } from '../../../../utils/site-name';
 import { isSelfHostedJetpackConnected } from '../../../../utils/site-types';
 import type { MigrationCompletedSearch } from '../../../../sites/migration/components/migration-completed-notice';
-import type { StaticSiteImportSearch } from '../../../../sites/overview-static-site-import';
+import type { StaticSiteImportSearch } from '../../../../sites/static-site-import';
 import type { Site } from '@automattic/api-core';
 import './style.scss';
 

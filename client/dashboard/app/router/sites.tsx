@@ -97,9 +97,9 @@ import {
 	redirectIfTwoStepReauthRequired,
 } from './redirect';
 import { rootRoute } from './root';
+import type { DifmOfferSearch } from '../../sites/difm/components/difm-offer-card/thank-you';
 import type { MigrationCompletedSearch } from '../../sites/migration/components/migration-completed-notice';
-import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
-import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
+import type { StaticSiteImportSearch } from '../../sites/static-site-import';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';

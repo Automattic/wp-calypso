@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
 import OverviewCard from '../../../components/overview-card';
-import { ScanCardContent } from '../../../sites/overview-scan-card';
+import { ScanCardContent } from '../../../sites/scan/components/scan-card';
 import type { AgencySite } from '@automattic/api-core';
 
 export default function ScanCard( { site, siteSlug }: { site: AgencySite; siteSlug: string } ) {

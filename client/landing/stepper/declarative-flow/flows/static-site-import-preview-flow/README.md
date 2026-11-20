@@ -29,7 +29,7 @@ with the source they copy. Going back to the reading step for the same source pi
 
 The progress step tracks the move with the dashboard’s own progress steps, site window and hook
 (`StaticSiteImportPreviewSteps`, `StaticSiteImportPreviewWindow` and `useStaticSiteImport` in
-`client/dashboard/sites/overview-static-site-import`), laid out for signup.
+`client/dashboard/sites/static-site-import`), laid out for signup.
 
 The preview stays Coming Soon like every unpaid preview: WordPress.com keeps it hidden until a plan
 is bought. When the move finishes, the ready step shows the preview at its `?share=` link, which

@@ -3,18 +3,16 @@
  */
 import { act, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { useStaticSiteImport } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
+import { useStaticSiteImport } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StaticSiteImportProgressStep from '..';
 import { mockStepProps } from '../../test/helpers';
-import type { StaticSiteImport } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
+import type { StaticSiteImport } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 
-jest.mock( 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import', () => ( {
-	...jest.requireActual(
-		'calypso/dashboard/sites/overview-static-site-import/use-static-site-import'
-	),
+jest.mock( 'calypso/dashboard/sites/static-site-import/use-static-site-import', () => ( {
+	...jest.requireActual( 'calypso/dashboard/sites/static-site-import/use-static-site-import' ),
 	useStaticSiteImport: jest.fn(),
 } ) );
 

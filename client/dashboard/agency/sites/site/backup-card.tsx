@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { backup } from '@wordpress/icons';
 import OverviewCard from '../../../components/overview-card';
-import { BackupCardContent } from '../../../sites/overview-backup-card';
+import { BackupCardContent } from '../../../sites/backups/components/backup-card';
 import type { AgencySite } from '@automattic/api-core';
 
 export default function BackupCard( { site }: { site: AgencySite } ) {
