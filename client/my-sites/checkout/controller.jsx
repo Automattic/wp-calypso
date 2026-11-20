@@ -11,7 +11,6 @@ import ClientExpressCheckout from 'calypso/a8c-for-agencies/sections/client/prim
 import DocumentHead from 'calypso/components/data/document-head';
 import { setSectionMiddleware } from 'calypso/controller';
 import { CALYPSO_PLANS_PAGE } from 'calypso/jetpack-connect/constants';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { MARKETING_COUPONS_KEY } from 'calypso/lib/analytics/utils';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { getStudentFlowRedirect } from 'calypso/lib/signup/student-flow-redirect';
@@ -60,9 +59,7 @@ import {
 	buildStudioCancelTo,
 	buildStudioRedirectTo,
 	getStudioCheckoutParams,
-	getStudioSyncConnectParams,
 } from './studio-return/round-trip';
-import StudioSyncConnect from './studio-return/sync-connect';
 import UpsellNudge, {
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
@@ -885,18 +882,6 @@ export function studentCheckoutRedirect( context ) {
 }
 
 export function studioCheckoutReturn( context, next ) {
-	const syncConnect = getStudioSyncConnectParams( context.query );
-	if ( syncConnect?.rejection ) {
-		recordTracksEvent( 'calypso_studio_sync_landing_invalid', { reason: syncConnect.rejection } );
-		page.redirect( '/sites' );
-		return;
-	}
-	if ( syncConnect?.params ) {
-		context.primary = <StudioSyncConnect { ...syncConnect.params } />;
-		next();
-		return;
-	}
-
 	const studioCheckoutParams = getStudioCheckoutParams( context.query );
 
 	// Without a valid `studioSiteId` there is nothing to hand back to, so there is no page worth

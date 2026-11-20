@@ -24,7 +24,7 @@ const getStudioLanding = () => {
 	};
 };
 
-describe( 'new-hosted-site flow: the Studio landing page', () => {
+describe( 'new-hosted-site flow: the Studio handoff destination', () => {
 	const { runUseStepNavigationSubmit } = renderFlow( newHostedSiteFlow );
 
 	const submitProcessing = ( search: string ) =>
@@ -50,7 +50,7 @@ describe( 'new-hosted-site flow: the Studio landing page', () => {
 		Object.defineProperty( window, 'location', { configurable: true, value: originalLocation } );
 	} );
 
-	it( 'sends Studio users through checkout and the transfer wait to the sync-connect page', async () => {
+	it( 'sends Studio users through checkout and the transfer wait to the wp-admin Dashboard', async () => {
 		submitProcessing( '?studioSiteId=abc&autoOpenPush=true' );
 
 		await waitFor( () => expect( window.location.assign ).toHaveBeenCalled() );
@@ -59,7 +59,7 @@ describe( 'new-hosted-site flow: the Studio landing page', () => {
 		expect( checkoutUrl.pathname ).toBe( '/checkout/example.wordpress.com' );
 		expect( transferringUrl.pathname ).toBe( '/setup/transferring-hosted-site' );
 		expect( landing ).toBe(
-			'/checkout/studio-return?studioSiteId=abc&remoteSiteId=123&autoOpenPush=true'
+			'https://example.wordpress.com/wp-admin/?studioSiteId=abc&autoOpenPush=true'
 		);
 	} );
 
@@ -72,17 +72,17 @@ describe( 'new-hosted-site flow: the Studio landing page', () => {
 		expect( getStudioLanding().checkoutUrl.searchParams.has( 'studioSiteId' ) ).toBe( false );
 	} );
 
-	it( 'leaves autoOpenPush off the landing page when Studio did not ask for it', async () => {
+	it( 'leaves autoOpenPush off the Dashboard URL when Studio did not ask for it', async () => {
 		submitProcessing( '?studioSiteId=abc' );
 
 		await waitFor( () => expect( window.location.assign ).toHaveBeenCalled() );
 
 		expect( getStudioLanding().landing ).toBe(
-			'/checkout/studio-return?studioSiteId=abc&remoteSiteId=123'
+			'https://example.wordpress.com/wp-admin/?studioSiteId=abc'
 		);
 	} );
 
-	it( 'adds no Studio landing page without studioSiteId', async () => {
+	it( 'adds no Studio destination without studioSiteId', async () => {
 		submitProcessing( '' );
 
 		await waitFor( () => expect( window.location.assign ).toHaveBeenCalled() );

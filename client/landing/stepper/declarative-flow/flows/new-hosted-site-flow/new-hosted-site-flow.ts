@@ -9,7 +9,6 @@ import { useIsValidWooPartner } from 'calypso/landing/stepper/hooks/use-is-valid
 import { recordFreeHostingTrialStarted } from 'calypso/lib/analytics/ad-tracking/ad-track-trial-start';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { pathToUrl } from 'calypso/lib/url';
-import { buildStudioSyncConnectPath } from 'calypso/my-sites/checkout/studio-return/round-trip';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -219,12 +218,15 @@ const hosting: FlowV2< typeof initialize > = {
 							siteId,
 							...( siteSlug ? { siteSlug } : {} ),
 						};
-						if ( studioSiteId ) {
-							destinationParams[ 'redirect_to' ] = buildStudioSyncConnectPath( {
-								studioSiteId,
-								remoteSiteId: Number( siteId ),
-								autoOpenPush: autoOpenPush === 'true',
-							} );
+						if ( studioSiteId && siteSlug ) {
+							// jetpack-mu-wpcom's Dashboard reads these params and hands off to Studio.
+							destinationParams[ 'redirect_to' ] = addQueryArgs(
+								`https://${ siteSlug }/wp-admin/`,
+								{
+									studioSiteId,
+									...( autoOpenPush === 'true' && { autoOpenPush: 'true' } ),
+								}
+							);
 						} else if ( isWooPartner ) {
 							// For partners, we'll redirect to the WooCommerce admin page
 							destinationParams[ 'redirect_to' ] =
