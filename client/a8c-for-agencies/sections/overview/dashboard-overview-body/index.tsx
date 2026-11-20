@@ -15,6 +15,7 @@ import {
 import useLeadMatchingProfile from 'calypso/a8c-for-agencies/data/partner-directory/use-lead-matching-profile';
 import useDashboardOptIn from 'calypso/a8c-for-agencies/hooks/use-dashboard-opt-in';
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
+import { getClassicPath } from 'calypso/a8c-for-agencies/lib/dashboard-opt-in';
 import { PARTNER_DIRECTORY_LEAD_MATCHING_SLUG } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import { PROGRAM_INCENTIVES_URL } from 'calypso/dashboard/agency/overview/constants';
 import { getAnsweredMatchingProfileCount } from 'calypso/dashboard/agency/overview/matching-profile-visibility';
@@ -129,6 +130,7 @@ export default function DashboardOverviewBody() {
 			onRelaunchTour={ handleRelaunchTour }
 			partnerManager={ agency.partner_manager }
 			recordTracksEvent={ handleRecordTracksEvent }
+			getNewsCtaUrl={ getClassicPath }
 		/>
 	);
 }
