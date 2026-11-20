@@ -83,10 +83,12 @@ export default function TransferDomainToAnyUser() {
 	const hasEmailWithUs = hasTitanMailWithUs( domain ) || hasGSuiteWithUs( domain );
 
 	const { isValid } = useFormValidity( formData, fields, form );
-	const isSaveDisabled = ! isValid;
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
+		if ( ! isValid ) {
+			return;
+		}
 		setIsTransferDialogOpen( true );
 	};
 
@@ -168,7 +170,7 @@ export default function TransferDomainToAnyUser() {
 								variant="primary"
 								type="submit"
 								isBusy={ isUpdatingDomainTransferRequest }
-								disabled={ isSaveDisabled || isUpdatingDomainTransferRequest }
+								disabled={ isUpdatingDomainTransferRequest }
 							>
 								{ __( 'Transfer domain' ) }
 							</Button>

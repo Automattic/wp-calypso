@@ -72,7 +72,6 @@ export function ConfirmNewOwnerForm( {
 
 	const fields = getFields( site.ID );
 	const { validity, isValid } = useFormValidity( debouncedFormData, fields, form );
-	const isSaveDisabled = ! isValid;
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -108,12 +107,7 @@ export function ConfirmNewOwnerForm( {
 					} }
 				/>
 				<ButtonStack justify="flex-start">
-					<Button
-						variant="primary"
-						type="submit"
-						isBusy={ mutation.isPending }
-						disabled={ isSaveDisabled }
-					>
+					<Button variant="primary" type="submit" isBusy={ mutation.isPending }>
 						{ __( 'Continue' ) }
 					</Button>
 				</ButtonStack>

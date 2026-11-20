@@ -94,6 +94,18 @@ test( 'disables submit button when isSubmitting is true', async () => {
 	expect( submitButton ).toBeDisabled();
 } );
 
+test( 'explains empty fields instead of submitting', async () => {
+	const onSubmit = vi.fn();
+	renderForm( { onSubmit } );
+
+	await userEvent.click( screen.getByRole( 'button', { name: 'Add record' } ) );
+
+	expect( screen.getByRole( 'textbox', { name: /IP address/ } ) ).toHaveAccessibleDescription(
+		/Constraints not satisfied/
+	);
+	expect( onSubmit ).not.toHaveBeenCalled();
+} );
+
 test( 'shows validation error when nameserver is invalid', async () => {
 	const user = userEvent.setup();
 

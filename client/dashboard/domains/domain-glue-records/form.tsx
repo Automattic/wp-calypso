@@ -109,10 +109,12 @@ export default function DomainGlueRecordsForm( {
 	};
 
 	const { validity, isValid } = useFormValidity( formData, fields, form );
-	const canSubmit = ! isSubmitting && isValid;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		if ( ! isValid ) {
+			return;
+		}
 
 		const glueRecord = {
 			nameserver: formData.nameServer,
@@ -142,7 +144,7 @@ export default function DomainGlueRecordsForm( {
 								variant="primary"
 								type="submit"
 								isBusy={ isSubmitting }
-								disabled={ ! canSubmit }
+								disabled={ isSubmitting }
 							>
 								{ submitButtonText }
 							</Button>
