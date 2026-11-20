@@ -239,23 +239,42 @@ describe( 'comment action placement', () => {
 		expect( trashNote ).toHaveBeenCalledTimes( 2 );
 	} );
 
-	it( 'sends one approval at a time from the a shortcut', async () => {
-		const user = userEvent.setup();
-		approveRequest.mockReset().mockImplementation( () => new Promise( () => {} ) );
-		renderWithProvider(
-			<AppProvider client={ null } locale="en">
-				<NoteActions note={ pendingNote( { 'approve-comment': false } ) } goBack={ noop } />
-			</AppProvider>
-		);
-		act( () => {
-			store.dispatch( actions.ui.enableKeyboardShortcuts() );
-		} );
+	it.each( [
+		[ 'twice', 'aa', 'Approve comment', [ [ true ], [ false ] ] ],
+		[ 'three times', 'aaa', 'Unapprove comment', [ [ true ] ] ],
+	] )(
+		'sends the last of the a presses %s once the first approval lands',
+		async ( _, keys, shown, sent ) => {
+			const user = userEvent.setup();
+			let land = noop;
+			approveRequest
+				.mockReset()
+				.mockImplementation( () => new Promise< void >( ( resolve ) => ( land = resolve ) ) );
+			renderWithProvider(
+				<AppProvider client={ null } locale="en">
+					<NoteActions note={ pendingNote( { 'approve-comment': false } ) } goBack={ noop } />
+				</AppProvider>
+			);
+			act( () => {
+				store.dispatch( actions.ui.enableKeyboardShortcuts() );
+			} );
 
-		await user.keyboard( 'a' );
-		await user.keyboard( 'a' );
+			for ( const key of keys ) {
+				await user.keyboard( key );
+			}
 
-		expect( approveRequest.mock.calls ).toEqual( [ [ true ] ] );
-	} );
+			expect( approveRequest.mock.calls ).toEqual( [ [ true ] ] );
+			expect( screen.getByRole( 'button', { name: shown } ) ).not.toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
+
+			await act( async () => land() );
+			await act( async () => land() );
+
+			expect( approveRequest.mock.calls ).toEqual( sent );
+		}
+	);
 
 	describe( 'with expanded actions, as on the full page', () => {
 		const approve = () => screen.getByRole( 'button', { name: 'Approve comment' } );
@@ -304,54 +323,48 @@ describe( 'comment action placement', () => {
 					await user.keyboard( '{Enter}{Enter}' );
 				},
 			],
-		] )( 'sends one approval at a time, on %s', async ( _, pressTwice ) => {
+		] )(
+			'shows a second press at once and sends it once the first lands, on %s',
+			async ( _, pressTwice ) => {
+				const user = userEvent.setup();
+				let land = () => {};
+				approveRequest.mockImplementation(
+					() => new Promise< void >( ( resolve ) => ( land = resolve ) )
+				);
+				renderExpanded( pendingNote( { 'approve-comment': false, 'spam-comment': true } ) );
+
+				await pressTwice( user );
+
+				expect( approveRequest.mock.calls ).toEqual( [ [ true ] ] );
+				expect( approve() ).toHaveFocus();
+				expect( approve() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+
+				await act( async () => land() );
+
+				expect( approveRequest.mock.calls ).toEqual( [ [ true ], [ false ] ] );
+				expect( approve() ).toBeVisible();
+			}
+		);
+
+		it( 'shows a pending Spam as busy only on the notes it was pressed on', async () => {
 			const user = userEvent.setup();
-			let land = () => {};
-			approveRequest.mockImplementation(
-				() => new Promise< void >( ( resolve ) => ( land = resolve ) )
-			);
-			renderExpanded( pendingNote( { 'approve-comment': false, 'spam-comment': true } ) );
-
-			await pressTwice( user );
-
-			expect( approveRequest.mock.calls ).toEqual( [ [ true ] ] );
-			const unapprove = screen.getByRole( 'button', { name: 'Unapprove comment' } );
-			expect( unapprove ).toHaveFocus();
-			expect( unapprove ).toHaveAttribute( 'aria-disabled', 'true' );
-
-			await act( async () => land() );
-			await user.click( unapprove );
-
-			expect( approveRequest.mock.calls ).toEqual( [ [ true ], [ false ] ] );
-		} );
-
-		it( 'shows a pending Approve or Spam as busy only on the notes it was pressed on', async () => {
-			const user = userEvent.setup();
-			approveRequest.mockImplementation( () => new Promise( () => {} ) );
 			spamNote.mockImplementation( () => new Promise( () => {} ) );
 			const first = pendingNote( { 'approve-comment': false, 'spam-comment': true } );
 			const { rerender } = renderExpanded( first );
 			const spam = () => screen.getByRole( 'button', { name: 'Mark comment as spam' } );
-			await user.click( approve() );
 			await user.click( spam() );
 
 			rerender( expanded( otherNote( first ) ) );
 
-			expect( approve() ).not.toHaveAttribute( 'aria-disabled', 'true' );
 			expect( spam() ).not.toHaveAttribute( 'aria-disabled', 'true' );
 
-			await user.click( approve() );
 			await user.click( spam() );
 			rerender( expanded( first ) );
 
-			expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toHaveAttribute(
-				'aria-disabled',
-				'true'
-			);
 			expect( spam() ).toHaveAttribute( 'aria-disabled', 'true' );
 		} );
 
-		it( 'keeps Approve busy on a note while another note’s approval lands', async () => {
+		it( 'queues a press only behind the same note’s approval', async () => {
 			const user = userEvent.setup();
 			const answers: ( () => void )[] = [];
 			approveRequest.mockImplementation(
@@ -362,15 +375,19 @@ describe( 'comment action placement', () => {
 			const unapprove = () => screen.getByRole( 'button', { name: 'Unapprove comment' } );
 			await user.click( approve() );
 			rerender( expanded( otherNote( first ) ) );
+
 			await user.click( approve() );
 
+			expect( approveRequest.mock.calls ).toEqual( [ [ true ], [ true ] ] );
+
+			await user.click( unapprove() );
 			await act( async () => answers[ 0 ]() );
 
-			expect( unapprove() ).toHaveAttribute( 'aria-disabled', 'true' );
+			expect( approveRequest.mock.calls ).toEqual( [ [ true ], [ true ] ] );
 
-			rerender( expanded( first ) );
+			await act( async () => answers[ 1 ]() );
 
-			expect( unapprove() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+			expect( approveRequest.mock.calls ).toEqual( [ [ true ], [ true ], [ false ] ] );
 		} );
 
 		it( 'goes back once the comment is marked as spam', async () => {
