@@ -361,6 +361,8 @@ const LANGUAGE_FILE_TIMEOUT_MS = 3000;
 const DEFAULT_READER_SCRIPT_URL = 'https://widgets.wp.com/agents-manager/reader-chat.min.js';
 // Read while the bundle executes: currentScript is null once it has finished.
 const readerScriptUrl = document.currentScript?.src || DEFAULT_READER_SCRIPT_URL;
+// Agenttic bundles neither of these; each reads the bundled locale that shares its script.
+const AGENTTIC_LOCALE_FALLBACKS = { 'zh-hk': 'zh-tw', 'zh-sg': 'zh-cn' };
 // The locales whose language file is named with a region; every other one uses the language alone.
 const REGIONAL_LANGUAGE_FILES = [
 	'de-ch',
@@ -413,16 +415,29 @@ function normalizeReaderLocale( locale ) {
 		.trim()
 		.toLowerCase()
 		.replace( /_/g, '-' );
-	if ( REGIONAL_LANGUAGE_FILES.includes( slug ) ) {
-		return slug;
+	// A variant such as "de-ch-informal" still reads its region's file.
+	const [ language, region ] = slug.split( '-' );
+	const regional = region ? `${ language }-${ region }` : '';
+	if ( REGIONAL_LANGUAGE_FILES.includes( regional ) ) {
+		return regional;
 	}
-	const language = slug.split( '-' )[ 0 ];
 	// The slug goes into a URL, so accept only a plain language code.
 	return /^[a-z]{2,3}$/.test( language ) ? language : 'en';
 }
 
 function resolveReaderLocale( config = readerConfig, doc = document ) {
 	return normalizeReaderLocale( config?.locale || doc?.documentElement?.lang );
+}
+
+const readerLocale = resolveReaderLocale();
+
+/**
+ * The line that asks the suggestions agent for the blog's language; its prompts are English.
+ * @param   {string} locale Language slug, as returned by resolveReaderLocale.
+ * @returns {string}        One sentence to end a prompt with.
+ */
+function getSuggestionsLanguageLine( locale ) {
+	return `Write every "label" and "prompt" in the blog's language, whose locale is "${ locale }".`;
 }
 
 function getLanguageFileUrl( locale, scriptUrl = readerScriptUrl ) {
@@ -467,7 +482,11 @@ function loadReaderTranslations( locale ) {
 		return Promise.resolve();
 	}
 	// Agenttic bundles fewer locales, so "fr-ca" uses its "fr".
-	const agentticLocale = [ locale, locale.split( '-' )[ 0 ] ].find( hasAgentticTranslations );
+	const agentticLocale = [
+		locale,
+		AGENTTIC_LOCALE_FALLBACKS[ locale ],
+		locale.split( '-' )[ 0 ],
+	].find( ( candidate ) => candidate && hasAgentticTranslations( candidate ) );
 	if ( agentticLocale ) {
 		loadAgentticTranslations( agentticLocale, { domain: 'a8c-agenttic' } );
 	}
@@ -728,7 +747,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
  * Called fire-and-forget after mount — the empty view shows fallback
  * chips immediately and re-renders with AI suggestions when they arrive.
  */
-function fetchAiSuggestions( signal ) {
+function fetchAiSuggestions( signal, locale = readerLocale ) {
 	const post = readerCurrentPost;
 	const siteName = readerConfig.siteName || '';
 	const siteUrl = readerConfig.siteUrl || '';
@@ -755,7 +774,8 @@ Use concrete details from the title or excerpt when possible.
 Avoid generic labels like "Summarize this post", "Explain this post", or "Find related posts".
 Do not ask the author personal interview questions.
 Do not address the author as "you" or "your".
-Phrase prompts around "this post", "the post", "the author", or the topic discussed.`
+Phrase prompts around "this post", "the post", "the author", or the topic discussed.
+${ getSuggestionsLanguageLine( locale ) }`
 		: `Context: a reader is on the home/stream of a blog (no specific post selected).
 Site name: ${ siteName }
 Site URL: ${ siteUrl }
@@ -767,7 +787,8 @@ Each object must have:
 
 Generate questions a reader might click to explore THIS BLOG overall: its topics, recent posts, or recommendations.
 Do not ask the site owner personal interview questions.
-Do not address the site owner as "you" or "your".`;
+Do not address the site owner as "you" or "your".
+${ getSuggestionsLanguageLine( locale ) }`;
 
 	return fetchSuggestions( {
 		messageText,
@@ -782,7 +803,7 @@ Do not address the site owner as "you" or "your".`;
  * Reuses the reader-chat-suggestions agent with a message shape that
  * describes the exchange and asks for follow-ups.
  */
-function fetchFollowupSuggestions( userText, agentText, signal ) {
+function fetchFollowupSuggestions( userText, agentText, signal, locale = readerLocale ) {
 	if ( ! userText || ! agentText ) {
 		return Promise.resolve( null );
 	}
@@ -799,7 +820,8 @@ Generate follow-up questions the reader might want to ask next, based only on th
 Anchor every question in a concrete detail, place, person, phrase, or theme from the reply.
 Do not ask for broad advice, outside recommendations, popularity, traffic, trends, or facts not implied by the reply.
 Do not ask the author/site owner personal interview questions or address them as "you".
-Questions should feel like natural next-step curiosity: clarify a detail, go deeper on a named point, or ask how two details connect.`;
+Questions should feel like natural next-step curiosity: clarify a detail, go deeper on a named point, or ask how two details connect.
+${ getSuggestionsLanguageLine( locale ) }`;
 
 	return fetchSuggestions( {
 		messageText,
@@ -1271,7 +1293,7 @@ function mountReaderChat( container ) {
 
 const container = document.getElementById( 'jetpack-reader-chat' );
 if ( container ) {
-	loadReaderTranslations( resolveReaderLocale() ).then( () => mountReaderChat( container ) );
+	loadReaderTranslations( readerLocale ).then( () => mountReaderChat( container ) );
 }
 
 // Exported for unit tests only; injectScopedReset mutates document.head.
@@ -1293,4 +1315,6 @@ export {
 	resolveReaderLocale,
 	getLanguageFileUrl,
 	loadReaderTranslations,
+	fetchAiSuggestions,
+	fetchFollowupSuggestions,
 };

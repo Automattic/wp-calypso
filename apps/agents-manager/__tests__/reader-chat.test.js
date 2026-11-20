@@ -22,7 +22,7 @@ vi.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => ( {
 	} ) ),
 } ) );
 vi.mock( '@automattic/agenttic-ui', () => ( {
-	hasAgentticTranslations: vi.fn( ( locale ) => [ 'nl', 'fr' ].includes( locale ) ),
+	hasAgentticTranslations: vi.fn( ( locale ) => [ 'nl', 'fr', 'zh-cn' ].includes( locale ) ),
 	loadAgentticTranslations: vi.fn(),
 } ) );
 vi.mock( '@tanstack/react-query', () => ( {
@@ -76,6 +76,8 @@ const {
 	resolveReaderLocale,
 	getLanguageFileUrl,
 	loadReaderTranslations,
+	fetchAiSuggestions,
+	fetchFollowupSuggestions,
 } = await import( '../reader-chat' );
 
 // ---------------------------------------------------------------------------
@@ -337,6 +339,31 @@ describe( 'getSuggestionsFetchHeaders', () => {
 		expect( createCalypsoAuthProvider ).toHaveBeenCalledWith( 247750866, {
 			logWpcomJwtFailure: false,
 		} );
+	} );
+} );
+
+describe( 'suggestion prompts', () => {
+	const sentText = () =>
+		JSON.parse( fetch.mock.calls[ 0 ][ 1 ].body ).params.message.parts[ 0 ].text;
+
+	beforeEach( () => {
+		globalThis.fetch = vi.fn( async () => ( { ok: false } ) );
+	} );
+
+	afterEach( () => {
+		delete globalThis.fetch;
+	} );
+
+	it( 'ask the agent for the blog’s language', async () => {
+		await fetchAiSuggestions( undefined, 'nl' );
+
+		expect( sentText() ).toMatch( /blog's language, whose locale is "nl"\.$/ );
+	} );
+
+	it( 'ask for the blog’s language on follow-ups too', async () => {
+		await fetchFollowupSuggestions( 'Wat is dit?', 'Een blog.', undefined, 'nl' );
+
+		expect( sentText() ).toMatch( /blog's language, whose locale is "nl"\.$/ );
 	} );
 } );
 
@@ -618,7 +645,10 @@ describe( 'normalizeReaderLocale', () => {
 		[ 'zh-TW', 'zh-tw' ],
 		[ 'zh_HK', 'zh-hk' ],
 		[ 'fr-CA', 'fr-ca' ],
+		[ 'de-CH-informal', 'de-ch' ],
+		[ 'de_CH_informal', 'de-ch' ],
 		[ 'pt-PT', 'pt' ],
+		[ 'pt_PT_ao90', 'pt' ],
 		[ 'de', 'de' ],
 		[ '', 'en' ],
 		[ undefined, 'en' ],
@@ -700,9 +730,23 @@ describe( 'loadReaderTranslations', () => {
 		expect( loadAgentticTranslations ).toHaveBeenCalledWith( 'fr', { domain: 'a8c-agenttic' } );
 	} );
 
+	it( 'uses Agenttic’s zh-cn for a zh-sg page', async () => {
+		respondWith( languageFile( {} ) );
+		await loadReaderTranslations( 'zh-sg' );
+
+		expect( fetch.mock.calls[ 0 ][ 0 ] ).toContain( '/languages/zh-sg-v1.1.json' );
+		expect( loadAgentticTranslations ).toHaveBeenCalledWith( 'zh-cn', { domain: 'a8c-agenttic' } );
+	} );
+
 	it( 'stays in English, without a warning, when the locale has no translations', async () => {
 		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
-		respondWith( Promise.resolve( { ok: false } ) );
+		// A body on the error response, so skipping the status check would apply it.
+		respondWith(
+			Promise.resolve( {
+				ok: false,
+				json: async () => ( { 'Explore recent posts': [ 'Not for this locale' ] } ),
+			} )
+		);
 		await loadReaderTranslations( 'xx' );
 
 		expect( loadAgentticTranslations ).not.toHaveBeenCalled();
