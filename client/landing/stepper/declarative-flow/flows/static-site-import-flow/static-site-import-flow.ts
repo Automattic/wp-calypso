@@ -29,6 +29,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { withLocale } from '../../helpers/with-locale';
 import { siteSetupImportListPath } from '../site-migration-flow/paths';
 import { canUseStaticSiteImport, isCheckoutExitPreview } from './helpers';
+import { usePlansSkipExperiment } from './plans-skip-experiment';
 import type { OnboardActions } from '@automattic/data-stores';
 import type {
 	AssertConditionResult,
@@ -96,9 +97,12 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	initialize,
 	useStepsProps() {
+		const isNewDestination = ! hasDestinationSite( useQuery() );
+		const offersPreview = usePlansSkipExperiment( isNewDestination );
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
-				isInSignup: ! hasDestinationSite( useQuery() ),
+				isInSignup: isNewDestination,
+				skippable: offersPreview,
 				intent: 'plans-default-wpcom',
 				hideFreePlan: true,
 				hideEnterprisePlan: true,
@@ -233,6 +237,13 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.UNIFIED_PLANS.slug: {
+					// Skipping plans builds the same preview site as leaving checkout. A full load
+					// re-runs initialize(), which lets the preview through and asks for an account.
+					if ( providedDependencies?.action === 'skip_plan' && ! hasSite ) {
+						return window.location.assign(
+							stepUrl( STEPS.STATIC_SITE_IMPORT_READING.slug, { checkoutExit: '1' } )
+						);
+					}
 					const planCartItem = providedDependencies?.cartItems?.[ 0 ];
 					if ( ! planCartItem?.product_slug ) {
 						return navigate( STEPS.ERROR.slug, { errorReason: 'no_plan_selected' } );

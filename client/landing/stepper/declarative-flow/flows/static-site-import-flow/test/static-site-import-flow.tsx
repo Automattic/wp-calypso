@@ -18,6 +18,7 @@ import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { useExperiment } from 'calypso/lib/explat';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderHookWithProvider, renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -30,6 +31,7 @@ jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
 jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
+jest.mock( 'calypso/lib/explat' );
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( staticSiteImportFlow, options, 'forward' );
@@ -281,6 +283,46 @@ describe( 'Static site import flow', () => {
 				true
 			);
 			expect( goToCheckout ).not.toHaveBeenCalled();
+			expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
+		} );
+
+		it.each( [
+			{ variationName: 'treatment', query: SOURCE, offered: true },
+			{ variationName: 'control', query: SOURCE, offered: false },
+			{ variationName: 'treatment', query: { ...SOURCE, ...SITE }, offered: false },
+		] )(
+			'offers Skip ($variationName, existing destination: $query.siteId)',
+			( { variationName, query, offered } ) => {
+				jest
+					.mocked( useExperiment )
+					.mockImplementation( ( name, { isEligible } ) => [
+						false,
+						isEligible ? { variationName } : null,
+					] );
+				const search = `?${ new URLSearchParams( query ) }`;
+				const { result } = renderHookWithProvider( () => staticSiteImportFlow.useStepsProps(), {
+					wrapper: ( { children } ) => (
+						<MemoryRouter initialEntries={ [ `${ plansPath }${ search }` ] }>
+							{ children }
+						</MemoryRouter>
+					),
+				} );
+
+				expect( Boolean( result.current[ STEPS.UNIFIED_PLANS.slug ].skippable ) ).toBe( offered );
+			}
+		);
+
+		it( 'builds a preview site, like leaving checkout, when plans are skipped', () => {
+			runNavigation( {
+				from: STEPS.UNIFIED_PLANS,
+				dependencies: { cartItems: null, action: 'skip_plan' },
+				query: SOURCE,
+			} );
+
+			expect( lastExit() ).toEqual( {
+				path: readingPath,
+				query: { ...SOURCE, checkoutExit: '1' },
+			} );
 			expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
 		} );
 

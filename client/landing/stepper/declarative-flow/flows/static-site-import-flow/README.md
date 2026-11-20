@@ -45,10 +45,13 @@ resolves the new destination’s `siteId`. Cancelling site checkout for an exist
 returns to plans with the source and destination retained. Once the session starts, Overview
 receives its `importSessionId` so it can resume tracking after a reload.
 
-## Preview site on leaving checkout
+## Preview site on leaving checkout or skipping plans
 
 Cancelling unified checkout for a new destination returns to the reading step with
-`checkoutExit=1` instead of plans. The step starts the import session, then builds a preview site
+`checkoutExit=1` instead of plans. In the treatment of the
+`calypso_static_site_import_plans_skip_to_preview` experiment, the plans step is `skippable`, and its **Skip**
+opens the same URL without going through checkout; signed-out customers create
+an account first. Existing destinations are never assigned. The step starts the import session, then builds a preview site
 through the `preview` WoW funnel (`/sites/new` with `wow_funnel=preview` and the session’s
 `import_session_id`). WordPress.com delivers the import onto the preview as soon as the build
 lands, so the flow goes straight to the preview’s Overview. If the server won’t build a preview,
@@ -75,6 +78,7 @@ its previous behavior.
    starts a session, builds a preview site, and opens its Overview with **We’re moving your
    site**. When it finishes, confirm the browser opens the preview at its `?share=` URL, and that
    its Overview then shows **Your preview is ready** with **View site** and **Choose a plan**.
+   With the experiment's treatment assigned, a new destination's plans step shows **Skip**; clicking it signed out asks for an account, then builds the preview the same way.
 5. In a test account, complete checkout. Confirm the reading step starts a session, then opens
    the destination’s Overview with **We’re moving your site**. Reload and confirm it resumes.
 6. Once it’s ready, click **Something not right? Let our team fix it** and confirm it files a migration
