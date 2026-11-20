@@ -75,14 +75,12 @@ export default function Notifications( {
 
 	const handleToggle = useCallback(
 		( willOpen: boolean ) => {
-			if ( willOpen && isInboxShown ) {
-				return;
-			}
 			if ( willOpen ) {
 				setShowHelpCenter( false, undefined, true );
 				recordTracksEvent( 'calypso_notification_open', {
 					unread_notifications: unseenCountRef.current,
 					unread_notifications_known: unseenCountRef.current !== undefined,
+					on_full_page: isInboxShown,
 				} );
 			}
 			setIsOpen( willOpen );
@@ -97,6 +95,7 @@ export default function Notifications( {
 		}
 	}, [ isHelpCenterShown ] );
 
+	// Opening the full page closes the panel it was opened from.
 	useEffect( () => {
 		if ( isInboxShown ) {
 			setIsOpen( false );
@@ -238,7 +237,8 @@ export default function Notifications( {
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
 						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
-						onOpenFullView={ onOpenInbox }
+						// There's no full view to open from the full page.
+						onOpenFullView={ isInboxShown ? undefined : onOpenInbox }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
