@@ -195,7 +195,7 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 					<VStack spacing={ 4 }>
 						<Text as="p">
 							{ __(
-								'They’ll be cleared from your Unread tab and the bell. This can’t be undone.'
+								'They’ll be cleared from your Unread tab and everywhere else you see notifications. This can’t be undone.'
 							) }
 						</Text>
 						<HStack justify="flex-end" spacing={ 3 }>
