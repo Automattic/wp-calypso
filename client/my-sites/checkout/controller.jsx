@@ -884,7 +884,7 @@ export function studentCheckoutRedirect( context ) {
 export function studioCheckoutReturn( context, next ) {
 	const studioCheckoutParams = getStudioCheckoutParams( context.query );
 
-	// Without a valid `studioSiteId` there is nothing to hand back to, so there is no page worth
+	// Without valid Studio params there is nothing to hand back to, so there is no page worth
 	// rendering.
 	if ( ! studioCheckoutParams ) {
 		page.redirect( '/sites' );
