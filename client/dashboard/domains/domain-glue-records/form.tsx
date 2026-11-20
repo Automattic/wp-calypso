@@ -144,7 +144,8 @@ export default function DomainGlueRecordsForm( {
 								variant="primary"
 								type="submit"
 								isBusy={ isSubmitting }
-								disabled={ isSubmitting }
+								// In edit mode the name server is read-only text, so its error has no input to show on.
+								disabled={ isSubmitting || ( isEdit && ! isValid ) }
 							>
 								{ submitButtonText }
 							</Button>
