@@ -12,14 +12,38 @@ const check = (
 	</svg>
 );
 
-const ApproveButton = ( { className, isApproved, isMinimal, note, setApproveStatus } ) => {
+// The `closeSmall` icon's 1.5px stroke, a little wider so it holds its own beside the check.
+const cross = (
+	<svg
+		width="24"
+		height="24"
+		viewBox="0 0 24 24"
+		xmlns="http://www.w3.org/2000/svg"
+		style={ { fill: 'none' } }
+		stroke="currentColor"
+		strokeWidth="1.5"
+	>
+		<path d="M7.25 16.75L16.75 7.25M16.75 16.75L7.25 7.25" />
+	</svg>
+);
+
+const ApproveButton = ( { className = '', isApproved, isMinimal, note, setApproveStatus } ) => {
 	const { client } = useAppContext();
+	// A minimal button names what it does, so an approved comment's reads "Unapprove".
+	const isUnapprove = isMinimal && isApproved;
+
+	const getText = () => {
+		if ( isUnapprove ) {
+			return __( 'Unapprove' );
+		}
+		return isApproved ? __( 'Approved' ) : __( 'Approve' );
+	};
 
 	return (
 		<ActionButton
 			className={ className }
-			icon={ check }
-			isActive={ isApproved }
+			icon={ isUnapprove ? cross : check }
+			isActive={ isApproved && ! isMinimal }
 			isMinimal={ isMinimal }
 			hotkey="a"
 			onToggle={ () =>
@@ -32,7 +56,7 @@ const ApproveButton = ( { className, isApproved, isMinimal, note, setApproveStat
 					client
 				)
 			}
-			text={ isApproved ? __( 'Approved' ) : __( 'Approve' ) }
+			text={ getText() }
 			title={ isApproved ? __( 'Unapprove comment' ) : __( 'Approve comment' ) }
 		/>
 	);

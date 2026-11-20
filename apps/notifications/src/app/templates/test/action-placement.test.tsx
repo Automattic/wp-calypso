@@ -3,12 +3,19 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from '../../../testing-library';
 import { AppProvider } from '../../context';
 import NoteActions from '../actions';
 import SimplifiedActions from '../simplified-actions';
 
 const noop = () => {};
+
+let isLargeScreen = true;
+vi.mock( '@wordpress/compose', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@wordpress/compose' ) >() ),
+	useViewportMatch: () => isLargeScreen,
+} ) );
 
 const note = {
 	id: 1,
@@ -99,5 +106,85 @@ describe( 'comment action placement', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Approve comment' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'with expanded actions, as on the full page', () => {
+		const renderExpanded = ( expandedNote: never ) =>
+			renderWithProvider(
+				<AppProvider client={ null } locale="en" hasExpandedActions>
+					<SimplifiedActions note={ expandedNote } goBack={ noop } />
+				</AppProvider>
+			);
+
+		beforeEach( () => {
+			isLargeScreen = true;
+		} );
+
+		it( 'puts Unapprove and Spam beside Like on an approved comment', async () => {
+			renderExpanded( note );
+
+			expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) ).toBeVisible();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
+
+			expect( await screen.findByRole( 'menuitem', { name: 'Edit' } ) ).toBeVisible();
+			expect( screen.getByRole( 'menuitem', { name: 'Move to trash' } ) ).toBeVisible();
+			expect( screen.queryByRole( 'menuitem', { name: 'Unapprove' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'menuitem', { name: 'Mark as spam' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'puts Approve and Spam beside Like on a pending comment', async () => {
+			renderExpanded(
+				pendingNote( {
+					'approve-comment': false,
+					'edit-comment': true,
+					'spam-comment': true,
+					'trash-comment': true,
+				} )
+			);
+
+			expect( screen.getByRole( 'button', { name: 'Approve comment' } ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) ).toBeVisible();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
+
+			expect( await screen.findByRole( 'menuitem', { name: 'Edit' } ) ).toBeVisible();
+			expect( screen.queryByRole( 'menuitem', { name: 'Mark as spam' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows Spam even when it is the only action', () => {
+			renderExpanded( pendingNote( { 'spam-comment': true } ) );
+
+			expect( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'keeps them in the Actions menu below the two-pane width', async () => {
+			isLargeScreen = false;
+			renderExpanded( note );
+
+			expect(
+				screen.queryByRole( 'button', { name: 'Mark comment as spam' } )
+			).not.toBeInTheDocument();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
+
+			expect( await screen.findByRole( 'menuitem', { name: 'Unapprove' } ) ).toBeVisible();
+			expect( screen.getByRole( 'menuitem', { name: 'Mark as spam' } ) ).toBeVisible();
+		} );
+
+		it( 'leaves the panel as it is', () => {
+			renderWithProvider(
+				<AppProvider client={ null } locale="en">
+					<SimplifiedActions note={ note } goBack={ noop } />
+				</AppProvider>
+			);
+
+			expect(
+				screen.queryByRole( 'button', { name: 'Mark comment as spam' } )
+			).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Actions' } ) ).toBeVisible();
+		} );
 	} );
 } );

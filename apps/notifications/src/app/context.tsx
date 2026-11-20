@@ -12,6 +12,8 @@ export type AppContextData = {
 	locale: string;
 	isViewSettingsEnabled: boolean;
 	isMarkAsUnreadEnabled: boolean;
+	/** Shows more of a comment's actions as buttons, for a host with room for them. */
+	hasExpandedActions: boolean;
 	onOpenFullView?: ( view: FullView ) => void;
 };
 
@@ -20,6 +22,7 @@ const AppContext = createContext< AppContextData >( {
 	locale: 'en',
 	isViewSettingsEnabled: false,
 	isMarkAsUnreadEnabled: false,
+	hasExpandedActions: false,
 } );
 
 export const AppProvider = ( {
@@ -27,6 +30,7 @@ export const AppProvider = ( {
 	locale,
 	isViewSettingsEnabled = false,
 	isMarkAsUnreadEnabled = false,
+	hasExpandedActions = false,
 	onOpenFullView,
 	children,
 }: {
@@ -34,6 +38,7 @@ export const AppProvider = ( {
 	locale: string;
 	isViewSettingsEnabled?: boolean;
 	isMarkAsUnreadEnabled?: boolean;
+	hasExpandedActions?: boolean;
 	onOpenFullView?: ( view: FullView ) => void;
 	children: React.ReactNode;
 } ) => {
@@ -43,9 +48,17 @@ export const AppProvider = ( {
 			locale,
 			isViewSettingsEnabled,
 			isMarkAsUnreadEnabled,
+			hasExpandedActions,
 			onOpenFullView,
 		} ),
-		[ client, locale, isViewSettingsEnabled, isMarkAsUnreadEnabled, onOpenFullView ]
+		[
+			client,
+			locale,
+			isViewSettingsEnabled,
+			isMarkAsUnreadEnabled,
+			hasExpandedActions,
+			onOpenFullView,
+		]
 	);
 
 	return <AppContext.Provider value={ value }>{ children }</AppContext.Provider>;
