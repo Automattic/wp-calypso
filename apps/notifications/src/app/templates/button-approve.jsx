@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { connect } from 'react-redux';
 import { getReferenceId } from '../../panel/helpers/notes';
 import { setApproveStatus as setApproveStatusAction } from '../../panel/state/notes/thunks';
@@ -29,8 +30,27 @@ const cross = (
 
 const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 	const { client } = useAppContext();
+	const [ isBusy, setIsBusy ] = useState( false );
 	// A minimal button names what it does, so an approved comment's reads "Unapprove".
 	const isUnapprove = isMinimal && isApproved;
+
+	// The button stays in place as it toggles, so a second press waits for the first to land,
+	// which keeps them from reaching the server out of order.
+	const handleToggle = async () => {
+		if ( isBusy ) {
+			return;
+		}
+		setIsBusy( true );
+		await setApproveStatus(
+			note.id,
+			getReferenceId( note, 'site' ),
+			getReferenceId( note, 'comment' ),
+			! isApproved,
+			note.type,
+			client
+		);
+		setIsBusy( false );
+	};
 
 	const getText = () => {
 		if ( isUnapprove ) {
@@ -44,17 +64,9 @@ const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 			icon={ isUnapprove ? cross : check }
 			isActive={ isApproved && ! isMinimal }
 			isMinimal={ isMinimal }
+			isBusy={ isBusy }
 			hotkey="a"
-			onToggle={ () =>
-				setApproveStatus(
-					note.id,
-					getReferenceId( note, 'site' ),
-					getReferenceId( note, 'comment' ),
-					! isApproved,
-					note.type,
-					client
-				)
-			}
+			onToggle={ handleToggle }
 			text={ getText() }
 			title={ isApproved ? __( 'Unapprove comment' ) : __( 'Approve comment' ) }
 		/>

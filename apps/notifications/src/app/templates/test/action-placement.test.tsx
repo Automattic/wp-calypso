@@ -26,12 +26,20 @@ vi.mock( '@wordpress/compose', async ( importOriginal ) => ( {
 	},
 } ) );
 
-// Approving only updates the store, and marking as spam is up to each test, so no request is made.
-const { spamNote } = vi.hoisted( () => ( { spamNote: vi.fn() } ) );
+// Approving updates the store, and when the request lands and whether marking as spam works are
+// up to each test, so no request is made.
+const { approveRequest, spamNote } = vi.hoisted( () => ( {
+	approveRequest: vi.fn(),
+	spamNote: vi.fn(),
+} ) );
 vi.mock( '../../../panel/state/notes/thunks', async ( importOriginal ) => ( {
 	...( await importOriginal< typeof import( '../../../panel/state/notes/thunks' ) >() ),
-	setApproveStatus: ( noteId: number, _siteId: number, _commentId: number, isApproved: boolean ) =>
-		approveNote( noteId, isApproved ),
+	setApproveStatus:
+		( noteId: number, _siteId: number, _commentId: number, isApproved: boolean ) =>
+		( dispatch: ( action: unknown ) => void ) => {
+			dispatch( approveNote( noteId, isApproved ) );
+			return approveRequest( isApproved );
+		},
 	spamNote:
 		( ...args: unknown[] ) =>
 		() =>
@@ -130,6 +138,7 @@ describe( 'comment action placement', () => {
 	} );
 
 	describe( 'with expanded actions, as on the full page', () => {
+		const approve = () => screen.getByRole( 'button', { name: 'Approve comment' } );
 		const renderExpanded = ( expandedNote: never ) =>
 			renderWithProvider(
 				<AppProvider client={ null } locale="en" hasExpandedActions>
@@ -139,6 +148,7 @@ describe( 'comment action placement', () => {
 
 		beforeEach( () => {
 			isLargeScreen = true;
+			approveRequest.mockReset();
 			spamNote.mockReset();
 		} );
 
@@ -153,6 +163,39 @@ describe( 'comment action placement', () => {
 			await user.click( screen.getByRole( 'button', { name: 'Unapprove comment' } ) );
 
 			expect( screen.getByRole( 'button', { name: 'Approve comment' } ) ).toHaveFocus();
+		} );
+
+		it.each( [
+			[
+				'a double click',
+				( user: ReturnType< typeof userEvent.setup > ) => user.dblClick( approve() ),
+			],
+			[
+				'pressing Enter twice',
+				async ( user: ReturnType< typeof userEvent.setup > ) => {
+					approve().focus();
+					await user.keyboard( '{Enter}{Enter}' );
+				},
+			],
+		] )( 'sends one approval at a time, on %s', async ( _, pressTwice ) => {
+			const user = userEvent.setup();
+			let land = () => {};
+			approveRequest.mockImplementation(
+				() => new Promise< void >( ( resolve ) => ( land = resolve ) )
+			);
+			renderExpanded( pendingNote( { 'approve-comment': false, 'spam-comment': true } ) );
+
+			await pressTwice( user );
+
+			expect( approveRequest.mock.calls ).toEqual( [ [ true ] ] );
+			const unapprove = screen.getByRole( 'button', { name: 'Unapprove comment' } );
+			expect( unapprove ).toHaveFocus();
+			expect( unapprove ).toHaveAttribute( 'aria-disabled', 'true' );
+
+			await act( async () => land() );
+			await user.click( unapprove );
+
+			expect( approveRequest.mock.calls ).toEqual( [ [ true ], [ false ] ] );
 		} );
 
 		it( 'goes back once the comment is marked as spam', async () => {
