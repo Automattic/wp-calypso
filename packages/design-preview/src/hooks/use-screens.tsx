@@ -94,9 +94,9 @@ const useScreens = ( {
 						label: translate( 'Colors' ),
 						path: '/color-palettes',
 						title: translate( 'Colors' ),
-						description: translate(
-							'Discover your ideal color blend, from free to premium styles.'
-						),
+						description: translate( 'Discover your ideal color blend.', {
+							comment: 'Description of the screen that lists the color palettes of a theme.',
+						} ),
 						content: (
 							<div className="design-preview__sidebar-variations">
 								<ColorPaletteVariations

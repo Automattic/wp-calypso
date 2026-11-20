@@ -61,7 +61,11 @@ const FontPairingVariation = ( {
 				translate( 'Font: %s', {
 					comment: 'Aria label for font preview buttons',
 					// The default font pairing has no title
-					args: fontPairingVariation?.title ?? translate( 'Free font' ),
+					args:
+						fontPairingVariation?.title ??
+						translate( 'Default font', {
+							comment: 'Heading for the theme’s own font pairing, available on every plan.',
+						} ),
 				} ) as string
 			}
 		>
@@ -100,7 +104,11 @@ const FontPairingVariations = ( {
 			className="global-styles-variations__container"
 		>
 			<div className="global-styles-variations__group">
-				<h3 className="global-styles-variations__group-title">{ translate( 'Free font' ) }</h3>
+				<h3 className="global-styles-variations__group-title">
+					{ translate( 'Default font', {
+						comment: 'Heading for the theme’s own font pairing, available on every plan.',
+					} ) }
+				</h3>
 				<div className="font-pairing-variations">
 					<FontPairingVariation
 						key="base"
@@ -114,7 +122,10 @@ const FontPairingVariations = ( {
 			<div className="global-styles-variations__group">
 				<h3 className="global-styles-variations__group-title">
 					<span className="global-styles-variations__group-title-actual">
-						{ translate( 'Premium fonts' ) }
+						{ translate( 'Additional fonts', {
+							comment:
+								'Heading for the theme’s alternative font pairings. Choosing one adds site styles: sitewide changes that visitors only see on a paid plan.',
+						} ) }
 					</span>
 					<PremiumBadge
 						shouldHideTooltip
