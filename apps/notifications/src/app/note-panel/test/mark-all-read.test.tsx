@@ -205,7 +205,7 @@ describe( 'MarkAllAsRead', () => {
 					name: `Mark all ${ count } notifications as read?`,
 				} )
 			).toBeVisible();
-			expect( within( dialog ).getByRole( 'button', { name: 'Mark as read' } ) ).toBeVisible();
+			expect( within( dialog ).getByRole( 'button', { name: 'Mark all as read' } ) ).toBeVisible();
 			expect( markAll ).not.toHaveBeenCalled();
 		} );
 
@@ -214,7 +214,7 @@ describe( 'MarkAllAsRead', () => {
 			renderLink();
 
 			await user.click( await findLink( `Mark ${ count } as read` ) );
-			await user.click( screen.getByRole( 'button', { name: 'Mark as read' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Mark all as read' } ) );
 
 			await waitFor( () => expect( markAll ).toHaveBeenCalledTimes( 1 ) );
 			await waitFor( () => expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument() );

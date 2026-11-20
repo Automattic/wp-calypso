@@ -194,14 +194,16 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 				<Modal title={ question } size="medium" onRequestClose={ handleCancel }>
 					<VStack spacing={ 4 }>
 						<Text as="p">
-							{ __( 'This includes the ones you haven’t opened. You can’t undo this.' ) }
+							{ __(
+								'They’ll be cleared from your Unread tab and the bell. This can’t be undone.'
+							) }
 						</Text>
 						<HStack justify="flex-end" spacing={ 3 }>
 							<Button __next40pxDefaultSize variant="tertiary" onClick={ handleCancel }>
 								{ __( 'Cancel' ) }
 							</Button>
 							<Button __next40pxDefaultSize variant="primary" onClick={ handleConfirm }>
-								{ __( 'Mark as read' ) }
+								{ __( 'Mark all as read' ) }
 							</Button>
 						</HStack>
 					</VStack>
