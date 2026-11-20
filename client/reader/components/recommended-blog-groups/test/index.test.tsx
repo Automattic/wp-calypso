@@ -17,8 +17,8 @@ const mockUnfollow = jest.fn();
 
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useIsSubscribed: ( { feedId }: { feedId: number } ) => mockSubscribedFeedIds.has( feedId ),
-	useFollowSite: () => ( { mutate: mockFollow, isPending: false } ),
-	useUnfollowSite: () => ( { mutate: mockUnfollow, isPending: false } ),
+	useFollowSite: () => ( { mutateAsync: mockFollow } ),
+	useUnfollowSite: () => ( { mutateAsync: mockUnfollow } ),
 } ) );
 
 const mockLatestPostDate = jest.fn< Date | null, [ { feed_ID?: number | null } ] >( () => null );
