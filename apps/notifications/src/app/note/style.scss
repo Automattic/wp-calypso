@@ -661,7 +661,7 @@
 // Below the two-pane width the title is also the Back button, in the heading's type. Its arrow's
 // box starts on the padding edge (past the 1px button border), and as a block it keeps the
 // heading at 24px, centred on the icons at the other end. A long title wraps and the button
-// grows with it, as the heading did. Four classes, to outweigh Button's own size and padding
+// grows with it, as the heading did, breaking a word too long for the line. Four classes, to outweigh Button's own size and padding
 // rules whichever stylesheet loads last.
 .components-card__header .wpnc__note-back.components-button.has-text {
 	display: flex;
@@ -672,6 +672,7 @@
 	padding-inline-start: 0;
 	font: inherit;
 	text-align: start;
+	overflow-wrap: anywhere;
 
 	svg {
 		margin-block: -1px;
