@@ -77,6 +77,14 @@ afterEach( () => {
 	nock.cleanAll();
 } );
 
+test( 'shows an ampersand in the agency name', async () => {
+	const agency = { ...makeAgency(), name: 'Design &amp; Development', user: { capabilities: [] } };
+	renderOverview( agency );
+	expect(
+		await screen.findByRole( 'heading', { name: 'Design & Development', level: 1 } )
+	).toBeVisible();
+} );
+
 test( 'shows empty and partial saved preferences, then hides after a successful native save', async () => {
 	nock( API )
 		.get( matchingPath )
