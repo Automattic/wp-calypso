@@ -23,3 +23,19 @@ const STUDIO_CHECKOUT_PATH_PREFIX = '/checkout/studio/';
 export function isStudioCheckoutPath( pathname: string ): boolean {
 	return pathname.startsWith( STUDIO_CHECKOUT_PATH_PREFIX );
 }
+
+/**
+ * Whether a login `redirect_to` leads back into the Studio checkout, so the login screen can
+ * carry Studio's branding. `redirectLoggedOut` passes the checkout path, relative.
+ */
+export function isStudioCheckoutRedirect( redirectTo: string | null | undefined ): boolean {
+	if ( ! redirectTo ) {
+		return false;
+	}
+	try {
+		const url = new URL( redirectTo, 'https://wordpress.com' );
+		return url.hostname === 'wordpress.com' && isStudioCheckoutPath( url.pathname );
+	} catch {
+		return false;
+	}
+}

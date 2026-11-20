@@ -26,6 +26,7 @@ import {
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login, lostPassword } from 'calypso/lib/paths';
+import { isStudioCheckoutRedirect } from 'calypso/lib/studio/checkout-urls';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -121,6 +122,7 @@ export class Login extends Component {
 			'isBlazePro',
 			'isFromAkismet',
 			'isFromPassport',
+			'isFromStudioCheckout',
 			'isFromAutomatticForAgenciesPlugin',
 			'isUnifiedConnectionFlow',
 			'connectorPlugins',
@@ -506,6 +508,7 @@ function getInitialHeadingState( props, translate ) {
 		isBlazePro,
 		isFromAkismet,
 		isFromPassport,
+		isFromStudioCheckout,
 		isFromAutomatticForAgenciesPlugin,
 		isUnifiedConnectionFlow,
 		connectorPlugins,
@@ -532,6 +535,7 @@ function getInitialHeadingState( props, translate ) {
 		isBlazePro,
 		isFromAkismet,
 		isFromPassport,
+		isFromStudioCheckout,
 		isFromAutomatticForAgenciesPlugin,
 		isUnifiedConnectionFlow,
 		connectorPlugins,
@@ -607,6 +611,7 @@ export default connect(
 				new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'back' )
 			),
 			isFromPassport: isPassportRedirect( getRedirectToOriginal( state ) ),
+			isFromStudioCheckout: isStudioCheckoutRedirect( getRedirectToOriginal( state ) ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWCCOM: getIsWCCOM( state ),
 			isWoo: getIsWoo( state ),

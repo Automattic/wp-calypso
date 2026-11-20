@@ -1,5 +1,6 @@
 import {
 	isStudioCheckoutPath,
+	isStudioCheckoutRedirect,
 	STUDIO_DEFAULT_BACK_URL,
 	STUDIO_WEB_HOSTS,
 	STUDIO_WEB_ORIGINS,
@@ -33,5 +34,25 @@ describe( 'isStudioCheckoutPath', () => {
 		'/checkout/example.com/studio-cloud-monthly',
 	] )( 'is false for %s', ( pathname ) => {
 		expect( isStudioCheckoutPath( pathname ) ).toBe( false );
+	} );
+} );
+
+describe( 'isStudioCheckoutRedirect', () => {
+	test.each( [
+		'/checkout/studio/studio-cloud-monthly',
+		'/checkout/studio/studio-cloud-monthly?coupon=X',
+		'https://wordpress.com/checkout/studio/studio-pro-yearly',
+	] )( 'is true for %s', ( redirectTo ) => {
+		expect( isStudioCheckoutRedirect( redirectTo ) ).toBe( true );
+	} );
+
+	test.each( [
+		null,
+		'',
+		'/checkout/studio-return?studioSiteId=abc',
+		'/checkout/wpcom/studio-cloud-monthly',
+		'https://example.com/checkout/studio/studio-cloud-monthly',
+	] )( 'is false for %s', ( redirectTo ) => {
+		expect( isStudioCheckoutRedirect( redirectTo ) ).toBe( false );
 	} );
 } );

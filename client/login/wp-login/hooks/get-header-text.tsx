@@ -33,6 +33,7 @@ interface Props {
 	isBlazePro?: boolean;
 	isFromAkismet?: boolean;
 	isFromPassport?: boolean;
+	isFromStudioCheckout?: boolean;
 	isFromAutomatticForAgenciesPlugin?: boolean;
 	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
@@ -111,6 +112,7 @@ export function getHeaderText( {
 	isBlazePro,
 	isFromAkismet,
 	isFromPassport,
+	isFromStudioCheckout,
 	isFromAutomatticForAgenciesPlugin,
 	isUnifiedConnectionFlow,
 	connectorPlugins,
@@ -161,6 +163,8 @@ export function getHeaderText( {
 				clientName = 'Akismet';
 			} else if ( isFromPassport ) {
 				clientName = 'Passport';
+			} else if ( isFromStudioCheckout ) {
+				clientName = 'WordPress Studio';
 			} else if ( mobileAppClientName ) {
 				clientName = mobileAppClientName;
 			} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
