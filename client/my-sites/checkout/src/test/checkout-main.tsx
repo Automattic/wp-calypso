@@ -16,7 +16,11 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import * as PrePurchaseNotices from '../components/prepurchase-notices';
-import { contactDetailsActions, resetCheckoutStores } from '../lib/checkout-stores';
+import {
+	contactDetailsActions,
+	renewalSitelessCheckoutTypeStore,
+	resetCheckoutStores,
+} from '../lib/checkout-stores';
 import {
 	domainProduct,
 	planWithoutDomain,
@@ -877,12 +881,12 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it.each( [
-		[ 'isAkismetSitelessCheckout', 'akismet_siteless_checkout' ],
-		[ 'isMarketplaceSitelessCheckout', 'marketplace_siteless_checkout' ],
-		[ 'isWpcomSitelessCheckout', 'wpcom_siteless_checkout' ],
+		[ 'isAkismetSitelessCheckout', 'akismet_siteless_checkout', 'akismet' ],
+		[ 'isMarketplaceSitelessCheckout', 'marketplace_siteless_checkout', 'marketplace' ],
+		[ 'isWpcomSitelessCheckout', 'wpcom_siteless_checkout', 'wpcom' ],
 	] )(
-		'records the checkout flow of a renewal by subscription ID from the cart flag %s',
-		async ( cartFlag, expectedCheckoutFlow ) => {
+		'takes the siteless type of a renewal by subscription ID from the cart flag %s',
+		async ( cartFlag, expectedCheckoutFlow, expectedSitelessCheckoutType ) => {
 			const recordTracksEvent = jest.spyOn( Tracks, 'recordTracksEvent' );
 			// The server flags a renewal of a purchase on a holding site; the URL has no product.
 			const setCartWithHoldingSiteRenewal: typeof mockSetCartEndpoint = ( cartKey, requestCart ) =>
@@ -901,7 +905,7 @@ describe( 'CheckoutMain', () => {
 			( useCartKey as jest.Mock ).mockImplementation( () => 'no-site' );
 
 			try {
-				render(
+				const { unmount } = render(
 					<MockCheckout
 						cartChanges={ { products: [] } }
 						additionalProps={ {
@@ -927,6 +931,14 @@ describe( 'CheckoutMain', () => {
 						expect.objectContaining( { checkout_flow: expectedCheckoutFlow } )
 					);
 				} );
+				// The checkout header brands itself from this.
+				expect( renewalSitelessCheckoutTypeStore.get() ).toEqual( {
+					sitelessCheckoutType: expectedSitelessCheckoutType,
+				} );
+
+				// A later checkout must not take this renewal's brand.
+				unmount();
+				expect( renewalSitelessCheckoutTypeStore.get() ).toBeNull();
 			} finally {
 				recordTracksEvent.mockRestore();
 			}

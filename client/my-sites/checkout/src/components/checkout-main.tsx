@@ -14,7 +14,7 @@ import { VGSCollectProvider } from '@vgs/collect-js-react';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -44,7 +44,11 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import blikProcessor from '../lib/blik-processor';
-import { recaptchaClientIdStore, useContactDetails } from '../lib/checkout-stores';
+import {
+	recaptchaClientIdStore,
+	renewalSitelessCheckoutTypeStore,
+	useContactDetails,
+} from '../lib/checkout-stores';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
@@ -293,17 +297,26 @@ export default function CheckoutMain( {
 	} );
 
 	// A renewal by subscription ID alone has no siteless type in its URL, so
-	// checkout's own analytics take it from the cart. Google Analytics still
-	// follows the URL: its Akismet property is only configured on Akismet paths.
+	// checkout's own analytics and the header take it from the cart. Google
+	// Analytics still follows the URL: its Akismet property is only configured
+	// on Akismet paths.
 	const isRenewalBySubscriptionId =
 		!! purchaseId && ! productAliasFromUrl && ! sitelessCheckoutType;
-	const analyticsSitelessCheckoutType = isRenewalBySubscriptionId
+	const resolvedSitelessCheckoutType = isRenewalBySubscriptionId
 		? getSitelessCheckoutTypeFromCart( responseCart )
 		: sitelessCheckoutType;
 
+	useEffect( () => {
+		if ( ! isRenewalBySubscriptionId || isInitialCartLoading ) {
+			return;
+		}
+		renewalSitelessCheckoutTypeStore.set( { sitelessCheckoutType: resolvedSitelessCheckoutType } );
+		return () => renewalSitelessCheckoutTypeStore.reset();
+	}, [ isRenewalBySubscriptionId, isInitialCartLoading, resolvedSitelessCheckoutType ] );
+
 	const checkoutFlow = useCheckoutFlowTrackKey( {
 		hasJetpackSiteSlug: !! jetpackSiteSlug,
-		sitelessCheckoutType: analyticsSitelessCheckoutType,
+		sitelessCheckoutType: resolvedSitelessCheckoutType,
 		isJetpackNotAtomic,
 		isLoggedOutCart,
 		isUserComingFromLoginForm,
@@ -480,10 +493,10 @@ export default function CheckoutMain( {
 		purchaseId,
 		productAliasFromUrl,
 		// Siteless checkouts have no site slug, as on their own renewal paths.
-		analyticsSitelessCheckoutType !== sitelessCheckoutType ? undefined : updatedSiteSlug,
+		resolvedSitelessCheckoutType !== sitelessCheckoutType ? undefined : updatedSiteSlug,
 		feature,
 		plan,
-		analyticsSitelessCheckoutType,
+		resolvedSitelessCheckoutType,
 		checkoutFlow
 	);
 
