@@ -15,6 +15,8 @@ test.describe(
 	},
 	() => {
 		skipIfMailosaurLimitReached();
+		// Setup signs up a new account, and the upload wait alone can take a minute.
+		test.slow();
 
 		const substackSiteURL = 'https://test.substack.com/';
 		const substackSiteName = 'Testing Product';
