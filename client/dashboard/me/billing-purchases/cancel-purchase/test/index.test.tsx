@@ -131,13 +131,13 @@ const lackOfCustomization = 'Lack of customization features (e.g., colors, fonts
 
 const experimentName = 'calypso_cancel_options_cards_202611_v1';
 
-// Store a live assignment so ExPlat returns this variation from localStorage.
-function assignExperiment( variationName: string ) {
+// Store a live control assignment so ExPlat returns it from localStorage.
+function assignControl() {
 	window.localStorage.setItem(
 		`explat-experiment--${ experimentName }`,
 		JSON.stringify( {
 			experimentName,
-			variationName,
+			variationName: 'control',
 			retrievedTimestamp: Date.now(),
 			ttl: 3600,
 		} )
@@ -172,7 +172,7 @@ const optionsListName = 'Before canceling, you can consider these options:';
 describe( '<CancelPurchase />', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/?intent=remove' );
-		assignExperiment( 'control' );
+		assignControl();
 		// A Tracks anonymous id lets ExPlat ask for an assignment straight away, skipping its 5 second wait.
 		document.cookie = 'tk_ai=test-anon-id; path=/';
 	} );

@@ -42,13 +42,13 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 
 const experimentName = 'calypso_cancel_options_cards_202611_v1';
 
-// Store a live assignment so ExPlat returns this variation from localStorage.
-function assignExperiment( variationName: string ) {
+// Store a live control assignment so ExPlat returns it from localStorage.
+function assignControl() {
 	window.localStorage.setItem(
 		`explat-experiment--${ experimentName }`,
 		JSON.stringify( {
 			experimentName,
-			variationName,
+			variationName: 'control',
 			retrievedTimestamp: Date.now(),
 			ttl: 3600,
 		} )
@@ -84,7 +84,7 @@ const personalPlan = makePurchase( {
 describe( '<CancelPurchaseForm />', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
-		assignExperiment( 'control' );
+		assignControl();
 	} );
 
 	afterEach( () => {
