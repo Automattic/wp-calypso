@@ -4,8 +4,8 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { render } from '../../../test-utils';
-import { StorageWarningBanner } from '../storage-warning-banner';
+import { render } from '../../../../../test-utils';
+import { StorageWarningBanner } from '../index';
 
 interface TestOptions {
 	storage_used_bytes: number;

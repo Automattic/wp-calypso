@@ -23,16 +23,12 @@ import Grid, { type GapSize } from '../../../../components/grid';
 import { GuidedTourContextProvider, GuidedTourStep } from '../../../../components/guided-tour';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
+import { EmailBlockNotice, getEmailBlock } from '../../../../sites/components/email-block-notice';
 import { SitesNoticeArbiter } from '../../../../sites/components/notice-arbiter';
-import { EmailBlockNotice, getEmailBlock } from '../../../../sites/overview/email-block-notice';
 import {
 	MigrationCompletedNotice,
 	useShouldShowMigrationCompletedNotice,
-} from '../../../../sites/overview/migration-completed-notice';
-import {
-	StorageWarningBanner,
-	useShouldShowStorageWarningBanner,
-} from '../../../../sites/overview/storage-warning-banner';
+} from '../../../../sites/migration/components/migration-completed-notice';
 import AgencySiteShareCard from '../../../../sites/overview-agency-site-share-card';
 import BackupCard from '../../../../sites/overview-backup-card';
 import DIFMOfferCard from '../../../../sites/overview-difm-offer-card';
@@ -61,9 +57,13 @@ import {
 	StagingSiteSyncNotice,
 	useStagingSiteSyncForNotice,
 } from '../../../../sites/staging-site-sync-notice';
+import {
+	StorageWarningBanner,
+	useShouldShowStorageWarningBanner,
+} from '../../../../sites/storage/components/storage-warning-banner';
 import { getSiteDisplayName } from '../../../../utils/site-name';
 import { isSelfHostedJetpackConnected } from '../../../../utils/site-types';
-import type { MigrationCompletedSearch } from '../../../../sites/overview/migration-completed-notice';
+import type { MigrationCompletedSearch } from '../../../../sites/migration/components/migration-completed-notice';
 import type { StaticSiteImportSearch } from '../../../../sites/overview-static-site-import';
 import type { Site } from '@automattic/api-core';
 import './style.scss';

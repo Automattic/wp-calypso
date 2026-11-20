@@ -12,11 +12,10 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import { useIntlLocale } from '../../app/locale';
-import { getCurrentDashboard } from '../../app/routing';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
-import { formatStorage } from '../../utils/site-storage';
-import { StorageCapacityStat } from './storage-capacity-stat';
+import { useIntlLocale } from '../../../../app/locale';
+import { getCurrentDashboard } from '../../../../app/routing';
+import { redirectToDashboardLink, wpcomLink } from '../../../../utils/link';
+import { formatStorage } from '../../../../utils/site-storage';
 import {
 	getStorageAddOnProduct,
 	getPurchasedStorageAddOn,
@@ -24,7 +23,8 @@ import {
 	getPurchasedStorageQuantity,
 	getStorageTierYearlyPrice,
 	type StorageTierOption,
-} from './utils';
+} from '../../utils';
+import { StorageCapacityStat } from './storage-capacity-stat';
 import type { Site } from '@automattic/api-core';
 
 interface AddStorageModalProps {

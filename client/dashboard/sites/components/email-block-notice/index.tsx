@@ -1,8 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { useHelpCenter } from '../../app/help-center';
-import Notice, { NoticeActionButton } from '../../components/notice';
+import { useAnalytics } from '../../../app/analytics';
+import { useHelpCenter } from '../../../app/help-center';
+import Notice, { NoticeActionButton } from '../../../components/notice';
 import type { AtomicEmailBlock, Site } from '@automattic/api-core';
 
 /**

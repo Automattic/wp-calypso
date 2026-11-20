@@ -97,7 +97,7 @@ import {
 	redirectIfTwoStepReauthRequired,
 } from './redirect';
 import { rootRoute } from './root';
-import type { MigrationCompletedSearch } from '../../sites/overview/migration-completed-notice';
+import type { MigrationCompletedSearch } from '../../sites/migration/components/migration-completed-notice';
 import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
 import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
 import type { AppConfig } from '../context';
