@@ -19,9 +19,14 @@ vi.mock( '@wordpress/compose', async ( importOriginal ) => ( {
 	...( await importOriginal< typeof import( '@wordpress/compose' ) >() ),
 	useViewportMatch: () => isLargeScreen,
 	useResizeObserver: (
-		callback: ( entries: Array< { contentRect: { width: number } } > ) => void
+		callback: (
+			entries: Array< { contentRect: { width: number }; target: Element | null } >
+		) => void
 	) => {
-		reportFooterWidth = ( width ) => callback( [ { contentRect: { width } } ] );
+		reportFooterWidth = ( width ) =>
+			callback( [
+				{ contentRect: { width }, target: document.querySelector( '.components-card__footer' ) },
+			] );
 		return () => {};
 	},
 } ) );
@@ -309,6 +314,31 @@ describe( 'comment action placement', () => {
 
 			expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toBeVisible();
 			expect( screen.getByRole( 'button', { name: 'Mark comment as spam' } ) ).toBeVisible();
+		} );
+
+		it.each( [ 'Unapprove comment', 'Mark comment as spam' ] )(
+			'hands the focus to Actions when a focused %s moves into the menu',
+			( name ) => {
+				renderExpanded( note );
+				act( () => reportFooterWidth( 500 ) );
+				screen.getByRole( 'button', { name } ).focus();
+
+				act( () => reportFooterWidth( 300 ) );
+
+				expect( screen.queryByRole( 'button', { name } ) ).not.toBeInTheDocument();
+				expect( screen.getByRole( 'button', { name: 'Actions' } ) ).toHaveFocus();
+			}
+		);
+
+		it( 'leaves the focus where it is when it isn’t on a button that moves', () => {
+			renderExpanded( note );
+			act( () => reportFooterWidth( 500 ) );
+			const actionsToggle = screen.getByRole( 'button', { name: 'Actions' } );
+			actionsToggle.focus();
+
+			act( () => reportFooterWidth( 300 ) );
+
+			expect( actionsToggle ).toHaveFocus();
 		} );
 
 		it( 'moves them into the menu before a note too narrow for them is painted', () => {

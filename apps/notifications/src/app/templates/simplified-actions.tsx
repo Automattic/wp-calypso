@@ -35,9 +35,15 @@ export default function SimplifiedActions( { note, goBack }: { note: Note; goBac
 	const isLargeScreen = useViewportMatch( 'large' );
 	const [ footerWidth, setFooterWidth ] = useState< number >();
 	// Committed before the browser paints, so a note too narrow for the buttons never shows them.
-	const footerRef = useResizeObserver( ( [ entry ]: ResizeObserverEntry[] ) =>
-		flushSync( () => setFooterWidth( entry.contentRect.width ) )
-	);
+	const footerRef = useResizeObserver( ( [ entry ]: ResizeObserverEntry[] ) => {
+		const focused = entry.target.ownerDocument.activeElement;
+		const hadFocus = !! focused && entry.target.contains( focused );
+		flushSync( () => setFooterWidth( entry.contentRect.width ) );
+		// A focused Unapprove or Spam that moved into the menu hands the focus to the menu's toggle.
+		if ( hadFocus && ! focused.isConnected ) {
+			entry.target.querySelector< HTMLElement >( '.wpnc__actions-menu-toggle' )?.focus();
+		}
+	} );
 	const actions = getActions( note );
 	const hasAction = ( ...types: string[] ) => types.some( ( type ) => type in actions );
 
