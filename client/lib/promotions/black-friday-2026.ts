@@ -26,8 +26,7 @@ export function isBlackFriday2026Active( now: number = Date.now() ): boolean {
  * the product, everyone else gets the public offer. Calypso only reads assignments, users
  * are assigned when the first email is sent.
  */
-export const BLACK_FRIDAY_2026_LIFECYCLE_EXPERIMENT =
-	'test_guides_wpcom_black_friday_sale_20261127';
+export const BLACK_FRIDAY_2026_LIFECYCLE_EXPERIMENT = 'guides_wpcom_black_friday_sale_20261127';
 export const BLACK_FRIDAY_2026_LIFECYCLE_COUPON = 'BF30WPCOM2026';
 export const BLACK_FRIDAY_2026_LIFECYCLE_DISCOUNT_PERCENT = 30;
 
