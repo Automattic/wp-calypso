@@ -24,7 +24,7 @@ const selectors = {
 		'.dataforms-layouts-panel__field-dropdown .dataforms-layouts-panel__dropdown-header button[aria-label="Close"]',
 	schedulePopoverCloseButton:
 		'[data-wp-component="Popover"][aria-label="Change publish date"] [aria-label="Close"]',
-	scheduleInput: ( name: string ) => `.editor-post-schedule__dialog label:has-text("${ name }")`,
+	scheduleInput: ( name: string ) => `.components-datetime label:has-text("${ name }")`,
 	scheduleMeridianButton: ( meridian: 'AM' | 'PM' ) =>
 		`button[role=radio]:has-text("${ meridian }")`,
 	// Category
@@ -364,11 +364,12 @@ export class EditorSettingsSidebarComponent {
 	async setScheduleDetails( date: ArticlePublishSchedule ): Promise< void > {
 		const editorParent = await this.editor.parent();
 
-		// The DataForm control is a single datetime-local input (YYYY-MM-DDTHH:mm).
-		// TODO: Drop the legacy inputs once the DataForm post summary ships in stable Gutenberg.
+		// Before Gutenberg 24.5 (WordPress/gutenberg#86065), the DataForm control is a single
+		// datetime-local input (YYYY-MM-DDTHH:mm); from 24.5 it is the DateTimePicker again.
+		// TODO: Drop the datetime-local input once stable Gutenberg reaches 24.5.
 		const dateTimeInput = editorParent.getByLabel( 'Date time', { exact: true } );
-		const legacyInput = editorParent.locator( selectors.scheduleInput( 'year' ) );
-		await dateTimeInput.or( legacyInput ).first().waitFor();
+		const pickerInput = editorParent.locator( selectors.scheduleInput( 'year' ) );
+		await dateTimeInput.or( pickerInput ).first().waitFor();
 
 		if ( await dateTimeInput.count() ) {
 			const pad = ( n: number ) => n.toString().padStart( 2, '0' );
