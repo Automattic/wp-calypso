@@ -195,6 +195,22 @@ describe( '<CancelPurchase />', () => {
 				],
 			] );
 		} );
+
+		test( 'records no exposure for a removed purchase', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow( {
+				purchase: { ...purchase, subscription_status: 'inactive' } as Purchase,
+			} );
+
+			await pickFoundBetterValue( user );
+
+			expect(
+				await screen.findByRole( 'radiogroup', {
+					name: 'Where is your next adventure taking you?',
+				} )
+			).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toHaveLength( 0 );
+		} );
 	} );
 
 	describe( 'domain removal', () => {

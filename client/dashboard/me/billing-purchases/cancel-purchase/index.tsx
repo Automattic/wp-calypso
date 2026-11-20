@@ -824,6 +824,7 @@ function CancelPurchaseInner() {
 	const clickNext = () => {
 		if (
 			state.surveyStep === FEEDBACK_STEP &&
+			! isRemoved( purchase ) &&
 			( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0
 		) {
 			recordEvent( 'calypso_purchases_cancel_options_eligible', {
