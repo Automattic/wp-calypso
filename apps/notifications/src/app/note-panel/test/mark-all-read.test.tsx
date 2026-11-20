@@ -226,6 +226,34 @@ describe( 'MarkAllAsRead', () => {
 		).toBeVisible();
 	} );
 
+	it( 'asks about one notification when the count it asked for drops to one', async () => {
+		const user = userEvent.setup();
+		serverUnreadIds = range( 19, 2 );
+		store.dispatch( actions.notes.addNotes( [ makeNote( 1, 1 ) ] ) );
+		renderLink();
+		await findLink( 'Mark 19 as read' );
+
+		let answer: ( response: unknown ) => void = () => {};
+		initWpcom( {
+			req: {
+				get: () => new Promise( ( resolve ) => ( answer = resolve ) ),
+				post: ( _params: unknown, _query: unknown, body: unknown ) => markAll( body ),
+			},
+		} );
+		act( () => {
+			store.dispatch( actions.notes.addNotes( [ makeNote( 22 ) ] ) );
+		} );
+		await user.click( await findLink( 'Mark 20+ as read' ) );
+
+		await act( async () => answer( { notes: [ { id: 22 } ] } ) );
+
+		expect(
+			within( screen.getByRole( 'dialog' ) ).getByRole( 'heading', {
+				name: 'Mark 1 notification as read?',
+			} )
+		).toBeVisible();
+	} );
+
 	it( 'marks everything as read and goes away', async () => {
 		const user = userEvent.setup();
 		const onFocusLost = vi.fn();

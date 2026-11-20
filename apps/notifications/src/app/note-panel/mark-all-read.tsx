@@ -213,8 +213,8 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 				count
 			)
 		: sprintf(
-				/* translators: %d is the number of unread notifications, always more than 20. */
-				_n( 'Mark all %d notifications as read?', 'Mark all %d notifications as read?', count ),
+				/* translators: %d is the number of unread notifications, usually more than 20. */
+				_n( 'Mark %d notification as read?', 'Mark all %d notifications as read?', count ),
 				count
 			);
 
