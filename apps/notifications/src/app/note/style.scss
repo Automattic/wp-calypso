@@ -668,3 +668,14 @@
 		}
 	}
 }
+
+// Below the two-pane width the title is also the Back button, in the heading's type. Its arrow's
+// box starts on the padding edge (past the 1px button border), and as a block it keeps the
+// heading at 24px, centred on the icons at the other end.
+.components-card__header .wpnc__note-back.components-button {
+	display: flex;
+	margin-inline-start: -1px;
+	padding-inline-start: 0;
+	color: inherit;
+	font: inherit;
+}

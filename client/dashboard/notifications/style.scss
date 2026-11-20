@@ -49,7 +49,12 @@ $pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-b
 		padding-block: $grid-unit-30;
 	}
 
-	.components-card__header > *,
+	// The bell's dome carries its weight above the middle of its box, so it reads high next
+	// to the title's capitals. A pixel down centres it optically.
+	.wpnc__mark-unread svg {
+		translate: 0 1px;
+	}
+
 	.components-card__body:not( .components-card__body * ) > *,
 	.components-card__footer > * {
 		width: 100%;
