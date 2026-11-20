@@ -1,4 +1,4 @@
-import { formatCurrency, formatNumber } from '@automattic/number-formatters';
+import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
 	Dropdown,
@@ -19,7 +19,7 @@ import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import { useBackHereSearch } from '../../components/fullscreen-page';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
-import { canHoldLicenses, getMaxLicenses } from './lib/cart-licenses';
+import { canHoldLicenses, getLicenseCountText, getMaxLicenses } from './lib/cart-licenses';
 import { getCheckoutUrl, getLegacyCheckoutUrl } from './lib/checkout-url';
 import { getTermSuffix } from './lib/product-pricing';
 import { getProductTitle } from './lib/product-title';
@@ -231,29 +231,21 @@ export default function CartMenu( {
 													{ isWpcomPlan ? (
 														// A site's price falls with the volume tier, so it comes from the line's total.
 														<TextBlur isBlurred={ ! isTotalReady }>
-															{ sprintf(
-																/* translators: %1$s is the number of sites, %2$s the price of one, such as "$25.00/mo". */
-																_n(
-																	'%1$s site at %2$s each',
-																	'%1$s sites at %2$s each',
-																	item.quantity
-																),
-																formatNumber( item.quantity ),
-																formatCurrency( subtotal / item.quantity, currency ) +
-																	getTermSuffix( term )
-															) }
+															{ getLicenseCountText( {
+																quantity: item.quantity,
+																unitPrice:
+																	formatCurrency( subtotal / item.quantity, currency ) +
+																	getTermSuffix( term ),
+																isSite: true,
+															} ) }
 														</TextBlur>
 													) : (
-														sprintf(
-															/* translators: %1$s is the number of licenses, %2$s the price of one, such as "$149.00/yr". */
-															_n(
-																'%1$s license at %2$s each',
-																'%1$s licenses at %2$s each',
-																item.quantity
-															),
-															formatNumber( item.quantity ),
-															formatCurrency( priceInfo.price, currency ) + getTermSuffix( term )
-														)
+														getLicenseCountText( {
+															quantity: item.quantity,
+															unitPrice:
+																formatCurrency( priceInfo.price, currency ) + getTermSuffix( term ),
+															isSite: false,
+														} )
 													) }
 												</Text>
 											) }
