@@ -1257,6 +1257,36 @@ describe( 'RestClient', () => {
 		} );
 	} );
 
+	describe( 'fetching one note', () => {
+		const answerNote = ( ...args ) =>
+			getCalls.find( ( call ) => call.path.path === '/notifications/100' ).callback( ...args );
+
+		beforeEach( () => {
+			seedFirstWindow();
+		} );
+
+		it( 'says the note was found when the server returns it', async () => {
+			const found = client.getNote( 100 );
+			answerNote( null, { notes: [ makeNote( 100 ) ] } );
+
+			await expect( found ).resolves.toBe( true );
+		} );
+
+		it( 'says the note was not found when the server no longer has it', async () => {
+			const found = client.getNote( 100 );
+			answerNote( null, { notes: [] } );
+
+			await expect( found ).resolves.toBe( false );
+		} );
+
+		it( 'says the note was not found when the request fails', async () => {
+			const found = client.getNote( 100 );
+			answerNote( { status: 404, error: 'not_found' } );
+
+			await expect( found ).resolves.toBe( false );
+		} );
+	} );
+
 	describe( 'notes marked as unread here, when the panel opens', () => {
 		const NOTE_ID = 100;
 		const noteCalls = () =>

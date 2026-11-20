@@ -99,10 +99,28 @@ function InboxPanes( {
 
 	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
 
+	const setSelectedNoteIdRef = useRef( setSelectedNoteId );
+
 	useEffect( () => {
-		if ( selectedNoteId && ! isSelectedNoteLoaded ) {
-			getClient()?.getNote( Number( selectedNoteId ) );
+		setSelectedNoteIdRef.current = setSelectedNoteId;
+	}, [ setSelectedNoteId ] );
+
+	useEffect( () => {
+		if ( ! selectedNoteId || isSelectedNoteLoaded ) {
+			return;
 		}
+		let isCurrent = true;
+		getClient()
+			?.getNote( Number( selectedNoteId ) )
+			?.then( ( found: boolean ) => {
+				// A note that can't be loaded would leave an empty pane, so show the host's empty state instead.
+				if ( isCurrent && ! found ) {
+					setSelectedNoteIdRef.current( undefined );
+				}
+			} );
+		return () => {
+			isCurrent = false;
+		};
 	}, [ selectedNoteId, isSelectedNoteLoaded ] );
 
 	useEffect( () => {
