@@ -20,7 +20,7 @@ import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
 import KeepSubscriptionButton from '../keep-subscription-button';
-import type { Domain, Purchase } from '@automattic/api-core';
+import type { Domain, PlanProduct, Purchase } from '@automattic/api-core';
 
 vi.mock( '../../../../app/router/domains', () => ( {
 	domainRoute: { fullPath: '/domains/$domainName' },
@@ -81,13 +81,14 @@ function mockHasExtended( status: number, body: object ) {
 
 function renderRemoveFlow( {
 	purchase: testPurchase = purchase,
+	plans = [],
 	seedHasExtended = true,
-}: { purchase?: Purchase; seedHasExtended?: boolean } = {} ) {
+}: { purchase?: Purchase; plans?: PlanProduct[]; seedHasExtended?: boolean } = {} ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
 	queryClient.setQueryData( purchaseQuery( purchase.ID ).queryKey, testPurchase );
-	queryClient.setQueryData( plansQuery().queryKey, [] );
+	queryClient.setQueryData( plansQuery().queryKey, plans );
 	queryClient.setQueryData( purchaseCancelFeaturesQuery( purchase.ID ).queryKey, [] );
 	queryClient.setQueryData( productsQuery().queryKey, {} );
 	queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
@@ -122,6 +123,15 @@ async function pickFoundBetterValue( user: ReturnType< typeof userEvent.setup > 
 	await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
 	await user.click(
 		screen.getByRole( 'radio', { name: 'I found a competitor with better pricing/value' } )
+	);
+	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+}
+
+async function pickPlanTooExpensive( user: ReturnType< typeof userEvent.setup > ) {
+	await startSurvey( user );
+	await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
+	await user.click(
+		screen.getByRole( 'radio', { name: 'The plan is too expensive for the features offered.' } )
 	);
 	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
 }
@@ -193,6 +203,51 @@ describe( '<CancelPurchase />', () => {
 						is_refundable: false,
 					} ),
 				],
+			] );
+		} );
+
+		test( 'records no exposure when the downgrade offer has no plan', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow();
+
+			await pickPlanTooExpensive( user );
+
+			expect(
+				await screen.findByRole( 'radiogroup', {
+					name: 'Where is your next adventure taking you?',
+				} )
+			).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toHaveLength( 0 );
+		} );
+
+		test( 'records the exposure when the downgrade offer has a plan', async () => {
+			const user = userEvent.setup();
+			const { recordTracksEvent } = renderRemoveFlow( {
+				purchase: { ...purchase, product_id: 1003 } as Purchase,
+				plans: [
+					{
+						product_id: 1003,
+						product_slug: 'value_bundle',
+						bill_period: 365,
+						downgrade_paths: [
+							{ product_id: 1009, product_slug: 'personal-bundle', bill_period: 365 },
+						],
+					},
+					{
+						product_id: 1009,
+						product_name: 'Personal',
+						product_slug: 'personal-bundle',
+						bill_period: 365,
+						downgrade_paths: [],
+					},
+				] as unknown as PlanProduct[],
+			} );
+
+			await pickPlanTooExpensive( user );
+
+			expect( await screen.findByRole( 'list', { name: optionsListName } ) ).toBeVisible();
+			expect( exposureCalls( recordTracksEvent ) ).toEqual( [
+				[ EXPOSURE, expect.objectContaining( { cancellation_reason: 'tooExpensive' } ) ],
 			] );
 		} );
 

@@ -825,6 +825,7 @@ function CancelPurchaseInner() {
 		if (
 			state.surveyStep === FEEDBACK_STEP &&
 			! isRemoved( purchase ) &&
+			! ( state.upsell?.startsWith( 'downgrade-' ) && ! downgradePlan ) &&
 			( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0
 		) {
 			recordEvent( 'calypso_purchases_cancel_options_eligible', {
