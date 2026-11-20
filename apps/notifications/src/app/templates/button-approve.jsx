@@ -27,7 +27,7 @@ const cross = (
 	</svg>
 );
 
-const ApproveButton = ( { className, isApproved, isMinimal, note, setApproveStatus } ) => {
+const ApproveButton = ( { className = '', isApproved, isMinimal, note, setApproveStatus } ) => {
 	const { client } = useAppContext();
 	// A minimal button names what it does, so an approved comment's reads "Unapprove".
 	const isUnapprove = isMinimal && isApproved;
