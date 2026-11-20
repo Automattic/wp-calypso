@@ -1,6 +1,7 @@
 ## Unreleased
 
-- Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
+- Breaking: Require `@wordpress/base-styles` ^15.1.0, `@wordpress/components` ^45.0.0 and `@wordpress/compose` ^9.2.0.
+- Require `@wordpress/icons` ^21.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## 1.1.2
 

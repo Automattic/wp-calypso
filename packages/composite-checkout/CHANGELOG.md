@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Breaking: Require `@wordpress/i18n` ^7.2.0 and `@wordpress/react-i18n` ^5.2.0.
+
 ## v2.0.2
 
 - Declare React 19 compatibility for package consumers (#111721).

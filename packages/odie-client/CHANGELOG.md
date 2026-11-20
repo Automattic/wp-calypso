@@ -2,8 +2,9 @@
 
 ## Unreleased
 
+- Breaking: Require `@wordpress/api-fetch` 8.2.0, `@wordpress/components` ^45.0.0, `@wordpress/data` ^11.2.0, `@wordpress/element` ^10.2.0, `@wordpress/html-entities` ^5.2.0 and `@wordpress/url` ^5.2.0.
 - Draw the attachment preview's remove control as a round badge around `closeSmall`, since `@wordpress/icons` 21 removes `cancelCircleFilled`.
-- Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
+- Require `@wordpress/icons` ^21.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## 1.0.1
 
