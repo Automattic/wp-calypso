@@ -4,12 +4,12 @@ export type NotificationsPanelView = {
 };
 
 /**
- * Returns the address of the notifications page for what the panel is showing.
+ * Returns the address of the notifications page for the panel's tab, with the panel's open note in the history state.
  */
 export function getInboxLocation( { filterName, noteId }: NotificationsPanelView ) {
-	const search = { filter: filterName === 'all' ? undefined : filterName };
-
-	return noteId
-		? { to: '/notifications/$noteId', params: { noteId }, search }
-		: { to: '/notifications', search };
+	return {
+		to: '/notifications',
+		search: { filter: filterName === 'all' ? undefined : filterName },
+		state: { notificationsNoteId: noteId },
+	};
 }

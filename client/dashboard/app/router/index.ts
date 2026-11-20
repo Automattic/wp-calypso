@@ -43,6 +43,10 @@ declare module '@tanstack/react-router' {
 		 */
 		isFullscreen?: boolean;
 	}
+
+	interface HistoryState {
+		notificationsNoteId?: string;
+	}
 }
 
 interface RouteContext {
