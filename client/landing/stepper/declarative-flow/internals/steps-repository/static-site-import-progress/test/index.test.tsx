@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { useStaticSiteImport } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
@@ -53,7 +53,17 @@ describe( 'StaticSiteImportProgressStep', () => {
 		jest.clearAllMocks();
 		mockLinks = {};
 		mockCreated = {};
+		jest.useFakeTimers();
 	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	const waitForShareLink = () =>
+		act( () => {
+			jest.advanceTimersByTime( 5_000 );
+		} );
 
 	it( 'shows the move’s steps beside a window onto the site', () => {
 		const submit = render( { status: 'moving' } );
@@ -69,13 +79,18 @@ describe( 'StaticSiteImportProgressStep', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'submits a finished preview with its share link', () => {
+	it( 'submits a finished preview with its share link once the link has had time to work', () => {
 		const submit = render( {
 			status: 'finished',
 			isPreview: true,
 			previewUrl: 'https://preview.example/?share=x',
 		} );
 
+		act( () => {
+			jest.advanceTimersByTime( 4_999 );
+		} );
+		expect( submit ).not.toHaveBeenCalled();
+		waitForShareLink();
 		expect( submit ).toHaveBeenCalledTimes( 1 );
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'finished',
@@ -93,6 +108,7 @@ describe( 'StaticSiteImportProgressStep', () => {
 	it( 'submits a finished preview with the share link it already has', () => {
 		mockLinks = { data: [ { code: 'abc' } ] };
 		const submit = render( { status: 'finished', isPreview: true } );
+		waitForShareLink();
 
 		expect( mockCreateLink ).not.toHaveBeenCalled();
 		expect( submit ).toHaveBeenCalledWith( {
@@ -113,6 +129,7 @@ describe( 'StaticSiteImportProgressStep', () => {
 		mockLinks = { data: [] };
 		mockCreated = { data: { code: 'new' } };
 		const submit = render( { status: 'finished', isPreview: true } );
+		waitForShareLink();
 
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'finished',
