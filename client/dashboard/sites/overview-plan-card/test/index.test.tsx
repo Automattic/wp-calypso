@@ -3,7 +3,7 @@
  * @vitest-environment-options {"url": "http://my.a4a.localhost/"}
  */
 
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import nock from 'nock';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
@@ -25,6 +25,8 @@ const withoutBillingRoutes: AppConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,
 	supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, me: false },
 };
+
+let mediaStorageResponse: [ number, unknown ];
 
 describe( '<PlanCard>', () => {
 	beforeEach( () => {
@@ -62,10 +64,14 @@ describe( '<PlanCard>', () => {
 				},
 			] );
 
+		mediaStorageResponse = [
+			200,
+			{ max_storage_bytes: 1073741824, storage_used_bytes: 100000000 },
+		];
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/rest/v1.1/sites/${ site.ID }/media-storage` )
 			.query( true )
-			.reply( 200, { max_storage_bytes: 1073741824, storage_used_bytes: 100000000 } );
+			.reply( () => mediaStorageResponse );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/hosting/metrics` )
@@ -117,5 +123,18 @@ describe( '<PlanCard>', () => {
 			'href',
 			expect.stringContaining( '/setup/launch-site' )
 		);
+	} );
+
+	test( 'shows the storage as unavailable when the user cannot read media storage', async () => {
+		mediaStorageResponse = [
+			403,
+			{ error: 'unauthorized', message: 'User cannot view media storage limits' },
+		];
+
+		render( <PlanCard site={ site } /> );
+
+		const card = await screen.findByRole( 'article' );
+		expect( await within( card ).findByText( 'Information unavailable' ) ).toBeVisible();
+		expect( within( card ).getByText( 'Bandwidth' ) ).toBeVisible();
 	} );
 } );
