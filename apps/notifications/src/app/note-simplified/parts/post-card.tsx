@@ -44,9 +44,7 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 	return (
 		<LinkCard
 			href={ post.url }
-			header={
-				<SiteIdentity site={ site } title={ title } details={ details } outlined={ false } />
-			}
+			header={ <SiteIdentity site={ site } title={ title } details={ details } /> }
 		/>
 	);
 }

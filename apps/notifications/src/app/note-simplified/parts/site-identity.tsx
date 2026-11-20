@@ -5,7 +5,6 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
-import clsx from 'clsx';
 import type { NoteSite } from '../../types';
 import type { ReactNode } from 'react';
 
@@ -14,19 +13,22 @@ export default function SiteIdentity( {
 	title,
 	details,
 	url,
-	outlined = true,
 }: {
 	site: NoteSite;
 	title?: string;
 	details?: ReactNode;
 	url?: string;
-	outlined?: boolean;
 } ) {
-	const iconClassName = clsx( 'wpnc-simplified__site-icon', { 'is-outlined': outlined } );
 	const icon = site.icon ? (
-		<img className={ iconClassName } src={ site.icon } alt="" width={ 36 } height={ 36 } />
+		<img
+			className="wpnc-simplified__site-icon"
+			src={ site.icon }
+			alt=""
+			width={ 36 }
+			height={ 36 }
+		/>
 	) : (
-		<Icon className={ clsx( iconClassName, 'is-placeholder' ) } icon={ wordpress } size={ 36 } />
+		<Icon className="wpnc-simplified__site-icon is-placeholder" icon={ wordpress } size={ 36 } />
 	);
 
 	return (

@@ -37,7 +37,7 @@ export default function SiteCard( { site, url, post }: HeaderSite ) {
 	return (
 		<LinkCard
 			href={ post?.url ?? url }
-			header={ <SiteIdentity site={ site } details={ displayUrl } outlined={ false } /> }
+			header={ <SiteIdentity site={ site } details={ displayUrl } /> }
 		>
 			{ post && (
 				<Text size={ 14 } weight={ 600 } lineHeight="24px" truncate numberOfLines={ 1 }>
