@@ -2,12 +2,13 @@ import { cn } from '@automattic/agenttic-ui';
 import { Button, Icon } from '@wordpress/components';
 import { useKeyboardShortcut } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { Fragment, useEffect } from '@wordpress/element';
+import { Fragment, type Ref, useEffect } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	chevronLeft,
 	chevronRight,
 	close,
+	crop,
 	external,
 	flipHorizontal,
 	flipVertical,
@@ -39,6 +40,7 @@ interface HeaderProps {
 	onAnnotationUndo?: () => void;
 	onAnnotationRedo?: () => void;
 	onTransform?: ( transform: ImageTransform ) => void;
+	cropButtonRef?: Ref< HTMLButtonElement >;
 	hasPendingAnnotations?: boolean;
 	hasUndoneAnnotations?: boolean;
 	setActiveToolbarOption: ( toolbarOption: ToolbarOption | null ) => void;
@@ -61,6 +63,7 @@ export const Header = ( {
 	onAnnotationUndo,
 	onAnnotationRedo,
 	onTransform,
+	cropButtonRef,
 	setActiveToolbarOption,
 	activeToolbarOption,
 	config,
@@ -327,13 +330,34 @@ export const Header = ( {
 										icon={ tool.icon }
 										label={ tool.label }
 										showTooltip
-										disabled={ isAiProcessing || isSaving || isAnnotationMode }
+										disabled={
+											isAiProcessing ||
+											isSaving ||
+											isAnnotationMode ||
+											activeToolbarOption === ToolbarOption.Crop
+										}
 										onClick={ () => {
 											trackImageStudioToolClick( tool.name );
 											onTransform?.( tool.transform );
 										} }
 									/>
 								) ) }
+								<Button
+									ref={ cropButtonRef }
+									variant="tertiary"
+									icon={ crop }
+									label={ __( 'Crop', __i18n_text_domain__ ) }
+									showTooltip
+									disabled={ isAiProcessing || isSaving }
+									// Stays focusable so focus can return here after cropping.
+									accessibleWhenDisabled
+									isPressed={ activeToolbarOption === ToolbarOption.Crop }
+									onClick={ () => {
+										const isCurrentlyOpen = activeToolbarOption === ToolbarOption.Crop;
+										trackImageStudioToolClick( 'crop', isCurrentlyOpen ? 'close' : 'open' );
+										handleToolbarClick( ToolbarOption.Crop );
+									} }
+								/>
 							</div>
 							<div className="image-studio-header__toolbar-group">
 								{ classicEditorUrl && onClassicMediaEditorNavigation && (
