@@ -110,7 +110,6 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
-import CheckoutPayLaterButton from './checkout-pay-later-button';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import DIFMOfferRequestNotice from './difm-offer-request-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -825,15 +824,10 @@ export default function CheckoutMainContent( {
 
 	// Control (and the non-portaled mobile fallback below) shows the money-back
 	// guarantee under the submit button.
-	const mobileSubmitButtonFooter = (
-		<>
-			<CheckoutPayLaterButton />
-			{ hasCartJetpackProductsOnly ? (
-				<JetpackCheckoutSeals />
-			) : (
-				<CheckoutMoneyBackGuarantee cart={ responseCart } />
-			) }
-		</>
+	const mobileSubmitButtonFooter = hasCartJetpackProductsOnly ? (
+		<JetpackCheckoutSeals />
+	) : (
+		<CheckoutMoneyBackGuarantee cart={ responseCart } />
 	);
 	// In the sticky bar the terms line rides above the CTA (header slot). The
 	// money-back guarantee is surfaced up in the payment step instead (see
