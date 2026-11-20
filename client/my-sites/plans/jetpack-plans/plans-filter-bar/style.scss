@@ -60,8 +60,10 @@
 			}
 
 			&.is-checked {
+				/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 				--wpds-color-background-interactive-brand-strong: var(--color-primary);
 				--wpds-color-stroke-interactive-brand: var(--color-primary);
+				/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 			}
 		}
 	}

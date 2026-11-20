@@ -153,8 +153,10 @@
 		// On wp-admin the Help Center uses WordPress's components, which color the track; components
 		// 45 draws the checked fill and ring from these tokens.
 		.components-form-toggle.is-checked {
+			/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 			--wpds-color-background-interactive-brand-strong: #{$help-center-blue};
 			--wpds-color-stroke-interactive-brand: #{$help-center-blue};
+			/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 
 			.components-form-toggle__track {
 				background-color: $help-center-blue;
