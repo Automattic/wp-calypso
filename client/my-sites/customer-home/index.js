@@ -1,6 +1,5 @@
 import page from '@automattic/calypso-router';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { forwardStudioHomeLink } from 'calypso/my-sites/checkout/studio-return/home-forward';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import renderHome, { maybeRedirect, redirectToLandingPage } from './controller';
 
@@ -14,7 +13,6 @@ export default function () {
 
 	page(
 		'/home/:site',
-		forwardStudioHomeLink,
 		siteSelection,
 		maybeRedirect,
 		navigation,

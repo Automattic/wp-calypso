@@ -4,7 +4,10 @@
 
 import { screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import configureStore from 'redux-mock-store';
+import { thunk } from 'redux-thunk';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StudioSyncConnect from '../sync-connect';
 
@@ -125,5 +128,18 @@ describe( 'StudioSyncConnect', () => {
 			'calypso_studio_sync_connect_site',
 			expect.objectContaining( { auto_open_push: false } )
 		);
+	} );
+
+	// Checkout's masterbar has a close button that would drop the user on the plans page.
+	it( 'hides the masterbar while mounted and restores it on the way out', () => {
+		const store = configureStore( [ thunk ] )( { sites: { items: {} } } );
+		const { unmount } = renderWithProvider( <StudioSyncConnect { ...PARAMS } />, { store } );
+
+		expect( store.getActions() ).toContainEqual( hideMasterbar() );
+		expect( store.getActions() ).not.toContainEqual( showMasterbar() );
+
+		unmount();
+
+		expect( store.getActions() ).toContainEqual( showMasterbar() );
 	} );
 } );

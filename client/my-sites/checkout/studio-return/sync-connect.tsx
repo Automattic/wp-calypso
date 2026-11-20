@@ -38,7 +38,6 @@ const StudioSyncConnect: FunctionComponent< StudioSyncConnectParams > = ( {
 
 	const openStudio = useCallback(
 		( { fromUserClick }: { fromUserClick: boolean } ) => {
-			// Same event My Home sent, so the handoff rate stays comparable across the move.
 			recordTracksEvent( 'calypso_studio_sync_connect_site', {
 				click: fromUserClick,
 				blog_id: remoteSiteId,

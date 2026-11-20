@@ -1,5 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
-import type { StudioSyncConnectParams } from './round-trip';
+import { toStudioSyncConnectQuery, type StudioSyncConnectParams } from './round-trip';
 
 // The Studio desktop app registers this scheme with the OS. Navigating to it prompts the browser
 // to hand off to the app; if Studio is not installed the navigation fails and the current page
@@ -51,16 +51,11 @@ export function openStudioCheckoutReturn( params: StudioCheckoutReturnParams ): 
  * Builds the `wp-studio://` URL that tells Studio to connect a local site to the WordPress.com site
  * its publish flow just created, and optionally open Push.
  */
-export function buildStudioSyncConnectUrl( {
-	studioSiteId,
-	remoteSiteId,
-	autoOpenPush,
-}: StudioSyncConnectParams ): string {
-	return addQueryArgs( `${ STUDIO_URL_SCHEME }://${ SYNC_CONNECT_SITE_ACTION }`, {
-		studioSiteId,
-		remoteSiteId,
-		...( autoOpenPush ? { autoOpenPush: 'true' } : {} ),
-	} );
+export function buildStudioSyncConnectUrl( params: StudioSyncConnectParams ): string {
+	return addQueryArgs(
+		`${ STUDIO_URL_SCHEME }://${ SYNC_CONNECT_SITE_ACTION }`,
+		toStudioSyncConnectQuery( params )
+	);
 }
 
 /**

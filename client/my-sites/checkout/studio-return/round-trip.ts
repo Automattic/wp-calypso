@@ -91,19 +91,26 @@ export function getStudioSyncConnectParams(
 }
 
 /**
- * Where Studio's publish flow should land once the new site is ready, so the page can connect it
- * to the local site.
+ * The query both the landing path and Studio's `sync-connect-site` deep link carry.
  */
-export function buildStudioSyncConnectPath( {
+export function toStudioSyncConnectQuery( {
 	studioSiteId,
 	remoteSiteId,
 	autoOpenPush,
-}: StudioSyncConnectParams ): string {
-	return addQueryArgs( STUDIO_RETURN_PATH, {
+}: StudioSyncConnectParams ): Record< string, string | number > {
+	return {
 		studioSiteId,
 		remoteSiteId,
 		...( autoOpenPush ? { autoOpenPush: 'true' } : {} ),
-	} );
+	};
+}
+
+/**
+ * Where Studio's publish flow should land once the new site is ready, so the page can connect it
+ * to the local site.
+ */
+export function buildStudioSyncConnectPath( params: StudioSyncConnectParams ): string {
+	return addQueryArgs( STUDIO_RETURN_PATH, toStudioSyncConnectQuery( params ) );
 }
 
 /**
