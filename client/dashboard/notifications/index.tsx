@@ -18,7 +18,7 @@ import './style.scss';
 
 const NotificationsInbox = lazy( () => import( '@automattic/notifications/src/inbox' ) );
 
-const FEEDBACK_URL = 'https://wp.me/FEEDBACK_POST_PLACEHOLDER';
+const FEEDBACK_URL = 'https://wp.me/p9zg7s-eO';
 
 export default function Notifications() {
 	const navigate = useNavigate();
