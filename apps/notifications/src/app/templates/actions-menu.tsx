@@ -2,13 +2,13 @@ import { Dropdown, MenuGroup, MenuItem, NavigableMenu } from '@wordpress/compone
 import { __ } from '@wordpress/i18n';
 import { chevronDown } from '@wordpress/icons';
 import { Button } from '@wordpress/ui';
-import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getEditCommentLink, getReferenceId } from '../../panel/helpers/notes';
 import { setApproveStatus, spamNote, trashNote } from '../../panel/state/notes/thunks';
 import { editComment } from '../../panel/state/ui/actions';
 import { useAppContext } from '../context';
 import HotkeyContainer from './container-hotkey';
+import usePendingNotes from './use-pending-notes';
 import type { Note } from '../types';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
@@ -35,20 +35,19 @@ export default function ActionsMenu( {
 } ) {
 	const dispatch = useDispatch< ThunkDispatch< unknown, unknown, UnknownAction > >();
 	const { client } = useAppContext();
-	// Busy for the note it was pressed on, since the same button shows the next note opened meanwhile.
-	const [ busyNoteId, setBusyNoteId ] = useState< Note[ 'id' ] >();
-	const isBusy = busyNoteId === note.id;
+	const { isPending, start, finish } = usePendingNotes();
+	const isBusy = isPending( note.id );
 	const { site: siteId, post: postId, comment: commentId } = note.meta?.ids ?? {};
 
 	const removeWith = ( remove: RemoveNote ) => async () => {
 		if ( isBusy ) {
 			return;
 		}
-		setBusyNoteId( note.id );
+		start( note.id );
 		try {
 			await dispatch( remove( note, true ) );
 		} catch {
-			setBusyNoteId( ( id ) => ( id === note.id ? undefined : id ) );
+			finish( note.id );
 			return;
 		}
 		goBack();

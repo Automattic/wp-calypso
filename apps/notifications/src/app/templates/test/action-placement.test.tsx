@@ -160,7 +160,7 @@ describe( 'comment action placement', () => {
 		</Provider>
 	);
 
-	it( 'shows a pending Mark as spam as busy only on the note it was chosen on', async () => {
+	it( 'shows a pending Mark as spam as busy only on the notes it was chosen on', async () => {
 		const user = userEvent.setup();
 		spamNote.mockReset().mockImplementation( () => new Promise( () => {} ) );
 		const { rerender } = renderWithProvider(
@@ -177,9 +177,12 @@ describe( 'comment action placement', () => {
 
 		expect( toggle() ).not.toHaveAttribute( 'aria-disabled', 'true' );
 
+		await user.click( toggle() );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Mark as spam' } ) );
 		rerender( show( <SimplifiedActions note={ note } goBack={ noop } /> ) );
 
 		expect( toggle() ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( spamNote ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'shows a pending Trash as busy only on the note it was pressed on', async () => {
@@ -197,6 +200,43 @@ describe( 'comment action placement', () => {
 		rerender( show( <NoteActions note={ otherNote( note ) } goBack={ noop } /> ) );
 
 		expect( trash() ).not.toHaveAttribute( 'aria-disabled', 'true' );
+
+		await user.click( trash() );
+		rerender( show( <NoteActions note={ note } goBack={ noop } /> ) );
+
+		expect( trash() ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+
+	it( 'sends one Trash at a time from the t shortcut, and another once it fails', async () => {
+		const user = userEvent.setup();
+		let fail: ( error: Error ) => void = noop;
+		trashNote
+			.mockReset()
+			.mockImplementation( () => new Promise( ( _resolve, reject ) => ( fail = reject ) ) );
+		renderWithProvider(
+			<AppProvider client={ null } locale="en">
+				<NoteActions note={ note } goBack={ noop } />
+			</AppProvider>
+		);
+		act( () => {
+			store.dispatch( actions.ui.enableKeyboardShortcuts() );
+		} );
+
+		await user.keyboard( 't' );
+		await user.keyboard( 't' );
+
+		expect( trashNote ).toHaveBeenCalledTimes( 1 );
+
+		await act( async () => fail( new Error( 'Offline' ) ) );
+
+		expect( screen.getByRole( 'button', { name: 'Trash comment' } ) ).not.toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
+
+		await user.keyboard( 't' );
+
+		expect( trashNote ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	it( 'sends one approval at a time from the a shortcut', async () => {
@@ -225,6 +265,13 @@ describe( 'comment action placement', () => {
 					<SimplifiedActions note={ expandedNote } goBack={ noop } />
 				</AppProvider>
 			);
+		const expanded = ( shown: never ) => (
+			<Provider store={ store }>
+				<AppProvider client={ null } locale="en" hasExpandedActions>
+					<SimplifiedActions note={ shown } goBack={ noop } />
+				</AppProvider>
+			</Provider>
+		);
 
 		beforeEach( () => {
 			isLargeScreen = true;
@@ -278,36 +325,52 @@ describe( 'comment action placement', () => {
 			expect( approveRequest.mock.calls ).toEqual( [ [ true ], [ false ] ] );
 		} );
 
-		it( 'shows a pending Approve or Spam as busy only on the note it was pressed on', async () => {
+		it( 'shows a pending Approve or Spam as busy only on the notes it was pressed on', async () => {
 			const user = userEvent.setup();
 			approveRequest.mockImplementation( () => new Promise( () => {} ) );
 			spamNote.mockImplementation( () => new Promise( () => {} ) );
 			const first = pendingNote( { 'approve-comment': false, 'spam-comment': true } );
 			const { rerender } = renderExpanded( first );
-			const showExpanded = ( shown: never ) =>
-				rerender(
-					<Provider store={ store }>
-						<AppProvider client={ null } locale="en" hasExpandedActions>
-							<SimplifiedActions note={ shown } goBack={ noop } />
-						</AppProvider>
-					</Provider>
-				);
 			const spam = () => screen.getByRole( 'button', { name: 'Mark comment as spam' } );
 			await user.click( approve() );
 			await user.click( spam() );
 
-			showExpanded( otherNote( first ) );
+			rerender( expanded( otherNote( first ) ) );
 
 			expect( approve() ).not.toHaveAttribute( 'aria-disabled', 'true' );
 			expect( spam() ).not.toHaveAttribute( 'aria-disabled', 'true' );
 
-			showExpanded( first );
+			await user.click( approve() );
+			await user.click( spam() );
+			rerender( expanded( first ) );
 
 			expect( screen.getByRole( 'button', { name: 'Unapprove comment' } ) ).toHaveAttribute(
 				'aria-disabled',
 				'true'
 			);
 			expect( spam() ).toHaveAttribute( 'aria-disabled', 'true' );
+		} );
+
+		it( 'keeps Approve busy on a note while another note’s approval lands', async () => {
+			const user = userEvent.setup();
+			const answers: ( () => void )[] = [];
+			approveRequest.mockImplementation(
+				() => new Promise< void >( ( resolve ) => answers.push( resolve ) )
+			);
+			const first = pendingNote( { 'approve-comment': false } );
+			const { rerender } = renderExpanded( first );
+			const unapprove = () => screen.getByRole( 'button', { name: 'Unapprove comment' } );
+			await user.click( approve() );
+			rerender( expanded( otherNote( first ) ) );
+			await user.click( approve() );
+
+			await act( async () => answers[ 0 ]() );
+
+			expect( unapprove() ).toHaveAttribute( 'aria-disabled', 'true' );
+
+			rerender( expanded( first ) );
+
+			expect( unapprove() ).not.toHaveAttribute( 'aria-disabled', 'true' );
 		} );
 
 		it( 'goes back once the comment is marked as spam', async () => {

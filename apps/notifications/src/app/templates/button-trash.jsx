@@ -1,19 +1,27 @@
 import { __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import { connect } from 'react-redux';
 import { trashNote } from '../../panel/state/notes/thunks';
 import ActionButton from './action-button';
+import usePendingNotes from './use-pending-notes';
 
 // eslint-disable-next-line no-shadow
 const TrashButton = ( { note, trashNote, goBack } ) => {
-	// Busy for the note it was pressed on, since the same button shows the next note opened meanwhile.
-	const [ busyNoteId, setBusyNoteId ] = useState();
+	const { isPending, start, finish } = usePendingNotes();
+	const isBusy = isPending( note.id );
 
 	const handleTrash = async () => {
-		setBusyNoteId( note.id );
-		await trashNote( note, true );
+		if ( isBusy ) {
+			return;
+		}
+		start( note.id );
+		try {
+			await trashNote( note, true );
+		} catch {
+			finish( note.id );
+			return;
+		}
 		goBack();
 	};
 
@@ -22,7 +30,7 @@ const TrashButton = ( { note, trashNote, goBack } ) => {
 			icon={ trash }
 			isActive={ false }
 			isDestructive
-			isBusy={ busyNoteId === note.id }
+			isBusy={ isBusy }
 			hotkey="t"
 			onToggle={ handleTrash }
 			text={ __( 'Trash' ) }

@@ -1,11 +1,11 @@
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import { connect } from 'react-redux';
 import { getReferenceId } from '../../panel/helpers/notes';
 import { setApproveStatus as setApproveStatusAction } from '../../panel/state/notes/thunks';
 import { useAppContext } from '../context';
 import ActionButton from './action-button';
+import usePendingNotes from './use-pending-notes';
 
 const check = (
 	<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -30,9 +30,8 @@ const cross = (
 
 const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 	const { client } = useAppContext();
-	// Busy for the note it was pressed on, since the same button shows the next note opened meanwhile.
-	const [ busyNoteId, setBusyNoteId ] = useState();
-	const isBusy = busyNoteId === note.id;
+	const { isPending, start, finish } = usePendingNotes();
+	const isBusy = isPending( note.id );
 	// A minimal button names what it does, so an approved comment's reads "Unapprove".
 	const isUnapprove = isMinimal && isApproved;
 
@@ -42,7 +41,7 @@ const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 		if ( isBusy ) {
 			return;
 		}
-		setBusyNoteId( note.id );
+		start( note.id );
 		await setApproveStatus(
 			note.id,
 			getReferenceId( note, 'site' ),
@@ -51,7 +50,7 @@ const ApproveButton = ( { isApproved, isMinimal, note, setApproveStatus } ) => {
 			note.type,
 			client
 		);
-		setBusyNoteId( ( id ) => ( id === note.id ? undefined : id ) );
+		finish( note.id );
 	};
 
 	const getText = () => {

@@ -1,9 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import { connect } from 'react-redux';
 import { spamNote } from '../../panel/state/notes/thunks';
 import ActionButton from './action-button';
+import usePendingNotes from './use-pending-notes';
 
 // The `caution` icon's exclamation mark in a circle, with its 1.5px stroke, drawn 15px across
 // instead of 16px so it matches the other actions' icons rather than outweighing them.
@@ -24,19 +24,18 @@ const caution = (
 
 // eslint-disable-next-line no-shadow
 const SpamButton = ( { isMinimal, note, spamNote, goBack } ) => {
-	// Busy for the note it was pressed on, since the same button shows the next note opened meanwhile.
-	const [ busyNoteId, setBusyNoteId ] = useState();
-	const isBusy = busyNoteId === note.id;
+	const { isPending, start, finish } = usePendingNotes();
+	const isBusy = isPending( note.id );
 
 	const handleSpam = async () => {
 		if ( isBusy ) {
 			return;
 		}
-		setBusyNoteId( note.id );
+		start( note.id );
 		try {
 			await spamNote( note, true );
 		} catch {
-			setBusyNoteId( ( id ) => ( id === note.id ? undefined : id ) );
+			finish( note.id );
 			return;
 		}
 		goBack();

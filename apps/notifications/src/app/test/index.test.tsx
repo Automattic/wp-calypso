@@ -47,7 +47,8 @@ const makeComment = ( id: number, name: string ) => ( {
 			meta: { ids: { site: 1, post: 2, comment: id } },
 		},
 	],
-	meta: { ids: { site: 1, post: 2, comment: id } },
+	// An actor gives the note the context the simplified layout needs, with view settings on.
+	meta: { ids: { site: 1, post: 2, comment: id }, actor: { name } },
 } );
 
 describe( 'NotificationApp', () => {
