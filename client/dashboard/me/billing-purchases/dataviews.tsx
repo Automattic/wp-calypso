@@ -14,6 +14,7 @@ import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
 import SiteIcon from '../../components/site-icon';
 import {
 	mightStillAutoRenew,
+	isRetryingFailedRenewal,
 	isTransferredOwnership,
 	isAkismetHoldingSitePurchase,
 	isMarketplaceHoldingSitePurchase,
@@ -453,6 +454,16 @@ export function getFields( {
 				}
 				return 'not-expiring-soon';
 			},
+		},
+		{
+			id: 'renewalPayment',
+			enableHiding: false,
+			enableSorting: false,
+			label: __( 'Renewal payment' ),
+			type: 'text',
+			elements: [ { value: 'failed', label: __( 'Failed' ) } ],
+			filterBy: { operators: [ 'is' ] },
+			getValue: ( { item } ) => ( isRetryingFailedRenewal( item ) ? 'failed' : 'not-failed' ),
 		},
 		{
 			id: 'status',
