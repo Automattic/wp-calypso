@@ -9,7 +9,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, useStore } from 'react-redux';
 import { reportRequestError } from '../../panel/helpers/log-error';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import { listNotes } from '../../panel/rest-client/wpcom';
@@ -18,6 +18,7 @@ import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
 import { useAppContext } from '../context';
 import type { Note } from '../types';
+import type { KeyboardEvent } from 'react';
 import type { UnknownAction } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
@@ -28,33 +29,47 @@ export const UNREAD_IDS_LIMIT = 200;
 // About two screens of rows. Above it, most of what's marked hasn't been seen, so the link asks first.
 export const CONFIRM_ABOVE = 20;
 
+const getNewestNoteKey = ( state: unknown ) => {
+	const [ newestNote ] = getAllNotes( state ) as Note[];
+	return newestNote && `${ newestNote.id }:${ newestNote.timestamp }`;
+};
+
 /**
  * Counts the unread notes on the account, loaded or not.
  *
  * The server's list of unread notes is fetched again whenever a newer note arrives. Between
  * fetches, notes read or left unread on this device adjust the count. Until the first list
- * arrives the count is 0, since the loaded notes alone would undercount the account.
+ * arrives the count is 0, since the loaded notes alone would undercount the account. While the
+ * list for a newer note is on its way, or if it can't be fetched, the count says "or more":
+ * marking all as read reaches up to the newest note, so it can mark notes the count missed.
  */
 function useUnreadCount() {
+	const store = useStore();
 	const [ unreadIds, setUnreadIds ] = useState< number[] >( [] );
 	const [ isCounted, setIsCounted ] = useState( false );
+	// The newest note when the unread notes were last listed.
+	const [ countedNoteKey, setCountedNoteKey ] = useState< string >();
 	const requestRef = useRef( 0 );
 
-	const newestNote = useSelector( ( state ) => ( getAllNotes( state ) as Note[] )[ 0 ] );
-	const newestNoteKey = newestNote && `${ newestNote.id }:${ newestNote.timestamp }`;
+	const newestNoteKey = useSelector( getNewestNoteKey );
 
 	const refresh = useCallback( async () => {
 		const request = ++requestRef.current;
+		const noteKey = getNewestNoteKey( store.getState() );
 		try {
 			const { notes } = await listNotes( { unread: 1, fields: 'id', number: UNREAD_IDS_LIMIT } );
 			if ( request === requestRef.current ) {
 				setUnreadIds( notes.map( ( { id }: { id: number } ) => id ) );
+				setCountedNoteKey( noteKey );
 				setIsCounted( true );
 			}
 		} catch ( error ) {
 			reportRequestError( 'load-unread-count', error );
+			if ( request === requestRef.current ) {
+				setIsCounted( true );
+			}
 		}
-	}, [] );
+	}, [ store ] );
 
 	useEffect( () => {
 		if ( newestNoteKey ) {
@@ -75,8 +90,8 @@ function useUnreadCount() {
 	} );
 
 	return {
-		count: newestNote && isCounted ? count : 0,
-		hasMore: unreadIds.length >= UNREAD_IDS_LIMIT,
+		count: newestNoteKey && isCounted ? count : 0,
+		hasMore: countedNoteKey !== newestNoteKey || unreadIds.length >= UNREAD_IDS_LIMIT,
 		refresh,
 	};
 }
@@ -100,7 +115,8 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 	const wrapperRef = useRef< HTMLDivElement >( null );
 	const refocusRef = useRef( false );
 	// The modal's close button, Esc and outside click call `onRequestClose` after its exit
-	// animation, so one of them can arrive after another close. Only the first one counts.
+	// animation, so another close or a click on Mark all as read can come first. Only the first
+	// one counts.
 	const isConfirmingRef = useRef( false );
 
 	const needsConfirm = hasMore || count > CONFIRM_ABOVE;
@@ -132,25 +148,37 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 		markAll();
 	};
 
-	const closeModal = () => {
+	const stopConfirming = () => {
 		const wasConfirming = isConfirmingRef.current;
 		isConfirmingRef.current = false;
-		setIsConfirming( false );
 		return wasConfirming;
 	};
 
+	const cancel = () => {
+		if ( stopConfirming() ) {
+			recordTracksEvent( 'calypso_notification_mark_all_read_cancel', {
+				count,
+				has_more: hasMore,
+			} );
+		}
+	};
+
 	const handleConfirm = () => {
-		if ( closeModal() ) {
+		setIsConfirming( false );
+		if ( stopConfirming() ) {
 			markAll( { fromModal: true } );
 		}
 	};
 
 	const handleCancel = () => {
-		if ( closeModal() ) {
-			recordTracksEvent( 'calypso_notification_mark_all_read_cancel', {
-				count,
-				has_more: hasMore,
-			} );
+		setIsConfirming( false );
+		cancel();
+	};
+
+	// Esc cancels as it's pressed, so that Enter on Mark all as read during the exit animation does nothing.
+	const handleModalKeyDown = ( event: KeyboardEvent< HTMLDivElement > ) => {
+		if ( event.key === 'Escape' && ! event.defaultPrevented && ! event.nativeEvent.isComposing ) {
+			cancel();
 		}
 	};
 
@@ -204,17 +232,22 @@ export default function MarkAllAsRead( { onFocusLost }: MarkAllAsReadProps ) {
 				</Button>
 			) }
 			{ /* Laid out like the Dashboard's site delete modal (client/dashboard/sites/site-delete-modal);
-			   the HStack matches its ButtonStack, which this app can't import. The modal returns the
-			   focus to the link as it closes. */ }
+			   the HStack matches its ButtonStack, which this app can't import, and wraps where longer
+			   labels don't fit side by side. The modal returns the focus to the link as it closes. */ }
 			{ isConfirming && (
-				<Modal title={ question } size="medium" onRequestClose={ handleCancel }>
+				<Modal
+					title={ question }
+					size="medium"
+					onRequestClose={ handleCancel }
+					onKeyDown={ handleModalKeyDown }
+				>
 					<VStack spacing={ 4 }>
 						<Text as="p">
 							{ __(
 								'They’ll be cleared from everywhere you see notifications. This can’t be undone.'
 							) }
 						</Text>
-						<HStack justify="flex-end" spacing={ 3 }>
+						<HStack justify="flex-end" spacing={ 3 } wrap>
 							<Button __next40pxDefaultSize variant="tertiary" onClick={ handleCancel }>
 								{ __( 'Cancel' ) }
 							</Button>

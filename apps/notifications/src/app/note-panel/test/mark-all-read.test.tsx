@@ -129,6 +129,43 @@ describe( 'MarkAllAsRead', () => {
 		expect( await findLink( 'Mark 30 as read' ) ).toBeVisible();
 	} );
 
+	it( 'goes by the loaded notes, and asks first, when the account’s unread notes can’t be counted', async () => {
+		const user = userEvent.setup();
+		let isFailing = true;
+		initWpcom( {
+			req: {
+				get: async () => {
+					if ( isFailing ) {
+						throw { status: 500 };
+					}
+					return { notes: serverUnreadIds.map( ( id ) => ( { id } ) ) };
+				},
+				post: ( _params: unknown, _query: unknown, body: unknown ) => markAll( body ),
+			},
+		} );
+		store.dispatch( actions.notes.addNotes( [ makeNote( 1 ), makeNote( 2 ) ] ) );
+		renderLink();
+
+		await user.click( await findLink( 'Mark 2+ as read' ) );
+
+		expect(
+			within( screen.getByRole( 'dialog' ) ).getByRole( 'heading', {
+				name: 'Mark all 2+ notifications as read?',
+			} )
+		).toBeVisible();
+		expect( markAll ).not.toHaveBeenCalled();
+		await user.click( screen.getByRole( 'button', { name: 'Cancel' } ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+
+		isFailing = false;
+		serverUnreadIds = [ 1, 2, 3 ];
+		act( () => {
+			store.dispatch( actions.notes.addNotes( [ makeNote( 3 ) ] ) );
+		} );
+
+		expect( await findLink( 'Mark 3 as read' ) ).toBeVisible();
+	} );
+
 	it( 'counts down when a note is opened', async () => {
 		serverUnreadIds = [ 1, 2 ];
 		store.dispatch( actions.notes.addNotes( [ makeNote( 1 ), makeNote( 2 ) ] ) );
@@ -154,6 +191,39 @@ describe( 'MarkAllAsRead', () => {
 		} );
 
 		expect( await findLink( 'Mark 3 as read' ) ).toBeVisible();
+	} );
+
+	it( 'says "or more", and asks first, while the unread notes are counted again for a newer note', async () => {
+		const user = userEvent.setup();
+		serverUnreadIds = range( 19 );
+		store.dispatch( actions.notes.addNotes( [ makeNote( 1 ) ] ) );
+		renderLink();
+		await findLink( 'Mark 19 as read' );
+
+		let answer: ( response: unknown ) => void = () => {};
+		initWpcom( {
+			req: {
+				get: () => new Promise( ( resolve ) => ( answer = resolve ) ),
+				post: ( _params: unknown, _query: unknown, body: unknown ) => markAll( body ),
+			},
+		} );
+		act( () => {
+			store.dispatch( actions.notes.addNotes( [ makeNote( 22 ) ] ) );
+		} );
+
+		await user.click( await findLink( 'Mark 20+ as read' ) );
+
+		const dialog = screen.getByRole( 'dialog' );
+		expect(
+			within( dialog ).getByRole( 'heading', { name: 'Mark all 20+ notifications as read?' } )
+		).toBeVisible();
+		expect( markAll ).not.toHaveBeenCalled();
+
+		await act( async () => answer( { notes: range( 22 ).map( ( id ) => ( { id } ) ) } ) );
+
+		expect(
+			within( dialog ).getByRole( 'heading', { name: 'Mark all 22 notifications as read?' } )
+		).toBeVisible();
 	} );
 
 	it( 'marks everything as read and goes away', async () => {
@@ -229,6 +299,22 @@ describe( 'MarkAllAsRead', () => {
 			expect( markAll ).not.toHaveBeenCalled();
 		} );
 
+		it( 'lets its buttons wrap where their labels don’t fit side by side', async () => {
+			const user = userEvent.setup();
+			renderLink();
+
+			await user.click( await findLink( `Mark ${ count } as read` ) );
+
+			const dialog = screen.getByRole( 'dialog' );
+			const row = within( dialog ).getByRole( 'button', { name: 'Cancel' } )
+				.parentElement as HTMLElement;
+			expect( row ).toContainElement(
+				within( dialog ).getByRole( 'button', { name: 'Mark all as read' } )
+			);
+			// jsdom has no layout, so this checks the flex-wrap value Flex hands its styles.
+			expect( row.style.getPropertyValue( '--wp-components-flex-wrap' ) ).toBe( 'wrap' );
+		} );
+
 		it( 'marks them all once confirmed, and hands the focus back as the link goes', async () => {
 			const user = userEvent.setup();
 			const onFocusLost = vi.fn();
@@ -286,6 +372,25 @@ describe( 'MarkAllAsRead', () => {
 			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 			await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
 			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'marks nothing when Mark all as read is pressed after Escape, as the modal closes', async () => {
+			const user = userEvent.setup();
+			renderLink();
+
+			await user.click( await findLink( `Mark ${ count } as read` ) );
+			const dialog = screen.getByRole( 'dialog' );
+			fireEvent.keyDown( dialog, { key: 'Escape' } );
+			fireEvent.click( within( dialog ).getByRole( 'button', { name: 'Mark all as read' } ) );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
+			expect( markAll ).not.toHaveBeenCalled();
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_notification_mark_all_read_cancel',
+				{ count, has_more: false }
+			);
 		} );
 	} );
 
