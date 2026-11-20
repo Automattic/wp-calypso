@@ -76,11 +76,7 @@ export function DeploymentLogsModalContent( {
 						style={ { flexShrink: 0 } }
 						href={ `https://github.com/${ deployment.repository_name }/commit/${ commit_sha }` }
 					>
-						<Text
-							as="code"
-							size="small"
-							style={ { color: 'var(--wp-admin-theme-color-darker-20)' } }
-						>
+						<Text as="code" size="small">
 							{ shortSha }
 						</Text>
 					</ExternalLink>

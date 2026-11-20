@@ -18,6 +18,7 @@ import { AppProvider, useAppContext } from './context';
 import { I18nProvider } from './i18n';
 import { getRouter } from './router';
 import { useSurvicate, useSurvicateVisitTraits } from './survicate';
+import { DashboardThemeProvider } from './theme-provider';
 import type { AppConfig } from './context';
 
 function AnalyticsProviderWithClient( {
@@ -117,7 +118,9 @@ function Layout( { config }: { config: AppConfig } ) {
 						<AnalyticsProviderWithClient router={ router }>
 							<GlobalChartsProvider>
 								{ withColorScheme(
-									<RouterProvider key={ routerKey } router={ router } context={ { config } } />,
+									<DashboardThemeProvider enabled={ config.supports.colorScheme }>
+										<RouterProvider key={ routerKey } router={ router } context={ { config } } />
+									</DashboardThemeProvider>,
 									{
 										enabled: config.supports.colorScheme,
 									}

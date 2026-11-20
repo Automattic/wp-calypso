@@ -31,7 +31,7 @@
 	margin: -8px -8px 0;
 	aspect-ratio: 1024 / 352;
 	overflow: hidden;
-	background: rgb(221, 227, 251);
+	background: var(--wpds-color-background-surface-brand);
 	container-type: inline-size;
 }
 
@@ -54,7 +54,7 @@
 	span {
 		width: 2.2cqw;
 		height: 2.2cqw;
-		border: 0.3cqw solid rgb(198, 202, 216);
+		border: 0.3cqw solid var(--wpds-color-stroke-surface-neutral-strong);
 		border-radius: $radius-round;
 	}
 }
@@ -76,7 +76,7 @@
 	align-items: center;
 	gap: 1.4cqw;
 	padding: 1.6cqw 3cqw;
-	color: rgb(16, 21, 23);
+	color: var(--wpds-color-foreground-content-neutral);
 	font-size: 3.4cqw;
 	line-height: 1.2;
 	white-space: nowrap;
@@ -100,7 +100,7 @@
 	width: 18cqw;
 	height: 0.9cqw;
 	margin-inline: auto;
-	background: rgb(240, 240, 241);
+	background: var(--wpds-color-stroke-surface-neutral-weak);
 	border-radius: 0.5cqw;
 }
 /* stylelint-enable unit-allowed-list, declaration-property-unit-allowed-list */

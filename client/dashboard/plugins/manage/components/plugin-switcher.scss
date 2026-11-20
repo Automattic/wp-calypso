@@ -27,29 +27,23 @@
 }
 
 .plugin-switcher-item {
-	border-top: 1px solid #f0f0f0;
+	border-top: 1px solid var(--wpds-color-stroke-surface-neutral-weak);
 	border-radius: 0;
 	padding: calc(4px * 4) calc(4px * 6);
 
-	&.is-selected {
-		background: rgba(var(--wp-admin-theme-color--rgb), 0.04);
-		border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12);
-
-		&:hover {
-			background: rgba(var(--wp-admin-theme-color--rgb), 0.08);
-		}
-
-		.switcher-item__description {
-			color: var(--wp-admin-theme-color);
-		}
+	&.is-selected,
+	&.is-selected:hover {
+		background: var(--wpds-color-background-interactive-brand-weak-active);
+		border-top-color: var(--wpds-color-stroke-surface-brand);
+		color: var(--wpds-color-foreground-content-neutral);
 	}
 
 	&.is-selected + & {
-		border-top: 1px solid rgba(var(--wp-admin-theme-color--rgb), 0.12);
+		border-top-color: var(--wpds-color-stroke-surface-brand);
 	}
 
 	&:hover {
-		background-color: #f8f8f8;
+		background-color: var(--wpds-color-background-interactive-neutral-weak-active);
 
 		.switcher-item__description {
 			color: var(--wp-admin-theme-color);

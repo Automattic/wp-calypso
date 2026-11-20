@@ -1,5 +1,3 @@
-@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
-
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/colors';
 
@@ -11,16 +9,8 @@
 	color: inherit !important; // avoid changing the color on hover
 
 	&:hover {
-		background: $gray-100;
+		background: var( --wpds-color-background-interactive-neutral-weak-active );
 		border-radius: $radius-medium;
-
-		@include ui-mixins.when-dark-theme {
-			background: color-mix(
-				in srgb,
-				var( --dashboard-surface__background-color ) 82%,
-				var( --wp-admin-theme-color )
-			);
-		}
 	}
 }
 
@@ -30,7 +20,7 @@
 }
 
 .dashboard-add-new-site__banner {
-	background: $gray-100;
+	background: var( --wpds-color-background-surface-neutral-weak );
 	border-radius: $radius-medium;
 	padding: $grid-unit-20;
 }
