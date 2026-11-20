@@ -2,7 +2,7 @@ import { Button, Popover } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, check, info, plus } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	useFollowSite,
@@ -91,6 +91,9 @@ function BlogPill( {
 	const [ isPinned, setIsPinned ] = useState( false );
 	// Escape hides the details until the pill is hovered or focused again.
 	const [ isDismissed, setIsDismissed ] = useState( false );
+	// Focus from a click or tap shouldn't open the details: hover covers mice,
+	// the info button covers touch, and keyboard focus opens them.
+	const isPointerPress = useRef( false );
 	const detailsId = useId();
 	const isOpen = ! isDismissed && ( isHovered || isFocused || isPinned );
 
@@ -99,17 +102,41 @@ function BlogPill( {
 		setIsPinned( false );
 	}, [] );
 
+	useEffect( () => {
+		if ( ! isPinned ) {
+			return;
+		}
+		const unpinOnOutsidePress = ( event: PointerEvent ) => {
+			const target = event.target as Element | null;
+			if (
+				target &&
+				! anchor?.contains( target ) &&
+				! target.closest( '.recommended-blog-groups__popover' )
+			) {
+				setIsPinned( false );
+			}
+		};
+		document.addEventListener( 'pointerdown', unpinOnOutsidePress );
+		return () => document.removeEventListener( 'pointerdown', unpinOnOutsidePress );
+	}, [ isPinned, anchor ] );
+
 	return (
 		<li
 			ref={ setAnchor }
 			className={ clsx( 'recommended-blog-groups__pill', { 'is-selected': isSelected } ) }
-			onMouseEnter={ () => {
-				setIsHovered( true );
-				setIsDismissed( false );
+			// Touch has no hover: a tap selects the blog, and the info button
+			// shows the details.
+			onPointerEnter={ ( event ) => {
+				if ( event.pointerType !== 'touch' ) {
+					setIsHovered( true );
+					setIsDismissed( false );
+				}
 			} }
-			onMouseLeave={ () => {
-				setIsHovered( false );
-				setIsPinned( false );
+			onPointerLeave={ ( event ) => {
+				if ( event.pointerType !== 'touch' ) {
+					setIsHovered( false );
+					setIsPinned( false );
+				}
 			} }
 		>
 			<button
@@ -120,11 +147,21 @@ function BlogPill( {
 				aria-busy={ isBusy || undefined }
 				aria-disabled={ isDisabled || isBusy || undefined }
 				onClick={ isDisabled || isBusy ? undefined : onClick }
+				onPointerDown={ () => {
+					isPointerPress.current = true;
+				} }
 				onFocus={ () => {
+					if ( isPointerPress.current ) {
+						isPointerPress.current = false;
+						return;
+					}
 					setIsFocused( true );
 					setIsDismissed( false );
 				} }
-				onBlur={ () => setIsFocused( false ) }
+				onBlur={ () => {
+					isPointerPress.current = false;
+					setIsFocused( false );
+				} }
 				onKeyDown={ ( event ) => {
 					if ( event.key === 'Escape' && isOpen ) {
 						event.stopPropagation();
@@ -161,7 +198,7 @@ function BlogPill( {
 				) }
 				showTooltip={ false }
 				onClick={ () => {
-					setIsPinned( true );
+					setIsPinned( ( value ) => ! value );
 					setIsDismissed( false );
 				} }
 			/>

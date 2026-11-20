@@ -237,6 +237,75 @@ describe( 'RecommendedBlogGroups in select mode', () => {
 		expect( screen.queryByText( 'Loud Songs writes about things.' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'does not open the details when a touch selects a pill', async () => {
+		const user = userEvent.setup();
+		const { onToggle } = renderSelect();
+
+		await user.pointer( [
+			{ keys: '[TouchA]', target: getPill( 'Loud Songs' ) },
+			{ keys: '[/TouchA]', target: getPill( 'Loud Songs' ) },
+		] );
+
+		expect( onToggle ).toHaveBeenCalledWith( groups[ 1 ].blogs[ 0 ] );
+		expect( screen.queryByText( 'Loud Songs writes about things.' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'toggles the details from the info button on touch, and closes them on a tap elsewhere', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+		const info = screen.getByRole( 'button', { name: 'About Loud Songs' } );
+		const tap = ( target: Element ) =>
+			user.pointer( [
+				{ keys: '[TouchA]', target },
+				{ keys: '[/TouchA]', target },
+			] );
+
+		await tap( info );
+		await waitFor( () =>
+			expect( screen.getByText( 'Loud Songs writes about things.' ) ).toBeVisible()
+		);
+
+		await tap( info );
+		expect( screen.queryByText( 'Loud Songs writes about things.' ) ).not.toBeInTheDocument();
+
+		await tap( info );
+		await waitFor( () =>
+			expect( screen.getByText( 'Loud Songs writes about things.' ) ).toBeVisible()
+		);
+
+		await tap( screen.getByRole( 'heading', { name: 'Food' } ) );
+		expect( screen.queryByText( 'Loud Songs writes about things.' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'closes the details of a clicked pill once the pointer moves on', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.click( getPill( 'Pasta Daily' ) );
+		await user.hover( getPill( 'Loud Songs' ) );
+
+		expect( getPill( 'Pasta Daily' ) ).toHaveFocus();
+		expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument();
+		await waitFor( () =>
+			expect( screen.getByText( 'Loud Songs writes about things.' ) ).toBeVisible()
+		);
+	} );
+
+	it( 'opens the details on keyboard focus after the pill was clicked while focused', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.tab();
+		await user.click( getPill( 'Pasta Daily' ) );
+		await user.tab();
+		await user.tab( { shift: true } );
+
+		expect( getPill( 'Pasta Daily' ) ).toHaveFocus();
+		await waitFor( () =>
+			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
+		);
+	} );
+
 	it( 'gives each blog a single tab stop', async () => {
 		const user = userEvent.setup();
 		renderSelect();
