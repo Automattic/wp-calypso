@@ -1,7 +1,7 @@
-import { act, render, screen, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import { getClient, showNotes } from '../../app/client';
+import { getClient, initClient, showNotes } from '../../app/client';
 import { listNotes } from '../../panel/rest-client/wpcom';
 import { store, init as initState } from '../../panel/state';
 import actions from '../../panel/state/actions';
@@ -259,6 +259,67 @@ describe( 'NotificationsInbox', () => {
 
 		expect( getClient().getNote ).toHaveBeenCalledWith( 999 );
 		expect( screen.getByRole( 'region', { name: 'Open note' } ) ).toBeEmptyDOMElement();
+	} );
+
+	it( 'leaves the host to show its empty state when a selected note cannot be loaded', async () => {
+		initClient( {} );
+		vi.mocked( getClient().getNote ).mockResolvedValueOnce( false );
+		const setSelectedNoteId = vi.fn();
+		loadNotes( makeNote( 801, 'First comment' ) );
+
+		renderInbox( '999', { setSelectedNoteId } );
+
+		await waitFor( () => expect( setSelectedNoteId ).toHaveBeenCalledWith( undefined ) );
+	} );
+
+	it( 'keeps a selected note that the server returns', async () => {
+		initClient( {} );
+		const found = Promise.resolve( true );
+		vi.mocked( getClient().getNote ).mockReturnValueOnce( found );
+		const setSelectedNoteId = vi.fn();
+
+		renderInbox( '999', { setSelectedNoteId } );
+		await act( () => found );
+
+		expect( setSelectedNoteId ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the selection when the note may still load', async () => {
+		initClient( {} );
+		const found = Promise.resolve( undefined );
+		vi.mocked( getClient().getNote ).mockReturnValueOnce( found );
+		const setSelectedNoteId = vi.fn();
+
+		renderInbox( '999', { setSelectedNoteId } );
+		await act( () => found );
+
+		expect( setSelectedNoteId ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the newer selection when a note that cannot be loaded was selected before it', async () => {
+		initClient( {} );
+		let answer: ( found: boolean ) => void = () => {};
+		vi.mocked( getClient().getNote ).mockReturnValueOnce(
+			new Promise( ( resolve ) => ( answer = resolve ) )
+		);
+		const setSelectedNoteId = vi.fn();
+		loadNotes( makeNote( 801, 'First comment' ) );
+		const { rerender } = renderInbox( '999', { setSelectedNoteId } );
+
+		rerender(
+			<NotificationsInbox
+				wpcom={ {} }
+				locale="en"
+				filterName={ undefined }
+				setFilterName={ () => {} }
+				selectedNoteId="801"
+				setSelectedNoteId={ setSelectedNoteId }
+				renderLayout={ ( { detail } ) => <section aria-label="Open note">{ detail }</section> }
+			/>
+		);
+		await act( async () => answer( false ) );
+
+		expect( setSelectedNoteId ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not fetch a selected note that is already loaded', () => {

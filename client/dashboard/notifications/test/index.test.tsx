@@ -233,6 +233,26 @@ describe( '<Notifications>', () => {
 		);
 	} );
 
+	test( 'shows the note an address names once, and takes it out of the address', async () => {
+		const router = await renderNotifications( '/notifications?filter=unread&note=42' );
+
+		expect( await screen.findByRole( 'button', { name: 'Close note 42' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Open a note from unread' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( router.state.location.href ).toBe( '/notifications?filter=unread' )
+		);
+	} );
+
+	test( 'ignores an address that names a note in a form the panel never writes', async () => {
+		const router = await renderNotifications( '/notifications?note=00042' );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No notification selected' } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( router.state.location.href ).toBe( '/notifications' ) );
+	} );
+
 	test( 'says that no notification is selected until one is opened', async () => {
 		const user = userEvent.setup();
 		await renderNotifications( '/notifications' );

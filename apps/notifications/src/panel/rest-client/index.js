@@ -178,6 +178,13 @@ function pinghubCallback( err, event ) {
 	this.reschedule();
 }
 
+/**
+ * Fetches one note into the store.
+ * @param {number} note_id
+ * @param {Object} [livePushMessage] the push message that announced the note
+ * @returns {Promise<boolean|undefined>} whether the server returned the note, or undefined when
+ *   the request failed in a way that doesn't say, such as a network or server error
+ */
 function getNote( note_id, livePushMessage ) {
 	// initialize the list if it's empty
 	if ( this.noteList.length === 0 ) {
@@ -189,6 +196,8 @@ function getNote( note_id, livePushMessage ) {
 	};
 
 	const requestedAt = Date.now();
+	let resolveFound;
+	const found = new Promise( ( resolve ) => ( resolveFound = resolve ) );
 
 	fetchNote( note_id, parameters, ( error, data ) => {
 		if ( error ) {
@@ -198,6 +207,8 @@ function getNote( note_id, livePushMessage ) {
 				status: error.status,
 				code: error.error,
 			} );
+			const isClientError = error.status >= 400 && error.status < 500 && error.status !== 429;
+			resolveFound( isClientError ? false : undefined );
 			return;
 		}
 		// The server answers with no notes for one it no longer has, so stop asking.
@@ -210,7 +221,10 @@ function getNote( note_id, livePushMessage ) {
 		const previousNotes = getAllNotes( store.getState() );
 		store.dispatch( actions.notes.addNotes( data.notes, requestedAt ) );
 		ready.call( this, getLiveFollowCandidates( data.notes, [ livePushMessage ], previousNotes ) );
+		resolveFound( data.notes.length > 0 );
 	} );
+
+	return found;
 }
 
 /**
