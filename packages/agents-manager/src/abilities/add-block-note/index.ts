@@ -3,12 +3,16 @@ import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { addBlockNoteCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
+/**
+ * Written for browser agents, which read it as the WebMCP tool description, so it names their
+ * tools (`agents_manager__…`, `wpcom__…`).
+ */
 export const addBlockNoteAbility: Ability = {
 	name: 'agents-manager/add-block-note',
 	label: __( 'Add a block note', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
 	description:
-		'Leave a note (review comment) on one block of the post open in the block editor. If the block already has a note, this adds a reply to that thread instead. The note is plain text and starts with "AI review:". Use get-block-notes first to see existing feedback. Tell the user to save the post afterwards.',
+		"Leaves a block note on one block of the post open in the editor, for the author and other editors to read, reply to and resolve. The note starts with \"AI review:\". Where review feedback goes: follow the user's request first. If they ask for notes, use this tool, even on their own post. If they ask for the feedback in the chat, don't use it, even on someone else's post. If they don't say, use notes when someone else wrote the post, and the chat when the user wrote it (agents_manager__get_block_notes reports post.authorIsCurrentUser); in the chat, offer to apply the fixes. For a review, call wpcom__get_content_guidelines and agents_manager__get_block_tree first, give 3 to 8 points in total, one note per block, and say what to change and why in plain text. If the block already has a note, your text is added as a reply. The note is saved at once; its link to the block is saved with the post. Use big_sky__apply_block_edits only for changes the user has asked you to make.",
 	input_schema: {
 		type: 'object',
 		properties: {
@@ -63,6 +67,7 @@ export const addBlockNoteAbility: Ability = {
 			readonly: false,
 			idempotent: false,
 		},
+		webmcp: { public: true },
 	},
 	callback: addBlockNoteCallback,
 };

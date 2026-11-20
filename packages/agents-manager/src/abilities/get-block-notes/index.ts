@@ -3,12 +3,16 @@ import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { getBlockNotesCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
+/**
+ * Written for browser agents, which read it as the WebMCP tool description, so it names their
+ * tools (`agents_manager__…`, `wpcom__…`).
+ */
 export const getBlockNotesAbility: Ability = {
 	name: 'agents-manager/get-block-notes',
 	label: __( 'Read block notes', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
 	description:
-		'Read the notes (review comments) on the post open in the block editor. Returns each thread with its status (open or resolved), its author, its text, its replies, and the client ids of the blocks it is attached to. Use this before adding a note or when asked what feedback a post has.',
+		"Lists the block notes on the post open in the editor: each thread's blocks, status (open or resolved), author, text and replies. Call it before a review, so you don't repeat a point that is already open or that a teammate resolved, and to read replies to earlier review notes. It also reports who wrote the post (post.authorName, post.authorIsCurrentUser).",
 	input_schema: {
 		type: 'object',
 		properties: {},
@@ -51,6 +55,7 @@ export const getBlockNotesAbility: Ability = {
 			readonly: true,
 			idempotent: true,
 		},
+		webmcp: { public: true },
 	},
 	callback: getBlockNotesCallback,
 };
