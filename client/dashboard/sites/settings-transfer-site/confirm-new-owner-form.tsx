@@ -72,6 +72,10 @@ export function ConfirmNewOwnerForm( {
 
 	const fields = getFields( site.ID );
 	const { validity, isValid } = useFormValidity( debouncedFormData, fields, form );
+	// While the debounced copy lags the input or the eligibility check runs, the field has no
+	// error for the browser to block on, but `isValid` is false, so a submit would do nothing.
+	const isChecking =
+		formData !== debouncedFormData || validity?.email?.custom?.type === 'validating';
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -107,7 +111,12 @@ export function ConfirmNewOwnerForm( {
 					} }
 				/>
 				<ButtonStack justify="flex-start">
-					<Button variant="primary" type="submit" isBusy={ mutation.isPending }>
+					<Button
+						variant="primary"
+						type="submit"
+						isBusy={ mutation.isPending }
+						disabled={ isChecking }
+					>
 						{ __( 'Continue' ) }
 					</Button>
 				</ButtonStack>
