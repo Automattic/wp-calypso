@@ -84,6 +84,28 @@ export function enabledSections() {
 	);
 }
 
+const unsafeCharEscapes = {
+	'<': '\\u003C',
+	'>': '\\u003E',
+	'\b': '\\b',
+	'\f': '\\f',
+	'\n': '\\n',
+	'\r': '\\r',
+	'\t': '\\t',
+	'\0': '\\0',
+	'\u2028': '\\u2028',
+	'\u2029': '\\u2029',
+};
+
+/**
+ * `JSON.stringify` leaves characters that can end a `<script>` or a line of code, such as `<` and U+2028.
+ * @param {string} json
+ * @returns {string}
+ */
+function escapeUnsafeChars( json ) {
+	return json.replace( /[<>\b\f\n\r\t\0\u2028\u2029]/g, ( char ) => unsafeCharEscapes[ char ] );
+}
+
 /**
  * Like `build-tools/webpack/sections-loader.js` for the browser: each section loads with `import()`.
  * @param {Object[]} sections
@@ -100,7 +122,7 @@ function sectionsPlugin( sections ) {
 			const list = sections.map( ( section ) =>
 				JSON.stringify( section ).replace(
 					/}$/,
-					`, "load": () => import( ${ JSON.stringify( section.module ) } ) }`
+					`, "load": () => import( ${ escapeUnsafeChars( JSON.stringify( section.module ) ) } ) }`
 				)
 			);
 			return { code: `export default [\n${ list.join( ',\n' ) }\n];`, map: null };
