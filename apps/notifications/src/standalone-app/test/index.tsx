@@ -105,7 +105,7 @@ describe( 'Notifications iframe app', () => {
 		vi.restoreAllMocks();
 	} );
 
-	it( 'opens the full page on the current tab, in a new browser tab, when the host turns the full view on', async () => {
+	it( 'opens the full page on the current tab, in a new browser tab and with the panel left open, when the host turns the full view on', async () => {
 		const user = userEvent.setup();
 		await openPanel( 'view-settings,full-view' );
 
@@ -115,6 +115,7 @@ describe( 'Notifications iframe app', () => {
 			'_blank',
 			'noopener'
 		);
+		expect( host.received ).not.toContain( 'togglePanel' );
 
 		await user.click( screen.getByRole( 'tab', { name: 'Unread' } ) );
 		await user.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
@@ -123,9 +124,10 @@ describe( 'Notifications iframe app', () => {
 			'_blank',
 			'noopener'
 		);
+		expect( host.received ).not.toContain( 'togglePanel' );
 	} );
 
-	it( 'hands the open note to the full page', async () => {
+	it( 'hands the open note to the full page and leaves the panel open', async () => {
 		const user = userEvent.setup();
 		await openPanel( 'view-settings,full-view' );
 
@@ -137,6 +139,7 @@ describe( 'Notifications iframe app', () => {
 			'_blank',
 			'noopener'
 		);
+		expect( host.received ).not.toContain( 'togglePanel' );
 	} );
 
 	it( 'shows "Mark as unread" on the open note when the host turns it on', async () => {
