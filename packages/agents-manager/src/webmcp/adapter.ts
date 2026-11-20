@@ -1,14 +1,16 @@
 import { parse } from '@wordpress/blocks';
+import { select } from '@wordpress/data';
 import { normalizeAbilityName } from '../abilities/ability-name';
 import { isRecord } from '../utils/is-record';
 import {
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
+	APPLY_UPDATE_THEME_ABILITY_NAME,
+	EDIT_ENTITY_RECORD_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
 	SHOW_TEMPLATE_ABILITY_NAME,
 	WEBMCP_SERVER_ABILITY_NAMES,
 	getWebMcpDescription,
 	getWebMcpInputSchema,
-	isWebMcpMutatingServerAbilityName,
 } from './contracts';
 import type { ToolProvider } from '../extension-types';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
@@ -35,9 +37,14 @@ type CreateWebMcpAdapterOptions = {
  */
 export const WEBMCP_EDITOR_ABILITY_ALLOWLIST = new Set( [
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
+	APPLY_UPDATE_THEME_ABILITY_NAME,
+	EDIT_ENTITY_RECORD_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
 	SHOW_TEMPLATE_ABILITY_NAME,
 ] );
+
+const EDITABLE_POST_TYPES = [ 'post', 'page' ];
+const EDITABLE_POST_FIELDS = [ 'title', 'excerpt' ];
 
 export const WEBMCP_SERVER_ABILITY_ALLOWLIST = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
 
@@ -45,10 +52,7 @@ export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 	const annotations = ability.meta?.annotations;
 
 	if ( WEBMCP_SERVER_ABILITY_ALLOWLIST.has( ability.name ) ) {
-		return (
-			annotations?.serverRegistered === true &&
-			( annotations.readonly === true || isWebMcpMutatingServerAbilityName( ability.name ) )
-		);
+		return annotations?.serverRegistered === true && annotations.readonly === true;
 	}
 
 	if ( ! WEBMCP_EDITOR_ABILITY_ALLOWLIST.has( ability.name ) ) {
@@ -156,6 +160,66 @@ function prepareApplyBlockEditsInput(
 	};
 }
 
+/**
+ * Targets the open post, so the WebMCP tool can never reach the full ability's
+ * creates, deletes and site-wide edits.
+ */
+function prepareEditEntityRecordInput(
+	input: Record< string, unknown >
+): Record< string, unknown > {
+	const editor = select( 'core/editor' ) as
+		| {
+				getCurrentPostType?: () => string | undefined;
+				getCurrentPostId?: () => number | string | undefined;
+		  }
+		| undefined;
+	const postType = editor?.getCurrentPostType?.();
+	const postId = editor?.getCurrentPostId?.();
+
+	if ( ! postType || ! EDITABLE_POST_TYPES.includes( postType ) || postId == null ) {
+		throw new Error( 'The editor does not have a post or page open.' );
+	}
+
+	const unknownFields = Object.keys( input ).filter(
+		( key ) => ! EDITABLE_POST_FIELDS.includes( key )
+	);
+	if ( unknownFields.length ) {
+		throw new Error(
+			`Unknown field: ${ unknownFields.join( ', ' ) }. Use title and excerpt only.`
+		);
+	}
+
+	const record = Object.fromEntries(
+		Object.entries( input ).filter( ( [ , value ] ) => typeof value === 'string' )
+	);
+	if ( Object.keys( record ).length !== Object.keys( input ).length ) {
+		throw new Error( 'title and excerpt must be strings.' );
+	}
+	if ( ! Object.keys( record ).length ) {
+		throw new Error( 'Provide a title or an excerpt.' );
+	}
+
+	return {
+		editEntities: [ { entityType: 'postType', entityName: postType, recordId: postId, record } ],
+	};
+}
+
+function prepareInput(
+	abilityName: string,
+	input: Record< string, unknown >,
+	context: ExecutionContext
+): Record< string, unknown > {
+	if ( abilityName === APPLY_BLOCK_EDITS_ABILITY_NAME ) {
+		return prepareApplyBlockEditsInput( input, context );
+	}
+
+	if ( abilityName === EDIT_ENTITY_RECORD_ABILITY_NAME ) {
+		return prepareEditEntityRecordInput( input );
+	}
+
+	return input;
+}
+
 function adaptResultForWebMcp( abilityName: string, value: unknown ): unknown {
 	if ( abilityName !== SHOW_TEMPLATE_ABILITY_NAME ) {
 		return value;
@@ -203,10 +267,7 @@ function createTool(
 				throw createAbortError();
 			}
 
-			const preparedInput =
-				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME
-					? prepareApplyBlockEditsInput( input ?? {}, executionContext )
-					: ( input ?? {} );
+			const preparedInput = prepareInput( ability.name, input ?? {}, executionContext );
 			const result = await toolProvider.executeAbility( ability.name, preparedInput );
 
 			if ( ability.name === GET_BLOCK_TREE_ABILITY_NAME ) {

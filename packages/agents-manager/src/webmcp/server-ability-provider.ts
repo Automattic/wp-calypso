@@ -80,13 +80,7 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 			}
 
 			if ( ability.meta?.annotations?.readonly !== true ) {
-				return apiFetch( {
-					method: 'POST',
-					path: addQueryArgs( `/wp-abilities/v1/abilities/${ name }/run`, {
-						webmcp: 1,
-					} ),
-					data: { input },
-				} );
+				throw new Error( `WebMCP runs only read-only server abilities: ${ name }` );
 			}
 
 			return apiFetch( {

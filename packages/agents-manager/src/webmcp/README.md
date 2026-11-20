@@ -17,7 +17,7 @@ The adapter wraps the live merged `ToolProvider` from `loadExternalProviders()` 
 the merged provider, which applies the established precedence and the canvas guard. The
 allowlisted server abilities are fetched by the wrapper from `/wp-abilities/v1/abilities`
 (`webmcp=1`), replace any same-named merged ability, and run directly against
-`/wp-abilities/v1/abilities/{name}/run` (GET when read-only, POST otherwise). WebMCP calls use the
+`/wp-abilities/v1/abilities/{name}/run` over GET. WebMCP calls use the
 original slash-based ability name. Both kinds are exposed to the browser agent without the backend
 route settings, which scope only the agent's own tools.
 
@@ -31,8 +31,8 @@ The allowlist contains:
 - `big-sky/apply-block-edits`: a client-registered ability that deterministically changes the
   current block-editor canvas. It does not save or publish the edit, so the result remains visible
   and reviewable. Its WebMCP contract supplies item-level schemas for updates, insertions, and
-  deletions, accepts serialized Gutenberg pattern markup as an insertion, strips internal-only
-  arguments, and injects an identity mapping for IDs from the most recent block-tree read. It is
+  deletions, accepts serialized Gutenberg block markup written by the agent as an insertion, strips
+  internal-only arguments, and injects an identity mapping for IDs from the most recent block-tree read. It is
   owned by Agents Manager (`abilities/apply-block-edits`), which resolves the supplied mapping
   ahead of its own short ids.
 
@@ -42,23 +42,26 @@ The allowlist contains:
   publish content. The WebMCP adapter translates the ability's Big Sky-specific next-step reference
   to `agents_manager__get_block_tree`.
 
-- `wpcom/get-block-schemas`, `wpcom/get-content-guidelines`, `wpcom/get-posts`,
-  `wpcom/get-site-stats`, `wpcom/patterns-list`, `wpcom/patterns-get`, and `core/get-site-info`:
+- `big-sky/apply-update-theme`: an Agents Manager-owned, client-only ability that merges theme.json
+  `settings` and `styles` into the site's global styles record. The change previews in the editor
+  and stays unsaved.
+
+- `big-sky/edit-entity-record`: an Agents Manager-owned ability that, through WebMCP, only changes
+  the title or excerpt of the post or page open in the editor. The full ability also creates,
+  deletes and saves records across the site, so the WebMCP contract replaces its schema with
+  `title` and `excerpt` alone, and the adapter targets the open post itself, refusing anything else.
+  The edit stays unsaved. Renaming a page also relabels the navigation menu items that point to it,
+  as it does in chat.
+
+- `wpcom/get-block-schemas`, `wpcom/get-content-guidelines`, and `core/get-site-info`:
   read-only server abilities fetched by the WebMCP provider from the current site's Abilities REST
   API. Their existing input schemas, permission
   checks, and authenticated site-specific execution path are preserved. The adapter also includes
   each ability's server-provided instructions in the WebMCP description when present.
 
-- `wpcom/media-create`: an explicitly allowlisted mutating server ability that uploads base64-encoded
-  files to the site's media library. The adapter does not gate it; the browser agent is expected to
-  confirm with the user first. WebMCP sends its input as a JSON POST
-  body and preserves its existing authentication, site capability, MIME validation, and size checks.
-
 Client abilities must be in the editor allowlist and be client-registered or carry a client
 callback. Server abilities must be in the separate server allowlist, marked server-registered
-(which the WebMCP provider sets on what it fetches), and annotated read-only unless they are also
-listed in `WEBMCP_MUTATING_SERVER_ABILITY_NAMES`;
-neither allowlist grants eligibility to a lookalike from the other provenance.
+(which the WebMCP provider sets on what it fetches), and annotated read-only; neither allowlist grants eligibility to a lookalike from the other provenance.
 
 ## Testing
 
@@ -69,25 +72,25 @@ neither allowlist grants eligibility to a lookalike from the other provenance.
 2. Sandbox `widgets.wp.com` and run `yarn dev --sync` from `apps/agents-manager`.
 3. Open a post, page, or site editor where the inline Agents Manager data has `isDevMode: true`
    using GPT-5.6 Sol or Terra.
-4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all eleven tools:
-   `agents_manager__get_block_tree`, `big_sky__show_template`, and
-   `big_sky__apply_block_edits`, plus `wpcom__get_block_schemas`,
-   `wpcom__get_content_guidelines`, `wpcom__get_posts`, `wpcom__get_site_stats`,
-   `wpcom__media_create`, and
-   `wpcom__patterns_list`, `wpcom__patterns_get`, and `core__get_site_info`. Do not use DevTools or
+4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all eight tools:
+   `agents_manager__get_block_tree`, `big_sky__show_template`, `big_sky__apply_block_edits`,
+   `big_sky__apply_update_theme`, and `big_sky__edit_entity_record`, plus
+   `wpcom__get_block_schemas`, `wpcom__get_content_guidelines`, and `core__get_site_info`. Do not use DevTools or
    call `document.modelContext` directly for this path.
 5. Call `agents_manager__get_block_tree`. If a requested template part is absent, call
    `big_sky__show_template`, then read the tree again.
 6. Call `big_sky__apply_block_edits` with a client ID from the latest tree, or insert a small test
    block on an empty page. Read the tree one final time and confirm the expected block and
    attributes are present.
-7. Call `wpcom__patterns_list`, choose a pattern, and fetch it with `wpcom__patterns_get`. Pass its
-   `content` to `big_sky__apply_block_edits` as `inserts[0].blockMarkup`, then confirm the pattern's
-   blocks appear on the canvas in order.
-8. After confirming the upload with the user, call `wpcom__media_create` with a small test image and
-   confirm its returned attachment ID and URL exist in the site's media library. Delete the test
-   attachment afterward.
-9. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
+7. Ask the agent to add a section, such as a heading and a paragraph, as block markup. Confirm it
+   passes the markup to `big_sky__apply_block_edits` as `inserts[0].blockMarkup` and that the blocks
+   appear on the canvas in order.
+8. Ask the agent to rename the open post or page with `big_sky__edit_entity_record`. Confirm the
+   title changes in the editor and the post is not saved. Ask it to rename a different page, or to
+   delete or publish one, and confirm the tool refuses.
+9. Ask the agent to change the site's background color with `big_sky__apply_update_theme`. Confirm
+   the canvas previews the new color and the global styles are not saved.
+10. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
 
 ### Direct browser API fallback
 
@@ -95,7 +98,7 @@ neither allowlist grants eligibility to a lookalike from the other provenance.
    on.
 2. Without opening Agents Manager chat, enumerate the page's tools through
    `document.modelContext.getTools()`.
-3. Confirm the same eleven tools are present and that the eight server tools expose input schemas.
+3. Confirm the same eight tools are present and that the three server tools expose input schemas.
 4. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.
@@ -111,8 +114,13 @@ execution cannot currently be cancelled because `ToolProvider.executeAbility()` 
 The edit tool should be preceded by a fresh block-tree read. This keeps its targets aligned with the
 current editor and refreshes the identity map the callback resolves through.
 
+Expose a tool here only if it needs the open page: it reads or changes the live editor state, or its
+result feeds an edit on the canvas. General site and account operations, such as listing posts or
+reading stats, belong in the WordPress.com MCP server, and a second copy here only makes the agent
+choose between two names for the same call. Keep saving and publishing a user action: a tool that
+saves as a side effect, such as `big-sky/editor-navigate`, does not belong here.
+
 To add another tool, verify its complete implementation, permissions, annotations, and execution
 path. Add client tools to `WEBMCP_EDITOR_ABILITY_ALLOWLIST` (`adapter.ts`) or REST-backed tools to
-`WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`), and mutating ones also to
-`WEBMCP_MUTATING_SERVER_ABILITY_NAMES`, with tests proving the opposite provenance and unlisted abilities
+`WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`), with tests proving the opposite provenance and unlisted abilities
 remain excluded.
