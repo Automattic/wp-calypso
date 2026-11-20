@@ -365,9 +365,10 @@ function CancelPurchaseInner() {
 				product_slug: productSlug,
 				purchase_id: purchase.ID,
 				ownership_id: purchase.ownership_id,
+				blog_id: purchase.blog_id,
 			} );
 		}
-	}, [ productSlug, purchase.ID, purchase.ownership_id, recordTracksEvent ] );
+	}, [ productSlug, purchase.ID, purchase.ownership_id, purchase.blog_id, recordTracksEvent ] );
 	const cancelPurchaseSurveyCompleted = () => {
 		surveyCompletedMutator.mutate( 'true' );
 	};
@@ -516,6 +517,7 @@ function CancelPurchaseInner() {
 				is_atomic: site?.is_wpcom_atomic,
 				purchase_id: purchase.ID,
 				ownership_id: purchase.ownership_id,
+				blog_id: purchase.blog_id,
 				is_refundable: purchase.is_refundable,
 
 				...properties,
@@ -526,6 +528,7 @@ function CancelPurchaseInner() {
 			purchase.product_slug,
 			purchase.ID,
 			purchase.ownership_id,
+			purchase.blog_id,
 			purchase.is_refundable,
 			recordTracksEvent,
 			site,

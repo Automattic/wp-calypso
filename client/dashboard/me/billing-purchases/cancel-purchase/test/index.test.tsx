@@ -189,6 +189,7 @@ describe( '<CancelPurchase />', () => {
 						product_slug: 'value_bundle',
 						purchase_id: 123,
 						ownership_id: 4567,
+						blog_id: 456,
 						is_refundable: false,
 					} ),
 				],

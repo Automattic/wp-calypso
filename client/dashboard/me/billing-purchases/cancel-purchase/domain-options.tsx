@@ -174,6 +174,8 @@ const CancelPurchaseDomainOptions = ( {
 			recordTracksEvent( 'calypso_purchases_domain_confirm_checkbox', {
 				product_slug: purchase.product_slug,
 				purchase_id: purchase?.ID,
+				ownership_id: purchase?.ownership_id,
+				blog_id: purchase?.blog_id,
 				domain_name: includedDomainPurchase.meta,
 				checked: checked,
 			} );
