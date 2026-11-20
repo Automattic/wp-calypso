@@ -487,17 +487,6 @@
 	}
 }
 
-// Approving is the job on a pending comment, so it takes the Pending badge's
-// amber text rather than Like's gray.
-.wpnc__action-link.wpnc__approve-action {
-	--wpnc-action__color: oklch(from var(--wpnc-pending) 0.44 c h);
-	--wpnc-action__color-hover: var(--wpnc-action__color);
-
-	@include ui-mixins.when-dark-theme {
-		--wpnc-action__color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
-	}
-}
-
 .wpnc__actions-menu-dropdown {
 	flex-shrink: 0;
 
