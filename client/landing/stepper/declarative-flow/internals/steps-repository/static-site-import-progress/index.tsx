@@ -22,6 +22,9 @@ import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
+// A share link opened the moment it's made can still show Coming Soon, so the step waits this long first.
+const SHARE_LINK_DELAY = 5_000;
+
 export type StaticSiteImportProgressStepSubmits =
 	{ action: 'finished'; previewUrl?: string } | { action: 'stopped' };
 
@@ -97,7 +100,11 @@ const StaticSiteImportProgressStep: StepType< {
 		}
 		if ( isFinished ) {
 			if ( previewUrl ) {
-				submit( { action: 'finished', previewUrl } );
+				const timer = setTimeout(
+					() => submit( { action: 'finished', previewUrl } ),
+					SHARE_LINK_DELAY
+				);
+				return () => clearTimeout( timer );
 			} else if ( hasNoShareLink ) {
 				submit( { action: 'finished' } );
 			}
