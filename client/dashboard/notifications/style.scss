@@ -45,12 +45,12 @@ $pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-b
 .dashboard-notifications-inbox__detail {
 	overflow-y: auto;
 
-	.components-card__body {
+	.components-card__body:not( .components-card__body * ) {
 		padding-block: $grid-unit-30;
 	}
 
 	.components-card__header > *,
-	.components-card__body > *,
+	.components-card__body:not( .components-card__body * ) > *,
 	.components-card__footer > * {
 		width: 100%;
 		max-width: 640px;
