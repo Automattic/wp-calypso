@@ -360,8 +360,23 @@ const MAX_SUGGESTION_LABEL_WORDS = 7;
 const LANGUAGE_FILE_TIMEOUT_MS = 3000;
 const DEFAULT_READER_SCRIPT_URL = 'https://widgets.wp.com/agents-manager/reader-chat.min.js';
 // Read while the bundle executes: currentScript is null once it has finished.
-const readerScriptUrl =
-	( typeof document !== 'undefined' && document.currentScript?.src ) || DEFAULT_READER_SCRIPT_URL;
+const readerScriptUrl = document.currentScript?.src || DEFAULT_READER_SCRIPT_URL;
+// The locales whose language file is named with a region; every other one uses the language alone.
+const REGIONAL_LANGUAGE_FILES = [
+	'de-ch',
+	'el-po',
+	'en-gb',
+	'es-cl',
+	'es-mx',
+	'fr-be',
+	'fr-ca',
+	'fr-ch',
+	'pt-br',
+	'zh-cn',
+	'zh-hk',
+	'zh-sg',
+	'zh-tw',
+];
 
 // Translated on each call: the locale data is registered after this module loads.
 function getPostFallbackLabels() {
@@ -389,9 +404,8 @@ function getFollowupFallbackLabels() {
 }
 
 /**
- * Reduce a locale to the slug the language files are named with, as Jetpack's
- * Agents_Manager::determine_iso_639_locale() does: "nl-NL" -> "nl", "pt_BR" -> "pt-br".
- * @param   {string} locale Locale or BCP 47 language tag.
+ * Reduce a locale to the slug the language files are named with: "nl_NL" -> "nl", "pt_BR" -> "pt-br".
+ * @param   {string} locale WordPress locale or BCP 47 language tag.
  * @returns {string}        Language slug, "en" when there is none.
  */
 function normalizeReaderLocale( locale ) {
@@ -399,7 +413,7 @@ function normalizeReaderLocale( locale ) {
 		.trim()
 		.toLowerCase()
 		.replace( /_/g, '-' );
-	if ( [ 'pt-br', 'zh-cn', 'zh-tw' ].includes( slug ) ) {
+	if ( REGIONAL_LANGUAGE_FILES.includes( slug ) ) {
 		return slug;
 	}
 	const language = slug.split( '-' )[ 0 ];
@@ -413,7 +427,7 @@ function resolveReaderLocale( config = readerConfig, doc = document ) {
 
 function getLanguageFileUrl( locale, scriptUrl = readerScriptUrl ) {
 	const script = new URL( scriptUrl, window.location.href );
-	const url = new URL( `languages/${ locale }-v1.js`, script );
+	const url = new URL( `languages/${ locale }-v1.1.json`, script );
 	const version = script.searchParams.get( 'ver' );
 	if ( version ) {
 		url.searchParams.set( 'ver', version );
@@ -423,47 +437,23 @@ function getLanguageFileUrl( locale, scriptUrl = readerScriptUrl ) {
 
 /**
  * Load the language file the Agents Manager release publishes next to the bundles.
- *
- * The file calls the global wp.i18n.setLocaleData, which this bundle's inlined
- * @wordpress/i18n never sees, so the global is pointed at both while the file runs.
  * @param   {string}  locale Language slug, as returned by normalizeReaderLocale.
- * @returns {Promise}        Settles once the file ran, failed, or took too long. Never rejects.
+ * @returns {Promise}        Settles once the file is registered, failed, or took too long. Never rejects.
  */
-function loadLanguageFile( locale ) {
-	return new Promise( ( resolve ) => {
-		const hadWp = 'wp' in window;
-		const pageI18n = window.wp?.i18n;
-		const bridge = {
-			...pageI18n,
-			setLocaleData( data, domain ) {
-				setLocaleData( data, domain );
-				pageI18n?.setLocaleData?.( data, domain );
-			},
-		};
-		window.wp = window.wp || {};
-		window.wp.i18n = bridge;
-
-		const script = document.createElement( 'script' );
-		const timeoutId = setTimeout( resolve, LANGUAGE_FILE_TIMEOUT_MS );
-		// Not on timeout: a file that arrives late still needs the bridge.
-		script.onload = script.onerror = () => {
-			clearTimeout( timeoutId );
-			// Leave the global alone if the page replaced it in the meantime.
-			if ( window.wp?.i18n === bridge ) {
-				if ( pageI18n ) {
-					window.wp.i18n = pageI18n;
-				} else {
-					delete window.wp.i18n;
-					if ( ! hadWp ) {
-						delete window.wp;
-					}
-				}
-			}
-			resolve();
-		};
-		script.src = getLanguageFileUrl( locale );
-		document.head.appendChild( script );
-	} );
+async function loadLanguageFile( locale ) {
+	// Aborting drops a late file, so the chat never changes language after it mounted.
+	const controller = new AbortController();
+	const timeoutId = setTimeout( () => controller.abort(), LANGUAGE_FILE_TIMEOUT_MS );
+	try {
+		const response = await fetch( getLanguageFileUrl( locale ), { signal: controller.signal } );
+		if ( response.ok ) {
+			setLocaleData( await response.json(), __i18n_text_domain__ );
+		}
+	} catch {
+		// A locale without a file, or one that is too slow, stays in English.
+	} finally {
+		clearTimeout( timeoutId );
+	}
 }
 
 /**
@@ -476,8 +466,10 @@ function loadReaderTranslations( locale ) {
 	if ( locale === 'en' ) {
 		return Promise.resolve();
 	}
-	if ( hasAgentticTranslations( locale ) ) {
-		loadAgentticTranslations( locale, { domain: 'a8c-agenttic' } );
+	// Agenttic bundles fewer locales, so "fr-ca" uses its "fr".
+	const agentticLocale = [ locale, locale.split( '-' )[ 0 ] ].find( hasAgentticTranslations );
+	if ( agentticLocale ) {
+		loadAgentticTranslations( agentticLocale, { domain: 'a8c-agenttic' } );
 	}
 	return loadLanguageFile( locale );
 }
@@ -609,7 +601,8 @@ function isConciseSuggestionLabel( label ) {
 
 function getFallbackSuggestionLabel( index, resultIdPrefix ) {
 	if ( resultIdPrefix === 'followup' ) {
-		return getFollowupFallbackLabels()[ index ] || __( 'Ask a follow-up', __i18n_text_domain__ );
+		const labels = getFollowupFallbackLabels();
+		return labels[ index ] || labels[ labels.length - 1 ];
 	}
 	if ( readerCurrentPost ) {
 		return getPostFallbackLabels()[ index ] || __( 'Ask about this post', __i18n_text_domain__ );

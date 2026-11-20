@@ -22,7 +22,7 @@ vi.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => ( {
 	} ) ),
 } ) );
 vi.mock( '@automattic/agenttic-ui', () => ( {
-	hasAgentticTranslations: vi.fn( ( locale ) => locale === 'nl' ),
+	hasAgentticTranslations: vi.fn( ( locale ) => [ 'nl', 'fr' ].includes( locale ) ),
 	loadAgentticTranslations: vi.fn(),
 } ) );
 vi.mock( '@tanstack/react-query', () => ( {
@@ -616,6 +616,8 @@ describe( 'normalizeReaderLocale', () => {
 		[ 'pt-BR', 'pt-br' ],
 		[ 'pt_BR', 'pt-br' ],
 		[ 'zh-TW', 'zh-tw' ],
+		[ 'zh_HK', 'zh-hk' ],
+		[ 'fr-CA', 'fr-ca' ],
 		[ 'pt-PT', 'pt' ],
 		[ 'de', 'de' ],
 		[ '', 'en' ],
@@ -642,47 +644,66 @@ describe( 'getLanguageFileUrl', () => {
 	it( 'points next to the bundle and keeps its cache-busting version', () => {
 		expect(
 			getLanguageFileUrl( 'nl', 'https://widgets.wp.com/agents-manager/reader-chat.min.js?ver=abc' )
-		).toBe( 'https://widgets.wp.com/agents-manager/languages/nl-v1.js?ver=abc' );
+		).toBe( 'https://widgets.wp.com/agents-manager/languages/nl-v1.1.json?ver=abc' );
 	} );
 } );
 
 describe( 'loadReaderTranslations', () => {
-	const languageScripts = () => document.head.querySelectorAll( 'script[src*="/languages/"]' );
+	const respondWith = ( response ) => {
+		globalThis.fetch = vi.fn( () => response );
+	};
+	const languageFile = ( data ) => Promise.resolve( { ok: true, json: async () => data } );
 
 	afterEach( () => {
-		languageScripts().forEach( ( script ) => script.remove() );
 		resetLocaleData( {}, 'default' );
 		loadAgentticTranslations.mockClear();
-		delete window.wp;
+		vi.useRealTimers();
+		delete globalThis.fetch;
 	} );
 
 	it( 'loads nothing for English', async () => {
+		respondWith( languageFile( {} ) );
 		await loadReaderTranslations( 'en' );
 
 		expect( loadAgentticTranslations ).not.toHaveBeenCalled();
-		expect( languageScripts() ).toHaveLength( 0 );
+		expect( fetch ).not.toHaveBeenCalled();
 	} );
 
-	it( 'translates the starter questions with what the language file registers', async () => {
-		const loaded = loadReaderTranslations( 'nl' );
-		// Stand in for the language file, which registers through the global.
-		window.wp.i18n.setLocaleData( { 'Explore recent posts': [ 'Recente berichten' ] }, 'default' );
-		languageScripts()[ 0 ].onload();
-		await loaded;
+	it( 'translates the starter questions with the fetched language file', async () => {
+		respondWith( languageFile( { 'Explore recent posts': [ 'Recente berichten' ] } ) );
+		await loadReaderTranslations( 'nl' );
 
+		expect( fetch.mock.calls[ 0 ][ 0 ] ).toContain( '/languages/nl-v1.1.json' );
 		expect( loadAgentticTranslations ).toHaveBeenCalledWith( 'nl', { domain: 'a8c-agenttic' } );
 		expect( getFallbackSuggestions()[ 0 ] ).toMatchObject( {
 			id: 'recent',
 			label: 'Recente berichten',
 		} );
-		expect( window.wp ).toBeUndefined();
+	} );
+
+	it( 'leaves the page’s own wp.i18n untouched', async () => {
+		const pageI18n = { setLocaleData: vi.fn() };
+		window.wp = { i18n: pageI18n };
+		respondWith( languageFile( { Hello: [ 'Hallo' ] } ) );
+		await loadReaderTranslations( 'nl' );
+
+		expect( window.wp.i18n ).toBe( pageI18n );
+		expect( pageI18n.setLocaleData ).not.toHaveBeenCalled();
+		delete window.wp;
+	} );
+
+	it( 'uses Agenttic’s language translations for a regional locale', async () => {
+		respondWith( languageFile( {} ) );
+		await loadReaderTranslations( 'fr-ca' );
+
+		expect( fetch.mock.calls[ 0 ][ 0 ] ).toContain( '/languages/fr-ca-v1.1.json' );
+		expect( loadAgentticTranslations ).toHaveBeenCalledWith( 'fr', { domain: 'a8c-agenttic' } );
 	} );
 
 	it( 'stays in English, without a warning, when the locale has no translations', async () => {
 		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
-		const loaded = loadReaderTranslations( 'xx' );
-		languageScripts()[ 0 ].onerror();
-		await loaded;
+		respondWith( Promise.resolve( { ok: false } ) );
+		await loadReaderTranslations( 'xx' );
 
 		expect( loadAgentticTranslations ).not.toHaveBeenCalled();
 		expect( getFallbackSuggestions()[ 0 ].label ).toBe( 'Explore recent posts' );
@@ -690,15 +711,19 @@ describe( 'loadReaderTranslations', () => {
 		warn.mockRestore();
 	} );
 
-	it( 'hands the page its own wp.i18n back, with the translations it would have received', async () => {
-		const pageI18n = { setLocaleData: vi.fn() };
-		window.wp = { i18n: pageI18n };
+	it( 'gives up on a slow language file and never applies it', async () => {
+		vi.useFakeTimers();
+		globalThis.fetch = vi.fn(
+			( url, { signal } ) =>
+				new Promise( ( resolve, reject ) => {
+					signal.addEventListener( 'abort', () => reject( new Error( 'aborted' ) ) );
+				} )
+		);
 		const loaded = loadReaderTranslations( 'nl' );
-		window.wp.i18n.setLocaleData( { Hello: [ 'Hallo' ] }, 'default' );
-		languageScripts()[ 0 ].onload();
+		await vi.advanceTimersByTimeAsync( 3000 );
 		await loaded;
 
-		expect( pageI18n.setLocaleData ).toHaveBeenCalledWith( { Hello: [ 'Hallo' ] }, 'default' );
-		expect( window.wp.i18n ).toBe( pageI18n );
+		expect( fetch.mock.calls[ 0 ][ 1 ].signal.aborted ).toBe( true );
+		expect( getFallbackSuggestions()[ 0 ].label ).toBe( 'Explore recent posts' );
 	} );
 } );
