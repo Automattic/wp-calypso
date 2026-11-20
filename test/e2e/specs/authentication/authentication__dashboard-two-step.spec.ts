@@ -351,14 +351,16 @@ test.describe(
 			} );
 
 			await test.step( 'When I log out and log in again using the security key', async function () {
-				const securityKeyAccepted = page.waitForResponse(
-					( response ) =>
+				let securityKeyAccepted = false;
+				page.on( 'response', ( response ) => {
+					if (
 						response.request().method() === 'POST' &&
 						response.url().includes( 'action=webauthn-authentication-endpoint' ) &&
-						response.ok(),
-					{ timeout: 0 }
-				);
-				securityKeyAccepted.catch( () => {} );
+						response.ok()
+					) {
+						securityKeyAccepted = true;
+					}
+				} );
 				await logOutAndLogInWithPassword(
 					page,
 					pageLogin,
@@ -366,7 +368,12 @@ test.describe(
 					testUser.password
 				);
 				await continueWithSecurityKey( page );
-				await securityKeyAccepted;
+				await expect
+					.poll( () => securityKeyAccepted, {
+						message: `Security key login request did not succeed; at ${ page.url() }`,
+						timeout: 5_000,
+					} )
+					.toBe( true );
 			} );
 
 			await test.step( 'Then I am logged in with the security key', async function () {
