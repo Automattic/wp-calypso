@@ -18,6 +18,7 @@ import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { stripHTML } from 'calypso/lib/formatting';
 import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
@@ -379,11 +380,7 @@ class PlansSetup extends Component {
 				return (
 					<Notice
 						{ ...statusProps }
-						text={
-							errorMessage
-								? errorMessage.replace( /<.[^<>]*?>/g, '' )
-								: translate( 'An error occured.' )
-						}
+						text={ errorMessage ? stripHTML( errorMessage ) : translate( 'An error occured.' ) }
 					/>
 				);
 		}
