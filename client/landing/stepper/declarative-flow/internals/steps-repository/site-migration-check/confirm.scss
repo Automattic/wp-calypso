@@ -66,7 +66,7 @@
 	.site-migration-confirm__route--side-by-side {
 		display: grid;
 		// Each site only as wide as its text, so the arrow sits midway between them.
-		grid-template-columns: minmax( 0, max-content ) auto max-content;
+		grid-template-columns: minmax( 0, max-content ) auto minmax( 0, max-content );
 		justify-content: start;
 		column-gap: 16px;
 		align-items: start;

@@ -5,12 +5,16 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
+import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
 	getSignupCompleteFlowName,
+	getSignupIsNewUserAndClear,
 } from 'calypso/signup/storageUtils';
+import { useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
 export type SiteMigrationCheckoutReturnSubmits =
@@ -33,6 +37,7 @@ const SiteMigrationCheckoutReturn: StepType< {
 	);
 	const { data: site, isError } = useSiteQuery( siteId || undefined );
 	const siteSlug = site?.slug;
+	const userId = useSelector( getCurrentUserId );
 	const hasSubmitted = useRef( false );
 
 	const finish = useEffectEvent( async ( slug: string ) => {
@@ -41,8 +46,28 @@ const SiteMigrationCheckoutReturn: StepType< {
 		}
 		clearSignupCompleteFlowName();
 		clearSignupDestinationCookie();
-		// Logged-in checkout creates the site without the flow's site params, so apply them here.
-		// They don't block the migration.
+		recordSignupComplete(
+			{
+				flow: SITE_MIGRATION_FLOW,
+				siteId,
+				isNewUser: Boolean( getSignupIsNewUserAndClear( userId ) ),
+				hasCartItems: true,
+				planProductSlug: site?.plan?.product_slug,
+				domainProductSlug: undefined,
+				intent: SITE_MIGRATION_FLOW,
+				startingPoint: SITE_MIGRATION_FLOW,
+				signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+				framework: 'stepper',
+				theme: undefined,
+				isBlankCanvas: undefined,
+				isTransfer: undefined,
+				isMapping: undefined,
+				goals: undefined,
+			},
+			true
+		);
+		// Logged-in checkout creates the site without the flow's site params, so apply them here
+		// (signed out, checkout already has). They don't block the migration.
 		await Promise.allSettled( [
 			wpcom.req.post(
 				{ path: `/sites/${ siteId }/settings`, apiVersion: '1.4' },

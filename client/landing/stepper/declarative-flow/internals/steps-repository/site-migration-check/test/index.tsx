@@ -142,6 +142,25 @@ describe( 'SiteMigrationCheck', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	it.each( [
+		[ 'puts a new site beside a short source', 'https://example.com', false, true ],
+		[ 'stacks a long source', 'https://calebmigrationtestingreprint.com', false, false ],
+		[ 'stacks a picked destination', 'https://example.com', true, false ],
+	] )( '%s', ( _, from, hasDestination, isSideBySide ) => {
+		renderStep(
+			<SiteMigrationCheck
+				{ ...mockStepProps() }
+				destinationSiteSlug={ hasDestination ? 'destination.wordpress.com' : undefined }
+			/>,
+			{ initialEntry: `/site-migration-check?from=${ from }&platform=wordpress` }
+		);
+		const route = screen.getByText( 'From your WordPress site' ).closest( 'div' )?.parentElement;
+		expect( route ).toHaveClass( 'site-migration-confirm__route' );
+		expect( route?.classList.contains( 'site-migration-confirm__route--side-by-side' ) ).toBe(
+			isSideBySide
+		);
+	} );
+
 	describe( 'a source picked as WordPress by hand', () => {
 		const manualEntry =
 			'/site-migration-check?from=https://example.com&platform=wordpress&manualPlatform=wordpress';

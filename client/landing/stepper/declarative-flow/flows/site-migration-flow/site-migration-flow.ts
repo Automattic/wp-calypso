@@ -421,6 +421,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 						),
 					} );
 				}
+				// Checkout's return page only passes through, so Back from MSD shouldn't land on it.
+				if ( currentStep === STEPS.SITE_MIGRATION_CHECKOUT_RETURN.slug ) {
+					return window.location.replace( destination );
+				}
 				window.location.assign( destination );
 			} catch {
 				if ( version === handoffVersion.current ) {
@@ -751,7 +755,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 							planCartItem.product_slug
 						);
 					}
-					// Checkout creates the site, then returns to set the migration up on it.
+					// Checkout creates the site, then returns to set the migration up on it. Checkout supplies
+					// the new site's ID, and an empty one from Change would shadow it.
 					const flowQuery = Object.fromEntries( urlQueryParams );
 					delete flowQuery.siteId;
 					delete flowQuery.siteSlug;
@@ -764,8 +769,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 							flowQuery,
 							`/setup/${ flowPath }/${ STEPS.SITE_MIGRATION_CHECKOUT_RETURN.slug }`
 						) }&siteId=:siteId`,
+						// Empty, so plans doesn't recover a destination configured earlier in the session.
 						cancelDestination: addQueryArgs(
-							flowQuery,
+							{ ...flowQuery, siteId: '', siteSlug: '' },
 							`/setup/${ flowPath }/${ STEPS.UNIFIED_PLANS.slug }`
 						),
 						siteIntent: Onboard.SiteIntent.SiteMigration,
@@ -777,7 +783,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return navigate( STEPS.ERROR.slug, { errorReason: 'site_not_created' } );
 					}
 					if ( result.action === 'configure' && fromQueryParam ) {
-						recordSignupComplete( { siteId: result.siteId } );
 						return configureAndContinue( result.siteId, result.siteSlug, fromQueryParam );
 					}
 					return window.location.replace( migrationPageUrl( result.siteSlug ) );

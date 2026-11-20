@@ -1804,15 +1804,15 @@ describe( 'Site Migration Flow', () => {
 				expect( returnUrl.searchParams.getAll( 'siteId' ) ).toEqual( [ ':siteId' ] );
 				const cancelUrl = new URL( checkout.cancelDestination, 'https://example.com' );
 				expect( cancelUrl.pathname ).toBe( '/setup/site-migration/plans' );
-				expect( cancelUrl.searchParams.has( 'siteId' ) ).toBe( false );
+				// Empty rather than absent, so plans can't recover an earlier destination.
+				expect( cancelUrl.searchParams.get( 'siteId' ) ).toBe( '' );
+				expect( cancelUrl.searchParams.get( 'siteSlug' ) ).toBe( '' );
 			} );
 
 			describe( 'returning from unified checkout', () => {
 				const newSite = { siteId: 456, siteSlug: 'new-site.wordpress.com' };
 
-				it( 'records the signup and sets the migration up once', async () => {
-					const recordSignupComplete = jest.fn();
-					jest.mocked( useRecordSignupComplete ).mockReturnValue( recordSignupComplete );
+				it( 'sets the migration up and leaves the return page out of history', async () => {
 					const configure = nock( 'https://public-api.wordpress.com' )
 						.post( '/wpcom/v2/sites/456/wordpress-migration/configure', {
 							source_url: context.from,
@@ -1823,12 +1823,12 @@ describe( 'Site Migration Flow', () => {
 						query: { ...context, siteId: String( newSite.siteId ) },
 						dependencies: { action: 'configure', ...newSite },
 					} );
-					await waitFor( () => expect( window.location.assign ).toHaveBeenCalledTimes( 1 ) );
+					await waitFor( () => expect( window.location.replace ).toHaveBeenCalledTimes( 1 ) );
 					expect( configure.isDone() ).toBe( true );
-					expect( recordSignupComplete ).toHaveBeenCalledWith( { siteId: newSite.siteId } );
-					expect( window.location.assign ).toMatchURL( {
+					expect( window.location.replace ).toMatchURL( {
 						path: dashboardLink( `/sites/${ newSite.siteSlug }/migration-overview` ),
 					} );
+					expect( window.location.assign ).not.toHaveBeenCalled();
 				} );
 
 				it( 'goes straight to the migration page on a later visit', () => {
@@ -2032,61 +2032,55 @@ describe( 'Site Migration Flow', () => {
 				expect( result.query.get( 'from' ) ).toBe( clearsSource ? '' : null );
 			} );
 
-			it.each( [ STEPS.UNIFIED_PLANS ] )(
-				'configures an existing destination before checkout after $slug and retains it when cancelling',
-				async ( step ) => {
-					const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
-					const configure = nock( 'https://public-api.wordpress.com' )
-						.post( '/wpcom/v2/sites/123/wordpress-migration/configure', {
-							source_url: context.from,
-						} )
-						.reply( 200, {} );
-					runNavigation( {
-						from: step,
-						query: { ...context, ...( step === STEPS.UNIFIED_PLANS && destination ) },
-						dependencies:
-							step === STEPS.PROCESSING
-								? { ...destination, siteCreated: true }
-								: { cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ] },
-					} );
-					await waitFor( () => expect( goToCheckout ).toHaveBeenCalledTimes( 1 ) );
-					expect( configure.isDone() ).toBe( true );
-					const checkout = jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
-					expect( checkout.historyBack ).toBeUndefined();
-					expect( checkout ).toEqual(
-						expect.objectContaining( {
-							flowName: 'site-migration',
-							stepName: 'plans',
-							siteSlug: destination.siteSlug,
-							plan: step === STEPS.UNIFIED_PLANS ? PLAN_BUSINESS_MONTHLY : undefined,
-						} )
-					);
-					const returnUrl = new URL( checkout.destination, 'https://example.com' );
-					expect( returnUrl.pathname ).toBe(
-						new URL(
-							dashboardLink( `/sites/${ destination.siteSlug }/migration-overview` ),
-							'https://example.com'
-						).pathname
-					);
-					expect( returnUrl.searchParams.get( 'ref' ) ).toBe( context.ref );
-					const cancelUrl = new URL( checkout.cancelDestination, 'https://example.com' );
-					expect( cancelUrl.pathname ).toBe( '/setup/site-migration/plans' );
-					for ( const [ key, value ] of Object.entries( { ...context, ...destination } ) ) {
-						expect( cancelUrl.searchParams.get( key ) ).toBe( String( value ) );
-					}
-					jest.requireActual( 'calypso/landing/stepper/utils/checkout' ).goToCheckout( checkout );
-					const checkoutUrl = new URL(
-						window.location.replace.mock.lastCall[ 0 ],
+			it( 'configures an existing destination before checkout after plans and retains it when cancelling', async () => {
+				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+				const configure = nock( 'https://public-api.wordpress.com' )
+					.post( '/wpcom/v2/sites/123/wordpress-migration/configure', {
+						source_url: context.from,
+					} )
+					.reply( 200, {} );
+				runNavigation( {
+					from: STEPS.UNIFIED_PLANS,
+					query: { ...context, ...destination },
+					dependencies: { cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ] },
+				} );
+				await waitFor( () => expect( goToCheckout ).toHaveBeenCalledTimes( 1 ) );
+				expect( configure.isDone() ).toBe( true );
+				const checkout = jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
+				expect( checkout.historyBack ).toBeUndefined();
+				expect( checkout ).toEqual(
+					expect.objectContaining( {
+						flowName: 'site-migration',
+						stepName: 'plans',
+						siteSlug: destination.siteSlug,
+						plan: PLAN_BUSINESS_MONTHLY,
+					} )
+				);
+				const returnUrl = new URL( checkout.destination, 'https://example.com' );
+				expect( returnUrl.pathname ).toBe(
+					new URL(
+						dashboardLink( `/sites/${ destination.siteSlug }/migration-overview` ),
 						'https://example.com'
-					);
-					expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( checkout.destination );
-					Object.assign( window.location, { href: checkoutUrl.href, search: checkoutUrl.search } );
-					leaveCheckout( { siteSlug: destination.siteSlug, tracksEvent: 'checkout_cancel' } );
-					expect( window.location.href ).toBe( cancelUrl.href );
-					window.location.search = '';
-					expect( window.location.assign ).not.toHaveBeenCalled();
+					).pathname
+				);
+				expect( returnUrl.searchParams.get( 'ref' ) ).toBe( context.ref );
+				const cancelUrl = new URL( checkout.cancelDestination, 'https://example.com' );
+				expect( cancelUrl.pathname ).toBe( '/setup/site-migration/plans' );
+				for ( const [ key, value ] of Object.entries( { ...context, ...destination } ) ) {
+					expect( cancelUrl.searchParams.get( key ) ).toBe( String( value ) );
 				}
-			);
+				jest.requireActual( 'calypso/landing/stepper/utils/checkout' ).goToCheckout( checkout );
+				const checkoutUrl = new URL(
+					window.location.replace.mock.lastCall[ 0 ],
+					'https://example.com'
+				);
+				expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( checkout.destination );
+				Object.assign( window.location, { href: checkoutUrl.href, search: checkoutUrl.search } );
+				leaveCheckout( { siteSlug: destination.siteSlug, tracksEvent: 'checkout_cancel' } );
+				expect( window.location.href ).toBe( cancelUrl.href );
+				window.location.search = '';
+				expect( window.location.assign ).not.toHaveBeenCalled();
+			} );
 
 			it.each( [ STEPS.UNIFIED_PLANS, STEPS.SITE_MIGRATION_CHECK ] )(
 				'recovers a configure failure after $slug with an explicit retry on the same destination',

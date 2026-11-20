@@ -3,6 +3,7 @@
  */
 import { waitFor } from '@testing-library/react';
 import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
+import { recordSignupComplete } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupCompleteFlowName,
@@ -13,10 +14,15 @@ import { mockStepProps, renderStep } from '../../test/helpers';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( { useSiteQuery: jest.fn() } ) );
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn().mockResolvedValue( {} ) } } ) );
+jest.mock( 'calypso/lib/analytics/signup', () => ( {
+	recordSignupComplete: jest.fn(),
+	SIGNUP_DOMAIN_ORIGIN: { NOT_SET: 'not-set' },
+} ) );
 jest.mock( 'calypso/signup/storageUtils', () => ( {
 	clearSignupCompleteFlowName: jest.fn(),
 	clearSignupDestinationCookie: jest.fn(),
 	getSignupCompleteFlowName: jest.fn(),
+	getSignupIsNewUserAndClear: jest.fn(),
 } ) );
 
 describe( 'SiteMigrationCheckoutReturn', () => {
@@ -34,7 +40,7 @@ describe( 'SiteMigrationCheckoutReturn', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		jest.mocked( useSiteQuery ).mockReturnValue( {
-			data: { ID: 456, slug: 'new-site.wordpress.com' },
+			data: { ID: 456, slug: 'new-site.wordpress.com', plan: { product_slug: 'personal-bundle' } },
 			isError: false,
 		} as unknown as ReturnType< typeof useSiteQuery > );
 	} );
@@ -50,6 +56,15 @@ describe( 'SiteMigrationCheckoutReturn', () => {
 			} )
 		);
 		expect( clearSignupCompleteFlowName ).toHaveBeenCalled();
+		expect( recordSignupComplete ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				flow: 'site-migration',
+				siteId: 456,
+				hasCartItems: true,
+				planProductSlug: 'personal-bundle',
+			} ),
+			true
+		);
 		expect( wpcom.req.post ).toHaveBeenCalledWith(
 			{ path: '/sites/456/site-intent', apiNamespace: 'wpcom/v2' },
 			{},
@@ -68,6 +83,7 @@ describe( 'SiteMigrationCheckoutReturn', () => {
 		} );
 		expect( wpcom.req.post ).not.toHaveBeenCalled();
 		expect( clearSignupCompleteFlowName ).not.toHaveBeenCalled();
+		expect( recordSignupComplete ).not.toHaveBeenCalled();
 	} );
 
 	it.each( [

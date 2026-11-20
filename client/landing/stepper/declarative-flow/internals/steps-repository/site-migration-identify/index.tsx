@@ -11,7 +11,7 @@ import CaptureInput from 'calypso/blocks/import/capture/capture-input';
 import { CAPTURE_URL_RGX, convertPlatformName } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
-	analyzeUrlQueryKey,
+	seedAnalyzeUrlQuery,
 	useAnalyzeUrlQuery,
 } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
@@ -128,7 +128,7 @@ export const Analyzer: FC< Props > = ( {
 		) {
 			// The next step looks the source up by the address the analyzer settled on.
 			if ( siteInfo ) {
-				queryClient.setQueryData( analyzeUrlQueryKey( siteInfo.url ), siteInfo );
+				seedAnalyzeUrlQuery( queryClient, siteInfo );
 			}
 			onCompleteRef.current(
 				siteInfo ?? { url: enteredURL, platform: 'wordpress' },
