@@ -20,9 +20,7 @@ const getLocalizedCanonicalUrl = ( path, locale, excludeSearch = false ) => {
 
 	// Calypso serves `/plugins` and `/plugins/` as the same page, so canonical and
 	// hreflang URLs never keep a trailing slash.
-	if ( localizedUrl.pathname.length > 1 && localizedUrl.pathname.endsWith( '/' ) ) {
-		localizedUrl.pathname = localizedUrl.pathname.replace( /\/+$/, '' ) || '/';
-	}
+	localizedUrl.pathname = localizedUrl.pathname.replace( /\/+$/, '' ) || '/';
 
 	return localizedUrl.href;
 };
