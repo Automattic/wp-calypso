@@ -18,9 +18,9 @@ This is a public repository: follow the Confidentiality section of `AGENTS.md` i
 
 ## 2. Write the commit body
 
-Plain paragraphs, with no labels, lists or headings. All but the last state why the change was needed, in the past tense; they become the PR's Why, the part hardest to recover later. Start with how the code worked before, enough for someone who has never seen it, then what was wrong with that. For a bug, say what caused it. For any change, give the context a reader needs to judge it: who was affected and how often (say so if they rarely were), what the existing approach cost, and the goal the change serves. Don't stop at the symptom. Before writing them, reread the linked issue and any earlier PRs in the same effort, and carry their motivation over in your own words: Why must make sense without opening a link, which may be private or stop working. Write for someone who didn't work on this code, as clearly and easily read as you can, and take as many sentences or paragraphs as that needs. The last paragraph states the fix: how this change solves it, in the present tense.
+Plain paragraphs, with no labels, lists or headings, about this commit alone. All but the last state why it was needed, in the past tense: what was wrong and, for a bug, what caused it. The last paragraph states the fix: how this commit solves it, in the present tense. Keep it complete but short enough to read in `git log`. This repository squash-merges PRs with their commits' messages, so these are what trunk's history keeps, and the merged subject links to the PR, whose description gives the full context. A follow-up commit during review describes only itself.
 
-A bug fix:
+Example:
 
 ```
 Sites: Show the PHP version for Simple sites
@@ -30,21 +30,11 @@ The Sites list and site overview showed `-` for the PHP version of Simple sites,
 Simple sites now read their PHP version from Core's `core/get-environment-info` ability, for users who can manage the site's options. Other sites still use the hosting PHP endpoint.
 ```
 
-A change of approach, where the problem rarely reached users:
-
-```
-Checkout: Take the renewal header's branding from the cart
-
-Checkout has a main renewal URL, `/checkout/renew/:subscriptionId`, which renews any purchase from its subscription ID, and service-specific ones such as `/checkout/akismet/renew/:subscriptionId`. The checkout header chose its brand from the URL alone, so an Akismet renewal at the main URL showed the WordPress.com logo instead of the Akismet one. Users rarely saw this, because Akismet renewal links go to the Akismet URL, but keeping a route like that for each service is a lot of special-case work when the server already knows what is being renewed. Checkout should work for any renewal from the main URL.
-
-Since an earlier server change, the cart flags a renewal of a purchase on a holding site with that site's siteless type, but the header renders outside checkout, before the cart has loaded, and had no way to wait for it.
-
-Checkout now shares the siteless type it finds in the cart once the cart has loaded, and on that route the header shows no logo until then, so it never shows the wrong brand.
-```
-
 ## 3. Write the PR description
 
-The PR title is the commit subject. The description follows `.github/PULL_REQUEST_TEMPLATE.md`, without its HTML comments.
+The PR title is the first commit's subject. The description follows `.github/PULL_REQUEST_TEMPLATE.md`, without its HTML comments.
+
+Write it from the whole change, not by copying a commit body: a PR may have several commits, or commits someone else wrote, and none of them may explain all of it. Before writing, read the branch's commits (`git log trunk..HEAD`), its full diff (`git diff trunk...HEAD`), the linked issue and any earlier PRs in the same effort. When a commit body already covers the whole change, start from it and expand it. When a later push changes what the PR does, rewrite What and Why to match.
 
 Start with a line linking the related GitHub or Linear issue: `Fixes #123` or `Fixes LIN-123` when merging resolves it, `Part of LIN-123` when it doesn't, e.g. it still needs a separate deploy. Leave the line out when there is no issue.
 
@@ -55,9 +45,19 @@ If the change adds new translatable strings, add this warning next, so a human r
 > This PR introduces new translatable strings. Remember to add the `[Status] String Freeze` label before merging.
 ```
 
-The description then reuses the commit body's paragraphs, each part under its own heading. `## What` holds the last, fix paragraph rewritten to start with a verb in the imperative, then `## Why` holds the paragraphs before it as is.
+Next, add a `## What` heading with how the whole change solves the problem, starting with a verb in the imperative, in as many sentences as that needs.
 
 For a change users can see (UI, or new or changed translatable strings), add before/after screenshots under `## What`, after its paragraph. Take and upload them as in [verify/screenshots.md](../verify/screenshots.md).
+
+Then add a `## Why` heading stating why the change was needed, in the past tense, in plain paragraphs; it's the part hardest to recover later. Start with how the code worked before, enough for someone who has never seen it, then what was wrong with that. For a bug, say what caused it. For any change, give the context a reader needs to judge it: who was affected and how often (say so if they rarely were), what the existing approach cost, and the goal the change serves. Don't stop at the symptom. Carry the motivation of the linked issue and earlier PRs over in your own words: Why must make sense without opening a link, which may be private or stop working. Write for someone who didn't work on this code, as clearly and easily read as you can, and take as many sentences or paragraphs as that needs.
+
+A Why for a change of approach, where the problem rarely reached users:
+
+```
+Checkout has a main renewal URL, `/checkout/renew/:subscriptionId`, which renews any purchase from its subscription ID, and service-specific ones such as `/checkout/akismet/renew/:subscriptionId`. The checkout header chose its brand from the URL alone, so an Akismet renewal at the main URL showed the WordPress.com logo instead of the Akismet one. Users rarely saw this, because Akismet renewal links go to the Akismet URL, but keeping a route like that for each service is a lot of special-case work when the server already knows what is being renewed. Checkout should work for any renewal from the main URL.
+
+Since an earlier server change, the cart flags a renewal of a purchase on a holding site with that site's siteless type, but the header renders outside checkout, before the cart has loaded, and had no way to wait for it.
+```
 
 Then add a `## Details` heading listing what What and Why leave out: which components, hooks, selectors, endpoints or feature flags change and how, trade-offs and alternatives rejected, and work left for a follow-up. Put the list in a collapsed `<details>` block whose `<summary>` is `Details`, with a blank line after `<summary>` and before `</details>` so that GitHub renders the Markdown inside. When changes must ship in a particular sequence, state the rollout order under Details, before the `<details>` block. Leave out Details only when What already names everything the diff does.
 
