@@ -85,18 +85,32 @@ function BlogPill( {
 	onIconError,
 }: BlogPillProps ) {
 	const [ anchor, setAnchor ] = useState< HTMLElement | null >( null );
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isHovered, setIsHovered ] = useState( false );
+	const [ isFocused, setIsFocused ] = useState( false );
+	// Opened from the info button, for touch screens that have no hover.
+	const [ isPinned, setIsPinned ] = useState( false );
+	// Escape hides the details until the pill is hovered or focused again.
+	const [ isDismissed, setIsDismissed ] = useState( false );
 	const detailsId = useId();
+	const isOpen = ! isDismissed && ( isHovered || isFocused || isPinned );
 
-	const open = useCallback( () => setIsOpen( true ), [] );
-	const close = useCallback( () => setIsOpen( false ), [] );
+	const dismiss = useCallback( () => {
+		setIsDismissed( true );
+		setIsPinned( false );
+	}, [] );
 
 	return (
 		<li
 			ref={ setAnchor }
 			className={ clsx( 'recommended-blog-groups__pill', { 'is-selected': isSelected } ) }
-			onMouseEnter={ open }
-			onMouseLeave={ close }
+			onMouseEnter={ () => {
+				setIsHovered( true );
+				setIsDismissed( false );
+			} }
+			onMouseLeave={ () => {
+				setIsHovered( false );
+				setIsPinned( false );
+			} }
 		>
 			<button
 				type="button"
@@ -106,12 +120,15 @@ function BlogPill( {
 				aria-busy={ isBusy || undefined }
 				aria-disabled={ isDisabled || isBusy || undefined }
 				onClick={ isDisabled || isBusy ? undefined : onClick }
-				onFocus={ open }
-				onBlur={ close }
+				onFocus={ () => {
+					setIsFocused( true );
+					setIsDismissed( false );
+				} }
+				onBlur={ () => setIsFocused( false ) }
 				onKeyDown={ ( event ) => {
 					if ( event.key === 'Escape' && isOpen ) {
 						event.stopPropagation();
-						close();
+						dismiss();
 					}
 				} }
 			>
@@ -143,14 +160,17 @@ function BlogPill( {
 					blog.name
 				) }
 				showTooltip={ false }
-				onClick={ open }
+				onClick={ () => {
+					setIsPinned( true );
+					setIsDismissed( false );
+				} }
 			/>
 			{ isOpen && anchor && (
 				<Popover
 					anchor={ anchor }
 					placement="bottom-start"
 					focusOnMount={ false }
-					onClose={ close }
+					onClose={ dismiss }
 					className="recommended-blog-groups__popover"
 				>
 					<BlogDetails blog={ blog } id={ detailsId } />

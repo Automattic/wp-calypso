@@ -169,6 +169,74 @@ describe( 'RecommendedBlogGroups in select mode', () => {
 		expect( screen.queryByText( 'Bread Notes writes about things.' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'keeps the details open while the pill has focus, after the pointer leaves', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.tab();
+		await user.hover( getPill( 'Pasta Daily' ) );
+		await user.unhover( getPill( 'Pasta Daily' ) );
+
+		expect( getPill( 'Pasta Daily' ) ).toHaveFocus();
+		await waitFor( () =>
+			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
+		);
+		expect( getPill( 'Pasta Daily' ) ).toHaveAccessibleDescription(
+			expect.stringContaining( 'Pasta Daily writes about things.' )
+		);
+	} );
+
+	it( 'keeps the details open while hovered, after the pill loses focus', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.hover( getPill( 'Bread Notes' ) );
+		getPill( 'Bread Notes' ).focus();
+		getPill( 'Bread Notes' ).blur();
+
+		await waitFor( () =>
+			expect( screen.getByText( 'Bread Notes writes about things.' ) ).toBeVisible()
+		);
+	} );
+
+	it( 'hides the details on Escape until the pill is hovered or focused again', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.hover( getPill( 'Pasta Daily' ) );
+		await user.tab();
+		expect( getPill( 'Pasta Daily' ) ).toHaveFocus();
+		await waitFor( () =>
+			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
+		);
+
+		await user.keyboard( '{Escape}' );
+
+		expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument();
+		expect( getPill( 'Pasta Daily' ) ).not.toHaveAttribute( 'aria-describedby' );
+
+		await user.unhover( getPill( 'Pasta Daily' ) );
+		await user.hover( getPill( 'Pasta Daily' ) );
+
+		await waitFor( () =>
+			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
+		);
+	} );
+
+	it( 'closes details opened from the info button when the pointer leaves', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.click( screen.getByRole( 'button', { name: 'About Loud Songs' } ) );
+		await waitFor( () =>
+			expect( screen.getByText( 'Loud Songs writes about things.' ) ).toBeVisible()
+		);
+
+		await user.unhover( getPill( 'Loud Songs' ) );
+
+		expect( screen.queryByText( 'Loud Songs writes about things.' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'gives each blog a single tab stop', async () => {
 		const user = userEvent.setup();
 		renderSelect();
