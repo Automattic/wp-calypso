@@ -80,6 +80,22 @@ describe( '<SecurityLegacyContact />', () => {
 		} );
 	} );
 
+	test( 'explains an empty email address instead of adding a contact', async () => {
+		interceptContacts( [] );
+		const addScope = nock( API ).post( '/wpcom/v2/me/legacy-contacts' ).query( true ).reply( 200 );
+
+		renderScreen();
+
+		const email = await screen.findByRole( 'textbox', { name: /Email address/ } );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Add legacy contact' } ) );
+
+		await waitFor( () =>
+			expect( email ).toHaveAccessibleDescription( /Constraints not satisfied/ )
+		);
+		expect( addScope.isDone() ).toBe( false );
+		nock.cleanAll();
+	} );
+
 	test( 'omits notes from the request when only whitespace is entered', async () => {
 		interceptContacts( [] );
 		let requestBody: Record< string, unknown > | undefined;
