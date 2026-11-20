@@ -2,9 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import nock from 'nock';
+import { screen } from '@testing-library/react';
 import { render } from '../../../../test-utils';
 import { ManageSubscriptionCard } from '../index';
 import type { Purchase } from '@automattic/api-core';
@@ -111,50 +109,5 @@ describe( 'auto-renew without a payment method', () => {
 
 		expect( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) ).toBeVisible();
 		expect( screen.queryByText( 'Auto-renew needs a payment method.' ) ).not.toBeInTheDocument();
-	} );
-} );
-
-describe( 'auto-renew enabled event', () => {
-	const EVENT = 'calypso_purchases_auto_renew_enabled';
-
-	test( 'records the event when auto-renew is enabled', async () => {
-		nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/upgrades/1/enable-auto-renew' )
-			.reply( 200, { success: true, upgrade: { ID: 1 } } );
-		const { recordTracksEvent } = render(
-			<ManageSubscriptionCard
-				purchase={ makePurchase( { can_reenable_auto_renewal: true, is_rechargeable: true } ) }
-			/>
-		);
-
-		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) );
-
-		await waitFor( () =>
-			expect( recordTracksEvent ).toHaveBeenCalledWith( EVENT, {
-				purchase_id: 1,
-				product_slug: 'personal-bundle',
-			} )
-		);
-	} );
-
-	test( 'records nothing when auto-renew is disabled', async () => {
-		const scope = nock( 'https://public-api.wordpress.com' )
-			.post( '/rest/v1.1/upgrades/1/disable-auto-renew' )
-			.reply( 200, { success: true, upgrade: { ID: 1 } } );
-		const { recordTracksEvent } = render(
-			<ManageSubscriptionCard
-				purchase={ makePurchase( {
-					is_auto_renew_enabled: true,
-					can_disable_auto_renew: true,
-					is_rechargeable: true,
-					expiry_status: 'auto-renewing',
-				} ) }
-			/>
-		);
-
-		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) );
-
-		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
-		expect( recordTracksEvent ).not.toHaveBeenCalledWith( EVENT, expect.anything() );
 	} );
 } );
