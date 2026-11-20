@@ -94,12 +94,16 @@ export function RecommendedBlogsStep( {
 
 		setIsFollowing( true );
 		setFailedCount( 0 );
-		const results = await Promise.allSettled(
-			blogs.map( ( blog ) =>
-				followSite( { feedUrl: blog.feed_URL, source: READER_ONBOARDING_FOLLOW_SOURCE } )
-			)
-		);
-		const failed = blogs.filter( ( _, index ) => results[ index ].status === 'rejected' );
+		// One at a time: a failed follow rolls the subscriptions cache back to its
+		// state when that follow started, which would drop follows that overlapped it.
+		const failed: RecommendedBlog[] = [];
+		for ( const blog of blogs ) {
+			try {
+				await followSite( { feedUrl: blog.feed_URL, source: READER_ONBOARDING_FOLLOW_SOURCE } );
+			} catch {
+				failed.push( blog );
+			}
+		}
 		setIsFollowing( false );
 
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }recommended_blogs_followed`, {
