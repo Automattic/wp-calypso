@@ -28,7 +28,7 @@ import {
 	isPaginatedCategory,
 	parseCategoryPage,
 } from './category-pagination';
-import { UNLISTED_PLUGINS } from './constants';
+import { UNLISTED_PLUGINS, WPBEGINNER_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
 const PREFETCH_TIMEOUT = 2000;
@@ -272,6 +272,8 @@ export async function fetchCategoryPlugins( context, next ) {
 		...getQueryOptions( context ),
 		category,
 		tag,
+		// Matches the client, which lists WPBeginner's picks by slug rather than by tag.
+		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
 		page: page > 1 ? page : undefined,
 	};
 
@@ -295,19 +297,21 @@ export async function fetchCategoryPlugins( context, next ) {
 		return next();
 	}
 
-	if ( ! ( dataOrError instanceof Error ) ) {
-		const firstPage = queryClient.getQueryData(
-			getESPluginsInfiniteQueryParams( { ...options, infinite: true }, true ).queryKey
-		)?.pages?.[ 0 ]?.data;
+	const firstPage =
+		dataOrError instanceof Error
+			? undefined
+			: queryClient.getQueryData(
+					getESPluginsInfiniteQueryParams( { ...options, infinite: true }, true ).queryKey
+				)?.pages?.[ 0 ]?.data;
 
-		if ( firstPage ) {
-			if ( page > 1 && ! firstPage.results?.length ) {
-				context.res.status( 404 );
-				context.serverSideRender = false;
-			} else {
-				setCategoryPaginationLinks( context, { page, hasNextPage: !! firstPage.page_handle } );
-			}
-		}
+	if ( ! firstPage ) {
+		// The prefetch swallows search errors, so skip SSR rather than cache an empty page.
+		context.serverSideRender = false;
+	} else if ( page > 1 && ! firstPage.results?.length ) {
+		context.res.status( 404 );
+		context.serverSideRender = false;
+	} else {
+		setCategoryPaginationLinks( context, { page, hasNextPage: !! firstPage.page_handle } );
 	}
 
 	next();

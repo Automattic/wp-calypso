@@ -70,7 +70,7 @@ const usePlugins = ( {
 		fetchNextPage,
 		hasNextPage,
 	} = useESPluginsInfinite( wporgPluginsOptions, {
-		enabled: !! search || ! [ 'paid', 'featured ' ].includes( category ),
+		enabled: !! search || ! [ 'paid', 'featured' ].includes( category ),
 		staleTime,
 	} ) as ESResponse;
 
