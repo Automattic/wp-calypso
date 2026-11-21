@@ -1,9 +1,8 @@
 ## Testing configuration
 
-At the moment we maintain four different group of tests. You can find configurations for all of them in the following subfolders:
+At the moment we maintain several groups of tests. You can find configurations for all of them in the following subfolders:
 
 - `client` - unit and component tests for code located in `client` top level folder.
-- `integration` - integration tests for code located in `bin`, `client` and `server` top level folders.
 - `server` - unit tests for code located in `server` top level folder.
 - `e2e` - automated tests for the entire project.
 
