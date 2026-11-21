@@ -23,7 +23,7 @@ export function DesignYourOwnCard() {
 	if ( ! site ) {
 		return null;
 	}
-	const redesignUrl = `/site-redesign/${ site.slug }`;
+	const redesignUrl = `/site-redesign/${ site.slug }?ref=theme_showcase`;
 	return (
 		<Card tagName="article" className="site-redesign-card" ref={ observeCard }>
 			<div className="site-redesign-card__image">
