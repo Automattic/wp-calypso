@@ -54,9 +54,9 @@ describe( 'useLinkAnswersMutation', () => {
 	it( 'should call wpcom.req.post with the right parameters', async () => {
 		render( <MockedComponent />, { wrapper } );
 		const button = document.querySelector( '[data-testid="button-mutate"]' ) as HTMLButtonElement;
-		button && button.click();
+		button.click();
 
-		waitFor( () =>
+		await waitFor( () =>
 			expect( wpcom.req.post ).toHaveBeenCalledWith( {
 				apiNamespace: 'wpcom/v2',
 				path: '/segmentation-survey/answers/link',

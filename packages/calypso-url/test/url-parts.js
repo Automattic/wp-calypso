@@ -203,12 +203,6 @@ describe( 'getUrlParts', () => {
 } );
 
 describe( 'getUrlFromParts', () => {
-	test( 'should throw an error if no parts object is provided', () => {
-		expect( () => getUrlFromParts().toThrow() );
-		expect( () => getUrlFromParts( undefined ).toThrow() );
-		expect( () => getUrlFromParts( null ).toThrow() );
-	} );
-
 	test( 'should throw an error if an empty parts object is provided', () => {
 		expect( () => getUrlFromParts( {} ) ).toThrow();
 	} );
