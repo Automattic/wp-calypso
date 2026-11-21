@@ -83,6 +83,18 @@ describe( 'VerifyLoginCode', () => {
 		expect( mockReboot ).not.toHaveBeenCalled();
 	} );
 
+	it( 'marks a redirect to a post on a WordPress.com site so iOS keeps it in the browser', async () => {
+		respondWith( { redirect_to: 'https://example.wordpress.com/2024/05/01/my-post/' } );
+
+		await submitCode();
+
+		await waitFor( () =>
+			expect( navigate ).toHaveBeenCalledWith(
+				'https://example.wordpress.com/2024/05/01/my-post/?open_in_browser=1'
+			)
+		);
+	} );
+
 	it( 'reboots an account without two-step authentication when there is no redirect URL', async () => {
 		// The endpoint leaves out `data` when the login has no valid redirect URL.
 		respondWith( undefined );
