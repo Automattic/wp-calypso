@@ -187,6 +187,29 @@ const waitForSslDetails = ( queryClient: QueryClient, domainName: string ) =>
 		expect( queryClient.getQueryData( sslDetailsQuery( domainName ).queryKey ) ).toBeDefined()
 	);
 
+// Media queries are read once and cached, so the answer has to change behind the same object.
+let isSmallScreen = false;
+
+beforeAll( () => {
+	vi.mocked( window.matchMedia ).mockImplementation(
+		( query: string ) =>
+			( {
+				get matches() {
+					return isSmallScreen && query.includes( 'max-width: 782px' );
+				},
+				media: query,
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+			} ) as unknown as MediaQueryList
+	);
+} );
+
+afterEach( () => {
+	isSmallScreen = false;
+} );
+
 describe( '<SiteDomains>', () => {
 	beforeEach( () => {
 		mockSearchParams = {};
@@ -953,5 +976,37 @@ describe( '<SiteDomains>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
 		expect( screen.queryByText( 'Expired domain' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows a saved table view as cards on a small screen, and keeps the table saved', async () => {
+		isSmallScreen = true;
+		nock.cleanAll();
+		mockApis( {
+			domains: [ domain, { ...domain, domain: 'second.com', primary_domain: false } ],
+			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
+		} );
+		const savedPreferences: Record< string, Record< string, { type?: string } > >[] = [];
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences' )
+			.reply( 200, ( _uri, body ) => {
+				savedPreferences.push( body as ( typeof savedPreferences )[ number ] );
+				return { calypso_preferences: {} };
+			} );
+		const user = userEvent.setup();
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'group', { name: domain.domain } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'View options' } ) );
+		await user.click( await screen.findByRole( 'radio', { name: 'Sort descending' } ) );
+
+		await vi.waitFor( () => expect( savedPreferences ).toHaveLength( 1 ) );
+		expect(
+			savedPreferences[ 0 ].calypso_preferences[ 'hosting-dashboard-dataviews-view-site-domains' ]
+				.type
+		).toBe( 'table' );
 	} );
 } );
