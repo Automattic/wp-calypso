@@ -430,7 +430,34 @@
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
-		"@react-spring/core@9.3.0": {
+		"@parcel/watcher": {
+			"built": false
+		},
+		"@playwright/browser-chromium": {
+			"built": true
+		},
+		"@playwright/browser-firefox": {
+			"built": true
+		},
+		"@swc/core": {
+			"built": false
+		},
+		"core-js": {
+			"built": false
+		},
+		"core-js-pure": {
+			"built": false
+		},
+		"dtrace-provider": {
+			"built": false
+		},
+		"esbuild": {
+			"built": false
+		},
+		"msw": {
+			"built": false
+		},
+		"unrs-resolver": {
 			"built": false
 		}
 	}
