@@ -1,0 +1,49 @@
+.sites-table .dataviews-view-table {
+	// A table can't be narrower than its content, and DataViews keeps cells on one line.
+	// Take the name and address out of the Site column's width, so the column gets the
+	// space the others leave and a name or address that doesn't fit ends in an ellipsis.
+	.dataviews-view-table__primary-column-content {
+		flex: 1 1 0;
+		width: 0;
+		// Room for a readable name next to its badges.
+		min-width: 240px;
+
+		// Matches the medium breakpoint from Core. Keeps the column clear of the sticky Actions column.
+		@media ( max-width: 782px ) {
+			min-width: 160px;
+		}
+
+		> * {
+			max-width: 100%;
+		}
+	}
+
+	// Badges don't shrink. Clip them rather than let them run into the next column.
+	.dataviews-title-field {
+		overflow: hidden;
+
+		> * {
+			min-width: 0;
+		}
+	}
+
+	// Cut the address, not the link, so the external link icon stays visible.
+	a.dataviews-url-field {
+		display: flex;
+		align-items: center;
+
+		.components-external-link__contents {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.components-external-link__icon {
+			flex-shrink: 0;
+		}
+	}
+
+	// The DataViews minimum is far wider than a plan name or a count needs.
+	td > .dataviews-view-table__cell-content-wrapper {
+		min-width: 0;
+	}
+}

@@ -51,6 +51,20 @@ describe( '<Name>', () => {
 		expect( container ).toHaveTextContent( 'Deleted' );
 	} );
 
+	test( 'for deleted sites, the name is cut with an ellipsis like any other name', () => {
+		const site = {
+			name: 'A very long name for a deleted site',
+			site_migration: {},
+			is_deleted: true,
+		} as Site;
+		const { getByText } = render( <Name site={ site } value={ site.name } /> );
+		expect( getByText( site.name ) ).toHaveStyle( {
+			overflowX: 'hidden',
+			textOverflow: 'ellipsis',
+			whiteSpace: 'nowrap',
+		} );
+	} );
+
 	test( 'for sites still being built via DIFM, it renders "Express service"', () => {
 		const site = {
 			name: 'name',
