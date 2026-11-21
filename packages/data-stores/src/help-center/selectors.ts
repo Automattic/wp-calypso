@@ -52,7 +52,6 @@ export const getAreSoundNotificationsEnabled = ( state: State ) =>
 export const getZendeskClientId = ( state: State ) => state.zendeskClientId;
 export const getHelpCenterRouterHistory = ( state: State ) => state.helpCenterRouterHistory;
 export const getNavigateToRoute = ( state: State ) => state.navigateToRoute;
-export const getOdieInitialPromptText = ( state: State ) => state.odieInitialPromptText;
 export const getOdieBotNameSlug = ( state: State ) => state.odieBotNameSlug;
 // The human-only and hybrid checkout variations also grant premium support, but only until the
 // Help Center is opened from somewhere other than checkout.

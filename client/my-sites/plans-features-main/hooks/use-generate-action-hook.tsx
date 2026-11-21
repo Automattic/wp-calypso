@@ -519,6 +519,9 @@ function getLoggedInPlansAction( {
 		sitePlanSlug === PLAN_MIGRATION_TRIAL_MONTHLY ||
 		sitePlanSlug === PLAN_HOSTING_TRIAL_MONTHLY ||
 		sitePlanSlug === PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY;
+	// Only the owner of a paid plan can change it. Anyone else sees a notice to contact the owner,
+	// and every button that would change the plan is disabled.
+	const ownerOnlyStatus = canUserManageCurrentPlan ? undefined : 'disabled';
 
 	const createLoggedInPlansAction = (
 		text: TranslateResult,
@@ -630,14 +633,14 @@ function getLoggedInPlansAction( {
 					translate( 'Switch at renewal', { context: 'verb' } ),
 					'secondary',
 					undefined,
-					canUserManageCurrentPlan ? undefined : 'disabled'
+					ownerOnlyStatus
 				);
 			}
 			return createLoggedInPlansAction(
 				translate( 'Downgrade', { context: 'verb' } ),
 				'secondary',
 				undefined,
-				canUserManageCurrentPlan ? undefined : 'disabled'
+				ownerOnlyStatus
 			);
 		}
 		// Not purchasable and not downgradeable — return a disabled no-op to avoid
@@ -663,7 +666,7 @@ function getLoggedInPlansAction( {
 				translate( 'Switch at renewal', { context: 'verb' } ),
 				'secondary',
 				undefined,
-				canUserManageCurrentPlan ? undefined : 'disabled'
+				ownerOnlyStatus
 			);
 		}
 		if ( isInstantPlanChangeTarget ) {
@@ -676,7 +679,9 @@ function getLoggedInPlansAction( {
 		}
 		return createLoggedInPlansAction(
 			translate( 'Contact support', { context: 'verb' } ),
-			'secondary'
+			'secondary',
+			undefined,
+			ownerOnlyStatus
 		);
 	}
 
@@ -710,7 +715,8 @@ function getLoggedInPlansAction( {
 					plan: planTitle ?? '',
 					priceString: priceString ?? '',
 				},
-			} )
+			} ),
+			ownerOnlyStatus
 		);
 	}
 
@@ -721,15 +727,30 @@ function getLoggedInPlansAction( {
 		! isTrialPlan
 	) {
 		if ( planMatches( planSlug, { term: TERM_TRIENNIALLY } ) ) {
-			return createLoggedInPlansAction( translate( 'Upgrade to Triennial' ) );
+			return createLoggedInPlansAction(
+				translate( 'Upgrade to Triennial' ),
+				'primary',
+				undefined,
+				ownerOnlyStatus
+			);
 		}
 
 		if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
-			return createLoggedInPlansAction( translate( 'Upgrade to Biennial' ) );
+			return createLoggedInPlansAction(
+				translate( 'Upgrade to Biennial' ),
+				'primary',
+				undefined,
+				ownerOnlyStatus
+			);
 		}
 
 		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
-			return createLoggedInPlansAction( translate( 'Upgrade to Yearly' ) );
+			return createLoggedInPlansAction(
+				translate( 'Upgrade to Yearly' ),
+				'primary',
+				undefined,
+				ownerOnlyStatus
+			);
 		}
 	}
 
@@ -753,7 +774,8 @@ function getLoggedInPlansAction( {
 				args: {
 					plan: getPlan( planSlug )?.getTitle() || '',
 				},
-			} )
+			} ),
+			ownerOnlyStatus
 		);
 	}
 
@@ -761,6 +783,6 @@ function getLoggedInPlansAction( {
 		translate( 'Upgrade', { context: 'verb' } ),
 		'primary',
 		undefined,
-		canUserManageCurrentPlan ? undefined : 'disabled'
+		ownerOnlyStatus
 	);
 }

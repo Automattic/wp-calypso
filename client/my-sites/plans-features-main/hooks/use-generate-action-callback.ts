@@ -21,7 +21,6 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import { getSiteSlug, getSiteUrl, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
-import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -226,7 +225,6 @@ function useGenerateActionCallback( {
 		siteUrl: siteUrl || '',
 		currentPlan,
 	} );
-	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) =>
 		async () => {
@@ -264,8 +262,8 @@ function useGenerateActionCallback( {
 				return;
 			}
 
+			// Only the plan's owner can change it, and its buttons are disabled for anyone else.
 			if ( sitePlanSlug && ! flowName && intent !== 'plans-p2' && ! canUserManageCurrentPlan ) {
-				await handleNonOwnerClick( { availableForPurchase } );
 				return;
 			}
 			/* 3. In the logged-in plans dashboard, handle plan downgrades and plan downgrade tracks events */
