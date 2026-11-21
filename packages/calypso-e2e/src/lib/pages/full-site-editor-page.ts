@@ -4,7 +4,6 @@ import {
 	BlockInserter,
 	EditorSidebarBlockInserterComponent,
 	EditorToolbarComponent,
-	EditorWelcomeTourComponent,
 	EditorPopoverMenuComponent,
 	EditorSiteStylesComponent,
 	ColorSettings,
@@ -51,7 +50,6 @@ export class FullSiteEditorPage {
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
-	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
 	private editorSiteStylesComponent: EditorSiteStylesComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
@@ -73,7 +71,6 @@ export class FullSiteEditorPage {
 		this.editor = new EditorComponent( page );
 
 		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
-		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editor );
 		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
@@ -154,7 +151,6 @@ export class FullSiteEditorPage {
 			await this.waitUntilLoaded();
 		}
 
-		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 		await this.cookieBannerComponent.acceptCookie();
 
 		if ( leaveWithoutSaving ) {

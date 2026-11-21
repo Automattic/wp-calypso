@@ -18,7 +18,6 @@ import {
 	EditorBlockListViewComponent,
 	EditorInlineBlockInserterComponent,
 	EditorSidebarBlockInserterComponent,
-	EditorWelcomeTourComponent,
 	EditorWelcomeGuideComponent,
 	EditorBlockToolbarComponent,
 	EditorPopoverMenuComponent,
@@ -45,9 +44,6 @@ const selectors = {
 
 	// Toast
 	toastViewPostLink: '.components-snackbar__content a:text-matches("View (Post|Page)", "i")',
-
-	// Welcome tour
-	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
 
 type PublishResponseBody = {
@@ -356,7 +352,6 @@ export class EditorPage {
 	private editorBlockListViewComponent: EditorBlockListViewComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
-	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorWelcomeGuideComponent: EditorWelcomeGuideComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
 	private editorPopoverMenuComponent: EditorPopoverMenuComponent;
@@ -378,7 +373,6 @@ export class EditorPage {
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
 		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
 		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
-		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
 		this.editorWelcomeGuideComponent = new EditorWelcomeGuideComponent( page, this.editor );
 		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
@@ -452,9 +446,6 @@ export class EditorPage {
 		} else {
 			await this.waitForEditorLoadedRequests( 60 * 1000 );
 		}
-
-		// Dismiss the Welcome Tour.
-		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 
 		// Accept the Cookie banner.
 		await this.cookieBannerComponent.acceptCookie();
