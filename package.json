@@ -322,9 +322,9 @@
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0",
 		"vitest-canvas-mock": "^1.2.0",
-		"webpack": "^5.111.1",
-		"webpack-bundle-analyzer": "^5.4.0",
-		"webpack-cli": "^7.2.3",
+		"webpack": "^5.112.2",
+		"webpack-bundle-analyzer": "^5.4.2",
+		"webpack-cli": "^7.3.1",
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
@@ -337,7 +337,7 @@
 		"@tanstack/store": "0.11.2",
 		"react": "19.3.1",
 		"react-dom": "19.3.1",
-		"webpack": "5.111.1",
+		"webpack": "^5.112.2",
 		"@types/react": "19.3.0",
 		"@types/react-dom": "19.3.0",
 		"@tootallnate/once@npm:1": "2.0.1",

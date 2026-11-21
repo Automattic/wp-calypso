@@ -52,7 +52,7 @@
 		"react-redux": "^9.3.1",
 		"redux": "^5.0.1",
 		"redux-thunk": "^3.1.0",
-		"webpack-bundle-analyzer": "^5.4.0",
+		"webpack-bundle-analyzer": "^5.4.2",
 		"wpcom": "workspace:^",
 		"wpcom-proxy-request": "workspace:^"
 	},
@@ -67,6 +67,6 @@
 		"postcss-custom-properties": "^12.1.11",
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0",
-		"webpack": "^5.111.1"
+		"webpack": "^5.112.2"
 	}
 }
