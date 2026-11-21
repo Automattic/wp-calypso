@@ -2,18 +2,10 @@
  * @jest-environment jsdom
  */
 
-import config from '@automattic/calypso-config';
-import { type Mock, vi } from 'vitest';
 import { SiteGoal, SiteIntent } from '../constants';
 import { goalsToIntent } from '../utils';
 
-vi.mock( '@automattic/calypso-config' );
-
 describe( 'Test onboard utils', () => {
-	beforeEach( () => {
-		( config.isEnabled as Mock ).mockReset();
-	} );
-
 	it.each( [
 		{
 			goals: [],

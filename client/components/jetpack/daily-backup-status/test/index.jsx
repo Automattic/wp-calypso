@@ -18,10 +18,6 @@ import DailyBackupStatus from '..';
 
 const render = ( el, options ) => renderWithProvider( el, { ...options } );
 
-jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
-	...jest.requireActual( 'calypso/my-sites/backup/hooks' ),
-} ) );
-
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );

@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import { ThemeTierBadgeContextProvider } from '../theme-tier-badge-context';
 import ThemeTierStyleVariationBadge from '../theme-tier-style-variation-badge';
 
-jest.mock( 'calypso/state' );
 jest.mock( '@automattic/calypso-products', () => ( {
 	...jest.requireActual( '@automattic/calypso-products' ),
 	getPlan: jest.fn(),
