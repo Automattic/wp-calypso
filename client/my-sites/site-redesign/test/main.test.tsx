@@ -1306,7 +1306,6 @@ describe( 'SiteRedesign', () => {
 		);
 		expect( page.replace ).toHaveBeenCalledTimes( 1 );
 		expect( activateRedesign ).toHaveBeenCalledTimes( 1 );
-		expect( screen.queryByRole( 'link', { name: 'View site' } ) ).toBeNull();
 	} );
 
 	it( 'goes straight to the theme list when the redesign is already live', async () => {

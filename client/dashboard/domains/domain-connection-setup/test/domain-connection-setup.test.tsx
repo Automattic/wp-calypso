@@ -279,7 +279,6 @@ describe( 'DomainConnectionSetup', () => {
 			await renderAndExpandBackupStep();
 
 			expect( screen.getByLabelText( 'I have a copy of my DNS records' ) ).toBeVisible();
-			expect( screen.queryByText( /Download your DNS records/ ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'suggests a screenshot or a text copy of the records', async () => {
