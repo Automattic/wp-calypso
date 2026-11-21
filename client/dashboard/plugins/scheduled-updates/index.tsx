@@ -4,16 +4,19 @@ import { FormToggle, Icon, Tooltip } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, type Field, filterSortAndPaginate, Operator, View } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { info } from '@wordpress/icons';
+import { info, plugins, scheduled } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState, useCallback } from 'react';
+import { useAnalytics } from '../../app/analytics';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
+	pluginsManageRoute,
 	pluginsScheduledUpdatesEditRoute,
 	pluginsScheduledUpdatesNewRoute,
 } from '../../app/router/plugins';
 import ConfirmModal from '../../components/confirm-modal';
-import { DataViewsCard } from '../../components/dataviews';
+import { DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
+import EmptyState from '../../components/empty-state';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -186,7 +189,8 @@ export default function PluginsScheduledUpdates() {
 		[ locale, handleToggleActive ]
 	);
 
-	const { isLoading, scheduledUpdates } = useScheduledUpdates();
+	const { isLoading, isSuccess, scheduledUpdates } = useScheduledUpdates();
+	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutateAsync: deleteSchedules } = useDeleteSchedules(
 		scheduleToDelete ? [ scheduleToDelete.site.ID ] : [],
@@ -196,6 +200,21 @@ export default function PluginsScheduledUpdates() {
 	const { data: filtered, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( scheduledUpdates, view, fields );
 	}, [ scheduledUpdates, view, fields ] );
+
+	const hasSchedules = scheduledUpdates.length > 0;
+	const hasNoSchedules = isSuccess && ! hasSchedules;
+	const hasSearch = !! view.search;
+	const hasFilters = !! view.filters?.length;
+
+	const newScheduleButton = (
+		<RouterLinkButton
+			variant="primary"
+			to={ pluginsScheduledUpdatesNewRoute.to }
+			__next40pxDefaultSize
+		>
+			{ __( 'New schedule' ) }
+		</RouterLinkButton>
+	);
 
 	const handleDeleteClick = ( schedule: ScheduledUpdateRow ) => {
 		setScheduleToDelete( schedule );
@@ -230,67 +249,119 @@ export default function PluginsScheduledUpdates() {
 					<PageHeader
 						title={ __( 'Scheduled updates' ) }
 						description={ __( 'Schedule automatic plugin updates for your sites.' ) }
-						actions={
-							<RouterLinkButton
-								variant="primary"
-								to={ pluginsScheduledUpdatesNewRoute.to }
-								__next40pxDefaultSize
-							>
-								{ __( 'New schedule' ) }
-							</RouterLinkButton>
-						}
+						actions={ hasNoSchedules ? null : newScheduleButton }
 					/>
 				}
 			>
-				<DataViewsCard>
-					{ ! isLoading && <PerformanceTrackerStop /> }
-					<DataViews
-						paginationInfo={ paginationInfo }
-						fields={ fields }
-						data={ filtered }
-						defaultLayouts={ { table: {} } }
-						view={ view }
-						onChangeView={ setView }
-						isLoading={ isLoading }
-						empty={
-							<p>
-								{ scheduledUpdates.length === 0
-									? __( 'No scheduled updates yet.' )
-									: __(
-											"We couldn't find any schedules based on your search criteria. You might want to check your search terms and try again."
-										) }
-							</p>
-						}
-						actions={ [
-							{
-								id: 'edit',
-								label: __( 'Edit' ),
-								isPrimary: true,
-								callback: ( items ) => {
-									const item = items[ 0 ];
-									navigate( {
-										to: pluginsScheduledUpdatesEditRoute.fullPath,
-										params: { scheduleId: item?.scheduleId },
-									} );
+				{ ! isLoading && <PerformanceTrackerStop /> }
+				{ hasNoSchedules ? (
+					<DataViewsEmptyStateLayout
+						title={ __( 'Choose when your plugins update' ) }
+						description={ __( 'Updates run daily or weekly, at the time you pick.' ) }
+					>
+						<EmptyState.ActionList>
+							<EmptyState.ActionItem
+								title={ __( 'New schedule' ) }
+								description={ __( 'Select the sites, the plugins, and how often they update.' ) }
+								decoration={ <Icon icon={ scheduled } size={ 24 } /> }
+								actions={
+									<RouterLinkButton
+										variant="primary"
+										size="compact"
+										to={ pluginsScheduledUpdatesNewRoute.to }
+										onClick={ () =>
+											recordTracksEvent(
+												'calypso_dashboard_plugins_scheduled_updates_empty_state_action_click',
+												{ action: 'new-schedule' }
+											)
+										}
+										__next40pxDefaultSize
+									>
+										{ __( 'New schedule' ) }
+									</RouterLinkButton>
+								}
+							/>
+							<EmptyState.ActionItem
+								title={ __( 'Manage plugins' ) }
+								description={ __( 'Update a plugin now, or turn on auto‑updates.' ) }
+								decoration={ <Icon icon={ plugins } size={ 24 } /> }
+								actions={
+									<RouterLinkButton
+										variant="secondary"
+										size="compact"
+										to={ pluginsManageRoute.to }
+										onClick={ () =>
+											recordTracksEvent(
+												'calypso_dashboard_plugins_scheduled_updates_empty_state_action_click',
+												{ action: 'manage-plugins' }
+											)
+										}
+										__next40pxDefaultSize
+									>
+										{ __( 'Manage plugins' ) }
+									</RouterLinkButton>
+								}
+							/>
+						</EmptyState.ActionList>
+					</DataViewsEmptyStateLayout>
+				) : (
+					<DataViewsCard>
+						<DataViews
+							paginationInfo={ paginationInfo }
+							fields={ fields }
+							data={ filtered }
+							defaultLayouts={ { table: {} } }
+							view={ view }
+							onChangeView={ setView }
+							isLoading={ isLoading }
+							empty={
+								hasSchedules && ( hasSearch || hasFilters ) ? (
+									<DataViewsEmptyStateLayout
+										isBorderless
+										title={
+											hasSearch
+												? __( 'No schedules match your search' )
+												: __( 'No schedules match your filters' )
+										}
+										description={
+											hasSearch
+												? __( 'Try a different search term.' )
+												: __( 'Try different filters, or reset them.' )
+										}
+									/>
+								) : undefined
+							}
+							actions={ [
+								{
+									id: 'edit',
+									label: __( 'Edit' ),
+									isPrimary: true,
+									callback: ( items ) => {
+										const item = items[ 0 ];
+										navigate( {
+											to: pluginsScheduledUpdatesEditRoute.fullPath,
+											params: { scheduleId: item?.scheduleId },
+										} );
+									},
 								},
-							},
-							{
-								id: 'remove',
-								label: __( 'Remove' ),
-								isEligible: () => ! isDeletingSchedule,
-								callback: ( items ) => {
-									const item = items[ 0 ];
-									if ( item ) {
-										handleDeleteClick( item );
-									}
+								{
+									id: 'remove',
+									label: __( 'Remove' ),
+									isEligible: () => ! isDeletingSchedule,
+									callback: ( items ) => {
+										const item = items[ 0 ];
+										if ( item ) {
+											handleDeleteClick( item );
+										}
+									},
 								},
-							},
-						] }
-						renderItemLink={ ( { item, ...props } ) => (
-							<SiteLink { ...props } site={ item.site } />
-						) }
-					/>
-				</DataViewsCard>
+							] }
+							renderItemLink={ ( { item, ...props } ) => (
+								<SiteLink { ...props } site={ item.site } />
+							) }
+						/>
+					</DataViewsCard>
+				) }
 			</PageLayout>
 
 			<ConfirmModal

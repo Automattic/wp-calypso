@@ -8,11 +8,10 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useParams, useRouter, useSearch } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
+import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { ThemedIllustration } from '../../components/themed-illustration';
@@ -25,15 +24,19 @@ import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callou
 import { useRepositoryFields } from './dataviews/fields';
 import { DEFAULT_VIEW, DEFAULT_LAYOUTS } from './dataviews/views';
 import { DisconnectRepositoryModalContent } from './disconnect-repository-modal-content';
+import { useInstallGithub } from './use-install-github';
 import type { RenderModalProps, Action } from '@wordpress/dataviews';
 
 function RepositoriesList() {
 	const router = useRouter();
 	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const { error: githubInstallationsError, isLoading: isLoadingInstallations } = useQuery(
-		githubInstallationsQuery()
-	);
+	const {
+		error: githubInstallationsError,
+		isLoading: isLoadingInstallations,
+		refetch: refetchGithubInstallations,
+	} = useQuery( githubInstallationsQuery() );
+	const { installGithub } = useInstallGithub();
 
 	const searchParams = useSearch( { strict: false } );
 	const { view, updateView, resetView } = usePersistentView( {
@@ -42,9 +45,11 @@ function RepositoriesList() {
 		queryParams: searchParams,
 	} );
 
-	const { data: deployments = [], isLoading: isLoadingDeployments } = useQuery(
-		codeDeploymentsQuery( site.ID )
-	);
+	const {
+		data: deployments = [],
+		isLoading: isLoadingDeployments,
+		isSuccess: hasLoadedDeployments,
+	} = useQuery( codeDeploymentsQuery( site.ID ) );
 
 	const fields = useRepositoryFields();
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( deployments, view, fields );
@@ -96,43 +101,64 @@ function RepositoriesList() {
 		},
 	];
 
-	let emptyTitle;
-	const hasFilterOrSearch = ( view.filters && view.filters.length > 0 ) || view.search;
+	const isLoading = isLoadingDeployments || isLoadingInstallations;
 
-	if ( githubInstallationsError ) {
-		emptyTitle = createInterpolateElement(
-			__( 'No repositories available. <a>Check your GitHub connection</a>.' ),
-			{
-				a: (
-					<Button
-						variant="link"
-						onClick={ () =>
-							router.navigate( { to: `/sites/${ siteSlug }/settings/repositories/connect` } )
-						}
-					/>
-				),
-			}
+	if ( ! isLoading && hasLoadedDeployments && deployments.length === 0 ) {
+		return (
+			<DataViewsEmptyStateLayout
+				isCompact
+				title={ __( 'Deploy your code from GitHub' ) }
+				description={ __( 'Connect a repository to deploy automatically or manually.' ) }
+			/>
 		);
-	} else if ( hasFilterOrSearch ) {
-		emptyTitle = __( 'No repositories found' );
-	} else {
-		emptyTitle = __( 'No repositories connected' );
+	}
+
+	// The installations request fails when the WordPress.com app is not installed
+	// on the user's GitHub account. Repositories connected by someone else, or
+	// before the app was removed, can't be listed until it is installed again.
+	if ( ! isLoading && githubInstallationsError ) {
+		return (
+			<DataViewsEmptyStateLayout
+				isCompact
+				title={ __( 'Install the WordPress.com app on GitHub' ) }
+				description={ __( 'This site’s repositories will appear here once the app is installed.' ) }
+			>
+				<Button
+					variant="secondary"
+					__next40pxDefaultSize
+					onClick={ () => installGithub( { onSuccess: () => refetchGithubInstallations() } ) }
+				>
+					{ __( 'Install the WordPress.com app' ) }
+				</Button>
+			</DataViewsEmptyStateLayout>
+		);
 	}
 
 	return (
 		<DataViewsCard>
 			<DataViews
-				data={ isLoadingInstallations || githubInstallationsError ? [] : filteredData }
+				data={ isLoadingInstallations ? [] : filteredData }
 				fields={ fields }
 				view={ view }
 				onChangeView={ updateView }
 				onReset={ resetView }
 				actions={ actions }
-				isLoading={ isLoadingDeployments || isLoadingInstallations }
+				isLoading={ isLoading }
 				defaultLayouts={ DEFAULT_LAYOUTS }
 				paginationInfo={ paginationInfo }
 				getItemId={ ( item ) => item.id.toString() }
-				empty={ <p>{ emptyTitle }</p> }
+				empty={
+					view.search ? (
+						<DataViewsEmptyStateLayout
+							isBorderless
+							isCompact
+							title={ __( 'No repositories match your search' ) }
+							description={ __( 'Try a different search term.' ) }
+						/>
+					) : (
+						<p>{ __( 'No repositories connected' ) }</p>
+					)
+				}
 				onChangeSelection={ ( selection ) => {
 					if ( selection.length > 0 ) {
 						const item = filteredData.find( ( d ) => d.id.toString() === selection[ 0 ] );
