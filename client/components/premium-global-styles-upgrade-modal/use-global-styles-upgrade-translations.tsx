@@ -2,11 +2,7 @@ import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 
-interface Props {
-	numOfSelectedGlobalStyles?: number;
-}
-
-const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: Props ) => {
+const useGlobalStylesUpgradeTranslations = () => {
 	const translate = useTranslate();
 	const plans = Plans.usePlans( { coupon: undefined } );
 
@@ -28,17 +24,19 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 		} ),
 		features: personalFeatures,
 		description: translate(
-			'You’ve selected a premium style that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',
-			'You’ve selected premium styles that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',
+			'You’ve selected sitewide styles that will only be visible to visitors after upgrading to the %(planTitle)s plan or higher.',
 			{
-				count: numOfSelectedGlobalStyles,
 				args: { planTitle },
+				comment:
+					'%(planTitle)s is the name of the plan that unlocks site styles. Site styles are the sitewide changes made in the Styles panel (Global Styles). Visitors only see them on a paid plan.',
 			}
 		),
 		promotion: translate(
-			'Upgrade now to unlock your premium style and get access to tons of other features. Or you can decide later and try it out first.',
-			'Upgrade now to unlock your premium styles and get access to tons of other features. Or you can decide later and try them out first.',
-			{ count: numOfSelectedGlobalStyles }
+			'Upgrade now to unlock your sitewide styles and get access to tons of other features. Or you can decide later and try them out first.',
+			{
+				comment:
+					'Site styles are the sitewide changes made in the Styles panel (Global Styles). Visitors only see them on a paid plan.',
+			}
 		),
 		try: translate( 'Decide later' ),
 		cancel: translate( 'Cancel' ),

@@ -1,6 +1,5 @@
 import { getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useState } from '@wordpress/element';
 import { ENTER } from '@wordpress/keycodes';
 import clsx from 'clsx';
@@ -101,7 +100,6 @@ const GlobalStylesVariations = ( {
 	needsUpgrade = true,
 	onSelect,
 }: GlobalStylesVariationsProps ) => {
-	const hasEnTranslation = useHasEnTranslation();
 	const isRegisteredCoreBlocks = useRegisterCoreBlocks();
 	const upgradeToPlan = PLAN_PERSONAL;
 
@@ -195,13 +193,9 @@ const GlobalStylesVariations = ( {
 						<div className="global-styles-variations__header">
 							<h2>
 								<span>
-									{ hasEnTranslation( 'Style Variations' )
-										? translate( 'Style Variation', 'Style Variations', {
-												count: nonDefaultStyles.length,
-											} )
-										: translate( 'Premium Style', 'Premium Styles', {
-												count: nonDefaultStyles.length,
-											} ) }
+									{ translate( 'Style Variation', 'Style Variations', {
+										count: nonDefaultStyles.length,
+									} ) }
 								</span>
 								{ needsUpgrade && (
 									<PremiumBadge shouldHideTooltip labelText={ translate( 'Upgrade' ) } />

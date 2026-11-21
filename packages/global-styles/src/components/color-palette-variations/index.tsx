@@ -61,7 +61,11 @@ const ColorPaletteVariation = ( {
 			aria-label={
 				translate( 'Color: %s', {
 					comment: 'Aria label for color preview buttons',
-					args: colorPaletteVariation.title ?? translate( 'Free style' ),
+					args:
+						colorPaletteVariation.title ??
+						translate( 'Default colors', {
+							comment: 'Heading for the theme’s own color palette, available on every plan.',
+						} ),
 				} ) as string
 			}
 		>
@@ -108,11 +112,20 @@ const ColorPaletteVariations = ( {
 			className="global-styles-variations__container"
 		>
 			<div className="global-styles-variations__group">
-				<h3 className="global-styles-variations__group-title">{ translate( 'Free style' ) }</h3>
+				<h3 className="global-styles-variations__group-title">
+					{ translate( 'Default colors', {
+						comment: 'Heading for the theme’s own color palette, available on every plan.',
+					} ) }
+				</h3>
 				<div className="color-palette-variations">
 					<ColorPaletteVariation
 						key="base"
-						colorPaletteVariation={ { ...base, title: translate( 'Free style' ) } }
+						colorPaletteVariation={ {
+							...base,
+							title: translate( 'Default colors', {
+								comment: 'Heading for the theme’s own color palette, available on every plan.',
+							} ) as string,
+						} }
 						isActive={ ! selectedColorPaletteVariation }
 						composite={ composite }
 						onSelect={ () => onSelect( null ) }
@@ -122,7 +135,10 @@ const ColorPaletteVariations = ( {
 			<div className="global-styles-variations__group">
 				<h3 className="global-styles-variations__group-title">
 					<span className="global-styles-variations__group-title-actual">
-						{ translate( 'Premium styles' ) }
+						{ translate( 'Additional colors', {
+							comment:
+								'Heading for the theme’s alternative color palettes. Choosing one adds site styles: sitewide changes that visitors only see on a paid plan.',
+						} ) }
 					</span>
 					<PremiumBadge
 						shouldHideTooltip
