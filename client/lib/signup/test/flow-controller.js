@@ -124,22 +124,6 @@ describe( 'flow-controller', () => {
 				store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
 			} );
 		} );
-
-		// eslint-disable-next-line jest/expect-expect
-		test( 'should not call apiRequestFunction multiple times', () => {
-			return new Promise( ( done ) => {
-				store.dispatch(
-					submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } )
-				);
-				store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
-
-				// resubmit the first step to initiate another call to SignupFlowController#_process
-				// implicitly asserting that apiRequestFunction/done is only called once
-				store.dispatch(
-					submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } )
-				);
-			} );
-		} );
 	} );
 
 	describe( 'controlling a flow w/ dependencies', () => {

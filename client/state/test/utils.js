@@ -59,7 +59,6 @@ describe( 'utils', () => {
 			expect( () => keyedReducer( 'key', 15.4 ) ).toThrow( TypeError );
 			expect( () => keyedReducer( 'key', '' ) ).toThrow( TypeError );
 			expect( () => keyedReducer( 'key' ) ).toThrow( TypeError );
-			expect( () => keyedReducer( 'key', () => {} ).not.toThrow( TypeError ) );
 		} );
 
 		test( 'should create keyed state given simple reducers', () => {

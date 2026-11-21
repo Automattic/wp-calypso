@@ -55,17 +55,6 @@ describe( 'index', () => {
 				request.context.sectionName = 'reader';
 			} );
 
-			test( 'logs response analytics', () => {
-				logSectionResponse( request, response, next );
-
-				// Move time forward and mock the "close" event
-				jest.advanceTimersByTime( TWO_SECONDS );
-				response.emit( 'close' );
-
-				// Check the information sent to boom.gif.
-				expect( includesBeacon( `reader.response_time:${ TWO_SECONDS }` ) );
-			} );
-
 			test( 'logs granular analytics', () => {
 				// Make the request authenticated
 				request.context.user = { foo: 'bar' };
