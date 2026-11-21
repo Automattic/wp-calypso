@@ -5,7 +5,7 @@
 @import "@wordpress/base-styles/breakpoints";
 
 $stats-sections-max-width: 1224px;
-$stats-layout-contnet-padding-top: 79px;
+$stats-layout-contnet-padding-top: calc( var( --masterbar-height ) + 32px );
 $sidebar-appearance-break-point: $break-medium;
 
 // Elements above main layout content per pages
