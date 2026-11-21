@@ -150,11 +150,18 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 
+		// An existing destination confirms the import on the reading step before anything else.
+		// A free one comes back to plans with the started session, to buy a plan before delivery.
+		const hasConfirmedImport = Boolean( urlQueryParams.get( 'importSessionId' ) );
 		useEffect( () => {
-			if ( currentStep === STEPS.UNIFIED_PLANS.slug && isSiteOnPaidPlan ) {
+			if (
+				currentStep === STEPS.UNIFIED_PLANS.slug &&
+				hasDestination &&
+				( isSiteOnPaidPlan || ! hasConfirmedImport )
+			) {
 				navigate( STEPS.STATIC_SITE_IMPORT_READING.slug, undefined, true );
 			}
-		}, [ currentStep, isSiteOnPaidPlan, navigate ] );
+		}, [ currentStep, hasDestination, isSiteOnPaidPlan, hasConfirmedImport, navigate ] );
 
 		const exitFlow = ( to: string ) =>
 			window.location.replace( addQueryArgs( { ref: STATIC_SITE_IMPORT_FLOW }, to ) );
