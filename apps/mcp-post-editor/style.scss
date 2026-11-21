@@ -1,0 +1,703 @@
+@import "@wordpress/components/build-style/style";
+@import "@wordpress/block-editor/build-style/style";
+@import "@wordpress/block-editor/build-style/content";
+@import "@wordpress/block-library/build-style/editor";
+
+// The front styles of the registered blocks, for a site whose styles don't load.
+@import "@wordpress/block-library/build-style/common";
+@import "@wordpress/block-library/build-style/audio/style";
+@import "@wordpress/block-library/build-style/button/style";
+@import "@wordpress/block-library/build-style/buttons/style";
+@import "@wordpress/block-library/build-style/code/style";
+@import "@wordpress/block-library/build-style/columns/style";
+@import "@wordpress/block-library/build-style/cover/style";
+@import "@wordpress/block-library/build-style/embed/style";
+@import "@wordpress/block-library/build-style/gallery/style";
+@import "@wordpress/block-library/build-style/group/style";
+@import "@wordpress/block-library/build-style/heading/style";
+@import "@wordpress/block-library/build-style/image/style";
+@import "@wordpress/block-library/build-style/list/style";
+@import "@wordpress/block-library/build-style/paragraph/style";
+@import "@wordpress/block-library/build-style/preformatted/style";
+@import "@wordpress/block-library/build-style/pullquote/style";
+@import "@wordpress/block-library/build-style/quote/style";
+@import "@wordpress/block-library/build-style/separator/style";
+@import "@wordpress/block-library/build-style/spacer/style";
+@import "@wordpress/block-library/build-style/table/style";
+@import "@wordpress/block-library/build-style/video/style";
+
+$chrome-font:
+	13px/1.4 -apple-system,
+	BlinkMacSystemFont,
+	"Segoe UI",
+	Roboto,
+	sans-serif;
+
+body {
+	margin: 0;
+}
+
+// The panel's own UI theme, whatever the site's styles set: the site's CSS loads unscoped into
+// this page (see site-styles.ts), so its `--wp-admin-theme-color`, which colours the components'
+// buttons, and its rules on body, `p`, `button` and the like would reach the UI. The popovers
+// render outside the panel, so they get the colours too.
+.mcp-post-editor,
+.components-popover {
+	--wp-admin-theme-color: #3858e9;
+	--wp-admin-theme-color--rgb: 56, 88, 233;
+	--wp-admin-theme-color-darker-10: #2145e6;
+	--wp-admin-theme-color-darker-10--rgb: 33, 69, 230;
+	--wp-admin-theme-color-darker-20: #183ad6;
+	--wp-admin-theme-color-darker-20--rgb: 24, 58, 214;
+}
+
+// Each piece of UI sets its type at its root, and everything inside takes it from there, over
+// the site's element rules. Later rules here still set their own sizes. The popovers (the
+// toolbar's menus, the link editor) render outside the panel.
+$ui-roots:
+	".mcp-post-editor__bar, .mcp-post-editor__changes, .mcp-post-editor__conflict, .mcp-post-editor__dock, .mcp-post-editor__fix, .mcp-post-editor__toolbar";
+$ui: ":is(.mcp-post-editor :is(#{$ui-roots}), .components-popover)";
+
+#{$ui} {
+	color: #1e1e1e;
+	font: $chrome-font;
+	letter-spacing: normal;
+	text-align: left;
+	text-transform: none;
+}
+
+// At the specificity of two element selectors: over a site's element rules, as `p` or `button`,
+// and under any class rule, so the components and the rules below keep their own type.
+:where(#{$ui}) *:not(svg):not(path) {
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	letter-spacing: inherit;
+	text-transform: inherit;
+}
+
+// By the root's id: themes style text fields with long selectors, as Assembler's
+// `input:not([type=submit]):not([type=checkbox]):not([type=radio]):not([type=range])`. Only what
+// such a rule sets, back to the components' own look: an input control draws its border and
+// background around the input; a text control's input has them itself.
+#mcp-post-editor .components-popover :is(.components-input-control__input, .components-text-control__input) {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 0;
+	border-radius: 2px;
+	box-shadow: none;
+	color: inherit;
+	font-size: 16px;
+	line-height: normal;
+
+	@media (min-width: 600px) {
+		font-size: 13px;
+	}
+}
+
+#mcp-post-editor .components-popover .components-input-control__input {
+	padding-block: 0;
+	background: none;
+	border: 0;
+}
+
+#mcp-post-editor .components-popover .components-text-control__input {
+	padding: 6px 12px;
+	background-color: #fff;
+}
+
+// The loader, as the host shell's inline CSS draws it before the script runs: the bar eases
+// towards 90% and holds there until the post is ready.
+#mcp-post-editor .mcp-post-editor-loader {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 24px;
+	height: 100vh;
+	min-height: 240px;
+	position: relative;
+	padding: 16px;
+	background: #e5e5e5;
+}
+
+// Over the editor, which renders underneath while the site's styles load.
+#mcp-post-editor .mcp-post-editor ~ .mcp-post-editor-loader {
+	position: fixed;
+	inset: 0;
+	z-index: 1000000;
+	height: auto;
+}
+
+// Under the bar, out of the flow, so the logo and the bar stay where the shell drew them: the
+// logo, the gap and the bar are 80px tall, centred.
+#mcp-post-editor .mcp-post-editor-loader__status {
+	position: absolute;
+	top: calc(50% + 52px);
+	right: 16px;
+	left: 16px;
+	margin: 0;
+	color: #757575;
+	font: $chrome-font;
+	text-align: center;
+}
+
+#mcp-post-editor .mcp-post-editor-loader__logo {
+	display: block;
+	width: 48px;
+	height: 48px;
+	fill: #3c434a;
+}
+
+#mcp-post-editor .mcp-post-editor-loader__bar {
+	width: 360px;
+	max-width: 70%;
+	height: 8px;
+	overflow: hidden;
+	border-radius: 4px;
+	background: #fff;
+}
+
+#mcp-post-editor .mcp-post-editor-loader__fill {
+	width: 90%;
+	height: 100%;
+	border-radius: 4px;
+	background: #1e1e1e;
+	animation: mcp-post-editor-loader 8s cubic-bezier(0.2, 0.6, 0.3, 1) both;
+}
+
+@keyframes mcp-post-editor-loader {
+	from {
+		width: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#mcp-post-editor .mcp-post-editor-loader__fill {
+		width: 40%;
+		animation: none;
+	}
+}
+
+// The page: a slim bar, then the canvas, which scrolls inside the panel's height, and a dock
+// floating over its bottom.
+.mcp-post-editor {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	height: var(--mcp-post-editor-height, 100vh);
+	min-width: 0;
+	overflow: hidden;
+	background: #fff;
+}
+
+// One row: the status and the post on the left, the actions on the right. A narrow panel wraps
+// the actions under the status.
+.mcp-post-editor .mcp-post-editor__bar {
+	display: flex;
+	flex: none;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px 12px;
+	padding: 6px 12px 6px 16px;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+	font: $chrome-font;
+}
+
+.mcp-post-editor .mcp-post-editor__status,
+.mcp-post-editor .mcp-post-editor__location {
+	min-width: 0;
+	margin: 0;
+	overflow: hidden;
+	color: #6b6b6b;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.mcp-post-editor .mcp-post-editor__status {
+	flex: 0 1 auto;
+
+	&.is-error {
+		color: #cc1818;
+	}
+}
+
+// The post gives way first: it shrinks to nothing before the actions leave the row.
+.mcp-post-editor .mcp-post-editor__location {
+	flex: 1 1 0;
+}
+
+.mcp-post-editor .mcp-post-editor__actions,
+.mcp-post-editor .mcp-post-editor__chips {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+
+.mcp-post-editor .mcp-post-editor__actions {
+	justify-content: flex-end;
+	margin-left: auto;
+}
+
+.mcp-post-editor .mcp-post-editor__chip {
+	min-height: 0;
+	margin: 0;
+	padding: 2px 8px;
+	background: #fff;
+	border: 1px solid #3858e9;
+	border-radius: 4px;
+	box-shadow: none;
+	color: #3858e9;
+	text-transform: none;
+	font: $chrome-font;
+	white-space: nowrap;
+	cursor: pointer;
+
+	&:hover:not(:disabled) {
+		background: #eef1fd;
+		color: #3858e9;
+	}
+
+	&.is-primary {
+		background: #3858e9;
+		color: #fff;
+
+		&:hover:not(:disabled) {
+			background: #2145e6;
+			color: #fff;
+		}
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+
+	&:focus-visible {
+		outline: 2px solid #3858e9;
+		outline-offset: 1px;
+	}
+}
+
+.mcp-post-editor__error {
+	flex: none;
+	margin: 0;
+	padding: 4px 16px;
+	background: #fcf0f1;
+	border-bottom: 1px solid #ddd;
+	color: #cc1818;
+	font: $chrome-font;
+	white-space: pre-line;
+}
+
+.mcp-post-editor__canvas {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+.editor-styles-wrapper {
+	min-height: 100%;
+	padding-bottom: 120px;
+	overflow-wrap: break-word;
+}
+
+// Without the site's styles: a readable column at a typical theme's content width. The site's
+// styles, scoped with the same zero specificity, come later and win.
+:where(.editor-styles-wrapper) {
+	padding-left: 16px;
+	padding-right: 16px;
+	color: #1e1e1e;
+	font-family: Georgia, "Times New Roman", serif;
+	font-size: 18px;
+	line-height: 1.6;
+}
+
+:where(.editor-styles-wrapper .is-layout-constrained) > * {
+	max-width: var(--wp--style--global--content-size, 680px);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+:where(.editor-styles-wrapper .is-layout-constrained) > .alignwide {
+	max-width: var(--wp--style--global--wide-size, 1200px);
+}
+
+:where(.editor-styles-wrapper .is-layout-constrained) > .alignfull {
+	max-width: none;
+}
+
+:where(.editor-styles-wrapper) img {
+	max-width: 100%;
+	height: auto;
+}
+
+.mcp-post-editor__title {
+	padding-top: 32px;
+}
+
+// The theme styles the title through its classes; only the editing chrome is reset here.
+.editor-post-title {
+	min-height: 1em;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+	cursor: text;
+
+	&:focus:not(:focus-visible) {
+		outline: none;
+	}
+
+	&.is-empty::before {
+		content: attr(data-placeholder);
+		opacity: 0.55;
+		pointer-events: none;
+	}
+}
+
+// The selected block's toolbar, in a row of its own so it never covers the post. The row keeps
+// its height without a selection, so the canvas doesn't jump; in a narrow panel it scrolls
+// sideways.
+.mcp-post-editor__toolbar {
+	flex: none;
+	box-sizing: border-box;
+	min-height: 49px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+
+// Read-only, links still open (through the host).
+.mcp-post-editor .is-preview-mode .block-editor-block-list__block :is(a, area) {
+	pointer-events: auto;
+}
+
+// The assistant's changes: cards under the bar, and an outline on each changed block and title.
+.mcp-post-editor .mcp-post-editor__changes {
+	flex: none;
+	max-height: 40%;
+	overflow-y: auto;
+	padding: 4px 16px 8px;
+	background: #f6f7fb;
+	border-bottom: 1px solid #ddd;
+	font: $chrome-font;
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__change {
+	margin-top: 8px;
+	padding: 8px 12px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.mcp-post-editor .mcp-post-editor__diff {
+	margin: 0;
+	overflow-wrap: anywhere;
+
+	del {
+		padding: 0 2px;
+		background: #fde8e8;
+		border-radius: 3px;
+		color: #cc1818;
+	}
+
+	ins {
+		padding: 0 2px;
+		background: #e6f6e9;
+		border-radius: 3px;
+		color: #007017;
+		text-decoration: none;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__change-foot {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 4px 8px;
+	margin-top: 6px;
+	color: #757575;
+	font-size: 12px;
+}
+
+.mcp-post-editor .mcp-post-editor__change-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	font-size: 13px;
+
+	&.is-all {
+		justify-content: flex-end;
+		margin-top: 4px;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__accepted {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 4px 0 0;
+}
+
+.mcp-post-editor .wp-block-post-title.is-agent-changed {
+	outline: 2px solid #3858e9;
+	outline-offset: 4px;
+}
+
+// The conflict notice.
+.mcp-post-editor .mcp-post-editor__conflict {
+	flex: none;
+	padding: 8px 16px;
+	background: #fcf9e8;
+	border-bottom: 1px solid #ddd;
+	font: $chrome-font;
+
+	p {
+		margin: 0 0 8px;
+	}
+}
+
+// Ask: a chip over the selected text, which opens an input in the dock.
+.mcp-post-editor .mcp-post-editor__ask-chip {
+	position: fixed;
+	z-index: 30;
+	min-height: 0;
+	margin: 0;
+	padding: 6px 12px;
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	border-radius: 24px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	color: #0d0d0d;
+	font: $chrome-font;
+	font-weight: 500;
+	text-transform: none;
+	white-space: nowrap;
+	cursor: pointer;
+	pointer-events: auto;
+
+	&:hover:not(:disabled) {
+		background: #f4f4f4;
+		color: #0d0d0d;
+	}
+
+	&:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+}
+
+// Over the canvas's bottom: the proofreading count and the Ask input, as dark pills.
+.mcp-post-editor .mcp-post-editor__dock {
+	position: absolute;
+	right: 16px;
+	bottom: 16px;
+	left: 16px;
+	z-index: 40;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 8px;
+	pointer-events: none;
+}
+
+.mcp-post-editor .mcp-post-editor__pill {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	box-sizing: border-box;
+	max-width: 100%;
+	padding: 6px 12px;
+	background: #1e1e1e;
+	border-radius: 24px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+	color: #ccc;
+	font: $chrome-font;
+	white-space: nowrap;
+	pointer-events: auto;
+
+	button {
+		min-height: 0;
+		margin: 0;
+		padding: 2px 4px;
+		background: none;
+		border: 0;
+		border-radius: 24px;
+		box-shadow: none;
+		color: #fff;
+		font: inherit;
+		text-transform: none;
+		cursor: pointer;
+
+		&:hover:not(:disabled) {
+			background: rgba(255, 255, 255, 0.12);
+			color: #fff;
+		}
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: default;
+		}
+
+		&:focus-visible {
+			outline: 2px solid #fff;
+		}
+	}
+
+	.is-send,
+	.is-send:hover:not(:disabled) {
+		padding: 2px 12px;
+		background: #3858e9;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__ask {
+	width: 360px;
+
+	&:focus-within {
+		outline: 2px solid #3858e9;
+		outline-offset: 2px;
+	}
+}
+
+// By the root's id: themes style text fields with long selectors, as Assembler's
+// `input:not([type=submit]):not([type=checkbox]):not([type=radio]):not([type=range])`.
+#mcp-post-editor .mcp-post-editor__ask-input {
+	flex: 1;
+	box-sizing: border-box;
+	width: auto;
+	min-width: 0;
+	min-height: 0;
+	margin: 0 4px 0 0;
+	padding: 2px 0;
+	background: none;
+	border: 0;
+	border-radius: 0;
+	outline: none;
+	box-shadow: none;
+	color: #fff;
+	font: inherit;
+	text-transform: none;
+
+	&:focus {
+		background: none;
+		border: 0;
+		outline: none;
+		box-shadow: none;
+		color: #fff;
+	}
+
+	&::placeholder {
+		color: #9e9e9e;
+	}
+}
+
+// Proofreading: underlines on the quoted text, and the card a click on one opens.
+::highlight(mcp-proofread-error) {
+	text-decoration: underline wavy #cc1818;
+	text-decoration-skip-ink: none;
+}
+
+::highlight(mcp-proofread-style) {
+	text-decoration: underline wavy #3858e9;
+	text-decoration-skip-ink: none;
+}
+
+.mcp-post-editor .mcp-post-editor__fix {
+	position: fixed;
+	z-index: 100000;
+	box-sizing: border-box;
+	max-width: calc(100vw - 16px);
+	padding: 12px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	color: #1e1e1e;
+	font: $chrome-font;
+	overflow-wrap: anywhere;
+
+	p {
+		margin: 0;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__fix .mcp-post-editor__fix-reason {
+	margin-top: 4px;
+	color: #6b6b6b;
+}
+
+.mcp-post-editor .mcp-post-editor__fix-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+// The proofreading issues, listed over the dock's pill.
+.mcp-post-editor .mcp-post-editor__issues {
+	box-sizing: border-box;
+	width: 360px;
+	max-width: 100%;
+	max-height: calc(var(--mcp-post-editor-height, 100vh) * 0.4);
+	margin: 0;
+	padding: 4px 0;
+	overflow-y: auto;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+	list-style: none;
+	pointer-events: auto;
+
+	li {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		margin: 0;
+		padding: 4px 8px 4px 12px;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__issue {
+	flex: 1;
+	min-width: 0;
+	margin: 0;
+	padding: 2px 0;
+	background: none;
+	border: 0;
+	box-shadow: none;
+	color: inherit;
+	text-align: left;
+	overflow-wrap: anywhere;
+	cursor: pointer;
+
+	&:hover {
+		color: #3858e9;
+	}
+
+	&:focus-visible {
+		outline: 2px solid #3858e9;
+		border-radius: 2px;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__issue-actions {
+	display: flex;
+	flex: none;
+	gap: 4px;
+}

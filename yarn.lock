@@ -1919,6 +1919,39 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@automattic/mcp-post-editor-app@workspace:apps/mcp-post-editor":
+  version: 0.0.0-use.local
+  resolution: "@automattic/mcp-post-editor-app@workspace:apps/mcp-post-editor"
+  dependencies:
+    "@automattic/calypso-apps-builder": "workspace:^"
+    "@automattic/calypso-build": "workspace:^"
+    "@modelcontextprotocol/client": "npm:2.0.0"
+    "@modelcontextprotocol/core": "npm:2.0.0"
+    "@modelcontextprotocol/ext-apps": "npm:2.0.4"
+    "@wordpress/api-fetch": "npm:^8.2.0"
+    "@wordpress/block-editor": "npm:^20.1.0"
+    "@wordpress/block-library": "npm:^12.2.0"
+    "@wordpress/blocks": "npm:^17.2.0"
+    "@wordpress/components": "npm:^45.0.0"
+    "@wordpress/data": "npm:^11.2.0"
+    "@wordpress/dependency-extraction-webpack-plugin": "npm:^7.2.0"
+    "@wordpress/element": "npm:^10.2.0"
+    "@wordpress/format-library": "npm:^6.2.0"
+    "@wordpress/keycodes": "npm:^5.2.0"
+    "@wordpress/readable-js-assets-webpack-plugin": "npm:^4.2.0"
+    "@wordpress/undo-manager": "npm:^2.2.0"
+    dompurify: "npm:3.4.17"
+    react: "npm:19.3.1"
+    react-dom: "npm:19.3.1"
+    vite: "npm:^8.3.7"
+    vitest: "npm:^5.1.0"
+    webpack: "npm:^5.111.1"
+    zod: "npm:^4.2.0"
+  peerDependencies:
+    postcss: "*"
+  languageName: unknown
+  linkType: soft
+
 "@automattic/mini-cart@workspace:^, @automattic/mini-cart@workspace:packages/mini-cart":
   version: 0.0.0-use.local
   resolution: "@automattic/mini-cart@workspace:packages/mini-cart"
@@ -6584,6 +6617,53 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@modelcontextprotocol/client@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@modelcontextprotocol/client@npm:2.0.0"
+  dependencies:
+    "@modelcontextprotocol/core": "npm:2.0.0"
+    cross-spawn: "npm:^7.0.5"
+    eventsource: "npm:^3.0.2"
+    eventsource-parser: "npm:^3.0.0"
+    jose: "npm:^6.1.3"
+    pkce-challenge: "npm:^5.0.0"
+    zod: "npm:^4.2.0"
+  checksum: 23d1d16539c76a69d1848dc67c495b3aa6d048946dd894ed449bca0de7ce9835a71904476c6eeb9f75fe8dfca1964c61372d9d7d283b7cabfa3258d288db6859
+  languageName: node
+  linkType: hard
+
+"@modelcontextprotocol/core@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@modelcontextprotocol/core@npm:2.0.0"
+  dependencies:
+    zod: "npm:^4.2.0"
+  checksum: 1cb96fcebfb60651775bcaa3b1e92b47b9317239e9e0352a2d6a404f77d1abfb68ce5b462becd073cddc4db08f2f0024cd3c7dd2582e3463ddb958f65b73fbe3
+  languageName: node
+  linkType: hard
+
+"@modelcontextprotocol/ext-apps@npm:2.0.4":
+  version: 2.0.4
+  resolution: "@modelcontextprotocol/ext-apps@npm:2.0.4"
+  dependencies:
+    "@standard-schema/spec": "npm:^1.1.0"
+  peerDependencies:
+    "@modelcontextprotocol/client": ^2.0.0
+    "@modelcontextprotocol/core": ^2.0.0
+    "@modelcontextprotocol/server": ^2.0.0
+    react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
+    zod: ^4.2.0
+  peerDependenciesMeta:
+    "@modelcontextprotocol/server":
+      optional: true
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 5a7e42cca9baa4fea2e36678fe9a6c0c0d4d0c77ddf7f871d80d554358f987d0ca3eb9a629b729b87c6a684ee8337fec284915ca6d79cbbeaee776f1ca5b58e7
+  languageName: node
+  linkType: hard
+
 "@modelcontextprotocol/sdk@npm:^1.27.0":
   version: 1.32.2
   resolution: "@modelcontextprotocol/sdk@npm:1.32.2"
@@ -9110,6 +9190,13 @@ __metadata:
   peerDependencies:
     size-limit: 8.2.6
   checksum: 45f1fa419d1024ec594d9784ad8af28d0bb396502031f05889da74e6d0a249be4a1659efa1124a44bf2332ca9902115ba831638ab61f464488d83f423dd5264f
+  languageName: node
+  linkType: hard
+
+"@standard-schema/spec@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@standard-schema/spec@npm:1.1.0"
+  checksum: d90f55acde4b2deb983529c87e8025fa693de1a5e8b49ecc6eb84d1fd96328add0e03d7d551442156c7432fd78165b2c26ff561b970a9a881f046abb78d6a526
   languageName: node
   linkType: hard
 
@@ -33131,7 +33218,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.25 || ^4.0, zod@npm:^3.25.0 || ^4.0.0, zod@npm:^4.3":
+"zod@npm:^3.25 || ^4.0, zod@npm:^3.25.0 || ^4.0.0, zod@npm:^4.2.0, zod@npm:^4.3":
   version: 4.6.7
   resolution: "zod@npm:4.6.7"
   checksum: 4ce2eb14034317b7254e347ca37b5ad591cf8333147030cf05b9b5d31692d45073f7f2747aa50cf8c6b29012194d2b22978cecc89969cf34a0d18e89d0ee7d7b

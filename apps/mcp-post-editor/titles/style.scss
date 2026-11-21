@@ -1,0 +1,199 @@
+// The card's own UI theme, after the chat host's: system type, neutral greys, rounded rows.
+$ui-font:
+	14px/1.4 system-ui,
+	-apple-system,
+	BlinkMacSystemFont,
+	'Segoe UI',
+	Roboto,
+	sans-serif;
+$text: #0d0d0d;
+$text-quiet: #6b6b6b;
+$border: #e0e0e0;
+$hover: #f5f5f5;
+$blueberry: #3858e9;
+$error: #cc1818;
+$success: #008a20;
+
+body {
+	margin: 0;
+}
+
+// Once the card has replaced the shell's loader, the page is as tall as its content.
+.has-mcp-post-editor-titles,
+.has-mcp-post-editor-titles body,
+.has-mcp-post-editor-titles #mcp-post-editor-titles {
+	height: auto;
+	min-height: 0;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles {
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 16px;
+	background: #fff;
+	border: 1px solid #ececec;
+	border-radius: 16px;
+	color: $text;
+	font: $ui-font;
+	letter-spacing: normal;
+	text-align: left;
+	text-transform: none;
+
+	* {
+		box-sizing: border-box;
+		font: inherit;
+		letter-spacing: inherit;
+	}
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__icon {
+	flex: none;
+	width: 16px;
+	height: 16px;
+	fill: currentColor;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__header {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__heading {
+	flex: 1 1 0;
+	min-width: 0;
+	padding-top: 5px;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__title {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 22px;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__subtitle {
+	margin: 0;
+	overflow: hidden;
+	color: $text-quiet;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__close {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	margin: 0 -6px 0 0;
+	padding: 0;
+	background: none;
+	border: 0;
+	border-radius: 8px;
+	color: $text-quiet;
+	cursor: pointer;
+
+	.mcp-post-editor-titles__icon {
+		width: 20px;
+		height: 20px;
+	}
+
+	&:hover {
+		background: $hover;
+		color: $text;
+	}
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	width: 100%;
+	min-height: 48px;
+	margin: 0;
+	padding: 12px 16px;
+	background: #fff;
+	border: 1px solid $border;
+	border-radius: 16px;
+	color: $text;
+	font-size: 16px;
+	line-height: 22px;
+	text-align: left;
+	overflow-wrap: anywhere;
+	cursor: pointer;
+	transition:
+		background-color 0.1s,
+		border-color 0.1s,
+		opacity 0.15s;
+
+	&:hover:not( :disabled ) {
+		background: $hover;
+		border-color: #c7c7c7;
+	}
+
+	&:disabled {
+		cursor: default;
+	}
+
+	// The chosen row: a blueberry ring and tint, with a check; the text stays dark.
+	&.is-chosen {
+		padding: 11px 15px;
+		background: #f2f5ff;
+		border: 2px solid $blueberry;
+
+		.mcp-post-editor-titles__icon {
+			color: $blueberry;
+		}
+	}
+}
+
+// While saving, and once a title is chosen, the other rows fade.
+#mcp-post-editor-titles .mcp-post-editor-titles__option:disabled:not( .is-chosen ) {
+	opacity: 0.5;
+}
+
+#mcp-post-editor-titles
+	:is( .mcp-post-editor-titles__option, .mcp-post-editor-titles__close ):focus-visible {
+	outline: 2px solid $blueberry;
+	outline-offset: 2px;
+}
+
+#mcp-post-editor-titles .mcp-post-editor-titles__message {
+	display: flex;
+	align-items: flex-start;
+	gap: 6px;
+	margin: 12px 0 0;
+	color: $text-quiet;
+	font-size: 13px;
+
+	&:empty {
+		display: none;
+	}
+
+	// Centred on the first line of text (13px at 1.4 is about 18px tall).
+	.mcp-post-editor-titles__icon {
+		margin-top: 1px;
+	}
+
+	&.is-success .mcp-post-editor-titles__icon {
+		color: $success;
+	}
+
+	&.is-error {
+		color: $error;
+	}
+}
+
+// The message alone, when the card couldn't load.
+#mcp-post-editor-titles .mcp-post-editor-titles__message:first-child {
+	margin-top: 0;
+}
