@@ -16,19 +16,20 @@ import {
 	ErrorContentInfo,
 } from './error-content-info';
 import { WarningContentInfo } from './warning-content-info';
+import type { Site } from '@automattic/api-core';
 
 import './style.scss';
 
 export default function HostingFeatureActivationModal( {
-	siteId,
+	site,
 	onProceed,
 }: {
-	siteId: number;
+	site: Site;
 	onProceed: ( options: { geo_affinity?: string } ) => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { data } = useSuspenseQuery( siteAutomatedTransfersEligibilityQuery( siteId ) );
-	const { setShowHelpCenter } = useHelpCenter();
+	const { data } = useSuspenseQuery( siteAutomatedTransfersEligibilityQuery( site.ID ) );
+	const { setOpenOdieWithContext } = useHelpCenter();
 	const [ selectedGeoAffinity, setSelectedGeoAffinity ] = useState( '' );
 
 	if ( ! data ) {
@@ -43,7 +44,12 @@ export default function HostingFeatureActivationModal( {
 	const cannotActivate = ! isEligible && ! needsPlanUpgrade;
 
 	function handleGetHelp() {
-		setShowHelpCenter( true );
+		setOpenOdieWithContext( {
+			initialMessage: __( 'I need help activating hosting features on my site.' ),
+			section: 'hosting-activation',
+			siteUrl: site.URL,
+			siteId: site.ID,
+		} );
 		recordTracksEvent( 'calypso_dashboard_hosting_feature_activation_modal_help_center_click' );
 	}
 
