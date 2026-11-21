@@ -79,7 +79,7 @@
 	padding: 4px 0;
 	border: 0;
 	background: transparent;
-	color: var( --color-text );
+	color: var( --wpds-color-foreground-content-neutral );
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 1.4;
@@ -91,7 +91,7 @@
 	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	text-decoration: underline dotted var( --color-text-subtle );
+	text-decoration: underline dotted var( --wpds-color-foreground-content-neutral-weak );
 	text-underline-offset: 3px;
 	white-space: nowrap;
 }
@@ -99,7 +99,7 @@
 .dashboard-amplify-story__rubric-item button strong {
 	flex: none;
 	margin-inline-start: 8px;
-	color: var( --color-text-subtle );
+	color: var( --wpds-color-foreground-content-neutral-weak );
 	font-weight: 400;
 }
 

@@ -7,6 +7,9 @@
 
 /* A category from the sample report, rebuilt so it can tilt and animate. */
 .dashboard-amplify-story__category-card {
+	// The sample report's own orange, so the card matches the PDF it comes from.
+	--amplify-report-orange: #e68b28;
+
 	position: absolute;
 	inset-block-start: 80px;
 	inset-inline-start: 50%;
@@ -14,8 +17,9 @@
 	width: min( 78%, 360px );
 	padding: 20px 22px 28px;
 	border-radius: 4px;
-	background: var( --color-surface );
-	box-shadow: 0 12px 32px color-mix( in srgb, var( --color-text ) 12%, transparent );
+	background: var( --wpds-color-background-surface-neutral-strong );
+	box-shadow: 0 12px 32px
+		color-mix( in srgb, var( --wpds-color-foreground-content-neutral ) 12%, transparent );
 	font-size: 11px;
 	line-height: 1.35;
 	transform: translateX( -50% ) rotate( -3deg );
@@ -31,15 +35,15 @@
 	align-items: center;
 	gap: 12px;
 	margin-block: 0 20px;
-	color: var( --studio-orange-30 );
+	color: var( --amplify-report-orange );
 }
 
 .dashboard-amplify-story__category-card-score[data-severity='good'] {
-	color: var( --color-success );
+	color: var( --wpds-color-foreground-content-success-weak );
 }
 
 .dashboard-amplify-story__category-card-score[data-severity='danger'] {
-	color: var( --color-error );
+	color: var( --wpds-color-foreground-content-error-weak );
 }
 
 .dashboard-amplify-story__category-card-score svg {
@@ -53,7 +57,7 @@
 	height: 6px;
 	overflow: hidden;
 	border-radius: 3px;
-	background: var( --color-border-subtle );
+	background: var( --wpds-color-stroke-surface-neutral );
 }
 
 .dashboard-amplify-story__category-card-score i {
@@ -76,7 +80,7 @@
 .dashboard-amplify-story__category-card ol {
 	margin: 4px 0 0;
 	padding-inline-start: 18px;
-	color: var( --color-text-subtle );
+	color: var( --wpds-color-foreground-content-neutral-weak );
 }
 
 .dashboard-amplify-story__category-card li {
