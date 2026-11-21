@@ -16,6 +16,7 @@ function render() {
 
 ## Props
 
+- `as` (`'header' | 'div'`) - Wrapper element (defaults to `'header'`). Use `'div'` when rendering inside another header.
 - `brandFont` (`bool`) - use the WP.com brand font for `headerText`
 - `id` (`string`) - ID for the header (optional)
 - `headerText` (`string`) - The main header text
