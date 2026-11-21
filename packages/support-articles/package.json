@@ -38,14 +38,40 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-url": "workspace:^",
+		"@automattic/components": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
+		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/odie-client": "workspace:^",
+		"@automattic/urls": "workspace:^",
+		"@automattic/zendesk-client": "workspace:^",
+		"@tanstack/react-query": "^5.83.0",
+		"@wordpress/api-fetch": "^8.2.0",
+		"@wordpress/components": "^45.0.0",
+		"@wordpress/compose": "^9.2.0",
+		"@wordpress/data": "^11.2.0",
+		"@wordpress/element": "^10.2.0",
+		"@wordpress/html-entities": "^5.2.0",
+		"@wordpress/i18n": "^7.2.0",
+		"@wordpress/icons": "^21.0.0",
+		"@wordpress/react-i18n": "^5.2.0",
+		"clsx": "^2.1.1",
+		"react-router-dom": "7.18.4",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"private": true,
 	"devDependencies": {
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/react": "^16.3.3",
 		"jsdom": "^20.0.3",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0"
+	},
+	"peerDependencies": {
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0"
 	}
 }
