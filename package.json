@@ -264,7 +264,7 @@
 		"@types/superagent": "^4.1.24",
 		"@typescript-eslint/eslint-plugin": "^8.72.1",
 		"@typescript-eslint/parser": "^8.72.1",
-		"@vitejs/plugin-react": "^6.2.1",
+		"@vitejs/plugin-react": "^6.3.0",
 		"@vitest/eslint-plugin": "^1.6.28",
 		"@wordpress/eslint-plugin": "^28.2.0",
 		"@wordpress/stylelint-config": "^27.2.0",
