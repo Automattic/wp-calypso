@@ -1,5 +1,7 @@
+import page from '@automattic/calypso-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import FullWidthSection from 'calypso/components/full-width-section';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
@@ -24,7 +26,7 @@ const PluginsCategoryResultsPage = ( {
 	category,
 	siteSlug,
 	sites,
-	page = 1,
+	page: currentPage = 1,
 	pathname,
 	isPaginated = false,
 } ) => {
@@ -32,10 +34,18 @@ const PluginsCategoryResultsPage = ( {
 		category,
 		infinite: ! isPaginated,
 		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
-		page,
+		page: currentPage,
 		// Outlasts the server's 2h stale time, so hydrating a server-rendered page doesn't refetch it.
 		staleTime: isPaginated ? 2 * BASE_STALE_TIME : undefined,
 	} );
+
+	const isPastLastPage = isPaginated && currentPage > 1 && ! isFetching && ! plugins.length;
+	useEffect( () => {
+		// The server already responded with a 404, so show the first page instead of placeholders.
+		if ( isPastLastPage ) {
+			page.replace( getCategoryPageUrl( pathname, 1 ) );
+		}
+	}, [ isPastLastPage, pathname ] );
 
 	const categories = useCategories();
 	const categoryName = categories[ category ]?.title || category;
@@ -55,9 +65,14 @@ const PluginsCategoryResultsPage = ( {
 
 	const isMarketplaceRedesign = useIsMarketplaceRedesignEnabled();
 
-	const pageUrls = isPaginated ? getCategoryPaginationUrls( { pathname, page, hasNextPage } ) : {};
+	const pageUrls = isPaginated
+		? getCategoryPaginationUrls( { pathname, page: currentPage, hasNextPage } )
+		: {};
 	const pageNumbers = isPaginated
-		? getCategoryPageNumbers( page, Math.max( getCategoryPageCount( pagination.results ), page ) )
+		? getCategoryPageNumbers(
+				currentPage,
+				Math.max( getCategoryPageCount( pagination.results ), currentPage )
+			)
 		: [];
 
 	return (
@@ -112,9 +127,9 @@ const PluginsCategoryResultsPage = ( {
 										key={ pageNumber }
 										__next40pxDefaultSize
 										className="plugins-category-results-page__page-number"
-										variant={ pageNumber === page ? 'primary' : 'tertiary' }
+										variant={ pageNumber === currentPage ? 'primary' : 'tertiary' }
 										href={ getCategoryPageUrl( pathname, pageNumber ) }
-										aria-current={ pageNumber === page ? 'page' : undefined }
+										aria-current={ pageNumber === currentPage ? 'page' : undefined }
 										aria-label={ translate( 'Page %(pageNumber)d', { args: { pageNumber } } ) }
 									>
 										{ pageNumber }
