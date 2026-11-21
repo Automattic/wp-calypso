@@ -5,11 +5,13 @@ import type { MailboxListProps } from 'calypso/my-sites/email/form/mailboxes/com
 const getUpsellProps = ( {
 	isDomainInCart,
 	siteSlug,
+	canSkip = true,
 }: {
 	isDomainInCart: boolean;
 	siteSlug: string;
+	canSkip?: boolean;
 } ): Partial< MailboxListProps > =>
-	! isDomainInCart
+	! isDomainInCart || ! canSkip
 		? {}
 		: {
 				cancelActionText: translate( 'Skip' ),

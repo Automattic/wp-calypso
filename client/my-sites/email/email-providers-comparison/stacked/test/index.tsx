@@ -2,7 +2,9 @@
  * @jest-environment jsdom
  */
 
+import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import {
 	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
 	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
@@ -19,15 +21,15 @@ jest.mock( '@automattic/calypso-products', () => ( {
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
-jest.mock( '@wordpress/url', () => ( {
-	addQueryArgs: jest.fn( ( url ) => url ),
-	getQueryArgs: jest.fn( () => ( {} ) ),
-} ) );
-
 jest.mock( 'i18n-calypso', () => ( {
 	localize: ( component: unknown ) => component,
 	translate: ( text: string ) => text,
-	useTranslate: () => ( text: string ) => text,
+	useTranslate: () => ( text: string, options?: { components?: { a?: ReactNode } } ) => {
+		const { cloneElement } = jest.requireActual( 'react' );
+		return options?.components?.a
+			? cloneElement( options.components.a, {}, 'Compare providers' )
+			: text;
+	},
 } ) );
 
 jest.mock( 'calypso/lib/domains', () => ( {
@@ -60,22 +62,38 @@ jest.mock( 'calypso/my-sites/email/email-non-domain-owner-message', () => ( {
 	EmailNonDomainOwnerMessage: () => <div>Email service can only be purchased</div>,
 } ) );
 jest.mock( 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle', () => ( {
-	BillingIntervalToggle: () => <div>Billing interval</div>,
+	BillingIntervalToggle: ( {
+		onIntervalChange,
+	}: {
+		onIntervalChange: ( interval: string ) => void;
+	} ) => <button onClick={ () => onIntervalChange( 'monthly' ) }>Billing interval</button>,
 } ) );
 jest.mock( 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link', () => () => (
 	<div>Email forwarding link</div>
 ) );
 jest.mock(
 	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation',
-	() => () => null
+	() =>
+		( { backUrl, skipUrl }: { backUrl: string; skipUrl?: string } ) => (
+			<nav>
+				<a href={ backUrl }>Back</a>
+				{ skipUrl && <a href={ skipUrl }>Skip</a> }
+			</nav>
+		)
 );
 jest.mock(
 	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card',
-	() => () => <div>Google Workspace card</div>
+	() =>
+		( { canSkip = true }: { canSkip?: boolean } ) => (
+			<div>Google Workspace card{ canSkip && <button>Skip Google Workspace</button> }</div>
+		)
 );
 jest.mock(
 	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card',
-	() => () => <div>Professional Email card</div>
+	() =>
+		( { canSkip = true }: { canSkip?: boolean } ) => (
+			<div>Professional Email card{ canSkip && <button>Skip Professional Email</button> }</div>
+		)
 );
 jest.mock( 'calypso/state', () => ( {
 	useDispatch: jest.fn(),
@@ -123,7 +141,7 @@ const nonOwnerDomainWithoutForwards = {
 	titanMailSubscription: null,
 } as ResponseDomain;
 
-const renderComparison = ( domain = nonOwnerDomainWithoutForwards ) => {
+const renderComparison = ( domain = nonOwnerDomainWithoutForwards, isDomainInCart = false ) => {
 	const state = {
 		canPurchaseGSuite: false,
 		currentRoute: '/email/example.com/purchase/example.wordpress.com',
@@ -139,6 +157,7 @@ const renderComparison = ( domain = nonOwnerDomainWithoutForwards ) => {
 	return render(
 		<EmailProvidersStackedComparison
 			comparisonContext="email-home-selected-domain"
+			isDomainInCart={ isDomainInCart }
 			selectedDomainName="example.com"
 			source="email"
 		/>
@@ -146,6 +165,10 @@ const renderComparison = ( domain = nonOwnerDomainWithoutForwards ) => {
 };
 
 describe( 'EmailProvidersStackedComparison', () => {
+	beforeEach( () => {
+		window.history.replaceState( {}, '', '/' );
+	} );
+
 	afterEach( () => {
 		jest.clearAllMocks();
 	} );
@@ -170,5 +193,44 @@ describe( 'EmailProvidersStackedComparison', () => {
 		} as ResponseDomain );
 
 		expect( screen.queryByText( 'Email forwarding link' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'hides navigation and provider Skip actions for an email-intent domain purchase', () => {
+		window.history.replaceState( {}, '', '/?emailIntent=true' );
+		renderComparison( nonOwnerDomainWithoutForwards, true );
+
+		expect( screen.queryByRole( 'link', { name: 'Skip' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Skip/ } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Back' } ) ).toHaveAttribute(
+			'href',
+			'/domains/add/example.wordpress.com?emailIntent=true'
+		);
+	} );
+
+	it( 'keeps Skip for ordinary domain purchases', () => {
+		renderComparison( nonOwnerDomainWithoutForwards, true );
+
+		expect( screen.getByRole( 'link', { name: 'Skip' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Skip Google Workspace' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Skip Professional Email' } ) ).toBeVisible();
+	} );
+
+	it( 'preserves email intent when changing the billing interval', async () => {
+		window.history.replaceState( {}, '', '/?emailIntent=true' );
+		renderComparison( nonOwnerDomainWithoutForwards, true );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Billing interval' } ) );
+
+		expect( page ).toHaveBeenLastCalledWith( expect.stringContaining( 'emailIntent=true' ) );
+		expect( page ).toHaveBeenLastCalledWith( expect.stringContaining( 'interval=monthly' ) );
+	} );
+
+	it( 'preserves email intent when opening the comparison page', () => {
+		window.history.replaceState( {}, '', '/?emailIntent=true' );
+		renderComparison( nonOwnerDomainWithoutForwards, true );
+		const target = new URL(
+			screen.getByRole( 'link', { name: 'Compare providers' } ).getAttribute( 'href' ) ?? '',
+			window.location.origin
+		);
+		expect( target.searchParams.get( 'emailIntent' ) ).toBe( 'true' );
 	} );
 } );
