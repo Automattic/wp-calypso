@@ -30379,7 +30379,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"swiper@npm:^12.1.2":
+"swiper@npm:^12.2.0":
   version: 12.2.0
   resolution: "swiper@npm:12.2.0"
   checksum: 459c9621e170130c0a6874b05e24fefd0411529600a17b2d8afc4987dc2e803ab18d42983081b723423819d464568fdb541b6c3f517e558c60888c644dc4ead1
@@ -32731,7 +32731,7 @@ __metadata:
     stream-json: "npm:^3.7.0"
     stylelint: "npm:^17.16.0"
     stylelint-scss: "npm:^7.4.0"
-    swiper: "npm:^12.1.2"
+    swiper: "npm:^12.2.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:6.0.3"
     vite: "npm:^8.3.7"
