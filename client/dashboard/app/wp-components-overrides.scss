@@ -1,3 +1,5 @@
+/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
+
 // 37.0.0 offsets the button focus ring by its own width, leaving a gap. Keep the ring
 // against the edge as before. The panel body toggle sets its own inset ring, so leave
 // it be. Remove to adopt the detached design-system ring.

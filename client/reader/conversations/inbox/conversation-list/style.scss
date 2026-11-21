@@ -285,9 +285,11 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 		--conversations-ink: var( --color-text );
 		--conversations-ink-weak: var( --color-text-subtle );
 		// The tabs read these, and they stay at their light values here too.
+		/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 		--wpds-color-foreground-interactive-neutral: var( --color-text );
 		--wpds-color-foreground-interactive-neutral-active: var( --color-text );
 		--wpds-color-stroke-interactive-neutral-strong: var( --color-text-subtle );
+		/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	}
 }
 

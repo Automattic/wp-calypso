@@ -26,7 +26,9 @@
 	padding: 3em 0;
 	.importer__importing-pane-progress{
 		width: 100%;
+		/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 		--wpds-color-background-track-neutral: var(--color-neutral-5);
 		--wpds-color-background-indicator-neutral: var(--color-accent);
+		/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	}
 }
