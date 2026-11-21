@@ -228,7 +228,7 @@
 		"react-dom": "19.3.1",
 		"react-hook-form": "^7.52.2",
 		"redux": "^5.0.1",
-		"swiper": "^12.1.2",
+		"swiper": "^12.2.0",
 		"wpcom": "workspace:^"
 	},
 	"optionalDependencies": {
