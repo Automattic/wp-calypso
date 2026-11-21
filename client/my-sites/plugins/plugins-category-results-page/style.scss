@@ -1,0 +1,44 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+// Page numbers sit above the previous and next links on small screens, and between them from medium up.
+.plugins-category-results-page__pagination {
+	display: grid;
+	grid-template-areas:
+		'numbers numbers'
+		'prev next';
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	align-items: center;
+	margin-block-start: 32px;
+
+	@include break-medium {
+		grid-template-areas: 'prev numbers next';
+		grid-template-columns: 1fr auto 1fr;
+	}
+}
+
+.plugins-category-results-page__page-numbers {
+	grid-area: numbers;
+	justify-self: center;
+}
+
+.plugins-category-results-page__page-number {
+	justify-content: center;
+	min-width: 40px;
+}
+
+.plugins-category-results-page__page-gap {
+	color: var( --color-text-subtle );
+	padding-inline: 2px;
+}
+
+.plugins-category-results-page__prev {
+	grid-area: prev;
+	justify-self: start;
+}
+
+.plugins-category-results-page__next {
+	grid-area: next;
+	justify-self: end;
+}

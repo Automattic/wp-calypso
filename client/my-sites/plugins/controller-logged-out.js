@@ -8,14 +8,27 @@ import {
 import { getSiteFragment } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import {
+	setDocumentHeadLink,
+	setDocumentHeadMeta,
+	setDocumentHeadTitle,
+} from 'calypso/state/document-head/actions';
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
-import { UNLISTED_PLUGINS } from './constants';
+import {
+	CATEGORY_PAGE_QUERY_ARG,
+	MAX_CATEGORY_PAGE,
+	getCategoryName,
+	getCategoryPaginationUrls,
+	getCategoryTitle,
+	isPaginatedCategory,
+	parseCategoryPage,
+} from './category-pagination';
+import { UNLISTED_PLUGINS, WPBEGINNER_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
 const PREFETCH_TIMEOUT = 2000;
@@ -189,6 +202,54 @@ export async function fetchPlugins( context, next ) {
 	next();
 }
 
+/** Redirect `?page=1` to the bare URL, 404 any page that doesn't exist, and SSR the rest. */
+export function validateCategoryPage( context, next ) {
+	const rawPage = context.query?.[ CATEGORY_PAGE_QUERY_ARG ];
+
+	if ( ! context.isServerSide || rawPage === undefined ) {
+		return next();
+	}
+
+	if ( rawPage === '1' ) {
+		const url = new URL( context.originalUrl, 'https://wordpress.com' );
+		url.searchParams.delete( CATEGORY_PAGE_QUERY_ARG );
+		return context.res.redirect( 301, url.pathname + url.search );
+	}
+
+	const page = parseCategoryPage( rawPage );
+	const category = getCategoryForPluginsBrowser( context );
+
+	// Not-found pages skip SSR, so they never fill the markup and state caches.
+	if ( ! page || page > MAX_CATEGORY_PAGE || ! isPaginatedCategory( category ) ) {
+		context.res.status( 404 );
+		return next();
+	}
+
+	// Calypso skips SSR for URLs with query args, so opt back in when `page` is the only one.
+	if ( Object.keys( context.query ).length === 1 ) {
+		context.serverSideRender = true;
+	}
+
+	next();
+}
+
+const setCategoryPaginationLinks = ( context, { page, hasNextPage } ) => {
+	const { prev, next } = getCategoryPaginationUrls( {
+		pathname: context.pathname,
+		page,
+		hasNextPage,
+	} );
+
+	const links = [
+		prev && { rel: 'prev', href: new URL( prev, 'https://wordpress.com' ).href },
+		next && { rel: 'next', href: new URL( next, 'https://wordpress.com' ).href },
+	].filter( Boolean );
+
+	if ( links.length ) {
+		context.store.dispatch( setDocumentHeadLink( links ) );
+	}
+};
+
 export async function fetchCategoryPlugins( context, next ) {
 	const { queryClient, store } = context;
 
@@ -202,13 +263,28 @@ export async function fetchCategoryPlugins( context, next ) {
 	const categoryTags = categories[ category || '' ]?.tags || [ category ];
 	const tag = categoryTags.join( ',' );
 
+	const isNotFound = context.res.statusCode === 404;
+	const page = isNotFound
+		? 1
+		: ( parseCategoryPage( context.query?.[ CATEGORY_PAGE_QUERY_ARG ] ) ?? 1 );
+
 	const options = {
 		...getQueryOptions( context ),
 		category,
 		tag,
+		// Matches the client, which lists WPBeginner's picks by slug rather than by tag.
+		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
+		page: page > 1 ? page : undefined,
 	};
 
-	await prefetchTimebox(
+	// DocumentHead also sets the title, but doesn't run when the markup comes from the cache.
+	if ( ! context.query?.s ) {
+		const translate = context.i18n.translate.bind( context.i18n );
+		const title = getCategoryTitle( translate, getCategoryName( categories, category ), page );
+		store.dispatch( setDocumentHeadTitle( title ) );
+	}
+
+	const dataOrError = await prefetchTimebox(
 		[
 			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
 			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
@@ -216,6 +292,27 @@ export async function fetchCategoryPlugins( context, next ) {
 		],
 		context
 	);
+
+	if ( isNotFound || ! isPaginatedCategory( category ) ) {
+		return next();
+	}
+
+	const firstPage =
+		dataOrError instanceof Error
+			? undefined
+			: queryClient.getQueryData(
+					getESPluginsInfiniteQueryParams( { ...options, infinite: true }, true ).queryKey
+				)?.pages?.[ 0 ]?.data;
+
+	if ( ! firstPage ) {
+		// The prefetch swallows search errors, so skip SSR rather than cache an empty page.
+		context.serverSideRender = false;
+	} else if ( page > 1 && ! firstPage.results?.length ) {
+		context.res.status( 404 );
+		context.serverSideRender = false;
+	} else {
+		setCategoryPaginationLinks( context, { page, hasNextPage: !! firstPage.page_handle } );
+	}
 
 	next();
 }
@@ -233,7 +330,11 @@ export async function fetchCategoryPlugins( context, next ) {
  * so Googlebot can recrawl and observe the directive.
  */
 export function setBrowsePluginsNoindex( context, next ) {
-	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
+	if (
+		! context.isServerSide ||
+		isUserLoggedIn( context.store.getState() ) ||
+		context.res?.statusCode === 404
+	) {
 		return next();
 	}
 
