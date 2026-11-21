@@ -209,6 +209,13 @@ describe( 'PostCommentForm', () => {
 			expect( await postReply( content ) ).toBe( true );
 		} );
 
+		it( 'shows the editor before focus when expanded', async () => {
+			mockEditorSettings( 200, editorSettings );
+			renderForm( { expanded: true }, { inbox: true } );
+
+			expect( await screen.findByRole( 'textbox', { name: 'Comment' } ) ).toBeVisible();
+		} );
+
 		it( 'keeps the textarea when the editor settings fail to load', async () => {
 			const settings = mockEditorSettings( 404, { code: 'editor_not_available' } );
 			renderForm( { commentText: 'Plain words' }, { inbox: true } );

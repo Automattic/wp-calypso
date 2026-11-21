@@ -7,6 +7,8 @@ export type CommentEditorProps = {
 	labels: CommentsEditorLabels & { embedUrl: string };
 	/** The caret's offset into the text, or -1 for the end. Left out, the editor takes no focus. */
 	focus?: () => number;
+	/** Keeps the toolbar up before the writer clicks in. */
+	showToolbar?: boolean;
 	placeholder: string;
 	/** Asks for an embed's preview in place of the editor's own request, which can't sign in. */
 	fetchEmbed?: ( url: string ) => Promise< Response >;
