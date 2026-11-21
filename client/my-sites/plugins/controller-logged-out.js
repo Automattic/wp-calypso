@@ -8,7 +8,11 @@ import {
 import { getSiteFragment } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { setDocumentHeadLink, setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import {
+	setDocumentHeadLink,
+	setDocumentHeadMeta,
+	setDocumentHeadTitle,
+} from 'calypso/state/document-head/actions';
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
@@ -18,7 +22,10 @@ import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
 import {
 	CATEGORY_PAGE_QUERY_ARG,
 	MAX_CATEGORY_PAGE,
+	getCategoryName,
 	getCategoryPaginationUrls,
+	getCategoryTitle,
+	isPaginatedCategory,
 	parseCategoryPage,
 } from './category-pagination';
 import { UNLISTED_PLUGINS } from './constants';
@@ -195,29 +202,31 @@ export async function fetchPlugins( context, next ) {
 	next();
 }
 
-/** Redirect a `page` query arg that isn't a page past the first to the URL without it. */
-export function redirectInvalidCategoryPage( context, next ) {
+/** Redirect `?page=1` to the bare URL, 404 any page that doesn't exist, and SSR the rest. */
+export function validateCategoryPage( context, next ) {
 	const rawPage = context.query?.[ CATEGORY_PAGE_QUERY_ARG ];
 
 	if ( ! context.isServerSide || rawPage === undefined ) {
 		return next();
 	}
 
+	if ( rawPage === '1' ) {
+		const url = new URL( context.originalUrl, 'https://wordpress.com' );
+		url.searchParams.delete( CATEGORY_PAGE_QUERY_ARG );
+		return context.res.redirect( 301, url.pathname + url.search );
+	}
+
 	const page = parseCategoryPage( rawPage );
-	if ( page && page > 1 ) {
+	const category = getCategoryForPluginsBrowser( context );
+
+	// Not-found pages skip SSR, so they never fill the markup and state caches.
+	if ( ! page || page > MAX_CATEGORY_PAGE || ! isPaginatedCategory( category ) ) {
+		context.res.status( 404 );
 		return next();
 	}
 
-	const url = new URL( context.originalUrl, 'https://wordpress.com' );
-	url.searchParams.delete( CATEGORY_PAGE_QUERY_ARG );
-	context.res.redirect( 301, url.pathname + url.search );
-}
-
-/** Calypso skips SSR for URLs with query args, so opt back in when `page` is the only one. */
-export function allowCategoryPageSsr( context, next ) {
-	const queryKeys = Object.keys( context.query ?? {} );
-
-	if ( queryKeys.length === 1 && queryKeys[ 0 ] === CATEGORY_PAGE_QUERY_ARG ) {
+	// Calypso skips SSR for URLs with query args, so opt back in when `page` is the only one.
+	if ( Object.keys( context.query ).length === 1 ) {
 		context.serverSideRender = true;
 	}
 
@@ -254,34 +263,35 @@ export async function fetchCategoryPlugins( context, next ) {
 	const categoryTags = categories[ category || '' ]?.tags || [ category ];
 	const tag = categoryTags.join( ',' );
 
-	const page = parseCategoryPage( context.query?.[ CATEGORY_PAGE_QUERY_ARG ] ) ?? 1;
-	const isPageInRange = page <= MAX_CATEGORY_PAGE;
+	const isNotFound = context.res.statusCode === 404;
+	const page = isNotFound
+		? 1
+		: ( parseCategoryPage( context.query?.[ CATEGORY_PAGE_QUERY_ARG ] ) ?? 1 );
 
 	const options = {
 		...getQueryOptions( context ),
 		category,
 		tag,
-		page: page > 1 && isPageInRange ? page : undefined,
+		page: page > 1 ? page : undefined,
 	};
+
+	// DocumentHead also sets the title, but doesn't run when the markup comes from the cache.
+	if ( ! context.query?.s ) {
+		const translate = context.i18n.translate.bind( context.i18n );
+		const title = getCategoryTitle( translate, getCategoryName( categories, category ), page );
+		store.dispatch( setDocumentHeadTitle( title ) );
+	}
 
 	const dataOrError = await prefetchTimebox(
 		[
 			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
 			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
-			...( isPageInRange
-				? [
-						{
-							name: 'category-plugins',
-							promise: prefetchCategoryPlugins( queryClient, options ),
-						},
-					]
-				: [] ),
+			{ name: 'category-plugins', promise: prefetchCategoryPlugins( queryClient, options ) },
 		],
 		context
 	);
 
-	if ( ! isPageInRange ) {
-		context.res.status( 404 );
+	if ( isNotFound || ! isPaginatedCategory( category ) ) {
 		return next();
 	}
 
@@ -293,6 +303,7 @@ export async function fetchCategoryPlugins( context, next ) {
 		if ( firstPage ) {
 			if ( page > 1 && ! firstPage.results?.length ) {
 				context.res.status( 404 );
+				context.serverSideRender = false;
 			} else {
 				setCategoryPaginationLinks( context, { page, hasNextPage: !! firstPage.page_handle } );
 			}
@@ -315,7 +326,11 @@ export async function fetchCategoryPlugins( context, next ) {
  * so Googlebot can recrawl and observe the directive.
  */
 export function setBrowsePluginsNoindex( context, next ) {
-	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
+	if (
+		! context.isServerSide ||
+		isUserLoggedIn( context.store.getState() ) ||
+		context.res?.statusCode === 404
+	) {
 		return next();
 	}
 

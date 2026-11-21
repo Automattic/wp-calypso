@@ -36,6 +36,7 @@ import {
 	getSelectedSite,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { getCategoryName, getCategoryTitle, isPaginatedCategory } from '../category-pagination';
 import PluginsCategoryResultsPage from '../plugins-category-results-page';
 import PluginsDiscoveryPage from '../plugins-discovery-page';
 import PluginsNavigationHeader from '../plugins-navigation-header';
@@ -114,23 +115,14 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, page = 1, pa
 	const { __ } = useI18n();
 	const translate = useTranslate();
 	const categories = useCategories();
-	const fallbackCategoryName = category
-		? category.charAt( 0 ).toUpperCase() + category.slice( 1 )
-		: __( 'Plugins' );
-	const categoryName = categories[ category ]?.menu || fallbackCategoryName;
+	const categoryName = category ? getCategoryName( categories, category ) : __( 'Plugins' );
+	const isPaginated = ! isLoggedIn && !! pathname && ! search && isPaginatedCategory( category );
+	const categoryPage = isPaginated ? page : 1;
 	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 	const shouldUseLoggedInView =
 		isEnabled( 'plugins/universal-header' ) && dashboardOptIn ? siteId : isLoggedIn;
 
 	const isMarketplaceRedesignEnabled = useIsMarketplaceRedesignEnabled();
-
-	const getCategoryTitle = () =>
-		page > 1
-			? translate( 'Page %(page)d – %(categoryName)s Plugins', {
-					args: { categoryName, page },
-					comment: 'Title of a page of a plugins category listing, e.g. "Page 2 – SEO Plugins".',
-				} )
-			: translate( '%(categoryName)s Plugins', { args: { categoryName } } );
 
 	// this is a temporary hack until we merge Phase 4 of the refactor
 	const renderList = () => {
@@ -159,8 +151,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, page = 1, pa
 					category={ category }
 					sites={ sites }
 					siteSlug={ siteSlug }
-					page={ page }
+					page={ categoryPage }
 					pathname={ pathname }
+					isPaginated={ isPaginated }
 				/>
 			);
 		}
@@ -200,7 +193,11 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, page = 1, pa
 				isLoggedIn={ isLoggedIn }
 			/>
 			<DocumentHead
-				title={ category && ! search ? getCategoryTitle() : translate( 'Plugins' ) }
+				title={
+					category && ! search
+						? getCategoryTitle( translate, categoryName, categoryPage )
+						: translate( 'Plugins' )
+				}
 				meta={
 					! category && ! search
 						? [
