@@ -1693,7 +1693,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     jsdom: "npm:^20.0.3"
     resize-observer-polyfill: "npm:^1.5.1"
-    social-logos: "npm:^3.4.0"
+    social-logos: "npm:^3.4.3"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
@@ -1882,7 +1882,7 @@ __metadata:
     postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    social-logos: "npm:^3.4.0"
+    social-logos: "npm:^3.4.3"
     storybook: "npm:^10.6.5"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
@@ -15527,7 +15527,7 @@ __metadata:
     redux-dynamic-middlewares: "npm:^2.2.0"
     redux-mock-store: "npm:^1.5.5"
     redux-thunk: "npm:^3.1.0"
-    social-logos: "npm:^3.4.0"
+    social-logos: "npm:^3.4.3"
     source-map-support: "npm:^0.5.21"
     store: "npm:^2.0.12"
     storybook: "npm:^10.6.5"
@@ -29493,15 +29493,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"social-logos@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "social-logos@npm:3.4.0"
+"social-logos@npm:^3.4.3":
+  version: 3.4.3
+  resolution: "social-logos@npm:3.4.3"
   dependencies:
     prop-types: "npm:^15.8.1"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
-  checksum: 9e5c25607a02f2ff8fa2aabf89717b1bbc53896c35530c40bf559da0834701fdba35511c114f893c72ded8d762dd24b23a4b99cf8ba60a705505abda22cca2bd
+  checksum: 96d51165e3c80f088fd13c689acf43d78eaef7c9bf31c3b18d8e78e674721da195be25299674d5cb3950c887563e89b8ea0e818c62317fdacf7c07a2fbf76ef7
   languageName: node
   linkType: hard
 
