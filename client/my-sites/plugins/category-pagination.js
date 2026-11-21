@@ -30,13 +30,15 @@ export function getCategoryPage( value ) {
 
 /**
  * Build the URL of a page of a plugins category. The first page has no query arg,
- * so it keeps a single URL.
+ * so it keeps a single URL. Calypso serves `/plugins/browse/seo/` as the same page
+ * as `/plugins/browse/seo`, so page URLs never keep a trailing slash.
  * @param {string} pathname The category page pathname
  * @param {number} page The page number
  * @returns {string} The page URL
  */
 export function getCategoryPageUrl( pathname, page ) {
-	return page > 1 ? `${ pathname }?${ CATEGORY_PAGE_QUERY_ARG }=${ page }` : pathname;
+	const path = pathname.replace( /\/+$/, '' );
+	return page > 1 ? `${ path }?${ CATEGORY_PAGE_QUERY_ARG }=${ page }` : path;
 }
 
 /**
