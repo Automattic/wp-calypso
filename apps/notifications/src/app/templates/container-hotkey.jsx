@@ -4,7 +4,14 @@ import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 
+// Every container listens on `window`, and an action can re-render another container
+// with the same hotkey before that one's listener runs, so the others skip a key press
+// one container handled. Not `event.defaultPrevented`: other code cancels key presses
+// too, such as a focusable disabled button, and that mustn't turn the shortcuts off.
+const handledEvents = new WeakSet();
+
 const dispatch = ( event, action ) => {
+	handledEvents.add( event );
 	event.preventDefault();
 	event.stopPropagation();
 
@@ -32,16 +39,22 @@ export class HotkeyContainer extends Component {
 	}
 
 	handleKeyDown = ( event ) => {
-		if ( ! this.props.shortcuts || ! this.props.keyboardShortcutsAreEnabled ) {
+		if (
+			handledEvents.has( event ) ||
+			! this.props.shortcuts ||
+			! this.props.keyboardShortcutsAreEnabled
+		) {
 			return;
 		}
 
-		this.props.shortcuts
-			.filter( ( shortcut ) => shortcut.hotkey === event.key )
-			.filter(
-				( shortcut ) => ( shortcut.withModifiers || false ) === modifierKeyIsActive( event )
-			)
-			.forEach( ( shortcut ) => dispatch( event, shortcut.action ) );
+		const shortcut = this.props.shortcuts.find(
+			( { hotkey, withModifiers = false } ) =>
+				hotkey === event.key && withModifiers === modifierKeyIsActive( event )
+		);
+
+		if ( shortcut ) {
+			dispatch( event, shortcut.action );
+		}
 	};
 
 	render() {
