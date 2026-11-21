@@ -429,19 +429,60 @@ async function endWpcomSession( logoutUrl: string ): Promise< string > {
 	}
 }
 
+const SESSION_CLEANUP_TIMEOUT_MS = 3000;
+
+/**
+ * Leaves the dashboard once the session is over, dropping what this browser stored for
+ * the user. The dashboard cannot render without a session, so this is a full page load.
+ *
+ * It never rejects and always navigates: someone whose session has already ended must
+ * not be left on a page they cannot use because the cleanup failed or stalled.
+ *
+ * `leave` defaults to a plain page load. Pass one to navigate another way, e.g. past
+ * the router's blockers.
+ */
+export async function redirectAfterSessionEnd(
+	destination: string,
+	leave: ( href: string ) => unknown = ( href ) => {
+		window.location.href = href;
+	}
+): Promise< void > {
+	let timeout: ReturnType< typeof setTimeout > | undefined;
+	await Promise.race( [
+		clearLocalSession(),
+		new Promise( ( resolve ) => {
+			timeout = setTimeout( resolve, SESSION_CLEANUP_TIMEOUT_MS );
+		} ),
+	] );
+	clearTimeout( timeout );
+
+	leave( destination );
+}
+
+async function clearLocalSession(): Promise< void > {
+	const steps: Array< () => unknown > = [
+		disablePersistQueryClient,
+		clearQueryClient,
+		async () => {
+			// Dynamically import Calypso v1 cleanup code because it includes a number
+			// of dependencies we don't want included in the Hosting Dashboard bundle.
+			const { disablePersistence, clearStore } = await import( 'calypso/lib/user/store' );
+			disablePersistence();
+			await clearStore();
+		},
+	];
+
+	for ( const step of steps ) {
+		try {
+			await step();
+		} catch {
+			// Leaving matters more than what is left behind, and the other steps still run.
+		}
+	}
+}
+
 export async function logout( user: User ): Promise< void > {
-	const destination = await endSession( user );
-
-	disablePersistQueryClient();
-	clearQueryClient();
-
-	// Dynamically import Calypso v1 cleanup code because it includes a number
-	// of dependencies we don't want included in the Hosting Dashboard bundle.
-	const { disablePersistence, clearStore } = await import( 'calypso/lib/user/store' );
-	disablePersistence();
-	clearStore();
-
-	window.location.href = destination;
+	await redirectAfterSessionEnd( await endSession( user ) );
 }
 
 /**
