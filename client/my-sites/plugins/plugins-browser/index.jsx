@@ -126,9 +126,9 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, page = 1, pa
 
 	const getCategoryTitle = () =>
 		page > 1
-			? translate( '%(categoryName)s Plugins – Page %(page)d', {
+			? translate( 'Page %(page)d – %(categoryName)s Plugins', {
 					args: { categoryName, page },
-					comment: 'Title of a page of a plugins category listing, e.g. "SEO Plugins – Page 2".',
+					comment: 'Title of a page of a plugins category listing, e.g. "Page 2 – SEO Plugins".',
 				} )
 			: translate( '%(categoryName)s Plugins', { args: { categoryName } } );
 
