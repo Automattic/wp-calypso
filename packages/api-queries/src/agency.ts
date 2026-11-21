@@ -1,4 +1,5 @@
 import {
+	createAgency,
 	fetchAgency,
 	fetchAgencyLeadMatching,
 	fetchAgencyProgramStats,
@@ -23,6 +24,7 @@ import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import type {
 	Agency,
+	AgencyCreateRequest,
 	AgencyDashboardOptInChoice,
 	AgencyHostingReferral,
 	AgencyLeadMatchingProfile,
@@ -152,6 +154,14 @@ export const agencyResourceEventMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-resource-record' },
 		mutationFn: ( event: AgencyResourceEvent ) => recordAgencyResourceEvent( agencyId, event ),
+	} );
+
+export const agencyCreateMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'agcy-create' },
+		mutationFn: ( request: AgencyCreateRequest ) => createAgency( request ),
+		// Reset, not invalidate: nothing here observes these queries, so a cached `hasAgency: false` would survive.
+		onSuccess: () => queryClient.resetQueries( { queryKey: [ 'agency' ] } ),
 	} );
 
 export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>

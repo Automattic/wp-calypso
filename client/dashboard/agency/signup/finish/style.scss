@@ -1,0 +1,11 @@
+@import '../../../app/pulse';
+
+.agency-signup-finish {
+	min-height: 100vh;
+	padding-inline: 24px;
+	background: var( --color-surface );
+}
+
+.agency-signup-finish-logo {
+	animation: pulse 1.5s ease-in-out infinite;
+}
