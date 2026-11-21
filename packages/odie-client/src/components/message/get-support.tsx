@@ -49,6 +49,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		isChatLoaded,
 		forceEmailSupport: contextForceEmailSupport,
 		humanSupportRouting,
+		pendingHumanSupportRequest,
 	} = useOdieAssistantContext();
 
 	const { mostRecentSupportInteractionId, hasReachedLimit: isConversationLimitReached } =
@@ -64,8 +65,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	const isEmailForced = forceEmailSupport || contextForceEmailSupport;
 	const hasZendeskAccess = canConnectToZendesk || contextCanConnectToZendesk;
 
-	// Early return if user is already talking to a human or transferring to Zendesk
-	if ( chat.provider !== 'odie' || chat.status === 'transfer' ) {
+	// Early return if user is already talking to a human or transferring to Zendesk, or a routing
+	// step has the request: asking again would only start the step over.
+	if ( chat.provider !== 'odie' || chat.status === 'transfer' || pendingHumanSupportRequest ) {
 		return null;
 	}
 
