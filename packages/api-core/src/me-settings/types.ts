@@ -20,6 +20,8 @@ export type McpAbility = {
 	category_label?: string;
 	type: string;
 	enabled: boolean;
+	/** Requires an individual opt-in; bulk enable intents do not apply. */
+	requires_opt_in?: boolean;
 	/** When false, hide this tool from account settings UIs. */
 	visible?: boolean;
 	/** Whether this ability is read-only. The backend guarantees this as of AIINT-469, but treat it as optional since older/partial payloads may omit it — fall back to `annotations.readonly`. */
