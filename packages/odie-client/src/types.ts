@@ -36,6 +36,7 @@ export type OdieAssistantContextInterface = {
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
+	openLinksInNewTab: boolean;
 	launcherContext?: string;
 	// The product's AI disclosure line, already translated.
 	aiDisclosureLine?: string;
@@ -71,6 +72,8 @@ export type OdieAssistantProviderProps = {
 	version?: string | null;
 	forceEmailSupport?: boolean;
 	isChatRestricted?: boolean;
+	// Open the links and sources of an answer in a new browser tab.
+	openLinksInNewTab?: boolean;
 	launcherContext?: string;
 	aiDisclosureLine?: string;
 	children?: ReactNode;

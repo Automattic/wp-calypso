@@ -1,4 +1,6 @@
 import { isThisASupportArticleLink } from '@automattic/urls';
+import { VisuallyHidden } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { Children, isValidElement, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +24,7 @@ const CustomALink = ( {
 	inline?: boolean;
 	target?: string;
 } ) => {
-	const { trackEvent } = useOdieAssistantContext();
+	const { trackEvent, openLinksInNewTab } = useOdieAssistantContext();
 	const navigate = useNavigate();
 
 	const transformedHref = useMemo( () => uriTransformer( href ?? '' ), [ href ] );
@@ -30,7 +32,11 @@ const CustomALink = ( {
 	const wrapsImage = Children.toArray( children ).some(
 		( child ) => isValidElement( child ) && child.type === 'img'
 	);
-	const effectiveTarget = wrapsImage ? '_blank' : target;
+	const isSupportArticleLink = isThisASupportArticleLink( transformedHref );
+	const isWebLink =
+		transformedHref.startsWith( 'http://' ) || transformedHref.startsWith( 'https://' );
+	const opensInNewTab = openLinksInNewTab && isWebLink && ! isSupportArticleLink;
+	const effectiveTarget = wrapsImage || opensInNewTab ? '_blank' : target;
 
 	// A `blob:` link is a file the user just sent, held by the browser. Save it under its name
 	// rather than open it in place of the page.
@@ -55,7 +61,7 @@ const CustomALink = ( {
 				download={ downloadName }
 				onClick={ ( e ) => {
 					// Open support article links in the Help Center.
-					if ( isThisASupportArticleLink( transformedHref ) ) {
+					if ( isSupportArticleLink ) {
 						navigate( `/post?link=${ transformedHref }` );
 						e.preventDefault();
 					}
@@ -67,6 +73,14 @@ const CustomALink = ( {
 				} }
 			>
 				{ children }
+				{ opensInNewTab && ! wrapsImage && (
+					<VisuallyHidden as="span">
+						{
+							/* translators: accessibility text */
+							__( '(opens in a new tab)', __i18n_text_domain__ )
+						}
+					</VisuallyHidden>
+				) }
 			</a>
 		</span>
 	);
