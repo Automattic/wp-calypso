@@ -3,10 +3,13 @@ import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
+import { useMatch } from 'react-router';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -16,6 +19,7 @@ import {
 import { useSiteQuery } from '../../../hooks/use-site';
 import { useSiteCopy } from '../../../hooks/use-site-copy';
 import { STEPS } from '../../internals/steps';
+import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
 import {
 	AssertConditionState,
 	type AssertConditionResult,
@@ -23,15 +27,20 @@ import {
 	type ProvidedDependencies,
 	type StepperStep,
 } from '../../internals/types';
+import { hasCopySitePlan } from './has-copy-site-plan';
 import type { OnboardActions } from '@automattic/data-stores';
 
-function useIsValidSite() {
+function useIsValidSite( enabled: boolean ) {
 	const urlQueryParams = useQuery();
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-	const sourceQuery = useSiteQuery( sourceSlug ?? undefined, { enabled: !! sourceSlug } );
+	const sourceQuery = useSiteQuery( sourceSlug ?? undefined, {
+		enabled: enabled && !! sourceSlug,
+	} );
 	const sourceSite = sourceQuery.data ?? undefined;
 
-	const { shouldShowSiteCopyItem, isFetching: isFetchingSiteCopy } = useSiteCopy( sourceSite );
+	const { shouldShowSiteCopyItem, isFetching: isFetchingSiteCopy } = useSiteCopy( sourceSite, {
+		enabled,
+	} );
 	return {
 		isValidSite: shouldShowSiteCopyItem,
 		hasFetchedSiteDetails: !! sourceSite?.ID && ! isFetchingSiteCopy,
@@ -46,6 +55,7 @@ const COPY_SITE_STEPS = [
 	STEPS.PROCESSING,
 	STEPS.AUTOMATED_COPY_SITE,
 	STEPS.PROCESSING_COPY_SITE_FLOW,
+	STEPS.ERROR,
 	{ ...STEPS.PROCESSING, slug: 'resuming' as StepperStep[ 'slug' ] } as StepperStep,
 ];
 
@@ -65,7 +75,17 @@ const copySite: Flow = {
 		const flowName = this.name;
 		const urlQueryParams = useQuery();
 		const sourceSiteSlug = urlQueryParams.get( 'sourceSlug' ) ?? '';
-		const { data: sourceSite } = useSiteQuery( sourceSiteSlug, { enabled: !! sourceSiteSlug } );
+		const isPostCheckoutStep = [ 'automated-copy', 'processing-copy', 'error' ].includes(
+			_currentStepSlug
+		);
+		const { data: sourceSite } = useSiteQuery( sourceSiteSlug, {
+			enabled: ! isPostCheckoutStep && !! sourceSiteSlug,
+		} );
+		const { prepareCopyCart } = useSiteCopy( sourceSite ?? undefined, {
+			enabled: _currentStepSlug === 'domains' || _currentStepSlug === 'use-my-domain',
+		} );
+		const plan = urlQueryParams.get( 'plan' ) || sourceSite?.plan?.product_slug || PLAN_BUSINESS;
+		const { setSiteSetupError } = useDispatch( SITE_STORE );
 		const {
 			setHideFreePlan,
 			setSignupDomainOrigin,
@@ -89,6 +109,9 @@ const copySite: Flow = {
 						return navigate( useMyDomainURL );
 					}
 
+					if ( ! prepareCopyCart( plan ) ) {
+						return navigate( 'error' );
+					}
 					setSiteUrl( providedDependencies.siteUrl as string );
 					setDomain( providedDependencies.suggestion as DomainSuggestion );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
@@ -115,6 +138,9 @@ const copySite: Flow = {
 						return navigate( destination as typeof _currentStepSlug );
 					}
 
+					if ( ! prepareCopyCart( plan ) ) {
+						return navigate( 'error' );
+					}
 					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
 						setHideFreePlan( true );
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
@@ -133,6 +159,23 @@ const copySite: Flow = {
 				case 'resuming' as StepperStep[ 'slug' ]:
 				case 'processing': {
 					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
+					if (
+						typeof siteSlug !== 'string' ||
+						! siteSlug ||
+						providedDependencies.processingResult === ProcessingResult.FAILURE
+					) {
+						return navigate( 'error' );
+					}
+					const cart = await wpcom.req
+						.get( {
+							path: `/me/shopping-cart/${ encodeURIComponent( siteSlug ) }`,
+							apiVersion: '1.1',
+						} )
+						.catch( () => undefined );
+					if ( ! hasCopySitePlan( cart, plan ) ) {
+						setSiteSetupError( '', __( 'We couldn’t prepare your cart. Please try again.' ) );
+						return navigate( 'error' );
+					}
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
 						sourceSlug: sourceSiteSlug,
 						siteSlug: siteSlug,
@@ -141,12 +184,8 @@ const copySite: Flow = {
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
-					const plan =
-						urlQueryParams.get( 'plan' ) ?? sourceSite?.plan?.product_slug ?? PLAN_BUSINESS;
 					return window.location.assign(
-						`/checkout/${ plan }/${ encodeURIComponent(
-							( siteSlug as string ) ?? ''
-						) }?redirect_to=${ returnUrl }&signup=1`
+						`/checkout/${ encodeURIComponent( siteSlug ) }?redirect_to=${ returnUrl }&signup=1`
 					);
 				}
 
@@ -155,6 +194,12 @@ const copySite: Flow = {
 				}
 
 				case 'processing-copy': {
+					if ( providedDependencies.processingResult === ProcessingResult.NO_ACTION ) {
+						return navigate( 'automated-copy' );
+					}
+					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
+						return navigate( 'error' );
+					}
 					clearSignupDestinationCookie();
 					return window.location.assign( `/home/${ providedDependencies?.siteSlug }` );
 				}
@@ -178,7 +223,15 @@ const copySite: Flow = {
 
 		const urlQueryParams = useQuery();
 		const sourceSlug = urlQueryParams.get( 'sourceSlug' );
-		const { isValidSite, hasFetchedSiteDetails, isFetchingError } = useIsValidSite();
+		const step = useMatch( '/:flow/:step?/:lang?' )?.params.step;
+		const isPostCheckoutStep = [ 'automated-copy', 'processing-copy', 'error' ].includes(
+			step ?? ''
+		);
+		const { isValidSite, hasFetchedSiteDetails, isFetchingError } =
+			useIsValidSite( ! isPostCheckoutStep );
+		if ( isPostCheckoutStep ) {
+			return result;
+		}
 
 		if ( ! sourceSlug || isFetchingError || ( ! isValidSite && hasFetchedSiteDetails ) ) {
 			window.location.assign( '/sites' );
