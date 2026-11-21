@@ -35,6 +35,7 @@ const usePlugins = ( {
 	locale = '',
 	slugs,
 	page,
+	staleTime,
 }: {
 	category: string;
 	search?: string;
@@ -42,6 +43,7 @@ const usePlugins = ( {
 	locale?: string;
 	slugs?: string[];
 	page?: number;
+	staleTime?: number;
 } ) => {
 	let plugins = [];
 	let isFetching = false;
@@ -69,6 +71,7 @@ const usePlugins = ( {
 		hasNextPage,
 	} = useESPluginsInfinite( wporgPluginsOptions, {
 		enabled: !! search || ! [ 'paid', 'featured ' ].includes( category ),
+		staleTime,
 	} ) as ESResponse;
 
 	// This is triggered only for paid plugins lists.

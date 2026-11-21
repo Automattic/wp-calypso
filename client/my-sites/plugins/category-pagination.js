@@ -1,9 +1,18 @@
 import { DEFAULT_PAGE_SIZE } from 'calypso/data/marketplace/constants';
 import { ES_MAX_RESULT_OFFSET } from 'calypso/data/marketplace/use-es-query';
+import { ALLOWED_CATEGORIES } from './categories/use-categories';
 
 export const CATEGORY_PAGE_QUERY_ARG = 'page';
 
 export const MAX_CATEGORY_PAGE = Math.floor( ES_MAX_RESULT_OFFSET / DEFAULT_PAGE_SIZE ) + 1;
+
+/** Only curated categories are paginated; tag pages stay one noindexed page. */
+export function isPaginatedCategory( category ) {
+	return (
+		!! category &&
+		ALLOWED_CATEGORIES.some( ( allowed ) => allowed.toLowerCase() === category.toLowerCase() )
+	);
+}
 
 /** The page number in a `page` query arg, or null unless it's a positive integer. */
 export function parseCategoryPage( value ) {
@@ -60,4 +69,19 @@ export function getCategoryPageNumbers( page, pageCount ) {
 		}
 		return n === previous + 2 ? [ previous + 1, n ] : [ null, n ];
 	} );
+}
+
+/** The category's menu name, or its capitalized slug for uncurated tags. */
+export function getCategoryName( categories, category ) {
+	return categories[ category ]?.menu || category.charAt( 0 ).toUpperCase() + category.slice( 1 );
+}
+
+/** Pages past the first lead with the page number, the part that tells them apart. */
+export function getCategoryTitle( translate, categoryName, page ) {
+	return page > 1
+		? translate( 'Page %(page)d – %(categoryName)s Plugins', {
+				args: { categoryName, page },
+				comment: 'Title of a page of a plugins category listing, e.g. "Page 2 – SEO Plugins".',
+			} )
+		: translate( '%(categoryName)s Plugins', { args: { categoryName } } );
 }

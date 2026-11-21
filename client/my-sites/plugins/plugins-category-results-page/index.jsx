@@ -1,6 +1,5 @@
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import FullWidthSection from 'calypso/components/full-width-section';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import { useCategories } from 'calypso/my-sites/plugins/categories/use-categories';
@@ -8,7 +7,7 @@ import BusinessPlanBanner from 'calypso/my-sites/plugins/plugins-banners/busines
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import UpgradeNudge from 'calypso/my-sites/plugins/plugins-discovery-page/upgrade-nudge';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { BASE_STALE_TIME } from 'calypso/state/constants';
 import {
 	getCategoryPageCount,
 	getCategoryPageNumbers,
@@ -21,14 +20,21 @@ import usePlugins from '../use-plugins';
 
 import './style.scss';
 
-const PluginsCategoryResultsPage = ( { category, siteSlug, sites, page = 1, pathname } ) => {
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const isPaginated = ! isLoggedIn && !! pathname;
+const PluginsCategoryResultsPage = ( {
+	category,
+	siteSlug,
+	sites,
+	page = 1,
+	pathname,
+	isPaginated = false,
+} ) => {
 	const { plugins, isFetching, fetchNextPage, hasNextPage, pagination } = usePlugins( {
 		category,
 		infinite: ! isPaginated,
 		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
 		page,
+		// Outlasts the server's 2h stale time, so hydrating a server-rendered page doesn't refetch it.
+		staleTime: isPaginated ? 2 * BASE_STALE_TIME : undefined,
 	} );
 
 	const categories = useCategories();
