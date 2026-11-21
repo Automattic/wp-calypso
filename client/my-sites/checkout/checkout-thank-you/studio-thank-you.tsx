@@ -40,12 +40,12 @@ const StudioThankYou: FunctionComponent< StudioThankYouProps > = ( { purchases, 
 	// an unhandled `wp-studio://` with an "invalid address" alert, so the web app goes first.
 	const desktopAppButton = (
 		<Button primary={ !! studioCheckoutParams } onClick={ openStudio }>
-			{ translate( 'Open the Studio app' ) }
+			{ translate( 'Open the WordPress Studio app' ) }
 		</Button>
 	);
 	const webAppButton = (
 		<Button primary={ ! studioCheckoutParams } href={ STUDIO_WEB_APP_URL }>
-			{ translate( 'Open Studio on the web' ) }
+			{ translate( 'Open WordPress Studio on the web' ) }
 		</Button>
 	);
 
