@@ -10,6 +10,7 @@ import {
 	isTransferringHostedSiteCreationFlow,
 	Step,
 } from '@automattic/onboarding';
+import { CartActionResponseError } from '@automattic/shopping-cart';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useState, useRef } from 'react';
@@ -23,6 +24,7 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordSignupProcessingScreen } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
+import { logToLogstash } from 'calypso/lib/logstash';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
@@ -37,6 +39,17 @@ import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { SiteIntent } from '@automattic/data-stores/src/onboard';
 import './style.scss';
+
+/**
+ * Cart error codes that answer the user's own choice of domain, so they are not a fault in
+ * Calypso. The WordPress.com cart validator returns these when the chosen domain is taken,
+ * cannot be sold, or is not open for registration.
+ */
+const EXPECTED_CART_ERROR_CODES = [
+	'domain-not-available',
+	'domain-restricted',
+	'not_allowed_to_register',
+];
 
 /**
  * Mounted only for transfer flows, so the site request behind `useSiteData` stays out of every
@@ -209,7 +222,26 @@ const ProcessingStep: StepType< {
 					waitProperties.outcome = 'failure';
 					// eslint-disable-next-line no-console
 					console.error( 'ProcessingStep failed:', e );
-					captureFlowException( e );
+					const isCartRejection = e instanceof CartActionResponseError;
+					if ( isCartRejection ) {
+						// The cart endpoint answered the request and refused it. Every rejection is
+						// logged here, with its code, because some flows do not go to the error step
+						// after a failure, and the error step writes the only other record.
+						logToLogstash( {
+							feature: 'calypso_client',
+							message: 'Cart rejection in Stepper processing step',
+							extra: { error: e.code, message: e.message, flow },
+							properties: { flow, error: e.code },
+						} ).catch( () => {
+							// A failed log request must not become an unhandled rejection.
+						} );
+					}
+					// A rejection with an expected code answers the user's choice, so it stays out of
+					// Sentry. Any other code can come from a bad cart item that Calypso sent, so it
+					// goes to Sentry with its stack and release.
+					if ( ! isCartRejection || ! EXPECTED_CART_ERROR_CODES.includes( e.code ) ) {
+						captureFlowException( e );
+					}
 					setSiteSetupError( e.error || e.code, e.message );
 					submit?.( {
 						processingResult: ProcessingResult.FAILURE,
