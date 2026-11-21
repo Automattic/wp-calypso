@@ -10,6 +10,7 @@ import store from 'store';
 import { vi } from 'vitest';
 import { bumpStat } from '../../analytics';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
+import { NavigationBlocker } from '../../navigation-blocker';
 import {
 	AUTH_QUERY_KEY,
 	AuthProvider,
@@ -573,6 +574,10 @@ describe( 'logout', () => {
 		} );
 	} );
 
+	afterEach( () => {
+		vi.restoreAllMocks();
+	} );
+
 	test( 'ends the WordPress.com session through the logout endpoint', async () => {
 		const scope = nock( 'https://wordpress.com' )
 			.post( '/wp-login.php', ( body ) => {
@@ -581,6 +586,35 @@ describe( 'logout', () => {
 			} )
 			.query( { action: 'logout-endpoint' } )
 			.reply( 200, { success: true, data: { redirect_to: 'https://wordpress.com/?apppromo' } } );
+
+		await logout( user );
+
+		expect( scope.isDone() ).toBe( true );
+		expect( window.location.href ).toBe( 'https://wordpress.com/?apppromo' );
+	} );
+
+	test( 'keeps the session when the user stays to keep unsaved changes', async () => {
+		const scope = nock( 'https://wordpress.com' )
+			.post( '/wp-login.php' )
+			.query( { action: 'logout-endpoint' } )
+			.reply( 200, { success: true, data: { redirect_to: 'https://wordpress.com/?apppromo' } } );
+		render( <NavigationBlocker shouldBlock message="Discard your changes?" /> );
+		const confirm = vi.spyOn( window, 'confirm' ).mockReturnValue( false );
+
+		await logout( user );
+
+		expect( confirm ).toHaveBeenCalledWith( 'Discard your changes?' );
+		expect( scope.isDone() ).toBe( false );
+		expect( window.location.href ).toBe( 'https://my.wordpress.com/sites' );
+	} );
+
+	test( 'ends the session once the user agrees to discard unsaved changes', async () => {
+		const scope = nock( 'https://wordpress.com' )
+			.post( '/wp-login.php' )
+			.query( { action: 'logout-endpoint' } )
+			.reply( 200, { success: true, data: { redirect_to: 'https://wordpress.com/?apppromo' } } );
+		render( <NavigationBlocker shouldBlock /> );
+		vi.spyOn( window, 'confirm' ).mockReturnValue( true );
 
 		await logout( user );
 
