@@ -48,7 +48,7 @@ describe( 'StudioThankYou', () => {
 			'Thank you for your purchase'
 		);
 		expect( container.querySelector( '.thank-you__header-buttons' ) ).toContainElement(
-			screen.getByRole( 'link', { name: 'Open Studio on the web' } )
+			screen.getByRole( 'link', { name: 'Open WordPress Studio on the web' } )
 		);
 	} );
 
@@ -58,8 +58,8 @@ describe( 'StudioThankYou', () => {
 		it( 'leads with the web app and offers the desktop app second', () => {
 			render( <StudioThankYou purchases={ purchases } /> );
 
-			const webApp = screen.getByRole( 'link', { name: 'Open Studio on the web' } );
-			const desktopApp = screen.getByRole( 'button', { name: 'Open the Studio app' } );
+			const webApp = screen.getByRole( 'link', { name: 'Open WordPress Studio on the web' } );
+			const desktopApp = screen.getByRole( 'button', { name: 'Open the WordPress Studio app' } );
 
 			expect( webApp ).toHaveAttribute( 'href', 'https://app.wordpress.studio/' );
 			expect( webApp ).toHaveClass( 'is-primary' );
@@ -72,7 +72,9 @@ describe( 'StudioThankYou', () => {
 		it( 'opens the Studio app on request', async () => {
 			render( <StudioThankYou purchases={ purchases } /> );
 
-			await userEvent.click( screen.getByRole( 'button', { name: 'Open the Studio app' } ) );
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Open the WordPress Studio app' } )
+			);
 
 			expect( window.location.href ).toBe( 'wp-studio://' );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_studio_checkout_open_app_click' );
@@ -85,8 +87,8 @@ describe( 'StudioThankYou', () => {
 		it( 'leads with the desktop app and offers the web app second', () => {
 			render( <StudioThankYou purchases={ purchases } /> );
 
-			const desktopApp = screen.getByRole( 'button', { name: 'Open the Studio app' } );
-			const webApp = screen.getByRole( 'link', { name: 'Open Studio on the web' } );
+			const desktopApp = screen.getByRole( 'button', { name: 'Open the WordPress Studio app' } );
+			const webApp = screen.getByRole( 'link', { name: 'Open WordPress Studio on the web' } );
 
 			expect( webApp ).toHaveAttribute( 'href', 'https://app.wordpress.studio/' );
 			expect( desktopApp ).toHaveClass( 'is-primary' );
@@ -99,7 +101,9 @@ describe( 'StudioThankYou', () => {
 		it( 'hands back to the Studio site the buyer came from', async () => {
 			render( <StudioThankYou purchases={ purchases } /> );
 
-			await userEvent.click( screen.getByRole( 'button', { name: 'Open the Studio app' } ) );
+			await userEvent.click(
+				screen.getByRole( 'button', { name: 'Open the WordPress Studio app' } )
+			);
 
 			expect( window.location.href ).toBe(
 				`wp-studio://checkout-return?studioSiteId=${ STUDIO_SITE_ID }&checkoutResult=success`
@@ -111,7 +115,9 @@ describe( 'StudioThankYou', () => {
 		setLocation( `?studioSiteId=${ STUDIO_SITE_ID }&checkout_type=studio` );
 		render( <StudioThankYou purchases={ purchases } receiptId={ 123 } /> );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Open the Studio app' } ) );
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Open the WordPress Studio app' } )
+		);
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_studio_checkout_return', {
 			checkout_result: 'success',
