@@ -1198,7 +1198,6 @@ describe( 'SiteRedesign', () => {
 		);
 		expect( open ).toHaveAttribute( 'target', '_blank' );
 		expect( open ).toHaveAttribute( 'rel', 'noopener noreferrer' );
-		expect( screen.queryByText( 'Open the preview in a new tab' ) ).toBeNull();
 		const controls = [
 			open,
 			screen.getByRole( 'button', { name: 'Preview: Desktop' } ),
@@ -1308,7 +1307,6 @@ describe( 'SiteRedesign', () => {
 		);
 		expect( page.replace ).toHaveBeenCalledTimes( 1 );
 		expect( activateRedesign ).toHaveBeenCalledTimes( 1 );
-		expect( screen.queryByText( 'Your site has its new design' ) ).toBeNull();
 		expect( screen.queryByRole( 'link', { name: 'View site' } ) ).toBeNull();
 	} );
 

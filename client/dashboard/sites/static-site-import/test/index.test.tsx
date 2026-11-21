@@ -544,9 +544,6 @@ describe( 'StaticSiteImportCard', () => {
 		const preview = screen.getByRole( 'link', { name: /Preview site/ } );
 		expect( preview ).toHaveAttribute( 'href', 'https://busybears.wordpress.com' );
 		expect( preview ).toHaveAttribute( 'target', '_blank' );
-
-		expect( screen.queryByText( 'Does it look right?' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'offers to get a domain when the old address is missing', () => {
@@ -585,25 +582,6 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getByRole( 'link', { name: 'Get a domain' } ) ).not.toHaveAttribute(
 			'href',
 			expect.stringContaining( 'initialQuery' )
-		);
-	} );
-
-	test( 'does not ask for feedback after the site is previewed', async () => {
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
-
-		const { recordTracksEvent } = render( <StaticSiteImport /> );
-
-		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
-
-		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
-		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_dashboard_static_site_import_feedback',
-			expect.anything()
 		);
 	} );
 

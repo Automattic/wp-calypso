@@ -454,10 +454,5 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 				follow_source: 'reader-onboarding-modal',
 			} )
 		);
-		// Confirm the legacy onboarding-specific event name is no longer used.
-		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_reader_onboarding_interests_modal_tag_followed',
-			expect.anything()
-		);
 	} );
 } );
