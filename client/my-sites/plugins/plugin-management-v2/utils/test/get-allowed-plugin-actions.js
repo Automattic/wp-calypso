@@ -125,6 +125,16 @@ describe( 'getAllowedPluginActions', () => {
 			}
 		);
 
+		it( 'returns false for auto-updates when the API marks the plugin managed on a non-Atomic Jetpack site', () => {
+			isJetpackSite.mockReturnValue( true );
+			isSiteAutomatedTransfer.mockReturnValue( false );
+
+			const plugin = { slug: 'jetpack', sites: { 123: { is_managed: true } } };
+			const result = getAllowedPluginActions( {}, plugin, { ID: 123 } );
+			expect( result.autoupdate ).toBe( false );
+			expect( result.activation ).toBe( true );
+		} );
+
 		describe( 'Atomic sites', () => {
 			beforeEach( () => {
 				jest.resetAllMocks();

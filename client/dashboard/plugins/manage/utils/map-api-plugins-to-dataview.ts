@@ -81,7 +81,7 @@ export function mapApiPluginsToDataViewPlugins(
 
 			if ( site ) {
 				const { autoupdate } = getAllowedPluginActions(
-					{ isPluginActive: p.active, ...site, isPluginManaged: entry.isManaged },
+					{ isPluginActive: p.active, ...site, isPluginManaged: !! p.is_managed },
 					p.slug
 				);
 
