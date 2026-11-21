@@ -58,7 +58,7 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
-		"@testing-library/user-event": "^14.6.8",
+		"@testing-library/user-event": "^14.6.9",
 		"@types/prop-types": "^15.7.15",
 		"jsdom": "^20.0.3",
 		"react": "^18.3.1",
