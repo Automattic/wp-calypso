@@ -64,11 +64,11 @@ Existing curated entries were checked before adding replacements. The selected t
 - Latest published post observed: Fri, 20 Nov 2026 18:20:11 +0000 ([post](https://blog.adafruit.com/2026/11/20/john-parks-circuitpython-parsec-display-shapes-arc/)).
 - Activity checked on: 2026-11-20T21:36:38+00:00; HTTP 200, 50 entries parsed.
 - Popularity evidence: A 2026 Hacker News submission linking to the project or publisher has 684 points and 283 comments as checked on 2026-11-20. This primary community response supports maker-community interest, not the blog’s total readership or subscription count. [Source](https://news.ycombinator.com/item?id=48368121) (checked 2026-11-20).
-- Real icon URL: https://cdn-blog.adafruit.com/uploads/2020/04/logo_small@2x.png
-- Icon source/result: apple-touch-icon; HTTP 200, image/png, 922 bytes.
+- Real icon URL: https://cdn-shop.adafruit.com/static/favicon-196x196.png
+- Icon source/result: Official Adafruit homepage-declared 196px favicon; HTTP200 image/png, 10096 bytes, 196x196, opaque (no alpha). Original asset inspected: white star-flower on near-black. Replaces the genuine but invisible white-on-transparent blog icon. Signed-in loading and the 24px crop passed on both white and pale-blue selected pills.
 - Reader feed lookup / feed_ID / site_ID: Checked signed in on 2026-11-20; subscription feed_ID 35939321, site_ID 0.
 - Reader recent posts: Newest Reader publication 2026-11-20 on 2026-11-20; public feed newest 2026-11-20. The tested live-date route reads the available Reader posts.
-- Reader icon load: Passed signed in on 2026-11-20; 100x100, verified in the 24px round pill crop.
+- Reader icon load: Passed signed in on2026-11-20: the opaque196px asset shows a visible white flower on a dark circle at24px, on both white and pale-blue selected pills. The original transparent image was invisible and is replaced.
 - Reader following: Passed signed in on 2026-11-20; followed, matched the returned subscription, unfollowed, and restored the original subscription set.
 - Outcome: Accepted; included in the twelve-entry DIY list.
 
