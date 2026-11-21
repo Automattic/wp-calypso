@@ -109,10 +109,12 @@ export default function DomainGlueRecordsForm( {
 	};
 
 	const { validity, isValid } = useFormValidity( formData, fields, form );
-	const canSubmit = ! isSubmitting && isValid;
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		if ( ! isValid ) {
+			return;
+		}
 
 		const glueRecord = {
 			nameserver: formData.nameServer,
@@ -142,7 +144,10 @@ export default function DomainGlueRecordsForm( {
 								variant="primary"
 								type="submit"
 								isBusy={ isSubmitting }
-								disabled={ ! canSubmit }
+								// In edit mode the name server is read-only text, so its error has no input to show on.
+								disabled={
+									isSubmitting || ( isEdit && validity?.nameServer?.custom?.type === 'invalid' )
+								}
 							>
 								{ submitButtonText }
 							</Button>

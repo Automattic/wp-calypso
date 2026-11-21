@@ -229,17 +229,20 @@ export default function NameServersForm( {
 		[ wpcomNameServersField, formData, isBusy ]
 	);
 
+	const { validity, isValid } = useFormValidity( formData, fields, form );
+
 	const handleSubmit = useCallback(
 		( e: React.FormEvent ) => {
 			e.preventDefault();
+			if ( ! isValid ) {
+				return;
+			}
 			onSubmit( getFormNameServers( formData ) );
 		},
-		[ onSubmit, formData ]
+		[ onSubmit, formData, isValid ]
 	);
 
-	const { isValid } = useFormValidity( formData, fields, form );
-
-	const canSubmit = ! isBusy && isValid && isNameServersChanged( formData, nameServers );
+	const canSubmit = ! isBusy && isNameServersChanged( formData, nameServers );
 
 	const onChange = ( value: Partial< FormData > ) => {
 		setFormData( ( data ) => ( { ...data, ...value } ) );
@@ -270,6 +273,7 @@ export default function NameServersForm( {
 								data={ formData }
 								fields={ fields }
 								form={ nameServersForm }
+								validity={ validity }
 								onChange={ onChange }
 							/>
 							<Text variant="muted">
