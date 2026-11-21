@@ -71,6 +71,15 @@ function loadJSONFromLocal( locale: string, config: TranslationConfig ): boolean
 }
 
 /**
+ * Whether translations are bundled for a locale, so a caller can skip loading without a warning.
+ * @param locale - Language locale (e.g., 'es', 'pt-br')
+ * @returns boolean - True when loadAgentticTranslations can load the locale
+ */
+export function hasAgentticTranslations( locale: string ): boolean {
+	return getBundledTranslation( locale ) !== null;
+}
+
+/**
  * Load translations for agenttic packages from pre-parsed objects
  * @param locale - Language locale (e.g., 'es', 'fr', 'de-DE'). Defaults to en.
  * @param config - Translation configuration

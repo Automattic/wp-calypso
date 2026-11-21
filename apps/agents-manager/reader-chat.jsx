@@ -10,12 +10,16 @@
  * WordPress's script loader is absent.
  */
 
+/* global __i18n_text_domain__ */
+
 import './config';
 import AgentsManager, { AGENTS_MANAGER_STORE } from '@automattic/agents-manager';
 import { createCalypsoAuthProvider } from '@automattic/agents-manager/src/auth/calypso-auth-provider';
+import { hasAgentticTranslations, loadAgentticTranslations } from '@automattic/agenttic-ui';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
+import { __, setLocaleData, sprintf } from '@wordpress/i18n';
 import { createRoot } from 'react-dom/client';
 
 /**
@@ -275,7 +279,6 @@ const readerCurrentPost = getReaderCurrentPost( readerConfig );
 window.agentsManagerData = window.agentsManagerData || {};
 window.agentsManagerData.agentId = readerAgentId;
 window.agentsManagerData.siteId = readerSiteId;
-window.agentsManagerData.emptyViewHeading = getReaderEmptyViewHeading( readerConfig );
 
 // Expose page context on the global so the default context provider
 // and agent hooks can read it. The AgentsManager default context
@@ -293,42 +296,56 @@ function getFallbackSuggestions() {
 	const post = readerCurrentPost;
 
 	if ( ! post ) {
+		const [ recent, about, recommend ] = getBlogFallbackLabels();
 		return [
 			{
 				id: 'recent',
-				label: 'Explore recent posts',
-				prompt: 'What recent posts can I read on this blog?',
+				label: recent,
+				prompt: __( 'What recent posts can I read on this blog?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'about',
-				label: 'Learn about this blog',
-				prompt: 'What is this blog about? What topics does it cover?',
+				label: about,
+				prompt: __( 'What is this blog about? What topics does it cover?', __i18n_text_domain__ ),
 			},
 			{
 				id: 'recommend',
-				label: 'Recommend a post',
-				prompt: 'Can you recommend a good post to read on this blog?',
+				label: recommend,
+				prompt: __( 'Can you recommend a good post to read on this blog?', __i18n_text_domain__ ),
 			},
 		];
 	}
 
-	const title = decodeHtmlEntities( post.title || 'this post' );
+	const title = decodeHtmlEntities( post.title ) || __( 'this post', __i18n_text_domain__ );
+	const [ takeaway, details, context ] = getPostFallbackLabels();
 
 	return [
 		{
 			id: 'takeaway',
-			label: 'Main takeaway',
-			prompt: `What is the main takeaway from "${ title }"?`,
+			label: takeaway,
+			prompt: sprintf(
+				/* translators: %s: the title of the post the visitor is reading */
+				__( 'What is the main takeaway from "%s"?', __i18n_text_domain__ ),
+				title
+			),
 		},
 		{
 			id: 'details',
-			label: 'Key details',
-			prompt: `What details from "${ title }" are most important?`,
+			label: details,
+			prompt: sprintf(
+				/* translators: %s: the title of the post the visitor is reading */
+				__( 'What details from "%s" are most important?', __i18n_text_domain__ ),
+				title
+			),
 		},
 		{
 			id: 'context',
-			label: 'Related context',
-			prompt: `What related ideas or posts help explain "${ title }"?`,
+			label: context,
+			prompt: sprintf(
+				/* translators: %s: the title of the post the visitor is reading */
+				__( 'What related ideas or posts help explain "%s"?', __i18n_text_domain__ ),
+				title
+			),
 		},
 	];
 }
@@ -340,13 +357,141 @@ const FOLLOWUP_DEBOUNCE_MS = 2500;
 const MIN_FOLLOWUP_AGENT_TEXT_LENGTH = 40;
 const MAX_SUGGESTION_LABEL_LENGTH = 48;
 const MAX_SUGGESTION_LABEL_WORDS = 7;
-const POST_FALLBACK_LABELS = [ 'Main takeaway', 'Key details', 'Related context' ];
-const BLOG_FALLBACK_LABELS = [
-	'Explore recent posts',
-	'Learn about this blog',
-	'Recommend a post',
+const LANGUAGE_FILE_TIMEOUT_MS = 3000;
+const DEFAULT_READER_SCRIPT_URL = 'https://widgets.wp.com/agents-manager/reader-chat.min.js';
+// Read while the bundle executes: currentScript is null once it has finished.
+const readerScriptUrl = document.currentScript?.src || DEFAULT_READER_SCRIPT_URL;
+// Agenttic bundles neither of these; each reads the bundled locale that shares its script.
+const AGENTTIC_LOCALE_FALLBACKS = { 'zh-hk': 'zh-tw', 'zh-sg': 'zh-cn' };
+// The locales whose language file is named with a region; every other one uses the language alone.
+const REGIONAL_LANGUAGE_FILES = [
+	'de-ch',
+	'el-po',
+	'en-gb',
+	'es-cl',
+	'es-mx',
+	'fr-be',
+	'fr-ca',
+	'fr-ch',
+	'pt-br',
+	'zh-cn',
+	'zh-hk',
+	'zh-sg',
+	'zh-tw',
 ];
-const FOLLOWUP_FALLBACK_LABELS = [ 'Go deeper', 'Learn more', 'Ask a follow-up' ];
+
+// Translated on each call: the locale data is registered after this module loads.
+function getPostFallbackLabels() {
+	return [
+		__( 'Main takeaway', __i18n_text_domain__ ),
+		__( 'Key details', __i18n_text_domain__ ),
+		__( 'Related context', __i18n_text_domain__ ),
+	];
+}
+
+function getBlogFallbackLabels() {
+	return [
+		__( 'Explore recent posts', __i18n_text_domain__ ),
+		__( 'Learn about this blog', __i18n_text_domain__ ),
+		__( 'Recommend a post', __i18n_text_domain__ ),
+	];
+}
+
+function getFollowupFallbackLabels() {
+	return [
+		__( 'Go deeper', __i18n_text_domain__ ),
+		__( 'Learn more', __i18n_text_domain__ ),
+		__( 'Ask a follow-up', __i18n_text_domain__ ),
+	];
+}
+
+/**
+ * Reduce a locale to the slug the language files are named with: "nl_NL" -> "nl", "pt_BR" -> "pt-br".
+ * @param   {string} locale WordPress locale or BCP 47 language tag.
+ * @returns {string}        Language slug, "en" when there is none.
+ */
+function normalizeReaderLocale( locale ) {
+	const slug = String( locale || '' )
+		.trim()
+		.toLowerCase()
+		.replace( /_/g, '-' );
+	// A variant such as "de-ch-informal" still reads its region's file.
+	const [ language, region ] = slug.split( '-' );
+	const regional = region ? `${ language }-${ region }` : '';
+	if ( REGIONAL_LANGUAGE_FILES.includes( regional ) ) {
+		return regional;
+	}
+	// The slug goes into a URL, so accept only a plain language code.
+	return /^[a-z]{2,3}$/.test( language ) ? language : 'en';
+}
+
+function resolveReaderLocale( config = readerConfig, doc = document ) {
+	return normalizeReaderLocale( config?.locale || doc?.documentElement?.lang );
+}
+
+const readerLocale = resolveReaderLocale();
+
+/**
+ * The line that asks the suggestions agent for the blog's language; its prompts are English.
+ * @param   {string} locale Language slug, as returned by resolveReaderLocale.
+ * @returns {string}        One sentence to end a prompt with.
+ */
+function getSuggestionsLanguageLine( locale ) {
+	return `Write every "label" and "prompt" in the blog's language, whose locale is "${ locale }".`;
+}
+
+function getLanguageFileUrl( locale, scriptUrl = readerScriptUrl ) {
+	const script = new URL( scriptUrl, window.location.href );
+	const url = new URL( `languages/${ locale }-v1.1.json`, script );
+	const version = script.searchParams.get( 'ver' );
+	if ( version ) {
+		url.searchParams.set( 'ver', version );
+	}
+	return url.href;
+}
+
+/**
+ * Load the language file the Agents Manager release publishes next to the bundles.
+ * @param   {string}  locale Language slug, as returned by normalizeReaderLocale.
+ * @returns {Promise}        Settles once the file is registered, failed, or took too long. Never rejects.
+ */
+async function loadLanguageFile( locale ) {
+	// Aborting drops a late file, so the chat never changes language after it mounted.
+	const controller = new AbortController();
+	const timeoutId = setTimeout( () => controller.abort(), LANGUAGE_FILE_TIMEOUT_MS );
+	try {
+		const response = await fetch( getLanguageFileUrl( locale ), { signal: controller.signal } );
+		if ( response.ok ) {
+			setLocaleData( await response.json(), __i18n_text_domain__ );
+		}
+	} catch {
+		// A locale without a file, or one that is too slow, stays in English.
+	} finally {
+		clearTimeout( timeoutId );
+	}
+}
+
+/**
+ * Register the translations for a locale: Agenttic's are bundled, the rest are fetched.
+ * English and locales without translations change nothing.
+ * @param   {string}  locale Language slug, as returned by resolveReaderLocale.
+ * @returns {Promise}        Settles when the chat can render. Never rejects.
+ */
+function loadReaderTranslations( locale ) {
+	if ( locale === 'en' ) {
+		return Promise.resolve();
+	}
+	// Agenttic bundles fewer locales, so "fr-ca" uses its "fr".
+	const agentticLocale = [
+		locale,
+		AGENTTIC_LOCALE_FALLBACKS[ locale ],
+		locale.split( '-' )[ 0 ],
+	].find( ( candidate ) => candidate && hasAgentticTranslations( candidate ) );
+	if ( agentticLocale ) {
+		loadAgentticTranslations( agentticLocale, { domain: 'a8c-agenttic' } );
+	}
+	return loadLanguageFile( locale );
+}
 
 function normalizeReaderSiteId( siteId ) {
 	const numericSiteId = Number( siteId );
@@ -385,8 +530,8 @@ function getReaderCurrentPost( config ) {
 
 function getReaderEmptyViewHeading( config ) {
 	return getReaderCurrentPost( config )
-		? 'Ask me anything about this post.'
-		: 'Ask me anything about this blog.';
+		? __( 'Ask me anything about this post.', __i18n_text_domain__ )
+		: __( 'Ask me anything about this blog.', __i18n_text_domain__ );
 }
 
 function getReaderClientContext( currentPost = readerCurrentPost, siteId = readerSiteId ) {
@@ -475,10 +620,13 @@ function isConciseSuggestionLabel( label ) {
 
 function getFallbackSuggestionLabel( index, resultIdPrefix ) {
 	if ( resultIdPrefix === 'followup' ) {
-		return FOLLOWUP_FALLBACK_LABELS[ index ] || 'Ask a follow-up';
+		const labels = getFollowupFallbackLabels();
+		return labels[ index ] || labels[ labels.length - 1 ];
 	}
-	const labels = readerCurrentPost ? POST_FALLBACK_LABELS : BLOG_FALLBACK_LABELS;
-	return labels[ index ] || ( readerCurrentPost ? 'Ask about this post' : 'Explore this blog' );
+	if ( readerCurrentPost ) {
+		return getPostFallbackLabels()[ index ] || __( 'Ask about this post', __i18n_text_domain__ );
+	}
+	return getBlogFallbackLabels()[ index ] || __( 'Explore this blog', __i18n_text_domain__ );
 }
 
 function normalizeSuggestions( items, resultIdPrefix ) {
@@ -599,7 +747,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
  * Called fire-and-forget after mount — the empty view shows fallback
  * chips immediately and re-renders with AI suggestions when they arrive.
  */
-function fetchAiSuggestions( signal ) {
+function fetchAiSuggestions( signal, locale = readerLocale ) {
 	const post = readerCurrentPost;
 	const siteName = readerConfig.siteName || '';
 	const siteUrl = readerConfig.siteUrl || '';
@@ -626,7 +774,8 @@ Use concrete details from the title or excerpt when possible.
 Avoid generic labels like "Summarize this post", "Explain this post", or "Find related posts".
 Do not ask the author personal interview questions.
 Do not address the author as "you" or "your".
-Phrase prompts around "this post", "the post", "the author", or the topic discussed.`
+Phrase prompts around "this post", "the post", "the author", or the topic discussed.
+${ getSuggestionsLanguageLine( locale ) }`
 		: `Context: a reader is on the home/stream of a blog (no specific post selected).
 Site name: ${ siteName }
 Site URL: ${ siteUrl }
@@ -638,7 +787,8 @@ Each object must have:
 
 Generate questions a reader might click to explore THIS BLOG overall: its topics, recent posts, or recommendations.
 Do not ask the site owner personal interview questions.
-Do not address the site owner as "you" or "your".`;
+Do not address the site owner as "you" or "your".
+${ getSuggestionsLanguageLine( locale ) }`;
 
 	return fetchSuggestions( {
 		messageText,
@@ -653,7 +803,7 @@ Do not address the site owner as "you" or "your".`;
  * Reuses the reader-chat-suggestions agent with a message shape that
  * describes the exchange and asks for follow-ups.
  */
-function fetchFollowupSuggestions( userText, agentText, signal ) {
+function fetchFollowupSuggestions( userText, agentText, signal, locale = readerLocale ) {
 	if ( ! userText || ! agentText ) {
 		return Promise.resolve( null );
 	}
@@ -670,7 +820,8 @@ Generate follow-up questions the reader might want to ask next, based only on th
 Anchor every question in a concrete detail, place, person, phrase, or theme from the reply.
 Do not ask for broad advice, outside recommendations, popularity, traffic, trends, or facts not implied by the reply.
 Do not ask the author/site owner personal interview questions or address them as "you".
-Questions should feel like natural next-step curiosity: clarify a detail, go deeper on a named point, or ask how two details connect.`;
+Questions should feel like natural next-step curiosity: clarify a detail, go deeper on a named point, or ask how two details connect.
+${ getSuggestionsLanguageLine( locale ) }`;
 
 	return fetchSuggestions( {
 		messageText,
@@ -990,8 +1141,13 @@ function setupTracksEvents() {
 			} );
 			return;
 		}
-		const sendBtn = target.closest( '[aria-label="Send message"]' );
-		if ( sendBtn && ! sendBtn.disabled ) {
+		// The send button is only told apart from the stop button by its label, which is translated.
+		const sendBtn = target.closest( 'button[aria-label]' );
+		if (
+			sendBtn &&
+			! sendBtn.disabled &&
+			sendBtn.getAttribute( 'aria-label' ) === __( 'Send message', 'a8c-agenttic' )
+		) {
 			recordTracksEvent( 'jetpack_reader_chat_message_sent', {
 				...baseProps,
 				trigger: 'button',
@@ -1098,8 +1254,10 @@ function ReaderChatApp() {
 	);
 }
 
-const container = document.getElementById( 'jetpack-reader-chat' );
-if ( container ) {
+function mountReaderChat( container ) {
+	// Set here, not at module load: the heading is translated once the locale data is in.
+	window.agentsManagerData.emptyViewHeading = getReaderEmptyViewHeading( readerConfig );
+
 	injectScopedReset();
 	setupFollowupChips();
 	setupTracksEvents();
@@ -1133,6 +1291,11 @@ if ( container ) {
 	watchFirstChatOpen( setupInitialSuggestions );
 }
 
+const container = document.getElementById( 'jetpack-reader-chat' );
+if ( container ) {
+	loadReaderTranslations( readerLocale ).then( () => mountReaderChat( container ) );
+}
+
 // Exported for unit tests only; injectScopedReset mutates document.head.
 export {
 	parseAgentSseResponse,
@@ -1148,4 +1311,10 @@ export {
 	getSuggestionsFetchHeaders,
 	injectScopedReset,
 	watchFirstChatOpen,
+	normalizeReaderLocale,
+	resolveReaderLocale,
+	getLanguageFileUrl,
+	loadReaderTranslations,
+	fetchAiSuggestions,
+	fetchFollowupSuggestions,
 };

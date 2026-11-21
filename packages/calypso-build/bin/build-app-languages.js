@@ -62,7 +62,7 @@ const argv = yargs( hideBin( process.argv ) )
 		default: './dist/languages',
 	} )
 	.option( 'outputFormat', {
-		describe: 'Output format for the built language files',
+		describe: 'Output format for the built language files: JSON, JS, or both as "JS,JSON"',
 		type: 'string',
 		default: 'JSON',
 	} )
@@ -84,6 +84,12 @@ const {
 	outputPath,
 	verbose,
 } = argv;
+
+const outputFormats = outputFormat.split( ',' );
+if ( ! outputFormats.every( ( format ) => [ 'JSON', 'JS' ].includes( format ) ) ) {
+	console.error( 'Invalid output format' );
+	process.exit( 1 );
+}
 
 fs.mkdirSync( outputPath, { recursive: true } );
 
@@ -268,21 +274,19 @@ function buildLanguages( downloadedLanguages, languageRevisions ) {
 				languageTranslations[ THOUSANDS_SEPARATOR_TRANSLATION ];
 			cmdPaletteTranslations[ '' ] = languageTranslations[ '' ];
 
-			if ( outputFormat === 'JSON' ) {
+			if ( outputFormats.includes( 'JSON' ) ) {
 				const output = resolve( process.cwd(), outputPath, `${ langSlug }-v1.1.json` );
 				if ( verbose ) {
 					console.log( `Writing ${ output }...` );
 				}
 				fs.writeFileSync( output, JSON.stringify( cmdPaletteTranslations ) );
-			} else if ( outputFormat === 'JS' ) {
+			}
+			if ( outputFormats.includes( 'JS' ) ) {
 				const output = resolve( process.cwd(), outputPath, `${ langSlug }-v1.js` );
 				if ( verbose ) {
 					console.log( `Writing ${ output }...` );
 				}
 				fs.writeFileSync( output, wrapWithJS( cmdPaletteTranslations ) );
-			} else {
-				console.error( 'Invalid output format' );
-				process.exit( 1 );
 			}
 		} );
 

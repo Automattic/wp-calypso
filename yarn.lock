@@ -287,6 +287,7 @@ __metadata:
   resolution: "@automattic/agents-manager-app@workspace:apps/agents-manager"
   dependencies:
     "@automattic/agents-manager": "workspace:^"
+    "@automattic/agenttic-ui": "workspace:^"
     "@automattic/calypso-analytics": "workspace:^"
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
