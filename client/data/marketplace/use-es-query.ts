@@ -122,9 +122,10 @@ export const useESPlugin = (
 type PageParam = string | number;
 
 /**
- * Elasticsearch rejects any request whose `from + size` goes past this window.
+ * The marketplace search API rejects any request that starts past this offset
+ * ("Cannot query past the first 200 results.").
  */
-export const ES_MAX_RESULT_WINDOW = 10000;
+export const ES_MAX_RESULT_OFFSET = 200;
 
 /**
  * Build the `page_handle` that starts a search at the given page.

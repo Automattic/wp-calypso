@@ -216,6 +216,21 @@ export function redirectInvalidCategoryPage( context, next ) {
 	context.res.redirect( 301, url.pathname + url.search );
 }
 
+/**
+ * Server-side render a plugins category page whose only query arg is its page number.
+ * Calypso skips SSR for any URL with query args, which would leave the later pages
+ * of a category without content for crawlers.
+ */
+export function allowCategoryPageSsr( context, next ) {
+	const queryKeys = Object.keys( context.query ?? {} );
+
+	if ( queryKeys.length === 1 && queryKeys[ 0 ] === CATEGORY_PAGE_QUERY_ARG ) {
+		context.serverSideRender = true;
+	}
+
+	next();
+}
+
 const markCategoryPageNotFound = ( context ) => {
 	context.res.status( 404 );
 

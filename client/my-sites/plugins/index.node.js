@@ -6,6 +6,7 @@ import { setupPreferences } from 'calypso/controller/preferences';
 import { overrideSanitizeSectionRoot } from 'calypso/lib/plugins/sanitize-section-content';
 import { browsePlugins, browsePluginsOrPlugin } from './controller';
 import {
+	allowCategoryPageSsr,
 	fetchPlugins,
 	fetchCategoryPlugins,
 	fetchPlugin,
@@ -35,6 +36,7 @@ export default function ( router ) {
 		`/${ langParam }/plugins/browse/:category`,
 		skipIfLoggedIn,
 		redirectInvalidCategoryPage,
+		allowCategoryPageSsr,
 		ssrSetupLocale,
 		setupPreferences,
 		fetchCategoryPlugins,
