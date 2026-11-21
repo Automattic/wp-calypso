@@ -328,6 +328,7 @@ describe( 'SiteMigrationCredentials', () => {
 				locale: 'en',
 				blog_url: 'site-url.wordpress.com',
 				from_url: 'site-url.com',
+				context: 'site_is_on_wpcom',
 			}
 		);
 		expect( submit ).toHaveBeenCalledWith( {
