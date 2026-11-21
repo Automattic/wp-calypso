@@ -11,6 +11,10 @@
 		}
 	}
 
+	.responsive-toolbar-group__menu-item:focus::before {
+		background-color: transparent;
+	}
+
 	span {
 		display: flex;
 		column-gap: 4px;

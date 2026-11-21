@@ -72,7 +72,7 @@ export function PluginsFAQ() {
 				},
 			} ),
 			answer: translate(
-				'Yes. Plugin installation is now included on all WordPress.com paid plans, starting with %(planName)s. You have access to over 50,000 plugins from the WordPress.org repository. This capability was expanded to all paid plans to give our customers full flexibility from day one.',
+				'Yes. Plugin installation is now included on all WordPress.com paid plans, starting with %(planName)s. You have access to over 60,000 plugins from the WordPress.org repository. This capability was expanded to all paid plans to give our customers full flexibility from day one.',
 				{ args: { planName: personalPlanName } }
 			),
 		},
