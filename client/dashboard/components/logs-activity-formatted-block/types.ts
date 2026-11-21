@@ -14,6 +14,7 @@ export interface ActivityBlockNode {
 	isTrashed?: boolean;
 	commentId?: number | string;
 	name?: string;
+	userId?: number | string;
 	siteSlug?: string;
 	pluginSlug?: string;
 	themeUri?: string;
