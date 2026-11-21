@@ -23,7 +23,10 @@ const mapESDataToReatedPluginData = (
 	} );
 };
 
-const getRelatedPluginsQueryParams = (
+export const RELATED_PLUGINS_DEFAULT_LIST_SIZE = 4;
+export const RELATED_PLUGINS_CAROUSEL_LIST_SIZE = 18;
+
+export const getRelatedPluginsQueryParams = (
 	pluginSlug: string,
 	size: number
 ): { queryKey: QueryKey; queryFn: QueryFunction } => {
@@ -45,7 +48,7 @@ const getRelatedPluginsQueryParams = (
 
 export const useGetRelatedPlugins = (
 	pluginSlug: string,
-	size = 4,
+	size = RELATED_PLUGINS_DEFAULT_LIST_SIZE,
 	{
 		enabled = true,
 		staleTime = BASE_STALE_TIME,
