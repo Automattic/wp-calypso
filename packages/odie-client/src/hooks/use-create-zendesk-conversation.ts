@@ -1,5 +1,6 @@
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
+	requestClassificationTags,
 	useUpdateZendeskUserFields,
 	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
 	ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
@@ -21,6 +22,12 @@ import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
 
 // Zendesk routes and prioritizes the checkout support experiment's chats by this tag.
 const CHECKOUT_SUPPORT_TAG = 'wpcom_checkout_chat';
+
+// How long chat creation waits for the classification tags. Past it, the chat is created
+// without them and Zendesk classifies the ticket itself.
+const CLASSIFICATION_TIME_LIMIT_MS = 10000;
+
+type ClassificationResult = { tags: string[]; timedOut: boolean };
 
 export const useCreateZendeskConversation = () => {
 	const {
@@ -148,6 +155,20 @@ export const useCreateZendeskConversation = () => {
 			status: 'transfer',
 		} ) );
 
+		// Classification runs alongside the user fields request; its time limit starts now.
+		let classificationTimer: ReturnType< typeof setTimeout > | undefined;
+		const classification: Promise< ClassificationResult > | null = chatId
+			? Promise.race( [
+					requestClassificationTags( chatId ).then( ( tags ) => ( { tags, timedOut: false } ) ),
+					new Promise< ClassificationResult >( ( resolve ) => {
+						classificationTimer = setTimeout(
+							() => resolve( { tags: [], timedOut: true } ),
+							CLASSIFICATION_TIME_LIMIT_MS
+						);
+					} ),
+				] )
+			: null;
+
 		try {
 			trackEvent( 'submitting_zendesk_user_fields', {
 				messaging_initial_message: userFieldMessage || undefined,
@@ -169,9 +190,17 @@ export const useCreateZendeskConversation = () => {
 
 			trackEvent( 'submitted_zendesk_user_fields' );
 		} catch ( error ) {
+			clearTimeout( classificationTimer );
 			handleErrorCreatingZendeskConversation( 'error_submitting_zendesk_user_fields', error );
 			return;
 		}
+
+		const classificationWaitStartedAt = Date.now();
+		const { tags: classificationTags, timedOut: classificationTimedOut } = classification
+			? await classification
+			: { tags: [], timedOut: false };
+		const classificationWaitMs = Date.now() - classificationWaitStartedAt;
+		clearTimeout( classificationTimer );
 
 		let conversation: ZendeskConversation | null = null;
 		let interaction = null;
@@ -194,10 +223,13 @@ export const useCreateZendeskConversation = () => {
 		// tell the variations apart. A user sent back to an open chat gets no new conversation, so
 		// that chat keeps the tags it started with.
 		const conversationTags = [
-			...( zendeskConversationTags ?? [] ),
-			...( checkoutSupportVariation
-				? [ CHECKOUT_SUPPORT_TAG, `${ CHECKOUT_SUPPORT_TAG }_${ checkoutSupportVariation }` ]
-				: [] ),
+			...new Set( [
+				...( zendeskConversationTags ?? [] ),
+				...classificationTags,
+				...( checkoutSupportVariation
+					? [ CHECKOUT_SUPPORT_TAG, `${ CHECKOUT_SUPPORT_TAG }_${ checkoutSupportVariation }` ]
+					: [] ),
+			] ),
 		];
 
 		const SMOOCH_READY_TIMEOUT_MS = 10000;
@@ -294,6 +326,9 @@ export const useCreateZendeskConversation = () => {
 				messaging_url: selectedSiteURL || null,
 				smooch_waited_ms: smoochWaitedMs,
 				smooch_attempts: smoochAttempts,
+				classification_tags_count: classificationTags.length,
+				classification_wait_ms: classificationWaitMs,
+				classification_timed_out: classificationTimedOut,
 			} );
 
 			// If the interaction id has changed, update the URL.
