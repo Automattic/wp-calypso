@@ -58,6 +58,7 @@ class Privacy extends Component {
 
 		const cookiePolicyLink = <a href={ localizeUrl( 'https://automattic.com/cookies/' ) } />;
 		const privacyPolicyLink = <a href={ localizeUrl( 'https://automattic.com/privacy/' ) } />;
+		const jetpackPrivacyLink = <a href={ localizeUrl( 'https://jetpack.com/support/privacy/' ) } />;
 
 		return (
 			<Main wideLayout className="privacy">
@@ -92,6 +93,18 @@ class Privacy extends Component {
 									{
 										components: {
 											cookiePolicyLink,
+										},
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									'This setting also covers how you use Jetpack on sites connected to your ' +
+										'WordPress.com account. The {{jetpackPrivacyLink}}Jetpack Privacy Center' +
+										'{{/jetpackPrivacyLink}} explains how specific Jetpack features use data.',
+									{
+										components: {
+											jetpackPrivacyLink,
 										},
 									}
 								) }
