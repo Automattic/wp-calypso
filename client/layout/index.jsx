@@ -505,7 +505,7 @@ class Layout extends Component {
 							<div id="secondary" className="layout__secondary" role="navigation">
 								{ this.props.secondary }
 							</div>
-							<div id="primary" className="layout__primary">
+							<div id="primary" className="layout__primary" data-bilmur-route-region="">
 								{ this.props.primary }
 							</div>
 						</>

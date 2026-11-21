@@ -17,6 +17,8 @@ import { isAllowedA4ADashboardHostname } from 'calypso/dashboard/app-a4a/routing
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
+import { trackNavigationStart } from 'calypso/lib/bilmur-spa/main-app';
+import { loadBilmurSpa } from 'calypso/lib/bilmur-spa/module';
 import DesktopListeners from 'calypso/lib/desktop-listeners';
 import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -255,6 +257,7 @@ const setupMiddlewares = ( currentUser, reduxStore, reactQueryClient ) => {
 	debug( 'Executing Calypso setup middlewares.' );
 
 	setupContextMiddleware( reduxStore, reactQueryClient );
+	page( '*', trackNavigationStart );
 	oauthTokenMiddleware();
 	setupRoutes();
 	setRouteMiddleware();
@@ -354,6 +357,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 };
 
 export const bootApp = async ( appName, registerRoutes ) => {
+	loadBilmurSpa();
 	const user = await initializeCurrentUser();
 	debug( `Starting ${ appName }. Let's do this.` );
 	await boot( user, registerRoutes );
