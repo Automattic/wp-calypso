@@ -76,7 +76,7 @@
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-a11y": "^10.6.5",
+		"@storybook/addon-a11y": "^10.6.7",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
@@ -86,7 +86,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"resize-observer-polyfill": "^1.5.1",
-		"storybook": "^10.6.5",
+		"storybook": "^10.6.7",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.7",
 		"vitest": "^5.1.0"
