@@ -1946,7 +1946,6 @@ __metadata:
     vite: "npm:^8.3.7"
     vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
-    zod: "npm:^4.2.0"
   peerDependencies:
     postcss: "*"
   languageName: unknown
