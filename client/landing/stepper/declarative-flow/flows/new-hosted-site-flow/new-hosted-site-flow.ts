@@ -218,11 +218,15 @@ const hosting: FlowV2< typeof initialize > = {
 							siteId,
 							...( siteSlug ? { siteSlug } : {} ),
 						};
-						if ( studioSiteId ) {
-							destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
-								studioSiteId,
-								...( autoOpenPush === 'true' && { autoOpenPush: 'true' } ),
-							} );
+						if ( studioSiteId && siteSlug ) {
+							// jetpack-mu-wpcom's Dashboard reads these params and hands off to Studio.
+							destinationParams[ 'redirect_to' ] = addQueryArgs(
+								`https://${ siteSlug }/wp-admin/`,
+								{
+									studioSiteId,
+									...( autoOpenPush === 'true' && { autoOpenPush: 'true' } ),
+								}
+							);
 						} else if ( isWooPartner ) {
 							// For partners, we'll redirect to the WooCommerce admin page
 							destinationParams[ 'redirect_to' ] =
