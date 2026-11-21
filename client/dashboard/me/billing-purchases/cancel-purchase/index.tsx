@@ -75,6 +75,7 @@ import {
 } from './cancel-purchase-form/options-for-product';
 import {
 	CANCELLATION_OFFER_STEP,
+	FEEDBACK_STEP,
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from './cancel-purchase-form/steps';
@@ -363,9 +364,12 @@ function CancelPurchaseInner() {
 		if ( productSlug ) {
 			recordTracksEvent( 'calypso_cancel_purchase_purchase_view', {
 				product_slug: productSlug,
+				purchase_id: purchase.ID,
+				ownership_id: purchase.ownership_id,
+				blog_id: purchase.blog_id,
 			} );
 		}
-	}, [ productSlug, recordTracksEvent ] );
+	}, [ productSlug, purchase.ID, purchase.ownership_id, purchase.blog_id, recordTracksEvent ] );
 	const cancelPurchaseSurveyCompleted = () => {
 		surveyCompletedMutator.mutate( 'true' );
 	};
@@ -512,11 +516,24 @@ function CancelPurchaseInner() {
 				cancellation_flow: flowType,
 				product_slug: purchase.product_slug,
 				is_atomic: site?.is_wpcom_atomic,
+				purchase_id: purchase.ID,
+				ownership_id: purchase.ownership_id,
+				blog_id: purchase.blog_id,
+				is_refundable: purchase.is_refundable,
 
 				...properties,
 			} );
 		},
-		[ flowType, purchase.product_slug, recordTracksEvent, site ]
+		[
+			flowType,
+			purchase.product_slug,
+			purchase.ID,
+			purchase.ownership_id,
+			purchase.blog_id,
+			purchase.is_refundable,
+			recordTracksEvent,
+			site,
+		]
 	);
 
 	// Because of the legacy reason, we can't just use `flowType` here.
@@ -589,7 +606,7 @@ function CancelPurchaseInner() {
 	}
 
 	const recordClickRadioEvent = ( option: string, value: string ) => {
-		recordTracksEvent( 'calypso_purchases_cancel_form_select_radio_option', {
+		recordEvent( 'calypso_purchases_cancel_form_select_radio_option', {
 			option,
 			value,
 		} );
@@ -734,9 +751,7 @@ function CancelPurchaseInner() {
 	};
 
 	const onCancellationComplete = () => {
-		recordTracksEvent( 'calypso_purchases_cancel_form_start', {
-			cancellation_flow: flowType,
-			product_slug: purchase.product_slug,
+		recordEvent( 'calypso_purchases_cancel_form_start', {
 			is_atomic: site?.is_wpcom_atomic ?? false,
 			user_lang: locale,
 		} );
@@ -780,9 +795,7 @@ function CancelPurchaseInner() {
 				showDomainOptionsStep: true,
 			} ) );
 		} else {
-			recordTracksEvent( 'calypso_purchases_cancel_form_start', {
-				cancellation_flow: flowType,
-				product_slug: purchase.product_slug,
+			recordEvent( 'calypso_purchases_cancel_form_start', {
 				is_atomic: site?.is_wpcom_atomic ?? false,
 				user_lang: locale,
 			} );
@@ -809,6 +822,16 @@ function CancelPurchaseInner() {
 	};
 
 	const clickNext = () => {
+		if (
+			state.surveyStep === FEEDBACK_STEP &&
+			! isRemoved( purchase ) &&
+			! ( state.upsell?.startsWith( 'downgrade-' ) && ! downgradePlan ) &&
+			( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0
+		) {
+			recordEvent( 'calypso_purchases_cancel_options_eligible', {
+				cancellation_reason: state.questionOneText,
+			} );
+		}
 		changeSurveyStep( nextStep( state.surveyStep ?? '', allSteps ) );
 	};
 
@@ -824,18 +847,11 @@ function CancelPurchaseInner() {
 		} ) );
 
 		// Record tracks event for domain confirmation checkbox
-		recordTracksEvent( 'calypso_purchases_domain_confirmation_checkbox', {
-			product_slug: purchase.product_slug,
-			purchase_id: purchase.ID,
-			checked,
-		} );
+		recordEvent( 'calypso_purchases_domain_confirmation_checkbox', { checked } );
 	};
 
 	const onKeepSubscriptionClick = () => {
-		recordTracksEvent( 'calypso_purchases_keep_subscription', {
-			product_slug: purchase.product_slug,
-			purchase_id: purchase.ID,
-		} );
+		recordEvent( 'calypso_purchases_keep_subscription' );
 	};
 
 	const handleMarketplaceDialogContinue = () => {

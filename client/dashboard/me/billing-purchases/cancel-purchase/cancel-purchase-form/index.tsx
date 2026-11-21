@@ -213,6 +213,7 @@ function SurveyContent( {
 				onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 				plans={ plans }
 				purchase={ purchase }
+				recordEvent={ recordEvent }
 				refundAmount={ refundAmount }
 				upsell={ upsell ?? '' }
 			/>
