@@ -94,7 +94,7 @@ describe( 'CheckoutPayButtonFooter', () => {
 
 		expect( screen.getByRole( 'link', { name: 'AI Credits Guidelines' } ) ).toHaveAttribute(
 			'href',
-			'https://developer.wordpress.com/docs/developer-tools/studio/studio-code/ai-credits-guidelines/'
+			'https://wordpress.studio/docs/studio-code/ai-credits-guidelines/'
 		);
 		// The standard notice is unaffected by the extra line.
 		expect(

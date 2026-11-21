@@ -123,8 +123,8 @@ export const initialClientsData = {
 	95109: {
 		id: 95109,
 		name: 'studio',
-		title: 'Studio by WordPress.com',
-		url: 'https://developer.wordpress.com/studio/',
+		title: 'WordPress Studio',
+		url: 'https://wordpress.studio/',
 	},
 	92099: {
 		id: 92099,

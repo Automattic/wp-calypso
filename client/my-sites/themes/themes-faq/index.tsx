@@ -104,7 +104,7 @@ export default function ThemesFAQ() {
 				'Yes—if you’re on a paid plan, you can upload and use your own custom themes. Developers can also build themes locally and deploy them using tools like GitHub and WP-CLI. Check out {{a}}WordPress Studio{{/a}} for local theme development.',
 				{
 					components: {
-						a: <a href="https://developer.wordpress.com/studio/" />,
+						a: <a href="https://wordpress.studio/" />,
 					},
 				}
 			),

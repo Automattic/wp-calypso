@@ -180,7 +180,7 @@ export function getNav2026Menus( {
 						},
 						{
 							label: __( 'WordPress Studio', __i18n_text_domain__ ),
-							url: localizeUrl( '//developer.wordpress.com/studio/' ),
+							url: 'https://wordpress.studio/',
 							target: '_self',
 							isExternal: true,
 						},
@@ -243,8 +243,8 @@ export function getNav2026Menus( {
 							url: localizeUrl( '//developer.wordpress.com/docs/' ),
 						},
 						{
-							label: __( 'Studio', __i18n_text_domain__ ),
-							url: localizeUrl( '//developer.wordpress.com/studio/' ),
+							label: __( 'WordPress Studio', __i18n_text_domain__ ),
+							url: 'https://wordpress.studio/',
 							target: '_self',
 							isExternal: true,
 						},
