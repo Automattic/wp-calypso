@@ -231,15 +231,6 @@ export function allowCategoryPageSsr( context, next ) {
 	next();
 }
 
-const markCategoryPageNotFound = ( context ) => {
-	context.res.status( 404 );
-
-	const meta = getDocumentHeadMeta( context.store.getState() )
-		.filter( ( { name } ) => name !== 'robots' )
-		.concat( { name: 'robots', content: 'noindex' } );
-	context.store.dispatch( setDocumentHeadMeta( meta ) );
-};
-
 const setCategoryPaginationLinks = ( context, { page, hasNextPage } ) => {
 	const { prev, next } = getCategoryPaginationUrls( {
 		pathname: context.pathname,
@@ -297,7 +288,7 @@ export async function fetchCategoryPlugins( context, next ) {
 	);
 
 	if ( ! isPageInRange ) {
-		markCategoryPageNotFound( context );
+		context.res.status( 404 );
 		return next();
 	}
 
@@ -308,7 +299,7 @@ export async function fetchCategoryPlugins( context, next ) {
 
 		if ( firstPage ) {
 			if ( page > 1 && ! firstPage.results?.length ) {
-				markCategoryPageNotFound( context );
+				context.res.status( 404 );
 			} else {
 				setCategoryPaginationLinks( context, { page, hasNextPage: !! firstPage.page_handle } );
 			}
