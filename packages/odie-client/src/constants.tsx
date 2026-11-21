@@ -413,10 +413,17 @@ export const ODIE_DEFAULT_BOT_SLUG_LEGACY = 'wpcom-support-chat';
  * New interactions will target this bot slug and store it in the interaction object. All future events of those interactions will use this bot slug.
  */
 export const ODIE_NEW_INTERACTIONS_BOT_SLUG = 'wpcom-workflow-support_chat';
+
+/**
+ * Help Center bot for the Call an HE pilot. Sampled users start new chats on it, see isCallAnHESampledUser.
+ */
+export const ODIE_CALL_AN_HE_BOT_SLUG = 'wpcom-workflow-support_chat_call_an_he';
+
 export { ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG } from './presales-constants';
 
 export const ODIE_ALLOWED_BOTS = [
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
 	ODIE_NEW_INTERACTIONS_BOT_SLUG,
 	'automattic-chat-support_a4a',
+	ODIE_CALL_AN_HE_BOT_SLUG,
 ];

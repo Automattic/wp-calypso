@@ -57,6 +57,14 @@ const defaultContextInterfaceValues = {
 };
 ```
 
+## Call an HE pilot
+
+Some logged-in users start their new chats on a separate bot, `ODIE_CALL_AN_HE_BOT_SLUG`, instead of `newInteractionsBotSlug`. That bot can ask a Happiness Engineer a question and relay the answer into the chat later, as a new bot message with no customer message in between.
+
+- Who: `isCallAnHESampledUser` in `src/utils`, one user in twenty by `ID`, plus every user with an `@automattic.com` email. The rule is hard-coded, so changing the sample means a new build.
+- Where the swap happens: the provider's `useSelect`, only when the bot for new chats is the normal support bot. A bot the Help Center store chose, and chats that already exist, keep their bot.
+- How the answer shows up: `usePollForDelayedReplies` in `src/hooks` fetches the chat every 5 seconds while it is on that bot, loaded, visible and not minimized, and adds the bot messages it does not have yet. It stops 20 minutes after the newest message, and for closed chats. Replies that ask for a human are left to the send handler; one the server job writes on its own shows on the next focus refresh or reload.
+
 ## Authentication
 
 Authentication is managed by Calypso. Currently, the Odie client is designed to work only within Calypso and does not support external bearer tokens.

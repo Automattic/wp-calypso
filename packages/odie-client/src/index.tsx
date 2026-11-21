@@ -6,6 +6,7 @@ import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 import { useCurrentSupportInteraction } from './data/use-current-support-interaction';
 import { useOpenLiveInteractions } from './hooks/use-open-interaction-status-map';
+import { usePollForDelayedReplies } from './hooks/use-poll-for-delayed-replies';
 import { useRefreshChatOnFocus } from './hooks/use-refresh-chat-on-focus';
 import {
 	hasCSATMessage,
@@ -20,6 +21,7 @@ export const OdieAssistant: React.FC = () => {
 	const { trackEvent, currentUser, chat, aiDisclosureLine } = useOdieAssistantContext();
 	const aiDisclosureId = useId();
 	useRefreshChatOnFocus();
+	usePollForDelayedReplies();
 	const { data: currentSupportInteraction, isLoading: isLoadingInteraction } =
 		useCurrentSupportInteraction();
 	const chatHasCSATMessage = hasCSATMessage( chat );
