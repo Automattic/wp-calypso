@@ -24,7 +24,9 @@ const RestorePlanSoftwareAction = ( { site }: { site: Site } ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const mutation = useMutation(
 		withSnackbar( sitePlanSoftwareRestoreMutation( site.ID ), {
-			success: __( 'Requested restoration of plugins and themes that come with your plan.' ),
+			success: __(
+				'Restoring the plugins and themes that come with your plan. This may take a few minutes.'
+			),
 			error: __( 'Failed to request restoration of plan plugin and themes.' ),
 		} )
 	);
