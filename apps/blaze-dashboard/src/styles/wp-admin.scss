@@ -33,6 +33,21 @@
 		min-height: calc(100vh - var(--wp-admin--admin-bar--height, 32px));
 	}
 
+	// Match the page header of the Jetpack admin pages next to it: wp-admin's type, not the Blaze font
+	// and letter-spacing `.promote-post-i2` passes down. The header is always the page's first child.
+	.promote-post-i2__page > :first-child {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+		font-size: 13px;
+		line-height: 1.4;
+		letter-spacing: normal;
+	}
+
+	// Jetpack's title row is at least 40px tall, with the logo, title and actions centered in it.
+	.promote-post-i2__page > :first-child > :first-child {
+		min-height: 40px;
+		align-items: center;
+	}
+
 	.site__info {
 		width: inherit;
 	}
