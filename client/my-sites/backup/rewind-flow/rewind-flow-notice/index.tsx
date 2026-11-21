@@ -1,7 +1,7 @@
 import { Gridicon } from '@automattic/components';
 import clsx from 'clsx';
 import type { TranslateResult } from 'i18n-calypso';
-import type { FunctionComponent } from 'react';
+import type { FunctionComponent, ReactNode } from 'react';
 
 enum RewindFlowNoticeLevel {
 	NOTICE,
@@ -10,6 +10,7 @@ enum RewindFlowNoticeLevel {
 }
 
 interface Props {
+	children?: ReactNode;
 	gridicon: string;
 	link?: string;
 	message?: TranslateResult;
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const RewindFlowNotice: FunctionComponent< Props > = ( {
+	children,
 	gridicon,
 	link,
 	message,
@@ -62,6 +64,7 @@ const RewindFlowNotice: FunctionComponent< Props > = ( {
 		<div className={ clsx( 'rewind-flow-notice', levelClassName ) }>
 			{ link ? renderLink() : renderNonLink() }
 			{ message && <p>{ message }</p> }
+			{ children }
 		</div>
 	);
 };
