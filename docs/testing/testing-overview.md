@@ -66,23 +66,6 @@ This test configuration contains unit tests for the packages in the `packages` t
 > yarn workspace <package name> test
 ```
 
-## Integration tests
-
-This test configuration contains integration tests that verify code located in `bin`, `client`, `server` and `test` top level folders. They should test how a group of components or a larger part of business logic works together.
-
-It supports automatic test discovery. We only need to put a test file into a `integration` subfolder, next to the files we want to test.
-
-Tests can be run in 2 different modes:
-
-```bash
-> # run the entire integration suite
-> yarn run test-integration
-> # run a configuration customized to work with continuous integration
-> yarn run test-integration:ci
-```
-
-They run daily on continuous integration (TeamCity), because they can use network connection or memory intensive processing and therefore can have longer runtime.
-
 ## End-to-end tests
 
 End-to-end tests (`e2e` for short) describes the automated functional tests that simulate user interaction with the system under test.
