@@ -1,14 +1,7 @@
 import { PaymentLogo } from '@automattic/wpcom-checkout';
 import { useI18n } from '@wordpress/react-i18n';
 import { Fragment } from 'react';
-import {
-	AmexLogo,
-	CBLogo,
-	JcbLogo,
-	MastercardLogo,
-	VisaLogo,
-} from 'calypso/my-sites/checkout/src/components/payment-logos';
-import { PaymentMethodLogos } from 'calypso/my-sites/checkout/src/components/payment-method-logos';
+import CreditCardLogos from 'calypso/my-sites/checkout/src/components/credit-card-logos';
 import {
 	SummaryLine,
 	SummaryDetails,
@@ -53,18 +46,6 @@ const CreditCardLabel: React.FC< {
 		</Fragment>
 	);
 };
-
-function CreditCardLogos( { currency }: { currency: string | null } ) {
-	return (
-		<PaymentMethodLogos className="credit-card__logos">
-			{ currency === 'EUR' && <CBLogo className="has-background" /> }
-			{ currency === 'JPY' && <JcbLogo /> }
-			<VisaLogo />
-			<MastercardLogo />
-			<AmexLogo />
-		</PaymentMethodLogos>
-	);
-}
 
 export function createCreditCardMethod( {
 	currency,
