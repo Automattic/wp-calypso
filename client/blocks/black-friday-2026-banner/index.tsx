@@ -4,9 +4,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
-	BLACK_FRIDAY_2026_DISCOUNT_PERCENT,
 	BLACK_FRIDAY_2026_END,
 	isBlackFriday2026Active,
+	type BlackFriday2026Offer,
 } from 'calypso/lib/promotions/black-friday-2026';
 
 import './style.scss';
@@ -55,7 +55,7 @@ function Countdown() {
 	);
 }
 
-export default function BlackFriday2026Banner() {
+export default function BlackFriday2026Banner( { offer }: { offer: BlackFriday2026Offer } ) {
 	const translate = useTranslate();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const [ , setHasSaleEnded ] = useState( false );
@@ -85,18 +85,18 @@ export default function BlackFriday2026Banner() {
 
 	useEffect( () => {
 		if ( isVisible ) {
-			recordTracksEvent( 'calypso_bf2026_plans_banner_view' );
+			recordTracksEvent( 'calypso_bf2026_plans_banner_view', { discount_percent: offer.percent } );
 		}
-	}, [ isVisible ] );
+	}, [ isVisible, offer.percent ] );
 
 	if ( ! isVisible ) {
 		return null;
 	}
 
-	const percent = BLACK_FRIDAY_2026_DISCOUNT_PERCENT;
+	const { percent } = offer;
 
 	const onDismiss = () => {
-		recordTracksEvent( 'calypso_bf2026_plans_banner_dismiss' );
+		recordTracksEvent( 'calypso_bf2026_plans_banner_dismiss', { discount_percent: percent } );
 		setIsDismissed( true );
 	};
 
@@ -114,9 +114,14 @@ export default function BlackFriday2026Banner() {
 					<span className="black-friday-2026-banner__tile black-friday-2026-banner__tile-quarter" />
 				</div>
 				<p className="black-friday-2026-banner__text">
-					{ translate( 'Until December 1: %(percent)d%% off annual and multi-year plans.', {
-						args: { percent },
-					} ) }{ ' ' }
+					{ offer.isLifecycle
+						? translate( 'Until December 1: %(percent)d%% off annual plans.', {
+								args: { percent },
+								comment: '%(percent)d is the discount percentage, e.g. 30',
+							} )
+						: translate( 'Until December 1: %(percent)d%% off annual and multi-year plans.', {
+								args: { percent },
+							} ) }{ ' ' }
 					<Countdown />
 				</p>
 				<Button

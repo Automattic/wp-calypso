@@ -76,7 +76,7 @@ import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import {
-	BLACK_FRIDAY_2026_COUPON,
+	getBlackFriday2026OfferForCoupon,
 	isBlackFriday2026Active,
 } from 'calypso/lib/promotions/black-friday-2026';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
@@ -349,6 +349,7 @@ const PlansFeaturesMain = ( {
 	);
 	const currentSitePlan = sitePlansData?.find( ( p ) => p.currentPlan );
 	const isPlanExpired = !! currentSitePlan?.expired;
+	const blackFridayOffer = getBlackFriday2026OfferForCoupon( coupon );
 
 	// Refund-window instant downgrade: when the server reports the plan can be
 	// downgraded instantly, the downgrade is performed via the cancel endpoint
@@ -1829,8 +1830,12 @@ const PlansFeaturesMain = ( {
 				) }
 			</div>
 			{ /* Only where the grid prices the sale coupon, so the bar never promises a discount it doesn't show. */ }
-			{ isPlansGridReady && isBlackFriday2026Active() && coupon === BLACK_FRIDAY_2026_COUPON && (
-				<AsyncLoad require={ loadBlackFriday2026Banner } placeholder={ null } />
+			{ isPlansGridReady && isBlackFriday2026Active() && blackFridayOffer && (
+				<AsyncLoad
+					require={ loadBlackFriday2026Banner }
+					placeholder={ null }
+					offer={ blackFridayOffer }
+				/>
 			) }
 			{ isPlansGridReady && renderSiblingWhenLoaded?.() }
 		</>
