@@ -7,7 +7,3 @@ At the moment we maintain several groups of tests. You can find configurations f
 - `e2e` - automated tests for the entire project.
 
 Check [testing overview](../docs/testing/testing-overview.md) to learn more how all those test configurations are consumed by [Jest](https://facebook.github.io/jest/) testing platform to ensure proper code quality of Calypso codebase.
-
-## Test helpers
-
-This folder contains also legacy test helpers which were used with the previous testing tool called [Mocha](https://mochajs.org/). They are still used in many places, but should be considered as **deprecated**. Check the corresponding code comments to learn about valid alternatives.
