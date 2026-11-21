@@ -14,7 +14,7 @@ import { ThemedIllustration } from '../../components/themed-illustration';
 import { hasHostingFeature } from '../../utils/site-features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import EnableSftpCard from './enable-sftp-card';
-import SftpCard from './sftp-card';
+import SftpCard, { type SftpCardSshState } from './sftp-card';
 import SshCard from './ssh-card';
 import upsellIllustrationDarkUrl from './upsell-illustration-dark.svg';
 import upsellIllustrationUrl from './upsell-illustration.svg';
@@ -36,6 +36,12 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	} );
 
 	const sftpEnabled = sftpUsers && sftpUsers.length > 0;
+	const sshEnabled = sshAccessStatus?.setting === 'ssh';
+	// Until the status loads, or if it fails to, assume SSH may be on so the delete dialog still warns about it.
+	let sftpCardSshState: SftpCardSshState = 'unavailable';
+	if ( hasSshFeature ) {
+		sftpCardSshState = sshAccessStatus?.setting === 'sftp' ? 'disabled' : 'maybe-enabled';
+	}
 
 	return (
 		<PageLayout
@@ -64,16 +70,12 @@ export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 				) }
 			>
 				{ sftpEnabled ? (
-					<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } />
+					<SftpCard siteId={ site.ID } sftpUsers={ sftpUsers } sshState={ sftpCardSshState } />
 				) : (
 					<EnableSftpCard siteId={ site.ID } canUseSsh={ hasSshFeature } />
 				) }
 				{ sftpEnabled && hasSshFeature && (
-					<SshCard
-						siteId={ site.ID }
-						sftpUsers={ sftpUsers }
-						sshEnabled={ sshAccessStatus?.setting === 'ssh' }
-					/>
+					<SshCard siteId={ site.ID } sftpUsers={ sftpUsers } sshEnabled={ sshEnabled } />
 				) }
 			</HostingFeatureGatedWithCallout>
 		</PageLayout>
