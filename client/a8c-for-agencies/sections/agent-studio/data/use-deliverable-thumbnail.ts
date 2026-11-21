@@ -70,7 +70,7 @@ export default function useDeliverableThumbnail( output: AgentStudioOutput ): De
 	const wantsOnePager = isOnePager && isReady;
 	const wantsSocial = ! isOnePager && isReady;
 
-	const run = useAgentStudioRun( output.id );
+	const run = useAgentStudioRun( isReady ? output.id : undefined );
 	const postId = extractPostId( run.data?.payload );
 	const brief = extractSocialBrief( run.data?.payload );
 
