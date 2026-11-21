@@ -291,9 +291,12 @@ function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownF
 	};
 }
 
+type CartHelperOptions = { throwOnError?: boolean };
+
 export async function replaceProductsInCart(
 	siteSlug: string,
-	cartItems: MinimalRequestCartProduct[]
+	cartItems: MinimalRequestCartProduct[],
+	options: CartHelperOptions = {}
 ) {
 	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
 
@@ -305,13 +308,17 @@ export async function replaceProductsInCart(
 		debug( 'product replace request complete', updatedCart );
 	} catch ( error ) {
 		debug( 'product replace request had an error', error );
+		if ( options.throwOnError ) {
+			throw error;
+		}
 	}
 }
 
 export async function addProductsToCart(
 	siteSlug: string,
 	flowName: string,
-	cartItems: MinimalRequestCartProduct[] | null
+	cartItems: MinimalRequestCartProduct[] | null,
+	options: CartHelperOptions = {}
 ) {
 	if ( Array.isArray( cartItems ) ) {
 		const cartItemsToAdd = cartItems.map( ( cartItem ) =>
@@ -329,6 +336,9 @@ export async function addProductsToCart(
 			debug( 'product add request complete', updatedCart );
 		} catch ( error ) {
 			debug( 'product add request had an error', error );
+			if ( options.throwOnError ) {
+				throw error;
+			}
 		}
 	}
 }

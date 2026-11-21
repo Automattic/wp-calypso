@@ -65,6 +65,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	setThemeOnSite: jest.fn(),
 	isAIBuilderOnboardingFlow: () => false,
 	isCopySiteFlow: () => false,
+	isDomainFlow: ( flow: string ) => flow === 'domain',
 	isEntrepreneurFlow: () => false,
 	isNewHostedSiteCreationFlow: () => false,
 	isNewsletterFlow: () => false,
@@ -309,10 +310,55 @@ describe( 'create-site', () => {
 		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: true } );
 
 		expect( transferDomainToSite ).not.toHaveBeenCalled();
-		expect( addProductsToCart ).toHaveBeenCalledWith( 'brand-new.wordpress.com', 'onboarding', [
-			mockPlanCartItem,
-			registeredMove,
-		] );
+		expect( addProductsToCart ).toHaveBeenCalledWith(
+			'brand-new.wordpress.com',
+			'onboarding',
+			[ mockPlanCartItem, registeredMove ],
+			{ throwOnError: true }
+		);
+	} );
+
+	// A rejected cart goes to the error step instead of an empty checkout.
+	it.each( [ 'onboarding', 'domain' ] )(
+		'asks the cart add to throw in the %s flow',
+		async ( flow ) => {
+			mockPlanCartItem = { product_slug: 'personal-bundle' };
+
+			await runStep( { flow } );
+
+			expect( addProductsToCart ).toHaveBeenCalledWith(
+				'brand-new.wordpress.com',
+				flow,
+				[ mockPlanCartItem ],
+				{ throwOnError: true }
+			);
+		}
+	);
+
+	// Some other flows that share this step have no failure branch after processing, so a throw
+	// there has nothing to catch it.
+	it( 'does not ask the cart add to throw in other flows', async () => {
+		mockPlanCartItem = { product_slug: 'personal-bundle' };
+
+		await runStep( { flow: 'newsletter' } );
+
+		expect( addProductsToCart ).toHaveBeenCalledWith(
+			'brand-new.wordpress.com',
+			'newsletter',
+			[ mockPlanCartItem ],
+			{ throwOnError: false }
+		);
+	} );
+
+	// The move needs no checkout, so a rejected cart must not skip it.
+	it( 'moves a registered domain on the Free plan when the cart add rejects', async () => {
+		const newDomain = { product_slug: 'domain_reg', meta: 'new-domain.com' };
+		mockDomainCartItems = [ registeredMove, newDomain ];
+		( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+		await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+		expect( transferDomainToSite ).toHaveBeenCalledWith( 'owned-domain.com', 555, 111 );
 	} );
 
 	// The site works without the domain, so a failed move must not stop the signup.
