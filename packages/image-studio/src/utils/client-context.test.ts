@@ -39,6 +39,10 @@ interface ImageStoreSelectors {
 	getSelectedAspectRatio?: () => string | null;
 	getEntryPoint?: () => string | null;
 	getBlockType?: () => string | null;
+	getOriginalAttachmentId?: () => number | null;
+	getDraftIds?: () => number[];
+	getSavedAttachmentIds?: () => number[];
+	getAnnotatedAttachmentIds?: () => number[];
 }
 
 interface VideoStoreSelectors {
@@ -88,6 +92,51 @@ function setupSelect( {
 describe( 'getClientContext', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
+	} );
+
+	it( 'reports where the canvas sits in the revision history', () => {
+		const attachments: Record< number, { id: number; source_url: string; date: string } > = {
+			10: { id: 10, source_url: 'https://example.com/10.png', date: '2026-01-01T10:00:00' },
+			11: { id: 11, source_url: 'https://example.com/11.png', date: '2026-01-01T11:00:00' },
+			12: { id: 12, source_url: 'https://example.com/12.png', date: '2026-01-01T12:00:00' },
+		};
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => 11,
+				getIsImageStudioOpen: () => true,
+				getEntryPoint: () => 'media_library',
+				getOriginalAttachmentId: () => 10,
+				getDraftIds: () => [ 11, 12 ],
+				getSavedAttachmentIds: () => [],
+				getAnnotatedAttachmentIds: () => [],
+			},
+			core: {
+				getEntityRecord: ( _kind: string, _name: string, id: number ) => attachments[ id ],
+			},
+		} );
+
+		expect( getClientContext().imageStudio?.revisions ).toEqual( {
+			index: 2,
+			count: 3,
+			canGoBack: true,
+			canGoForward: true,
+		} );
+	} );
+
+	it( 'reports an empty revision history when nothing is loaded', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+			},
+		} );
+
+		expect( getClientContext().imageStudio?.revisions ).toEqual( {
+			index: 0,
+			count: 0,
+			canGoBack: false,
+			canGoForward: false,
+		} );
 	} );
 
 	it( 'emits an imageStudio payload for default (image) entry points', () => {
