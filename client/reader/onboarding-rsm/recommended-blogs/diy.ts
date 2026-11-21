@@ -31,7 +31,7 @@ export const getDiyBlogs = (): RecommendedBlog[] => [
 		name: 'Adafruit Blog',
 		site_URL: 'https://blog.adafruit.com/',
 		feed_URL: 'https://blog.adafruit.com/feed/',
-		icon_URL: 'https://cdn-blog.adafruit.com/uploads/2020/04/logo_small@2x.png',
+		icon_URL: 'https://cdn-shop.adafruit.com/static/favicon-196x196.png',
 		description: __(
 			'Electronics tutorials, creative technology projects, and discoveries for makers.'
 		),
