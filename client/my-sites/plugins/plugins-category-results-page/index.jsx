@@ -30,7 +30,7 @@ const PluginsCategoryResultsPage = ( {
 	pathname,
 	isPaginated = false,
 } ) => {
-	const { plugins, isFetching, fetchNextPage, hasNextPage, pagination } = usePlugins( {
+	const { plugins, isFetching, isSuccess, fetchNextPage, hasNextPage, pagination } = usePlugins( {
 		category,
 		infinite: ! isPaginated,
 		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
@@ -39,9 +39,9 @@ const PluginsCategoryResultsPage = ( {
 		staleTime: isPaginated ? 2 * BASE_STALE_TIME : undefined,
 	} );
 
-	const isPastLastPage = isPaginated && currentPage > 1 && ! isFetching && ! plugins.length;
+	// Past the last page (the server sent a 404), but not on a search error: show the first page.
+	const isPastLastPage = isPaginated && currentPage > 1 && isSuccess && ! plugins.length;
 	useEffect( () => {
-		// The server already responded with a 404, so show the first page instead of placeholders.
 		if ( isPastLastPage ) {
 			page.replace( getCategoryPageUrl( pathname, 1 ) );
 		}
@@ -106,6 +106,17 @@ const PluginsCategoryResultsPage = ( {
 					className="plugins-category-results-page__pagination"
 					aria-label={ translate( 'Plugins pagination' ) }
 				>
+					{ pageUrls.prev && (
+						<Button
+							__next40pxDefaultSize
+							className="plugins-category-results-page__prev"
+							variant="secondary"
+							href={ pageUrls.prev }
+							rel="prev"
+						>
+							{ translate( 'Previous page' ) }
+						</Button>
+					) }
 					{ pageNumbers.length > 0 && (
 						<HStack
 							className="plugins-category-results-page__page-numbers"
@@ -137,17 +148,6 @@ const PluginsCategoryResultsPage = ( {
 								)
 							) }
 						</HStack>
-					) }
-					{ pageUrls.prev && (
-						<Button
-							__next40pxDefaultSize
-							className="plugins-category-results-page__prev"
-							variant="secondary"
-							href={ pageUrls.prev }
-							rel="prev"
-						>
-							{ translate( 'Previous page' ) }
-						</Button>
 					) }
 					{ pageUrls.next && (
 						<Button

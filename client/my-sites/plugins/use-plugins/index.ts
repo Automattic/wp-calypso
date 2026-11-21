@@ -18,6 +18,7 @@ interface ESResponse {
 		};
 	};
 	isLoading: boolean;
+	isSuccess: boolean;
 	fetchNextPage?: () => void;
 	hasNextPage?: boolean;
 }
@@ -25,6 +26,7 @@ interface ESResponse {
 interface WPCOMResponse {
 	data?: Plugin[];
 	isLoading: boolean;
+	isSuccess: boolean;
 	fetchNextPage?: () => void;
 }
 
@@ -47,6 +49,7 @@ const usePlugins = ( {
 } ) => {
 	let plugins = [];
 	let isFetching = false;
+	let isSuccess = false;
 	let results = 0;
 
 	const categories = useCategories();
@@ -67,6 +70,7 @@ const usePlugins = ( {
 	const {
 		data: { plugins: ESPlugins = [], pagination: ESPagination } = {},
 		isLoading: isFetchingES,
+		isSuccess: isSuccessES,
 		fetchNextPage,
 		hasNextPage,
 	} = useESPluginsInfinite( wporgPluginsOptions, {
@@ -75,7 +79,11 @@ const usePlugins = ( {
 	} ) as ESResponse;
 
 	// This is triggered only for paid plugins lists.
-	const { data: dotComPlugins = [], isLoading: isFetchingDotCom } = useWPCOMPluginsList(
+	const {
+		data: dotComPlugins = [],
+		isLoading: isFetchingDotCom,
+		isSuccess: isSuccessDotCom,
+	} = useWPCOMPluginsList(
 		config.isEnabled( 'marketplace-fetch-all-dynamic-products' ) ? 'all' : 'launched',
 		search,
 		tag,
@@ -85,30 +93,37 @@ const usePlugins = ( {
 	) as WPCOMResponse;
 
 	// This is triggered only for featured plugins list in discover page.
-	const { data: featuredPlugins = [], isLoading: isFetchingDotComFeatured } =
-		useWPCOMFeaturedPlugins( {
-			enabled: category === 'featured',
-		} ) as WPCOMResponse;
+	const {
+		data: featuredPlugins = [],
+		isLoading: isFetchingDotComFeatured,
+		isSuccess: isSuccessDotComFeatured,
+	} = useWPCOMFeaturedPlugins( {
+		enabled: category === 'featured',
+	} ) as WPCOMResponse;
 
 	switch ( category ) {
 		case 'paid':
 			plugins = dotComPlugins;
 			isFetching = isFetchingDotCom;
+			isSuccess = isSuccessDotCom;
 			results = dotComPlugins?.length ?? 0;
 			break;
 		case 'popular':
 			plugins = ESPlugins;
 			isFetching = isFetchingES;
+			isSuccess = isSuccessES;
 			results = ESPagination?.results ?? 0;
 			break;
 		case 'featured':
 			plugins = featuredPlugins;
 			isFetching = isFetchingDotComFeatured;
+			isSuccess = isSuccessDotComFeatured;
 			results = featuredPlugins?.length ?? 0;
 			break;
 		default:
 			plugins = ESPlugins;
 			isFetching = isFetchingES;
+			isSuccess = isSuccessES;
 			results = ESPagination?.results ?? 0;
 
 			break;
@@ -125,6 +140,7 @@ const usePlugins = ( {
 	return {
 		plugins,
 		isFetching,
+		isSuccess,
 		fetchNextPage: fetchNextPageAndStop,
 		hasNextPage: !! hasNextPage,
 		pagination: {
