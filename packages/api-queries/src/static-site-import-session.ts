@@ -36,10 +36,13 @@ export const pollStaticSiteImportSessionUntil =
 		return state && states.includes( state ) ? false : POLL_INTERVAL;
 	};
 
-export const createStaticSiteImportSessionMutation = () =>
+export const createStaticSiteImportSessionMutation = ( {
+	copyWordPress = false,
+}: { copyWordPress?: boolean } = {} ) =>
 	mutationOptions( {
 		meta: { statId: 'static-site-import-create' },
-		mutationFn: ( sourceUrl: string ) => createStaticSiteImportSession( sourceUrl ),
+		mutationFn: ( sourceUrl: string ) =>
+			createStaticSiteImportSession( sourceUrl, { copyWordPress } ),
 	} );
 
 export const approveStaticSiteImportSessionMutation = () =>

@@ -5,15 +5,20 @@ import type {
 	StaticSiteImportSession,
 } from './types';
 
+/**
+ * Starts a session for a source URL. The server refuses a WordPress source, which a site migration
+ * moves whole, unless `copyWordPress` asks for a copy of it.
+ */
 export async function createStaticSiteImportSession(
-	sourceUrl: string
+	sourceUrl: string,
+	{ copyWordPress = false }: { copyWordPress?: boolean } = {}
 ): Promise< StaticSiteImportSession > {
 	return wpcom.req.post(
 		{
 			path: '/static-site-import-session',
 			apiNamespace: 'wpcom/v2',
 		},
-		{ source_url: sourceUrl }
+		{ source_url: sourceUrl, ...( copyWordPress ? { copy_wordpress: true } : {} ) }
 	);
 }
 
