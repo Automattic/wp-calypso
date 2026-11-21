@@ -237,6 +237,6 @@
 		"pkg-dir": "^5.0.0",
 		"react-router": "7.18.4",
 		"redux-mock-store": "^1.5.5",
-		"storybook": "^10.6.5"
+		"storybook": "^10.6.7"
 	}
 }
