@@ -195,10 +195,7 @@ export async function fetchPlugins( context, next ) {
 	next();
 }
 
-/**
- * Redirect a plugins category page whose `page` query arg is not a page past the
- * first to the URL without it, so each page of results has a single URL.
- */
+/** Redirect a `page` query arg that isn't a page past the first to the URL without it. */
 export function redirectInvalidCategoryPage( context, next ) {
 	const rawPage = context.query?.[ CATEGORY_PAGE_QUERY_ARG ];
 
@@ -216,11 +213,7 @@ export function redirectInvalidCategoryPage( context, next ) {
 	context.res.redirect( 301, url.pathname + url.search );
 }
 
-/**
- * Server-side render a plugins category page whose only query arg is its page number.
- * Calypso skips SSR for any URL with query args, which would leave the later pages
- * of a category without content for crawlers.
- */
+/** Calypso skips SSR for URLs with query args, so opt back in when `page` is the only one. */
 export function allowCategoryPageSsr( context, next ) {
 	const queryKeys = Object.keys( context.query ?? {} );
 

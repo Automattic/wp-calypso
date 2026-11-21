@@ -5,11 +5,7 @@ export const CATEGORY_PAGE_QUERY_ARG = 'page';
 
 export const MAX_CATEGORY_PAGE = Math.floor( ES_MAX_RESULT_OFFSET / DEFAULT_PAGE_SIZE ) + 1;
 
-/**
- * Parse the `page` query arg of a plugins category page.
- * @param {*} value The raw query arg value
- * @returns {number|null} The page number, or null when the value is not a positive integer
- */
+/** The page number in a `page` query arg, or null unless it's a positive integer. */
 export function parseCategoryPage( value ) {
 	if ( typeof value !== 'string' || ! /^[1-9]\d*$/.test( value ) ) {
 		return null;
@@ -18,37 +14,18 @@ export function parseCategoryPage( value ) {
 	return Number( value );
 }
 
-/**
- * The page a plugins category page shows, defaulting to the first page.
- * @param {*} value The raw query arg value
- * @returns {number} The page number
- */
+/** The page to show, falling back to the first page when the query arg is invalid or out of range. */
 export function getCategoryPage( value ) {
 	const page = parseCategoryPage( value );
 	return page && page <= MAX_CATEGORY_PAGE ? page : 1;
 }
 
-/**
- * Build the URL of a page of a plugins category. The first page has no query arg,
- * so it keeps a single URL. Calypso serves `/plugins/browse/seo/` as the same page
- * as `/plugins/browse/seo`, so page URLs never keep a trailing slash.
- * @param {string} pathname The category page pathname
- * @param {number} page The page number
- * @returns {string} The page URL
- */
+/** Page 1 has no query arg, and the trailing slash is dropped since Calypso serves both paths as one page. */
 export function getCategoryPageUrl( pathname, page ) {
 	const path = pathname.replace( /\/+$/, '' );
 	return page > 1 ? `${ path }?${ CATEGORY_PAGE_QUERY_ARG }=${ page }` : path;
 }
 
-/**
- * Get the previous and next page URLs of a plugins category page.
- * @param {Object} options
- * @param {string} options.pathname The category page pathname
- * @param {number} options.page The page number
- * @param {boolean} options.hasNextPage Whether the search has more results
- * @returns {{ prev: string|null, next: string|null }} The page URLs
- */
 export function getCategoryPaginationUrls( { pathname, page, hasNextPage } ) {
 	const nextPage = page + 1;
 
@@ -61,22 +38,12 @@ export function getCategoryPaginationUrls( { pathname, page, hasNextPage } ) {
 	};
 }
 
-/**
- * The number of pages a plugins category has, within the search result window.
- * @param {number} total The number of plugins in the category
- * @returns {number} The page count
- */
+/** Capped at the last page the search API can return. */
 export function getCategoryPageCount( total ) {
 	return Math.min( Math.ceil( ( total || 0 ) / DEFAULT_PAGE_SIZE ), MAX_CATEGORY_PAGE );
 }
 
-/**
- * The page numbers to link to from a plugins category page: the first and last pages
- * and the pages next to the current one.
- * @param {number} page The current page
- * @param {number} pageCount The number of pages
- * @returns {Array<number|null>} The page numbers, with null where pages are skipped
- */
+/** The first, last, current and adjacent pages, with null for each gap. */
 export function getCategoryPageNumbers( page, pageCount ) {
 	if ( pageCount < 2 ) {
 		return [];

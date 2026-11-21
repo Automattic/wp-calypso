@@ -1,8 +1,7 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-// Small screens: page numbers on the first row, previous and next pages below them.
-// Wider screens: previous page, page numbers and next page on one row.
+// Page numbers sit above the previous and next links on small screens, and between them from medium up.
 .plugins-category-results-page__pagination {
 	display: grid;
 	grid-template-areas:
