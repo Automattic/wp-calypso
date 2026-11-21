@@ -1,10 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, renderHook } from '@testing-library/react';
+import { act, renderHook, waitFor } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
 import wpcomRequest from 'wpcom-proxy-request';
 import { useOdieAssistantContext } from '../../context';
+import { useOdieChat } from '../use-odie-chat';
 import { useSendOdieMessage } from '../use-send-odie-message';
-import type { Message } from '../../types';
+import type { Message, SupportInteraction } from '../../types';
 import type { ReactNode } from 'react';
 
 vi.mock( '@automattic/data-stores', () => ( {
@@ -63,8 +64,10 @@ vi.mock( '../../utils/is-agents-manager-available', () => ( {
 	getIsAgentsManagerAvailable: () => false,
 } ) );
 
+let mockCurrentSupportInteraction: SupportInteraction | undefined;
+
 vi.mock( '../use-current-support-interaction', () => ( {
-	useCurrentSupportInteraction: () => ( { data: undefined } ),
+	useCurrentSupportInteraction: () => ( { data: mockCurrentSupportInteraction } ),
 } ) );
 
 vi.mock( '../request-logged-out-wpcom-odie', () => ( {
@@ -246,5 +249,57 @@ describe( 'useSendOdieMessage – asking for a human', () => {
 		await sendMessage();
 
 		expect( mockRequestHumanSupport ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'useSendOdieMessage – the cached chat', () => {
+	beforeEach( () => {
+		vi.clearAllMocks();
+		mockContext();
+		( wpcomRequest as Mock ).mockResolvedValue( {
+			chat_id: 123,
+			messages: [ { message_id: 1, content: 'Yes, PayPal works.', role: 'bot', type: 'message' } ],
+		} );
+	} );
+
+	afterEach( () => {
+		mockCurrentSupportInteraction = undefined;
+	} );
+
+	it.each( [
+		{ chat: 'a chat', botSlug: 'wpcom-workflow-support_chat' },
+		{ chat: 'a legacy chat without a bot slug', botSlug: '' },
+	] )( 'refetches $chat after a message is sent', async ( { botSlug } ) => {
+		mockCurrentSupportInteraction = {
+			uuid: 'interaction-1',
+			bot_slug: botSlug,
+			events: [ { event_source: 'odie', event_external_id: '123' } ],
+		} as SupportInteraction;
+
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+		} );
+		const wrapper = ( { children }: { children: ReactNode } ) => (
+			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+		);
+		const { result } = renderHook(
+			() => ( {
+				// The chat id is a number, as `useGetCombinedChat` passes it.
+				chat: useOdieChat( 123 ),
+				sendOdieMessage: useSendOdieMessage( new AbortController().signal ),
+			} ),
+			{ wrapper }
+		);
+		const getChatRequests = () =>
+			( wpcomRequest as Mock ).mock.calls.filter( ( [ request ] ) => request.method === 'GET' );
+
+		await waitFor( () => expect( result.current.chat.isSuccess ).toBe( true ) );
+		expect( getChatRequests() ).toHaveLength( 1 );
+
+		await act( async () => {
+			await result.current.sendOdieMessage.mutateAsync( userMessage );
+		} );
+
+		await waitFor( () => expect( getChatRequests() ).toHaveLength( 2 ) );
 	} );
 } );
