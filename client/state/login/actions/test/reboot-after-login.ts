@@ -1,0 +1,55 @@
+/**
+ * @jest-environment jsdom
+ */
+import { rebootAfterLogin } from '../reboot-after-login';
+
+jest.mock( 'calypso/lib/user/store', () => ( {
+	clearStore: jest.fn(),
+	getStoredUserId: () => null,
+} ) );
+
+const reboot = async ( sanitizedRedirectTo: string | null ) => {
+	const getState = () => ( { login: { redirectTo: { sanitized: sanitizedRedirectTo } } } );
+	await rebootAfterLogin( {} )( jest.fn(), getState );
+	return window.location.href;
+};
+
+describe( 'rebootAfterLogin', () => {
+	const originalLocation = window.location;
+
+	beforeEach( () => {
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: { href: '' },
+		} );
+	} );
+
+	afterEach( () => {
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: originalLocation,
+		} );
+	} );
+
+	it( 'marks a post on a WordPress.com site so iOS keeps it in the browser', async () => {
+		expect( await reboot( 'https://example.wordpress.com/2024/05/01/my-post/#comment-55' ) ).toBe(
+			'https://example.wordpress.com/2024/05/01/my-post/?open_in_browser=1#comment-55'
+		);
+	} );
+
+	it( 'leaves a relative redirect unchanged', async () => {
+		expect( await reboot( '/read' ) ).toBe( '/read' );
+	} );
+
+	it( 'falls back to /home without a redirect', async () => {
+		expect( await reboot( null ) ).toBe( '/home' );
+	} );
+
+	it( 'flags an OAuth authorize redirect as coming from the login flow', async () => {
+		expect(
+			await reboot( 'https://public-api.wordpress.com/oauth2/authorize?client_id=123' )
+		).toBe( 'https://public-api.wordpress.com/oauth2/authorize?client_id=123&login_flow=true' );
+	} );
+} );
