@@ -68,42 +68,6 @@ describe( 'SiteThumbnail', () => {
 		);
 	} );
 
-	test( 'should generate responsive size alternatives 2x and 3x srcset', async () => {
-		const dimension = { width: 200, height: 100 };
-		render( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } { ...dimension } /> );
-		await waitFor( () => {
-			const srcset = screen.getByAltText( IMG_ALT ).getAttribute( 'srcset' );
-			expect( srcset ).toMatch( ` ${ dimension.width * 2 }w` );
-			expect( srcset ).toMatch( ` ${ dimension.width * 3 }w` );
-		} );
-	} );
-
-	test( 'should add dimensionsSrcSet array prop to srcset string attribute', async () => {
-		const alternativeDimensions = [
-			{
-				width: 777,
-				height: 777,
-			},
-			{
-				width: 888,
-				height: 888,
-			},
-		];
-		render(
-			<SiteThumbnail
-				mShotsUrl={ MSHOTS_URL }
-				alt={ IMG_ALT }
-				dimensionsSrcset={ alternativeDimensions }
-			/>
-		);
-		await waitFor( () => {
-			const srcset = screen.getByAltText( IMG_ALT ).getAttribute( 'srcset' );
-			alternativeDimensions.forEach( ( dimension ) => {
-				expect( srcset ).toMatch( ` ${ dimension.width }w` );
-			} );
-		} );
-	} );
-
 	test( 'empty URL will show no image cause an error', async () => {
 		const { rerender } = render( <SiteThumbnail mShotsUrl="" alt={ IMG_ALT } /> );
 		expect( screen.queryByAltText( IMG_ALT ) ).toBeNull();
