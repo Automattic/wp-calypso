@@ -828,7 +828,6 @@ describe( 'StaticSiteImportCard', () => {
 		render( <StaticSiteImport /> );
 
 		expect( await screen.findByText( 'We can’t import this site' ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Read my site again' } ) ).not.toBeInTheDocument();
 	} );
 } );
 

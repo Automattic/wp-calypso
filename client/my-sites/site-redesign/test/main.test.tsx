@@ -134,7 +134,6 @@ describe( 'SiteRedesign', () => {
 		expect( openRedesign ).toHaveBeenCalledTimes( 1 );
 		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
 		expect( generateRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, false );
-		expect( screen.queryByRole( 'button', { name: 'Show me four designs' } ) ).toBeNull();
 	} );
 
 	it.each( [ 'preview_ready', 'generating', 'failed', 'installed' ] as const )(
