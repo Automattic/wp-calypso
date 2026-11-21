@@ -268,8 +268,7 @@ describe( 'useProductInstall', () => {
 				{},
 				withReplaceCandidate( {
 					error: 'folder_exists',
-					plugin_slug: 'hello-dolly',
-					plugin_version: '2.0',
+					data: { plugin_slug: 'hello-dolly', plugin_version: '2.0' },
 				} )
 			);
 
@@ -284,7 +283,7 @@ describe( 'useProductInstall', () => {
 		it( 'keeps the existing rejection when the backend slug is missing', () => {
 			const { result } = renderProductInstall(
 				{},
-				withReplaceCandidate( { error: 'folder_exists', plugin_version: '2.0' } )
+				withReplaceCandidate( { error: 'folder_exists', data: { plugin_version: '2.0' } } )
 			);
 
 			expect( result.current.error ).toEqual( { type: 'rejected-upload', reason: 'exists' } );
@@ -295,8 +294,7 @@ describe( 'useProductInstall', () => {
 				{},
 				withUploadError( {
 					error: 'folder_exists',
-					plugin_slug: 'hello-dolly',
-					plugin_version: '2.0',
+					data: { plugin_slug: 'hello-dolly', plugin_version: '2.0' },
 				} )
 			);
 
