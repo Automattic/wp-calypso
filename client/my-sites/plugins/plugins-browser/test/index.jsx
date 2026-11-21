@@ -288,7 +288,7 @@ describe( 'DocumentHead meta', () => {
 			{
 				name: 'description',
 				content:
-					'Browse 50,000+ free and premium WordPress plugins — SEO, ecommerce, booking, security, and more. Available on Personal plans and up.',
+					'Browse 60,000+ free and premium WordPress plugins — SEO, ecommerce, booking, security, and more. Available on Personal plans and up.',
 			},
 			{ property: 'og:site_name', content: 'WordPress.com' },
 		] );
