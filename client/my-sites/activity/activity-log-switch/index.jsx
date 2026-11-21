@@ -28,7 +28,7 @@ class ActivityLogSwitch extends Component {
 	 * @returns {Object} Primary button.
 	 */
 	getMainButton() {
-		const { siteId, siteSlug, translate, canAutoconfigure } = this.props;
+		const { siteId, siteSlug, translate } = this.props;
 		switch ( this.props.failureReason ) {
 			case 'vp_can_transfer':
 				return (
@@ -50,14 +50,7 @@ class ActivityLogSwitch extends Component {
 			case 'awaitingCredentials':
 			default:
 				return (
-					<Button
-						primary
-						href={
-							canAutoconfigure
-								? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-								: `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }`
-						}
-					>
+					<Button primary href={ `/start/rewind-setup/?siteId=${ siteId }&siteSlug=${ siteSlug }` }>
 						{ translate( 'Continue setup' ) }
 					</Button>
 				);
@@ -175,6 +168,5 @@ export default connect( ( state, { siteId } ) => {
 		siteUrl: getSiteUrl( state, siteId ),
 		rewindState: rewindState.state,
 		failureReason: rewindState.reason || '',
-		canAutoconfigure: rewindState.canAutoconfigure,
 	};
 } )( localize( ActivityLogSwitch ) );

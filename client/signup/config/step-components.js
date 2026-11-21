@@ -1,8 +1,6 @@
 import { captureMessage } from '@automattic/calypso-sentry';
 
 const stepNameToModuleName = {
-	'creds-confirm': 'creds-confirm',
-	'creds-permission': 'creds-permission',
 	domains: 'domains',
 	'domain-only': 'domains',
 	'hosting-decider': 'hosting-decider',
@@ -35,16 +33,6 @@ const stepNameToModuleName = {
 };
 
 const stepModuleLoaders = {
-	'creds-confirm': () =>
-		import(
-			/* webpackChunkName: "async-load-signup-steps-creds-confirm" */
-			'calypso/signup/steps/creds-confirm'
-		),
-	'creds-permission': () =>
-		import(
-			/* webpackChunkName: "async-load-signup-steps-creds-permission" */
-			'calypso/signup/steps/creds-permission'
-		),
 	'design-picker': () =>
 		import(
 			/* webpackChunkName: "async-load-signup-steps-design-picker" */
