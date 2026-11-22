@@ -41,7 +41,6 @@
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
-		"download": "node bin/download.js",
 		"test": "vitest run"
 	},
 	"dependencies": {
