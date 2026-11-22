@@ -11,11 +11,11 @@ End-to-end tests use [Playwright](https://playwright.dev/docs/intro) to interact
 ### How to run all tests?
 
 Executing `yarn test` from the root folder will run all test suites.
-Behind the scenes we maintain 3 test configuration. This is because each of them (`client`, `server`, and `integration`) has their own requirements.
+Behind the scenes we maintain a test configuration for each part of the repository (for example `client` and `server`), because each has its own requirements.
 
 ### How to run a smaller subset of test files?
 
-We have a yarn run script for each tests type: `yarn run test-client`, `yarn run test-server`, `yarn run test-integration`.
+We have a yarn run script for each tests type: `yarn run test-client`, `yarn run test-server`, `yarn run test-packages`.
 You can pass a filename, folder name or matching pattern to these scripts to narrow down number of executed tests.
 
 Example for client:
