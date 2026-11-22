@@ -82,13 +82,6 @@ export default defineConfig(
 				]
 			: [] ),
 		{
-			files: [ '**/docs/example.jsx' ],
-			rules: {
-				// We use a log of console.log() in examples.
-				'no-console': 'off',
-			},
-		},
-		{
 			files: [ '**/*.stories.{ts,tsx}' ],
 			rules: {
 				'import/no-extraneous-dependencies': 'off',
