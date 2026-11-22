@@ -339,7 +339,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@testing-library/user-event": "npm:^14.6.8"
+    "@testing-library/user-event": "npm:^14.6.10"
     "@types/react": "npm:^18.3.31"
     "@types/react-dom": "npm:^18.3.7"
     "@wordpress/abilities": "npm:^0.26.0"
@@ -1090,7 +1090,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@testing-library/user-event": "npm:^14.6.8"
+    "@testing-library/user-event": "npm:^14.6.10"
     "@types/canvas-confetti": "npm:^1.6.0"
     "@types/node": "npm:^24.12.2"
     "@wordpress/base-styles": "npm:^15.1.0"
@@ -1145,7 +1145,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@testing-library/user-event": "npm:^14.6.8"
+    "@testing-library/user-event": "npm:^14.6.10"
     "@types/prop-types": "npm:^15.7.15"
     "@wordpress/i18n": "npm:^7.2.0"
     "@wordpress/react-i18n": "npm:^5.2.0"
@@ -2130,7 +2130,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
-    "@testing-library/user-event": "npm:^14.6.8"
+    "@testing-library/user-event": "npm:^14.6.10"
     "@visx/xychart": "npm:^4.0.0"
     "@wordpress/base-styles": "npm:^15.1.0"
     "@wordpress/components": "npm:^45.0.0"
@@ -2259,7 +2259,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@testing-library/user-event": "npm:^14.6.8"
+    "@testing-library/user-event": "npm:^14.6.10"
     "@wordpress/components": "npm:^45.0.0"
     "@wordpress/data": "npm:^11.2.0"
     "@wordpress/element": "npm:^10.2.0"
@@ -2351,7 +2351,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@testing-library/user-event": "npm:^14.6.8"
+    "@testing-library/user-event": "npm:^14.6.10"
     "@wordpress/base-styles": "npm:^15.1.0"
     "@wordpress/components": "npm:^45.0.0"
     "@wordpress/compose": "npm:^9.2.0"
@@ -2407,7 +2407,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@testing-library/user-event": "npm:^14.6.8"
+    "@testing-library/user-event": "npm:^14.6.10"
     "@wordpress/base-styles": "npm:^15.1.0"
     "@wordpress/components": "npm:^45.0.0"
     "@wordpress/compose": "npm:^9.2.0"
@@ -2606,7 +2606,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@testing-library/user-event": "npm:^14.6.8"
+    "@testing-library/user-event": "npm:^14.6.10"
     "@wordpress/base-styles": "npm:15.1.0"
     "@wordpress/element": "npm:^10.2.0"
     "@wordpress/i18n": "npm:^7.2.0"
@@ -9817,12 +9817,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^14.6.3, @testing-library/user-event@npm:^14.6.8":
-  version: 14.6.8
-  resolution: "@testing-library/user-event@npm:14.6.8"
+"@testing-library/user-event@npm:^14.6.10, @testing-library/user-event@npm:^14.6.3":
+  version: 14.6.13
+  resolution: "@testing-library/user-event@npm:14.6.13"
   peerDependencies:
     "@testing-library/dom": ">=7.21.4"
-  checksum: 374bbf9f477fdc278f4bf56d6a27f88b1801c90cce9dffc414777dbf33fb1e421efc7341ee169cb286435bb742076a7899bb463c9927d2acca95aafaa5324820
+  checksum: 29cb1c17275ac8b0be3800fbcbcfd3b87c2fc7134aa91df4dc404e3962c4204e720c2286d654d15669eb9e0ee9428a9e246e162149ef9704ea6082b5e303ba85
   languageName: node
   linkType: hard
 
@@ -15418,7 +15418,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@testing-library/user-event": "npm:^14.6.8"
+    "@testing-library/user-event": "npm:^14.6.10"
     "@types/express": "npm:^4.17.25"
     "@types/prismjs": "npm:^1.26.6"
     "@types/react": "npm:19.3.0"
