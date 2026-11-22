@@ -3,7 +3,6 @@ import {
 	STATS_UTM_METRICS_REQUEST_FAILURE,
 	STATS_UTM_METRICS_RECEIVE,
 	STATS_UTM_METRICS_RECEIVE_BY_POST,
-	STATS_UTM_TOP_POSTS_REQUEST,
 	STATS_UTM_TOP_POSTS_RECEIVE,
 } from 'calypso/state/action-types';
 import {
@@ -202,9 +201,6 @@ const isLoadingReducer = ( state = {}, action: AnyAction ) => {
 		}
 		case STATS_UTM_METRICS_RECEIVE_BY_POST: {
 			return false;
-		}
-		case STATS_UTM_TOP_POSTS_REQUEST: {
-			return true;
 		}
 		case STATS_UTM_TOP_POSTS_RECEIVE: {
 			return false;

@@ -4,36 +4,16 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
 	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { fetchingConnections, connections } from '../reducer';
 
 describe( 'reducer', () => {
 	describe( '#fetchingConnections()', () => {
-		test( 'should set fetching to true for fetching action', () => {
-			const state = fetchingConnections( null, {
-				type: PUBLICIZE_CONNECTIONS_REQUEST,
-				siteId: 2916284,
-			} );
-
-			expect( state[ 2916284 ] ).toBe( true );
-		} );
-
 		test( 'should set fetching to false for received action', () => {
 			const state = fetchingConnections( null, {
 				type: PUBLICIZE_CONNECTIONS_RECEIVE,
-				siteId: 2916284,
-			} );
-
-			expect( state[ 2916284 ] ).toBe( false );
-		} );
-
-		test( 'should set fetching to false for failed action', () => {
-			const state = fetchingConnections( null, {
-				type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 				siteId: 2916284,
 			} );
 

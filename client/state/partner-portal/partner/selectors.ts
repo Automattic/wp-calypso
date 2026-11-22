@@ -1,10 +1,5 @@
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import type {
-	APIError,
-	Partner,
-	PartnerKey,
-	PartnerPortalStore,
-} from 'calypso/state/partner-portal/types';
+import type { Partner, PartnerKey, PartnerPortalStore } from 'calypso/state/partner-portal/types';
 // Required for modular state.
 import 'calypso/state/partner-portal/init';
 import type { IAppState } from 'calypso/state/types';
@@ -45,10 +40,6 @@ export function getIsPartnerOAuthTokenLoaded( state: PartnerPortalStore ): boole
 
 export function getCurrentPartner( state: PartnerPortalStore ): Partner | null {
 	return state.partnerPortal?.partner.current || null;
-}
-
-export function getPartnerRequestError( state: PartnerPortalStore ): APIError | null {
-	return state.partnerPortal.partner.error;
 }
 
 export function hasJetpackPartnerAccess( state: PartnerPortalStore ): boolean {

@@ -5,7 +5,6 @@ import {
 	JETPACK_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
 import {
-	regeneratePostByEmail,
 	requestJetpackSettings,
 	saveJetpackSettings,
 	saveJetpackSettingsSuccess,
@@ -83,17 +82,6 @@ describe( 'actions', () => {
 				siteId,
 				settings,
 			} );
-		} );
-	} );
-
-	describe( 'regeneratePostByEmail()', () => {
-		test( 'should return a jetpack settings update action object with settings set to regenerate post-by-email', () => {
-			const siteId = 12345678;
-			const action = regeneratePostByEmail( siteId );
-
-			expect( action ).toEqual(
-				saveJetpackSettings( siteId, { post_by_email_address: 'regenerate' } )
-			);
 		} );
 	} );
 } );

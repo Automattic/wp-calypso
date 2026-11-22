@@ -14,23 +14,6 @@ export const wasImmediateLoginAttempted = ( state ) => {
 };
 
 /**
- * Retrieves information about whether an immediate login attempt was
- * successful (according to query parameters provided in the client request)
- * during the current instance of Calypso.
- *
- * This and the other selectors in this file are based on information provided
- * in the URL (which can be tampered with) so it should not be used to trust
- * that the immediate login actually occurred. However, it is appropriate to
- * use it to make user interface improvements for the immediate login scenario.
- * @param {Object} state - Global state tree
- * @returns {boolean} - Whether the client request indicates that an immediate
- *                      login attempt was successful
- */
-export const wasImmediateLoginSuccessfulAccordingToClient = ( state ) => {
-	return state?.immediateLogin?.success ?? false;
-};
-
-/**
  * Retrieves the reason information provided in the query parameters of
  * immediate login request.
  * @param  {Object} state - Global state tree

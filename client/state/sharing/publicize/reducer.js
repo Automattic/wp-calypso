@@ -4,9 +4,7 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
 	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { connectionsSchema } from './schema';
@@ -21,21 +19,9 @@ import { connectionsSchema } from './schema';
  */
 export const fetchingConnections = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case PUBLICIZE_CONNECTIONS_REQUEST: {
-			const { siteId } = action;
-			return { ...state, [ siteId ]: true };
-		}
 		case PUBLICIZE_CONNECTIONS_RECEIVE: {
 			const { siteId } = action;
 			return { ...state, [ siteId ]: false };
-		}
-		case PUBLICIZE_CONNECTIONS_REQUEST_FAILURE: {
-			const { siteId } = action;
-
-			return {
-				...state,
-				[ siteId ]: false,
-			};
 		}
 	}
 

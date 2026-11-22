@@ -76,8 +76,6 @@ export const transferInProgress = [
 	transferStates.PROVISIONED,
 ] as const;
 
-export const transferRevertingInProgress = [ transferStates.RELOCATING_REVERT ] as const;
-
 export const eligibilityHolds = {
 	BLOCKED_ATOMIC_TRANSFER: 'BLOCKED_ATOMIC_TRANSFER',
 	TRANSFER_ALREADY_EXISTS: 'TRANSFER_ALREADY_EXISTS',

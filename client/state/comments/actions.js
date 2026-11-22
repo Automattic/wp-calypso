@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
-	COMMENT_COUNTS_REQUEST,
 	COMMENT_REQUEST,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_DELETE,
@@ -22,7 +21,6 @@ import { getSiteComment } from 'calypso/state/comments/selectors';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
 
 import 'calypso/state/data-layer/wpcom/comments';
-import 'calypso/state/data-layer/wpcom/sites/comment-counts';
 import 'calypso/state/data-layer/wpcom/sites/comments';
 import 'calypso/state/data-layer/wpcom/sites/posts/replies';
 
@@ -122,18 +120,6 @@ export function requestPostComments( {
 export const requestCommentsList = ( query ) => ( {
 	type: COMMENTS_LIST_REQUEST,
 	query,
-} );
-
-/**
- * Creates an action that requests comment counts for a given site.
- * @param {number} siteId Site identifier
- * @param {number} [postId] Post identifier
- * @returns {Object} Action that requests comment counts by site.
- */
-export const requestCommentCounts = ( siteId, postId ) => ( {
-	type: COMMENT_COUNTS_REQUEST,
-	siteId,
-	postId,
 } );
 
 /**

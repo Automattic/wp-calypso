@@ -1,24 +1,6 @@
-import { isCurrentUserUploadingGravatar, getUserTempGravatar } from '../selectors';
+import { getUserTempGravatar } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#isCurrentUserUploadingGravatar', () => {
-		test( 'returns state when defined', () => {
-			const uploadingState = {
-				gravatarStatus: {
-					isUploading: true,
-				},
-			};
-			expect( isCurrentUserUploadingGravatar( uploadingState ) ).toBe( true );
-
-			const notUploadingState = {
-				gravatarStatus: {
-					isUploading: false,
-				},
-			};
-			expect( isCurrentUserUploadingGravatar( notUploadingState ) ).toBe( false );
-		} );
-	} );
-
 	describe( '#getUserTempGravatar', () => {
 		const tempImage = 'image';
 		const currentUserId = 1;

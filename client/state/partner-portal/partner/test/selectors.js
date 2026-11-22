@@ -178,24 +178,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getPartnerRequestError()', () => {
-		test( 'should return the value of error', () => {
-			const { getPartnerRequestError } = selectors;
-			const state = {
-				partnerPortal: {
-					partner: {
-						error: '',
-					},
-				},
-			};
-
-			expect( getPartnerRequestError( state ) ).toEqual( state.partnerPortal.partner.error );
-
-			state.partnerPortal.partner.error = 'Foo';
-			expect( getPartnerRequestError( state ) ).toEqual( state.partnerPortal.partner.error );
-		} );
-	} );
-
 	describe( '#isJetpackManageStoreClosed()', () => {
 		test( 'should return false when there is no current partner', () => {
 			const { isJetpackManageStoreClosed } = selectors;

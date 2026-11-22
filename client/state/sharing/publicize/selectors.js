@@ -6,18 +6,6 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import 'calypso/state/sharing/init';
 
 /**
- * Returns an array of known connections for the given site ID.
- * @param  {Object} state  Global state tree
- * @param  {number} siteId Site ID
- * @returns {Array}         Site connections
- */
-export function getConnectionsBySiteId( state, siteId ) {
-	return Object.values( state.sharing.publicize.connections ?? {} ).filter(
-		( connection ) => connection.site_ID === siteId
-	);
-}
-
-/**
  * Returns an array of known connections for the given site ID
  * that are available to the specified user ID.
  * @param  {Object} state  Global state tree
@@ -91,16 +79,6 @@ export function getRemovableConnections( state, service ) {
 	}
 
 	return siteUserConnectionsForService.filter( ( connection ) => connection.user_ID === userId );
-}
-
-/**
- * Returns true if connections have been fetched for the given site ID.
- * @param  {Object} state  Global state tree
- * @param  {number} siteId Site ID
- * @returns {Array}         Site connections
- */
-export function hasFetchedConnections( state, siteId ) {
-	return state.sharing.publicize.fetchedConnections?.[ siteId ] ?? false;
 }
 
 /**

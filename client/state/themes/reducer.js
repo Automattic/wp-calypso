@@ -8,7 +8,6 @@ import {
 	ACTIVE_THEME_REQUEST,
 	ACTIVE_THEME_REQUEST_SUCCESS,
 	ACTIVE_THEME_REQUEST_FAILURE,
-	LIVE_PREVIEW_END,
 	LIVE_PREVIEW_START,
 	THEME_ACTIVATE,
 	THEME_ACTIVATE_SUCCESS,
@@ -37,7 +36,6 @@ import {
 	UPSELL_CARD_DISPLAYED,
 	THEMES_LOADING_CART,
 	THEME_START_ACTIVATION_SYNC,
-	THEME_STOP_ACTIVATION_SYNC,
 } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
@@ -558,12 +556,6 @@ export function startActivationSync( state = {}, { type, siteId, themeId } ) {
 				},
 			};
 		}
-		case THEME_STOP_ACTIVATION_SYNC: {
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], themeId ),
-			};
-		}
 	}
 
 	return state;
@@ -576,12 +568,6 @@ export function livePreview( state = {}, { type, themeId } ) {
 				...state,
 				started: true,
 				themeId,
-			};
-		case LIVE_PREVIEW_END:
-			return {
-				...state,
-				started: false,
-				themeId: undefined,
 			};
 	}
 

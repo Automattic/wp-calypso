@@ -153,22 +153,6 @@ export const isFormDisabled = ( state ) => state.login.isFormDisabled;
 export const getAuthAccountType = ( state ) => state.login.authAccountType;
 
 /**
- * Gets Username of the created social account
- * @param  {Object}   state  Global state tree
- * @returns {?string}         Username of the created social account
- */
-export const getCreatedSocialAccountUsername = ( state ) =>
-	state.login.socialAccount.username ?? null;
-
-/**
- * Gets Bearer token of the created social account
- * @param  {Object}   state  Global state tree
- * @returns {?string}         Bearer token of the created social account
- */
-export const getCreatedSocialAccountBearerToken = ( state ) =>
-	state.login.socialAccount.bearerToken ?? null;
-
-/**
  * Gets error for the create social account request.
  * @param  {Object}   state  Global state tree
  * @returns {?Object}         Error for the create social account request.

@@ -16,25 +16,6 @@ export const getDomainsBySiteId = ( state, siteId ) => {
 	return state.sites.domains.items[ siteId ] || EMPTY_SITE_DOMAINS;
 };
 
-/**
- * Returns the  wpcom domain for the provided site id.
- * @param {Object} state - global state tree
- * @param {number | undefined} siteId - identifier of the site
- * @returns {null|import('./types').ResponseDomain} the wpcom domain
- */
-export const getWpComDomainBySiteId = ( state, siteId ) => {
-	const domains = getDomainsBySiteId( state, siteId );
-	if ( ! Array.isArray( domains ) ) {
-		return null;
-	}
-
-	const WPComDomain = domains.find(
-		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
-	);
-
-	return WPComDomain || null;
-};
-
 export const getAllDomains = ( state ) => {
 	return state.sites.domains.items;
 };
@@ -92,14 +73,4 @@ export const isUpdatingPrimaryDomain = ( state, siteId ) => {
  */
 export const isRequestingDomainDetails = ( state, domainName ) => {
 	return state?.sites?.domains?.requesting[ domainName ] || false;
-};
-
-/**
- * Returns the error for the specified domain details request.
- * @param {Object} state - global state tree
- * @param {string} domainName - domain name
- * @returns {string|null} error message or null
- */
-export const getDomainDetailsError = ( state, domainName ) => {
-	return state?.sites?.domains?.errors[ domainName ] || null;
 };
