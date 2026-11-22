@@ -99,7 +99,6 @@
 				'cross-env',
 				'electron',
 				'electron-builder',
-				'electron-fetch',
 				'electron-store',
 				'electron-updater',
 				'js-yaml',

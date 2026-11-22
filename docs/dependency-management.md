@@ -103,15 +103,15 @@ yarn up <package>@^<semver-range>
 
 As before, it will update `react-query` and all its dependencies. But in this case, it _will_ change the required range (i.e. it will modify `package.json`)
 
-### List oudated dependencies
+### List outdated dependencies
 
 Run
 
 ```
-yarn outdated
+yarn upgrade-interactive
 ```
 
-Note that the output includes which sub-package has the dependency. It is possible that the same dependency is present in many sub-packages (or even in the root project).
+It lists the dependencies that have newer versions and lets you pick which to upgrade.
 
 ### List duplicated dependencies
 
