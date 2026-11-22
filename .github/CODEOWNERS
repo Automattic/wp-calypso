@@ -147,8 +147,6 @@
 # Exclude Stepper steps
 /client/landing/stepper/declarative-flow/internals/steps-repository
 
-# DataViews
-
 # Grid package
 /packages/grid @youknowriad
 
