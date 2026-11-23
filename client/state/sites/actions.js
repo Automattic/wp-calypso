@@ -403,44 +403,6 @@ export const sitePluginUpdated = ( siteId ) => ( {
 	siteId,
 } );
 
-/**
- * Returns an action object to be used to update the site front page options.
- * @param  {number} siteId Site ID
- * @param  {Object} frontPageOptions Object containing the three optional front page options.
- * @param  {string} [frontPageOptions.show_on_front] What to show in homepage. Can be 'page' or 'posts'.
- * @param  {number} [frontPageOptions.page_on_front] If `show_on_front = 'page'`, the front page ID.
- * @param  {number} [frontPageOptions.page_for_posts] If `show_on_front = 'page'`, the posts page ID.
- * @returns {Object} Action object
- */
-export const updateSiteFrontPage = ( siteId, frontPageOptions ) => async ( dispatch ) => {
-	try {
-		const response = await wpcom.req.post( `/sites/${ siteId }/homepage`, {
-			is_page_on_front: isPageOnFront( frontPageOptions.show_on_front ),
-			page_on_front_id: frontPageOptions.page_on_front,
-			page_for_posts_id: frontPageOptions.page_for_posts,
-		} );
-
-		dispatch(
-			receiveSiteFrontPage( siteId, {
-				show_on_front: response.is_page_on_front ? 'page' : 'posts',
-				page_on_front: response.page_on_front_id,
-				page_for_posts: response.page_for_posts_id,
-			} )
-		);
-	} catch {}
-};
-
-function isPageOnFront( showOnFront ) {
-	switch ( showOnFront ) {
-		case 'page':
-			return true;
-		case 'posts':
-			return false;
-		default:
-			return undefined;
-	}
-}
-
 export function receiveSiteFrontPage( siteId, { show_on_front, page_on_front, page_for_posts } ) {
 	return {
 		type: SITE_FRONT_PAGE_UPDATE,

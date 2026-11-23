@@ -26,14 +26,6 @@ export function receiveUpdateCoupon( siteId, coupon ) {
 	};
 }
 
-export function receiveDeleteCoupon( siteId, couponId ) {
-	return {
-		couponId,
-		siteId,
-		type: MEMBERSHIPS_COUPON_DELETE,
-	};
-}
-
 export const requestAddCoupon = ( siteId, coupon, noticeText ) => {
 	return ( dispatch ) => {
 		dispatch( {

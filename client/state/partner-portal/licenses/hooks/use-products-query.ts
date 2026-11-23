@@ -51,10 +51,6 @@ function queryProducts( isPublicFacing: boolean ): Promise< APIProductFamily[] >
 		} );
 }
 
-export function usePublicProductsQuery(): UseQueryResult< APIProductFamilyProduct[], unknown > {
-	return useProductsQuery( true );
-}
-
 export default function useProductsQuery(
 	isPublicFacing = false
 ): UseQueryResult< APIProductFamilyProduct[], unknown > {

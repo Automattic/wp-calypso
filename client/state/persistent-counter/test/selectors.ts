@@ -1,11 +1,5 @@
 import { PREFERENCE_BASE_NAME } from '../constants';
-import {
-	getCounterName,
-	getCounter,
-	getCount,
-	lastUpdatedIsToday,
-	counterExists,
-} from '../selectors';
+import { getCounterName, getCounter, getCount, lastUpdatedIsToday } from '../selectors';
 
 const TEST_SITE_ID = 123456789;
 const COUNTER_NAME = 'my-test-counter';
@@ -169,43 +163,6 @@ describe( 'selectors', () => {
 				},
 			};
 			expect( lastUpdatedIsToday( state, COUNTER_NAME, false ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'counterExists:', () => {
-		test( 'should return true if the counter preference key exists', () => {
-			const state = {
-				...reduxState,
-				preferences: {
-					localValues: {
-						[ PREFERENCE_BASE_NAME ]: {
-							'my-counter-name': {
-								count: 7,
-								lastUpdated: 1646852413406,
-							},
-						},
-					},
-				},
-			};
-			expect( counterExists( state, 'my-counter-name', false ) ).toBe( true );
-		} );
-
-		test( 'should return false if counter preference key does not exist', () => {
-			const notToday = Date.parse( '2022-03-09 07:47:05' );
-			const state = {
-				...reduxState,
-				preferences: {
-					localValues: {
-						[ PREFERENCE_BASE_NAME ]: {
-							'my-counter-name': {
-								count: 7,
-								lastUpdated: notToday,
-							},
-						},
-					},
-				},
-			};
-			expect( lastUpdatedIsToday( state, 'wrong-counter-name', false ) ).toBe( false );
 		} );
 	} );
 } );

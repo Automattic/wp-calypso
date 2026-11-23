@@ -62,16 +62,6 @@ import { getKeyringConnections } from 'calypso/state/sharing/keyring/selectors';
 const connections = getKeyringConnections( state );
 ```
 
-### `getKeyringConnectionById( state: object, keyringConnectionId: number )`
-
-Returns a keyring connection object with a specified ID.
-
-```js
-import { getKeyringConnectionById } from 'calypso/state/sharing/keyring/selectors';
-
-const connection = getKeyringConnectionById( state, 23353 );
-```
-
 ### `getKeyringConnectionsByName( state: object, service: string )`
 
 Returns an array of keyring connection objects for a specified service.
@@ -80,16 +70,6 @@ Returns an array of keyring connection objects for a specified service.
 import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 
 const twitterConnections = getKeyringConnectionsByName( state, 'twitter' );
-```
-
-### `getUserConnections( state: object, userId: number )`
-
-Returns an array of keyring connection objects for a specific user.
-
-```js
-import { getUserConnections } from 'calypso/state/sharing/keyring/selectors';
-
-const userConnections = getUserConnections( state, 344325 );
 ```
 
 ### `isKeyringConnectionsFetching( state: object )`

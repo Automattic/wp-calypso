@@ -2,7 +2,6 @@ import deepFreeze from 'deep-freeze';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
 } from 'calypso/state/action-types';
@@ -163,20 +162,6 @@ describe( 'reducer', () => {
 			} );
 			const state = requestSuccess( originalState, {
 				type: WORDADS_SITE_APPROVE_REQUEST_FAILURE,
-				siteId: 2916284,
-			} );
-
-			expect( state ).toEqual( {
-				2916284: null,
-			} );
-		} );
-
-		test( 'should update success state on dismiss error', () => {
-			const originalState = deepFreeze( {
-				2916284: true,
-			} );
-			const state = requestSuccess( originalState, {
-				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 				siteId: 2916284,
 			} );
 

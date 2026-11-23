@@ -58,11 +58,6 @@ export const requestUserSettingsFailure = ( action, error ) => fetchUserSettings
 export const requestUserSettingsSuccess = ( action, data ) => fetchUserSettingsSuccess( data );
 
 /*
- * Store the fetched user settings to Redux state
- */
-export const storeFetchedUserSettings = ( action, data ) => saveUserSettingsSuccess( data );
-
-/*
  * Post settings to WordPress.com API at /me/settings endpoint
  */
 export function userSettingsSave( action ) {
