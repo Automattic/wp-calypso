@@ -273,10 +273,10 @@ export default function SftpCard( {
 						<Text>
 							{ sshState === 'maybe-enabled'
 								? __(
-										'SSH access is also turned off, and every SSH key attached to this site is detached. To use SSH again, create new credentials, turn SSH access on, and attach your keys again.'
+										'SSH access is also turned off, and every SSH key attached to this site, including keys from other users, is detached. To use SSH again, create new credentials, turn SSH access on, and attach your keys again.'
 									)
 								: __(
-										'Every SSH key attached to this site is also detached. To use SSH later, create new credentials, turn SSH access on, and attach your keys again.'
+										'Every SSH key attached to this site, including keys from other users, is also detached. To use SSH later, create new credentials, turn SSH access on, and attach your keys again.'
 									) }
 						</Text>
 					) }
