@@ -45,6 +45,16 @@ describe( 'isExternal', () => {
 		expect( actual ).toBe( true );
 	} );
 
+	test.each( [
+		'javascript:alert(1)',
+		'JaVa\tScRiPt:alert(1)',
+		"javascript:x='@example.com/';alert(1)",
+		'data:text/html,x',
+		'not a host.example',
+	] )( 'should return true for %s', ( source ) => {
+		expect( isExternal( source ) ).toBe( true );
+	} );
+
 	describe( 'with global.window (test against window.location.hostname)', () => {
 		// window.location.hostname === 'example.com'
 		test( 'should return false for for internal protocol-relative url', () => {

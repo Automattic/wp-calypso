@@ -7,10 +7,24 @@ import { URL as URLString } from 'calypso/types';
 const BASE_HOSTNAME = 'base.invalid';
 const BASE_URL = `http://${ BASE_HOSTNAME }`;
 
+function getAbsoluteProtocol( url: string ) {
+	try {
+		return new URL( url ).protocol;
+	} catch {
+		return null;
+	}
+}
+
 export default function isExternal( url: URLString ): boolean {
 	// While TypeScript should ensure that `url` really is a string, this method
 	// is still used in a lot of JavaScript contexts, without type checks.
 	if ( ! url && url !== '' ) {
+		return true;
+	}
+
+	// `javascript:x='@example.com/'` reads as a host after the `//` below, so check the scheme
+	// as the browser will parse it first.
+	if ( ! [ 'http:', 'https:', null ].includes( getAbsoluteProtocol( url ) ) ) {
 		return true;
 	}
 
@@ -31,7 +45,7 @@ export default function isExternal( url: URLString ): boolean {
 	try {
 		parsedUrl = new URL( url, BASE_URL );
 	} catch {
-		return false;
+		return true;
 	}
 	const { hostname, pathname } = parsedUrl;
 
