@@ -6,10 +6,11 @@ import {
 	approveStaticSiteImportSessionMutation,
 	isPermanentStaticSiteImportError,
 	pollStaticSiteImportSessionUntil,
+	siteQueryFilter,
 	staticSiteImportSessionQuery,
 	wowFunnelPendingQuery,
 } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import type { StaticSiteImportSession } from '@automattic/api-core';
 
@@ -99,6 +100,14 @@ export function useStaticSiteImport(
 
 	// Only a finished move can be a preview with a share link, and the lookup is per user, not per site.
 	const isFinished = Boolean( sessionId ) && session?.state === 'finished';
+
+	// A bought site is launched as its move finishes, so the site read while it ran is out of date.
+	const queryClient = useQueryClient();
+	useEffect( () => {
+		if ( isFinished ) {
+			queryClient.invalidateQueries( siteQueryFilter( siteId ) );
+		}
+	}, [ isFinished, queryClient, siteId ] );
 	const { data: pending } = useQuery( {
 		...wowFunnelPendingQuery(),
 		enabled: isFinished,
