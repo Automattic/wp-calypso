@@ -94,7 +94,7 @@ function NewsFilters( {
 }
 
 /** One item: a short row that opens in place to show the rest of its fields. */
-function NewsRow( {
+export function NewsRow( {
 	announcement,
 	isOpen,
 	canToggle,

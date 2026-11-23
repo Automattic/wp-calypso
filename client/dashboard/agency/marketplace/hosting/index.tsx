@@ -28,6 +28,7 @@ import { useMarketplaceType } from '../use-marketplace-type';
 import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { useTermPricing } from '../use-term-pricing';
 import HostCards from './host-cards';
+import HostingAnnouncements, { useHostingAnnouncements } from './hosting-announcements';
 import { getHost } from './hosts';
 import {
 	getPressablePlanInfo,
@@ -64,6 +65,11 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 	const agencyId = agency?.id ?? 0;
 	const pressableUsageLimit = usePressableUsageLimit( agency );
 	const agencyApproved = isAgencyApproved( agency );
+	const {
+		announcements,
+		hasPressableAnnouncement,
+		isPending: isAnnouncementsPending,
+	} = useHostingAnnouncements( agencyId, section );
 
 	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
 	const { data: devLicenses } = useQuery( {
@@ -228,7 +234,12 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 			{ isReferralMode && section !== 'vip' && (
 				<ReferralModeBand kind={ section === 'pressable' ? 'pressable' : 'hosting' } />
 			) }
-			<PressableOffers agency={ agency } />
+			<HostingAnnouncements announcements={ announcements } section={ section } />
+			{ /* A Pressable promo from News and updates replaces the built-in Pressable offer,
+			     which waits for the announcements so it never shows and then disappears. */ }
+			{ ! isAnnouncementsPending && ! hasPressableAnnouncement && (
+				<PressableOffers agency={ agency } />
+			) }
 			{ section ? (
 				renderSection( section )
 			) : (

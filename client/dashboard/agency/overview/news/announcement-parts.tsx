@@ -19,6 +19,10 @@ export interface AnnouncementActionProps {
 	recordTracksEvent?: RecordTracksEvent;
 	/** Maps a CTA's dashboard path to the page of the app rendering the card. */
 	getCtaUrl?: ( url: string ) => string;
+	/** The Tracks event a CTA click records, for pages other than the Overview. */
+	ctaEventName?: string;
+	/** Leaves out the primary CTA, for a page that already shows what it leads to. */
+	hidePrimaryCta?: boolean;
 }
 
 /**
@@ -141,11 +145,12 @@ export function AnnouncementDescription( { announcement }: { announcement: Annou
 
 function trackCta(
 	recordTracksEvent: RecordTracksEvent | undefined,
+	eventName: string,
 	announcement: Announcement,
 	cta: AnnouncementCta,
 	ctaId: 'primary' | 'secondary'
 ) {
-	recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
+	recordTracksEvent?.( eventName, {
 		announcement_id: announcement.id,
 		announcement_type: announcement.type,
 		cta_id: ctaId,
@@ -202,24 +207,35 @@ export function AnnouncementCtas( {
 	shouldUseRouterLink = true,
 	recordTracksEvent,
 	getCtaUrl,
+	ctaEventName = 'calypso_a4a_overview_event_cta_click',
+	hidePrimaryCta = false,
 }: { announcement: Announcement } & AnnouncementActionProps ) {
 	const { primaryCta, secondaryCta } = announcement;
 	const resolveCta = ( cta: AnnouncementCta ) =>
 		getCtaUrl && ! cta.isExternal ? { ...cta, url: getCtaUrl( cta.url ) } : cta;
+	if ( hidePrimaryCta && ! secondaryCta ) {
+		return null;
+	}
 	return (
 		<ButtonStack justify="flex-start" wrap>
-			<CtaButton
-				cta={ resolveCta( primaryCta ) }
-				variant="secondary"
-				shouldUseRouterLink={ shouldUseRouterLink }
-				onClick={ () => trackCta( recordTracksEvent, announcement, primaryCta, 'primary' ) }
-			/>
+			{ ! hidePrimaryCta && (
+				<CtaButton
+					cta={ resolveCta( primaryCta ) }
+					variant="secondary"
+					shouldUseRouterLink={ shouldUseRouterLink }
+					onClick={ () =>
+						trackCta( recordTracksEvent, ctaEventName, announcement, primaryCta, 'primary' )
+					}
+				/>
+			) }
 			{ secondaryCta && (
 				<CtaButton
 					cta={ resolveCta( secondaryCta ) }
 					variant="tertiary"
 					shouldUseRouterLink={ shouldUseRouterLink }
-					onClick={ () => trackCta( recordTracksEvent, announcement, secondaryCta, 'secondary' ) }
+					onClick={ () =>
+						trackCta( recordTracksEvent, ctaEventName, announcement, secondaryCta, 'secondary' )
+					}
 				/>
 			) }
 		</ButtonStack>
