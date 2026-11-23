@@ -184,7 +184,12 @@ function failedResult( error: unknown ): ApplyBlockEditsResultData {
 
 async function applyEditsAction(
 	edits: BlockEdits,
-	{ toolCallId, summary, resolve, onReplaced }: Resolver & { toolCallId?: string; summary?: string }
+	{
+		toolCallId,
+		summary,
+		resolve,
+		onReplaced,
+	}: Resolver & { toolCallId?: string | null; summary?: string }
 ): Promise< { result: ApplyBlockEditsResultData; insertedClientIds: string[] } > {
 	const hasBlockEdits = hasRequestedBlockEdits( edits );
 	const hasCustomCss = edits.customCSS !== undefined;
@@ -348,9 +353,11 @@ export async function applyBlockEditsCallback(
 	const suppliedToolCallId =
 		typeof input.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
 	const toolCallId =
-		suppliedToolCallId ??
-		getToolCallIdFromConversationHistory( APPLY_BLOCK_EDITS_TOOL_ID ) ??
-		undefined;
+		input.toolCallId === null
+			? null
+			: ( suppliedToolCallId ??
+				getToolCallIdFromConversationHistory( APPLY_BLOCK_EDITS_TOOL_ID ) ??
+				undefined );
 	const summary =
 		typeof input.summary === 'string' && input.summary.trim() ? input.summary.trim() : undefined;
 	const resolver = createResolver( input.reverseMap );

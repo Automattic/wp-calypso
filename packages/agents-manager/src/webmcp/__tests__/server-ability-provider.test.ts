@@ -24,11 +24,6 @@ const serverAbility: Ability = {
 	meta: { annotations: { readonly: true, idempotent: true } },
 };
 
-const mutatingServerAbility: Ability = {
-	...serverAbility,
-	meta: { annotations: { readonly: false, destructive: false, idempotent: false } },
-};
-
 describe( 'WebMCP server ability provider', () => {
 	beforeEach( () => {
 		vi.mocked( apiFetch ).mockReset();
@@ -105,21 +100,6 @@ describe( 'WebMCP server ability provider', () => {
 			method: 'GET',
 			path: expect.stringMatching( /wp-abilities\/v1\/abilities\/wpcom\/get-block-schemas\/run/ ),
 		} );
-		expect( toolProvider.executeAbility ).not.toHaveBeenCalled();
-	} );
-
-	it( 'refuses to run a server ability that is not read-only', async () => {
-		vi.mocked( apiFetch ).mockResolvedValueOnce( [ mutatingServerAbility ] );
-		const toolProvider: ToolProvider = {
-			getAbilities: vi.fn( async () => [ clientAbility ] ),
-			executeAbility: vi.fn(),
-		};
-		const provider = createWebMcpToolProvider( toolProvider );
-
-		await expect( provider.executeAbility( 'wpcom/get-block-schemas', {} ) ).rejects.toThrow(
-			'only read-only server abilities'
-		);
-		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
 		expect( toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 

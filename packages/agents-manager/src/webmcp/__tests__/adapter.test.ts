@@ -540,23 +540,38 @@ describe( 'WebMCP adapter', () => {
 		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
-	it.each< [ string, Ability[] ] >( [
-		[ 'removed', [] ],
+	it.each< [ string, string, Ability, Ability[] ] >( [
+		[ 'removed', 'big_sky__apply_block_edits', createAbility(), [] ],
 		[
 			'replaced by an unflagged ability',
+			'big_sky__apply_block_edits',
+			createAbility(),
 			[ createAbility( { meta: { annotations: { clientRegistered: true } } } ) ],
 		],
-	] )( 'refuses a tool whose ability was %s before the next sync', async ( _case, next ) => {
-		const harness = createHarness();
-		await harness.adapter.sync();
-		harness.setAbilities( next );
+		[
+			'no longer read-only on the server',
+			'wpcom__get_block_schemas',
+			createServerAbility( 'wpcom/get-block-schemas' ),
+			[
+				createServerAbility( 'wpcom/get-block-schemas', {
+					meta: { annotations: { serverRegistered: true, readonly: false } },
+				} ),
+			],
+		],
+	] )(
+		'refuses a tool whose ability was %s before the next sync',
+		async ( _case, toolName, ability, next ) => {
+			const harness = createHarness( [ ability ] );
+			await harness.adapter.sync();
+			harness.setAbilities( next );
 
-		await expect(
-			harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {} )
-		).rejects.toThrow( 'no longer available' );
+			await expect( harness.tools.get( toolName )?.execute( {} ) ).rejects.toThrow(
+				'no longer available'
+			);
 
-		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
-	} );
+			expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+		}
+	);
 
 	it( 'reconciles late, removed, and changed abilities without duplicates', async () => {
 		const harness = createHarness( [] );

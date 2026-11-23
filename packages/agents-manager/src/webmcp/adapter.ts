@@ -16,6 +16,7 @@ import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
 import type { Ability } from '@wordpress/abilities';
 import type { Block } from '@wordpress/blocks';
 
+export { withoutChatToolCalls } from './non-chat-call-provider';
 export { subscribeToRegistryAbilities, withRegistryAbilities } from './registry-ability-provider';
 export { createWebMcpToolProvider } from './server-ability-provider';
 

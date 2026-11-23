@@ -13,7 +13,7 @@ interface SetSiteLogoInput {
 		url?: string;
 	};
 	summary?: string;
-	toolCallId?: string;
+	toolCallId?: string | null;
 }
 
 /**
