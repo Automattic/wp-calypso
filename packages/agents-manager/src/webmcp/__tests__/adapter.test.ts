@@ -524,6 +524,24 @@ describe( 'WebMCP adapter', () => {
 		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
+	it.each< [ string, Ability[] ] >( [
+		[ 'removed', [] ],
+		[
+			'replaced by an unflagged ability',
+			[ createAbility( { meta: { annotations: { clientRegistered: true } } } ) ],
+		],
+	] )( 'refuses a tool whose ability was %s before the next sync', async ( _case, next ) => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+		harness.setAbilities( next );
+
+		await expect(
+			harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {} )
+		).rejects.toThrow( 'no longer available' );
+
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
 	it( 'reconciles late, removed, and changed abilities without duplicates', async () => {
 		const harness = createHarness( [] );
 		await harness.adapter.sync();

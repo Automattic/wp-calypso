@@ -237,6 +237,7 @@ function adaptResultForWebMcp( abilityName: string, value: unknown ): unknown {
 function createTool(
 	ability: Ability,
 	toolProvider: ToolProvider,
+	shouldExposeAbility: ( ability: Ability ) => boolean,
 	executionContext: ExecutionContext
 ): WebMcpTool {
 	return {
@@ -254,6 +255,18 @@ function createTool(
 		execute: async ( input, options ) => {
 			if ( options?.signal?.aborted ) {
 				throw createAbortError();
+			}
+
+			// The ability can change before the next sync replaces this tool, e.g. an unflagged one
+			// registered under the same name.
+			const current = ( await toolProvider.getAbilities() ).find(
+				( item ) => item.name === ability.name
+			);
+
+			if ( ! current || ! shouldExposeAbility( current ) ) {
+				throw new Error(
+					`WebMCP tool is no longer available: ${ normalizeAbilityName( ability.name ) }`
+				);
 			}
 
 			const preparedInput = prepareInput( ability.name, input ?? {}, executionContext );
@@ -324,7 +337,7 @@ export function createWebMcpAdapter( {
 		}
 
 		for ( const [ abilityName, ability ] of eligible ) {
-			const tool = createTool( ability, toolProvider, executionContext );
+			const tool = createTool( ability, toolProvider, shouldExposeAbility, executionContext );
 			const fingerprint = fingerprintTool( tool );
 			const current = registrations.get( abilityName );
 

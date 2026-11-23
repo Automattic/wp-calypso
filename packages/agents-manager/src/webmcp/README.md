@@ -37,9 +37,10 @@ such a change, or unmounting, aborts all registrations. While eligible, the adap
 whenever the `@wordpress/abilities` registry changes, which covers abilities registered there by
 later React effects. Anything else, such as an ability only a provider lists, a server ability
 fetch that failed or a tool the browser rejected, is picked up on the next registry or scope
-change. A rejected tool doesn't stop the others from registering. An already-aborted tool
-execution is rejected, but an in-flight provider execution cannot currently be cancelled because
-`ToolProvider.executeAbility()` has no signal.
+change. A rejected tool doesn't stop the others from registering, and a call to a tool whose
+ability was removed or is no longer exposed is refused until the next sync updates the tools. An
+already-aborted tool execution is rejected, but an in-flight provider execution cannot currently be
+cancelled because `ToolProvider.executeAbility()` has no signal.
 
 The exposed tools are:
 
