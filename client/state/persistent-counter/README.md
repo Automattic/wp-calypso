@@ -18,12 +18,12 @@ dispatch( incrementCounter( MY_COUNTER_NAME ) );
 
 ### More info
 
-`incrementCounter`, `decrementCounter`, and `resetCounter` are redux actions that can be dispatched. Thier argument signature is as follows:
+`incrementCounter` is a redux action that can be dispatched. Its argument signature is as follows:
 
 `incrementCounter( counterName, keyedToSiteId = false, countSameDay = true );`
 
 `counterName` - a unique slug/name that will be used to reference the counter.
-`keyedToSiteId` - if true, the counter will be keyed to the currently selected siteId and therefore a counter will be created and incremented/decremented per each currently selected siteId.
+`keyedToSiteId` - if true, the counter will be keyed to the currently selected siteId and therefore a counter will be created and incremented per each currently selected siteId.
 `countSameDay` - if false, the counter will only increment, at most, once per day.
 
 #### The counter keyed by siteId
@@ -45,7 +45,5 @@ const currentCount = useSelector( state => getCount( MY_COUNTER_NAME, false ) );
 ```
 
 ##### Other selectors
-
-`counterExists( state, counterName, keyedToSiteId )`
 
 `getCounter( state, counterName, keyedToSiteId )`

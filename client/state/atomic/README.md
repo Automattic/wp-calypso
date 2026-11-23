@@ -1,6 +1,6 @@
 # Atomic Transfers
 
-Used for initiating and tracking the status of Atomic transfers and software set installs. See also: client/state/data-layer/wpcom/sites/atomic
+Used for initiating and tracking the status of Atomic transfers, and for tracking software set installs. See also: client/state/data-layer/wpcom/sites/atomic
 
 ## Selectors
 
@@ -10,8 +10,5 @@ getLatestAtomicTransfer
 ## Example usage
 
 ```
-import {
-	requestAtomicSoftwareStatus,
-	requestAtomicSoftwareInstall,
-} from 'calypso/state/atomic/software/actions';
+import { requestAtomicSoftwareStatus } from 'calypso/state/atomic/software/actions';
 ```
