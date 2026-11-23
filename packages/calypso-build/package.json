@@ -67,7 +67,7 @@
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"gettext-parser": "^6.0.0",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {
