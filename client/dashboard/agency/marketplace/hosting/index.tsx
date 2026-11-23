@@ -18,6 +18,7 @@ import PressableUsageLimitNotice, {
 } from '../../components/pressable-usage-limit-notice';
 import { isAgencyApproved } from '../is-agency-approved';
 import { getWpcomPlan } from '../lib/wpcom-hosting';
+import MarketplacePromos, { useMarketplacePromos } from '../marketplace-promos';
 import CartMenu from '../products/cart-menu';
 import { useCartOpen, useShoppingCart } from '../products/use-shopping-cart';
 import ReferralModeBand from '../referral-mode-band';
@@ -28,7 +29,6 @@ import { useMarketplaceType } from '../use-marketplace-type';
 import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
 import { useTermPricing } from '../use-term-pricing';
 import HostCards from './host-cards';
-import HostingAnnouncements, { useHostingAnnouncements } from './hosting-announcements';
 import { getHost } from './hosts';
 import {
 	getPressablePlanInfo,
@@ -41,9 +41,17 @@ import VipSection from './vip-section';
 import WpcomSection from './wpcom-section';
 import type { HostingSection } from '../paths';
 import type { PressablePlan } from './lib/pressable-plans';
-import type { AgencyProduct } from '@automattic/api-core';
+import type { AgencyAnnouncementLogo, AgencyProduct } from '@automattic/api-core';
 
 import './style.scss';
+
+// The promos each page shows: both hosts on `/hosting`, and only its own on a host's page.
+const PROMO_LOGOS: Record< HostingSection | 'all', readonly AgencyAnnouncementLogo[] > = {
+	all: [ 'wordpress_com', 'pressable' ],
+	wpcom: [ 'wordpress_com' ],
+	pressable: [ 'pressable' ],
+	vip: [],
+};
 
 /**
  * `/hosting` shows the hosts side by side; `section` is the page of one host.
@@ -64,7 +72,7 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 	const agencyId = agency?.id ?? 0;
 	const pressableUsageLimit = usePressableUsageLimit( agency );
 	const agencyApproved = isAgencyApproved( agency );
-	const announcements = useHostingAnnouncements( agencyId, section );
+	const promos = useMarketplacePromos( agencyId, PROMO_LOGOS[ section ?? 'all' ] );
 
 	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
 	const { data: devLicenses } = useQuery( {
@@ -229,7 +237,12 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 			{ isReferralMode && section !== 'vip' && (
 				<ReferralModeBand kind={ section === 'pressable' ? 'pressable' : 'hosting' } />
 			) }
-			<HostingAnnouncements announcements={ announcements } section={ section } />
+			{ /* A host's own page lists its plans right below, so its promos leave out the primary CTA. */ }
+			<MarketplacePromos
+				announcements={ promos }
+				placement="hosting"
+				hidePrimaryCta={ !! section }
+			/>
 			{ section ? (
 				renderSection( section )
 			) : (

@@ -6,10 +6,10 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { render } from '../../../../test-utils';
-import HostingAnnouncements, { useHostingAnnouncements } from '../hosting-announcements';
-import type { HostingSection } from '../../paths';
-import type { AgencyAnnouncement } from '@automattic/api-core';
+import { render } from '../../../test-utils';
+import MarketplacePromos, { useMarketplacePromos } from '../marketplace-promos';
+import type { MarketplacePromoPlacement } from '../marketplace-promos';
+import type { AgencyAnnouncement, AgencyAnnouncementLogo } from '@automattic/api-core';
 
 const AGENCY_ID = 123;
 
@@ -51,6 +51,22 @@ const jetpackPromo = {
 	subtitle: 'Automattic for Agencies & Jetpack',
 	description: 'Get 25% off your first year of any new yearly Jetpack plan.',
 	primaryCta: { label: 'Explore Jetpack products', url: '/marketplace/products' },
+	secondaryCta: {
+		label: 'See Jetpack terms',
+		url: 'https://example.com/jetpack-terms',
+		isExternal: true,
+	},
+} as AgencyAnnouncement;
+
+const wooPromo = {
+	id: 'woo-extensions',
+	type: 'announcement',
+	logo: 'woo',
+	eyebrow: 'WooCommerce',
+	headline: '30% off Woo extensions',
+	subtitle: 'Automattic for Agencies & WooCommerce',
+	description: 'Get 30% off any new Woo extension.',
+	primaryCta: { label: 'Explore Woo extensions', url: '/marketplace/products' },
 } as AgencyAnnouncement;
 
 function mockAnnouncements( items: AgencyAnnouncement[] ) {
@@ -59,15 +75,33 @@ function mockAnnouncements( items: AgencyAnnouncement[] ) {
 		.reply( 200, items );
 }
 
-function HostingPage( { section }: { section?: HostingSection } ) {
-	const announcements = useHostingAnnouncements( AGENCY_ID, section );
-	return <HostingAnnouncements announcements={ announcements } section={ section } />;
+const HOSTING_LOGOS: AgencyAnnouncementLogo[] = [ 'wordpress_com', 'pressable' ];
+const PRESSABLE_LOGOS: AgencyAnnouncementLogo[] = [ 'pressable' ];
+const PRODUCTS_LOGOS: AgencyAnnouncementLogo[] = [ 'jetpack', 'woo' ];
+
+function PromosPage( {
+	logos,
+	placement,
+	hidePrimaryCta,
+}: {
+	logos: AgencyAnnouncementLogo[];
+	placement: MarketplacePromoPlacement;
+	hidePrimaryCta?: boolean;
+} ) {
+	const promos = useMarketplacePromos( AGENCY_ID, logos );
+	return (
+		<MarketplacePromos
+			announcements={ promos }
+			placement={ placement }
+			hidePrimaryCta={ hidePrimaryCta }
+		/>
+	);
 }
 
-describe( '<HostingAnnouncements>', () => {
-	test( 'shows only the WordPress.com and Pressable promos, with the first one open', async () => {
+describe( '<MarketplacePromos>', () => {
+	test( 'shows only the promos for the page’s products, with the first one open', async () => {
 		mockAnnouncements( [ jetpackPromo, wpcomPromo, pressablePromo ] );
-		render( <HostingPage /> );
+		render( <PromosPage logos={ HOSTING_LOGOS } placement="hosting" /> );
 
 		expect(
 			await screen.findByText( 'Get 25% off your first term of any new annual WordPress.com plan.' )
@@ -83,40 +117,48 @@ describe( '<HostingAnnouncements>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'a host’s own page shows only that host’s promo', async () => {
+	test( 'a host’s own page shows only its promo, without the primary action', async () => {
 		mockAnnouncements( [ wpcomPromo, pressablePromo ] );
-		render( <HostingPage section="pressable" /> );
+		render( <PromosPage logos={ PRESSABLE_LOGOS } placement="hosting" hidePrimaryCta /> );
 
-		expect(
-			await screen.findByText(
-				'Enjoy up to 6 months free on Pressable Signature and Premium plans.'
-			)
-		).toBeVisible();
+		expect( await screen.findByRole( 'link', { name: /See full terms/ } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'View promo details' } ) ).not.toBeInTheDocument();
 		expect(
 			screen.queryByText( 'Black Friday: 25% off WordPress.com plans' )
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'a host’s own page leaves out the primary action, since its plans are below', async () => {
-		mockAnnouncements( [ wpcomPromo, pressablePromo ] );
-		render( <HostingPage section="pressable" /> );
-
-		expect( await screen.findByRole( 'link', { name: /See full terms/ } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'View promo details' } ) ).not.toBeInTheDocument();
-	} );
-
 	test( 'the Hosting page keeps the primary action', async () => {
 		mockAnnouncements( [ pressablePromo ] );
-		render( <HostingPage /> );
+		render( <PromosPage logos={ HOSTING_LOGOS } placement="hosting" /> );
 
 		expect( await screen.findByRole( 'link', { name: 'View promo details' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /See full terms/ } ) ).toBeVisible();
 	} );
 
-	test( 'tracks opening a promo and clicking its action', async () => {
+	test( 'the Products page shows Jetpack and Woo promos, without their primary actions', async () => {
+		mockAnnouncements( [ wpcomPromo, jetpackPromo, wooPromo ] );
+		render( <PromosPage logos={ PRODUCTS_LOGOS } placement="products" hidePrimaryCta /> );
+
+		expect(
+			await screen.findByText( 'Get 25% off your first year of any new yearly Jetpack plan.' )
+		).toBeVisible();
+		expect( screen.getByText( '30% off Woo extensions' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /See Jetpack terms/ } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'link', { name: 'Explore Jetpack products' } )
+		).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Black Friday: 25% off WordPress.com plans' )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'tracks opening a promo and clicking its action under the page’s events', async () => {
 		const user = userEvent.setup();
 		mockAnnouncements( [ wpcomPromo, pressablePromo ] );
-		const { recordTracksEvent } = render( <HostingPage /> );
+		const { recordTracksEvent } = render(
+			<PromosPage logos={ HOSTING_LOGOS } placement="hosting" />
+		);
 
 		const [ row ] = await screen.findAllByRole( 'button', {
 			name: /Get up to 6 months of free Pressable hosting on new\splans!/,
@@ -134,9 +176,25 @@ describe( '<HostingAnnouncements>', () => {
 		);
 	} );
 
-	test( 'shows nothing when there are no hosting promos', async () => {
+	test( 'tracks opening a promo on the Products page under its own event', async () => {
+		const user = userEvent.setup();
+		mockAnnouncements( [ jetpackPromo, wooPromo ] );
+		const { recordTracksEvent } = render(
+			<PromosPage logos={ PRODUCTS_LOGOS } placement="products" hidePrimaryCta />
+		);
+
+		const [ row ] = await screen.findAllByRole( 'button', { name: /30% off Woo\sextensions/ } );
+		await user.click( row );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_products_announcement_open', {
+			announcement_id: 'woo-extensions',
+			announcement_type: 'announcement',
+		} );
+	} );
+
+	test( 'shows nothing when there are no promos for the page’s products', async () => {
 		const scope = mockAnnouncements( [ jetpackPromo ] );
-		render( <HostingPage /> );
+		render( <PromosPage logos={ HOSTING_LOGOS } placement="hosting" /> );
 
 		await vi.waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		expect(

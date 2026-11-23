@@ -18,6 +18,7 @@ import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import { isPressablePlanLicense, pressableLicensesQuery } from '../hosting/lib/pressable-products';
 import { isAgencyApproved } from '../is-agency-approved';
+import MarketplacePromos, { useMarketplacePromos } from '../marketplace-promos';
 import ReferralModeBand from '../referral-mode-band';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
@@ -59,10 +60,12 @@ import {
 import type { TileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 import type { ProductListItem, ProductSection } from './lib/product-groups';
-import type { AgencyProduct } from '@automattic/api-core';
+import type { AgencyAnnouncementLogo, AgencyProduct } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
 import './style.scss';
+
+const PROMO_LOGOS: readonly AgencyAnnouncementLogo[] = [ 'jetpack', 'woo' ];
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -111,6 +114,7 @@ export default function MarketplaceProducts() {
 	const agencyId = agency?.id ?? 0;
 
 	const { data: allProducts, isLoading } = useQuery( agencyProductsQuery( agencyId ) );
+	const promos = useMarketplacePromos( agencyId, PROMO_LOGOS );
 
 	// Pressable add-ons only make sense for an agency that owns a Pressable plan
 	// (not one it referred), except in referral mode, where a client may buy them.
@@ -441,6 +445,8 @@ export default function MarketplaceProducts() {
 			}
 		>
 			{ isReferralMode && <ReferralModeBand kind="products" /> }
+			{ /* The products a promo leads to are listed right below, so its primary CTA is left out. */ }
+			<MarketplacePromos announcements={ promos } placement="products" hidePrimaryCta />
 			{ detailsProduct && (
 				<ProductDetailsModal
 					product={ detailsProduct }
