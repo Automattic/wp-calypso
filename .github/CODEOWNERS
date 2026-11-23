@@ -33,7 +33,7 @@
 /client/dashboard/sites/staging-site-sync-dropdown @Automattic/yolo @Automattic/lego
 /client/dashboard/sites/staging-site-sync-modal @Automattic/yolo @Automattic/lego
 /client/dashboard/sites/staging-site-delete-modal @Automattic/yolo @Automattic/lego
-/client/dashboard/app/staging-site-sync-monitor @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/staging-site @Automattic/yolo @Automattic/lego
 
 # Staging sites - interim dashboard
 /client/sites/staging-site @Automattic/yolo

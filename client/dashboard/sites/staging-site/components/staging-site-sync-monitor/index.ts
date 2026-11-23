@@ -4,7 +4,7 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useRef } from 'react';
-import { getProductionSiteId, isStagingSiteSyncing } from '../../utils/site-staging-site';
+import { getProductionSiteId, isStagingSiteSyncing } from '../../../../utils/site-staging-site';
 import type { Site } from '@automattic/api-core';
 
 interface StagingSiteSyncMonitorProps {
