@@ -20,7 +20,7 @@ export const statusField: Field< Email > = {
 			return (
 				<Tooltip
 					text={ __(
-						"This domain is no longer on WordPress.com. Your mailbox keeps working as long as the domain's email DNS records stay in place."
+						'This domain is no longer on WordPress.com. Your mailbox keeps working as long as the domain’s email DNS records stay in place.'
 					) }
 				>
 					<Text intent="warning" tabIndex={ 0 } className="emails-status-with-tooltip">
