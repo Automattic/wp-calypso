@@ -18,7 +18,7 @@ import PressableUsageLimitNotice, {
 } from '../../components/pressable-usage-limit-notice';
 import { isAgencyApproved } from '../is-agency-approved';
 import { getWpcomPlan } from '../lib/wpcom-hosting';
-import MarketplacePromos, { useMarketplacePromos } from '../marketplace-promos';
+import MarketplacePromos from '../marketplace-promos';
 import CartMenu from '../products/cart-menu';
 import { useCartOpen, useShoppingCart } from '../products/use-shopping-cart';
 import ReferralModeBand from '../referral-mode-band';
@@ -72,7 +72,6 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 	const agencyId = agency?.id ?? 0;
 	const pressableUsageLimit = usePressableUsageLimit( agency );
 	const agencyApproved = isAgencyApproved( agency );
-	const promos = useMarketplacePromos( agencyId, PROMO_LOGOS[ section ?? 'all' ] );
 
 	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
 	const { data: devLicenses } = useQuery( {
@@ -239,7 +238,8 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 			) }
 			{ /* A host's own page lists its plans right below, so its promos leave out the primary CTA. */ }
 			<MarketplacePromos
-				announcements={ promos }
+				agencyId={ agencyId }
+				logos={ PROMO_LOGOS[ section ?? 'all' ] }
 				placement="hosting"
 				hidePrimaryCta={ !! section }
 			/>

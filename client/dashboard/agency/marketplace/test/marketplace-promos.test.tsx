@@ -7,8 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
 import { render } from '../../../test-utils';
-import MarketplacePromos, { useMarketplacePromos } from '../marketplace-promos';
-import type { MarketplacePromoPlacement } from '../marketplace-promos';
+import MarketplacePromos from '../marketplace-promos';
 import type { AgencyAnnouncement, AgencyAnnouncementLogo } from '@automattic/api-core';
 
 const AGENCY_ID = 123;
@@ -79,29 +78,12 @@ const HOSTING_LOGOS: AgencyAnnouncementLogo[] = [ 'wordpress_com', 'pressable' ]
 const PRESSABLE_LOGOS: AgencyAnnouncementLogo[] = [ 'pressable' ];
 const PRODUCTS_LOGOS: AgencyAnnouncementLogo[] = [ 'jetpack', 'woo' ];
 
-function PromosPage( {
-	logos,
-	placement,
-	hidePrimaryCta,
-}: {
-	logos: AgencyAnnouncementLogo[];
-	placement: MarketplacePromoPlacement;
-	hidePrimaryCta?: boolean;
-} ) {
-	const promos = useMarketplacePromos( AGENCY_ID, logos );
-	return (
-		<MarketplacePromos
-			announcements={ promos }
-			placement={ placement }
-			hidePrimaryCta={ hidePrimaryCta }
-		/>
-	);
-}
-
 describe( '<MarketplacePromos>', () => {
 	test( 'shows only the promos for the page’s products, with the first one open', async () => {
 		mockAnnouncements( [ jetpackPromo, wpcomPromo, pressablePromo ] );
-		render( <PromosPage logos={ HOSTING_LOGOS } placement="hosting" /> );
+		render(
+			<MarketplacePromos agencyId={ AGENCY_ID } logos={ HOSTING_LOGOS } placement="hosting" />
+		);
 
 		expect(
 			await screen.findByText( 'Get 25% off your first term of any new annual WordPress.com plan.' )
@@ -119,7 +101,14 @@ describe( '<MarketplacePromos>', () => {
 
 	test( 'a host’s own page shows only its promo, without the primary action', async () => {
 		mockAnnouncements( [ wpcomPromo, pressablePromo ] );
-		render( <PromosPage logos={ PRESSABLE_LOGOS } placement="hosting" hidePrimaryCta /> );
+		render(
+			<MarketplacePromos
+				agencyId={ AGENCY_ID }
+				logos={ PRESSABLE_LOGOS }
+				placement="hosting"
+				hidePrimaryCta
+			/>
+		);
 
 		expect( await screen.findByRole( 'link', { name: /See full terms/ } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'View promo details' } ) ).not.toBeInTheDocument();
@@ -130,7 +119,9 @@ describe( '<MarketplacePromos>', () => {
 
 	test( 'the Hosting page keeps the primary action', async () => {
 		mockAnnouncements( [ pressablePromo ] );
-		render( <PromosPage logos={ HOSTING_LOGOS } placement="hosting" /> );
+		render(
+			<MarketplacePromos agencyId={ AGENCY_ID } logos={ HOSTING_LOGOS } placement="hosting" />
+		);
 
 		expect( await screen.findByRole( 'link', { name: 'View promo details' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /See full terms/ } ) ).toBeVisible();
@@ -138,7 +129,14 @@ describe( '<MarketplacePromos>', () => {
 
 	test( 'the Products page shows Jetpack and Woo promos, without their primary actions', async () => {
 		mockAnnouncements( [ wpcomPromo, jetpackPromo, wooPromo ] );
-		render( <PromosPage logos={ PRODUCTS_LOGOS } placement="products" hidePrimaryCta /> );
+		render(
+			<MarketplacePromos
+				agencyId={ AGENCY_ID }
+				logos={ PRODUCTS_LOGOS }
+				placement="products"
+				hidePrimaryCta
+			/>
+		);
 
 		expect(
 			await screen.findByText( 'Get 25% off your first year of any new yearly Jetpack plan.' )
@@ -157,7 +155,7 @@ describe( '<MarketplacePromos>', () => {
 		const user = userEvent.setup();
 		mockAnnouncements( [ wpcomPromo, pressablePromo ] );
 		const { recordTracksEvent } = render(
-			<PromosPage logos={ HOSTING_LOGOS } placement="hosting" />
+			<MarketplacePromos agencyId={ AGENCY_ID } logos={ HOSTING_LOGOS } placement="hosting" />
 		);
 
 		const [ row ] = await screen.findAllByRole( 'button', {
@@ -185,7 +183,12 @@ describe( '<MarketplacePromos>', () => {
 		const user = userEvent.setup();
 		mockAnnouncements( [ jetpackPromo, wooPromo ] );
 		const { recordTracksEvent } = render(
-			<PromosPage logos={ PRODUCTS_LOGOS } placement="products" hidePrimaryCta />
+			<MarketplacePromos
+				agencyId={ AGENCY_ID }
+				logos={ PRODUCTS_LOGOS }
+				placement="products"
+				hidePrimaryCta
+			/>
 		);
 
 		const [ row ] = await screen.findAllByRole( 'button', { name: /30% off Woo\sextensions/ } );
@@ -200,7 +203,9 @@ describe( '<MarketplacePromos>', () => {
 
 	test( 'shows nothing when there are no promos for the page’s products', async () => {
 		const scope = mockAnnouncements( [ jetpackPromo ] );
-		render( <PromosPage logos={ HOSTING_LOGOS } placement="hosting" /> );
+		render(
+			<MarketplacePromos agencyId={ AGENCY_ID } logos={ HOSTING_LOGOS } placement="hosting" />
+		);
 
 		await vi.waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		expect(

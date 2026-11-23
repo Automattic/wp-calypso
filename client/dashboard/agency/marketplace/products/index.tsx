@@ -18,7 +18,7 @@ import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import { isPressablePlanLicense, pressableLicensesQuery } from '../hosting/lib/pressable-products';
 import { isAgencyApproved } from '../is-agency-approved';
-import MarketplacePromos, { useMarketplacePromos } from '../marketplace-promos';
+import MarketplacePromos from '../marketplace-promos';
 import ReferralModeBand from '../referral-mode-band';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
@@ -114,7 +114,6 @@ export default function MarketplaceProducts() {
 	const agencyId = agency?.id ?? 0;
 
 	const { data: allProducts, isLoading } = useQuery( agencyProductsQuery( agencyId ) );
-	const promos = useMarketplacePromos( agencyId, PROMO_LOGOS );
 
 	// Pressable add-ons only make sense for an agency that owns a Pressable plan
 	// (not one it referred), except in referral mode, where a client may buy them.
@@ -446,7 +445,12 @@ export default function MarketplaceProducts() {
 		>
 			{ isReferralMode && <ReferralModeBand kind="products" /> }
 			{ /* The products a promo leads to are listed right below, so its primary CTA is left out. */ }
-			<MarketplacePromos announcements={ promos } placement="products" hidePrimaryCta />
+			<MarketplacePromos
+				agencyId={ agencyId }
+				logos={ PROMO_LOGOS }
+				placement="products"
+				hidePrimaryCta
+			/>
 			{ detailsProduct && (
 				<ProductDetailsModal
 					product={ detailsProduct }
