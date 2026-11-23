@@ -163,13 +163,18 @@ function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise
 // instead of asking /sites/new for a second site, also when the retry asks for another domain.
 // The `createdSite` record in the flow state cannot do this: it matches on the requested name, and
 // the flow state outlives a run, so a record without that match could belong to an earlier
-// signup. A page load does not outlive the run, and a rejected cart goes to the error step
-// without a page load.
+// signup. This record lives until a run succeeds or the page reloads. A rejected cart goes to the
+// error step without a reload, so the retry finds the record. A known limit: a later signup in the
+// same tab, with the same site choices and no successful run in between, adopts this site too.
 //
 // A site keeps the theme, visibility, title and intent it was created with, and some of them only
 // apply at creation. So only a run with the same site choices can use the site. A run in another
 // flow of the same tab, or a retry with a plan that needs another intent, creates its own site.
-let siteAfterCartFailure: { siteId: number; siteSlug: string; siteChoices: string } | undefined;
+//
+// `movedDomains` lists the Free plan domain moves that worked on the site. A retry skips them,
+// because a second move of a domain that is already on the site fails.
+let siteAfterCartFailure:
+	{ siteId: number; siteSlug: string; siteChoices: string; movedDomains: string[] } | undefined;
 
 // The domain search records the site a moved domain is on now. The move call needs it.
 function getMoveSourceSiteId( item: MinimalRequestCartProduct ): number | undefined {
@@ -183,12 +188,15 @@ function getMoveSourceSiteId( item: MinimalRequestCartProduct ): number | undefi
  * Moves registered domains to the new site directly. A move on the Free plan costs nothing, so a
  * checkout only adds a step. A failed move does not stop the signup: the site works without the
  * domain, and the user can move it later from domain management.
+ *
+ * @returns The domain names of the moves that worked.
  */
 async function moveDomainsToSite(
 	domainMoves: MinimalRequestCartProduct[],
 	siteId: number,
 	flow: string
 ) {
+	const movedDomains: string[] = [];
 	for ( const domainMove of domainMoves ) {
 		const sourceSiteId = getMoveSourceSiteId( domainMove );
 		try {
@@ -196,6 +204,7 @@ async function moveDomainsToSite(
 				throw new Error( 'missing_move_source' );
 			}
 			await transferDomainToSite( domainMove.meta, sourceSiteId, siteId );
+			movedDomains.push( domainMove.meta );
 		} catch ( error ) {
 			recordTracksEvent( 'calypso_signup_free_plan_domain_move_failed', {
 				flow,
@@ -203,6 +212,7 @@ async function moveDomainsToSite(
 			} );
 		}
 	}
+	return movedDomains;
 }
 
 const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
@@ -490,12 +500,13 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 					? recordedSite
 					: undefined;
 			// A free subdomain is the address of the site itself, so a request for one that the
-			// record does not match needs a site of its own. A paid domain is added to the site.
-			const siteToReuse =
-				siteFromThisRun ??
-				( isFreeSubdomainQuery( requestedName ) || siteAfterCartFailure?.siteChoices !== siteChoices
-					? undefined
-					: siteAfterCartFailure );
+			// record does not match needs a site of its own, unless it asks for the address the saved
+			// site already has. A paid domain is added to the site.
+			const savedSiteFits =
+				siteAfterCartFailure?.siteChoices === siteChoices &&
+				( ! isFreeSubdomainQuery( requestedName ) ||
+					requestedName === siteAfterCartFailure.siteSlug );
+			const siteToReuse = siteFromThisRun ?? ( savedSiteFits ? siteAfterCartFailure : undefined );
 
 			const site = siteToReuse
 				? { siteId: siteToReuse.siteId, siteSlug: siteToReuse.siteSlug }
@@ -550,14 +561,28 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...cartDomainItems,
 			];
 
+			const savedSite =
+				siteAfterCartFailure?.siteId === site.siteId ? siteAfterCartFailure : undefined;
+
 			// The moves need no checkout, so they run before a cart add that can throw.
-			await moveDomainsToSite( freePlanDomainMoves, site.siteId, flow );
+			const movedDomains = await moveDomainsToSite(
+				freePlanDomainMoves.filter(
+					( domainMove ) =>
+						! domainMove.meta || ! savedSite?.movedDomains.includes( domainMove.meta )
+				),
+				site.siteId,
+				flow
+			);
 
 			if ( additionalCartItems.length > 0 ) {
 				try {
 					await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
 				} catch ( error ) {
-					siteAfterCartFailure = { siteId: site.siteId, siteSlug: site.siteSlug, siteChoices };
+					// A second failure on the saved site can come from the site itself, so the next
+					// retry creates a new site instead of failing on this one again.
+					siteAfterCartFailure = savedSite
+						? undefined
+						: { siteId: site.siteId, siteSlug: site.siteSlug, siteChoices, movedDomains };
 					throw error;
 				}
 			}

@@ -7,6 +7,7 @@ import { addProductsToCart, createSite } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFlowState } from '../../../state-manager/store';
+import { pollForAtomicProvisioning } from '../early-provisioning';
 import CreateSite from '../index';
 
 // The action the step hands to the processing step, captured as it is set.
@@ -371,6 +372,32 @@ describe( 'create-site', () => {
 		await pendingAction!();
 	} );
 
+	// A second move of a domain that is already on the site fails and reports a failed move.
+	it( 'skips the moves that worked when it reuses the site of a rejected cart', async () => {
+		mockSiteUrl = '';
+		const failedMove = {
+			product_slug: 'domain_move_internal',
+			meta: 'disputed-domain.com',
+			extra: { move_source_site_id: 556 },
+		};
+		const newDomain = { product_slug: 'domain_reg', meta: 'new-domain.com' };
+		mockDomainCartItems = [ registeredMove, failedMove, newDomain ];
+		( transferDomainToSite as jest.Mock )
+			.mockResolvedValueOnce( undefined )
+			.mockRejectedValueOnce( { error: 'dispute_flag' } );
+		( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+		await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+		await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+
+		expect( createSite ).toHaveBeenCalledTimes( 1 );
+		expect( ( transferDomainToSite as jest.Mock ).mock.calls ).toEqual( [
+			[ 'owned-domain.com', 555, 111 ],
+			[ 'disputed-domain.com', 556, 111 ],
+			[ 'disputed-domain.com', 556, 111 ],
+		] );
+	} );
+
 	describe( 'retry after a rejected cart', () => {
 		beforeEach( () => {
 			mockPlanCartItem = { product_slug: 'personal-bundle' };
@@ -406,8 +433,8 @@ describe( 'create-site', () => {
 			expect( createSite ).toHaveBeenCalledTimes( 2 );
 		} );
 
-		// Only a run that reaches its end forgets the site. A retry that fails must not.
-		it( 'adds to the cart of the first site again when the cart rejects the retry too', async () => {
+		// The site can be the reason the cart fails, so a retry on it gets one chance.
+		it( 'creates a new site when the cart rejects the retry on the first site too', async () => {
 			mockSiteUrl = '';
 			( addProductsToCart as jest.Mock )
 				.mockRejectedValueOnce( new Error( 'cart rejected' ) )
@@ -415,7 +442,37 @@ describe( 'create-site', () => {
 
 			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
 			await expect( pendingAction!() ).rejects.toThrow( 'cart rejected' );
-			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+
+			( createSite as jest.Mock ).mockResolvedValueOnce( {
+				siteId: 222,
+				siteSlug: 'second-try.wordpress.com',
+				domainItem: undefined,
+			} );
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 222 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		// /sites/new refuses the exact name of a site that exists as `blog_name_exists`. A run that
+		// stops before its cart, here on the Atomic wait, keeps the saved site but overwrites the
+		// flow state record with its own name.
+		it( 'reuses the first site when the retry asks for the free subdomain of that site', async () => {
+			mockQueryParams = new URLSearchParams( 'provision_target=wpcom-atomic' );
+			( pollForAtomicProvisioning as jest.Mock )
+				.mockResolvedValueOnce( { siteSlug: 'my-site.wordpress.com' } )
+				.mockRejectedValueOnce( new Error( 'atomic timeout' ) )
+				.mockResolvedValueOnce( { siteSlug: 'my-site.wordpress.com' } );
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			mockSiteUrl = 'example.com';
+			pendingAction = undefined;
+			await expect( runStep() ).rejects.toThrow( 'atomic timeout' );
+
+			mockSiteUrl = 'my-site.wordpress.com';
+			pendingAction = undefined;
+			await expect( runStep() ).resolves.toMatchObject( { siteId: 111 } );
 
 			expect( createSite ).toHaveBeenCalledTimes( 1 );
 		} );
