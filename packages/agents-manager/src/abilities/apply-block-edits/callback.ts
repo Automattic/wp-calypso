@@ -106,7 +106,7 @@ const createAgentMessage = (
 
 type Resolver = Pick< ApplyEditsOptions, 'resolve' | 'onReplaced' >;
 
-// A caller's own map is read first, as the WebMCP adapter's; the rest are the
+// A caller's own map is read first, as WebMCP's; the rest are the
 // page structure's. A replaced block keeps its id for the rest of the call.
 /**
  * What to tell the model about the reference blocks it asked to see.
