@@ -1,10 +1,6 @@
 import { loadBlackboxSdk } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { configureBlackbox, getBlackboxSignal } from 'calypso/blocks/login/utils/blackbox-surface';
 
-const FLUSH_DEADLINE_MS = 5000;
-// The SDK enforces the deadline itself; this only fails open if it never settles.
-const FLUSH_TIMEOUT_MS = FLUSH_DEADLINE_MS + 1000;
-
 /**
  * Flush telemetry and wait for active challenges before submission.
  * Undefined permits submission without a session; null cancels an obsolete submission.
@@ -19,7 +15,6 @@ export async function getBlackboxSessionId(
 	collectFlow
 ) {
 	let loadTimer;
-	let flushTimer;
 	let unsubscribe;
 	let cancel;
 	const cancelled = new Promise( ( resolve ) => {
@@ -58,14 +53,7 @@ export async function getBlackboxSessionId(
 		configureBlackbox( api, { apiKey, flow: collectFlow } );
 
 		while ( ! signal?.aborted ) {
-			await Promise.race( [
-				api.flush( { deadlineMs: FLUSH_DEADLINE_MS } ),
-				new Promise( ( resolve ) => {
-					flushTimer = setTimeout( resolve, FLUSH_TIMEOUT_MS );
-				} ),
-				cancelled,
-			] );
-			clearTimeout( flushTimer );
+			await Promise.race( [ api.flush( { deadlineMs: 5000 } ), cancelled ] );
 			if ( signal?.aborted ) {
 				return null;
 			}
@@ -91,7 +79,6 @@ export async function getBlackboxSessionId(
 		return signal?.aborted ? null : undefined;
 	} finally {
 		clearTimeout( loadTimer );
-		clearTimeout( flushTimer );
 		unsubscribe?.();
 		signal?.removeEventListener( 'abort', cancel );
 	}

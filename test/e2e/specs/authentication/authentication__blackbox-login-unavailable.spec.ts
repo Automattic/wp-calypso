@@ -98,15 +98,22 @@ test.describe(
 
 			const credentials = secrets.testAccounts.defaultUser;
 
-			await test.step( 'Given flush() hangs instead of resolving', async function () {
+			await test.step( 'Given collect() hangs instead of resolving', async function () {
 				// The SDK is kept off the page so the stub below survives, standing in
-				// for a load that succeeds and then stalls mid-collect. getSessionId()
-				// races flush() against its own timeout and gives up on it.
+				// for a load that succeeds and then stalls mid-collect. flush() gives up
+				// on the stalled collect at its deadline, as the SDK does.
 				await page.route( '**/blackbox-api.wp.com/**', ( route ) => route.abort() );
 				await page.addInitScript( () => {
 					( window as unknown as { Blackbox: unknown } ).Blackbox = {
 						configure: () => undefined,
-						flush: () => new Promise( () => undefined ),
+						collect: () => new Promise( () => undefined ),
+						flush: ( { deadlineMs }: { deadlineMs: number } ) =>
+							new Promise( ( resolve ) =>
+								setTimeout(
+									() => resolve( { sessionId: '', challengePending: false, outcome: 'timeout' } ),
+									deadlineMs
+								)
+							),
 						getSnapshot: () => ( { status: 'loading' } ),
 						subscribe: () => () => undefined,
 						reset: () => undefined,
