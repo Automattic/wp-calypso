@@ -17,8 +17,19 @@ function resolve( href ) {
 	}
 }
 
+// An SVG animation rewrites its target's attribute after the rules have run, so one aimed at an
+// `href` can turn a checked link into any URL at all.
+function animatesHref( animation ) {
+	const name = ( animation.getAttribute( 'attributeName' ) ?? '' ).trim().toLowerCase();
+	return name === 'href' || name.endsWith( ':href' );
+}
+
 export default function makeContentLinksSafe( post, dom ) {
-	const links = Array.from( dom.querySelectorAll( 'a' ) );
+	Array.from( dom.querySelectorAll( 'animate, set' ) )
+		.filter( animatesHref )
+		.forEach( ( animation ) => animation.remove() );
+
+	const links = Array.from( dom.querySelectorAll( 'a, area' ) );
 	links.forEach( ( link ) => {
 		// An SVG anchor's `href` IDL property is an `SVGAnimatedString`, not a resolved URL, so it
 		// never matches and every link -- safe ones included -- would be stripped. Resolve the
