@@ -7,6 +7,7 @@ import { navigate } from '..';
 describe( 'navigate', () => {
 	let originalLocation: Location;
 	let showSpy: jest.SpyInstance;
+	let openSpy: jest.SpyInstance;
 
 	beforeEach( () => {
 		originalLocation = window.location;
@@ -20,6 +21,7 @@ describe( 'navigate', () => {
 			},
 		} );
 		showSpy = jest.spyOn( page, 'show' ).mockImplementation( () => undefined as never );
+		openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
 	} );
 
 	afterEach( () => {
@@ -29,6 +31,7 @@ describe( 'navigate', () => {
 			value: originalLocation,
 		} );
 		showSpy.mockRestore();
+		openSpy.mockRestore();
 		page.current = '';
 	} );
 
@@ -47,6 +50,29 @@ describe( 'navigate', () => {
 		navigate( '/me/account' );
 
 		expect( showSpy ).toHaveBeenCalledWith( '/me/account' );
+		expect( window.location.href ).toBe( 'http://localhost/sites' );
+	} );
+
+	it( 'opens external https URLs', () => {
+		navigate( 'https://example.com/' );
+
+		expect( openSpy ).toHaveBeenCalledWith( expect.stringContaining( 'example.com' ), '_self' );
+	} );
+
+	it.each( [
+		'javascript:alert(1)',
+		'JaVaScRiPt:%0Aalert(1)',
+		' javascript:alert(1)',
+		'data:text/html,<script>alert(1)</script>',
+	] )( 'does not navigate to %s', ( path ) => {
+		page.current = '/sites';
+
+		navigate( path );
+		navigate( path, true );
+		navigate( path, false, true );
+
+		expect( openSpy ).not.toHaveBeenCalled();
+		expect( showSpy ).not.toHaveBeenCalled();
 		expect( window.location.href ).toBe( 'http://localhost/sites' );
 	} );
 } );

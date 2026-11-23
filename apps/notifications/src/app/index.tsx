@@ -13,7 +13,7 @@ import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { interceptLinks } from '../panel/utils/link-interceptor';
 import { getClient, initClient, showNotes } from './client';
-import { AppProvider, useOpenFullView, type FullView } from './context';
+import { AppProvider, type FullView } from './context';
 import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
@@ -95,7 +95,6 @@ const NotificationContent = ( {
 	};
 
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
-	const openFullView = useOpenFullView( { filterName, noteId: selectedNoteId } );
 	const constrainedTabbingRef = useConstrainedTabbing();
 
 	return (
@@ -126,7 +125,6 @@ const NotificationContent = ( {
 						noteId={ displayedNoteId }
 						setSelectedNoteId={ setSelectedNoteId }
 						noteNavigation={ noteNavigation }
-						onOpenFullView={ openFullView }
 					/>
 				</ErrorBoundary>
 			</div>

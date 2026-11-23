@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
-import { chevronLeft, chevronRight, arrowUp, arrowDown, fullscreen } from '@wordpress/icons';
+import { chevronLeft, chevronRight, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -71,16 +71,9 @@ type NoteProps = {
 	noteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 	noteNavigation: NoteNavigation;
-	onOpenFullView?: () => void;
 };
 
-const Note = ( {
-	isDismissible,
-	noteId,
-	setSelectedNoteId,
-	noteNavigation,
-	onOpenFullView,
-}: NoteProps ) => {
+const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: NoteProps ) => {
 	const dispatch = useDispatch();
 	const isLargeScreen = useViewportMatch( 'large' );
 
@@ -163,14 +156,6 @@ const Note = ( {
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
-						{ onOpenFullView && (
-							<Button
-								size="small"
-								icon={ fullscreen }
-								label={ __( 'Open full view' ) }
-								onClick={ onOpenFullView }
-							/>
-						) }
 						<MarkUnreadButton note={ note } goBack={ goBack } />
 						{ ! isLargeScreen && (
 							<>

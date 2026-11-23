@@ -918,6 +918,10 @@ __metadata:
 "@automattic/calypso-router@workspace:^, @automattic/calypso-router@workspace:packages/calypso-router":
   version: 0.0.0-use.local
   resolution: "@automattic/calypso-router@workspace:packages/calypso-router"
+  dependencies:
+    jsdom: "npm:^20.0.3"
+    vite: "npm:^8.3.8"
+    vitest: "npm:^5.1.0"
   languageName: unknown
   linkType: soft
 
@@ -1843,16 +1847,6 @@ __metadata:
     webpack: "npm:^5.111.1"
   languageName: unknown
   linkType: soft
-
-"@automattic/lasagna@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "@automattic/lasagna@npm:0.6.1"
-  dependencies:
-    jwt-decode: "npm:^2.2.0"
-    phoenix: "npm:^1.5.1"
-  checksum: 10c0/4fa74b732cf0dc2f7d0353db4ecc2143da9e50fb50df5976a218ec3047c9f01f74b132bb5f4f20d53cbf1887c5c57fa7015553940a1a36641279048c4546ad6a
-  languageName: node
-  linkType: hard
 
 "@automattic/launchpad@workspace:^, @automattic/launchpad@workspace:packages/launchpad":
   version: 0.0.0-use.local
@@ -15366,7 +15360,6 @@ __metadata:
     "@automattic/js-utils": "workspace:^"
     "@automattic/language-picker": "workspace:^"
     "@automattic/languages": "workspace:^"
-    "@automattic/lasagna": "npm:^0.6.1"
     "@automattic/launchpad": "workspace:^"
     "@automattic/load-script": "workspace:^"
     "@automattic/mini-cart": "workspace:^"
@@ -22793,13 +22786,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jwt-decode@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "jwt-decode@npm:2.2.0"
-  checksum: 10c0/15658696fed0f9f8742485a7303b2f49719417187343f1d29c50dfbac0a41296dab73bb7e77f04cf16a3fac17ab32a83bb31489441eaf7d52316ee4aaab982e7
-  languageName: node
-  linkType: hard
-
 "katex@npm:^0.16.0":
   version: 0.16.47
   resolution: "katex@npm:0.16.47"
@@ -26127,13 +26113,6 @@ __metadata:
   version: 0.4.1
   resolution: "pe-library@npm:0.4.1"
   checksum: 10c0/75c772e74c75d9710a2bf6b7e88fb57e4c26788422abd3b38c8100c796e311c72102ef71159b9e0b56f05f616a968e11b8ec218bcd625c896df067235af8da77
-  languageName: node
-  linkType: hard
-
-"phoenix@npm:1.5.15":
-  version: 1.5.15
-  resolution: "phoenix@npm:1.5.15"
-  checksum: 10c0/872f2c9b0c24ba2cc99fb2dfc120675ce9c2e2520dc7ac55249f6e1514f92fdc1205f128da86016f40ccb58dc67a0973c87afeb6ce064d9336ede5b4f3b5562d
   languageName: node
   linkType: hard
 
