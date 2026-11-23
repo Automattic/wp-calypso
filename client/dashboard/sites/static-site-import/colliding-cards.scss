@@ -51,7 +51,7 @@ $slide-share: 0.6;
 	// The cards swing away from each other, whichever way the page reads.
 	direction: ltr;
 	overflow: hidden;
-	background: color-mix( in srgb, var( --wp-admin-theme-color ) 12%, var( --color-surface ) );
+	background: color-mix( in srgb, var( --color-text ) 10%, var( --color-surface ) );
 }
 
 .static-site-import-colliding-cards__card {
@@ -62,7 +62,8 @@ $slide-share: 0.6;
 	aspect-ratio: 4 / 3;
 	overflow: hidden;
 	border-radius: 16px;
-	background: color-mix( in srgb, var( --wp-admin-theme-color ) 30%, var( --color-surface ) );
+	background: var( --color-surface );
+	box-shadow: 0 4px 16px color-mix( in srgb, var( --color-text ) 8%, transparent );
 
 	&.is-left {
 		--static-site-import-collide-side: -1;
@@ -83,7 +84,7 @@ $slide-share: 0.6;
 	width: auto;
 	height: 34%;
 	aspect-ratio: 1;
-	fill: color-mix( in srgb, var( --wp-admin-theme-color ) 38%, var( --color-surface ) );
+	fill: color-mix( in srgb, var( --color-text ) 8%, var( --color-surface ) );
 	pointer-events: none;
 	transform: translate( -50%, -50% );
 }
