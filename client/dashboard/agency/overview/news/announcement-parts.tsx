@@ -199,6 +199,22 @@ function CtaButton( {
 }
 
 /**
+ * CTA URLs come from marketing content, so only https links and dashboard paths become
+ * buttons; anything else, such as a `javascript:` URL, is dropped.
+ */
+export function isSafeCtaUrl( url: string ) {
+	if ( url.startsWith( '/' ) ) {
+		// `//host` (and `/\host`, which browsers read the same way) links to another site.
+		return ! /^\/[/\\]/.test( url );
+	}
+	try {
+		return new URL( url ).protocol === 'https:';
+	} catch {
+		return false;
+	}
+}
+
+/**
  * The open item's actions: secondary, then tertiary, so the Overview keeps one primary
  * button (Schedule a check-in) and the news never competes with it.
  */
@@ -213,12 +229,14 @@ export function AnnouncementCtas( {
 	const { primaryCta, secondaryCta } = announcement;
 	const resolveCta = ( cta: AnnouncementCta ) =>
 		getCtaUrl && ! cta.isExternal ? { ...cta, url: getCtaUrl( cta.url ) } : cta;
-	if ( hidePrimaryCta && ! secondaryCta ) {
+	const showPrimary = ! hidePrimaryCta && isSafeCtaUrl( primaryCta.url );
+	const showSecondary = !! secondaryCta && isSafeCtaUrl( secondaryCta.url );
+	if ( ! showPrimary && ! showSecondary ) {
 		return null;
 	}
 	return (
 		<ButtonStack justify="flex-start" wrap>
-			{ ! hidePrimaryCta && (
+			{ showPrimary && (
 				<CtaButton
 					cta={ resolveCta( primaryCta ) }
 					variant="secondary"
@@ -228,7 +246,7 @@ export function AnnouncementCtas( {
 					}
 				/>
 			) }
-			{ secondaryCta && (
+			{ showSecondary && secondaryCta && (
 				<CtaButton
 					cta={ resolveCta( secondaryCta ) }
 					variant="tertiary"

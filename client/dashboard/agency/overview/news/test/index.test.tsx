@@ -170,6 +170,22 @@ describe( '<NewsCard>', () => {
 		);
 	} );
 
+	test( 'drops actions whose links aren’t https or a dashboard path', async () => {
+		mockAnnouncements( [
+			{
+				...event,
+				// eslint-disable-next-line no-script-url
+				primaryCta: { label: 'Run a script', url: 'javascript:alert(1)', isExternal: true },
+				secondaryCta: { label: 'Leave the dashboard', url: '//example.com/elsewhere' },
+			} as AgencyAnnouncement,
+		] );
+		render( <NewsCard agencyId={ AGENCY_ID } shouldUseRouterLink={ false } /> );
+
+		expect( await screen.findByText( 'Watch an audit run start to finish.' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /Run a script/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /Leave the dashboard/ } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'shows nothing when there are no announcements', async () => {
 		const scope = mockAnnouncements( [] );
 		render( <NewsCard agencyId={ AGENCY_ID } /> );

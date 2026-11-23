@@ -371,6 +371,11 @@ export const marketplaceHostingRoute = createRoute( {
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+				// Loaded up front so the promos don't push the page down when they arrive.
+				// They're optional, so a failure leaves them hidden, not the page.
+				queryClient
+					.ensureQueryData( agencyAnnouncementsQuery( agency.id ) )
+					.catch( () => undefined ),
 			] );
 		}
 	},
@@ -571,6 +576,11 @@ export const marketplaceProductsRoute = createRoute( {
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				// The cart prices Pressable plans by whether the agency owns one.
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+				// Loaded up front so the promos don't push the page down when they arrive.
+				// They're optional, so a failure leaves them hidden, not the page.
+				queryClient
+					.ensureQueryData( agencyAnnouncementsQuery( agency.id ) )
+					.catch( () => undefined ),
 			] );
 		}
 	},
