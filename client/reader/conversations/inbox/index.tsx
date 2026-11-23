@@ -1,5 +1,7 @@
 import { type NotificationNote } from '@automattic/api-core';
+import { readConversationsCommentsQuery, readConversationsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -161,11 +163,14 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_inbox_viewed' ) );
 	}, [ dispatch ] );
 
+	const isPickingFirst = ! isNarrow && ! selectedKey && conversations.length > 0;
+	// Cached conversations can be old, so the latest is picked once they're refreshed.
+	const isRefreshing = conversationsShownQuery.isFetching;
 	useEffect( () => {
-		if ( ! isNarrow && ! selectedKey && conversations.length ) {
+		if ( isPickingFirst && ! isRefreshing ) {
 			page.replace( getConversationPath( conversations[ 0 ] ) );
 		}
-	}, [ isNarrow, selectedKey, conversations ] );
+	}, [ isPickingFirst, isRefreshing, conversations ] );
 
 	useEffect( () => {
 		if ( ! isWaitingForNotes ) {
@@ -197,11 +202,12 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	// A conversation opened from the URL, or as the first one, is read like one picked from the list.
 	useEffect( () => {
 		// A conversation opened from the list sets `opened` before the URL catches up.
-		if ( ! selectedKey || opened || ( ! found && conversationsShownQuery.isLoading ) ) {
+		// Cached unread notes can be out of date, so it waits for the refresh too.
+		if ( ! selectedKey || opened || isRefreshing ) {
 			return;
 		}
 		open( { key: selectedKey, unread: found, conversation: found } );
-	}, [ selectedKey, opened, found, conversationsShownQuery.isLoading, open ] );
+	}, [ selectedKey, opened, found, isRefreshing, open ] );
 
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
 		setHasOpened( true );
@@ -266,6 +272,19 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 				source,
 			} )
 		);
+	};
+
+	const queryClient = useQueryClient();
+	const prefetchTab = ( next: InboxTab ) => {
+		if ( next === 'unread' ) {
+			queryClient.prefetchInfiniteQuery(
+				readConversationsQuery( { sort, search: debouncedSearch, scope: 'unread' } )
+			);
+		} else if ( next === 'yours' ) {
+			queryClient.prefetchInfiniteQuery(
+				readConversationsCommentsQuery( { sort, search: debouncedSearch } )
+			);
+		}
 	};
 
 	const selectSort = ( next: SortOrder ) => {
@@ -342,6 +361,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					onLoadMore={ loadMore }
 					tab={ tab }
 					onTabChange={ ( next ) => selectTab( next, 'click' ) }
+					onTabHover={ prefetchTab }
 					search={ search }
 					onSearchChange={ setSearch }
 					density={ density }
@@ -357,7 +377,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					followFocus={ hasOpened }
 					onSelect={ openConversation }
 				/>
-				{ ! hasConversation && ! isNarrow && listQuery.isLoading && (
+				{ ! hasConversation && ! isNarrow && ( listQuery.isLoading || isPickingFirst ) && (
 					<ConversationDetailPlaceholder />
 				) }
 				{ hasConversation && (

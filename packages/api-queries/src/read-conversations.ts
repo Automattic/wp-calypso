@@ -102,7 +102,12 @@ export const readConversationsQuery = ( {
 		...cursorPaging,
 		// Long enough that a prefetched list isn't fetched again when the inbox mounts.
 		staleTime: 30 * 1000,
-		meta: { persist: false },
+		// The inbox's default list, so a reload shows it right away. One page only, since a
+		// refetch refetches every loaded page.
+		meta: {
+			persist: ( data: ReadConversationsInfiniteData ) =>
+				! search && ! scope && sort === 'newest' && data.pages.length === 1,
+		},
 	} );
 
 export const readConversationsCommentsQuery = ( {
@@ -124,6 +129,8 @@ export const readConversationsCommentsQuery = ( {
 				pageParam
 			),
 		...cursorPaging,
+		// Long enough that hovering the tab before opening it doesn't fetch twice.
+		staleTime: 30 * 1000,
 		meta: { persist: false },
 	} );
 

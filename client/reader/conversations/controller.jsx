@@ -1,19 +1,13 @@
-import { readConversationsQuery, siteCommentsInfiniteQuery } from '@automattic/api-queries';
+import { siteCommentsInfiniteQuery } from '@automattic/api-queries';
 import AsyncLoad from 'calypso/components/async-load';
 import { trackPageLoad } from 'calypso/reader/controller-helper';
 import { ConversationsInboxPlaceholder } from 'calypso/reader/conversations/inbox/placeholder';
 import { recordTrack } from 'calypso/reader/stats';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-
-const loadInbox = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-conversations-inbox" */ 'calypso/reader/conversations/inbox'
-	).then( ( { ConversationsInbox } ) => ( { default: ConversationsInbox } ) );
+import { loadInbox, prefetchInbox } from './preload';
 
 export function conversationsInbox( context, next ) {
-	// Same key as the inbox's first query. Opening a conversation runs this again, so only fetch
-	// when nothing is cached.
-	context.queryClient.prefetchInfiniteQuery( { ...readConversationsQuery(), staleTime: Infinity } );
+	prefetchInbox( context.queryClient );
 	const siteId = Number( context.params.siteId );
 	const postId = Number( context.params.postId );
 	if ( siteId && postId ) {
