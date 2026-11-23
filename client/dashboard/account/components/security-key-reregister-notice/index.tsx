@@ -1,8 +1,8 @@
 import { userPreferenceQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import ComponentViewTracker from '../../components/component-view-tracker';
-import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
+import ComponentViewTracker from '../../../components/component-view-tracker';
+import { Notice, RouterNoticeActionLinkButton } from '../../../components/notice';
 
 /**
  * Whether the security key re-register notice is eligible to show. Read at the
