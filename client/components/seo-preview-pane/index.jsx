@@ -108,6 +108,7 @@ const GoogleSite = ( site, frontPageMetaDescription ) => (
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 		siteTitle={ site.title }
+		siteIcon={ site.icon?.img }
 	/>
 );
 
@@ -117,6 +118,7 @@ const GooglePost = ( site, post, frontPageMetaDescription ) => (
 		url={ post?.URL ?? '' }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		siteTitle={ site.title }
+		siteIcon={ site.icon?.img }
 	/>
 );
 
