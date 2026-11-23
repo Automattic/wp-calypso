@@ -240,7 +240,7 @@ export const getTrustedPartners = (): PartnerOffer[] => [
 		logo: <img src={ EasyPostLogo } alt="EasyPost" />,
 		title: __( 'Build trust and boost conversions' ),
 		description: __(
-			'Protect every WooCommerce order from cart to delivery with Norton Shopping Guarantee badges, buyer guarantees, and package protection at no extra cost to merchants.'
+			'Build shopper confidence with Norton Shopping Guarantee and optional, shopper-paid package protection at no extra cost to merchants.'
 		),
 		cta: {
 			label: __( 'Explore Norton' ),
