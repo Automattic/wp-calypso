@@ -510,17 +510,31 @@ describe( 'WebMCP adapter', () => {
 		);
 	} );
 
-	it( 'does not dispatch an already-aborted execution', async () => {
+	it.each<
+		[ string, ( controller: AbortController, harness: ReturnType< typeof createHarness > ) => void ]
+	>( [
+		[ 'before the call', ( controller ) => controller.abort() ],
+		[
+			'while the tool is looked up',
+			( controller, harness ) =>
+				( harness.toolProvider.getAbilities as Mock ).mockImplementationOnce( async () => {
+					controller.abort();
+
+					return [ createAbility() ];
+				} ),
+		],
+	] )( 'does not dispatch an execution aborted %s', async ( _case, abort ) => {
 		const harness = createHarness();
 		await harness.adapter.sync();
 		const controller = new AbortController();
-		controller.abort();
+		abort( controller, harness );
 
 		await expect(
 			harness.tools
 				.get( 'big_sky__apply_block_edits' )
 				?.execute( {}, { signal: controller.signal } )
 		).rejects.toMatchObject( { name: 'AbortError' } );
+
 		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 

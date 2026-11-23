@@ -253,15 +253,16 @@ function createTool(
 			idempotentHint: ability.meta?.annotations?.idempotent === true,
 		},
 		execute: async ( input, options ) => {
-			if ( options?.signal?.aborted ) {
-				throw createAbortError();
-			}
-
 			// The ability can change before the next sync replaces this tool, e.g. an unflagged one
 			// registered under the same name.
 			const current = ( await toolProvider.getAbilities() ).find(
 				( item ) => item.name === ability.name
 			);
+
+			// Checked after the lookup, so a call cancelled while it was pending never edits.
+			if ( options?.signal?.aborted ) {
+				throw createAbortError();
+			}
 
 			if ( ! current || ! shouldExposeAbility( current ) ) {
 				throw new Error(
