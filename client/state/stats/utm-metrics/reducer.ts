@@ -3,7 +3,6 @@ import {
 	STATS_UTM_METRICS_REQUEST_FAILURE,
 	STATS_UTM_METRICS_RECEIVE,
 	STATS_UTM_METRICS_RECEIVE_BY_POST,
-	STATS_UTM_TOP_POSTS_RECEIVE,
 } from 'calypso/state/action-types';
 import {
 	UTMMetricItem,
@@ -63,10 +62,6 @@ const metricsParser = (
 	utmParam?: string
 ) => {
 	const combinedKeys = Object.keys( UTMValues );
-	// Stop fetching top posts by other requests
-	// when `topPosts` is already fetched within the same request
-	// or set to an empty object.
-	const stopFurtherRequest = !! topPosts;
 
 	return combinedKeys
 		.sort( ( keyA: string, keyB: string ) => {
@@ -108,15 +103,7 @@ const metricsParser = (
 				data.children = topPostsParser( posts, siteSlug, UTMdata );
 			}
 
-			// Set no `paramValues` to prevent top post requests.
-			if ( stopFurtherRequest ) {
-				return data;
-			}
-
-			return {
-				...data,
-				paramValues: combinedKey,
-			};
+			return data;
 		} );
 };
 
@@ -155,23 +142,6 @@ const dataReducer = ( state = {}, action: AnyAction ) => {
 				},
 			};
 		}
-
-		case STATS_UTM_TOP_POSTS_RECEIVE: {
-			const data = action.data.top_posts;
-			const siteSlug = action.siteSlug;
-
-			const { topPosts } = state as {
-				topPosts: { [ key: string ]: Array< UTMMetricItemTopPostRaw > };
-			};
-
-			return {
-				...state,
-				topPosts: {
-					...topPosts,
-					[ action.paramValues ]: topPostsParser( data, siteSlug ),
-				},
-			};
-		}
 	}
 
 	return state;
@@ -200,9 +170,6 @@ const isLoadingReducer = ( state = {}, action: AnyAction ) => {
 			return false;
 		}
 		case STATS_UTM_METRICS_RECEIVE_BY_POST: {
-			return false;
-		}
-		case STATS_UTM_TOP_POSTS_RECEIVE: {
 			return false;
 		}
 	}

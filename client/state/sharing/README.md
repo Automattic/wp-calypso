@@ -10,24 +10,6 @@ Manage or retrieve details about a site's Publicize connections.
 
 The Publicize reducers add the following keys to the global state tree, under `sharing.publicize`:
 
-#### `fetchingConnections`
-
-An object mapping site ID to connection fetching status for that site.
-
 #### `connections`
 
 All known connections, indexed by connection ID.
-
-### Selectors
-
-Selectors are intended to assist in extracting data from the global state tree for consumption by other modules.
-
-#### `isFetchingConnections`
-
-Returns true if connections are currently fetching for the given site ID.
-
-```js
-import { isFetchingConnections } from 'calypso/state/sharing/publicize/selectors';
-
-const connections = isFetchingConnections( store.getState(), 2916284 );
-```
