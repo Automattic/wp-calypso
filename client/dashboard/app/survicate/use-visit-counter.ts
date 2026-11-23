@@ -6,7 +6,7 @@ import { useRouterState } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { useAppContext } from '../context';
-import { resolveVisitAreaSlug } from '../survicate/visit-areas';
+import { resolveVisitAreaSlug } from './visit-areas';
 
 const DAY_IN_MS = 86400000;
 

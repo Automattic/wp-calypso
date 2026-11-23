@@ -7,12 +7,12 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useRef } from 'react';
-import { withSnackbar } from '../app/snackbars/with-snackbar';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import {
 	resendAcceptedRetryAfter,
 	RESEND_MIN_INTERVAL_SECONDS,
 	resendThrottleRetryAfter,
-} from './email-verification-resend';
+} from '../../utils/email-verification-resend';
 import { useResendCooldown } from './use-resend-cooldown';
 
 const sentToEmail = ( email?: string ) =>

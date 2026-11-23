@@ -9,9 +9,9 @@ import {
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
-import useDebouncedState from '../../app/hooks/use-debounced-state';
 import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
+import useDebouncedState from '../../hooks/use-debounced-state';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
