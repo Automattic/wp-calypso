@@ -79,6 +79,25 @@ describe( 'StaticSiteImportProgressStep', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps the colliding cards up in place of the page list and screenshot', () => {
+		render( {
+			status: 'moving',
+			session: {
+				state: 'building',
+				preview_image_url: 'https://preview.example/shot.png',
+				progress: { pages: [ { path: '/', captured: true } ] },
+			},
+		} as StaticSiteImport );
+
+		expect( document.querySelector( '.static-site-import-colliding-cards' ) ).toBeVisible();
+		expect(
+			document.querySelector( '.static-site-import-snapshot__pages' )
+		).not.toBeInTheDocument();
+		expect(
+			document.querySelector( '.static-site-import-snapshot__image' )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'submits a finished preview with its share link once the link has had time to work', () => {
 		const submit = render( {
 			status: 'finished',
