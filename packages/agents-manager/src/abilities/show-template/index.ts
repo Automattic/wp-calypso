@@ -65,6 +65,7 @@ export const showTemplateAbility: Ability = {
 			readonly: false,
 			idempotent: true,
 		},
+		webmcp: { public: true },
 	},
 	callback: showTemplateCallback,
 };

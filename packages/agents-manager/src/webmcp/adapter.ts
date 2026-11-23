@@ -4,19 +4,19 @@ import { normalizeAbilityName } from '../abilities/ability-name';
 import { isRecord } from '../utils/is-record';
 import {
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
-	APPLY_UPDATE_THEME_ABILITY_NAME,
 	EDIT_ENTITY_RECORD_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
 	SHOW_TEMPLATE_ABILITY_NAME,
-	WEBMCP_SERVER_ABILITY_NAMES,
 	getWebMcpDescription,
 	getWebMcpInputSchema,
+	isWebMcpServerAbilityName,
 } from './contracts';
 import type { ToolProvider } from '../extension-types';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
 import type { Ability } from '@wordpress/abilities';
 import type { Block } from '@wordpress/blocks';
 
+export { subscribeToRegistryAbilities, withRegistryAbilities } from './registry-ability-provider';
 export { createWebMcpToolProvider } from './server-ability-provider';
 
 type Registration = {
@@ -31,35 +31,17 @@ type CreateWebMcpAdapterOptions = {
 	shouldExposeAbility?: ( ability: Ability ) => boolean;
 };
 
-/**
- * Execution remains behind the merged provider's permission checks and canvas
- * guard.
- */
-export const WEBMCP_EDITOR_ABILITY_ALLOWLIST = new Set( [
-	APPLY_BLOCK_EDITS_ABILITY_NAME,
-	APPLY_UPDATE_THEME_ABILITY_NAME,
-	EDIT_ENTITY_RECORD_ABILITY_NAME,
-	GET_BLOCK_TREE_ABILITY_NAME,
-	SHOW_TEMPLATE_ABILITY_NAME,
-] );
-
 const EDITABLE_POST_TYPES = [ 'post', 'page' ];
 const EDITABLE_POST_FIELDS = [ 'title', 'excerpt' ];
-
-export const WEBMCP_SERVER_ABILITY_ALLOWLIST = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
 
 export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 	const annotations = ability.meta?.annotations;
 
-	if ( WEBMCP_SERVER_ABILITY_ALLOWLIST.has( ability.name ) ) {
+	if ( isWebMcpServerAbilityName( ability.name ) ) {
 		return annotations?.serverRegistered === true && annotations.readonly === true;
 	}
 
-	if ( ! WEBMCP_EDITOR_ABILITY_ALLOWLIST.has( ability.name ) ) {
-		return false;
-	}
-
-	if ( annotations?.serverRegistered === true ) {
+	if ( ability.meta?.webmcp?.public !== true || annotations?.serverRegistered === true ) {
 		return false;
 	}
 
@@ -72,6 +54,7 @@ export function normalizeInputSchema( schema: unknown ): Record< string, unknown
 	}
 
 	const normalized = schema as Record< string, unknown >;
+
 	if ( ! ( 'type' in normalized ) && ! ( 'anyOf' in normalized ) && ! ( 'oneOf' in normalized ) ) {
 		return { ...normalized, type: 'object' };
 	}
@@ -82,6 +65,7 @@ export function normalizeInputSchema( schema: unknown ): Record< string, unknown
 function createAbortError(): Error {
 	const error = new Error( 'WebMCP tool execution was aborted.' );
 	error.name = 'AbortError';
+
 	return error;
 }
 
@@ -111,6 +95,7 @@ function rememberBlockClientIds( result: unknown, context: ExecutionContext ): v
 			if ( typeof block.clientId === 'string' ) {
 				context.knownBlockClientIds.add( block.clientId );
 			}
+
 			visit( block.innerBlocks );
 		}
 	};
@@ -140,6 +125,7 @@ function prepareApplyBlockEditsInput(
 				}
 
 				const { blockMarkup: _blockMarkup, block: _block, ...placement } = insert;
+
 				return blocks.map( ( block, offset ) => ( {
 					...placement,
 					...( typeof placement.index === 'number' ? { index: placement.index + offset } : {} ),
@@ -183,6 +169,7 @@ function prepareEditEntityRecordInput(
 	const unknownFields = Object.keys( input ).filter(
 		( key ) => ! EDITABLE_POST_FIELDS.includes( key )
 	);
+
 	if ( unknownFields.length ) {
 		throw new Error(
 			`Unknown field: ${ unknownFields.join( ', ' ) }. Use title and excerpt only.`
@@ -192,9 +179,11 @@ function prepareEditEntityRecordInput(
 	const record = Object.fromEntries(
 		Object.entries( input ).filter( ( [ , value ] ) => typeof value === 'string' )
 	);
+
 	if ( Object.keys( record ).length !== Object.keys( input ).length ) {
 		throw new Error( 'title and excerpt must be strings.' );
 	}
+
 	if ( ! Object.keys( record ).length ) {
 		throw new Error( 'Provide a title or an excerpt.' );
 	}
@@ -248,6 +237,7 @@ function adaptResultForWebMcp( abilityName: string, value: unknown ): unknown {
 function createTool(
 	ability: Ability,
 	toolProvider: ToolProvider,
+	shouldExposeAbility: ( ability: Ability ) => boolean,
 	executionContext: ExecutionContext
 ): WebMcpTool {
 	return {
@@ -263,8 +253,21 @@ function createTool(
 			idempotentHint: ability.meta?.annotations?.idempotent === true,
 		},
 		execute: async ( input, options ) => {
+			// The ability can change before the next sync replaces this tool, e.g. an unflagged one
+			// registered under the same name.
+			const current = ( await toolProvider.getAbilities() ).find(
+				( item ) => item.name === ability.name
+			);
+
+			// Checked after the lookup, so a call cancelled while it was pending never edits.
 			if ( options?.signal?.aborted ) {
 				throw createAbortError();
+			}
+
+			if ( ! current || ! shouldExposeAbility( current ) ) {
+				throw new Error(
+					`WebMCP tool is no longer available: ${ normalizeAbilityName( ability.name ) }`
+				);
 			}
 
 			const preparedInput = prepareInput( ability.name, input ?? {}, executionContext );
@@ -315,6 +318,7 @@ export function createWebMcpAdapter( {
 
 	const reconcile = async () => {
 		const abilities = await toolProvider.getAbilities();
+
 		if ( disposed ) {
 			return;
 		}
@@ -324,6 +328,7 @@ export function createWebMcpAdapter( {
 				.filter( shouldExposeAbility )
 				.map( ( ability ) => [ ability.name, ability ] as const )
 		);
+		const registrationErrors: unknown[] = [];
 
 		for ( const [ abilityName, registration ] of registrations ) {
 			if ( ! eligible.has( abilityName ) ) {
@@ -333,7 +338,7 @@ export function createWebMcpAdapter( {
 		}
 
 		for ( const [ abilityName, ability ] of eligible ) {
-			const tool = createTool( ability, toolProvider, executionContext );
+			const tool = createTool( ability, toolProvider, shouldExposeAbility, executionContext );
 			const fingerprint = fingerprintTool( tool );
 			const current = registrations.get( abilityName );
 
@@ -352,8 +357,10 @@ export function createWebMcpAdapter( {
 			try {
 				await modelContext.registerTool( tool, { signal: abortController.signal } );
 			} catch ( error ) {
+				// One rejected tool, such as a plugin's invalid schema, must not hide the others.
 				abortController.abort();
-				throw error;
+				registrationErrors.push( error );
+				continue;
 			} finally {
 				pendingControllers.delete( abortController );
 			}
@@ -369,6 +376,10 @@ export function createWebMcpAdapter( {
 				toolName: tool.name,
 			} );
 		}
+
+		if ( registrationErrors.length ) {
+			throw registrationErrors[ 0 ];
+		}
 	};
 
 	const sync = (): Promise< void > => {
@@ -377,6 +388,7 @@ export function createWebMcpAdapter( {
 		}
 
 		syncRequested = true;
+
 		const result = syncQueue.then( async () => {
 			while ( syncRequested && ! disposed ) {
 				syncRequested = false;

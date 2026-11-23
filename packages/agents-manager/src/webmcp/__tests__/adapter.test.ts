@@ -24,6 +24,8 @@ function openInEditor( postType: string, postId: number ) {
 	} as unknown as ReturnType< typeof select > );
 }
 
+const flaggedMeta = { webmcp: { public: true } };
+
 const createAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 	name: 'big-sky/apply-block-edits',
 	label: 'Apply block edits',
@@ -38,6 +40,7 @@ const createAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 			clientRegistered: true,
 			readonly: false,
 		},
+		...flaggedMeta,
 	},
 	...overrides,
 } );
@@ -48,7 +51,10 @@ const createBlockTreeAbility = (): Ability => ( {
 	description: 'Read the current editor block tree.',
 	category: 'big-sky',
 	input_schema: { type: 'object', properties: {} },
-	meta: { annotations: { clientRegistered: true, readonly: true, idempotent: true } },
+	meta: {
+		annotations: { clientRegistered: true, readonly: true, idempotent: true },
+		webmcp: { public: true },
+	},
 } );
 
 const createShowTemplateAbility = (): Ability => ( {
@@ -59,6 +65,7 @@ const createShowTemplateAbility = (): Ability => ( {
 	input_schema: { type: 'object', properties: {}, additionalProperties: false },
 	meta: {
 		annotations: { clientRegistered: true, readonly: false, idempotent: true },
+		webmcp: { public: true },
 	},
 } );
 
@@ -136,63 +143,57 @@ describe( 'WebMCP adapter', () => {
 		} );
 	} );
 
-	it( 'requires the explicit allowlist and matching client or server provenance', () => {
-		expect( shouldExposeWebMcpAbility( createAbility() ) ).toBe( true );
-		expect( shouldExposeWebMcpAbility( createBlockTreeAbility() ) ).toBe( true );
-		expect( shouldExposeWebMcpAbility( createShowTemplateAbility() ) ).toBe( true );
-		expect( shouldExposeWebMcpAbility( createEditEntityRecordAbility() ) ).toBe( true );
-		expect(
-			shouldExposeWebMcpAbility( createAbility( { name: 'big-sky/apply-update-theme' } ) )
-		).toBe( true );
-		expect(
-			shouldExposeWebMcpAbility( createAbility( { name: 'big-sky/editor-navigate' } ) )
-		).toBe( false );
-		expect(
-			shouldExposeWebMcpAbility( createAbility( { name: 'big-sky/restore-checkpoint' } ) )
-		).toBe( false );
-		for ( const name of WEBMCP_SERVER_ABILITY_NAMES ) {
-			expect( shouldExposeWebMcpAbility( createServerAbility( name ) ) ).toBe( true );
-		}
-		expect(
-			shouldExposeWebMcpAbility( createAbility( { meta: undefined, callback: vi.fn() } ) )
-		).toBe( true );
-		expect( shouldExposeWebMcpAbility( createAbility( { name: 'big-sky/save-post' } ) ) ).toBe(
-			false
-		);
-		expect(
-			shouldExposeWebMcpAbility(
-				createAbility( {
-					meta: { annotations: { serverRegistered: true, clientRegistered: true } },
-				} )
-			)
-		).toBe( false );
-		expect( shouldExposeWebMcpAbility( createServerAbility( 'wpcom/delete-site' ) ) ).toBe( false );
-		expect(
-			shouldExposeWebMcpAbility(
-				createServerAbility( 'wpcom/get-block-schemas', {
-					meta: { annotations: { clientRegistered: true } },
-				} )
-			)
-		).toBe( false );
-		expect(
-			shouldExposeWebMcpAbility(
-				createServerAbility( 'wpcom/get-block-schemas', {
-					meta: { annotations: { serverRegistered: true, readonly: false } },
-				} )
-			)
-		).toBe( false );
-		expect(
-			shouldExposeWebMcpAbility(
-				createServerAbility( 'wpcom/media-create', {
-					meta: { annotations: { serverRegistered: true, readonly: false } },
-				} )
-			)
-		).toBe( false );
-		expect(
-			shouldExposeWebMcpAbility(
-				createAbility( { meta: { annotations: {} }, callback: undefined } )
-			)
-		).toBe( false );
+	it.each< [ string, Ability ] >( [
+		[ 'a flagged client-registered ability', createAbility() ],
+		[
+			'a flagged ability with a client callback',
+			createAbility( { meta: flaggedMeta, callback: vi.fn() } ),
+		],
+		...WEBMCP_SERVER_ABILITY_NAMES.map( ( name ): [ string, Ability ] => [
+			`the read-only server ability ${ name }`,
+			createServerAbility( name ),
+		] ),
+	] )( 'exposes %s', ( _case, ability ) => {
+		expect( shouldExposeWebMcpAbility( ability ) ).toBe( true );
+	} );
+
+	it.each< [ string, Ability ] >( [
+		[
+			'an unflagged ability',
+			createAbility( { meta: { annotations: { clientRegistered: true } } } ),
+		],
+		[
+			'an ability whose flag is not public',
+			createAbility( { meta: { annotations: { clientRegistered: true }, webmcp: true } } ),
+		],
+		[
+			'a flagged server-registered ability',
+			createAbility( {
+				meta: { ...flaggedMeta, annotations: { serverRegistered: true, clientRegistered: true } },
+			} ),
+		],
+		[ 'a flagged ability without a client callback', createAbility( { meta: flaggedMeta } ) ],
+		[
+			'a flagged server ability off the server allowlist',
+			createServerAbility( 'wpcom/delete-site', {
+				meta: { ...flaggedMeta, annotations: { serverRegistered: true, readonly: true } },
+			} ),
+		],
+		[
+			'a client ability named like an allowlisted server ability',
+			createServerAbility( 'wpcom/get-block-schemas', {
+				meta: { ...flaggedMeta, annotations: { clientRegistered: true } },
+				callback: vi.fn(),
+			} ),
+		],
+		[
+			'an allowlisted server ability that is not read-only',
+			createServerAbility( 'wpcom/get-block-schemas', {
+				meta: { annotations: { serverRegistered: true, readonly: false } },
+			} ),
+		],
+	] )( 'hides %s', ( _case, ability ) => {
+		expect( shouldExposeWebMcpAbility( ability ) ).toBe( false );
 	} );
 
 	it( 'registers a server ability with its schema and executes through the provider', async () => {
@@ -211,7 +212,9 @@ describe( 'WebMCP adapter', () => {
 			inputSchema: ability.input_schema,
 			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
 		} );
+
 		await tool?.execute( { fields: 'summary' } );
+
 		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith( 'wpcom/get-block-schemas', {
 			fields: 'summary',
 		} );
@@ -237,6 +240,7 @@ describe( 'WebMCP adapter', () => {
 			inputSchema: { type: 'object', properties: {}, additionalProperties: false },
 			annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
 		} );
+
 		await expect( tool?.execute( {} ) ).resolves.toEqual( {
 			result: {
 				success: true,
@@ -258,6 +262,7 @@ describe( 'WebMCP adapter', () => {
 		await harness.adapter.sync();
 
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
+
 		const tool = harness.tools.get( 'big_sky__apply_block_edits' );
 		expect( tool ).toMatchObject( {
 			name: 'big_sky__apply_block_edits',
@@ -327,6 +332,7 @@ describe( 'WebMCP adapter', () => {
 		expect( readTool ).toMatchObject( {
 			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
 		} );
+
 		await readTool?.execute( {} );
 
 		const editInput = {
@@ -472,6 +478,16 @@ describe( 'WebMCP adapter', () => {
 		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
+	it( 'tells the agent where the site logo image comes from', async () => {
+		const harness = createHarness( [ createAbility( { name: 'big-sky/set-site-logo' } ) ] );
+
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'big_sky__set_site_logo' )?.description ).toContain(
+			'attachment ID'
+		);
+	} );
+
 	it( 'returns structured provider results without double encoding', async () => {
 		const harness = createHarness();
 		const result = { result: { success: true }, returnToAgent: true };
@@ -494,39 +510,75 @@ describe( 'WebMCP adapter', () => {
 		);
 	} );
 
-	it( 'does not dispatch an already-aborted execution', async () => {
+	it.each<
+		[ string, ( controller: AbortController, harness: ReturnType< typeof createHarness > ) => void ]
+	>( [
+		[ 'before the call', ( controller ) => controller.abort() ],
+		[
+			'while the tool is looked up',
+			( controller, harness ) =>
+				( harness.toolProvider.getAbilities as Mock ).mockImplementationOnce( async () => {
+					controller.abort();
+
+					return [ createAbility() ];
+				} ),
+		],
+	] )( 'does not dispatch an execution aborted %s', async ( _case, abort ) => {
 		const harness = createHarness();
 		await harness.adapter.sync();
 		const controller = new AbortController();
-		controller.abort();
+		abort( controller, harness );
 
 		await expect(
 			harness.tools
 				.get( 'big_sky__apply_block_edits' )
 				?.execute( {}, { signal: controller.signal } )
 		).rejects.toMatchObject( { name: 'AbortError' } );
+
+		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it.each< [ string, Ability[] ] >( [
+		[ 'removed', [] ],
+		[
+			'replaced by an unflagged ability',
+			[ createAbility( { meta: { annotations: { clientRegistered: true } } } ) ],
+		],
+	] )( 'refuses a tool whose ability was %s before the next sync', async ( _case, next ) => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+		harness.setAbilities( next );
+
+		await expect(
+			harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {} )
+		).rejects.toThrow( 'no longer available' );
+
 		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
 	it( 'reconciles late, removed, and changed abilities without duplicates', async () => {
 		const harness = createHarness( [] );
 		await harness.adapter.sync();
+
 		expect( harness.modelContext.registerTool ).not.toHaveBeenCalled();
 
 		harness.setAbilities( [ createAbility() ] );
 		await harness.adapter.sync();
 		await harness.adapter.sync();
+
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
 
 		const firstSignal = harness.signals.get( 'big_sky__apply_block_edits' );
 		harness.setAbilities( [ createAbility( { label: 'Updated label' } ) ] );
 		await harness.adapter.sync();
+
 		expect( firstSignal?.aborted ).toBe( true );
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 2 );
 
 		const secondSignal = harness.signals.get( 'big_sky__apply_block_edits' );
 		harness.setAbilities( [] );
 		await harness.adapter.sync();
+
 		expect( secondSignal?.aborted ).toBe( true );
 	} );
 
@@ -558,18 +610,26 @@ describe( 'WebMCP adapter', () => {
 		const signal = harness.signals.get( 'big_sky__apply_block_edits' );
 
 		harness.adapter.dispose();
+
 		expect( signal?.aborted ).toBe( true );
 		await expect( harness.adapter.sync() ).resolves.toBeUndefined();
 	} );
 
-	it( 'surfaces registration failures and can retry them', async () => {
-		const harness = createHarness();
-		( harness.modelContext.registerTool as Mock )
-			.mockRejectedValueOnce( new Error( 'Invalid WebMCP schema' ) )
-			.mockResolvedValueOnce( undefined );
+	it( 'registers the other tools when one fails and retries it on the next sync', async () => {
+		const harness = createHarness( [ createAbility(), createBlockTreeAbility() ] );
+		( harness.modelContext.registerTool as Mock ).mockRejectedValueOnce(
+			new Error( 'Invalid WebMCP schema' )
+		);
 
 		await expect( harness.adapter.sync() ).rejects.toThrow( 'Invalid WebMCP schema' );
+
+		expect( [ ...harness.tools.keys() ] ).toEqual( [ 'agents_manager__get_block_tree' ] );
+
 		await expect( harness.adapter.sync() ).resolves.toBeUndefined();
-		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 2 );
+
+		expect( [ ...harness.tools.keys() ] ).toEqual( [
+			'agents_manager__get_block_tree',
+			'big_sky__apply_block_edits',
+		] );
 	} );
 } );

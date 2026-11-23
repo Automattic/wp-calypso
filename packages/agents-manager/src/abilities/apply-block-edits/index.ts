@@ -141,4 +141,7 @@ export const applyBlockEditsAbility: Ability = {
 		required: [ 'result', 'returnToAgent' ],
 	},
 	callback: applyBlockEditsCallback,
+	meta: {
+		webmcp: { public: true },
+	},
 };
