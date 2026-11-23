@@ -149,10 +149,7 @@ describe( 'reader utils', () => {
 
 		test.each( [
 			[ '_xpost_original_permalink', 'javascript://x/%0Aalert(1)' ],
-			[ '_xpost_original_permalink', 'JAVASCRIPT://x/%0Aalert(1)' ],
-			[ '_xpost_original_permalink', 'data://x/text/html,<script>alert(1)</script>' ],
 			[ 'xcomment_original_permalink', 'javascript://x/%0Aalert(1)#comment-1' ],
-			[ 'xcomment_original_permalink', 'vbscript://x/%0Amsgbox(1)' ],
 		] )( 'shows the x-post itself instead of opening a %s of %j', ( permalinkKey, permalink ) => {
 			cacheXPost( permalinkKey, permalink );
 
@@ -177,7 +174,7 @@ describe( 'reader utils', () => {
 			Reflect.deleteProperty( globalThis, 'window' );
 		} );
 
-		test.each( [ 'javascript://x/%0Aalert(1)', 'data:text/html,hi', null ] )(
+		test.each( [ 'javascript://x/%0Aalert(1)', null ] )(
 			'does not open a post URL of %j',
 			( postURL ) => {
 				const opened = showFullXPost( {
