@@ -34,7 +34,7 @@ jest.mock( 'calypso/lib/explat' );
 ( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
 
 export const normalAllowedPaymentMethods: WPCOMPaymentMethod[] = [
-	'WPCOM_Billing_PayPal_Express',
+	'WPCOM_Billing_PayPal_PPCP',
 	'WPCOM_Billing_Stripe_Payment_Method',
 ];
 
@@ -1330,23 +1330,6 @@ export function mockUserSignupValidationEndpoint( endpointResponse ) {
 		.reply( endpointResponse );
 	return endpoint;
 }
-
-export function mockPayPalEndpoint( endpointResponse ) {
-	const endpoint = jest.fn();
-	endpoint.mockReturnValue( true );
-
-	nock( 'https://public-api.wordpress.com' )
-		.post( '/rest/v1.2/me/paypal-express-url', ( body ) => {
-			return endpoint( body );
-		} )
-		.reply( endpointResponse );
-	return endpoint;
-}
-
-export const mockPayPalRedirectResponse = () => [
-	200,
-	{ redirect_url: 'https://test-redirect-url' },
-];
 
 export function mockGetPaymentMethodsEndpoint( endpointResponse ) {
 	nock( 'https://public-api.wordpress.com' )

@@ -229,19 +229,18 @@ export default function getThankYouPageUrl( {
 	}
 
 	// Note: this function is called early on for redirect payment methods like
-	// PayPal, when the receipt isn't set yet.
+	// Bancontact, when the receipt isn't set yet.
 	//
-	// For redirect payment methods like Bancontact or PayPal, the `return_url`
-	// submitted to the payment partner (Stripe or PayPal) actually redirects to
-	// a pseudo-endpoint (`/me/transactions/source-payment` or
-	// `/me/transactions/paypal-express`) on `public-api.wordpress.com`.
+	// For redirect payment methods like Bancontact, the `return_url` submitted
+	// to the payment partner (Stripe) actually redirects to a pseudo-endpoint
+	// (`/me/transactions/source-payment`) on `public-api.wordpress.com`.
 	//
 	// That pseudo-endpoint performs various duties and then uses a 302 redirect
 	// to send the browser to the `success_url` originally sent by checkout to
-	// start the transaction (to either the `/me/transactions` or
-	// `/me/paypal-express-url` endpoint). That URL sometimes is for the calypso
-	// "pending" page (`/checkout/thank-you/:site/pending/:orderId`) which
-	// requires an order ID and its own `redirectTo` query param.
+	// start the transaction (to the `/me/transactions` endpoint). That URL
+	// sometimes is for the calypso "pending" page
+	// (`/checkout/thank-you/:site/pending/:orderId`) which requires an order ID
+	// and its own `redirectTo` query param.
 	//
 	// The pseudo-endpoint modifies the `success_url` to add that order ID and to
 	// replace the `:receiptId` placeholder with the actual receipt ID for the
