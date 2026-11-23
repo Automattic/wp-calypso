@@ -102,46 +102,49 @@ path. Set `meta.webmcp.public: true` on a client ability, or add a REST-backed t
 
 ## Testing
 
-### Codex built-in browser
+### Setup
 
-1. In the ChatGPT desktop app, open the built-in browser and sign in to the test WordPress.com
-   account in that browser profile.
-2. Sandbox `widgets.wp.com` and run `yarn dev --sync` from `apps/agents-manager`.
-3. Open a post, page, or site editor where the inline Agents Manager data has `isDevMode: true`
-   using GPT-5.6 Sol or Terra.
-4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all nine tools:
+1. Sandbox `widgets.wp.com` and run `yarn dev --sync` from `apps/agents-manager`.
+2. Use a browser with WebMCP, such as Chrome with `chrome://flags/#enable-webmcp-testing` on or an
+   agent's built-in browser that supports it, and sign in to a test WordPress.com account there.
+3. Open a post, page, or site editor where the inline Agents Manager data has `isDevMode: true`,
+   for example on the Automattic proxy.
+
+### With a browser agent
+
+Use any agent that can call the page's WebMCP tools, such as the Codex built-in browser. Don't use
+DevTools or call `document.modelContext` directly for this path.
+
+1. Ask the agent which tools the page offers. Confirm it finds all nine:
    `agents_manager__get_block_tree`, `big_sky__show_template`, `big_sky__apply_block_edits`,
    `big_sky__apply_update_theme`, `big_sky__edit_entity_record`, and `big_sky__set_site_logo`, plus
-   `wpcom__get_block_schemas`, `wpcom__get_content_guidelines`, and `core__get_site_info`. Do not use DevTools or
-   call `document.modelContext` directly for this path.
-5. Call `agents_manager__get_block_tree`. If a requested template part is absent, call
+   `wpcom__get_block_schemas`, `wpcom__get_content_guidelines`, and `core__get_site_info`.
+2. Call `agents_manager__get_block_tree`. If a requested template part is absent, call
    `big_sky__show_template`, then read the tree again.
-6. Call `big_sky__apply_block_edits` with a client ID from the latest tree, or insert a small test
+3. Call `big_sky__apply_block_edits` with a client ID from the latest tree, or insert a small test
    block on an empty page. Read the tree one final time and confirm the expected block and
    attributes are present.
-7. Ask the agent to add a section, such as a heading and a paragraph, as block markup. Confirm it
+4. Ask the agent to add a section, such as a heading and a paragraph, as block markup. Confirm it
    passes the markup to `big_sky__apply_block_edits` as `inserts[0].blockMarkup` and that the blocks
    appear on the canvas in order.
-8. Ask the agent to rename the open post or page with `big_sky__edit_entity_record`. Confirm the
+5. Ask the agent to rename the open post or page with `big_sky__edit_entity_record`. Confirm the
    title changes in the editor and the post is not saved. Ask it to rename a different page, or to
    delete or publish one, and confirm the tool refuses.
-9. Ask the agent to change the site's background color with `big_sky__apply_update_theme`. Confirm
+6. Ask the agent to change the site's background color with `big_sky__apply_update_theme`. Confirm
    the canvas previews the new color and the global styles are not saved.
-10. Ask the agent to set the site logo to an image from the media library. Confirm it calls
-    `big_sky__set_site_logo` with that image's attachment ID, the Site Logo block previews it, and
-    the site settings are not saved.
-11. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
+7. Ask the agent to set the site logo to an image from the media library. Confirm it calls
+   `big_sky__set_site_logo` with that image's attachment ID, the Site Logo block previews it, and
+   the site settings are not saved.
+8. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
 
-### Direct browser API fallback
+### From the console
 
-1. Open a post, page, or site editor with `isDevMode: true` and the browser's WebMCP testing feature
-   on.
-2. Without opening Agents Manager chat, enumerate the page's tools through
+1. Without opening Agents Manager chat, enumerate the page's tools through
    `document.modelContext.getTools()`.
-3. Confirm the same nine tools are present and that the three server tools expose input schemas.
-4. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
+2. Confirm the same nine tools are present and that the three server tools expose input schemas.
+3. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.
-5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
-6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
-7. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
+4. Confirm the Network panel shows no Agenttic/orchestrator/model request.
+5. Navigate to another editor/site and confirm the tool now targets only the current canvas.
+6. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
