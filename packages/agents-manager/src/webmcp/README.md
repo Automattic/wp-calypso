@@ -19,10 +19,11 @@ clash, the provider's ability wins and runs through the merged provider, which a
 precedence and the canvas guard. Registry-only abilities run through the registry's
 `executeAbility()`.
 
-Provider calls carry `toolCallId: null` (`withoutChatToolCalls()`), so a WebMCP edit takes no undo
-checkpoint and never adds to the chat's. A chat Undo still restores its whole snapshot, so it also
-removes later edits to the same part of the page, the user's or a WebMCP agent's. WebMCP edits stay
-unsaved for review, and block edits land on the editor's own undo stack.
+Provider calls carry `toolCallId: null` (`withoutChatToolCalls()` in `non-chat-call-provider.ts`),
+so a WebMCP edit takes no undo checkpoint and never adds to the chat's. A chat Undo still restores
+its whole snapshot, so it also removes later edits to the same part of the page, the user's or a
+WebMCP agent's. WebMCP edits stay unsaved for review, and block edits land on the editor's own undo
+stack.
 
 The allowlisted server abilities (`WEBMCP_SERVER_ABILITY_NAMES`) are fetched by
 `createWebMcpToolProvider()` (`server-ability-provider.ts`) from `/wp-abilities/v1/abilities`
