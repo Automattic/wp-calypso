@@ -263,6 +263,10 @@ describe( 'normalization-rules', () => {
 					'<text>click</text></a></svg>',
 			],
 			[
+				'an SVG poll link inside noscript',
+				'<p>a</p><noscript><svg><a href="https://poll.fm/123"></a></svg></noscript>',
+			],
+			[
 				'elements that act on the page',
 				'<p>a</p><base href="https://example.com/"><meta http-equiv="refresh" content="0;url=https://example.com/">' +
 					'<link rel="stylesheet" href="https://example.com/style.css">',

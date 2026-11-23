@@ -1,6 +1,7 @@
 function createInertDocument() {
 	if ( typeof DOMParser !== 'undefined' && window.DOMParser.prototype.parseFromString ) {
-		const parsed = new window.DOMParser().parseFromString( '', 'text/html' );
+		// The doctype keeps the document out of quirks mode, which parses some markup differently.
+		const parsed = new window.DOMParser().parseFromString( '<!DOCTYPE html>', 'text/html' );
 		if ( parsed && parsed.body ) {
 			return parsed;
 		}
