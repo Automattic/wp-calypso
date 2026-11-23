@@ -176,6 +176,10 @@ function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise
 let siteAfterCartFailure:
 	{ siteId: number; siteSlug: string; siteChoices: string; movedDomains: string[] } | undefined;
 
+export function resetSiteAfterCartFailureForTests() {
+	siteAfterCartFailure = undefined;
+}
+
 // The domain search records the site a moved domain is on now. The move call needs it.
 function getMoveSourceSiteId( item: MinimalRequestCartProduct ): number | undefined {
 	const extra = item.extra;

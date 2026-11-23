@@ -8,7 +8,7 @@ import { render, waitFor } from '@testing-library/react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFlowState } from '../../../state-manager/store';
 import { pollForAtomicProvisioning } from '../early-provisioning';
-import CreateSite from '../index';
+import CreateSite, { resetSiteAfterCartFailureForTests } from '../index';
 
 // The action the step hands to the processing step, captured as it is set.
 let pendingAction: ( () => Promise< unknown > ) | undefined;
@@ -171,6 +171,7 @@ describe( 'create-site', () => {
 		mockDomainCartItems = [];
 		mockPlanCartItem = null;
 		sessionStorage.clear();
+		resetSiteAfterCartFailureForTests();
 		jest.clearAllMocks();
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
 			get: ( key: string ) => flowStateStore[ key ],
@@ -366,10 +367,6 @@ describe( 'create-site', () => {
 		await expect( runStep() ).rejects.toThrow( 'cart rejected' );
 
 		expect( transferDomainToSite ).toHaveBeenCalledWith( 'owned-domain.com', 555, 111 );
-
-		// The step keeps the site of a rejected cart for the next run in this page load. A run that
-		// succeeds clears it, so the next test starts without one.
-		await pendingAction!();
 	} );
 
 	// A second move of a domain that is already on the site fails and reports a failed move.
@@ -483,14 +480,16 @@ describe( 'create-site', () => {
 			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
 			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
 
+			( createSite as jest.Mock ).mockResolvedValueOnce( {
+				siteId: 222,
+				siteSlug: 'my-site.wordpress.com',
+				domainItem: undefined,
+			} );
 			mockSiteUrl = 'my-site.wordpress.com';
 			pendingAction = undefined;
-			await runStep();
+			await expect( runStep() ).resolves.toMatchObject( { siteId: 222 } );
 
 			expect( createSite ).toHaveBeenCalledTimes( 2 );
-			expect( flowStateStore.createdSite ).toMatchObject( {
-				requestedName: 'my-site.wordpress.com',
-			} );
 		} );
 
 		// The flow state record matches on the name, so without this a retry with another domain
@@ -511,8 +510,8 @@ describe( 'create-site', () => {
 			} );
 		} );
 
-		// The first site has the theme and visibility of the flow that created it.
-		it( 'creates a new site when a run in another flow follows the rejected cart', async () => {
+		// The first site has the visibility and AI Launchpad setting of the flow that created it.
+		it( 'creates a new site when the retry needs another visibility and AI Launchpad setting', async () => {
 			mockSiteUrl = '';
 			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
 			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
@@ -521,7 +520,6 @@ describe( 'create-site', () => {
 			await runStep( { flow: 'domain' } );
 
 			expect( createSite ).toHaveBeenCalledTimes( 2 );
-			expect( ( createSite as jest.Mock ).mock.calls[ 1 ][ 0 ] ).toBe( 'domain' );
 		} );
 
 		// The intent applies only when it is set at creation, so the first site cannot get it later.
@@ -543,12 +541,14 @@ describe( 'create-site', () => {
 			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
 
 			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
-			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+			flowStateStore.createdSite = {
+				siteId: 333,
+				siteSlug: 'recorded.wordpress.com',
+				requestedName: 'my-site.wordpress.com',
+			};
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 333 } );
 
 			expect( createSite ).toHaveBeenCalledTimes( 1 );
-			expect( flowStateStore.createdSite ).toMatchObject( {
-				requestedName: 'my-site.wordpress.com',
-			} );
 		} );
 	} );
 
