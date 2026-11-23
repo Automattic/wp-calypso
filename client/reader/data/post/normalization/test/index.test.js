@@ -1,10 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expect"] }] */
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expectNothingRuns", "expect"] }] */
 
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
+import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';
 import makeContentLinksSafe from 'calypso/lib/post-normalizer/rule-content-make-links-safe';
+import { removeNoscript } from 'calypso/lib/post-normalizer/rule-content-remove-elements-by-selector';
 import removeEventHandlers from 'calypso/lib/post-normalizer/rule-content-remove-event-handlers';
 import { domForHtml, isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import { classifyPost, contentDomRules, runFastRules } from '..';
@@ -183,6 +185,140 @@ describe( 'normalization-rules', () => {
 		} );
 	} );
 
+	describe( 'the rendered content', () => {
+		const SVG_NS = 'http://www.w3.org/2000/svg';
+		const XLINK_NS = 'http://www.w3.org/1999/xlink';
+		const webAddress = /^https?:\/\//;
+
+		// What `ContentProcessor` does with `post.content`: a parse in the live document, where
+		// scripting is on.
+		function render( html ) {
+			const container = document.createElement( 'div' );
+			container.innerHTML = html;
+			return container;
+		}
+
+		function navigationTargets( container ) {
+			return Array.from( container.querySelectorAll( 'a, area' ) ).flatMap( ( link ) =>
+				link.namespaceURI === SVG_NS
+					? [ link.getAttribute( 'href' ), link.getAttributeNS( XLINK_NS, 'href' ) ]
+					: [ link.getAttribute( 'href' ) ]
+			);
+		}
+
+		function expectNothingRuns( content ) {
+			const container = render( content );
+			const elements = Array.from( container.querySelectorAll( '*' ) );
+
+			expect(
+				elements.flatMap( ( element ) =>
+					element.getAttributeNames().filter( ( name ) => /^on/i.test( name ) )
+				)
+			).toEqual( [] );
+			expect(
+				navigationTargets( container ).filter(
+					( href ) => href !== null && ! webAddress.test( new URL( href, document.baseURI ).href )
+				)
+			).toEqual( [] );
+			expect(
+				Array.from( container.querySelectorAll( 'animate, set' ) ).map( ( animation ) =>
+					animation.getAttribute( 'attributeName' )
+				)
+			).toEqual( [] );
+			expect(
+				elements.filter(
+					( element ) => element.localName === 'iframe' && ! element.hasAttribute( 'sandbox' )
+				)
+			).toEqual( [] );
+			expect( container.querySelector( 'script, noscript, base, meta, link' ) ).toBeNull();
+		}
+
+		const carriers = [
+			[
+				'a comment inside noscript',
+				'<p>a</p><noscript><!--</noscript><img src="https://example.com/x" onerror="alert(1)">--></noscript>',
+			],
+			[
+				'xmp text inside noscript',
+				'<p>a</p><noscript><xmp></noscript><img src="https://example.com/x" onerror="alert(1)"></xmp></noscript>',
+			],
+			[
+				'iframe text inside noscript',
+				'<p>a</p><noscript><iframe></noscript><img src="https://example.com/x" onerror="alert(1)"></iframe></noscript>',
+			],
+			[
+				'an mglyph and xmp in MathML',
+				'<math><mtext><table><mglyph><xmp><img src="https://example.com/x" onerror="alert(1)"></xmp></mglyph></table></mtext></math>',
+			],
+			[
+				'a VideoPress embed marker inside inline SVG',
+				'<svg><g class="wp-block-video wp-block-embed is-type-video is-provider-videopress">' +
+					'<text class="wp-block-embed__wrapper">https://videopress.com/v/abc</text></g>' +
+					'<xmp><img src="https://example.com/x" onerror="alert(1)"></xmp></svg>',
+			],
+			[
+				'an image map area',
+				'<map name="m"><area shape="default" href="javascript:alert(1)"></map>' +
+					'<img usemap="#m" src="https://example.com/a.jpg">',
+			],
+			[
+				'an SVG animation of a link',
+				'<svg><a href="https://example.com/"><set attributeName="href" to="javascript:alert(1)"></set>' +
+					'<text>click</text></a></svg>',
+			],
+			[
+				'elements that act on the page',
+				'<p>a</p><base href="https://example.com/"><meta http-equiv="refresh" content="0;url=https://example.com/">' +
+					'<link rel="stylesheet" href="https://example.com/style.css">',
+			],
+		];
+
+		describe( 'when the rules parse content the way jsdom does', () => {
+			test.each( carriers )( 'runs nothing from %s', ( name, content ) => {
+				expectNothingRuns( runFastRules( { content } ).content );
+			} );
+		} );
+
+		// Browsers parse a DOMParser document with scripting off, so `noscript` holds markup there
+		// while the live document treats it as text. jsdom's DOMParser parses with scripting on, but
+		// the fallback, a `div` in a document of its own, parses the way a browser's DOMParser does.
+		describe( 'when the rules parse content the way browsers do', () => {
+			let domParser;
+
+			beforeEach( () => {
+				domParser = global.DOMParser;
+				global.DOMParser = undefined;
+			} );
+
+			afterEach( () => {
+				global.DOMParser = domParser;
+			} );
+
+			test.each( carriers )( 'runs nothing from %s', ( name, content ) => {
+				expectNothingRuns( runFastRules( { content } ).content );
+			} );
+
+			test( 'still links an embedded Crowdsignal poll', () => {
+				const post = runFastRules( {
+					content:
+						'<p>a</p><noscript><a href="https://poll.fm/12345678">Take Our Poll</a></noscript>',
+				} );
+				const link = render( post.content ).querySelector( 'a' );
+
+				expect( link.getAttribute( 'href' ) ).toBe( 'https://poll.fm/12345678' );
+			} );
+		} );
+
+		test( 'keeps ordinary content as it was', () => {
+			const content =
+				'<p>Hello <a href="https://example.com/">there</a>, <strong>reader</strong>.</p>' +
+				'<ul><li>one</li><li>two</li></ul>' +
+				'<svg><a href="https://example.com/"><text>svg link</text></a></svg>';
+
+			expect( runFastRules( { content } ).content ).toBe( content );
+		} );
+	} );
+
 	describe( 'content DOM rule order', () => {
 		// Both invariants are invisible in the output once every rule validates its own URLs, so
 		// assert the order itself rather than a behaviour that survives getting it wrong.
@@ -190,6 +326,13 @@ describe( 'normalization-rules', () => {
 			expect( contentDomRules.indexOf( removeEventHandlers ) ).toBeLessThan(
 				contentDomRules.indexOf( detectMedia )
 			);
+		} );
+
+		test( 'removes noscript elements only after the rules that read them', () => {
+			const removal = contentDomRules.indexOf( removeNoscript );
+
+			expect( contentDomRules.indexOf( detectMedia ) ).toBeLessThan( removal );
+			expect( contentDomRules.indexOf( detectPolls ) ).toBeLessThan( removal );
 		} );
 
 		test( 'checks links after every rule that builds one', () => {
