@@ -210,6 +210,7 @@ export default function PartnerOffers( {
 						label={ __( 'Offer type' ) }
 						hideLabelFromVision
 						size="compact"
+						__next40pxDefaultSize
 						value={ filter }
 						options={ options.map( ( option ) => ( {
 							value: option.value,
