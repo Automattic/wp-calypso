@@ -184,7 +184,9 @@ async function logInTestAccount( account ) {
 				throw new UserActionRequired(
 					'WordPress.com refused the login page with HTTP 403, as its human check does on some ' +
 						`networks, so ${ account } can't log in from here. ` +
-						'Skip the browser check and report it as not done, with this reason.'
+						'For a page on the local Dashboard, check it with --fixtures instead ' +
+						'("Fixtures without a login" in browser.md). Otherwise, or if fixtures can\'t show ' +
+						'the change, skip the browser check and report it as not done, with this reason.'
 				);
 			}
 			throw error;

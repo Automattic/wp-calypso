@@ -6,6 +6,16 @@
 
 - **[Calypso Live](#calypso-live)** for final signed-in checks, when a PR is open or you were asked to open one. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built, before marking it ready. Drafts from branches in this repository get previews, which verify the intended commit without sharing a local dev server across worktrees.
 - **A [local dev server](#setup)** to reproduce bugs, test unpushed changes, or when the preview is unavailable or can't support the check, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. A dev server takes 4 to 9 GB of memory while it builds, more on a machine with more cores, and 2 to 6 GB after, so stop one you no longer need.
+- **A change to `config/dashboard-stage.json` or `config/dashboard-production.json`** can't be checked on Calypso Live: the preview's Dashboard link runs the `dashboard-horizon` config (its corner badge says so). `?flags=` on the preview can turn the same flags on or off (`?flags=a,-b`), which approximates the change without testing it. Check it on a local build of that config instead. These configs set `env: production`, so `yarn start` serves a prebuilt client and doesn't build one: run `yarn build-client` once the server is up. After any code or config change, rebuild the client and restart the server.
+
+  ```bash
+  export CALYPSO_ENV=dashboard-stage HOST=my.localhost NODE_OPTIONS=--max-old-space-size=8192
+  export ENTRY_LIMIT=entry-main,entry-stepper,entry-dashboard-dotcom,entry-dashboard-a4a SECTION_LIMIT=signup,checkout,a8c-for-agencies-signup
+  yarn start         # in the background
+  yarn build-client  # once the server is up
+  ```
+
+  Use `CALYPSO_ENV=dashboard-production` the same way for the production config.
 
 ## Accounts
 
@@ -60,7 +70,7 @@ If you're a subagent that can't ask the user, report back to the agent that star
 - If you need a local build and the right dev server isn't running, start it in the background with the Node version in `.nvmrc`: `yarn start-dashboard`, or `yarn start` for classic Calypso or the Reader. Its first build takes several minutes; rerun the script until it gets past it. On `EADDRINUSE`, put the same free port in front of both commands, e.g. `PORT=3100 yarn start-dashboard`. Stop a server you started once your checks are done.
 - If the E2E test accounts aren't set up and `E2E_SECRETS_KEY` is set, or you're in a git worktree, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
 - If Chromium is missing, run `(cd test/e2e && npx playwright install --with-deps chromium)`.
-- If you still can't log in, skip the browser check and report it as not done, with the reason.
+- If you still can't log in, e.g. because WordPress.com answers the login page with HTTP 403 from a cloud sandbox, check the local Dashboard with `--fixtures` ([Fixtures without a login](#fixtures-without-a-login)). If fixtures can't show the change, skip the browser check and report it as not done, with the reason.
 - Skip any check that would change something and report it as not done.
 
 ## Browsing
@@ -85,6 +95,7 @@ The script targets the dev server port of the checkout it runs from (3000 in the
 | `--viewport <WxH>`                     | Default `1440x1000`; e.g. `390x844` for mobile.                                                                      |
 | `--settle <ms>`                        | Extra wait before reporting. Default `2000`.                                                                         |
 | `--log-requests <regex>`               | List matching responses with their status and envelope code.                                                         |
+| `--fixtures <file>`                    | Open the local Dashboard as a made-up user, with API responses from `<file>` ([below](#fixtures-without-a-login)).   |
 
 With several accounts, the script reports on each in turn and adds `-<account>` to screenshot names.
 
@@ -103,6 +114,27 @@ node .agents/skills/verify/scripts/browse.cjs '/sites/{site}' --screenshot /tmp/
 '
 ```
 
+## Fixtures without a login
+
+`--fixtures <file>` opens a page on the local Dashboard as a made-up user, with no WordPress.com login. The Dashboard sends its API requests through a `public-api.wordpress.com/wp-admin/rest-proxy/` iframe: the script serves its own page there and answers each request with what `<file>` returns. It blocks every other request to another host, except the Tracks script and the fonts under `s1.wp.com/i/fonts/`. `<file>` is a CommonJS module, kept outside the repository, that exports `answer( { method, path, query, body, apiNamespace } )`:
+
+```js
+exports.answer = ( { method, path, query } ) => {
+	if ( method === 'GET' && path === '/notifications' ) {
+		return { last_seen_time: '0', number: 1, notes: [ /* … */ ] };
+	}
+	if ( method === 'POST' && path === '/notifications/read' ) {
+		return { __status: 403, error: 'unauthorized', message: 'Not allowed' };
+	}
+};
+```
+
+- Return the response body for a `200`, an object with `__status` for another status, or nothing to fall back to the base fixtures. `path` has no trailing slash and no query string. `query` holds the query from both the path and the request, with repeated and `key[]` parameters as arrays. `apiNamespace` is set for routes such as `wpcom/v2`.
+- The base fixtures in `scripts/fixtures.cjs` answer what the Dashboard's shell requests on every page, for a user with no sites, purchases or notifications. Your answers come first, so they can replace them.
+- The report adds the requests nothing answered (`no fixture`), which got a 404, and those whose fixture threw (`fixture threw`), which got a 500. The page may show an error screen until you fix them. It also lists the Tracks events the page sent, with their properties. They are answered locally and never reach Tracks. Last, it lists the `blocked hosts`: images and other files from those hosts don't load, so a screenshot can differ from the real page.
+- `--as` and `{site}` don't apply. Use made-up names, `example.com` addresses and `data:` image URLs. Never paste responses from a real account.
+- Fixtures can check layout, navigation, focus, the keyboard, console errors and Tracks events, not what the backend does. In the report and the PR, say which checks used fixtures and that backend behavior is unverified.
+
 ## Gotchas
 
 - **Calypso routes that need a login redirect when loaded directly**, in any browser: `calypso.localhost:<port>/tags` lands on `/discover/tags` as if logged out, so a working fix looks broken. Load `/read` (or `/home`), then navigate inside the app:
@@ -118,6 +150,7 @@ node .agents/skills/verify/scripts/browse.cjs '/sites/{site}' --screenshot /tmp/
 - **Don't wait for `networkidle`.** The dashboard keeps polling. Wait for a visible element.
 - **Tour popovers** can cover parts of a screenshot. Dismiss them in `--eval` if they get in the way.
 - **Don't count Dashboard snackbars by page text.** A hidden screen-reader region repeats the message and keeps it after the snackbar closes. Count `.components-snackbar` elements right after the action: most snackbars close after 6 seconds.
+- **Tracks events.** `--fixtures` lists each event the page sends, with its properties. Signed in, `--log-requests '_en=<event_name>'` lists an event's `t.gif` hits, but prints only the first 200 characters of each URL, and Tracks puts the event's properties before `_en`. To check properties, collect the URLs of `pixel.wp.com/t.gif` requests with `page.on( 'request' )` in `--eval` and read them with `new URL( url ).searchParams`. `--eval` runs after the page has loaded, so for an event sent on load, register the listener, then `await page.reload(); await loaded();` before reading the URLs. Tracks keeps hits it hasn't confirmed in a cookie and resends them, with the same `_ts`, when the page or another frame records its next event, so one action can show two or three identical hits: count distinct `_ts`. Events recorded with `recordTracksEvent` also appear in the console after `localStorage.setItem( 'debug', 'calypso:analytics' )`.
 - **Sandboxes.** Headless Chromium can reach production even when `/etc/hosts` points at a sandbox. Responses from the edge have an `x-ac` header; sandbox responses don't. To reach the sandbox, start the `--eval` with:
 
   ```js

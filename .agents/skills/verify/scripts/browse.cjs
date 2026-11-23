@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /**
- * Opens a local or hosted Calypso page as a logged-in user and reports what it shows.
+ * Opens a local or hosted Calypso page as a logged-in user and reports what it shows. With
+ * `--fixtures <file>`, it opens a local page as a made-up user instead, answering API requests from
+ * the file.
  *
  *   node browse.cjs <url> [options]
  *
@@ -12,6 +14,7 @@ const fs = require( 'node:fs' );
 const path = require( 'node:path' );
 const { setTimeout: delay } = require( 'node:timers/promises' );
 const { parseArgs } = require( 'node:util' );
+const { loadAnswer, serveFixtures } = require( './fixtures.cjs' );
 const {
 	AUTH_COMMAND,
 	OWN_ACCOUNT,
@@ -29,7 +32,8 @@ const {
 const { values: options, positionals } = parseArgs( {
 	allowPositionals: true,
 	options: {
-		as: { type: 'string', default: 'defaultUser' },
+		as: { type: 'string' },
+		fixtures: { type: 'string' },
 		'wait-for': { type: 'string' },
 		eval: { type: 'string' },
 		'eval-file': { type: 'string' },
@@ -45,6 +49,11 @@ const { values: options, positionals } = parseArgs( {
 } );
 
 const AsyncFunction = async function () {}.constructor;
+
+const FIXTURE_USER = 'made-up user (fixtures)';
+// Set by main(): the --fixtures module's answer(), and the accounts to check.
+let fixtureAnswer;
+let accounts;
 
 class UsageError extends Error {}
 
@@ -180,7 +189,12 @@ function watch( page ) {
 	const logPattern = options[ 'log-requests' ] && new RegExp( options[ 'log-requests' ] );
 	page.on( 'console', ( message ) => {
 		// Report-only CSP violations block nothing; the site preview logs them on Atomic sites.
-		if ( message.type() === 'error' && ! /report-only/i.test( message.text() ) ) {
+		// With fixtures, requests to other hosts are blocked on purpose.
+		if (
+			message.type() === 'error' &&
+			! /report-only/i.test( message.text() ) &&
+			! ( options.fixtures && /ERR_BLOCKED_BY_CLIENT/.test( message.text() ) )
+		) {
 			problems.push( `console: ${ clip( message.text() ) }` );
 		}
 	} );
@@ -290,10 +304,12 @@ async function navigate( page, url, problems, requests ) {
 async function open( browser, account, url ) {
 	const [ width, height ] = options.viewport.split( 'x' ).map( Number );
 	const context = await browser.newContext( {
-		storageState: statePath( account ),
+		storageState: fixtureAnswer ? undefined : statePath( account ),
 		viewport: { width, height },
 		reducedMotion: 'reduce',
 	} );
+	const fixtureReport =
+		fixtureAnswer && ( await serveFixtures( context, fixtureAnswer, isLocalTarget ) );
 	const page = await context.newPage();
 	const { problems, requests } = watch( page );
 	await navigate( page, url, problems, requests );
@@ -302,7 +318,7 @@ async function open( browser, account, url ) {
 		page.waitForURL( ( current ) => isLoginUrl( current.toString() ), { timeout: 30000 } ),
 		page.getByRole( 'heading', { level: 1 } ).first().waitFor( { timeout: 30000 } ),
 	] ).catch( () => {} );
-	return { context, page, problems, requests };
+	return { context, page, problems, requests, fixtureReport };
 }
 
 function screenshotTarget( file ) {
@@ -446,8 +462,6 @@ async function takeScreenshot( page, file, { selector, fullPage = false, arrow }
 	console.log( 'screenshot:', target );
 }
 
-const accounts = options.as.split( ',' );
-
 function screenshotPathFor( file, account ) {
 	if ( accounts.length === 1 ) {
 		return file;
@@ -461,11 +475,13 @@ async function check( browser, account, target ) {
 		? target.replaceAll( '{site}', testAccountSite( account ) )
 		: target;
 	const url = new URL( resolved, LOCAL_DASHBOARD_ORIGIN ).toString();
-	await ensureState( account );
+	if ( ! fixtureAnswer ) {
+		await ensureState( account );
+	}
 
-	let { context, page, problems, requests } = await open( browser, account, url );
+	let { context, page, problems, requests, fixtureReport } = await open( browser, account, url );
 
-	if ( isLoginUrl( page.url() ) && ! isLoginUrl( url ) ) {
+	if ( ! fixtureAnswer && isLoginUrl( page.url() ) && ! isLoginUrl( url ) ) {
 		if ( account === OWN_ACCOUNT ) {
 			throw new UserActionRequired(
 				'The saved login has expired. Ask the user to log in again with: ' + AUTH_COMMAND
@@ -474,7 +490,7 @@ async function check( browser, account, target ) {
 		console.log( `The ${ account } session has expired. Logging in again…` );
 		await context.close();
 		await logInTestAccount( account );
-		( { context, page, problems, requests } = await open( browser, account, url ) );
+		( { context, page, problems, requests, fixtureReport } = await open( browser, account, url ) );
 		if ( isLoginUrl( page.url() ) ) {
 			throw new Error( `Still redirected to the login page after logging in ${ account } again.` );
 		}
@@ -541,6 +557,9 @@ async function check( browser, account, target ) {
 				requests.length ? `requests:\n  ${ requests.join( '\n  ' ) }` : 'requests: none matched'
 			);
 		}
+		if ( fixtureReport ) {
+			reportFixtures( fixtureReport );
+		}
 
 		if ( options.screenshot ) {
 			await takeScreenshot( page, screenshotPathFor( options.screenshot, account ), {
@@ -559,10 +578,50 @@ async function check( browser, account, target ) {
 	}
 }
 
+function reportFixtures( { unanswered, threw, tracks, blockedHosts } ) {
+	console.log(
+		unanswered.size
+			? `no fixture, so they got a 404:\n  ${ [ ...unanswered ].join( '\n  ' ) }`
+			: 'no fixture: none'
+	);
+	if ( threw.size ) {
+		console.log( `fixture threw, so they got a 500:\n  ${ [ ...threw ].join( '\n  ' ) }` );
+	}
+	const events = tracks.map( ( { _en, ...properties } ) => {
+		const custom = Object.entries( properties ).filter( ( [ key ] ) => ! key.startsWith( '_' ) );
+		const line = `${ _en } ${ JSON.stringify( Object.fromEntries( custom ) ) }`;
+		return line.length > 300 ? `${ line.slice( 0, 300 ) } …` : line;
+	} );
+	console.log( events.length ? `tracks:\n  ${ events.join( '\n  ' ) }` : 'tracks: none' );
+	if ( blockedHosts.size ) {
+		console.log( `blocked hosts: ${ [ ...blockedHosts ].join( ', ' ) }` );
+	}
+}
+
 async function main() {
 	if ( ! positionals[ 0 ] ) {
 		throw new UserActionRequired( 'Usage: node browse.cjs <url> [options]' );
 	}
+	if ( options.fixtures ) {
+		if ( options.as ) {
+			throw new UsageError( '--fixtures opens the page as a made-up user, so leave out --as.' );
+		}
+		if ( positionals[ 0 ].includes( '{site}' ) ) {
+			throw new UsageError(
+				"{site} is a test account's site. With --fixtures, use a site your fixtures answer for."
+			);
+		}
+		if ( ! isLocalTarget( positionals[ 0 ] ) ) {
+			throw new UsageError( '--fixtures works on the local dev server only.' );
+		}
+		fixtureAnswer = loadAnswer( options.fixtures );
+		if ( typeof fixtureAnswer !== 'function' ) {
+			throw new UsageError(
+				`${ options.fixtures } must export an \`answer( request )\` function.`
+			);
+		}
+	}
+	accounts = fixtureAnswer ? [ FIXTURE_USER ] : ( options.as ?? 'defaultUser' ).split( ',' );
 	const target = withDevServerPort( positionals[ 0 ] );
 	if ( options.screenshot ) {
 		screenshotTarget( options.screenshot );
