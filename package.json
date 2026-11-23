@@ -73,7 +73,7 @@
 		"build-docker": "node bin/build-docker.js",
 		"build-languages": "yarn run translate && node bin/build-languages.js",
 		"build-languages-if-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || node bin/build-languages.js",
-		"build-packages": "{ [ \"${SKIP_TSC:-}\" = \"true\" ] || tsc --build packages/tsconfig.json; } && yarn workspaces foreach --all --parallel --topological --verbose run prepare",
+		"build-packages": "{ [ \"${SKIP_TSC:-}\" = \"true\" ] || tsc --build packages/tsconfig.json; } && yarn workspaces foreach --all --parallel --topological -vv run prepare",
 		"build-packages:apps": "bash ./bin/build-packages-apps.sh",
 		"build-packages:unit-tests": "bash ./bin/build-packages-unit-tests.sh",
 		"build-packages:web": "bash ./bin/build-packages-web.sh",
@@ -85,7 +85,7 @@
 		"calypso-doctor": "./node_modules/.bin/calypso-doctor",
 		"clean": "yarn run clean:packages && yarn run clean:build && yarn run clean:public && yarn run clean:translations",
 		"clean:build": "rm -rf build client/server/bundler/*.json || true",
-		"clean:packages": "yarn workspaces foreach --all --parallel --verbose --exclude 'wp-calypso' run clean",
+		"clean:packages": "yarn workspaces foreach --all --parallel -vv --exclude 'wp-calypso' run clean",
 		"clean:public": "rm -rf public",
 		"clean:translations": "rm -rf build/strings calypso-strings.pot chunks-map.*.json || true",
 		"components:storybook:start": "yarn workspace @automattic/components run storybook:start",
@@ -422,7 +422,7 @@
 		"marked@npm:^18.0.3": "18.1.1",
 		"wemoji": "patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch"
 	},
-	"packageManager": "yarn@4.0.2",
+	"packageManager": "yarn@4.2.2",
 	"dependenciesMeta": {
 		"@react-spring/core@9.3.0": {
 			"built": false
