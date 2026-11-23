@@ -10,7 +10,6 @@ import { compose } from 'redux';
 import Chart from 'calypso/components/chart';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import compareProps from 'calypso/lib/compare-props';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	getSiteStatsNormalizedData,
 	isRequestingSiteStatsForQuery,
@@ -176,7 +175,7 @@ const connectComponent = connect(
 			isDataLoading,
 		};
 	},
-	{ recordGoogleEvent },
+	{},
 	null,
 	{
 		areStatePropsEqual: compareProps( {

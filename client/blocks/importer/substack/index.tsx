@@ -3,7 +3,6 @@ import { Progress } from '@wordpress/ui';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import React, { useEffect, useRef, useState } from 'react';
-import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
 import FormattedHeader from 'calypso/components/formatted-header';
 import StepProgress from 'calypso/components/step-progress';
@@ -24,8 +23,6 @@ import Summary from 'calypso/my-sites/importer/newsletter/summary';
 import { EngineTypes } from 'calypso/my-sites/importer/newsletter/types';
 import { getImporterStatus } from 'calypso/my-sites/importer/newsletter/utils';
 import { useCompleteImportSubscribersTask } from 'calypso/my-sites/subscribers/hooks/use-complete-import-subscribers-task';
-import { resetImport, startImport } from 'calypso/state/imports/actions';
-import { importSite } from 'calypso/state/imports/site-importer/actions';
 import { Importer, ImporterBaseProps } from '../types';
 import { getStepsProgress } from './utils';
 
@@ -265,8 +262,4 @@ export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( 
 	);
 };
 
-export default connect( null, {
-	importSite,
-	startImport,
-	resetImport,
-} )( SubstackImporter );
+export default SubstackImporter;

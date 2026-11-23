@@ -1,7 +1,5 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { recordGoogleEvent } from '../../state/analytics/actions';
 import Security2faKeyItem from './item';
 
 import './style.scss';
@@ -25,6 +23,4 @@ Security2faKeyList.propTypes = {
 	onDelete: PropTypes.func.isRequired,
 };
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( Security2faKeyList ) );
+export default localize( Security2faKeyList );

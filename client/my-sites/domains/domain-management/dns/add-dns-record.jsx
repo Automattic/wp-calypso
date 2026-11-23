@@ -17,9 +17,7 @@ import {
 	domainManagementList,
 	isUnderDomainManagementAll,
 } from 'calypso/my-sites/domains/paths';
-import { fetchDns } from 'calypso/state/domains/dns/actions';
 import { getDomainDns } from 'calypso/state/domains/dns/selectors';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -178,18 +176,15 @@ class AddDnsRecord extends Component {
 	}
 }
 
-export default connect(
-	( state, { selectedDomainName } ) => {
-		const selectedSite = getSelectedSite( state );
-		const domains = getDomainsBySiteId( state, selectedSite?.ID );
-		const dns = getDomainDns( state, selectedDomainName );
+export default connect( ( state, { selectedDomainName } ) => {
+	const selectedSite = getSelectedSite( state );
+	const domains = getDomainsBySiteId( state, selectedSite?.ID );
+	const dns = getDomainDns( state, selectedDomainName );
 
-		return {
-			selectedSite,
-			domains,
-			dns,
-			currentRoute: getCurrentRoute( state ),
-		};
-	},
-	{ successNotice, errorNotice, fetchDns }
-)( localize( AddDnsRecord ) );
+	return {
+		selectedSite,
+		domains,
+		dns,
+		currentRoute: getCurrentRoute( state ),
+	};
+}, {} )( localize( AddDnsRecord ) );

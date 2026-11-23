@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
 import { ImporterConfig } from 'calypso/lib/importer/importer-config';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import ImportingPane from '../importing-pane/importing-pane';
@@ -83,4 +82,4 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default connect( null, { recordTracksEvent, startImport } )( ImporterDrag );
+export default connect( null, { startImport } )( ImporterDrag );

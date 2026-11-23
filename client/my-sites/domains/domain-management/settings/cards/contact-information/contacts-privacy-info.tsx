@@ -1,13 +1,9 @@
 import { memo, type JSX } from 'react';
-import { connect } from 'react-redux';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
-import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
-import { IAppState } from 'calypso/state/types';
 import ContactsPrivacyCard from './contacts-card';
-import type { ContactsInfoPassedProps, ContactsInfoProps } from './types';
+import type { ContactsInfoProps } from './types';
 import './style.scss';
 
 const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
@@ -68,9 +64,4 @@ const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
 	return domain?.currentUserCanManage ? renderForOwner() : renderForOthers();
 };
 
-export default connect( ( state: IAppState, ownProps: ContactsInfoPassedProps ) => {
-	return {
-		currentRoute: getCurrentRoute( state ),
-		isRequestingWhois: isRequestingWhois( state, ownProps.selectedDomainName ),
-	};
-} )( memo( ContactsPrivacy ) );
+export default memo( ContactsPrivacy );
