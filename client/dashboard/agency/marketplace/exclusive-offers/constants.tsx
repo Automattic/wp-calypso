@@ -4,7 +4,7 @@ import { addQueryArgs } from '@wordpress/url';
 import AvalaraLogo from './images/avalara.svg';
 import EasyPostLogo from './images/easypost.svg';
 import JetpackLogo from './images/jetpack-descriptor.svg';
-import PacklinkLogo from './images/packlink.svg';
+// import PacklinkLogo from './images/packlink.svg';
 import PressableLogo from './images/pressable-descriptor.svg';
 import ShipStationLogo from './images/shipstation.svg';
 import VIPLogo from './images/vip-descriptor.svg';
@@ -215,22 +215,23 @@ export const getTrustedPartners = (): PartnerOffer[] => [
 			external: true,
 		},
 	},
-	{
-		id: 'packlink',
-		offerType: 'partner',
-		badge: __( 'Shipping' ),
-		tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_packlink_click',
-		logo: <img src={ PacklinkLogo } alt="Packlink" />,
-		title: __( 'Boost efficiency for better retention' ),
-		description: __(
-			'Help your customers to get their ship organised - with better rates and automation tools that turn shipping from a cost centre into a growth driver!'
-		),
-		cta: {
-			label: __( 'Explore Packlink PRO' ),
-			url: 'https://partners.auctane.com',
-			external: true,
-		},
-	},
+	// Hidden until Packlink has a partner link to send agencies to.
+	// {
+	// 	id: 'packlink',
+	// 	offerType: 'partner',
+	// 	badge: __( 'Shipping' ),
+	// 	tracksEventName: 'calypso_a4a_exclusive_offers_trusted_partner_packlink_click',
+	// 	logo: <img src={ PacklinkLogo } alt="Packlink" />,
+	// 	title: __( 'Boost efficiency for better retention' ),
+	// 	description: __(
+	// 		'Help your customers to get their ship organised - with better rates and automation tools that turn shipping from a cost centre into a growth driver!'
+	// 	),
+	// 	cta: {
+	// 		label: __( 'Explore Packlink PRO' ),
+	// 		url: 'https://partners.auctane.com',
+	// 		external: true,
+	// 	},
+	// },
 	{
 		id: 'easypost-norton-shopping-guarantee',
 		offerType: 'partner',

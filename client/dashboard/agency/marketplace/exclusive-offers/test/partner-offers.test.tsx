@@ -42,10 +42,9 @@ describe( '<PartnerOffers>', () => {
 			'href',
 			'https://www.shipstation.com/partnership-options/'
 		);
-		expect( screen.getByRole( 'link', { name: 'Explore Packlink PRO' } ) ).toHaveAttribute(
-			'href',
-			'https://partners.auctane.com'
-		);
+		expect(
+			screen.queryByRole( 'link', { name: 'Explore Packlink PRO' } )
+		).not.toBeInTheDocument();
 		expect( screen.getAllByRole( 'link', { name: 'Explore Avalara' } ) ).toHaveLength( 1 );
 	} );
 
