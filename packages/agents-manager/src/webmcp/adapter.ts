@@ -25,8 +25,23 @@ type Registration = {
 type CreateWebMcpAdapterOptions = {
 	toolProvider: ToolProvider;
 	modelContext: WebMcpModelContext;
-	shouldExposeAbility?: ( ability: Ability ) => boolean;
 };
+
+function getFlagRefusalReason( ability: Ability ): string | undefined {
+	if ( ability.meta?.webmcp?.public !== true || isWebMcpServerAbilityName( ability.name ) ) {
+		return undefined;
+	}
+
+	if ( ability.meta?.annotations?.serverRegistered === true ) {
+		return 'it is server-registered, and `meta.webmcp.public` exposes only client abilities';
+	}
+
+	if ( typeof ability.callback !== 'function' ) {
+		return 'it has no client callback';
+	}
+
+	return undefined;
+}
 
 export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 	const annotations = ability.meta?.annotations;
@@ -35,11 +50,7 @@ export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 		return annotations?.serverRegistered === true && annotations.readonly === true;
 	}
 
-	if ( ability.meta?.webmcp?.public !== true || annotations?.serverRegistered === true ) {
-		return false;
-	}
-
-	return annotations?.clientRegistered === true || typeof ability.callback === 'function';
+	return ability.meta?.webmcp?.public === true && ! getFlagRefusalReason( ability );
 }
 
 export function normalizeInputSchema( schema: unknown ): Record< string, unknown > {
@@ -66,7 +77,6 @@ function createAbortError(): Error {
 function createTool(
 	ability: Ability,
 	toolProvider: ToolProvider,
-	shouldExposeAbility: ( ability: Ability ) => boolean,
 	toolCallContext: ToolCallContext
 ): WebMcpTool {
 	return {
@@ -93,7 +103,7 @@ function createTool(
 				throw createAbortError();
 			}
 
-			if ( ! current || ! shouldExposeAbility( current ) ) {
+			if ( ! current || ! shouldExposeWebMcpAbility( current ) ) {
 				throw new Error(
 					`WebMCP tool is no longer available: ${ normalizeAbilityName( ability.name ) }`
 				);
@@ -124,11 +134,11 @@ function fingerprintTool( tool: WebMcpTool ): string {
 export function createWebMcpAdapter( {
 	toolProvider,
 	modelContext,
-	shouldExposeAbility = shouldExposeWebMcpAbility,
 }: CreateWebMcpAdapterOptions ): WebMcpAdapter {
 	const registrations = new Map< string, Registration >();
 	const pendingControllers = new Set< AbortController >();
 	const toolCallContext: ToolCallContext = { knownBlockClientIds: new Set() };
+	const warnedAbilityNames = new Set< string >();
 	let disposed = false;
 	let syncRequested = false;
 	let syncQueue = Promise.resolve();
@@ -145,6 +155,18 @@ export function createWebMcpAdapter( {
 		}
 	};
 
+	const warnAboutRefusedFlags = ( abilities: Ability[] ) => {
+		for ( const ability of abilities ) {
+			const reason = getFlagRefusalReason( ability );
+
+			if ( reason && ! warnedAbilityNames.has( ability.name ) ) {
+				warnedAbilityNames.add( ability.name );
+				// eslint-disable-next-line no-console
+				console.warn( `[AgentsManager] WebMCP doesn't expose ${ ability.name }: ${ reason }.` );
+			}
+		}
+	};
+
 	const reconcile = async () => {
 		const abilities = await toolProvider.getAbilities();
 
@@ -152,9 +174,11 @@ export function createWebMcpAdapter( {
 			return;
 		}
 
+		warnAboutRefusedFlags( abilities );
+
 		const eligible = new Map(
 			abilities
-				.filter( shouldExposeAbility )
+				.filter( shouldExposeWebMcpAbility )
 				.map( ( ability ) => [ ability.name, ability ] as const )
 		);
 		const registrationErrors: unknown[] = [];
@@ -167,7 +191,7 @@ export function createWebMcpAdapter( {
 		}
 
 		for ( const [ abilityName, ability ] of eligible ) {
-			const tool = createTool( ability, toolProvider, shouldExposeAbility, toolCallContext );
+			const tool = createTool( ability, toolProvider, toolCallContext );
 			const fingerprint = fingerprintTool( tool );
 			const current = registrations.get( abilityName );
 

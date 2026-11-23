@@ -40,6 +40,7 @@ const ability: Ability = {
 	category: 'big-sky',
 	input_schema: { type: 'object', properties: {} },
 	meta: { annotations: { clientRegistered: true }, webmcp: { public: true } },
+	callback: vi.fn(),
 };
 
 describe( 'useWebMcpTools', () => {
