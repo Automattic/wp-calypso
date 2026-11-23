@@ -1,8 +1,9 @@
 import { Page } from 'playwright';
 import { completeJetpackSso } from './jetpack-sso';
 
-export type SettingsTabs =
-	'Security' | 'Performance' | 'Writing' | 'Sharing' | 'Discussion' | 'Traffic' | 'Monetize';
+// The tabs Jetpack keeps on Settings once My Jetpack takes over the rest; the server picks
+// which of these a site shows.
+export type SettingsTabs = 'Security' | 'Traffic' | 'Monetize';
 
 /**
  * Represents the Jetpack Settings page in WP-Admin.
@@ -50,5 +51,13 @@ export class JetpackDashboardPage {
 			.getByRole( 'tab', { name: tab, exact: true } )
 			.and( this.page.locator( '[aria-selected="true"]' ) )
 			.waitFor();
+	}
+
+	/**
+	 * Waits for My Jetpack › Features, where Settings sends a site that has no tab left on it.
+	 */
+	async waitForFeaturesInMyJetpack() {
+		await this.page.waitForURL( /[?&]page=my-jetpack\b/ );
+		await this.page.getByRole( 'tab', { name: 'Features', selected: true } ).waitFor();
 	}
 }
