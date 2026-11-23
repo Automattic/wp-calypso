@@ -69,9 +69,9 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 interface ShowFullXPostArgs {
 	blogId: number;
 	postId: number;
-	postURL: string;
-	siteURL: string;
-	commentURL: string;
+	postURL: string | null;
+	siteURL: string | null;
+	commentURL: string | null;
 }
 
 export function showFullXPost( xMetadata: ShowFullXPostArgs ): void {
@@ -85,7 +85,10 @@ export function showFullXPost( xMetadata: ShowFullXPostArgs ): void {
 			post: mappedPost,
 		} );
 	} else {
-		window.open( xMetadata.postURL );
+		const url = xMetadata.postURL && safeLink( xMetadata.postURL );
+		if ( url ) {
+			window.open( url, '_blank', 'noopener,noreferrer' );
+		}
 	}
 }
 
