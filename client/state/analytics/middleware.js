@@ -1,7 +1,3 @@
-import {
-	trackCustomAdWordsRemarketingEvent,
-	trackCustomFacebookConversionEvent,
-} from 'calypso/lib/analytics/ad-tracking';
 import { gaRecordEvent, gaRecordPageView } from 'calypso/lib/analytics/ga';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { bumpStat } from 'calypso/lib/analytics/mc';
@@ -19,8 +15,6 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 const eventServices = {
 	ga: ( { category, action, label, value } ) => gaRecordEvent( category, action, label, value ),
 	tracks: ( { name, properties } ) => recordTracksEvent( name, properties ),
-	fb: ( { name, properties } ) => trackCustomFacebookConversionEvent( name, properties ),
-	adwords: ( { properties } ) => trackCustomAdWordsRemarketingEvent( properties ),
 };
 
 const pageViewServices = {

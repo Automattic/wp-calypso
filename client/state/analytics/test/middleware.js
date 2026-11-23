@@ -20,13 +20,7 @@ jest.mock( 'calypso/lib/analytics/page-view', () => ( {
 } ) );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	setTracksOptOut: jest.fn(),
 	recordTracksEvent: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
-	trackCustomFacebookConversionEvent: jest.fn(),
-	trackCustomAdWordsRemarketingEvent: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/lib/analytics/mc', () => ( {
