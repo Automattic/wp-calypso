@@ -3,7 +3,7 @@
  */
 import { transferDomainToSite } from '@automattic/api-core';
 import { Site } from '@automattic/data-stores';
-import { addProductsToCart, createSite } from '@automattic/onboarding';
+import { addProductsToCart, createSite, replaceProductsInCart } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFlowState } from '../../../state-manager/store';
@@ -60,6 +60,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	StepContainer: () => null,
 	Step: { Loading: () => null },
 	addProductsToCart: jest.fn(),
+	replaceProductsInCart: jest.fn(),
 	createSite: jest.fn( async () => ( {
 		siteId: 111,
 		siteSlug: 'brand-new.wordpress.com',
@@ -415,6 +416,23 @@ describe( 'create-site', () => {
 				'onboarding',
 				[ mockPlanCartItem ],
 				{ throwOnError: true }
+			);
+		} );
+
+		// The rejected attempt can leave items in the cart that the retry does not ask for.
+		it( 'empties the cart of the first site before the retry adds its items', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			expect( replaceProductsInCart ).not.toHaveBeenCalled();
+
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( replaceProductsInCart ).toHaveBeenCalledTimes( 1 );
+			expect( replaceProductsInCart ).toHaveBeenCalledWith( 'brand-new.wordpress.com', [] );
+			expect( ( replaceProductsInCart as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+				( addProductsToCart as jest.Mock ).mock.invocationCallOrder[ 1 ]
 			);
 		} );
 

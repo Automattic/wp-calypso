@@ -27,6 +27,7 @@ import {
 	isOnboardingFlow,
 	Step,
 	isNewSiteMigrationFlow,
+	replaceProductsInCart,
 	setThemeOnSite,
 } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
@@ -579,6 +580,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			);
 
 			if ( additionalCartItems.length > 0 ) {
+				// The cart of the saved site can still have items the rejected attempt added, and
+				// the retry may not ask for them. Without throwOnError a failure here is quiet, and
+				// the add below runs as it did before.
+				if ( savedSite ) {
+					await replaceProductsInCart( site.siteSlug, [] );
+				}
 				try {
 					await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
 				} catch ( error ) {
