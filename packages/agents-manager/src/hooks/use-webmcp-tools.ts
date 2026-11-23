@@ -28,9 +28,9 @@ export default function useWebMcpTools( {
 			.then(
 				( {
 					createWebMcpAdapter,
-					createWebMcpToolProvider,
 					subscribeToRegistryAbilities,
 					withRegistryAbilities,
+					withServerAbilities,
 					withoutChatToolCalls,
 				} ) => {
 					if ( disposed ) {
@@ -38,7 +38,7 @@ export default function useWebMcpTools( {
 					}
 
 					adapter = createWebMcpAdapter( {
-						toolProvider: createWebMcpToolProvider(
+						toolProvider: withServerAbilities(
 							withRegistryAbilities( withoutChatToolCalls( toolProvider ) )
 						),
 						modelContext,

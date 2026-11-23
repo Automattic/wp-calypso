@@ -17,7 +17,11 @@ function markServerRegistered( ability: Ability ): Ability {
 	};
 }
 
-export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProvider {
+/**
+ * Adds the allowlisted server abilities from the site's Abilities REST API, in place of any
+ * same-named ability, and runs them over GET.
+ */
+export function withServerAbilities( toolProvider: ToolProvider ): ToolProvider {
 	let serverAbilitiesPromise: Promise< Ability[] > | undefined;
 	let didWarnAboutServerAbilities = false;
 

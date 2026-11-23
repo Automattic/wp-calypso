@@ -19,6 +19,10 @@ clash, the provider's ability wins and runs through the merged provider, which a
 precedence and the canvas guard. Registry-only abilities run through the registry's
 `executeAbility()`.
 
+`adapter.ts` builds, registers and syncs the tools. `tool-calls.ts` prepares each call's input
+(`prepareToolInput()`), remembers the block-tree IDs (`rememberBlockClientIds()`) and adapts the
+result (`adaptToolResult()`).
+
 Provider calls carry `toolCallId: null` (`withoutChatToolCalls()` in `non-chat-call-provider.ts`),
 so a WebMCP edit takes no undo checkpoint and never adds to the chat's. A chat Undo still restores
 its whole snapshot, so it also removes later edits to the same part of the page, the user's or a
@@ -26,12 +30,12 @@ WebMCP agent's. WebMCP edits stay unsaved for review, and block edits land on th
 stack.
 
 The allowlisted server abilities (`WEBMCP_SERVER_ABILITY_NAMES`) are fetched by
-`createWebMcpToolProvider()` (`server-ability-provider.ts`) from `/wp-abilities/v1/abilities`
+`withServerAbilities()` (`server-ability-provider.ts`) from `/wp-abilities/v1/abilities`
 (`webmcp=1`), replace any same-named ability, and run against
 `/wp-abilities/v1/abilities/{name}/run` over GET.
 
 Client abilities must set the flag and be client-registered or carry a client callback. Server
-abilities must be in the server allowlist, marked server-registered (which the WebMCP provider
+abilities must be in the server allowlist, marked server-registered (which `withServerAbilities()`
 sets on what it fetches), and annotated read-only. The flag doesn't expose a server-registered
 ability, and the server allowlist doesn't expose a client one.
 
@@ -56,7 +60,7 @@ The exposed tools are:
 
 - `agents-manager/get-block-tree`: an Agents Manager-owned, client-only ability that reads the live
   Gutenberg tree. It returns real client IDs, block names, serializable attributes, nesting, the
-  current selection, and a block count. The WebMCP adapter remembers these IDs for the matching
+  current selection, and a block count. WebMCP remembers these IDs for the matching
   edit call. It is annotated as read-only and idempotent.
 
 - `big-sky/apply-block-edits`: an Agents Manager-owned, client-only ability that deterministically
@@ -70,7 +74,7 @@ The exposed tools are:
 - `big-sky/show-template`: an Agents Manager-owned, client-only ability that turns on the editor's
   Show template mode. Use it when the block-tree result does not contain the requested header or
   footer, then read the tree again before editing. Repeated calls are safe, and it does not save or
-  publish content. The WebMCP adapter translates the ability's Big Sky-specific next-step reference
+  publish content. WebMCP translates the ability's Big Sky-specific next-step reference
   to `agents_manager__get_block_tree`.
 
 - `big-sky/apply-update-theme`: an Agents Manager-owned, client-only ability that merges theme.json
@@ -80,7 +84,7 @@ The exposed tools are:
 - `big-sky/edit-entity-record`: an Agents Manager-owned ability that, through WebMCP, only changes
   the title or excerpt of the post or page open in the editor. The full ability also creates,
   deletes and saves records across the site, so the WebMCP contract replaces its schema with
-  `title` and `excerpt` alone, and the adapter targets the open post itself, refusing anything else.
+  `title` and `excerpt` alone, and WebMCP targets the open post itself, refusing anything else.
   The edit stays unsaved. Renaming a page also relabels the navigation menu items that point to it,
   as it does in chat.
 
@@ -90,10 +94,10 @@ The exposed tools are:
   block and stays unsaved.
 
 - `wpcom/get-block-schemas`, `wpcom/get-content-guidelines`, and `core/get-site-info`:
-  read-only server abilities fetched by the WebMCP provider from the current site's Abilities REST
-  API. Their existing input schemas, permission checks, and authenticated site-specific execution
-  path are preserved. The adapter also includes each ability's server-provided instructions in the
-  WebMCP description when present.
+  read-only server abilities that `withServerAbilities()` fetches from the current site's Abilities
+  REST API. Their existing input schemas, permission checks, and authenticated site-specific
+  execution path are preserved. Their WebMCP descriptions also include each ability's
+  server-provided instructions when present.
 
 ## Adding a tool
 
