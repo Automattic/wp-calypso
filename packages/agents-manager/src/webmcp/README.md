@@ -34,10 +34,11 @@ The allowlisted server abilities (`WEBMCP_SERVER_ABILITY_NAMES`) are fetched by
 (`webmcp=1`), replace any same-named ability, and run against
 `/wp-abilities/v1/abilities/{name}/run` over GET.
 
-Client abilities must set the flag and be client-registered or carry a client callback. Server
-abilities must be in the server allowlist, marked server-registered (which `withServerAbilities()`
-sets on what it fetches), and annotated read-only. The flag doesn't expose a server-registered
-ability, and the server allowlist doesn't expose a client one.
+Client abilities must set the flag and carry a client callback. Server abilities must be in the
+server allowlist, marked server-registered (which `withServerAbilities()` sets on what it fetches),
+and annotated read-only. The flag doesn't expose a server-registered ability, and the server
+allowlist doesn't expose a client one. A flagged ability off the server allowlist that isn't exposed
+logs one `[AgentsManager]` console warning that says why.
 
 WebMCP calls use the original slash-based ability name. The backend route settings don't apply
 here: they scope only the agent's own tools.
@@ -108,8 +109,8 @@ choose between two names for the same call. Keep saving and publishing a user ac
 saves as a side effect, such as `big-sky/editor-navigate`, does not belong here.
 
 To add another tool, verify its complete implementation, permissions, annotations, and execution
-path. Set `meta.webmcp.public: true` on a client ability, or add a REST-backed tool to
-`WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`).
+path. Set `meta.webmcp.public: true` on a client ability with a callback, or add a REST-backed tool
+to `WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`).
 
 Write the ability's `description` for both agents: name another tool only if both have it, or if
 only browser agents read the description, as with `big-sky/apply-block-edits`.
@@ -158,10 +159,11 @@ DevTools or call `document.modelContext` directly for this path.
 3. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.
-4. Register a flagged ability, for example with
+4. Register a flagged ability with a callback, for example with
    `wp.data.dispatch( 'core/abilities' ).registerAbility()` and `meta: { webmcp: { public: true } }`
    (its category must be registered first). Confirm it appears as a tool without a reload, and
-   disappears when it is unregistered.
+   disappears when it is unregistered. Register one without a callback, and confirm it stays
+   absent and logs one `[AgentsManager]` warning that says why.
 5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
 6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
 7. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
