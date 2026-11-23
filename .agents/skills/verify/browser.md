@@ -5,7 +5,7 @@
 ## Choosing where to test
 
 - **[Calypso Live](#calypso-live)** for final signed-in checks, when a PR is open or you were asked to open one. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built, before marking it ready. Drafts from branches in this repository get previews, which verify the intended commit without sharing a local dev server across worktrees.
-- **A [local dev server](#setup)** to reproduce bugs, test unpushed changes, or when the preview is unavailable or can't support the check, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview.
+- **A [local dev server](#setup)** to reproduce bugs, test unpushed changes, or when the preview is unavailable or can't support the check, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. A dev server takes 4 to 9 GB of memory while it builds, more on a machine with more cores, and 2 to 6 GB after, so stop one you no longer need.
 
 ## Accounts
 
@@ -45,7 +45,7 @@
 
 ## Calypso Live
 
-1. Take the PR bot's preview link for each affected client, set the path you want to check, and keep the image and environment query parameters. Pass the full URL to `browse.cjs` in single quotes, with the usual test account. The script retries startup responses for up to 90 seconds and fails if no build loads. If a container URL has expired, use a fresh bot link.
+1. Take the PR bot's preview link for each affected client, set the path you want to check, and keep the image and environment query parameters. Pass the full URL to `browse.cjs` in single quotes, with the usual test account. The script retries startup responses for up to 90 seconds and fails if no build loads: on a 404 the image isn't built yet or was removed, so wait for the `Docker image (Web app)` check and reread the bot's comment, and on a timeout the container is still starting, so run it again. If a container URL has expired, use a fresh bot link.
 2. Check the final host and path: a signed-in account can redirect from Classic to Dashboard. Check that the report's `preview commit` is the PR head you intend to verify. If it isn't, wait for the `Docker image (Web app)` check on that commit, reread the bot link and check again. Builds for successive pushes can update the link out of order, so if it still serves another commit, verify locally. Never verify an older build. The preview may also include trunk as of build time.
 3. Run the same interactions and capture the same states as you would locally. With response fixtures on a shared test account, keep the live account read-only, and report which checks used fixtures and which backend behavior remains unverified.
 
