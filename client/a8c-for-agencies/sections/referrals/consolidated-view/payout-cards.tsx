@@ -17,7 +17,6 @@ function PayoutAmount( {
 	footerAction,
 	popoverTitle,
 	handleHalfQuarter,
-	showEstimateExplanation,
 }: {
 	expectedCommission: number;
 	activityWindow: string;
@@ -27,7 +26,6 @@ function PayoutAmount( {
 	footerAction?: React.ReactNode;
 	popoverTitle: string;
 	handleHalfQuarter?: boolean;
-	showEstimateExplanation?: boolean;
 } ) {
 	const translate = useTranslate();
 	const { showSupportGuide } = useHelpCenter();
@@ -40,13 +38,11 @@ function PayoutAmount( {
 			popoverTitle={ popoverTitle }
 			popoverContent={
 				<div className="payout-cards__description">
-					{ showEstimateExplanation && (
-						<div>
-							{ translate(
-								'When your client buys products or hosting from Automattic for Agencies, they are billed on the first of every month rather than immediately. We estimate the commission based on the active use for the current month.'
-							) }
-						</div>
-					) }
+					<div>
+						{ translate(
+							'When your client buys products or hosting from Automattic for Agencies, they are billed on the first of every month rather than immediately. We estimate the commission based on the active use for the current month.'
+						) }
+					</div>
 
 					<div className="payout-cards__description-item">
 						{ translate( 'Payout range:' ) }
@@ -73,12 +69,6 @@ function PayoutAmount( {
 					<div>
 						{ translate(
 							'*Commissions are paid quarterly, after a 60-day waiting period, excluding refunds and chargebacks.'
-						) }
-					</div>
-
-					<div>
-						{ translate(
-							'If your commissions for a payout come to less than $50, we carry them over to the next payout until your total reaches $50.'
 						) }
 					</div>
 
@@ -150,7 +140,6 @@ export default function PayoutCards( {
 				footerText={ currentQuarterTitle }
 				popoverTitle={ currentQuarterTitle }
 				handleHalfQuarter={ handleHalfQuarter }
-				showEstimateExplanation
 			/>
 		</>
 	);

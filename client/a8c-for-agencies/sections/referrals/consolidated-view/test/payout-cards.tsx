@@ -15,11 +15,10 @@ const mockUseGetPayoutData = useGetPayoutData.default as jest.MockedFunction<
 
 // Mock the ConsolidatedStatsCard component
 jest.mock( 'calypso/a8c-for-agencies/components/consolidated-stats-card', () => ( {
-	ConsolidatedStatsCard: ( { value, footerText, popoverContent, isLoading }: any ) => (
+	ConsolidatedStatsCard: ( { value, footerText, isLoading }: any ) => (
 		<div data-testid="consolidated-stats-card">
 			<div data-testid="value">{ value }</div>
 			<div data-testid="footer-text">{ footerText }</div>
-			<div data-testid="popover-content">{ popoverContent }</div>
 			{ isLoading && <div data-testid="loading">Loading...</div> }
 		</div>
 	),
@@ -137,28 +136,6 @@ describe( 'PayoutCards', () => {
 		expect( values[ 1 ] ).toHaveTextContent( '$300.50' );
 		expect( footerTexts[ 0 ] ).toHaveTextContent( 'Estimated earnings in previous quarter' );
 		expect( footerTexts[ 1 ] ).toHaveTextContent( 'Estimated earnings in current quarter' );
-	} );
-
-	it( 'should explain the current-month estimate only on the current quarter card and the $50 minimum on both', () => {
-		render(
-			<PayoutCards
-				isFetching={ false }
-				previousQuarterExpectedCommission={ 9.87 }
-				currentQuarterExpectedCommission={ 250.75 }
-			/>
-		);
-
-		const [ previousPopover, currentPopover ] = screen.getAllByTestId( 'popover-content' );
-		const estimateExplanation = /active use for the current month/;
-		const minimumPayoutNote =
-			'If your commissions for a payout come to less than $50, we carry them over to the next payout until your total reaches $50.';
-
-		expect( previousPopover ).not.toHaveTextContent( estimateExplanation );
-		expect( previousPopover ).toHaveTextContent( minimumPayoutNote );
-		expect( previousPopover ).toHaveTextContent( '1 Jan 2024 - 31 Mar 2024' );
-
-		expect( currentPopover ).toHaveTextContent( estimateExplanation );
-		expect( currentPopover ).toHaveTextContent( minimumPayoutNote );
 	} );
 
 	it( 'should render the correct payout cards when the current quarter is not a full quarter and isWooPayments is false', () => {
