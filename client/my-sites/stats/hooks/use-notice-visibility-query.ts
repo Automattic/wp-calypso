@@ -33,16 +33,6 @@ export const DEFAULT_NOTICES_VISIBILITY = {
 export type Notices = typeof DEFAULT_NOTICES_VISIBILITY;
 export type NoticeIdType = keyof Notices;
 
-const NOTICE_DISMISS_STATUSES = [ 'dismissed', 'postponed' ] as const;
-export type NoticeDismissStatus = ( typeof NOTICE_DISMISS_STATUSES )[ number ];
-export interface NoticeRecord {
-	show: boolean;
-	status: NoticeDismissStatus | null;
-	postponed_count: number;
-	next_show_at: number | null;
-}
-export type NoticeRecords = Record< NoticeIdType, NoticeRecord >;
-
 // These notices are mutually exclusive, so if one is active, the other should be hidden.
 // The IDs are sorted by priory from high to low.
 // `pricing_grid` is deliberately NOT in this group even though the grid trumps every
@@ -101,78 +91,28 @@ export const normalizeNoticesVisibility = (
 	return notices;
 };
 
-const isNoticeRecord = ( value: unknown ): value is Partial< NoticeRecord > =>
-	typeof value === 'object' && value !== null;
-
-const isNoticeDismissStatus = ( value: unknown ): value is NoticeDismissStatus =>
-	NOTICE_DISMISS_STATUSES.includes( value as NoticeDismissStatus );
-
-/**
- * Both the flat map an older server answers with and a detail record land in one shape, so the
- * escalation fields read as "never postponed" wherever the server cannot say otherwise.
- */
-const toNoticeRecord = ( value: unknown ): NoticeRecord => {
-	if ( ! isNoticeRecord( value ) ) {
-		return { show: !! value, status: null, postponed_count: 0, next_show_at: null };
-	}
-	return {
-		show: !! value.show,
-		status: isNoticeDismissStatus( value.status ) ? value.status : null,
-		postponed_count: Number( value.postponed_count ) || 0,
-		next_show_at: typeof value.next_show_at === 'number' ? value.next_show_at : null,
-	};
-};
-
-export const toNoticesVisibility = ( records: NoticeRecords ): Notices => {
-	const visibility = { ...DEFAULT_NOTICES_VISIBILITY };
-	for ( const noticeId of Object.keys( records ) as NoticeIdType[] ) {
-		visibility[ noticeId ] = records[ noticeId ].show;
-	}
-	return visibility;
-};
-
-export const normalizeNoticeRecords = (
-	payload: Record< string, unknown > | null | undefined
-): NoticeRecords => {
-	const records = {} as NoticeRecords;
-	for ( const [ noticeId, value ] of Object.entries( payload ?? {} ) ) {
-		records[ noticeId as NoticeIdType ] = toNoticeRecord( value );
-	}
-	const visibility = normalizeNoticesVisibility( toNoticesVisibility( records ) );
-	for ( const noticeId of Object.keys( visibility ) as NoticeIdType[] ) {
-		records[ noticeId ] = {
-			...( records[ noticeId ] ?? toNoticeRecord( false ) ),
-			show: visibility[ noticeId ],
-		};
-	}
-	return records;
-};
-
-const queryNotices = async function ( siteId: number | null ): Promise< NoticeRecords > {
+const queryNotices = async function ( siteId: number | null ): Promise< Notices > {
 	let payload;
 
 	try {
-		payload = await wpcom.req.get(
-			{
-				method: 'GET',
-				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
-			},
-			{ include_details: true }
-		);
+		payload = await wpcom.req.get( {
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+			path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
+		} );
 	} catch ( error ) {
-		return normalizeNoticeRecords( DEFAULT_NOTICES_VISIBILITY );
+		return DEFAULT_NOTICES_VISIBILITY;
 	}
 
-	return normalizeNoticeRecords( payload );
+	return normalizeNoticesVisibility( payload );
 };
 
-// Calypso persists this cache for a week with no buster, so the shape change from a boolean
-// map to records needs its own key or an older build's entry is read as records.
+// Calypso persists this cache for a week with no buster, so the key changes whenever the
+// cached shape does. `details` held per-notice records; `raw` has only ever held this flat map.
 export const noticesVisibilityQueryKey = ( siteId: number | null ) => [
 	'stats',
 	'notices-visibility',
-	'details',
+	'raw',
 	siteId,
 ];
 
@@ -185,15 +125,14 @@ export const setNoticeHidden = (
 	siteId: number | null,
 	noticeId: NoticeIdType
 ) =>
-	queryClient.setQueryData< NoticeRecords >( noticesVisibilityQueryKey( siteId ), ( records ) =>
-		records
-			? { ...records, [ noticeId ]: { ...toNoticeRecord( records[ noticeId ] ), show: false } }
-			: records
+	queryClient.setQueryData< Notices >(
+		noticesVisibilityQueryKey( siteId ),
+		( notices ) => notices && { ...notices, [ noticeId ]: false }
 	);
 
 const useNoticesVisibilityQueryRaw = function < T >(
 	siteId: number | null,
-	select?: ( payload: NoticeRecords ) => T,
+	select?: ( payload: Notices ) => T,
 	enabled?: boolean
 ) {
 	return useQuery( {
@@ -210,8 +149,8 @@ export function useNoticeVisibilityQuery(
 	noticeId: NoticeIdType,
 	enabled?: boolean
 ) {
-	const selectVisibilityForSingleNotice = ( records: NoticeRecords ) => {
-		const payload = processConflictNotices( toNoticesVisibility( records ) );
+	const selectVisibilityForSingleNotice = ( payload: Notices ) => {
+		payload = processConflictNotices( payload );
 		return !! payload?.[ noticeId ];
 	};
 	return useNoticesVisibilityQueryRaw< boolean >(
@@ -222,10 +161,5 @@ export function useNoticeVisibilityQuery(
 }
 
 export function useNoticesVisibilityQuery( siteId: number | null ) {
-	return useNoticesVisibilityQueryRaw< Notices >( siteId, toNoticesVisibility );
-}
-
-export function useNoticeRecordQuery( siteId: number | null, noticeId: NoticeIdType ) {
-	const selectRecord = ( records: NoticeRecords ) => records[ noticeId ];
-	return useNoticesVisibilityQueryRaw< NoticeRecord >( siteId, selectRecord );
+	return useNoticesVisibilityQueryRaw< Notices >( siteId );
 }

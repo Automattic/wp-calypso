@@ -35,7 +35,7 @@ describe( 'useNoticeVisibilityMutation', () => {
 		mockPost.mockResolvedValue( { updated: true } );
 	} );
 
-	it( 'sends the hook arguments when the call passes nothing', async () => {
+	it( 'sends the hook arguments', async () => {
 		const { result } = renderMutation( client, 'postponed', THIRTY_DAYS );
 
 		await result.current.mutateAsync();
@@ -47,23 +47,11 @@ describe( 'useNoticeVisibilityMutation', () => {
 		);
 	} );
 
-	it( 'lets a call override the update, so one hook can escalate', async () => {
-		const { result } = renderMutation( client );
-
-		await result.current.mutateAsync( { status: 'postponed', postponedFor: THIRTY_DAYS } );
-		await result.current.mutateAsync( { status: 'dismissed' } );
-
-		expect( mockPost.mock.calls.map( ( [ params ] ) => params.body ) ).toEqual( [
-			{ id: 'pricing_grid', status: 'postponed', postponed_for: THIRTY_DAYS },
-			{ id: 'pricing_grid', status: 'dismissed', postponed_for: 0 },
-		] );
-	} );
-
 	it( 'refetches the notices once the write lands', async () => {
 		const invalidate = jest.spyOn( client, 'invalidateQueries' );
 		const { result } = renderMutation( client );
 
-		await result.current.mutateAsync( { status: 'dismissed' } );
+		await result.current.mutateAsync();
 
 		await waitFor( () =>
 			expect( invalidate ).toHaveBeenCalledWith( {

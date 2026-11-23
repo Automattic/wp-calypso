@@ -4,9 +4,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import {
-	normalizeNoticeRecords,
+	normalizeNoticesVisibility,
 	noticesVisibilityQueryKey,
-	useNoticeRecordQuery,
 	useNoticesVisibilityQuery,
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import useDismissPricingGrid from '../use-dismiss-pricing-grid';
@@ -31,27 +30,18 @@ describe( 'useDismissPricingGrid', () => {
 		client = new QueryClient();
 		client.setQueryData(
 			noticesVisibilityQueryKey( SITE_ID ),
-			normalizeNoticeRecords( { pricing_grid: true, tier_upgrade: true } )
+			normalizeNoticesVisibility( { pricing_grid: true, tier_upgrade: true } )
 		);
 	} );
 
-	it( 'hides the grid in the cache as a record, before the write lands', async () => {
+	it( 'hides the grid in the cache before the write lands', async () => {
 		const { result: dismiss } = renderHook( () => useDismissPricingGrid( SITE_ID ), { wrapper } );
 		const { result: all } = renderHook( () => useNoticesVisibilityQuery( SITE_ID ), { wrapper } );
-		const { result: record } = renderHook( () => useNoticeRecordQuery( SITE_ID, 'pricing_grid' ), {
-			wrapper,
-		} );
 
 		act( () => dismiss.current() );
 
 		expect( mockRecordDismissal ).toHaveBeenCalled();
 		await waitFor( () => expect( all.current.data?.pricing_grid ).toBe( false ) );
 		expect( all.current.data?.tier_upgrade ).toBe( true );
-		expect( record.current.data ).toEqual( {
-			show: false,
-			status: null,
-			postponed_count: 0,
-			next_show_at: null,
-		} );
 	} );
 } );

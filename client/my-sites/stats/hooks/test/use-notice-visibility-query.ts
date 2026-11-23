@@ -1,10 +1,9 @@
 import { QueryClient } from '@tanstack/react-query';
 import {
-	normalizeNoticeRecords,
+	Notices,
 	normalizeNoticesVisibility,
 	noticesVisibilityQueryKey,
 	setNoticeHidden,
-	toNoticesVisibility,
 } from '../use-notice-visibility-query';
 
 const serverSaysVisible = {
@@ -55,109 +54,21 @@ describe( 'normalizeNoticesVisibility', () => {
 	} );
 } );
 
-describe( 'normalizeNoticeRecords', () => {
-	const detail = {
-		show: false,
-		status: 'postponed',
-		postponed_count: 1,
-		next_show_at: 1_800_000_000,
-	};
-
-	it( 'reads a detail record as the server sent it', () => {
-		expect( normalizeNoticeRecords( { pricing_grid: detail } ).pricing_grid ).toEqual( detail );
-	} );
-
-	it( 'wraps a bare boolean as a record that was never postponed', () => {
-		const records = normalizeNoticeRecords( {
-			pricing_grid: true,
-			tier_upgrade: false,
-		} );
-
-		expect( records.pricing_grid ).toEqual( {
-			show: true,
-			status: null,
-			postponed_count: 0,
-			next_show_at: null,
-		} );
-		expect( records.tier_upgrade.show ).toBe( false );
-	} );
-
-	it( 'fills ids missing from the response with their defaults', () => {
-		const records = normalizeNoticeRecords( {} );
-
-		expect( records.tier_upgrade ).toEqual( {
-			show: true,
-			status: null,
-			postponed_count: 0,
-			next_show_at: null,
-		} );
-		expect( records.pricing_grid.show ).toBe( false );
-		expect( normalizeNoticeRecords( null ) ).toEqual( records );
-	} );
-
-	it( 'keeps the legacy upsell inheritance for free_site_upgrade on detail records', () => {
-		const records = normalizeNoticeRecords( {
-			free_site_upgrade: { ...detail, show: true, postponed_count: 0 },
-			do_you_love_jetpack_stats: { ...detail, show: false },
-		} );
-
-		expect( records.free_site_upgrade.show ).toBe( false );
-	} );
-
-	it( 'discards malformed escalation fields rather than passing them on', () => {
-		const record = normalizeNoticeRecords( {
-			pricing_grid: {
-				show: 1,
-				status: 'expired',
-				postponed_count: 'two',
-				next_show_at: 'soon',
-			},
-		} ).pricing_grid;
-
-		expect( record ).toEqual( {
-			show: true,
-			status: null,
-			postponed_count: 0,
-			next_show_at: null,
-		} );
-	} );
-
-	it( 'reduces records to the flat map the rest of Stats reads', () => {
-		const visibility = toNoticesVisibility(
-			normalizeNoticeRecords( { pricing_grid: detail, tier_upgrade: true } )
-		);
-
-		expect( visibility.pricing_grid ).toBe( false );
-		expect( visibility.tier_upgrade ).toBe( true );
-		expect( visibility.gdpr_cookie_consent ).toBe( false );
-	} );
-} );
-
 describe( 'setNoticeHidden', () => {
 	const read = ( client: QueryClient ) =>
-		client.getQueryData< ReturnType< typeof normalizeNoticeRecords > >(
-			noticesVisibilityQueryKey( 1 )
-		);
+		client.getQueryData< Notices >( noticesVisibilityQueryKey( 1 ) );
 
-	it( 'hides the notice, keeping the record it already holds', () => {
+	it( 'hides only that notice', () => {
 		const client = new QueryClient();
 		client.setQueryData(
 			noticesVisibilityQueryKey( 1 ),
-			normalizeNoticeRecords( {
-				pricing_grid: { show: true, status: null, postponed_count: 2, next_show_at: null },
-				tier_upgrade: true,
-			} )
+			normalizeNoticesVisibility( { pricing_grid: true, tier_upgrade: true } )
 		);
 
 		setNoticeHidden( client, 1, 'pricing_grid' );
 
-		expect( read( client )?.pricing_grid ).toEqual( {
-			show: false,
-			status: null,
-			postponed_count: 2,
-			next_show_at: null,
-		} );
-		expect( read( client )?.tier_upgrade.show ).toBe( true );
+		expect( read( client )?.pricing_grid ).toBe( false );
+		expect( read( client )?.tier_upgrade ).toBe( true );
 	} );
 
 	it( 'leaves a cache that was never fetched empty', () => {
