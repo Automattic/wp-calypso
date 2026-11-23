@@ -25,14 +25,14 @@
 	"dependencies": {
 		"@automattic/survicate": "workspace:^",
 		"@automattic/viewport": "workspace:^",
-		"@wordpress/data": "^11.1.0"
+		"@wordpress/data": "^11.2.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
-		"@wordpress/dependency-extraction-webpack-plugin": "^7.1.0",
-		"@wordpress/readable-js-assets-webpack-plugin": "^4.1.0",
-		"vite": "^8.3.7",
+		"@wordpress/dependency-extraction-webpack-plugin": "^7.2.0",
+		"@wordpress/readable-js-assets-webpack-plugin": "^4.2.0",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	},

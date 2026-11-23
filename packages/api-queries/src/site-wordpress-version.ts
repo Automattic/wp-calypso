@@ -1,8 +1,10 @@
 import {
 	fetchWordPressVersion,
 	fetchPendingWordPressVersion,
+	fetchWordPressPrerelease,
 	fetchWordPressTrackVersions,
 	fetchWpOrgCoreVersion,
+	updateWordPressPrerelease,
 	updateWordPressVersion,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
@@ -18,6 +20,22 @@ export const sitePendingWordPressVersionQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'wp-version', 'pending' ],
 		queryFn: () => fetchPendingWordPressVersion( siteId ),
+	} );
+
+export const siteWordPressPrereleaseQuery = ( siteId: number ) =>
+	queryOptions( {
+		queryKey: [ 'site', siteId, 'wp-version', 'prerelease' ],
+		queryFn: () => fetchWordPressPrerelease( siteId ),
+	} );
+
+export const siteWordPressPrereleaseMutation = ( siteId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'site-wp-prerelease-update' },
+		mutationFn: ( optedOut: boolean ) =>
+			updateWordPressPrerelease( siteId, { opted_out: optedOut } ),
+		onSuccess: ( data ) => {
+			queryClient.setQueryData( siteWordPressPrereleaseQuery( siteId ).queryKey, data );
+		},
 	} );
 
 // WP Cloud's tracks can lag behind wordpress.org's releases, so ask the site what they serve.

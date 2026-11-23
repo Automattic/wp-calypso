@@ -3,14 +3,14 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { shield } from '@wordpress/icons';
-import { useSiteTimezone } from '../../app/hooks/use-site-timezone';
 import { siteRoute } from '../../app/router/sites';
 import { ThemedIllustration } from '../../components/themed-illustration';
 import TimeMismatchNotice, {
 	useShouldShowTimeMismatchNotice,
 } from '../../components/time-mismatch-notice';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
+import { useSiteTimezone } from '../hooks/use-site-timezone';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { SitesNoticeArbiter } from '../notice-arbiter';
 import illustrationDarkUrl from './scan-callout-illustration-dark.svg';
 import illustrationUrl from './scan-callout-illustration.svg';
 import { ScanContent } from './scan-content';

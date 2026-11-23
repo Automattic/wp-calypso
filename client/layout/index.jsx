@@ -361,7 +361,7 @@ class Layout extends Component {
 					/>
 				) }
 				<MasterbarComponent
-					siteId={ this.props.siteIdForLaunch }
+					siteId={ this.props.siteId }
 					section={ this.props.sectionGroup }
 					sectionGroup={ this.props.sectionGroup }
 					isCheckout={ this.props.sectionName === 'checkout' }
@@ -556,9 +556,9 @@ export default withCurrentRoute(
 
 		const siteId = getSelectedSiteId( state );
 		// Falls back to using the user's primary site if no site has been selected
-		// by the user yet. Only consumed by the masterbar launch button and the
-		// site launch celebration modal — other layout logic (sidebar type,
-		// universal header, color scheme, jetpack detection) must keep using the
+		// by the user yet. Only consumed by the site launch celebration modal —
+		// other layout logic (sidebar type, universal header, color scheme, the
+		// checkout masterbar's branding and close URL) must keep using the
 		// actually-selected site.
 		const siteIdForLaunch =
 			siteId || getMostRecentlySelectedSiteId( state ) || getPrimarySiteId( state );

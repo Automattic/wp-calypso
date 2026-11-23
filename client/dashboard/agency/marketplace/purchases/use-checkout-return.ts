@@ -1,3 +1,9 @@
+import {
+	activeAgencyQuery,
+	invalidateAgencyLicenses,
+	invalidateAgencyProducts,
+} from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { useAnalytics } from '../../../app/analytics';
 import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { CHECKOUT_CART_PARAM, RECEIPT_ID_PARAM } from '../products/lib/checkout-url';
@@ -9,11 +15,15 @@ import { useMarketplaceType } from '../use-marketplace-type';
  * page fills in `receipt_id` only after a successful payment, so the parameter
  * means the cart was bought: empty the cart and drop the parameters the
  * checkout added from the URL. A free referral cart is bought here too, and
- * leaves referral mode once it is.
+ * leaves referral mode once it is. The licenses and products the agency had
+ * are refetched: the dashboard keeps them across the checkout's page loads, so
+ * a page that caches them, like Hosting with its Pressable plan or a promotion
+ * the purchase ended, would show the old ones.
  */
 export function useCheckoutReturn() {
 	const { recordTracksEvent } = useAnalytics();
 	const { updateMarketplaceType } = useMarketplaceType();
+	const { data: agency } = useQuery( activeAgencyQuery() );
 
 	// `flash` and `purchased_plan` are left to the app shell's checkout success message.
 	useConsumeSearchParams( [ RECEIPT_ID_PARAM, CHECKOUT_CART_PARAM ], {
@@ -25,6 +35,8 @@ export function useCheckoutReturn() {
 			} else {
 				clearStoredCart( 'regular' );
 			}
+			invalidateAgencyLicenses( agency?.id );
+			invalidateAgencyProducts( agency?.id );
 			recordTracksEvent( 'calypso_a4a_marketplace_cart_cleared_on_checkout_success', {
 				receipt_id: receiptId,
 			} );

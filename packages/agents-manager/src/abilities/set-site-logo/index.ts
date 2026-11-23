@@ -71,4 +71,7 @@ export const setSiteLogoAbility: Ability = {
 		required: [ 'result', 'returnToAgent' ],
 	},
 	callback: setSiteLogoCallback,
+	meta: {
+		webmcp: { public: true },
+	},
 };

@@ -1,0 +1,102 @@
+import { siteMediaStorageQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+	Button,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
+import { sprintf, __ } from '@wordpress/i18n';
+import { useState } from 'react';
+import { useIntlLocale } from '../../../../app/locale';
+import { ErrorBoundary } from '../../../../components/error-boundary';
+import { Stat } from '../../../../components/stat';
+import { hasStagingSite } from '../../../../utils/site-staging-site';
+import {
+	formatStorage,
+	getSharedStorageTotal,
+	getStorageAlertLevel,
+	getStorageUsagePercent,
+} from '../../../../utils/site-storage';
+import { isStagingSite } from '../../../../utils/site-types';
+import { AddStorageModal } from '../add-storage-modal';
+import type { Site } from '@automattic/api-core';
+
+const MINIMUM_DISPLAYED_USAGE = 2.5;
+
+function StorageStatUnavailable() {
+	/* translators: shown in place of a storage figure that failed to load */
+	const metric = __( 'Information unavailable' );
+	return <Stat density="high" strapline={ __( 'Storage' ) } metric={ metric } />;
+}
+
+function SiteStorageStatInner( { site }: { site: Site } ) {
+	const { data: mediaStorage } = useSuspenseQuery( siteMediaStorageQuery( site.ID ) );
+	const [ isModalOpen, setIsModalOpen ] = useState( false );
+	const locale = useIntlLocale();
+
+	const storageUsagePercent = getStorageUsagePercent( mediaStorage );
+
+	// Ensure that the displayed usage is never fully empty to avoid a confusing UI.
+	const progressBarValue = Math.max(
+		MINIMUM_DISPLAYED_USAGE,
+		Math.min( storageUsagePercent, 100 )
+	);
+
+	const alertLevel = getStorageAlertLevel( mediaStorage );
+
+	let storageWarningColor = undefined;
+	if ( alertLevel === 'exceeded' ) {
+		storageWarningColor = 'alert-red' as const;
+	} else if ( alertLevel === 'warning' ) {
+		storageWarningColor = 'alert-yellow' as const;
+	}
+
+	const isSharedQuota = isStagingSite( site ) || hasStagingSite( site );
+
+	return (
+		<VStack spacing={ 2 }>
+			<Stat
+				density="high"
+				strapline={ __( 'Storage' ) }
+				metric={ formatStorage( mediaStorage.storage_used_bytes, locale ) }
+				description={ formatStorage( mediaStorage.max_storage_bytes, locale ) }
+				progressValue={ progressBarValue }
+				progressColor={ storageWarningColor }
+				progressLabel={ `${ storageUsagePercent }%` }
+			/>
+			{ isSharedQuota && (
+				<Text variant="muted" lineHeight="16px" size={ 12 }>
+					{ sprintf(
+						// translators: %s is the total storage quota (e.g., "53 GB")
+						__( 'Production and staging share a total storage quota of %s.' ),
+						formatStorage( getSharedStorageTotal( mediaStorage ), locale )
+					) }
+				</Text>
+			) }
+			{ alertLevel !== 'none' && (
+				<>
+					<Button variant="link" onClick={ () => setIsModalOpen( true ) }>
+						{ __( 'Add more storage' ) }
+					</Button>
+					<AddStorageModal
+						site={ site }
+						isOpen={ isModalOpen }
+						onClose={ () => setIsModalOpen( false ) }
+					/>
+				</>
+			) }
+		</VStack>
+	);
+}
+
+export default function SiteStorageStat( { site }: { site: Site } ) {
+	return (
+		<ErrorBoundary
+			key={ site.ID }
+			fallback={ <StorageStatUnavailable /> }
+			sentryTags={ { feature: 'site-storage-stat' } }
+		>
+			<SiteStorageStatInner site={ site } />
+		</ErrorBoundary>
+	);
+}

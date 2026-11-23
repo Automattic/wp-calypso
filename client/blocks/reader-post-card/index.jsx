@@ -17,7 +17,6 @@ import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-exp
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
 import PostByline from './byline';
-import ConversationPost from './conversation-post';
 import { getFreshlyPressedOn } from './freshly-pressed-badge';
 import GalleryPost from './gallery';
 import PostPhoto from './photo';
@@ -95,11 +94,6 @@ class ReaderPostCard extends Component {
 			return;
 		}
 
-		// ignore clicks on comments
-		if ( event.target.closest( '.conversations__comment-list' ) ) {
-			return;
-		}
-
 		// ignore clicks on inline comments
 		if ( event.target.closest( '.comments__comment-list' ) ) {
 			return;
@@ -148,10 +142,8 @@ class ReaderPostCard extends Component {
 		const isGalleryPost = !! ( post.display_type & DisplayTypes.GALLERY ) && ! compact;
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
-		const isConversations = currentRoute.startsWith( '/reader/conversations' );
 		const isDiscoverPage = currentRoute.startsWith( '/discover' );
 
-		const shouldShowPostCardComments = ! isConversations;
 		const showSuggestedFollows = isDiscoverPage;
 		const freshlyPressedOn = getFreshlyPressedOn( this.props.streamKey, post );
 
@@ -199,17 +191,7 @@ class ReaderPostCard extends Component {
 
 		// Set up post card
 		let readerPostCard;
-		if ( isConversations ) {
-			readerPostCard = (
-				<ConversationPost
-					post={ post }
-					title={ title }
-					postByline={ postByline }
-					commentIds={ postKey?.comments ?? [] }
-					onClick={ this.handleCardClick }
-				/>
-			);
-		} else if ( compact ) {
+		if ( compact ) {
 			readerPostCard = (
 				<CompactPostCard
 					post={ post }
@@ -277,14 +259,12 @@ class ReaderPostCard extends Component {
 						author={ feed?.blog_owner }
 					/>
 				) }
-				{ shouldShowPostCardComments && (
-					<PostCardComments
-						post={ post }
-						handleClick={ this.props.handleClick }
-						fixedHeaderHeight={ this.props.fixedHeaderHeight }
-						streamKey={ this.props.streamKey }
-					/>
-				) }
+				<PostCardComments
+					post={ post }
+					handleClick={ this.props.handleClick }
+					fixedHeaderHeight={ this.props.fixedHeaderHeight }
+					streamKey={ this.props.streamKey }
+				/>
 			</Card>
 		);
 	}

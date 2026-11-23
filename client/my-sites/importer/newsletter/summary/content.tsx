@@ -1,5 +1,5 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { verse, page, file, postFeaturedImage } from '@wordpress/icons';
+import { verse, page, folder, postFeaturedImage } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import {
 	ContentStepContent,
@@ -41,7 +41,7 @@ export default function ContentSummary( { status, stepContent }: ContentSummaryP
 				{ posts > 0 && <SummaryStat count={ posts } icon={ verse } label={ __( 'Posts' ) } /> }
 				{ pages > 0 && <SummaryStat count={ pages } icon={ page } label={ __( 'Pages' ) } /> }
 				{ attachments > 0 && (
-					<SummaryStat count={ attachments } icon={ file } label={ __( 'Media items' ) } />
+					<SummaryStat count={ attachments } icon={ folder } label={ __( 'Media items' ) } />
 				) }
 			</div>
 		);

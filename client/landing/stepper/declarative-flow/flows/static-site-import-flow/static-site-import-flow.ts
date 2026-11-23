@@ -192,6 +192,17 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 					if ( providedDependencies.action === 'preview_failed' ) {
 						return navigate( STEPS.UNIFIED_PLANS.slug );
 					}
+					const importListPath = siteSetupImportListPath( {
+						siteId,
+						siteSlug,
+						from,
+						origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+						backToFlow: `/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+					} );
+					// The customer would rather pick one of the content importers for this site.
+					if ( providedDependencies.action === 'choose_importer' ) {
+						return exitFlow( importListPath );
+					}
 					if ( providedDependencies.action === 'unavailable' ) {
 						if ( ! hasSite ) {
 							return navigate( STEPS.UNIFIED_PLANS.slug );
@@ -199,15 +210,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						if ( isPlatformImportable( platform ) && from ) {
 							return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
 						}
-						return exitFlow(
-							siteSetupImportListPath( {
-								siteId,
-								siteSlug,
-								from,
-								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-								backToFlow: `/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-							} )
-						);
+						return exitFlow( importListPath );
 					}
 
 					const { importSessionId, previewSiteSlug } = providedDependencies;

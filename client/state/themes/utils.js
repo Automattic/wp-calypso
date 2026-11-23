@@ -4,7 +4,6 @@ import { DEFAULT_THEME_QUERY } from './constants';
 /**
  * Constants
  */
-const REGEXP_SERIALIZED_QUERY = /^(?:(\d+):)?(.*)$/;
 // Used for client-side filtering of results from Jetpack sites. Note that Jetpack sites
 // only return the 'feature' taxonomy (in the guise of an array called `tags` which
 // we normalize to taxonomies.theme_feature to be consistent with results from WPCOM.)
@@ -152,27 +151,6 @@ export function getSerializedThemesQuery( query = {}, siteId ) {
 	}
 
 	return serializedQuery;
-}
-
-/**
- * Returns an object with details related to the specified serialized query.
- * The object will include siteId and/or query object, if can be parsed.
- * @param  {string} serializedQuery Serialized themes query
- * @returns {Object}                 Deserialized themes query details
- */
-export function getDeserializedThemesQueryDetails( serializedQuery ) {
-	let siteId;
-	let query;
-
-	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
-	if ( matches ) {
-		siteId = Number( matches[ 1 ] ) || undefined;
-		try {
-			query = JSON.parse( matches[ 2 ] );
-		} catch ( error ) {}
-	}
-
-	return { siteId, query };
 }
 
 /**

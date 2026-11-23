@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import validUrl from 'valid-url';
 import { formatSlugToURL } from 'calypso/blocks/importer/util';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
@@ -79,12 +80,7 @@ import {
 	XMLRPC_ERROR,
 } from './connection-notice-types';
 import { getConnectorBranding } from './connector-branding-config';
-import {
-	JPC_A4A_PATH,
-	JPC_JETPACK_MANAGE_PATH,
-	JPC_PATH_PLANS,
-	REMOTE_PATH_AUTH,
-} from './constants';
+import { JPC_A4A_PATH, JPC_JETPACK_MANAGE_PATH, JPC_PATH_PLANS } from './constants';
 import Disclaimer from './disclaimer';
 import { isStandardEntryPoint, isUnifiedFlow } from './entry-points';
 import { getConnectorFeatureCards, getSecondaryAdminFeatureCards } from './feature-cards';
@@ -96,13 +92,14 @@ import {
 	clearPlan,
 	isCalypsoStartedConnection,
 	isSsoApproved,
+	persistSession,
 	retrieveMobileRedirect,
 	retrievePlan,
 	retrieveSource,
 	clearSource,
 } from './persistence-utils';
 import AuthorizationScreenReaderIndicator from './screen-reader-indicator';
-import { authQueryPropTypes, getRoleFromScope } from './utils';
+import { authQueryPropTypes, getRetryAuthUrl, getRoleFromScope } from './utils';
 import wooDnaConfig from './woo-dna-config';
 import WooInstallExtSuccessNotice from './woo-install-ext-success-notice';
 import { WooLoader } from './woo-loader';
@@ -157,14 +154,8 @@ export class JetpackAuthorize extends Component {
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
 
-		const { from, clientId, closeWindowAfterLogin } = this.props.authQuery;
-		const tracksProperties = {
-			from,
-			is_mobile_app_flow: isMobileAppFlow,
-			site: clientId,
-			is_secondary_connection: this.isSecondaryConnection(),
-			is_admin_connection: this.isAdminConnection(),
-		};
+		const { closeWindowAfterLogin } = this.props.authQuery;
+		const tracksProperties = { ...this.getTracksProperties(), is_mobile_app_flow: isMobileAppFlow };
 
 		if ( closeWindowAfterLogin && typeof window !== 'undefined' ) {
 			// Certain connection flows may complete the login step within a popup window.
@@ -229,7 +220,7 @@ export class JetpackAuthorize extends Component {
 			// as controlled by MAX_AUTH_ATTEMPTS.
 			const attempts = this.props.authAttempts || 0;
 			this.retryingAuth = true;
-			return retryAuth( site, attempts + 1, nextProps.authQuery.from, redirectAfterAuth );
+			return retryAuth( site, attempts + 1, this.getRetryArgs( nextProps.authQuery ) );
 		}
 	}
 
@@ -376,6 +367,9 @@ export class JetpackAuthorize extends Component {
 
 	redirectToXmlRpcErrorFallbackUrl() {
 		const { state, redirectUri } = this.props.authQuery;
+		if ( ! validUrl.isWebUri( redirectUri ) ) {
+			return;
+		}
 		const code = this.props.authorizationData.authorizationCode;
 		const url = addQueryArgs( { code, state }, redirectUri );
 		debug( 'xmlrpc fallback to', url );
@@ -602,14 +596,36 @@ export class JetpackAuthorize extends Component {
 		this.props.redirectToLogout( window.location.href );
 	};
 
+	getTracksProperties() {
+		const { from, clientId, plugins } = this.props.authQuery;
+		return {
+			from,
+			site: clientId,
+			plugins: plugins?.join( ',' ) || undefined,
+			is_secondary_connection: this.isSecondaryConnection(),
+			is_admin_connection: this.isAdminConnection(),
+		};
+	}
+
+	getRetryArgs( authQuery = this.props.authQuery ) {
+		return {
+			from: authQuery.from,
+			redirectAfterAuth: authQuery.redirectAfterAuth,
+			skipPricing: new URLSearchParams( window.location.search ).get( 'skip_pricing' ),
+		};
+	}
+
 	handleResolve = () => {
-		const { site, recordTracksEvent } = this.props;
+		const { recordTracksEvent } = this.props;
+		const { site } = this.props.authQuery;
 		this.retryingAuth = false;
 		if ( this.props.hasExpiredSecretError ) {
 			// In this case, we need to re-issue the secret.
 			// We do this by redirecting to Jetpack client, which will automatically redirect back here.
 			recordTracksEvent( 'calypso_jpc_resolve_expired_secret_error_click' );
-			this.externalRedirectOnce( site + REMOTE_PATH_AUTH );
+			// The user already approved, so authorize as soon as the site sends them back.
+			persistSession( site );
+			this.externalRedirectOnce( getRetryAuthUrl( site, this.getRetryArgs() ) );
 			return;
 		}
 		// Otherwise, we assume the site is having trouble receive XMLRPC requests.
@@ -647,10 +663,7 @@ export class JetpackAuthorize extends Component {
 			return this.redirect();
 		}
 
-		recordTracksEvent( 'calypso_jpc_approve_click', {
-			is_secondary_connection: this.isSecondaryConnection(),
-			is_admin_connection: this.isAdminConnection(),
-		} );
+		recordTracksEvent( 'calypso_jpc_approve_click', this.getTracksProperties() );
 
 		if ( 'woocommerce-core-profiler' === from ) {
 			recordTracksEvent( 'calypso_jpc_wc_coreprofiler_connect', { use_account: true } );

@@ -1,7 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { copySmall, check } from '@wordpress/icons';
+import { copy, check } from '@wordpress/icons';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import './style.scss';
 
@@ -34,7 +34,7 @@ export default function CopyActionButton( { text, messageId }: Props ) {
 	return (
 		<Button
 			className="agents-manager-copy-action-button"
-			icon={ isCopied ? check : copySmall }
+			icon={ isCopied ? check : copy }
 			label={ isCopied ? __( 'Copied', __i18n_text_domain__ ) : __( 'Copy', __i18n_text_domain__ ) }
 			onClick={ handleClick }
 			size="compact"

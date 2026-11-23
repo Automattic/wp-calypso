@@ -67,7 +67,7 @@ describe( 'exact carriers from the HackerOne reports', () => {
 		expect( value ).toBeNull();
 		// Replay the runtime's builder on whatever is left.
 		const built = `${ String( value ).replace( /^(.*?)\/?(\?.*|#|$)/, '$1/' ) }embed/`;
-		expect( built.startsWith( 'javascript:' ) ).toBe( false );
+		expect( built ).not.toMatch( /^(javascript|data|vbscript):/i );
 	} );
 
 	// READ-753 / report 4032482

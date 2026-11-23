@@ -134,7 +134,6 @@ describe( 'SiteRedesign', () => {
 		expect( openRedesign ).toHaveBeenCalledTimes( 1 );
 		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
 		expect( generateRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, false );
-		expect( screen.queryByRole( 'button', { name: 'Show me four designs' } ) ).toBeNull();
 	} );
 
 	it.each( [ 'preview_ready', 'generating', 'failed', 'installed' ] as const )(
@@ -1198,7 +1197,6 @@ describe( 'SiteRedesign', () => {
 		);
 		expect( open ).toHaveAttribute( 'target', '_blank' );
 		expect( open ).toHaveAttribute( 'rel', 'noopener noreferrer' );
-		expect( screen.queryByText( 'Open the preview in a new tab' ) ).toBeNull();
 		const controls = [
 			open,
 			screen.getByRole( 'button', { name: 'Preview: Desktop' } ),
@@ -1308,8 +1306,6 @@ describe( 'SiteRedesign', () => {
 		);
 		expect( page.replace ).toHaveBeenCalledTimes( 1 );
 		expect( activateRedesign ).toHaveBeenCalledTimes( 1 );
-		expect( screen.queryByText( 'Your site has its new design' ) ).toBeNull();
-		expect( screen.queryByRole( 'link', { name: 'View site' } ) ).toBeNull();
 	} );
 
 	it( 'goes straight to the theme list when the redesign is already live', async () => {

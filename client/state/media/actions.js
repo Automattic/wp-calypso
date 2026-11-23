@@ -1,9 +1,7 @@
 import {
-	MEDIA_DELETE,
 	MEDIA_ITEM_CREATE,
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
-	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
@@ -117,21 +115,6 @@ export function failMediaItemRequest( siteId, mediaId, error = null ) {
 }
 
 /**
- * Returns an action object used in signalling that a request for media item(s)
- * has failed.
- * @param  {number} siteId  Site ID
- * @param  {number} mediaId Media ID
- * @returns {Object}         Action object
- */
-export function successMediaItemRequest( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_REQUEST_SUCCESS,
-		siteId,
-		mediaId,
-	};
-}
-
-/**
  * Returns an action object used in signalling that a media item for the site
  * are being created.
  * @param  {Object}  site           Site object
@@ -143,25 +126,6 @@ export function createMediaItem( site, transientMedia ) {
 		type: MEDIA_ITEM_CREATE,
 		site,
 		transientMedia,
-	};
-}
-
-/**
- * Returns an action object used in signalling that media item(s) for the site
- * are to be deleted.
- *
- * TODO: When network layer behavior is attached to this action type, remember
- * to ignore media IDs for "transient" items (upload in progress) by validating
- * numeric ID.
- * @param  {number}         siteId   Site ID
- * @param  {(Array|number)} mediaIds ID(s) of media to be deleted
- * @returns {Object}                  Action object
- */
-export function deleteMedia( siteId, mediaIds ) {
-	return {
-		type: MEDIA_DELETE,
-		mediaIds: Array.isArray( mediaIds ) ? mediaIds : [ mediaIds ],
-		siteId,
 	};
 }
 

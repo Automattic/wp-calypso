@@ -777,7 +777,11 @@ export default function CheckoutMainContent( {
 						>
 							<CheckoutSummaryTitleLink
 								className="checkout__summary-button"
-								onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }
+								onClick={ () => {
+									const isOpen = ! isSummaryVisible;
+									recordTracksEvent( 'calypso_checkout_summary_toggle', { is_open: isOpen } );
+									setIsSummaryVisible( isOpen );
+								} }
 							>
 								<CheckoutSummaryTitleContent className="checkout__summary-title">
 									<CheckoutSummaryTitle>

@@ -21,6 +21,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { navigate } from 'calypso/lib/navigate';
 import { login, onboardingUrl } from 'calypso/lib/paths';
 import { addQueryArgs, getSiteFragment, sectionify, trailingslashit } from 'calypso/lib/route';
+import { isStudioCheckoutPath } from 'calypso/lib/studio/checkout-urls';
 import { withoutHttp } from 'calypso/lib/url';
 import { isPathAllowedForDIFMPreSubmitContentCollection } from 'calypso/my-sites/difm-route-utils';
 import {
@@ -556,6 +557,7 @@ export function noSite( context, next ) {
 
 	const isUnifiedCheckoutFlow = context.pathname.includes( '/checkout/unified' );
 	const isWpcomCheckoutFlow = context.pathname.includes( '/checkout/wpcom' );
+	const isStudioCheckoutFlow = isStudioCheckoutPath( context.pathname );
 	const isDomainsManage = context.pathname === '/domains/manage/';
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 	const isRenewal = context.pathname.includes( '/renew/' );
@@ -567,6 +569,7 @@ export function noSite( context, next ) {
 		! isMarketplaceSitelessCheckoutFlow &&
 		! isUnifiedCheckoutFlow &&
 		! isWpcomCheckoutFlow &&
+		! isStudioCheckoutFlow &&
 		! isGiftCheckoutFlow &&
 		! isDomainsManage &&
 		! is100YearCheckoutFlow &&

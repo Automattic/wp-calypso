@@ -39,10 +39,6 @@ jest.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
 	canAccessWpcomApis: jest.fn( () => true ),
 } ) );
 
-jest.mock( 'calypso/lib/presales-chat', () => ( {
-	usePresalesChat: () => {},
-} ) );
-
 jest.mock( 'calypso/lib/analytics/ad-tracking/record-migration-events' );
 
 jest.mock( 'calypso/data/site-migration/landing/use-migration-cancellation', () => ( {
@@ -328,7 +324,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		expect( screen.queryByText( /How it works/ ) ).toBeInTheDocument();
 	} );
 
-	it( 'should render <DIYOption /> component', () => {
+	it( 'should render the "I\'ll do it myself" option', () => {
 		render( { navigation } );
 
 		expect( screen.queryByText( /I'll do it myself/ ) ).toBeInTheDocument();

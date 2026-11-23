@@ -6,6 +6,7 @@ import {
 	setLocaleMiddleware,
 } from 'calypso/controller';
 import { recordSiftScienceUser } from 'calypso/lib/siftscience';
+import { STUDENT_CHECKOUT_PATH } from 'calypso/lib/signup/student-flow-redirect';
 import { loggedInSiteSelection, noSite, siteSelection } from 'calypso/my-sites/controller';
 import { getProfessionalEmailCheckoutUpsellPath } from 'calypso/my-sites/email/paths';
 import {
@@ -16,6 +17,7 @@ import {
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
 	checkoutWpcomSiteless,
+	checkoutStudioSiteless,
 	checkoutA4ASiteless,
 	checkoutA4AAgencySiteless,
 	checkoutA4AAgencySite,
@@ -39,6 +41,7 @@ import {
 	transferDomainToAnyUser,
 	checkoutFailedPurchases,
 	refreshUserSession,
+	studentCheckoutRedirect,
 	studioCheckoutReturn,
 } from './controller';
 
@@ -291,6 +294,17 @@ export default function () {
 		clientRender
 	);
 
+	// The Studio-branded entry to the same siteless checkout, logged-in only like /checkout/wpcom.
+	page(
+		'/checkout/studio/:productSlug',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutStudioSiteless,
+		makeLayout,
+		clientRender
+	);
+
 	// The no-site post-checkout route is for purchases not tied to a site so do
 	// not include the `siteSelection` middleware.
 	page( '/checkout/gift/thank-you/:site', giftThankYou, makeLayout, clientRender );
@@ -372,6 +386,9 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// Also ahead of `/checkout/:domainOrProduct`, which would read `student` as a product slug.
+	page( STUDENT_CHECKOUT_PATH, studentCheckoutRedirect );
 
 	page( '/checkout/no-site/:lang?', noSite, checkout, makeLayout, clientRender );
 

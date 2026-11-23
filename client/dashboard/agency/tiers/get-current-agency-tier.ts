@@ -9,6 +9,10 @@ export function isProPartnerOrHigher( agencyTier?: AgencyTierType ) {
 	);
 }
 
+export function isVipProPartnerOrHigher( agencyTier?: AgencyTierType ) {
+	return agencyTier === 'vip-pro-agency-partner' || agencyTier === 'premier-partner';
+}
+
 export default function getCurrentAgencyTier( agencyTier?: AgencyTierType ) {
 	return ALL_TIERS.find( ( tier ) => ( agencyTier ? tier.id === agencyTier : tier.level === 0 ) );
 }

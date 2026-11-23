@@ -4,9 +4,10 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import { setSessionLocale } from '../../../../../../app/locale/session-locale';
 import { render } from '../../../../../../test-utils';
 import SolutionsCardsUpsellStep from '../solutions-cards-upsell-step';
-import type { Purchase } from '@automattic/api-core';
+import type { Purchase, User } from '@automattic/api-core';
 
 const mockSetNewMessagingChat = vi.fn();
 const mockSetNavigateToRoute = vi.fn();
@@ -49,6 +50,7 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
 		mockCanConnectToZendesk = true;
+		setSessionLocale( null );
 	} );
 
 	test( 'speak-with-support calls setNewMessagingChat when Zendesk eligible', async () => {
@@ -99,6 +101,12 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			'personal-bundle',
 			365,
 			'change-plan,find-guides,ask-ai-assistant,speak-with-support',
+		],
+		[
+			'complicatedDashboard',
+			'business-bundle',
+			365,
+			'book-expert-session,built-by,ask-ai-assistant,speak-with-support',
 		],
 	] )(
 		'fires view event on mount with visible card IDs %s %s',
@@ -299,4 +307,139 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			await screen.findByRole( 'link', { name: /Switch to a different plan/ } )
 		).toHaveAttribute( 'href', 'https://wordpress.com/plans/example.wordpress.com' );
 	} );
+
+	test( 'shows the 1:1 session card after the free month card', async () => {
+		const recordEvent = vi.fn();
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooMuchTimeToLearn"
+				purchase={ { ...purchase, bill_period_days: 31 } as Purchase }
+				closeDialog={ vi.fn() }
+				onDeclineUpsell={ vi.fn() }
+				recordEvent={ recordEvent }
+				showFreeMonthOffer
+			/>
+		);
+
+		const list = await screen.findByRole( 'list', {
+			name: 'Before canceling, you can consider these options:',
+		} );
+		const items = within( list ).getAllByRole( 'listitem' );
+		expect(
+			within( items[ 1 ] ).getByRole( 'link', { name: /Book a 1:1 session/ } )
+		).toBeVisible();
+		expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_cards_view', {
+			solution_ids:
+				'free-month-offer,book-expert-session,built-by,ask-ai-assistant,speak-with-support',
+			cancellation_reason: 'tooMuchTimeToLearn',
+		} );
+	} );
+
+	test( 'the 1:1 session card opens the booking page in a new tab and records the click', async () => {
+		const user = userEvent.setup();
+		const recordEvent = vi.fn();
+		const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
+
+		try {
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason="inadequateOnboarding"
+					purchase={ purchase }
+					closeDialog={ vi.fn() }
+					onDeclineUpsell={ vi.fn() }
+					recordEvent={ recordEvent }
+				/>
+			);
+
+			const link = await screen.findByRole( 'link', { name: /^Book a 1:1 session/ } );
+			expect(
+				within( link ).getByText( 'Get hands-on help from a WordPress.com expert.' )
+			).toBeVisible();
+			expect( link ).toHaveAttribute(
+				'href',
+				'https://savvycal.com/CustomerExperience/WordPress-Onboarding'
+			);
+
+			const windowClick = vi.fn( ( event: MouseEvent ) => event.defaultPrevented );
+			window.addEventListener( 'click', windowClick, { once: true } );
+			await user.click( link );
+
+			expect( open ).toHaveBeenCalledWith(
+				'https://savvycal.com/CustomerExperience/WordPress-Onboarding',
+				'_blank'
+			);
+			// This tab stays on the cancel flow.
+			expect( windowClick ).toHaveReturnedWith( true );
+			expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
+				solution_id: 'book-expert-session',
+				cancellation_reason: 'inadequateOnboarding',
+			} );
+		} finally {
+			open.mockRestore();
+		}
+	} );
+
+	test.each( [
+		{ label: 'English', language: 'en', shown: true },
+		{ label: 'British English', language: 'en-gb', shown: true },
+		{ label: 'Spanish', language: 'es', shown: false },
+		// Catalan is marked incompletely translated in languages-meta.json, so
+		// "Display interface in English" shows the Dashboard in English.
+		{
+			label: 'Catalan with "Display interface in English"',
+			language: 'ca',
+			fallback: true,
+			shown: true,
+		},
+		{ label: 'Catalan', language: 'ca', shown: false },
+		{
+			label: 'English account, Spanish set in the language switcher',
+			language: 'en',
+			session: 'es',
+			shown: false,
+		},
+		{
+			label: 'Spanish account, English set in the language switcher',
+			language: 'es',
+			session: 'en',
+			shown: true,
+		},
+	] )(
+		'shows the 1:1 session card only in an English Dashboard: $label',
+		( { language, fallback = false, session, shown } ) => {
+			const recordEvent = vi.fn();
+			if ( session ) {
+				setSessionLocale( session );
+			}
+
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason="difficultEditor"
+					purchase={ purchase }
+					closeDialog={ vi.fn() }
+					onDeclineUpsell={ vi.fn() }
+					recordEvent={ recordEvent }
+				/>,
+				{
+					user: {
+						ID: 1,
+						username: 'testuser',
+						language,
+						use_fallback_for_incomplete_languages: fallback,
+					} as User,
+				}
+			);
+
+			const otherCards = 'built-by,ask-ai-assistant,speak-with-support';
+			expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_cards_view', {
+				solution_ids: shown ? `book-expert-session,${ otherCards }` : otherCards,
+				cancellation_reason: 'difficultEditor',
+			} );
+			expect( screen.getByRole( 'link', { name: /Let us build for you/ } ) ).toBeVisible();
+			expect( screen.queryAllByRole( 'link', { name: /Book a 1:1 session/ } ) ).toHaveLength(
+				shown ? 1 : 0
+			);
+		}
+	);
 } );

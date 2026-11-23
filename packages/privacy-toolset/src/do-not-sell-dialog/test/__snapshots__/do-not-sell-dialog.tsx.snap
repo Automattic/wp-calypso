@@ -99,6 +99,39 @@ exports[`DoNotSellDialog > renders correctly 1`] = `
               class="components-form-toggle__track"
             />
             <span
+              class="components-form-toggle__labels"
+            >
+              <svg
+                aria-hidden="true"
+                class="components-form-toggle__label components-form-toggle__on-label"
+                focusable="false"
+                viewBox="0 0 8 8"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4 1.5v5"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <svg
+                aria-hidden="true"
+                class="components-form-toggle__label components-form-toggle__off-label"
+                focusable="false"
+                viewBox="0 0 8 8"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="4"
+                  cy="4"
+                  fill="none"
+                  r="2.5"
+                  stroke="currentColor"
+                />
+              </svg>
+            </span>
+            <span
               class="components-form-toggle__thumb"
             />
           </span>

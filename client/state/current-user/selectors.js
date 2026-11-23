@@ -141,15 +141,6 @@ export function currentUserHasFlag( state, flagName ) {
 export const isCurrentUserEmailVerified = createCurrentUserSelector( 'email_verified', false );
 
 /**
- * Returns the Lasagna JWT for the current user.
- * @param  {Object}  state  Global state tree
- * @returns {?string}       Lasagna JWT
- */
-export function getCurrentUserLasagnaJwt( state ) {
-	return state.currentUser.lasagnaJwt;
-}
-
-/**
  * Returns true if the user was bootstrapped (i.e. user data was fetched by the server
  * and hydrated using window.currentUser)
  * @returns {boolean} Whether the current user is bootstrapped

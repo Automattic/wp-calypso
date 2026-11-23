@@ -1,7 +1,6 @@
 import '../style.scss';
 
 import {
-	isAutomatticianQuery,
 	siteAbilitiesQuery,
 	userSettingsQuery,
 	userSettingsMutation,
@@ -116,25 +115,20 @@ export default function SiteAIToolsWrite() {
 	const groups = groupToolsByGroup( filteredTools, groupDescriptors ) as ToolGroup[];
 
 	// Site-published abilities on this page, for the page-level toggle and its
-	// state. Staff-gated like the server-side remote: path (AI-1328) and cached
-	// with the section's own query.
-	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
+	// state, cached with the section's own query.
 	const localeSlug = useLocale();
 	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
 	const savedRemoteGroups = useMemo(
-		() => ( isAutomattician ? getSiteRemoteGroups( userSettings || {}, site.ID ) : {} ),
-		[ isAutomattician, userSettings, site.ID ]
+		() => getSiteRemoteGroups( userSettings || {}, site.ID ),
+		[ userSettings, site.ID ]
 	);
 	const { data: remoteAbilities } = useQuery( {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
-		enabled: !! site.jetpack && !! isAutomattician,
+		enabled: !! site.jetpack,
 	} );
 	const remoteNamespaces: ReturnType< typeof collectNamespaces > = useMemo(
-		() =>
-			isAutomattician
-				? collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY )
-				: new Map(),
-		[ isAutomattician, remoteAbilities, savedRemoteGroups ]
+		() => collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY ),
+		[ remoteAbilities, savedRemoteGroups ]
 	);
 	const remoteGroupKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => group.keys );
 	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap(
@@ -142,10 +136,11 @@ export default function SiteAIToolsWrite() {
 	);
 
 	// Site-published abilities with no saved choice follow the user's MCP access:
-	// on when MCP is on for this site and any tool of this category is enabled.
+	// on when MCP is on for this site and every tool of this category is enabled.
 	const remoteDefaultEnabled =
 		getSiteLevelEnabled( userSettings || {}, site.ID ) &&
-		allTools.some( ( [ , tool ] ) => tool.enabled );
+		allTools.length > 0 &&
+		allTools.every( ( [ , tool ] ) => tool.enabled );
 
 	const pageAllEnabled =
 		allTools.length > 0 &&

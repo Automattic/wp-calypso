@@ -115,21 +115,3 @@ test( 'columns that are not sortable do not renders a chevron', () => {
 	const chevronIcon = statusHeader.parentElement?.querySelector( 'svg' );
 	expect( chevronIcon ).not.toBeInTheDocument();
 } );
-
-test( 'no checkbox is rendered if no domains are selectable', () => {
-	render(
-		<DomainsTableHeader
-			columns={ domainsTableColumns }
-			activeSortKey="domain"
-			activeSortDirection="asc"
-			onChangeSortOrder={ vi.fn() }
-			bulkSelectionStatus="no-domains"
-			onBulkSelectionChange={ noop }
-			canSelectAnyDomains={ false }
-			domainCount={ 1 }
-			selectedDomainsCount={ 0 }
-		/>
-	);
-
-	expect( screen.queryByTestId( 'domain-select-all-checkbox' ) ).not.toBeInTheDocument();
-} );

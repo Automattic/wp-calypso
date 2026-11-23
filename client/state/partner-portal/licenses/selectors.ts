@@ -53,15 +53,3 @@ export function getAssignedPlanAndProductIDsForSite(
 	);
 	return planAndProductIDs;
 }
-
-/**
- * Returns if the site has purchased standalone product licenses (not bundles) for the given site ID.
- * @param state
- * @param siteId
- * @returns {boolean} True if the site has standalone products only.
- */
-export function hasPurchasedProductsOnly( state: AppState, siteId: number ): Array< number > {
-	const currentSite = state?.sites?.items?.[ siteId ];
-
-	return currentSite?.products?.length && currentSite?.plan?.is_free;
-}

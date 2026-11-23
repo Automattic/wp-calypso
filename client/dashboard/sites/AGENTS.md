@@ -2,7 +2,7 @@
 
 ## Single-notice invariant
 
-**At most one _on-load_ notice (banner) is visible at the top of any `/sites/*` page.** All on-load notices — banners whose eligibility is settled when the page mounts — MUST be rendered through `<SitesNoticeArbiter>` (`client/dashboard/sites/notice-arbiter.ts`) inside the `notices` prop of `<PageLayout>`. Never render a banner as a content child of `<PageLayout>`.
+**At most one _on-load_ notice (banner) is visible at the top of any `/sites/*` page.** All on-load notices — banners whose eligibility is settled when the page mounts — MUST be rendered through `<SitesNoticeArbiter>` (`client/dashboard/sites/components/notice-arbiter/index.ts`) inside the `notices` prop of `<PageLayout>`. Never render a banner as a content child of `<PageLayout>`.
 
 **Action-feedback notices are a different category and MUST NOT be arbiter children.** A notice that appears in response to a user action mid-session (progress of a job the user just started, an error caused by their input) may appear, disappear, and reappear — that breaks the arbiter's on-mount latch (its disappearance would summon a shared engagement banner). Render these directly in the `notices` prop as a sibling of the arbiter, with the visibility condition at the call site. They may stack with the arbiter's banner; if the user causes several at once, showing several is fine. Place them above the arbiter.
 
@@ -47,7 +47,7 @@
 
 ### Reference implementations
 
-- `client/dashboard/sites/overview/index.tsx` — `InaccessibleJetpackNotice` vs `StorageWarningBanner`
+- `client/dashboard/app-dotcom/routes/sites/site/index.tsx` — `InaccessibleJetpackNotice` vs `StorageWarningBanner`
 - `client/dashboard/sites/domains/index.tsx` — `PrimaryDomainSelectorNotice` vs the redirect warning, with eligibility settled in the `siteDomainsRoute` loader; the bulk-update progress notice is action feedback rendered beside the arbiter
 - `client/dashboard/sites/logs/index.tsx` — Jetpack-error UTC notice vs `TimeMismatchNotice`; the auto-refresh warning is action feedback rendered beside the arbiter
 - `client/dashboard/sites/backups/index.tsx` — `BackupNotices` (backup progress/result) is action feedback rendered beside the arbiter

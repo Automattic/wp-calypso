@@ -20,7 +20,7 @@ jest.mock( '../internals/state-manager/store', () => ( { useFlowState: jest.fn()
 describe( 'Site Setup Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn(), pathname: '' },
+			value: { assign: jest.fn(), replace: jest.fn(), pathname: '' },
 		} );
 	} );
 
@@ -49,9 +49,7 @@ describe( 'Site Setup Flow', () => {
 				jest
 					.mocked( config.isEnabled )
 					.mockImplementation(
-						( flag ) =>
-							flag === 'migration/reprint-flow' ||
-							( staticImport && flag === 'migration/non-wordpress-source' )
+						( flag ) => staticImport && flag === 'migration/non-wordpress-source'
 					);
 				const ref = fromWpAdmin ? 'wp-admin-importers-list' : 'new-site-popover';
 				jest.mocked( useFlowState ).mockReturnValue( {
@@ -64,7 +62,7 @@ describe( 'Site Setup Flow', () => {
 					ref,
 					sessionId: 'fallback-selection',
 					source: 'sites-dashboard',
-					flags: 'migration/reprint-flow',
+					flags: 'migration/non-wordpress-source',
 					manualPlatform: 'wordpress',
 				};
 				const stale = {
@@ -72,7 +70,6 @@ describe( 'Site Setup Flow', () => {
 					platform: 'unknown',
 					host: 'bluehost',
 					isWpcom: 'true',
-					ssh: 'true',
 					action: 'import',
 					how: 'difm',
 					start: 'true',
@@ -93,7 +90,7 @@ describe( 'Site Setup Flow', () => {
 			}
 		);
 
-		it( 'redirects the user to the migration offer when the origin param is set as site-migration-identify', async () => {
+		it( 'redirects the user to address entry when the origin param is set as site-migration-identify', async () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
 			runUseStepNavigationSubmit( {
@@ -106,33 +103,28 @@ describe( 'Site Setup Flow', () => {
 			} );
 
 			expect( window.location.assign ).toHaveBeenCalledWith(
-				'/setup/site-migration/site-migration-how-to-migrate?siteSlug=example.wordpress.com&siteId=123'
+				'/setup/site-migration/site-migration-identify?siteSlug=example.wordpress.com&siteId=123&manualPlatform=wordpress'
 			);
 		} );
 
-		it.each( [ false, true ] )(
-			'keeps the file importer without a migration origin (Reprint: %s)',
-			( enabled ) => {
-				jest.mocked( config.isEnabled ).mockReturnValue( enabled );
-				const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+		it( 'keeps the file importer without a migration origin', () => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 
-				runUseStepNavigationSubmit( {
-					currentStep: STEPS.IMPORT_LIST.slug,
-					dependencies: {
-						platform: 'wordpress',
-						url: 'importerWordpress',
-					},
-				} );
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.IMPORT_LIST.slug,
+				dependencies: {
+					platform: 'wordpress',
+					url: 'importerWordpress',
+				},
+			} );
 
-				expect( window.location.assign ).not.toHaveBeenCalledWith(
-					expect.stringContaining( '/setup/site-migration/' )
-				);
-				expect( getFlowLocation().path ).toBe( '/importerWordpress' );
-			}
-		);
+			expect( window.location.assign ).not.toHaveBeenCalledWith(
+				expect.stringContaining( '/setup/site-migration/' )
+			);
+			expect( getFlowLocation().path ).toBe( '/importerWordpress' );
+		} );
 
-		it( 'keeps other platforms on their importer with Reprint enabled', () => {
-			jest.mocked( config.isEnabled ).mockReturnValue( true );
+		it( 'keeps other platforms on their importer', () => {
 			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
 			runUseStepNavigationSubmit( {
 				currentURL: '/some-path?origin=site-migration-identify&siteSlug=example.wordpress.com',
@@ -191,6 +183,48 @@ describe( 'Site Setup Flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				expect.stringContaining( '/setup/some-flow/some-step' )
 			);
+		} );
+	} );
+
+	describe( 'when the Playground import finishes', () => {
+		const finishImport = (
+			search = 'siteSlug=example.wordpress.com&siteId=123&playground=abc'
+		) => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.IMPORTER_PLAYGROUND.slug,
+				currentURL: `/setup/site-setup/${ STEPS.IMPORTER_PLAYGROUND.slug }?${ search }`,
+				dependencies: { siteSlug: 'example.wordpress.com', siteId: 123 },
+			} );
+		};
+
+		// Going through exitFlow would replace the Sell intent the Commerce site was created with,
+		// and Back onto the importer would import the store again. The clean-up still runs, or the
+		// next run in this browser starts with this one's cart and destination.
+		it( 'replaces the page with the store and cleans up the run', () => {
+			finishImport( 'siteSlug=example.wordpress.com&siteId=123&playground=abc&intent=woocommerce' );
+
+			expect( window.location.replace ).toHaveBeenCalledWith( '/home/123' );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( clearSignupDestinationCookie ).toHaveBeenCalled();
+			expect( getFlowLocation().path ).not.toContain( 'processing' );
+		} );
+
+		// Without a site ID in the URL or the site loaded, the ID is 0.
+		it( 'falls back to the site slug for a store without a site ID', () => {
+			finishImport( 'siteSlug=example.wordpress.com&playground=abc&intent=woocommerce' );
+
+			expect( window.location.replace ).toHaveBeenCalledWith( '/home/example.wordpress.com' );
+		} );
+
+		it( 'exits the flow for any other Playground site', () => {
+			finishImport();
+
+			expect( window.location.replace ).not.toHaveBeenCalled();
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( clearSignupDestinationCookie ).toHaveBeenCalled();
+			expect( getFlowLocation().path ).toContain( 'processing' );
 		} );
 	} );
 

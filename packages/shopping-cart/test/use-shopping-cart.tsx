@@ -5,13 +5,16 @@ import {
 	fireEvent,
 	waitForElementToBeRemoved,
 } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
 import { vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { getEmptyResponseCart } from '../src/empty-carts';
-import { useShoppingCart } from '../src/index';
+import { useShoppingCart, ShoppingCartProvider } from '../src/index';
+import { noopManager } from '../src/managers';
 import { planOne, planTwo, renewalOne, renewalTwo, mainCartKey } from './utils/mock-cart-api';
 import { ProductList, MockProvider, ProductListWithoutHook } from './utils/mock-components';
 import { convertMsToSecs, verifyThatNever, verifyThatTextNeverAppears } from './utils/utils';
+import type { ShoppingCartManager } from '../src/types';
 
 const emptyResponseCart = getEmptyResponseCart();
 
@@ -863,6 +866,91 @@ describe( 'useShoppingCart', () => {
 			await waitFor( () => {
 				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
 			} );
+		} );
+	} );
+
+	describe( 'when the cart changes between render and subscribe', () => {
+		it( 'renders the changed cart', async () => {
+			const subscribers = new Set< () => void >();
+			let managerState = { ...noopManager.getState(), isLoading: false, isPendingUpdate: false };
+			const manager: ShoppingCartManager = {
+				...noopManager,
+				getState: () => managerState,
+				subscribe: ( callback ) => {
+					subscribers.add( callback );
+					return () => {
+						subscribers.delete( callback );
+					};
+				},
+				fetchInitialCart: () => {
+					managerState = {
+						...managerState,
+						responseCart: { ...emptyResponseCart, products: [ planOne ] },
+					};
+					subscribers.forEach( ( callback ) => callback() );
+					return Promise.resolve( managerState.responseCart );
+				},
+			};
+			const managerClient = {
+				forCartKey: () => manager,
+				getCartKeyForSiteSlug: vi.fn(),
+			};
+
+			render(
+				<ShoppingCartProvider
+					managerClient={ managerClient }
+					options={ { defaultCartKey: mainCartKey } }
+				>
+					<ProductList />
+				</ShoppingCartProvider>
+			);
+
+			await waitFor( () => {
+				expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			} );
+		} );
+	} );
+
+	describe( 'with managers that never notify', () => {
+		// Each manager holds an already-loaded cart, so only reading its state
+		// (not waiting for a notification) shows it.
+		const createLoadedManager = ( product: typeof planOne ): ShoppingCartManager => {
+			const managerState = {
+				...noopManager.getState(),
+				isLoading: false,
+				isPendingUpdate: false,
+				responseCart: { ...emptyResponseCart, products: [ product ] },
+			};
+			return { ...noopManager, getState: () => managerState };
+		};
+		const planOneCartKey = 1;
+		const planTwoCartKey = 2;
+		const managers = new Map( [
+			[ planOneCartKey, createLoadedManager( planOne ) ],
+			[ planTwoCartKey, createLoadedManager( planTwo ) ],
+		] );
+		const managerClient = {
+			forCartKey: ( cartKey: number ) => managers.get( cartKey ) ?? noopManager,
+			getCartKeyForSiteSlug: vi.fn(),
+		};
+		const CartWithKey = ( { cartKey }: { cartKey: number } ) => (
+			<ShoppingCartProvider managerClient={ managerClient } options={ { defaultCartKey: cartKey } }>
+				<ProductList />
+			</ShoppingCartProvider>
+		);
+
+		it( 'renders the new cart when the cart key changes', () => {
+			const { rerender } = render( <CartWithKey cartKey={ planOneCartKey } /> );
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+
+			rerender( <CartWithKey cartKey={ planTwoCartKey } /> );
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planTwo.product_name );
+		} );
+
+		it( 'renders on the server', () => {
+			expect( renderToString( <CartWithKey cartKey={ planOneCartKey } /> ) ).toContain(
+				planOne.product_name
+			);
 		} );
 	} );
 } );

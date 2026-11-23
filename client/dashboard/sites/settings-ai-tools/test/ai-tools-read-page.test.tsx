@@ -3,7 +3,6 @@
  */
 
 import {
-	isAutomatticianQuery,
 	queryClient,
 	siteAbilitiesQuery,
 	siteBySlugQuery,
@@ -61,10 +60,6 @@ function seed() {
 			sites: [ { blog_id: JETPACK_SITE.ID, site_level_enabled: true, abilities: {} } ],
 		},
 	} as unknown as UserSettings );
-	queryClient.setQueryData( isAutomatticianQuery().queryKey, {
-		number: 0,
-		teams: [ { slug: 'a8c' } ],
-	} );
 	queryClient.setQueryData( siteAbilitiesQuery( JETPACK_SITE.ID, 'en_US' ).queryKey, [
 		{
 			name: 'jetpack-forms/get-form',

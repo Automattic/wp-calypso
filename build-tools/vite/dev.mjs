@@ -84,6 +84,26 @@ export function enabledSections() {
 	);
 }
 
+// Characters `JSON.stringify` leaves as is that can end a line or a script elsewhere.
+const unsafeCharEscapes = {
+	'<': '\\u003C',
+	'>': '\\u003E',
+	'\u2028': '\\u2028',
+	'\u2029': '\\u2029',
+};
+
+/**
+ * A value as a JavaScript literal for generated code.
+ * @param {unknown} value
+ * @returns {string}
+ */
+function toCodeString( value ) {
+	return JSON.stringify( value ).replace(
+		/[<>\u2028\u2029]/g,
+		( char ) => unsafeCharEscapes[ char ]
+	);
+}
+
 /**
  * Like `build-tools/webpack/sections-loader.js` for the browser: each section loads with `import()`.
  * @param {Object[]} sections
@@ -98,9 +118,9 @@ function sectionsPlugin( sections ) {
 				return;
 			}
 			const list = sections.map( ( section ) =>
-				JSON.stringify( section ).replace(
+				toCodeString( section ).replace(
 					/}$/,
-					`, "load": () => import( ${ JSON.stringify( section.module ) } ) }`
+					`, "load": () => import( ${ toCodeString( section.module ) } ) }`
 				)
 			);
 			return { code: `export default [\n${ list.join( ',\n' ) }\n];`, map: null };

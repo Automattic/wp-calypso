@@ -1,4 +1,3 @@
-import { decodeEntities } from '@wordpress/html-entities';
 import { wpcom } from '../wpcom-fetcher';
 import type { UserLastDraft, UserLastDraftResponse } from './types';
 
@@ -21,6 +20,8 @@ export async function fetchUserLastDraft( userId: number ): Promise< UserLastDra
 	return {
 		id: post.ID,
 		siteId: post.site_ID,
-		title: decodeEntities( ( post.title ?? '' ).replace( /<[^>]*>/g, '' ) ).trim(),
+		title: (
+			new DOMParser().parseFromString( post.title ?? '', 'text/html' ).body.textContent ?? ''
+		).trim(),
 	};
 }

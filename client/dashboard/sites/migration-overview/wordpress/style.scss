@@ -5,7 +5,7 @@
 	--wp-components-color-foreground: var( --wp-admin-theme-color );
 	// Progress paints its indicator and track with these tokens; mix them from the
 	// foreground color, as ProgressBar did before.
-	--wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
+	--wpds-color-background-indicator-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
 	--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 }
 
@@ -202,4 +202,16 @@
 // The same for a domain in a notice's message, which comes as plain text.
 .wordpress-migration__message {
 	overflow-wrap: anywhere;
+}
+
+.wordpress-migration__footer-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	align-items: center;
+
+	@media ( max-width: 660px ) {
+		flex-direction: column;
+		align-items: flex-start;
+	}
 }

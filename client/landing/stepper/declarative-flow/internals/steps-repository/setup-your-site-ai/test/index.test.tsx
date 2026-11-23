@@ -9,22 +9,29 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../../hooks/use-plan-cart-item';
 import { useSiteData } from '../../../../../hooks/use-site-data';
+import { useAiToolExperiment } from '../ai-tool-experiment';
 import SetupYourSiteAIStep from '../index';
 
 let mockQueryParams = new URLSearchParams();
+let mockUntranslatedTexts: string[] = [];
+let mockAiToolExperiment = { isLoading: false, isTreatment: false };
+let mockIsLoadingSite = false;
 
 jest.mock( '@automattic/components', () => ( {
 	BigSkyLogo: { CentralLogo: () => null },
 	SummaryButton: ( {
 		title,
+		decoration,
 		onClick,
 		disabled,
 	}: {
 		title: string;
+		decoration?: React.ReactNode;
 		onClick: () => void;
 		disabled?: boolean;
 	} ) => (
 		<button onClick={ onClick } disabled={ disabled }>
+			{ decoration }
 			{ title }
 		</button>
 	),
@@ -47,8 +54,22 @@ jest.mock( '@automattic/onboarding', () => ( {
 
 jest.mock( 'i18n-calypso', () => ( {
 	__esModule: true,
-	default: { fixMe: ( { text }: { text: string } ) => text },
+	default: {
+		fixMe: ( { text, oldCopy }: { text: string; oldCopy: string } ) =>
+			mockUntranslatedTexts.includes( text ) ? oldCopy : text,
+	},
 	useTranslate: () => ( text: string ) => text,
+} ) );
+
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => ( text: string ) => ! mockUntranslatedTexts.includes( text ),
+} ) );
+
+jest.mock( '../ai-tool-experiment', () => ( {
+	useAiToolExperiment: jest.fn( ( isEligible: boolean ) =>
+		isEligible ? mockAiToolExperiment : { isLoading: false, isTreatment: false }
+	),
 } ) );
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
@@ -74,6 +95,10 @@ jest.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
 
 jest.mock( '../../../../../hooks/use-query', () => ( {
 	useQuery: () => mockQueryParams,
+} ) );
+
+jest.mock( '../../../../../hooks/use-site', () => ( {
+	useSiteQuery: () => ( { isLoading: mockIsLoadingSite } ),
 } ) );
 
 jest.mock( '../../../../../hooks/use-site-data', () => ( {
@@ -120,13 +145,24 @@ describe( 'SetupYourSiteAIStep', () => {
 			productSlug ? { product_slug: productSlug } : null
 		);
 
+	const tracksCallsFor = ( eventName: string ) =>
+		( recordTracksEvent as jest.Mock ).mock.calls.filter( ( [ name ] ) => name === eventName );
+
+	const viewCalls = () => tracksCallsFor( 'calypso_onboarding_setup_your_site_with_ai_view' );
+
 	const clickCustomDesign = () =>
 		fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockQueryParams = new URLSearchParams();
-		isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec/build-wow-blocks-first' );
+		mockUntranslatedTexts = [];
+		mockAiToolExperiment = { isLoading: false, isTreatment: false };
+		mockIsLoadingSite = false;
+		isEnabled.mockImplementation(
+			( flag: string ) =>
+				flag !== 'site-spec/build-wow-blocks-first' && flag !== 'onboarding/setup-your-site-ai-tool'
+		);
 		setAutomattician( true );
 		setSitePlan( 'business-bundle' );
 		setPlanCartItem( null );
@@ -397,6 +433,362 @@ describe( 'SetupYourSiteAIStep', () => {
 			renderStep();
 
 			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a pre-made design' ] );
+		} );
+	} );
+
+	describe( 'with the AI tool feature enabled', () => {
+		const setSiteSetupSite = ( options: Record< string, unknown > = {} ) =>
+			mockUseSiteData.mockReturnValue( {
+				site: {
+					plan: { product_slug: 'business-bundle' },
+					options: {
+						admin_url: 'https://example.wordpress.com/wp-admin/',
+						wpcom_ai_launchpad_enabled: true,
+						...options,
+					},
+				},
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+			} );
+
+		const clickAiTool = () =>
+			fireEvent.click( screen.getByRole( 'button', { name: 'Build with AI' } ) );
+
+		beforeEach( () => {
+			isEnabled.mockImplementation(
+				( flag: string ) => flag !== 'site-spec/build-wow-blocks-first'
+			);
+			setSiteSetupSite();
+			mockAiToolExperiment = { isLoading: false, isTreatment: true };
+		} );
+
+		it( 'assigns the experiment when the step renders', () => {
+			renderStep();
+
+			expect( useAiToolExperiment ).toHaveBeenLastCalledWith( true );
+		} );
+
+		it( 'shows only the two original cards to the control group', () => {
+			mockAiToolExperiment = { isLoading: false, isTreatment: false };
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
+		} );
+
+		it( 'holds back every card until the assignment is back', () => {
+			mockAiToolExperiment = { isLoading: true, isTreatment: false };
+
+			renderStep();
+
+			expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'holds back every card while the site loads for the treatment group', () => {
+			mockUseSiteData.mockReturnValue( {
+				site: null,
+				siteSlug: 'example.wordpress.com',
+				siteId: 0,
+			} );
+			mockIsLoadingSite = true;
+
+			renderStep();
+
+			expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'does not hold the control group back while the site loads', () => {
+			mockAiToolExperiment = { isLoading: false, isTreatment: false };
+			mockUseSiteData.mockReturnValue( {
+				site: null,
+				siteSlug: 'example.wordpress.com',
+				siteId: 0,
+			} );
+			mockIsLoadingSite = true;
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
+		} );
+
+		it( 'shows the cards to the treatment group when the site fails to load', () => {
+			mockUseSiteData.mockReturnValue( {
+				site: null,
+				siteSlug: 'example.wordpress.com',
+				siteId: 0,
+			} );
+			mockIsLoadingSite = false;
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
+		} );
+
+		it( 'does not assign the Woo hosting solutions layout', () => {
+			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
+
+			renderStep();
+
+			expect( useAiToolExperiment ).toHaveBeenLastCalledWith( false );
+		} );
+
+		it( 'renders the AI tool card after the template card on a Site Setup site', () => {
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+				'Build with AI',
+			] );
+		} );
+
+		it( 'places the AI tool card before the blocks-first card', () => {
+			isEnabled.mockReturnValue( true );
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+				'Build with AI',
+				'Create a custom design (blocks-first)',
+			] );
+		} );
+
+		it( 'shows the AI tool card once a failed site load recovers', () => {
+			mockUseSiteData.mockReturnValue( {
+				site: null,
+				siteSlug: 'example.wordpress.com',
+				siteId: 0,
+			} );
+			const { rerender } = renderStep();
+			expect( screen.queryByRole( 'button', { name: 'Build with AI' } ) ).not.toBeInTheDocument();
+
+			setSiteSetupSite();
+			rerender(
+				<SetupYourSiteAIStep
+					navigation={ navigation }
+					stepName="setup-your-site-ai"
+					flow="onboarding"
+				/>
+			);
+
+			expect( screen.getByRole( 'button', { name: 'Build with AI' } ) ).toBeVisible();
+		} );
+
+		it( 'submits the ai-tool choice once and tracks it once', () => {
+			renderStep();
+
+			clickAiTool();
+			clickAiTool();
+
+			expect( tracksCallsFor( 'calypso_onboarding_setup_your_site_with_ai_selection' ) ).toEqual( [
+				[ 'calypso_onboarding_setup_your_site_with_ai_selection', { selection: 'ai-tool' } ],
+			] );
+			expect( navigation.submit ).toHaveBeenCalledTimes( 1 );
+			expect( navigation.submit ).toHaveBeenCalledWith( {
+				setupChoice: 'ai-tool',
+				siteSlug: 'example.wordpress.com',
+			} );
+		} );
+
+		it( 'records the view once, with the card shown, for the treatment group', () => {
+			const { rerender } = renderStep();
+			mockUntranslatedTexts = [ 'Connect ChatGPT or Claude and build your site by chatting.' ];
+			rerender(
+				<SetupYourSiteAIStep
+					navigation={ navigation }
+					stepName="setup-your-site-ai"
+					flow="onboarding"
+				/>
+			);
+
+			expect( viewCalls() ).toEqual( [
+				[ 'calypso_onboarding_setup_your_site_with_ai_view', { ai_tool_shown: true } ],
+			] );
+		} );
+
+		it( 'records the view once the site loads for the treatment group', () => {
+			mockUseSiteData.mockReturnValue( {
+				site: null,
+				siteSlug: 'example.wordpress.com',
+				siteId: 0,
+			} );
+			mockIsLoadingSite = true;
+			const { rerender } = renderStep();
+			expect( viewCalls() ).toEqual( [] );
+
+			setSiteSetupSite();
+			mockIsLoadingSite = false;
+			rerender(
+				<SetupYourSiteAIStep
+					navigation={ navigation }
+					stepName="setup-your-site-ai"
+					flow="onboarding"
+				/>
+			);
+
+			expect( viewCalls() ).toEqual( [
+				[ 'calypso_onboarding_setup_your_site_with_ai_view', { ai_tool_shown: true } ],
+			] );
+		} );
+
+		it( 'records the view without the card for the control group', () => {
+			mockAiToolExperiment = { isLoading: false, isTreatment: false };
+
+			renderStep();
+
+			expect( viewCalls() ).toEqual( [
+				[ 'calypso_onboarding_setup_your_site_with_ai_view', { ai_tool_shown: false } ],
+			] );
+		} );
+
+		it( 'tags the view with the ref the step was reached with', () => {
+			mockQueryParams = new URLSearchParams( { ref: SITE_SELECTED_REF } );
+
+			renderStep();
+
+			expect( viewCalls() ).toEqual( [
+				[
+					'calypso_onboarding_setup_your_site_with_ai_view',
+					{ ai_tool_shown: true, ref: SITE_SELECTED_REF },
+				],
+			] );
+		} );
+
+		it( 'records no view while the cards are held', () => {
+			mockAiToolExperiment = { isLoading: true, isTreatment: false };
+
+			renderStep();
+
+			expect( viewCalls() ).toEqual( [] );
+		} );
+
+		it( 'records no view for the Woo hosting solutions layout', () => {
+			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
+
+			renderStep();
+
+			expect( viewCalls() ).toEqual( [] );
+		} );
+
+		it( 'tags the ai-tool selection with the ref the step was reached with', () => {
+			mockQueryParams = new URLSearchParams( { ref: SITE_SELECTED_REF } );
+
+			renderStep();
+			clickAiTool();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_onboarding_setup_your_site_with_ai_selection',
+				{ selection: 'ai-tool', ref: SITE_SELECTED_REF }
+			);
+		} );
+
+		it( 'ignores the other cards once the AI tool card is chosen', () => {
+			renderStep();
+
+			clickAiTool();
+			clickCustomDesign();
+			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a pre-made design' } ) );
+
+			expect( navigation.submit ).toHaveBeenCalledTimes( 1 );
+			expect( screen.getByRole( 'button', { name: 'Build with AI' } ) ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Create a custom design' } ) ).toBeDisabled();
+		} );
+
+		it( 're-enables the AI tool card when the page is restored from bfcache', () => {
+			renderStep();
+
+			clickAiTool();
+			expect( screen.getByRole( 'button', { name: 'Build with AI' } ) ).toBeDisabled();
+
+			const pageshow = new Event( 'pageshow' ) as PageTransitionEvent;
+			Object.defineProperty( pageshow, 'persisted', { value: true } );
+			fireEvent( window, pageshow );
+
+			expect( screen.getByRole( 'button', { name: 'Build with AI' } ) ).toBeEnabled();
+		} );
+
+		it.each( [
+			[ 'without the AI Launchpad', { wpcom_ai_launchpad_enabled: false } ],
+			[ 'with no guidance', { wpcom_ai_launchpad_no_guidance: true } ],
+			[ 'with a skipped AI Launchpad', { wpcom_ai_launchpad_dismissed: true } ],
+			[ 'with a completed AI Launchpad', { wpcom_ai_launchpad_completed: true } ],
+		] )( 'hides the AI tool card on a site %s', ( _, options ) => {
+			setSiteSetupSite( options );
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
+		} );
+
+		it( 'hides the AI tool card for the Woo hosting solutions ref', () => {
+			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a pre-made design' ] );
+		} );
+
+		it( 'hides the AI tool card while the custom design card still reads Build with AI', () => {
+			mockUntranslatedTexts = [ 'Create a custom design' ];
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a pre-made design' ] );
+		} );
+
+		it( 'hides the AI tool card while its description is untranslated', () => {
+			mockUntranslatedTexts = [ 'Connect ChatGPT or Claude and build your site by chatting.' ];
+
+			renderStep();
+
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
+		} );
+
+		it( 'falls back to an icon when the ChatGPT logo fails to load', () => {
+			renderStep();
+			const card = screen.getByRole( 'button', { name: 'Build with AI' } );
+			const logo = card.querySelector( 'img' );
+			expect( logo ).toBeVisible();
+
+			fireEvent.error( logo as HTMLImageElement );
+
+			expect( card.querySelector( 'img' ) ).not.toBeInTheDocument();
+			expect( card.querySelector( 'svg' ) ).toBeVisible();
+		} );
+
+		it( 'hides the AI tool card and skips the assignment with the feature disabled', () => {
+			isEnabled.mockImplementation(
+				( flag: string ) =>
+					flag !== 'site-spec/build-wow-blocks-first' &&
+					flag !== 'onboarding/setup-your-site-ai-tool'
+			);
+
+			renderStep();
+
+			expect( useAiToolExperiment ).toHaveBeenLastCalledWith( false );
+			expect( viewCalls() ).toEqual( [] );
+
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
 		} );
 	} );
 

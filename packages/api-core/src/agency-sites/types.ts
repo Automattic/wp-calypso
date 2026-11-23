@@ -49,6 +49,8 @@ export interface ProvisionAgencyDevSiteParams {
 	php_version?: string;
 	primary_data_center?: string;
 	is_fully_managed_agency_site?: boolean;
+	/** A static-site import the server delivers onto the dev site once it exists. Owner only. */
+	import_session_id?: string;
 }
 
 /** The `/agency/{id}/sites/provision-dev-site` response, narrowed to the site it created. */

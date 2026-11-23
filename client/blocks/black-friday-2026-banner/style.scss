@@ -1,0 +1,128 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+// Fixed to the bottom of the screen; the spacer keeps the page's last row, buttons and CTAs above it.
+.black-friday-2026-banner {
+	position: fixed;
+	inset-inline: 0;
+	inset-block-end: 0;
+	// Above the grid's sticky headers, below modals and popovers.
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	min-block-size: 60px;
+	padding-block: 8px;
+	padding-inline: 16px 56px;
+	background: #101517 url( ./bar-bg.png ) repeat-x center bottom / 220px 60px;
+	color: var( --color-text-inverted );
+
+	@include break-small {
+		padding-inline-start: 202px;
+	}
+
+	// Start after the logged-in sidebar instead of under it.
+	.layout:not( .has-no-sidebar ) .layout__secondary:not( :empty ) ~ .layout__primary & {
+		inset-inline-start: var( --sidebar-width-max );
+
+		// The sidebar narrows at this width.
+		@media ( max-width: 960px ) {
+			inset-inline-start: var( --sidebar-width-min );
+		}
+	}
+
+	@media ( max-width: 781px ) {
+		.layout.focus-content:not( .has-no-sidebar )
+			.layout__secondary:not( :empty )
+			~ .layout__primary
+			& {
+			inset-inline-start: 0;
+		}
+	}
+}
+
+// Clipped so the tiles drop in from above the bar instead of over the page.
+.black-friday-2026-banner__tiles {
+	display: none;
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	block-size: 60px;
+	overflow: hidden;
+
+	@include break-small {
+		display: flex;
+	}
+}
+
+.black-friday-2026-banner__tile {
+	flex: none;
+	inline-size: 62px;
+	block-size: 60px;
+	background-repeat: no-repeat;
+	background-size: 62px 60px;
+	animation: black-friday-2026-banner-tile-drop 400ms ease-out both;
+}
+
+.black-friday-2026-banner__tile-globe {
+	background-image: url( ./tile-globe.png );
+}
+
+.black-friday-2026-banner__tile-crop {
+	background-image: url( ./tile-crop.png );
+	animation-delay: 120ms;
+}
+
+.black-friday-2026-banner__tile-quarter {
+	background-image: url( ./tile-quarter.png );
+	animation-delay: 240ms;
+}
+
+@keyframes black-friday-2026-banner-tile-drop {
+	from {
+		transform: translateY( -60px );
+	}
+
+	to {
+		transform: translateY( 0 );
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.black-friday-2026-banner__tile {
+		animation: none;
+	}
+}
+
+.black-friday-2026-banner__text {
+	margin: 0;
+	font-size: 15px;
+	font-weight: 500;
+	line-height: 24px;
+	text-align: center;
+	color: var( --color-text-inverted );
+}
+
+.black-friday-2026-banner__countdown {
+	display: inline-block;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+
+	span + span {
+		margin-inline-start: 16px;
+	}
+}
+
+.black-friday-2026-banner .black-friday-2026-banner__close {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-end: 8px;
+	transform: translateY( -50% );
+	color: var( --color-text-inverted );
+
+	&:hover,
+	&:focus {
+		color: var( --color-text-inverted );
+	}
+}

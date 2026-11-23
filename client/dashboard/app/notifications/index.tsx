@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { Button, Dropdown } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
-import { bellUnread, bell } from '@wordpress/icons';
+import { bell } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
@@ -16,8 +16,11 @@ import { omnibarEvents, useOmnibarEvent } from '../omnibar/events';
 import { NOTIFICATIONS_ICON_CLASS } from '../omnibar/notifications-node/icon-class';
 import useSubscriberAlerts from './use-subscriber-alerts';
 import './style.scss';
+import type { NotificationsPanelView } from './panel-view';
 
 const AsyncNotificationApp = lazy( () => import( '@automattic/notifications/src/app' ) );
+
+const TRACKS_SURFACE = 'dashboard_panel';
 
 /**
  * Returns the position of the omnibar bell, or the end of the omnibar when the bell is missing.
@@ -46,10 +49,14 @@ type LinkAction = {
 export default function Notifications( {
 	className,
 	anchor,
+	isInboxShown = false,
+	onOpenInbox,
 }: {
 	className?: string;
 	/** When true, hides the built-in toggle button (the omnibar provides its own). */
 	anchor?: boolean;
+	isInboxShown?: boolean;
+	onOpenInbox?: ( view: NotificationsPanelView ) => void;
 } ) {
 	const { user } = useAuth();
 	const locale = useLocale();
@@ -60,6 +67,7 @@ export default function Notifications( {
 	const unseenCountRef = useRef< number | undefined >( user.has_unseen_notes ? undefined : 0 );
 	const { recordTracksEvent } = useAnalytics();
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
+	const isMarkAsUnreadEnabled = config.isEnabled( 'notifications/mark-as-unread' );
 	const onNotificationCount = useCallback( ( count: number ) => {
 		unseenCountRef.current = count;
 		setHasUnseenNotifications( count > 0 );
@@ -72,13 +80,15 @@ export default function Notifications( {
 			if ( willOpen ) {
 				setShowHelpCenter( false, undefined, true );
 				recordTracksEvent( 'calypso_notification_open', {
+					surface: TRACKS_SURFACE,
 					unread_notifications: unseenCountRef.current,
 					unread_notifications_known: unseenCountRef.current !== undefined,
+					on_full_page: isInboxShown,
 				} );
 			}
 			setIsOpen( willOpen );
 		},
-		[ setShowHelpCenter, recordTracksEvent ]
+		[ isInboxShown, setShowHelpCenter, recordTracksEvent ]
 	);
 
 	// Close notifications when help center opens.
@@ -87,6 +97,13 @@ export default function Notifications( {
 			setIsOpen( false );
 		}
 	}, [ isHelpCenterShown ] );
+
+	// Opening the full page closes the panel it was opened from.
+	useEffect( () => {
+		if ( isInboxShown ) {
+			setIsOpen( false );
+		}
+	}, [ isInboxShown ] );
 
 	// Keep the omnibar button in sync with the panel open state.
 	useEffect( () => {
@@ -103,7 +120,12 @@ export default function Notifications( {
 
 	const trackAndOpen = ( name: string ) => ( store: unknown, action: LinkAction ) => {
 		const { siteId, postId, commentId } = action;
-		recordTracksEvent( name, { site_id: siteId, post_id: postId, comment_id: commentId } );
+		recordTracksEvent( name, {
+			surface: TRACKS_SURFACE,
+			site_id: siteId,
+			post_id: postId,
+			comment_id: commentId,
+		} );
 		openInNewTab( store, action );
 	};
 
@@ -127,7 +149,10 @@ export default function Notifications( {
 			( store: unknown, action: LinkAction ) => {
 				if ( action.tracksEvent ) {
 					const suffix = action.tracksEvent.toLowerCase().replace( /[^a-z0-9_]+/g, '_' );
-					recordTracksEvent( 'calypso_notifications_' + suffix, { link: action.href } );
+					recordTracksEvent( 'calypso_notifications_' + suffix, {
+						surface: TRACKS_SURFACE,
+						link: action.href,
+					} );
 				}
 				openInNewTab( store, action );
 			},
@@ -199,12 +224,14 @@ export default function Notifications( {
 			renderToggle={ ( { isOpen, onToggle } ) =>
 				anchor ? null : (
 					<Button
-						className={ clsx( className, 'dashboard-notifications__icon' ) }
+						className={ clsx( className, 'dashboard-notifications__icon', {
+							'is-unread': hasUnseenNotifications,
+						} ) }
 						onClick={ onToggle }
 						aria-expanded={ isOpen }
 						variant="tertiary"
 						label={ __( 'Notifications' ) }
-						icon={ hasUnseenNotifications ? bellUnread : bell }
+						icon={ bell }
 					/>
 				)
 			}
@@ -220,6 +247,10 @@ export default function Notifications( {
 						locale={ locale }
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
+						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+						// There's no full view to open from the full page.
+						onOpenFullView={ isInboxShown ? undefined : onOpenInbox }
+						tracksSurface={ TRACKS_SURFACE }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>

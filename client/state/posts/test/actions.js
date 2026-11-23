@@ -1,38 +1,24 @@
 import nock from 'nock';
 import {
-	POST_DELETE,
-	POST_DELETE_SUCCESS,
-	POST_DELETE_FAILURE,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
-	POST_RESTORE_SUCCESS,
-	POST_SAVE,
 	POST_SAVE_SUCCESS,
-	POST_SAVE_FAILURE,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 import {
-	receivePost,
-	receivePosts,
 	requestSitePosts,
 	requestSitePost,
 	requestAllSitesPosts,
-	savePost,
-	trashPost,
-	deletePost,
 	restorePost,
 } from 'calypso/state/posts/actions';
-import { savePostSuccess } from 'calypso/state/posts/actions/save-post-success';
-
-jest.mock( 'calypso/state/posts/actions/save-post-success', () => ( {
-	savePostSuccess: jest.fn(),
-} ) );
+import { receivePost } from 'calypso/state/posts/actions/receive-post';
+import { receivePosts } from 'calypso/state/posts/actions/receive-posts';
 
 describe( 'actions', () => {
 	let dispatch;
@@ -269,204 +255,6 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'savePost()', () => {
-		beforeAll( () => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.post( '/rest/v1.2/sites/2916284/posts/new', {
-					title: 'Hello World',
-				} )
-				.reply( 200, {
-					ID: 13640,
-					title: 'Hello World',
-				} )
-				.post( '/rest/v1.2/sites/2916284/posts/13640', {
-					title: 'Updated',
-				} )
-				.reply( 200, {
-					ID: 13640,
-					title: 'Updated',
-				} )
-				.post( '/rest/v1.2/sites/77203074/posts/new' )
-				.reply( 403, {
-					error: 'unauthorized',
-					message: 'User cannot edit posts',
-				} )
-				.post( '/rest/v1.2/sites/77203074/posts/102' )
-				.reply( 403, {
-					error: 'unauthorized',
-					message: 'User cannot edit post',
-				} );
-		} );
-
-		test( 'should dispatch save action when thunk triggered for new post', () => {
-			savePost( 2916284, null, { title: 'Hello World' } )( dispatch );
-
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: POST_SAVE,
-				siteId: 2916284,
-				postId: null,
-				post: {
-					title: 'Hello World',
-				},
-			} );
-		} );
-
-		test( 'should dispatch success action when saving new post succeeds', () => {
-			return savePost( 2916284, null, { title: 'Hello World' } )( dispatch, getState ).then( () => {
-				expect( savePostSuccess ).toHaveBeenCalledWith(
-					2916284,
-					null,
-					{ ID: 13640, title: 'Hello World' },
-					{ title: 'Hello World' },
-					false
-				);
-			} );
-		} );
-
-		test( 'should dispatch received post action when saving new post succeeds', () => {
-			return savePost( 2916284, null, { title: 'Hello World' } )( dispatch ).then( () => {
-				expect( dispatch ).toHaveBeenCalledWith( {
-					type: POSTS_RECEIVE,
-					posts: [
-						expect.objectContaining( {
-							ID: 13640,
-							title: 'Hello World',
-						} ),
-					],
-				} );
-			} );
-		} );
-
-		test( 'should dispatch save action when thunk triggered for existing post', () => {
-			savePost( 2916284, 13640, { title: 'Updated' } )( dispatch );
-
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: POST_SAVE,
-				siteId: 2916284,
-				postId: 13640,
-				post: {
-					title: 'Updated',
-				},
-			} );
-		} );
-
-		test( 'should dispatch success action when saving existing post succeeds', () => {
-			return savePost( 2916284, 13640, { title: 'Updated' } )( dispatch, getState ).then( () => {
-				expect( savePostSuccess ).toHaveBeenCalledWith(
-					2916284,
-					13640,
-					{ ID: 13640, title: 'Updated' },
-					{ title: 'Updated' },
-					false
-				);
-			} );
-		} );
-
-		test( 'should dispatch received post action when saving existing post succeeds', () => {
-			return savePost( 2916284, 13640, { title: 'Updated' } )( dispatch ).then( () => {
-				expect( dispatch ).toHaveBeenCalledWith( {
-					type: POSTS_RECEIVE,
-					posts: [
-						expect.objectContaining( {
-							ID: 13640,
-							title: 'Updated',
-						} ),
-					],
-				} );
-			} );
-		} );
-
-		test( 'should dispatch failure action when saving new post fails', async () => {
-			await expect(
-				savePost( 77203074, null, { title: 'Hello World' } )( dispatch )
-			).rejects.toThrow();
-
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: POST_SAVE_FAILURE,
-				siteId: 77203074,
-				postId: null,
-				error: expect.objectContaining( { message: 'User cannot edit posts' } ),
-			} );
-		} );
-
-		test( 'should dispatch failure action when saving existing post fails', async () => {
-			await expect(
-				savePost( 77203074, 102, { title: 'Hello World' } )( dispatch )
-			).rejects.toThrow();
-
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: POST_SAVE_FAILURE,
-				siteId: 77203074,
-				postId: 102,
-				error: expect.objectContaining( { message: 'User cannot edit post' } ),
-			} );
-		} );
-	} );
-
-	describe( 'trashPost()', () => {
-		test( 'should dispatch save request with trash status payload', () => {
-			trashPost( 2916284, 13640 )( dispatch );
-
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: POST_SAVE,
-				siteId: 2916284,
-				postId: 13640,
-				post: {
-					status: 'trash',
-				},
-			} );
-		} );
-	} );
-
-	describe( 'deletePost()', () => {
-		beforeAll( () => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.post( '/rest/v1.1/sites/2916284/posts/13640/delete' )
-				.reply( 200, {
-					ID: 13640,
-					status: 'deleted',
-				} )
-				.post( '/rest/v1.1/sites/77203074/posts/102/delete' )
-				.reply( 403, {
-					error: 'unauthorized',
-					message: 'User cannot delete posts',
-				} );
-		} );
-
-		test( 'should dispatch request action when thunk triggered', () => {
-			deletePost( 2916284, 13640 )( dispatch, getState );
-
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: POST_DELETE,
-				siteId: 2916284,
-				postId: 13640,
-			} );
-		} );
-
-		test( 'should dispatch success action when deleting post succeeds', () => {
-			return deletePost( 2916284, 13640 )( dispatch, getState ).then( () => {
-				expect( dispatch ).toHaveBeenCalledWith( {
-					type: POST_DELETE_SUCCESS,
-					siteId: 2916284,
-					postId: 13640,
-				} );
-			} );
-		} );
-
-		test( 'should dispatch failure action when deleting post fails', async () => {
-			await expect( deletePost( 77203074, 102 )( dispatch, getState ) ).rejects.toThrow();
-
-			expect( dispatch ).toHaveBeenCalledWith( {
-				type: POST_DELETE_FAILURE,
-				siteId: 77203074,
-				postId: 102,
-				error: expect.objectContaining( { message: 'User cannot delete posts' } ),
-			} );
-		} );
-	} );
-
 	describe( 'restorePost()', () => {
 		beforeAll( () => {
 			nock( 'https://public-api.wordpress.com:443' )
@@ -498,16 +286,6 @@ describe( 'actions', () => {
 				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ { ID: 13640, status: 'draft' } ],
-				} );
-			} );
-		} );
-
-		test( 'should dispatch success action when restoring post succeeds', () => {
-			return restorePost( 2916284, 13640 )( dispatch, getState ).then( () => {
-				expect( dispatch ).toHaveBeenCalledWith( {
-					type: POST_RESTORE_SUCCESS,
-					siteId: 2916284,
-					postId: 13640,
 				} );
 			} );
 		} );

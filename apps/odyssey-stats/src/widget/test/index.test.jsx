@@ -23,6 +23,12 @@ vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
 	default: () => 'https://example.com/wp-admin/',
 } ) );
 vi.mock( 'calypso/my-sites/stats/hooks/use-wp-admin-theme', () => ( { default: () => null } ) );
+const mockGates = vi.hoisted( () => ( { locked: [] } ) );
+vi.mock( '../stats-gates', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	isStatTypeGated: ( siteId, statType ) => mockGates.locked.includes( statType ),
+	getUpgradeUrl: () => 'https://wordpress.com/checkout/example.com/personal-bundle',
+} ) );
 const mockStatsLink = vi.fn( ( url ) => url );
 vi.mock( '../use-stats-link', () => ( { default: () => mockStatsLink } ) );
 vi.mock( '../mini-chart', () => ( {
@@ -52,6 +58,7 @@ describe( 'Stats widget', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
 		localStorage.clear();
+		mockGates.locked = [];
 	} );
 
 	it( 'opens on the range last chosen on this site', async () => {
@@ -126,6 +133,44 @@ describe( 'Stats widget', () => {
 		);
 		expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'explore_more_clicked', {
 			destination: 'stats',
+		} );
+	} );
+
+	describe( 'on a plan that locks longer ranges', () => {
+		beforeEach( () => {
+			mockGates.locked = [
+				'StatsDateControl/last_30_days',
+				'StatsModuleSummaryLinks/quarter',
+				'StatsDateControl/last_12_months',
+			];
+		} );
+
+		it( 'shows the last 7 days in place of a remembered range the plan locks', async () => {
+			localStorage.setItem( STORAGE_KEY, 'last_90_days' );
+			await renderWidget();
+
+			expect( screen.getByText( 'Chart of last_7_days' ) ).toBeInTheDocument();
+			expect(
+				screen.getByRole( 'button', { name: 'Date range: Last 7 days' } )
+			).toBeInTheDocument();
+			// Kept, for when the site has the range again.
+			expect( localStorage.getItem( STORAGE_KEY ) ).toBe( 'last_90_days' );
+		} );
+
+		it( 'locks them in the menu, with an upgrade to checkout', async () => {
+			const user = userEvent.setup();
+			await renderWidget();
+
+			await user.click( screen.getByRole( 'button', { name: 'Date range: Last 7 days' } ) );
+
+			expect( screen.getByRole( 'menuitemradio', { name: 'Last 30 days' } ) ).toHaveAttribute(
+				'aria-disabled',
+				'true'
+			);
+			expect( screen.getByRole( 'menuitem', { name: /^Upgrade/ } ) ).toHaveAttribute(
+				'href',
+				'https://wordpress.com/checkout/example.com/personal-bundle'
+			);
 		} );
 	} );
 } );

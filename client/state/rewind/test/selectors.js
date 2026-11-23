@@ -1,17 +1,17 @@
+import getBackupRetentionUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-retention-update-status';
+import getBackupStagingSiteInfo from 'calypso/state/rewind/selectors/get-backup-staging-site-info';
+import getBackupStagingUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-staging-update-status';
+import hasFetchedStagingSiteInfo from 'calypso/state/rewind/selectors/has-fetched-staging-site-info';
+import isRequestingStagingSiteInfo from 'calypso/state/rewind/selectors/is-requesting-staging-site-info';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from '../retention/constants';
 import {
 	getRewindStorageUsageLevel,
 	getBackupCurrentSiteSize,
 	getBackupRetentionDays,
-	getBackupRetentionUpdateRequestStatus,
 	getBackupStoppedFlag,
 	isFetchingStagingSitesList,
-	isRequestingStagingSiteInfo,
 	hasFetchedStagingSitesList,
-	hasFetchedStagingSiteInfo,
-	getBackupStagingSiteInfo,
 	getBackupStagingSites,
-	getBackupStagingUpdateRequestStatus,
 } from '../selectors';
 import { BACKUP_STAGING_UPDATE_REQUEST } from '../staging/constants';
 import { stagingSites } from '../staging/test/fixtures';

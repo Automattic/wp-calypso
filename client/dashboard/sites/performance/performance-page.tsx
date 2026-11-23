@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { SitesNoticeArbiter } from '../notice-arbiter';
+import { SitesNoticeArbiter } from '../components/notice-arbiter';
 import { useCanViewApm } from './backend-access';
 
 export type PerformanceTab = 'frontend' | 'backend';

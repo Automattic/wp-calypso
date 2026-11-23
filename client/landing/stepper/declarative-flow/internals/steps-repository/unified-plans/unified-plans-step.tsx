@@ -205,6 +205,11 @@ export interface UnifiedPlansStepProps {
 	useStepContainerV2?: boolean;
 
 	/**
+	 * Offers a Skip button that leaves the step without picking a plan.
+	 */
+	onSkip?: () => void;
+
+	/**
 	 * Whether this step is being used in a signup flow context.
 	 * Defaults to true to preserve existing behavior.
 	 */
@@ -273,6 +278,7 @@ function UnifiedPlansStep( {
 	onIntentChange,
 	isInSignup = true,
 	isStepperUpgradeFlow = false,
+	onSkip,
 	selectedFeature,
 }: UnifiedPlansStepProps ) {
 	const [ isContentReady, setIsContentReady ] = useState( ! useStepContainerV2 );
@@ -783,7 +789,7 @@ function UnifiedPlansStep( {
 									) : undefined
 								}
 								rightElement={
-									stepCounter || isOnboardingFlow( flowName ) ? (
+									stepCounter || isOnboardingFlow( flowName ) || onSkip ? (
 										<>
 											{ stepCounter && (
 												<Step.StepCounter
@@ -796,6 +802,7 @@ function UnifiedPlansStep( {
 													{ translate( 'Need help?' ) }
 												</Step.LinkButton>
 											) }
+											{ onSkip && <Step.SkipButton onClick={ onSkip } /> }
 										</>
 									) : undefined
 								}
@@ -861,6 +868,7 @@ function UnifiedPlansStep( {
 						recordTracksEvent={ recordTracksEvent }
 						hideBack={ wrapperProps.hideBack }
 						goBack={ wrapperProps.goBack }
+						onSkip={ onSkip }
 					/>
 				) : (
 					<AsyncLoad

@@ -2,7 +2,10 @@ import config from '@automattic/calypso-config';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
-import { activateBlackboxSurface } from 'calypso/blocks/login/utils/blackbox-surface';
+import {
+	activateBlackboxSurface,
+	getBlackboxSignal,
+} from 'calypso/blocks/login/utils/blackbox-surface';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import type { ReactElement } from 'react';
 
@@ -13,8 +16,8 @@ export interface BlackboxProtection {
 	challenge: ReactElement;
 	/** Resolves an ID, undefined without a session, or null when the form becomes inactive. */
 	getSessionId: () => Promise< string | undefined | null >;
-	/** Resets the Blackbox session so a retry starts fresh. */
-	reset: () => void;
+	/** Reset for a fresh attempt; an expected ID restricts reset to this active form and session. */
+	reset: ( expectedSessionId?: string ) => void;
 }
 
 interface UseBlackboxProtectionOptions {
@@ -94,13 +97,25 @@ export function useBlackboxProtection( {
 		[ apiKey, flow ]
 	);
 
-	const reset = useCallback( () => {
-		try {
-			window.Blackbox?.reset?.();
-		} catch {
-			// Intentionally ignored — Blackbox must never block the host form.
-		}
-	}, [] );
+	const reset = useCallback(
+		( expectedSessionId?: string ) => {
+			try {
+				if (
+					expectedSessionId !== undefined &&
+					( ! surfaceSignal.current ||
+						surfaceSignal.current.aborted ||
+						getBlackboxSignal( apiKey ) !== surfaceSignal.current ||
+						window.Blackbox?.getSnapshot?.().sessionId !== expectedSessionId )
+				) {
+					return;
+				}
+				window.Blackbox?.reset?.();
+			} catch {
+				// Intentionally ignored — Blackbox must never block the host form.
+			}
+		},
+		[ apiKey ]
+	);
 
 	useEffect( () => {
 		if ( enabled && resetOnError ) {

@@ -29,6 +29,7 @@ import {
 	creditCardExpiresBeforeSubscription,
 	isCentennialPurchase,
 	getRenewalUrlFromPurchase,
+	isRetryingFailedRenewal,
 } from '../../utils/purchase';
 import {
 	getExpiredCopy,
@@ -301,6 +302,35 @@ function getInAppPurchaseText( managePurchase: React.JSX.Element ) {
 	);
 }
 
+function getFailedRenewalCopy(
+	purchase: Purchase,
+	locale: string,
+	hasEnTranslation: ( single: string ) => boolean
+): ExpiryStatusCopy | null {
+	if ( ! isRetryingFailedRenewal( purchase ) ) {
+		return null;
+	}
+
+	if ( purchase.renew_date ) {
+		return hasEnTranslation( 'Payment failed, retrying on %(date)s' )
+			? {
+					intent: 'error',
+					text: sprintf(
+						// translators: %(date)s is the date of the next renewal attempt, e.g. "January 1, 2026"
+						__( 'Payment failed, retrying on %(date)s' ),
+						{
+							date: formatDate( new Date( purchase.renew_date ), locale, { dateStyle: 'long' } ),
+						}
+					),
+				}
+			: null;
+	}
+
+	return hasEnTranslation( 'Payment failed, we’ll retry' )
+		? { intent: 'error', text: __( 'Payment failed, we’ll retry' ) }
+		: null;
+}
+
 function describePurchaseExpiry(
 	purchase: Purchase,
 	locale: string,
@@ -404,6 +434,15 @@ function describePurchaseExpiry(
 				) }
 			</span>
 		);
+	}
+
+	const failedRenewalCopy = getFailedRenewalCopy( purchase, locale, hasEnTranslation );
+	if ( failedRenewalCopy ) {
+		return {
+			kind: 'urgent',
+			copy: failedRenewalCopy,
+			hasExpired: isExpiredOrRemoved( purchase ),
+		};
 	}
 
 	// When a downgrade is scheduled for the next renewal, the plan won't simply

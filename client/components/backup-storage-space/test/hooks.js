@@ -2,19 +2,13 @@
  * @jest-environment jsdom
  */
 
-const EXAMPLE_SITE_SLUG = 'mysite.example';
-
 // Mock dependencies
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
 	useDispatch: jest.fn().mockImplementation( () => () => {} ),
 } ) );
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-slug', () =>
-	jest.fn().mockImplementation( () => EXAMPLE_SITE_SLUG )
-);
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
-jest.mock( 'calypso/state/analytics/actions/record' );
 
 import { render, renderHook } from '@testing-library/react';
 import {

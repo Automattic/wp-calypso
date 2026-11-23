@@ -1,11 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-	failMediaItemRequest,
-	receiveMedia,
-	successMediaItemRequest,
-} from 'calypso/state/media/actions';
+import { failMediaItemRequest, receiveMedia } from 'calypso/state/media/actions';
 import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
 import { isFileList } from 'calypso/state/media/utils/is-file-list';
 
@@ -20,7 +16,6 @@ export const useUploadMediaMutation = ( queryOptions = {} ) => {
 				transientId: transientMedia.ID,
 			};
 
-			dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 			dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
 			queryClient.invalidateQueries( {

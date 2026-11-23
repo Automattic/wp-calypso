@@ -4,15 +4,13 @@ This test configuration contains unit tests that verify code located in `server`
 
 It supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
 
-Tests can be run in 3 different modes:
+Tests can be run in 2 different modes:
 
 ```bash
 > # run the entire server suite
 > yarn run test-server
-> # run a configuration customized to work with continuous integration
-> yarn run test-server:ci
 > # run tests in watch mode, by default it executes tests for the modified files only
-> yarn run test-client:watch
+> yarn run test-server:watch
 ```
 
 Those tests are executed on every push on continuous integration (we use TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
@@ -25,13 +23,11 @@ This test configuration contains unit and component tests that verify code locat
 
 It supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
 
-Tests can be run in 3 different modes:
+Tests can be run in 2 different modes:
 
 ```bash
 > # run the entire client suite
 > yarn run test-client
-> # run a configuration customized to work with continuous integration
-> yarn run test-server:ci
 > # run tests in watch mode, by default it executes tests for the modified files only
 > yarn run test-client:watch
 ```
@@ -65,23 +61,6 @@ This test configuration contains unit tests for the packages in the `packages` t
 > # run one package's tests, if it has a `test` script
 > yarn workspace <package name> test
 ```
-
-## Integration tests
-
-This test configuration contains integration tests that verify code located in `bin`, `client`, `server` and `test` top level folders. They should test how a group of components or a larger part of business logic works together.
-
-It supports automatic test discovery. We only need to put a test file into a `integration` subfolder, next to the files we want to test.
-
-Tests can be run in 2 different modes:
-
-```bash
-> # run the entire integration suite
-> yarn run test-integration
-> # run a configuration customized to work with continuous integration
-> yarn run test-integration:ci
-```
-
-They run daily on continuous integration (TeamCity), because they can use network connection or memory intensive processing and therefore can have longer runtime.
 
 ## End-to-end tests
 

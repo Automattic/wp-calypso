@@ -1,4 +1,9 @@
-import { Page } from 'playwright';
+import { Locator, Page } from 'playwright';
+
+// Normal processing takes 5–10 s. The budget also covers one WordPress.com database lock wait,
+// which stalls a file save for 50 s before it carries on. Importers that convert the export save
+// twice, so two stalls (about 105 s) still fail.
+const UPLOAD_PROCESSING_TIMEOUT = 75 * 1000;
 
 /**
  * Represents the Import File Content page.
@@ -37,6 +42,32 @@ export class ImportFileContentPage {
 	 */
 	async uploadExportFile( filePath: string ): Promise< void > {
 		await this.page.locator( 'input[type="file"][name="exportFile"]' ).setInputFiles( filePath );
+	}
+
+	/**
+	 * Waits for the step that follows the backend's processing of the uploaded file.
+	 * If the page is still processing when the wait ends, the error points at the backend first,
+	 * so a stall there isn't mistaken for a test bug.
+	 * @param nextStep The element shown once the upload is processed.
+	 */
+	async waitForUploadProcessed( nextStep: Locator = this.yourFileIsReadyText ): Promise< void > {
+		try {
+			await nextStep.waitFor( { timeout: UPLOAD_PROCESSING_TIMEOUT } );
+		} catch ( error ) {
+			// The site setup importers show this text; the /import importers show only a progress bar.
+			const stillProcessing = this.page
+				.getByText( 'Processing uploaded file…' )
+				.or( this.page.getByRole( 'progressbar', { name: 'Loading…' } ) );
+			if ( await stillProcessing.isVisible() ) {
+				throw new Error(
+					`The page was still processing the uploaded file after ${
+						UPLOAD_PROCESSING_TIMEOUT / 1000
+					} s. This usually means the WordPress.com backend is slow or stuck (for example, database lock waits on file uploads), so check WordPress.com upload health first. If that looks normal, check Calypso's import status polling.`,
+					{ cause: error }
+				);
+			}
+			throw error;
+		}
 	}
 
 	/**

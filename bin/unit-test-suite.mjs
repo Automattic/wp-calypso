@@ -142,7 +142,7 @@ const viteCheck = {
 
 const testWorkspaces = {
 	name: 'yarn',
-	args: 'workspaces foreach -A --verbose --parallel run storybook:start --ci --smoke-test',
+	args: 'workspaces foreach -A -vv --parallel run storybook:start --ci --smoke-test',
 	testId: 'check_storybook',
 };
 

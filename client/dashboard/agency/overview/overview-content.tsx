@@ -57,6 +57,8 @@ export interface AgencyOverviewContentProps {
 	/** The welcome band is showing and already says what the Pending card would. */
 	hidesPendingCard?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
+	/** Maps a News and updates CTA's dashboard path to this app's page. */
+	getNewsCtaUrl?: ( url: string ) => string;
 }
 
 /**
@@ -83,6 +85,7 @@ export default function AgencyOverviewContent( {
 	tourLabel,
 	hidesPendingCard,
 	recordTracksEvent,
+	getNewsCtaUrl,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const spacing = isSmallViewport ? 4 : 6;
@@ -169,8 +172,13 @@ export default function AgencyOverviewContent( {
 					agencyId={ agencyId }
 					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
+					getCtaUrl={ getNewsCtaUrl }
 				/>
-				<HelpfulLinksCard links={ links.helpful } recordTracksEvent={ recordTracksEvent } />
+				<HelpfulLinksCard
+					links={ links.helpful }
+					recordTracksEvent={ recordTracksEvent }
+					shouldUseRouterLink={ shouldUseRouterLink }
+				/>
 			</VStack>
 		</Grid>
 	);

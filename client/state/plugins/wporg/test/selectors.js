@@ -1,11 +1,5 @@
 import deepFreeze from 'deep-freeze';
-import {
-	getNextPluginsListPage,
-	getPlugin,
-	isFetched,
-	isFetching,
-	isFetchingPluginsList,
-} from '../selectors';
+import { getPlugin, isFetched, isFetching, isFetchingPluginsList } from '../selectors';
 
 const items = deepFreeze( {
 	test: { slug: 'test' },
@@ -122,32 +116,6 @@ describe( 'WPorg Selectors', () => {
 		} );
 		test( 'Should return false when search term list is not being fetched', () => {
 			expect( isFetchingPluginsList( state, 'enahncement' ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'getNextPluginsListPage', () => {
-		test( 'Should return null by default', () => {
-			const emptyState = { plugins: { wporg: { listsPagination: {} } } };
-			expect( getNextPluginsListPage( emptyState, 'popular' ) ).toBe( null );
-		} );
-		test( 'Should return null when this is the last page', () => {
-			const currentState = {
-				plugins: {
-					wporg: {
-						listsPagination: {
-							popular: {
-								page: 10,
-								pages: 10,
-								results: 235,
-							},
-						},
-					},
-				},
-			};
-			expect( getNextPluginsListPage( currentState, 'popular' ) ).toBe( null );
-		} );
-		test( 'Should return next page number when there is one', () => {
-			expect( getNextPluginsListPage( state, 'popular' ) ).toBe( 2 );
 		} );
 	} );
 } );

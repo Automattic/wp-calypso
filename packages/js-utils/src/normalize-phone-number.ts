@@ -46,7 +46,7 @@ export default function normalizePhoneNumber( value: string, countryCode = '' ):
 		return '';
 	}
 
-	const match = /^(\+?[\d\s().-]+?)(?:\s*ext\s*(\d+))?$/i.exec( input );
+	const match = /^(\+?[\d\s().-]+?)(?:ext\s*(\d+))?$/i.exec( input );
 	if ( ! match ) {
 		return null;
 	}

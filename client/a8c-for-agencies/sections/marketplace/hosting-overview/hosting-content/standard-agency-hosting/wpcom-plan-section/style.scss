@@ -51,6 +51,12 @@
 	@include body-small;
 }
 
+.wpcom-plan-selector__promo-footnote {
+	@include body-small;
+	color: var( --color-neutral-50 );
+	margin-block-start: 4px;
+}
+
 .wpcom-plan-selector__cta {
 	display: flex;
 	flex-direction: column;

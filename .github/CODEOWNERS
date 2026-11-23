@@ -9,9 +9,8 @@
 #
 # See https://help.github.com/en/articles/about-code-owners for details on the format of this file
 
-# V2 Dashboard
 # Adding to the top as a fallback for all dashboard PRs
-/client/dashboard @Automattic/lego
+/client/dashboard @fushar @StevenDufresne @arthur791004 @chriskmnds
 
 # Comments management
 /client/my-sites/comment* @Automattic/serenity
@@ -34,8 +33,7 @@
 /client/dashboard/sites/staging-site-sync-dropdown @Automattic/yolo @Automattic/lego
 /client/dashboard/sites/staging-site-sync-modal @Automattic/yolo @Automattic/lego
 /client/dashboard/sites/staging-site-delete-modal @Automattic/yolo @Automattic/lego
-/client/dashboard/sites/site/environment-switcher.tsx @Automattic/yolo @Automattic/lego
-/client/dashboard/app/staging-site-sync-monitor @Automattic/yolo @Automattic/lego
+/client/dashboard/sites/staging-site @Automattic/yolo @Automattic/lego
 
 # Staging sites - interim dashboard
 /client/sites/staging-site @Automattic/yolo
@@ -62,10 +60,7 @@
 
 # Payments
 /client/lib/checkout/ @Automattic/shilling
-/client/me/purchases/add-new-payment-method/ @Automattic/shilling
-/client/me/purchases/billing-history/ @Automattic/shilling
 /client/me/purchases/manage-purchase/ @Automattic/shilling
-/client/me/purchases/payment-methods/ @Automattic/shilling
 /client/my-sites/checkout/checkout-main-wrapper.tsx @Automattic/shilling
 /client/my-sites/checkout/src/ @Automattic/shilling
 /client/my-sites/checkout/get-thank-you-page-url/ @Automattic/shilling
@@ -80,8 +75,6 @@
 /client/dashboard/me/billing-payment-methods/ @Automattic/shilling @Automattic/lego
 /client/dashboard/me/billing-purchases/ @Automattic/shilling @Automattic/lego
 /client/dashboard/me/billing-tax-details/ @Automattic/shilling @Automattic/lego
-/client/dashboard/shopping-cart/ @Automattic/shilling @Automattic/lego
-/client/dashboard/sites/overview-plan-card/ @Automattic/shilling @Automattic/lego
 /client/dashboard/sites/plans.ts @Automattic/shilling @Automattic/lego
 /client/dashboard/utils/payment-method.ts @Automattic/shilling @Automattic/lego
 /client/dashboard/utils/purchase.ts @Automattic/shilling @Automattic/lego
@@ -123,14 +116,9 @@
 
 # Domains
 /client/data/domains @Automattic/nomado
-/client/my-sites/checkout/composite-checkout/components/domain-contact-details.tsx @Automattic/nomado
-/client/my-sites/checkout/composite-checkout/components/domain-refund-policy.jsx @Automattic/nomado
-/client/my-sites/checkout/composite-checkout/components/domain-registration-agreement.jsx @Automattic/nomado
-/client/my-sites/checkout/composite-checkout/components/domain-registration-hsts.jsx @Automattic/nomado
 /client/state/data-layer/wpcom/domains @Automattic/nomado
 /client/state/domains @Automattic/nomado
 /client/state/sites/domains @Automattic/nomado
-/packages/data-stores/src/domain-suggestions @Automattic/nomado
 /packages/wpcom.js/src/lib/domain.dns.js @Automattic/nomado
 
 # Domains entrypoints and UI components
@@ -142,11 +130,7 @@
 /packages/domain-search/src/name-pulse @Automattic/yolo
 
 # Plans
-/client/my-sites/plans-grid @Automattic/martech
 /packages/plans-grid-next @Automattic/martech
-/packages/data-stores/plans @Automattic/martech
-/packages/data-stores/add-ons @Automattic/martech
-/packages/data-stores/wpcom-plans-ui @Automattic/martech
 
 # Support
 /packages/help-center @Automattic/t-rex
@@ -161,9 +145,6 @@
 
 # Exclude Stepper steps
 /client/landing/stepper/declarative-flow/internals/steps-repository
-
-# DataViews
-/packages/dataviews @youknowriad @Automattic/io
 
 # Grid package
 /packages/grid @youknowriad

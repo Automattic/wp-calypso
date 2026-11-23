@@ -77,6 +77,14 @@ afterEach( () => {
 	nock.cleanAll();
 } );
 
+test( 'shows an ampersand in the agency name', async () => {
+	const agency = { ...makeAgency(), name: 'Design &amp; Development', user: { capabilities: [] } };
+	renderOverview( agency );
+	expect(
+		await screen.findByRole( 'heading', { name: 'Design & Development', level: 1 } )
+	).toBeVisible();
+} );
+
 test( 'shows empty and partial saved preferences, then hides after a successful native save', async () => {
 	nock( API )
 		.get( matchingPath )
@@ -151,4 +159,30 @@ test( 'hides cached preferences after a failed native refetch', async () => {
 		await queryClient.refetchQueries( { queryKey: matchingKey } );
 	} );
 	await waitFor( () => expect( profileLink() ).not.toBeInTheDocument() );
+} );
+
+test( 'links VIP Pro and Premier partners to the enterprise hosting referral', async () => {
+	const referLink = () =>
+		screen.queryByRole( 'link', { name: 'Refer your client to VIP hosting' } );
+	const agency = { ...makeAgency(), user: { capabilities: [] } } as Agency;
+	renderOverview( agency );
+	await screen.findByRole( 'button', { name: 'Contact sales & support' } );
+	expect( referLink() ).not.toBeInTheDocument();
+
+	const setTier = ( id: string ) => {
+		act( () =>
+			queryClient.setQueryData( activeAgencyQuery().queryKey, {
+				...agency,
+				tier: { id },
+			} as Agency )
+		);
+	};
+	setTier( 'vip-pro-agency-partner' );
+	expect(
+		await screen.findByRole( 'link', { name: 'Refer your client to VIP hosting' } )
+	).toHaveAttribute( 'href', '/hosting/refer-enterprise-hosting' );
+	setTier( 'premier-partner' );
+	expect( referLink() ).toBeVisible();
+	setTier( 'agency-partner' );
+	await waitFor( () => expect( referLink() ).not.toBeInTheDocument() );
 } );

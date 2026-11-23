@@ -1,4 +1,4 @@
-import { reportError } from '../../../helpers/log-error';
+import { reportRequestError } from '../../../helpers/log-error';
 import { recordTracksEvent } from '../../../helpers/stats';
 import { wpcom } from '../../../rest-client/wpcom';
 import { likeNote } from '../actions';
@@ -21,7 +21,7 @@ const setLikeStatus =
 				await wpcom().req.del( `/sites/${ siteId }/${ entityPath }/likes/mine/delete` );
 			}
 		} catch ( error ) {
-			reportError( 'like', error );
+			reportRequestError( 'like', error );
 		}
 
 		// getNote() updates the redux store with a fresh object from the API

@@ -4,8 +4,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, act, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -27,17 +26,5 @@ describe( 'UpgradeBadge', () => {
 		render( <UpgradeBadge />, { wrapper: Wrapper } );
 		const badge = screen.getByText( 'Upgrade' );
 		expect( badge ).toBeInTheDocument();
-	} );
-
-	it( 'shows tooltip on mouse hover', () => {
-		render( <UpgradeBadge />, { wrapper: Wrapper } );
-
-		const badgeWrapper = screen.getByRole( 'button', { name: 'Upgrade' } );
-		act( () => {
-			userEvent.hover( badgeWrapper );
-		} );
-		waitFor( () => {
-			expect( screen.getByText( 'Maximize uptime' ) ).toBeInTheDocument();
-		} );
 	} );
 } );

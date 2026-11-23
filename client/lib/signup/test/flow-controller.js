@@ -125,20 +125,18 @@ describe( 'flow-controller', () => {
 			} );
 		} );
 
-		// eslint-disable-next-line jest/expect-expect
-		test( 'should not call apiRequestFunction multiple times', () => {
-			return new Promise( ( done ) => {
-				store.dispatch(
-					submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } )
-				);
-				store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
+		test( 'should not call apiRequestFunction multiple times', async () => {
+			const done = jest.fn();
+			const called = new Promise( ( resolve ) => done.mockImplementation( resolve ) );
+			store.dispatch( submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } ) );
+			store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );
 
-				// resubmit the first step to initiate another call to SignupFlowController#_process
-				// implicitly asserting that apiRequestFunction/done is only called once
-				store.dispatch(
-					submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } )
-				);
-			} );
+			// Resubmitting the first step runs SignupFlowController#_process again.
+			store.dispatch( submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } ) );
+
+			await called;
+			await new Promise( ( resolve ) => setTimeout( resolve, 10 ) );
+			expect( done ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 

@@ -3,7 +3,7 @@
  */
 import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
+import { useDifmOffer } from 'calypso/dashboard/sites/difm/hooks/use-difm-offer';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import preferencesReducer from 'calypso/state/preferences/reducer';
@@ -12,8 +12,8 @@ import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DifmOfferBanner from '../index';
 
-jest.mock( 'calypso/dashboard/utils/difm-offer', () => ( {
-	...jest.requireActual( 'calypso/dashboard/utils/difm-offer' ),
+jest.mock( 'calypso/dashboard/sites/difm/hooks/use-difm-offer', () => ( {
+	...jest.requireActual( 'calypso/dashboard/sites/difm/hooks/use-difm-offer' ),
 	useDifmOffer: jest.fn(),
 } ) );
 

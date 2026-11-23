@@ -35,7 +35,3 @@ export const capabilitiesSchema = {
 export const flagsSchema = {
 	type: 'array',
 };
-
-export const lasagnaSchema = {
-	type: [ 'string', 'null' ],
-};

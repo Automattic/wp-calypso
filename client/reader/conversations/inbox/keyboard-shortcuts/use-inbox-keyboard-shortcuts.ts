@@ -35,8 +35,8 @@ const TAB_KEYS: Record< string, InboxTab > = {
 };
 
 /**
- * Registers the Conversations inbox shortcuts, with the same input and modifier
- * guards as `useStreamKeyboardShortcuts`. Keys pressed inside any popover are
+ * Registers the Conversations inbox shortcuts, ignoring keys typed into form
+ * fields or pressed with a modifier. Keys pressed inside any popover are
  * ignored, except `i` inside the shortcuts popover so it can close itself.
  */
 export function useInboxKeyboardShortcuts( {
