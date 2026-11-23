@@ -35,8 +35,8 @@ export { submitFeedback, rateMessage } from './hooks/use-feedback-action';
 export { default as FeedbackInput } from './components/feedback-input';
 export { default as useAgentTraceIds } from './hooks/use-agent-trace-ids';
 
-// Site credits copy and rules, so other chats show the same amounts, low-balance limit and switch to top-ups
-export { CREDITS_LOW_BALANCE, formatCreditsShort, isCreditsOnTopUps } from './utils/credits';
+// Site credits copy and rules, so other chats show the same amounts, low-balance rule and switch to top-ups
+export { formatCreditsShort, isCreditsLow, isCreditsOnTopUps } from './utils/credits';
 // The top-ups balance and agent environment the credits Tracks events send, so other chats send the same values
 export { getAgentEnvironment, getTopUpCreditsLeft } from './utils/credits';
 

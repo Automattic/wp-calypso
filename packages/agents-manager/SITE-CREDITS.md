@@ -7,7 +7,7 @@ Chats outside the dock that show the site's AI credits, such as Image Studio, us
 - `parseLiveCreditsStatus( value, siteId )` turns a site's allowance snapshot into a `CreditsStatus`, or `undefined` if the snapshot isn't valid.
 - `CreditsMeter` shows that status. Its toggle is a ring of this period's plan credits left, in the primary blue: full at the start, and empty at 0 even while top-ups remain. An empty ring is drawn as a grey circle, so the toggle stays visible. Its tooltip gives the combined balance. Its popover leads with the same total, and then lists each pool.
 - `formatCreditsShort()` formats an amount such as "800" or "8.5k", rounding down.
-- `CREDITS_LOW_BALANCE` is the 10,000-credit balance below which a paid plan runs low: the toggle's label leads with "Low on credits:", and the low-balance notice shows. Free plans run low at 20% or below.
+- `isCreditsLow( status )` says whether the balance runs low: the toggle's label leads with "Low on credits:", and the low-balance notice shows. A paid plan runs low when its combined balance, plan and top-ups together, falls below 25% of the plan's monthly allowance (the plan pool's `total`), such as 2,500 credits of a 10,000-credit plan. A paid status without that allowance never runs low. Free plans run low at 20% or below. Neither runs low at 0, which is out of credits.
 
 ## Purchase links
 
@@ -42,7 +42,7 @@ Checkout refuses an upgrade from most people who didn't buy the plan, though any
 
 - `isCreditsOnTopUps( status )` says a paid site's plan credits are used up while top-ups remain. Plan credits are spent first, so the combined balance is then the top-ups left, even when the snapshot's top-up fields were unreadable.
 - `getCreditsTopUpsNotice( remaining, askToUpgrade, action, onDismiss )` gives its notice: "Now using top-ups: 25k left.", with the purchase button or who to ask, and a close button.
-- It shows only when no other credits notice applies. Under `CREDITS_LOW_BALANCE` the low notice shows instead, and closing that one doesn't bring this one back. In the dock it also gives way to the conversation's reply notices, such as "Waiting for the reply…".
+- It shows only when no other credits notice applies. While `isCreditsLow()` holds, the low notice shows instead, and closing that one doesn't bring this one back. In the dock it also gives way to the conversation's reply notices, such as "Waiting for the reply…".
 - Closing it lasts until the chat remounts or the site, user or agent changes. Where the chat has an AI chat button, closing the dock remounts it. Opening another of the dock's screens, such as the history, remounts it too. In Image Studio it stays closed until the modal opens again. Its dismissal is separate from the low notice's.
 - It sends no shown or dismissed event. A click on its button sends the usual click event, with `state: 'ok'`.
 

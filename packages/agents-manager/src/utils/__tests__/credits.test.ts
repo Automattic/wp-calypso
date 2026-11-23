@@ -40,7 +40,7 @@ const paid = ( percent: number, remaining = Math.round( 150 * percent ) ): Credi
 	plan: 'paid',
 	percent,
 	remaining,
-	pools: [ { id: 'plan', label: 'Monthly plan', percent } ],
+	pools: [ { id: 'plan', label: 'Monthly plan', percent, total: 15000 } ],
 } );
 
 describe( 'clampPercent', () => {
@@ -63,13 +63,13 @@ describe( 'formatPercent', () => {
 } );
 
 describe( 'credit states', () => {
-	it( 'reads low by percentage on free plans and by amount on paid plans', () => {
+	it( 'reads low by percentage on free plans and by a quarter of the allowance on paid plans', () => {
 		expect( isCreditsLow( free( 20 ) ) ).toBe( true );
 		expect( isCreditsLow( free( 21 ) ) ).toBe( false );
 		expect( isCreditsLow( free( 0 ) ) ).toBe( false );
-		expect( isCreditsLow( paid( 5 ) ) ).toBe( true );
-		expect( isCreditsLow( paid( 100, 10000 ) ) ).toBe( false );
-		expect( isCreditsLow( paid( 100, 9999 ) ) ).toBe( true );
+		expect( isCreditsLow( paid( 25, 3750 ) ) ).toBe( false );
+		expect( isCreditsLow( paid( 25, 3749 ) ) ).toBe( true );
+		expect( isCreditsLow( { ...paid( 25, 3749 ), pools: [] } ) ).toBe( false );
 		expect( isCreditsLow( paid( 0, 0 ) ) ).toBe( false );
 		expect( isCreditsLow( { ...paid( 0 ), remaining: 25000 } ) ).toBe( false );
 	} );
@@ -226,8 +226,8 @@ describe( 'getCreditsToggleLabel', () => {
 	} );
 
 	it( 'leads with the state when credits are low or out', () => {
-		expect( getCreditsToggleLabel( paid( 0, 9999 ) ) ).toBe(
-			`Low on credits: ${ localNumber( 9.9 ) }k credits left`
+		expect( getCreditsToggleLabel( paid( 0, 3749 ) ) ).toBe(
+			`Low on credits: ${ localNumber( 3.7 ) }k credits left`
 		);
 		expect( getCreditsToggleLabel( free( 0.4 ) ) ).toBe(
 			'Low on credits: <1% of free credits left'

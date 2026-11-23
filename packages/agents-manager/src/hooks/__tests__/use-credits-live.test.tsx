@@ -14,7 +14,7 @@ import {
 	setSessionSiteKey,
 	setSessionUserId,
 } from '../../utils/agent-session';
-import { CREDITS_LOW_BALANCE, getCreditsLabel } from '../../utils/credits';
+import { getCreditsLabel } from '../../utils/credits';
 import { setResolvedAgentId } from '../../utils/resolved-agent-id';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits, useCreditsVisit } from '../use-credits';
@@ -350,11 +350,11 @@ it.each( [ undefined, null, 'unsupported' ] )(
 	'keeps the balance without a purchase link or fabricated guidance for tier %o',
 	async ( plan_tier ) => {
 		const { result } = renderCredits();
-		await receive( { ...creditSnapshot(), plan_tier } );
-		expect( props( result.current ).status.remaining ).toBe( 2450 );
+		await receive( { ...low(), plan_tier } );
+		expect( props( result.current ).status.remaining ).toBe( 5 );
 		expect( props( result.current ).action?.href ).toBeUndefined();
 		expect( props( result.current ).onAction ).toBeUndefined();
-		expect( result.current.notice?.message ).toBe( `${ localNumber( 2.4 ) }k credits left.` );
+		expect( result.current.notice?.message ).toBe( `${ localNumber( 5 ) } credits left.` );
 		expect( result.current.notice?.action ).toBeUndefined();
 	}
 );
@@ -736,9 +736,8 @@ it( 'refreshes an upgraded balance on return focus and switches Upgrade to Add c
 
 it.each( [
 	[ 15000, 15000, undefined, undefined ],
-	[ 10001, 40000, undefined, undefined ],
-	[ 10000, 40000, undefined, undefined ],
-	[ 9999, 40000, `${ localNumber( 9.9 ) }k credits left.`, true ],
+	[ 2500, 10000, undefined, undefined ],
+	[ 2499, 10000, `${ localNumber( 2.4 ) }k credits left.`, true ],
 	[ 8500, 40000, `${ localNumber( 8.5 ) }k credits left.`, true ],
 	[ 800, 40000, `${ localNumber( 800 ) } credits left.`, true ],
 	[ 1, 40000, `${ localNumber( 1 ) } credit left.`, true ],
@@ -775,13 +774,13 @@ it( 'shows the credits notice by amount through depletion and replenishment', as
 			credits_used: 100000 - remaining,
 			exhausted: remaining === 0,
 		} );
-	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
+	fetchMock.mockResolvedValueOnce( response( balance( 30000 ) ) );
 	const { result } = renderCredits();
 	await flush();
 	expect( result.current.notice ).toBeUndefined();
 	for ( const [ remaining, message ] of [
-		[ 10000, undefined ],
-		[ 9999, `${ localNumber( 9.9 ) }k credits left.` ],
+		[ 25000, undefined ],
+		[ 24999, `${ localNumber( 24.9 ) }k credits left.` ],
 		[ 800, `${ localNumber( 800 ) } credits left.` ],
 		[ 0, 'You’ve used all your site credits.' ],
 	] as const ) {
@@ -943,13 +942,13 @@ describe( 'the top-ups notice', () => {
 		expect( result.current.topUpsNotice?.message ).toBe( topUpsMessage( 67 ) );
 	} );
 
-	it( 'gives way to the low notice under 10,000, and shows neither once that one is closed', async () => {
+	it( 'gives way to the low notice under a quarter of the allowance, and shows neither once that one is closed', async () => {
 		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
 		const { result } = renderCredits();
 		await flush();
 		expect( result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
-		await receive( withTopUps( 0, 9999 ) );
-		expect( result.current.notice?.message ).toBe( `${ localNumber( 9.9 ) }k credits left.` );
+		await receive( withTopUps( 0, 3749 ) );
+		expect( result.current.notice?.message ).toBe( `${ localNumber( 3.7 ) }k credits left.` );
 		expect( result.current.topUpsNotice ).toBeUndefined();
 		act( () => result.current.notice?.onDismiss?.() );
 		expect( result.current.notice ).toBeUndefined();
@@ -1746,13 +1745,13 @@ it( 'confirms, on reopening, a zero last shown before minimising', async () => {
 	expect( view.result.current.notice ).toBeDefined();
 
 	view.rerender( { ...defaultOptions, isOpen: false } );
-	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	fetchMock.mockResolvedValueOnce( response( low() ) );
 	view.rerender( defaultOptions );
 	expect( view.result.current.trailingActions ).toBeUndefined();
 	expect( view.result.current.notice ).toBeUndefined();
 
 	await flush();
-	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
+	expect( props( view.result.current ).status.remaining ).toBe( 5 );
 	expect( view.result.current.notice?.dismissible ).toBe( true );
 } );
 it( 'confirms a second zero that arrived while minimised before drawing it again', async () => {
@@ -2007,9 +2006,9 @@ describe( 'credits Tracks events', () => {
 			.mock.calls.filter( ( [ eventName ] ) => eventName.includes( '_credits_' ) );
 	const healthy = () =>
 		creditSnapshot( {
-			credits_limit: CREDITS_LOW_BALANCE * 2,
-			credits_remaining: CREDITS_LOW_BALANCE,
-			credits_used: CREDITS_LOW_BALANCE,
+			credits_limit: 20000,
+			credits_remaining: 10000,
+			credits_used: 10000,
 			plan_tier: 'business',
 		} );
 	const base = {
@@ -2298,7 +2297,7 @@ describe( 'credits Tracks events', () => {
 			creditsEvents().map( ( [ name, eventProps ] ) => [ name, eventProps?.top_up_credits_left ] );
 
 		it.each( [
-			[ 'the packs left', withPacks( lowOnBusiness(), 3000 ), 3000 ],
+			[ 'the packs left', withPacks( lowOnBusiness(), 300 ), 300 ],
 			[ '0 for used-up packs', withPacks( lowOnBusiness(), 0 ), 0 ],
 			[ 'none without packs', lowOnBusiness(), 'none' ],
 			[
@@ -2381,12 +2380,12 @@ describe( 'credits Tracks events', () => {
 			const { result } = renderCredits( freshScope() );
 			await flush();
 			expect( result.current.topUpsNotice ).toBeDefined();
-			await receive( withTopUps( 0, 6000 ) );
-			expect( result.current.notice?.message ).toBe( `${ localNumber( 6 ) }k credits left.` );
+			await receive( withTopUps( 0, 3000 ) );
+			expect( result.current.notice?.message ).toBe( `${ localNumber( 3 ) }k credits left.` );
 			expect( creditsEvents() ).toEqual( [
 				[
 					'calypso_agents_manager_credits_notice_shown',
-					expect.objectContaining( { state: 'low', top_up_credits_left: 6000 } ),
+					expect.objectContaining( { state: 'low', top_up_credits_left: 3000 } ),
 				],
 			] );
 		} );
@@ -2447,7 +2446,7 @@ describe( 'credits Tracks events', () => {
 				{
 					...base,
 					state: 'ok',
-					credits_left: CREDITS_LOW_BALANCE,
+					credits_left: 10000,
 					plan_tier: 'business',
 					trigger: 'click',
 				},
@@ -2562,7 +2561,7 @@ describe( 'credits Tracks events', () => {
 			await flush();
 			expect( isPopoverOpen() ).toBe( false );
 			expect( view.result.current.notice ).toBeUndefined();
-			expect( props( view.result.current ).status.remaining ).toBe( CREDITS_LOW_BALANCE );
+			expect( props( view.result.current ).status.remaining ).toBe( 10000 );
 			expect( opened() ).toEqual( [] );
 		} );
 
@@ -2778,7 +2777,7 @@ describe( 'credits Tracks events', () => {
 						{
 							...base,
 							state: 'ok',
-							credits_left: CREDITS_LOW_BALANCE,
+							credits_left: 10000,
 							plan_tier,
 							cta_type: ctaType,
 							ref: 'wp_ai_credits',
@@ -3218,11 +3217,11 @@ describe( 'refusal code', () => {
 
 			it( 'drops the card when the next turn starts, and the composer shows the balance', async () => {
 				const view = await openThenRefuse( 'business' );
-				await topUp();
+				await read( response( low( 'business' ) ) );
 				chatIsProcessing = true;
 				view.rerender( defaultOptions );
 				expect( view.result.current.refusalNotice ).toBeUndefined();
-				expect( view.result.current.notice?.message ).toBe( '2.4k credits left.' );
+				expect( view.result.current.notice?.message ).toBe( '5 credits left.' );
 			} );
 
 			it( 'offers the card again for the next refusal', async () => {
