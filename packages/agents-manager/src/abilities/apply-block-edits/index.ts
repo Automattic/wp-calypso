@@ -4,12 +4,10 @@ import { applyBlockEditsCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
 /**
- * The internal agent never calls this directly: the backend's block-editing
- * tools produce the edits, delegate them to the client under this name and ack
- * the call from the result envelope. Only WebMCP browser agents read its
- * description, so it may name their tools. The `big-sky/` name and category
- * are the keys the backend route allowlists match on — renaming either drops
- * the ability from every surface.
+ * The chat agent never calls this directly: the backend's block-editing tools
+ * delegate their edits to it. So only browser agents read the description, and
+ * it may name their tools. The `big-sky/` name and category are the keys the
+ * backend route allowlists match on — renaming either drops it everywhere.
  */
 export const applyBlockEditsAbility: Ability = {
 	name: 'big-sky/apply-block-edits',

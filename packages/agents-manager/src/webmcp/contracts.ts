@@ -96,10 +96,7 @@ export const APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = 
 	$defs: { blockData: BLOCK_DATA_SCHEMA },
 };
 
-/**
- * The full ability creates, deletes and saves records across the site; through
- * WebMCP it only edits the open post, and those edits stay unsaved.
- */
+/** Narrowed because the full ability also creates, deletes and saves records across the site. */
 export const EDIT_ENTITY_RECORD_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = {
 	type: 'object',
 	description:
