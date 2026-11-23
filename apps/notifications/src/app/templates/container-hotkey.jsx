@@ -3,6 +3,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import { NoteOpenContext } from '../context';
 
 // Every container listens on `window`, and an action can re-render another container
 // with the same hotkey before that one's listener runs, so the others skip a key press
@@ -19,6 +20,8 @@ const dispatch = ( event, action ) => {
 };
 
 export class HotkeyContainer extends Component {
+	static contextType = NoteOpenContext;
+
 	static propTypes = {
 		shortcuts: PropTypes.arrayOf(
 			PropTypes.shape( {
@@ -42,6 +45,7 @@ export class HotkeyContainer extends Component {
 		if (
 			event.repeat ||
 			handledEvents.has( event ) ||
+			! this.context ||
 			! this.props.shortcuts ||
 			! this.props.keyboardShortcutsAreEnabled
 		) {
