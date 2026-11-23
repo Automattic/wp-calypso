@@ -90,7 +90,6 @@
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page-annual-only": true,
 		"jitms": true,
-		"lasagna": true,
 		"layout/app-banner": true,
 		"layout/global-notifications": true,
 		"layout/guided-tours": true,
