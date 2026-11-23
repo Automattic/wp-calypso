@@ -167,10 +167,13 @@ const NewStatsNotices = ( { siteId, isOdysseyStats, statsPurchaseSuccess }: Stat
 		useSelector( ( state ) => hasLoadedSitePlansFromServer( state, siteId ) ) ||
 		config.isEnabled( 'is_odyssey' );
 
-	const isWaitingForNoticeInputs =
-		! hasLoadedPurchases || ! hasLoadedPlans || isLoading || isRequestingSitePurchases;
-
-	if ( isWaitingForNoticeInputs || isError ) {
+	if (
+		! hasLoadedPurchases ||
+		! hasLoadedPlans ||
+		isLoading ||
+		isError ||
+		isRequestingSitePurchases
+	) {
 		return null;
 	}
 
