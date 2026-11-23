@@ -246,27 +246,6 @@ const BundleMemberList = styled.div< { theme?: Theme } >`
 	line-height: 1.4;
 `;
 
-const BundleTermRow = styled.div< { theme?: Theme } >`
-	box-sizing: border-box;
-	width: 100%;
-	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
-	border-radius: 4px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	margin-top: 16px;
-	padding: 16px;
-	color: ${ ( props ) => props.theme.colors.textColorDark };
-	font-size: 14px;
-`;
-
-const BundleTermPrice = styled.span`
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-`;
-
 const BundleRenewalNote = styled.div< { theme?: Theme } >`
 	width: 100%;
 	margin: 8px 0;
@@ -580,7 +559,7 @@ export function BundleLineItem( {
 
 			<LineItemMeta>
 				<LineItemSublabelTitle>
-					{ translate( 'Domain Bundle Registration: billed annually' ) }
+					{ translate( 'Domain Bundle Registration: One-year registration, billed annually' ) }
 				</LineItemSublabelTitle>
 				{ isBundleDiscounted && (
 					<DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>
@@ -592,14 +571,6 @@ export function BundleLineItem( {
 					<span key={ product.uuid }>{ product.meta }</span>
 				) ) }
 			</BundleMemberList>
-
-			<BundleTermRow>
-				<span>{ translate( 'One year' ) }</span>
-				<BundleTermPrice>
-					<span>{ bundleTotalDisplay }</span>
-					<Gridicon icon="chevron-down" size={ 16 } aria-hidden="true" />
-				</BundleTermPrice>
-			</BundleTermRow>
 
 			{ /* Bundle members renew at full price, so the renewal amount is the
 			     pre-discount group total. */ }
