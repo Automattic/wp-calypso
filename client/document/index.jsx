@@ -33,7 +33,7 @@ import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2
 import { getCachedRuntimeStyles } from 'calypso/server/render/runtime-styles';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
-import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
+import { isBilmurEnabled, getBilmurUrl, isBilmurSpaEnabled } from './utils/bilmur';
 import { chunkCssLinks } from './utils/chunk';
 
 class Document extends Component {
@@ -50,6 +50,7 @@ class Document extends Component {
 			commitChecksum,
 			commitSha,
 			entrypoint,
+			entrypointName,
 			env,
 			featuresHelper,
 			feedbackURL,
@@ -124,6 +125,8 @@ class Document extends Component {
 			( params && params.hasOwnProperty( 'lang' )
 				? `var localeFromRoute = ${ jsonStringifyForHtml( params.lang ?? '' ) };\n`
 				: '' );
+
+		const hasBilmurSpa = isBilmurSpaEnabled( entrypointName );
 
 		const isDashboardSection =
 			sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
@@ -202,8 +205,8 @@ class Document extends Component {
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
 					) ) }
-					{ /* The bilmur script looks its configuration up by this `id`. */ }
-					{ isBilmurEnabled() && (
+					{ /* `bilmur` and `bilmur-spa` look their configuration up by this `id`. */ }
+					{ ( hasBilmurSpa || isBilmurEnabled() ) && (
 						<meta
 							id="bilmur"
 							property="bilmur:data"
@@ -319,7 +322,11 @@ class Document extends Component {
 							/>
 						) ) }
 
-					{ isBilmurEnabled() && (
+					{
+						// If `bilmur-spa` is enabled, it handles hard navigation data
+						// reporting itself, and we shouldn't load `bilmur`.
+					 }
+					{ ! hasBilmurSpa && isBilmurEnabled() && (
 						<script nonce={ inlineScriptNonce } defer src={ getBilmurUrl() } />
 					) }
 

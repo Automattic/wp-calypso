@@ -1,2 +1,2 @@
 export { chunkCssLinks } from './chunk';
-export { isBilmurEnabled, getBilmurUrl } from './bilmur';
+export { isBilmurEnabled, getBilmurUrl, isBilmurSpaEnabled } from './bilmur';
