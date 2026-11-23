@@ -3,7 +3,8 @@ import { ThemeProvider } from '@wordpress/theme';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { useColorScheme } from 'calypso/lib/color-scheme/shared';
-import { COLOR_SCHEME_STORAGE_KEY, DARK_SEEDS, LIGHT_SEEDS } from './theme-pre-paint';
+import { useAuth } from './auth';
+import { DARK_SEEDS, LIGHT_SEEDS, colorSchemeStorageKey } from './theme-pre-paint';
 import type { ReactNode } from 'react';
 
 /**
@@ -27,7 +28,7 @@ function useIsPrinting() {
 }
 
 /**
- * Applies the WPDS theme for the user's color scheme to the whole document.
+ * Applies the WPDS theme for the user's color scheme to the whole document, or nothing when the app has no color schemes.
  */
 export function DashboardThemeProvider( {
 	children,
@@ -36,19 +37,29 @@ export function DashboardThemeProvider( {
 	children: ReactNode;
 	enabled: boolean;
 } ) {
+	if ( ! enabled ) {
+		return children;
+	}
+
+	return <ColorSchemeThemeProvider>{ children }</ColorSchemeThemeProvider>;
+}
+
+/**
+ * Applies the WPDS theme for the user's color scheme and remembers the scheme for the pre-paint.
+ */
+function ColorSchemeThemeProvider( { children }: { children: ReactNode } ) {
 	const { colorScheme } = useColorScheme();
+	const { user } = useAuth();
 	const prefersDark = useMediaQuery( '(prefers-color-scheme: dark)' );
 	const isPrint = useIsPrinting();
 	const isDark =
-		enabled &&
-		! isPrint &&
-		( colorScheme === 'dark' || ( colorScheme === 'system' && prefersDark ) );
+		! isPrint && ( colorScheme === 'dark' || ( colorScheme === 'system' && prefersDark ) );
 
 	useEffect( () => {
 		try {
-			window.localStorage.setItem( COLOR_SCHEME_STORAGE_KEY, enabled ? colorScheme : 'light' );
+			window.localStorage.setItem( colorSchemeStorageKey( user.ID ), colorScheme );
 		} catch {}
-	}, [ enabled, colorScheme ] );
+	}, [ user.ID, colorScheme ] );
 
 	useLayoutEffect( () => {
 		delete document.documentElement.dataset.prePaintTheme;

@@ -1,4 +1,9 @@
-export const COLOR_SCHEME_STORAGE_KEY = 'dashboard-color-scheme';
+/**
+ * Returns the localStorage key holding the color scheme a user last saw.
+ */
+export function colorSchemeStorageKey( userId: number | string ) {
+	return `dashboard-color-scheme:${ userId }`;
+}
 
 export const LIGHT_SEEDS = {
 	background: '#fcfcfc',
@@ -11,11 +16,15 @@ export const DARK_SEEDS = {
 };
 
 /**
- * Paints the page dark before the app loads when the last color scheme the user saw was dark.
+ * Paints the page dark before the app loads when the last color scheme this user saw was dark.
  */
-export function ThemePrePaint( { nonce }: { nonce?: string } ) {
+export function ThemePrePaint( { nonce, userId }: { nonce?: string; userId?: number } ) {
+	if ( ! userId ) {
+		return null;
+	}
+
 	const script = `(function(){try{var s=localStorage.getItem(${ JSON.stringify(
-		COLOR_SCHEME_STORAGE_KEY
+		colorSchemeStorageKey( userId )
 	) });if(s==='system'){s=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}if(s==='dark'){document.documentElement.setAttribute('data-pre-paint-theme','dark');}}catch(e){}})();`;
 	const style = `html[data-pre-paint-theme="dark"],html[data-pre-paint-theme="dark"] body{background:${ DARK_SEEDS.background };color-scheme:dark;}`;
 

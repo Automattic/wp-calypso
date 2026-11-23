@@ -204,7 +204,7 @@ class Document extends Component {
 					shouldPrefetchRestProxy={ ! app?.isFirefox }
 				>
 					{ sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name && (
-						<ThemePrePaint nonce={ inlineScriptNonce } />
+						<ThemePrePaint nonce={ inlineScriptNonce } userId={ user?.ID } />
 					) }
 					{ head.metas.map( ( props, index ) => (
 						<meta { ...props } key={ index } />
