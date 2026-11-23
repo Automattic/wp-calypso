@@ -5,10 +5,10 @@ WebMCP API. The browser agent supplies the model and all reasoning. This adapter
 Agenttic agent, open Agents Manager chat, or call the WordPress.com AI orchestrator.
 
 This is a staff-testing proof of concept, not a production-supported integration. It is disabled by
-default. It is enabled only when the Agents Manager inline data reports `isDevMode: true`, on a
-post, page, custom-post-type block editor or site editor screen (detected from the admin body
-classes) in a browser that implements
-`document.modelContext.registerTool` (or the older `navigator.modelContext` location).
+default, and enabled only when the Agents Manager inline data reports `isDevMode: true`, on a post,
+page, custom-post-type block editor or site editor screen (detected from the admin body classes),
+in a browser that implements `document.modelContext.registerTool` (or the older
+`navigator.modelContext`).
 
 ## Execution and exposure
 
@@ -33,14 +33,15 @@ WebMCP calls use the original slash-based ability name. The backend route settin
 here: they scope only the agent's own tools.
 
 Eligibility is checked when Agents Manager mounts and whenever the scope or tool provider changes;
-such a change, or unmounting, aborts all registrations. While eligible, the adapter also reconciles
+such a change, or unmounting, aborts all registrations. While eligible, the adapter syncs the tools
 whenever the `@wordpress/abilities` registry changes, which covers abilities registered there by
-later React effects. Anything else, such as an ability only a provider lists, a server ability
-fetch that failed or a tool the browser rejected, is picked up on the next registry or scope
-change. A rejected tool doesn't stop the others from registering, and a call to a tool whose
-ability was removed or is no longer exposed is refused until the next sync updates the tools. An
-already-aborted tool execution is rejected, but an in-flight provider execution cannot currently be
-cancelled because `ToolProvider.executeAbility()` has no signal.
+later React effects. Anything else, such as an ability only a provider lists, a server ability fetch
+that failed or a tool the browser rejected, is picked up on the next registry or scope change.
+
+A rejected tool doesn't stop the others from registering. A call to a tool whose ability was
+removed or is no longer exposed, or whose signal was aborted, is refused before it runs. An
+in-flight provider execution cannot be cancelled, because `ToolProvider.executeAbility()` has no
+signal.
 
 The exposed tools are:
 
@@ -49,13 +50,13 @@ The exposed tools are:
   current selection, and a block count. The WebMCP adapter remembers these IDs for the matching
   edit call. It is annotated as read-only and idempotent.
 
-- `big-sky/apply-block-edits`: a client-registered ability that deterministically changes the
-  current block-editor canvas. It does not save or publish the edit, so the result remains visible
-  and reviewable. Its WebMCP contract supplies item-level schemas for updates, insertions, and
-  deletions, accepts serialized Gutenberg block markup written by the agent as an insertion, strips
-  internal-only arguments, and injects an identity mapping for IDs from the most recent block-tree read. It is
-  owned by Agents Manager (`abilities/apply-block-edits`), which resolves the supplied mapping
-  ahead of its own short ids.
+- `big-sky/apply-block-edits`: an Agents Manager-owned, client-only ability that deterministically
+  changes the current block-editor canvas. It does not save or publish the edit, so the result
+  remains visible and reviewable. Its WebMCP contract supplies item-level schemas for updates,
+  insertions, and deletions, accepts serialized Gutenberg block markup written by the agent as an
+  insertion, strips internal-only arguments, and injects an identity mapping for IDs from the most
+  recent block-tree read, which the callback resolves ahead of its own short ids. Read the block
+  tree right before each edit, so its targets match the editor and the mapping is fresh.
 
 - `big-sky/show-template`: an Agents Manager-owned, client-only ability that turns on the editor's
   Show template mode. Use it when the block-tree result does not contain the requested header or
@@ -81,12 +82,9 @@ The exposed tools are:
 
 - `wpcom/get-block-schemas`, `wpcom/get-content-guidelines`, and `core/get-site-info`:
   read-only server abilities fetched by the WebMCP provider from the current site's Abilities REST
-  API. Their existing input schemas, permission
-  checks, and authenticated site-specific execution path are preserved. The adapter also includes
-  each ability's server-provided instructions in the WebMCP description when present.
-
-The edit tool should be preceded by a fresh block-tree read. This keeps its targets aligned with the
-current editor and refreshes the identity map the callback resolves through.
+  API. Their existing input schemas, permission checks, and authenticated site-specific execution
+  path are preserved. The adapter also includes each ability's server-provided instructions in the
+  WebMCP description when present.
 
 ## Adding a tool
 
@@ -119,11 +117,10 @@ DevTools or call `document.modelContext` directly for this path.
    `agents_manager__get_block_tree`, `big_sky__show_template`, `big_sky__apply_block_edits`,
    `big_sky__apply_update_theme`, `big_sky__edit_entity_record`, and `big_sky__set_site_logo`, plus
    `wpcom__get_block_schemas`, `wpcom__get_content_guidelines`, and `core__get_site_info`.
-2. Call `agents_manager__get_block_tree`. If a requested template part is absent, call
-   `big_sky__show_template`, then read the tree again.
-3. Call `big_sky__apply_block_edits` with a client ID from the latest tree, or insert a small test
-   block on an empty page. Read the tree one final time and confirm the expected block and
-   attributes are present.
+2. Ask the agent to read the block tree. If a requested template part is absent, confirm it calls
+   `big_sky__show_template`, then reads the tree again.
+3. Ask the agent to change a block, or insert a small test block on an empty page. Confirm it uses a
+   client ID from the latest tree, and that the expected block and attributes are on the canvas.
 4. Ask the agent to add a section, such as a heading and a paragraph, as block markup. Confirm it
    passes the markup to `big_sky__apply_block_edits` as `inserts[0].blockMarkup` and that the blocks
    appear on the canvas in order.
@@ -145,6 +142,10 @@ DevTools or call `document.modelContext` directly for this path.
 3. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.
-4. Confirm the Network panel shows no Agenttic/orchestrator/model request.
-5. Navigate to another editor/site and confirm the tool now targets only the current canvas.
-6. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
+4. Register a flagged ability, for example with
+   `wp.data.dispatch( 'core/abilities' ).registerAbility()` and `meta: { webmcp: { public: true } }`
+   (its category must be registered first). Confirm it appears as a tool without a reload, and
+   disappears when it is unregistered.
+5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
+6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
+7. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
