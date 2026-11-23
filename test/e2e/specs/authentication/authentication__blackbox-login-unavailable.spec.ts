@@ -104,6 +104,7 @@ test.describe(
 				// on the stalled collect at its deadline, as the SDK does.
 				await page.route( '**/blackbox-api.wp.com/**', ( route ) => route.abort() );
 				await page.addInitScript( () => {
+					const loadingSnapshot = Object.freeze( { status: 'loading' } );
 					( window as unknown as { Blackbox: unknown } ).Blackbox = {
 						configure: () => undefined,
 						collect: () => new Promise( () => undefined ),
@@ -114,7 +115,7 @@ test.describe(
 									deadlineMs
 								)
 							),
-						getSnapshot: () => ( { status: 'loading' } ),
+						getSnapshot: () => loadingSnapshot,
 						subscribe: () => () => undefined,
 						reset: () => undefined,
 					};
