@@ -3,6 +3,7 @@
  */
 import { randomUUID } from 'crypto';
 import config from '@automattic/calypso-config';
+import { captureException } from '@automattic/calypso-sentry';
 import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -31,6 +32,11 @@ vi.mock( '../../analytics', async () => ( {
 } ) );
 
 const mockedBumpStat = vi.mocked( bumpStat );
+
+vi.mock( '@automattic/calypso-sentry', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/calypso-sentry' ) >() ),
+	captureException: vi.fn(),
+} ) );
 
 vi.mock( 'calypso/lib/user/store', async ( importOriginal ) => {
 	const actual = await importOriginal< typeof import( 'calypso/lib/user/store' ) >();
@@ -651,6 +657,7 @@ describe( 'redirectAfterSessionEnd', () => {
 
 		expect( store.get( 'wpcom_user_id' ) ).toBeUndefined();
 		expect( window.location.href ).toBe( 'https://wordpress.com/me/account/closed' );
+		expect( captureException ).toHaveBeenCalledWith( new Error( 'storage is unavailable' ) );
 	} );
 
 	test( 'leaves after a few seconds when the cleanup stalls', async () => {
