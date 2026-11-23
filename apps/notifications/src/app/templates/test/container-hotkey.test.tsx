@@ -7,7 +7,8 @@ import { flushSync } from 'react-dom';
 import { vi } from 'vitest';
 import { HotkeyContainer } from '../container-hotkey';
 
-const pressKey = ( key: string ) => fireEvent.keyDown( window, { key } );
+const pressKey = ( key: string, init: KeyboardEventInit = {} ) =>
+	fireEvent.keyDown( window, { key, ...init } );
 
 describe( 'HotkeyContainer', () => {
 	it( 'runs one shortcut when two containers share a hotkey', () => {
@@ -127,6 +128,34 @@ describe( 'HotkeyContainer', () => {
 
 		expect( like ).not.toHaveBeenCalled();
 		expect( approve ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'runs no shortcut while keyboard shortcuts are off', () => {
+		const approve = vi.fn();
+		render(
+			<HotkeyContainer
+				keyboardShortcutsAreEnabled={ false }
+				shortcuts={ [ { hotkey: 'a', action: approve } ] }
+			/>
+		);
+
+		expect( pressKey( 'a' ) ).toBe( true );
+		expect( approve ).not.toHaveBeenCalled();
+	} );
+
+	it( 'leaves a key pressed with Ctrl, Cmd or Alt to the browser', () => {
+		const approve = vi.fn();
+		render(
+			<HotkeyContainer
+				keyboardShortcutsAreEnabled
+				shortcuts={ [ { hotkey: 'a', action: approve } ] }
+			/>
+		);
+
+		expect( pressKey( 'a', { ctrlKey: true } ) ).toBe( true );
+		expect( pressKey( 'a', { metaKey: true } ) ).toBe( true );
+		expect( pressKey( 'a', { altKey: true } ) ).toBe( true );
+		expect( approve ).not.toHaveBeenCalled();
 	} );
 
 	it( 'runs a shortcut for a key press other code cancelled', () => {
