@@ -12,7 +12,6 @@ interface Props {
 	tab: InboxTab;
 	unreadCount: number;
 	onChange: ( tab: InboxTab ) => void;
-	/** Lets the tab's list load while the pointer is on its way to a click. */
 	onHover?: ( tab: InboxTab ) => void;
 	children: ReactNode;
 }

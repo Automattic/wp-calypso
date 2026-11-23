@@ -1,7 +1,11 @@
 import { type NotificationNote } from '@automattic/api-core';
-import { readConversationsCommentsQuery, readConversationsQuery } from '@automattic/api-queries';
+import {
+	hasLoadedMorePages,
+	readConversationsCommentsQuery,
+	readConversationsQuery,
+} from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, type QueryKey } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -102,16 +106,15 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		// Its cached pages still serve those lookups while Unread runs its own query.
 		enabled: tab !== 'unread',
 	} );
+	const ownCommentsParams = { sort, search: debouncedSearch };
+	const unreadParams = { ...ownCommentsParams, scope: 'unread' as const };
 	const unreadQuery = useConversations( {
-		sort,
-		search: debouncedSearch,
-		scope: 'unread',
+		...unreadParams,
 		refetchInterval: REFRESH_INTERVAL,
 		enabled: tab === 'unread',
 	} );
 	const ownCommentsQuery = useOwnComments( {
-		sort,
-		search: debouncedSearch,
+		...ownCommentsParams,
 		enabled: tab === 'yours',
 		refetchInterval: REFRESH_INTERVAL,
 	} );
@@ -165,7 +168,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 
 	const isPickingFirst = ! isNarrow && ! selectedKey && conversations.length > 0;
 	// Cached conversations can be old, so the latest is picked once they're refreshed.
-	const isRefreshing = conversationsShownQuery.isFetching;
+	const isRefreshing =
+		conversationsShownQuery.isFetching && ! conversationsShownQuery.isFetchedAfterMount;
 	useEffect( () => {
 		if ( isPickingFirst && ! isRefreshing ) {
 			page.replace( getConversationPath( conversations[ 0 ] ) );
@@ -275,15 +279,25 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	};
 
 	const queryClient = useQueryClient();
+	// A failed query is always stale, and a refetch reloads every page, so neither is warmed.
+	const canPrefetch = ( queryKey: QueryKey ) => {
+		const state = queryClient.getQueryState< { pages: unknown[] } >( queryKey );
+		return ! state || ( state.status !== 'error' && ! hasLoadedMorePages( { state } ) );
+	};
 	const prefetchTab = ( next: InboxTab ) => {
+		if ( next === tab ) {
+			return;
+		}
 		if ( next === 'unread' ) {
-			queryClient.prefetchInfiniteQuery(
-				readConversationsQuery( { sort, search: debouncedSearch, scope: 'unread' } )
-			);
+			const query = readConversationsQuery( unreadParams );
+			if ( canPrefetch( query.queryKey ) ) {
+				queryClient.prefetchInfiniteQuery( query );
+			}
 		} else if ( next === 'yours' ) {
-			queryClient.prefetchInfiniteQuery(
-				readConversationsCommentsQuery( { sort, search: debouncedSearch } )
-			);
+			const query = readConversationsCommentsQuery( ownCommentsParams );
+			if ( canPrefetch( query.queryKey ) ) {
+				queryClient.prefetchInfiniteQuery( query );
+			}
 		}
 	};
 

@@ -260,13 +260,30 @@ const markCachedRead = ( queryClient: QueryClient, noteIds: number[] ) => {
  */
 const pendingMarks = new WeakMap<
 	QueryClient,
-	{ count: number; noteIds: number[]; needsRefetch: boolean }
+	{ count: number; noteIds: number[]; needsRefetch: boolean; interrupted: Set< string > }
 >();
 
 const getMarkReadQueryKeys = () => [
 	getReadConversationsQueryKeyPrefix(),
 	getNotificationsQueryKey(),
 ];
+
+/**
+ * Cancels the fetches in flight, keeping the hashes of the refetches so they run again once the
+ * marks land. A cancelled refetch keeps the data it was replacing, which can be a persisted page
+ * from days ago. A cancelled next page is left to the next scroll, since a refetch reloads every page.
+ */
+const cancelFetches = ( queryClient: QueryClient, interrupted: Set< string > ) =>
+	Promise.all(
+		getMarkReadQueryKeys().map( ( queryKey ) => {
+			queryClient
+				.getQueryCache()
+				.findAll( { queryKey, fetchStatus: 'fetching' } )
+				.filter( ( query ) => ! query.state.fetchMeta?.fetchMore )
+				.forEach( ( { queryHash } ) => interrupted.add( queryHash ) );
+			return queryClient.cancelQueries( { queryKey } );
+		} )
+	);
 
 /**
  * Marks comment notes read and clears them from the cached conversations and notes
@@ -284,13 +301,12 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 				count: 0,
 				noteIds: [],
 				needsRefetch: false,
+				interrupted: new Set< string >(),
 			};
 			pending.count++;
 			pending.noteIds.push( ...noteIds );
 			pendingMarks.set( queryClient, pending );
-			await Promise.all(
-				getMarkReadQueryKeys().map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
-			);
+			await cancelFetches( queryClient, pending.interrupted );
 			pending.needsRefetch ||= markCachedRead( queryClient, noteIds );
 		},
 		// Waiting for the last mark keeps a refetch from bringing back what the others cleared.
@@ -305,18 +321,17 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 				return;
 			}
 			pendingMarks.delete( queryClient );
-			const queryKeys = getMarkReadQueryKeys();
-			// A fetch still in flight may predate the marks. Cancelling a first fetch leaves no
-			// data, so those fetch again.
-			await Promise.all(
-				queryKeys.map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
-			);
+			// A fetch still in flight may predate the marks.
+			await cancelFetches( queryClient, pending.interrupted );
 			markCachedRead( queryClient, pending.noteIds );
 			await Promise.all(
-				queryKeys.map( ( queryKey ) =>
+				getMarkReadQueryKeys().map( ( queryKey ) =>
 					queryClient.invalidateQueries( {
 						queryKey,
-						predicate: ( query ) => pending.needsRefetch || query.state.data === undefined,
+						predicate: ( query ) =>
+							pending.needsRefetch ||
+							query.state.data === undefined ||
+							pending.interrupted.has( query.queryHash ),
 					} )
 				)
 			);
