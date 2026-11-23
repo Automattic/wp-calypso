@@ -1,11 +1,7 @@
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
-import {
-	THEME_DELETE_FAILURE,
-	THEME_DELETE_SUCCESS,
-	THEME_DELETE,
-} from 'calypso/state/themes/action-types';
+import { THEME_DELETE_SUCCESS } from 'calypso/state/themes/action-types';
 
 import 'calypso/state/themes/init';
 
@@ -17,11 +13,6 @@ import 'calypso/state/themes/init';
  */
 export function deleteTheme( themeId, siteId ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: THEME_DELETE,
-			themeId,
-			siteId,
-		} );
 		return wpcom.req
 			.post( `/sites/${ siteId }/themes/${ themeId }/delete` )
 			.then( ( { name: themeName } ) => {
@@ -41,13 +32,7 @@ export function deleteTheme( themeId, siteId ) {
 					)
 				);
 			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: THEME_DELETE_FAILURE,
-					themeId,
-					siteId,
-					error,
-				} );
+			.catch( () => {
 				dispatch(
 					errorNotice(
 						translate( 'Problem deleting %(themeId)s. Check theme is not active.', {

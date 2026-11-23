@@ -2,7 +2,6 @@ import {
 	MEDIA_ITEM_CREATE,
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
-	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
@@ -112,21 +111,6 @@ export function failMediaItemRequest( siteId, mediaId, error = null ) {
 		siteId,
 		mediaId,
 		error,
-	};
-}
-
-/**
- * Returns an action object used in signalling that a request for media item(s)
- * has failed.
- * @param  {number} siteId  Site ID
- * @param  {number} mediaId Media ID
- * @returns {Object}         Action object
- */
-export function successMediaItemRequest( siteId, mediaId ) {
-	return {
-		type: MEDIA_ITEM_REQUEST_SUCCESS,
-		siteId,
-		mediaId,
 	};
 }
 

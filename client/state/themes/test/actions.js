@@ -12,7 +12,6 @@ import {
 	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
-	THEME_DELETE_FAILURE,
 	THEME_FILTERS_REQUEST,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
@@ -1364,22 +1363,6 @@ describe( 'actions', () => {
 					themeId: 'karuna',
 					themeName: 'Karuna',
 				} );
-			} );
-		} );
-
-		test( 'should dispatch failure action on error response', () => {
-			return deleteTheme(
-				'blahblah',
-				2211667
-			)( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith(
-					expect.objectContaining( {
-						type: THEME_DELETE_FAILURE,
-						siteId: 2211667,
-						themeId: 'blahblah',
-						error: expect.toBeTruthy(),
-					} )
-				);
 			} );
 		} );
 	} );

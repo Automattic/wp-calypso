@@ -1,15 +1,9 @@
 import {
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
-	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_RECEIVE,
 } from 'calypso/state/action-types';
-import {
-	receiveMedia,
-	requestMediaItem,
-	successMediaItemRequest,
-	failMediaItemRequest,
-} from 'calypso/state/media/actions';
+import { receiveMedia, requestMediaItem, failMediaItemRequest } from 'calypso/state/media/actions';
 
 describe( 'media - actions - sync', () => {
 	describe( 'receiveMedia()', () => {
@@ -64,18 +58,6 @@ describe( 'media - actions - sync', () => {
 
 			expect( action ).toEqual( {
 				type: MEDIA_ITEM_REQUEST,
-				siteId: 2916284,
-				mediaId: 2454,
-			} );
-		} );
-	} );
-
-	describe( 'successMediaItemRequest()', () => {
-		test( 'should return an action object', () => {
-			const action = successMediaItemRequest( 2916284, 2454 );
-
-			expect( action ).toEqual( {
-				type: MEDIA_ITEM_REQUEST_SUCCESS,
 				siteId: 2916284,
 				mediaId: 2454,
 			} );
