@@ -15,7 +15,6 @@ export const schema = {
 							medium: { type: 'string' },
 							label: { type: 'string' },
 							value: { type: 'number' },
-							paramValues: { type: 'string' },
 						},
 					},
 				},
@@ -33,25 +32,6 @@ export const schema = {
 									medium: { type: 'string' },
 									label: { type: 'string' },
 									value: { type: 'number' },
-								},
-							},
-						},
-					},
-				},
-				topPosts: {
-					type: 'object',
-					patternProperties: {
-						// UTM parameter values
-						'^\\w+$': {
-							type: 'array',
-							items: {
-								type: 'object',
-								required: [ 'id', 'label', 'value' ],
-								properties: {
-									id: { type: 'number' },
-									label: { type: 'string' },
-									value: { type: 'number' },
-									href: { type: 'string' },
 								},
 							},
 						},

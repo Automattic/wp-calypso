@@ -4,99 +4,12 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTION_RECEIVE,
 	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTIONS_RECEIVE,
 } from 'calypso/state/action-types';
 import { serialize, deserialize } from 'calypso/state/utils';
-import { fetchingConnections, connections } from '../reducer';
+import { connections } from '../reducer';
 
 describe( 'reducer', () => {
-	describe( '#fetchingConnections()', () => {
-		test( 'should set fetching to false for received action', () => {
-			const state = fetchingConnections( null, {
-				type: PUBLICIZE_CONNECTIONS_RECEIVE,
-				siteId: 2916284,
-			} );
-
-			expect( state[ 2916284 ] ).toBe( false );
-		} );
-	} );
-
 	describe( '#connections()', () => {
-		describe( 'PUBLICIZE_CONNECTIONS_RECEIVE', () => {
-			test( 'should index connections by ID', () => {
-				const state = connections( null, {
-					type: PUBLICIZE_CONNECTIONS_RECEIVE,
-					siteId: 2916284,
-					data: {
-						connections: [ { ID: 1, site_ID: 2916284 } ],
-					},
-				} );
-
-				expect( state ).toEqual( {
-					1: { ID: 1, site_ID: 2916284 },
-				} );
-			} );
-
-			test( 'should accumulate connections for distinct sites', () => {
-				const state = connections(
-					deepFreeze( {
-						1: { ID: 1, site_ID: 2916284 },
-					} ),
-					{
-						type: PUBLICIZE_CONNECTIONS_RECEIVE,
-						siteId: 77203074,
-						data: {
-							connections: [ { ID: 2, site_ID: 77203074 } ],
-						},
-					}
-				);
-
-				expect( state ).toEqual( {
-					1: { ID: 1, site_ID: 2916284 },
-					2: { ID: 2, site_ID: 77203074 },
-				} );
-			} );
-
-			test( 'should discard connections for the same site ID if no longer present', () => {
-				const state = connections(
-					deepFreeze( {
-						1: { ID: 1, site_ID: 2916284 },
-					} ),
-					{
-						type: PUBLICIZE_CONNECTIONS_RECEIVE,
-						siteId: 2916284,
-						data: {
-							connections: [ { ID: 2, site_ID: 2916284 } ],
-						},
-					}
-				);
-
-				expect( state ).toEqual( {
-					2: { ID: 2, site_ID: 2916284 },
-				} );
-			} );
-
-			test( 'should override previous connections of same ID', () => {
-				const connection = { ID: 1, site_ID: 2916284, foo: true };
-				const state = connections(
-					deepFreeze( {
-						1: { ID: 1, site_ID: 2916284 },
-					} ),
-					{
-						type: PUBLICIZE_CONNECTIONS_RECEIVE,
-						siteId: 2916284,
-						data: {
-							connections: [ connection ],
-						},
-					}
-				);
-
-				expect( state ).toEqual( {
-					1: connection,
-				} );
-			} );
-		} );
-
 		describe( 'PUBLICIZE_CONNECTION_CREATE', () => {
 			test( 'should add new connection', () => {
 				const existingConnection = { ID: 1, site_ID: 2916284 };

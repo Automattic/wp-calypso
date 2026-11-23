@@ -80,13 +80,3 @@ export function getRemovableConnections( state, service ) {
 
 	return siteUserConnectionsForService.filter( ( connection ) => connection.user_ID === userId );
 }
-
-/**
- * Returns true if connections are currently fetching for the given site ID.
- * @param  {Object} state  Global state tree
- * @param  {number} siteId Site ID
- * @returns {Array}         Site connections
- */
-export function isFetchingConnections( state, siteId ) {
-	return state.sharing.publicize.fetchingConnections?.[ siteId ] ?? false;
-}
