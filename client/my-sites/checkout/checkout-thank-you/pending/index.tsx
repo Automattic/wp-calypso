@@ -21,7 +21,7 @@ import {
 import {
 	RENEWAL_SUCCESS_FLASH_ID,
 	RENEWAL_SUCCESS_PURCHASE_PARAM,
-} from 'calypso/dashboard/app/renewal-success-flash-message';
+} from 'calypso/dashboard/app/checkout-success-flash/renewal-success-flash-message';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

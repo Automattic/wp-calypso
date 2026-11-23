@@ -287,7 +287,7 @@ export default defineConfig( [
 			'agency/marketplace/products/test/cart-menu.test.tsx',
 			'agency/marketplace/referral-checkout/test/index.test.tsx',
 			'agency/sites/site/test/overview.test.tsx',
-			'app/test/unified-page-view.test.tsx',
+			'app/test/layout.test.tsx',
 			'domains/dns/test/add.test.tsx',
 			'domains/domain-diagnostics/test/index.test.tsx',
 			'domains/domain-dns/test/index.test.tsx',

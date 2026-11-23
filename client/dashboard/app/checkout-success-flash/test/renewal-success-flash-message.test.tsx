@@ -5,10 +5,10 @@ import { screen, waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
-import { makePurchase } from '../../components/plan-expiry-notice/test/fixtures';
-import { render } from '../../test-utils';
+import { makePurchase } from '../../../components/plan-expiry-notice/test/fixtures';
+import { render } from '../../../test-utils';
+import Snackbars from '../../snackbars';
 import { RenewalSuccessFlashMessage } from '../renewal-success-flash-message';
-import Snackbars from '../snackbars';
 import type { Purchase } from '@automattic/api-core';
 
 const PURCHASE_ID = 1234;
