@@ -118,6 +118,7 @@
 	font-family: $font-sf-pro-display;
 	font-size: 20px;
 	line-height: 1.5;
+	text-wrap: balance;
 }
 
 // The panel is at its narrowest here, so the copy steps down to keep the headline on two lines.
@@ -132,10 +133,6 @@
 
 	.signup-brand-panel__description {
 		font-size: 16px;
-
-		br {
-			display: none;
-		}
 	}
 }
 
