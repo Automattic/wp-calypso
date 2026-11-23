@@ -57,7 +57,7 @@ This simply means deploying Calypso as you normally would.
 #### Deploy the Help Center for Jetpack consumption
 
 1. cd into `apps/help-center`.
-2. run `yarn build --sync`.
+2. run `NODE_ENV=production yarn dev --sync`.
 3. Create a patch from the changes on your sandbox.
 4. Deploy wpcom.
 

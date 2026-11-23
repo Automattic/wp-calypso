@@ -12,7 +12,7 @@ Most work on the notifications panel should happen in Calypso the same way other
 That is, you can work in these files and rely on the normal Calypso dev server.
 **However** things are often different inside the `iframe` in unexpected ways and so we need to verify that any changes apply properly in both environments.
 
-TeamCity generates notifications panel build artifacts on every commit that it processes. You can find the last one in the PR checks by searching for `Notifications (WPCom Plugins)` then clicking the `artifacts` tab (requires access to the A8C TeamCity instance).
+TeamCity's "Build Calypso Apps" builds the panel (`notifications.zip`) automatically for `trunk` commits. It doesn't run for PR branches on its own: someone with TeamCity access has to run it for the branch. A branch build comments on the PR with the apps it changed, and `install-plugin.sh notifications <branch>` installs it on a sandbox.
 
 Alternatively you can manually build the app with `yarn` and pass `--sync` to sync to your sandbox automatically (requires your to configure an alias called `wpcom-sandbox` in `~/.ssh/config`):
 

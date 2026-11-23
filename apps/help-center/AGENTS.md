@@ -28,7 +28,7 @@ yarn dev --sync
 
 # Production build + sync (use before deploying)
 cd apps/help-center
-yarn build --sync
+NODE_ENV=production yarn dev --sync
 ```
 
 Both commands use `calypso-apps-builder` to compile webpack bundles and sync them to `widgets.wp.com/help-center/` on your sandbox.
