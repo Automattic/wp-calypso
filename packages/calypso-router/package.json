@@ -39,5 +39,10 @@
 	},
 	"license": "GPL-2.0-or-later",
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
-	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-router#readme"
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-router#readme",
+	"devDependencies": {
+		"jsdom": "^20.0.3",
+		"vite": "^8.3.8",
+		"vitest": "^5.1.0"
+	}
 }

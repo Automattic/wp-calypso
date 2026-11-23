@@ -561,6 +561,10 @@ Page.prototype.stop = function () {
 
 Page.prototype.show = function ( path, state, dispatch, push ) {
 	const ctx = new Context( path, state, this );
+	if ( ! hasAllowedProtocol( ctx.canonicalPath, this._window ) ) {
+		ctx.handled = false;
+		return ctx;
+	}
 	const prev = this.prevContext;
 	this.prevContext = ctx;
 	this.current = ctx.path;
@@ -633,6 +637,10 @@ Page.prototype.redirect = function ( from, to ) {
 
 Page.prototype.replace = function ( path, state, init, dispatch ) {
 	const ctx = new Context( path, state, this );
+	if ( ! hasAllowedProtocol( ctx.canonicalPath, this._window ) ) {
+		ctx.handled = false;
+		return ctx;
+	}
 	const prev = this.prevContext;
 	this.prevContext = ctx;
 	this.current = ctx.path;
@@ -1025,6 +1033,26 @@ function unhandled( ctx ) {
 	this.stop();
 	ctx.handled = false;
 	isLocation && ( window.location.href = ctx.canonicalPath );
+}
+
+/**
+ * Whether `url` resolves to `http:`, `https:` or the page's own scheme (such as
+ * `file:` in hashbang mode). Guards against `javascript:` and other schemes that
+ * would run script when middleware or the unhandled fallback assigns them to `location`.
+ * @param {string} url
+ * @param {Object} window The router's window.
+ * @returns {boolean}
+ */
+function hasAllowedProtocol( url, window ) {
+	if ( ! isLocation || ! window?.location?.href ) {
+		return true;
+	}
+	try {
+		const { protocol } = new URL( url, window.location.href );
+		return protocol === 'http:' || protocol === 'https:' || protocol === window.location.protocol;
+	} catch {
+		return false;
+	}
 }
 
 /**
