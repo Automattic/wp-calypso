@@ -36,6 +36,13 @@ const largeBlavatar = ( site ) => {
 	return `${ siteIcon }?s=${ PREVIEW_IMAGE_WIDTH }`;
 };
 
+// Without a site icon, show the favicon Google would, as social-previews did before it took `siteIcon`.
+const googleSiteIcon = ( site, url ) =>
+	site.icon?.img ??
+	`https://www.google.com/s2/favicons?sz=128&domain_url=${
+		url.replace( /^[^/]+:\/\//, '' ).split( '/' )[ 0 ]
+	}`;
+
 const getPostImage = ( post ) => {
 	if ( ! post ) {
 		return null;
@@ -108,7 +115,7 @@ const GoogleSite = ( site, frontPageMetaDescription ) => (
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 		siteTitle={ site.title }
-		siteIcon={ site.icon?.img }
+		siteIcon={ googleSiteIcon( site, site.URL ) }
 	/>
 );
 
@@ -118,7 +125,7 @@ const GooglePost = ( site, post, frontPageMetaDescription ) => (
 		url={ post?.URL ?? '' }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		siteTitle={ site.title }
-		siteIcon={ site.icon?.img }
+		siteIcon={ googleSiteIcon( site, post?.URL ?? '' ) }
 	/>
 );
 
