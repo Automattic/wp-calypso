@@ -14,11 +14,6 @@ const exPlatClient = createExPlatClient( {
 	isDevelopmentMode,
 } );
 
-export const {
-	loadExperimentAssignment,
-	dangerouslyGetExperimentAssignment,
-	getFeatureValue,
-	prefetchFlagPayload,
-} = exPlatClient;
+export const { loadExperimentAssignment, dangerouslyGetExperimentAssignment } = exPlatClient;
 const exPlatClientReactHelpers = createExPlatClientReactHelpers( exPlatClient );
 export const { useExperiment, Experiment, ProvideExperimentData } = exPlatClientReactHelpers;
