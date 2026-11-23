@@ -31,13 +31,16 @@ export default function useWebMcpTools( {
 					createWebMcpToolProvider,
 					subscribeToRegistryAbilities,
 					withRegistryAbilities,
+					withoutChatToolCalls,
 				} ) => {
 					if ( disposed ) {
 						return;
 					}
 
 					adapter = createWebMcpAdapter( {
-						toolProvider: createWebMcpToolProvider( withRegistryAbilities( toolProvider ) ),
+						toolProvider: createWebMcpToolProvider(
+							withRegistryAbilities( withoutChatToolCalls( toolProvider ) )
+						),
 						modelContext,
 					} );
 

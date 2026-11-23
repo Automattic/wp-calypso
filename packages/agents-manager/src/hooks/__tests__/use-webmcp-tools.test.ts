@@ -135,6 +135,28 @@ describe( 'useWebMcpTools', () => {
 		);
 	} );
 
+	it( 'runs provider tools as calls no chat made, over any id the agent sends', async () => {
+		const tools: WebMcpTool[] = [];
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool: vi.fn( async ( tool: WebMcpTool ) => tools.push( tool ) ) },
+		} );
+		const toolProvider: ToolProvider = {
+			getAbilities: vi.fn().mockResolvedValue( [ { ...ability, name: 'big-sky/set-site-logo' } ] ),
+			executeAbility: vi.fn(),
+		};
+		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		onTestFinished( unmount );
+		await waitFor( () => expect( tools ).toHaveLength( 1 ) );
+
+		await tools[ 0 ].execute( { fileObj: { attachment_id: '7' }, toolCallId: 'chat-call' } );
+
+		expect( toolProvider.executeAbility ).toHaveBeenCalledWith( 'big-sky/set-site-logo', {
+			fileObj: { attachment_id: '7' },
+			toolCallId: null,
+		} );
+	} );
+
 	it( 'does not load tools outside development mode', async () => {
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 			isDevMode: false,

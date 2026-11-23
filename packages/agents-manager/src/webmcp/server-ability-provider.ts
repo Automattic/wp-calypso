@@ -77,10 +77,6 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 				throw new Error( `WebMCP server ability is unavailable: ${ name }` );
 			}
 
-			if ( ability.meta?.annotations?.readonly !== true ) {
-				throw new Error( `WebMCP runs only read-only server abilities: ${ name }` );
-			}
-
 			return apiFetch( {
 				method: 'GET',
 				path: addQueryArgs( `/wp-abilities/v1/abilities/${ name }/run`, {

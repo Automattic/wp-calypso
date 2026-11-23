@@ -532,6 +532,17 @@ describe( 'withCheckpoint', () => {
 		expect( getCheckpoint( 'call-1' )?.logoBeforeUpdate ).toBe( SITE_RECORD.site_logo );
 	} );
 
+	it( 'writes without a checkpoint or a history read for a call no chat made', async () => {
+		const { withCheckpoint, getCheckpoints } = setUpCheckpoints();
+		const write = vi.fn();
+
+		await withCheckpoint( { ...LOGO_WRITE, toolCallId: null }, write );
+
+		expect( write ).toHaveBeenCalled();
+		expect( getCheckpoints() ).toEqual( [] );
+		expect( mocked( toolCallHistory ).getToolCallIdFromConversationHistory ).not.toHaveBeenCalled();
+	} );
+
 	it( 'writes without a checkpoint when the tool call id is unknown', async () => {
 		const { withCheckpoint, getCheckpoints } = setUpCheckpoints();
 		mocked( toolCallHistory ).getToolCallIdFromConversationHistory.mockReturnValueOnce( null );
