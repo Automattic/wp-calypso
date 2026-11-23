@@ -12,16 +12,36 @@ classes) in a browser that implements
 
 ## Execution and exposure
 
-The adapter wraps the live merged `ToolProvider` from `loadExternalProviders()` in
-`createWebMcpToolProvider()` (`server-ability-provider.ts`). Client abilities run through
-the merged provider, which applies the established precedence and the canvas guard. The
-allowlisted server abilities are fetched by the wrapper from `/wp-abilities/v1/abilities`
-(`webmcp=1`), replace any same-named merged ability, and run directly against
-`/wp-abilities/v1/abilities/{name}/run` over GET. WebMCP calls use the
-original slash-based ability name. Both kinds are exposed to the browser agent without the backend
-route settings, which scope only the agent's own tools.
+A client ability becomes a WebMCP tool when it sets `meta.webmcp.public: true`. It can come from
+the merged `ToolProvider` of `loadExternalProviders()` or from the `@wordpress/abilities` registry
+(`registry-ability-provider.ts`), so a plugin that isn't a provider can add a tool too. On a name
+clash, the provider's ability wins and runs through the merged provider, which applies the provider
+precedence and the canvas guard. Registry-only abilities run through the registry's
+`executeAbility()`.
 
-The allowlist contains:
+The allowlisted server abilities (`WEBMCP_SERVER_ABILITY_NAMES`) are fetched by
+`createWebMcpToolProvider()` (`server-ability-provider.ts`) from `/wp-abilities/v1/abilities`
+(`webmcp=1`), replace any same-named ability, and run against
+`/wp-abilities/v1/abilities/{name}/run` over GET.
+
+Client abilities must set the flag and be client-registered or carry a client callback. Server
+abilities must be in the server allowlist, marked server-registered (which the WebMCP provider
+sets on what it fetches), and annotated read-only. The flag doesn't expose a server-registered
+ability, and the server allowlist doesn't expose a client one.
+
+WebMCP calls use the original slash-based ability name. The backend route settings don't apply
+here: they scope only the agent's own tools.
+
+Eligibility is checked when Agents Manager mounts and whenever the scope or tool provider changes;
+such a change, or unmounting, aborts all registrations. While eligible, the adapter also reconciles
+whenever the `@wordpress/abilities` registry changes, which covers abilities registered there by
+later React effects. Anything else, such as an ability only a provider lists, a server ability
+fetch that failed or a tool the browser rejected, is picked up on the next registry or scope
+change. A rejected tool doesn't stop the others from registering. An already-aborted tool
+execution is rejected, but an in-flight provider execution cannot currently be cancelled because
+`ToolProvider.executeAbility()` has no signal.
+
+The exposed tools are:
 
 - `agents-manager/get-block-tree`: an Agents Manager-owned, client-only ability that reads the live
   Gutenberg tree. It returns real client IDs, block names, serializable attributes, nesting, the
@@ -53,15 +73,31 @@ The allowlist contains:
   The edit stays unsaved. Renaming a page also relabels the navigation menu items that point to it,
   as it does in chat.
 
+- `big-sky/set-site-logo`: an Agents Manager-owned, client-only ability that points the site logo
+  at an image in the media library, by attachment ID. The agent finds or uploads the image with
+  the WordPress.com MCP media tools first. The change previews wherever the page has a Site Logo
+  block and stays unsaved.
+
 - `wpcom/get-block-schemas`, `wpcom/get-content-guidelines`, and `core/get-site-info`:
   read-only server abilities fetched by the WebMCP provider from the current site's Abilities REST
   API. Their existing input schemas, permission
   checks, and authenticated site-specific execution path are preserved. The adapter also includes
   each ability's server-provided instructions in the WebMCP description when present.
 
-Client abilities must be in the editor allowlist and be client-registered or carry a client
-callback. Server abilities must be in the separate server allowlist, marked server-registered
-(which the WebMCP provider sets on what it fetches), and annotated read-only; neither allowlist grants eligibility to a lookalike from the other provenance.
+The edit tool should be preceded by a fresh block-tree read. This keeps its targets aligned with the
+current editor and refreshes the identity map the callback resolves through.
+
+## Adding a tool
+
+Expose a tool here only if it needs the open page: it reads or changes the live editor state, or its
+result feeds an edit on the canvas. General site and account operations, such as listing posts or
+reading stats, belong in the WordPress.com MCP server, and a second copy here only makes the agent
+choose between two names for the same call. Keep saving and publishing a user action: a tool that
+saves as a side effect, such as `big-sky/editor-navigate`, does not belong here.
+
+To add another tool, verify its complete implementation, permissions, annotations, and execution
+path. Set `meta.webmcp.public: true` on a client ability, or add a REST-backed tool to
+`WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`).
 
 ## Testing
 
@@ -72,9 +108,9 @@ callback. Server abilities must be in the separate server allowlist, marked serv
 2. Sandbox `widgets.wp.com` and run `yarn dev --sync` from `apps/agents-manager`.
 3. Open a post, page, or site editor where the inline Agents Manager data has `isDevMode: true`
    using GPT-5.6 Sol or Terra.
-4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all eight tools:
+4. Ask Codex to inspect the current page's Site tools. Confirm it discovers all nine tools:
    `agents_manager__get_block_tree`, `big_sky__show_template`, `big_sky__apply_block_edits`,
-   `big_sky__apply_update_theme`, and `big_sky__edit_entity_record`, plus
+   `big_sky__apply_update_theme`, `big_sky__edit_entity_record`, and `big_sky__set_site_logo`, plus
    `wpcom__get_block_schemas`, `wpcom__get_content_guidelines`, and `core__get_site_info`. Do not use DevTools or
    call `document.modelContext` directly for this path.
 5. Call `agents_manager__get_block_tree`. If a requested template part is absent, call
@@ -90,7 +126,10 @@ callback. Server abilities must be in the separate server allowlist, marked serv
    delete or publish one, and confirm the tool refuses.
 9. Ask the agent to change the site's background color with `big_sky__apply_update_theme`. Confirm
    the canvas previews the new color and the global styles are not saved.
-10. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
+10. Ask the agent to set the site logo to an image from the media library. Confirm it calls
+    `big_sky__set_site_logo` with that image's attachment ID, the Site Logo block previews it, and
+    the site settings are not saved.
+11. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
 
 ### Direct browser API fallback
 
@@ -98,29 +137,10 @@ callback. Server abilities must be in the separate server allowlist, marked serv
    on.
 2. Without opening Agents Manager chat, enumerate the page's tools through
    `document.modelContext.getTools()`.
-3. Confirm the same eight tools are present and that the three server tools expose input schemas.
+3. Confirm the same nine tools are present and that the three server tools expose input schemas.
 4. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.
 5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
 6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
 7. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
-
-Eligibility is checked when Agents Manager mounts and whenever the scope or tool provider changes;
-such a change, or unmounting, aborts all registrations. While eligible, the adapter reconciles the
-provider every two seconds, which covers abilities registered by later React effects. An already-aborted tool execution is rejected, but an in-flight provider
-execution cannot currently be cancelled because `ToolProvider.executeAbility()` has no signal.
-
-The edit tool should be preceded by a fresh block-tree read. This keeps its targets aligned with the
-current editor and refreshes the identity map the callback resolves through.
-
-Expose a tool here only if it needs the open page: it reads or changes the live editor state, or its
-result feeds an edit on the canvas. General site and account operations, such as listing posts or
-reading stats, belong in the WordPress.com MCP server, and a second copy here only makes the agent
-choose between two names for the same call. Keep saving and publishing a user action: a tool that
-saves as a side effect, such as `big-sky/editor-navigate`, does not belong here.
-
-To add another tool, verify its complete implementation, permissions, annotations, and execution
-path. Add client tools to `WEBMCP_EDITOR_ABILITY_ALLOWLIST` (`adapter.ts`) or REST-backed tools to
-`WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`), with tests proving the opposite provenance and unlisted abilities
-remain excluded.

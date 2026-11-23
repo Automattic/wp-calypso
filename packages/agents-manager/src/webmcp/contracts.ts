@@ -5,6 +5,7 @@ export const APPLY_BLOCK_EDITS_ABILITY_NAME = 'big-sky/apply-block-edits';
 export const SHOW_TEMPLATE_ABILITY_NAME = 'big-sky/show-template';
 export const APPLY_UPDATE_THEME_ABILITY_NAME = 'big-sky/apply-update-theme';
 export const EDIT_ENTITY_RECORD_ABILITY_NAME = 'big-sky/edit-entity-record';
+export const SET_SITE_LOGO_ABILITY_NAME = 'big-sky/set-site-logo';
 export const WEBMCP_SERVER_ABILITY_NAMES = [
 	'wpcom/get-block-schemas',
 	'wpcom/get-content-guidelines',
@@ -146,6 +147,10 @@ export function getWebMcpDescription( ability: Ability ): string {
 
 	if ( ability.name === EDIT_ENTITY_RECORD_ABILITY_NAME ) {
 		return 'Changes the title or excerpt of the post or page open in the editor. Renaming a page also relabels the navigation menu items that point to it. The change remains unsaved and reviewable in the editor.';
+	}
+
+	if ( ability.name === SET_SITE_LOGO_ABILITY_NAME ) {
+		return "Sets the site logo to an image in the site's media library. Pass the image's attachment ID as fileObj.attachment_id; find or upload the image with the WordPress.com MCP media tools first. The logo shows wherever the page has a Site Logo block, and the change remains unsaved and reviewable in the editor.";
 	}
 
 	const description = ability.description || ability.label || ability.name;

@@ -62,5 +62,6 @@ export const getBlockTreeAbility: Ability = {
 			readonly: true,
 			idempotent: true,
 		},
+		webmcp: { public: true },
 	},
 };

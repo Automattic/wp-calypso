@@ -194,4 +194,7 @@ export const applyUpdateThemeAbility: Ability = {
 		required: [ 'result', 'returnToAgent' ],
 	},
 	callback: applyUpdateThemeCallback,
+	meta: {
+		webmcp: { public: true },
+	},
 };

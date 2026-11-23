@@ -1,10 +1,8 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
-import { WEBMCP_SERVER_ABILITY_NAMES } from './contracts';
+import { isWebMcpServerAbilityName } from './contracts';
 import type { ToolProvider } from '../extension-types';
 import type { Ability } from '@wordpress/abilities';
-
-const SERVER_ABILITY_NAMES = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
 
 function markServerRegistered( ability: Ability ): Ability {
 	return {
@@ -34,7 +32,7 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 			} )
 				.then( ( abilities ) =>
 					abilities
-						.filter( ( ability ) => SERVER_ABILITY_NAMES.has( ability.name ) )
+						.filter( ( ability ) => isWebMcpServerAbilityName( ability.name ) )
 						.map( markServerRegistered )
 				)
 				.catch( ( error ) => {
@@ -70,7 +68,7 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 			];
 		},
 		executeAbility: async ( name, input ) => {
-			if ( ! SERVER_ABILITY_NAMES.has( name ) ) {
+			if ( ! isWebMcpServerAbilityName( name ) ) {
 				return toolProvider.executeAbility( name, input );
 			}
 
