@@ -1,4 +1,4 @@
-import { ROUTE_SET, COMMENTS_LIKE } from 'calypso/state/action-types';
+import { ROUTE_SET } from 'calypso/state/action-types';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
@@ -35,11 +35,11 @@ describe( 'reducer', () => {
 	test( 'should discard them if payload is irrelevant', () => {
 		const actions = [
 			{
-				type: COMMENTS_LIKE,
+				type: 'IRRELEVANT_ACTION',
 				path: '/menus/77203074',
 			},
 			{
-				type: COMMENTS_LIKE,
+				type: 'IRRELEVANT_ACTION',
 				path: '/menus/foobar',
 			},
 		];
@@ -67,7 +67,7 @@ describe( 'reducer', () => {
 				},
 			},
 			{
-				type: COMMENTS_LIKE,
+				type: 'IRRELEVANT_ACTION',
 				path: '/menus/foobar',
 				meta: {
 					analytics: [
@@ -110,7 +110,7 @@ describe( 'reducer', () => {
 				},
 			},
 			{
-				type: COMMENTS_LIKE,
+				type: 'IRRELEVANT_ACTION',
 				path: '/menus/foobar',
 				meta: {
 					analytics: [

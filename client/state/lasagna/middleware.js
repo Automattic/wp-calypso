@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import Lasagna from '@automattic/lasagna';
 import wpcom from 'calypso/lib/wp';
 import connectMiddleware from './connect/middleware';
-import postChannelMiddleware from './post-channel/middleware';
 import userChannelMiddleware from './user-channel/middleware';
 
 const jwtFetcher = ( jwtType, { params } ) => {
@@ -29,4 +28,4 @@ const combineMiddleware = ( ...m ) => {
 	};
 };
 
-export default combineMiddleware( connectMiddleware, userChannelMiddleware, postChannelMiddleware );
+export default combineMiddleware( connectMiddleware, userChannelMiddleware );

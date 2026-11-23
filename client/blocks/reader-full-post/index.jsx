@@ -53,10 +53,6 @@ import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
-import {
-	setViewingFullPostKey,
-	unsetViewingFullPostKey,
-} from 'calypso/state/reader/viewing/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -213,7 +209,6 @@ export class FullPostView extends Component {
 	}
 
 	componentWillUnmount() {
-		this.props.unsetViewingFullPostKey( keyForPost( this.props.post ) );
 		// Remove WPiFrameResize listener.
 		this.stopResize?.();
 		this.props.enableAppBanner(); // reset the app banner
@@ -563,9 +558,6 @@ export class FullPostView extends Component {
 		) {
 			markPostSeen( post, site );
 			this.hasSentPageView = true;
-
-			// mark post as currently viewing
-			this.props.setViewingFullPostKey( keyForPost( post ) );
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
@@ -975,8 +967,6 @@ const getPostSiteId = ( { post } ) =>
 const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	disableAppBanner,
 	enableAppBanner,
-	setViewingFullPostKey,
-	unsetViewingFullPostKey,
 	showSelectedPost,
 	successNotice,
 } )(
