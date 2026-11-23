@@ -49,6 +49,8 @@ body {
 	--wp-admin-theme-color-darker-10--rgb: 33, 69, 230;
 	--wp-admin-theme-color-darker-20: #183ad6;
 	--wp-admin-theme-color-darker-20--rgb: 24, 58, 214;
+	// The outline on a block its review chip scrolled to.
+	--mcp-post-editor-flash: #3858e9;
 }
 
 // Each piece of UI sets its type at its root, and everything inside takes it from there, over
@@ -648,56 +650,221 @@ $ui: ":is(.mcp-post-editor :is(#{$ui-roots}), .components-popover)";
 	margin-top: 8px;
 }
 
-// The proofreading issues, listed over the dock's pill.
-.mcp-post-editor .mcp-post-editor__issues {
+// The review panel over the dock's pill: the proofreading issues and the editorial feedback as
+// cards, after WP Agent's review cards.
+.mcp-post-editor .mcp-post-editor__review {
+	--mcp-review-border: #e0e0e0;
+	--mcp-review-band: #eef1fd;
+
 	box-sizing: border-box;
-	width: 360px;
+	width: 400px;
 	max-width: 100%;
-	max-height: calc(var(--mcp-post-editor-height, 100vh) * 0.4);
-	margin: 0;
-	padding: 4px 0;
+	max-height: calc(var(--mcp-post-editor-height, 100vh) * 0.6);
 	overflow-y: auto;
 	background: #fff;
 	border: 1px solid #ddd;
 	border-radius: 8px;
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-	list-style: none;
 	pointer-events: auto;
 
-	li {
-		display: flex;
-		align-items: flex-start;
-		gap: 8px;
+	.components-panel {
+		border: 0;
+	}
+
+	.components-panel__body-toggle.components-button {
+		padding: 10px 12px;
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+	}
+
+	.components-panel__body.is-opened {
+		padding: 0 0 12px;
+	}
+
+	.components-panel__body-title {
 		margin: 0;
-		padding: 4px 8px 4px 12px;
+	}
+
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	p {
+		margin: 0;
 	}
 }
 
-.mcp-post-editor .mcp-post-editor__issue {
-	flex: 1;
-	min-width: 0;
+.mcp-post-editor .mcp-post-editor__review-summary {
+	padding: 0 12px 8px;
+	color: #6b6b6b;
+}
+
+.mcp-post-editor .mcp-post-editor__review-done {
+	display: flex;
+	gap: 8px;
+	margin: 0 12px 8px;
+	padding: 8px 12px 8px 8px;
+	background: #e6f6e9;
+	border-radius: 4px;
+
+	svg {
+		flex: none;
+		color: #007017;
+	}
+
+	b {
+		display: block;
+		margin: 2px 0 4px;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__review-all {
+	display: flex;
+	justify-content: flex-end;
+	padding: 0 12px 4px;
+}
+
+// The block an item is about: a chip that scrolls to it, or "Post-wide".
+.mcp-post-editor .mcp-post-editor__block-ref {
+	flex: none;
+	min-height: 0;
 	margin: 0;
-	padding: 2px 0;
-	background: none;
-	border: 0;
+	padding: 2px 6px;
+	background: transparent;
+	border: 1px solid var(--mcp-review-border);
+	border-radius: 8px;
 	box-shadow: none;
 	color: inherit;
-	text-align: left;
-	overflow-wrap: anywhere;
-	cursor: pointer;
+	font-size: 11px;
+	line-height: 1.4;
+	white-space: nowrap;
 
-	&:hover {
-		color: #3858e9;
+	&:is(button) {
+		cursor: pointer;
+
+		&:hover,
+		&:focus-visible {
+			background: #f4f4f4;
+			border-color: #bbb;
+			color: inherit;
+		}
+
+		&:focus-visible {
+			outline: 2px solid #3858e9;
+		}
 	}
 
-	&:focus-visible {
-		outline: 2px solid #3858e9;
-		border-radius: 2px;
+	&.is-post-wide {
+		opacity: 0.75;
 	}
 }
 
-.mcp-post-editor .mcp-post-editor__issue-actions {
+.mcp-post-editor .mcp-post-editor__cards {
 	display: flex;
-	flex: none;
-	gap: 4px;
+	flex-direction: column;
+	gap: 12px;
+	padding: 4px 12px 0;
+}
+
+// No inset of its own, so the New band spans the card; each row has its own.
+.mcp-post-editor .mcp-post-editor__card {
+	overflow: hidden;
+	border: 1px solid var(--mcp-review-border);
+	border-radius: 8px;
+	overflow-wrap: anywhere;
+}
+
+.mcp-post-editor .mcp-post-editor__card-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 12px 6px;
+}
+
+.mcp-post-editor .mcp-post-editor__card-title {
+	min-width: 0;
+	font-weight: 600;
+}
+
+.mcp-post-editor .mcp-post-editor__manual-tag {
+	display: inline-block;
+	margin: 10px 12px 0;
+	padding: 2px 8px;
+	background: #fdf8ee;
+	border-radius: 4px;
+	color: #9a6a1a;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.mcp-post-editor .mcp-post-editor__card-row {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 6px 12px;
+
+	&.is-new {
+		background: var(--mcp-review-band);
+	}
+
+	del,
+	ins {
+		white-space: pre-wrap;
+	}
+
+	del {
+		opacity: 0.55;
+	}
+
+	ins {
+		text-decoration: none;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__card-tag {
+	color: #757575;
+	font-size: 11px;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+.mcp-post-editor .mcp-post-editor__card-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px 10px;
+
+	.mcp-post-editor__card-dismiss {
+		margin-left: auto;
+	}
+}
+
+.mcp-post-editor .mcp-post-editor__resolution {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	margin-right: auto;
+	font-weight: 500;
+}
+
+.mcp-post-editor .mcp-post-editor__resolution-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: #3858e9;
+	color: #fff;
+	font-size: 12px;
+}
+
+.mcp-post-editor .mcp-post-editor__resolution.is-dismissed .mcp-post-editor__resolution-icon {
+	background: #757575;
 }

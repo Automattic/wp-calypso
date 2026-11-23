@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { isSummaryOnly } from '../editor/proofread';
 
 type Args = Record< string, unknown >;
 type Listener = ( result: unknown ) => void;
@@ -19,7 +20,11 @@ const host = vi.hoisted( () => ( {
 				onChange: ( post: { title: string; content: string } ) => void;
 				onDecide: ( decision: string, ids: string[] ) => void;
 				onSave: () => void;
-				onProofreadDone: ( ids: string[], failed: number ) => void;
+				issues: { id: string }[];
+				feedback: { summary: string; items: { id: string }[] } | null;
+				fixStatus: Record< string, Record< string, string > >;
+				onFixDone: ( kind: string, ids: string[], status: string, failed: number ) => void;
+				onFixUndo: ( kind: string, id: string, reverted: boolean ) => void;
 				isCovered: boolean;
 				styles: { css: string }[];
 				notices: string[];
@@ -39,6 +44,8 @@ const host = vi.hoisted( () => ( {
 	updates: [] as Args[],
 	// The next update is taken, but its reply is lost.
 	loseNextReply: false,
+	// Runs once while the next update is in flight, as the user's own action.
+	duringNextUpdate: undefined as undefined | ( () => void ),
 	failNextDiscard: false,
 	failNextState: false,
 	// The host can't call tools: every call throws its error.
@@ -85,11 +92,30 @@ vi.mock( '@modelcontextprotocol/ext-apps/app-with-deps', () => ( {
 				data = host.saveResults.shift() ?? { saved: true };
 			} else if ( name === 'wpcom-post-editor-update' ) {
 				host.updates.push( args );
+				const during = host.duringNextUpdate;
+				host.duringNextUpdate = undefined;
+				during?.();
 				if ( args.base_version !== server.version ) {
 					data = { version: server.version, conflict: true };
 				} else {
 					server.content = args.content as string;
 					server.version++;
+					// The server drops the feedback items the update finished, and the summary with
+					// the last one.
+					const feedback = server.feedback as
+						{ summary: string; items: { id: string }[] } | undefined;
+					const done = ( args.feedback_done_ids ?? [] ) as string[];
+					if ( feedback && done.length ) {
+						const items = feedback.items.filter( ( item ) => ! done.includes( item.id ) );
+						server.feedback = { summary: items.length ? feedback.summary : '', items };
+					}
+					// And the proofreading issues.
+					const pdone = ( args.proofread_done_ids ?? [] ) as string[];
+					if ( server.proofread && pdone.length ) {
+						server.proofread = ( server.proofread as { id: string }[] ).filter(
+							( issue ) => ! pdone.includes( issue.id )
+						);
+					}
 					data = { version: server.version };
 					if ( host.loseNextReply ) {
 						host.loseNextReply = false;
@@ -183,6 +209,7 @@ describe( 'the page', () => {
 		Object.defineProperty( document, 'hidden', { value: true, configurable: true } );
 		host.updates = [];
 		host.loseNextReply = false;
+		host.duringNextUpdate = undefined;
 		host.failNextDiscard = false;
 		host.failNextState = false;
 		host.noToolCalls = false;
@@ -417,7 +444,7 @@ describe( 'the page', () => {
 	it( 'sends a finished proofreading issue with the typing in the next update', async () => {
 		await openPost( paragraph( 'a tpyo' ) );
 		host.editor?.onChange( { title: 'Title', content: paragraph( 'a typo' ) } );
-		host.editor?.onProofreadDone( [ 'p1' ], 0 );
+		host.editor?.onFixDone( 'proofread', [ 'p1' ], 'applied', 0 );
 		await vi.advanceTimersByTimeAsync( 1000 );
 
 		expect( host.updates ).toHaveLength( 1 );
@@ -425,6 +452,248 @@ describe( 'the page', () => {
 			content: paragraph( 'a typo' ),
 			proofread_done_ids: [ 'p1' ],
 		} );
+	} );
+
+	const feedbackItem = ( id: string, block_index: number | null = 1 ) => ( {
+		id,
+		block_index,
+		title: id,
+		feedback: '',
+		requires_manual: true,
+	} );
+
+	it( 'shows the feedback from state in the server’s order', async () => {
+		await openPost( paragraph( 'a' ), {
+			feedback: {
+				summary: 'Good',
+				items: [ feedbackItem( 'f3', 3 ), feedbackItem( 'f1', 1 ), feedbackItem( 'fw', null ) ],
+			},
+		} );
+		expect( host.editor?.feedback?.summary ).toBe( 'Good' );
+		expect( host.editor?.feedback?.items.map( ( { id } ) => id ) ).toEqual( [ 'f3', 'f1', 'fw' ] );
+	} );
+
+	it( 'sends a finished feedback item with the typing, and keeps its card for Undo', async () => {
+		await openPost( paragraph( 'a' ), {
+			feedback: { summary: 'Good', items: [ feedbackItem( 'f1' ), feedbackItem( 'f2' ) ] },
+		} );
+		host.editor?.onChange( { title: 'Title', content: paragraph( 'b' ) } );
+		host.editor?.onFixDone( 'feedback', [ 'f1' ], 'applied', 0 );
+		host.editor?.onFixDone( 'feedback', [ 'f2' ], 'dismissed', 0 );
+		expect( host.editor?.fixStatus.feedback ).toEqual( { f1: 'applied', f2: 'dismissed' } );
+		await vi.advanceTimersByTimeAsync( 1000 );
+
+		expect( host.updates ).toHaveLength( 1 );
+		expect( lastUpdate() ).toMatchObject( {
+			content: paragraph( 'b' ),
+			feedback_done_ids: [ 'f1', 'f2' ],
+		} );
+		expect( lastUpdate() ).not.toHaveProperty( 'proofread_done_ids' );
+		// The state after the update has neither item, nor the summary: their cards stay, with Undo.
+		expect( host.calls.at( -1 ) ).toBe( 'wpcom-post-editor-state' );
+		expect( host.server.feedback ).toEqual( { summary: '', items: [] } );
+		expect( host.editor?.feedback?.items.map( ( { id } ) => id ) ).toEqual( [ 'f1', 'f2' ] );
+		expect( host.editor?.fixStatus.feedback ).toEqual( { f1: 'applied', f2: 'dismissed' } );
+
+		// Undo opens a sent item again here, and it stays open.
+		host.editor?.onFixUndo( 'feedback', 'f2', true );
+		host.editor?.onChange( { title: 'Title', content: paragraph( 'c' ) } );
+		await vi.advanceTimersByTimeAsync( 1000 );
+		expect( host.editor?.feedback?.items.map( ( { id } ) => id ) ).toEqual( [ 'f1', 'f2' ] );
+		expect( host.editor?.fixStatus.feedback ).toEqual( { f1: 'applied' } );
+	} );
+
+	it( 'shows no review when the post opens with its review finished', async () => {
+		await openPost( paragraph( 'a' ), { feedback: { summary: '', items: [] } } );
+
+		expect( host.editor?.feedback ).toEqual( { summary: '', items: [] } );
+		const feedback = host.editor?.feedback as Parameters< typeof isSummaryOnly >[ 0 ];
+		expect( isSummaryOnly( feedback ) ).toBe( false );
+	} );
+
+	it( 'replaces the feedback and its statuses with a new review', async () => {
+		await openPost( paragraph( 'a' ), {
+			feedback: { summary: 'Good', items: [ feedbackItem( 'f1' ) ] },
+		} );
+		host.editor?.onFixDone( 'feedback', [ 'f1' ], 'dismissed', 0 );
+		host.server.feedback = { summary: 'Better', items: [ feedbackItem( 'g1' ) ] };
+		host.server.version++;
+		await type( paragraph( 'b' ) );
+
+		expect( host.editor?.feedback ).toMatchObject( { summary: 'Better', items: [ { id: 'g1' } ] } );
+		expect( host.editor?.fixStatus.feedback ).toEqual( {} );
+	} );
+
+	it( 'shows an item again on Undo, and doesn’t send it when it hasn’t gone yet', async () => {
+		await openPost( paragraph( 'a' ) );
+		host.editor?.onFixDone( 'feedback', [ 'f1', 'f2' ], 'dismissed', 0 );
+		host.editor?.onFixUndo( 'feedback', 'f1', true );
+		expect( host.editor?.fixStatus.feedback ).toEqual( { f2: 'dismissed' } );
+		await vi.advanceTimersByTimeAsync( 1000 );
+		expect( lastUpdate().feedback_done_ids ).toEqual( [ 'f2' ] );
+
+		// Already sent: Undo shows it again here only.
+		host.editor?.onFixUndo( 'feedback', 'f2', true );
+		expect( host.editor?.fixStatus.feedback ).toEqual( {} );
+	} );
+
+	it( 'doesn’t send again an item undone while its update was refused', async () => {
+		await openPost( paragraph( 'a' ) );
+		// The update goes on a stale version, and is refused.
+		host.server.version++;
+		host.editor?.onFixDone( 'feedback', [ 'f1', 'f2' ], 'dismissed', 0 );
+		host.duringNextUpdate = () => host.editor?.onFixUndo( 'feedback', 'f1', true );
+		await vi.advanceTimersByTimeAsync( 1000 );
+
+		expect( host.updates.map( ( update ) => update.feedback_done_ids ) ).toEqual( [
+			[ 'f1', 'f2' ],
+			[ 'f2' ],
+		] );
+	} );
+
+	it( 'keeps an applied item applied when its text changed since', async () => {
+		await openPost( paragraph( 'a' ) );
+		host.editor?.onFixDone( 'feedback', [ 'f1' ], 'applied', 0 );
+		host.editor?.onFixUndo( 'feedback', 'f1', false );
+
+		expect( host.editor?.fixStatus.feedback ).toEqual( { f1: 'applied' } );
+		expect( host.editor?.status ).toBe(
+			'Couldn’t undo the change: its text changed since. Edit it by hand.'
+		);
+	} );
+
+	const issue = ( id: string ) => ( {
+		id,
+		block_index: 1,
+		quote: 'tpyo',
+		replacement: 'typo',
+		reason: '',
+		kind: 'spelling',
+	} );
+
+	it( 'keeps finished proofreading issues, with Undo, when the server drops them', async () => {
+		await openPost( paragraph( 'a tpyo' ), { proofread: [ issue( 'p1' ), issue( 'p2' ) ] } );
+		host.editor?.onChange( { title: 'Title', content: paragraph( 'a typo' ) } );
+		host.editor?.onFixDone( 'proofread', [ 'p1' ], 'applied', 0 );
+		host.editor?.onFixDone( 'proofread', [ 'p2' ], 'dismissed', 0 );
+		await vi.advanceTimersByTimeAsync( 1000 );
+
+		expect( lastUpdate() ).toMatchObject( { proofread_done_ids: [ 'p1', 'p2' ] } );
+		expect( lastUpdate() ).not.toHaveProperty( 'feedback_done_ids' );
+		// The state after the update has neither issue: their cards stay, with Undo.
+		expect( host.calls.at( -1 ) ).toBe( 'wpcom-post-editor-state' );
+		expect( host.server.proofread ).toEqual( [] );
+		expect( host.editor?.issues.map( ( { id } ) => id ) ).toEqual( [ 'p1', 'p2' ] );
+		expect( host.editor?.fixStatus.proofread ).toEqual( { p1: 'applied', p2: 'dismissed' } );
+
+		// Undo opens a sent issue again here, and it stays open.
+		host.editor?.onFixUndo( 'proofread', 'p1', true );
+		await type( paragraph( 'a tpyo' ) );
+		expect( host.editor?.issues.map( ( { id } ) => id ) ).toEqual( [ 'p1', 'p2' ] );
+		expect( host.editor?.fixStatus.proofread ).toEqual( { p2: 'dismissed' } );
+		expect( lastUpdate() ).not.toHaveProperty( 'proofread_done_ids' );
+	} );
+
+	it( 'doesn’t send a proofreading issue undone before its update went', async () => {
+		await openPost( paragraph( 'a' ), { proofread: [ issue( 'p1' ), issue( 'p2' ) ] } );
+		host.editor?.onFixDone( 'proofread', [ 'p1', 'p2' ], 'dismissed', 0 );
+		host.editor?.onFixUndo( 'proofread', 'p1', true );
+		expect( host.editor?.fixStatus.proofread ).toEqual( { p2: 'dismissed' } );
+		await vi.advanceTimersByTimeAsync( 1000 );
+
+		expect( lastUpdate().proofread_done_ids ).toEqual( [ 'p2' ] );
+		expect( host.server.proofread ).toEqual( [ issue( 'p1' ) ] );
+		expect( host.editor?.issues.map( ( { id } ) => id ) ).toEqual( [ 'p1', 'p2' ] );
+	} );
+
+	it( 'doesn’t send again a proofreading issue undone while its update was refused', async () => {
+		await openPost( paragraph( 'a' ), { proofread: [ issue( 'p1' ), issue( 'p2' ) ] } );
+		host.server.version++;
+		host.editor?.onFixDone( 'proofread', [ 'p1', 'p2' ], 'applied', 0 );
+		host.duringNextUpdate = () => host.editor?.onFixUndo( 'proofread', 'p1', true );
+		await vi.advanceTimersByTimeAsync( 1000 );
+
+		expect( host.updates.map( ( update ) => update.proofread_done_ids ) ).toEqual( [
+			[ 'p1', 'p2' ],
+			[ 'p2' ],
+		] );
+	} );
+
+	it( 'replaces the proofreading issues and their statuses with a new run', async () => {
+		await openPost( paragraph( 'a' ), { proofread: [ issue( 'p1' ), issue( 'p2' ) ] } );
+		host.editor?.onFixDone( 'proofread', [ 'p1' ], 'dismissed', 0 );
+		host.editor?.onFixDone( 'feedback', [ 'f1' ], 'dismissed', 0 );
+		await vi.advanceTimersByTimeAsync( 1000 );
+		expect( host.editor?.issues.map( ( { id } ) => id ) ).toEqual( [ 'p1', 'p2' ] );
+
+		host.server.proofread = [ issue( 'q1' ) ];
+		host.server.version++;
+		await type( paragraph( 'b' ) );
+
+		expect( host.editor?.issues.map( ( { id } ) => id ) ).toEqual( [ 'q1' ] );
+		expect( host.editor?.fixStatus ).toEqual( { proofread: {}, feedback: { f1: 'dismissed' } } );
+	} );
+
+	it( 'clears open proofreading issues with an empty new run', async () => {
+		await openPost( paragraph( 'a' ), { proofread: [ issue( 'p1' ), issue( 'p2' ) ] } );
+		host.editor?.onFixDone( 'proofread', [ 'p1' ], 'dismissed', 0 );
+		await type( paragraph( 'b' ) );
+		expect( host.editor?.issues.map( ( { id } ) => id ) ).toEqual( [ 'p1', 'p2' ] );
+
+		// A clean run: p2, still open and never sent as done, is gone.
+		host.server.proofread = [];
+		host.server.version++;
+		await type( paragraph( 'c' ) );
+
+		expect( host.editor?.issues ).toEqual( [] );
+		expect( host.editor?.fixStatus.proofread ).toEqual( {} );
+	} );
+
+	it( 'keeps a proofreading issue undone after it was sent when the server lists it no more', async () => {
+		await openPost( paragraph( 'a' ), { proofread: [ issue( 'p1' ), issue( 'p2' ) ] } );
+		host.editor?.onFixDone( 'proofread', [ 'p1', 'p2' ], 'dismissed', 0 );
+		await type( paragraph( 'b' ) );
+		expect( host.server.proofread ).toEqual( [] );
+
+		host.editor?.onFixUndo( 'proofread', 'p1', true );
+		host.server.version++;
+		await type( paragraph( 'c' ) );
+
+		expect( host.editor?.issues.map( ( { id } ) => id ) ).toEqual( [ 'p1', 'p2' ] );
+		expect( host.editor?.fixStatus.proofread ).toEqual( { p2: 'dismissed' } );
+	} );
+
+	it( 'clears open feedback items with an empty new review', async () => {
+		await openPost( paragraph( 'a' ), {
+			feedback: { summary: 'Good', items: [ feedbackItem( 'f1' ), feedbackItem( 'f2' ) ] },
+		} );
+		host.editor?.onFixDone( 'feedback', [ 'f1' ], 'dismissed', 0 );
+		await type( paragraph( 'b' ) );
+		expect( host.editor?.feedback?.items.map( ( { id } ) => id ) ).toEqual( [ 'f1', 'f2' ] );
+
+		// A review with nothing to change: f2, still open and never sent as done, is gone.
+		host.server.feedback = { summary: '', items: [] };
+		host.server.version++;
+		await type( paragraph( 'c' ) );
+
+		expect( host.editor?.feedback ).toEqual( { summary: '', items: [] } );
+		expect( host.editor?.fixStatus.feedback ).toEqual( {} );
+	} );
+
+	it( 'keeps a feedback item undone after it was sent when the server lists it no more', async () => {
+		await openPost( paragraph( 'a' ), {
+			feedback: { summary: 'Good', items: [ feedbackItem( 'f1' ), feedbackItem( 'f2' ) ] },
+		} );
+		host.editor?.onFixDone( 'feedback', [ 'f1', 'f2' ], 'dismissed', 0 );
+		await type( paragraph( 'b' ) );
+		expect( host.server.feedback ).toEqual( { summary: '', items: [] } );
+
+		host.editor?.onFixUndo( 'feedback', 'f1', true );
+		host.server.version++;
+		await type( paragraph( 'c' ) );
+
+		expect( host.editor?.feedback?.items.map( ( { id } ) => id ) ).toEqual( [ 'f1', 'f2' ] );
+		expect( host.editor?.fixStatus.feedback ).toEqual( { f2: 'dismissed' } );
 	} );
 
 	it( 'asks again for the pending changes when the first ask fails', async () => {

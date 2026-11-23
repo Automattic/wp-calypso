@@ -28,8 +28,17 @@ import {
 } from './assistant';
 import './blocks';
 import { AgentChanges, ChangedBlocks, type AgentChange, type Decision } from './changes';
-import { KIND_LABEL, ProofreadLayer } from './proofread-layer';
-import type { ProofreadIssue } from './proofread';
+import { isSummaryOnly, reviewCount } from './proofread';
+import { ProofreadLayer, type BlockPositions, type FixKind } from './proofread-layer';
+import { ReviewPanel } from './review-panel';
+import type {
+	Feedback,
+	FeedbackItem,
+	Fix,
+	FixStatus,
+	FixStatuses,
+	ProofreadIssue,
+} from './proofread';
 import type { EditorSelection } from './selection-context';
 import type { ClipboardEvent, CSSProperties, KeyboardEvent } from 'react';
 
@@ -67,9 +76,14 @@ type Props = {
 	onPrompt: ( prompt: Prompt ) => void;
 	onAsk: ( question: string, selection: TextSelection ) => void;
 	onSelect: ( selection?: EditorSelection ) => void;
-	// The open proofreading issues; `failed` counts those whose text was no longer there.
+	// The proofreading issues and the editorial feedback, and the issues and items the user applied
+	// or dismissed, which can be undone. `failed` counts those whose text was no longer there.
 	issues: ProofreadIssue[];
-	onProofreadDone: ( ids: string[], failed: number ) => void;
+	feedback: Feedback | null;
+	fixStatus: FixStatuses;
+	onFixDone: ( kind: FixKind, ids: string[], status: FixStatus, failed: number ) => void;
+	// After Undo: `reverted` is false when an applied fix's text changed since.
+	onFixUndo: ( kind: FixKind, id: string, reverted: boolean ) => void;
 	// Under the loader, while the site's styles load: out of reach of the keyboard and clicks.
 	isCovered: boolean;
 };
@@ -90,6 +104,9 @@ type HistoryAction =
 	| { type: 'record'; value: BlockInstance[]; isStaged: boolean }
 	| { type: 'undo' | 'redo' }
 	| { type: 'reset'; value: BlockInstance[] };
+
+// One empty list, so the canvas's layer doesn't bind again on every render.
+const NO_ITEMS: FeedbackItem[] = [];
 
 const newHistory = ( value: BlockInstance[] ): History => ( {
 	manager: createUndoManager(),
@@ -192,20 +209,22 @@ function Canvas( {
 	changes,
 	onChange,
 	issues,
-	onProofreadDone,
+	fixes,
+	onDone,
 	onVisibleIssues,
+	onBlocks,
 	applyRef,
-	openRef,
+	showRef,
+	undoRef,
 	onSelect,
-}: Pick<
-	Props,
-	'styles' | 'readOnly' | 'onChange' | 'changes' | 'issues' | 'onProofreadDone' | 'onSelect'
-> & {
-	post: EditorPost;
-	onVisibleIssues: ( ids: string[] ) => void;
-	applyRef: Parameters< typeof ProofreadLayer >[ 0 ][ 'applyRef' ];
-	openRef: Parameters< typeof ProofreadLayer >[ 0 ][ 'openRef' ];
-} ) {
+}: Pick< Props, 'styles' | 'readOnly' | 'onChange' | 'changes' | 'onSelect' > &
+	Pick<
+		Parameters< typeof ProofreadLayer >[ 0 ],
+		'issues' | 'fixes' | 'onDone' | 'onBlocks' | 'applyRef' | 'showRef' | 'undoRef'
+	> & {
+		post: EditorPost;
+		onVisibleIssues: ( ids: string[] ) => void;
+	} ) {
 	const [ history, dispatch ] = useReducer( historyReducer, post.content, ( content ) =>
 		newHistory( parse( content ) )
 	);
@@ -294,10 +313,13 @@ function Canvas( {
 				<ChangedBlocks indexes={ changes.flatMap( ( change ) => change.block_index ?? [] ) } />
 				<ProofreadLayer
 					issues={ issues }
-					onDone={ onProofreadDone }
+					fixes={ fixes }
+					onDone={ onDone }
 					onVisible={ onVisibleIssues }
+					onBlocks={ onBlocks }
 					applyRef={ applyRef }
-					openRef={ openRef }
+					showRef={ showRef }
+					undoRef={ undoRef }
 				/>
 				<WritingFlow className="editor-styles-wrapper" onKeyDown={ onKeyDown }>
 					<ObserveTyping>
@@ -335,47 +357,61 @@ export function PostEditor( {
 	onAsk,
 	onSelect,
 	isCovered,
+	issues,
+	feedback,
+	fixStatus,
+	onFixDone,
+	onFixUndo,
 	...canvas
 }: Props ) {
-	// The issues whose quote the canvas still has; the others are out of view.
+	// The open issues whose quote the canvas still has; the others are out of view.
 	const [ visibleIds, setVisibleIds ] = useState< string[] >( [] );
-	const applyRef = useRef< ( list: ProofreadIssue[] ) => void >( undefined );
-	const openRef = useRef< ( id: string ) => void >( undefined );
-	const [ isListOpen, setListOpen ] = useState( false );
+	const applyRef = useRef< ( list: Fix[], kind?: FixKind ) => void >( undefined );
+	const showRef = useRef< ( fix: Fix, kind: FixKind ) => void >( undefined );
+	const undoRef = useRef< ( kind: FixKind, id: string ) => boolean >( undefined );
+	const [ isReviewOpen, setReviewOpen ] = useState( false );
 	const onVisibleIssues = ( ids: string[] ) =>
 		setVisibleIds( ( current ) => ( current.join() === ids.join() ? current : ids ) );
-	const visible = canvas.issues.filter( ( issue ) => visibleIds.includes( issue.id ) );
-	// The list closes itself when the last issue goes.
+	// Where each issue's and item's block is now, for their chips.
+	const [ positions, setPositions ] = useState< BlockPositions >( {} );
+	const onBlocks = ( next: BlockPositions ) =>
+		setPositions( ( current ) =>
+			JSON.stringify( current ) === JSON.stringify( next ) ? current : next
+		);
+	const feedbackItems = feedback?.items ?? NO_ITEMS;
+	const issueStatus = fixStatus.proofread;
+	// Only the open issues are underlined; all are bound, for their chips and Undo.
+	const openIssues = useMemo(
+		() => issues.filter( ( issue ) => ! issueStatus[ issue.id ] ),
+		[ issues, issueStatus ]
+	);
+	const fixes = useMemo(
+		() => ( { proofread: issues, feedback: feedbackItems } ),
+		[ issues, feedbackItems ]
+	);
+	// Resolved cards stay, with their Undo, until a new run replaces them; so does a review with
+	// only its summary.
+	const shownIssues = issues.filter(
+		( issue ) => issueStatus[ issue.id ] || visibleIds.includes( issue.id )
+	);
+	const count = reviewCount( fixStatus, shownIssues, feedbackItems );
+	const hasReview = shownIssues.length > 0 || feedbackItems.length > 0 || isSummaryOnly( feedback );
+	// The panel closes itself when the last item goes.
 	useEffect( () => {
-		if ( ! visible.length ) {
-			setListOpen( false );
+		if ( ! hasReview ) {
+			setReviewOpen( false );
 		}
-	}, [ visible.length ] );
-	// After a row's Apply or Dismiss, the focus goes to the row now in its place, or the last one,
-	// or the canvas when none is left, once the row has gone. An Apply that couldn't apply leaves
-	// the row, and nothing to move.
-	const listRef = useRef< HTMLUListElement >( null );
-	const focusAfter = useRef< { index: number; id: string } >( undefined );
-	useLayoutEffect( () => {
-		const after = focusAfter.current;
-		if ( ! after || visible.some( ( issue ) => issue.id === after.id ) ) {
-			return;
+	}, [ hasReview ] );
+	const onUndo = ( kind: FixKind, fix: Fix ) => {
+		const reverted =
+			fixStatus[ kind ][ fix.id ] !== 'applied' || !! undoRef.current?.( kind, fix.id );
+		// Its quote is back: the card stays open until the canvas looks for it again.
+		if ( reverted && kind === 'proofread' ) {
+			setVisibleIds( ( current ) =>
+				current.includes( fix.id ) ? current : [ ...current, fix.id ]
+			);
 		}
-		focusAfter.current = undefined;
-		const rows =
-			listRef.current?.querySelectorAll< HTMLButtonElement >( '.mcp-post-editor__issue' );
-		const row = rows?.[ Math.min( after.index, rows.length - 1 ) ];
-		( row ?? document.querySelector< HTMLElement >( '.editor-styles-wrapper' ) )?.focus();
-	} );
-	const finishRow = ( index: number, id: string, finish: () => void ) => {
-		focusAfter.current = { index, id };
-		finish();
-		// Unarmed if the row stays: the update that removes it renders before this runs.
-		setTimeout( () => {
-			if ( focusAfter.current?.id === id ) {
-				focusAfter.current = undefined;
-			}
-		} );
+		onFixUndo( kind, fix.id, reverted );
 	};
 	const { readOnly } = canvas;
 	return (
@@ -455,79 +491,38 @@ export function PostEditor( {
 						post={ post }
 						onVisibleIssues={ onVisibleIssues }
 						applyRef={ applyRef }
-						openRef={ openRef }
 						onSelect={ onSelect }
+						issues={ openIssues }
+						fixes={ fixes }
+						onBlocks={ onBlocks }
+						onDone={ onFixDone }
+						showRef={ showRef }
+						undoRef={ undoRef }
 						{ ...canvas }
 					/>
 				) }
 				<div className="mcp-post-editor__dock">
 					{ ! readOnly && <AskAssistant canMessage={ canMessage } onAsk={ onAsk } /> }
-					{ ! readOnly && isListOpen && visible.length > 0 && (
-						<ul
-							ref={ listRef }
-							className="mcp-post-editor__issues"
-							aria-label="Proofreading issues"
-						>
-							{ visible.map( ( issue, index ) => (
-								<li key={ issue.id }>
-									<button
-										type="button"
-										className="mcp-post-editor__issue"
-										onClick={ () => openRef.current?.( issue.id ) }
-									>
-										<b>{ KIND_LABEL[ issue.kind ] ?? issue.kind }</b> · “{ issue.quote }” →{ ' ' }
-										{ issue.replacement ? `“${ issue.replacement }”` : 'remove' }
-									</button>
-									<span className="mcp-post-editor__issue-actions">
-										<Button
-											size="small"
-											variant="tertiary"
-											onClick={ () =>
-												finishRow( index, issue.id, () =>
-													canvas.onProofreadDone( [ issue.id ], 0 )
-												)
-											}
-										>
-											Dismiss
-										</Button>
-										<Button
-											size="small"
-											variant="primary"
-											onClick={ () =>
-												finishRow( index, issue.id, () => applyRef.current?.( [ issue ] ) )
-											}
-										>
-											Apply
-										</Button>
-									</span>
-								</li>
-							) ) }
-						</ul>
+					{ ! readOnly && isReviewOpen && hasReview && (
+						<ReviewPanel
+							issues={ shownIssues }
+							feedback={ feedback }
+							status={ fixStatus }
+							positions={ positions }
+							onApply={ ( kind, list ) => applyRef.current?.( list, kind ) }
+							onDismiss={ ( kind, id ) => onFixDone( kind, [ id ], 'dismissed', 0 ) }
+							onUndo={ onUndo }
+							onShow={ ( fix, kind ) => showRef.current?.( fix, kind ) }
+						/>
 					) }
-					{ ! readOnly && visible.length > 0 && (
+					{ ! readOnly && hasReview && (
 						<div className="mcp-post-editor__pill">
 							<button
 								type="button"
-								aria-expanded={ isListOpen }
-								onClick={ () => setListOpen( ! isListOpen ) }
+								aria-expanded={ isReviewOpen }
+								onClick={ () => setReviewOpen( ! isReviewOpen ) }
 							>
-								{ visible.length } { visible.length === 1 ? 'issue' : 'issues' }
-							</button>
-							<span aria-hidden="true">·</span>
-							<button type="button" onClick={ () => applyRef.current?.( visible ) }>
-								Apply all
-							</button>
-							<span aria-hidden="true">·</span>
-							<button
-								type="button"
-								onClick={ () =>
-									canvas.onProofreadDone(
-										visible.map( ( issue ) => issue.id ),
-										0
-									)
-								}
-							>
-								Dismiss all
+								{ count ? `Review (${ count })` : 'Review' }
 							</button>
 						</div>
 					) }

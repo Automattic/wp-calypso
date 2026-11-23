@@ -6,7 +6,12 @@ import { joinBlocks, splitBlocks } from './editor/blocks';
 import { changeLabel, type AgentChange, type Decision } from './editor/changes';
 import { Loader } from './editor/loader';
 import { mergePost } from './editor/merge';
-import { type ProofreadIssue } from './editor/proofread';
+import {
+	type Feedback,
+	type FixKind,
+	type FixStatus,
+	type ProofreadIssue,
+} from './editor/proofread';
 import sanitize from './editor/sanitize';
 import { quoted, selectionContext, type EditorSelection } from './editor/selection-context';
 import { applySiteStyles } from './site-styles';
@@ -29,6 +34,7 @@ type StateResult = {
 	content?: string;
 	changes?: ( AgentChange & { status?: string } )[];
 	proofread?: ProofreadIssue[];
+	feedback?: Feedback | null;
 	conflict?: Conflict;
 };
 type SaveResult = {
@@ -73,7 +79,7 @@ const PROMPTS: Record< Prompt, [ string, ( where: string ) => string ] > = {
 	review: [
 		'Editorial feedback',
 		( where ) =>
-			`Review my post (${ where }, open in the editor) for structure, headings, paragraph length and flow, and give me the feedback here. Read it with wpcom-post-editor-read. Don’t change the post, and don’t use the browser or wp-admin.`,
+			`Review my post (${ where }, open in the editor) editorially, for structure, headings, paragraph length and flow: read it with wpcom-post-editor-read, then send your feedback with the editor’s tool for editorial feedback, so it shows in my editor’s Review panel. Give each item the block it’s about, or none for the whole post, and a quote and its replacement where an exact rewrite fits; mark the others as manual edits. Don’t change the post yourself, and don’t use the browser or wp-admin.`,
 	],
 	title: [
 		'Optimize title',
@@ -152,24 +158,57 @@ let changes: AgentChange[] = [];
 // Changes the page has shown, and those it decided, which stay hidden until the server agrees.
 const seenChanges = new Map< string, AgentChange >();
 const decided = new Set< string >();
-// With the proofreading issues the user applied or dismissed, `done`.
-type Decisions = Record< Decision | 'done', string[] >;
-const noDecisions = (): Decisions => ( { accept: [], reject: [], undo: [], done: [] } );
+// With the proofreading issues the user applied or dismissed, `done`, and the feedback items,
+// `feedbackDone`.
+type Decisions = Record< Decision | 'done' | 'feedbackDone', string[] >;
+const noDecisions = (): Decisions => ( {
+	accept: [],
+	reject: [],
+	undo: [],
+	done: [],
+	feedbackDone: [],
+} );
 // Decisions the next update sends, with the typing.
 let decisions = noDecisions();
 let accepted: { ids: string[]; label: string; timer: ReturnType< typeof setTimeout > } | undefined;
 const hasDecisions = ( list: Decisions ) => Object.values( list ).some( ( ids ) => ids.length );
+// Where each kind's finished ids go.
+const DONE: Record< FixKind, 'done' | 'feedbackDone' > = {
+	proofread: 'done',
+	feedback: 'feedbackDone',
+};
 const decisionArgs = ( list: Decisions ) => ( {
 	...( list.accept.length && { accept_change_ids: list.accept } ),
 	...( list.reject.length && { reject_change_ids: list.reject } ),
 	...( list.undo.length && { undo_change_ids: list.undo } ),
 	...( list.done.length && { proofread_done_ids: list.done } ),
+	...( list.feedbackDone.length && { feedback_done_ids: list.feedbackDone } ),
 } );
 
-// The open proofreading issues, as the last state listed them, and those the user finished,
-// which stay hidden until the server agrees.
+// The proofreading issues, as the last new run listed them, the editorial feedback, as the last
+// new review gave it, and the issues and items the user applied or dismissed, by kind. The server
+// drops finished ones from its lists, so the page keeps its own: their cards stay, with Undo, which
+// only opens one again here once the server has it.
 let issues: ProofreadIssue[] = [];
-const doneIssues = new Set< string >();
+let feedback: Feedback | null = null;
+const fixStatus: Record< FixKind, Map< string, FixStatus > > = {
+	proofread: new Map(),
+	feedback: new Map(),
+};
+// The ids an update the server took finished, by kind. The server has dropped them, so a list
+// without one is still the same run, even when Undo opened it again here.
+const sentDone: Record< FixKind, Set< string > > = {
+	proofread: new Set(),
+	feedback: new Set(),
+};
+// A list from a new run when it lacks an id still open here that the server never heard was done:
+// the server drops only finished ones. An empty new run has no new id to tell it apart.
+const lacksOpen = ( kind: FixKind, open: { id: string }[], list: { id: string }[] ) => {
+	const ids = new Set( list.map( ( { id } ) => id ) );
+	return open.some(
+		( { id } ) => ! ids.has( id ) && ! fixStatus[ kind ].has( id ) && ! sentDone[ kind ].has( id )
+	);
+};
 // The conflict with WordPress.com, by its stamp, and the one the user dismissed.
 let conflict: string | undefined;
 let dismissedConflict: string | undefined;
@@ -262,8 +301,14 @@ function renderEditor() {
 		onPrompt: sendPrompt,
 		onAsk: ask,
 		onSelect: reportSelection,
-		issues: readOnly ? [] : issues.filter( ( issue ) => ! doneIssues.has( issue.id ) ),
-		onProofreadDone: finishIssues,
+		issues: readOnly ? [] : issues,
+		feedback: readOnly ? null : feedback,
+		fixStatus: {
+			proofread: Object.fromEntries( fixStatus.proofread ),
+			feedback: Object.fromEntries( fixStatus.feedback ),
+		},
+		onFixDone: finishFixes,
+		onFixUndo: undoFix,
 		isCovered: loading,
 	} );
 }
@@ -439,6 +484,9 @@ async function save() {
 					version = result.version;
 					break;
 				}
+				( Object.keys( DONE ) as FixKind[] ).forEach( ( kind ) =>
+					sentDecisions?.[ DONE[ kind ] ].forEach( ( id ) => sentDone[ kind ].add( id ) )
+				);
 				// The server applied the decisions after the content, so its post can differ from
 				// the one sent: take it in from the version before.
 				const undone = [ ...sentDecisions.reject, ...sentDecisions.undo ];
@@ -557,6 +605,12 @@ function restoreDecisions( sent?: Decisions ) {
 		( Object.keys( sent ) as ( keyof Decisions )[] ).forEach( ( decision ) =>
 			decisions[ decision ].unshift( ...sent[ decision ] )
 		);
+		// Not the issues and items undone since, nor those finished again and queued.
+		( Object.keys( DONE ) as FixKind[] ).forEach( ( kind ) => {
+			decisions[ DONE[ kind ] ] = decisions[ DONE[ kind ] ].filter(
+				( id, index, list ) => fixStatus[ kind ].has( id ) && list.indexOf( id ) === index
+			);
+		} );
 	}
 }
 
@@ -618,9 +672,44 @@ function receiveChanges( list: StateResult[ 'changes' ] = [] ) {
 			: `The assistant made ${ fresh.length } changes`;
 }
 
+// A list with only issues the page has, and all those still open that weren't sent as done, is the
+// same run less those finished: the page keeps its own, with the server's copy of each still open
+// there. Any other is a new run, with new ids.
 function receiveIssues( list?: StateResult[ 'proofread' ] ) {
-	if ( list ) {
+	if ( ! list ) {
+		return;
+	}
+	const ids = new Set( issues.map( ( issue ) => issue.id ) );
+	if ( list.some( ( issue ) => ! ids.has( issue.id ) ) || lacksOpen( 'proofread', issues, list ) ) {
 		issues = list;
+		fixStatus.proofread.clear();
+		sentDone.proofread.clear();
+	} else {
+		const latest = new Map( list.map( ( issue ) => [ issue.id, issue ] ) );
+		issues = issues.map( ( issue ) => latest.get( issue.id ) ?? issue );
+	}
+}
+
+// Null when the post has no feedback; missing when it didn't change. A list with only items the
+// page has is the same review less those finished, and an empty one with no summary is that review
+// finished, unless either lacks an item still open here that wasn't sent as done; any other is a
+// new review, with new ids.
+function receiveFeedback( next?: StateResult[ 'feedback' ] ) {
+	if ( next === undefined ) {
+		return;
+	}
+	const ids = new Set( feedback?.items.map( ( item ) => item.id ) );
+	const finished = ! next?.items.length && ! next?.summary.trim();
+	if (
+		! next ||
+		! feedback ||
+		lacksOpen( 'feedback', feedback.items, next.items ) ||
+		( ! finished &&
+			( next.summary !== feedback.summary || next.items.some( ( item ) => ! ids.has( item.id ) ) ) )
+	) {
+		feedback = next;
+		fixStatus.feedback.clear();
+		sentDone.feedback.clear();
 	}
 }
 
@@ -640,16 +729,34 @@ function receiveState( state: StateResult ) {
 		if ( state.changed ) {
 			receiveChanges( state.changes );
 			receiveIssues( state.proofread );
+			receiveFeedback( state.feedback );
 			applyRemote( state );
 		}
 	}
 }
 
-// Issues the user applied or dismissed, sent with the typing in the next update. An applied
-// issue's edit reaches onEditorChange first, so the same update carries it.
-function finishIssues( ids: string[], failed: number ) {
-	ids.forEach( ( id ) => doneIssues.add( id ) );
-	decisions.done.push( ...ids );
+// Issues and items the user applied or dismissed, sent with the typing in the next update. An
+// applied one's edit reaches onEditorChange first, so the same update carries it.
+function finishFixes( kind: FixKind, ids: string[], status: FixStatus, failed: number ) {
+	ids.forEach( ( id ) => fixStatus[ kind ].set( id, status ) );
+	decisions[ DONE[ kind ] ].push( ...ids );
+	reportFailed( failed );
+}
+
+// An applied issue's or item's text is already back in the editor, or `reverted` is false.
+function undoFix( kind: FixKind, id: string, reverted: boolean ) {
+	if ( reverted ) {
+		fixStatus[ kind ].delete( id );
+		// Unsent yet: the server never hears of it.
+		decisions[ DONE[ kind ] ] = decisions[ DONE[ kind ] ].filter( ( done ) => done !== id );
+	} else {
+		statusMessage = 'Couldn’t undo the change: its text changed since. Edit it by hand.';
+	}
+	render();
+}
+
+// Shows the fixes that couldn't apply, and sends the decisions with the typing.
+function reportFailed( failed: number ) {
 	if ( failed ) {
 		statusMessage =
 			failed === 1
@@ -1008,6 +1115,7 @@ async function loadChanges( current: number ) {
 		changesLoaded = true;
 		receiveChanges( state.changes );
 		receiveIssues( state.proofread );
+		receiveFeedback( state.feedback );
 		receiveConflict( state.conflict );
 		render();
 	}
@@ -1041,7 +1149,11 @@ async function open( result: OpenResult ) {
 	seenChanges.clear();
 	clearAccepted();
 	issues = [];
-	doneIssues.clear();
+	feedback = null;
+	fixStatus.proofread.clear();
+	fixStatus.feedback.clear();
+	sentDone.proofread.clear();
+	sentDone.feedback.clear();
 	conflict = result.conflict?.remote_modified;
 	dismissedConflict = undefined;
 	persistentErrors.save = undefined;

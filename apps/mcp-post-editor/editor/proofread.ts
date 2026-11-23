@@ -11,6 +11,39 @@ export type ProofreadIssue = {
 	kind: 'spelling' | 'grammar' | 'style' | 'clarity';
 };
 
+// An editorial feedback item the model reported with the editor's feedback tool, from `state`.
+// `block_index` starts at 1; null is post-wide. Manual items have no quote or replacement.
+export type FeedbackItem = {
+	id: string;
+	block_index: number | null;
+	title: string;
+	feedback: string;
+	quote?: string;
+	replacement?: string;
+	requires_manual: boolean;
+};
+export type Feedback = { summary: string; items: FeedbackItem[] };
+// What the user did with a proofreading issue or a feedback item, by kind and id.
+export type FixStatus = 'applied' | 'dismissed';
+export type FixStatuses = Record< FixKind, Record< string, FixStatus > >;
+
+// The review pill's count: the proofreading issues and feedback items not yet applied or dismissed.
+export const reviewCount = (
+	status: FixStatuses,
+	issues: { id: string }[],
+	items: { id: string }[]
+) =>
+	issues.filter( ( issue ) => ! status.proofread[ issue.id ] ).length +
+	items.filter( ( item ) => ! status.feedback[ item.id ] ).length;
+
+// A review with no items but a summary: the reviewer found nothing to change, and says so.
+export const isSummaryOnly = ( feedback: Feedback | null ) =>
+	!! feedback && ! feedback.items.length && !! feedback.summary.trim();
+
+// What Apply replaces: a proofreading issue or a feedback item.
+export type FixKind = 'proofread' | 'feedback';
+export type Fix = Pick< FeedbackItem, 'id' | 'block_index' | 'quote' | 'replacement' >;
+
 // The server compares quotes with a block's text normalised: <br> and block-level tags become
 // a space, other tags go, entities are decoded, and whitespace (NBSP too) collapses and trims.
 // Each normalised character keeps where it starts and ends in its source, to map a match back.
@@ -59,16 +92,13 @@ function collapse< T >( chars: Char< T >[] ) {
 // The first and last normalised characters of the quote's first match, or null.
 function match< T >( chars: Char< T >[], quote: string ) {
 	const normalized = collapse( chars );
+	const text = normalized.map( ( { char } ) => char ).join( '' );
 	const wanted = quote.replace( /\s+/g, ' ' ).trim();
-	const index = wanted
-		? normalized
-				.map( ( { char } ) => char )
-				.join( '' )
-				.indexOf( wanted )
-		: -1;
-	return index < 0
-		? null
-		: { first: normalized[ index ], last: normalized[ index + wanted.length - 1 ] };
+	const index = wanted ? text.indexOf( wanted ) : -1;
+	if ( index < 0 ) {
+		return null;
+	}
+	return { first: normalized[ index ], last: normalized[ index + wanted.length - 1 ] };
 }
 
 type Position = { node: Node; offset: number };
@@ -166,17 +196,70 @@ export function replaceText( html: string, quote: string, replacement: string ) 
 
 // Rich text attributes are strings or, in recent Gutenberg, RichTextData.
 const RICH_TEXT_KEYS = [ 'content', 'caption' ];
+export const htmlOf = ( value: unknown ) =>
+	typeof value === 'string'
+		? value
+		: ( value as { toHTMLString?: () => string } | undefined )?.toHTMLString?.();
+
+// How many characters of Apply's HTML on each side of its change Undo looks for.
+const AROUND = 20;
+
+// The HTML with the one change from `before` to `next` taken back, found by the text Apply left on
+// each side of it, or null unless that's in the HTML exactly once.
+function revertText( html: string, before: string, next: string ) {
+	let start = 0;
+	while ( start < before.length && start < next.length && before[ start ] === next[ start ] ) {
+		start++;
+	}
+	let end = 0;
+	while (
+		end < before.length - start &&
+		end < next.length - start &&
+		before[ before.length - 1 - end ] === next[ next.length - 1 - end ]
+	) {
+		end++;
+	}
+	const from = Math.max( 0, start - AROUND );
+	const to = Math.min( next.length, next.length - end + AROUND );
+	const wanted = next.slice( from, to );
+	const index = wanted ? html.indexOf( wanted ) : -1;
+	if ( index < 0 || html.indexOf( wanted, index + 1 ) >= 0 ) {
+		return null;
+	}
+	const changed = index + start - from;
+	return (
+		html.slice( 0, changed ) +
+		before.slice( start, before.length - end ) +
+		html.slice( changed + next.length - end - start )
+	);
+}
+
+// What Undo puts in an attribute whose HTML is `html` now, after Apply replaced `before` with
+// `next`: `before` when the text is as Apply left it; the HTML with only Apply's change taken back
+// when that's still there with the same text around it, as after another Apply in the block; null
+// when it isn't. Undefined when the text is already as it was, as after the editor's own undo.
+export function undoValue( html: string, { before, next }: { before: unknown; next: string } ) {
+	if ( html === next ) {
+		return before;
+	}
+	const old = htmlOf( before );
+	if ( html === old ) {
+		return undefined;
+	}
+	return typeof old === 'string' ? revertText( html, old, next ) : null;
+}
 
 export type Target = { clientId: string; key: string; next: string };
 
 // Where Apply would replace the quote: the block, or the first inner block that has it in one run
 // of text, and the attribute's new value. Undefined when Apply can't.
-function targetIn( block: BlockInstance, issue: ProofreadIssue ): Target | undefined {
+function targetIn( block: BlockInstance, issue: Fix ): Target | undefined {
 	for ( const key of RICH_TEXT_KEYS ) {
-		const value = block.attributes[ key ] as string | { toHTMLString?: () => string };
-		const html = typeof value === 'string' ? value : value?.toHTMLString?.();
+		const html = htmlOf( block.attributes[ key ] );
 		const next =
-			typeof html === 'string' ? replaceText( html, issue.quote, issue.replacement ) : null;
+			typeof html === 'string'
+				? replaceText( html, issue.quote ?? '', issue.replacement ?? '' )
+				: null;
 		if ( next !== null ) {
 			return { clientId: block.clientId, key, next };
 		}
@@ -192,13 +275,21 @@ function targetIn( block: BlockInstance, issue: ProofreadIssue ): Target | undef
 
 // The top-level block each issue was reported against, by issue id: the one at its `block_index`
 // when it arrived. Bound by clientId, so blocks the user adds or removes above it don't move it.
-// Null when the post had no such block.
-export type Bindings = Map< string, { issue: ProofreadIssue; clientId: string | null } >;
+// Null when the post had no such block, or the issue is post-wide.
+export type Bindings = Map< string, { issue: Fix; clientId: string | null } >;
 
-// Where Apply would replace the quote, only in the issue's own block and its inner blocks. A new
-// list binds an issue again only when its block is gone, replaced by a reload or a merge: its
-// `block_index` can be from before the user's own new blocks.
-export function locate( bindings: Bindings, blocks: BlockInstance[], issue: ProofreadIssue ) {
+// The issue's own block. A new list binds an issue again only when its block is gone, replaced by
+// a reload or a merge: its `block_index` can be from before the user's own new blocks. While the
+// same feedback item's block is gone, it's the block at its `block_index`, found each time and not
+// bound: feedback items keep their object while a rewrite or a transform gives the block a new
+// clientId, and the editor's undo brings the bound block back. A proofreading issue comes as a new
+// object after a change, so while its block is gone it has none.
+export function boundBlock(
+	bindings: Bindings,
+	blocks: BlockInstance[],
+	issue: Fix,
+	kind: FixKind
+) {
 	const bound = bindings.get( issue.id );
 	if ( bound && bound.issue !== issue ) {
 		if ( blocks.some( ( block ) => block.clientId === bound.clientId ) ) {
@@ -210,11 +301,22 @@ export function locate( bindings: Bindings, blocks: BlockInstance[], issue: Proo
 	if ( ! bindings.has( issue.id ) ) {
 		bindings.set( issue.id, {
 			issue,
-			clientId: blocks[ issue.block_index - 1 ]?.clientId ?? null,
+			clientId:
+				issue.block_index === null ? null : ( blocks[ issue.block_index - 1 ]?.clientId ?? null ),
 		} );
 	}
 	const { clientId } = bindings.get( issue.id )!;
-	const block = clientId && blocks.find( ( item ) => item.clientId === clientId );
+	return (
+		( clientId && blocks.find( ( item ) => item.clientId === clientId ) ) ||
+		( kind === 'feedback' && issue.block_index !== null
+			? blocks[ issue.block_index - 1 ]
+			: undefined )
+	);
+}
+
+// Where Apply would replace the quote, only in the issue's own block and its inner blocks.
+export function locate( bindings: Bindings, blocks: BlockInstance[], issue: Fix, kind: FixKind ) {
+	const block = boundBlock( bindings, blocks, issue, kind );
 	return block ? targetIn( block, issue ) : undefined;
 }
 
