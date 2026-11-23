@@ -3,15 +3,16 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { WooHumanSupportRoutingStep } from '../woo-human-support-routing-step';
 import type { WooHandoff } from '../../data/use-woo-handoff';
 import type { WooHandoffData } from '../../human-routing/woo-handoff';
 import type { HumanSupportRequest } from '@automattic/odie-client';
 
 let mockHandoff: { data?: WooHandoff; isPending: boolean };
-const mockRecordTracksEvent = jest.fn();
+const mockRecordTracksEvent = vi.fn();
 
-jest.mock( '../../data/use-woo-handoff', () => ( {
+vi.mock( '../../data/use-woo-handoff', () => ( {
 	useWooHandoff: () => mockHandoff,
 } ) );
 
@@ -20,7 +21,7 @@ const loaded = ( data: WooHandoffData | null, isSupportBlocked = false ) => ( {
 	isPending: false,
 } );
 
-jest.mock( '../../hooks/use-help-center-tracks-event', () => ( {
+vi.mock( '../../hooks/use-help-center-tracks-event', () => ( {
 	useHelpCenterTracksEvent: () => mockRecordTracksEvent,
 } ) );
 
@@ -55,8 +56,8 @@ const request: HumanSupportRequest = {
 	flags: { isEmergency: false, emergencyType: null, routeToEmail: false, isUnknownCharge: false },
 };
 
-const startChat = jest.fn();
-const dismiss = jest.fn();
+const startChat = vi.fn();
+const dismiss = vi.fn();
 
 const renderStep = ( humanSupportRequest = request ) =>
 	render(
@@ -76,7 +77,7 @@ const lastDecision = () =>
 	)?.[ 1 ];
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockHandoff = loaded( merchant() );
 } );
 
@@ -141,7 +142,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 
 	it( 'keeps Continue in view when questions are added', async () => {
 		// jsdom doesn't scroll.
-		const scrollIntoView = jest.fn();
+		const scrollIntoView = vi.fn();
 		Element.prototype.scrollIntoView = scrollIntoView;
 		try {
 			renderStep();

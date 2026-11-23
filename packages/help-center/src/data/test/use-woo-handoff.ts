@@ -1,10 +1,11 @@
 import apiFetch from '@wordpress/api-fetch';
+import { vi } from 'vitest';
 import { fetchWooHandoff } from '../use-woo-handoff';
 import type { WooHandoffData } from '../../human-routing/woo-handoff';
 
-jest.mock( '@wordpress/api-fetch' );
+vi.mock( '@wordpress/api-fetch' );
 
-const mockApiFetch = apiFetch as jest.MockedFunction< typeof apiFetch >;
+const mockApiFetch = vi.mocked( apiFetch );
 
 const merchant: WooHandoffData = {
 	supportTier: 'tier_1',
