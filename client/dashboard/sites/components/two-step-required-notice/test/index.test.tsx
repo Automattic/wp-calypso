@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
-import { render } from '../../../test-utils';
+import { render } from '../../../../test-utils';
 import TwoStepRequiredNotice, { useSiteRequiresTwoStep } from '../index';
 import type { Site, User } from '@automattic/api-core';
 

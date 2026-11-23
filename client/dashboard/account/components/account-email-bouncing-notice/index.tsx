@@ -1,8 +1,8 @@
 import { __, sprintf } from '@wordpress/i18n';
-import ComponentViewTracker from '../../components/component-view-tracker';
-import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
-import { useAnalytics } from '../analytics';
-import { useAuth } from '../auth';
+import { useAnalytics } from '../../../app/analytics';
+import { useAuth } from '../../../app/auth';
+import ComponentViewTracker from '../../../components/component-view-tracker';
+import { Notice, RouterNoticeActionLinkButton } from '../../../components/notice';
 
 /**
  * Whether the bouncing-account-email notice is eligible to show. Read at the call site so the

@@ -171,6 +171,12 @@
 			depNameTemplate: 'node',
 			datasourceTemplate: 'node',
 		},
+		// Renovate's Buildkite manager only reads plugin versions, not `image:` lines.
+		{
+			fileMatch: [ '^\\.buildkite/pipeline\\.yml$' ],
+			matchStrings: [ 'image: (?<depName>cimg/node):(?<currentValue>[^\\s]+)' ],
+			datasourceTemplate: 'docker',
+		},
 	],
 
 	// --- Update & schedule settings ---
