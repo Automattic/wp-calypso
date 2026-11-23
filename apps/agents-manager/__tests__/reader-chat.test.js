@@ -22,7 +22,9 @@ vi.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => ( {
 	} ) ),
 } ) );
 vi.mock( '@automattic/agenttic-ui', () => ( {
-	hasAgentticTranslations: vi.fn( ( locale ) => [ 'nl', 'fr', 'zh-cn' ].includes( locale ) ),
+	hasAgentticTranslations: vi.fn( ( locale ) =>
+		[ 'nl', 'fr', 'zh-cn', 'zh-tw' ].includes( locale )
+	),
 	loadAgentticTranslations: vi.fn(),
 } ) );
 vi.mock( '@tanstack/react-query', () => ( {
@@ -354,16 +356,19 @@ describe( 'suggestion prompts', () => {
 		delete globalThis.fetch;
 	} );
 
-	it( 'ask the agent for the blog’s language', async () => {
-		await fetchAiSuggestions( undefined, 'nl' );
+	it.each( [
+		[ 'the blog', null ],
+		[ 'a post', { url: 'https://example.com/hallo/', title: 'Hallo' } ],
+	] )( 'ask for the blog’s language on %s', async ( view, post ) => {
+		await fetchAiSuggestions( undefined, 'nl', post );
 
 		expect( sentText() ).toMatch( /blog's language, whose locale is "nl"\.$/ );
 	} );
 
-	it( 'ask for the blog’s language on follow-ups too', async () => {
-		await fetchFollowupSuggestions( 'Wat is dit?', 'Een blog.', undefined, 'nl' );
+	it( 'ask for the reader’s language on follow-ups', async () => {
+		await fetchFollowupSuggestions( '¿Qué es esto?', 'Un blog.' );
 
-		expect( sentText() ).toMatch( /blog's language, whose locale is "nl"\.$/ );
+		expect( sentText() ).toMatch( /in the language the reader asked in\.$/ );
 	} );
 } );
 
@@ -730,12 +735,15 @@ describe( 'loadReaderTranslations', () => {
 		expect( loadAgentticTranslations ).toHaveBeenCalledWith( 'fr', { domain: 'a8c-agenttic' } );
 	} );
 
-	it( 'uses Agenttic’s zh-cn for a zh-sg page', async () => {
+	it.each( [
+		[ 'zh-sg', 'zh-cn' ],
+		[ 'zh-hk', 'zh-tw' ],
+	] )( 'uses the Agenttic Chinese that shares a %s page’s script', async ( locale, agenttic ) => {
 		respondWith( languageFile( {} ) );
-		await loadReaderTranslations( 'zh-sg' );
+		await loadReaderTranslations( locale );
 
-		expect( fetch.mock.calls[ 0 ][ 0 ] ).toContain( '/languages/zh-sg-v1.1.json' );
-		expect( loadAgentticTranslations ).toHaveBeenCalledWith( 'zh-cn', { domain: 'a8c-agenttic' } );
+		expect( fetch.mock.calls[ 0 ][ 0 ] ).toContain( `/languages/${ locale }-v1.1.json` );
+		expect( loadAgentticTranslations ).toHaveBeenCalledWith( agenttic, { domain: 'a8c-agenttic' } );
 	} );
 
 	it( 'stays in English, without a warning, when the locale has no translations', async () => {

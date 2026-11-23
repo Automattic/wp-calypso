@@ -747,8 +747,7 @@ async function fetchSuggestions( { messageText, requestIdPrefix, resultIdPrefix,
  * Called fire-and-forget after mount — the empty view shows fallback
  * chips immediately and re-renders with AI suggestions when they arrive.
  */
-function fetchAiSuggestions( signal, locale = readerLocale ) {
-	const post = readerCurrentPost;
+function fetchAiSuggestions( signal, locale = readerLocale, post = readerCurrentPost ) {
 	const siteName = readerConfig.siteName || '';
 	const siteUrl = readerConfig.siteUrl || '';
 	const postTitle = decodeHtmlEntities( post?.title || '' );
@@ -803,7 +802,7 @@ ${ getSuggestionsLanguageLine( locale ) }`;
  * Reuses the reader-chat-suggestions agent with a message shape that
  * describes the exchange and asks for follow-ups.
  */
-function fetchFollowupSuggestions( userText, agentText, signal, locale = readerLocale ) {
+function fetchFollowupSuggestions( userText, agentText, signal ) {
 	if ( ! userText || ! agentText ) {
 		return Promise.resolve( null );
 	}
@@ -821,7 +820,7 @@ Anchor every question in a concrete detail, place, person, phrase, or theme from
 Do not ask for broad advice, outside recommendations, popularity, traffic, trends, or facts not implied by the reply.
 Do not ask the author/site owner personal interview questions or address them as "you".
 Questions should feel like natural next-step curiosity: clarify a detail, go deeper on a named point, or ask how two details connect.
-${ getSuggestionsLanguageLine( locale ) }`;
+Write every "label" and "prompt" in the language the reader asked in.`;
 
 	return fetchSuggestions( {
 		messageText,
