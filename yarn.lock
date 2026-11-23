@@ -2451,17 +2451,17 @@ __metadata:
   linkType: soft
 
 "@automattic/social-previews@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "@automattic/social-previews@npm:3.0.0"
+  version: 3.4.3
+  resolution: "@automattic/social-previews@npm:3.4.3"
   dependencies:
-    "@wordpress/components": "npm:30.9.0"
-    "@wordpress/element": "npm:6.36.0"
-    "@wordpress/i18n": "npm:6.9.0"
+    "@wordpress/components": "npm:44.0.0"
+    "@wordpress/element": "npm:10.1.0"
+    "@wordpress/i18n": "npm:7.1.0"
     clsx: "npm:2.1.1"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 10c0/f695d200c13669980ecd2c4ca4835dfce434bbad53b23b1c55a30d7a4abba3d5a8a985db439be5d16b8c50cdd3e58e7aef84c45617d2d89bc18f6ad40079d120
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  checksum: 10c0/d48369e5bac66ac69562fa9689eb3c3af4546bd11acaa8ba96ba755c39d8f2c3cd9846f5dfda83b326b0d54f95b4645108352403fb7487099edf9dfdd9c24498
   languageName: node
   linkType: hard
 

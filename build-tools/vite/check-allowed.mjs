@@ -32,8 +32,6 @@ export const allowed = {
 		'@vgs/collect-js-react/dist/index.mjs | @vgs/collect-js-react/dist/index.js': IMPORT_AS_REQUIRE,
 		'date-fns/index.js | date-fns/index.cjs': IMPORT_AS_REQUIRE,
 		'framer-motion/dist/es/index.mjs | framer-motion/dist/cjs/index.js': IMPORT_AS_REQUIRE,
-		'react-intersection-observer/react-intersection-observer.modern.mjs | react-intersection-observer/react-intersection-observer.js':
-			IMPORT_AS_REQUIRE,
 	},
 	// Webpack files that become more than one module under Vite, by package path.
 	duplicates: {},
