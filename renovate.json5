@@ -162,7 +162,7 @@
 			packageNameTemplate: 'ghcr.io/renovatebot/renovate',
 		},
 		{
-			fileMatch: [ '^Dockerfile$' ],
+			fileMatch: [ '^Dockerfile(\\..+)?$' ],
 			matchStrings: [ 'ARG node_version=(?<currentValue>.*?)\\n' ],
 			depNameTemplate: 'node',
 			datasourceTemplate: 'node',
