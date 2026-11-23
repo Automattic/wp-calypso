@@ -45,7 +45,7 @@ steps:
       queue: default
     plugins:
       - $DOCKER_PLUGIN:
-          image: cimg/node:24.15.0-browsers
+          image: cimg/node:24.22.3-browsers
           propagate-uid-gid: true
           userns: host
           environment:
