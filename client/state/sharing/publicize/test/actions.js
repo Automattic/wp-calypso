@@ -2,10 +2,8 @@ import {
 	NOTICE_CREATE,
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
-	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
 	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 import {
@@ -131,20 +129,6 @@ describe( 'actions', () => {
 				expect( action.connection ).toEqual( { ID: 2, site_ID: 2916284 } );
 			} );
 		} );
-
-		test( 'should dispatch fail action when request fails', () => {
-			return updateSiteConnection(
-				{ ID: 2, site_ID: 77203074, label: 'Facebook' },
-				attributes
-			)( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-					error: expect.objectContaining( {
-						message: 'An active access token must be used to access publicize connections.',
-					} ),
-				} );
-			} );
-		} );
 	} );
 
 	describe( 'deleteSiteConnection()', () => {
@@ -170,17 +154,6 @@ describe( 'actions', () => {
 						ID: 2,
 						site_ID: 2916284,
 					},
-				} );
-			} );
-		} );
-
-		test( 'should dispatch fail action when request fails', () => {
-			return deleteSiteConnection( { ID: 2, site_ID: 77203074 } )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
-					error: expect.objectContaining( {
-						message: 'An active access token must be used to access publicize connections.',
-					} ),
 				} );
 			} );
 		} );

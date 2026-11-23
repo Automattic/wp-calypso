@@ -5,7 +5,6 @@ import {
 	POST_REQUEST_FAILURE,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
-	POST_RESTORE_SUCCESS,
 	POST_SAVE_SUCCESS,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
@@ -287,16 +286,6 @@ describe( 'actions', () => {
 				expect( dispatch ).toHaveBeenCalledWith( {
 					type: POSTS_RECEIVE,
 					posts: [ { ID: 13640, status: 'draft' } ],
-				} );
-			} );
-		} );
-
-		test( 'should dispatch success action when restoring post succeeds', () => {
-			return restorePost( 2916284, 13640 )( dispatch, getState ).then( () => {
-				expect( dispatch ).toHaveBeenCalledWith( {
-					type: POST_RESTORE_SUCCESS,
-					siteId: 2916284,
-					postId: 13640,
 				} );
 			} );
 		} );

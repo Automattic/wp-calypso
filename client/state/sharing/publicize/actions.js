@@ -3,10 +3,8 @@ import wpcom from 'calypso/lib/wp';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
-	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
 	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
@@ -113,11 +111,6 @@ export function updateSiteConnection( connection, attributes ) {
 				);
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-					error: { ...error, label: connection.label },
-				} );
-
 				dispatch(
 					errorNotice(
 						translate( 'The %(service)s account was unable to be updated.', {
@@ -153,11 +146,6 @@ export function deleteSiteConnection( connection ) {
 					dispatch( deleteConnection( connection ) );
 					dispatch( deleteConnectionSuccess( connection ) );
 				}
-
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
-					error: { ...error, label: connection.label },
-				} );
 
 				dispatch(
 					errorNotice(

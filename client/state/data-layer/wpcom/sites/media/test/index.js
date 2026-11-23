@@ -5,7 +5,6 @@ import {
 	failMediaRequest,
 	receiveMedia,
 	setNextPageHandle,
-	successMediaItemRequest,
 	successMediaRequest,
 } from 'calypso/state/media/actions';
 import {
@@ -108,10 +107,7 @@ describe( 'receiveMediaItem', () => {
 
 		const result = receiveMediaItem( action, media );
 
-		expect( result ).toEqual( [
-			receiveMedia( siteId, media ),
-			successMediaItemRequest( siteId, mediaId ),
-		] );
+		expect( result ).toEqual( [ receiveMedia( siteId, media ) ] );
 	} );
 } );
 
