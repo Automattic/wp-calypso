@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
@@ -128,6 +128,54 @@ describe( '<ContentInfo> purchase blockers', () => {
 		render( <ContentInfo site={ { ...site, is_wpcom_atomic: true } } onClose={ vi.fn() } /> );
 
 		expect( await screen.findByText( /reassigned to the site owner/ ) ).toBeVisible();
+	} );
+
+	test( 'sends one leave request when submissions arrive before the pending render', async () => {
+		mockPurchases( [] );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wp/v2/sites/123/users/me' )
+			.query( true )
+			.reply( 200, { id: CURRENT_USER_ID } );
+		let requestCount = 0;
+		let releaseResponses = false;
+		const finishRequests: Array< () => void > = [];
+		const leaveRequest = nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/sites/123/users/1/delete' )
+			.query( true )
+			.reply( ( _uri, _body, callback ) => {
+				requestCount++;
+				const finish = () => callback( null, [ 200, { success: false } ] );
+				if ( releaseResponses ) {
+					finish();
+				} else {
+					finishRequests.push( finish );
+				}
+			} );
+		const onClose = vi.fn();
+		const { unmount } = render( <ContentInfo site={ site } onClose={ onClose } /> );
+		const user = userEvent.setup();
+		await user.click( await screen.findByRole( 'checkbox' ) );
+		const submit = screen.getByRole( 'button', { name: 'Leave site' } );
+		await waitFor( () => expect( submit ).toBeEnabled() );
+
+		try {
+			await act( async () => {
+				submit.click();
+				submit.click();
+			} );
+			await waitFor( () => expect( requestCount ).toBeGreaterThan( 0 ) );
+			expect( requestCount ).toBe( 1 );
+			expect( leaveRequest.isDone() ).toBe( true );
+			expect( submit ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
+		} finally {
+			releaseResponses = true;
+			finishRequests.forEach( ( finish ) => finish() );
+			await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+			unmount();
+		}
+		expect( requestCount ).toBe( 1 );
 	} );
 
 	test( 'reports a failed leave if the dialog unmounts during the request', async () => {

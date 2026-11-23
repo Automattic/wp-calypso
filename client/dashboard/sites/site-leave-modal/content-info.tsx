@@ -13,7 +13,7 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { purchaseSettingsRoute, purchasesRoute } from '../../app/router/me';
@@ -143,6 +143,7 @@ function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
 function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
+	const isSubmittingRef = useRef( false );
 
 	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
 	const { data: me } = useQuery( siteCurrentUserQuery( site.ID ) );
@@ -176,10 +177,11 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( ! me || ! isConfirmed || mutation.isPending ) {
+		if ( ! me || ! isConfirmed || isSubmittingRef.current ) {
 			return;
 		}
 
+		isSubmittingRef.current = true;
 		recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_click' );
 
 		mutation.mutate( me.id, {
@@ -188,6 +190,9 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 				onClose();
 			},
 			onError: onClose,
+			onSettled: () => {
+				isSubmittingRef.current = false;
+			},
 		} );
 	};
 
