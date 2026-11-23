@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import { vi } from 'vitest';
+import { addTracksSurface } from '../../helpers/stats';
 import { store, init as initState } from '../../state';
 import actions from '../../state/actions';
 import { addListeners, removeListeners } from '../../state/create-listener-middleware';
@@ -9,6 +10,7 @@ import getAllNotes from '../../state/selectors/get-all-notes';
 import getFilteredLoading from '../../state/selectors/get-filtered-loading';
 import getFilteredNoteIds from '../../state/selectors/get-filtered-note-ids';
 import getIsLoading from '../../state/selectors/get-is-loading';
+import getIsNoteRead from '../../state/selectors/get-is-note-read';
 import Client from '../index';
 import { init } from '../wpcom';
 
@@ -68,7 +70,7 @@ describe( 'RestClient', () => {
 		init( {
 			req: {
 				get: ( path, query, callback ) => getCalls.push( { path, query, callback } ),
-				post: () => {},
+				post: () => Promise.resolve(),
 			},
 			pinghub: {
 				connect: ( _path, callback ) => {
@@ -117,6 +119,56 @@ describe( 'RestClient', () => {
 			expect( ids ).toContain( 100 ); // first window kept
 			expect( ids ).toContain( 91 ); // first window kept
 			expect( ids ).toContain( 71 ); // older page added
+		} );
+
+		it( 'retries a failed page after a backoff instead of re-requesting it straight away', () => {
+			seedFirstWindow();
+			client.subscribed = true;
+			client.isShowing = true;
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
+			getCalls.length = 0;
+
+			client.loadMore();
+			vi.advanceTimersByTime( 29000 );
+			expect( getCalls ).toHaveLength( 0 );
+
+			vi.advanceTimersByTime( 1000 );
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query ).toHaveProperty( 'before' );
+		} );
+
+		it( 'does not retry a failed page while notifications are closed, and retries once reopened', () => {
+			init( {
+				req: {
+					get: ( path, query, callback ) => getCalls.push( { path, query, callback } ),
+					post: () => Promise.resolve(),
+				},
+				pinghub: { connect: () => {} },
+			} );
+			seedFirstWindow();
+			client.subscribed = true;
+			client.isShowing = true;
+
+			client.loadMore();
+			getCalls[ 0 ].callback( { status: 500, error: 'server_error' } );
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+
+			vi.advanceTimersByTime( 600000 );
+			expect( getCalls.filter( ( call ) => call.query.before ) ).toHaveLength( 0 );
+
+			client.setVisibility( { isShowing: true, isVisible: true } );
+			getCalls
+				.filter( ( call ) => ! call.query.before )
+				.forEach( ( call ) =>
+					call.callback( null, {
+						notes: fullPage( 10, 100 ).map( ( { id, note_hash } ) => ( { id, note_hash } ) ),
+					} )
+				);
+			vi.advanceTimersByTime( 1000 );
+			expect( getCalls.filter( ( call ) => call.query.before ) ).toHaveLength( 1 );
 		} );
 
 		it( 'does not send before on the initial window fetch', () => {
@@ -332,6 +384,19 @@ describe( 'RestClient', () => {
 			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } ); // all known
 
 			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 10, reached_end: true } ] );
+		} );
+
+		it( 'names the surface shown when the load-more started, even if it has closed since', () => {
+			seedFirstWindow();
+			const removePanel = addTracksSurface( 'dashboard_panel' );
+
+			client.loadMore();
+			removePanel();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 91 ), last_seen_time: 0 } );
+
+			expect( trackedEvents() ).toEqual( [
+				{ surface: 'dashboard_panel', filter: 'all', total: 19, reached_end: false },
+			] );
 		} );
 
 		it( 'records nothing for the initial window or a poll refresh', () => {
@@ -738,6 +803,87 @@ describe( 'RestClient', () => {
 		} );
 	} );
 
+	describe( 'refreshing the filtered tab after a change made here', () => {
+		const unreadCalls = () => getCalls.filter( ( call ) => call.query.unread );
+
+		it( 'fetches straight away when no filtered fetch is in flight', () => {
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+
+			expect( unreadCalls() ).toHaveLength( 1 );
+		} );
+
+		it( 'runs once the fetch in flight is done instead of being dropped', () => {
+			client.setFilter( 'unread' );
+			const inFlight = getCalls[ 0 ];
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+			client.refreshFilteredNotes();
+			expect( unreadCalls() ).toHaveLength( 0 );
+
+			inFlight.callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 1 );
+
+			// The refresh's own answer does not ask for another one.
+			unreadCalls()[ 0 ].callback( null, {
+				notes: [ makeNote( 901 ), makeNote( 900 ) ],
+				last_seen_time: 0,
+			} );
+			expect( unreadCalls() ).toHaveLength( 1 );
+			expect( getFilteredNoteIds( store.getState(), UNREAD_KEY ) ).toEqual( [ 901, 900 ] );
+		} );
+
+		it( 'runs after a fetch in flight fails', () => {
+			client.setFilter( 'unread' );
+			const inFlight = getCalls[ 0 ];
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+			inFlight.callback( { status: 500 } );
+
+			expect( unreadCalls() ).toHaveLength( 1 );
+		} );
+
+		it( 'is dropped when the tab is no longer filtered', () => {
+			client.setFilter( 'unread' );
+			const inFlight = getCalls[ 0 ];
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+			client.setFilter( 'all' );
+			inFlight.callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 0 );
+
+			// Coming back fetches once, with no refresh left over.
+			client.setFilter( 'unread' );
+			unreadCalls()[ 0 ].callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 1 );
+		} );
+
+		it( 'waits for the page to be visible again when it was hidden in the meantime', () => {
+			client.subscribed = true;
+			client.setFilter( 'unread' );
+			const inFlight = getCalls[ 0 ];
+			getCalls.length = 0;
+
+			client.refreshFilteredNotes();
+			client.setVisibility( { isShowing: true, isVisible: false } );
+			inFlight.callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 0 );
+
+			client.setVisibility( { isShowing: true, isVisible: true } );
+			expect( unreadCalls() ).toHaveLength( 1 );
+
+			// The refresh's own answer does not ask for another one.
+			unreadCalls()[ 0 ].callback( null, { notes: [ makeNote( 900 ) ], last_seen_time: 0 } );
+			expect( unreadCalls() ).toHaveLength( 1 );
+		} );
+	} );
+
 	describe( 'loading state', () => {
 		// Regression: with the fixed head window, paging older notes must still flip
 		// the loading state on, so the UI shows its load-more indicator.
@@ -1089,6 +1235,183 @@ describe( 'RestClient', () => {
 				'subscriberNotifications'
 			);
 			subscriberActionListener.stop();
+		} );
+	} );
+
+	describe( 'read status changed in another tab', () => {
+		const note = { ...makeNote( 100 ), read: 1 };
+		const isRead = () => getIsNoteRead( store.getState(), note );
+		const receiveStorageEvent = ( newValue ) =>
+			window.dispatchEvent(
+				new StorageEvent( 'storage', { key: `note_read_status_${ note.id }`, newValue } )
+			);
+
+		beforeEach( () => {
+			store.dispatch( actions.notes.addNotes( [ note ] ) );
+		} );
+
+		it( 'marks the note as unread when the other tab stores it as unread', () => {
+			receiveStorageEvent( '0' );
+
+			expect( isRead() ).toBe( false );
+		} );
+
+		it( 'marks the note as read when the other tab stores it as read', () => {
+			receiveStorageEvent( '0' );
+			receiveStorageEvent( '1' );
+
+			expect( isRead() ).toBe( true );
+		} );
+
+		it( 'keeps the note unread when the other tab clears its stored status', () => {
+			receiveStorageEvent( '0' );
+			receiveStorageEvent( null );
+
+			expect( isRead() ).toBe( false );
+		} );
+	} );
+
+	describe( 'fetching one note', () => {
+		const answerNote = ( ...args ) =>
+			getCalls.find( ( call ) => call.path.path === '/notifications/100' ).callback( ...args );
+
+		beforeEach( () => {
+			seedFirstWindow();
+		} );
+
+		it( 'says the note was found when the server returns it', async () => {
+			const found = client.getNote( 100 );
+			answerNote( null, { notes: [ makeNote( 100 ) ] } );
+
+			await expect( found ).resolves.toBe( true );
+		} );
+
+		it( 'says the note was not found when the server no longer has it', async () => {
+			const found = client.getNote( 100 );
+			answerNote( null, { notes: [] } );
+
+			await expect( found ).resolves.toBe( false );
+		} );
+
+		it( 'says the note was not found when the server refuses it', async () => {
+			const found = client.getNote( 100 );
+			answerNote( { status: 404, error: 'not_found' } );
+
+			await expect( found ).resolves.toBe( false );
+		} );
+
+		it( 'does not say either way when the request fails for another reason', async () => {
+			const serverError = client.getNote( 100 );
+			answerNote( { status: 502 } );
+			getCalls.length = 0;
+			const networkError = client.getNote( 100 );
+			answerNote( new Error( 'offline' ) );
+
+			await expect( serverError ).resolves.toBeUndefined();
+			await expect( networkError ).resolves.toBeUndefined();
+		} );
+	} );
+
+	describe( 'notes marked as unread here, when the panel opens', () => {
+		const NOTE_ID = 100;
+		const noteCalls = () =>
+			getCalls.filter( ( call ) => call.path.path === `/notifications/${ NOTE_ID }` );
+		const isRead = () =>
+			getIsNoteRead(
+				store.getState(),
+				getAllNotes( store.getState() ).find( ( note ) => note.id === NOTE_ID )
+			);
+		const openPanel = () => client.setVisibility( { isShowing: true, isVisible: true } );
+
+		beforeEach( () => {
+			seedFirstWindow();
+			// A live connection: nothing is fetched unless the client asks.
+			client.subscribed = true;
+		} );
+
+		it( 'asks the server for them again', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+
+			openPanel();
+
+			expect( noteCalls() ).toHaveLength( 1 );
+		} );
+
+		it( 'shows what the server has once the hold is over', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+			expect( isRead() ).toBe( false );
+			vi.advanceTimersByTime( 10001 );
+
+			openPanel();
+			noteCalls()[ 0 ].callback( null, { notes: [ { ...makeNote( NOTE_ID ), read: 1 } ] } );
+
+			expect( isRead() ).toBe( true );
+
+			// The override is gone, so the next time the panel opens nothing is asked.
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+			openPanel();
+			expect( noteCalls() ).toHaveLength( 0 );
+		} );
+
+		it( 'keeps the note unread when the answer was asked for before the hold was over', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+
+			openPanel();
+			vi.advanceTimersByTime( 10001 );
+			noteCalls()[ 0 ].callback( null, { notes: [ { ...makeNote( NOTE_ID ), read: 1 } ] } );
+
+			expect( isRead() ).toBe( false );
+		} );
+
+		it( 'asks for nothing once the note is no longer in the list', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+			store.dispatch( actions.notes.removeNotes( [ NOTE_ID ] ) );
+
+			openPanel();
+
+			expect( noteCalls() ).toHaveLength( 0 );
+		} );
+
+		it( 'stops asking for a note the server no longer has', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+
+			openPanel();
+			noteCalls()[ 0 ].callback( null, { notes: [] } );
+
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+			openPanel();
+			expect( noteCalls() ).toHaveLength( 0 );
+		} );
+
+		it( 'asks again after a request that failed', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+
+			openPanel();
+			noteCalls()[ 0 ].callback( { status: 500 } );
+
+			client.setVisibility( { isShowing: false, isVisible: true } );
+			getCalls.length = 0;
+			openPanel();
+			expect( noteCalls() ).toHaveLength( 1 );
+		} );
+
+		it( 'asks for nothing when no note is marked as unread here', () => {
+			store.dispatch( actions.notes.readNote( NOTE_ID ) );
+
+			openPanel();
+
+			expect( noteCalls() ).toHaveLength( 0 );
+		} );
+
+		it( 'asks for nothing while the page is hidden', () => {
+			store.dispatch( actions.notes.unreadNote( NOTE_ID ) );
+			client.isVisible = false;
+
+			client.setVisibility( { isShowing: true, isVisible: false } );
+
+			expect( noteCalls() ).toHaveLength( 0 );
 		} );
 	} );
 } );

@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
@@ -21,6 +20,7 @@ import { useIsPluginBundleEligible } from '../../../hooks/use-is-plugin-bundle-e
 import { useSiteData } from '../../../hooks/use-site-data';
 import { useCanUserManageOptions } from '../../../hooks/use-user-can-manage-options';
 import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../../../stores';
+import { isPlaygroundStoreRun } from '../../../utils/playground-woo-intent';
 import { shouldRedirectToSiteMigration } from '../../helpers';
 import { useRedirectDesignSetupOldSlug } from '../../helpers/use-redirect-design-setup-old-slug';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
@@ -135,6 +135,15 @@ const siteSetupFlow: Flow = {
 			return featuresForGoals.length > 0 ? featuresForGoals : undefined;
 		};
 
+		const cleanUpAfterFlow = () => {
+			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
+
+			// After finishing the site setup flow, we can safely clean the signup destination cookie.
+			// This will prevent undesired redirects to the /site-setup from the Plans page after the onboarding flow is finished.
+			clearSignupDestinationCookie();
+		};
+
 		const exitFlow = ( to: string ) => {
 			setPendingAction( () => {
 				/**
@@ -211,13 +220,7 @@ const siteSetupFlow: Flow = {
 			} );
 
 			navigate( 'processing' );
-
-			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
-
-			// After finishing the site setup flow, we can safely clean the signup destination cookie.
-			// This will prevent undesired redirects to the /site-setup from the Plans page after the onboarding flow is finished.
-			clearSignupDestinationCookie();
+			cleanUpAfterFlow();
 		};
 
 		const { getPostFlowUrl, initializeLaunchpadState } = useLaunchpadDecider( {
@@ -270,26 +273,19 @@ const siteSetupFlow: Flow = {
 					const entryPoint = get( 'flow' )?.entryPoint;
 
 					if ( shouldRedirectToSiteMigration( currentStep, platform, origin, entryPoint ) ) {
-						const useReprint = config.isEnabled( 'migration/reprint-flow' );
-						const step = useReprint
-							? STEPS.SITE_MIGRATION_IDENTIFY
-							: STEPS.SITE_MIGRATION_HOW_TO_MIGRATE;
 						return window.location.assign(
 							addQueryArgs(
 								{
 									siteSlug,
 									siteId,
 									from,
-									ref: entryPoint,
-									...( useReprint && {
-										manualPlatform: 'wordpress',
-										ref: entryPoint || urlQueryParams.get( 'ref' ),
-										sessionId: urlQueryParams.get( 'sessionId' ),
-										source: urlQueryParams.get( 'source' ),
-										flags: urlQueryParams.get( 'flags' ),
-									} ),
+									manualPlatform: 'wordpress',
+									ref: entryPoint || urlQueryParams.get( 'ref' ),
+									sessionId: urlQueryParams.get( 'sessionId' ),
+									source: urlQueryParams.get( 'source' ),
+									flags: urlQueryParams.get( 'flags' ),
 								},
-								`/setup/${ SITE_MIGRATION_FLOW }/${ step.slug }`
+								`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
 							)
 						);
 					}
@@ -347,7 +343,13 @@ const siteSetupFlow: Flow = {
 
 				case 'importerPlayground': {
 					// The step waits for the import, so the site is ready here.
-					return exitFlow( `/home/${ siteId ?? siteSlug }` );
+					if ( isPlaygroundStoreRun( urlQueryParams ) ) {
+						// A store lands in wp-admin. Leaving without exitFlow keeps the Sell intent the
+						// Commerce site was created with. Replaced, so Back can't import the store again.
+						cleanUpAfterFlow();
+						return window.location.replace( adminUrl || `/home/${ siteId || siteSlug }` );
+					}
+					return exitFlow( `/home/${ siteId || siteSlug }` );
 				}
 
 				case 'trialAcknowledge': {

@@ -59,13 +59,13 @@
 		"@automattic/domain-search": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
-		"@wordpress/components": "^37.0.0",
-		"@wordpress/compose": "^8.2.0",
-		"@wordpress/data": "^10.48.0",
-		"@wordpress/icons": "^20.0.0",
-		"@wordpress/react-i18n": "^4.48.0",
-		"@wordpress/ui": "^0.26.0",
-		"@wordpress/url": "^4.48.0",
+		"@wordpress/components": "^45.0.0",
+		"@wordpress/compose": "^9.2.0",
+		"@wordpress/data": "^11.2.0",
+		"@wordpress/icons": "^21.0.0",
+		"@wordpress/react-i18n": "^5.2.0",
+		"@wordpress/ui": "^0.27.0",
+		"@wordpress/url": "^5.2.0",
 		"clsx": "^2.1.1",
 		"debug": "^4.4.3",
 		"email-validator": "^2.0.4",
@@ -76,7 +76,7 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^6.21.0 || ^7.0.0",
+		"@wordpress/i18n": "^7.2.0",
 		"react": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
@@ -87,7 +87,7 @@
 		"@storybook/addon-a11y": "^10.6.5",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/react": "^16.3.3",
-		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/base-styles": "^15.1.0",
 		"copyfiles": "^2.4.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
@@ -95,7 +95,7 @@
 		"sass-loader": "^16.0.8",
 		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	}

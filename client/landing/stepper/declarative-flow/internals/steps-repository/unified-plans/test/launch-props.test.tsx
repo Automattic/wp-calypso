@@ -86,6 +86,31 @@ describe( 'PlansStepAdaptor launch props', () => {
 	} );
 } );
 
+describe( 'PlansStepAdaptor skippable', () => {
+	beforeEach( () => {
+		mockReceivedProps = {};
+	} );
+
+	it( 'submits a skip without a plan when the step is skippable', () => {
+		const navigation = { submit: jest.fn(), goBack: jest.fn() };
+		renderAdaptor( { skippable: true, navigation } );
+
+		( mockReceivedProps.onSkip as () => void )();
+
+		expect( navigation.submit ).toHaveBeenCalledWith( {
+			stepName: 'plans',
+			cartItems: null,
+			action: 'skip_plan',
+		} );
+	} );
+
+	it( 'offers no skip otherwise', () => {
+		renderAdaptor();
+
+		expect( mockReceivedProps.onSkip ).toBeUndefined();
+	} );
+} );
+
 describe( 'PlansStepAdaptor downgrade term', () => {
 	beforeEach( () => {
 		mockReceivedProps = {};

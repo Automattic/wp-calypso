@@ -57,7 +57,18 @@ describe( 'usePrepareProductsForCart for WordPress.com siteless checkout', () =>
 		expect( result.current.productsForCart[ 0 ].extra.isWpcomSitelessCheckout ).toBe( true );
 	} );
 
-	it( 'only the wpcom type sets isWpcomSitelessCheckout', () => {
+	it( 'marks a Studio product as both a WordPress.com and a Studio siteless checkout', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'studio-cloud-monthly',
+			sitelessCheckoutType: 'studio',
+		} );
+
+		expect( result.current.productsForCart ).toHaveLength( 1 );
+		expect( result.current.productsForCart[ 0 ].extra.isWpcomSitelessCheckout ).toBe( true );
+		expect( result.current.productsForCart[ 0 ].extra.isStudioSitelessCheckout ).toBe( true );
+	} );
+
+	it( 'only the wpcom and studio types set isWpcomSitelessCheckout', () => {
 		const { result } = renderPrepareProducts( {
 			productAliasFromUrl: 'ak_pro5h_yearly',
 			sitelessCheckoutType: 'akismet',
@@ -65,6 +76,7 @@ describe( 'usePrepareProductsForCart for WordPress.com siteless checkout', () =>
 
 		expect( result.current.productsForCart[ 0 ].extra.isWpcomSitelessCheckout ).toBeFalsy();
 		expect( result.current.productsForCart[ 0 ].extra.isAkismetSitelessCheckout ).toBe( true );
+		expect( result.current.productsForCart[ 0 ].extra.isStudioSitelessCheckout ).toBeFalsy();
 	} );
 
 	it( 'reads the quantity from a :-q- suffix on the URL slug', () => {

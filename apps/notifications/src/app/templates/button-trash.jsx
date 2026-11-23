@@ -1,18 +1,27 @@
 import { __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 import { connect } from 'react-redux';
 import { trashNote } from '../../panel/state/notes/thunks';
 import ActionButton from './action-button';
+import usePendingNotes from './use-pending-notes';
 
 // eslint-disable-next-line no-shadow
 const TrashButton = ( { note, trashNote, goBack } ) => {
-	const [ isBusy, setIsBusy ] = useState( false );
+	const { isPending, start, finish } = usePendingNotes();
+	const isBusy = isPending( note.id );
 
 	const handleTrash = async () => {
-		setIsBusy( true );
-		await trashNote( note, true );
+		if ( isBusy ) {
+			return;
+		}
+		start( note.id );
+		try {
+			await trashNote( note, true );
+		} catch {
+			finish( note.id );
+			return;
+		}
 		goBack();
 	};
 

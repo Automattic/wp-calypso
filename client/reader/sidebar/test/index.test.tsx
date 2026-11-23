@@ -45,7 +45,6 @@ describe( 'ReaderSidebar', () => {
 	const defaultProps = {
 		path: '/reader',
 		translate: ( text: string ) => text,
-		teams: [],
 		subscribedLists: [],
 		followedTags: [],
 		organizations: null,
@@ -82,7 +81,6 @@ describe( 'ReaderSidebar', () => {
 			render( instance.renderSidebarMenu() );
 
 			expect( screen.getAllByText( 'Conversations' ) ).toHaveLength( 1 );
-			expect( screen.queryByText( 'Conversations (WIP)' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'sits in the main group above Feeds', () => {

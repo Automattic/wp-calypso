@@ -4,17 +4,17 @@ import { applyBlockEditsCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
 /**
- * Never called by the model directly: the backend's block-editing tools
- * produce the edits, delegate them to the client under this name and ack the
- * call from the result envelope. The `big-sky/` name and category are the keys
- * the backend route allowlists match on — renaming either drops the ability
- * from every surface.
+ * The chat agent never calls this directly: the backend's block-editing tools
+ * delegate their edits to it. So only browser agents read the description, and
+ * it may name their tools. The `big-sky/` name and category are the keys the
+ * backend route allowlists match on — renaming either drops it everywhere.
  */
 export const applyBlockEditsAbility: Ability = {
 	name: 'big-sky/apply-block-edits',
 	label: __( 'Apply Block Edits', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: 'Applies a collection of block edits to the canvas',
+	description:
+		'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. To insert a section or several blocks at once, write serialized Gutenberg block markup and pass it as an insert blockMarkup value; call wpcom__get_block_schemas first to check block names and attributes. The change remains unsaved and reviewable in the editor.',
 	input_schema: {
 		type: 'object',
 		properties: {
@@ -141,4 +141,7 @@ export const applyBlockEditsAbility: Ability = {
 		required: [ 'result', 'returnToAgent' ],
 	},
 	callback: applyBlockEditsCallback,
+	meta: {
+		webmcp: { public: true },
+	},
 };

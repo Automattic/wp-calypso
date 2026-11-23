@@ -234,6 +234,26 @@ describe( 'getRedirectFromPendingPage', () => {
 		).toEqual( { url: '/checkout/thank-you/example.com/12345#section' } );
 	} );
 
+	it( 'returns a Studio url with the receipt interpolated', () => {
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				redirectTo: 'https://app.wordpress.studio/purchase-complete?receipt=:receiptId',
+				receiptId: 12345,
+			} )
+		).toEqual( { url: 'https://app.wordpress.studio/purchase-complete?receipt=12345' } );
+	} );
+
+	it( 'falls back to the thank-you page for a host that only starts with a Studio host', () => {
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				redirectTo: 'https://wordpress.studio.example.com/?receipt=:receiptId',
+				receiptId: 12345,
+			} )
+		).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
+	} );
+
 	it( 'returns a receipt interpolated relative url if there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,

@@ -43,6 +43,7 @@ import {
 	siteSftpUsersQuery,
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
+	siteWordPressPrereleaseQuery,
 	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
 	staticSiteImportSessionQuery,
@@ -55,7 +56,6 @@ import { __ } from '@wordpress/i18n';
 import { ensureSiteExpiryNoticeData } from '../../components/site-expiry-notice';
 import {
 	canManageSite,
-	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
@@ -82,6 +82,7 @@ import { getSiteDisplayName } from '../../utils/site-name';
 import { SitePermissionError } from '../../utils/site-permissions';
 import {
 	getSiteMigrationState,
+	isAssistedWordPressMigration,
 	isSiteMigrationInProgress,
 	isWordPressMigration,
 } from '../../utils/site-status';
@@ -96,9 +97,9 @@ import {
 	redirectIfTwoStepReauthRequired,
 } from './redirect';
 import { rootRoute } from './root';
-import type { MigrationCompletedSearch } from '../../sites/overview/migration-completed-notice';
-import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
-import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
+import type { DifmOfferSearch } from '../../sites/difm/components/difm-offer-card/thank-you';
+import type { MigrationCompletedSearch } from '../../sites/migration/components/migration-completed-notice';
+import type { StaticSiteImportSearch } from '../../sites/static-site-import';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -319,9 +320,14 @@ export const siteOverviewRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/overview' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			component: () => (
+				<d.default
+					siteSlug={ siteRoute.useParams().siteSlug }
+					search={ siteOverviewRoute.useSearch() }
+				/>
+			),
 		} )
 	)
 );
@@ -1161,12 +1167,16 @@ export const siteSettingsWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
+		if ( canSwitchWordPressVersion( site ) ) {
 			// Fire-and-forget the track versions so a slow site or wp.org
 			// doesn't hang navigation; the component suspends on them via
 			// useSuspenseQuery and falls back to the route's Suspense boundary.
 			queryClient.prefetchQuery( siteWordPressTrackVersionsQuery( site.ID ) );
-			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
+			await Promise.all( [
+				queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) ),
+				// Settles even if the request fails, so the page then shows the generic beta notice.
+				queryClient.prefetchQuery( siteWordPressPrereleaseQuery( site.ID ) ),
+			] );
 		}
 	},
 } ).lazy( () =>
@@ -1889,37 +1899,29 @@ export const siteMigrationAssistedIntroRoute = createRoute( {
 	)
 );
 
-export const siteSSHMigrationFailedRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'We hit a snag, but we’re on it' ),
-			},
-		],
-	} ),
+export const siteMigrationShareAccessRoute = createRoute( {
+	head: () => ( { meta: [ { title: __( 'Share access' ) } ] } ),
 	getParentRoute: () => siteRoute,
-	path: 'ssh-migration-failed',
-} ).lazy( () =>
-	import( '../../sites/ssh-migration-failed' ).then( ( d ) =>
-		createLazyRoute( 'ssh-migration-failed' )( {
-			component: () => <d.default />,
-		} )
-	)
-);
+	path: 'migration-overview/share-access',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
 
-export const siteSSHMigrationCompleteRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Welcome to your new home' ),
-			},
-		],
-	} ),
-	getParentRoute: () => siteRoute,
-	path: 'ssh-migration-complete',
+		const site = await queryClient
+			.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 0 } )
+			.catch( () => undefined );
+		if (
+			! site ||
+			! isAssistedWordPressMigration( site ) ||
+			site.site_migration.status_v2 !== 'pending'
+		) {
+			throw dashboardRedirect( { to: siteMigrationOverviewRoute.fullPath, params: { siteSlug } } );
+		}
+	},
 } ).lazy( () =>
-	import( '../../sites/ssh-migration-complete' ).then( ( d ) =>
-		createLazyRoute( 'ssh-migration-complete' )( {
+	import( '../../sites/migration-overview/share-access' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview-share-access' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
 	)
@@ -1967,8 +1969,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
 		siteMigrationAssistedIntroRoute,
-		siteSSHMigrationCompleteRoute,
-		siteSSHMigrationFailedRoute,
+		siteMigrationShareAccessRoute,
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
 		sitePerformanceRoute.addChildren( [
 			sitePerformanceIndexRoute,
@@ -2057,9 +2058,9 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	return [
 		sitesRoute.lazy( () =>
-			import( '../../sites' ).then( ( d ) =>
+			import( '../../app-dotcom/routes/sites' ).then( ( d ) =>
 				createLazyRoute( 'sites' )( {
-					component: d.default,
+					component: () => <d.default search={ sitesRoute.useSearch() } />,
 				} )
 			)
 		),

@@ -275,21 +275,6 @@ export const fetchReadSaved = (
 	} );
 
 /**
- * Fetch the `conversations` stream — `/read/conversations`. Calypso stream
- * query params pass `comments_per_post: 20` and (for the a8c variant)
- * `index: 'a8c'`, mirroring the legacy `streamApis.conversations` definition.
- * Pagination is date-based via `last_comment_date_gmt` on the response.
- */
-export const fetchReadConversations = (
-	params: ReadStreamQueryParams = {}
-): Promise< ReadStreamResponse > =>
-	wpcom.req.get( {
-		path: addQueryArgs( '/read/conversations', params ),
-		apiVersion: '1.2',
-		method: 'GET',
-	} );
-
-/**
  * Fetch the `recommendations_posts` and `custom_recs_posts_with_images`
  * streams — both hit `/read/recommendations/posts`. The differentiator is in
  * the query params (algorithm vs. alg_prefix, plus `seed`), which Calypso

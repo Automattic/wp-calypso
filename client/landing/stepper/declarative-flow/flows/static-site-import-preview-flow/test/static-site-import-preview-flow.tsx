@@ -116,6 +116,28 @@ describe( 'Static site import preview flow', () => {
 				sourceUrl: 'url.example.com',
 			} );
 		} );
+
+		it( 'picks up the move it started for the same source, on going back', () => {
+			identify();
+			const started = { ...STARTED, sourceUrl: 'https://source.example.com/' };
+			flowState[ STEPS.STATIC_SITE_IMPORT_READING.slug ] = started;
+
+			expect( renderReadingProps( '/reading' ) ).toEqual( {
+				buildPreview: true,
+				sourceUrl: SOURCE.from,
+				startedImport: started,
+			} );
+		} );
+
+		it( 'starts a new move for another source', () => {
+			identify();
+			flowState[ STEPS.STATIC_SITE_IMPORT_READING.slug ] = {
+				...STARTED,
+				sourceUrl: 'https://other.example.com',
+			};
+
+			expect( renderReadingProps( '/reading' ).startedImport ).toBeUndefined();
+		} );
 	} );
 
 	describe( 'side effect', () => {
@@ -268,26 +290,38 @@ describe( 'Static site import preview flow', () => {
 
 			expect( props ).toEqual( {
 				siteId: 456,
+				siteSlug: 'preview.wpcomstaging.com',
 				importSessionId: 'abc123',
 				...SOURCE,
 			} );
 		} );
 
-		it( 'opens a finished preview at its share link', () => {
+		it( 'opens the finished preview at its share link', () => {
+			const previewUrl = 'https://preview.example/?share=x';
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_PROGRESS,
-				dependencies: { action: 'finished', previewUrl: 'https://preview.example/?share=x' },
+				dependencies: { action: 'finished', previewUrl },
 			} );
 
-			expect( window.location.replace ).toHaveBeenCalledWith( 'https://preview.example/?share=x' );
+			expect( window.location.replace ).toHaveBeenCalledWith( previewUrl );
 		} );
 
-		it.each( [
-			[ 'finished without a share link', { action: 'finished' } ],
-			[ 'stopped', { action: 'stopped' } ],
-		] )( 'opens the preview’s Overview for a move that %s', ( _name, dependencies ) => {
+		it( 'opens the preview’s Overview for a finished move without a share link', () => {
 			identify();
-			runNavigation( { from: STEPS.STATIC_SITE_IMPORT_PROGRESS, dependencies } );
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_PROGRESS,
+				dependencies: { action: 'finished' },
+			} );
+
+			expect( lastExit() ).toEqual( overviewExit( SOURCE ) );
+		} );
+
+		it( 'opens the preview’s Overview for a move that stopped', () => {
+			identify();
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_PROGRESS,
+				dependencies: { action: 'stopped' },
+			} );
 
 			expect( lastExit() ).toEqual( overviewExit( SOURCE ) );
 		} );

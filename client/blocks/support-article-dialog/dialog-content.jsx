@@ -3,7 +3,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { SupportArticleHeader } from '@automattic/support-articles';
 import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import { SUPPORT_BLOG_ID } from 'calypso/blocks/inline-help/constants';
 import { usePost } from 'calypso/reader/data/post';
@@ -47,30 +46,12 @@ const useSupportArticleAlternatePostKey = ( blogId, postId ) => {
 	return getPostKey( supportArticleAlternates.data.blog_id, supportArticleAlternates.data.page_id );
 };
 
-const DialogContent = ( { postId, blogId, articleUrl } ) => {
+const DialogContent = ( { postId, blogId } ) => {
 	const postKey = useSupportArticleAlternatePostKey( blogId ?? SUPPORT_BLOG_ID, postId );
 	const { data: post, isLoading } = usePost( postKey );
 	const isArticleLoading = isLoading || ! postKey;
 	const siteId = post?.site_ID;
 	useSite( siteId );
-
-	useEffect( () => {
-		//If a url includes an anchor, let's scroll this into view!
-		if (
-			typeof window !== 'undefined' &&
-			articleUrl &&
-			articleUrl.indexOf( '#' ) !== -1 &&
-			post?.content
-		) {
-			setTimeout( () => {
-				const anchorId = articleUrl.split( '#' ).pop();
-				const element = document.getElementById( anchorId );
-				if ( element ) {
-					element.scrollIntoView();
-				}
-			}, 0 );
-		}
-	}, [ articleUrl, post ] );
 
 	return (
 		<>
@@ -99,7 +80,6 @@ const DialogContent = ( { postId, blogId, articleUrl } ) => {
 DialogContent.propTypes = {
 	postId: PropTypes.number.isRequired,
 	blogId: PropTypes.number,
-	articleUrl: PropTypes.string,
 };
 
 export default DialogContent;

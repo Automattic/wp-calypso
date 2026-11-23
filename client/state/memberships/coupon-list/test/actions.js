@@ -1,9 +1,5 @@
 import nock from 'nock';
-import {
-	MEMBERSHIPS_COUPONS_LIST,
-	MEMBERSHIPS_COUPON_RECEIVE,
-	MEMBERSHIPS_COUPON_DELETE,
-} from 'calypso/state/action-types';
+import { MEMBERSHIPS_COUPONS_LIST, MEMBERSHIPS_COUPON_RECEIVE } from 'calypso/state/action-types';
 import {
 	COUPON_DISCOUNT_TYPE_PERCENTAGE,
 	COUPON_DURATION_FOREVER,
@@ -11,7 +7,6 @@ import {
 import {
 	requestCoupons,
 	receiveUpdateCoupon,
-	receiveDeleteCoupon,
 	requestAddCoupon,
 	requestUpdateCoupon,
 	requestDeleteCoupon,
@@ -52,16 +47,6 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'receiveDeleteCoupon()', () => {
-		test( 'should return an action object with the couponId', () => {
-			expect( receiveDeleteCoupon( 123, 456 ) ).toEqual( {
-				couponId: 456,
-				siteId: 123,
-				type: MEMBERSHIPS_COUPON_DELETE,
-			} );
-		} );
-	} );
-
 	describe( 'requestAddCoupon()', () => {
 		test( 'should dispatch add coupon failure and error notice on failure', async () => {
 			const siteId = 1;
@@ -77,13 +62,7 @@ describe( 'actions', () => {
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 			await requestAddCoupon( siteId, coupon, noticeText )( dispatch );
 
-			const [ addAction, addFailureAction, noticeCreateAction ] = dispatchedActions;
-			expect( addAction ).toHaveProperty( 'coupon' );
-			expect( addAction ).toHaveProperty( 'siteId' );
-			expect( addAction ).toHaveProperty( 'type' );
-			expect( addFailureAction ).toHaveProperty( 'error' );
-			expect( addFailureAction ).toHaveProperty( 'siteId' );
-			expect( addFailureAction ).toHaveProperty( 'type' );
+			const [ noticeCreateAction ] = dispatchedActions;
 			expect( noticeCreateAction ).toHaveProperty( 'notice' );
 			expect( noticeCreateAction ).toHaveProperty( 'type' );
 		} );
@@ -101,10 +80,7 @@ describe( 'actions', () => {
 
 			await requestAddCoupon( siteId, coupon, noticeText )( dispatch );
 
-			const [ addAction, receiveAction, noticeCreateAction ] = dispatchedActions;
-			expect( addAction ).toHaveProperty( 'coupon' );
-			expect( addAction ).toHaveProperty( 'siteId' );
-			expect( addAction ).toHaveProperty( 'type' );
+			const [ receiveAction, noticeCreateAction ] = dispatchedActions;
 			expect( receiveAction ).toHaveProperty( 'coupon' );
 			expect( receiveAction.coupon ).toHaveProperty( 'ID' );
 			expect( receiveAction ).toHaveProperty( 'siteId' );
@@ -141,13 +117,7 @@ describe( 'actions', () => {
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 			await requestUpdateCoupon( siteId, couponContainingId, noticeText )( dispatch );
 
-			const [ updateAction, updateFailureAction, noticeCreateAction ] = dispatchedActions;
-			expect( updateAction ).toHaveProperty( 'coupon' );
-			expect( updateAction ).toHaveProperty( 'siteId' );
-			expect( updateAction ).toHaveProperty( 'type' );
-			expect( updateFailureAction ).toHaveProperty( 'error' );
-			expect( updateFailureAction ).toHaveProperty( 'siteId' );
-			expect( updateFailureAction ).toHaveProperty( 'type' );
+			const [ noticeCreateAction ] = dispatchedActions;
 			expect( noticeCreateAction ).toHaveProperty( 'notice' );
 			expect( noticeCreateAction ).toHaveProperty( 'type' );
 		} );
@@ -173,10 +143,7 @@ describe( 'actions', () => {
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 			await requestUpdateCoupon( siteId, couponContainingId, noticeText )( dispatch );
 
-			const [ updateAction, receiveAction, noticeCreateAction ] = dispatchedActions;
-			expect( updateAction ).toHaveProperty( 'coupon' );
-			expect( updateAction ).toHaveProperty( 'siteId' );
-			expect( updateAction ).toHaveProperty( 'type' );
+			const [ receiveAction, noticeCreateAction ] = dispatchedActions;
 			expect( receiveAction ).toHaveProperty( 'coupon' );
 			expect( receiveAction ).toHaveProperty( 'siteId' );
 			expect( receiveAction ).toHaveProperty( 'type' );
@@ -213,13 +180,10 @@ describe( 'actions', () => {
 			const dispatch = ( obj ) => dispatchedActions.push( obj );
 			await requestDeleteCoupon( siteId, couponContainingId, noticeText )( dispatch );
 
-			const [ deleteAction, deleteFailureAction, noticeCreateAction ] = dispatchedActions;
+			const [ deleteAction, noticeCreateAction ] = dispatchedActions;
 			expect( deleteAction ).toHaveProperty( 'coupon' );
 			expect( deleteAction ).toHaveProperty( 'siteId' );
 			expect( deleteAction ).toHaveProperty( 'type' );
-			expect( deleteFailureAction ).toHaveProperty( 'error' );
-			expect( deleteFailureAction ).toHaveProperty( 'siteId' );
-			expect( deleteFailureAction ).toHaveProperty( 'type' );
 			expect( noticeCreateAction ).toHaveProperty( 'notice' );
 			expect( noticeCreateAction ).toHaveProperty( 'type' );
 		} );

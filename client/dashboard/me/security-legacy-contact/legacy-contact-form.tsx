@@ -130,12 +130,7 @@ export default function LegacyContactForm() {
 					}
 				/>
 				<ButtonStack justify="flex-start">
-					<Button
-						variant="primary"
-						type="submit"
-						isBusy={ isPending }
-						disabled={ isPending || ! isValid }
-					>
+					<Button variant="primary" type="submit" isBusy={ isPending } disabled={ isPending }>
 						{ __( 'Add legacy contact' ) }
 					</Button>
 				</ButtonStack>

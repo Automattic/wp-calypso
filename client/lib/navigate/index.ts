@@ -43,7 +43,21 @@ function getScrollableContainer( node: HTMLElement ): HTMLElement | undefined {
 	return undefined;
 }
 
+// Blocks `javascript:`, `data:` and other schemes that would run script on our origin.
+function hasHttpProtocol( path: string ): boolean {
+	try {
+		const { protocol } = new URL( path, window.location.href );
+		return protocol === 'http:' || protocol === 'https:';
+	} catch {
+		return false;
+	}
+}
+
 export function navigate( path: string, openInNewTab = false, forceReload = false ): void {
+	if ( ! hasHttpProtocol( path ) ) {
+		return;
+	}
+
 	if ( isSameOrigin( path ) ) {
 		if ( openInNewTab ) {
 			window.open( path, '_blank' );

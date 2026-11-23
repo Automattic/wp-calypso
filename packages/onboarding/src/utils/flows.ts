@@ -24,8 +24,6 @@ export const WITH_THEME_FLOW = 'with-theme';
 export const ECOMMERCE_FLOW = 'ecommerce';
 export const ECOMMERCE_MONTHLY_FLOW = 'ecommerce-monthly';
 
-export const READYMADE_TEMPLATE_FLOW = 'readymade-template';
-
 export const UPDATE_DESIGN_FLOW = 'update-design';
 export const DOMAIN_AND_PLAN_FLOW = 'domain-and-plan';
 export const DOMAIN_TRANSFER = 'domain-transfer';
@@ -129,8 +127,6 @@ export const isOnboardingFlow = ( flowName: string | null ) => {
 export const isDomainAndPlanFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ DOMAIN_AND_PLAN_FLOW ].includes( flowName ) );
 };
-
-export const isReadymadeFlow = ( flowName: string | null ) => flowName === READYMADE_TEMPLATE_FLOW;
 
 export const isWithThemeFlow = ( flowName: string | null ) => {
 	const WITH_THEME_FLOWS = [ WITH_THEME_FLOW ];

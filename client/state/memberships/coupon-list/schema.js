@@ -39,13 +39,4 @@ const couponListSchema = {
 	additionalProperties: false,
 };
 
-/**
- * Map that maps custom field keys to corresponding keys in redux representation of a product
- * @type {Object}
- */
-export const metaKeytoSchemaKeyMap = Object.keys( metadataSchema ).reduce( ( prev, curr ) => {
-	prev[ metadataSchema[ curr ].metaKey ] = curr;
-	return prev;
-}, {} );
-
 export default couponListSchema;

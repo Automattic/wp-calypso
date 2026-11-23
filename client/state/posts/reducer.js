@@ -6,15 +6,11 @@ import PostQueryManager from 'calypso/lib/query-manager/post';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
 	EDITOR_STOP,
-	POST_DELETE,
-	POST_DELETE_SUCCESS,
-	POST_DELETE_FAILURE,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
-	POST_SAVE,
 	POST_SAVE_SUCCESS,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
@@ -61,18 +57,6 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 				memo[ globalId ] = [ siteId, postId ];
 				return memo;
 			}, state );
-		}
-		case POST_DELETE_SUCCESS: {
-			const globalId = Object.keys( state ).find( ( key ) => {
-				const [ siteId, postId ] = state[ key ];
-				return siteId === action.siteId && postId === action.postId;
-			} );
-
-			if ( ! globalId ) {
-				return state;
-			}
-
-			return omit( state, globalId );
 		}
 	}
 
@@ -179,28 +163,6 @@ const queriesReducer = ( state = {}, action ) => {
 				m.receive( { ID: postId, status: 'trash' }, { patch: true } )
 			);
 		}
-		case POST_SAVE: {
-			const { siteId, postId, post } = action;
-			return withQueryManager( state, siteId, ( m ) =>
-				m.receive( { ID: postId, ...post }, { patch: true } )
-			);
-		}
-		case POST_DELETE: {
-			const { siteId, postId } = action;
-			return withQueryManager( state, siteId, ( m ) =>
-				m.receive( { ID: postId, status: '__DELETE_PENDING' }, { patch: true } )
-			);
-		}
-		case POST_DELETE_FAILURE: {
-			const { siteId, postId } = action;
-			return withQueryManager( state, siteId, ( m ) =>
-				m.receive( { ID: postId, status: 'trash' }, { patch: true } )
-			);
-		}
-		case POST_DELETE_SUCCESS: {
-			const { siteId, postId } = action;
-			return withQueryManager( state, siteId, ( m ) => m.removeItem( postId ) );
-		}
 	}
 
 	return state;
@@ -259,26 +221,6 @@ const allSitesQueriesReducer = (
 			const { siteId, postId } = action;
 			const globalId = findItemKey( state, siteId, postId );
 			return state.receive( { global_ID: globalId, status: 'trash' }, { patch: true } );
-		}
-		case POST_SAVE: {
-			const { siteId, postId, post } = action;
-			const globalId = findItemKey( state, siteId, postId );
-			return state.receive( { global_ID: globalId, ...post }, { patch: true } );
-		}
-		case POST_DELETE: {
-			const { siteId, postId } = action;
-			const globalId = findItemKey( state, siteId, postId );
-			return state.receive( { global_ID: globalId, status: '__DELETE_PENDING' }, { patch: true } );
-		}
-		case POST_DELETE_FAILURE: {
-			const { siteId, postId } = action;
-			const globalId = findItemKey( state, siteId, postId );
-			return state.receive( { global_ID: globalId, status: 'trash' }, { patch: true } );
-		}
-		case POST_DELETE_SUCCESS: {
-			const { siteId, postId } = action;
-			const globalId = findItemKey( state, siteId, postId );
-			return state.removeItem( globalId );
 		}
 	}
 

@@ -18,7 +18,6 @@ import {
 	STATIC_SITE_IMPORT_FLOW,
 } from '@automattic/onboarding';
 import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -122,57 +121,6 @@ describe( 'Plans accepts-props', () => {
 		const stepWrapper = await waitFor( () => screen.getByTestId( 'stepper-step-wrapper' ) );
 		expect( stepWrapper ).toBeVisible();
 		expect( stepWrapper.parentNode ).toHaveClass( 'plans-step' );
-	} );
-} );
-
-describe( 'Plans existing-site action', () => {
-	afterEach( () => jest.restoreAllMocks() );
-
-	it( 'submits the existing-site action without selecting a plan', async () => {
-		jest
-			.spyOn( unifiedPlansModule, 'default' )
-			.mockImplementation( ( { subHeaderText } ) => <div>{ subHeaderText }</div> );
-		const submit = jest.fn();
-		renderStep(
-			<PlansStepAdaptor
-				flow="site-migration"
-				navigation={ { submit } }
-				showExistingSiteLink
-				subHeaderText="Choose a plan for your new site."
-			/>,
-			{
-				initialEntry:
-					'/setup/site-migration/plans?from=https%3A%2F%2Fexample.com&platform=wordpress',
-			}
-		);
-		const link = await screen.findByRole( 'button', {
-			name: 'migrate to a site you already have',
-		} );
-		expect( link ).toBeVisible();
-		await userEvent.click( link );
-		expect( submit ).toHaveBeenCalledWith( {
-			stepName: 'plans',
-			cartItems: null,
-			action: 'select-existing-site',
-		} );
-	} );
-
-	it( 'does not offer the existing-site action in other flows by default', async () => {
-		jest
-			.spyOn( unifiedPlansModule, 'default' )
-			.mockImplementation( ( { subHeaderText } ) => <div>{ subHeaderText }</div> );
-		renderStep(
-			<PlansStepAdaptor
-				flow="onboarding"
-				navigation={ { submit: jest.fn() } }
-				subHeaderText="Choose a plan"
-			/>,
-			{ initialEntry: '/setup/onboarding/plans' }
-		);
-		expect( await screen.findByText( 'Choose a plan' ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'button', { name: 'migrate to a site you already have' } )
-		).not.toBeInTheDocument();
 	} );
 } );
 

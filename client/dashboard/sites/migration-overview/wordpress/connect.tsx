@@ -20,12 +20,7 @@ import ClipboardInputControl from '../../../components/clipboard-input-control';
 import ConfirmModal from '../../../components/confirm-modal';
 import Notice, { NoticeActionButton } from '../../../components/notice';
 import { Text } from '../../../components/text';
-import {
-	AssistedHandoffLink,
-	MigrationCard,
-	StatusIcon,
-	getChangeSourceUrl,
-} from './migration-card';
+import { MigrationCard, StatusIcon, getChangeSourceUrl } from './migration-card';
 import type {
 	Site,
 	WordPressMigrationFinding,
@@ -37,10 +32,12 @@ const MANUAL_INSTALL = 'manual-wpcom-install';
 
 export function Connect( {
 	site,
+	note,
 	sourceHost,
 	failure,
 }: {
 	site: Site;
+	note: React.ReactNode;
 	sourceHost: string;
 	failure?: WordPressMigrationFinding;
 } ) {
@@ -120,7 +117,7 @@ export function Connect( {
 				disabled: isStarting,
 			} }
 			actions={ actions }
-			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
+			note={ note }
 		>
 			{ /* What stopped the last run stays until the next one, even once the source reads as connected: it may still refuse. */ }
 			{ failure && (

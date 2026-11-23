@@ -22,10 +22,10 @@ $blueberry-color: #3858e9;
 	.plan-storage__bar {
 		width: 100%;
 		--wpds-color-background-track-neutral: color-mix(in srgb, #{$blueberry-color} 8%, transparent);
-		--wpds-color-background-thumb-neutral: #{$blueberry-color};
+		--wpds-color-background-indicator-neutral: #{$blueberry-color};
 
 		&.is-alert {
-			--wpds-color-background-thumb-neutral: var(--studio-red-30);
+			--wpds-color-background-indicator-neutral: var(--studio-red-30);
 		}
 	}
 

@@ -82,10 +82,6 @@ jest.mock( 'calypso/lib/paths', () => ( {
 	login: jest.fn(),
 } ) );
 
-jest.mock( './analytics', () => ( {
-	logSectionResponse: jest.fn(),
-} ) );
-
 jest.mock( 'calypso/server/lib/analytics', () => ( {
 	tracks: {
 		recordEvent: jest.fn(),
@@ -1183,6 +1179,25 @@ describe( 'main app', () => {
 				expect( response.redirect ).toHaveBeenCalledWith( url );
 			} );
 		} );
+
+		it( 'keeps the rest of the path and the query', async () => {
+			const { response } = await app.run( {
+				request: { url: '/sites/my-site/posts/drafts?s=x' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( '/posts/my-site/drafts?s=x' );
+		} );
+
+		it( 'redirects a Jetpack site installed in a subdirectory', async () => {
+			const { response } = await app.run( {
+				request: { url: '/sites/example.com::my_blog/posts' },
+			} );
+			expect( response.redirect ).toHaveBeenCalledWith( '/posts/example.com::my_blog' );
+		} );
+
+		it( 'passes a site it cannot rewrite on instead of redirecting it to itself', async () => {
+			const { response } = await app.run( { request: { url: '/sites/a@b/posts' } } );
+			expect( response.redirect ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'Route /plans', () => {
@@ -1222,6 +1237,11 @@ describe( 'main app', () => {
 				302,
 				'/fr/discover/tags?selectedTag=travel'
 			);
+		} );
+
+		it( 'drops a locale prefix Calypso does not know', async () => {
+			const { response } = await app.run( { request: { url: '/xx/tag/travel' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, '/discover/tags?selectedTag=travel' );
 		} );
 
 		it( 'does not redirect logged-in users', async () => {
@@ -1631,6 +1651,19 @@ describe( 'main app', () => {
 			],
 			[ '/start/website-design-services/difm-options/es/', {}, '/start/do-it-for-me/es' ],
 		] )( 'redirects %s to the DIFM flow', async ( url, query, destination ) => {
+			const { response } = await app.run( { request: { url, query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
+		} );
+	} );
+
+	describe( 'Student flow entry points', () => {
+		it.each( [
+			[ '/start/student', { ref: 'edu' }, '/setup/student?ref=edu' ],
+			[ '/start/student/es/', {}, '/setup/student/es' ],
+			[ '/start/student/user/fr', { ref: 'edu' }, '/setup/student/fr?ref=edu' ],
+			[ '/checkout/student', { coupon: 'SAVE10' }, '/setup/student?coupon=SAVE10' ],
+			[ '/checkout/student', {}, '/setup/student' ],
+		] )( 'redirects %s to the Student flow', async ( url, query, destination ) => {
 			const { response } = await app.run( { request: { url, query } } );
 			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
 		} );

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { createContext, PureComponent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from './comment-replies-cache';
+import { addTracksSurface } from './helpers/stats';
 import RestClient from './rest-client';
 import { init as initAPI } from './rest-client/wpcom';
 import { init as initStore, store } from './state';
@@ -39,6 +40,7 @@ export class Notifications extends PureComponent {
 		receiveMessage: PropTypes.func,
 		wpcom: PropTypes.object.isRequired,
 		forceLocale: PropTypes.bool,
+		tracksSurface: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -92,6 +94,8 @@ export class Notifications extends PureComponent {
 			this.props;
 
 		initStore( { customEnhancer } );
+
+		this.updateTracksSurface();
 
 		store.dispatch( addListeners( actionHandlers ) );
 		store.dispatch( addListeners( this.defaultHandlers ) );
@@ -152,10 +156,25 @@ export class Notifications extends PureComponent {
 		}
 	}
 
+	componentDidUpdate( prevProps ) {
+		if ( prevProps.tracksSurface !== this.props.tracksSurface ) {
+			this.updateTracksSurface();
+		}
+	}
+
 	componentWillUnmount() {
+		this.removeTracksSurface?.();
+
 		const { actionHandlers } = this.props;
 		store.dispatch( removeListeners( actionHandlers ) );
 		store.dispatch( removeListeners( this.defaultHandlers ) );
+	}
+
+	updateTracksSurface() {
+		this.removeTracksSurface?.();
+		this.removeTracksSurface = this.props.tracksSurface
+			? addTracksSurface( this.props.tracksSurface )
+			: undefined;
 	}
 
 	render() {

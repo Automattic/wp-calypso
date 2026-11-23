@@ -22,6 +22,10 @@ vi.mock( '../../lib/selectors/can-current-user', () => ( { default: () => true }
 vi.mock( '../../lib/selectors/get-site-admin-url', () => ( {
 	default: () => 'https://example.com/wp-admin/',
 } ) );
+const mockGates = vi.hoisted( () => ( { locked: [] } ) );
+vi.mock( '../stats-gates', () => ( {
+	isStatTypeGated: ( siteId, statType ) => mockGates.locked.includes( statType ),
+} ) );
 vi.mock( '../record-widget-event', () => ( {
 	__esModule: true,
 	default: vi.fn(),
@@ -71,6 +75,7 @@ const renderHighlights = ( lists ) => render( highlights( lists ) );
 describe( 'Highlights', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
+		mockGates.locked = [];
 		global.ResizeObserver = class {
 			observe() {}
 			disconnect() {}
@@ -178,5 +183,37 @@ describe( 'Highlights', () => {
 			'true'
 		);
 		expect( recordWidgetEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	describe( 'on a plan that locks the lists', () => {
+		it( 'drops the section when the plan locks both lists, and asks for neither', () => {
+			mockGates.locked = [ 'statsTopPosts', 'statsReferrers' ];
+			const { container } = renderHighlights( {
+				posts: { loading: true },
+				referrers: { loading: true },
+			} );
+
+			expect( useTopPostsQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
+			expect( useReferrersQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
+			expect( container ).toBeEmptyDOMElement();
+		} );
+
+		it( 'shows only the list the plan includes, without a tab for the locked one', () => {
+			mockGates.locked = [ 'statsReferrers' ];
+			renderHighlights( { posts: { data: items( 'Hello world' ) }, referrers: { loading: true } } );
+
+			expect( useTopPostsQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, true );
+			expect( useReferrersQuery ).toHaveBeenCalledWith( SITE_ID, RANGE, 5, false );
+			expect( screen.getByRole( 'link', { name: /Hello world/ } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'tab', { name: 'Top Posts & Pages' } ) ).toBeInTheDocument();
+			expect( screen.queryByRole( 'tab', { name: 'Top Referrers' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'drops the section when the only list the plan includes comes back empty', () => {
+			mockGates.locked = [ 'statsReferrers' ];
+			const { container } = renderHighlights( { posts: {}, referrers: { loading: true } } );
+
+			expect( container ).toBeEmptyDOMElement();
+		} );
 	} );
 } );

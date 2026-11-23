@@ -13,6 +13,24 @@ import SidebarFooter from '../sidebar/footer';
 import { GLOBAL_SIDEBAR_EVENTS } from './events';
 import './style.scss';
 
+export const getBackLinkFromURL = () => {
+	const searchParams = new URLSearchParams( window.location.search );
+	const url = searchParams.get( 'from' ) || '';
+	if ( ! url.startsWith( '/' ) ) {
+		return '';
+	}
+
+	// Only accept links on this site: `//host` and `/\host` also start with `/`.
+	// Return the resolved URL, since slicing the origin off would make `/.//host` another host.
+	let href;
+	try {
+		href = new URL( url, window.location.href ).href;
+	} catch {
+		return '';
+	}
+	return href.startsWith( `${ window.location.origin }/` ) ? href : '';
+};
+
 const GlobalSidebar = ( {
 	children,
 	onClick = undefined,
@@ -45,14 +63,6 @@ const GlobalSidebar = ( {
 			ev.stopPropagation();
 			props.onClose();
 		}
-	};
-
-	const getBackLinkFromURL = () => {
-		const searchParams = new URLSearchParams( window.location.search );
-		const url = searchParams.get( 'from' ) || '';
-
-		// Only accept internal links for security purposes.
-		return url.startsWith( '/' ) ? url : '';
 	};
 
 	useEffect( () => {

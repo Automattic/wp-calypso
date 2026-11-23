@@ -5,10 +5,18 @@ import config from '@automattic/calypso-config';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
+import { applyMiddleware, createStore } from 'redux';
+import { thunk } from 'redux-thunk';
 import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginForm from 'calypso/blocks/login/login-form';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
+import {
+	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
+	SOCIAL_LOGIN_REQUEST,
+	SOCIAL_LOGIN_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
 import loginReducer from 'calypso/state/login/reducer';
+import initialReducer from 'calypso/state/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
@@ -361,6 +369,71 @@ describe( 'LoginForm', () => {
 			getBlackboxSessionId.mockResolvedValue( undefined );
 			MockBlackboxChallenge.blocked = false;
 			delete window.Blackbox;
+		} );
+
+		test( 'waits for Blackbox when looking up an account', async () => {
+			let finish;
+			getBlackboxSessionId.mockImplementationOnce(
+				() => new Promise( ( resolve ) => ( finish = resolve ) )
+			);
+			render( <LoginForm isSocialFirst /> );
+			await userEvent.type( screen.getByLabelText( /username/i ), 'someone@example.com' );
+			await userEvent.click( screen.getByRole( 'button', { name: /continue$/i } ) );
+			expect( getBlackboxSessionId ).toHaveBeenCalledTimes( 1 );
+			expect( getBlackboxSessionId ).toHaveBeenCalledWith(
+				config( 'blackbox_api_key' ),
+				expect.any( AbortSignal ),
+				'login'
+			);
+			expect( screen.getByRole( 'button', { name: /continue$/i } ) ).toBeDisabled();
+			await act( async () => finish( null ) );
+			expect( screen.getByRole( 'button', { name: /continue$/i } ) ).toBeEnabled();
+		} );
+
+		test( 'protects the account lookup after a social login requires account linking', async () => {
+			const requests = [];
+			const captureRequests = () => ( next ) => ( action ) => {
+				if ( action.type === LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING ) {
+					requests.push( action );
+				}
+				return next( action );
+			};
+			const store = createStore(
+				initialReducer
+					.addReducer( [ 'login' ], loginReducer )
+					.addReducer( [ 'route' ], routeReducer ),
+				applyMiddleware( thunk, captureRequests )
+			);
+			getBlackboxSessionId.mockResolvedValue( 'social-session' );
+			render( <LoginForm />, { store } );
+			act( () => store.dispatch( { type: SOCIAL_LOGIN_REQUEST } ) );
+			await act( async () => {
+				store.dispatch( {
+					type: SOCIAL_LOGIN_REQUEST_FAILURE,
+					error: { code: 'user_exists', email: 'someone@example.com' },
+					authInfo: { service: 'google' },
+				} );
+			} );
+			expect( getBlackboxSessionId ).toHaveBeenCalledTimes( 1 );
+			expect( getBlackboxSessionId ).toHaveBeenCalledWith(
+				config( 'blackbox_api_key' ),
+				expect.any( AbortSignal ),
+				'login'
+			);
+			expect( requests ).toEqual( [
+				expect.objectContaining( {
+					usernameOrEmail: 'someone@example.com',
+					blackboxSessionId: 'social-session',
+				} ),
+			] );
+		} );
+
+		test( 'does not collect for an account lookup when the login flag is off', async () => {
+			config.disable( 'blackbox-login' );
+			render( <LoginForm isSocialFirst /> );
+			await userEvent.type( screen.getByLabelText( /username/i ), 'someone@example.com' );
+			await userEvent.click( screen.getByRole( 'button', { name: /continue$/i } ) );
+			expect( getBlackboxSessionId ).not.toHaveBeenCalled();
 		} );
 
 		test( 'cancels an inactive form without sending a login request', async () => {

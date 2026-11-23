@@ -4,7 +4,7 @@ import { useContext, useMemo } from 'react';
 import A4ASlider, { Option } from 'calypso/a8c-for-agencies/components/slider';
 import useProductsQuery from 'calypso/a8c-for-agencies/data/marketplace/use-products-query';
 import { TermPricingContext } from 'calypso/a8c-for-agencies/sections/marketplace/context';
-import { calculateDiscountPercentage } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-marketplace';
+import { getWPCOMTierPrices } from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-marketplace';
 import wpcomBulkOptions from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-options';
 import type { TermPricingType } from 'calypso/a8c-for-agencies/sections/marketplace/types';
 import type {
@@ -22,35 +22,13 @@ type Props = {
 const createOptionsFromPriceTierList = (
 	plan: APIProductFamilyProduct,
 	termPricing: TermPricingType
-) => {
-	const priceTierList =
-		termPricing === 'yearly' ? plan.tier_yearly_prices || [] : plan.tier_monthly_prices || [];
-	const basePrice =
-		termPricing === 'yearly' ? ( plan.yearly_price ?? 0 ) : ( plan.monthly_price ?? 0 );
-
-	const options = priceTierList.map( ( tier ) => {
-		const discountPercent = calculateDiscountPercentage( basePrice, tier.price );
-
-		return {
-			value: tier.units,
-			label: `${ tier.units }`,
-			discount: discountPercent / 100,
-			sub: discountPercent > 0 ? `${ discountPercent }%` : '',
-		};
-	} );
-
-	// Ensure first option is always 1
-	if ( options.length === 0 || options[ 0 ]?.value !== 1 ) {
-		options.unshift( {
-			value: 1,
-			label: '1',
-			discount: 0,
-			sub: '',
-		} );
-	}
-
-	return options;
-};
+) =>
+	getWPCOMTierPrices( plan, termPricing ).map( ( tier ) => ( {
+		value: tier.units,
+		label: `${ tier.units }`,
+		discount: tier.discountPercentage / 100,
+		sub: tier.discountPercentage > 0 ? `${ tier.discountPercentage }%` : '',
+	} ) );
 
 export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange, plan }: Props ) {
 	const translate = useTranslate();

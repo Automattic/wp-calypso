@@ -9,7 +9,3 @@ export const isAnalyzing = ( state: State ): boolean => {
 export const getUrlData = ( state: State ): UrlData | null => {
 	return state.imports.urlAnalyzer.urlData ?? null;
 };
-
-export const getAnalyzerError = ( state: State ): Error => {
-	return state.imports.urlAnalyzer.analyzerError;
-};

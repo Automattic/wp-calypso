@@ -29,7 +29,7 @@ export const SidebarNavigatorMenu = ( {
 }: Props ) => {
 	return (
 		<NavigatorScreen path={ path }>
-			<Card>
+			<Card isBorderless>
 				<CardBody className="sidebar-v2__navigator-sub-menu">
 					<VStack spacing={ 0 } justify="flex-start">
 						<ul>

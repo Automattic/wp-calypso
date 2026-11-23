@@ -22,16 +22,19 @@ The reading step is the one `static-site-import` uses when a customer leaves che
 (`buildPreview`): it starts a static site import session, then builds a preview site through the
 `preview` WoW funnel (`/sites/new` with `wow_funnel=preview` and the session’s
 `import_session_id`). WordPress.com delivers the import onto the preview as soon as the build
-lands. The started session and preview are kept in the flow state under the reading step’s slug.
+lands. The started session and preview are kept in the flow state under the reading step’s slug,
+with the source they copy. Going back to the reading step for the same source picks up that move
+(`startedImport`) instead of starting another, so the progress step shows its status as before.
 
-The progress step tracks the move with the dashboard’s own progress card and hook
-(`StaticSiteImportProgress` and `useStaticSiteImport` in
-`client/dashboard/sites/overview-static-site-import`), so the customer sees the same screen in
-signup as on the preview’s Overview.
+The progress step tracks the move with the dashboard’s own progress steps, site window and hook
+(`StaticSiteImportPreviewSteps`, `StaticSiteImportPreviewWindow` and `useStaticSiteImport` in
+`client/dashboard/sites/static-site-import`), laid out for signup.
 
 The preview stays Coming Soon like every unpaid preview: WordPress.com keeps it hidden until a plan
 is bought. When the move finishes, the flow opens the preview at its `?share=` link, which gets
-past Coming Soon and can be passed on. Without a share link, it opens the preview’s Overview.
+past Coming Soon. Until WordPress.com reports the link it made for the preview, the progress step
+uses a share link the preview already has, or makes one, and only goes on once it has one, 5 seconds later, since a link opened the moment it's made can still show Coming Soon. If no
+link can be read or made, the flow opens the preview’s Overview instead.
 
 ## Failures
 
@@ -56,12 +59,13 @@ registered.
 1. Run `yarn start` and open `/setup/static-site-import-preview` while signed out. Sign up or log
    in with an account allowed to create preview sites.
 2. Enter a Wix or Squarespace URL. Confirm analysis finishes, **Checking your site** shows, and
-   the flow stays in signup on **We’re moving your site**, the same card the preview’s Overview
-   shows.
-3. Wait for the move to finish. Confirm the browser opens the preview at its `?share=` link.
-4. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
+   the flow stays in signup on **Copying your site**.
+3. Go back in the browser. Confirm the flow returns to **Copying your site** for the same move,
+   and no other preview site is created.
+4. Wait for the move to finish. Confirm the browser opens the preview at its `?share=` link.
+5. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
    skips the address step and shows the move’s progress the same way.
-5. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
+6. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
 
 ## Owned by
 

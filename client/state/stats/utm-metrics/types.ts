@@ -2,7 +2,6 @@ export interface UTMMetricItem {
 	label: string;
 	value: number;
 	children?: Array< UTMMetricItemTopPost >;
-	paramValues?: string;
 }
 
 export interface UTMMetricItemTopPostRaw {

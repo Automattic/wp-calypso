@@ -1,10 +1,13 @@
 ## Unreleased
 
+- Breaking: Require `@wordpress/base-styles` ^15.1.0, `@wordpress/components` ^45.0.0, `@wordpress/compose` ^9.2.0, `@wordpress/data` ^11.2.0, `@wordpress/date` 6.2.0, `@wordpress/element` ^10.2.0, `@wordpress/html-entities` 5.2.0, `@wordpress/i18n` ^7.2.0, `@wordpress/primitives` ^5.2.0, `@wordpress/private-apis` ^3.2.0, `@wordpress/react-i18n` ^5.2.0, `@wordpress/ui` ^0.27.0, `@wordpress/url` ^5.2.0 and `@wordpress/warning` 4.2.0.
+- `NoticeBanner`: show the stroke-drawn `caution` icon for a `level` it doesn't recognize, since `@wordpress/icons` 21 removes `cautionFilled`. Warnings keep the `info` icon.
+- `HorizontalBarList`: draw folder rows with the `folder` icon, the drawing `@wordpress/icons` 20 called `file`.
+- Require `@wordpress/icons` ^21.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`, and which adds `folder`.
 - `SummaryButton`: set `color` alongside `fill` on the navigation and decoration icons, so icons drawn with `currentColor` (such as stroke-drawn `@wordpress/icons`) take the same grey, and the accent color on hover.
 - `FoldableCard`: set `color` alongside `fill` on the expand chevron, so its stroke-drawn icon keeps the dark grey, and the light grey when disabled.
 - `FlowQuestion`, `HorizontalBarList`, `ImageCarousel` and `NoticeBanner`: set `color` alongside `fill` on their icons, so stroke-drawn icons keep their hover, status and button colors.
 - `ImageCarousel`: show `caption` exactly as given, rather than stripping tags from it. `addImageCarousel` now reads Jetpack's caption HTML as text, so tags are dropped and entities such as `&#8217;` are decoded.
-- Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## 5.0.0
 

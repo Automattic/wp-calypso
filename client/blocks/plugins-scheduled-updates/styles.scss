@@ -84,20 +84,13 @@
 	}
 
 	.components-form-toggle {
+		// The checked fill and thumb ring, which components 45 draws from these tokens.
+		--wpds-color-background-interactive-brand-strong: var(--color-text);
+		--wpds-color-stroke-interactive-brand: var(--color-text);
+
 		.components-form-toggle__track {
 			border-color: var(--color-text) !important;
 		}
-
-		&.is-checked {
-			.components-form-toggle__track {
-				background-color: var(--color-text) !important;
-			}
-
-			.components-form-toggle__thumb {
-				background-color: #fff !important;
-			}
-		}
-
 	}
 
 	table {

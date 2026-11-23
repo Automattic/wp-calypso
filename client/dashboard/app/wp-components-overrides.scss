@@ -14,11 +14,30 @@
 .dataviews-view-table__checkbox-column [role="checkbox"],
 .dataviews-bulk-actions [role="checkbox"] {
 	--wpds-color-background-interactive-brand-strong: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	// A checked toggle's thumb ring.
+	--wpds-color-stroke-interactive-brand: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 }
 
-// Focused menu items and suggestions fill with this pinned token too.
+// Buttons read these tokens where components 44 read the accent variables, which the dark
+// theme and sections set on a button or its ancestors. Mapping them on the button keeps those
+// accents; disabled buttons keep upstream's colors.
+:where(.components-button) {
+	--wpds-color-background-interactive-brand-strong: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	--wpds-color-background-interactive-brand-strong-active: var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
+	--wpds-color-background-interactive-brand-weak-active: color-mix(in srgb, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 4%, transparent);
+	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-accent-inverted, var(--wpds-color-foreground-interactive-brand-strong, #fff));
+	--wpds-color-foreground-interactive-brand: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	--wpds-color-foreground-interactive-brand-active: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+	--wpds-color-stroke-interactive-brand: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+	--wpds-color-stroke-interactive-brand-active: var(--wp-components-color-accent-darker-20, var(--wp-admin-theme-color-darker-20, #183ad6));
+}
+
+// Focused menu items and suggestions fill with this pinned token too. Menu items and results
+// are buttons, so name them: the button mapping above beats a value inherited from the popover.
 .components-dropdown__content,
+.components-dropdown__content .components-button[role^="menuitem"],
 .components-autocomplete__results,
+.components-autocomplete__results .components-button,
 .components-form-token-field__suggestions-list {
 	--wpds-color-background-interactive-brand-strong-active: color-mix(in oklch, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 93%, #000);
 	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-foreground-inverted, #fff);

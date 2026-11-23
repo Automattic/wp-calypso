@@ -1,12 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'PageViewTracker' );
 jest.mock( 'calypso/blocks/upsell-nudge', () =>
 	jest.fn( () => <div data-testid="UpsellNudge" /> )
 );
-jest.mock( 'calypso/components/notice', () => () => 'Notice' );
-jest.mock( 'calypso/components/notice/notice-action', () => () => 'NoticeAction' );
 jest.mock( 'calypso/components/data/query-jetpack-modules', () => () => 'QueryJetpackModules' );
 jest.mock(
 	'calypso/my-sites/site-settings/jetpack-module-toggle',

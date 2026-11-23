@@ -13,7 +13,7 @@ import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, addSchemeIfMissing } from 'calypso/lib/url';
 import { withLocale } from '../../helpers/with-locale';
 import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
 import type {
@@ -29,6 +29,10 @@ const ALL_STEPS = [
 	STEPS.STATIC_SITE_IMPORT_PROGRESS,
 	STEPS.ERROR,
 ];
+
+/** A source as the reading step names it, so the same site typed two ways still matches. */
+const normalizeSource = ( source = '' ) =>
+	source.trim() ? addSchemeIfMissing( source.trim(), 'https' ).replace( /\/+$/, '' ) : '';
 
 /** A source named on the flow's URL. */
 const getSource = ( query: URLSearchParams ) => query.get( 'from' )?.trim() || '';
@@ -77,9 +81,17 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 			[ STEPS.STATIC_SITE_IMPORT_READING.slug ]: {
 				buildPreview: true,
 				sourceUrl: from || undefined,
+				// Going back to this step picks up the move it started, rather than copying the site again.
+				startedImport:
+					started?.action === 'continue' &&
+					started.previewSiteId &&
+					normalizeSource( started.sourceUrl ) === normalizeSource( from )
+						? started
+						: undefined,
 			},
 			[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ]: {
 				siteId: started?.action === 'continue' ? started.previewSiteId : undefined,
+				siteSlug: started?.action === 'continue' ? started.previewSiteSlug : undefined,
 				importSessionId: started?.action === 'continue' ? started.importSessionId : undefined,
 				from,
 				platform,
@@ -182,6 +194,8 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 					switch ( providedDependencies.action ) {
 						case 'migrate':
 							return goToWordPressMigration( from );
+						// A preview has no destination to confirm, so its reading step never offers importers.
+						case 'choose_importer':
 						case 'unavailable':
 							return navigate( STEPS.ERROR.slug );
 						// The server won't build a preview, so the customer can still move the site by
@@ -209,7 +223,7 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.STATIC_SITE_IMPORT_PROGRESS.slug: {
-					// A finished preview opens at its share link, which gets past Coming Soon.
+					// The share link gets past Coming Soon, so the customer sees the site that was copied.
 					if ( providedDependencies.action === 'finished' && providedDependencies.previewUrl ) {
 						return window.location.replace( providedDependencies.previewUrl );
 					}

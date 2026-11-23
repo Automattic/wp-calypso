@@ -1,5 +1,6 @@
 ## next
 
+- Breaking: Require `@wordpress/components` ^45.0.0.
 - Make the cookie banner more compact on desktop and mobile: smaller text and buttons, less padding, and an inset floating card on small screens.
 
 ## 2.1.1

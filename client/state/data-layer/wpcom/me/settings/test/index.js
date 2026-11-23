@@ -4,13 +4,7 @@ import {
 	saveUserSettingsSuccess,
 	clearUnsavedUserSettings,
 } from 'calypso/state/user-settings/actions';
-import {
-	requestUserSettings,
-	storeFetchedUserSettings,
-	fromApi,
-	userSettingsSave,
-	userSettingsSaveSuccess,
-} from '../';
+import { requestUserSettings, userSettingsSave, userSettingsSaveSuccess } from '../';
 
 jest.mock( 'calypso/state/current-user/actions', () => ( {
 	fetchCurrentUser: jest.fn(),
@@ -35,43 +29,6 @@ describe( 'wpcom-api', () => {
 						},
 						action
 					)
-				);
-			} );
-		} );
-
-		describe( '#storeFetchedUserSettings', () => {
-			test( 'should dispatch user settings update', () => {
-				const action = { type: 'DUMMY' };
-
-				const result = storeFetchedUserSettings( action, {
-					language: 'qix',
-				} );
-
-				expect( result ).toEqual(
-					saveUserSettingsSuccess( {
-						language: 'qix',
-					} )
-				);
-			} );
-
-			test( 'should decode HTML entities returned in some fields of HTTP response', () => {
-				const action = { type: 'DUMMY' };
-
-				const result = storeFetchedUserSettings(
-					action,
-					fromApi( {
-						display_name: 'baz &amp; qix',
-						description: 'foo &amp; bar',
-						user_URL: 'http://example.com?a=b&amp;c=d',
-					} )
-				);
-
-				expect( result ).toEqual(
-					saveUserSettingsSuccess( {
-						display_name: 'baz & qix',
-						description: 'foo & bar',
-						user_URL: 'http://example.com?a=b&c=d',
-					} )
 				);
 			} );
 		} );

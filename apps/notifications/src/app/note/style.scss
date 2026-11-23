@@ -487,17 +487,6 @@
 	}
 }
 
-// Approving is the job on a pending comment, so it takes the Pending badge's
-// amber text rather than Like's gray.
-.wpnc__action-link.wpnc__approve-action {
-	--wpnc-action__color: oklch(from var(--wpnc-pending) 0.44 c h);
-	--wpnc-action__color-hover: var(--wpnc-action__color);
-
-	@include ui-mixins.when-dark-theme {
-		--wpnc-action__color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
-	}
-}
-
 .wpnc__actions-menu-dropdown {
 	flex-shrink: 0;
 
@@ -522,6 +511,35 @@
 		// mouseup and the menu taking focus. Keep it for the keyboard.
 		&:focus:not(:focus-visible) {
 			outline: none;
+		}
+	}
+}
+
+.wpnc__mark-unread.components-button {
+	position: relative;
+	color: var(--wp-components-color-gray-600, #{$gray-600});
+
+	// The unread dot where `bellUnread` drew it, 5px right of and above the icon's center, with
+	// a ring in the background color to separate it from the bell.
+	&::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		width: 5px;
+		height: 5px;
+		margin: auto;
+		border-radius: 50%;
+		background: currentColor;
+		box-shadow: 0 0 0 1.5px var(--wp-components-color-background, #{$white});
+		// Physical, since the bell isn't mirrored; the RTL build doesn't flip `translate`.
+		translate: 5px -5px;
+		pointer-events: none;
+
+		// Forced colors would drop the dot's background and ring; draw them in system colors.
+		@media (forced-colors: active) {
+			forced-color-adjust: none;
+			background: ButtonText;
+			box-shadow: 0 0 0 1.5px Canvas;
 		}
 	}
 }
@@ -638,4 +656,30 @@
 			border-color: var( --wpnc-divider__color );
 		}
 	}
+}
+
+// Below the two-pane width the title is also the Back button, in the heading's type. Its arrow's
+// box starts on the padding edge (past the 1px button border), and as a block it keeps the
+// heading at 24px, centred on the icons at the other end. A long title wraps and the button
+// grows with it, as the heading did, breaking a word too long for the line. Four classes, to outweigh Button's own size and padding
+// rules whichever stylesheet loads last.
+.components-card__header .wpnc__note-back.components-button.has-text {
+	display: flex;
+	height: auto;
+	min-height: var(--wpds-dimension-size-sm, 24px);
+	margin-inline-start: -1px;
+	padding-block: 0;
+	padding-inline-start: 0;
+	font: inherit;
+	text-align: start;
+	overflow-wrap: anywhere;
+
+	svg {
+		margin-block: -1px;
+	}
+}
+
+// Lighter than Button's hover and pressed rules, so those still show.
+.wpnc__note-back.components-button {
+	color: inherit;
 }

@@ -5,5 +5,5 @@
 		"declarationDir": "dist/types",
 		"module": "commonjs"
 	},
-	"include": [ "src", "test", "src/secrets/decrypted-secrets.json" ]
+	"include": [ "src", "src/secrets/decrypted-secrets.json" ]
 }

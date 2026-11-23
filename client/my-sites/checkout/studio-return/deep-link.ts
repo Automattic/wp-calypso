@@ -9,7 +9,7 @@ const CHECKOUT_RETURN_ACTION = 'checkout-return';
 export type StudioCheckoutResult = 'success' | 'cancelled';
 
 export interface StudioCheckoutReturnParams {
-	studioSiteId: string;
+	studioSiteId?: string;
 	checkoutResult: StudioCheckoutResult;
 	studioReturnTo?: string;
 }
@@ -17,10 +17,10 @@ export interface StudioCheckoutReturnParams {
 /**
  * Builds the `wp-studio://` URL that hands the user back to Studio after checkout.
  *
- * The payload is deliberately minimal: `studioSiteId` is the only value Studio cannot derive, and
- * `checkoutResult` distinguishes the two outcomes. Everything else — the purchased quantity, the
- * receipt, the resulting credit balance — must come from the API, because any web page can navigate
- * to this URL and Studio therefore cannot trust it as proof of purchase.
+ * The payload is deliberately minimal: the Studio params are the only values Studio cannot derive,
+ * and `checkoutResult` distinguishes the two outcomes. Everything else — the purchased quantity,
+ * the receipt, the resulting credit balance — must come from the API, because any web page can
+ * navigate to this URL and Studio therefore cannot trust it as proof of purchase.
  */
 export function buildStudioCheckoutReturnUrl( {
 	studioSiteId,
@@ -28,7 +28,7 @@ export function buildStudioCheckoutReturnUrl( {
 	studioReturnTo,
 }: StudioCheckoutReturnParams ): string {
 	return addQueryArgs( `${ STUDIO_URL_SCHEME }://${ CHECKOUT_RETURN_ACTION }`, {
-		studioSiteId,
+		...( studioSiteId ? { studioSiteId } : {} ),
 		checkoutResult,
 		...( studioReturnTo ? { studioReturnTo } : {} ),
 	} );
@@ -45,4 +45,13 @@ export function buildStudioCheckoutReturnUrl( {
  */
 export function openStudioCheckoutReturn( params: StudioCheckoutReturnParams ): void {
 	window.location.href = buildStudioCheckoutReturnUrl( params );
+}
+
+/**
+ * Opens the Studio desktop app with no action, for a buyer who did not start in the app.
+ * When Studio is not installed the browser cannot open the URL, and Safari shows an "invalid
+ * address" alert, so callers must offer the web app first and this only on request.
+ */
+export function openStudioApp(): void {
+	window.location.href = `${ STUDIO_URL_SCHEME }://`;
 }

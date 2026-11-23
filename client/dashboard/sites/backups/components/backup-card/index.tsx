@@ -1,0 +1,159 @@
+import { HostingFeatures } from '@automattic/api-core';
+import { siteActivityLogQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { __, sprintf } from '@wordpress/i18n';
+import { backup } from '@wordpress/icons';
+import { useFormattedTime } from '../../../../components/formatted-time';
+import OverviewCard from '../../../../components/overview-card';
+import { TextBlur } from '../../../../components/text-blur';
+import { useTimeSince } from '../../../../components/time-since';
+import { getBackupUrl } from '../../../../utils/site-backup';
+import { isSimple } from '../../../../utils/site-types';
+import JetpackConnectionWarningCard from '../../../components/jetpack-connection-warning-card';
+import HostingFeatureGatedWithOverviewCard from '../../../hosting-feature-gated-with-overview-card';
+import type { Site, SiteActivityLog } from '@automattic/api-core';
+
+const CARD_PROPS = {
+	icon: backup,
+	title: __( 'Last backup' ),
+	tracksId: 'site-overview-backups',
+};
+
+const SUCCESSFUL_BACKUP_ACTIVITIES = [
+	'rewind__backup_complete_full',
+	'rewind__backup_complete_initial',
+	'rewind__backup_only_complete_full',
+	'rewind__backup_only_complete_initial',
+];
+
+const FAILED_BACKUP_ACTIVITIES = [ 'rewind__backup_error', 'rewind__backup_only_error' ];
+
+function BackupCardFailed( {
+	backupUrl,
+	backup,
+	isLoading,
+}: {
+	backupUrl: string;
+	backup?: SiteActivityLog;
+	isLoading: boolean;
+} ) {
+	const timeSinceLastSuccessful = useTimeSince( backup?.published ?? new Date( 0 ).toISOString() );
+
+	const description = backup
+		? sprintf(
+				/* translators: %s: time since last successful backup, e.g. '2h ago' */
+				__( 'Last successful backup was %s.' ),
+				timeSinceLastSuccessful
+			)
+		: __( 'No successful backups found.' );
+
+	return (
+		<OverviewCard
+			{ ...CARD_PROPS }
+			heading={ __( 'Backup failed' ) }
+			description={
+				<TextBlur isBlurred={ isLoading } length={ 30 }>
+					{ description }
+				</TextBlur>
+			}
+			link={ backupUrl }
+			intent="error"
+		/>
+	);
+}
+
+function BackupCardSuccess( {
+	backupUrl,
+	lastBackup,
+}: {
+	backupUrl: string;
+	lastBackup: SiteActivityLog;
+} ) {
+	const timeSinceLastBackup = useTimeSince( lastBackup.published );
+	const formattedLastBackupTime = useFormattedTime( lastBackup.published, { timeStyle: 'short' } );
+
+	return (
+		<OverviewCard
+			{ ...CARD_PROPS }
+			heading={ timeSinceLastBackup }
+			description={ formattedLastBackupTime }
+			link={ backupUrl }
+			intent="success"
+		/>
+	);
+}
+
+export function BackupCardContent( { siteId, backupUrl }: { siteId: number; backupUrl: string } ) {
+	const { data: lastBackup, isLoading } = useQuery( {
+		...siteActivityLogQuery( siteId, {
+			name: [ ...SUCCESSFUL_BACKUP_ACTIVITIES, ...FAILED_BACKUP_ACTIVITIES ],
+			number: 1,
+		} ),
+		select: ( data ) => data.activityLogs[ 0 ],
+	} );
+
+	const { data: lastSuccessfulBackup, isLoading: isLoadingLastSuccessfulBackup } = useQuery( {
+		...siteActivityLogQuery( siteId, { name: SUCCESSFUL_BACKUP_ACTIVITIES, number: 1 } ),
+		select: ( data ) => data.activityLogs[ 0 ],
+		// Only fetch successful backups if there are any failed backups
+		enabled: !! lastBackup && FAILED_BACKUP_ACTIVITIES.includes( lastBackup.name ),
+	} );
+
+	if ( isLoading ) {
+		return <OverviewCard { ...CARD_PROPS } isLoading />;
+	}
+
+	if ( ! lastBackup ) {
+		return (
+			<OverviewCard
+				{ ...CARD_PROPS }
+				heading={ __( 'No backups yet' ) }
+				description={ __( 'Your first backup will be ready soon.' ) }
+				link={ backupUrl }
+			/>
+		);
+	}
+
+	if ( FAILED_BACKUP_ACTIVITIES.includes( lastBackup.name ) ) {
+		return (
+			<BackupCardFailed
+				backupUrl={ backupUrl }
+				backup={ lastSuccessfulBackup }
+				isLoading={ isLoadingLastSuccessfulBackup }
+			/>
+		);
+	}
+
+	return <BackupCardSuccess backupUrl={ backupUrl } lastBackup={ lastBackup } />;
+}
+
+export default function BackupCard( { site }: { site: Site } ) {
+	if ( site.__inaccessible_jetpack_error ) {
+		return <JetpackConnectionWarningCard { ...CARD_PROPS } />;
+	}
+
+	if ( site.is_multisite && ! isSimple( site ) ) {
+		return (
+			<OverviewCard
+				{ ...CARD_PROPS }
+				heading={ __( 'Not supported on multisite' ) }
+				description={ __( 'Backup is not available for multisite installations.' ) }
+			/>
+		);
+	}
+
+	return (
+		<HostingFeatureGatedWithOverviewCard
+			site={ site }
+			feature={ HostingFeatures.BACKUPS_SELF_SERVE }
+			featureIcon={ CARD_PROPS.icon }
+			upsellId={ CARD_PROPS.tracksId }
+			upsellFeatureId="site-backups"
+			upsellHeading={ __( 'Back up your site' ) }
+			upsellDescription={ __( 'Get back online quickly with one-click restores.' ) }
+			upsellLink={ getBackupUrl( site ) }
+		>
+			<BackupCardContent siteId={ site.ID } backupUrl={ getBackupUrl( site ) } />
+		</HostingFeatureGatedWithOverviewCard>
+	);
+}

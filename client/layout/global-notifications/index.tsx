@@ -23,8 +23,8 @@ const GlobalNotifications = () => {
 	const dispatch = useDispatch();
 	const toggleNotesFrame = useCallback( ( event: MouseEvent | null ) => {
 		if ( event ) {
-			event.preventDefault && event.preventDefault();
-			event.stopPropagation && event.stopPropagation();
+			event.preventDefault?.();
+			event.stopPropagation?.();
 		}
 		// Get URL and if it matches "/reader/notifications", don't open the panel
 		// As it will cause duplicate notification panels to show
@@ -67,6 +67,7 @@ const GlobalNotifications = () => {
 		if ( ! prevIsNotificationsOpen && isNotificationsOpen ) {
 			dispatch(
 				recordTracksEvent( 'calypso_notification_open', {
+					surface: 'calypso_panel',
 					unread_notifications: unseenCount,
 				} )
 			);

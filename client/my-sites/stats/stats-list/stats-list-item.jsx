@@ -5,7 +5,7 @@ import {
 	Icon,
 	moreHorizontal as moreHorizontalMobile,
 	tag,
-	file,
+	folder,
 	chevronDown,
 } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -232,7 +232,7 @@ class StatsListItem extends Component {
 						gridiconSpan = <Icon className="stats-icon" icon={ tag } size={ 22 } />;
 						break;
 					case 'folder':
-						gridiconSpan = <Icon className="stats-icon" icon={ file } size={ 22 } />;
+						gridiconSpan = <Icon className="stats-icon" icon={ folder } size={ 22 } />;
 						break;
 					default:
 						// fallback to an old icon

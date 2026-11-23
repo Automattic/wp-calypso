@@ -1,6 +1,5 @@
 import deepFreeze from 'deep-freeze';
 import {
-	MEDIA_DELETE,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	SITE_RECEIVE,
@@ -481,49 +480,6 @@ describe( 'reducer', () => {
 					icon: {
 						media_id: 42,
 					},
-				},
-			} );
-		} );
-
-		test( 'should return same state if media deleted but not including site icon setting', () => {
-			const original = deepFreeze( {
-				2916284: {
-					ID: 2916284,
-					name: 'WordPress.com Example Blog',
-					icon: {
-						media_id: 42,
-					},
-				},
-			} );
-			const state = items( original, {
-				type: MEDIA_DELETE,
-				siteId: 2916284,
-				mediaIds: [ 36 ],
-			} );
-
-			expect( state ).toEqual( original );
-		} );
-
-		test( 'should return site with unset icon property if media deleted includes icon setting', () => {
-			const original = deepFreeze( {
-				2916284: {
-					ID: 2916284,
-					name: 'WordPress.com Example Blog',
-					icon: {
-						media_id: 42,
-					},
-				},
-			} );
-			const state = items( original, {
-				type: MEDIA_DELETE,
-				siteId: 2916284,
-				mediaIds: [ 42 ],
-			} );
-
-			expect( state ).toEqual( {
-				2916284: {
-					ID: 2916284,
-					name: 'WordPress.com Example Blog',
 				},
 			} );
 		} );

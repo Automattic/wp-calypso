@@ -8,6 +8,7 @@ import {
 	isRemoved,
 	mightStillAutoRenew,
 	isA4ABillingDragonPurchase,
+	isOneTimePurchase,
 } from '../../utils/purchase';
 import { PaymentMethodImage } from './payment-method-image';
 import type { Purchase } from '@automattic/api-core';
@@ -38,6 +39,7 @@ export function PurchasePaymentMethod( {
 
 	if (
 		isRemoved( purchase ) ||
+		isOneTimePurchase( purchase ) ||
 		isExpiredWithNoAutoRenewAttemptsLeft( purchase ) ||
 		( purchase.partner_name && ! isA4ABillingDragonPurchase( purchase ) ) ||
 		isAkismetFreeProduct( purchase ) ||

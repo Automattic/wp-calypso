@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import type { TermPricing } from '../../use-term-pricing';
-import type { AgencyProduct } from '@automattic/api-core';
+import type { AgencyProduct, AgencyProductPromotion } from '@automattic/api-core';
 
 export interface ProductPriceInfo {
 	/** What the agency pays per term, after any introductory discount. */
@@ -97,16 +97,83 @@ export function getProductPriceInfo(
 	return { price: regularPrice, discountPercentage: 0, intervalLabel, billingTerm, isFree };
 }
 
+// The promotion on the term's product, unless it has already ended.
+export function getActivePromotion(
+	product: AgencyProduct,
+	term: TermPricing,
+	now = Date.now()
+): AgencyProductPromotion | undefined {
+	const promotion = term === 'yearly' ? product.yearly_promotion : product.monthly_promotion;
+	if ( ! promotion || new Date( promotion.ends_at ).getTime() <= now ) {
+		return undefined;
+	}
+	return promotion;
+}
+
+export interface WpcomTierPrice {
+	units: number;
+	/** The per-site price at this tier, with any active promotion applied. */
+	pricePerUnit: number;
+	/** The per-site price at this tier without the promotion. */
+	regularPricePerUnit: number;
+	/** Off the regular per-site price, volume and promotion discounts combined. */
+	discountPercentage: number;
+}
+
+// The volume tiers for the term, with the single-site tier always first.
+// While a promotion is active every tier, including a single site, sells at its promotional price.
+export function getWpcomTierPrices( product: AgencyProduct, term: TermPricing ): WpcomTierPrice[] {
+	const basePrice =
+		term === 'yearly' ? ( product.yearly_price ?? 0 ) : ( product.monthly_price ?? 0 );
+	const promotion = getActivePromotion( product, term );
+	const tiers =
+		( term === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices ) ?? [];
+	const toTierPrice = ( units: number, regularPricePerUnit: number, pricePerUnit: number ) => ( {
+		units,
+		pricePerUnit,
+		regularPricePerUnit,
+		discountPercentage: calculateDiscountPercentage( basePrice, pricePerUnit ),
+	} );
+	const options = tiers.map( ( tier ) =>
+		toTierPrice(
+			tier.units,
+			tier.price,
+			promotion ? ( tier.promotional_price ?? tier.price ) : tier.price
+		)
+	);
+	if ( options[ 0 ]?.units !== 1 ) {
+		options.unshift( toTierPrice( 1, basePrice, promotion?.price ?? basePrice ) );
+	}
+	return options;
+}
+
 export interface WpcomTieredPrice {
 	/** The regular per-site price for the term. */
 	basePricePerUnit: number;
-	/** The per-site price at the reached volume tier. */
+	/** The per-site price at the reached volume tier, with any active promotion applied. */
 	pricePerUnit: number;
 	/** Regular price for the new sites only. */
 	actualCost: number;
 	/** Tiered price for the new sites only. */
 	discountedCost: number;
 	discountPercentage: number;
+	promotion?: AgencyProductPromotion;
+}
+
+// Checkout takes the coupon off the line total and rounds down to the currency's smallest unit,
+// so a total built from rounded per-site prices can come out a little lower.
+export function applyPromotionToTotal(
+	amount: number,
+	discount: number,
+	currency: string
+): number {
+	const precision =
+		new Intl.NumberFormat( 'en-US', { style: 'currency', currency } ).resolvedOptions()
+			.maximumFractionDigits ?? 2;
+	const factor = 10 ** precision;
+	return (
+		Math.floor( Number( ( ( amount * ( 100 - discount ) * factor ) / 100 ).toFixed( 6 ) ) ) / factor
+	);
 }
 
 // Mirrors the classic dashboard: sites the agency already owns count towards
@@ -119,21 +186,23 @@ export function getWpcomTieredPrice(
 ): WpcomTieredPrice {
 	const basePricePerUnit =
 		term === 'yearly' ? ( product.yearly_price ?? 0 ) : ( product.monthly_price ?? 0 );
-	const tierPrices = term === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices;
 	const tierQuantity = quantity + ownedSites;
-	const tier =
-		tierPrices?.find( ( candidate ) => candidate.units === tierQuantity ) ??
-		tierPrices
-			?.filter( ( candidate ) => candidate.units <= tierQuantity )
-			.sort( ( a, b ) => b.units - a.units )[ 0 ];
-	const pricePerUnit = tier?.price ?? basePricePerUnit;
+	const tier = getWpcomTierPrices( product, term )
+		.filter( ( candidate ) => candidate.units <= tierQuantity )
+		.sort( ( a, b ) => b.units - a.units )[ 0 ];
+	const pricePerUnit = tier?.pricePerUnit ?? basePricePerUnit;
+	const promotion = getActivePromotion( product, term );
+	const regularCost = ( tier?.regularPricePerUnit ?? basePricePerUnit ) * quantity;
 
 	return {
 		basePricePerUnit,
 		pricePerUnit,
 		actualCost: basePricePerUnit * quantity,
-		discountedCost: pricePerUnit * quantity,
+		discountedCost: promotion
+			? applyPromotionToTotal( regularCost, promotion.discount, product.currency )
+			: pricePerUnit * quantity,
 		discountPercentage: calculateDiscountPercentage( basePricePerUnit, pricePerUnit ),
+		promotion,
 	};
 }
 

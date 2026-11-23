@@ -46,7 +46,7 @@ Ticket numbers mark parts still to come.
     demand and sends actions to the agent.
   - `surfaces/` renders a message's surfaces in the chat's colors and mode (its `style.scss` sets
     A2UI's tokens from Agenttic's), disables one while it's stale or the chat is busy, shows a
-    notice for one that can't be shown, and stacks the modal and chart tooltips above the chat.
+    notice for one that can't be shown, and stacks the modal above the chat.
     Surfaces sit in a `data-agenttic-isolated` wrapper, so their components keep their own styles
     while replies keep the chat's reset and typography.
   - `action-note/` shows an action's `userMessage` in the transcript.

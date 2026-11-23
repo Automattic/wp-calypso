@@ -44,6 +44,7 @@ import {
 	has100YearDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { STUDIO_WEB_HOSTS } from 'calypso/lib/studio/checkout-urls';
 import { getEligibleTitanDomain } from 'calypso/lib/titan';
 import { addQueryArgs, isExternal, resemblesUrl } from 'calypso/lib/url';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -58,6 +59,7 @@ import {
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
 import { PURCHASE_SUCCESS_NOTICE_QUERY_VALUE } from '../checkout-thank-you/purchase-notice-constants';
+import { isWpcomSitelessCheckoutType } from '../src/lib/is-wpcom-siteless-checkout-type';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
@@ -84,6 +86,7 @@ const allowedExternalSites = [
 	'akismet.com',
 	'gravatar.com',
 	'difmrequest.com',
+	...STUDIO_WEB_HOSTS,
 ];
 
 /**
@@ -373,7 +376,7 @@ export default function getThankYouPageUrl( {
 	}
 
 	// WordPress.com siteless checkout
-	if ( sitelessCheckoutType === 'wpcom' ) {
+	if ( isWpcomSitelessCheckoutType( sitelessCheckoutType ) ) {
 		debug( 'redirecting to siteless WordPress.com thank you' );
 		return receiptIdOrPlaceholder
 			? `/checkout/thank-you/no-site/${ receiptIdOrPlaceholder }`

@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Breaking: Require `@wordpress/is-shallow-equal` ^6.1.0 and `@wordpress/warning` ^4.1.0.
+- Breaking: Require `@wordpress/is-shallow-equal` ^6.2.0 and `@wordpress/warning` ^4.2.0.
 
 ## 1.0.0-alpha.4
 

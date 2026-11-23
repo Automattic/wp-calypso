@@ -1,0 +1,74 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/colors';
+
+$pane-height: calc( 100vh - var( --masterbar-height ) - 2 * var( --page-layout-block-padding ) );
+
+.dashboard-notifications-page {
+	display: flex;
+	flex-direction: column;
+	gap: var( --dashboard-page-header__content-gap );
+	height: $pane-height;
+}
+
+.dashboard-notifications-page__inbox {
+	flex: 1;
+	min-height: 0;
+}
+
+.dashboard-notifications-inbox {
+	height: 100%;
+	overflow: hidden;
+
+	> div {
+		height: 100%;
+	}
+}
+
+.dashboard-notifications-inbox__panes {
+	display: grid;
+	grid-template-columns: minmax( 360px, 480px ) minmax( 0, 1fr );
+	height: 100%;
+}
+
+.dashboard-notifications-inbox__list,
+.dashboard-notifications-inbox__detail {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	min-height: 0;
+}
+
+.dashboard-notifications-inbox__panes .dashboard-notifications-inbox__list {
+	border-inline-end: 1px solid var( --dashboard-surface__border-color, #{$gray-200} );
+}
+
+.dashboard-notifications-inbox__detail {
+	overflow-y: auto;
+	// The note keeps its width whether it scrolls or not. Its footer's width decides whether
+	// the comment actions show as buttons, and a scrollbar coming and going with them would
+	// switch them back and forth.
+	scrollbar-gutter: stable;
+
+	.components-card__body:not( .components-card__body * ) {
+		padding-block: $grid-unit-30;
+	}
+
+	// The bell's dome carries its weight above the middle of its box, so it reads high next
+	// to the title's capitals. A pixel down centres it optically; moving the button keeps its
+	// unread dot in place on the bell.
+	.wpnc__mark-unread.components-button {
+		translate: 0 1px;
+	}
+
+	.components-card__body:not( .components-card__body * ) > *,
+	.components-card__footer > * {
+		width: 100%;
+		max-width: 640px;
+		margin-inline: auto;
+	}
+}
+
+.dashboard-notifications-inbox__detail.is-empty {
+	justify-content: center;
+	padding: $grid-unit-30;
+}

@@ -38,10 +38,6 @@ const createCancelOrder = ( siteId, importerId ) =>
 const createExpiryOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.EXPIRE_PENDING, site: { ID: siteId } } );
 
-// Creates a request to clear all import sessions
-const createClearOrder = ( siteId, importerId ) =>
-	toApi( { importerId, importerState: appStates.IMPORT_CLEAR, site: { ID: siteId } } );
-
 // Creates a request object to start performing the actual import
 const createImportOrder = ( importerStatus ) =>
 	toApi( {
@@ -152,21 +148,6 @@ export const resetImport = ( siteId, importerId ) => async ( dispatch ) => {
 	dispatch( resetImportAction );
 
 	const data = await updateImporter( siteId, createExpiryOrder( siteId, importerId ) );
-	dispatch( receiveImporterStatus( data ) );
-};
-
-export const clearImport = ( siteId, importerId ) => async ( dispatch ) => {
-	// We are done with this import session, so lock it away
-	dispatch( lockImport( importerId ) );
-
-	const resetImportAction = {
-		type: IMPORTS_IMPORT_RESET,
-		importerId,
-		siteId,
-	};
-	dispatch( resetImportAction );
-
-	const data = await updateImporter( siteId, createClearOrder( siteId, importerId ) );
 	dispatch( receiveImporterStatus( data ) );
 };
 

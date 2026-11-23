@@ -62,8 +62,7 @@ export const SignupBrandPanel = () => {
 					</p>
 					<p className="signup-brand-panel__description">
 						{ translate(
-							'Launch a business, publish a blog, and connect {{br/}}your favorite tools with MCP.',
-							{ components: { br: <br /> } }
+							'Launch a business, publish a blog, and manage your site with ChatGPT or Claude.'
 						) }
 					</p>
 				</div>

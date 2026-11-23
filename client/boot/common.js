@@ -128,12 +128,12 @@ function saveOauthFlags() {
 		return;
 	}
 
-	const oauthFlag = flags.split( ',' ).find( ( flag ) => /^[+-]?oauth$/.test( flag ) );
-	if ( ! oauthFlag ) {
+	const loginModeFlag = flags.split( ',' ).find( ( flag ) => /^[+-]?oauth$/.test( flag ) );
+	if ( ! loginModeFlag ) {
 		return;
 	}
 
-	window.sessionStorage.setItem( 'flags', oauthFlag );
+	window.sessionStorage.setItem( 'flags', loginModeFlag );
 }
 
 function authorizePath() {

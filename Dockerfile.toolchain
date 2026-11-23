@@ -3,7 +3,7 @@
 #### This file intentionally mirrors the non-cache stages in Dockerfile.base so
 #### we can validate a toolchain-only path while keeping the existing base flow
 #### intact as a fallback during rollout.
-ARG node_version=24.22.1
+ARG node_version=24.22.3
 ARG commit_sha="(unknown)"
 ARG cache_seed_key="(unknown)"
 FROM node:${node_version}-trixie-slim AS toolchain
@@ -107,11 +107,6 @@ RUN wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout
 	apt-get update && \
 	apt-get upgrade -y && \
 	apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring docker-compose && \
-	composer install && \
-	# Install sentry-cli. We pin it to a version to make it easier to know at a
-	# glance what is the version being used. It's important to keep the JS SDK and
-	# the CLI updated to their latest stable versions.
-	wget --tries=5 --retry-connrefused --waitretry=2 --timeout=20 --read-timeout=20 \
-		-O - https://sentry.io/get-cli/ | SENTRY_CLI_VERSION="2.18.1" bash
+	composer install
 
 ENTRYPOINT [ "/bin/bash" ]
