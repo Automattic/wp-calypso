@@ -22,15 +22,11 @@ const NO_ANNOUNCEMENTS: AgencyAnnouncement[] = [];
  * host a section is about.
  */
 export function useHostingAnnouncements( agencyId: number, section?: HostingSection ) {
-	const { data = NO_ANNOUNCEMENTS, isPending } = useQuery( agencyAnnouncementsQuery( agencyId ) );
+	const { data = NO_ANNOUNCEMENTS } = useQuery( agencyAnnouncementsQuery( agencyId ) );
 	return useMemo( () => {
 		const logos = section ? [ HOST_LOGOS[ section ] ] : Object.values( HOST_LOGOS );
-		return {
-			announcements: data.filter( ( item ) => logos.includes( item.logo ) ),
-			hasPressableAnnouncement: data.some( ( item ) => item.logo === HOST_LOGOS.pressable ),
-			isPending,
-		};
-	}, [ data, section, isPending ] );
+		return data.filter( ( item ) => logos.includes( item.logo ) );
+	}, [ data, section ] );
 }
 
 /**

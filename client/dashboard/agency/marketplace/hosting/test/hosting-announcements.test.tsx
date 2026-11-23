@@ -60,7 +60,7 @@ function mockAnnouncements( items: AgencyAnnouncement[] ) {
 }
 
 function HostingPage( { section }: { section?: HostingSection } ) {
-	const { announcements } = useHostingAnnouncements( AGENCY_ID, section );
+	const announcements = useHostingAnnouncements( AGENCY_ID, section );
 	return <HostingAnnouncements announcements={ announcements } section={ section } />;
 }
 

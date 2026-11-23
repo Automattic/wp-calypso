@@ -36,7 +36,6 @@ import {
 	hasPressableUpgrade,
 } from './lib/pressable-plans';
 import { getEffectivePressableOwnership } from './lib/pressable-products';
-import PressableOffers from './pressable-offer-banner';
 import PressableSection from './pressable-section';
 import VipSection from './vip-section';
 import WpcomSection from './wpcom-section';
@@ -65,11 +64,7 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 	const agencyId = agency?.id ?? 0;
 	const pressableUsageLimit = usePressableUsageLimit( agency );
 	const agencyApproved = isAgencyApproved( agency );
-	const {
-		announcements,
-		hasPressableAnnouncement,
-		isPending: isAnnouncementsPending,
-	} = useHostingAnnouncements( agencyId, section );
+	const announcements = useHostingAnnouncements( agencyId, section );
 
 	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
 	const { data: devLicenses } = useQuery( {
@@ -235,11 +230,6 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 				<ReferralModeBand kind={ section === 'pressable' ? 'pressable' : 'hosting' } />
 			) }
 			<HostingAnnouncements announcements={ announcements } section={ section } />
-			{ /* A Pressable promo from News and updates replaces the built-in Pressable offer,
-			     which waits for the announcements so it never shows and then disappears. */ }
-			{ ! isAnnouncementsPending && ! hasPressableAnnouncement && (
-				<PressableOffers agency={ agency } />
-			) }
 			{ section ? (
 				renderSection( section )
 			) : (
