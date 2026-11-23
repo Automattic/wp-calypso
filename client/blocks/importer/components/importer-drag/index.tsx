@@ -1,11 +1,9 @@
 import { SubTitle, Title } from '@automattic/onboarding';
 import clsx from 'clsx';
 import React from 'react';
-import { connect } from 'react-redux';
 import { UrlData } from 'calypso/blocks/import/types';
 import { ImporterConfig } from 'calypso/lib/importer/importer-config';
 import ErrorPane from 'calypso/my-sites/importer/error-pane';
-import { startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import ImportingPane from '../importing-pane/importing-pane';
 import UploadingPane from '../uploading-pane/uploading-pane';
@@ -37,7 +35,6 @@ interface Props {
 	site: SiteDetails | null | undefined;
 	urlData?: UrlData | null;
 	renderHeading?: boolean;
-	startImport: ( siteId: number, type: string ) => void;
 }
 const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 	const { importerStatus, importerData, site, urlData, renderHeading } = props;
@@ -82,4 +79,4 @@ const ImporterDrag: React.FunctionComponent< Props > = ( props ) => {
 	);
 };
 
-export default connect( null, { startImport } )( ImporterDrag );
+export default ImporterDrag;
