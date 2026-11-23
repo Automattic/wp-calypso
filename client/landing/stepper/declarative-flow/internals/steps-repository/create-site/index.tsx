@@ -174,8 +174,20 @@ function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise
 //
 // `movedDomains` lists the Free plan domain moves that worked on the site. A retry skips them,
 // because a second move of a domain that is already on the site fails.
+//
+// `cartFailedOnReuse` is true after the cart failed on a run that reused the site. The site can be
+// the reason the cart fails, so the record no longer gives the site to a retry. The record stays,
+// because the `createdSite` record can still give the same site to a named retry, and that run
+// needs the empty cart and the list of moved domains too.
 let siteAfterCartFailure:
-	{ siteId: number; siteSlug: string; siteChoices: string; movedDomains: string[] } | undefined;
+	| {
+			siteId: number;
+			siteSlug: string;
+			siteChoices: string;
+			movedDomains: string[];
+			cartFailedOnReuse: boolean;
+	  }
+	| undefined;
 
 export function resetSiteAfterCartFailureForTests() {
 	siteAfterCartFailure = undefined;
@@ -509,6 +521,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			// site already has. A paid domain is added to the site.
 			const savedSiteFits =
 				siteAfterCartFailure?.siteChoices === siteChoices &&
+				! siteAfterCartFailure.cartFailedOnReuse &&
 				( ! isFreeSubdomainQuery( requestedName ) ||
 					requestedName === siteAfterCartFailure.siteSlug );
 			const siteToReuse = siteFromThisRun ?? ( savedSiteFits ? siteAfterCartFailure : undefined );
@@ -579,21 +592,25 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				flow
 			);
 
-			if ( additionalCartItems.length > 0 ) {
-				// The cart of the saved site can still have items the rejected attempt added, and
-				// the retry may not ask for them. Without throwOnError a failure here is quiet, and
-				// the add below runs as it did before.
-				if ( savedSite ) {
-					await replaceProductsInCart( site.siteSlug, [] );
-				}
+			if ( savedSite || additionalCartItems.length > 0 ) {
 				try {
-					await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
+					// The cart of the saved site can still have items the rejected attempt added, and
+					// the retry may not ask for them, or may ask for nothing. A failure here goes to
+					// the catch below, because the old items would stay in the cart.
+					if ( savedSite ) {
+						await replaceProductsInCart( site.siteSlug, [], cartHelperOptions );
+					}
+					if ( additionalCartItems.length > 0 ) {
+						await addProductsToCart( site.siteSlug, flow, additionalCartItems, cartHelperOptions );
+					}
 				} catch ( error ) {
-					// A second failure on the saved site can come from the site itself, so the next
-					// retry creates a new site instead of failing on this one again.
-					siteAfterCartFailure = savedSite
-						? undefined
-						: { siteId: site.siteId, siteSlug: site.siteSlug, siteChoices, movedDomains };
+					siteAfterCartFailure = {
+						siteId: site.siteId,
+						siteSlug: site.siteSlug,
+						siteChoices,
+						movedDomains: [ ...( savedSite?.movedDomains ?? [] ), ...movedDomains ],
+						cartFailedOnReuse: !! savedSite,
+					};
 					throw error;
 				}
 			}

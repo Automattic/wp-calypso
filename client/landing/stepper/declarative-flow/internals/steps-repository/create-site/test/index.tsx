@@ -430,10 +430,45 @@ describe( 'create-site', () => {
 			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
 
 			expect( replaceProductsInCart ).toHaveBeenCalledTimes( 1 );
-			expect( replaceProductsInCart ).toHaveBeenCalledWith( 'brand-new.wordpress.com', [] );
+			expect( replaceProductsInCart ).toHaveBeenCalledWith( 'brand-new.wordpress.com', [], {
+				throwOnError: true,
+			} );
 			expect( ( replaceProductsInCart as jest.Mock ).mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 				( addProductsToCart as jest.Mock ).mock.invocationCallOrder[ 1 ]
 			);
+		} );
+
+		// The first site can go on without a checkout, so its cart must not keep the rejected items.
+		it( 'empties the cart of the first site when the retry has nothing to add', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			mockPlanCartItem = null;
+			pendingAction = undefined;
+			await expect( runStep() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+			expect( replaceProductsInCart ).toHaveBeenCalledTimes( 1 );
+			expect( addProductsToCart ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		// The old items would stay in the cart beside the new ones, so the retry must not go on.
+		it( 'creates a new site after the cart of the first site could not be emptied', async () => {
+			mockSiteUrl = '';
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			( replaceProductsInCart as jest.Mock ).mockRejectedValueOnce( new Error( 'not emptied' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).rejects.toThrow( 'not emptied' );
+			expect( addProductsToCart ).toHaveBeenCalledTimes( 1 );
+
+			( createSite as jest.Mock ).mockResolvedValueOnce( {
+				siteId: 222,
+				siteSlug: 'second-try.wordpress.com',
+				domainItem: undefined,
+			} );
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 222 } );
 		} );
 
 		// A run that finished has handed its site to checkout. The next unnamed run is a new signup.
@@ -553,6 +588,25 @@ describe( 'create-site', () => {
 			expect( createSite ).toHaveBeenCalledTimes( 2 );
 			// The step passes the site intent to createSite as its eleventh argument.
 			expect( ( createSite as jest.Mock ).mock.calls[ 1 ][ 10 ] ).toBe( 'build' );
+		} );
+
+		// After two failures the saved site no longer goes to a retry, but the flow state record
+		// still gives the same site to a retry with the same name.
+		it( 'empties the cart and skips the moves that worked on a third run for the same name', async () => {
+			mockPlanCartItem = null;
+			const newDomain = { product_slug: 'domain_reg', meta: 'new-domain.com' };
+			mockDomainCartItems = [ registeredMove, newDomain ];
+			( addProductsToCart as jest.Mock )
+				.mockRejectedValueOnce( new Error( 'cart rejected' ) )
+				.mockRejectedValueOnce( new Error( 'cart rejected' ) );
+
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).rejects.toThrow( 'cart rejected' );
+			await expect( pendingAction!() ).resolves.toMatchObject( { siteId: 111 } );
+
+			expect( createSite ).toHaveBeenCalledTimes( 1 );
+			expect( replaceProductsInCart ).toHaveBeenCalledTimes( 2 );
+			expect( transferDomainToSite ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'adopts the recorded site when a named request is retried', async () => {
