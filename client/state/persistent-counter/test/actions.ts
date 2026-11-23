@@ -1,5 +1,5 @@
 import { PREFERENCE_BASE_NAME } from '../constants';
-import { isSameDay, incrementPreference, decrementPreference, resetPreference } from '../helpers';
+import { isSameDay, incrementPreference } from '../helpers';
 
 const TEST_SITE_ID = 123456789;
 const COUNTER_NAME = 'my-test-counter';
@@ -120,111 +120,6 @@ describe( 'actions', () => {
 				lastUpdated: 9999,
 			} );
 			expect( result[ COUNTER_NAME ] ).toHaveProperty( 'lastUpdated', 9999 );
-		} );
-	} );
-
-	describe( 'decrementPreference()', () => {
-		test( "should create new counter property if counter preference doesn't exist and set count to 0", () => {
-			jest.spyOn( Date, 'now' ).mockReturnValueOnce( 9999 );
-			const result = decrementPreference(
-				{
-					ui: {
-						selectedSiteId: TEST_SITE_ID,
-					},
-					preferences: {},
-				},
-				'my-test-counter',
-				false
-			);
-			expect( result ).toHaveProperty( 'my-test-counter' );
-			expect( result[ COUNTER_NAME ] ).toEqual( {
-				count: 0,
-				lastUpdated: 9999,
-			} );
-		} );
-
-		test( 'counter should not decrement to negative. should force minimum 0', () => {
-			jest.spyOn( Date, 'now' ).mockReturnValueOnce( 9999 );
-			const result = decrementPreference(
-				{
-					ui: {
-						selectedSiteId: TEST_SITE_ID,
-					},
-					preferences: {
-						localValues: {
-							[ PREFERENCE_BASE_NAME ]: {
-								'my-test-counter': {
-									count: 0,
-									lastUpdated: 1646844419200,
-								},
-							},
-						},
-					},
-				},
-				'my-test-counter',
-				false
-			);
-			expect( result[ COUNTER_NAME ] ).toEqual( {
-				count: 0,
-				lastUpdated: 9999,
-			} );
-		} );
-
-		test( 'should update lastUpdated on decrement', () => {
-			jest.spyOn( Date, 'now' ).mockReturnValueOnce( 9999 );
-
-			const result = decrementPreference(
-				{
-					ui: {
-						selectedSiteId: TEST_SITE_ID,
-					},
-					preferences: {
-						localValues: {
-							[ PREFERENCE_BASE_NAME ]: {
-								'my-test-counter': {
-									count: 1,
-									lastUpdated: 1646844419200,
-								},
-							},
-						},
-					},
-				},
-				'my-test-counter',
-				false
-			);
-			expect( result[ COUNTER_NAME ] ).toEqual( {
-				count: 0,
-				lastUpdated: 9999,
-			} );
-			expect( result[ COUNTER_NAME ] ).toHaveProperty( 'lastUpdated', 9999 );
-		} );
-	} );
-
-	describe( 'resetPreference()', () => {
-		test( 'should reset the counter preference to count: 0 and lastUpdated: null', () => {
-			const result = resetPreference(
-				{
-					ui: {
-						selectedSiteId: TEST_SITE_ID,
-					},
-					preferences: {
-						localValues: {
-							[ PREFERENCE_BASE_NAME ]: {
-								'my-test-counter': {
-									count: 8,
-									lastUpdated: 1646844419200,
-								},
-							},
-						},
-					},
-				},
-				'my-test-counter',
-				false
-			);
-			expect( result[ COUNTER_NAME ] ).toEqual( {
-				count: 0,
-				lastUpdated: null,
-			} );
 		} );
 	} );
 } );

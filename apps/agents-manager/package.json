@@ -27,10 +27,11 @@
 		"build:app": "calypso-build",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/agents-manager",
 		"prepack": "yarn run clean && yarn run build",
-		"translate": "rm -rf dist/strings && (cd ../.. && wp-oxc-makepot './{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './' --dir './apps/agents-manager/dist/strings' --jobs 4 --output './apps/agents-manager/dist/agents-manager.pot') && node bin/merge-chunks-maps.js && build-app-languages --stringsFilePath='./dist/agents-manager.pot' --outputPath='./dist/languages' --outputFormat='JS'"
+		"translate": "rm -rf dist/strings && (cd ../.. && wp-oxc-makepot './{client,packages,apps}/**/*.{js,jsx,ts,tsx}' --ignore '**/node_modules/**,**/test/**,**/*.d.ts' --base './' --dir './apps/agents-manager/dist/strings' --jobs 4 --output './apps/agents-manager/dist/agents-manager.pot') && node bin/merge-chunks-maps.js && build-app-languages --stringsFilePath='./dist/agents-manager.pot' --outputPath='./dist/languages' --outputFormat='JS,JSON'"
 	},
 	"dependencies": {
 		"@automattic/agents-manager": "workspace:^",
+		"@automattic/agenttic-ui": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/image-studio": "workspace:^",
 		"@automattic/jetpack-ai-sidebar": "workspace:^",
@@ -51,7 +52,7 @@
 		"copy-webpack-plugin": "^14.0.0",
 		"postcss-prefix-selector": "^1.16.1",
 		"sass": "1.77.8",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	},

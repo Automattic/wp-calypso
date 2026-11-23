@@ -99,7 +99,7 @@ export type * from './types';
 // Message rendering utilities
 export { createMessageRenderer } from './utils/createMessageRenderer';
 export type { MarkdownComponents } from './utils/createMessageRenderer';
-export { loadAgentticTranslations } from './utils/translation-loader';
+export { hasAgentticTranslations, loadAgentticTranslations } from './utils/translation-loader';
 
 // Message actions utilities
 export { createFeedbackActions } from './message-actions/utils';

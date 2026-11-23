@@ -34,8 +34,3 @@ export function getBackPath( state ) {
 export function getThemesBookmark( state ) {
 	return state.themes.themesUI.themesBookmark;
 }
-
-// Returns whether the showcase has opened.
-export function hasShowcaseOpened( state ) {
-	return state.themes.themesUI.themesShowcaseOpen;
-}

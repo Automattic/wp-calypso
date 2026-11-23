@@ -61,10 +61,7 @@
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@typescript-eslint/eslint-plugin": "^8.72.1",
 		"@typescript-eslint/parser": "^8.72.1",
-		"@wordpress/eslint-plugin": "^28.2.0",
-		"@wordpress/stylelint-config": "^27.2.0",
 		"css-loader": "^7.1.5",
 		"jsdom": "^20.0.3",
 		"sass-embedded": "^1.89.0",
@@ -72,7 +69,7 @@
 		"stylelint": "^17.16.0",
 		"stylelint-scss": "^7.4.0",
 		"typescript": "^6.0.3",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {

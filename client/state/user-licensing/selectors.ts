@@ -10,16 +10,8 @@ export function getUserLicenses( state: AppState ): PaginatedItems< License > | 
 	return state?.userLicensing?.licenses;
 }
 
-export function hasFetchedUserLicensesCounts( state: AppState ): boolean {
-	return state.userLicensing?.hasFetchedLicenseCounts;
-}
-
 export function isFetchingUserLicensesCounts( state: AppState ): boolean {
 	return state.userLicensing?.countsFetching;
-}
-
-export function hasFetchedUserLicenses( state: AppState ): boolean {
-	return state.userLicensing?.hasFetchedLicenses;
 }
 
 export function isFetchingUserLicenses( state: AppState ): boolean {

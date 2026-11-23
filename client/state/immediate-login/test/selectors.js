@@ -2,7 +2,6 @@ import { REASONS_FOR_MANUAL_RENEWAL } from '../constants';
 import {
 	wasImmediateLoginAttempted,
 	wasManualRenewalImmediateLoginAttempted,
-	wasImmediateLoginSuccessfulAccordingToClient,
 	getImmediateLoginReason,
 	getImmediateLoginEmail,
 	getImmediateLoginLocale,
@@ -50,23 +49,6 @@ describe( 'immediate-login/selectors', () => {
 				wasManualRenewalImmediateLoginAttempted( {
 					immediateLogin: { reason: REASONS_FOR_MANUAL_RENEWAL.at( -1 ) },
 				} )
-			).toEqual( true );
-		} );
-	} );
-	describe( 'wasImmediateLoginSuccessfulAccordingToClient', () => {
-		test( 'should return correct value from state [1]', () => {
-			expect( wasImmediateLoginSuccessfulAccordingToClient( {} ) ).toEqual( false );
-		} );
-
-		test( 'should return correct value from state [2]', () => {
-			expect(
-				wasImmediateLoginSuccessfulAccordingToClient( { immediateLogin: { success: false } } )
-			).toEqual( false );
-		} );
-
-		test( 'should return correct value from state [3]', () => {
-			expect(
-				wasImmediateLoginSuccessfulAccordingToClient( { immediateLogin: { success: true } } )
 			).toEqual( true );
 		} );
 	} );

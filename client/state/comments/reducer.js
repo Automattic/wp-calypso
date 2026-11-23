@@ -2,7 +2,6 @@ import { omit, orderBy } from '@automattic/js-utils';
 import { withStorageKey } from '@automattic/state-utils';
 import isEqual from 'fast-deep-equal/es6';
 import {
-	COMMENT_COUNTS_UPDATE,
 	COMMENTS_CHANGE_STATUS,
 	COMMENTS_EDIT,
 	COMMENTS_EMPTY_SUCCESS,
@@ -370,19 +369,6 @@ function updateCount( counts, rawStatus, value = 1 ) {
 
 export const counts = ( state = {}, action ) => {
 	switch ( action.type ) {
-		case COMMENT_COUNTS_UPDATE: {
-			const { siteId, postId, ...commentCounts } = omit( action, 'type' );
-			if ( ! siteId ) {
-				return state;
-			}
-			const keyName = siteId && postId ? postId : 'site';
-			const siteCounts = {
-				[ siteId ]: Object.assign( {}, state[ siteId ] || {}, {
-					[ keyName ]: commentCounts,
-				} ),
-			};
-			return Object.assign( {}, state, siteCounts );
-		}
 		case COMMENTS_CHANGE_STATUS: {
 			const { siteId, postId = -1, status } = action;
 			const previousStatus = action?.meta?.comment?.previousStatus;

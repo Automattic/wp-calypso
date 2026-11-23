@@ -8,7 +8,6 @@ import {
 	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
-	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_USER_ALREADY_CONNECTED,
 } from 'calypso/state/jetpack-connect/action-types';
@@ -69,9 +68,6 @@ function jetpackConnectAuthorize( state = {}, action ) {
 
 		case JETPACK_CONNECT_USER_ALREADY_CONNECTED:
 			return Object.assign( {}, state, { userAlreadyConnected: true } );
-
-		case JETPACK_CONNECT_COMPLETE_FLOW:
-			return {};
 
 		default:
 			return state;

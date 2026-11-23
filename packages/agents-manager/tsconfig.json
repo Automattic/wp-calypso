@@ -9,7 +9,7 @@
 		"types": [ "vitest/globals", "@testing-library/jest-dom/vitest" ],
 		"moduleResolution": "bundler"
 	},
-	"include": [ "src", "src/*.json", "types" ],
+	"include": [ "src", "src/*.json" ],
 	"references": [
 		{ "path": "../agenttic-client" },
 		{ "path": "../agenttic-ui" },

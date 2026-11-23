@@ -61,33 +61,6 @@ export const recordAddDomainButtonClickInTransferDomain = ( domainName, section,
 		} )
 	);
 
-export const recordAddDomainButtonClickInUseYourDomain = ( domainName, section ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Search',
-			'Clicked "Use Your Domain" Button on a Domain Search Step',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent( 'calypso_transfer_domain_step_add_domain_click', {
-			domain_name: domainName,
-			section,
-		} )
-	);
-
-export const recordRemoveDomainButtonClick = ( domainName ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Search',
-			'Clicked "Remove" Button on a Domain Registration',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent( 'calypso_domain_remove_button_click', {
-			domain_name: domainName,
-		} )
-	);
-
 export const recordFormSubmitInMapDomain = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',
