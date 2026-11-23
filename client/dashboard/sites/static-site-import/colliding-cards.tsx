@@ -1,3 +1,4 @@
+import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useEffect, useState } from 'react';
 import { getMshotUrl, MSHOT_PLACEHOLDER, MSHOT_TRIES } from './torn-collage';
 
@@ -44,6 +45,9 @@ export function CollidingCards( { imageUrl }: { imageUrl?: string } ) {
 		<div className="static-site-import-colliding-cards" aria-hidden="true">
 			{ [ 'is-left', 'is-right' ].map( ( side ) => (
 				<div key={ side } className={ `static-site-import-colliding-cards__card ${ side }` }>
+					{ side === 'is-left' && (
+						<WordPressLogo className="static-site-import-colliding-cards__watermark" />
+					) }
 					{ imageUrl && (
 						<img className="static-site-import-colliding-cards__image" src={ imageUrl } alt="" />
 					) }

@@ -75,6 +75,19 @@ $slide-share: 0.6;
 	}
 }
 
+// Centered on the part of the left card that the window doesn't crop.
+.static-site-import-colliding-cards__watermark {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 72.2%;
+	width: auto;
+	height: 34%;
+	aspect-ratio: 1;
+	fill: color-mix( in srgb, var( --wp-admin-theme-color ) 38%, var( --color-surface ) );
+	pointer-events: none;
+	transform: translate( -50%, -50% );
+}
+
 // Each card holds a copy of the screenshot, one card-width apart, so together they read as one
 // image sliding across the line.
 .static-site-import-colliding-cards__image {
