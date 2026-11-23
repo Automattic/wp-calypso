@@ -163,8 +163,8 @@ describe( 'Notifications iframe app', () => {
 			const user = userEvent.setup();
 			await openPanel( 'view-settings,full-view' );
 
-			const note = await openNote( user );
-			await user.click( note.getByRole( 'button', { name: 'Open full view' } ) );
+			await openNote( user );
+			await user.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
 
 			expect( window.open ).toHaveBeenLastCalledWith(
 				'https://my.wordpress.com/notifications?note=801',
