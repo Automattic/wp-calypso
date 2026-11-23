@@ -1,7 +1,6 @@
 import {
 	JETPACK_CONNECT_CHECK_URL,
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
-	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 } from 'calypso/state/jetpack-connect/action-types';
@@ -38,9 +37,6 @@ export default function jetpackConnectSite( state = {}, action ) {
 
 		case JETPACK_CONNECT_CONFIRM_JETPACK_STATUS:
 			return Object.assign( {}, state, { installConfirmedByUser: action.status } );
-
-		case JETPACK_CONNECT_COMPLETE_FLOW:
-			return {};
 	}
 	return state;
 }

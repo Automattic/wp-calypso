@@ -5,11 +5,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { useEmailVerificationResend } from '../../../account/hooks/use-email-verification-resend';
 import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice, { NoticeActionButton, RouterNoticeActionLink } from '../../../components/notice';
 import { formatCooldown } from '../../../utils/email-verification-resend';
-import { useEmailVerificationResend } from '../../../utils/use-email-verification-resend';
 import { useIsEmailWritePending } from '../use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
 

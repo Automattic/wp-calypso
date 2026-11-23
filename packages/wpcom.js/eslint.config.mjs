@@ -14,12 +14,4 @@ export default defineConfig( [
 			],
 		},
 	},
-	{
-		files: [ 'test/**' ],
-		rules: {
-			// These files use a weird mixture of CJS and ESM. Disabling the rules for now until they can
-			// get refactored.
-			'import/default': 'off',
-		},
-	},
 ] );

@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, envelope, file, formatListBullets, help, wordpress } from '@wordpress/icons';
+import { Icon, envelope, folder, formatListBullets, help, wordpress } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -143,7 +143,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 	}
 	if ( canViewSftpSshSettingsRoute ) {
 		items.push( {
-			icon: file,
+			icon: folder,
 			text: createInterpolateElement(
 				// translators: <sftpLink/> is a link to the SFTP/SSH settings page with the text "Connect over SFTP/SSH"
 				__( '<sftpLink/> to edit the files responsible for the error.' ),

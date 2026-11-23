@@ -33,6 +33,7 @@
 	"features": {
 		"a4a-dashboard-opt-in": true,
 		"a4a-spacefast-promo": true,
+		"a4a/static-site-import": true,
 		"bilmur-script": true,
 		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,

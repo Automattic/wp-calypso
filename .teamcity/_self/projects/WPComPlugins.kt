@@ -5,8 +5,6 @@ import _self.lib.utils.allBranchesExceptMergeQueue
 import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
@@ -34,7 +32,6 @@ object WPComPlugins : Project({
 	}
 
 	buildType(CalypsoApps)
-	buildType(GutenbergUploadSourceMapsToSentry);
 
 	cleanup {
 		keepRule {
@@ -53,7 +50,7 @@ object WPComPlugins : Project({
 		}
 
 		// Always keep each app's latest release build, however old: the release
-		// diff and source map uploads download it via its .tcbuildtag URL.
+		// diff downloads it via its .tcbuildtag URL.
 		releaseBuildTags.forEach { tag ->
 			keepRule {
 				id = "keepLatest-$tag"
@@ -208,97 +205,3 @@ object CalypsoApps: BuildType({
 		executionTimeoutMin = 12
 	}
 })
-
-private object GutenbergUploadSourceMapsToSentry: BuildType() {
-	init {
-		name = "Upload Source Maps";
-		description = "Uploads sourcemaps for various WordPress.com plugins to Sentry. Often triggered per-commit by a WPCOM post-deploy job.";
-
-		id("WPComPlugins_GutenbergUploadSourceMapsToSentry");
-
-		// Only needed so that we can test the job in different branches.
-		vcs {
-			root(Settings.WpCalypso)
-			branchFilter = allBranchesExceptMergeQueue()
-			cleanCheckout = true
-		}
-
-		params {
-			text(
-				name = "GUTENBERG_VERSION",
-				value = "",
-				label = "Gutenberg version",
-				description = "The Gutenberg version to upload source maps for (include the whole string, including the `v` prefix)",
-				allowEmpty = false
-			)
-		}
-
-		params {
-			text(
-				name = "SENTRY_RELEASE_NAME",
-				value = "",
-				label = "Sentry release name",
-				description = "The WPCOM Sentry release to upload the source-maps to",
-				allowEmpty = false
-			)
-		}
-
-		steps {
-			bashNodeScript {
-				name = "Upload Gutenberg source maps to Sentry"
-				scriptContent = """
-					rm -rf gutenberg gutenberg.zip
-
-					wget https://github.com/WordPress/gutenberg/releases/download/%GUTENBERG_VERSION%/gutenberg.zip
-					unzip gutenberg.zip -d gutenberg
-					cd gutenberg
-
-					# Upload the .js and .js.map files to Sentry for the given release.
-					sentry-cli releases files %SENTRY_RELEASE_NAME% upload-sourcemaps . \
-							--auth-token %SENTRY_AUTH_TOKEN% \
-							--org a8c \
-							--project wpcom-gutenberg-wp-admin \
-							--url-prefix "~/wp-content/plugins/gutenberg-core/%GUTENBERG_VERSION%/"
-				"""
-			}
-
-			uploadPluginSourceMaps(
-				slug = "wpcom-block-editor",
-				wpcomURL = "~/wpcom-block-editor"
-			)
-
-			uploadPluginSourceMaps(
-				slug = "notifications",
-				wpcomURL = "~/notifications"
-			)
-		}
-	}
-}
-
-// Given the plugin information, get the source code and upload any sourcemaps
-// to Sentry.
-fun BuildSteps.uploadPluginSourceMaps(
-	slug: String,
-	wpcomURL: String,
-	buildTag: String = "$slug-release-build",
-): ScriptBuildStep {
-	return bashNodeScript {
-		name = "Upload $slug source maps to Sentry"
-		scriptContent = """
-			rm -rf code code.zip
-
-			# Downloads the latest release build for the plugin.
-			wget "%teamcity.serverUrl%/repository/download/calypso_calypso_WPComPlugins_Build_Plugins/$buildTag.tcbuildtag/$slug.zip?guest=1&branch=trunk" -O ./code.zip
-
-			unzip -q ./code.zip -d ./code
-			cd code
-
-			# Upload the .js and .js.map files to Sentry for the given release.
-			sentry-cli releases files %SENTRY_RELEASE_NAME% upload-sourcemaps . \
-					--auth-token %SENTRY_AUTH_TOKEN% \
-					--org a8c \
-					--project wpcom-gutenberg-wp-admin \
-					--url-prefix "$wpcomURL"
-		"""
-	}
-}

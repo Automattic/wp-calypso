@@ -5,12 +5,6 @@ import {
 	getProductsByBillingSlug,
 } from '../selectors';
 
-jest.mock( 'calypso/state/selectors/get-intro-offer-price', () => jest.fn() );
-
-jest.mock( 'calypso/state/products-list/selectors/get-product-sale-coupon-cost', () => ( {
-	getProductSaleCouponCost: jest.fn( () => null ),
-} ) );
-
 jest.mock( 'calypso/state/products-list/selectors/get-product-sale-coupon-discount', () => ( {
 	getProductSaleCouponDiscount: jest.fn( () => null ),
 } ) );

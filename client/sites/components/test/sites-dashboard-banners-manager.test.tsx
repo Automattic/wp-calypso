@@ -8,11 +8,6 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import SitesDashboardBannersManager from '../sites-dashboard-banners-manager';
 
-// Mock the Banner component
-jest.mock( 'calypso/components/banner', () => {
-	return jest.fn( ( { title } ) => <div>{ title }</div> );
-} );
-
 const mockStore = configureStore();
 
 describe( 'SitesDashboardBannersManager', () => {

@@ -13,7 +13,6 @@ to keep it.
 | `site-migration-identify`     | The source's address, analyzed as in `site-migration`   |
 | `static-site-import-reading`  | Starts the import session, then builds the preview site |
 | `static-site-import-progress` | Shows the move's progress until it ends                 |
-| `static-site-import-ready`    | Shows the finished preview, to look around or launch    |
 
 The identified source is kept in the flow’s state (`useFlowState`, under the identify step’s slug)
 for this session, not in the URL. Opening the flow with `?from=<source>` (and optionally
@@ -29,13 +28,12 @@ with the source they copy. Going back to the reading step for the same source pi
 
 The progress step tracks the move with the dashboard’s own progress steps, site window and hook
 (`StaticSiteImportPreviewSteps`, `StaticSiteImportPreviewWindow` and `useStaticSiteImport` in
-`client/dashboard/sites/overview-static-site-import`), laid out for signup.
+`client/dashboard/sites/static-site-import`), laid out for signup.
 
 The preview stays Coming Soon like every unpaid preview: WordPress.com keeps it hidden until a plan
-is bought. When the move finishes, the ready step shows the preview at its `?share=` link, which
-gets past Coming Soon, under **Your site is on WordPress.com**. **Look around**, or closing the welcome, moves it to a
-card in the corner, which folds to a pill, and lets the customer click around the preview; and the card’s **Choose a plan** goes straight to checkout with the Personal plan. Paying, leaving or
-**Pay later** in checkout all come back to the preview’s Overview.
+is bought. When the move finishes, the flow opens the preview at its `?share=` link, which gets
+past Coming Soon. The progress step waits until WordPress.com reports the link it made for the
+preview, and only goes on once it has it.
 
 ## Failures
 
@@ -63,9 +61,7 @@ registered.
    the flow stays in signup on **Copying your site**.
 3. Go back in the browser. Confirm the flow returns to **Copying your site** for the same move,
    and no other preview site is created.
-4. Wait for the move to finish. Confirm **Your site is on WordPress.com** shows over the preview.
-   **Look around** moves the welcome to the corner card, and its **Choose a plan** opens checkout with the
-   Personal plan.
+4. Wait for the move to finish. Confirm the browser opens the preview at its `?share=` link.
 5. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
    skips the address step and shows the move’s progress the same way.
 6. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.

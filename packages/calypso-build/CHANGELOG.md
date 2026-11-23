@@ -2,6 +2,7 @@
 
 ## trunk
 
+- Added: `build-app-languages` takes `--outputFormat='JS,JSON'` to write both formats in one run.
 - Breaking: Remove the Jest `matchMedia` mock, `@automattic/calypso-build/jest/mocks/match-media`. No package in this repository uses it any more; Jest setups that do can define `window.matchMedia` themselves.
 - Breaking: Move to Babel 8 (`@babel/core`, `@babel/cli` and `@babel/compat-data` 8), which needs Node.js `^22.18.0 || >=24.11.0`. `transpile` and the webpack config compile with `@automattic/calypso-babel-config`'s Babel 8 presets.
 - Fixed: Depend on `@babel/cli`, which `transpile` runs. It was only found when `@automattic/calypso-babel-config`'s copy was hoisted, so `transpile` failed under pnpm and other installs that don't hoist.
@@ -11,8 +12,8 @@
   - babel-loader to ^10.1.1 (needs thread-loader 4, below, for `this.utils` in workers)
   - thread-loader to ^4.0.4
   - css-minimizer-webpack-plugin to ^8.0.0 (cssnano 7)
-  - @wordpress/browserslist-config to ^7.1.0
-  - @wordpress/dependency-extraction-webpack-plugin to ^7.1.0
+  - @wordpress/browserslist-config to ^7.2.0
+  - @wordpress/dependency-extraction-webpack-plugin to ^7.2.0
 - Changed: `minify` turns off cssnano's `:is()` selector folding, which changes what selectors containing combinators match. Passing your own `preset` in `cssMinimizerOptions` replaces this default and turns folding back on.
 - Updated css-loader to ^7.1.5. The Sass loader keeps css-loader 6's CSS Modules exports (a default object with class names as written), so `import styles from './style.module.scss'` and `styles[ 'is-current' ]` keep working.
 - Breaking: The `webpack` peer dependency is now `^5.101.0`, the minimum webpack-cli 7 supports.

@@ -4,7 +4,6 @@
 
 import {
 	bigSkyPluginQuery,
-	isAutomatticianQuery,
 	queryClient,
 	siteAbilitiesQuery,
 	siteBySlugQuery,
@@ -86,7 +85,6 @@ function seedQueries(
 				: [],
 		},
 	} as UserSettings );
-	queryClient.setQueryData( isAutomatticianQuery().queryKey, { number: 0, teams: [] } );
 	if ( seedPostByEmailSettings ) {
 		queryClient.setQueryData( sitePostByEmailSettingsQuery( activeSite ).queryKey, {
 			post_by_email_address: postByEmailAddress,
@@ -334,11 +332,6 @@ describe( '<AIToolsSettings>', () => {
 
 	test( 'counts site-published groups in the badges so they cannot claim All enabled while those are off', () => {
 		seedQueries( '', true, jetpackSite, true, true );
-		// The remote section is staff-gated; the badge math applies for Automatticians.
-		queryClient.setQueryData( isAutomatticianQuery().queryKey, {
-			number: 0,
-			teams: [ { slug: 'a8c' } ],
-		} );
 		queryClient.setQueryData( userSettingsQuery().queryKey, {
 			mcp_abilities: {
 				account: {
@@ -387,51 +380,6 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.queryByText( 'All enabled' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'excludes site-published abilities from the badges for non-Automatticians, even with the catalog cached', () => {
-		// seedQueries leaves the user as a non-Automattician (no a8c team).
-		seedQueries( '', true, jetpackSite, true, true );
-		queryClient.setQueryData( userSettingsQuery().queryKey, {
-			mcp_abilities: {
-				account: {
-					'wpcom-mcp/posts-list': {
-						enabled: true,
-						readonly: true,
-						visible: true,
-						title: 'List posts',
-						description: 'List posts on your sites.',
-					},
-				},
-				sites: [
-					{
-						blog_id: jetpackSite.ID,
-						site_level_enabled: true,
-						abilities: { 'wpcom-mcp/posts-list': true },
-					},
-				],
-			},
-		} as unknown as UserSettings );
-		// A catalog cached from an Automattician's earlier view must not leak in.
-		queryClient.setQueryData( siteAbilitiesQuery( jetpackSite.ID, 'en_US' ).queryKey, [
-			{
-				name: 'jetpack-forms/get-form',
-				label: 'Get form',
-				meta: { annotations: { readonly: true } },
-			},
-			{
-				name: 'jetpack-forms/list-forms',
-				label: 'List forms',
-				meta: { annotations: { readonly: true } },
-			},
-		] );
-
-		render( <AIToolsSettings siteSlug={ jetpackSite.slug } />, { queryClient } );
-
-		// Only the wpcom tool counts, and it is on.
-		expect( screen.getAllByText( 'All enabled' ) ).not.toHaveLength( 0 );
-		expect( screen.queryByText( '1 of 3 enabled' ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( 'Disabled' ) ).not.toBeInTheDocument();
-	} );
-
 	test( 'manages the WordPress Agent email address on an Atomic site', async () => {
 		const user = userEvent.setup();
 		mockClipboard();
@@ -446,11 +394,9 @@ describe( '<AIToolsSettings>', () => {
 				'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
 			)
 		).toBeVisible();
-		expect(
-			screen.getByText(
-				'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
-			)
-		).toBeVisible();
+		const postByEmailNotice =
+			'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.';
+		expect( screen.queryByText( postByEmailNotice ) ).not.toBeInTheDocument();
 
 		const toggle = screen.getByRole( 'checkbox', {
 			name: 'Enable WordPress Agent email address',
@@ -472,6 +418,7 @@ describe( '<AIToolsSettings>', () => {
 		const addressInput = await screen.findByLabelText( 'WordPress Agent email address' );
 		expect( addressInput ).toHaveValue( 'agent+first-secret@post.wordpress.com' );
 		expect( toggle ).toBeChecked();
+		expect( screen.getByText( postByEmailNotice ) ).toBeVisible();
 
 		const addToContactsLink = screen.getByRole( 'link', { name: 'Add to contacts' } );
 		expect( addToContactsLink ).toHaveAttribute( 'download', 'email-assistant.wordpress.com.vcf' );
@@ -518,7 +465,40 @@ describe( '<AIToolsSettings>', () => {
 		await waitFor( () => {
 			expect( toggle ).not.toBeChecked();
 			expect( screen.queryByLabelText( 'WordPress Agent email address' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( postByEmailNotice ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	test( 'shows the Post by Email notice once WordPress Agent is enabled', async () => {
+		const user = userEvent.setup();
+		renderAIToolsSettings();
+
+		const postByEmailNotice =
+			'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.';
+		expect( screen.queryByText( postByEmailNotice ) ).not.toBeInTheDocument();
+
+		const pluginStatus = {
+			blog_id: site.ID,
+			enabled: true,
+			available: true,
+			on_free_trial: false,
+		};
+		const enableScope = nock( 'https://public-api.wordpress.com' )
+			.post( `/rest/v1.1/sites/${ site.ID }/big-sky-plugin` )
+			.reply( 200, pluginStatus )
+			.get( `/rest/v1.1/sites/${ site.ID }/big-sky-plugin` )
+			.reply( 200, pluginStatus );
+		mockJetpackPostByEmailSettings();
+
+		await user.click( screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } ) );
+
+		await waitFor( () => {
+			expect( enableScope.isDone() ).toBe( true );
+		} );
+		expect( await screen.findByText( postByEmailNotice ) ).toBeVisible();
+		expect(
+			screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent email address' } )
+		).not.toBeChecked();
 	} );
 
 	test( 'uses Jetpack settings for an external Jetpack site', async () => {

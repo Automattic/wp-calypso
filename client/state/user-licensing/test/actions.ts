@@ -17,10 +17,6 @@ import {
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 import * as actions from 'calypso/state/user-licensing/actions';
 
-jest.mock( 'calypso/state/partner-portal/partner/selectors', () => ( {
-	getActivePartnerKey: () => ( { oAuth2Token: 'fake_oauth2_token' } ),
-} ) );
-
 describe( 'actions', () => {
 	describe( '#requestLicenses()', () => {
 		test( 'should return a thunk which dispatches 2 actions when called', () => {

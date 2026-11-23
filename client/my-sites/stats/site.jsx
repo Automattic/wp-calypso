@@ -4,7 +4,7 @@ import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent, settings, chartBar } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import titlecase from 'to-title-case';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
@@ -67,6 +67,7 @@ import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import StatsModuleListing from './pages/shared/stats-module-listing';
 import PremiumAnalyticsPreviewSwitchOnDialog from './premium-analytics-preview/switch-on-dialog';
+import DashboardHiddenContext from './pricing-grid/dashboard-hidden-context';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
@@ -177,6 +178,7 @@ function moduleVisibilityWithUserConfiguration( userConfig, hasVideoPress ) {
 
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
 	const dispatch = useDispatch();
+	const isHidden = useContext( DashboardHiddenContext );
 	const {
 		supportsPlanUsage,
 		supportsUTMStats: supportsUTMStatsFeature,
@@ -808,11 +810,15 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 			) }
 			{ ! shouldShowUpsells ? null : <AsyncLoad require={ loadJetpackUpsellSection } /> }
-			{ ! wpcomShowUpsell && (
-				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+			{ ! isHidden && (
+				<>
+					{ ! wpcomShowUpsell && (
+						<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+					) }
+					{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
+					<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
+				</>
 			) }
-			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
-			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</div>
 	);
 }
@@ -909,6 +915,7 @@ const StatsSite = ( props ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const slug = useSelector( getSelectedSiteSlug );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isHidden = useContext( DashboardHiddenContext );
 
 	useEffect(
 		() =>
@@ -952,10 +959,12 @@ const StatsSite = ( props ) => {
 			{ /* Odyssey: if Stats module is not enabled, the page will not be rendered. */ }
 			{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
-			<PageViewTracker
-				path={ `/stats/${ period }/:site` }
-				title={ `Stats > ${ titlecase( period ) }` }
-			/>
+			{ ! isHidden && (
+				<PageViewTracker
+					path={ `/stats/${ period }/:site` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
+			) }
 			<StatsGlobalValuesContext.Consumer>
 				{ ( isInternal ) => (
 					<StatsBodyAccessCheck isInternal={ isInternal } siteId={ siteId } { ...props } />

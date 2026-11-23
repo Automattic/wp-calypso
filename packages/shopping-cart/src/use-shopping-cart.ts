@@ -1,5 +1,4 @@
-import { useContext, useState, useEffect, useRef } from 'react';
-import { createUseShoppingCartState } from './shopping-cart-hook-manager';
+import { useContext, useEffect, useMemo, useSyncExternalStore } from 'react';
 import ShoppingCartOptionsContext from './shopping-cart-options-context';
 import useManagerClient from './use-manager-client';
 import useRefetchOnFocus from './use-refetch-on-focus';
@@ -21,21 +20,12 @@ export default function useShoppingCart( cartKey: CartKey | undefined ): UseShop
 		} );
 	}, [ manager ] );
 
-	const isMounted = useRef( true );
-	useEffect( () => {
-		isMounted.current = true;
-		return () => {
-			isMounted.current = false;
-		};
-	}, [] );
-
 	// Re-render when the cart changes
-	const [ cartState, setCartState ] = useState( createUseShoppingCartState( manager ) );
-	useEffect( () => {
-		return manager.subscribe( () => {
-			isMounted.current && setCartState( createUseShoppingCartState( manager ) );
-		} );
-	}, [ manager ] );
+	const managerState = useSyncExternalStore(
+		manager.subscribe,
+		manager.getState,
+		manager.getState
+	);
 
-	return cartState;
+	return useMemo( () => ( { ...manager.actions, ...managerState } ), [ manager, managerState ] );
 }

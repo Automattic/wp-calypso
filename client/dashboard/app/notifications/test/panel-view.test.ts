@@ -5,6 +5,7 @@ describe( 'getInboxLocation', () => {
 		expect( getInboxLocation( { filterName: 'all' } ) ).toEqual( {
 			to: '/notifications',
 			search: { filter: undefined },
+			state: { notificationsNoteId: undefined },
 		} );
 	} );
 
@@ -14,15 +15,16 @@ describe( 'getInboxLocation', () => {
 			expect( getInboxLocation( { filterName } ) ).toEqual( {
 				to: '/notifications',
 				search: { filter: filterName },
+				state: { notificationsNoteId: undefined },
 			} );
 		}
 	);
 
-	test( 'opens the page on the open note and keeps the tab', () => {
+	test( 'hands the open note to the page and keeps the tab', () => {
 		expect( getInboxLocation( { filterName: 'comments', noteId: '42' } ) ).toEqual( {
-			to: '/notifications/$noteId',
-			params: { noteId: '42' },
+			to: '/notifications',
 			search: { filter: 'comments' },
+			state: { notificationsNoteId: '42' },
 		} );
 	} );
 } );

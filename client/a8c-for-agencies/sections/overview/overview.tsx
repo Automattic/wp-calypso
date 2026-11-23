@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { decodeEntities } from '@wordpress/html-entities';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
@@ -54,7 +55,7 @@ export default function Overview() {
 				<PaymentRiskNoticeBanner source="overview" />
 
 				<LayoutHeader className="a4a-overview-header">
-					<Title>{ showAgencyHeader ? agency?.name : title }</Title>
+					<Title>{ showAgencyHeader ? decodeEntities( agency.name ) : title }</Title>
 					{ showAgencyHeader && (
 						<Subtitle>
 							<AgencyOverviewHeaderInfo

@@ -5,7 +5,6 @@ import {
 	normalizeWporgTheme,
 	getNormalizedThemesQuery,
 	getSerializedThemesQuery,
-	getDeserializedThemesQueryDetails,
 	getSerializedThemesQueryWithoutPage,
 	isThemeMatchingQuery,
 } from '../utils';
@@ -182,35 +181,6 @@ describe( 'utils', () => {
 			);
 
 			expect( serializedQuery ).toEqual( '2916284:{"search":"Hello"}' );
-		} );
-	} );
-
-	describe( 'getDeserializedThemesQueryDetails()', () => {
-		test( 'should return undefined query and site if string does not contain JSON', () => {
-			const queryDetails = getDeserializedThemesQueryDetails( 'bad' );
-
-			expect( queryDetails ).toEqual( {
-				siteId: undefined,
-				query: undefined,
-			} );
-		} );
-
-		test( 'should return query but not site if string does not contain site prefix', () => {
-			const queryDetails = getDeserializedThemesQueryDetails( '{"search":"hello"}' );
-
-			expect( queryDetails ).toEqual( {
-				siteId: undefined,
-				query: { search: 'hello' },
-			} );
-		} );
-
-		test( 'should return query and site if string contains site prefix and JSON', () => {
-			const queryDetails = getDeserializedThemesQueryDetails( '2916284:{"search":"hello"}' );
-
-			expect( queryDetails ).toEqual( {
-				siteId: 2916284,
-				query: { search: 'hello' },
-			} );
 		} );
 	} );
 

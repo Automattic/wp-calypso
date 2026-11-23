@@ -628,4 +628,15 @@ describe( 'noSite', () => {
 		expect( next ).toHaveBeenCalled();
 		expect( store.getActions() ).toContainEqual( expect.objectContaining( { siteId: null } ) );
 	} );
+
+	it( 'lets the Studio checkout route through without a site', () => {
+		const pathname = '/checkout/studio/a.product';
+		const next = jest.fn();
+		const store = mockStore( stateWithSites );
+
+		noSite( { store, path: pathname, pathname, params: {}, query: {}, section: {} }, next );
+
+		expect( next ).toHaveBeenCalled();
+		expect( store.getActions() ).toContainEqual( expect.objectContaining( { siteId: null } ) );
+	} );
 } );

@@ -82,7 +82,7 @@ interface EditEntityRecordInput {
 	deleteEntities?: EntityRef[];
 	confirmationMessage?: string | null;
 	summary?: string;
-	toolCallId?: string;
+	toolCallId?: string | null;
 }
 
 type Operation = 'create' | 'edit' | 'delete';
@@ -228,7 +228,8 @@ type Batch = {
 	deletes: Entity< 'delete' >[];
 };
 
-// The schema's fields, plus what agenttic-client adds to every callback's input.
+// The schema's fields, plus the ids agenttic-client adds to every callback's input
+// (`toolCallId` is `null` for a WebMCP call).
 const BATCH_FIELDS = [
 	'addEntities',
 	'editEntities',

@@ -10,7 +10,7 @@ import {
 	TextareaControl,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { customLink, Icon, send, cautionFilled as warning } from '@wordpress/icons';
+import { customLink, Icon, send, caution as warning } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import emailValidator from 'email-validator';
@@ -136,7 +136,10 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 		[ checkoutItems ]
 	);
 
-	const productIds = checkoutItems.map( ( item ) => item.product_id ).join( ',' );
+	// The referral takes one id per license, so a line's count repeats its id.
+	const productIds = checkoutItems
+		.flatMap( ( item ) => Array< number >( item.quantity ).fill( item.product_id ) )
+		.join( ',' );
 
 	const licenses = useMemo(
 		() =>

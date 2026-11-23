@@ -3,7 +3,6 @@ import {
 	recordTracksEvent as baseRecordTracksEvent,
 	analyticsEvents,
 	recordTracksPageView as baseRecordTracksPageView,
-	pushEventToTracksQueue,
 } from '@automattic/calypso-analytics';
 
 export const tracksEvents = new EventEmitter();
@@ -18,8 +17,4 @@ export function recordTracksEvent( eventName, eventProperties ) {
 
 export function recordTracksPageView( urlPath, params ) {
 	baseRecordTracksPageView( urlPath, params );
-}
-
-export function setTracksOptOut( isOptingOut ) {
-	pushEventToTracksQueue( [ 'setOptOut', isOptingOut ] );
 }

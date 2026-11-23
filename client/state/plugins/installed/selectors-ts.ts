@@ -1,11 +1,6 @@
 import { createSelector } from '@automattic/state-utils';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
-import {
-	getSite,
-	getSiteTitle,
-	isJetpackSite,
-	isJetpackSiteSecondaryNetworkSite,
-} from 'calypso/state/sites/selectors';
+import { getSiteTitle } from 'calypso/state/sites/selectors';
 import type {
 	InstalledPlugins,
 	InstalledPluginData,
@@ -30,10 +25,6 @@ const getSortCompareNumber = ( a: string, b: string ) => {
 	return 0;
 };
 
-export function isEqualSlugOrId( pluginSlug: string, plugin: Plugin ) {
-	return plugin.slug === pluginSlug || plugin?.id?.split( '/' ).shift() === pluginSlug;
-}
-
 export function isRequesting( state: AppState, siteId: number ): boolean {
 	if ( typeof state.plugins.installed.isRequesting[ siteId ] === 'undefined' ) {
 		return false;
@@ -48,10 +39,6 @@ export function isRequestingForSites( state: AppState, sites: number[] ) {
 
 export function isRequestingForAllSites( state: AppState ): boolean {
 	return state.plugins.installed.isRequestingAll;
-}
-
-export function requestPluginsError( state: AppState ) {
-	return state.plugins.installed.requestError;
 }
 
 const getSiteIdsThatHavePlugins = createSelector(
@@ -219,27 +206,6 @@ export const getFilteredAndSortedPlugins = createSelector(
 	}
 );
 
-export function getPluginsWithUpdates( state: AppState, siteIds: number[] ) {
-	return getFilteredAndSortedPlugins( state, siteIds, 'updates' ).map( ( plugin ) => ( {
-		...plugin,
-		type: 'plugin',
-	} ) );
-}
-
-export function getPluginOnSites( state: AppState, siteIds: number[], pluginSlug: string ) {
-	const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
-
-	if ( ! plugin ) {
-		return undefined;
-	}
-
-	if ( siteIds.some( ( siteId ) => !! plugin.sites[ siteId ] ) ) {
-		return plugin;
-	}
-
-	return undefined;
-}
-
 export const getPluginOnSite = createSelector(
 	( state: AppState, siteId: number, pluginSlug: string ) => {
 		const plugin = getAllPluginsIndexedByPluginSlug( state )[ pluginSlug ];
@@ -288,46 +254,6 @@ export const getSitesWithPlugin = createSelector(
 			const siteTitleB = getSiteTitle( state, b )?.toLowerCase() || '';
 			return getSortCompareNumber( siteTitleA, siteTitleB );
 		} );
-	},
-	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
-	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
-);
-
-export const getSiteObjectsWithPlugin = createSelector(
-	( state: AppState, siteIds: number[], pluginSlug: string ) => {
-		const siteIdsWithPlugin = getSitesWithPlugin( state, siteIds, pluginSlug );
-		return siteIdsWithPlugin.map( ( siteId ) => getSite( state, siteId ) );
-	},
-	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
-	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
-);
-
-export const getSitesWithoutPlugin = createSelector(
-	( state: AppState, siteIds: number[], pluginSlug: string ) => {
-		const installedOnSiteIds = getSitesWithPlugin( state, siteIds, pluginSlug ) || emptyNumberArray;
-
-		return siteIds.filter( ( siteId ) => {
-			if ( ! getSite( state, siteId )?.visible || ! isJetpackSite( state, siteId ) ) {
-				return false;
-			}
-
-			if ( isJetpackSiteSecondaryNetworkSite( state, siteId ) ) {
-				return false;
-			}
-
-			return installedOnSiteIds.every( function ( installedOnSiteId ) {
-				return installedOnSiteId !== siteId;
-			} );
-		} );
-	},
-	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
-	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
-);
-
-export const getSiteObjectsWithoutPlugin = createSelector(
-	( state: AppState, siteIds: number[], pluginSlug: string ) => {
-		const siteIdsWithoutPlugin = getSitesWithoutPlugin( state, siteIds, pluginSlug );
-		return siteIdsWithoutPlugin.map( ( siteId ) => getSite( state, siteId ) );
 	},
 	( state: AppState ) => [ getAllPluginsIndexedByPluginSlug( state ), getSitesItems( state ) ],
 	( state: AppState, siteIds: number[], pluginSlug: string ) => [ pluginSlug, ...siteIds ].join()
@@ -392,36 +318,6 @@ export function isPluginActionInProgress(
 ) {
 	return isPluginActionStatus( state, siteId, pluginId, action, 'inProgress' );
 }
-
-/**
- * Retrieve all plugin statuses of a certain type.
- * @param  {Object} state    Global state tree
- * @param  {string} status   Status of interest
- * @returns {Array}          Array of plugin status objects
- */
-export const getPluginStatusesByType = createSelector(
-	( state: AppState, status: string ) => {
-		const statuses: PluginStatus[] = [];
-
-		const pluginStatuses: { [ siteId: number ]: { [ pluginId: string ]: PluginStatus } } =
-			state.plugins.installed.status;
-
-		Object.entries( pluginStatuses ).map( ( [ siteId, siteStatuses ] ) => {
-			Object.entries( siteStatuses ).map( ( [ pluginId, pluginStatus ] ) => {
-				if ( pluginStatus.status === status ) {
-					statuses.push( {
-						...pluginStatus,
-						siteId: Number( siteId ),
-						pluginId,
-					} );
-				}
-			} );
-		} );
-
-		return statuses;
-	},
-	( state: AppState ) => state.plugins.installed.status
-);
 
 /**
  * Returns true if a particular plugin is installed and active for a specified site.

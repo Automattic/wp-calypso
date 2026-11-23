@@ -5,7 +5,7 @@ import {
 	StatsCard,
 	StatsCardAvatar,
 } from '@automattic/components';
-import { Icon, tag, file } from '@wordpress/icons';
+import { Icon, tag, folder } from '@wordpress/icons';
 import clsx from 'clsx';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -114,7 +114,7 @@ const StatsListCard = ( {
 
 	const getLabelIcon = ( labelIconType ) => {
 		if ( labelIconType === 'folder' ) {
-			return <Icon className="stats-icon" icon={ file } size={ 22 } />;
+			return <Icon className="stats-icon" icon={ folder } size={ 22 } />;
 		} else if ( labelIconType === 'tag' ) {
 			return <Icon className="stats-icon" icon={ tag } size={ 22 } />;
 		}

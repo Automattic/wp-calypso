@@ -7,10 +7,10 @@ import {
 	CardBody,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight, arrowUp, arrowDown, fullscreen } from '@wordpress/icons';
+import { __, isRTL, sprintf } from '@wordpress/i18n';
+import { chevronLeft, chevronRight, arrowUp, arrowDown } from '@wordpress/icons';
 import clsx from 'clsx';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
@@ -71,19 +71,26 @@ type NoteProps = {
 	noteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 	noteNavigation: NoteNavigation;
-	onOpenFullView?: () => void;
 };
 
-const Note = ( {
-	isDismissible,
-	noteId,
-	setSelectedNoteId,
-	noteNavigation,
-	onOpenFullView,
-}: NoteProps ) => {
+const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: NoteProps ) => {
 	const dispatch = useDispatch();
 	const isLargeScreen = useViewportMatch( 'large' );
-	const goBack = () => setSelectedNoteId( undefined );
+
+	// Spam and trash go back once their request lands, and by then another note may be open, in
+	// this Note or in a new one.
+	const shownNoteIdRef = useRef< string >( undefined );
+	useEffect( () => {
+		shownNoteIdRef.current = noteId;
+		return () => {
+			shownNoteIdRef.current = undefined;
+		};
+	}, [ noteId ] );
+	const goBack = () => {
+		if ( shownNoteIdRef.current === noteId ) {
+			setSelectedNoteId( undefined );
+		}
+	};
 
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
@@ -105,6 +112,9 @@ const Note = ( {
 	}
 
 	const isSimplifiedNote = isSimplified && hasNoteContext( note );
+	const title = isSimplified
+		? toSentenceCase( isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title, locale )
+		: note.title;
 
 	return (
 		<>
@@ -119,36 +129,33 @@ const Note = ( {
 			>
 				<HStack>
 					<HStack justify="flex-start">
-						{ ! isLargeScreen && (
-							<Button
-								size="small"
-								icon={ isRTL() ? chevronRight : chevronLeft }
-								label={ __( 'Back' ) }
-								onClick={ goBack }
-							/>
-						) }
 						<Heading
 							level={ 3 }
 							size={ 15 }
 							weight="var(--wpds-typography-font-weight-emphasis, 600)"
 						>
-							{ isSimplified
-								? toSentenceCase(
-										isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title,
-										locale
-									)
-								: note.title }
+							{ isLargeScreen ? (
+								title
+							) : (
+								// The title goes back too, so the target isn't just the arrow. Its
+								// name starts with the visible title, for voice control.
+								<Button
+									size="small"
+									className="wpnc__note-back"
+									icon={ isRTL() ? chevronRight : chevronLeft }
+									text={ title }
+									label={ sprintf(
+										/* translators: %s is the open notification's title, e.g. "New post". */
+										__( '%s, back to notifications' ),
+										title
+									) }
+									showTooltip={ false }
+									onClick={ goBack }
+								/>
+							) }
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
-						{ onOpenFullView && (
-							<Button
-								size="small"
-								icon={ fullscreen }
-								label={ __( 'Open full view' ) }
-								onClick={ onOpenFullView }
-							/>
-						) }
 						<MarkUnreadButton note={ note } goBack={ goBack } />
 						{ ! isLargeScreen && (
 							<>

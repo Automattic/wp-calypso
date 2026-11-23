@@ -1,5 +1,4 @@
 import {
-	isAutomatticianQuery,
 	userSettingsMutation,
 	userSettingsQuery,
 	siteAbilitiesQuery,
@@ -116,15 +115,13 @@ export default function RemoteAbilitiesSection( {
 	const localeSlug = useLocale();
 	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
-	// Staff-gated like the server-side remote: path (AI-1328); drop this gate at GA.
-	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const {
 		data: abilities,
 		isLoading,
 		isError,
 	} = useQuery( {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
-		enabled: !! isAutomattician,
+		enabled: !! site.jetpack,
 	} );
 
 	const savedGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
@@ -156,7 +153,7 @@ export default function RemoteAbilitiesSection( {
 		} )
 	);
 
-	if ( ! isAutomattician || ! site.jetpack || ( namespaces.size === 0 && ! isLoading ) ) {
+	if ( ! site.jetpack || ( namespaces.size === 0 && ! isLoading ) ) {
 		return null;
 	}
 

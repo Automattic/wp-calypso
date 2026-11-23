@@ -11,7 +11,7 @@ export type WordPressMigrationFinding = {
 };
 
 export type WordPressMigrationStatus = {
-	status: 'not_started' | 'running' | 'paused' | 'failed' | 'completed';
+	status: 'not_started' | 'running' | 'paused' | 'failed' | 'completed' | 'cancelled';
 	phase: 'prepare-source' | 'prepare-destination' | 'preflight' | 'migration' | 'cleanup' | null;
 	findings: WordPressMigrationFinding[];
 	progress: { message: string } | null;
@@ -22,6 +22,7 @@ export type WordPressMigrationStatus = {
 	notification_emails: string[];
 	// Our team has taken the migration over, which the site's own migration state shows once it's read again.
 	handed_off: boolean;
+	can_cancel?: boolean;
 };
 
 export type WordPressMigrationSourceConnection = {
@@ -51,4 +52,8 @@ export type WordPressMigrationConfigureParams = {
 
 export type WordPressMigrationRunParams = {
 	accept_findings?: string[];
+};
+
+export type WordPressMigrationCancellation = {
+	status: 'cancelled';
 };

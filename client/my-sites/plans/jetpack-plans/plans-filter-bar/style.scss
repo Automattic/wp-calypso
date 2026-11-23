@@ -59,25 +59,9 @@
 				box-shadow: 0 0 0 2px #fff, 0 0 0 3.5px var(--color-primary);
 			}
 
-			.components-form-toggle__track {
-				width: 42px;
-				height: 22px;
-				border-radius: 11px; /* stylelint-disable-line scales/radii */
-			}
-
-			.components-form-toggle__thumb {
-				width: 16px;
-				height: 16px;
-			}
-
 			&.is-checked {
-				.components-form-toggle__track {
-					background-color: var(--color-primary);
-				}
-
-				.components-form-toggle__thumb {
-					transform: translateX(20px);
-				}
+				--wpds-color-background-interactive-brand-strong: var(--color-primary);
+				--wpds-color-stroke-interactive-brand: var(--color-primary);
 			}
 		}
 	}

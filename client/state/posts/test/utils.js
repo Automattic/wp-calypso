@@ -2,14 +2,9 @@ import deepFreeze from 'deep-freeze';
 import {
 	normalizePostForDisplay,
 	normalizePostForState,
-	normalizePostForApi,
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
-	getDeserializedPostsQueryDetails,
-	getSerializedPostsQueryWithoutPage,
-	getTermIdsFromEdits,
 	isTermsEqual,
-	applyPostEdits,
 	mergePostEdits,
 	getEditURL,
 	getFeaturedImageId,
@@ -92,37 +87,6 @@ describe( 'utils', () => {
 				{}
 			);
 			expect( isEqual ).toBe( false );
-		} );
-	} );
-
-	describe( 'normalizePostForApi()', () => {
-		test( 'should return null if post is falsey', () => {
-			const normalizedPost = normalizePostForApi();
-			expect( normalizedPost ).toBeNull();
-		} );
-
-		test( 'should return a normalized post object', () => {
-			const post = {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Ribs &amp; Chicken',
-				terms: {
-					category: [ { ID: 777, name: 'recipes' } ],
-					post_tag: [ 'super', 'yummy', 'stuff' ],
-				},
-			};
-
-			const normalizedPost = normalizePostForApi( post );
-			expect( normalizedPost ).toEqual( {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Ribs &amp; Chicken',
-				terms: {
-					post_tag: [ 'super', 'yummy', 'stuff' ],
-				},
-			} );
 		} );
 	} );
 
@@ -302,58 +266,6 @@ describe( 'utils', () => {
 		} );
 	} );
 
-	describe( 'getDeserializedPostsQueryDetails()', () => {
-		test( 'should return undefined query and site if string does not contain JSON', () => {
-			const queryDetails = getDeserializedPostsQueryDetails( 'bad' );
-
-			expect( queryDetails ).toEqual( {
-				siteId: undefined,
-				query: undefined,
-			} );
-		} );
-
-		test( 'should return query but not site if string does not contain site prefix', () => {
-			const queryDetails = getDeserializedPostsQueryDetails( '{"search":"hello"}' );
-
-			expect( queryDetails ).toEqual( {
-				siteId: undefined,
-				query: { search: 'hello' },
-			} );
-		} );
-
-		test( 'should return query and site if string contains site prefix and JSON', () => {
-			const queryDetails = getDeserializedPostsQueryDetails( '2916284:{"search":"hello"}' );
-
-			expect( queryDetails ).toEqual( {
-				siteId: 2916284,
-				query: { search: 'hello' },
-			} );
-		} );
-	} );
-
-	describe( '#getSerializedPostsQueryWithoutPage()', () => {
-		test( 'should return a JSON string of a normalized query omitting page', () => {
-			const serializedQuery = getSerializedPostsQueryWithoutPage( {
-				type: 'page',
-				page: 2,
-			} );
-
-			expect( serializedQuery ).toBe( '{"type":"page"}' );
-		} );
-
-		test( 'should prefix site ID if specified', () => {
-			const serializedQuery = getSerializedPostsQueryWithoutPage(
-				{
-					search: 'Hello',
-					page: 2,
-				},
-				2916284
-			);
-
-			expect( serializedQuery ).toBe( '2916284:{"search":"Hello"}' );
-		} );
-	} );
-
 	describe( 'mergePostEdits', () => {
 		test( 'should return null when there are no objects to merge', () => {
 			expect( mergePostEdits() ).toBeNull();
@@ -503,175 +415,6 @@ describe( 'utils', () => {
 					{ key: 'geo_latitude', value: '10', operation: 'update' },
 					{ key: 'geo_longitude', value: '20', operation: 'update' },
 				],
-			} );
-		} );
-	} );
-
-	describe( 'applyPostEdits', () => {
-		test( 'should modify metadata', () => {
-			const edited = applyPostEdits(
-				deepFreeze( {
-					metadata: [ { key: 'geo_latitude', value: '10' } ],
-				} ),
-				{
-					metadata: [ { key: 'geo_latitude', value: '20', operation: 'update' } ],
-				}
-			);
-
-			expect( edited ).toEqual( {
-				metadata: [ { key: 'geo_latitude', value: '20' } ],
-			} );
-		} );
-
-		test( 'should add metadata', () => {
-			const edited = applyPostEdits(
-				deepFreeze( {
-					metadata: [ { key: 'geo_latitude', value: '10' } ],
-				} ),
-				{
-					metadata: [ { key: 'geo_longitude', value: '20', operation: 'update' } ],
-				}
-			);
-
-			expect( edited ).toEqual( {
-				metadata: [
-					{ key: 'geo_latitude', value: '10' },
-					{ key: 'geo_longitude', value: '20' },
-				],
-			} );
-		} );
-
-		test( 'should remove metadata', () => {
-			const edited = applyPostEdits(
-				deepFreeze( {
-					metadata: [
-						{ key: 'geo_latitude', value: '10' },
-						{ key: 'geo_longitude', value: '20' },
-					],
-				} ),
-				{
-					metadata: [ { key: 'geo_longitude', operation: 'delete' } ],
-				}
-			);
-
-			expect( edited ).toEqual( {
-				metadata: [ { key: 'geo_latitude', value: '10' } ],
-			} );
-		} );
-
-		test( 'should return unchanged object on noop update', () => {
-			const post = deepFreeze( {
-				metadata: [ { key: 'geo_latitude', value: '10' } ],
-			} );
-
-			const edited = applyPostEdits( post, {
-				metadata: [ { key: 'geo_latitude', value: '10', operation: 'update' } ],
-			} );
-
-			expect( edited ).toEqual( post );
-		} );
-
-		test( 'should return unchanged object on noop delete', () => {
-			const post = deepFreeze( {
-				metadata: [ { key: 'geo_latitude', value: '10' } ],
-			} );
-
-			const edited = applyPostEdits( post, {
-				metadata: [ { key: 'geo_longitude', value: '10', operation: 'delete' } ],
-			} );
-
-			expect( edited ).toEqual( post );
-		} );
-
-		test( 'should return metadata array after applying edits to a false value', () => {
-			const post = deepFreeze( {
-				metadata: false, // value returned by REST API for a new post
-			} );
-
-			const edited = applyPostEdits( post, {
-				metadata: [ { key: 'geo_latitude', value: '10', operation: 'update' } ],
-			} );
-
-			expect( edited ).toEqual( {
-				metadata: [ { key: 'geo_latitude', value: '10' } ],
-			} );
-		} );
-	} );
-
-	describe( '#getTermIdsFromEdits()', () => {
-		test( 'should return the same post edit object if no term edits have been made', () => {
-			const normalizedPostEdits = getTermIdsFromEdits( {
-				title: 'Chewbacca Saves',
-			} );
-
-			expect( normalizedPostEdits ).toEqual( {
-				title: 'Chewbacca Saves',
-			} );
-		} );
-
-		test( 'should return the add terms_by_id if terms have been edited', () => {
-			const originalPost = deepFreeze( {
-				title: 'Chewbacca Saves',
-				terms: {
-					wookie_post_types: {
-						awesomesauce: {
-							ID: 777,
-							name: 'Awesomesauce',
-						},
-					},
-				},
-			} );
-
-			const normalizedPostEdits = getTermIdsFromEdits( originalPost );
-
-			expect( normalizedPostEdits ).toEqual( {
-				title: 'Chewbacca Saves',
-				terms: {
-					wookie_post_types: {
-						awesomesauce: {
-							ID: 777,
-							name: 'Awesomesauce',
-						},
-					},
-				},
-				terms_by_id: {
-					wookie_post_types: [ 777 ],
-				},
-			} );
-		} );
-
-		test( 'should taxonomy terms_by_id to null if object is empty', () => {
-			const normalizedPostEdits = getTermIdsFromEdits( {
-				title: 'Chewbacca Saves',
-				terms: {
-					wookie_post_types: {},
-				},
-			} );
-
-			expect( normalizedPostEdits ).toEqual( {
-				title: 'Chewbacca Saves',
-				terms: {
-					wookie_post_types: {},
-				},
-				terms_by_id: {
-					wookie_post_types: null,
-				},
-			} );
-		} );
-
-		test( 'should not set terms_by_id for taxonomies that set an array on terms', () => {
-			const normalizedPostEdits = getTermIdsFromEdits( {
-				title: 'Chewbacca Saves',
-				terms: {
-					wookie_post_tags: [ 'raaar', 'uggggaaarr' ],
-				},
-			} );
-
-			expect( normalizedPostEdits ).toEqual( {
-				title: 'Chewbacca Saves',
-				terms: {
-					wookie_post_tags: [ 'raaar', 'uggggaaarr' ],
-				},
 			} );
 		} );
 	} );

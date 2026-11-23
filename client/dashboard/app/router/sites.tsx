@@ -97,9 +97,9 @@ import {
 	redirectIfTwoStepReauthRequired,
 } from './redirect';
 import { rootRoute } from './root';
-import type { MigrationCompletedSearch } from '../../sites/overview/migration-completed-notice';
-import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
-import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
+import type { DifmOfferSearch } from '../../sites/difm/components/difm-offer-card/thank-you';
+import type { MigrationCompletedSearch } from '../../sites/migration/components/migration-completed-notice';
+import type { StaticSiteImportSearch } from '../../sites/static-site-import';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -320,9 +320,14 @@ export const siteOverviewRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/overview' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			component: () => (
+				<d.default
+					siteSlug={ siteRoute.useParams().siteSlug }
+					search={ siteOverviewRoute.useSearch() }
+				/>
+			),
 		} )
 	)
 );
@@ -2053,9 +2058,9 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	return [
 		sitesRoute.lazy( () =>
-			import( '../../sites' ).then( ( d ) =>
+			import( '../../app-dotcom/routes/sites' ).then( ( d ) =>
 				createLazyRoute( 'sites' )( {
-					component: d.default,
+					component: () => <d.default search={ sitesRoute.useSearch() } />,
 				} )
 			)
 		),

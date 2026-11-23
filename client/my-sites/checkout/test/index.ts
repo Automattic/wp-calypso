@@ -7,6 +7,7 @@ import { noSite } from 'calypso/my-sites/controller';
 import {
 	checkoutAkismetSiteless,
 	checkoutMarketplaceSiteless,
+	checkoutStudioSiteless,
 	checkoutWpcomSiteless,
 } from '../controller';
 import registerCheckoutRoutes from '../index';
@@ -63,6 +64,31 @@ describe( 'checkout routes', () => {
 		expect( wpcomIndex ).toBeGreaterThanOrEqual( 0 );
 		expect( genericIndex ).toBeGreaterThanOrEqual( 0 );
 		expect( wpcomIndex ).toBeLessThan( genericIndex );
+	} );
+
+	it( 'guards the Studio checkout route with redirectLoggedOut', () => {
+		registerCheckoutRoutes();
+
+		expect( page ).toHaveBeenCalledWith(
+			'/checkout/studio/:productSlug',
+			mockLocaleMiddleware,
+			redirectLoggedOut,
+			noSite,
+			checkoutStudioSiteless,
+			makeLayout,
+			clientRender
+		);
+	} );
+
+	it( 'registers the Studio checkout route ahead of the generic product route', () => {
+		registerCheckoutRoutes();
+
+		const studioIndex = registrationIndexOf( '/checkout/studio/:productSlug' );
+		const genericIndex = registrationIndexOf( '/checkout/:product/:domainOrProduct' );
+
+		expect( studioIndex ).toBeGreaterThanOrEqual( 0 );
+		expect( genericIndex ).toBeGreaterThanOrEqual( 0 );
+		expect( studioIndex ).toBeLessThan( genericIndex );
 	} );
 
 	// Single-segment, so it competes with /checkout/:domainOrProduct rather than the two-segment

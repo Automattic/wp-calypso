@@ -217,8 +217,7 @@ export function getFooterColumns( {
 				{
 					slug: 'press',
 					label: __( 'Press', __i18n_text_domain__ ),
-					url: 'https://automattic.com/press/',
-					chevron: true,
+					url: localizeUrl( 'https://wordpress.com/press/' ),
 				},
 				{
 					slug: 'tos',
@@ -449,6 +448,11 @@ export function getFooterColumns2026( {
 					label: __( 'Accessibility', __i18n_text_domain__ ),
 					url: localizeUrl( 'https://wordpress.com/accessibility/' ),
 				},
+				{
+					slug: 'security',
+					label: __( 'Security', __i18n_text_domain__ ),
+					url: localizeUrl( 'https://wordpress.com/support/security/' ),
+				},
 				// The sitemap page is English-only.
 				...( locale === 'en'
 					? [
@@ -459,6 +463,12 @@ export function getFooterColumns2026( {
 							},
 						]
 					: [] ),
+				{
+					slug: 'status',
+					label: __( 'Status', __i18n_text_domain__ ),
+					url: 'https://automatticstatus.com/',
+					chevron: true,
+				},
 				{
 					slug: 'compare',
 					label: __( 'Compare', __i18n_text_domain__ ),
@@ -471,15 +481,9 @@ export function getFooterColumns2026( {
 					chevron: true,
 				},
 				{
-					slug: 'partners',
-					label: __( 'Partners', __i18n_text_domain__ ),
-					url: localizeUrl( 'https://wordpress.com/partners/' ),
-				},
-				{
 					slug: 'press',
 					label: __( 'Press', __i18n_text_domain__ ),
-					url: 'https://automattic.com/press/',
-					chevron: true,
+					url: localizeUrl( 'https://wordpress.com/press/' ),
 				},
 			],
 		},

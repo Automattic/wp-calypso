@@ -3,8 +3,35 @@
  */
 
 import { renderHook } from '@testing-library/react';
-import { useProductTermAvailabilityTooltip } from '../use-marketplace';
+import {
+	getWPCOMTieredPrice,
+	getWPCOMTierPrices,
+	useGetProductPricingInfo,
+	useProductTermAvailabilityTooltip,
+} from '../use-marketplace';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
+
+jest.mock( '@automattic/calypso-config', () => {
+	const config = jest.fn();
+	return Object.assign( config, {
+		isEnabled: ( flag: string ) => [ 'a4a-bd-checkout', 'a4a-bd-term-pricing' ].includes( flag ),
+	} );
+} );
+
+jest.mock( 'calypso/a8c-for-agencies/data/marketplace/use-products-query', () => ( {
+	__esModule: true,
+	default: () => ( { data: [] } ),
+} ) );
+
+jest.mock( 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites', () => ( {
+	__esModule: true,
+	default: () => ( { count: 0 } ),
+} ) );
+
+jest.mock( '../../hosting-overview/hooks/use-pressable-ownership-type', () => ( {
+	__esModule: true,
+	default: () => 'none',
+} ) );
 
 const buildProduct = ( overrides: Partial< APIProductFamilyProduct > = {} ) =>
 	( {
@@ -77,5 +104,75 @@ describe( 'useProductTermAvailabilityTooltip', () => {
 		expect( result.current( product ) ).toBe(
 			'This product is not available for monthly billing. We will bill you yearly instead.'
 		);
+	} );
+} );
+
+describe( 'WordPress.com promotions', () => {
+	const promotion = { price: 198, discount: 25, ends_at: '2999-12-12T00:00:00+00:00' };
+	const wpcom = ( overrides: Partial< APIProductFamilyProduct > = {} ) =>
+		buildProduct( {
+			family_slug: 'wpcom-hosting',
+			yearly_price: 264,
+			tier_yearly_prices: [
+				{ units: 2, price: 264, promotional_price: 198 },
+				{ units: 4, price: 158.5, promotional_price: 118.87 },
+			],
+			...overrides,
+		} );
+
+	it( 'prices every tier, including a single site, at its promotional price', () => {
+		expect(
+			getWPCOMTierPrices( wpcom( { yearly_promotion: promotion } ), 'yearly' ).map(
+				( tier ) => tier.pricePerUnit
+			)
+		).toEqual( [ 198, 198, 118.87 ] );
+	} );
+
+	it( 'prices the promotion like checkout, off the line total', () => {
+		// 4 × 118.87 would be 475.48; checkout charges 25% off 634.
+		expect( getWPCOMTieredPrice( wpcom( { yearly_promotion: promotion } ), 4, 'yearly' ) ).toEqual(
+			{
+				actualCost: 1056,
+				discountedCost: 475.5,
+				discountPercentage: 55,
+				promotion,
+			}
+		);
+	} );
+
+	it( 'rounds the promotional total down to whole yen for JPY', () => {
+		const plan = wpcom( {
+			currency: 'JPY',
+			yearly_price: 43854,
+			yearly_promotion: { ...promotion, price: 32890 },
+			tier_yearly_prices: [ { units: 2, price: 43854, promotional_price: 32890 } ],
+		} );
+		expect( getWPCOMTieredPrice( plan, 1, 'yearly' ).discountedCost ).toBe( 32890 );
+		// 2 × 32890 would be 65780; checkout charges 25% off 87708.
+		expect( getWPCOMTieredPrice( plan, 2, 'yearly' ).discountedCost ).toBe( 65781 );
+	} );
+
+	it( 'ignores promotional tier prices once the promotion has ended', () => {
+		const ended = { ...promotion, ends_at: '2000-01-01T00:00:00+00:00' };
+		const pricing = getWPCOMTieredPrice( wpcom( { yearly_promotion: ended } ), 4, 'yearly' );
+
+		expect( pricing.discountedCost ).toBe( 634 );
+		expect( pricing.promotion ).toBeUndefined();
+	} );
+} );
+
+describe( 'useGetProductPricingInfo', () => {
+	it( 'prices a Billing Dragon line at the term price of one license times its count', () => {
+		const { result } = renderHook( () => useGetProductPricingInfo( 'yearly', 'USD' ) );
+
+		const { actualCost, discountedCost, showActualCost } = result.current.getProductPricingInfo(
+			{},
+			buildProduct(),
+			3
+		);
+
+		expect( discountedCost ).toBe( 360 );
+		expect( actualCost ).toBe( 360 );
+		expect( showActualCost ).toBe( false );
 	} );
 } );

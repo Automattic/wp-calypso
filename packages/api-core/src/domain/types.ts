@@ -97,7 +97,7 @@ export interface Domain extends DomainSummary {
 	pending_transfer: boolean;
 	whois_update_unmodifiable_fields: string[];
 	renewable_until: string;
-	ssl_status: 'active' | 'inactive' | 'newly_registered' | 'pending';
+	ssl_status: 'active' | 'inactive' | 'newly_registered' | 'pending' | 'failed';
 	subdomain_part: string;
 	transfer_status: DomainTransferStatus | null;
 	transfer_away_eligible_at: string;

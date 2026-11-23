@@ -2,7 +2,6 @@ import {
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
 	MAGIC_LOGIN_HIDE_REQUEST_NOTICE,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-	MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 	MAGIC_LOGIN_REQUEST_AUTH_ERROR,
 	MAGIC_LOGIN_REQUEST_AUTH_FETCH,
@@ -13,12 +12,7 @@ import {
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
-import {
-	CHECK_YOUR_EMAIL_PAGE,
-	INTERSTITIAL_PAGE,
-	LINK_EXPIRED_PAGE,
-	REQUEST_FORM,
-} from './constants';
+import { CHECK_YOUR_EMAIL_PAGE, LINK_EXPIRED_PAGE, REQUEST_FORM } from './constants';
 
 export const currentView = ( state = null, action ) => {
 	switch ( action.type ) {
@@ -28,8 +22,6 @@ export const currentView = ( state = null, action ) => {
 			return REQUEST_FORM;
 		case MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE:
 			return CHECK_YOUR_EMAIL_PAGE;
-		case MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE:
-			return INTERSTITIAL_PAGE;
 		case MAGIC_LOGIN_SHOW_LINK_EXPIRED:
 			return LINK_EXPIRED_PAGE;
 	}
@@ -61,8 +53,6 @@ export const isFetchingAuth = ( state = false, action ) => {
 		case MAGIC_LOGIN_REQUEST_AUTH_FETCH:
 			return true;
 		case MAGIC_LOGIN_REQUEST_AUTH_SUCCESS:
-			return false;
-		case MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE:
 			return false;
 	}
 

@@ -2,7 +2,12 @@
  * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RouterProvider, createMemoryHistory, createRouter } from '@tanstack/react-router';
+import {
+	RouterProvider,
+	createMemoryHistory,
+	createRouter,
+	type RouterHistory,
+} from '@tanstack/react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, type Mock } from 'vitest';
@@ -82,10 +87,10 @@ function setNarrowScreen( isNarrow: boolean ) {
 
 const recordTracksEvent = vi.fn();
 
-async function renderNotifications( ...initialPaths: string[] ) {
+async function renderRouter( history: RouterHistory ) {
 	const router = createRouter( {
 		routeTree: rootRoute.addChildren( createNotificationsRoutes() ),
-		history: createMemoryHistory( { initialEntries: initialPaths } ),
+		history,
 		context: { config: APP_CONTEXT_DEFAULT_CONFIG },
 	} );
 
@@ -105,6 +110,22 @@ async function renderNotifications( ...initialPaths: string[] ) {
 	);
 
 	return router;
+}
+
+/**
+ * Renders the page at the given addresses, on the last one.
+ */
+function renderNotifications( ...initialPaths: string[] ) {
+	return renderRouter( createMemoryHistory( { initialEntries: initialPaths } ) );
+}
+
+/**
+ * Renders the page as the panel's "Open full view" opens it, with the panel's open note handed over.
+ */
+function renderHandedOffNote( noteId: string ) {
+	const history = createMemoryHistory( { initialEntries: [ '/notifications' ] } );
+	history.replace( '/notifications', { notificationsNoteId: noteId } );
+	return renderRouter( history );
 }
 
 describe( '<Notifications>', () => {
@@ -127,7 +148,7 @@ describe( '<Notifications>', () => {
 
 	test( 'opens the notification settings from the list', async () => {
 		const user = userEvent.setup();
-		const router = await renderNotifications( '/notifications/42?filter=comments' );
+		const router = await renderNotifications( '/notifications?filter=comments' );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Settings' } ) );
 
@@ -166,9 +187,11 @@ describe( '<Notifications>', () => {
 
 	test( 'closes the open note and keeps the new tab when the tab changes', async () => {
 		const user = userEvent.setup();
-		const router = await renderNotifications( '/notifications/42' );
+		const router = await renderNotifications( '/notifications' );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Show comments' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Open a note from all' } ) );
+		await screen.findByRole( 'button', { name: 'Close note 42' } );
+		await user.click( screen.getByRole( 'button', { name: 'Show comments' } ) );
 
 		await waitFor( () =>
 			expect( router.state.location.href ).toBe( '/notifications?filter=comments' )
@@ -191,36 +214,43 @@ describe( '<Notifications>', () => {
 		expect( router.state.location.href ).toBe( '/notifications?filter=likes' );
 	} );
 
-	test( 'goes back to the list a note was opened from after the tab changes', async () => {
-		const user = userEvent.setup();
-		const router = await renderNotifications( '/notifications' );
-
-		await user.click( await screen.findByRole( 'button', { name: 'Open a note from all' } ) );
-		await screen.findByRole( 'button', { name: 'Close note 42' } );
-		await user.click( screen.getByRole( 'button', { name: 'Show comments' } ) );
-		await screen.findByRole( 'button', { name: 'Open a note from comments' } );
-
-		router.history.back();
-
-		expect( await screen.findByRole( 'button', { name: 'Open a note from all' } ) ).toBeVisible();
-		expect( router.state.location.href ).toBe( '/notifications' );
-		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'opens a note at its own address and keeps the tab', async () => {
+	test( 'opens a note without changing the address', async () => {
 		const user = userEvent.setup();
 		const router = await renderNotifications( '/notifications?filter=unread' );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Open a note from unread' } ) );
 
 		expect( await screen.findByRole( 'button', { name: 'Close note 42' } ) ).toBeVisible();
-		expect( router.state.location.href ).toBe( '/notifications/42?filter=unread' );
+		expect( router.state.location.href ).toBe( '/notifications?filter=unread' );
 	} );
 
-	test( 'shows the note an address links to', async () => {
-		await renderNotifications( '/notifications/42' );
+	test( 'shows the note the panel hands over, and forgets it for a reload', async () => {
+		const router = await renderHandedOffNote( '42' );
 
 		expect( await screen.findByRole( 'button', { name: 'Close note 42' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( router.state.location.state.notificationsNoteId ).toBeUndefined()
+		);
+	} );
+
+	test( 'shows the note an address names once, and takes it out of the address', async () => {
+		const router = await renderNotifications( '/notifications?filter=unread&note=42' );
+
+		expect( await screen.findByRole( 'button', { name: 'Close note 42' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Open a note from unread' } ) ).toBeVisible();
+		await waitFor( () =>
+			expect( router.state.location.href ).toBe( '/notifications?filter=unread' )
+		);
+	} );
+
+	test( 'ignores an address that names a note in a form the panel never writes', async () => {
+		const router = await renderNotifications( '/notifications?note=00042' );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'No notification selected' } )
+		).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( router.state.location.href ).toBe( '/notifications' ) );
 	} );
 
 	test( 'says that no notification is selected until one is opened', async () => {
@@ -239,8 +269,8 @@ describe( '<Notifications>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'does not say that no notification is selected while a linked note loads', async () => {
-		await renderNotifications( '/notifications/999' );
+	test( 'does not say that no notification is selected while a handed-over note loads', async () => {
+		await renderHandedOffNote( '999' );
 
 		await screen.findByRole( 'button', { name: 'Open a note from all' } );
 		expect(
@@ -260,7 +290,7 @@ describe( '<Notifications>', () => {
 
 	test( 'keeps a page heading on a narrow screen while a notification covers the list', async () => {
 		setNarrowScreen( true );
-		await renderNotifications( '/notifications/42' );
+		await renderHandedOffNote( '42' );
 
 		await screen.findByRole( 'button', { name: 'Close note 42' } );
 		expect(
@@ -271,33 +301,20 @@ describe( '<Notifications>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'goes back to the list in one step after moving between notes', async () => {
+	test( 'closes the open note', async () => {
 		const user = userEvent.setup();
-		const router = await renderNotifications( '/notifications' );
-
-		await user.click( await screen.findByRole( 'button', { name: 'Open a note from all' } ) );
-		await screen.findByRole( 'button', { name: 'Close note 42' } );
-		await user.click( screen.getByRole( 'button', { name: 'Open a note from all' } ) );
-		await screen.findByRole( 'button', { name: 'Close note 43' } );
-
-		router.history.back();
-
-		await waitFor( () => expect( router.state.location.href ).toBe( '/notifications' ) );
-		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'returns to the list address when the note closes', async () => {
-		const user = userEvent.setup();
-		const router = await renderNotifications( '/notifications/42' );
+		await renderHandedOffNote( '42' );
 
 		await user.click( await screen.findByRole( 'button', { name: 'Close note 42' } ) );
 
-		await waitFor( () => expect( router.state.location.href ).toBe( '/notifications' ) );
+		expect(
+			await screen.findByRole( 'heading', { name: 'No notification selected' } )
+		).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: /Close note/ } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'says that the page is a work in progress', async () => {
-		await renderNotifications( '/notifications/42' );
+		await renderNotifications( '/notifications' );
 
 		expect( await screen.findByText( 'This page is a work in progress' ) ).toBeVisible();
 	} );

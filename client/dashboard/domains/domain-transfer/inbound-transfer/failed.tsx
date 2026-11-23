@@ -3,7 +3,7 @@ import { domainInboundTransferStatusQuery, purchaseQuery } from '@automattic/api
 import { useQuery } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { cancelCircleFilled } from '@wordpress/icons';
+import { error } from '@wordpress/icons';
 import { useAppContext } from '../../../app/context';
 import { domainTransferSetupRoute } from '../../../app/router/domains';
 import Notice from '../../../components/notice';
@@ -26,7 +26,7 @@ export const InboundTransferFailed = ( { domain }: { domain: Domain } ) => {
 			icon={
 				<Icon
 					size={ 24 }
-					icon={ cancelCircleFilled }
+					icon={ error }
 					style={ { color: 'var(--dashboard__foreground-color-error)' } }
 				/>
 			}

@@ -4,7 +4,6 @@ import { HostingFeatures, type Site } from '@automattic/api-core';
 import {
 	bigSkyPluginMutation,
 	bigSkyPluginQuery,
-	isAutomatticianQuery,
 	siteAbilitiesQuery,
 	siteBySlugQuery,
 	sitePostByEmailSettingsMutation,
@@ -133,10 +132,12 @@ const TELEGRAM_CONNECTION_PATH = '/me/agent';
 function EmailAssistantCard( {
 	site,
 	recordTracksEvent,
+	isAgentEnabled = false,
 	disabled = false,
 }: {
 	site: Site;
 	recordTracksEvent: ReturnType< typeof useAnalytics >[ 'recordTracksEvent' ];
+	isAgentEnabled?: boolean;
 	disabled?: boolean;
 } ) {
 	const { data: postByEmailSettings, isLoading: isPostByEmailSettingsLoading } = useQuery( {
@@ -219,11 +220,13 @@ function EmailAssistantCard( {
 						label={ __( 'Enable WordPress Agent email address' ) }
 						onChange={ handleEmailAddressToggle }
 					/>
-					<Notice>
-						{ __(
-							'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
-						) }
-					</Notice>
+					{ ( isAgentEnabled || isAgentEmailEnabled ) && (
+						<Notice>
+							{ __(
+								'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
+							) }
+						</Notice>
+					) }
 					{ agentEmailAddress && (
 						<VStack spacing={ 3 }>
 							<ClipboardInputControl
@@ -305,32 +308,22 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 
 	// The badges span the site-published abilities on the subpages too, so "All
 	// enabled" can't appear while those groups are still off (their default).
-	// Staff-gated like the server-side remote: path (AI-1328).
-	const { data: isAutomattician } = useSuspenseQuery( isAutomatticianQuery() );
 	const localeSlug = useLocale();
 	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
-	const savedRemoteGroups = isAutomattician
-		? getSiteRemoteGroups( userSettings || {}, site.ID )
-		: {};
+	const savedRemoteGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
 	const { data: remoteAbilities } = useQuery( {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
-		enabled:
-			!! isAutomattician &&
-			config.isEnabled( 'mcp-settings' ) &&
-			isAvailable &&
-			isMcpEnabled &&
-			!! site.jetpack,
+		enabled: config.isEnabled( 'mcp-settings' ) && isAvailable && isMcpEnabled && !! site.jetpack,
 	} );
 	// Count published abilities individually; an ability counts as enabled when
 	// its group key is allowed. Saved-only groups (catalog unreachable) fall
-	// back to counting their keys. Gated at the computation level: even a
-	// previously cached catalog must not leak into the totals for other users.
+	// back to counting their keys.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
+		const categoryTools = category === 'read' ? readTools : writeTools;
 		const defaultEnabled =
-			isMcpEnabled && enabledToolCount( category === 'read' ? readTools : writeTools ) > 0;
-		if ( ! isAutomattician ) {
-			return { total: 0, enabled: 0 };
-		}
+			isMcpEnabled &&
+			categoryTools.length > 0 &&
+			enabledToolCount( categoryTools ) === categoryTools.length;
 		let total = 0;
 		let enabled = 0;
 		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
@@ -489,6 +482,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				<EmailAssistantCard
 					site={ site }
 					recordTracksEvent={ recordTracksEvent }
+					isAgentEnabled={ isEnabled }
 					disabled={ ! isAvailable }
 				/>
 				{ config.isEnabled( 'dolly/telegram' ) && (

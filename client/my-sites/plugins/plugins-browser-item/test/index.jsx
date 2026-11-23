@@ -6,7 +6,6 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import PluginsBrowserListElement from '../';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'calypso/state/ui/selectors' );
 jest.mock( 'calypso/state/plugins/installed/selectors' );
 jest.mock( 'calypso/state/products-list/selectors' );

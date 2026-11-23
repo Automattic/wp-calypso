@@ -958,6 +958,12 @@ export interface ResponseCartProductExtra {
 	isJetpackCheckout?: boolean;
 	isAkismetSitelessCheckout?: boolean;
 	isMarketplaceSitelessCheckout?: boolean;
+	isWpcomSitelessCheckout?: boolean;
+	/**
+	 * Marks a product as added by the Studio-branded `/checkout/studio` route. Always
+	 * comes with `isWpcomSitelessCheckout`.
+	 */
+	isStudioSitelessCheckout?: boolean;
 	isA4ASitelessCheckout?: boolean;
 	isA4ADevSiteCheckout?: boolean;
 	referral_id?: number;
@@ -968,6 +974,11 @@ export interface ResponseCartProductExtra {
 	 * one cart item per unit instead of merging them.
 	 */
 	cart_item_index?: number;
+
+	/**
+	 * Order in which the line was added, set by the cart endpoint on every line.
+	 */
+	add_sequence?: number;
 
 	/**
 	 * A4A Pressable PHP Memory add-on target domain.
@@ -1001,6 +1012,13 @@ export interface ResponseCartProductExtra {
 	 * This will hide product variant UI elements in checkout ( line item variant dropdown or variant upsells )
 	 */
 	hideProductVariants?: boolean;
+
+	/**
+	 * True when the cart holds one line per unit of a product (kept apart by
+	 * `cart_item_index`) and checkout should show identical lines as one, with
+	 * their count and the price of one.
+	 */
+	mergeIdenticalItems?: boolean;
 }
 
 export interface ResponseCartGiftDetails {
@@ -1010,7 +1028,15 @@ export interface ResponseCartGiftDetails {
 }
 
 export type SitelessCheckoutType =
-	'domainonly' | 'jetpack' | 'akismet' | 'marketplace' | 'a4a' | 'unified' | 'wpcom' | undefined;
+	| 'domainonly'
+	| 'jetpack'
+	| 'akismet'
+	| 'marketplace'
+	| 'a4a'
+	| 'unified'
+	| 'wpcom'
+	| 'studio'
+	| undefined;
 
 /**
  * Miscellaneous data requested to be added to the shopping cart item in a
@@ -1044,6 +1070,11 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	 * Marks a product as having been added by the siteless `/checkout/wpcom` route.
 	 */
 	isWpcomSitelessCheckout?: boolean;
+	/**
+	 * Marks a product as added by the Studio-branded `/checkout/studio` route. Always
+	 * comes with `isWpcomSitelessCheckout`.
+	 */
+	isStudioSitelessCheckout?: boolean;
 
 	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;

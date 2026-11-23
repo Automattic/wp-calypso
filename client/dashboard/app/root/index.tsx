@@ -23,7 +23,6 @@ import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 import CommandPalette from '../command-palette';
 import { useAppContext } from '../context';
 import DefaultHelpCenter from '../help-center/help-center';
-import { useTrackVisitedAreas } from '../hooks/use-visit-counter';
 import MutationErrorTracker from '../mutation-error-tracker';
 import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
@@ -34,6 +33,7 @@ import { RenewalSuccessFlashMessage } from '../renewal-success-flash-message';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
+import { useTrackVisitedAreas } from '../survicate/use-visit-counter';
 import './style.scss';
 
 const WebpackBuildMonitor = lazy(

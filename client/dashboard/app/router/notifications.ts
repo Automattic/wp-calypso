@@ -23,16 +23,4 @@ export const notificationsRoute = createRoute( {
 	)
 );
 
-export const notificationsIndexRoute = createRoute( {
-	getParentRoute: () => notificationsRoute,
-	path: '/',
-} );
-
-export const notificationRoute = createRoute( {
-	getParentRoute: () => notificationsRoute,
-	path: '$noteId',
-} );
-
-export const createNotificationsRoutes = () => [
-	notificationsRoute.addChildren( [ notificationsIndexRoute, notificationRoute ] ),
-];
+export const createNotificationsRoutes = () => [ notificationsRoute ];

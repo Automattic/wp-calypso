@@ -41,7 +41,7 @@
 		"@automattic/color-studio": "^4.1.0",
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@wordpress/url": "^5.1.0",
+		"@wordpress/url": "^5.2.0",
 		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {
@@ -50,11 +50,11 @@
 		"@testing-library/jest-dom": "^7.0.1",
 		"jsdom": "^20.0.3",
 		"typescript": "^6.0.3",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^11.1.0",
+		"@wordpress/data": "^11.2.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	}

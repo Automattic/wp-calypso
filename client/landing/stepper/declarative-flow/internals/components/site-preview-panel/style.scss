@@ -1,0 +1,127 @@
+@import '@automattic/onboarding/styles/mixins';
+@import './mixins';
+
+.site-preview-panel {
+	@include site-preview-panel;
+
+	// Placed on the page rather than the window, so on short screens it grows to fit its windows and
+	// the page scrolls. Absolute boxes don't count their margins toward the page's height, so the gap
+	// below it is padding that the clip hides.
+	@include break-large {
+		position: absolute;
+		inset-block: 24px auto;
+		min-height: calc( 100vh - 24px );
+		padding-bottom: 48px;
+		clip-path: inset( 0 0 24px round 16px );
+	}
+}
+
+.site-preview-panel__content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	// The windows show at 4:3, so on short screens they narrow to stay inside the panel, down to a
+	// size that still shows the site.
+	max-width: clamp( 360px, calc( ( 100vh - 160px ) * 4 / 3 ), 640px );
+}
+
+// A browser window onto a site.
+.site-window {
+	width: 100%;
+	margin: 0;
+	border-radius: 8px;
+	overflow: hidden;
+	background: var( --color-surface );
+	box-shadow: 0 12px 32px -16px color-mix( in srgb, var( --color-neutral-100 ) 35%, transparent );
+}
+
+.site-window__bar {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 12px;
+	border-block-end: 1px solid var( --color-neutral-5 );
+}
+
+.site-window__dots {
+	flex: none;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var( --color-neutral-5 );
+	box-shadow:
+		14px 0 0 var( --color-neutral-5 ),
+		28px 0 0 var( --color-neutral-5 );
+	margin-inline-end: 28px;
+}
+
+.site-window__address {
+	flex: 1;
+	min-width: 0;
+	padding: 4px 12px;
+	border-radius: 16px;
+	background: color-mix( in srgb, var( --color-neutral-100 ) 5%, transparent );
+	@include body-small();
+	color: var( --color-neutral-60 );
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.site-window .site-window__screenshot {
+	position: relative;
+	display: flex;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 4 / 3;
+	border: 0;
+	border-radius: 0;
+	box-sizing: border-box;
+	background-color: var( --color-surface );
+}
+
+// Stands in for the page until its screenshot arrives.
+.site-window__skeleton {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-rows: 7% 20% 5% 5% 9%;
+	align-content: start;
+	gap: 4%;
+	padding: 5%;
+
+	span {
+		border-radius: 4px;
+		background: color-mix( in srgb, var( --color-neutral-100 ) 5%, transparent );
+	}
+
+	span:nth-child( 3 ) {
+		width: 45%;
+	}
+
+	span:nth-child( 4 ) {
+		width: 30%;
+	}
+}
+
+// It pulses only while the screenshot is on its way, and stays still once it isn't coming.
+.site-thumbnail-loader .site-window__skeleton span {
+	@include onboarding-loading( color-mix( in srgb, var( --color-neutral-100 ) 5%, transparent ) );
+}
+
+.site-window__screenshot--unavailable {
+	align-items: center;
+	justify-content: center;
+}
+
+.site-window__note {
+	position: relative;
+	padding: 4px 12px;
+	border-radius: 16px;
+	background: var( --color-surface );
+	box-shadow: 0 0 0 1px var( --color-neutral-5 );
+	@include body-small();
+	color: var( --color-neutral-60 );
+}

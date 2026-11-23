@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import { vi } from 'vitest';
+import { addTracksSurface } from '../../helpers/stats';
 import { store, init as initState } from '../../state';
 import actions from '../../state/actions';
 import { addListeners, removeListeners } from '../../state/create-listener-middleware';
@@ -383,6 +384,19 @@ describe( 'RestClient', () => {
 			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } ); // all known
 
 			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 10, reached_end: true } ] );
+		} );
+
+		it( 'names the surface shown when the load-more started, even if it has closed since', () => {
+			seedFirstWindow();
+			const removePanel = addTracksSurface( 'dashboard_panel' );
+
+			client.loadMore();
+			removePanel();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 91 ), last_seen_time: 0 } );
+
+			expect( trackedEvents() ).toEqual( [
+				{ surface: 'dashboard_panel', filter: 'all', total: 19, reached_end: false },
+			] );
 		} );
 
 		it( 'records nothing for the initial window or a poll refresh', () => {
@@ -1254,6 +1268,47 @@ describe( 'RestClient', () => {
 			receiveStorageEvent( null );
 
 			expect( isRead() ).toBe( false );
+		} );
+	} );
+
+	describe( 'fetching one note', () => {
+		const answerNote = ( ...args ) =>
+			getCalls.find( ( call ) => call.path.path === '/notifications/100' ).callback( ...args );
+
+		beforeEach( () => {
+			seedFirstWindow();
+		} );
+
+		it( 'says the note was found when the server returns it', async () => {
+			const found = client.getNote( 100 );
+			answerNote( null, { notes: [ makeNote( 100 ) ] } );
+
+			await expect( found ).resolves.toBe( true );
+		} );
+
+		it( 'says the note was not found when the server no longer has it', async () => {
+			const found = client.getNote( 100 );
+			answerNote( null, { notes: [] } );
+
+			await expect( found ).resolves.toBe( false );
+		} );
+
+		it( 'says the note was not found when the server refuses it', async () => {
+			const found = client.getNote( 100 );
+			answerNote( { status: 404, error: 'not_found' } );
+
+			await expect( found ).resolves.toBe( false );
+		} );
+
+		it( 'does not say either way when the request fails for another reason', async () => {
+			const serverError = client.getNote( 100 );
+			answerNote( { status: 502 } );
+			getCalls.length = 0;
+			const networkError = client.getNote( 100 );
+			answerNote( new Error( 'offline' ) );
+
+			await expect( serverError ).resolves.toBeUndefined();
+			await expect( networkError ).resolves.toBeUndefined();
 		} );
 	} );
 

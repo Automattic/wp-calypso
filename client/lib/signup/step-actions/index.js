@@ -54,7 +54,6 @@ import {
 	getProductBillingSlugByThemeId,
 } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
-import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -159,7 +158,6 @@ export const getNewSiteParams = ( {
 	siteAccentColor,
 } ) => {
 	const signupDependencies = getSignupDependencyStore( state );
-	const designType = getDesignType( state ).trim();
 	const siteTitle = ( signupDependencies?.siteTitle || '' ).trim();
 	const selectedDesign = signupDependencies?.selectedDesign ?? false;
 
@@ -184,7 +182,6 @@ export const getNewSiteParams = ( {
 		blog_title: siteTitle,
 		public: launchAsComingSoon ? Visibility.PublicNotIndexed : Visibility.PublicIndexed,
 		options: {
-			designType: designType || undefined,
 			theme,
 			use_theme_annotation: signupDependencies?.useThemeHeadstart ?? false,
 			default_annotation_as_primary_fallback: shouldUseDefaultAnnotationAsFallback,

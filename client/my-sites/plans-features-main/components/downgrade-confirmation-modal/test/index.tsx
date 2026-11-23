@@ -74,6 +74,31 @@ describe( 'DowngradeConfirmationModal', () => {
 		).toBeNull();
 	} );
 
+	test( 'describes a term change made now, with its refund and the monthly warning', () => {
+		mockFeatures( {
+			features: [ { feature_id: 'domain-credit', title: 'Free domain for one year' } ],
+			is_change_to_monthly: true,
+		} );
+
+		render(
+			<DowngradeConfirmationModal
+				{ ...defaultProps }
+				isDelayedDowngrade={ false }
+				isInstantDowngrade
+				isTermChange
+				renewalPriceText="$8/month"
+				refundText="$40"
+			/>
+		);
+
+		const dialog = within( screen.getByRole( 'dialog' ) );
+		expect( screen.getByRole( 'heading', { name: 'Confirm plan change' } ) ).toBeVisible();
+		expect( dialog.getByText( /Monthly plans don’t include some benefits/ ) ).toBeVisible();
+		expect( dialog.getByText( /now, and you’ll pay \$8\/month when it renews/ ) ).toBeVisible();
+		expect( dialog.getByText( 'Free domain for one year' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Change plan and refund $40' } ) ).toBeVisible();
+	} );
+
 	test( 'shows no monthly warning outside a term change', () => {
 		mockFeatures( { features: [], is_change_to_monthly: true } );
 

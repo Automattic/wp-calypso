@@ -1,6 +1,5 @@
 import {
 	KEYRING_CONNECTION_DELETE,
-	KEYRING_CONNECTION_DELETE_FAILURE,
 	KEYRING_CONNECTIONS_RECEIVE,
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
@@ -122,17 +121,6 @@ describe( 'actions', () => {
 					connection: {
 						ID: 2,
 					},
-				} );
-			} );
-		} );
-
-		test( 'should dispatch fail action when request fails', () => {
-			return deleteStoredKeyringConnection( { ID: 34 } )( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: KEYRING_CONNECTION_DELETE_FAILURE,
-					error: expect.objectContaining( {
-						message: 'You do not have permission to access this Keyring connection.',
-					} ),
 				} );
 			} );
 		} );

@@ -73,8 +73,9 @@ body.is-section-jetpack-monetize {
 }
 
 .theme-jetpack-cloud {
-	.components-form-toggle.is-checked .components-form-toggle__track {
-		background-color: var(--studio-jetpack-green-50);
+	.components-form-toggle.is-checked {
+		--wpds-color-background-interactive-brand-strong: var(--studio-jetpack-green-50);
+		--wpds-color-stroke-interactive-brand: var(--studio-jetpack-green-50);
 	}
 
 	h2.formatted-header__title {

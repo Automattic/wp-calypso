@@ -12,7 +12,6 @@ import {
 	THEME_ACTIVATE_FAILURE,
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
-	THEME_DELETE_FAILURE,
 	THEME_FILTERS_REQUEST,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
@@ -33,32 +32,31 @@ import {
 	THEMES_UPDATE_SUCCESS,
 	THEME_SHOW_ATOMIC_TRANSFER_DIALOG,
 } from 'calypso/state/themes/action-types';
+import { installAndTryAndCustomizeTheme } from 'calypso/state/themes/actions/install-and-try-and-customize-theme';
+import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
+import { redirectToLivePreview } from 'calypso/state/themes/actions/redirect-to-live-preview';
+import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
+import { pollThemeTransferStatus } from 'calypso/state/themes/actions/theme-transfer';
+import { tryAndCustomizeTheme } from 'calypso/state/themes/actions/try-and-customize-theme';
 import useNock from 'calypso/test-helpers/use-nock';
 import { ADMIN_MENU_REQUEST } from '../../action-types';
 import {
-	themeActivated,
 	clearActivated,
 	activateTheme,
 	installAndActivateTheme,
 	activate,
 	requestActiveTheme,
 	receiveTheme,
-	receiveThemes,
 	requestThemes,
 	requestTheme,
-	requestThemeOnAtomic,
-	pollThemeTransferStatus,
 	initiateThemeTransfer,
 	installTheme,
-	installAndTryAndCustomizeTheme,
-	tryAndCustomizeTheme,
 	tryAndCustomize,
 	deleteTheme,
 	requestThemeFilters,
 	updateThemes,
 	addExternalManagedThemeToCart,
 	livePreview,
-	redirectToLivePreview,
 } from '../actions';
 import { themesUpdated } from '../actions/theme-update';
 
@@ -1367,22 +1365,6 @@ describe( 'actions', () => {
 				} );
 			} );
 		} );
-
-		test( 'should dispatch failure action on error response', () => {
-			return deleteTheme(
-				'blahblah',
-				2211667
-			)( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith(
-					expect.objectContaining( {
-						type: THEME_DELETE_FAILURE,
-						siteId: 2211667,
-						themeId: 'blahblah',
-						error: expect.toBeTruthy(),
-					} )
-				);
-			} );
-		} );
 	} );
 
 	describe( '#installAndTryAndCustomizeTheme', () => {
@@ -1768,57 +1750,6 @@ describe( 'actions', () => {
 				).rejects.toThrow( 'No products available' );
 
 				expect( spy ).not.toHaveBeenCalled();
-			} );
-		} );
-	} );
-
-	describe( '#requestThemeOnAtomic()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/wp/v2/sites/1234/themes/makoney' )
-				.reply( 200, { id: 'makoney', name: 'Makoney' } )
-				.get( '/wp/v2/sites/1234/themes/solarone' )
-				.reply( 404, {
-					error: 'unknown_theme',
-					message: 'Unknown theme',
-				} );
-		} );
-
-		test( 'should dispatch THEME_REQUEST', () => {
-			requestThemeOnAtomic( 'makoney', 1234 )( spy );
-
-			expect( spy ).toHaveBeenCalledWith( {
-				type: THEME_REQUEST,
-				siteId: 1234,
-				themeId: 'makoney',
-			} );
-		} );
-
-		test( 'should dispatch THEME_REQUEST_SUCCESS on success', () => {
-			return requestThemeOnAtomic(
-				'makoney',
-				1234
-			)( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: THEME_REQUEST_SUCCESS,
-					siteId: 1234,
-					themeId: 'makoney',
-				} );
-			} );
-		} );
-
-		test( 'should dispatch THEME_REQUEST_FAILURE on failure', () => {
-			return requestThemeOnAtomic(
-				'solarone',
-				1234
-			)( spy ).finally( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: THEME_REQUEST_FAILURE,
-					siteId: 1234,
-					themeId: 'solarone',
-					error: expect.objectContaining( { message: 'Unknown theme' } ),
-				} );
 			} );
 		} );
 	} );

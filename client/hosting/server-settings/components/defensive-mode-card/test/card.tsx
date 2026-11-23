@@ -41,7 +41,6 @@ jest.mock( 'react-redux', () => ( {
 } ) );
 
 jest.mock( 'calypso/data/hosting/use-cache' );
-jest.mock( 'calypso/state/hosting/actions' );
 
 describe( 'DefensiveModeCard component', () => {
 	beforeEach( () => {

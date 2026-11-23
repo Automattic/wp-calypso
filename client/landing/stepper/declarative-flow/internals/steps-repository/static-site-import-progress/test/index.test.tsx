@@ -1,24 +1,26 @@
 /**
  * @jest-environment jsdom
  */
-import { act, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { useStaticSiteImport } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
+import { useStaticSiteImport } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StaticSiteImportProgressStep from '..';
 import { mockStepProps } from '../../test/helpers';
-import type { StaticSiteImport } from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
+import type { StaticSiteImport } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 
-jest.mock( 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import', () => ( {
-	...jest.requireActual(
-		'calypso/dashboard/sites/overview-static-site-import/use-static-site-import'
-	),
+jest.mock( 'calypso/dashboard/sites/static-site-import/use-static-site-import', () => ( {
+	...jest.requireActual( 'calypso/dashboard/sites/static-site-import/use-static-site-import' ),
 	useStaticSiteImport: jest.fn(),
 } ) );
 
-const MOVE = { siteId: 456, importSessionId: 'abc123', from: 'source.example.com' };
+const MOVE = {
+	siteId: 456,
+	importSessionId: 'abc123',
+	from: 'source.example.com',
+};
 
 const render = ( siteImport: StaticSiteImport | null, props: Partial< typeof MOVE > = MOVE ) => {
 	jest.mocked( useStaticSiteImport ).mockReturnValue( siteImport );
@@ -38,7 +40,6 @@ const render = ( siteImport: StaticSiteImport | null, props: Partial< typeof MOV
 describe( 'StaticSiteImportProgressStep', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		jest.useRealTimers();
 	} );
 
 	it( 'shows the move’s steps beside a window onto the site', () => {
@@ -50,10 +51,28 @@ describe( 'StaticSiteImportProgressStep', () => {
 				'We’re copying source.example.com into a private preview on WordPress.com. Your original site stays as it is.'
 			)
 		).toBeVisible();
-		expect( screen.getByText( 'Copying from source.example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'Getting your preview ready' ) ).toBeVisible();
 		expect( useStaticSiteImport ).toHaveBeenCalledWith( 456, 'abc123', { approve: false } );
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the colliding cards up in place of the page list and screenshot', () => {
+		render( {
+			status: 'moving',
+			session: {
+				state: 'building',
+				preview_image_url: 'https://preview.example/shot.png',
+				progress: { pages: [ { path: '/', captured: true } ] },
+			},
+		} as StaticSiteImport );
+
+		expect( document.querySelector( '.static-site-import-colliding-cards' ) ).toBeVisible();
+		expect(
+			document.querySelector( '.static-site-import-snapshot__pages' )
+		).not.toBeInTheDocument();
+		expect(
+			document.querySelector( '.static-site-import-snapshot__image' )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'submits a finished preview with its share link', () => {
@@ -70,15 +89,10 @@ describe( 'StaticSiteImportProgressStep', () => {
 		} );
 	} );
 
-	it( 'waits for a finished preview’s share link before going on without it', () => {
-		jest.useFakeTimers();
+	it( 'waits for WordPress.com to report a finished preview’s share link', () => {
 		const submit = render( { status: 'finished', isPreview: true } );
 
 		expect( submit ).not.toHaveBeenCalled();
-		act( () => {
-			jest.advanceTimersByTime( 30_000 );
-		} );
-		expect( submit ).toHaveBeenCalledWith( { action: 'finished', previewUrl: undefined } );
 	} );
 
 	it.each( [

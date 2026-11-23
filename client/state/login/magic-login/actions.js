@@ -8,19 +8,12 @@ import {
 	MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
-	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { HTTPError, stringifyBody } from '../utils';
 import { AUTHENTICATE_URL } from './constants';
 
 import 'calypso/state/login/init';
-
-export const showMagicLoginCheckYourEmailPage = () => {
-	return {
-		type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-	};
-};
 
 export const showMagicLoginLinkExpiredPage = () => {
 	return {

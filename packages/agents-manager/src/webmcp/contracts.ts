@@ -3,27 +3,17 @@ import type { Ability } from '@wordpress/abilities';
 export const GET_BLOCK_TREE_ABILITY_NAME = 'agents-manager/get-block-tree';
 export const APPLY_BLOCK_EDITS_ABILITY_NAME = 'big-sky/apply-block-edits';
 export const SHOW_TEMPLATE_ABILITY_NAME = 'big-sky/show-template';
+export const EDIT_ENTITY_RECORD_ABILITY_NAME = 'big-sky/edit-entity-record';
 export const WEBMCP_SERVER_ABILITY_NAMES = [
 	'wpcom/get-block-schemas',
 	'wpcom/get-content-guidelines',
-	'wpcom/get-posts',
-	'wpcom/get-site-stats',
-	'wpcom/media-create',
-	'wpcom/patterns-list',
-	'wpcom/patterns-get',
 	'core/get-site-info',
 ] as const;
-
-export const WEBMCP_MUTATING_SERVER_ABILITY_NAMES = [ 'wpcom/media-create' ] as const;
 
 export type WebMcpServerAbilityName = ( typeof WEBMCP_SERVER_ABILITY_NAMES )[ number ];
 
 export function isWebMcpServerAbilityName( name: string ): name is WebMcpServerAbilityName {
 	return ( WEBMCP_SERVER_ABILITY_NAMES as readonly string[] ).includes( name );
-}
-
-export function isWebMcpMutatingServerAbilityName( name: string ): boolean {
-	return ( WEBMCP_MUTATING_SERVER_ABILITY_NAMES as readonly string[] ).includes( name );
 }
 
 const BLOCK_DATA_SCHEMA = {
@@ -53,8 +43,6 @@ const BLOCK_DATA_SCHEMA = {
 
 export const APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = {
 	type: 'object',
-	description:
-		'Call agents_manager__get_block_tree immediately before this tool. Use its clientId values unchanged.',
 	properties: {
 		updates: {
 			type: 'array',
@@ -69,7 +57,7 @@ export const APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = 
 		inserts: {
 			type: 'array',
 			description:
-				'New blocks to insert. Use blockMarkup with content returned by wpcom__patterns_get to insert a pattern.',
+				'New blocks to insert. Use blockMarkup to insert serialized Gutenberg block markup.',
 			items: {
 				type: 'object',
 				properties: {
@@ -87,7 +75,7 @@ export const APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = 
 					blockMarkup: {
 						type: 'string',
 						description:
-							'Serialized Gutenberg block markup returned in the content field by wpcom__patterns_get. All top-level blocks are inserted in order.',
+							'Serialized Gutenberg block markup, using <!-- wp:name {attributes} --> comment delimiters. All top-level blocks are inserted in order.',
 					},
 				},
 				oneOf: [ { required: [ 'block' ] }, { required: [ 'blockMarkup' ] } ],
@@ -108,23 +96,38 @@ export const APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = 
 	$defs: { blockData: BLOCK_DATA_SCHEMA },
 };
 
+/** Narrowed because the full ability also creates, deletes and saves records across the site. */
+export const EDIT_ENTITY_RECORD_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = {
+	type: 'object',
+	description:
+		'Through this tool, only the title or excerpt of the post or page open in the editor can change. Creating, deleting or editing any other record is refused.',
+	properties: {
+		title: {
+			type: 'string',
+			description: 'New title for the post or page open in the editor.',
+		},
+		excerpt: {
+			type: 'string',
+			description: 'New excerpt for the post or page open in the editor.',
+		},
+	},
+	minProperties: 1,
+	additionalProperties: false,
+};
+
 export function getWebMcpInputSchema( ability: Ability ): Record< string, unknown > | undefined {
 	if ( ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ) {
 		return APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA;
+	}
+
+	if ( ability.name === EDIT_ENTITY_RECORD_ABILITY_NAME ) {
+		return EDIT_ENTITY_RECORD_WEBMCP_INPUT_SCHEMA;
 	}
 
 	return ability.input_schema;
 }
 
 export function getWebMcpDescription( ability: Ability ): string {
-	if ( ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ) {
-		return 'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. To insert a block pattern, call wpcom__patterns_list, fetch one with wpcom__patterns_get, then pass its content as an insert blockMarkup value. The change remains unsaved and reviewable in the editor.';
-	}
-
-	if ( ability.name === SHOW_TEMPLATE_ABILITY_NAME ) {
-		return "Turns on the editor's Show template mode so headers and footers become available to agents_manager__get_block_tree. Use this when the requested header or footer is absent from the block tree, then read the block tree again before editing. This does not unlock a template part that is already visible but locked.";
-	}
-
 	const description = ability.description || ability.label || ability.name;
 	const instructions = ability.meta?.instructions;
 

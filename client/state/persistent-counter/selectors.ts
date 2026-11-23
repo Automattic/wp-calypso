@@ -37,17 +37,6 @@ export const lastUpdatedIsToday = (
 	return isSameDay( lastUpdatedDate, Date.now() );
 };
 
-export const counterExists = (
-	state: AppState,
-	counterName: string,
-	keyedToSiteId = false
-): boolean => {
-	const pref = ( getPreference( state, PREFERENCE_BASE_NAME ) as CounterType ) || {};
-	const keyedCounterName: keyof CounterType = getCounterName( state, counterName, keyedToSiteId );
-
-	return !! pref[ keyedCounterName ];
-};
-
 export const getCount = ( state: AppState, counterName: string, keyedToSiteId = false ): number => {
 	const keyedCounterName: keyof CounterType = getCounterName( state, counterName, keyedToSiteId );
 	const pref = ( getPreference( state, PREFERENCE_BASE_NAME ) as CounterType ) || {};

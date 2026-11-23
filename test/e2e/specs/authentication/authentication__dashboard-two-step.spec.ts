@@ -10,21 +10,26 @@ import type { LoginPage } from '@automattic/calypso-e2e';
 import type { CDPSession, Page } from 'playwright';
 
 /**
- * Navigates to the WordPress.com login page (redirecting to the dashboard on
- * success) and submits the username and password. For an account with two-step
- * authentication enabled this lands on the relevant second-factor screen.
+ * Leaves the dashboard, clears cookies and opens the login page until its form
+ * appears, then submits the username and password.
  */
-async function logInWithPassword(
+async function logOutAndLogInWithPassword(
 	page: Page,
 	pageLogin: LoginPage,
 	username: string,
 	password: string
 ): Promise< void > {
-	await page.goto(
-		DataHelper.getCalypsoURL( 'log-in', {
-			redirect_to: DataHelper.getDashboardURL( '/me/security/two-step-auth' ),
-		} )
-	);
+	const usernameInput = page.locator( 'input[name="usernameOrEmail"]' );
+	await expect( async () => {
+		await page.goto( 'about:blank' );
+		await page.context().clearCookies();
+		await page.goto(
+			DataHelper.getCalypsoURL( 'log-in', {
+				redirect_to: DataHelper.getDashboardURL( '/me/security/two-step-auth' ),
+			} )
+		);
+		await expect( usernameInput ).toBeVisible( { timeout: 15_000 } );
+	} ).toPass( { timeout: 60_000 } );
 	await pageLogin.logInWithCredentials( username, password );
 }
 
@@ -86,15 +91,24 @@ async function submitLoginTOTPCode(
  * virtual authenticator answers it, but a ceremony can fail transiently (the
  * button then re-enables), so it is retried from the button until the login
  * proceeds, failing with the on-screen error rather than an opaque timeout.
+ * Returns at once if the login already completed on its own.
  */
 async function continueWithSecurityKey( page: Page ): Promise< void > {
 	const securityKeyButton = page.getByRole( 'button', { name: 'Continue with security key' } );
 	const switchToSecurityKey = page.getByRole( 'button', {
 		name: /Continue with your security.key/,
 	} );
-	await expect( securityKeyButton.or( switchToSecurityKey ).first() ).toBeVisible( {
-		timeout: 30_000,
-	} );
+	const loggedIn = () => ! new URL( page.url() ).pathname.includes( '/log-in' );
+	await expect
+		.poll(
+			async () =>
+				loggedIn() || ( await securityKeyButton.or( switchToSecurityKey ).first().isVisible() ),
+			{ timeout: 30_000 }
+		)
+		.toBe( true );
+	if ( loggedIn() ) {
+		return;
+	}
 	if ( await switchToSecurityKey.isVisible() ) {
 		await switchToSecurityKey.click();
 	}
@@ -295,8 +309,7 @@ test.describe(
 				// logging out: changing it invalidates the signup session that the
 				// enable and assert steps above rely on, so it cannot be done earlier.
 				await restAPIClient!.setMySettings( { password: testUser.password } );
-				await page.context().clearCookies();
-				await logInWithPassword(
+				await logOutAndLogInWithPassword(
 					page,
 					pageLogin,
 					newUserDetails!.body.username,
@@ -338,14 +351,29 @@ test.describe(
 			} );
 
 			await test.step( 'When I log out and log in again using the security key', async function () {
-				await page.context().clearCookies();
-				await logInWithPassword(
+				let securityKeyAccepted = false;
+				page.on( 'response', ( response ) => {
+					if (
+						response.request().method() === 'POST' &&
+						response.url().includes( 'action=webauthn-authentication-endpoint' ) &&
+						response.ok()
+					) {
+						securityKeyAccepted = true;
+					}
+				} );
+				await logOutAndLogInWithPassword(
 					page,
 					pageLogin,
 					newUserDetails!.body.username,
 					testUser.password
 				);
 				await continueWithSecurityKey( page );
+				await expect
+					.poll( () => securityKeyAccepted, {
+						message: `Security key login request did not succeed; at ${ page.url() }`,
+						timeout: 5_000,
+					} )
+					.toBe( true );
 			} );
 
 			await test.step( 'Then I am logged in with the security key', async function () {

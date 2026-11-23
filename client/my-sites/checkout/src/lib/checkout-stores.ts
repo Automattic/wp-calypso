@@ -8,6 +8,7 @@ import type {
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
 	PossiblyCompleteDomainContactDetails,
+	SitelessCheckoutType,
 	VatDetails,
 } from '@automattic/wpcom-checkout';
 
@@ -70,8 +71,19 @@ export const vatDetailsInFormStore = createValueStore< VatDetails >( {} );
  */
 export const recaptchaClientIdStore = createValueStore< number >( -1 );
 
+/**
+ * What the cart says about a renewal by subscription ID alone, whose URL does
+ * not say which kind of purchase it is. `null` until the cart has loaded, so
+ * the checkout header can wait for it rather than show the wrong brand. A
+ * renewal on a site is `{ sitelessCheckoutType: undefined }`.
+ */
+export const resolvedRenewalDataStore = createValueStore< {
+	sitelessCheckoutType: SitelessCheckoutType;
+} | null >( null );
+
 export function resetCheckoutStores(): void {
 	contactDetailsStore.reset();
 	vatDetailsInFormStore.reset();
 	recaptchaClientIdStore.reset();
+	resolvedRenewalDataStore.reset();
 }

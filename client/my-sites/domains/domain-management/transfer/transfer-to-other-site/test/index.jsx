@@ -1,6 +1,4 @@
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 jest.mock( '@automattic/search', () => null );
 
 import {

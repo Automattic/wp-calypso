@@ -19,7 +19,15 @@ export interface ConversationPostDetails {
 	discussion: ReadConversationPostDiscussion;
 }
 
-export interface Conversation {
+/** The user's unread comment notes on a post. */
+export interface ConversationUnread {
+	unreadCount: number;
+	unreadNoteIds: number[];
+	/** The comments of `unreadNoteIds`, in the same order. */
+	unreadCommentIds: number[];
+}
+
+export interface Conversation extends ConversationUnread {
 	key: string;
 	siteId: number;
 	postId: number;
@@ -32,16 +40,12 @@ export interface Conversation {
 	/** The newest commenters, the latest first. */
 	commenters: Commenter[];
 	commenterCount: number;
-	unreadCount: number;
-	unreadNoteIds: number[];
-	/** The comments of `unreadNoteIds`, in the same order. */
-	unreadCommentIds: number[];
 	isFollowing: boolean;
 	postDetails?: ConversationPostDetails;
 }
 
 /** A comment the current user left. Your comments lists the latest one on each post. */
-export interface OwnComment {
+export interface OwnComment extends ConversationUnread {
 	key: string;
 	siteId: number;
 	postId: number;
@@ -50,5 +54,4 @@ export interface OwnComment {
 	excerpt: string;
 	timestamp: number;
 	author: Commenter;
-	newCommentCount: number;
 }

@@ -259,6 +259,21 @@ describe( 'applyBlockEditsCallback', () => {
 		);
 	} );
 
+	it( 'takes no history call id for a call no chat made', async () => {
+		vi.mocked( getToolCallIdFromConversationHistory ).mockReturnValue( 'call-h' );
+
+		await applyBlockEditsCallback( { updates: [ update ], toolCallId: null } );
+
+		expect( withCheckpoint ).toHaveBeenCalledWith(
+			expect.objectContaining( { toolCallId: null } ),
+			expect.any( Function )
+		);
+		expect( recordBigSkyTracksEvent ).toHaveBeenCalledWith(
+			'jetpack_big_sky_block_edits_applied',
+			expect.not.objectContaining( { tool_call_id: expect.anything() } )
+		);
+	} );
+
 	it( 'writes custom CSS that differs under its own domain', async () => {
 		vi.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'b{}' } ) );
 		vi.mocked( haveBlocksChanged ).mockReturnValue( false );

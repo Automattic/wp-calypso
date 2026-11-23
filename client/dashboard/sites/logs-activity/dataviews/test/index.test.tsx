@@ -51,12 +51,6 @@ vi.mock( '@tanstack/react-router', async () => ( {
 	} ),
 } ) );
 
-vi.mock( '../../../../app/router/sites', () => ( {
-	siteLogsActivityRoute: {
-		useSearch: () => ( {} ),
-	},
-} ) );
-
 const mockSite: DeepPartial< Site > = {
 	ID: mockSiteId,
 	slug: 'test-site',

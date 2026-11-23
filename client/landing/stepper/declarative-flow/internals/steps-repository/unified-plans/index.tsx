@@ -8,7 +8,7 @@ import {
 	useStepPersistedState,
 } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
-import { useTranslate, type TranslateResult } from 'i18n-calypso';
+import { type TranslateResult } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
@@ -40,8 +40,9 @@ import './style.scss';
 
 type ProvidedDependencies = {
 	stepName: 'plans';
-	action?: 'select-existing-site';
 	cartItems: MinimalRequestCartProduct[] | null;
+	/** Set when the customer skipped the step, offered by `skippable`, without picking a plan. */
+	action?: 'skip_plan';
 };
 
 const PlansStepAdaptor: StepType< {
@@ -53,7 +54,6 @@ const PlansStepAdaptor: StepType< {
 		displayedIntervals?: SupportedIntervalTypes[];
 		headerText?: string;
 		subHeaderText?: string;
-		showExistingSiteLink?: boolean;
 		hideFreePlan?: boolean;
 		hideEnterprisePlan?: boolean;
 		hidePersonalPlan?: boolean;
@@ -67,6 +67,8 @@ const PlansStepAdaptor: StepType< {
 		isLaunchPage?: boolean;
 		isCustomDomainAllowedOnFreePlan?: boolean;
 		deemphasizeFreePlan?: boolean;
+		/** Offers a Skip button, which submits `{ action: 'skip_plan' }` without a plan. */
+		skippable?: boolean;
 		intent?: PlansIntent;
 		wrapperProps?: {
 			hideBack?: boolean;
@@ -84,7 +86,6 @@ const PlansStepAdaptor: StepType< {
 		wrapperProps,
 		headerText,
 		subHeaderText,
-		showExistingSiteLink,
 		hideFreePlan: hideFreePlanOverride,
 		hideEnterprisePlan: hideEnterprisePlanOverride,
 		hidePersonalPlan: hidePersonalPlanOverride,
@@ -98,9 +99,9 @@ const PlansStepAdaptor: StepType< {
 		isLaunchPage,
 		isCustomDomainAllowedOnFreePlan,
 		deemphasizeFreePlan,
+		skippable,
 		intent: intentOverride,
 	} = props;
-	const translate = useTranslate();
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const query = useQuery();
 	const isMigrationFlow = isNewSiteMigrationFlow( props.flow );
@@ -259,31 +260,7 @@ const PlansStepAdaptor: StepType< {
 			hideEcommercePlan={ hideEcommercePlanOverride || blueprintHideProps.hideEcommercePlan }
 			hidePlanTypeSelector={ hidePlanTypeSelectorOverride }
 			headerText={ headerText }
-			subHeaderText={
-				showExistingSiteLink ? (
-					<>
-						{ subHeaderText }
-						<br />
-						{ translate( 'Or {{link}}migrate to a site you already have{{/link}}.', {
-							components: {
-								link: (
-									<Step.LinkButton
-										onClick={ () =>
-											props.navigation.submit?.( {
-												stepName: 'plans',
-												cartItems: null,
-												action: 'select-existing-site',
-											} )
-										}
-									/>
-								),
-							},
-						} ) }
-					</>
-				) : (
-					subHeaderText
-				)
-			}
+			subHeaderText={ subHeaderText }
 			highlightLabelOverrides={ highlightLabelOverrides }
 			titleBadgeOverrides={ titleBadgeOverrides }
 			taglineOverrides={ taglineOverrides }
@@ -332,6 +309,16 @@ const PlansStepAdaptor: StepType< {
 			isLaunchPage={ isLaunchPage }
 			isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 			deemphasizeFreePlan={ deemphasizeFreePlan }
+			onSkip={
+				skippable
+					? () =>
+							props.navigation.submit?.( {
+								stepName: 'plans',
+								cartItems: null,
+								action: 'skip_plan',
+							} )
+					: undefined
+			}
 		/>
 	);
 };

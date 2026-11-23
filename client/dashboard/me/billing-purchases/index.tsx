@@ -85,7 +85,9 @@ export default function PurchasesList() {
 		slug: 'me-billing-purchases',
 		defaultView,
 		queryParams: currentSearchParams,
-		queryParamFilterFields: [ 'site' ],
+		queryParamFilterFields: supportsMe
+			? [ 'site', { field: 'renewalPayment', operator: 'is' } ]
+			: [ 'site' ],
 		lockQueryParamFilters: ! supportsMe,
 	} );
 

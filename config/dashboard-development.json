@@ -4,6 +4,7 @@
 	"favicon_url": "/calypso/images/favicons/favicon-development.ico",
 	"client_slug": "browser",
 	"survicate_enabled": true,
+	"bilmur_spa_beacon_origin": "/",
 	"hostname": "my.localhost",
 	"hostname_allowlist": [ "my.localhost", "my.a4a.localhost" ],
 	"hostname_overrides": {
@@ -32,6 +33,7 @@
 	"features": {
 		"a4a-dashboard-opt-in": true,
 		"a4a-spacefast-promo": true,
+		"a4a/static-site-import": true,
 		"calypso/ai-site-builder-flow": true,
 		"ciab/allow-domain-features": true,
 		"cookie-banner": false,

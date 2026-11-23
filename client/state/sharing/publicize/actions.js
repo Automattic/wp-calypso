@@ -3,50 +3,12 @@ import wpcom from 'calypso/lib/wp';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
-	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	PUBLICIZE_CONNECTION_RECEIVE,
 	PUBLICIZE_CONNECTION_UPDATE,
-	PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-	PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/sharing/init';
-
-/**
- * Triggers a network request to fetch Publicize connections for the specified
- * site ID.
- * @param  {number}   siteId Site ID
- * @returns {Function}        Action thunk
- */
-export function fetchConnections( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: PUBLICIZE_CONNECTIONS_REQUEST,
-			siteId,
-		} );
-
-		return wpcom.req
-			.get( `/sites/${ siteId }/publicize-connections` )
-			.then( ( connections ) => {
-				dispatch( receiveConnections( siteId, connections ) );
-				dispatch( {
-					type: PUBLICIZE_CONNECTIONS_REQUEST_SUCCESS,
-					siteId,
-				} );
-			} )
-			.catch( ( error ) =>
-				dispatch( {
-					type: PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-					siteId,
-					error,
-				} )
-			);
-	};
-}
 
 /**
  * Triggers a network request to request a Publicize connection for the
@@ -149,11 +111,6 @@ export function updateSiteConnection( connection, attributes ) {
 				);
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
-					error: { ...error, label: connection.label },
-				} );
-
 				dispatch(
 					errorNotice(
 						translate( 'The %(service)s account was unable to be updated.', {
@@ -189,11 +146,6 @@ export function deleteSiteConnection( connection ) {
 					dispatch( deleteConnection( connection ) );
 					dispatch( deleteConnectionSuccess( connection ) );
 				}
-
-				dispatch( {
-					type: PUBLICIZE_CONNECTION_DELETE_FAILURE,
-					error: { ...error, label: connection.label },
-				} );
 
 				dispatch(
 					errorNotice(
@@ -233,19 +185,4 @@ function deleteConnectionSuccess( connection ) {
 		} ),
 		{ id: 'publicize' }
 	);
-}
-
-/**
- * Returns an action object to be used in signalling that a network request for
- * Publicize connections has been received.
- * @param  {number} siteId Site ID
- * @param  {Object} data   API response
- * @returns {Object}        Action object
- */
-export function receiveConnections( siteId, data ) {
-	return {
-		type: PUBLICIZE_CONNECTIONS_RECEIVE,
-		siteId,
-		data,
-	};
 }
