@@ -4,7 +4,6 @@ import isEqual from 'fast-deep-equal/es6';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import withQueryManager from 'calypso/lib/query-manager/with-query-manager';
 import {
-	MEDIA_DELETE,
 	MEDIA_ITEM_CREATE,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_RECEIVE,
@@ -27,10 +26,6 @@ export const queries = ( state = {}, action ) => {
 				( m ) => m.receive( media, { found, query } ),
 				() => new MediaQueryManager()
 			);
-		}
-		case MEDIA_DELETE: {
-			const { siteId, mediaIds } = action;
-			return withQueryManager( state, siteId, ( m ) => m.removeItems( mediaIds ) );
 		}
 	}
 

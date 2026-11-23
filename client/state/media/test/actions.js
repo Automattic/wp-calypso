@@ -1,5 +1,4 @@
 import {
-	MEDIA_DELETE,
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
@@ -7,7 +6,6 @@ import {
 } from 'calypso/state/action-types';
 import {
 	receiveMedia,
-	deleteMedia,
 	requestMediaItem,
 	successMediaItemRequest,
 	failMediaItemRequest,
@@ -55,32 +53,6 @@ describe( 'media - actions - sync', () => {
 					media: [ { ID: 42, title: 'flowers' } ],
 					found: 1,
 					query: { search: 'flowers' },
-				} );
-			} );
-		} );
-	} );
-
-	describe( 'deleteMedia()', () => {
-		describe( 'single', () => {
-			test( 'should return an action object', () => {
-				const action = deleteMedia( 2916284, 42 );
-
-				expect( action ).toEqual( {
-					type: MEDIA_DELETE,
-					siteId: 2916284,
-					mediaIds: [ 42 ],
-				} );
-			} );
-		} );
-
-		describe( 'array', () => {
-			test( 'should return an action object', () => {
-				const action = deleteMedia( 2916284, [ 42 ] );
-
-				expect( action ).toEqual( {
-					type: MEDIA_DELETE,
-					siteId: 2916284,
-					mediaIds: [ 42 ],
 				} );
 			} );
 		} );

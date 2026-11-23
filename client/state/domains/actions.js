@@ -46,21 +46,6 @@ export const recordAddDomainButtonClickInMapDomain = ( domainName, section, flow
 		} )
 	);
 
-export const recordAddDomainButtonClickInTransferDomain = ( domainName, section, flowName = '' ) =>
-	composeAnalytics(
-		recordGoogleEvent(
-			'Domain Search',
-			'Clicked "Transfer" Button on a Domain Registration in Transfer Domain Step',
-			'Domain Name',
-			domainName
-		),
-		recordTracksEvent( 'calypso_transfer_domain_step_add_domain_click', {
-			domain_name: domainName,
-			section,
-			flow_name: flowName,
-		} )
-	);
-
 export const recordFormSubmitInMapDomain = ( searchBoxValue ) =>
 	recordGoogleEvent(
 		'Domain Search',

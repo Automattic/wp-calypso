@@ -78,9 +78,6 @@ const mapDispatchToProps = {
 `recordPageView :: String -> String -> Object`<br />
 `recordPageView( url, title )`: Creates an action to record a page view in both Google Analytics _and_ in Tracks.
 
-`recordGooglePageView :: String -> String -> Object`<br />
-`recordGooglePageView( url, title )`: Creates an action to record a page view in Google Analytics.
-
 `loadTrackingTool :: String -> String -> Object`<br />
 `loadTrackingTool ( trackingTool )`: Creates an action to load a tracking tool that gets attached to the DOM on component mount. Pass tracking tool reference through to middleware and manage loading scripts there.
 

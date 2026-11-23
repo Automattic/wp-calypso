@@ -3,7 +3,8 @@ import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state/create-store';
 import { setStore } from 'calypso/state/redux-store';
-import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
+import { receiveTheme } from 'calypso/state/themes/actions';
+import { themeRequestFailure } from 'calypso/state/themes/actions/theme-request-failure';
 import ThemeSheetComponent from '../main';
 
 jest.mock( '@automattic/odie-client/src/data', () => ( {

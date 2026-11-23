@@ -1,7 +1,6 @@
 import { merge, omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
 import {
-	MEDIA_DELETE,
 	SITE_LEAVE_RECEIVE,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
@@ -226,19 +225,6 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 				},
 				state
 			);
-		}
-
-		case MEDIA_DELETE: {
-			const { siteId, mediaIds } = action;
-			const siteIconId = state[ siteId ]?.icon?.media_id;
-			if ( siteIconId && mediaIds.includes( siteIconId ) ) {
-				return {
-					...state,
-					[ siteId ]: omit( state[ siteId ], 'icon' ),
-				};
-			}
-
-			return state;
 		}
 
 		case SITE_PLUGIN_UPDATED: {

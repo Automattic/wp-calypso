@@ -1,7 +1,7 @@
+import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
+import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
+import { getDocumentHeadUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-unread-count';
 import {
-	getDocumentHeadTitle,
-	getDocumentHeadUnreadCount,
-	getDocumentHeadCappedUnreadCount,
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
