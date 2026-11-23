@@ -90,7 +90,6 @@
 		"jetpack/pro-bundles": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jitms": true,
-		"lasagna": true,
 		"layout/app-banner": true,
 		"layout/global-notifications": true,
 		"layout/guided-tours": true,

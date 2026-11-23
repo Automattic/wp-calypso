@@ -7,7 +7,7 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import emailVerification from './email-verification/reducer';
-import { capabilitiesSchema, flagsSchema, idSchema, lasagnaSchema } from './schema';
+import { capabilitiesSchema, flagsSchema, idSchema } from './schema';
 
 /**
  * Tracks the current user ID.
@@ -112,20 +112,10 @@ export const capabilities = withSchemaValidation( capabilitiesSchema, ( state = 
 	return state;
 } );
 
-export const lasagnaJwt = withSchemaValidation( lasagnaSchema, ( state = null, action ) => {
-	switch ( action.type ) {
-		case CURRENT_USER_RECEIVE:
-			return action.user.lasagna_jwt || null;
-	}
-
-	return state;
-} );
-
 export default combineReducers( {
 	id,
 	user,
 	capabilities,
 	flags,
 	emailVerification,
-	lasagnaJwt,
 } );
