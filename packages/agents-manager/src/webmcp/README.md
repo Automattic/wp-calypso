@@ -32,6 +32,9 @@ ability, and the server allowlist doesn't expose a client one.
 WebMCP calls use the original slash-based ability name. The backend route settings don't apply
 here: they scope only the agent's own tools.
 
+A tool's description is its ability's own `description`, the text the Agents Manager agent also
+reads when its route allows the ability. A client ability's `meta.instructions` stay with the chat.
+
 Eligibility is checked when Agents Manager mounts and whenever the scope or tool provider changes;
 such a change, or unmounting, aborts all registrations. While eligible, the adapter syncs the tools
 whenever the `@wordpress/abilities` registry changes, which covers abilities registered there by
@@ -97,6 +100,9 @@ saves as a side effect, such as `big-sky/editor-navigate`, does not belong here.
 To add another tool, verify its complete implementation, permissions, annotations, and execution
 path. Set `meta.webmcp.public: true` on a client ability, or add a REST-backed tool to
 `WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`).
+
+Write the ability's `description` for both agents: name another tool only if both have it, or if
+only browser agents read the description, as with `big-sky/apply-block-edits`.
 
 ## Testing
 

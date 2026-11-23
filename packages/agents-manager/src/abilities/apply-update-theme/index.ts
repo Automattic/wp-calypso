@@ -29,7 +29,8 @@ export const applyUpdateThemeAbility: Ability = {
 	name: 'big-sky/apply-update-theme',
 	label: __( 'Update Theme', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: 'Update WordPress theme settings and styles using theme.json format',
+	description:
+		"Merges theme.json settings and styles into the site's global styles, for example the color palette, font families, or styles for elements and blocks. The change previews in the editor and remains unsaved and reviewable.",
 	input_schema: {
 		type: 'object',
 		properties: {
