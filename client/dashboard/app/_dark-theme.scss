@@ -119,4 +119,54 @@
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-illustrations;
 	@include color-scheme-dark-theme-palettes;
+	@include dashboard-dark-theme-pending-upstream;
+}
+
+// TEMPORARY local overrides: WPDS's dark ramp puts these tokens too close to the surface. Each rule
+// goes once fixed upstream in WordPress/gutenberg (elevation: #75266; ramp contrast: raised on #116914).
+@mixin dashboard-dark-theme-pending-upstream {
+	// Row separators: `stroke-surface-neutral-weak` is ~1:1 against cards.
+	.dataviews-view-list div[role='row'],
+	.dataviews-view-list div[role='article'],
+	.dataviews-view-table tr {
+		border-top-color: var( --wpds-color-stroke-surface-neutral );
+	}
+
+	// Selected rows: `background-interactive-brand-weak-active` reads as a block, `stroke-surface-brand` is 2.55:1.
+	.dataviews-view-list div[role='row'].is-selected .dataviews-view-list__item-wrapper,
+	.dataviews-view-list div[role='article'].is-selected .dataviews-view-list__item-wrapper,
+	.dataviews-view-table tr.is-selected {
+		background-color: color-mix(
+			in srgb,
+			var( --wpds-color-background-interactive-brand-weak-active ) 30%,
+			var( --wpds-color-background-surface-neutral-strong )
+		);
+	}
+
+	.dataviews-view-list div[role='row'].is-selected.is-selected,
+	.dataviews-view-list div[role='article'].is-selected.is-selected,
+	.dataviews-view-list div.is-selected.is-selected + div[role='row'],
+	.dataviews-view-list div.is-selected.is-selected + div[role='article'],
+	.dataviews-view-table tr.is-selected,
+	.dataviews-view-table tr.is-selected + tr {
+		border-top-color: var( --wpds-color-stroke-interactive-brand );
+	}
+
+	// Checkbox border: `stroke-interactive-neutral` is 3:1 on cards and below it on hovered and selected rows.
+	.components-checkbox-control__input[type='checkbox']:not( :checked, :indeterminate ) {
+		border-color: var( --wpds-color-stroke-interactive-neutral-strong );
+	}
+
+	// Menus: shadows don't show on dark surfaces (#75266), so lift them with a lighter surface and a visible edge.
+	.components-dropdown-menu__popover .components-popover__content,
+	[data-base-ui-portal] [role='menu'] {
+		background: color-mix(
+			in srgb,
+			var( --wpds-color-background-surface-neutral-strong ) 94%,
+			var( --wpds-color-foreground-content-neutral )
+		);
+		box-shadow:
+			0 0 0 1px var( --wpds-color-stroke-surface-neutral-strong ),
+			0 4px 16px rgba( 0, 0, 0, 0.4 );
+	}
 }
