@@ -15,7 +15,7 @@ import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { formatStorage } from '../../utils/site-storage';
-import { CollidingCardsPreview } from './colliding-cards';
+import { PuzzlePreview } from './puzzle';
 import { TornCollage } from './torn-collage';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
@@ -325,12 +325,12 @@ function SiteSnapshot( {
 	destinationHost,
 	session,
 	step,
-	hasCollidingCards = false,
+	hasPuzzle = false,
 }: {
 	/** The address the customer gave, whose screenshot is torn up and stuck back together while pages are found. */
 	sourceUrl?: string;
-	/** Keeps two colliding cards up for the whole move, in place of the collage and page list. */
-	hasCollidingCards?: boolean;
+	/** Keeps the puzzle up for the whole move, in place of the collage and page list. */
+	hasPuzzle?: boolean;
 	sourceHost: string;
 	/** Shown in the address bar once the copy is being built there, when given. */
 	destinationHost?: string;
@@ -386,8 +386,7 @@ function SiteSnapshot( {
 	// of pages takes over from there.
 	const isCollage =
 		Boolean( sourceUrl ) &&
-		( hasCollidingCards ||
-			( step <= 1 && ! hasLoaded && ! pages.some( ( page ) => page.captured ) ) );
+		( hasPuzzle || ( step <= 1 && ! hasLoaded && ! pages.some( ( page ) => page.captured ) ) );
 	const isListShown = pages.length > 0 && ! isCollage;
 
 	return (
@@ -418,8 +417,8 @@ function SiteSnapshot( {
 				</div>
 				{ isCollage &&
 					sourceUrl &&
-					( hasCollidingCards ? (
-						<CollidingCardsPreview url={ sourceUrl } />
+					( hasPuzzle ? (
+						<PuzzlePreview url={ sourceUrl } running={ step < 3 } />
 					) : (
 						<TornCollage url={ sourceUrl } />
 					) ) }
@@ -437,7 +436,7 @@ function SiteSnapshot( {
 						) ) }
 					</ol>
 				) }
-				{ imageUrl && ! hasCollidingCards && (
+				{ imageUrl && ! hasPuzzle && (
 					<img
 						className="static-site-import-snapshot__image"
 						src={ imageUrl }
@@ -458,9 +457,7 @@ function SiteSnapshot( {
 						} }
 					/>
 				) }
-				{ ! hasCollidingCards && (
-					<span className="static-site-import-snapshot__scan" aria-hidden="true" />
-				) }
+				{ ! hasPuzzle && <span className="static-site-import-snapshot__scan" aria-hidden="true" /> }
 			</div>
 		</figure>
 	);
@@ -790,7 +787,7 @@ export function StaticSiteImportPreviewWindow( {
 				destinationHost={ getSourceHost( session?.site_url ) }
 				session={ session }
 				step={ getCurrentStep( session ) }
-				hasCollidingCards
+				hasPuzzle
 			/>
 		</div>
 	);

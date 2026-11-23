@@ -5,7 +5,7 @@ import { getMshotUrl, MSHOT_PLACEHOLDER, MSHOT_TRIES } from './torn-collage';
 import './colliding-cards.scss';
 
 /** The address of the site's screenshot, once mShots has finished taking it. */
-function useMshotImage( url: string ) {
+export function useMshotImage( url: string ) {
 	const [ imageUrl, setImageUrl ] = useState< string >();
 
 	useEffect( () => {

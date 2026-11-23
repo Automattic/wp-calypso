@@ -56,7 +56,7 @@ describe( 'StaticSiteImportProgressStep', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'keeps the colliding cards up in place of the page list and screenshot', () => {
+	it( 'keeps the puzzle up in place of the page list and screenshot', () => {
 		render( {
 			status: 'moving',
 			session: {
@@ -66,7 +66,7 @@ describe( 'StaticSiteImportProgressStep', () => {
 			},
 		} as StaticSiteImport );
 
-		expect( document.querySelector( '.static-site-import-colliding-cards' ) ).toBeVisible();
+		expect( document.querySelector( '.static-site-import-puzzle' ) ).toBeVisible();
 		expect(
 			document.querySelector( '.static-site-import-snapshot__pages' )
 		).not.toBeInTheDocument();
