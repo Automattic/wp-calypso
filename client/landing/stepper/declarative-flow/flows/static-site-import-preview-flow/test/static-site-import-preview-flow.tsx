@@ -295,6 +295,21 @@ describe( 'Static site import preview flow', () => {
 			} );
 		} );
 
+		it( 'passes a saved site ID as a number', () => {
+			flowState[ STEPS.STATIC_SITE_IMPORT_READING.slug ] = {
+				...STARTED,
+				previewSiteId: '456',
+			} as unknown as typeof STARTED;
+			identify();
+			const props = renderHookWithProvider( () => staticSiteImportPreviewFlow.useStepsProps(), {
+				wrapper: ( { children } ) => (
+					<MemoryRouter initialEntries={ [ '/progress' ] }>{ children }</MemoryRouter>
+				),
+			} ).result.current[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ];
+
+			expect( props.siteId ).toBe( 456 );
+		} );
+
 		it( 'opens the finished preview at its share link', () => {
 			const previewUrl = 'https://preview.example/?share=x';
 			runNavigation( {

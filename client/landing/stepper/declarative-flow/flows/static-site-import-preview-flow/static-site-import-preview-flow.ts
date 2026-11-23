@@ -90,7 +90,11 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 						: undefined,
 			},
 			[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ]: {
-				siteId: started?.action === 'continue' ? started.previewSiteId : undefined,
+				// Site creation returns the ID as a string, and the move looks up the preview by a numeric ID.
+				siteId:
+					started?.action === 'continue' && started.previewSiteId
+						? Number( started.previewSiteId )
+						: undefined,
 				importSessionId: started?.action === 'continue' ? started.importSessionId : undefined,
 				from,
 				platform,
