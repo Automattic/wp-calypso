@@ -21,6 +21,10 @@ describe( 'isExternal', () => {
 		expect( actual ).toBe( false );
 	} );
 
+	test( 'should return false for an empty url', () => {
+		expect( isExternal( '' ) ).toBe( false );
+	} );
+
 	test( 'should return true for url without http', () => {
 		const urlWithoutHttp = 'wordpress.com/support';
 		const actual = isExternal( urlWithoutHttp );

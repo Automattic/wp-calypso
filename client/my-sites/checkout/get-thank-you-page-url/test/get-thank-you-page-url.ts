@@ -1559,6 +1559,16 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).not.toContain( 'javascript:' );
 	} );
 
+	it( 'ignores a non-http redirectTo that names an allowed host', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			receiptId: 12342424241,
+			redirectTo: 'javascript://jetpack.com/%0Aalert(1)',
+		} );
+		expect( url ).not.toContain( 'javascript:' );
+	} );
+
 	it( 'returns a Studio redirectTo as is, keeping the receipt placeholder for the pending page', () => {
 		const redirectTo = 'https://app.wordpress.studio/purchase-complete?receipt=:receiptId';
 		const url = getThankYouPageUrl( {

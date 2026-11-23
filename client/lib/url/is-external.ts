@@ -22,6 +22,10 @@ export default function isExternal( url: URLString ): boolean {
 		return true;
 	}
 
+	if ( url === '' ) {
+		return false;
+	}
+
 	// `javascript:x='@example.com/'` reads as a host after the `//` below, so check the scheme
 	// as the browser will parse it first.
 	if ( ! [ 'http:', 'https:', null ].includes( getAbsoluteProtocol( url ) ) ) {

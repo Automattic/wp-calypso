@@ -8,11 +8,10 @@ import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfe
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import { useWaitForAtomic, FailureInfo } from '../../../../hooks/use-wait-for-atomic';
 import { ONBOARD_STORE } from '../../../../stores';
-import { sanitizeDirectToCartRedirect } from '../../../flows/direct-to-cart/sanitize-redirect';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { getTransferRedirectTo } from './redirect-to';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
@@ -110,20 +109,12 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 			setProgress( 75 );
 			const latestSite = await waitForLatestSiteData();
 			setProgress( 100 );
-			const redirectTo = searchParams.get( 'redirect_to' );
 
 			return {
 				finishedWaitingForAtomic: true,
 				siteId,
 				siteSlug: data?.siteSlug,
-				// The site's host before the transfer and after it are both followed: callers link to
-				// either, and `site` is still empty when a reload resumes the wait. Direct-to-cart sends
-				// partners back here, so their allowlisted hosts are followed too.
-				redirectTo:
-					getSafeUrl( redirectTo, site?.URL ) ??
-					getSafeUrl( redirectTo, latestSite.URL ) ??
-					getSafeUrl( redirectTo, latestSite.options?.unmapped_url ) ??
-					sanitizeDirectToCartRedirect( redirectTo ),
+				redirectTo: getTransferRedirectTo( searchParams.get( 'redirect_to' ), site, latestSite ),
 			};
 		} );
 

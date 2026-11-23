@@ -183,7 +183,7 @@ export default function getThankYouPageUrl( {
 	// (i.e. on WordPress.com), the same site as the cart's site, a Jetpack cloud URL,
 	// or a Jetpack or WP.com site's block editor (in wp-admin). This is required for Jetpack's
 	// (and WP.com's) paid blocks Upgrade Nudge.
-	if ( redirectTo && ! connectAfterCheckout ) {
+	if ( redirectTo && ! connectAfterCheckout && isHttpOrRelativeUrl( redirectTo ) ) {
 		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
 
 		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {
@@ -892,15 +892,17 @@ function getRedirectUrlFromCart( cart: ResponseCart ): string | null {
 	return firstProductWithUrl?.extra.afterPurchaseUrl ?? null;
 }
 
+// `javascript://<host>/%0A…` has the host of the site or of an allowed one.
+function isHttpOrRelativeUrl( url: string ) {
+	const { protocol } = getUrlParts( url );
+	return ! protocol || protocol === 'http:' || protocol === 'https:';
+}
+
 function isRedirectSameSite( redirectTo: string, siteSlug?: string ) {
 	if ( ! siteSlug ) {
 		return false;
 	}
-	const { protocol, hostname, pathname } = getUrlParts( redirectTo );
-	// `javascript://<site>/%0A…` names the site as its host.
-	if ( protocol && ! [ 'http:', 'https:' ].includes( protocol ) ) {
-		return false;
-	}
+	const { hostname, pathname } = getUrlParts( redirectTo );
 	// For subdirectory site, check that both hostname and subdirectory matches the siteSlug (host.name::subdirectory).
 	if ( siteSlug.indexOf( '::' ) !== -1 ) {
 		const slugParts = siteSlug.split( '::' );
