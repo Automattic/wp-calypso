@@ -130,6 +130,22 @@ describe( 'HotkeyContainer', () => {
 		expect( approve ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'runs a shortcut once while its key is held down', () => {
+		const approve = vi.fn();
+		render(
+			<HotkeyContainer
+				keyboardShortcutsAreEnabled
+				shortcuts={ [ { hotkey: 'a', action: approve } ] }
+			/>
+		);
+
+		pressKey( 'a' );
+		pressKey( 'a', { repeat: true } );
+		pressKey( 'a', { repeat: true } );
+
+		expect( approve ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'runs no shortcut while keyboard shortcuts are off', () => {
 		const approve = vi.fn();
 		render(

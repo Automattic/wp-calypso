@@ -40,6 +40,7 @@ export class HotkeyContainer extends Component {
 
 	handleKeyDown = ( event ) => {
 		if (
+			event.repeat ||
 			handledEvents.has( event ) ||
 			! this.props.shortcuts ||
 			! this.props.keyboardShortcutsAreEnabled
