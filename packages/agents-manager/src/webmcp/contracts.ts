@@ -3,9 +3,7 @@ import type { Ability } from '@wordpress/abilities';
 export const GET_BLOCK_TREE_ABILITY_NAME = 'agents-manager/get-block-tree';
 export const APPLY_BLOCK_EDITS_ABILITY_NAME = 'big-sky/apply-block-edits';
 export const SHOW_TEMPLATE_ABILITY_NAME = 'big-sky/show-template';
-export const APPLY_UPDATE_THEME_ABILITY_NAME = 'big-sky/apply-update-theme';
 export const EDIT_ENTITY_RECORD_ABILITY_NAME = 'big-sky/edit-entity-record';
-export const SET_SITE_LOGO_ABILITY_NAME = 'big-sky/set-site-logo';
 export const WEBMCP_SERVER_ABILITY_NAMES = [
 	'wpcom/get-block-schemas',
 	'wpcom/get-content-guidelines',
@@ -45,8 +43,6 @@ const BLOCK_DATA_SCHEMA = {
 
 export const APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = {
 	type: 'object',
-	description:
-		'Call agents_manager__get_block_tree immediately before this tool. Use its clientId values unchanged.',
 	properties: {
 		updates: {
 			type: 'array',
@@ -106,6 +102,8 @@ export const APPLY_BLOCK_EDITS_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = 
  */
 export const EDIT_ENTITY_RECORD_WEBMCP_INPUT_SCHEMA: Record< string, unknown > = {
 	type: 'object',
+	description:
+		'Through this tool, only the title or excerpt of the post or page open in the editor can change. Creating, deleting or editing any other record is refused.',
 	properties: {
 		title: {
 			type: 'string',
@@ -133,26 +131,6 @@ export function getWebMcpInputSchema( ability: Ability ): Record< string, unknow
 }
 
 export function getWebMcpDescription( ability: Ability ): string {
-	if ( ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ) {
-		return 'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. To insert a section or several blocks at once, write serialized Gutenberg block markup and pass it as an insert blockMarkup value; call wpcom__get_block_schemas first to check block names and attributes. The change remains unsaved and reviewable in the editor.';
-	}
-
-	if ( ability.name === SHOW_TEMPLATE_ABILITY_NAME ) {
-		return "Turns on the editor's Show template mode so headers and footers become available to agents_manager__get_block_tree. Use this when the requested header or footer is absent from the block tree, then read the block tree again before editing. This does not unlock a template part that is already visible but locked.";
-	}
-
-	if ( ability.name === APPLY_UPDATE_THEME_ABILITY_NAME ) {
-		return "Merges theme.json settings and styles into the site's global styles, for example the color palette, font families, or styles for elements and blocks. The change previews in the editor and remains unsaved and reviewable.";
-	}
-
-	if ( ability.name === EDIT_ENTITY_RECORD_ABILITY_NAME ) {
-		return 'Changes the title or excerpt of the post or page open in the editor. Renaming a page also relabels the navigation menu items that point to it. The change remains unsaved and reviewable in the editor.';
-	}
-
-	if ( ability.name === SET_SITE_LOGO_ABILITY_NAME ) {
-		return "Sets the site logo to an image in the site's media library. Pass the image's attachment ID as fileObj.attachment_id; find or upload the image with the WordPress.com MCP media tools first. The logo shows wherever the page has a Site Logo block, and the change remains unsaved and reviewable in the editor.";
-	}
-
 	const description = ability.description || ability.label || ability.name;
 	const instructions = ability.meta?.instructions;
 

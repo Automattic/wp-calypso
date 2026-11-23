@@ -60,7 +60,7 @@ const createBlockTreeAbility = (): Ability => ( {
 const createShowTemplateAbility = (): Ability => ( {
 	name: 'big-sky/show-template',
 	label: 'Show the page template',
-	description: 'Show the page template, then call big_sky__get_page_structure again.',
+	description: 'Show the page template.',
 	category: 'big-sky',
 	input_schema: { type: 'object', properties: {}, additionalProperties: false },
 	meta: {
@@ -236,7 +236,6 @@ describe( 'WebMCP adapter', () => {
 
 		const tool = harness.tools.get( 'big_sky__show_template' );
 		expect( tool ).toMatchObject( {
-			description: expect.stringContaining( 'agents_manager__get_block_tree' ),
 			inputSchema: { type: 'object', properties: {}, additionalProperties: false },
 			annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
 		} );
@@ -267,7 +266,7 @@ describe( 'WebMCP adapter', () => {
 		expect( tool ).toMatchObject( {
 			name: 'big_sky__apply_block_edits',
 			title: 'Apply block edits',
-			description: expect.stringContaining( 'agents_manager__get_block_tree' ),
+			description: 'Apply deterministic edits to the current block canvas.',
 			inputSchema: {
 				type: 'object',
 				properties: {
@@ -432,8 +431,8 @@ describe( 'WebMCP adapter', () => {
 		await harness.adapter.sync();
 
 		expect( harness.tools.get( 'big_sky__edit_entity_record' ) ).toMatchObject( {
-			description: expect.stringContaining( 'post or page open in the editor' ),
 			inputSchema: {
+				description: expect.stringContaining( 'post or page open in the editor' ),
 				properties: { title: { type: 'string' }, excerpt: { type: 'string' } },
 				additionalProperties: false,
 			},
@@ -478,13 +477,16 @@ describe( 'WebMCP adapter', () => {
 		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
-	it( 'tells the agent where the site logo image comes from', async () => {
-		const harness = createHarness( [ createAbility( { name: 'big-sky/set-site-logo' } ) ] );
+	it( "uses a client ability's own description and leaves out its chat instructions", async () => {
+		const ability = createEditEntityRecordAbility();
+		const harness = createHarness( [
+			{ ...ability, meta: { ...ability.meta, instructions: 'Chat-only instructions.' } },
+		] );
 
 		await harness.adapter.sync();
 
-		expect( harness.tools.get( 'big_sky__set_site_logo' )?.description ).toContain(
-			'attachment ID'
+		expect( harness.tools.get( 'big_sky__edit_entity_record' )?.description ).toBe(
+			ability.description
 		);
 	} );
 

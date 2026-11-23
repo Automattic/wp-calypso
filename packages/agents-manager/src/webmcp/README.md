@@ -32,6 +32,9 @@ ability, and the server allowlist doesn't expose a client one.
 WebMCP calls use the original slash-based ability name. The backend route settings don't apply
 here: they scope only the agent's own tools.
 
+A tool's description is its ability's own `description`, the text the Agents Manager agent also
+reads when its route allows the ability. A client ability's `meta.instructions` stay with the chat.
+
 Eligibility is checked when Agents Manager mounts and whenever the scope or tool provider changes;
 such a change, or unmounting, aborts all registrations. While eligible, the adapter syncs the tools
 whenever the `@wordpress/abilities` registry changes, which covers abilities registered there by
@@ -71,7 +74,8 @@ The exposed tools are:
 - `big-sky/edit-entity-record`: an Agents Manager-owned ability that, through WebMCP, only changes
   the title or excerpt of the post or page open in the editor. The full ability also creates,
   deletes and saves records across the site, so the WebMCP contract replaces its schema with
-  `title` and `excerpt` alone, and the adapter targets the open post itself, refusing anything else.
+  `title` and `excerpt` alone, says so in the schema's description, and the adapter targets the
+  open post itself, refusing anything else.
   The edit stays unsaved. Renaming a page also relabels the navigation menu items that point to it,
   as it does in chat.
 
@@ -97,6 +101,10 @@ saves as a side effect, such as `big-sky/editor-navigate`, does not belong here.
 To add another tool, verify its complete implementation, permissions, annotations, and execution
 path. Set `meta.webmcp.public: true` on a client ability, or add a REST-backed tool to
 `WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`).
+
+Write the ability's `description` for both agents. Name another tool only if both agents have it,
+or if the route settings keep the ability from the Agents Manager agent, as with
+`big-sky/apply-block-edits`, which only server abilities emit there.
 
 ## Testing
 
