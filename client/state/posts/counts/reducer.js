@@ -1,4 +1,4 @@
-import { merge, omit, pick } from '@automattic/js-utils';
+import { merge, pick } from '@automattic/js-utils';
 import {
 	CURRENT_USER_RECEIVE,
 	POST_COUNTS_RECEIVE,
@@ -90,22 +90,12 @@ export const counts = ( () => {
 				0
 			);
 
-			// So long as we're not trashing an already trashed post or page,
-			// increment the count for the transitioned status
-			if ( 'deleted' !== status ) {
-				memo[ subKey ][ status ] = ( subKeyCounts[ status ] || 0 ) + 1;
-			}
+			memo[ subKey ][ status ] = ( subKeyCounts[ status ] || 0 ) + 1;
 
 			return memo;
 		}, {} );
 
-		if ( 'deleted' === status ) {
-			// If post is permanently deleted, omit from tracked statuses
-			postStatuses = omit( postStatuses, postStatusKey );
-		} else {
-			// Otherwise, update object to reflect new status
-			postStatus.status = status;
-		}
+		postStatus.status = status;
 
 		// Ensure that `all` and `mine` keys are always present
 		merge( revisions, {
