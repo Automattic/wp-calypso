@@ -55,7 +55,7 @@ const findManagePurchases = () => screen.findByRole( 'link', { name: 'Manage pur
 
 beforeEach( () => {
 	mockIsBackport = true;
-	window.scrollTo = jest.fn();
+	window.scrollTo = vi.fn();
 } );
 
 describe( '<ContentInfo> purchase blockers', () => {
@@ -125,7 +125,7 @@ describe( '<ContentInfo> purchase blockers', () => {
 
 	test( 'explains who will receive authored content on an Atomic site', async () => {
 		mockPurchases( [] );
-		render( <ContentInfo site={ { ...site, is_wpcom_atomic: true } } onClose={ jest.fn() } /> );
+		render( <ContentInfo site={ { ...site, is_wpcom_atomic: true } } onClose={ vi.fn() } /> );
 
 		expect( await screen.findByText( /reassigned to the site owner/ ) ).toBeVisible();
 	} );
@@ -144,7 +144,7 @@ describe( '<ContentInfo> purchase blockers', () => {
 				finishRequest = () => callback( null, [ 200, { success: false } ] );
 			} );
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		const { unmount, recordTracksEvent } = render(
 			<ContentInfo site={ site } onClose={ onClose } />
 		);
@@ -189,9 +189,9 @@ describe( '<ContentInfo> purchase blockers', () => {
 					requestCount++;
 					finishRequest = () => callback( null, [ 200, { success } ] );
 				} );
-			const onClose = jest.fn();
+			const onClose = vi.fn();
 			const { router } = render( <ContentInfo site={ site } onClose={ onClose } /> );
-			const navigate = jest.spyOn( router, 'navigate' ).mockResolvedValue();
+			const navigate = vi.spyOn( router, 'navigate' ).mockResolvedValue();
 			const user = userEvent.setup();
 
 			await user.click( await screen.findByRole( 'checkbox' ) );
@@ -249,7 +249,7 @@ describe( '<ContentInfo> purchase blockers', () => {
 
 			const user = userEvent.setup();
 			const { router } = render( <LeaveDialog /> );
-			const navigate = jest.spyOn( router, 'navigate' ).mockResolvedValue();
+			const navigate = vi.spyOn( router, 'navigate' ).mockResolvedValue();
 			await user.click( await screen.findByRole( 'checkbox' ) );
 			const submit = screen.getByRole( 'button', { name: 'Leave site' } );
 			await waitFor( () => expect( submit ).toBeEnabled() );
