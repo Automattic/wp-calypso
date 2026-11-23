@@ -2,17 +2,8 @@
 import { basename, dirname, resolve } from 'node:path';
 import util from 'node:util';
 import glob from 'glob';
+import { APPS_EXCLUDED_FROM_TYPE_CHECK } from './apps-excluded-from-type-check.mjs';
 import runTask from './teamcity-task-runner.mjs';
-
-// TEMPORARY: These apps *should* be type-checked, but there are existing issues that need to be
-// resolved.
-const APPS_EXCLUDED_FROM_TYPE_CHECK = [
-	'happy-blocks',
-	'o2-blocks',
-	'odyssey-stats',
-	'notifications',
-	'wpcom-block-editor',
-];
 
 const globPromise = util.promisify( glob );
 
