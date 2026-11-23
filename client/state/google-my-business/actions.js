@@ -47,9 +47,6 @@ export const connectGoogleMyBusinessAccount =
 export const connectGoogleMyBusinessLocation = ( siteId, keyringId, locationId ) => ( dispatch ) =>
 	dispatch( updateSiteKeyring( siteId, keyringId, locationId ) );
 
-export const disconnectGoogleMyBusinessLocation = ( siteId, keyringId ) => ( dispatch ) =>
-	dispatch( updateSiteKeyring( siteId, keyringId, null ) );
-
 export const requestGoogleMyBusinessStats = (
 	siteId,
 	statType,

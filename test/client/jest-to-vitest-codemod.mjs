@@ -431,14 +431,10 @@ for ( const file of files ) {
 		const text = src.slice( comment.pos, comment.end );
 		for ( const match of text.matchAll( /@jest-environment(\s+)(\S+)/g ) ) {
 			const at = comment.pos + match.index;
-			// Vitest shares the real `process.env`, so setting `TZ` in a test already works there.
-			const environment = match[ 2 ].endsWith( '/jest-environment-timezone.js' )
-				? 'jsdom'
-				: match[ 2 ];
 			edits.push( {
 				start: at,
 				end: at + match[ 0 ].length,
-				text: `@vitest-environment${ match[ 1 ] }${ environment }`,
+				text: `@vitest-environment${ match[ 1 ] }${ match[ 2 ] }`,
 			} );
 		}
 		for ( const match of text.matchAll( /@jest-environment-options\b/g ) ) {

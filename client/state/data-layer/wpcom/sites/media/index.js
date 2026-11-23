@@ -10,7 +10,6 @@ import {
 	failMediaRequest,
 	receiveMedia,
 	setNextPageHandle,
-	successMediaItemRequest,
 	successMediaRequest,
 } from 'calypso/state/media/actions';
 import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
@@ -76,10 +75,7 @@ export function requestMediaItem( action ) {
 	];
 }
 
-export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
-	receiveMedia( siteId, media ),
-	successMediaItemRequest( siteId, mediaId ),
-];
+export const receiveMediaItem = ( { siteId }, media ) => [ receiveMedia( siteId, media ) ];
 
 export const receiveMediaItemError = ( { mediaId, siteId } ) =>
 	failMediaItemRequest( siteId, mediaId );

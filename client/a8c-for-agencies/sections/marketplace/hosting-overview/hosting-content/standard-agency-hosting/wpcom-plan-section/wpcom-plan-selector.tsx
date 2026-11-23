@@ -10,6 +10,9 @@ import { getWPCOMTieredPrice } from 'calypso/a8c-for-agencies/sections/marketpla
 import useWPCOMPlanDescription from 'calypso/a8c-for-agencies/sections/marketplace/hooks/use-wpcom-plan-description';
 import { calculateTier } from 'calypso/a8c-for-agencies/sections/marketplace/lib/wpcom-bulk-values-utils';
 import WPCOMLogo from 'calypso/assets/images/a8c-for-agencies/wpcom-logo.svg';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useDispatch } from 'calypso/state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import useWPCOMDiscountTiers from '../../../hooks/use-wpcom-discount-tiers';
 import type { TermPricingType } from 'calypso/a8c-for-agencies/sections/marketplace/types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
@@ -48,6 +51,7 @@ export default function WPCOMPlanSelector( {
 	termPricing,
 }: Props ) {
 	const translate = useTranslate();
+	const moment = useLocalizedMoment();
 
 	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
@@ -70,9 +74,25 @@ export default function WPCOMPlanSelector( {
 				actualCost: originalPrice,
 				discountedCost: originalPrice - originalPrice * discount,
 				discountPercentage: Math.round( discount * 100 ),
+				promotion: undefined,
 			};
 
 	const actualPrice = pricingInfo.discountedCost;
+
+	const dispatch = useDispatch();
+	const promotionDiscount = pricingInfo.promotion?.discount;
+	useEffect( () => {
+		if ( promotionDiscount === undefined ) {
+			return;
+		}
+		dispatch(
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_wpcom_promotion_view', {
+				discount: promotionDiscount,
+				term: termPricing,
+				purchase_mode: isReferralMode ? 'referral' : 'regular',
+			} )
+		);
+	}, [ dispatch, promotionDiscount, termPricing, isReferralMode ] );
 
 	const { name: planName } = useWPCOMPlanDescription( plan?.slug ?? '' );
 
@@ -155,16 +175,36 @@ export default function WPCOMPlanSelector( {
 							</b>
 
 							<span className="wpcom-plan-selector__price-discount">
-								{ translate( 'You save %(discount)s%', {
-									args: {
-										discount: pricingInfo.discountPercentage,
-									},
-									comment: '%(discount)s is the discount percentage.',
-								} ) }
+								{ pricingInfo.promotion
+									? translate( 'You save %(discount)s%%*', {
+											args: {
+												discount: pricingInfo.discountPercentage,
+											},
+											comment:
+												'%(discount)s is the discount percentage. The asterisk indicates limited time offer.',
+										} )
+									: translate( 'You save %(discount)s%', {
+											args: {
+												discount: pricingInfo.discountPercentage,
+											},
+											comment: '%(discount)s is the discount percentage.',
+										} ) }
 							</span>
 						</>
 					) }
 					<div className="wpcom-plan-selector__price-interval">{ priceInterval() }</div>
+					{ pricingInfo.promotion && (
+						<div className="wpcom-plan-selector__promo-footnote">
+							{ translate( '*Includes %(discount)d%% off for a limited time. Ends %(endDate)s.', {
+								args: {
+									discount: pricingInfo.promotion.discount,
+									endDate: moment( pricingInfo.promotion.ends_at ).format( 'MMM D' ),
+								},
+								comment:
+									'%(discount)d is the promotion discount percentage, %(endDate)s the day it ends, e.g. "Dec 4".',
+							} ) }
+						</div>
+					) }
 				</div>
 			</div>
 			<div className="wpcom-plan-selector__cta">

@@ -25,7 +25,7 @@ import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import { isFeaturedImageInContent, safeLink } from 'calypso/lib/post-normalizer/utils';
+import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
@@ -53,10 +53,6 @@ import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
-import {
-	setViewingFullPostKey,
-	unsetViewingFullPostKey,
-} from 'calypso/state/reader/viewing/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getPreviousPath from 'calypso/state/selectors/get-previous-path';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -213,7 +209,6 @@ export class FullPostView extends Component {
 	}
 
 	componentWillUnmount() {
-		this.props.unsetViewingFullPostKey( keyForPost( this.props.post ) );
 		// Remove WPiFrameResize listener.
 		this.stopResize?.();
 		this.props.enableAppBanner(); // reset the app banner
@@ -563,9 +558,6 @@ export class FullPostView extends Component {
 		) {
 			markPostSeen( post, site );
 			this.hasSentPageView = true;
-
-			// mark post as currently viewing
-			this.props.setViewingFullPostKey( keyForPost( post ) );
 		}
 
 		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
@@ -824,9 +816,7 @@ export class FullPostView extends Component {
 								/>
 							) }
 
-							{ post.featured_image && ! isFeaturedImageInContent( post ) && (
-								<ReaderFullPostFeaturedImage post={ post } maxWidth={ contentWidth } />
-							) }
+							<ReaderFullPostFeaturedImage post={ post } maxWidth={ contentWidth } />
 							{ isLoading && <ReaderFullPostContentPlaceholder /> }
 							{ post.use_excerpt ? (
 								<PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
@@ -977,8 +967,6 @@ const getPostSiteId = ( { post } ) =>
 const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	disableAppBanner,
 	enableAppBanner,
-	setViewingFullPostKey,
-	unsetViewingFullPostKey,
 	showSelectedPost,
 	successNotice,
 } )(

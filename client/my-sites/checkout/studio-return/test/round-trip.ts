@@ -1,11 +1,34 @@
-import { buildStudioCancelTo, buildStudioRedirectTo, getStudioCheckoutParams } from '../round-trip';
+import {
+	buildStudioCancelTo,
+	buildStudioCheckoutRedirectTo,
+	buildStudioRedirectTo,
+	getStudioCheckoutParams,
+} from '../round-trip';
 
 const STUDIO_SITE_ID = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
 
 describe( 'getStudioCheckoutParams', () => {
-	it( 'returns null when studioSiteId is absent', () => {
+	it( 'returns null when neither studioSiteId nor studioReturnTo is present', () => {
 		expect( getStudioCheckoutParams( {} ) ).toBeNull();
 		expect( getStudioCheckoutParams( undefined ) ).toBeNull();
+	} );
+
+	it( 'treats studioReturnTo alone as the trigger, for checkouts started outside any site', () => {
+		expect( getStudioCheckoutParams( { studioReturnTo: 'settings' } ) ).toEqual( {
+			studioReturnTo: 'settings',
+		} );
+	} );
+
+	it( 'returns null when both params are present but unusable', () => {
+		expect(
+			getStudioCheckoutParams( { studioSiteId: '', studioReturnTo: 'a'.repeat( 65 ) } )
+		).toBeNull();
+	} );
+
+	it( 'drops an unusable studioSiteId when studioReturnTo is usable', () => {
+		expect(
+			getStudioCheckoutParams( { studioSiteId: [ STUDIO_SITE_ID ], studioReturnTo: 'settings' } )
+		).toEqual( { studioReturnTo: 'settings' } );
 	} );
 
 	it( 'rejects an empty or over-long studioSiteId', () => {
@@ -78,6 +101,14 @@ describe( 'buildStudioRedirectTo', () => {
 		).not.toContain( 'studioReturnTo' );
 	} );
 
+	it( 'omits studioSiteId when it was not supplied', () => {
+		const redirectTo = buildStudioRedirectTo( undefined, { studioReturnTo: 'settings' } );
+		const params = new URL( redirectTo, 'https://wordpress.com' ).searchParams;
+
+		expect( params.has( 'studioSiteId' ) ).toBe( false );
+		expect( params.get( 'studioReturnTo' ) ).toBe( 'settings' );
+	} );
+
 	it( 'stays relative so it needs no redirect allowlist entry', () => {
 		expect(
 			buildStudioRedirectTo( 'example.wordpress.com', { studioSiteId: STUDIO_SITE_ID } )
@@ -98,7 +129,37 @@ describe( 'buildStudioCancelTo', () => {
 		expect( url.searchParams.get( 'studioReturnTo' ) ).toBe( 'publish-site' );
 	} );
 
+	it( 'omits studioSiteId when it was not supplied', () => {
+		const url = new URL(
+			buildStudioCancelTo( { studioReturnTo: 'settings' } ),
+			'https://wordpress.com'
+		);
+
+		expect( url.pathname ).toBe( '/checkout/studio-return' );
+		expect( url.searchParams.has( 'studioSiteId' ) ).toBe( false );
+		expect( url.searchParams.get( 'studioReturnTo' ) ).toBe( 'settings' );
+	} );
+
 	it( 'stays relative so it passes the cancel_to check in leaveCheckout', () => {
 		expect( buildStudioCancelTo( { studioSiteId: STUDIO_SITE_ID } ) ).toMatch( /^\/(?!\/)/ );
+	} );
+} );
+
+describe( 'buildStudioCheckoutRedirectTo', () => {
+	it( 'lands on the Studio thank-you page when Studio sent no round-trip params', () => {
+		expect( buildStudioCheckoutRedirectTo( {} ) ).toBe(
+			'/checkout/thank-you/no-site/:receiptId?checkout_type=studio'
+		);
+	} );
+
+	it( 'keeps the desktop round-trip params next to the Studio flag', () => {
+		expect(
+			buildStudioCheckoutRedirectTo( {
+				studioSiteId: STUDIO_SITE_ID,
+				studioReturnTo: 'plan-purchased',
+			} )
+		).toBe(
+			`/checkout/thank-you/no-site/:receiptId?studioSiteId=${ STUDIO_SITE_ID }&studioReturnTo=plan-purchased&checkout_type=studio`
+		);
 	} );
 } );

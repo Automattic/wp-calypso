@@ -7,6 +7,7 @@ import { useEffect, useMemo, useReducer } from 'react';
 import { getCartProductByBillingIntentId } from 'calypso/data/marketplace/use-marketplace-billing-intents';
 import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
+import { isWpcomSitelessCheckoutType } from '../lib/is-wpcom-siteless-checkout-type';
 import useStripProductsFromUrl from './use-strip-products-from-url';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -153,7 +154,7 @@ export default function usePrepareProductsForCart( {
 		sitelessCheckoutType === 'marketplace' ||
 		sitelessCheckoutType === 'a4a' ||
 		sitelessCheckoutType === 'unified' ||
-		sitelessCheckoutType === 'wpcom' ||
+		isWpcomSitelessCheckoutType( sitelessCheckoutType ) ||
 		isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -240,7 +241,7 @@ function chooseAddHandler( {
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
 		sitelessCheckoutType === 'unified' ||
-		sitelessCheckoutType === 'wpcom'
+		isWpcomSitelessCheckoutType( sitelessCheckoutType )
 	) {
 		return 'addProductFromSlug';
 	}
@@ -776,7 +777,8 @@ function createItemToAddToCart( {
 			sitelessCheckoutType,
 			isDomainOnlySitelessCheckout: sitelessCheckoutType === 'domainonly',
 			isUnifiedSitelessCheckout: sitelessCheckoutType === 'unified',
-			isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
+			isWpcomSitelessCheckout: isWpcomSitelessCheckoutType( sitelessCheckoutType ),
+			isStudioSitelessCheckout: sitelessCheckoutType === 'studio',
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
 			jetpackSiteSlug,

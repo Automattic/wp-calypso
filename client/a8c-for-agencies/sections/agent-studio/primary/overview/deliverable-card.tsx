@@ -10,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
-import { Icon, moreVertical, page, trash, cautionFilled as warning } from '@wordpress/icons';
+import { Icon, moreVertical, page, trash, caution as warning } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useState } from 'react';
 import useDeliverableThumbnail from '../../data/use-deliverable-thumbnail';

@@ -109,6 +109,28 @@ describe( 'leaveCheckout', () => {
 			expect( navigate ).toHaveBeenCalledWith( '/plans/test.wordpress.com' );
 		} );
 
+		it.each( [ 'https://wordpress.studio/pricing', 'https://app.wordpress.studio/' ] )(
+			'should redirect to cancel_to when it is a Studio URL: %s',
+			( cancelTo ) => {
+				window.location.search = `?cancel_to=${ encodeURIComponent( cancelTo ) }`;
+
+				leaveCheckout( { tracksEvent: 'checkout_cancel' } );
+
+				expect( window.location.href ).toBe( cancelTo );
+				expect( navigate ).not.toHaveBeenCalled();
+			}
+		);
+
+		it( 'should not redirect to cancel_to on a host that only starts with a Studio host', () => {
+			const cancelTo = 'https://wordpress.studio.example.com/pricing';
+			window.location.search = `?cancel_to=${ encodeURIComponent( cancelTo ) }`;
+
+			leaveCheckout( { siteSlug: 'test.wordpress.com', tracksEvent: 'checkout_cancel' } );
+
+			expect( window.location.href ).not.toBe( cancelTo );
+			expect( navigate ).toHaveBeenCalledWith( '/plans/test.wordpress.com' );
+		} );
+
 		it.each( [
 			'https://my.wordpress.com@evil.example.com/',
 			'https://my.wordpress.com.evil.example.com/',

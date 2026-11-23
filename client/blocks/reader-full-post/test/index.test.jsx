@@ -311,7 +311,6 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		canMarkSeen: true,
 		teams: [],
 		referralStream: '',
-		setViewingFullPostKey: jest.fn(),
 	};
 
 	const feedPost = {

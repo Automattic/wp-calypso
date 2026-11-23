@@ -1,9 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import { PLAN_ECOMMERCE_2_YEARS, PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_HOSTING_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
-import { shouldSkipPlansStep } from '../preselected-plan';
+import { getPreselectedPlan, shouldSkipPlansStep } from '../preselected-plan';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const inCart = ( productSlug: string ) =>
@@ -55,5 +59,33 @@ describe( 'shouldSkipPlansStep', () => {
 				NEW_HOSTED_SITE_FLOW
 			)
 		).toBe( false );
+	} );
+} );
+
+describe( 'getPreselectedPlan for a WooCommerce Playground store', () => {
+	it( 'is Commerce, which the import needs', () => {
+		expect( getPreselectedPlan( new URLSearchParams( 'intent=woocommerce&playground=abc' ) ) ).toBe(
+			PLAN_ECOMMERCE
+		);
+	} );
+
+	it( 'ignores a plan named in the URL', () => {
+		expect(
+			getPreselectedPlan(
+				new URLSearchParams( 'intent=woocommerce&playground=abc&plan=personal-bundle' )
+			)
+		).toBe( PLAN_ECOMMERCE );
+	} );
+
+	it( 'needs both the WooCommerce intent and a Playground', () => {
+		expect( getPreselectedPlan( new URLSearchParams( 'intent=woocommerce' ) ) ).toBeNull();
+		expect( getPreselectedPlan( new URLSearchParams( 'playground=abc' ) ) ).toBeNull();
+	} );
+
+	it( 'skips the plans step once Commerce is in the cart', () => {
+		const query = new URLSearchParams( 'intent=woocommerce&playground=abc' );
+
+		expect( shouldSkipPlansStep( query, inCart( PLAN_ECOMMERCE ) ) ).toBe( true );
+		expect( shouldSkipPlansStep( query, null ) ).toBe( false );
 	} );
 } );

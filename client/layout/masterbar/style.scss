@@ -119,7 +119,8 @@ body.is-mobile-app-view {
 		&.masterbar--is-akismet,
 		&.masterbar--is-jetpack,
 		&.masterbar--is-a4a,
-		&.masterbar--is-passport {
+		&.masterbar--is-passport,
+		&.masterbar--is-studio {
 			padding-inline-start: 1.5em;
 		}
 
@@ -630,4 +631,13 @@ body.is-mobile-app-view {
 	100% {
 		opacity: 1;
 	}
+}
+
+.masterbar__studio-logo {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-weight: 600;
+	white-space: nowrap;
+	color: var(--color-checkout-masterbar-text);
 }

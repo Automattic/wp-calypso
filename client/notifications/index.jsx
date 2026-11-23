@@ -54,6 +54,7 @@ const getIsVisible = () => {
 const isDesktop = config.isEnabled( 'desktop' );
 
 const isRedesignEnabled = config.isEnabled( 'notifications/redesign' );
+const isMarkAsUnreadEnabled = config.isEnabled( 'notifications/mark-as-unread' );
 
 let notificationAppModule;
 
@@ -77,6 +78,8 @@ const refreshNotes = () => notificationAppModule?.then( ( module ) => module.ref
 const debug = debugFactory( 'notifications:panel' );
 
 const getMasterbarBell = () => document.querySelector( '.omnibar__notifications' );
+
+const isDedicatedReaderRoute = ( route ) => route?.startsWith( '/reader/notifications' );
 
 const Notifications3PCNotice = ( { className } ) => {
 	const translate = useTranslate();
@@ -112,6 +115,7 @@ const RedesignedNotifications = ( {
 	actionHandlers,
 	closePanel,
 	updateUnseenCount,
+	tracksSurface,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -147,6 +151,8 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
+						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+						tracksSurface={ tracksSurface }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -189,6 +195,8 @@ const RedesignedNotifications = ( {
 					<NotificationApp
 						locale={ locale }
 						isDismissible={ isMobile }
+						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+						tracksSurface={ tracksSurface }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>
@@ -219,6 +227,7 @@ export class Notifications extends Component {
 					// range_info.context from the notes API can be hyphenated, which Tracks rejects.
 					const suffix = tracksEvent.toLowerCase().replace( /[^a-z0-9_]+/g, '_' );
 					this.props.recordTracksEventAction( 'calypso_notifications_' + suffix, {
+						surface: this.getTracksSurface(),
 						link: href,
 					} );
 				}
@@ -229,6 +238,7 @@ export class Notifications extends Component {
 			( store, { siteId, postId } ) => {
 				this.props.checkToggle();
 				this.props.recordTracksEventAction( 'calypso_notifications_open_post', {
+					surface: this.getTracksSurface(),
 					site_id: siteId,
 					post_id: postId,
 				} );
@@ -239,6 +249,7 @@ export class Notifications extends Component {
 			( store, { siteId, postId, commentId } ) => {
 				this.props.checkToggle();
 				this.props.recordTracksEventAction( 'calypso_notifications_open_comment', {
+					surface: this.getTracksSurface(),
 					site_id: siteId,
 					post_id: postId,
 					comment_id: commentId,
@@ -250,6 +261,7 @@ export class Notifications extends Component {
 			( store, { siteId } ) => {
 				this.props.checkToggle();
 				this.props.recordTracksEventAction( 'calypso_notifications_open_site', {
+					surface: this.getTracksSurface(),
 					site_id: siteId,
 				} );
 				page( `/reader/blogs/${ siteId }` );
@@ -265,6 +277,7 @@ export class Notifications extends Component {
 			( store, { siteId, postId, commentId } ) => {
 				this.props.checkToggle();
 				this.props.recordTracksEventAction( 'calypso_notifications_edit_comment', {
+					surface: this.getTracksSurface(),
 					site_id: siteId,
 					post_id: postId,
 					comment_id: commentId,
@@ -276,6 +289,7 @@ export class Notifications extends Component {
 			( store, { siteId, href } ) => {
 				this.props.checkToggle();
 				this.props.recordTracksEventAction( 'calypso_notifications_answer_prompt', {
+					surface: this.getTracksSurface(),
 					site_id: siteId,
 				} );
 				window.open( href, '_blank' );
@@ -455,6 +469,12 @@ export class Notifications extends Component {
 		}
 	};
 
+	getTracksSurface() {
+		return isDedicatedReaderRoute( this.props.currentRoute )
+			? 'calypso_reader_page'
+			: 'calypso_panel';
+	}
+
 	postServiceWorkerMessage = ( message ) => {
 		if ( ! ( 'serviceWorker' in window.navigator ) ) {
 			return;
@@ -467,13 +487,15 @@ export class Notifications extends Component {
 
 	render() {
 		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
-		const isDedicatedReaderPage = this.props.currentRoute?.startsWith( '/reader/notifications' );
+		const isDedicatedReaderPage = isDedicatedReaderRoute( this.props.currentRoute );
+		const tracksSurface = this.getTracksSurface();
 
 		if ( isRedesignEnabled ) {
 			const redesigned = (
 				<RedesignedNotifications
 					isShowing={ this.props.isShowing }
 					isDedicatedReaderPage={ isDedicatedReaderPage }
+					tracksSurface={ tracksSurface }
 					locale={ localeSlug }
 					actionHandlers={ this.actionHandlers }
 					closePanel={ this.closePanel }
@@ -522,6 +544,7 @@ export class Notifications extends Component {
 							isShowing={ this.props.isShowing }
 							isVisible={ this.state.isVisible }
 							locale={ localeSlug }
+							tracksSurface={ tracksSurface }
 							wpcom={ wpcom }
 						/>
 					</Suspense>

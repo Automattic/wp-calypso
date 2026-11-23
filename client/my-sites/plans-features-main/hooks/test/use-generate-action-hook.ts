@@ -704,5 +704,30 @@ describe( 'useGenerateActionHook', () => {
 
 			expect( action.primary.text ).toBe( 'Switch at renewal' );
 		} );
+
+		it( 'offers a higher tier on a shorter term now inside the refund window', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+				{
+					productSlug: PLAN_BUSINESS_MONTHLY,
+					interval: 31,
+					...scheduledOnly,
+					isInstantDowngradeAvailable: true,
+				},
+			] );
+			( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( { planSlug: PLAN_PREMIUM } );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_BUSINESS_MONTHLY,
+				availableForPurchase: true,
+				currentPlanBillingPeriod: 365,
+				billingPeriod: 31,
+			} );
+
+			expect( action.primary.text ).toBe( 'Switch now' );
+		} );
 	} );
 } );

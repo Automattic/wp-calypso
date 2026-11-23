@@ -1,4 +1,4 @@
-import calypsoConfig from '@automattic/calypso-config';
+import calypsoConfig, { isEnabled } from '@automattic/calypso-config';
 import { addBreadcrumb, setTag } from '@automattic/calypso-sentry';
 import { createRouter, createRoute } from '@tanstack/react-router';
 import NotFound from '../404';
@@ -10,6 +10,7 @@ import { createAgencyClientRoutes } from './agency-client';
 import { createDomainsRoutes } from './domains';
 import { createEmailsRoutes } from './emails';
 import { createMeRoutes } from './me';
+import { createNotificationsRoutes } from './notifications';
 import { createPluginsRoutes } from './plugins';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
@@ -41,6 +42,10 @@ declare module '@tanstack/react-router' {
 		 * for pages that take the whole screen, like a checkout.
 		 */
 		isFullscreen?: boolean;
+	}
+
+	interface HistoryState {
+		notificationsNoteId?: string;
 	}
 }
 
@@ -98,6 +103,10 @@ export const createRouteTree = ( config: AppConfig ) => {
 
 	if ( config.supports.me ) {
 		children.push( ...createMeRoutes( config ) );
+	}
+
+	if ( config.supports.notifications && isEnabled( 'dashboard/notifications-inbox' ) ) {
+		children.push( ...createNotificationsRoutes() );
 	}
 
 	children.push( catchAllRoute );

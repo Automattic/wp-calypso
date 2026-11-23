@@ -17,6 +17,7 @@ import {
 	checkoutMarketplaceSiteless,
 	checkoutUnifiedSiteless,
 	checkoutWpcomSiteless,
+	checkoutStudioSiteless,
 	checkoutA4ASiteless,
 	checkoutA4AAgencySiteless,
 	checkoutA4AAgencySite,
@@ -289,6 +290,17 @@ export default function () {
 		redirectLoggedOut,
 		noSite,
 		checkoutWpcomSiteless,
+		makeLayout,
+		clientRender
+	);
+
+	// The Studio-branded entry to the same siteless checkout, logged-in only like /checkout/wpcom.
+	page(
+		'/checkout/studio/:productSlug',
+		setLocaleMiddleware(),
+		redirectLoggedOut,
+		noSite,
+		checkoutStudioSiteless,
 		makeLayout,
 		clientRender
 	);

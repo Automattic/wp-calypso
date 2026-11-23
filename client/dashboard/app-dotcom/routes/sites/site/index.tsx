@@ -1,0 +1,334 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+} from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
+import { wordpress } from '@wordpress/icons';
+import clsx from 'clsx';
+import { useRef } from 'react';
+import { useAnalytics } from '../../../../app/analytics';
+import { useAuth } from '../../../../app/auth';
+import { useAppContext } from '../../../../app/context';
+import { useIntlLocale } from '../../../../app/locale';
+import { PerformanceTrackerStop } from '../../../../app/performance-tracking';
+import Divider from '../../../../components/divider';
+import FlashMessage from '../../../../components/flash-message';
+import Grid, { type GapSize } from '../../../../components/grid';
+import { GuidedTourContextProvider, GuidedTourStep } from '../../../../components/guided-tour';
+import { PageHeader } from '../../../../components/page-header';
+import PageLayout from '../../../../components/page-layout';
+import LatestActivityCard from '../../../../sites/activity/components/latest-activity-card';
+import BackupCard from '../../../../sites/backups/components/backup-card';
+import AgencySiteShareCard from '../../../../sites/components/agency-site-share-card';
+import { EmailBlockNotice, getEmailBlock } from '../../../../sites/components/email-block-notice';
+import { SitesNoticeArbiter } from '../../../../sites/components/notice-arbiter';
+import SiteActionMenu from '../../../../sites/components/site-action-menu';
+import SiteOverviewFields from '../../../../sites/components/site-overview-fields';
+import SubscribersCard from '../../../../sites/components/subscribers-card';
+import TwoStepRequiredNotice, {
+	useSiteRequiresTwoStep,
+} from '../../../../sites/components/two-step-required-notice';
+import DIFMOfferCard from '../../../../sites/difm/components/difm-offer-card';
+import DifmOfferDeepLink from '../../../../sites/difm/components/difm-offer-card/deep-link';
+import DifmOfferThankYou from '../../../../sites/difm/components/difm-offer-card/thank-you';
+import DomainsCard from '../../../../sites/domains/components/domains-card';
+import MigrateSiteCard from '../../../../sites/migration/components/migrate-site-card';
+import {
+	MigrationCompletedNotice,
+	useShouldShowMigrationCompletedNotice,
+} from '../../../../sites/migration/components/migration-completed-notice';
+import PerformanceCard from '../../../../sites/performance/components/performance-card';
+import PlanCard from '../../../../sites/plan/components/plan-card';
+import ScanCard from '../../../../sites/scan/components/scan-card';
+import { InaccessibleJetpackNotice } from '../../../../sites/site/notices';
+import StagingSiteSyncDropdown from '../../../../sites/staging-site-sync-dropdown';
+import {
+	StagingSiteSyncNotice,
+	useStagingSiteSyncForNotice,
+} from '../../../../sites/staging-site-sync-notice';
+import {
+	StaticSiteImportFailed,
+	StaticSiteImportNotice,
+	StaticSiteImportProgress,
+	useOpenPreviewWhenReady,
+	useStaticSiteImport,
+} from '../../../../sites/static-site-import';
+import {
+	StorageWarningBanner,
+	useShouldShowStorageWarningBanner,
+} from '../../../../sites/storage/components/storage-warning-banner';
+import VisibilityCard from '../../../../sites/visibility/components/visibility-card';
+import { getSiteDisplayName } from '../../../../utils/site-name';
+import { isSelfHostedJetpackConnected } from '../../../../utils/site-types';
+import type { MigrationCompletedSearch } from '../../../../sites/migration/components/migration-completed-notice';
+import type { StaticSiteImportSearch } from '../../../../sites/static-site-import';
+import type { Site } from '@automattic/api-core';
+import './style.scss';
+
+export type SiteOverviewSearch = StaticSiteImportSearch & MigrationCompletedSearch;
+
+type WPBreakpoint = Parameters< typeof useViewportMatch >[ 0 ];
+
+const SPACING = {
+	DEFAULT: 6,
+	SMALL: 4,
+};
+
+function getGridLayout( {
+	count,
+	isLargeViewport,
+	isSmallViewport,
+}: {
+	count: number;
+	isLargeViewport: boolean;
+	isSmallViewport: boolean;
+} ) {
+	if ( isLargeViewport ) {
+		return {
+			columns: count,
+			rows: 1,
+		};
+	}
+
+	if ( isSmallViewport ) {
+		return {
+			columns: 1,
+			rows: count,
+		};
+	}
+
+	return {
+		columns: 2,
+		rows: Math.ceil( count / 2 ),
+	};
+}
+
+function SiteOverviewPrimaryCards( { site, gap }: { site: Site; gap: GapSize } ) {
+	return (
+		<>
+			<PlanCard site={ site } />
+			<Grid columns={ 1 } rows={ 2 } gap={ gap }>
+				<VisibilityCard site={ site } />
+				<BackupCard site={ site } />
+			</Grid>
+			<Grid columns={ 1 } rows={ 2 } gap={ gap }>
+				{ ( () => {
+					if ( site.is_a4a_dev_site ) {
+						return <AgencySiteShareCard site={ site } />;
+					}
+					if ( isSelfHostedJetpackConnected( site ) ) {
+						return <SubscribersCard site={ site } />;
+					}
+					if ( site.plan?.is_free && ! site.is_wpcom_staging_site ) {
+						return <MigrateSiteCard site={ site } />;
+					}
+					return <PerformanceCard site={ site } />;
+				} )() }
+				<ScanCard site={ site } />
+			</Grid>
+		</>
+	);
+}
+
+function SiteOverviewSecondaryCards( {
+	site,
+	spacing,
+	isLargeViewport,
+	isSmallViewport,
+}: {
+	site: Site;
+	spacing: number;
+	isLargeViewport: boolean;
+	isSmallViewport: boolean;
+} ) {
+	const isSelfHostedJetpackConnectedSite = isSelfHostedJetpackConnected( site );
+
+	return (
+		<>
+			<HStack
+				className={ clsx( 'site-overview-cards', 'site-overview-cards--secondary', {
+					'is-large': isLargeViewport,
+				} ) }
+				spacing={ spacing }
+				alignment="flex-start"
+			>
+				{ ! site.__inaccessible_jetpack_error && (
+					<LatestActivityCard site={ site } isCompact={ isSmallViewport } />
+				) }
+				<VStack spacing={ spacing } justify="start">
+					{ ! isSelfHostedJetpackConnectedSite && ! site.is_wpcom_staging_site && (
+						<>
+							<DIFMOfferCard site={ site } />
+							<DomainsCard site={ site } />
+						</>
+					) }
+				</VStack>
+			</HStack>
+			{ /* Divider re-ordered by CSS to appear above the HStack */ }
+			<Divider
+				className="site-overview-divider"
+				style={ { color: 'var(--dashboard-overview__divider-color)' } }
+			/>
+		</>
+	);
+}
+
+function SiteOverview( {
+	siteSlug,
+	search = {},
+	breakpoints,
+}: {
+	siteSlug: string;
+	search?: SiteOverviewSearch;
+	breakpoints?: { large: WPBreakpoint; small: WPBreakpoint };
+} ) {
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { supports } = useAppContext();
+	const isLargeViewport = useViewportMatch( breakpoints?.large ?? 'xlarge' );
+	const isSmallViewport = useViewportMatch( breakpoints?.small ?? 'medium', '<' );
+	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
+	const gap = isSmallViewport ? 'lg' : 'xl';
+	const gridLayout = getGridLayout( {
+		count: 3,
+		isLargeViewport,
+		isSmallViewport,
+	} );
+
+	const { recordTracksEvent } = useAnalytics();
+	const wpAdminButtonRef = useRef( null );
+
+	const stagingSiteSyncForNotice = useStagingSiteSyncForNotice( site );
+	const isStorageWarningVisible = useShouldShowStorageWarningBanner( site );
+	const isMigrationCompletedNoticeVisible = useShouldShowMigrationCompletedNotice( site );
+	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
+	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
+	const siteImport = useStaticSiteImport( site.ID, search.importSessionId );
+	const locale = useIntlLocale();
+	const { user } = useAuth();
+	useOpenPreviewWhenReady( siteImport );
+	const migrationCompletedNotice = isMigrationCompletedNoticeVisible && (
+		<MigrationCompletedNotice key={ site.ID } site={ site } />
+	);
+
+	const renderActions = () => {
+		if ( ! site.options?.admin_url ) {
+			return null;
+		}
+
+		return (
+			<>
+				<StagingSiteSyncDropdown siteSlug={ siteSlug } />
+				<Button
+					ref={ wpAdminButtonRef }
+					__next40pxDefaultSize
+					variant="primary"
+					href={ site.options.admin_url }
+					icon={ wordpress }
+					onClick={ () =>
+						recordTracksEvent( 'calypso_dashboard_site_overview_wp_admin_clicked', {
+							site_id: site.ID,
+						} )
+					}
+				>
+					{ __( 'WP Admin' ) }
+				</Button>
+				<PageHeader.ActionMenu>
+					<SiteActionMenu site={ site } />
+				</PageHeader.ActionMenu>
+			</>
+		);
+	};
+
+	// A refused site keeps its notice: our team can't move content that isn't allowed.
+	const showImportFailed = siteImport?.status === 'failed' && ! siteImport.isRefused;
+
+	return (
+		<PageLayout
+			header={
+				<PageHeader
+					title={ getSiteDisplayName( site ) }
+					description={ <SiteOverviewFields site={ site } /> }
+					actions={ renderActions() }
+				/>
+			}
+			notices={
+				<>
+					{ stagingSiteSyncForNotice && (
+						<StagingSiteSyncNotice site={ site } syncState={ stagingSiteSyncForNotice } />
+					) }
+					{ siteImport && siteImport.status !== 'moving' && ! showImportFailed && (
+						<StaticSiteImportNotice site={ site } siteImport={ siteImport } search={ search } />
+					) }
+					{ /* With the query string, show the notice even when the arbiter picks another. */ }
+					{ search.migration === 'completed' && migrationCompletedNotice }
+					<SitesNoticeArbiter>
+						{ site.__inaccessible_jetpack_error && (
+							<InaccessibleJetpackNotice
+								error={ site.__inaccessible_jetpack_error }
+								site={ site }
+							/>
+						) }
+						{ showTwoStepRequiredNotice && <TwoStepRequiredNotice site={ site } /> }
+						{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
+						{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
+						{ search.migration !== 'completed' && migrationCompletedNotice }
+					</SitesNoticeArbiter>
+				</>
+			}
+		>
+			{ siteImport?.status === 'moving' && (
+				<StaticSiteImportProgress
+					siteImport={ siteImport }
+					search={ search }
+					locale={ locale }
+					email={ user.email }
+				/>
+			) }
+			{ showImportFailed && <StaticSiteImportFailed site={ site } search={ search } /> }
+			{ siteImport?.status !== 'moving' && ! showImportFailed && (
+				<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+					<Grid { ...gridLayout } gap={ gap }>
+						<SiteOverviewPrimaryCards site={ site } gap={ gap } />
+					</Grid>
+					<SiteOverviewSecondaryCards
+						site={ site }
+						spacing={ spacing }
+						isLargeViewport={ isLargeViewport }
+						isSmallViewport={ isSmallViewport }
+					/>
+				</VStack>
+			) }
+			<GuidedTourContextProvider
+				tourId="hosting-dashboard-tours-site-overview"
+				guidedTours={ [
+					{
+						id: 'hosting-dashboard-tours-site-overview-wp-admin',
+						title: __( 'Go to WP Admin' ),
+						description: __(
+							'Use this button to quickly switch from the Hosting Dashboard to your WP Admin.'
+						),
+					},
+				] }
+			>
+				{ wpAdminButtonRef.current && (
+					<GuidedTourStep
+						id="hosting-dashboard-tours-site-overview-wp-admin"
+						target={ wpAdminButtonRef.current }
+						placement="bottom"
+						inline
+					/>
+				) }
+			</GuidedTourContextProvider>
+			<FlashMessage id="migration-cancelled" message={ __( 'Migration cancelled.' ) } />
+			<DifmOfferThankYou />
+			<DifmOfferDeepLink site={ site } />
+			<PerformanceTrackerStop />
+		</PageLayout>
+	);
+}
+
+export default SiteOverview;

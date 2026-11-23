@@ -49,6 +49,15 @@ export function isScheduledOnlyPlanChange( targetSitePlan: SitePlanData | null |
 }
 
 /**
+ * Whether the server allows moving to this plan now, through the cancel
+ * endpoint with a refund. Inside the refund window this includes some changes
+ * to a shorter term, such as Premium annual to Business monthly.
+ */
+export function isInstantPlanChange( targetSitePlan: SitePlanData | null | undefined ) {
+	return !! targetSitePlan?.availableForDowngrade && !! targetSitePlan.isInstantDowngradeAvailable;
+}
+
+/**
  * The site plan's name with its billing term, e.g. "WordPress.com Premium
  * (monthly)", to tell two terms of the same plan apart.
  */

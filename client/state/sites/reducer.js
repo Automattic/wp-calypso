@@ -1,7 +1,6 @@
 import { merge, omit } from '@automattic/js-utils';
 import isEqual from 'fast-deep-equal/es6';
 import {
-	MEDIA_DELETE,
 	SITE_LEAVE_RECEIVE,
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
@@ -9,7 +8,6 @@ import {
 	JETPACK_SITES_FEATURES_FETCH,
 	JETPACK_SITES_FEATURES_FETCH_FAILURE,
 	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
-	SITE_PURCHASES_UPDATE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -229,19 +227,6 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			);
 		}
 
-		case MEDIA_DELETE: {
-			const { siteId, mediaIds } = action;
-			const siteIconId = state[ siteId ]?.icon?.media_id;
-			if ( siteIconId && mediaIds.includes( siteIconId ) ) {
-				return {
-					...state,
-					[ siteId ]: omit( state[ siteId ], 'icon' ),
-				};
-			}
-
-			return state;
-		}
-
 		case SITE_PLUGIN_UPDATED: {
 			const { siteId } = action;
 			const siteUpdates = state[ siteId ]?.updates;
@@ -276,19 +261,6 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 						...frontPageOptions,
 					},
 				} ),
-			};
-		}
-
-		// Partial updates for purchases of the site as `site.products`.
-		case SITE_PURCHASES_UPDATE: {
-			const { siteId, purchases } = action;
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					products: purchases,
-				},
 			};
 		}
 	}

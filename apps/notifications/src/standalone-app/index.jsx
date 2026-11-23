@@ -11,6 +11,7 @@ import { SET_IS_SHOWING } from '../panel/state/action-types';
 import actions from '../panel/state/actions';
 import { createClient } from '../standalone/client';
 import { receiveMessage, sendMessage } from '../standalone/messaging';
+import { initTracks, recordPanelOpen } from '../standalone/tracks';
 
 import './style.scss';
 
@@ -22,6 +23,22 @@ const locale = match ? match[ 1 ] : 'en';
 const features =
 	new URLSearchParams( document.location.search ).get( 'features' )?.split( ',' ) ?? [];
 const isViewSettingsEnabled = features.includes( 'view-settings' );
+const isMarkAsUnreadEnabled = features.includes( 'mark-as-unread' );
+const isFullViewEnabled = features.includes( 'full-view' );
+
+const FULL_VIEW_URL = 'https://my.wordpress.com/notifications';
+
+// Opens in a new tab: the panel sits over pages where a same-tab navigation would lose unsaved work.
+const openFullView = ( { filterName, noteId } ) => {
+	const url = new URL( FULL_VIEW_URL );
+	if ( filterName !== 'all' ) {
+		url.searchParams.set( 'filter', filterName );
+	}
+	if ( noteId ) {
+		url.searchParams.set( 'note', noteId );
+	}
+	window.open( url.href, '_blank', 'noopener' );
+};
 
 const fetchLocale = async ( localeSlug ) => {
 	try {
@@ -121,6 +138,12 @@ const NotesWrapper = ( { wpcom } ) => {
 		store.dispatch( { type: 'APP_REFRESH_NOTES', isVisible } );
 	}, [ isShowing, isVisible ] );
 
+	useEffect( () => {
+		if ( isShowing ) {
+			recordPanelOpen();
+		}
+	}, [ isShowing ] );
+
 	// The card sits inside a wider iframe, so the host can't detect clicks on
 	// the empty area around it. Dismiss from inside instead: close on any click
 	// outside the two panes. (Not gated on `isShowing` — when the panel is
@@ -212,6 +235,8 @@ const NotesWrapper = ( { wpcom } ) => {
 			isDismissible={ isMobileViewport }
 			constrainTabbing
 			isViewSettingsEnabled={ isViewSettingsEnabled }
+			isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+			onOpenFullView={ isFullViewEnabled ? openFullView : undefined }
 		/>
 	);
 };
@@ -249,18 +274,8 @@ const render = ( wpcom ) => {
 	root.render( <NotesWrapper wpcom={ wpcom } /> );
 };
 
-const setTracksUser = ( wpcom ) => {
-	wpcom.req
-		.get( '/me', { fields: 'ID,username' } )
-		.then( ( { ID, username } ) => {
-			window._tkq = window._tkq || [];
-			window._tkq.push( [ 'identifyUser', ID, username ] );
-		} )
-		.catch( () => {} );
-};
-
 const init = ( wpcom ) => {
-	setTracksUser( wpcom );
+	initTracks( wpcom );
 	render( wpcom );
 };
 

@@ -14,16 +14,13 @@ import {
 	marketplacePluginsQuery,
 } from '@automattic/api-queries';
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
-import { decodeEntities } from '@wordpress/html-entities';
 import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
+import { parseHtmlMessage } from '../../utils/html-message';
 import { isWebUrl } from '../../utils/is-web-url';
 
-// wp.org/marketplace ship `author` as an HTML anchor (e.g.
-// `<a href="…">Automattic</a>`). Strip the markup with a regex — never
-// `innerHTML`, to avoid a DOM-XSS sink — and decode any entities.
-const stripAuthorMarkup = ( author = '' ) =>
-	decodeEntities( author.replace( /<[^>]*>/g, '' ) ).trim();
+// wp.org/marketplace ship `author` as an HTML anchor (e.g. `<a href="…">Automattic</a>`).
+const stripAuthorMarkup = ( author = '' ) => parseHtmlMessage( author ).text;
 
 const toAuthorUrl = ( url?: string | null ) => ( url && isWebUrl( url ) ? url : null );
 

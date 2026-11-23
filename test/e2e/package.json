@@ -35,6 +35,7 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"eslint": "^10.14.0",
 		"eslint-plugin-playwright": "^2.10.1"
 	},
 	"dependencies": {

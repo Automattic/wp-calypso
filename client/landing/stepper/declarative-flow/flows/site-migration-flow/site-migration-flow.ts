@@ -1,6 +1,6 @@
 import { configureWordPressMigration } from '@automattic/api-core';
 import { getUrlParts, isAllowedRedirectUrl } from '@automattic/calypso-url';
-import { Onboard, type OnboardActions, type SiteDetails } from '@automattic/data-stores';
+import { Onboard, type SiteDetails } from '@automattic/data-stores';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { canInstallPlugins, type SiteExcerptData } from '@automattic/sites';
@@ -22,6 +22,7 @@ import {
 	type ProcessingResult,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { type CopySiteEligibility } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-check';
+import { type SiteMigrationCheckoutReturnSubmits } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-checkout-return';
 import { type SiteMigrationIdentifyAction } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/site-migration-identify';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { goToImporter } from 'calypso/landing/stepper/declarative-flow/migration/helpers';
@@ -32,7 +33,7 @@ import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
-import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { getSiteAddresses, isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -40,7 +41,12 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserJetpackVisibleSiteCount,
+	getCurrentUserSiteCount,
+	getCurrentUserVisibleSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import { withLocale } from '../../helpers/with-locale';
 import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
 import * as paths from './paths';
@@ -69,6 +75,7 @@ const BASE_STEPS = [
 	STEPS.PICK_SITE,
 	STEPS.SITE_CREATION_STEP,
 	STEPS.PROCESSING,
+	STEPS.SITE_MIGRATION_CHECKOUT_RETURN,
 ];
 
 function initialize() {
@@ -118,10 +125,16 @@ function initialize() {
 		return false as const;
 	}
 
+	// Without a destination of their own, people can check their site and pick a plan before
+	// signing in: unified checkout creates the account along with the site.
+	const publicSlugs: string[] = [ STEPS.SITE_MIGRATION_IDENTIFY.slug ];
+	if ( ! query.get( 'siteId' ) && ! query.get( 'siteSlug' ) ) {
+		publicSlugs.push( STEPS.SITE_MIGRATION_CHECK.slug, STEPS.UNIFIED_PLANS.slug );
+	}
 	return [
-		STEPS.SITE_MIGRATION_IDENTIFY,
+		...BASE_STEPS.filter( ( step ) => publicSlugs.includes( step.slug ) ),
 		...stepsWithRequiredLogin(
-			BASE_STEPS.filter( ( step ) => step.slug !== STEPS.SITE_MIGRATION_IDENTIFY.slug )
+			BASE_STEPS.filter( ( step ) => ! publicSlugs.includes( step.slug ) )
 		),
 	];
 }
@@ -200,6 +213,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const { __ } = useI18n();
 		const { siteId, siteSlug, site } = useSiteData();
 		const { isError: hasSiteError, refetch: refetchSite } = useSiteQuery();
+		// The picker lists WordPress.com and Atomic sites, not self-hosted Jetpack ones.
+		const pickableSiteCount = useSelector( ( state ) => {
+			const visibleSiteCount = getCurrentUserVisibleSiteCount( state );
+			return visibleSiteCount === null
+				? null
+				: visibleSiteCount - ( getCurrentUserJetpackVisibleSiteCount( state ) ?? 0 );
+		} );
+		const isLoggedIn = useSelector( isUserLoggedIn );
 		const query = useQuery();
 		const flowState = useFlowState< typeof initialize >();
 		const handoff = flowState.get( 'migrationHandoff' );
@@ -259,11 +280,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 				destinationSiteSlug: hasDestination ? siteSlug : undefined,
 				destinationSiteUrl: hasDestination ? site?.URL : undefined,
 				destinationSiteUrls,
-				destinationPlanName: site?.plan?.product_name_short || site?.plan?.product_name,
 				needsUpgrade: hasDestination && !! site?.plan && ! canInstallPlugins( site ),
 				isLoadingDestination: hasDestination && ! site?.plan && ! hasSiteError,
 				destinationFailed: hasDestination && hasSiteError,
 				onRetryDestination: refetchSite,
+				// With nothing to pick, the picker can only make a new site, which is already the default.
+				// Signed out, there's nothing to pick yet either: checkout creates the account.
+				canPickDestination:
+					hasDestination ||
+					( isLoggedIn && ( pickableSiteCount === null || pickableSiteCount > 0 ) ),
 			},
 			plans: {
 				headerText: __( 'Ready to migrate' ),
@@ -271,7 +296,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					? __( 'Choose a plan to upgrade your site and continue the migration.' )
 					: __( 'Choose a plan for your new site. Every paid plan includes the migration.' ),
 				isInSignup: ! hasDestination,
-				showExistingSiteLink: ! hasDestination,
 				defaultInterval: 'yearly',
 			},
 		};
@@ -279,7 +303,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 	useStepNavigation( currentStep, navigate: NavigateV2< typeof BASE_STEPS > ) {
 		const { __ } = useI18n();
 		const navigateHistory = useNavigate();
-		const { setPlanCartItem } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const { clearSiteSetupError, setSiteSetupError } = useDispatch( SITE_STORE );
 		const handoffStarted = useRef( false );
 		const handoffVersion = useRef( 0 );
@@ -341,6 +364,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 					siteSlug: savedHandoff.siteSlug,
 				} )
 			: undefined;
+		const migrationPageUrl = ( destinationSlug: string ) =>
+			addQueryArgs(
+				{
+					ref: entryPoint || urlQueryParams.get( 'ref' ) || SITE_MIGRATION_FLOW,
+					source: urlQueryParams.get( 'source' ),
+					sessionId,
+					flags: urlQueryParams.get( 'flags' ),
+				},
+				dashboardLink( `/sites/${ destinationSlug }/migration-overview` )
+			);
 		const configureAndContinue = async (
 			destinationId: number,
 			destinationSlug: string,
@@ -370,15 +403,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 				if ( version !== handoffVersion.current ) {
 					return;
 				}
-				const destination = addQueryArgs(
-					{
-						ref: entryPoint || urlQueryParams.get( 'ref' ) || SITE_MIGRATION_FLOW,
-						source: urlQueryParams.get( 'source' ),
-						sessionId,
-						flags: urlQueryParams.get( 'flags' ),
-					},
-					dashboardLink( `/sites/${ destinationSlug }/migration-overview` )
-				);
+				const destination = migrationPageUrl( destinationSlug );
 				if ( shouldGoToCheckout ) {
 					return goToCheckout( {
 						flowName: flowPath,
@@ -395,6 +420,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 							`/setup/${ flowPath }/${ STEPS.UNIFIED_PLANS.slug }`
 						),
 					} );
+				}
+				// Checkout's return page only passes through, so Back from MSD shouldn't land on it.
+				if ( currentStep === STEPS.SITE_MIGRATION_CHECKOUT_RETURN.slug ) {
+					return window.location.replace( destination );
 				}
 				window.location.assign( destination );
 			} catch {
@@ -420,13 +449,16 @@ const siteMigration: FlowV2< typeof initialize > = {
 			from: string
 		) => {
 			if ( currentStep !== STEPS.SITE_MIGRATION_CHECK.slug ) {
+				// The picker is a detour from the site checks, so it doesn't stay in history.
 				return navigate(
 					paths.siteCheckPath( {
 						from,
 						siteId: destinationId,
 						siteSlug: destinationSlug,
 						isWpcom: false,
-					} )
+					} ),
+					undefined,
+					currentStep === STEPS.PICK_SITE.slug
 				);
 			}
 			if ( ! site?.plan || isSiteAddress( from, getSiteAddresses( destinationSlug, site ) ) ) {
@@ -708,15 +740,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if ( ! isReprintSource ) {
 						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 					}
-					if ( providedDependencies?.action === 'select-existing-site' ) {
-						return navigate(
-							paths.sitePickerPath( {
-								siteId: '',
-								siteSlug: '',
-								from: fromQueryParam,
-							} )
-						);
-					}
 					const planCartItem = providedDependencies?.cartItems?.[ 0 ];
 					if ( ! planCartItem ) {
 						return;
@@ -732,8 +755,37 @@ const siteMigration: FlowV2< typeof initialize > = {
 							planCartItem.product_slug
 						);
 					}
-					setPlanCartItem( planCartItem );
-					return navigate( STEPS.SITE_CREATION_STEP.slug );
+					// Checkout creates the site, then returns to set the migration up on it. Checkout supplies
+					// the new site's ID, and an empty one from Change would shadow it.
+					const flowQuery = Object.fromEntries( urlQueryParams );
+					delete flowQuery.siteId;
+					delete flowQuery.siteSlug;
+					return goToUnifiedCheckout( {
+						flowName: flowPath,
+						plan: planCartItem.product_slug,
+						userIsLoggedIn: isLoggedIn,
+						// The pending page resolves the literal placeholder from the purchase receipt.
+						destination: `${ addQueryArgs(
+							flowQuery,
+							`/setup/${ flowPath }/${ STEPS.SITE_MIGRATION_CHECKOUT_RETURN.slug }`
+						) }&siteId=:siteId`,
+						// Empty, so plans doesn't recover a destination configured earlier in the session.
+						cancelDestination: addQueryArgs(
+							{ ...flowQuery, siteId: '', siteSlug: '' },
+							`/setup/${ flowPath }/${ STEPS.UNIFIED_PLANS.slug }`
+						),
+						siteIntent: Onboard.SiteIntent.SiteMigration,
+					} );
+				}
+				case STEPS.SITE_MIGRATION_CHECKOUT_RETURN.slug: {
+					const result = providedDependencies as SiteMigrationCheckoutReturnSubmits;
+					if ( result.action === 'site-unavailable' ) {
+						return navigate( STEPS.ERROR.slug, { errorReason: 'site_not_created' } );
+					}
+					if ( result.action === 'configure' && fromQueryParam ) {
+						return configureAndContinue( result.siteId, result.siteSlug, fromQueryParam );
+					}
+					return window.location.replace( migrationPageUrl( result.siteSlug ) );
 				}
 				case STEPS.PICK_SITE.slug: {
 					switch ( providedDependencies?.action ) {
@@ -805,7 +857,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						}
 						case 'create-site': {
 							if ( isReprintSource && fromQueryParam ) {
-								return navigate( paths.plansPath( { from: fromQueryParam } ) );
+								return replace( paths.siteCheckPath( { from: fromQueryParam, isWpcom: false } ) );
 							}
 							const detectedHost = providedDependencies.host as string | undefined;
 							const host = detectedHost || hostQueryParam;
@@ -870,10 +922,6 @@ const siteMigration: FlowV2< typeof initialize > = {
 							getFullImporterUrl( platformQueryParam, siteSlug, fromQueryParam || '' ),
 							true
 						);
-					}
-
-					if ( isReprintSource && fromQueryParam ) {
-						return configureAndContinue( siteId, siteSlug, fromQueryParam, true );
 					}
 
 					//NOTE: There are links pointing to this step with the action=migrate query param, so we need to ignore the platform
@@ -1155,12 +1203,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 			fromQueryParam &&
 			( currentStep === STEPS.UNIFIED_PLANS.slug || currentStep === STEPS.PICK_SITE.slug )
 		) {
-			goBack = () =>
-				replace(
-					currentStep === STEPS.PICK_SITE.slug
-						? paths.plansPath( { from: fromQueryParam } )
-						: paths.siteCheckPath( { from: fromQueryParam } )
-				);
+			goBack = () => replace( paths.siteCheckPath( { from: fromQueryParam } ) );
 		}
 		return { submit, exitFlow, goBack };
 	},

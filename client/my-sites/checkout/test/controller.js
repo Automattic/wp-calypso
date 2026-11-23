@@ -11,6 +11,7 @@ import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
 import {
+	checkoutStudioSiteless,
 	checkoutWpcomSiteless,
 	redirectJetpackLegacyPlans,
 	studentCheckoutRedirect,
@@ -88,6 +89,72 @@ describe( 'checkoutWpcomSiteless', () => {
 		expect( wrapper.props.productAliasFromUrl ).toBe( 'ak_pro5h_yearly' );
 		expect( wrapper.props.isNoSiteCart ).toBe( true );
 		expect( next ).toHaveBeenCalled();
+	} );
+} );
+
+describe( 'checkoutStudioSiteless', () => {
+	const renderStudioCheckout = ( query, path = '/checkout/studio/studio-cloud-monthly' ) => {
+		const next = jest.fn();
+		const context = {
+			path,
+			params: { productSlug: 'studio-cloud-monthly' },
+			query,
+			store: mockStore( { currentUser: { id: 7 } } ),
+		};
+
+		checkoutStudioSiteless( context, next );
+
+		return { wrapper: context.primary?.props.children[ 1 ], next };
+	};
+
+	it( 'renders the Studio siteless checkout', () => {
+		const { wrapper, next } = renderStudioCheckout( {} );
+
+		expect( wrapper.props.sitelessCheckoutType ).toBe( 'studio' );
+		expect( wrapper.props.productAliasFromUrl ).toBe( 'studio-cloud-monthly' );
+		expect( wrapper.props.isNoSiteCart ).toBe( true );
+		expect( next ).toHaveBeenCalled();
+	} );
+
+	it( 'sends the buyer to the Studio thank-you page by default', () => {
+		const { wrapper } = renderStudioCheckout( {} );
+
+		expect( wrapper.props.redirectTo ).toBe(
+			'/checkout/thank-you/no-site/:receiptId?checkout_type=studio'
+		);
+	} );
+
+	it( 'keeps the desktop round trip, on the Studio thank-you page', () => {
+		const { wrapper } = renderStudioCheckout( {
+			studioSiteId: 'abc',
+			studioReturnTo: 'plan-purchased',
+			cancel_to: '/checkout/studio-return?studioSiteId=abc&studioReturnTo=plan-purchased',
+		} );
+
+		expect( wrapper.props.redirectTo ).toBe(
+			'/checkout/thank-you/no-site/:receiptId?studioSiteId=abc&studioReturnTo=plan-purchased&checkout_type=studio'
+		);
+	} );
+
+	it( 'passes an explicit redirect_to through for checkout to check', () => {
+		const { wrapper } = renderStudioCheckout( {
+			redirect_to: 'https://app.wordpress.studio/purchase-complete',
+		} );
+
+		expect( wrapper.props.redirectTo ).toBe( 'https://app.wordpress.studio/purchase-complete' );
+	} );
+
+	it( 'still adds the desktop cancel_to before rendering', () => {
+		const spy = jest.spyOn( page.default, 'replace' ).mockImplementation( () => {} );
+		const path = '/checkout/studio/studio-cloud-monthly?studioSiteId=abc';
+		const { wrapper, next } = renderStudioCheckout( { studioSiteId: 'abc' }, path );
+
+		expect( spy ).toHaveBeenCalledWith(
+			expect.stringContaining( 'cancel_to=%2Fcheckout%2Fstudio-return%3FstudioSiteId%3Dabc' )
+		);
+		expect( wrapper ).toBeUndefined();
+		expect( next ).not.toHaveBeenCalled();
+		spy.mockRestore();
 	} );
 } );
 

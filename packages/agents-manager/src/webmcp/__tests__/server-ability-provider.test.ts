@@ -1,6 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { vi } from 'vitest';
-import { createWebMcpToolProvider } from '../server-ability-provider';
+import { withServerAbilities } from '../server-ability-provider';
 import type { ToolProvider } from '../../extension-types';
 import type { Ability } from '@wordpress/abilities';
 
@@ -16,21 +16,12 @@ const clientAbility: Ability = {
 };
 
 const serverAbility: Ability = {
-	name: 'wpcom/get-posts',
-	label: 'Get posts',
-	description: 'Get posts from this site.',
+	name: 'wpcom/get-block-schemas',
+	label: 'Get block schemas',
+	description: 'Get the block schemas for this site.',
 	category: 'wpcom',
 	input_schema: { type: 'object', properties: {} },
 	meta: { annotations: { readonly: true, idempotent: true } },
-};
-
-const mutatingServerAbility: Ability = {
-	name: 'wpcom/media-create',
-	label: 'Upload media',
-	description: 'Upload media to this site.',
-	category: 'wpcom',
-	input_schema: { type: 'object', properties: {} },
-	meta: { annotations: { readonly: false, destructive: false, idempotent: false } },
 };
 
 describe( 'WebMCP server ability provider', () => {
@@ -48,7 +39,7 @@ describe( 'WebMCP server ability provider', () => {
 			executeAbility: vi.fn(),
 		};
 
-		const provider = createWebMcpToolProvider( toolProvider );
+		const provider = withServerAbilities( toolProvider );
 		await expect( provider.getAbilities() ).resolves.toEqual( [
 			clientAbility,
 			{
@@ -80,7 +71,7 @@ describe( 'WebMCP server ability provider', () => {
 			executeAbility: vi.fn(),
 		};
 
-		const abilities = await createWebMcpToolProvider( toolProvider ).getAbilities();
+		const abilities = await withServerAbilities( toolProvider ).getAbilities();
 
 		expect( abilities ).toHaveLength( 2 );
 		expect( abilities.find( ( ability ) => ability.name === serverAbility.name ) ).toEqual(
@@ -95,48 +86,19 @@ describe( 'WebMCP server ability provider', () => {
 	it( 'executes server abilities through the read-only REST route', async () => {
 		vi.mocked( apiFetch )
 			.mockResolvedValueOnce( [ serverAbility ] )
-			.mockResolvedValueOnce( { posts: [] } );
+			.mockResolvedValueOnce( { blocks: [] } );
 		const toolProvider: ToolProvider = {
 			getAbilities: vi.fn( async () => [ clientAbility ] ),
 			executeAbility: vi.fn(),
 		};
-		const provider = createWebMcpToolProvider( toolProvider );
+		const provider = withServerAbilities( toolProvider );
 
 		await expect(
-			provider.executeAbility( 'wpcom/get-posts', { fields: 'summary' } )
-		).resolves.toEqual( { posts: [] } );
+			provider.executeAbility( 'wpcom/get-block-schemas', { fields: 'summary' } )
+		).resolves.toEqual( { blocks: [] } );
 		expect( apiFetch ).toHaveBeenLastCalledWith( {
 			method: 'GET',
-			path: expect.stringMatching( /wp-abilities\/v1\/abilities\/wpcom\/get-posts\/run/ ),
-		} );
-		expect( toolProvider.executeAbility ).not.toHaveBeenCalled();
-	} );
-
-	it( 'executes mutating server abilities through POST with a JSON body', async () => {
-		vi.mocked( apiFetch )
-			.mockResolvedValueOnce( [ mutatingServerAbility ] )
-			.mockResolvedValueOnce( { data: { id: 123, source_url: 'https://example.com/image.jpg' } } );
-		const toolProvider: ToolProvider = {
-			getAbilities: vi.fn( async () => [ clientAbility ] ),
-			executeAbility: vi.fn(),
-		};
-		const provider = createWebMcpToolProvider( toolProvider );
-		const input = {
-			wpcom_site: 'example.wordpress.com',
-			file_content_base64: 'aW1hZ2U=',
-			filename: 'image.jpg',
-			mime_type: 'image/jpeg',
-			user_confirmed: true,
-		};
-
-		await provider.executeAbility( 'wpcom/media-create', input );
-
-		expect( apiFetch ).toHaveBeenLastCalledWith( {
-			method: 'POST',
-			path: expect.stringMatching(
-				/wp-abilities\/v1\/abilities\/wpcom\/media-create\/run.*webmcp=1/
-			),
-			data: { input },
+			path: expect.stringMatching( /wp-abilities\/v1\/abilities\/wpcom\/get-block-schemas\/run/ ),
 		} );
 		expect( toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
@@ -147,7 +109,7 @@ describe( 'WebMCP server ability provider', () => {
 			getAbilities: vi.fn( async () => [ clientAbility ] ),
 			executeAbility: vi.fn( async () => ( { ok: true } ) ),
 		};
-		const provider = createWebMcpToolProvider( toolProvider );
+		const provider = withServerAbilities( toolProvider );
 
 		await expect( provider.executeAbility( clientAbility.name, {} ) ).resolves.toEqual( {
 			ok: true,
@@ -164,7 +126,7 @@ describe( 'WebMCP server ability provider', () => {
 			executeAbility: vi.fn(),
 		};
 
-		await expect( createWebMcpToolProvider( toolProvider ).getAbilities() ).resolves.toEqual( [
+		await expect( withServerAbilities( toolProvider ).getAbilities() ).resolves.toEqual( [
 			clientAbility,
 		] );
 		expect( warn ).toHaveBeenCalledWith(

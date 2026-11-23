@@ -1,7 +1,7 @@
 import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
-import { check, chevronDown } from '@wordpress/icons';
+import { Icon, check, chevronDown, lock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, MouseEventHandler } from 'react';
 import {
 	DATE_RANGES,
 	DATE_RANGE_LAST_7_DAYS,
@@ -10,12 +10,16 @@ import {
 	DATE_RANGE_LAST_12_MONTHS,
 	DateRangeId,
 } from '../lib/date-ranges';
+import { recordWidgetEventThenFollow } from './record-widget-event';
 
 import './date-range-control.scss';
 
 interface DateRangeControlProps {
 	value: DateRangeId;
 	onChange: ( value: DateRangeId ) => void;
+	/** Whether the site's plan locks a range, as Stats v2 locks its date shortcuts. */
+	isLocked?: ( value: DateRangeId ) => boolean;
+	upgradeUrl?: string;
 }
 
 /**
@@ -23,7 +27,12 @@ interface DateRangeControlProps {
  * `premium-analytics/packages/ui/src/date-comparison-dropdown`), rather than a `SelectControl`,
  * whose options open in the browser's native menu.
  */
-const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, onChange } ) => {
+const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( {
+	value,
+	onChange,
+	isLocked = () => false,
+	upgradeUrl,
+} ) => {
 	const translate = useTranslate();
 
 	// Kept next to the control rather than in `lib/date-ranges` so the strings stay
@@ -34,6 +43,8 @@ const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, 
 		[ DATE_RANGE_LAST_90_DAYS ]: translate( 'Last 90 days' ),
 		[ DATE_RANGE_LAST_12_MONTHS ]: translate( 'Last 12 months' ),
 	};
+
+	const hasLockedRanges = DATE_RANGES.some( ( range ) => isLocked( range.id ) );
 
 	return (
 		<DropdownMenu
@@ -56,26 +67,47 @@ const DateRangeControl: FunctionComponent< DateRangeControlProps > = ( { value, 
 			} }
 		>
 			{ ( { onClose } ) => (
-				<MenuGroup>
-					{ DATE_RANGES.map( ( range ) => {
-						const isSelected = range.id === value;
+				<>
+					<MenuGroup>
+						{ DATE_RANGES.map( ( range ) => {
+							const isSelected = range.id === value;
+							const isRangeLocked = isLocked( range.id );
 
-						return (
+							return (
+								<MenuItem
+									key={ range.id }
+									role="menuitemradio"
+									isSelected={ isSelected }
+									icon={ isSelected ? check : undefined }
+									disabled={ isRangeLocked }
+									suffix={ isRangeLocked ? <Icon icon={ lock } size={ 18 } /> : undefined }
+									onClick={ () => {
+										onChange( range.id );
+										onClose();
+									} }
+								>
+									{ labels[ range.id ] }
+								</MenuItem>
+							);
+						} ) }
+					</MenuGroup>
+					{ hasLockedRanges && upgradeUrl && (
+						<MenuGroup>
 							<MenuItem
-								key={ range.id }
-								role="menuitemradio"
-								isSelected={ isSelected }
-								icon={ isSelected ? check : undefined }
-								onClick={ () => {
-									onChange( range.id );
-									onClose();
-								} }
+								href={ upgradeUrl }
+								info={ translate( 'Upgrade your plan to see your stats over longer periods.' ) }
+								// `MenuItem` renders an `<a>` when given `href`, but types its events as a button's.
+								onClick={
+									recordWidgetEventThenFollow( 'upgrade_clicked', {
+										feature: 'date_range',
+									} ) as MouseEventHandler< HTMLElement >
+								}
 							>
-								{ labels[ range.id ] }
+								{ translate( 'Upgrade' ) }
 							</MenuItem>
-						);
-					} ) }
-				</MenuGroup>
+						</MenuGroup>
+					) }
+				</>
 			) }
 		</DropdownMenu>
 	);

@@ -182,7 +182,6 @@ describe( 'useWithServerCredentials HOC', () => {
 	it( 'should toggle the advanced section', async () => {
 		const { utils } = setup();
 		const advancedSection = utils.getByTestId( 'advanced-section' );
-		expect( advancedSection.innerHTML ).toContain( '' );
 
 		const toggleButton = utils.getByText( 'Advanced Section' );
 		await userEvent.click( toggleButton );

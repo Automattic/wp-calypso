@@ -7,6 +7,7 @@ export function useSslStatusLabels() {
 	return {
 		active: __( 'SSL active' ),
 		pending: hasEnTranslation( 'SSL pending' ) ? __( 'SSL pending' ) : __( 'SSL Pending' ),
+		failed: __( 'SSL failed' ),
 		disabled: hasEnTranslation( 'SSL disabled' ) ? __( 'SSL disabled' ) : __( 'SSL Disabled' ),
 	};
 }

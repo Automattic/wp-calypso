@@ -8,13 +8,6 @@ import {
 } from 'calypso/state/action-types';
 import reducer from '../reducer';
 
-// Mock necessary for testing certain utils
-jest.mock( 'calypso/signup/config/flows-pure', () => ( {
-	'new-flow': {
-		steps: [ 'something', 'everything' ],
-	},
-} ) );
-
 // Mock necessary for testing step submission behavior
 jest.mock( 'calypso/signup/config/steps-pure', () => ( {
 	stepWithAPI: { apiRequestFunction: () => {} },

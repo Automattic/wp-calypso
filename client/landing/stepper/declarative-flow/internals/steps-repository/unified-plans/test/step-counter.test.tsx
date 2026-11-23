@@ -15,6 +15,7 @@ jest.mock( '../../../../flows/onboarding/use-onboarding-step-counter', () => ( {
 } ) );
 
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { useOnboardingStepCounter } from '../../../../flows/onboarding/use-onboarding-step-counter';
 import { renderStep } from '../../test/helpers';
@@ -22,7 +23,7 @@ import UnifiedPlansStep from '../unified-plans-step';
 
 const noop = () => {};
 
-const render = ( flowName: string ) =>
+const render = ( flowName: string, extraProps = {} ) =>
 	renderStep(
 		<UnifiedPlansStep
 			flowName={ flowName }
@@ -40,6 +41,7 @@ const render = ( flowName: string ) =>
 				isFullLayout: true,
 				isExtraWideLayout: true,
 			} }
+			{ ...extraProps }
 		/>
 	);
 
@@ -60,5 +62,24 @@ describe( 'Plans step counter', () => {
 
 		await waitFor( () => expect( screen.getByText( 'Need help?' ) ).toBeInTheDocument() );
 		expect( document.querySelector( '.step-container-v2__step-counter' ) ).toBeNull();
+	} );
+} );
+
+describe( 'Plans step skip', () => {
+	beforeEach( () => useOnboardingStepCounter.mockReturnValue( null ) );
+
+	it( 'offers a Skip button that calls onSkip', async () => {
+		const onSkip = jest.fn();
+		render( 'launch-site', { onSkip } );
+
+		await userEvent.click( await screen.findByText( 'Skip' ) );
+
+		expect( onSkip ).toHaveBeenCalled();
+	} );
+
+	it( 'offers no Skip button without onSkip', async () => {
+		render( 'launch-site' );
+
+		await waitFor( () => expect( screen.queryByText( 'Skip' ) ).not.toBeInTheDocument() );
 	} );
 } );

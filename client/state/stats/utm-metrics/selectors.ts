@@ -18,10 +18,6 @@ export function getMetrics( state: AppState, siteId: number, postId?: number ) {
 	return metrics;
 }
 
-export function getTopPosts( state: AppState, siteId: number ) {
-	return state?.stats?.utmMetrics?.data?.[ siteId ]?.topPosts ?? {};
-}
-
 /**
  * Returns whether or not the UTM metrics are being loaded
  * @param   {Object}  state    Global state tree

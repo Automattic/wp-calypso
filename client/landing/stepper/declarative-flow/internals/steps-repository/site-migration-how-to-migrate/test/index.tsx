@@ -39,10 +39,6 @@ jest.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
 	canAccessWpcomApis: jest.fn( () => true ),
 } ) );
 
-jest.mock( 'calypso/lib/presales-chat', () => ( {
-	usePresalesChat: () => {},
-} ) );
-
 jest.mock( 'calypso/lib/analytics/ad-tracking/record-migration-events' );
 
 jest.mock( 'calypso/data/site-migration/landing/use-migration-cancellation', () => ( {

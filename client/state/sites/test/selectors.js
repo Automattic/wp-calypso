@@ -1,11 +1,16 @@
 import { WPCOM_FEATURES_WORDADS } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
+import canJetpackSiteAutoUpdateFiles from 'calypso/state/sites/selectors/can-jetpack-site-auto-update-files';
+import canJetpackSiteUpdateFiles from 'calypso/state/sites/selectors/can-jetpack-site-update-files';
+import getJetpackComputedAttributes from 'calypso/state/sites/selectors/get-jetpack-computed-attributes';
+import getSeoTitleFormats from 'calypso/state/sites/selectors/get-seo-title-formats';
+import getSiteCollisions from 'calypso/state/sites/selectors/get-site-collisions';
+import getSiteComputedAttributes from 'calypso/state/sites/selectors/get-site-computed-attributes';
+import isSiteConflicting from 'calypso/state/sites/selectors/is-site-conflicting';
 import {
 	canAccessWordAds,
 	getSite,
-	getSiteCollisions,
-	isSiteConflicting,
 	isSingleUserSite,
 	isJetpackSite,
 	isJetpackModuleActive,
@@ -13,36 +18,26 @@ import {
 	getSiteSlug,
 	getSiteDomain,
 	getSiteTitle,
-	getSiteThemeShowcasePath,
 	isSitePreviewable,
 	getSiteOption,
 	isRequestingSites,
 	isRequestingSite,
-	getSeoTitleFormats,
 	getSeoTitle,
 	getSiteBySlug,
 	getSiteByUrl,
 	getSitePlan,
 	getSitePlanSlug,
-	isCurrentSitePlan,
 	isCurrentPlanPaid,
 	getSiteFrontPage,
 	getSiteFrontPageType,
 	canCurrentUserUseCustomerHome,
-	canJetpackSiteUpdateFiles,
-	canJetpackSiteAutoUpdateFiles,
-	canJetpackSiteAutoUpdateCore,
 	getJetpackSearchCustomizeUrl,
 	getJetpackSearchDashboardUrl,
 	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
-	verifyJetpackModulesActive,
-	hasJetpackSiteCustomDomain,
 	isJetpackSiteMainNetworkSite,
 	getSiteAdminUrl,
 	getCustomizerUrl,
-	getJetpackComputedAttributes,
-	getSiteComputedAttributes,
 } from '../selectors';
 
 jest.mock( '@automattic/calypso-config', () => {
@@ -1974,84 +1969,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isCurrentSitePlan()', () => {
-		test( 'should return null if the site is not known', () => {
-			const isCurrent = isCurrentSitePlan(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203074,
-				1008
-			);
-
-			expect( isCurrent ).toBeNull();
-		} );
-
-		test( 'should return null if the planProductId is not supplied', () => {
-			const isCurrent = isCurrentSitePlan(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								plan: {
-									product_id: 1008,
-								},
-							},
-						},
-					},
-				},
-				77203074
-			);
-
-			expect( isCurrent ).toBeNull();
-		} );
-
-		test( "it should return true if the site's plan matches supplied planProductId", () => {
-			const isCurrent = isCurrentSitePlan(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								plan: {
-									product_id: 1008,
-								},
-							},
-						},
-					},
-				},
-				77203074,
-				1008
-			);
-
-			expect( isCurrent ).toBe( true );
-		} );
-
-		test( "it should return false if the site's plan doesn't match supplied planProductId", () => {
-			const isCurrent = isCurrentSitePlan(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								plan: {
-									product_id: 1008,
-								},
-							},
-						},
-					},
-				},
-				77203074,
-				1003
-			);
-
-			expect( isCurrent ).toBe( false );
-		} );
-	} );
-
 	describe( '#isCurrentPlanPaid()', () => {
 		test( 'it should return true if not free plan', () => {
 			const isPaid = isCurrentPlanPaid(
@@ -2110,103 +2027,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( isPaid ).toEqual( null );
-		} );
-	} );
-
-	describe( 'getSiteThemeShowcasePath()', () => {
-		test( 'it should return null if site is not tracked', () => {
-			const showcasePath = getSiteThemeShowcasePath(
-				{
-					sites: {
-						items: {},
-					},
-				},
-				77203074
-			);
-
-			expect( showcasePath ).toBeNull();
-		} );
-
-		test( 'it should return null if site is jetpack', () => {
-			const showcasePath = getSiteThemeShowcasePath(
-				{
-					sites: {
-						items: {
-							77203074: { ID: 77203074, URL: 'https://example.net', jetpack: true },
-						},
-					},
-				},
-				77203074,
-				1003
-			);
-
-			expect( showcasePath ).toBeNull();
-		} );
-
-		test( 'it should return null if theme_slug is not pub or premium', () => {
-			const showcasePath = getSiteThemeShowcasePath(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								options: {
-									theme_slug: 'a8c/ribs',
-								},
-							},
-						},
-					},
-				},
-				77203074,
-				1003
-			);
-
-			expect( showcasePath ).toBeNull();
-		} );
-
-		test( 'it should return the theme showcase path on non-premium themes', () => {
-			const showcasePath = getSiteThemeShowcasePath(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									theme_slug: 'pub/motif',
-								},
-							},
-						},
-					},
-				},
-				77203074,
-				1003
-			);
-
-			expect( showcasePath ).toEqual( '/theme/motif/testonesite2014.wordpress.com' );
-		} );
-
-		test( 'it should return the theme setup path on premium themes', () => {
-			const showcasePath = getSiteThemeShowcasePath(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://testonesite2014.wordpress.com',
-								options: {
-									theme_slug: 'premium/journalistic',
-								},
-							},
-						},
-					},
-				},
-				77203074,
-				1003
-			);
-
-			expect( showcasePath ).toEqual( '/theme/journalistic/setup/testonesite2014.wordpress.com' );
 		} );
 	} );
 
@@ -2455,44 +2275,6 @@ describe( 'selectors', () => {
 
 			const canAutoUpdateFiles = canJetpackSiteAutoUpdateFiles( state, siteId );
 			expect( canAutoUpdateFiles ).toEqual( false );
-		} );
-	} );
-
-	describe( '#canJetpackSiteAutoUpdateCore()', () => {
-		test( 'it should return `true` if the `file_mod_disabled` option does not contain `automatic_updater_disabled`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					is_multisite: false,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [],
-						jetpack_version: '3.4',
-					},
-				},
-			} );
-
-			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
-			expect( canAutoUpdateCore ).toEqual( true );
-		} );
-
-		test( 'it should return `false` if the `file_mod_disabled` option contains `automatic_updater_disabled`', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					is_multisite: false,
-					jetpack: true,
-					options: {
-						file_mod_disabled: [ 'automatic_updater_disabled' ],
-						jetpack_version: '3.4',
-					},
-				},
-			} );
-
-			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
-			expect( canAutoUpdateCore ).toEqual( false );
 		} );
 	} );
 
@@ -2832,106 +2614,6 @@ describe( 'selectors', () => {
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
 			expect( isSecondary ).toEqual( true );
-		} );
-	} );
-
-	describe( '#verifyJetpackModulesActive()', () => {
-		test( 'should return `null` for a non-existing site', () => {
-			const modulesActive = verifyJetpackModulesActive( stateWithNoItems, nonExistingSiteId, [
-				'manage',
-			] );
-			expect( modulesActive ).toEqual( null );
-		} );
-
-		test( 'it should return `null` for a non jetpack site', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					jetpack: false,
-					options: {},
-				},
-			} );
-
-			const modulesActive = verifyJetpackModulesActive( state, siteId, [ 'manage' ] );
-			expect( modulesActive ).toEqual( null );
-		} );
-
-		test( 'it should return `true` if all given modules are active for a site', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ],
-					},
-				},
-			} );
-
-			const modulesActive = verifyJetpackModulesActive( state, siteId, [
-				'omnisearch',
-				'sso',
-				'photon',
-			] );
-			expect( modulesActive ).toEqual( true );
-		} );
-
-		test( 'it should return `false` if not all given modules are active for a site', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ],
-					},
-				},
-			} );
-
-			const modulesActive = verifyJetpackModulesActive( state, siteId, [
-				'contact-form',
-				'manage',
-			] );
-			expect( modulesActive ).toEqual( false );
-		} );
-	} );
-
-	describe( '#hasJetpackSiteCustomDomain()', () => {
-		test( 'should return `null` for a non-existing site', () => {
-			const hasCustomDomain = hasJetpackSiteCustomDomain( stateWithNoItems, nonExistingSiteId );
-			expect( hasCustomDomain ).toEqual( null );
-		} );
-
-		test( 'it should return `true` if `URL` and `unmapped_url` have different domains', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						unmapped_url: 'https://jetpack.co',
-					},
-				},
-			} );
-
-			const hasCustomDomain = hasJetpackSiteCustomDomain( state, siteId );
-			expect( hasCustomDomain ).toEqual( true );
-		} );
-
-		test( 'it should return `false` if `URL` and `unmapped_url` have the same domain', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						unmapped_url: 'https://jetpacksite.me',
-					},
-				},
-			} );
-
-			const hasCustomDomain = hasJetpackSiteCustomDomain( state, siteId );
-			expect( hasCustomDomain ).toEqual( false );
 		} );
 	} );
 

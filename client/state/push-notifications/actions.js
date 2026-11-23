@@ -5,7 +5,6 @@ import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import wpcom from 'calypso/lib/wp';
 import {
 	PUSH_NOTIFICATIONS_API_READY,
-	PUSH_NOTIFICATIONS_API_NOT_READY,
 	PUSH_NOTIFICATIONS_AUTHORIZE,
 	PUSH_NOTIFICATIONS_BLOCK,
 	PUSH_NOTIFICATIONS_TOGGLE_ENABLED,
@@ -39,14 +38,12 @@ export function init() {
 		// init function is called. That currently happens too late, in a promise resolution callback.
 		if ( isSupportSession() ) {
 			debug( 'Push Notifications are not supported when SU is active' );
-			dispatch( apiNotReady() );
 			return;
 		}
 
 		// Only continue if the service worker supports notifications
 		if ( ! isPushNotificationsSupported() ) {
 			debug( 'Push Notifications are not supported' );
-			dispatch( apiNotReady() );
 			return;
 		}
 
@@ -59,7 +56,6 @@ export function init() {
 					chromeVersion > 39 && chromeVersion < 50 ? chromeVersion : 'other'
 				)
 			);
-			dispatch( apiNotReady() );
 			return;
 		}
 
@@ -74,7 +70,6 @@ export function init() {
 					operaVersion > 15 && operaVersion < 100 ? operaVersion : 'other'
 				)
 			);
-			dispatch( apiNotReady() );
 			return;
 		}
 
@@ -84,12 +79,6 @@ export function init() {
 		}
 
 		dispatch( fetchAndLoadServiceWorker() );
-	};
-}
-
-export function apiNotReady() {
-	return {
-		type: PUSH_NOTIFICATIONS_API_NOT_READY,
 	};
 }
 
@@ -125,7 +114,6 @@ export function fetchAndLoadServiceWorker() {
 			.then( ( serviceWorkerRegistration ) => dispatch( apiReady( serviceWorkerRegistration ) ) )
 			.catch( ( err ) => {
 				debug( 'Error loading service worker!', err );
-				dispatch( apiNotReady() );
 			} );
 	};
 }

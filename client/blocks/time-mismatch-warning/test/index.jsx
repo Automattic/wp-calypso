@@ -18,7 +18,6 @@ jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: jest.fn( () => ( text ) => text ),
 } ) );
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () => jest.fn( () => -4 ) );
-jest.mock( 'calypso/state/sites/selectors/get-site-slug', () => jest.fn( () => 'wordpress.test' ) );
 jest.mock( 'calypso/state/preferences/selectors', () => ( {
 	hasReceivedRemotePreferences: jest.fn( () => true ),
 	getPreference: jest.fn( () => false ),

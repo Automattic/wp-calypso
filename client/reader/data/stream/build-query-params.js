@@ -191,17 +191,6 @@ export function buildStreamQueryParams( {
 			// Legacy `streamApis.user.pollQuery` polled with `number: 20`.
 			return getQueryStringForPoll( [], { ...commonQueryParams, number: 20 } );
 		}
-		if ( streamType === 'conversations' ) {
-			// Legacy `streamApis.conversations.pollQuery`.
-			return getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], commonQueryParams );
-		}
-		if ( streamType === 'conversations-a8c' ) {
-			// Legacy `streamApis['conversations-a8c'].pollQuery`.
-			return getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], {
-				...commonQueryParams,
-				index: 'a8c',
-			} );
-		}
 		if ( streamType === 'likes' ) {
 			// Legacy `streamApis.likes.pollQuery`.
 			return getQueryStringForPoll( [ 'date_liked' ] );
@@ -235,10 +224,6 @@ export function buildStreamQueryParams( {
 			return buildOnThisDayQueryParams( extras, streamKey );
 		case 'saved':
 			return getQueryString( { ...extras, ...SAVED_SORT_PARAMS[ streamKey ] } );
-		case 'conversations':
-			return getQueryString( { ...extras, comments_per_post: 20 } );
-		case 'conversations-a8c':
-			return getQueryString( { ...extras, comments_per_post: 20, index: 'a8c' } );
 		case 'recommendations_posts': {
 			// Legacy first request: only seed + algorithm (no meta/orderBy/etc.).
 			const base = {

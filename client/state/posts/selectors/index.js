@@ -1,11 +1,6 @@
-export { getEditedPost } from 'calypso/state/posts/selectors/get-edited-post';
-export { getNormalizedPost } from 'calypso/state/posts/selectors/get-normalized-post';
 export { getPost } from 'calypso/state/posts/selectors/get-post';
-export { getPostEdits } from 'calypso/state/posts/selectors/get-post-edits';
 export { getPostPreviewUrl } from 'calypso/state/posts/selectors/get-post-preview-url';
 export { getPostsForQuery } from 'calypso/state/posts/selectors/get-posts-for-query';
-export { getPostsLastPageForQuery } from 'calypso/state/posts/selectors/get-posts-last-page-for-query';
 export { getSitePost } from 'calypso/state/posts/selectors/get-site-post';
-export { isPostsLastPageForQuery } from 'calypso/state/posts/selectors/is-posts-last-page-for-query';
 export { isRequestingPostsForQuery } from 'calypso/state/posts/selectors/is-requesting-posts-for-query';
 export { isRequestingSitePost } from 'calypso/state/posts/selectors/is-requesting-site-post';

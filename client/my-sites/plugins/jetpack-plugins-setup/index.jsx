@@ -381,7 +381,7 @@ class PlansSetup extends Component {
 						{ ...statusProps }
 						text={
 							errorMessage
-								? errorMessage.replace( /<.[^<>]*?>/g, '' )
+								? new DOMParser().parseFromString( errorMessage, 'text/html' ).body.textContent
 								: translate( 'An error occured.' )
 						}
 					/>

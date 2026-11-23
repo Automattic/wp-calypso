@@ -242,12 +242,6 @@ export function getNav2026Menus( {
 							label: __( 'Docs', __i18n_text_domain__ ),
 							url: localizeUrl( '//developer.wordpress.com/docs/' ),
 						},
-						{
-							label: __( 'WordPress Studio', __i18n_text_domain__ ),
-							url: 'https://wordpress.studio/',
-							target: '_self',
-							isExternal: true,
-						},
 					],
 				},
 				{

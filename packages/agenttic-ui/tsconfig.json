@@ -31,6 +31,6 @@
 		"jsx": "react-jsx",
 		"types": [ "vitest/globals" ]
 	},
-	"include": [ "src/**/*", "src/test/setup.ts" ],
+	"include": [ "src/**/*" ],
 	"exclude": [ "node_modules", "dist" ]
 }

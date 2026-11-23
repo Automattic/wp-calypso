@@ -63,7 +63,7 @@ describe( 'index', () => {
 				response.emit( 'close' );
 
 				// Check the information sent to boom.gif.
-				expect( includesBeacon( `reader.response_time:${ TWO_SECONDS }` ) );
+				expect( includesBeacon( `reader.response_time:${ TWO_SECONDS }` ) ).toBe( true );
 			} );
 
 			test( 'logs granular analytics', () => {

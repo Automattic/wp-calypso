@@ -36,22 +36,26 @@
 		}
 	}
 
-	.odie-attachment-preview-cancel {
-		$width: 18px;
-		$height: 10px;
+	// A round badge on the card's corner, the size the filled cancel icon drew it, so the preview
+	// row's scroll clipping doesn't cut its top.
+	.odie-attachment-preview-cancel.components-button {
+		$size: 16px;
 		position: absolute;
-		height: $height;
-		width: $width;
-		top: calc(-1 * $height / 2);
-		right: calc(-1 * $width / 2);
+		height: $size;
+		width: $size;
+		min-width: $size;
+		top: calc(-1 * $size / 2);
+		right: calc(-1 * $size / 2);
 		margin: 0;
 		padding: 0;
+		justify-content: center;
+		border-radius: 50%;
+		background: $gray-700;
+		color: $white;
 
-		&:not( :hover ) {
-			svg {
-				fill: $gray-700;
-				color: $gray-700;
-			}
+		&:hover:not(:disabled) {
+			background: $gray-900;
+			color: $white;
 		}
 	}
 

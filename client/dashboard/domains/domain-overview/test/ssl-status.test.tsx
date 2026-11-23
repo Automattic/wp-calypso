@@ -41,6 +41,7 @@ describe( 'DomainOverviewSslStatus', () => {
 		[ 'pending', 'SSL pending' ],
 		[ 'newly_registered', 'SSL pending' ],
 		[ 'inactive', 'SSL disabled' ],
+		[ 'failed', 'SSL failed' ],
 	] )( 'shows a badge without a link for %s certificates', async ( ssl_status, badge ) => {
 		renderStatus( { ssl_status } );
 

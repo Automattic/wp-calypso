@@ -8,14 +8,7 @@ describe( 'reducer', () => {
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
-			expect.arrayContaining( [
-				'id',
-				'user',
-				'capabilities',
-				'flags',
-				'emailVerification',
-				'lasagnaJwt',
-			] )
+			expect.arrayContaining( [ 'id', 'user', 'capabilities', 'flags', 'emailVerification' ] )
 		);
 	} );
 

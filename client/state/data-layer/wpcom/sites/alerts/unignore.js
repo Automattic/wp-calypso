@@ -1,12 +1,7 @@
 import i18n from 'i18n-calypso';
-import {
-	JETPACK_SITE_ALERT_THREAT_UNIGNORE,
-	REWIND_STATE_UPDATE,
-} from 'calypso/state/action-types';
-import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { REWIND_STATE_UPDATE } from 'calypso/state/action-types';
 import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 export const request = ( action ) => {
@@ -54,13 +49,3 @@ export const failure = ( action ) =>
 		duration: 10000,
 		id: action.noticeId,
 	} );
-
-registerHandlers( 'state/data-layer/wpcom/sites/alerts/unignore.js', {
-	[ JETPACK_SITE_ALERT_THREAT_UNIGNORE ]: [
-		dispatchRequest( {
-			fetch: request,
-			onSuccess: success,
-			onError: failure,
-		} ),
-	],
-} );

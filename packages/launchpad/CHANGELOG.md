@@ -2,8 +2,9 @@
 
 ## Unreleased
 
+- Breaking: Require `@wordpress/api-fetch` ^8.2.0, `@wordpress/base-styles` ^15.1.0, `@wordpress/components` ^45.0.0, `@wordpress/i18n` ^7.2.0, `@wordpress/ui` ^0.27.0 and `@wordpress/url` ^5.2.0.
 - Set `color` alongside `fill` on completed and hovered checklist checkmarks and chevrons, so icons drawn with `currentColor` (such as stroke-drawn `@wordpress/icons`) keep their green and accent colors.
-- Require `@wordpress/icons` ^20.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
+- Require `@wordpress/icons` ^21.0.0, whose icons are drawn with strokes that take their color from `color` rather than `fill`.
 
 ## 1.3.1
 

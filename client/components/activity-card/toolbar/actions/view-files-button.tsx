@@ -1,4 +1,4 @@
-import { Icon, file as fileIcon } from '@wordpress/icons';
+import { Icon, folder } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import Button from 'calypso/components/forms/form-button';
@@ -34,7 +34,7 @@ const ViewFilesButton: FunctionComponent< ViewFilesButtonProps > = ( {
 			className="toolbar__view-files-button"
 			onClick={ onButtonClick }
 		>
-			<Icon icon={ fileIcon } className="toolbar__view-files-button-icon" size={ 18 } />
+			<Icon icon={ folder } className="toolbar__view-files-button-icon" size={ 18 } />
 			<span className="toolbar__view-files-button-text">{ translate( 'View files' ) }</span>
 		</Button>
 	);

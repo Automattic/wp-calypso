@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
+@import '../../components/site-preview-panel/mixins';
 
 // The steps and window come from the dashboard, which defines these on its root.
 .static-site-import-progress-step {
@@ -10,26 +11,9 @@
 	--dashboard__foreground-color-error: var( --color-error );
 }
 
-// The steps on the left; on wide screens, the window onto the site fills a dark panel on the right.
+// The steps on the left; on wide screens, the window onto the site fills a blue panel on the right.
 .static-site-import-progress-step__split {
-	display: flex;
-	flex-direction: column;
-	gap: 48px;
-
-	@include break-large {
-		// The panel is pinned to the window, so the steps keep to the left half.
-		width: calc( 50% - 24px );
-		margin-inline-end: auto;
-		// Centered in the window, like the panel, by leaving the same room below as the top bar takes above.
-		min-height: calc(
-			100vh - 2 *
-				(
-					var( --step-container-v2-top-bar-height, 0px ) +
-						var( --step-container-v2-content-block-padding, 0px )
-				)
-		);
-		justify-content: center;
-	}
+	@include site-preview-split;
 }
 
 .static-site-import-progress-step__main {
@@ -39,95 +23,14 @@
 }
 
 .static-site-import-progress-step__panel {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 24px 16px;
-	border-radius: 16px;
-	position: relative;
-	isolation: isolate;
-	overflow: hidden;
-	background-color: var( --studio-gray-100 );
-
-	// The dots, and a brighter copy of them that a band of light sweeps across like a wave.
-	&::before,
-	&::after {
-		content: '';
-		position: absolute;
-		inset: 0;
-		z-index: -1;
-		background-image: radial-gradient(
-			color-mix( in srgb, var( --studio-white ) 14%, transparent ) 1px,
-			transparent 1px
-		);
-		background-size: 20px 20px;
-	}
-
-	&::after {
-		background-image: radial-gradient(
-			color-mix( in srgb, var( --studio-white ) 28%, transparent ) 1.2px,
-			transparent 1.2px
-		);
-		-webkit-mask-image: linear-gradient(
-			115deg,
-			transparent 35%,
-			var( --studio-white ) 50%,
-			transparent 65%
-		);
-		mask-image: linear-gradient(
-			115deg,
-			transparent 35%,
-			var( --studio-white ) 50%,
-			transparent 65%
-		);
-		-webkit-mask-size: 300% 300%;
-		mask-size: 300% 300%;
-		-webkit-mask-repeat: no-repeat;
-		mask-repeat: no-repeat;
-		-webkit-mask-position: 100% 100%;
-		mask-position: 100% 100%;
-		opacity: 0;
-	}
-
-	@include break-large {
-		position: fixed;
-		inset-block: 24px;
-		inset-inline-end: 24px;
-		width: calc( 50% - 36px );
-		box-sizing: border-box;
-	}
+	@include site-preview-panel;
 }
 
 .static-site-import-preview-window {
 	width: 100%;
-	max-width: 640px;
-}
-
-.static-site-import-progress-step__panel .static-site-import-preview-window__caption {
-	color: var( --studio-gray-5 );
-}
-
-.static-site-import-progress-step__panel .static-site-import-snapshot__viewport {
-	aspect-ratio: 2 / 1;
-}
-
-@media ( prefers-reduced-motion: no-preference ) {
-	.static-site-import-progress-step__panel::after {
-		opacity: 1;
-		animation: static-site-import-progress-step__wave 5s ease-in-out infinite;
-	}
-}
-
-@keyframes static-site-import-progress-step__wave {
-	from {
-		-webkit-mask-position: 100% 100%;
-		mask-position: 100% 100%;
-	}
-
-	to {
-		-webkit-mask-position: 0% 0%;
-		mask-position: 0% 0%;
-	}
+	// The site shows at the engine's 4:3 screenshot, so on short screens the window narrows to keep
+	// it, with its address bar, inside the panel.
+	max-width: min( 640px, calc( ( 100vh - 160px ) * 4 / 3 ) );
 }
 
 // Every step keeps room for its activity line, so the markers stay evenly spaced.

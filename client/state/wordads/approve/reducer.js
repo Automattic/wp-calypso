@@ -3,7 +3,6 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
@@ -56,7 +55,6 @@ export function requestErrors( state = {}, action ) {
 export function requestSuccess( state = {}, action ) {
 	switch ( action.type ) {
 		case WORDADS_SITE_APPROVE_REQUEST:
-		case WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS:
 		case WORDADS_SITE_APPROVE_REQUEST_FAILURE:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: null,

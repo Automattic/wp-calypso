@@ -176,6 +176,7 @@ export interface Client {
 	filter: Record< string, unknown > | null;
 	filteredHasMore: Record< string, boolean >;
 	gettingFilteredNotes: boolean;
+	filteredRefreshPending: boolean;
 	retries: number;
 	subscribeTry: number;
 	subscribeTries: number;
@@ -187,10 +188,11 @@ export interface Client {
 
 	main: () => void;
 	reschedule: ( refresh_ms?: number ) => void;
-	getNote: ( note_id: number ) => void;
+	getNote: ( note_id: number ) => Promise< boolean | undefined >;
 	getNotes: () => void;
 	getNotesList: () => void;
 	getFilteredNotes: ( before?: number ) => void;
+	refreshFilteredNotes: () => void;
 	setFilter: ( filterName: FilterName ) => void;
 	updateLastSeenTime: ( proposedTime: number, fromStorage: boolean ) => boolean;
 	loadMore: () => void;

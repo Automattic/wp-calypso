@@ -34,6 +34,9 @@ const exported = {
 					meta.key === 'xcomment_original_permalink'
 				) {
 					const urlParts = getUrlParts( meta.value );
+					if ( ! [ 'http:', 'https:' ].includes( urlParts.protocol ) || ! urlParts.host ) {
+						continue;
+					}
 					xPostMetadata.siteURL = `${ urlParts.protocol }//${ urlParts.host }`;
 					xPostMetadata.postURL = `${ xPostMetadata.siteURL }${ urlParts.pathname }`;
 					if ( urlParts.hash && urlParts.hash.indexOf( '#comment-' ) === 0 ) {

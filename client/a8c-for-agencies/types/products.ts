@@ -7,6 +7,13 @@ export interface APIProductFamilyProductBundlePrice {
 export interface APIProductTierPrice {
 	units: number;
 	price: number;
+	promotional_price?: number;
+}
+
+export interface APIProductPromotion {
+	price: number;
+	discount: number;
+	ends_at: string;
 }
 
 export interface APIProductFamilyProduct {
@@ -29,6 +36,8 @@ export interface APIProductFamilyProduct {
 	yearly_price?: number;
 	monthly_introductory_price?: number;
 	yearly_introductory_price?: number;
+	monthly_promotion?: APIProductPromotion;
+	yearly_promotion?: APIProductPromotion;
 	tier_monthly_prices?: APIProductTierPrice[];
 	tier_yearly_prices?: APIProductTierPrice[];
 	site_domain?: string;

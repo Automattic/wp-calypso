@@ -79,11 +79,15 @@ This mixin generates alias variables for a color palette. For example, the
 	--wp-components-color-accent-darker-10: var( --studio-blue-90 );
 	--wp-components-color-accent-darker-20: var( --studio-blue-100 );
 	--wp-components-color-accent-inverted: #fff;
+	--wpds-color-foreground-interactive-brand-strong: var( --wp-components-color-accent-inverted );
+	--wpds-color-foreground-interactive-brand-strong-active: var( --wp-components-color-accent-inverted );
 	--wpds-color-foreground-interactive-brand: var( --wp-components-color-accent );
 	--wpds-color-foreground-interactive-brand-active: var( --wp-components-color-accent-darker-20 );
 	--wpds-color-stroke-focus: var( --wp-components-color-accent );
 	--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
 	--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
+	// Input placeholders and a toggle's off mark. Without it they keep the light default, too dim here.
+	--wpds-color-foreground-interactive-neutral-weak: var( --dashboard__text-muted-color );
 	--wpds-color-background-interactive-neutral-weak-active: var( --wp-components-color-gray-200 );
 	// Field fill and border, e.g. checkboxes. Without these they fall back to light values.
 	--wpds-color-background-interactive-neutral: transparent;
@@ -92,6 +96,10 @@ This mixin generates alias variables for a color palette. For example, the
 	--wpds-color-stroke-interactive-neutral: var( --dashboard-field__border-color );
 	--wpds-color-stroke-interactive-neutral-active: var( --wp-components-color-gray-700 );
 	--wpds-color-stroke-interactive-neutral-disabled: var( --dashboard-surface__border-color );
+	// An unchecked toggle's track, under its light knob; disabled toggles dim both.
+	--wpds-color-background-track-neutral: var( --wp-components-color-gray-300 );
+	--wpds-color-background-track-neutral-disabled: var( --wp-components-color-gray-200 );
+	--wpds-color-background-thumb-neutral-disabled: var( --wp-components-color-gray-400 );
 	--wp-components-color-gray-800: #e0e0e0;
 	--wp-components-color-gray-700: #bdbdbd;
 	--wp-components-color-gray-600: #8a8a8a;
@@ -193,15 +201,36 @@ This mixin generates alias variables for a color palette. For example, the
 			#fff
 		);
 
-		// @wordpress/components hard-codes disabled primary text to
-		// rgba( 255, 255, 255, 0.4 ), so token overrides alone cannot meet
-		// the required contrast.
+		// @wordpress/components fills disabled primary buttons with light-mode
+		// grays, which glare on the dark surface; keep a dimmed accent instead.
 		&:disabled:not( .is-busy ),
 		&[aria-disabled='true']:not( .is-busy ) {
 			background: var( --wp-components-color-accent-disabled );
 			border-color: var( --wp-components-color-accent-disabled );
 			color: var( --wp-components-color-accent-disabled-text );
 		}
+	}
+
+	// Disabled destructive primary buttons fill with these tokens; dim the danger red the same way.
+	.components-button.is-primary.is-destructive {
+		--wpds-color-background-interactive-error-strong-disabled: color-mix(
+			in srgb,
+			var( --dashboard-danger__color ) 35%,
+			var( --dashboard-surface__background-color )
+		);
+		--wpds-color-foreground-interactive-error-strong-disabled: color-mix(
+			in srgb,
+			var( --dashboard-danger__color ) 50%,
+			#fff
+		);
+	}
+}
+
+// Pressed buttons fill with these tokens, which stay dark; keep the light pill they had.
+@mixin color-scheme-dark-theme-pressed-button {
+	.components-button.is-pressed {
+		--wpds-color-background-interactive-neutral-strong-active: var( --wp-components-color-foreground );
+		--wpds-color-foreground-interactive-neutral-strong-active: var( --wp-components-color-foreground-inverted );
 	}
 }
 
@@ -341,6 +370,10 @@ This mixin generates alias variables for a color palette. For example, the
 
 	.components-card__header {
 		border-bottom-color: var( --dashboard-surface__border-color );
+	}
+
+	.components-card__footer {
+		border-top-color: var( --dashboard-surface__border-color );
 	}
 }
 
@@ -871,6 +904,7 @@ This mixin generates alias variables for a color palette. For example, the
 	@include color-scheme-dark-theme-site-icon;
 	@include color-scheme-dark-theme-primary-button;
 	@include color-scheme-dark-theme-secondary-tertiary-and-link-buttons;
+	@include color-scheme-dark-theme-pressed-button;
 	@include color-scheme-dark-theme-agenttic;
 }
 

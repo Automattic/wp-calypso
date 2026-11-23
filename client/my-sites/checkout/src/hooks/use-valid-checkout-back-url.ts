@@ -2,10 +2,16 @@ import config from '@automattic/calypso-config';
 import { isAllowedRedirectUrl } from '@automattic/calypso-url';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { useMemo } from 'react';
-import { dashboardOrigins } from 'calypso/dashboard/utils/link';
+import {
+	isStudioCheckoutPath,
+	STUDIO_DEFAULT_BACK_URL,
+	STUDIO_WEB_HOSTS,
+} from 'calypso/lib/studio/checkout-urls';
+import { getStudioCheckoutParams } from 'calypso/my-sites/checkout/studio-return/round-trip';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getSiteId } from 'calypso/state/sites/selectors';
+import { getAllowedCancelToUrl } from '../lib/leave-checkout';
 import { isJetpackNotAtomicSite, useCheckoutSite } from './use-checkout-site';
 
 const getAllowedHosts = ( siteSlug?: string ): string[] => {
@@ -15,6 +21,7 @@ const getAllowedHosts = ( siteSlug?: string ): string[] => {
 		'jetpack.com',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
+		...STUDIO_WEB_HOSTS,
 		...( hostname ? [ hostname ] : [] ),
 		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
@@ -25,14 +32,6 @@ const getAllowedHosts = ( siteSlug?: string ): string[] => {
 
 	return basicHosts.concat( languageSpecificJetpackHosts );
 };
-
-function isDashboardUrl( url: string ) {
-	try {
-		return dashboardOrigins().includes( new URL( url ).origin );
-	} catch {
-		return false;
-	}
-}
 
 const useValidCheckoutBackUrl = (
 	siteSlug: string | undefined,
@@ -58,16 +57,23 @@ const useValidCheckoutBackUrl = (
 			if ( ! siteSlug && isAkismetCheckout ) {
 				return 'https://akismet.com/pricing';
 			}
+			// `leaveCheckout` prefers a back URL to `cancel_to`, so the Studio default must not
+			// hide a `cancel_to` it would follow, such as the desktop app's own cancel target.
+			const searchParams = new URLSearchParams( window.location.search );
+			const cancelTo = searchParams.get( 'cancel_to' );
+			if (
+				isStudioCheckoutPath( window.location.pathname ) &&
+				! ( cancelTo && getAllowedCancelToUrl( cancelTo ) ) &&
+				! getStudioCheckoutParams( Object.fromEntries( searchParams ) )
+			) {
+				return STUDIO_DEFAULT_BACK_URL;
+			}
 			// For Jetpack specific checkout, if navigated with direct link
 			// We should redirect to the jetpack pricing page
 			if ( jetpackSite ) {
 				return 'https://cloud.jetpack.com/pricing/' + ( siteSlug || '' );
 			}
 			return undefined;
-		}
-
-		if ( isDashboardUrl( backUrl ) ) {
-			return backUrl;
 		}
 
 		const allowedHosts = getAllowedHosts( siteSlug );

@@ -60,14 +60,14 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@types/react-dom": "^18.0.0 || ^19.0.0",
-		"@wordpress/api-fetch": "^8.1.0",
+		"@wordpress/api-fetch": "^8.2.0",
 		"autoprefixer": "^10.4.0",
 		"postcss": "^8.5.32",
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
 		"typescript": "^5.9.3",
 		"unified": "^11.0.5",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vite-plugin-lib-inject-css": "^2.2.2",
 		"vitest": "^5.1.0"
 	},

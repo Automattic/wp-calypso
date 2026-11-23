@@ -20,7 +20,7 @@ jest.mock( '../internals/state-manager/store', () => ( { useFlowState: jest.fn()
 describe( 'Site Setup Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn(), pathname: '' },
+			value: { assign: jest.fn(), replace: jest.fn(), pathname: '' },
 		} );
 	} );
 
@@ -183,6 +183,48 @@ describe( 'Site Setup Flow', () => {
 			expect( window.location.assign ).toHaveBeenCalledWith(
 				expect.stringContaining( '/setup/some-flow/some-step' )
 			);
+		} );
+	} );
+
+	describe( 'when the Playground import finishes', () => {
+		const finishImport = (
+			search = 'siteSlug=example.wordpress.com&siteId=123&playground=abc'
+		) => {
+			const { runUseStepNavigationSubmit } = renderFlow( siteSetupFlow );
+
+			runUseStepNavigationSubmit( {
+				currentStep: STEPS.IMPORTER_PLAYGROUND.slug,
+				currentURL: `/setup/site-setup/${ STEPS.IMPORTER_PLAYGROUND.slug }?${ search }`,
+				dependencies: { siteSlug: 'example.wordpress.com', siteId: 123 },
+			} );
+		};
+
+		// Going through exitFlow would replace the Sell intent the Commerce site was created with,
+		// and Back onto the importer would import the store again. The clean-up still runs, or the
+		// next run in this browser starts with this one's cart and destination.
+		it( 'replaces the page with the store and cleans up the run', () => {
+			finishImport( 'siteSlug=example.wordpress.com&siteId=123&playground=abc&intent=woocommerce' );
+
+			expect( window.location.replace ).toHaveBeenCalledWith( '/home/123' );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( clearSignupDestinationCookie ).toHaveBeenCalled();
+			expect( getFlowLocation().path ).not.toContain( 'processing' );
+		} );
+
+		// Without a site ID in the URL or the site loaded, the ID is 0.
+		it( 'falls back to the site slug for a store without a site ID', () => {
+			finishImport( 'siteSlug=example.wordpress.com&playground=abc&intent=woocommerce' );
+
+			expect( window.location.replace ).toHaveBeenCalledWith( '/home/example.wordpress.com' );
+		} );
+
+		it( 'exits the flow for any other Playground site', () => {
+			finishImport();
+
+			expect( window.location.replace ).not.toHaveBeenCalled();
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			expect( clearSignupDestinationCookie ).toHaveBeenCalled();
+			expect( getFlowLocation().path ).toContain( 'processing' );
 		} );
 	} );
 

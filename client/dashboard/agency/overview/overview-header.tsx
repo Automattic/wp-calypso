@@ -1,4 +1,5 @@
 import { ExternalLink } from '@wordpress/components';
+import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
 import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
@@ -47,7 +48,7 @@ export default function AgencyOverviewHeader( {
 }: AgencyOverviewHeaderInfoProps & { name?: string } ) {
 	return (
 		<PageHeader
-			title={ name }
+			title={ name && decodeEntities( name ) }
 			description={
 				<AgencyOverviewHeaderInfo url={ url } createdAt={ createdAt } locale={ locale } />
 			}

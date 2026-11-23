@@ -1,6 +1,17 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/variables';
 
+.step-container-v2:has( .site-migration-check, .site-migration-confirm ) {
+	.step-container-v2__top-bar-wordpress-logo--wordmark {
+		height: 18px;
+	}
+
+	.step-container-v2__back-button {
+		text-decoration: none;
+		font-weight: 400;
+	}
+}
+
 .step-container-v2:has( .site-migration-check ) {
 	.step-container-v2__content-wrapper {
 		gap: 32px;
@@ -14,15 +25,6 @@
 		letter-spacing: 0.2px;
 		line-height: 1.18;
 		text-wrap: wrap;
-	}
-
-	.step-container-v2__top-bar-wordpress-logo--wordmark {
-		height: 18px;
-	}
-
-	.step-container-v2__back-button {
-		text-decoration: none;
-		font-weight: 400;
 	}
 
 	.site-migration-check {
@@ -52,113 +54,6 @@
 		font-size: 1rem;
 		line-height: 1.5;
 		overflow-wrap: anywhere;
-	}
-
-	.site-migration-check__platform {
-		font-size: 0.75rem;
-		line-height: 1.33;
-		color: var( --color-neutral-50 );
-	}
-
-	.site-migration-check__upgrade-description {
-		margin: 0;
-		color: var( --color-neutral-50 );
-	}
-
-	.site-migration-check__actions {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 10px;
-	}
-
-	.site-migration-check__comparison {
-		display: grid;
-		grid-template-columns: minmax( 0, 1fr ) 24px minmax( 0, 1fr );
-		gap: 16px;
-
-		@media ( max-width: $break-medium ) {
-			grid-template-columns: minmax( 0, 1fr );
-		}
-	}
-
-	.site-migration-check__comparison-site {
-		display: grid;
-		grid-template-rows: subgrid;
-		grid-row: 1 / span 3;
-		gap: 8px;
-		min-width: 0;
-		overflow-wrap: anywhere;
-
-		&:last-child {
-			grid-column: 3;
-		}
-
-		@media ( max-width: $break-medium ) {
-			grid-template-rows: auto;
-			grid-row: auto;
-
-			&:last-child {
-				grid-column: 1;
-			}
-		}
-	}
-
-	.site-migration-check__preview-label,
-	.site-migration-check__preview-description {
-		margin: 0;
-		font-size: $font-size-medium;
-		line-height: 1.5;
-	}
-
-	.site-migration-check__preview-label {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.site-migration-check__preview-heading {
-		font-size: 1rem;
-		font-weight: 500;
-	}
-
-	.site-migration-check__preview-address {
-		display: flex;
-		gap: 4px;
-		max-width: 100%;
-		align-self: flex-start;
-		white-space: nowrap;
-		color: var( --color-neutral-50 );
-		text-decoration: none;
-
-		&:hover,
-		&:focus-visible {
-			color: var( --color-link );
-			text-decoration: underline;
-		}
-	}
-
-	.site-migration-check__preview-address-text {
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.site-migration-check__preview-description {
-		color: var( --color-neutral-50 );
-	}
-
-	.site-migration-check__comparison-arrow {
-		grid-column: 2;
-		grid-row: 2;
-		align-self: center;
-		justify-self: center;
-		color: var( --color-neutral-50 );
-		font-size: $font-size-large;
-
-		@media ( max-width: $break-medium ) {
-			grid-column: 1;
-			grid-row: auto;
-			transform: rotate( 90deg );
-		}
 	}
 
 	.site-migration-check__choice.components-button {
@@ -229,29 +124,6 @@
 		text-decoration: underline;
 	}
 
-	.site-migration-preview {
-		flex: none;
-		border-radius: 8px;
-		box-shadow: none;
-
-		.site-migration-preview__screenshot {
-			height: auto;
-			min-height: 0;
-			aspect-ratio: 660 / 331;
-			border: 1px solid var( --color-neutral-5 );
-			border-radius: 8px;
-		}
-	}
-
-	.site-migration-check__comparison .site-migration-preview {
-		height: auto;
-
-		.site-migration-preview__screenshot {
-			aspect-ratio: 3 / 2;
-			border-radius: 2px;
-		}
-	}
-
 	.site-migration-check__card {
 		display: flex;
 		flex-direction: column;
@@ -263,47 +135,6 @@
 		background: var( --color-surface );
 		font-size: $font-size-medium;
 		line-height: 1.54;
-
-		&:has( .site-migration-check__actions ) .site-migration-check__choice-content {
-			max-width: 480px;
-		}
-
-		.components-notice {
-			box-sizing: border-box;
-			width: 100%;
-			margin: 0;
-			padding: 12px;
-			border: 1px solid var( --wp-components-notice-border-color );
-			border-radius: 8px;
-			background: var( --wp-components-notice-background-color );
-			color: var( --wp-components-notice-text-color );
-		}
-
-		.components-notice__content {
-			display: flex;
-			align-items: flex-start;
-			gap: 4px;
-			margin: 0;
-			font-size: inherit;
-			line-height: inherit;
-			font-weight: 600;
-			overflow-wrap: anywhere;
-
-			img {
-				flex: none;
-			}
-
-			span {
-				padding-block: 2px;
-			}
-		}
-
-		.step-container-v2__primary-button,
-		.step-container-v2__secondary-button {
-			padding-inline: 12px;
-			font-size: inherit;
-			line-height: inherit;
-		}
 	}
 }
 

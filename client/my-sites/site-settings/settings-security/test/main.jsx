@@ -17,7 +17,6 @@ const props = {
 };
 
 jest.mock( 'calypso/my-sites/site-settings/form-security', () => () => null );
-jest.mock( 'calypso/my-sites/site-settings/form-jetpack-monitor', () => () => null );
 jest.mock( 'calypso/my-sites/site-settings/jetpack-dev-mode-notice', () => () => null );
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 jest.mock( 'calypso/components/empty-content', () => () => <div data-testid="empty-content" /> );

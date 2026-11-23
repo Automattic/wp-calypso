@@ -4,12 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
 import { EXTERNAL_WPCOM_ACCOUNT_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
+import { useResendCooldown } from 'calypso/dashboard/account/hooks/use-resend-cooldown';
 import {
 	formatCooldown,
 	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
 } from 'calypso/dashboard/utils/email-verification-resend';
-import { useResendCooldown } from 'calypso/dashboard/utils/use-resend-cooldown';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';

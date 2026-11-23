@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { isWpcomSitelessCheckoutType } from '../lib/is-wpcom-siteless-checkout-type';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 interface Props {
@@ -42,7 +43,7 @@ export default function useCheckoutFlowTrackKey( {
 			return 'a4a_siteless_checkout';
 		}
 
-		if ( sitelessCheckoutType === 'wpcom' ) {
+		if ( isWpcomSitelessCheckoutType( sitelessCheckoutType ) ) {
 			return 'wpcom_siteless_checkout';
 		}
 

@@ -77,9 +77,6 @@ describe( 'BundleLineItem', () => {
 
 		expect( screen.getByText( 'Domain Bundle' ) ).toBeVisible();
 		expect( screen.getByText( 'Domain Bundle Registration: billed annually' ) ).toBeVisible();
-		expect(
-			screen.queryByText( 'First year discounted; domains renew at standard rates.' )
-		).not.toBeInTheDocument();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
 		// 2200 + 1800 = 4000 smallest-unit => $40, shown as the price, the term row,

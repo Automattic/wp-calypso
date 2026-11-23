@@ -2,8 +2,6 @@ import { useEffect } from '@wordpress/element';
 import { canExposeWebMcpTools, getWebMcpModelContext } from '../webmcp/eligibility';
 import type { ToolProvider } from '../extension-types';
 
-const RECONCILIATION_INTERVAL_MS = 2000;
-
 export default function useWebMcpTools( {
 	toolProvider,
 	scope,
@@ -17,36 +15,46 @@ export default function useWebMcpTools( {
 		}
 
 		const modelContext = getWebMcpModelContext();
+
 		if ( ! modelContext ) {
 			return;
 		}
 
 		let disposed = false;
-		let interval: ReturnType< typeof setInterval > | undefined;
+		let unsubscribe: ( () => void ) | undefined;
 		let adapter: import( '../webmcp/types' ).WebMcpAdapter | undefined;
 
 		import( /* webpackChunkName: "am-webmcp" */ '../webmcp/adapter' )
-			.then( ( { createWebMcpAdapter, createWebMcpToolProvider } ) => {
-				if ( disposed ) {
-					return;
-				}
+			.then(
+				( {
+					createWebMcpAdapter,
+					subscribeToRegistryAbilities,
+					withRegistryAbilities,
+					withServerAbilities,
+					withoutChatToolCalls,
+				} ) => {
+					if ( disposed ) {
+						return;
+					}
 
-				adapter = createWebMcpAdapter( {
-					toolProvider: createWebMcpToolProvider( toolProvider ),
-					modelContext,
-				} );
-				adapter.sync().catch( ( error ) => {
-					// eslint-disable-next-line no-console
-					console.warn( '[AgentsManager] Failed to synchronize WebMCP tools:', error );
-				} );
-
-				interval = setInterval( () => {
-					adapter?.sync().catch( ( error ) => {
-						// eslint-disable-next-line no-console
-						console.warn( '[AgentsManager] Failed to synchronize WebMCP tools:', error );
+					adapter = createWebMcpAdapter( {
+						toolProvider: withServerAbilities(
+							withRegistryAbilities( withoutChatToolCalls( toolProvider ) )
+						),
+						modelContext,
 					} );
-				}, RECONCILIATION_INTERVAL_MS );
-			} )
+
+					const sync = () => {
+						adapter?.sync().catch( ( error ) => {
+							// eslint-disable-next-line no-console
+							console.warn( '[AgentsManager] Failed to synchronize WebMCP tools:', error );
+						} );
+					};
+
+					sync();
+					unsubscribe = subscribeToRegistryAbilities( sync );
+				}
+			)
 			.catch( ( error ) => {
 				// eslint-disable-next-line no-console
 				console.warn( '[AgentsManager] Failed to load the WebMCP experiment:', error );
@@ -54,9 +62,7 @@ export default function useWebMcpTools( {
 
 		return () => {
 			disposed = true;
-			if ( interval ) {
-				clearInterval( interval );
-			}
+			unsubscribe?.();
 			adapter?.dispose();
 		};
 	}, [ scope, toolProvider ] );

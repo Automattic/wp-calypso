@@ -15,4 +15,3 @@ export { getRawSitePurchases } from './get-raw-site-purchases';
 export { getRawUserPurchases } from './get-raw-user-purchases';
 export { willAtomicSiteRevertAfterPurchaseDeactivation } from './will-atomic-site-revert-after-purchase-deactivation';
 export { siteHasJetpackProductPurchase } from './site-has-jetpack-product-purchase';
-export { hasPurchasedDomain } from './has-purchased-domain';
