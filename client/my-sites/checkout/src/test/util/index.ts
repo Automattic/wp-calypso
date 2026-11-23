@@ -1331,6 +1331,13 @@ export function mockUserSignupValidationEndpoint( endpointResponse ) {
 	return endpoint;
 }
 
+export function mockPayPalConfigurationEndpoint() {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.1/me/paypal-configuration' )
+		.reply( 200, { client_id: 'paypal-client-id' } );
+}
+
 export function mockGetPaymentMethodsEndpoint( endpointResponse ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( /\/rest\/v1\.2\/me\/payment-methods/ )
