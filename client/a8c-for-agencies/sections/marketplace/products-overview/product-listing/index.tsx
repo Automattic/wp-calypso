@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { JetpackLogo } from '@automattic/components';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -40,6 +41,8 @@ interface ProductListingProps {
 	selectedFilters: SelectedFilters;
 	stickyHeadingTopOffset?: number;
 	termPricing: TermPricingType;
+	/** Opens the cart, where a product's count is set. */
+	onOpenCart?: () => void;
 }
 
 export default function ProductListing( {
@@ -51,6 +54,7 @@ export default function ProductListing( {
 	selectedFilters,
 	stickyHeadingTopOffset,
 	termPricing,
+	onOpenCart,
 }: ProductListingProps ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -64,6 +68,14 @@ export default function ProductListing( {
 		() => ( isReferralMode ? 1 : selectedBundleSize ),
 		[ isReferralMode, selectedBundleSize ]
 	);
+	// Billing Dragon holds one line per product, whose count is set in the cart.
+	const isBdCheckout = isEnabled( 'a4a-bd-checkout' );
+	const isProductLine = useCallback(
+		( item: ShoppingCartItem, slug: string ) =>
+			item.slug === slug && ( isBdCheckout || item.quantity === quantity ),
+		[ isBdCheckout, quantity ]
+	);
+
 	const { hasActiveAgencyPressablePlanLicense } = usePressableAddonVisibility();
 	const canShowPressableAddonsByMode = canShowPressableAddonsInMarketplace( {
 		isReferralMode,
@@ -149,8 +161,8 @@ export default function ProductListing( {
 				...product,
 				quantity,
 			};
-			const index = selectedCartItems.findIndex(
-				( item ) => item.quantity === productBundle.quantity && item.slug === productBundle.slug
+			const index = selectedCartItems.findIndex( ( item ) =>
+				isProductLine( item, productBundle.slug )
 			);
 			if ( index === -1 ) {
 				// Item doesn't exist, add it
@@ -176,7 +188,15 @@ export default function ProductListing( {
 				);
 			}
 		},
-		[ dispatch, marketplaceType, quantity, selectedCartItems, setSelectedCartItems, termPricing ]
+		[
+			dispatch,
+			isProductLine,
+			marketplaceType,
+			quantity,
+			selectedCartItems,
+			setSelectedCartItems,
+			termPricing,
+		]
 	);
 
 	const onSelectOrReplaceProduct = useCallback(
@@ -184,8 +204,8 @@ export default function ProductListing( {
 			if ( replace ) {
 				setSelectedCartItems(
 					selectedCartItems.map( ( item ) => {
-						if ( item.slug === replace.slug && item.quantity === quantity ) {
-							return { ...product, quantity };
+						if ( isProductLine( item, replace.slug ) ) {
+							return { ...product, quantity: item.quantity };
 						}
 
 						return item;
@@ -217,6 +237,7 @@ export default function ProductListing( {
 		[
 			dispatch,
 			handleSelectBundleLicense,
+			isProductLine,
 			quantity,
 			selectedCartItems,
 			setSelectedCartItems,
@@ -229,12 +250,10 @@ export default function ProductListing( {
 
 	const isSelected = useCallback(
 		( slug: string | string[] ) =>
-			selectedCartItems.some(
-				( item ) =>
-					( Array.isArray( slug ) ? slug.includes( item.slug ) : item.slug === slug ) &&
-					item.quantity === quantity
+			selectedCartItems.some( ( item ) =>
+				( Array.isArray( slug ) ? slug : [ slug ] ).some( ( one ) => isProductLine( item, one ) )
 			),
-		[ quantity, selectedCartItems ]
+		[ isProductLine, selectedCartItems ]
 	);
 
 	const onClickVariantOption = useCallback(
@@ -309,6 +328,7 @@ export default function ProductListing( {
 					suggestedProduct={ suggestedProduct }
 					quantity={ productDoNotHaveSupportedBundles ? 1 : quantity }
 					withCustomCard={ withCustomCard }
+					onOpenCart={ isBdCheckout && ! isReferralMode ? onOpenCart : undefined }
 					tooltip={ tooltip }
 					tooltipPosition="bottom"
 				/>
