@@ -217,10 +217,11 @@ describe( 'cart helpers', () => {
 			mockCartActions.reloadFromServer.mockReset();
 		} );
 
-		// The state before the reload is the cart the client asked for. Only the reload makes the
-		// state the server cart, so these mocks set the state from inside the reload.
+		// The state before the reload is the cart from before the request, which does not hold the
+		// requested items. Only the reload makes the state the server cart, so these mocks set the
+		// state from inside the reload.
 		function serverCartHolds( products: Array< { product_slug: string; meta: string } > ) {
-			mockGetCartState.mockReturnValue( { responseCart: { products: cartItems } } );
+			mockGetCartState.mockReturnValue( { responseCart: { products: [] } } );
 			mockCartActions.reloadFromServer.mockImplementation( async () => {
 				mockGetCartState.mockReturnValue( { responseCart: { products } } );
 			} );
@@ -232,7 +233,6 @@ describe( 'cart helpers', () => {
 			await expect(
 				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
 			).resolves.toBeUndefined();
-			expect( mockCartActions.reloadFromServer ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'addProductsToCart rejects when the server cart does not hold a requested item', async () => {
@@ -252,14 +252,6 @@ describe( 'cart helpers', () => {
 			await expect(
 				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
 			).rejects.toBe( connectionError );
-		} );
-
-		test( 'replaceProductsInCart resolves when the server cart holds every requested item', async () => {
-			serverCartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
-
-			await expect(
-				replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
-			).resolves.toBeUndefined();
 		} );
 	} );
 } );

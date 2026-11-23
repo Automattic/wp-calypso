@@ -332,9 +332,9 @@ function isRequestedItemMissingFromCart(
 }
 
 // A failed request does not tell whether the server applied the change. After that failure the
-// manager state is the cart the client asked for, not the cart the server has, so the helper
-// fetches the server cart before it looks for the requested items. Every other error that is not
-// a response error stops the caller.
+// manager state is the cart from before the request, which cannot show whether the change was
+// applied, so the helper fetches the server cart before it looks for the requested items. Every
+// other error that is not a response error stops the caller.
 async function shouldThrowCartError(
 	error: unknown,
 	cartKey: CartKey,
