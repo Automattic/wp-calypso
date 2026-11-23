@@ -3,8 +3,9 @@ import { Icon } from '@wordpress/icons';
 import { gridiconToWordPressIcon } from '../../utils/gridicons';
 import { renderFormattedContent } from '../logs-activity-formatted-block';
 import type { Activity } from './types';
+import type { ReactNode } from 'react';
 import './activity-event.scss';
-export function ActivityEvent( { activity }: { activity: Activity } ) {
+export function ActivityEvent( { activity, action }: { activity: Activity; action?: ReactNode } ) {
 	const { activityDescription, activityIcon, activityTitle } = activity;
 	const formattedContent = activityDescription.items.length
 		? renderFormattedContent( { items: activityDescription.items } )
@@ -27,6 +28,7 @@ export function ActivityEvent( { activity }: { activity: Activity } ) {
 			>
 				<strong className="site-activity-logs__event-title">{ activityTitle }</strong>
 				{ formattedContent && <span>{ formattedContent }</span> }
+				{ action }
 			</HStack>
 		</HStack>
 	);
