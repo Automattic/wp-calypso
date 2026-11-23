@@ -1,7 +1,7 @@
 # Experimental WebMCP editor tools
 
 Agents Manager can expose a small set of editor abilities to browser agents through the draft
-WebMCP API. The browser agent supplies the model and all reasoning. This adapter does not create an
+WebMCP API. The browser agent supplies the model and all reasoning, so a tool call doesn't create an
 Agenttic agent, open Agents Manager chat, or call the WordPress.com AI orchestrator.
 
 This is a staff-testing proof of concept, not a production-supported integration. It is disabled by
