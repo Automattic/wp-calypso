@@ -64,18 +64,16 @@ describe( 'normalizeNoticeRecords', () => {
 	};
 
 	it( 'reads a detail record as the server sent it', () => {
-		expect(
-			normalizeNoticeRecords( { premium_analytics_preview: detail } ).premium_analytics_preview
-		).toEqual( detail );
+		expect( normalizeNoticeRecords( { pricing_grid: detail } ).pricing_grid ).toEqual( detail );
 	} );
 
 	it( 'wraps a bare boolean as a record that was never postponed', () => {
 		const records = normalizeNoticeRecords( {
-			premium_analytics_preview: true,
+			pricing_grid: true,
 			tier_upgrade: false,
 		} );
 
-		expect( records.premium_analytics_preview ).toEqual( {
+		expect( records.pricing_grid ).toEqual( {
 			show: true,
 			status: null,
 			postponed_count: 0,
@@ -93,7 +91,7 @@ describe( 'normalizeNoticeRecords', () => {
 			postponed_count: 0,
 			next_show_at: null,
 		} );
-		expect( records.premium_analytics_preview.show ).toBe( false );
+		expect( records.pricing_grid.show ).toBe( false );
 		expect( normalizeNoticeRecords( null ) ).toEqual( records );
 	} );
 
@@ -108,13 +106,13 @@ describe( 'normalizeNoticeRecords', () => {
 
 	it( 'discards malformed escalation fields rather than passing them on', () => {
 		const record = normalizeNoticeRecords( {
-			premium_analytics_preview: {
+			pricing_grid: {
 				show: 1,
 				status: 'expired',
 				postponed_count: 'two',
 				next_show_at: 'soon',
 			},
-		} ).premium_analytics_preview;
+		} ).pricing_grid;
 
 		expect( record ).toEqual( {
 			show: true,
@@ -126,10 +124,10 @@ describe( 'normalizeNoticeRecords', () => {
 
 	it( 'reduces records to the flat map the rest of Stats reads', () => {
 		const visibility = toNoticesVisibility(
-			normalizeNoticeRecords( { premium_analytics_preview: detail, tier_upgrade: true } )
+			normalizeNoticeRecords( { pricing_grid: detail, tier_upgrade: true } )
 		);
 
-		expect( visibility.premium_analytics_preview ).toBe( false );
+		expect( visibility.pricing_grid ).toBe( false );
 		expect( visibility.tier_upgrade ).toBe( true );
 		expect( visibility.gdpr_cookie_consent ).toBe( false );
 	} );

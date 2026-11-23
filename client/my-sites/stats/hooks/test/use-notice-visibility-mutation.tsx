@@ -20,14 +20,11 @@ const renderMutation = (
 	status?: 'dismissed' | 'postponed',
 	seconds?: number
 ) =>
-	renderHook(
-		() => useNoticeVisibilityMutation( SITE_ID, 'premium_analytics_preview', status, seconds ),
-		{
-			wrapper: ( { children } ) => (
-				<QueryClientProvider client={ client }>{ children }</QueryClientProvider>
-			),
-		}
-	);
+	renderHook( () => useNoticeVisibilityMutation( SITE_ID, 'pricing_grid', status, seconds ), {
+		wrapper: ( { children } ) => (
+			<QueryClientProvider client={ client }>{ children }</QueryClientProvider>
+		),
+	} );
 
 describe( 'useNoticeVisibilityMutation', () => {
 	let client: QueryClient;
@@ -45,7 +42,7 @@ describe( 'useNoticeVisibilityMutation', () => {
 
 		expect( mockPost ).toHaveBeenCalledWith(
 			expect.objectContaining( {
-				body: { id: 'premium_analytics_preview', status: 'postponed', postponed_for: THIRTY_DAYS },
+				body: { id: 'pricing_grid', status: 'postponed', postponed_for: THIRTY_DAYS },
 			} )
 		);
 	} );
@@ -57,8 +54,8 @@ describe( 'useNoticeVisibilityMutation', () => {
 		await result.current.mutateAsync( { status: 'dismissed' } );
 
 		expect( mockPost.mock.calls.map( ( [ params ] ) => params.body ) ).toEqual( [
-			{ id: 'premium_analytics_preview', status: 'postponed', postponed_for: THIRTY_DAYS },
-			{ id: 'premium_analytics_preview', status: 'dismissed', postponed_for: 0 },
+			{ id: 'pricing_grid', status: 'postponed', postponed_for: THIRTY_DAYS },
+			{ id: 'pricing_grid', status: 'dismissed', postponed_for: 0 },
 		] );
 	} );
 

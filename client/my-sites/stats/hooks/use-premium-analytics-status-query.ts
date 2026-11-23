@@ -39,8 +39,7 @@ export const premiumAnalyticsStatusRequest = ( siteId: number | null ) =>
  * Three answers, not two: `true` and `false` come from the site, and `undefined` means it never
  * offered the setting at all — a Jetpack too old to register it — which is not the same as off.
  *
- * The site answers this itself: the opt-in is a local option there, and a sticker we set can
- * enable the dashboard without ever touching it.
+ * The site answers this itself, since the opt-in is a local option there.
  * @param siteId Site to query.
  * @param enabled Whether to run the query at all.
  */

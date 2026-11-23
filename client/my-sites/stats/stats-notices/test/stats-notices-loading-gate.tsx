@@ -29,7 +29,7 @@ jest.mock( '../all-notice-definitions', () => ( {
 	default: [
 		{
 			component: () => <div>Notice under test</div>,
-			noticeId: 'premium_analytics_preview',
+			noticeId: 'tier_upgrade',
 			isVisibleFunc: () => true,
 			disabled: false,
 		},
@@ -43,7 +43,7 @@ jest.mock( 'calypso/components/data/query-site-stats', () => ( {
 jest.mock( '../jitm-wrapper', () => ( { __esModule: true, default: () => null } ) );
 
 const serverNoticesVisibility = {
-	premium_analytics_preview: true,
+	tier_upgrade: true,
 } as unknown as Notices;
 jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-query', () => ( {
 	...jest.requireActual( 'calypso/my-sites/stats/hooks/use-notice-visibility-query' ),
@@ -58,12 +58,6 @@ jest.mock( 'calypso/my-sites/stats/hooks/use-plan-usage-query', () => ( {
 	__esModule: true,
 	default: () => ( { data: undefined } ),
 	getUsageLimitStatus: () => ( { isNearLimit: false, isOverLimit: false } ),
-} ) );
-
-let mockStatusLoading = false;
-jest.mock( 'calypso/my-sites/stats/hooks/use-premium-analytics-status-query', () => ( {
-	__esModule: true,
-	default: () => ( { data: false, isLoading: mockStatusLoading } ),
 } ) );
 
 jest.mock( 'calypso/my-sites/stats/hooks/use-should-gate-stats', () => ( {
@@ -93,23 +87,9 @@ jest.mock( 'calypso/state/sites/selectors/get-env-stats-feature-supports', () =>
 	default: () => ( { supportsNewStatsNotices: true } ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/can-current-user', () => ( { canCurrentUser: () => true } ) );
-jest.mock( 'calypso/state/selectors/get-site-features', () => ( {
-	__esModule: true,
-	default: () => ( { active: [] } ),
-} ) );
-jest.mock( 'calypso/state/selectors/has-loaded-site-features', () => ( {
-	__esModule: true,
-	default: () => true,
-} ) );
-let mockIsWpcom = true;
 jest.mock( 'calypso/state/selectors/is-site-wpcom', () => ( {
 	__esModule: true,
-	default: () => mockIsWpcom,
-} ) );
-jest.mock( 'calypso/state/sites/selectors/get-site-admin-url', () => ( {
-	__esModule: true,
-	default: () => 'https://example.com/wp-admin/admin.php?page=jetpack-premium-analytics-wp-admin',
+	default: () => true,
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-wpforteams', () => ( {
 	__esModule: true,
@@ -162,8 +142,6 @@ describe( 'StatsNotices loading gate', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockHasLoadedPlans = false;
-		mockStatusLoading = false;
-		mockIsWpcom = true;
 		delete mockFlags().is_odyssey;
 	} );
 
@@ -178,24 +156,6 @@ describe( 'StatsNotices loading gate', () => {
 
 		renderNotices();
 
-		expect( screen.getByText( 'Notice under test' ) ).toBeVisible();
-	} );
-
-	/**
-	 * The status query is shared with the modules menu, and TanStack reports the query's fetch
-	 * status to every observer, so this host sees "loading" while that consumer fetches even when
-	 * it never asked. Only a site whose answer this host uses should wait on it.
-	 */
-	it( 'waits for the status read only when it asked for it', () => {
-		mockHasLoadedPlans = true;
-		mockStatusLoading = true;
-
-		const { unmount } = renderNotices();
-		expect( screen.queryByText( 'Notice under test' ) ).not.toBeInTheDocument();
-		unmount();
-
-		mockIsWpcom = false;
-		renderNotices();
 		expect( screen.getByText( 'Notice under test' ) ).toBeVisible();
 	} );
 
