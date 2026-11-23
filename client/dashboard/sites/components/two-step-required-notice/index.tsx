@@ -1,9 +1,9 @@
 import { JetpackModules } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
-import ComponentViewTracker from '../../components/component-view-tracker';
-import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
-import { hasJetpackModule } from '../../utils/site-features';
-import { useAuth } from '../auth';
+import { useAuth } from '../../../app/auth';
+import ComponentViewTracker from '../../../components/component-view-tracker';
+import { Notice, RouterNoticeActionLinkButton } from '../../../components/notice';
+import { hasJetpackModule } from '../../../utils/site-features';
 import type { Site } from '@automattic/api-core';
 
 /**
