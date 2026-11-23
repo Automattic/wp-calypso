@@ -47,7 +47,9 @@ function getTitle( engine: EngineTypes, urlData?: UrlData ) {
 	return __( 'Import your newsletter' );
 }
 
-export const SubstackImporter: React.FunctionComponent< ImporterBaseProps > = ( props ) => {
+export const SubstackImporter: React.FunctionComponent<
+	Omit< ImporterBaseProps, 'importSite' | 'startImport' | 'resetImport' >
+> = ( props ) => {
 	const importer: Importer = 'substack';
 	const engine = importer;
 

@@ -13,7 +13,7 @@ import SocialLogo from 'calypso/components/social-logo';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { errorNotice, warningNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice, warningNotice } from 'calypso/state/notices/actions';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -752,6 +752,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 		{
 			createSiteConnection,
 			deleteSiteConnection,
+			successNotice,
 			errorNotice,
 			fetchConnection,
 			recordGoogleEvent,

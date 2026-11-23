@@ -3,10 +3,10 @@ import { getSelectedDomain } from 'calypso/lib/domains';
 import InfoNotice from 'calypso/my-sites/domains/domain-management/components/domain/info-notice';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import ContactsPrivacyCard from './contacts-card';
-import type { ContactsInfoProps } from './types';
+import type { ContactsInfoPassedProps } from './types';
 import './style.scss';
 
-const ContactsPrivacy = ( props: ContactsInfoProps ): null | JSX.Element => {
+const ContactsPrivacy = ( props: ContactsInfoPassedProps ): null | JSX.Element => {
 	const renderForOwner = ( readonly = false ) => {
 		const domain = getSelectedDomain( props );
 		if ( ! domain ) {
