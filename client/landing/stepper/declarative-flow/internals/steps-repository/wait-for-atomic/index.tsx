@@ -108,17 +108,22 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 			setProgress( 50 );
 			await waitForFeature();
 			setProgress( 75 );
-			await waitForLatestSiteData();
+			const latestSite = await waitForLatestSiteData();
 			setProgress( 100 );
+			const redirectTo = searchParams.get( 'redirect_to' );
 
 			return {
 				finishedWaitingForAtomic: true,
 				siteId,
 				siteSlug: data?.siteSlug,
-				// Direct-to-cart sends partners back here, so their allowlisted hosts are followed too.
+				// The site's host before the transfer and after it are both followed: callers link to
+				// either, and `site` is still empty when a reload resumes the wait. Direct-to-cart sends
+				// partners back here, so their allowlisted hosts are followed too.
 				redirectTo:
-					getSafeUrl( searchParams.get( 'redirect_to' ), site?.URL ) ??
-					sanitizeDirectToCartRedirect( searchParams.get( 'redirect_to' ) ),
+					getSafeUrl( redirectTo, site?.URL ) ??
+					getSafeUrl( redirectTo, latestSite.URL ) ??
+					getSafeUrl( redirectTo, latestSite.options?.unmapped_url ) ??
+					sanitizeDirectToCartRedirect( redirectTo ),
 			};
 		} );
 

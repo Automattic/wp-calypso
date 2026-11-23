@@ -896,7 +896,11 @@ function isRedirectSameSite( redirectTo: string, siteSlug?: string ) {
 	if ( ! siteSlug ) {
 		return false;
 	}
-	const { hostname, pathname } = getUrlParts( redirectTo );
+	const { protocol, hostname, pathname } = getUrlParts( redirectTo );
+	// `javascript://<site>/%0A…` names the site as its host.
+	if ( protocol && ! [ 'http:', 'https:' ].includes( protocol ) ) {
+		return false;
+	}
 	// For subdirectory site, check that both hostname and subdirectory matches the siteSlug (host.name::subdirectory).
 	if ( siteSlug.indexOf( '::' ) !== -1 ) {
 		const slugParts = siteSlug.split( '::' );

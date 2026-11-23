@@ -254,7 +254,7 @@ export const useWaitForAtomic = ( {
 				requestedSite?.options?.is_wpcom_atomic &&
 				requestedSite?.capabilities?.manage_options
 			) {
-				break;
+				return requestedSite;
 			}
 
 			if ( maxFinishTime < new Date().getTime() ) {
