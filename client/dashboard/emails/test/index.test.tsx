@@ -257,7 +257,7 @@ describe( '<Emails>', () => {
 			render( <Emails /> );
 
 			expect( await screen.findByText( 'hello@removed.example' ) ).toBeVisible();
-			expect( screen.getByText( 'Disconnected' ) ).toBeVisible();
+			expect( screen.getByText( 'Domain removed' ) ).toBeVisible();
 		} );
 
 		test( 'prefers the not connected status over pending Google terms', async () => {
@@ -272,7 +272,7 @@ describe( '<Emails>', () => {
 			} );
 			render( <Emails /> );
 
-			expect( await screen.findByText( 'Disconnected' ) ).toBeVisible();
+			expect( await screen.findByText( 'Domain removed' ) ).toBeVisible();
 			expect( screen.queryByText( 'Action required' ) ).not.toBeInTheDocument();
 		} );
 
