@@ -17,6 +17,10 @@
 			prPriority: 2,
 		},
 		{
+			groupName: 'nodejs',
+			matchDepNames: [ 'node' ],
+		},
+		{
 			// Published with the Node range its dependencies need, not the one Calypso runs on.
 			matchFileNames: [ 'packages/eslint-plugin-wpcalypso/package.json' ],
 			matchDepNames: [ 'node' ],
