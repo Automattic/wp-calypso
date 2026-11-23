@@ -153,13 +153,13 @@ describe( 'reader utils', () => {
 			[ '_xpost_original_permalink', 'data://x/text/html,<script>alert(1)</script>' ],
 			[ 'xcomment_original_permalink', 'javascript://x/%0Aalert(1)#comment-1' ],
 			[ 'xcomment_original_permalink', 'vbscript://x/%0Amsgbox(1)' ],
-		] )( 'does not open a %s of %j', ( permalinkKey, permalink ) => {
+		] )( 'shows the x-post itself instead of opening a %s of %j', ( permalinkKey, permalink ) => {
 			cacheXPost( permalinkKey, permalink );
 
 			showSelectedPost( { postKey: { blogId: 100, postId: 1 } } )();
 
 			expect( windowOpen ).not.toHaveBeenCalled();
-			expect( page ).not.toHaveBeenCalled();
+			expect( page as ( url: string ) => void ).toHaveBeenCalledWith( '/reader/blogs/100/posts/1' );
 		} );
 	} );
 
@@ -180,13 +180,14 @@ describe( 'reader utils', () => {
 		test.each( [ 'javascript://x/%0Aalert(1)', 'data:text/html,hi', null ] )(
 			'does not open a post URL of %j',
 			( postURL ) => {
-				showFullXPost( {
-					blogId: 0,
-					postId: 0,
+				const opened = showFullXPost( {
+					blogId: null,
+					postId: null,
 					postURL,
 					siteURL: null,
 					commentURL: null,
 				} );
+				expect( opened ).toBe( false );
 				expect( windowOpen ).not.toHaveBeenCalled();
 			}
 		);
