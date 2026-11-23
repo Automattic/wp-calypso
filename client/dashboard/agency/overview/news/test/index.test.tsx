@@ -120,10 +120,12 @@ describe( '<NewsCard>', () => {
 		await user.click( screen.getByRole( 'link', { name: 'View promo details' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_news_item_open', {
+			placement: 'overview',
 			announcement_id: '2',
 			announcement_type: 'announcement',
 		} );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_event_cta_click', {
+			placement: 'overview',
 			announcement_id: '2',
 			announcement_type: 'announcement',
 			cta_id: 'primary',
@@ -176,7 +178,8 @@ describe( '<NewsCard>', () => {
 				...event,
 				// eslint-disable-next-line no-script-url
 				primaryCta: { label: 'Run a script', url: 'javascript:alert(1)', isExternal: true },
-				secondaryCta: { label: 'Leave the dashboard', url: '//example.com/elsewhere' },
+				// Browsers drop the tab, so this is `//example.com/elsewhere`.
+				secondaryCta: { label: 'Leave the dashboard', url: '/\t/example.com/elsewhere' },
 			} as AgencyAnnouncement,
 		] );
 		render( <NewsCard agencyId={ AGENCY_ID } shouldUseRouterLink={ false } /> );

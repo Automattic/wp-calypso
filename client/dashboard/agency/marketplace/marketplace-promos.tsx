@@ -4,24 +4,14 @@ import { Fragment, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardDivider } from '../../components/card';
 import { NewsRow } from '../overview/news';
+import type { AnnouncementPlacement } from '../overview/news/announcement-parts';
 import type { AgencyAnnouncement, AgencyAnnouncementLogo } from '@automattic/api-core';
 
 import '../overview/news/style.scss';
 
-export type MarketplacePromoPlacement = 'hosting' | 'products';
+export type MarketplacePromoPlacement = Exclude< AnnouncementPlacement, 'overview' >;
 
 const NO_ANNOUNCEMENTS: AgencyAnnouncement[] = [];
-
-const TRACKS_EVENTS: Record< MarketplacePromoPlacement, { open: string; ctaClick: string } > = {
-	hosting: {
-		open: 'calypso_a4a_hosting_announcement_open',
-		ctaClick: 'calypso_a4a_hosting_announcement_cta_click',
-	},
-	products: {
-		open: 'calypso_a4a_products_announcement_open',
-		ctaClick: 'calypso_a4a_products_announcement_cta_click',
-	},
-};
 
 /**
  * The Overview's News and updates items for the products a Marketplace page sells,
@@ -69,20 +59,22 @@ export default function MarketplacePromos( {
 					<NewsRow
 						announcement={ announcement }
 						isOpen={ openItemId === announcement.id }
+						// Unlike the Overview, even a single promo can collapse, to free up the page.
 						canToggle
 						onToggle={ () => {
 							if ( openItemId === announcement.id ) {
 								setOpenId( null );
 								return;
 							}
-							recordTracksEvent( TRACKS_EVENTS[ placement ].open, {
+							recordTracksEvent( 'calypso_a4a_overview_news_item_open', {
+								placement,
 								announcement_id: announcement.id,
 								announcement_type: announcement.type,
 							} );
 							setOpenId( announcement.id );
 						} }
 						recordTracksEvent={ recordTracksEvent }
-						ctaEventName={ TRACKS_EVENTS[ placement ].ctaClick }
+						placement={ placement }
 						hidePrimaryCta={ hidePrimaryCta }
 					/>
 				</Fragment>

@@ -262,6 +262,7 @@ export default function NewsCard( { agencyId, ...actionProps }: NewsCardProps ) 
 									return;
 								}
 								actionProps.recordTracksEvent?.( 'calypso_a4a_overview_news_item_open', {
+									placement: 'overview',
 									announcement_id: announcement.id,
 									announcement_type: announcement.type,
 								} );

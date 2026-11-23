@@ -8,19 +8,23 @@ import { ButtonStack } from '../../../components/button-stack';
 import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
 import { formatDate, getCalendarDaysUntil, parseYmdLocal } from '../../../utils/datetime';
+import { isWebUrl } from '../../../utils/is-web-url';
 import { isDashboardPath } from '../../../utils/link';
+import { getUrlOnOrigins, isRelativeUrl } from '../../../utils/url';
 import NewTabLabel from '../../components/new-tab-label';
 import { ANNOUNCEMENT_LOGOS } from './announcements';
 import type { Announcement, AnnouncementCta } from './announcements';
 import type { RecordTracksEvent } from '../../tiers/types';
+
+/** The page showing the announcements, sent with their Tracks events. */
+export type AnnouncementPlacement = 'overview' | 'hosting' | 'products';
 
 export interface AnnouncementActionProps {
 	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 	/** Maps a CTA's dashboard path to the page of the app rendering the card. */
 	getCtaUrl?: ( url: string ) => string;
-	/** The Tracks event a CTA click records, for pages other than the Overview. */
-	ctaEventName?: string;
+	placement?: AnnouncementPlacement;
 	/** Leaves out the primary CTA, for a page that already shows what it leads to. */
 	hidePrimaryCta?: boolean;
 }
@@ -145,12 +149,13 @@ export function AnnouncementDescription( { announcement }: { announcement: Annou
 
 function trackCta(
 	recordTracksEvent: RecordTracksEvent | undefined,
-	eventName: string,
+	placement: AnnouncementPlacement,
 	announcement: Announcement,
 	cta: AnnouncementCta,
 	ctaId: 'primary' | 'secondary'
 ) {
-	recordTracksEvent?.( eventName, {
+	recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
+		placement,
 		announcement_id: announcement.id,
 		announcement_type: announcement.type,
 		cta_id: ctaId,
@@ -199,19 +204,13 @@ function CtaButton( {
 }
 
 /**
- * CTA URLs come from marketing content, so only https links and dashboard paths become
- * buttons; anything else, such as a `javascript:` URL, is dropped.
+ * CTA URLs come from marketing content, so only web links and paths on this site become
+ * buttons; anything else, such as a `javascript:` URL or `//other-site`, is dropped.
  */
 export function isSafeCtaUrl( url: string ) {
-	if ( url.startsWith( '/' ) ) {
-		// `//host` (and `/\host`, which browsers read the same way) links to another site.
-		return ! /^\/[/\\]/.test( url );
-	}
-	try {
-		return new URL( url ).protocol === 'https:';
-	} catch {
-		return false;
-	}
+	return isRelativeUrl( url )
+		? !! getUrlOnOrigins( url, [ window.location.origin ], window.location.href )
+		: isWebUrl( url );
 }
 
 /**
@@ -223,7 +222,7 @@ export function AnnouncementCtas( {
 	shouldUseRouterLink = true,
 	recordTracksEvent,
 	getCtaUrl,
-	ctaEventName = 'calypso_a4a_overview_event_cta_click',
+	placement = 'overview',
 	hidePrimaryCta = false,
 }: { announcement: Announcement } & AnnouncementActionProps ) {
 	const { primaryCta, secondaryCta } = announcement;
@@ -242,7 +241,7 @@ export function AnnouncementCtas( {
 					variant="secondary"
 					shouldUseRouterLink={ shouldUseRouterLink }
 					onClick={ () =>
-						trackCta( recordTracksEvent, ctaEventName, announcement, primaryCta, 'primary' )
+						trackCta( recordTracksEvent, placement, announcement, primaryCta, 'primary' )
 					}
 				/>
 			) }
@@ -252,7 +251,7 @@ export function AnnouncementCtas( {
 					variant="tertiary"
 					shouldUseRouterLink={ shouldUseRouterLink }
 					onClick={ () =>
-						trackCta( recordTracksEvent, ctaEventName, announcement, secondaryCta, 'secondary' )
+						trackCta( recordTracksEvent, placement, announcement, secondaryCta, 'secondary' )
 					}
 				/>
 			) }

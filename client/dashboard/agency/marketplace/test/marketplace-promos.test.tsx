@@ -153,7 +153,7 @@ describe( '<MarketplacePromos>', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'tracks opening a promo and clicking its action under the page’s events', async () => {
+	test( 'tracks opening a promo and clicking its action with the page’s placement', async () => {
 		const user = userEvent.setup();
 		mockAnnouncements( [ wpcomPromo, pressablePromo ] );
 		const { recordTracksEvent } = render(
@@ -166,17 +166,22 @@ describe( '<MarketplacePromos>', () => {
 		await user.click( row );
 		await user.click( screen.getByRole( 'link', { name: 'View promo details' } ) );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_hosting_announcement_open', {
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_news_item_open', {
+			placement: 'hosting',
 			announcement_id: 'pressable-free-months',
 			announcement_type: 'announcement',
 		} );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_a4a_hosting_announcement_cta_click',
-			expect.objectContaining( { announcement_id: 'pressable-free-months', cta_id: 'primary' } )
+			'calypso_a4a_overview_event_cta_click',
+			expect.objectContaining( {
+				placement: 'hosting',
+				announcement_id: 'pressable-free-months',
+				cta_id: 'primary',
+			} )
 		);
 	} );
 
-	test( 'tracks opening a promo on the Products page under its own event', async () => {
+	test( 'tracks opening a promo on the Products page with its placement', async () => {
 		const user = userEvent.setup();
 		mockAnnouncements( [ jetpackPromo, wooPromo ] );
 		const { recordTracksEvent } = render(
@@ -186,7 +191,8 @@ describe( '<MarketplacePromos>', () => {
 		const [ row ] = await screen.findAllByRole( 'button', { name: /30% off Woo\sextensions/ } );
 		await user.click( row );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_products_announcement_open', {
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_news_item_open', {
+			placement: 'products',
 			announcement_id: 'woo-extensions',
 			announcement_type: 'announcement',
 		} );
