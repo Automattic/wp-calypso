@@ -91,7 +91,6 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 			},
 			[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ]: {
 				siteId: started?.action === 'continue' ? started.previewSiteId : undefined,
-				siteSlug: started?.action === 'continue' ? started.previewSiteSlug : undefined,
 				importSessionId: started?.action === 'continue' ? started.importSessionId : undefined,
 				from,
 				platform,

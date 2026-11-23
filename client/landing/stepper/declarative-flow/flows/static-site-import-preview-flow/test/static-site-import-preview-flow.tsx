@@ -290,7 +290,6 @@ describe( 'Static site import preview flow', () => {
 
 			expect( props ).toEqual( {
 				siteId: 456,
-				siteSlug: 'preview.wpcomstaging.com',
 				importSessionId: 'abc123',
 				...SOURCE,
 			} );
