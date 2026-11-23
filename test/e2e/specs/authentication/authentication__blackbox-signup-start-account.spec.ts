@@ -63,10 +63,10 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 		await test.step( 'And I sign up with my email', async function () {
 			// Blackbox is suspended until the email form becomes the active
 			// surface, so the collect only fires during the signup interaction.
-			const collectResponse = page.waitForResponse(
-				( response ) =>
-					response.request().method() === 'POST' &&
-					response.url().includes( 'blackbox-api.wp.com/v1/collect' ),
+			const collectData = waitForCollectData( page );
+			const collectRequest = page.waitForRequest(
+				( request ) =>
+					request.method() === 'POST' && request.url().includes( 'blackbox-api.wp.com/v1/collect' ),
 				{ timeout: 60 * 1000 }
 			);
 			const usersNewRequest = waitForUsersNewRequest( page );
@@ -81,10 +81,9 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 				email: testUser.email,
 			} );
 
-			const response = await collectResponse;
-			const collectBody = await response.json();
+			const collectBody = await collectData;
 			expect( collectBody?.data?.session_id ).toBe( 'bbtest_allow__________' );
-			expect( response.request().headers()[ 'x-blackbox-flow' ] ).toBe( 'signup' );
+			expect( ( await collectRequest ).headers()[ 'x-blackbox-flow' ] ).toBe( 'signup' );
 
 			const request = await usersNewRequest;
 			expect( request.postDataJSON()?.blackbox_session_id ).toBe( 'bbtest_allow__________' );
