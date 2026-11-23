@@ -51,6 +51,22 @@ const EXPECTED_CART_ERROR_CODES = [
 	'not_allowed_to_register',
 ];
 
+const LOG_REQUEST_TIME_LIMIT_MS = 1000;
+
+/**
+ * Resolves when the log request settles or the time limit passes, whichever comes first, and
+ * never rejects. A slow or failed log request must not keep the user on the processing screen.
+ */
+function waitForLogRequest( request: Promise< void > ): Promise< void > {
+	let timeoutId: ReturnType< typeof setTimeout > | undefined;
+	const timeLimit = new Promise< void >( ( resolve ) => {
+		timeoutId = setTimeout( resolve, LOG_REQUEST_TIME_LIMIT_MS );
+	} );
+	const settled = request.catch( () => {} );
+
+	return Promise.race( [ settled, timeLimit ] ).finally( () => clearTimeout( timeoutId ) );
+}
+
 /**
  * Mounted only for transfer flows, so the site request behind `useSiteData` stays out of every
  * other flow's processing screen. The slug is what lets a stalled wait offer a way to the site.
@@ -226,15 +242,17 @@ const ProcessingStep: StepType< {
 					if ( isCartRejection ) {
 						// The cart endpoint answered the request and refused it. Every rejection is
 						// logged here, with its code, because some flows do not go to the error step
-						// after a failure, and the error step writes the only other record.
-						logToLogstash( {
-							feature: 'calypso_client',
-							message: 'Cart rejection in Stepper processing step',
-							extra: { error: e.code, message: e.message, flow },
-							properties: { flow, error: e.code },
-						} ).catch( () => {
-							// A failed log request must not become an unhandled rejection.
-						} );
+						// after a failure, and the error step writes the only other record. Some of
+						// those flows leave the page as soon as the step submits, which would cancel
+						// the log request, so the step waits for it before it submits.
+						await waitForLogRequest(
+							logToLogstash( {
+								feature: 'calypso_client',
+								message: 'Cart rejection in Stepper processing step',
+								extra: { error: e.code, message: e.message, flow },
+								properties: { flow, error: e.code },
+							} )
+						);
 					}
 					// A rejection with an expected code answers the user's choice, so it stays out of
 					// Sentry. Any other code can come from a bad cart item that Calypso sent, so it
