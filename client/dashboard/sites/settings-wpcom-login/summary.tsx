@@ -41,11 +41,11 @@ export default function WpcomLoginSettingsSummary( {
 	let badges;
 	// Don't show any badge for Simple sites.
 	if ( ! isSimple( site ) && ! ssoAvailable ) {
-		badges = [ { text: __( 'Unavailable' ), intent: 'draft' as const } ];
+		badges = [ { text: __( 'Unavailable' ), intent: 'none' as const } ];
 	} else if ( ! isSimple( site ) && hasHostingFeature( site, HostingFeatures.SECURITY_SETTINGS ) ) {
 		badges = ssoEnabled
 			? [ { text: __( 'Enabled' ), intent: 'stable' as const } ]
-			: [ { text: __( 'Disabled' ), intent: 'draft' as const } ];
+			: [ { text: __( 'Disabled' ), intent: 'none' as const } ];
 	}
 
 	return (
