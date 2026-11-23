@@ -1,6 +1,5 @@
 import { withStorageKey } from '@automattic/state-utils';
 import {
-	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
 	SITE_SETTINGS_REQUEST_FAILURE,
@@ -102,24 +101,6 @@ export const items = withSchemaValidation( itemSchemas, ( state = {}, action ) =
 				[ siteId ]: {
 					...state[ siteId ],
 					...settings,
-				},
-			};
-		}
-		case MEDIA_DELETE: {
-			const { siteId, mediaIds } = action;
-			const settings = state[ siteId ];
-			if (
-				! settings ||
-				! ( Array.isArray( mediaIds ) && mediaIds.includes( settings.site_icon ) )
-			) {
-				return state;
-			}
-
-			return {
-				...state,
-				[ siteId ]: {
-					...settings,
-					site_icon: null,
 				},
 			};
 		}

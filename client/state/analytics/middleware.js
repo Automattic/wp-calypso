@@ -7,13 +7,12 @@ import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
-import { recordTracksEvent, setTracksOptOut } from 'calypso/lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	ANALYTICS_EVENT_RECORD,
 	ANALYTICS_PAGE_VIEW_RECORD,
 	ANALYTICS_STAT_BUMP,
 	ANALYTICS_TRACKING_ON,
-	ANALYTICS_TRACKS_OPT_OUT,
 } from 'calypso/state/action-types';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
@@ -66,10 +65,6 @@ export const analyticsMiddleware = ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
 		case ANALYTICS_TRACKING_ON:
 			loadTrackingTool( action.trackingTool, store );
-			return;
-
-		case ANALYTICS_TRACKS_OPT_OUT:
-			setTracksOptOut( action.isOptingOut );
 			return;
 
 		default:

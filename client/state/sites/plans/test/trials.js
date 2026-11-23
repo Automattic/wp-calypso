@@ -9,13 +9,13 @@ import {
 import deepFreeze from 'deep-freeze';
 import moment from 'moment';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
+import getECommerceTrialDaysLeft from 'calypso/state/sites/plans/selectors/trials/get-ecommerce-trial-days-left';
+import getMigrationTrialDaysLeft from 'calypso/state/sites/plans/selectors/trials/get-migration-trial-days-left';
+import getMigrationTrialExpiration from 'calypso/state/sites/plans/selectors/trials/get-migration-trial-expiration';
+import isECommerceTrialExpired from 'calypso/state/sites/plans/selectors/trials/is-ecommerce-trial-expired';
+import isMigrationTrialExpired from 'calypso/state/sites/plans/selectors/trials/is-migration-trial-expired';
 import {
-	getECommerceTrialDaysLeft,
 	getECommerceTrialExpiration,
-	getMigrationTrialDaysLeft,
-	getMigrationTrialExpiration,
-	isECommerceTrialExpired,
-	isMigrationTrialExpired,
 	isSiteOnECommerceTrial,
 	isSiteOnMigrationTrial,
 	isSiteOnWooExpressEcommerceTrial,

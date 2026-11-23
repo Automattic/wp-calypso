@@ -6,8 +6,6 @@ import {
 	POST_COUNTS_REQUEST_SUCCESS,
 	POST_COUNTS_REQUEST_FAILURE,
 	POST_COUNTS_RESET_INTERNAL_STATE,
-	POST_DELETE,
-	POST_SAVE,
 	POSTS_RECEIVE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
@@ -151,17 +149,6 @@ export const counts = ( () => {
 				} );
 
 				return state;
-			}
-			case POST_SAVE: {
-				const { siteId, postId, post } = action;
-				if ( ! post.status ) {
-					return state;
-				}
-
-				return transitionPostStateToStatus( state, siteId, postId, post.status );
-			}
-			case POST_DELETE: {
-				return transitionPostStateToStatus( state, action.siteId, action.postId, 'deleted' );
 			}
 			case POST_COUNTS_RECEIVE: {
 				return merge( {}, state, {

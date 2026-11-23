@@ -1,7 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import {
-	MEDIA_DELETE,
 	MEDIA_RECEIVE,
 	MEDIA_REQUEST,
 	MEDIA_REQUEST_FAILURE,
@@ -105,18 +104,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state[ 2916284 ].getItem( 42 ) ).toEqual( updatedItem );
-		} );
-
-		test( 'should remove item when post delete action success dispatched', () => {
-			const previousState = deepFreeze( queries( deepFreeze( {} ), action1 ) );
-			const state = queries( previousState, {
-				type: MEDIA_DELETE,
-				siteId: 2916284,
-				mediaIds: [ 42 ],
-			} );
-
-			expect( state[ 2916284 ].getItem( 42 ) ).toBeUndefined();
-			expect( state[ 2916284 ].getItems() ).toHaveLength( 0 );
 		} );
 	} );
 

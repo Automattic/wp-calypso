@@ -1,25 +1,14 @@
-import {
-	trackCustomFacebookConversionEvent,
-	trackCustomAdWordsRemarketingEvent,
-} from 'calypso/lib/analytics/ad-tracking';
-import { gaRecordPageView, gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import { bumpStat as mcBumpStat } from 'calypso/lib/analytics/mc';
 import { recordPageView as pageviewRecordPageView } from 'calypso/lib/analytics/page-view';
-import {
-	setTracksOptOut as tracksSetTracksOptOut,
-	recordTracksEvent as tracksRecordTracksEvent,
-} from 'calypso/lib/analytics/tracks';
+import { recordTracksEvent as tracksRecordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	withAnalytics,
 	bumpStat,
-	recordCustomAdWordsRemarketingEvent,
-	recordCustomFacebookConversionEvent,
 	recordGoogleEvent,
-	recordGooglePageView,
 	recordTracksEvent,
 	recordPageView,
-	setTracksOptOut,
 	loadTrackingTool,
 } from '../actions';
 import { analyticsMiddleware } from '../middleware.js';
@@ -94,36 +83,10 @@ describe( 'middleware', () => {
 			expect( gaRecordEvent ).toHaveBeenCalledWith( 'category', 'action', 'label', 'value' );
 		} );
 
-		test( 'should call ga.recordPageView', () => {
-			dispatch( recordGooglePageView( 'path', 'title' ) );
-
-			expect( gaRecordPageView ).toHaveBeenCalledWith( 'path', 'title' );
-		} );
-
-		test( 'should call trackCustomFacebookConversionEvent', () => {
-			dispatch( recordCustomFacebookConversionEvent( 'event', { name: 'value' } ) );
-
-			expect( trackCustomFacebookConversionEvent ).toHaveBeenCalledWith( 'event', {
-				name: 'value',
-			} );
-		} );
-
-		test( 'should call trackCustomAdWordsRemarketingEvent', () => {
-			dispatch( recordCustomAdWordsRemarketingEvent( { name: 'value' } ) );
-
-			expect( trackCustomAdWordsRemarketingEvent ).toHaveBeenCalledWith( { name: 'value' } );
-		} );
-
 		test( 'should call analytics events with wrapped actions', () => {
 			dispatch( withAnalytics( bumpStat( 'name', 'value' ), { type: 'TEST_ACTION' } ) );
 
 			expect( mcBumpStat ).toHaveBeenCalledWith( 'name', 'value' );
-		} );
-
-		test( 'should call `setOptOut`', () => {
-			dispatch( setTracksOptOut( false ) );
-
-			expect( tracksSetTracksOptOut ).toHaveBeenCalledWith( false );
 		} );
 
 		test( 'should call hotjar.addHotJarScript', () => {
