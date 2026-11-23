@@ -543,7 +543,7 @@ export class CheckoutThankYou extends Component<
 			);
 
 			if ( this.isStudioThankYou() ) {
-				pageContent = <StudioThankYou purchases={ purchases } receiptId={ this.props.receiptId } />;
+				pageContent = <StudioThankYou purchases={ purchases } />;
 			} else if ( this.props.receipt && isOnlyDomainTransfers( purchases ) ) {
 				pageContent = (
 					<DomainBulkTransferThankYou
@@ -654,11 +654,7 @@ export class CheckoutThankYou extends Component<
 
 						{ this.getMasterBar() }
 
-						<StudioHandoff
-							siteId={ siteId }
-							receiptId={ this.props.receiptId }
-							hideNotice={ this.isStudioThankYou() }
-						/>
+						<StudioHandoff siteId={ siteId } receiptId={ this.props.receiptId } />
 
 						{ pageContent }
 					</Main>
