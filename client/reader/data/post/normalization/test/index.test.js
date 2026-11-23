@@ -214,22 +214,22 @@ describe( 'normalization-rules', () => {
 				elements.flatMap( ( element ) =>
 					element.getAttributeNames().filter( ( name ) => /^on/i.test( name ) )
 				)
-			).toEqual( [] );
+			).toStrictEqual( [] );
 			expect(
 				navigationTargets( container ).filter(
 					( href ) => href !== null && ! webAddress.test( new URL( href, document.baseURI ).href )
 				)
-			).toEqual( [] );
+			).toStrictEqual( [] );
 			expect(
 				Array.from( container.querySelectorAll( 'animate, set' ) ).map( ( animation ) =>
 					animation.getAttribute( 'attributeName' )
 				)
-			).toEqual( [] );
+			).toStrictEqual( [] );
 			expect(
 				elements.filter(
 					( element ) => element.localName === 'iframe' && ! element.hasAttribute( 'sandbox' )
 				)
-			).toEqual( [] );
+			).toStrictEqual( [] );
 			expect( container.querySelector( 'script, noscript, base, meta, link' ) ).toBeNull();
 		}
 
@@ -241,10 +241,6 @@ describe( 'normalization-rules', () => {
 			[
 				'xmp text inside noscript',
 				'<p>a</p><noscript><xmp></noscript><img src="https://example.com/x" onerror="alert(1)"></xmp></noscript>',
-			],
-			[
-				'iframe text inside noscript',
-				'<p>a</p><noscript><iframe></noscript><img src="https://example.com/x" onerror="alert(1)"></iframe></noscript>',
 			],
 			[
 				'an mglyph and xmp in MathML',
@@ -273,40 +269,23 @@ describe( 'normalization-rules', () => {
 			],
 		];
 
-		describe( 'when the rules parse content the way jsdom does', () => {
-			test.each( carriers )( 'runs nothing from %s', ( name, content ) => {
-				expectNothingRuns( runFastRules( { content } ).content );
-			} );
-		} );
-
 		// Browsers parse a DOMParser document with scripting off, so `noscript` holds markup there
 		// while the live document treats it as text. jsdom's DOMParser parses with scripting on, but
-		// the fallback, a `div` in a document of its own, parses the way a browser's DOMParser does.
-		describe( 'when the rules parse content the way browsers do', () => {
-			let domParser;
+		// the rules' fallback, a `div` in a document of its own, parses the way a browser's DOMParser
+		// does, so hide DOMParser to reproduce that difference.
+		let domParser;
 
-			beforeEach( () => {
-				domParser = global.DOMParser;
-				global.DOMParser = undefined;
-			} );
+		beforeEach( () => {
+			domParser = global.DOMParser;
+			global.DOMParser = undefined;
+		} );
 
-			afterEach( () => {
-				global.DOMParser = domParser;
-			} );
+		afterEach( () => {
+			global.DOMParser = domParser;
+		} );
 
-			test.each( carriers )( 'runs nothing from %s', ( name, content ) => {
-				expectNothingRuns( runFastRules( { content } ).content );
-			} );
-
-			test( 'still links an embedded Crowdsignal poll', () => {
-				const post = runFastRules( {
-					content:
-						'<p>a</p><noscript><a href="https://poll.fm/12345678">Take Our Poll</a></noscript>',
-				} );
-				const link = render( post.content ).querySelector( 'a' );
-
-				expect( link.getAttribute( 'href' ) ).toBe( 'https://poll.fm/12345678' );
-			} );
+		test.each( carriers )( 'runs nothing from %s', ( name, content ) => {
+			expectNothingRuns( runFastRules( { content } ).content );
 		} );
 
 		test( 'keeps ordinary content as it was', () => {

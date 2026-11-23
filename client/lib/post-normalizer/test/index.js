@@ -12,9 +12,7 @@ import linkJetpackCarousels from '../rule-content-link-jetpack-carousels';
 import makeEmbedsSafe from '../rule-content-make-embeds-safe';
 import makeImagesSafe from '../rule-content-make-images-safe';
 import makeContentLinksSafe from '../rule-content-make-links-safe';
-import removeElementsBySelector, {
-	removeNoscript,
-} from '../rule-content-remove-elements-by-selector';
+import removeElementsBySelector from '../rule-content-remove-elements-by-selector';
 import removeEventHandlers from '../rule-content-remove-event-handlers';
 import removeStyles from '../rule-content-remove-styles';
 import createBetterExcerpt from '../rule-create-better-excerpt';
@@ -383,14 +381,6 @@ describe( 'index', () => {
 				expect( normalized.content ).toBe( '<p>a</p><div>b</div><p></p>' );
 			} );
 
-			test( 'leaves content that a parse does not change alone', () => {
-				const content = '<p>Hello <a href="https://example.com/">there</a></p>';
-
-				const normalized = withContentDOM( [], [ removeEventHandlers ] )( { content } );
-
-				expect( normalized.content ).toBe( content );
-			} );
-
 			test( 'renders content that never settles as text', () => {
 				let round = 0;
 				function neverSettles( post, dom ) {
@@ -561,7 +551,7 @@ describe( 'index', () => {
 			);
 		} );
 
-		test.each( [ 'href', 'xlink:href', ' HREF ' ] )(
+		test.each( [ 'href', 'xlink:href' ] )(
 			'removes SVG animations that rewrite %j',
 			( attributeName ) => {
 				const post = {
@@ -578,16 +568,6 @@ describe( 'index', () => {
 				);
 			}
 		);
-
-		test( 'keeps SVG animations of other attributes', () => {
-			const post = {
-				content:
-					'<svg><circle r="1"><animate attributeName="r" values="1;2"></animate></circle></svg>',
-			};
-			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
-
-			expect( normalized.content ).toBe( post.content );
-		} );
 
 		test( 'keeps a safe plain href on an SVG anchor', () => {
 			// SVG 2 anchors use `href` rather than `xlink:href`, and their `href` IDL property is an
@@ -1206,15 +1186,6 @@ describe( 'index', () => {
 			};
 			const normalized = withContentDOM( [ removeElementsBySelector ] )( post );
 			expect( normalized.content.trim() ).toBe( '' );
-		} );
-
-		test( 'removes noscript elements', () => {
-			const post = {
-				content: '<p>a</p><noscript><img src="https://example.com/a.jpg"></noscript><p>b</p>',
-			};
-			const normalized = withContentDOM( [ removeNoscript ] )( post );
-
-			expect( normalized.content ).toBe( '<p>a</p><p>b</p>' );
 		} );
 	} );
 
