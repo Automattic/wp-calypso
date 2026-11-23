@@ -49,13 +49,11 @@ export default function makeEmbedsSafe( post, dom ) {
 		}
 	} );
 
-	if ( post.is_external || post.is_jetpack ) {
-		const embeds = dom.querySelectorAll( 'embed,object' );
-
-		Array.from( embeds ).forEach( function ( embed ) {
-			embed.parentNode.removeChild( embed );
-		} );
-	}
+	// These load an unsandboxed frame or plugin. Don't go by `is_external` or `is_jetpack`: the
+	// single-post API sends Jetpack and Atomic posts with neither set.
+	Array.from( dom.querySelectorAll( 'embed,object' ) ).forEach( function ( embed ) {
+		embed.parentNode.removeChild( embed );
+	} );
 
 	return post;
 }

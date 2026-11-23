@@ -915,6 +915,19 @@ describe( 'index', () => {
 			const normalized = withContentDOM( [ makeEmbedsSafe ] )( post );
 			expect( normalized.content ).toBe( '' );
 		} );
+
+		test( 'removes objects and embeds from posts not flagged as external or Jetpack', () => {
+			// The single-post Reader API sends Jetpack and Atomic posts with `is_external: false`
+			// and no `is_jetpack`, so neither flag can be relied on.
+			const post = {
+				is_external: false,
+				content:
+					'<p>a</p><object type="text/html" data="https://example.com/x.html"></object>' +
+					'<embed src="https://example.com/x.swf">',
+			};
+			const normalized = withContentDOM( [ makeEmbedsSafe ] )( post );
+			expect( normalized.content ).toBe( '<p>a</p>' );
+		} );
 	} );
 
 	describe( 'content.convertVideoPressBlocks', () => {
