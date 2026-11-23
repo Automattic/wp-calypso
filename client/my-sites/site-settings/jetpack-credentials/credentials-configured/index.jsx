@@ -123,7 +123,6 @@ const mapStateToProps = ( state, { siteId } ) => {
 
 	return {
 		canAutoconfigure: canAutoconfigure || credentials.some( ( c ) => c.type === 'managed' ), // eslint-disable-line wpcalypso/redux-no-bound-selectors
-		// eslint-disable-line wpcalypso/redux-no-bound-selectors
 		supportsRealtimeBackup: siteHasFeature( state, siteId, WPCOM_FEATURES_REAL_TIME_BACKUPS ),
 	};
 };

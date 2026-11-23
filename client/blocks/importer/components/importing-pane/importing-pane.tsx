@@ -11,7 +11,7 @@ import {
 	ImportingPane as ImportingPaneBase,
 	resourcesRemaining,
 } from 'calypso/my-sites/importer/importing-pane';
-import { startImporting } from 'calypso/state/imports/actions';
+import { mapAuthor, startImporting } from 'calypso/state/imports/actions';
 import './importing-pane.scss';
 
 class ImportingPane extends ImportingPaneBase {
@@ -104,5 +104,6 @@ class ImportingPane extends ImportingPaneBase {
 }
 
 export default connect( null, {
+	mapAuthor,
 	startImporting,
 } )( localize( ImportingPane ) );

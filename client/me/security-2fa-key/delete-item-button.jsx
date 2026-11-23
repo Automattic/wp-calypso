@@ -2,7 +2,6 @@ import { Button, Dialog, Gridicon } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 
 class Security2faKeyDeleteButton extends Component {
 	static propTypes = {
@@ -66,4 +65,4 @@ class Security2faKeyDeleteButton extends Component {
 	}
 }
 
-export default connect( null, {}, null )( localize( Security2faKeyDeleteButton ) );
+export default localize( Security2faKeyDeleteButton );
