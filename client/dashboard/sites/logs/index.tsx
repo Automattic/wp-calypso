@@ -5,7 +5,6 @@ import { useSearch } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
-import { useDateRange } from '../../app/hooks/use-date-range';
 import { useIntlLocale } from '../../app/locale';
 import { Card, CardBody } from '../../components/card';
 import { DateRangePicker } from '../../components/date-range-picker';
@@ -19,6 +18,7 @@ import TimeMismatchNotice, {
 } from '../../components/time-mismatch-notice';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { SitesNoticeArbiter } from '../components/notice-arbiter';
+import { useDateRange } from '../hooks/use-date-range';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
 import SiteActivityLogsDataViews from '../logs-activity/dataviews';
 import SiteLogsDataViews from './dataviews';

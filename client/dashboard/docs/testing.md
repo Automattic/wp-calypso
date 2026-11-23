@@ -53,7 +53,7 @@ Follow these tests as examples:
 - [`sites/test/index.test.tsx`](../sites/test/index.test.tsx): assertions on a DataViews list.
 - [`sites/overview/test/index.test.tsx`](../sites/overview/test/index.test.tsx): assertions on the cards and sections of a screen.
 - [`sites/settings-php/test/index.test.tsx`](../sites/settings-php/test/index.test.tsx): submitting a form.
-- [`app/hooks/test/use-visit-counter.test.tsx`](../app/hooks/test/use-visit-counter.test.tsx): a hook.
+- [`app/survicate/test/use-visit-counter.test.tsx`](../app/survicate/test/use-visit-counter.test.tsx): a hook.
 - [`domains/dataviews/test/field-domain-name.test.tsx`](../domains/dataviews/test/field-domain-name.test.tsx): a component that needs the real route tree.
 
 ### File Naming and Structure

@@ -3,7 +3,7 @@ import { useAuth } from '../../../../app/auth';
 import { useConsumeSearchParams } from '../../../../app/hooks/use-consume-search-params';
 import { useLocale } from '../../../../app/locale';
 import DifmOfferModal from '../../../../components/difm-offer-modal';
-import { useDifmOffer } from '../../../../utils/difm-offer';
+import { useDifmOffer } from '../../hooks/use-difm-offer';
 import type { DifmOfferSource, Site } from '@automattic/api-core';
 
 const DIFM_OFFER_OPEN = 'open';

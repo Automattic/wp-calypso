@@ -1,9 +1,9 @@
 import { useState } from 'react';
+import { useResendCooldown } from 'calypso/dashboard/account/hooks/use-resend-cooldown';
 import {
 	resendAcceptedRetryAfter,
 	resendThrottleRetryAfter,
 } from 'calypso/dashboard/utils/email-verification-resend';
-import { useResendCooldown } from 'calypso/dashboard/utils/use-resend-cooldown';
 import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send-email-verification';
 import { STUDENT_ACTIVATION_EMAIL_SOURCE } from '../../../../flows/student/constants';
 

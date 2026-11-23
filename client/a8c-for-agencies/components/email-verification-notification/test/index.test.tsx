@@ -82,7 +82,7 @@ jest.mock( 'calypso/state/selectors/is-pending-email-change', () => ( {
 	default: () => mockIsEmailChangePending,
 } ) );
 
-jest.mock( 'calypso/dashboard/utils/use-resend-cooldown', () => ( {
+jest.mock( 'calypso/dashboard/account/hooks/use-resend-cooldown', () => ( {
 	useResendCooldown: () => ( {
 		secondsUntilResend: mockSecondsUntilResend,
 		hold: mockHoldResend,

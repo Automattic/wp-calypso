@@ -2,8 +2,8 @@ import { TZDate } from '@date-fns/tz';
 import { useRouter, useSearch } from '@tanstack/react-router';
 import { getUnixTime, fromUnixTime, isValid as isValidDate, subDays } from 'date-fns';
 import { useMemo, useRef, useEffect, useCallback } from 'react';
-import { buildTimeRangeInSeconds } from '../../sites/logs/utils';
 import { formatYmd, parseYmdLocal } from '../../utils/datetime';
+import { buildTimeRangeInSeconds } from '../logs/utils';
 import type { DateRangeSearch } from '../../utils/date-range-search';
 import type { AnyRouter } from '@tanstack/react-router';
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { EVERY_SECOND, useInterval } from 'calypso/lib/interval';
-import { cooldownDeadline, cooldownRemainingSeconds } from './email-verification-resend';
+import { cooldownDeadline, cooldownRemainingSeconds } from '../../utils/email-verification-resend';
 
 interface Options {
 	// A cooldown already in effect, for a caller that persists one across a reload.
