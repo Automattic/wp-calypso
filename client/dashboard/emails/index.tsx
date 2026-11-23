@@ -139,7 +139,7 @@ function Emails() {
 		}
 
 		return (
-			<DataViewsCard>
+			<DataViewsCard className="emails__dataviews">
 				<PerformanceTrackerStop />
 				<DataViews
 					data={ filteredData }
