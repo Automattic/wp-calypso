@@ -5,6 +5,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
+import './terms-modal.scss';
+
 /**
  * The Spacefast launch offer's terms, condensed from Legal's blurb for the
  * partner email, so the card itself can stay short.

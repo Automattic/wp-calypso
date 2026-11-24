@@ -4,3 +4,6 @@ import { isEnabled } from '@automattic/calypso-config';
 export function isSpacefastPromoEnabled() {
 	return isEnabled( 'a4a-spacefast-promo' );
 }
+
+/** Where the launch offer's code is redeemed. */
+export const SPACEFAST_REDEEM_URL = 'https://my.spacefast.com/redeem/SPACEFAST-LAUNCH-213M';
