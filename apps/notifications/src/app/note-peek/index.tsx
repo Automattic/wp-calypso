@@ -1,11 +1,18 @@
-import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+} from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { html } from '../../panel/indices-to-html';
 import { p } from '../../panel/templates/functions';
+import { useAppContext } from '../context';
+import NoteIcon from '../note-icon';
 import { isPostNote } from '../note-simplified';
+import { formatNoteTime } from '../note-simplified/format-note-time';
 import type { Note } from '../types';
 import type { FocusEvent, PointerEvent, SyntheticEvent } from 'react';
 
@@ -161,8 +168,8 @@ export function useNotePeek( {
 }
 
 /**
- * A preview of a note beside its row: what the row has only a line or two of, in the
- * note's own formatting.
+ * A preview of a note beside its row: who and when on one line, then what the row has
+ * only a line or two of, in the note's own formatting.
  */
 export default function NotePeek( {
 	note,
@@ -177,8 +184,9 @@ export default function NotePeek( {
 	isMove?: boolean;
 	onClose: () => void;
 } ) {
-	// The row beside the card already says who, where and, for a post, its title. A
-	// comment's row doesn't say which post it's on, so that's the one line above the text.
+	const { locale } = useAppContext();
+	const actor = note.meta?.actor;
+	// The post a comment is on, which its row doesn't name. A post's own title is in its row.
 	const postTitle = ! isPostNote( note ) && note.meta?.post?.title;
 	// The comment or post itself, where the row shows a line or two of it. Its ranges mark
 	// the headings, paragraphs and emphasis, as in the open note.
@@ -205,16 +213,26 @@ export default function NotePeek( {
 				<VisuallyHidden render={ <Popover.Title /> }>
 					{ __( 'Notification preview' ) }
 				</VisuallyHidden>
-				<VStack spacing={ 1 }>
-					{ postTitle && (
-						<Text size={ 12 } lineHeight="16px" variant="muted" truncate>
-							{ sprintf(
-								/* translators: %s is the title of the post a comment is on. */
-								__( 'On %s' ),
-								postTitle
-							) }
+				<VStack spacing={ 2 }>
+					{ /* Who's speaking, on one line, so the text doesn't read as nobody's. The row's
+					     icon is this person, and already loaded. */ }
+					<HStack spacing={ 1.5 } justify="flex-start">
+						<NoteIcon icon={ note.icon || actor?.avatar } size={ 16 } />
+						<Text className="wpnc-peek__byline" size={ 12 } lineHeight="16px" variant="muted">
+							<span className="wpnc-simplified__card-author wpnc-peek__author">
+								{ actor?.name }
+							</span>{ ' ' }
+							{ postTitle &&
+								sprintf(
+									/* translators: %s is the title of the post a comment is on. */
+									__( 'on %s' ),
+									postTitle
+								) }
 						</Text>
-					) }
+						<Text className="wpnc-peek__time" size={ 12 } lineHeight="16px" variant="muted">
+							{ formatNoteTime( note.timestamp, locale ) }
+						</Text>
+					</HStack>
 					{ block?.text.trim() &&
 						p( html( block ), 'wpnc-peek__text wpnc-simplified__quiet-links' ) }
 				</VStack>

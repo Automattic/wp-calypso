@@ -1,5 +1,37 @@
 .wpnc-peek {
 	width: 340px;
+
+	// The panel's 8% hairline around the avatar, drawn inside so it keeps its size.
+	.wpnc__note-icon {
+		flex-shrink: 0;
+	}
+
+	.wpnc__note-icon > :first-child {
+		outline: 1px solid color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
+		outline-offset: -1px;
+	}
+}
+
+// The name and the post on one line, the post cut short before the time is.
+.wpnc-peek__byline {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.wpnc-peek__author {
+	font-weight: 500;
+}
+
+.wpnc-peek__time {
+	flex-shrink: 0;
+
+	// As wide after the dot as the row's gap before it.
+	&::before {
+		content: "·";
+		margin-inline-end: 6px;
+	}
 }
 
 // Glides to the next row rather than jumping to it. Only between rows: on opening, Base

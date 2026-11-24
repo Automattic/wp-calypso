@@ -115,7 +115,7 @@ describe( 'NotePeek', () => {
 		await hoverRow( user );
 
 		expect( await screen.findByText( COMMENT ) ).toBeVisible();
-		expect( screen.getByText( 'On The tide tables' ) ).toBeVisible();
+		expect( screen.getByText( 'on The tide tables' ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_notification_peek', {
 			note_type: 'comment',
 		} );
