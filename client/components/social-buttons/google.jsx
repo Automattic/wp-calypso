@@ -36,6 +36,10 @@ export class GoogleSocialButton extends Component {
 		onClick: noop,
 	};
 
+	state = {
+		isWaitingForGoogle: false,
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -79,6 +83,8 @@ export class GoogleSocialButton extends Component {
 			redirect_uri: this.props.redirectUri,
 			state: state,
 			callback: ( response ) => {
+				this.setState( { isWaitingForGoogle: false } );
+
 				if ( response.error ) {
 					this.props.recordTracksEvent( 'calypso_social_button_failure', {
 						social_account_type: 'google',
@@ -90,6 +96,26 @@ export class GoogleSocialButton extends Component {
 				}
 
 				this.handleAuthorizationCode( { auth_code: response.code, state: response.state } );
+			},
+			// Called instead of `callback` when the window never answers: blocked, or closed.
+			error_callback: ( error ) => {
+				this.setState( { isWaitingForGoogle: false } );
+
+				if ( error?.type !== 'popup_failed_to_open' ) {
+					return;
+				}
+
+				this.props.recordTracksEvent( 'calypso_social_button_failure', {
+					social_account_type: 'google',
+					starting_point: this.props.startingPoint,
+					error_code: error.type,
+				} );
+
+				this.props.showErrorNotice(
+					this.props.translate(
+						'Your browser blocked the Google window. Allow pop-ups for this site, then try again.'
+					)
+				);
 			},
 		} );
 	}
@@ -175,9 +201,17 @@ export class GoogleSocialButton extends Component {
 			this.props.onClick( event );
 		}
 
+		this.client = undefined;
+		this.setState( { isWaitingForGoogle: true } );
+
 		await this.fetchNonceAndInitializeGoogleSignIn();
 
-		this.client?.requestCode();
+		if ( ! this.client ) {
+			this.setState( { isWaitingForGoogle: false } );
+			return;
+		}
+
+		this.client.requestCode();
 	}
 
 	render() {
@@ -211,11 +245,17 @@ export class GoogleSocialButton extends Component {
 						<GoogleIcon isDisabled={ isDisabled } width={ 19 } height={ 19 } />
 
 						<span className="social-buttons__service-name">
-							{ this.props.translate( 'Continue with %(service)s', {
-								args: { service: 'Google' },
-								comment:
-									'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
-							} ) }
+							{ this.state.isWaitingForGoogle
+								? this.props.translate( 'Waiting for %(service)s…', {
+										args: { service: 'Google' },
+										comment:
+											'%(service)s is the name of a third-party authentication provider, e.g. "Google". Shown on its button while its sign-in window is open.',
+									} )
+								: this.props.translate( 'Continue with %(service)s', {
+										args: { service: 'Google' },
+										comment:
+											'%(service)s is the name of a third-party authentication provider, e.g. "Google", "Facebook", "Apple" ...',
+									} ) }
 						</span>
 					</Button>
 				) }

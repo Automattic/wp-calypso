@@ -3,7 +3,7 @@
  */
 
 import config from '@automattic/calypso-config';
-import { act, render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act, cleanup, render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
@@ -62,6 +62,82 @@ describe( 'createAccountError', () => {
 		await waitFor( () => {
 			expect( screen.getByText( /Too many attempts/i ) ).toBeInTheDocument();
 		} );
+	} );
+
+	describe( 'when the server names the wait', () => {
+		const throttleFor = ( seconds ) =>
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/users/new' )
+				.reply( 403, { error: 'throttled', data: { retry_after: seconds } } );
+
+		afterEach( () => {
+			window.localStorage.clear();
+			nock.cleanAll();
+		} );
+
+		it( 'says how long the limit lasts, and holds Continue and the human check until then', async () => {
+			throttleFor( 900 );
+
+			await renderFormAndSubmit();
+
+			expect( await screen.findByText( /try again in 15 minutes/i ) ).toBeVisible();
+			expect( screen.queryByText( /try again later/i ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /create your account/i } ) ).toBeDisabled();
+			expect( MockBlackboxChallenge.enabled ).toBe( false );
+		} );
+
+		it( 'keeps the limit message while the email is edited', async () => {
+			throttleFor( 900 );
+
+			await renderFormAndSubmit();
+			await screen.findByText( /try again in 15 minutes/i );
+			await userEvent.type( screen.getByRole( 'textbox', { name: /email/i } ), 'x' );
+
+			expect( screen.getByText( /try again in 15 minutes/i ) ).toBeVisible();
+		} );
+
+		it( 'still shows the limit on coming back to the form, before any submit', async () => {
+			throttleFor( 900 );
+
+			await renderFormAndSubmit();
+			await screen.findByText( /try again in 15 minutes/i );
+			cleanup();
+
+			render(
+				<Provider store={ mockStore( {} ) }>
+					<PasswordlessSignupForm />
+				</Provider>
+			);
+
+			expect( screen.getByText( /try again in 15 minutes/i ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: /create your account/i } ) ).toBeDisabled();
+		} );
+
+		it( 'opens the form again once the wait is over', async () => {
+			window.localStorage.setItem( 'wpcom_signup_limit_until', String( Date.now() - 1000 ) );
+
+			render(
+				<Provider store={ mockStore( {} ) }>
+					<PasswordlessSignupForm />
+				</Provider>
+			);
+
+			expect( screen.queryByText( /too many attempts/i ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /create your account/i } ) ).toBeEnabled();
+			expect( MockBlackboxChallenge.enabled ).toBe( true );
+		} );
+	} );
+
+	it( 'keeps "try again later" when the server names no wait, rather than guess one', async () => {
+		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/users/new' ).reply( 403, {
+			error: 'throttled',
+		} );
+
+		await renderFormAndSubmit();
+
+		expect( await screen.findByText( /try again later/i ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /create your account/i } ) ).toBeEnabled();
+		expect( window.localStorage.getItem( 'wpcom_signup_limit_until' ) ).toBeNull();
 	} );
 
 	it( 'should handle generic errors', async () => {

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { loadScript } from '@automattic/load-script';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import wpcomRequest from 'wpcom-proxy-request';
 import { postLoginRequest } from 'calypso/state/login/utils';
@@ -161,6 +161,55 @@ describe( 'GoogleSocialButton', () => {
 		);
 		expect( postLoginRequest ).not.toHaveBeenCalled();
 		expect( props.responseHandler ).not.toHaveBeenCalled();
+	} );
+
+	test( 'says it is waiting for Google until the Google window answers', async () => {
+		requestCode.mockImplementation( () => {} );
+		render( <GoogleSocialButton { ...props } /> );
+		await userEvent.click( screen.getByRole( 'button' ) );
+
+		expect( screen.getByRole( 'button', { name: /^Waiting for/ } ) ).toBeVisible();
+
+		act( () => initCodeClient.mock.calls[ 0 ][ 0 ].callback( providerResponse ) );
+
+		expect( screen.getByRole( 'button', { name: /^Continue with/ } ) ).toBeVisible();
+	} );
+
+	test( 'says so when the browser blocks the Google window', async () => {
+		requestCode.mockImplementation( () =>
+			initCodeClient.mock.calls[ 0 ][ 0 ].error_callback( { type: 'popup_failed_to_open' } )
+		);
+		render( <GoogleSocialButton { ...props } /> );
+		await userEvent.click( screen.getByRole( 'button' ) );
+
+		expect( props.showErrorNotice ).toHaveBeenCalledWith(
+			'Your browser blocked the Google window. Allow pop-ups for this site, then try again.'
+		);
+		expect( props.recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_social_button_failure',
+			expect.objectContaining( { error_code: 'popup_failed_to_open' } )
+		);
+		expect( screen.getByRole( 'button', { name: /^Continue with/ } ) ).toBeVisible();
+	} );
+
+	test( 'brings back the normal button when the Google window is closed', async () => {
+		requestCode.mockImplementation( () => {} );
+		render( <GoogleSocialButton { ...props } /> );
+		await userEvent.click( screen.getByRole( 'button' ) );
+
+		act( () => initCodeClient.mock.calls[ 0 ][ 0 ].error_callback( { type: 'popup_closed' } ) );
+
+		expect( screen.getByRole( 'button', { name: /^Continue with/ } ) ).toBeVisible();
+		expect( props.showErrorNotice ).not.toHaveBeenCalled();
+		expect( postLoginRequest ).not.toHaveBeenCalled();
+	} );
+
+	test( 'brings back the normal button when Google sign-in could not start', async () => {
+		wpcomRequest.mockRejectedValue( new Error( 'Nonce unavailable' ) );
+		render( <GoogleSocialButton { ...props } /> );
+		await userEvent.click( screen.getByRole( 'button' ) );
+
+		expect( await screen.findByRole( 'button', { name: /^Continue with/ } ) ).toBeVisible();
 	} );
 
 	test( 'shows an exchange error without handing off tokens', async () => {

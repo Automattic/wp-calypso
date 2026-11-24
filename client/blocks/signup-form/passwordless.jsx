@@ -22,7 +22,12 @@ import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getEmailTrackingConsentPayload } from 'calypso/lib/signup/email-tracking-consent';
 import { isExistingAccountError } from 'calypso/lib/signup/is-existing-account-error';
-import { isThrottledError, getThrottledErrorMessage } from 'calypso/lib/signup/is-throttled-error';
+import {
+	isThrottledError,
+	getSignupLimitMessage,
+	getThrottledErrorMessage,
+} from 'calypso/lib/signup/is-throttled-error';
+import { signupThrottleRetryAfter, useSignupLimit } from 'calypso/lib/signup/signup-limit';
 import wpcom from 'calypso/lib/wp';
 import ValidationFieldset from 'calypso/signup/validation-fieldset';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -36,6 +41,10 @@ class PasswordlessSignupForm extends Component {
 			challenge: PropTypes.node.isRequired,
 			getSessionId: PropTypes.func.isRequired,
 			reset: PropTypes.func.isRequired,
+		} ).isRequired,
+		signupLimit: PropTypes.shape( {
+			secondsRemaining: PropTypes.number.isRequired,
+			hold: PropTypes.func.isRequired,
 		} ).isRequired,
 		locale: PropTypes.string,
 		inputPlaceholder: PropTypes.string,
@@ -67,6 +76,8 @@ class PasswordlessSignupForm extends Component {
 
 	submitLock = false;
 
+	isSignupLimited = () => this.props.signupLimit.secondsRemaining > 0;
+
 	submitTracksEvent = ( isSuccessful, props ) => {
 		const tracksEventName = isSuccessful
 			? 'calypso_signup_actions_onboarding_passwordless_login_success'
@@ -79,7 +90,7 @@ class PasswordlessSignupForm extends Component {
 	onFormSubmit = async ( event ) => {
 		event.preventDefault();
 
-		if ( this.props.blackbox.isSubmitBlocked || this.submitLock ) {
+		if ( this.props.blackbox.isSubmitBlocked || this.submitLock || this.isSignupLimited() ) {
 			return;
 		}
 
@@ -212,8 +223,13 @@ class PasswordlessSignupForm extends Component {
 
 		if ( ! isExistingAccountError( error.error ) ) {
 			if ( isThrottledError( error.error ) ) {
+				const retryAfter = signupThrottleRetryAfter( error );
+				if ( retryAfter !== null ) {
+					this.props.signupLimit.hold( retryAfter );
+				}
 				this.setState( {
-					errorMessages: [ getThrottledErrorMessage( this.props.translate ) ],
+					errorMessages:
+						retryAfter !== null ? null : [ getThrottledErrorMessage( this.props.translate ) ],
 				} );
 			} else {
 				this.setState( {
@@ -404,7 +420,8 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting ||
 			!! this.props.disabled ||
 			!! this.props.disableSubmitButton ||
-			this.props.blackbox.isSubmitBlocked;
+			this.props.blackbox.isSubmitBlocked ||
+			this.isSignupLimited();
 		const submitButtonText = isCreatingAccount
 			? this.props.submitButtonLoadingLabel || this.props.translate( 'Creating your account…' )
 			: this.props.submitButtonLabel || this.props.translate( 'Create your account' );
@@ -439,7 +456,10 @@ class PasswordlessSignupForm extends Component {
 	}
 
 	render() {
-		const { errorMessages, isSubmitting } = this.state;
+		const { isSubmitting } = this.state;
+		const errorMessages = this.isSignupLimited()
+			? [ getSignupLimitMessage( this.props.translate, this.props.signupLimit.secondsRemaining ) ]
+			: this.state.errorMessages;
 
 		const terms = ! this.props.disableTosText && this.props.renderTerms?.();
 
@@ -474,15 +494,32 @@ class PasswordlessSignupForm extends Component {
 		);
 	}
 }
+
+// The human check stays away during the limit: solving it again can only earn the same refusal.
+function withSignupLimit( WrappedComponent ) {
+	return function WithSignupLimit( props ) {
+		const signupLimit = useSignupLimit();
+		return (
+			<WrappedComponent
+				{ ...props }
+				signupLimit={ signupLimit }
+				blackboxSuspended={ props.blackboxSuspended || signupLimit.secondsRemaining > 0 }
+			/>
+		);
+	};
+}
+
 export default connect( null, {
 	recordTracksEvent,
 	saveSignupStep,
 	submitCreateAccountStep: submitSignupStep,
 } )(
 	localize(
-		withBlackboxProtection( PasswordlessSignupForm, {
-			feature: 'blackbox-signup',
-			flow: 'signup',
-		} )
+		withSignupLimit(
+			withBlackboxProtection( PasswordlessSignupForm, {
+				feature: 'blackbox-signup',
+				flow: 'signup',
+			} )
+		)
 	)
 );

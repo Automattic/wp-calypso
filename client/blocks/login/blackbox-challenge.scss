@@ -1,0 +1,7 @@
+@import '@automattic/typography/styles/variables';
+
+.login__form-blackbox-status p {
+	margin-block: 8px;
+	color: var( --color-text-subtle );
+	font-size: $font-body-small;
+}
