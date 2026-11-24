@@ -68,8 +68,10 @@
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"gettext-parser": "^6.0.0",
+		"postcss": "^8.5.32",
 		"vite": "^8.3.8",
-		"vitest": "^5.1.0"
+		"vitest": "^5.1.0",
+		"webpack": "^5.101.0"
 	},
 	"peerDependencies": {
 		"postcss": "^8.5.32",

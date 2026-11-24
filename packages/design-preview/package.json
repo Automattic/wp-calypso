@@ -55,6 +55,10 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@wordpress/data": "^11.2.0",
+		"@wordpress/element": "^10.2.0",
+		"@wordpress/i18n": "^7.2.0",
+		"debug": "^4.4.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3"
