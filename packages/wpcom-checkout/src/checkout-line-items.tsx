@@ -29,7 +29,7 @@ import {
 import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import {
 	useState,
 	PropsWithChildren,
@@ -559,7 +559,13 @@ export function BundleLineItem( {
 
 			<LineItemMeta>
 				<LineItemSublabelTitle>
-					{ translate( 'Domain Bundle Registration: One-year registration, billed annually' ) }
+					{ fixMe( {
+						text: 'Domain Bundle Registration: One-year registration, billed annually',
+						newCopy: translate(
+							'Domain Bundle Registration: One-year registration, billed annually'
+						),
+						oldCopy: translate( 'Domain Bundle Registration: billed annually' ),
+					} ) }
 				</LineItemSublabelTitle>
 				{ isBundleDiscounted && (
 					<DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>
