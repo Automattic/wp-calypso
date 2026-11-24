@@ -2882,7 +2882,7 @@ __metadata:
     css-loader: "npm:^7.1.5"
     eslint: "npm:^10.14.0"
     jsdom: "npm:^20.0.3"
-    postcss: "npm:*"
+    postcss: "npm:^8.5.32"
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1 || ^19.0.0"
     sass-embedded: "npm:^1.89.0"
@@ -2892,7 +2892,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.0"
-    webpack: "npm:*"
+    webpack: "npm:^5.111.1"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^11.2.0
