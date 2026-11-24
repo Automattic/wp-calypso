@@ -111,22 +111,40 @@ describe( 'DomainSetupInfo', () => {
 		expect( queryIcon() ).not.toBeInTheDocument();
 	} );
 
-	it.each( [ DomainStatus.IN_PROGRESS, DomainStatus.TRANSFER_ERROR ] )(
-		'links to the domain page when the primary domain status is %s',
-		async ( status ) => {
-			mockDomains = [
-				defaultAddress,
-				buildDomain( { domain_status: { id: status, label: status, type: 'warning' } } ),
-			];
+	it.each( [
+		[
+			'has a failed transfer',
+			{
+				domain_status: {
+					id: DomainStatus.TRANSFER_ERROR,
+					label: 'Transfer error',
+					type: 'error',
+				},
+			},
+		],
+		[ 'is active but still being made the primary address', { set_primary_domain_pending: true } ],
+	] as [ string, Partial< DomainSummary > ][] )(
+		'shows the info icon when the primary domain %s',
+		async ( _, overrides ) => {
+			mockDomains = [ defaultAddress, buildDomain( overrides ) ];
 			renderDomainSetupInfo();
-			await openPopover();
 
-			const link = screen.getByRole( 'link', { name: 'View domain status' } );
-
-			expect( link ).toBeVisible();
-			expect( link ).toHaveAttribute( 'href', domainManagementEdit( SITE_DOMAIN, 'example.com' ) );
+			expect( await screen.findByRole( 'button', { name: 'Domain setup status' } ) ).toBeVisible();
 		}
 	);
+
+	it( 'does not show the info icon for a domain that belongs to another site', async () => {
+		mockDomains = [
+			defaultAddress,
+			buildDomain( {
+				blog_id: SITE_ID + 1,
+				domain_status: { id: DomainStatus.IN_PROGRESS, label: 'In progress', type: 'warning' },
+			} ),
+		];
+		await waitForDomains( renderDomainSetupInfo() );
+
+		expect( queryIcon() ).not.toBeInTheDocument();
+	} );
 
 	it( 'links to the first custom domain when no custom domain is primary', async () => {
 		mockDomains = [

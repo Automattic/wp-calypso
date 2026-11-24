@@ -23,7 +23,11 @@ export function getPendingCustomDomain( domains: DomainSummary[], siteDomain: st
 		return undefined;
 	}
 
-	return domain.domain_status?.id !== DomainStatus.ACTIVE ? domain : undefined;
+	// A new registration can already report "active" while it's still being made the primary address.
+	const isSettingUp =
+		domain.domain_status?.id !== DomainStatus.ACTIVE || domain.set_primary_domain_pending === true;
+
+	return isSettingUp ? domain : undefined;
 }
 
 interface DomainSetupInfoProps {
@@ -49,13 +53,13 @@ export default function DomainSetupInfo( { siteId, siteSlug, siteDomain }: Domai
 
 	return (
 		<InfoPopover
-			className="customer-home__site-domain-info"
+			className="home-site-preview__domain-setup-info"
 			icon="info"
 			iconSize={ 16 }
 			position="bottom"
 			aria-label={ __( 'Domain setup status' ) }
 		>
-			<p className="customer-home__site-domain-info-text">
+			<p className="home-site-preview__domain-setup-info-text">
 				{ sprintf(
 					/* translators: %1$s is the custom domain being set up, %2$s is the address the site is currently reachable at. */
 					__(

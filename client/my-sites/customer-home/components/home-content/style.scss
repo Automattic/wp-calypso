@@ -36,21 +36,8 @@ body.is-section-home.theme-default.color-scheme {
 		flex: 1 0 auto;
 	}
 
-	.customer-home__site-domain-row {
-		display: flex;
-		align-items: center;
-		gap: 4px;
-		min-width: 0;
-	}
-
-	.customer-home__site-domain-info {
-		display: flex;
-		flex-shrink: 0;
-	}
-
 	.customer-home__site-domain {
 		display: flex;
-		min-width: 0;
 		flex-direction: row;
 		align-items: center;
 
@@ -403,8 +390,4 @@ body.is-section-home.theme-default.color-scheme {
 			color: var( --color-neutral-20 );
 		}
 	}
-}
-
-.customer-home__site-domain-info-text {
-	margin-bottom: 8px;
 }
