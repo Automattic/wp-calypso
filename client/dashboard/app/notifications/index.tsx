@@ -122,10 +122,10 @@ export default function Notifications( {
 				setIsOpen( false );
 			}
 		};
-		document.addEventListener( 'pointerdown', closeOnPage, true );
+		document.addEventListener( 'click', closeOnPage, true );
 		document.addEventListener( 'focusin', closeOnPage );
 		return () => {
-			document.removeEventListener( 'pointerdown', closeOnPage, true );
+			document.removeEventListener( 'click', closeOnPage, true );
 			document.removeEventListener( 'focusin', closeOnPage );
 		};
 	}, [ isOpen, isInboxShown ] );

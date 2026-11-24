@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { isTyping, modifierKeyIsActive } from '../../panel/helpers/input';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { useAppContext } from '../context';
@@ -114,7 +114,7 @@ export function useNoteListNavigationKeyboardShortcuts( {
 			if ( ! areKeyboardShortcutsEnabled ) {
 				return;
 			}
-			if ( modifierKeyIsActive( event ) ) {
+			if ( modifierKeyIsActive( event ) || isTyping( event ) ) {
 				return;
 			}
 

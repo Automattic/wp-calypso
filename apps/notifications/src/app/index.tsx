@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useCallback, useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
-import { modifierKeyIsActive } from '../panel/helpers/input';
+import { isTyping, modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
 import { store } from '../panel/state';
 import actions from '../panel/state/actions';
@@ -233,7 +233,7 @@ const NotificationApp = ( {
 			if ( ! getKeyboardShortcutsEnabled( store.getState() ) ) {
 				return;
 			}
-			if ( modifierKeyIsActive( event ) ) {
+			if ( modifierKeyIsActive( event ) || isTyping( event ) ) {
 				return;
 			}
 			switch ( event.key ) {

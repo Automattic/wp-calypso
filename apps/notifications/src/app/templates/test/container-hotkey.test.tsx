@@ -160,6 +160,24 @@ describe( 'HotkeyContainer', () => {
 		expect( approve ).not.toHaveBeenCalled();
 	} );
 
+	it( 'runs no shortcut for typing in a form field, while keyboard shortcuts are on', () => {
+		const spam = vi.fn();
+		render(
+			<>
+				<input aria-label="Search commands" />
+				<HotkeyContainer
+					keyboardShortcutsAreEnabled
+					shortcuts={ [ { hotkey: 's', action: spam } ] }
+				/>
+			</>
+		);
+
+		expect(
+			fireEvent.keyDown( screen.getByRole( 'textbox', { name: 'Search commands' } ), { key: 's' } )
+		).toBe( true );
+		expect( spam ).not.toHaveBeenCalled();
+	} );
+
 	it( 'leaves a key pressed with Ctrl, Cmd or Alt to the browser', () => {
 		const approve = vi.fn();
 		render(
@@ -267,7 +285,7 @@ describe( 'HotkeyContainer', () => {
 			const other = vi.fn();
 			const like = renderScoped( { other } );
 
-			fireEvent.keyDown( screen.getByRole( 'textbox', { name: 'Search' } ), { key: 'l' } );
+			fireEvent.keyDown( screen.getByRole( 'button', { name: 'Sites' } ), { key: 'l' } );
 
 			expect( like ).not.toHaveBeenCalled();
 			expect( other ).toHaveBeenCalledTimes( 1 );

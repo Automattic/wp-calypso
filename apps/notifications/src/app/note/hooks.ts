@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { isTyping, modifierKeyIsActive } from '../../panel/helpers/input';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
@@ -88,7 +88,7 @@ export function useNoteNavigation( {
 			if ( ! areKeyboardShortcutsEnabled ) {
 				return;
 			}
-			if ( modifierKeyIsActive( event ) ) {
+			if ( modifierKeyIsActive( event ) || isTyping( event ) ) {
 				return;
 			}
 			switch ( event.key ) {

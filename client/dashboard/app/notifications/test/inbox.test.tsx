@@ -126,6 +126,48 @@ describe( '<Notifications> with the inbox', () => {
 		);
 	} );
 
+	test( 'keeps the panel open over the page on a right-click in the page', async () => {
+		const user = userEvent.setup();
+		render(
+			<>
+				<div id="wpcom-omnibar">
+					<button>Omnibar menu</button>
+				</div>
+				<p>Comment text</p>
+				<Notifications isInboxShown onOpenInbox={ () => {} } />
+			</>
+		);
+
+		await openPanel( user );
+		const panel = screen.getByRole( 'region', { name: 'Notifications panel' } );
+		await waitFor( () => expect( panel ).toBeVisible() );
+		await user.click( screen.getByRole( 'button', { name: 'Omnibar menu' } ) );
+		await user.pointer( { keys: '[MouseRight]', target: screen.getByText( 'Comment text' ) } );
+
+		expect( panel ).toBeVisible();
+	} );
+
+	test( 'leaves the panel open on other pages after a click in the page', async () => {
+		const user = userEvent.setup();
+		render(
+			<>
+				<div id="wpcom-omnibar">
+					<button>Omnibar menu</button>
+				</div>
+				<p>Site list</p>
+				<Notifications onOpenInbox={ () => {} } />
+			</>
+		);
+
+		await openPanel( user );
+		const panel = screen.getByRole( 'region', { name: 'Notifications panel' } );
+		await waitFor( () => expect( panel ).toBeVisible() );
+		await user.click( screen.getByRole( 'button', { name: 'Omnibar menu' } ) );
+		await user.click( screen.getByText( 'Site list' ) );
+
+		expect( panel ).toBeVisible();
+	} );
+
 	test( 'keeps the panel open over the page while the focus is in it, its menus or a dialog', async () => {
 		const user = userEvent.setup();
 		render(

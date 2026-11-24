@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { isTyping, modifierKeyIsActive } from '../../panel/helpers/input';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { NoteOpenContext, useAppContext } from '../context';
 import { isPanelMounted } from '../panel-mounted';
@@ -12,23 +12,14 @@ import { isPanelMounted } from '../panel-mounted';
 // too, such as a focusable disabled button, and that mustn't turn the shortcuts off.
 const handledEvents = new WeakSet();
 
-const isFormField = ( target ) =>
-	target instanceof HTMLElement &&
-	( target.isContentEditable || [ 'INPUT', 'SELECT', 'TEXTAREA' ].includes( target.tagName ) );
-
 // A host with a scope, like the full page, shares the window with the rest of its page and with the
 // panel opened over it. It leaves every key press to a mounted panel, and otherwise takes those from
-// inside the scope or with nothing focused, never from a form field. It doesn't use the shared on/off
-// switch, which a reply box turns back on only if React sees it lose focus.
-const isForScope = ( { target }, shortcutScope ) => {
-	if ( isPanelMounted() || isFormField( target ) ) {
-		return false;
-	}
-	return (
-		target === document.body ||
-		( target instanceof Node && !! shortcutScope.current?.contains( target ) )
-	);
-};
+// inside the scope or with nothing focused. It doesn't use the shared on/off switch, which a reply
+// box turns back on only if React sees it lose focus.
+const isForScope = ( { target }, shortcutScope ) =>
+	! isPanelMounted() &&
+	( target === document.body ||
+		( target instanceof Node && !! shortcutScope.current?.contains( target ) ) );
 
 const dispatch = ( event, action ) => {
 	handledEvents.add( event );
@@ -69,6 +60,7 @@ export class HotkeyContainer extends Component {
 			handledEvents.has( event ) ||
 			! this.context ||
 			! shortcuts ||
+			isTyping( event ) ||
 			! ( shortcutScope ? isForScope( event, shortcutScope ) : keyboardShortcutsAreEnabled )
 		) {
 			return;
