@@ -26,14 +26,7 @@ const SENTRY_CONFIG: SentryApi.BrowserOptions = {
 	],
 };
 
-type SupportedMethods =
-	| 'addBreadcrumb'
-	| 'captureEvent'
-	| 'captureException'
-	| 'captureMessage'
-	| 'withScope'
-	| 'setTag'
-	| 'setUser';
+type SupportedMethods = Exclude< keyof typeof import( './sentry-api' ), 'init' >;
 
 interface QueueDataMethod< Method extends SupportedMethods > {
 	f: Method;
