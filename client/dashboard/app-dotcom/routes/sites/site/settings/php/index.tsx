@@ -10,16 +10,16 @@ import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
-import Breadcrumbs from '../../app/breadcrumbs';
-import { NavigationBlocker } from '../../app/navigation-blocker';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
-import { getSitePlanDisplayName } from '../../utils/site-plan';
-import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import Breadcrumbs from '../../../../../../app/breadcrumbs';
+import { NavigationBlocker } from '../../../../../../app/navigation-blocker';
+import { withSnackbar } from '../../../../../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../../../../../components/button-stack';
+import { Card, CardBody } from '../../../../../../components/card';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import { hasHostingFeature, hasPlanFeature } from '../../../../../../utils/site-features';
+import { getSitePlanDisplayName } from '../../../../../../utils/site-plan';
 import type { Field } from '@wordpress/dataviews';
 
 export default function PHPVersionSettings( { siteSlug }: { siteSlug: string } ) {

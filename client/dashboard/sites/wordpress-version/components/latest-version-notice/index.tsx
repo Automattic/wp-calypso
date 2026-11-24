@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { Notice } from '../../components/notice';
+import { Notice } from '../../../../components/notice';
 
 interface LatestVersionNoticeProps {
 	wpVersion: string;

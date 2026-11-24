@@ -103,7 +103,7 @@ const wordpressRoute = createRoute( {
 	...appRouterSites.siteSettingsWordPressRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-wordpress' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/wordpress' ).then( ( d ) =>
 		createLazyRoute( 'wordpress' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -114,7 +114,7 @@ const phpRoute = createRoute( {
 	...appRouterSites.siteSettingsPHPRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-php' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/php' ).then( ( d ) =>
 		createLazyRoute( 'php' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

@@ -1180,7 +1180,7 @@ export const siteSettingsWordPressRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-wordpress' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/wordpress' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-wordpress' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1205,7 +1205,7 @@ export const siteSettingsPHPRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-php' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/php' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-php' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
