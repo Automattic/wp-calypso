@@ -5,7 +5,9 @@ import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 
 vi.mock( 'calypso/state/posts/selectors', () => ( { getPostsForQuery: vi.fn() } ) );
 vi.mock( 'calypso/state/selectors/get-editor-url', () => ( { default: vi.fn() } ) );
-vi.mock( 'calypso/state/selectors/get-front-page-editor-url', () => ( { default: vi.fn( () => null ) } ) );
+vi.mock( 'calypso/state/selectors/get-front-page-editor-url', () => ( {
+	default: vi.fn( () => null ),
+} ) );
 vi.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteUrl: vi.fn( () => 'https://example.com' ),
 } ) );
