@@ -47,6 +47,7 @@ import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/sele
 import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DomainSetupInfo from './domain-setup-info';
 import openSyncUrlInStudio from './studio-deeplink';
 
 import './style.scss';
@@ -212,13 +213,16 @@ const HomeContent = ( {
 				<SiteIcon site={ site } size={ 58 } />
 				<div className="customer-home__site-info">
 					<div className="customer-home__site-title">{ site.name }</div>
-					<a
-						href={ site.URL }
-						className="customer-home__site-domain"
-						onClick={ trackViewSiteAction }
-					>
-						<span className="customer-home__site-domain-text">{ site.domain }</span>
-					</a>
+					<div className="customer-home__site-domain-row">
+						<a
+							href={ site.URL }
+							className="customer-home__site-domain"
+							onClick={ trackViewSiteAction }
+						>
+							<span className="customer-home__site-domain-text">{ site.domain }</span>
+						</a>
+						<DomainSetupInfo siteId={ siteId } siteSlug={ site.slug } siteDomain={ site.domain } />
+					</div>
 				</div>
 			</div>
 		</div>
