@@ -32686,10 +32686,28 @@ __metadata:
     wpcom: "workspace:^"
     yargs: "npm:^17.0.1"
   dependenciesMeta:
-    "@react-spring/core@9.3.0":
+    "@parcel/watcher":
+      built: false
+    "@playwright/browser-chromium":
+      built: true
+    "@playwright/browser-firefox":
+      built: true
+    "@swc/core":
+      built: false
+    core-js:
+      built: false
+    core-js-pure:
+      built: false
+    dtrace-provider:
+      built: false
+    esbuild:
       built: false
     fsevents:
       optional: true
+    msw:
+      built: false
+    unrs-resolver:
+      built: false
   languageName: unknown
   linkType: soft
 
