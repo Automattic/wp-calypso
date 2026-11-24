@@ -346,6 +346,27 @@ describe( 'PostComments', () => {
 		expect( oldestRequest.isDone() ).toBe( true );
 	} );
 
+	it( 'stays on Oldest when loading more of the oldest comments fails', async () => {
+		const user = userEvent.setup();
+		mockLongerThread();
+		const failedLoadMore = nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'ASC' && !! query.after )
+			.reply( 500, { error: 'unknown' } );
+		renderComments( { initialSize: 3, pageSize: 50, commentCount: 120 } );
+		await waitFor( () => expect( renderedIds() ).toHaveLength( 3 ) );
+		const sortBy = screen.getByRole( 'combobox', { name: 'Sort by' } );
+		await user.selectOptions( sortBy, 'oldest' );
+		await waitFor( () => expect( renderedIds()[ 0 ] ).toBe( '1' ) );
+
+		await user.click( screen.getByRole( 'button', { name: /Load more comments/ } ) );
+
+		await waitFor( () => expect( failedLoadMore.isDone() ).toBe( true ) );
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) ) );
+		expect( sortBy ).toHaveValue( 'oldest' );
+		expect( renderedIds()[ 0 ] ).toBe( '1' );
+	} );
+
 	it( 'starts an anchored thread at its first comment with one Load more below', async () => {
 		const user = userEvent.setup();
 		mockLongerThread();

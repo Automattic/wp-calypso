@@ -23,7 +23,8 @@ import type { SiteComment } from '@automattic/api-core';
  *
  * The initial comments page is fetched with `DESC` ordering, so page index 0 is
  * the newest API page even though `useComments` later exposes comments
- * chronologically.
+ * chronologically. The oldest-first query gets the placeholder on its first page
+ * too, where sorting puts it after the comments loaded so far.
  */
 export const usePostCommentActions = () => {
 	const queryClient = useQueryClient();
