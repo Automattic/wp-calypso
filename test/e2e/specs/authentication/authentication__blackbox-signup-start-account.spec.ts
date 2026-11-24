@@ -64,6 +64,8 @@ test.describe( 'Signup: Blackbox /start/account', { tag: [ tags.AUTHENTICATION ]
 			// Blackbox is suspended until the email form becomes the active
 			// surface, so the collect only fires during the signup interaction.
 			const collectData = waitForCollectData( page );
+			// Without a handler, a failed read ends the test before teardown is queued.
+			collectData.catch( () => undefined );
 			const collectRequest = page.waitForRequest(
 				( request ) =>
 					request.method() === 'POST' && request.url().includes( 'blackbox-api.wp.com/v1/collect' ),
