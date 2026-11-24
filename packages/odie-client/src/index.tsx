@@ -8,6 +8,7 @@ import { useCurrentSupportInteraction } from './data/use-current-support-interac
 import { useIsPendingDirectChat } from './hooks/use-is-pending-direct-chat';
 import { useOpenLiveInteractions } from './hooks/use-open-interaction-status-map';
 import { useRefreshChatOnFocus } from './hooks/use-refresh-chat-on-focus';
+import { useTrackChatPanelClosed } from './hooks/use-track-chat-panel-closed';
 import {
 	hasCSATMessage,
 	interactionHasEnded,
@@ -21,6 +22,7 @@ export const OdieAssistant: React.FC = () => {
 	const { trackEvent, currentUser, chat, aiDisclosureLine } = useOdieAssistantContext();
 	const aiDisclosureId = useId();
 	useRefreshChatOnFocus();
+	useTrackChatPanelClosed();
 	const { data: currentSupportInteraction, isLoading: isLoadingInteraction } =
 		useCurrentSupportInteraction();
 	const chatHasCSATMessage = hasCSATMessage( chat );
