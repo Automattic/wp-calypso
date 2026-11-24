@@ -168,7 +168,9 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		await openHelpCenter();
 
 		expect( shownWith() ).toMatchObject( { checkoutSupportVariation: 'human_only' } );
-		expect( route() ).toBe( '/odie?provider=zendesk&siteUrl=example.wordpress.com&siteId=123' );
+		expect( route() ).toBe(
+			'/odie?provider=zendesk&siteUrl=example.wordpress.com&siteId=123&start-on-message=1'
+		);
 	} );
 
 	it.each( [ 'hybrid', 'control' ] )( 'sends the %s variation to Odie', async ( variation ) => {
@@ -367,7 +369,9 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 				true,
 				expect.objectContaining( { checkoutSupportVariation: 'human_only' } )
 			);
-			expect( route() ).toBe( '/odie?provider=zendesk&siteUrl=example.wordpress.com&siteId=123' );
+			expect( route() ).toBe(
+				'/odie?provider=zendesk&siteUrl=example.wordpress.com&siteId=123&start-on-message=1'
+			);
 		} );
 	} );
 
