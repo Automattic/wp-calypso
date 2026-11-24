@@ -130,15 +130,16 @@ export const siteCommentsInfiniteQuery = ( {
 		refetchOnWindowFocus: false,
 		getNextPageParam: ( lastPage, allPages ) => {
 			const pageSize = number ?? DEFAULT_NUMBER;
-			if ( lastPage.comments.length < pageSize ) {
-				return undefined;
-			}
-
+			// Mutations add and remove comments in cached pages, so a page's length can't mark the end.
 			if ( order === 'ASC' ) {
 				const offset = allPages.length * pageSize;
 				return offset < ( allPages[ 0 ]?.found ?? 0 )
 					? { direction: 'after' as const, offset }
 					: undefined;
+			}
+
+			if ( lastPage.comments.length < pageSize ) {
+				return undefined;
 			}
 
 			// With a `before` cursor, `found` counts the comments left before it, not the post's total.

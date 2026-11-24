@@ -96,7 +96,10 @@ export const usePostCommentsData = ( props ) => {
 			return fetchNewestComments();
 		}
 
-		const knownIds = new Set( loadedComments.map( ( comment ) => comment.ID ) );
+		// Compare against the pages polling refetches, which differ from the list shown in Oldest mode.
+		const knownIds = new Set(
+			( data?.pages ?? [] ).flatMap( ( page ) => page.comments.map( ( comment ) => comment.ID ) )
+		);
 		const { data: polled } = await fetchNewestComments();
 		const newIds = ( polled?.pages ?? [] )
 			.flatMap( ( page ) => page.comments )
@@ -109,7 +112,7 @@ export const usePostCommentsData = ( props ) => {
 			.map( ( comment ) => comment.ID );
 
 		setPendingCommentIds( ( current ) => [ ...new Set( [ ...current, ...newIds ] ) ] );
-	}, [ currentUserId, deferNewComments, fetchNewestComments, loadedComments ] );
+	}, [ currentUserId, data, deferNewComments, fetchNewestComments ] );
 
 	const initialCommentFromList = props.startingCommentId
 		? loadedComments.find(

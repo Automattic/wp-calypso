@@ -13,7 +13,7 @@ type CommentsTree = {
 	[ commentId: string ]: CommentsTreeNode | SiteComment[ 'ID' ][] | undefined;
 };
 
-export const getCommentTimestamp = ( comment: SiteComment ) => {
+const getCommentTimestamp = ( comment: SiteComment ) => {
 	const timestamp = Date.parse( comment.date ?? '' );
 	return Number.isNaN( timestamp ) ? Number.POSITIVE_INFINITY : timestamp;
 };

@@ -7,7 +7,6 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
-import { addCommentToNewestPage } from 'calypso/reader/data/comments/cache';
 import PostComments from '..';
 
 jest.mock( '../form-root', () => () => <textarea aria-label="Add a comment" /> );
@@ -345,29 +344,6 @@ describe( 'PostComments', () => {
 
 		await waitFor( () => expect( renderedIds() ).toEqual( [ '1', '2', '3' ] ) );
 		expect( oldestRequest.isDone() ).toBe( true );
-	} );
-
-	it( 'keeps the unloaded middle of an oldest-first thread out of view after posting', async () => {
-		const user = userEvent.setup();
-		mockLongerThread();
-		const { queryClient } = renderComments( { initialSize: 100, commentCount: 120 } );
-
-		await waitFor( () => expect( renderedIds() ).toHaveLength( 50 ) );
-		await user.selectOptions( screen.getByRole( 'combobox', { name: 'Sort by' } ), 'oldest' );
-		await waitFor( () => expect( renderedIds()[ 0 ] ).toBe( '1' ) );
-
-		await act( async () => {
-			addCommentToNewestPage(
-				queryClient,
-				123,
-				456,
-				makeComment( 999, '2026-12-01T00:00:00.000Z' )
-			);
-			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
-		} );
-
-		expect( renderedIds() ).toHaveLength( 50 );
-		expect( renderedIds() ).not.toContain( '100' );
 	} );
 
 	it( 'does not paginate while waiting for a starting comment outside the initial comments page', async () => {

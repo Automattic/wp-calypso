@@ -21,6 +21,10 @@ jest.mock( 'calypso/lib/interval', () => ( {
 
 jest.mock( '../form-root', () => () => null );
 
+jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: () => ( { type: 'READER_TRACKS_EVENT_MOCK' } ),
+} ) );
+
 jest.mock( '../post-comment', () => ( props ) => (
 	<li className="comments__comment" data-testid="post-comment">
 		<strong id={ `comment-${ props.commentId }` }>{ props.commentId }</strong>
@@ -126,6 +130,36 @@ describe( 'PostComments polling for new comments', () => {
 		expect( getRenderedCommentIds() ).toEqual( [ '4', '3', '2', '1' ] );
 		expect( pill ).not.toBeInTheDocument();
 		expect( document.getElementById( 'comment-4' ).closest( 'li' ) ).toHaveFocus();
+	} );
+
+	it( 'does not count loaded comments as new after polling in Oldest mode', async () => {
+		const user = userEvent.setup();
+		const longThreadPage = ( firstId, month ) =>
+			Array.from( { length: 50 }, ( _, index ) => ( {
+				...makeComment( firstId + index, 1 ),
+				date: new Date( Date.UTC( 2026, month, index + 1 ) ).toISOString(),
+			} ) );
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'DESC' && ! query.after )
+			.reply( 200, { comments: longThreadPage( 100, 5 ).reverse(), found: 120 } );
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'ASC' && ! query.after )
+			.reply( 200, { comments: longThreadPage( 1, 0 ), found: 120 } );
+		mockNewComments( [] );
+
+		renderComments( { deferNewComments: true, commentCount: 120 } );
+		await waitFor( () => expect( getRenderedCommentIds() ).toHaveLength( 50 ) );
+		const sortBy = screen.getByRole( 'combobox', { name: 'Sort by' } );
+		await user.selectOptions( sortBy, 'oldest' );
+		await waitFor( () => expect( getRenderedCommentIds()[ 0 ] ).toBe( '1' ) );
+
+		await act( () => pollForNewComments() );
+		await user.selectOptions( sortBy, 'newest' );
+
+		expect( getRenderedCommentIds() ).toHaveLength( 50 );
+		expect( screen.queryByRole( 'button', { name: /new update/ } ) ).not.toBeInTheDocument();
 	} );
 
 	it.each( [

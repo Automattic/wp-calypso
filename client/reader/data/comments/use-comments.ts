@@ -1,10 +1,5 @@
 import { useMemo } from 'react';
-import {
-	buildCommentsTree,
-	filterComments,
-	getCommentTimestamp,
-	mergeComments,
-} from './normalization';
+import { buildCommentsTree, filterComments, mergeComments } from './normalization';
 import { usePostCommentsQuery, type UseCommentsOptions } from './use-post-comments-query';
 
 type UseCommentsParams = {
@@ -54,41 +49,14 @@ export const useComments = (
 		{ siteId, postId, status, number, order: 'ASC' },
 		{ ...options, enabled: needsOldestQuery && ( options.enabled ?? true ) }
 	);
-	const oldestFirstThread = useMemo( () => {
-		if ( ! needsOldestQuery || ! oldestQuery.data ) {
-			return null;
-		}
-
-		const oldestPages = oldestQuery.data.pages.map( ( page ) => page.comments );
-		// Pages arrive oldest first, and comments posted here are cached at the front of the first page,
-		// so the last comment fetched marks how far the start of the thread reaches.
-		const lastFetched = oldestPages.at( -1 )?.at( -1 );
-		const frontier = lastFetched ? getCommentTimestamp( lastFetched ) : -Infinity;
-
-		const merged = mergeComments( [
-			...oldestPages,
-			...( query.data?.pages.map( ( page ) => page.comments ) ?? [] ),
-		] );
-		const reachesNewest =
-			! oldestQuery.hasNextPage ||
-			( newestFirstComments.length > 0 &&
-				getCommentTimestamp( newestFirstComments[ 0 ] ) <= frontier );
-		// Comments past the frontier would leave a gap, so they wait until the two ends meet.
-		const gap = reachesNewest
-			? -1
-			: merged.findIndex(
-					( comment ) => comment.isPlaceholder || getCommentTimestamp( comment ) > frontier
-				);
-
-		return { comments: gap === -1 ? merged : merged.slice( 0, gap ), reachesNewest };
-	}, [
-		needsOldestQuery,
-		newestFirstComments,
-		oldestQuery.data,
-		oldestQuery.hasNextPage,
-		query.data?.pages,
-	] );
-	const comments = oldestFirstThread?.comments ?? newestFirstComments;
+	const oldestFirstComments = useMemo(
+		() =>
+			needsOldestQuery && oldestQuery.data
+				? mergeComments( oldestQuery.data.pages.map( ( page ) => page.comments ) )
+				: null,
+		[ needsOldestQuery, oldestQuery.data ]
+	);
+	const comments = oldestFirstComments ?? newestFirstComments;
 	const displayedComments = useMemo(
 		() => filterComments( comments, displayStatus, authorId ),
 		[ authorId, comments, displayStatus ]
@@ -113,9 +81,9 @@ export const useComments = (
 		commentsTree,
 		commentsFetchingStatus: {
 			haveEarlierCommentsToFetch:
-				! oldestFirstThread && query.hasNextPage && hasMoreComments && ! query.isFetchingNextPage,
-			haveLaterCommentsToFetch: oldestFirstThread
-				? ! oldestFirstThread.reachesNewest && ! oldestQuery.isFetchingNextPage
+				! oldestFirstComments && query.hasNextPage && hasMoreComments && ! query.isFetchingNextPage,
+			haveLaterCommentsToFetch: oldestFirstComments
+				? oldestQuery.hasNextPage && ! oldestQuery.isFetchingNextPage
 				: query.hasPreviousPage && hasMoreComments && ! query.isFetchingPreviousPage,
 			hasReceivedBefore,
 			hasReceivedAfter,
@@ -124,9 +92,10 @@ export const useComments = (
 		// Until the first comments arrive, the list keeps its order rather than flash the wrong window.
 		// If they can't load, the comments already here still flip.
 		isOldestFirst:
-			oldestFirst && ( ! needsOldestQuery || Boolean( oldestFirstThread ) || oldestQuery.isError ),
-		fetchEarlierComments: oldestFirstThread ? noop : query.fetchNextPage,
-		fetchLaterComments: oldestFirstThread ? oldestQuery.fetchNextPage : query.fetchPreviousPage,
+			oldestFirst &&
+			( ! needsOldestQuery || Boolean( oldestFirstComments ) || oldestQuery.isError ),
+		fetchEarlierComments: oldestFirstComments ? noop : query.fetchNextPage,
+		fetchLaterComments: oldestFirstComments ? oldestQuery.fetchNextPage : query.fetchPreviousPage,
 		fetchNewestComments: query.fetchPreviousPage,
 	};
 };
