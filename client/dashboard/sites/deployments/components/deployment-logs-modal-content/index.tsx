@@ -76,7 +76,7 @@ export function DeploymentLogsModalContent( {
 						style={ { flexShrink: 0 } }
 						href={ `https://github.com/${ deployment.repository_name }/commit/${ commit_sha }` }
 					>
-						<Text as="code" size="small">
+						<Text as="code" size="small" style={ { color: 'inherit' } }>
 							{ shortSha }
 						</Text>
 					</ExternalLink>

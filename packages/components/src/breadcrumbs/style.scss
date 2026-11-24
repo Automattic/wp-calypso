@@ -17,7 +17,7 @@
 
 		&:not(.is-current)::after {
 			content: '/';
-			color: var(--wpds-color-stroke-surface-neutral-strong, #{$gray-600});
+			color: var(--wpds-color-stroke-surface-neutral, #{$gray-200});
 			margin: 0 8px;
 			@include body-medium;
 		}

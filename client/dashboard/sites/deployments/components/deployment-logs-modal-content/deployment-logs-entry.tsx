@@ -13,9 +13,6 @@ import { useLocale } from '../../../../app/locale';
 import { formatDate } from '../../../../utils/datetime';
 import type { DeploymentRunWithDeploymentInfo, LogEntry } from '@automattic/api-core';
 
-const LOG_TEXT_COLOR = '#f0f0f0';
-const LOG_TIMESTAMP_COLOR = '#949494';
-
 export const DeploymentLogsEntry = ( {
 	entry,
 	deployment,
@@ -90,23 +87,19 @@ export const DeploymentLogsEntry = ( {
 		<HStack spacing={ 3 }>
 			<VStack spacing={ 2 }>
 				<Text
-					style={ {
-						color: LOG_TEXT_COLOR,
-						whiteSpace: 'pre-wrap',
-					} }
+					className="deployment-logs-entry__text"
+					style={ { whiteSpace: 'pre-wrap' } }
 					as="code"
 				>
-					<Text style={ { color: LOG_TIMESTAMP_COLOR } }>
+					<Text className="deployment-logs-entry__timestamp">
 						{ formatDate( new Date( entry.timestamp ), locale, { timeStyle: 'medium' } ) }
 					</Text>{ ' ' }
 					{ entry.level.toUpperCase() } { entry.message }
 					{ hasDetail && (
 						<Button
 							variant="link"
-							style={ {
-								color: LOG_TEXT_COLOR,
-								marginInlineStart: '4px',
-							} }
+							className="deployment-logs-entry__text"
+							style={ { marginInlineStart: '4px' } }
 							onClick={ toggleExpandDetail }
 							disabled={ ! hasDetail }
 						>
@@ -116,10 +109,8 @@ export const DeploymentLogsEntry = ( {
 				</Text>
 				{ detailExpanded && (
 					<Text
-						style={ {
-							color: LOG_TEXT_COLOR,
-							whiteSpace: 'pre-wrap',
-						} }
+						className="deployment-logs-entry__text"
+						style={ { whiteSpace: 'pre-wrap' } }
 						as="code"
 					>
 						{ getDetail() }

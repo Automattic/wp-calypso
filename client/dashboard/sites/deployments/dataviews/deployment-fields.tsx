@@ -89,7 +89,7 @@ export function useFields( {
 								<ExternalLink
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }
 								>
-									<Text as="code" size="small">
+									<Text as="code" size="small" style={ { color: 'inherit' } }>
 										{ shortSha }
 									</Text>
 								</ExternalLink>

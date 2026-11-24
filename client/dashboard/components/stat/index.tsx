@@ -28,8 +28,8 @@ interface StatProps {
 	metric?: string;
 
 	/**
-	 * The color of the progress bar. If none is provided the admin theme colour
-	 * will be used.
+	 * The color of the progress bar. If none is provided the default indicator
+	 * color will be used.
 	 */
 	progressColor?: 'alert-yellow' | 'alert-red' | 'alert-green';
 

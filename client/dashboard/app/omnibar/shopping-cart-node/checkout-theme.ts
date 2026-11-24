@@ -26,6 +26,11 @@ export const dashboardCheckoutTheme: Theme = {
 		textColorDark: 'var( --wpds-color-foreground-content-neutral )',
 		textColorDisabled: 'var( --wpds-color-foreground-content-neutral-weak )',
 		error: 'var( --wpds-color-foreground-content-error-weak )',
+		warningBackground: 'var( --wpds-color-background-surface-error-weak )',
+		outline: 'var( --wpds-color-stroke-focus )',
+		textColorOnDarkBackground: 'var( --wpds-color-background-surface-neutral-strong )',
+		modalBackground:
+			'color-mix( in srgb, var( --wpds-color-background-surface-neutral ) 90%, transparent )',
 		disabledField: 'var( --wpds-color-background-surface-neutral-weak )',
 		placeHolderTextColor: 'var( --wpds-color-foreground-content-neutral-weak )',
 	},

@@ -20,6 +20,10 @@
 
 .site-launch-pre-launch-modal__meta {
 	min-width: 0;
+
+	svg {
+		fill: currentColor;
+	}
 }
 
 .site-launch-pre-launch-modal__body {

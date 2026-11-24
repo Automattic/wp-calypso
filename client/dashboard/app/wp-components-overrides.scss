@@ -47,18 +47,8 @@
 	border-top-color: var(--wpds-color-stroke-surface-neutral);
 }
 
-// `@wordpress/components` Card, Panel and ItemGroup hardcode light borders and surfaces;
+// `@wordpress/components` Panel and ItemGroup hardcode light borders and surfaces;
 // drop each block once the component uses WPDS tokens.
-:root .components-card:not([class*="__card-borderless"]) {
-	box-shadow: 0 0 0 1px var(--wpds-color-stroke-surface-neutral);
-}
-
-:root .components-card__header,
-:root .components-card__footer,
-.components-card__divider {
-	border-color: var(--wpds-color-stroke-surface-neutral);
-}
-
 .components-panel {
 	background: var(--wpds-color-background-surface-neutral-strong);
 	border-color: var(--wpds-color-stroke-surface-neutral);

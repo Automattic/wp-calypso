@@ -98,7 +98,6 @@
 	}
 }
 
-// Shows the dark variant of `ThemedIllustration` assets; this is the swap itself, not an override.
 @mixin dashboard-dark-theme-illustrations {
 	.dashboard-themed-illustration--light {
 		display: none;
@@ -123,7 +122,7 @@
 }
 
 // TEMPORARY local overrides: WPDS's dark ramp puts these tokens too close to the surface. Each rule
-// goes once fixed upstream in WordPress/gutenberg (elevation: #75266; ramp contrast: raised on #116914).
+// goes once fixed upstream in WordPress/gutenberg (elevation: #75266).
 @mixin dashboard-dark-theme-pending-upstream {
 	// Row separators: `stroke-surface-neutral-weak` is ~1:1 against cards.
 	.dataviews-view-list div[role='row'],

@@ -81,6 +81,7 @@ export default function FieldActionToggle( {
 
 	return (
 		<div
+			className="dashboard-field-action-toggle"
 			role="presentation"
 			onClick={ ( e ) => e.stopPropagation() }
 			onMouseDown={ ( e ) => e.stopPropagation() }
