@@ -1,4 +1,5 @@
 import { Visibility } from '@automattic/data-stores';
+import { CartActionConnectionError, CartActionResponseError } from '@automattic/shopping-cart';
 import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 import { addProductsToCart, createSite, getNewSiteParams, replaceProductsInCart } from '..';
@@ -8,14 +9,16 @@ import wpcomRequest from '../../wpcom-request';
 const mockCartActions = vi.hoisted( () => ( {
 	addProductsToCart: vi.fn(),
 	replaceProductsInCart: vi.fn(),
+	reloadFromServer: vi.fn(),
 } ) );
+const mockGetCartState = vi.hoisted( () => vi.fn() );
 
 vi.mock( 'calypso/lib/wp', () => ( { default: { req: { post: vi.fn() } } } ) );
 vi.mock( '../../wpcom-request', () => ( { default: vi.fn() } ) );
 vi.mock( '../create-cart-manager-client', () => ( {
 	default: {
 		getCartKeyForSiteSlug: vi.fn( async () => 123 ),
-		forCartKey: () => ( { actions: mockCartActions } ),
+		forCartKey: () => ( { actions: mockCartActions, getState: mockGetCartState } ),
 	},
 } ) );
 vi.mock( '@automattic/calypso-config', () => {
@@ -103,6 +106,153 @@ describe( 'cart helpers', () => {
 			replaceProductsInCart( 'example.wordpress.com', cartItems )
 		).resolves.toBeUndefined();
 		expect( mockCartActions.replaceProductsInCart ).toHaveBeenCalled();
+	} );
+
+	describe( 'with a cart response error', () => {
+		const responseError = new CartActionResponseError(
+			'A stale product cannot be purchased.',
+			'invalid-product'
+		);
+		const domainItem = { product_slug: 'dotcom_domain', meta: 'example.com' };
+
+		function cartHolds( products: Array< { product_slug: string; meta: string } > ) {
+			mockGetCartState.mockReturnValue( { responseCart: { products } } );
+		}
+
+		beforeEach( () => {
+			mockCartActions.addProductsToCart.mockRejectedValue( responseError );
+			mockCartActions.replaceProductsInCart.mockRejectedValue( responseError );
+		} );
+
+		// clearAllMocks keeps a mocked return value, so the cart of one test would stay for the next.
+		afterEach( () => {
+			mockGetCartState.mockReset();
+		} );
+
+		test( 'addProductsToCart resolves when the cart holds every requested item', async () => {
+			cartHolds( [
+				{ product_slug: 'personal-bundle', meta: '' },
+				{ product_slug: 'dotcom_domain', meta: 'example.com' },
+			] );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', [ ...cartItems, domainItem ], {
+					throwOnError: true,
+				} )
+			).resolves.toBeUndefined();
+		} );
+
+		test( 'addProductsToCart rejects when a requested item is missing from the cart', async () => {
+			cartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', [ ...cartItems, domainItem ], {
+					throwOnError: true,
+				} )
+			).rejects.toBe( responseError );
+		} );
+
+		test( 'addProductsToCart rejects when the cart holds the slug with a different meta', async () => {
+			cartHolds( [ { product_slug: 'dotcom_domain', meta: 'other.com' } ] );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', [ domainItem ], {
+					throwOnError: true,
+				} )
+			).rejects.toBe( responseError );
+		} );
+
+		test( 'addProductsToCart resolves when the cart holds the meta in another letter case', async () => {
+			cartHolds( [ { product_slug: 'domain_map', meta: 'example.com' } ] );
+
+			await expect(
+				addProductsToCart(
+					'example.wordpress.com',
+					'domain',
+					[ { product_slug: 'domain_map', meta: 'Example.com' } ],
+					{ throwOnError: true }
+				)
+			).resolves.toBeUndefined();
+		} );
+
+		test( 'addProductsToCart rejects when the cart state cannot be read', async () => {
+			mockGetCartState.mockReturnValue( undefined );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).rejects.toBe( responseError );
+		} );
+
+		test( 'replaceProductsInCart resolves when the cart holds every requested item', async () => {
+			cartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
+
+			await expect(
+				replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
+			).resolves.toBeUndefined();
+		} );
+
+		test( 'replaceProductsInCart rejects when a requested item is missing from the cart', async () => {
+			cartHolds( [] );
+
+			await expect(
+				replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
+			).rejects.toBe( responseError );
+		} );
+	} );
+
+	describe( 'with a cart connection error', () => {
+		const connectionError = new CartActionConnectionError(
+			'Network failure.',
+			'SET_SERVER_CART_ERROR'
+		);
+
+		beforeEach( () => {
+			mockCartActions.addProductsToCart.mockRejectedValue( connectionError );
+			mockCartActions.replaceProductsInCart.mockRejectedValue( connectionError );
+		} );
+
+		// clearAllMocks keeps a mocked implementation, so the reload of one test would stay for the next.
+		afterEach( () => {
+			mockGetCartState.mockReset();
+			mockCartActions.reloadFromServer.mockReset();
+		} );
+
+		// The state before the reload is the cart from before the request, which does not hold the
+		// requested items. Only the reload makes the state the server cart, so these mocks set the
+		// state from inside the reload.
+		function serverCartHolds( products: Array< { product_slug: string; meta: string } > ) {
+			mockGetCartState.mockReturnValue( { responseCart: { products: [] } } );
+			mockCartActions.reloadFromServer.mockImplementation( async () => {
+				mockGetCartState.mockReturnValue( { responseCart: { products } } );
+			} );
+		}
+
+		test( 'addProductsToCart resolves when the server cart holds every requested item', async () => {
+			serverCartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).resolves.toBeUndefined();
+		} );
+
+		test( 'addProductsToCart rejects when the server cart does not hold a requested item', async () => {
+			serverCartHolds( [] );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).rejects.toBe( connectionError );
+		} );
+
+		test( 'addProductsToCart rejects when the cart fetch fails too', async () => {
+			mockGetCartState.mockReturnValue( { responseCart: { products: cartItems } } );
+			mockCartActions.reloadFromServer.mockRejectedValue(
+				new CartActionConnectionError( 'Network failure.', 'GET_SERVER_CART_ERROR' )
+			);
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).rejects.toBe( connectionError );
+		} );
 	} );
 } );
 
