@@ -10,6 +10,7 @@ import {
 	fetchUserTransferredPurchases,
 	fetchSitePurchases,
 	fetchCancellationFeatures,
+	fetchDowngradeRefund,
 	setDelayedDowngrade,
 	fetchPurchaseSiteTransferPreview,
 	transferPurchaseToSite,
@@ -72,6 +73,12 @@ export const purchaseCancelFeaturesQuery = (
 	queryOptions( {
 		queryKey: [ 'upgrades', purchaseId, 'cancel-features', variant, targetProductSlug ],
 		queryFn: () => fetchCancellationFeatures( purchaseId, variant, targetProductSlug ),
+	} );
+
+export const downgradeRefundQuery = ( purchaseId: number, toProductId: number ) =>
+	queryOptions( {
+		queryKey: [ 'upgrades', purchaseId, 'downgrade-refund', toProductId ],
+		queryFn: () => fetchDowngradeRefund( purchaseId, toProductId ),
 	} );
 
 export const hasPurchaseBeenExtendedQuery = ( purchaseId: number ) =>

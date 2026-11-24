@@ -99,6 +99,22 @@ describe( 'DowngradeConfirmationModal', () => {
 		expect( screen.getByRole( 'button', { name: 'Change plan and refund $40' } ) ).toBeVisible();
 	} );
 
+	test( 'cannot confirm a change made now until its refund has loaded', () => {
+		mockFeatures( { features: [], is_change_to_monthly: true } );
+
+		render(
+			<DowngradeConfirmationModal
+				{ ...defaultProps }
+				isDelayedDowngrade={ false }
+				isInstantDowngrade
+				isTermChange
+				isRefundLoading
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Change plan' } ) ).toBeDisabled();
+	} );
+
 	test( 'shows no monthly warning outside a term change', () => {
 		mockFeatures( { features: [], is_change_to_monthly: true } );
 

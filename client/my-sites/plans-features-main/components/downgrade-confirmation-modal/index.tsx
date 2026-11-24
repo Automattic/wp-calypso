@@ -41,6 +41,8 @@ interface DowngradeConfirmationModalProps {
 	renewalPriceText?: string;
 	/** Pre-formatted, localized refund amount (e.g. "$48.00"). */
 	refundText?: string;
+	/** When true, the refund is still being fetched; show the loader and disable confirming. */
+	isRefundLoading?: boolean;
 	/** When true, the confirm action is in flight; disable buttons and show a spinner. */
 	isConfirming?: boolean;
 	/**
@@ -296,6 +298,7 @@ const DowngradeConfirmationModal = ( {
 	isTermChange,
 	renewalPriceText,
 	refundText,
+	isRefundLoading,
 	isConfirming,
 	isRechargeable,
 	changePaymentMethodUrl,
@@ -378,7 +381,7 @@ const DowngradeConfirmationModal = ( {
 			size="medium"
 		>
 			<ModalBody
-				isLoading={ isLoading }
+				isLoading={ isLoading || !! isRefundLoading }
 				currentPlanName={ currentPlanName }
 				targetPlanName={ targetPlanName }
 				lostFeatures={ lostFeatures }
@@ -415,7 +418,9 @@ const DowngradeConfirmationModal = ( {
 						variant="primary"
 						onClick={ onConfirm }
 						isBusy={ isConfirming }
-						disabled={ isConfirming || ( isDelayedDowngrade && isRechargeable === false ) }
+						disabled={
+							isConfirming || isRefundLoading || ( isDelayedDowngrade && isRechargeable === false )
+						}
 					>
 						{ confirmButtonLabel }
 					</Button>
