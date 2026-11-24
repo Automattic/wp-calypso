@@ -13,19 +13,24 @@ const jetpackTemporarySiteId = 2;
 describe( 'LicensingActivationThankYou', () => {
 	it.each( [
 		[
-			'Jetpack Search on this site has higher limits.',
-			'Jetpack Search on this site has higher limits.',
+			'jetpack_pro_lower_limits',
+			'This site has a Jetpack product with higher limits than Jetpack Pro',
 		],
-		[ undefined, 'There was a problem activating Jetpack Complete' ],
-	] )( 'explains a refused activation with reason %p', ( reason, expected ) => {
+		[
+			'jetpack_pro_other_owner',
+			'A Jetpack product on this site belongs to another WordPress.com account',
+		],
+		[ 'product_incompatibility', 'There was a problem activating Jetpack Pro' ],
+		[ undefined, 'There was a problem activating Jetpack Pro' ],
+	] )( 'explains a refused activation with reason code %p', ( reasonCode, expected ) => {
 		const queryClient = new QueryClient();
 		queryClient.setQueryData( [ 'products', 'jetpack' ], {
-			jetpack_complete: { product_id: 3, product_name: 'Jetpack Complete' },
+			jetpack_pro: { product_id: 3, product_name: 'Jetpack Pro' },
 		} );
 
 		renderWithProvider(
 			<LicensingActivationThankYou
-				productSlug="jetpack_complete"
+				productSlug="jetpack_pro"
 				receiptId={ receiptId }
 				jetpackTemporarySiteId={ jetpackTemporarySiteId }
 			/>,
@@ -39,7 +44,7 @@ describe( 'LicensingActivationThankYou', () => {
 							[ jetpackTemporarySiteId ]: {
 								transferred_to: 0,
 								incompatible_product_ids: [],
-								reason,
+								reason_code: reasonCode,
 							},
 						},
 					},

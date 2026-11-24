@@ -15,7 +15,7 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
 import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
 import getJetpackCheckoutSupportTicketIncompatibleProductIds from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-incompatible-products';
-import getJetpackCheckoutSupportTicketReason from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-reason';
+import getJetpackCheckoutSupportTicketReasonCode from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-reason-code';
 import getSupportTicketRequestStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import getJetpackSites from 'calypso/state/selectors/get-jetpack-sites';
 
@@ -74,8 +74,8 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	const incompatibleProductIds = useSelector( ( state ) =>
 		getJetpackCheckoutSupportTicketIncompatibleProductIds( state, jetpackTemporarySiteId )
 	);
-	const reason = useSelector( ( state ) =>
-		getJetpackCheckoutSupportTicketReason( state, jetpackTemporarySiteId )
+	const reasonCode = useSelector( ( state ) =>
+		getJetpackCheckoutSupportTicketReasonCode( state, jetpackTemporarySiteId )
 	);
 
 	const [ selectedSite, setSelectedSite ] = useState( '' );
@@ -168,6 +168,20 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			);
 		}
 		if ( supportTicketRequestStatus === 'success' && destinationSiteId !== undefined ) {
+			if ( destinationSiteId === 0 && reasonCode === 'jetpack_pro_lower_limits' ) {
+				return setError(
+					translate(
+						"This site has a Jetpack product with higher limits than Jetpack Pro, so Pro can't replace it. You can use this license on another site, or contact us for a refund."
+					)
+				);
+			}
+			if ( destinationSiteId === 0 && reasonCode === 'jetpack_pro_other_owner' ) {
+				return setError(
+					translate(
+						"A Jetpack product on this site belongs to another WordPress.com account, so Jetpack Pro can't be activated here. Contact us and we'll help you sort it out."
+					)
+				);
+			}
 			if ( incompatibleProductIds.length ) {
 				const incompatibleProductName =
 					Object.values( productsList ?? {} ).find( ( product ) =>
@@ -191,9 +205,6 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			}
 
 			if ( destinationSiteId === 0 ) {
-				if ( reason ) {
-					return setError( reason );
-				}
 				return setError(
 					translate(
 						'There was a problem activating %(productName)s on {{strong}}%(selectedSite)s{{/strong}}. Try with a different site or {{a}}activate your product manually{{/a}}.',
@@ -228,7 +239,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		productName,
 		productsList,
 		productSlug,
-		reason,
+		reasonCode,
 		redirectTo,
 		selectedSite,
 		supportTicketRequestStatus,
