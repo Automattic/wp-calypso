@@ -145,7 +145,7 @@
 		"translate-if-languages-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || yarn run translate",
 		"typecheck": "run-p 'typecheck-*'",
 		"typecheck-client": "tsc --project client",
-		"typecheck-apps": "find apps -depth 2 -name tsconfig.json | xargs -n 1 -P 4 -I {} yarn tsc --noEmit --project {}",
+		"typecheck-apps": "node bin/typecheck-apps.mjs",
 		"typecheck-packages": "tsc --build packages/tsconfig.json",
 		"vite-check": "node build-tools/vite/check.mjs",
 		"vscode:link": "node bin/set-up-vs-code.js",
