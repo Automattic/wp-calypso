@@ -5,6 +5,7 @@
 - Update `@sentry/react` from 7 to 10, which accepts React 19.
 - Remove `configureScope`, which Sentry removed in v8. Use `setTag`, or the scope helpers, instead.
 - Load only the SDK functions the package calls, so the lazy chunk no longer includes Replay, Feedback and tracing.
+- The `mechanism` property sent to Logstash uses Sentry 10's names, such as `auto.browser.global_handlers.onerror` instead of `onerror` and `auto.browser.browserapierrors.*` instead of `instrument`.
 
 ## 1.1.0
 

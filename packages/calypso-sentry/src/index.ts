@@ -228,9 +228,9 @@ export async function initSentry( parameters?: SentryOptions ) {
 			// See configuration docs: https://docs.sentry.io/clients/javascript/config
 			Sentry.init( {
 				...SENTRY_CONFIG,
-				initialScope: {
-					user: { id: userId?.toString() },
-				},
+				// An empty initial user would hide one set later with setUser: Sentry keeps the two on
+				// different scopes, and a missing id still overrides when they're merged.
+				...( userId ? { initialScope: { user: { id: userId.toString() } } } : {} ),
 				environment,
 				release,
 				beforeBreadcrumb,
