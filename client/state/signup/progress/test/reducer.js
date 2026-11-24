@@ -10,10 +10,12 @@ import {
 import reducer from '../reducer';
 
 // Mock necessary for testing step submission behavior
-vi.mock( 'calypso/signup/config/steps-pure', () => ( ( ( m ) => ( { ...m, default: m } ) )( {
-	stepWithAPI: { apiRequestFunction: () => {} },
-	stepWithoutAPI: {},
-} ) ) );
+vi.mock( 'calypso/signup/config/steps-pure', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		stepWithAPI: { apiRequestFunction: () => {} },
+		stepWithoutAPI: {},
+	} )
+);
 
 describe( 'reducer', () => {
 	test( 'should return an empty object at first', () => {

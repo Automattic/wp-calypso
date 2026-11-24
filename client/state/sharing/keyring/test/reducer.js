@@ -143,7 +143,7 @@ describe( 'reducers', () => {
 		} );
 
 		describe( 'persistence', () => {
-			vi.spyOn( console, 'warn' ).mockImplementation(() => {});
+			vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {

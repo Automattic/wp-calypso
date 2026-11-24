@@ -12,7 +12,9 @@ vi.mock( 'calypso/state/selectors/is-unlaunched-site', () => ( { default: () => 
 vi.mock( 'calypso/state/sites/domains/selectors', () => ( {
 	getDomainsBySiteId: () => [ { domain: 'example.wordpress.com' } ],
 } ) );
-vi.mock( 'calypso/state/sites/plans/selectors/is-site-big-sky-trial', () => ( { default: () => false } ) );
+vi.mock( 'calypso/state/sites/plans/selectors/is-site-big-sky-trial', () => ( {
+	default: () => false,
+} ) );
 vi.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	isSiteOnHostingTrial: () => false,
 } ) );

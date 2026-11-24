@@ -1,14 +1,5 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { vi } from 'vitest';
-let mockInstanceIdCounter = 0;
-vi.mock( 'calypso/signup/difm/page-instances', async () => {
-	const actual = ( await vi.importActual< typeof import( 'calypso/signup/difm/page-instances' ) >( 'calypso/signup/difm/page-instances' ) );
-	return {
-		...actual,
-		newInstanceId: vi.fn( () => `instance-${ ++mockInstanceIdCounter }` ),
-	};
-} );
-
 import { SIGNUP_COMPLETE_RESET } from 'calypso/state/action-types';
 import {
 	ABOUT_PAGE,
@@ -46,6 +37,17 @@ import {
 import { initialState, SITE_INFORMATION_SECTION_ID, MEDIA_UPLOAD_STATES } from '../constants';
 import websiteContentCollectionReducer from '../reducer';
 import type { WebsiteContentCollectionState } from '../types';
+
+let mockInstanceIdCounter = 0;
+vi.mock( 'calypso/signup/difm/page-instances', async () => {
+	const actual = await vi.importActual< typeof import( 'calypso/signup/difm/page-instances' ) >(
+		'calypso/signup/difm/page-instances'
+	);
+	return {
+		...actual,
+		newInstanceId: vi.fn( () => `instance-${ ++mockInstanceIdCounter }` ),
+	};
+} );
 
 const initialTestState: WebsiteContentCollectionState = {
 	currentIndex: 0,

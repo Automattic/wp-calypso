@@ -45,7 +45,7 @@ const originalKeyringServices = {
 };
 
 describe( 'reducer', () => {
-	vi.spyOn( console, 'warn' ).mockImplementation(() => {});
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(

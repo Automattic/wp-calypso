@@ -9,11 +9,15 @@ import canRestoreSite from '../can-restore-site';
 vi.mock( 'calypso/state/jetpack/credentials/selectors', () => ( {
 	areJetpackCredentialsInvalid: vi.fn( () => false ),
 } ) );
-vi.mock( 'calypso/state/selectors/get-does-rewind-need-credentials', () =>
-	( { default: vi.fn( () => false ) } )
-);
-vi.mock( 'calypso/state/selectors/get-is-restore-in-progress', () => ( { default: vi.fn( () => false ) } ) );
-vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( { default: vi.fn( () => false ) } ) );
+vi.mock( 'calypso/state/selectors/get-does-rewind-need-credentials', () => ( {
+	default: vi.fn( () => false ),
+} ) );
+vi.mock( 'calypso/state/selectors/get-is-restore-in-progress', () => ( {
+	default: vi.fn( () => false ),
+} ) );
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
+	default: vi.fn( () => false ),
+} ) );
 
 describe( 'canRestoreSite', () => {
 	const siteId = 12345;

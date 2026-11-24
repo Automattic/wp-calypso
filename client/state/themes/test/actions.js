@@ -1228,7 +1228,7 @@ describe( 'actions', () => {
 			} );
 		} );
 		test( 'should dispatch failure on error', () => {
-			/* eslint-disable jest/no-conditional-expect */
+			/* eslint-disable vitest/no-conditional-expect */
 			return initiateThemeTransfer( siteId )( spy ).catch( () => {
 				expect( spy ).toHaveBeenCalledTimes( 1 );
 
@@ -1242,7 +1242,7 @@ describe( 'actions', () => {
 					expect.objectContaining( { error: expect.toBeTruthy() } )
 				);
 			} );
-			/* eslint-enable jest/no-conditional-expect */
+			/* eslint-enable vitest/no-conditional-expect */
 		} );
 	} );
 

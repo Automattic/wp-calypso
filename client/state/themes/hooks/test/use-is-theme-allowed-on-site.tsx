@@ -11,6 +11,7 @@ import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import { useIsThemeAllowedOnSite } from '../use-is-theme-allowed-on-site';
 
 vi.mock( 'react-redux', () => ( {
+	useDispatch: vi.fn(),
 	useSelector: vi.fn(),
 } ) );
 

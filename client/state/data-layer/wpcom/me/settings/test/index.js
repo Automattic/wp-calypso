@@ -1,3 +1,4 @@
+import { getQueryArg } from '@wordpress/url';
 import { vi } from 'vitest';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -104,8 +105,6 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#userSettingsSaveSuccess', () => {
-			const { getQueryArg } = require( '@wordpress/url' );
-
 			beforeEach( () => {
 				getQueryArg.mockReset();
 				getQueryArg.mockReturnValue( null );
