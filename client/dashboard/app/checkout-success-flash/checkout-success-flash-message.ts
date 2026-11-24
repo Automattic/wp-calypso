@@ -1,12 +1,12 @@
 import { useDispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
-import { FLASH_QUERY_PARAM } from '../components/flash-message';
+import { FLASH_QUERY_PARAM } from '../../components/flash-message';
+import { useConsumeSearchParams } from '../hooks/use-consume-search-params';
 import {
 	CHECKOUT_SUCCESS_FLASH_ID,
 	CHECKOUT_SUCCESS_PLAN_PARAM,
 	getCheckoutSuccessMessage,
-} from './checkout-success-flash';
-import { useConsumeSearchParams } from './hooks/use-consume-search-params';
+} from '.';
 
 /**
  * Rendered in the app shell (`app/root`) so the toast appears regardless of

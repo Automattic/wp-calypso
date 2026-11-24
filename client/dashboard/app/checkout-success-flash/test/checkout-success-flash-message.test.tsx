@@ -4,7 +4,7 @@
 import { waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
-import { render } from '../../test-utils';
+import { render } from '../../../test-utils';
 import { CheckoutSuccessFlashMessage } from '../checkout-success-flash-message';
 
 afterEach( () => {

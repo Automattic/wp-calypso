@@ -12,7 +12,7 @@ import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { CheckoutSuccessFlashMessage } from '../../../../app/checkout-success-flash-message';
+import { CheckoutSuccessFlashMessage } from '../../../../app/checkout-success-flash/checkout-success-flash-message';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import CrossoverModalHost from '../../../crossover';
