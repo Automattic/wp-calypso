@@ -91,6 +91,8 @@
 		"@types/react": "^18.3.31",
 		"@types/react-dom": "^18.3.7",
 		"@wordpress/base-styles": "^15.1.0",
+		"@wordpress/data": "^11.2.0",
+		"@wordpress/element": "^10.2.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"resize-observer-polyfill": "^1.5.1",
