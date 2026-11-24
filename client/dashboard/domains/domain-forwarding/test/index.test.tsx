@@ -93,3 +93,15 @@ test.each( [
 		expect( await screen.findByRole( 'link', { name: label } ) ).toBeVisible();
 	}
 );
+
+test( 'replaces the table with an empty state when there are no forwarding rules', async () => {
+	mockApiRequests( [] );
+
+	render( <DomainForwardingList /> );
+
+	expect(
+		await screen.findByRole( 'heading', { name: 'Send visitors to another address' } )
+	).toBeVisible();
+	expect( screen.getByText( 'Each forwarding rule can be temporary or permanent.' ) ).toBeVisible();
+	expect( screen.queryByRole( 'searchbox' ) ).not.toBeInTheDocument();
+} );

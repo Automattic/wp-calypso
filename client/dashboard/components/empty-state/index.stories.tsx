@@ -189,6 +189,10 @@ export const WithoutContentWrapper: Story = {
 	},
 };
 
+/**
+ * A compact wrapper is only as tall as its content: it has no minimum height,
+ * and keeps its inner padding so the card does not look cramped.
+ */
 export const CompactWrapper: Story = {
 	render: ( args ) => (
 		<EmptyState.Wrapper isCompact>
