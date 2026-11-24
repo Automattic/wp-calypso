@@ -45,6 +45,25 @@ describe( 'getRecommendedBlogGroups', () => {
 		expect( groups.map( ( group ) => group.key ) ).toEqual( [ 'food' ] );
 	} );
 
+	it( 'includes the API topic slugs alongside the original onboarding tags', () => {
+		mockLists.food = [ blog( 1 ) ];
+		mockLists.books = [ blog( 2 ) ];
+		mockLists[ 'social-media' ] = [ blog( 3 ) ];
+
+		const groups = getRecommendedBlogGroups( [ 'social-media', 'books', 'food' ] );
+
+		expect( groups.map( ( group ) => [ group.key, group.title ] ) ).toEqual( [
+			[ 'food', 'Food' ],
+			[ 'books', 'Books' ],
+			[ 'social-media', 'Social media' ],
+		] );
+		expect( groups.map( ( group ) => group.blogs ) ).toEqual( [
+			[ blog( 1 ) ],
+			[ blog( 2 ) ],
+			[ blog( 3 ) ],
+		] );
+	} );
+
 	it( 'falls back to Most subscribed when no followed tag has a list', () => {
 		mockLists[ 'most-subscribed' ] = [ blog( 3 ) ];
 

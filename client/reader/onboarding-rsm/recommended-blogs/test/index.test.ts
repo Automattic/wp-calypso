@@ -1,12 +1,47 @@
 import { getTopicGroups } from '../../interests-modal/topic-groups';
 import { RECOMMENDED_BLOG_LIST_KEYS, getRecommendedBlogs, recommendedBlogGetters } from '../index';
 
+const additionalTopicKeys = [
+	'books',
+	'family',
+	'writing',
+	'politics',
+	'blogging',
+	'fashion',
+	'health',
+	'humor',
+	'poetry',
+	'love',
+	'entertainment',
+	'education',
+	'inspiration',
+	'relationships',
+	'religion',
+	'sports',
+	'business',
+	'creativity',
+	'beauty',
+	'work',
+	'history',
+	'reading',
+	'social-media',
+	'cooking',
+	'internet',
+	'lifestyle',
+	'media',
+	'fitness',
+	'environment',
+] as const;
+
 describe( 'recommended blogs', () => {
-	it( 'covers the onboarding tags in order and the Most subscribed list', () => {
+	it( 'covers all 46 topic keys and the Most subscribed list in order', () => {
 		expect( RECOMMENDED_BLOG_LIST_KEYS ).toEqual( [
 			'most-subscribed',
 			...getTopicGroups().flatMap( ( group ) => group.tags ),
+			...additionalTopicKeys,
 		] );
+		expect( RECOMMENDED_BLOG_LIST_KEYS ).toHaveLength( 47 );
+		expect( new Set( RECOMMENDED_BLOG_LIST_KEYS ).size ).toBe( 47 );
 		expect( Object.keys( recommendedBlogGetters ) ).toEqual( RECOMMENDED_BLOG_LIST_KEYS );
 	} );
 
@@ -15,7 +50,10 @@ describe( 'recommended blogs', () => {
 		( key ) => {
 			const blogs = getRecommendedBlogs( key );
 
-			expect( [ 0, 12 ] ).toContain( blogs.length );
+			const allowedLengths = additionalTopicKeys.some( ( topic ) => topic === key )
+				? [ 0, 12 ]
+				: [ 12 ];
+			expect( allowedLengths ).toContain( blogs.length );
 			expect( new Set( blogs.map( ( blog ) => blog.feed_ID ) ).size ).toBe( blogs.length );
 
 			for ( const blog of blogs ) {
