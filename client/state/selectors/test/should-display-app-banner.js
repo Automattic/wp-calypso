@@ -1,17 +1,18 @@
 import { isMobile } from '@automattic/viewport';
+import { vi } from 'vitest';
 import { isE2ETest } from 'calypso/lib/e2e';
 import { isWpMobileApp, isWcMobileApp } from 'calypso/lib/mobile-app';
 import { shouldDisplayAppBanner } from 'calypso/state/selectors/should-display-app-banner';
 
-jest.mock( 'calypso/lib/e2e', () => ( {
-	isE2ETest: jest.fn( () => false ),
+vi.mock( 'calypso/lib/e2e', () => ( {
+	isE2ETest: vi.fn( () => false ),
 } ) );
-jest.mock( '@automattic/viewport', () => ( {
-	isMobile: jest.fn( () => true ),
+vi.mock( '@automattic/viewport', () => ( {
+	isMobile: vi.fn( () => true ),
 } ) );
-jest.mock( 'calypso/lib/mobile-app', () => ( {
-	isWpMobileApp: jest.fn( () => false ),
-	isWcMobileApp: jest.fn( () => false ),
+vi.mock( 'calypso/lib/mobile-app', () => ( {
+	isWpMobileApp: vi.fn( () => false ),
+	isWcMobileApp: vi.fn( () => false ),
 } ) );
 
 describe( 'shouldDisplayAppBanner()', () => {
