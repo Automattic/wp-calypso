@@ -41,10 +41,10 @@ export default function ResetPasswordModal( {
 	};
 
 	return (
-		<Modal title={ __( 'Restore database password' ) } onRequestClose={ onClose }>
+		<Modal title={ __( 'Reset database password' ) } onRequestClose={ onClose }>
 			<VStack spacing={ 6 }>
 				<Text>
-					{ __( 'Are you sure you want to restore the default password of your database?' ) }
+					{ __( 'Are you sure you want to reset your database password to its default value?' ) }
 				</Text>
 				<ButtonStack justify="flex-end">
 					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
@@ -56,7 +56,7 @@ export default function ResetPasswordModal( {
 						isBusy={ isRestoring }
 						onClick={ handleRestore }
 					>
-						{ __( 'Restore' ) }
+						{ __( 'Reset' ) }
 					</Button>
 				</ButtonStack>
 			</VStack>
