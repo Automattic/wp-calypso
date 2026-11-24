@@ -256,10 +256,6 @@ export function getNav2026Menus( {
 							url: localizeUrl( '//wordpress.com/plugins', locale, isLoggedIn, true ),
 						},
 						{
-							label: __( 'Patterns', __i18n_text_domain__ ),
-							url: localizeUrl( '//wordpress.com/patterns', locale, isLoggedIn, true ),
-						},
-						{
 							label: __( 'View all features', __i18n_text_domain__ ),
 							url: localizeUrl( '//wordpress.com/features/' ),
 							target: '_self',
