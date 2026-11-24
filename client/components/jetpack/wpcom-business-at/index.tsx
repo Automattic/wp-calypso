@@ -189,14 +189,17 @@ export default function WPCOMBusinessAT( {
 	const [ isRewindActivating, setIsRewindActivating ] = useState( false );
 
 	// The transferring flow starts the transfer and returns to the product page once the user can
-	// manage the transferred site. It only exists on WordPress.com, so Jetpack Cloud ends there too.
+	// manage the transferred site. It only exists on WordPress.com, so Jetpack Cloud links there and
+	// returns by site ID: the transfer can change the slug, and Cloud doesn't resolve the old one.
 	const dispatch = useDispatch();
 	const initiateAT = useCallback(
 		( { geo_affinity = '' }: { geo_affinity?: string } = {} ) => {
 			setShowDialog( false );
 			const params = new URLSearchParams( {
 				siteId: String( siteId ),
-				redirect_to: content.getProductUrl( siteSlug ),
+				redirect_to: isJetpackCloud()
+					? window.location.origin + content.getProductUrl( String( siteId ) )
+					: content.getProductUrl( siteSlug ),
 				initiate_transfer_context: 'jetpack_product_activation',
 				initiate_transfer_geo_affinity: geo_affinity,
 			} );
