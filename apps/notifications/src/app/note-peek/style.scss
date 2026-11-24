@@ -37,8 +37,8 @@
 // Glides to the next row rather than jumping to it. Only between rows: on opening, Base
 // UI places the card at the corner of the page until it's measured.
 .wpnc-peek__positioner.is-moving {
-	@media not ( prefers-reduced-motion ) {
-		transition: transform var( --wpds-motion-duration-md ) var( --wpds-motion-easing-expressive );
+	@media not (prefers-reduced-motion) {
+		transition: transform var(--wpds-motion-duration-md) var(--wpds-motion-easing-expressive);
 	}
 }
 
@@ -53,31 +53,38 @@
 	line-height: 20px;
 	overflow-wrap: anywhere;
 
-	:is( h1, h2, h3, h4, h5, h6 ) {
-		margin: 0;
+	// One size throughout, and one weight for anything bold.
+	* {
 		font-size: inherit;
-		font-weight: 600;
 	}
 
-	:is( p, ul, ol, blockquote, figure ) {
+	:is(h1, h2, h3, h4, h5, h6) {
+		margin: 0;
+	}
+
+	:is(h1, h2, h3, h4, h5, h6, strong, b, th) {
+		font-weight: 500;
+	}
+
+	:is(p, ul, ol, blockquote, figure) {
 		margin: 0;
 	}
 
 	// A little air between paragraphs, lists and quotes, none under a heading.
-	:is( p, ul, ol, blockquote ) + :is( p, ul, ol, blockquote ) {
+	:is(p, ul, ol, blockquote) + :is(p, ul, ol, blockquote) {
 		margin-block-start: 4px;
 	}
 
-	:is( ul, ol ) {
+	:is(ul, ol) {
 		padding-inline-start: 20px;
 	}
 
 	blockquote {
 		padding-inline-start: 8px;
-		box-shadow: inset 2px 0 0 var( --wp-components-color-gray-400, #c3c4c7 );
+		box-shadow: inset 2px 0 0 var(--wp-components-color-gray-400, #c3c4c7);
 	}
 
-	:is( img:not( .emoji ), figure, hr ) {
+	:is(img:not(.emoji), figure, hr) {
 		display: none;
 	}
 }
