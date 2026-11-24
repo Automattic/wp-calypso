@@ -7,22 +7,22 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
-import { render } from '../../../test-utils';
-import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../../../../../app/context';
+import { render } from '../../../../../../../test-utils';
+import { isDashboardBackport } from '../../../../../../../utils/is-dashboard-backport';
 import SiteVisibilitySettings from '../index';
 import type { Site, SiteSettings } from '@automattic/api-core';
 
-vi.mock( '../../../utils/is-dashboard-backport', async () => {
-	const actual = await vi.importActual< typeof import( '../../../utils/is-dashboard-backport' ) >(
-		'../../../utils/is-dashboard-backport'
-	);
+vi.mock( '../../../../../../../utils/is-dashboard-backport', async () => {
+	const actual = await vi.importActual<
+		typeof import( '../../../../../../../utils/is-dashboard-backport' )
+	>( '../../../../../../../utils/is-dashboard-backport' );
 	return { isDashboardBackport: vi.fn( actual.isDashboardBackport ) };
 } );
 
 const { isDashboardBackport: actualIsDashboardBackport } = await vi.importActual<
-	typeof import( '../../../utils/is-dashboard-backport' )
->( '../../../utils/is-dashboard-backport' );
+	typeof import( '../../../../../../../utils/is-dashboard-backport' )
+>( '../../../../../../../utils/is-dashboard-backport' );
 
 afterEach( () => {
 	vi.mocked( isDashboardBackport ).mockImplementation( actualIsDashboardBackport );

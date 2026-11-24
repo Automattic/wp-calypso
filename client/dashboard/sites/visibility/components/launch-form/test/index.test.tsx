@@ -3,10 +3,10 @@
  */
 import { screen } from '@testing-library/react';
 import nock from 'nock';
-import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
-import { render } from '../../../test-utils';
-import { LaunchAgencyDevelopmentSiteForm } from '../launch-form';
-import type { AgencySupports, AppConfig } from '../../../app/context';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../../../app/context';
+import { render } from '../../../../../test-utils';
+import { LaunchAgencyDevelopmentSiteForm } from '../index';
+import type { AgencySupports, AppConfig } from '../../../../../app/context';
 import type { Site } from '@automattic/api-core';
 
 const site = {

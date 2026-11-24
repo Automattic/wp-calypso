@@ -1787,7 +1787,7 @@ export const agencySiteSettingsSiteVisibilityRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-site-visibility' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-site-visibility' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )

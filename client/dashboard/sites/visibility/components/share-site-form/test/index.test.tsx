@@ -3,8 +3,8 @@
  */
 import { screen } from '@testing-library/react';
 import nock from 'nock';
-import { render } from '../../../test-utils';
-import { ShareSiteForm } from '../share-site-form';
+import { render } from '../../../../../test-utils';
+import { ShareSiteForm } from '../index';
 import type { Site } from '@automattic/api-core';
 
 const site = {

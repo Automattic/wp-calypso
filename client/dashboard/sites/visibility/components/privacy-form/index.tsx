@@ -6,20 +6,20 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useLayoutEffect, useMemo, useState } from 'react';
-import { useAppContext } from '../../app/context';
-import { NavigationBlocker } from '../../app/navigation-blocker';
-import { buildDashboardLink } from '../../app/routing';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
-import InlineSupportLink from '../../components/inline-support-link';
+import { useAppContext } from '../../../../app/context';
+import { NavigationBlocker } from '../../../../app/navigation-blocker';
+import { buildDashboardLink } from '../../../../app/routing';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Card, CardBody } from '../../../../components/card';
+import InlineSupportLink from '../../../../components/inline-support-link';
 import Notice, {
 	NoticeActionLinkButton,
 	RouterNoticeActionLinkButton,
-} from '../../components/notice';
-import { getAddSiteDomainUrl } from '../../utils/domain-url';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { ShareSiteForm } from './share-site-form';
+} from '../../../../components/notice';
+import { getAddSiteDomainUrl } from '../../../../utils/domain-url';
+import { isDashboardBackport } from '../../../../utils/is-dashboard-backport';
+import { ShareSiteForm } from '../share-site-form';
 import type { Site, SiteSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 

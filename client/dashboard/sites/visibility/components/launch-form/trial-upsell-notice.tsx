@@ -1,10 +1,10 @@
 import { DotcomPlans } from '@automattic/api-core';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import Notice from '../../components/notice';
-import UpsellCTAButton from '../../components/upsell-cta-button';
-import { wpcomLink } from '../../utils/link';
-import { isSitePlanLaunchable } from '../plans';
+import Notice from '../../../../components/notice';
+import UpsellCTAButton from '../../../../components/upsell-cta-button';
+import { wpcomLink } from '../../../../utils/link';
+import { isSitePlanLaunchable } from '../../../plans';
 import type { Site } from '@automattic/api-core';
 
 export default function TrialUpsellNotice( { site }: { site: Site } ) {

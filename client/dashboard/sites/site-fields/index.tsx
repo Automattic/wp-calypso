@@ -29,10 +29,10 @@ import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { getStorageUsagePercent } from '../../utils/site-storage';
-import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
+import { getVisibilityLabels } from '../visibility/utils';
 import {
 	PlanAwaitingCheckout,
 	PlanPreview,

@@ -29,7 +29,7 @@ const siteVisibilityRoute = createRoute( {
 	...appRouterSites.siteSettingsSiteVisibilityRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-site-visibility' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-visibility' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
