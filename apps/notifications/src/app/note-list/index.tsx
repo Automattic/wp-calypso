@@ -252,7 +252,7 @@ const NoteList = ( {
 		visibleNotes.find( ( { id } ) => id.toString() === noteId );
 
 	// A preview only fits beside the list, and only while no note is open there.
-	const { peek, dismiss, listProps } = useNotePeek( {
+	const peek = useNotePeek( {
 		isEnabled: isPeekEnabled && isPeekViewport && selectedNoteId === undefined,
 		getNoteId: ( row ) => {
 			const noteId = getRowNoteId( row );
@@ -262,7 +262,7 @@ const NoteList = ( {
 		onShow: ( noteId ) =>
 			recordTracksEvent( 'calypso_notification_peek', { note_type: findNote( noteId )?.type } ),
 	} );
-	const peekNote = findNote( peek?.noteId );
+	const peekNote = findNote( peek.noteId );
 
 	useNoteListFocusOnNoteClose( { noteListRef, notes, selectedNoteId } );
 	useNoteListNavigationKeyboardShortcuts( {
@@ -315,7 +315,7 @@ const NoteList = ( {
 				isArrowKeyNavigationRef.current = false;
 			} }
 			onFocus={ openFocusedNote }
-			{ ...listProps }
+			{ ...peek.listProps }
 		>
 			<SelectedNoteIdContext.Provider value={ selectedNoteId }>
 				<DataViews< Note >
@@ -362,9 +362,14 @@ const NoteList = ( {
 					) }
 				</DataViews>
 			</SelectedNoteIdContext.Provider>
-			{ peek && peekNote && (
+			{ peekNote && peek.anchor && (
 				// Inside the list, so leaving the list for the card doesn't count as leaving.
-				<NotePeek note={ peekNote } anchor={ peek.anchor } onClose={ dismiss } />
+				<NotePeek
+					note={ peekNote }
+					isOpen={ peek.isOpen }
+					anchor={ peek.anchor }
+					onClose={ peek.close }
+				/>
 			) }
 		</div>
 	);

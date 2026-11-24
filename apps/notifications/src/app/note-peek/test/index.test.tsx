@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { vi } from 'vitest';
@@ -118,6 +118,18 @@ describe( 'NotePeek', () => {
 		await hoverRow( user );
 		await screen.findByText( COMMENT );
 		await user.unhover( screen.getByText( 'Ben Quah commented' ) );
+
+		await waitFor( () => expect( screen.queryByText( COMMENT ) ).not.toBeInTheDocument() );
+	} );
+
+	it( 'closes the preview while the list scrolls', async () => {
+		const user = userEvent.setup();
+		const { container } = renderList();
+
+		await hoverRow( user );
+		await screen.findByText( COMMENT );
+		// User Event has no scrolling.
+		fireEvent.scroll( container.querySelector( '.dataviews-view-list' ) as Element );
 
 		await waitFor( () => expect( screen.queryByText( COMMENT ) ).not.toBeInTheDocument() );
 	} );

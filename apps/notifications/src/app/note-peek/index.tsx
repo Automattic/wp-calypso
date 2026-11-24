@@ -7,8 +7,9 @@ import { __ } from '@wordpress/i18n';
 import { Popover, VisuallyHidden } from '@wordpress/ui';
 import { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../context';
-import NoteIcon from '../note-icon';
 import { formatNoteTime } from '../note-simplified/format-note-time';
+import Author from '../note-simplified/parts/author';
+import SiteIdentity from '../note-simplified/parts/site-identity';
 import type { Note } from '../types';
 import type { PointerEvent } from 'react';
 
@@ -17,8 +18,6 @@ import './style.scss';
 const SHOW_DELAY = 300;
 // Long enough to cross the gap between two rows, or from a row onto the card.
 const HIDE_DELAY = 90;
-
-type Peek = { noteId: string; anchor: HTMLElement };
 
 /**
  * Shows a preview of a note's row after the pointer rests on it. Once the preview is
@@ -33,7 +32,9 @@ export function useNotePeek( {
 	getNoteId: ( row: Element ) => string | undefined;
 	onShow: ( noteId: string ) => void;
 } ) {
-	const [ peek, setPeek ] = useState< Peek | null >( null );
+	// The last note shown stays set after the card closes, so it can fade out.
+	const [ peek, setPeek ] = useState< { noteId: string; anchor: Element } >();
+	const [ isOpen, setIsOpen ] = useState( false );
 	const hoveredRowRef = useRef< Element | null >( null );
 	const showTimerRef = useRef< number >( undefined );
 	const hideTimerRef = useRef< number >( undefined );
@@ -49,36 +50,40 @@ export function useNotePeek( {
 		if ( ! isEnabled ) {
 			clearTimers();
 			hoveredRowRef.current = null;
-			setPeek( null );
+			setIsOpen( false );
 		}
 	}, [ isEnabled ] );
 
 	// Escape closes the preview before anything else, like the panel around it. The row
 	// stays hovered, so the preview doesn't come back until the pointer moves to another.
-	const isShown = peek !== null;
 	useEffect( () => {
-		if ( ! isShown ) {
+		if ( ! isOpen ) {
 			return;
 		}
 		const onKeyDown = ( event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
 				event.stopPropagation();
 				window.clearTimeout( hideTimerRef.current );
-				setPeek( null );
+				setIsOpen( false );
 			}
 		};
 		window.addEventListener( 'keydown', onKeyDown, true );
 		return () => window.removeEventListener( 'keydown', onKeyDown, true );
-	}, [ isShown ] );
+	}, [ isOpen ] );
+
+	const close = () => {
+		clearTimers();
+		hoveredRowRef.current = null;
+		setIsOpen( false );
+	};
 
 	const hide = () => {
 		hoveredRowRef.current = null;
-		window.clearTimeout( showTimerRef.current );
-		window.clearTimeout( hideTimerRef.current );
-		hideTimerRef.current = window.setTimeout( () => setPeek( null ), HIDE_DELAY );
+		clearTimers();
+		hideTimerRef.current = window.setTimeout( () => setIsOpen( false ), HIDE_DELAY );
 	};
 
-	const onPointerOver = ( event: PointerEvent< HTMLElement > ) => {
+	const onPointer = ( event: PointerEvent< HTMLElement > ) => {
 		if ( ! isEnabled || event.pointerType !== 'mouse' ) {
 			return;
 		}
@@ -89,9 +94,9 @@ export function useNotePeek( {
 		}
 		const row = ( event.target as Element )
 			.closest( '.dataviews-view-list__item-wrapper' )
-			?.querySelector< HTMLElement >( '.dataviews-view-list__item' );
-		const noteId = row && getNoteId( row );
-		if ( ! row || ! noteId ) {
+			?.querySelector( '.dataviews-view-list__item' );
+		const rowNoteId = row && getNoteId( row );
+		if ( ! row || ! rowNoteId ) {
 			hide();
 			return;
 		}
@@ -100,82 +105,94 @@ export function useNotePeek( {
 		}
 		hoveredRowRef.current = row;
 		clearTimers();
-		const show = () => setPeek( { noteId, anchor: row } );
-		if ( peek ) {
-			show();
-		} else {
-			showTimerRef.current = window.setTimeout( () => {
-				show();
-				onShow( noteId );
-			}, SHOW_DELAY );
+		if ( isOpen ) {
+			setPeek( { noteId: rowNoteId, anchor: row } );
+			return;
 		}
-	};
-
-	const dismiss = () => {
-		clearTimers();
-		hoveredRowRef.current = null;
-		setPeek( null );
+		showTimerRef.current = window.setTimeout( () => {
+			setPeek( { noteId: rowNoteId, anchor: row } );
+			setIsOpen( true );
+			onShow( rowNoteId );
+		}, SHOW_DELAY );
 	};
 
 	return {
-		peek,
-		dismiss,
-		listProps: { onPointerOver, onPointerLeave: hide, onPointerDown: dismiss },
+		noteId: peek?.noteId,
+		anchor: peek?.anchor,
+		isOpen,
+		close,
+		listProps: {
+			onPointerOver: onPointer,
+			// Also on move, for a pointer that settles on a row it was already over, after a scroll.
+			onPointerMove: onPointer,
+			onPointerLeave: hide,
+			onPointerDown: close,
+			// Rows pass under a still pointer while the list scrolls, so the preview waits
+			// for the pointer to rest again.
+			onScrollCapture: close,
+		},
 	};
 }
 
 /**
- * A preview of a note beside its row: where it happened, who, when, and what they said.
+ * A preview of a note beside its row, in the parts the note itself uses: the site and
+ * post, who and when, and what they said.
  */
 export default function NotePeek( {
 	note,
+	isOpen,
 	anchor,
 	onClose,
 }: {
 	note: Note;
-	anchor: HTMLElement;
+	isOpen: boolean;
+	anchor: Element;
 	onClose: () => void;
 } ) {
 	const { locale } = useAppContext();
 	const { site, post, actor } = note.meta ?? {};
 	// The comment or post itself, where the row shows a line or two of it.
-	const text =
+	const text = (
 		note.body.find( ( block ) => block.type === 'comment' || block.type === 'post' )?.text ??
-		note.meta?.parent_comment?.text;
+		note.meta?.parent_comment?.text
+	)
+		?.trim()
+		.replace( /\n\s*\n+/g, '\n' );
 
 	return (
-		<Popover.Root open onOpenChange={ ( open: boolean ) => ! open && onClose() }>
+		<Popover.Root open={ isOpen } onOpenChange={ ( open: boolean ) => ! open && onClose() }>
 			<Popover.Popup
 				className="wpnc-peek"
 				initialFocus={ false }
 				finalFocus={ false }
 				positioner={
-					<Popover.Positioner anchor={ anchor } side="left" align="start" sideOffset={ 12 } />
+					<Popover.Positioner
+						className="wpnc-peek__positioner"
+						anchor={ anchor }
+						side="left"
+						align="start"
+						sideOffset={ 12 }
+					/>
 				}
 			>
 				<VisuallyHidden render={ <Popover.Title /> }>
 					{ __( 'Notification preview' ) }
 				</VisuallyHidden>
 				<VStack spacing={ 3 }>
-					{ ( site || post ) && (
-						<VStack spacing={ 0 }>
-							{ site && (
-								<Text size={ 12 } lineHeight="16px" truncate>
-									{ site.name }
-								</Text>
-							) }
-							{ post && (
-								<Text weight={ 600 } lineHeight="20px" truncate>
-									{ post.title }
-								</Text>
-							) }
-						</VStack>
+					{ site ? (
+						<SiteIdentity site={ site } title={ post?.title } details={ post && site.name } />
+					) : (
+						post && (
+							<Text weight={ 600 } lineHeight="20px" truncate>
+								{ post.title }
+							</Text>
+						)
 					) }
 					{ actor && (
 						<HStack spacing={ 2 } justify="flex-start">
-							<NoteIcon icon={ actor.avatar } size={ 24 } />
-							<Text weight={ 600 } lineHeight="20px" truncate>
-								{ actor.name }
+							<Text weight={ 500 } lineHeight="20px" truncate>
+								{ /* The row's icon is this person, and already loaded. */ }
+								<Author avatar={ note.icon || actor.avatar }>{ actor.name }</Author>
 							</Text>
 							<Text className="wpnc-peek__time" size={ 12 } lineHeight="16px" variant="muted">
 								{ formatNoteTime( note.timestamp, locale ) }
@@ -183,8 +200,8 @@ export default function NotePeek( {
 						</HStack>
 					) }
 					{ text && (
-						<Text lineHeight="20px" numberOfLines={ 6 } truncate>
-							{ text.trim() }
+						<Text className="wpnc-peek__text" lineHeight="20px" numberOfLines={ 5 } truncate>
+							{ text }
 						</Text>
 					) }
 				</VStack>
