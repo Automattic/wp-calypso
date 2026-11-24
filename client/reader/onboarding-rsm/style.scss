@@ -46,7 +46,7 @@ $actions-height: 64px;
 
 // User-agent buttons default to `cursor: default`, which makes the modal's
 // header (Back / Close), footer (Do it later / Pick your topics / Continue /
-// Finish), and inline action buttons (See more topics, Load more
+// Finish), and inline action buttons (topic pills, Load more
 // recommendations, per-row Subscribe) feel non-interactive on hover. Restore
 // the pointer cursor for any enabled control inside the modal.
 .reader-onboarding-rsm-modal {

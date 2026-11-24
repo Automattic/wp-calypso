@@ -70,7 +70,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 	onPackSubscribed = () => {},
 } ) => {
 	const [ followedTags, setFollowedTags ] = useState< string[] >( [] );
-	const [ showAllTopics, setShowAllTopics ] = useState( false );
 	const hasSyncedFromServerRef = useRef( false );
 	const followedTagsRef = useRef< string[] >( [] );
 	const interestTopics = useReaderInterestTags( { enabled: true } ).slice( 0, MAX_INTEREST_TOPICS );
@@ -288,15 +287,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 		}
 	};
 
-	const handleToggleTopics = () => {
-		const next = ! showAllTopics;
-		setShowAllTopics( next );
-		recordTracksEvent(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }interests_modal_individual_topics_toggled`,
-			{ expanded: next }
-		);
-	};
-
 	return (
 		<>
 			{ promptVerification && <InterestsVerificationNudge /> }
@@ -316,7 +306,9 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 						</span>
 						<br className="interests-modal__subtitle-break" />{ ' ' }
 						<span>
-							{ __( 'Pick a pack that describes your interest, or switch to individual topics.' ) }
+							{ __(
+								'Pick a pack that describes your interest, or choose individual topics below.'
+							) }
 						</span>
 					</p>
 				</VStack>
@@ -341,19 +333,6 @@ const InterestsModal: React.FC< InterestsModalProps > = ( {
 				) }
 
 				{ interestTopics.length > 0 && (
-					<div className="interests-modal__topics-toggle-row">
-						<Button
-							variant="link"
-							onClick={ handleToggleTopics }
-							className="interests-modal__topics-toggle"
-							aria-expanded={ showAllTopics }
-						>
-							{ showAllTopics ? __( 'See less topics' ) : __( 'See more topics' ) }
-						</Button>
-					</div>
-				) }
-
-				{ showAllTopics && (
 					<div className="interests-modal__topics-pills" role="group" aria-label={ __( 'Topics' ) }>
 						{ interestTopics.map( ( topic ) => {
 							const checked = followedTags.includes( topic.tag );
