@@ -35,7 +35,7 @@ export interface SiteCommentLikeMutationParams extends CoreSiteCommentLikeMutati
 
 type SiteCommentsInfiniteQueryParams = Pick<
 	SitePostRepliesQueryParams,
-	'siteId' | 'postId' | 'status' | 'number'
+	'siteId' | 'postId' | 'status' | 'number' | 'order'
 >;
 
 export type SiteCommentsPageParam =
@@ -91,11 +91,19 @@ const commentCountAtDate = ( comments: SiteComment[] = [], date?: Date ): number
 	} ).length;
 };
 
+/**
+ * Pages through a post's comments newest first by default, with `before` cursors for earlier pages
+ * and `after` cursors for newer ones.
+ *
+ * Oldest first pages forward by offset instead: new comments only land past the end, and comments
+ * written into the cache by mutations never change how many pages are loaded.
+ */
 export const siteCommentsInfiniteQuery = ( {
 	siteId,
 	postId,
 	status,
 	number,
+	order = DEFAULT_ORDER,
 }: SiteCommentsInfiniteQueryParams ) =>
 	infiniteQueryOptions<
 		SitePostRepliesResponse,
@@ -104,14 +112,14 @@ export const siteCommentsInfiniteQuery = ( {
 		ReturnType< typeof siteCommentsInfiniteQueryKey >,
 		SiteCommentsPageParam
 	>( {
-		queryKey: siteCommentsInfiniteQueryKey( siteId, postId, status, number ),
+		queryKey: siteCommentsInfiniteQueryKey( siteId, postId, status, number, order ),
 		queryFn: ( { pageParam } ) =>
 			fetchSitePostReplies( {
 				siteId,
 				postId,
 				status,
 				number,
-				order: pageParam?.direction === 'after' ? 'ASC' : 'DESC',
+				order: order === 'ASC' || pageParam?.direction === 'after' ? 'ASC' : 'DESC',
 				before: pageParam?.before,
 				after: pageParam?.after,
 				offset: pageParam?.offset,
@@ -120,13 +128,21 @@ export const siteCommentsInfiniteQuery = ( {
 		// Most threads poll for newer comments, so a refocus or reopen doesn't refetch every loaded page.
 		staleTime: 60 * 1000,
 		refetchOnWindowFocus: false,
-		// With a `before` cursor, `found` counts the comments left before it, not the post's total.
-		getNextPageParam: ( lastPage ) => {
+		getNextPageParam: ( lastPage, allPages ) => {
 			const pageSize = number ?? DEFAULT_NUMBER;
-			if (
-				lastPage.comments.length < pageSize ||
-				( lastPage.found && lastPage.comments.length >= lastPage.found )
-			) {
+			if ( lastPage.comments.length < pageSize ) {
+				return undefined;
+			}
+
+			if ( order === 'ASC' ) {
+				const offset = allPages.length * pageSize;
+				return offset < ( allPages[ 0 ]?.found ?? 0 )
+					? { direction: 'after' as const, offset }
+					: undefined;
+			}
+
+			// With a `before` cursor, `found` counts the comments left before it, not the post's total.
+			if ( lastPage.found && lastPage.comments.length >= lastPage.found ) {
 				return undefined;
 			}
 
@@ -139,7 +155,7 @@ export const siteCommentsInfiniteQuery = ( {
 				: undefined;
 		},
 		getPreviousPageParam: ( firstPage, allPages ) => {
-			const newest = newestDate( firstPage.comments );
+			const newest = order === 'DESC' ? newestDate( firstPage.comments ) : undefined;
 			return newest
 				? {
 						direction: 'after' as const,
@@ -150,52 +166,6 @@ export const siteCommentsInfiniteQuery = ( {
 						),
 					}
 				: undefined;
-		},
-		enabled: Boolean( siteId && postId ),
-		meta: { persist: false },
-	} );
-
-export type SiteCommentsOldestFirstPageParam = { offset: number } | undefined;
-
-/**
- * Pages forward from a post's first comment.
- *
- * Pages are fetched by offset rather than date cursor: new comments only land past the end, and
- * comments written into the cache by mutations never change how many pages are loaded.
- */
-export const siteCommentsOldestFirstInfiniteQuery = ( {
-	siteId,
-	postId,
-	status,
-	number,
-}: SiteCommentsInfiniteQueryParams ) =>
-	infiniteQueryOptions<
-		SitePostRepliesResponse,
-		Error,
-		InfiniteData< SitePostRepliesResponse, SiteCommentsOldestFirstPageParam >,
-		ReturnType< typeof siteCommentsInfiniteQueryKey >,
-		SiteCommentsOldestFirstPageParam
-	>( {
-		queryKey: siteCommentsInfiniteQueryKey( siteId, postId, status, number, 'ASC' ),
-		queryFn: ( { pageParam } ) =>
-			fetchSitePostReplies( {
-				siteId,
-				postId,
-				status,
-				number,
-				order: 'ASC',
-				offset: pageParam?.offset,
-			} ),
-		initialPageParam: undefined,
-		staleTime: 60 * 1000,
-		refetchOnWindowFocus: false,
-		getNextPageParam: ( lastPage, allPages ) => {
-			const pageSize = number ?? DEFAULT_NUMBER;
-			const offset = allPages.length * pageSize;
-			if ( lastPage.comments.length < pageSize || offset >= ( allPages[ 0 ]?.found ?? 0 ) ) {
-				return undefined;
-			}
-			return { offset };
 		},
 		enabled: Boolean( siteId && postId ),
 		meta: { persist: false },

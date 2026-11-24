@@ -99,8 +99,6 @@ class PostCommentList extends Component {
 		showExpandWhenOnlyComments: false,
 	};
 
-	isOldestFirst = () => this.props.isOldestFirst && ! this.props.expandableView;
-
 	onSortOrderChange = ( sortOrder ) => {
 		this.props.setSortOrder( sortOrder );
 		this.props.recordReaderTracksEvent(
@@ -440,7 +438,7 @@ class PostCommentList extends Component {
 		return (
 			<>
 				<ol className="comments__list is-root">
-					{ ( this.isOldestFirst() ? commentIds : commentIds?.reverse() )?.map( ( commentId ) =>
+					{ ( this.props.isOldestFirst ? commentIds : commentIds?.reverse() )?.map( ( commentId ) =>
 						this.renderComment( commentId, commentsTreeToShow )
 					) }
 				</ol>
@@ -507,7 +505,7 @@ class PostCommentList extends Component {
 
 		let displayedComments = [];
 		if ( numberToTake ) {
-			displayedComments = this.isOldestFirst()
+			displayedComments = this.props.isOldestFirst
 				? commentIds.slice( 0, numberToTake )
 				: commentIds.slice( numberToTake * -1 );
 		}
@@ -538,7 +536,7 @@ class PostCommentList extends Component {
 		this.setState( { amountOfCommentsToTake } );
 		if ( direction === 'after' ) {
 			this.props.fetchLaterComments();
-		} else if ( direction === 'before' ) {
+		} else {
 			this.props.fetchEarlierComments();
 		}
 	};
@@ -677,11 +675,8 @@ class PostCommentList extends Component {
 		const showSortControl = ! expandableView && actualCommentsCount > 1;
 
 		// Each button loads toward its own end of the list, so the two swap with the sort order.
-		const [ topLoadMoreHandler, bottomLoadMoreHandler ] = this.isOldestFirst()
-			? [
-					this.viewEarlierCommentsHandler,
-					() => this.loadMoreCommentsHandler( haveLaterCommentsToFetch ? 'after' : null ),
-				]
+		const [ topLoadMoreHandler, bottomLoadMoreHandler ] = this.props.isOldestFirst
+			? [ this.viewEarlierCommentsHandler, this.viewLaterCommentsHandler ]
 			: [ this.viewLaterCommentsHandler, this.viewEarlierCommentsHandler ];
 
 		return (

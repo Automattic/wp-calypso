@@ -2,10 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	buildCommentsTreeForDisplay,
 	mergeCommentLists,
-	mergeComments,
 	useComment,
 	useComments,
-	useOldestComments,
 } from 'calypso/reader/data/comments';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -28,13 +26,6 @@ const ensureInitialCommentVisible = ( commentsTree, initialComment ) => {
 		children: [ ...commentsTree.children, initialComment.ID ],
 	};
 };
-
-const latestTimestamp = ( comments ) =>
-	Math.max(
-		...comments
-			.filter( ( comment ) => ! comment.isPlaceholder )
-			.map( ( comment ) => Date.parse( comment.date ?? '' ) || 0 )
-	);
 
 const omitCommentsFromTree = ( commentsTree, commentIds ) => {
 	if ( ! commentIds.length ) {
@@ -83,10 +74,11 @@ export const usePostCommentsData = ( props ) => {
 		comments: loadedComments,
 		isLoading,
 		isFetched,
-		hasNextPage: hasEarlierPages,
-		commentsFetchingStatus: newestFirstFetchingStatus,
+		commentsFetchingStatus,
+		isOldestFirst,
 		fetchEarlierComments,
 		fetchLaterComments,
+		fetchNewestComments,
 		data,
 	} = useComments( {
 		siteId,
@@ -95,49 +87,17 @@ export const usePostCommentsData = ( props ) => {
 		displayStatus: props.commentsFilterDisplay ?? props.commentsFilter,
 		commentTotal: props.commentCount,
 		authorId: currentUserId,
+		oldestFirst: sortOrder === 'oldest',
 	} );
 	const { deferNewComments } = props;
 
-	// A thread that's all loaded sorts in place. A longer one loads its start in one request instead
-	// of paging back through every newer comment.
-	const needsOldestQuery = sortOrder === 'oldest' && Boolean( hasEarlierPages );
-	const oldest = useOldestComments(
-		{ siteId, postId, status: props.commentsFilter },
-		{ enabled: needsOldestQuery }
-	);
-	const oldestFirstThread = useMemo( () => {
-		if ( ! needsOldestQuery || ! oldest.data ) {
-			return null;
-		}
-		const frontier = latestTimestamp( oldest.comments );
-		const merged = mergeComments( [ oldest.comments, loadedComments ] );
-		const reachesNewest =
-			! oldest.hasNextPage || Date.parse( loadedComments[ 0 ]?.date ?? '' ) <= frontier;
-		// Comments past the frontier would leave a gap, so they wait until the pages meet.
-		return {
-			comments: reachesNewest
-				? merged
-				: merged.filter(
-						( comment ) => ! comment.isPlaceholder && Date.parse( comment.date ?? '' ) <= frontier
-					),
-			reachesNewest,
-		};
-	}, [ loadedComments, needsOldestQuery, oldest.comments, oldest.data, oldest.hasNextPage ] );
-	const commentsFetchingStatus = oldestFirstThread
-		? {
-				...newestFirstFetchingStatus,
-				haveEarlierCommentsToFetch: false,
-				haveLaterCommentsToFetch: ! oldestFirstThread.reachesNewest && ! oldest.isFetchingNextPage,
-			}
-		: newestFirstFetchingStatus;
-
 	const pollForNewComments = useCallback( async () => {
 		if ( ! deferNewComments ) {
-			return fetchLaterComments();
+			return fetchNewestComments();
 		}
 
 		const knownIds = new Set( loadedComments.map( ( comment ) => comment.ID ) );
-		const { data: polled } = await fetchLaterComments();
+		const { data: polled } = await fetchNewestComments();
 		const newIds = ( polled?.pages ?? [] )
 			.flatMap( ( page ) => page.comments )
 			.filter(
@@ -149,7 +109,7 @@ export const usePostCommentsData = ( props ) => {
 			.map( ( comment ) => comment.ID );
 
 		setPendingCommentIds( ( current ) => [ ...new Set( [ ...current, ...newIds ] ) ] );
-	}, [ currentUserId, deferNewComments, fetchLaterComments, loadedComments ] );
+	}, [ currentUserId, deferNewComments, fetchNewestComments, loadedComments ] );
 
 	const initialCommentFromList = props.startingCommentId
 		? loadedComments.find(
@@ -175,8 +135,8 @@ export const usePostCommentsData = ( props ) => {
 		[ postId, startingComment.data ]
 	);
 	const commentsForDisplay = useMemo(
-		() => mergeCommentLists( oldestFirstThread?.comments ?? loadedComments, additionalComments ),
-		[ additionalComments, loadedComments, oldestFirstThread ]
+		() => mergeCommentLists( loadedComments, additionalComments ),
+		[ additionalComments, loadedComments ]
 	);
 	const commentsTree = useMemo(
 		() =>
@@ -233,11 +193,10 @@ export const usePostCommentsData = ( props ) => {
 		activeReplyCommentId,
 		isExpanded,
 		fetchEarlierComments,
-		fetchLaterComments: oldestFirstThread ? oldest.fetchNextPage : fetchLaterComments,
+		fetchLaterComments,
 		pollForNewComments,
 		sortOrder,
-		// Until the first comments arrive, the list keeps its order rather than flash the wrong window.
-		isOldestFirst: sortOrder === 'oldest' && ( ! needsOldestQuery || Boolean( oldestFirstThread ) ),
+		isOldestFirst,
 		setSortOrder,
 		pendingCommentIds: reachablePendingIds,
 		revealPendingComments: () => setPendingCommentIds( [] ),

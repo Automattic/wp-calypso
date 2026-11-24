@@ -7,6 +7,7 @@ type UsePostCommentsQueryParams = {
 	postId?: number;
 	status?: string;
 	number?: number;
+	order?: 'ASC' | 'DESC';
 };
 
 export type UseCommentsOptions = {
@@ -17,7 +18,7 @@ export type UseCommentsOptions = {
 };
 
 export const usePostCommentsQuery = (
-	{ siteId, postId, status = 'approved', number }: UsePostCommentsQueryParams,
+	{ siteId, postId, status = 'approved', number, order }: UsePostCommentsQueryParams,
 	{ enabled = true, retry = false, ...options }: UseCommentsOptions = {}
 ) => {
 	const queryClient = useQueryClient();
@@ -26,6 +27,7 @@ export const usePostCommentsQuery = (
 		postId: postId ?? 0,
 		status,
 		number,
+		order,
 	} );
 
 	return useInfiniteQuery( {

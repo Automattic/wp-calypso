@@ -4,7 +4,6 @@ import {
 	createSitePostCommentMutation,
 	likeSiteCommentMutation,
 	siteCommentsInfiniteQuery,
-	siteCommentsOldestFirstInfiniteQuery,
 } from '../site-comments';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -23,26 +22,6 @@ describe( 'site comments queries', () => {
 			{ number: 50, order: 'DESC' },
 		] );
 		expect( query.meta ).toEqual( { persist: false } );
-	} );
-
-	it( 'keeps the infinite comments key tied to the fixed newest-first order', () => {
-		const params = {
-			siteId: 123,
-			postId: 456,
-			status: 'approved',
-			order: 'ASC',
-		};
-		const query = siteCommentsInfiniteQuery( params );
-
-		expect( query.queryKey ).toEqual( [
-			'site',
-			'comments',
-			'infinite',
-			123,
-			456,
-			'approved',
-			{ number: 50, order: 'DESC' },
-		] );
 	} );
 
 	it( 'uses before cursor from the oldest comment for earlier pages', () => {
@@ -147,46 +126,38 @@ describe( 'site comments queries', () => {
 } );
 
 describe( 'oldest-first site comments query', () => {
-	const query = siteCommentsOldestFirstInfiniteQuery( {
-		siteId: 123,
-		postId: 456,
-		status: 'approved',
-		number: 2,
-	} );
-	const page = ( ids: number[], found = 5 ) => ( {
-		comments: ids.map( ( ID ) => ( { ID, content: `${ ID }`, date: '2026-05-01T00:00:00.000Z' } ) ),
-		found,
-	} );
-
-	it( 'shares the comments prefix so cache writes reach it', () => {
-		expect( query.queryKey ).toEqual( [
-			'site',
-			'comments',
-			'infinite',
-			123,
-			456,
-			'approved',
-			{ number: 2, order: 'ASC' },
-		] );
-	} );
-
-	it( 'pages forward by how many pages are loaded', () => {
-		const first = page( [ 1, 2 ] );
-		const second = page( [ 3, 4 ] );
-
-		expect( query.getNextPageParam?.( second, [ first, second ], undefined, [] ) ).toEqual( {
-			offset: 4,
+	it( 'pages forward by loaded pages until every comment is covered', () => {
+		const query = siteCommentsInfiniteQuery( {
+			siteId: 123,
+			postId: 456,
+			status: 'approved',
+			number: 2,
+			order: 'ASC',
 		} );
-	} );
-
-	it( 'stops at a short page or once every comment is covered', () => {
-		const first = page( [ 1, 2 ] );
+		const page = ( ids: number[], found: number ) => ( {
+			comments: ids.map( ( ID ) => ( {
+				ID,
+				content: `${ ID }`,
+				date: '2026-05-01T00:00:00.000Z',
+			} ) ),
+			found,
+		} );
 
 		expect(
-			query.getNextPageParam?.( page( [ 3 ] ), [ first, page( [ 3 ] ) ], undefined, [] )
-		).toBeUndefined();
+			query.getNextPageParam?.(
+				page( [ 3, 4 ], 5 ),
+				[ page( [ 1, 2 ], 5 ), page( [ 3, 4 ], 5 ) ],
+				undefined,
+				[]
+			)
+		).toEqual( { direction: 'after', offset: 4 } );
 		expect(
-			query.getNextPageParam?.( page( [ 1, 2 ], 2 ), [ page( [ 1, 2 ], 2 ) ], undefined, [] )
+			query.getNextPageParam?.(
+				page( [ 3, 4 ], 4 ),
+				[ page( [ 1, 2 ], 4 ), page( [ 3, 4 ], 4 ) ],
+				undefined,
+				[]
+			)
 		).toBeUndefined();
 	} );
 } );
