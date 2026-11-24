@@ -7,7 +7,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { render } from '../../../test-utils';
+import { render } from '../../../../../../../test-utils';
 import PHPVersionSettings from '../index';
 import type { Site } from '@automattic/api-core';
 

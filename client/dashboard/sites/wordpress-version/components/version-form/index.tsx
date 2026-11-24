@@ -8,12 +8,12 @@ import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { NavigationBlocker } from '../../app/navigation-blocker';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
-import { formatWordPressVersion } from '../../utils/wp-version';
-import type { VersionSwitchState } from './use-version-switch';
+import { NavigationBlocker } from '../../../../app/navigation-blocker';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Card, CardBody } from '../../../../components/card';
+import { formatWordPressVersion } from '../../utils';
+import type { VersionSwitchState } from '../../hooks/use-version-switch';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 

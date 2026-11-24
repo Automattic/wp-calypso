@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { canSwitchWordPressVersion } from '../sites/features';
+import { canSwitchWordPressVersion } from '../features';
 import type { Site } from '@automattic/api-core';
 
 function getWordPressVersionTagName( versionTag: string ) {

@@ -2,9 +2,9 @@ import { siteWordPressVersionQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { wordpress } from '@wordpress/icons';
-import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { getFormattedWordPressVersion } from '../../utils/wp-version';
-import { canSwitchWordPressVersion } from '../features';
+import RouterLinkSummaryButton from '../../../../components/router-link-summary-button';
+import { canSwitchWordPressVersion } from '../../../features';
+import { getFormattedWordPressVersion } from '../../utils';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 

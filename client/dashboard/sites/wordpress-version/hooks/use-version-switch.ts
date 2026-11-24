@@ -12,9 +12,9 @@ import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { usePrevious } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useReducer } from 'react';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { useBackupState } from '../backups/use-backup-state';
-import type { BackupState } from '../backups/use-backup-state';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
+import { useBackupState } from '../../backups/use-backup-state';
+import type { BackupState } from '../../backups/use-backup-state';
 import type { Site } from '@automattic/api-core';
 
 export type Phase =

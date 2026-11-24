@@ -12,19 +12,19 @@ import { getSiteBlockingStatus } from '../../utils/site-status';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getSiteVisibility, getVisibilityLabels } from '../../utils/site-visibility';
-import { getFormattedWordPressVersion } from '../../utils/wp-version';
+import { PHPVersion } from '../php-version/components/php-version-field';
 import {
 	AsyncEngagementStat,
 	LastBackup,
 	MediaStorage,
 	Name,
-	PHPVersion,
 	Plan,
 	Preview,
 	URL,
 	Uptime,
 	Visibility,
 } from '../site-fields';
+import { getFormattedWordPressVersion } from '../wordpress-version/utils';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 
