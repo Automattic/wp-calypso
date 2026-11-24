@@ -1602,14 +1602,6 @@ __metadata:
     vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
     wpcom-proxy-request: "workspace:^"
-  peerDependencies:
-    "@automattic/calypso-router": "workspace:^"
-    "@wordpress/data": ^11.2.0
-    "@wordpress/element": ^10.2.0
-    postcss: "*"
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    redux: ^5.0.1
   languageName: unknown
   linkType: soft
 
@@ -2586,10 +2578,6 @@ __metadata:
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.0"
     webpack: "npm:^5.111.1"
-  peerDependencies:
-    postcss: "*"
-    react: ^18.2.0
-    react-dom: ^18.2.0
   languageName: unknown
   linkType: soft
 

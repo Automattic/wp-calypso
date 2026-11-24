@@ -61,6 +61,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/wp-oxc-makepot": "workspace:^",
 		"@types/react": "^19.3.0",
+		"@wordpress/data": "^11.2.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^7.2.0",
 		"@wordpress/element": "^10.2.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^4.2.0",
@@ -73,15 +74,6 @@
 		"vite": "^8.3.8",
 		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
-	},
-	"peerDependencies": {
-		"@automattic/calypso-router": "workspace:^",
-		"@wordpress/data": "^11.2.0",
-		"@wordpress/element": "^10.2.0",
-		"postcss": "*",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
-		"redux": "^5.0.1"
 	},
 	"private": true
 }

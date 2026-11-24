@@ -39,10 +39,5 @@
 		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	},
-	"peerDependencies": {
-		"postcss": "*",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
-	},
 	"private": true
 }
