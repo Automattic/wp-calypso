@@ -76,6 +76,7 @@ export const usePostCommentsData = ( props ) => {
 		isFetched,
 		commentsFetchingStatus,
 		isOldestFirst,
+		isOldestFirstError,
 		fetchEarlierComments,
 		fetchLaterComments,
 		fetchNewestComments,
@@ -90,6 +91,12 @@ export const usePostCommentsData = ( props ) => {
 		oldestFirst: sortOrder === 'oldest',
 	} );
 	const { deferNewComments } = props;
+
+	useEffect( () => {
+		if ( isOldestFirstError ) {
+			setSortOrder( 'newest' );
+		}
+	}, [ isOldestFirstError ] );
 
 	const pollForNewComments = useCallback( async () => {
 		if ( ! deferNewComments ) {
@@ -138,8 +145,9 @@ export const usePostCommentsData = ( props ) => {
 		[ postId, startingComment.data ]
 	);
 	const commentsForDisplay = useMemo(
-		() => mergeCommentLists( loadedComments, additionalComments ),
-		[ additionalComments, loadedComments ]
+		// Oldest first shows the thread from its start, so a comment fetched on its own can't be placed.
+		() => mergeCommentLists( loadedComments, isOldestFirst ? [] : additionalComments ),
+		[ additionalComments, isOldestFirst, loadedComments ]
 	);
 	const commentsTree = useMemo(
 		() =>

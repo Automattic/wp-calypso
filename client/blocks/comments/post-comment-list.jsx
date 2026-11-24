@@ -156,6 +156,7 @@ class PostCommentList extends Component {
 		// Once per comment, since one that never loads (held for moderation, deleted) would refetch on every update.
 		if (
 			latestCommentId &&
+			! this.props.isOldestFirst &&
 			commentsFetchingStatus.hasReceivedBefore &&
 			! loadedComments?.some( ( comment ) => comment.ID === latestCommentId ) &&
 			this.requestedLatestCommentId !== latestCommentId
@@ -674,11 +675,6 @@ class PostCommentList extends Component {
 
 		const showSortControl = ! expandableView && actualCommentsCount > 1;
 
-		// Each button loads toward its own end of the list, so the two swap with the sort order.
-		const [ topLoadMoreHandler, bottomLoadMoreHandler ] = this.props.isOldestFirst
-			? [ this.viewEarlierCommentsHandler, this.viewLaterCommentsHandler ]
-			: [ this.viewLaterCommentsHandler, this.viewEarlierCommentsHandler ];
-
 		return (
 			<div
 				className={ clsx( 'comments__comment-list', {
@@ -770,8 +766,8 @@ class PostCommentList extends Component {
 						</SegmentedControl.Item>
 					</SegmentedControl>
 				) }
-				{ showViewMoreComments && this.props.startingCommentId && (
-					<button className="comments__view-more" onClick={ topLoadMoreHandler }>
+				{ showViewMoreComments && this.props.startingCommentId && ! this.props.isOldestFirst && (
+					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
 						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {
 								shown: displayedCommentsCount,
@@ -790,7 +786,11 @@ class PostCommentList extends Component {
 				{ showViewMoreComments && (
 					<button
 						className="comments__view-more comments__view-more-last"
-						onClick={ bottomLoadMoreHandler }
+						onClick={
+							this.props.isOldestFirst
+								? this.viewLaterCommentsHandler
+								: this.viewEarlierCommentsHandler
+						}
 					>
 						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {

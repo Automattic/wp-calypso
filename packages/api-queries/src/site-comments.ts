@@ -93,10 +93,7 @@ const commentCountAtDate = ( comments: SiteComment[] = [], date?: Date ): number
 
 /**
  * Pages through a post's comments newest first by default, with `before` cursors for earlier pages
- * and `after` cursors for newer ones.
- *
- * Oldest first pages forward by offset instead: new comments only land past the end, and comments
- * written into the cache by mutations never change how many pages are loaded.
+ * and `after` cursors for newer ones. Oldest first pages forward with `after` cursors.
  */
 export const siteCommentsInfiniteQuery = ( {
 	siteId,
@@ -128,23 +125,32 @@ export const siteCommentsInfiniteQuery = ( {
 		// Most threads poll for newer comments, so a refocus or reopen doesn't refetch every loaded page.
 		staleTime: 60 * 1000,
 		refetchOnWindowFocus: false,
-		getNextPageParam: ( lastPage, allPages ) => {
+		getNextPageParam: ( lastPage, allPages, lastPageParam ) => {
+			// Mutations add and remove comments in cached pages, so stop on what the server reported.
+			// `found` counts every comment matching the page's cursor, including those its offset skipped.
 			const pageSize = number ?? DEFAULT_NUMBER;
-			// Mutations add and remove comments in cached pages, so a page's length can't mark the end.
+			const isLastPage =
+				lastPage.found === undefined
+					? lastPage.comments.length < pageSize
+					: lastPage.found - ( lastPageParam?.offset ?? 0 ) <= pageSize;
+			if ( isLastPage ) {
+				return undefined;
+			}
+
 			if ( order === 'ASC' ) {
-				const offset = allPages.length * pageSize;
-				return offset < ( allPages[ 0 ]?.found ?? 0 )
-					? { direction: 'after' as const, offset }
+				// Cache writes go to the front of a page, so the last comment is the newest one fetched.
+				const lastDate = lastPage.comments.at( -1 )?.date;
+				const after = lastDate ? new Date( lastDate ) : undefined;
+				return after
+					? {
+							direction: 'after' as const,
+							after: after.toISOString(),
+							offset: commentCountAtDate(
+								allPages.flatMap( ( page ) => page.comments ),
+								after
+							),
+						}
 					: undefined;
-			}
-
-			if ( lastPage.comments.length < pageSize ) {
-				return undefined;
-			}
-
-			// With a `before` cursor, `found` counts the comments left before it, not the post's total.
-			if ( lastPage.found && lastPage.comments.length >= lastPage.found ) {
-				return undefined;
 			}
 
 			const oldest = oldestDate( lastPage.comments );

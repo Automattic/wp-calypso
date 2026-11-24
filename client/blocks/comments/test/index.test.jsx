@@ -346,6 +346,24 @@ describe( 'PostComments', () => {
 		expect( oldestRequest.isDone() ).toBe( true );
 	} );
 
+	it( 'starts an anchored thread at its first comment with one Load more below', async () => {
+		const user = userEvent.setup();
+		mockLongerThread();
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/comments/999' )
+			.query( true )
+			.reply( 200, makeComment( 999, '2026-07-01T00:00:00.000Z' ) );
+
+		renderComments( { startingCommentId: 999, commentCount: 120 } );
+
+		await waitFor( () => expect( renderedIds() ).toContain( '999' ) );
+		await user.selectOptions( screen.getByRole( 'combobox', { name: 'Sort by' } ), 'oldest' );
+
+		await waitFor( () => expect( renderedIds()[ 0 ] ).toBe( '1' ) );
+		expect( renderedIds() ).not.toContain( '999' );
+		expect( screen.getAllByRole( 'button', { name: /Load more comments/ } ) ).toHaveLength( 1 );
+	} );
+
 	it( 'does not paginate while waiting for a starting comment outside the initial comments page', async () => {
 		const initialComments = Array.from( { length: 50 }, ( _, index ) => ( {
 			ID: index + 1,

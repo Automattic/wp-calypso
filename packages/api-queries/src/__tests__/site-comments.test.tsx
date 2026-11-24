@@ -126,7 +126,7 @@ describe( 'site comments queries', () => {
 } );
 
 describe( 'oldest-first site comments query', () => {
-	it( 'pages forward by loaded pages until every comment is covered', () => {
+	it( 'pages forward after the newest comment fetched until the server has no more', () => {
 		const query = siteCommentsInfiniteQuery( {
 			siteId: 123,
 			postId: 456,
@@ -134,30 +134,28 @@ describe( 'oldest-first site comments query', () => {
 			number: 2,
 			order: 'ASC',
 		} );
-		const page = ( ids: number[], found: number ) => ( {
-			comments: ids.map( ( ID ) => ( {
-				ID,
-				content: `${ ID }`,
-				date: '2026-05-01T00:00:00.000Z',
-			} ) ),
-			found,
+		const comment = ( ID: number, day: number ) => ( {
+			ID,
+			content: `${ ID }`,
+			date: `2026-05-0${ day }T00:00:00.000Z`,
 		} );
+		// A comment posted from this view is cached at the front of the page.
+		const firstPage = { comments: [ comment( 9, 9 ), comment( 1, 1 ), comment( 2, 2 ) ], found: 5 };
+		const lastPage = { comments: [ comment( 3, 3 ), comment( 4, 4 ) ], found: 3 };
+		const afterSecond = {
+			direction: 'after' as const,
+			after: '2026-05-02T00:00:00.000Z',
+			offset: 1,
+		};
 
 		expect(
-			query.getNextPageParam?.(
-				page( [ 3, 4 ], 5 ),
-				[ page( [ 1, 2 ], 5 ), page( [ 3, 4 ], 5 ) ],
-				undefined,
-				[]
-			)
-		).toEqual( { direction: 'after', offset: 4 } );
+			query.getNextPageParam?.( firstPage, [ firstPage ], undefined, [ undefined ] )
+		).toEqual( afterSecond );
 		expect(
-			query.getNextPageParam?.(
-				page( [ 3, 4 ], 4 ),
-				[ page( [ 1, 2 ], 4 ), page( [ 3, 4 ], 4 ) ],
+			query.getNextPageParam?.( lastPage, [ firstPage, lastPage ], afterSecond, [
 				undefined,
-				[]
-			)
+				afterSecond,
+			] )
 		).toBeUndefined();
 	} );
 } );
