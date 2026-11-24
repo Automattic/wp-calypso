@@ -147,6 +147,28 @@ describe( '<Notifications> with the inbox', () => {
 		expect( panel ).toBeVisible();
 	} );
 
+	test( 'keeps the panel open over the page when a press in it is released over the page', async () => {
+		const user = userEvent.setup();
+		render(
+			<>
+				<p>Comment text</p>
+				<Notifications isInboxShown onOpenInbox={ () => {} } />
+			</>
+		);
+
+		await openPanel( user );
+		const panel = screen.getByRole( 'region', { name: 'Notifications panel' } );
+		await waitFor( () => expect( panel ).toBeVisible() );
+		// The click lands on an element that holds both, like selecting text past the panel's edge.
+		await user.pointer( [
+			{ keys: '[MouseLeft>]', target: screen.getByRole( 'button', { name: 'Panel note' } ) },
+			{ target: screen.getByText( 'Comment text' ) },
+			{ keys: '[/MouseLeft]' },
+		] );
+
+		expect( panel ).toBeVisible();
+	} );
+
 	test( 'leaves the panel open on other pages after a click in the page', async () => {
 		const user = userEvent.setup();
 		render(

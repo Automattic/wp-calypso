@@ -112,21 +112,35 @@ export default function Notifications( {
 		if ( ! isOpen || ! isInboxShown ) {
 			return;
 		}
-		const closeOnPage = ( { target }: Event ) => {
-			if (
-				target instanceof Element &&
-				! target.closest(
-					'.components-popover, .components-modal__screen-overlay, [role="dialog"], #wpcom-omnibar'
-				)
-			) {
+		const isOnPage = ( target: EventTarget | null ) =>
+			target instanceof Element &&
+			! target.closest(
+				'.components-popover, .components-modal__screen-overlay, [role="dialog"], #wpcom-omnibar'
+			);
+		// A press that starts in the panel and ends over the page, like selecting a note's text past the
+		// panel's edge, fires its click on an element that holds both, which looks like the page.
+		let isPressOnPage = false;
+		const rememberPress = ( { target }: PointerEvent ) => {
+			isPressOnPage = isOnPage( target );
+		};
+		const closeOnClick = ( event: MouseEvent ) => {
+			// A click from the keyboard has no press before it.
+			if ( isOnPage( event.target ) && ( isPressOnPage || event.detail === 0 ) ) {
 				setIsOpen( false );
 			}
 		};
-		document.addEventListener( 'click', closeOnPage, true );
-		document.addEventListener( 'focusin', closeOnPage );
+		const closeOnFocus = ( { target }: FocusEvent ) => {
+			if ( isOnPage( target ) ) {
+				setIsOpen( false );
+			}
+		};
+		document.addEventListener( 'pointerdown', rememberPress, true );
+		document.addEventListener( 'click', closeOnClick, true );
+		document.addEventListener( 'focusin', closeOnFocus );
 		return () => {
-			document.removeEventListener( 'click', closeOnPage, true );
-			document.removeEventListener( 'focusin', closeOnPage );
+			document.removeEventListener( 'pointerdown', rememberPress, true );
+			document.removeEventListener( 'click', closeOnClick, true );
+			document.removeEventListener( 'focusin', closeOnFocus );
 		};
 	}, [ isOpen, isInboxShown ] );
 
