@@ -606,6 +606,30 @@ describe( 'create-site', () => {
 			expect( transferDomainToSite ).toHaveBeenCalledTimes( 1 );
 		} );
 
+		// The first run moved the domain off the site the domain search recorded.
+		it( 'moves the domain from the first site when the retry creates a new site', async () => {
+			mockPlanCartItem = null;
+			mockSiteUrl = '';
+			const newDomain = { product_slug: 'domain_reg', meta: 'new-domain.com' };
+			mockDomainCartItems = [ registeredMove, newDomain ];
+			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
+			await expect( runStep() ).rejects.toThrow( 'cart rejected' );
+
+			( createSite as jest.Mock ).mockResolvedValueOnce( {
+				siteId: 222,
+				siteSlug: 'my-site.wordpress.com',
+				domainItem: undefined,
+			} );
+			mockSiteUrl = 'my-site.wordpress.com';
+			pendingAction = undefined;
+			await expect( runStep() ).resolves.toMatchObject( { siteId: 222 } );
+
+			expect( ( transferDomainToSite as jest.Mock ).mock.calls ).toEqual( [
+				[ 'owned-domain.com', 555, 111 ],
+				[ 'owned-domain.com', 111, 222 ],
+			] );
+		} );
+
 		it( 'adopts the recorded site when a named request is retried', async () => {
 			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'cart rejected' ) );
 

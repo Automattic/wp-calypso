@@ -172,8 +172,10 @@ function runOnce< T >( requestedName: string, run: () => Promise< T > ): Promise
 // apply at creation. So only a run with the same site choices can use the site. A run in another
 // flow of the same tab, or a retry with a plan that needs another intent, creates its own site.
 //
-// `movedDomains` lists the Free plan domain moves that worked on the site. A retry skips them,
-// because a second move of a domain that is already on the site fails.
+// `movedDomains` maps each Free plan domain that a run moved to the site it moved it to. It
+// covers every earlier run, not only the run on this site. A retry skips a domain that is already
+// on its site, because a second move fails. A retry on a new site moves the domain from the site an
+// earlier run moved it to, because the domain is no longer on the site the domain search recorded.
 //
 // `cartFailedOnReuse` is true after the cart failed on a run that reused the site. The site can be
 // the reason the cart fails, so the record no longer gives the site to a retry. The record stays,
@@ -184,7 +186,7 @@ let siteAfterCartFailure:
 			siteId: number;
 			siteSlug: string;
 			siteChoices: string;
-			movedDomains: string[];
+			movedDomains: Record< string, number >;
 			cartFailedOnReuse: boolean;
 	  }
 	| undefined;
@@ -206,22 +208,27 @@ function getMoveSourceSiteId( item: MinimalRequestCartProduct ): number | undefi
  * checkout only adds a step. A failed move does not stop the signup: the site works without the
  * domain, and the user can move it later from domain management.
  *
- * @returns The domain names of the moves that worked.
+ * @returns The moves that worked, as a map from the domain name to the new site ID.
  */
 async function moveDomainsToSite(
 	domainMoves: MinimalRequestCartProduct[],
 	siteId: number,
-	flow: string
+	flow: string,
+	earlierMoves: Record< string, number > = {}
 ) {
-	const movedDomains: string[] = [];
+	const movedDomains: Record< string, number > = {};
 	for ( const domainMove of domainMoves ) {
-		const sourceSiteId = getMoveSourceSiteId( domainMove );
+		const earlierSiteId = domainMove.meta ? earlierMoves[ domainMove.meta ] : undefined;
+		if ( earlierSiteId === siteId ) {
+			continue;
+		}
+		const sourceSiteId = earlierSiteId ?? getMoveSourceSiteId( domainMove );
 		try {
 			if ( ! domainMove.meta || ! sourceSiteId ) {
 				throw new Error( 'missing_move_source' );
 			}
 			await transferDomainToSite( domainMove.meta, sourceSiteId, siteId );
-			movedDomains.push( domainMove.meta );
+			movedDomains[ domainMove.meta ] = siteId;
 		} catch ( error ) {
 			recordTracksEvent( 'calypso_signup_free_plan_domain_move_failed', {
 				flow,
@@ -579,13 +586,12 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				siteAfterCartFailure?.siteId === site.siteId ? siteAfterCartFailure : undefined;
 
 			// The moves need no checkout, so they run before a cart add that can throw.
+			const earlierMoves = siteAfterCartFailure?.movedDomains ?? {};
 			const movedDomains = await moveDomainsToSite(
-				freePlanDomainMoves.filter(
-					( domainMove ) =>
-						! domainMove.meta || ! savedSite?.movedDomains.includes( domainMove.meta )
-				),
+				freePlanDomainMoves,
 				site.siteId,
-				flow
+				flow,
+				earlierMoves
 			);
 
 			if ( savedSite || additionalCartItems.length > 0 ) {
@@ -604,7 +610,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 						siteId: site.siteId,
 						siteSlug: site.siteSlug,
 						siteChoices,
-						movedDomains: [ ...( savedSite?.movedDomains ?? [] ), ...movedDomains ],
+						movedDomains: { ...earlierMoves, ...movedDomains },
 						cartFailedOnReuse: !! savedSite,
 					};
 					throw error;
