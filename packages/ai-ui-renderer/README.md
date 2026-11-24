@@ -22,6 +22,13 @@
   edits, bind the inputs and the action's context to the same data paths. The agent gets the
   event's `name` and `context`, so name it for what it does, such as `save_title`, and put in its
   context what acting on it needs, such as the item's ID.
+- An activated button shows the WordPress UI loading indicator and announces its loading state
+  until its action promise settles. Only that button is busy; a surface disabled by its host
+  does not give every button a spinner. Repeated activation is suppressed while pending, and
+  success or failure clears the indicator. Hosts must return the pending work from `onAction`
+  and settle it on completion or cancellation. In agent mode, loading ends when the host
+  acknowledges the event, which may be before the agent finishes its response. Modal triggers
+  open the dialog immediately without a loading state. This behavior applies to every theme.
 - Values, such as a `Text`'s `text`, take a literal or a `{"@path": …}` binding. Unlike in A2UI's
   Basic catalog, they never take a `{"@call": …}`: only actions and checks call functions. So send
   display text ready to show: formatted, such as a date or a price, and in the person's language.
@@ -51,6 +58,16 @@
 - Components ignore A2UI v1.0 properties they don't support, such as `weight`, a `Text`'s
   `variant` and the `accessibility` of components other than `Modal`, instead of rejecting the
   surface.
+
+## Component preview
+
+From the repository root, run `yarn workspace @automattic/ai-ui-renderer preview`
+and open the printed local URL. The preview uses synthetic data, with no account or MCP server.
+It exercises the actual renderer: responsive cards and detail layouts, the WordPress default,
+ChatGPT and a second token preset, light/dark mode, modals and pending actions.
+Click an action, then **Finish request** or **Fail request** to settle its promise. Close the
+modal before using the page controls. **Switch theme** inside the modal exercises live theme
+changes while it remains open.
 
 ## Responsive layouts
 
@@ -349,6 +366,10 @@ Styles are scoped to the selected surface and its portaled modal. An open modal 
 changes, host ancestor class/style changes and system color-scheme changes. Page backgrounds,
 root resets, branding and overlay stacking remain the consumer's responsibility. The optional
 `--ai-ui-theme-page` token is available to hosts that need a matching page background.
+
+When compiling SCSS to inline multiple stylesheets into one UTF-8 HTML document, pass
+`charset: false` to Sass. Otherwise non-ASCII content, including a retained license notice,
+can produce an encoding marker between the stylesheets and prevent the next selector from matching.
 
 ## Adding a component
 

@@ -46,6 +46,7 @@
 	],
 	"types": "dist/types",
 	"scripts": {
+		"preview": "vite examples --host 127.0.0.1",
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build",

@@ -1,0 +1,54 @@
+@use '../src/style';
+@use '../src/themes/chatgpt';
+body {
+	margin: 0;
+	background: #eee;
+	font-family: system-ui;
+}
+nav {
+	flex-wrap: wrap;
+	padding: 12px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 12px;
+}
+nav label {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+nav button,
+nav select {
+	font: inherit;
+	padding: 5px;
+}
+main {
+	margin: 20px auto;
+	padding: 28px;
+	max-width: 1100px;
+	min-height: 660px;
+	box-sizing: border-box;
+}
+main .ai-ui-renderer .ai-ui-renderer__image--header {
+	width: 100%;
+	height: auto;
+	aspect-ratio: 22/10;
+	object-position: top;
+}
+.outside-control {
+	margin-bottom: 24px;
+	color: #888;
+	font: 12px system-ui;
+}
+.ai-ui-renderer__modal {
+	z-index: 1000;
+}
+[data-ai-ui-theme='another-client'] {
+	@extend [data-ai-ui-theme='chatgpt'];
+	--ai-ui-theme-font: Georgia, serif;
+	--ai-ui-theme-inverse: #6b359d;
+	--ai-ui-theme-on-inverse: #fff;
+	--ai-ui-theme-ring: #6b359d;
+	--ai-ui-theme-control-radius: 24px;
+}

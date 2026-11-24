@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
 import { BASIC_CATALOG_ID, LAYOUT_CATALOG_ID } from '../../capabilities';
 import { LAYOUT_CATALOG, createInteractiveUiCatalog } from '../../utils/catalog';
@@ -96,6 +96,60 @@ function createSurface(
 
 	return surface;
 }
+
+it.each( [ 'resolve', 'reject' ] as const )(
+	'keeps only the activated button busy until its action %ss',
+	async ( outcome ) => {
+		runtime.dispose();
+		runtime = createInteractiveUiRuntime( {
+			catalogs: [ createInteractiveUiCatalog() ],
+			actionMode: 'tool-call',
+			onAction,
+			onError,
+		} );
+		let resolve!: () => void;
+		let reject!: ( error: Error ) => void;
+		onAction.mockReturnValue(
+			new Promise< void >( ( done, fail ) => {
+				resolve = done;
+				reject = fail;
+			} )
+		);
+		const surface = createSurface( [
+			{ id: 'root', component: 'Column', children: [ 'save', 'other' ] },
+			{ id: 'save', component: 'Button', child: 'label', action: { event: { name: 'save' } } },
+			{ id: 'label', component: 'Text', text: 'Save' },
+			{
+				id: 'other',
+				component: 'Button',
+				child: 'otherLabel',
+				action: { event: { name: 'other' } },
+			},
+			{ id: 'otherLabel', component: 'Text', text: 'Other' },
+		] );
+		const { rerender } = render( <InteractiveUiSurface surface={ surface } /> );
+		expect( onError ).not.toHaveBeenCalled();
+		const button = screen.getByRole( 'button', { name: 'Save' } );
+		fireEvent.click( button );
+		rerender( <InteractiveUiSurface surface={ surface } disabled /> );
+		expect( button ).toHaveAttribute( 'aria-busy', 'true' );
+		expect( screen.getByRole( 'button', { name: 'Other' } ) ).not.toHaveAttribute( 'aria-busy' );
+		fireEvent.click( button );
+		await waitFor( () => expect( onAction ).toHaveBeenCalledTimes( 1 ) );
+
+		await act( async () => {
+			if ( outcome === 'resolve' ) {
+				resolve();
+			} else {
+				reject( new Error( 'Request failed' ) );
+			}
+		} );
+		await waitFor( () => expect( button ).not.toHaveAttribute( 'aria-busy' ) );
+		rerender( <InteractiveUiSurface surface={ surface } /> );
+		expect( button ).not.toHaveAttribute( 'aria-disabled', 'true' );
+		expect( onError ).toHaveBeenCalledTimes( outcome === 'reject' ? 1 : 0 );
+	}
+);
 
 it( 'preserves edited action arguments inside nested shared layouts', async () => {
 	runtime.dispose();
