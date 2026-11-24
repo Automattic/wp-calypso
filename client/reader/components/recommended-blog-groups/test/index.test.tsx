@@ -290,11 +290,27 @@ describe( 'RecommendedBlogGroups in select mode', () => {
 		expect( link ).toHaveFocus();
 		expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible();
 
-		act( () => link.blur() );
+		act( () => getPill( 'Bread Notes' ).focus() );
 
 		await waitFor( () =>
 			expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument()
 		);
+	} );
+
+	it( 'keeps the details open when keyboard focus moves from the link back to the pill', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.tab();
+		await waitFor( () =>
+			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
+		);
+		act( () => screen.getByRole( 'link', { name: /pastadaily\.example/ } ).focus() );
+		act( () => getPill( 'Pasta Daily' ).focus() );
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 50 ) ) );
+
+		expect( getPill( 'Pasta Daily' ) ).toHaveFocus();
+		expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible();
 	} );
 
 	it( 'returns focus to the pill on Escape from the link, and closes normally afterwards', async () => {

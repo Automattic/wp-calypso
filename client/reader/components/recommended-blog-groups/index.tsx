@@ -14,6 +14,7 @@ import type {
 	RecommendedBlog,
 	RecommendedBlogGroup,
 } from 'calypso/reader/onboarding-rsm/recommended-blogs';
+import type { FocusEvent } from 'react';
 
 import './style.scss';
 
@@ -241,6 +242,11 @@ function BlogPill( {
 					placement="bottom-start"
 					focusOnMount={ false }
 					onClose={ dismiss }
+					onFocusOutside={ ( event ) => {
+						if ( ! anchor.contains( ( event as FocusEvent ).relatedTarget ) ) {
+							setIsFocused( false );
+						}
+					} }
 					className="recommended-blog-groups__popover"
 				>
 					<div
@@ -248,14 +254,6 @@ function BlogPill( {
 						onPointerEnter={ ( event ) => event.pointerType !== 'touch' && startHover() }
 						onPointerLeave={ ( event ) => event.pointerType !== 'touch' && endHover() }
 						onFocus={ () => setIsFocused( true ) }
-						onBlur={ ( event ) => {
-							if (
-								! event.currentTarget.contains( event.relatedTarget ) &&
-								! anchor.contains( event.relatedTarget )
-							) {
-								setIsFocused( false );
-							}
-						} }
 					>
 						<BlogDetails blog={ blog } id={ detailsId } />
 					</div>

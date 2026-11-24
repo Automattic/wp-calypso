@@ -1,59 +1,10 @@
-import { __ } from '@wordpress/i18n';
-import { getRecommendedBlogs, RECOMMENDED_BLOG_LIST_KEYS } from './index';
-import type { RecommendedBlogGroup, RecommendedBlogListKey } from './types';
-
-export const getRecommendedBlogListTitle = ( key: RecommendedBlogListKey ): string => {
-	const titles: Record< RecommendedBlogListKey, string > = {
-		'most-subscribed': __( 'Most subscribed' ),
-		food: __( 'Food' ),
-		drinks: __( 'Drinks' ),
-		dining: __( 'Dining' ),
-		travel: __( 'Travel' ),
-		'world-travel': __( 'World travel' ),
-		photography: __( 'Photography' ),
-		art: __( 'Art' ),
-		technology: __( 'Technology' ),
-		software: __( 'Software' ),
-		nature: __( 'Nature' ),
-		science: __( 'Science' ),
-		space: __( 'Space' ),
-		design: __( 'Design' ),
-		diy: __( 'DIY' ),
-		music: __( 'Music' ),
-		movies: __( 'Movies' ),
-		culture: __( 'Culture' ),
-		books: __( 'Books' ),
-		family: __( 'Family' ),
-		writing: __( 'Writing' ),
-		politics: __( 'Politics' ),
-		blogging: __( 'Blogging' ),
-		fashion: __( 'Fashion' ),
-		health: __( 'Health' ),
-		humor: __( 'Humor' ),
-		poetry: __( 'Poetry' ),
-		love: __( 'Love' ),
-		entertainment: __( 'Entertainment' ),
-		education: __( 'Education' ),
-		inspiration: __( 'Inspiration' ),
-		relationships: __( 'Relationships' ),
-		religion: __( 'Religion' ),
-		sports: __( 'Sports' ),
-		business: __( 'Business' ),
-		creativity: __( 'Creativity' ),
-		beauty: __( 'Beauty' ),
-		work: __( 'Work' ),
-		history: __( 'History' ),
-		reading: __( 'Reading' ),
-		'social-media': __( 'Social media' ),
-		cooking: __( 'Cooking' ),
-		internet: __( 'Internet' ),
-		lifestyle: __( 'Lifestyle' ),
-		media: __( 'Media' ),
-		fitness: __( 'Fitness' ),
-		environment: __( 'Environment' ),
-	};
-	return titles[ key ];
-};
+import {
+	getRecommendedBlogListTitle,
+	getRecommendedBlogs,
+	RECOMMENDED_BLOG_LIST_KEYS,
+} from './index';
+import type { RecommendedBlogListKey } from './index';
+import type { RecommendedBlogGroup } from './types';
 
 const toGroup = ( key: RecommendedBlogListKey ): RecommendedBlogGroup => ( {
 	key,

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { readFeedLatestPostQueryKey, readSiteLatestPostQueryKey } from '@automattic/api-queries';
+import { readStreamLatestPostQueryKey } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -14,13 +14,12 @@ const SITE_POSTS_PATH = '/rest/v1.2/read/sites/456/posts';
 
 const renderLatestPostDate = (
 	blog: Parameters< typeof useLatestPostDate >[ 0 ],
-	options?: Parameters< typeof useLatestPostDate >[ 1 ],
 	queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } )
 ) => {
 	const wrapper = ( { children }: { children: ReactNode } ) => (
 		<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 	);
-	return renderHook( () => useLatestPostDate( blog, options ), { wrapper } );
+	return renderHook( () => useLatestPostDate( blog ), { wrapper } );
 };
 
 describe( 'getLatestPostDate', () => {
@@ -104,13 +103,13 @@ describe( 'useLatestPostDate', () => {
 		{
 			route: 'feed',
 			blog: { feed_ID: 123, site_ID: 0 },
-			key: readFeedLatestPostQueryKey( 123 ),
+			key: readStreamLatestPostQueryKey( 'feed:123' ),
 			path: FEED_POSTS_PATH,
 		},
 		{
 			route: 'site',
 			blog: { feed_ID: 123, site_ID: 456 },
-			key: readSiteLatestPostQueryKey( 456 ),
+			key: readStreamLatestPostQueryKey( 'site:456' ),
 			path: SITE_POSTS_PATH,
 		},
 	] )(
@@ -127,7 +126,7 @@ describe( 'useLatestPostDate', () => {
 				.query( { number: '1' } )
 				.reply( 500, { error: 'server_error' } );
 
-			const { result } = renderLatestPostDate( blog, undefined, queryClient );
+			const { result } = renderLatestPostDate( blog, queryClient );
 
 			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 			await waitFor( () => expect( queryClient.getQueryState( key )?.status ).toBe( 'error' ) );
@@ -139,17 +138,8 @@ describe( 'useLatestPostDate', () => {
 		}
 	);
 
-	it( 'makes no request until enabled', () => {
-		const scope = nock( API ).get( FEED_POSTS_PATH ).query( true ).reply( 200, { posts: [] } );
-
-		const { result } = renderLatestPostDate( { feed_ID: 123, site_ID: 0 }, { enabled: false } );
-
-		expect( result.current ).toBeNull();
-		expect( scope.isDone() ).toBe( false );
-	} );
-
-	it( 'makes no request without a feed ID', () => {
-		const { result } = renderLatestPostDate( { feed_ID: null, site_ID: null } );
+	it( 'makes no request without a feed or site ID', () => {
+		const { result } = renderLatestPostDate( { feed_ID: 0, site_ID: 0 } );
 
 		expect( result.current ).toBeNull();
 	} );

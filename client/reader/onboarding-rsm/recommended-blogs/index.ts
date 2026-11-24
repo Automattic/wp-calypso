@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { getArtBlogs } from './art';
 import { getBeautyBlogs } from './beauty';
 import { getBloggingBlogs } from './blogging';
@@ -45,60 +46,69 @@ import { getTravelBlogs } from './travel';
 import { getWorkBlogs } from './work';
 import { getWorldTravelBlogs } from './world-travel';
 import { getWritingBlogs } from './writing';
-import type { RecommendedBlog, RecommendedBlogListKey } from './types';
+import type { RecommendedBlog } from './types';
 
-export { RECOMMENDED_BLOG_LIST_KEYS } from './types';
-export type { RecommendedBlog, RecommendedBlogGroup, RecommendedBlogListKey } from './types';
+export type { RecommendedBlog, RecommendedBlogGroup } from './types';
 
-export const recommendedBlogGetters: Record< RecommendedBlogListKey, () => RecommendedBlog[] > = {
-	'most-subscribed': getMostSubscribedBlogs,
-	food: getFoodBlogs,
-	drinks: getDrinksBlogs,
-	dining: getDiningBlogs,
-	travel: getTravelBlogs,
-	'world-travel': getWorldTravelBlogs,
-	photography: getPhotographyBlogs,
-	art: getArtBlogs,
-	technology: getTechnologyBlogs,
-	software: getSoftwareBlogs,
-	nature: getNatureBlogs,
-	science: getScienceBlogs,
-	space: getSpaceBlogs,
-	design: getDesignBlogs,
-	diy: getDiyBlogs,
-	music: getMusicBlogs,
-	movies: getMoviesBlogs,
-	culture: getCultureBlogs,
-	books: getBooksBlogs,
-	family: getFamilyBlogs,
-	writing: getWritingBlogs,
-	politics: getPoliticsBlogs,
-	blogging: getBloggingBlogs,
-	fashion: getFashionBlogs,
-	health: getHealthBlogs,
-	humor: getHumorBlogs,
-	poetry: getPoetryBlogs,
-	love: getLoveBlogs,
-	entertainment: getEntertainmentBlogs,
-	education: getEducationBlogs,
-	inspiration: getInspirationBlogs,
-	relationships: getRelationshipsBlogs,
-	religion: getReligionBlogs,
-	sports: getSportsBlogs,
-	business: getBusinessBlogs,
-	creativity: getCreativityBlogs,
-	beauty: getBeautyBlogs,
-	work: getWorkBlogs,
-	history: getHistoryBlogs,
-	reading: getReadingBlogs,
-	'social-media': getSocialMediaBlogs,
-	cooking: getCookingBlogs,
-	internet: getInternetBlogs,
-	lifestyle: getLifestyleBlogs,
-	media: getMediaBlogs,
-	fitness: getFitnessBlogs,
-	environment: getEnvironmentBlogs,
-};
+// Every list, in onboarding order: step 3 shows a reader's groups in this order.
+const RECOMMENDED_BLOG_LISTS = {
+	'most-subscribed': { getTitle: () => __( 'Most subscribed' ), getBlogs: getMostSubscribedBlogs },
+	food: { getTitle: () => __( 'Food' ), getBlogs: getFoodBlogs },
+	drinks: { getTitle: () => __( 'Drinks' ), getBlogs: getDrinksBlogs },
+	dining: { getTitle: () => __( 'Dining' ), getBlogs: getDiningBlogs },
+	travel: { getTitle: () => __( 'Travel' ), getBlogs: getTravelBlogs },
+	'world-travel': { getTitle: () => __( 'World travel' ), getBlogs: getWorldTravelBlogs },
+	photography: { getTitle: () => __( 'Photography' ), getBlogs: getPhotographyBlogs },
+	art: { getTitle: () => __( 'Art' ), getBlogs: getArtBlogs },
+	technology: { getTitle: () => __( 'Technology' ), getBlogs: getTechnologyBlogs },
+	software: { getTitle: () => __( 'Software' ), getBlogs: getSoftwareBlogs },
+	nature: { getTitle: () => __( 'Nature' ), getBlogs: getNatureBlogs },
+	science: { getTitle: () => __( 'Science' ), getBlogs: getScienceBlogs },
+	space: { getTitle: () => __( 'Space' ), getBlogs: getSpaceBlogs },
+	design: { getTitle: () => __( 'Design' ), getBlogs: getDesignBlogs },
+	diy: { getTitle: () => __( 'DIY' ), getBlogs: getDiyBlogs },
+	music: { getTitle: () => __( 'Music' ), getBlogs: getMusicBlogs },
+	movies: { getTitle: () => __( 'Movies' ), getBlogs: getMoviesBlogs },
+	culture: { getTitle: () => __( 'Culture' ), getBlogs: getCultureBlogs },
+	books: { getTitle: () => __( 'Books' ), getBlogs: getBooksBlogs },
+	family: { getTitle: () => __( 'Family' ), getBlogs: getFamilyBlogs },
+	writing: { getTitle: () => __( 'Writing' ), getBlogs: getWritingBlogs },
+	politics: { getTitle: () => __( 'Politics' ), getBlogs: getPoliticsBlogs },
+	blogging: { getTitle: () => __( 'Blogging' ), getBlogs: getBloggingBlogs },
+	fashion: { getTitle: () => __( 'Fashion' ), getBlogs: getFashionBlogs },
+	health: { getTitle: () => __( 'Health' ), getBlogs: getHealthBlogs },
+	humor: { getTitle: () => __( 'Humor' ), getBlogs: getHumorBlogs },
+	poetry: { getTitle: () => __( 'Poetry' ), getBlogs: getPoetryBlogs },
+	love: { getTitle: () => __( 'Love' ), getBlogs: getLoveBlogs },
+	entertainment: { getTitle: () => __( 'Entertainment' ), getBlogs: getEntertainmentBlogs },
+	education: { getTitle: () => __( 'Education' ), getBlogs: getEducationBlogs },
+	inspiration: { getTitle: () => __( 'Inspiration' ), getBlogs: getInspirationBlogs },
+	relationships: { getTitle: () => __( 'Relationships' ), getBlogs: getRelationshipsBlogs },
+	religion: { getTitle: () => __( 'Religion' ), getBlogs: getReligionBlogs },
+	sports: { getTitle: () => __( 'Sports' ), getBlogs: getSportsBlogs },
+	business: { getTitle: () => __( 'Business' ), getBlogs: getBusinessBlogs },
+	creativity: { getTitle: () => __( 'Creativity' ), getBlogs: getCreativityBlogs },
+	beauty: { getTitle: () => __( 'Beauty' ), getBlogs: getBeautyBlogs },
+	work: { getTitle: () => __( 'Work' ), getBlogs: getWorkBlogs },
+	history: { getTitle: () => __( 'History' ), getBlogs: getHistoryBlogs },
+	reading: { getTitle: () => __( 'Reading' ), getBlogs: getReadingBlogs },
+	'social-media': { getTitle: () => __( 'Social media' ), getBlogs: getSocialMediaBlogs },
+	cooking: { getTitle: () => __( 'Cooking' ), getBlogs: getCookingBlogs },
+	internet: { getTitle: () => __( 'Internet' ), getBlogs: getInternetBlogs },
+	lifestyle: { getTitle: () => __( 'Lifestyle' ), getBlogs: getLifestyleBlogs },
+	media: { getTitle: () => __( 'Media' ), getBlogs: getMediaBlogs },
+	fitness: { getTitle: () => __( 'Fitness' ), getBlogs: getFitnessBlogs },
+	environment: { getTitle: () => __( 'Environment' ), getBlogs: getEnvironmentBlogs },
+} satisfies Record< string, { getTitle: () => string; getBlogs: () => RecommendedBlog[] } >;
+
+export type RecommendedBlogListKey = keyof typeof RECOMMENDED_BLOG_LISTS;
+
+export const RECOMMENDED_BLOG_LIST_KEYS = Object.keys(
+	RECOMMENDED_BLOG_LISTS
+) as RecommendedBlogListKey[];
+
+export const getRecommendedBlogListTitle = ( key: RecommendedBlogListKey ): string =>
+	RECOMMENDED_BLOG_LISTS[ key ].getTitle();
 
 export const getRecommendedBlogs = ( key: RecommendedBlogListKey ): RecommendedBlog[] =>
-	recommendedBlogGetters[ key ]();
+	RECOMMENDED_BLOG_LISTS[ key ].getBlogs();

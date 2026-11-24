@@ -1,6 +1,6 @@
-import { getRecommendedBlogGroups, getRecommendedBlogListTitle } from '../groups';
-import { RECOMMENDED_BLOG_LIST_KEYS } from '../types';
-import type { RecommendedBlog, RecommendedBlogListKey } from '../types';
+import { getRecommendedBlogGroups } from '../groups';
+import { getRecommendedBlogListTitle, RECOMMENDED_BLOG_LIST_KEYS } from '../index';
+import type { RecommendedBlog, RecommendedBlogListKey } from '../index';
 
 const mockLists: Partial< Record< RecommendedBlogListKey, RecommendedBlog[] > > = {};
 

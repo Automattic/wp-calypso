@@ -666,24 +666,12 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			data: [ { slug: 'tech' }, { slug: 'food' } ],
 			isPending: false,
 		} ) );
-		const { useSiteSubscriptions } = jest.requireMock(
+		const { getCachedFollowedNonSelfSitesCount } = jest.requireMock(
 			'calypso/reader/data/site-subscriptions'
-		) as {
-			useSiteSubscriptions: jest.Mock;
-		};
-		// Mix of active non-self, stale (unfollowed), and self-owned to verify
-		// the filter — only the two active non-self entries should be counted.
-		// `nonSelfSubscriptionsCount` defaults to 0 here (per beforeEach), so
-		// the reported count comes from the follows query, not the
-		// `nonSelfSubscriptionsCount` baseline.
-		useSiteSubscriptions.mockReturnValue( {
-			subscriptions: [
-				{ is_following: true, is_owner: false },
-				{ is_following: true, is_owner: false },
-				{ is_following: false, is_owner: false },
-				{ is_following: true, is_owner: true },
-			],
-		} );
+		) as { getCachedFollowedNonSelfSitesCount: jest.Mock };
+		// Read from the cache when the event fires, so it includes follows the
+		// last render hasn't seen yet. `nonSelfSubscriptionsCount` is 0 here.
+		getCachedFollowedNonSelfSitesCount.mockReturnValue( 2 );
 
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
@@ -712,7 +700,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 			isLoading: false,
 			nonSelfSubscriptionsCount: 5,
 		} ) );
-		// Follows query intentionally empty — default mock returns [].
+		// The cached follows are still empty: the default mock returns 0.
 
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm /> );
@@ -723,26 +711,6 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
 			expect.objectContaining( { followed_non_self_sites_count: 5 } )
-		);
-	} );
-
-	it( 'counts follows that reached the cache before the last render', async () => {
-		const { getCachedFollowedNonSelfSitesCount } = jest.requireMock(
-			'calypso/reader/data/site-subscriptions'
-		) as { getCachedFollowedNonSelfSitesCount: jest.Mock };
-		// The rendered follows are still empty, as when step 3's batch ends
-		// before React Query has told this component about its follows.
-		getCachedFollowedNonSelfSitesCount.mockReturnValue( 1 );
-
-		const user = userEvent.setup();
-		renderWithProvider( <ReaderOnboardingRsm /> );
-
-		await navigateToSubscribeStep( user );
-		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
-			expect.objectContaining( { followed_non_self_sites_count: 1 } )
 		);
 	} );
 

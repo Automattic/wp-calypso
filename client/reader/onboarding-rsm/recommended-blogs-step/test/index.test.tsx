@@ -65,18 +65,10 @@ const getPill = ( name: string ) =>
 
 const renderStep = ( promptVerification = false ) => {
 	const onFinish = jest.fn();
-	const { rerender, unmount } = renderWithProvider(
+	const { unmount } = renderWithProvider(
 		<RecommendedBlogsStep onFinish={ onFinish } promptVerification={ promptVerification } />
 	);
-	return { onFinish, rerender, unmount };
-};
-
-const deferred = () => {
-	let resolve: ( value: unknown ) => void = () => {};
-	const promise = new Promise( ( done ) => {
-		resolve = done;
-	} );
-	return { promise, resolve };
+	return { onFinish, unmount };
 };
 
 beforeEach( () => {
@@ -168,24 +160,8 @@ describe( 'RecommendedBlogsStep', () => {
 		);
 	} );
 
-	it( 'finishes with the latest onFinish, which carries the counts after the follows', async () => {
-		const follow = deferred();
-		mockFollowSite.mockReturnValue( follow.promise );
-		const user = userEvent.setup();
-		const { onFinish, rerender } = renderStep();
-
-		await user.click( getPill( 'Pasta Daily' ) );
-		await user.click( screen.getByRole( 'button', { name: 'Subscribe to 1 blog and continue' } ) );
-		const latestOnFinish = jest.fn();
-		rerender( <RecommendedBlogsStep onFinish={ latestOnFinish } promptVerification={ false } /> );
-		await act( async () => follow.resolve( {} ) );
-
-		expect( latestOnFinish ).toHaveBeenCalledTimes( 1 );
-		expect( onFinish ).not.toHaveBeenCalled();
-	} );
-
 	it( 'does not finish onboarding when the reader leaves the step during the follows', async () => {
-		const follow = deferred();
+		const follow = Promise.withResolvers< unknown >();
 		mockFollowSite.mockReturnValue( follow.promise );
 		const user = userEvent.setup();
 		const { onFinish, unmount } = renderStep();

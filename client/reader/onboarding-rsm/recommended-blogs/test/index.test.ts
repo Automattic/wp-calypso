@@ -1,5 +1,5 @@
 import { getTopicGroups } from '../../interests-modal/topic-groups';
-import { RECOMMENDED_BLOG_LIST_KEYS, getRecommendedBlogs, recommendedBlogGetters } from '../index';
+import { RECOMMENDED_BLOG_LIST_KEYS, getRecommendedBlogs } from '../index';
 
 const additionalTopicKeys = [
 	'books',
@@ -42,7 +42,6 @@ describe( 'recommended blogs', () => {
 		] );
 		expect( RECOMMENDED_BLOG_LIST_KEYS ).toHaveLength( 47 );
 		expect( new Set( RECOMMENDED_BLOG_LIST_KEYS ).size ).toBe( 47 );
-		expect( Object.keys( recommendedBlogGetters ) ).toEqual( RECOMMENDED_BLOG_LIST_KEYS );
 	} );
 
 	it.each( RECOMMENDED_BLOG_LIST_KEYS )( '%s has exactly twelve valid recommendations', ( key ) => {

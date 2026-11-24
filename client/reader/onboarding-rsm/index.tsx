@@ -10,11 +10,9 @@ import { chevronLeft, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { getLocaleSlug, translate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
-import {
-	getCachedFollowedNonSelfSitesCount,
-	useSiteSubscriptions as useCachedSiteSubscriptions,
-} from 'calypso/reader/data/site-subscriptions';
+import { getCachedFollowedNonSelfSitesCount } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
@@ -29,7 +27,6 @@ import {
 import InterestsModal from 'calypso/reader/onboarding-rsm/interests-modal';
 import { getPackBlogs } from 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs';
 import { getTopicGroups } from 'calypso/reader/onboarding-rsm/interests-modal/topic-groups';
-import { RecommendedBlogsStep } from 'calypso/reader/onboarding-rsm/recommended-blogs-step';
 import SubscribeModal from 'calypso/reader/onboarding-rsm/subscribe-modal';
 import WelcomeModal from 'calypso/reader/onboarding-rsm/welcome-modal';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -56,6 +53,17 @@ const STEP_FRAME_CLASS: Record< Step, string > = {
 	discover: 'subscribe-modal',
 };
 
+// Step 3 carries every researched list, so it loads only for readers who can
+// reach it, rather than with this chunk on every Reader visit.
+const loadRecommendedBlogsStep = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-onboarding-recommended-blogs" */ 'calypso/reader/onboarding-rsm/recommended-blogs-step'
+	).then( ( module ) => ( { default: module.RecommendedBlogsStep } ) );
+
+// The researched recommendations are English blogs, so other locales keep the
+// earlier discover step.
+const isRecommendedBlogsLocale = () => getLocaleSlug()?.startsWith( 'en' ) ?? false;
+
 const ReaderOnboardingRsm = ( {
 	onRender,
 	isSuppressed = false,
@@ -72,34 +80,6 @@ const ReaderOnboardingRsm = ( {
 		useNonSelfSubscriptionsCount();
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedTags();
-	// Used in the `completed` event for an instant in-session site-follow
-	// count: follows mutations update this query cache, whereas
-	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` can lag until
-	// its refetch resolves.
-	//
-	// The follows query retains stale rows (`is_following: false`) and
-	// self-owned subs (`is_owner: true`); we filter both out so the count
-	// matches the rest of the onboarding eligibility logic, which uses
-	// `nonSelfSubscriptionsCount` (also excludes self-owned). Use
-	// `nonSelfSubscriptionsCount` as a baseline so completion analytics do not
-	// under-report follows before the follows query has hydrated.
-	//
-	// `Math.max` is safe in onboarding because the UI only nets follow
-	// additions: discover-step recommendations exclude pre-session
-	// subscriptions (so in-session unfollows only target in-session adds),
-	// and interests-step pack subscribe never unfollows. The invariant is
-	// therefore `queryFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
-	// so the max picks the live follows-query value. If a future flow ever allows
-	// unfollowing a pre-session subscription from within onboarding, revisit
-	// this and gate on follows query hydration rather than blindly take the max.
-	const { subscriptions } = useCachedSiteSubscriptions();
-	const queryFollowedNonSelfSitesCount = subscriptions.filter(
-		( subscription ) => subscription.is_following && ! subscription.is_owner
-	).length;
-	const followedNonSelfSitesCount = Math.max(
-		nonSelfSubscriptionsCount,
-		queryFollowedNonSelfSitesCount
-	);
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
@@ -267,6 +247,9 @@ const ReaderOnboardingRsm = ( {
 	const openStep = ( step: Step ) => {
 		recordStepOpen( step );
 		setCurrentStep( step );
+		if ( step === 'interests' && isRecommendedBlogsLocale() ) {
+			void loadRecommendedBlogsStep();
+		}
 	};
 
 	const handleStepClose = () => {
@@ -307,10 +290,12 @@ const ReaderOnboardingRsm = ( {
 		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
 			followed_tags_count: followedTags?.length ?? 0,
-			// Step 3 finishes after an async batch of follows, possibly before this
-			// component re-renders with them, so read the cache as it is now too.
+			// Read from the cache when the event fires: follows patch it straight
+			// away, but step 3 can finish before this component re-renders with
+			// them. `nonSelfSubscriptionsCount` covers a cache that hasn't
+			// hydrated yet; the max is safe because onboarding only adds follows.
 			followed_non_self_sites_count: Math.max(
-				followedNonSelfSitesCount,
+				nonSelfSubscriptionsCount,
 				getCachedFollowedNonSelfSitesCount( queryClient )
 			),
 		} );
@@ -422,9 +407,7 @@ const ReaderOnboardingRsm = ( {
 		},
 	];
 
-	// The researched recommendations are English blogs, so other locales keep
-	// the earlier discover step.
-	const showRecommendedBlogs = getLocaleSlug()?.startsWith( 'en' ) ?? false;
+	const showRecommendedBlogs = isRecommendedBlogsLocale();
 
 	let modalBackButton = null;
 	if ( currentStep === 'interests' ) {
@@ -542,7 +525,9 @@ const ReaderOnboardingRsm = ( {
 					) }
 					{ currentStep === 'discover' &&
 						( showRecommendedBlogs ? (
-							<RecommendedBlogsStep
+							<AsyncLoad
+								require={ loadRecommendedBlogsStep }
+								placeholder={ null }
 								onFinish={ handleDiscoverFinish }
 								promptVerification={ promptVerification }
 							/>
