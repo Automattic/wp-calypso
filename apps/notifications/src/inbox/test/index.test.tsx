@@ -2,6 +2,7 @@ import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { getClient, initClient, showNotes } from '../../app/client';
+import { markPanelMounted } from '../../app/panel-mounted';
 import { listNotes } from '../../panel/rest-client/wpcom';
 import { store, init as initState } from '../../panel/state';
 import actions from '../../panel/state/actions';
@@ -27,6 +28,7 @@ vi.mock( '../../panel/rest-client', () => ( {
 const { post } = vi.hoisted( () => ( { post: vi.fn( async () => ( {} ) ) } ) );
 vi.mock( '../../panel/rest-client/wpcom', () => ( {
 	init: vi.fn(),
+	fetchSuggestions: vi.fn(),
 	listNotes: vi.fn( async () => ( { notes: [] } ) ),
 	markReadStatus: vi.fn(),
 	markPostAsSeen: vi.fn(),
@@ -48,8 +50,14 @@ const makeComment = ( id: number, label: string ) => {
 	const ids = { site: 10, post: 30, comment: 20 };
 	return {
 		...makeNote( id, label ),
+		subject: [ { text: label, ranges: [ { type: 'b', indices: [ 0, 0 ] } ], media: [] } ],
 		body: [
-			{ type: 'comment', text: 'A short reply', actions: { 'like-comment': false }, meta: { ids } },
+			{
+				type: 'comment',
+				text: 'A short reply',
+				actions: { 'like-comment': false, 'replyto-comment': true },
+				meta: { ids },
+			},
 		],
 		meta: { ids },
 	};
@@ -400,10 +408,13 @@ describe( 'NotificationsInbox', () => {
 			post.mockClear();
 		} );
 
-		it( 'turns them on', () => {
+		it( "leaves the panel's shortcut switch alone", () => {
+			// Off, as while the panel's reply box has focus.
+			store.dispatch( actions.ui.disableKeyboardShortcuts() );
+
 			renderInbox();
 
-			expect( getKeyboardShortcutsEnabled( store.getState() ) ).toBe( true );
+			expect( getKeyboardShortcutsEnabled( store.getState() ) ).toBe( false );
 		} );
 
 		it( 'likes the open comment with l', async () => {
@@ -427,16 +438,53 @@ describe( 'NotificationsInbox', () => {
 			expect( post ).not.toHaveBeenCalled();
 		} );
 
+		it( 'leaves l typed into the reply box alone, whatever the shared switch says', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+			const reply = within( screen.getByRole( 'region', { name: 'Open note' } ) ).getByRole(
+				'textbox'
+			);
+			await user.click( reply );
+			// On, as when React misses the reply box getting the focus back.
+			act( () => {
+				store.dispatch( actions.ui.enableKeyboardShortcuts() );
+			} );
+
+			await user.keyboard( 'l' );
+
+			expect( reply ).toHaveValue( 'l' );
+			expect( post ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves l pressed with nothing focused to a panel opened over the page', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+			const unmarkPanel = markPanelMounted();
+
+			try {
+				await user.keyboard( 'l' );
+			} finally {
+				unmarkPanel();
+			}
+
+			expect( post ).not.toHaveBeenCalled();
+		} );
+
 		it( "leaves moving through the notes and tabs to the page's own controls", async () => {
 			const user = userEvent.setup();
 			const setSelectedNoteId = vi.fn();
 			const setFilterName = vi.fn();
+			// On, as after the panel was opened.
+			store.dispatch( actions.ui.enableKeyboardShortcuts() );
 			loadNotes( makeNote( 801, 'First comment' ), makeNote( 802, 'Second comment' ) );
 			const { unmount } = renderInbox( '802', { setSelectedNoteId } );
 
 			await user.keyboard( 'j{ArrowDown}{ArrowRight}' );
 
 			expect( setSelectedNoteId ).not.toHaveBeenCalled();
+			expect( document.body ).toHaveFocus();
 			unmount();
 
 			renderInbox( undefined, { setFilterName } );
@@ -454,6 +502,21 @@ describe( 'NotificationsInbox', () => {
 		store.dispatch( { type: 'OPEN_LINK', href: 'https://example.com/post' } );
 
 		expect( open ).toHaveBeenCalledWith( 'https://example.com/post', '_blank', 'noopener' );
+		open.mockRestore();
+	} );
+
+	it( 'leaves links to a panel opened over the page, which opens them itself', () => {
+		const open = vi.spyOn( window, 'open' ).mockReturnValue( null );
+		renderInbox();
+		const unmarkPanel = markPanelMounted();
+
+		try {
+			store.dispatch( { type: 'EDIT_COMMENT', href: 'https://example.com/edit' } );
+		} finally {
+			unmarkPanel();
+		}
+
+		expect( open ).not.toHaveBeenCalled();
 		open.mockRestore();
 	} );
 } );

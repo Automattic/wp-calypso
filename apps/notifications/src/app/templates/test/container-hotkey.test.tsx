@@ -5,6 +5,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { vi } from 'vitest';
+import { markPanelMounted } from '../../panel-mounted';
 import { HotkeyContainer } from '../container-hotkey';
 
 const pressKey = ( key: string, init: KeyboardEventInit = {} ) =>
@@ -193,16 +194,21 @@ describe( 'HotkeyContainer', () => {
 	} );
 
 	describe( 'with a scope, as on the full page', () => {
-		const renderScoped = ( other?: () => void ) => {
+		const renderScoped = ( {
+			keyboardShortcutsAreEnabled = true,
+			other,
+		}: { keyboardShortcutsAreEnabled?: boolean; other?: () => void } = {} ) => {
 			const like = vi.fn();
 			const scope = createRef< HTMLDivElement >();
 			render(
 				<>
 					<input aria-label="Search" />
+					<button>Sites</button>
 					<div ref={ scope }>
 						<button>Open note</button>
+						<textarea aria-label="Reply" />
 						<HotkeyContainer
-							keyboardShortcutsAreEnabled
+							keyboardShortcutsAreEnabled={ keyboardShortcutsAreEnabled }
 							shortcutScope={ scope }
 							shortcuts={ [ { hotkey: 'l', action: like } ] }
 						/>
@@ -233,17 +239,57 @@ describe( 'HotkeyContainer', () => {
 			expect(
 				fireEvent.keyDown( screen.getByRole( 'textbox', { name: 'Search' } ), { key: 'l' } )
 			).toBe( true );
+			expect(
+				fireEvent.keyDown( screen.getByRole( 'button', { name: 'Sites' } ), { key: 'l' } )
+			).toBe( true );
 			expect( like ).not.toHaveBeenCalled();
+		} );
+
+		it( 'runs no shortcut for typing in a form field inside its scope', () => {
+			const like = renderScoped();
+
+			expect(
+				fireEvent.keyDown( screen.getByRole( 'textbox', { name: 'Reply' } ), { key: 'l' } )
+			).toBe( true );
+			expect( like ).not.toHaveBeenCalled();
+		} );
+
+		it( 'runs shortcuts while the shared switch is off', () => {
+			// A reply box that goes away while it has focus leaves the switch off.
+			const like = renderScoped( { keyboardShortcutsAreEnabled: false } );
+
+			fireEvent.keyDown( screen.getByRole( 'button', { name: 'Open note' } ), { key: 'l' } );
+
+			expect( like ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'leaves a key press from outside its scope to another container', () => {
 			const other = vi.fn();
-			const like = renderScoped( other );
+			const like = renderScoped( { other } );
 
 			fireEvent.keyDown( screen.getByRole( 'textbox', { name: 'Search' } ), { key: 'l' } );
 
 			expect( like ).not.toHaveBeenCalled();
 			expect( other ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'leaves a key press with nothing focused to a mounted panel', () => {
+			const other = vi.fn();
+			const like = renderScoped( { other } );
+			const unmarkPanel = markPanelMounted();
+
+			try {
+				fireEvent.keyDown( document.body, { key: 'l' } );
+			} finally {
+				unmarkPanel();
+			}
+
+			expect( like ).not.toHaveBeenCalled();
+			expect( other ).toHaveBeenCalledTimes( 1 );
+
+			fireEvent.keyDown( document.body, { key: 'l' } );
+
+			expect( like ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 } );

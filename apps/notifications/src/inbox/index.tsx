@@ -7,9 +7,9 @@ import Note from '../app/note';
 import { useNoteNavigation } from '../app/note/hooks';
 import NotePanel, { getNotificationTabs } from '../app/note-panel';
 import NoteSettingsButton from '../app/note-panel/settings-button';
+import { isPanelMounted } from '../app/panel-mounted';
 import { useTracksSurface, type TracksSurface } from '../app/use-tracks-surface';
 import { store } from '../panel/state';
-import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getAllNotes from '../panel/state/selectors/get-all-notes';
 import { interceptLinks } from '../panel/utils/link-interceptor';
@@ -41,6 +41,10 @@ type NotificationsInboxProps = {
 };
 
 const openInNewTab = ( _store: unknown, action: unknown ) => {
+	// A panel opened over the page opens its own links, and the store runs both hosts' handlers.
+	if ( isPanelMounted() ) {
+		return;
+	}
 	const { href } = action as { href: string };
 	window.open( href, '_blank', 'noopener' );
 };
@@ -128,10 +132,6 @@ function InboxPanes( {
 			isCurrent = false;
 		};
 	}, [ selectedNoteId, isSelectedNoteLoaded ] );
-
-	useEffect( () => {
-		store.dispatch( actions.ui.enableKeyboardShortcuts() );
-	}, [] );
 
 	const canViewSettings = !! onViewSettings;
 	const onViewSettingsRef = useRef( onViewSettings );

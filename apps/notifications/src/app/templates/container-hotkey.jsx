@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { NoteOpenContext, useAppContext } from '../context';
+import { isPanelMounted } from '../panel-mounted';
 
 // Every container listens on `window`, and an action can re-render another container
 // with the same hotkey before that one's listener runs, so the others skip a key press
@@ -11,12 +12,23 @@ import { NoteOpenContext, useAppContext } from '../context';
 // too, such as a focusable disabled button, and that mustn't turn the shortcuts off.
 const handledEvents = new WeakSet();
 
-// With a scope, only key presses from inside it count, or from the page with nothing focused: not
-// typing in a field elsewhere on the page, nor in the panel opened over it.
-const isInScope = ( { target }, shortcutScope ) =>
-	! shortcutScope ||
-	target === document.body ||
-	( target instanceof Node && !! shortcutScope.current?.contains( target ) );
+const isFormField = ( target ) =>
+	target instanceof HTMLElement &&
+	( target.isContentEditable || [ 'INPUT', 'SELECT', 'TEXTAREA' ].includes( target.tagName ) );
+
+// A host with a scope, like the full page, shares the window with the rest of its page and with the
+// panel opened over it. It takes key presses from inside the scope, or from the page with nothing
+// focused while no panel is mounted, and never from a form field. It doesn't use the shared on/off
+// switch, which a reply box turns back on only if React sees it lose focus.
+const isForScope = ( { target }, shortcutScope ) => {
+	if ( isFormField( target ) ) {
+		return false;
+	}
+	if ( target === document.body ) {
+		return ! isPanelMounted();
+	}
+	return target instanceof Node && !! shortcutScope.current?.contains( target );
+};
 
 const dispatch = ( event, action ) => {
 	handledEvents.add( event );
@@ -50,18 +62,19 @@ export class HotkeyContainer extends Component {
 	}
 
 	handleKeyDown = ( event ) => {
+		const { shortcuts, shortcutScope, keyboardShortcutsAreEnabled } = this.props;
+
 		if (
 			event.repeat ||
 			handledEvents.has( event ) ||
 			! this.context ||
-			! this.props.shortcuts ||
-			! this.props.keyboardShortcutsAreEnabled ||
-			! isInScope( event, this.props.shortcutScope )
+			! shortcuts ||
+			! ( shortcutScope ? isForScope( event, shortcutScope ) : keyboardShortcutsAreEnabled )
 		) {
 			return;
 		}
 
-		const shortcut = this.props.shortcuts.find(
+		const shortcut = shortcuts.find(
 			( { hotkey, withModifiers = false } ) =>
 				hotkey === event.key && withModifiers === modifierKeyIsActive( event )
 		);

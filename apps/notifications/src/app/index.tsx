@@ -18,6 +18,7 @@ import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
+import { markPanelMounted } from './panel-mounted';
 import { useTracksSurface, type TracksSurface } from './use-tracks-surface';
 import type { FilterName } from './types';
 
@@ -202,6 +203,8 @@ const NotificationApp = ( {
 
 	useEffect( () => {
 		store.dispatch( actions.ui.enableKeyboardShortcuts() );
+
+		return markPanelMounted();
 	}, [] );
 
 	useEffect( () => {

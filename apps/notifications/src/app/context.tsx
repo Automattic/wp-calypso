@@ -18,7 +18,8 @@ export type AppContextData = {
 	hasNavigationShortcuts: boolean;
 	/**
 	 * The element the host shows the notes in, when the page around it has other content. The open
-	 * note's shortcuts then act only on key presses from inside it, or with nothing focused.
+	 * note's shortcuts then act only on key presses from inside it, or with nothing focused while no
+	 * panel is mounted, and never on typing in a form field.
 	 */
 	shortcutScope?: RefObject< HTMLElement | null >;
 	onOpenFullView?: ( view: FullView ) => void;
