@@ -77,6 +77,10 @@ async function waitForSuggestedAddress() {
 	);
 }
 
+// Each keystroke re-renders the whole form, so typing an address takes several
+// seconds on a busy CI agent.
+const TYPING_TIMEOUT = 15000;
+
 describe( '<SiteConfigurationModal>', () => {
 	afterEach( () => {
 		nock.cleanAll();
@@ -220,7 +224,7 @@ describe( '<SiteConfigurationModal>', () => {
 		).toBeVisible();
 		await waitFor( () => expect( input ).toBeInvalid() );
 		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
-	} );
+	}, TYPING_TIMEOUT );
 
 	// An address is only verified by the check, so one that never came back must
 	// not leave the button offering to create a site at it.
@@ -252,7 +256,7 @@ describe( '<SiteConfigurationModal>', () => {
 
 		expect( scope.isDone() ).toBe( true );
 		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
-	} );
+	}, TYPING_TIMEOUT );
 
 	// The suggested address is taken on trust until it isn't: it is only claimed
 	// by the provision itself, so a failure there has to send it back for a check.
@@ -314,7 +318,7 @@ describe( '<SiteConfigurationModal>', () => {
 		).toBeVisible();
 		await waitFor( () => expect( input ).toBeInvalid() );
 		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
-	} );
+	}, TYPING_TIMEOUT );
 } );
 
 describe( '<DevSiteConfigurationModal>', () => {
