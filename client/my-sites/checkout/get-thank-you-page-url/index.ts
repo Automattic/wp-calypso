@@ -183,9 +183,14 @@ export default function getThankYouPageUrl( {
 	// (i.e. on WordPress.com), the same site as the cart's site, a Jetpack cloud URL,
 	// or a Jetpack or WP.com site's block editor (in wp-admin). This is required for Jetpack's
 	// (and WP.com's) paid blocks Upgrade Nudge.
-	if ( redirectTo && ! connectAfterCheckout ) {
-		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
-
+	// `javascript://<host>/%0A…` has the host of the site or of an allowed one, so only http(s)
+	// and relative URLs are followed.
+	const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo ?? '' );
+	if (
+		redirectTo &&
+		! connectAfterCheckout &&
+		( ! protocol || protocol === 'http:' || protocol === 'https:' )
+	) {
 		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {
 			debug( 'has same site redirectTo, so returning that', redirectTo );
 			return redirectTo;
