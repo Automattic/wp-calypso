@@ -1,4 +1,5 @@
 @use '@wordpress/base-styles/colors' as *;
+@use './layout';
 
 // A2UI's mode classes, on the surface or an ancestor. Otherwise the surface follows the page.
 :where( .a2ui-dark ) {

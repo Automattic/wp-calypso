@@ -52,6 +52,37 @@
   `variant` and the `accessibility` of components other than `Modal`, instead of rejecting the
   surface.
 
+## Responsive layouts
+
+Register `createInteractiveUiCatalog( LAYOUT_CATALOG )` beside the Basic catalog and advertise
+`{ catalog: LAYOUT_CATALOG_DOCUMENT }` through `getInteractiveUiRendererCapabilities()`.
+Both exports come from the same entries as the charts catalog. Layout components name
+`LAYOUT_CATALOG_ID` as their `catalogId`; their children can use any registered catalog.
+The shared `style.scss` includes their CSS regardless of the selected theme.
+
+- `Grid`: `children`, `gap` (`none`, `xs`, `sm`, `md`, `lg`, `xl`), `minColumnWidth` (pixels,
+  default 248), optional maximum `columns` (1–6) and `align` (`start`, `center`, `end`, `stretch`).
+  It fits columns to its own container and shrinks to one column without horizontal overflow.
+  `balance: 'wideStart'` or `'wideEnd'` creates a 3:2 or 2:3 detail view above 52rem, stacking
+  its children in reading order below that width. Use these with exactly two children.
+- `Stack`: `children`, the same `gap` and `align`, `direction` (`column` by default, or `row`),
+  `justify` (`start`, `center`, `end`, `space-between`) and `wrap` (false by default).
+
+```json
+{
+  "id": "sites",
+  "component": "Grid",
+  "catalogId": "urn:automattic:ai-ui-renderer:layouts:v1",
+  "minColumnWidth": 248,
+  "gap": "lg",
+  "children": ["first-site", "second-site"]
+}
+```
+
+Keep page width, branding, thumbnail cropping and app-specific visibility rules in the host.
+Layout components do not style buttons, cards or text, so the same layout works with the
+WordPress defaults and with optional themes.
+
 ## Charts
 
 The charts catalog (`CHARTS_CATALOG_ID`) has `LineChart` (values over time), `BarChart` (values by
@@ -128,9 +159,11 @@ const exampleCatalog: InteractiveUiCatalogDefinition = {
   `isShowingErrors` state, and the host's `hostProps`. These replace the surface's props of the
   same name, so don't declare props with those names. A setter writes only to a bound path and
   does nothing for a literal value, so keep an input's value in local state too, as the basic
-  inputs do. It doesn't get A2UI's `buildChild`, so it can't render other components: a
-  `ComponentId` or `ChildList` prop arrives as IDs only. Make custom components leaves, laid out
-  with the basic ones. A `lazy()` component renders nothing while it loads.
+  inputs do. A `ComponentId` or `ChildList` prop arrives as IDs. Use the supplied
+  `buildChild( id, basePath? )` to render them, preserving their data bindings and actions.
+  A template child arrives as `{ id, basePath }`; pass both to `buildChild`.
+  `buildChild` comes from the renderer and cannot be overridden by agent or host props.
+  A `lazy()` component renders nothing while it loads.
 - A component that declares `checks` (an array of `CheckRule`s) also gets `isValid` and
   `validationErrors`, its failed checks' messages. `isShowingErrors` turns true once the person
   activates a `Button` whose checks fail. Show the messages and handle `disabled` as

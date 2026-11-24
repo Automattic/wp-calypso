@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
-import { BASIC_CATALOG_ID } from '../../capabilities';
-import { createInteractiveUiCatalog } from '../../utils/catalog';
+import { BASIC_CATALOG_ID, LAYOUT_CATALOG_ID } from '../../capabilities';
+import { LAYOUT_CATALOG, createInteractiveUiCatalog } from '../../utils/catalog';
 import { createInteractiveUiRuntime } from '../../utils/runtime';
 import { InteractiveUiSurface } from '../interactive-ui-surface';
 import type { InteractiveUiRuntime } from '../../utils/runtime';
@@ -96,6 +96,41 @@ function createSurface(
 
 	return surface;
 }
+
+it( 'preserves edited action arguments inside nested shared layouts', async () => {
+	runtime.dispose();
+	runtime = createInteractiveUiRuntime( {
+		catalogs: [ createInteractiveUiCatalog( LAYOUT_CATALOG ) ],
+		onAction,
+		onError,
+	} );
+	const surface = createSurface(
+		[
+			{ id: 'root', component: 'Grid', children: [ 'form' ] },
+			{ id: 'form', component: 'Stack', children: [ 'name', 'save' ] },
+			{ id: 'name', component: 'TextField', label: 'Name', value: { '@path': '/name' } },
+			{
+				id: 'save',
+				component: 'Button',
+				child: 'label',
+				action: { event: { name: 'save', context: { name: { '@path': '/name' } } } },
+			},
+			{ id: 'label', component: 'Text', text: 'Save' },
+		],
+		LAYOUT_CATALOG_ID
+	);
+
+	render( <InteractiveUiSurface surface={ surface } hostProps={ { buildChild: () => null } } /> );
+	fireEvent.change( screen.getByRole( 'textbox', { name: 'Name' } ), { target: { value: 'Ada' } } );
+	fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+	await waitFor( () =>
+		expect( onAction ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'save', context: { name: 'Ada' } } )
+		)
+	);
+	expect( onError ).not.toHaveBeenCalled();
+} );
 
 it.each( [
 	[ undefined, 'ai-ui-renderer' ],
