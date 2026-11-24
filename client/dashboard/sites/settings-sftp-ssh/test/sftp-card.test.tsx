@@ -72,8 +72,9 @@ describe( '<SftpCard>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Delete credentials' } ) );
 		const dialog = await screen.findByRole( 'dialog' );
 		expect( dialog ).toHaveTextContent(
-			'every SSH key attached to this site, including keys from other users, is detached'
+			'every SSH key attached to this site is detached, including keys that other users attached.'
 		);
+		expect( dialog ).toHaveTextContent( 'Then each user has to attach their SSH key again.' );
 		await user.click( within( dialog ).getByRole( 'button', { name: 'Delete credentials' } ) );
 
 		await waitFor( () => expect( deleteRequest.isDone() ).toBe( true ) );
@@ -143,8 +144,9 @@ describe( '<SftpCard>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Delete credentials' } ) );
 		const dialog = await screen.findByRole( 'dialog' );
 		expect( dialog ).toHaveTextContent(
-			'Every SSH key attached to this site, including keys from other users, is also detached.'
+			'Every SSH key attached to this site is also detached, including keys that other users attached.'
 		);
+		expect( dialog ).toHaveTextContent( 'Then each user has to attach their SSH key again.' );
 		expect( dialog ).not.toHaveTextContent( 'SSH access is also turned off' );
 	} );
 
