@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	KEYRING_SERVICES_RECEIVE,
 	KEYRING_SERVICES_REQUEST,
@@ -44,7 +45,7 @@ const originalKeyringServices = {
 };
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation(() => {});
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(

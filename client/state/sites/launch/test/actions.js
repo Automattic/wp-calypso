@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { SITE_LAUNCH } from 'calypso/state/action-types';
 import {
 	launchSite,
 	launchSiteOrRedirectToLaunchSignupFlow,
 } from 'calypso/state/sites/launch/actions';
 
-jest.mock( 'calypso/state/selectors/is-unlaunched-site', () => () => true );
-jest.mock( 'calypso/state/sites/domains/selectors', () => ( {
+vi.mock( 'calypso/state/selectors/is-unlaunched-site', () => ( { default: () => true } ) );
+vi.mock( 'calypso/state/sites/domains/selectors', () => ( {
 	getDomainsBySiteId: () => [ { domain: 'example.wordpress.com' } ],
 } ) );
-jest.mock( 'calypso/state/sites/plans/selectors/is-site-big-sky-trial', () => () => false );
-jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
+vi.mock( 'calypso/state/sites/plans/selectors/is-site-big-sky-trial', () => ( { default: () => false } ) );
+vi.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	isSiteOnHostingTrial: () => false,
 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'example.wordpress.com',
 	isCurrentPlanPaid: () => false,
 } ) );
@@ -57,7 +58,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should redirect an unlaunched free site to the Stepper launch-site flow', () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 
 			launchSiteOrRedirectToLaunchSignupFlow( 1, 'my-home', 'My Site' )( dispatch, () => ( {} ) );
 

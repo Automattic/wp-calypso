@@ -1,10 +1,11 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { vi } from 'vitest';
 let mockInstanceIdCounter = 0;
-jest.mock( 'calypso/signup/difm/page-instances', () => {
-	const actual = jest.requireActual( 'calypso/signup/difm/page-instances' );
+vi.mock( 'calypso/signup/difm/page-instances', async () => {
+	const actual = ( await vi.importActual< typeof import( 'calypso/signup/difm/page-instances' ) >( 'calypso/signup/difm/page-instances' ) );
 	return {
 		...actual,
-		newInstanceId: jest.fn( () => `instance-${ ++mockInstanceIdCounter }` ),
+		newInstanceId: vi.fn( () => `instance-${ ++mockInstanceIdCounter }` ),
 	};
 } );
 

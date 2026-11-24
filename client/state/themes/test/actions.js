@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
@@ -60,16 +61,16 @@ import {
 } from '../actions';
 import { themesUpdated } from '../actions/theme-update';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
-	mock.isEnabled = jest.fn( ( flag ) => {
+	mock.isEnabled = vi.fn( ( flag ) => {
 		const allowedFlags = [];
 		if ( allowedFlags.includes( flag ) ) {
 			return true;
 		}
 		return false;
 	} );
-	return mock;
+	return { ...mock, default: mock };
 } );
 
 expect.extend( {
@@ -104,7 +105,7 @@ expect.extend( {
 describe( 'actions', () => {
 	let spy;
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( '#receiveTheme()', () => {
@@ -675,7 +676,7 @@ describe( 'actions', () => {
 		} );
 
 		beforeEach( () => {
-			window._sva = { invokeEvent: jest.fn() };
+			window._sva = { invokeEvent: vi.fn() };
 		} );
 
 		afterEach( () => {
@@ -883,7 +884,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#installAndActivateTheme', () => {
-		const stub = jest.fn();
+		const stub = vi.fn();
 		stub.mockReturnValue(
 			new Promise( ( res ) => {
 				res();
@@ -909,7 +910,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#activate', () => {
-		const stub = jest.fn();
+		const stub = vi.fn();
 		stub.mockReturnValue(
 			new Promise( ( res ) => {
 				res();
@@ -1368,7 +1369,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#installAndTryAndCustomizeTheme', () => {
-		const stub = jest.fn();
+		const stub = vi.fn();
 		stub.mockReturnValue(
 			new Promise( ( res ) => {
 				res();
@@ -1394,7 +1395,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#tryAndCustomize', () => {
-		const stub = jest.fn();
+		const stub = vi.fn();
 		stub.mockReturnValue(
 			new Promise( ( res ) => {
 				res();
@@ -1487,7 +1488,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#livePreview', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		dispatch.mockReturnValue(
 			new Promise( ( res ) => {
 				res();

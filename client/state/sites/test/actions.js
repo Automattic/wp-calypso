@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -17,7 +18,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( '#receiveSite()', () => {
@@ -110,7 +111,7 @@ describe( 'actions', () => {
 			let isJetpackCloudMock;
 
 			beforeEach( () => {
-				isJetpackCloudMock = jest.spyOn(
+				isJetpackCloudMock = vi.spyOn(
 					require( 'calypso/lib/jetpack/is-jetpack-cloud' ),
 					'default'
 				);

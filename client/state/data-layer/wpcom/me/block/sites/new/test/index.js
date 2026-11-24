@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { blockSite, unblockSite } from 'calypso/state/reader/site-blocks/actions';
@@ -44,7 +45,7 @@ describe( 'site-blocks', () => {
 
 	describe( 'receiveSiteBlockError', () => {
 		test( 'should revert to the previous state', () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			receiveSiteBlockError( blockSite( 123 ), {
 				success: false,
 			} )( dispatch );

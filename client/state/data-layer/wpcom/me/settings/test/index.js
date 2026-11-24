@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
@@ -6,12 +7,12 @@ import {
 } from 'calypso/state/user-settings/actions';
 import { requestUserSettings, userSettingsSave, userSettingsSaveSuccess } from '../';
 
-jest.mock( 'calypso/state/current-user/actions', () => ( {
-	fetchCurrentUser: jest.fn(),
+vi.mock( 'calypso/state/current-user/actions', () => ( {
+	fetchCurrentUser: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/url', () => ( {
-	getQueryArg: jest.fn().mockReturnValue( null ),
+vi.mock( '@wordpress/url', () => ( {
+	getQueryArg: vi.fn().mockReturnValue( null ),
 } ) );
 
 describe( 'wpcom-api', () => {
@@ -37,7 +38,7 @@ describe( 'wpcom-api', () => {
 	describe( 'user settings save', () => {
 		describe( '#userSettingsSave', () => {
 			test( 'should dispatch POST request to me/settings using unsavedSettings from state', () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const getState = () => ( {
 					userSettings: {
 						settings: { foo: 'bar' },
@@ -63,7 +64,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should dispatch POST request to me/settings using explicit settingsOverride', () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const getState = () => ( {} );
 				const action = {
 					type: 'DUMMY',
@@ -87,7 +88,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should not dispatch any HTTP request when there are no unsaved settings', () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const getState = () => ( {
 					userSettings: {
 						settings: {},
@@ -111,7 +112,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should dispatch user settings update and clear all unsaved settings on full save', async () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const action = { type: 'DUMMY' };
 
 				await userSettingsSaveSuccess( action, {
@@ -133,7 +134,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should not show success notice when ref=reader-onboarding', async () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const action = { type: 'DUMMY' };
 				getQueryArg.mockReturnValue( 'reader-onboarding' );
 
@@ -156,7 +157,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should dispatch user settings update and clear only one unsaved setting on partial save', async () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const data = {
 					language: 'qix',
 				};
@@ -179,7 +180,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should decode HTML entities returned in some fields of HTTP response', () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const action = { type: 'DUMMY' };
 
 				userSettingsSaveSuccess( action, {

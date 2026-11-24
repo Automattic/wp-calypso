@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { submitSignupStep } from '../actions';
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
 } ) );
-jest.mock( '@automattic/viewport', () => ( {
+vi.mock( '@automattic/viewport', () => ( {
 	resolveDeviceTypeByViewPort: () => 'desktop',
 } ) );
 
@@ -15,7 +16,7 @@ describe( 'submitSignupStep', () => {
 			{
 				cartItems: [ { product_slug: 'business-bundle' }, { product_slug: 'jetpack_backup' } ],
 			}
-		)( jest.fn(), () => ( {} ) );
+		)( vi.fn(), () => ( {} ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_signup_actions_submit_step',

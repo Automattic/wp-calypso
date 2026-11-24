@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
@@ -147,7 +148,7 @@ describe( 'reducer', () => {
 		} );
 
 		describe( 'persistence', () => {
-			jest.spyOn( console, 'warn' ).mockImplementation();
+			vi.spyOn( console, 'warn' ).mockImplementation(() => {});
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {

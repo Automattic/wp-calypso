@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTIONS_RECEIVE,
@@ -142,7 +143,7 @@ describe( 'reducers', () => {
 		} );
 
 		describe( 'persistence', () => {
-			jest.spyOn( console, 'warn' ).mockImplementation();
+			vi.spyOn( console, 'warn' ).mockImplementation(() => {});
 
 			test( 'should persist data', () => {
 				const state = deepFreeze( {

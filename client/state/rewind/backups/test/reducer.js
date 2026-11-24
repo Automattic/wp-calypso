@@ -1,9 +1,10 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import { REWIND_BACKUPS_SET } from 'calypso/state/action-types';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation(() => {});
 
 	test( 'should default to an empty object', () => {
 		const state = reducer( undefined, {} );

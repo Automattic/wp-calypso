@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
@@ -9,10 +10,10 @@ import {
 import reducer from '../reducer';
 
 // Mock necessary for testing step submission behavior
-jest.mock( 'calypso/signup/config/steps-pure', () => ( {
+vi.mock( 'calypso/signup/config/steps-pure', () => ( ( ( m ) => ( { ...m, default: m } ) )( {
 	stepWithAPI: { apiRequestFunction: () => {} },
 	stepWithoutAPI: {},
-} ) );
+} ) ) );
 
 describe( 'reducer', () => {
 	test( 'should return an empty object at first', () => {

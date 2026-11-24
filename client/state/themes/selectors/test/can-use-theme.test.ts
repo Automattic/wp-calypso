@@ -8,15 +8,16 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_SENSEI_THEMES,
 } from '@automattic/calypso-products';
+import { vi } from 'vitest';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import * as themeSelectors from 'calypso/state/themes/selectors';
 import { canUseTheme } from '../can-use-theme';
 
-jest.mock( 'calypso/state/selectors/site-has-feature' );
-jest.mock( 'calypso/state/themes/selectors' );
+vi.mock( 'calypso/state/selectors/site-has-feature' );
+vi.mock( 'calypso/state/themes/selectors' );
 
-const mockedSiteHasFeature = jest.mocked( siteHasFeature );
-const mockedThemeSelectors = jest.mocked( themeSelectors );
+const mockedSiteHasFeature = vi.mocked( siteHasFeature );
+const mockedThemeSelectors = vi.mocked( themeSelectors );
 
 describe( 'canUseTheme', () => {
 	const state = {};

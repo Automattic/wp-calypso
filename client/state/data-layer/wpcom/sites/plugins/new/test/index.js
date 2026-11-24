@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { MAX_UPLOAD_ZIP_SIZE } from 'calypso/lib/automated-transfer/constants';
 import { INSTALL_PLUGIN } from 'calypso/lib/plugins/constants';
 import { PLUGIN_INSTALL_REQUEST_SUCCESS } from 'calypso/state/action-types';
@@ -60,16 +61,16 @@ describe( 'uploadPlugin', () => {
 } );
 
 describe( 'uploadComplete', () => {
-	const getState = jest.fn();
+	const getState = vi.fn();
 
 	test( 'should return a plugin upload complete action', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		uploadComplete( { siteId }, SUCCESS_RESPONSE )( dispatch, getState );
 		expect( dispatch ).toHaveBeenCalledWith( completePluginUpload( siteId, pluginId ) );
 	} );
 
 	test( 'should dispatch a receive installed plugin action', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 
 		uploadComplete( { siteId }, SUCCESS_RESPONSE )( dispatch, getState );
 
