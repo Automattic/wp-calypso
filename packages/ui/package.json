@@ -69,6 +69,8 @@
 		"jsdom": "^20.0.3",
 		"postcss": "^8.5.32",
 		"postcss-modules": "^6.0.1",
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0",
 		"sass-embedded": "^1.89.0",
 		"storybook": "^10.6.5",
 		"stylelint": "^17.16.0",

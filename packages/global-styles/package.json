@@ -82,6 +82,7 @@
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/wordpress__block-library": "^2.6.3",
+		"@wordpress/data": "^11.2.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3"

@@ -67,14 +67,19 @@
 		"@automattic/languages": "workspace:^",
 		"@typescript-eslint/parser": "^8.72.1",
 		"css-loader": "^7.1.5",
+		"eslint": "^10.14.0",
 		"jsdom": "^20.0.3",
+		"postcss": "^8.5.32",
+		"react": "^18.3.1 || ^19.0.0",
+		"react-dom": "^18.3.1 || ^19.0.0",
 		"sass-embedded": "^1.89.0",
 		"sass-loader": "^16.0.8",
 		"stylelint": "^17.16.0",
 		"stylelint-scss": "^7.4.0",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.8",
-		"vitest": "^5.1.0"
+		"vitest": "^5.1.0",
+		"webpack": "^5.111.1"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^11.2.0",
