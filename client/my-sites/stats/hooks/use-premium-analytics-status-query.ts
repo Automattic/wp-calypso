@@ -7,13 +7,13 @@ import getDefaultQueryParams from './default-query-params';
  * The site setting the dashboard's opt-in is registered under, exposed through core's settings
  * route. Absent from the response on a Jetpack too old to register it.
  */
-export const PREMIUM_ANALYTICS_ENABLED_SETTING = 'jetpack_premium_analytics_enabled';
+const PREMIUM_ANALYTICS_ENABLED_SETTING = 'jetpack_premium_analytics_enabled';
 
 type SiteSettings = {
 	[ PREMIUM_ANALYTICS_ENABLED_SETTING ]?: boolean;
 };
 
-export const premiumAnalyticsStatusQueryKey = ( siteId: number | null ) => [
+const premiumAnalyticsStatusQueryKey = ( siteId: number | null ) => [
 	'stats',
 	'premium-analytics-status',
 	siteId,
