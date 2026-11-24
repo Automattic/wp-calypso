@@ -257,17 +257,17 @@ These are pool decisions, not claims that a blog fails in the Reader. A client-s
 - Site URL: https://later.com/blog/
 - RSS/Atom feed URL checked: https://later.com/rss.xml
 - One-line description: Read Later's blog for the latest influencer marketing and social media best practices, tips, and industry news to connect with customers and grow your brand.
-- Latest published item date observed: Not available from this fetch.
-- Activity checked on: 2026-11-24T15:45:18.761183+00:00
-- Public feed result: HTTP Error 404: Not Found
+- Latest published item date observed: 2026-11-23T17:22:08+00:00
+- Activity checked on: 2026-11-24T17:36:18.675148+00:00
+- Public feed result: HTTP 200; RSS parsed; 692 items; final URL https://later.com/rss.xml.
 - Popularity claim: Not established; this candidate was not selected.
 - Public source supporting the popularity claim: [Source](https://later.com/about/)
 - Real avatar or site icon URL (HTTPS): https://later.com/images/favicons/favicon.ico
 - Icon source and HTTP check result: Publisher-declared or retained researched icon; HTTP 200, image/vnd.microsoft.icon, 15086 bytes.
-- Feed selection note: Uses the publisher-declared RSS endpoint rather than the old /blog/feed/ path.
+- Feed selection note: The earlier /blog/feed/ path returned HTTP 404. The publisher-declared /rss.xml endpoint was then checked successfully; the result here records that later fetch.
 - Existing curated entry: new or a related-list reserve.
 - Reader recent posts and following: Not tested; public feed only.
-- Outcome: Not selected. This feed request did not provide a parseable public feed in this check; no universal failure is inferred.
+- Outcome: Not selected. The publisher-declared RSS feed loads publicly and has current items, but public metadata lookups did not supply the required positive feed ID. This is an ID metadata gap, not evidence of failure in the Reader.
 
 ### 2. SocialPilot Blog
 
