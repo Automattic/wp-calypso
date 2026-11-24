@@ -156,6 +156,21 @@ describe( '<SiteAIToolsRead>', () => {
 		} );
 	} );
 
+	test( 'opt-in tools get their own section, without an Enable all', () => {
+		seed();
+		const { unmount } = render( <SiteAIToolsRead />, { queryClient } );
+		const togglesWithoutOptIn = screen.getAllByRole( 'checkbox', { name: 'Enable all' } ).length;
+		unmount();
+
+		seed( OPT_IN_TOOL );
+		render( <SiteAIToolsRead />, { queryClient } );
+
+		expect( screen.getByRole( 'heading', { name: 'Requires individual approval' } ) ).toBeVisible();
+		expect( screen.getAllByRole( 'checkbox', { name: 'Enable all' } ) ).toHaveLength(
+			togglesWithoutOptIn
+		);
+	} );
+
 	test( 'the page-level Enable all leaves an opt-in tool off', async () => {
 		const user = userEvent.setup();
 		seed( OPT_IN_TOOL );

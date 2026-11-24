@@ -14,9 +14,8 @@ export function groupIntentKey( category, groupName ) {
 }
 
 /**
- * Whether a tool can only be turned on by its own switch. Bulk enables (MCP
- * access, a Read or Write page, a group) skip it; bulk disables still turn it
- * off. Any truthy value counts, so an unexpected encoding fails closed.
+ * Whether a tool can only be turned on by its own switch. Any truthy value
+ * counts, so an unexpected encoding fails closed.
  * @param {import('@automattic/api-core').McpAbility} tool
  * @returns {boolean}
  */
@@ -25,12 +24,22 @@ export function requiresOptIn( tool ) {
 }
 
 /**
+ * The tools a bulk switch acts on. Opt-in tools sit in their own section, see
+ * groupToolsByGroup(), and only change through their own switches.
+ * @param {Array<[string, import('@automattic/api-core').McpAbility]>} tools
+ * @returns {Array<[string, import('@automattic/api-core').McpAbility]>}
+ */
+export function getOrdinaryTools( tools ) {
+	return tools.filter( ( [ , tool ] ) => ! requiresOptIn( tool ) );
+}
+
+/**
  * A group/read/write intent only sets the *default* for abilities with no
  * explicit per-op override — an explicit override from an earlier individual
  * toggle always wins (see SettingsHelper::is_ability_enabled() on the
  * backend). So an "Enable all" action must also force-write an explicit
  * override for any tool in scope whose current state disagrees with the new
- * value, except that opt-in tools can only be enabled individually.
+ * value, or a previously-toggled tool would silently stay stuck.
  * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
  * @param {boolean} enabled
  * @returns {Record<string, boolean>|undefined}
@@ -38,52 +47,9 @@ export function requiresOptIn( tool ) {
 export function getOverridesToMatch( scopedTools, enabled ) {
 	const overrides = {};
 	scopedTools.forEach( ( [ toolId, tool ] ) => {
-		if ( tool.enabled !== enabled && ! ( enabled && requiresOptIn( tool ) ) ) {
+		if ( tool.enabled !== enabled ) {
 			overrides[ toolId ] = enabled;
 		}
 	} );
 	return Object.keys( overrides ).length > 0 ? overrides : undefined;
-}
-
-/**
- * Site-level settings store an explicit value per tool, and an explicit site
- * value wins over every account-level grant. So a site page's "Enable all"
- * writes the new value for each tool in scope, except that it never enables
- * an opt-in tool: that stays with the tool's own switch.
- * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
- * @param {boolean} enabled
- * @returns {Record<string, boolean>}
- */
-export function getSiteBulkOverrides( scopedTools, enabled ) {
-	const overrides = {};
-	scopedTools.forEach( ( [ toolId, tool ] ) => {
-		if ( ! ( enabled && requiresOptIn( tool ) ) ) {
-			overrides[ toolId ] = enabled;
-		}
-	} );
-	return overrides;
-}
-
-/**
- * Whether a category's ordinary tools are all on. Site-published abilities with
- * no saved choice follow this, as in SettingsHelper::remote_ability_default()
- * on the backend. Unlike isBulkEnabled(), opt-in tools never count either way,
- * so a category with only opt-in tools is off.
- * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
- * @returns {boolean}
- */
-export function areOrdinaryToolsEnabled( scopedTools ) {
-	const ordinaryTools = scopedTools.filter( ( [ , tool ] ) => ! requiresOptIn( tool ) );
-	return ordinaryTools.length > 0 && ordinaryTools.every( ( [ , tool ] ) => tool.enabled );
-}
-
-/**
- * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
- * @returns {boolean}
- */
-export function isBulkEnabled( scopedTools ) {
-	return (
-		scopedTools.some( ( [ , tool ] ) => tool.enabled ) &&
-		scopedTools.every( ( [ , tool ] ) => tool.enabled || requiresOptIn( tool ) )
-	);
 }

@@ -38,11 +38,7 @@ import {
 } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
-import {
-	areOrdinaryToolsEnabled,
-	getSiteBulkOverrides,
-	requiresOptIn,
-} from '../../../../../../../me/mcp/group-intents';
+import { getOrdinaryTools, requiresOptIn } from '../../../../../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
@@ -325,8 +321,11 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// its group key is allowed. Saved-only groups (catalog unreachable) fall
 	// back to counting their keys.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
-		const categoryTools = category === 'read' ? readTools : writeTools;
-		const defaultEnabled = isMcpEnabled && areOrdinaryToolsEnabled( categoryTools );
+		const ordinaryTools = getOrdinaryTools( category === 'read' ? readTools : writeTools );
+		const defaultEnabled =
+			isMcpEnabled &&
+			ordinaryTools.length > 0 &&
+			enabledToolCount( ordinaryTools ) === ordinaryTools.length;
 		let total = 0;
 		let enabled = 0;
 		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
@@ -369,7 +368,13 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	);
 
 	const handleMcpToggle = ( enabled: boolean ) => {
-		const abilities = enabled ? getSiteBulkOverrides( readTools, true ) : {};
+		const abilities: Record< string, boolean > = {};
+		if ( enabled ) {
+			// Auto-enable the ordinary read tools; leave write and opt-in tools unset (not explicitly disabled).
+			getOrdinaryTools( readTools ).forEach( ( [ toolId ] ) => {
+				abilities[ toolId ] = true;
+			} );
+		}
 		// When disabling, send abilities: {} to clear all site-level tool access.
 		mcpMutation.mutate(
 			{

@@ -16,10 +16,10 @@ import type { ReactNode } from 'react';
 /**
  * A collapsible group card for MCP tool settings, mirroring the account-level
  * /me/preferences/mcp pages: collapsed by default, with a group intent toggle
- * and a chevron that reveals the tools. `id` anchors the card itself and
- * `toolAnchors` the rows inside it, so a server response can deep-link a
- * group or a single tool: whenever the location hash matches, the card opens
- * and the target scrolls into view.
+ * (unless `onEnableAll` is omitted) and a chevron that reveals the tools. `id`
+ * anchors the card itself and `toolAnchors` the rows inside it, so a server
+ * response can deep-link a group or a single tool: whenever the location hash
+ * matches, the card opens and the target scrolls into view.
  */
 export default function McpGroupCard( {
 	id,
@@ -36,8 +36,8 @@ export default function McpGroupCard( {
 	title: string;
 	description?: string;
 	toolAnchors?: string[];
-	allEnabled: boolean;
-	onEnableAll: ( enabled: boolean ) => void;
+	allEnabled?: boolean;
+	onEnableAll?: ( enabled: boolean ) => void;
 	disabled?: boolean;
 	/** Renders the tools open regardless of the collapsed state (e.g. while searching). */
 	forceOpen?: boolean;
@@ -75,13 +75,15 @@ export default function McpGroupCard( {
 							</Text>
 						) }
 					</VStack>
-					<ToggleControl
-						__nextHasNoMarginBottom
-						checked={ allEnabled }
-						disabled={ disabled }
-						label={ __( 'Enable all' ) }
-						onChange={ onEnableAll }
-					/>
+					{ onEnableAll && (
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ allEnabled }
+							disabled={ disabled }
+							label={ __( 'Enable all' ) }
+							onChange={ onEnableAll }
+						/>
+					) }
 					{ children != null && (
 						<Button
 							icon={ open ? chevronUp : chevronDown }

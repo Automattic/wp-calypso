@@ -16,10 +16,14 @@ import { chevronDown, chevronUp } from '@wordpress/icons';
 import { Fragment, useDeferredValue, useEffect, useRef, useState } from 'react';
 import {
 	groupIntentKey,
+	getOrdinaryTools,
 	getOverridesToMatch,
-	isBulkEnabled,
 } from '../../../../me/mcp/group-intents';
-import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
+import {
+	OPT_IN_GROUP_NAME,
+	groupToolsByGroup,
+	groupToolsBySubCategory,
+} from '../../../../me/mcp/groups';
 import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
@@ -76,6 +80,7 @@ export default function McpWrite() {
 	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > )
 		.filter( ( [ , tool ] ) => tool.visible !== false )
 		.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
+	const ordinaryTools = getOrdinaryTools( allTools ) as Array< [ string, McpAbility ] >;
 
 	// Tool search: fuzzy-filters the tools on this page.
 	const locationHash = ( useLocation().hash ?? '' ).replace( /^#/, '' );
@@ -95,7 +100,8 @@ export default function McpWrite() {
 
 	const groupDescriptors = getGroupDescriptors( userSettings || {} ) as McpGroupDescriptor[];
 	const groups = groupToolsByGroup( filteredTools, groupDescriptors ) as ToolGroup[];
-	const pageAllEnabled = isBulkEnabled( allTools );
+	const pageAllEnabled =
+		ordinaryTools.length > 0 && ordinaryTools.every( ( [ , tool ] ) => tool.enabled );
 
 	const pageRef = useRef< HTMLDivElement >( null );
 	const toolbarRef = useRef< HTMLDivElement >( null );
@@ -153,7 +159,7 @@ export default function McpWrite() {
 	};
 
 	const handlePageToggle = ( enabled: boolean ) => {
-		const overrides = getOverridesToMatch( allTools, enabled ) as
+		const overrides = getOverridesToMatch( ordinaryTools, enabled ) as
 			Record< string, boolean > | undefined;
 		const groupIntents: Record< string, boolean > = { [ TOOL_CATEGORY ]: enabled };
 		if ( ! enabled ) {
@@ -237,7 +243,7 @@ export default function McpWrite() {
 							<ToggleControl
 								__nextHasNoMarginBottom
 								checked={ pageAllEnabled }
-								disabled={ mutation.isPending || allTools.length === 0 }
+								disabled={ mutation.isPending || ordinaryTools.length === 0 }
 								label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
 								onChange={ handlePageToggle }
 							/>
@@ -258,7 +264,8 @@ export default function McpWrite() {
 					<VStack spacing={ 3 }>
 						{ groups.map( ( { group: descriptor, label, tools: groupTools }: ToolGroup ) => {
 							const groupKey = descriptor?.name ?? '__other__';
-							const allGroupEnabled = isBulkEnabled( groupTools );
+							const isOptInGroup = descriptor?.name === OPT_IN_GROUP_NAME;
+							const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
 							const isOpen = openGroups.has( groupKey ) || query.length > 0;
 
 							return (
@@ -276,15 +283,17 @@ export default function McpWrite() {
 														</Text>
 													) }
 												</VStack>
-												<ToggleControl
-													__nextHasNoMarginBottom
-													checked={ allGroupEnabled }
-													disabled={ mutation.isPending }
-													label={ __( 'Enable all' ) }
-													onChange={ ( checked ) =>
-														handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
-													}
-												/>
+												{ ! isOptInGroup && (
+													<ToggleControl
+														__nextHasNoMarginBottom
+														checked={ allGroupEnabled }
+														disabled={ mutation.isPending }
+														label={ __( 'Enable all' ) }
+														onChange={ ( checked ) =>
+															handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
+														}
+													/>
+												) }
 												<Button
 													icon={ isOpen ? chevronUp : chevronDown }
 													label={ isOpen ? __( 'Hide operations' ) : __( 'Show operations' ) }
@@ -312,15 +321,17 @@ export default function McpWrite() {
 														onClick={ () => toggleGroupOpen( groupKey, descriptor?.name ?? null ) }
 													/>
 												</HStack>
-												<ToggleControl
-													__nextHasNoMarginBottom
-													checked={ allGroupEnabled }
-													disabled={ mutation.isPending }
-													label={ __( 'Enable all' ) }
-													onChange={ ( checked ) =>
-														handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
-													}
-												/>
+												{ ! isOptInGroup && (
+													<ToggleControl
+														__nextHasNoMarginBottom
+														checked={ allGroupEnabled }
+														disabled={ mutation.isPending }
+														label={ __( 'Enable all' ) }
+														onChange={ ( checked ) =>
+															handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
+														}
+													/>
+												) }
 											</VStack>
 										) }
 									</CardBody>

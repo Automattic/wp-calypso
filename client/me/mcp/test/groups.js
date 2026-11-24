@@ -1,4 +1,4 @@
-import { groupToolsByGroup, groupToolsBySubCategory } from '../groups';
+import { OPT_IN_GROUP_NAME, groupToolsByGroup, groupToolsBySubCategory } from '../groups';
 
 const GROUPS = [
 	{ name: 'content-authoring', label: 'Content Authoring', description: 'Create posts.', order: 0 },
@@ -49,6 +49,27 @@ describe( 'client/me/mcp/groups', () => {
 			expect( other.tools.map( ( [ id ] ) => id ) ).toEqual( [
 				'wpcom-mcp/standalone-tool',
 				'wpcom-mcp/legacy-tool',
+			] );
+		} );
+
+		it( 'pulls opt-in tools out of their own groups into one trailing section', () => {
+			const tools = [
+				[ 'wpcom-mcp/sensitive-read', { group: 'site', requires_opt_in: true } ],
+				[ 'wpcom-mcp/standalone-tool', { group: null } ],
+				[ 'wpcom-mcp/sensitive-other', { group: null, requires_opt_in: 1 } ],
+				[ 'wpcom-mcp/posts-create', { group: 'content-authoring' } ],
+			];
+
+			const groups = groupToolsByGroup( tools, GROUPS );
+
+			expect( groups.map( ( g ) => g.group?.name ) ).toEqual( [
+				'content-authoring',
+				undefined,
+				OPT_IN_GROUP_NAME,
+			] );
+			expect( groups[ 2 ].tools.map( ( [ id ] ) => id ) ).toEqual( [
+				'wpcom-mcp/sensitive-read',
+				'wpcom-mcp/sensitive-other',
 			] );
 		} );
 

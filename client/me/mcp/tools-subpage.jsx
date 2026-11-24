@@ -24,8 +24,8 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
-import { getOverridesToMatch, groupIntentKey, isBulkEnabled } from './group-intents';
-import { groupToolsByGroup, groupToolsBySubCategory } from './groups';
+import { getOrdinaryTools, getOverridesToMatch, groupIntentKey } from './group-intents';
+import { OPT_IN_GROUP_NAME, groupToolsByGroup, groupToolsBySubCategory } from './groups';
 import { useMcpPageChrome } from './mcp-page-header';
 import { useMcpTracksAudienceProps } from './tracks';
 import { getAccountMcpAbilities, getGroupDescriptors } from './utils';
@@ -120,6 +120,7 @@ export default function McpToolsSubpage( {
 	const tools = filterVisibleTools( Object.entries( mcpAbilities ) ).filter( ( [ , tool ] ) =>
 		filterTool( tool )
 	);
+	const ordinaryTools = getOrdinaryTools( tools );
 	const groupDescriptors = getGroupDescriptors( userSettings || {} );
 	const groups = groupToolsByGroup( tools, groupDescriptors );
 
@@ -147,7 +148,7 @@ export default function McpToolsSubpage( {
 	};
 
 	const handlePageToggle = ( enabled ) => {
-		const overrides = getOverridesToMatch( tools, enabled );
+		const overrides = getOverridesToMatch( ordinaryTools, enabled );
 		const groupIntents = { [ toolCategory ]: enabled };
 		if ( ! enabled ) {
 			// Disabling: also clear this category's per-group intents so a future
@@ -224,7 +225,8 @@ export default function McpToolsSubpage( {
 		return null;
 	}
 
-	const pageAllEnabled = isBulkEnabled( tools );
+	const pageAllEnabled =
+		ordinaryTools.length > 0 && ordinaryTools.every( ( [ , tool ] ) => tool.enabled );
 
 	return (
 		<Main wideLayout className="mcp mcp-tools-subpage">
@@ -250,7 +252,7 @@ export default function McpToolsSubpage( {
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ pageAllEnabled }
-									disabled={ mutation.isPending || tools.length === 0 }
+									disabled={ mutation.isPending || ordinaryTools.length === 0 }
 									label={ <Text weight="600">{ translate( 'Enable all' ) }</Text> }
 									onChange={ handlePageToggle }
 								/>
@@ -262,7 +264,8 @@ export default function McpToolsSubpage( {
 						<VStack spacing={ 3 }>
 							{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 								const groupKey = descriptor?.name ?? '__other__';
-								const allGroupEnabled = isBulkEnabled( groupTools );
+								const isOptInGroup = descriptor?.name === OPT_IN_GROUP_NAME;
+								const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
 								const isOpen = openGroups.has( groupKey );
 
 								return (
@@ -279,17 +282,23 @@ export default function McpToolsSubpage( {
 														</Text>
 													) }
 												</VStack>
-												<div className="mcp-tools-subpage__group-toggle">
-													<ToggleControl
-														__nextHasNoMarginBottom
-														checked={ allGroupEnabled }
-														disabled={ mutation.isPending }
-														label={ translate( 'Enable all' ) }
-														onChange={ ( checked ) =>
-															handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
-														}
-													/>
-												</div>
+												{ ! isOptInGroup && (
+													<div className="mcp-tools-subpage__group-toggle">
+														<ToggleControl
+															__nextHasNoMarginBottom
+															checked={ allGroupEnabled }
+															disabled={ mutation.isPending }
+															label={ translate( 'Enable all' ) }
+															onChange={ ( checked ) =>
+																handleGroupEnableAll(
+																	descriptor?.name ?? null,
+																	groupTools,
+																	checked
+																)
+															}
+														/>
+													</div>
+												) }
 												<Button
 													className="mcp-tools-subpage__group-chevron"
 													icon={ isOpen ? chevronUp : chevronDown }
