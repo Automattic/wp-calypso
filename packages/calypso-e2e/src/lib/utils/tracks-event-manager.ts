@@ -1,6 +1,7 @@
 import { Page, Request } from 'playwright';
 
 // About twice the slowest event latency seen on CI (~15s after navigation starts).
+// See https://github.com/Automattic/wp-calypso/pull/117178
 const EVENT_TIMEOUT_MS = 30 * 1000;
 
 // Modify global Window interface to include _tkAllowE2ETests
