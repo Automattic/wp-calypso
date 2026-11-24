@@ -12,7 +12,7 @@ import type { ToolCallContext } from './tool-calls';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
 import type { Ability } from '@wordpress/abilities';
 
-export { withBlockEditCorrections } from './block-edit-corrections';
+export { withBlockEditCorrections } from './block-edit-correction-provider';
 export { withoutChatToolCalls } from './non-chat-call-provider';
 export { subscribeToRegistryAbilities, withRegistryAbilities } from './registry-ability-provider';
 export { withServerAbilities } from './server-ability-provider';

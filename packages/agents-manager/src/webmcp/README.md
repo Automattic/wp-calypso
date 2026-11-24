@@ -23,9 +23,9 @@ precedence and the canvas guard. Registry-only abilities run through the registr
 (`prepareToolInput()`), remembers the block-tree IDs (`rememberBlockClientIds()`) and adapts the
 result (`adaptToolResult()`).
 
-`withBlockEditCorrections()` (`block-edit-corrections.ts`) sends each block edit, with the live
-block tree, to the server's `wpcom/correct-block-edits` before applying it, so it gets the checks
-and fixes the chat's block edits get. It applies the corrected edits, or returns the server's
+`withBlockEditCorrections()` (`block-edit-correction-provider.ts`) sends each block edit, with the
+live block tree, to the server's `wpcom/correct-block-edits` before applying it, so it gets the
+checks and fixes the chat's block edits get. It applies the corrected edits, or returns the server's
 `unchanged` result or error without applying anything. It also refuses the edits if the editor moved
 to another page meanwhile. Sites that don't serve the ability, such as Atomic sites, apply the edits
 as sent.

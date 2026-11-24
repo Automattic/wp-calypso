@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { vi } from 'vitest';
 import { resolveCanvasKey } from '../../utils/canvas-binding';
-import { withBlockEditCorrections } from '../block-edit-corrections';
+import { withBlockEditCorrections } from '../block-edit-correction-provider';
 import type { ToolProvider } from '../../extension-types';
 
 vi.mock( '@wordpress/api-fetch' );

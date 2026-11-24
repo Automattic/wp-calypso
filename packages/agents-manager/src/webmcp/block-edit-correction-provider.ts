@@ -28,7 +28,7 @@ export function withBlockEditCorrections( toolProvider: ToolProvider ): ToolProv
 				return toolProvider.executeAbility( name, input );
 			}
 
-			const canvas = resolveCanvasKey();
+			const canvasKey = resolveCanvasKey();
 			const tree = await toolProvider.executeAbility( GET_BLOCK_TREE_ABILITY_NAME, {} );
 			const blocks = getBlockTreeBlocks( tree );
 
@@ -65,7 +65,7 @@ export function withBlockEditCorrections( toolProvider: ToolProvider ): ToolProv
 			}
 
 			// The correction round trip leaves time to switch pages, and no chat binds the canvas here.
-			if ( resolveCanvasKey() !== canvas ) {
+			if ( resolveCanvasKey() !== canvasKey ) {
 				return errorResult( CANVAS_MOVED_ERROR );
 			}
 
