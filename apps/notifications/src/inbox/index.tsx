@@ -133,34 +133,6 @@ function InboxPanes( {
 		};
 	}, [ selectedNoteId, isSelectedNoteLoaded ] );
 
-	const canViewSettings = !! onViewSettings;
-	const onViewSettingsRef = useRef( onViewSettings );
-
-	useEffect( () => {
-		onViewSettingsRef.current = onViewSettings;
-	}, [ onViewSettings ] );
-
-	useEffect( () => {
-		if ( ! canViewSettings ) {
-			return;
-		}
-		const handlers = {
-			VIEW_SETTINGS: [
-				() => {
-					// A panel opened over the page opens its own settings.
-					if ( ! isPanelMounted() ) {
-						onViewSettingsRef.current?.();
-					}
-				},
-			],
-		};
-		store.dispatch( addListeners( handlers ) );
-
-		return () => {
-			store.dispatch( removeListeners( handlers ) );
-		};
-	}, [ canViewSettings ] );
-
 	return (
 		<div
 			ref={ rootRef }
@@ -173,7 +145,9 @@ function InboxPanes( {
 					<ErrorBoundary>
 						<NotePanel
 							headingLevel={ 1 }
-							actions={ canViewSettings ? <NoteSettingsButton /> : null }
+							actions={
+								onViewSettings ? <NoteSettingsButton onViewSettings={ onViewSettings } /> : null
+							}
 							showMarkAllAsRead
 							filterName={ filterName }
 							setFilterName={ setFilterName }

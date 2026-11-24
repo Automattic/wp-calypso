@@ -15,6 +15,7 @@ vi.mock( '@automattic/notifications/src/app', () => ( {
 		onOpenFullView?: ( view: { filterName: string; noteId?: string } ) => void;
 	} ) => (
 		<div role="region" aria-label="Notifications panel">
+			<button>Panel note</button>
 			{ onOpenFullView && (
 				<button onClick={ () => onOpenFullView( { filterName: 'unread', noteId: '42' } ) }>
 					Open full view
@@ -89,12 +90,70 @@ describe( '<Notifications> with the inbox', () => {
 
 		expect( screen.getByRole( 'region', { name: 'Notifications panel' } ) ).toBeVisible();
 
-		await user.click( screen.getByRole( 'button', { name: 'Note row' } ) );
+		await user.tab();
 
 		await waitFor( () =>
 			expect(
 				screen.queryByRole( 'region', { name: 'Notifications panel' } )
 			).not.toBeInTheDocument()
 		);
+		expect( screen.getByRole( 'button', { name: 'Note row' } ) ).toHaveFocus();
+	} );
+
+	test( 'closes the panel on a click on text in the page after the omnibar', async () => {
+		const user = userEvent.setup();
+		render(
+			<>
+				<div id="wpcom-omnibar">
+					<button>Omnibar menu</button>
+				</div>
+				<p>Comment text</p>
+				<Notifications isInboxShown onOpenInbox={ () => {} } />
+			</>
+		);
+
+		await openPanel( user );
+		await waitFor( () =>
+			expect( screen.getByRole( 'region', { name: 'Notifications panel' } ) ).toBeVisible()
+		);
+		await user.click( screen.getByRole( 'button', { name: 'Omnibar menu' } ) );
+		await user.click( screen.getByText( 'Comment text' ) );
+
+		await waitFor( () =>
+			expect(
+				screen.queryByRole( 'region', { name: 'Notifications panel' } )
+			).not.toBeInTheDocument()
+		);
+	} );
+
+	test( 'keeps the panel open over the page while the focus is in it, its menus or a dialog', async () => {
+		const user = userEvent.setup();
+		render(
+			<>
+				<div id="wpcom-omnibar">
+					<button>Omnibar menu</button>
+				</div>
+				<div className="components-popover">
+					<button>Menu item</button>
+				</div>
+				<div role="dialog" aria-label="Command palette">
+					<button>Palette item</button>
+				</div>
+				<div className="components-modal__screen-overlay">Dialog overlay</div>
+				<Notifications isInboxShown onOpenInbox={ () => {} } />
+			</>
+		);
+
+		await openPanel( user );
+		const panel = screen.getByRole( 'region', { name: 'Notifications panel' } );
+		await waitFor( () => expect( panel ).toBeVisible() );
+		await user.click( screen.getByRole( 'button', { name: 'Panel note' } ) );
+		// From the omnibar, the panel's own check for focus moving out of it doesn't run.
+		await user.click( screen.getByRole( 'button', { name: 'Omnibar menu' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Menu item' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Palette item' } ) );
+		await user.click( screen.getByText( 'Dialog overlay' ) );
+
+		expect( panel ).toBeVisible();
 	} );
 } );

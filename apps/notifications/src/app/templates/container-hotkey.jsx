@@ -17,17 +17,17 @@ const isFormField = ( target ) =>
 	( target.isContentEditable || [ 'INPUT', 'SELECT', 'TEXTAREA' ].includes( target.tagName ) );
 
 // A host with a scope, like the full page, shares the window with the rest of its page and with the
-// panel opened over it. It takes key presses from inside the scope, or from the page with nothing
-// focused while no panel is mounted, and never from a form field. It doesn't use the shared on/off
+// panel opened over it. It leaves every key press to a mounted panel, and otherwise takes those from
+// inside the scope or with nothing focused, never from a form field. It doesn't use the shared on/off
 // switch, which a reply box turns back on only if React sees it lose focus.
 const isForScope = ( { target }, shortcutScope ) => {
-	if ( isFormField( target ) ) {
+	if ( isPanelMounted() || isFormField( target ) ) {
 		return false;
 	}
-	if ( target === document.body ) {
-		return ! isPanelMounted();
-	}
-	return target instanceof Node && !! shortcutScope.current?.contains( target );
+	return (
+		target === document.body ||
+		( target instanceof Node && !! shortcutScope.current?.contains( target ) )
+	);
 };
 
 const dispatch = ( event, action ) => {

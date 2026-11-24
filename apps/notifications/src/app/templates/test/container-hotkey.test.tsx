@@ -273,19 +273,20 @@ describe( 'HotkeyContainer', () => {
 			expect( other ).toHaveBeenCalledTimes( 1 );
 		} );
 
-		it( 'leaves a key press with nothing focused to a mounted panel', () => {
+		it( 'leaves every key press to a mounted panel', () => {
 			const other = vi.fn();
 			const like = renderScoped( { other } );
 			const unmarkPanel = markPanelMounted();
 
 			try {
+				fireEvent.keyDown( screen.getByRole( 'button', { name: 'Open note' } ), { key: 'l' } );
 				fireEvent.keyDown( document.body, { key: 'l' } );
 			} finally {
 				unmarkPanel();
 			}
 
 			expect( like ).not.toHaveBeenCalled();
-			expect( other ).toHaveBeenCalledTimes( 1 );
+			expect( other ).toHaveBeenCalledTimes( 2 );
 
 			fireEvent.keyDown( document.body, { key: 'l' } );
 

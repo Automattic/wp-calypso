@@ -105,24 +105,28 @@ export default function Notifications( {
 		}
 	}, [ isInboxShown ] );
 
-	// On the full page, the panel stays open when the focus moves into the page without leaving
-	// the panel first: from the omnibar, which onFocusOutside below leaves alone, or after it fell
-	// to the body. Close it then, or the panel and the page would both act on one key press.
+	// On the full page, the panel stays open when the user moves into the page without leaving the
+	// panel first: from the omnibar, which onFocusOutside below leaves alone, or after its focus fell
+	// to the body. Close it on a click or focus in the page then, before the page acts on it.
 	useEffect( () => {
 		if ( ! isOpen || ! isInboxShown ) {
 			return;
 		}
-		const closeOnFocusInPage = ( { target }: FocusEvent ) => {
+		const closeOnPage = ( { target }: Event ) => {
 			if (
 				target instanceof Element &&
-				! target.closest( '.components-popover, [role="dialog"], #wpcom-omnibar' )
+				! target.closest(
+					'.components-popover, .components-modal__screen-overlay, [role="dialog"], #wpcom-omnibar'
+				)
 			) {
 				setIsOpen( false );
 			}
 		};
-		document.addEventListener( 'focusin', closeOnFocusInPage );
+		document.addEventListener( 'pointerdown', closeOnPage, true );
+		document.addEventListener( 'focusin', closeOnPage );
 		return () => {
-			document.removeEventListener( 'focusin', closeOnFocusInPage );
+			document.removeEventListener( 'pointerdown', closeOnPage, true );
+			document.removeEventListener( 'focusin', closeOnPage );
 		};
 	}, [ isOpen, isInboxShown ] );
 
