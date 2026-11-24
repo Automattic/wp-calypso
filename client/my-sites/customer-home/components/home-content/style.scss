@@ -46,7 +46,6 @@ body.is-section-home.theme-default.color-scheme {
 	.customer-home__site-domain-info {
 		display: flex;
 		flex-shrink: 0;
-		color: var(--color-text-subtle);
 	}
 
 	.customer-home__site-domain {
@@ -404,4 +403,8 @@ body.is-section-home.theme-default.color-scheme {
 			color: var( --color-neutral-20 );
 		}
 	}
+}
+
+.customer-home__site-domain-info-text {
+	margin-bottom: 8px;
 }

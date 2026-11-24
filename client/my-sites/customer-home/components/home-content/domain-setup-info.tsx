@@ -1,9 +1,8 @@
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
-import { Gridicon, Tooltip } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
-import { useRef, useState } from 'react';
+import InfoPopover from 'calypso/components/info-popover';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import type { DomainSummary } from '@automattic/api-core';
 
@@ -34,8 +33,6 @@ interface DomainSetupInfoProps {
 }
 
 export default function DomainSetupInfo( { siteId, siteSlug, siteDomain }: DomainSetupInfoProps ) {
-	const linkRef = useRef< HTMLAnchorElement >( null );
-	const [ isTooltipVisible, setIsTooltipVisible ] = useState( false );
 	const { data: pendingDomain } = useQuery( {
 		...domainsQuery(),
 		enabled: !! siteId,
@@ -50,32 +47,27 @@ export default function DomainSetupInfo( { siteId, siteSlug, siteDomain }: Domai
 		return null;
 	}
 
-	const label = sprintf(
-		/* translators: %1$s is the custom domain being set up, %2$s is the address the site is currently reachable at. */
-		__(
-			'Your domain %1$s is still being set up. In the meantime, your site is reachable at %2$s. View domain status →'
-		),
-		pendingDomain.domain,
-		siteDomain
-	);
-
 	return (
-		<>
-			<a
-				ref={ linkRef }
-				href={ domainManagementEdit( siteSlug, pendingDomain.domain ) }
-				className="customer-home__site-domain-info"
-				aria-label={ label }
-				onMouseEnter={ () => setIsTooltipVisible( true ) }
-				onMouseLeave={ () => setIsTooltipVisible( false ) }
-				onFocus={ () => setIsTooltipVisible( true ) }
-				onBlur={ () => setIsTooltipVisible( false ) }
-			>
-				<Gridicon icon="info" size={ 16 } />
+		<InfoPopover
+			className="customer-home__site-domain-info"
+			icon="info"
+			iconSize={ 16 }
+			position="bottom"
+			aria-label={ __( 'Domain setup status' ) }
+		>
+			<p className="customer-home__site-domain-info-text">
+				{ sprintf(
+					/* translators: %1$s is the custom domain being set up, %2$s is the address the site is currently reachable at. */
+					__(
+						'Your domain %1$s is still being set up. In the meantime, your site is reachable at %2$s.'
+					),
+					pendingDomain.domain,
+					siteDomain
+				) }
+			</p>
+			<a href={ domainManagementEdit( siteSlug, pendingDomain.domain ) }>
+				{ __( 'View domain status' ) }
 			</a>
-			<Tooltip context={ linkRef } isVisible={ isTooltipVisible } position="bottom">
-				{ label }
-			</Tooltip>
-		</>
+		</InfoPopover>
 	);
 }

@@ -54,6 +54,14 @@ async function waitForDomains( queryClient: QueryClient ) {
 	);
 }
 
+function queryIcon() {
+	return screen.queryByRole( 'button', { name: 'Domain setup status' } );
+}
+
+async function openPopover() {
+	await userEvent.click( await screen.findByRole( 'button', { name: 'Domain setup status' } ) );
+}
+
 describe( 'DomainSetupInfo', () => {
 	it( 'does not show the info icon when the primary domain is active', async () => {
 		mockDomains = [
@@ -67,7 +75,7 @@ describe( 'DomainSetupInfo', () => {
 		];
 		await waitForDomains( renderDomainSetupInfo() );
 
-		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		expect( queryIcon() ).not.toBeInTheDocument();
 	} );
 
 	it.each( [ 'example.com', 'www.example.com' ] )(
@@ -85,7 +93,7 @@ describe( 'DomainSetupInfo', () => {
 			];
 			await waitForDomains( renderDomainSetupInfo( siteDomain ) );
 
-			expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+			expect( queryIcon() ).not.toBeInTheDocument();
 		}
 	);
 
@@ -100,7 +108,7 @@ describe( 'DomainSetupInfo', () => {
 		];
 		await waitForDomains( renderDomainSetupInfo() );
 
-		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
+		expect( queryIcon() ).not.toBeInTheDocument();
 	} );
 
 	it.each( [ DomainStatus.IN_PROGRESS, DomainStatus.TRANSFER_ERROR ] )(
@@ -111,10 +119,9 @@ describe( 'DomainSetupInfo', () => {
 				buildDomain( { domain_status: { id: status, label: status, type: 'warning' } } ),
 			];
 			renderDomainSetupInfo();
+			await openPopover();
 
-			const link = await screen.findByRole( 'link', {
-				name: /Your domain example\.com is still being set up/,
-			} );
+			const link = screen.getByRole( 'link', { name: 'View domain status' } );
 
 			expect( link ).toBeVisible();
 			expect( link ).toHaveAttribute( 'href', domainManagementEdit( SITE_DOMAIN, 'example.com' ) );
@@ -130,15 +137,14 @@ describe( 'DomainSetupInfo', () => {
 			} ),
 		];
 		renderDomainSetupInfo();
+		await openPopover();
 
-		const link = await screen.findByRole( 'link', {
-			name: /Your domain example\.com is still being set up/,
-		} );
+		const link = screen.getByRole( 'link', { name: 'View domain status' } );
 
 		expect( link ).toHaveAttribute( 'href', domainManagementEdit( SITE_DOMAIN, 'example.com' ) );
 	} );
 
-	it( 'shows the explanation in a tooltip on hover', async () => {
+	it( 'shows the explanation when the icon is clicked', async () => {
 		mockDomains = [
 			defaultAddress,
 			buildDomain( {
@@ -146,13 +152,13 @@ describe( 'DomainSetupInfo', () => {
 			} ),
 		];
 		renderDomainSetupInfo();
+		const explanation = `Your domain example.com is still being set up. In the meantime, your site is reachable at ${ SITE_DOMAIN }.`;
 
-		await userEvent.hover( await screen.findByRole( 'link' ) );
+		expect( await screen.findByRole( 'button', { name: 'Domain setup status' } ) ).toBeVisible();
+		expect( screen.queryByText( explanation ) ).not.toBeInTheDocument();
 
-		expect(
-			await screen.findByText(
-				`Your domain example.com is still being set up. In the meantime, your site is reachable at ${ SITE_DOMAIN }. View domain status →`
-			)
-		).toBeVisible();
+		await openPopover();
+
+		expect( screen.getByText( explanation ) ).toBeVisible();
 	} );
 } );
