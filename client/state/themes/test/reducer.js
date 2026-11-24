@@ -22,7 +22,6 @@ import {
 import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, {
 	queryRequests,
-	queryRequestErrors,
 	queries,
 	lastQuery,
 	themeRequests,
@@ -69,7 +68,6 @@ describe( 'reducer', () => {
 				'completedActivationRequests',
 				'lastQuery',
 				'queries',
-				'queryRequestErrors',
 				'queryRequests',
 				'themeFilters',
 				'themeInstalls',
@@ -156,83 +154,6 @@ describe( 'reducer', () => {
 
 			expect( state ).toEqual( {
 				'2916284:{"search":"Hello"}': false,
-			} );
-		} );
-	} );
-
-	describe( '#queryRequestErrors()', () => {
-		test( 'should default to an empty object', () => {
-			const state = queryRequestErrors( undefined, {} );
-
-			expect( state ).toEqual( {} );
-		} );
-
-		test( 'should create empty mapping on success if previous state was empty', () => {
-			const state = queryRequestErrors( deepFreeze( {} ), {
-				type: THEMES_REQUEST_SUCCESS,
-				siteId: 2916284,
-				query: { search: 'Twenty' },
-			} );
-
-			expect( state ).toEqual( {
-				2916284: {},
-			} );
-		} );
-
-		test( 'should map site ID, query to error if request finishes with failure', () => {
-			const state = queryRequestErrors( deepFreeze( {} ), {
-				type: THEMES_REQUEST_FAILURE,
-				siteId: 2916284,
-				query: { search: 'Twenty' },
-				error: 'Request error',
-			} );
-
-			expect( state ).toEqual( {
-				2916284: {
-					'2916284:{"search":"Twenty"}': 'Request error',
-				},
-			} );
-		} );
-
-		test( 'should reset error state after successful request after a failure', () => {
-			const state = queryRequestErrors(
-				deepFreeze( {
-					2916284: {
-						'2916284:{"search":"Twenty"}': 'Request Error',
-					},
-				} ),
-				{
-					type: THEMES_REQUEST_SUCCESS,
-					siteId: 2916284,
-					query: { search: 'Twenty' },
-				}
-			);
-
-			expect( state ).toEqual( {
-				2916284: {},
-			} );
-		} );
-
-		test( 'should accumulate mappings', () => {
-			const state = queryRequestErrors(
-				deepFreeze( {
-					2916284: {
-						'2916284:{"blerch":"Twenty"}': 'Invalid query!',
-					},
-				} ),
-				{
-					type: THEMES_REQUEST_FAILURE,
-					siteId: 2916284,
-					query: { search: 'Twenty' },
-					error: 'System error',
-				}
-			);
-
-			expect( state ).toEqual( {
-				2916284: {
-					'2916284:{"blerch":"Twenty"}': 'Invalid query!',
-					'2916284:{"search":"Twenty"}': 'System error',
-				},
 			} );
 		} );
 	} );

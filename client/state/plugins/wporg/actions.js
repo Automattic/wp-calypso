@@ -70,17 +70,15 @@ export function fetchPluginData( pluginSlug, locale = '' ) {
  * @param {string} searchTerm Search term
  * @param {Array}  data       List of found plugins, not defined if there was an error
  * @param {Object} error      Error object, undefined if the plugins were fetched successfully
- * @param {Object} pagination Paginatioin data, as retrieved from the API response.
  * @returns {Object}          Action object
  */
-function receivePluginsList( category, page, searchTerm, data, error, pagination = null ) {
+function receivePluginsList( category, page, searchTerm, data, error ) {
 	return {
 		type: PLUGINS_WPORG_LIST_RECEIVE,
 		category,
 		page,
 		searchTerm,
 		data: normalizePluginsList( data ),
-		pagination,
 		error,
 	};
 }
@@ -140,7 +138,7 @@ export function fetchPluginsList(
 			locale: getCurrentUserLocale( getState() ),
 		} )
 			.then( ( { info, plugins } ) => {
-				dispatch( receivePluginsList( category, page, searchTerm, plugins, null, info ) );
+				dispatch( receivePluginsList( category, page, searchTerm, plugins, null ) );
 				// Do not trigger a new tracks event for subsequent pages.
 				if ( searchTerm && info?.page === 1 ) {
 					dispatch(
