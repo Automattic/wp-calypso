@@ -2,11 +2,15 @@
  * @vitest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useState } from 'react';
 import { vi } from 'vitest';
+import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import ContentInfo from '../content-info';
+import SiteLeaveModal from '../index';
 import type { Site } from '@automattic/api-core';
 
 // The blocker-counting tests run against the Calypso backport branch because it
@@ -51,6 +55,7 @@ const findManagePurchases = () => screen.findByRole( 'link', { name: 'Manage pur
 
 beforeEach( () => {
 	mockIsBackport = true;
+	window.scrollTo = vi.fn();
 } );
 
 describe( '<ContentInfo> purchase blockers', () => {
@@ -115,7 +120,202 @@ describe( '<ContentInfo> purchase blockers', () => {
 		renderContent();
 
 		expect( await screen.findByRole( 'button', { name: 'Leave site' } ) ).toBeVisible();
+		expect( screen.queryByText( /reassigned to the site owner/ ) ).not.toBeInTheDocument();
 	} );
+
+	test( 'explains who will receive authored content on an Atomic site', async () => {
+		mockPurchases( [] );
+		render( <ContentInfo site={ { ...site, is_wpcom_atomic: true } } onClose={ vi.fn() } /> );
+
+		expect( await screen.findByText( /reassigned to the site owner/ ) ).toBeVisible();
+	} );
+
+	test( 'sends one leave request when submissions arrive before the pending render', async () => {
+		mockPurchases( [] );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wp/v2/sites/123/users/me' )
+			.query( true )
+			.reply( 200, { id: CURRENT_USER_ID } );
+		let requestCount = 0;
+		let releaseResponses = false;
+		const finishRequests: Array< () => void > = [];
+		const leaveRequest = nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.post( '/rest/v1.1/sites/123/users/1/delete' )
+			.query( true )
+			.reply( ( _uri, _body, callback ) => {
+				requestCount++;
+				const finish = () => callback( null, [ 200, { success: false } ] );
+				if ( releaseResponses ) {
+					finish();
+				} else {
+					finishRequests.push( finish );
+				}
+			} );
+		const onClose = vi.fn();
+		const { unmount } = render( <ContentInfo site={ site } onClose={ onClose } /> );
+		const user = userEvent.setup();
+		await user.click( await screen.findByRole( 'checkbox' ) );
+		const submit = screen.getByRole( 'button', { name: 'Leave site' } );
+		await waitFor( () => expect( submit ).toBeEnabled() );
+
+		try {
+			await act( async () => {
+				submit.click();
+				submit.click();
+			} );
+			await waitFor( () => expect( requestCount ).toBeGreaterThan( 0 ) );
+			expect( requestCount ).toBe( 1 );
+			expect( leaveRequest.isDone() ).toBe( true );
+			expect( submit ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
+		} finally {
+			releaseResponses = true;
+			finishRequests.forEach( ( finish ) => finish() );
+			await waitFor( () => expect( onClose ).toHaveBeenCalled() );
+			unmount();
+		}
+		expect( requestCount ).toBe( 1 );
+	} );
+
+	test( 'reports a failed leave if the dialog unmounts during the request', async () => {
+		mockPurchases( [] );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wp/v2/sites/123/users/me' )
+			.query( true )
+			.reply( 200, { id: CURRENT_USER_ID } );
+		let finishRequest: ( () => void ) | undefined;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/sites/123/users/1/delete' )
+			.query( true )
+			.reply( ( _uri, _body, callback ) => {
+				finishRequest = () => callback( null, [ 200, { success: false } ] );
+			} );
+		const user = userEvent.setup();
+		const onClose = vi.fn();
+		const { unmount, recordTracksEvent } = render(
+			<ContentInfo site={ site } onClose={ onClose } />
+		);
+
+		await user.click( await screen.findByRole( 'checkbox' ) );
+		const submit = screen.getByRole( 'button', { name: 'Leave site' } );
+		await waitFor( () => expect( submit ).toBeEnabled() );
+		await user.click( submit );
+		await waitFor( () => expect( finishRequest ).toBeDefined() );
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
+
+		unmount();
+		finishRequest?.();
+		await waitFor( () =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_sites_dashboard_site_leave_modal_leave_site_error',
+				{ site_id: site.ID, error: 'Error' }
+			)
+		);
+		expect( onClose ).not.toHaveBeenCalled();
+	} );
+
+	test.each( [
+		{ outcome: 'success', success: true, navigations: [ [ { to: '/sites' } ] ] },
+		{ outcome: 'error', success: false, navigations: [] },
+	] )(
+		'completes a mounted $outcome after one leave request',
+		async ( { success, navigations } ) => {
+			mockIsBackport = false;
+			mockPurchases( [] );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wp/v2/sites/123/users/me' )
+				.query( true )
+				.reply( 200, { id: CURRENT_USER_ID } );
+			let finishRequest: ( () => void ) | undefined;
+			let requestCount = 0;
+			const leaveRequest = nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( '/rest/v1.1/sites/123/users/1/delete' )
+				.query( true )
+				.reply( ( _uri, _body, callback ) => {
+					requestCount++;
+					finishRequest = () => callback( null, [ 200, { success } ] );
+				} );
+			const onClose = vi.fn();
+			const { router } = render( <ContentInfo site={ site } onClose={ onClose } /> );
+			const navigate = vi.spyOn( router, 'navigate' ).mockResolvedValue();
+			const user = userEvent.setup();
+
+			await user.click( await screen.findByRole( 'checkbox' ) );
+			const submit = screen.getByRole( 'button', { name: 'Leave site' } );
+			await waitFor( () => expect( submit ).toBeEnabled() );
+			await user.dblClick( submit );
+			await waitFor( () => expect( finishRequest ).toBeDefined() );
+			expect( submit ).toBeDisabled();
+			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
+			expect( requestCount ).toBe( 1 );
+			expect( leaveRequest.isDone() ).toBe( true );
+			expect( navigate ).not.toHaveBeenCalled();
+			expect( onClose ).not.toHaveBeenCalled();
+
+			finishRequest?.();
+			await waitFor( () => expect( onClose ).toHaveBeenCalledTimes( 1 ) );
+			expect( navigate.mock.calls ).toEqual( navigations );
+			expect( requestCount ).toBe( 1 );
+		}
+	);
+
+	test.each( [
+		{
+			outcome: 'success',
+			success: true,
+			message: 'You have left example.wordpress.com successfully.',
+		},
+		{ outcome: 'error', success: false, message: 'Failed to leave the site. Please try again.' },
+	] )(
+		'shows the $outcome notice after the leave dialog is dismissed',
+		async ( { success, message } ) => {
+			mockIsBackport = false;
+			mockPurchases( [] );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wp/v2/sites/123/users/me' )
+				.query( true )
+				.reply( 200, { id: CURRENT_USER_ID } );
+			let finishRequest: ( () => void ) | undefined;
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/sites/123/users/1/delete' )
+				.query( true )
+				.reply( ( _uri, _body, callback ) => {
+					finishRequest = () => callback( null, [ 200, { success } ] );
+				} );
+
+			function LeaveDialog() {
+				const [ isOpen, setIsOpen ] = useState( true );
+				return (
+					<>
+						<Snackbars />
+						{ isOpen && <SiteLeaveModal site={ site } onClose={ () => setIsOpen( false ) } /> }
+					</>
+				);
+			}
+
+			const user = userEvent.setup();
+			const { router } = render( <LeaveDialog /> );
+			const navigate = vi.spyOn( router, 'navigate' ).mockResolvedValue();
+			await user.click( await screen.findByRole( 'checkbox' ) );
+			const submit = screen.getByRole( 'button', { name: 'Leave site' } );
+			await waitFor( () => expect( submit ).toBeEnabled() );
+			await user.click( submit );
+			await waitFor( () => expect( finishRequest ).toBeDefined() );
+
+			await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+			expect( screen.queryByRole( 'dialog', { name: 'Leave site' } ) ).not.toBeInTheDocument();
+			finishRequest?.();
+			const notices = await screen.findAllByText( message );
+			await waitFor( () =>
+				expect(
+					notices.find( ( notice ) => notice.closest( '.dashboard-snackbars' ) )
+				).toBeVisible()
+			);
+			expect( navigate ).not.toHaveBeenCalled();
+		}
+	);
 
 	describe( 'on the dashboard', () => {
 		beforeEach( () => {

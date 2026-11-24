@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { leaveSite } from 'calypso/state/sites/actions';
 import { getSite, getSiteDomain, getSiteSlug } from 'calypso/state/sites/selectors';
 import useQueryUsersMeBySiteId from './use-query-users-me-by-site-id';
@@ -35,6 +36,7 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 	const siteSlug = useSelector( ( state: AppState ) => getSiteSlug( state, siteId ) );
 	const siteDomain = useSelector( ( state: AppState ) => getSiteDomain( state, siteId ) || '' );
 	const siteOwnerId = useSelector( ( state: AppState ) => getSite( state, siteId )?.site_owner );
+	const isAtomic = useSelector( ( state: AppState ) => isSiteAutomatedTransfer( state, siteId ) );
 	const sitePurchasesLoaded = useSelector( ( state: AppState ) =>
 		hasLoadedSitePurchasesFromServer( state )
 	);
@@ -47,16 +49,17 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 	const { data: user } = useQueryUsersMeBySiteId( siteId );
 
 	const isSiteOwner = wpcomUserId === siteOwnerId;
+	const canLeave = user?.id && isChecked && ! isSiteOwner && ! hasActiveCancelableSubscriptions;
 
 	const handleLeaveSite = async () => {
-		if ( ! user?.id || ! isChecked ) {
+		if ( ! canLeave || isSubmitting ) {
 			return;
 		}
 
 		recordTracksEvent( 'calypso_leave_site_modal_form_leave_site_click' );
 		setIsSubmitting( true );
 		try {
-			const result = await dispatch( leaveSite( siteId, user?.id ) );
+			const result = await dispatch( leaveSite( siteId, user.id ) );
 			if ( result ) {
 				page.redirect( '/sites' );
 				onSuccess?.();
@@ -104,6 +107,13 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 						'Leaving will remove your access to the site, including all content, users, domains, upgrades, and anything else you have access to.'
 					) }
 				</p>
+				{ isAtomic && (
+					<p>
+						{ translate(
+							'Any content you authored will stay on the site and be reassigned to the site owner.'
+						) }
+					</p>
+				) }
 				<p>
 					{ translate(
 						'To regain access, a current administrator must re-invite you. Please confirm this is your intent before proceeding.'
@@ -155,7 +165,7 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 			<Button
 				__next40pxDefaultSize
 				variant="primary"
-				disabled={ ! user?.id || ! isChecked || isSiteOwner || hasActiveCancelableSubscriptions }
+				disabled={ ! canLeave || isSubmitting }
 				isBusy={ isSubmitting }
 				onClick={ handleLeaveSite }
 			>

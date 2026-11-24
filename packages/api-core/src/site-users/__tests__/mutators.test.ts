@@ -1,5 +1,20 @@
 import nock from 'nock';
-import { updateCurrentSiteUserMeta } from '../mutators';
+import { deleteSiteUser, updateCurrentSiteUserMeta } from '../mutators';
+
+describe( 'deleteSiteUser', () => {
+	afterEach( () => nock.cleanAll() );
+
+	test( 'rejects when the site did not remove the user', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/sites/99/users/12/delete' )
+			.query( true )
+			.reply( 200, { success: false } );
+
+		await expect( deleteSiteUser( 99, 12 ) ).rejects.toThrow(
+			'Failed to leave the site. Please try again.'
+		);
+	} );
+} );
 
 describe( 'updateCurrentSiteUserMeta', () => {
 	afterEach( () => nock.cleanAll() );
