@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
+import { useAppContext } from '../context';
 import type { Note } from '../types';
 
 import './style.scss';
@@ -99,7 +100,9 @@ export function useNoteListNavigationKeyboardShortcuts( {
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 } ) {
-	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
+	const { hasNavigationShortcuts } = useAppContext();
+	const areKeyboardShortcutsEnabled =
+		useSelector( getKeyboardShortcutsEnabled ) && hasNavigationShortcuts;
 
 	useEffect( () => {
 		const stopEvent = ( event: KeyboardEvent ) => {

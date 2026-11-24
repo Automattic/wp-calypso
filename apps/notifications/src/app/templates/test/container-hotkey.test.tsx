@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
-import { useState } from 'react';
+import { createRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { vi } from 'vitest';
 import { HotkeyContainer } from '../container-hotkey';
@@ -190,5 +190,60 @@ describe( 'HotkeyContainer', () => {
 		fireEvent.keyDown( screen.getByRole( 'button', { name: 'Send' } ), { key: 'l' } );
 
 		expect( like ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	describe( 'with a scope, as on the full page', () => {
+		const renderScoped = ( other?: () => void ) => {
+			const like = vi.fn();
+			const scope = createRef< HTMLDivElement >();
+			render(
+				<>
+					<input aria-label="Search" />
+					<div ref={ scope }>
+						<button>Open note</button>
+						<HotkeyContainer
+							keyboardShortcutsAreEnabled
+							shortcutScope={ scope }
+							shortcuts={ [ { hotkey: 'l', action: like } ] }
+						/>
+					</div>
+					{ other && (
+						<HotkeyContainer
+							keyboardShortcutsAreEnabled
+							shortcuts={ [ { hotkey: 'l', action: other } ] }
+						/>
+					) }
+				</>
+			);
+			return like;
+		};
+
+		it( 'runs a shortcut for a key press from inside its scope or with nothing focused', () => {
+			const like = renderScoped();
+
+			fireEvent.keyDown( screen.getByRole( 'button', { name: 'Open note' } ), { key: 'l' } );
+			fireEvent.keyDown( document.body, { key: 'l' } );
+
+			expect( like ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it( 'runs no shortcut for a key press from outside its scope', () => {
+			const like = renderScoped();
+
+			expect(
+				fireEvent.keyDown( screen.getByRole( 'textbox', { name: 'Search' } ), { key: 'l' } )
+			).toBe( true );
+			expect( like ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves a key press from outside its scope to another container', () => {
+			const other = vi.fn();
+			const like = renderScoped( other );
+
+			fireEvent.keyDown( screen.getByRole( 'textbox', { name: 'Search' } ), { key: 'l' } );
+
+			expect( like ).not.toHaveBeenCalled();
+			expect( other ).toHaveBeenCalledTimes( 1 );
+		} );
 	} );
 } );

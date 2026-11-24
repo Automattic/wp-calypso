@@ -25,11 +25,12 @@ export function useNoteNavigation( {
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 } ): NoteNavigation {
-	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
+	const { client, hasNavigationShortcuts } = useAppContext();
+	const areKeyboardShortcutsEnabled =
+		useSelector( getKeyboardShortcutsEnabled ) && hasNavigationShortcuts;
 	const isLoading = useSelector( getIsLoading );
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as Note[] );
 	const hiddenNoteIds = useSelector( getHiddenNoteIds );
-	const { client } = useAppContext();
 
 	const filter = getFilters()[ filterName ];
 	// Keep the selected note in the navigation list at its natural position even

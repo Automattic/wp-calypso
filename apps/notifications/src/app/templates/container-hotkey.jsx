@@ -3,13 +3,20 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
-import { NoteOpenContext } from '../context';
+import { NoteOpenContext, useAppContext } from '../context';
 
 // Every container listens on `window`, and an action can re-render another container
 // with the same hotkey before that one's listener runs, so the others skip a key press
 // one container handled. Not `event.defaultPrevented`: other code cancels key presses
 // too, such as a focusable disabled button, and that mustn't turn the shortcuts off.
 const handledEvents = new WeakSet();
+
+// With a scope, only key presses from inside it count, or from the page with nothing focused: not
+// typing in a field elsewhere on the page, nor in the panel opened over it.
+const isInScope = ( { target }, shortcutScope ) =>
+	! shortcutScope ||
+	target === document.body ||
+	( target instanceof Node && !! shortcutScope.current?.contains( target ) );
 
 const dispatch = ( event, action ) => {
 	handledEvents.add( event );
@@ -30,6 +37,7 @@ export class HotkeyContainer extends Component {
 				withModifiers: PropTypes.bool,
 			} )
 		),
+		shortcutScope: PropTypes.shape( { current: PropTypes.object } ),
 		children: PropTypes.node,
 	};
 
@@ -47,7 +55,8 @@ export class HotkeyContainer extends Component {
 			handledEvents.has( event ) ||
 			! this.context ||
 			! this.props.shortcuts ||
-			! this.props.keyboardShortcutsAreEnabled
+			! this.props.keyboardShortcutsAreEnabled ||
+			! isInScope( event, this.props.shortcutScope )
 		) {
 			return;
 		}
@@ -71,4 +80,10 @@ const mapStateToProps = ( state ) => ( {
 	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
-export default connect( mapStateToProps )( HotkeyContainer );
+const ConnectedHotkeyContainer = connect( mapStateToProps )( HotkeyContainer );
+
+export default function ScopedHotkeyContainer( props ) {
+	const { shortcutScope } = useAppContext();
+
+	return <ConnectedHotkeyContainer shortcutScope={ shortcutScope } { ...props } />;
+}

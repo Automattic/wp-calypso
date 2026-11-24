@@ -24,11 +24,13 @@ vi.mock( '../../panel/rest-client', () => ( {
 		};
 	} ),
 } ) );
+const { post } = vi.hoisted( () => ( { post: vi.fn( async () => ( {} ) ) } ) );
 vi.mock( '../../panel/rest-client/wpcom', () => ( {
 	init: vi.fn(),
 	listNotes: vi.fn( async () => ( { notes: [] } ) ),
 	markReadStatus: vi.fn(),
 	markPostAsSeen: vi.fn(),
+	wpcom: () => ( { req: { post } } ),
 } ) );
 
 const makeNote = ( id: number, label: string ) => ( {
@@ -42,7 +44,20 @@ const makeNote = ( id: number, label: string ) => ( {
 	body: [],
 } );
 
-const loadNotes = ( ...notes: ReturnType< typeof makeNote >[] ) => {
+const makeComment = ( id: number, label: string ) => {
+	const ids = { site: 10, post: 30, comment: 20 };
+	return {
+		...makeNote( id, label ),
+		body: [
+			{ type: 'comment', text: 'A short reply', actions: { 'like-comment': false }, meta: { ids } },
+		],
+		meta: { ids },
+	};
+};
+
+const loadNotes = (
+	...notes: Array< ReturnType< typeof makeNote > | ReturnType< typeof makeComment > >
+) => {
 	store.dispatch( actions.notes.addNotes( notes ) );
 	store.dispatch( actions.ui.loadedNotes() );
 };
@@ -380,12 +395,56 @@ describe( 'NotificationsInbox', () => {
 		);
 	} );
 
-	it( 'turns off the panel keyboard shortcuts', () => {
-		store.dispatch( actions.ui.enableKeyboardShortcuts() );
+	describe( 'keyboard shortcuts', () => {
+		beforeEach( () => {
+			post.mockClear();
+		} );
 
-		renderInbox();
+		it( 'turns them on', () => {
+			renderInbox();
 
-		expect( getKeyboardShortcutsEnabled( store.getState() ) ).toBe( false );
+			expect( getKeyboardShortcutsEnabled( store.getState() ) ).toBe( true );
+		} );
+
+		it( 'likes the open comment with l', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+
+			await user.keyboard( 'l' );
+
+			expect( post ).toHaveBeenCalledWith( '/sites/10/comments/20/likes/new' );
+		} );
+
+		it( 'leaves l typed into a field elsewhere on the page alone', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+			render( <input aria-label="Search" /> );
+
+			await user.type( screen.getByRole( 'textbox', { name: 'Search' } ), 'l' );
+
+			expect( post ).not.toHaveBeenCalled();
+		} );
+
+		it( "leaves moving through the notes and tabs to the page's own controls", async () => {
+			const user = userEvent.setup();
+			const setSelectedNoteId = vi.fn();
+			const setFilterName = vi.fn();
+			loadNotes( makeNote( 801, 'First comment' ), makeNote( 802, 'Second comment' ) );
+			const { unmount } = renderInbox( '802', { setSelectedNoteId } );
+
+			await user.keyboard( 'j{ArrowDown}{ArrowRight}' );
+
+			expect( setSelectedNoteId ).not.toHaveBeenCalled();
+			unmount();
+
+			renderInbox( undefined, { setFilterName } );
+
+			await user.keyboard( 'u' );
+
+			expect( setFilterName ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'opens a link from a note in a new tab', () => {
