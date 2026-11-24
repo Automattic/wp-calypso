@@ -1,0 +1,68 @@
+/*!
+Copyright 2025 OpenAI
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the “Software”), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+/* Token values adapted from OpenAI Apps SDK UI under the MIT license above. */
+[data-ai-ui-theme='chatgpt'] {
+	--ai-ui-theme-font: var(
+		--font-sans,
+		ui-sans-serif,
+		-apple-system,
+		system-ui,
+		'Segoe UI',
+		sans-serif
+	);
+	--ai-ui-theme-text: var( --color-text-primary, light-dark( #0d0d0d, #fff ) );
+	--ai-ui-theme-text-secondary: var( --color-text-secondary, light-dark( #5d5d5d, #afafaf ) );
+	--ai-ui-theme-text-disabled: var(
+		--color-text-disabled,
+		light-dark( rgb( 13 13 13 / 35% ), rgb( 255 255 255 / 35% ) )
+	);
+	--ai-ui-theme-page: var( --color-background-primary, light-dark( #fff, #212121 ) );
+	--ai-ui-theme-surface: var( --color-background-secondary, light-dark( #f9f9f9, #181818 ) );
+	--ai-ui-theme-input: var( --color-background-tertiary, light-dark( #f3f3f3, #131313 ) );
+	--ai-ui-theme-inverse: var( --color-background-inverse, light-dark( #0d0d0d, #fff ) );
+	--ai-ui-theme-on-inverse: var( --color-text-inverse, light-dark( #fff, #0d0d0d ) );
+	--ai-ui-theme-border: var(
+		--color-border-primary,
+		light-dark( rgb( 13 13 13 / 10% ), rgb( 255 255 255 / 12% ) )
+	);
+	--ai-ui-theme-control-border: var(
+		--color-border-secondary,
+		light-dark( rgb( 13 13 13 / 16% ), rgb( 255 255 255 / 25% ) )
+	);
+	--ai-ui-theme-hover: light-dark( rgb( 13 13 13 / 4% ), rgb( 255 255 255 / 8% ) );
+	--ai-ui-theme-ring: var( --color-ring-primary, light-dark( #0169cc, #0285ff ) );
+	--ai-ui-theme-danger: var( --color-text-danger, light-dark( #ba2623, #ff8583 ) );
+	--ai-ui-theme-font-size: var( --font-text-sm-size, 0.875rem );
+	--ai-ui-theme-line-height: var( --font-text-sm-line-height, 1.25rem );
+	--ai-ui-theme-small-size: var( --font-text-xs-size, 0.75rem );
+	--ai-ui-theme-small-line-height: var( --font-text-xs-line-height, 1.125rem );
+	--ai-ui-theme-control-height: 2rem;
+	--ai-ui-theme-control-radius: var( --border-radius-md, 0.5rem );
+	--ai-ui-theme-card-radius: var( --border-radius-xl, 1rem );
+	--ai-ui-theme-space: 0.25rem;
+	--ai-ui-theme-heading-1-size: var( --font-heading-md-size, 1.25rem );
+	--ai-ui-theme-heading-1-line-height: var( --font-heading-md-line-height, 1.625rem );
+	--ai-ui-theme-heading-2-size: var( --font-heading-sm-size, 1.125rem );
+	--ai-ui-theme-heading-2-line-height: var( --font-heading-sm-line-height, 1.625rem );
+	--ai-ui-theme-heading-3-size: var( --font-heading-xs-size, 1rem );
+	--ai-ui-theme-heading-3-line-height: var( --font-heading-xs-line-height, 1.5rem );
+}

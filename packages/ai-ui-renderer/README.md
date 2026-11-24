@@ -314,6 +314,42 @@ The renderer derives its own colors from those, which follow the light or dark m
   mode, so they stand out on the surface. Fills, such as a primary Button or a checked check box,
   keep the primary in both modes, with `--a2ui-color-on-primary` text and marks on top.
 
+### Optional client themes
+
+```tsx
+import '@automattic/ai-ui-renderer/style.scss';
+import '@automattic/ai-ui-renderer/themes/chatgpt.scss';
+
+<InteractiveUiSurface surface={ surface } theme="chatgpt" />;
+```
+
+No theme preserves the WordPress appearance. The host chooses a theme from its MCP client
+information and may update it while a surface or modal is open. The renderer does not inspect
+user agents, tool arguments or transport globals. Unknown clients should use the default theme.
+
+`theme` accepts a CSS preset name, rather than a fixed list of clients. Add another preset by
+setting `--ai-ui-theme-*` variables on `[data-ai-ui-theme="your-client"]` and importing its CSS.
+It can live in a consumer or be shared alongside `themes/chatgpt.scss`. Use the same contract:
+
+| Tokens (prefix `--ai-ui-theme-`) | Purpose |
+| --- | --- |
+| `font`, `font-size`, `line-height`, `small-size`, `small-line-height` | Body and control typography |
+| `heading-1-size`, `heading-1-line-height`, `heading-2-size`, `heading-2-line-height`, `heading-3-size`, `heading-3-line-height` | Markdown headings |
+| `text`, `text-secondary`, `text-disabled`, `danger` | Text and validation colors |
+| `surface`, `input`, `inverse`, `on-inverse`, `hover` | Cards, inputs and primary actions |
+| `border`, `control-border`, `ring` | Borders and focus indicators |
+| `control-height`, `control-radius`, `card-radius`, `space` | Component geometry and spacing unit |
+
+The optional ChatGPT preset adapts the MIT-licensed OpenAI Apps SDK UI tokens at
+[`0f00143c7a639906f1621fe58e1b6be7b5bea46d`](https://github.com/openai/apps-sdk-ui/tree/0f00143c7a639906f1621fe58e1b6be7b5bea46d/src/styles).
+Its license is preserved in the SCSS header. It uses MCP host style variables when provided,
+with light/dark fallback values. It adds no OpenAI React or Tailwind dependency.
+
+Styles are scoped to the selected surface and its portaled modal. An open modal follows theme
+changes, host ancestor class/style changes and system color-scheme changes. Page backgrounds,
+root resets, branding and overlay stacking remain the consumer's responsibility. The optional
+`--ai-ui-theme-page` token is available to hosts that need a matching page background.
+
 ## Adding a component
 
 Add a basic component in `src/components`, or a custom one to its owner's catalog

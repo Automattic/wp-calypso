@@ -25,6 +25,10 @@
 		"./style.scss": {
 			"calypso:src": "./src/style.scss",
 			"default": "./dist/esm/style.scss"
+		},
+		"./themes/*.scss": {
+			"calypso:src": "./src/themes/*.scss",
+			"default": "./dist/esm/themes/*.scss"
 		}
 	},
 	"sideEffects": [

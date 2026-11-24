@@ -13,6 +13,7 @@ export const InteractiveUiSurfaceContext = createContext< {
 	showErrors?: () => void;
 	/** The host's classes for the surface, which its modal takes too. */
 	className?: string;
+	theme?: string;
 	/** The surface's root, whose theme its modals copy. */
 	rootRef?: RefObject< HTMLElement | null >;
 } >( { disabled: false, isShowingErrors: false } );

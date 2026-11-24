@@ -162,7 +162,7 @@ it.each( [
 	expect( onError ).not.toHaveBeenCalled();
 } );
 
-it( 'themes the modal like its surface', async () => {
+it( 'keeps an open modal in sync with its surface theme', async () => {
 	const surface = createSurface( [
 		{ id: 'root', component: 'Modal', trigger: 'trigger', content: 'details' },
 		{ id: 'trigger', component: 'Button', child: 'label', action: { event: { name: 'open' } } },
@@ -170,7 +170,9 @@ it( 'themes the modal like its surface', async () => {
 		{ id: 'details', component: 'Text', text: 'Details' },
 	] );
 
-	const { container } = render( <InteractiveUiSurface surface={ surface } className="host" /> );
+	const { container, rerender } = render(
+		<InteractiveUiSurface surface={ surface } className="host" theme="chatgpt" />
+	);
 	const trigger = screen.getByRole( 'button', { name: 'Open details' } );
 	const root = trigger.closest< HTMLElement >( '.ai-ui-renderer' );
 
@@ -187,6 +189,23 @@ it( 'themes the modal like its surface', async () => {
 	expect( overlay?.style.getPropertyValue( '--a2ui-color-surface' ) ).toBe( 'black' );
 	expect( overlay?.style.getPropertyValue( 'color-scheme' ) ).toBe( 'dark' );
 	expect( overlay?.style.getPropertyValue( '--ai-ui-renderer-host-accent' ) ).toBe( 'green' );
+
+	root?.style.setProperty( '--a2ui-color-surface', 'white' );
+	root?.style.setProperty( 'color-scheme', 'light' );
+	root?.style.setProperty( '--ai-ui-theme-control-radius', '12px' );
+	rerender( <InteractiveUiSurface surface={ surface } className="host" theme="another-client" /> );
+
+	await waitFor( () => {
+		expect( overlay ).toHaveAttribute( 'data-ai-ui-theme', 'another-client' );
+		expect( overlay?.style.getPropertyValue( '--a2ui-color-surface' ) ).toBe( 'white' );
+		expect( overlay?.style.getPropertyValue( 'color-scheme' ) ).toBe( 'light' );
+		expect( overlay?.style.getPropertyValue( '--ai-ui-theme-control-radius' ) ).toBe( '12px' );
+	} );
+
+	root?.style.removeProperty( '--ai-ui-theme-control-radius' );
+	await waitFor( () =>
+		expect( overlay?.style.getPropertyValue( '--ai-ui-theme-control-radius' ) ).toBe( '' )
+	);
 } );
 
 it( 'titles a modal with its accessibility label', async () => {

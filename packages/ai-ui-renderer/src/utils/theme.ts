@@ -22,8 +22,42 @@ const THEME_PROPERTIES = [
 /** Copies the theme an element resolved onto one outside it, such as the modal's overlay. */
 export function copyTheme( from: Element, to: HTMLElement ) {
 	const style = getComputedStyle( from );
+	const properties = new Set( THEME_PROPERTIES );
 
-	for ( const property of THEME_PROPERTIES ) {
+	for ( const property of Array.from( style ) ) {
+		if ( property.startsWith( '--ai-ui-theme-' ) ) {
+			properties.add( property );
+		}
+	}
+
+	for ( const property of Array.from( to.style ) ) {
+		if ( property.startsWith( '--ai-ui-theme-' ) && ! properties.has( property ) ) {
+			to.style.removeProperty( property );
+		}
+	}
+
+	for ( const property of properties ) {
 		to.style.setProperty( property, style.getPropertyValue( property ) );
 	}
+}
+
+export function observeTheme( from: Element, to: HTMLElement ) {
+	const update = () => copyTheme( from, to );
+	const observer = new MutationObserver( update );
+	const media = window.matchMedia( '(prefers-color-scheme: dark)' );
+
+	for ( let ancestor: Element | null = from; ancestor; ancestor = ancestor.parentElement ) {
+		observer.observe( ancestor, {
+			attributes: true,
+			attributeFilter: [ 'class', 'style', 'data-ai-ui-theme' ],
+		} );
+	}
+
+	media.addEventListener( 'change', update );
+	update();
+
+	return () => {
+		observer.disconnect();
+		media.removeEventListener( 'change', update );
+	};
 }

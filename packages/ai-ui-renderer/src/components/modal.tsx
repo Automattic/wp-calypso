@@ -1,6 +1,6 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { ComponentIdSchema } from '@a2ui/web_core/v1_0';
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import { Dialog } from '@wordpress/ui';
@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { z } from 'zod';
 import { ModalTriggerContext, useInteractiveUiSurface } from '../contexts/surface';
 import { StringValueSchema } from '../utils/schemas';
-import { copyTheme } from '../utils/theme';
+import { copyTheme, observeTheme } from '../utils/theme';
 
 export const Modal = createComponentImplementation(
 	{
@@ -23,17 +23,25 @@ export const Modal = createComponentImplementation(
 		const [ isOpen, setIsOpen ] = useState( false );
 		const triggerRef = useRef< HTMLElement | null >( null );
 		const popupRef = useRef< HTMLDivElement | null >( null );
-		const { className, rootRef } = useInteractiveUiSurface();
+		const overlayRef = useRef< HTMLDivElement | null >( null );
+		const { className, theme, rootRef } = useInteractiveUiSurface();
 
 		// The modal renders outside the host, so it takes the theme its surface resolved.
 		const copySurfaceTheme = useCallback(
 			( overlay: HTMLDivElement | null ) => {
+				overlayRef.current = overlay;
 				if ( overlay && rootRef?.current ) {
 					copyTheme( rootRef.current, overlay );
 				}
 			},
 			[ rootRef ]
 		);
+
+		useEffect( () => {
+			if ( isOpen && rootRef?.current && overlayRef.current ) {
+				return observeTheme( rootRef.current, overlayRef.current );
+			}
+		}, [ isOpen, rootRef, theme, className ] );
 
 		return (
 			<Dialog.Root open={ isOpen } onOpenChange={ setIsOpen }>
@@ -58,6 +66,7 @@ export const Modal = createComponentImplementation(
 							container={ document.body }
 							ref={ copySurfaceTheme }
 							className={ clsx( 'ai-ui-renderer__modal', className ) }
+							data-ai-ui-theme={ theme || undefined }
 						/>
 					}
 				>
