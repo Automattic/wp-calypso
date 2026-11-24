@@ -1,4 +1,4 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
@@ -9,7 +9,6 @@ import { useAppContext } from '../context';
 import { formatNoteTime } from '../note-simplified/format-note-time';
 import Author from '../note-simplified/parts/author';
 import MetaList from '../note-simplified/parts/meta-list';
-import SiteIdentity from '../note-simplified/parts/site-identity';
 import type { Note } from '../types';
 import type { FocusEvent, PointerEvent, SyntheticEvent } from 'react';
 
@@ -189,7 +188,7 @@ export default function NotePeek( {
 		note.body.find( ( { type } ) => type === 'comment' || type === 'post' ) ??
 		( note.meta?.parent_comment && { text: note.meta.parent_comment.text } );
 
-	// Who and when, under the site like the post card in the open note. The row's icon is
+	// Who and when, under the site as in the open note's post card. The row's icon is
 	// this person, and already loaded.
 	const byline = (
 		<MetaList>
@@ -218,7 +217,14 @@ export default function NotePeek( {
 					{ __( 'Notification preview' ) }
 				</VisuallyHidden>
 				<VStack spacing={ 3 }>
-					{ site ? <SiteIdentity site={ site } iconSize={ 32 } details={ byline } /> : byline }
+					<VStack spacing={ 1 }>
+						{ site && (
+							<Text size={ 13 } weight={ 600 } lineHeight="16px" truncate>
+								{ site.name }
+							</Text>
+						) }
+						{ byline }
+					</VStack>
 					{ block?.text.trim() &&
 						p( html( block ), 'wpnc-peek__text wpnc-simplified__quiet-links' ) }
 				</VStack>
