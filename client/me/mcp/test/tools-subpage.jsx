@@ -10,6 +10,7 @@ import McpToolsSubpage from '../tools-subpage';
 
 const mockSaveSettings = vi.fn( async () => ( {} ) );
 let mockOrdinaryToolEnabled = false;
+let mockOptInToolEnabled = false;
 
 vi.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: vi.fn(),
@@ -42,7 +43,7 @@ vi.mock( '@automattic/api-queries', () => ( {
 						description: 'List posts on your sites.',
 					},
 					'wpcom/sensitive-read': {
-						enabled: false,
+						enabled: mockOptInToolEnabled,
 						requires_opt_in: true,
 						readonly: true,
 						title: 'Sensitive read',
@@ -114,6 +115,7 @@ describe( 'client/me/mcp/tools-subpage Tracks payloads', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
 		mockOrdinaryToolEnabled = false;
+		mockOptInToolEnabled = false;
 	} );
 
 	it.each( [
@@ -125,6 +127,7 @@ describe( 'client/me/mcp/tools-subpage Tracks payloads', () => {
 		'toggles ordinary tools without opting in sensitive tools (%s, switch %i, initially %s)',
 		async ( scope, toggleIndex, initiallyEnabled ) => {
 			mockOrdinaryToolEnabled = initiallyEnabled;
+			mockOptInToolEnabled = initiallyEnabled;
 			const user = userEvent.setup();
 			renderWithProvider(
 				<McpToolsSubpage
@@ -149,7 +152,7 @@ describe( 'client/me/mcp/tools-subpage Tracks payloads', () => {
 		}
 	);
 
-	it( 'lists opt-in tools in their own section, switched on one at a time', async () => {
+	it( 'labels an opt-in tool in its group and saves an individual grant', async () => {
 		const user = userEvent.setup();
 		renderWithProvider(
 			<McpToolsSubpage
@@ -160,13 +163,12 @@ describe( 'client/me/mcp/tools-subpage Tracks payloads', () => {
 				toolCategory="read"
 			/>
 		);
-		expect( await screen.findByText( 'Requires individual approval' ) ).toBeVisible();
-		// One switch for the page and one for the ordinary group; none for the opt-in section.
-		expect( screen.getAllByRole( 'checkbox', { name: 'Enable all' } ) ).toHaveLength( 2 );
-
-		const [ , optInButton ] = screen.getAllByRole( 'button', { name: 'Show operations' } );
-		await user.click( optInButton );
-		await user.click( await screen.findByRole( 'checkbox', { name: 'Sensitive read' } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Show operations' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Turn on individually' } ) );
+		expect( mockSaveSettings ).not.toHaveBeenCalled();
+		await user.keyboard( '{Escape}' );
+		const optInToggle = screen.getByRole( 'checkbox', { name: 'Sensitive read' } );
+		await user.click( optInToggle );
 
 		await waitFor( () =>
 			expect( mockSaveSettings ).toHaveBeenCalledWith( {

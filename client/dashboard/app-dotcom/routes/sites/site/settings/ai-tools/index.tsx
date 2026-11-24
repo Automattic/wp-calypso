@@ -38,7 +38,7 @@ import {
 } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
-import { getOrdinaryTools, requiresOptIn } from '../../../../../../../me/mcp/group-intents';
+import { getOrdinaryTools } from '../../../../../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
@@ -48,6 +48,7 @@ import {
 	getSiteRemoteGroups,
 	isRemoteAbilityEnabled,
 	isRemoteKeyEnabled,
+	isSiteMcpToolEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../../../../../me/mcp/utils';
 import { useAnalytics } from '../../../../../../app/analytics';
@@ -291,20 +292,19 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// turns on an opt-in tool, so it keeps its account state.
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
-	const isToolEnabled = ( tool: McpAbility ) => {
-		if ( hasSiteAbilityOverrides ) {
-			return tool.enabled;
-		}
-		return requiresOptIn( tool ) ? defaultToolEnabled && tool.enabled : defaultToolEnabled;
-	};
 	const availableTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > )
 		.filter( ( [ , tool ] ) => tool.visible !== false )
 		.map( ( [ toolId, tool ] ): [ string, McpAbility ] => [
 			toolId,
-			{ ...tool, enabled: isToolEnabled( tool ) },
+			{
+				...tool,
+				enabled: isSiteMcpToolEnabled( tool, hasSiteAbilityOverrides, defaultToolEnabled ),
+			},
 		] );
 	const readTools = availableTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
 	const writeTools = availableTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
+	const ordinaryReadTools = getOrdinaryTools( readTools );
+	const ordinaryWriteTools = getOrdinaryTools( writeTools );
 	const enabledToolCount = ( tools: Array< [ string, McpAbility ] > ) =>
 		tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 
@@ -321,7 +321,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// its group key is allowed. Saved-only groups (catalog unreachable) fall
 	// back to counting their keys.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
-		const ordinaryTools = getOrdinaryTools( category === 'read' ? readTools : writeTools );
+		const ordinaryTools = category === 'read' ? ordinaryReadTools : ordinaryWriteTools;
 		const defaultEnabled =
 			isMcpEnabled &&
 			ordinaryTools.length > 0 &&
@@ -371,7 +371,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 		const abilities: Record< string, boolean > = {};
 		if ( enabled ) {
 			// Auto-enable the ordinary read tools; leave write and opt-in tools unset (not explicitly disabled).
-			getOrdinaryTools( readTools ).forEach( ( [ toolId ] ) => {
+			ordinaryReadTools.forEach( ( [ toolId ] ) => {
 				abilities[ toolId ] = true;
 			} );
 		}

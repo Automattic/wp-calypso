@@ -10,19 +10,12 @@
 
 import { __ } from '@wordpress/i18n';
 import { SUB_CATEGORY_ORDER, getSubCategory } from '../../dashboard/me/mcp/categories';
-import { requiresOptIn } from './group-intents';
-
-// Name of the client-side section that holds every opt-in tool. Not an API group.
-export const OPT_IN_GROUP_NAME = 'requires-opt-in';
 
 // Flat priority list of all known sub-categories across all display categories.
 // Used to order sub-groups within an expanded group card consistently.
 const FLAT_SUB_CATEGORY_ORDER = [ ...new Set( Object.values( SUB_CATEGORY_ORDER ).flat() ) ];
 
 /**
- * Opt-in tools go to their own section, last, whatever group the API gives them.
- * Callers show that section without an "Enable all" switch.
- *
  * @param {Array<[string, import('@automattic/api-core').McpAbility]>} tools
  * @param {Array<{name: string, label: string, description: string, order: number}>} groupDescriptors Group descriptors, already ordered (e.g. via `getGroupDescriptors()`).
  * @returns {Array<{group: {name: string, label: string, description: string, order: number}|null, label: string, tools: Array<[string, import('@automattic/api-core').McpAbility]>}>}
@@ -30,14 +23,9 @@ const FLAT_SUB_CATEGORY_ORDER = [ ...new Set( Object.values( SUB_CATEGORY_ORDER 
 export function groupToolsByGroup( tools, groupDescriptors ) {
 	const byGroupName = new Map();
 	const unmatched = [];
-	const optIn = [];
 
 	for ( const entry of tools ) {
 		const [ , ability ] = entry;
-		if ( requiresOptIn( ability ) ) {
-			optIn.push( entry );
-			continue;
-		}
 		const groupName = ability?.group ?? null;
 		if ( groupName === null ) {
 			unmatched.push( entry );
@@ -69,20 +57,6 @@ export function groupToolsByGroup( tools, groupDescriptors ) {
 			group: null,
 			label: __( 'Other', 'calypso' ),
 			tools: unmatched,
-		} );
-	}
-
-	if ( optIn.length > 0 ) {
-		const label = __( 'Requires individual approval', 'calypso' );
-		groups.push( {
-			group: {
-				name: OPT_IN_GROUP_NAME,
-				label,
-				description: __( 'Turn these on one at a time. “Enable all” skips them.', 'calypso' ),
-				order: Number.MAX_SAFE_INTEGER,
-			},
-			label,
-			tools: optIn,
 		} );
 	}
 

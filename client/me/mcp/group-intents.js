@@ -24,8 +24,7 @@ export function requiresOptIn( tool ) {
 }
 
 /**
- * The tools a bulk switch acts on. Opt-in tools sit in their own section, see
- * groupToolsByGroup(), and only change through their own switches.
+ * The tools eligible for a bulk grant.
  * @param {Array<[string, import('@automattic/api-core').McpAbility]>} tools
  * @returns {Array<[string, import('@automattic/api-core').McpAbility]>}
  */

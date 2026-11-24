@@ -19,12 +19,9 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Fragment, useDeferredValue, useMemo, useState } from 'react';
-import { getOrdinaryTools, requiresOptIn } from '../../../../../../../../me/mcp/group-intents';
-import {
-	OPT_IN_GROUP_NAME,
-	groupToolsByGroup,
-	groupToolsBySubCategory,
-} from '../../../../../../../../me/mcp/groups';
+import { getOrdinaryTools } from '../../../../../../../../me/mcp/group-intents';
+import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../../../../../me/mcp/groups';
+import { getMcpBulkHelp, McpToolToggle } from '../../../../../../../../me/mcp/opt-in-controls';
 import { useMcpTracksAudienceProps } from '../../../../../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
@@ -35,6 +32,7 @@ import {
 	getSiteLevelEnabled,
 	isRemoteAbilityEnabled,
 	isRemoteKeyEnabled,
+	isSiteMcpToolEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../../../../../../me/mcp/utils';
 import { useAnalytics } from '../../../../../../../app/analytics';
@@ -91,24 +89,17 @@ export default function SiteAIToolsRead() {
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled =
 		( userSettings as any )?.mcp_abilities?.site_level_enabled_default ?? false;
-	const mcpAbilities = hasSiteAbilityOverrides
-		? mergedAbilities
-		: Object.fromEntries(
-				Object.entries( mergedAbilities as Record< string, McpAbility > ).map( ( [ id, tool ] ) => [
-					id,
-					{
-						...tool,
-						enabled: requiresOptIn( tool )
-							? defaultToolEnabled && tool.enabled
-							: defaultToolEnabled,
-					},
-				] )
-			);
-
-	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > )
+	const allTools = ( Object.entries( mergedAbilities ) as Array< [ string, McpAbility ] > )
 		.filter( ( [ , tool ] ) => tool.visible !== false )
-		.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
-	const ordinaryTools = getOrdinaryTools( allTools ) as Array< [ string, McpAbility ] >;
+		.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) )
+		.map( ( [ id, tool ] ): [ string, McpAbility ] => [
+			id,
+			{
+				...tool,
+				enabled: isSiteMcpToolEnabled( tool, hasSiteAbilityOverrides, defaultToolEnabled ),
+			},
+		] );
+	const ordinaryTools = getOrdinaryTools( allTools );
 	const allOrdinaryEnabled =
 		ordinaryTools.length > 0 && ordinaryTools.every( ( [ , tool ] ) => tool.enabled );
 
@@ -267,12 +258,9 @@ export default function SiteAIToolsRead() {
 			<div key={ toolId } id={ toolId }>
 				<HStack justify="space-between" alignment="flex-start" spacing={ 2 }>
 					<div style={ { flex: 1, minWidth: 0 } }>
-						<ToggleControl
-							__nextHasNoMarginBottom
-							checked={ tool.enabled }
+						<McpToolToggle
+							tool={ tool }
 							disabled={ mutation.isPending }
-							label={ tool.title }
-							help={ tool.description }
 							onChange={ ( checked ) => handleToolChange( toolId, checked ) }
 						/>
 					</div>
@@ -324,6 +312,7 @@ export default function SiteAIToolsRead() {
 									checked={ pageAllEnabled }
 									disabled={ mutation.isPending }
 									label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
+									help={ getMcpBulkHelp( allTools.length - ordinaryTools.length ) }
 									onChange={ handlePageToggle }
 								/>
 							</CardBody>
@@ -340,8 +329,7 @@ export default function SiteAIToolsRead() {
 				</div>
 				{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 					const groupKey = descriptor?.name ?? '__other__';
-					const isOptInGroup = groupKey === OPT_IN_GROUP_NAME;
-					const allGroupEnabled = groupTools.every( ( [ , tool ] ) => tool.enabled );
+					const ordinaryGroupTools = getOrdinaryTools( groupTools );
 
 					return (
 						<McpGroupCard
@@ -350,13 +338,14 @@ export default function SiteAIToolsRead() {
 							title={ label }
 							description={ descriptor?.description }
 							toolAnchors={ groupTools.map( ( [ toolId ] ) => toolId ) }
-							allEnabled={ allGroupEnabled }
+							allEnabled={ ordinaryGroupTools.every( ( [ , tool ] ) => tool.enabled ) }
+							enableAllHelp={ getMcpBulkHelp( groupTools.length - ordinaryGroupTools.length ) }
 							disabled={ mutation.isPending }
 							forceOpen={ query.length > 0 }
 							onEnableAll={
-								isOptInGroup
-									? undefined
-									: ( checked ) => handleGroupEnableAll( groupTools, checked )
+								ordinaryGroupTools.length > 0
+									? ( checked ) => handleGroupEnableAll( ordinaryGroupTools, checked )
+									: undefined
 							}
 						>
 							{ renderToolsContent( groupTools ) }

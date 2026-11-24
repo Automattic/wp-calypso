@@ -156,16 +156,42 @@ describe( '<SiteAIToolsRead>', () => {
 		} );
 	} );
 
-	test( 'opt-in tools get their own section, without an Enable all', () => {
+	test( 'shows which tools are skipped at page and group level and labels the opt-in tool in its group', async () => {
+		const user = userEvent.setup();
+		seed( OPT_IN_TOOL );
+		render( <SiteAIToolsRead />, { queryClient } );
+
+		const [ pageToggle, groupToggle ] = screen.getAllByRole( 'checkbox', { name: 'Enable all' } );
+		const help = 'Skips 1 locked tool. Turn it on individually.';
+		expect( pageToggle ).toHaveAccessibleDescription( help );
+		expect( groupToggle ).toHaveAccessibleDescription( help );
+
+		const [ groupButton ] = screen.getAllByRole( 'button', { name: 'Show operations' } );
+		await user.click( groupButton );
+		const optInToggle = screen.getByRole( 'checkbox', { name: 'List subscribers' } );
+		expect( optInToggle ).toHaveAccessibleDescription(
+			'List the subscribers of your sites. This tool needs individual approval, so “Enable all” skips it.'
+		);
+		await user.click( screen.getByRole( 'button', { name: 'Turn on individually' } ) );
+		expect( screen.getByRole( 'dialog', { name: 'Turn on individually' } ) ).toBeVisible();
+		expect( optInToggle ).not.toBeChecked();
+	} );
+
+	test( 'a group of only opt-in tools has no Enable all switch', () => {
 		seed();
 		const { unmount } = render( <SiteAIToolsRead />, { queryClient } );
 		const togglesWithoutOptIn = screen.getAllByRole( 'checkbox', { name: 'Enable all' } ).length;
 		unmount();
 
-		seed( OPT_IN_TOOL );
+		seed( {
+			'wpcom-mcp/subscribers-list': {
+				...OPT_IN_TOOL[ 'wpcom-mcp/subscribers-list' ],
+				group: null,
+			},
+		} );
 		render( <SiteAIToolsRead />, { queryClient } );
 
-		expect( screen.getByRole( 'heading', { name: 'Requires individual approval' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Other' } ) ).toBeVisible();
 		expect( screen.getAllByRole( 'checkbox', { name: 'Enable all' } ) ).toHaveLength(
 			togglesWithoutOptIn
 		);
@@ -184,6 +210,35 @@ describe( '<SiteAIToolsRead>', () => {
 			expect( saveScope.isDone() ).toBe( true );
 		} );
 	} );
+
+	test.each( [ true, false ] )(
+		'setting a mixed group to %s saves only ordinary tools',
+		async ( enabled ) => {
+			const user = userEvent.setup();
+			seed( OPT_IN_TOOL, {
+				'wpcom-mcp/posts-list': ! enabled,
+				'wpcom-mcp/pages-list': ! enabled,
+				'wpcom-mcp/subscribers-list': ! enabled,
+			} );
+			render( <SiteAIToolsRead />, { queryClient } );
+
+			const saveScope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', {
+					mcp_abilities: {
+						sites: [
+							{
+								blog_id: JETPACK_SITE.ID,
+								abilities: { 'wpcom-mcp/posts-list': enabled, 'wpcom-mcp/pages-list': enabled },
+							},
+						],
+					},
+				} )
+				.reply( 200, {} );
+			await user.click( screen.getAllByRole( 'checkbox', { name: 'Enable all' } )[ 1 ] );
+
+			await waitFor( () => expect( saveScope.isDone() ).toBe( true ) );
+		}
+	);
 
 	test( 'an opt-in tool that is off leaves unsaved site-published abilities on', () => {
 		seed( OPT_IN_TOOL, { 'wpcom-mcp/posts-list': true, 'wpcom-mcp/pages-list': true } );

@@ -19,11 +19,8 @@ import {
 	getOrdinaryTools,
 	getOverridesToMatch,
 } from '../../../../me/mcp/group-intents';
-import {
-	OPT_IN_GROUP_NAME,
-	groupToolsByGroup,
-	groupToolsBySubCategory,
-} from '../../../../me/mcp/groups';
+import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
+import { getMcpBulkHelp, McpToolToggle } from '../../../../me/mcp/opt-in-controls';
 import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
 import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
@@ -80,7 +77,7 @@ export default function McpRead() {
 	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > )
 		.filter( ( [ , tool ] ) => tool.visible !== false )
 		.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
-	const ordinaryTools = getOrdinaryTools( allTools ) as Array< [ string, McpAbility ] >;
+	const ordinaryTools = getOrdinaryTools( allTools );
 
 	// Tool search: fuzzy-filters the tools on this page.
 	const locationHash = ( useLocation().hash ?? '' ).replace( /^#/, '' );
@@ -245,6 +242,7 @@ export default function McpRead() {
 								checked={ pageAllEnabled }
 								disabled={ mutation.isPending || ordinaryTools.length === 0 }
 								label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
+								help={ getMcpBulkHelp( allTools.length - ordinaryTools.length ) }
 								onChange={ handlePageToggle }
 							/>
 						</CardBody>
@@ -264,9 +262,20 @@ export default function McpRead() {
 					<VStack spacing={ 3 }>
 						{ groups.map( ( { group: descriptor, label, tools: groupTools }: ToolGroup ) => {
 							const groupKey = descriptor?.name ?? '__other__';
-							const isOptInGroup = descriptor?.name === OPT_IN_GROUP_NAME;
-							const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
+							const ordinaryGroupTools = getOrdinaryTools( groupTools );
 							const isOpen = openGroups.has( groupKey ) || query.length > 0;
+							const groupToggle = ordinaryGroupTools.length > 0 && (
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ ordinaryGroupTools.every( ( [ , tool ] ) => tool.enabled ) }
+									disabled={ mutation.isPending }
+									label={ __( 'Enable all' ) }
+									help={ getMcpBulkHelp( groupTools.length - ordinaryGroupTools.length ) }
+									onChange={ ( checked ) =>
+										handleGroupEnableAll( descriptor?.name ?? null, ordinaryGroupTools, checked )
+									}
+								/>
+							);
 
 							return (
 								<Card key={ groupKey } id={ groupKey } className="mcp-tools-anchor">
@@ -283,17 +292,7 @@ export default function McpRead() {
 														</Text>
 													) }
 												</VStack>
-												{ ! isOptInGroup && (
-													<ToggleControl
-														__nextHasNoMarginBottom
-														checked={ allGroupEnabled }
-														disabled={ mutation.isPending }
-														label={ __( 'Enable all' ) }
-														onChange={ ( checked ) =>
-															handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
-														}
-													/>
-												) }
+												{ groupToggle }
 												<Button
 													icon={ isOpen ? chevronUp : chevronDown }
 													label={ isOpen ? __( 'Hide operations' ) : __( 'Show operations' ) }
@@ -321,17 +320,7 @@ export default function McpRead() {
 														onClick={ () => toggleGroupOpen( groupKey, descriptor?.name ?? null ) }
 													/>
 												</HStack>
-												{ ! isOptInGroup && (
-													<ToggleControl
-														__nextHasNoMarginBottom
-														checked={ allGroupEnabled }
-														disabled={ mutation.isPending }
-														label={ __( 'Enable all' ) }
-														onChange={ ( checked ) =>
-															handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
-														}
-													/>
-												) }
+												{ groupToggle }
 											</VStack>
 										) }
 									</CardBody>
@@ -360,12 +349,9 @@ export default function McpRead() {
 																		spacing={ 2 }
 																	>
 																		<div style={ { flex: 1, minWidth: 0 } }>
-																			<ToggleControl
-																				__nextHasNoMarginBottom
-																				checked={ tool.enabled }
+																			<McpToolToggle
+																				tool={ tool }
 																				disabled={ mutation.isPending }
-																				label={ tool.title }
-																				help={ tool.description }
 																				onChange={ ( checked ) =>
 																					handleToolChange(
 																						toolId,

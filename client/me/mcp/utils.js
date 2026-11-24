@@ -1,3 +1,5 @@
+import { requiresOptIn } from './group-intents';
+
 /**
  * Get account-level MCP abilities from user settings
  * This is for the /me/mcp route which manages account-level settings
@@ -212,6 +214,21 @@ export function mergeSiteMcpAbilities( accountAbilities, siteAbilities ) {
 			},
 		] )
 	);
+}
+
+/**
+ * An opt-in tool with no site overrides is enabled only if site access is on and
+ * it was enabled at account level.
+ * @param {import('@automattic/api-core').McpAbility} tool
+ * @param {boolean} hasSiteAbilityOverrides
+ * @param {boolean} defaultEnabled
+ * @returns {boolean}
+ */
+export function isSiteMcpToolEnabled( tool, hasSiteAbilityOverrides, defaultEnabled ) {
+	if ( hasSiteAbilityOverrides ) {
+		return tool.enabled;
+	}
+	return defaultEnabled && ( ! requiresOptIn( tool ) || tool.enabled );
 }
 
 /**
