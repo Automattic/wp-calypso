@@ -53,10 +53,11 @@ jest.mock( '@automattic/launchpad', () => ( {
 // dedicated "Close modal" button so tests can simulate the X / escape /
 // outside-click dismiss path that the real <Modal> wires up.
 jest.mock( '@wordpress/components', () => {
-	const { Button } =
+	const { Button, Spinner } =
 		jest.requireActual< typeof import( '@wordpress/components' ) >( '@wordpress/components' );
 	return {
 		Button,
+		Spinner,
 		Modal: ( {
 			children,
 			headerActions,

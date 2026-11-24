@@ -5,7 +5,7 @@ import page from '@automattic/calypso-router';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
 import { useQueryClient } from '@tanstack/react-query';
-import { Button, Modal } from '@wordpress/components';
+import { Button, Modal, Spinner } from '@wordpress/components';
 import { chevronLeft, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { getLocaleSlug, translate } from 'i18n-calypso';
@@ -247,9 +247,6 @@ const ReaderOnboardingRsm = ( {
 	const openStep = ( step: Step ) => {
 		recordStepOpen( step );
 		setCurrentStep( step );
-		if ( step === 'interests' && isRecommendedBlogsLocale() ) {
-			void loadRecommendedBlogsStep();
-		}
 	};
 
 	const handleStepClose = () => {
@@ -369,6 +366,13 @@ const ReaderOnboardingRsm = ( {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
+
+	// Fetch step 3 while the reader is on an earlier step.
+	useEffect( () => {
+		if ( currentStep && isRecommendedBlogsLocale() ) {
+			loadRecommendedBlogsStep().catch( () => {} );
+		}
+	}, [ currentStep ] );
 
 	// Notify the parent component if onboarding will render.
 	// Use useEffect to avoid calling setState during render (React anti-pattern).
@@ -527,7 +531,13 @@ const ReaderOnboardingRsm = ( {
 						( showRecommendedBlogs ? (
 							<AsyncLoad
 								require={ loadRecommendedBlogsStep }
-								placeholder={ null }
+								placeholder={ <Spinner /> }
+								loadFailureFallback={
+									<SubscribeModal
+										onFinish={ handleDiscoverFinish }
+										promptVerification={ promptVerification }
+									/>
+								}
 								onFinish={ handleDiscoverFinish }
 								promptVerification={ promptVerification }
 							/>
