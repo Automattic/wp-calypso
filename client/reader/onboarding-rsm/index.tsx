@@ -4,13 +4,17 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button, Modal } from '@wordpress/components';
 import { chevronLeft, close } from '@wordpress/icons';
 import clsx from 'clsx';
 import { getLocaleSlug, translate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
-import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import {
+	getCachedFollowedNonSelfSitesCount,
+	useSiteSubscriptions as useCachedSiteSubscriptions,
+} from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
@@ -60,6 +64,7 @@ const ReaderOnboardingRsm = ( {
 	isSuppressed?: boolean;
 } ) => {
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const refreshFollowingStreams = useRefreshFollowingStreams();
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
@@ -302,7 +307,12 @@ const ReaderOnboardingRsm = ( {
 		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
 			followed_tags_count: followedTags?.length ?? 0,
-			followed_non_self_sites_count: followedNonSelfSitesCount,
+			// Step 3 finishes after an async batch of follows, possibly before this
+			// component re-renders with them, so read the cache as it is now too.
+			followed_non_self_sites_count: Math.max(
+				followedNonSelfSitesCount,
+				getCachedFollowedNonSelfSitesCount( queryClient )
+			),
 		} );
 		if ( hasCompletedOnboarding ) {
 			return;

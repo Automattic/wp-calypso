@@ -183,6 +183,7 @@ jest.mock( 'calypso/reader/data/tags', () => ( {
 
 jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [] } ) ),
+	getCachedFollowedNonSelfSitesCount: jest.fn( () => 0 ),
 } ) );
 
 jest.mock( 'calypso/reader/following/hooks/use-non-self-subscriptions-count', () => ( {
@@ -230,11 +231,11 @@ beforeEach( () => {
 	const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
 		useFollowedTags: jest.Mock;
 	};
-	const { useSiteSubscriptions: useCachedSiteSubscriptions } = jest.requireMock(
-		'calypso/reader/data/site-subscriptions'
-	) as {
-		useSiteSubscriptions: jest.Mock;
-	};
+	const { useSiteSubscriptions: useCachedSiteSubscriptions, getCachedFollowedNonSelfSitesCount } =
+		jest.requireMock( 'calypso/reader/data/site-subscriptions' ) as {
+			useSiteSubscriptions: jest.Mock;
+			getCachedFollowedNonSelfSitesCount: jest.Mock;
+		};
 	const { useNonSelfSubscriptionsCount } = jest.requireMock(
 		'calypso/reader/following/hooks/use-non-self-subscriptions-count'
 	) as {
@@ -245,6 +246,7 @@ beforeEach( () => {
 	};
 	useFollowedTags.mockImplementation( () => ( { data: [], isPending: false } ) );
 	useCachedSiteSubscriptions.mockReturnValue( { subscriptions: [] } );
+	getCachedFollowedNonSelfSitesCount.mockReturnValue( 0 );
 	useNonSelfSubscriptionsCount.mockImplementation( () => ( {
 		isLoading: false,
 		nonSelfSubscriptionsCount: 0,
@@ -721,6 +723,26 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
 			expect.objectContaining( { followed_non_self_sites_count: 5 } )
+		);
+	} );
+
+	it( 'counts follows that reached the cache before the last render', async () => {
+		const { getCachedFollowedNonSelfSitesCount } = jest.requireMock(
+			'calypso/reader/data/site-subscriptions'
+		) as { getCachedFollowedNonSelfSitesCount: jest.Mock };
+		// The rendered follows are still empty, as when step 3's batch ends
+		// before React Query has told this component about its follows.
+		getCachedFollowedNonSelfSitesCount.mockReturnValue( 1 );
+
+		const user = userEvent.setup();
+		renderWithProvider( <ReaderOnboardingRsm /> );
+
+		await navigateToSubscribeStep( user );
+		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			`${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`,
+			expect.objectContaining( { followed_non_self_sites_count: 1 } )
 		);
 	} );
 

@@ -1,6 +1,6 @@
 import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { getCachedIsFollowingPost } from '../cache';
+import { getCachedFollowedNonSelfSitesCount, getCachedIsFollowingPost } from '../cache';
 import type { SiteSubscriptionItem } from '@automattic/api-core';
 
 type Page = { subscriptions: Partial< SiteSubscriptionItem >[]; totalCount: number | null };
@@ -133,5 +133,32 @@ describe( 'getCachedIsFollowingPost', () => {
 		const queryClient = makeClient( [ { blog_ID: 1, feed_ID: 10, is_following: true } ] );
 
 		expect( getCachedIsFollowingPost( queryClient, { site_ID: 0, feed_ID: 0 } ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'getCachedFollowedNonSelfSitesCount', () => {
+	it( 'returns 0 before the subscriptions load', () => {
+		expect( getCachedFollowedNonSelfSitesCount( makeClient() ) ).toBe( 0 );
+	} );
+
+	it( 'counts followed sites the user does not own, across pages', () => {
+		const queryClient = makeClientWithPages( [
+			{
+				subscriptions: [
+					{ feed_ID: 1, is_following: true, is_owner: false },
+					{ feed_ID: 2, is_following: false, is_owner: false },
+				],
+				totalCount: 4,
+			},
+			{
+				subscriptions: [
+					{ feed_ID: 3, is_following: true, is_owner: true },
+					{ feed_ID: 4, is_following: true, is_owner: false },
+				],
+				totalCount: 4,
+			},
+		] );
+
+		expect( getCachedFollowedNonSelfSitesCount( queryClient ) ).toBe( 2 );
 	} );
 } );
