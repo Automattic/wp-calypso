@@ -492,7 +492,6 @@ function build( rootDir ) {
 				'@typescript-eslint/camelcase': 'off',
 
 				// TypeScript compiler already takes care of these errors
-				'import/no-extraneous-dependencies': 'off',
 				'import/named': 'off',
 				'import/namespace': 'off',
 				'import/default': 'off',

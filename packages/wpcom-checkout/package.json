@@ -73,9 +73,11 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
+		"@emotion/jest": "^11.11.0",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
+		"@testing-library/user-event": "^14.6.10",
 		"@types/prop-types": "^15.7.15",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3",
