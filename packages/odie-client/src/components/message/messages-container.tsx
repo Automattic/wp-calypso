@@ -283,10 +283,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 					/>
 				) }
 				{ isEmptyUntilFirstMessage && (
-					// Laid out like the bot messages that take its place once the chat starts.
-					<div className="odie-chatbox-messages-cluster role-bot">
-						<ChatMessage message={ getDirectChatWaitingMessage() } />
-					</div>
+					<ChatMessage message={ getDirectChatWaitingMessage( currentUser?.display_name ) } />
 				) }
 				{ chat.messages?.length > 0 && (
 					<MessagesClusterizer
