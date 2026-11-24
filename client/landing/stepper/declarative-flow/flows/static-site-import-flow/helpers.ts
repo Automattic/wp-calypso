@@ -1,11 +1,4 @@
 import config from '@automattic/calypso-config';
-import {
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PERSONAL_3_YEARS,
-	PLAN_PERSONAL_MONTHLY,
-} from '@automattic/calypso-products';
-import { __ } from '@wordpress/i18n';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 export const canUseStaticSiteImport = (
@@ -23,21 +16,3 @@ export const canUseStaticSiteImport = (
  */
 export const isCheckoutExitPreview = ( query: URLSearchParams ) =>
 	query.get( 'checkoutExit' ) === '1' && ! query.get( 'siteId' ) && ! query.get( 'siteSlug' );
-
-const PERSONAL_PLAN_SLUGS = [
-	PLAN_PERSONAL_MONTHLY,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PERSONAL_3_YEARS,
-];
-
-/** The plans step for a static site import into a new destination, recommending Personal. */
-export const getNewDestinationPlansProps = () => ( {
-	isInSignup: true,
-	intent: 'plans-default-wpcom' as const,
-	hideFreePlan: true,
-	hideEnterprisePlan: true,
-	highlightLabelOverrides: Object.fromEntries(
-		PERSONAL_PLAN_SLUGS.map( ( planSlug ) => [ planSlug, __( 'Recommended' ) ] )
-	),
-} );

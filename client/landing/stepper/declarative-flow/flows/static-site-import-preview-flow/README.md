@@ -29,7 +29,7 @@ in A from then on.
 | `static-site-import-reading` | Starts the import into the new site, then opens its Overview |
 
 The steps, props and checkout are `static-site-import`’s for a new destination: plans recommend
-Personal (`getNewDestinationPlansProps`), and the flow’s plan styles apply here too. Leaving
+Personal, and this flow’s `style.scss` copies its plan styles. Leaving
 checkout builds a preview of the import instead, as in `static-site-import`. A source on the URL
 skips identification, and opening the reading step before checkout goes to plans.
 
