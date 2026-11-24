@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import SupportDocLink from '../support-link';
+import { isWooCommerceComLink } from './utils/is-woocommerce-com-link';
 import type { Message, Source } from '../../types';
 
 export const Sources = ( {
@@ -100,6 +101,7 @@ export const Sources = ( {
 						<SupportDocLink
 							key={ index }
 							link={ source.url }
+							openInNewTab={ isWooCommerceComLink( source.url ) }
 							onLinkClickHandler={ () => {
 								trackEvent( 'chat_message_action_click', {
 									action: 'link',
@@ -111,7 +113,9 @@ export const Sources = ( {
 									action: 'click',
 									href: source.url,
 								} );
-								navigate( `/post?link=${ source.url }` );
+								if ( ! isWooCommerceComLink( source.url ) ) {
+									navigate( `/post?link=${ source.url }` );
+								}
 							} }
 							title={ source.title }
 						/>
