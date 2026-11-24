@@ -1,4 +1,5 @@
 import {
+	areOrdinaryToolsEnabled,
 	getOverridesToMatch,
 	getSiteBulkOverrides,
 	groupIntentKey,
@@ -90,6 +91,32 @@ describe( 'client/me/mcp/group-intents', () => {
 					[ 'wpcom/sensitive-read', { enabled: false, requires_opt_in: 1 } ],
 				] )
 			).toBe( true );
+		} );
+	} );
+
+	describe( 'areOrdinaryToolsEnabled', () => {
+		it( 'ignores opt-in tools in either state', () => {
+			expect(
+				areOrdinaryToolsEnabled( [
+					[ 'wpcom/posts-list', { enabled: true } ],
+					[ 'wpcom/sensitive-read', { enabled: false, requires_opt_in: 1 } ],
+				] )
+			).toBe( true );
+			expect(
+				areOrdinaryToolsEnabled( [
+					[ 'wpcom/posts-list', { enabled: false } ],
+					[ 'wpcom/sensitive-read', { enabled: true, requires_opt_in: true } ],
+				] )
+			).toBe( false );
+		} );
+
+		it( 'stays off without any ordinary tool, even when an opt-in tool is on', () => {
+			expect(
+				areOrdinaryToolsEnabled( [
+					[ 'wpcom/sensitive-read', { enabled: true, requires_opt_in: true } ],
+				] )
+			).toBe( false );
+			expect( areOrdinaryToolsEnabled( [] ) ).toBe( false );
 		} );
 	} );
 

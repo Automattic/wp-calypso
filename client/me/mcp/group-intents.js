@@ -65,6 +65,19 @@ export function getSiteBulkOverrides( scopedTools, enabled ) {
 }
 
 /**
+ * Whether a category's ordinary tools are all on. Site-published abilities with
+ * no saved choice follow this, as in SettingsHelper::remote_ability_default()
+ * on the backend. Unlike isBulkEnabled(), opt-in tools never count either way,
+ * so a category with only opt-in tools is off.
+ * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
+ * @returns {boolean}
+ */
+export function areOrdinaryToolsEnabled( scopedTools ) {
+	const ordinaryTools = scopedTools.filter( ( [ , tool ] ) => ! requiresOptIn( tool ) );
+	return ordinaryTools.length > 0 && ordinaryTools.every( ( [ , tool ] ) => tool.enabled );
+}
+
+/**
  * @param {Array<[string, import('@automattic/api-core').McpAbility]>} scopedTools
  * @returns {boolean}
  */

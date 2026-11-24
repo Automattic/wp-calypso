@@ -35,7 +35,10 @@ const OPT_IN_TOOL = {
 	},
 };
 
-function seed( extraAccountTools: Record< string, unknown > = {} ) {
+function seed(
+	extraAccountTools: Record< string, unknown > = {},
+	siteAbilities: Record< string, boolean > = {}
+) {
 	// The page reads siteSlug from useParams, which is undefined in this harness.
 	queryClient.setQueryData(
 		siteBySlugQuery( undefined as unknown as string ).queryKey,
@@ -70,7 +73,7 @@ function seed( extraAccountTools: Record< string, unknown > = {} ) {
 					order: 1,
 				},
 			],
-			sites: [ { blog_id: JETPACK_SITE.ID, site_level_enabled: true, abilities: {} } ],
+			sites: [ { blog_id: JETPACK_SITE.ID, site_level_enabled: true, abilities: siteAbilities } ],
 		},
 	} as unknown as UserSettings );
 	queryClient.setQueryData( siteAbilitiesQuery( JETPACK_SITE.ID, 'en_US' ).queryKey, [
@@ -165,5 +168,13 @@ describe( '<SiteAIToolsRead>', () => {
 		await waitFor( () => {
 			expect( saveScope.isDone() ).toBe( true );
 		} );
+	} );
+
+	test( 'an opt-in tool that is off leaves unsaved site-published abilities on', () => {
+		seed( OPT_IN_TOOL, { 'wpcom-mcp/posts-list': true, 'wpcom-mcp/pages-list': true } );
+		render( <SiteAIToolsRead />, { queryClient } );
+
+		// The page-level toggle is on only when the site's unsaved ability counts as on too.
+		expect( screen.getAllByRole( 'checkbox', { name: 'Enable all' } )[ 0 ] ).toBeChecked();
 	} );
 } );

@@ -20,6 +20,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { Fragment, useDeferredValue, useMemo, useState } from 'react';
 import {
+	areOrdinaryToolsEnabled,
 	getSiteBulkOverrides,
 	isBulkEnabled,
 	requiresOptIn,
@@ -149,11 +150,10 @@ export default function SiteAIToolsRead() {
 	);
 
 	// Site-published abilities with no saved choice follow the user's MCP access:
-	// on when MCP is on for this site and every tool of this category is enabled.
+	// on when MCP is on for this site and every tool of this category is enabled,
+	// leaving out opt-in tools.
 	const remoteDefaultEnabled =
-		getSiteLevelEnabled( userSettings || {}, site.ID ) &&
-		allTools.length > 0 &&
-		allTools.every( ( [ , tool ] ) => tool.enabled );
+		getSiteLevelEnabled( userSettings || {}, site.ID ) && areOrdinaryToolsEnabled( allTools );
 
 	const pageAllEnabled =
 		isBulkEnabled( allTools ) &&

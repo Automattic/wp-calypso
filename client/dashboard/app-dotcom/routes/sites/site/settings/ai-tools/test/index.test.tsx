@@ -429,6 +429,50 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.queryByText( 'All enabled' ) ).not.toBeInTheDocument();
 	} );
 
+	test.each( [
+		[ 'with site overrides', { 'wpcom-mcp/posts-list': true } ],
+		[ 'without site overrides', {} ],
+	] )(
+		'%s, an opt-in tool counts as off and leaves unsaved site-published abilities on',
+		( _label, abilities ) => {
+			seedQueries( '', true, jetpackSite, true, true );
+			queryClient.setQueryData( userSettingsQuery().queryKey, {
+				mcp_abilities: {
+					site_level_enabled_default: true,
+					account: {
+						'wpcom-mcp/posts-list': {
+							enabled: true,
+							readonly: true,
+							visible: true,
+							title: 'List posts',
+							description: 'List posts on your sites.',
+						},
+						'wpcom-mcp/subscribers-list': {
+							enabled: false,
+							readonly: true,
+							visible: true,
+							requires_opt_in: true,
+							title: 'List subscribers',
+							description: 'List the subscribers of your sites.',
+						},
+					},
+					sites: [ { blog_id: jetpackSite.ID, site_level_enabled: true, abilities } ],
+				},
+			} as unknown as UserSettings );
+			queryClient.setQueryData( siteAbilitiesQuery( jetpackSite.ID, 'en_US' ).queryKey, [
+				{
+					name: 'jetpack-forms/get-form',
+					label: 'Get form',
+					meta: { annotations: { readonly: true } },
+				},
+			] );
+
+			render( <AIToolsSettings siteSlug={ jetpackSite.slug } />, { queryClient } );
+
+			expect( screen.getByText( '2 of 3 enabled' ) ).toBeVisible();
+		}
+	);
+
 	test( 'manages the WordPress Agent email address on an Atomic site', async () => {
 		const user = userEvent.setup();
 		mockClipboard();

@@ -38,7 +38,11 @@ import {
 } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
-import { getSiteBulkOverrides } from '../../../../../../../me/mcp/group-intents';
+import {
+	areOrdinaryToolsEnabled,
+	getSiteBulkOverrides,
+	requiresOptIn,
+} from '../../../../../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
@@ -286,21 +290,27 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 			)
 		: accountAbilities;
 	const mcpAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
-	const availableTools = (
-		Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >
-	 ).filter( ( [ , tool ] ) => tool.visible !== false );
-	const readTools = availableTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
-	const writeTools = availableTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
 	// When there are no site-specific overrides, use site_level_enabled_default as the effective
-	// state. True when account MCP is on for sites, false when disabled.
+	// state. True when account MCP is on for sites, false when disabled. The site default never
+	// turns on an opt-in tool, so it keeps its account state.
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
-	const enabledToolCount = ( tools: Array< [ string, McpAbility ] > ) => {
+	const isToolEnabled = ( tool: McpAbility ) => {
 		if ( hasSiteAbilityOverrides ) {
-			return tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+			return tool.enabled;
 		}
-		return defaultToolEnabled ? tools.length : 0;
+		return requiresOptIn( tool ) ? defaultToolEnabled && tool.enabled : defaultToolEnabled;
 	};
+	const availableTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > )
+		.filter( ( [ , tool ] ) => tool.visible !== false )
+		.map( ( [ toolId, tool ] ): [ string, McpAbility ] => [
+			toolId,
+			{ ...tool, enabled: isToolEnabled( tool ) },
+		] );
+	const readTools = availableTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
+	const writeTools = availableTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
+	const enabledToolCount = ( tools: Array< [ string, McpAbility ] > ) =>
+		tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 
 	// The badges span the site-published abilities on the subpages too, so "All
 	// enabled" can't appear while those groups are still off (their default).
@@ -316,10 +326,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// back to counting their keys.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
 		const categoryTools = category === 'read' ? readTools : writeTools;
-		const defaultEnabled =
-			isMcpEnabled &&
-			categoryTools.length > 0 &&
-			enabledToolCount( categoryTools ) === categoryTools.length;
+		const defaultEnabled = isMcpEnabled && areOrdinaryToolsEnabled( categoryTools );
 		let total = 0;
 		let enabled = 0;
 		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
