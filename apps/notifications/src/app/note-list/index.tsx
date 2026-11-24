@@ -373,6 +373,7 @@ const NoteList = ( {
 					note={ peekNote }
 					isOpen={ peek.isOpen }
 					anchor={ peek.anchor }
+					isMove={ peek.isMove }
 					onClose={ peek.close }
 				/>
 			) }

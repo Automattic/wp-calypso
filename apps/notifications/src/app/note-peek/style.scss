@@ -2,16 +2,12 @@
 	width: 340px;
 }
 
-// Glides to the next row rather than jumping to it. Base UI marks the first placement
-// instant, so the card doesn't fly in from the corner when it opens.
-.wpnc-peek__positioner:not([data-instant]) {
+// Glides to the next row rather than jumping to it. Only between rows: on opening, Base
+// UI places the card at the corner of the page until it's measured.
+.wpnc-peek__positioner.is-moving {
 	@media not (prefers-reduced-motion) {
 		transition: transform var(--wpds-motion-duration-md) var(--wpds-motion-easing-expressive);
 	}
-}
-
-.wpnc-peek__time {
-	flex-shrink: 0;
 }
 
 // Keeps the post's headings and paragraphs on their own lines.

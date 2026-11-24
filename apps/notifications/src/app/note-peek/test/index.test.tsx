@@ -116,7 +116,6 @@ describe( 'NotePeek', () => {
 
 		expect( await screen.findByText( COMMENT ) ).toBeVisible();
 		expect( screen.getByText( 'Harbour Notes' ) ).toBeVisible();
-		expect( screen.getByText( 'The tide tables' ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_notification_peek', {
 			note_type: 'comment',
 		} );

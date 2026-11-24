@@ -1,14 +1,12 @@
-import {
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Popover, VisuallyHidden } from '@wordpress/ui';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../context';
 import { formatNoteTime } from '../note-simplified/format-note-time';
 import Author from '../note-simplified/parts/author';
+import MetaList from '../note-simplified/parts/meta-list';
 import SiteIdentity from '../note-simplified/parts/site-identity';
 import type { Note } from '../types';
 import type { FocusEvent, PointerEvent, SyntheticEvent } from 'react';
@@ -33,7 +31,8 @@ export function useNotePeek( {
 	onShow: ( noteId: string ) => void;
 } ) {
 	// The last note shown stays set after the card closes, so it can fade out.
-	const [ peek, setPeek ] = useState< { noteId: string; anchor: Element } >();
+	// `isMove` marks a swap to another row while open, the only change the card glides for.
+	const [ peek, setPeek ] = useState< { noteId: string; anchor: Element; isMove: boolean } >();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const activeRowRef = useRef< Element | null >( null );
 	const isFromKeyboardRef = useRef( false );
@@ -100,11 +99,11 @@ export function useNotePeek( {
 		activeRowRef.current = row;
 		clearTimers();
 		if ( isOpen ) {
-			setPeek( { noteId: rowNoteId, anchor: row } );
+			setPeek( { noteId: rowNoteId, anchor: row, isMove: true } );
 			return;
 		}
 		showTimerRef.current = window.setTimeout( () => {
-			setPeek( { noteId: rowNoteId, anchor: row } );
+			setPeek( { noteId: rowNoteId, anchor: row, isMove: false } );
 			setIsOpen( true );
 			onShow( rowNoteId );
 		}, SHOW_DELAY );
@@ -143,6 +142,7 @@ export function useNotePeek( {
 	return {
 		noteId: peek?.noteId,
 		anchor: peek?.anchor,
+		isMove: peek?.isMove,
 		isOpen,
 		close,
 		preview,
@@ -163,22 +163,24 @@ export function useNotePeek( {
 }
 
 /**
- * A preview of a note beside its row, in the parts the note itself uses: the site and
- * post, who and when, and what they said.
+ * A preview of a note beside its row, in the parts the note itself uses: the site, who
+ * and when, and what they said.
  */
 export default function NotePeek( {
 	note,
 	isOpen,
 	anchor,
+	isMove,
 	onClose,
 }: {
 	note: Note;
 	isOpen: boolean;
 	anchor: Element;
+	isMove?: boolean;
 	onClose: () => void;
 } ) {
 	const { locale } = useAppContext();
-	const { site, post, actor } = note.meta ?? {};
+	const { site, actor } = note.meta ?? {};
 	// The comment or post itself, where the row shows a line or two of it.
 	const text = (
 		note.body.find( ( block ) => block.type === 'comment' || block.type === 'post' )?.text ??
@@ -186,6 +188,15 @@ export default function NotePeek( {
 	)
 		?.trim()
 		.replace( /\n\s*\n+/g, '\n' );
+
+	// Who and when, under the site like the post card in the open note. The row's icon is
+	// this person, and already loaded.
+	const byline = (
+		<MetaList>
+			{ actor && <Author avatar={ note.icon || actor.avatar }>{ actor.name }</Author> }
+			{ formatNoteTime( note.timestamp, locale ) }
+		</MetaList>
+	);
 
 	return (
 		<Popover.Root open={ isOpen } onOpenChange={ ( open: boolean ) => ! open && onClose() }>
@@ -195,7 +206,7 @@ export default function NotePeek( {
 				finalFocus={ false }
 				positioner={
 					<Popover.Positioner
-						className="wpnc-peek__positioner"
+						className={ clsx( 'wpnc-peek__positioner', { 'is-moving': isMove } ) }
 						anchor={ anchor }
 						side="left"
 						align="start"
@@ -207,26 +218,7 @@ export default function NotePeek( {
 					{ __( 'Notification preview' ) }
 				</VisuallyHidden>
 				<VStack spacing={ 3 }>
-					{ site ? (
-						<SiteIdentity site={ site } title={ post?.title } details={ post && site.name } />
-					) : (
-						post && (
-							<Text weight={ 600 } lineHeight="20px" truncate>
-								{ post.title }
-							</Text>
-						)
-					) }
-					{ actor && (
-						<HStack spacing={ 2 } justify="flex-start">
-							<Text weight={ 500 } lineHeight="20px" truncate>
-								{ /* The row's icon is this person, and already loaded. */ }
-								<Author avatar={ note.icon || actor.avatar }>{ actor.name }</Author>
-							</Text>
-							<Text className="wpnc-peek__time" size={ 12 } lineHeight="16px" variant="muted">
-								{ formatNoteTime( note.timestamp, locale ) }
-							</Text>
-						</HStack>
-					) }
+					{ site ? <SiteIdentity site={ site } iconSize={ 32 } details={ byline } /> : byline }
 					{ text && (
 						<Text className="wpnc-peek__text" lineHeight="20px" numberOfLines={ 5 } truncate>
 							{ text }
