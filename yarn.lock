@@ -23957,16 +23957,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mdast-util-gfm-autolink-literal@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "mdast-util-gfm-autolink-literal@npm:2.0.1"
+"mdast-util-gfm-autolink-literal@npm:2.0.0":
+  version: 2.0.0
+  resolution: "mdast-util-gfm-autolink-literal@npm:2.0.0"
   dependencies:
     "@types/mdast": "npm:^4.0.0"
     ccount: "npm:^2.0.0"
     devlop: "npm:^1.0.0"
     mdast-util-find-and-replace: "npm:^3.0.0"
     micromark-util-character: "npm:^2.0.0"
-  checksum: 10c0/963cd22bd42aebdec7bdd0a527c9494d024d1ad0739c43dc040fee35bdfb5e29c22564330a7418a72b5eab51d47a6eff32bc0255ef3ccb5cebfe8970e91b81b6
+  checksum: 10c0/821ef91db108f05b321c54fdf4436df9d6badb33e18f714d8d52c0e70f988f5b6b118cdd4d607b4cb3bef1718304ce7e9fb25fa580622c3d20d68c1489c64875
   languageName: node
   linkType: hard
 
