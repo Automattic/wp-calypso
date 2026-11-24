@@ -44,6 +44,7 @@ const directories = [
 	'state/jetpack-review-prompt',
 	'state/jetpack-sync',
 	'state/login',
+	'state/selectors',
 ];
 
 // Test files in `directories` that stay on Jest until a fix lands, relative to `client/`.
