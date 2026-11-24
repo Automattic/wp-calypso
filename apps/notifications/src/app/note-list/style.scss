@@ -12,7 +12,10 @@
 		flex: 1;
 		min-height: 0;
 	}
+}
 
+// The note preview repeats a row's icon and sentence.
+:is(.wpnc__note-list, .wpnc-peek) {
 	// The subject and excerpt render in separate DataViews cells (the title and
 	// description fields), so they're styled directly rather than under a shared
 	// row wrapper.

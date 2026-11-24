@@ -1,5 +1,22 @@
 .wpnc-peek {
 	width: 340px;
+
+	.wpnc__note-icon {
+		flex-shrink: 0;
+	}
+
+	// When, then the post on one line, cut short rather than wrapping.
+	.wpnc-simplified__meta {
+		flex-wrap: nowrap;
+		white-space: nowrap;
+
+		> :last-child {
+			display: block;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
 }
 
 // Glides to the next row rather than jumping to it. Only between rows: on opening, Base
