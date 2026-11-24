@@ -100,7 +100,7 @@ function getAccessBadge( total: number, enabledCount: number ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ), intent: 'draft' as const };
+		return { text: __( 'Disabled' ), intent: 'none' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */

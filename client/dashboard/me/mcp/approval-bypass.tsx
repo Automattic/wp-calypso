@@ -141,7 +141,7 @@ export default function McpApprovalBypassControl( {
 				density="medium"
 				title={ __( 'Bypass permissions' ) }
 				decoration={ <Icon icon={ unlock } size={ 24 } /> }
-				badges={ [ { text: status, intent: isActive ? 'medium' : 'draft' } ] }
+				badges={ [ { text: status, intent: isActive ? 'medium' : 'none' } ] }
 				aria-expanded={ isOpen }
 				onClick={ () => setIsOpen( ! isOpen ) }
 			/>
