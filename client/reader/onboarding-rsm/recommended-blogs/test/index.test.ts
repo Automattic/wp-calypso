@@ -45,29 +45,23 @@ describe( 'recommended blogs', () => {
 		expect( Object.keys( recommendedBlogGetters ) ).toEqual( RECOMMENDED_BLOG_LIST_KEYS );
 	} );
 
-	it.each( RECOMMENDED_BLOG_LIST_KEYS )(
-		'%s has a complete, valid list or an empty scaffold',
-		( key ) => {
-			const blogs = getRecommendedBlogs( key );
+	it.each( RECOMMENDED_BLOG_LIST_KEYS )( '%s has exactly twelve valid recommendations', ( key ) => {
+		const blogs = getRecommendedBlogs( key );
 
-			const allowedLengths = additionalTopicKeys.some( ( topic ) => topic === key )
-				? [ 0, 12 ]
-				: [ 12 ];
-			expect( allowedLengths ).toContain( blogs.length );
-			expect( new Set( blogs.map( ( blog ) => blog.feed_ID ) ).size ).toBe( blogs.length );
+		expect( blogs ).toHaveLength( 12 );
+		expect( new Set( blogs.map( ( blog ) => blog.feed_ID ) ).size ).toBe( blogs.length );
 
-			for ( const blog of blogs ) {
-				expect( Number.isInteger( blog.feed_ID ) ).toBe( true );
-				expect( blog.feed_ID ).toBeGreaterThan( 0 );
-				expect( Number.isInteger( blog.site_ID ) ).toBe( true );
-				expect( blog.site_ID ).toBeGreaterThanOrEqual( 0 );
-				expect( blog.name.trim() ).not.toBe( '' );
-				expect( blog.description.trim() ).not.toBe( '' );
-				for ( const url of [ blog.site_URL, blog.feed_URL ] ) {
-					expect( [ 'http:', 'https:' ] ).toContain( new URL( url ).protocol );
-				}
-				expect( new URL( blog.icon_URL ).protocol ).toBe( 'https:' );
+		for ( const blog of blogs ) {
+			expect( Number.isInteger( blog.feed_ID ) ).toBe( true );
+			expect( blog.feed_ID ).toBeGreaterThan( 0 );
+			expect( Number.isInteger( blog.site_ID ) ).toBe( true );
+			expect( blog.site_ID ).toBeGreaterThanOrEqual( 0 );
+			expect( blog.name.trim() ).not.toBe( '' );
+			expect( blog.description.trim() ).not.toBe( '' );
+			for ( const url of [ blog.site_URL, blog.feed_URL ] ) {
+				expect( [ 'http:', 'https:' ] ).toContain( new URL( url ).protocol );
 			}
+			expect( new URL( blog.icon_URL ).protocol ).toBe( 'https:' );
 		}
-	);
+	} );
 } );
