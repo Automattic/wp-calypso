@@ -25,3 +25,4 @@ export {
 export type { ThrottleId } from './throttle-flags';
 export { withDeadline } from './with-deadline';
 export { watchImportFailure } from './import-failure';
+export { waitForURLWithRetry } from './transient-server-error';
