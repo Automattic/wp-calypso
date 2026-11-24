@@ -16,8 +16,9 @@ const SENTRY_CONFIG: SentryApi.BrowserOptions = {
 	// Determine the sample of errors collected where 1.0 is 100% of errors.
 	sampleRate: 1.0, // We're disabling it for 90% of requests, so we should track 100% of errors for the remaining 10% of requests.
 	// The logstash transport drops sessions and client reports, so don't collect them.
-	autoSessionTracking: false,
 	sendClientReports: false,
+	integrations: ( defaults ) =>
+		defaults.filter( ( integration ) => integration.name !== 'BrowserSession' ),
 	// Don't track errors on these URLs.
 	denyUrls: [
 		// Matches browser extension URLs, like "moz-extension://..." or "safari-web-extension://..."
@@ -30,7 +31,6 @@ type SupportedMethods =
 	| 'captureEvent'
 	| 'captureException'
 	| 'captureMessage'
-	| 'configureScope'
 	| 'withScope'
 	| 'setTag'
 	| 'setUser';
@@ -59,7 +59,7 @@ type SentryState =
 	// Sentry will not be enabled
 	| { state: 'disabled'; params: SentryOptions }
 	// Fully loaded!
-	| { state: 'loaded'; params: SentryOptions; sentry: typeof import( '@sentry/react' ) };
+	| { state: 'loaded'; params: SentryOptions; sentry: typeof import( './sentry-api' ) };
 let state: SentryState = { state: 'initial' };
 
 function dispatchSentryMethodCall< Method extends SupportedMethods >(
@@ -88,14 +88,6 @@ export function captureException( ...args: Parameters< typeof SentryApi.captureE
 }
 export function captureMessage( ...args: Parameters< typeof SentryApi.captureMessage > ) {
 	dispatchSentryMethodCall( 'captureMessage', args );
-}
-/**
- * @deprecated Sentry deprecated `configureScope` (removed in @sentry/react v8).
- * To set a tag use `setTag`; for anything else use the top-level scope helpers
- * directly once the SDK is loaded.
- */
-export function configureScope( ...args: Parameters< typeof SentryApi.configureScope > ) {
-	dispatchSentryMethodCall( 'configureScope', args );
 }
 export function withScope( ...args: Parameters< typeof SentryApi.withScope > ) {
 	dispatchSentryMethodCall( 'withScope', args );
@@ -158,7 +150,7 @@ function shouldEnableSentry( sampleRate: number = 0.1 ): boolean {
 }
 
 interface SentryOptions {
-	beforeSend?: ( e: SentryApi.Event ) => SentryApi.Event | null;
+	beforeSend?: ( e: SentryApi.ErrorEvent ) => SentryApi.ErrorEvent | null;
 	userId?: number;
 	sampleRate?: number;
 }
@@ -218,7 +210,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 		window.addEventListener( 'unhandledrejection', rejectionHandler );
 
 		try {
-			const Sentry = await import( '@sentry/react' );
+			const Sentry = await import( './sentry-api' );
 			// We don't set a release outside of production builds because we don't
 			// really "release" anything other than new deploys from trunk builds.
 			// calypso.live runs on PRs, which doesn't really map to a
