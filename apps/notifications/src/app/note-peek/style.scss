@@ -10,7 +10,37 @@
 	}
 }
 
-// Keeps the post's headings and paragraphs on their own lines.
+// The note's own formatting at the card's size: headings set off by weight alone, and
+// the text cut at five lines.
 .wpnc-peek__text {
-	white-space: pre-line;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 5;
+	overflow: hidden;
+	font-size: 13px;
+	line-height: 20px;
+	overflow-wrap: anywhere;
+
+	:is(h1, h2, h3, h4, h5, h6) {
+		margin: 0;
+		font-size: inherit;
+		font-weight: 600;
+	}
+
+	:is(p, ul, ol, blockquote, figure) {
+		margin: 0;
+	}
+
+	:is(ul, ol) {
+		padding-inline-start: 20px;
+	}
+
+	blockquote {
+		padding-inline-start: 8px;
+		box-shadow: inset 2px 0 0 var(--wp-components-color-gray-400, #c3c4c7);
+	}
+
+	:is(img:not(.emoji), figure, hr) {
+		display: none;
+	}
 }

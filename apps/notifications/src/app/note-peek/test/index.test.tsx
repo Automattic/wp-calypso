@@ -177,6 +177,34 @@ describe( 'NotePeek', () => {
 		expect( screen.queryByText( COMMENT ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'keeps the headings and emphasis of the note', async () => {
+		const user = userEvent.setup();
+		renderList( {
+			notes: [
+				{
+					...commentNote,
+					body: [
+						commentNote.body[ 0 ],
+						{
+							text: 'Spring tides\nThey are an hour out.',
+							ranges: [
+								{ type: 'h2', indices: [ 0, 12 ] },
+								{ type: 'b', indices: [ 13, 17 ] },
+							],
+							media: [],
+							type: 'comment',
+						},
+					],
+				},
+			],
+		} );
+
+		await hoverRow( user );
+
+		expect( ( await screen.findByText( 'Spring tides' ) ).tagName ).toBe( 'H2' );
+		expect( screen.getByText( 'They' ).tagName ).toBe( 'STRONG' );
+	} );
+
 	it( 'shows no preview without the flag', async () => {
 		const user = userEvent.setup();
 		renderList( { isPeekEnabled: false } );

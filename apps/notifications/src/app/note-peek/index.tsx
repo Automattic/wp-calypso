@@ -3,11 +3,12 @@ import { __ } from '@wordpress/i18n';
 import { Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
+import { html } from '../../panel/indices-to-html';
+import { p } from '../../panel/templates/functions';
 import { useAppContext } from '../context';
 import { formatNoteTime } from '../note-simplified/format-note-time';
 import Author from '../note-simplified/parts/author';
 import MetaList from '../note-simplified/parts/meta-list';
-import SiteIdentity from '../note-simplified/parts/site-identity';
 import type { Note } from '../types';
 import type { FocusEvent, PointerEvent, SyntheticEvent } from 'react';
 
@@ -163,8 +164,7 @@ export function useNotePeek( {
 }
 
 /**
- * A preview of a note beside its row, in the parts the note itself uses: the site, who
- * and when, and what they said.
+ * A preview of a note beside its row: who, where and when, then what they said.
  */
 export default function NotePeek( {
 	note,
@@ -181,19 +181,24 @@ export default function NotePeek( {
 } ) {
 	const { locale } = useAppContext();
 	const { site, actor } = note.meta ?? {};
-	// The comment or post itself, where the row shows a line or two of it.
-	const text = (
-		note.body.find( ( block ) => block.type === 'comment' || block.type === 'post' )?.text ??
-		note.meta?.parent_comment?.text
-	)
-		?.trim()
-		.replace( /\n\s*\n+/g, '\n' );
+	// The comment or post itself, where the row shows a line or two of it. Its ranges mark
+	// the headings, paragraphs and emphasis, as in the open note.
+	const block =
+		note.body.find( ( { type } ) => type === 'comment' || type === 'post' ) ??
+		( note.meta?.parent_comment && { text: note.meta.parent_comment.text } );
 
-	// Who and when, under the site like the post card in the open note. The row's icon is
-	// this person, and already loaded.
+	// Who, where and when on one line, so the text leads. The row's icon is this person,
+	// and already loaded.
 	const byline = (
 		<MetaList>
-			{ actor && <Author avatar={ note.icon || actor.avatar }>{ actor.name }</Author> }
+			{ actor && (
+				<Author avatar={ note.icon || actor.avatar }>
+					<Text size={ 12 } lineHeight="16px" weight={ 500 }>
+						{ actor.name }
+					</Text>
+				</Author>
+			) }
+			{ site?.name }
 			{ formatNoteTime( note.timestamp, locale ) }
 		</MetaList>
 	);
@@ -217,13 +222,10 @@ export default function NotePeek( {
 				<VisuallyHidden render={ <Popover.Title /> }>
 					{ __( 'Notification preview' ) }
 				</VisuallyHidden>
-				<VStack spacing={ 3 }>
-					{ site ? <SiteIdentity site={ site } iconSize={ 32 } details={ byline } /> : byline }
-					{ text && (
-						<Text className="wpnc-peek__text" lineHeight="20px" numberOfLines={ 5 } truncate>
-							{ text }
-						</Text>
-					) }
+				<VStack spacing={ 2 }>
+					{ byline }
+					{ block?.text.trim() &&
+						p( html( block ), 'wpnc-peek__text wpnc-simplified__quiet-links' ) }
 				</VStack>
 			</Popover.Popup>
 		</Popover.Root>
