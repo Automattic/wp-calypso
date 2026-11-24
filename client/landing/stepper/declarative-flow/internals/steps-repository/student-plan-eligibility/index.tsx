@@ -8,6 +8,7 @@ import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import { useFlowLocale } from '../../../../hooks/use-flow-locale';
 import { withLocale } from '../../../helpers/with-locale';
 import ConfirmEmail from './confirm-email';
+import { useRestoreDocumentTitle } from './hooks/use-restore-document-title';
 import { useStudentPlanEligibility } from './hooks/use-student-plan-eligibility';
 import { Screen } from './screen';
 import type { Step as StepType } from '../../types';
@@ -24,6 +25,7 @@ const StudentPlanEligibility: StepType< {
 	const locale = useFlowLocale();
 	const email = useSelector( getCurrentUserEmail ) ?? '';
 	const { data, isError, isFetching, isRefetchError, refetch } = useStudentPlanEligibility();
+	useRestoreDocumentTitle();
 	const reason = data?.reason;
 	// `isBusy` doesn't disable the button, so a click during a check joins it instead of
 	// sending another request to the rate-limited endpoint.
