@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
@@ -25,8 +26,8 @@ describe( 'actions', () => {
 	let getState;
 
 	beforeEach( () => {
-		dispatch = jest.fn();
-		getState = jest.fn( () => ( {
+		dispatch = vi.fn();
+		getState = vi.fn( () => ( {
 			posts: {
 				queries: {},
 			},
