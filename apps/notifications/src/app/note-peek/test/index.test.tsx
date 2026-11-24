@@ -96,10 +96,8 @@ const renderList = ( {
 	);
 };
 
-// The row's sentence, not the preview's copy of it.
-const getRow = () => screen.getAllByText( 'Ben Quah commented' )[ 0 ];
-
-const hoverRow = ( user: ReturnType< typeof userEvent.setup > ) => user.hover( getRow() );
+const hoverRow = ( user: ReturnType< typeof userEvent.setup > ) =>
+	user.hover( screen.getByText( 'Ben Quah commented' ) );
 
 describe( 'NotePeek', () => {
 	beforeAll( () => {
@@ -117,7 +115,7 @@ describe( 'NotePeek', () => {
 		await hoverRow( user );
 
 		expect( await screen.findByText( COMMENT ) ).toBeVisible();
-		expect( screen.getByText( 'The tide tables' ) ).toBeVisible();
+		expect( screen.getByText( 'Harbour Notes' ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_notification_peek', {
 			note_type: 'comment',
 		} );
@@ -140,7 +138,7 @@ describe( 'NotePeek', () => {
 
 		await hoverRow( user );
 		await screen.findByText( COMMENT );
-		await user.unhover( getRow() );
+		await user.unhover( screen.getByText( 'Ben Quah commented' ) );
 
 		await waitFor( () => expect( screen.queryByText( COMMENT ) ).not.toBeInTheDocument() );
 	} );

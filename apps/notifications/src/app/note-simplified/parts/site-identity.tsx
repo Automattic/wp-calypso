@@ -13,22 +13,28 @@ export default function SiteIdentity( {
 	title,
 	details,
 	url,
+	iconSize = 36,
 }: {
 	site: NoteSite;
 	title?: string;
 	details?: ReactNode;
 	url?: string;
+	iconSize?: number;
 } ) {
 	const icon = site.icon ? (
 		<img
 			className="wpnc-simplified__site-icon"
 			src={ site.icon }
 			alt=""
-			width={ 36 }
-			height={ 36 }
+			width={ iconSize }
+			height={ iconSize }
 		/>
 	) : (
-		<Icon className="wpnc-simplified__site-icon is-placeholder" icon={ wordpress } size={ 36 } />
+		<Icon
+			className="wpnc-simplified__site-icon is-placeholder"
+			icon={ wordpress }
+			size={ iconSize }
+		/>
 	);
 
 	return (
