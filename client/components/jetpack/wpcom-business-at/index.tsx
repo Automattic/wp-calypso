@@ -40,6 +40,7 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
@@ -210,7 +211,13 @@ export default function WPCOMBusinessAT( {
 	);
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 
-	const isJetpack = useSelector( ( state: AppState ) => isJetpackSite( state, siteId ) );
+	// The site turns Jetpack before the user's capabilities on it have propagated, and Backup and
+	// Scan show "not authorized" without `manage_options`.
+	const isActivated = useSelector(
+		( state: AppState ) =>
+			!! isJetpackSite( state, siteId ) &&
+			canCurrentUser( state, siteId, 'manage_options' ) === true
+	);
 	const isAtomic = useSelector( ( state: AppState ) => isSiteWpcomAtomic( state, siteId ) );
 
 	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
@@ -244,9 +251,9 @@ export default function WPCOMBusinessAT( {
 		}
 	}, [] );
 
-	// Poll for updated site data after transfer completes until site is recognized as Jetpack
+	// Poll for updated site data after transfer completes until the site is activated
 	useEffect( () => {
-		if ( automatedTransferStatus !== COMPLETE || isJetpack ) {
+		if ( automatedTransferStatus !== COMPLETE || isActivated ) {
 			return;
 		}
 
@@ -273,18 +280,18 @@ export default function WPCOMBusinessAT( {
 			clearInterval( intervalId );
 			clearTimeout( timeoutId );
 		};
-	}, [ automatedTransferStatus, isJetpack, dispatch, siteId ] );
+	}, [ automatedTransferStatus, isActivated, dispatch, siteId ] );
 
-	// Once the site is recognized as Jetpack after transfer, navigate to the product page
+	// Once the site is activated after transfer, navigate to the product page
 	useEffect( () => {
-		if ( automatedTransferStatus !== COMPLETE || ! isJetpack ) {
+		if ( automatedTransferStatus !== COMPLETE || ! isActivated ) {
 			return;
 		}
 
 		onActivationResolved?.();
 		// Full reload is needed so route middleware re-evaluates the site as Jetpack/Atomic.
 		window.location.href = getProductUrl( siteSlug );
-	}, [ automatedTransferStatus, isJetpack, onActivationResolved, getProductUrl, siteSlug ] );
+	}, [ automatedTransferStatus, isActivated, onActivationResolved, getProductUrl, siteSlug ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
@@ -366,7 +373,7 @@ export default function WPCOMBusinessAT( {
 								loadingText={ translate( 'Activating…' ) }
 								loading={
 									automatedTransferStatus === START ||
-									( automatedTransferStatus === COMPLETE && ! isJetpack ) ||
+									( automatedTransferStatus === COMPLETE && ! isActivated ) ||
 									isRewindActivating
 								}
 								onClick={ () => {
