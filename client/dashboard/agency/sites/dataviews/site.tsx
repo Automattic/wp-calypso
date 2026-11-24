@@ -7,7 +7,7 @@ import { useInView } from 'react-intersection-observer';
 import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
 import { useIsSiteUnreachable } from '../../../sites/site-fields/site-unreachable-status';
 import SitePreview from '../../../sites/site-preview';
-import { getSiteVisibility, getVisibilityLabels } from '../../../utils/site-visibility';
+import { getSiteVisibility, getVisibilityLabels } from '../../../sites/visibility/utils';
 import AgencySiteIcon from '../site-icon';
 import { getDisplayUrl, getSiteName, getSiteUrl } from './site-data';
 import type { AgencySite, Site } from '@automattic/api-core';

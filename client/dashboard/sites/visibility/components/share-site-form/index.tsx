@@ -2,11 +2,11 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { Card, CardBody } from '../../components/card';
-import ClipboardInputControl from '../../components/clipboard-input-control';
-import { SectionHeader } from '../../components/section-header';
-import { useSiteIsPreview } from '../site-fields/plan-awaiting-checkout';
-import SitePreviewLinks from '../site-preview-links';
+import { Card, CardBody } from '../../../../components/card';
+import ClipboardInputControl from '../../../../components/clipboard-input-control';
+import { SectionHeader } from '../../../../components/section-header';
+import { useSiteIsPreview } from '../../../site-fields/plan-awaiting-checkout';
+import SitePreviewLinks from '../../../site-preview-links';
 import type { Site } from '@automattic/api-core';
 
 // A preview stays Coming Soon until it is bought, so its share link is how anyone sees it. The

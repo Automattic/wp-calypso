@@ -9,16 +9,16 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../../agency/marketplace/paths';
-import { getSiteLaunchCheckoutUrl } from '../../agency/marketplace/products/lib/checkout-url';
-import { useAppContext } from '../../app/context';
+import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../../../../agency/marketplace/paths';
+import { getSiteLaunchCheckoutUrl } from '../../../../agency/marketplace/products/lib/checkout-url';
+import { useAppContext } from '../../../../app/context';
 import Notice, {
 	NoticeActionLinkButton,
 	RouterNoticeActionLinkButton,
-} from '../../components/notice';
-import { a4aLink } from '../../utils/link';
-import { SiteLaunchButton } from '../site-launch-button';
-import AgencyDevelopmentSiteLaunchModal from '../site-launch-button/agency-development-site-launch-modal';
+} from '../../../../components/notice';
+import { a4aLink } from '../../../../utils/link';
+import { SiteLaunchButton } from '../../../site-launch-button';
+import AgencyDevelopmentSiteLaunchModal from '../../../site-launch-button/agency-development-site-launch-modal';
 import TrialUpsellNotice from './trial-upsell-notice';
 import type { AgencyBlog, Site } from '@automattic/api-core';
 

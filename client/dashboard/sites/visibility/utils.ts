@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import type { SiteVisibility } from '../types/site';
+import type { SiteVisibility } from '../../types/site';
 import type { Site } from '@automattic/api-core';
 
 export function getVisibilityLabels() {

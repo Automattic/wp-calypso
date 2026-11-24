@@ -948,7 +948,7 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-site-visibility' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-site-visibility' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

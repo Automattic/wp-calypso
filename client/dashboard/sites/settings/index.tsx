@@ -25,11 +25,11 @@ import PrimaryDataCenterSettingsSummary from '../settings-primary-data-center/su
 import SiteRedirectSettingsSummary from '../settings-redirect/summary';
 import RepositoriesSettingsSummary from '../settings-repositories/summary';
 import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
-import SiteVisibilitySettingsSummary from '../settings-site-visibility/summary';
 import StaticFile404SettingsSummary from '../settings-static-file-404/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 import WebApplicationFirewallSettingsSummary from '../settings-web-application-firewall/summary';
 import WpcomLoginSettingsSummary from '../settings-wpcom-login/summary';
+import SiteVisibilitySettingsSummary from '../visibility/components/visibility-summary';
 import WordPressSettingsSummary from '../wordpress-version/components/wordpress-version-summary';
 import DangerZone from './danger-zone';
 import SiteActions from './site-actions';
