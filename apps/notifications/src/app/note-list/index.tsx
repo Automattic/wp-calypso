@@ -314,7 +314,12 @@ const NoteList = ( {
 			onPointerDownCapture={ () => {
 				isArrowKeyNavigationRef.current = false;
 			} }
-			onFocus={ openFocusedNote }
+			onFocus={ ( event ) => {
+				if ( isArrowKeyNavigationRef.current ) {
+					peek.preview( event.target );
+				}
+				openFocusedNote( event );
+			} }
 			{ ...peek.listProps }
 		>
 			<SelectedNoteIdContext.Provider value={ selectedNoteId }>

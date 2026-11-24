@@ -11,7 +11,7 @@ import { formatNoteTime } from '../note-simplified/format-note-time';
 import Author from '../note-simplified/parts/author';
 import SiteIdentity from '../note-simplified/parts/site-identity';
 import type { Note } from '../types';
-import type { PointerEvent } from 'react';
+import type { FocusEvent, PointerEvent, SyntheticEvent } from 'react';
 
 import './style.scss';
 
@@ -20,8 +20,8 @@ const SHOW_DELAY = 300;
 const HIDE_DELAY = 90;
 
 /**
- * Shows a preview of a note's row after the pointer rests on it. Once the preview is
- * showing, moving to another row swaps it at once.
+ * Shows a preview of a note's row after the pointer rests on it, or the arrow keys move
+ * to it. Once the preview is showing, moving to another row swaps it at once.
  */
 export function useNotePeek( {
 	isEnabled,
@@ -35,7 +35,8 @@ export function useNotePeek( {
 	// The last note shown stays set after the card closes, so it can fade out.
 	const [ peek, setPeek ] = useState< { noteId: string; anchor: Element } >();
 	const [ isOpen, setIsOpen ] = useState( false );
-	const hoveredRowRef = useRef< Element | null >( null );
+	const activeRowRef = useRef< Element | null >( null );
+	const isFromKeyboardRef = useRef( false );
 	const showTimerRef = useRef< number >( undefined );
 	const hideTimerRef = useRef< number >( undefined );
 
@@ -49,7 +50,7 @@ export function useNotePeek( {
 	useEffect( () => {
 		if ( ! isEnabled ) {
 			clearTimers();
-			hoveredRowRef.current = null;
+			activeRowRef.current = null;
 			setIsOpen( false );
 		}
 	}, [ isEnabled ] );
@@ -73,26 +74,19 @@ export function useNotePeek( {
 
 	const close = () => {
 		clearTimers();
-		hoveredRowRef.current = null;
+		activeRowRef.current = null;
 		setIsOpen( false );
 	};
 
 	const hide = () => {
-		hoveredRowRef.current = null;
+		activeRowRef.current = null;
 		clearTimers();
 		hideTimerRef.current = window.setTimeout( () => setIsOpen( false ), HIDE_DELAY );
 	};
 
-	const onPointer = ( event: PointerEvent< HTMLElement > ) => {
-		if ( ! isEnabled || event.pointerType !== 'mouse' ) {
-			return;
-		}
-		// The card renders in a portal, so it's outside the list but its events still reach it.
-		if ( ! event.currentTarget.contains( event.target as Node ) ) {
-			window.clearTimeout( hideTimerRef.current );
-			return;
-		}
-		const row = ( event.target as Element )
+	// Shows the preview for the row holding `target`, or hides it off the rows.
+	const track = ( target: Element ) => {
+		const row = target
 			.closest( '.dataviews-view-list__item-wrapper' )
 			?.querySelector( '.dataviews-view-list__item' );
 		const rowNoteId = row && getNoteId( row );
@@ -100,10 +94,10 @@ export function useNotePeek( {
 			hide();
 			return;
 		}
-		if ( row === hoveredRowRef.current ) {
+		if ( row === activeRowRef.current ) {
 			return;
 		}
-		hoveredRowRef.current = row;
+		activeRowRef.current = row;
 		clearTimers();
 		if ( isOpen ) {
 			setPeek( { noteId: rowNoteId, anchor: row } );
@@ -116,20 +110,54 @@ export function useNotePeek( {
 		}, SHOW_DELAY );
 	};
 
+	// The card renders in a portal, so it's outside the list but its events still reach it.
+	const isFromCard = ( event: SyntheticEvent< HTMLElement > ) =>
+		! event.currentTarget.contains( event.target as Node );
+
+	const onPointer = ( event: PointerEvent< HTMLElement > ) => {
+		if ( ! isEnabled || event.pointerType !== 'mouse' ) {
+			return;
+		}
+		if ( isFromCard( event ) ) {
+			window.clearTimeout( hideTimerRef.current );
+			return;
+		}
+		isFromKeyboardRef.current = false;
+		track( event.target as Element );
+	};
+
+	// For a row the arrow keys moved to, like resting the pointer on it.
+	const preview = ( target: Element ) => {
+		if ( isEnabled ) {
+			isFromKeyboardRef.current = true;
+			track( target );
+		}
+	};
+
+	const onBlur = ( event: FocusEvent< HTMLElement > ) => {
+		if ( ! event.currentTarget.contains( event.relatedTarget ) ) {
+			hide();
+		}
+	};
+
 	return {
 		noteId: peek?.noteId,
 		anchor: peek?.anchor,
 		isOpen,
 		close,
+		preview,
 		listProps: {
 			onPointerOver: onPointer,
 			// Also on move, for a pointer that settles on a row it was already over, after a scroll.
 			onPointerMove: onPointer,
 			onPointerLeave: hide,
-			onPointerDown: close,
+			// Pressing a row opens it; pressing the card, say to select its text, keeps it.
+			onPointerDown: ( event: PointerEvent< HTMLElement > ) => ! isFromCard( event ) && close(),
+			onBlur,
 			// Rows pass under a still pointer while the list scrolls, so the preview waits
-			// for the pointer to rest again.
-			onScrollCapture: close,
+			// for the pointer to rest again. The arrow keys scroll their row into view, and
+			// the preview follows it.
+			onScrollCapture: () => ! isFromKeyboardRef.current && close(),
 		},
 	};
 }

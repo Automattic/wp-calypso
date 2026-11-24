@@ -48,12 +48,34 @@ const commentNote = {
 	},
 };
 
+const REPLY = 'Same here, so I moved the Saturday swim to the afternoon.';
+
+const replyNote = {
+	...commentNote,
+	id: 2,
+	timestamp: '2026-05-31T00:00:00+00:00',
+	subject: [
+		{ text: 'Ana Ruiz replied on The tide tables', ranges: [], media: [] },
+		{ text: 'Same here…', ranges: [], media: [] },
+	],
+	body: [
+		{ text: 'Ana Ruiz', ranges: [], media: [], type: 'user' },
+		{ text: REPLY, ranges: [], media: [], type: 'comment' },
+	],
+	meta: {
+		...commentNote.meta,
+		summary: { text: 'Ana Ruiz replied', ranges: [] },
+		actor: { name: 'Ana Ruiz', avatar: '' },
+	},
+};
+
 const renderList = ( {
 	isPeekEnabled = true,
 	selectedNoteId,
-}: { isPeekEnabled?: boolean; selectedNoteId?: string } = {} ) => {
+	notes = [ commentNote ],
+}: { isPeekEnabled?: boolean; selectedNoteId?: string; notes?: object[] } = {} ) => {
 	const store = initStore();
-	store.dispatch( actions.notes.addNotes( [ commentNote ] ) );
+	store.dispatch( actions.notes.addNotes( notes ) );
 	store.dispatch( actions.ui.loadedNotes() );
 
 	return render(
@@ -132,6 +154,28 @@ describe( 'NotePeek', () => {
 		fireEvent.scroll( container.querySelector( '.dataviews-view-list' ) as Element );
 
 		await waitFor( () => expect( screen.queryByText( COMMENT ) ).not.toBeInTheDocument() );
+	} );
+
+	it( 'keeps the preview open when it is clicked', async () => {
+		const user = userEvent.setup();
+		renderList();
+
+		await hoverRow( user );
+		await user.click( await screen.findByText( COMMENT ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 200 ) );
+
+		expect( screen.getByText( COMMENT ) ).toBeVisible();
+	} );
+
+	it( 'previews the row the arrow keys move to', async () => {
+		const user = userEvent.setup();
+		renderList( { notes: [ commentNote, replyNote ] } );
+
+		await user.keyboard( '{Tab}' );
+		await user.keyboard( '{ArrowDown}' );
+
+		expect( await screen.findByText( REPLY ) ).toBeVisible();
+		expect( screen.queryByText( COMMENT ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows no preview without the flag', async () => {
