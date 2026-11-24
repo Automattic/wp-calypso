@@ -104,7 +104,7 @@ export const receiveStatus =
 
 		if ( status === transferStates.COMPLETE || status === transferStates.COMPLETED ) {
 			// Update the now-atomic site to ensure plugin page displays correctly.
-			dispatch( requestSite( siteId, { keepAdminCapabilities: true } ) );
+			dispatch( requestSite( siteId ) );
 		}
 	};
 

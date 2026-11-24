@@ -147,17 +147,11 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  * @param {number|string} siteFragment Site ID or slug
- * @param {Object} [options]
- * @param {boolean} [options.keepAdminCapabilities] For callers that know the site was just
- * transferred to Atomic: keep the user's stored admin capabilities while the site's own propagate.
- * @param {number} [options.atomicCapabilitiesRetriesLeft] Internal: how many times we may still
- * re-request the site while it waits for its capabilities to propagate after an Atomic transfer.
+ * @param {number} [atomicCapabilitiesRetriesLeft] Internal: how many times we may still re-request
+ * the site while it waits for its capabilities to propagate after an Atomic transfer.
  * @returns {import('redux-thunk').ThunkAction} Action thunk
  */
-export function requestSite(
-	siteFragment,
-	{ keepAdminCapabilities = false, atomicCapabilitiesRetriesLeft = 3 } = {}
-) {
+export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 	function doRequest( forceWpcom ) {
 		const query = { apiVersion: '1.2' };
 		if ( forceWpcom ) {
@@ -220,16 +214,9 @@ export function requestSite(
 					const isAtomic = site?.options?.is_wpcom_atomic;
 					const hasSiteTransferredToAtomic = ! wasAtomic && isAtomic;
 
-					const storedCapabilities = state?.currentUser?.capabilities?.[ site.ID ];
-					const wasAdmin = storedCapabilities?.manage_options;
+					const wasAdmin = state?.currentUser?.capabilities?.[ site.ID ]?.manage_options;
 					const isAdmin = site?.capabilities?.manage_options;
 					const hasMismatchingCapabilities = wasAdmin && ! isAdmin;
-
-					// Otherwise admin-only screens switch to "not authorized" mid-transfer.
-					const siteToStore =
-						keepAdminCapabilities && isAtomic && hasMismatchingCapabilities
-							? { ...omit( site, '_headers' ), capabilities: storedCapabilities }
-							: omit( site, '_headers' );
 
 					/*
 					 * Capabilities are not immediately propagated to the Atomic site
@@ -245,24 +232,19 @@ export function requestSite(
 						// so the UI can see the latest state (e.g. isJetpack
 						// flipping to true). Capabilities will self-correct on
 						// subsequent requests once they propagate on the server.
-						dispatch( receiveSite( siteToStore ) );
+						dispatch( receiveSite( omit( site, '_headers' ) ) );
 						return new Promise( ( resolve ) => {
 							setTimeout(
 								() =>
 									resolve(
-										dispatch(
-											requestSite( siteFragment, {
-												keepAdminCapabilities,
-												atomicCapabilitiesRetriesLeft: atomicCapabilitiesRetriesLeft - 1,
-											} )
-										)
+										dispatch( requestSite( siteFragment, atomicCapabilitiesRetriesLeft - 1 ) )
 									),
 								2000
 							);
 						} );
 					}
 
-					dispatch( receiveSite( siteToStore ) );
+					dispatch( receiveSite( omit( site, '_headers' ) ) );
 				}
 
 				dispatch( { type: SITE_REQUEST_SUCCESS, siteId: siteFragment } );
