@@ -40,16 +40,11 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getRequest from 'calypso/state/selectors/get-request';
 import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
-import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { launchSite } from 'calypso/state/sites/launch/actions';
 import { getIsSiteLaunchCelebrationModalOpen } from 'calypso/state/sites/launch/selectors';
 import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/selectors';
-import {
-	canCurrentUserUseCustomerHome,
-	getSitePlan,
-	getSiteOption,
-} from 'calypso/state/sites/selectors';
+import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import openSyncUrlInStudio from './studio-deeplink';
@@ -380,10 +375,8 @@ const mapStateToProps = ( state ) => {
 
 	return {
 		site: getSelectedSite( state ),
-		sitePlan: getSitePlan( state, siteId ),
 		siteId,
 		isJetpack: isJetpackSite( state, siteId ),
-		isNew7DUser: isUserRegistrationDaysWithinRange( state, null, 0, 7 ),
 		canUserUseCustomerHome: canCurrentUserUseCustomerHome( state, siteId ),
 		isStaticHomePage: 'page' === getSiteOption( state, siteId, 'show_on_front' ),
 		hasWooCommerceInstalled: !! ( installedWooCommercePlugin && installedWooCommercePlugin.active ),

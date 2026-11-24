@@ -33,10 +33,8 @@ export interface License {
 
 export interface LicensesStore {
 	licensesFetching: boolean;
-	hasFetchedLicenses: boolean;
 	licenses: PaginatedItems< License > | null;
 	countsFetching: boolean;
-	hasFetchedLicenseCounts: boolean;
 	counts: LicenseCounts | null;
 }
 

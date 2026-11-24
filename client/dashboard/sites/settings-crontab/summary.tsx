@@ -42,7 +42,7 @@ export default function CrontabSettingsSummary( {
 							crontabCount
 						)
 					: __( 'No scheduled jobs' ),
-			intent: crontabCount > 0 ? ( 'stable' as const ) : ( 'draft' as const ),
+			intent: crontabCount > 0 ? ( 'stable' as const ) : ( 'none' as const ),
 		},
 	].filter( ( badge ) => !! badge );
 

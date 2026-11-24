@@ -59,6 +59,7 @@
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
 		"@testing-library/user-event": "^14.6.10",
+		"@types/react": "^19.3.0",
 		"@wordpress/data": "^11.2.0",
 		"@wordpress/is-shallow-equal": "^6.2.0",
 		"jsdom": "^20.0.3",

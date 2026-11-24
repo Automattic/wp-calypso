@@ -94,7 +94,7 @@ function NewsFilters( {
 }
 
 /** One item: a short row that opens in place to show the rest of its fields. */
-function NewsRow( {
+export function NewsRow( {
 	announcement,
 	isOpen,
 	canToggle,
@@ -262,6 +262,7 @@ export default function NewsCard( { agencyId, ...actionProps }: NewsCardProps ) 
 									return;
 								}
 								actionProps.recordTracksEvent?.( 'calypso_a4a_overview_news_item_open', {
+									placement: 'overview',
 									announcement_id: announcement.id,
 									announcement_type: announcement.type,
 								} );

@@ -14,7 +14,7 @@ export type SummaryButtonBadgeProps = {
 	text: string;
 	/**
 	 * Optional property to specify the intent of the badge.
-	 * @default 'draft'
+	 * @default 'none'
 	 */
 	intent?: React.ComponentProps< typeof Badge >[ 'intent' ];
 };

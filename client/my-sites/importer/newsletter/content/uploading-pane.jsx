@@ -10,12 +10,7 @@ import { WPImportError, FileTooLarge } from 'calypso/blocks/importer/wordpress/t
 import DropZone from 'calypso/components/drop-zone';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import {
-	startMappingAuthors,
-	startUpload,
-	failPreUpload,
-	startImporting,
-} from 'calypso/state/imports/actions';
+import { startUpload, failPreUpload } from 'calypso/state/imports/actions';
 import { appStates, MAX_FILE_SIZE } from 'calypso/state/imports/constants';
 import {
 	getUploadFilename,
@@ -264,5 +259,5 @@ export default connect(
 		filename: getUploadFilename( state ),
 		percentComplete: getUploadPercentComplete( state ),
 	} ),
-	{ startMappingAuthors, startUpload, startImporting, failPreUpload }
+	{ startUpload, failPreUpload }
 )( localize( UploadingPane ) );

@@ -1095,8 +1095,6 @@ export default connect(
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
 			oauth2Client,
-			isFromAutomatticForAgenciesPlugin:
-				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from,
 			allowedSocialServices: getPartnerAllowedSocialServices( oauth2Client ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
@@ -1109,7 +1107,6 @@ export default connect(
 				props.userEmail ||
 				getInitialQueryArguments( state )?.email_address ||
 				getParamFromUrlOrOauth2Redirect( state, 'email_address' ),
-			socialService: getInitialQueryArguments( state )?.service,
 			wccomFrom: getWccomFrom( state ),
 			currentQuery,
 			isBlazePro: getIsBlazePro( state ),

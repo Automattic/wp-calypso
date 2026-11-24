@@ -76,10 +76,6 @@ import {
 	CRM_DOWNLOADS_SEGMENT,
 	MARKETPLACE_HOSTING_REFER_SEGMENTS,
 } from '../../agency/marketplace/paths';
-import {
-	mayBeEligibleForPressableExpansionOffer,
-	pressableOfferLicensesQuery,
-} from '../../agency/overview/use-pressable-offer-eligibility';
 import { hasApprovedDirectory } from '../../agency/partner-directory/lib';
 import {
 	PARTNER_DIRECTORY_DETAILS_SEGMENT,
@@ -375,10 +371,11 @@ export const marketplaceHostingRoute = createRoute( {
 			await Promise.all( [
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
-				mayBeEligibleForPressableExpansionOffer( agency ) &&
-					queryClient
-						.ensureQueryData( pressableOfferLicensesQuery( agency.id ) )
-						.catch( () => undefined ),
+				// Loaded up front so the promos don't push the page down when they arrive.
+				// They're optional, so a failure leaves them hidden, not the page.
+				queryClient
+					.ensureQueryData( agencyAnnouncementsQuery( agency.id ) )
+					.catch( () => undefined ),
 			] );
 		}
 	},
@@ -579,6 +576,11 @@ export const marketplaceProductsRoute = createRoute( {
 				queryClient.ensureQueryData( agencyProductsQuery( agency.id ) ),
 				// The cart prices Pressable plans by whether the agency owns one.
 				queryClient.ensureQueryData( pressableLicensesQuery( agency.id ) ).catch( () => undefined ),
+				// Loaded up front so the promos don't push the page down when they arrive.
+				// They're optional, so a failure leaves them hidden, not the page.
+				queryClient
+					.ensureQueryData( agencyAnnouncementsQuery( agency.id ) )
+					.catch( () => undefined ),
 			] );
 		}
 	},

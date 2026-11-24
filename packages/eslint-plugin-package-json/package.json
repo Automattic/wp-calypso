@@ -25,7 +25,8 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"eslint": "^10.14.0"
 	},
 	"peerDependencies": {
 		"eslint": "^10.14.0"

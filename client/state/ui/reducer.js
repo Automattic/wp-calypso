@@ -7,7 +7,6 @@ import {
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
-import appBannerDismissed from './app-banner-dismissed/reducer';
 import appBannerVisibility from './app-banner-visibility/reducer';
 import checkout from './checkout/reducer';
 import language from './language/reducer';
@@ -86,7 +85,6 @@ export function isNotificationsOpen( state = false, { type } ) {
 const reducer = combineReducers( {
 	actionLog,
 	appBannerVisibility,
-	appBannerDismissed,
 	checkout,
 	isSectionLoading,
 	isNotificationsOpen,

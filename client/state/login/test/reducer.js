@@ -25,7 +25,6 @@ import reducer, {
 	isFormDisabled,
 	requestError,
 	requestNotice,
-	requestSuccess,
 	twoFactorAuth,
 	twoFactorAuthRequestError,
 	socialAccount,
@@ -45,7 +44,6 @@ describe( 'reducer', () => {
 				'redirectTo',
 				'requestError',
 				'requestNotice',
-				'requestSuccess',
 				'socialAccount',
 				'socialAccountLink',
 				'twoFactorAuth',
@@ -350,38 +348,6 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	describe( 'requestSuccess', () => {
-		test( 'should default to a null', () => {
-			const state = requestSuccess( undefined, {} );
-
-			expect( state ).toBeNull();
-		} );
-
-		test( 'should set requestSuccess to null value if a request is initiated', () => {
-			const state = requestSuccess( undefined, {
-				type: LOGIN_REQUEST,
-			} );
-
-			expect( state ).toBeNull();
-		} );
-
-		test( 'should set requestSuccess to true value if a request was successful', () => {
-			const state = requestSuccess( null, {
-				type: LOGIN_REQUEST_SUCCESS,
-			} );
-
-			expect( state ).toBe( true );
-		} );
-
-		test( 'should set requestSuccess to false value if a request is unsuccessful', () => {
-			const state = requestSuccess( null, {
-				type: LOGIN_REQUEST_FAILURE,
-			} );
-
-			expect( state ).toBe( false );
-		} );
-	} );
-
 	describe( 'twoFactorAuth', () => {
 		test( 'should default to a null', () => {
 			const state = twoFactorAuth( undefined, {} );
@@ -471,14 +437,6 @@ describe( 'reducer', () => {
 				two_step_id: 12345678,
 				two_step_nonce_authenticator: 'foo',
 			} );
-		} );
-
-		test( 'should reset the "notice" value when an SMS code request is made', () => {
-			const state = requestSuccess( null, {
-				type: TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
-			} );
-
-			expect( state ).toBeNull();
 		} );
 
 		test( 'should reset the "two_step_nonce" value when a two factor authentication SMS code request returns new nonce', () => {

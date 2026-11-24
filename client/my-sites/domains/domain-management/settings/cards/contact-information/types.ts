@@ -7,19 +7,12 @@ import {
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
-export type ContactsInfoConnectedProps = {
-	currentRoute: string;
-	isRequestingWhois: boolean;
-};
-
 export type ContactsInfoPassedProps = {
 	domains: ResponseDomain[];
 
 	selectedDomainName: string;
 	selectedSite: SiteDetails;
 };
-
-export type ContactsInfoProps = ContactsInfoPassedProps & ContactsInfoConnectedProps;
 
 export type ContactsCardPassedProps = {
 	selectedSite: SiteDetails;

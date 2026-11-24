@@ -18,6 +18,7 @@ import PressableUsageLimitNotice, {
 } from '../../components/pressable-usage-limit-notice';
 import { isAgencyApproved } from '../is-agency-approved';
 import { getWpcomPlan } from '../lib/wpcom-hosting';
+import MarketplacePromos from '../marketplace-promos';
 import CartMenu from '../products/cart-menu';
 import { useCartOpen, useShoppingCart } from '../products/use-shopping-cart';
 import ReferralModeBand from '../referral-mode-band';
@@ -35,15 +36,22 @@ import {
 	hasPressableUpgrade,
 } from './lib/pressable-plans';
 import { getEffectivePressableOwnership } from './lib/pressable-products';
-import PressableOffers from './pressable-offer-banner';
 import PressableSection from './pressable-section';
 import VipSection from './vip-section';
 import WpcomSection from './wpcom-section';
 import type { HostingSection } from '../paths';
 import type { PressablePlan } from './lib/pressable-plans';
-import type { AgencyProduct } from '@automattic/api-core';
+import type { AgencyAnnouncementLogo, AgencyProduct } from '@automattic/api-core';
 
 import './style.scss';
+
+// The promos each page shows: both hosts on `/hosting`, and only its own on a host's page.
+const PROMO_LOGOS: Record< HostingSection | 'all', readonly AgencyAnnouncementLogo[] > = {
+	all: [ 'wordpress_com', 'pressable' ],
+	wpcom: [ 'wordpress_com' ],
+	pressable: [ 'pressable' ],
+	vip: [],
+};
 
 /**
  * `/hosting` shows the hosts side by side; `section` is the page of one host.
@@ -228,7 +236,13 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 			{ isReferralMode && section !== 'vip' && (
 				<ReferralModeBand kind={ section === 'pressable' ? 'pressable' : 'hosting' } />
 			) }
-			<PressableOffers agency={ agency } />
+			{ /* A host's own page lists its plans right below, so its promos leave out the primary CTA. */ }
+			<MarketplacePromos
+				agencyId={ agencyId }
+				logos={ PROMO_LOGOS[ section ?? 'all' ] }
+				placement="hosting"
+				hidePrimaryCta={ !! section }
+			/>
 			{ section ? (
 				renderSection( section )
 			) : (

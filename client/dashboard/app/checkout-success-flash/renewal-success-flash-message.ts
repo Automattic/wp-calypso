@@ -5,11 +5,11 @@ import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
-import { FLASH_QUERY_PARAM } from '../components/flash-message';
-import { formatDate } from '../utils/datetime';
-import { getTitleForDisplay } from '../utils/purchase';
-import { getCheckoutSuccessMessage } from './checkout-success-flash';
-import { useLocale } from './locale';
+import { FLASH_QUERY_PARAM } from '../../components/flash-message';
+import { formatDate } from '../../utils/datetime';
+import { getTitleForDisplay } from '../../utils/purchase';
+import { useLocale } from '../locale';
+import { getCheckoutSuccessMessage } from '.';
 import type { Purchase } from '@automattic/api-core';
 
 /**

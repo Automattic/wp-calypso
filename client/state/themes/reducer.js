@@ -18,7 +18,6 @@ import {
 	THEME_CLEAR_ACTIVATED,
 	THEME_DELETE_SUCCESS,
 	THEME_FILTERS_ADD,
-	THEME_FILTERS_REQUEST_FAILURE,
 	THEME_INSTALL,
 	THEME_INSTALL_SUCCESS,
 	THEME_INSTALL_FAILURE,
@@ -266,40 +265,6 @@ export function queryRequests( state = {}, action ) {
 	return state;
 }
 
-/**
- * Returns the updated query request error state after an action has been
- * dispatched. The state reflects a mapping of site ID, query ID pairing to an
- * object containing the request error. If there is no error null is stored.
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @returns {Object}        Updated state
- */
-export const queryRequestErrors = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case THEMES_REQUEST_FAILURE: {
-			const { siteId, query, error } = action;
-			const serializedQuery = getSerializedThemesQuery( query, siteId );
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ serializedQuery ]: error,
-				},
-			};
-		}
-		case THEMES_REQUEST_SUCCESS: {
-			const { siteId, query } = action;
-			const serializedQuery = getSerializedThemesQuery( query, siteId );
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], serializedQuery ),
-			};
-		}
-	}
-
-	return state;
-};
-
 function fromApi( theme ) {
 	if ( ! theme || ! theme.description ) {
 		return theme;
@@ -459,20 +424,6 @@ export const themeFilters = withSchemaValidation( themeFiltersSchema, ( state = 
 	return state;
 } );
 
-export function themeFilterRequestError( state = null, action ) {
-	// Stores the error for the theme filter fetch.
-	switch ( action.type ) {
-		case THEME_FILTERS_REQUEST_FAILURE:
-			return action.error;
-		case THEME_FILTERS_ADD: {
-			// Only dispatched on success, which means we can clear the error.
-			return null;
-		}
-	}
-
-	return state;
-}
-
 export function themesUpdate( state = {}, action ) {
 	const themesUpdating = state.themesUpdating || [];
 	const themesUpdated = state.themesUpdated || [];
@@ -603,7 +554,6 @@ export const themeHasAtomicTransferDialog = ( state = null, action ) => {
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
-	queryRequestErrors,
 	lastQuery,
 	themeInstalls,
 	themeRequests,
@@ -617,7 +567,6 @@ const combinedReducer = combineReducers( {
 	themePreviewOptions,
 	themePreviewVisibility,
 	themeFilters,
-	themeFilterRequestError,
 	themesUpdate,
 	upsellCardDisplayed,
 	isLoadingCart,

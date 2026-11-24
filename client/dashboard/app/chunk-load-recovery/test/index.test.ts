@@ -3,10 +3,10 @@
  */
 
 import { vi } from 'vitest';
-import { bumpStat } from '../analytics';
-import { isChunkLoadError, maybeReloadForChunkError } from '../chunk-load-recovery';
+import { bumpStat } from '../../analytics';
+import { isChunkLoadError, maybeReloadForChunkError } from '../index';
 
-vi.mock( '../analytics', () => ( {
+vi.mock( '../../analytics', () => ( {
 	bumpStat: vi.fn(),
 } ) );
 

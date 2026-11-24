@@ -15,10 +15,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	connectGoogleMyBusinessLocation,
-	connectGoogleMyBusinessAccount,
-} from 'calypso/state/google-my-business/actions';
+import { connectGoogleMyBusinessAccount } from 'calypso/state/google-my-business/actions';
 import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -144,7 +141,6 @@ export default connect(
 		};
 	},
 	{
-		connectGoogleMyBusinessLocation,
 		connectGoogleMyBusinessAccount,
 		recordTracksEvent: withEnhancers( recordTracksEvent, enhanceWithSiteType ),
 		recordTracksEventWithLocationCounts: withEnhancers( recordTracksEvent, [

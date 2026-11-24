@@ -3,9 +3,9 @@ import { cancel, start, stop } from '@automattic/browser-data-collector';
 import config from '@automattic/calypso-config';
 import { useParams, useRouter } from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
-import { isDashboardBackport } from '../utils/is-dashboard-backport';
-import { getSiteFromCache } from './analytics/super-props';
-import { AUTH_QUERY_KEY } from './auth';
+import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { getSiteFromCache } from '../analytics/super-props';
+import { AUTH_QUERY_KEY } from '../auth';
 import type { User } from '@automattic/api-core';
 import type { Collector } from '@automattic/browser-data-collector';
 
