@@ -3,12 +3,12 @@ import './style.scss';
 import { readSubscribedListsQuery, refetchSeenCounts } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { Icon, commentAuthorAvatar, plus, search } from '@wordpress/icons';
 import clsx from 'clsx';
 import i18n, { localize } from 'i18n-calypso';
-import { Component, useMemo } from 'react';
+import { Component, useEffect, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { withReaderOrganizations } from 'calypso/components/data/with-reader-organizations';
 import { withCurrentRoute } from 'calypso/components/route';
@@ -22,6 +22,7 @@ import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
 import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
 import ReaderManageSubscriptionsIcon from 'calypso/reader/components/icons/manage-subscriptions-icon';
 import ReaderSavedIcon from 'calypso/reader/components/icons/saved-icon';
+import { preloadInbox } from 'calypso/reader/conversations/preload';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { getTagStreamUrl } from 'calypso/reader/route';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
@@ -90,6 +91,14 @@ const TrackingKeys = {
  */
 function SyncAllSiteSubscriptions() {
 	useSiteSubscriptions( { fetchAllPages: true }, { refetchOnMount: refetchSeenCounts } );
+	return null;
+}
+
+function PreloadConversationsInbox() {
+	const queryClient = useQueryClient();
+	useEffect( () => {
+		preloadInbox( queryClient );
+	}, [ queryClient ] );
 	return null;
 }
 
@@ -347,6 +356,7 @@ export class ReaderSidebar extends Component {
 				siteTitle={ i18n.translate( 'Reader' ) }
 			>
 				<SyncAllSiteSubscriptions />
+				<PreloadConversationsInbox />
 				{ this.renderSidebarMenu() }
 				<ReaderSidebarNudges />
 			</GlobalSidebar>
