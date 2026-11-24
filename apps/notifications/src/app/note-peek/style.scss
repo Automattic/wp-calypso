@@ -1,5 +1,5 @@
 .wpnc-peek {
-	width: 340px;
+	width: 360px;
 
 	// The panel's 8% hairline around the avatar, drawn inside so it keeps its size.
 	.wpnc__note-icon {
@@ -43,11 +43,11 @@
 }
 
 // The note's own formatting at the card's size: headings set off by weight alone, and
-// the text cut at five lines.
+// the text cut at eight lines.
 .wpnc-peek__text {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
-	-webkit-line-clamp: 5;
+	-webkit-line-clamp: 8;
 	overflow: hidden;
 	font-size: 13px;
 	line-height: 20px;
