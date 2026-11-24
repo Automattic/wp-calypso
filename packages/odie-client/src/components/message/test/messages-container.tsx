@@ -161,6 +161,12 @@ describe( 'MessagesContainer greeting', () => {
 			'loaded',
 			false,
 		],
+		[
+			'skips it while waiting for the first message to a person',
+			'direct-zd-chat=1&start-on-message=1',
+			'loaded',
+			false,
+		],
 		[ 'skips it while the chat with a person is created', 'direct-zd-chat=1', 'transfer', false ],
 		[ 'greets when that chat fails and the AI is back', 'direct-zd-chat=1', 'loaded', true ],
 	] )( '%s', ( _name, params, chatStatus, isGreeted ) => {
@@ -180,6 +186,17 @@ describe( 'MessagesContainer direct link to a human', () => {
 
 		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 		expect( mockAddMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'waits for the first message when the link asks the chat to start on one', () => {
+		// Opening it would otherwise make a ticket for someone who never asks anything.
+		mockSearchParams = new URLSearchParams( 'provider=zendesk&start-on-message=1' );
+		mockContext();
+
+		render( container() );
+
+		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
+		expect( mockSearchParams.toString() ).toBe( 'start-on-message=1&direct-zd-chat=1' );
 	} );
 
 	it( 'opens it from the chat on show when the link is followed from another chat', () => {

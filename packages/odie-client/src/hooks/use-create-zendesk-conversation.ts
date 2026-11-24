@@ -18,6 +18,7 @@ import { useManageSupportInteraction } from '../data';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { useOpenInteractionStatusMap } from './use-open-interaction-status-map';
+import type { Message } from '../types';
 
 // Zendesk routes and prioritizes the checkout support experiment's chats by this tag.
 const CHECKOUT_SUPPORT_TAG = 'wpcom_checkout_chat';
@@ -65,11 +66,14 @@ export const useCreateZendeskConversation = () => {
 		isFromError = false,
 		errorReason = '',
 		escalationOnSecondAttempt = false,
+		firstMessage,
 	}: {
 		createdFrom?: string;
 		isFromError?: boolean;
 		errorReason?: string;
 		escalationOnSecondAttempt?: boolean;
+		// The user's message that starts the conversation, when it waited for one.
+		firstMessage?: Message;
 	} ) => {
 		if (
 			isSubmittingZendeskUserFields ||
@@ -79,6 +83,12 @@ export const useCreateZendeskConversation = () => {
 		) {
 			return chat.conversationId || '';
 		}
+
+		// The first message shows in the chat until Zendesk's copy replaces it. Without a temporary id,
+		// rebuilding the chat drops it instead of keeping it next to that copy.
+		const firstMessages: Message[] = firstMessage
+			? [ { ...firstMessage, metadata: undefined } ]
+			: [];
 
 		// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
 		// conversation list outside React without triggering a re-render.
@@ -90,6 +100,7 @@ export const useCreateZendeskConversation = () => {
 			} );
 			setChat( ( prevChat ) => ( {
 				...prevChat,
+				messages: [ ...prevChat.messages, ...firstMessages ],
 				status: 'loaded',
 			} ) );
 			return;
@@ -111,7 +122,7 @@ export const useCreateZendeskConversation = () => {
 		} );
 
 		// Store previous state to restore on error
-		const previousMessages = [ ...chat.messages ];
+		const previousMessages = [ ...chat.messages, ...firstMessages ];
 		const previousProvider = chat.provider;
 		const previousConversationId = chat.conversationId;
 
@@ -145,6 +156,7 @@ export const useCreateZendeskConversation = () => {
 
 		setChat( ( prevChat ) => ( {
 			...prevChat,
+			messages: [ ...prevChat.messages, ...firstMessages ],
 			status: 'transfer',
 		} ) );
 
@@ -215,6 +227,13 @@ export const useCreateZendeskConversation = () => {
 						...( chatId ? { odieChatId: chatId } : {} ),
 						...ticketFieldMetadata,
 					},
+					// Sent with the conversation, so its ticket starts with the user's question. Smooch
+					// fills in the rest of the message, which its types require.
+					...( firstMessage && {
+						messages: [ { type: 'text', text: firstMessage.content as string } ] as Parameters<
+							typeof Smooch.createConversation
+						>[ 0 ][ 'messages' ],
+					} ),
 				} );
 				break;
 			} catch ( error ) {
@@ -277,10 +296,12 @@ export const useCreateZendeskConversation = () => {
 				...prevChat,
 				conversationId: conversationId,
 				messages: [
-					...prevChat.messages,
+					...prevChat.messages.filter( ( message ) => ! firstMessages.includes( message ) ),
 					// Without an Odie chat, the user went straight to a human.
 					...getOdieTransferMessages( hasEnTranslation, ! prevChat.odieId ),
 					getZendeskChatStartedMetaMessage(),
+					// Where the chat rebuilt from Zendesk shows it, so it doesn't move.
+					...firstMessages,
 				],
 				provider: 'zendesk',
 				status: 'loaded',
