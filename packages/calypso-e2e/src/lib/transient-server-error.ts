@@ -126,14 +126,16 @@ export async function waitForURLWithRetry(
 		const remaining = deadline - Date.now();
 		// Playwright reads a 0 timeout as no timeout.
 		if ( remaining <= 0 ) {
-			throw new errors.TimeoutError( `Timeout ${ timeout }ms exceeded waiting for the URL.` );
+			throw new errors.TimeoutError(
+				`Timeout ${ timeout }ms exceeded waiting for the URL, on ${ page.url() }.`
+			);
 		}
 
 		try {
 			await page.waitForURL( url, { timeout: Math.min( URL_CHECK_INTERVAL, remaining ) } );
 			return;
 		} catch ( error ) {
-			if ( ! ( error instanceof errors.TimeoutError ) || Date.now() >= deadline ) {
+			if ( ! ( error instanceof errors.TimeoutError ) ) {
 				throw error;
 			}
 		}
@@ -149,11 +151,17 @@ export async function waitForURLWithRetry(
 		}
 
 		const delay = TRANSIENT_RETRY_DELAYS[ attempt - 1 ];
+		const left = deadline - Date.now();
+		// No time to back off and reload before the deadline: wait it out.
+		if ( delay >= left ) {
+			continue;
+		}
+
 		console.warn(
 			`${ page.url() } attempt ${ attempt }/${ maxAttempts } showed a transient server error, reloading in ${ delay }ms.`
 		);
 		await page.waitForTimeout( delay );
-		await page.reload();
+		await page.reload( { timeout: left - delay } );
 		attempt++;
 	}
 }

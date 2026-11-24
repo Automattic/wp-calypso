@@ -201,14 +201,19 @@ describe( 'gotoWithRetry', () => {
 /**
  * A page on a fake clock. Each waitForURL runs out its timeout and throws a
  * Playwright TimeoutError, except call number `matchOnCall`, which resolves.
- * Each waitForTimeout advances the clock; the error-page detector always
- * answers `isErrorPage`.
+ * A timeout of 0 or less rejects: Playwright reads 0 as no timeout. Each
+ * waitForTimeout advances the clock; the error-page detector always answers
+ * `isErrorPage`.
  */
 const buildWaitPage = ( isErrorPage: boolean, matchOnCall?: number ) => {
 	let now = 0;
 	vi.spyOn( Date, 'now' ).mockImplementation( () => now );
 
 	const waitForURL = vi.fn( async ( url: unknown, options: { timeout: number } ) => {
+		if ( options.timeout <= 0 ) {
+			throw new Error( 'Unbounded wait.' );
+		}
+
 		if ( waitForURL.mock.calls.length === matchOnCall ) {
 			return;
 		}
@@ -246,7 +251,7 @@ describe( 'waitForURLWithRetry', () => {
 
 		expect( page.waitForURL ).toHaveBeenCalledWith( LANDING_URL, expect.anything() );
 		expect( page.waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ] ] );
-		expect( page.reload ).toHaveBeenCalledTimes( 1 );
+		expect( page.reload.mock.calls ).toEqual( [ [ { timeout: 170_000 } ] ] );
 		expect( page.waitForTimeout.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
 			page.reload.mock.invocationCallOrder[ 0 ]
 		);
@@ -291,26 +296,26 @@ describe( 'waitForURLWithRetry', () => {
 		expect( page.reload ).not.toHaveBeenCalled();
 	} );
 
-	test( 'checks in slices and rethrows the timeout once the deadline passes', async () => {
+	test( 'checks in slices and throws the overall timeout once the deadline passes', async () => {
 		const page = buildWaitPage( false );
+		const wait = waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: 7_000 } );
 
-		await expect(
-			waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: 7_000 } )
-		).rejects.toThrow( new errors.TimeoutError( 'Timeout 2000ms exceeded.' ) );
-
+		await expect( wait ).rejects.toBeInstanceOf( errors.TimeoutError );
+		await expect( wait ).rejects.toThrow(
+			`Timeout 7000ms exceeded waiting for the URL, on ${ PENDING_URL }.`
+		);
 		expect( waitTimeouts( page ) ).toEqual( [ 5_000, 2_000 ] );
 	} );
 
-	test( 'times out rather than wait unbounded once the backoff used up the deadline', async () => {
+	test( 'does not back off or reload past the deadline', async () => {
 		const page = buildWaitPage( true );
-		vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
 
-		// Playwright reads a 0 timeout as no timeout.
 		await expect(
-			waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: 6_000 } )
-		).rejects.toBeInstanceOf( errors.TimeoutError );
+			waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: 10_000 } )
+		).rejects.toThrow( `Timeout 10000ms exceeded waiting for the URL, on ${ PENDING_URL }.` );
 
-		expect( page.reload ).toHaveBeenCalledTimes( 1 );
-		expect( waitTimeouts( page ) ).toEqual( [ 5_000 ] );
+		expect( page.waitForTimeout ).not.toHaveBeenCalled();
+		expect( page.reload ).not.toHaveBeenCalled();
+		expect( waitTimeouts( page ) ).toEqual( [ 5_000, 5_000 ] );
 	} );
 } );
