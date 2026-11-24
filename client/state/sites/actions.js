@@ -143,6 +143,11 @@ export function requestSites() {
 	};
 }
 
+// Capabilities an admin had on a site before its Atomic transfer, by site ID, kept while the
+// transferred site's own capabilities propagate. Bounded like the Stepper's post-transfer wait.
+const capabilitiesHeldAfterTransfer = new Map();
+const CAPABILITIES_HOLD_MS = 1000 * 180;
+
 /**
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
@@ -212,39 +217,42 @@ export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 					// which is usually a slug.
 					const wasAtomic = state?.sites?.items?.[ site.ID ]?.options?.is_wpcom_atomic;
 					const isAtomic = site?.options?.is_wpcom_atomic;
-					const hasSiteTransferredToAtomic = ! wasAtomic && isAtomic;
-
 					const wasAdmin = state?.currentUser?.capabilities?.[ site.ID ]?.manage_options;
 					const isAdmin = site?.capabilities?.manage_options;
-					const hasMismatchingCapabilities = wasAdmin && ! isAdmin;
 
 					/*
-					 * Capabilities are not immediately propagated to the Atomic site
-					 * after transfer, so let's hold off updating the state until the
-					 * endpoint returns accurate data.
+					 * Capabilities are not immediately propagated to the Atomic site after transfer.
+					 * Until they are, store the site with the capabilities the user had before it,
+					 * so the UI sees it turn Atomic (e.g. isJetpack flipping to true) while
+					 * admin-only screens don't switch to "not authorized".
 					 */
-					if (
-						hasSiteTransferredToAtomic &&
-						hasMismatchingCapabilities &&
-						atomicCapabilitiesRetriesLeft > 0
-					) {
-						// Update Redux state with the site data before retrying,
-						// so the UI can see the latest state (e.g. isJetpack
-						// flipping to true). Capabilities will self-correct on
-						// subsequent requests once they propagate on the server.
-						dispatch( receiveSite( omit( site, '_headers' ) ) );
-						return new Promise( ( resolve ) => {
-							setTimeout(
-								() =>
-									resolve(
-										dispatch( requestSite( siteFragment, atomicCapabilitiesRetriesLeft - 1 ) )
-									),
-								2000
-							);
+					if ( ! wasAtomic && isAtomic && wasAdmin && ! isAdmin ) {
+						capabilitiesHeldAfterTransfer.set( site.ID, {
+							capabilities: state.currentUser.capabilities[ site.ID ],
+							until: Date.now() + CAPABILITIES_HOLD_MS,
 						} );
 					}
 
-					dispatch( receiveSite( omit( site, '_headers' ) ) );
+					const held = capabilitiesHeldAfterTransfer.get( site.ID );
+					if ( held && ! isAdmin && Date.now() < held.until ) {
+						dispatch(
+							receiveSite( { ...omit( site, '_headers' ), capabilities: held.capabilities } )
+						);
+						if ( atomicCapabilitiesRetriesLeft > 0 ) {
+							return new Promise( ( resolve ) => {
+								setTimeout(
+									() =>
+										resolve(
+											dispatch( requestSite( siteFragment, atomicCapabilitiesRetriesLeft - 1 ) )
+										),
+									2000
+								);
+							} );
+						}
+					} else {
+						capabilitiesHeldAfterTransfer.delete( site.ID );
+						dispatch( receiveSite( omit( site, '_headers' ) ) );
+					}
 				}
 
 				dispatch( { type: SITE_REQUEST_SUCCESS, siteId: siteFragment } );

@@ -40,14 +40,12 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getFeaturesBySiteId from 'calypso/state/selectors/get-site-features';
 import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site-features';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
-import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
@@ -166,7 +164,8 @@ function TransferFailureNotice( { transferStatus, productName }: TransferFailure
 	);
 }
 const SITE_POLL_DELAY_MS = 3000;
-const SITE_POLL_MAX_ATTEMPTS = 10;
+// As long as `requestSite` keeps the pre-transfer capabilities.
+const SITE_POLL_MAX_ATTEMPTS = 60;
 export default function WPCOMBusinessAT( {
 	content = vaultpressContent,
 }: { content?: AtomicContentSwitch } = {} ) {
@@ -211,13 +210,7 @@ export default function WPCOMBusinessAT( {
 	);
 	const trackInitiateAT = useTrackCallback( initiateAT, 'calypso_jetpack_backup_business_at' );
 
-	// The site turns Jetpack before the user's capabilities on it have propagated, and Backup and
-	// Scan show "not authorized" without `manage_options`.
-	const isActivated = useSelector(
-		( state: AppState ) =>
-			!! isJetpackSite( state, siteId ) &&
-			canCurrentUser( state, siteId, 'manage_options' ) === true
-	);
+	const [ isSiteReady, setIsSiteReady ] = useState( false );
 	const isAtomic = useSelector( ( state: AppState ) => isSiteWpcomAtomic( state, siteId ) );
 
 	const rewindAtomicDeactivated = isAtomic && rewindState?.state === 'unavailable';
@@ -251,17 +244,26 @@ export default function WPCOMBusinessAT( {
 		}
 	}, [] );
 
-	// Poll for updated site data after transfer completes until the site is activated
+	// Poll for updated site data after transfer completes until the site is Jetpack and the user's
+	// capabilities on it have propagated. Check each response: the state keeps the pre-transfer
+	// capabilities until then, see `requestSite`.
 	useEffect( () => {
-		if ( automatedTransferStatus !== COMPLETE || isActivated ) {
+		if ( automatedTransferStatus !== COMPLETE || isSiteReady ) {
 			return;
 		}
 
-		dispatch( requestSite( siteId ) );
+		const poll = () =>
+			Promise.resolve( dispatch( requestSite( siteId, 0 ) ) )
+				.then( ( site?: { jetpack?: boolean; capabilities?: { manage_options?: boolean } } ) => {
+					if ( site?.jetpack && site.capabilities?.manage_options ) {
+						setIsSiteReady( true );
+					}
+				} )
+				.catch( () => {} );
 
-		const intervalId = setInterval( () => {
-			dispatch( requestSite( siteId ) );
-		}, SITE_POLL_DELAY_MS );
+		poll();
+
+		const intervalId = setInterval( poll, SITE_POLL_DELAY_MS );
 
 		// Stop polling after max attempts to avoid indefinite requests
 		const timeoutId = setTimeout( () => {
@@ -280,18 +282,18 @@ export default function WPCOMBusinessAT( {
 			clearInterval( intervalId );
 			clearTimeout( timeoutId );
 		};
-	}, [ automatedTransferStatus, isActivated, dispatch, siteId ] );
+	}, [ automatedTransferStatus, isSiteReady, dispatch, siteId ] );
 
-	// Once the site is activated after transfer, navigate to the product page
+	// Once the transferred site is ready, navigate to the product page
 	useEffect( () => {
-		if ( automatedTransferStatus !== COMPLETE || ! isActivated ) {
+		if ( ! isSiteReady ) {
 			return;
 		}
 
 		onActivationResolved?.();
 		// Full reload is needed so route middleware re-evaluates the site as Jetpack/Atomic.
 		window.location.href = getProductUrl( siteSlug );
-	}, [ automatedTransferStatus, isActivated, onActivationResolved, getProductUrl, siteSlug ] );
+	}, [ isSiteReady, onActivationResolved, getProductUrl, siteSlug ] );
 
 	// If there are any issues, show a dialog.
 	// Otherwise, kick off the transfer!
@@ -373,7 +375,7 @@ export default function WPCOMBusinessAT( {
 								loadingText={ translate( 'Activating…' ) }
 								loading={
 									automatedTransferStatus === START ||
-									( automatedTransferStatus === COMPLETE && ! isActivated ) ||
+									automatedTransferStatus === COMPLETE ||
 									isRewindActivating
 								}
 								onClick={ () => {
