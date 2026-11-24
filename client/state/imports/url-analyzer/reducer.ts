@@ -3,7 +3,6 @@ import {
 	URL_ANALYZER_ANALYZE,
 	URL_ANALYZER_ANALYZE_DONE,
 	URL_ANALYZER_ANALYZE_SUCCESS,
-	URL_ANALYZER_ANALYZE_ERROR,
 } from '../../action-types';
 import type { AnyAction } from 'redux';
 
@@ -16,17 +15,6 @@ const isAnalyzing = ( state = false, action: AnyAction ) => {
 	}
 
 	return state;
-};
-
-const analyzerError = ( state = null, action: AnyAction ) => {
-	switch ( action.type ) {
-		case URL_ANALYZER_ANALYZE_ERROR: {
-			const { payload } = action;
-			return payload;
-		}
-		default:
-			return state;
-	}
 };
 
 const urlData = ( state = null, action: AnyAction ) => {
@@ -43,7 +31,6 @@ const urlData = ( state = null, action: AnyAction ) => {
 const reducer = combineReducers( {
 	isAnalyzing,
 	urlData,
-	analyzerError,
 } );
 
 export type State = ReturnType< typeof reducer >;

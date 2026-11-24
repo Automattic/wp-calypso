@@ -34,18 +34,8 @@ export const scan = keyedReducer( 'siteId', ( state, { type, payload } ) => {
 	return state;
 } );
 
-const requestStatusRetryCount = keyedReducer( 'siteId', ( state, { type, retryCount } ) => {
-	switch ( type ) {
-		case JETPACK_SCAN_REQUEST:
-			return retryCount;
-	}
-
-	return state;
-} );
-
 export default combineReducers( {
 	requestStatus,
-	requestStatusRetryCount,
 	scan,
 	threatCounts: threatCountsReducer,
 	threats: threatsReducer,
