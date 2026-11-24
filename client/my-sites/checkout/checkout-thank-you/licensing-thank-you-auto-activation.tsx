@@ -15,6 +15,7 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
 import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
 import getJetpackCheckoutSupportTicketIncompatibleProductIds from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-incompatible-products';
+import getJetpackCheckoutSupportTicketReason from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-reason';
 import getSupportTicketRequestStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import getJetpackSites from 'calypso/state/selectors/get-jetpack-sites';
 
@@ -72,6 +73,9 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	);
 	const incompatibleProductIds = useSelector( ( state ) =>
 		getJetpackCheckoutSupportTicketIncompatibleProductIds( state, jetpackTemporarySiteId )
+	);
+	const reason = useSelector( ( state ) =>
+		getJetpackCheckoutSupportTicketReason( state, jetpackTemporarySiteId )
 	);
 
 	const [ selectedSite, setSelectedSite ] = useState( '' );
@@ -187,6 +191,9 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			}
 
 			if ( destinationSiteId === 0 ) {
+				if ( reason ) {
+					return setError( reason );
+				}
 				return setError(
 					translate(
 						'There was a problem activating %(productName)s on {{strong}}%(selectedSite)s{{/strong}}. Try with a different site or {{a}}activate your product manually{{/a}}.',
@@ -221,6 +228,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		productName,
 		productsList,
 		productSlug,
+		reason,
 		redirectTo,
 		selectedSite,
 		supportTicketRequestStatus,
