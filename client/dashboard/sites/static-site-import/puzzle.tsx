@@ -1,7 +1,7 @@
 import { useReducedMotion } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import { useMshotImage } from './colliding-cards';
+import { useMshotImage } from './use-mshot-image';
 import type { CSSProperties } from 'react';
 
 import './puzzle.scss';
