@@ -1,7 +1,8 @@
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import { clearStepPersistedState, STUDENT_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from 'react';
+import { __ } from '@wordpress/i18n';
+import { useEffect, useRef } from 'react';
 import {
 	clearSignupCompleteFlowName,
 	clearSignupCompleteSiteID,
@@ -9,6 +10,7 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import { useDispatch as useReduxDispatch } from 'calypso/state';
+import { setDocumentHeadTitle } from 'calypso/state/document-head/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -91,6 +93,18 @@ const student: FlowV2< typeof initialize > = {
 				clearSignupCompleteSiteID();
 			}
 		}, [ currentStepSlug, reduxDispatch, resetOnboardStore ] );
+
+		// The eligibility screens set the tab title with `DocumentHead`, which keeps it after
+		// unmounting, and the domain step that follows sets none. Put back Stepper's default
+		// flow title, translated now rather than read back from the store.
+		const previousStepSlug = useRef( currentStepSlug );
+		useEffect( () => {
+			const eligibilitySlug = STEPS.STUDENT_PLAN_ELIGIBILITY.slug;
+			if ( previousStepSlug.current === eligibilitySlug && currentStepSlug !== eligibilitySlug ) {
+				reduxDispatch( setDocumentHeadTitle( __( 'Create a site' ) ) );
+			}
+			previousStepSlug.current = currentStepSlug;
+		}, [ currentStepSlug, reduxDispatch ] );
 
 		// No Student plan in the cart on a later step means the user deep-linked past the
 		// eligibility check, so send them back to it.
