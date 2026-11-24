@@ -82,7 +82,9 @@ vi.mock( '../../../utils/get-open-live-interactions', () => ( {
 	getOpenLiveInteractions: () => mockGetOpenLiveInteractions(),
 } ) );
 
-vi.mock( '..', () => ( { default: () => null } ) );
+vi.mock( '..', () => ( {
+	default: ( { message }: { message: { content?: string } } ) => <p>{ message.content }</p>,
+} ) );
 vi.mock( '../jump-to-recent', () => ( { JumpToRecent: () => null } ) );
 vi.mock( '../messages-cluster/messages-cluster', () => ( { MessagesClusterizer: () => null } ) );
 vi.mock( '../thinking-placeholder', () => ( {
@@ -147,6 +149,27 @@ beforeEach( () => {
 	mockGetOpenLiveInteractions.mockReturnValue( {
 		mostRecentSupportInteractionId: null,
 		hasReachedLimit: false,
+	} );
+} );
+
+describe( 'MessagesContainer greeting', () => {
+	// The greeting introduces the AI, so someone who went straight to a person shouldn't get it.
+	it.each( [
+		[
+			'skips it while waiting to start the chat with a person',
+			'provider=zendesk',
+			'loaded',
+			false,
+		],
+		[ 'skips it while the chat with a person is created', 'direct-zd-chat=1', 'transfer', false ],
+		[ 'greets when that chat fails and the AI is back', 'direct-zd-chat=1', 'loaded', true ],
+	] )( '%s', ( _name, params, chatStatus, isGreeted ) => {
+		mockSearchParams = new URLSearchParams( params );
+		mockContext( { isChatLoaded: false, chatStatus } );
+
+		render( container() );
+
+		expect( screen.queryByText( 'Hi' ) !== null ).toBe( isGreeted );
 	} );
 } );
 
