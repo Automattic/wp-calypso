@@ -188,6 +188,23 @@ for ( const file of files ) {
 	const requireToImport = ( e ) =>
 		edits.push( { start: e.expression.getStart( sf ), end: e.expression.end, text: 'import' } );
 
+	// Jest lets named imports read the properties of a returned module, such as a function with
+	// an `isEnabled` property; Vitest needs them spread onto the object of exports.
+	const wrapModule = ( e, isArrowBody = false ) => {
+		const [ open, close ] = isArrowBody ? [ '( ', ' )' ] : [ '', '' ];
+		const inner = unwrap( e );
+		if ( ts.isIdentifier( inner ) ) {
+			edits.push( {
+				start: e.getStart( sf ),
+				end: e.end,
+				text: `${ open }{ ...${ inner.text }, default: ${ inner.text } }${ close }`,
+			} );
+			return;
+		}
+		edits.push( { start: e.getStart( sf ), end: e.getStart( sf ), text: `${ open }{ default: ` } );
+		edits.push( { start: e.end, end: e.end, text: ` }${ close }` } );
+	};
+
 	// Jest lets a factory return the module itself (e.g. a function, read through the default
 	// import); Vitest needs an object of exports. As with the interop default, only `jest.mock()`
 	// factories are changed.
@@ -231,12 +248,7 @@ for ( const file of files ) {
 					} );
 					edits.push( { start: r.expression.end, end: r.expression.end, text: ' }' } );
 				} else {
-					edits.push( {
-						start: r.expression.getStart( sf ),
-						end: r.expression.getStart( sf ),
-						text: '{ default: ',
-					} );
-					edits.push( { start: r.expression.end, end: r.expression.end, text: ' }' } );
+					wrapModule( r.expression );
 				}
 			}
 			return;
@@ -257,12 +269,7 @@ for ( const file of files ) {
 		) {
 			return;
 		}
-		edits.push( {
-			start: factory.body.getStart( sf ),
-			end: factory.body.getStart( sf ),
-			text: '( { default: ',
-		} );
-		edits.push( { start: factory.body.end, end: factory.body.end, text: ' } )' } );
+		wrapModule( factory.body, true );
 		vitestImports.add( 'vi' );
 	};
 	// Jest's mock generics are `< Return, Args >`; Vitest's take the function type.
