@@ -137,8 +137,7 @@
 		border-color: var( --color-neutral-20 );
 	}
 
-	.button.is-primary,
-	.components-button.is-primary {
+	.components-button.is-primary:not( .is-destructive ) {
 		border-color: var( --wpds-color-background-interactive-brand-strong );
 
 		&:is( :disabled, [aria-disabled='true'] ) {

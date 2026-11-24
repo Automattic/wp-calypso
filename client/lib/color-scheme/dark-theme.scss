@@ -136,34 +136,40 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 }
 
-// Reader and Themes only: the Dashboard gets these from its ThemeProvider. Drop once they have one.
+// Reader and Themes styles still read these aliases; drop once they use `--wpds-*` tokens.
 @mixin color-scheme-dark-theme-component-tokens {
-	// The theme provider generates these from the WPDS tokens, but Reader and Themes styles still
-	// read the old aliases, where the "darker" accent shades are lighter in dark mode. Remove once
-	// those styles use `--wpds-*` tokens.
 	--wp-components-color-foreground: var( --wpds-color-foreground-content-neutral );
 	--wp-components-color-foreground-inverted: var( --wpds-color-background-surface-neutral );
 	--wp-components-color-background: var( --wpds-color-background-surface-neutral-strong );
 	--wp-components-color-accent: var( --wpds-color-foreground-interactive-brand );
-	--wp-components-color-accent-darker-10: var( --wpds-color-foreground-interactive-brand );
-	--wp-components-color-accent-darker-20: var( --wpds-color-foreground-interactive-brand );
+	--wp-components-color-accent-darker-10: color-mix(
+		in srgb,
+		var( --wpds-color-foreground-interactive-brand ),
+		var( --wpds-color-foreground-interactive-brand-active )
+	);
+	--wp-components-color-accent-darker-20: var( --wpds-color-foreground-interactive-brand-active );
 	--wp-components-color-accent-inverted: var( --wpds-color-foreground-interactive-brand-strong );
 	--wp-components-color-gray-800: var( --wpds-color-foreground-content-neutral );
 	--wp-components-color-gray-700: var( --wpds-color-foreground-content-neutral-weak );
 	--wp-components-color-gray-600: var( --wpds-color-stroke-interactive-neutral );
 	--wp-components-color-gray-400: var( --wpds-color-stroke-surface-neutral-strong );
-	--wp-components-color-gray-300: var( --wpds-color-stroke-surface-neutral );
+	--wp-components-color-gray-300: color-mix(
+		in srgb,
+		var( --wpds-color-stroke-surface-neutral ),
+		var( --wpds-color-stroke-surface-neutral-strong ) 30%
+	);
 	--wp-components-color-gray-200: var( --wpds-color-stroke-surface-neutral );
 	--wp-components-color-gray-100: var( --wpds-color-background-surface-neutral-strong );
 	--wp-admin-theme-color: var( --wpds-color-background-interactive-brand-strong );
-	--wp-admin-theme-color--rgb: 147, 174, 248;
-	--wp-admin-theme-color-darker-10: var( --wpds-color-background-interactive-brand-strong-active );
-	--wp-admin-theme-color-darker-10--rgb: 166, 194, 255;
+	--wp-admin-theme-color-darker-10: color-mix(
+		in srgb,
+		var( --wpds-color-background-interactive-brand-strong ),
+		var( --wpds-color-background-interactive-brand-strong-active )
+	);
 	--wp-admin-theme-color-darker-20: var( --wpds-color-background-interactive-brand-strong-active );
-	--wp-admin-theme-color-darker-20--rgb: 166, 194, 255;
 }
 
-// Reader and Themes only: the Dashboard derives these from WPDS tokens. Drop once they have a ThemeProvider.
+// Reader and Themes styles still read these aliases; drop once they use `--wpds-*` tokens.
 @mixin color-scheme-dark-theme-wpds-bridged-tokens {
 	--dashboard-inline-code__background-color: var( --wpds-color-background-surface-neutral-weak );
 	--dashboard-field__border-color: var( --wpds-color-stroke-interactive-neutral );
@@ -209,14 +215,12 @@ This mixin generates alias variables for a color palette. For example, the
 	@include color-scheme-dark-theme-color-palette-alias( 'color-primary', 'studio-blue' );
 	@include color-scheme-dark-theme-color-palette-alias( 'color-accent', 'studio-wordpress-blue' );
 
-	// Calypso colors buttons and highlights through these roles; follow the WPDS brand so they
-	// match the Dashboard. Remove once those components use `--wpds-*` tokens.
 	--color-primary: var( --wpds-color-background-interactive-brand-strong );
 	--color-primary-60: var( --wpds-color-background-interactive-brand-strong-active );
-	--color-primary-rgb: 147, 174, 248;
+	--color-primary-rgb: var( --wp-admin-theme-color--rgb );
 	--color-accent: var( --wpds-color-background-interactive-brand-strong );
 	--color-accent-60: var( --wpds-color-background-interactive-brand-strong-active );
-	--color-accent-rgb: 147, 174, 248;
+	--color-accent-rgb: var( --wp-admin-theme-color--rgb );
 	@include color-scheme-dark-theme-color-palette(
 		'color-success',
 		var( --dashboard__foreground-color-success )
@@ -722,7 +726,6 @@ This mixin generates alias variables for a color palette. For example, the
 }
 
 @mixin color-scheme-dark-theme-masterbar {
-	// The omnibar reads its menu colors on <body>, where the palette's light grays are dark.
 	--color-masterbar-submenu-text: var( --dashboard__text-color );
 
 	.masterbar {
