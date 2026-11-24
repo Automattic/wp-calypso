@@ -32,6 +32,11 @@ export interface VisitCounter {
 	lastUpdated: number | null; // Result of Date.now(), or null before the first visit
 }
 
+export interface CancelFlowStart {
+	time: number; // Unix timestamp (seconds) of the latest start
+	purchase_id: number;
+}
+
 export interface A4AFeedbackEntry {
 	lastSubmittedAt?: number;
 	lastSkippedAt?: number;
@@ -64,6 +69,7 @@ export interface UserPreferences {
 	'reader-seen-posts'?: boolean;
 	'sites-landing-page'?: SitesLandingPage;
 	'logged-in-homepage'?: LoggedInHomepagePreference;
+	[ key: `cancel-flow-start-${ number }` ]: CancelFlowStart | undefined; // Keyed by site ID
 	[ key: `cancel-purchase-survey-completed-${ string | number }` ]: string | undefined;
 	[ key: `cancellation-offer-accepted-notice-dismissed-${ string | number }` ]: string | undefined;
 	'achievements-visibility'?: 'public' | 'private';
