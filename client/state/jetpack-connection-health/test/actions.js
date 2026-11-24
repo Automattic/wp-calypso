@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	JETPACK_CONNECTION_HEALTHY,
 	JETPACK_CONNECTION_MAYBE_UNHEALTHY,
@@ -62,8 +63,8 @@ describe( 'action', () => {
 		let stateSpy;
 
 		beforeEach( () => {
-			dispatchSpy = jest.fn();
-			stateSpy = jest.fn();
+			dispatchSpy = vi.fn();
+			stateSpy = vi.fn();
 		} );
 
 		test( 'should set connection health as healthy if the connection api has failed but the health api finds the connection health ok.', async () => {

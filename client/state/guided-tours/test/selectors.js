@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { findEligibleTour, getGuidedTourState, hasTourJustBeenVisible } from '../selectors';
 
-jest.mock( 'calypso/layout/guided-tours/config', () => {
-	return require( 'calypso/state/guided-tours/test/fixtures/config' );
+vi.mock( 'calypso/layout/guided-tours/config', () => {
+	return import( 'calypso/state/guided-tours/test/fixtures/config' );
 } );
 
 describe( 'selectors', () => {
