@@ -106,7 +106,7 @@ describe( 'site comments queries', () => {
 		).toEqual( { direction: 'before', before: '2026-05-02T00:00:00.000Z' } );
 	} );
 
-	it( 'stops earlier pagination when the loaded unique comments reach the found count', () => {
+	it( 'stops earlier pagination when a page holds every comment its cursor matches', () => {
 		const query = siteCommentsInfiniteQuery( {
 			siteId: 123,
 			postId: 456,
@@ -148,8 +148,10 @@ describe( 'oldest-first site comments query', () => {
 			offset: 1,
 		};
 
+		// Comment 2 is cached twice, which must not count as two comments sharing its timestamp.
+		const repeat = { comments: [ comment( 2, 2 ) ], found: 5 };
 		expect(
-			query.getNextPageParam?.( firstPage, [ firstPage ], undefined, [ undefined ] )
+			query.getNextPageParam?.( firstPage, [ repeat, firstPage ], undefined, [ undefined ] )
 		).toEqual( afterSecond );
 		expect(
 			query.getNextPageParam?.( lastPage, [ firstPage, lastPage ], afterSecond, [

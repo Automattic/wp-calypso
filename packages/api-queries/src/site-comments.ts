@@ -82,13 +82,15 @@ const commentCountAtDate = ( comments: SiteComment[] = [], date?: Date ): number
 		return 0;
 	}
 
+	// A comment can sit in two cached pages, so count each one once.
 	const timestampSeconds = date.getTime() / 1000;
-	return comments.filter( ( comment ) => {
-		if ( ! comment.date ) {
-			return false;
-		}
-		return Date.parse( comment.date ) / 1000 === timestampSeconds;
-	} ).length;
+	return new Set(
+		comments
+			.filter(
+				( comment ) => comment.date && Date.parse( comment.date ) / 1000 === timestampSeconds
+			)
+			.map( ( comment ) => comment.ID )
+	).size;
 };
 
 /**
@@ -139,8 +141,8 @@ export const siteCommentsInfiniteQuery = ( {
 
 			if ( order === 'ASC' ) {
 				// Cache writes go to the front of a page, so the last comment is the newest one fetched.
-				const lastDate = lastPage.comments.at( -1 )?.date;
-				const after = lastDate ? new Date( lastDate ) : undefined;
+				const lastComment = lastPage.comments.at( -1 );
+				const [ after ] = validDates( lastComment ? [ lastComment ] : [] );
 				return after
 					? {
 							direction: 'after' as const,

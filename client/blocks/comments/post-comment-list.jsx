@@ -75,6 +75,9 @@ class PostCommentList extends Component {
 		shouldHighlightNew: PropTypes.bool,
 		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
 		collapsibleThreads: PropTypes.bool,
+		sortOrder: PropTypes.oneOf( [ 'newest', 'oldest' ] ),
+		setSortOrder: PropTypes.func,
+		isOldestFirst: PropTypes.bool,
 	};
 
 	static defaultProps = {
