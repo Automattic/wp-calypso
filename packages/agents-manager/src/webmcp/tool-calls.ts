@@ -15,12 +15,23 @@ export type ToolCallContext = {
 	knownBlockClientIds: Set< string >;
 };
 
-export function rememberBlockClientIds( result: unknown, context: ToolCallContext ): void {
+export function getBlockTreeBlocks( result: unknown ): unknown[] | undefined {
 	if (
 		! isRecord( result ) ||
 		! isRecord( result.result ) ||
-		! isRecord( result.result.details )
+		! isRecord( result.result.details ) ||
+		! Array.isArray( result.result.details.blocks )
 	) {
+		return undefined;
+	}
+
+	return result.result.details.blocks;
+}
+
+export function rememberBlockClientIds( result: unknown, context: ToolCallContext ): void {
+	const rootBlocks = getBlockTreeBlocks( result );
+
+	if ( ! rootBlocks ) {
 		return;
 	}
 
@@ -43,7 +54,7 @@ export function rememberBlockClientIds( result: unknown, context: ToolCallContex
 	};
 
 	context.knownBlockClientIds.clear();
-	visit( result.result.details.blocks );
+	visit( rootBlocks );
 }
 
 function prepareApplyBlockEditsInput(

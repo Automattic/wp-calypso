@@ -158,6 +158,33 @@ describe( 'useWebMcpTools', () => {
 		} );
 	} );
 
+	it( 'runs block edits through the server corrections', async () => {
+		const tools: WebMcpTool[] = [];
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool: vi.fn( async ( tool: WebMcpTool ) => tools.push( tool ) ) },
+		} );
+		const blockTreeAbility = { ...ability, name: 'agents-manager/get-block-tree', meta: {} };
+		const toolProvider: ToolProvider = {
+			getAbilities: vi.fn().mockResolvedValue( [ ability, blockTreeAbility ] ),
+			executeAbility: vi.fn().mockResolvedValue( { result: { details: { blocks: [] } } } ),
+		};
+		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		onTestFinished( unmount );
+		await waitFor( () => expect( tools ).toHaveLength( 1 ) );
+		vi.mocked( apiFetch ).mockResolvedValue( { edits: { deletes: [ 'block-1' ] } } );
+
+		await tools[ 0 ].execute( { deletes: [ 'block-1' ] } );
+
+		expect( apiFetch ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: expect.stringContaining( 'correct-block-edits' ) } )
+		);
+		expect( toolProvider.executeAbility ).toHaveBeenLastCalledWith(
+			'big-sky/apply-block-edits',
+			expect.objectContaining( { deletes: [ 'block-1' ], toolCallId: null } )
+		);
+	} );
+
 	it( 'does not load tools outside development mode', async () => {
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 			isDevMode: false,
