@@ -68,6 +68,7 @@ export default function Notifications( {
 	const { recordTracksEvent } = useAnalytics();
 	const isViewSettingsEnabled = config.isEnabled( 'notifications/view-settings' );
 	const isMarkAsUnreadEnabled = config.isEnabled( 'notifications/mark-as-unread' );
+	const isPeekEnabled = config.isEnabled( 'notifications/peek' );
 	const onNotificationCount = useCallback( ( count: number ) => {
 		unseenCountRef.current = count;
 		setHasUnseenNotifications( count > 0 );
@@ -248,6 +249,7 @@ export default function Notifications( {
 						isDismissible={ isMobileViewport }
 						isViewSettingsEnabled={ isViewSettingsEnabled }
 						isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+						isPeekEnabled={ isPeekEnabled }
 						// There's no full view to open from the full page.
 						onOpenFullView={ isInboxShown ? undefined : onOpenInbox }
 						tracksSurface={ TRACKS_SURFACE }
