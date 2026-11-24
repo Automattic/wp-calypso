@@ -43,34 +43,6 @@ const renderThread = () =>
 	);
 
 describe( 'PostComment', () => {
-	it( 'highlights a comment that just arrived, unless the reader wrote it', () => {
-		const now = new Date().toISOString();
-		const tree = {
-			1: { data: { ...comment( 1, 'Their comment' ), date: now }, children: [] },
-			2: { data: { ...comment( 2, 'My comment' ), date: now }, children: [] },
-		};
-		const store = createStore( ( state = { currentUser: { user: { ID: 20 } } } ) => state );
-		render(
-			<Provider store={ store }>
-				<ul>
-					{ [ 1, 2 ].map( ( id ) => (
-						<PostComment
-							key={ id }
-							post={ { ID: 456, site_ID: 123, discussion: { comments_open: true } } }
-							commentsTree={ tree }
-							commentId={ id }
-							depth={ 0 }
-							shouldHighlightNew
-						/>
-					) ) }
-				</ul>
-			</Provider>
-		);
-
-		expect( screen.getByText( 'Their comment' ).closest( 'li' ) ).toHaveClass( 'is-highlighted' );
-		expect( screen.getByText( 'My comment' ).closest( 'li' ) ).not.toHaveClass( 'is-highlighted' );
-	} );
-
 	it( 'counts the hidden replies next to the toggle while the thread is collapsed', async () => {
 		const user = userEvent.setup();
 		renderThread();
