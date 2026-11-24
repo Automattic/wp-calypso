@@ -1,9 +1,3 @@
-import {
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PERSONAL_3_YEARS,
-	PLAN_PERSONAL_MONTHLY,
-} from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import {
 	SITE_MIGRATION_FLOW,
@@ -11,7 +5,6 @@ import {
 	STATIC_SITE_IMPORT_PREVIEW_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
@@ -41,15 +34,6 @@ import type {
 	SubmitHandler,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
-
-import './style.scss';
-
-const PERSONAL_PLAN_SLUGS = [
-	PLAN_PERSONAL_MONTHLY,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PERSONAL_3_YEARS,
-];
 
 const PREVIEW_FIRST_STEPS = [
 	STEPS.SITE_MIGRATION_IDENTIFY,
@@ -160,15 +144,12 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 		const isCheckoutFirstRun = useIsCheckoutFirst();
 		const started = get( STEPS.STATIC_SITE_IMPORT_READING.slug );
 		return {
-			// The checkout-first variation offers the plans `static-site-import` does for a new site.
+			// The same grid the preview-first variation's Overview offers, without Free: the move
+			// needs a paid plan.
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				isInSignup: true,
 				intent: 'plans-default-wpcom',
 				hideFreePlan: true,
-				hideEnterprisePlan: true,
-				highlightLabelOverrides: Object.fromEntries(
-					PERSONAL_PLAN_SLUGS.map( ( planSlug ) => [ planSlug, __( 'Recommended' ) ] )
-				),
 			},
 			[ STEPS.STATIC_SITE_IMPORT_READING.slug ]: {
 				// After checkout, the step reads from the URL whether it imports into the site

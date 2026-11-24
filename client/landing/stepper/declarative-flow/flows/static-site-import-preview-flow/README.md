@@ -24,13 +24,13 @@ in A from then on.
 | Step                         | Screen                                                       |
 | ---------------------------- | ------------------------------------------------------------ |
 | `site-migration-identify`    | The source's address, before login                           |
-| `plans`                      | Public plan selection, the same as `static-site-import`’s    |
+| `plans`                      | Public plan selection, without Free                          |
 | Unified checkout             | Account, payment, and site creation                          |
 | `static-site-import-reading` | Starts the import into the new site, then opens its Overview |
 
-The steps, props and checkout are `static-site-import`’s for a new destination: plans recommend
-Personal, and this flow’s `style.scss` copies its plan styles. Leaving
-checkout builds a preview of the import instead, as in `static-site-import`. A source on the URL
+The steps and checkout are `static-site-import`’s for a new destination. The plans grid is the
+default one, as B’s **Choose a plan** opens on the preview, so it looks the same in both
+variations. Leaving checkout builds a preview of the import instead, as in `static-site-import`. A source on the URL
 skips identification, and opening the reading step before checkout goes to plans.
 
 ## Steps
@@ -103,7 +103,7 @@ For the checkout-first variation (A), force `import_after_checkout`:
 1. Open `/setup/static-site-import-preview` while signed out. Confirm it asks for the source
    without signup, and stays in this flow.
 2. Enter a Wix or Squarespace URL. Confirm it opens `/setup/static-site-import-preview/plans`,
-   which looks like `/setup/static-site-import/plans`, with Personal recommended.
+   which shows the same plans grid as **Choose a plan** on a B preview, without Free.
 3. Pick a plan. Confirm unified checkout includes account creation, and no import-session request
    has run.
 4. Complete checkout in a test account. Confirm the reading step starts the move without asking to

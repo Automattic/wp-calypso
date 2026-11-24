@@ -448,7 +448,7 @@ describe( 'Static site import preview flow', () => {
 			expect( flowState[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] ).toEqual( IDENTIFIED );
 		} );
 
-		it( 'recommends Personal on the plans step, as static-site-import does', () => {
+		it( 'offers the paid plans', () => {
 			const props = renderHookWithProvider( () => staticSiteImportPreviewFlow.useStepsProps(), {
 				wrapper: ( { children } ) => (
 					<MemoryRouter initialEntries={ [ '/plans' ] }>{ children }</MemoryRouter>
