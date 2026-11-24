@@ -10,7 +10,7 @@ export const START_ON_MESSAGE_PARAM = 'start-on-message';
 /**
  * Whether a chat that goes straight to a person and starts on the first message is waiting for
  * it. The wait begins once the chat client is ready, which swaps `provider=zendesk` for
- * `direct-zd-chat`, and ends when the user sends a message.
+ * `direct-zd-chat`, and lasts until the chat with the person has started.
  */
 export function useIsWaitingForFirstMessage(): boolean {
 	const { chat, isUserEligibleForPaidSupport } = useOdieAssistantContext();
@@ -18,8 +18,6 @@ export function useIsWaitingForFirstMessage(): boolean {
 
 	return (
 		! chat.provider?.startsWith( 'zendesk' ) &&
-		! chat.conversationId &&
-		chat.status !== 'transfer' &&
 		searchParams.has( 'direct-zd-chat' ) &&
 		searchParams.has( START_ON_MESSAGE_PARAM ) &&
 		isUserEligibleForPaidSupport
@@ -31,10 +29,10 @@ export function useIsWaitingForFirstMessage(): boolean {
  * yet. The chat is still the AI's until then, so anything that introduces the AI would greet someone
  * who never asked for it.
  *
- * It covers every wait: for the chat client, while the route still has `provider=zendesk`, for the
- * user's first message when the chat starts on it, and for the Zendesk conversation, which swaps
- * `provider` for `direct-zd-chat`. The last ends with the transfer: if it fails, the user is back
- * with the AI.
+ * It covers every wait: for the chat client, while the route still has `provider=zendesk`, then,
+ * once that's swapped for `direct-zd-chat`, for the user's first message when the chat starts on
+ * it, and for the Zendesk conversation. If the conversation can't start, the user is back with the
+ * AI, or, when the chat starts on the first message, it waits for the next one.
  */
 export function useIsPendingDirectChat(): boolean {
 	const { chat, isUserEligibleForPaidSupport, humanSupportRouting } = useOdieAssistantContext();

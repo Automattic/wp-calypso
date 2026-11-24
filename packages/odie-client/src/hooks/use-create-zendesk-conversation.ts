@@ -100,7 +100,6 @@ export const useCreateZendeskConversation = () => {
 			} );
 			setChat( ( prevChat ) => ( {
 				...prevChat,
-				messages: [ ...prevChat.messages, ...firstMessages ],
 				status: 'loaded',
 			} ) );
 			return;

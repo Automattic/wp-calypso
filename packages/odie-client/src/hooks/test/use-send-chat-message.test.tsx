@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { MemoryRouter, useSearchParams } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { useSendChatMessage } from '../use-send-chat-message';
 import type { Message } from '../../types';
@@ -29,7 +29,7 @@ const message = { content: 'My card was declined', role: 'user', type: 'message'
 
 // A chat that goes straight to a person, waiting for the user's first message.
 const renderWaitingChat = () =>
-	renderHook( () => ( { ...useSendChatMessage(), searchParams: useSearchParams()[ 0 ] } ), {
+	renderHook( () => useSendChatMessage(), {
 		wrapper: ( { children }: { children: ReactNode } ) => (
 			<MemoryRouter initialEntries={ [ '/odie?direct-zd-chat=1&start-on-message=1' ] }>
 				{ children }
@@ -53,14 +53,5 @@ describe( 'useSendChatMessage while a chat with a person waits for the first mes
 			firstMessage: message,
 		} );
 		expect( mockSendOdieMessage ).not.toHaveBeenCalled();
-	} );
-
-	it( 'leaves the user with the AI when the chat can’t start', async () => {
-		mockCreateZendeskConversation.mockResolvedValue( undefined );
-		const { result } = renderWaitingChat();
-
-		await act( () => result.current.sendMessage( message ) );
-
-		expect( result.current.searchParams.toString() ).toBe( 'direct-zd-chat=1' );
 	} );
 } );
