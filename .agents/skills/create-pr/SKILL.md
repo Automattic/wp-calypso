@@ -38,11 +38,11 @@ Write it from the whole change, not by copying a commit body: a PR may have seve
 
 Start with a line linking the related GitHub or Linear issue: `Fixes #123` or `Fixes LIN-123` when merging resolves it, `Part of LIN-123` when it doesn't, e.g. it still needs a separate deploy. Leave the line out when there is no issue.
 
-Translators get a branch's strings only once the `[Status] String Freeze` label is on, so a label added just before merging ships the strings untranslated. The `ci/i18n` check reports their translation coverage, but it isn't required to merge, and each push turns it green whatever the coverage. If the change adds new translatable strings, add this warning next, so a human adds the label in time (see the String Freeze section of [docs/i18n.md](../../../docs/i18n.md#string-freeze)):
+If the change adds new translatable strings, add this warning next, so a human remembers the label (see the String Freeze section of [docs/i18n.md](../../../docs/i18n.md#string-freeze)):
 
 ```
 > [!IMPORTANT]
-> This PR introduces new translatable strings. To ship them translated, add the `[Status] String Freeze` label as soon as they are final. Before merging, check that the `ci/i18n` check's description after the last push reports 100% translated: a push turns the check green whatever the coverage.
+> This PR introduces new translatable strings. To ship them translated, add the `[Status] String Freeze` label as soon as they are final.
 ```
 
 Next, add a `## What` heading with how the whole change solves the problem, starting with a verb in the imperative, in as many sentences as that needs.
