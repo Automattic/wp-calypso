@@ -823,6 +823,49 @@ const assertDefaultContext = ( { url, entry } ) => {
 			} );
 		} );
 	} );
+
+	describe( 'with environment dashboard-production', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'dashboard-production' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
+		} );
+
+		describe( 'Route /signup', () => {
+			it( 'redirects the A4A dashboard to the classic signup, keeping the raw query', async () => {
+				const { response } = await customApp.run( {
+					request: {
+						url: '/signup?q=black+friday&a=1&a=2',
+						hostname: 'agencies-beta.automattic.com',
+					},
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?q=black+friday&a=1&a=2'
+				);
+			} );
+
+			it( 'does not redirect other dashboards', async () => {
+				const { response } = await customApp.run( {
+					request: { url: '/signup', hostname: 'my.wordpress.com' },
+				} );
+				expect( response.redirect ).not.toHaveBeenCalledWith(
+					302,
+					expect.stringContaining( 'agencies.automattic.com' )
+				);
+			} );
+		} );
+	} );
 };
 
 const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {

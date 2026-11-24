@@ -32,6 +32,7 @@ import {
 } from 'calypso/dashboard/app-dotcom/section';
 import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
+import { a4aLink } from 'calypso/dashboard/utils/link';
 import { A4A_SIGNUP_URL, JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
@@ -1482,6 +1483,16 @@ export default function pages() {
 
 	// Multi-site Dashboard (A4A) routing.
 	if ( isDashboardEnv() || calypsoEnv === 'a8c-for-agencies-development' ) {
+		// The raw query string is forwarded so encodings like `+` and repeated keys survive.
+		app.get( '/signup', ( req, res, next ) => {
+			if ( ! isAllowedA4ADashboardHostname( req.hostname ) ) {
+				return next();
+			}
+			const queryIndex = req.originalUrl.indexOf( '?' );
+			const search = queryIndex === -1 ? '' : req.originalUrl.slice( queryIndex );
+			res.redirect( 302, a4aLink( `/signup${ search }` ) );
+		} );
+
 		const a4aSignupSectionDefinition = sections.find(
 			( s ) => s.name === 'a8c-for-agencies-signup'
 		);
