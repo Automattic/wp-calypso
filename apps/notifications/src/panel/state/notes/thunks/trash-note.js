@@ -12,7 +12,11 @@ const trashNote = ( note, immediately, restClient ) => async ( dispatch ) => {
 
 	if ( immediately ) {
 		try {
-			await wpcom().site( note.meta.ids.site ).comment( note.meta.ids.comment ).del();
+			// Not `del()`: deleting a comment that is already in spam or the trash deletes it for good.
+			await wpcom()
+				.site( note.meta.ids.site )
+				.comment( note.meta.ids.comment )
+				.update( { status: 'trash' } );
 		} catch ( error ) {
 			reportRequestError( 'trash', error );
 			throw error;
