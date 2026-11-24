@@ -1,4 +1,5 @@
 import { dispatch } from '@wordpress/data';
+import { Icon, comment, home, plus, search, update } from '@wordpress/icons';
 import type {
 	AdminBarNode,
 	OmnibarHrefResolver,
@@ -56,13 +57,13 @@ export function buildOmnibarNodesFromAdminBarNodes(
 						alt={ siteIcon?.getAttribute( 'alt' ) || '' }
 					/>
 				) : (
-					<span className="dashicons-before dashicons-admin-home" />
+					<Icon icon={ home } />
 				);
 				omnibarNodes.site = omnibarNode;
 				break;
 			}
 			case 'new-content': {
-				omnibarNode.icon = <span className="dashicons-before dashicons-plus" />;
+				omnibarNode.icon = <Icon icon={ plus } />;
 				omnibarNode.className = 'omnibar__new-content';
 				break;
 			}
@@ -70,14 +71,15 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				omnibarNode.title = doc.querySelector( '.pending-count' )?.textContent?.trim();
 				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
-				omnibarNode.icon = <span className="dashicons-before dashicons-admin-comments" />;
+				omnibarNode.icon = <Icon icon={ comment } />;
+				omnibarNode.className = 'omnibar__comments';
 				break;
 			}
 			case 'updates': {
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				omnibarNode.title = doc.querySelector( '.ab-label' )?.textContent?.trim();
 				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
-				omnibarNode.icon = <span className="dashicons-before dashicons-update" />;
+				omnibarNode.icon = <Icon icon={ update } />;
 				omnibarNode.className = 'omnibar__updates';
 				break;
 			}
@@ -85,7 +87,7 @@ export function buildOmnibarNodesFromAdminBarNodes(
 				const doc = new DOMParser().parseFromString( node.title || '', 'text/html' );
 				omnibarNode.title = doc.querySelector( 'kbd' )?.textContent?.trim();
 				omnibarNode.label = doc.querySelector( '.screen-reader-text' )?.textContent?.trim();
-				omnibarNode.icon = <span className="dashicons-before dashicons-search" />;
+				omnibarNode.icon = <Icon icon={ search } className="omnibar__search-icon" />;
 				// The node points at `#` and relies on an inline onclick handler.
 				omnibarNode.href = undefined;
 				omnibarNode.onClick = () => ( dispatch( 'core/commands' ) as { open: () => void } ).open();
