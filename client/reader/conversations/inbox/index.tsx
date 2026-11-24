@@ -1,11 +1,7 @@
 import { type NotificationNote } from '@automattic/api-core';
-import {
-	hasLoadedMorePages,
-	readConversationsCommentsQuery,
-	readConversationsQuery,
-} from '@automattic/api-queries';
+import { readConversationsCommentsQuery, readConversationsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
-import { useQueryClient, type QueryKey } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -279,25 +275,19 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	};
 
 	const queryClient = useQueryClient();
-	// A failed query is always stale, and a refetch reloads every page, so neither is warmed.
-	const canPrefetch = ( queryKey: QueryKey ) => {
-		const state = queryClient.getQueryState< { pages: unknown[] } >( queryKey );
-		return ! state || ( state.status !== 'error' && ! hasLoadedMorePages( { state } ) );
-	};
+	// Only a tab that has never loaded is fetched, since a refetch reloads every page.
+	const prefetchOptions = { staleTime: Infinity, retry: false };
 	const prefetchTab = ( next: InboxTab ) => {
-		if ( next === tab ) {
-			return;
-		}
 		if ( next === 'unread' ) {
-			const query = readConversationsQuery( unreadParams );
-			if ( canPrefetch( query.queryKey ) ) {
-				queryClient.prefetchInfiniteQuery( query );
-			}
+			queryClient.prefetchInfiniteQuery( {
+				...readConversationsQuery( unreadParams ),
+				...prefetchOptions,
+			} );
 		} else if ( next === 'yours' ) {
-			const query = readConversationsCommentsQuery( ownCommentsParams );
-			if ( canPrefetch( query.queryKey ) ) {
-				queryClient.prefetchInfiniteQuery( query );
-			}
+			queryClient.prefetchInfiniteQuery( {
+				...readConversationsCommentsQuery( ownCommentsParams ),
+				...prefetchOptions,
+			} );
 		}
 	};
 

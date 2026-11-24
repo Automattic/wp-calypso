@@ -6,7 +6,6 @@ import { createElement } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
-import { preloadInbox } from 'calypso/reader/conversations/preload';
 import FeedError from 'calypso/reader/feed-error';
 import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
@@ -73,7 +72,6 @@ export function sidebar( context, next ) {
 		context.secondary = (
 			<AsyncLoad require={ loadSidebar } path={ context.path } placeholder={ null } />
 		);
-		preloadInbox( context.queryClient );
 	}
 
 	next();

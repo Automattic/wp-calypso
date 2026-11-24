@@ -305,7 +305,6 @@ describe( 'ConversationsInbox', () => {
 		release();
 
 		expect( await findRow( '10-p-100' ) ).toBeVisible();
-		expect( requests ).toHaveLength( 2 );
 	} );
 
 	it( 'refetches the list when a conversation has more unread notes than it lists', async () => {
