@@ -1,13 +1,6 @@
-import {
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PERSONAL_3_YEARS,
-	PLAN_PERSONAL_MONTHLY,
-} from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -28,7 +21,11 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { withLocale } from '../../helpers/with-locale';
 import { siteSetupImportListPath } from '../site-migration-flow/paths';
-import { canUseStaticSiteImport, isCheckoutExitPreview } from './helpers';
+import {
+	canUseStaticSiteImport,
+	getNewDestinationPlansProps,
+	isCheckoutExitPreview,
+} from './helpers';
 import type { OnboardActions } from '@automattic/data-stores';
 import type {
 	AssertConditionResult,
@@ -39,13 +36,6 @@ import type {
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 import './style.scss';
-
-const PERSONAL_PLAN_SLUGS = [
-	PLAN_PERSONAL_MONTHLY,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PERSONAL_3_YEARS,
-];
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS, STEPS.STATIC_SITE_IMPORT_READING, STEPS.ERROR ];
 
@@ -98,13 +88,8 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
+				...getNewDestinationPlansProps(),
 				isInSignup: ! hasDestinationSite( useQuery() ),
-				intent: 'plans-default-wpcom',
-				hideFreePlan: true,
-				hideEnterprisePlan: true,
-				highlightLabelOverrides: Object.fromEntries(
-					PERSONAL_PLAN_SLUGS.map( ( planSlug ) => [ planSlug, __( 'Recommended' ) ] )
-				),
 			},
 		};
 	},

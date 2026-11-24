@@ -10,14 +10,32 @@ to keep it.
 Opening the flow assigns the `calypso_static_site_import_preview_checkout_first_202611` ExPlat
 experiment, before login so signed-out visitors are assigned too.
 
-- `import_after_checkout`: the flow hands over to the same path `site-migration` takes for a
-  static source, with `ref=static-site-import-preview` and the rest of the query kept. Without a
-  source that is `site-migration`'s identify step; with `?from=` it is `static-site-import`'s plans
-  step. The move starts only after checkout, as in `static-site-import`.
-- Any other variation, including control: the flow below, which moves the site onto a preview
-  before any checkout.
+- `import_after_checkout` (A): the flow runs `static-site-import`’s steps up to checkout, without
+  leaving this flow. See [Checkout first](#checkout-first).
+- Any other variation, including control (B): the preview-first flow in [Steps](#steps), which
+  moves the site onto a preview before any checkout.
+
+Checkout returns to the reading step with `siteId` (or `checkoutExit=1` when the customer left
+it). Signing up at checkout can change the visitor’s assignment, so those parameters keep the run
+in A from then on.
+
+### Checkout first
+
+| Step                         | Screen                                                       |
+| ---------------------------- | ------------------------------------------------------------ |
+| `site-migration-identify`    | The source's address, before login                           |
+| `plans`                      | Public plan selection, the same as `static-site-import`’s    |
+| Unified checkout             | Account, payment, and site creation                          |
+| `static-site-import-reading` | Starts the import into the new site, then opens its Overview |
+
+The steps, props and checkout are `static-site-import`’s for a new destination: plans recommend
+Personal (`getNewDestinationPlansProps`), and the flow’s plan styles apply here too. Leaving
+checkout builds a preview of the import instead, as in `static-site-import`. A source on the URL
+skips identification, and opening the reading step before checkout goes to plans.
 
 ## Steps
+
+The preview-first variation (B):
 
 | Step                          | Screen                                                  |
 | ----------------------------- | ------------------------------------------------------- |
@@ -67,6 +85,8 @@ registered.
 
 ## Testing instructions
 
+For the preview-first variation (B), force any variation but `import_after_checkout`:
+
 1. Run `yarn start` and open `/setup/static-site-import-preview` while signed out. Sign up or log
    in with an account allowed to create preview sites.
 2. Enter a Wix or Squarespace URL. Confirm analysis finishes, **Checking your site** shows, and
@@ -77,6 +97,19 @@ registered.
 5. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
    skips the address step and shows the move’s progress the same way.
 6. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
+
+For the checkout-first variation (A), force `import_after_checkout`:
+
+1. Open `/setup/static-site-import-preview` while signed out. Confirm it asks for the source
+   without signup, and stays in this flow.
+2. Enter a Wix or Squarespace URL. Confirm it opens `/setup/static-site-import-preview/plans`,
+   which looks like `/setup/static-site-import/plans`, with Personal recommended.
+3. Pick a plan. Confirm unified checkout includes account creation, and no import-session request
+   has run.
+4. Complete checkout in a test account. Confirm the reading step starts the move without asking to
+   confirm, then opens the new site’s Overview with **We’re moving your site**.
+5. Repeat, leaving checkout instead. Confirm the reading step builds a preview and opens its
+   Overview.
 
 ## Owned by
 

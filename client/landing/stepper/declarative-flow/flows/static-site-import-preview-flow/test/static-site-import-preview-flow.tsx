@@ -8,7 +8,10 @@ import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { runFlowNavigation } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import staticSiteImportPreviewFlow, {
 	CHECKOUT_FIRST_EXPERIMENT,
@@ -17,7 +20,13 @@ import staticSiteImportPreviewFlow, {
 
 jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store' );
-jest.mock( 'calypso/lib/explat', () => ( { loadExperimentAssignment: jest.fn() } ) );
+jest.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: jest.fn(),
+	useExperiment: jest.fn(),
+} ) );
+jest.mock( 'calypso/landing/stepper/utils/checkout' );
+jest.mock( 'calypso/landing/stepper/hooks/use-site' );
+jest.mock( 'calypso/state/current-user/selectors' );
 
 const originalLocation = window.location;
 
@@ -40,6 +49,20 @@ const overviewExit = ( source ) => ( {
 } );
 
 let flowState: Record< string, unknown >;
+
+const assignVariation = ( variationName: string | null ) => {
+	jest.mocked( loadExperimentAssignment ).mockResolvedValue( { variationName } );
+	jest.mocked( useExperiment ).mockReturnValue( [ false, { variationName } ] );
+};
+
+const PLAN = { cartItems: [ { product_slug: 'personal-bundle' } ] };
+const SITE = { ID: 42, URL: 'https://destination.example.com', plan: { is_free: false } };
+const readingPath = '/setup/static-site-import-preview/static-site-import-reading';
+
+const parseUrl = ( url: string ) => {
+	const [ path, query = '' ] = url.split( '?' );
+	return { path, query: Object.fromEntries( new URLSearchParams( query ) ) };
+};
 
 const lastExit = () => {
 	const url = String( ( window.location.replace as jest.Mock ).mock.calls.at( -1 )?.[ 0 ] ?? '' );
@@ -65,7 +88,9 @@ describe( 'Static site import preview flow', () => {
 		window.location.search = '';
 		window.location.pathname = '/setup/static-site-import-preview';
 		jest.clearAllMocks();
-		jest.mocked( loadExperimentAssignment ).mockResolvedValue( { variationName: null } );
+		assignVariation( null );
+		jest.mocked( useSite ).mockReturnValue( undefined );
+		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
 		jest.mocked( useFlowLocale ).mockReturnValue( 'en' );
 		flowState = {};
 		jest.mocked( useFlowState ).mockReturnValue( {
@@ -101,40 +126,56 @@ describe( 'Static site import preview flow', () => {
 		} );
 
 		describe( 'in the checkout-first variation', () => {
-			beforeEach( () => {
-				jest
-					.mocked( loadExperimentAssignment )
-					.mockResolvedValue( { variationName: CHECKOUT_FIRST_VARIATION } );
+			beforeEach( () => assignVariation( CHECKOUT_FIRST_VARIATION ) );
+
+			it( 'identifies the source and offers plans before login', async () => {
+				const steps = await staticSiteImportPreviewFlow.initialize();
+
+				expect( slugs( steps ) ).toEqual( [
+					STEPS.SITE_MIGRATION_IDENTIFY.slug,
+					STEPS.UNIFIED_PLANS.slug,
+					STEPS.STATIC_SITE_IMPORT_READING.slug,
+					STEPS.ERROR.slug,
+				] );
+				expect(
+					steps.filter( ( step ) => step.requiresLoggedInUser ).map( ( s ) => s.slug )
+				).toEqual( [ STEPS.STATIC_SITE_IMPORT_READING.slug ] );
 			} );
 
-			it( 'identifies the source as site-migration does', async () => {
-				window.location.search = '?utm_source=test';
+			it( 'skips identification for a source on the URL', async () => {
+				window.location.search = '?from=source.example.com';
+
+				expect( slugs( await staticSiteImportPreviewFlow.initialize() ) ).toEqual( [
+					STEPS.UNIFIED_PLANS.slug,
+					STEPS.STATIC_SITE_IMPORT_READING.slug,
+					STEPS.ERROR.slug,
+				] );
+			} );
+
+			it( 'sends reading to plans until checkout', async () => {
+				window.location.pathname = readingPath;
+				window.location.search = '?from=source.example.com';
 
 				expect( await staticSiteImportPreviewFlow.initialize() ).toBe( false );
-				expect( lastExit() ).toEqual( {
-					path: '/setup/site-migration/site-migration-identify',
-					query: { utm_source: 'test', ref: 'static-site-import-preview' },
-				} );
-			} );
-
-			it( 'offers plans for a source on the URL', async () => {
-				window.location.search = '?from=source.example.com&platform=wix';
-
-				expect( await staticSiteImportPreviewFlow.initialize() ).toBe( false );
-				expect( lastExit() ).toEqual( {
-					path: '/setup/static-site-import/plans',
-					query: { ...SOURCE, ref: 'static-site-import-preview' },
-				} );
-			} );
-
-			it( 'keeps the locale', async () => {
-				window.location.pathname = '/setup/static-site-import-preview/site-migration-identify/es';
-
-				await staticSiteImportPreviewFlow.initialize();
-
-				expect( lastExit().path ).toBe( '/setup/site-migration/site-migration-identify/es' );
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					'/setup/static-site-import-preview/plans?from=source.example.com'
+				);
 			} );
 		} );
+
+		it.each( [ '?siteId=42&newSite=1', '?checkoutExit=1' ] )(
+			'stays checkout-first back from checkout (%s), whatever the assignment',
+			async ( search ) => {
+				window.location.pathname = readingPath;
+				window.location.search = `${ search }&from=source.example.com`;
+
+				expect( slugs( await staticSiteImportPreviewFlow.initialize() ) ).toEqual( [
+					STEPS.UNIFIED_PLANS.slug,
+					STEPS.STATIC_SITE_IMPORT_READING.slug,
+					STEPS.ERROR.slug,
+				] );
+			}
+		);
 	} );
 
 	describe( 'reading step props', () => {
@@ -392,6 +433,146 @@ describe( 'Static site import preview flow', () => {
 			} );
 
 			expect( destination ).toMatchDestination( { step: STEPS.ERROR } );
+		} );
+	} );
+	describe( 'in the checkout-first variation', () => {
+		beforeEach( () => assignVariation( CHECKOUT_FIRST_VARIATION ) );
+
+		it( 'offers plans for an importable source', () => {
+			const destination = runNavigation( {
+				from: STEPS.SITE_MIGRATION_IDENTIFY,
+				dependencies: IDENTIFIED,
+			} );
+
+			expect( destination ).toMatchDestination( { step: STEPS.UNIFIED_PLANS } );
+			expect( flowState[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] ).toEqual( IDENTIFIED );
+		} );
+
+		it( 'recommends Personal on the plans step, as static-site-import does', () => {
+			const props = renderHookWithProvider( () => staticSiteImportPreviewFlow.useStepsProps(), {
+				wrapper: ( { children } ) => (
+					<MemoryRouter initialEntries={ [ '/plans' ] }>{ children }</MemoryRouter>
+				),
+			} ).result.current;
+
+			expect( props[ STEPS.UNIFIED_PLANS.slug ] ).toMatchObject( {
+				isInSignup: true,
+				intent: 'plans-default-wpcom',
+				hideFreePlan: true,
+			} );
+			expect( props[ STEPS.STATIC_SITE_IMPORT_READING.slug ] ).toEqual( {
+				buildPreview: false,
+			} );
+		} );
+
+		it( 'checks out a new site, starting the move on return or a preview on leaving', () => {
+			identify();
+			jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+			runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: PLAN } );
+
+			const { destination, cancelDestination, ...options } =
+				jest.mocked( goToUnifiedCheckout ).mock.calls[ 0 ][ 0 ];
+			expect( options ).toEqual( {
+				flowName: 'static-site-import-preview',
+				plan: 'personal-bundle',
+				userIsLoggedIn: false,
+				siteIntent: 'site-migration',
+			} );
+			expect( destination ).toContain( '&siteId=:siteId' );
+			expect( parseUrl( destination ) ).toEqual( {
+				path: readingPath,
+				query: { ...SOURCE, newSite: '1', siteId: ':siteId' },
+			} );
+			expect( parseUrl( cancelDestination ) ).toEqual( {
+				path: readingPath,
+				query: { ...SOURCE, checkoutExit: '1' },
+			} );
+		} );
+
+		it( 'shows an error when no plan is selected', () => {
+			const destination = runNavigation( { from: STEPS.UNIFIED_PLANS } );
+
+			expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
+			expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
+		} );
+
+		it( 'opens the new site’s Overview once the move starts', () => {
+			jest.mocked( useSite ).mockReturnValue( SITE );
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'continue', importSessionId: 'abc123' },
+				query: { ...SOURCE, siteId: '42' },
+			} );
+
+			expect( lastExit() ).toEqual( {
+				path: expect.stringMatching( /\/sites\/destination\.example\.com$/ ),
+				query: { ...SOURCE, importSessionId: 'abc123', ref: 'static-site-import-preview' },
+			} );
+		} );
+
+		it( 'opens the preview’s Overview for a customer who left checkout', () => {
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: STARTED,
+				query: { ...SOURCE, checkoutExit: '1' },
+			} );
+
+			expect( lastExit() ).toEqual( overviewExit( SOURCE ) );
+		} );
+
+		it( 'returns a customer who left checkout to plans when no preview can be built', () => {
+			const destination = runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'preview_failed' },
+				query: { ...SOURCE, checkoutExit: '1' },
+			} );
+
+			expect( destination ).toMatchDestination( { step: STEPS.UNIFIED_PLANS } );
+		} );
+
+		it( 'continues a WordPress source as a migration into the new site', () => {
+			jest.mocked( useSite ).mockReturnValue( SITE );
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'migrate' },
+				query: { ...SOURCE, siteId: '42' },
+			} );
+
+			expect( lastExit() ).toEqual( {
+				path: '/setup/site-migration/site-migration-check',
+				query: {
+					from: SOURCE.from,
+					platform: 'wordpress',
+					siteId: '42',
+					siteSlug: 'destination.example.com',
+					ref: 'static-site-import-preview',
+				},
+			} );
+		} );
+
+		it( 'offers the content importer when the move can’t start', () => {
+			jest.mocked( useSite ).mockReturnValue( SITE );
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'unavailable' },
+				query: { ...SOURCE, siteId: '42' },
+			} );
+
+			expect( lastExit() ).toMatchObject( {
+				path: '/setup/site-setup/importerWix',
+				query: { from: SOURCE.from, siteSlug: 'destination.example.com' },
+			} );
+		} );
+
+		it( 'goes back from plans to identification', () => {
+			identify();
+			const destination = runFlowNavigation(
+				staticSiteImportPreviewFlow,
+				{ from: STEPS.UNIFIED_PLANS },
+				'back'
+			);
+
+			expect( destination ).toMatchDestination( { step: STEPS.SITE_MIGRATION_IDENTIFY } );
 		} );
 	} );
 } );

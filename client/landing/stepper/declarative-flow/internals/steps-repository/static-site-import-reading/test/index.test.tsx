@@ -41,18 +41,28 @@ const render = (
 	{
 		afterCheckout = true,
 		siteId = '123',
+		flow = 'static-site-import',
 		props = {},
-	}: { afterCheckout?: boolean; siteId?: string; props?: Record< string, unknown > } = {}
+	}: {
+		afterCheckout?: boolean;
+		siteId?: string;
+		flow?: string;
+		props?: Record< string, unknown >;
+	} = {}
 ) => {
 	const url = `/setup/static-site-import-reading?${ query }${ siteId ? `&siteId=${ siteId }` : '' }`;
 	if ( afterCheckout ) {
-		setSignupCompleteFlowName( 'static-site-import' );
+		setSignupCompleteFlowName( flow );
 	}
 	const submit = jest.fn();
 	renderWithProvider(
 		<MemoryRouter basename="/setup" initialEntries={ [ url ] }>
 			<StaticSiteImportReading
-				{ ...mockStepProps( { navigation: { submit }, stepName: 'static-site-import-reading' } ) }
+				{ ...mockStepProps( {
+					navigation: { submit },
+					flow,
+					stepName: 'static-site-import-reading',
+				} ) }
 				{ ...props }
 			/>
 		</MemoryRouter>,
@@ -124,6 +134,20 @@ describe( 'StaticSiteImportReading', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Import into this site' } ) ).toBeVisible();
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'starts the move after checkout in the flow it runs in', async () => {
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session' )
+			.query( true )
+			.reply( 200, sessionResponse );
+
+		const submit = render( 'from=busybearscleaning.com', { flow: 'static-site-import-preview' } );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect(
+			screen.queryByRole( 'button', { name: 'Import into this site' } )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'starts a session for the HTTPS source URL after checkout for an existing site', async () => {

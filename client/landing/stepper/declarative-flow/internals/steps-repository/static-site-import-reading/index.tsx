@@ -71,6 +71,7 @@ type StaticSiteImportReadingProps = {
 const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 	function StaticSiteImportReading( {
 		navigation,
+		flow,
 		sourceUrl: sourceProp,
 		buildPreview,
 		startedImport,
@@ -88,7 +89,7 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 		// The flow records itself for this tab before sending the user to checkout, where
 		// they already chose this destination.
 		const [ isCheckoutReturn ] = useState(
-			() => siteId > 0 && getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW
+			() => siteId > 0 && getSignupCompleteFlowName() === flow
 		);
 		const isNewSite = isCheckoutReturn && searchParams.get( 'newSite' ) === '1';
 		const [ hasConfirmed, setHasConfirmed ] = useState( false );
@@ -115,7 +116,7 @@ const StaticSiteImportReading: StepType< StaticSiteImportReadingProps > =
 			if ( isNewSite ) {
 				recordSignupComplete(
 					{
-						flow: STATIC_SITE_IMPORT_FLOW,
+						flow,
 						siteId,
 						isNewUser: Boolean( getSignupIsNewUserAndClear( userId ) ),
 						hasCartItems: true,
