@@ -321,6 +321,11 @@ function isRequestedItemMissingFromCart(
 		return true;
 	}
 
+	// A request for an empty cart names no items. It failed when the cart still holds products.
+	if ( requestedItems.length === 0 ) {
+		return cartProducts.length > 0;
+	}
+
 	return requestedItems.some(
 		( requestedItem ) =>
 			! cartProducts.some(

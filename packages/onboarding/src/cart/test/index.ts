@@ -253,6 +253,23 @@ describe( 'cart helpers', () => {
 				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
 			).rejects.toBe( connectionError );
 		} );
+
+		// An empty request names no items, so only the products left in the cart show the failure.
+		test( 'replaceProductsInCart rejects an empty request when the server cart still has items', async () => {
+			serverCartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
+
+			await expect(
+				replaceProductsInCart( 'example.wordpress.com', [], { throwOnError: true } )
+			).rejects.toBe( connectionError );
+		} );
+
+		test( 'replaceProductsInCart resolves an empty request when the server cart is empty', async () => {
+			serverCartHolds( [] );
+
+			await expect(
+				replaceProductsInCart( 'example.wordpress.com', [], { throwOnError: true } )
+			).resolves.toBeUndefined();
+		} );
 	} );
 } );
 
