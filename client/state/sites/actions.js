@@ -147,9 +147,17 @@ export function requestSites() {
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  * @param {number|string} siteFragment Site ID or slug
+ * @param {Object} [options]
+ * @param {boolean} [options.keepAdminCapabilities] For callers that know the site was just
+ * transferred to Atomic: keep the user's stored admin capabilities while the site's own propagate.
+ * @param {number} [options.atomicCapabilitiesRetriesLeft] Internal: how many times we may still
+ * re-request the site while it waits for its capabilities to propagate after an Atomic transfer.
  * @returns {import('redux-thunk').ThunkAction} Action thunk
  */
-export function requestSite( siteFragment ) {
+export function requestSite(
+	siteFragment,
+	{ keepAdminCapabilities = false, atomicCapabilitiesRetriesLeft = 3 } = {}
+) {
 	function doRequest( forceWpcom ) {
 		const query = { apiVersion: '1.2' };
 		if ( forceWpcom ) {
@@ -206,23 +214,55 @@ export function requestSite( siteFragment ) {
 				if ( site && site.capabilities ) {
 					const state = getState();
 
-					// Keyed by site ID, not by the fragment we were called with, which is usually a slug.
+					// Both maps are keyed by site ID, not by the fragment we were called with,
+					// which is usually a slug.
+					const wasAtomic = state?.sites?.items?.[ site.ID ]?.options?.is_wpcom_atomic;
+					const isAtomic = site?.options?.is_wpcom_atomic;
+					const hasSiteTransferredToAtomic = ! wasAtomic && isAtomic;
+
 					const storedCapabilities = state?.currentUser?.capabilities?.[ site.ID ];
+					const wasAdmin = storedCapabilities?.manage_options;
+					const isAdmin = site?.capabilities?.manage_options;
+					const hasMismatchingCapabilities = wasAdmin && ! isAdmin;
 
-					// An Atomic site's capabilities propagate late after a transfer. Until they do,
-					// keep the admin capabilities already stored, so the UI sees the site turn Atomic
-					// while admin-only screens don't switch to "not authorized".
-					const isAwaitingCapabilities =
-						site.options?.is_wpcom_atomic &&
-						storedCapabilities?.manage_options &&
-						! site.capabilities.manage_options;
+					// Otherwise admin-only screens switch to "not authorized" mid-transfer.
+					const siteToStore =
+						keepAdminCapabilities && isAtomic && hasMismatchingCapabilities
+							? { ...omit( site, '_headers' ), capabilities: storedCapabilities }
+							: omit( site, '_headers' );
 
-					dispatch(
-						receiveSite( {
-							...omit( site, '_headers' ),
-							...( isAwaitingCapabilities && { capabilities: storedCapabilities } ),
-						} )
-					);
+					/*
+					 * Capabilities are not immediately propagated to the Atomic site
+					 * after transfer, so let's hold off updating the state until the
+					 * endpoint returns accurate data.
+					 */
+					if (
+						hasSiteTransferredToAtomic &&
+						hasMismatchingCapabilities &&
+						atomicCapabilitiesRetriesLeft > 0
+					) {
+						// Update Redux state with the site data before retrying,
+						// so the UI can see the latest state (e.g. isJetpack
+						// flipping to true). Capabilities will self-correct on
+						// subsequent requests once they propagate on the server.
+						dispatch( receiveSite( siteToStore ) );
+						return new Promise( ( resolve ) => {
+							setTimeout(
+								() =>
+									resolve(
+										dispatch(
+											requestSite( siteFragment, {
+												keepAdminCapabilities,
+												atomicCapabilitiesRetriesLeft: atomicCapabilitiesRetriesLeft - 1,
+											} )
+										)
+									),
+								2000
+							);
+						} );
+					}
+
+					dispatch( receiveSite( siteToStore ) );
 				}
 
 				dispatch( { type: SITE_REQUEST_SUCCESS, siteId: siteFragment } );

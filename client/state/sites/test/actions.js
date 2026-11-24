@@ -359,20 +359,30 @@ describe( 'actions', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/sites/90100' )
+				.times( 2 )
 				.reply( 200, atomicSite( lagging ) )
 				.get( '/rest/v1.2/sites/90100' )
 				.reply( 200, atomicSite( propagated ) );
 		} );
 
 		// Without the hold, Backup and Scan switch to "not authorized" mid-activation.
-		test( 'keeps the admin capabilities until the transferred site has its own', async () => {
-			const getState = () => ( { currentUser: { capabilities: { 90100: admin } } } );
+		test( 'keeps the admin capabilities on request until the transferred site has its own', async () => {
+			// Already stored as Atomic, as on every request after the first one following a transfer.
+			const getState = () => ( {
+				sites: { items: { 90100: { options: { is_wpcom_atomic: true } } } },
+				currentUser: { capabilities: { 90100: admin } },
+			} );
+			const keep = { keepAdminCapabilities: true };
 
 			await requestSite( 90100 )( spy, getState );
+			expect( spy ).toHaveBeenCalledWith( receiveSite( atomicSite( lagging ) ) );
+
+			spy.mockClear();
+			await requestSite( 90100, keep )( spy, getState );
 			expect( spy ).toHaveBeenCalledWith( receiveSite( atomicSite( admin ) ) );
 
 			spy.mockClear();
-			await requestSite( 90100 )( spy, getState );
+			await requestSite( 90100, keep )( spy, getState );
 			expect( spy ).toHaveBeenCalledWith( receiveSite( atomicSite( propagated ) ) );
 		} );
 	} );

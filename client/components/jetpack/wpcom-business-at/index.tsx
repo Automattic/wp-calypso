@@ -253,7 +253,7 @@ export default function WPCOMBusinessAT( {
 		}
 
 		const poll = () =>
-			Promise.resolve( dispatch( requestSite( siteId ) ) )
+			Promise.resolve( dispatch( requestSite( siteId, { keepAdminCapabilities: true } ) ) )
 				.then( ( site?: { jetpack?: boolean; capabilities?: { manage_options?: boolean } } ) => {
 					if ( site?.jetpack && site.capabilities?.manage_options ) {
 						setIsSiteReady( true );
