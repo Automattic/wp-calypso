@@ -164,7 +164,7 @@ function TransferFailureNotice( { transferStatus, productName }: TransferFailure
 	);
 }
 const SITE_POLL_DELAY_MS = 3000;
-// As long as `requestSite` keeps the pre-transfer capabilities.
+// As long as the Stepper waits for capabilities after a transfer.
 const SITE_POLL_MAX_ATTEMPTS = 60;
 export default function WPCOMBusinessAT( {
 	content = vaultpressContent,
@@ -253,7 +253,7 @@ export default function WPCOMBusinessAT( {
 		}
 
 		const poll = () =>
-			Promise.resolve( dispatch( requestSite( siteId, 0 ) ) )
+			Promise.resolve( dispatch( requestSite( siteId ) ) )
 				.then( ( site?: { jetpack?: boolean; capabilities?: { manage_options?: boolean } } ) => {
 					if ( site?.jetpack && site.capabilities?.manage_options ) {
 						setIsSiteReady( true );

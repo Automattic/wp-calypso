@@ -143,20 +143,13 @@ export function requestSites() {
 	};
 }
 
-// Capabilities an admin had on a site before its Atomic transfer, by site ID, kept while the
-// transferred site's own capabilities propagate. Bounded like the Stepper's post-transfer wait.
-const capabilitiesHeldAfterTransfer = new Map();
-const CAPABILITIES_HOLD_MS = 1000 * 180;
-
 /**
  * Returns a function which, when invoked, triggers a network request to fetch
  * a site.
  * @param {number|string} siteFragment Site ID or slug
- * @param {number} [atomicCapabilitiesRetriesLeft] Internal: how many times we may still re-request
- * the site while it waits for its capabilities to propagate after an Atomic transfer.
  * @returns {import('redux-thunk').ThunkAction} Action thunk
  */
-export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
+export function requestSite( siteFragment ) {
 	function doRequest( forceWpcom ) {
 		const query = { apiVersion: '1.2' };
 		if ( forceWpcom ) {
@@ -213,46 +206,23 @@ export function requestSite( siteFragment, atomicCapabilitiesRetriesLeft = 3 ) {
 				if ( site && site.capabilities ) {
 					const state = getState();
 
-					// Both maps are keyed by site ID, not by the fragment we were called with,
-					// which is usually a slug.
-					const wasAtomic = state?.sites?.items?.[ site.ID ]?.options?.is_wpcom_atomic;
-					const isAtomic = site?.options?.is_wpcom_atomic;
-					const wasAdmin = state?.currentUser?.capabilities?.[ site.ID ]?.manage_options;
-					const isAdmin = site?.capabilities?.manage_options;
+					// Keyed by site ID, not by the fragment we were called with, which is usually a slug.
+					const storedCapabilities = state?.currentUser?.capabilities?.[ site.ID ];
 
-					/*
-					 * Capabilities are not immediately propagated to the Atomic site after transfer.
-					 * Until they are, store the site with the capabilities the user had before it,
-					 * so the UI sees it turn Atomic (e.g. isJetpack flipping to true) while
-					 * admin-only screens don't switch to "not authorized".
-					 */
-					if ( ! wasAtomic && isAtomic && wasAdmin && ! isAdmin ) {
-						capabilitiesHeldAfterTransfer.set( site.ID, {
-							capabilities: state.currentUser.capabilities[ site.ID ],
-							until: Date.now() + CAPABILITIES_HOLD_MS,
-						} );
-					}
+					// An Atomic site's capabilities propagate late after a transfer. Until they do,
+					// keep the admin capabilities already stored, so the UI sees the site turn Atomic
+					// while admin-only screens don't switch to "not authorized".
+					const isAwaitingCapabilities =
+						site.options?.is_wpcom_atomic &&
+						storedCapabilities?.manage_options &&
+						! site.capabilities.manage_options;
 
-					const held = capabilitiesHeldAfterTransfer.get( site.ID );
-					if ( held && ! isAdmin && Date.now() < held.until ) {
-						dispatch(
-							receiveSite( { ...omit( site, '_headers' ), capabilities: held.capabilities } )
-						);
-						if ( atomicCapabilitiesRetriesLeft > 0 ) {
-							return new Promise( ( resolve ) => {
-								setTimeout(
-									() =>
-										resolve(
-											dispatch( requestSite( siteFragment, atomicCapabilitiesRetriesLeft - 1 ) )
-										),
-									2000
-								);
-							} );
-						}
-					} else {
-						capabilitiesHeldAfterTransfer.delete( site.ID );
-						dispatch( receiveSite( omit( site, '_headers' ) ) );
-					}
+					dispatch(
+						receiveSite( {
+							...omit( site, '_headers' ),
+							...( isAwaitingCapabilities && { capabilities: storedCapabilities } ),
+						} )
+					);
 				}
 
 				dispatch( { type: SITE_REQUEST_SUCCESS, siteId: siteFragment } );
