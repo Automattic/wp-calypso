@@ -51,17 +51,9 @@ export const siteCommentsInfiniteQueryKey = (
 	siteId: number,
 	postId: number,
 	status: string = DEFAULT_STATUS,
-	number: number = DEFAULT_NUMBER
-) =>
-	[
-		'site',
-		'comments',
-		'infinite',
-		siteId,
-		postId,
-		status,
-		{ number, order: DEFAULT_ORDER },
-	] as const;
+	number: number = DEFAULT_NUMBER,
+	order: 'ASC' | 'DESC' = DEFAULT_ORDER
+) => [ 'site', 'comments', 'infinite', siteId, postId, status, { number, order } ] as const;
 
 export const siteCommentsInfiniteQueryPrefix = ( siteId: number, postId: number ) =>
 	[ 'site', 'comments', 'infinite', siteId, postId ] as const;
@@ -99,9 +91,6 @@ const commentCountAtDate = ( comments: SiteComment[] = [], date?: Date ): number
 	} ).length;
 };
 
-const uniqueCommentsCount = ( pages: SitePostRepliesResponse[] ) =>
-	new Set( pages.flatMap( ( page ) => page.comments.map( ( comment ) => comment.ID ) ) ).size;
-
 export const siteCommentsInfiniteQuery = ( {
 	siteId,
 	postId,
@@ -131,11 +120,12 @@ export const siteCommentsInfiniteQuery = ( {
 		// Most threads poll for newer comments, so a refocus or reopen doesn't refetch every loaded page.
 		staleTime: 60 * 1000,
 		refetchOnWindowFocus: false,
-		getNextPageParam: ( lastPage, allPages ) => {
+		// With a `before` cursor, `found` counts the comments left before it, not the post's total.
+		getNextPageParam: ( lastPage ) => {
 			const pageSize = number ?? DEFAULT_NUMBER;
 			if (
 				lastPage.comments.length < pageSize ||
-				( lastPage.found && uniqueCommentsCount( allPages ) >= lastPage.found )
+				( lastPage.found && lastPage.comments.length >= lastPage.found )
 			) {
 				return undefined;
 			}
@@ -160,6 +150,52 @@ export const siteCommentsInfiniteQuery = ( {
 						),
 					}
 				: undefined;
+		},
+		enabled: Boolean( siteId && postId ),
+		meta: { persist: false },
+	} );
+
+export type SiteCommentsOldestFirstPageParam = { offset: number } | undefined;
+
+/**
+ * Pages forward from a post's first comment.
+ *
+ * Pages are fetched by offset rather than date cursor: new comments only land past the end, and
+ * comments written into the cache by mutations never change how many pages are loaded.
+ */
+export const siteCommentsOldestFirstInfiniteQuery = ( {
+	siteId,
+	postId,
+	status,
+	number,
+}: SiteCommentsInfiniteQueryParams ) =>
+	infiniteQueryOptions<
+		SitePostRepliesResponse,
+		Error,
+		InfiniteData< SitePostRepliesResponse, SiteCommentsOldestFirstPageParam >,
+		ReturnType< typeof siteCommentsInfiniteQueryKey >,
+		SiteCommentsOldestFirstPageParam
+	>( {
+		queryKey: siteCommentsInfiniteQueryKey( siteId, postId, status, number, 'ASC' ),
+		queryFn: ( { pageParam } ) =>
+			fetchSitePostReplies( {
+				siteId,
+				postId,
+				status,
+				number,
+				order: 'ASC',
+				offset: pageParam?.offset,
+			} ),
+		initialPageParam: undefined,
+		staleTime: 60 * 1000,
+		refetchOnWindowFocus: false,
+		getNextPageParam: ( lastPage, allPages ) => {
+			const pageSize = number ?? DEFAULT_NUMBER;
+			const offset = allPages.length * pageSize;
+			if ( lastPage.comments.length < pageSize || offset >= ( allPages[ 0 ]?.found ?? 0 ) ) {
+				return undefined;
+			}
+			return { offset };
 		},
 		enabled: Boolean( siteId && postId ),
 		meta: { persist: false },

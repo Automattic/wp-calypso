@@ -1,5 +1,6 @@
 import { Button, Gridicon, SegmentedControl } from '@automattic/components';
 import { pickBy } from '@automattic/js-utils';
+import { SelectControl } from '@wordpress/components';
 import { Icon, published } from '@wordpress/icons';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
@@ -96,6 +97,17 @@ class PostCommentList extends Component {
 		amountOfCommentsToTake: this.props.initialSize,
 		commentText: '',
 		showExpandWhenOnlyComments: false,
+	};
+
+	isOldestFirst = () => this.props.isOldestFirst && ! this.props.expandableView;
+
+	onSortOrderChange = ( sortOrder ) => {
+		this.props.setSortOrder( sortOrder );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_comments_sort_change',
+			{ sort_order: sortOrder },
+			{ post: this.props.post }
+		);
 	};
 
 	shouldFetchInitialComment = () => {
@@ -428,10 +440,9 @@ class PostCommentList extends Component {
 		return (
 			<>
 				<ol className="comments__list is-root">
-					{ commentIds
-						// Reverse comment list so that newest comments are rendered first.
-						?.reverse()
-						.map( ( commentId ) => this.renderComment( commentId, commentsTreeToShow ) ) }
+					{ ( this.isOldestFirst() ? commentIds : commentIds?.reverse() )?.map( ( commentId ) =>
+						this.renderComment( commentId, commentsTreeToShow )
+					) }
 				</ol>
 				{ ( shouldShowViewMoreToggle || this.state.showExpandWhenOnlyComments ) && (
 					<Button
@@ -494,7 +505,12 @@ class PostCommentList extends Component {
 			return null;
 		}
 
-		const displayedComments = numberToTake ? commentIds.slice( numberToTake * -1 ) : [];
+		let displayedComments = [];
+		if ( numberToTake ) {
+			displayedComments = this.isOldestFirst()
+				? commentIds.slice( 0, numberToTake )
+				: commentIds.slice( numberToTake * -1 );
+		}
 
 		return {
 			displayedComments,
@@ -522,7 +538,7 @@ class PostCommentList extends Component {
 		this.setState( { amountOfCommentsToTake } );
 		if ( direction === 'after' ) {
 			this.props.fetchLaterComments();
-		} else {
+		} else if ( direction === 'before' ) {
 			this.props.fetchEarlierComments();
 		}
 	};
@@ -658,6 +674,16 @@ class PostCommentList extends Component {
 		const showManageCommentsButton =
 			! expandableView && this.props.canUserModerateComments && commentCount > 0;
 
+		const showSortControl = ! expandableView && actualCommentsCount > 1;
+
+		// Each button loads toward its own end of the list, so the two swap with the sort order.
+		const [ topLoadMoreHandler, bottomLoadMoreHandler ] = this.isOldestFirst()
+			? [
+					this.viewEarlierCommentsHandler,
+					() => this.loadMoreCommentsHandler( haveLaterCommentsToFetch ? 'after' : null ),
+				]
+			: [ this.viewLaterCommentsHandler, this.viewEarlierCommentsHandler ];
+
 		return (
 			<div
 				className={ clsx( 'comments__comment-list', {
@@ -668,12 +694,28 @@ class PostCommentList extends Component {
 				ref={ this.listRef }
 			>
 				{ ( this.props.showCommentCount ||
+					showSortControl ||
 					showManageCommentsButton ||
 					showConversationFollowButton ) && (
 					<div className="comments__info-bar">
 						<div className="comments__info-bar-title-links">
 							{ this.props.showCommentCount && <CommentCount count={ actualCommentsCount } /> }
 							<div className="comments__actions-wrapper">
+								{ showSortControl && (
+									<SelectControl
+										__next40pxDefaultSize
+										__nextHasNoMarginBottom
+										size="compact"
+										label={ translate( 'Sort by' ) }
+										labelPosition="side"
+										value={ this.props.sortOrder }
+										options={ [
+											{ label: translate( 'Newest' ), value: 'newest' },
+											{ label: translate( 'Oldest' ), value: 'oldest' },
+										] }
+										onChange={ this.onSortOrderChange }
+									/>
+								) }
 								{ showManageCommentsButton && this.renderCommentManageLink() }
 								{ showConversationFollowButton && (
 									<ConversationFollowButton
@@ -728,7 +770,7 @@ class PostCommentList extends Component {
 					</SegmentedControl>
 				) }
 				{ showViewMoreComments && this.props.startingCommentId && (
-					<button className="comments__view-more" onClick={ this.viewLaterCommentsHandler }>
+					<button className="comments__view-more" onClick={ topLoadMoreHandler }>
 						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {
 								shown: displayedCommentsCount,
@@ -747,7 +789,7 @@ class PostCommentList extends Component {
 				{ showViewMoreComments && (
 					<button
 						className="comments__view-more comments__view-more-last"
-						onClick={ this.viewEarlierCommentsHandler }
+						onClick={ bottomLoadMoreHandler }
 					>
 						{ translate( 'Load more comments (Showing %(shown)d of %(total)d)', {
 							args: {

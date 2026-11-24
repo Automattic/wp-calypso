@@ -45,9 +45,11 @@ export const useComments = (
 		() => buildCommentsTree( displayedComments ),
 		[ displayedComments ]
 	);
-	const found = query.data?.pages[ 0 ]?.found ?? commentTotal ?? 0;
-	const hasMoreComments = found > comments.length;
 	const pageParams = query.data?.pageParams ?? [];
+	// Cursor pages count only the comments past their cursor, so only the first page has the total.
+	const firstPage = query.data?.pages[ pageParams.findIndex( ( pageParam ) => ! pageParam ) ];
+	const found = firstPage?.found ?? commentTotal ?? 0;
+	const hasMoreComments = found > comments.length;
 	const hasReceivedBefore = pageParams.some(
 		( pageParam ) => ! pageParam || pageParam.direction === 'before'
 	);

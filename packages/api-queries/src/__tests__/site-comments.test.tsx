@@ -4,6 +4,7 @@ import {
 	createSitePostCommentMutation,
 	likeSiteCommentMutation,
 	siteCommentsInfiniteQuery,
+	siteCommentsOldestFirstInfiniteQuery,
 } from '../site-comments';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -96,6 +97,36 @@ describe( 'site comments queries', () => {
 		} );
 	} );
 
+	it( 'keeps paging earlier while a cursor page has more comments before it', () => {
+		const query = siteCommentsInfiniteQuery( {
+			siteId: 123,
+			postId: 456,
+			status: 'approved',
+			number: 2,
+		} );
+		const firstPage = {
+			comments: [
+				{ ID: 5, content: 'five', date: '2026-05-05T00:00:00.000Z' },
+				{ ID: 4, content: 'four', date: '2026-05-04T00:00:00.000Z' },
+			],
+			found: 5,
+		};
+		const cursorPage = {
+			comments: [
+				{ ID: 3, content: 'three', date: '2026-05-03T00:00:00.000Z' },
+				{ ID: 2, content: 'two', date: '2026-05-02T00:00:00.000Z' },
+			],
+			found: 3,
+		};
+
+		expect(
+			query.getNextPageParam?.( cursorPage, [ firstPage, cursorPage ], undefined, [
+				undefined,
+				{ direction: 'before', before: '2026-05-04T00:00:00.000Z' },
+			] )
+		).toEqual( { direction: 'before', before: '2026-05-02T00:00:00.000Z' } );
+	} );
+
 	it( 'stops earlier pagination when the loaded unique comments reach the found count', () => {
 		const query = siteCommentsInfiniteQuery( {
 			siteId: 123,
@@ -112,6 +143,51 @@ describe( 'site comments queries', () => {
 		};
 
 		expect( query.getNextPageParam?.( page, [ page ], undefined, [ undefined ] ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'oldest-first site comments query', () => {
+	const query = siteCommentsOldestFirstInfiniteQuery( {
+		siteId: 123,
+		postId: 456,
+		status: 'approved',
+		number: 2,
+	} );
+	const page = ( ids: number[], found = 5 ) => ( {
+		comments: ids.map( ( ID ) => ( { ID, content: `${ ID }`, date: '2026-05-01T00:00:00.000Z' } ) ),
+		found,
+	} );
+
+	it( 'shares the comments prefix so cache writes reach it', () => {
+		expect( query.queryKey ).toEqual( [
+			'site',
+			'comments',
+			'infinite',
+			123,
+			456,
+			'approved',
+			{ number: 2, order: 'ASC' },
+		] );
+	} );
+
+	it( 'pages forward by how many pages are loaded', () => {
+		const first = page( [ 1, 2 ] );
+		const second = page( [ 3, 4 ] );
+
+		expect( query.getNextPageParam?.( second, [ first, second ], undefined, [] ) ).toEqual( {
+			offset: 4,
+		} );
+	} );
+
+	it( 'stops at a short page or once every comment is covered', () => {
+		const first = page( [ 1, 2 ] );
+
+		expect(
+			query.getNextPageParam?.( page( [ 3 ] ), [ first, page( [ 3 ] ) ], undefined, [] )
+		).toBeUndefined();
+		expect(
+			query.getNextPageParam?.( page( [ 1, 2 ], 2 ), [ page( [ 1, 2 ], 2 ) ], undefined, [] )
+		).toBeUndefined();
 	} );
 } );
 
