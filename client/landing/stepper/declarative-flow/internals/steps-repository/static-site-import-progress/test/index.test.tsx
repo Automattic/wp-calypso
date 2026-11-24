@@ -75,6 +75,20 @@ describe( 'StaticSiteImportProgressStep', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	it.each( [
+		[ 'building', false ],
+		[ 'preview_ready', true ],
+	] )( 'settles the puzzle only once the preview is ready, when %s', ( state, isSettled ) => {
+		render( {
+			status: 'moving',
+			session: { state, progress: { pages: [ { path: '/', captured: true } ] } },
+		} as StaticSiteImport );
+
+		const tiles = document.querySelector( '.static-site-import-puzzle__tiles' );
+		expect( tiles ).toBeVisible();
+		expect( tiles?.classList.contains( 'is-settled' ) ).toBe( isSettled );
+	} );
+
 	it( 'submits a finished preview with its share link', () => {
 		const submit = render( {
 			status: 'finished',

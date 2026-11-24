@@ -26,15 +26,27 @@ window.matchMedia = vi.fn( ( query: string ) => ( {
 	dispatchEvent: vi.fn(),
 } ) );
 
-function mockScreenshot( { width, height } = SCREENSHOT ) {
+// Each address the image is given loads the next size, and the last size from then on, so a retry
+// can find the screenshot ready.
+function mockScreenshot( ...sizes: ( typeof SCREENSHOT )[] ) {
 	// A `function`, because `new Image()` calls it as a constructor.
 	vi.spyOn( window, 'Image' ).mockImplementation( function () {
 		const image = document.createElement( 'img' );
+		const pending = sizes.length ? sizes.slice() : [ SCREENSHOT ];
+		let size = pending[ 0 ];
+		let src = '';
 		Object.defineProperties( image, {
-			naturalWidth: { value: width },
-			naturalHeight: { value: height },
+			naturalWidth: { get: () => size.width },
+			naturalHeight: { get: () => size.height },
+			src: {
+				get: () => src,
+				set( value: string ) {
+					src = value;
+					size = pending.length > 1 ? pending.shift()! : pending[ 0 ];
+					setTimeout( () => image.onload?.( new Event( 'load' ) ) );
+				},
+			},
 		} );
-		setTimeout( () => image.onload?.( new Event( 'load' ) ) );
 		return image;
 	} );
 }
@@ -98,7 +110,9 @@ describe( 'PuzzlePreview', () => {
 		expect( getTiles() ).toHaveLength( 25 );
 		expect( getTiles().every( isHome ) ).toBe( true );
 		expect( isSettled() ).toBe( true );
-		expect( getStill() ).toBeInTheDocument();
+		expect( getStill() ).toBeVisible();
+		// The shuffling stops, not just the tiles shown at home.
+		expect( vi.getTimerCount() ).toBe( 0 );
 	} );
 
 	test( 'keeps the tiles home when it opens after the preview is ready', () => {
@@ -109,6 +123,7 @@ describe( 'PuzzlePreview', () => {
 		expect( getTiles() ).toHaveLength( 25 );
 		expect( getTiles().every( isHome ) ).toBe( true );
 		expect( isSettled() ).toBe( true );
+		expect( vi.getTimerCount() ).toBe( 0 );
 	} );
 
 	test( 'shuffles the tiles without a picture until the screenshot is ready', () => {
@@ -122,13 +137,26 @@ describe( 'PuzzlePreview', () => {
 		expect( getStill() ).not.toBeInTheDocument();
 	} );
 
+	test( 'shows the screenshot once a retry finds it ready', () => {
+		mockScreenshot( MSHOT_PLACEHOLDER, SCREENSHOT );
+		render( <PuzzlePreview url={ SITE_URL } running /> );
+		wait( 500 );
+
+		expect( getStill() ).not.toBeInTheDocument();
+
+		wait( 1000 );
+
+		expect( getStill() ).toBeVisible();
+		expect( getTiles()[ 0 ].style.backgroundImage ).toContain( 'mshots' );
+	} );
+
 	test( 'shows only the still screenshot when motion is reduced', () => {
 		prefersReducedMotion = true;
 		mockScreenshot();
 		render( <PuzzlePreview url={ SITE_URL } running /> );
 		wait( 1000 );
 
-		expect( getStill() ).toBeInTheDocument();
+		expect( getStill() ).toBeVisible();
 		expect( getTiles() ).toHaveLength( 0 );
 	} );
 
@@ -136,6 +164,15 @@ describe( 'PuzzlePreview', () => {
 		mockScreenshot();
 		const { unmount } = render( <PuzzlePreview url={ SITE_URL } running /> );
 		wait( ms );
+		unmount();
+
+		expect( vi.getTimerCount() ).toBe( 0 );
+	} );
+
+	test( 'leaves no timers running once it is gone while the screenshot is retried', () => {
+		mockScreenshot( MSHOT_PLACEHOLDER );
+		const { unmount } = render( <PuzzlePreview url={ SITE_URL } running /> );
+		wait( 2000 );
 		unmount();
 
 		expect( vi.getTimerCount() ).toBe( 0 );
