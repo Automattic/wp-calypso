@@ -240,7 +240,7 @@ The curated registry has no exact `blogging` key. Related researched lists suppl
 - Activity checked on: 2026-11-24T16:53:19.540155+00:00
 - Public feed result: HTTP 200; RSS parsed; 10 items; final URL https://ducttapemarketing.com/feed/.
 - Popularity claim: An established small-business marketing publication associated with John Jantsch’s Duct Tape Marketing practice; professional author and publication standing are the reputation proxy, without an audience estimate.
-- Public source supporting the popularity claim: [Source](https://ducttapemarketing.com/about/)
+- Public source supporting the popularity claim: [Source](https://ducttapemarketing.com/company/)
 - Real avatar or site icon URL (HTTPS): https://ducttapemarketing.com/wp-content/uploads/2022/08/cropped-15921-New-Logo-Favicon_V1-DTM.png
 - Icon source and HTTP check result: Publisher-declared or retained researched icon; HTTP 200, image/png, 10030 bytes.
 - Feed and site IDs: feed_ID 169060013; site_ID 41106627. Public feed metadata lookup only; no Reader or following test
