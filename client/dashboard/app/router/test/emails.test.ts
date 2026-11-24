@@ -22,15 +22,15 @@ const accountWithFreeMailbox = {
 } as unknown as EmailAccount;
 
 function mockAccounts( accounts: EmailAccount[] ) {
-	nock( 'https://public-api.wordpress.com' )
+	return nock( 'https://public-api.wordpress.com' )
 		.get( `/wpcom/v2/sites/${ SITE_ID }/emails/accounts/${ DOMAIN }/mailboxes` )
 		.reply( 200, { accounts } );
 }
 
-function enterSetUpMailbox() {
+function enterSetUpMailbox( cause = 'enter' ) {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const beforeLoad = setUpMailboxRoute.options.beforeLoad as any;
-	return beforeLoad( { params: { domain: DOMAIN } } ).catch( ( error: unknown ) => error );
+	return beforeLoad( { cause, params: { domain: DOMAIN } } ).catch( ( error: unknown ) => error );
 }
 
 describe( 'setUpMailboxRoute', () => {
@@ -55,5 +55,12 @@ describe( 'setUpMailboxRoute', () => {
 		expect( await enterSetUpMailbox() ).toMatchObject( {
 			options: { search: { domainName: DOMAIN } },
 		} );
+	} );
+
+	test( 'does not fetch the accounts when the link is only hovered', async () => {
+		const accounts = mockAccounts( [ fullAccount ] );
+
+		expect( await enterSetUpMailbox( 'preload' ) ).toBeUndefined();
+		expect( accounts.isDone() ).toBe( false );
 	} );
 } );
