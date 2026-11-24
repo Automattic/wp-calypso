@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import EmptyValueIndicator from 'calypso/a8c-for-agencies/components/empty-value-indicator';
 import PressableUsageDetails from 'calypso/a8c-for-agencies/components/pressable-usage-details';
+import useWooCommerceLicenseSite from 'calypso/a8c-for-agencies/data/purchases/use-woocommerce-license-site';
 import {
 	isPressableAddonProduct,
 	isPressableHostingProduct,
@@ -41,7 +42,7 @@ export default function LicenseDetails( {
 }: Props ) {
 	const licenseKey = license.licenseKey;
 	const product = license.product;
-	const siteUrl = license.siteUrl;
+	const { siteUrl } = useWooCommerceLicenseSite( license );
 	const blogId = license.blogId;
 	const hasDownloads = license.hasDownloads;
 	const issuedAt = license.issuedAt;
