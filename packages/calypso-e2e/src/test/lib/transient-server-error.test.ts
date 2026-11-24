@@ -1,8 +1,10 @@
+import { errors } from 'playwright';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import {
 	gotoWithRetry,
 	isServerErrorPage,
 	ServerErrorMatch,
+	waitForURLWithRetry,
 } from '../../lib/transient-server-error';
 import type { Page, Response } from 'playwright';
 
@@ -14,6 +16,9 @@ const HTTP_SERVICE_UNAVAILABLE = 503;
 const HTTP_GATEWAY_TIMEOUT = 504;
 const TARGET_URL = 'https://example.com/home/site';
 const GOTO_OPTIONS = { timeout: 20_000 };
+const PENDING_URL = 'https://example.com/checkout/thank-you/site/pending/1';
+const LANDING_URL = /wp-admin|\/sites\/[^/?#]+/;
+const WAIT_TIMEOUT = 180_000;
 
 /**
  * A page whose evaluate runs the callback in Node against a stub document with
@@ -190,5 +195,127 @@ describe( 'gotoWithRetry', () => {
 
 		expect( page.waitForTimeout ).not.toHaveBeenCalled();
 		expect( page.goto ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+/**
+ * A page on a fake clock. Each waitForURL runs out its timeout and throws a
+ * Playwright TimeoutError, except call number `matchOnCall`, which resolves.
+ * A timeout of 0 or less rejects: Playwright reads 0 as no timeout. Each
+ * waitForTimeout advances the clock; the error-page detector always answers
+ * `isErrorPage`.
+ */
+const buildWaitPage = ( isErrorPage: boolean, matchOnCall?: number ) => {
+	let now = 0;
+	vi.spyOn( Date, 'now' ).mockImplementation( () => now );
+
+	const waitForURL = vi.fn( async ( url: unknown, options: { timeout: number } ) => {
+		if ( options.timeout <= 0 ) {
+			throw new Error( 'Unbounded wait.' );
+		}
+
+		if ( waitForURL.mock.calls.length === matchOnCall ) {
+			return;
+		}
+
+		now += options.timeout;
+		throw new errors.TimeoutError( `Timeout ${ options.timeout }ms exceeded.` );
+	} );
+
+	return {
+		url: () => PENDING_URL,
+		waitForURL,
+		evaluate: vi.fn( async () => isErrorPage ),
+		reload: vi.fn( async () => null ),
+		waitForTimeout: vi.fn( async ( delay: number ) => {
+			now += delay;
+		} ),
+	};
+};
+
+const waitTimeouts = ( page: ReturnType< typeof buildWaitPage > ) =>
+	page.waitForURL.mock.calls.map( ( [ , options ] ) => options.timeout );
+
+describe( 'waitForURLWithRetry', () => {
+	afterEach( () => {
+		vi.restoreAllMocks();
+	} );
+
+	test( 'reloads a gateway-error page after backing off, then returns once the URL matches', async () => {
+		const page = buildWaitPage( true, 2 );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		await expect(
+			waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: WAIT_TIMEOUT } )
+		).resolves.toBeUndefined();
+
+		expect( page.waitForURL ).toHaveBeenCalledWith( LANDING_URL, expect.anything() );
+		expect( page.waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ] ] );
+		expect( page.reload.mock.calls ).toEqual( [ [ { timeout: 170_000 } ] ] );
+		expect( page.waitForTimeout.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			page.reload.mock.invocationCallOrder[ 0 ]
+		);
+		// Transient-only: a 500 "Internal Server Error" page must not be reloaded.
+		expect( page.evaluate ).toHaveBeenCalledWith( expect.any( Function ), true );
+		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( '1/4' ) );
+	} );
+
+	test( 'keeps waiting without reloading a page that is not an error page', async () => {
+		const page = buildWaitPage( false, 3 );
+
+		await expect(
+			waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: WAIT_TIMEOUT } )
+		).resolves.toBeUndefined();
+
+		expect( page.waitForURL ).toHaveBeenCalledTimes( 3 );
+		expect( page.waitForTimeout ).not.toHaveBeenCalled();
+		expect( page.reload ).not.toHaveBeenCalled();
+	} );
+
+	test( 'throws once every reload landed on a gateway-error page', async () => {
+		const page = buildWaitPage( true );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		await expect(
+			waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: WAIT_TIMEOUT } )
+		).rejects.toThrow( `${ PENDING_URL } still showed a transient server error after 4 attempts.` );
+
+		expect( page.waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ], [ 10_000 ], [ 20_000 ] ] );
+		expect( page.reload ).toHaveBeenCalledTimes( 3 );
+	} );
+
+	test( 'rethrows a non-timeout error without reloading', async () => {
+		const page = buildWaitPage( true );
+		const closed = new Error( 'Target page, context or browser has been closed' );
+		page.waitForURL.mockRejectedValueOnce( closed );
+
+		await expect(
+			waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: WAIT_TIMEOUT } )
+		).rejects.toBe( closed );
+
+		expect( page.reload ).not.toHaveBeenCalled();
+	} );
+
+	test( 'checks in slices and throws the overall timeout once the deadline passes', async () => {
+		const page = buildWaitPage( false );
+		const wait = waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: 7_000 } );
+
+		await expect( wait ).rejects.toBeInstanceOf( errors.TimeoutError );
+		await expect( wait ).rejects.toThrow(
+			`Timeout 7000ms exceeded waiting for the URL, on ${ PENDING_URL }.`
+		);
+		expect( waitTimeouts( page ) ).toEqual( [ 5_000, 2_000 ] );
+	} );
+
+	test( 'does not back off or reload past the deadline', async () => {
+		const page = buildWaitPage( true );
+
+		await expect(
+			waitForURLWithRetry( page as unknown as Page, LANDING_URL, { timeout: 10_000 } )
+		).rejects.toThrow( `Timeout 10000ms exceeded waiting for the URL, on ${ PENDING_URL }.` );
+
+		expect( page.waitForTimeout ).not.toHaveBeenCalled();
+		expect( page.reload ).not.toHaveBeenCalled();
+		expect( waitTimeouts( page ) ).toEqual( [ 5_000, 5_000 ] );
 	} );
 } );
