@@ -1,17 +1,18 @@
+import { vi } from 'vitest';
 import { getPostsForQuery } from 'calypso/state/posts/selectors';
 import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 
-jest.mock( 'calypso/state/posts/selectors', () => ( { getPostsForQuery: jest.fn() } ) );
-jest.mock( 'calypso/state/selectors/get-editor-url', () => jest.fn() );
-jest.mock( 'calypso/state/selectors/get-front-page-editor-url', () => jest.fn( () => null ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	getSiteUrl: jest.fn( () => 'https://example.com' ),
+vi.mock( 'calypso/state/posts/selectors', () => ( { getPostsForQuery: vi.fn() } ) );
+vi.mock( 'calypso/state/selectors/get-editor-url', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/state/selectors/get-front-page-editor-url', () => ( { default: vi.fn( () => null ) } ) );
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	getSiteUrl: vi.fn( () => 'https://example.com' ),
 } ) );
 
 describe( 'getChecklistTaskUrls()', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		getEditorUrl.mockImplementation(
 			( state, siteId, postId ) => `/editor/${ siteId }/${ postId }`
 		);
