@@ -68,4 +68,33 @@ describe( '<Notifications> with the inbox', () => {
 		);
 		expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
 	} );
+
+	test( 'closes the panel when the focus moves on from the omnibar into the page', async () => {
+		const user = userEvent.setup();
+		render(
+			<>
+				<div id="wpcom-omnibar">
+					<button>Omnibar menu</button>
+				</div>
+				<button>Note row</button>
+				<Notifications isInboxShown onOpenInbox={ () => {} } />
+			</>
+		);
+
+		await openPanel( user );
+		await waitFor( () =>
+			expect( screen.getByRole( 'region', { name: 'Notifications panel' } ) ).toBeVisible()
+		);
+		await user.click( screen.getByRole( 'button', { name: 'Omnibar menu' } ) );
+
+		expect( screen.getByRole( 'region', { name: 'Notifications panel' } ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Note row' } ) );
+
+		await waitFor( () =>
+			expect(
+				screen.queryByRole( 'region', { name: 'Notifications panel' } )
+			).not.toBeInTheDocument()
+		);
+	} );
 } );

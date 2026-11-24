@@ -1,8 +1,8 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import NotificationApp from '../../app';
 import { getClient, initClient, showNotes } from '../../app/client';
-import { markPanelMounted } from '../../app/panel-mounted';
 import { listNotes } from '../../panel/rest-client/wpcom';
 import { store, init as initState } from '../../panel/state';
 import actions from '../../panel/state/actions';
@@ -415,6 +415,13 @@ describe( 'NotificationsInbox', () => {
 			renderInbox();
 
 			expect( getKeyboardShortcutsEnabled( store.getState() ) ).toBe( false );
+
+			// On, as when the panel opens.
+			act( () => {
+				store.dispatch( actions.ui.enableKeyboardShortcuts() );
+			} );
+
+			expect( getKeyboardShortcutsEnabled( store.getState() ) ).toBe( true );
 		} );
 
 		it( 'likes the open comment with l', async () => {
@@ -424,6 +431,22 @@ describe( 'NotificationsInbox', () => {
 
 			await user.keyboard( 'l' );
 
+			expect( post ).toHaveBeenCalledWith( '/sites/10/comments/20/likes/new' );
+		} );
+
+		it( 'likes the open comment with l pressed on a control in the page', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+			act( () =>
+				within( screen.getByRole( 'region', { name: 'Open note' } ) )
+					.getByRole( 'button', { name: /^Like/ } )
+					.focus()
+			);
+
+			await user.keyboard( 'l' );
+
+			expect( post ).toHaveBeenCalledTimes( 1 );
 			expect( post ).toHaveBeenCalledWith( '/sites/10/comments/20/likes/new' );
 		} );
 
@@ -457,19 +480,20 @@ describe( 'NotificationsInbox', () => {
 			expect( post ).not.toHaveBeenCalled();
 		} );
 
-		it( 'leaves l pressed with nothing focused to a panel opened over the page', async () => {
+		it( 'leaves the keys to a panel opened over the page, until it closes', async () => {
 			const user = userEvent.setup();
 			loadNotes( makeComment( 801, 'First comment' ) );
 			renderInbox( '801' );
-			const unmarkPanel = markPanelMounted();
+			const panel = render( <NotificationApp wpcom={ {} } /> );
 
-			try {
-				await user.keyboard( 'l' );
-			} finally {
-				unmarkPanel();
-			}
+			await user.keyboard( 'l' );
 
 			expect( post ).not.toHaveBeenCalled();
+
+			panel.unmount();
+			await user.keyboard( 'l' );
+
+			expect( post ).toHaveBeenCalledWith( '/sites/10/comments/20/likes/new' );
 		} );
 
 		it( "leaves moving through the notes and tabs to the page's own controls", async () => {
@@ -505,18 +529,43 @@ describe( 'NotificationsInbox', () => {
 		open.mockRestore();
 	} );
 
+	it( 'leaves the settings to a panel opened over the page, which opens them itself', () => {
+		const onViewSettings = vi.fn();
+		const openFromPanel = vi.fn();
+		renderInbox( undefined, { onViewSettings } );
+		const panel = render(
+			<NotificationApp wpcom={ {} } actionHandlers={ { VIEW_SETTINGS: [ openFromPanel ] } } />
+		);
+
+		store.dispatch( actions.ui.viewSettings() );
+
+		expect( openFromPanel ).toHaveBeenCalledTimes( 1 );
+		expect( onViewSettings ).not.toHaveBeenCalled();
+
+		panel.unmount();
+		store.dispatch( actions.ui.viewSettings() );
+
+		expect( onViewSettings ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'leaves links to a panel opened over the page, which opens them itself', () => {
 		const open = vi.spyOn( window, 'open' ).mockReturnValue( null );
+		const openFromPanel = ( _store: unknown, { href }: { href: string } ) =>
+			window.open( href, '_blank', 'noopener' );
 		renderInbox();
-		const unmarkPanel = markPanelMounted();
+		const panel = render(
+			<NotificationApp wpcom={ {} } actionHandlers={ { EDIT_COMMENT: [ openFromPanel ] } } />
+		);
 
-		try {
-			store.dispatch( { type: 'EDIT_COMMENT', href: 'https://example.com/edit' } );
-		} finally {
-			unmarkPanel();
-		}
+		store.dispatch( { type: 'EDIT_COMMENT', href: 'https://example.com/edit' } );
 
-		expect( open ).not.toHaveBeenCalled();
+		expect( open ).toHaveBeenCalledTimes( 1 );
+		expect( open ).toHaveBeenCalledWith( 'https://example.com/edit', '_blank', 'noopener' );
+
+		panel.unmount();
+		store.dispatch( { type: 'EDIT_COMMENT', href: 'https://example.com/edit' } );
+
+		expect( open ).toHaveBeenCalledTimes( 2 );
 		open.mockRestore();
 	} );
 } );

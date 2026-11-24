@@ -144,7 +144,16 @@ function InboxPanes( {
 		if ( ! canViewSettings ) {
 			return;
 		}
-		const handlers = { VIEW_SETTINGS: [ () => onViewSettingsRef.current?.() ] };
+		const handlers = {
+			VIEW_SETTINGS: [
+				() => {
+					// A panel opened over the page opens its own settings.
+					if ( ! isPanelMounted() ) {
+						onViewSettingsRef.current?.();
+					}
+				},
+			],
+		};
 		store.dispatch( addListeners( handlers ) );
 
 		return () => {

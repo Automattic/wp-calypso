@@ -105,6 +105,27 @@ export default function Notifications( {
 		}
 	}, [ isInboxShown ] );
 
+	// On the full page, the panel stays open when the focus moves into the page without leaving
+	// the panel first: from the omnibar, which onFocusOutside below leaves alone, or after it fell
+	// to the body. Close it then, or the panel and the page would both act on one key press.
+	useEffect( () => {
+		if ( ! isOpen || ! isInboxShown ) {
+			return;
+		}
+		const closeOnFocusInPage = ( { target }: FocusEvent ) => {
+			if (
+				target instanceof Element &&
+				! target.closest( '.components-popover, [role="dialog"], #wpcom-omnibar' )
+			) {
+				setIsOpen( false );
+			}
+		};
+		document.addEventListener( 'focusin', closeOnFocusInPage );
+		return () => {
+			document.removeEventListener( 'focusin', closeOnFocusInPage );
+		};
+	}, [ isOpen, isInboxShown ] );
+
 	// Keep the omnibar button in sync with the panel open state.
 	useEffect( () => {
 		omnibarEvents.notificationsOpen.emit( isOpen );
