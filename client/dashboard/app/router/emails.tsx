@@ -279,7 +279,11 @@ export const setUpMailboxRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'set-up-mailbox/$domain',
-	beforeLoad: async ( { params: { domain: domainName } } ) => {
+	beforeLoad: async ( { cause, params: { domain: domainName } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
 		await redirectIfInvalidDomain( domainName );
