@@ -12,7 +12,6 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { protectForm } from 'calypso/lib/protect-form';
 import getCountries from 'calypso/state/selectors/get-countries';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
-import { setUserSetting, saveUserSettings } from 'calypso/state/user-settings/actions';
 import { isUpdatingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveTwoStepSMSSettings } from 'calypso/state/user-settings/thunks';
 import './style.scss';
@@ -210,8 +209,6 @@ export default compose(
 			countriesList: getCountries( state, 'sms' ),
 		} ),
 		{
-			setUserSetting,
-			saveUserSettings,
 			saveTwoStepSMSSettings,
 		}
 	)

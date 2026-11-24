@@ -19,11 +19,7 @@ import isSiteStore from 'calypso/state/selectors/is-site-store';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteOption, isSimpleSite } from 'calypso/state/sites/selectors';
 import getSiteAdminUrl from 'calypso/state/sites/selectors/get-site-admin-url';
-import {
-	updateModuleToggles,
-	requestModuleToggles,
-} from 'calypso/state/stats/module-toggles/actions';
-import { getModuleToggles } from 'calypso/state/stats/module-toggles/selectors';
+import { requestModuleToggles } from 'calypso/state/stats/module-toggles/actions';
 import { navItems as allNavItems, intervals as intervalConstants } from './constants';
 import Intervals from './intervals';
 
@@ -251,7 +247,7 @@ class StatsNavigation extends Component {
 }
 
 export default connect(
-	( state, { siteId, selectedItem } ) => {
+	( state, { siteId } ) => {
 		return {
 			isGoogleMyBusinessLocationConnected: isGoogleMyBusinessLocationConnectedSelector(
 				state,
@@ -266,9 +262,8 @@ export default connect(
 			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),
 			canManageSettings: canManageStatsSettings( state, siteId ),
 			siteId,
-			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			adminUrl: getSiteAdminUrl( state, siteId ),
 		};
 	},
-	{ requestModuleToggles, updateModuleToggles }
+	{ requestModuleToggles }
 )( localize( StatsNavigation ) );

@@ -4,7 +4,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import WebPreview from 'calypso/components/web-preview';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { hideThemePreview } from 'calypso/state/themes/actions';
@@ -132,5 +131,5 @@ export default connect(
 			],
 		};
 	},
-	{ hideThemePreview, recordTracksEvent }
+	{ hideThemePreview }
 )( localize( ConnectedThemePreview ) );

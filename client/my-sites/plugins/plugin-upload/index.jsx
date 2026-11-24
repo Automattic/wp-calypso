@@ -27,16 +27,12 @@ import HostingActivateStatus from 'calypso/hosting/server-settings/hosting-activ
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { MAX_UPLOAD_ZIP_SIZE } from 'calypso/lib/automated-transfer/constants';
 import { isHostingTrialSite } from 'calypso/sites-dashboard/utils';
-import {
-	fetchAutomatedTransferStatus,
-	initiateAutomatedTransferWithPluginZip,
-} from 'calypso/state/automated-transfer/actions';
+import { initiateAutomatedTransferWithPluginZip } from 'calypso/state/automated-transfer/actions';
 import {
 	getEligibility,
 	isEligibleForAutomatedTransfer,
 } from 'calypso/state/automated-transfer/selectors';
 import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
-import { successNotice } from 'calypso/state/notices/actions';
 import { uploadPlugin, clearPluginUpload } from 'calypso/state/plugins/upload/actions';
 import {
 	isFetchingSitePurchases,
@@ -281,7 +277,6 @@ const mapStateToProps = ( state ) => {
 		isStandaloneJetpack,
 		inProgress: hasLiveUpload && isPluginUploadInProgress( state, siteId ),
 		complete: hasLiveUpload && isPluginUploadComplete( state, siteId ),
-		failed: !! error,
 		pluginId: getUploadedPluginId( state, siteId ),
 		error,
 		isJetpackMultisite,
@@ -300,9 +295,7 @@ const flowRightArgs = [
 		uploadPlugin,
 		clearPluginUpload,
 		initiateAutomatedTransferWithPluginZip,
-		successNotice,
 		productToBeInstalled,
-		fetchAutomatedTransferStatus,
 	} ),
 	localize,
 ];

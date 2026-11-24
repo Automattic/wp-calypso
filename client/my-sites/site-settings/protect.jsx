@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -67,7 +66,6 @@ export default connect( ( state ) => {
 
 	return {
 		selectedSiteId,
-		protectModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'protect' ),
 		protectModuleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 	};
 } )( localize( Protect ) );
