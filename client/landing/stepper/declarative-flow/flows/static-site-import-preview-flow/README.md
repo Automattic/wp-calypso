@@ -5,6 +5,18 @@ on WordPress.com, and shows the move as it happens. Unlike `static-site-import`,
 or checkout before the move: the customer sees their site on WordPress.com first, and buys a plan
 to keep it.
 
+## Experiment
+
+Opening the flow assigns the `calypso_static_site_import_preview_checkout_first_202611` ExPlat
+experiment, before login so signed-out visitors are assigned too.
+
+- `import_after_checkout`: the flow hands over to the same path `site-migration` takes for a
+  static source, with `ref=static-site-import-preview` and the rest of the query kept. Without a
+  source that is `site-migration`'s identify step; with `?from=` it is `static-site-import`'s plans
+  step. The move starts only after checkout, as in `static-site-import`.
+- Any other variation, including control: the flow below, which moves the site onto a preview
+  before any checkout.
+
 ## Steps
 
 | Step                          | Screen                                                  |

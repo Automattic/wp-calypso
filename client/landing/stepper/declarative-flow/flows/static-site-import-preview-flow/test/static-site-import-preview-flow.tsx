@@ -8,11 +8,16 @@ import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { runFlowNavigation } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import staticSiteImportPreviewFlow from '../static-site-import-preview-flow';
+import staticSiteImportPreviewFlow, {
+	CHECKOUT_FIRST_EXPERIMENT,
+	CHECKOUT_FIRST_VARIATION,
+} from '../static-site-import-preview-flow';
 
 jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store' );
+jest.mock( 'calypso/lib/explat', () => ( { loadExperimentAssignment: jest.fn() } ) );
 
 const originalLocation = window.location;
 
@@ -58,7 +63,9 @@ describe( 'Static site import preview flow', () => {
 	beforeEach( () => {
 		config.enable( 'migration/non-wordpress-source' );
 		window.location.search = '';
+		window.location.pathname = '/setup/static-site-import-preview';
 		jest.clearAllMocks();
+		jest.mocked( loadExperimentAssignment ).mockResolvedValue( { variationName: null } );
 		jest.mocked( useFlowLocale ).mockReturnValue( 'en' );
 		flowState = {};
 		jest.mocked( useFlowState ).mockReturnValue( {
@@ -70,9 +77,10 @@ describe( 'Static site import preview flow', () => {
 	const identify = () => ( flowState[ STEPS.SITE_MIGRATION_IDENTIFY.slug ] = IDENTIFIED );
 
 	describe( 'initialize', () => {
-		it( 'asks for the source after login', () => {
-			const steps = staticSiteImportPreviewFlow.initialize();
+		it( 'asks for the source after login', async () => {
+			const steps = await staticSiteImportPreviewFlow.initialize();
 
+			expect( loadExperimentAssignment ).toHaveBeenCalledWith( CHECKOUT_FIRST_EXPERIMENT );
 			expect( slugs( steps ) ).toEqual( [
 				STEPS.SITE_MIGRATION_IDENTIFY.slug,
 				STEPS.STATIC_SITE_IMPORT_READING.slug,
@@ -82,14 +90,50 @@ describe( 'Static site import preview flow', () => {
 			expect( steps.every( ( step ) => step.requiresLoggedInUser ) ).toBe( true );
 		} );
 
-		it( 'skips identification for a source on the URL', () => {
+		it( 'skips identification for a source on the URL', async () => {
 			window.location.search = '?from=source.example.com';
 
-			expect( slugs( staticSiteImportPreviewFlow.initialize() ) ).toEqual( [
+			expect( slugs( await staticSiteImportPreviewFlow.initialize() ) ).toEqual( [
 				STEPS.STATIC_SITE_IMPORT_READING.slug,
 				STEPS.STATIC_SITE_IMPORT_PROGRESS.slug,
 				STEPS.ERROR.slug,
 			] );
+		} );
+
+		describe( 'in the checkout-first variation', () => {
+			beforeEach( () => {
+				jest
+					.mocked( loadExperimentAssignment )
+					.mockResolvedValue( { variationName: CHECKOUT_FIRST_VARIATION } );
+			} );
+
+			it( 'identifies the source as site-migration does', async () => {
+				window.location.search = '?utm_source=test';
+
+				expect( await staticSiteImportPreviewFlow.initialize() ).toBe( false );
+				expect( lastExit() ).toEqual( {
+					path: '/setup/site-migration/site-migration-identify',
+					query: { utm_source: 'test', ref: 'static-site-import-preview' },
+				} );
+			} );
+
+			it( 'offers plans for a source on the URL', async () => {
+				window.location.search = '?from=source.example.com&platform=wix';
+
+				expect( await staticSiteImportPreviewFlow.initialize() ).toBe( false );
+				expect( lastExit() ).toEqual( {
+					path: '/setup/static-site-import/plans',
+					query: { ...SOURCE, ref: 'static-site-import-preview' },
+				} );
+			} );
+
+			it( 'keeps the locale', async () => {
+				window.location.pathname = '/setup/static-site-import-preview/site-migration-identify/es';
+
+				await staticSiteImportPreviewFlow.initialize();
+
+				expect( lastExit().path ).toBe( '/setup/site-migration/site-migration-identify/es' );
+			} );
 		} );
 	} );
 

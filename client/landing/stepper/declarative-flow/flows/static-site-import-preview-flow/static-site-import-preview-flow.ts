@@ -1,4 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
+import { getLanguageSlugs } from '@automattic/i18n-utils';
 import {
 	SITE_MIGRATION_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
@@ -13,6 +14,7 @@ import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { addQueryArgs, addSchemeIfMissing } from 'calypso/lib/url';
 import { withLocale } from '../../helpers/with-locale';
 import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
@@ -55,7 +57,38 @@ function useSource() {
 	};
 }
 
-function initialize() {
+export const CHECKOUT_FIRST_EXPERIMENT = 'calypso_static_site_import_preview_checkout_first_202611';
+export const CHECKOUT_FIRST_VARIATION = 'import_after_checkout';
+
+const getPathLocale = () => {
+	const lastSegment = window.location.pathname.replace( /\/+$/, '' ).split( '/' ).pop() ?? '';
+	return getLanguageSlugs().includes( lastSegment ) ? lastSegment : '';
+};
+
+/**
+ * The checkout-first variation takes the customer through `static-site-import` as `site-migration`
+ * hands it a source: plans and checkout first, and the move only once a plan is bought.
+ */
+function goToCheckoutFirstImport() {
+	const query = new URLSearchParams( window.location.search );
+	const path = getSource( query )
+		? `/setup/${ STATIC_SITE_IMPORT_FLOW }/${ STEPS.UNIFIED_PLANS.slug }`
+		: `/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`;
+	window.location.replace(
+		addQueryArgs(
+			{ ...Object.fromEntries( query ), ref: STATIC_SITE_IMPORT_PREVIEW_FLOW },
+			withLocale( path, getPathLocale() )
+		)
+	);
+}
+
+async function initialize() {
+	const assignment = await loadExperimentAssignment( CHECKOUT_FIRST_EXPERIMENT );
+	if ( assignment.variationName === CHECKOUT_FIRST_VARIATION ) {
+		goToCheckoutFirstImport();
+		return false as const;
+	}
+
 	// A source on the URL skips identification.
 	if ( getSource( new URLSearchParams( window.location.search ) ) ) {
 		return stepsWithRequiredLogin( [
