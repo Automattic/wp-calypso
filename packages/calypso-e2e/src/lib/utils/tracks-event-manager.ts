@@ -1,5 +1,8 @@
 import { Page, Request } from 'playwright';
 
+// About twice the slowest event latency seen on CI (~15s after navigation starts).
+const EVENT_TIMEOUT_MS = 30 * 1000;
+
 // Modify global Window interface to include _tkAllowE2ETests
 declare global {
 	interface Window {
@@ -12,16 +15,16 @@ declare global {
  */
 export class TracksEventManager {
 	private page: Page;
-	private timeout: number;
+	private eventTimeout: number;
 
 	/**
 	 * Construct an instance of the Tracks event manager class
 	 * @param page
-	 * @param timeout
+	 * @param eventTimeout How long to wait for a Tracks event to fire.
 	 */
-	constructor( page: Page, timeout: number = 10000 ) {
+	constructor( page: Page, eventTimeout: number = EVENT_TIMEOUT_MS ) {
 		this.page = page;
-		this.timeout = timeout;
+		this.eventTimeout = eventTimeout;
 	}
 
 	/**
@@ -48,10 +51,12 @@ export class TracksEventManager {
 
 	/**
 	 * Navigate to a URL
+	 *
+	 * Doesn't wait for `load`: wait for a Tracks event to know the page is ready.
 	 * @param url
 	 */
 	async navigateToUrl( url: string ) {
-		await this.page.goto( url, { timeout: this.timeout } );
+		await this.page.goto( url, { waitUntil: 'domcontentloaded' } );
 	}
 
 	/**
@@ -77,7 +82,7 @@ export class TracksEventManager {
 					this.getParamFromUrl( '_en', request.url() ) === eventName
 				);
 			},
-			{ timeout: this.timeout }
+			{ timeout: this.eventTimeout }
 		);
 
 		return request.url();
