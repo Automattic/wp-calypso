@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { render } from '../../../test-utils';
@@ -167,6 +167,29 @@ describe( '<Notifications> with the inbox', () => {
 		] );
 
 		expect( panel ).toBeVisible();
+	} );
+
+	test( 'closes the panel over the page on a click in the page without a press, after a press in the panel', async () => {
+		const user = userEvent.setup();
+		render(
+			<>
+				<p>Comment text</p>
+				<Notifications isInboxShown onOpenInbox={ () => {} } />
+			</>
+		);
+
+		await openPanel( user );
+		const panel = screen.getByRole( 'region', { name: 'Notifications panel' } );
+		await waitFor( () => expect( panel ).toBeVisible() );
+		await user.click( screen.getByRole( 'button', { name: 'Panel note' } ) );
+		// Like a click from the keyboard or assistive technology, with no pointer press.
+		fireEvent.click( screen.getByText( 'Comment text' ) );
+
+		await waitFor( () =>
+			expect(
+				screen.queryByRole( 'region', { name: 'Notifications panel' } )
+			).not.toBeInTheDocument()
+		);
 	} );
 
 	test( 'leaves the panel open on other pages after a click in the page', async () => {

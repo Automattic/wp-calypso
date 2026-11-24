@@ -118,16 +118,17 @@ export default function Notifications( {
 				'.components-popover, .components-modal__screen-overlay, [role="dialog"], #wpcom-omnibar'
 			);
 		// A press that starts in the panel and ends over the page, like selecting a note's text past the
-		// panel's edge, fires its click on an element that holds both, which looks like the page.
-		let isPressOnPage = false;
+		// panel's edge, fires its click on an element that holds both, which looks like the page. A click
+		// without a press of its own, such as from the keyboard, goes by its target.
+		let isPressOffPage = false;
 		const rememberPress = ( { target }: PointerEvent ) => {
-			isPressOnPage = isOnPage( target );
+			isPressOffPage = ! isOnPage( target );
 		};
-		const closeOnClick = ( event: MouseEvent ) => {
-			// A click from the keyboard has no press before it.
-			if ( isOnPage( event.target ) && ( isPressOnPage || event.detail === 0 ) ) {
+		const closeOnClick = ( { target }: MouseEvent ) => {
+			if ( isOnPage( target ) && ! isPressOffPage ) {
 				setIsOpen( false );
 			}
+			isPressOffPage = false;
 		};
 		const closeOnFocus = ( { target }: FocusEvent ) => {
 			if ( isOnPage( target ) ) {
