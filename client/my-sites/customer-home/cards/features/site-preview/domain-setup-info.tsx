@@ -54,7 +54,7 @@ export default function DomainSetupInfo( { siteId, siteSlug, siteDomain }: Domai
 	return (
 		<InfoPopover
 			className="home-site-preview__domain-setup-info"
-			icon="info"
+			icon="info-outline"
 			iconSize={ 16 }
 			position="bottom"
 			aria-label={ __( 'Domain setup status' ) }
