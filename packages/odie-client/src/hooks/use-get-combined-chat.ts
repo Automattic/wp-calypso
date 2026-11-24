@@ -97,6 +97,31 @@ function insertZendeskHistory( messages: Message[], history: Message[] ) {
 }
 
 /**
+ * The chat to show after a refresh asked for in the background. It keeps the chat on show when:
+ * - anything changed it since the refresh was asked for (a send, a reply, a transfer, a file): that
+ *   wins, and the next refresh catches up;
+ * - the rebuilt chat is another conversation: only a load moves a chat to a human or back;
+ * - the rebuilt chat brings no new message and no new status, so it neither re-renders nor scrolls.
+ * @param prevChat - The chat on show.
+ * @param rebuiltChat - The chat rebuilt from fresh data.
+ * @param chatWhenRequested - The chat on show when the refresh was asked for.
+ * @returns The chat to show.
+ */
+function applyBackgroundRefresh( prevChat: Chat, rebuiltChat: Chat, chatWhenRequested: Chat ) {
+	if ( prevChat !== chatWhenRequested || rebuiltChat.conversationId !== prevChat.conversationId ) {
+		return prevChat;
+	}
+	const idsOnShow = new Set(
+		prevChat.messages.map( ( message ) => getMessageUniqueIdentifier( message ) )
+	);
+	const hasNewMessage = rebuiltChat.messages.some( ( message ) => {
+		const id = getMessageUniqueIdentifier( message );
+		return id !== undefined && ! idsOnShow.has( id );
+	} );
+	return hasNewMessage || rebuiltChat.status !== prevChat.status ? rebuiltChat : prevChat;
+}
+
+/**
  * This combines the ODIE chat with the ZENDESK conversation.
  * @returns The combined chat.
  */
@@ -131,6 +156,12 @@ export const useGetCombinedChat = (
 	const previousOdieIdRef = useRef< string | null | undefined >( undefined );
 	const wasChatLoadedRef = useRef( isChatLoaded );
 	const [ mainChatState, setMainChatState ] = useState< Chat >( emptyChat );
+	// The chat as last rendered, so a background refresh can tell whether anything changed it since.
+	const chatOnShowRef = useRef( mainChatState );
+	chatOnShowRef.current = mainChatState;
+	const [ backgroundRefresh, setBackgroundRefresh ] = useState< {
+		chatWhenRequested: Chat;
+	} | null >( null );
 	const conversationId = getConversationIdFromInteraction( currentSupportInteraction );
 	const [ refreshingAfterReconnect, setRefreshingAfterReconnect ] = useState( false );
 	const chatStatus = mainChatState?.status;
@@ -168,6 +199,19 @@ export const useGetCombinedChat = (
 			status: 'loading',
 		} ) );
 	}, [ setRefreshingAfterReconnect ] );
+
+	/**
+	 * Rebuild the chat from fresh data, the way a load does, while it stays on show and usable: its
+	 * status stays `loaded`, and the result only replaces a chat that nothing changed since. Call it
+	 * after invalidating what should be refetched.
+	 */
+	const refreshChatInBackground = useCallback( () => {
+		const chat = chatOnShowRef.current;
+		// Re-checked here: a send or a transfer may have started while the caller refetched.
+		if ( chat.status === 'loaded' ) {
+			setBackgroundRefresh( { chatWhenRequested: chat } );
+		}
+	}, [] );
 
 	// Recover messages missed while the connection was dropped: once Smooch
 	// reports it has reconnected, re-fetch the conversation.
@@ -248,6 +292,10 @@ export const useGetCombinedChat = (
 						checkoutSupportVariationRef.current
 					)
 				);
+				// Forget the failed request, so the next background refresh asks for it again.
+				setZendeskHistoryRequest( ( currentRequest ) =>
+					currentRequest === zendeskHistoryRequest ? null : currentRequest
+				);
 			} )
 			.finally( () => {
 				if ( activeZendeskHistoryRequestIdRef.current === requestId ) {
@@ -278,12 +326,33 @@ export const useGetCombinedChat = (
 			isFetchingConversation ||
 			isUploadingUnsentMessages ||
 			isLoadingCanConnectToZendesk ||
-			( chatStatus !== 'loading' && ! interactionHasChanged )
+			( chatStatus !== 'loading' && ! interactionHasChanged && ! backgroundRefresh )
 		) {
 			return;
 		}
 
 		previousUuidRef.current = currentSupportInteraction?.uuid;
+
+		// A load (the first one, another chat, a reconnect) rebuilds the chat anyway, so it answers a
+		// refresh asked for in the background too. A request made after this render stays for the next run.
+		const chatWhenRefreshRequested =
+			chatStatus !== 'loading' && ! interactionHasChanged
+				? backgroundRefresh?.chatWhenRequested
+				: undefined;
+		const isBackgroundRefresh = !! chatWhenRefreshRequested;
+		if ( backgroundRefresh ) {
+			setBackgroundRefresh( ( request ) => ( request === backgroundRefresh ? null : request ) );
+		}
+		// A send or a transfer started since the refresh was asked for: leave the chat to it.
+		if ( isBackgroundRefresh && chatStatus !== 'loaded' ) {
+			return;
+		}
+		const showRebuiltChat = ( rebuildChat: ( prevChat: Chat ) => Chat ) =>
+			setMainChatState( ( prevChat ) =>
+				chatWhenRefreshRequested
+					? applyBackgroundRefresh( prevChat, rebuildChat( prevChat ), chatWhenRefreshRequested )
+					: rebuildChat( prevChat )
+			);
 
 		const supportInteractionId = currentSupportInteraction?.uuid ?? null;
 
@@ -291,16 +360,19 @@ export const useGetCombinedChat = (
 		if ( ! conversationId ) {
 			const shouldLoadOdieChat =
 				odieChat &&
-				( chatStatus === 'loading' || interactionHasChanged || ! mainChatState.messages.length );
+				( chatStatus === 'loading' ||
+					interactionHasChanged ||
+					isBackgroundRefresh ||
+					! mainChatState.messages.length );
 
 			// set chat empty state or with messages
 			if ( ! currentSupportInteraction?.uuid || shouldLoadOdieChat ) {
-				setMainChatState( {
+				showRebuiltChat( () => ( {
 					...( shouldLoadOdieChat ? odieChat : emptyChat ),
 					conversationId: null,
 					status: 'loaded',
 					provider: 'odie',
-				} );
+				} ) );
 			}
 			return;
 		}
@@ -310,12 +382,12 @@ export const useGetCombinedChat = (
 
 		// We have an ongoing conversation with Zendesk, but we have some problems connecting to it
 		if ( ! canConnectToZendesk ) {
-			setMainChatState( {
+			showRebuiltChat( () => ( {
 				messages: [ ...( odieChat ? filteredOdieMessages : [] ) ],
 				conversationId,
 				status: 'loaded',
 				provider: 'zendesk',
-			} );
+			} ) );
 			return;
 		}
 
@@ -325,7 +397,17 @@ export const useGetCombinedChat = (
 				?.then( ( conversation ) => {
 					if ( conversation ) {
 						const before = getOldestReceived( conversation.messages as Message[] );
-						setZendeskHistoryRequest( before ? { conversationId: conversation.id, before } : null );
+						const historyRequest = before ? { conversationId: conversation.id, before } : null;
+						// A background refresh asks for the older messages again only when the latest page
+						// moved or the last request for them failed, so "Loading earlier messages" doesn't
+						// show each time the user comes back.
+						setZendeskHistoryRequest( ( currentRequest ) =>
+							isBackgroundRefresh &&
+							currentRequest?.conversationId === historyRequest?.conversationId &&
+							currentRequest?.before === historyRequest?.before
+								? currentRequest
+								: historyRequest
+						);
 						const historyQueryKey = before
 							? getZendeskConversationHistoryQueryKey( conversation.id )
 							: null;
@@ -333,7 +415,7 @@ export const useGetCombinedChat = (
 							? queryClient.getQueryData< Message[] >( historyQueryKey )
 							: [];
 
-						setMainChatState( ( prevChat ) => {
+						showRebuiltChat( ( prevChat ) => {
 							const isSameConversation =
 								prevChat.odieId?.toString() === odieId?.toString() &&
 								prevChat.conversationId === conversation.id;
@@ -376,6 +458,11 @@ export const useGetCombinedChat = (
 						)
 					);
 
+					// A refresh in the background keeps the chat on show, and the next one tries again.
+					if ( isBackgroundRefresh ) {
+						return;
+					}
+
 					// Leave the loading state, or this effect re-runs and fetches again, forever.
 					// Keep the conversation the chat already shows; otherwise show it with the
 					// Odie history only, like when Zendesk can't be reached above, so live
@@ -401,6 +488,7 @@ export const useGetCombinedChat = (
 	}, [
 		isOdieChatLoading,
 		chatStatus,
+		backgroundRefresh,
 		refreshingAfterReconnect,
 		isUploadingUnsentMessages,
 		isChatLoaded,
@@ -425,5 +513,5 @@ export const useGetCombinedChat = (
 		!! historyLoadingConversationId &&
 		historyLoadingConversationId === mainChatState.conversationId;
 
-	return { mainChatState, setMainChatState, isLoadingZendeskHistory };
+	return { mainChatState, setMainChatState, refreshChatInBackground, isLoadingZendeskHistory };
 };
