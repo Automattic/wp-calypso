@@ -1,4 +1,4 @@
-import { Button, Popover } from '@wordpress/components';
+import { Button, ExternalLink, Popover } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, check, info, plus } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -50,7 +50,11 @@ function BlogDetails( { blog, id }: { blog: RecommendedBlog; id: string } ) {
 	return (
 		<div id={ id } className="recommended-blog-groups__details">
 			<p className="recommended-blog-groups__details-name">{ blog.name }</p>
-			<p className="recommended-blog-groups__details-domain">{ getDomain( blog.site_URL ) }</p>
+			<p className="recommended-blog-groups__details-domain">
+				<ExternalLink href={ blog.site_URL } rel="noopener noreferrer">
+					{ getDomain( blog.site_URL ) }
+				</ExternalLink>
+			</p>
 			<p className="recommended-blog-groups__details-description">{ blog.description }</p>
 			{ latestPostDate && (
 				<p className="recommended-blog-groups__details-date">
@@ -94,6 +98,9 @@ function BlogPill( {
 	// Focus from a click or tap shouldn't open the details: hover covers mice,
 	// the info button covers touch, and keyboard focus opens them.
 	const isPointerPress = useRef( false );
+	// Leaving the pill waits briefly before closing, so the pointer can cross
+	// the gap to the details and use the link there.
+	const leaveTimer = useRef< ReturnType< typeof setTimeout > >( undefined );
 	const detailsId = useId();
 	const isOpen = ! isDismissed && ( isHovered || isFocused || isPinned );
 
@@ -101,6 +108,21 @@ function BlogPill( {
 		setIsDismissed( true );
 		setIsPinned( false );
 	}, [] );
+
+	const startHover = useCallback( () => {
+		clearTimeout( leaveTimer.current );
+		setIsHovered( true );
+	}, [] );
+
+	const endHover = useCallback( () => {
+		clearTimeout( leaveTimer.current );
+		leaveTimer.current = setTimeout( () => {
+			setIsHovered( false );
+			setIsPinned( false );
+		}, 150 );
+	}, [] );
+
+	useEffect( () => () => clearTimeout( leaveTimer.current ), [] );
 
 	useEffect( () => {
 		if ( ! isPinned ) {
@@ -128,14 +150,13 @@ function BlogPill( {
 			// shows the details.
 			onPointerEnter={ ( event ) => {
 				if ( event.pointerType !== 'touch' ) {
-					setIsHovered( true );
+					startHover();
 					setIsDismissed( false );
 				}
 			} }
 			onPointerLeave={ ( event ) => {
 				if ( event.pointerType !== 'touch' ) {
-					setIsHovered( false );
-					setIsPinned( false );
+					endHover();
 				}
 			} }
 		>
@@ -210,7 +231,12 @@ function BlogPill( {
 					onClose={ dismiss }
 					className="recommended-blog-groups__popover"
 				>
-					<BlogDetails blog={ blog } id={ detailsId } />
+					<div
+						onPointerEnter={ ( event ) => event.pointerType !== 'touch' && startHover() }
+						onPointerLeave={ ( event ) => event.pointerType !== 'touch' && endHover() }
+					>
+						<BlogDetails blog={ blog } id={ detailsId } />
+					</div>
 				</Popover>
 			) }
 		</li>

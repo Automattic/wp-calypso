@@ -53,6 +53,12 @@ beforeEach( () => {
 	mockLatestPostDate.mockReturnValue( null );
 } );
 
+// Popovers render into one shared container at the end of the body. Left over
+// from an earlier test, it would sit before the pills and take the first Tab.
+afterEach( () => {
+	document.querySelector( '.components-popover__fallback-container' )?.remove();
+} );
+
 describe( 'RecommendedBlogGroups in select mode', () => {
 	const renderSelect = (
 		props: Partial< React.ComponentProps< typeof RecommendedBlogGroups > > = {}
@@ -142,7 +148,12 @@ describe( 'RecommendedBlogGroups in select mode', () => {
 		await waitFor( () =>
 			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
 		);
-		expect( screen.getByText( 'pastadaily.example' ) ).toBeVisible();
+		const domainLink = screen.getByRole( 'link', { name: /pastadaily\.example/ } );
+		expect( domainLink ).toBeVisible();
+		expect( domainLink ).toHaveAttribute( 'href', 'https://www.pastadaily.example/' );
+		expect( domainLink ).toHaveAttribute( 'target', '_blank' );
+		expect( domainLink ).toHaveAttribute( 'rel', 'noopener noreferrer' );
+		expect( domainLink ).toHaveTextContent( '↗' );
 		expect( screen.getByText( 'Latest post: Nov 18, 2026' ) ).toBeVisible();
 		expect( getPill( 'Pasta Daily' ) ).toHaveAccessibleDescription(
 			expect.stringContaining( 'Pasta Daily writes about things.' )
@@ -166,7 +177,9 @@ describe( 'RecommendedBlogGroups in select mode', () => {
 
 		await user.unhover( getPill( 'Bread Notes' ) );
 
-		expect( screen.queryByText( 'Bread Notes writes about things.' ) ).not.toBeInTheDocument();
+		await waitFor( () =>
+			expect( screen.queryByText( 'Bread Notes writes about things.' ) ).not.toBeInTheDocument()
+		);
 	} );
 
 	it( 'keeps the details open while the pill has focus, after the pointer leaves', async () => {
@@ -234,7 +247,32 @@ describe( 'RecommendedBlogGroups in select mode', () => {
 
 		await user.unhover( getPill( 'Loud Songs' ) );
 
-		expect( screen.queryByText( 'Loud Songs writes about things.' ) ).not.toBeInTheDocument();
+		await waitFor( () =>
+			expect( screen.queryByText( 'Loud Songs writes about things.' ) ).not.toBeInTheDocument()
+		);
+	} );
+
+	it( 'keeps the details open while the pointer moves from the pill onto them, so the link can be used', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.hover( getPill( 'Pasta Daily' ) );
+		await waitFor( () =>
+			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
+		);
+		const link = screen.getByRole( 'link', { name: /pastadaily\.example/ } );
+
+		await user.unhover( getPill( 'Pasta Daily' ) );
+		await user.hover( link );
+		await new Promise( ( resolve ) => setTimeout( resolve, 300 ) );
+
+		expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible();
+
+		await user.unhover( link );
+
+		await waitFor( () =>
+			expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument()
+		);
 	} );
 
 	it( 'does not open the details when a touch selects a pill', async () => {
@@ -285,7 +323,9 @@ describe( 'RecommendedBlogGroups in select mode', () => {
 		await user.hover( getPill( 'Loud Songs' ) );
 
 		expect( getPill( 'Pasta Daily' ) ).toHaveFocus();
-		expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument();
+		await waitFor( () =>
+			expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument()
+		);
 		await waitFor( () =>
 			expect( screen.getByText( 'Loud Songs writes about things.' ) ).toBeVisible()
 		);
