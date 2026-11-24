@@ -705,8 +705,14 @@ class PostCommentList extends Component {
 										labelPosition="side"
 										value={ this.props.sortOrder }
 										options={ [
-											{ label: translate( 'Newest' ), value: 'newest' },
-											{ label: translate( 'Oldest' ), value: 'oldest' },
+											{
+												label: translate( 'Newest', { context: 'comment sort order' } ),
+												value: 'newest',
+											},
+											{
+												label: translate( 'Oldest', { context: 'comment sort order' } ),
+												value: 'oldest',
+											},
 										] }
 										onChange={ this.onSortOrderChange }
 									/>

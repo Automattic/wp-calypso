@@ -122,7 +122,9 @@ export const useComments = (
 		},
 		found,
 		// Until the first comments arrive, the list keeps its order rather than flash the wrong window.
-		isOldestFirst: oldestFirst && ( ! needsOldestQuery || Boolean( oldestFirstThread ) ),
+		// If they can't load, the comments already here still flip.
+		isOldestFirst:
+			oldestFirst && ( ! needsOldestQuery || Boolean( oldestFirstThread ) || oldestQuery.isError ),
 		fetchEarlierComments: oldestFirstThread ? noop : query.fetchNextPage,
 		fetchLaterComments: oldestFirstThread ? oldestQuery.fetchNextPage : query.fetchPreviousPage,
 		fetchNewestComments: query.fetchPreviousPage,
