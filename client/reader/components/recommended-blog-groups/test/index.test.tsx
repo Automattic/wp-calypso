@@ -297,6 +297,33 @@ describe( 'RecommendedBlogGroups in select mode', () => {
 		);
 	} );
 
+	it( 'returns focus to the pill on Escape from the link, and closes normally afterwards', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.tab();
+		await waitFor( () =>
+			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
+		);
+		const link = screen.getByRole( 'link', { name: /pastadaily\.example/ } );
+		act( () => link.focus() );
+
+		await user.keyboard( '{Escape}' );
+
+		expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument();
+		expect( getPill( 'Pasta Daily' ) ).toHaveFocus();
+
+		await user.hover( getPill( 'Pasta Daily' ) );
+		await waitFor( () =>
+			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
+		);
+		await user.unhover( getPill( 'Pasta Daily' ) );
+
+		await waitFor( () =>
+			expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument()
+		);
+	} );
+
 	it( 'does not open the details when a touch selects a pill', async () => {
 		const user = userEvent.setup();
 		const { onToggle } = renderSelect();

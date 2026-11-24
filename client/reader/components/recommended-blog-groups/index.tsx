@@ -101,6 +101,7 @@ function BlogPill( {
 	// Leaving the pill waits briefly before closing, so the pointer can cross
 	// the gap to the details and use the link there.
 	const leaveTimer = useRef< ReturnType< typeof setTimeout > >( undefined );
+	const toggleRef = useRef< HTMLButtonElement >( null );
 	const detailsRef = useRef< HTMLDivElement >( null );
 	const detailsId = useId();
 	const isOpen = ! isDismissed && ( isHovered || isFocused || isPinned );
@@ -108,6 +109,13 @@ function BlogPill( {
 	const dismiss = useCallback( () => {
 		setIsDismissed( true );
 		setIsPinned( false );
+		// The details unmount without a blur, so hand focus back to the pill
+		// without reopening them.
+		if ( detailsRef.current?.contains( document.activeElement ) ) {
+			setIsFocused( false );
+			isPointerPress.current = true;
+			toggleRef.current?.focus();
+		}
 	}, [] );
 
 	const startHover = useCallback( () => {
@@ -162,6 +170,7 @@ function BlogPill( {
 			} }
 		>
 			<button
+				ref={ toggleRef }
 				type="button"
 				className="recommended-blog-groups__pill-toggle"
 				aria-pressed={ isSelected }
