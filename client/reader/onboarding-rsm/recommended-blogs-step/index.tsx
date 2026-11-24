@@ -8,7 +8,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { RecommendedBlogGroups } from 'calypso/reader/components/recommended-blog-groups';
 import { StepIndicator } from 'calypso/reader/components/step-indicator';
 import { useFollowSite } from 'calypso/reader/data/site-subscriptions';
@@ -52,6 +52,20 @@ export function RecommendedBlogsStep( {
 	const [ isFollowing, setIsFollowing ] = useState( false );
 	const [ failedCount, setFailedCount ] = useState( 0 );
 	const { mutateAsync: followSite } = useFollowSite();
+	// A batch outlives the render that started it. It finishes with the latest
+	// onFinish, which carries the counts after its follows, and not at all once
+	// the reader has left the step (for example with Back).
+	const onFinishRef = useRef( onFinish );
+	useLayoutEffect( () => {
+		onFinishRef.current = onFinish;
+	} );
+	const isMountedRef = useRef( false );
+	useEffect( () => {
+		isMountedRef.current = true;
+		return () => {
+			isMountedRef.current = false;
+		};
+	}, [] );
 
 	const selectedFeedIds = useMemo( () => new Set( selected.keys() ), [ selected ] );
 
@@ -111,8 +125,12 @@ export function RecommendedBlogsStep( {
 			failed_count: failed.length,
 		} );
 
+		if ( ! isMountedRef.current ) {
+			return;
+		}
+
 		if ( failed.length === 0 ) {
-			onFinish();
+			onFinishRef.current();
 			return;
 		}
 

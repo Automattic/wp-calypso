@@ -3,7 +3,7 @@
  */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { RecommendedBlogsStep } from '../index';
@@ -65,10 +65,18 @@ const getPill = ( name: string ) =>
 
 const renderStep = ( promptVerification = false ) => {
 	const onFinish = jest.fn();
-	renderWithProvider(
+	const { rerender, unmount } = renderWithProvider(
 		<RecommendedBlogsStep onFinish={ onFinish } promptVerification={ promptVerification } />
 	);
-	return { onFinish };
+	return { onFinish, rerender, unmount };
+};
+
+const deferred = () => {
+	let resolve: ( value: unknown ) => void = () => {};
+	const promise = new Promise( ( done ) => {
+		resolve = done;
+	} );
+	return { promise, resolve };
 };
 
 beforeEach( () => {
@@ -157,6 +165,40 @@ describe( 'RecommendedBlogsStep', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_onboarding_recommended_blogs_followed',
 			{ selected_count: 2, failed_count: 0 }
+		);
+	} );
+
+	it( 'finishes with the latest onFinish, which carries the counts after the follows', async () => {
+		const follow = deferred();
+		mockFollowSite.mockReturnValue( follow.promise );
+		const user = userEvent.setup();
+		const { onFinish, rerender } = renderStep();
+
+		await user.click( getPill( 'Pasta Daily' ) );
+		await user.click( screen.getByRole( 'button', { name: 'Subscribe to 1 blog and continue' } ) );
+		const latestOnFinish = jest.fn();
+		rerender( <RecommendedBlogsStep onFinish={ latestOnFinish } promptVerification={ false } /> );
+		await act( async () => follow.resolve( {} ) );
+
+		expect( latestOnFinish ).toHaveBeenCalledTimes( 1 );
+		expect( onFinish ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not finish onboarding when the reader leaves the step during the follows', async () => {
+		const follow = deferred();
+		mockFollowSite.mockReturnValue( follow.promise );
+		const user = userEvent.setup();
+		const { onFinish, unmount } = renderStep();
+
+		await user.click( getPill( 'Pasta Daily' ) );
+		await user.click( screen.getByRole( 'button', { name: 'Subscribe to 1 blog and continue' } ) );
+		unmount();
+		await act( async () => follow.resolve( {} ) );
+
+		expect( onFinish ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_reader_onboarding_recommended_blogs_followed',
+			{ selected_count: 1, failed_count: 0 }
 		);
 	} );
 
