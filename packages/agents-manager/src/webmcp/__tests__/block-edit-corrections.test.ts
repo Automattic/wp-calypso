@@ -1,9 +1,11 @@
 import apiFetch from '@wordpress/api-fetch';
 import { vi } from 'vitest';
+import { resolveCanvasKey } from '../../utils/canvas-binding';
 import { withBlockEditCorrections } from '../block-edit-corrections';
 import type { ToolProvider } from '../../extension-types';
 
 vi.mock( '@wordpress/api-fetch' );
+vi.mock( '../../utils/canvas-binding', () => ( { resolveCanvasKey: vi.fn( () => 'page:1' ) } ) );
 
 const blocks = [ { clientId: 'block-1', name: 'core/image', attributes: {}, innerBlocks: [] } ];
 const edits = {
@@ -130,6 +132,25 @@ describe( 'withBlockEditCorrections', () => {
 		).resolves.toBe( treeError );
 		expect( apiFetch ).not.toHaveBeenCalled();
 		expect( toolProvider.executeAbility ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'refuses the edits when the editor moved to another page during the correction', async () => {
+		vi.mocked( apiFetch ).mockResolvedValue( { edits } );
+		vi.mocked( resolveCanvasKey ).mockReturnValueOnce( 'page:1' ).mockReturnValueOnce( 'page:2' );
+		const toolProvider = createToolProvider();
+
+		const result = await withBlockEditCorrections( toolProvider ).executeAbility(
+			'big-sky/apply-block-edits',
+			edits
+		);
+
+		expect( result ).toEqual(
+			expect.objectContaining( { result: expect.objectContaining( { success: false } ) } )
+		);
+		expect( toolProvider.executeAbility ).not.toHaveBeenCalledWith(
+			'big-sky/apply-block-edits',
+			expect.anything()
+		);
 	} );
 
 	it( 'runs other abilities directly', async () => {
