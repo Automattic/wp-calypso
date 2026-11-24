@@ -101,6 +101,7 @@ function BlogPill( {
 	// Leaving the pill waits briefly before closing, so the pointer can cross
 	// the gap to the details and use the link there.
 	const leaveTimer = useRef< ReturnType< typeof setTimeout > >( undefined );
+	const detailsRef = useRef< HTMLDivElement >( null );
 	const detailsId = useId();
 	const isOpen = ! isDismissed && ( isHovered || isFocused || isPinned );
 
@@ -179,9 +180,11 @@ function BlogPill( {
 					setIsFocused( true );
 					setIsDismissed( false );
 				} }
-				onBlur={ () => {
+				onBlur={ ( event ) => {
 					isPointerPress.current = false;
-					setIsFocused( false );
+					if ( ! detailsRef.current?.contains( event.relatedTarget ) ) {
+						setIsFocused( false );
+					}
 				} }
 				onKeyDown={ ( event ) => {
 					if ( event.key === 'Escape' && isOpen ) {
@@ -232,8 +235,18 @@ function BlogPill( {
 					className="recommended-blog-groups__popover"
 				>
 					<div
+						ref={ detailsRef }
 						onPointerEnter={ ( event ) => event.pointerType !== 'touch' && startHover() }
 						onPointerLeave={ ( event ) => event.pointerType !== 'touch' && endHover() }
+						onFocus={ () => setIsFocused( true ) }
+						onBlur={ ( event ) => {
+							if (
+								! event.currentTarget.contains( event.relatedTarget ) &&
+								! anchor.contains( event.relatedTarget )
+							) {
+								setIsFocused( false );
+							}
+						} }
 					>
 						<BlogDetails blog={ blog } id={ detailsId } />
 					</div>

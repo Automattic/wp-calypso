@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { RecommendedBlogGroups } from '../index';
@@ -269,6 +269,28 @@ describe( 'RecommendedBlogGroups in select mode', () => {
 		expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible();
 
 		await user.unhover( link );
+
+		await waitFor( () =>
+			expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument()
+		);
+	} );
+
+	it( 'keeps the details open while keyboard focus moves from the pill to the link', async () => {
+		const user = userEvent.setup();
+		renderSelect();
+
+		await user.tab();
+		await waitFor( () =>
+			expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible()
+		);
+		const link = screen.getByRole( 'link', { name: /pastadaily\.example/ } );
+
+		act( () => link.focus() );
+
+		expect( link ).toHaveFocus();
+		expect( screen.getByText( 'Pasta Daily writes about things.' ) ).toBeVisible();
+
+		act( () => link.blur() );
 
 		await waitFor( () =>
 			expect( screen.queryByText( 'Pasta Daily writes about things.' ) ).not.toBeInTheDocument()
