@@ -1,14 +1,11 @@
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { html } from '../../panel/indices-to-html';
 import { p } from '../../panel/templates/functions';
-import { useAppContext } from '../context';
-import { formatNoteTime } from '../note-simplified/format-note-time';
-import Author from '../note-simplified/parts/author';
-import MetaList from '../note-simplified/parts/meta-list';
+import { isPostNote } from '../note-simplified';
 import type { Note } from '../types';
 import type { FocusEvent, PointerEvent, SyntheticEvent } from 'react';
 
@@ -164,8 +161,8 @@ export function useNotePeek( {
 }
 
 /**
- * A preview of a note beside its row, in the parts the note itself uses: the site, who
- * and when, and what they said.
+ * A preview of a note beside its row: what the row has only a line or two of, in the
+ * note's own formatting.
  */
 export default function NotePeek( {
 	note,
@@ -180,22 +177,14 @@ export default function NotePeek( {
 	isMove?: boolean;
 	onClose: () => void;
 } ) {
-	const { locale } = useAppContext();
-	const { site, actor } = note.meta ?? {};
+	// The row beside the card already says who, where and, for a post, its title. A
+	// comment's row doesn't say which post it's on, so that's the one line above the text.
+	const postTitle = ! isPostNote( note ) && note.meta?.post?.title;
 	// The comment or post itself, where the row shows a line or two of it. Its ranges mark
 	// the headings, paragraphs and emphasis, as in the open note.
 	const block =
 		note.body.find( ( { type } ) => type === 'comment' || type === 'post' ) ??
 		( note.meta?.parent_comment && { text: note.meta.parent_comment.text } );
-
-	// Who and when, under the site as in the open note's post card. The row's icon is
-	// this person, and already loaded.
-	const byline = (
-		<MetaList>
-			{ actor && <Author avatar={ note.icon || actor.avatar }>{ actor.name }</Author> }
-			{ formatNoteTime( note.timestamp, locale ) }
-		</MetaList>
-	);
 
 	return (
 		<Popover.Root open={ isOpen } onOpenChange={ ( open: boolean ) => ! open && onClose() }>
@@ -216,15 +205,16 @@ export default function NotePeek( {
 				<VisuallyHidden render={ <Popover.Title /> }>
 					{ __( 'Notification preview' ) }
 				</VisuallyHidden>
-				<VStack spacing={ 3 }>
-					<VStack spacing={ 1 }>
-						{ site && (
-							<Text size={ 13 } weight={ 600 } lineHeight="16px" truncate>
-								{ site.name }
-							</Text>
-						) }
-						{ byline }
-					</VStack>
+				<VStack spacing={ 1 }>
+					{ postTitle && (
+						<Text size={ 12 } lineHeight="16px" variant="muted" truncate>
+							{ sprintf(
+								/* translators: %s is the title of the post a comment is on. */
+								__( 'On %s' ),
+								postTitle
+							) }
+						</Text>
+					) }
 					{ block?.text.trim() &&
 						p( html( block ), 'wpnc-peek__text wpnc-simplified__quiet-links' ) }
 				</VStack>

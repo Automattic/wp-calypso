@@ -17,12 +17,11 @@ const getCommentText = ( note: Note ) => note.subject[ 1 ]?.text;
 
 // A mention in a post is about the post itself, so it takes the New Post layout, with
 // the site as its context, rather than a card for the post above the same post.
+const isMentionInPost = ( note: Note ) =>
+	!! ( note.meta?.post && note.meta.site && ! note.meta.ids?.comment );
+
 const MentionNote = ( { note }: { note: Note } ) =>
-	note.meta?.post && note.meta.site && ! note.meta.ids?.comment ? (
-		<NewPostNote note={ note } />
-	) : (
-		<CommentNote note={ note } />
-	);
+	isMentionInPost( note ) ? <NewPostNote note={ note } /> : <CommentNote note={ note } />;
 
 const NOTE_TYPES: Record< string, NoteTypeConfig > = {
 	comment: { Layout: CommentNote, getPreview: getCommentText },
@@ -40,6 +39,13 @@ const NOTE_TYPES: Record< string, NoteTypeConfig > = {
 };
 
 export const hasNoteContext = ( note: Note ) => !! note.meta?.actor;
+
+/**
+ * Whether a note is about a post itself, so it leads with the post's site and title
+ * rather than with a card for the post.
+ */
+export const isPostNote = ( note: Note ) =>
+	note.type === 'new_post' || ( note.type === 'automattcher' && isMentionInPost( note ) );
 
 export const getNotePreview = ( note: Note ) => {
 	const getPreview = NOTE_TYPES[ note.type ]?.getPreview;

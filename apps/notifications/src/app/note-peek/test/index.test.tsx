@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { vi } from 'vitest';
@@ -115,10 +115,29 @@ describe( 'NotePeek', () => {
 		await hoverRow( user );
 
 		expect( await screen.findByText( COMMENT ) ).toBeVisible();
-		expect( screen.getByText( 'Harbour Notes' ) ).toBeVisible();
+		expect( screen.getByText( 'On The tide tables' ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_notification_peek', {
 			note_type: 'comment',
 		} );
+	} );
+
+	it( 'leaves the post title to the row for a new post', async () => {
+		const user = userEvent.setup();
+		renderList( {
+			notes: [
+				{
+					...commentNote,
+					type: 'new_post',
+					body: [ commentNote.body[ 0 ], { text: COMMENT, ranges: [], media: [], type: 'post' } ],
+				},
+			],
+		} );
+
+		await hoverRow( user );
+
+		const card = await screen.findByRole( 'dialog' );
+		expect( within( card ).getByText( COMMENT ) ).toBeVisible();
+		expect( within( card ).queryByText( /The tide tables/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'closes the preview on Escape', async () => {
