@@ -6,6 +6,15 @@ export interface RefundOptions {
 	refund_currency_symbol: string;
 }
 
+export interface DowngradeInfo {
+	to_product_id: number;
+	refund_amount: number;
+	/** The refund in the currency's smallest unit (eg: cents). */
+	refund_integer: number;
+	/** The refund's currency code (eg: USD). */
+	refund_currency: string;
+}
+
 export interface RawPurchaseIntroductoryOffer {
 	cost_per_interval: number;
 	cost_per_interval_integer: number;

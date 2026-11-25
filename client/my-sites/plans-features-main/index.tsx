@@ -1,5 +1,6 @@
 import {
 	cancelAndRefundPurchaseMutation,
+	downgradeInfoQuery,
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	setDelayedDowngradeMutation,
@@ -404,19 +405,24 @@ const PlansFeaturesMain = ( {
 		downgradeMode = 'checkout';
 	}
 
-	// The product the user is downgrading to, and the refund specific to that
-	// downgrade target. `refund_options` carries the per-target refund amount,
-	// which differs from the purchase's full `refund_amount`.
+	// The product the user is downgrading to, and the refund for changing to it
+	// now, which differs from the purchase's full `refund_amount`.
 	const downgradeTargetProductId = pendingDowngradePlanSlug
 		? getPlan( pendingDowngradePlanSlug )?.getProductId()
 		: undefined;
-	const downgradeRefundAmount =
-		currentPurchase?.refund_options?.find(
-			( option ) => option.to_product_id === downgradeTargetProductId
-		)?.refund_amount ?? 0;
+	const { data: downgradeInfo, isLoading: isDowngradeInfoLoading } = useQuery( {
+		...downgradeInfoQuery( currentPlanPurchaseId ?? 0, downgradeTargetProductId ?? 0 ),
+		enabled: !! currentPlanPurchaseId && !! downgradeTargetProductId && downgradeMode === 'instant',
+		// The dialog stays open with its loader until the redirect after the change,
+		// when a refetch would quote a change that has already been made.
+		refetchOnWindowFocus: false,
+		staleTime: Infinity,
+	} );
 	const downgradeRefundText =
-		currentPurchase && downgradeRefundAmount > 0
-			? formatCurrency( downgradeRefundAmount, currentPurchase.currency_code )
+		downgradeInfo && downgradeInfo.refund_integer > 0
+			? formatCurrency( downgradeInfo.refund_integer, downgradeInfo.refund_currency, {
+					isSmallestUnit: true,
+				} )
 			: undefined;
 
 	// The date a delayed downgrade will take effect. `renew_date` is the next
@@ -1627,6 +1633,7 @@ const PlansFeaturesMain = ( {
 						downgradeRenewalPriceText ? String( downgradeRenewalPriceText ) : undefined
 					}
 					refundText={ downgradeRefundText }
+					isRefundLoading={ isDowngradeInfoLoading }
 					isConfirming={ cancelAndRefundMutation.isPending || isDowngrading }
 					isRechargeable={ currentPurchase?.is_rechargeable ?? false }
 					changePaymentMethodUrl={
