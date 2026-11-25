@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	getWPCOMTieredPrice,
 	getWPCOMTierPrices,
@@ -11,24 +12,24 @@ import {
 } from '../use-marketplace';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn();
-	return Object.assign( config, {
+vi.mock( '@automattic/calypso-config', () => {
+	const config = Object.assign( vi.fn(), {
 		isEnabled: ( flag: string ) => [ 'a4a-bd-checkout', 'a4a-bd-term-pricing' ].includes( flag ),
 	} );
+	return { ...config, default: config };
 } );
 
-jest.mock( 'calypso/a8c-for-agencies/data/marketplace/use-products-query', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/data/marketplace/use-products-query', () => ( {
 	__esModule: true,
 	default: () => ( { data: [] } ),
 } ) );
 
-jest.mock( 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/hooks/use-wpcom-owned-sites', () => ( {
 	__esModule: true,
 	default: () => ( { count: 0 } ),
 } ) );
 
-jest.mock( '../../hosting-overview/hooks/use-pressable-ownership-type', () => ( {
+vi.mock( '../../hosting-overview/hooks/use-pressable-ownership-type', () => ( {
 	__esModule: true,
 	default: () => 'none',
 } ) );

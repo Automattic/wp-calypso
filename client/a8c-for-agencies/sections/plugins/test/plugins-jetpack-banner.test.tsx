@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import A4APluginsJetpackBanner from '../plugins-jetpack-banner';
 
-jest.mock( 'calypso/components/banner', () => ( {
+vi.mock( 'calypso/components/banner', () => ( {
 	__esModule: true,
 	default: ( { title, description }: { title: string; description: string } ) => (
 		<section>

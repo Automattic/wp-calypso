@@ -1,42 +1,41 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MockedFunction, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import LaunchPermissionModal from '..';
 
-const mockDispatch = jest.fn();
-const mockShowSupportGuide = jest.fn();
+const mockDispatch = vi.fn();
+const mockShowSupportGuide = vi.fn();
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( ( name, properties ) => ( {
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( ( name, properties ) => ( {
 		type: 'RECORD_TRACKS_EVENT',
 		name,
 		properties,
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/a8c-for-agencies/hooks/use-help-center', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/hooks/use-help-center', () => ( {
 	__esModule: true,
 	default: () => ( { showSupportGuide: mockShowSupportGuide } ),
 } ) );
 
-const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
-	typeof recordTracksEvent
->;
+const mockedRecordTracksEvent = recordTracksEvent as MockedFunction< typeof recordTracksEvent >;
 
 describe( 'LaunchPermissionModal', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'records a Tracks event with the source when shown', () => {
-		render( <LaunchPermissionModal source="sites" onClose={ jest.fn() } /> );
+		render( <LaunchPermissionModal source="sites" onClose={ vi.fn() } /> );
 
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_a4a_prepare_for_launch_no_permission',
@@ -45,7 +44,7 @@ describe( 'LaunchPermissionModal', () => {
 	} );
 
 	it( 'calls onClose when "Got it" is clicked', async () => {
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		render( <LaunchPermissionModal source="licenses" onClose={ onClose } /> );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Got it' } ) );
@@ -54,7 +53,7 @@ describe( 'LaunchPermissionModal', () => {
 	} );
 
 	it( 'opens the support guide from the learn more link', async () => {
-		render( <LaunchPermissionModal source="sites" onClose={ jest.fn() } /> );
+		render( <LaunchPermissionModal source="sites" onClose={ vi.fn() } /> );
 
 		await userEvent.click(
 			screen.getByRole( 'button', { name: 'Learn more about team member permissions' } )

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	SELECTED_ITEMS_SESSION_STORAGE_KEY,
@@ -10,14 +11,14 @@ import {
 } from '../../lib/shopping-cart-storage';
 import useClearCartOnCheckoutSuccess from '../use-clear-cart-on-checkout-success';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( ( name, properties ) => ( {
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( ( name, properties ) => ( {
 		type: 'RECORD_TRACKS_EVENT',
 		name,
 		properties,
@@ -26,7 +27,7 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 
 describe( 'useClearCartOnCheckoutSuccess', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		sessionStorage.clear();
 		sessionStorage.setItem( SELECTED_ITEMS_SESSION_STORAGE_KEY, 'jetpack-backup:1' );
 		sessionStorage.setItem( SELECTED_ITEMS_SESSION_STORAGE_KEY_REFERRAL, 'jetpack-scan:1' );

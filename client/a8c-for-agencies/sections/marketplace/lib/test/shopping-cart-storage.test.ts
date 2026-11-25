@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	SELECTED_ITEMS_SESSION_STORAGE_KEY,

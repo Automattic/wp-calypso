@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useDefaultSiteColumns from '../use-default-site-columns';
 
-jest.mock( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config' );
 
 describe( 'useSiteColumns', () => {
 	it.each( [ [ 'Site' ], [ 'Stats' ], [ 'Backup' ], [ 'Scan' ], [ 'Monitor' ], [ 'Plugins' ] ] )(

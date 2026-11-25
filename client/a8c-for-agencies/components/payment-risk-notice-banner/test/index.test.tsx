@@ -1,27 +1,32 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { isEnabled } from '@automattic/calypso-config';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MockedFunction, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import PaymentRiskNoticeBanner from '..';
 import type { PaymentNotice } from 'calypso/state/a8c-for-agencies/types';
 import type { ReactNode } from 'react';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 let mockPaymentNotice: PaymentNotice | null = null;
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isEnabled: vi.fn(),
+	} )
+);
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		children,
 		href,
@@ -39,14 +44,14 @@ jest.mock( '@wordpress/components', () => ( {
 			data-href={ href }
 			data-rel={ rel }
 			data-target={ target }
-			onClick={ () => onClick?.( { preventDefault: jest.fn() } ) }
+			onClick={ () => onClick?.( { preventDefault: vi.fn() } ) }
 		>
 			{ children }
 		</button>
 	),
 } ) );
 
-jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
 	__esModule: true,
 	default: ( {
 		actions,
@@ -67,7 +72,7 @@ jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( state: unknown ) => unknown ) =>
 		selector( {
@@ -81,22 +86,20 @@ jest.mock( 'calypso/state', () => ( {
 		} ),
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( ( name, properties ) => ( {
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( ( name, properties ) => ( {
 		type: 'RECORD_TRACKS_EVENT',
 		name,
 		properties,
 	} ) ),
 } ) );
 
-const mockedIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
-const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
-	typeof recordTracksEvent
->;
+const mockedIsEnabled = isEnabled as MockedFunction< typeof isEnabled >;
+const mockedRecordTracksEvent = recordTracksEvent as MockedFunction< typeof recordTracksEvent >;
 
 describe( 'PaymentRiskNoticeBanner', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockPaymentNotice = {
 			state: 'renewal_failure',
 			severity: 'error',

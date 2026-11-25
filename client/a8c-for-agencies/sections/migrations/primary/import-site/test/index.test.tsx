@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { A4A_MIGRATIONS_IMPORT_SITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -14,31 +15,28 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ImportSite from '..';
 
 // The page chrome reads unrelated agency state; the behavior under test is the form and modal.
-jest.mock( 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour', () => ( {
 	LayoutWithGuidedTour: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 } ) );
-jest.mock(
-	'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification',
-	() =>
-		( { children }: { children: React.ReactNode } ) => <div>{ children }</div>
-);
-jest.mock(
-	'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation',
-	() => () => null
-);
-jest.mock(
+vi.mock( 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification', () => ( {
+	default: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+} ) );
+vi.mock( 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation', () => ( {
+	default: () => null,
+} ) );
+vi.mock(
 	'calypso/a8c-for-agencies/components/site-configurations-modal/use-random-site-name',
 	() => ( {
 		useRandomSiteName: () => ( {
 			randomSiteName: 'agencymove',
 			isRandomSiteNameLoading: false,
-			refetchRandomSiteName: jest.fn(),
+			refetchRandomSiteName: vi.fn(),
 		} ),
 	} )
 );
-jest.mock( '@automattic/calypso-router', () =>
-	Object.assign( jest.fn(), { redirect: jest.fn() } )
-);
+vi.mock( '@automattic/calypso-router', () => ( {
+	default: Object.assign( vi.fn(), { redirect: vi.fn() } ),
+} ) );
 
 const API = 'https://public-api.wordpress.com';
 const AGENCY_ID = 123;

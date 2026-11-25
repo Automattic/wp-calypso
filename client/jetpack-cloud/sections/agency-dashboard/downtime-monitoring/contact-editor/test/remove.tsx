@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,6 +8,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import RemoveContactForm from '../remove';
 
 describe( 'RemoveContactForm', () => {
@@ -23,8 +24,8 @@ describe( 'RemoveContactForm', () => {
 		</Provider>
 	);
 
-	const onCancelMock = jest.fn();
-	const onRemoveMock = jest.fn();
+	const onCancelMock = vi.fn();
+	const onRemoveMock = vi.fn();
 
 	it( 'should render remove email form', () => {
 		const contact = {
