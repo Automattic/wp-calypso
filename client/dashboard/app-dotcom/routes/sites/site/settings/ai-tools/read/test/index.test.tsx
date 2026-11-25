@@ -162,7 +162,7 @@ describe( '<SiteAIToolsRead>', () => {
 		render( <SiteAIToolsRead />, { queryClient } );
 
 		const [ pageToggle, groupToggle ] = screen.getAllByRole( 'checkbox', { name: 'Enable all' } );
-		const help = 'Skips 1 locked tool. Turn it on individually.';
+		const help = 'Doesn’t change 1 locked tool. Turn it on or off individually.';
 		expect( pageToggle ).toHaveAccessibleDescription( help );
 		expect( groupToggle ).toHaveAccessibleDescription( help );
 

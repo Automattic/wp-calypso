@@ -49,7 +49,7 @@ export function McpToolToggle( {
 
 	const badgeLabel = __( 'Turn on individually' );
 	return (
-		<HStack alignment="flex-start" justify="flex-start" wrap>
+		<HStack alignment="baseline" justify="flex-start" wrap>
 			{ toggle }
 			<HStack spacing={ 1 } expanded={ false }>
 				<Icon icon={ lock } size={ 16 } aria-hidden="true" />
@@ -81,8 +81,8 @@ export function getMcpBulkHelp( optInCount: number ) {
 	return sprintf(
 		/* translators: %s is the number of MCP tools that require individual approval. */
 		_n(
-			'Skips %s locked tool. Turn it on individually.',
-			'Skips %s locked tools. Turn them on individually.',
+			'Doesn’t change %s locked tool. Turn it on or off individually.',
+			'Doesn’t change %s locked tools. Turn them on or off individually.',
 			optInCount
 		),
 		formatNumber( optInCount )
