@@ -146,10 +146,12 @@ describe( 'DomainSetupInfo', () => {
 		expect( queryIcon() ).not.toBeInTheDocument();
 	} );
 
-	it( 'links to the first custom domain when no custom domain is primary', async () => {
+	it( 'links to the first custom domain being set up when no custom domain is primary', async () => {
 		mockDomains = [
 			defaultAddress,
+			buildDomain( { domain: 'old.com', primary_domain: false } ),
 			buildDomain( {
+				domain: 'new.com',
 				primary_domain: false,
 				domain_status: { id: DomainStatus.IN_PROGRESS, label: 'In progress', type: 'warning' },
 			} ),
@@ -159,7 +161,7 @@ describe( 'DomainSetupInfo', () => {
 
 		const link = screen.getByRole( 'link', { name: 'View domain status' } );
 
-		expect( link ).toHaveAttribute( 'href', domainManagementEdit( SITE_DOMAIN, 'example.com' ) );
+		expect( link ).toHaveAttribute( 'href', domainManagementEdit( SITE_DOMAIN, 'new.com' ) );
 	} );
 
 	it( 'shows the explanation when the icon is clicked', async () => {

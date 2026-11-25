@@ -15,20 +15,18 @@ export function getPendingCustomDomain( domains: DomainSummary[], siteDomain: st
 			domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS &&
 			domain.subtype.id !== DomainSubtype.SITE_REDIRECT
 	);
-	const domain =
-		customDomains.find( ( { primary_domain } ) => primary_domain ) ?? customDomains[ 0 ];
+	const primaryDomain = customDomains.find( ( { primary_domain } ) => primary_domain );
+	const servedDomain = siteDomain.replace( /^www\./, '' );
 
 	// When the site already serves from the custom domain, statuses like "expiring soon"
 	// don't mean the displayed address differs from the one the user bought.
-	if ( ! domain || domain.domain === siteDomain.replace( /^www\./, '' ) ) {
-		return undefined;
-	}
-
 	// A new registration can already report "active" while it's still being made the primary address.
-	const isSettingUp =
-		domain.domain_status?.id !== DomainStatus.ACTIVE || domain.set_primary_domain_pending === true;
-
-	return isSettingUp ? domain : undefined;
+	return ( primaryDomain ? [ primaryDomain ] : customDomains ).find(
+		( domain ) =>
+			domain.domain !== servedDomain &&
+			( domain.domain_status?.id !== DomainStatus.ACTIVE ||
+				domain.set_primary_domain_pending === true )
+	);
 }
 
 /**
