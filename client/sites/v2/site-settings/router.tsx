@@ -126,7 +126,7 @@ const databaseRoute = createRoute( {
 	...Object.assign( {}, appRouterSites.siteSettingsDatabaseRoute.options, { loader: undefined } ),
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-database' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/database' ).then( ( d ) =>
 		createLazyRoute( 'database' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -159,10 +159,11 @@ const primaryDataCenterRoute = createRoute( {
 	...appRouterSites.siteSettingsPrimaryDataCenterRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-primary-data-center' ).then( ( d ) =>
-		createLazyRoute( 'primary-data-center' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/primary-data-center' ).then(
+		( d ) =>
+			createLazyRoute( 'primary-data-center' )( {
+				component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			} )
 	)
 );
 
@@ -170,7 +171,7 @@ const staticFile404Route = createRoute( {
 	...appRouterSites.siteSettingsStaticFile404Route.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-static-file-404' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'static-file-404' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -181,7 +182,7 @@ const cachingRoute = createRoute( {
 	...appRouterSites.siteSettingsCachingRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-caching' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/caching' ).then( ( d ) =>
 		createLazyRoute( 'caching' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -192,7 +193,7 @@ const defensiveModeRoute = createRoute( {
 	...appRouterSites.siteSettingsDefensiveModeRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-defensive-mode' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/defensive-mode' ).then( ( d ) =>
 		createLazyRoute( 'defensive-mode' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

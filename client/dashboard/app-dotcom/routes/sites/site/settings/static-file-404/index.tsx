@@ -9,15 +9,15 @@ import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import Breadcrumbs from '../../app/breadcrumbs';
-import { NavigationBlocker } from '../../app/navigation-blocker';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { hasHostingFeature } from '../../utils/site-features';
-import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import Breadcrumbs from '../../../../../../app/breadcrumbs';
+import { NavigationBlocker } from '../../../../../../app/navigation-blocker';
+import { withSnackbar } from '../../../../../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../../../../../components/button-stack';
+import { Card, CardBody } from '../../../../../../components/card';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import { hasHostingFeature } from '../../../../../../utils/site-features';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< { setting: string } >[] = [
