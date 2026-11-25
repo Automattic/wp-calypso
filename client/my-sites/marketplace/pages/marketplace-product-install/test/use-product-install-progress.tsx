@@ -89,11 +89,16 @@ vi.mock( 'calypso/state/plugins/wporg/actions', async () => ( {
 	fetchPluginData: vi.fn( () => ( { type: 'MOCK_FETCH_PLUGIN_DATA' } ) ),
 } ) );
 
-const { installPlugin, activatePlugin } = await import( 'calypso/state/plugins/installed/actions' );
+const { installPlugin, activatePlugin } = vi.mocked(
+	await import( 'calypso/state/plugins/installed/actions' )
+);
 // initiateThemeTransfer is the (confusingly named) action that starts a plugin's Atomic transfer.
-const { initiateThemeTransfer: initiatePluginTransfer, installAndActivateTheme } =
-	await import( 'calypso/state/themes/actions' );
-const { initiateAtomicTransfer } = await import( 'calypso/state/atomic/transfers/actions' );
+const { initiateThemeTransfer: initiatePluginTransfer, installAndActivateTheme } = vi.mocked(
+	await import( 'calypso/state/themes/actions' )
+);
+const { initiateAtomicTransfer } = vi.mocked(
+	await import( 'calypso/state/atomic/transfers/actions' )
+);
 
 const reducers = {
 	plugins: pluginsReducer,

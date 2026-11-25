@@ -28,8 +28,9 @@ vi.mock( 'calypso/lib/interval', () => ( {
 	},
 } ) );
 
-const { fetchSitePlugins, activatePlugin } =
-	await import( 'calypso/state/plugins/installed/actions' );
+const { fetchSitePlugins, activatePlugin } = vi.mocked(
+	await import( 'calypso/state/plugins/installed/actions' )
+);
 
 const INSTALLED = { slug: 'sensei-pro', id: 'sensei-pro/sensei-pro' };
 

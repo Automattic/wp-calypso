@@ -23,7 +23,7 @@ import {
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 
-/* eslint-disable jest/no-conditional-expect */
+/* eslint-disable vitest/no-conditional-expect */
 
 vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 vi.mock( 'calypso/my-sites/checkout/use-cart-key' );

@@ -225,7 +225,7 @@ describe( 'UpcomingRenewalsReminder', () => {
 				{ urgent_count: 1 }
 			);
 			const impressions = mockRecordTracksEvent.mock.calls.filter(
-				( [ name ]: [ string ] ) => name === 'calypso_checkout_urgent_renewals_modal_impression'
+				( [ name ] ) => name === 'calypso_checkout_urgent_renewals_modal_impression'
 			);
 			expect( impressions ).toHaveLength( 1 );
 		} );
@@ -253,7 +253,7 @@ describe( 'UpcomingRenewalsReminder', () => {
 			// recomputed). The hasAutoOpened ref must stop a second open + impression.
 			rerenderWithCart( { products: [] } );
 			const impressions = mockRecordTracksEvent.mock.calls.filter(
-				( [ name ]: [ string ] ) => name === 'calypso_checkout_urgent_renewals_modal_impression'
+				( [ name ] ) => name === 'calypso_checkout_urgent_renewals_modal_impression'
 			);
 			expect( impressions ).toHaveLength( 1 );
 		} );

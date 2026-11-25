@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
@@ -35,22 +36,29 @@ import { MockCheckout } from './util/mock-checkout';
 import type { CartKey, SetCart } from '@automattic/shopping-cart';
 import type { StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-jest.mock( 'calypso/lib/navigate' );
+vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+vi.mock( 'calypso/lib/navigate' );
 // Stripe must load for the card payment methods, new and saved, to be offered.
-jest.mock( '@stripe/react-stripe-js', () => ( {
-	...jest.requireActual( '@stripe/react-stripe-js' ),
-	...jest.requireActual( './util' ).mockStripeElements(),
+vi.mock( '@stripe/react-stripe-js', async () => ( {
+	...( await vi.importActual< typeof import( '@stripe/react-stripe-js' ) >(
+		'@stripe/react-stripe-js'
+	) ),
+	...( await vi.importActual< typeof import( './util' ) >( './util' ) ).mockStripeElements(),
 } ) );
-jest.mock( '@stripe/stripe-js', () => ( {
-	loadStripe: async () => jest.requireActual( './util' ).mockStripeElements().useStripe(),
+vi.mock( '@stripe/stripe-js', () => ( {
+	loadStripe: async () =>
+		( await vi.importActual< typeof import( './util' ) >( './util' ) )
+			.mockStripeElements()
+			.useStripe(),
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/lib/analytics/tracks' ) >(
+		'calypso/lib/analytics/tracks'
+	) ),
+	recordTracksEvent: vi.fn(),
 } ) );
 
 // These tests seem to be particularly slow (it might be because of using
@@ -58,7 +66,7 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 // rather that each iteration?), so we need to increase the timeout for their
 // operation. The standard timeout (at the time of writing) is 5 seconds so
 // we are increasing this to 12 seconds.
-jest.setTimeout( 12000 );
+vi.setConfig( { testTimeout: 12000 } );
 
 describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com' as CartKey;
@@ -125,7 +133,7 @@ describe( 'Checkout contact step', () => {
 	};
 
 	const getTracksCalls = ( eventName: string ) =>
-		( recordTracksEvent as jest.Mock ).mock.calls.filter( ( [ event ] ) => event === eventName );
+		( recordTracksEvent as Mock ).mock.calls.filter( ( [ event ] ) => event === eventName );
 
 	getPlansBySiteId.mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
@@ -136,8 +144,8 @@ describe( 'Checkout contact step', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
-		( recordTracksEvent as jest.Mock ).mockClear();
-		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
+		( recordTracksEvent as Mock ).mockClear();
+		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
 		storedPaymentMethods = [];
@@ -443,7 +451,7 @@ describe( 'Checkout contact step', () => {
 
 			await user.click( screen.getByText( 'Continue to payment' ) );
 
-			/* eslint-disable jest/no-conditional-expect */
+			/* eslint-disable vitest/no-conditional-expect */
 			if ( complete === 'does' ) {
 				expect( await screen.findByTestId( 'payment-method-step--visible' ) ).toBeInTheDocument();
 			} else {
@@ -456,7 +464,7 @@ describe( 'Checkout contact step', () => {
 							screen.getByText( ( content ) =>
 								content.startsWith( 'That email address is already in use' )
 							)
-						);
+						).toBeInTheDocument();
 					} else if ( email === 'passes' ) {
 						expect( screen.getByText( 'Postal code error message' ) ).toBeInTheDocument();
 					}
@@ -466,7 +474,7 @@ describe( 'Checkout contact step', () => {
 					}
 				}
 			}
-			/* eslint-enable jest/no-conditional-expect */
+			/* eslint-enable vitest/no-conditional-expect */
 		}
 	);
 } );

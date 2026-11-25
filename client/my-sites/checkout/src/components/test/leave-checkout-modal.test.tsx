@@ -1,27 +1,6 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-// Mock module dependencies before importing the hook so the mocks are wired
-// up when the hook's module evaluates its imports.
-jest.mock( '../../../use-cart-key', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
-
-jest.mock( '../../hooks/use-valid-checkout-back-url', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
-
-jest.mock( '../../lib/leave-checkout', () => ( {
-	__esModule: true,
-	leaveCheckout: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
 
 import {
 	createShoppingCartManagerClient,
@@ -32,6 +11,7 @@ import {
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCartKey from '../../../use-cart-key';
 import useValidCheckoutBackUrl from '../../hooks/use-valid-checkout-back-url';
@@ -46,6 +26,25 @@ import type {
 	SetCart,
 } from '@automattic/shopping-cart';
 import type { ReactNode } from 'react';
+
+vi.mock( '../../../use-cart-key', () => ( {
+	__esModule: true,
+	default: vi.fn(),
+} ) );
+
+vi.mock( '../../hooks/use-valid-checkout-back-url', () => ( {
+	__esModule: true,
+	default: vi.fn(),
+} ) );
+
+vi.mock( '../../lib/leave-checkout', () => ( {
+	__esModule: true,
+	leaveCheckout: vi.fn(),
+} ) );
+
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
+} ) );
 
 const NEW_SITE_CART_KEY: CartKey = 1234;
 const NEW_SITE_SLUG = 'mynewsite.wordpress.com';
@@ -152,11 +151,11 @@ function buildWrapper( client: ReturnType< typeof createShoppingCartManagerClien
 
 describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 	beforeEach( () => {
-		( useCartKey as jest.Mock ).mockReset();
-		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
-		( leaveCheckout as jest.Mock ).mockReset();
-		( useCartKey as jest.Mock ).mockReturnValue( NEW_SITE_CART_KEY );
-		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue(
+		( useCartKey as Mock ).mockReset();
+		( useValidCheckoutBackUrl as Mock ).mockReset();
+		( leaveCheckout as Mock ).mockReset();
+		( useCartKey as Mock ).mockReturnValue( NEW_SITE_CART_KEY );
+		( useValidCheckoutBackUrl as Mock ).mockReturnValue(
 			'/start/domain/domain-only?skippedCheckout=1'
 		);
 	} );
@@ -192,7 +191,7 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 		const Wrapper = buildWrapper( client );
 
 		let cartsWrittenAtLeaveTime: CartKey[] = [];
-		( leaveCheckout as jest.Mock ).mockImplementation( () => {
+		( leaveCheckout as Mock ).mockImplementation( () => {
 			cartsWrittenAtLeaveTime = [ ...setCallsByKey ];
 		} );
 
@@ -233,7 +232,7 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 		// A flow that provides `checkoutBackUrlDomains` (e.g. AI Site Builder
 		// onboarding) wants emptying the cart to return the user to the domain
 		// step rather than the default plan-step back URL.
-		( useValidCheckoutBackUrl as jest.Mock ).mockImplementation(
+		( useValidCheckoutBackUrl as Mock ).mockImplementation(
 			( _siteSlug: string, _siteId: number | undefined, queryArgName = 'checkoutBackUrl' ) =>
 				queryArgName === 'checkoutBackUrlDomains'
 					? 'https://mynewsite.wordpress.com/setup/ai-site-builder-onboarding/domains'
@@ -273,7 +272,7 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 		// When the user is checking out directly against `'no-site'` (no
 		// "New site" branch involved), the hook must not re-clear the same
 		// cart twice. Only one POST per distinct cart key should fire.
-		( useCartKey as jest.Mock ).mockReturnValue( 'no-site' );
+		( useCartKey as Mock ).mockReturnValue( 'no-site' );
 
 		const { getCart, setCart, setCallsByKey } = createFakeCartBackend( {
 			'no-site': [ domainProduct ],
@@ -305,12 +304,12 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 
 describe( 'useCheckoutLeaveModal Tracks events', () => {
 	beforeEach( () => {
-		( useCartKey as jest.Mock ).mockReset();
-		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
-		( leaveCheckout as jest.Mock ).mockReset();
-		( recordTracksEvent as jest.Mock ).mockReset();
-		( useCartKey as jest.Mock ).mockReturnValue( NEW_SITE_CART_KEY );
-		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue( undefined );
+		( useCartKey as Mock ).mockReset();
+		( useValidCheckoutBackUrl as Mock ).mockReset();
+		( leaveCheckout as Mock ).mockReset();
+		( recordTracksEvent as Mock ).mockReset();
+		( useCartKey as Mock ).mockReturnValue( NEW_SITE_CART_KEY );
+		( useValidCheckoutBackUrl as Mock ).mockReturnValue( undefined );
 	} );
 
 	async function renderWithCart(
@@ -411,11 +410,11 @@ describe( 'useCheckoutLeaveModal Tracks events', () => {
 
 describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 	beforeEach( () => {
-		( useCartKey as jest.Mock ).mockReset();
-		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
-		( leaveCheckout as jest.Mock ).mockReset();
-		( useCartKey as jest.Mock ).mockReturnValue( NEW_SITE_CART_KEY );
-		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue(
+		( useCartKey as Mock ).mockReset();
+		( useValidCheckoutBackUrl as Mock ).mockReset();
+		( leaveCheckout as Mock ).mockReset();
+		( useCartKey as Mock ).mockReturnValue( NEW_SITE_CART_KEY );
+		( useValidCheckoutBackUrl as Mock ).mockReturnValue(
 			'https://mynewsite.wordpress.com/setup/onboarding/plans'
 		);
 	} );
@@ -547,11 +546,11 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 	}
 
 	beforeEach( () => {
-		( useCartKey as jest.Mock ).mockReset();
-		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
-		( leaveCheckout as jest.Mock ).mockReset();
-		( useCartKey as jest.Mock ).mockReturnValue( GIFT_CART_KEY );
-		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue( undefined );
+		( useCartKey as Mock ).mockReset();
+		( useValidCheckoutBackUrl as Mock ).mockReset();
+		( leaveCheckout as Mock ).mockReset();
+		( useCartKey as Mock ).mockReturnValue( GIFT_CART_KEY );
+		( useValidCheckoutBackUrl as Mock ).mockReturnValue( undefined );
 		// The hook reads the gift checkout route off the path, the way
 		// `getProductSlugFromContext` does.
 		window.history.replaceState( {}, '', '/checkout/personal-bundle/gift/123' );
@@ -635,9 +634,7 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 
 	it( 'lets an explicit checkoutBackUrl win over the gifted site', async () => {
 		setReferrer( 'https://giftedsite.wordpress.com/' );
-		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue(
-			'https://wordpress.com/plans/explicit'
-		);
+		( useValidCheckoutBackUrl as Mock ).mockReturnValue( 'https://wordpress.com/plans/explicit' );
 		const { result } = await renderGiftHook( {
 			gift_details: giftDetails,
 			is_gift_purchase: true,
@@ -860,10 +857,10 @@ describe( 'useCheckoutLeaveModal isLeaveDisabled outside a gift checkout', () =>
 	const CART_KEY: CartKey = 'no-site';
 
 	beforeEach( () => {
-		( useCartKey as jest.Mock ).mockReset();
-		( useValidCheckoutBackUrl as jest.Mock ).mockReset();
-		( useCartKey as jest.Mock ).mockReturnValue( CART_KEY );
-		( useValidCheckoutBackUrl as jest.Mock ).mockReturnValue( undefined );
+		( useCartKey as Mock ).mockReset();
+		( useValidCheckoutBackUrl as Mock ).mockReset();
+		( useCartKey as Mock ).mockReturnValue( CART_KEY );
+		( useValidCheckoutBackUrl as Mock ).mockReturnValue( undefined );
 		window.history.replaceState( {}, '', '/checkout/mysite.wordpress.com' );
 	} );
 

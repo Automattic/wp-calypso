@@ -1,44 +1,6 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( '@automattic/help-center/src/stores', () => ( { HELP_CENTER_STORE: 'help-center' } ) );
-jest.mock( '@automattic/zendesk-client', () => ( {
-	useCanConnectToZendeskMessaging: () => ( { data: false } ),
-} ) );
-// Override only useDispatch; read everything else lazily, because @wordpress/data
-// is still mid-load (circular imports) when this factory runs.
-jest.mock(
-	'@wordpress/data',
-	() =>
-		new Proxy(
-			{},
-			{
-				get: ( _target, key ) =>
-					'useDispatch' === key
-						? () => ( { setNewMessagingChat: jest.fn(), setNavigateToOdie: jest.fn() } )
-						: jest.requireActual( '@wordpress/data' )[ key ],
-			}
-		)
-);
-jest.mock( 'calypso/state', () => ( {
-	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
-} ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	getSiteSlug: () => 'example.wordpress.com',
-	getSiteUrl: () => 'https://example.wordpress.com',
-	isCurrentPlanPaid: () => false,
-} ) );
-jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
-	isCurrentUserCurrentPlanOwner: () => true,
-} ) );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs', () => ( {
-	useFreeTrialPlanSlugs: () => ( {} ),
-} ) );
-jest.mock( '../use-current-plan-manage-href', () => () => '/manage' );
-jest.mock( '../use-non-owner-handler', () => ( { useNonOwnerHandler: () => jest.fn() } ) );
-
 import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
@@ -47,8 +9,36 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import useGenerateActionCallback from '../use-generate-action-callback';
 import type { CheckoutAttribution } from '../use-generate-action-callback';
+
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '@automattic/help-center/src/stores', () => ( { HELP_CENTER_STORE: 'help-center' } ) );
+vi.mock( '@automattic/zendesk-client', () => ( {
+	useCanConnectToZendeskMessaging: () => ( { data: false } ),
+} ) );
+vi.mock( '@wordpress/data', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@wordpress/data' ) >() ),
+	useDispatch: () => ( { setNewMessagingChat: vi.fn(), setNavigateToOdie: vi.fn() } ),
+} ) );
+vi.mock( 'calypso/state', () => ( {
+	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
+} ) );
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	getSiteSlug: () => 'example.wordpress.com',
+	getSiteUrl: () => 'https://example.wordpress.com',
+	isCurrentPlanPaid: () => false,
+} ) );
+vi.mock( 'calypso/state/sites/plans/selectors', () => ( {
+	isCurrentUserCurrentPlanOwner: () => true,
+} ) );
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs', () => ( {
+	useFreeTrialPlanSlugs: () => ( {} ),
+} ) );
+vi.mock( '../use-current-plan-manage-href', () => ( { default: () => '/manage' } ) );
+vi.mock( '../use-non-owner-handler', () => ( { useNonOwnerHandler: () => vi.fn() } ) );
 
 /**
  * Click Personal on a free site's plans page and return the checkout URL it opens.
@@ -75,12 +65,12 @@ async function upgradeToPersonal( props: {
 	} as never )();
 
 	expect( page ).toHaveBeenCalledTimes( 1 );
-	return new URL( ( page as unknown as jest.Mock ).mock.calls[ 0 ][ 0 ], 'https://wordpress.com' );
+	return new URL( ( page as unknown as Mock ).mock.calls[ 0 ][ 0 ], 'https://wordpress.com' );
 }
 
 describe( 'useGenerateActionCallback upgrade checkout URL', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'forwards purchase attribution to checkout', async () => {
@@ -117,7 +107,7 @@ describe( 'useGenerateActionCallback upgrade checkout URL', () => {
 describe( 'useGenerateActionCallback downgrades', () => {
 	// Without it, a Woo Hosted store picking a lower plan is sent to checkout instead of support.
 	it( 'sends a Woo Hosted store picking a lower plan to support, not checkout', async () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		const { result } = renderHook( () =>
 			useGenerateActionCallback( {
 				currentPlan: { productSlug: PLAN_WOO_HOSTED_PRO } as never,
