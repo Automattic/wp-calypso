@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import NotificationSettingsFormFooter from '../footer';
 
 describe( 'NotificationSettingsFormFooter', () => {
@@ -11,7 +12,7 @@ describe( 'NotificationSettingsFormFooter', () => {
 		isLoading: false,
 		validationError: '',
 		isBulkUpdate: false,
-		handleOnClose: jest.fn(),
+		handleOnClose: vi.fn(),
 		hasUnsavedChanges: false,
 		unsavedChangesExist: true,
 	};

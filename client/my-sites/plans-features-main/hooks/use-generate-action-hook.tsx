@@ -33,6 +33,7 @@ import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selecto
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
 import {
+	isInstantPlanChange,
 	isScheduledOnlyPlanChange,
 	isScheduledTermChangeEnabled,
 	isShorterTermPlanChange,
@@ -171,6 +172,11 @@ export default function useGenerateActionHook( {
 				getScheduledChangeSitePlans( state )?.find( ( p ) => p.productSlug === planSlug )
 			)
 		);
+		const isInstantPlanChangeTarget = useSelector( ( state: IAppState ) =>
+			isInstantPlanChange(
+				getScheduledChangeSitePlans( state )?.find( ( p ) => p.productSlug === planSlug )
+			)
+		);
 		const isScheduledTermChange = useSelector( ( state: IAppState ) => {
 			const sitePlans = getScheduledChangeSitePlans( state );
 			return isShorterTermPlanChange(
@@ -257,6 +263,7 @@ export default function useGenerateActionHook( {
 			availableForPurchase,
 			availableForDowngrade,
 			isScheduledOnlyTarget,
+			isInstantPlanChangeTarget,
 			isScheduledTermChange,
 			domainFromHomeUpsellFlow,
 			canUserManageCurrentPlan,
@@ -463,6 +470,7 @@ function getLoggedInPlansAction( {
 	availableForPurchase,
 	availableForDowngrade,
 	isScheduledOnlyTarget,
+	isInstantPlanChangeTarget,
 	isScheduledTermChange,
 	domainFromHomeUpsellFlow,
 	canUserManageCurrentPlan,
@@ -489,6 +497,8 @@ function getLoggedInPlansAction( {
 	availableForDowngrade?: boolean;
 	/** Whether the server only allows moving to this plan at the current plan's renewal. */
 	isScheduledOnlyTarget?: boolean;
+	/** Whether the server allows moving to this plan now, with a refund. */
+	isInstantPlanChangeTarget?: boolean;
 	/**
 	 * Whether this plan bills on a shorter term than the current one, such as
 	 * monthly from annual.
@@ -651,6 +661,14 @@ function getLoggedInPlansAction( {
 		if ( isScheduledOnlyTarget ) {
 			return createLoggedInPlansAction(
 				translate( 'Switch at renewal', { context: 'verb' } ),
+				'secondary',
+				undefined,
+				canUserManageCurrentPlan ? undefined : 'disabled'
+			);
+		}
+		if ( isInstantPlanChangeTarget ) {
+			return createLoggedInPlansAction(
+				translate( 'Switch now', { context: 'verb' } ),
 				'secondary',
 				undefined,
 				canUserManageCurrentPlan ? undefined : 'disabled'

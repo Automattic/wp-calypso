@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import ModalFooterBar from 'calypso/components/videos-ui/modal-footer-bar';
 import ModalHeaderBar from 'calypso/components/videos-ui/modal-header-bar';
 import { COURSE_SLUGS } from '../../../data/courses';
@@ -35,7 +36,7 @@ const useCourseData = () => {
 
 const useUpdateUserCourseProgressionMutation = () => {
 	return {
-		updateUserCourseProgression: jest.fn(),
+		updateUserCourseProgression: vi.fn(),
 	};
 };
 
@@ -47,26 +48,27 @@ const useCourseDetails = () => {
 	};
 };
 
-jest.mock( 'calypso/data/courses', () => ( {
+vi.mock( 'calypso/data/courses', () => ( {
 	COURSE_SLUGS: {
 		BLOGGING_QUICK_START: 'blogging-quick-start',
 	},
-	useCourseData,
-	useCourseDetails,
-	useUpdateUserCourseProgressionMutation,
+	// `vi.mock()` is hoisted above these helpers, so read them when called.
+	useCourseData: () => useCourseData(),
+	useCourseDetails: () => useCourseDetails(),
+	useUpdateUserCourseProgressionMutation: () => useUpdateUserCourseProgressionMutation(),
 } ) );
 
 describe( 'Video-UI', () => {
 	beforeEach( () => {
 		window._tkq = {
-			push: jest.fn(),
+			push: vi.fn(),
 		};
 	} );
 
 	test( 'Track event with intent prop', async () => {
 		const user = userEvent.setup();
-		const useStateMock = ( useState ) => [ useState, jest.fn() ];
-		jest.spyOn( React, 'useState' ).mockImplementation( useStateMock );
+		const useStateMock = ( useState ) => [ useState, vi.fn() ];
+		vi.spyOn( React, 'useState' ).mockImplementation( useStateMock );
 		const initialState = {
 			ui: { section: 'test' },
 			documentHead: { unreadCount: 1 },
@@ -108,8 +110,8 @@ describe( 'Video-UI', () => {
 
 	test( 'Track event without intent prop', async () => {
 		const user = userEvent.setup();
-		const useStateMock = ( useState ) => [ useState, jest.fn() ];
-		jest.spyOn( React, 'useState' ).mockImplementation( useStateMock );
+		const useStateMock = ( useState ) => [ useState, vi.fn() ];
+		vi.spyOn( React, 'useState' ).mockImplementation( useStateMock );
 		const initialState = {
 			ui: { section: 'test' },
 			documentHead: { unreadCount: 1 },

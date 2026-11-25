@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`JetpackSignup should render 1`] = `
+exports[`JetpackSignup > should render 1`] = `
 <div>
   <main
     class="jetpack-connect__main main"
@@ -195,7 +195,7 @@ exports[`JetpackSignup should render 1`] = `
 </div>
 `;
 
-exports[`JetpackSignup should render with locale suggestions 1`] = `
+exports[`JetpackSignup > should render with locale suggestions 1`] = `
 <div>
   <main
     class="jetpack-connect__main main"
@@ -390,7 +390,7 @@ exports[`JetpackSignup should render with locale suggestions 1`] = `
 </div>
 `;
 
-exports[`JetpackSignup should render with the connector branding when from=jetpack-connector 1`] = `
+exports[`JetpackSignup > should render with the connector branding when from=jetpack-connector 1`] = `
 <div>
   <main
     class="jetpack-connect__authorize-form-wrapper--connector jetpack-connect__main is-jetpack-connector-flow main"

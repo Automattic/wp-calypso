@@ -1,8 +1,6 @@
 /**
  * Mocks
  */
-jest.mock( 'calypso/state/products-list/selectors/get-product-cost' );
-jest.mock( 'calypso/state/currency-code/selectors' );
 
 import { getYearlySlugFromMonthly } from 'calypso/my-sites/plans/jetpack-plans/convert-slug-terms';
 

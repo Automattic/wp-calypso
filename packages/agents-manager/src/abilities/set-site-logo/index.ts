@@ -13,7 +13,8 @@ export const setSiteLogoAbility: Ability = {
 	name: 'big-sky/set-site-logo',
 	label: __( 'Set Site Logo', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: 'Set the site logo',
+	description:
+		"Sets the site logo to an image in the site's media library; find or upload the image there first. Pass the image's attachment ID as fileObj.attachment_id. The logo shows wherever the page has a Site Logo block, and the change remains unsaved and reviewable in the editor.",
 	input_schema: {
 		type: 'object',
 		properties: {
@@ -71,4 +72,7 @@ export const setSiteLogoAbility: Ability = {
 		required: [ 'result', 'returnToAgent' ],
 	},
 	callback: setSiteLogoCallback,
+	meta: {
+		webmcp: { public: true },
+	},
 };

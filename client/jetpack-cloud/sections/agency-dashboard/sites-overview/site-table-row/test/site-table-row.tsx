@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -10,23 +10,24 @@ import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import SiteTableRow from '../index';
 import type { SiteData } from '../../types';
 
-jest.mock(
+vi.mock(
 	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-backup-staging',
-	() => 'span'
+	() => ( { default: 'span' } )
 );
 
 describe( '<SiteTableRow>', () => {
 	beforeAll( () => {
-		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+		window.matchMedia = vi.fn().mockImplementation( ( query ) => {
 			return {
 				matches: true,
 				media: query,
 				onchange: null,
-				addListener: jest.fn(),
-				removeListener: jest.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
 			};
 		} );
 	} );

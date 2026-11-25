@@ -70,7 +70,12 @@ const LIMIT_TEXT = 'We noticed you have other open conversations. Would you like
 
 const renderMessage = (
 	message: Message,
-	{ isUserEligibleForPaidSupport = true, forceEmailSupport = false, isChatLoaded = true } = {}
+	{
+		isUserEligibleForPaidSupport = true,
+		forceEmailSupport = false,
+		isChatLoaded = true,
+		trackEvent = vi.fn(),
+	} = {}
 ) => {
 	const shownMessage = { ...message, message_id: 1 };
 	( useOdieAssistantContext as Mock ).mockReturnValue( {
@@ -80,11 +85,31 @@ const renderMessage = (
 		forceEmailSupport,
 		isChatRestricted: false,
 		isChatLoaded,
-		trackEvent: vi.fn(),
+		trackEvent,
 	} );
 
 	render( <UserMessage message={ shownMessage } isMessageWithEscalationOption /> );
 };
+
+describe( 'UserMessage support options', () => {
+	beforeEach( () => {
+		mockHasReachedLimit = false;
+	} );
+
+	it( 'records the options it shows', () => {
+		const trackEvent = vi.fn();
+
+		renderMessage( getOdieEmailFallbackMessage(), {
+			isUserEligibleForPaidSupport: false,
+			trackEvent,
+		} );
+
+		expect( trackEvent ).toHaveBeenCalledWith( 'chat_get_support_shown', {
+			location: 'user-message',
+			destinations: 'forum',
+		} );
+	} );
+} );
 
 describe( 'UserMessage when the user has reached the open conversation limit', () => {
 	beforeEach( () => {

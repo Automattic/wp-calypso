@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import a8cForAgencies from 'calypso/state/a8c-for-agencies/reducer';
 import documentHead from 'calypso/state/document-head/reducer';
 import preferences from 'calypso/state/preferences/reducer';
@@ -43,13 +44,13 @@ const renderSubscriptionsList = () =>
 describe( '<SubscriptionsList>', () => {
 	beforeEach( () => {
 		// The table only renders at the desktop breakpoint; narrower viewports get the mobile cards.
-		jest.mocked( window.matchMedia ).mockImplementation(
+		vi.mocked( window.matchMedia ).mockImplementation(
 			( query ) =>
 				( {
 					matches: query === '(min-width: 961px)',
 					media: query,
-					addListener: jest.fn(),
-					removeListener: jest.fn(),
+					addListener: vi.fn(),
+					removeListener: vi.fn(),
 				} ) as unknown as MediaQueryList
 		);
 

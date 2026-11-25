@@ -2,12 +2,12 @@ import { siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useDateRange } from '../../app/hooks/use-date-range';
 import { useIntlLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { DateRangePicker } from '../../components/date-range-picker';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { useDateRange } from '../hooks/use-date-range';
 import { BackupNotices } from './backup-notices';
 import { BackupNowButton } from './backup-now-button';
 import { BackupsBrowser, useBackupsBrowserState } from './backups-browser';
@@ -26,6 +26,7 @@ export interface BackupsNavigation {
 	listPath: string;
 	selectBackup: ( rewindId: string | null ) => void;
 	requestRestore: ( rewindId: string ) => void;
+	restoreLinkTo?: string;
 	requestDownload: ( rewindId: string, downloadId?: number ) => void;
 }
 
@@ -127,6 +128,7 @@ export function BackupsPage( {
 					timezoneString={ timezoneString }
 					gmtOffset={ gmtOffset }
 					searchParams={ searchParams }
+					restoreLinkTo={ navigation.restoreLinkTo }
 					onSelectBackup={ ( selected ) => navigation.selectBackup( selected?.rewind_id ?? null ) }
 					onRequestRestore={ ( selected ) => navigation.requestRestore( selected.rewind_id ) }
 					onRequestDownload={ ( selected ) => navigation.requestDownload( selected.rewind_id ) }

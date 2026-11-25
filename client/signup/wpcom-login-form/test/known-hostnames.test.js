@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 
 import fs from 'fs';
@@ -116,10 +116,11 @@ describe( 'CALYPSO_ONLY_HOSTNAMES', () => {
 		expect( stale ).toEqual( [] );
 	} );
 
+	// Reads every client source file, which is slow while other tests run.
 	test( 'call sites all belong to a section in LOGIN_FORM_SECTIONS', () => {
 		expect( findLoginFormCallSites() ).toEqual( Object.keys( LOGIN_FORM_CALL_SITES ).sort() );
 		expect( [ ...new Set( Object.values( LOGIN_FORM_CALL_SITES ) ) ].sort() ).toEqual(
 			LOGIN_FORM_SECTIONS
 		);
-	} );
+	}, 30_000 );
 } );

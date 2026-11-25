@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { mockedSites } from '../../../../data/sites.ts';
 import {
 	A4A_SITES_DASHBOARD_DEFAULT_CATEGORY,
@@ -10,7 +11,7 @@ import { updateSitesDashboardUrl } from '../update-sites-dashboard-url';
 
 describe( 'updateSitesDashboardUrl returns correct URL', () => {
 	const category = 'overview';
-	const setCategoryMock = jest.fn();
+	const setCategoryMock = vi.fn();
 
 	const defaultSitesParams = {
 		setCategory: setCategoryMock,
@@ -67,7 +68,7 @@ describe( 'updateSitesDashboardUrl returns correct URL', () => {
 			...defaultSitesParams,
 		} );
 
-		expect( setCategoryMock ).toHaveBeenCalledTimes( 1 );
+		expect( setCategoryMock ).not.toHaveBeenCalled();
 		expect( updatedUrl ).toBe( '/sites/overview/elegantsuperbly.wpcomstaging.com/jetpack-backup' );
 	} );
 

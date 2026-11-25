@@ -10,6 +10,8 @@ MAX_DIFF_CHARS=80000
 LOW_CAP_PATHS='^(\.github/workflows/|client/my-sites/checkout/|client/login/|client/server/|client/me/purchases/|client/dashboard/me/billing-purchases/)'
 MEDIUM_CAP_PATHS='^(client/(state|components|lib|layout)/|packages/|config/|package\.json$|yarn\.lock$)'
 TEST_PATHS='(\.test\.|\.spec\.|/test/|__tests__/)'
+UNCAPPED_PATHS='(\.test\.|\.spec\.|/test/|__tests__/|\.snap$|\.md$)'
+AGENT_INSTRUCTION_PATHS='(^|/)(AGENTS|CLAUDE|GEMINI|SKILL)\.md$|^\.(agents|claude|cursor)/|^\.github/agents/|^\.github/scripts/pr-confidence/prompt\.md$'
 
 PR_JSON=$(gh pr view "$PR" --repo "$REPO" --json number,title,body,headRefOid,additions,deletions,changedFiles,files,statusCheckRollup)
 
@@ -19,13 +21,17 @@ SIGNALS=$(jq -c \
 	--arg low "$LOW_CAP_PATHS" \
 	--arg medium "$MEDIUM_CAP_PATHS" \
 	--arg tests "$TEST_PATHS" \
+	--arg uncapped "$UNCAPPED_PATHS" \
+	--arg agent "$AGENT_INSTRUCTION_PATHS" \
 	--argjson fix_here "$FIX_HERE" '
 	[.files[].path] as $paths
+	| [$paths[] | select(test($uncapped) | not)] as $capped_paths
 	| {
 		lines_changed: (.additions + .deletions),
 		files_changed: .changedFiles,
-		sensitive_paths: [$paths[] | select(test($low))],
-		shared_paths: [$paths[] | select(test($medium))],
+		sensitive_paths: [$capped_paths[] | select(test($low))],
+		shared_paths: [$capped_paths[] | select(test($medium))],
+		agent_instruction_paths: [$paths[] | select(test($agent))],
 		tests_changed: any($paths[]; test($tests)),
 		failing_checks: [.statusCheckRollup[]?
 			| select((.conclusion // .state) as $s | ["FAILURE", "ERROR", "TIMED_OUT"] | index($s))
@@ -74,6 +80,7 @@ jq -c \
 	.structured_output as $out
 	| [
 		(if $signals.unresolved_fix_here_comments > 0 then {level: "Low", reason: "unresolved [fix here] review comment", always: true} else empty end),
+		(if ($signals.agent_instruction_paths | length) > 0 then {level: "Low", reason: "changes agent instructions: \($signals.agent_instruction_paths[0])", always: true} else empty end),
 		(if ($signals.sensitive_paths | length) > 0 then {level: "Medium", reason: "touches sensitive paths: \($signals.sensitive_paths[0])"} else empty end),
 		(if ($signals.shared_paths | length) > 0 then {level: "Medium", reason: "touches shared code: \($signals.shared_paths[0])"} else empty end),
 		(if $signals.lines_changed > 1000 then {level: "Medium", reason: "large diff, \($signals.lines_changed) lines"} else empty end)
@@ -85,6 +92,6 @@ jq -c \
 		level: $level,
 		model_level: $out.level,
 		reasons: ([$caps[] | select(.always or ((.level | rank) < ($out.level | rank))) | .reason] + $out.reasons | .[0:3] | map(clean)),
-		signals: ($signals | .sensitive_paths |= map(clean) | .shared_paths |= map(clean) | .failing_checks |= map(clean)),
+		signals: ($signals | .sensitive_paths |= map(clean) | .shared_paths |= map(clean) | .agent_instruction_paths |= map(clean) | .failing_checks |= map(clean)),
 		cost_usd: (.total_cost_usd // 0)
 	}' <<<"$RESULT"

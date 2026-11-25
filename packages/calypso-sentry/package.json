@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-sentry",
-	"version": "1.1.0",
+	"version": "2.0.0",
 	"description": "A wrapper of the sentry for Calypso.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -40,7 +40,7 @@
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
-		"@sentry/react": "^7.120.4",
+		"@sentry/react": "^10.78.0",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {
@@ -49,7 +49,7 @@
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {

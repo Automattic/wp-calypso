@@ -27,7 +27,7 @@ export default function SecurityConnectedAppsSummary( { density }: { density?: D
 						connectedApplicationsCount
 					)
 				: __( 'No connected applications' ),
-			intent: connectedApplicationsCount ? 'informational' : 'draft',
+			intent: connectedApplicationsCount ? 'informational' : 'none',
 		},
 	];
 

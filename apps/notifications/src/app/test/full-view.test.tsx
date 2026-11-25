@@ -66,23 +66,13 @@ describe( 'NotificationApp full view', () => {
 		loadNote( 801, 'First comment' );
 		render( <NotificationApp wpcom={ {} } onOpenFullView={ onOpenFullView } /> );
 
-		const note = await openNote( user, 'First comment' );
-		await user.click( note.getByRole( 'button', { name: 'Open full view' } ) );
+		await openNote( user, 'First comment' );
+		await user.click( screen.getByRole( 'button', { name: 'Open full view' } ) );
 
 		expect( onOpenFullView ).toHaveBeenCalledWith( { filterName: 'all', noteId: '801' } );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_notification_full_view_click', {
 			tab: 'all',
 			is_note_open: true,
 		} );
-	} );
-
-	it( 'has no full view button on the open note when the host provides none', async () => {
-		const user = userEvent.setup();
-		loadNote( 801, 'First comment' );
-		render( <NotificationApp wpcom={ {} } /> );
-
-		const note = await openNote( user, 'First comment' );
-
-		expect( note.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -22,9 +22,11 @@
 		"teamcity:build-app": "yarn run build"
 	},
 	"dependencies": {
+		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@babel/runtime": "^8.1.0",
+		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/api-fetch": "^8.2.0",
 		"@wordpress/base-styles": "^15.1.0",
 		"@wordpress/block-editor": "^20.1.0",
@@ -33,8 +35,6 @@
 		"@wordpress/compose": "^9.2.0",
 		"@wordpress/data": "^11.2.0",
 		"@wordpress/dom-ready": "^5.2.0",
-		"@wordpress/edit-post": "^9.2.0",
-		"@wordpress/edit-site": "^8.2.0",
 		"@wordpress/editor": "^16.2.0",
 		"@wordpress/element": "^10.2.0",
 		"@wordpress/hooks": "^5.2.0",
@@ -57,8 +57,8 @@
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-config": "workspace:^",
+		"@automattic/data-stores": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^7.2.0",
-		"npm-run-all": "^4.1.5",
 		"postcss": "^8.5.32",
 		"webpack": "^5.111.1",
 		"webpack-bundle-analyzer": "^5.4.0"

@@ -1,20 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import InlineHelpSearchCard from '../inline-help-search-card';
 
-const mockRecordTracksEvent = recordTracksEvent as jest.Mock;
+const mockRecordTracksEvent = recordTracksEvent as Mock;
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >(
+		'@automattic/calypso-analytics'
+	) ),
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/components/search-card', () => ( {
+vi.mock( 'calypso/components/search-card', () => ( {
 	__esModule: true,
 	default: ( { onSearch }: { onSearch: ( query: string ) => void } ) => (
 		<input

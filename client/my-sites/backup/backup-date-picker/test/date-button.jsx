@@ -12,10 +12,6 @@ jest.mock( 'react-redux', () => ( {
 jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
-jest.mock( '../hooks', () => ( {
-	...jest.requireActual( '../hooks' ),
-	useCanGoToDate: jest.fn(),
-} ) );
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

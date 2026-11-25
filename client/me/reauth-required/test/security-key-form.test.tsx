@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SecurityKeyForm } from '../security-key-form';
 
-jest.mock( 'calypso/lib/logstash', () => ( {
+vi.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: () => Promise.resolve(),
 } ) );
 
 describe( 'SecurityKeyForm', () => {
 	const currentUserId = 123;
 	const translate = ( str: string ) => str;
-	const loginUserWithSecurityKey = jest.fn();
-	const fetch = jest.fn();
+	const loginUserWithSecurityKey = vi.fn();
+	const fetch = vi.fn();
 
 	const setup = () =>
 		render(
@@ -28,7 +29,7 @@ describe( 'SecurityKeyForm', () => {
 		);
 
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	test( 'prompts immediately and shows spinner and waiting message', async () => {

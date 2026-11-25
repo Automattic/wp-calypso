@@ -1,4 +1,4 @@
-import { getThemeFilterTermsTable } from 'calypso/state/themes/selectors';
+import { getThemeFilterTermsTable } from 'calypso/state/themes/selectors/get-theme-filter-terms-table';
 import { state } from './fixtures/theme-filters';
 
 describe( 'getThemeFilterTermsTable()', () => {

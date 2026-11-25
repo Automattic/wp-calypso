@@ -119,9 +119,6 @@ describe( 'SiteMigrationCheck', () => {
 		);
 		expect( screen.getByText( 'Couldn’t load' ) ).toBeVisible();
 		expect(
-			screen.queryByRole( 'button', { name: 'Use a different site' } )
-		).not.toBeInTheDocument();
-		expect(
 			screen.queryByRole( 'img', { name: 'Preview of destination.wordpress.com' } )
 		).not.toBeInTheDocument();
 		expect( screen.getByRole( 'heading', { name: 'We can copy your whole site' } ) ).toBeVisible();

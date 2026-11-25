@@ -1,10 +1,8 @@
 import apiFetch from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
-import { WEBMCP_SERVER_ABILITY_NAMES } from './contracts';
+import { isWebMcpServerAbilityName } from './contracts';
 import type { ToolProvider } from '../extension-types';
 import type { Ability } from '@wordpress/abilities';
-
-const SERVER_ABILITY_NAMES = new Set< string >( WEBMCP_SERVER_ABILITY_NAMES );
 
 function markServerRegistered( ability: Ability ): Ability {
 	return {
@@ -19,7 +17,11 @@ function markServerRegistered( ability: Ability ): Ability {
 	};
 }
 
-export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProvider {
+/**
+ * Adds the allowlisted server abilities from the site's Abilities REST API, in place of any
+ * same-named ability, and runs them over GET.
+ */
+export function withServerAbilities( toolProvider: ToolProvider ): ToolProvider {
 	let serverAbilitiesPromise: Promise< Ability[] > | undefined;
 	let didWarnAboutServerAbilities = false;
 
@@ -34,7 +36,7 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 			} )
 				.then( ( abilities ) =>
 					abilities
-						.filter( ( ability ) => SERVER_ABILITY_NAMES.has( ability.name ) )
+						.filter( ( ability ) => isWebMcpServerAbilityName( ability.name ) )
 						.map( markServerRegistered )
 				)
 				.catch( ( error ) => {
@@ -70,23 +72,13 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 			];
 		},
 		executeAbility: async ( name, input ) => {
-			if ( ! SERVER_ABILITY_NAMES.has( name ) ) {
+			if ( ! isWebMcpServerAbilityName( name ) ) {
 				return toolProvider.executeAbility( name, input );
 			}
 
 			const ability = ( await getServerAbilities() ).find( ( item ) => item.name === name );
 			if ( ! ability ) {
 				throw new Error( `WebMCP server ability is unavailable: ${ name }` );
-			}
-
-			if ( ability.meta?.annotations?.readonly !== true ) {
-				return apiFetch( {
-					method: 'POST',
-					path: addQueryArgs( `/wp-abilities/v1/abilities/${ name }/run`, {
-						webmcp: 1,
-					} ),
-					data: { input },
-				} );
 			}
 
 			return apiFetch( {

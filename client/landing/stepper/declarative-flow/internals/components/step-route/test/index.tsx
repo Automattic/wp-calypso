@@ -10,7 +10,6 @@ import { MemoryRouter } from 'react-router';
 import recordStepComplete from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
-import { useSelectedDesign } from 'calypso/landing/stepper/hooks/use-selected-design';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import {
 	getSignupCompleteFlowName,
@@ -32,7 +31,6 @@ jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start' );
 jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete' );
 jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
-jest.mock( 'calypso/landing/stepper/hooks/use-selected-design' );
 jest.mock( 'calypso/lib/analytics/page-view' );
 jest.mock( '../../../analytics/record-page-view' );
 
@@ -103,7 +101,6 @@ describe( 'StepRoute', () => {
 			value: { ...originalLocation, assign: jest.fn() },
 		} );
 		( useIntent as jest.Mock ).mockReturnValue( 'build' );
-		( useSelectedDesign as jest.Mock ).mockReturnValue( { design_type: 'premium' } );
 	} );
 
 	beforeEach( () => {

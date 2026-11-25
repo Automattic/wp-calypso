@@ -66,5 +66,3 @@ export default function SomeComponent() {
 	);
 }
 ```
-
-See [`docs/example.jsx`](docs/example.jsx) for a full-featured example.

@@ -1,14 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import UkAddressFieldset from '../uk-address-fieldset';
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( x ) => x,
-	translate: ( x ) => x,
-	useTranslate: () => ( x ) => x,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		localize: ( x ) => x,
+		translate: ( x ) => x,
+		useTranslate: () => ( x ) => x,
+	} )
+);
 
 describe( 'UK Address Fieldset', () => {
 	const defaultProps = {

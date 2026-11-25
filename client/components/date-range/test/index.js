@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
@@ -8,10 +8,11 @@ import { translate } from 'i18n-calypso';
 import MockDate from 'mockdate';
 import moment from 'moment';
 import { createRef } from 'react';
+import { vi } from 'vitest';
 import { DateRange } from '../index.jsx';
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual( '@wordpress/compose' ) ),
 	debounce: ( fn ) => fn,
 } ) );
 
@@ -32,7 +33,7 @@ function renderInContentArea( props = {}, initialRect = {} ) {
 	);
 	const result = render( renderDateRange() );
 	const contentArea = result.container.querySelector( '.main' );
-	jest.spyOn( contentArea, 'getBoundingClientRect' ).mockImplementation( () => contentAreaRect );
+	vi.spyOn( contentArea, 'getBoundingClientRect' ).mockImplementation( () => contentAreaRect );
 
 	return {
 		...result,

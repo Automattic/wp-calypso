@@ -51,6 +51,7 @@
 		"update-tlds": "node ./bin/update-tlds.mjs"
 	},
 	"dependencies": {
+		"@automattic/api-core": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
@@ -85,9 +86,14 @@
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@storybook/addon-a11y": "^10.6.5",
+		"@storybook/react": "^10.6.5",
 		"@testing-library/dom": "^10.4.2",
+		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
+		"@testing-library/user-event": "^14.6.10",
 		"@wordpress/base-styles": "^15.1.0",
+		"@wordpress/element": "^10.2.0",
+		"@wordpress/i18n": "^7.2.0",
 		"copyfiles": "^2.4.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
@@ -95,7 +101,7 @@
 		"sass-loader": "^16.0.8",
 		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0",
 		"webpack": "^5.111.1"
 	}

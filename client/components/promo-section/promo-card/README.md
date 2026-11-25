@@ -5,12 +5,12 @@ A [`Card` component](../../components/card) based on [`ActionPanel`](../../compo
 ## Usage
 
 ```jsx
-import referralImage from 'calypso/assets/images/earn/referral.svg';
+import backupImage from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import PromoCard from 'calypso/my-sites/promo-section/promo-card';
 
 const PromoCardExample = () => {
 	const img = {
-		path: referralImage,
+		path: backupImage,
 		alt: 'Using Props',
 	};
 	const clicked = () => alert( 'Clicked!' );

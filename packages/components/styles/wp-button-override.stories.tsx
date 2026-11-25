@@ -3,6 +3,7 @@ import { Button } from './storybook-utils/typed-wp-components';
 import type { Meta, StoryObj } from '@storybook/react';
 
 // Not using a relative path here to ensure that the build is working.
+// eslint-disable-next-line import/no-extraneous-dependencies -- The package importing itself through its exports.
 import '@automattic/components/styles/wp-button-override.scss';
 
 /**

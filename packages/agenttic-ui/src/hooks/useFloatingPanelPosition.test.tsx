@@ -500,8 +500,9 @@ describe( 'useFloatingPanelPosition', () => {
 
 			// Repeated grow keeps pinning the (new) right edge: 500 pre-grow width
 			// this time, Δ = 100, x = 300 - 100 = 200.
+			// `jump`, not `set`: `set` leaves the first spring running, and a later frame of it can overwrite x.
 			await act( async () => {
-				result.x.set( 300 );
+				result.x.jump( 300 );
 			} );
 			animateSpy.mockClear();
 			await act( async () => {

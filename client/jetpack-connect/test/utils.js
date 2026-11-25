@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { navigate } from 'calypso/lib/navigate';
 import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 import {
@@ -15,15 +16,17 @@ import {
 	redirect,
 } from '../utils';
 
-jest.mock( '@automattic/calypso-config', () => ( input ) => {
-	const lookupTable = {
-		env_id: 'mocked-test-env-id',
-	};
-	if ( input in lookupTable ) {
-		return lookupTable[ input ];
-	}
-	throw new Error( 'Unrecognized input to mocked config' );
-} );
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: ( input ) => {
+		const lookupTable = {
+			env_id: 'mocked-test-env-id',
+		};
+		if ( input in lookupTable ) {
+			return lookupTable[ input ];
+		}
+		throw new Error( 'Unrecognized input to mocked config' );
+	},
+} ) );
 
 describe( 'addCalypsoEnvQueryArg', () => {
 	test( 'should add config env_id as calypso_env', () => {
@@ -230,13 +233,15 @@ describe( 'authQueryTransformer plugins param', () => {
 	} );
 } );
 
-jest.mock( 'calypso/lib/navigate', () => ( {
-	navigate: jest.fn(),
+vi.mock( 'calypso/lib/navigate', () => ( {
+	navigate: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-router', () => ( {
-	redirect: jest.fn(),
-} ) );
+vi.mock( '@automattic/calypso-router', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		redirect: vi.fn(),
+	} )
+);
 
 describe( 'redirect', () => {
 	beforeEach( () => {

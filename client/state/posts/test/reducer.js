@@ -1,16 +1,13 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	EDITOR_STOP,
-	POST_DELETE,
-	POST_DELETE_SUCCESS,
-	POST_DELETE_FAILURE,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
 	POST_RESTORE,
 	POST_RESTORE_FAILURE,
-	POST_SAVE,
 	POST_SAVE_SUCCESS,
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
@@ -28,7 +25,7 @@ import reducer, {
 } from '../reducer';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
@@ -96,19 +93,6 @@ describe( 'reducer', () => {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 				'6c831c187ffef321eb43a67761a525a3': [ 2916284, 413 ],
 			} );
-		} );
-
-		test( 'should remove an item when delete action is dispatched', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-			} );
-			const state = items( original, {
-				type: POST_DELETE_SUCCESS,
-				siteId: 2916284,
-				postId: 841,
-			} );
-
-			expect( state ).toEqual( {} );
 		} );
 
 		test( 'should persist state', () => {
@@ -453,139 +437,6 @@ describe( 'reducer', () => {
 
 			expect( state[ 2916284 ].getItem( 841 ).status ).toEqual( 'trash' );
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).toHaveLength( 1 );
-		} );
-
-		test( 'should apply save actions as partial received posts', () => {
-			const original = deepFreeze(
-				queries( deepFreeze( {} ), {
-					type: POSTS_REQUEST_SUCCESS,
-					siteId: 2916284,
-					query: { search: 'Hello' },
-					found: 1,
-					posts: [
-						{
-							ID: 841,
-							site_ID: 2916284,
-							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-							title: 'Hello World',
-							status: 'draft',
-							type: 'post',
-						},
-					],
-				} )
-			);
-
-			const state = queries( original, {
-				type: POST_SAVE,
-				siteId: 2916284,
-				postId: 841,
-				post: {
-					status: 'trash',
-				},
-			} );
-
-			expect( state[ 2916284 ].getItem( 841 ) ).toEqual( {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World',
-				status: 'trash',
-				type: 'post',
-			} );
-		} );
-
-		test( 'should apply pending delete status on delete actions', () => {
-			let original = deepFreeze( {} );
-			original = queries( original, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: 2916284,
-				query: { status: 'trash' },
-				found: 1,
-				posts: [
-					{
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '48b6010b559efe6a77a429773e0cbf12',
-						title: 'Trashed',
-						status: 'trash',
-						type: 'post',
-					},
-				],
-			} );
-
-			const state = queries( original, {
-				type: POST_DELETE,
-				siteId: 2916284,
-				postId: 841,
-			} );
-
-			expect( state[ 2916284 ].getItem( 841 ).status ).toEqual( '__DELETE_PENDING' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).toHaveLength( 0 );
-		} );
-
-		test( 'should restore item when post delete fails', () => {
-			let original = deepFreeze( {} );
-			original = queries( original, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: 2916284,
-				query: { status: 'trash' },
-				found: 1,
-				posts: [
-					{
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '48b6010b559efe6a77a429773e0cbf12',
-						title: 'Trashed',
-						status: 'trash',
-						type: 'post',
-					},
-				],
-			} );
-			original = queries( original, {
-				type: POST_DELETE,
-				siteId: 2916284,
-				postId: 841,
-			} );
-
-			expect( original[ 2916284 ].getItems( { status: 'trash' } ) ).toHaveLength( 0 );
-
-			const state = queries( original, {
-				type: POST_DELETE_FAILURE,
-				siteId: 2916284,
-				postId: 841,
-			} );
-
-			expect( state[ 2916284 ].getItem( 841 ).status ).toEqual( 'trash' );
-			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).toHaveLength( 1 );
-		} );
-
-		test( 'should remove item when post delete action success dispatched', () => {
-			const original = deepFreeze(
-				queries( deepFreeze( {} ), {
-					type: POSTS_REQUEST_SUCCESS,
-					siteId: 2916284,
-					query: { search: 'Hello' },
-					found: 1,
-					posts: [
-						{
-							ID: 841,
-							site_ID: 2916284,
-							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-							title: 'Hello World',
-							status: 'trash',
-							type: 'post',
-						},
-					],
-				} )
-			);
-
-			const state = queries( original, {
-				type: POST_DELETE_SUCCESS,
-				siteId: 2916284,
-				postId: 841,
-			} );
-
-			expect( state[ 2916284 ].getItems() ).toHaveLength( 0 );
 		} );
 
 		test( 'should persist state', () => {
@@ -1590,139 +1441,6 @@ describe( 'reducer', () => {
 
 			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).toEqual( 'trash' );
 			expect( state.getItems( { status: 'trash' } ) ).toHaveLength( 1 );
-		} );
-
-		test( 'should apply save actions as partial received posts', () => {
-			const original = deepFreeze(
-				allSitesQueries( undefined, {
-					type: POSTS_REQUEST_SUCCESS,
-					siteId: null,
-					query: { search: 'Hello' },
-					found: 1,
-					posts: [
-						{
-							ID: 841,
-							site_ID: 2916284,
-							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-							title: 'Hello World',
-							status: 'draft',
-							type: 'post',
-						},
-					],
-				} )
-			);
-
-			const state = allSitesQueries( original, {
-				type: POST_SAVE,
-				siteId: 2916284,
-				postId: 841,
-				post: {
-					status: 'trash',
-				},
-			} );
-
-			expect( state.getItem( '3d097cb7c5473c169bba0eb8e3c6cb64' ) ).toEqual( {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World',
-				status: 'trash',
-				type: 'post',
-			} );
-		} );
-
-		test( 'should apply pending delete status on delete actions', () => {
-			const original = allSitesQueries( undefined, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: null,
-				query: { status: 'trash' },
-				found: 1,
-				posts: [
-					{
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '48b6010b559efe6a77a429773e0cbf12',
-						title: 'Trashed',
-						status: 'trash',
-						type: 'post',
-					},
-				],
-			} );
-
-			const state = allSitesQueries( original, {
-				type: POST_DELETE,
-				siteId: 2916284,
-				postId: 841,
-			} );
-
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).toEqual(
-				'__DELETE_PENDING'
-			);
-			expect( state.getItems( { status: 'trash' } ) ).toHaveLength( 0 );
-		} );
-
-		test( 'should restore item when post delete fails', () => {
-			let original = allSitesQueries( undefined, {
-				type: POSTS_REQUEST_SUCCESS,
-				siteId: null,
-				query: { status: 'trash' },
-				found: 1,
-				posts: [
-					{
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '48b6010b559efe6a77a429773e0cbf12',
-						title: 'Trashed',
-						status: 'trash',
-						type: 'post',
-					},
-				],
-			} );
-			original = allSitesQueries( original, {
-				type: POST_DELETE,
-				siteId: 2916284,
-				postId: 841,
-			} );
-
-			expect( original.getItems( { status: 'trash' } ) ).toHaveLength( 0 );
-
-			const state = allSitesQueries( original, {
-				type: POST_DELETE_FAILURE,
-				siteId: 2916284,
-				postId: 841,
-			} );
-
-			expect( state.getItem( '48b6010b559efe6a77a429773e0cbf12' ).status ).toEqual( 'trash' );
-			expect( state.getItems( { status: 'trash' } ) ).toHaveLength( 1 );
-		} );
-
-		test( 'should remove item when post delete action success dispatched', () => {
-			const original = deepFreeze(
-				allSitesQueries( undefined, {
-					type: POSTS_REQUEST_SUCCESS,
-					siteId: null,
-					query: { search: 'Hello' },
-					found: 1,
-					posts: [
-						{
-							ID: 841,
-							site_ID: 2916284,
-							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-							title: 'Hello World',
-							status: 'trash',
-							type: 'post',
-						},
-					],
-				} )
-			);
-
-			const state = allSitesQueries( original, {
-				type: POST_DELETE_SUCCESS,
-				siteId: 2916284,
-				postId: 841,
-			} );
-
-			expect( state.getItems() ).toHaveLength( 0 );
 		} );
 
 		test( 'should persist state', () => {

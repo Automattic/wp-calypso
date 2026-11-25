@@ -40,7 +40,7 @@ is useful to track and inspect actions flowing through the store.
 The `actionLog.filter( query )` and `actionLog.watch( query )` accept a `query`. The following types
 are valid queries which are useful for different situations:
 
-- `string`: `actionLog.filter( "COMMENTS_LIKE" )` - Match actions whose type exactly matches the
+- `string`: `actionLog.filter( "ROUTE_SET" )` - Match actions whose type exactly matches the
   string.
 
 - `RexExp`: `actionLog.filter( /^comments_/i )` - Match actions whose type is matched by the RegExp.
@@ -59,7 +59,7 @@ are not snippets of bundled JavaScript from Calypso.
 actionLog.history;
 
 // return a subset of the recorded actions filtering on the `action.type`
-actionLog.filter( 'COMMENTS_LIKE' );
+actionLog.filter( 'ROUTE_SET' );
 
 // Watch actions in the console by string, RegExp or Predicate Function.
 // The same types of query arguments may be used with `actionLog.filter`.

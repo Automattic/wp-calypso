@@ -40,7 +40,7 @@ import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { canSwitchEnvironment } from '../features';
-import SidebarEnvironmentSwitcher from '../site/sidebar-environment-switcher';
+import SidebarEnvironmentSwitcher from '../staging-site/components/sidebar-environment-switcher';
 import SiteSwitcherItem from './site-switcher-item';
 import type { Site } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';

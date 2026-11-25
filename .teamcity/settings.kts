@@ -74,7 +74,6 @@ project {
 		password("mc_teamcity_webhook", "credentialsJSON:7a711930-afd4-4058-b33f-39af8a0b7f91", display = ParameterDisplay.HIDDEN)
 		password("TRANSLATE_GH_APP_SECRET", "credentialsJSON:083cc9f7-4e9a-461f-b213-bc306baaeb28", display = ParameterDisplay.HIDDEN)
 		password("TRANSLATE_GH_APP_ID", "credentialsJSON:c03b1958-5ec3-4f4c-ab1c-ca1bf0e629f5", display = ParameterDisplay.HIDDEN)
-		password("SENTRY_AUTH_TOKEN", "credentialsJSON:e266a488-d639-4baa-b681-0e11be59ebc1", display = ParameterDisplay.HIDDEN)
 
 		// Fetch all heads. This is used for builds that merge trunk before running tests
 		param("teamcity.git.fetchAllHeads", "true")
@@ -368,7 +367,7 @@ object BuildToolchainPreviewImages : BuildType({
 				set -euo pipefail
 
 				docker run --rm --entrypoint /bin/bash registry.a8c.com/calypso/ci-wpcom:%build.number% -lc \
-					'php -v && composer --version && docker-compose version && sentry-cli --version'
+					'php -v && composer --version && docker-compose version'
 			""".trimIndent()
 		}
 		script {

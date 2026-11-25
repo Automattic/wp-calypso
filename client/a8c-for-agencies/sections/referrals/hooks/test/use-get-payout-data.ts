@@ -1,31 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import * as getNextPayoutDate from '../../lib/get-next-payout-date';
 import useGetPayoutData from '../use-get-payout-data';
 
 // Mock the dependencies
-jest.mock( '../../lib/get-next-payout-date' );
+vi.mock( '../../lib/get-next-payout-date' );
 
-const mockGetNextPayoutDate = getNextPayoutDate.getNextPayoutDate as jest.MockedFunction<
+const mockGetNextPayoutDate = getNextPayoutDate.getNextPayoutDate as MockedFunction<
 	typeof getNextPayoutDate.getNextPayoutDate
 >;
-const mockGetCurrentCyclePayoutDate =
-	getNextPayoutDate.getCurrentCyclePayoutDate as jest.MockedFunction<
-		typeof getNextPayoutDate.getCurrentCyclePayoutDate
-	>;
+const mockGetCurrentCyclePayoutDate = getNextPayoutDate.getCurrentCyclePayoutDate as MockedFunction<
+	typeof getNextPayoutDate.getCurrentCyclePayoutDate
+>;
 const mockGetNextPayoutDateActivityWindow =
-	getNextPayoutDate.getNextPayoutDateActivityWindow as jest.MockedFunction<
+	getNextPayoutDate.getNextPayoutDateActivityWindow as MockedFunction<
 		typeof getNextPayoutDate.getNextPayoutDateActivityWindow
 	>;
 const mockGetCurrentCycleActivityWindow =
-	getNextPayoutDate.getCurrentCycleActivityWindow as jest.MockedFunction<
+	getNextPayoutDate.getCurrentCycleActivityWindow as MockedFunction<
 		typeof getNextPayoutDate.getCurrentCycleActivityWindow
 	>;
 const mockAreNextAndCurrentPayoutDatesEqual =
-	getNextPayoutDate.areNextAndCurrentPayoutDatesEqual as jest.MockedFunction<
+	getNextPayoutDate.areNextAndCurrentPayoutDatesEqual as MockedFunction<
 		typeof getNextPayoutDate.areNextAndCurrentPayoutDatesEqual
 	>;
 
@@ -58,7 +58,7 @@ describe( 'useGetPayoutData', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetNextPayoutDate.mockReturnValue( mockNextPayoutDate );
 		mockGetCurrentCyclePayoutDate.mockReturnValue( mockCurrentCyclePayoutDate );
 		mockGetNextPayoutDateActivityWindow.mockReturnValue( mockNextPayoutWindow );

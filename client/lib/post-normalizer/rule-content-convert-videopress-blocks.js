@@ -1,5 +1,7 @@
 import readerContentWidth from 'calypso/reader/lib/content-width';
 
+const HTML_NS = 'http://www.w3.org/1999/xhtml';
+
 export default function convertVideoPressBlocks( post, dom ) {
 	const videoPresses = dom.querySelectorAll(
 		'.wp-block-video.wp-block-embed.is-type-video.is-provider-videopress'
@@ -9,6 +11,11 @@ export default function convertVideoPressBlocks( post, dom ) {
 
 	//Loop through each VideoPress block and replace it with an iframe
 	Array.from( videoPresses ).forEach( ( videoPress ) => {
+		// An HTML iframe inside SVG or MathML would be parsed as a different element on render.
+		if ( videoPress.namespaceURI !== HTML_NS ) {
+			return;
+		}
+
 		const src = videoPress.querySelector( '.wp-block-embed__wrapper' )?.textContent?.trim();
 		// Check URL to video is valid before creating iframe
 		if ( ! src || ! src.startsWith( 'https://videopress.com/v/' ) ) {

@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import ReaderFullPostActionBar from '../action-bar';
 
-jest.mock( 'calypso/reader/follow-button', () => jest.fn( () => null ) );
-jest.mock( 'calypso/blocks/comment-button', () => () => null );
-jest.mock( 'calypso/blocks/post-edit-button', () => () => null );
-jest.mock( 'calypso/reader/like-button', () => () => null );
+vi.mock( 'calypso/reader/follow-button', () => ( { default: vi.fn( () => null ) } ) );
+vi.mock( 'calypso/blocks/comment-button', () => ( { default: () => null } ) );
+vi.mock( 'calypso/blocks/post-edit-button', () => ( { default: () => null } ) );
+vi.mock( 'calypso/reader/like-button', () => ( { default: () => null } ) );
 
 describe( 'ReaderFullPostActionBar', () => {
 	it( 'passes the follow callbacks to the subscribe button', () => {
-		const onFollowToggle = jest.fn();
-		const onFollowSuccess = jest.fn();
+		const onFollowToggle = vi.fn();
+		const onFollowSuccess = vi.fn();
 
 		render(
 			<ReaderFullPostActionBar

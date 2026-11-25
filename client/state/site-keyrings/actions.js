@@ -4,12 +4,8 @@ import {
 	SITE_KEYRINGS_REQUEST_FAILURE,
 	SITE_KEYRINGS_REQUEST_SUCCESS,
 	SITE_KEYRINGS_SAVE_SUCCESS,
-	SITE_KEYRINGS_DELETE,
-	SITE_KEYRINGS_DELETE_FAILURE,
 	SITE_KEYRINGS_DELETE_SUCCESS,
-	SITE_KEYRINGS_UPDATE,
 	SITE_KEYRINGS_UPDATE_SUCCESS,
-	SITE_KEYRINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/site-keyrings/init';
@@ -65,13 +61,6 @@ export function createSiteKeyring( siteId, keyring ) {
 
 export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_KEYRINGS_UPDATE,
-			siteId,
-			keyringId,
-			externalUserId,
-		} );
-
 		return wpcom.req
 			.post(
 				`/sites/${ siteId }/keyrings/${ keyringId }`,
@@ -91,14 +80,6 @@ export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
 				return body;
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: SITE_KEYRINGS_UPDATE_FAILURE,
-					siteId,
-					keyringId,
-					externalUserId,
-					error,
-				} );
-
 				return Promise.reject( error );
 			} );
 	};
@@ -106,13 +87,6 @@ export function updateSiteKeyring( siteId, keyringId, externalUserId ) {
 
 export function deleteSiteKeyring( siteId, keyringId, externalUserId = null ) {
 	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_KEYRINGS_DELETE,
-			siteId,
-			keyringId,
-			externalUserId,
-		} );
-
 		return wpcom.req
 			.post(
 				`/sites/${ siteId }/keyrings/${ keyringId }/delete`,
@@ -132,14 +106,6 @@ export function deleteSiteKeyring( siteId, keyringId, externalUserId = null ) {
 				return body;
 			} )
 			.catch( ( error ) => {
-				dispatch( {
-					type: SITE_KEYRINGS_DELETE_FAILURE,
-					error,
-					siteId,
-					keyringId,
-					externalUserId,
-				} );
-
 				return Promise.reject( error );
 			} );
 	};

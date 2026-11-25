@@ -11,6 +11,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { useWaitForAtomic, FailureInfo } from '../../../../hooks/use-wait-for-atomic';
 import { ONBOARD_STORE } from '../../../../stores';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
+import { getTransferRedirectTo } from './redirect-to';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 
@@ -106,14 +107,14 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 			setProgress( 50 );
 			await waitForFeature();
 			setProgress( 75 );
-			await waitForLatestSiteData();
+			const latestSite = await waitForLatestSiteData();
 			setProgress( 100 );
 
 			return {
 				finishedWaitingForAtomic: true,
 				siteId,
 				siteSlug: data?.siteSlug,
-				redirectTo: searchParams.get( 'redirect_to' ),
+				redirectTo: getTransferRedirectTo( searchParams.get( 'redirect_to' ), site, latestSite ),
 			};
 		} );
 

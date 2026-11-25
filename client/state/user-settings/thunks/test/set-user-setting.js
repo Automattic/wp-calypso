@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
@@ -6,7 +7,7 @@ import setUserSetting from '../set-user-setting';
 
 describe( 'setUserSetting()', () => {
 	test( 'should store the new value to unsaved settings', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const getState = () => ( {
 			userSettings: {
 				settings: { foo: 'bar' },
@@ -24,7 +25,7 @@ describe( 'setUserSetting()', () => {
 	} );
 
 	test( 'should remove the value from unsaved settings after it is reset to original value', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const getState = () => ( {
 			userSettings: {
 				settings: { foo: 'bar' },
@@ -41,7 +42,7 @@ describe( 'setUserSetting()', () => {
 	} );
 
 	test( 'should ignore update of a setting that is not already in the server data', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const getState = () => ( {
 			userSettings: {
 				settings: { foo: 'bar' },
@@ -55,7 +56,7 @@ describe( 'setUserSetting()', () => {
 	} );
 
 	test( 'should not consider settings unchanged when set back to original values for `user_login`', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const getState = () => ( {
 			userSettings: {
 				settings: {
@@ -78,7 +79,7 @@ describe( 'setUserSetting()', () => {
 
 	describe( 'language settings', () => {
 		test( 'should treat root language as an unsaved setting when its locale variant is activated', () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			const getState = () => ( {
 				userSettings: {
 					settings: {
@@ -99,7 +100,7 @@ describe( 'setUserSetting()', () => {
 		} );
 
 		test( 'should treat same locale variant language as an already-saved setting', () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			const getState = () => ( {
 				userSettings: {
 					settings: {
@@ -119,7 +120,7 @@ describe( 'setUserSetting()', () => {
 		} );
 
 		test( 'should treat new root language as an unsaved setting', () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 			const getState = () => ( {
 				userSettings: {
 					settings: {

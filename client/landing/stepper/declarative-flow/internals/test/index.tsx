@@ -27,7 +27,6 @@ jest.mock( 'calypso/landing/stepper/hooks/use-sync-route', () => ( {
 	default: () => {},
 } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
-jest.mock( 'calypso/landing/stepper/hooks/use-selected-design' );
 jest.mock( 'calypso/landing/stepper/utils/performance-tracking', () => ( {
 	useStartStepperPerformanceTracking: () => {},
 	StepperPerformanceTrackerStop: () => null,

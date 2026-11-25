@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import ReaderAuthorLink, { ReaderLinkAuthor } from '../index';
 
-jest.mock( 'calypso/reader/stats', () => ( {
+vi.mock( 'calypso/reader/stats', () => ( {
 	recordAction: () => {},
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},

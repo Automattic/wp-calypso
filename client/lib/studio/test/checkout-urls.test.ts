@@ -4,7 +4,6 @@ import {
 	STUDIO_DEFAULT_BACK_URL,
 	STUDIO_WEB_HOSTS,
 	STUDIO_WEB_ORIGINS,
-	STUDIO_WEB_APP_URL,
 } from '../checkout-urls';
 
 describe( 'Studio checkout URLs', () => {
@@ -16,9 +15,8 @@ describe( 'Studio checkout URLs', () => {
 		] );
 	} );
 
-	test( 'sends back and close to the landing site, and Go to Studio to the web app', () => {
+	test( 'sends back and close to the landing site', () => {
 		expect( STUDIO_DEFAULT_BACK_URL ).toBe( 'https://wordpress.studio/' );
-		expect( STUDIO_WEB_APP_URL ).toBe( 'https://app.wordpress.studio/' );
 	} );
 } );
 

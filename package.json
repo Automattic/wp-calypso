@@ -54,7 +54,7 @@
 		]
 	},
 	"engines": {
-		"node": "^v24.22.1",
+		"node": "^v24.22.3",
 		"yarn": "^4.0.0"
 	},
 	"scripts": {
@@ -69,12 +69,11 @@
 		"build-css": "run-p -s 'build-css:*'",
 		"build-css:reader-mobile": "node bin/render-stylesheet.js --in client/assets/stylesheets/reader-mobile.scss --out public/reader-mobile.css && yarn run postcss public/reader-mobile.css",
 		"build-desktop": "cd desktop && yarn run build",
-		"build-desktop:app": "cd desktop && yarn run build",
 		"build-desktop:config": "cd desktop && yarn run build:config",
 		"build-docker": "node bin/build-docker.js",
 		"build-languages": "yarn run translate && node bin/build-languages.js",
 		"build-languages-if-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || node bin/build-languages.js",
-		"build-packages": "{ [ \"${SKIP_TSC:-}\" = \"true\" ] || tsc --build packages/tsconfig.json; } && yarn workspaces foreach --all --parallel --topological --verbose run prepare",
+		"build-packages": "{ [ \"${SKIP_TSC:-}\" = \"true\" ] || tsc --build packages/tsconfig.json; } && yarn workspaces foreach --all --parallel --topological -vv run prepare",
 		"build-packages:apps": "bash ./bin/build-packages-apps.sh",
 		"build-packages:unit-tests": "bash ./bin/build-packages-unit-tests.sh",
 		"build-packages:web": "bash ./bin/build-packages-web.sh",
@@ -86,7 +85,7 @@
 		"calypso-doctor": "./node_modules/.bin/calypso-doctor",
 		"clean": "yarn run clean:packages && yarn run clean:build && yarn run clean:public && yarn run clean:translations",
 		"clean:build": "rm -rf build client/server/bundler/*.json || true",
-		"clean:packages": "yarn workspaces foreach --all --parallel --verbose --exclude 'wp-calypso' run clean",
+		"clean:packages": "yarn workspaces foreach --all --parallel -vv --exclude 'wp-calypso' run clean",
 		"clean:public": "rm -rf public",
 		"clean:translations": "rm -rf build/strings calypso-strings.pot chunks-map.*.json || true",
 		"components:storybook:start": "yarn workspace @automattic/components run storybook:start",
@@ -133,8 +132,6 @@
 		"test-client:vitest:watch": "vitest --changed -c test/client/vitest.config.mts",
 		"test-dashboard": "vitest run -c test/dashboard/vitest.config.mts",
 		"test-dashboard:watch": "vitest --changed -c test/dashboard/vitest.config.mts",
-		"test-integration": "jest -c=test/integration/jest.config.js",
-		"test-integration:watch": "yarn run test-integration --watch",
 		"test-apps": "vitest run -c test/apps/vitest.config.mjs",
 		"test-apps:watch": "vitest --changed -c test/apps/vitest.config.mjs",
 		"test-packages": "vitest run",
@@ -148,7 +145,7 @@
 		"translate-if-languages-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || yarn run translate",
 		"typecheck": "run-p 'typecheck-*'",
 		"typecheck-client": "tsc --project client",
-		"typecheck-apps": "find apps -depth 2 -name tsconfig.json | xargs -n 1 -P 4 -I {} yarn tsc --noEmit --project {}",
+		"typecheck-apps": "node bin/typecheck-apps.mjs",
 		"typecheck-packages": "tsc --build packages/tsconfig.json",
 		"vite-check": "node build-tools/vite/check.mjs",
 		"vscode:link": "node bin/set-up-vs-code.js",
@@ -170,7 +167,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/launchpad": "workspace:^",
-		"@automattic/number-formatters": "^1.2.12",
+		"@automattic/number-formatters": "^1.3.0",
 		"@automattic/omnibar": "workspace:^",
 		"@automattic/plans-grid-next": "workspace:^",
 		"@automattic/privacy-toolset": "workspace:^",
@@ -186,13 +183,12 @@
 		"@types/cookie": "^0.6.0",
 		"@types/debug": "^4.1.13",
 		"@types/jest": "^30.0.0",
-		"@types/node": "^24.12.2",
+		"@types/node": "^24.19.2",
 		"@types/qs": "^6.15.1",
 		"@types/react": "19.3.0",
 		"@types/react-modal": "^3.16.3",
 		"@types/react-transition-group": "^4.4.12",
 		"@types/store": "^2.0.5",
-		"@types/webpack-env": "^1.18.8",
 		"@vgs/collect-js": "^0.7.2",
 		"@vgs/collect-js-react": "^2.1.1",
 		"@wordpress/admin-ui": "^3.2.0",
@@ -228,7 +224,7 @@
 		"react-dom": "19.3.1",
 		"react-hook-form": "^7.52.2",
 		"redux": "^5.0.1",
-		"swiper": "^12.1.2",
+		"swiper": "^12.2.0",
 		"wpcom": "workspace:^"
 	},
 	"optionalDependencies": {
@@ -239,6 +235,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-jest": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
+		"@automattic/create-calypso-config": "workspace:^",
 		"@automattic/eslint-plugin-json": "workspace:^",
 		"@babel/code-frame": "^8.0.6",
 		"@babel/core": "^8.1.0",
@@ -264,7 +261,7 @@
 		"@types/superagent": "^4.1.24",
 		"@typescript-eslint/eslint-plugin": "^8.72.1",
 		"@typescript-eslint/parser": "^8.72.1",
-		"@vitejs/plugin-react": "^6.2.1",
+		"@vitejs/plugin-react": "^6.3.0",
 		"@vitest/eslint-plugin": "^1.6.28",
 		"@wordpress/eslint-plugin": "^28.2.0",
 		"@wordpress/stylelint-config": "^27.2.0",
@@ -288,7 +285,6 @@
 		"eslint-plugin-react": "^7.37.5",
 		"eslint-plugin-react-hooks": "^7.1.1",
 		"eslint-plugin-wpcalypso": "workspace:^",
-		"eslint-scope": "^9.1.2",
 		"gettext-parser": "^4.0.3",
 		"glob": "^7.2.3",
 		"globals": "^14.0.0",
@@ -319,7 +315,7 @@
 		"stylelint-scss": "^7.4.0",
 		"tslib": "^2.8.1",
 		"typescript": "6.0.3",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0",
 		"vitest-canvas-mock": "^1.2.0",
 		"webpack": "^5.111.1",
@@ -349,7 +345,6 @@
 		"immutable@npm:~3.7.4": "4.3.9",
 		"js-yaml@npm:^4.1.0": "4.3.2",
 		"js-yaml@npm:^3.13.1": "4.3.2",
-		"phoenix@npm:^1.5.1": "1.5.15",
 		"shell-quote@npm:^1.6.1": "1.11.0",
 		"tar@npm:^6.0.2": "7.5.22",
 		"tar@npm:^6.1.2": "7.5.22",
@@ -378,8 +373,6 @@
 		"@wordpress/deprecated": "5.2.0",
 		"@wordpress/dom-ready": "5.2.0",
 		"@wordpress/dom": "5.2.0",
-		"@wordpress/edit-post": "9.2.0",
-		"@wordpress/edit-site": "8.2.0",
 		"@wordpress/editor": "16.2.0",
 		"@wordpress/element": "10.2.0",
 		"@wordpress/escape-html": "4.2.0",
@@ -397,7 +390,6 @@
 		"@wordpress/latex-to-mathml": "2.2.0",
 		"@wordpress/media-utils": "6.2.0",
 		"@wordpress/notices": "6.2.0",
-		"@wordpress/npm-package-json-lint-config": "6.2.0",
 		"@wordpress/plugins": "8.2.0",
 		"@wordpress/preferences": "5.2.0",
 		"@wordpress/prettier-config": "5.2.0",
@@ -420,7 +412,6 @@
 		"@wordpress/theme": "5.0.0",
 		"@wordpress/ui": "patch:@wordpress/ui@npm%3A0.27.0#~/.yarn/patches/@wordpress-ui-npm-0.27.0-91caa5b31d.patch",
 		"@wordpress/warning": "4.2.0",
-		"@wordpress/widgets": "5.2.0",
 		"@wordpress/wordcount": "5.2.0",
 		"@wordpress/global-styles-ui": "2.2.0",
 		"@wordpress/worker-threads": "2.2.0",
@@ -428,9 +419,36 @@
 		"marked@npm:^18.0.3": "18.1.1",
 		"wemoji": "patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch"
 	},
-	"packageManager": "yarn@4.0.2",
+	"packageManager": "yarn@4.18.1",
 	"dependenciesMeta": {
-		"@react-spring/core@9.3.0": {
+		"@parcel/watcher": {
+			"built": false
+		},
+		"@playwright/browser-chromium": {
+			"built": true
+		},
+		"@playwright/browser-firefox": {
+			"built": true
+		},
+		"@swc/core": {
+			"built": false
+		},
+		"core-js": {
+			"built": false
+		},
+		"core-js-pure": {
+			"built": false
+		},
+		"dtrace-provider": {
+			"built": false
+		},
+		"esbuild": {
+			"built": false
+		},
+		"msw": {
+			"built": false
+		},
+		"unrs-resolver": {
 			"built": false
 		}
 	}

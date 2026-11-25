@@ -121,6 +121,13 @@ export const useESPlugin = (
 
 type PageParam = string | number;
 
+/** The marketplace search API rejects requests that start past this offset. */
+export const ES_MAX_RESULT_OFFSET = 200;
+
+/** A `page_handle` is a base64 query string whose `from` sets the offset, so any page can be fetched directly. */
+export const getESPageHandle = ( page: number, pageSize: number = DEFAULT_PAGE_SIZE ): PageParam =>
+	page > 1 ? btoa( `from=${ ( page - 1 ) * pageSize }` ) : 1;
+
 export const getESPluginsInfiniteQueryParams = (
 	options: PluginQueryOptions,
 	locale: string
@@ -144,7 +151,7 @@ export const getESPluginsInfiniteQueryParams = (
 			locale: getWpLocaleBySlug( ( options.locale || locale ) as LanguageSlug ),
 			slugs: options.slugs,
 		} );
-	return { queryKey, queryFn, initialPageParam: 1 };
+	return { queryKey, queryFn, initialPageParam: getESPageHandle( options.page ?? 1, pageSize ) };
 };
 
 export const useESPluginsInfinite = (

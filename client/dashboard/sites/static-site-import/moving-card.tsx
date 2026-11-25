@@ -15,6 +15,7 @@ import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { formatStorage } from '../../utils/site-storage';
+import { CollidingCardsPreview } from './colliding-cards';
 import { TornCollage } from './torn-collage';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
@@ -324,9 +325,12 @@ function SiteSnapshot( {
 	destinationHost,
 	session,
 	step,
+	hasCollidingCards = false,
 }: {
 	/** The address the customer gave, whose screenshot is torn up and stuck back together while pages are found. */
 	sourceUrl?: string;
+	/** Keeps two colliding cards up for the whole move, in place of the collage and page list. */
+	hasCollidingCards?: boolean;
 	sourceHost: string;
 	/** Shown in the address bar once the copy is being built there, when given. */
 	destinationHost?: string;
@@ -381,7 +385,9 @@ function SiteSnapshot( {
 	// The collage keeps going until the first page is copied, which can take minutes, and the list
 	// of pages takes over from there.
 	const isCollage =
-		Boolean( sourceUrl ) && step <= 1 && ! hasLoaded && ! pages.some( ( page ) => page.captured );
+		Boolean( sourceUrl ) &&
+		( hasCollidingCards ||
+			( step <= 1 && ! hasLoaded && ! pages.some( ( page ) => page.captured ) ) );
 	const isListShown = pages.length > 0 && ! isCollage;
 
 	return (
@@ -410,7 +416,13 @@ function SiteSnapshot( {
 					<span />
 					<span />
 				</div>
-				{ isCollage && sourceUrl && <TornCollage url={ sourceUrl } /> }
+				{ isCollage &&
+					sourceUrl &&
+					( hasCollidingCards ? (
+						<CollidingCardsPreview url={ sourceUrl } />
+					) : (
+						<TornCollage url={ sourceUrl } />
+					) ) }
 				{ isListShown && (
 					<ol
 						ref={ pagesRef }
@@ -425,7 +437,7 @@ function SiteSnapshot( {
 						) ) }
 					</ol>
 				) }
-				{ imageUrl && (
+				{ imageUrl && ! hasCollidingCards && (
 					<img
 						className="static-site-import-snapshot__image"
 						src={ imageUrl }
@@ -446,7 +458,9 @@ function SiteSnapshot( {
 						} }
 					/>
 				) }
-				<span className="static-site-import-snapshot__scan" aria-hidden="true" />
+				{ ! hasCollidingCards && (
+					<span className="static-site-import-snapshot__scan" aria-hidden="true" />
+				) }
 			</div>
 		</figure>
 	);
@@ -776,6 +790,7 @@ export function StaticSiteImportPreviewWindow( {
 				destinationHost={ getSourceHost( session?.site_url ) }
 				session={ session }
 				step={ getCurrentStep( session ) }
+				hasCollidingCards
 			/>
 		</div>
 	);

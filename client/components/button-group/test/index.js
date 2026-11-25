@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { Button } from '@automattic/components';
 import { render, screen } from '@testing-library/react';

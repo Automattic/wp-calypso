@@ -531,7 +531,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( await screen.findByText( 'Your site is ready' ) ).toBeVisible();
 		expect(
 			screen.getByText(
-				'busybearscleaning.com is copied and running on WordPress.com. It stays private until you launch it.'
+				'busybearscleaning.com is copied and live on WordPress.com. Its visitors see your old site until you connect your domain.'
 			)
 		).toBeVisible();
 
@@ -541,12 +541,9 @@ describe( 'StaticSiteImportCard', () => {
 			expect.stringContaining( 'initialQuery=busybearscleaning.com' )
 		);
 
-		const preview = screen.getByRole( 'link', { name: /Preview site/ } );
+		const preview = screen.getByRole( 'link', { name: /View site/ } );
 		expect( preview ).toHaveAttribute( 'href', 'https://busybears.wordpress.com' );
 		expect( preview ).toHaveAttribute( 'target', '_blank' );
-
-		expect( screen.queryByText( 'Does it look right?' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'offers to get a domain when the old address is missing', () => {
@@ -588,25 +585,6 @@ describe( 'StaticSiteImportCard', () => {
 		);
 	} );
 
-	test( 'does not ask for feedback after the site is previewed', async () => {
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
-
-		const { recordTracksEvent } = render( <StaticSiteImport /> );
-
-		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
-
-		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
-		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_dashboard_static_site_import_feedback',
-			expect.anything()
-		);
-	} );
-
 	describe( 'Tracks', () => {
 		const finished = () =>
 			mockApi()
@@ -642,7 +620,7 @@ describe( 'StaticSiteImportCard', () => {
 				{ ...props, action: 'connect_domain' }
 			);
 
-			await userEvent.click( screen.getByRole( 'link', { name: /Preview site/ } ) );
+			await userEvent.click( screen.getByRole( 'link', { name: /View site/ } ) );
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_dashboard_static_site_import_ready_notice_click',
 				{ ...props, action: 'preview_site' }
@@ -850,30 +828,38 @@ describe( 'StaticSiteImportCard', () => {
 		render( <StaticSiteImport /> );
 
 		expect( await screen.findByText( 'We can’t import this site' ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Read my site again' } ) ).not.toBeInTheDocument();
 	} );
 } );
 
-describe( 'StaticSiteImportNotice preview link', () => {
+describe( 'StaticSiteImportNotice site state', () => {
 	const finished = { status: 'finished' as const };
 
 	test.each( [
 		[
-			'logs the owner in to a Coming Soon Atomic site on the way',
+			'says a Coming Soon Atomic site is private and logs the owner in on the way',
 			{ is_coming_soon: true, is_wpcom_atomic: true },
+			'It stays private until you launch it.',
 			'https://busybears.wpcomstaging.com/wp-login.php?redirect_to=%2F',
 		],
 		[
-			'links a launched site directly',
-			{ is_coming_soon: false },
+			'says a private site is private',
+			{ is_private: true },
+			'It stays private until you launch it.',
 			'https://busybears.wordpress.com',
 		],
-	] )( '%s', ( _, props, href ) => {
+		[
+			'says a launched site is live and links it directly',
+			{ is_coming_soon: false },
+			'Its visitors see your old site until you connect your domain.',
+			'https://busybears.wordpress.com',
+		],
+	] )( '%s', ( _, props, copy, href ) => {
 		const target = { ...site, ...props } as unknown as Site;
 
 		render( <StaticSiteImportNotice site={ target } siteImport={ finished } search={ search } /> );
 
-		expect( screen.getByRole( 'link', { name: /Preview site/ } ) ).toHaveAttribute( 'href', href );
+		expect( screen.getByText( copy, { exact: false } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /View site/ } ) ).toHaveAttribute( 'href', href );
 	} );
 } );
 

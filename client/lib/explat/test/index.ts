@@ -1,15 +1,18 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { vi } from 'vitest';
 import * as ExPlatClient from '../index';
 
-const mockLogError = jest.fn();
-jest.mock( '../internals/log-error', () => ( {
-	...jest.requireActual( '../internals/log-error' ),
+const mockLogError = vi.fn();
+vi.mock( '../internals/log-error', async () => ( {
+	...( await vi.importActual< typeof import( '../internals/log-error' ) >(
+		'../internals/log-error'
+	) ),
 	// We get a runtime type error if we don't do this:
 	logError: ( ...args ) => mockLogError( ...args ),
 } ) );
 
 beforeEach( () => {
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 } );
 
 describe( 'ExPlatClient', () => {

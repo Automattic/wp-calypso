@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
@@ -9,7 +10,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	describe( '#requesting()', () => {
 		test( 'should default to an empty object', () => {

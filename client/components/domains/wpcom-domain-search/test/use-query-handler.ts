@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { clearSessionStorageQuery, useQueryHandler } from '../use-query-handler';
 
 describe( 'useQueryHandler', () => {
@@ -112,7 +113,7 @@ describe( 'useQueryHandler', () => {
 	it( 'should handle sessionStorage errors gracefully', () => {
 		const mockError = new Error( 'Storage access denied' );
 		const originalGetItem = Storage.prototype.getItem;
-		Storage.prototype.getItem = jest.fn().mockImplementation( () => {
+		Storage.prototype.getItem = vi.fn().mockImplementation( () => {
 			throw mockError;
 		} );
 

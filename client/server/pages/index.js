@@ -307,6 +307,7 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		entrypoint: entrypointFiles,
+		entrypointName: entrypoint,
 		manifests,
 		useViteDevServer: request.app.get( 'bundler' ) === 'vite',
 		reactQueryDevtoolsHelper,
@@ -649,6 +650,7 @@ function setUpCSP( req, res, next ) {
 			...( req.context.app.isDevelopmentEnv ? [ "'unsafe-eval'" ] : [] ),
 			`'nonce-${ req.context.inlineScriptNonce }'`,
 			'stats.wp.com',
+			'https://s0.wp.com', // `bilmur-spa`, imported at runtime
 			'https://widgets.wp.com',
 			'*.wordpress.com',
 			'https://apis.google.com',

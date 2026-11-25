@@ -1,26 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import page from '@automattic/calypso-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MockedFunction, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import PurchaseConfirmationMessage from '../purchase-confirmation-message';
 import type { ReactNode } from 'react';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
 
-jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
 	__esModule: true,
 	default: ( {
 		children,
@@ -41,26 +44,24 @@ jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( ( name, properties ) => ( {
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( ( name, properties ) => ( {
 		type: 'RECORD_TRACKS_EVENT',
 		name,
 		properties,
 	} ) ),
 } ) );
 
-const mockedPage = page as jest.MockedFunction< typeof page >;
-const mockedRecordTracksEvent = recordTracksEvent as jest.MockedFunction<
-	typeof recordTracksEvent
->;
+const mockedPage = page as MockedFunction< typeof page >;
+const mockedRecordTracksEvent = recordTracksEvent as MockedFunction< typeof recordTracksEvent >;
 
 describe( 'PurchaseConfirmationMessage', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		window.history.replaceState( {}, '', '/client/subscriptions' );
 	} );
 

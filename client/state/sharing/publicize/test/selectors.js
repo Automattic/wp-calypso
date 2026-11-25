@@ -1,11 +1,8 @@
 import {
 	getBrokenSiteUserConnectionsForService,
-	getConnectionsBySiteId,
 	getSiteUserConnections,
 	getSiteUserConnectionsForService,
 	getRemovableConnections,
-	hasFetchedConnections,
-	isFetchingConnections,
 } from '../selectors';
 
 describe( 'getBrokenSiteUserConnectionsForService()', () => {
@@ -76,44 +73,6 @@ describe( 'getBrokenSiteUserConnectionsForService()', () => {
 				keyring_connection_user_ID: 26957695,
 				status: 'broken',
 			},
-		] );
-	} );
-} );
-
-describe( '#getConnectionsBySiteId()', () => {
-	test( 'should return an empty array for a site which has not yet been fetched', () => {
-		const connections = getConnectionsBySiteId(
-			{
-				sharing: {
-					publicize: {
-						connections: {},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( connections ).toEqual( [] );
-	} );
-
-	test( 'should return an array of connection objects received for the site', () => {
-		const connections = getConnectionsBySiteId(
-			{
-				sharing: {
-					publicize: {
-						connections: {
-							1: { ID: 1, site_ID: 2916284 },
-							2: { ID: 2, site_ID: 2916284 },
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( connections ).toEqual( [
-			{ ID: 1, site_ID: 2916284 },
-			{ ID: 2, site_ID: 2916284 },
 		] );
 	} );
 } );
@@ -297,107 +256,5 @@ describe( '#getRemovableConnections()', () => {
 				user_ID: 26957695,
 			},
 		] );
-	} );
-} );
-
-describe( '#hasFetchedConnections()', () => {
-	test( 'should return false if connections have not been fetched for a site', () => {
-		const hasFetched = hasFetchedConnections(
-			{
-				sharing: {
-					publicize: {
-						fetchedConnections: {},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( hasFetched ).toBe( false );
-	} );
-
-	test( 'should return true if connections have completed fetching for a site', () => {
-		const hasFetched = hasFetchedConnections(
-			{
-				sharing: {
-					publicize: {
-						fetchedConnections: {
-							2916284: true,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( hasFetched ).toBe( true );
-	} );
-} );
-
-describe( '#isFetchingConnections()', () => {
-	test( 'should return false if fetch has never been triggered for site', () => {
-		const isFetching = isFetchingConnections(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnections: {},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).toBe( false );
-	} );
-
-	test( 'should return true if connections are currently fetching for a site', () => {
-		const isFetching = isFetchingConnections(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnections: {
-							2916284: true,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).toBe( true );
-	} );
-
-	test( 'should return false if connections are not currently fetching for a site', () => {
-		const isFetching = isFetchingConnections(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnections: {
-							2916284: false,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).toBe( false );
-	} );
-
-	test( 'should return false if connections are fetching, but not for the given site', () => {
-		const isFetching = isFetchingConnections(
-			{
-				sharing: {
-					publicize: {
-						fetchingConnections: {
-							77203074: true,
-						},
-					},
-				},
-			},
-			2916284
-		);
-
-		expect( isFetching ).toBe( false );
 	} );
 } );

@@ -57,6 +57,17 @@ describe( 'shouldShowAiDisclosureLine', () => {
 		}
 	);
 
+	it( 'hides while a chat that goes straight to a person is starting', () => {
+		expect(
+			shouldShowAiDisclosureLine( {
+				chat: makeChat(),
+				interaction: undefined,
+				isChatPending: false,
+				isPendingDirectChat: true,
+			} )
+		).toBe( false );
+	} );
+
 	it( 'hides while a chat with a Zendesk event is in transfer, even if the provider still says odie', () => {
 		expect(
 			shouldShowAiDisclosureLine( {

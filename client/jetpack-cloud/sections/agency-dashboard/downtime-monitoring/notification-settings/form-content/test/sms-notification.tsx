@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,16 +8,17 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import DashboardDataContext from '../../../../sites-overview/dashboard-data-context';
 import SMSNotification from '../sms-notification';
 import type { RestrictionType } from '../../../types';
 
 describe( 'SMSNotification', () => {
 	const defaultProps = {
-		recordEvent: jest.fn(),
+		recordEvent: vi.fn(),
 		enableSMSNotification: true,
-		setEnableSMSNotification: jest.fn(),
-		toggleModal: jest.fn(),
+		setEnableSMSNotification: vi.fn(),
+		toggleModal: vi.fn(),
 		allPhoneItems: [],
 		restriction: 'none' as RestrictionType,
 	};
@@ -26,7 +27,7 @@ describe( 'SMSNotification', () => {
 		verifiedContacts: {
 			emails: [],
 			phoneNumbers: [],
-			refetchIfFailed: jest.fn(),
+			refetchIfFailed: vi.fn(),
 		},
 		products: [
 			{

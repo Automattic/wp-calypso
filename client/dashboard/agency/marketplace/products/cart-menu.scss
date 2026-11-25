@@ -7,3 +7,8 @@
 	min-inline-size: min( 360px, 100vw - 48px );
 	padding: 8px;
 }
+
+// Fits the counter's number and its two buttons, at the compact size.
+.dashboard-marketplace-products__cart-count {
+	inline-size: 112px;
+}

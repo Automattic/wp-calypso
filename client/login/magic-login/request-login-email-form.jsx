@@ -13,7 +13,6 @@ import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import { isGravPoweredOAuth2Client } from 'calypso/lib/oauth2-clients';
 import wpcom from 'calypso/lib/wp';
 import { LoginContext } from 'calypso/login/login-context';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { sendEmailLogin } from 'calypso/state/auth/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hideMagicLoginRequestNotice } from 'calypso/state/login/magic-login/actions';
@@ -366,7 +365,6 @@ const mapState = ( state ) => {
 const mapDispatch = {
 	sendEmailLogin,
 	hideMagicLoginRequestNotice,
-	recordTracksEvent,
 };
 
 export default connect( mapState, mapDispatch )( localize( RequestLoginEmailForm ) );

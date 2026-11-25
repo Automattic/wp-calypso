@@ -2,6 +2,7 @@
 
 ## trunk
 
+- Added: `build-app-languages` takes `--outputFormat='JS,JSON'` to write both formats in one run.
 - Breaking: Remove the Jest `matchMedia` mock, `@automattic/calypso-build/jest/mocks/match-media`. No package in this repository uses it any more; Jest setups that do can define `window.matchMedia` themselves.
 - Breaking: Move to Babel 8 (`@babel/core`, `@babel/cli` and `@babel/compat-data` 8), which needs Node.js `^22.18.0 || >=24.11.0`. `transpile` and the webpack config compile with `@automattic/calypso-babel-config`'s Babel 8 presets.
 - Fixed: Depend on `@babel/cli`, which `transpile` runs. It was only found when `@automattic/calypso-babel-config`'s copy was hoisted, so `transpile` failed under pnpm and other installs that don't hoist.

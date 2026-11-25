@@ -1,15 +1,15 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { getPlan, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { ThemeTierBadgeContextProvider } from '../theme-tier-badge-context';
 import ThemeTierStyleVariationBadge from '../theme-tier-style-variation-badge';
 
-jest.mock( 'calypso/state' );
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
-	getPlan: jest.fn(),
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-products' ) ),
+	getPlan: vi.fn(),
 } ) );
 
 describe( 'ThemeTierStyleVariationBadge', () => {
@@ -39,7 +39,7 @@ describe( 'ThemeTierStyleVariationBadge', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		originalWindowLocation = global.window.location;
 		delete global.window.location;

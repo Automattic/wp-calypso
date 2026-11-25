@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	SIGNUP_COMPLETE_RESET,
 	SIGNUP_PROGRESS_COMPLETE_STEP,
@@ -8,18 +9,13 @@ import {
 } from 'calypso/state/action-types';
 import reducer from '../reducer';
 
-// Mock necessary for testing certain utils
-jest.mock( 'calypso/signup/config/flows-pure', () => ( {
-	'new-flow': {
-		steps: [ 'something', 'everything' ],
-	},
-} ) );
-
 // Mock necessary for testing step submission behavior
-jest.mock( 'calypso/signup/config/steps-pure', () => ( {
-	stepWithAPI: { apiRequestFunction: () => {} },
-	stepWithoutAPI: {},
-} ) );
+vi.mock( 'calypso/signup/config/steps-pure', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		stepWithAPI: { apiRequestFunction: () => {} },
+		stepWithoutAPI: {},
+	} )
+);
 
 describe( 'reducer', () => {
 	test( 'should return an empty object at first', () => {

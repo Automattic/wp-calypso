@@ -17,6 +17,9 @@ vi.mock( '../context', () => ( {
 vi.mock( '../data/use-current-support-interaction', () => ( {
 	useCurrentSupportInteraction: vi.fn(),
 } ) );
+vi.mock( '../hooks/use-is-pending-direct-chat', () => ( {
+	useIsPendingDirectChat: () => false,
+} ) );
 vi.mock( '../hooks/use-open-interaction-status-map', () => ( {
 	useOpenLiveInteractions: () => ( { mostRecentSupportInteractionId: null, openCount: 0 } ),
 } ) );

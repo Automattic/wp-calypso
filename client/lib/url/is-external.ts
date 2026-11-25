@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { getUrlParts } from '@automattic/calypso-url';
 import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 import { URL as URLString } from 'calypso/types';
 
@@ -11,6 +12,17 @@ export default function isExternal( url: URLString ): boolean {
 	// While TypeScript should ensure that `url` really is a string, this method
 	// is still used in a lot of JavaScript contexts, without type checks.
 	if ( ! url && url !== '' ) {
+		return true;
+	}
+
+	if ( url === '' ) {
+		return false;
+	}
+
+	// `javascript:x='@example.com/'` reads as a host after the `//` below, so check the scheme
+	// as the browser will parse it first.
+	const { protocol } = getUrlParts( url );
+	if ( protocol && protocol !== 'http:' && protocol !== 'https:' ) {
 		return true;
 	}
 
@@ -31,7 +43,7 @@ export default function isExternal( url: URLString ): boolean {
 	try {
 		parsedUrl = new URL( url, BASE_URL );
 	} catch {
-		return false;
+		return true;
 	}
 	const { hostname, pathname } = parsedUrl;
 

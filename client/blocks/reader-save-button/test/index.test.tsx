@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { readSavedKeysQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
@@ -7,14 +7,15 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { createStore } from 'redux';
+import { type MockInstance, vi } from 'vitest';
 import { recordTrackForPost } from 'calypso/reader/stats';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSaveButton from '../index';
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordAction: jest.fn(),
-	recordGaEvent: jest.fn(),
-	recordTrackForPost: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordAction: vi.fn(),
+	recordGaEvent: vi.fn(),
+	recordTrackForPost: vi.fn(),
 } ) );
 
 const BASE = 'https://public-api.wordpress.com';
@@ -60,7 +61,7 @@ function deferredReply( body: object ) {
 function renderButton() {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	const store = createStore( ( state = {} ) => state );
-	const dispatch = jest.spyOn( store, 'dispatch' );
+	const dispatch = vi.spyOn( store, 'dispatch' );
 
 	renderWithProvider( <ReaderSaveButton post={ POST } />, { store, queryClient } );
 
@@ -76,14 +77,14 @@ async function renderLoadedButton() {
 	return rendered;
 }
 
-function expectNotice( dispatch: jest.SpyInstance, text: string ) {
+function expectNotice( dispatch: MockInstance, text: string ) {
 	expect( dispatch ).toHaveBeenCalledWith(
 		expect.objectContaining( { notice: expect.objectContaining( { status: 'is-error', text } ) } )
 	);
 }
 
 beforeEach( () => {
-	jest.mocked( recordTrackForPost ).mockClear();
+	vi.mocked( recordTrackForPost ).mockClear();
 } );
 
 afterEach( () => nock.cleanAll() );

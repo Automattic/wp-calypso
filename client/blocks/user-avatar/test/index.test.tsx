@@ -1,19 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { UserResponse } from '@automattic/api-core';
 import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import UserAvatar, { UserAvatarInfo } from '../index';
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useQuery: vi.fn(),
 } ) );
 
 let capturedOnUserLoaded: ( ( user: UserResponse | null ) => void ) | undefined;
 
-jest.mock( 'calypso/blocks/user-avatar/user-hovercard', () => ( {
+vi.mock( 'calypso/blocks/user-avatar/user-hovercard', () => ( {
 	__esModule: true,
 	default: ( { onUserLoaded }: { onUserLoaded?: ( user: UserResponse | null ) => void } ) => {
 		capturedOnUserLoaded = onUserLoaded;
@@ -21,8 +24,10 @@ jest.mock( 'calypso/blocks/user-avatar/user-hovercard', () => ( {
 	},
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
-	...jest.requireActual( '@wordpress/components' ),
+vi.mock( '@wordpress/components', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/components' ) >(
+		'@wordpress/components'
+	) ),
 	Popover: ( props: Record< string, unknown > ) => (
 		<div data-testid="popover" data-placement={ props.placement }>
 			{ props.children as React.ReactNode }
@@ -39,12 +44,12 @@ describe( 'UserAvatar', () => {
 	};
 
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.clearAllMocks();
+		vi.useFakeTimers();
+		vi.clearAllMocks();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	test( 'renders avatar image when avatar_URL is provided', () => {
@@ -105,7 +110,7 @@ describe( 'UserAvatar', () => {
 
 		const link = document.querySelector( '.user-avatar a' ) as HTMLElement;
 		act( () => link.focus() );
-		act( () => jest.advanceTimersByTime( 200 ) );
+		act( () => vi.advanceTimersByTime( 200 ) );
 
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 	} );
@@ -119,27 +124,27 @@ describe( 'UserAvatar', () => {
 	} );
 
 	test( 'does not show hovercard when hideHovercard is true', async () => {
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 		render( <UserAvatar user={ defaultUser } hideHovercard /> );
 
 		await user.hover( document.querySelector( '.user-avatar' )! );
-		act( () => jest.advanceTimersByTime( 200 ) );
+		act( () => vi.advanceTimersByTime( 200 ) );
 
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'does not show hovercard when user is null', async () => {
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 		render( <UserAvatar user={ null } /> );
 
 		await user.hover( document.querySelector( '.user-avatar' )! );
-		act( () => jest.advanceTimersByTime( 200 ) );
+		act( () => vi.advanceTimersByTime( 200 ) );
 
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows hovercard after hover delay', async () => {
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 		render( <UserAvatar user={ defaultUser } /> );
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 
@@ -149,20 +154,20 @@ describe( 'UserAvatar', () => {
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 
 		// Should appear after the delay.
-		act( () => jest.advanceTimersByTime( 200 ) );
+		act( () => vi.advanceTimersByTime( 200 ) );
 		expect( screen.getByTestId( 'user-hovercard' ) ).toBeInTheDocument();
 	} );
 
 	test( 'hides hovercard on mouse leave', async () => {
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 		render( <UserAvatar user={ defaultUser } /> );
 
 		await user.hover( document.querySelector( '.user-avatar' )! );
-		act( () => jest.advanceTimersByTime( 200 ) );
+		act( () => vi.advanceTimersByTime( 200 ) );
 		expect( screen.getByTestId( 'user-hovercard' ) ).toBeInTheDocument();
 
 		await user.unhover( document.querySelector( '.user-avatar' )! );
-		act( () => jest.advanceTimersByTime( 100 ) );
+		act( () => vi.advanceTimersByTime( 100 ) );
 		expect( screen.queryByTestId( 'user-hovercard' ) ).not.toBeInTheDocument();
 	} );
 
@@ -188,7 +193,7 @@ describe( 'UserAvatar', () => {
 		};
 
 		function mockAvatarPosition( top: number, bottom: number, left: number, right: number ) {
-			jest.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockReturnValue( {
+			vi.spyOn( HTMLElement.prototype, 'getBoundingClientRect' ).mockReturnValue( {
 				top,
 				bottom,
 				left,
@@ -197,23 +202,23 @@ describe( 'UserAvatar', () => {
 				height: bottom - top,
 				x: left,
 				y: top,
-				toJSON: jest.fn(),
+				toJSON: vi.fn(),
 			} );
 		}
 
 		async function showHovercardAndTriggerPlacement( userData: UserResponse | null ) {
-			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 			render( <UserAvatar user={ defaultUser } /> );
 
 			await user.hover( document.querySelector( '.user-avatar' )! );
-			act( () => jest.advanceTimersByTime( 200 ) );
+			act( () => vi.advanceTimersByTime( 200 ) );
 
 			// Trigger the onUserLoaded callback from the hovercard mock.
 			act( () => capturedOnUserLoaded?.( userData ) );
 		}
 
 		afterEach( () => {
-			jest.restoreAllMocks();
+			vi.restoreAllMocks();
 		} );
 
 		test( 'places hovercard at bottom-start when there is enough space below', async () => {

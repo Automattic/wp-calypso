@@ -12,16 +12,6 @@ export function getKeyringConnections( state ) {
 }
 
 /**
- * Returns a keyring connection object with a specified ID.
- * @param  {Object} state               Global state tree
- * @param  {number} keyringConnectionId Keyring connection ID.
- * @returns {?Object}                    Keyring connections, if known.
- */
-export function getKeyringConnectionById( state, keyringConnectionId ) {
-	return state.sharing.keyring.items[ keyringConnectionId ] || null;
-}
-
-/**
  * Returns an array of keyring connection objects for a specified service.
  * @param  {Object} state   Global state tree
  * @param  {string} service Service slug.
@@ -34,18 +24,6 @@ export const getKeyringConnectionsByName = createSelector(
 );
 
 /**
- * Returns an array of broken keyring connection objects for a specified service.
- * @param  {Object} state   Global state tree
- * @param  {string} service Service slug.
- * @returns {Array}         Keyring connections, if known.
- */
-export function getBrokenKeyringConnectionsByName( state, service ) {
-	return getKeyringConnectionsByName( state, service ).filter(
-		( connection ) => connection.status === 'broken'
-	);
-}
-
-/**
  * Returns an array of keyring connection objects for a specified service that
  * need to be manually refreshed/reconnected.
  * @param  {Object} state   Global state tree
@@ -55,18 +33,6 @@ export function getBrokenKeyringConnectionsByName( state, service ) {
 export function getRefreshableKeyringConnections( state, service ) {
 	return getKeyringConnectionsByName( state, service ).filter(
 		( conn ) => 'broken' === conn.status || 'refresh-failed' === conn.status
-	);
-}
-
-/**
- * Returns an array of keyring connection objects for a specific user.
- * @param  {Object} state  Global state tree
- * @param  {number} userId User ID.
- * @returns {Array}         Site connections, if known.
- */
-export function getUserConnections( state, userId ) {
-	return Object.values( state.sharing.keyring.items ?? {} ).filter(
-		( connection ) => connection.shared || connection.keyring_connection_user_ID === userId
 	);
 }
 

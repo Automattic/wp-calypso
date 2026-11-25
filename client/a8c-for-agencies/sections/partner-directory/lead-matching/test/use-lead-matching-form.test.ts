@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { createDefaultLeadMatchingDetails } from '../../utils/map-application-form-data';

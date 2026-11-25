@@ -76,15 +76,14 @@ describe( 'BundleLineItem', () => {
 		renderBundle();
 
 		expect( screen.getByText( 'Domain Bundle' ) ).toBeVisible();
-		expect( screen.getByText( 'Domain Bundle Registration: billed annually' ) ).toBeVisible();
 		expect(
-			screen.queryByText( 'First year discounted; domains renew at standard rates.' )
-		).not.toBeInTheDocument();
+			screen.getByText( 'Domain Bundle Registration: One-year registration, billed annually' )
+		).toBeVisible();
 		expect( screen.getByText( 'example.com' ) ).toBeVisible();
 		expect( screen.getByText( 'example.net' ) ).toBeVisible();
-		// 2200 + 1800 = 4000 smallest-unit => $40, shown as the price, the term row,
-		// and the renewal amount.
-		expect( screen.getAllByText( /\$40\b/ ) ).toHaveLength( 3 );
+		// 2200 + 1800 = 4000 smallest-unit => $40, shown as the price and the renewal
+		// amount.
+		expect( screen.getAllByText( /\$40\b/ ) ).toHaveLength( 2 );
 	} );
 
 	test( 'uses the checkout product-row layout', () => {
@@ -103,11 +102,12 @@ describe( 'BundleLineItem', () => {
 		expect( screen.queryByText( /\$18\b/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'renders a one-year term row with the bundle total', () => {
-		renderBundle();
+	// Bundles are sold for one year only, so nothing should look like a term picker.
+	test( 'shows no term picker', () => {
+		const { container } = renderBundle();
 
-		expect( screen.getByText( 'One year' ) ).toBeVisible();
-		expect( screen.getAllByText( /\$40\b/ ) ).toHaveLength( 3 );
+		expect( screen.queryByText( 'One year' ) ).not.toBeInTheDocument();
+		expect( container.querySelector( '.gridicons-chevron-down' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows no crossed-out price or discount callout when the bundle is not discounted', () => {
@@ -121,7 +121,7 @@ describe( 'BundleLineItem', () => {
 		renderBundle( { bundle: discountedBundle } );
 
 		// 2200 + 700 = 2900 smallest-unit => $29.
-		expect( screen.getAllByText( /\$29\b/ ) ).toHaveLength( 2 );
+		expect( screen.getByText( /\$29\b/ ) ).toBeVisible();
 		// 6500 + 6400 = 12900 smallest-unit => $129, struck through. The amount also
 		// appears in the renewal disclosure, so match on the tag.
 		const crossedOut = screen
@@ -143,14 +143,14 @@ describe( 'BundleLineItem', () => {
 		expect( screen.getByText( 'Auto-renews at $129/year.' ) ).toBeVisible();
 	} );
 
-	test( 'shows the renewal disclosure between the term row and the remove button', () => {
+	test( 'shows the renewal disclosure between the member domains and the remove button', () => {
 		renderBundle( { hasDeleteButton: true, removeProductFromCart: vi.fn() } );
 
-		const termRow = screen.getByText( 'One year' );
+		const lastMember = screen.getByText( 'example.net' );
 		const renewalNote = screen.getByText( 'Auto-renews at $40/year.' );
 		const removeButton = screen.getByRole( 'button', { name: /Remove Domain Bundle from cart/ } );
 
-		expect( termRow.compareDocumentPosition( renewalNote ) ).toBe(
+		expect( lastMember.compareDocumentPosition( renewalNote ) ).toBe(
 			Node.DOCUMENT_POSITION_FOLLOWING
 		);
 		expect( renewalNote.compareDocumentPosition( removeButton ) ).toBe(

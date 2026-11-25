@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { fetchMagicLoginAuthenticate } from '../actions';
 
 const dispatchAuthenticate = ( blackboxSessionId ) => {
-	fetchMagicLoginAuthenticate( 'a-token', '', null, true, blackboxSessionId )( jest.fn() );
+	fetchMagicLoginAuthenticate( 'a-token', '', null, true, blackboxSessionId )( vi.fn() );
 	return new URLSearchParams( globalThis.fetch.mock.calls[ 0 ][ 1 ].body );
 };
 
 describe( 'fetchMagicLoginAuthenticate', () => {
 	beforeEach( () => {
-		globalThis.fetch = jest.fn( () => new Promise( () => {} ) );
+		globalThis.fetch = vi.fn( () => new Promise( () => {} ) );
 	} );
 
 	it( 'sends the Blackbox session id when available', () => {

@@ -52,7 +52,6 @@ import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import './style.scss';
 
@@ -567,7 +566,7 @@ export class UserStep extends Component {
 					save={ this.save }
 					submitForm={ this.submitForm }
 					submitButtonText={ this.submitButtonText() }
-					suggestedUsername={ this.props.suggestedUsername }
+					suggestedUsername=""
 					handleSocialResponse={ this.handleSocialResponse }
 					isPasswordless={ isPasswordless }
 					queryArgs={ this.props.initialContext?.query || {} }
@@ -696,7 +695,6 @@ const ConnectedUser = connect(
 
 		return {
 			oauth2Client: oauth2Client,
-			suggestedUsername: getSuggestedUsername( state ),
 			wccomFrom: getWccomFrom( state ),
 			isWoo,
 			isWooJPC: isWooJPCFlow( state ),

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import {
 	forgetSavedEmailTrackingConsent,
 	getEmailTrackingConsentPayload,
@@ -14,15 +15,17 @@ import { EmailTrackingConsent, useEmailTrackingConsent } from '../email-tracking
 let mockLocale = 'en';
 let mockIsFlagOn = true;
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => null;
 	config.isEnabled = ( feature: string ) => mockIsFlagOn && feature === 'me/email-tracking-consent';
-	return config;
+	return { ...config, default: config };
 } );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( { localeSlug: mockLocale } ),
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( { localeSlug: mockLocale } ),
+	} )
+);
 
 const Form = () => {
 	const { isAsked, hasAgreed, setHasAgreed } = useEmailTrackingConsent();
@@ -31,7 +34,7 @@ const Form = () => {
 
 describe( 'Email tracking consent at signup', () => {
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		mockIsFlagOn = true;
 		window.sessionStorage.clear();
 	} );
@@ -76,7 +79,7 @@ describe( 'Email tracking consent at signup', () => {
 
 	test( 'does not need browser storage for an email signup', () => {
 		mockLocale = 'fr';
-		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+		vi.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 			throw new Error( 'QuotaExceededError' );
 		} );
 		render( <Form /> );

@@ -545,7 +545,7 @@ describe( 'useWaitForAtomic', () => {
 			const promise = result.current.waitForLatestSiteData();
 			await jest.advanceTimersByTimeAsync( 2000 );
 
-			await expect( promise ).resolves.toBeUndefined();
+			await expect( promise ).resolves.toMatchObject( { capabilities: { manage_options: true } } );
 		} );
 
 		it( 'fails with a timeout when the site data never reflects the transfer', async () => {

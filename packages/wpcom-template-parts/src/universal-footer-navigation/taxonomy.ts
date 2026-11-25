@@ -448,6 +448,11 @@ export function getFooterColumns2026( {
 					label: __( 'Accessibility', __i18n_text_domain__ ),
 					url: localizeUrl( 'https://wordpress.com/accessibility/' ),
 				},
+				{
+					slug: 'security',
+					label: __( 'Security', __i18n_text_domain__ ),
+					url: localizeUrl( 'https://wordpress.com/support/security/' ),
+				},
 				// The sitemap page is English-only.
 				...( locale === 'en'
 					? [
@@ -458,6 +463,12 @@ export function getFooterColumns2026( {
 							},
 						]
 					: [] ),
+				{
+					slug: 'status',
+					label: __( 'Status', __i18n_text_domain__ ),
+					url: 'https://automatticstatus.com/',
+					chevron: true,
+				},
 				{
 					slug: 'compare',
 					label: __( 'Compare', __i18n_text_domain__ ),

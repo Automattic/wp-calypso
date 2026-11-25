@@ -8,7 +8,7 @@ const sass = require( 'sass' );
 
 describe( 'Credits meter CSS contract', () => {
 	const rules = [];
-	const tokens = { light: {}, dark: {}, calypsoDark: {} };
+	const tokens = { light: {}, dark: {} };
 	const ringStrokes = {};
 
 	beforeAll( () => {
@@ -36,18 +36,6 @@ describe( 'Credits meter CSS contract', () => {
 			}
 		} );
 		tokens.dark = { ...tokens.light, ...tokens.dark };
-
-		// The light chat under Calypso's dark scheme, whose mixin recolours its agenttic tokens.
-		const scheme = sass.compileString(
-			"@use 'dark-theme'; .scheme { @include dark-theme.color-scheme-dark-theme-tokens; @include dark-theme.color-scheme-dark-theme-agenttic; }",
-			{ loadPaths: [ path.resolve( __dirname, '../../../client/lib/color-scheme' ), nodeModules ] }
-		);
-		tokens.calypsoDark = { ...tokens.light };
-		postcss.parse( scheme.css ).walkRules( /^\.scheme( \.agenttic)?$/, ( rule ) => {
-			rule.walkDecls( /^--/, ( declaration ) => {
-				tokens.calypsoDark[ declaration.prop ] = declaration.value.replace( /\s+/g, ' ' );
-			} );
-		} );
 
 		const ringFile = path.resolve(
 			__dirname,
@@ -164,8 +152,6 @@ describe( 'Credits meter CSS contract', () => {
 			.join( '' );
 
 	const themes = [ 'light', 'dark' ];
-	// Calypso's dark scheme has no design values, so it joins only the checks that hold in any palette.
-	const allThemes = [ ...themes, 'calypsoDark' ];
 	const ring = '.agents-manager-credits-meter__ring';
 	const TRACK = '.track';
 	// `CreditsMeter` draws the ring with `tone="primary"`, whose arc keeps `.fill`'s stroke.
@@ -217,7 +203,7 @@ describe( 'Credits meter CSS contract', () => {
 
 	// One case per theme and state, so a failure names both.
 	const eachState = ( states ) =>
-		allThemes.flatMap( ( theme ) =>
+		themes.flatMap( ( theme ) =>
 			Object.entries( states ).map( ( [ name, state ] ) => [ theme, name, state ] )
 		);
 

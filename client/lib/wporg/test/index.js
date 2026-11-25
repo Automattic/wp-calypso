@@ -1,6 +1,7 @@
+import { vi } from 'vitest';
 import { fetchPluginInformation } from '..';
 
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 describe( 'wporg getRequest', () => {
 	test( 'attaches the request URL to network errors', async () => {

@@ -43,8 +43,9 @@ Everything here reads the raw `Purchase` type from `@automattic/api-core`
 
 3. **`site.wpcom_url` lies for `.home.blog` sites** — Always returns
    `.wordpress.com` even when the site's free domain is `.home.blog` (or 27
-   other `.blog` subdomains). Use `getWpComDomainBySiteId()` selector to get
-   the actual free domain. Affects `NonPrimaryDomainDialog` in `remove-purchase/`.
+   other `.blog` subdomains). Find the actual free domain as the entry with
+   `isWPCOMDomain` in the site's domains. Affects `NonPrimaryDomainDialog` in
+   `remove-purchase/`.
 
 4. **`isMonthly()` only checks plan slugs** — Returns `false` for Jetpack
    product slugs like `jetpack_videopress_monthly` because it only checks

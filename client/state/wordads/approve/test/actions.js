@@ -1,33 +1,24 @@
+import { vi } from 'vitest';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { dismissWordAdsError, dismissWordAdsSuccess, requestWordAdsApproval } from '../actions';
+import { dismissWordAdsError, requestWordAdsApproval } from '../actions';
 
 describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( '#dismissWordAdsError()', () => {
 		test( 'should return a dismiss error action', () => {
 			expect( dismissWordAdsError( 2916284 ) ).toEqual( {
 				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-				siteId: 2916284,
-			} );
-		} );
-	} );
-
-	describe( '#dismissWordAdsSuccess()', () => {
-		test( 'should return a dismiss Success action', () => {
-			expect( dismissWordAdsSuccess( 2916284 ) ).toEqual( {
-				type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 				siteId: 2916284,
 			} );
 		} );

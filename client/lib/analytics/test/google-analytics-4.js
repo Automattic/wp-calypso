@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TRACKING_IDS } from '../ad-tracking/constants';
 import { setup, firePageView, Ga4PropertyGtag } from '../ad-tracking/google-analytics-4';
 
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
-jest.mock( 'calypso/lib/analytics/tracker-buckets', () => ( {
+vi.mock( 'calypso/lib/analytics/tracker-buckets', () => ( {
 	mayWeTrackByTracker: () => true,
 	mayWeInitTracker: () => true,
 } ) );
 
 describe( 'Google Analytics 4 implementation', () => {
 	beforeEach( () => {
-		jest.spyOn( window, 'gtag' ).mockImplementation( () => [] );
+		vi.spyOn( window, 'gtag' ).mockImplementation( () => [] );
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'Google Analytics 4 initialization on Jetpack Cloud and WPcom', () => {

@@ -1,18 +1,19 @@
 import { withStorageKey } from '@automattic/state-utils';
 import warn from '@wordpress/warning';
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import { APPLY_STORED_STATE } from 'calypso/state/action-types';
 import {
 	keyedReducer,
 	withSchemaValidation,
 	combineReducers,
-	isValidStateWithSchema,
 	withPersistence,
 	serialize,
 	deserialize,
 } from 'calypso/state/utils';
+import { isValidStateWithSchema } from 'calypso/state/utils/schema-utils';
 
-jest.mock( '@wordpress/warning', () => jest.fn() );
+vi.mock( '@wordpress/warning', () => ( { default: vi.fn() } ) );
 
 describe( 'utils', () => {
 	beforeEach( () => warn.mockReset() );
@@ -59,7 +60,6 @@ describe( 'utils', () => {
 			expect( () => keyedReducer( 'key', 15.4 ) ).toThrow( TypeError );
 			expect( () => keyedReducer( 'key', '' ) ).toThrow( TypeError );
 			expect( () => keyedReducer( 'key' ) ).toThrow( TypeError );
-			expect( () => keyedReducer( 'key', () => {} ).not.toThrow( TypeError ) );
 		} );
 
 		test( 'should create keyed state given simple reducers', () => {

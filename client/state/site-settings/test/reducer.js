@@ -1,6 +1,6 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
-	MEDIA_DELETE,
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
 	SITE_SETTINGS_REQUEST_FAILURE,
@@ -14,7 +14,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import { items, requesting, saveRequests } from '../reducer';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	describe( 'requesting()', () => {
 		test( 'should default to an empty object', () => {
@@ -207,54 +207,6 @@ describe( 'reducer', () => {
 
 			expect( state ).toEqual( {
 				2916284: { blogdescription: 'ribs', blogname: 'chicken', lang_id: 1 },
-			} );
-		} );
-
-		test( 'should return same state on media delete for untracked site', () => {
-			const previousState = deepFreeze( {} );
-			const state = items( previousState, {
-				type: MEDIA_DELETE,
-				siteId: 2916284,
-				mediaIds: [ 42 ],
-			} );
-
-			expect( state ).toEqual( previousState );
-		} );
-
-		test( 'should return same state on media delete if set does not contain icon setting', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					blogname: 'Example',
-					site_icon: 42,
-				},
-			} );
-			const state = items( previousState, {
-				type: MEDIA_DELETE,
-				siteId: 2916284,
-				mediaIds: [ 36 ],
-			} );
-
-			expect( state ).toEqual( previousState );
-		} );
-
-		test( 'should unset icon setting on media delete if set contains icon', () => {
-			const previousState = deepFreeze( {
-				2916284: {
-					blogname: 'Example',
-					site_icon: 42,
-				},
-			} );
-			const state = items( previousState, {
-				type: MEDIA_DELETE,
-				siteId: 2916284,
-				mediaIds: [ 42 ],
-			} );
-
-			expect( state ).toEqual( {
-				2916284: {
-					blogname: 'Example',
-					site_icon: null,
-				},
 			} );
 		} );
 

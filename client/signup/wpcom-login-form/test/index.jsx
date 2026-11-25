@@ -1,9 +1,10 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import config from '@automattic/calypso-config';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import WpcomLoginForm from '..';
 
-jest.mock( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config' );
 
 describe( 'WpcomLoginForm', () => {
 	const props = {

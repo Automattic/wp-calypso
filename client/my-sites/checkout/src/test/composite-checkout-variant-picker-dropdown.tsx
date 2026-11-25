@@ -23,6 +23,7 @@ import {
 	getPlanSubtitleTextForInterval,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockGetVatInfoEndpoint,
@@ -63,6 +64,7 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetVatInfoEndpoint( {} );
 		mockMatchMediaOnWindow();

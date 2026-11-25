@@ -10,7 +10,7 @@
 - **Hosts** drive the chat from outside the React tree through `window.__agentsManagerActions` and window events — see `hooks/custom-actions/README.md`.
 - **Chat runtime** comes from `@automattic/agenttic-client` (hooks, auth, message types) and `@automattic/agenttic-ui` (UI components, renderers). Both live in this repo under `packages/` and are also published to npm. Image Studio, the Jetpack AI sidebar, the Odie and Zendesk support clients, A8C for Agencies and parts of Calypso use them too: keep a change there backward compatible, with new behavior opt-in, and remove an old API only once none of them uses it.
 - **Interactive UI** renders with `@automattic/ai-ui-renderer` (the A2UI runtime, the basic or shared components and their styles), and Agents Manager hosts it from `interactive-ui/` — see "Interactive UI" below.
-- **Other docs**: the package root's `README.md` (usage, props, window API) and `SITE-CREDITS.md` (the site credits exports), plus the `README.md` beside the code it covers: `interactive-ui/` (the interactive UI architecture), `webmcp/` (the dev-mode browser tools, exposed through their own allowlists rather than the route settings) and `hooks/use-agent-layout-manager/` (dock layout).
+- **Other docs**: the package root's `README.md` (usage, props, window API) and `SITE-CREDITS.md` (the site credits exports), plus the `README.md` beside the code it covers: `interactive-ui/` (the interactive UI architecture), `webmcp/` (the dev-mode browser tools, exposed through the `meta.webmcp.public` ability flag and a server allowlist rather than the route settings) and `hooks/use-agent-layout-manager/` (dock layout).
 
 ## Testing
 

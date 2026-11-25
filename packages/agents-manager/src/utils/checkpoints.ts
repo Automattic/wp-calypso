@@ -927,14 +927,18 @@ export async function withCheckpoint< T >(
 		summary,
 	}: {
 		toolId: string;
-		/** The client's id for this call; read from the conversation history when absent. */
-		toolCallId?: string;
+		/**
+		 * The client's id for this call; read from the conversation history when absent. `null`
+		 * marks a call no chat made, such as a WebMCP one, which takes no checkpoint.
+		 */
+		toolCallId?: string | null;
 		keys: string[];
 		summary: string;
 	},
 	write: ( recorder: CheckpointRecorder ) => T | Promise< T >
 ): Promise< T > {
-	const callId = toolCallId ?? getToolCallIdFromConversationHistory( toolId );
+	const callId =
+		toolCallId === undefined ? getToolCallIdFromConversationHistory( toolId ) : toolCallId;
 
 	// No keys means no domain to put back, and every restore is key-gated —
 	// so a checkpoint here would offer the user an undo that does nothing.

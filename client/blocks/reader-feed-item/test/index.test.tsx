@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -10,19 +10,20 @@ import {
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderFeedItem from '../index';
 import type { Reader } from '@automattic/data-stores';
 
-const mockSubscribeMutate = jest.fn();
-const mockUnsubscribeMutate = jest.fn();
+const mockSubscribeMutate = vi.fn();
+const mockUnsubscribeMutate = vi.fn();
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTrainTracksInteract: jest.fn(),
-	recordTrainTracksRender: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTrainTracksInteract: vi.fn(),
+	recordTrainTracksRender: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	Reader: {},
 	SubscriptionManager: {
 		useSiteSubscribeMutation: () => ( {
@@ -36,22 +37,24 @@ jest.mock( '@automattic/data-stores', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/landing/subscriptions/tracks', () => ( {
+vi.mock( 'calypso/landing/subscriptions/tracks', () => ( {
 	SOURCE_SUBSCRIPTIONS_SEARCH_RECOMMENDATION_LIST: 'subscriptions-search-recommendation-list',
-	useRecordSiteIconClicked: () => jest.fn(),
-	useRecordSiteSubscribed: () => jest.fn(),
-	useRecordSiteTitleClicked: () => jest.fn(),
-	useRecordSiteUnsubscribed: () => jest.fn(),
-	useRecordSiteUrlClicked: () => jest.fn(),
+	useRecordSiteIconClicked: () => vi.fn(),
+	useRecordSiteSubscribed: () => vi.fn(),
+	useRecordSiteTitleClicked: () => vi.fn(),
+	useRecordSiteUnsubscribed: () => vi.fn(),
+	useRecordSiteUrlClicked: () => vi.fn(),
 } ) );
 
-jest.mock( 'calypso/blocks/site-icon', () => ( {
-	SiteIcon: () => <div data-testid="site-icon" />,
-} ) );
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SiteIcon: () => <div data-testid="site-icon" />,
+	} )
+);
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	isCurrentUserEmailVerified: jest.fn( () => true ),
-	isUserLoggedIn: jest.fn( () => true ),
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	isCurrentUserEmailVerified: vi.fn( () => true ),
+	isUserLoggedIn: vi.fn( () => true ),
 } ) );
 
 const makeFeedItem = ( overrides: Partial< Reader.FeedItem > = {} ): Reader.FeedItem => ( {
@@ -100,7 +103,7 @@ const makeQueryClient = ( siteSubscriptions: unknown[] = [] ) => {
 
 describe( 'ReaderFeedItem', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'marks a feed as subscribed after a successful subscribe mutation', async () => {

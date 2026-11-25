@@ -11,21 +11,13 @@ import type { FunctionComponent } from 'react';
 interface StudioHandoffProps {
 	siteId?: number;
 	receiptId?: number;
-	// Hand off without the notice, on a page that offers its own "Open Studio" button.
-	hideNotice?: boolean;
 }
 
 /**
  * The Studio round-trip params on this thank-you URL, and the one way to hand the buyer back to
  * Studio with them, so every "Open Studio" records the same `calypso_studio_checkout_return`.
  */
-export function useStudioCheckoutReturn( {
-	siteId,
-	receiptId,
-}: {
-	siteId?: number;
-	receiptId?: number;
-} ) {
+function useStudioCheckoutReturn( { siteId, receiptId }: { siteId?: number; receiptId?: number } ) {
 	// The query string does not change while this page is mounted.
 	const studioCheckoutParams = useMemo( () => getStudioCheckoutParams( getQueryArgs() ), [] );
 
@@ -62,11 +54,7 @@ export function useStudioCheckoutReturn( {
  * The surrounding page waits for the receipt to load, so the handoff fires after that rather than
  * on first paint.
  */
-const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( {
-	siteId,
-	receiptId,
-	hideNotice,
-} ) => {
+const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( { siteId, receiptId } ) => {
 	const translate = useTranslate();
 	const { studioCheckoutParams, openStudio } = useStudioCheckoutReturn( { siteId, receiptId } );
 
@@ -79,7 +67,7 @@ const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( {
 		openStudio( { fromUserClick: false } );
 	}, [ studioCheckoutParams, openStudio ] );
 
-	if ( ! studioCheckoutParams || hideNotice ) {
+	if ( ! studioCheckoutParams ) {
 		return null;
 	}
 

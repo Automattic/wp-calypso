@@ -1,28 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-const EXAMPLE_SITE_SLUG = 'mysite.example';
-
-// Mock dependencies
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
-	useDispatch: jest.fn().mockImplementation( () => () => {} ),
-} ) );
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-slug', () =>
-	jest.fn().mockImplementation( () => EXAMPLE_SITE_SLUG )
-);
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
-jest.mock( 'calypso/state/analytics/actions/record' );
-
 import { render, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	useDaysOfBackupsSavedText,
 	useStorageUsageText,
 	useStorageText,
 } from 'calypso/components/backup-storage-space/hooks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+
+// Mock dependencies
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn().mockImplementation( ( selector ) => selector() ),
+	useDispatch: vi.fn().mockImplementation( () => () => {} ),
+} ) );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 const GIGABYTE = 2 ** 30;
 const TERABYTE = 2 ** 40;

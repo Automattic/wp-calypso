@@ -13,7 +13,7 @@ import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { interceptLinks } from '../panel/utils/link-interceptor';
 import { getClient, initClient, showNotes } from './client';
-import { AppProvider, useOpenFullView, type FullView } from './context';
+import { AppProvider, NoteOpenContext, type FullView } from './context';
 import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
@@ -94,8 +94,12 @@ const NotificationContent = ( {
 		}
 	};
 
+	const ignoreClick = ( event: MouseEvent< HTMLDivElement > ) => {
+		event.preventDefault();
+		event.stopPropagation();
+	};
+
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
-	const openFullView = useOpenFullView( { filterName, noteId: selectedNoteId } );
 	const constrainedTabbingRef = useConstrainedTabbing();
 
 	return (
@@ -111,6 +115,9 @@ const NotificationContent = ( {
 			<div
 				className={ clsx( 'wpnc-app__detail-pane', { 'is-open': isDetailOpen } ) }
 				onTransitionEnd={ handleDetailPaneTransitionEnd }
+				// A closed note keeps the focus while it slides out (see `inert` below), so a click
+				// on it, or Enter on one of its buttons, could still act on it.
+				onClickCapture={ isDetailOpen ? undefined : ignoreClick }
 				// Keep the pane interactive through the exit transition: it's
 				// still on-screen sliding out and `displayedNoteId` is still
 				// set. Flipping `inert` synchronously on `isDetailOpen` (the
@@ -121,13 +128,14 @@ const NotificationContent = ( {
 				inert={ displayedNoteId === undefined ? '' : undefined }
 			>
 				<ErrorBoundary>
-					<Note
-						isDismissible={ isDismissible }
-						noteId={ displayedNoteId }
-						setSelectedNoteId={ setSelectedNoteId }
-						noteNavigation={ noteNavigation }
-						onOpenFullView={ openFullView }
-					/>
+					<NoteOpenContext.Provider value={ isDetailOpen }>
+						<Note
+							isDismissible={ isDismissible }
+							noteId={ displayedNoteId }
+							setSelectedNoteId={ setSelectedNoteId }
+							noteNavigation={ noteNavigation }
+						/>
+					</NoteOpenContext.Provider>
 				</ErrorBoundary>
 			</div>
 			<div className="wpnc-app__list-pane">

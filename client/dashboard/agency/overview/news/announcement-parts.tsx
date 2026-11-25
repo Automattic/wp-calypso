@@ -8,17 +8,25 @@ import { ButtonStack } from '../../../components/button-stack';
 import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
 import { formatDate, getCalendarDaysUntil, parseYmdLocal } from '../../../utils/datetime';
+import { isWebUrl } from '../../../utils/is-web-url';
 import { isDashboardPath } from '../../../utils/link';
+import { getUrlOnOrigins, isRelativeUrl } from '../../../utils/url';
 import NewTabLabel from '../../components/new-tab-label';
 import { ANNOUNCEMENT_LOGOS } from './announcements';
 import type { Announcement, AnnouncementCta } from './announcements';
 import type { RecordTracksEvent } from '../../tiers/types';
+
+/** The page showing the announcements, sent with their Tracks events. */
+export type AnnouncementPlacement = 'overview' | 'hosting' | 'products';
 
 export interface AnnouncementActionProps {
 	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 	/** Maps a CTA's dashboard path to the page of the app rendering the card. */
 	getCtaUrl?: ( url: string ) => string;
+	placement?: AnnouncementPlacement;
+	/** Leaves out the primary CTA, for a page that already shows what it leads to. */
+	hidePrimaryCta?: boolean;
 }
 
 /**
@@ -141,11 +149,13 @@ export function AnnouncementDescription( { announcement }: { announcement: Annou
 
 function trackCta(
 	recordTracksEvent: RecordTracksEvent | undefined,
+	placement: AnnouncementPlacement,
 	announcement: Announcement,
 	cta: AnnouncementCta,
 	ctaId: 'primary' | 'secondary'
 ) {
 	recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
+		placement,
 		announcement_id: announcement.id,
 		announcement_type: announcement.type,
 		cta_id: ctaId,
@@ -194,6 +204,16 @@ function CtaButton( {
 }
 
 /**
+ * CTA URLs come from marketing content, so only web links and paths on this site become
+ * buttons; anything else, such as a `javascript:` URL or `//other-site`, is dropped.
+ */
+export function isSafeCtaUrl( url: string ) {
+	return isRelativeUrl( url )
+		? !! getUrlOnOrigins( url, [ window.location.origin ], window.location.href )
+		: isWebUrl( url );
+}
+
+/**
  * The open item's actions: secondary, then tertiary, so the Overview keeps one primary
  * button (Schedule a check-in) and the news never competes with it.
  */
@@ -202,24 +222,37 @@ export function AnnouncementCtas( {
 	shouldUseRouterLink = true,
 	recordTracksEvent,
 	getCtaUrl,
+	placement = 'overview',
+	hidePrimaryCta = false,
 }: { announcement: Announcement } & AnnouncementActionProps ) {
 	const { primaryCta, secondaryCta } = announcement;
 	const resolveCta = ( cta: AnnouncementCta ) =>
 		getCtaUrl && ! cta.isExternal ? { ...cta, url: getCtaUrl( cta.url ) } : cta;
+	const showPrimary = ! hidePrimaryCta && isSafeCtaUrl( primaryCta.url );
+	const showSecondary = !! secondaryCta && isSafeCtaUrl( secondaryCta.url );
+	if ( ! showPrimary && ! showSecondary ) {
+		return null;
+	}
 	return (
 		<ButtonStack justify="flex-start" wrap>
-			<CtaButton
-				cta={ resolveCta( primaryCta ) }
-				variant="secondary"
-				shouldUseRouterLink={ shouldUseRouterLink }
-				onClick={ () => trackCta( recordTracksEvent, announcement, primaryCta, 'primary' ) }
-			/>
-			{ secondaryCta && (
+			{ showPrimary && (
+				<CtaButton
+					cta={ resolveCta( primaryCta ) }
+					variant="secondary"
+					shouldUseRouterLink={ shouldUseRouterLink }
+					onClick={ () =>
+						trackCta( recordTracksEvent, placement, announcement, primaryCta, 'primary' )
+					}
+				/>
+			) }
+			{ showSecondary && secondaryCta && (
 				<CtaButton
 					cta={ resolveCta( secondaryCta ) }
 					variant="tertiary"
 					shouldUseRouterLink={ shouldUseRouterLink }
-					onClick={ () => trackCta( recordTracksEvent, announcement, secondaryCta, 'secondary' ) }
+					onClick={ () =>
+						trackCta( recordTracksEvent, placement, announcement, secondaryCta, 'secondary' )
+					}
 				/>
 			) }
 		</ButtonStack>

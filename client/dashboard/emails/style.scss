@@ -33,3 +33,11 @@
 	text-decoration: none !important;
 	font-size: $font-size-medium;
 }
+
+.emails-status-with-tooltip {
+	text-decoration: underline dotted;
+}
+
+.emails__dataviews .dataviews-view-table tbody td {
+	vertical-align: middle;
+}

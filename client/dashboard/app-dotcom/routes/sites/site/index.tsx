@@ -15,9 +15,6 @@ import { useAuth } from '../../../../app/auth';
 import { useAppContext } from '../../../../app/context';
 import { useIntlLocale } from '../../../../app/locale';
 import { PerformanceTrackerStop } from '../../../../app/performance-tracking';
-import TwoStepRequiredNotice, {
-	useSiteRequiresTwoStep,
-} from '../../../../app/two-step-required-notice';
 import Divider from '../../../../components/divider';
 import FlashMessage from '../../../../components/flash-message';
 import Grid, { type GapSize } from '../../../../components/grid';
@@ -32,6 +29,9 @@ import { SitesNoticeArbiter } from '../../../../sites/components/notice-arbiter'
 import SiteActionMenu from '../../../../sites/components/site-action-menu';
 import SiteOverviewFields from '../../../../sites/components/site-overview-fields';
 import SubscribersCard from '../../../../sites/components/subscribers-card';
+import TwoStepRequiredNotice, {
+	useSiteRequiresTwoStep,
+} from '../../../../sites/components/two-step-required-notice';
 import DIFMOfferCard from '../../../../sites/difm/components/difm-offer-card';
 import DifmOfferDeepLink from '../../../../sites/difm/components/difm-offer-card/deep-link';
 import DifmOfferThankYou from '../../../../sites/difm/components/difm-offer-card/thank-you';
@@ -45,11 +45,11 @@ import PerformanceCard from '../../../../sites/performance/components/performanc
 import PlanCard from '../../../../sites/plan/components/plan-card';
 import ScanCard from '../../../../sites/scan/components/scan-card';
 import { InaccessibleJetpackNotice } from '../../../../sites/site/notices';
-import StagingSiteSyncDropdown from '../../../../sites/staging-site-sync-dropdown';
+import StagingSiteSyncDropdown from '../../../../sites/staging-site/components/staging-site-sync-dropdown';
 import {
 	StagingSiteSyncNotice,
 	useStagingSiteSyncForNotice,
-} from '../../../../sites/staging-site-sync-notice';
+} from '../../../../sites/staging-site/components/staging-site-sync-notice';
 import {
 	StaticSiteImportFailed,
 	StaticSiteImportNotice,

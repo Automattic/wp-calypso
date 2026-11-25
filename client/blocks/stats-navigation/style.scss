@@ -27,13 +27,6 @@
 			margin-left: 16px;
 		}
 	}
-	.subscribers-count .button {
-		margin-left: 16px;
-
-		@media (max-width: $break-mobile) {
-			display: none;
-		}
-	}
 	.stats-navigation__intervals.is-standalone.segmented-control {
 		display: flex;
 
@@ -107,25 +100,6 @@
 
 			&.is-open {
 				@media (max-width: $break-mobile) {
-					.subscribers-count {
-						&:hover,
-						&:focus {
-							.button {
-								color: var(--color-text-inverted);
-							}
-						}
-
-						.button {
-							display: inline-block;
-							padding: 8px;
-							color: var(--color-neutral-60);
-							font-size: $font-body-small;
-							font-weight: 600;
-							line-height: 24px;
-
-						}
-					}
-
 					& ~ .page-modules-settings {
 						position: absolute;
 						top: 11px;
@@ -211,43 +185,6 @@
 						color: var(--color-neutral-100);
 					}
 				}
-			}
-		}
-
-		.subscribers-count {
-			.button {
-				font-weight: 400;
-				font-size: $font-body-small;
-				line-height: 24px;
-				color: var(--color-neutral-80);
-				margin: 0;
-				padding: 7px 12px;
-			}
-
-			@media (max-width: $break-mobile) {
-				margin-top: 1px; // TODO: remove this after enabling Subscribers page and all nav items are of the same type
-
-				&:hover,
-				&:focus {
-					color: var(--color-text-inverted);
-					background-color: var(--color-accent);
-					opacity: 0.65;
-
-					.button {
-						color: var(--color-text-inverted);
-					}
-				}
-			}
-
-			.a8c-count {
-				padding: 0 8px;
-				margin-left: 6px;
-				border-radius: 2px;
-				border: 0;
-				background-color: var(--color-neutral-0);
-				font-weight: 500;
-				font-size: $font-body-extra-small;
-				line-height: 20px;
 			}
 		}
 	}

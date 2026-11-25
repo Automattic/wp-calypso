@@ -14,6 +14,16 @@ $omnibar-reader-active-radius: 4px;
 	}
 }
 
+.omnibar .omnibar__secondary .omnibar__menu.omnibar__reader {
+	@media ( min-width: 782px ) {
+		padding-inline-start: 6px;
+
+		.omnibar__node-content {
+			gap: 6px;
+		}
+	}
+}
+
 .omnibar .omnibar__menu svg.omnibar__reader-icon {
 	width: 36px;
 	height: auto;

@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import {
 	ClassicColorSchemeProvider,
 	PREFERENCE_KEY,
@@ -200,8 +201,8 @@ describe( 'withColorScheme', () => {
 
 	test( 'keeps the body class effect stable across re-renders', () => {
 		const store = mockStore( buildState( { scheme: 'dark' } ) );
-		const addClass = jest.spyOn( document.body.classList, 'add' );
-		const removeClass = jest.spyOn( document.body.classList, 'remove' );
+		const addClass = vi.spyOn( document.body.classList, 'add' );
+		const removeClass = vi.spyOn( document.body.classList, 'remove' );
 		const renderWrappedColorScheme = () => (
 			<Provider store={ store }>
 				{ withColorScheme( <span>child</span>, {

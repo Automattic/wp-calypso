@@ -27,16 +27,20 @@ useMutation( withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Sav
 
 Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `eslint.config.mjs` enforces this.
 
-If the mutation needs other options too, wrap only the factory:
+For component-specific handling, pass callbacks to `mutate()`:
 
 ```ts
-useMutation( {
-	...withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ),
+const { mutate } = useMutation(
+	withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } )
+);
+mutate( version, {
 	onSuccess: () => {
 		/* … */
 	},
 } );
 ```
+
+Put component-specific `onSuccess` and `onError` handling on the `mutate()` call by default, e.g. if the component proceeds to another step after the mutation is complete. Set it on `useMutation()` only when it must run even if the component unmounts first, and then call the factory's own callback too, as the README example shows. See [Adding mutations](../../packages/api-queries/README.md#adding-mutations) for why.
 
 ### Internationalization
 

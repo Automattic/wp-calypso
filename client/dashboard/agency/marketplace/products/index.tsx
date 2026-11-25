@@ -18,6 +18,7 @@ import PageLayout from '../../../components/page-layout';
 import { SectionHeader } from '../../../components/section-header';
 import { isPressablePlanLicense, pressableLicensesQuery } from '../hosting/lib/pressable-products';
 import { isAgencyApproved } from '../is-agency-approved';
+import MarketplacePromos from '../marketplace-promos';
 import ReferralModeBand from '../referral-mode-band';
 import ReferralToggle from '../referral-toggle';
 import TermPricingToggle from '../term-pricing-toggle';
@@ -59,10 +60,12 @@ import {
 import type { TileValue } from './category-tiles';
 import type { ProductBrand, ProductCategory } from './lib/product-categories';
 import type { ProductListItem, ProductSection } from './lib/product-groups';
-import type { AgencyProduct } from '@automattic/api-core';
+import type { AgencyAnnouncementLogo, AgencyProduct } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
 import './style.scss';
+
+const PROMO_LOGOS: readonly AgencyAnnouncementLogo[] = [ 'jetpack', 'woo' ];
 
 const DEFAULT_VIEW: View = {
 	type: 'list',
@@ -129,7 +132,14 @@ export default function MarketplaceProducts() {
 	}, [ allProducts, showPressableAddons ] );
 
 	const searchParams = marketplaceProductsRoute.useSearch() as ProductsSearchParams;
-	const { items: cartItems, hasItem, addItem, removeItem, replaceItems } = useShoppingCart();
+	const {
+		items: cartItems,
+		hasItem,
+		addItem,
+		removeItem,
+		setItemQuantity,
+		replaceItems,
+	} = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useCartOpen();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
@@ -365,6 +375,12 @@ export default function MarketplaceProducts() {
 		[ hasItem ]
 	);
 
+	const isLegacyBilling = agency?.billing_system === 'legacy';
+	const openCart = useCallback( () => setIsCartOpen( true ), [ setIsCartOpen ] );
+	// Only a Billing Dragon purchase sets counts in the cart, so only then does a
+	// product in the cart open it.
+	const opensCart = ! isReferralMode && ! isLegacyBilling;
+
 	const openDetails = ( product: AgencyProduct ) => {
 		recordTracksEvent( 'calypso_marketplace_products_overview_product_view', {
 			product: product.slug,
@@ -383,6 +399,7 @@ export default function MarketplaceProducts() {
 					isInCart={ isProductInCart }
 					onToggleCart={ toggleCart }
 					onViewDetails={ openDetails }
+					onOpenCart={ opensCart ? openCart : undefined }
 					onSelectVariant={ ( product ) =>
 						recordTracksEvent( 'calypso_a4a_marketplace_products_overview_variant_option_click', {
 							product: product.slug,
@@ -414,10 +431,11 @@ export default function MarketplaceProducts() {
 									term={ termPricing }
 									isReferralMode={ isReferralMode }
 									isAgencyApproved={ isAgencyApproved( agency ) }
-									isLegacyBilling={ agency?.billing_system === 'legacy' }
+									isLegacyBilling={ isLegacyBilling }
 									open={ isCartOpen }
 									onToggle={ setIsCartOpen }
 									onRemove={ removeItem }
+									onSetQuantity={ setItemQuantity }
 								/>
 							</HStack>
 						</HStack>
@@ -426,6 +444,13 @@ export default function MarketplaceProducts() {
 			}
 		>
 			{ isReferralMode && <ReferralModeBand kind="products" /> }
+			{ /* The products a promo leads to are listed right below, so its primary CTA is left out. */ }
+			<MarketplacePromos
+				agencyId={ agencyId }
+				logos={ PROMO_LOGOS }
+				placement="products"
+				hidePrimaryCta
+			/>
 			{ detailsProduct && (
 				<ProductDetailsModal
 					product={ detailsProduct }
@@ -434,6 +459,14 @@ export default function MarketplaceProducts() {
 					inCart={ isProductInCart( detailsProduct ) }
 					onToggleCart={ () => toggleCart( detailsProduct ) }
 					onClose={ () => setDetailsProduct( null ) }
+					onOpenCart={
+						opensCart
+							? () => {
+									setDetailsProduct( null );
+									openCart();
+								}
+							: undefined
+					}
 				/>
 			) }
 			{ isLoading && <FeaturedShowcaseSkeleton /> }
@@ -445,6 +478,7 @@ export default function MarketplaceProducts() {
 					isInCart={ isProductInCart }
 					onToggleCart={ toggleCart }
 					onViewDetails={ openDetails }
+					onOpenCart={ opensCart ? openCart : undefined }
 				/>
 			) }
 			<div className="dashboard-marketplace-products__filters">

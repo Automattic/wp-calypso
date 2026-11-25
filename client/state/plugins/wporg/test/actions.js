@@ -1,13 +1,14 @@
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import * as wporg from 'calypso/lib/wporg';
 import { combineReducers } from 'calypso/state/utils';
 import { fetchPluginData, fetchPluginsList } from '../actions';
 import wporgReducer from '../reducer';
 
-jest.mock( 'calypso/lib/wporg', () => ( {
-	fetchPluginInformation: jest.fn( ( slug ) => Promise.resolve( { slug } ) ),
-	fetchPluginsList: jest.fn( () => Promise.resolve( [ { slug: 'test-plugin' } ] ) ),
+vi.mock( 'calypso/lib/wporg', () => ( {
+	fetchPluginInformation: vi.fn( ( slug ) => Promise.resolve( { slug } ) ),
+	fetchPluginsList: vi.fn( () => Promise.resolve( [ { slug: 'test-plugin' } ] ) ),
 } ) );
 
 const reducer = combineReducers( {
@@ -17,13 +18,13 @@ const reducer = combineReducers( {
 } );
 
 // Redux middleware that wraps the `store.dispatch` method with a Jest spy
-const dispatchSpy = () => jest.fn;
+const dispatchSpy = () => vi.fn;
 
 describe( 'WPorg Data Actions', () => {
 	let store;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		store = createStore( reducer, applyMiddleware( dispatchSpy, thunk ) );
 	} );
 

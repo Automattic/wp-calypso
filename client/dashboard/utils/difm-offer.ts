@@ -1,8 +1,6 @@
 import { DIFM_OFFER_ARMS, DotcomPlans } from '@automattic/api-core';
-import config from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
-import { useExperiment } from 'calypso/lib/explat';
 import type { DifmOfferBuildRequestVariation } from '@automattic/api-core';
 
 /**
@@ -127,34 +125,6 @@ export function isEligibleForDifmOffer(
 		isRecentSite( siteCreatedAt, now ) &&
 		isEnglishLocale( localeSlug )
 	);
-}
-
-/**
- * Takes plain values rather than a site object so that callers holding either the
- * redux site model or the api-core site model can use it.
- */
-export function useDifmOffer( input: DifmOfferEligibilityInput ): DifmOfferResult {
-	const isEligible = isEligibleForDifmOffer( input );
-	const isForcedTreatment = isEligible && config.isEnabled( DIFM_OFFER_FORCE_TREATMENT_FLAG );
-
-	// Always call the hook. Keep ineligible users and forced testers out of the experiment.
-	const [ isLoading, experimentAssignment ] = useExperiment( DIFM_OFFER_EXPERIMENT, {
-		isEligible: isEligible && ! isForcedTreatment,
-	} );
-
-	if ( ! isEligible ) {
-		return { isEligible, isLoading: false, variation: 'control' };
-	}
-
-	if ( isForcedTreatment ) {
-		return { isEligible, isLoading: false, variation: DIFM_OFFER_FORCED_ARM };
-	}
-
-	return {
-		isEligible,
-		isLoading,
-		variation: normalizeDifmOfferVariation( experimentAssignment?.variationName ),
-	};
 }
 
 export interface DifmOfferCopy {

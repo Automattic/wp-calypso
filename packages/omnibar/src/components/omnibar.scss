@@ -21,27 +21,6 @@ body:has( .omnibar ) {
 	}
 }
 
-.omnibar,
-.omnibar__popover {
-	.dashicons-before {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 20px;
-		color: var( --omnibar-icon-color );
-
-		&::before {
-			position: relative;
-			width: 20px;
-			height: 20px;
-			font-size: 20px;
-			line-height: 1;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;
-		}
-	}
-}
-
 .omnibar {
 	background-color: var( --omnibar-background );
 	min-height: var( --omnibar-height );
@@ -96,7 +75,6 @@ body:has( .omnibar ) {
 			box-shadow: none;
 			outline: none;
 
-			.dashicons-before,
 			svg {
 				color: var( --omnibar-highlight-color );
 			}
@@ -143,22 +121,18 @@ body:has( .omnibar ) {
 	.omnibar__home {
 		@media ( max-width: 480px ) {
 			min-width: 44px;
-
-			svg {
-				position: relative;
-				inset-inline-start: 1px;
-			}
 		}
 
 		@media ( min-width: 782px ) {
-			padding-inline-start: 8px;
+			padding-inline: 7px;
 		}
 	}
 
 	.omnibar__site {
 		@media ( max-width: 480px ) {
-			.dashicons-before::before {
-				width: 46px;
+			svg {
+				position: relative;
+				inset-inline-start: 3px;
 			}
 
 			.omnibar__site-icon {
@@ -180,6 +154,10 @@ body:has( .omnibar ) {
 				border-radius: 2px;
 			}
 		}
+
+		.omnibar__node-content:has( .omnibar__site-icon ) {
+			gap: 6px;
+		}
 	}
 
 	.omnibar__updates {
@@ -194,6 +172,12 @@ body:has( .omnibar ) {
 		}
 	}
 
+	.omnibar__comments {
+		@media ( max-width: 400px ) {
+			display: none;
+		}
+	}
+
 	.omnibar__menu .omnibar__label {
 		display: none;
 
@@ -203,61 +187,14 @@ body:has( .omnibar ) {
 	}
 
 	.omnibar__node-content {
-		gap: 6px;
+		gap: 4px;
 	}
 
-	.dashicons-before {
-		height: 40px;
+	.omnibar__search-icon {
+		transform: scaleX( -1 );
 
-		&::before {
-			width: 52px;
-			height: 40px;
-			font-size: 40px;
-			text-align: center;
-		}
-
-		@media ( min-width: 782px ) {
-			height: 20px;
-
-			&::before {
-				width: 20px;
-				height: 20px;
-				font-size: 20px;
-				text-align: initial;
-			}
-		}
-	}
-
-	.dashicons-menu-alt::before {
-		top: 0.5px;
-		inset-inline-start: -1px;
-		margin-inline-end: 1px;
-	}
-
-	.dashicons-admin-home::before {
-		height: 32px;
-		font-size: 32px;
-
-		@media ( min-width: 782px ) {
-			height: 20px;
-			font-size: 20px;
-		}
-	}
-
-	.dashicons-plus::before {
-		top: 2px;
-	}
-
-	.dashicons-admin-comments::before,
-	.dashicons-search::before {
-		height: 34px;
-		font-size: 34px;
-		top: 0.5px;
-
-		@media ( min-width: 782px ) {
-			height: 20px;
-			font-size: 20px;
-			top: 1px;
+		[dir='rtl'] & {
+			transform: none;
 		}
 	}
 }

@@ -1,24 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { render, screen } from '@testing-library/react';
+import { HelpCenter } from '@automattic/data-stores';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch, select } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CaptureInput from '../capture-input';
 
-const mockedRecordTracksEvent = jest.fn();
+const mockedRecordTracksEvent = vi.fn();
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
+vi.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: ( ...args ) => mockedRecordTracksEvent( ...args ),
 } ) );
 
+const HELP_CENTER_STORE = HelpCenter.register();
+const SIGNED_IN = { currentUser: { id: 1, user: { ID: 1 } } };
+
 describe( 'CaptureInput', () => {
-	beforeEach( () => jest.resetAllMocks() );
+	beforeEach( () => vi.resetAllMocks() );
 
 	it( 'captures the site url', async () => {
-		const onInputEnter = jest.fn();
+		const onInputEnter = vi.fn();
 		render(
 			<MemoryRouter>
 				<CaptureInput onInputEnter={ onInputEnter } />
@@ -37,7 +44,7 @@ describe( 'CaptureInput', () => {
 
 	it( 'uses the initial address instead of the resolved address in the query string', async () => {
 		const user = userEvent.setup();
-		const onInputEnter = jest.fn();
+		const onInputEnter = vi.fn();
 		render(
 			<MemoryRouter initialEntries={ [ '/?from=https://redirected.example.com' ] }>
 				<CaptureInput onInputEnter={ onInputEnter } initialUrl="example.com" skipInitialChecking />
@@ -54,7 +61,7 @@ describe( 'CaptureInput', () => {
 
 	it( 'validates the initial address before submitting it', async () => {
 		const user = userEvent.setup();
-		const onInputEnter = jest.fn();
+		const onInputEnter = vi.fn();
 		render(
 			<MemoryRouter>
 				<CaptureInput onInputEnter={ onInputEnter } initialUrl="invalid" skipInitialChecking />
@@ -69,7 +76,7 @@ describe( 'CaptureInput', () => {
 
 	it( 'preserves the URL and focus while busy and allows editing and submission afterward', async () => {
 		const user = userEvent.setup();
-		const onInputEnter = jest.fn();
+		const onInputEnter = vi.fn();
 		const { rerender } = render( <CaptureInput onInputEnter={ onInputEnter } />, {
 			wrapper: MemoryRouter,
 		} );
@@ -101,8 +108,8 @@ describe( 'CaptureInput', () => {
 	it( 'blocks platform selection while busy and restores it afterward', async () => {
 		const user = userEvent.setup();
 		const props = {
-			onInputEnter: jest.fn(),
-			onDontHaveSiteAddressClick: jest.fn(),
+			onInputEnter: vi.fn(),
+			onDontHaveSiteAddressClick: vi.fn(),
 		};
 		const { rerender } = render( <CaptureInput { ...props } isBusy />, {
 			wrapper: MemoryRouter,
@@ -123,7 +130,7 @@ describe( 'CaptureInput', () => {
 	it( 'shows an custom input label', async () => {
 		render(
 			<MemoryRouter>
-				<CaptureInput onInputEnter={ jest.fn() } label="A custom label text" />
+				<CaptureInput onInputEnter={ vi.fn() } label="A custom label text" />
 			</MemoryRouter>
 		);
 
@@ -133,7 +140,7 @@ describe( 'CaptureInput', () => {
 	} );
 
 	it( 'only records invalid urls once', async () => {
-		const onInputEnter = jest.fn();
+		const onInputEnter = vi.fn();
 		render(
 			<MemoryRouter>
 				<CaptureInput onInputEnter={ onInputEnter } />
@@ -169,7 +176,7 @@ describe( 'CaptureInput', () => {
 	it( 'does not record a valid URL from the query string as invalid', async () => {
 		render(
 			<MemoryRouter initialEntries={ [ '/?from=example.com' ] }>
-				<CaptureInput onInputEnter={ jest.fn() } hasError />
+				<CaptureInput onInputEnter={ vi.fn() } hasError />
 			</MemoryRouter>
 		);
 
@@ -178,10 +185,163 @@ describe( 'CaptureInput', () => {
 		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
+	it( 'refuses a WordPress.com page instead of entering it', async () => {
+		const onInputEnter = vi.fn();
+		renderWithProvider(
+			<MemoryRouter>
+				<CaptureInput onInputEnter={ onInputEnter } />
+			</MemoryRouter>
+		);
+
+		await userEvent.type(
+			screen.getByLabelText( /Enter the URL of the site/ ),
+			'https://wordpress.com/home/example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( onInputEnter ).not.toHaveBeenCalled();
+		expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_importer_capture_input_invalid',
+			{ error_code: 'wordpress_com_page' }
+		);
+	} );
+
+	it( 'explains a handed-over WordPress.com page straight away', () => {
+		renderWithProvider(
+			<MemoryRouter initialEntries={ [ '/?from=wordpress.com/log-in' ] }>
+				<CaptureInput onInputEnter={ vi.fn() } skipInitialChecking />
+			</MemoryRouter>
+		);
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'wordpress.com/log-in' );
+		expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'explains a WordPress.com page from the address straight away', () => {
+		const onInputEnter = vi.fn();
+		renderWithProvider(
+			<MemoryRouter initialEntries={ [ '/?from=wordpress.com/log-in' ] }>
+				<CaptureInput onInputEnter={ onInputEnter } />
+			</MemoryRouter>
+		);
+
+		expect( onInputEnter ).not.toHaveBeenCalled();
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'wordpress.com/log-in' );
+		expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+	} );
+
+	it( 'explains why an address from the address bar is invalid on Continue', async () => {
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=myblog' ] }>
+				<CaptureInput onInputEnter={ vi.fn() } />
+			</MemoryRouter>
+		);
+
+		expect( screen.queryByText( /missing its domain extension/ ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( screen.getByText( /missing its domain extension/ ) ).toBeVisible();
+	} );
+
+	it( 'waits for Continue before explaining other handed-over addresses', async () => {
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=myblog' ] }>
+				<CaptureInput onInputEnter={ vi.fn() } skipInitialChecking />
+			</MemoryRouter>
+		);
+
+		expect( screen.queryByText( /missing its domain extension/ ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( screen.getByText( /missing its domain extension/ ) ).toBeVisible();
+	} );
+
+	describe( 'support link on a WordPress.com page', () => {
+		beforeEach( async () => {
+			await dispatch( HELP_CENTER_STORE ).setShowHelpCenter( false, undefined, true );
+		} );
+
+		const enterWordPressComPage = async ( { initialState, onInputEnter = vi.fn() } = {} ) => {
+			renderWithProvider(
+				<MemoryRouter>
+					<CaptureInput onInputEnter={ onInputEnter } />
+				</MemoryRouter>,
+				{ initialState }
+			);
+			await userEvent.type( screen.getByRole( 'textbox' ), 'wordpress.com/log-in' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		};
+
+		it( 'reads as one sentence with the support words inside it', async () => {
+			await enterWordPressComPage( { initialState: SIGNED_IN } );
+
+			const supportButton = screen.getByRole( 'button', { name: 'contact our support' } );
+
+			expect( supportButton.closest( '.is-error' ) ).toHaveTextContent(
+				"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com and you need help, contact our support."
+			);
+		} );
+
+		it( 'opens the Odie chat on the same page for signed-in people', async () => {
+			const onInputEnter = vi.fn();
+			await enterWordPressComPage( { initialState: SIGNED_IN, onInputEnter } );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'contact our support' } ) );
+
+			await waitFor( () => {
+				expect( select( HELP_CENTER_STORE ).isHelpCenterShown() ).toBe( true );
+			} );
+			expect( select( HELP_CENTER_STORE ).getNavigateToRoute().route ).toBe( '/odie' );
+			expect( onInputEnter ).not.toHaveBeenCalled();
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_importer_capture_contact_support_click',
+				{ is_logged_in: true }
+			);
+		} );
+
+		it( 'links signed-out people to log in and then the Odie chat in a new tab', async () => {
+			await enterWordPressComPage();
+
+			const supportLink = screen.getByRole( 'link', { name: /contact our support/ } );
+
+			expect( supportLink ).toHaveAttribute( 'href', '/sites?help-center=wapuu' );
+			expect( supportLink ).toHaveAttribute( 'target', '_blank' );
+			expect(
+				screen.queryByRole( 'button', { name: 'contact our support' } )
+			).not.toBeInTheDocument();
+
+			await userEvent.click( supportLink );
+
+			expect( select( HELP_CENTER_STORE ).isHelpCenterShown() ).toBe( false );
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_importer_capture_contact_support_click',
+				{ is_logged_in: false }
+			);
+		} );
+
+		it( 'goes away once the address has a different mistake', async () => {
+			await enterWordPressComPage();
+			expect( screen.getByRole( 'link', { name: /contact our support/ } ) ).toBeVisible();
+
+			await userEvent.clear( screen.getByRole( 'textbox' ) );
+			await userEvent.type( screen.getByRole( 'textbox' ), 'notaurl' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( screen.getByText( /missing its domain extension/ ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'link', { name: /contact our support/ } )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
 	it( 'shows a custom CTA label', async () => {
 		render(
 			<MemoryRouter>
-				<CaptureInput onInputEnter={ jest.fn() } label="A custom label text" nextLabelText="XYZ" />
+				<CaptureInput onInputEnter={ vi.fn() } label="A custom label text" nextLabelText="XYZ" />
 			</MemoryRouter>
 		);
 
@@ -237,7 +397,7 @@ describe( 'URL Validation', () => {
 				"Please add a valid website address (like 'example.com'). Feel free to copy and paste it in if that helps.",
 		},
 	] )( 'shows error message "$error" when input URL is "$input"', async ( { input, error } ) => {
-		const onInputEnter = jest.fn();
+		const onInputEnter = vi.fn();
 		render(
 			<MemoryRouter>
 				<CaptureInput onInputEnter={ onInputEnter } />

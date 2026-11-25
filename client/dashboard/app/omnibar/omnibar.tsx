@@ -9,6 +9,7 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { ShoppingCartProvider } from '@automattic/shopping-cart';
 import { useQuery } from '@tanstack/react-query';
+import { Icon, home } from '@wordpress/icons';
 import { useEffect, useMemo, useState } from 'react';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { useAnalytics } from '../analytics';
@@ -166,7 +167,7 @@ function ConnectedOmnibar( {
 					icon: site.icon?.img ? (
 						<img className="omnibar__site-icon" src={ site.icon.img } alt="" />
 					) : (
-						<span className="dashicons-before dashicons-admin-home" />
+						<Icon icon={ home } />
 					),
 					href: site.URL,
 				};

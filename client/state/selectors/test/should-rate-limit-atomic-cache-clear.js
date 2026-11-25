@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { shouldRateLimitAtomicCacheClear } from 'calypso/state/selectors/should-rate-limit-atomic-cache-clear';
 
 const ONE_MINUTE_IN_MILLISECONDS = 60 * 1000;
@@ -15,11 +16,11 @@ const generateState = ( { timestamp } ) => ( {
 
 describe( 'shouldRateLimitAtomicCacheClear', () => {
 	beforeAll( () => {
-		jest.useFakeTimers( 'modern' ).setSystemTime( TIMESTAMP );
+		vi.useFakeTimers( 'modern' ).setSystemTime( TIMESTAMP );
 	} );
 
 	afterAll( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	test( 'should return false if there is no stored timestamp', () => {

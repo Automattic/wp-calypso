@@ -197,33 +197,6 @@ export const requestError = ( state = null, action ) => {
 	return state;
 };
 
-export const requestSuccess = ( state = null, action ) => {
-	switch ( action.type ) {
-		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
-			return null;
-		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE:
-			return false;
-		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_SUCCESS:
-			return true;
-		case LOGIN_REQUEST:
-			return null;
-		case LOGIN_REQUEST_FAILURE:
-			return false;
-		case LOGIN_REQUEST_SUCCESS:
-			return true;
-		case SOCIAL_CONNECT_ACCOUNT_REQUEST:
-			return null;
-		case SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS:
-			return true;
-		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST:
-			return null;
-		case SOCIAL_DISCONNECT_ACCOUNT_REQUEST_SUCCESS:
-			return true;
-	}
-
-	return state;
-};
-
 export const requestNotice = ( state = null, action ) => {
 	switch ( action.type ) {
 		case TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST: {
@@ -476,7 +449,6 @@ const combinedReducer = combineReducers( {
 	redirectTo,
 	requestError,
 	requestNotice,
-	requestSuccess,
 	socialAccount,
 	socialAccountLink,
 	twoFactorAuth,

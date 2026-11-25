@@ -7,9 +7,5 @@ export { recordOrder } from './record-order';
 export { retarget } from './retarget';
 export { retargetViewPlans } from './retarget-view-plans';
 export * as GA4 from './google-analytics-4';
-export {
-	trackCustomFacebookConversionEvent,
-	trackCustomAdWordsRemarketingEvent,
-} from './track-custom-events';
 export { initGTMContainer, loadGTMContainer } from './gtm-container';
 export { loadParselyTracker } from './parsely';

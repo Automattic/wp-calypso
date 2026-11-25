@@ -1,19 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, screen } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
 import { createRef } from 'react';
+import { vi } from 'vitest';
 import loginReducer from 'calypso/state/login/reducer';
 import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { JetpackSignup } from '../signup.jsx';
 
-jest.mock( 'calypso/components/data/document-head', () => () => 'DocumentHead' );
-jest.mock( 'calypso/components/social-buttons/google', () => () => 'GoogleSocialButton' );
-jest.mock( 'calypso/components/social-buttons/apple', () => () => 'AppleLoginButton' );
-jest.mock( 'calypso/components/social-buttons/github', () => () => 'GitHubLoginButton' );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => 'DocumentHead' } ) );
+vi.mock( 'calypso/components/social-buttons/google', () => ( {
+	default: () => 'GoogleSocialButton',
+} ) );
+vi.mock( 'calypso/components/social-buttons/apple', () => ( {
+	default: () => 'AppleLoginButton',
+} ) );
+vi.mock( 'calypso/components/social-buttons/github', () => ( {
+	default: () => 'GitHubLoginButton',
+} ) );
 
 const render = ( el, options ) =>
 	renderWithProvider( el, {
@@ -233,7 +240,7 @@ describe( 'JetpackSignup', () => {
 	} );
 
 	test( 'handleSubmitSignup forwards from and plugins from authQuery into the signup extra bag', async () => {
-		const createAccount = jest.fn().mockResolvedValue( {} );
+		const createAccount = vi.fn().mockResolvedValue( {} );
 		const signupRef = createRef();
 
 		render(

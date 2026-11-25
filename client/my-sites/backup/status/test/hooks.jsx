@@ -14,7 +14,6 @@ jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
 	useMatchingBackupAttemptsInRange: jest.fn(),
 } ) );
 jest.mock( 'calypso/components/localized-moment' );
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
 

@@ -13,7 +13,7 @@ export default function PreferencesWordPressLabs( { density }: { density?: Densi
 	const badges = [
 		{
 			text: isOptedIn ? __( 'Enabled' ) : __( 'Disabled' ),
-			intent: isOptedIn ? ( 'stable' as const ) : ( 'draft' as const ),
+			intent: isOptedIn ? ( 'stable' as const ) : ( 'none' as const ),
 		},
 	];
 

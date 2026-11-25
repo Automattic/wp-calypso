@@ -41,8 +41,12 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 		const queryClient = getCalypsoQueryClient();
 		const post = queryClient ? getCachedPost( queryClient, postKey ) : null;
 
-		if ( post && isXPost( post ) ) {
-			return showFullXPost( XPostHelper.getXPostMetadata( post ) as ShowFullXPostArgs );
+		if (
+			post &&
+			isXPost( post ) &&
+			showFullXPost( XPostHelper.getXPostMetadata( post ) as ShowFullXPostArgs )
+		) {
+			return;
 		}
 
 		// normal
@@ -67,14 +71,18 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 }
 
 interface ShowFullXPostArgs {
-	blogId: number;
-	postId: number;
-	postURL: string;
-	siteURL: string;
-	commentURL: string;
+	blogId: number | null;
+	postId: number | null;
+	postURL: string | null;
+	siteURL: string | null;
+	commentURL: string | null;
 }
 
-export function showFullXPost( xMetadata: ShowFullXPostArgs ): void {
+/**
+ * Opens the original post of an x-post.
+ * @returns whether there was an original post to open
+ */
+export function showFullXPost( xMetadata: ShowFullXPostArgs ): boolean {
 	if ( xMetadata.blogId && xMetadata.postId ) {
 		const mappedPost = {
 			site_ID: xMetadata.blogId,
@@ -84,9 +92,15 @@ export function showFullXPost( xMetadata: ShowFullXPostArgs ): void {
 		showFullPost( {
 			post: mappedPost,
 		} );
-	} else {
-		window.open( xMetadata.postURL );
+		return true;
 	}
+
+	const url = xMetadata.postURL && safeLink( xMetadata.postURL );
+	if ( ! url ) {
+		return false;
+	}
+	window.open( url, '_blank', 'noopener,noreferrer' );
+	return true;
 }
 
 interface ShowFullPostArgs {

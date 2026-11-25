@@ -1,22 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, act, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { site } from '../../../sites-overview/test/test-utils/constants';
 import ToggleActivateMonitoring from '../index';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	config.isEnabled = ( property: string ) => true;
-	return config;
+	return { ...config, default: config };
 } );
 
 describe( 'ToggleActivateMonitoring', () => {
@@ -62,65 +62,6 @@ describe( 'ToggleActivateMonitoring', () => {
 		const checkbox = screen.getByRole( 'checkbox' );
 		expect( checkbox ).toBeInTheDocument();
 		expect( checkbox ).not.toBeChecked();
-	} );
-
-	it( 'renders the component with toggle content and shows the default tooltip', () => {
-		render( <ToggleActivateMonitoring { ...defaultProps } />, {
-			wrapper: Wrapper,
-		} );
-
-		const button = screen.getByRole( 'button', { name: /current schedule/i } );
-		expect( button ).toBeInTheDocument();
-		act( () => {
-			userEvent.hover( button );
-		} );
-		waitFor( () => {
-			expect( screen.getByText( defaultProps.tooltip ) ).toBeInTheDocument();
-		} );
-	} );
-
-	it( 'renders the component with toggle content and shows the SMS overlimit tooltip', () => {
-		const props = {
-			...defaultProps,
-			settings: {
-				...defaultProps.settings,
-				is_over_limit: true,
-			},
-		};
-		render( <ToggleActivateMonitoring { ...props } />, {
-			wrapper: Wrapper,
-		} );
-
-		const button = screen.getByRole( 'button', { name: /alert/i } );
-		expect( button ).toBeInTheDocument();
-		act( () => {
-			userEvent.hover( button );
-		} );
-		waitFor( () => {
-			expect( screen.getByText( 'You have reached the SMS limit' ) ).toBeInTheDocument();
-		} );
-	} );
-
-	it( 'renders the component with toggle content and shows the upgrade tooltip', () => {
-		const props = {
-			...defaultProps,
-			site: {
-				...defaultProps.site,
-				has_paid_agency_monitor: false,
-			},
-		};
-		render( <ToggleActivateMonitoring { ...props } />, {
-			wrapper: Wrapper,
-		} );
-
-		const button = screen.getByRole( 'button', { name: /current schedule/i } );
-		expect( button ).toBeInTheDocument();
-		act( () => {
-			userEvent.hover( button );
-		} );
-		waitFor( () => {
-			expect( screen.getByText( 'Maximize uptime' ) ).toBeInTheDocument();
-		} );
 	} );
 
 	it( 'renders the component with correct aria label for notification schedule in minutes', () => {

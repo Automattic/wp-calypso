@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import {
 	FeedRecommendation,
 	useFeedRecommendationsQuery,
@@ -10,13 +11,13 @@ import {
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import RecommendedBlogs from '../index';
 
-jest.mock( 'calypso/data/reader/use-feed-recommendations-query', () => ( {
-	useFeedRecommendationsQuery: jest.fn(),
+vi.mock( 'calypso/data/reader/use-feed-recommendations-query', () => ( {
+	useFeedRecommendationsQuery: vi.fn(),
 } ) );
 
-const mockUseFeedRecommendationsQuery = jest.mocked( useFeedRecommendationsQuery );
+const mockUseFeedRecommendationsQuery = vi.mocked( useFeedRecommendationsQuery );
 
-jest.mock( 'calypso/reader/sites-list', () => ( {
+vi.mock( 'calypso/reader/sites-list', () => ( {
 	ReaderSitesList: ( {
 		sites,
 		variant,
@@ -50,7 +51,7 @@ function createBlog( overrides: Partial< FeedRecommendation > = {} ): FeedRecomm
 
 describe( 'RecommendedBlogs', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders spinner when loading', () => {

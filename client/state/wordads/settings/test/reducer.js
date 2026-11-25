@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	WORDADS_SETTINGS_RECEIVE,
 	WORDADS_SETTINGS_SAVE,
@@ -13,7 +14,7 @@ describe( 'reducer', () => {
 	const originalConsoleWarn = global.console.warn;
 
 	beforeAll( () => {
-		jest.spyOn( console, 'warn' ).mockImplementation();
+		vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 	} );
 
 	afterAll( () => {

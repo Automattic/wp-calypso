@@ -33,7 +33,7 @@ describe( 'isStandardEntryPoint', () => {
 		[ '[unknown]', false ],
 		[ null, false ],
 		[ undefined, false ],
-	] )( '%p → %p', ( from, expected ) => {
+	] )( '%o → %o', ( from, expected ) => {
 		expect( isStandardEntryPoint( from ) ).toBe( expected );
 	} );
 } );
@@ -55,7 +55,7 @@ describe( 'isUnifiedFlow', () => {
 		[ 'wpcom-connector', false ],
 		[ 'jetpack-x_y', false ],
 		[ null, false ],
-	] )( '%p → %p', ( from, expected ) => {
+	] )( '%o → %o', ( from, expected ) => {
 		expect( isUnifiedFlow( from ) ).toBe( expected );
 	} );
 } );
@@ -66,7 +66,7 @@ describe( 'isMigrationEntryPoint', () => {
 		[ 'wpcom_migration_dashboard', true ],
 		[ 'wpcom_migrationother', false ],
 		[ 'wpcom-migration', false ],
-	] )( '%p → %p', ( from, expected ) => {
+	] )( '%o → %o', ( from, expected ) => {
 		expect( isMigrationEntryPoint( from ) ).toBe( expected );
 	} );
 } );

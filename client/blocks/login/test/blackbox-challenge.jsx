@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useBlackbox } from 'calypso/blocks/login/utils/use-blackbox';
 import BlackboxChallenge from '../blackbox-challenge';
 
-jest.mock( 'calypso/blocks/login/utils/use-blackbox', () => ( {
-	useBlackbox: jest.fn(),
+vi.mock( 'calypso/blocks/login/utils/use-blackbox', () => ( {
+	useBlackbox: vi.fn(),
 } ) );
 
-function renderChallenge( state, onSubmitBlockedChange = jest.fn() ) {
+function renderChallenge( state, onSubmitBlockedChange = vi.fn() ) {
 	useBlackbox.mockReturnValue( {
 		isChallengeActive: false,
 		isLoading: false,
@@ -31,7 +32,7 @@ function renderChallenge( state, onSubmitBlockedChange = jest.fn() ) {
 
 describe( 'BlackboxChallenge', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'spaces the container while the widget occupies space', () => {
@@ -50,7 +51,7 @@ describe( 'BlackboxChallenge', () => {
 	} );
 
 	test( 'unblocks submit once the challenge completes, even though the widget stays mounted', () => {
-		const onSubmitBlockedChange = jest.fn();
+		const onSubmitBlockedChange = vi.fn();
 
 		renderChallenge( { hasChallengeContent: true }, onSubmitBlockedChange );
 
@@ -58,7 +59,7 @@ describe( 'BlackboxChallenge', () => {
 	} );
 
 	test( 'blocks submit while a challenge is active', () => {
-		const onSubmitBlockedChange = jest.fn();
+		const onSubmitBlockedChange = vi.fn();
 
 		renderChallenge( { isChallengeActive: true }, onSubmitBlockedChange );
 

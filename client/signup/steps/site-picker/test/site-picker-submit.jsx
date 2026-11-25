@@ -1,10 +1,6 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -27,21 +23,24 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { siteHasPaidPlan, SitePickerSubmit } from '../site-picker-submit';
+
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 
 const noop = () => {};
 const props = {
-	goToStep: jest.fn(),
+	goToStep: vi.fn(),
 	submitSignupStep: noop,
 	selectedSite: {
 		ID: 1,
 	},
 };
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
 	config.isEnabled = ( property ) => property === 'signup/social-first';
-	return config;
+	return { ...config, default: config };
 } );
 
 describe( 'siteHasPaidPlan', () => {
