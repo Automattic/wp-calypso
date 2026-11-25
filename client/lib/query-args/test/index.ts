@@ -1,8 +1,9 @@
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { setQueryArgs, getQueryArgs } from '../index';
 
-jest.mock( 'react' );
-jest.mock( '@automattic/calypso-router' );
+vi.mock( 'react' );
+vi.mock( '@automattic/calypso-router' );
 
 describe( '#setQueryArgs', () => {
 	global.window = { location: { href: '' } } as typeof global.window;

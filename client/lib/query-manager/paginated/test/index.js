@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import PaginatedQueryManager from '../';
 
 /**
@@ -13,7 +14,7 @@ describe( 'PaginatedQueryManager', () => {
 	let manager;
 	beforeEach( () => {
 		manager = new TestCustomQueryManager();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	describe( '.hasQueryPaginationKeys()', () => {
@@ -281,7 +282,7 @@ describe( 'PaginatedQueryManager', () => {
 			manager = manager.receive( [ { ID: 176 }, { ID: 184 } ], {
 				query: { search: 'title', number: 2, page: 3 },
 			} );
-			jest.spyOn( PaginatedQueryManager, 'matches' ).mockImplementation( () => false );
+			vi.spyOn( PaginatedQueryManager, 'matches' ).mockImplementation( () => false );
 			manager = manager.receive( { ID: 160, changed: true } );
 
 			expect( manager.getFound( { search: 'title' } ) ).toBe( 5 );

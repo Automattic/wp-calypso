@@ -348,6 +348,21 @@ for ( const file of files ) {
 		}
 		if ( ts.isPropertyAccessExpression( node ) && isJest( node.expression ) ) {
 			const name = node.name.text;
+			// `interface Foo extends jest.Mock` parses `jest.Mock` as an expression, not a type name.
+			if (
+				ts.isExpressionWithTypeArguments( node.parent ) &&
+				ts.isInterfaceDeclaration( node.parent.parent?.parent )
+			) {
+				const renamed = TYPE_RENAMES[ name ];
+				if ( renamed ) {
+					edits.push( { start: node.getStart( sf ), end: node.end, text: renamed } );
+					vitestImports.add( `type ${ renamed }` );
+					toFunctionTypeArguments( node.parent.typeArguments );
+				} else {
+					flag( node, `unknown jest type ${ node.getText( sf ) }` );
+				}
+				return;
+			}
 			if ( name === 'requireActual' && ts.isCallExpression( node.parent ) ) {
 				const call = node.parent;
 				const fn = enclosingFunction( call );

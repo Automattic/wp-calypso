@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { isLegacyRoute } from '../legacy-routes';
 
 const features = [];
@@ -6,7 +7,7 @@ const features = [];
 describe( 'legacy-routes', () => {
 	describe( '#isLegacyRoute()', () => {
 		beforeAll( () => {
-			jest.spyOn( config, 'isEnabled' ).mockImplementation( ( flag ) => {
+			vi.spyOn( config, 'isEnabled' ).mockImplementation( ( flag ) => {
 				return features.indexOf( flag ) > -1;
 			} );
 		} );

@@ -1,7 +1,8 @@
+import { vi } from 'vitest';
 import { getLaunchCheckoutUrl, getLaunchDestination, getLaunchReturnUrl } from '../destination';
 
-jest.mock( 'calypso/lib/url', () => ( {
-	...jest.requireActual( 'calypso/lib/url' ),
+vi.mock( 'calypso/lib/url', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/lib/url' ) >( 'calypso/lib/url' ) ),
 	pathToUrl: ( path: string ) => `https://wordpress.com${ path }`,
 } ) );
 

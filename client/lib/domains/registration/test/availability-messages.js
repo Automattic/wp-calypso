@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from '../availability-messages';
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	translate: jest.fn( () => 'default' ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual( 'i18n-calypso' ) ),
+	translate: vi.fn( () => 'default' ),
 } ) );
 
 describe( 'getAvailabilityNotice()', () => {
