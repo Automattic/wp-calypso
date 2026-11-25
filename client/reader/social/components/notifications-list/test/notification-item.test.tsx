@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialNotificationItem } from '../notification-item';
 import type { AtmosphereNotification } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-const pageMock = jest.mocked( page );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+const pageMock = vi.mocked( page );
 
 function makeItem( overrides: Partial< AtmosphereNotification > = {} ): AtmosphereNotification {
 	return {

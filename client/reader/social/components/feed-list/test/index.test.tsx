@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { vi } from 'vitest';
 import { SocialFeedList } from '../index';
 import type { SocialError } from '../../../types';
 
@@ -80,7 +81,7 @@ describe( 'SocialFeedList', () => {
 	} );
 
 	it( 'calls fetchNextPage when sentinel comes into view', async () => {
-		const fetchNextPage = jest.fn();
+		const fetchNextPage = vi.fn();
 		render(
 			<SocialFeedList< Item >
 				items={ items }
@@ -99,7 +100,7 @@ describe( 'SocialFeedList', () => {
 	} );
 
 	it( 'does not call fetchNextPage while a fetch is already in flight', () => {
-		const fetchNextPage = jest.fn();
+		const fetchNextPage = vi.fn();
 		render(
 			<SocialFeedList< Item >
 				items={ items }

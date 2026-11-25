@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { readerAtmosphereKeys } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
@@ -8,6 +8,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { type Mock, vi } from 'vitest';
 import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -15,9 +16,9 @@ import { AuthorProfilePanel } from '../author-profile-panel';
 import { atmosphereComposerConfig } from '../composer-config';
 import type { AtmosphereScopedProfile, AtmosphereConnection } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
 const connection: AtmosphereConnection = {
@@ -74,15 +75,15 @@ describe( 'AuthorProfilePanel', () => {
 		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
-		( page as unknown as jest.Mock ).mockReset();
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
+		( page as unknown as Mock ).mockReset();
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		// Reset window.location so per-test ?tab= overrides don't leak into
 		// the next test's useAuthorProfileFilter() read.
 		window.history.replaceState( {}, '', '/' );
@@ -139,7 +140,7 @@ describe( 'AuthorProfilePanel', () => {
 	} );
 
 	it( 'fires profile_viewed on mount', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 			.reply( 200, profilePayload );
@@ -414,9 +415,7 @@ describe( 'AuthorProfilePanel', () => {
 					expect.objectContaining( { surface: 'header' } )
 				)
 			);
-			const headerCall = (
-				analytics.recordReaderTracksEvent as unknown as jest.Mock
-			 ).mock.calls.find(
+			const headerCall = ( analytics.recordReaderTracksEvent as unknown as Mock ).mock.calls.find(
 				( c ) =>
 					c[ 0 ] === 'calypso_reader_atmosphere_profile_error_shown' && c[ 1 ]?.surface === 'header'
 			);
@@ -486,7 +485,7 @@ describe( 'AuthorProfilePanel', () => {
 	describe( 'follow / unfollow', () => {
 		it( 'fires _follow_clicked, POSTs to /follows, and optimistically swaps to "Following"', async () => {
 			const user = userEvent.setup();
-			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
@@ -559,7 +558,7 @@ describe( 'AuthorProfilePanel', () => {
 
 		it( 'fires _follow_error with action and error_kind on a 502 follow response', async () => {
 			const user = userEvent.setup();
-			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/wpcom/v2/reader/atmosphere/connections/42/profile/alice.bsky.social' )
 				.reply( 200, profilePayload );
@@ -712,15 +711,15 @@ describe( 'AuthorProfilePanel', () => {
 
 describe( 'AuthorProfilePanel — quote composer integration', () => {
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
-		( page as unknown as jest.Mock ).mockReset();
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
+		( page as unknown as Mock ).mockReset();
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		window.history.replaceState( {}, '', '/' );
 	} );
 

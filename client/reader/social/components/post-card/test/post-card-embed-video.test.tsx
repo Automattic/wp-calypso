@@ -1,25 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Hls from 'hls.js';
+import { type Mock, vi } from 'vitest';
 import { PostCardEmbedVideo } from '../post-card-embed-video';
 import type { AtmosphereEmbedVideo } from '@automattic/api-core';
 
 const mockHls = {
-	loadSource: jest.fn(),
-	attachMedia: jest.fn(),
-	destroy: jest.fn(),
+	loadSource: vi.fn(),
+	attachMedia: vi.fn(),
+	destroy: vi.fn(),
 };
 
-jest.mock( 'hls.js', () => {
-	const HlsCtor = jest.fn().mockImplementation( () => mockHls );
+vi.mock( 'hls.js', () => {
+	const HlsCtor = vi.fn().mockImplementation( () => mockHls );
 	( HlsCtor as unknown as { isSupported: () => boolean } ).isSupported = () => true;
 	return { __esModule: true, default: HlsCtor };
 } );
 
-const HlsMock = Hls as unknown as jest.Mock;
+const HlsMock = Hls as unknown as Mock;
 
 const embed: AtmosphereEmbedVideo = {
 	type: 'video',
@@ -34,10 +35,10 @@ describe( 'PostCardEmbedVideo', () => {
 	// returns a Promise. Stub a resolved promise so production code's
 	// `video.play().catch(...)` doesn't crash in the default test path.
 	let originalPlay: typeof window.HTMLMediaElement.prototype.play;
-	let playMock: jest.Mock< Promise< void >, [] >;
+	let playMock: Mock< ( ...args: [] ) => Promise< void > >;
 	beforeEach( () => {
 		originalPlay = window.HTMLMediaElement.prototype.play;
-		playMock = jest.fn< Promise< void >, [] >().mockResolvedValue( undefined );
+		playMock = vi.fn< ( ...args: [] ) => Promise< void > >().mockResolvedValue( undefined );
 		window.HTMLMediaElement.prototype.play = playMock;
 		HlsMock.mockClear();
 		mockHls.loadSource.mockClear();

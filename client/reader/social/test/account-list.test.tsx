@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { vi } from 'vitest';
 import { SocialAccountList } from '../account-list';
 
 interface FakeItem {
@@ -20,8 +21,8 @@ const buildQuery = (
 		error: null,
 		hasNextPage: false,
 		isFetchingNextPage: false,
-		fetchNextPage: jest.fn(),
-		refetch: jest.fn(),
+		fetchNextPage: vi.fn(),
+		refetch: vi.fn(),
 		...overrides,
 	} ) as Parameters< typeof SocialAccountList< FakeItem > >[ 0 ][ 'query' ];
 

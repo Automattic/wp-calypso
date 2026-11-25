@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AtmosphereNavigation } from '../atmosphere-navigation';
 
-const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+const mockRecordReaderTracksEvent: Mock = vi.fn( () => ( {
 	type: 'TEST_TRACKS_EVENT',
 } ) );
 
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
 } ) );
 

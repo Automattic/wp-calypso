@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
+import { vi } from 'vitest';
 import { errorMessage, followErrorMessage } from '../profile-errors';
 import type { FediverseError } from '@automattic/api-core';
 
@@ -88,7 +89,7 @@ describe( 'errorMessage', () => {
 		// pattern the Mastodon test uses.
 		const translate = getTranslate();
 		// Mute the devtools warn the default arm emits.
-		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 		const message = String(
 			errorMessage( { kind: 'newly-added-variant' } as unknown as FediverseError, translate )
 		);

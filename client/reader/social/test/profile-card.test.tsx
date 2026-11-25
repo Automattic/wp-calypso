@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SocialAnalyticsProvider } from '../components/post-card/analytics-context';
 import { SocialProfileCard } from '../profile-card';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-const pageMock = jest.mocked( page );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+const pageMock = vi.mocked( page );
 
 describe( 'SocialProfileCard', () => {
 	it( 'renders avatar, stats, and bio', () => {
@@ -342,7 +343,7 @@ describe( 'SocialProfileCard', () => {
 } );
 
 describe( 'SocialProfileCard — bio mention click routing', () => {
-	const onClick = jest.fn();
+	const onClick = vi.fn();
 
 	function renderInsideProvider(
 		bioHtml: string,
@@ -377,7 +378,7 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 
 	it( 'routes the click in-app when data-id resolves to an in-app URL', async () => {
 		const user = userEvent.setup();
-		const getProfileUrl = jest.fn( ( ref: { id?: string | null } ) =>
+		const getProfileUrl = vi.fn( ( ref: { id?: string | null } ) =>
 			ref.id ? `/reader/atmosphere/7/profile/${ ref.id }` : null
 		);
 		const { getByText } = renderInsideProvider(
@@ -391,7 +392,7 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 
 	it( 'leaves anchors without data-id alone (no in-app routing)', async () => {
 		const user = userEvent.setup();
-		const getProfileUrl = jest.fn( () => '/reader/atmosphere/7/profile/anything' );
+		const getProfileUrl = vi.fn( () => '/reader/atmosphere/7/profile/anything' );
 		const { getByText } = renderInsideProvider(
 			'<p><a href="https://bsky.app/hashtag/SFGiants">#SFGiants</a></p>',
 			getProfileUrl
@@ -403,7 +404,7 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 
 	it( 'fires *_mention_unresolved Tracks when data-id is present but resolver returns null', async () => {
 		const user = userEvent.setup();
-		const getProfileUrl = jest.fn( () => null );
+		const getProfileUrl = vi.fn( () => null );
 		const { getByText } = renderInsideProvider(
 			'<p><a href="https://bsky.app/profile/bogus" data-id="bogus">@bogus</a></p>',
 			getProfileUrl
@@ -418,7 +419,7 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 
 	it( 'passes through modifier-clicks (cmd) so users can open in a new tab', async () => {
 		const user = userEvent.setup();
-		const getProfileUrl = jest.fn( ( ref: { id?: string | null } ) =>
+		const getProfileUrl = vi.fn( ( ref: { id?: string | null } ) =>
 			ref.id ? `/reader/atmosphere/7/profile/${ ref.id }` : null
 		);
 		const { getByText } = renderInsideProvider(
@@ -441,7 +442,7 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 		// to bsky.app. Assert the call site populates all three fields so any
 		// per-protocol resolver picks whichever it understands.
 		const user = userEvent.setup();
-		const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+		const getProfileUrl = vi.fn( ( ref: { handle?: string | null } ) =>
 			ref.handle ? `/reader/atmosphere/7/profile/${ ref.handle }` : null
 		);
 		const { getByText } = renderInsideProvider(
@@ -481,7 +482,7 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 		// handler routes them to distinct ref fields so resolvers can
 		// build a clean user-readable URL from the handle.
 		const user = userEvent.setup();
-		const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+		const getProfileUrl = vi.fn( ( ref: { handle?: string | null } ) =>
 			ref.handle ? `/reader/fediverse/7/profile/${ ref.handle }` : null
 		);
 		const { getByText } = renderInsideProvider(
@@ -501,7 +502,7 @@ describe( 'SocialProfileCard — bio mention click routing', () => {
 } );
 
 describe( 'SocialProfileCard — bio hashtag click routing', () => {
-	const onClick = jest.fn();
+	const onClick = vi.fn();
 
 	function renderInsideProvider( bioHtml: string, getTagUrl: ( tag: string ) => string | null ) {
 		return render(
@@ -547,7 +548,7 @@ describe( 'SocialProfileCard — bio hashtag click routing', () => {
 
 	it( 'routes the click in-app when data-tag resolves to an in-app URL', async () => {
 		const user = userEvent.setup();
-		const getTagUrl = jest.fn( ( tag: string ) => `/reader/atmosphere/7/tag/${ tag }` );
+		const getTagUrl = vi.fn( ( tag: string ) => `/reader/atmosphere/7/tag/${ tag }` );
 		const { getByText } = renderInsideProvider(
 			'<p><a href="https://bsky.app/hashtag/wordpress"' +
 				' data-tag="wordpress">#WordPress</a></p>',
@@ -560,7 +561,7 @@ describe( 'SocialProfileCard — bio hashtag click routing', () => {
 
 	it( 'fires *_tag_unresolved Tracks when data-tag is present but resolver returns null', async () => {
 		const user = userEvent.setup();
-		const getTagUrl = jest.fn( () => null );
+		const getTagUrl = vi.fn( () => null );
 		const { getByText } = renderInsideProvider(
 			'<p><a href="https://bsky.app/hashtag/wordpress"' +
 				' data-tag="wordpress">#WordPress</a></p>',
@@ -576,7 +577,7 @@ describe( 'SocialProfileCard — bio hashtag click routing', () => {
 
 	it( 'passes through modifier-clicks on hashtag anchors so users can open in a new tab', async () => {
 		const user = userEvent.setup();
-		const getTagUrl = jest.fn( ( tag: string ) => `/reader/atmosphere/7/tag/${ tag }` );
+		const getTagUrl = vi.fn( ( tag: string ) => `/reader/atmosphere/7/tag/${ tag }` );
 		const { getByText } = renderInsideProvider(
 			'<p><a href="https://bsky.app/hashtag/wordpress"' +
 				' data-tag="wordpress">#WordPress</a></p>',
@@ -606,10 +607,10 @@ describe( 'SocialProfileCard — bio hashtag click routing', () => {
 
 	it( 'data-id takes precedence when both attributes are on the same anchor', async () => {
 		const user = userEvent.setup();
-		const getProfileUrl = jest.fn( ( ref: { id?: string | null } ) =>
+		const getProfileUrl = vi.fn( ( ref: { id?: string | null } ) =>
 			ref.id ? `/reader/atmosphere/7/profile/${ ref.id }` : null
 		);
-		const getTagUrl = jest.fn( () => '/reader/atmosphere/7/tag/wrong' );
+		const getTagUrl = vi.fn( () => '/reader/atmosphere/7/tag/wrong' );
 		const { getByText } = render(
 			<SocialAnalyticsProvider
 				value={ {
@@ -730,7 +731,7 @@ describe( 'SocialProfileCard — rich variant', () => {
 
 	it( 'fires the profile_external_clicked Tracks event when the link is clicked', async () => {
 		const user = userEvent.setup();
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		render(
 			<SocialAnalyticsProvider value={ { source: 'atmosphere', connectionId: 7, onClick } }>
 				<SocialProfileCard

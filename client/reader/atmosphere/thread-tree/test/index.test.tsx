@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ThreadTree } from '../index';
 import type { AtmosphereThreadNode, AtmosphereFeedItem } from '@automattic/api-core';
@@ -34,13 +35,13 @@ function makeFeedItem( overrides: Partial< AtmosphereFeedItem > = {} ): Atmosphe
 // jsdom doesn't implement Element.prototype.scrollIntoView. Stub it for the
 // duration of each test and restore afterwards so the prototype patch doesn't
 // leak across files.
-let scrollIntoView: jest.Mock;
+let scrollIntoView: Mock;
 const originalScrollIntoView = Object.getOwnPropertyDescriptor(
 	Element.prototype,
 	'scrollIntoView'
 );
 beforeEach( () => {
-	scrollIntoView = jest.fn();
+	scrollIntoView = vi.fn();
 	Object.defineProperty( Element.prototype, 'scrollIntoView', {
 		configurable: true,
 		writable: true,

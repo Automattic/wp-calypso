@@ -1,38 +1,37 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { MastodonConnectView } from '../mastodon-connect-view';
 import type React from 'react';
 
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: React.ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: React.ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+const mockRecordReaderTracksEvent: Mock = vi.fn( () => ( {
 	type: 'TEST_TRACKS_EVENT',
 } ) );
 
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
 } ) );
 
 describe( 'MastodonConnectView', () => {
-	let assignMock: jest.Mock;
+	let assignMock: Mock;
 	let originalLocation: Location;
 
 	beforeEach( () => {
 		originalLocation = window.location;
-		assignMock = jest.fn();
+		assignMock = vi.fn();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			writable: true,

@@ -1,28 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfileView } from '../author-profile-view';
 import type React from 'react';
 
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: React.ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: React.ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-jest.mock( '@automattic/calypso-router', () => {
-	const mockPage: jest.Mock & { replace: jest.Mock } = Object.assign( jest.fn(), {
-		replace: jest.fn(),
+vi.mock( '@automattic/calypso-router', () => {
+	const mockPage: Mock & { replace: Mock } = Object.assign( vi.fn(), {
+		replace: vi.fn(),
 	} );
 	return { __esModule: true, default: mockPage };
 } );
@@ -46,16 +45,16 @@ beforeEach( () => {
 	// recordReaderTracksEvent is a thunk that reads the follows query cache.
 	// Replace it with a no-op action creator so dispatch() doesn't throw,
 	// while still letting spies observe call-site arguments.
-	jest
-		.spyOn( analytics, 'recordReaderTracksEvent' )
-		.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+		() => ( { type: '@@TEST/NOOP' } ) as never
+	);
 } );
 
 afterEach( () => {
 	nock.cleanAll();
-	jest.restoreAllMocks();
-	( page as unknown as jest.Mock ).mockClear();
-	( page.replace as jest.Mock ).mockClear();
+	vi.restoreAllMocks();
+	( page as unknown as Mock ).mockClear();
+	( page.replace as Mock ).mockClear();
 } );
 
 describe( 'AuthorProfileView', () => {
@@ -195,7 +194,7 @@ describe( 'AuthorProfileView', () => {
 	it( 'renders the back-to-timeline button above the panel', async () => {
 		const user = userEvent.setup();
 		// Force history.length === 1 so BackButton routes via page() instead of history.back().
-		jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
+		vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/wpcom/v2/reader/atmosphere/connections' )
@@ -234,7 +233,7 @@ describe( 'AuthorProfileView', () => {
 		const backButtons = screen.getAllByRole( 'button', { name: /back/i } );
 		expect( backButtons ).toHaveLength( 1 );
 		await user.click( backButtons[ 0 ] );
-		expect( page as unknown as jest.Mock ).toHaveBeenCalledWith( '/reader/atmosphere/42/timeline' );
+		expect( page as unknown as Mock ).toHaveBeenCalledWith( '/reader/atmosphere/42/timeline' );
 		expect( analytics.recordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_atmosphere_profile_back_to_timeline_clicked',
 			{ connection_id: 42, actor: 'alice.bsky.social' }
