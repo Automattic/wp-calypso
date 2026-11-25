@@ -1,7 +1,11 @@
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { readStreamInfiniteQuery, readStreamQuery } from '../read-streams';
+import {
+	readStreamInfiniteQuery,
+	readStreamLatestPostQuery,
+	readStreamQuery,
+} from '../read-streams';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -141,5 +145,42 @@ describe( 'readStreamInfiniteQuery', () => {
 		);
 
 		expect( opts.meta ).toEqual( { persist: false } );
+	} );
+} );
+
+describe( 'readStreamLatestPostQuery', () => {
+	afterEach( () => nock.cleanAll() );
+
+	it( 'does not persist the latest post to localStorage', () => {
+		expect( readStreamLatestPostQuery( 'feed:123' ).meta ).toEqual( { persist: false } );
+	} );
+
+	it.each( [
+		[ 'feed:123', '/rest/v1.2/read/feed/123/posts' ],
+		[ 'site:456', '/rest/v1.2/read/sites/456/posts' ],
+	] )( 'fetches the newest post of %s as a one-post page', async ( streamKey, path ) => {
+		const scope = nock( BASE )
+			.get( path )
+			.query( ( query ) => query.number === '1' )
+			.reply( 200, { posts: [ { ID: 9, date: '2026-11-18T10:00:00+00:00' } ] } );
+
+		const { result } = renderHook( () => useQuery( readStreamLatestPostQuery( streamKey ) ), {
+			wrapper: makeWrapper( newClient() ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( scope.isDone() ).toBe( true );
+		expect( result.current.data ).toEqual( { ID: 9, date: '2026-11-18T10:00:00+00:00' } );
+	} );
+
+	it( 'resolves to null when the stream has no posts', async () => {
+		nock( BASE ).get( '/rest/v1.2/read/feed/123/posts' ).query( true ).reply( 200, { posts: [] } );
+
+		const { result } = renderHook( () => useQuery( readStreamLatestPostQuery( 'feed:123' ) ), {
+			wrapper: makeWrapper( newClient() ),
+		} );
+
+		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
+		expect( result.current.data ).toBeNull();
 	} );
 } );

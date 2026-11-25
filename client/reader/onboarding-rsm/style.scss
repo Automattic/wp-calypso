@@ -46,7 +46,7 @@ $actions-height: 64px;
 
 // User-agent buttons default to `cursor: default`, which makes the modal's
 // header (Back / Close), footer (Do it later / Pick your topics / Continue /
-// Finish), and inline action buttons (See more topics, Load more
+// Finish), and inline action buttons (topic pills, Load more
 // recommendations, per-row Subscribe) feel non-interactive on hover. Restore
 // the pointer cursor for any enabled control inside the modal.
 .reader-onboarding-rsm-modal {
@@ -80,12 +80,13 @@ html:not( .accessible-focus ) .reader-onboarding-rsm-modal {
 }
 
 // Shared layout for all reader-onboarding-rsm modals (welcome, interests,
-// subscribe). All three share the same overall size, the same flex-column
+// subscribe, recommended blogs). They share the same overall size, the same flex-column
 // scroll/footer architecture, and the same footer styling. Per-modal
 // stylesheets only handle modal-specific content, padding, and visuals.
 .reader-welcome-modal,
 .interests-modal,
-.subscribe-modal {
+.subscribe-modal,
+.recommended-blogs-step {
 	// Frame size: 980 × 740 max, clamped to the viewport in either axis when
 	// smaller, so the modal itself never forces page-level scrolling.
 	// `margin: auto` keeps WP's default centering working for both axes.

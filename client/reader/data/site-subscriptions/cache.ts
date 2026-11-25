@@ -2,6 +2,7 @@ import { prepareComparableUrl, type ReadSiteResponse } from '@automattic/api-cor
 import {
 	getHasAllSiteSubscriptionsFromData,
 	getIsSubscribedFromData,
+	getSiteSubscriptionsFromData,
 	getSiteSubscriptionsQueryKey,
 	readSiteQuery,
 	type SiteSubscriptionsInfiniteData,
@@ -48,6 +49,16 @@ export const getCachedIsFollowingPost = (
 
 	return getHasAllSiteSubscriptionsFromData( data ) ? false : undefined;
 };
+
+/**
+ * How many sites the user follows that they don't own, read from the cached
+ * subscriptions at call time rather than from a render that may predate the
+ * latest follows.
+ */
+export const getCachedFollowedNonSelfSitesCount = ( queryClient: QueryClient ): number =>
+	getSiteSubscriptionsFromData(
+		queryClient.getQueryData< SiteSubscriptionsInfiniteData >( getSiteSubscriptionsQueryKey() )
+	).filter( ( subscription ) => subscription.is_following && ! subscription.is_owner ).length;
 
 export const patchReadSiteFollowStatus = (
 	queryClient: QueryClient,

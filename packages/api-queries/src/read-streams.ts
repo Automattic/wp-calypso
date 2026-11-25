@@ -21,12 +21,14 @@ import {
 	fetchReadTagPopular,
 	fetchReadTagPosts,
 	fetchReadUserPosts,
+	type ReadStreamPost,
 	type ReadStreamQueryParams,
 	type ReadStreamResponse,
 } from '@automattic/api-core';
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query';
 
 const STREAM_STALE_TIME = 30 * 1000;
+const LATEST_POST_STALE_TIME = 30 * 60 * 1000;
 
 export const getStreamType = ( streamKey: string ): string => {
 	const colon = streamKey.indexOf( ':' );
@@ -266,3 +268,19 @@ export function readStreamInfiniteQuery(
 		refetchOnWindowFocus: false,
 	} );
 }
+
+export const readStreamLatestPostQueryKey = ( streamKey: string ) =>
+	[ 'read', 'latest-post', streamKey ] as const;
+
+/**
+ * The newest post in a stream, such as `site:<id>` or `feed:<id>`, as a
+ * one-post page. Resolves to `null` when the stream has no posts.
+ */
+export const readStreamLatestPostQuery = ( streamKey: string ) =>
+	queryOptions( {
+		queryKey: readStreamLatestPostQueryKey( streamKey ),
+		queryFn: async (): Promise< ReadStreamPost | null > =>
+			( await fetchReadStream( streamKey, { number: 1 } ) ).posts?.[ 0 ] ?? null,
+		staleTime: LATEST_POST_STALE_TIME,
+		meta: { persist: false },
+	} );

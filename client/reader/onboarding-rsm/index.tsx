@@ -4,13 +4,15 @@ import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { CircularProgressBar } from '@automattic/components';
 import { Checklist, ChecklistItem, Task } from '@automattic/launchpad';
-import { Button, Modal } from '@wordpress/components';
+import { useQueryClient } from '@tanstack/react-query';
+import { Button, Modal, Spinner } from '@wordpress/components';
 import { chevronLeft, close } from '@wordpress/icons';
 import clsx from 'clsx';
-import { translate } from 'i18n-calypso';
+import { getLocaleSlug, translate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 import { ConfirmDialog, DialogContent, DialogFooter } from 'calypso/components/confirm-dialog';
-import { useSiteSubscriptions as useCachedSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { getCachedFollowedNonSelfSitesCount } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
@@ -51,6 +53,17 @@ const STEP_FRAME_CLASS: Record< Step, string > = {
 	discover: 'subscribe-modal',
 };
 
+// Step 3 carries every researched list, so it loads only for readers who can
+// reach it, rather than with this chunk on every Reader visit.
+const loadRecommendedBlogsStep = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-reader-onboarding-recommended-blogs" */ 'calypso/reader/onboarding-rsm/recommended-blogs-step'
+	).then( ( module ) => ( { default: module.RecommendedBlogsStep } ) );
+
+// The researched recommendations are English blogs, so other locales keep the
+// earlier discover step.
+const isRecommendedBlogsLocale = () => getLocaleSlug()?.startsWith( 'en' ) ?? false;
+
 const ReaderOnboardingRsm = ( {
 	onRender,
 	isSuppressed = false,
@@ -59,6 +72,7 @@ const ReaderOnboardingRsm = ( {
 	isSuppressed?: boolean;
 } ) => {
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	const refreshFollowingStreams = useRefreshFollowingStreams();
 
 	const preferencesLoaded = useSelector( hasReceivedRemotePreferences );
@@ -66,34 +80,6 @@ const ReaderOnboardingRsm = ( {
 		useNonSelfSubscriptionsCount();
 
 	const { data: followedTags, isPending: tagsPending } = useFollowedTags();
-	// Used in the `completed` event for an instant in-session site-follow
-	// count: follows mutations update this query cache, whereas
-	// `nonSelfSubscriptionsCount` from `useSiteSubscriptions` can lag until
-	// its refetch resolves.
-	//
-	// The follows query retains stale rows (`is_following: false`) and
-	// self-owned subs (`is_owner: true`); we filter both out so the count
-	// matches the rest of the onboarding eligibility logic, which uses
-	// `nonSelfSubscriptionsCount` (also excludes self-owned). Use
-	// `nonSelfSubscriptionsCount` as a baseline so completion analytics do not
-	// under-report follows before the follows query has hydrated.
-	//
-	// `Math.max` is safe in onboarding because the UI only nets follow
-	// additions: discover-step recommendations exclude pre-session
-	// subscriptions (so in-session unfollows only target in-session adds),
-	// and interests-step pack subscribe never unfollows. The invariant is
-	// therefore `queryFollowedNonSelfSitesCount >= nonSelfSubscriptionsCount`,
-	// so the max picks the live follows-query value. If a future flow ever allows
-	// unfollowing a pre-session subscription from within onboarding, revisit
-	// this and gate on follows query hydration rather than blindly take the max.
-	const { subscriptions } = useCachedSiteSubscriptions();
-	const queryFollowedNonSelfSitesCount = subscriptions.filter(
-		( subscription ) => subscription.is_following && ! subscription.is_owner
-	).length;
-	const followedNonSelfSitesCount = Math.max(
-		nonSelfSubscriptionsCount,
-		queryFollowedNonSelfSitesCount
-	);
 	const userRegistrationDate = useSelector( getCurrentUserDate ) as string | null;
 	const promptVerification = ! useSelector( isCurrentUserEmailVerified );
 
@@ -301,7 +287,14 @@ const ReaderOnboardingRsm = ( {
 		// record tracks for completion regardless of setting, to still track it in flows that forceShow.
 		recordTracksEvent( `${ READER_ONBOARDING_TRACKS_EVENT_PREFIX }completed`, {
 			followed_tags_count: followedTags?.length ?? 0,
-			followed_non_self_sites_count: followedNonSelfSitesCount,
+			// Read from the cache when the event fires: follows patch it straight
+			// away, but step 3 can finish before this component re-renders with
+			// them. `nonSelfSubscriptionsCount` covers a cache that hasn't
+			// hydrated yet; the max is safe because onboarding only adds follows.
+			followed_non_self_sites_count: Math.max(
+				nonSelfSubscriptionsCount,
+				getCachedFollowedNonSelfSitesCount( queryClient )
+			),
 		} );
 		if ( hasCompletedOnboarding ) {
 			return;
@@ -374,6 +367,13 @@ const ReaderOnboardingRsm = ( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
+	// Fetch step 3 while the reader is on an earlier step.
+	useEffect( () => {
+		if ( currentStep && isRecommendedBlogsLocale() ) {
+			loadRecommendedBlogsStep().catch( () => {} );
+		}
+	}, [ currentStep ] );
+
 	// Notify the parent component if onboarding will render.
 	// Use useEffect to avoid calling setState during render (React anti-pattern).
 	useEffect( () => {
@@ -410,6 +410,8 @@ const ReaderOnboardingRsm = ( {
 			disabled: ! hasFollowedTags && ! hasFollowedInInterestsStep,
 		},
 	];
+
+	const showRecommendedBlogs = isRecommendedBlogsLocale();
 
 	let modalBackButton = null;
 	if ( currentStep === 'interests' ) {
@@ -499,10 +501,16 @@ const ReaderOnboardingRsm = ( {
 				<Modal
 					onRequestClose={ handleStepClose }
 					size="medium"
-					className={ clsx( 'reader-onboarding-rsm-modal', STEP_FRAME_CLASS[ currentStep ], {
-						'is-disabled':
-							( currentStep === 'discover' || currentStep === 'interests' ) && promptVerification,
-					} ) }
+					className={ clsx(
+						'reader-onboarding-rsm-modal',
+						currentStep === 'discover' && showRecommendedBlogs
+							? 'recommended-blogs-step'
+							: STEP_FRAME_CLASS[ currentStep ],
+						{
+							'is-disabled':
+								( currentStep === 'discover' || currentStep === 'interests' ) && promptVerification,
+						}
+					) }
 					headerActions={ modalBackButton }
 				>
 					{ currentStep === 'welcome' && (
@@ -519,12 +527,26 @@ const ReaderOnboardingRsm = ( {
 							onPackSubscribed={ handlePackSubscribed }
 						/>
 					) }
-					{ currentStep === 'discover' && (
-						<SubscribeModal
-							onFinish={ handleDiscoverFinish }
-							promptVerification={ promptVerification }
-						/>
-					) }
+					{ currentStep === 'discover' &&
+						( showRecommendedBlogs ? (
+							<AsyncLoad
+								require={ loadRecommendedBlogsStep }
+								placeholder={ <Spinner /> }
+								loadFailureFallback={
+									<SubscribeModal
+										onFinish={ handleDiscoverFinish }
+										promptVerification={ promptVerification }
+									/>
+								}
+								onFinish={ handleDiscoverFinish }
+								promptVerification={ promptVerification }
+							/>
+						) : (
+							<SubscribeModal
+								onFinish={ handleDiscoverFinish }
+								promptVerification={ promptVerification }
+							/>
+						) ) }
 				</Modal>
 			) }
 		</>
