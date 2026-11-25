@@ -102,7 +102,7 @@ const LicensingPendingAsyncActivation: FC< Props > = ( {
 			{
 				receiptId,
 				source: 'connect-after-checkout',
-				jetpackTemporarySiteId,
+				siteId: jetpackTemporarySiteId,
 				fromSiteSlug,
 				redirect_to: redirectTo,
 			},
