@@ -169,9 +169,27 @@ describe( 'NotePeek', () => {
 		await hoverRow( user );
 
 		const card = await screen.findByRole( 'dialog' );
-		expect( within( card ).getByText( 'In reply to Ana Ruiz' ) ).toBeVisible();
+		expect( within( card ).getByText( 'On The tide tables' ) ).toBeVisible();
 		expect( within( card ).getByText( 'Are the tides still out in May?' ) ).toBeVisible();
 		expect( within( card ).getByText( COMMENT ) ).toBeVisible();
+	} );
+
+	it( 'names the post a mention in a post is on', async () => {
+		const user = userEvent.setup();
+		renderList( {
+			notes: [
+				{
+					...commentNote,
+					type: 'automattcher',
+					body: [ { text: COMMENT, ranges: [], media: [], type: 'post' } ],
+				},
+			],
+		} );
+
+		await hoverRow( user );
+
+		const card = await screen.findByRole( 'dialog' );
+		expect( within( card ).getByText( 'On The tide tables' ) ).toBeVisible();
 	} );
 
 	it( 'lists the people who liked something', async () => {

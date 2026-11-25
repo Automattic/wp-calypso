@@ -11,7 +11,6 @@ import { html } from '../../panel/indices-to-html';
 import { p } from '../../panel/templates/functions';
 import { useAppContext } from '../context';
 import NoteIcon from '../note-icon';
-import { isPostNote } from '../note-simplified';
 import { formatNoteTime } from '../note-simplified/format-note-time';
 import type { Note } from '../types';
 import type { FocusEvent, MouseEvent, PointerEvent, SyntheticEvent } from 'react';
@@ -199,12 +198,10 @@ export default function NotePeek( {
 	const people = isLikes ? note.body.filter( ( { type } ) => type === 'user' ) : [];
 	const otherCount = Math.max( 0, ( actorCount ?? 0 ) - people.length );
 
+	// Always the post a note is on, which most rows don't name. A new post's row already
+	// does, so its card says how long it is instead. A reply's quote says what it answers.
 	let context;
-	if ( isReply ) {
-		/* translators: %s is the name of the person whose comment was replied to. */
-		context = sprintf( __( 'In reply to %s' ), repliedTo.author_name );
-	} else if ( isPostNote( note ) ) {
-		// A post's title is in its row, so say how long it is instead.
+	if ( note.type === 'new_post' ) {
 		const minutes = Math.max( 1, Math.round( ( block?.text.split( /\s+/ ).length ?? 0 ) / 200 ) );
 		/* translators: %d is how many minutes a post takes to read. */
 		context = sprintf( _n( '%d min read', '%d min read', minutes ), minutes );
