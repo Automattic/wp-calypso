@@ -1604,7 +1604,7 @@ export const siteSettingsWebApplicationFirewallRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-web-application-firewall' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/web-application-firewall' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-web-application-firewall' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1632,7 +1632,7 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-wpcom-login' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/wpcom-login' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-wpcom-login' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

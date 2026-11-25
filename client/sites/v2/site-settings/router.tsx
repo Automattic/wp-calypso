@@ -229,10 +229,11 @@ const webApplicationFirewallRoute = createRoute( {
 	...appRouterSites.siteSettingsWebApplicationFirewallRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-web-application-firewall' ).then( ( d ) =>
-		createLazyRoute( 'web-application-firewall' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/web-application-firewall' ).then(
+		( d ) =>
+			createLazyRoute( 'web-application-firewall' )( {
+				component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			} )
 	)
 );
 
@@ -240,7 +241,7 @@ const wpcomLoginRoute = createRoute( {
 	...appRouterSites.siteSettingsWpcomLoginRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-wpcom-login' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/wpcom-login' ).then( ( d ) =>
 		createLazyRoute( 'wpcom-login' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
