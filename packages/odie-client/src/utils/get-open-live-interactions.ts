@@ -1,3 +1,4 @@
+import { isCsatTriggerMessage, isZendeskSurveyMessage } from '@automattic/zendesk-client';
 import Smooch from 'smooch';
 import type { InteractionStatus } from '../types';
 import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';
@@ -11,11 +12,15 @@ export type InteractionStatusByUuid = Map< string, InteractionStatus >;
 /**
  * A conversation is open unless one of these says otherwise:
  * - it hasn't been updated within AGE_THRESHOLD (stale — true even with no messages),
- * - it carries a terminal Smooch message (csat/form/rated),
+ * - it carries a terminal Smooch message (a CSAT prompt, a form or a rating),
  * - its backing SupportInteraction is closed/solved server-side.
  *
+ * Zendesk sends the CSAT prompt when the ticket is solved, in one of two shapes: our own
+ * trigger (metadata.type 'csat') or a native Zendesk survey (source.type 'zd:surveys', a
+ * plain text message with no metadata).
+ *
  * The backend status is authoritative: a conversation can still look open in Smooch
- * (no csat/form/rated message yet) while its interaction is already closed/solved —
+ * (no CSAT/form/rated message yet) while its interaction is already closed/solved —
  * e.g. after a ticket merge.
  */
 function isOpenConversation(
@@ -30,7 +35,8 @@ function isOpenConversation(
 	const hasTerminalMessage = conversation.messages.some(
 		( message: ZendeskMessage ) =>
 			message.type === 'form' ||
-			message.metadata?.type === 'csat' ||
+			isCsatTriggerMessage( message ) ||
+			isZendeskSurveyMessage( message ) ||
 			message.metadata?.type === 'form' ||
 			message.metadata?.rated
 	);
