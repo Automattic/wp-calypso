@@ -99,6 +99,26 @@ describe( 'DowngradeConfirmationModal', () => {
 		expect( screen.getByRole( 'button', { name: 'Change plan and refund $40' } ) ).toBeVisible();
 	} );
 
+	test( 'explains scheduling a change that was picked to make now but can’t be', () => {
+		mockFeatures( { features: [], is_change_to_monthly: false } );
+
+		render(
+			<DowngradeConfirmationModal
+				{ ...defaultProps }
+				isTermChange
+				isChangeNowRefused
+				renewalPriceText="$70/month"
+			/>
+		);
+
+		expect(
+			within( screen.getByRole( 'dialog' ) ).getByText(
+				/can’t be made right away with a refund, but you can schedule it/
+			)
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Schedule change' } ) ).toBeEnabled();
+	} );
+
 	test( 'cannot confirm a change made now until its refund has loaded', () => {
 		mockFeatures( { features: [], is_change_to_monthly: true } );
 
