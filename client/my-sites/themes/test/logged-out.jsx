@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { vi } from 'vitest';
 import { createReduxStore } from 'calypso/state/create-store';
 import { setStore } from 'calypso/state/redux-store';
 import { THEMES_REQUEST_FAILURE } from 'calypso/state/themes/action-types';
@@ -11,33 +12,36 @@ import { receiveThemes } from 'calypso/state/themes/actions/receive-themes';
 import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import LoggedOutShowcase from '../logged-out';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/track-component-view', () =>
-	require( 'calypso/components/empty-component' )
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+vi.mock(
+	'calypso/lib/analytics/track-component-view',
+	() => import( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
-	require( 'calypso/components/empty-component' )
+vi.mock(
+	'calypso/lib/analytics/page-view-tracker',
+	() => import( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
-	require( 'calypso/components/empty-component' )
+vi.mock(
+	'calypso/my-sites/themes/theme-preview',
+	() => import( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/components/data/query-themes', () => ( {
+vi.mock( 'calypso/components/data/query-themes', () => ( {
 	__esModule: true,
 	default: require( 'calypso/components/empty-component' ).default,
-	useQueryThemes: jest.fn(),
+	useQueryThemes: vi.fn(),
 } ) );
 
-window.IntersectionObserver = jest.fn( () => ( {
-	observe: jest.fn(),
-	disconnect: jest.fn(),
+window.IntersectionObserver = vi.fn( () => ( {
+	observe: vi.fn(),
+	disconnect: vi.fn(),
 	root: null,
 	rootMargin: '',
 	thresholds: [],
-	takeRecords: jest.fn(),
-	unobserve: jest.fn(),
+	takeRecords: vi.fn(),
+	unobserve: vi.fn(),
 } ) );
 
-Element.prototype.scrollBy = jest.fn();
+Element.prototype.scrollBy = vi.fn();
 
 const themes = [
 	{

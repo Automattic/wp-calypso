@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import VideoPressStatsModule from '..';
 
-jest.mock( 'calypso/components/data/query-site-stats', () => () => null );
-jest.mock( 'calypso/my-sites/stats/components/stats-infotip', () => () => null );
-jest.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 123 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( { getSiteSlug: () => 'example.com' } ) );
+vi.mock( 'calypso/components/data/query-site-stats', () => ( { default: () => null } ) );
+vi.mock( 'calypso/my-sites/stats/components/stats-infotip', () => ( { default: () => null } ) );
+vi.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 123 } ) );
+vi.mock( 'calypso/state/sites/selectors', () => ( { getSiteSlug: () => 'example.com' } ) );
 
 let mockData;
-jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
+vi.mock( 'calypso/state/stats/lists/selectors', () => ( {
 	isRequestingSiteStatsForQuery: () => false,
 	getVideoPressPlaysComplete: () => mockData,
 } ) );

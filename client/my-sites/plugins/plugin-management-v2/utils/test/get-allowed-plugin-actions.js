@@ -1,17 +1,18 @@
+import { vi } from 'vitest';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getAllowedPluginActions } from '../get-allowed-plugin-actions';
 
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
-jest.mock( 'calypso/state/selectors/site-has-feature' );
-jest.mock( 'calypso/state/sites/selectors/is-jetpack-site' );
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer' );
+vi.mock( 'calypso/state/selectors/site-has-feature' );
+vi.mock( 'calypso/state/sites/selectors/is-jetpack-site' );
 
 const AUTO_MANAGED_PLUGIN_SLUGS = [ [ 'akismet' ], [ 'jetpack' ], [ 'vaultpress' ] ];
 
 describe( 'getAllowedPluginActions', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it.each( [ [ 'randomstring' ], [ 'jetpack' ] ] )(
@@ -25,7 +26,7 @@ describe( 'getAllowedPluginActions', () => {
 
 	describe( 'Non-managed plugins', () => {
 		beforeEach( () => {
-			jest.resetAllMocks();
+			vi.resetAllMocks();
 		} );
 
 		it.each( [ [ 'randomstring' ], [ 'hello-dolly' ] ] )(
@@ -54,7 +55,7 @@ describe( 'getAllowedPluginActions', () => {
 
 		describe( 'Atomic sites', () => {
 			beforeEach( () => {
-				jest.resetAllMocks();
+				vi.resetAllMocks();
 
 				isJetpackSite.mockReturnValue( true );
 				isSiteAutomatedTransfer.mockReturnValue( true );
@@ -86,7 +87,7 @@ describe( 'getAllowedPluginActions', () => {
 
 	describe( 'Auto-managed plugins', () => {
 		beforeEach( () => {
-			jest.resetAllMocks();
+			vi.resetAllMocks();
 		} );
 
 		it.each( AUTO_MANAGED_PLUGIN_SLUGS )(
@@ -127,7 +128,7 @@ describe( 'getAllowedPluginActions', () => {
 
 		describe( 'Atomic sites', () => {
 			beforeEach( () => {
-				jest.resetAllMocks();
+				vi.resetAllMocks();
 				isJetpackSite.mockReturnValue( true );
 				isSiteAutomatedTransfer.mockReturnValue( true );
 			} );

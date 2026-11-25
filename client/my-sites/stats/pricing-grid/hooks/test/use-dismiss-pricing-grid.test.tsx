@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	normalizeNoticesVisibility,
 	noticesVisibilityQueryKey,
@@ -10,8 +11,8 @@ import {
 } from 'calypso/my-sites/stats/hooks/use-notice-visibility-query';
 import useDismissPricingGrid from '../use-dismiss-pricing-grid';
 
-const mockRecordDismissal = jest.fn();
-jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
+const mockRecordDismissal = vi.fn();
+vi.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
 	__esModule: true,
 	default: () => ( { mutateAsync: mockRecordDismissal } ),
 } ) );
@@ -25,7 +26,7 @@ describe( 'useDismissPricingGrid', () => {
 	);
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockRecordDismissal.mockReturnValue( new Promise( () => {} ) );
 		client = new QueryClient();
 		client.setQueryData(

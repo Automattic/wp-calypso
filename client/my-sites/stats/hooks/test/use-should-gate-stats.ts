@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_STATS_PAID } from '@automattic/calypso-products';
+import { type Mock, vi } from 'vitest';
 import {
 	STAT_TYPE_CLICKS,
 	STAT_TYPE_TOP_POSTS,
@@ -11,10 +12,10 @@ import {
 } from '../../constants';
 import { shouldGateStats } from '../use-should-gate-stats';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
-	config.isEnabled = jest.fn();
-	return config;
+	config.isEnabled = vi.fn();
+	return { ...config, default: config };
 } );
 
 const siteId = 123;
@@ -24,7 +25,7 @@ const jetpackStatsAdvancedStatType = STATS_TYPE_DEVICE_STATS;
 
 describe( 'shouldGateStats in Calypso', () => {
 	beforeAll( () => {
-		( isEnabled as jest.Mock ).mockImplementation( ( property: string ) => {
+		( isEnabled as Mock ).mockImplementation( ( property: string ) => {
 			switch ( property ) {
 				case 'stats/paid-wpcom-v2':
 					return true;
@@ -35,7 +36,7 @@ describe( 'shouldGateStats in Calypso', () => {
 	} );
 
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should not gate stats when site features are not loaded', () => {
@@ -361,7 +362,7 @@ describe( 'shouldGateStats in Calypso', () => {
 
 describe( 'shouldGateStats in Odyssey stats', () => {
 	beforeAll( () => {
-		( isEnabled as jest.Mock ).mockImplementation( ( property: string ) => {
+		( isEnabled as Mock ).mockImplementation( ( property: string ) => {
 			switch ( property ) {
 				case 'stats/paid-wpcom-v2':
 					return true;
@@ -372,7 +373,7 @@ describe( 'shouldGateStats in Odyssey stats', () => {
 	} );
 
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should not gate basic stats for non-commercial jetpack sites without Stats commercial purchase', () => {

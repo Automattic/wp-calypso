@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render } from '@testing-library/react';
@@ -10,6 +10,7 @@ import Modal from 'react-modal';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getSite } from 'calypso/state/sites/selectors';
 import RemovePlugin from '../remove-plugin';
@@ -19,16 +20,16 @@ const HEADING_TEXT = 'Heading';
 const MESSAGE_TEXT = 'Message';
 const CONFIRM_TEXT = 'OK';
 const CANCEL_TEXT = 'Cancel';
-jest.mock( '../../hooks/use-get-dialog-text', () =>
-	jest.fn().mockReturnValue( () => ( {
+vi.mock( '../../hooks/use-get-dialog-text', () => ( {
+	default: vi.fn().mockReturnValue( () => ( {
 		heading: HEADING_TEXT,
 		message: MESSAGE_TEXT,
 		cta: {
 			confirm: CONFIRM_TEXT,
 			cancel: CANCEL_TEXT,
 		},
-	} ) )
-);
+	} ) ),
+} ) );
 
 const initialState = {
 	sites: { items: { [ site.ID ]: site } },

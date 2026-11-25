@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import MySitesSidebarUnifiedMenu from '../../menu';
 import { CustomizeProvider, useCustomizeContext } from '../index';
 import type { JSX } from 'react';
@@ -31,11 +32,11 @@ function EnterButton() {
 
 describe( '<MySitesSidebarUnifiedMenu> customize keyboard behaviour', () => {
 	beforeEach( () => {
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'marks expandable parent rows as reassignable in customize mode', () => {
@@ -88,7 +89,7 @@ describe( '<MySitesSidebarUnifiedMenu> customize keyboard behaviour', () => {
 	} );
 
 	it( 'does not enable expandable hover flyouts in customize mode', () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		const { container } = renderInProvider(
 			<CustomizeProvider>
@@ -128,7 +129,7 @@ describe( '<MySitesSidebarUnifiedMenu> customize keyboard behaviour', () => {
 
 		act( () => {
 			fireEvent.mouseOver( menu, { clientX: 120, clientY: 120 } );
-			jest.advanceTimersByTime( 220 );
+			vi.advanceTimersByTime( 220 );
 		} );
 
 		expect( menu ).not.toHaveClass( 'hovered' );

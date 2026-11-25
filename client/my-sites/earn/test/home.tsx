@@ -1,32 +1,33 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import page from '@automattic/calypso-router';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, type MockedFunction, vi } from 'vitest';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import membershipsReducer from 'calypso/state/memberships/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Home from '../home';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
 // Requests stay pending: the cards under test read their state from Redux, not
 // from anything these would return.
-jest.mock( 'calypso/lib/wp', () => {
+vi.mock( 'calypso/lib/wp', () => {
 	const pending = () => new Promise( () => {} );
 	return { __esModule: true, default: { req: { get: pending, post: pending } } };
 } );
 
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => ( { default: vi.fn() } ) );
 
-const mockedPage = page as unknown as jest.Mock;
-const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
+const mockedPage = page as unknown as Mock;
+const mockedIsJetpackCloud = isJetpackCloud as MockedFunction< typeof isJetpackCloud >;
 
 // A monthly plan has none of the monetization features, so every card that can
 // upsell does.

@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getWPCOMPluginQueryParams } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import { fetchPluginInformation } from 'calypso/lib/wporg';
 import { fetchPlugin, fetchPlugins, setBrowsePluginsNoindex } from '../controller-logged-out';
 
-jest.mock( 'calypso/lib/wporg', () => ( {
-	fetchPluginInformation: jest.fn(),
-	fetchPluginsList: jest.fn(),
+vi.mock( 'calypso/lib/wporg', () => ( {
+	fetchPluginInformation: vi.fn(),
+	fetchPluginsList: vi.fn(),
 } ) );
 
 function makeContext( category, { isServerSide = true, loggedIn = false, meta = [] } = {} ) {
@@ -35,7 +36,7 @@ const robotsMeta = ( context ) =>
 
 describe( 'setBrowsePluginsNoindex', () => {
 	test( 'adds noindex robots meta for an uncurated tag fallthrough term', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makeContext( 'email-money-transfer' );
 
 		setBrowsePluginsNoindex( context, next );
@@ -45,7 +46,7 @@ describe( 'setBrowsePluginsNoindex', () => {
 	} );
 
 	test( 'does NOT add noindex for a curated ALLOWED_CATEGORIES term', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makeContext( 'seo' );
 
 		setBrowsePluginsNoindex( context, next );
@@ -56,17 +57,17 @@ describe( 'setBrowsePluginsNoindex', () => {
 
 	test( 'matches curated categories case-insensitively (e.g. jobBoards via jobboards)', () => {
 		const upper = makeContext( 'SEO' );
-		setBrowsePluginsNoindex( upper, jest.fn() );
+		setBrowsePluginsNoindex( upper, vi.fn() );
 		expect( upper.dispatched ).toHaveLength( 0 );
 
 		// `jobBoards` is camelCase in the allowlist but lowercased in URLs.
 		const camel = makeContext( 'jobboards' );
-		setBrowsePluginsNoindex( camel, jest.fn() );
+		setBrowsePluginsNoindex( camel, vi.fn() );
 		expect( camel.dispatched ).toHaveLength( 0 );
 	} );
 
 	test( 'does nothing on client-side (non-SSR) requests', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makeContext( 'email-money-transfer', { isServerSide: false } );
 
 		setBrowsePluginsNoindex( context, next );
@@ -76,7 +77,7 @@ describe( 'setBrowsePluginsNoindex', () => {
 	} );
 
 	test( 'does nothing for logged-in users', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makeContext( 'email-money-transfer', { loggedIn: true } );
 
 		setBrowsePluginsNoindex( context, next );
@@ -86,7 +87,7 @@ describe( 'setBrowsePluginsNoindex', () => {
 	} );
 
 	test( 'preserves existing non-robots meta and replaces any prior robots meta', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makeContext( 'email-money-transfer', {
 			meta: [
 				{ name: 'description', content: 'Plugins' },
@@ -153,16 +154,16 @@ function makePluginContext( { cachedProduct, isMarketplaceProduct = true } = {} 
 			dispatch: () => {},
 		},
 		res: {
-			redirect: jest.fn(),
-			status: jest.fn(),
-			req: { logger: { error: jest.fn() }, useragent: { isBot: false } },
+			redirect: vi.fn(),
+			status: vi.fn(),
+			req: { logger: { error: vi.fn() }, useragent: { isBot: false } },
 		},
 	};
 }
 
 describe( 'fetchPlugin', () => {
 	test( 'redirects a retired marketplace product to /plugins', async () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makePluginContext( {
 			cachedProduct: { slug: PLUGIN_SLUG, is_retired: true },
 		} );
@@ -174,7 +175,7 @@ describe( 'fetchPlugin', () => {
 	} );
 
 	test( 'keeps the locale in the redirect for a localized request', async () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makePluginContext( {
 			isMarketplaceProduct: true,
 			cachedProduct: { slug: PLUGIN_SLUG, is_retired: true },
@@ -190,7 +191,7 @@ describe( 'fetchPlugin', () => {
 	} );
 
 	test( 'renders normally when is_retired is false', async () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makePluginContext( {
 			cachedProduct: { slug: PLUGIN_SLUG, is_retired: false },
 		} );
@@ -202,7 +203,7 @@ describe( 'fetchPlugin', () => {
 	} );
 
 	test( 'renders normally when the API omits is_retired', async () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makePluginContext( { cachedProduct: { slug: PLUGIN_SLUG } } );
 
 		await fetchPlugin( context, next );
@@ -212,7 +213,7 @@ describe( 'fetchPlugin', () => {
 	} );
 
 	test( 'renders normally for a WordPress.org plugin with no cached product', async () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makePluginContext( { isMarketplaceProduct: false } );
 
 		await fetchPlugin( context, next );
@@ -247,7 +248,7 @@ describe( 'fetchPlugin', () => {
 			return action;
 		};
 
-		const next = jest.fn();
+		const next = vi.fn();
 		await fetchPlugin( context, next );
 
 		expect( next ).toHaveBeenCalledWith( 'route' );
@@ -275,8 +276,8 @@ describe( 'fetchPlugins prefetch error logging', () => {
 			},
 			store: { getState: () => ( {} ), dispatch: () => {} },
 			res: {
-				status: jest.fn(),
-				req: { logger: { error: jest.fn() }, useragent: { isBot: false } },
+				status: vi.fn(),
+				req: { logger: { error: vi.fn() }, useragent: { isBot: false } },
 			},
 		};
 	}
@@ -288,7 +289,7 @@ describe( 'fetchPlugins prefetch error logging', () => {
 		failure.url = 'https://public-api.wordpress.com/rest/v1.1/products';
 		const context = makeBrowserContext( () => Promise.reject( failure ) );
 
-		await fetchPlugins( context, jest.fn() );
+		await fetchPlugins( context, vi.fn() );
 
 		expect( context.serverSideRender ).toBe( false );
 		const logCall = context.res.req.logger.error.mock.calls[ 0 ][ 0 ];
@@ -306,11 +307,11 @@ describe( 'fetchPlugins prefetch error logging', () => {
 	} );
 
 	test( 'logs the still-pending prefetches when the timebox fires', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const context = makeBrowserContext( neverSettles );
 
-		const promise = fetchPlugins( context, jest.fn() );
-		await jest.advanceTimersByTimeAsync( 2000 );
+		const promise = fetchPlugins( context, vi.fn() );
+		await vi.advanceTimersByTimeAsync( 2000 );
 		await promise;
 
 		const logCall = context.res.req.logger.error.mock.calls[ 0 ][ 0 ];
@@ -322,6 +323,6 @@ describe( 'fetchPlugins prefetch error logging', () => {
 			'popular-plugins',
 			'featured-plugins',
 		] );
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 } );

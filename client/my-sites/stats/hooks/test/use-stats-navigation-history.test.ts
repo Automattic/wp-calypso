@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useSelector } from 'calypso/state';
 import { getSiteSlug, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -11,10 +12,10 @@ import {
 	recordCurrentScreen,
 } from '../use-stats-navigation-history';
 
-jest.mock( 'calypso/state', () => ( { useSelector: jest.fn() } ) );
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/ui/selectors' );
-jest.mock( 'i18n-calypso', () => {
+vi.mock( 'calypso/state', () => ( { useSelector: vi.fn() } ) );
+vi.mock( 'calypso/state/sites/selectors' );
+vi.mock( 'calypso/state/ui/selectors' );
+vi.mock( 'i18n-calypso', () => {
 	const translate = ( text: string ) => text;
 	const localize = ( component: unknown ) => component;
 	const getLocaleSlug = () => 'en';
@@ -32,12 +33,12 @@ const STORAGE_KEY = 'jp-stats-navigation';
 
 describe( 'use-stats-navigation-history back-link param forwarding', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		sessionStorage.clear();
-		( getSelectedSiteId as jest.Mock ).mockReturnValue( 123 );
-		( getSiteSlug as jest.Mock ).mockReturnValue( 'example.com' );
-		( getSiteAdminUrl as jest.Mock ).mockReturnValue( 'https://example.com/wp-admin/' );
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) => selector( {} ) );
+		( getSelectedSiteId as Mock ).mockReturnValue( 123 );
+		( getSiteSlug as Mock ).mockReturnValue( 'example.com' );
+		( getSiteAdminUrl as Mock ).mockReturnValue( 'https://example.com/wp-admin/' );
+		( useSelector as Mock ).mockImplementation( ( selector ) => selector( {} ) );
 	} );
 
 	const summaryEntry = {

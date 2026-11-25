@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { navigate } from 'calypso/lib/navigate';
 import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-interval-switcher/constants';
 import { onClickInstallPlugin } from '../CTA-button';
 
 // The module is a callable config function carrying isEnabled; keep it callable.
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual( '@automattic/calypso-config' );
 	const config = ( key ) => actual( key );
-	config.isEnabled = jest.fn();
-	return config;
+	config.isEnabled = vi.fn();
+	return { ...config, default: config };
 } );
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( 'calypso/lib/navigate', () => ( { navigate: jest.fn() } ) );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/lib/navigate', () => ( { navigate: vi.fn() } ) );
 
 const selectedSite = { slug: 'example.wordpress.com' };
 const paidPlugin = {
@@ -27,7 +28,7 @@ const freePlugin = { slug: 'givewp', tags: {} };
 
 const clickUpgradeAndActivate = ( plugin, isMarketplaceProduct = false ) =>
 	onClickInstallPlugin( {
-		dispatch: jest.fn(),
+		dispatch: vi.fn(),
 		selectedSite,
 		plugin,
 		upgradeAndInstall: true,
@@ -43,7 +44,7 @@ const upgradeFlowArgs = () =>
 
 describe( 'onClickInstallPlugin', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		window.history.replaceState( {}, '', '/plugins/sensei-pro/example.wordpress.com' );
 	} );
 

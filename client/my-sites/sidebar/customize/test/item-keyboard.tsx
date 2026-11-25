@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import MySitesSidebarUnifiedItem from '../../item';
 import { CustomizeProvider, useCustomizeContext } from '../index';
 import type { JSX } from 'react';
@@ -29,11 +30,11 @@ function EnterButton() {
 
 describe( '<MySitesSidebarUnifiedItem> customize keyboard behaviour', () => {
 	beforeEach( () => {
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	it( 'removes the row link from tab order and suppresses navigation in customize mode', () => {
-		const trackClickEvent = jest.fn();
+		const trackClickEvent = vi.fn();
 		const { container } = renderInProvider(
 			<CustomizeProvider>
 				<EnterButton />
