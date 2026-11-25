@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { Reader } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,6 +7,7 @@ import { act, render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
@@ -38,7 +39,7 @@ const mockSiteSubscriptionContext = (
 		},
 		isLoading: false,
 		error: null,
-		navigate: jest.fn(),
+		navigate: vi.fn(),
 	};
 };
 

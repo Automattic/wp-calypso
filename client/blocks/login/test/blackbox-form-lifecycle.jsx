@@ -1,16 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Fragment } from 'react';
+import { vi } from 'vitest';
 import { useBlackboxProtection } from '../use-blackbox-protection';
 import { createBlackboxInstance } from '../utils/__mocks__/blackbox-instance';
 import { getBlackboxSessionId } from '../utils/get-blackbox-session-id';
 
-jest.mock( '@automattic/calypso-config', () => ( { isEnabled: () => true } ) );
-jest.mock( '../utils/blackbox-sdk', () => ( {
-	getBlackboxApiKey: jest.fn( () => 'checkout-key' ),
-	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { isEnabled: () => true } )
+);
+vi.mock( '../utils/blackbox-sdk', () => ( {
+	getBlackboxApiKey: vi.fn( () => 'checkout-key' ),
+	loadBlackboxSdk: vi.fn( () => Promise.resolve() ),
 } ) );
 
 function TestForm( {
@@ -52,7 +55,7 @@ describe( 'Blackbox form lifetime', () => {
 	let onResult;
 	let onSubmit;
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		sdk = createBlackboxInstance( { status: 'loading' } );
 		window.Blackbox = sdk.api;
 		sdk.api.flush.mockImplementation(
@@ -61,19 +64,19 @@ describe( 'Blackbox form lifetime', () => {
 					finishFlush = resolve;
 				} )
 		);
-		onResult = jest.fn();
-		onSubmit = jest.fn();
+		onResult = vi.fn();
+		onSubmit = vi.fn();
 	} );
 	afterEach( () => {
 		delete window.Blackbox;
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	async function startSubmission( props = {} ) {
 		const formProps = { onResult, onSubmit, ...props };
 		const view = render( <TestForm { ...formProps } /> );
 		await act( async () => {} );
-		act( () => jest.advanceTimersByTime( 5000 ) );
+		act( () => vi.advanceTimersByTime( 5000 ) );
 		fireEvent.click( screen.getByRole( 'button' ) );
 		await act( async () => {} );
 		return { ...view, formProps };
@@ -109,7 +112,7 @@ describe( 'Blackbox form lifetime', () => {
 
 	test( 'keeps an earlier form usable while a later form is mounted and after it unmounts', async () => {
 		const first = { onResult, onSubmit };
-		const second = { onResult: jest.fn(), onSubmit: jest.fn() };
+		const second = { onResult: vi.fn(), onSubmit: vi.fn() };
 		const { rerender } = render(
 			<>
 				<TestForm { ...first } />
@@ -118,7 +121,7 @@ describe( 'Blackbox form lifetime', () => {
 		);
 		sdk.api.flush.mockResolvedValue( { sessionId: 'sid', challengePending: false, outcome: 'ok' } );
 		await act( async () => {} );
-		act( () => jest.advanceTimersByTime( 5000 ) );
+		act( () => vi.advanceTimersByTime( 5000 ) );
 		act( () => sdk.setState( { status: 'ready', sessionId: 'sid' } ) );
 
 		fireEvent.click( screen.getAllByRole( 'button' )[ 0 ] );

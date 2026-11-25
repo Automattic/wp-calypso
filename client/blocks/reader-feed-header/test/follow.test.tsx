@@ -1,55 +1,56 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import ReaderSuggestedFollowsDialog from 'calypso/blocks/reader-suggested-follows/dialog';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { successNotice } from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderFeedHeaderFollow from '../follow';
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
+vi.mock( 'calypso/state/notices/actions', () => ( {
 	__esModule: true,
-	successNotice: jest.fn( ( text: string, options: { duration: number } ) => ( {
+	successNotice: vi.fn( ( text: string, options: { duration: number } ) => ( {
 		type: 'NOTICE/SUCCESS',
 		text,
 		options,
 	} ) ),
 } ) );
-jest.mock( 'calypso/reader/follow-button', () => ( {
+vi.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
-	default: jest.fn( () => null ),
+	default: vi.fn( () => null ),
 } ) );
-jest.mock( 'calypso/blocks/reader-suggested-follows/dialog', () => ( {
+vi.mock( 'calypso/blocks/reader-suggested-follows/dialog', () => ( {
 	__esModule: true,
-	default: jest.fn( () => null ),
+	default: vi.fn( () => null ),
 } ) );
-jest.mock( 'calypso/blocks/reader-site-notification-settings', () => () => null );
-jest.mock( 'calypso/reader/recommend-button', () => ( { RecommendButton: () => null } ) );
-jest.mock( 'calypso/data/reader/use-feed-recommendations-mutation', () => ( {
+vi.mock( 'calypso/blocks/reader-site-notification-settings', () => ( { default: () => null } ) );
+vi.mock( 'calypso/reader/recommend-button', () => ( { RecommendButton: () => null } ) );
+vi.mock( 'calypso/data/reader/use-feed-recommendations-mutation', () => ( {
 	useFeedRecommendationsMutation: () => ( {
 		isRecommended: false,
 		isUpdating: false,
-		toggleRecommended: jest.fn(),
+		toggleRecommended: vi.fn(),
 	} ),
 } ) );
-jest.mock( 'calypso/reader/data/feed', () => ( { useFeedQuery: () => ( { data: undefined } ) } ) );
-jest.mock( 'calypso/reader/data/seen-posts', () => ( {
+vi.mock( 'calypso/reader/data/feed', () => ( { useFeedQuery: () => ( { data: undefined } ) } ) );
+vi.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useCanMarkSeen: () => false,
-	useMarkAllAsSeenMutation: () => ( { mutate: jest.fn() } ),
+	useMarkAllAsSeenMutation: () => ( { mutate: vi.fn() } ),
 } ) );
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( { useIsSubscribed: () => false } ) );
+vi.mock( 'calypso/reader/data/site-subscriptions', () => ( { useIsSubscribed: () => false } ) );
 
 describe( 'ReaderFeedHeaderFollow', () => {
 	const site = { ID: 100, feed_ID: 200, name: 'Test Blog', is_following: false };
 	const feed = { feed_ID: 200, feed_URL: 'https://testblog.com/feed', blog_ID: 100 };
 
-	const lastFollowButtonProps = () => jest.mocked( ReaderFollowButton ).mock.lastCall![ 0 ];
+	const lastFollowButtonProps = () => vi.mocked( ReaderFollowButton ).mock.lastCall![ 0 ];
 	const isDialogVisible = () =>
-		( ReaderSuggestedFollowsDialog as jest.Mock ).mock.lastCall[ 0 ].isVisible;
+		( ReaderSuggestedFollowsDialog as Mock ).mock.lastCall[ 0 ].isVisible;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'opens suggested follows on click without a success notice', () => {

@@ -1,22 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement } from 'react';
+import { type Mock, vi } from 'vitest';
 import wp from 'calypso/lib/wp';
 import { useStatus } from '../use-status';
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { get: jest.fn() } },
+	default: { req: { get: vi.fn() } },
 } ) );
 
-jest.mock( '../log-error', () => ( {
-	logQrAppLoginError: jest.fn(),
+vi.mock( '../log-error', () => ( {
+	logQrAppLoginError: vi.fn(),
 } ) );
 
-const mockedGet = wp.req.get as jest.Mock;
+const mockedGet = wp.req.get as Mock;
 
 function makeWrapper() {
 	const client = new QueryClient( {
@@ -28,7 +29,7 @@ function makeWrapper() {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 } );
 
 describe( 'useStatus', () => {

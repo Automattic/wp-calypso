@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import PasswordResetSuccessNotice from 'calypso/blocks/login/password-reset-success-notice';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';

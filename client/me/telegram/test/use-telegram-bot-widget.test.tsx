@@ -1,20 +1,25 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { useTelegramBotWidget } from '../use-telegram-bot-widget';
 
-jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn(), post: jest.fn() } } ) );
-const mockDispatch = jest.fn();
-jest.mock( 'react-redux', () => ( { useDispatch: () => mockDispatch } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { get: vi.fn(), post: vi.fn() } } )
+);
+const mockDispatch = vi.fn();
+vi.mock( 'react-redux', () => ( { useDispatch: () => mockDispatch } ) );
 const mockTranslate = ( text: string ) => text;
-jest.mock( 'i18n-calypso', () => ( { useTranslate: () => mockTranslate } ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { useTranslate: () => mockTranslate } )
+);
 
 const payload = { id: 123, username: 'telegram-user', auth_date: 123456789, hash: 'test-hash' };
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	jest.mocked( wpcom.req.get ).mockResolvedValue( { connected: false } );
-	jest.mocked( wpcom.req.post ).mockResolvedValue( {} );
+	vi.clearAllMocks();
+	vi.mocked( wpcom.req.get ).mockResolvedValue( { connected: false } );
+	vi.mocked( wpcom.req.post ).mockResolvedValue( {} );
 } );
 
 test( 'requires confirmation and submits the displayed identity', async () => {
@@ -45,7 +50,7 @@ test( 'cancel discards the payload without connecting', async () => {
 } );
 
 test( 'retains the pending identity after a failed request for an explicit retry', async () => {
-	jest.mocked( wpcom.req.post ).mockRejectedValueOnce( new Error( 'Try again' ) );
+	vi.mocked( wpcom.req.post ).mockRejectedValueOnce( new Error( 'Try again' ) );
 	const { result } = renderHook( () => useTelegramBotWidget() );
 	await waitFor( () => expect( window.dollyOnTelegramAuth ).toBeDefined() );
 	act( () => window.dollyOnTelegramAuth?.( payload ) );

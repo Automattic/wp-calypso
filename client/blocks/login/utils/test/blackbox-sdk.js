@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( ( key ) => {
+import { vi } from 'vitest';
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn( ( key ) => {
 		if ( key === 'blackbox_api_key' ) {
 			return 'login-key';
 		}
@@ -12,12 +13,12 @@ jest.mock( '@automattic/calypso-config', () => {
 		}
 		return undefined;
 	} );
-	config.isEnabled = jest.fn( ( flag ) => flag === 'blackbox' );
-	return config;
+	config.isEnabled = vi.fn( ( flag ) => flag === 'blackbox' );
+	return { ...config, default: config };
 } );
 
-jest.mock( '@automattic/load-script', () => ( {
-	loadScript: jest.fn( ( _url, callback ) => {
+vi.mock( '@automattic/load-script', () => ( {
+	loadScript: vi.fn( ( _url, callback ) => {
 		if ( typeof callback === 'function' ) {
 			callback( null );
 		}
@@ -26,8 +27,8 @@ jest.mock( '@automattic/load-script', () => ( {
 
 describe( 'blackbox-sdk', () => {
 	beforeEach( () => {
-		jest.resetModules();
-		jest.clearAllMocks();
+		vi.resetModules();
+		vi.clearAllMocks();
 		delete window.Blackbox;
 	} );
 
@@ -72,7 +73,7 @@ describe( 'blackbox-sdk', () => {
 			finishLoad = callback;
 		} );
 		const loading = loadBlackboxSdk( 'login-key' );
-		window.Blackbox = { configure: jest.fn(), reset: jest.fn() };
+		window.Blackbox = { configure: vi.fn(), reset: vi.fn() };
 		finishLoad( null );
 		await loading;
 		configureBlackbox( window.Blackbox, { apiKey: 'signup-key' } );
@@ -80,7 +81,7 @@ describe( 'blackbox-sdk', () => {
 	} );
 
 	test( 'loadBlackboxSdk does not call configure after load', async () => {
-		window.Blackbox = { configure: jest.fn(), getSessionId: jest.fn() };
+		window.Blackbox = { configure: vi.fn(), getSessionId: vi.fn() };
 		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
 
 		await loadBlackboxSdk( 'login-key', 'login' );

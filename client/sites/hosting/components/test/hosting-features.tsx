@@ -1,44 +1,49 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import HostingFeatures from '../hosting-features';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 let mockTransferStatus = 'completed';
 let mockIsSiteAtomic = false;
 let mockSiteId = 1;
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-transfer-status-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-transfer-status-query', () => ( {
 	useSiteTransferStatusQuery: () => ( {
 		data: { status: mockTransferStatus, isTransferring: mockTransferStatus === 'active' },
 	} ),
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => () => mockIsSiteAtomic );
-jest.mock( 'calypso/state/selectors/site-has-feature', () => () => true );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( {
+	default: () => mockIsSiteAtomic,
+} ) );
+vi.mock( 'calypso/state/selectors/site-has-feature', () => ( { default: () => true } ) );
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'example.wordpress.com',
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: () => mockSiteId,
 	getSelectedSite: () => ( { plan: { expired: false } } ),
 } ) );
-jest.mock( 'calypso/state/sites/actions', () => ( {
+vi.mock( 'calypso/state/sites/actions', () => ( {
 	requestSite: ( siteId: number ) => ( { type: 'REQUEST_SITE', siteId } ),
 } ) );
-jest.mock( '@automattic/calypso-router', () => ( { replace: jest.fn() } ) );
-jest.mock( '../hosting-activation-button', () => () => null );
-jest.mock( 'calypso/components/inline-support-link', () => () => null );
+vi.mock( '@automattic/calypso-router', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { replace: vi.fn() } )
+);
+vi.mock( '../hosting-activation-button', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/inline-support-link', () => ( { default: () => null } ) );
 
 const elapse = async ( ms: number ) => {
 	await act( async () => {
-		await jest.advanceTimersByTimeAsync( ms );
+		await vi.advanceTimersByTimeAsync( ms );
 	} );
 };
 
@@ -47,13 +52,13 @@ const requestSiteCalls = () =>
 
 describe( 'HostingFeatures', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.useFakeTimers();
+		vi.clearAllMocks();
+		vi.useFakeTimers();
 		mockTransferStatus = 'completed';
 		mockIsSiteAtomic = false;
 		mockSiteId = 1;
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	// The bug: Redux owns the redirect's condition and nothing here refreshed it, so a successful
 	// transfer parked the user on the activating spinner until they reloaded by hand.

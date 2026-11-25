@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import SocialLoginForm from 'calypso/blocks/login/social';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-const mockRecordTracksEvent = jest.fn();
-jest.mock( '@automattic/calypso-analytics', () => ( {
+const mockRecordTracksEvent = vi.fn();
+vi.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: ( ...args ) => mockRecordTracksEvent( ...args ),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( ( key ) => {
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn( ( key ) => {
 		if ( key === 'wpcom_signup_id' ) {
 			return 'test-id';
 		}
@@ -22,19 +23,19 @@ jest.mock( '@automattic/calypso-config', () => {
 		}
 		return null;
 	} );
-	config.isEnabled = jest.fn( ( feature ) => {
+	config.isEnabled = vi.fn( ( feature ) => {
 		if ( feature === 'sign-in-with-paypal' ) {
 			return true;
 		}
 		return false;
 	} );
-	return config;
+	return { ...config, default: config };
 } );
 
 const defaultProps = {
-	handleLogin: jest.fn(),
-	trackLoginAndRememberRedirect: jest.fn(),
-	resetLastUsedAuthenticationMethod: jest.fn(),
+	handleLogin: vi.fn(),
+	trackLoginAndRememberRedirect: vi.fn(),
+	resetLastUsedAuthenticationMethod: vi.fn(),
 	currentRoute: '/log-in',
 	from: 'lohp',
 };
@@ -44,7 +45,7 @@ const render = ( el, options ) =>
 
 describe( 'SocialLoginForm', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders Google social login button', () => {

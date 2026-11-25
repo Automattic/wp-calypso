@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AppPromo } from '../index';
 
 const mockUserAgent: Record< string, boolean > = {};
 
-jest.mock( 'calypso/lib/user-agent', () => ( {
+vi.mock( 'calypso/lib/user-agent', () => ( {
 	__esModule: true,
 	get default() {
 		return mockUserAgent;
 	},
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
 } ) );
 
 // jsdom cannot navigate, so keep link clicks from logging "Not implemented" errors.
@@ -34,7 +35,7 @@ describe( 'AppPromo', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		for ( const key of Object.keys( mockUserAgent ) ) {
 			delete mockUserAgent[ key ];
 		}

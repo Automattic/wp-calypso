@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render } from '@testing-library/react';
+import { vi } from 'vitest';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import ReaderFullPostFeaturedImage from '../featured-image';
 
-jest.mock( 'calypso/lib/resize-image-url', () => jest.fn( ( url ) => url ) );
+vi.mock( 'calypso/lib/resize-image-url', () => ( { default: vi.fn( ( url ) => url ) } ) );
 
 describe( 'ReaderFullPostFeaturedImage', () => {
 	const photonFeaturedImage = 'https://i0.wp.com/example.com/wp-content/uploads/featured.jpg?w=600';

@@ -1,7 +1,7 @@
-/** @jest-environment jsdom */
-jest.mock( 'calypso/components/purchase-detail', () => ( { description } ) => (
-	<div data-testid="purchase-detail">{ description }</div>
-) );
+/** @vitest-environment jsdom */
+vi.mock( 'calypso/components/purchase-detail', () => ( {
+	default: ( { description } ) => <div data-testid="purchase-detail">{ description }</div>,
+} ) );
 
 import {
 	PLAN_FREE,
@@ -22,6 +22,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { VideoAudioPosts } from '../video-audio-posts';
 
 describe( 'VideoAudioPosts basic tests', () => {

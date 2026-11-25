@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -9,21 +9,24 @@ import userEvent from '@testing-library/user-event';
 import { ReactElement } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import EligibilityWarnings from '..';
 
-jest.mock( '@automattic/calypso-router', () => ( {
-	redirect: jest.fn(),
-} ) );
+vi.mock( '@automattic/calypso-router', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		redirect: vi.fn(),
+	} )
+);
 
-jest.mock( '@automattic/odie-client/src/data', () => ( {
+vi.mock( '@automattic/odie-client/src/data', () => ( {
 	useManageSupportInteraction: () => ( {
-		startNewInteraction: jest.fn().mockResolvedValue( undefined ),
-		resolveInteraction: jest.fn().mockResolvedValue( undefined ),
-		addEventToInteraction: jest.fn().mockResolvedValue( undefined ),
+		startNewInteraction: vi.fn().mockResolvedValue( undefined ),
+		resolveInteraction: vi.fn().mockResolvedValue( undefined ),
+		addEventToInteraction: vi.fn().mockResolvedValue( undefined ),
 	} ),
-	useGetZendeskConversation: jest.fn(),
-	useOdieChat: jest.fn(),
-	broadcastOdieMessage: jest.fn(),
+	useGetZendeskConversation: vi.fn(),
+	useOdieChat: vi.fn(),
+	broadcastOdieMessage: vi.fn(),
 } ) );
 
 function renderWithStore( element: ReactElement, initialState: Record< string, unknown > ) {
@@ -68,7 +71,7 @@ describe( '<EligibilityWarnings>', () => {
 	} );
 
 	afterAll( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'renders error notice when AT has been blocked by a sticker', () => {
@@ -315,7 +318,7 @@ describe( '<EligibilityWarnings>', () => {
 			siteUrl: 'https://example.wordpress.com',
 		} );
 
-		const handleProceed = jest.fn();
+		const handleProceed = vi.fn();
 
 		const { getByText } = renderWithStore(
 			<EligibilityWarnings context={ null } onProceed={ handleProceed } />,
@@ -371,7 +374,7 @@ describe( '<EligibilityWarnings>', () => {
 			holds: [ 'NON_ADMIN_USER', 'SITE_PRIVATE' ],
 		} );
 
-		const handleProceed = jest.fn();
+		const handleProceed = vi.fn();
 
 		const { getByText } = renderWithStore(
 			<EligibilityWarnings context={ null } onProceed={ handleProceed } />,

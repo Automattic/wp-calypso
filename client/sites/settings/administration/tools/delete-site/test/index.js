@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,6 +8,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import DeleteSite from '../index';
 
 const initialState = {
@@ -40,19 +41,21 @@ const initialState = {
 	preferences: {},
 };
 
-const mockDeleteSite = jest.fn();
+const mockDeleteSite = vi.fn();
 
-jest.mock( 'calypso/components/data/query-site-purchases', () => {
-	return () => {};
+vi.mock( 'calypso/components/data/query-site-purchases', () => {
+	return { default: () => {} };
 } );
-jest.mock( 'calypso/components/inline-support-link', () => {
-	return () => {
-		<>InlineSupportLink</>;
+vi.mock( 'calypso/components/inline-support-link', () => {
+	return {
+		default: () => {
+			<>InlineSupportLink</>;
+		},
 	};
 } );
 
 describe( 'index', () => {
-	jest.mock( 'calypso/state/sites/actions', () => {
+	vi.mock( 'calypso/state/sites/actions', () => {
 		return {
 			deleteSite: mockDeleteSite,
 		};

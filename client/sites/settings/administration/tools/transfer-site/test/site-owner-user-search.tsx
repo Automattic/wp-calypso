@@ -1,24 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import SiteOwnerTransferEligibility from '../site-owner-user-search';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		post: jest.fn(),
-	},
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			post: vi.fn(),
+		},
+	} )
+);
+
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
-} ) );
+vi.mock( 'calypso/data/users/use-users-query', () => ( { default: vi.fn() } ) );
 
-jest.mock( 'calypso/data/users/use-users-query', () => jest.fn() );
-
-jest.mock( 'calypso/my-sites/people/team-members-site-transfer', () => ( {
+vi.mock( 'calypso/my-sites/people/team-members-site-transfer', () => ( {
 	__esModule: true,
 	default: ( {
 		usersQuery,
@@ -39,8 +42,8 @@ jest.mock( 'calypso/my-sites/people/team-members-site-transfer', () => ( {
 	),
 } ) );
 
-const post = jest.requireMock( 'calypso/lib/wp' ).req.post as jest.Mock;
-const useUsersQuery = jest.requireMock( 'calypso/data/users/use-users-query' ) as jest.Mock;
+const post = ( await import( 'calypso/lib/wp' ) ).req.post as Mock;
+const useUsersQuery = ( await import( 'calypso/data/users/use-users-query' ) ) as unknown as Mock;
 
 function deferred< T >() {
 	let resolve!: ( value: T ) => void;
@@ -52,7 +55,7 @@ function deferred< T >() {
 	return { promise, resolve, reject };
 }
 
-function renderComponent( onNewUserOwnerSubmit = jest.fn() ) {
+function renderComponent( onNewUserOwnerSubmit = vi.fn() ) {
 	const queryClient = new QueryClient();
 	render(
 		<QueryClientProvider client={ queryClient }>
@@ -68,7 +71,7 @@ function renderComponent( onNewUserOwnerSubmit = jest.fn() ) {
 
 describe( 'SiteOwnerTransferEligibility', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		useUsersQuery.mockReturnValue( {
 			data: {
 				users: [

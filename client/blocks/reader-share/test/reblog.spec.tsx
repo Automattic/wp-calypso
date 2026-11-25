@@ -1,28 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useRef, useState } from 'react';
+import { type Mock, vi } from 'vitest';
 import ReaderReblogSelection, { ReblogPost } from '../reblog';
 
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
 	useSelector: () => '/reader',
 } ) );
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordAction: jest.fn(),
-	recordGaEvent: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordAction: vi.fn(),
+	recordGaEvent: vi.fn(),
 	getLocation: () => 'following',
 } ) );
 
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: jest.fn(),
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/components/site-selector', () => ( {
+vi.mock( 'calypso/components/site-selector', () => ( {
 	__esModule: true,
 	default: ( { onSiteSelect }: { onSiteSelect: ( slug: string ) => void } ) => (
 		<>
@@ -47,18 +48,18 @@ describe( 'ReaderReblogSelection', () => {
 		feed_item_ID: 0,
 		is_jetpack: false,
 	};
-	let closeMenu: jest.Mock;
-	let openPost: jest.Mock;
+	let closeMenu: Mock;
+	let openPost: Mock;
 
 	beforeEach( () => {
-		closeMenu = jest.fn();
-		openPost = jest.fn();
-		jest.spyOn( HTMLElement.prototype, 'offsetHeight', 'get' ).mockReturnValue( 20 );
-		jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		closeMenu = vi.fn();
+		openPost = vi.fn();
+		vi.spyOn( HTMLElement.prototype, 'offsetHeight', 'get' ).mockReturnValue( 20 );
+		vi.spyOn( window, 'open' ).mockImplementation( () => null );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	const RepostPopoverTestWrapper = () => {
