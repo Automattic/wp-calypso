@@ -1,16 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { FEATURE_WOOP, PLAN_FREE } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
+import { vi } from 'vitest';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import { useIsThemeAllowedOnSite } from '../use-is-theme-allowed-on-site';
 
-jest.mock( 'react-redux', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'react-redux', () => ( {
+	useDispatch: vi.fn(),
+	useSelector: vi.fn(),
 } ) );
 
 const freeThemeTier = {

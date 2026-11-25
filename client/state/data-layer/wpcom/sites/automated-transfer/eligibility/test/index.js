@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	requestAutomatedTransferEligibility,
 	updateAutomatedTransferEligibility,
@@ -24,7 +25,7 @@ describe( 'requestAutomatedTransferEligibility', () => {
 
 describe( 'updateAutomatedTransferEligibility', () => {
 	test( 'should dispatch an update eligibility action', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const getState = () => ( {
 			sites: { items: { 2916284: { ID: 2916284, launch_status: 'unlaunched' } } },
 		} );
@@ -45,7 +46,7 @@ describe( 'updateAutomatedTransferEligibility', () => {
 	} );
 
 	test( 'should dispatch an update eligibility action and map SITE_UNLAUNCHED', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const getState = () => ( {
 			sites: { items: { 2916284: { ID: 2916284, launch_status: 'unlaunched' } } },
 		} );

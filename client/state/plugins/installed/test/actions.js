@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	INSTALL_PLUGIN,
 	REMOVE_PLUGIN,
@@ -65,7 +66,7 @@ import {
 } from './fixtures/plugins';
 
 describe( 'actions', () => {
-	const spy = jest.fn();
+	const spy = vi.fn();
 
 	const statBumps = ( group, name ) =>
 		spy.mock.calls
@@ -901,8 +902,8 @@ describe( 'actions', () => {
 
 	describe( '#handleDispatchSuccessCallback()', () => {
 		test( 'should dispatch status update and the action dispatch call when a plugin is activated successfully', () => {
-			jest.useFakeTimers();
-			jest.spyOn( global, 'setTimeout' );
+			vi.useFakeTimers();
+			vi.spyOn( global, 'setTimeout' );
 			const defaultAction = {
 				action: ACTIVATE_PLUGIN,
 				siteId: 2916284,

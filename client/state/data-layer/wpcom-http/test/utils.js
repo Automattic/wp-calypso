@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	getData,
 	getError,
@@ -108,7 +109,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		test( 'should bypass actions without opt-in flag', () => {
 			const store = {};
 			const action = {};
-			const next = jest.fn();
+			const next = vi.fn();
 
 			trackRequests( next )( store, action );
 
@@ -118,7 +119,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		test( 'should bypass progress events', () => {
 			const store = {};
 			const action = { meta: { dataLayer: { trackRequest: true, progress: {} } } };
-			const next = jest.fn();
+			const next = vi.fn();
 
 			trackRequests( next )( store, action );
 
@@ -126,9 +127,9 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should inject false dispatcher', () => {
-			const store = { dispatch: jest.fn() };
+			const store = { dispatch: vi.fn() };
 			const action = { meta: { dataLayer: { trackRequest: true } } };
-			const next = jest.fn();
+			const next = vi.fn();
 
 			trackRequests( next )( store, action );
 
@@ -186,7 +187,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		let store;
 
 		beforeEach( () => {
-			dispatch = jest.fn();
+			dispatch = vi.fn();
 			store = { dispatch };
 		} );
 
@@ -232,7 +233,7 @@ describe( 'WPCOM HTTP Data Layer', () => {
 		} );
 
 		test( 'should pass data to fromApi for validation', () => {
-			const fromApi = jest.fn( ( input ) => input );
+			const fromApi = vi.fn( ( input ) => input );
 			dispatchRequest( { fetch, onSuccess, onError, fromApi } )( store, successHttpAction );
 			expect( fromApi ).toHaveBeenCalledWith( successHttpAction.meta.dataLayer.data );
 			expect( dispatch ).toHaveBeenCalledWith( successAction );

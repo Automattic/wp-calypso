@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import {
 	LicenseState,
 	LicenseSortDirection,
@@ -16,7 +17,7 @@ import {
 import * as actions from 'calypso/state/partner-portal/licenses/actions';
 import { LICENSES_PER_PAGE } from 'calypso/state/partner-portal/licenses/constants';
 
-jest.mock( 'calypso/state/partner-portal/partner/selectors', () => ( {
+vi.mock( 'calypso/state/partner-portal/partner/selectors', () => ( {
 	getActivePartnerKey: () => ( { oAuth2Token: 'fake_oauth2_token' } ),
 } ) );
 
@@ -24,7 +25,7 @@ describe( 'actions', () => {
 	describe( '#fetchLicenses()', () => {
 		test( 'should return a thunk which dispatches 2 actions when called', () => {
 			const { fetchLicenses } = actions;
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 
 			const thunk = fetchLicenses(
 				LicenseState.Detached,
