@@ -309,10 +309,31 @@ describe( 'create-site', () => {
 		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: true } );
 
 		expect( transferDomainToSite ).not.toHaveBeenCalled();
-		expect( addProductsToCart ).toHaveBeenCalledWith( 'brand-new.wordpress.com', 'onboarding', [
-			mockPlanCartItem,
-			registeredMove,
-		] );
+		expect( addProductsToCart ).toHaveBeenCalledWith(
+			'brand-new.wordpress.com',
+			'onboarding',
+			[ mockPlanCartItem, registeredMove ],
+			{ cartKey: 111 }
+		);
+	} );
+
+	// The cart helper ignores a cart key that is not a number and looks up the slug again.
+	it( 'passes the cart key as a number when /sites/new sends the blog ID as a string', async () => {
+		( createSite as jest.Mock ).mockResolvedValueOnce( {
+			siteId: '111',
+			siteSlug: 'brand-new.wordpress.com',
+			domainItem: undefined,
+		} );
+		mockPlanCartItem = { product_slug: 'personal-bundle' };
+
+		await runStep();
+
+		expect( addProductsToCart ).toHaveBeenCalledWith(
+			'brand-new.wordpress.com',
+			'onboarding',
+			[ mockPlanCartItem ],
+			{ cartKey: 111 }
+		);
 	} );
 
 	// The site works without the domain, so a failed move must not stop the signup.

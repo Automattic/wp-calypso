@@ -12,14 +12,18 @@ const mockCartActions = vi.hoisted( () => ( {
 } ) );
 const mockGetCartState = vi.hoisted( () => vi.fn() );
 const mockGetServerCart = vi.hoisted( () => vi.fn() );
+const mockGetCartKeyForSiteSlug = vi.hoisted( () => vi.fn( async () => 123 ) );
+const mockForCartKey = vi.hoisted( () =>
+	vi.fn( () => ( { actions: mockCartActions, getState: mockGetCartState } ) )
+);
 
 vi.mock( 'calypso/lib/wp', () => ( { default: { req: { post: vi.fn() } } } ) );
 vi.mock( '../../wpcom-request', () => ( { default: vi.fn() } ) );
 vi.mock( '../create-cart-manager-client', () => ( {
 	wpcomGetCart: mockGetServerCart,
 	default: {
-		getCartKeyForSiteSlug: vi.fn( async () => 123 ),
-		forCartKey: () => ( { actions: mockCartActions, getState: mockGetCartState } ),
+		getCartKeyForSiteSlug: mockGetCartKeyForSiteSlug,
+		forCartKey: mockForCartKey,
 	},
 } ) );
 vi.mock( '@automattic/calypso-config', () => {
@@ -123,6 +127,46 @@ describe( 'cart helpers', () => {
 		expect( mockCartActions.replaceProductsInCart ).toHaveBeenCalled();
 	} );
 
+	// The lookup of the site slug can time out and return `no-site`, so a known site ID must skip it.
+	test( 'addProductsToCart uses the cart key it receives and does not look up the site slug', async () => {
+		await addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { cartKey: 456 } );
+
+		expect( mockGetCartKeyForSiteSlug ).not.toHaveBeenCalled();
+		expect( mockForCartKey ).toHaveBeenCalledWith( 456 );
+	} );
+
+	test( 'replaceProductsInCart uses the cart key it receives and does not look up the site slug', async () => {
+		await replaceProductsInCart( 'example.wordpress.com', cartItems, { cartKey: 456 } );
+
+		expect( mockGetCartKeyForSiteSlug ).not.toHaveBeenCalled();
+		expect( mockForCartKey ).toHaveBeenCalledWith( 456 );
+	} );
+
+	test( 'addProductsToCart looks up the site slug when it receives no cart key', async () => {
+		await addProductsToCart( 'example.wordpress.com', 'domain', cartItems );
+
+		expect( mockGetCartKeyForSiteSlug ).toHaveBeenCalledWith( 'example.wordpress.com' );
+		expect( mockForCartKey ).toHaveBeenCalledWith( 123 );
+	} );
+
+	test( 'replaceProductsInCart looks up the site slug when it receives no cart key', async () => {
+		await replaceProductsInCart( 'example.wordpress.com', cartItems );
+
+		expect( mockGetCartKeyForSiteSlug ).toHaveBeenCalledWith( 'example.wordpress.com' );
+		expect( mockForCartKey ).toHaveBeenCalledWith( 123 );
+	} );
+
+	// A caller can pass a site ID that is not set, such as the 0 or NaN of a missing value.
+	test.each( [ 0, NaN, 'no-site' as const ] )(
+		'addProductsToCart looks up the site slug when the cart key is %s',
+		async ( cartKey ) => {
+			await addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { cartKey } );
+
+			expect( mockGetCartKeyForSiteSlug ).toHaveBeenCalledWith( 'example.wordpress.com' );
+			expect( mockForCartKey ).toHaveBeenCalledWith( 123 );
+		}
+	);
+
 	describe( 'with a cart response error', () => {
 		const responseError = new CartActionResponseError(
 			'A stale product cannot be purchased.',
@@ -188,6 +232,19 @@ describe( 'cart helpers', () => {
 					{ throwOnError: true }
 				)
 			).resolves.toBeUndefined();
+		} );
+
+		test( 'addProductsToCart reads the cart of the cart key it receives for the missing-item check', async () => {
+			cartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, {
+					throwOnError: true,
+					cartKey: 456,
+				} )
+			).resolves.toBeUndefined();
+			expect( mockGetCartState ).toHaveBeenCalled();
+			expect( mockForCartKey.mock.calls ).toEqual( [ [ 456 ], [ 456 ] ] );
 		} );
 
 		test( 'addProductsToCart rejects when the cart state cannot be read', async () => {
@@ -333,6 +390,18 @@ describe( 'cart helpers', () => {
 				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
 			).resolves.toBeUndefined();
 			expect( mockGetServerCart ).toHaveBeenCalledWith( 123 );
+		} );
+
+		test( 'addProductsToCart fetches the server cart of the cart key it receives', async () => {
+			carts( { server: requestedProducts, manager: [] } );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, {
+					throwOnError: true,
+					cartKey: 456,
+				} )
+			).resolves.toBeUndefined();
+			expect( mockGetServerCart ).toHaveBeenCalledWith( 456 );
 		} );
 
 		test( 'addProductsToCart rejects when the server cart does not hold a requested item', async () => {

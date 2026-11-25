@@ -307,11 +307,13 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...( productCartItems ?? [] ),
 				...cartDomainItems,
 			];
+			const signupCompleteSiteId = getSignupCompleteSiteID();
 			if ( manageFlowCartItems.length > 0 && slug ) {
-				await addProductsToCart( slug, flow, manageFlowCartItems );
+				await addProductsToCart( slug, flow, manageFlowCartItems, {
+					cartKey: Number( signupCompleteSiteId ),
+				} );
 			}
 
-			const signupCompleteSiteId = getSignupCompleteSiteID();
 			if ( freePlanDomainMoves.length > 0 && signupCompleteSiteId ) {
 				await moveDomainsToSite( freePlanDomainMoves, Number( signupCompleteSiteId ), flow );
 			}
@@ -359,7 +361,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...mergedDomainCartItems,
 			];
 			if ( funnelCartItems.length > 0 ) {
-				await addProductsToCart( funnelSite.siteSlug, flow, funnelCartItems );
+				await addProductsToCart( funnelSite.siteSlug, flow, funnelCartItems, {
+					cartKey: funnelSite.blogId,
+				} );
 			}
 
 			return {
@@ -498,7 +502,10 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			];
 
 			if ( additionalCartItems.length > 0 ) {
-				await addProductsToCart( site.siteSlug, flow, additionalCartItems );
+				await addProductsToCart( site.siteSlug, flow, additionalCartItems, {
+					// /sites/new sends the blog ID as a string, and the cart helper takes only a number.
+					cartKey: Number( site.siteId ),
+				} );
 			}
 
 			await moveDomainsToSite( freePlanDomainMoves, site.siteId, flow );
