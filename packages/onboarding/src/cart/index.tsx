@@ -331,6 +331,25 @@ function isRequestedItemMissingFromCart(
 	);
 }
 
+const CART_RELOAD_TIME_LIMIT_MS = 10000;
+
+// The cart endpoint can leave a request without an answer, and the fetch has no time limit of its
+// own. Without this limit, a fetch that never answers keeps the processing step waiting forever.
+function reloadCartWithTimeLimit( cartKey: CartKey ): Promise< unknown > {
+	let timeoutId: ReturnType< typeof setTimeout > | undefined;
+	const timeLimit = new Promise< never >( ( _resolve, reject ) => {
+		timeoutId = setTimeout(
+			() => reject( new Error( 'The cart fetch did not answer in time.' ) ),
+			CART_RELOAD_TIME_LIMIT_MS
+		);
+	} );
+
+	return Promise.race( [
+		cartManagerClient.forCartKey( cartKey ).actions.reloadFromServer(),
+		timeLimit,
+	] ).finally( () => clearTimeout( timeoutId ) );
+}
+
 // A failed request does not tell whether the server applied the change. After that failure the
 // manager state is the cart from before the request, which cannot show whether the change was
 // applied, so the helper fetches the server cart before it looks for the requested items. Every
@@ -342,7 +361,7 @@ async function shouldThrowCartError(
 ): Promise< boolean > {
 	if ( error instanceof CartActionConnectionError ) {
 		try {
-			await cartManagerClient.forCartKey( cartKey ).actions.reloadFromServer();
+			await reloadCartWithTimeLimit( cartKey );
 		} catch ( reloadError ) {
 			// A response error still comes with the server cart. A second failed request does not.
 			if ( ! ( reloadError instanceof CartActionResponseError ) ) {
