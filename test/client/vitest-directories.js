@@ -14,6 +14,8 @@ const directories = [
 	'hosting',
 	'jetpack-cloud',
 	'jetpack-connect',
+	'landing/stepper/declarative-flow/flows/site-migration-flow',
+	'landing/stepper/declarative-flow/internals',
 	'layout',
 	'lib',
 	'login',
@@ -27,8 +29,11 @@ const directories = [
 	'test-helpers',
 ];
 
-// Test files in `directories` that stay on Jest until a fix lands, relative to `client/`.
-const onJest = [];
+// Files in `directories` that stay on Jest, relative to `client/`: test files until a fix lands,
+// and helpers that tests still on Jest import, which keep using the `jest` global until they move.
+const onJest = [
+	'landing/stepper/declarative-flow/internals/steps-repository/launchpad/test/lib/fixtures.ts',
+];
 
 for ( const file of onJest ) {
 	if ( ! directories.some( ( dir ) => file.startsWith( dir + '/' ) ) ) {

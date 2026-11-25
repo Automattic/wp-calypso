@@ -3,6 +3,7 @@ import { SiteIntent } from '@automattic/data-stores/src/onboard';
 import { QueryClient } from '@tanstack/react-query';
 import React, { ReactElement } from 'react';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -40,9 +41,9 @@ export const renderStep = ( step: ReactElement< Step >, options?: RenderStepOpti
 };
 
 const navigation = {
-	submit: jest.fn(),
-	goNext: jest.fn(),
-	goToStep: jest.fn(),
+	submit: vi.fn(),
+	goNext: vi.fn(),
+	goToStep: vi.fn(),
 };
 
 const defaultProps = {

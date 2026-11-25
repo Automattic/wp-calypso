@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MockInstance, vi } from 'vitest';
 import { PlaygroundConfirmModal } from '../components/playground-confirm-modal';
 
 const renderModal = ( props: Partial< Parameters< typeof PlaygroundConfirmModal >[ 0 ] > = {} ) => {
-	const onConfirm = jest.fn();
-	const onCancel = jest.fn();
+	const onConfirm = vi.fn();
+	const onCancel = vi.fn();
 	const renderWith = ( overrides: typeof props ) => (
 		<PlaygroundConfirmModal
 			title="Confirm title"
@@ -30,11 +31,11 @@ const renderModal = ( props: Partial< Parameters< typeof PlaygroundConfirmModal 
 };
 
 describe( 'PlaygroundConfirmModal', () => {
-	let getClientRectsSpy: jest.SpyInstance;
+	let getClientRectsSpy: MockInstance;
 
 	beforeEach( () => {
 		// jsdom has no layout, so the Modal can't find a tabbable element to focus on mount.
-		getClientRectsSpy = jest
+		getClientRectsSpy = vi
 			.spyOn( HTMLElement.prototype, 'getClientRects' )
 			.mockReturnValue( [ {} ] as unknown as DOMRectList );
 	} );

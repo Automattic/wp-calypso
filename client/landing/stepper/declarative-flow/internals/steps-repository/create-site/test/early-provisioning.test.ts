@@ -1,4 +1,5 @@
 import { AI_SITE_BUILDER_FLOW } from '@automattic/onboarding';
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import {
 	getAtomicProvisionedSiteSlug,
@@ -6,15 +7,15 @@ import {
 	pollForAtomicProvisioning,
 } from '../early-provisioning';
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { get: jest.fn() } },
+	default: { req: { get: vi.fn() } },
 } ) );
 
-const wpcomGetMock = wpcom.req.get as jest.Mock;
+const wpcomGetMock = wpcom.req.get as Mock;
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 } );
 
 describe( 'getEarlyCreatedSiteId', () => {

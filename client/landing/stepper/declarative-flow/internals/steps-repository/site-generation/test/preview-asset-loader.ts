@@ -1,5 +1,6 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
+import { type Mock, vi } from 'vitest';
 import { createPreviewAssetLoader } from '../stream/preview-asset-loader';
 import type { PreviewAsset, PreviewAssets } from '../stream/html-preview-document';
 
@@ -33,13 +34,13 @@ function response(
 ) {
 	let index = 0;
 	const reader = {
-		read: jest.fn( async () =>
+		read: vi.fn( async () =>
 			index < chunks.length ? { done: false, value: chunks[ index++ ] } : { done: true }
 		),
-		cancel: jest.fn().mockResolvedValue( undefined ),
-		releaseLock: jest.fn(),
+		cancel: vi.fn().mockResolvedValue( undefined ),
+		releaseLock: vi.fn(),
 	};
-	const body = { getReader: () => reader, cancel: jest.fn().mockResolvedValue( undefined ) };
+	const body = { getReader: () => reader, cancel: vi.fn().mockResolvedValue( undefined ) };
 	const value = {
 		ok: true,
 		redirected: false,
@@ -53,20 +54,20 @@ function response(
 
 const originalFetch = global.fetch;
 let loader: ReturnType< typeof createPreviewAssetLoader >;
-let fetchMock: jest.Mock;
+let fetchMock: Mock;
 
 beforeEach( () => {
 	loader = createPreviewAssetLoader(
 		'https://public-api.wordpress.com/wpcom/v2/sites/123/big-sky/build-wow/snapshot'
 	);
-	fetchMock = jest.fn().mockImplementation( async () => response().value );
+	fetchMock = vi.fn().mockImplementation( async () => response().value );
 	global.fetch = fetchMock;
 } );
 
 afterEach( () => {
 	loader.dispose();
 	global.fetch = originalFetch;
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 const load = ( assets: PreviewAssets, signal = new AbortController().signal ) =>
@@ -322,7 +323,7 @@ it( 'disposes pending work, clears the cache and makes future loads inert', asyn
 } );
 
 it( 'times out stalled requests, releases queue slots and never caches their late responses', async () => {
-	jest.useFakeTimers();
+	vi.useFakeTimers();
 	const gates = Array.from( { length: 3 }, () =>
 		deferred< ReturnType< typeof response >[ 'value' ] >()
 	);
@@ -336,9 +337,9 @@ it( 'times out stalled requests, releases queue slots and never caches their lat
 		)
 	);
 	expect( fetchMock ).toHaveBeenCalledTimes( 3 );
-	await jest.advanceTimersByTimeAsync( 14999 );
+	await vi.advanceTimersByTimeAsync( 14999 );
 	expect( fetchMock ).toHaveBeenCalledTimes( 3 );
-	await jest.advanceTimersByTimeAsync( 1 );
+	await vi.advanceTimersByTimeAsync( 1 );
 	expect( Object.keys( await pending ) ).toEqual( [ source( '3.png' ) ] );
 	expect(
 		fetchMock.mock.calls.slice( 0, 3 ).every( ( [ , options ] ) => options.signal.aborted )
@@ -346,22 +347,22 @@ it( 'times out stalled requests, releases queue slots and never caches their lat
 	gates.forEach( ( gate ) => gate.resolve( response().value ) );
 	await load( { [ source() ]: asset() } );
 	expect( fetchMock ).toHaveBeenCalledTimes( 5 );
-	expect( jest.getTimerCount() ).toBe( 0 );
+	expect( vi.getTimerCount() ).toBe( 0 );
 } );
 
 it( 'applies the deadline while reading a stalled response body', async () => {
-	jest.useFakeTimers();
+	vi.useFakeTimers();
 	const streaming = response();
 	streaming.reader.read.mockReturnValueOnce( new Promise( () => {} ) );
 	fetchMock.mockResolvedValueOnce( streaming.value );
 	const pending = load( { [ source() ]: asset() } );
-	await jest.advanceTimersByTimeAsync( 15000 );
+	await vi.advanceTimersByTimeAsync( 15000 );
 	expect( await pending ).toEqual( {} );
 	expect( streaming.reader.cancel ).toHaveBeenCalled();
 	expect( fetchMock.mock.calls[ 0 ][ 1 ].signal.aborted ).toBe( true );
 	await load( { [ source() ]: asset() } );
 	expect( fetchMock ).toHaveBeenCalledTimes( 2 );
-	expect( jest.getTimerCount() ).toBe( 0 );
+	expect( vi.getTimerCount() ).toBe( 0 );
 } );
 
 const localSnapshot =

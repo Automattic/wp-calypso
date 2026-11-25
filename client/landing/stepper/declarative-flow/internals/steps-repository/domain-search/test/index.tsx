@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { isEnabled } from '@automattic/calypso-config';
@@ -11,24 +11,30 @@ import {
 } from '@automattic/onboarding';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../../hooks/use-site';
 import { renderStep } from '../../test/helpers';
 import DomainSearchStep from '../index';
 import type { ReactNode } from 'react';
 
-jest.mock( '../../../../../hooks/use-site', () => ( { useSite: jest.fn() } ) );
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	return Object.assign( jest.fn( actual ), actual, { isEnabled: jest.fn( actual.isEnabled ) } );
+vi.mock( '../../../../../hooks/use-site', () => ( { useSite: vi.fn() } ) );
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
+	const config = Object.assign( vi.fn( actual.default ), actual.default, {
+		isEnabled: vi.fn( actual.isEnabled ),
+	} );
+	return { ...actual, default: config, isEnabled: config.isEnabled };
 } );
-jest.mock( 'calypso/state/dashboard/selectors', () => ( { hasDashboardOptIn: () => false } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( '../results-experiment', () => ( {
+vi.mock( 'calypso/state/dashboard/selectors', () => ( { hasDashboardOptIn: () => false } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '../results-experiment', () => ( {
 	useDomainSearchResultsExperiment: () => ( { isLoading: false, variation: 'control' } ),
 } ) );
 
-jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
+vi.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: ( {
 		isFirstDomainFreeForFirstYear,
 		config,
@@ -63,7 +69,7 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo', () => ( {
+vi.mock( 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo', () => ( {
 	FreeDomainForAYearPromo: ( { textOnly }: { textOnly?: boolean } ) => (
 		<span>{ textOnly ? 'promo text' : 'promo banner' }</span>
 	),
@@ -79,7 +85,7 @@ const renderDomainSearch = (
 		<DomainSearchStep
 			flow={ flow }
 			stepName="domains"
-			navigation={ { submit: jest.fn(), goBack: jest.fn() } }
+			navigation={ { submit: vi.fn(), goBack: vi.fn() } }
 		/>,
 		{
 			initialEntry: `/domains?siteSlug=example.wordpress.com${ query }`,
@@ -89,7 +95,7 @@ const renderDomainSearch = (
 
 describe( 'DomainSearchStep free domain promo', () => {
 	beforeEach( () => {
-		jest.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
+		vi.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
 	} );
 
 	it( 'shows the promo for an existing site in the launch-site flow, without first-year-free pricing', () => {
@@ -109,20 +115,25 @@ describe( 'DomainSearchStep free domain promo', () => {
 } );
 
 describe( 'DomainSearchStep Name Pulse flag', () => {
-	const { isEnabled: actualIsEnabled } = jest.requireActual( '@automattic/calypso-config' );
+	let actualIsEnabled: typeof isEnabled;
+	beforeAll( async () => {
+		( { isEnabled: actualIsEnabled } = await vi.importActual<
+			typeof import( '@automattic/calypso-config' )
+		>( '@automattic/calypso-config' ) );
+	} );
 	const setFlag = ( on: boolean ) =>
-		jest
+		vi
 			.mocked( isEnabled )
 			.mockImplementation( ( name: string ) =>
 				name === 'domain-search/name-pulse-onboarding' ? on : actualIsEnabled( name )
 			);
 
 	beforeEach( () => {
-		jest.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
+		vi.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
 	} );
 
 	afterEach( () => {
-		jest.mocked( isEnabled ).mockImplementation( actualIsEnabled );
+		vi.mocked( isEnabled ).mockImplementation( actualIsEnabled );
 	} );
 
 	it( 'keeps the classic results in onboarding while the flag is off', () => {
@@ -149,7 +160,7 @@ describe( 'DomainSearchStep Name Pulse flag', () => {
 
 describe( 'DomainSearchStep back button', () => {
 	beforeEach( () => {
-		jest.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
+		vi.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
 	} );
 
 	it( 'ignores `source` in the launch-site flow and goes back to sites', () => {
@@ -214,8 +225,8 @@ describe( 'DomainSearchStep back button', () => {
 
 describe( 'DomainSearchStep notice skip link', () => {
 	beforeEach( () => {
-		jest.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( useSite ).mockReturnValue( site as ReturnType< typeof useSite > );
+		vi.mocked( recordTracksEvent ).mockClear();
 	} );
 
 	it( 'records a Tracks event when the notice skip link is clicked in the onboarding flow', async () => {

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import * as wpcomProxyRequest from 'wpcom-proxy-request';
 import wpcomXhrRequest from 'wpcom-xhr-request';
 import {
@@ -19,53 +20,59 @@ import {
 } from '../mocks';
 import UnifiedDesignPickerStep from '../unified-design-picker';
 
-jest.mock( '@automattic/global-styles', () => ( {
-	useColorPaletteVariations: jest.fn( () => [] ),
-	useFontPairingVariations: jest.fn( () => [] ),
+vi.mock( '@automattic/global-styles', () => ( {
+	useColorPaletteVariations: vi.fn( () => [] ),
+	useFontPairingVariations: vi.fn( () => [] ),
 } ) );
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn( () => false ),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn( () => false ),
 } ) );
 
-jest.mock( 'wpcom-proxy-request', () => jest.requireActual( 'wpcom-proxy-request' ) );
+vi.mock(
+	'wpcom-proxy-request',
+	async () =>
+		await vi.importActual< typeof import( 'wpcom-proxy-request' ) >( 'wpcom-proxy-request' )
+);
 
-jest.mock( '../../../../../hooks/use-site', () => ( {
+vi.mock( '../../../../../hooks/use-site', () => ( {
 	useSite: () => MOCKED_SITE,
 } ) );
 
-jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+vi.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
 	useSiteGlobalStylesStatus: () => ( { shouldLimitGlobalStyles: false } ),
 } ) );
 
-jest.mock( 'calypso/lib/explat', () => ( {
+vi.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: () => [ false, null ],
 } ) );
 
-jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
+vi.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 	getEligibility: () => {
 		return;
 	},
 } ) );
 
-jest.mock( 'calypso/components/data/query-themes', () => ( {
-	useQueryThemes: () => {
-		return;
-	},
-} ) );
+vi.mock( 'calypso/components/data/query-themes', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useQueryThemes: () => {
+			return;
+		},
+	} )
+);
 
-jest.mock( 'calypso/state/themes/hooks/use-is-theme-allowed-on-site', () => ( {
+vi.mock( 'calypso/state/themes/hooks/use-is-theme-allowed-on-site', () => ( {
 	useIsThemeAllowedOnSite: () => false,
 } ) );
 
-jest.mock( 'calypso/state/themes/selectors/get-theme', () => ( {
+vi.mock( 'calypso/state/themes/selectors/get-theme', () => ( {
 	getTheme: () => {
 		return;
 	},
 } ) );
 
-jest.mock( 'calypso/state/themes/selectors/get-theme-demo-url', () => ( {
+vi.mock( 'calypso/state/themes/selectors/get-theme-demo-url', () => ( {
 	getThemeDemoUrl: () => {
 		return;
 	},
@@ -75,14 +82,12 @@ jest.mock( 'calypso/state/themes/selectors/get-theme-demo-url', () => ( {
  * Mock wpcom-proxy-request so that we could use wpcom-xhr-request to call the endpoint
  * and get the response from nock
  */
-jest
-	.spyOn( wpcomProxyRequest, 'default' )
-	.mockImplementation(
-		( ...args ) =>
-			new Promise( ( resolve, reject ) =>
-				wpcomXhrRequest( ...args, ( err, res ) => ( err ? reject( err ) : resolve( res ) ) )
-			)
-	);
+vi.spyOn( wpcomProxyRequest, 'default' ).mockImplementation(
+	( ...args ) =>
+		new Promise( ( resolve, reject ) =>
+			wpcomXhrRequest( ...args, ( err, res ) => ( err ? reject( err ) : resolve( res ) ) )
+		)
+);
 
 const middlewares = [ thunk ];
 
@@ -115,14 +120,14 @@ describe( 'UnifiedDesignPickerStep', () => {
 	let originalScrollTo;
 
 	const navigation = {
-		goBack: jest.fn(),
-		goNext: jest.fn(),
-		submit: jest.fn(),
+		goBack: vi.fn(),
+		goNext: vi.fn(),
+		submit: vi.fn(),
 	};
 
 	beforeAll( () => {
 		originalScrollTo = window.scrollTo;
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 
 		nock( 'https://public-api.wordpress.com' )
 			.persist()
@@ -136,11 +141,12 @@ describe( 'UnifiedDesignPickerStep', () => {
 			.query( true )
 			.reply( 200, generateMockedStarterDesignDetails );
 
-		const mockIntersectionObserver = jest.fn();
-		mockIntersectionObserver.mockReturnValue( {
-			observe: () => null,
-			unobserve: () => null,
-			disconnect: () => null,
+		const mockIntersectionObserver = vi.fn( function () {
+			return {
+				observe: () => null,
+				unobserve: () => null,
+				disconnect: () => null,
+			};
 		} );
 		window.IntersectionObserver = mockIntersectionObserver;
 	} );
@@ -152,7 +158,7 @@ describe( 'UnifiedDesignPickerStep', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'Basics', () => {

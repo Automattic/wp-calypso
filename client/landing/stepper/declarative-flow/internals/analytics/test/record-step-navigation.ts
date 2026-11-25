@@ -1,9 +1,10 @@
+import { vi } from 'vitest';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordStepNavigation } from '../record-step-navigation';
 
-jest.mock( 'calypso/lib/analytics/tracks' );
-jest.mock( '@automattic/viewport', () => ( {
+vi.mock( 'calypso/lib/analytics/tracks' );
+vi.mock( '@automattic/viewport', () => ( {
 	resolveDeviceTypeByViewPort: () => 'desktop',
 } ) );
 
@@ -16,17 +17,17 @@ const record = ( providedDependencies: Record< string, unknown > ) => {
 		providedDependencies,
 	} );
 	expect( recordTracksEvent ).toHaveBeenCalled();
-	return jest.mocked( recordTracksEvent ).mock.lastCall?.[ 1 ];
+	return vi.mocked( recordTracksEvent ).mock.lastCall?.[ 1 ];
 };
 
 describe( 'recordStepNavigation', () => {
 	beforeEach( () => {
-		jest.mocked( recordTracksEvent ).mockClear();
-		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		vi.mocked( recordTracksEvent ).mockClear();
+		vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'records a site object as its ID', () => {
@@ -77,7 +78,7 @@ describe( 'recordStepNavigation', () => {
 			additionalProps: { filters: { a: 1 }, selectedFilters: 'blog' },
 		} );
 
-		const props = jest.mocked( recordTracksEvent ).mock.lastCall?.[ 1 ];
+		const props = vi.mocked( recordTracksEvent ).mock.lastCall?.[ 1 ];
 		expect( props ).not.toHaveProperty( 'filters' );
 		expect( props ).toMatchObject( { selected_filters: 'blog' } );
 	} );
