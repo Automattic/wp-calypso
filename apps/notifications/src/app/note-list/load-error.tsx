@@ -1,3 +1,4 @@
+import { __experimentalSpacer as Spacer } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
 import { useEffect, useState } from 'react';
@@ -17,17 +18,19 @@ export default function LoadError( { isRetrying, onRetry }: LoadErrorProps ) {
 	useEffect( () => setIsListMounted( true ), [] );
 
 	return (
-		<Notice.List>
-			{ isListMounted && (
-				<Notice.Root intent="error" className="wpnc__load-error">
-					<Notice.Description>{ __( 'Couldn’t load your notifications.' ) }</Notice.Description>
-					<Notice.Actions>
-						<Notice.ActionButton variant="minimal" loading={ isRetrying } onClick={ onRetry }>
-							{ __( 'Try again' ) }
-						</Notice.ActionButton>
-					</Notice.Actions>
-				</Notice.Root>
-			) }
-		</Notice.List>
+		<Spacer margin={ 4 }>
+			<Notice.List>
+				{ isListMounted && (
+					<Notice.Root intent="error">
+						<Notice.Description>{ __( 'Couldn’t load your notifications.' ) }</Notice.Description>
+						<Notice.Actions>
+							<Notice.ActionButton variant="minimal" loading={ isRetrying } onClick={ onRetry }>
+								{ __( 'Try again' ) }
+							</Notice.ActionButton>
+						</Notice.Actions>
+					</Notice.Root>
+				) }
+			</Notice.List>
+		</Spacer>
 	);
 }

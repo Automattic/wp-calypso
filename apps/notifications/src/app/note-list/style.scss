@@ -13,11 +13,6 @@
 		min-height: 0;
 	}
 
-	// In line with the rows' 16px edge.
-	.wpnc__load-error {
-		margin: 16px;
-	}
-
 	// The subject and excerpt render in separate DataViews cells (the title and
 	// description fields), so they're styled directly rather than under a shared
 	// row wrapper.

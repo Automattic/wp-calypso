@@ -307,9 +307,11 @@ function getNotes( before, livePushMessages = [] ) {
 			);
 			debug( 'getNotes error, using backoff_ms=%d', backoff_ms );
 			this.noteList = [];
-			// A list that never loaded has nothing to show, so it shows an error with
-			// "Try again" instead of spinning; a failed refresh keeps the notes on screen.
-			store.dispatch( this.listLoaded ? actions.ui.loadedNotes() : actions.ui.loadNotesFailed() );
+			if ( this.listLoaded ) {
+				store.dispatch( actions.ui.loadedNotes() );
+			} else {
+				store.dispatch( actions.ui.loadNotesFailed() );
+			}
 			this.reschedule( backoff_ms );
 			return;
 		}
@@ -587,14 +589,12 @@ function getFilteredNotes( before ) {
 			if ( before ) {
 				scheduleLoadMoreRetry.call( this, key );
 			}
-			// A tab that never loaded shows an error with "Try again"; a failed refresh
-			// or older page keeps the tab's notes on screen.
-			const hasLoaded = getFilteredNoteIds( store.getState(), key ) !== undefined;
-			store.dispatch(
-				before || hasLoaded
-					? actions.ui.loadedNotes( { filter: key } )
-					: actions.ui.loadNotesFailed( { filter: key } )
-			);
+			const isFirstLoad = ! before && getFilteredNoteIds( store.getState(), key ) === undefined;
+			if ( isFirstLoad ) {
+				store.dispatch( actions.ui.loadNotesFailed( { filter: key } ) );
+			} else {
+				store.dispatch( actions.ui.loadedNotes( { filter: key } ) );
+			}
 			if ( activeTabNeedsFetch ) {
 				this.getFilteredNotes();
 			}
