@@ -4,7 +4,7 @@ import { TextDecoder, TextEncoder } from 'node:util';
 import { Worker } from 'node:worker_threads';
 import nock from 'nock';
 import ResizeObserver from 'resize-observer-polyfill';
-import { afterAll, vi } from 'vitest';
+import { afterAll, beforeAll, vi } from 'vitest';
 
 const isJsdom = typeof window !== 'undefined';
 const testGlobals = globalThis as unknown as Record< string, unknown >;
@@ -43,9 +43,18 @@ if ( isJsdom ) {
 	}
 }
 
-if ( ! nock.isActive() ) {
+// nock patches `http` on import, and Vitest runs neither `beforeAll` nor `afterAll` in a file whose
+// tests are all skipped, so patch it only in `beforeAll`. Otherwise that file's nock stays in `http`.
+nock.restore();
+const unpatchedFetch = globalThis.fetch;
+beforeAll( () => {
+	const fetch = globalThis.fetch;
 	nock.activate();
-}
+	// Keep a `fetch` mock that the test file set when it loaded.
+	if ( fetch !== unpatchedFetch ) {
+		globalThis.fetch = fetch;
+	}
+} );
 // Fail any network requests which aren't mocked.
 nock.disableNetConnect();
 
