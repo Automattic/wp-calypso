@@ -3,9 +3,12 @@
  */
 import { type Mock, vi } from 'vitest';
 import AsyncLoad from 'calypso/components/async-load';
+import ReaderOnboardingRsm from 'calypso/reader/onboarding-rsm';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderOnboardingGate from '../gate';
 import type { ReactElement } from 'react';
+
+vi.mock( 'calypso/reader/onboarding-rsm', () => ( { default: () => null } ) );
 
 vi.mock( 'calypso/components/async-load', () => ( {
 	__esModule: true,
@@ -25,12 +28,12 @@ describe( 'ReaderOnboardingGate', () => {
 		vi.clearAllMocks();
 	} );
 
-	it( 'loads reader onboarding for a logged-in user', () => {
+	it( 'loads reader onboarding for a logged-in user', async () => {
 		render( <ReaderOnboardingGate /> );
 
 		const [ props ] = ( AsyncLoad as Mock ).mock.calls[ 0 ];
 		expect( typeof props.require ).toBe( 'function' );
-		expect( props.require.toString() ).toContain( 'calypso/reader/onboarding-rsm' );
+		await expect( props.require() ).resolves.toMatchObject( { default: ReaderOnboardingRsm } );
 	} );
 
 	it( 'forwards props to AsyncLoad', () => {

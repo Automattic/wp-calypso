@@ -2,8 +2,8 @@
  * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import { vi } from 'vitest';
+import { mockAllIsIntersecting } from 'calypso/test-helpers/intersection-observer';
 import NewBlogCard from '../card';
 import type { NewBlogRec } from '../tracks';
 

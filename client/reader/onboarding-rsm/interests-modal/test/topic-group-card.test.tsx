@@ -4,8 +4,8 @@
 
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import { vi } from 'vitest';
+import { mockAllIsIntersecting } from 'calypso/test-helpers/intersection-observer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import TopicGroupCard from '../topic-group-card';
 import type { CuratedBlog } from '../../curated-blogs';

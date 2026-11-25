@@ -12,8 +12,12 @@ vi.mock( 'calypso/reader/lib/reader-router', async () => {
 } );
 
 describe( 'conversations routes', () => {
+	// Vitest clears mock calls before each test, so keep the routes registered here.
+	let routes;
+
 	beforeAll( () => {
 		registerConversationsRoutes();
+		routes = [ ...readerPage.mock.calls ];
 	} );
 
 	it.each( [
@@ -29,7 +33,7 @@ describe( 'conversations routes', () => {
 		'redirects %s to the inbox',
 		( path ) => {
 			const redirect = vi.spyOn( page, 'redirect' ).mockImplementation( () => {} );
-			const [ , handler ] = readerPage.mock.calls.find( ( [ route ] ) => route === path );
+			const [ , handler ] = routes.find( ( [ route ] ) => route === path );
 
 			handler();
 

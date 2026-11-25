@@ -37,7 +37,6 @@ vi.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: vi.fn(),
 } ) );
 vi.mock( '@automattic/i18n-utils', async () => ( {
-	localeRegexString: 'en|es|fr|de|it|pt|ru|ja|ko|zh',
 	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
 		'@automattic/i18n-utils'
 	) ),
