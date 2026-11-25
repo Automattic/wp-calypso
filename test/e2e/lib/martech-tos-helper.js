@@ -11,7 +11,9 @@ import FormData from 'form-data';
 export default async function uploadScreenshotsToBlog( zipFilename, globPattern ) {
 	const zip = new ZipWriter( new Uint8ArrayWriter() );
 	for ( const file of fs.globSync( globPattern ) ) {
-		await zip.add( file, new Uint8ArrayReader( fs.readFileSync( file ) ) );
+		await zip.add( file, new Uint8ArrayReader( fs.readFileSync( file ) ), {
+			lastModDate: fs.statSync( file ).mtime,
+		} );
 	}
 
 	const form = new FormData();
