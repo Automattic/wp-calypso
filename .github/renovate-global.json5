@@ -1,7 +1,8 @@
-// Self-hosted Renovate settings that can't go in the repository's renovate.json5.
+// Self-hosted Renovate settings: the bot's identity, and options the repository's renovate.json5 can't set.
 {
 	platform: 'github',
 	repositories: [ 'Automattic/wp-calypso' ],
+	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
 	allowPlugins: true,
 	allowScripts: true,
 }

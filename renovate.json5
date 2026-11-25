@@ -218,7 +218,6 @@
 	labels: [ 'Framework', 'Task', 'dependencies' ],
 	reviewers: [ 'team:@automattic/calypso-dependency-updates' ],
 	branchPrefix: 'renovate/',
-	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
 	semanticCommits: 'enabled',
 	semanticCommitType: 'chore',
 
