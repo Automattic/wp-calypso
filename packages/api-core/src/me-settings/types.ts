@@ -57,6 +57,7 @@ export type McpAbilities = {
 	site_level_enabled_default?: boolean;
 	/** Ordered display-group descriptors (AIINT-469). */
 	groups?: McpGroupDescriptor[];
+	remote_abilities_requiring_opt_in?: string[];
 	/** Account-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group slug (e.g. `site`). */
 	group_intents?: Record< string, boolean >;
 };

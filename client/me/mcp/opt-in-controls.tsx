@@ -16,7 +16,7 @@ export function McpToolToggle( {
 	disabled,
 	onChange,
 }: {
-	tool: McpAbility;
+	tool: Pick< McpAbility, 'title' | 'description' | 'enabled' | 'requires_opt_in' >;
 	disabled: boolean;
 	onChange: ( enabled: boolean ) => void;
 } ) {

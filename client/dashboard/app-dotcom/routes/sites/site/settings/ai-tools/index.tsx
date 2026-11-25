@@ -313,6 +313,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const localeSlug = useLocale();
 	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
 	const savedRemoteGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
+	const remoteOptIn = userSettings?.mcp_abilities?.remote_abilities_requiring_opt_in;
 	const { data: remoteAbilities } = useQuery( {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
 		enabled: config.isEnabled( 'mcp-settings' ) && isAvailable && isMcpEnabled && !! site.jetpack,
@@ -336,7 +337,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						savedRemoteGroups,
 						ability.name,
 						ability.meta?.annotations,
-						defaultEnabled
+						defaultEnabled,
+						remoteOptIn
 					)
 				).length;
 				return;

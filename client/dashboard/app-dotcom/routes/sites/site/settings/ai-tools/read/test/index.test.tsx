@@ -37,7 +37,8 @@ const OPT_IN_TOOL = {
 
 function seed(
 	extraAccountTools: Record< string, unknown > = {},
-	siteAbilities: Record< string, boolean > = {}
+	siteAbilities: Record< string, boolean > = {},
+	remoteGroups?: Record< string, boolean >
 ) {
 	// The page reads siteSlug from useParams, which is undefined in this harness.
 	queryClient.setQueryData(
@@ -73,7 +74,14 @@ function seed(
 					order: 1,
 				},
 			],
-			sites: [ { blog_id: JETPACK_SITE.ID, site_level_enabled: true, abilities: siteAbilities } ],
+			sites: [
+				{
+					blog_id: JETPACK_SITE.ID,
+					site_level_enabled: true,
+					abilities: siteAbilities,
+					remote_groups: remoteGroups,
+				},
+			],
 		},
 	} as unknown as UserSettings );
 	queryClient.setQueryData( siteAbilitiesQuery( JETPACK_SITE.ID, 'en_US' ).queryKey, [
@@ -154,6 +162,53 @@ describe( '<SiteAIToolsRead>', () => {
 		await waitFor( () => {
 			expect( saveScope.isDone() ).toBe( true );
 		} );
+	} );
+
+	test.each( [
+		{ scope: 'page', toggleIndex: 0, expected: true, individual: false },
+		{ scope: 'namespace', toggleIndex: 2, expected: false, individual: true },
+	] )( '$scope Enable all preserves the saved subscriber choice', async ( row ) => {
+		const user = userEvent.setup();
+		seed(
+			{},
+			{},
+			{
+				'read:jetpack-stats': true,
+				'read:jetpack-stats/get-subscribers': row.individual,
+			}
+		);
+		const statsAbilities = [
+			[ 'get-subscribers', 'List remote subscribers' ],
+			[ 'get-views', 'Get views' ],
+		].map( ( [ name, label ] ) => ( {
+			name: `jetpack-stats/${ name }`,
+			label,
+			meta: { annotations: { readonly: true } },
+		} ) );
+		queryClient.setQueryData(
+			siteAbilitiesQuery( JETPACK_SITE.ID, 'en_US' ).queryKey,
+			statsAbilities
+		);
+		render( <SiteAIToolsRead />, { queryClient } );
+
+		for ( const expand of screen.getAllByRole( 'button', { name: 'Show operations' } ) ) {
+			await user.click( expand );
+		}
+		expect(
+			screen.getByRole( 'checkbox', { name: 'List remote subscribers', checked: row.individual } )
+		).toBeVisible();
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/settings', ( body ) => {
+				expect( body.mcp_abilities.sites[ 0 ].remote_groups ).toEqual( {
+					'read:jetpack-stats': row.expected,
+				} );
+				return true;
+			} )
+			.reply( 200, { mcp_abilities: {} } );
+		await user.click(
+			screen.getAllByRole( 'checkbox', { name: 'Enable all' } )[ row.toggleIndex ]
+		);
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	test( 'shows which tools are skipped at page and group level and labels the opt-in tool in its group', async () => {

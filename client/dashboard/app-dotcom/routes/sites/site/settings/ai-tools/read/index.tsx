@@ -30,8 +30,7 @@ import {
 	getSiteMcpAbilities,
 	getSiteRemoteGroups,
 	getSiteLevelEnabled,
-	isRemoteAbilityEnabled,
-	isRemoteKeyEnabled,
+	isRemoteAbilityOptIn,
 	isSiteMcpToolEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../../../../../../me/mcp/utils';
@@ -48,6 +47,8 @@ import { isWriteTool, sortTools } from '../../../../../../../me/mcp/categories';
 import McpGroupCard from '../../../../../../../sites/ai-tools/components/mcp-group-card';
 import RemoteAbilitiesSection, {
 	collectNamespaces,
+	getRemoteBulkKeys,
+	isRemoteBulkEnabled,
 } from '../../../../../../../sites/ai-tools/components/remote-abilities-section';
 import type { McpAbility, McpGroupDescriptor } from '@automattic/api-core';
 
@@ -137,10 +138,12 @@ export default function SiteAIToolsRead() {
 		() => collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY ),
 		[ remoteAbilities, savedRemoteGroups ]
 	);
-	const remoteGroupKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => group.keys );
-	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap(
-		( group ) => group.abilityKeys
-	);
+	const remoteOptIn = userSettings?.mcp_abilities?.remote_abilities_requiring_opt_in;
+	const remoteGroups = [ ...remoteNamespaces.values() ];
+	const remoteKeys = remoteGroups.flatMap( ( group ) => getRemoteBulkKeys( group, remoteOptIn ) );
+	const remoteOptInCount = remoteGroups
+		.flatMap( ( group ) => group.abilities )
+		.filter( ( ability ) => isRemoteAbilityOptIn( ability.name, remoteOptIn ) ).length;
 
 	// Site-published abilities with no saved choice follow the user's MCP access:
 	// on when MCP is on for this site and every tool of this category is enabled,
@@ -150,18 +153,8 @@ export default function SiteAIToolsRead() {
 
 	const pageAllEnabled =
 		allOrdinaryEnabled &&
-		[ ...remoteGroupKeys, ...remoteAbilityKeys ].every( ( key ) =>
-			isRemoteKeyEnabled( savedRemoteGroups, key, remoteDefaultEnabled )
-		) &&
-		[ ...remoteNamespaces.values() ].every( ( group ) =>
-			group.abilities.every( ( ability ) =>
-				isRemoteAbilityEnabled(
-					savedRemoteGroups,
-					ability.name,
-					ability.meta?.annotations,
-					remoteDefaultEnabled
-				)
-			)
+		remoteGroups.every( ( group ) =>
+			isRemoteBulkEnabled( group, savedRemoteGroups, remoteDefaultEnabled, remoteOptIn )
 		);
 
 	const mutation = useMutation(
@@ -225,7 +218,6 @@ export default function SiteAIToolsRead() {
 		} );
 		// Both directions write group keys and saved ability-level keys:
 		// ability-level trues actively allow, so disabling must clear them too.
-		const remoteKeys = [ ...remoteGroupKeys, ...remoteAbilityKeys ];
 		mutation.mutate(
 			{
 				mcp_abilities: {
@@ -312,7 +304,9 @@ export default function SiteAIToolsRead() {
 									checked={ pageAllEnabled }
 									disabled={ mutation.isPending }
 									label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
-									help={ getMcpBulkHelp( allTools.length - ordinaryTools.length ) }
+									help={ getMcpBulkHelp(
+										allTools.length - ordinaryTools.length + remoteOptInCount
+									) }
 									onChange={ handlePageToggle }
 								/>
 							</CardBody>
