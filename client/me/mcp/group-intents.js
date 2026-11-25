@@ -16,7 +16,7 @@ export function groupIntentKey( category, groupName ) {
 /**
  * Whether a tool can only be turned on by its own switch. Any truthy value
  * counts, so an unexpected encoding fails closed.
- * @param {import('@automattic/api-core').McpAbility} tool
+ * @param {Pick<import('@automattic/api-core').McpAbility, 'requires_opt_in'>} tool
  * @returns {boolean}
  */
 export function requiresOptIn( tool ) {
