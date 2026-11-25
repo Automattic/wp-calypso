@@ -309,10 +309,12 @@ describe( 'create-site', () => {
 		await expect( runStep() ).resolves.toMatchObject( { goToCheckout: true } );
 
 		expect( transferDomainToSite ).not.toHaveBeenCalled();
-		expect( addProductsToCart ).toHaveBeenCalledWith( 'brand-new.wordpress.com', 'onboarding', [
-			mockPlanCartItem,
-			registeredMove,
-		] );
+		expect( addProductsToCart ).toHaveBeenCalledWith(
+			'brand-new.wordpress.com',
+			'onboarding',
+			[ mockPlanCartItem, registeredMove ],
+			{ cartKey: 111 }
+		);
 	} );
 
 	// The site works without the domain, so a failed move must not stop the signup.

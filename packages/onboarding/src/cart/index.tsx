@@ -298,7 +298,16 @@ function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownF
 	};
 }
 
-type CartHelperOptions = { throwOnError?: boolean };
+type CartHelperOptions = { throwOnError?: boolean; cartKey?: CartKey };
+
+// The lookup of a cart key from a site slug can time out and return `no-site`, which sends the
+// items to the cart of no site. A caller that knows the site ID passes it to skip the lookup.
+async function getCartKey( siteSlug: string, cartKey: CartKey | undefined ): Promise< CartKey > {
+	if ( typeof cartKey === 'number' && Number.isInteger( cartKey ) && cartKey > 0 ) {
+		return cartKey;
+	}
+	return cartManagerClient.getCartKeyForSiteSlug( siteSlug );
+}
 
 // The server lower-cases the domain in a cart item's meta, so the comparison ignores case.
 function isSameMeta( cartMeta: string | undefined, requestedMeta: string ): boolean {
@@ -467,7 +476,7 @@ export async function replaceProductsInCart(
 	cartItems: MinimalRequestCartProduct[],
 	options: CartHelperOptions = {}
 ) {
-	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
+	const cartKey = await getCartKey( siteSlug, options.cartKey );
 
 	try {
 		const updatedCart = await cartManagerClient
@@ -501,7 +510,7 @@ export async function addProductsToCart(
 		);
 
 		debug( 'adding products to cart', cartItems );
-		const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
+		const cartKey = await getCartKey( siteSlug, options.cartKey );
 
 		try {
 			const updatedCart = await cartManagerClient

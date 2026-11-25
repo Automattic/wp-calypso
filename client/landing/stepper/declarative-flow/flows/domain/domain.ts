@@ -308,7 +308,7 @@ const domain: FlowV2< typeof initialize > = {
 								siteSlug,
 								this.name,
 								[ providedDependencies.domainCartItem ],
-								{ throwOnError: true }
+								{ throwOnError: true, cartKey: site?.ID }
 							);
 
 							return {
@@ -388,13 +388,14 @@ const domain: FlowV2< typeof initialize > = {
 							if ( isCiab ) {
 								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems, {
 									throwOnError: true,
+									cartKey: providedDependencies.site.ID,
 								} );
 							} else {
 								await addProductsToCart(
 									providedDependencies.siteSlug,
 									this.name,
 									domainCartItems,
-									{ throwOnError: true }
+									{ throwOnError: true, cartKey: providedDependencies.site.ID }
 								);
 							}
 						}
@@ -430,10 +431,12 @@ const domain: FlowV2< typeof initialize > = {
 							if ( isCiab ) {
 								await replaceProductsInCart( siteSlug, aggregatedCartItems, {
 									throwOnError: true,
+									cartKey: site?.ID,
 								} );
 							} else {
 								await addProductsToCart( siteSlug, this.name, aggregatedCartItems, {
 									throwOnError: true,
+									cartKey: site?.ID,
 								} );
 							}
 
