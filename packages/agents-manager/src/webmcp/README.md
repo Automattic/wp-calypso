@@ -160,6 +160,12 @@ DevTools or call `document.modelContext` directly for this path.
    the site settings are not saved.
 8. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
 
+### Evals
+
+The `wpcom-webmcp` profile in the internal `wp-mcp-evals` repository runs these steps as eval
+scenarios, with Claude Code or Codex as the agent. When you add or change a tool, update its
+scenarios in that repository's `tests/webmcp/editor.yaml`.
+
 ### From the console
 
 1. Without opening Agents Manager chat, enumerate the page's tools through
