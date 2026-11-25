@@ -1763,7 +1763,7 @@ const agencySiteSettingsIndexRoute = createRoute( {
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/settings' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -2387,7 +2387,7 @@ const agencySiteSettingsTransferSiteRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-transfer-site' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-transfer-site' )( {
 			component: () => (
 				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } context="dashboard_v2" />

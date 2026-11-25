@@ -918,7 +918,7 @@ export const siteSettingsIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/settings' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1574,7 +1574,7 @@ export const siteSettingsTransferSiteRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-transfer-site' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {
 			component: () => (
 				<d.default siteSlug={ siteRoute.useParams().siteSlug } context="dashboard_v2" />

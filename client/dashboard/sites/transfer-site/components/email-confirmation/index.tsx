@@ -2,7 +2,7 @@ import { __experimentalVStack as VStack, __experimentalText as Text } from '@wor
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, inbox } from '@wordpress/icons';
-import { SectionHeader } from '../../components/section-header';
+import { SectionHeader } from '../../../../components/section-header';
 
 export function EmailConfirmation( { userEmail }: { userEmail: string } ) {
 	return (

@@ -18,7 +18,7 @@ const settingsIndexRoute = createRoute( {
 	getParentRoute: () => settingsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings' ).then( ( d ) =>
 		createLazyRoute( 'settings' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -220,7 +220,7 @@ const transferSiteRoute = createRoute( {
 	} ),
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-transfer-site' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'transfer-site' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
