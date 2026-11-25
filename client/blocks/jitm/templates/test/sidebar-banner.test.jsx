@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import preferencesReducer from 'calypso/state/preferences/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import SidebarBannerTemplate from '../sidebar-banner';
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	...jest.requireActual( 'calypso/state/analytics/actions' ),
-	recordTracksEvent: jest.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
+vi.mock( 'calypso/state/analytics/actions', async () => ( {
+	...( await vi.importActual( 'calypso/state/analytics/actions' ) ),
+	recordTracksEvent: vi.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
 } ) );
 
 // jsdom cannot navigate, so keep link clicks from logging "Not implemented" errors.
@@ -44,7 +45,7 @@ describe( 'SidebarBannerTemplate', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'records an impression naming the JITM it came from', () => {

@@ -1,25 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { act, screen, render, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LostPasswordForm from 'calypso/blocks/login/lost-password-form';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn().mockImplementation( () => {} ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useDispatch: vi.fn().mockImplementation( () => {} ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
-	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+vi.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: vi.fn().mockResolvedValue( undefined ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/blackbox-challenge' );
+vi.mock( 'calypso/blocks/login/blackbox-challenge' );
 
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 Object.defineProperty( window, 'location', {
@@ -193,7 +194,7 @@ describe( 'LostPasswordForm', () => {
 		mockFetch.mockResolvedValueOnce( {
 			ok: false,
 			status: 400,
-			text: jest.fn().mockResolvedValue( mockHTMLResponse ),
+			text: vi.fn().mockResolvedValue( mockHTMLResponse ),
 		} );
 
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
@@ -221,7 +222,7 @@ describe( 'LostPasswordForm', () => {
 		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			status: 200,
-			text: jest.fn().mockResolvedValue( '<html></html>' ),
+			text: vi.fn().mockResolvedValue( '<html></html>' ),
 		} );
 
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
@@ -256,7 +257,7 @@ describe( 'LostPasswordForm', () => {
 		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			status: 200,
-			text: jest.fn().mockResolvedValue( '<html></html>' ),
+			text: vi.fn().mockResolvedValue( '<html></html>' ),
 		} );
 
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
@@ -278,12 +279,12 @@ describe( 'LostPasswordForm', () => {
 	} );
 
 	test( 'resets Blackbox when the lost password POST fails', async () => {
-		window.Blackbox = { reset: jest.fn() };
+		window.Blackbox = { reset: vi.fn() };
 
 		mockFetch.mockResolvedValueOnce( {
 			ok: false,
 			status: 400,
-			text: jest.fn().mockResolvedValue( '' ),
+			text: vi.fn().mockResolvedValue( '' ),
 		} );
 
 		render( <LostPasswordForm redirectToAfterLoginUrl="" oauth2ClientId="" locale="" /> );
@@ -301,12 +302,12 @@ describe( 'LostPasswordForm', () => {
 	} );
 
 	test( 'resets Blackbox when the lost password request cannot find a user', async () => {
-		window.Blackbox = { reset: jest.fn() };
+		window.Blackbox = { reset: vi.fn() };
 
 		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			status: 200,
-			text: jest
+			text: vi
 				.fn()
 				.mockResolvedValue( 'Lost Password [...] Unable to reset password [...] More help' ),
 		} );

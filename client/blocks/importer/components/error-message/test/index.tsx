@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import ErrorMessage from '../index';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 describe( 'ErrorMessage', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'records the error code, type and file type on mount', () => {

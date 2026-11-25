@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-account-notice';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';

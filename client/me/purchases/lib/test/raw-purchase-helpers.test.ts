@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getDisplayName } from '../raw-purchase-helpers';
@@ -46,7 +46,7 @@ describe( 'getDisplayName', () => {
 	} );
 
 	test.each( [ null, undefined, 0 ] )(
-		'shows the product name for a quantity of %p',
+		'shows the product name for a quantity of %o',
 		( quantity ) => {
 			expect(
 				getDisplayName(

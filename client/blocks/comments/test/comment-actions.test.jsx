@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import CommentActions from '../comment-actions';
 import { CommentLabelsContext } from '../comment-labels-context';
 
@@ -33,9 +34,9 @@ const renderCommentActions = ( props = {}, { spellOutLabels = false, hasSites = 
 						} }
 						comment={ { ID: 789, i_like: false, isPlaceholder: false, like_count: 0 } }
 						activeReplyCommentId={ 789 }
-						handleReply={ jest.fn() }
-						onLikeToggle={ jest.fn() }
-						onReplyCancel={ jest.fn() }
+						handleReply={ vi.fn() }
+						onLikeToggle={ vi.fn() }
+						onReplyCancel={ vi.fn() }
 						{ ...props }
 					/>
 				</CommentLabelsContext.Provider>
@@ -46,7 +47,7 @@ const renderCommentActions = ( props = {}, { spellOutLabels = false, hasSites = 
 
 describe( 'CommentActions', () => {
 	it( 'uses the comment id from the comment object', () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		renderCommentActions();
 
@@ -68,7 +69,7 @@ describe( 'CommentActions', () => {
 
 	it( 'puts Cancel in place of Reply when labels are spelled out', async () => {
 		const user = userEvent.setup();
-		const onReplyCancel = jest.fn();
+		const onReplyCancel = vi.fn();
 
 		renderCommentActions( { onReplyCancel }, { spellOutLabels: true } );
 

@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import SecurityKeyForm from 'calypso/blocks/login/two-factor-authentication/security-key-form';
 import loginReducer from 'calypso/state/login/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-const mockLoginUserWithSecurityKey = jest.fn();
+const mockLoginUserWithSecurityKey = vi.fn();
 
 // Mocking the leaf module also mocks what `calypso/state/login/actions` re-exports,
 // which is what the form imports. The thunk lets the form await the result.
-jest.mock( 'calypso/state/login/actions/login-user-with-security-key', () => ( {
+vi.mock( 'calypso/state/login/actions/login-user-with-security-key', () => ( {
 	loginUserWithSecurityKey: () => () => mockLoginUserWithSecurityKey(),
 } ) );
 
@@ -35,7 +36,7 @@ const waitForCeremonyToFail = () =>
 
 describe( 'SecurityKeyForm', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'when the two-step nonce has expired', () => {

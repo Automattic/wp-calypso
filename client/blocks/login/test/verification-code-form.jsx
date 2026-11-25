@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import VerificationCodeForm from 'calypso/blocks/login/two-factor-authentication/verification-code-form';
 import loginReducer from 'calypso/state/login/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-const mockRecordTracksEvent = jest.fn();
-const mockLoginRejection = jest.fn();
+const mockRecordTracksEvent = vi.fn();
+const mockLoginRejection = vi.fn();
 
 // Mocking the leaf module also mocks what `calypso/state/login/actions` re-exports,
 // which is what the form imports. The thunk lets the form await a rejection.
-jest.mock( 'calypso/state/login/actions/login-user-with-two-factor-verification-code', () => ( {
+vi.mock( 'calypso/state/login/actions/login-user-with-two-factor-verification-code', () => ( {
 	loginUserWithTwoFactorVerificationCode: () => () => mockLoginRejection(),
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	...jest.requireActual( 'calypso/state/analytics/actions' ),
+vi.mock( 'calypso/state/analytics/actions', async () => ( {
+	...( await vi.importActual( 'calypso/state/analytics/actions' ) ),
 	recordTracksEventWithClientId: ( ...args ) => {
 		mockRecordTracksEvent( ...args );
 		return { type: 'TEST_RECORD_TRACKS_EVENT' };
@@ -53,7 +54,7 @@ const submitCode = async () => {
 
 describe( 'VerificationCodeForm', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'when the two-step nonce has expired', () => {

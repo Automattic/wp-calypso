@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import preferencesReducer from 'calypso/state/preferences/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UpsellNudge from '../index';
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	...jest.requireActual( 'calypso/state/analytics/actions' ),
-	recordTracksEvent: jest.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
+vi.mock( 'calypso/state/analytics/actions', async () => ( {
+	...( await vi.importActual( 'calypso/state/analytics/actions' ) ),
+	recordTracksEvent: vi.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
 } ) );
 
 const PREFERENCE_NAME = 'upsell-nudge-test';
@@ -37,7 +38,7 @@ const impressions = () =>
 
 describe( 'UpsellNudge impressions', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'records an impression for a dismissible banner that has not been dismissed', () => {

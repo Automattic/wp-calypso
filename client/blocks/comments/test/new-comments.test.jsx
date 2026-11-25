@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
@@ -7,25 +7,28 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import PostComments from '..';
 
 let pollForNewComments;
 
-jest.mock( 'calypso/lib/interval', () => ( {
-	...jest.requireActual( 'calypso/lib/interval' ),
+vi.mock( 'calypso/lib/interval', async () => ( {
+	...( await vi.importActual( 'calypso/lib/interval' ) ),
 	Interval: ( { onTick } ) => {
 		pollForNewComments = onTick;
 		return null;
 	},
 } ) );
 
-jest.mock( '../form-root', () => () => null );
+vi.mock( '../form-root', () => ( { default: () => null } ) );
 
-jest.mock( '../post-comment', () => ( props ) => (
-	<li className="comments__comment" data-testid="post-comment">
-		<strong id={ `comment-${ props.commentId }` }>{ props.commentId }</strong>
-	</li>
-) );
+vi.mock( '../post-comment', () => ( {
+	default: ( props ) => (
+		<li className="comments__comment" data-testid="post-comment">
+			<strong id={ `comment-${ props.commentId }` }>{ props.commentId }</strong>
+		</li>
+	),
+} ) );
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -88,7 +91,7 @@ const getRenderedCommentIds = () =>
 describe( 'PostComments polling for new comments', () => {
 	beforeAll( () => {
 		nock.disableNetConnect();
-		Element.prototype.scrollIntoView = jest.fn();
+		Element.prototype.scrollIntoView = vi.fn();
 	} );
 
 	beforeEach( () => {
