@@ -83,8 +83,8 @@ export default function DomainSetupInfo( { siteId, siteSlug, siteDomain }: Domai
 						'Your domain <domain /> is still being set up. In the meantime, your site is reachable at <address />.'
 					),
 					{
-						domain: <span>{ breakableDomain( pendingDomain.domain ) }</span>,
-						address: <span>{ breakableDomain( siteDomain ) }</span>,
+						domain: <strong>{ breakableDomain( pendingDomain.domain ) }</strong>,
+						address: <strong>{ breakableDomain( siteDomain ) }</strong>,
 					}
 				) }
 			</p>
