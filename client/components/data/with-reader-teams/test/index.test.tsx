@@ -1,5 +1,5 @@
 /*
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { ReaderTeam } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';

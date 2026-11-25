@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import { useRtl } from 'i18n-calypso';
+import { type Mock, vi } from 'vitest';
 import ScrollableHorizontalNavigation from '../index';
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useRtl: jest.fn( () => false ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
+	useRtl: vi.fn( () => false ),
 } ) );
 
-const mockUseRtl = useRtl as jest.Mock;
+const mockUseRtl = useRtl as Mock;
 
 const tabs = [
 	{ slug: 'one', title: 'One' },
@@ -60,27 +61,27 @@ describe( 'ScrollableHorizontalNavigation', () => {
 
 	beforeEach( () => {
 		mockUseRtl.mockReturnValue( false );
-		jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback ) => {
+		vi.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( callback ) => {
 			callback( 0 );
 			return 0;
 		} );
-		jest.spyOn( window, 'cancelAnimationFrame' ).mockImplementation( () => undefined );
-		Element.prototype.scrollIntoView = jest.fn();
+		vi.spyOn( window, 'cancelAnimationFrame' ).mockImplementation( () => undefined );
+		Element.prototype.scrollIntoView = vi.fn();
 
-		global.ResizeObserver = jest.fn( ( callback: ResizeObserverCallback ) => {
+		global.ResizeObserver = vi.fn( ( callback: ResizeObserverCallback ) => {
 			resizeObserverCallback = callback;
 			return {
-				observe: jest.fn( () => {
+				observe: vi.fn( () => {
 					callback( [], {} as ResizeObserver );
 				} ),
-				unobserve: jest.fn(),
-				disconnect: jest.fn(),
+				unobserve: vi.fn(),
+				disconnect: vi.fn(),
 			};
 		} ) as unknown as typeof ResizeObserver;
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	function renderNavigation( selectedTab = 'one' ) {
@@ -88,7 +89,7 @@ describe( 'ScrollableHorizontalNavigation', () => {
 			<ScrollableHorizontalNavigation
 				selectedTab={ selectedTab }
 				tabs={ tabs }
-				onTabClick={ jest.fn() }
+				onTabClick={ vi.fn() }
 			/>
 		);
 	}
@@ -199,7 +200,7 @@ describe( 'ScrollableHorizontalNavigation', () => {
 		} );
 
 		const container = getTabsContainer();
-		const scrollBy = jest.fn();
+		const scrollBy = vi.fn();
 		container.scrollBy = scrollBy as unknown as typeof container.scrollBy;
 
 		fireEvent.click(
@@ -227,7 +228,7 @@ describe( 'ScrollableHorizontalNavigation', () => {
 		} );
 
 		const container = getTabsContainer();
-		const scrollBy = jest.fn();
+		const scrollBy = vi.fn();
 		container.scrollBy = scrollBy as unknown as typeof container.scrollBy;
 
 		fireEvent.click(
@@ -246,7 +247,7 @@ describe( 'ScrollableHorizontalNavigation', () => {
 	} );
 
 	test( 'does not use document.querySelector for arrow visibility', () => {
-		const querySelectorSpy = jest.spyOn( document, 'querySelector' );
+		const querySelectorSpy = vi.spyOn( document, 'querySelector' );
 
 		renderNavigation();
 

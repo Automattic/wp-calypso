@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { loadScript } from '@automattic/load-script';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import wpcomRequest from 'wpcom-proxy-request';
+import { vi } from 'vitest';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { GoogleSocialButton } from '../google';
 
-jest.mock( '@automattic/calypso-config', () =>
-	Object.assign(
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: Object.assign(
 		( key ) =>
 			( {
 				google_oauth_client_id: 'test-google-client',
@@ -17,13 +18,13 @@ jest.mock( '@automattic/calypso-config', () =>
 				wpcom_signup_key: 'test-wpcom-key',
 			} )[ key ],
 		{ isEnabled: () => false }
-	)
-);
-jest.mock( '@automattic/load-script', () => ( { loadScript: jest.fn() } ) );
-jest.mock( 'wpcom-proxy-request', () => ( { __esModule: true, default: jest.fn() } ) );
-jest.mock( 'calypso/state/login/utils', () => ( {
-	...jest.requireActual( 'calypso/state/login/utils' ),
-	postLoginRequest: jest.fn(),
+	),
+} ) );
+vi.mock( '@automattic/load-script', () => ( { loadScript: vi.fn() } ) );
+vi.mock( 'wpcom-proxy-request', () => ( { __esModule: true, default: vi.fn() } ) );
+vi.mock( 'calypso/state/login/utils', async () => ( {
+	...( await vi.importActual( 'calypso/state/login/utils' ) ),
+	postLoginRequest: vi.fn(),
 } ) );
 
 describe( 'GoogleSocialButton', () => {
@@ -33,18 +34,18 @@ describe( 'GoogleSocialButton', () => {
 	let providerResponse;
 
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		props = {
-			recordTracksEvent: jest.fn(),
-			responseHandler: jest.fn(),
-			showErrorNotice: jest.fn(),
+			recordTracksEvent: vi.fn(),
+			responseHandler: vi.fn(),
+			showErrorNotice: vi.fn(),
 			translate: ( text ) => text,
 			uxMode: 'popup',
 			startingPoint: 'login',
 		};
 		providerResponse = { code: 'test-code', state: 'test-state' };
-		requestCode = jest.fn( () => initCodeClient.mock.calls[ 0 ][ 0 ].callback( providerResponse ) );
-		initCodeClient = jest.fn( () => ( { requestCode } ) );
+		requestCode = vi.fn( () => initCodeClient.mock.calls[ 0 ][ 0 ].callback( providerResponse ) );
+		initCodeClient = vi.fn( () => ( { requestCode } ) );
 		window.google = { accounts: { oauth2: { initCodeClient } } };
 		wpcomRequest.mockResolvedValue( { nonce: 'test-nonce' } );
 		postLoginRequest.mockResolvedValue( {

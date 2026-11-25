@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { captureException } from '@automattic/calypso-sentry';
@@ -7,11 +7,12 @@ import { render, act, waitFor } from '@testing-library/react';
 import globalMoment from 'moment';
 import { PureComponent } from 'react';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import { withLocalizedMoment, useLocalizedMoment } from '..';
 import momentLocaleLoaders from '../moment-locale-loaders';
 import MomentProvider from '../provider';
 
-jest.mock( '@automattic/calypso-sentry', () => ( { captureException: jest.fn() } ) );
+vi.mock( '@automattic/calypso-sentry', () => ( { captureException: vi.fn() } ) );
 
 // helper to create state object with specified `languageSlug`
 const createState = ( localeSlug ) => ( { ui: { language: { localeSlug } } } );
@@ -136,13 +137,13 @@ describe( 'MomentProvider', () => {
 	beforeEach( () => globalMoment.locale( 'en' ) );
 	afterEach( () => {
 		globalMoment.locale( 'en' );
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		captureException.mockClear();
 	} );
 
 	it( 'reports a moment locale that fails to load and keeps English dates', async () => {
 		const error = new Error( 'Loading chunk moment-locale-fr failed.' );
-		jest.spyOn( momentLocaleLoaders, 'fr' ).mockRejectedValue( error );
+		vi.spyOn( momentLocaleLoaders, 'fr' ).mockRejectedValue( error );
 		const store = createStore( reducer, createState( 'fr' ) );
 
 		const { container } = render(

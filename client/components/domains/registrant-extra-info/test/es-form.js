@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { translate } from 'i18n-calypso';
+import { vi } from 'vitest';
 import { RegistrantExtraInfoEsForm } from '../es-form';
 
 const mockProps = {
@@ -98,7 +99,7 @@ describe( 'es-form', () => {
 	} );
 
 	test( 'sends the selected entity type', async () => {
-		const onContactDetailsChange = jest.fn();
+		const onContactDetailsChange = vi.fn();
 		render(
 			<RegistrantExtraInfoEsForm
 				{ ...mockProps }
@@ -114,7 +115,7 @@ describe( 'es-form', () => {
 	} );
 
 	test( 'uppercases the identification numbers before sending them', () => {
-		const onContactDetailsChange = jest.fn();
+		const onContactDetailsChange = vi.fn();
 		render(
 			<RegistrantExtraInfoEsForm
 				{ ...mockProps }
@@ -158,7 +159,7 @@ describe( 'es-form', () => {
 	} );
 
 	test( 'seeds the Red.es agreement as not accepted on mount when absent', () => {
-		const onContactDetailsChange = jest.fn();
+		const onContactDetailsChange = vi.fn();
 		render(
 			<RegistrantExtraInfoEsForm
 				{ ...mockProps }
@@ -174,7 +175,7 @@ describe( 'es-form', () => {
 	} );
 
 	test( 'resets a cached Red.es agreement acceptance on mount', () => {
-		const onContactDetailsChange = jest.fn();
+		const onContactDetailsChange = vi.fn();
 		render(
 			<RegistrantExtraInfoEsForm
 				{ ...mockProps }

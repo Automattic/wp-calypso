@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 // Mock dependencies
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
-	useDispatch: jest.fn().mockImplementation( () => () => {} ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn().mockImplementation( ( selector ) => selector() ),
+	useDispatch: vi.fn().mockImplementation( () => () => {} ),
 } ) );
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 import { render, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	useDaysOfBackupsSavedText,
 	useStorageUsageText,

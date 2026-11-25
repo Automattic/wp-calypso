@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, type MockedFunction, vi } from 'vitest';
 import { OptionContent } from '../index';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 
@@ -21,10 +22,10 @@ type SummaryButtonMockProps = ComponentPropsWithoutRef< 'button' > & {
 	badges?: SummaryButtonMockBadge[];
 };
 
-jest.mock( '@automattic/components', () => {
+vi.mock( '@automattic/components', () => {
 	const React = require( 'react' );
 
-	const SummaryButton = jest.fn(
+	const SummaryButton = vi.fn(
 		( { title, description, decoration, badges, ...buttonProps }: SummaryButtonMockProps ) => {
 			return React.createElement(
 				'button',
@@ -57,22 +58,23 @@ jest.mock( '@automattic/components', () => {
 	};
 } );
 
-const { SummaryButton: summaryButtonMock } = jest.requireMock( '@automattic/components' ) as {
-	SummaryButton: jest.Mock;
-};
+const { SummaryButton: summaryButtonMock } =
+	( await import( '@automattic/components' ) ) as unknown as {
+		SummaryButton: Mock;
+	};
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	useLocalizeUrl: jest.fn(),
+vi.mock( '@automattic/i18n-utils', () => ( {
+	useLocalizeUrl: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_x: ( text: string ) => text,
 	isRTL: () => false,
 } ) );
 
-const useLocalizeUrlMock = useLocalizeUrl as jest.MockedFunction< typeof useLocalizeUrl >;
-const localizeUrlMock = jest.fn( ( url: string ) => url );
+const useLocalizeUrlMock = useLocalizeUrl as MockedFunction< typeof useLocalizeUrl >;
+const localizeUrlMock = vi.fn( ( url: string ) => url );
 
 const baseTitleText = 'Transfer or connect your domain';
 const baseTopText = 'Bring your domain to WordPress.com';
@@ -89,7 +91,7 @@ const renderOptionContent = ( props: Partial< OptionContentProps > = {} ) => {
 
 describe( 'OptionContent', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		localizeUrlMock.mockImplementation( ( url: string ) => `localized-${ url }` );
 		useLocalizeUrlMock.mockReturnValue( localizeUrlMock );
 	} );
@@ -118,7 +120,7 @@ describe( 'OptionContent', () => {
 	} );
 
 	it( 'invokes onSelect when the summary button is clicked', async () => {
-		const onSelect = jest.fn();
+		const onSelect = vi.fn();
 		const user = userEvent.setup();
 		const { getByTestId } = renderOptionContent( { onSelect } );
 

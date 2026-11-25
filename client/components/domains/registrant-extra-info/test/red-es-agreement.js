@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import RedEsAgreement from '../red-es-agreement';
 import { RED_ES_AGREEMENT_VERSION } from '../red-es-agreement-text';
 
@@ -179,7 +180,7 @@ describe( 'RedEsAgreement', () => {
 		} );
 
 		test( 'resets the acceptance when the entity type changes the applicant ID', async () => {
-			const onContactDetailsChange = jest.fn();
+			const onContactDetailsChange = vi.fn();
 			const { rerenderAgreement } = renderAgreement( {
 				onContactDetailsChange,
 				contactDetails: companyContactDetails,
@@ -249,7 +250,7 @@ describe( 'RedEsAgreement', () => {
 
 	describe( 'acceptance', () => {
 		test( 'sends the acceptance and the version when ticked', async () => {
-			const onContactDetailsChange = jest.fn();
+			const onContactDetailsChange = vi.fn();
 			renderAgreement( { onContactDetailsChange } );
 
 			await userEvent.click( screen.getByRole( 'checkbox', { name: checkboxName } ) );
@@ -262,7 +263,7 @@ describe( 'RedEsAgreement', () => {
 		} );
 
 		test( 'clears the acceptance and the version when unticked', async () => {
-			const onContactDetailsChange = jest.fn();
+			const onContactDetailsChange = vi.fn();
 			const { rerenderAgreement } = renderAgreement( { onContactDetailsChange } );
 			await userEvent.click( screen.getByRole( 'checkbox', { name: checkboxName } ) );
 			rerenderAgreement( {
@@ -281,7 +282,7 @@ describe( 'RedEsAgreement', () => {
 		} );
 
 		test( 'resets the acceptance when an interpolated value changes', async () => {
-			const onContactDetailsChange = jest.fn();
+			const onContactDetailsChange = vi.fn();
 			const { rerenderAgreement } = renderAgreement( { onContactDetailsChange } );
 			await userEvent.click( screen.getByRole( 'checkbox', { name: checkboxName } ) );
 			const acceptedCcTldDetails = {
@@ -303,7 +304,7 @@ describe( 'RedEsAgreement', () => {
 		} );
 
 		test( 'keeps the acceptance when an unrelated detail changes', async () => {
-			const onContactDetailsChange = jest.fn();
+			const onContactDetailsChange = vi.fn();
 			const { rerenderAgreement } = renderAgreement( { onContactDetailsChange } );
 			await userEvent.click( screen.getByRole( 'checkbox', { name: checkboxName } ) );
 			const acceptedCcTldDetails = {
@@ -321,7 +322,7 @@ describe( 'RedEsAgreement', () => {
 		} );
 
 		test( 'resets an acceptance that was not ticked in this session', () => {
-			const onContactDetailsChange = jest.fn();
+			const onContactDetailsChange = vi.fn();
 			renderAgreement( {
 				onContactDetailsChange,
 				ccTldDetails: { ...individualCcTldDetails, redEsAgreementAccepted: true },

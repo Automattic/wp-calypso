@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import preferencesReducer from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { Banner } from '../index';
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( () => ( {
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( () => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
 	} ) ),
 } ) );
@@ -31,7 +32,7 @@ const props = {
 
 describe( 'Banner basic tests', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should render Card if dismissPreferenceName is null', () => {
@@ -145,7 +146,7 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render Card with no href and CTA button with href if href prop is passed and callToAction is also passed', async () => {
-		const handleClick = jest.fn();
+		const handleClick = vi.fn();
 		const { container } = render(
 			<Banner { ...props } href="/" callToAction="Go WordPress!" onClick={ handleClick } />
 		);
@@ -160,7 +161,7 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render Card with href and CTA button with no href if href prop is passed and callToAction is also passed and forceHref is true', async () => {
-		const handleClick = jest.fn();
+		const handleClick = vi.fn();
 		const { container } = render(
 			<Banner
 				{ ...props }
@@ -183,8 +184,8 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should record click and call onClick when a dismissible banner with forceHref is clicked', async () => {
 		const user = userEvent.setup();
-		const handleClick = jest.fn();
-		const recordClick = jest.fn();
+		const handleClick = vi.fn();
+		const recordClick = vi.fn();
 		const { container } = renderWithRedux(
 			<Banner
 				{ ...props }
@@ -209,8 +210,8 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should not record click when a dismissible banner is dismissed', async () => {
 		const user = userEvent.setup();
-		const handleClick = jest.fn();
-		const recordEvent = jest.fn();
+		const handleClick = vi.fn();
+		const recordEvent = vi.fn();
 		renderWithRedux(
 			<Banner
 				{ ...props }
@@ -236,7 +237,7 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should not make a dismissible banner clickable or record clicks when it has no href', async () => {
 		const user = userEvent.setup();
-		const recordEvent = jest.fn();
+		const recordEvent = vi.fn();
 		const { container } = renderWithRedux(
 			<Banner
 				{ ...props }

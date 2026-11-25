@@ -1,22 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import { vi } from 'vitest';
 import { useDispatch } from 'calypso/state';
 import { BackupRealtimeMessage } from '../status-card/backup-realtime-message';
 
-jest.mock( 'i18n-calypso' ); // Mock the useTranslate hook
-jest.mock( 'calypso/state' ); // Mock the useDispatch hook
+vi.mock( 'i18n-calypso' ); // Mock the useTranslate hook
+vi.mock( 'calypso/state' ); // Mock the useDispatch hook
 
 describe( 'BackupRealtimeMessage', () => {
 	beforeAll( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	} );
 
 	afterAll( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	const renderMessage = ( baseBackupDate, eventsCount, selectedDate, learnMoreUrl ) => {
@@ -30,7 +31,7 @@ describe( 'BackupRealtimeMessage', () => {
 		);
 	};
 
-	const translateMock = jest.fn( ( singular, plural, options ) => {
+	const translateMock = vi.fn( ( singular, plural, options ) => {
 		if ( options === undefined ) {
 			return singular;
 		}
@@ -43,9 +44,9 @@ describe( 'BackupRealtimeMessage', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		useTranslate.mockImplementation( () => translateMock );
-		useDispatch.mockImplementation( () => jest.fn() );
+		useDispatch.mockImplementation( () => vi.fn() );
 	} );
 
 	test( 'renders the correct message when backup date and selected date are today', () => {
