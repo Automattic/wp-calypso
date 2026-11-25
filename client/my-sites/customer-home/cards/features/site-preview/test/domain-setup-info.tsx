@@ -173,10 +173,12 @@ describe( 'DomainSetupInfo', () => {
 		const explanation = `Your domain example.com is still being set up. In the meantime, your site is reachable at ${ SITE_DOMAIN }.`;
 
 		expect( await screen.findByRole( 'button', { name: 'Domain setup status' } ) ).toBeVisible();
-		expect( screen.queryByText( explanation ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /^Your domain/ ) ).not.toBeInTheDocument();
 
 		await openPopover();
 
-		expect( screen.getByText( explanation ) ).toBeVisible();
+		const text = screen.getByText( /^Your domain/ );
+		expect( text ).toBeVisible();
+		expect( text ).toHaveTextContent( explanation );
 	} );
 } );

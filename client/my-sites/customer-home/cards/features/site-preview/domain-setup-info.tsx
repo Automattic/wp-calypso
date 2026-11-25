@@ -1,7 +1,8 @@
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __, sprintf } from '@wordpress/i18n';
+import { createInterpolateElement, Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import InfoPopover from 'calypso/components/info-popover';
 import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import type { DomainSummary } from '@automattic/api-core';
@@ -28,6 +29,22 @@ export function getPendingCustomDomain( domains: DomainSummary[], siteDomain: st
 		domain.domain_status?.id !== DomainStatus.ACTIVE || domain.set_primary_domain_pending === true;
 
 	return isSettingUp ? domain : undefined;
+}
+
+/**
+ * Lets a long domain wrap before its dots instead of in the middle of a label.
+ */
+function breakableDomain( domain: string ) {
+	return domain.split( '.' ).map( ( label, index ) => (
+		<Fragment key={ index }>
+			{ index > 0 && (
+				<>
+					<wbr />.
+				</>
+			) }
+			{ label }
+		</Fragment>
+	) );
 }
 
 interface DomainSetupInfoProps {
@@ -60,13 +77,15 @@ export default function DomainSetupInfo( { siteId, siteSlug, siteDomain }: Domai
 			aria-label={ __( 'Domain setup status' ) }
 		>
 			<p className="home-site-preview__domain-setup-info-text">
-				{ sprintf(
-					/* translators: %1$s is the custom domain being set up, %2$s is the address the site is currently reachable at. */
+				{ createInterpolateElement(
+					/* translators: <domain /> is the custom domain being set up, <address /> is the address the site is currently reachable at. */
 					__(
-						'Your domain %1$s is still being set up. In the meantime, your site is reachable at %2$s.'
+						'Your domain <domain /> is still being set up. In the meantime, your site is reachable at <address />.'
 					),
-					pendingDomain.domain,
-					siteDomain
+					{
+						domain: <span>{ breakableDomain( pendingDomain.domain ) }</span>,
+						address: <span>{ breakableDomain( siteDomain ) }</span>,
+					}
 				) }
 			</p>
 			<a href={ domainManagementEdit( siteSlug, pendingDomain.domain ) }>
