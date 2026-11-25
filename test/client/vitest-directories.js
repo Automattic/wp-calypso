@@ -61,6 +61,19 @@ const directories = [
 	'state/reader',
 	'state/reader-ui',
 	'state/selectors',
+	'state/route',
+	'state/site-address-change',
+	'state/site-connection',
+	'state/site-settings',
+	'state/staging-site',
+	'state/stats',
+	'state/support',
+	'state/sync',
+	'state/timezones',
+	'state/user-licensing',
+	'state/user-settings',
+	'state/user-suggestions',
+	'state/wordads',
 ];
 
 // Test files in `directories` that stay on Jest until a fix lands, relative to `client/`.

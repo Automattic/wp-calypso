@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
@@ -11,7 +12,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( '#dismissWordAdsError()', () => {
