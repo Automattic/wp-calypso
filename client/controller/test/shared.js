@@ -1,13 +1,14 @@
+import { vi } from 'vitest';
 import { setLocale } from '../../state/ui/language/actions';
 import { setLocaleMiddleware } from '../shared';
 
-jest.mock( '../../state/ui/language/actions', () => ( {
-	setLocale: jest.fn( () => jest.fn() ),
+vi.mock( '../../state/ui/language/actions', () => ( {
+	setLocale: vi.fn( () => vi.fn() ),
 } ) );
 
 describe( 'setLocaleMiddleware', () => {
-	const next = jest.fn();
-	const dispatch = jest.fn();
+	const next = vi.fn();
+	const dispatch = vi.fn();
 	let context;
 	let middleware;
 

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`JetpackConnectNotices Should render non-terminal notice if callback supplied 1`] = `
+exports[`JetpackConnectNotices > Should render non-terminal notice if callback supplied 1`] = `
 <div>
   <div
     class="jetpack-connect__notices-container"
@@ -42,7 +42,7 @@ exports[`JetpackConnectNotices Should render non-terminal notice if callback sup
 </div>
 `;
 
-exports[`JetpackConnectNotices Should render notice 1`] = `
+exports[`JetpackConnectNotices > Should render notice 1`] = `
 <div>
   <div
     class="jetpack-connect__notices-container"

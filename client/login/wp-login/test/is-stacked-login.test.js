@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { Login } from 'calypso/login/wp-login';
 

@@ -1,27 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-jest.mock( 'calypso/signup/step-wrapper', () =>
-	jest.fn( ( props: { stepContent?: React.ReactNode } ) => props.stepContent ?? null )
-);
-jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
-	WPCOMDomainSearch: jest.fn().mockReturnValue( null ),
-} ) );
-jest.mock( 'calypso/components/domains/wpcom-domain-search/analytics', () => ( {
-	...jest.requireActual( 'calypso/components/domains/wpcom-domain-search/analytics' ),
-	recordUseYourDomainButtonClick: jest.fn( () => ( { type: 'TEST_USE_YOUR_DOMAIN_CLICK' } ) ),
-} ) );
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => {
-	const handler = { query: '', setQuery: jest.fn(), clearQuery: jest.fn(), resetQuery: jest.fn() };
-	return { useQueryHandler: jest.fn( () => handler ) };
-} );
-
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { recordUseYourDomainButtonClick } from 'calypso/components/domains/wpcom-domain-search/analytics';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
@@ -29,14 +13,32 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainSearchStep from '../';
 
-const mockWPCOMDomainSearch = WPCOMDomainSearch as jest.Mock;
-const mockUseQueryHandler = useQueryHandler as jest.Mock;
+vi.mock( 'calypso/signup/step-wrapper', () => ( {
+	default: vi.fn( ( props: { stepContent?: React.ReactNode } ) => props.stepContent ?? null ),
+} ) );
+vi.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
+	WPCOMDomainSearch: vi.fn().mockReturnValue( null ),
+} ) );
+vi.mock( 'calypso/components/domains/wpcom-domain-search/analytics', async () => ( {
+	...( await vi.importActual<
+		typeof import( 'calypso/components/domains/wpcom-domain-search/analytics' )
+	>( 'calypso/components/domains/wpcom-domain-search/analytics' ) ),
+	recordUseYourDomainButtonClick: vi.fn( () => ( { type: 'TEST_USE_YOUR_DOMAIN_CLICK' } ) ),
+} ) );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => {
+	const handler = { query: '', setQuery: vi.fn(), clearQuery: vi.fn(), resetQuery: vi.fn() };
+	return { useQueryHandler: vi.fn( () => handler ) };
+} );
+
+const mockWPCOMDomainSearch = WPCOMDomainSearch as Mock;
+const mockUseQueryHandler = useQueryHandler as Mock;
 const mockQueryHandler = mockUseQueryHandler() as {
 	query: string;
-	clearQuery: jest.Mock;
-	resetQuery: jest.Mock;
+	clearQuery: Mock;
+	resetQuery: Mock;
 };
-const mockStepWrapper = StepWrapper as unknown as jest.Mock;
+const mockStepWrapper = StepWrapper as unknown as Mock;
 
 const domainItem = { meta: 'example.com', product_slug: 'domain_reg' };
 
@@ -44,9 +46,9 @@ const baseProps = {
 	flowName: 'domain',
 	stepName: 'domain-only',
 	stepSectionName: null,
-	goToStep: jest.fn(),
-	goToNextStep: jest.fn(),
-	submitSignupStep: jest.fn(),
+	goToStep: vi.fn(),
+	goToNextStep: vi.fn(),
+	submitSignupStep: vi.fn(),
 	queryObject: {} as Record< string, string | undefined >,
 	locale: 'en',
 	previousStepName: null,
@@ -65,14 +67,14 @@ const LOGGED_IN_STATE = { currentUser: { id: 12345 } };
 
 describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockWPCOMDomainSearch.mockReturnValue( null );
 	} );
 
 	it( 'auto-submits the skipped steps and routes logged-out users to the account step', () => {
-		const submitSignupStep = jest.fn();
-		const goToStep = jest.fn();
-		const goToNextStep = jest.fn();
+		const submitSignupStep = vi.fn();
+		const goToStep = vi.fn();
+		const goToNextStep = vi.fn();
 		const events = renderStep( { ...baseProps, submitSignupStep, goToStep, goToNextStep } );
 
 		events.onContinue( [ domainItem ] );
@@ -114,9 +116,9 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 	} );
 
 	it( 'skips straight to checkout for logged-in users in the domain flow', () => {
-		const submitSignupStep = jest.fn();
-		const goToStep = jest.fn();
-		const goToNextStep = jest.fn();
+		const submitSignupStep = vi.fn();
+		const goToStep = vi.fn();
+		const goToNextStep = vi.fn();
 		const events = renderStep(
 			{ ...baseProps, submitSignupStep, goToStep, goToNextStep },
 			{ initialState: LOGGED_IN_STATE }
@@ -131,8 +133,8 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 	} );
 
 	it( 'submits the domain step and does not skip steps in a non-domain flow', () => {
-		const submitSignupStep = jest.fn();
-		const goToNextStep = jest.fn();
+		const submitSignupStep = vi.fn();
+		const goToNextStep = vi.fn();
 		const events = renderStep( {
 			...baseProps,
 			flowName: 'onboarding',
@@ -215,7 +217,7 @@ describe( 'DomainSearchStep — "Use a domain I already own" header link', () =>
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockWPCOMDomainSearch.mockReturnValue( null );
 	} );
 
@@ -261,7 +263,7 @@ describe( 'DomainSearchStep — Back button back_to', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockWPCOMDomainSearch.mockReturnValue( null );
 	} );
 
