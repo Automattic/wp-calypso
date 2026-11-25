@@ -80,7 +80,10 @@ describe( 'requestClassificationTags', () => {
 		( canAccessWpcomApis as Mock ).mockReturnValue( true );
 		( wpcomRequest as Mock ).mockResolvedValue( { classification_tags: VALID_TAGS } );
 
-		await expect( requestClassificationTags( 123 ) ).resolves.toEqual( VALID_TAGS );
+		await expect( requestClassificationTags( 123 ) ).resolves.toEqual( {
+			tags: VALID_TAGS,
+			status: 'classified',
+		} );
 
 		expect( wpcomRequest ).toHaveBeenCalledWith( {
 			path: '/help/zendesk/update-user-fields',
@@ -95,7 +98,10 @@ describe( 'requestClassificationTags', () => {
 		( canAccessWpcomApis as Mock ).mockReturnValue( false );
 		( apiFetch as unknown as Mock ).mockResolvedValue( { classification_tags: VALID_TAGS } );
 
-		await expect( requestClassificationTags( '123' ) ).resolves.toEqual( VALID_TAGS );
+		await expect( requestClassificationTags( '123' ) ).resolves.toEqual( {
+			tags: VALID_TAGS,
+			status: 'classified',
+		} );
 
 		expect( apiFetch ).toHaveBeenCalledWith( {
 			global: true,
@@ -112,20 +118,64 @@ describe( 'requestClassificationTags', () => {
 			classification_tags: [ 'cl_category_billing' ],
 		} );
 
-		await expect( requestClassificationTags( 123 ) ).resolves.toEqual( [] );
+		await expect( requestClassificationTags( 123 ) ).resolves.toEqual( {
+			tags: [],
+			status: 'invalid',
+		} );
+	} );
+
+	it( 'resolves to no tags when the server classified nothing', async () => {
+		( canAccessWpcomApis as Mock ).mockReturnValue( true );
+		( wpcomRequest as Mock ).mockResolvedValue( { classification_tags: [] } );
+
+		await expect( requestClassificationTags( 123 ) ).resolves.toEqual( {
+			tags: [],
+			status: 'not_classified',
+		} );
 	} );
 
 	it( 'resolves to no tags for a server without classification', async () => {
 		( canAccessWpcomApis as Mock ).mockReturnValue( true );
 		( wpcomRequest as Mock ).mockResolvedValue( { id: 1, user_fields: {} } );
 
-		await expect( requestClassificationTags( 123 ) ).resolves.toEqual( [] );
+		await expect( requestClassificationTags( 123 ) ).resolves.toEqual( {
+			tags: [],
+			status: 'unsupported',
+		} );
 	} );
 
 	it( 'resolves to no tags when the request fails', async () => {
 		( canAccessWpcomApis as Mock ).mockReturnValue( false );
 		( apiFetch as unknown as Mock ).mockRejectedValue( new Error( 'timeout' ) );
 
-		await expect( requestClassificationTags( 123 ) ).resolves.toEqual( [] );
+		await expect( requestClassificationTags( 123 ) ).resolves.toEqual( {
+			tags: [],
+			status: 'error',
+		} );
+	} );
+
+	it( 'reuses a request for the same chat while it runs, and only then', async () => {
+		( canAccessWpcomApis as Mock ).mockReturnValue( true );
+		let respond: ( value: unknown ) => void = () => {};
+		( wpcomRequest as Mock ).mockReturnValueOnce(
+			new Promise( ( resolve ) => {
+				respond = resolve;
+			} )
+		);
+
+		const first = requestClassificationTags( 123 );
+		const retry = requestClassificationTags( '123' );
+		const otherChat = requestClassificationTags( 456 );
+
+		expect( retry ).toBe( first );
+		expect( wpcomRequest ).toHaveBeenCalledTimes( 2 );
+
+		respond( { classification_tags: VALID_TAGS } );
+		await expect( retry ).resolves.toEqual( { tags: VALID_TAGS, status: 'classified' } );
+		await otherChat;
+
+		( wpcomRequest as Mock ).mockResolvedValue( { classification_tags: VALID_TAGS } );
+		await requestClassificationTags( 123 );
+		expect( wpcomRequest ).toHaveBeenCalledTimes( 3 );
 	} );
 } );

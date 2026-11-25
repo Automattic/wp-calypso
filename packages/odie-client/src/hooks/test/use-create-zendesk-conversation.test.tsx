@@ -97,7 +97,7 @@ beforeEach( () => {
 	vi.useFakeTimers();
 	mockHasReachedLimit = false;
 	mockSubmitUserFields.mockResolvedValue( undefined );
-	mockRequestClassificationTags.mockResolvedValue( [] );
+	mockRequestClassificationTags.mockResolvedValue( { tags: [], status: 'not_classified' } );
 	// activeInteractionId === interaction.uuid, so updateConversation is skipped.
 	mockAddEventToInteraction.mockResolvedValue( { uuid: 'int-1' } );
 	mockStartNewInteraction.mockResolvedValue( { uuid: 'int-1' } );
@@ -435,7 +435,10 @@ describe( 'useCreateZendeskConversation — classification tags', () => {
 			zendeskConversationTags: [ 'woo_support_flow_help_center', 'cl_classified' ],
 			checkoutSupportVariation: 'hybrid',
 		} );
-		mockRequestClassificationTags.mockResolvedValue( [ 'cl_category_billing', 'cl_classified' ] );
+		mockRequestClassificationTags.mockResolvedValue( {
+			tags: [ 'cl_category_billing', 'cl_classified' ],
+			status: 'classified',
+		} );
 
 		const { result } = renderHook( () => useCreateZendeskConversation() );
 		await expect( result.current( { createdFrom: 'automatic_escalation' } ) ).resolves.toBe(
@@ -450,6 +453,7 @@ describe( 'useCreateZendeskConversation — classification tags', () => {
 			} ),
 		} );
 		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_status: 'classified',
 			classification_tags_count: 2,
 			classification_timed_out: false,
 		} );
@@ -489,9 +493,110 @@ describe( 'useCreateZendeskConversation — classification tags', () => {
 			'zen:ticket:tags'
 		);
 		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_status: 'timed_out',
 			classification_tags_count: 0,
 			classification_wait_ms: 10_000,
 			classification_timed_out: true,
+		} );
+	} );
+
+	it( 'counts the time limit from the start, so slow user fields leave less of it to wait', async () => {
+		mockRequestClassificationTags.mockReturnValue( new Promise( () => {} ) );
+		mockSubmitUserFields.mockReturnValue(
+			new Promise< void >( ( resolve ) => setTimeout( resolve, 4000 ) )
+		);
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		const promise = result.current( { createdFrom: 'automatic_escalation' } );
+
+		await vi.advanceTimersByTimeAsync( 9999 );
+		expect( smoochCreateConversation ).not.toHaveBeenCalled();
+
+		await vi.advanceTimersByTimeAsync( 1 );
+		await expect( promise ).resolves.toBe( 'conv-1' );
+		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_status: 'timed_out',
+			classification_wait_ms: 6000,
+		} );
+	} );
+
+	it( 'uses tags that came in after the time limit but before the user fields', async () => {
+		mockRequestClassificationTags.mockReturnValue(
+			new Promise( ( resolve ) =>
+				setTimeout(
+					() =>
+						resolve( { tags: [ 'cl_category_billing', 'cl_classified' ], status: 'classified' } ),
+					10_500
+				)
+			)
+		);
+		mockSubmitUserFields.mockReturnValue(
+			new Promise< void >( ( resolve ) => setTimeout( resolve, 12_000 ) )
+		);
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		const promise = result.current( { createdFrom: 'automatic_escalation' } );
+
+		await vi.advanceTimersByTimeAsync( 12_000 );
+		await expect( promise ).resolves.toBe( 'conv-1' );
+
+		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata[ 'zen:ticket:tags' ] ).toBe(
+			'cl_category_billing,cl_classified'
+		);
+		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_status: 'classified',
+			classification_tags_count: 2,
+			classification_wait_ms: 0,
+			classification_timed_out: false,
+		} );
+	} );
+
+	it( 'does not wait once the time limit has passed during the user fields', async () => {
+		mockRequestClassificationTags.mockReturnValue( new Promise( () => {} ) );
+		mockSubmitUserFields.mockReturnValue(
+			new Promise< void >( ( resolve ) => setTimeout( resolve, 12_000 ) )
+		);
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		const promise = result.current( { createdFrom: 'automatic_escalation' } );
+
+		await vi.advanceTimersByTimeAsync( 12_000 );
+		// What's left of the limit is a 0 ms timer, set once the user fields resolve.
+		await vi.runOnlyPendingTimersAsync();
+		await expect( promise ).resolves.toBe( 'conv-1' );
+
+		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_status: 'timed_out',
+			// A 0 ms timer fires after 1 ms.
+			classification_wait_ms: 1,
+		} );
+	} );
+
+	it( 'tracks why a classification returned no tags', async () => {
+		mockRequestClassificationTags.mockResolvedValue( { tags: [], status: 'error' } );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await expect( result.current( { createdFrom: 'automatic_escalation' } ) ).resolves.toBe(
+			'conv-1'
+		);
+
+		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_status: 'error',
+			classification_tags_count: 0,
+			classification_timed_out: false,
+		} );
+	} );
+
+	it( 'tracks the classification status when the chat can’t be created', async () => {
+		smoochCreateConversation.mockReset();
+		smoochCreateConversation.mockRejectedValueOnce( new Error( 'TypeError: Failed to fetch' ) );
+		mockRequestClassificationTags.mockResolvedValue( { tags: [], status: 'invalid' } );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'automatic_escalation' } );
+
+		expect( lastTrackedProps( 'error_creating_zendesk_conversation' ) ).toMatchObject( {
+			classification_status: 'invalid',
 		} );
 	} );
 
@@ -506,7 +611,9 @@ describe( 'useCreateZendeskConversation — classification tags', () => {
 		).resolves.toBeUndefined();
 
 		expect( smoochCreateConversation ).not.toHaveBeenCalled();
-		expect( lastTrackedProps( 'error_submitting_zendesk_user_fields' ) ).toBeDefined();
+		expect( lastTrackedProps( 'error_submitting_zendesk_user_fields' ) ).toMatchObject( {
+			classification_status: 'pending',
+		} );
 		expect( vi.getTimerCount() ).toBe( 0 );
 	} );
 
@@ -518,13 +625,46 @@ describe( 'useCreateZendeskConversation — classification tags', () => {
 		} );
 
 		const { result } = renderHook( () => useCreateZendeskConversation() );
-		await expect( result.current( { createdFrom: 'direct_url' } ) ).resolves.toBe( 'conv-1' );
+		await expect( result.current( { createdFrom: 'automatic_escalation' } ) ).resolves.toBe(
+			'conv-1'
+		);
 
 		expect( mockRequestClassificationTags ).not.toHaveBeenCalled();
 		expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+			classification_status: 'skipped',
 			classification_tags_count: 0,
 			classification_wait_ms: 0,
 			classification_timed_out: false,
 		} );
 	} );
+
+	it.each( [
+		[ 'straight to a person', { createdFrom: 'direct_url' } ],
+		[
+			'on its first message',
+			{
+				createdFrom: 'direct_url',
+				firstMessage: { content: 'My card was declined', role: 'user', type: 'message' } as Message,
+			},
+		],
+	] )(
+		'does not classify an Odie chat left from before for a chat that starts %s',
+		async ( _, options ) => {
+			mockRequestClassificationTags.mockResolvedValue( {
+				tags: [ 'cl_category_domains', 'cl_classified' ],
+				status: 'classified',
+			} );
+
+			const { result } = renderHook( () => useCreateZendeskConversation() );
+			await expect( result.current( options ) ).resolves.toBe( 'conv-1' );
+
+			expect( mockRequestClassificationTags ).not.toHaveBeenCalled();
+			expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata ).not.toHaveProperty(
+				'zen:ticket:tags'
+			);
+			expect( lastTrackedProps( 'new_zendesk_conversation' ) ).toMatchObject( {
+				classification_status: 'skipped',
+			} );
+		}
+	);
 } );
