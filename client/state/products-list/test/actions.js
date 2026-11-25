@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
@@ -10,7 +11,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 		global.window = {
 			location: {
 				search: '',
