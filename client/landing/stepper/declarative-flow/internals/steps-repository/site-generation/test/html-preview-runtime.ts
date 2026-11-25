@@ -520,7 +520,7 @@ describe( 'homepage-first presentation', () => {
 } );
 
 describe( 'homepage section presentation', () => {
-	let animate: Mock;
+	let animate: Mock< ( this: Element ) => unknown >;
 	let previousAnimate: PropertyDescriptor | undefined;
 	let previousRangeRects: PropertyDescriptor | undefined;
 

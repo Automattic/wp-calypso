@@ -1,31 +1,44 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-jest.mock( 'wpcom-proxy-request', () => ( {
-	...jest.requireActual( 'wpcom-proxy-request' ),
-	reloadProxy: jest.fn(),
-	requestAllBlogsAccess: jest.fn(),
+import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
+import { type Mock, vi } from 'vitest';
+import { reloadProxy } from 'wpcom-proxy-request';
+import { rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import UserStep from '..';
+
+vi.mock( 'wpcom-proxy-request', async () => ( {
+	...( await vi.importActual< typeof import( 'wpcom-proxy-request' ) >( 'wpcom-proxy-request' ) ),
+	reloadProxy: vi.fn(),
+	requestAllBlogsAccess: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/user/shared-utils', () => ( {
-	...jest.requireActual( 'calypso/lib/user/shared-utils' ),
-	rawCurrentUserFetch: jest.fn(),
+vi.mock( 'calypso/lib/user/shared-utils', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/lib/user/shared-utils' ) >(
+		'calypso/lib/user/shared-utils'
+	) ),
+	rawCurrentUserFetch: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/partner-branding', () => ( {
+vi.mock( 'calypso/lib/partner-branding', () => ( {
 	usePartnerBranding: () => ( { hasCustomBranding: false, partnerConfig: null } ),
 } ) );
 
 // A thunk, so it only records when dispatched.
-const mockSendTracksEvent = jest.fn();
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	...jest.requireActual( 'calypso/state/analytics/actions' ),
+const mockSendTracksEvent = vi.fn();
+vi.mock( 'calypso/state/analytics/actions', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/state/analytics/actions' ) >(
+		'calypso/state/analytics/actions'
+	) ),
 	recordTracksEventWithClientId: ( name: string ) => () => mockSendTracksEvent( name ),
 } ) );
 
 // Stands in for the form's `goToNextStep` call after `/users/new` succeeds.
-jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
+vi.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	__esModule: true,
 	default: ( {
 		goToNextStep,
@@ -38,27 +51,19 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 	),
 } ) );
 
-import { act, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
-import { reloadProxy } from 'wpcom-proxy-request';
-import { rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import UserStep from '..';
-
-const mockReloadProxy = reloadProxy as jest.Mock;
-const mockRawCurrentUserFetch = rawCurrentUserFetch as jest.Mock;
+const mockReloadProxy = reloadProxy as Mock;
+const mockRawCurrentUserFetch = rawCurrentUserFetch as Mock;
 
 const NEW_USER = { ID: 1, username: 'newuser', email: 'newuser@example.com' };
 const LOGGED_OUT = new Error( 'Not logged in' );
 
 describe( 'User step account creation', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	const renderUserStep = () => {
-		const navigation = { submit: jest.fn() };
+		const navigation = { submit: vi.fn() };
 		const { unmount } = renderWithProvider(
 			<MemoryRouter initialEntries={ [ '/onboarding/user' ] }>
 				<UserStep flow="onboarding" stepName="user" navigation={ navigation } />

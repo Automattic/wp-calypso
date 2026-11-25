@@ -53,6 +53,7 @@ vi.mock( '@automattic/onboarding', () => ( {
 	ENTREPRENEUR_FLOW: 'entrepreneur',
 	NEWSLETTER_FLOW: 'newsletter',
 	ONBOARDING_FLOW: 'onboarding',
+	STATIC_SITE_IMPORT_FLOW: 'static-site-import',
 	WRITE_NEW_SITE_FLOW: 'write-new-site',
 	WRITE_ON_FLOW: 'write-on',
 	StepContainer: () => null,

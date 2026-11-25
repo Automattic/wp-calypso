@@ -114,13 +114,18 @@ describe( 'SitePicker', () => {
 			.get( ( uri ) => uri.startsWith( '/rest/v1.2/me/sites' ) )
 			.reply( 200, { sites: initialState.sites.items } );
 
-		const mockIntersectionObserver = vi.fn();
-		mockIntersectionObserver.mockReturnValue( {
-			observe: () => null,
-			unobserve: () => null,
-			disconnect: () => null,
+		window.IntersectionObserver = vi.fn( function () {
+			return {
+				observe: () => null,
+				unobserve: () => null,
+				disconnect: () => null,
+				root: null,
+				rootMargin: '',
+				scrollMargin: '',
+				thresholds: [],
+				takeRecords: () => [],
+			};
 		} );
-		window.IntersectionObserver = mockIntersectionObserver;
 	} );
 
 	test( 'renders with correct list of sites', () => {

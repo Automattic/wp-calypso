@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom';
+import { vi } from 'vitest';
 import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -11,15 +12,15 @@ import { recordStepperPageView } from '../../../analytics/record-page-view';
 import type { Flow } from '../../../types';
 import type { ComponentProps } from 'react';
 
-jest.mock( 'calypso/lib/analytics/record-admin-page-view' );
-jest.mock( 'calypso/state/current-user/selectors' );
-jest.mock( '../hooks/use-step-route-tracking' );
-jest.mock( '../../../analytics/record-page-view' );
-jest.mock( 'calypso/landing/stepper/hooks/use-login-url-for-flow', () => ( {
+vi.mock( 'calypso/lib/analytics/record-admin-page-view' );
+vi.mock( 'calypso/state/current-user/selectors' );
+vi.mock( '../hooks/use-step-route-tracking' );
+vi.mock( '../../../analytics/record-page-view' );
+vi.mock( 'calypso/landing/stepper/hooks/use-login-url-for-flow', () => ( {
 	useLoginUrlForFlow: () => '/log-in',
 } ) );
-jest.mock( 'calypso/signup/signup-header', () => () => null );
-jest.mock( 'calypso/landing/stepper/utils/performance-tracking', () => ( {
+vi.mock( 'calypso/signup/signup-header', () => ( { default: () => null } ) );
+vi.mock( 'calypso/landing/stepper/utils/performance-tracking', () => ( {
 	StepperPerformanceTrackerStop: () => null,
 } ) );
 
@@ -39,7 +40,7 @@ type Options = Partial<
 
 function renderSteps( options: Options = {}, initialPath = '/setup/test-flow/domains' ) {
 	window.history.replaceState( null, '', initialPath );
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 
 	function App( {
 		isResolving = false,
@@ -62,7 +63,7 @@ function renderSteps( options: Options = {}, initialPath = '/setup/test-flow/dom
 								element={
 									<StepRoute
 										key={ slug }
-										step={ { slug, requiresLoggedInUser, asyncComponent: jest.fn() } }
+										step={ { slug, requiresLoggedInUser, asyncComponent: vi.fn() } }
 										flow={ flow }
 										isResolving={ isResolving }
 										renderStep={
@@ -87,15 +88,15 @@ function renderSteps( options: Options = {}, initialPath = '/setup/test-flow/dom
 }
 
 describe( 'Stepper unified admin page views', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.isolateModules( () => {
-			const { recordStepperPageView: record } = jest.requireActual<
-				typeof import( '../../../analytics/record-page-view' )
-			>( '../../../analytics/record-page-view' );
-			jest.mocked( recordStepperPageView ).mockImplementation( record );
-		} );
-		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
+	beforeEach( async () => {
+		vi.clearAllMocks();
+		// A fresh copy, so that the path the last test tracked doesn't carry over.
+		vi.resetModules();
+		const { recordStepperPageView: record } = await vi.importActual<
+			typeof import( '../../../analytics/record-page-view' )
+		>( '../../../analytics/record-page-view' );
+		vi.mocked( recordStepperPageView ).mockImplementation( record );
+		vi.mocked( isUserLoggedIn ).mockReturnValue( true );
 	} );
 
 	afterEach( () => {
@@ -130,7 +131,7 @@ describe( 'Stepper unified admin page views', () => {
 			fireEvent.click( screen.getByText( 'First step' ) );
 		} );
 		expect(
-			jest.mocked( recordUnifiedAdminPageView ).mock.calls.map( ( [ view ] ) => view.path )
+			vi.mocked( recordUnifiedAdminPageView ).mock.calls.map( ( [ view ] ) => view.path )
 		).toEqual( [
 			'/setup/test-flow/domains',
 			'/setup/test-flow/plans',
@@ -172,7 +173,7 @@ describe( 'Stepper unified admin page views', () => {
 	} );
 
 	it( 'does not track steps that redirect to authentication', () => {
-		jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+		vi.mocked( isUserLoggedIn ).mockReturnValue( false );
 		const { navigate } = renderSteps( { requiresLoggedInUser: true } );
 
 		expect( navigate ).toHaveBeenCalledWith( 'user', expect.any( Object ), true );

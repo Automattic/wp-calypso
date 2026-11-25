@@ -21,13 +21,15 @@ const mockSiteTransferStatus = { isTransferring: false };
 
 // A spread would read every export while these modules are still loading (both are required back
 // through their own dependencies), so override the exports lazily.
-const withOverrides = ( actual: Record< string, unknown >, overrides: Record< string, unknown > ) =>
-	new Proxy( actual, {
-		get: ( target, key: string ) => ( key in overrides ? overrides[ key ] : target[ key ] ),
-	} );
+const { withOverrides } = vi.hoisted( () => ( {
+	withOverrides: ( actual: Record< string, unknown >, overrides: Record< string, unknown > ) =>
+		new Proxy( actual, {
+			get: ( target, key: string ) => ( key in overrides ? overrides[ key ] : target[ key ] ),
+		} ),
+} ) );
 
-vi.mock( '@automattic/api-queries', async () => ( {
-	default: withOverrides(
+vi.mock( '@automattic/api-queries', async () =>
+	withOverrides(
 		await vi.importActual< typeof import( '@automattic/api-queries' ) >(
 			'@automattic/api-queries'
 		),
@@ -37,34 +39,31 @@ vi.mock( '@automattic/api-queries', async () => ( {
 				queryFn: () => mockGetSite(),
 			} ),
 		}
-	),
-} ) );
+	)
+);
 
-vi.mock( '@wordpress/data', async () => ( {
-	default: withOverrides(
-		await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' ),
-		{
-			// Mirrors the real onboard store's empty state; anything else this tree selects is unset.
-			useSelect: ( selector: ( select: () => unknown ) => unknown ) =>
-				selector(
-					() =>
-						new Proxy(
-							{
-								getIntent: () => mockOnboardState.intent,
-								getGoals: () => mockOnboardState.goals,
-							} as Record< string, () => unknown >,
-							{ get: ( target, key: string ) => target[ key ] ?? ( () => undefined ) }
-						)
-				),
-			useDispatch: () => ( {
-				setPendingAction: mockSetPendingAction,
-				setIntentOnSite: mockSetIntentOnSite,
-				setGoalsOnSite: mockSetGoalsOnSite,
-				saveSiteSettings: mockSaveSiteSettings,
-			} ),
-		}
-	),
-} ) );
+vi.mock( '@wordpress/data', async () =>
+	withOverrides( await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' ), {
+		// Mirrors the real onboard store's empty state; anything else this tree selects is unset.
+		useSelect: ( selector: ( select: () => unknown ) => unknown ) =>
+			selector(
+				() =>
+					new Proxy(
+						{
+							getIntent: () => mockOnboardState.intent,
+							getGoals: () => mockOnboardState.goals,
+						} as Record< string, () => unknown >,
+						{ get: ( target, key: string ) => target[ key ] ?? ( () => undefined ) }
+					)
+			),
+		useDispatch: () => ( {
+			setPendingAction: mockSetPendingAction,
+			setIntentOnSite: mockSetIntentOnSite,
+			setGoalsOnSite: mockSetGoalsOnSite,
+			saveSiteSettings: mockSaveSiteSettings,
+		} ),
+	} )
+);
 
 vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'automattic/onboard',

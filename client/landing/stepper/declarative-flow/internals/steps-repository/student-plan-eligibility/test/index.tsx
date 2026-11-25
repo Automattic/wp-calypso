@@ -283,6 +283,9 @@ describe( 'StudentPlanEligibility', () => {
 
 			render( { props: { navigation: { submit } }, emailVerified: true } );
 
+			// The alert also shows in the moment between the last check starting and React Query
+			// reporting it as fetching, so wait for that check's answer first.
+			await waitFor( () => expect( nock.pendingMocks() ).toHaveLength( 1 ) );
 			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
 				'Your email is confirmed, but we couldn’t continue. Please try again.'
 			);
@@ -292,7 +295,7 @@ describe( 'StudentPlanEligibility', () => {
 			} );
 			expect( fetchCurrentUser ).not.toHaveBeenCalled();
 
-			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+			await userEvent.click( await screen.findByRole( 'button', { name: 'Try again' } ) );
 
 			await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
 		} );

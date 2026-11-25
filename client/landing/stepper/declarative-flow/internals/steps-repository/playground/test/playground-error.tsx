@@ -3,7 +3,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
 import { PlaygroundError } from '../components/playground-error';
@@ -50,6 +50,7 @@ const renderError = ( error, props = {} ) =>
 describe( 'PlaygroundError', () => {
 	afterEach( () => {
 		vi.clearAllMocks();
+		vi.useRealTimers();
 	} );
 
 	describe( 'playground not found', () => {
@@ -71,21 +72,18 @@ describe( 'PlaygroundError', () => {
 		} );
 
 		it( 'should call createNewPlayground when countdown reaches zero', () => {
-			// Create a special version of setTimeout that triggers the callback immediately
+			vi.useFakeTimers();
 			const mockCreateNewPlayground = vi.fn();
-
-			// Mock the setState to immediately set countdown to 0
-			vi.spyOn( React, 'useState' ).mockImplementation( ( initialState ) => {
-				if ( initialState === 5 ) {
-					// When countdown is initialized, immediately return 0 to trigger the effect
-					return [ 0, vi.fn() ];
-				}
-				return [ initialState, vi.fn() ];
-			} );
 
 			renderError( notFoundError, { createNewPlayground: mockCreateNewPlayground } );
 
-			// The effect should have called createNewPlayground when countdown became 0
+			// Each second of the countdown schedules the next one once React re-renders.
+			for ( let second = 0; second < 5; second++ ) {
+				act( () => {
+					vi.advanceTimersByTime( 1000 );
+				} );
+			}
+
 			expect( mockCreateNewPlayground ).toHaveBeenCalled();
 		} );
 	} );
