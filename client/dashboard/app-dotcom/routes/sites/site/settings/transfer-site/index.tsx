@@ -4,16 +4,19 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import React, { useState } from 'react';
-import { useAuth } from '../../app/auth';
-import Breadcrumbs from '../../app/breadcrumbs';
-import { Card, CardBody } from '../../components/card';
-import InlineSupportLink from '../../components/inline-support-link';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { ConfirmNewOwnerForm, ConfirmNewOwnerFormData } from './confirm-new-owner-form';
-import { EmailConfirmation } from './email-confirmation';
-import { InvitationEmailSent } from './invitation-email-sent';
-import { StartSiteTransferForm } from './start-site-transfer-form';
+import { useAuth } from '../../../../../../app/auth';
+import Breadcrumbs from '../../../../../../app/breadcrumbs';
+import { Card, CardBody } from '../../../../../../components/card';
+import InlineSupportLink from '../../../../../../components/inline-support-link';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
+import {
+	ConfirmNewOwnerForm,
+	ConfirmNewOwnerFormData,
+} from '../../../../../../sites/transfer-site/components/confirm-new-owner-form';
+import { EmailConfirmation } from '../../../../../../sites/transfer-site/components/email-confirmation';
+import { InvitationEmailSent } from '../../../../../../sites/transfer-site/components/invitation-email-sent';
+import { StartSiteTransferForm } from '../../../../../../sites/transfer-site/components/start-site-transfer-form';
 import type { SiteOwnerTransferContext } from '@automattic/api-core';
 
 const MIN_STEP = 0;

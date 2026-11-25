@@ -5,8 +5,8 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import nock from 'nock';
-import { render } from '../../../test-utils';
-import DangerZone from '../danger-zone';
+import { render } from '../../../../../test-utils';
+import DangerZone from '../index';
 import type { Site } from '@automattic/api-core';
 
 const siteId = 123;

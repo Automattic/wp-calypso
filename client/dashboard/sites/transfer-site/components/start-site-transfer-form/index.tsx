@@ -11,9 +11,9 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
-import { ButtonStack } from '../../components/button-stack';
-import Notice from '../../components/notice';
-import { SectionHeader } from '../../components/section-header';
+import { ButtonStack } from '../../../../components/button-stack';
+import Notice from '../../../../components/notice';
+import { SectionHeader } from '../../../../components/section-header';
 import type { Site, SiteOwnerTransferContext } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
