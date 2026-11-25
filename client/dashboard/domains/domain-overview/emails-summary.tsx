@@ -17,7 +17,7 @@ export default function DomainEmailsSettingsSummary( {
 	// mailboxes belonging to this domain.
 	const mailboxCount = accounts
 		?.flatMap( ( account ) => account.emails )
-		.filter( ( box ) => box.domain === domain.domain ).length;
+		.filter( ( box ) => box.domain === domain.domain && box.email_type === 'email' ).length;
 
 	// Only a known zero offers the add flow: while loading or after a failure the
 	// domain may already have mailboxes.

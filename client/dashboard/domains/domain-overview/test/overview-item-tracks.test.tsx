@@ -57,6 +57,7 @@ describe( 'domain overview item tracking', () => {
 
 	test.each( [
 		[ 'emails', settings, /Professional email/ ],
+		[ 'email-forwarding', settings, /Email forwarding/ ],
 		[ 'renew', registration, /Renewal & billing/ ],
 		[ 'contact-details', registration, /Contact details & privacy/ ],
 	] )( 'tracks a click on the %s row', async ( item, ui, name ) => {

@@ -23,6 +23,7 @@ import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
 import { shouldShowTransferInAction } from './actions.utils';
+import DomainEmailForwardingSettingsSummary from './email-forwarding-summary';
 import DomainEmailsSettingsSummary from './emails-summary';
 import DomainSiteSettingsSummary from './site-summary';
 import { useTrackOverviewItem } from './use-track-overview-item';
@@ -90,6 +91,11 @@ export default function DomainOverviewSettings( {
 			key="emails"
 			domain={ domain }
 			onClick={ () => trackItem( 'emails' ) }
+		/>,
+		<DomainEmailForwardingSettingsSummary
+			key="email-forwarding"
+			domain={ domain }
+			onClick={ () => trackItem( 'email-forwarding' ) }
 		/>,
 	];
 	const advancedButtonListItems = [];

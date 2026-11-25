@@ -2,12 +2,58 @@
  * @vitest-environment jsdom
  */
 import { EmailProvider } from '@automattic/api-core';
-import { screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+	Outlet,
+	RouterProvider,
+	createMemoryHistory,
+	createRootRoute,
+	createRoute,
+	createRouter,
+} from '@tanstack/react-router';
+import { render as testingLibraryRender, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
+import { AnalyticsProvider } from '../../../app/analytics';
+import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from '../../../app/context';
+import { emailsRoute } from '../../../app/router/emails';
 import { render } from '../../../test-utils';
 import AddEmailForwarder from '../index';
 import type { EmailAccount } from '@automattic/api-core';
+
+// The shared test-utils router has no `/emails` route, so render the form at its
+// real URL with a router of its own whose `/emails` route validates search like the app's.
+function renderAtUrl( url: string ) {
+	const root = createRootRoute( { component: Outlet } );
+	const emails = createRoute( {
+		getParentRoute: () => root,
+		path: 'emails',
+		component: Outlet,
+		validateSearch: emailsRoute.options.validateSearch,
+	} );
+	const addForwarder = createRoute( {
+		getParentRoute: () => emails,
+		path: 'add-forwarder',
+		component: AddEmailForwarder,
+	} );
+	const router = createRouter( {
+		routeTree: root.addChildren( [ emails.addChildren( [ addForwarder ] ) ] ),
+		history: createMemoryHistory( { initialEntries: [ url ] } ),
+	} );
+
+	return testingLibraryRender(
+		<QueryClientProvider
+			client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
+		>
+			<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
+				<AnalyticsProvider client={ { recordTracksEvent: vi.fn(), recordPageView: vi.fn() } }>
+					<RouterProvider router={ router } />
+				</AnalyticsProvider>
+			</AppProvider>
+		</QueryClientProvider>
+	);
+}
 
 const DOMAIN = 'example.com';
 
@@ -108,5 +154,12 @@ describe( '<AddEmailForwarder>', () => {
 		expect(
 			await screen.findByText( 'You do not have any domains eligible for email forwarding.' )
 		).toBeVisible();
+	} );
+
+	test( 'preselects the domain named in the URL', async () => {
+		mockApi();
+		renderAtUrl( `/emails/add-forwarder?domainName=${ DOMAIN }` );
+
+		expect( await screen.findByRole( 'combobox', { name: 'Domain' } ) ).toHaveValue( DOMAIN );
 	} );
 } );

@@ -139,7 +139,7 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 	} );
 
-	test( 'keeps only Site, Professional email and Domain security for a partially restricted domain', async () => {
+	test( 'keeps only Site, Professional email, Email forwarding and Domain security for a partially restricted domain', async () => {
 		renderDomainSettings( {
 			current_user_can_manage: false,
 			can_manage_dns_records: false,
@@ -147,7 +147,7 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 
 		expect( await getOptionalRows() ).toEqual( [ SECURITY ] );
-		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 2 );
+		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 3 );
 	} );
 
 	test( 'keeps security and glue records behind a tracked toggle, after the default rows', async () => {
