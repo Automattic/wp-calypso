@@ -2103,7 +2103,7 @@ const agencySiteSettingsCrontabIndexRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-crontab' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -2115,7 +2115,7 @@ const agencySiteSettingsCrontabAddRoute = createRoute( {
 	getParentRoute: () => agencySiteSettingsCrontabRoute,
 	path: 'add',
 } ).lazy( () =>
-	import( '../../sites/settings-crontab/add-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab/add' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-crontab-add' )( {
 			component: d.default,
 		} )
@@ -2134,7 +2134,7 @@ const agencySiteSettingsCrontabEditRoute = createRoute( {
 		await queryClient.ensureQueryData( siteCrontabsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-crontab/edit-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab/cron/edit' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-crontab-edit' )( {
 			component: d.default,
 		} )
@@ -2300,7 +2300,7 @@ const agencySiteSettingsApmRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-apm' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/apm' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-apm' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )

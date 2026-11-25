@@ -19,18 +19,21 @@ import { __, sprintf } from '@wordpress/i18n';
 import { scheduled, trash, copy, people, calendar } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import Breadcrumbs from '../../app/breadcrumbs';
-import { useLocale } from '../../app/locale';
-import ConfirmModal from '../../components/confirm-modal';
-import { DataViewsCard } from '../../components/dataviews';
-import InlineSupportLink from '../../components/inline-support-link';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import TimeSince, { useTimeSince } from '../../components/time-since';
-import { hasHostingFeature } from '../../utils/site-features';
-import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import { parseRequestedScheduleForBackwardCompatibility } from './parse-requested-schedule-for-backward-compatibility';
-import { formatScheduleLabel, formatScheduleDescription } from './schedules';
+import Breadcrumbs from '../../../../../../app/breadcrumbs';
+import { useLocale } from '../../../../../../app/locale';
+import ConfirmModal from '../../../../../../components/confirm-modal';
+import { DataViewsCard } from '../../../../../../components/dataviews';
+import InlineSupportLink from '../../../../../../components/inline-support-link';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
+import TimeSince, { useTimeSince } from '../../../../../../components/time-since';
+import { parseRequestedScheduleForBackwardCompatibility } from '../../../../../../sites/crontab/utils/parse-requested-schedule-for-backward-compatibility';
+import {
+	formatScheduleLabel,
+	formatScheduleDescription,
+} from '../../../../../../sites/crontab/utils/schedules';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import { hasHostingFeature } from '../../../../../../utils/site-features';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 

@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { scheduled } from '@wordpress/icons';
-import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { hasHostingFeature } from '../../utils/site-features';
+import RouterLinkSummaryButton from '../../../../components/router-link-summary-button';
+import { isDashboardBackport } from '../../../../utils/is-dashboard-backport';
+import { hasHostingFeature } from '../../../../utils/site-features';
 import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 

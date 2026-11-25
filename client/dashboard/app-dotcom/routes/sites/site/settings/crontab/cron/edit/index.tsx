@@ -1,7 +1,7 @@
 import { siteBySlugQuery, siteCrontabsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import CrontabForm from './crontab-form';
+import CrontabForm from '../../../../../../../../sites/crontab/components/crontab-form';
 
 export default function EditCrontab() {
 	const { siteSlug, cronId } = useParams( { strict: false } ) as {
