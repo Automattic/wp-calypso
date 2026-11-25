@@ -46,14 +46,11 @@ export type CreditsStatus =
 			remaining: number;
 	  } );
 
-/** Free-plan low-balance percentage, for the toggle's label and the notice. */
-const CREDITS_LOW_THRESHOLD = 20;
-
 /**
- * Share of a paid plan's monthly allowance, in percent, below which the combined balance runs low:
- * the toggle's label says so and the low-balance notice shows.
+ * Share of the plan's allowance, in percent, below which credits run low: the toggle's label
+ * says so and the low-balance notice shows.
  */
-const CREDITS_LOW_ALLOWANCE_PERCENT = 25;
+const LOW_CREDITS_PERCENT_OF_ALLOWANCE = 25;
 
 export function clampPercent( percent: number ): number {
 	if ( ! Number.isFinite( percent ) ) {
@@ -85,9 +82,10 @@ export function isCreditsExhausted( status: CreditsStatus ): boolean {
 }
 
 /**
- * Low but not exhausted: paid plans by the combined balance against `CREDITS_LOW_ALLOWANCE_PERCENT`
- * of the plan pool's allowance, free plans by percentage against `CREDITS_LOW_THRESHOLD`. A paid
- * status without the plan's allowance has nothing to measure against, so it never reads low.
+ * Low but not exhausted: the balance left is under `LOW_CREDITS_PERCENT_OF_ALLOWANCE` of the plan's
+ * allowance. Free plans measure by `percent`, already the remaining share of the free allowance;
+ * paid plans by the combined balance against the plan pool's allowance. A paid status without that
+ * allowance has nothing to measure against, so it never reads low.
  */
 export function isCreditsLow( status: CreditsStatus ): boolean {
 	if ( isCreditsExhausted( status ) ) {
@@ -95,12 +93,12 @@ export function isCreditsLow( status: CreditsStatus ): boolean {
 	}
 
 	if ( status.plan === 'free' ) {
-		return status.percent <= CREDITS_LOW_THRESHOLD;
+		return status.percent < LOW_CREDITS_PERCENT_OF_ALLOWANCE;
 	}
 
 	const allowance = status.pools.find( ( pool ) => pool.id === 'plan' )?.total;
 	return (
-		allowance !== undefined && status.remaining * 100 < allowance * CREDITS_LOW_ALLOWANCE_PERCENT
+		allowance !== undefined && status.remaining * 100 < allowance * LOW_CREDITS_PERCENT_OF_ALLOWANCE
 	);
 }
 

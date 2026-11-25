@@ -63,9 +63,9 @@ describe( 'formatPercent', () => {
 } );
 
 describe( 'credit states', () => {
-	it( 'reads low by percentage on free plans and by a quarter of the allowance on paid plans', () => {
-		expect( isCreditsLow( free( 20 ) ) ).toBe( true );
-		expect( isCreditsLow( free( 21 ) ) ).toBe( false );
+	it( 'reads low under a quarter of the allowance on any plan', () => {
+		expect( isCreditsLow( free( 24 ) ) ).toBe( true );
+		expect( isCreditsLow( free( 25 ) ) ).toBe( false );
 		expect( isCreditsLow( free( 0 ) ) ).toBe( false );
 		expect( isCreditsLow( paid( 25, 3750 ) ) ).toBe( false );
 		expect( isCreditsLow( paid( 25, 3749 ) ) ).toBe( true );

@@ -7,7 +7,7 @@ Chats outside the dock that show the site's AI credits, such as Image Studio, us
 - `parseLiveCreditsStatus( value, siteId )` turns a site's allowance snapshot into a `CreditsStatus`, or `undefined` if the snapshot isn't valid.
 - `CreditsMeter` shows that status. Its toggle is a ring of this period's plan credits left, in the primary blue: full at the start, and empty at 0 even while top-ups remain. An empty ring is drawn as a grey circle, so the toggle stays visible. Its tooltip gives the combined balance. Its popover leads with the same total, and then lists each pool.
 - `formatCreditsShort()` formats an amount such as "800" or "8.5k", rounding down.
-- `isCreditsLow( status )` says whether the balance runs low: the toggle's label leads with "Low on credits:", and the low-balance notice shows. A paid plan runs low when its combined balance, plan and top-ups together, falls below 25% of the plan's monthly allowance (the plan pool's `total`), such as 2,500 credits of a 10,000-credit plan. A paid status without that allowance never runs low. Free plans run low at 20% or below. Neither runs low at 0, which is out of credits.
+- `isCreditsLow( status )` says whether the balance runs low: the toggle's label leads with "Low on credits:", and the low-balance notice shows. A paid plan runs low when its combined balance, plan and top-ups together, falls below 25% of the plan's monthly allowance (the plan pool's `total`), such as 2,500 credits of a 10,000-credit plan. A paid status without that allowance never runs low. Free plans run low by the same rule, when the remaining share of the free allowance (`percent`) is below 25%. Neither runs low at 0, which is out of credits.
 
 ## Purchase links
 
