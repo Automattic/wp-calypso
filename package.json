@@ -392,7 +392,6 @@
 		"@wordpress/latex-to-mathml": "2.2.0",
 		"@wordpress/media-utils": "6.2.0",
 		"@wordpress/notices": "6.2.0",
-		"@wordpress/npm-package-json-lint-config": "6.2.0",
 		"@wordpress/plugins": "8.2.0",
 		"@wordpress/preferences": "5.2.0",
 		"@wordpress/prettier-config": "5.2.0",

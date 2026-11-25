@@ -1503,7 +1503,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@wordpress/npm-package-json-lint-config": "npm:^6.2.0"
     eslint: "npm:^10.14.0"
     eslint-plugin-json-es: "npm:^1.6.0"
     esquery: "npm:^1.7.0"
@@ -13289,15 +13288,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/npm-package-json-lint-config@npm:6.2.0":
-  version: 6.2.0
-  resolution: "@wordpress/npm-package-json-lint-config@npm:6.2.0"
-  peerDependencies:
-    npm-package-json-lint: ">=6.0.0"
-  checksum: 10c0/8e6e1b06219964f198c97ecd4952ec1dfabd210f0f9b5baefd73eb0798fd7785cfd147c278de4eb64fd6b8a2ee304cf64bc5b191214b571591506f62c5cd18d6
-  languageName: node
-  linkType: hard
-
 "@wordpress/patterns@npm:^3.2.0":
   version: 3.2.0
   resolution: "@wordpress/patterns@npm:3.2.0"
@@ -21308,7 +21298,6 @@ __metadata:
     tannin: "npm:^1.2.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
-    use-subscription: "npm:1.11.0"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.0"
   peerDependencies:
@@ -31959,17 +31948,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 10c0/161599bf921cfaa41c85d2b01c871975ee99260f3e874c2d41c05890d41170297bdcf314bc5185e7a700de2034ac5b888e3efc8e9f35724f4918f53538d717c9
-  languageName: node
-  linkType: hard
-
-"use-subscription@npm:1.11.0":
-  version: 1.11.0
-  resolution: "use-subscription@npm:1.11.0"
-  dependencies:
-    use-sync-external-store: "npm:^1.5.0"
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/6aa31e134d56e90a37f0f8232ece5ab5b74f35224e52bfd5b9a9e1af668423bba37715ee0f932f9e40dd9f8825d2efb90a1d254a7014b55a470b033acfadf4a3
   languageName: node
   linkType: hard
 
