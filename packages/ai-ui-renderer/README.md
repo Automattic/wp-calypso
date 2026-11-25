@@ -367,14 +367,15 @@ loaded keeps the WordPress appearance. A preset can live in a consumer or be sha
 
 Use the same contract:
 
-| Tokens (prefix `--ai-ui-theme-`)                                                                                                | Purpose                             |
-| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
-| `font`, `font-size`, `line-height`, `small-size`, `small-line-height`                                                           | Body and control typography         |
-| `heading-1-size`, `heading-1-line-height`, `heading-2-size`, `heading-2-line-height`, `heading-3-size`, `heading-3-line-height` | Markdown headings                   |
-| `text`, `text-secondary`, `text-disabled`, `danger`                                                                             | Text and validation colors          |
-| `surface`, `input`, `inverse`, `on-inverse`, `hover`                                                                            | Cards, inputs and primary actions   |
-| `border`, `control-border`, `ring`                                                                                              | Borders and focus indicators        |
-| `control-height`, `control-radius`, `card-radius`, `space`                                                                      | Component geometry and spacing unit |
+| Tokens (prefix `--ai-ui-theme-`)                                                                                                | Purpose                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `font`, `font-size`, `line-height`, `small-size`, `small-line-height`                                                           | Body and control typography                                         |
+| `heading-1-size`, `heading-1-line-height`, `heading-2-size`, `heading-2-line-height`, `heading-3-size`, `heading-3-line-height` | Markdown headings                                                   |
+| `text`, `text-secondary`, `text-disabled`, `danger`                                                                             | Text and validation colors                                          |
+| `surface`, `input`, `inverse`, `on-inverse`, `hover`                                                                            | Cards, inputs and primary actions                                   |
+| `border`, `control-border`, `ring`                                                                                              | Borders and focus indicators                                        |
+| `control-height`, `control-radius`, `card-radius`, `space`                                                                      | Component geometry and spacing unit                                 |
+| `chip-text`, `chip-border-hover`, `chip-hover`, `chip-padding`, `chip-font-weight` (optional)                                   | `ChoicePicker` chips: unselected text and hover, padding and weight |
 
 The optional ChatGPT preset adapts the MIT-licensed OpenAI Apps SDK UI tokens at
 [`0f00143c7a639906f1621fe58e1b6be7b5bea46d`](https://github.com/openai/apps-sdk-ui/tree/0f00143c7a639906f1621fe58e1b6be7b5bea46d/src/styles).

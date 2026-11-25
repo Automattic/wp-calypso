@@ -147,6 +147,23 @@
 		border-color: var( --ai-ui-theme-danger );
 	}
 
+	#{$theme}
+		.ai-ui-renderer__choice-picker--chips
+		.ai-ui-renderer__choice-chip:not( :has( [data-checked], [data-disabled] ) ) {
+		color: var( --ai-ui-theme-chip-text, var( --ai-ui-theme-text ) );
+
+		&:hover {
+			border-color: var( --ai-ui-theme-chip-border-hover, var( --ai-ui-theme-text-secondary ) );
+			background-color: var( --ai-ui-theme-chip-hover, var( --ai-ui-theme-hover ) );
+			color: var( --ai-ui-theme-text );
+		}
+	}
+
+	#{$theme} .ai-ui-renderer__choice-picker--chips .ai-ui-renderer__choice-chip-label {
+		padding-inline: var( --ai-ui-theme-chip-padding, var( --wpds-dimension-padding-md ) );
+		font-weight: var( --ai-ui-theme-chip-font-weight, inherit );
+	}
+
 	#{$theme} :is( input, textarea )[aria-invalid='true'] {
 		outline: 1px solid var( --ai-ui-theme-danger );
 		outline-offset: 2px;

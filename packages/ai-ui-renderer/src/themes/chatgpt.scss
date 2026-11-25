@@ -67,6 +67,12 @@ SOFTWARE.
 	--ai-ui-theme-heading-2-line-height: var( --font-heading-sm-line-height, 1.625rem );
 	--ai-ui-theme-heading-3-size: var( --font-heading-xs-size, 1rem );
 	--ai-ui-theme-heading-3-line-height: var( --font-heading-xs-line-height, 1.5rem );
+	// Chips follow the Apps SDK's outline pill button.
+	--ai-ui-theme-chip-text: var( --ai-ui-theme-text-secondary );
+	--ai-ui-theme-chip-border-hover: light-dark( rgb( 13 13 13 / 20% ), rgb( 255 255 255 / 30% ) );
+	--ai-ui-theme-chip-hover: light-dark( rgb( 13 13 13 / 2% ), rgb( 255 255 255 / 4% ) );
+	--ai-ui-theme-chip-padding: 1rem;
+	--ai-ui-theme-chip-font-weight: var( --font-weight-medium, 500 );
 }
 
 @include theme.preset( chatgpt );
