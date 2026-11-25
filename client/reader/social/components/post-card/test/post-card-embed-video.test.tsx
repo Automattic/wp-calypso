@@ -15,7 +15,9 @@ const mockHls = {
 };
 
 vi.mock( 'hls.js', () => {
-	const HlsCtor = vi.fn().mockImplementation( () => mockHls );
+	const HlsCtor = vi.fn( function () {
+		return mockHls;
+	} );
 	( HlsCtor as unknown as { isSupported: () => boolean } ).isSupported = () => true;
 	return { __esModule: true, default: HlsCtor };
 } );

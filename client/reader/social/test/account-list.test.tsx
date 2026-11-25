@@ -2,8 +2,8 @@
  * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
 import { vi } from 'vitest';
+import { mockAllIsIntersecting } from 'calypso/test-helpers/intersection-observer';
 import { SocialAccountList } from '../account-list';
 
 interface FakeItem {
