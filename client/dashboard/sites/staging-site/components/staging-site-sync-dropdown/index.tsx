@@ -8,13 +8,13 @@ import { DropdownMenu, MenuGroup, MenuItem } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, cloudDownload, cloudUpload } from '@wordpress/icons';
 import { useState, lazy, Suspense } from 'react';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { isDashboardBackport } from '../../../../utils/is-dashboard-backport';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
 	hasStagingSiteSyncTimedOut,
 	isStagingSiteSyncing,
-} from '../../utils/site-staging-site';
+} from '../../utils';
 import StagingSiteSyncModal from '../staging-site-sync-modal';
 import type { StagingSiteSyncDirection } from '@automattic/api-core';
 

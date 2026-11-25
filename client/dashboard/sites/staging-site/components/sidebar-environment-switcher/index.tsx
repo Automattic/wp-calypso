@@ -1,13 +1,13 @@
 import { __experimentalHStack as HStack, Button, Dropdown } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronUpDown } from '@wordpress/icons';
-import Environment from '../../components/environment';
-import { canManageSite } from '../features';
+import { canManageSite } from '../../../features';
+import useStagingSite from '../../hooks/use-staging-site';
+import Environment from '../environment';
 import EnvironmentSwitcherDropdown from './environment-switcher-dropdown';
-import useStagingSite from './use-staging-site';
 import type { Site } from '@automattic/api-core';
 
-import './sidebar-environment-switcher.scss';
+import './style.scss';
 
 const SidebarEnvironmentSwitcher = ( { site }: { site: Site } ) => {
 	const {

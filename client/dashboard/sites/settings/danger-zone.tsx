@@ -16,7 +16,7 @@ import { canTransferSite, canLeaveSite } from '../features';
 import SiteDeleteModal from '../site-delete-modal';
 import SiteLeaveModal from '../site-leave-modal';
 import SiteResetModal from '../site-reset-modal';
-import StagingSiteDeleteModal from '../staging-site-delete-modal';
+import StagingSiteDeleteModal from '../staging-site/components/staging-site-delete-modal';
 import type { Site } from '@automattic/api-core';
 
 const RestorePlanSoftwareAction = ( { site }: { site: Site } ) => {

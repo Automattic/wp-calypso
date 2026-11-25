@@ -314,7 +314,7 @@ export default defineConfig( [
 			'sites/settings-repositories/test/configure-repository.test.tsx',
 			'sites/settings-repositories/test/connect-repository.test.tsx',
 			'sites/site-plans/test/index.test.tsx',
-			'sites/staging-site-delete-modal/test/index.test.tsx',
+			'sites/staging-site/components/staging-site-delete-modal/test/index.test.tsx',
 		],
 		rules: {
 			'dashboard-tests/no-router-mocks': 'off',

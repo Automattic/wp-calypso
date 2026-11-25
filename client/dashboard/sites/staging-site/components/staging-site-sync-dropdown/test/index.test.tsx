@@ -8,7 +8,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { render } from '../../../test-utils';
+import { render } from '../../../../../test-utils';
 import StagingSiteSyncDropdown from '../index';
 import type { Site } from '@automattic/api-core';
 
@@ -20,7 +20,7 @@ vi.mock( '@automattic/calypso-config', () => {
 		wpcom_url: 'https://wordpress.com',
 	};
 	globalThis.window.electron = {};
-	return import( '../../../../../packages/calypso-config/src' );
+	return import( '../../../../../../../packages/calypso-config/src' );
 } );
 
 const createMockSite = ( options = {} ): Site =>

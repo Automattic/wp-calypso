@@ -7,7 +7,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useRef, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
-import SyncDropdown from 'calypso/dashboard/sites/staging-site-sync-dropdown';
+import SyncDropdown from 'calypso/dashboard/sites/staging-site/components/staging-site-sync-dropdown';
 import { isAtomicTransferredSite } from 'calypso/dashboard/utils/site-atomic-transfers';
 import { useCheckSyncStatus } from 'calypso/sites/staging-site/hooks/use-site-sync-status';
 import { useStagingSite } from 'calypso/sites/staging-site/hooks/use-staging-site';

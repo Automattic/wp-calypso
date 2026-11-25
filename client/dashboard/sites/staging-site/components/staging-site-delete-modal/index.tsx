@@ -14,11 +14,11 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useAnalytics } from '../../app/analytics';
-import { ButtonStack } from '../../components/button-stack';
-import Notice from '../../components/notice';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { getProductionSiteId, isStagingSiteSyncing } from '../../utils/site-staging-site';
+import { useAnalytics } from '../../../../app/analytics';
+import { ButtonStack } from '../../../../components/button-stack';
+import Notice from '../../../../components/notice';
+import { isDashboardBackport } from '../../../../utils/is-dashboard-backport';
+import { getProductionSiteId, isStagingSiteSyncing } from '../../utils';
 import type { Site } from '@automattic/api-core';
 
 export default function StagingSiteDeleteModal( {
