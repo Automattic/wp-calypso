@@ -42,7 +42,7 @@ vi.mock( 'calypso/my-sites/people/team-members-site-transfer', () => ( {
 	),
 } ) );
 
-const post = ( await import( 'calypso/lib/wp' ) ).req.post as Mock;
+const post = ( await import( 'calypso/lib/wp' ) ).default.req.post as Mock;
 const useUsersQuery = ( await import( 'calypso/data/users/use-users-query' ) )
 	.default as unknown as Mock;
 

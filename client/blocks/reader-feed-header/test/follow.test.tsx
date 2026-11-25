@@ -47,7 +47,7 @@ describe( 'ReaderFeedHeaderFollow', () => {
 
 	const lastFollowButtonProps = () => vi.mocked( ReaderFollowButton ).mock.lastCall![ 0 ];
 	const isDialogVisible = () =>
-		( ReaderSuggestedFollowsDialog as Mock ).mock.lastCall[ 0 ].isVisible;
+		( ReaderSuggestedFollowsDialog as Mock ).mock.lastCall![ 0 ].isVisible;
 
 	beforeEach( () => {
 		vi.clearAllMocks();
