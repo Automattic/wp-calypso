@@ -2965,6 +2965,7 @@ describe( 'Site Migration Flow', () => {
 						from: 'oldsite.com',
 					},
 				} );
+				expect( destination.query.get( 'preventTicketCreation' ) ).toBeNull();
 			} );
 		} );
 
@@ -3219,6 +3220,7 @@ describe( 'Site Migration Flow', () => {
 					query: {
 						siteSlug: 'example.wordpress.com',
 						siteId: 123,
+						preventTicketCreation: true,
 					},
 				} );
 			} );

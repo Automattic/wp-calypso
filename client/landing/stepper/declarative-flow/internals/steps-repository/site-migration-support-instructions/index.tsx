@@ -53,6 +53,8 @@ export const SiteMigrationSupportInstructions: StepType = () => {
 	const variation = query.get( 'variation' ) || 'default';
 	const siteSlug = query.get( 'siteSlug' ) || '';
 	const fromUrl = query.get( 'from' ) || '';
+	// Set after the survey, whose answers wpcom only saves onto an existing ticket (`wpcom-survey` fails without one).
+	const preventTicketCreation = query.get( 'preventTicketCreation' ) === 'true';
 	const locale = useLocale();
 
 	const subHeaderOptions = useMemo(
@@ -103,8 +105,10 @@ export const SiteMigrationSupportInstructions: StepType = () => {
 			automated_migration: true,
 		} );
 
-		requestMigration();
-	}, [ requestMigration ] );
+		if ( ! preventTicketCreation ) {
+			requestMigration();
+		}
+	}, [ requestMigration, preventTicketCreation ] );
 
 	// When wpcom refused the request, our team already knows and will reach out, as this page says.
 	const ticketErrorCode = getErrorCode( ticketError );
