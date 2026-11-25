@@ -53,6 +53,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		isChatLoaded,
 		forceEmailSupport: contextForceEmailSupport,
 		humanSupportRouting,
+		pendingHumanSupportRequest,
 	} = useOdieAssistantContext();
 
 	const { mostRecentSupportInteractionId, hasReachedLimit: isConversationLimitReached } =
@@ -67,8 +68,10 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	const isEmailForced = forceEmailSupport || contextForceEmailSupport;
 	const hasZendeskAccess = canConnectToZendesk || contextCanConnectToZendesk;
 
-	// Hidden when the user is already talking to a human or transferring to Zendesk.
-	const isHidden = chat.provider !== 'odie' || chat.status === 'transfer';
+	// Hidden when the user is already talking to a human or transferring to Zendesk, or when a
+	// routing step has the request: asking again would only start the step over.
+	const isHidden =
+		chat.provider !== 'odie' || chat.status === 'transfer' || !! pendingHumanSupportRequest;
 
 	const getButtonConfig = (): ButtonConfig[] => {
 		const buttons: ButtonConfig[] = [];

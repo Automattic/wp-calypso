@@ -147,6 +147,7 @@ export type Context = {
 		is_emergency?: boolean;
 		emergency_type?: string | null;
 		route_to_email?: boolean;
+		is_unknown_charge?: boolean;
 	};
 };
 
@@ -308,6 +309,7 @@ export type HumanSupportFlags = {
 	isEmergency: boolean;
 	emergencyType: string | null;
 	routeToEmail: boolean;
+	isUnknownCharge: boolean;
 };
 
 export type HumanSupportRequest = {

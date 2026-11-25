@@ -4,6 +4,7 @@ export const NO_HUMAN_SUPPORT_FLAGS: HumanSupportFlags = {
 	isEmergency: false,
 	emergencyType: null,
 	routeToEmail: false,
+	isUnknownCharge: false,
 };
 
 /** The flags the bot sent with a request for a human. */
@@ -14,6 +15,7 @@ export const getHumanSupportFlags = ( message?: Message ): HumanSupportFlags => 
 		isEmergency: !! flags?.is_emergency,
 		emergencyType: flags?.emergency_type ?? null,
 		routeToEmail: !! flags?.route_to_email,
+		isUnknownCharge: !! flags?.is_unknown_charge,
 	};
 };
 
@@ -29,7 +31,8 @@ export const getLatestHumanSupportFlags = ( messages: Message[] = [] ): HumanSup
  * existing-conversation prompt, so a request started from that message keeps them.
  */
 export const withHumanSupportFlags = ( message: Message, botMessage: Message ): Message => {
-	const { is_emergency, emergency_type, route_to_email } = botMessage.context?.flags ?? {};
+	const { is_emergency, emergency_type, route_to_email, is_unknown_charge } =
+		botMessage.context?.flags ?? {};
 
 	return {
 		...message,
@@ -41,6 +44,7 @@ export const withHumanSupportFlags = ( message: Message, botMessage: Message ): 
 				...( is_emergency !== undefined && { is_emergency } ),
 				...( emergency_type !== undefined && { emergency_type } ),
 				...( route_to_email !== undefined && { route_to_email } ),
+				...( is_unknown_charge !== undefined && { is_unknown_charge } ),
 			},
 		},
 	};
