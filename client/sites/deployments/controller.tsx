@@ -1,5 +1,5 @@
 import { DotcomFeatures } from '@automattic/api-core';
-import { DeploymentsCallout } from 'calypso/dashboard/sites/deployments/deployments-callout';
+import { DeploymentsCallout } from 'calypso/dashboard/sites/deployments/components/deployments-callout';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';

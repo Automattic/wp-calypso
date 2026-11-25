@@ -1706,7 +1706,7 @@ const agencySiteDeploymentsRoute = createRoute( {
 	getParentRoute: () => agencySiteRoute,
 	path: 'deployments',
 } ).lazy( () =>
-	import( '../../sites/deployments' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/deployments/layout' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-deployments' )( {
 			component: d.default,
 		} )
@@ -1721,7 +1721,7 @@ const agencySiteDeploymentsListRoute = createRoute( {
 		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/deployments-list' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/deployments' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-deployments-list' )( {
 			component: d.default,
 		} )
@@ -2157,7 +2157,7 @@ const agencySiteSettingsRepositoriesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/repositories' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-repositories' )( {
 			component: d.default,
 		} )
@@ -2172,7 +2172,7 @@ const agencySiteSettingsRepositoriesConnectRoute = createRoute( {
 		queryClient.prefetchQuery( githubInstallationsQuery() );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/repositories/connect' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-repositories-connect' )( {
 			component: d.default,
 		} )
@@ -2191,10 +2191,11 @@ const agencySiteSettingsRepositoriesManageRoute = createRoute( {
 		await queryClient.ensureQueryData( codeDeploymentQuery( site.ID, deploymentId ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
-		createLazyRoute( 'agency-site-settings-repositories-manage' )( {
-			component: d.default,
-		} )
+	import( '../../app-dotcom/routes/sites/site/settings/repositories/manage/deployment' ).then(
+		( d ) =>
+			createLazyRoute( 'agency-site-settings-repositories-manage' )( {
+				component: d.default,
+			} )
 	)
 );
 

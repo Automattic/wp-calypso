@@ -1,6 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { getDeploymentTypeFromPath } from 'calypso/dashboard/sites/settings-repositories/deployment-tracks';
+import { getDeploymentTypeFromPath } from 'calypso/dashboard/sites/deployments/utils/deployment-tracks';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

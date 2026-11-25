@@ -344,7 +344,7 @@ export const siteDeploymentsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
 } ).lazy( () =>
-	import( '../../sites/deployments' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/deployments/layout' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
 			component: d.default,
 		} )
@@ -359,7 +359,7 @@ export const siteDeploymentsListRoute = createRoute( {
 		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/deployments-list' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments-list' )( {
 			component: d.default,
 		} )
@@ -1661,7 +1661,7 @@ export const siteSettingsRepositoriesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/repositories' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories' )( {
 			component: d.default,
 		} )
@@ -1682,7 +1682,7 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 		queryClient.prefetchQuery( githubInstallationsQuery() );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/repositories/connect' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-connect' )( {
 			component: d.default,
 		} )
@@ -1707,10 +1707,11 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 		await queryClient.ensureQueryData( codeDeploymentQuery( site.ID, deploymentId ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-repositories-manage' )( {
-			component: d.default,
-		} )
+	import( '../../app-dotcom/routes/sites/site/settings/repositories/manage/deployment' ).then(
+		( d ) =>
+			createLazyRoute( 'site-settings-repositories-manage' )( {
+				component: d.default,
+			} )
 	)
 );
 
