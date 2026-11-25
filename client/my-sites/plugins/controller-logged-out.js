@@ -203,7 +203,6 @@ export async function fetchPlugins( context, next ) {
 	next();
 }
 
-/** The requested page of a paginated category, or null when `page` is invalid or out of range. */
 const getRequestedCategoryPage = ( context ) => {
 	const page = parseCategoryPage( context.query?.[ CATEGORY_PAGE_QUERY_ARG ] );
 	const category = getCategoryForPluginsBrowser( context );
@@ -227,8 +226,7 @@ export function validateCategoryPage( context, next ) {
 		return context.res.redirect( 301, url.pathname + url.search );
 	}
 
-	// The client shows the first page for these, so they're canonical to it. They skip SSR,
-	// so they never fill the markup and state caches.
+	// The client shows the first page, so it's canonical; skipping SSR keeps these out of the caches.
 	if ( ! getRequestedCategoryPage( context ) ) {
 		context.excludeSearchFromCanonicalUrl = true;
 		return next();

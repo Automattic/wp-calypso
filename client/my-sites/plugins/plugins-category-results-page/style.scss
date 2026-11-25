@@ -1,7 +1,6 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
-// Page numbers sit above the previous and next links on small screens, and between them from medium up.
 .plugins-category-results-page__pagination {
 	display: grid;
 	grid-template-areas:
