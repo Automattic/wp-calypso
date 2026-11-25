@@ -1,26 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+
+import { type Mock, vi } from 'vitest';
+import { injectFingerprint } from '../fingerprint';
 
 const MOCK_VISITOR_ID = 'mock-visitor-id-123';
 
-jest.mock( '@fingerprintjs/fingerprintjs', () => ( {
-	load: jest.fn( () =>
-		Promise.resolve( {
-			get: jest.fn( () => Promise.resolve( { visitorId: MOCK_VISITOR_ID } ) ),
-		} )
-	),
-} ) );
-
-import { injectFingerprint } from '../fingerprint';
+vi.mock( '@fingerprintjs/fingerprintjs', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		load: vi.fn( () =>
+			Promise.resolve( {
+				get: vi.fn( () => Promise.resolve( { visitorId: MOCK_VISITOR_ID } ) ),
+			} )
+		),
+	} )
+);
 
 describe( '#injectFingerprint', () => {
-	let wpcom: { request: jest.Mock };
-	let originalRequest: jest.Mock;
-	const callback = jest.fn();
+	let wpcom: { request: Mock };
+	let originalRequest: Mock;
+	const callback = vi.fn();
 
 	beforeEach( () => {
-		originalRequest = jest.fn();
+		originalRequest = vi.fn();
 		wpcom = { request: originalRequest };
 	} );
 

@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import redirectLoggedIn from 'calypso/login/redirect-logged-in/index.web';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 const originalLocation = window.location;
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	isUserLoggedIn: jest.fn(),
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	isUserLoggedIn: vi.fn(),
 } ) );
 
 describe( 'redirectLoggedIn', () => {
@@ -15,19 +16,19 @@ describe( 'redirectLoggedIn', () => {
 
 	describe( 'when user is logged in', () => {
 		beforeEach( () => {
-			jest.resetAllMocks();
+			vi.resetAllMocks();
 			isUserLoggedIn.mockReturnValue( true );
 
 			context = {
 				store: {
-					getState: jest.fn(),
+					getState: vi.fn(),
 				},
 				query: {},
 			};
-			next = jest.fn();
+			next = vi.fn();
 
 			Object.defineProperty( window, 'location', {
-				value: { assign: jest.fn(), pathname: '', origin: 'https://wordpress.com' },
+				value: { assign: vi.fn(), pathname: '', origin: 'https://wordpress.com' },
 				writable: true,
 			} );
 		} );

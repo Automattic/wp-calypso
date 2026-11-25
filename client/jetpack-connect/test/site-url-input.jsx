@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render } from '@testing-library/react';
+import { vi } from 'vitest';
 import JetpackConnectSiteUrlInput from '../site-url-input';
 
 const requiredProps = { translate: ( string ) => string };
@@ -51,7 +52,7 @@ describe( 'JetpackConnectSiteUrlInput', () => {
 	} );
 
 	test( 'Should call onSubmit when URL is valid', () => {
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 		const { container } = render(
 			<JetpackConnectSiteUrlInput { ...requiredProps } url="valid.com" onSubmit={ onSubmit } />
 		);

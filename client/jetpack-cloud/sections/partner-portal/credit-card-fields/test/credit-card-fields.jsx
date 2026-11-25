@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { ThemeProvider } from '@emotion/react';
@@ -9,32 +9,33 @@ import { render } from '@testing-library/react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import CreditCardFields from '../index';
 
 const mockUseSelector = () => () => null;
 
-jest.mock( '@stripe/stripe-js', () => ( {
+vi.mock( '@stripe/stripe-js', () => ( {
 	loadStripe: () => null,
 } ) );
 
-jest.mock( '@wordpress/data' );
+vi.mock( '@wordpress/data' );
 
-jest.mock( '../set-as-primary-payment-method', () => {
-	const component = jest.requireActual( '../set-as-primary-payment-method' ).default;
+vi.mock( '../set-as-primary-payment-method', async () => {
+	const component = ( await vi.importActual( '../set-as-primary-payment-method' ) ).default;
 	const paymentMethodComponent = ( args ) => {
 		const props = {
 			...args,
 			isChecked: true,
 			isDisabled: true,
-			onChange: jest.fn(),
+			onChange: vi.fn(),
 		};
 		return component( props );
 	};
-	return paymentMethodComponent;
+	return { ...paymentMethodComponent, default: paymentMethodComponent };
 } );
 
-jest.mock( 'calypso/jetpack-cloud/sections/partner-portal/hooks', () => {
-	const items = jest.requireActual( 'calypso/jetpack-cloud/sections/partner-portal/hooks' );
+vi.mock( 'calypso/jetpack-cloud/sections/partner-portal/hooks', async () => {
+	const items = await vi.importActual( 'calypso/jetpack-cloud/sections/partner-portal/hooks' );
 	return {
 		...items,
 		useRecentPaymentMethodsQuery: () => {
@@ -49,7 +50,7 @@ jest.mock( 'calypso/jetpack-cloud/sections/partner-portal/hooks', () => {
 describe( '<CreditCardFields>', () => {
 	beforeEach( () => {
 		// Re-mock dependencies
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		useDispatch.mockImplementation( mockUseSelector );
 		useSelect.mockImplementation( mockUseSelector );
 	} );

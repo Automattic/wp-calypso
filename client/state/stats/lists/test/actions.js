@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
@@ -29,7 +30,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( 'receiveSiteStats()', () => {

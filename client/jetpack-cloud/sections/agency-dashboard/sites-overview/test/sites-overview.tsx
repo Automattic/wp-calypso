@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -10,20 +10,23 @@ import React, { type JSX } from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import SitesOverviewContext from '../context';
 import SitesOverview from '../index';
 
-jest.mock( '@automattic/viewport' );
+vi.mock( '@automattic/viewport' );
 
-window.IntersectionObserver = jest.fn( () => ( {
-	observe: jest.fn(),
-	disconnect: jest.fn(),
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	takeRecords: jest.fn(),
-	unobserve: jest.fn(),
-} ) );
+window.IntersectionObserver = vi.fn( function () {
+	return {
+		observe: vi.fn(),
+		disconnect: vi.fn(),
+		root: null,
+		rootMargin: '',
+		thresholds: [],
+		takeRecords: vi.fn(),
+		unobserve: vi.fn(),
+	};
+} );
 
 describe( '<SitesOverview>', () => {
 	const initialState = {
@@ -189,7 +192,7 @@ describe( '<SitesOverview>', () => {
 		setData();
 
 		//set screen to widescreen for this test
-		jest.mocked( isWithinBreakpoint ).mockReturnValue( true );
+		vi.mocked( isWithinBreakpoint ).mockReturnValue( true );
 
 		const { queryByText } = render( <Wrapper context={ context } /> );
 
@@ -199,6 +202,6 @@ describe( '<SitesOverview>', () => {
 		expect( issueLicenseButton ).toBeInTheDocument();
 
 		// set screen back to mobile for rest of tests
-		jest.mocked( isWithinBreakpoint ).mockReturnValue( false );
+		vi.mocked( isWithinBreakpoint ).mockReturnValue( false );
 	} );
 } );

@@ -457,6 +457,53 @@ describe( 'WebMCP adapter', () => {
 		expect( blocks.parse ).toHaveBeenCalledWith( expect.stringContaining( 'Pattern heading' ) );
 	} );
 
+	it( 'numbers pattern markup insertions from the start when no index is given', async () => {
+		vi.mocked( blocks.parse ).mockReturnValue( [
+			{
+				clientId: 'parsed-heading',
+				name: 'core/heading',
+				isValid: true,
+				attributes: { content: 'Pattern heading' },
+				innerBlocks: [],
+			},
+			{
+				clientId: 'parsed-paragraph',
+				name: 'core/paragraph',
+				isValid: true,
+				attributes: { content: 'Pattern copy' },
+				innerBlocks: [],
+			},
+		] );
+		const harness = createHarness();
+		await harness.adapter.sync();
+
+		await harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {
+			inserts: [
+				{
+					blockMarkup:
+						'<!-- wp:heading --><h2 class="wp-block-heading">Pattern heading</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Pattern copy</p><!-- /wp:paragraph -->',
+				},
+			],
+		} );
+
+		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith(
+			'big-sky/apply-block-edits',
+			{
+				inserts: [
+					{
+						index: 0,
+						block: { name: 'core/heading', attributes: { content: 'Pattern heading' } },
+					},
+					{
+						index: 1,
+						block: { name: 'core/paragraph', attributes: { content: 'Pattern copy' } },
+					},
+				],
+				reverseMap: {},
+			}
+		);
+	} );
+
 	it( 'rejects empty pattern markup before dispatching the edit', async () => {
 		const harness = createHarness();
 		await harness.adapter.sync();

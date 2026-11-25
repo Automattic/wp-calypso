@@ -1,22 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import TwoFactorContent from 'calypso/blocks/login/two-factor-authentication/two-factor-content';
 import loginReducer from 'calypso/state/login/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-const mockIsWebAuthnSupported = jest.fn();
+const mockIsWebAuthnSupported = vi.fn();
 
-jest.mock( 'calypso/lib/webauthn', () => ( {
-	...jest.requireActual( 'calypso/lib/webauthn' ),
+vi.mock( 'calypso/lib/webauthn', async () => ( {
+	...( await vi.importActual( 'calypso/lib/webauthn' ) ),
 	isWebAuthnSupported: () => mockIsWebAuthnSupported(),
 } ) );
 
-const mockLoginUserWithSecurityKey = jest.fn();
+const mockLoginUserWithSecurityKey = vi.fn();
 
-jest.mock( 'calypso/state/login/actions/login-user-with-security-key', () => ( {
+vi.mock( 'calypso/state/login/actions/login-user-with-security-key', () => ( {
 	loginUserWithSecurityKey: () => () => mockLoginUserWithSecurityKey(),
 } ) );
 
@@ -69,7 +70,7 @@ describe( 'TwoFactorContent', () => {
 		} );
 
 		test( 'offers the other advertised methods', async () => {
-			const switchTwoFactorAuthType = jest.fn();
+			const switchTwoFactorAuthType = vi.fn();
 			renderContent( {
 				supportedAuthTypes: [ 'webauthn', 'sms', 'backup' ],
 				isBrowserSupported: false,

@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import SiteStatusContent from '../site-status-content';
 
-jest.mock( 'react', () => ( {
-	...jest.requireActual( 'react' ),
-	useContext: jest.fn().mockReturnValue( {} ),
+vi.mock( 'react', async () => ( {
+	...( await vi.importActual( 'react' ) ),
+	useContext: vi.fn().mockReturnValue( {} ),
 } ) );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn().mockReturnValue( () => null ),
-	useDispatch: jest.fn().mockReturnValue( () => {} ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn().mockReturnValue( () => null ),
+	useDispatch: vi.fn().mockReturnValue( () => {} ),
 } ) );
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useTranslate: jest.fn().mockReturnValue( ( str ) => str ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual( 'i18n-calypso' ) ),
+	useTranslate: vi.fn().mockReturnValue( ( str ) => str ),
 } ) );
-jest.mock( '../site-set-favorite' );
+vi.mock( '../site-set-favorite' );
 
 describe( 'SiteStatusContent', () => {
 	it( 'renders the correct Activity Log link for sites with a path component', () => {

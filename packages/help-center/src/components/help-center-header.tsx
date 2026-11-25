@@ -152,7 +152,7 @@ const EllipsisMenu = () => {
 
 const useHeaderText = () => {
 	const { __ } = useI18n();
-	const { pathname } = useLocation();
+	const { pathname, search } = useLocation();
 	const { data: currentSupportInteraction } = useCurrentSupportInteraction();
 	const { launcherContext } = useHelpCenterContext();
 	const hasEnTranslation = useHasEnTranslation();
@@ -160,6 +160,10 @@ const useHeaderText = () => {
 	const isConversationWithZendesk = currentSupportInteraction?.events.some(
 		( event ) => event.event_source === 'zendesk'
 	);
+	// A chat that goes straight to a person is the support team's from the start, even before its
+	// Zendesk conversation exists. Once that's being created, `direct-zd-chat` replaces `provider`.
+	const params = new URLSearchParams( search );
+	const isDirectChat = params.get( 'provider' ) === 'zendesk' || params.has( 'direct-zd-chat' );
 	// Same gate as the greeting, plus the title's own translation so a locale
 	// never shows an English title over a localized panel.
 	const isPlansPresales =
@@ -180,7 +184,7 @@ const useHeaderText = () => {
 			case '/success':
 				return __( 'Message Submitted', __i18n_text_domain__ );
 			case '/odie':
-				if ( isConversationWithZendesk ) {
+				if ( isConversationWithZendesk || isDirectChat ) {
 					return __( 'Support Team', __i18n_text_domain__ );
 				}
 				return isPlansPresales
@@ -193,7 +197,7 @@ const useHeaderText = () => {
 			default:
 				return __( 'Help Center', __i18n_text_domain__ );
 		}
-	}, [ __, isConversationWithZendesk, isPlansPresales, pathname ] );
+	}, [ __, isConversationWithZendesk, isDirectChat, isPlansPresales, pathname ] );
 };
 
 const HeaderText = () => {

@@ -23,6 +23,13 @@ precedence and the canvas guard. Registry-only abilities run through the registr
 (`prepareToolInput()`), remembers the block-tree IDs (`rememberBlockClientIds()`) and adapts the
 result (`adaptToolResult()`).
 
+`withBlockEditCorrections()` (`block-edit-correction-provider.ts`) sends each block edit, with the
+live block tree, to the server's `wpcom/correct-block-edits` before applying it, so it gets the
+checks and fixes the chat's block edits get. It applies the corrected edits, or returns the server's
+`unchanged` result or error without applying anything. It also refuses the edits if the editor moved
+to another page meanwhile. Sites that don't serve the ability, such as Atomic sites, apply the edits
+as sent.
+
 Provider calls carry `toolCallId: null` (`withoutChatToolCalls()` in `non-chat-call-provider.ts`),
 so a WebMCP edit takes no undo checkpoint and never adds to the chat's. A chat Undo still restores
 its whole snapshot, so it also removes later edits to the same part of the page, the user's or a
@@ -138,6 +145,8 @@ DevTools or call `document.modelContext` directly for this path.
    `big_sky__show_template`, then reads the tree again.
 3. Ask the agent to change a block, or insert a small test block on an empty page. Confirm it uses a
    client ID from the latest tree, and that the expected block and attributes are on the canvas.
+   Ask it to delete the only button in a buttons block, and confirm the whole buttons block goes, as
+   `wpcom/correct-block-edits` corrects it.
 4. Ask the agent to add a section, such as a heading and a paragraph, as block markup. Confirm it
    passes the markup to `big_sky__apply_block_edits` as `inserts[0].blockMarkup` and that the blocks
    appear on the canvas in order.

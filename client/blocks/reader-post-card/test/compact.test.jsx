@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import CompactPost from '../compact';
 
-jest.mock( '@automattic/viewport-react', () => ( {
+vi.mock( '@automattic/viewport-react', () => ( {
 	useBreakpoint: () => false,
 } ) );
-jest.mock( 'calypso/blocks/reader-excerpt', () => () => null );
-jest.mock( 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu', () => () => null );
-jest.mock( 'calypso/reader/follow-button', () => () => null );
-jest.mock( '../featured-asset', () => () => null );
-jest.mock( '../freshly-pressed-badge', () => ( {
+vi.mock( 'calypso/blocks/reader-excerpt', () => ( { default: () => null } ) );
+vi.mock( 'calypso/blocks/reader-post-options-menu/reader-post-ellipsis-menu', () => ( {
+	default: () => null,
+} ) );
+vi.mock( 'calypso/reader/follow-button', () => ( { default: () => null } ) );
+vi.mock( '../featured-asset', () => ( { default: () => null } ) );
+vi.mock( '../freshly-pressed-badge', () => ( {
 	FreshlyPressedBadge: ( { displayedOn } ) => <div>Freshly Pressed on { displayedOn }</div>,
 } ) );
 

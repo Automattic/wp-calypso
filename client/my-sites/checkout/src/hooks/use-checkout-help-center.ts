@@ -215,10 +215,12 @@ export const useCheckoutHelpCenter = (): {
 			setNavigateToRoute( urlWithQueryArgs );
 		} else if ( checkoutSupportVariation === 'human_only' ) {
 			// The variation grants premium support, so users without a paid plan reach a human too.
+			// The chat starts with their first message, so just opening it makes no ticket.
 			setNavigateToRoute(
 				addQueryArgs( '/odie?provider=zendesk', {
 					siteUrl: siteSlug ?? undefined,
 					siteId: siteId ?? undefined,
+					'start-on-message': 1,
 				} )
 			);
 		} else {

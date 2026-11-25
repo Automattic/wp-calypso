@@ -21,6 +21,10 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
+import {
+	START_ON_MESSAGE_PARAM,
+	useIsPendingDirectChat,
+} from '../../hooks/use-is-pending-direct-chat';
 import { useLoggedOutSession } from '../../hooks/use-logged-out-session';
 import { useOpenInteractionStatusMap } from '../../hooks/use-open-interaction-status-map';
 import { getOpenLiveInteractions } from '../../utils/get-open-live-interactions';
@@ -65,6 +69,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
 	const isStartingDirectChat = isForwardingToZendesk && canRequestHuman && ! chat.conversationId;
+	const isPendingDirectChat = useIsPendingDirectChat();
 	const isWaitingForChatClient = isStartingDirectChat && ! forceEmailSupport && ! isChatLoaded;
 	const [ hasChatClientTimedOut, setHasChatClientTimedOut ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
@@ -186,6 +191,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 		searchParams.delete( 'id' );
 		setSearchParams( searchParams );
+
+		// The first message starts this chat. Opening it starts nothing.
+		if ( searchParams.has( START_ON_MESSAGE_PARAM ) ) {
+			return;
+		}
+
 		requestHumanSupport( {
 			createdFrom: 'direct_url',
 			flags: NO_HUMAN_SUPPORT_FLAGS,
@@ -250,7 +261,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				>
 					<Spinner />
 				</div>
-				{ ( chat.odieId || chat.provider !== 'zendesk' ) && (
+				{ ( chat.odieId || ( chat.provider !== 'zendesk' && ! isPendingDirectChat ) ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
 							currentUser?.display_name,

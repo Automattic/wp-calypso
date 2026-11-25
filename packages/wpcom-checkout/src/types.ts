@@ -5,7 +5,6 @@ export type { SitelessCheckoutType } from '@automattic/shopping-cart';
 export type {
 	AdConversionDetails,
 	FailedPurchase,
-	PayPalExpressEndpointRequestPayload,
 	TaxVendorInfo,
 	ToSAcceptanceTrackingDetails,
 	TransactionDomainContactDetails,
@@ -165,7 +164,6 @@ export type CheckoutPaymentMethodSlug =
 	// ends up using this as an `id`, which overwrites `window.paypal`
 	// which is the namespace used by the PayPal JS SDK.
 	| 'paypal-js'
-	| 'paypal-express'
 	| 'paypal-direct'
 	| 'sofort'
 	| 'free-purchase'
@@ -192,7 +190,6 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_MoneyPress_Stored'
 	| 'WPCOM_Billing_Ebanx'
 	| 'WPCOM_Billing_PayPal_Direct'
-	| 'WPCOM_Billing_PayPal_Express'
 	| 'WPCOM_Billing_PayPal_PPCP'
 	| 'WPCOM_Billing_Stripe_Payment_Method'
 	| 'WPCOM_Billing_Stripe_Alipay'

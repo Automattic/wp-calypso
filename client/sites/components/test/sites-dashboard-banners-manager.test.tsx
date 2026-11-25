@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import SitesDashboardBannersManager from '../sites-dashboard-banners-manager';
 
 const mockStore = configureStore();
@@ -19,7 +20,7 @@ describe( 'SitesDashboardBannersManager', () => {
 
 	it( 'renders restore sites banner when ?restored=true param exists', () => {
 		// Setup URLSearchParams mock
-		const urlSearchParamsGetSpy = jest.spyOn( URLSearchParams.prototype, 'get' );
+		const urlSearchParamsGetSpy = vi.spyOn( URLSearchParams.prototype, 'get' );
 		urlSearchParamsGetSpy.mockImplementation( ( param ) =>
 			param === 'restored' ? 'true' : null
 		);

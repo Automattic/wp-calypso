@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { omit } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ContactDetailsFormFields } from '../';
@@ -12,13 +13,13 @@ const render = ( el, options ) => renderWithProvider( el, { ...options } );
 
 const noop = () => {};
 
-jest.mock( '../custom-form-fieldsets/region-address-fieldsets', () => () => (
-	<div data-testid="region-address-fieldsets" />
-) );
+vi.mock( '../custom-form-fieldsets/region-address-fieldsets', () => ( {
+	default: () => <div data-testid="region-address-fieldsets" />,
+} ) );
 
-jest.mock( 'calypso/components/forms/form-phone-media-input', () =>
-	jest.fn( () => <div data-testid="form-phone-media-input" /> )
-);
+vi.mock( 'calypso/components/forms/form-phone-media-input', () => ( {
+	default: vi.fn( () => <div data-testid="form-phone-media-input" /> ),
+} ) );
 
 describe( 'ContactDetailsFormFields', () => {
 	afterEach( () => {
@@ -196,7 +197,7 @@ describe( 'ContactDetailsFormFields', () => {
 
 	describe( 'Addresses with no province/state', () => {
 		test( 'should return province/state value when the country has states', async () => {
-			const onContactDetailsChange = jest.fn();
+			const onContactDetailsChange = vi.fn();
 
 			const { rerender } = render(
 				<ContactDetailsFormFields
@@ -219,7 +220,7 @@ describe( 'ContactDetailsFormFields', () => {
 		} );
 
 		test( 'should return province/state value when the country does not have states', () => {
-			const onContactDetailsChange = jest.fn();
+			const onContactDetailsChange = vi.fn();
 
 			const { rerender } = render(
 				<ContactDetailsFormFields

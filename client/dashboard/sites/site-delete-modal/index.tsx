@@ -26,11 +26,7 @@ import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
-import {
-	getProductionSiteId,
-	hasStagingSite,
-	isStagingSiteSyncing,
-} from '../../utils/site-staging-site';
+import { getProductionSiteId, hasStagingSite, isStagingSiteSyncing } from '../staging-site/utils';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 

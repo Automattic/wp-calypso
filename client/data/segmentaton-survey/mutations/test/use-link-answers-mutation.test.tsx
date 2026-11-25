@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import useLinkAnswersMutation from '../use-link-answers-mutation';
 
@@ -21,18 +22,20 @@ const MockedComponent = () => {
 	);
 };
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		post: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			post: vi.fn(),
+		},
+	} )
+);
 
 describe( 'useLinkAnswersMutation', () => {
 	let queryClient: QueryClient;
 	let wrapper: React.FC< React.PropsWithChildren< any > >;
 
 	beforeEach( () => {
-		jest.mocked( wpcom.req.post ).mockReset();
+		vi.mocked( wpcom.req.post ).mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -48,7 +51,7 @@ describe( 'useLinkAnswersMutation', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should call wpcom.req.post with the right parameters', async () => {

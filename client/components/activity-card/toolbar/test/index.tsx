@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import Toolbar from '../index';
 
-jest.mock( '../actions-button', () => () => <button>Actions</button> );
-jest.mock( 'calypso/lib/jetpack/backup-utils', () => ( {
+vi.mock( '../actions-button', () => ( { default: () => <button>Actions</button> } ) );
+vi.mock( 'calypso/lib/jetpack/backup-utils', () => ( {
 	isSuccessfulRealtimeBackup: () => true,
 } ) );
 

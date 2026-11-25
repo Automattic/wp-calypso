@@ -82,7 +82,9 @@ vi.mock( '../../../utils/get-open-live-interactions', () => ( {
 	getOpenLiveInteractions: () => mockGetOpenLiveInteractions(),
 } ) );
 
-vi.mock( '..', () => ( { default: () => null } ) );
+vi.mock( '..', () => ( {
+	default: ( { message }: { message: { content?: string } } ) => <p>{ message.content }</p>,
+} ) );
 vi.mock( '../jump-to-recent', () => ( { JumpToRecent: () => null } ) );
 vi.mock( '../messages-cluster/messages-cluster', () => ( { MessagesClusterizer: () => null } ) );
 vi.mock( '../thinking-placeholder', () => ( {
@@ -150,6 +152,33 @@ beforeEach( () => {
 	} );
 } );
 
+describe( 'MessagesContainer greeting', () => {
+	// The greeting introduces the AI, so someone who went straight to a person shouldn't get it.
+	it.each( [
+		[
+			'skips it while waiting to start the chat with a person',
+			'provider=zendesk',
+			'loaded',
+			false,
+		],
+		[
+			'skips it while waiting for the first message to a person',
+			'direct-zd-chat=1&start-on-message=1',
+			'loaded',
+			false,
+		],
+		[ 'skips it while the chat with a person is created', 'direct-zd-chat=1', 'transfer', false ],
+		[ 'greets when that chat fails and the AI is back', 'direct-zd-chat=1', 'loaded', true ],
+	] )( '%s', ( _name, params, chatStatus, isGreeted ) => {
+		mockSearchParams = new URLSearchParams( params );
+		mockContext( { isChatLoaded: false, chatStatus } );
+
+		render( container() );
+
+		expect( screen.queryByText( 'Hi' ) !== null ).toBe( isGreeted );
+	} );
+} );
+
 describe( 'MessagesContainer direct link to a human', () => {
 	it( 'opens a new human chat with paid support', () => {
 		// The chat client is loaded.
@@ -157,6 +186,17 @@ describe( 'MessagesContainer direct link to a human', () => {
 
 		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 		expect( mockAddMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'waits for the first message when the link asks the chat to start on one', () => {
+		// Opening it would otherwise make a ticket for someone who never asks anything.
+		mockSearchParams = new URLSearchParams( 'provider=zendesk&start-on-message=1' );
+		mockContext();
+
+		render( container() );
+
+		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
+		expect( mockSearchParams.toString() ).toBe( 'start-on-message=1&direct-zd-chat=1' );
 	} );
 
 	it( 'opens it from the chat on show when the link is followed from another chat', () => {
@@ -266,7 +306,12 @@ describe( 'MessagesContainer routing step', () => {
 		createdFrom: 'automatic_escalation',
 		isFromError: false,
 		escalationOnSecondAttempt: true,
-		flags: { isEmergency: true, emergencyType: 'site_down', routeToEmail: false },
+		flags: {
+			isEmergency: true,
+			emergencyType: 'site_down',
+			routeToEmail: false,
+			isUnknownCharge: false,
+		},
 	};
 
 	it( 'shows the routing step for a pending request', () => {

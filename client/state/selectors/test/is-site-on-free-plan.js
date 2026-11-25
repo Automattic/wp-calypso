@@ -1,9 +1,10 @@
 import { PLAN_BUSINESS, PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import isSiteOnFreePlan from '../is-site-on-free-plan';
-jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
-	getCurrentPlan: jest.fn(),
+vi.mock( 'calypso/state/sites/plans/selectors', () => ( {
+	getCurrentPlan: vi.fn(),
 } ) );
 
 describe( 'isSiteOnFreePlan', () => {

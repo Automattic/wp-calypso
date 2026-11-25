@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getNewsletterPageUrl, getSubscribersUrl } from '../get-subscribers-url';

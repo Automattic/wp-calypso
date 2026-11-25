@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { type Mock, vi } from 'vitest';
 import type * as BilmurSpaMainApp from '../main-app';
 import type * as BilmurSpaModule from '../module';
 import type { Context } from '@automattic/calypso-router';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = ( key: string ) => ( key === 'bilmur_spa_url' ? '/bilmur-spa.min.js' : '' );
 	config.isEnabled = ( feature: string ) => feature === 'bilmur-spa';
 	return { __esModule: true, default: config };
 } );
 
-jest.mock( 'calypso/sections-helper', () => ( {
+vi.mock( 'calypso/sections-helper', () => ( {
 	getSections: () => [
 		{ name: 'account', paths: [ '/me/account' ] },
 		{ name: 'disabled', paths: [ '/me/disabled' ] },
@@ -21,7 +22,7 @@ jest.mock( 'calypso/sections-helper', () => ( {
 	],
 } ) );
 
-jest.mock( 'calypso/sections-filter', () => ( {
+vi.mock( 'calypso/sections-filter', () => ( {
 	__esModule: true,
 	default: ( section: { name: string } ) => section.name !== 'disabled',
 } ) );
@@ -29,13 +30,13 @@ jest.mock( 'calypso/sections-filter', () => ( {
 describe( 'bilmur-spa main app', () => {
 	let lib: typeof BilmurSpaMainApp;
 	let loadBilmurSpa: ( typeof BilmurSpaModule )[ 'loadBilmurSpa' ];
-	let module: { init: jest.Mock; startNavigation: jest.Mock; completeNavigation: jest.Mock };
-	let importModule: jest.Mock;
+	let module: { init: Mock; startNavigation: Mock; completeNavigation: Mock };
+	let importModule: Mock;
 
 	// What the router does with a path: run the middleware, then the route's own handlers.
 	function navigate( canonicalPath: string, init = false ) {
 		const context = { canonicalPath, init } as unknown as Context;
-		const next = jest.fn();
+		const next = vi.fn();
 		lib.trackNavigationStart( context, next );
 		expect( next ).toHaveBeenCalledTimes( 1 );
 		return context;
@@ -53,11 +54,11 @@ describe( 'bilmur-spa main app', () => {
 
 	beforeEach( async () => {
 		// The library keeps its state at the module level.
-		jest.resetModules();
+		vi.resetModules();
 		lib = await import( '../main-app' );
 		( { loadBilmurSpa } = await import( '../module' ) );
-		module = { init: jest.fn(), startNavigation: jest.fn(), completeNavigation: jest.fn() };
-		importModule = jest.fn().mockResolvedValue( module );
+		module = { init: vi.fn(), startNavigation: vi.fn(), completeNavigation: vi.fn() };
+		importModule = vi.fn().mockResolvedValue( module );
 		document.head.innerHTML = '<meta id="bilmur" data-provider="wordpress.com" />';
 	} );
 

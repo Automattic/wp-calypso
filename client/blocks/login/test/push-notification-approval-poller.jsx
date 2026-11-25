@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import PushNotificationApprovalPoller from 'calypso/blocks/login/two-factor-authentication/push-notification-approval-poller';
 
-jest.mock( 'calypso/state/login/actions/remote-login-user', () => ( {
-	remoteLoginUser: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/state/login/actions/remote-login-user', () => ( {
+	remoteLoginUser: vi.fn( () => Promise.resolve() ),
 } ) );
 
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 const mockStore = configureStore( [ thunk ] );
@@ -41,7 +42,7 @@ const firstPollBody = () => mockFetch.mock.calls[ 0 ][ 1 ].body;
 
 describe( 'PushNotificationApprovalPoller', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockFetch.mockResolvedValue( {
 			json: () => Promise.resolve( { success: true, data: { token_links: [] } } ),
 		} );

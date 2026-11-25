@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -14,6 +14,7 @@ import {
 	UseShoppingCart,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
+import { type MockedFunction, vi } from 'vitest';
 import { renderHookWithProvider } from '../../../../test-helpers/testing-library';
 import {
 	recordDomainSearchStepSubmit,
@@ -22,31 +23,33 @@ import {
 } from '../analytics';
 import { getCartKey, useWPCOMDomainSearchProps } from '../use-wpcom-domain-search-props';
 
-jest.mock( '@automattic/shopping-cart', () => ( {
-	...jest.requireActual( '@automattic/shopping-cart' ),
-	useShoppingCart: jest.fn(),
+vi.mock( '@automattic/shopping-cart', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
+		'@automattic/shopping-cart'
+	) ),
+	useShoppingCart: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
 	config.isEnabled = ( flag: string ) => flag === 'domain-bundling';
-	return config;
+	return { ...config, default: config };
 } );
 
-jest.mock( '../analytics', () => ( {
-	...jest.requireActual( '../analytics' ),
-	recordDomainSearchStepSubmit: jest.fn().mockReturnValue( {
+vi.mock( '../analytics', async () => ( {
+	...( await vi.importActual< typeof import( '../analytics' ) >( '../analytics' ) ),
+	recordDomainSearchStepSubmit: vi.fn().mockReturnValue( {
 		type: 'test',
 	} ),
-	recordUseYourDomainButtonClick: jest.fn().mockReturnValue( {
+	recordUseYourDomainButtonClick: vi.fn().mockReturnValue( {
 		type: 'test',
 	} ),
-	recordSearchFormSubmitButtonClick: jest.fn().mockReturnValue( {
+	recordSearchFormSubmitButtonClick: vi.fn().mockReturnValue( {
 		type: 'test',
 	} ),
 } ) );
 
-const mockUseShoppingCart = useShoppingCart as jest.MockedFunction< typeof useShoppingCart >;
+const mockUseShoppingCart = useShoppingCart as MockedFunction< typeof useShoppingCart >;
 
 const buildShoppingCart = ( {
 	responseCart,
@@ -54,15 +57,15 @@ const buildShoppingCart = ( {
 }: Partial<
 	Omit< UseShoppingCart, 'responseCart' > & { responseCart: Partial< ResponseCart > }
 > = {} ): UseShoppingCart => ( {
-	addProductsToCart: jest.fn(),
-	removeProductFromCart: jest.fn(),
-	applyCoupon: jest.fn(),
-	removeCoupon: jest.fn(),
-	updateLocation: jest.fn(),
-	replaceProductInCart: jest.fn(),
-	replaceProductsInCart: jest.fn(),
-	reloadFromServer: jest.fn(),
-	clearMessages: jest.fn(),
+	addProductsToCart: vi.fn(),
+	removeProductFromCart: vi.fn(),
+	applyCoupon: vi.fn(),
+	removeCoupon: vi.fn(),
+	updateLocation: vi.fn(),
+	replaceProductInCart: vi.fn(),
+	replaceProductsInCart: vi.fn(),
+	reloadFromServer: vi.fn(),
+	clearMessages: vi.fn(),
 	isLoading: false,
 	loadingError: undefined,
 	loadingErrorType: undefined,
@@ -113,7 +116,7 @@ const defaultProps = {
 	flowAllowsMultipleDomainsInCart: true,
 	analyticsSection: 'analytics-section',
 	events: {
-		onContinue: jest.fn(),
+		onContinue: vi.fn(),
 	},
 };
 
@@ -834,7 +837,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'calls beforeAddDomainToCart so it is possible to modify the domain before it is added to the cart', () => {
-		const beforeAddDomainToCart = jest.fn().mockImplementation( ( domain ) => domain );
+		const beforeAddDomainToCart = vi.fn().mockImplementation( ( domain ) => domain );
 
 		mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
@@ -873,8 +876,8 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		};
 
 		it( 'continues with the domain without touching a siteless cart', async () => {
-			const replaceProductsInCart = jest.fn();
-			const onContinue = jest.fn();
+			const replaceProductsInCart = vi.fn();
+			const onContinue = vi.fn();
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
 
 			const { result } = renderHookWithProvider( () =>
@@ -897,7 +900,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 
 		it( 'marks a move of a domain connected to another site', async () => {
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
 			const { result } = renderHookWithProvider( () =>
@@ -922,7 +925,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 
 		it( 'records the site a moved domain is on now', async () => {
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart() );
 
 			const { result } = renderHookWithProvider( () =>
@@ -944,7 +947,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 
 		it( 'carries the domains already in the siteless cart along, after the moved domain', async () => {
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 			const existingDomain = buildProduct( {
 				product_slug: 'dotcom_domain',
 				meta: 'new-domain.com',
@@ -974,10 +977,10 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 
 		it( 'adds the domain to a site cart like any other domain', async () => {
-			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+			const replaceProductsInCart = vi.fn().mockResolvedValue( {
 				products: [ { meta: 'owned-domain.com', product_slug: 'domain_move_internal' } ],
 			} );
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
 
 			const { result } = renderHookWithProvider( () =>
@@ -1030,7 +1033,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			} )
 		);
 
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 		const { result } = renderHookWithProvider( () =>
 			useWPCOMDomainSearchProps( {
 				...defaultProps,
@@ -1061,7 +1064,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			} )
 		);
 
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 
 		const { result } = renderHookWithProvider( () =>
 			useWPCOMDomainSearchProps( {
@@ -1078,7 +1081,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'calls onContinue after selecting a domain if flowAllowsMultipleDomainsInCart is false', async () => {
-		const replaceProductsInCart = jest.fn().mockReturnValue( {
+		const replaceProductsInCart = vi.fn().mockReturnValue( {
 			products: [
 				{
 					meta: 'my-domain.com',
@@ -1094,7 +1097,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			} )
 		);
 
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 
 		const { result } = renderHookWithProvider( () =>
 			useWPCOMDomainSearchProps( {
@@ -1129,7 +1132,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'does not call onContinue after selecting a domain if flowAllowsMultipleDomainsInCart is true', async () => {
-		const replaceProductsInCart = jest.fn().mockReturnValue( {
+		const replaceProductsInCart = vi.fn().mockReturnValue( {
 			products: [
 				{
 					meta: 'my-domain.com',
@@ -1145,7 +1148,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			} )
 		);
 
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 
 		const { result } = renderHookWithProvider( () =>
 			useWPCOMDomainSearchProps( {
@@ -1205,7 +1208,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		};
 
 		it( 'adds one product per bundle member, with the server-issued bundle extras, in a single cart call', async () => {
-			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+			const replaceProductsInCart = vi.fn().mockResolvedValue( {
 				products: [
 					{
 						meta: 'example.com',
@@ -1235,7 +1238,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 				} )
 			);
 
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 
 			const { result } = renderHookWithProvider( () =>
 				useWPCOMDomainSearchProps( {
@@ -1277,7 +1280,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 
 		it( 'drops a standalone copy of a bundle member so the bundle-tagged product wins', async () => {
-			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+			const replaceProductsInCart = vi.fn().mockResolvedValue( {
 				products: [
 					{
 						meta: 'example.com',
@@ -1342,13 +1345,13 @@ describe( 'useWPCOMDomainSearchProps', () => {
 					extra: { domain_bundle_group_id: 'server-issued-group-id' },
 				},
 			];
-			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+			const replaceProductsInCart = vi.fn().mockResolvedValue( {
 				products: [ ...bundleCartProducts, { meta: 'unrelated.com', product_slug: 'domain' } ],
 			} );
 
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
 
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 
 			const { result } = renderHookWithProvider( () =>
 				useWPCOMDomainSearchProps( {
@@ -1367,13 +1370,13 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			// The backend all-or-nothing invariant strips an incomplete bundle
 			// group from the cart silently, so the replace resolves without the
 			// bundle members rather than rejecting.
-			const replaceProductsInCart = jest.fn().mockResolvedValue( {
+			const replaceProductsInCart = vi.fn().mockResolvedValue( {
 				products: [ { meta: 'unrelated.com', product_slug: 'domain' } ],
 			} );
 
 			mockUseShoppingCart.mockReturnValue( buildShoppingCart( { replaceProductsInCart } ) );
 
-			const onContinue = jest.fn();
+			const onContinue = vi.fn();
 
 			const { result } = renderHookWithProvider( () =>
 				useWPCOMDomainSearchProps( {
@@ -1458,7 +1461,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 		} );
 
 		it( 'removes every member of the bundle, and nothing else, in a single cart call', async () => {
-			const replaceProductsInCart = jest.fn().mockResolvedValue( { products: [] } );
+			const replaceProductsInCart = vi.fn().mockResolvedValue( { products: [] } );
 
 			const standaloneProduct = buildProduct( {
 				uuid: 'standalone',
@@ -1509,7 +1512,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'prepends products in the cart when adding a new domain', async () => {
-		const replaceProductsInCart = jest.fn();
+		const replaceProductsInCart = vi.fn();
 
 		mockUseShoppingCart.mockReturnValue(
 			buildShoppingCart( {
@@ -1526,7 +1529,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 			} )
 		);
 
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 
 		const { result } = renderHookWithProvider( () =>
 			useWPCOMDomainSearchProps( {
@@ -1552,7 +1555,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'calls both analytics and external events', () => {
-		const onExternalDomainClick = jest.fn();
+		const onExternalDomainClick = vi.fn();
 
 		const { result } = renderHookWithProvider( () =>
 			useWPCOMDomainSearchProps( {
@@ -1576,7 +1579,7 @@ describe( 'useWPCOMDomainSearchProps', () => {
 	} );
 
 	it( 'calls the submit button tracking when onSubmitButtonClick is invoked', () => {
-		const onSubmitButtonClick = jest.fn();
+		const onSubmitButtonClick = vi.fn();
 
 		const { result } = renderHookWithProvider( () =>
 			useWPCOMDomainSearchProps( {

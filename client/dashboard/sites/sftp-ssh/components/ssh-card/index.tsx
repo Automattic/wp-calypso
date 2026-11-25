@@ -1,0 +1,429 @@
+import { isWpError } from '@automattic/api-core';
+import {
+	siteSshAccessEnableMutation,
+	siteSshAccessDisableMutation,
+	siteSshKeysQuery,
+	siteSshKeysAttachMutation,
+	siteSshKeysDetachMutation,
+	sshKeysQuery,
+} from '@automattic/api-queries';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	BaseControl,
+	Button,
+	ExternalLink,
+	SelectControl,
+	ToggleControl,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { DataForm } from '@wordpress/dataviews';
+import { createInterpolateElement } from '@wordpress/element';
+import { sprintf, __ } from '@wordpress/i18n';
+import { trash } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
+import { Badge } from '@wordpress/ui';
+import { useMemo, useState } from 'react';
+import { useAuth } from '../../../../app/auth';
+import { useAppContext } from '../../../../app/context';
+import { useIntlLocale } from '../../../../app/locale';
+import { securitySshKeyRoute } from '../../../../app/router/me';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Card, CardBody } from '../../../../components/card';
+import ClipboardInputControl from '../../../../components/clipboard-input-control';
+import InlineSupportLink from '../../../../components/inline-support-link';
+import RouterLinkButton from '../../../../components/router-link-button';
+import { SectionHeader } from '../../../../components/section-header';
+import { isDashboardBackport } from '../../../../utils/is-dashboard-backport';
+import { reauthRequiredLink } from '../../../../utils/link';
+import { getSshKeyLabel, MAX_SSH_KEYS } from '../../../../utils/ssh';
+import type { SftpUser, SiteSshKey, UserSshKey } from '@automattic/api-core';
+import type { DataFormControlProps, Field } from '@wordpress/dataviews';
+
+type SshCardFormData = {
+	connection_command: string;
+	ssh_key: string;
+};
+
+const getSiteSshKeyTitle = ( siteSshKey: SiteSshKey, currentUserLogin: string ) => {
+	const label = getSshKeyLabel( siteSshKey );
+	if ( siteSshKey.user_login === currentUserLogin ) {
+		return label;
+	}
+
+	return sprintf(
+		/* translators: %1$s is the SSH key label, %2$s is the username of the key owner. */
+		__( '%1$s (%2$s)' ),
+		label,
+		siteSshKey.user_login
+	);
+};
+
+const SshKeyCard = ( {
+	siteSshKey,
+	title,
+	userLocale,
+	isBusy,
+	onDetach,
+}: {
+	siteSshKey: SiteSshKey;
+	title: string;
+	userLocale: string;
+	isBusy: boolean;
+	onDetach: ( siteSshKey: SiteSshKey ) => void;
+} ) => {
+	return (
+		<Card size="small">
+			<CardBody>
+				<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
+					<VStack spacing={ 3 } alignment="flex-start">
+						<VStack spacing={ 1 }>
+							<Text>{ title }</Text>
+							<Text variant="muted">{ siteSshKey.sha256 }</Text>
+						</VStack>
+						<Badge intent="informational" style={ { height: '24px' } }>
+							{ sprintf(
+								/* translators: %s is when the SSH key was attached. */
+								__( 'Attached on %s' ),
+								new Intl.DateTimeFormat( userLocale, {
+									dateStyle: 'long',
+									timeStyle: 'medium',
+								} ).format( new Date( siteSshKey.attached_at ) )
+							) }
+						</Badge>
+					</VStack>
+					<Button
+						icon={ trash }
+						label={ __( 'Detach' ) }
+						isBusy={ isBusy }
+						style={ { margin: '-6px' } }
+						onClick={ () => onDetach( siteSshKey ) }
+					/>
+				</HStack>
+			</CardBody>
+		</Card>
+	);
+};
+
+const AddSshKeyButton = () => {
+	const { supports } = useAppContext();
+
+	if ( isDashboardBackport() ) {
+		return (
+			<Button variant="secondary" target="_blank" href="/me/security/ssh-key" rel="noreferrer">
+				{ __( 'Add new SSH key ↗' ) }
+			</Button>
+		);
+	}
+
+	// The SSH key settings page only exists in dashboards that register the
+	// `/me/security` routes.
+	if ( ! ( supports.me && supports.me.security ) ) {
+		return null;
+	}
+
+	return (
+		<RouterLinkButton
+			to={ securitySshKeyRoute.fullPath }
+			search={ { back_to: 'site-settings-sftp-ssh' } }
+			variant="secondary"
+		>
+			{ __( 'Add new SSH key' ) }
+		</RouterLinkButton>
+	);
+};
+
+export default function SshCard( {
+	siteId,
+	sftpUsers,
+	sshEnabled,
+}: {
+	siteId: number;
+	sftpUsers: SftpUser[];
+	sshEnabled: boolean;
+} ) {
+	const { user } = useAuth();
+	const queryClient = useQueryClient();
+	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteId ) );
+	const {
+		data: userSshKeys,
+		error: userSshKeysError,
+		isFetchedAfterMount: isUserSshKeysFetchedAfterMount,
+	} = useQuery( {
+		...sshKeysQuery(),
+		enabled: sshEnabled,
+	} );
+	const toggleSshAccessMutation = useMutation(
+		! sshEnabled ? siteSshAccessEnableMutation( siteId ) : siteSshAccessDisableMutation( siteId )
+	);
+	const attachSshKeyMutation = useMutation( siteSshKeysAttachMutation( siteId ) );
+	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteId ) );
+	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const userLocale = useIntlLocale();
+	const hasUserSshKeys = userSshKeys && userSshKeys.length > 0;
+	// Take opportunity while showing the sshEnabled loading state to also fetch the user SSH keys.
+	const isLoadingUserSshKeys = sshEnabled && ! isUserSshKeysFetchedAfterMount;
+	const showSshSettings = sshEnabled && ! isLoadingUserSshKeys;
+	const [ formData, setFormData ] = useState< SshCardFormData >( {
+		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
+		ssh_key: 'default',
+	} );
+
+	const unattachedUserSshKeys = useMemo(
+		() =>
+			( userSshKeys ?? [] ).filter(
+				( userSshKey: UserSshKey ) =>
+					! siteSshKeys?.some(
+						( siteSshKey: SiteSshKey ) =>
+							siteSshKey.user_login === user.username && siteSshKey.name === userSshKey.name
+					)
+			),
+		[ userSshKeys, siteSshKeys, user.username ]
+	);
+
+	// Fall back to the first key that can still be attached, for example after the selected key was attached.
+	const selectedSshKey = unattachedUserSshKeys.some( ( { name } ) => name === formData.ssh_key )
+		? formData.ssh_key
+		: ( unattachedUserSshKeys[ 0 ]?.name ?? '' );
+	const showAttachSshKey = ! hasUserSshKeys || unattachedUserSshKeys.length > 0;
+	const showAddSshKey = ( userSshKeys?.length ?? 0 ) < MAX_SSH_KEYS;
+
+	const handleCopy = ( label?: React.ReactNode ) => {
+		if ( ! label ) {
+			return;
+		}
+
+		createSuccessNotice(
+			sprintf(
+				/* translators: %s is the copied field */
+				__( 'Copied %s to clipboard.' ),
+				String( label )
+			),
+			{
+				type: 'snackbar',
+			}
+		);
+	};
+
+	const handleToggleSshAccess = () => {
+		toggleSshAccessMutation.mutate( undefined, {
+			onSuccess: async ( { setting } ) => {
+				if ( setting === 'ssh' ) {
+					// Don't show snackbar until we know ssh keys have finished loading, so that
+					// the snackbar doesn't pop up moments before the ssh settings form.
+					try {
+						await queryClient.fetchQuery( sshKeysQuery() );
+					} catch ( error ) {
+						if ( isWpError( error ) && error.code === 'reauthorization_required' ) {
+							// We will redirect, so show no notice.
+							return;
+						}
+					}
+					createSuccessNotice( __( 'SSH access has been successfully enabled for this site.' ), {
+						type: 'snackbar',
+					} );
+				} else {
+					createSuccessNotice( __( 'SSH access has been successfully disabled for this site.' ), {
+						type: 'snackbar',
+					} );
+				}
+			},
+			onError: () => {
+				createErrorNotice(
+					sshEnabled
+						? __(
+								'Sorry, we had a problem disabling SSH access for this site. Please refresh the page and try again.'
+							)
+						: __(
+								'Sorry, we had a problem enabling SSH access for this site. Please refresh the page and try again.'
+							),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+		} );
+	};
+
+	const handleAttachSshKey = () => {
+		attachSshKeyMutation.mutate( selectedSshKey, {
+			onError: () => {
+				createErrorNotice(
+					__(
+						'Sorry, we had a problem attaching SSH key to this site. Please refresh the page and try again.'
+					),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+		} );
+	};
+
+	const handleDetachSshKey = ( siteSshKey: SiteSshKey ) => {
+		detachSshKeyMutation.mutate( siteSshKey, {
+			onError: () => {
+				createErrorNotice(
+					__(
+						'Sorry, we had a problem detaching SSH key from this site. Please refresh the page and try again.'
+					),
+					{
+						type: 'snackbar',
+					}
+				);
+			},
+		} );
+	};
+
+	const SshKeysControl = < Item, >( { field }: DataFormControlProps< Item > ) => (
+		<BaseControl label={ field.label }>
+			<VStack>
+				{ siteSshKeys?.map( ( siteSshKey: SiteSshKey ) => (
+					<SshKeyCard
+						key={ `${ siteSshKey.user_login }-${ siteSshKey.name }` }
+						siteSshKey={ siteSshKey }
+						title={ getSiteSshKeyTitle( siteSshKey, user.username ) }
+						userLocale={ userLocale }
+						isBusy={ detachSshKeyMutation.isPending }
+						onDetach={ handleDetachSshKey }
+					/>
+				) ) }
+			</VStack>
+		</BaseControl>
+	);
+
+	const fields: Field< SshCardFormData >[] = [
+		{
+			id: 'connection_command',
+			label: __( 'Connection command' ),
+			Edit: ( { field, data } ) => {
+				return (
+					<ClipboardInputControl
+						label={ field.label }
+						value={ field.getValue( { item: data } ) }
+						readOnly
+						onCopy={ handleCopy }
+					/>
+				);
+			},
+		},
+		{
+			id: 'ssh_key',
+			label: __( 'SSH keys' ),
+			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
+				const hasSiteSshKeys = siteSshKeys && siteSshKeys.length > 0;
+				const sshKeysControl = (
+					<SshKeysControl
+						data={ data }
+						field={ field }
+						onChange={ onChange }
+						hideLabelFromVision={ hideLabelFromVision }
+					/>
+				);
+
+				const selectControl = (
+					<SelectControl
+						label={ hasSiteSshKeys ? __( 'Attach another SSH key' ) : __( 'SSH key' ) }
+						value={ field.getValue( { item: data } ) ?? '' }
+						help={ field.description }
+						options={ field.elements }
+						disabled={ ! hasUserSshKeys }
+						onChange={ ( newValue: any ) =>
+							onChange( {
+								[ field.id ]: newValue,
+							} )
+						}
+						hideLabelFromVision={ hideLabelFromVision }
+					/>
+				);
+
+				if ( ! hasSiteSshKeys ) {
+					return selectControl;
+				}
+
+				return (
+					<VStack spacing={ 4 }>
+						{ sshKeysControl }
+						{ showAttachSshKey && selectControl }
+					</VStack>
+				);
+			},
+			elements: hasUserSshKeys
+				? unattachedUserSshKeys.map( ( userSshKey: UserSshKey ) => ( {
+						label: getSshKeyLabel( userSshKey ),
+						value: userSshKey.name,
+					} ) )
+				: [
+						{
+							label: __( 'No SSH keys available' ),
+							value: '',
+						},
+					],
+		},
+	];
+
+	const form = {
+		layout: { type: 'regular' as const },
+		fields: [ 'connection_command', 'ssh_key' ],
+	};
+
+	if ( isWpError( userSshKeysError ) && userSshKeysError.code === 'reauthorization_required' ) {
+		window.location.href = reauthRequiredLink();
+		return null;
+	}
+
+	return (
+		<Card>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						title={ __( 'SSH' ) }
+						description={ createInterpolateElement(
+							__(
+								'SSH lets you access your site’s backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink/>'
+							),
+							{
+								wpCliLink: <ExternalLink href="https://wp-cli.org/" children={ null } />,
+								learnMoreLink: <InlineSupportLink supportContext="hosting-connect-to-ssh" />,
+							}
+						) }
+						level={ 3 }
+					/>
+					<ToggleControl
+						label={ __( 'Enable SSH access for this site' ) }
+						checked={ sshEnabled }
+						disabled={ toggleSshAccessMutation.isPending || isLoadingUserSshKeys }
+						onChange={ handleToggleSshAccess }
+					/>
+					{ showSshSettings && (
+						<DataForm< SshCardFormData >
+							data={ { ...formData, ssh_key: selectedSshKey } }
+							fields={ fields }
+							form={ form }
+							onChange={ ( edits: Partial< SshCardFormData > ) => {
+								setFormData( ( data ) => ( { ...data, ...edits } ) );
+							} }
+						/>
+					) }
+					{ showSshSettings && ( showAttachSshKey || showAddSshKey ) && (
+						<ButtonStack justify="flex-start">
+							{ showAttachSshKey && (
+								<Button
+									variant="primary"
+									isBusy={ attachSshKeyMutation.isPending }
+									disabled={ ! hasUserSshKeys || attachSshKeyMutation.isPending }
+									onClick={ handleAttachSshKey }
+								>
+									{ __( 'Attach SSH key to site' ) }
+								</Button>
+							) }
+							{ showAddSshKey && <AddSshKeyButton /> }
+						</ButtonStack>
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}

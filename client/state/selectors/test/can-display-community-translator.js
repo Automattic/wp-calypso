@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { isMobile } from '@automattic/viewport';
+import { vi } from 'vitest';
 import canDisplayCommunityTranslator from '../can-display-community-translator';
 
-jest.mock( '@automattic/viewport', () => ( {
-	isMobile: jest.fn(),
+vi.mock( '@automattic/viewport', () => ( {
+	isMobile: vi.fn(),
 } ) );
 
 describe( 'canDisplayCommunityTranslator()', () => {

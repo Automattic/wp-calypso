@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,11 +8,12 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { site } from '../../test/test-utils/constants';
 import BoostSitePerformance from '../boost-site-performance';
 
 describe( 'BoostSitePerformance', () => {
-	const trackEventMock = jest.fn();
+	const trackEventMock = vi.fn();
 
 	const initialState = {
 		partnerPortal: {

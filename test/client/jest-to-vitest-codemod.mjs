@@ -114,8 +114,12 @@ const handFixes = [];
 
 for ( const file of files ) {
 	const src = fs.readFileSync( file, 'utf8' );
-	const kind = file.endsWith( 'x' ) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
 	const isTypeScript = /\.tsx?$/.test( file );
+	// Babel parses JSX in `.js` files too.
+	let kind = isTypeScript ? ts.ScriptKind.TS : ts.ScriptKind.JSX;
+	if ( file.endsWith( '.tsx' ) ) {
+		kind = ts.ScriptKind.TSX;
+	}
 	const sf = ts.createSourceFile( file, src, ts.ScriptTarget.Latest, true, kind );
 	const edits = [];
 	const vitestImports = new Set();
@@ -183,11 +187,38 @@ for ( const file of files ) {
 		edits.push( { start: e.end, end: e.end, text: ' )' } );
 	};
 
+	// `require( './mock' )` in a factory loads the mock module with its exports.
+	const isRequire = ( e ) => ts.isCallExpression( e ) && e.expression.getText( sf ) === 'require';
+	const requireToImport = ( e ) =>
+		edits.push( { start: e.expression.getStart( sf ), end: e.expression.end, text: 'import' } );
+
+	// Jest lets named imports read the properties of a returned module, such as a function with
+	// an `isEnabled` property; Vitest needs them spread onto the object of exports.
+	const wrapModule = ( e, isArrowBody = false ) => {
+		const [ open, close ] = isArrowBody ? [ '( ', ' )' ] : [ '', '' ];
+		const inner = unwrap( e );
+		if ( ts.isIdentifier( inner ) ) {
+			edits.push( {
+				start: e.getStart( sf ),
+				end: e.end,
+				text: `${ open }{ ...${ inner.text }, default: ${ inner.text } }${ close }`,
+			} );
+			return;
+		}
+		edits.push( { start: e.getStart( sf ), end: e.getStart( sf ), text: `${ open }{ default: ` } );
+		edits.push( { start: e.end, end: e.end, text: ` }${ close }` } );
+	};
+
 	// Jest lets a factory return the module itself (e.g. a function, read through the default
-	// import); Vitest needs an object of exports.
+	// import); Vitest needs an object of exports. As with the interop default, only `jest.mock()`
+	// factories are changed.
 	const wrapNonObjectFactory = ( call ) => {
 		const factory = call.arguments[ 1 ];
-		if ( ! factory || ! ( ts.isArrowFunction( factory ) || ts.isFunctionExpression( factory ) ) ) {
+		if (
+			! isJest( call.expression.expression ) ||
+			! factory ||
+			! ( ts.isArrowFunction( factory ) || ts.isFunctionExpression( factory ) )
+		) {
 			return;
 		}
 		if ( ts.isBlock( factory.body ) ) {
@@ -195,6 +226,10 @@ for ( const file of files ) {
 				const e = r.expression && unwrap( r.expression );
 				if ( e && ts.isObjectLiteralExpression( e ) ) {
 					addInteropDefault( call, e );
+					continue;
+				}
+				if ( e && isRequire( e ) ) {
+					requireToImport( e );
 					continue;
 				}
 				if ( ! e || isRequireActual( e ) || isDynamicImport( e ) ) {
@@ -217,24 +252,14 @@ for ( const file of files ) {
 					} );
 					edits.push( { start: r.expression.end, end: r.expression.end, text: ' }' } );
 				} else {
-					edits.push( {
-						start: r.expression.getStart( sf ),
-						end: r.expression.getStart( sf ),
-						text: '{ default: ',
-					} );
-					edits.push( { start: r.expression.end, end: r.expression.end, text: ' }' } );
+					wrapModule( r.expression );
 				}
 			}
 			return;
 		}
 		const body = unwrap( factory.body );
-		// `() => require( './mock' )` loads the mock module with its exports.
-		if ( ts.isCallExpression( body ) && body.expression.getText( sf ) === 'require' ) {
-			edits.push( {
-				start: body.expression.getStart( sf ),
-				end: body.expression.end,
-				text: 'import',
-			} );
+		if ( isRequire( body ) ) {
+			requireToImport( body );
 			return;
 		}
 		if ( ts.isObjectLiteralExpression( body ) ) {
@@ -248,12 +273,7 @@ for ( const file of files ) {
 		) {
 			return;
 		}
-		edits.push( {
-			start: factory.body.getStart( sf ),
-			end: factory.body.getStart( sf ),
-			text: '( { default: ',
-		} );
-		edits.push( { start: factory.body.end, end: factory.body.end, text: ' } )' } );
+		wrapModule( factory.body, true );
 		vitestImports.add( 'vi' );
 	};
 	// Jest's mock generics are `< Return, Args >`; Vitest's take the function type.
@@ -332,6 +352,21 @@ for ( const file of files ) {
 		}
 		if ( ts.isPropertyAccessExpression( node ) && isJest( node.expression ) ) {
 			const name = node.name.text;
+			// `interface Foo extends jest.Mock` parses `jest.Mock` as an expression, not a type name.
+			if (
+				ts.isExpressionWithTypeArguments( node.parent ) &&
+				ts.isInterfaceDeclaration( node.parent.parent?.parent )
+			) {
+				const renamed = TYPE_RENAMES[ name ];
+				if ( renamed ) {
+					edits.push( { start: node.getStart( sf ), end: node.end, text: renamed } );
+					vitestImports.add( `type ${ renamed }` );
+					toFunctionTypeArguments( node.parent.typeArguments );
+				} else {
+					flag( node, `unknown jest type ${ node.getText( sf ) }` );
+				}
+				return;
+			}
 			if ( name === 'requireActual' && ts.isCallExpression( node.parent ) ) {
 				const call = node.parent;
 				const fn = enclosingFunction( call );

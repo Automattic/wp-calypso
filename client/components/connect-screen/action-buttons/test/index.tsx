@@ -1,15 +1,16 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { ActionButtons } from '../index';
 
 describe( 'ActionButtons', () => {
-	const mockPrimaryClick = jest.fn();
-	const mockSecondaryClick = jest.fn();
-	const mockTertiaryClick = jest.fn();
+	const mockPrimaryClick = vi.fn();
+	const mockSecondaryClick = vi.fn();
+	const mockTertiaryClick = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'basic rendering', () => {

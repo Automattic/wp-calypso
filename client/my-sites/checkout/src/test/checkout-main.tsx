@@ -34,6 +34,7 @@ import {
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -79,6 +80,7 @@ describe( 'CheckoutMain', () => {
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockGetVatInfoEndpoint( {} );
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockMatchMediaOnWindow();

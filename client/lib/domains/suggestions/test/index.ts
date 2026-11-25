@@ -1,14 +1,17 @@
+import { vi } from 'vitest';
 import { getSuggestionsVendor } from '../index';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn( () => false ),
-} ) );
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isEnabled: vi.fn( () => false ),
+	} )
+);
 
-jest.mock( '@automattic/onboarding', () => ( {
-	isDomainForGravatarFlow: jest.fn( () => false ),
-	isHundredYearPlanFlow: jest.fn( () => false ),
-	isHundredYearDomainFlow: jest.fn( () => false ),
-	isNewsletterFlow: jest.fn( () => false ),
+vi.mock( '@automattic/onboarding', () => ( {
+	isDomainForGravatarFlow: vi.fn( () => false ),
+	isHundredYearPlanFlow: vi.fn( () => false ),
+	isHundredYearDomainFlow: vi.fn( () => false ),
+	isNewsletterFlow: vi.fn( () => false ),
 } ) );
 
 describe( 'getSuggestionsVendor', () => {

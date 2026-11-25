@@ -15,6 +15,7 @@ import {
 	mockMatchMediaOnWindow,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 	mockGetVatInfoEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
@@ -50,6 +51,7 @@ describe( 'Checkout payment methods list', () => {
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockGetVatInfoEndpoint( {} );
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockMatchMediaOnWindow();

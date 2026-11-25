@@ -25,6 +25,7 @@ import {
 	countryList,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockUserSignupValidationEndpoint,
@@ -86,6 +87,7 @@ describe( 'Checkout contact step VAT form', () => {
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockMatchMediaOnWindow();
@@ -170,6 +172,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -200,6 +203,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -231,6 +235,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -260,6 +265,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -501,6 +507,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		const cachedContactCountry = 'ES';
 		mockCachedContactDetailsEndpoint( {
 			country_code: cachedContactCountry,

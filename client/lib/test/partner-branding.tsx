@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import {
 	getPartnerConfigFromCurrentDomain,
 	getPartnerConfigFromBrandingCode,
@@ -23,7 +24,7 @@ import type { PartnerConfig } from '../partner-branding';
 import type { useTranslate } from 'i18n-calypso';
 
 // Mock the config module
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = ( key: string ) => {
 		if ( key === 'site_name' ) {
 			return 'WordPress.com';
@@ -31,13 +32,13 @@ jest.mock( '@automattic/calypso-config', () => {
 
 		return null;
 	};
-	config.isEnabled = jest.fn( ( feature: string ) => {
+	config.isEnabled = vi.fn( ( feature: string ) => {
 		if ( feature === 'ciab/custom-branding' ) {
 			return true;
 		}
 		return false;
 	} );
-	return config;
+	return { ...config, default: config };
 } );
 
 describe( 'partner-branding', () => {
@@ -52,7 +53,7 @@ describe( 'partner-branding', () => {
 
 	beforeEach( () => {
 		clearPersistedPartnerId();
-		( config.isEnabled as jest.Mock ).mockImplementation( ( feature: string ) => {
+		( config.isEnabled as Mock ).mockImplementation( ( feature: string ) => {
 			if ( feature === 'ciab/custom-branding' ) {
 				return true;
 			}
@@ -198,7 +199,7 @@ describe( 'partner-branding', () => {
 		} );
 
 		test( 'returns null when feature flag is disabled', () => {
-			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+			( config.isEnabled as Mock ).mockReturnValue( false );
 
 			const result = getPartnerConfigFromOAuth2Client( { id: 134404 } );
 
@@ -322,7 +323,7 @@ describe( 'partner-branding', () => {
 
 		test( 'detectPartnerConfig clears persisted partner when feature flag is disabled', () => {
 			persistPartnerId( 'woo' );
-			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+			( config.isEnabled as Mock ).mockReturnValue( false );
 			setLocation( 'wordpress.com' );
 
 			const result = detectPartnerConfig();
@@ -430,7 +431,7 @@ describe( 'partner-branding', () => {
 		} );
 
 		test( 'getPartnerConfigFromCurrentDomain returns partner even when all feature flags are disabled', () => {
-			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+			( config.isEnabled as Mock ).mockReturnValue( false );
 			setLocation( 'test.example.com' );
 
 			const result = getPartnerConfigFromCurrentDomain();
@@ -440,7 +441,7 @@ describe( 'partner-branding', () => {
 		} );
 
 		test( 'getPartnerConfigFromBrandingCode returns partner even when all feature flags are disabled', () => {
-			( config.isEnabled as jest.Mock ).mockReturnValue( false );
+			( config.isEnabled as Mock ).mockReturnValue( false );
 			setLocation( 'wordpress.com', '?from=test-no-flag' );
 
 			const result = getPartnerConfigFromBrandingCode();

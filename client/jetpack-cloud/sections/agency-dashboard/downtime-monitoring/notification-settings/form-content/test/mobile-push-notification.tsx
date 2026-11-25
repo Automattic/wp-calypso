@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,13 +8,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import MobilePushNotification from '../mobile-push-notification';
 
 describe( 'MobilePushNotification', () => {
 	const defaultProps = {
-		recordEvent: jest.fn(),
+		recordEvent: vi.fn(),
 		enableMobileNotification: true,
-		setEnableMobileNotification: jest.fn(),
+		setEnableMobileNotification: vi.fn(),
 	};
 
 	const initialState = {};

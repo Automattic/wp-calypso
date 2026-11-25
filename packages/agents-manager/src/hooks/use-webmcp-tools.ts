@@ -29,6 +29,7 @@ export default function useWebMcpTools( {
 				( {
 					createWebMcpAdapter,
 					subscribeToRegistryAbilities,
+					withBlockEditCorrections,
 					withRegistryAbilities,
 					withServerAbilities,
 					withoutChatToolCalls,
@@ -39,7 +40,9 @@ export default function useWebMcpTools( {
 
 					adapter = createWebMcpAdapter( {
 						toolProvider: withServerAbilities(
-							withRegistryAbilities( withoutChatToolCalls( toolProvider ) )
+							withBlockEditCorrections(
+								withRegistryAbilities( withoutChatToolCalls( toolProvider ) )
+							)
 						),
 						modelContext,
 					} );

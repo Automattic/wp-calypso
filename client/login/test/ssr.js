@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { setShouldServerSideRenderLogin } from '../ssr';
 
 function getSomeCleanLoginContext( queryValues, lang = 'en' ) {
@@ -9,7 +10,7 @@ function getSomeCleanLoginContext( queryValues, lang = 'en' ) {
 
 describe( 'setShouldServerSideRenderLogin', () => {
 	test( 'when lang is Mag-16, then sets context.serverSideRender to TRUE - and calls next()', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const contextWithNonDefaultLang = getSomeCleanLoginContext( {}, 'ar' );
 
 		setShouldServerSideRenderLogin( contextWithNonDefaultLang, next );
@@ -18,7 +19,7 @@ describe( 'setShouldServerSideRenderLogin', () => {
 	} );
 
 	test( 'when lang is non-default and non-Mag-16, then sets context.serverSideRender to FALSE - and calls next()', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const contextWithNonDefaultLang = getSomeCleanLoginContext( {}, 'bg' );
 
 		setShouldServerSideRenderLogin( contextWithNonDefaultLang, next );
@@ -27,7 +28,7 @@ describe( 'setShouldServerSideRenderLogin', () => {
 	} );
 
 	test( 'when query is empty, then sets context.serverSideRender to TRUE - and calls next()', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const contextWithoutQueryKeys = getSomeCleanLoginContext( {} );
 
 		setShouldServerSideRenderLogin( contextWithoutQueryKeys, next );
@@ -36,7 +37,7 @@ describe( 'setShouldServerSideRenderLogin', () => {
 	} );
 
 	test( 'when query has only INVALID keys, then sets context.serverSideRender to FALSE - and calls next()', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const contextWithQueryKeys = {
 			query: {
 				hello: 'world',
@@ -49,7 +50,7 @@ describe( 'setShouldServerSideRenderLogin', () => {
 	} );
 
 	test( 'when query has only valid keys, then serverSideRender is TRUE, but when invalid keys are added, it fails', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		let contextWithQueryKeys = getSomeCleanLoginContext( { client_id: 1234 } );
 		setShouldServerSideRenderLogin( contextWithQueryKeys, next );
 		expect( contextWithQueryKeys.serverSideRender ).toBe( true );

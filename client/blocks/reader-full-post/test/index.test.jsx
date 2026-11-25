@@ -1,36 +1,37 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post-key-selection';
 import { FullPostView, mapStateToFullPostProps, withFullPostNavigation } from '../index';
 
-jest.mock( 'calypso/reader/data/comments', () => ( {
-	usePostCommentsApiDisabled: jest.fn(),
+vi.mock( 'calypso/reader/data/comments', () => ( {
+	usePostCommentsApiDisabled: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/data/post', () => ( {
-	usePost: jest.fn(),
+vi.mock( 'calypso/reader/data/post', () => ( {
+	usePost: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
-	useStreamPostKeySelection: jest.fn(),
+vi.mock( 'calypso/reader/stream/use-stream-post-key-selection', () => ( {
+	useStreamPostKeySelection: vi.fn(),
 } ) );
 
 // The seen gate reads React Query caches these tests don't provide.
-jest.mock( 'calypso/reader/data/seen-posts', () => ( {
-	useCanMarkSeen: jest.fn( () => false ),
+vi.mock( 'calypso/reader/data/seen-posts', () => ( {
+	useCanMarkSeen: vi.fn( () => false ),
 	withSeenPostsMutations: ( WrappedComponent ) => WrappedComponent,
 } ) );
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordAction: jest.fn(),
-	recordGaEvent: jest.fn(),
-	recordTrackForPost: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordAction: vi.fn(),
+	recordGaEvent: vi.fn(),
+	recordTrackForPost: vi.fn(),
 } ) );
 
 // Mock the entire FullPostView component to focus on the specific logic we're testing
@@ -130,7 +131,7 @@ describe( 'withFullPostNavigation', () => {
 	} );
 
 	it( 'resolves current, referral, previous, and next posts from Reader post queries', () => {
-		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const WrappedComponent = vi.fn( () => <div data-testid="wrapped-full-post" /> );
 		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
 		const store = createStore( ( state = {} ) => state, {
 			readerUi: { currentStream: 'following' },
@@ -174,7 +175,7 @@ describe( 'withFullPostNavigation', () => {
 			previousPostKey: { snapshotId: 'url-save-1', url: snapshotUrl },
 			nextPostKey: { blogId: 100, postId: 3 },
 		} );
-		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const WrappedComponent = vi.fn( () => <div data-testid="wrapped-full-post" /> );
 		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
 		const store = createStore( ( state = {} ) => state, {
 			readerUi: { currentStream: 'saved' },
@@ -200,7 +201,7 @@ describe( 'withFullPostNavigation', () => {
 			previousPostKey: { snapshotId: 'url-save-1', url: 'javascript:alert(1)' },
 			nextPostKey: null,
 		} );
-		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const WrappedComponent = vi.fn( () => <div data-testid="wrapped-full-post" /> );
 		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
 		const store = createStore( ( state = {} ) => state, {
 			readerUi: { currentStream: 'saved' },
@@ -220,7 +221,7 @@ describe( 'withFullPostNavigation', () => {
 
 	it( 'passes the comments API disabled state from Reader comment queries', () => {
 		usePostCommentsApiDisabled.mockReturnValue( true );
-		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const WrappedComponent = vi.fn( () => <div data-testid="wrapped-full-post" /> );
 		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
 		const store = createStore( ( state = {} ) => state, {
 			readerUi: { currentStream: 'following' },
@@ -246,7 +247,7 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 	describe( 'when comments API is disabled', () => {
 		it( 'should not render Comments component', () => {
 			const store = createMockStore();
-			const shouldShowComments = jest.fn( () => true );
+			const shouldShowComments = vi.fn( () => true );
 
 			const { queryByTestId } = render(
 				<Provider store={ store }>
@@ -259,7 +260,7 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 
 		it( 'should not render CommentButton', () => {
 			const store = createMockStore();
-			const shouldShowComments = jest.fn( () => true );
+			const shouldShowComments = vi.fn( () => true );
 
 			const { queryByTestId } = render(
 				<Provider store={ store }>
@@ -274,7 +275,7 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 	describe( 'when comments API is enabled', () => {
 		it( 'should render Comments component when shouldShowComments is true', () => {
 			const store = createMockStore();
-			const shouldShowComments = jest.fn( () => true );
+			const shouldShowComments = vi.fn( () => true );
 
 			const { queryByTestId } = render(
 				<Provider store={ store }>
@@ -290,7 +291,7 @@ describe( 'FullPostView Comments API Disabled Logic', () => {
 
 		it( 'should render CommentButton when API is enabled', () => {
 			const store = createMockStore();
-			const shouldShowComments = jest.fn( () => true );
+			const shouldShowComments = vi.fn( () => true );
 
 			const { queryByTestId } = render(
 				<Provider store={ store }>
@@ -330,11 +331,11 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 	};
 
 	it( 'marks an unseen post as seen when the full post is viewed', () => {
-		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeen = vi.fn();
 		const instance = new FullPostView( {
 			...baseProps,
 			requestMarkAsSeen,
-			requestMarkAsSeenBlog: jest.fn(),
+			requestMarkAsSeenBlog: vi.fn(),
 			post: { ...feedPost, is_seen: false },
 		} );
 
@@ -344,8 +345,8 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 	} );
 
 	it( 'does not hit the seen endpoint when the post is already seen', () => {
-		const requestMarkAsSeen = jest.fn();
-		const requestMarkAsSeenBlog = jest.fn();
+		const requestMarkAsSeen = vi.fn();
+		const requestMarkAsSeenBlog = vi.fn();
 		const instance = new FullPostView( {
 			...baseProps,
 			requestMarkAsSeen,
@@ -360,8 +361,8 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 	} );
 
 	it( 'does not hit the seen endpoint when seen is disabled for the feed', () => {
-		const requestMarkAsSeen = jest.fn();
-		const requestMarkAsSeenBlog = jest.fn();
+		const requestMarkAsSeen = vi.fn();
+		const requestMarkAsSeenBlog = vi.fn();
 		const instance = new FullPostView( {
 			...baseProps,
 			canMarkSeen: false,
@@ -377,12 +378,12 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 	} );
 
 	it( 'marks the post once seen eligibility resolves after the post already loaded', () => {
-		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeen = vi.fn();
 		const pendingProps = {
 			...baseProps,
 			canMarkSeen: false,
 			requestMarkAsSeen,
-			requestMarkAsSeenBlog: jest.fn(),
+			requestMarkAsSeenBlog: vi.fn(),
 			post: { ...feedPost, is_seen: false },
 		};
 		const instance = new FullPostView( pendingProps );
@@ -397,12 +398,12 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 	} );
 
 	it( 'marks a different post that happens to share the same post ID', () => {
-		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeen = vi.fn();
 		const first = {
 			...baseProps,
 			canMarkSeen: true,
 			requestMarkAsSeen,
-			requestMarkAsSeenBlog: jest.fn(),
+			requestMarkAsSeenBlog: vi.fn(),
 			post: { ...feedPost, is_seen: false, ID: 42, feed_item_ID: 10, global_ID: 'post-a' },
 			feed: { ID: 1 },
 		};
@@ -423,12 +424,12 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 	} );
 
 	it( 'marks a second post when neither post carries a global_ID', () => {
-		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeen = vi.fn();
 		// Cached posts can reach us without a `global_ID`.
 		const first = {
 			...baseProps,
 			requestMarkAsSeen,
-			requestMarkAsSeenBlog: jest.fn(),
+			requestMarkAsSeenBlog: vi.fn(),
 			post: { ...feedPost, is_seen: false, feed_item_ID: 10, global_ID: undefined },
 			feed: { ID: 1 },
 		};
@@ -448,12 +449,12 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 	} );
 
 	it( 'does not re-mark a post the reader explicitly marked as unseen', () => {
-		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeen = vi.fn();
 		const enabledProps = {
 			...baseProps,
 			canMarkSeen: true,
 			requestMarkAsSeen,
-			requestMarkAsSeenBlog: jest.fn(),
+			requestMarkAsSeenBlog: vi.fn(),
 			post: { ...feedPost, is_seen: false },
 		};
 		const instance = new FullPostView( enabledProps );
@@ -473,12 +474,12 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 	} );
 
 	it( 'does not re-mark while feed metadata hydrates for the same post', () => {
-		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeen = vi.fn();
 		const initialProps = {
 			...baseProps,
 			canMarkSeen: true,
 			requestMarkAsSeen,
-			requestMarkAsSeenBlog: jest.fn(),
+			requestMarkAsSeenBlog: vi.fn(),
 			post: { ...feedPost, is_seen: false, ID: 42 },
 			feed: { ID: 1 },
 		};
@@ -496,12 +497,12 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 
 describe( 'FullPostView subscribe notice', () => {
 	const createInstance = () => {
-		const successNotice = jest.fn();
+		const successNotice = vi.fn();
 		const instance = new FullPostView( {
 			post: { ID: 1, site_ID: 100, site_name: 'Example Blog' },
 			successNotice,
 		} );
-		instance.setState = jest.fn();
+		instance.setState = vi.fn();
 		return { instance, successNotice };
 	};
 

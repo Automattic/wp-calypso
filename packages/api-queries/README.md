@@ -28,20 +28,21 @@ These guidelines should be followed to ensure reusability of the queries and mut
   - If the query intends to return only a subset of the data, transform the result in the `queryFn`:
 
     ```ts
-    export const isSiteUsingBlockThemeQuery = ( siteId: number ) => queryOptions( {
-        queryFn: async () => {
-            const themes = await siteActiveThemesQuery( siteId );
-            return themes[ 0 ]?.is_block_theme ?? false;
-        },
-    } );
+    export const isSiteUsingBlockThemeQuery = ( siteId: number ) =>
+    	queryOptions( {
+    		queryFn: async () => {
+    			const themes = await siteActiveThemesQuery( siteId );
+    			return themes[ 0 ]?.is_block_theme ?? false;
+    		},
+    	} );
     ```
 
   - If a component only needs a subset of the data, pass `select` from the component:
 
     ```ts
     const { data } = useQuery( {
-        ...sitePurchasesQuery( site.ID ),
-        select: ( data ) => data.find( ( purchase ) => purchase.product_slug === WPCOM_DIFM_LITE ),
+    	...sitePurchasesQuery( site.ID ),
+    	select: ( data ) => data.find( ( purchase ) => purchase.product_slug === WPCOM_DIFM_LITE ),
     } );
     ```
 
@@ -50,8 +51,8 @@ These guidelines should be followed to ensure reusability of the queries and mut
 
     ```ts
     const { data } = useQuery( {
-        ...siteWordPressVersionQuery( site.ID ),
-        enabled: site.is_wpcom_staging_site,
+    	...siteWordPressVersionQuery( site.ID ),
+    	enabled: site.is_wpcom_staging_site,
     } );
     ```
 
@@ -69,50 +70,56 @@ These guidelines should be followed to ensure reusability of the queries and mut
 
     ```ts
     export const sitePHPVersionMutation = ( siteId: number ) =>
-        mutationOptions( {
-            /* other options */
-            onSuccess: () => {
-                queryClient.invalidateQueries( sitePHPVersionQuery( siteId ) );
-            },
-        } );
+    	mutationOptions( {
+    		/* other options */
+    		onSuccess: () => {
+    			queryClient.invalidateQueries( sitePHPVersionQuery( siteId ) );
+    		},
+    	} );
     ```
 
 - Limit logic in `onSuccess` and `onError` handlers to query invalidation and cache updates.
-  - Add additional logic (e.g., analytics or event tracking) in the component itself:
+  - Add additional logic (e.g., analytics or event tracking) in the component itself, on the `mutate()` call by default:
 
     ```ts
     const { mutate: updatePHPVersion } = useMutation( sitePHPVersionMutation( site.ID ) );
     updatePHPVersion( data, {
-        onSuccess: () => {
-            recordTracksEvent( 'calypso_settings_updated' );
-        },
+    	onSuccess: () => {
+    		recordTracksEvent( 'calypso_settings_updated' );
+    	},
     } );
     ```
+
+  - Callbacks passed to `mutate()` don't run if the component unmounts before the mutation settles. When an effect must run anyway, such as a redirect after a request that ends the session, set it on `useMutation()` instead.
+  - A callback set on `useMutation()` replaces the factory's callback of the same name rather than adding to it. Call the factory's callback from yours, so its cache updates still run.
 
 - Examples:
 
   ```typescript
-  // ✅ Correct - callback on mutate call
+  // ✅ Correct - component-specific handling on the mutate call
   const { mutate: saveSetting } = useMutation( saveSettingMutation() );
-  
+
   const handleSave = () => {
-    saveSetting( newValue, {
-      onSuccess: () => {
-        // Component-specific success handling
-        setShowSuccessMessage( true );
-      },
-      onError: ( error ) => {
-        // Component-specific error handling
-        setError( error.message );
-      },
-    } );
+  	saveSetting( newValue, {
+  		onSuccess: () => setShowSuccessMessage( true ),
+  		onError: ( error ) => setError( error.message ),
+  	} );
   };
 
-  // ❌ Incorrect - overrides mutation option callbacks
+  // ✅ Correct - an effect that must run even if the component unmounts first
+  const mutation = closeAccountMutation();
+  const { mutate: closeAccount } = useMutation( {
+  	...mutation,
+  	onSuccess: ( ...args ) => {
+  		mutation.onSuccess?.( ...args );
+  		redirectAfterSessionEnd( closedAccountUrl );
+  	},
+  } );
+
+  // ❌ Incorrect - replaces the factory's onSuccess, so its cache updates never run
   const { mutate: saveSetting } = useMutation( {
-    ...saveSettingMutation(),
-    onSuccess: () => setShowSuccessMessage( true ), // Breaks cache updates!
-    onError: ( error ) => setError( error.message ),
+  	...saveSettingMutation(),
+  	onSuccess: () => setShowSuccessMessage( true ),
   } );
   ```
 

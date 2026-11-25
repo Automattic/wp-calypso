@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,27 +8,28 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import DashboardDataContext from '../../../../sites-overview/dashboard-data-context';
 import NotificationDuration from '../notification-duration';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	config.isEnabled = ( property: string ) => true;
-	return config;
+	return { ...config, default: config };
 } );
 
 describe( 'NotificationDuration', () => {
 	const defaultProps = {
-		selectDuration: jest.fn(),
-		recordEvent: jest.fn(),
+		selectDuration: vi.fn(),
+		recordEvent: vi.fn(),
 	};
 
 	const dashboardContextValue = {
 		verifiedContacts: {
 			emails: [],
 			phoneNumbers: [],
-			refetchIfFailed: jest.fn(),
+			refetchIfFailed: vi.fn(),
 		},
 		products: [
 			{

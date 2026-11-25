@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -25,8 +26,8 @@ describe( 'actions', () => {
 	const siteId = 1234;
 	const purchaseId = 31337;
 
-	const dispatch = jest.fn();
-	const getState = jest.fn();
+	const dispatch = vi.fn();
+	const getState = vi.fn();
 
 	getState.mockReturnValue( {
 		ui: {

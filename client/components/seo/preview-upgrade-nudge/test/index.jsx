@@ -1,12 +1,4 @@
-/** @jest-environment jsdom */
-jest.mock( 'calypso/lib/analytics/track-component-view', () => ( { eventName } ) => (
-	<div data-testid="track-component-view">{ eventName }</div>
-) );
-jest.mock( 'calypso/blocks/upsell-nudge', () => ( { plan } ) => (
-	<div data-testid="upsell-nudge">{ plan }</div>
-) );
-jest.mock( 'calypso/components/data/query-products-list', () => 'query-products' );
-
+/** @vitest-environment jsdom */
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS_2_YEARS,
@@ -27,8 +19,17 @@ import {
 	PLAN_BUSINESS,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import { SeoPreviewNudge } from '../index';
+
+vi.mock( 'calypso/lib/analytics/track-component-view', () => ( {
+	default: ( { eventName } ) => <div data-testid="track-component-view">{ eventName }</div>,
+} ) );
+vi.mock( 'calypso/blocks/upsell-nudge', () => ( {
+	default: ( { plan } ) => <div data-testid="upsell-nudge">{ plan }</div>,
+} ) );
+vi.mock( 'calypso/components/data/query-products-list', () => ( { default: 'query-products' } ) );
 
 const props = {
 	translate: ( x ) => x,

@@ -1,12 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import RestoreButton from '../actions/restore-button';
 
-jest.mock( 'calypso/state/rewind/selectors/can-restore-site', () => jest.fn( () => true ) );
+vi.mock( 'calypso/state/rewind/selectors/can-restore-site', () => ( {
+	default: vi.fn( () => true ),
+} ) );
 
 const hint = 'To restore this backup, confirm that you understand it contains known threats.';
 

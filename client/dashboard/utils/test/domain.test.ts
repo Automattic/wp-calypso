@@ -1,12 +1,13 @@
-import { DomainStatus, DomainSubtype, WhoisType } from '@automattic/api-core';
+import { DomainStatus, DomainSubtype, DomainTypes, WhoisType } from '@automattic/api-core';
 import {
 	canEnableAutoRenew,
 	findRegistrantWhois,
 	findPrivacyServiceWhois,
 	getDomainTypeLabel,
+	isGoogleWorkspaceSupportedDomain,
 	isPendingPrimaryDomain,
 } from '../domain';
-import type { DomainSummary, WhoisDataEntry } from '@automattic/api-core';
+import type { Domain, DomainSummary, WhoisDataEntry } from '@automattic/api-core';
 
 describe( 'utils', () => {
 	const whoisData = [
@@ -166,5 +167,29 @@ describe( 'getDomainTypeLabel', () => {
 		expect(
 			getDomainTypeLabel( { subtype: { id, label: 'From the API' } } as DomainSummary )
 		).toBe( expected );
+	} );
+} );
+
+describe( 'isGoogleWorkspaceSupportedDomain', () => {
+	const mappedDomain = ( overrides: Partial< Domain > ) =>
+		( {
+			domain: 'example.com',
+			type: DomainTypes.MAPPED,
+			subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connected' },
+			has_wpcom_nameservers: false,
+			google_apps_subscription: { status: 'no_subscription' },
+			...overrides,
+		} ) as Domain;
+
+	test( 'rejects a mapped domain with other name servers and no Google Workspace', () => {
+		expect( isGoogleWorkspaceSupportedDomain( mappedDomain( {} ) ) ).toBe( false );
+	} );
+
+	test( 'accepts a mapped domain with other name servers that already has Google Workspace with us', () => {
+		const domain = mappedDomain( {
+			google_apps_subscription: { status: 'active' },
+		} as Partial< Domain > );
+
+		expect( isGoogleWorkspaceSupportedDomain( domain ) ).toBe( true );
 	} );
 } );

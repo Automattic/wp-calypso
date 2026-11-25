@@ -1,12 +1,15 @@
-/** @jest-environment jsdom */
-jest.mock( '../shared/upsell', () => () => <div data-testid="upsell" /> );
-jest.mock( '../shared/no-available-times', () => () => <div data-testid="no-available-times" /> );
-jest.mock( 'calypso/me/reauth-required', () => () => null );
-
+/** @vitest-environment jsdom */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConciergeMain } from '../main';
+
+vi.mock( '../shared/upsell', () => ( { default: () => <div data-testid="upsell" /> } ) );
+vi.mock( '../shared/no-available-times', () => ( {
+	default: () => <div data-testid="no-available-times" />,
+} ) );
+vi.mock( 'calypso/me/reauth-required', () => ( { default: () => null } ) );
 
 const render = ( el, options ) => renderWithProvider( el, { ...options, reducers: { ui } } );
 

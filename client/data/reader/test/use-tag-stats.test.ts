@@ -1,21 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
+import { vi } from 'vitest';
 import { useTagStats } from '../use-tag-stats';
 
-const mockGet = jest.fn();
-jest.mock( 'calypso/lib/wp', () => ( {
+const mockGet = vi.fn();
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: { req: { get: ( ...args: unknown[] ) => mockGet( ...args ) } },
 } ) );
 
 let mockLocaleSlug: string | undefined = 'en';
-jest.mock( 'i18n-calypso', () => ( {
-	getLocaleSlug: () => mockLocaleSlug,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		getLocaleSlug: () => mockLocaleSlug,
+	} )
+);
 
 function newClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );

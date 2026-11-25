@@ -1,11 +1,12 @@
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mock = jest.fn();
-	mock.isEnabled = jest.fn();
+vi.mock( '@automattic/calypso-config', () => {
+	const mock = vi.fn();
+	mock.isEnabled = vi.fn();
 
-	return mock;
+	return { ...mock, default: mock };
 } );
 
 const configMock = ( values ) => ( key ) => values[ key ];

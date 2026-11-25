@@ -1,24 +1,25 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import page from '@automattic/calypso-router';
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { LoginContext } from 'calypso/login/login-context';
 import loginReducer from 'calypso/state/login/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import HandleEmailedLinkFormJetpackConnect from '../handle-emailed-link-form-jetpack-connect';
 
-const mockIsWebAuthnSupported = jest.fn();
+const mockIsWebAuthnSupported = vi.fn();
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( '../emailed-login-link-expired', () => () => null );
-jest.mock( 'calypso/lib/webauthn', () => ( {
-	...jest.requireActual( 'calypso/lib/webauthn' ),
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( '../emailed-login-link-expired', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/webauthn', async () => ( {
+	...( await vi.importActual( 'calypso/lib/webauthn' ) ),
 	isWebAuthnSupported: () => mockIsWebAuthnSupported(),
 } ) );
 
 // Answers the magic link authenticate request with a two-step challenge, as the
 // endpoint does for an account with two-step authentication.
 const respondWithTwoStepChallenge = ( twoStepData ) => {
-	globalThis.fetch = jest.fn().mockResolvedValue( {
+	globalThis.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: async () => ( {
 			success: true,
@@ -33,7 +34,7 @@ const respondWithTwoStepChallenge = ( twoStepData ) => {
 
 const renderForm = () =>
 	renderWithProvider(
-		<LoginContext.Provider value={ { setHeaders: jest.fn() } }>
+		<LoginContext.Provider value={ { setHeaders: vi.fn() } }>
 			<HandleEmailedLinkFormJetpackConnect emailAddress="user@example.com" token="a-token" />
 		</LoginContext.Provider>,
 		{ reducers: { login: loginReducer } }
@@ -43,7 +44,7 @@ describe( 'HandleEmailedLinkFormJetpackConnect 2FA handoff', () => {
 	const originalFetch = globalThis.fetch;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsWebAuthnSupported.mockReturnValue( false );
 	} );
 

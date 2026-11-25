@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	createDefaultLeadMatchingDetails,
 	mapLeadMatchingDetailsToProfile,
@@ -22,7 +23,7 @@ describe( 'useLeadMatchingSaveState', () => {
 			...formData,
 			regions: [ 'americas' ],
 		};
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 
 		const { result, rerender } = renderHook(
 			( currentFormData ) =>
@@ -47,7 +48,7 @@ describe( 'useLeadMatchingSaveState', () => {
 			...formData,
 			regions: [ 'americas' ],
 		};
-		const onSubmit = jest.fn().mockResolvedValue( createResponse( updatedFormData ) );
+		const onSubmit = vi.fn().mockResolvedValue( createResponse( updatedFormData ) );
 
 		const { result, rerender } = renderHook(
 			( currentFormData ) =>
@@ -84,7 +85,7 @@ describe( 'useLeadMatchingSaveState', () => {
 		};
 		const response = createResponse( updatedFormData );
 		response.lead_matching_profile.contact = { booking_link: '' };
-		const onSubmit = jest.fn().mockResolvedValue( {
+		const onSubmit = vi.fn().mockResolvedValue( {
 			...response,
 			ignored_contact_fields: [ 'phone' ],
 		} );
@@ -121,7 +122,7 @@ describe( 'useLeadMatchingSaveState', () => {
 			...formData,
 			regions: [ 'americas' ],
 		};
-		const onSubmit = jest.fn().mockResolvedValue( {
+		const onSubmit = vi.fn().mockResolvedValue( {
 			...createResponse( updatedFormData ),
 			sync: {
 				status: 'failed',
@@ -158,7 +159,7 @@ describe( 'useLeadMatchingSaveState', () => {
 				accepting_work: ! profile.availability.accepting_work,
 			},
 		};
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 
 		const { result, rerender } = renderHook(
 			( currentProfile ) =>

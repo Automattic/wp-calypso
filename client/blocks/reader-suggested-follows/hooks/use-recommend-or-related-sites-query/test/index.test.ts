@@ -1,29 +1,30 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { UseQueryResult } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
 import { when } from 'jest-when';
+import { type Mock, vi } from 'vitest';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
 import { RelatedSite, useRelatedSites } from 'calypso/data/reader/use-related-sites';
 import { useRecommendOrRelatedSitesQuery } from '..';
 
 const fakeAuthor = { wpcom_login: 'test', ID: '123', name: 'Test' };
 
-jest.mock( 'calypso/data/reader/use-feed-recommendations-query' );
-jest.mock( 'calypso/data/reader/use-related-sites' );
+vi.mock( 'calypso/data/reader/use-feed-recommendations-query' );
+vi.mock( 'calypso/data/reader/use-related-sites' );
 
 describe( 'useRecommendOrRelatedSitesQuery', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
-		jest.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
+		vi.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			isFetched: false,
 		} );
 
-		( useRelatedSites as jest.Mock ).mockReturnValue( {
+		( useRelatedSites as Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			isFetched: false,
@@ -44,7 +45,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 	} );
 
 	it( 'returns the loading state when loads the recommended feeds', () => {
-		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+		( useFeedRecommendationsQuery as Mock ).mockReturnValue( {
 			data: [],
 			isLoading: true,
 		} );
@@ -61,13 +62,13 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 	} );
 
 	it( 'returns the loading state when the recommended feeds are loading and the related sites are not loading', () => {
-		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+		( useFeedRecommendationsQuery as Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			isFetched: false,
 		} );
 
-		( useRelatedSites as jest.Mock ).mockReturnValue( {
+		( useRelatedSites as Mock ).mockReturnValue( {
 			data: [],
 			isLoading: true,
 			isFetched: false,
@@ -94,7 +95,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 			},
 		];
 
-		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+		( useFeedRecommendationsQuery as Mock ).mockReturnValue( {
 			data: mockRecommendedFeeds,
 			isLoading: false,
 			isFetched: true,
@@ -121,13 +122,13 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 			},
 		];
 
-		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+		( useFeedRecommendationsQuery as Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			isFetched: true,
 		} );
 
-		( useRelatedSites as jest.Mock ).mockReturnValue( {
+		( useRelatedSites as Mock ).mockReturnValue( {
 			data: mockRelatedSites,
 			isLoading: false,
 			isFetched: true,
@@ -154,7 +155,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 			},
 		];
 
-		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+		( useFeedRecommendationsQuery as Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			isFetched: false,
@@ -197,7 +198,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 			},
 		];
 
-		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+		( useFeedRecommendationsQuery as Mock ).mockReturnValue( {
 			data: mockRecommendedFeeds,
 			isLoading: false,
 			isFetched: true,
@@ -214,7 +215,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 	} );
 
 	it( 'filters out the current site from related sites', () => {
-		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+		( useFeedRecommendationsQuery as Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			isFetched: true,
@@ -225,7 +226,7 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 			{ site_ID: 789, name: 'Other Site' },
 		];
 
-		( useRelatedSites as jest.Mock ).mockReturnValue( {
+		( useRelatedSites as Mock ).mockReturnValue( {
 			data: mockRelatedSites,
 			isLoading: false,
 			isFetched: true,
@@ -240,13 +241,13 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 	} );
 
 	it( 'returns an empty array when there is no recommended or related sites', () => {
-		( useFeedRecommendationsQuery as jest.Mock ).mockReturnValue( {
+		( useFeedRecommendationsQuery as Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			isFetched: true,
 		} );
 
-		( useRelatedSites as jest.Mock ).mockReturnValue( {
+		( useRelatedSites as Mock ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			isFetched: true,

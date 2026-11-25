@@ -21,6 +21,7 @@ import {
 	mockGetVatInfoEndpoint,
 	countryList,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockGetPaymentMethodsEndpoint,
@@ -64,6 +65,7 @@ describe( 'Checkout contact step', () => {
 		mockGetVatInfoEndpoint( {} );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockSetCachedContactDetailsEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 	} );

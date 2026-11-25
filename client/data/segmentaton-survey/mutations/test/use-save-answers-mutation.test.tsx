@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import useSaveAnswersMutation from '../use-save-answers-mutation';
 
@@ -23,18 +24,20 @@ const MockedComponent = () => {
 	);
 };
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		post: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			post: vi.fn(),
+		},
+	} )
+);
 
 describe( 'useSaveAnswersMutation', () => {
 	let queryClient: QueryClient;
 	let wrapper: React.FC< React.PropsWithChildren >;
 
 	beforeEach( () => {
-		jest.mocked( wpcom.req.post ).mockReset();
+		vi.mocked( wpcom.req.post ).mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -50,7 +53,7 @@ describe( 'useSaveAnswersMutation', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should call wpcom.req.post with the right parameters', async () => {

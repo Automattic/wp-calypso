@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type MockInstance, vi } from 'vitest';
 import { hasExceededDormancyThreshold } from '../utils';
 
 describe( 'hasExceededDormancyThreshold', () => {
 	const now = 1_700_000_000_000;
-	let dateSpy: jest.SpyInstance< number, [] >;
+	let dateSpy: MockInstance< ( ...args: [] ) => number >;
 
 	beforeAll( () => {
-		dateSpy = jest.spyOn( Date, 'now' ).mockReturnValue( now );
+		dateSpy = vi.spyOn( Date, 'now' ).mockReturnValue( now );
 	} );
 
 	afterAll( () => {

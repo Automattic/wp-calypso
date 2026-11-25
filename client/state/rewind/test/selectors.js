@@ -371,7 +371,7 @@ describe( 'Backup staging site info', () => {
 	describe( 'getBackupStagingSiteInfo()', () => {
 		test( 'should return null if the rewind state is empty', () => {
 			const stateIn = fixtures.emptyRewindState;
-			expect( getBackupStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toBeNull;
+			expect( getBackupStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toBeNull();
 		} );
 
 		test( 'should return the site info object if site info loaded', () => {

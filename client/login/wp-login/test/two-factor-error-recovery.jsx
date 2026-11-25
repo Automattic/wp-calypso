@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, screen } from '@testing-library/react';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import WPLogin from 'calypso/login/wp-login';
 import {
 	LOGIN_REQUEST_FAILURE,
@@ -17,9 +18,9 @@ import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
 // The two-factor forms render no page-level notice or footer of their own.
-jest.mock( 'calypso/components/async-load', () => () => null );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( 'calypso/components/locale-suggestions', () => () => null );
+vi.mock( 'calypso/components/async-load', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/locale-suggestions', () => ( { default: () => null } ) );
 
 const WOOCOMMERCE_PRODUCTION_CLIENT_ID = 50916;
 const OTHER_CLIENT_ID = 12345;
@@ -80,7 +81,7 @@ const twoFactorFailure = {
 describe( 'WPLogin two-factor error recovery', () => {
 	beforeEach( () => {
 		// jsdom doesn't implement window.scrollTo; the login block calls it on mount.
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	test.each( [

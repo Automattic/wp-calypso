@@ -1,18 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( '@automattic/calypso-config', () => {
+import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import { Banner } from '../index';
+
+vi.mock( '@automattic/calypso-config', () => {
 	const configApi = () => '';
-	configApi.isEnabled = jest.fn( ( flag ) => flag === 'is_odyssey' );
-	return configApi;
+	configApi.isEnabled = vi.fn( ( flag ) => flag === 'is_odyssey' );
+	return { ...configApi, default: configApi };
 } );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
+vi.mock( 'calypso/state/analytics/actions', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	recordTracksEvent: vi.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
 } ) );
-
-import { render, screen } from '@testing-library/react';
-import { Banner } from '../index';
 
 const props = {
 	title: 'banner title',
