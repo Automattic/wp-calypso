@@ -6,7 +6,7 @@ import { DotcomFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
-import { render } from '../../../test-utils';
+import { render } from '../../../../../../../test-utils';
 import SftpSshSettings from '../index';
 import type { Site } from '@automattic/api-core';
 

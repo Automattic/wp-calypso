@@ -22,10 +22,10 @@ import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
 import { ThemedIllustration } from '../../../../../../components/themed-illustration';
 import ResetPasswordModal from '../../../../../../sites/database/components/reset-password-modal';
+import upsellIllustrationDarkUrl from '../../../../../../sites/database/components/upsell-illustration/upsell-illustration-dark.svg';
+import upsellIllustrationUrl from '../../../../../../sites/database/components/upsell-illustration/upsell-illustration.svg';
 import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
 import { hasPlanFeature } from '../../../../../../utils/site-features';
-import upsellIllustrationDarkUrl from './upsell-illustration-dark.svg';
-import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );

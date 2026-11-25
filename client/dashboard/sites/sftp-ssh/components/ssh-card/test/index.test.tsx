@@ -9,8 +9,8 @@ import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
-import { render } from '../../../test-utils';
-import SshCard from '../ssh-card';
+import { render } from '../../../../../test-utils';
+import SshCard from '../index';
 
 const siteId = 123;
 const sftpUsers = [ { username: 'example.wordpress.com', password: '' } ];

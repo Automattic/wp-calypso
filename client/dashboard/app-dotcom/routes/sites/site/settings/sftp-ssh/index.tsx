@@ -7,17 +7,19 @@ import {
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { folder } from '@wordpress/icons';
-import Breadcrumbs from '../../app/breadcrumbs';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { ThemedIllustration } from '../../components/themed-illustration';
-import { hasHostingFeature } from '../../utils/site-features';
-import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
-import EnableSftpCard from './enable-sftp-card';
-import SftpCard, { type SftpCardSshState } from './sftp-card';
-import SshCard from './ssh-card';
-import upsellIllustrationDarkUrl from './upsell-illustration-dark.svg';
-import upsellIllustrationUrl from './upsell-illustration.svg';
+import Breadcrumbs from '../../../../../../app/breadcrumbs';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
+import { ThemedIllustration } from '../../../../../../components/themed-illustration';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import EnableSftpCard from '../../../../../../sites/sftp-ssh/components/enable-sftp-card';
+import SftpCard, {
+	type SftpCardSshState,
+} from '../../../../../../sites/sftp-ssh/components/sftp-card';
+import SshCard from '../../../../../../sites/sftp-ssh/components/ssh-card';
+import upsellIllustrationDarkUrl from '../../../../../../sites/sftp-ssh/components/upsell-illustration/upsell-illustration-dark.svg';
+import upsellIllustrationUrl from '../../../../../../sites/sftp-ssh/components/upsell-illustration/upsell-illustration.svg';
+import { hasHostingFeature } from '../../../../../../utils/site-features';
 
 export default function SftpSshSettings( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );

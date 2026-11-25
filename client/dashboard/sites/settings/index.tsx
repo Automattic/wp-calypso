@@ -24,10 +24,10 @@ import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summar
 import PlanSettingsSummary from '../settings-plan/summary';
 import SiteRedirectSettingsSummary from '../settings-redirect/summary';
 import RepositoriesSettingsSummary from '../settings-repositories/summary';
-import SftpSshSettingsSummary from '../settings-sftp-ssh/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
 import WebApplicationFirewallSettingsSummary from '../settings-web-application-firewall/summary';
 import WpcomLoginSettingsSummary from '../settings-wpcom-login/summary';
+import SftpSshSettingsSummary from '../sftp-ssh/components/sftp-ssh-summary';
 import StaticFile404SettingsSummary from '../static-file-404/components/static-file-404-summary';
 import SiteVisibilitySettingsSummary from '../visibility/components/visibility-summary';
 import WordPressSettingsSummary from '../wordpress-version/components/wordpress-version-summary';
