@@ -1,8 +1,6 @@
 /**
  * @vitest-environment jsdom
  */
-vi.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-
 import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE,
@@ -27,6 +25,8 @@ import {
 import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 import { siteHasPaidPlan, SitePickerSubmit } from '../site-picker-submit';
+
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 
 const noop = () => {};
 const props = {

@@ -61,11 +61,12 @@ const expiredTrialSite = {
 
 describe( '<SitePlan>', () => {
 	beforeEach( () => {
-		const mockIntersectionObserver = vi.fn();
-		mockIntersectionObserver.mockReturnValue( {
-			observe: () => null,
-			unobserve: () => null,
-			disconnect: () => null,
+		const mockIntersectionObserver = vi.fn( function () {
+			return {
+				observe: () => null,
+				unobserve: () => null,
+				disconnect: () => null,
+			};
 		} );
 		window.IntersectionObserver = mockIntersectionObserver;
 	} );

@@ -2,8 +2,13 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import {
+	getStepUrl,
+	getFilteredSteps,
+	getPreviousStepName,
+	isFirstStepInFlow,
+} from 'calypso/signup/utils';
 import { NavigationLink } from '../';
-const signupUtils = require( 'calypso/signup/utils' );
 
 vi.mock( 'calypso/signup/utils', () => ( {
 	getStepUrl: vi.fn(),
@@ -17,7 +22,6 @@ vi.mock( '@automattic/components/src/gridicon', () => {
 } );
 
 const noop = () => {};
-const { getStepUrl, getFilteredSteps, getPreviousStepName, isFirstStepInFlow } = signupUtils;
 
 describe( 'NavigationLink', () => {
 	const props = {

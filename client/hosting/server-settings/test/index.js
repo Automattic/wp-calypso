@@ -1,21 +1,6 @@
 /**
  * @vitest-environment jsdom
  */
-vi.mock( 'calypso/components/data/document-head', () => ( { default: 'document-head' } ) );
-vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( { default: 'page-view-tracker' } ) );
-vi.mock( 'calypso/components/feature-example', () => ( {
-	default: ( { children } ) => {
-		return <div data-testid="feature-example-wrapper">{ children }</div>;
-	},
-} ) );
-vi.mock( 'calypso/lib/wp', () =>
-	( ( m ) => ( { ...m, default: m } ) )( {
-		req: {
-			get: vi.fn(),
-		},
-	} )
-);
-
 import {
 	FEATURE_SFTP,
 	FEATURE_SITE_STAGING_SITES,
@@ -34,6 +19,21 @@ import { vi } from 'vitest';
 import wp from 'calypso/lib/wp';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import Hosting from '../main';
+
+vi.mock( 'calypso/components/data/document-head', () => ( { default: 'document-head' } ) );
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( { default: 'page-view-tracker' } ) );
+vi.mock( 'calypso/components/feature-example', () => ( {
+	default: ( { children } ) => {
+		return <div data-testid="feature-example-wrapper">{ children }</div>;
+	},
+} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+		},
+	} )
+);
 
 const wpcomGetStub = wp.req.get;
 
@@ -160,11 +160,13 @@ describe( 'Hosting Configuration', () => {
 		// Mock `ResizeObserver`, which isn't currently supported in JSDOM
 		Object.defineProperty( global, 'ResizeObserver', {
 			writable: false,
-			value: vi.fn().mockImplementation( () => ( {
-				observe: vi.fn(),
-				unobserve: vi.fn(),
-				disconnect: vi.fn(),
-			} ) ),
+			value: vi.fn().mockImplementation( function () {
+				return {
+					observe: vi.fn(),
+					unobserve: vi.fn(),
+					disconnect: vi.fn(),
+				};
+			} ),
 		} );
 	} );
 

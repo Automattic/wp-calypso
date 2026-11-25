@@ -41,10 +41,10 @@ function dispatchKey( key: string, target: EventTarget = document ) {
 }
 
 async function flushImport() {
-	// installKonamiListener triggers a dynamic import on match — wait for the
-	// resulting microtasks to settle so the mock is observed.
-	await Promise.resolve();
-	await Promise.resolve();
+	// installKonamiListener triggers a dynamic import on match — wait for that import, then for
+	// its `then()` callback, so the mock is observed.
+	await import( '../activate' );
+	await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 }
 
 function mountFakeMasterbar() {

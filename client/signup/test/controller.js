@@ -156,11 +156,10 @@ describe( 'start', () => {
 		const store = { dispatch, getState: () => ( { currentUser: { id: 1 } } ) };
 		const context = { params: { flowName, stepName: 'plans' }, query, store };
 
-		await vi.isolateModulesAsync( async () => {
-			const { default: isolatedController } = await import( '../controller' );
-			isolatedController.saveInitialContext( context, () => {} );
-			await isolatedController.start( context, () => {} );
-		} );
+		vi.resetModules();
+		const { default: isolatedController } = await import( '../controller' );
+		isolatedController.saveInitialContext( context, () => {} );
+		await isolatedController.start( context, () => {} );
 
 		return dispatch;
 	};
@@ -199,13 +198,12 @@ describe( 'saveInitialContext', () => {
 			await isolatedController.start( context, () => {} );
 		};
 
-		await vi.isolateModulesAsync( async () => {
-			const { default: isolatedController } = await import( '../controller' );
+		vi.resetModules();
+		const { default: isolatedController } = await import( '../controller' );
 
-			await visit( isolatedController, undefined, { ref: 'first' } );
-			await visit( isolatedController, 'mailbox', {} );
-			await visit( isolatedController, undefined, { ref: 'second' } );
-		} );
+		await visit( isolatedController, undefined, { ref: 'first' } );
+		await visit( isolatedController, 'mailbox', {} );
+		await visit( isolatedController, undefined, { ref: 'second' } );
 
 		const refParameters = dispatch.mock.calls
 			.map( ( [ action ] ) => action.dependencies?.refParameter )

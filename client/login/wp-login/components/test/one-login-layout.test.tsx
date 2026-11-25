@@ -1,6 +1,15 @@
 /**
  * @vitest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { fireEvent, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
+import { usePartnerBranding } from 'calypso/lib/partner-branding';
+import LoginContextProvider from 'calypso/login/login-context';
+import oauth2ClientsReducer from 'calypso/state/oauth2-clients/reducer';
+import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import OneLoginLayout, { ensureHeadingProvided } from '../one-login-layout';
 
 vi.mock( '@automattic/calypso-analytics', async () => ( {
 	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >(
@@ -14,16 +23,6 @@ vi.mock( 'calypso/state/selectors/is-woo-jpc-flow', () => ( { default: vi.fn( ()
 vi.mock( 'calypso/lib/partner-branding', () => ( {
 	usePartnerBranding: vi.fn( () => ( { hasCustomBranding: false, topBarLogo: undefined } ) ),
 } ) );
-
-import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { fireEvent, screen } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
-import { usePartnerBranding } from 'calypso/lib/partner-branding';
-import LoginContextProvider from 'calypso/login/login-context';
-import oauth2ClientsReducer from 'calypso/state/oauth2-clients/reducer';
-import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import OneLoginLayout, { ensureHeadingProvided } from '../one-login-layout';
 
 describe( 'ensureHeadingProvided', () => {
 	const originalEnv = process.env.NODE_ENV;

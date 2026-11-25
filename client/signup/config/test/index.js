@@ -8,7 +8,18 @@ import { getStepModuleLoaders, getStepModuleMap } from '../step-components';
 import steps from '../steps';
 import { generateSteps } from '../steps-pure';
 
-vi.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
+vi.mock( 'calypso/lib/signup/step-actions', () => ( {
+	addPlanToCart: vi.fn(),
+	addWithThemePlanToCart: vi.fn(),
+	addWithPluginPlanToCart: vi.fn(),
+	createAccount: vi.fn(),
+	createSiteOrDomain: vi.fn(),
+	createSiteWithCart: vi.fn(),
+	isPlanFulfilled: vi.fn(),
+	isMailboxFulfilled: vi.fn(),
+	createSiteAndAddDIFMToCart: vi.fn(),
+	submitWebsiteContent: vi.fn(),
+} ) );
 vi.mock( 'calypso/components/file-picker/component-file-picker', () => ( {
 	default: <div></div>,
 } ) );
@@ -24,7 +35,7 @@ vi.mock( '@automattic/calypso-config', () =>
 );
 
 describe( 'index', () => {
-	// eslint-disable-next-line jest/expect-expect
+	// eslint-disable-next-line vitest/expect-expect
 	test( 'should not have overlapping step/flow names', () => {
 		const flowNames = Object.keys( flows.getFlows() );
 		const overlappingNames = Object.keys( steps ).filter( ( name ) => flowNames.includes( name ) );

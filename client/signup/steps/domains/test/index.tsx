@@ -1,6 +1,17 @@
 /**
  * @vitest-environment jsdom
  */
+import page from '@automattic/calypso-router';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { type Mock, vi } from 'vitest';
+import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/wpcom-domain-search/analytics';
+import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import DomainSearchStep from '../';
 
 vi.mock( 'calypso/signup/step-wrapper', () => ( {
 	default: vi.fn( ( props: { stepContent?: React.ReactNode } ) => props.stepContent ?? null ),
@@ -19,18 +30,6 @@ vi.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () 
 	const handler = { query: '', setQuery: vi.fn(), clearQuery: vi.fn(), resetQuery: vi.fn() };
 	return { useQueryHandler: vi.fn( () => handler ) };
 } );
-
-import page from '@automattic/calypso-router';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
-import { type Mock, vi } from 'vitest';
-import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
-import { recordUseYourDomainButtonClick } from 'calypso/components/domains/wpcom-domain-search/analytics';
-import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
-import StepWrapper from 'calypso/signup/step-wrapper';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import DomainSearchStep from '../';
 
 const mockWPCOMDomainSearch = WPCOMDomainSearch as Mock;
 const mockUseQueryHandler = useQueryHandler as Mock;
