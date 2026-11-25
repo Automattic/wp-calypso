@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { addQueryArgs } from '@wordpress/url';
+import { vi } from 'vitest';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -24,28 +25,32 @@ import {
 } from '../index';
 
 // Mock dependencies
-jest.mock( 'debug', () => () => jest.fn() );
-jest.mock( 'calypso/lib/analytics/ga', () => ( {
-	gaRecordEvent: jest.fn(),
+vi.mock( 'debug', () => ( { default: () => vi.fn() } ) );
+vi.mock( 'calypso/lib/analytics/ga', () => ( {
+	gaRecordEvent: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/analytics/mc', () => ( {
-	bumpStat: jest.fn(),
-	bumpStatWithPageView: jest.fn(),
+vi.mock( 'calypso/lib/analytics/mc', () => ( {
+	bumpStat: vi.fn(),
+	bumpStatWithPageView: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', async () => ( {
 	localeRegexString: 'en|es|fr|de|it|pt|ru|ja|ko|zh',
-	...jest.requireActual( '@automattic/i18n-utils' ),
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 } ) );
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
-} ) );
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isEnabled: vi.fn(),
+	} )
+);
 
 describe( 'reader stats', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Mock window.location
 		Object.defineProperty( window, 'location', {
 			value: {

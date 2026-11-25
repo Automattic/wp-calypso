@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import VerificationNudge from '../verificationNudge';
 
 // Expose the props in a way that lets us inspect and interact with them.
-jest.mock( 'calypso/me/email-verification-banner', () => ( {
+vi.mock( 'calypso/me/email-verification-banner', () => ( {
 	__esModule: true,
 	default: ( {
 		customDescription,
@@ -29,8 +30,8 @@ jest.mock( 'calypso/me/email-verification-banner', () => ( {
 } ) );
 
 // i18n-calypso's useTranslate is called inside VerificationNudge.
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
 	useTranslate:
 		() => ( text: string, opts?: { components?: Record< string, React.ReactNode > } ) => {
 			if ( ! opts?.components ) {
@@ -42,7 +43,7 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 
 describe( 'VerificationNudge', () => {
-	const replaceMock = jest.fn();
+	const replaceMock = vi.fn();
 
 	beforeEach( () => {
 		replaceMock.mockClear();

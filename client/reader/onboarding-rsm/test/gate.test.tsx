@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import AsyncLoad from 'calypso/components/async-load';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderOnboardingGate from '../gate';
 import type { ReactElement } from 'react';
 
-jest.mock( 'calypso/components/async-load', () => ( {
+vi.mock( 'calypso/components/async-load', () => ( {
 	__esModule: true,
-	default: jest.fn( () => null ),
+	default: vi.fn( () => null ),
 } ) );
 
 type TestState = { currentUser: { id: number | null } };
@@ -21,23 +22,23 @@ const render = ( ui: ReactElement, initialState: TestState = loggedInState ) =>
 
 describe( 'ReaderOnboardingGate', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'loads reader onboarding for a logged-in user', () => {
 		render( <ReaderOnboardingGate /> );
 
-		const [ props ] = ( AsyncLoad as jest.Mock ).mock.calls[ 0 ];
+		const [ props ] = ( AsyncLoad as Mock ).mock.calls[ 0 ];
 		expect( typeof props.require ).toBe( 'function' );
 		expect( props.require.toString() ).toContain( 'calypso/reader/onboarding-rsm' );
 	} );
 
 	it( 'forwards props to AsyncLoad', () => {
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 
 		render( <ReaderOnboardingGate onRender={ onRender } isSuppressed /> );
 
-		const [ props ] = ( AsyncLoad as jest.Mock ).mock.calls[ 0 ];
+		const [ props ] = ( AsyncLoad as Mock ).mock.calls[ 0 ];
 		expect( props ).toMatchObject( {
 			onRender,
 			isSuppressed: true,
@@ -47,6 +48,6 @@ describe( 'ReaderOnboardingGate', () => {
 	it( 'renders nothing when the user is logged out', () => {
 		render( <ReaderOnboardingGate />, loggedOutState );
 
-		expect( AsyncLoad as jest.Mock ).not.toHaveBeenCalled();
+		expect( AsyncLoad as Mock ).not.toHaveBeenCalled();
 	} );
 } );

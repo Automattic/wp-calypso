@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { vi } from 'vitest';
 import NewBlogCard from '../card';
 import type { NewBlogRec } from '../tracks';
 
-const mockRecordNewBlogRender = jest.fn();
-jest.mock( '../tracks', () => ( {
+const mockRecordNewBlogRender = vi.fn();
+vi.mock( '../tracks', () => ( {
 	recordNewBlogRender: ( ...args: unknown[] ) => mockRecordNewBlogRender( ...args ),
 } ) );
 const mockPost = {
@@ -17,21 +18,25 @@ const mockPost = {
 	title: 'A post',
 	URL: 'https://example.com/a-post',
 };
-jest.mock( 'calypso/reader/data/post', () => ( {
+vi.mock( 'calypso/reader/data/post', () => ( {
 	usePost: () => ( { data: mockPost, isLoading: false } ),
 } ) );
-jest.mock( 'calypso/reader/data/site', () => ( { useSite: () => ( { site: undefined } ) } ) );
-jest.mock( 'calypso/reader/data/feed', () => ( { useFeedQuery: () => ( { data: undefined } ) } ) );
-jest.mock( 'calypso/reader/follow-button', () => () => <button>Subscribe</button> );
-jest.mock( 'calypso/blocks/site-icon', () => ( { SiteIcon: () => null } ) );
-jest.mock( 'calypso/blocks/reader-excerpt', () => () => null );
-jest.mock( 'calypso/reader/get-helpers', () => ( { getSiteName: () => 'A blog' } ) );
-jest.mock( 'calypso/reader/route', () => ( { getStreamUrl: () => '/reader/feeds/2' } ) );
-jest.mock( 'calypso/reader/utils', () => ( { showSelectedPost: () => () => {} } ) );
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( str: string ) => str,
-} ) );
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( 'calypso/reader/data/site', () => ( { useSite: () => ( { site: undefined } ) } ) );
+vi.mock( 'calypso/reader/data/feed', () => ( { useFeedQuery: () => ( { data: undefined } ) } ) );
+vi.mock( 'calypso/reader/follow-button', () => ( { default: () => <button>Subscribe</button> } ) );
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { SiteIcon: () => null } )
+);
+vi.mock( 'calypso/blocks/reader-excerpt', () => ( { default: () => null } ) );
+vi.mock( 'calypso/reader/get-helpers', () => ( { getSiteName: () => 'A blog' } ) );
+vi.mock( 'calypso/reader/route', () => ( { getStreamUrl: () => '/reader/feeds/2' } ) );
+vi.mock( 'calypso/reader/utils', () => ( { showSelectedPost: () => () => {} } ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( str: string ) => str,
+	} )
+);
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( props: { label: string; onClick: () => void } ) => (
 		<button onClick={ props.onClick }>{ props.label }</button>
 	),
@@ -51,18 +56,18 @@ const rec: NewBlogRec = {
 };
 
 describe( 'NewBlogCard', () => {
-	afterEach( () => jest.clearAllMocks() );
+	afterEach( () => vi.clearAllMocks() );
 
 	it( 'records one render the first time the card is on screen', () => {
-		const onImpression = jest.fn();
+		const onImpression = vi.fn();
 		render(
 			<ul>
 				<NewBlogCard
 					rec={ rec }
 					uiPosition={ 1 }
-					onDismiss={ jest.fn() }
-					onOpen={ jest.fn() }
-					onFollowToggle={ jest.fn() }
+					onDismiss={ vi.fn() }
+					onOpen={ vi.fn() }
+					onFollowToggle={ vi.fn() }
 					onImpression={ onImpression }
 				/>
 			</ul>

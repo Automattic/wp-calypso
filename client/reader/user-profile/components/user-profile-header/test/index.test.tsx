@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { ReaderUser, UserSitesResponse } from '@automattic/api-core';
@@ -8,42 +8,45 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import UserProfileHeader from '../index';
 
-jest.mock(
-	'calypso/blocks/user-avatar',
-	() =>
-		( { user }: { user: ComponentProps< typeof UserAvatar >[ 'user' ] } ) => (
-			<div data-testid="user-avatar" data-user-id={ user?.ID }></div>
-		)
-);
-
-jest.mock( 'calypso/blocks/site-icon', () => ( {
-	SiteIcon: ( { siteId }: { siteId: number } ) => <span data-testid={ `site-icon-${ siteId }` } />,
+vi.mock( 'calypso/blocks/user-avatar', () => ( {
+	default: ( { user }: { user: ComponentProps< typeof UserAvatar >[ 'user' ] } ) => (
+		<div data-testid="user-avatar" data-user-id={ user?.ID }></div>
+	),
 } ) );
 
-jest.mock(
-	'calypso/components/section-nav/tabs',
-	() =>
-		( { children }: { children: React.ReactNode } ) => (
-			<div data-testid="nav-tabs">{ children }</div>
-		)
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SiteIcon: ( { siteId }: { siteId: number } ) => (
+			<span data-testid={ `site-icon-${ siteId }` } />
+		),
+	} )
 );
 
-const mockUseAchievementsVisibility = jest.fn();
-jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility', () => ( {
+vi.mock( 'calypso/components/section-nav/tabs', () => ( {
+	default: ( { children }: { children: React.ReactNode } ) => (
+		<div data-testid="nav-tabs">{ children }</div>
+	),
+} ) );
+
+const mockUseAchievementsVisibility = vi.fn();
+vi.mock( 'calypso/reader/components/achievements/use-achievements-visibility', () => ( {
 	__esModule: true,
 	default: () => mockUseAchievementsVisibility(),
 } ) );
 
-const mockUseProfileTabVisibility = jest.fn();
-jest.mock( 'calypso/reader/data/user-profile/use-profile-tab-visibility', () => ( {
+const mockUseProfileTabVisibility = vi.fn();
+vi.mock( 'calypso/reader/data/user-profile/use-profile-tab-visibility', () => ( {
 	useProfileTabVisibility: () => mockUseProfileTabVisibility(),
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
+vi.mock( '@automattic/api-queries', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+		'@automattic/api-queries'
+	) ),
 	isAutomatticianQuery: () => ( {
 		queryKey: [ 'me', 'is-automattician' ],
 		initialData: { teams: [ { slug: 'a8c' } ] },
@@ -66,7 +69,7 @@ describe( 'UserProfileHeader', () => {
 	let queryClient: QueryClient;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseAchievementsVisibility.mockReturnValue( {
 			isOwnProfile: true,
 			isVisible: true,

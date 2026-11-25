@@ -1,18 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import DailyPostStreakCard from '../daily-post-streak-card';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+		},
+	} )
+);
 
-const mockGet = jest.mocked( wpcom.req.get );
+const mockGet = vi.mocked( wpcom.req.get );
 
 const streak = ( overrides = {} ) => ( {
 	blog_id: 12345,
@@ -32,7 +35,7 @@ function renderCard( props: { streak: ReturnType< typeof streak > } ) {
 
 describe( 'DailyPostStreakCard', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders the static "Daily Post Streak" card title', () => {

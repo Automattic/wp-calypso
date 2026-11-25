@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import TopicGroupCard from '../topic-group-card';
 import type { CuratedBlog } from '../../curated-blogs';
@@ -15,8 +16,11 @@ import type { CuratedBlog } from '../../curated-blogs';
 // inside the jest.mock factory below.
 const mockFeedQueryCalls: number[] = [];
 
-jest.mock( '@automattic/api-queries', () => {
-	const actual = jest.requireActual( '@automattic/api-queries' );
+vi.mock( '@automattic/api-queries', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+			'@automattic/api-queries'
+		);
 	return {
 		...actual,
 		readFeedQuery: ( feedId: number ) => ( {
@@ -32,7 +36,7 @@ jest.mock( '@automattic/api-queries', () => {
 	};
 } );
 
-jest.mock( 'calypso/blocks/site-icon', () => ( {
+vi.mock( 'calypso/blocks/site-icon', () => ( {
 	__esModule: true,
 	SiteIcon: ( { alt }: { alt?: string } ) => <span data-testid="site-icon" aria-label={ alt } />,
 } ) );
@@ -87,12 +91,12 @@ const defaultProps = {
 	tags: [ 'food', 'drinks' ],
 	blogs,
 	isSubscribed: false,
-	onSubscribe: jest.fn(),
+	onSubscribe: vi.fn(),
 };
 
 describe( 'TopicGroupCard', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockFeedQueryCalls.length = 0;
 	} );
 
@@ -175,7 +179,7 @@ describe( 'TopicGroupCard', () => {
 	} );
 
 	it( 'calls onSubscribe when the Subscribe button is clicked', async () => {
-		const onSubscribe = jest.fn();
+		const onSubscribe = vi.fn();
 		const user = userEvent.setup();
 		renderWithProvider( <TopicGroupCard { ...defaultProps } onSubscribe={ onSubscribe } /> );
 
@@ -185,7 +189,7 @@ describe( 'TopicGroupCard', () => {
 	} );
 
 	it( 'renders the "Subscribed" state with the button disabled and does not invoke onSubscribe on click', async () => {
-		const onSubscribe = jest.fn();
+		const onSubscribe = vi.fn();
 		const user = userEvent.setup();
 		renderWithProvider(
 			<TopicGroupCard { ...defaultProps } isSubscribed onSubscribe={ onSubscribe } />

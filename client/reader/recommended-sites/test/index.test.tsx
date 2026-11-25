@@ -1,25 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import RecommendedSites, { seed as recommendedSitesSeed } from '..';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
 
-jest.mock( '@automattic/viewport-react', () => ( {
-	useBreakpoint: jest.fn( () => false ),
+vi.mock( '@automattic/viewport-react', () => ( {
+	useBreakpoint: vi.fn( () => false ),
 } ) );
 
-jest.mock( '../site', () => ( props: { siteId: number; feedId?: number } ) => (
-	<li data-testid="recommended-site">{ `${ props.siteId }:${ props.feedId ?? '' }` }</li>
-) );
+vi.mock( '../site', () => ( {
+	default: ( props: { siteId: number; feedId?: number } ) => (
+		<li data-testid="recommended-site">{ `${ props.siteId }:${ props.feedId ?? '' }` }</li>
+	),
+} ) );
 
-jest.mock( '../placeholder', () => ( {
+vi.mock( '../placeholder', () => ( {
 	RecommendedSitesPlaceholder: ( { count }: { count: number } ) => (
 		<>
 			{ Array.from( { length: count }, ( _, index ) => (
