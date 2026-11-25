@@ -7,12 +7,11 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
@@ -32,16 +31,23 @@ export default function RecoveryEmail() {
 	const { data: serverData } = useQuery( userSettingsQuery() );
 
 	const { mutate: validateEmail, isPending: isValidateEmailPending } = useMutation(
-		updateAccountRecoveryEmailMutation()
+		withSnackbar( updateAccountRecoveryEmailMutation(), {
+			success: __( 'Recovery email saved.' ),
+			error: ( error ) => error.message || __( 'Failed to save recovery email.' ),
+		} )
 	);
 	const { mutate: removeEmail, isPending: isRemoveEmailPending } = useMutation(
-		removeAccountRecoveryEmailMutation()
+		withSnackbar( removeAccountRecoveryEmailMutation(), {
+			success: __( 'Recovery email removed.' ),
+			error: ( error ) => error.message || __( 'Failed to remove recovery email.' ),
+		} )
 	);
 	const { mutate: resendValidation, isPending: isResendValidationPending } = useMutation(
-		resendAccountRecoveryEmailValidationMutation()
+		withSnackbar( resendAccountRecoveryEmailValidationMutation(), {
+			success: __( 'Recovery email validation resent.' ),
+			error: ( error ) => error.message || __( 'Failed to resend recovery email validation.' ),
+		} )
 	);
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const accountRecoveryEmail = accountRecoveryData.email;
 
@@ -54,33 +60,14 @@ export default function RecoveryEmail() {
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		recordTracksEvent( 'calypso_dashboard_security_account_recovery_email_validate_email_click' );
-		validateEmail( formData.email, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Recovery email saved.' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to save recovery email.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		validateEmail( formData.email );
 	};
 
 	const handleRemove = () => {
 		recordTracksEvent( 'calypso_dashboard_security_account_recovery_email_remove_email_click' );
 		removeEmail( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Recovery email removed.' ), {
-					type: 'snackbar',
-				} );
 				setFormData( { email: '' } );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to remove recovery email.' ), {
-					type: 'snackbar',
-				} );
 			},
 			onSettled: () => {
 				setIsRemoveDialogOpen( false );
@@ -93,18 +80,7 @@ export default function RecoveryEmail() {
 		recordTracksEvent(
 			'calypso_dashboard_security_account_recovery_email_resend_validation_click'
 		);
-		resendValidation( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Recovery email validation resent.' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to resend recovery email validation.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		resendValidation();
 	};
 
 	const emailMatchesAccountEmail = recoveryEmailMatchesAccountEmail(

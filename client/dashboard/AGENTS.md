@@ -22,16 +22,33 @@ This is the new hosting dashboard for WordPress.com.
 Use `withSnackbar()` from `app/snackbars/with-snackbar` to attach a snackbar to a mutation. Never write `meta: { snackbar }` by hand:
 
 ```ts
-useMutation( withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ) );
+useMutation( withSnackbar( sitePHPVersionMutation( siteId ), { success: __( 'Saved.' ) } ) );
 ```
 
 Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `eslint.config.mjs` enforces this.
+
+Show a mutation's snackbars through `withSnackbar()`, not with `createSuccessNotice()` or `createErrorNotice()` in `onSuccess` and `onError`. The app shows them even if the component unmounts before the mutation finishes, when callbacks passed to `mutate()` no longer run.
+
+For errors, prefer the server's message: `error: { source: 'server' }`. When the text depends on the result, pass a function. It gets the response (or the error) and the variables passed to `mutate()`, and returns the text, or `undefined` for no snackbar:
+
+```ts
+useMutation(
+	withSnackbar( sitePHPVersionMutation( siteId ), {
+		success: ( _data, version ) =>
+			/* translators: %s: PHP version */
+			sprintf( __( 'PHP version changed to %s.' ), version ),
+		error: { source: 'server' },
+	} )
+);
+```
+
+A function also gives a fallback when the server's message may be empty: `error: ( error ) => error.message || __( 'Failed to save.' )`. Write a notice by hand only when `withSnackbar()` can't express it, such as one with `actions` or a custom `id`.
 
 For component-specific handling, pass callbacks to `mutate()`:
 
 ```ts
 const { mutate } = useMutation(
-	withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } )
+	withSnackbar( sitePHPVersionMutation( siteId ), { success: __( 'Saved.' ) } )
 );
 mutate( version, {
 	onSuccess: () => {

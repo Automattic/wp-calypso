@@ -40,12 +40,17 @@ function renderSnackbars() {
 	return queryClient;
 }
 
-function runMutation( queryClient: QueryClient, meta: MutationMeta, error?: Error ) {
-	const observer = new MutationObserver( queryClient, {
-		mutationFn: () => ( error ? Promise.reject( error ) : Promise.resolve() ),
+function runMutation(
+	queryClient: QueryClient,
+	meta: MutationMeta,
+	error?: Error,
+	{ data, variables }: { data?: unknown; variables?: unknown } = {}
+) {
+	const observer = new MutationObserver< unknown, Error, unknown >( queryClient, {
+		mutationFn: () => ( error ? Promise.reject( error ) : Promise.resolve( data ) ),
 		meta,
 	} );
-	return act( () => observer.mutate().catch( () => {} ) );
+	return act( () => observer.mutate( variables ).catch( () => {} ) );
 }
 
 describe( 'Snackbars', () => {
@@ -157,5 +162,57 @@ describe( 'Snackbars', () => {
 		expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Custom snackbar error.', {
 			type: 'snackbar',
 		} );
+	} );
+
+	test( 'builds the success message from the response and the variables', async () => {
+		const queryClient = renderSnackbars();
+
+		await runMutation(
+			queryClient,
+			{
+				// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
+				snackbar: {
+					success: ( data: { name: string }, enabled: boolean ) =>
+						`${ data.name } ${ enabled ? 'enabled' : 'disabled' }.`,
+				},
+			},
+			undefined,
+			{ data: { name: 'Read status' }, variables: true }
+		);
+
+		expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Read status enabled.', {
+			type: 'snackbar',
+		} );
+	} );
+
+	test( 'builds the error message from the error and the variables', async () => {
+		const queryClient = renderSnackbars();
+
+		await runMutation(
+			queryClient,
+			{
+				// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
+				snackbar: {
+					error: ( error: Error, email: string ) => `${ error.message } (${ email })`,
+				},
+			},
+			new Error( 'Invalid email.' ),
+			{ variables: 'me@example.com' }
+		);
+
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Invalid email. (me@example.com)', {
+			type: 'snackbar',
+		} );
+	} );
+
+	test( 'shows no snackbar when a message function returns undefined', async () => {
+		const queryClient = renderSnackbars();
+
+		await runMutation( queryClient, {
+			// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
+			snackbar: { success: () => undefined },
+		} );
+
+		expect( mockCreateSuccessNotice ).not.toHaveBeenCalled();
 	} );
 } );

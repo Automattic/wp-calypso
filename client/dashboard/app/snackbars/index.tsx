@@ -23,15 +23,24 @@ export default function Snackbars() {
 		return queryClient.getMutationCache().subscribe( ( event ) => {
 			const { type, mutation } = event;
 			if ( type === 'updated' ) {
+				const { variables } = mutation.state;
 				if ( event.action.type === 'success' ) {
-					const message = mutation.meta?.snackbar?.success;
+					const success = mutation.meta?.snackbar?.success;
+					const message =
+						typeof success === 'function' ? success( event.action.data, variables ) : success;
 					if ( message ) {
 						createSuccessNotice( message, { type: 'snackbar' } );
 					}
 				} else if ( event.action.type === 'error' ) {
 					const error = mutation.meta?.snackbar?.error;
-					const showServerError = typeof error === 'object' && error?.source === 'server';
-					const errorMessage = showServerError ? event.action.error.message : error;
+					let errorMessage;
+					if ( typeof error === 'function' ) {
+						errorMessage = error( event.action.error, variables );
+					} else if ( typeof error === 'object' && error?.source === 'server' ) {
+						errorMessage = event.action.error.message;
+					} else {
+						errorMessage = error;
+					}
 
 					if ( errorMessage ) {
 						createErrorNotice( errorMessage, { type: 'snackbar' } );

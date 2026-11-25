@@ -14,13 +14,12 @@ import {
 	ExternalLink,
 	Modal,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { purchasesRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
@@ -137,9 +136,17 @@ function SiteDeleteWarningContent( { site, onClose }: { site: Site; onClose: () 
 
 function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const router = useRouter();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState< SiteDeleteFormData >( { domain: '' } );
-	const mutation = useMutation( siteDeleteMutation( site.ID ) );
+	const mutation = useMutation(
+		withSnackbar( siteDeleteMutation( site.ID ), {
+			success: sprintf(
+				/* translators: %s: site name */
+				__( '%s has been deleted.' ),
+				site.slug
+			),
+			error: ( error ) => error.message || __( 'Failed to delete site' ),
+		} )
+	);
 
 	const productionSiteId = getProductionSiteId( site );
 	const { data: stagingSiteSyncState } = useQuery( {
@@ -172,19 +179,6 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 		mutation.mutate( undefined, {
 			onSuccess: () => {
 				router.navigate( { to: '/sites' } );
-				createSuccessNotice(
-					sprintf(
-						/* translators: %s: site name */
-						__( '%s has been deleted.' ),
-						site.slug
-					),
-					{ type: 'snackbar' }
-				);
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to delete site' ), {
-					type: 'snackbar',
-				} );
 			},
 		} );
 	};
