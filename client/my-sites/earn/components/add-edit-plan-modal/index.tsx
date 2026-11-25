@@ -3,7 +3,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useState, useEffect, useMemo } from 'react';
+import { ChangeEvent, useState, useEffect, useId, useMemo } from 'react';
 import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -40,6 +40,7 @@ type RecurringPaymentsPlanAddEditModalProps = {
 	annualProduct: Product | null;
 	siteId?: number;
 	isOnlyTier?: boolean;
+	nameHelp?: string;
 	hideWelcomeEmailInput?: boolean;
 	hideAdvancedSettings?: boolean;
 };
@@ -82,11 +83,13 @@ const RecurringPaymentsPlanAddEditModal = ( {
 	annualProduct /* annual product for tiers */,
 	siteId,
 	isOnlyTier = false,
+	nameHelp,
 	hideWelcomeEmailInput = false,
 	hideAdvancedSettings = false,
 }: RecurringPaymentsPlanAddEditModalProps ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const nameHelpId = useId();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const connectedAccountDefaultCurrency = useSelector( ( state ) =>
 		getconnectedAccountDefaultCurrencyForSiteId( state, siteId ?? selectedSiteId )
@@ -380,12 +383,16 @@ const RecurringPaymentsPlanAddEditModal = ( {
 					</FormLabel>
 					<FormTextInput
 						id="title"
+						aria-describedby={ nameHelpId }
 						value={ editedProductName }
 						onChange={ onNameChange }
 						onBlur={ () => setFocusedName( true ) }
 					/>
 					<FormSettingExplanation>
-						{ translate( "Let your audience know what they'll get when they subscribe." ) }
+						<span id={ nameHelpId }>
+							{ nameHelp ??
+								translate( "Let your audience know what they'll get when they subscribe." ) }
+						</span>
 					</FormSettingExplanation>
 					{ ! isFormValid( 'name' ) && focusedName && (
 						<FormInputValidation isError text={ translate( 'Please input a name.' ) } />
