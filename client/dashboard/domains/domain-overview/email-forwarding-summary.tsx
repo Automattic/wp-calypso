@@ -14,25 +14,21 @@ export default function DomainEmailForwardingSettingsSummary( {
 } ) {
 	const { data: accounts } = useQuery( mailboxAccountsQuery( domain.blog_id, domain.domain ) );
 
-	// A domain that can host forwarding always has a forwarding account, even with no forwarders.
-	const forwardingAccounts = accounts?.filter(
-		( account ) =>
-			account.account_type === EmailProvider.Forwarding &&
-			account.domains.some( ( binding ) => binding.domain === domain.domain )
-	);
-
 	// Each target of a forwarder is its own entry, so count unique addresses.
-	const forwarderCount = forwardingAccounts?.length
-		? new Set(
-				forwardingAccounts
-					.flatMap( ( account ) => account.emails )
-					.filter( ( box ) => box.domain === domain.domain )
-					.map( ( box ) => box.mailbox )
-			).size
-		: undefined;
+	const forwarderCount =
+		accounts &&
+		new Set(
+			accounts
+				.filter( ( account ) => account.account_type === EmailProvider.Forwarding )
+				.flatMap( ( account ) => account.emails )
+				.filter( ( box ) => box.domain === domain.domain )
+				.map( ( box ) => box.mailbox )
+		).size;
 
 	// Only a known zero offers the add flow: while loading or after a failure the
-	// domain may already have forwarders.
+	// domain may already have forwarders. This endpoint can leave out the forwarding
+	// account of a domain that supports forwarding, so the add-forwarder page decides
+	// whether the domain is eligible.
 	const linkProps =
 		forwarderCount === 0 && domain.current_user_can_add_email
 			? { to: '/emails/add-forwarder', search: { domainName: domain.domain } }

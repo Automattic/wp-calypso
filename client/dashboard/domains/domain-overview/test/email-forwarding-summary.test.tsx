@@ -76,16 +76,12 @@ describe( '<DomainEmailForwardingSettingsSummary>', () => {
 		expect( screen.queryByText( /forwarder/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'links to the list when the domain cannot host forwarding', async () => {
-		const { queryClient } = renderSummary( 'example.com', 200, [
-			mockAccount( EmailProvider.Titan, 'example.com', [ { mailbox: 'info' } ] ),
-		] );
-		const { queryKey } = mailboxAccountsQuery( blogId, 'example.com' );
+	test( 'offers the add flow when the response has no forwarding account', async () => {
+		renderSummary( 'example.com', 200, [] );
 
 		await waitFor( () =>
-			expect( queryClient.getQueryState( queryKey )?.status ).toBe( 'success' )
+			expect( getRow() ).toHaveAttribute( 'href', '/emails/add-forwarder?domainName=example.com' )
 		);
-		expect( getRow() ).toHaveAttribute( 'href', LIST );
 	} );
 
 	test( 'links to the list when the user cannot add email', async () => {
