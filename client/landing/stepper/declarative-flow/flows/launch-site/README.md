@@ -31,7 +31,7 @@ The plans step does look the site up in the user's preview sites (`/wow-funnel/p
   `back_to` and `redirect_to` are only followed when they are a relative path, a URL on one of the dashboards, or a URL on the site being launched (such as the wp-admin screen the launch started from); anything else is ignored.
 
 - `ref` – Passed on to checkout. `wp-admin` (or `wp-admin/…`) lands the user on that wp-admin screen after launch, ahead of `back_to`.
-- `coupon` – Applied at checkout.
+- `coupon` – Applied at checkout. During the Black Friday 2026 sale, a link with `hide_free_plan=1` and no coupon gets the sale coupon.
 - `hide_free_plan` – `1` offers only paid plans.
 - `checkout_source` – Passed on to checkout as its `source`, which it records on the purchase.
 - `dashboard` – Passed on to checkout when it is `a4a` or `dotcom`.
