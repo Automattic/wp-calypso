@@ -114,8 +114,12 @@ const handFixes = [];
 
 for ( const file of files ) {
 	const src = fs.readFileSync( file, 'utf8' );
-	const kind = file.endsWith( 'x' ) ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
 	const isTypeScript = /\.tsx?$/.test( file );
+	// Babel parses JSX in `.js` files too.
+	let kind = isTypeScript ? ts.ScriptKind.TS : ts.ScriptKind.JSX;
+	if ( file.endsWith( '.tsx' ) ) {
+		kind = ts.ScriptKind.TSX;
+	}
 	const sf = ts.createSourceFile( file, src, ts.ScriptTarget.Latest, true, kind );
 	const edits = [];
 	const vitestImports = new Set();
