@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useSiteSpec } from '../use-site-spec';
 import type { SiteSpecConfig } from '../utils';
@@ -30,7 +30,10 @@ vi.mock( '@automattic/i18n-utils', () => ( {
 } ) );
 
 const { createCalypsoAuthProvider, mockAuthProvider } =
-	await import( '@automattic/agents-manager/src/auth/calypso-auth-provider' );
+	( await import( '@automattic/agents-manager/src/auth/calypso-auth-provider' ) ) as unknown as {
+		createCalypsoAuthProvider: Mock;
+		mockAuthProvider: Mock;
+	};
 
 function TestComponent( { siteSpecConfig }: { siteSpecConfig?: SiteSpecConfig } ) {
 	useSiteSpec( { container: '#site-spec', siteSpecConfig } );

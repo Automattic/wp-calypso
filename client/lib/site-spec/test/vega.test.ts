@@ -9,7 +9,7 @@ import config from '@automattic/calypso-config';
 import { type Mock, vi } from 'vitest';
 import { VEGA_AGENT_ID, getVegaSiteSpecConfig } from '../vega';
 
-interface MockWithIsEnabled extends vi.Mock {
+interface MockWithIsEnabled extends Mock {
 	isEnabled: Mock;
 }
 

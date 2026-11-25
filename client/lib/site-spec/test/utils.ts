@@ -20,7 +20,7 @@ import {
 	getBuildWowSiteSpecConfig,
 } from '../utils';
 
-interface MockWithIsEnabled extends vi.Mock {
+interface MockWithIsEnabled extends Mock {
 	isEnabled: Mock;
 }
 
