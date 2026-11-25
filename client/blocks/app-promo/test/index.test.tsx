@@ -18,7 +18,8 @@ vi.mock( 'calypso/lib/user-agent', () => ( {
 	},
 } ) );
 
-vi.mock( 'calypso/state/analytics/actions', () => ( {
+vi.mock( 'calypso/state/analytics/actions', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
 	recordTracksEvent: vi.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
 } ) );
 

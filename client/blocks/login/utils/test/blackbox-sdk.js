@@ -32,15 +32,15 @@ describe( 'blackbox-sdk', () => {
 		delete window.Blackbox;
 	} );
 
-	test( 'getBlackboxApiKey uses the login key', () => {
-		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
+	test( 'getBlackboxApiKey uses the login key', async () => {
+		const { getBlackboxApiKey } = await import( '../blackbox-sdk' );
 
 		expect( getBlackboxApiKey() ).toBe( 'login-key' );
 	} );
 
 	test( 'loadBlackboxSdk injects the api key and collect flow', async () => {
-		const { loadScript } = require( '@automattic/load-script' );
-		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+		const { loadScript } = await import( '@automattic/load-script' );
+		const { loadBlackboxSdk } = await import( '../blackbox-sdk' );
 
 		await loadBlackboxSdk( 'signup-key', 'signup' );
 
@@ -55,8 +55,8 @@ describe( 'blackbox-sdk', () => {
 	} );
 
 	test( 'loadBlackboxSdk only injects the script once on repeated calls', async () => {
-		const { loadScript } = require( '@automattic/load-script' );
-		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+		const { loadScript } = await import( '@automattic/load-script' );
+		const { loadBlackboxSdk } = await import( '../blackbox-sdk' );
 
 		await loadBlackboxSdk( 'login-key', 'login' );
 		await loadBlackboxSdk( 'login-key', 'login' );
@@ -65,9 +65,9 @@ describe( 'blackbox-sdk', () => {
 	} );
 
 	test( 'rotates the initial session when the active key changes during script loading', async () => {
-		const { loadScript } = require( '@automattic/load-script' );
-		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
-		const { configureBlackbox } = require( '../blackbox-surface' );
+		const { loadScript } = await import( '@automattic/load-script' );
+		const { loadBlackboxSdk } = await import( '../blackbox-sdk' );
+		const { configureBlackbox } = await import( '../blackbox-surface' );
 		let finishLoad;
 		loadScript.mockImplementationOnce( ( _url, callback ) => {
 			finishLoad = callback;
@@ -82,7 +82,7 @@ describe( 'blackbox-sdk', () => {
 
 	test( 'loadBlackboxSdk does not call configure after load', async () => {
 		window.Blackbox = { configure: vi.fn(), getSessionId: vi.fn() };
-		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+		const { loadBlackboxSdk } = await import( '../blackbox-sdk' );
 
 		await loadBlackboxSdk( 'login-key', 'login' );
 
@@ -90,19 +90,19 @@ describe( 'blackbox-sdk', () => {
 	} );
 
 	test( 'loadBlackboxSdk resolves even when the script fails to load', async () => {
-		const { loadScript } = require( '@automattic/load-script' );
+		const { loadScript } = await import( '@automattic/load-script' );
 		loadScript.mockImplementationOnce( ( _url, callback ) => callback( new Error( 'fail' ) ) );
-		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+		const { loadBlackboxSdk } = await import( '../blackbox-sdk' );
 
 		await expect( loadBlackboxSdk( 'login-key', 'login' ) ).resolves.toBeUndefined();
 	} );
 
 	test( 'loadBlackboxSdk retries on the next call after the script fails to load', async () => {
-		const { loadScript } = require( '@automattic/load-script' );
+		const { loadScript } = await import( '@automattic/load-script' );
 		loadScript
 			.mockImplementationOnce( ( _url, callback ) => callback( new Error( 'fail' ) ) )
 			.mockImplementationOnce( ( _url, callback ) => callback( null ) );
-		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+		const { loadBlackboxSdk } = await import( '../blackbox-sdk' );
 
 		await loadBlackboxSdk( 'login-key', 'login' );
 		await loadBlackboxSdk( 'login-key', 'login' );
@@ -111,10 +111,10 @@ describe( 'blackbox-sdk', () => {
 	} );
 
 	test( 'loadBlackboxSdk resolves immediately without calling loadScript when feature flag is off', async () => {
-		const config = require( '@automattic/calypso-config' );
+		const config = await import( '@automattic/calypso-config' );
 		config.isEnabled.mockReturnValueOnce( false );
-		const { loadScript } = require( '@automattic/load-script' );
-		const { loadBlackboxSdk } = require( '../blackbox-sdk' );
+		const { loadScript } = await import( '@automattic/load-script' );
+		const { loadBlackboxSdk } = await import( '../blackbox-sdk' );
 
 		await expect( loadBlackboxSdk( 'login-key', 'login' ) ).resolves.toBeUndefined();
 		expect( loadScript ).not.toHaveBeenCalled();

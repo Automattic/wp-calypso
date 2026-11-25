@@ -43,7 +43,8 @@ vi.mock( 'calypso/my-sites/people/team-members-site-transfer', () => ( {
 } ) );
 
 const post = ( await import( 'calypso/lib/wp' ) ).req.post as Mock;
-const useUsersQuery = ( await import( 'calypso/data/users/use-users-query' ) ) as unknown as Mock;
+const useUsersQuery = ( await import( 'calypso/data/users/use-users-query' ) )
+	.default as unknown as Mock;
 
 function deferred< T >() {
 	let resolve!: ( value: T ) => void;

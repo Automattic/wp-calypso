@@ -1,8 +1,4 @@
 /** @vitest-environment jsdom */
-vi.mock( 'calypso/components/purchase-detail', () => ( {
-	default: ( { description } ) => <div data-testid="purchase-detail">{ description }</div>,
-} ) );
-
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -24,6 +20,10 @@ import {
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { VideoAudioPosts } from '../video-audio-posts';
+
+vi.mock( 'calypso/components/purchase-detail', () => ( {
+	default: ( { description } ) => <div data-testid="purchase-detail">{ description }</div>,
+} ) );
 
 describe( 'VideoAudioPosts basic tests', () => {
 	const props = {

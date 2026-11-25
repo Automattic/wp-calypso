@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
 import { vi } from 'vitest';
+import { deleteSite } from 'calypso/state/sites/actions';
 import DeleteSite from '../index';
 
 const initialState = {
@@ -41,8 +42,6 @@ const initialState = {
 	preferences: {},
 };
 
-const mockDeleteSite = vi.fn();
-
 vi.mock( 'calypso/components/data/query-site-purchases', () => {
 	return { default: () => {} };
 } );
@@ -54,13 +53,13 @@ vi.mock( 'calypso/components/inline-support-link', () => {
 	};
 } );
 
-describe( 'index', () => {
-	vi.mock( 'calypso/state/sites/actions', () => {
-		return {
-			deleteSite: mockDeleteSite,
-		};
-	} );
+vi.mock( 'calypso/state/sites/actions', () => {
+	return {
+		deleteSite: vi.fn(),
+	};
+} );
 
+describe( 'index', () => {
 	test( 'Check DeleteSite renders as expected', async () => {
 		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( initialState );
@@ -98,7 +97,7 @@ describe( 'index', () => {
 
 		const deleteButton = await screen.getByRole( 'button', { name: /Delete site/ } );
 		expect( deleteButton ).not.toBeDisabled();
-		expect( mockDeleteSite ).not.toHaveBeenCalled();
+		expect( deleteSite ).not.toHaveBeenCalled();
 	} );
 
 	test( 'Check will show purchases message', async () => {

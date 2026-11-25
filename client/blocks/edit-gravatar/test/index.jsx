@@ -8,7 +8,7 @@ import { EditGravatar } from 'calypso/blocks/edit-gravatar';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
 vi.mock( '@gravatar-com/quick-editor', () => ( {
-	GravatarQuickEditorCore: vi.fn().mockImplementation( ( options ) => {
+	GravatarQuickEditorCore: vi.fn().mockImplementation( function ( options ) {
 		let _isOpen = false;
 		return {
 			// Fire the callback to simulate the profile update.

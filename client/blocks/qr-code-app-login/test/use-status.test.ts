@@ -6,6 +6,7 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { createElement } from 'react';
 import { type Mock, vi } from 'vitest';
 import wp from 'calypso/lib/wp';
+import { logQrAppLoginError } from '../log-error';
 import { useStatus } from '../use-status';
 
 vi.mock( 'calypso/lib/wp', () => ( {
@@ -88,7 +89,6 @@ describe( 'useStatus', () => {
 	} );
 
 	it( 'logs to logstash when the query errors', async () => {
-		const { logQrAppLoginError } = jest.requireMock( '../log-error' );
 		mockedGet.mockRejectedValueOnce( new Error( 'boom' ) );
 		const { wrapper } = makeWrapper();
 
