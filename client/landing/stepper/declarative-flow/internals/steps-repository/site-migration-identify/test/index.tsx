@@ -733,7 +733,7 @@ describe( 'SiteMigrationIdentify', () => {
 		} );
 
 		it( 'asks for the site address instead of checking a WordPress.com page', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			const analysis = mockAnalysis( { platform: 'unknown' }, 200, 'wordpress.com/log-in' );
 			render( { navigation: { submit } } );
 
@@ -743,7 +743,7 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( getInput() ).not.toHaveAttribute( 'readonly' );
 			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).not.toHaveClass( 'is-busy' );
 			await act( async () => {
-				jest.advanceTimersByTime( 2000 );
+				vi.advanceTimersByTime( 2000 );
 				await realTick();
 			} );
 			expect( submit ).not.toHaveBeenCalled();
@@ -751,7 +751,7 @@ describe( 'SiteMigrationIdentify', () => {
 		} );
 
 		it( 'explains a handed-over WordPress.com page without checking it', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			const analysis = mockAnalysis(
 				{ platform: 'unknown' },
 				200,
@@ -772,7 +772,7 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).not.toHaveClass( 'is-busy' );
 			expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
 			await act( async () => {
-				jest.advanceTimersByTime( 2000 );
+				vi.advanceTimersByTime( 2000 );
 				await realTick();
 			} );
 			expect( submit ).not.toHaveBeenCalled();
@@ -780,7 +780,7 @@ describe( 'SiteMigrationIdentify', () => {
 		} );
 
 		it( 'does not continue a hand-picked WordPress source that is a WordPress.com page', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			render(
 				{ navigation: { submit } },
 				{ initialEntry: '/some-path?from=wordpress.com%2Flog-in&manualPlatform=wordpress' }
