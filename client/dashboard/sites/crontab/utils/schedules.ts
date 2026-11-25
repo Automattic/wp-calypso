@@ -1,6 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import cronstrue from 'cronstrue';
-import { ScheduleType, CustomFrequency } from './types';
+import { ScheduleType, CustomFrequency } from '../types';
 
 export const PREDEFINED_SCHEDULES: { value: ScheduleType; label: string }[] = [
 	{ value: 'hourly', label: __( 'Every hour' ) },

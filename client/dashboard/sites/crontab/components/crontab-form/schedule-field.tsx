@@ -7,8 +7,8 @@ import {
 } from '@wordpress/components';
 import { __, _n } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { parseSchedule, PREDEFINED_SCHEDULES } from './schedules';
-import { ScheduleType, CustomFrequency } from './types';
+import { ScheduleType, CustomFrequency } from '../../types';
+import { parseSchedule, PREDEFINED_SCHEDULES } from '../../utils/schedules';
 
 interface ScheduleFieldProps {
 	value: string;

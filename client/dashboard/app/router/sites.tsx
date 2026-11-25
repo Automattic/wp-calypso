@@ -1412,7 +1412,7 @@ export const siteSettingsApmRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-apm' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/apm' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-apm' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1502,7 +1502,7 @@ export const siteSettingsCrontabIndexRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1520,7 +1520,7 @@ export const siteSettingsCrontabAddRoute = createRoute( {
 	getParentRoute: () => siteSettingsCrontabRoute,
 	path: 'add',
 } ).lazy( () =>
-	import( '../../sites/settings-crontab/add-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab/add' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab-add' )( {
 			component: d.default,
 		} )
@@ -1545,7 +1545,7 @@ export const siteSettingsCrontabEditRoute = createRoute( {
 		await queryClient.ensureQueryData( siteCrontabsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-crontab/edit-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab/cron/edit' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab-edit' )( {
 			component: d.default,
 		} )

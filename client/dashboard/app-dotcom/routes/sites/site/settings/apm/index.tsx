@@ -3,15 +3,15 @@ import { siteApmEnabledMutation, siteBySlugQuery } from '@automattic/api-queries
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import Breadcrumbs from '../../app/breadcrumbs';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import InlineSupportLink from '../../components/inline-support-link';
-import Notice, { NoticeActionButton } from '../../components/notice';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
-import { hasBackendAccess } from '../performance/backend-access';
-import { getBackendCalloutProps } from '../performance/backend-callout';
+import Breadcrumbs from '../../../../../../app/breadcrumbs';
+import { withSnackbar } from '../../../../../../app/snackbars/with-snackbar';
+import InlineSupportLink from '../../../../../../components/inline-support-link';
+import Notice, { NoticeActionButton } from '../../../../../../components/notice';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
+import UpsellCallout from '../../../../../../sites/hosting-feature-gated-with-callout/upsell';
+import { hasBackendAccess } from '../../../../../../sites/performance/backend-access';
+import { getBackendCalloutProps } from '../../../../../../sites/performance/backend-callout';
 
 function ApmToggle( { site }: { site: Site } ) {
 	const enabled = !! site.options?.apm_enabled;
