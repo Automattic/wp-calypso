@@ -30,9 +30,13 @@
 			groupName: 'nodejs',
 			matchDepNames: [ '@types/node' ],
 		},
+		// Peer ranges are widened in a separate rule: `extends: [ ':widenPeerDependencies' ]` nests a
+		// peerDependencies-only rule, which keeps the rest of the rule from applying to other deps.
+		{ extends: [ 'monorepo:react' ], prPriority: 2 },
 		{
-			extends: [ 'monorepo:react', ':widenPeerDependencies' ],
-			prPriority: 2,
+			extends: [ 'monorepo:react' ],
+			matchDepTypes: [ 'peerDependencies' ],
+			rangeStrategy: 'widen',
 		},
 		{
 			groupName: 'redux-related packages',
@@ -60,7 +64,6 @@
 		},
 		{
 			groupName: 'webpack packages',
-			extends: [ ':widenPeerDependencies' ],
 			matchPackageNames: [
 				'html-loader',
 				'postcss-loader',
@@ -70,6 +73,18 @@
 				'!/^@storybook/',
 			],
 			prPriority: 2,
+		},
+		{
+			matchPackageNames: [
+				'html-loader',
+				'postcss-loader',
+				'css-loader',
+				'/webpack/',
+				'/terser/',
+				'!/^@storybook/',
+			],
+			matchDepTypes: [ 'peerDependencies' ],
+			rangeStrategy: 'widen',
 		},
 		{
 			groupName: 'size-limit',
