@@ -1,30 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-jest.mock( '@automattic/data-stores', () => ( {
-	Plans: {
-		usePlans: jest.fn(),
-	},
-} ) );
-jest.mock( '@automattic/i18n-utils', () => ( {
-	useLocale: jest.fn(),
-} ) );
-jest.mock( 'calypso/landing/stepper/utils/get-flow-from-url', () => ( {
-	getFlowFromURL: jest.fn( () => null ),
-} ) );
-jest.mock( 'calypso/lib/akismet/is-akismet-checkout', () => jest.fn( () => false ) );
-jest.mock( 'calypso/lib/jetpack/is-jetpack-checkout', () => jest.fn( () => false ) );
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	getSignupCompleteFlowName: jest.fn( () => null ),
-} ) );
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
-} ) );
 
 import { Plans } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -34,14 +15,34 @@ import {
 	isRenewalPricingTreatment,
 } from '../use-renewal-price-experiment';
 
+vi.mock( '@automattic/data-stores', () => ( {
+	Plans: {
+		usePlans: vi.fn(),
+	},
+} ) );
+vi.mock( '@automattic/i18n-utils', () => ( {
+	useLocale: vi.fn(),
+} ) );
+vi.mock( 'calypso/landing/stepper/utils/get-flow-from-url', () => ( {
+	getFlowFromURL: vi.fn( () => null ),
+} ) );
+vi.mock( 'calypso/lib/akismet/is-akismet-checkout', () => ( { default: vi.fn( () => false ) } ) );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-checkout', () => ( { default: vi.fn( () => false ) } ) );
+vi.mock( 'calypso/signup/storageUtils', () => ( {
+	getSignupCompleteFlowName: vi.fn( () => null ),
+} ) );
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
+} ) );
+
 function mockPlansWithCurrency( currencyCode: string | undefined ) {
-	( Plans.usePlans as jest.Mock ).mockReturnValue( {
+	( Plans.usePlans as Mock ).mockReturnValue( {
 		data: currencyCode ? { plan: { pricing: { currencyCode } } } : undefined,
 	} );
 }
 
 function mockUserDate( date: string | null ) {
-	( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+	( useSelector as Mock ).mockImplementation( ( selector ) =>
 		selector( {
 			currentUser: {
 				id: date !== null ? 1 : null,
@@ -53,13 +54,13 @@ function mockUserDate( date: string | null ) {
 
 describe( 'useRenewalPricingExperiment', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
-		( useLocale as jest.Mock ).mockReturnValue( 'en' );
+		vi.resetAllMocks();
+		( useLocale as Mock ).mockReturnValue( 'en' );
 		mockPlansWithCurrency( 'USD' );
 		mockUserDate( null );
-		( isAkismetCheckout as jest.Mock ).mockReturnValue( false );
-		( isJetpackCheckout as jest.Mock ).mockReturnValue( false );
-		( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( null );
+		( isAkismetCheckout as Mock ).mockReturnValue( false );
+		( isJetpackCheckout as Mock ).mockReturnValue( false );
+		( getSignupCompleteFlowName as Mock ).mockReturnValue( null );
 	} );
 
 	it( 'returns crossed_price for logged-out users when all conditions are met', () => {
@@ -69,13 +70,13 @@ describe( 'useRenewalPricingExperiment', () => {
 
 	describe( 'locale gating', () => {
 		it( 'disqualifies non-English locales', () => {
-			( useLocale as jest.Mock ).mockReturnValue( 'fr' );
+			( useLocale as Mock ).mockReturnValue( 'fr' );
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current ).toEqual( [ false, null ] );
 		} );
 
 		it( 'qualifies English locale', () => {
-			( useLocale as jest.Mock ).mockReturnValue( 'en' );
+			( useLocale as Mock ).mockReturnValue( 'en' );
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current[ 1 ] ).toBe( 'crossed_price' );
 		} );
@@ -97,13 +98,13 @@ describe( 'useRenewalPricingExperiment', () => {
 
 	describe( 'checkout type gating', () => {
 		it( 'disqualifies Akismet checkout', () => {
-			( isAkismetCheckout as jest.Mock ).mockReturnValue( true );
+			( isAkismetCheckout as Mock ).mockReturnValue( true );
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current ).toEqual( [ false, null ] );
 		} );
 
 		it( 'disqualifies Jetpack checkout', () => {
-			( isJetpackCheckout as jest.Mock ).mockReturnValue( true );
+			( isJetpackCheckout as Mock ).mockReturnValue( true );
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current ).toEqual( [ false, null ] );
 		} );
@@ -126,7 +127,7 @@ describe( 'useRenewalPricingExperiment', () => {
 		} );
 
 		it( 'falls back to flow from storage', () => {
-			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'onboarding-pm' );
+			( getSignupCompleteFlowName as Mock ).mockReturnValue( 'onboarding-pm' );
 			const { result } = renderHook( () => useRenewalPricingExperiment() );
 			expect( result.current ).toEqual( [ false, null ] );
 		} );

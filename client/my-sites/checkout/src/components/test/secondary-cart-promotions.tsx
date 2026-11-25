@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
+import { type Mock, vi } from 'vitest';
 import {
 	createTestSite,
 	mockGetCartEndpointWith,
@@ -24,11 +25,11 @@ import {
 import SecondaryCartPromotions from '../secondary-cart-promotions';
 import { responseCartWithRenewal, storeData } from './lib/fixtures';
 
-const mockConfig = config as unknown as { isEnabled: jest.Mock };
-jest.mock( '@automattic/calypso-config', () => {
+const mockConfig = config as unknown as { isEnabled: Mock };
+vi.mock( '@automattic/calypso-config', () => {
 	const mock = () => '';
-	mock.isEnabled = jest.fn();
-	return mock;
+	mock.isEnabled = vi.fn();
+	return { ...mock, default: mock };
 } );
 
 const products: Record< string, Product > = {
@@ -151,7 +152,7 @@ describe( 'SecondaryCartPromotions', () => {
 					<TestWrapper initialCart={ responseCartWithRenewal }>
 						<SecondaryCartPromotions
 							responseCart={ responseCartWithRenewal }
-							addItemToCart={ jest.fn() }
+							addItemToCart={ vi.fn() }
 							isPurchaseRenewal
 						/>
 					</TestWrapper>
@@ -161,7 +162,7 @@ describe( 'SecondaryCartPromotions', () => {
 			} );
 
 			test( 'adds the items to the cart when "Renew all" is clicked', async () => {
-				const mockAddItemToCart = jest.fn();
+				const mockAddItemToCart = vi.fn();
 				render(
 					<TestWrapper initialCart={ responseCartWithRenewal }>
 						<SecondaryCartPromotions
@@ -194,7 +195,7 @@ describe( 'SecondaryCartPromotions', () => {
 					<TestWrapper initialCart={ cart } queryClient={ queryClient }>
 						<SecondaryCartPromotions
 							responseCart={ cart }
-							addItemToCart={ jest.fn() }
+							addItemToCart={ vi.fn() }
 							isPurchaseRenewal
 						/>
 					</TestWrapper>
@@ -214,7 +215,7 @@ describe( 'SecondaryCartPromotions', () => {
 						>
 							<SecondaryCartPromotions
 								responseCart={ cart }
-								addItemToCart={ jest.fn() }
+								addItemToCart={ vi.fn() }
 								isPurchaseRenewal
 							/>
 						</TestWrapper>
@@ -234,7 +235,7 @@ describe( 'SecondaryCartPromotions', () => {
 						>
 							<SecondaryCartPromotions
 								responseCart={ cart }
-								addItemToCart={ jest.fn() }
+								addItemToCart={ vi.fn() }
 								isPurchaseRenewal
 							/>
 						</TestWrapper>
@@ -253,7 +254,7 @@ describe( 'SecondaryCartPromotions', () => {
 						>
 							<SecondaryCartPromotions
 								responseCart={ cart }
-								addItemToCart={ jest.fn() }
+								addItemToCart={ vi.fn() }
 								isPurchaseRenewal
 							/>
 						</TestWrapper>
@@ -269,7 +270,7 @@ describe( 'SecondaryCartPromotions', () => {
 					<TestWrapper initialCart={ responseCartWithRenewal }>
 						<SecondaryCartPromotions
 							responseCart={ responseCartWithRenewal }
-							addItemToCart={ jest.fn() }
+							addItemToCart={ vi.fn() }
 						/>
 					</TestWrapper>
 				);
@@ -285,7 +286,7 @@ describe( 'SecondaryCartPromotions', () => {
 					<TestWrapper initialCart={ responseCartWithRenewal }>
 						<SecondaryCartPromotions
 							responseCart={ responseCartWithRenewal }
-							addItemToCart={ jest.fn() }
+							addItemToCart={ vi.fn() }
 						/>
 					</TestWrapper>
 				);
@@ -294,7 +295,7 @@ describe( 'SecondaryCartPromotions', () => {
 			} );
 
 			test( 'adds the plan to the cart when "Add to cart" is clicked', async () => {
-				const mockAddItemToCart = jest.fn();
+				const mockAddItemToCart = vi.fn();
 				render(
 					<TestWrapper initialCart={ responseCartWithRenewal }>
 						<SecondaryCartPromotions
@@ -320,7 +321,7 @@ describe( 'SecondaryCartPromotions', () => {
 					>
 						<SecondaryCartPromotions
 							responseCart={ responseCartWithRenewal }
-							addItemToCart={ jest.fn() }
+							addItemToCart={ vi.fn() }
 						/>
 					</TestWrapper>
 				);

@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { useQuery } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import DowngradeConfirmationModal from '../index';
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useQuery: vi.fn(),
 } ) );
 
 const mockFeatures = ( data: object ) =>
-	( useQuery as jest.Mock ).mockReturnValue( { data, isLoading: false } );
+	( useQuery as Mock ).mockReturnValue( { data, isLoading: false } );
 
 const defaultProps = {
 	isOpen: true,
@@ -22,8 +25,8 @@ const defaultProps = {
 	isDelayedDowngrade: true,
 	renewalDate: 'May 9, 2027',
 	isRechargeable: true,
-	onClose: jest.fn(),
-	onConfirm: jest.fn(),
+	onClose: vi.fn(),
+	onConfirm: vi.fn(),
 };
 
 describe( 'DowngradeConfirmationModal', () => {

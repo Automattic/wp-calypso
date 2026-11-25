@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
 import usePlansGridRedesignExperiment from '../use-plans-grid-redesign-experiment';

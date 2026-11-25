@@ -1,14 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import { NewForwardForm } from '../index';
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
 
 const defaultProps = {
 	selectedDomainName: 'example.com',

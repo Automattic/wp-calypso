@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -9,6 +9,7 @@ import {
 } from '@automattic/calypso-products';
 import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { COMPARE_PLANS_QUERY_PARAM } from '../../plans/jetpack-plans/plan-upgrade/constants';
 import {
 	checkoutStudioSiteless,
@@ -18,8 +19,8 @@ import {
 } from '../controller';
 import * as utils from '../utils';
 
-jest.mock( '@automattic/calypso-router' );
-jest.mock( '../utils' );
+vi.mock( '@automattic/calypso-router' );
+vi.mock( '../utils' );
 
 const mockStore = configureStore();
 
@@ -43,8 +44,8 @@ describe( 'redirectJetpackLegacyPlans', () => {
 	let next;
 
 	beforeEach( () => {
-		spy = jest.spyOn( page, 'default' );
-		next = jest.fn();
+		spy = vi.spyOn( page, 'default' );
+		next = vi.fn();
 	} );
 
 	afterEach( () => {
@@ -75,7 +76,7 @@ describe( 'redirectJetpackLegacyPlans', () => {
 
 describe( 'checkoutWpcomSiteless', () => {
 	it( 'renders checkout with the wpcom siteless type', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = {
 			params: { productSlug: 'ak_pro5h_yearly' },
 			query: {},
@@ -94,7 +95,7 @@ describe( 'checkoutWpcomSiteless', () => {
 
 describe( 'checkoutStudioSiteless', () => {
 	const renderStudioCheckout = ( query, path = '/checkout/studio/studio-cloud-monthly' ) => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = {
 			path,
 			params: { productSlug: 'studio-cloud-monthly' },
@@ -145,7 +146,7 @@ describe( 'checkoutStudioSiteless', () => {
 	} );
 
 	it( 'still adds the desktop cancel_to before rendering', () => {
-		const spy = jest.spyOn( page.default, 'replace' ).mockImplementation( () => {} );
+		const spy = vi.spyOn( page.default, 'replace' ).mockImplementation( () => {} );
 		const path = '/checkout/studio/studio-cloud-monthly?studioSiteId=abc';
 		const { wrapper, next } = renderStudioCheckout( { studioSiteId: 'abc' }, path );
 
@@ -164,7 +165,7 @@ describe( 'studentCheckoutRedirect', () => {
 	beforeEach( () => {
 		Object.defineProperty( window, 'location', {
 			configurable: true,
-			value: { replace: jest.fn() },
+			value: { replace: vi.fn() },
 		} );
 	} );
 

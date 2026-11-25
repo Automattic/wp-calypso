@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import nock from 'nock';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ThankYouPluginSection } from '../marketplace-thank-you-plugin-section';
 
-jest.mock( 'react-redux', () => {
-	const originalModule = jest.requireActual( 'react-redux' );
+vi.mock( 'react-redux', async () => {
+	const originalModule = await vi.importActual( 'react-redux' );
 	return {
 		...originalModule,
-		useDispatch: () => jest.fn(),
+		useDispatch: () => vi.fn(),
 	};
 } );
 

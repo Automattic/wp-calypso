@@ -1,30 +1,34 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { vi } from 'vitest';
 import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits';
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock(
-	'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable',
-	() => ( {
-		usePlanUpgradeCreditsApplicable: jest.fn(),
-	} )
-);
-
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
-	useMaxPlanUpgradeCredits: jest.fn(),
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable', () => ( {
+	usePlanUpgradeCreditsApplicable: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
+	useMaxPlanUpgradeCredits: vi.fn(),
+} ) );
+
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+		'@automattic/data-stores'
+	) ),
 	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		useSitePlans: jest.fn(),
+		...(
+			await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+				'@automattic/data-stores'
+			)
+		).Plans,
+		useSitePlans: vi.fn(),
 	},
 } ) );
 
@@ -33,18 +37,18 @@ type SitePlansQueryResult = ReturnType< typeof Plans.useSitePlans >;
 
 describe( 'useUpgradeCreditsNoticeData', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 0 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.resetAllMocks();
+		vi.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( null );
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 0 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {},
 		} as unknown as SitePlansQueryResult );
 	} );
 
 	test( 'prefers paid-plan upgrade credits when eligible (source: plan)', () => {
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 500 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 500 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {
 				free_plan: {
 					pricing: {
@@ -64,8 +68,8 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 	} );
 
 	test( 'returns domain proration credits when domain proration exists', () => {
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 1000 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 1000 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {
 				free_plan: {
 					pricing: {
@@ -82,8 +86,8 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 	} );
 
 	test( 'returns other-upgrades proration credits when plan proration exists', () => {
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 500 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 500 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {
 				free_plan: {
 					pricing: {
@@ -98,8 +102,8 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 	} );
 
 	test( 'returns other-upgrades proration credits when site plan pricing is discounted without a coupon or cost override', () => {
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 300 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 300 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {
 				free_plan: {
 					pricing: {
@@ -116,8 +120,8 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 	} );
 
 	test( 'returns null when proration exists but maxCredits is 0', () => {
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 0 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 0 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {
 				free_plan: {
 					pricing: {
@@ -134,8 +138,8 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 	} );
 
 	test( 'does not infer other-upgrades proration when a sale coupon is present', () => {
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 300 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 300 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {
 				free_plan: {
 					pricing: {
@@ -152,9 +156,9 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 	} );
 
 	test( 'does not return plan credits when visiblePlans is empty (even if plan credits are available)', () => {
-		jest.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 0 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( usePlanUpgradeCreditsApplicable ).mockReturnValue( 100 );
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 0 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {},
 		} as unknown as SitePlansQueryResult );
 
@@ -163,8 +167,8 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 	} );
 
 	test( 'does not infer combined source when domain proration exists alongside a non-coupon discount (without explicit plan proration override)', () => {
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 700 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 700 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {
 				free_plan: {
 					pricing: {
@@ -184,8 +188,8 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 	} );
 
 	test( 'returns combined source when both proration reasons exist', () => {
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 700 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 700 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {
 				free_plan: {
 					pricing: {
@@ -203,8 +207,8 @@ describe( 'useUpgradeCreditsNoticeData', () => {
 	} );
 
 	test( 'returns null when no proration exists and paid upgrade is not applicable', () => {
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 1000 );
-		jest.mocked( Plans.useSitePlans ).mockReturnValue( {
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 1000 );
+		vi.mocked( Plans.useSitePlans ).mockReturnValue( {
 			data: {
 				free_plan: {
 					pricing: {

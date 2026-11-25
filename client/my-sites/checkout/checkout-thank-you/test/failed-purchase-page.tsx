@@ -1,30 +1,33 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { FailedPurchasePage } from '../failed-purchase-page';
 
-const mockUseQuery = jest.fn();
-jest.mock( '@tanstack/react-query', () => ( {
+const mockUseQuery = vi.fn();
+vi.mock( '@tanstack/react-query', () => ( {
 	useQuery: ( options: unknown ) => mockUseQuery( options ),
 } ) );
 
-const mockReceiptQuery = jest.fn();
-jest.mock( '@automattic/api-queries', () => ( {
+const mockReceiptQuery = vi.fn();
+vi.mock( '@automattic/api-queries', () => ( {
 	receiptQuery: ( receiptId: number, options: unknown ) => mockReceiptQuery( receiptId, options ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => null );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( 'calypso/components/loading', () => () => <div data-testid="loading" /> );
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/loading', () => ( { default: () => <div data-testid="loading" /> } ) );
 
 // Capture the props the page hands to the details component — that mapping is
 // the logic under test.
-const mockFailedPurchaseDetails = jest.fn();
-jest.mock( '../failed-purchase-details', () => ( props: unknown ) => {
-	mockFailedPurchaseDetails( props );
-	return <div data-testid="failed-purchase-details" />;
-} );
+const mockFailedPurchaseDetails = vi.fn();
+vi.mock( '../failed-purchase-details', () => ( {
+	default: ( props: unknown ) => {
+		mockFailedPurchaseDetails( props );
+		return <div data-testid="failed-purchase-details" />;
+	},
+} ) );
 
 type QueryResult = { data?: unknown; isLoading?: boolean };
 
@@ -40,8 +43,8 @@ function setSearch( search: string ) {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
-	mockReceiptQuery.mockReturnValue( { queryKey: [ 'receipt' ], queryFn: jest.fn() } );
+	vi.clearAllMocks();
+	mockReceiptQuery.mockReturnValue( { queryKey: [ 'receipt' ], queryFn: vi.fn() } );
 	setSearch( '' );
 } );
 

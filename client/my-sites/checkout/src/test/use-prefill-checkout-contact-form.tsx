@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { CheckoutProvider, CheckoutStep, CheckoutStepGroup } from '@automattic/composite-checkout';
@@ -13,6 +13,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { type Mock, vi } from 'vitest';
 import { useExperiment } from 'calypso/lib/explat';
 import { usePrefillCheckoutContactForm } from 'calypso/my-sites/checkout/src/hooks/use-prefill-checkout-contact-form';
 import {
@@ -27,8 +28,8 @@ import {
 	mockGetSupportedCountriesEndpoint,
 } from './util';
 
-jest.mock( 'calypso/lib/explat' );
-( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
+vi.mock( 'calypso/lib/explat' );
+( useExperiment as Mock ).mockImplementation( () => [ false, undefined ] );
 
 const initialCart = getEmptyResponseCart();
 const { getCart, setCart } = mockCartEndpoint( initialCart, 'USD', 'US' );
@@ -127,7 +128,7 @@ function MyTestContent() {
 describe( 'usePrefillCheckoutContactForm', () => {
 	beforeEach( () => {
 		resetCheckoutStores();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'sends the postal code and country from the contact details endpoint to the checkout data store for country with postal code', async () => {

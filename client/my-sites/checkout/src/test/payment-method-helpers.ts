@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import config from '@automattic/calypso-config';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import { createAccount } from '../payment-method-helpers';
 
-jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
-	getBlackboxApiKey: jest.fn( () => 'blackbox-api-key' ),
+vi.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
+	getBlackboxApiKey: vi.fn( () => 'blackbox-api-key' ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
-	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+vi.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: vi.fn().mockResolvedValue( undefined ),
 } ) );
 
 function interceptUsersNew( status = 200, responseBody: object = { success: true } ) {
@@ -38,16 +39,16 @@ describe( 'createAccount', () => {
 	beforeEach( () => {
 		config.enable( 'blackbox' );
 		config.enable( 'blackbox-userless-checkout' );
-		( getBlackboxApiKey as jest.Mock ).mockReset();
-		( getBlackboxApiKey as jest.Mock ).mockReturnValue( 'blackbox-api-key' );
-		( getBlackboxSessionId as jest.Mock ).mockReset();
-		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( undefined );
+		( getBlackboxApiKey as Mock ).mockReset();
+		( getBlackboxApiKey as Mock ).mockReturnValue( 'blackbox-api-key' );
+		( getBlackboxSessionId as Mock ).mockReset();
+		( getBlackboxSessionId as Mock ).mockResolvedValue( undefined );
 		delete window.Blackbox;
 		nock.cleanAll();
 	} );
 
 	it( 'cancels account creation when checkout becomes inactive', async () => {
-		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( null );
+		( getBlackboxSessionId as Mock ).mockResolvedValue( null );
 		const getRequestBody = interceptUsersNew();
 		await expect( createAccount( createAccountArgs ) ).rejects.toMatchObject( {
 			name: 'AbortError',
@@ -56,7 +57,7 @@ describe( 'createAccount', () => {
 	} );
 
 	it( 'attaches blackbox_session_id when available', async () => {
-		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		( getBlackboxSessionId as Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		const getRequestBody = interceptUsersNew();
 
 		await createAccount( createAccountArgs );
@@ -66,8 +67,8 @@ describe( 'createAccount', () => {
 	} );
 
 	it( 'omits blackbox_session_id when the Blackbox api key is missing', async () => {
-		( getBlackboxApiKey as jest.Mock ).mockReturnValue( '' );
-		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		( getBlackboxApiKey as Mock ).mockReturnValue( '' );
+		( getBlackboxSessionId as Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		const getRequestBody = interceptUsersNew();
 
 		await createAccount( createAccountArgs );
@@ -78,7 +79,7 @@ describe( 'createAccount', () => {
 
 	it( 'omits blackbox_session_id when the userless checkout feature flag is off', async () => {
 		config.disable( 'blackbox-userless-checkout' );
-		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		( getBlackboxSessionId as Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		const getRequestBody = interceptUsersNew();
 
 		await createAccount( createAccountArgs );
@@ -96,14 +97,14 @@ describe( 'createAccount', () => {
 	} );
 
 	it( 'resets Blackbox when account creation fails', async () => {
-		const reset = jest.fn();
+		const reset = vi.fn();
 		window.Blackbox = {
-			configure: jest.fn(),
-			collect: jest.fn(),
-			getSessionId: jest.fn(),
-			flush: jest.fn(),
-			getSnapshot: jest.fn(),
-			subscribe: jest.fn(),
+			configure: vi.fn(),
+			collect: vi.fn(),
+			getSessionId: vi.fn(),
+			flush: vi.fn(),
+			getSnapshot: vi.fn(),
+			subscribe: vi.fn(),
 			reset,
 		};
 		interceptUsersNew( 500, { error: 'internal_server_error', message: 'fail' } );

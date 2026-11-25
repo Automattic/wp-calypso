@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import useSitePlanCart from '../use-site-plan-cart';
 import type { Agency, AgencyProduct } from '@automattic/api-core';
 import type { PropsWithChildren } from 'react';
 
-jest.mock( '@automattic/shopping-cart', () => ( {
-	...jest.requireActual( '@automattic/shopping-cart' ),
-	useShoppingCart: jest.fn(),
+vi.mock( '@automattic/shopping-cart', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
+		'@automattic/shopping-cart'
+	) ),
+	useShoppingCart: vi.fn(),
 } ) );
 
 const AGENCY_ID = 42;
@@ -27,7 +30,7 @@ const products = [
 	},
 ] as AgencyProduct[];
 
-const replaceProductsInCart = jest.fn();
+const replaceProductsInCart = vi.fn();
 
 function renderCart( productSlug: string, term: 'monthly' | 'yearly' = 'yearly' ) {
 	const queryClient = new QueryClient( {
@@ -53,7 +56,7 @@ function renderCart( productSlug: string, term: 'monthly' | 'yearly' = 'yearly' 
 describe( 'useSitePlanCart', () => {
 	beforeEach( () => {
 		replaceProductsInCart.mockReset().mockResolvedValue( {} );
-		( useShoppingCart as jest.Mock ).mockReset().mockReturnValue( { replaceProductsInCart } );
+		( useShoppingCart as Mock ).mockReset().mockReturnValue( { replaceProductsInCart } );
 	} );
 
 	it( 'puts the plan of the chosen term in the site’s own cart as a development site checkout', async () => {

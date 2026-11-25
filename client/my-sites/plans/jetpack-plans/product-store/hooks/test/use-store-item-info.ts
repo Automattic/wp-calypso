@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import { ITEM_TYPE_PLAN } from '../../../constants';

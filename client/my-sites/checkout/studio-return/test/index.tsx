@@ -1,16 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StudioReturn from '../index';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/lib/analytics/tracks' ) >(
+		'calypso/lib/analytics/tracks'
+	) ),
+	recordTracksEvent: vi.fn(),
 } ) );
 
 const STUDIO_SITE_ID = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
@@ -18,7 +21,7 @@ const EXPECTED_DEEP_LINK = `wp-studio://checkout-return?studioSiteId=${ STUDIO_S
 
 describe( 'StudioReturn', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		Object.defineProperty( window, 'location', {
 			value: { href: 'https://wordpress.com/checkout/studio-return' },
 			writable: true,
