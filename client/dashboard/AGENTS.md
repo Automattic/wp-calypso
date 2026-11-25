@@ -29,7 +29,7 @@ Every `@automattic/api-queries` mutation carries a `meta.statId` naming its fail
 
 Show a mutation's snackbars through `withSnackbar()`, not with `createSuccessNotice()` or `createErrorNotice()` in `onSuccess` and `onError`. The app shows them even if the component unmounts before the mutation finishes, when callbacks passed to `mutate()` no longer run.
 
-For errors, prefer the server's message: `error: { source: 'server' }`. When the text depends on the result, pass a function. It gets the response (or the error) and the variables passed to `mutate()`, and returns the text, or `undefined` for no snackbar:
+When a success message depends on the result, pass a function. It gets the response and the variables passed to `mutate()`, and returns the text, or `undefined` for no snackbar:
 
 ```ts
 useMutation(
@@ -42,7 +42,13 @@ useMutation(
 );
 ```
 
-A function also gives a fallback when the server's message may be empty: `error: ( error ) => error.message || __( 'Failed to save.' )`. Write a notice by hand only when `withSnackbar()` can't express it, such as one with `actions` or a custom `id`.
+For errors, in order of preference:
+
+1. `{ source: 'server' }`, the default: the server's message, or a generic one when it sends none.
+2. A string, when the server's text isn't fit for users.
+3. A function `( error, variables ) => string | undefined`, only when the text depends on the error's code or the variables.
+
+Write a notice by hand only when `withSnackbar()` can't express it, such as one with `actions` or a custom `id`.
 
 For component-specific handling, pass callbacks to `mutate()`:
 

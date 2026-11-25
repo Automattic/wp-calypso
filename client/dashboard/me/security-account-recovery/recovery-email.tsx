@@ -33,19 +33,19 @@ export default function RecoveryEmail() {
 	const { mutate: validateEmail, isPending: isValidateEmailPending } = useMutation(
 		withSnackbar( updateAccountRecoveryEmailMutation(), {
 			success: __( 'Recovery email saved.' ),
-			error: ( error ) => error.message || __( 'Failed to save recovery email.' ),
+			error: { source: 'server' },
 		} )
 	);
 	const { mutate: removeEmail, isPending: isRemoveEmailPending } = useMutation(
 		withSnackbar( removeAccountRecoveryEmailMutation(), {
 			success: __( 'Recovery email removed.' ),
-			error: ( error ) => error.message || __( 'Failed to remove recovery email.' ),
+			error: { source: 'server' },
 		} )
 	);
 	const { mutate: resendValidation, isPending: isResendValidationPending } = useMutation(
 		withSnackbar( resendAccountRecoveryEmailValidationMutation(), {
 			success: __( 'Recovery email validation resent.' ),
-			error: ( error ) => error.message || __( 'Failed to resend recovery email validation.' ),
+			error: { source: 'server' },
 		} )
 	);
 

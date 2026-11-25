@@ -147,6 +147,24 @@ describe( 'Snackbars', () => {
 		expect( mockCreateSuccessNotice ).not.toHaveBeenCalled();
 	} );
 
+	test( 'shows a generic error when the server sends no message', async () => {
+		const queryClient = renderSnackbars();
+
+		await runMutation(
+			queryClient,
+			{
+				// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
+				snackbar: { error: { source: 'server' } },
+			},
+			new Error( '' )
+		);
+
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+			'Something went wrong. Please try again.',
+			{ type: 'snackbar' }
+		);
+	} );
+
 	test( 'uses snackbar error string when provided directly by mutation meta', async () => {
 		const queryClient = renderSnackbars();
 

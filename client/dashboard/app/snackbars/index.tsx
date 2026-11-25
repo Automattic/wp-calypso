@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { SnackbarList } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { Icon, published, error } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
@@ -37,7 +38,8 @@ export default function Snackbars() {
 					if ( typeof error === 'function' ) {
 						errorMessage = error( event.action.error, variables );
 					} else if ( typeof error === 'object' && error?.source === 'server' ) {
-						errorMessage = event.action.error.message;
+						errorMessage =
+							event.action.error.message || __( 'Something went wrong. Please try again.' );
 					} else {
 						errorMessage = error;
 					}

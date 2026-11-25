@@ -144,7 +144,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 				__( '%s has been deleted.' ),
 				site.slug
 			),
-			error: ( error ) => error.message || __( 'Failed to delete site' ),
+			error: { source: 'server' },
 		} )
 	);
 
