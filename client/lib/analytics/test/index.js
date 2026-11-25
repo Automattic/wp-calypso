@@ -1,32 +1,35 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import url from 'url';
 import { loadScript } from '@automattic/load-script';
 import cookie from 'cookie';
+import { vi } from 'vitest';
 import { recordAliasInFloodlight } from 'calypso/lib/analytics/ad-tracking';
 import { identifyUser } from 'calypso/lib/analytics/identify-user';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent, tracksEvents } from 'calypso/lib/analytics/tracks';
 
-jest.mock( '@automattic/calypso-config', () => require( './mocks/config' ) );
-jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
+vi.mock( '@automattic/calypso-config', () => import( './mocks/config' ) );
+vi.mock( 'calypso/lib/analytics/ad-tracking', () => ( {
 	retarget: () => {},
-	recordAliasInFloodlight: jest.fn(),
+	recordAliasInFloodlight: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/load-script', () => ( {
-	loadScript: jest.fn( () => Promise.reject() ),
+vi.mock( '@automattic/load-script', () => ( {
+	loadScript: vi.fn( () => Promise.reject() ),
 } ) );
 
-jest.mock( 'cookie', () => ( {
-	parse: jest.fn(),
-	serialize: jest.fn(),
-} ) );
+vi.mock( 'cookie', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		parse: vi.fn(),
+		serialize: vi.fn(),
+	} )
+);
 
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => () => false );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => ( { default: () => false } ) );
 
 function logImageLoads() {
 	const imagesLoaded = [];
@@ -107,7 +110,7 @@ describe( 'Analytics', () => {
 	describe( 'identifyUser', () => {
 		beforeEach( () => {
 			window._tkq = {
-				push: jest.fn(),
+				push: vi.fn(),
 			};
 			cookie.parse.mockImplementation( () => ( { tk_ai: true } ) );
 		} );
@@ -170,10 +173,10 @@ describe( 'Analytics', () => {
 		describe( 'recordEvent', () => {
 			beforeEach( () => {
 				window._tkq = {
-					push: jest.fn(),
+					push: vi.fn(),
 				};
 				cookie.parse.mockImplementation( () => ( { tk_ai: true } ) );
-				global.console.error = jest.fn();
+				global.console.error = vi.fn();
 			} );
 
 			test( 'should log error if event name does not match regex', () => {

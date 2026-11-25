@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { safeImageUrl as safeImageUrlFake } from '@automattic/calypso-url';
 import { flow } from '@automattic/js-utils';
+import { vi } from 'vitest';
 import convertVideoPressBlocks from '../rule-content-convert-videopress-blocks';
 import detectMedia from '../rule-content-detect-media';
 import detectPolls from '../rule-content-detect-polls';
@@ -28,8 +29,8 @@ import stripHtml from '../rule-strip-html';
 import withContentDOM from '../rule-with-content-dom';
 import { domForHtml, externalLinkParagraph } from '../utils';
 
-jest.mock( '@automattic/calypso-url', () => ( {
-	...jest.requireActual( '@automattic/calypso-url' ),
+vi.mock( '@automattic/calypso-url', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-url' ) ),
 	safeImageUrl: require( './mocks/lib/safe-image-url' ).default,
 } ) );
 

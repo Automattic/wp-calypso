@@ -867,7 +867,7 @@ describe( 'titanMailYearly() and titanMailMonthly()', () => {
 	const mailbox = { email: 'info@example.com' };
 
 	test.each( [ titanMailYearly, titanMailMonthly ] )(
-		'%p keeps an explicit new_quantity',
+		'%o keeps an explicit new_quantity',
 		( builder ) => {
 			const cartItem = builder( {
 				domain: 'example.com',
@@ -880,7 +880,7 @@ describe( 'titanMailYearly() and titanMailMonthly()', () => {
 	);
 
 	test.each( [ titanMailYearly, titanMailMonthly ] )(
-		'%p uses the number of mailboxes when new_quantity is missing',
+		'%o uses the number of mailboxes when new_quantity is missing',
 		( builder ) => {
 			const cartItem = builder( {
 				domain: 'example.com',
@@ -892,7 +892,7 @@ describe( 'titanMailYearly() and titanMailMonthly()', () => {
 	);
 
 	test.each( [ titanMailYearly, titanMailMonthly ] )(
-		'%p uses the number of mailboxes when new_quantity is 0',
+		'%o uses the number of mailboxes when new_quantity is 0',
 		( builder ) => {
 			const cartItem = builder( {
 				domain: 'example.com',
@@ -904,7 +904,7 @@ describe( 'titanMailYearly() and titanMailMonthly()', () => {
 	);
 
 	test.each( [ titanMailYearly, titanMailMonthly ] )(
-		'%p defaults new_quantity to 1 when there is no mailbox count at all',
+		'%o defaults new_quantity to 1 when there is no mailbox count at all',
 		( builder ) => {
 			const cartItem = builder( { domain: 'example.com' } );
 
@@ -913,7 +913,7 @@ describe( 'titanMailYearly() and titanMailMonthly()', () => {
 	);
 
 	test.each( [ titanMailYearly, titanMailMonthly ] )(
-		'%p keeps the other extra fields',
+		'%o keeps the other extra fields',
 		( builder ) => {
 			const cartItem = builder( {
 				domain: 'example.com',

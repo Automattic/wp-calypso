@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render } from '@testing-library/react';
 import { useCallback } from 'react';
+import { vi } from 'vitest';
 import { useWindowResizeCallback, THROTTLE_RATE } from '..';
 
 const initialRect = { width: 10, height: 10 };
@@ -28,16 +29,16 @@ describe( 'useWindowResizeCallback', () => {
 	}
 
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
-		callback = jest.fn( ( boundingClientRect ) => {
+		callback = vi.fn( ( boundingClientRect ) => {
 			lastRect = boundingClientRect;
 		} );
 	} );
 
 	afterEach( () => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
+		vi.runOnlyPendingTimers();
+		vi.useRealTimers();
 	} );
 
 	// eslint-disable-next-line jest/expect-expect
@@ -51,7 +52,7 @@ describe( 'useWindowResizeCallback', () => {
 	} );
 
 	it( 'triggers an initial callback', () => {
-		const getBoundingClientRectMock = jest.fn().mockReturnValueOnce( initialRect );
+		const getBoundingClientRectMock = vi.fn().mockReturnValueOnce( initialRect );
 		const TestComponent = createTestComponent( callback, getBoundingClientRectMock );
 
 		render( <TestComponent /> );
@@ -62,7 +63,7 @@ describe( 'useWindowResizeCallback', () => {
 
 	it( 'triggers a callback when a resize takes place', () => {
 		const secondRect = { height: 100, width: 100 };
-		const getBoundingClientRectMock = jest
+		const getBoundingClientRectMock = vi
 			.fn()
 			.mockReturnValueOnce( initialRect )
 			.mockReturnValueOnce( secondRect );
@@ -77,7 +78,7 @@ describe( 'useWindowResizeCallback', () => {
 		fireEvent.resize( window );
 
 		// Flush timer queue to trigger callbacks.
-		jest.advanceTimersByTime( THROTTLE_RATE );
+		vi.advanceTimersByTime( THROTTLE_RATE );
 
 		expect( lastRect ).toBe( secondRect );
 		expect( callback ).toHaveBeenCalledTimes( 2 );
@@ -85,7 +86,7 @@ describe( 'useWindowResizeCallback', () => {
 
 	it( 'does not trigger a callback when a resize returns the same dimensions as before', () => {
 		const secondRect = { height: 10, width: 10 };
-		const getBoundingClientRectMock = jest
+		const getBoundingClientRectMock = vi
 			.fn()
 			.mockReturnValueOnce( initialRect )
 			.mockReturnValueOnce( secondRect );
@@ -100,7 +101,7 @@ describe( 'useWindowResizeCallback', () => {
 		fireEvent.resize( window );
 
 		// Flush timer queue to trigger callbacks.
-		jest.advanceTimersByTime( THROTTLE_RATE );
+		vi.advanceTimersByTime( THROTTLE_RATE );
 
 		expect( lastRect ).toBe( initialRect );
 		expect( callback ).toHaveBeenCalledTimes( 1 );

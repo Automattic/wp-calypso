@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const configApi = () => '';
-	configApi.isEnabled = jest.fn( () => false );
-	return configApi;
+	configApi.isEnabled = vi.fn( () => false );
+	return { ...configApi, default: configApi };
 } );
 
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import toCalypsoHref from '../to-calypso-href';
 
 const enableOdyssey = ( enabled ) =>

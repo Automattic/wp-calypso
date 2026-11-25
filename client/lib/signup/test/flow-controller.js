@@ -1,24 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import signupReducer from 'calypso/state/signup/reducer';
 import { combineReducers } from 'calypso/state/utils';
 import SignupFlowController from '../flow-controller';
 
-jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'calypso/signup/config/flows-pure', () =>
-	require( './mocks/signup/config/flows-pure' )
-);
-jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'calypso/signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'calypso/lib/logstash', () => {
+vi.mock( 'calypso/signup/config/flows', () => import( './mocks/signup/config/flows' ) );
+vi.mock( 'calypso/signup/config/flows-pure', () => import( './mocks/signup/config/flows-pure' ) );
+vi.mock( 'calypso/signup/config/steps', () => import( './mocks/signup/config/steps' ) );
+vi.mock( 'calypso/signup/config/steps-pure', () => import( './mocks/signup/config/steps' ) );
+vi.mock( 'calypso/lib/logstash', () => {
 	return {
-		logToLogstash: jest.fn(),
+		logToLogstash: vi.fn(),
 	};
 } );
 
@@ -126,7 +125,7 @@ describe( 'flow-controller', () => {
 		} );
 
 		test( 'should not call apiRequestFunction multiple times', async () => {
-			const done = jest.fn();
+			const done = vi.fn();
 			const called = new Promise( ( resolve ) => done.mockImplementation( resolve ) );
 			store.dispatch( submitSignupStep( { stepName: 'userCreation' }, { bearer_token: 'TOKEN' } ) );
 			store.dispatch( submitSignupStep( { stepName: 'asyncStep', done } ) );

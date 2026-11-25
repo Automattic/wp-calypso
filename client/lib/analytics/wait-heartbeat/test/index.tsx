@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, cleanup, renderHook } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from '../index';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-const mockRecordTracksEvent = recordTracksEvent as jest.MockedFunction< typeof recordTracksEvent >;
+const mockRecordTracksEvent = recordTracksEvent as MockedFunction< typeof recordTracksEvent >;
 
 type Props = { enabled: boolean; properties?: Record< string, unknown > };
 
@@ -23,7 +24,7 @@ const propsOf = ( name: string ) =>
 
 const advance = async ( ms: number ) => {
 	await act( async () => {
-		jest.advanceTimersByTime( ms );
+		vi.advanceTimersByTime( ms );
 	} );
 };
 
@@ -51,16 +52,16 @@ const renderHeartbeat = ( initialProps: Props = { enabled: true } ) =>
 
 describe( 'useWaitHeartbeat', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( new Date( '2026-08-10T12:00:00Z' ) );
+		vi.useFakeTimers();
+		vi.setSystemTime( new Date( '2026-08-10T12:00:00Z' ) );
 		setVisibility( 'visible' );
 	} );
 	afterEach( () => {
 		// Before the mock is cleared: a mounted wait emits its closing event as it unmounts, and
 		// that event belongs to the test that started it, not to the next one.
 		cleanup();
-		jest.useRealTimers();
-		jest.clearAllMocks();
+		vi.useRealTimers();
+		vi.clearAllMocks();
 	} );
 
 	it( 'opens the bracket when the wait starts', () => {
@@ -293,7 +294,7 @@ describe( 'useWaitHeartbeat', () => {
 		mockRecordTracksEvent.mockClear();
 		// The clock moves but the timers do not, which is the whole point: a suspended interval never
 		// runs to notice the cap.
-		jest.setSystemTime( Date.now() + 20 * 60 * 1000 );
+		vi.setSystemTime( Date.now() + 20 * 60 * 1000 );
 
 		setVisibility( 'visible' );
 

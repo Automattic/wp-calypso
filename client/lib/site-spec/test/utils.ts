@@ -9,6 +9,7 @@
  *
  */
 import config from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import {
 	isSiteSpecEnabled,
 	getSiteSpecUrl,
@@ -19,14 +20,14 @@ import {
 	getBuildWowSiteSpecConfig,
 } from '../utils';
 
-interface MockWithIsEnabled extends jest.Mock {
-	isEnabled: jest.Mock;
+interface MockWithIsEnabled extends vi.Mock {
+	isEnabled: Mock;
 }
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mockFn: MockWithIsEnabled = jest.fn() as MockWithIsEnabled;
-	mockFn.isEnabled = jest.fn();
-	return mockFn;
+vi.mock( '@automattic/calypso-config', () => {
+	const mockFn: MockWithIsEnabled = vi.fn() as MockWithIsEnabled;
+	mockFn.isEnabled = vi.fn();
+	return { ...mockFn, default: mockFn };
 } );
 
 describe( 'SiteSpec Utils', () => {
@@ -34,7 +35,7 @@ describe( 'SiteSpec Utils', () => {
 
 	beforeEach( () => {
 		// Reset all mocks
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		// Setup default mock implementations
 		mockConfig.mockImplementation( ( key: string ) => {

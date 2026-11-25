@@ -6,16 +6,17 @@
  * rendered by the widget itself and is not part of the Calypso-side payload.
  */
 import config from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import { VEGA_AGENT_ID, getVegaSiteSpecConfig } from '../vega';
 
-interface MockWithIsEnabled extends jest.Mock {
-	isEnabled: jest.Mock;
+interface MockWithIsEnabled extends vi.Mock {
+	isEnabled: Mock;
 }
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mockFn: MockWithIsEnabled = jest.fn() as MockWithIsEnabled;
-	mockFn.isEnabled = jest.fn();
-	return mockFn;
+vi.mock( '@automattic/calypso-config', () => {
+	const mockFn: MockWithIsEnabled = vi.fn() as MockWithIsEnabled;
+	mockFn.isEnabled = vi.fn();
+	return { ...mockFn, default: mockFn };
 } );
 
 describe( 'Vega site-spec', () => {

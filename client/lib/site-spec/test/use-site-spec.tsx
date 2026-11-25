@@ -1,36 +1,36 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useSiteSpec } from '../use-site-spec';
 import type { SiteSpecConfig } from '../utils';
 
-jest.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => {
-	const provider = jest.fn();
+vi.mock( '@automattic/agents-manager/src/auth/calypso-auth-provider', () => {
+	const provider = vi.fn();
 	return {
-		createCalypsoAuthProvider: jest.fn( () => provider ),
+		createCalypsoAuthProvider: vi.fn( () => provider ),
 		mockAuthProvider: provider,
 	};
 } );
 
-jest.mock( '../script-loader', () => ( {
-	loadSiteSpecScriptAndCSS: jest.fn( () => Promise.resolve() ),
-	resetSiteSpecScriptState: jest.fn(),
+vi.mock( '../script-loader', () => ( {
+	loadSiteSpecScriptAndCSS: vi.fn( () => Promise.resolve() ),
+	resetSiteSpecScriptState: vi.fn(),
 } ) );
 
-jest.mock( '../utils', () => ( {
-	...jest.requireActual( '../utils' ),
-	isSiteSpecEnabled: jest.fn( () => true ),
+vi.mock( '../utils', async () => ( {
+	...( await vi.importActual< typeof import( '../utils' ) >( '../utils' ) ),
+	isSiteSpecEnabled: vi.fn( () => true ),
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	useLocale: () => 'en',
 } ) );
 
-const { createCalypsoAuthProvider, mockAuthProvider } = jest.requireMock(
-	'@automattic/agents-manager/src/auth/calypso-auth-provider'
-);
+const { createCalypsoAuthProvider, mockAuthProvider } =
+	await import( '@automattic/agents-manager/src/auth/calypso-auth-provider' );
 
 function TestComponent( { siteSpecConfig }: { siteSpecConfig?: SiteSpecConfig } ) {
 	useSiteSpec( { container: '#site-spec', siteSpecConfig } );
@@ -42,7 +42,7 @@ const LOGGED_OUT_STATE = { currentUser: { id: null } };
 
 describe( 'useSiteSpec', () => {
 	beforeEach( () => {
-		window.SiteSpec = { init: jest.fn() };
+		window.SiteSpec = { init: vi.fn() };
 		createCalypsoAuthProvider.mockClear();
 	} );
 
@@ -81,7 +81,7 @@ describe( 'useSiteSpec', () => {
 	} );
 
 	it( 'lets a config-provided auth provider override the default', async () => {
-		const customAuthProvider = jest.fn();
+		const customAuthProvider = vi.fn();
 		renderWithProvider( <TestComponent siteSpecConfig={ { authProvider: customAuthProvider } } />, {
 			initialState: LOGGED_IN_STATE,
 		} );

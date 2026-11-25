@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 describe( 'resizeImageUrl()', () => {
 	const imageUrl =
 		'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?w=1000&h=1000&resize=foo&fit=meh';
@@ -164,14 +165,14 @@ describe( 'resizeImageUrl()', () => {
 		beforeAll( () => {
 			global.window = { devicePixelRatio: 2 };
 			// We need to reset module under test to recompute image scale factor
-			jest.resetModules();
+			vi.resetModules();
 			resizeImageUrl = require( '..' ).default;
 		} );
 
 		afterAll( () => {
 			global.window = undefined;
 			// We need to reset module under test to recompute image scale factor
-			jest.resetModules();
+			vi.resetModules();
 			resizeImageUrl = require( '..' ).default;
 		} );
 

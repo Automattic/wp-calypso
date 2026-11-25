@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import 'fake-indexeddb/auto'; // Polyfill indexedDB for this set of tests.

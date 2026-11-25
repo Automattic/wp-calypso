@@ -1,38 +1,42 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 // Mock dependencies before importing the module
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn();
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn();
 
-	return Object.assign( config, {
-		__esModule: true,
-		default: config,
-		isEnabled: config,
-		config,
-	} );
+	return {
+		...Object.assign( config, {
+			__esModule: true,
+			default: config,
+			isEnabled: config,
+			config,
+		} ),
+	};
 } );
 
-jest.mock( '@automattic/viewport', () => ( {
-	isMobile: jest.fn(),
+vi.mock( '@automattic/viewport', () => ( {
+	isMobile: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/i18n-utils', () => ( {
-	getLocaleSlug: jest.fn(),
-} ) );
+vi.mock( 'calypso/lib/i18n-utils', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		getLocaleSlug: vi.fn(),
+	} )
+);
 
-jest.mock( '@automattic/survicate', () => ( {
-	shouldLoadSurvicate: jest.fn(),
-	loadSurvicateScript: jest.fn(),
-	isSurvicateScriptLoaded: jest.fn(),
-	setSurvicateVisitorTraits: jest.fn(),
-	getAccountAgeInDays: jest.fn(),
+vi.mock( '@automattic/survicate', () => ( {
+	shouldLoadSurvicate: vi.fn(),
+	loadSurvicateScript: vi.fn(),
+	isSurvicateScriptLoaded: vi.fn(),
+	setSurvicateVisitorTraits: vi.fn(),
+	getAccountAgeInDays: vi.fn(),
 	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
 } ) );
 
 // Mock debug module used transitively by calypso-config.
-jest.mock( 'debug', () => () => jest.fn() );
+vi.mock( 'debug', () => ( { default: () => vi.fn() } ) );
 
 import config from '@automattic/calypso-config';
 import {
@@ -43,6 +47,7 @@ import {
 	getAccountAgeInDays,
 } from '@automattic/survicate';
 import { isMobile } from '@automattic/viewport';
+import { vi } from 'vitest';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 
 const flushPromises = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
@@ -59,10 +64,10 @@ describe( 'survicate', () => {
 
 	beforeEach( () => {
 		// Reset all mocks
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		// Set up fresh module imports
-		jest.isolateModules( () => {
+		vi.isolateModules( () => {
 			const survicateModule = require( 'calypso/lib/analytics/survicate' );
 			mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
 			addSurvicate = survicateModule.addSurvicate;
