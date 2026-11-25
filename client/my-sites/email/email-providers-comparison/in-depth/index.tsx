@@ -3,6 +3,7 @@
 import page from '@automattic/calypso-router';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { stringify } from 'qs';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -41,11 +42,16 @@ const EmailProvidersInDepthComparison = ( {
 	const translate = useTranslate();
 
 	const isMobile = useMobileBreakpoint();
+	const queryArgs = getQueryArgs( window.location.href );
+	const canSkip = queryArgs.emailIntent !== 'true';
 
 	const selectedSite = useSelector( getSelectedSite );
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
 	const isDomainInCart = hasDomainInCart( shoppingCartManager.responseCart, selectedDomainName );
+	const backUrl = isDomainInCart
+		? `/domains/add/${ selectedDomainName }/email/${ selectedSite?.slug }`
+		: getEmailManagementPath( selectedSite?.slug, selectedDomainName );
 
 	const changeIntervalLength = ( newIntervalLength: IntervalLength ) => {
 		if ( ! selectedSite ) {
@@ -61,12 +67,15 @@ const EmailProvidersInDepthComparison = ( {
 		);
 
 		page(
-			getEmailInDepthComparisonPath(
-				selectedSite.slug,
-				selectedDomainName,
-				referrer,
-				source,
-				newIntervalLength
+			addQueryArgs(
+				getEmailInDepthComparisonPath(
+					selectedSite.slug,
+					selectedDomainName,
+					referrer,
+					source,
+					newIntervalLength
+				),
+				{ emailIntent: queryArgs.emailIntent }
 			)
 		);
 	};
@@ -84,6 +93,7 @@ const EmailProvidersInDepthComparison = ( {
 			} )
 		);
 		const path = `${ referrer }?${ stringify( {
+			emailIntent: queryArgs.emailIntent,
 			interval: selectedIntervalLength,
 			provider: emailProviderSlug,
 			source,
@@ -99,12 +109,8 @@ const EmailProvidersInDepthComparison = ( {
 			<QueryProductsList />
 			{ showBackButton && (
 				<EmailUpsellNavigation
-					backUrl={
-						isDomainInCart
-							? `/domains/add/${ selectedDomainName }/email/${ selectedSite?.slug }`
-							: getEmailManagementPath( selectedSite?.slug, selectedDomainName )
-					}
-					skipUrl={ isDomainInCart ? `/checkout/${ selectedSite?.slug }` : '' }
+					backUrl={ canSkip ? backUrl : addQueryArgs( backUrl, { emailIntent: 'true' } ) }
+					skipUrl={ isDomainInCart && canSkip ? `/checkout/${ selectedSite?.slug }` : undefined }
 				/>
 			) }
 			<h1 className="email-providers-in-depth-comparison__header">
