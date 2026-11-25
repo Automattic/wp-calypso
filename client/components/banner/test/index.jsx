@@ -10,7 +10,8 @@ import preferencesReducer from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { Banner } from '../index';
 
-vi.mock( 'calypso/state/analytics/actions', () => ( {
+vi.mock( 'calypso/state/analytics/actions', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
 	recordTracksEvent: vi.fn( () => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
 	} ) ),

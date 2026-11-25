@@ -12,15 +12,17 @@ vi.mock( 'calypso/lib/analytics/ga', () => ( {
 	recordEvent: () => {},
 } ) );
 
-window.IntersectionObserver = vi.fn( () => ( {
-	observe: vi.fn(),
-	disconnect: vi.fn(),
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	takeRecords: vi.fn(),
-	unobserve: vi.fn(),
-} ) );
+window.IntersectionObserver = vi.fn( function () {
+	return {
+		observe: vi.fn(),
+		disconnect: vi.fn(),
+		root: null,
+		rootMargin: '',
+		thresholds: [],
+		takeRecords: vi.fn(),
+		unobserve: vi.fn(),
+	};
+} );
 
 // SectionNav clones children with internal props; a component child consumes them instead
 // of leaking unknown attributes onto a DOM element (which React warns about).

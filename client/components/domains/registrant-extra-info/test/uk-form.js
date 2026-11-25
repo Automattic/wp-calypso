@@ -27,7 +27,7 @@ describe( 'uk-form', () => {
 			};
 
 			render( <RegistrantExtraInfoUkForm { ...testProps } /> );
-			expect( screen.getByText( 'Test error message.' ) );
+			expect( screen.getByText( 'Test error message.' ) ).toBeVisible();
 		} );
 
 		test( 'should render multiple registration errors', () => {

@@ -3,8 +3,8 @@
 import { WPCOM_FEATURES_PREMIUM_THEMES_LIMITED } from '@automattic/calypso-products';
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import wpcomProxyRequest from 'wpcom-proxy-request';
 import { vi } from 'vitest';
+import wpcomProxyRequest from 'wpcom-proxy-request';
 import ThemeTierBadge from '../index';
 import { PERSONAL_PLAN } from './helpers/fixtures';
 import { render } from './helpers/utils';

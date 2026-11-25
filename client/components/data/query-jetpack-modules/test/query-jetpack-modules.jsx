@@ -87,6 +87,6 @@ describe( 'fetchModuleList', () => {
 			</Provider>
 		);
 
-		expect( mockFetchModuleList ).toHaveBeenCalledTimes( 2 );
+		expect( mockFetchModuleList ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

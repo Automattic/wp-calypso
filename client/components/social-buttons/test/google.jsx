@@ -4,8 +4,8 @@
 import { loadScript } from '@automattic/load-script';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import wpcomRequest from 'wpcom-proxy-request';
 import { vi } from 'vitest';
+import wpcomRequest from 'wpcom-proxy-request';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { GoogleSocialButton } from '../google';
 
@@ -19,6 +19,7 @@ vi.mock( '@automattic/calypso-config', () => ( {
 			} )[ key ],
 		{ isEnabled: () => false }
 	),
+	isEnabled: () => false,
 } ) );
 vi.mock( '@automattic/load-script', () => ( { loadScript: vi.fn() } ) );
 vi.mock( 'wpcom-proxy-request', () => ( { __esModule: true, default: vi.fn() } ) );

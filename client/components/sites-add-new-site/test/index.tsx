@@ -35,7 +35,8 @@ vi.mock( 'calypso/sites/v2/hooks/use-analytics-client', () => ( {
 } ) );
 
 // Mock fetchUser to provide auth data
-vi.mock( '@automattic/api-core', () => ( {
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
 	fetchUser: vi.fn( () =>
 		Promise.resolve( {
 			ID: 123,

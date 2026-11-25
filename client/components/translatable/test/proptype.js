@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 
-/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["assertPasses", "assertFails"] }] */
+/* eslint vitest/expect-expect: ["error", { "assertFunctionNames": ["assertPasses", "assertFails"] }] */
 
 import { localize } from 'i18n-calypso';
 import translatableString from '../proptype';

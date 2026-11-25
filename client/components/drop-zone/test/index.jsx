@@ -31,10 +31,12 @@ describe( 'index', () => {
 	}
 
 	beforeAll( () => {
-		window.MutationObserver = vi.fn( () => ( {
-			observe: vi.fn(),
-			disconnect: vi.fn(),
-		} ) );
+		window.MutationObserver = vi.fn( function () {
+			return {
+				observe: vi.fn(),
+				disconnect: vi.fn(),
+			};
+		} );
 	} );
 
 	afterAll( () => {

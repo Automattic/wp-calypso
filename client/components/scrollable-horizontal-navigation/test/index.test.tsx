@@ -68,7 +68,7 @@ describe( 'ScrollableHorizontalNavigation', () => {
 		vi.spyOn( window, 'cancelAnimationFrame' ).mockImplementation( () => undefined );
 		Element.prototype.scrollIntoView = vi.fn();
 
-		global.ResizeObserver = vi.fn( ( callback: ResizeObserverCallback ) => {
+		global.ResizeObserver = vi.fn( function ( callback: ResizeObserverCallback ) {
 			resizeObserverCallback = callback;
 			return {
 				observe: vi.fn( () => {

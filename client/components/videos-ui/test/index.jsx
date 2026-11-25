@@ -52,9 +52,10 @@ vi.mock( 'calypso/data/courses', () => ( {
 	COURSE_SLUGS: {
 		BLOGGING_QUICK_START: 'blogging-quick-start',
 	},
-	useCourseData,
-	useCourseDetails,
-	useUpdateUserCourseProgressionMutation,
+	// `vi.mock()` is hoisted above these helpers, so read them when called.
+	useCourseData: () => useCourseData(),
+	useCourseDetails: () => useCourseDetails(),
+	useUpdateUserCourseProgressionMutation: () => useUpdateUserCourseProgressionMutation(),
 } ) );
 
 describe( 'Video-UI', () => {

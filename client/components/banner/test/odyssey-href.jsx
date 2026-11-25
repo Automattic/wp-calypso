@@ -1,19 +1,20 @@
 /**
  * @vitest-environment jsdom
  */
+import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import { Banner } from '../index';
+
 vi.mock( '@automattic/calypso-config', () => {
 	const configApi = () => '';
 	configApi.isEnabled = vi.fn( ( flag ) => flag === 'is_odyssey' );
 	return { ...configApi, default: configApi };
 } );
 
-vi.mock( 'calypso/state/analytics/actions', () => ( {
+vi.mock( 'calypso/state/analytics/actions', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
 	recordTracksEvent: vi.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
 } ) );
-
-import { render, screen } from '@testing-library/react';
-import { vi } from 'vitest';
-import { Banner } from '../index';
 
 const props = {
 	title: 'banner title',

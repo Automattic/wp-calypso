@@ -22,8 +22,8 @@ type SummaryButtonMockProps = ComponentPropsWithoutRef< 'button' > & {
 	badges?: SummaryButtonMockBadge[];
 };
 
-vi.mock( '@automattic/components', () => {
-	const React = require( 'react' );
+vi.mock( '@automattic/components', async () => {
+	const React = await vi.importActual< typeof import( 'react' ) >( 'react' );
 
 	const SummaryButton = vi.fn(
 		( { title, description, decoration, badges, ...buttonProps }: SummaryButtonMockProps ) => {
