@@ -9,9 +9,10 @@ import redirectPathIfNecessary, { isRemovedFlow } from '../flow-redirect-handler
 
 // `@automattic/calypso-products` calls `isEnabled` while it loads, before a top-level
 // `mockIsEnabled` would exist, so the mock is created inside the factory.
-vi.mock( '@automattic/calypso-config', () => ( {
-	default: Object.assign( vi.fn(), { isEnabled: vi.fn( () => false ) } ),
-} ) );
+vi.mock( '@automattic/calypso-config', () => {
+	const config = Object.assign( vi.fn(), { isEnabled: vi.fn( () => false ) } );
+	return { default: config, isEnabled: config.isEnabled };
+} );
 const mockIsEnabled = isEnabled as Mock;
 
 vi.mock( 'calypso/lib/analytics/tracks', () => ( {

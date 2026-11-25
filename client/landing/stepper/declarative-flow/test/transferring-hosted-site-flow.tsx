@@ -34,27 +34,25 @@ vi.mock( '@wordpress/data', async () => {
 	const actualModule =
 		await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' );
 
-	return {
-		default: new Proxy( actualModule, {
-			get: ( target, property ) => {
-				switch ( property ) {
-					case 'useSelect': {
-						return vi.fn( () => {
-							return {
-								options: {
-									admin_url: 'https://mysite.com/wp-admin',
-								},
-							};
-						} );
-					}
-					// fallback to the original module
-					default: {
-						return target[ property ];
-					}
+	return new Proxy( actualModule, {
+		get: ( target, property ) => {
+			switch ( property ) {
+				case 'useSelect': {
+					return vi.fn( () => {
+						return {
+							options: {
+								admin_url: 'https://mysite.com/wp-admin',
+							},
+						};
+					} );
 				}
-			},
-		} ),
-	};
+				// fallback to the original module
+				default: {
+					return target[ property ];
+				}
+			}
+		},
+	} );
 } );
 
 describe( 'Transferring hosted site flow submit redirects', () => {

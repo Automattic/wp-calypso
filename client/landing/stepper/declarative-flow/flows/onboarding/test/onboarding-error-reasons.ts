@@ -98,6 +98,7 @@ vi.mock( 'calypso/signup/storageUtils', () => ( {
 } ) );
 
 vi.mock( '@automattic/onboarding', () => ( {
+	NEW_HOSTED_SITE_FLOW: 'new-hosted-site',
 	ONBOARDING_FLOW: 'onboarding',
 	SITE_SETUP_FLOW: 'site-setup',
 	clearStepPersistedState: vi.fn(),

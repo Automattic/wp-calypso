@@ -12,12 +12,11 @@ vi.mock( 'calypso/my-sites/checkout/get-thank-you-page-url', () =>
 );
 
 vi.mock( '@automattic/calypso-config', async () => {
-	const actualConfigFn = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
 		'@automattic/calypso-config'
 	);
-	const configFn = vi.fn( ( key ) => actualConfigFn( key ) );
-	Object.assign( configFn, actualConfigFn );
-	return { ...configFn, default: configFn };
+	const configFn = Object.assign( vi.fn( actual.default ), actual.default );
+	return { ...actual, default: configFn };
 } );
 
 describe( 'sanitizeDirectToCartRedirect', () => {

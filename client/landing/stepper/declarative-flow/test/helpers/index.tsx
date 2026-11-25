@@ -10,6 +10,7 @@ import themeReducer from 'calypso/state/themes/reducer';
 import { addQueryArgs } from '../../../../../lib/url';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import type { Flow, FlowV2, ProvidedDependencies, StepperStep } from '../../internals/types';
+import type { MockInstance } from 'vitest';
 
 export const getFlowLocation = () => {
 	return {
@@ -182,7 +183,7 @@ const toObject = ( a: URLSearchParams | Record< string, Primitive > ) => {
 
 expect.extend( {
 	toMatchURL(
-		destination: jest.Spied< typeof window.location.assign >,
+		destination: MockInstance< typeof window.location.assign >,
 		expected: MatchExternalFlowParams
 	) {
 		const results = destination.mock.calls.map( ( [ destination ] ) => {

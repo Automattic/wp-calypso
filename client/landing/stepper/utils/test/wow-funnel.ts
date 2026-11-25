@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import {
 	getSiteAdminUrl,
@@ -26,28 +27,28 @@ import {
 	wowFunnelSiteIsPaid,
 } from '../wow-funnel';
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { get: jest.fn() } },
+	default: { req: { get: vi.fn() } },
 } ) );
 
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
 
-jest.mock( '../blueprint-archive-import', () => ( {
+vi.mock( '../blueprint-archive-import', () => ( {
 	__esModule: true,
-	waitForAtomicTransferComplete: jest.fn( () => Promise.resolve() ),
-	waitForBlueprintImportComplete: jest.fn( () => Promise.resolve() ),
-	getSiteAdminUrl: jest.fn(),
-	getSiteEditorUrl: jest.fn(),
+	waitForAtomicTransferComplete: vi.fn( () => Promise.resolve() ),
+	waitForBlueprintImportComplete: vi.fn( () => Promise.resolve() ),
+	getSiteAdminUrl: vi.fn(),
+	getSiteEditorUrl: vi.fn(),
 } ) );
 
-const mockTransferWait = waitForAtomicTransferComplete as jest.Mock;
-const mockImportWait = waitForBlueprintImportComplete as jest.Mock;
-const mockGetSiteAdminUrl = getSiteAdminUrl as jest.Mock;
-const mockGetSiteEditorUrl = getSiteEditorUrl as jest.Mock;
-const mockWpcomGet = wpcom.req.get as jest.Mock;
+const mockTransferWait = waitForAtomicTransferComplete as Mock;
+const mockImportWait = waitForBlueprintImportComplete as Mock;
+const mockGetSiteAdminUrl = getSiteAdminUrl as Mock;
+const mockGetSiteEditorUrl = getSiteEditorUrl as Mock;
+const mockWpcomGet = wpcom.req.get as Mock;
 
 const never = () => new Promise< void >( () => {} );
 
@@ -234,7 +235,7 @@ describe( 'getWowFunnelDest', () => {
 
 describe( 'waitForWowFunnelHandoff', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'returns as soon as the site says the customer can sign in', async () => {
@@ -324,7 +325,7 @@ describe( 'waitForWowFunnelHandoff', () => {
 
 describe( 'waitForWowFunnelReady', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockTransferWait.mockImplementation( () => Promise.resolve() );
 		mockImportWait.mockImplementation( () => Promise.resolve() );
 		mockWpcomGet.mockResolvedValue( { ready: true } );
@@ -342,7 +343,7 @@ describe( 'waitForWowFunnelReady', () => {
 	} );
 
 	it( 'reports a hand-off that never becomes ready as a timeout, not a failure', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockWpcomGet.mockResolvedValue( { ready: false } );
 
 		const pending = waitForWowFunnelReady( {
@@ -351,13 +352,13 @@ describe( 'waitForWowFunnelReady', () => {
 		} );
 		const caught = pending.catch( ( error: unknown ) => error );
 
-		await jest.advanceTimersByTimeAsync( 180 * 1000 );
+		await vi.advanceTimersByTimeAsync( 180 * 1000 );
 		const error = await caught;
 
 		expect( isWowFunnelWaitTimeout( error ) ).toBe( true );
 		expect( ( error as Error ).message ).toMatch( /taking longer than expected/i );
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'does not report a failed build as a timeout', async () => {
@@ -398,7 +399,7 @@ describe( 'waitForWowFunnelReady', () => {
 	} );
 
 	it( 'throws a timeout once the funnel budget is spent, without hanging on the build', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		// A build that never settles: only the timeout can end this wait.
 		mockTransferWait.mockImplementation( never );
 
@@ -406,17 +407,17 @@ describe( 'waitForWowFunnelReady', () => {
 			funnelSlug: 'default',
 			siteIdentifier: 'site.example.com',
 		} );
-		const assertion = expect( pending ).rejects.toThrow( /taking longer than expected/i );
-
 		// The default funnel's budget is 180s.
-		await jest.advanceTimersByTimeAsync( 180 * 1000 );
-		await assertion;
+		await Promise.all( [
+			expect( pending ).rejects.toThrow( /taking longer than expected/i ),
+			vi.advanceTimersByTimeAsync( 180 * 1000 ),
+		] );
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'does not raise an unhandled rejection when the build fails after a timeout', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		let failBuild: ( error: Error ) => void = () => {};
 		mockTransferWait.mockImplementation(
 			() => new Promise< void >( ( _resolve, reject ) => ( failBuild = reject ) )
@@ -426,23 +427,23 @@ describe( 'waitForWowFunnelReady', () => {
 			funnelSlug: 'default',
 			siteIdentifier: 'site.example.com',
 		} );
-		const assertion = expect( pending ).rejects.toThrow( /taking longer than expected/i );
-
-		await jest.advanceTimersByTimeAsync( 180 * 1000 );
-		await assertion;
+		await Promise.all( [
+			expect( pending ).rejects.toThrow( /taking longer than expected/i ),
+			vi.advanceTimersByTimeAsync( 180 * 1000 ),
+		] );
 
 		// The abandoned build settles late. It must be swallowed: the wait already reported a
 		// timeout, and an unhandled rejection here would surface as a spurious flow exception.
 		failBuild( new Error( 'Atomic transfer failed with status: error' ) );
 		await Promise.resolve();
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 } );
 
 describe( 'getWowFunnelHandoffUrl', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetSiteAdminUrl.mockResolvedValue( 'https://fetched.example.com/wp-admin/' );
 		mockGetSiteEditorUrl.mockReturnValue( 'https://example.com/editor' );
 	} );

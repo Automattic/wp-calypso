@@ -26,23 +26,21 @@ vi.mock( '@wordpress/data', async () => {
 	const actualModule =
 		await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' );
 
-	return {
-		default: new Proxy( actualModule, {
-			get: ( target, property ) => {
-				if ( property === 'resolveSelect' ) {
-					return () => ( {
-						getSite: async () => ( {
-							options: {
-								admin_url: 'https://test-site.wordpress.com/wp-admin/',
-								...mockSiteOptions,
-							},
-						} ),
-					} );
-				}
-				return target[ property as keyof typeof target ];
-			},
-		} ),
-	};
+	return new Proxy( actualModule, {
+		get: ( target, property ) => {
+			if ( property === 'resolveSelect' ) {
+				return () => ( {
+					getSite: async () => ( {
+						options: {
+							admin_url: 'https://test-site.wordpress.com/wp-admin/',
+							...mockSiteOptions,
+						},
+					} ),
+				} );
+			}
+			return target[ property as keyof typeof target ];
+		},
+	} );
 } );
 
 const originalLocation = window.location;

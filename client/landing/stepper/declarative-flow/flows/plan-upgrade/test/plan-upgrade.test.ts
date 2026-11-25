@@ -8,7 +8,10 @@ import planUpgradeFlow from '../plan-upgrade';
 let mockQuery: Record< string, string > = {};
 let mockSitePlan = 'personal-bundle';
 
-vi.mock( '@automattic/onboarding', () => ( { PLAN_UPGRADE_FLOW: 'plan-upgrade' } ) );
+vi.mock( '@automattic/onboarding', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/onboarding' ) >() ),
+	PLAN_UPGRADE_FLOW: 'plan-upgrade',
+} ) );
 vi.mock( 'calypso/landing/stepper/stores', () => ( { SITE_STORE: 'SITE_STORE' } ) );
 
 vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {

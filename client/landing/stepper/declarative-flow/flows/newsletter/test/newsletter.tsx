@@ -14,11 +14,10 @@ import newsletterFlow from '../newsletter';
 vi.mock( '@wordpress/data', async () => {
 	const actual = await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' );
 	const resolveSelect = vi.fn();
-	return {
-		default: new Proxy( actual, {
-			get: ( target, key ) => ( key === 'resolveSelect' ? resolveSelect : target[ key ] ),
-		} ),
-	};
+	return new Proxy( actual, {
+		get: ( target, key ) =>
+			key === 'resolveSelect' ? resolveSelect : target[ key as keyof typeof target ],
+	} );
 } );
 
 const ADMIN_URL = 'https://example.wordpress.com/wp-admin/';
