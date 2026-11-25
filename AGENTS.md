@@ -66,8 +66,7 @@ If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation
 # JavaScript tests
 yarn test                                       # Run unit tests for client, Dashboard, packages, server, and build-tools (CI also runs apps)
 yarn test-build-tools                           # Run unit tests for build-tools
-yarn test-client                                # Run client unit tests still on Jest, except the Dashboard
-yarn test-client:vitest [path]                  # Run client unit tests that have moved to Vitest
+yarn test-client [path]                         # Run client unit tests, except the Dashboard (on Vitest)
 yarn test-dashboard [path]                      # Run Dashboard unit tests (on Vitest)
 yarn test-apps                                  # Run apps unit tests
 yarn test-packages [path]                       # Run packages unit tests on Vitest
@@ -77,7 +76,7 @@ yarn test-server:coverage                       # Run server unit tests with cov
 
 yarn test-client:watch                          # Run unit tests for client in watch mode
 yarn test-client <path_to_test_directory>       # Run client unit tests from a specific directory
-yarn test-client --testNamePattern="<TestName>" # Run a specific client unit test
+yarn test-client -t "<TestName>"                # Run a specific client unit test
 yarn test-dashboard:watch                       # Run Dashboard unit tests in watch mode
 
 # E2E tests - refer to: test/e2e/AGENTS.md
