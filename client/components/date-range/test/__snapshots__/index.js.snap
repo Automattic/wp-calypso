@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`DateRange should render 1`] = `
+exports[`DateRange > should render 1`] = `
 <div
   class="date-range"
 >

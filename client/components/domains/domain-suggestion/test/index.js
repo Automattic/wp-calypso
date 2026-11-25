@@ -1,11 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 
-jest.mock( 'calypso/components/domains/domain-product-price', () => () => 'domain-product-price' );
+vi.mock( 'calypso/components/domains/domain-product-price', () => ( {
+	default: () => 'domain-product-price',
+} ) );
 
 const noop = () => {};
 

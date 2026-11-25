@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import themes from 'calypso/state/themes/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ThemesList } from '../';
@@ -11,17 +12,17 @@ import { ThemesList } from '../';
 const noop = () => {};
 
 let mockRedesignEligible = false;
-jest.mock( 'calypso/my-sites/site-redesign/design-your-own-card', () => ( {
+vi.mock( 'calypso/my-sites/site-redesign/design-your-own-card', () => ( {
 	DesignYourOwnCard: () =>
 		mockRedesignEligible ? <a href="/site-redesign/example">Design Your Own</a> : null,
 } ) );
 
-jest.mock( 'calypso/components/theme', () => ( { theme } ) => (
-	<div data-testid={ `theme-${ theme.id }` } />
-) );
+vi.mock( 'calypso/components/theme', () => ( {
+	default: ( { theme } ) => <div data-testid={ `theme-${ theme.id }` } />,
+} ) );
 
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
 	useSelector: () => false,
 } ) );
 

@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -9,11 +10,13 @@ import {
 } from '../constants';
 import { RegionAddressFieldsets } from '../region-address-fieldsets';
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( x ) => x,
-	translate: ( x ) => x,
-	useTranslate: () => ( x ) => x,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		localize: ( x ) => x,
+		translate: ( x ) => x,
+		useTranslate: () => ( x ) => x,
+	} )
+);
 
 describe( 'Region Address Fieldsets', () => {
 	const defaultProps = {

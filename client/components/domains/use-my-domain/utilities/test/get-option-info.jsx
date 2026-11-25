@@ -1,25 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import moment from 'moment';
+import { vi } from 'vitest';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getOptionInfo } from '../get-option-info';
 
 const DOMAIN = 'example.com';
 const ELIGIBLE_DATE = '2026-12-01T00:00:00+00:00';
 
-const onAlreadyConnected = jest.fn();
+const onAlreadyConnected = vi.fn();
 
 const getCards = ( status, domainInboundTransferStatusInfo ) => {
 	const [ transfer, connect ] = getOptionInfo( {
 		availability: { status, mappable: 'not_mappable' },
 		domain: DOMAIN,
 		domainInboundTransferStatusInfo,
-		onConnect: jest.fn(),
+		onConnect: vi.fn(),
 		onAlreadyConnected,
-		onTransfer: jest.fn(),
+		onTransfer: vi.fn(),
 	} );
 	return { transfer, connect };
 };

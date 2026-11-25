@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { useDispatch } from 'react-redux';
+import { vi } from 'vitest';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import getBackupCurrentSiteSize from 'calypso/state/rewind/selectors/get-backup-current-site-size';
 import getBackupRetentionDays from 'calypso/state/rewind/selectors/get-backup-retention-days';
@@ -20,68 +21,70 @@ const EXAMPLE_ADDON_STORAGE_INFO = {
 };
 
 // Mock dependencies
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn( ( func ) => func() ),
-	useDispatch: () => jest.fn(),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn( ( func ) => func() ),
+	useDispatch: () => vi.fn(),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useTranslate: jest.fn( () => ( text ) => text ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual( 'i18n-calypso' ) ),
+	useTranslate: vi.fn( () => ( text ) => text ),
 } ) );
 
-jest.mock( 'calypso/components/data/query-site-products', () => () => 'query-site-products' );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSiteId: jest.fn().mockImplementation( () => EXAMPLE_SITE_ID ),
+vi.mock( 'calypso/components/data/query-site-products', () => ( {
+	default: () => 'query-site-products',
+} ) );
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSiteId: vi.fn().mockImplementation( () => EXAMPLE_SITE_ID ),
 } ) );
 
-jest.mock( 'calypso/state/rewind/selectors/is-requesting-rewind-policies', () =>
-	jest.fn().mockImplementation( () => false )
-);
-
-jest.mock( 'calypso/state/rewind/selectors/is-requesting-rewind-size', () =>
-	jest.fn().mockImplementation( () => false )
-);
-
-jest.mock( 'calypso/state/rewind/selectors/get-activity-log-visible-days', () =>
-	jest.fn().mockImplementation( () => 30 )
-);
-
-jest.mock( 'calypso/state/rewind/selectors/get-backup-retention-days', () =>
-	jest.fn().mockImplementation( () => 30 )
-);
-
-jest.mock( 'calypso/state/rewind/selectors/get-rewind-bytes-available', () =>
-	jest.fn().mockImplementation( () => 10 * GB_IN_BYTES )
-);
-
-jest.mock( 'calypso/state/rewind/selectors/get-backup-retention-update-status', () =>
-	jest.fn().mockImplementation( () => 'unsubmitted' )
-);
-
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
-	useDispatch: jest.fn().mockImplementation( () => () => {} ),
+vi.mock( 'calypso/state/rewind/selectors/is-requesting-rewind-policies', () => ( {
+	default: vi.fn().mockImplementation( () => false ),
 } ) );
 
-jest.mock( 'calypso/state/rewind/selectors/get-backup-current-site-size', () =>
-	jest.fn().mockImplementation( () => GB_IN_BYTES )
-);
+vi.mock( 'calypso/state/rewind/selectors/is-requesting-rewind-size', () => ( {
+	default: vi.fn().mockImplementation( () => false ),
+} ) );
 
-jest.mock( 'calypso/state/sites/selectors/get-site-slug', () =>
-	jest.fn().mockImplementation( () => EXAMPLE_SITE_SLUG )
-);
+vi.mock( 'calypso/state/rewind/selectors/get-activity-log-visible-days', () => ( {
+	default: vi.fn().mockImplementation( () => 30 ),
+} ) );
 
-jest.mock( 'calypso/components/backup-storage-space/usage-warning/use-upsell-slug', () =>
-	jest.fn().mockImplementation( () => EXAMPLE_ADDON_STORAGE_INFO )
-);
+vi.mock( 'calypso/state/rewind/selectors/get-backup-retention-days', () => ( {
+	default: vi.fn().mockImplementation( () => 30 ),
+} ) );
+
+vi.mock( 'calypso/state/rewind/selectors/get-rewind-bytes-available', () => ( {
+	default: vi.fn().mockImplementation( () => 10 * GB_IN_BYTES ),
+} ) );
+
+vi.mock( 'calypso/state/rewind/selectors/get-backup-retention-update-status', () => ( {
+	default: vi.fn().mockImplementation( () => 'unsubmitted' ),
+} ) );
+
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn().mockImplementation( ( selector ) => selector() ),
+	useDispatch: vi.fn().mockImplementation( () => () => {} ),
+} ) );
+
+vi.mock( 'calypso/state/rewind/selectors/get-backup-current-site-size', () => ( {
+	default: vi.fn().mockImplementation( () => GB_IN_BYTES ),
+} ) );
+
+vi.mock( 'calypso/state/sites/selectors/get-site-slug', () => ( {
+	default: vi.fn().mockImplementation( () => EXAMPLE_SITE_SLUG ),
+} ) );
+
+vi.mock( 'calypso/components/backup-storage-space/usage-warning/use-upsell-slug', () => ( {
+	default: vi.fn().mockImplementation( () => EXAMPLE_ADDON_STORAGE_INFO ),
+} ) );
 
 describe( 'BackupRetentionManagement', () => {
 	describe( 'purchase and update flow', () => {
 		beforeEach( () => {
-			jest.clearAllMocks();
+			vi.clearAllMocks();
 		} );
 
 		test( 'should not update automatically when storagePurchased prop is not passed', () => {
@@ -89,7 +92,7 @@ describe( 'BackupRetentionManagement', () => {
 			const retentionOptionName = /7 days/;
 
 			// Mock dispatch
-			const mockedDispatch = jest.fn();
+			const mockedDispatch = vi.fn();
 			useDispatch.mockReturnValue( mockedDispatch );
 
 			// Render component
@@ -109,7 +112,7 @@ describe( 'BackupRetentionManagement', () => {
 			const retentionOptionName = /7 days/;
 
 			// Mock dispatch
-			const mockedDispatch = jest.fn();
+			const mockedDispatch = vi.fn();
 			useDispatch.mockReturnValue( mockedDispatch );
 
 			// Render component
@@ -143,7 +146,7 @@ describe( 'BackupRetentionManagement', () => {
 			getBackupCurrentSiteSize.mockReturnValue( GB_IN_BYTES );
 
 			// Mock dispatch
-			const mockedDispatch = jest.fn();
+			const mockedDispatch = vi.fn();
 			useDispatch.mockReturnValue( mockedDispatch );
 
 			// Render component
@@ -168,7 +171,7 @@ describe( 'BackupRetentionManagement', () => {
 			getBackupRetentionDays.mockReturnValue( 30 );
 
 			// Mock dispatch
-			const mockedDispatch = jest.fn();
+			const mockedDispatch = vi.fn();
 			useDispatch.mockReturnValue( mockedDispatch );
 
 			// Render component
@@ -203,7 +206,7 @@ describe( 'BackupRetentionManagement', () => {
 			getBackupCurrentSiteSize.mockReturnValue( GB_IN_BYTES );
 
 			// Mock dispatch
-			const mockedDispatch = jest.fn();
+			const mockedDispatch = vi.fn();
 			useDispatch.mockReturnValue( mockedDispatch );
 
 			// Render component

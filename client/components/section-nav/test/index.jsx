@@ -1,25 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import SectionNav from '../';
 import NavItem from '../item';
 import NavTabs from '../tabs';
 
-jest.mock( 'calypso/lib/analytics/ga', () => ( {
+vi.mock( 'calypso/lib/analytics/ga', () => ( {
 	recordEvent: () => {},
 } ) );
 
-window.IntersectionObserver = jest.fn( () => ( {
-	observe: jest.fn(),
-	disconnect: jest.fn(),
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	takeRecords: jest.fn(),
-	unobserve: jest.fn(),
-} ) );
+window.IntersectionObserver = vi.fn( function () {
+	return {
+		observe: vi.fn(),
+		disconnect: vi.fn(),
+		root: null,
+		rootMargin: '',
+		thresholds: [],
+		takeRecords: vi.fn(),
+		unobserve: vi.fn(),
+	};
+} );
 
 // SectionNav clones children with internal props; a component child consumes them instead
 // of leaking unknown attributes onto a DOM element (which React warns about).
@@ -129,7 +132,7 @@ describe( 'section-nav', () => {
 
 	describe( 'interaction', () => {
 		test( 'should toggle the panel and call onMobileNavPanelOpen twice when tapped three times', async () => {
-			const onMobileNavPanelOpen = jest.fn();
+			const onMobileNavPanelOpen = vi.fn();
 			const { container } = render(
 				<SectionNav selectedText="placeholder" onMobileNavPanelOpen={ onMobileNavPanelOpen }>
 					<Panel>placeholder</Panel>

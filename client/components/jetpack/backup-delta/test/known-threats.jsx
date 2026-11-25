@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import BackupDelta from '../index';
 
-jest.mock( 'calypso/state/selectors/site-has-feature' );
-jest.mock( 'calypso/components/data/query-rewind-state', () => () => null );
-jest.mock( 'calypso/components/activity-card/toolbar/actions-button', () => () => (
-	<button>Actions</button>
-) );
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () => () => 0 );
-jest.mock( 'calypso/state/selectors/get-site-timezone-value', () => () => 'UTC' );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/ui/selectors' ),
+vi.mock( 'calypso/state/selectors/site-has-feature' );
+vi.mock( 'calypso/components/data/query-rewind-state', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/activity-card/toolbar/actions-button', () => ( {
+	default: () => <button>Actions</button>,
+} ) );
+vi.mock( 'calypso/state/selectors/get-site-gmt-offset', () => ( { default: () => 0 } ) );
+vi.mock( 'calypso/state/selectors/get-site-timezone-value', () => ( { default: () => 'UTC' } ) );
+vi.mock( 'calypso/state/ui/selectors', async () => ( {
+	...( await vi.importActual( 'calypso/state/ui/selectors' ) ),
 	getSelectedSiteId: () => 123,
 	getSelectedSiteSlug: () => 'example.wordpress.com',
 } ) );

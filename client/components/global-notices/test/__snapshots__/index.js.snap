@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<GlobalNotices /> should render notices with the expected structure 1`] = `
+exports[`<GlobalNotices /> > should render notices with the expected structure 1`] = `
 <div>
   <div
     class="global-notices"

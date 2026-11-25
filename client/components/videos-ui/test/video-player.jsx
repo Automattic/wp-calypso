@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { fireEvent, render } from '@testing-library/react';
+import { vi } from 'vitest';
 import VideoPlayer from '../video-player';
 
 describe( 'Video player', () => {
@@ -14,7 +15,7 @@ describe( 'Video player', () => {
 
 	beforeEach( () => {
 		window._tkq = {
-			push: jest.fn(),
+			push: vi.fn(),
 		};
 	} );
 
@@ -23,8 +24,8 @@ describe( 'Video player', () => {
 			<VideoPlayer
 				course={ course }
 				videoData={ videoData }
-				onVideoPlayStatusChanged={ jest.fn() }
-				onVideoCompleted={ jest.fn() }
+				onVideoPlayStatusChanged={ vi.fn() }
+				onVideoCompleted={ vi.fn() }
 				{ ...props }
 			/>
 		);

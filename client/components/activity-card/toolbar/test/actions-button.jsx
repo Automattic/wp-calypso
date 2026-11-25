@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getIsRestoreInProgress from 'calypso/state/selectors/get-is-restore-in-progress';
@@ -12,40 +13,40 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ActionsButton from '../actions-button';
 
-jest.mock( 'calypso/lib/jetpack/actionable-rewind-id' );
+vi.mock( 'calypso/lib/jetpack/actionable-rewind-id' );
 
-jest.mock( 'react', () => ( {
-	...jest.requireActual( 'react' ),
-	useState: jest.fn( () => [ false, jest.fn() ] ),
+vi.mock( 'react', async () => ( {
+	...( await vi.importActual( 'react' ) ),
+	useState: vi.fn( () => [ false, vi.fn() ] ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useRtl: jest.fn(),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual( 'i18n-calypso' ) ),
+	useRtl: vi.fn(),
 	localize: ( x ) => x,
 	translate: ( x ) => x,
-	useTranslate: jest.fn( () => ( text ) => text ),
+	useTranslate: vi.fn( () => ( text ) => text ),
 } ) );
 
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
-	useDispatch: jest.fn().mockImplementation( () => () => {} ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn().mockImplementation( ( selector ) => selector() ),
+	useDispatch: vi.fn().mockImplementation( () => () => {} ),
 } ) );
 
-jest.mock( 'calypso/components/popover-menu', () => 'components--popover--menu' );
+vi.mock( 'calypso/components/popover-menu', () => ( { default: 'components--popover--menu' } ) );
 
-jest.mock( 'calypso/state/jetpack/credentials/selectors', () => ( {
-	areJetpackCredentialsInvalid: jest.fn().mockImplementation( () => false ),
+vi.mock( 'calypso/state/jetpack/credentials/selectors', () => ( {
+	areJetpackCredentialsInvalid: vi.fn().mockImplementation( () => false ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-does-rewind-need-credentials' );
-jest.mock( 'calypso/state/selectors/get-is-restore-in-progress' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
+vi.mock( 'calypso/state/selectors/get-does-rewind-need-credentials' );
+vi.mock( 'calypso/state/selectors/get-is-restore-in-progress' );
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	getSiteSlug: jest.fn().mockImplementation( () => 'mysite.example' ),
-	isJetpackSiteMultiSite: jest.fn().mockImplementation( () => false ),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	getSiteSlug: vi.fn().mockImplementation( () => 'mysite.example' ),
+	isJetpackSiteMultiSite: vi.fn().mockImplementation( () => false ),
 } ) );
 
 function createState( siteId = 1 ) {
@@ -69,12 +70,12 @@ function createState( siteId = 1 ) {
 }
 
 function initializeUseStateMock( { isPopoverVisible = true } = {} ) {
-	useState.mockReturnValueOnce( [ isPopoverVisible, jest.fn() ] );
+	useState.mockReturnValueOnce( [ isPopoverVisible, vi.fn() ] );
 }
 
 describe( 'ActionsButton render', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'Site is multisite. Show download button', () => {

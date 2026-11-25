@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import * as record from 'calypso/state/analytics/actions/record';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import ActionButtons from '../action-buttons';
 
-jest.mock( 'calypso/state/ui/selectors' );
-jest.mock( 'calypso/state/selectors/get-does-rewind-need-credentials' );
-jest.mock( 'calypso/state/jetpack/credentials/selectors' );
+vi.mock( 'calypso/state/ui/selectors' );
+vi.mock( 'calypso/state/selectors/get-does-rewind-need-credentials' );
+vi.mock( 'calypso/state/jetpack/credentials/selectors' );
 
-const recordTracksEvent = jest.spyOn( record, 'recordTracksEvent' );
+const recordTracksEvent = vi.spyOn( record, 'recordTracksEvent' );
 
 describe( 'ActionButtons', () => {
 	beforeAll( () => {
@@ -23,7 +24,7 @@ describe( 'ActionButtons', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( "disables all buttons when 'rewindId' is not provided", () => {
@@ -88,7 +89,7 @@ describe( 'ActionButtons', () => {
 		const rewindId = 'test';
 		render( <ActionButtons rewindId={ rewindId } /> );
 		const downloadButton = screen.getByRole( 'link', { name: /download/i } );
-		downloadButton.onclick = jest.fn( ( event ) => event.preventDefault() );
+		downloadButton.onclick = vi.fn( ( event ) => event.preventDefault() );
 
 		await user.click( downloadButton );
 
@@ -104,7 +105,7 @@ describe( 'ActionButtons', () => {
 		render( <ActionButtons rewindId={ rewindId } /> );
 
 		const restoreButton = screen.getByRole( 'link', { name: /restore/i } );
-		restoreButton.onclick = jest.fn( ( event ) => event.preventDefault() );
+		restoreButton.onclick = vi.fn( ( event ) => event.preventDefault() );
 
 		await user.click( restoreButton );
 
@@ -116,7 +117,7 @@ describe( 'ActionButtons', () => {
 	test( 'enables clone button', async () => {
 		const user = userEvent.setup();
 		const rewindId = 'test';
-		const onClickClone = jest.fn();
+		const onClickClone = vi.fn();
 		render(
 			<ActionButtons
 				rewindId={ rewindId }

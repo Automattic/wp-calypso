@@ -1,11 +1,14 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import PurchaseDetail from '..';
 import PurchaseButton from '../purchase-button';
 import TipInfo from '../tip-info';
 
-jest.mock( '../tip-info', () => jest.fn( () => <div data-testid="tip-info" /> ) );
-jest.mock( '../purchase-button', () => jest.fn( () => <div data-testid="purchase-button" /> ) );
+vi.mock( '../tip-info', () => ( { default: vi.fn( () => <div data-testid="tip-info" /> ) } ) );
+vi.mock( '../purchase-button', () => ( {
+	default: vi.fn( () => <div data-testid="purchase-button" /> ),
+} ) );
 
 const noop = () => {};
 
