@@ -134,7 +134,13 @@ export function WooHumanSupportRoutingStep( {
 
 		// Until the ticket and email routes are built (WOOPUBR-2404), they start a chat, as every
 		// request does today.
-		startChat( getWooChatValues( { storeUrl, product: showProduct ? product : null } ) );
+		startChat(
+			getWooChatValues( {
+				storeUrl,
+				product: showProduct ? product : null,
+				flags: request.flags,
+			} )
+		);
 	};
 
 	// The support form's block comes first, so wait for the merchant's details before going on.

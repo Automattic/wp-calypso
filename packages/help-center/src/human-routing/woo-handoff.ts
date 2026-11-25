@@ -103,18 +103,39 @@ export function getWooRoutingInput( {
 export const normalizeStoreUrl = ( url: string ) =>
 	/^https?:\/\//i.test( url ) ? url : `https://${ url }`;
 
-/** What the merchant told the Help Center, sent to Zendesk when the chat is created. */
+/**
+ * Zendesk's High priority trigger looks for `woo_emergency`. The type tag is for filtering and
+ * reporting (WOOPUBR-2398).
+ */
+function getWooEmergencyTags( { isEmergency, emergencyType }: HumanRoutingFlags ): string[] {
+	if ( ! isEmergency ) {
+		return [];
+	}
+
+	// Zendesk gets the tags as one comma-separated list, so only a plain slug can be a tag.
+	const hasType =
+		!! emergencyType && emergencyType !== 'none' && /^[a-z0-9_]+$/.test( emergencyType );
+
+	return hasType ? [ 'woo_emergency', `woo_emergency_${ emergencyType }` ] : [ 'woo_emergency' ];
+}
+
+/** What the merchant and the bot told the Help Center, sent to Zendesk when the chat is created. */
 export function getWooChatValues( {
 	storeUrl,
 	product,
+	flags,
 }: {
 	storeUrl: string | null;
 	product: WooHandoffProduct | null;
+	flags: HumanRoutingFlags;
 } ): HumanSupportChatValues {
+	const tags = getWooEmergencyTags( flags );
+
 	return {
 		...( storeUrl && { siteUrl: normalizeStoreUrl( storeUrl ) } ),
 		...( product?.zendeskSlug && {
 			ticketFields: { [ ZENDESK_CUSTOM_FIELD_PRODUCT ]: product.zendeskSlug },
 		} ),
+		...( tags.length > 0 && { tags } ),
 	};
 }
