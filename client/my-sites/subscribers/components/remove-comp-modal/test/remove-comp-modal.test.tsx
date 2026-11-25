@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -7,26 +7,28 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { type Mock, vi } from 'vitest';
+import { requestDeleteComp } from 'calypso/state/memberships/comps/actions';
 import RemoveCompModal from '../remove-comp-modal';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mockDispatch: jest.Mock = jest.fn( ( action: any ) => {
+const mockDispatch: Mock = vi.fn( ( action: any ) => {
 	if ( typeof action === 'function' ) {
 		return action( mockDispatch );
 	}
 	return action;
 } );
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-jest.mock( 'calypso/state/memberships/comps/actions', () => ( {
-	requestDeleteComp: jest.fn( () => () => Promise.resolve() ),
+vi.mock( 'calypso/state/memberships/comps/actions', () => ( {
+	requestDeleteComp: vi.fn( () => () => Promise.resolve() ),
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 const mockStore = configureStore();
@@ -39,8 +41,8 @@ function renderModal( props = {} ) {
 		compId: 789,
 		planName: 'Premium Newsletter',
 		username: 'testuser',
-		onClose: jest.fn(),
-		onRemoved: jest.fn(),
+		onClose: vi.fn(),
+		onRemoved: vi.fn(),
 	};
 
 	return {
@@ -75,7 +77,6 @@ describe( 'RemoveCompModal', () => {
 	} );
 
 	it( 'calls requestDeleteComp and onRemoved when Remove is clicked', async () => {
-		const { requestDeleteComp } = jest.requireMock( 'calypso/state/memberships/comps/actions' );
 		const user = userEvent.setup();
 		const { props } = renderModal();
 
@@ -87,9 +88,8 @@ describe( 'RemoveCompModal', () => {
 	} );
 
 	it( 'disables Remove button while submitting', async () => {
-		const { requestDeleteComp } = jest.requireMock( 'calypso/state/memberships/comps/actions' );
 		// Make the request hang indefinitely
-		requestDeleteComp.mockImplementation( () => () => new Promise( () => {} ) );
+		vi.mocked( requestDeleteComp ).mockImplementation( () => () => new Promise( () => {} ) );
 
 		const user = userEvent.setup();
 		renderModal();

@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { SiteIndicator } from '..';
 
 const INITIAL_STATE = {
@@ -12,9 +13,11 @@ const INITIAL_STATE = {
 	},
 };
 const mockStore = configureStore();
-jest.mock( 'calypso/components/data/query-site-connection-status', () => () => {
-	return <></>;
-} );
+vi.mock( 'calypso/components/data/query-site-connection-status', () => ( {
+	default: () => {
+		return <></>;
+	},
+} ) );
 
 const store = mockStore( INITIAL_STATE );
 
@@ -27,8 +30,8 @@ const defaultProps = {
 			admin_url: 'https://example.com/wp-admin/',
 		},
 	},
-	recordTracksEvent: jest.fn(),
-	trackSiteDisconnect: jest.fn(),
+	recordTracksEvent: vi.fn(),
+	trackSiteDisconnect: vi.fn(),
 	translate: ( text ) => text,
 };
 
@@ -37,18 +40,18 @@ describe( 'SiteIndicator component', () => {
 		// Mock the missing `window.matchMedia` function that's not even in JSDOM
 		Object.defineProperty( window, 'matchMedia', {
 			writable: true,
-			value: jest.fn().mockImplementation( ( query ) => ( {
+			value: vi.fn().mockImplementation( ( query ) => ( {
 				matches: false,
 				media: query,
 				onchange: null,
-				addListener: jest.fn(), // deprecated
-				removeListener: jest.fn(), // deprecated
-				addEventListener: jest.fn(),
-				removeEventListener: jest.fn(),
-				dispatchEvent: jest.fn(),
+				addListener: vi.fn(), // deprecated
+				removeListener: vi.fn(), // deprecated
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				dispatchEvent: vi.fn(),
 			} ) ),
 		} );
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 	it( 'should show update indicator if site is not atomic and has updates', () => {
 		const { container } = render(

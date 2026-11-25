@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { SiteDetails } from '@automattic/data-stores';
+import { type Mock, vi } from 'vitest';
 import { getShortDateString, isRunningInWpAdmin } from '../utils';
 
 describe( 'Promote Post Utils', () => {
 	const timestamp = 1687521600000; // 2023-06-23 12:00:00 GMT+0000
 
 	beforeAll( () => {
-		jest.useFakeTimers().setSystemTime( timestamp );
+		vi.useFakeTimers().setSystemTime( timestamp );
 	} );
 
 	test.each( [
@@ -28,25 +29,25 @@ describe( 'Promote Post Utils', () => {
 	} );
 } );
 
-jest.mock( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config' );
 
 describe( 'isRunningInWpAdmin', () => {
 	it( 'should return true if running in a Jetpack site', () => {
-		( config.isEnabled as jest.Mock ).mockReturnValue( true );
+		( config.isEnabled as Mock ).mockReturnValue( true );
 		// using unknown to avoid having to mock the entire SiteDetails object
 		const site = { options: { is_wpcom_simple: false } } as unknown as SiteDetails;
 		expect( isRunningInWpAdmin( site ) ).toBe( true );
 	} );
 
 	it( 'should return true if running in a classic simple site', () => {
-		( config.isEnabled as jest.Mock ).mockReturnValue( false );
+		( config.isEnabled as Mock ).mockReturnValue( false );
 		// using unknown to avoid having to mock the entire SiteDetails object
 		const site = { options: { is_wpcom_simple: true } } as unknown as SiteDetails;
 		expect( isRunningInWpAdmin( site ) ).toBe( true );
 	} );
 
 	it( 'should return false if not running in Jetpack and not a classic simple site', () => {
-		( config.isEnabled as jest.Mock ).mockReturnValue( false );
+		( config.isEnabled as Mock ).mockReturnValue( false );
 		// using unknown to avoid having to mock the entire SiteDetails object
 		const site = { options: { is_wpcom_simple: false } } as unknown as SiteDetails;
 		expect( isRunningInWpAdmin( site ) ).toBe( false );
@@ -54,7 +55,7 @@ describe( 'isRunningInWpAdmin', () => {
 
 	it( 'should handle empty site gracefully', () => {
 		// using unknown to avoid having to mock the entire SiteDetails object
-		( config.isEnabled as jest.Mock ).mockReturnValue( false ) as unknown as SiteDetails;
+		( config.isEnabled as Mock ).mockReturnValue( false ) as unknown as SiteDetails;
 		expect( isRunningInWpAdmin( null ) ).toBe( false );
 	} );
 } );

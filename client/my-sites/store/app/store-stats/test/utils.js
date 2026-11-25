@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import moment from 'moment';
+import { vi } from 'vitest';
 import { UNITS } from '../constants';
 import {
 	formatValue,
@@ -182,7 +183,7 @@ describe( 'getEndPeriod', () => {
 
 describe( 'formatValue', () => {
 	beforeEach( () => {
-		jest.spyOn( window.navigator, 'languages', 'get' ).mockImplementation( () => [ 'en-US' ] );
+		vi.spyOn( window.navigator, 'languages', 'get' ).mockImplementation( () => [ 'en-US' ] );
 	} );
 	test( 'should return a correctly formatted currency for NZD', () => {
 		const response = formatValue( 12.34, 'currency', 'NZD' );
@@ -195,7 +196,7 @@ describe( 'formatValue', () => {
 		expect( response ).toBe( '$12.34' );
 	} );
 	test( 'should return a correctly formatted currency for ZAR', () => {
-		jest.spyOn( window.navigator, 'languages', 'get' ).mockImplementation( () => [ 'en-ZA' ] );
+		vi.spyOn( window.navigator, 'languages', 'get' ).mockImplementation( () => [ 'en-ZA' ] );
 		const response = formatValue( 12.34, 'currency', 'ZAR' );
 		expect( typeof response ).toBe( 'string' );
 		// see https://unicode-org.atlassian.net/browse/CLDR-14707

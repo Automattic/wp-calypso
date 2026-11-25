@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { redirectToNewsletter } from '../controller';
 
 let mockIsJetpackCloud = false;
 
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => ( {
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => ( {
 	__esModule: true,
 	default: () => mockIsJetpackCloud,
 } ) );
@@ -46,7 +47,7 @@ describe( 'redirectToNewsletter()', () => {
 
 	beforeEach( () => {
 		mockIsJetpackCloud = false;
-		replace = jest.fn();
+		replace = vi.fn();
 		Object.defineProperty( window, 'location', {
 			value: { replace, hash: '' },
 			writable: true,
@@ -54,7 +55,7 @@ describe( 'redirectToNewsletter()', () => {
 	} );
 
 	test( 'sends a WordPress.com site to the Subscribers tab in wp-admin', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToNewsletter( makeContext(), next );
 
@@ -63,7 +64,7 @@ describe( 'redirectToNewsletter()', () => {
 	} );
 
 	test( 'carries a numeric subscriber id into the route', () => {
-		redirectToNewsletter( makeContext( { subscriberId: '944012532' } ), jest.fn() );
+		redirectToNewsletter( makeContext( { subscriberId: '944012532' } ), vi.fn() );
 
 		expect( replace ).toHaveBeenCalledWith(
 			`${ ADMIN_URL }admin.php?page=jetpack-newsletter&p=%2F%3Ftab%3Dsubscribers%26subscriber%3D944012532`
@@ -71,7 +72,7 @@ describe( 'redirectToNewsletter()', () => {
 	} );
 
 	test( 'ignores a subscriber id that is not an id', () => {
-		redirectToNewsletter( makeContext( { subscriberId: 'external-7' } ), jest.fn() );
+		redirectToNewsletter( makeContext( { subscriberId: 'external-7' } ), vi.fn() );
 
 		expect( replace ).toHaveBeenCalledWith( SUBSCRIBERS_URL );
 	} );
@@ -79,7 +80,7 @@ describe( 'redirectToNewsletter()', () => {
 	test( 'carries an Add subscribers fragment through to the Newsletter page', () => {
 		window.location.hash = '#add-subscribers';
 
-		redirectToNewsletter( makeContext(), jest.fn() );
+		redirectToNewsletter( makeContext(), vi.fn() );
 
 		expect( replace ).toHaveBeenCalledWith( `${ SUBSCRIBERS_URL }#add-subscribers` );
 	} );
@@ -87,7 +88,7 @@ describe( 'redirectToNewsletter()', () => {
 	test( 'normalises the fragment this screen appended for itself', () => {
 		window.location.hash = '#add-subscribers?method=upload';
 
-		redirectToNewsletter( makeContext(), jest.fn() );
+		redirectToNewsletter( makeContext(), vi.fn() );
 
 		expect( replace ).toHaveBeenCalledWith( `${ SUBSCRIBERS_URL }#add-subscribers` );
 	} );
@@ -95,13 +96,13 @@ describe( 'redirectToNewsletter()', () => {
 	test( 'drops a fragment the Newsletter page knows nothing about', () => {
 		window.location.hash = '#somewhere-else';
 
-		redirectToNewsletter( makeContext(), jest.fn() );
+		redirectToNewsletter( makeContext(), vi.fn() );
 
 		expect( replace ).toHaveBeenCalledWith( SUBSCRIBERS_URL );
 	} );
 
 	test( 'renders for self-hosted Jetpack below 16.1, which has no wp-admin page yet', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToNewsletter( makeContext( { jetpack: true, jetpackVersion: '16.0' } ), next );
 
@@ -110,7 +111,7 @@ describe( 'redirectToNewsletter()', () => {
 	} );
 
 	test( 'renders rather than redirecting to itself when wp-admin is unknown', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToNewsletter( makeContext( { adminUrl: null } ), next );
 
@@ -120,7 +121,7 @@ describe( 'redirectToNewsletter()', () => {
 
 	test( 'renders on Jetpack Cloud, which still serves this screen', () => {
 		mockIsJetpackCloud = true;
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToNewsletter( makeContext(), next );
 

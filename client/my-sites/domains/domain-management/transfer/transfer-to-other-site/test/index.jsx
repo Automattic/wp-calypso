@@ -1,6 +1,3 @@
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( '@automattic/search', () => null );
-
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS_MONTHLY,
@@ -26,7 +23,11 @@ import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
+import { vi } from 'vitest';
 import { TransferDomainToOtherSite } from '../transfer-domain-to-other-site';
+
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+vi.mock( '@automattic/search', () => ( { default: null } ) );
 
 const site = {
 	options: {

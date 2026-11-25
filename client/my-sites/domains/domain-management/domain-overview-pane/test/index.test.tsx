@@ -1,37 +1,40 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { QueryParams } from '../../dataviews/query-params';
 import { DOMAIN_OVERVIEW } from '../constants';
 import DomainOverviewPane, { showDomainManagementPage } from '../index';
 
 // Mock dependencies
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { show: jest.fn() },
+	default: { show: vi.fn() },
 } ) );
 
-jest.mock( 'calypso/state/sites/hooks', () => ( {
+vi.mock( 'calypso/state/sites/hooks', () => ( {
 	useSiteAdminInterfaceData: () => ( {
 		adminLabel: 'WP Admin',
 		adminUrl: 'https://example.com/wp-admin',
 	} ),
 } ) );
 
-window.IntersectionObserver = jest.fn( () => ( {
-	observe: jest.fn(),
-	disconnect: jest.fn(),
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	takeRecords: jest.fn(),
-	unobserve: jest.fn(),
-} ) ) as unknown as typeof IntersectionObserver;
+window.IntersectionObserver = vi.fn( function () {
+	return {
+		observe: vi.fn(),
+		disconnect: vi.fn(),
+		root: null,
+		rootMargin: '',
+		thresholds: [],
+		takeRecords: vi.fn(),
+		unobserve: vi.fn(),
+	};
+} ) as unknown as typeof IntersectionObserver;
 
 function createState( siteId = 1 ) {
 	return {
@@ -99,7 +102,7 @@ describe( 'DomainOverviewPane', () => {
 
 	beforeEach( () => {
 		global.window.location = new URL( 'https://wordpress.com' ) as any;
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	const renderComponent = ( props = {} ) => {
@@ -157,12 +160,12 @@ describe( 'DomainOverviewPane', () => {
 
 describe( 'showDomainManagementPage', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'preserves supported URL parameters when navigating', () => {
 		const url = new URL( 'https://wordpress.com?page=2&search=test&status=active' );
-		jest.spyOn( window, 'location', 'get' ).mockReturnValue( url as any );
+		vi.spyOn( window, 'location', 'get' ).mockReturnValue( url as any );
 
 		showDomainManagementPage( '/domains/manage/example.com' );
 		expect( page.show ).toHaveBeenCalledWith(
