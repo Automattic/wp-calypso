@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getiOSDeepLink, buildDeepLinkFragment } from 'calypso/blocks/app-banner';

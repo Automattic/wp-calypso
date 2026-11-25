@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { createStatsdURL, logServerEvent } from '../statsd-utils';
 
-jest.mock( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config' );
 
 describe( 'StatsD Analytics Utils', () => {
 	describe( 'createStatsdURL', () => {
@@ -72,7 +73,7 @@ describe( 'StatsD Analytics Utils', () => {
 		const originalFetch = globalThis.fetch;
 
 		beforeAll( () => {
-			globalThis.fetch = jest.fn().mockResolvedValue( undefined );
+			globalThis.fetch = vi.fn().mockResolvedValue( undefined );
 		} );
 
 		afterAll( () => {

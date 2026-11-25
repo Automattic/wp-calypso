@@ -1,31 +1,34 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { useHeadingLogo } from 'calypso/login/wp-login/components/heading-logo';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmailedLoginLinkSuccessfully from '../emailed-login-link-successfully';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( 'calypso/components/redirect-when-logged-in', () => () => null );
-jest.mock( 'calypso/state/analytics/actions', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/components/redirect-when-logged-in', () => ( { default: () => null } ) );
+vi.mock( 'calypso/state/analytics/actions', () => ( {
 	recordPageViewWithClientId: () => ( { type: 'TEST_PAGE_VIEW' } ),
 	enhanceWithSiteType: ( action ) => action,
 } ) );
-jest.mock( 'calypso/login/wp-login/components/heading-logo', () => ( {
-	useHeadingLogo: jest.fn(),
-} ) );
+vi.mock( 'calypso/login/wp-login/components/heading-logo', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useHeadingLogo: vi.fn(),
+	} )
+);
 
 const renderScreen = ( emailAddress = 'person@gmail.com' ) =>
 	renderWithProvider( <EmailedLoginLinkSuccessfully emailAddress={ emailAddress } /> );
 
 describe( 'EmailedLoginLinkSuccessfully', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		useHeadingLogo.mockReturnValue( null );
 	} );
 

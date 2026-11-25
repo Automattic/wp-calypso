@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { transferStates } from '../../../state/automated-transfer/constants';
 import HostingActivateStatus from '../hosting-activate-status';
 
@@ -40,7 +41,7 @@ describe( 'index', () => {
 		const mockStore = configureStore();
 		const store = mockStore( mockInitialState );
 
-		const onTick = jest.fn();
+		const onTick = vi.fn();
 
 		render(
 			<Provider store={ store }>
@@ -56,7 +57,7 @@ describe( 'index', () => {
 		const mockStore = configureStore();
 		const store = mockStore( mockInitialState );
 
-		const onTick = jest.fn();
+		const onTick = vi.fn();
 
 		render(
 			<Provider store={ store }>

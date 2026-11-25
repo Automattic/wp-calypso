@@ -22,7 +22,9 @@ test.describe(
 			const tracksEventManager = new TracksEventManager( page );
 			await tracksEventManager.init();
 
+			const pageViewPromise = tracksEventManager.didEventFire( 'wpcom_page_view' );
 			await tracksEventManager.navigateToUrl( lohpUrl );
+			await pageViewPromise;
 
 			const didEventFirePromise = tracksEventManager.didEventFire( 'wpcom_homepage_link_click' );
 			await page.getByRole( 'link', { name: 'Get started' } ).first().click();

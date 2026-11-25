@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { JETPACK_SETTINGS_SAVE, JETPACK_SETTINGS_UPDATE } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
@@ -45,7 +46,7 @@ describe( 'requestJetpackSettings()', () => {
 } );
 
 describe( 'announceRequestFailure()', () => {
-	const dispatch = jest.fn();
+	const dispatch = vi.fn();
 	const siteId = 12345678;
 	const siteUrl = 'http://yourgroovydomain.com';
 
@@ -113,7 +114,7 @@ describe( 'announceRequestFailure()', () => {
 } );
 
 describe( 'saveJetpackSettings()', () => {
-	const dispatch = jest.fn();
+	const dispatch = vi.fn();
 	const token = 'abcd1234';
 	const userEmail = 'example@yourgroovydomain.com';
 	const siteId = 12345678;

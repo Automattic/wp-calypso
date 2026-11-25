@@ -78,7 +78,7 @@ describe( 'useAgencyCart', () => {
 
 		expect( result.current.error ).toBeNull();
 		expect( replaceProductsInCart ).toHaveBeenCalledTimes( 1 );
-		const extra = { isA4ASitelessCheckout: true, agency_id: AGENCY_ID };
+		const extra = { isA4ASitelessCheckout: true, agency_id: AGENCY_ID, mergeIdenticalItems: true };
 		expect( addedLines() ).toEqual( [
 			{
 				product_id: 1010,

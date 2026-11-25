@@ -1,14 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { parse } from 'url';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { Theme } from '../';
 
-jest.mock( 'calypso/components/popover-menu', () => 'components--popover--menu' );
-jest.mock( 'calypso/components/popover-menu/item', () => 'components--popover--menu-item' );
-jest.mock( 'calypso/components/theme-tier/theme-tier-badge', () => 'components--theme-tier-badge' );
+vi.mock( 'calypso/components/popover-menu', () => ( { default: 'components--popover--menu' } ) );
+vi.mock( 'calypso/components/popover-menu/item', () => ( {
+	default: 'components--popover--menu-item',
+} ) );
+vi.mock( 'calypso/components/theme-tier/theme-tier-badge', () => ( {
+	default: 'components--theme-tier-badge',
+} ) );
 
 describe( 'Theme', () => {
 	const props = {
@@ -21,7 +26,7 @@ describe( 'Theme', () => {
 		translate: ( string ) => string,
 		setThemesBookmark: () => {},
 		onScreenshotClick: () => {},
-		recordTracksEvent: jest.fn(),
+		recordTracksEvent: vi.fn(),
 	};
 
 	describe( 'rendering', () => {
@@ -48,7 +53,7 @@ describe( 'Theme', () => {
 		} );
 
 		test( 'should call onScreenshotClick() on click on screenshot', async () => {
-			const onScreenshotClick = jest.fn();
+			const onScreenshotClick = vi.fn();
 			render( <Theme { ...props } onScreenshotClick={ onScreenshotClick } index={ 1 } /> );
 
 			const img = screen.getByRole( 'presentation' );
@@ -82,11 +87,11 @@ describe( 'Theme', () => {
 		const modernButtonContents = {
 			preview: {
 				label: 'Demo site',
-				action: jest.fn(),
+				action: vi.fn(),
 			},
 			signup: {
 				label: 'Get started',
-				getUrl: jest.fn( () => '/start/with-theme?theme=twentyseventeen' ),
+				getUrl: vi.fn( () => '/start/with-theme?theme=twentyseventeen' ),
 			},
 		};
 
@@ -107,7 +112,7 @@ describe( 'Theme', () => {
 		} );
 
 		test( 'should call preview action when Preview demo button is clicked', async () => {
-			const previewAction = jest.fn();
+			const previewAction = vi.fn();
 			const buttonContents = {
 				...modernButtonContents,
 				preview: { ...modernButtonContents.preview, action: previewAction },

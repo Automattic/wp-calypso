@@ -16,9 +16,6 @@ const DEFAULT_SERVER_NOTICES_VISIBILITY = {
 	// default only covers request failures: the grid stays hidden rather than
 	// rendering without a working dismissal round-trip.
 	pricing_grid: false,
-	// Defaults to hidden until the server includes it in the notices response,
-	// so the client can ship ahead of the WPCOM allow-list change.
-	premium_analytics_preview: false,
 	// TODO: Check if the site needs to be upgraded to a higher tier on the back end.
 	tier_upgrade: true,
 	gdpr_cookie_consent: false,
@@ -36,16 +33,6 @@ export const DEFAULT_NOTICES_VISIBILITY = {
 export type Notices = typeof DEFAULT_NOTICES_VISIBILITY;
 export type NoticeIdType = keyof Notices;
 
-const NOTICE_DISMISS_STATUSES = [ 'dismissed', 'postponed' ] as const;
-export type NoticeDismissStatus = ( typeof NOTICE_DISMISS_STATUSES )[ number ];
-export interface NoticeRecord {
-	show: boolean;
-	status: NoticeDismissStatus | null;
-	postponed_count: number;
-	next_show_at: number | null;
-}
-export type NoticeRecords = Record< NoticeIdType, NoticeRecord >;
-
 // These notices are mutually exclusive, so if one is active, the other should be hidden.
 // The IDs are sorted by priory from high to low.
 // `pricing_grid` is deliberately NOT in this group even though the grid trumps every
@@ -59,10 +46,6 @@ const CONFLICT_NOTICE_ID_GROUPS: Record< string, Array< NoticeIdType > > = {
 		'gdpr_cookie_consent',
 		'client_paid_plan_purchase_success',
 		'client_free_plan_purchase_success',
-		// Above `tier_upgrade`, the one id below whose audience it genuinely shares: both want a
-		// site with commercial use. The upsells in between need an unpaid site, so they and the
-		// invitation hardly ever come up together.
-		'premium_analytics_preview',
 		// The two legacy upsell ids and `free_site_upgrade` are mutually exclusive: their
 		// registry entries are enabled on opposite sides of the commercial paywall kill switch.
 		'do_you_love_jetpack_stats',
@@ -108,78 +91,28 @@ export const normalizeNoticesVisibility = (
 	return notices;
 };
 
-const isNoticeRecord = ( value: unknown ): value is Partial< NoticeRecord > =>
-	typeof value === 'object' && value !== null;
-
-const isNoticeDismissStatus = ( value: unknown ): value is NoticeDismissStatus =>
-	NOTICE_DISMISS_STATUSES.includes( value as NoticeDismissStatus );
-
-/**
- * Both the flat map an older server answers with and a detail record land in one shape, so the
- * escalation fields read as "never postponed" wherever the server cannot say otherwise.
- */
-const toNoticeRecord = ( value: unknown ): NoticeRecord => {
-	if ( ! isNoticeRecord( value ) ) {
-		return { show: !! value, status: null, postponed_count: 0, next_show_at: null };
-	}
-	return {
-		show: !! value.show,
-		status: isNoticeDismissStatus( value.status ) ? value.status : null,
-		postponed_count: Number( value.postponed_count ) || 0,
-		next_show_at: typeof value.next_show_at === 'number' ? value.next_show_at : null,
-	};
-};
-
-export const toNoticesVisibility = ( records: NoticeRecords ): Notices => {
-	const visibility = { ...DEFAULT_NOTICES_VISIBILITY };
-	for ( const noticeId of Object.keys( records ) as NoticeIdType[] ) {
-		visibility[ noticeId ] = records[ noticeId ].show;
-	}
-	return visibility;
-};
-
-export const normalizeNoticeRecords = (
-	payload: Record< string, unknown > | null | undefined
-): NoticeRecords => {
-	const records = {} as NoticeRecords;
-	for ( const [ noticeId, value ] of Object.entries( payload ?? {} ) ) {
-		records[ noticeId as NoticeIdType ] = toNoticeRecord( value );
-	}
-	const visibility = normalizeNoticesVisibility( toNoticesVisibility( records ) );
-	for ( const noticeId of Object.keys( visibility ) as NoticeIdType[] ) {
-		records[ noticeId ] = {
-			...( records[ noticeId ] ?? toNoticeRecord( false ) ),
-			show: visibility[ noticeId ],
-		};
-	}
-	return records;
-};
-
-const queryNotices = async function ( siteId: number | null ): Promise< NoticeRecords > {
+const queryNotices = async function ( siteId: number | null ): Promise< Notices > {
 	let payload;
 
 	try {
-		payload = await wpcom.req.get(
-			{
-				method: 'GET',
-				apiNamespace: 'wpcom/v2',
-				path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
-			},
-			{ include_details: true }
-		);
+		payload = await wpcom.req.get( {
+			method: 'GET',
+			apiNamespace: 'wpcom/v2',
+			path: `/sites/${ siteId }/jetpack-stats-dashboard/notices`,
+		} );
 	} catch ( error ) {
-		return normalizeNoticeRecords( DEFAULT_NOTICES_VISIBILITY );
+		return DEFAULT_NOTICES_VISIBILITY;
 	}
 
-	return normalizeNoticeRecords( payload );
+	return normalizeNoticesVisibility( payload );
 };
 
-// Calypso persists this cache for a week with no buster, so the shape change from a boolean
-// map to records needs its own key or an older build's entry is read as records.
+// Calypso persists this cache for a week with no buster, so the key changes whenever the
+// cached shape does. `details` held per-notice records; `raw` has only ever held this flat map.
 export const noticesVisibilityQueryKey = ( siteId: number | null ) => [
 	'stats',
 	'notices-visibility',
-	'details',
+	'raw',
 	siteId,
 ];
 
@@ -192,15 +125,14 @@ export const setNoticeHidden = (
 	siteId: number | null,
 	noticeId: NoticeIdType
 ) =>
-	queryClient.setQueryData< NoticeRecords >( noticesVisibilityQueryKey( siteId ), ( records ) =>
-		records
-			? { ...records, [ noticeId ]: { ...toNoticeRecord( records[ noticeId ] ), show: false } }
-			: records
+	queryClient.setQueryData< Notices >(
+		noticesVisibilityQueryKey( siteId ),
+		( notices ) => notices && { ...notices, [ noticeId ]: false }
 	);
 
 const useNoticesVisibilityQueryRaw = function < T >(
 	siteId: number | null,
-	select?: ( payload: NoticeRecords ) => T,
+	select?: ( payload: Notices ) => T,
 	enabled?: boolean
 ) {
 	return useQuery( {
@@ -217,8 +149,8 @@ export function useNoticeVisibilityQuery(
 	noticeId: NoticeIdType,
 	enabled?: boolean
 ) {
-	const selectVisibilityForSingleNotice = ( records: NoticeRecords ) => {
-		const payload = processConflictNotices( toNoticesVisibility( records ) );
+	const selectVisibilityForSingleNotice = ( payload: Notices ) => {
+		payload = processConflictNotices( payload );
 		return !! payload?.[ noticeId ];
 	};
 	return useNoticesVisibilityQueryRaw< boolean >(
@@ -229,10 +161,5 @@ export function useNoticeVisibilityQuery(
 }
 
 export function useNoticesVisibilityQuery( siteId: number | null ) {
-	return useNoticesVisibilityQueryRaw< Notices >( siteId, toNoticesVisibility );
-}
-
-export function useNoticeRecordQuery( siteId: number | null, noticeId: NoticeIdType ) {
-	const selectRecord = ( records: NoticeRecords ) => records[ noticeId ];
-	return useNoticesVisibilityQueryRaw< NoticeRecord >( siteId, selectRecord );
+	return useNoticesVisibilityQueryRaw< Notices >( siteId );
 }

@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { resolvedRenewalDataStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 import CheckoutMasterbar from '../checkout';
 import type { PropsWithChildren } from 'react';
 
-jest.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => ( {
+vi.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => ( {
 	__esModule: true,
 	default: ( { children }: PropsWithChildren ) => children,
 } ) );
-jest.mock( 'calypso/my-sites/checkout/src/components/leave-checkout-modal', () => ( {
+vi.mock( 'calypso/my-sites/checkout/src/components/leave-checkout-modal', () => ( {
 	LeaveCheckoutModal: () => null,
-	useCheckoutLeaveModal: () => ( { clickClose: jest.fn(), isLeaveDisabled: false } ),
+	useCheckoutLeaveModal: () => ( { clickClose: vi.fn(), isLeaveDisabled: false } ),
 } ) );
-jest.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center', () => ( {
-	useCheckoutHelpCenter: () => ( { toggleHelpCenter: jest.fn() } ),
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center', () => ( {
+	useCheckoutHelpCenter: () => ( { toggleHelpCenter: vi.fn() } ),
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( '../masterbar', () => ( {
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '../masterbar', () => ( {
 	__esModule: true,
 	default: ( { children }: PropsWithChildren ) => <header>{ children }</header>,
 } ) );

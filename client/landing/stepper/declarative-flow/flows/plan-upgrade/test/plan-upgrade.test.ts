@@ -147,6 +147,12 @@ describe( 'plan-upgrade flow', () => {
 		expect( goBack() ).toContain( '/sites' );
 	} );
 
+	it( 'does not go back to a host that only starts like a dashboard', () => {
+		mockQuery.back_to = 'https://my.wordpress.com.evil.example/';
+
+		expect( goBack() ).toContain( '/sites' );
+	} );
+
 	// Without it, a Woo Hosted store is offered WordPress.com plans it can't move to.
 	it( 'offers a Woo Hosted store the Woo Hosted plans', () => {
 		mockSitePlan = 'woo_hosted_basic_plan_monthly';

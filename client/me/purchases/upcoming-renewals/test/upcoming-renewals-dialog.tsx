@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import Modal from 'react-modal';
+import { vi } from 'vitest';
 import UpcomingRenewalsDialog from '../upcoming-renewals-dialog';
 
 describe( '<UpcomingRenewalsDialog>', () => {
@@ -66,8 +67,8 @@ describe( '<UpcomingRenewalsDialog>', () => {
 				isVisible
 				purchases={ mockPurchases() }
 				site={ site }
-				onConfirm={ jest.fn() }
-				onClose={ jest.fn() }
+				onConfirm={ vi.fn() }
+				onClose={ vi.fn() }
 			/>
 		);
 
@@ -108,8 +109,8 @@ describe( '<UpcomingRenewalsDialog>', () => {
 				isVisible
 				purchases={ purchases }
 				site={ site }
-				onConfirm={ jest.fn() }
-				onClose={ jest.fn() }
+				onConfirm={ vi.fn() }
+				onClose={ vi.fn() }
 			/>
 		);
 
@@ -119,7 +120,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 	} );
 
 	test( 'selects all purchases by default', async () => {
-		const onConfirm = jest.fn();
+		const onConfirm = vi.fn();
 		const purchases = mockPurchases();
 		render(
 			<UpcomingRenewalsDialog
@@ -127,7 +128,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 				purchases={ purchases }
 				site={ site }
 				onConfirm={ onConfirm }
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 			/>
 		);
 
@@ -138,7 +139,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 
 	test( 'submits only the selected purchases', async () => {
 		const user = userEvent.setup();
-		const onConfirm = jest.fn();
+		const onConfirm = vi.fn();
 		const purchases = mockPurchases();
 		render(
 			<UpcomingRenewalsDialog
@@ -146,7 +147,7 @@ describe( '<UpcomingRenewalsDialog>', () => {
 				purchases={ purchases }
 				site={ site }
 				onConfirm={ onConfirm }
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 			/>
 		);
 
@@ -163,8 +164,8 @@ describe( '<UpcomingRenewalsDialog>', () => {
 				isVisible
 				purchases={ mockPurchases() }
 				site={ site }
-				onConfirm={ jest.fn() }
-				onClose={ jest.fn() }
+				onConfirm={ vi.fn() }
+				onClose={ vi.fn() }
 			/>
 		);
 

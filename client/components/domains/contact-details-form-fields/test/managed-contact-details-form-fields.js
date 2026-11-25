@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { checkoutTheme } from '@automattic/composite-checkout';
@@ -7,16 +7,16 @@ import { ThemeProvider } from '@emotion/react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ManagedContactDetailsFormFields } from '../managed-contact-details-form-fields';
 
-jest.mock( 'calypso/components/data/query-countries/domains', () => () => null );
-jest.mock( 'calypso/components/data/query-country-states', () => () => null );
-const mockPhoneInput = jest.fn( () => null );
-jest.mock(
-	'calypso/components/forms/form-phone-media-input',
-	() => ( props ) => mockPhoneInput( props )
-);
+vi.mock( 'calypso/components/data/query-countries/domains', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-country-states', () => ( { default: () => null } ) );
+const mockPhoneInput = vi.fn( () => null );
+vi.mock( 'calypso/components/forms/form-phone-media-input', () => ( {
+	default: ( props ) => mockPhoneInput( props ),
+} ) );
 
 const countriesList = [
 	{ code: 'GB', name: 'United Kingdom', has_postal_codes: true },
@@ -25,7 +25,7 @@ const countriesList = [
 ];
 
 function renderForm( contactDetails = {} ) {
-	const onContactDetailsChange = jest.fn();
+	const onContactDetailsChange = vi.fn();
 
 	function Form() {
 		const [ details, setDetails ] = useState( {

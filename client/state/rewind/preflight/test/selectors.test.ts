@@ -1,15 +1,16 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import { getPreflightStatus } from '../selectors';
 import { PreflightTestStatus } from '../types';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
-	config.isEnabled = jest.fn();
-	return config;
+	config.isEnabled = vi.fn();
+	return { ...config, default: config };
 } );
 
 const mockPreflightFeatureFlag = ( isEnabledValue: boolean ) => {
-	( isEnabled as jest.Mock ).mockImplementation( ( property: string ) => {
+	( isEnabled as Mock ).mockImplementation( ( property: string ) => {
 		if ( property === 'jetpack/backup-restore-preflight-checks' ) {
 			return isEnabledValue;
 		}
@@ -34,7 +35,7 @@ const mockState = {
 
 describe( 'getPreflightStatus', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should return the correct overall preflight status from the state when feature flag is enabled', () => {

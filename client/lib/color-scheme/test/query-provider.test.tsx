@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { queryClient } from '@automattic/api-queries';
@@ -8,6 +8,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useEffect } from 'react';
+import { vi } from 'vitest';
 import { ColorSchemeProvider, useColorScheme, withColorScheme } from 'calypso/lib/color-scheme';
 import type { ColorScheme } from 'calypso/lib/color-scheme';
 
@@ -16,9 +17,9 @@ const API_BASE = 'https://public-api.wordpress.com';
 const PREFERENCES_PATH = '/rest/v1.1/me/preferences';
 const surfaceBodyClasses = [ 'is-reader-dark-mode', 'is-themes-dark-mode' ];
 
-const mockUpdatePreference = jest.fn();
-const mockOnSaveSuccess = jest.fn();
-const mockChildMount = jest.fn();
+const mockUpdatePreference = vi.fn();
+const mockOnSaveSuccess = vi.fn();
+const mockChildMount = vi.fn();
 
 function mockGetPreferences(
 	preferences: Record< string, unknown >,

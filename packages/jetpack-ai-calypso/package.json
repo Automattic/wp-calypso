@@ -75,6 +75,8 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
+		"@types/react": "^19.3.0",
+		"@wordpress/data": "^11.2.0",
 		"jsdom": "^20.0.3",
 		"postcss": "^8.5.32",
 		"react": "^18.3.1",

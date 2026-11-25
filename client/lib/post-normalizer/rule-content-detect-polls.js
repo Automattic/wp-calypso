@@ -30,8 +30,10 @@ export default function detectPolls( post, dom ) {
 		const pollLink = noscriptDom.querySelector( pollLinkSelectors.join( ', ' ) );
 		if ( pollLink ) {
 			const matches =
-				pollLink.href.match( /https?:\/\/(polldaddy\.com\/poll|poll\.fm|survey\.fm)\/([0-9]+)/ ) ||
-				[];
+				// Not `href`, which is an `SVGAnimatedString` on an SVG anchor.
+				pollLink
+					.getAttribute( 'href' )
+					.match( /https?:\/\/(polldaddy\.com\/poll|poll\.fm|survey\.fm)\/([0-9]+)/ ) || [];
 			const pollId = matches[ 2 ];
 			if ( pollId ) {
 				noscript.parentNode.replaceChild(

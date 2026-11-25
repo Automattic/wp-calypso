@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- `stop()` resolves to `false` instead of rejecting when the report can't be sent, as its documentation says.
+
 ## 3.0.0
 
 - Breaking: Undo ESM conversion, CJS is provided again.

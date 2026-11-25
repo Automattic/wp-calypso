@@ -1,7 +1,9 @@
 /**
  * Smoke tests the Jetpack Settings screen in wp-admin.
  *
- * This test is basic and only checks that each Settings tab can be selected.
+ * This test is basic and only checks that each Settings tab can be selected. Most settings have
+ * moved to My Jetpack, so Monetize is the only tab left, and a private site, which has no Ads,
+ * has none: Settings sends it to My Jetpack › Features instead.
  *
  * Keywords: Jetpack, Smoke Test
  */
@@ -9,7 +11,6 @@
 import {
 	DataHelper,
 	JetpackDashboardPage,
-	SettingsTabs,
 	TestAccount,
 	completeJetpackSso,
 	envToFeatureKey,
@@ -50,23 +51,17 @@ test.describe(
 				await jetpackDashboardPage.visit( testAccount.getSiteURL( { protocol: false } ) );
 			} );
 
-			for ( const tab of [
-				'Performance',
-				'Writing',
-				'Sharing',
-				'Discussion',
-				'Traffic',
-			] as SettingsTabs[] ) {
-				await test.step( `Click on ${ tab } tab in the Settings view`, async () => {
-					await jetpackDashboardPage.clickTab( tab );
+			if ( envVariables.ATOMIC_VARIATION === 'private' ) {
+				await test.step( 'Land on Features in My Jetpack', async () => {
+					await jetpackDashboardPage.waitForFeaturesInMyJetpack();
 				} );
+
+				return;
 			}
 
-			if ( envVariables.ATOMIC_VARIATION !== 'private' ) {
-				await test.step( 'Click on Monetize tab in the Settings view', async () => {
-					await jetpackDashboardPage.clickTab( 'Monetize' );
-				} );
-			}
+			await test.step( 'Click on Monetize tab in the Settings view', async () => {
+				await jetpackDashboardPage.clickTab( 'Monetize' );
+			} );
 		} );
 	}
 );

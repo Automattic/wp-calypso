@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import moment from 'moment';
+import { vi } from 'vitest';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
@@ -18,33 +19,41 @@ import DailyBackupStatus from '..';
 
 const render = ( el, options ) => renderWithProvider( el, { ...options } );
 
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
-jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
+vi.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
+vi.mock( 'calypso/state/selectors/get-site-timezone-value' );
+vi.mock( 'calypso/state/selectors/get-site-gmt-offset' );
 
-jest.mock( 'calypso/state/selectors/get-rewind-backups' );
-jest.mock( 'calypso/state/selectors/get-site-features' );
-jest.mock( 'calypso/state/rewind/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/rewind/selectors' ),
-	getRewindStorageUsageLevel: jest.fn(),
+vi.mock( 'calypso/state/selectors/get-rewind-backups' );
+vi.mock( 'calypso/state/selectors/get-site-features' );
+vi.mock( 'calypso/state/rewind/selectors', async () => ( {
+	...( await vi.importActual( 'calypso/state/rewind/selectors' ) ),
+	getRewindStorageUsageLevel: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/jetpack/backup-utils' );
+vi.mock( 'calypso/lib/jetpack/backup-utils' );
 
-jest.mock( 'calypso/components/data/query-rewind-policies', () => () => 'query-rewind-policies' );
+vi.mock( 'calypso/components/data/query-rewind-policies', () => ( {
+	default: () => 'query-rewind-policies',
+} ) );
 
-jest.mock( '../status-card/no-backups-yet', () => () => <div data-testid="no-backups-yet" /> );
-jest.mock( '../status-card/backup-scheduled', () => () => <div data-testid="backup-scheduled" /> );
-jest.mock( '../status-card/no-backups-on-selected-date', () => () => (
-	<div data-testid="no-backups-on-selected-date" />
-) );
-jest.mock( '../status-card/backup-failed', () => () => <div data-testid="backup-failed" /> );
-jest.mock( '../status-card/backup-no-storage', () => () => (
-	<div data-testid="backup-no-storage" />
-) );
-jest.mock( '../status-card/backup-successful', () => () => (
-	<div data-testid="backup-successful" />
-) );
+vi.mock( '../status-card/no-backups-yet', () => ( {
+	default: () => <div data-testid="no-backups-yet" />,
+} ) );
+vi.mock( '../status-card/backup-scheduled', () => ( {
+	default: () => <div data-testid="backup-scheduled" />,
+} ) );
+vi.mock( '../status-card/no-backups-on-selected-date', () => ( {
+	default: () => <div data-testid="no-backups-on-selected-date" />,
+} ) );
+vi.mock( '../status-card/backup-failed', () => ( {
+	default: () => <div data-testid="backup-failed" />,
+} ) );
+vi.mock( '../status-card/backup-no-storage', () => ( {
+	default: () => <div data-testid="backup-no-storage" />,
+} ) );
+vi.mock( '../status-card/backup-successful', () => ( {
+	default: () => <div data-testid="backup-successful" />,
+} ) );
 
 const ARBITRARY_DATE = moment( '2019-01-01' );
 

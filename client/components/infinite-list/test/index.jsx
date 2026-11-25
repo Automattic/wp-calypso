@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { vi } from 'vitest';
 import InfiniteList from '../index';
 
 const items = [ { id: 1 }, { id: 2 }, { id: 3 } ];
@@ -31,11 +32,11 @@ describe( 'InfiniteList', () => {
 	beforeEach( () => {
 		// jsdom reports clientHeight as 0, which would leave the list with no
 		// visible rows. Give the scroll context a height so items render.
-		clientHeightSpy = jest
+		clientHeightSpy = vi
 			.spyOn( document.documentElement, 'clientHeight', 'get' )
 			.mockReturnValue( 1000 );
 		// jsdom doesn't implement window.scrollTo; the list calls it on mount.
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	afterEach( () => {
@@ -46,7 +47,7 @@ describe( 'InfiniteList', () => {
 		// Regression guard: the third argument is the contract that lets consumers
 		// register their item's DOM node. Consumers whose renderItem has a colliding
 		// third positional param would silently misbehave (see blogs-settings).
-		const renderItem = jest.fn( ( item, index, registerItemRef ) => (
+		const renderItem = vi.fn( ( item, index, registerItemRef ) => (
 			<div key={ getItemRef( item ) } ref={ registerItemRef } data-testid={ getItemRef( item ) } />
 		) );
 		renderList( renderItem );
@@ -65,7 +66,7 @@ describe( 'InfiniteList', () => {
 		renderList( renderItem, listRef );
 
 		const node = screen.getByTestId( 'item-1' );
-		jest.spyOn( node, 'getBoundingClientRect' ).mockReturnValue( { top: 10, bottom: 52 } );
+		vi.spyOn( node, 'getBoundingClientRect' ).mockReturnValue( { top: 10, bottom: 52 } );
 
 		expect( listRef.current.boundsForRef( 'item-1' ) ).toEqual( { top: 10, bottom: 52 } );
 		expect( listRef.current.getDOMNode() ).toBe( node.parentElement );

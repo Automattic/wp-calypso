@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import * as useGetPayoutData from '../../hooks/use-get-payout-data';
 import PayoutCards from '../payout-cards';
 
 // Mock the dependencies
-jest.mock( '../../hooks/use-get-payout-data' );
+vi.mock( '../../hooks/use-get-payout-data' );
 
-const mockUseGetPayoutData = useGetPayoutData.default as jest.MockedFunction<
+const mockUseGetPayoutData = useGetPayoutData.default as MockedFunction<
 	typeof useGetPayoutData.default
 >;
 
 // Mock the ConsolidatedStatsCard component
-jest.mock( 'calypso/a8c-for-agencies/components/consolidated-stats-card', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/components/consolidated-stats-card', () => ( {
 	ConsolidatedStatsCard: ( { value, footerText, isLoading }: any ) => (
 		<div data-testid="consolidated-stats-card">
 			<div data-testid="value">{ value }</div>
@@ -35,7 +36,7 @@ describe( 'PayoutCards', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseGetPayoutData.mockReturnValue( mockPayoutData );
 	} );
 

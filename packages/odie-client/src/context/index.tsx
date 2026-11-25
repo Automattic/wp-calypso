@@ -50,6 +50,7 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	isUserEligibleForPaidSupport: false,
 	hasOpenZendeskChat: false,
 	setChat: noop,
+	refreshChatInBackground: noop,
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
 	trackEvent: noop,
@@ -120,10 +121,11 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
-	const { mainChatState, setMainChatState, isLoadingZendeskHistory } = useGetCombinedChat(
-		( isUserEligibleForPaidSupport || hasOpenZendeskChat ) && canConnectToZendesk,
-		isLoadingCanConnectToZendesk
-	);
+	const { mainChatState, setMainChatState, refreshChatInBackground, isLoadingZendeskHistory } =
+		useGetCombinedChat(
+			( isUserEligibleForPaidSupport || hasOpenZendeskChat ) && canConnectToZendesk,
+			isLoadingCanConnectToZendesk
+		);
 
 	/**
 	 * Has the user ever escalated to get human support?
@@ -213,6 +215,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				newLoggedOutInteractionsBotSlug,
 				chat: mainChatState,
 				setChat: setMainChatState,
+				refreshChatInBackground,
 				clearChat,
 				currentUser,
 				isChatLoaded,

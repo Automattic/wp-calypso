@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	pathWithLeadingSlash,
 	getSignupUrl,
@@ -26,9 +27,9 @@ describe( 'pathWithLeadingSlash', () => {
 	} );
 } );
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: jest.fn( ( key ) => {
+	default: vi.fn( ( key ) => {
 		switch ( key ) {
 			case 'i18n_default_locale_slug':
 				return 'en';

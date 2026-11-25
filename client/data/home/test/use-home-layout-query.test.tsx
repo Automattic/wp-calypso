@@ -1,19 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { ReactNode } from 'react';
+import { vi } from 'vitest';
 import useHomeLayoutQuery, { getCacheKey, prefetchHomeLayout } from '../use-home-layout-query';
 
-const mockGet = jest.fn();
+const mockGet = vi.fn();
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: { get: ( ...args: unknown[] ) => mockGet( ...args ) },
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: { get: ( ...args: unknown[] ) => mockGet( ...args ) },
+	} )
+);
 
-jest.mock( '../use-home-layout-query-params', () => ( {
+vi.mock( '../use-home-layout-query-params', () => ( {
 	useHomeLayoutQueryParams: () => ( {} ),
 	getHomeLayoutQueryParams: () => ( {} ),
 } ) );

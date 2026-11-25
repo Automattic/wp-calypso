@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,10 +8,8 @@ import * as selectors from 'calypso/state/user-licensing/selectors';
 const userLicensingState = {
 	userLicensing: {
 		licensesFetching: false,
-		hasFetchedLicenses: false,
 		licenses: null,
 		countsFetching: false,
-		hasFetchedLicenseCounts: true,
 		counts: null,
 	},
 };

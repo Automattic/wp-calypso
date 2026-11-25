@@ -1,6 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { vi } from 'vitest';
-import { createWebMcpToolProvider } from '../server-ability-provider';
+import { withServerAbilities } from '../server-ability-provider';
 import type { ToolProvider } from '../../extension-types';
 import type { Ability } from '@wordpress/abilities';
 
@@ -24,11 +24,6 @@ const serverAbility: Ability = {
 	meta: { annotations: { readonly: true, idempotent: true } },
 };
 
-const mutatingServerAbility: Ability = {
-	...serverAbility,
-	meta: { annotations: { readonly: false, destructive: false, idempotent: false } },
-};
-
 describe( 'WebMCP server ability provider', () => {
 	beforeEach( () => {
 		vi.mocked( apiFetch ).mockReset();
@@ -44,7 +39,7 @@ describe( 'WebMCP server ability provider', () => {
 			executeAbility: vi.fn(),
 		};
 
-		const provider = createWebMcpToolProvider( toolProvider );
+		const provider = withServerAbilities( toolProvider );
 		await expect( provider.getAbilities() ).resolves.toEqual( [
 			clientAbility,
 			{
@@ -76,7 +71,7 @@ describe( 'WebMCP server ability provider', () => {
 			executeAbility: vi.fn(),
 		};
 
-		const abilities = await createWebMcpToolProvider( toolProvider ).getAbilities();
+		const abilities = await withServerAbilities( toolProvider ).getAbilities();
 
 		expect( abilities ).toHaveLength( 2 );
 		expect( abilities.find( ( ability ) => ability.name === serverAbility.name ) ).toEqual(
@@ -96,7 +91,7 @@ describe( 'WebMCP server ability provider', () => {
 			getAbilities: vi.fn( async () => [ clientAbility ] ),
 			executeAbility: vi.fn(),
 		};
-		const provider = createWebMcpToolProvider( toolProvider );
+		const provider = withServerAbilities( toolProvider );
 
 		await expect(
 			provider.executeAbility( 'wpcom/get-block-schemas', { fields: 'summary' } )
@@ -108,28 +103,13 @@ describe( 'WebMCP server ability provider', () => {
 		expect( toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
-	it( 'refuses to run a server ability that is not read-only', async () => {
-		vi.mocked( apiFetch ).mockResolvedValueOnce( [ mutatingServerAbility ] );
-		const toolProvider: ToolProvider = {
-			getAbilities: vi.fn( async () => [ clientAbility ] ),
-			executeAbility: vi.fn(),
-		};
-		const provider = createWebMcpToolProvider( toolProvider );
-
-		await expect( provider.executeAbility( 'wpcom/get-block-schemas', {} ) ).rejects.toThrow(
-			'only read-only server abilities'
-		);
-		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
-		expect( toolProvider.executeAbility ).not.toHaveBeenCalled();
-	} );
-
 	it( 'keeps client ability execution on the existing provider', async () => {
 		vi.mocked( apiFetch ).mockResolvedValueOnce( [ serverAbility ] );
 		const toolProvider: ToolProvider = {
 			getAbilities: vi.fn( async () => [ clientAbility ] ),
 			executeAbility: vi.fn( async () => ( { ok: true } ) ),
 		};
-		const provider = createWebMcpToolProvider( toolProvider );
+		const provider = withServerAbilities( toolProvider );
 
 		await expect( provider.executeAbility( clientAbility.name, {} ) ).resolves.toEqual( {
 			ok: true,
@@ -146,7 +126,7 @@ describe( 'WebMCP server ability provider', () => {
 			executeAbility: vi.fn(),
 		};
 
-		await expect( createWebMcpToolProvider( toolProvider ).getAbilities() ).resolves.toEqual( [
+		await expect( withServerAbilities( toolProvider ).getAbilities() ).resolves.toEqual( [
 			clientAbility,
 		] );
 		expect( warn ).toHaveBeenCalledWith(

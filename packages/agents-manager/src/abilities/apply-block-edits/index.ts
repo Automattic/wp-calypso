@@ -14,7 +14,7 @@ export const applyBlockEditsAbility: Ability = {
 	label: __( 'Apply Block Edits', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
 	description:
-		'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. To insert a section or several blocks at once, write serialized Gutenberg block markup and pass it as an insert blockMarkup value; call wpcom__get_block_schemas first to check block names and attributes. The change remains unsaved and reviewable in the editor.',
+		'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. To insert a section or several blocks at once, write serialized Gutenberg block markup and pass it as an insert blockMarkup value. For a ready-made section, get the markup of a pattern with the wpcom-patterns-get tool of the WordPress.com MCP. Call wpcom__get_block_schemas first to check block names and attributes. The change remains unsaved and reviewable in the editor.',
 	input_schema: {
 		type: 'object',
 		properties: {

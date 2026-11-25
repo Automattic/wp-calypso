@@ -45,11 +45,11 @@ import PerformanceCard from '../../../../sites/performance/components/performanc
 import PlanCard from '../../../../sites/plan/components/plan-card';
 import ScanCard from '../../../../sites/scan/components/scan-card';
 import { InaccessibleJetpackNotice } from '../../../../sites/site/notices';
-import StagingSiteSyncDropdown from '../../../../sites/staging-site-sync-dropdown';
+import StagingSiteSyncDropdown from '../../../../sites/staging-site/components/staging-site-sync-dropdown';
 import {
 	StagingSiteSyncNotice,
 	useStagingSiteSyncForNotice,
-} from '../../../../sites/staging-site-sync-notice';
+} from '../../../../sites/staging-site/components/staging-site-sync-notice';
 import {
 	StaticSiteImportFailed,
 	StaticSiteImportNotice,

@@ -4,6 +4,7 @@
 	"favicon_url": "/calypso/images/favicons/favicon-jetpack-cloud-development.ico",
 	"client_slug": "browser",
 	"protocol": "http",
+	"bilmur_spa_beacon_origin": "/",
 	"hostname": "jetpack.cloud.localhost",
 	"i18n_default_locale_slug": "en",
 	"port": 3000,

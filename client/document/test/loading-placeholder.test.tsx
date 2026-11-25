@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderToStaticMarkup } from 'react-dom/server';
+import { vi } from 'vitest';
 import Document from '../index';
-import { getBilmurUrl, isBilmurEnabled } from '../utils/bilmur';
+import { getBilmurUrl, isBilmurEnabled, isBilmurSpaEnabled } from '../utils/bilmur';
 import type { ComponentProps } from 'react';
 
-jest.mock( '../utils/bilmur' );
+vi.mock( '../utils/bilmur' );
 
 type DocumentProps = ComponentProps< typeof Document >;
 
@@ -161,12 +162,12 @@ describe( 'Document bilmur', () => {
 	const bilmurUrl = 'https://example.com/bilmur.min.js?w=1';
 
 	afterEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'renders the configuration in an element of its own, apart from the script', () => {
-		jest.mocked( isBilmurEnabled ).mockReturnValue( true );
-		jest.mocked( getBilmurUrl ).mockReturnValue( bilmurUrl );
+		vi.mocked( isBilmurEnabled ).mockReturnValue( true );
+		vi.mocked( getBilmurUrl ).mockReturnValue( bilmurUrl );
 
 		const html = renderToStaticMarkup( <Document { ...baseProps } sectionName="reader" /> );
 		const container = document.createElement( 'div' );
@@ -187,10 +188,36 @@ describe( 'Document bilmur', () => {
 	} );
 
 	it( 'renders neither when the bilmur script is disabled', () => {
-		jest.mocked( isBilmurEnabled ).mockReturnValue( false );
+		vi.mocked( isBilmurEnabled ).mockReturnValue( false );
 
 		const html = renderToStaticMarkup( <Document { ...baseProps } sectionName="reader" /> );
 
 		expect( html ).not.toContain( 'bilmur' );
+	} );
+
+	function mockBilmurSpaEnabled() {
+		vi.mocked( isBilmurSpaEnabled ).mockImplementation(
+			( entrypointName ) => entrypointName === 'entry-main'
+		);
+	}
+
+	it( 'leaves the bilmur script off when the client loads bilmur-spa', () => {
+		vi.mocked( isBilmurEnabled ).mockReturnValue( true );
+		vi.mocked( getBilmurUrl ).mockReturnValue( bilmurUrl );
+		mockBilmurSpaEnabled();
+
+		const html = renderToStaticMarkup( <Document { ...baseProps } entrypointName="entry-main" /> );
+
+		expect( html ).toContain( 'id="bilmur"' );
+		expect( html ).not.toContain( bilmurUrl );
+	} );
+
+	it( 'renders the configuration for bilmur-spa where the bilmur script is disabled', () => {
+		vi.mocked( isBilmurEnabled ).mockReturnValue( false );
+		mockBilmurSpaEnabled();
+
+		const html = renderToStaticMarkup( <Document { ...baseProps } entrypointName="entry-main" /> );
+
+		expect( html ).toContain( 'id="bilmur"' );
 	} );
 } );

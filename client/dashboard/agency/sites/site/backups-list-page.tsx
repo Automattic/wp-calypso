@@ -40,6 +40,7 @@ export default function AgencySiteBackupsListPage() {
 							...listRoute,
 							search: ( query: Record< string, string > ) => query,
 						} ),
+			restoreLinkTo: agencySiteBackupRestoreRoute.fullPath,
 			requestRestore: ( id ) =>
 				router.navigate( {
 					to: agencySiteBackupRestoreRoute.fullPath,

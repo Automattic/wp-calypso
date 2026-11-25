@@ -23,24 +23,8 @@ const fetchingLists = deepFreeze( {
 		enhancement: false,
 	},
 } );
-const listsPagination = deepFreeze( {
-	category: {
-		popular: {
-			page: 1,
-			pages: 100,
-			results: 2359,
-		},
-	},
-	search: {
-		woocommerce: {
-			page: 1,
-			pages: 50,
-			results: 1000,
-		},
-	},
-} );
 const state = deepFreeze( {
-	plugins: { wporg: { items, fetchingItems, fetchingLists, listsPagination } },
+	plugins: { wporg: { items, fetchingItems, fetchingLists } },
 } );
 
 describe( 'WPorg Selectors', () => {

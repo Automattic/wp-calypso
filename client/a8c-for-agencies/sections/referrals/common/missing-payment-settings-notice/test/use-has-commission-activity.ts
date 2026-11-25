@@ -1,33 +1,34 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { useQuery } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import useFetchAllLicenses from 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses';
 import useFetchSitesWithPlugins from 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins';
 import useFetchTaggedSitesForMigration from 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration';
 import useHasCommissionActivity from '../use-has-commission-activity';
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useQuery: vi.fn(),
 } ) );
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn( () => 1 ),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn( () => 1 ),
 } ) );
-jest.mock( 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration' );
-jest.mock( 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses' );
-jest.mock( 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins' );
+vi.mock( 'calypso/dashboard/agency/earn/migrations/hooks/use-fetch-tagged-sites-for-migration' );
+vi.mock( 'calypso/a8c-for-agencies/data/purchases/use-fetch-all-licenses' );
+vi.mock( 'calypso/a8c-for-agencies/data/sites/use-fetch-sites-with-plugins' );
 
-const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
-const mockUseFetchTaggedSitesForMigration = useFetchTaggedSitesForMigration as jest.MockedFunction<
+const mockUseQuery = useQuery as MockedFunction< typeof useQuery >;
+const mockUseFetchTaggedSitesForMigration = useFetchTaggedSitesForMigration as MockedFunction<
 	typeof useFetchTaggedSitesForMigration
 >;
-const mockUseFetchAllLicenses = useFetchAllLicenses as jest.MockedFunction<
-	typeof useFetchAllLicenses
->;
-const mockUseFetchSitesWithPlugins = useFetchSitesWithPlugins as jest.MockedFunction<
+const mockUseFetchAllLicenses = useFetchAllLicenses as MockedFunction< typeof useFetchAllLicenses >;
+const mockUseFetchSitesWithPlugins = useFetchSitesWithPlugins as MockedFunction<
 	typeof useFetchSitesWithPlugins
 >;
 
@@ -79,7 +80,7 @@ const setMocks = ( {
 
 describe( 'useHasCommissionActivity', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'returns hasActivity=false when all data sources are empty', () => {

@@ -40,6 +40,7 @@ const ability: Ability = {
 	category: 'big-sky',
 	input_schema: { type: 'object', properties: {} },
 	meta: { annotations: { clientRegistered: true }, webmcp: { public: true } },
+	callback: vi.fn(),
 };
 
 describe( 'useWebMcpTools', () => {
@@ -132,6 +133,55 @@ describe( 'useWebMcpTools', () => {
 				expect.objectContaining( { name: 'test__late' } ),
 				expect.anything()
 			)
+		);
+	} );
+
+	it( 'runs provider tools as calls no chat made, over any id the agent sends', async () => {
+		const tools: WebMcpTool[] = [];
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool: vi.fn( async ( tool: WebMcpTool ) => tools.push( tool ) ) },
+		} );
+		const toolProvider: ToolProvider = {
+			getAbilities: vi.fn().mockResolvedValue( [ { ...ability, name: 'big-sky/set-site-logo' } ] ),
+			executeAbility: vi.fn(),
+		};
+		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		onTestFinished( unmount );
+		await waitFor( () => expect( tools ).toHaveLength( 1 ) );
+
+		await tools[ 0 ].execute( { fileObj: { attachment_id: '7' }, toolCallId: 'chat-call' } );
+
+		expect( toolProvider.executeAbility ).toHaveBeenCalledWith( 'big-sky/set-site-logo', {
+			fileObj: { attachment_id: '7' },
+			toolCallId: null,
+		} );
+	} );
+
+	it( 'runs block edits through the server corrections', async () => {
+		const tools: WebMcpTool[] = [];
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool: vi.fn( async ( tool: WebMcpTool ) => tools.push( tool ) ) },
+		} );
+		const blockTreeAbility = { ...ability, name: 'agents-manager/get-block-tree', meta: {} };
+		const toolProvider: ToolProvider = {
+			getAbilities: vi.fn().mockResolvedValue( [ ability, blockTreeAbility ] ),
+			executeAbility: vi.fn().mockResolvedValue( { result: { details: { blocks: [] } } } ),
+		};
+		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		onTestFinished( unmount );
+		await waitFor( () => expect( tools ).toHaveLength( 1 ) );
+		vi.mocked( apiFetch ).mockResolvedValue( { edits: { deletes: [ 'block-1' ] } } );
+
+		await tools[ 0 ].execute( { deletes: [ 'block-1' ] } );
+
+		expect( apiFetch ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: expect.stringContaining( 'correct-block-edits' ) } )
+		);
+		expect( toolProvider.executeAbility ).toHaveBeenLastCalledWith(
+			'big-sky/apply-block-edits',
+			expect.objectContaining( { deletes: [ 'block-1' ], toolCallId: null } )
 		);
 	} );
 

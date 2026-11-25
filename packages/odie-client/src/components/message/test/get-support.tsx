@@ -10,6 +10,7 @@ const mockNavigate = vi.fn();
 
 let mockHasReachedLimit = false;
 let mockSupportInteraction: { uuid: string } | null = { uuid: 'int-1' };
+let mockIsLoadingSupportInteraction = false;
 
 vi.mock( '@automattic/i18n-utils', () => ( {
 	localizeUrl: ( url: string ) => url,
@@ -35,7 +36,10 @@ vi.mock( '../../../context', () => ( {
 } ) );
 
 vi.mock( '../../../data', () => ( {
-	useGetSupportInteractionById: () => ( { data: mockSupportInteraction } ),
+	useGetSupportInteractionById: () => ( {
+		data: mockIsLoadingSupportInteraction ? undefined : mockSupportInteraction,
+		isLoading: mockIsLoadingSupportInteraction,
+	} ),
 } ) );
 
 vi.mock( '../../../hooks', () => ( {
@@ -57,12 +61,14 @@ vi.mock( '../../../hooks/use-open-interaction-status-map', () => ( {
 const setContext = ( {
 	isChatLoaded,
 	forceEmailSupport = false,
+	provider = 'odie',
 }: {
 	isChatLoaded: boolean;
 	forceEmailSupport?: boolean;
+	provider?: string;
 } ) => {
 	( useOdieAssistantContext as Mock ).mockReturnValue( {
-		chat: { provider: 'odie', status: 'loaded' },
+		chat: { provider, status: 'loaded' },
 		isUserEligibleForPaidSupport: true,
 		canConnectToZendesk: true,
 		trackEvent: vi.fn(),
@@ -76,6 +82,41 @@ describe( 'GetSupport', () => {
 		vi.clearAllMocks();
 		mockHasReachedLimit = false;
 		mockSupportInteraction = { uuid: 'int-1' };
+		mockIsLoadingSupportInteraction = false;
+	} );
+
+	it( 'reports the options it shows once, with where each one leads', () => {
+		setContext( { isChatLoaded: true } );
+		const onShow = vi.fn();
+
+		const { rerender } = render( <GetSupport onShow={ onShow } /> );
+		rerender( <GetSupport onShow={ onShow } /> );
+
+		expect( onShow ).toHaveBeenCalledTimes( 1 );
+		expect( onShow ).toHaveBeenCalledWith( [ 'previous-conversation', 'chat' ] );
+	} );
+
+	it( 'waits for the open conversation before reporting the options, since it adds one', () => {
+		mockIsLoadingSupportInteraction = true;
+		setContext( { isChatLoaded: true } );
+		const onShow = vi.fn();
+
+		const { rerender } = render( <GetSupport onShow={ onShow } /> );
+		expect( onShow ).not.toHaveBeenCalled();
+
+		mockIsLoadingSupportInteraction = false;
+		rerender( <GetSupport onShow={ onShow } /> );
+
+		expect( onShow ).toHaveBeenCalledWith( [ 'previous-conversation', 'chat' ] );
+	} );
+
+	it( "doesn't report options once the user is talking to a human", () => {
+		setContext( { isChatLoaded: true, provider: 'zendesk' } );
+		const onShow = vi.fn();
+
+		render( <GetSupport onShow={ onShow } /> );
+
+		expect( onShow ).not.toHaveBeenCalled();
 	} );
 
 	it( 'escalates when the user asks to be connected with someone new', async () => {

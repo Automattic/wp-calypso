@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Breaking: Require `@wordpress/compose` ^9.2.0.
+- Remove the unused `use-subscription` dependency.
 
 ## 8.0.0
 

@@ -279,12 +279,17 @@ export const setUpMailboxRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'set-up-mailbox/$domain',
-	beforeLoad: async ( { params: { domain: domainName } } ) => {
+	beforeLoad: async ( { cause, params: { domain: domainName } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
 		await redirectIfInvalidDomain( domainName );
 
-		const existingMailboxes = await queryClient.ensureQueryData(
+		// Intentional call to `fetchQuery`: stale cached accounts can hide a free mailbox and redirect away.
+		const existingMailboxes = await queryClient.fetchQuery(
 			mailboxAccountsQuery( domain.blog_id, domainName )
 		);
 

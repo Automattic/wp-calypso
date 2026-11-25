@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import { pathToUrl } from '../path-to-url';
 
-jest.mock( '@automattic/calypso-config', () => jest.fn() );
+vi.mock( '@automattic/calypso-config', () => ( { default: vi.fn() } ) );
 
-const mockConfig = config as unknown as jest.Mock;
+const mockConfig = config as unknown as Mock;
 
 describe( 'pathToUrl', () => {
 	beforeEach( () => {

@@ -28,16 +28,22 @@ export default function useWebMcpTools( {
 			.then(
 				( {
 					createWebMcpAdapter,
-					createWebMcpToolProvider,
 					subscribeToRegistryAbilities,
+					withBlockEditCorrections,
 					withRegistryAbilities,
+					withServerAbilities,
+					withoutChatToolCalls,
 				} ) => {
 					if ( disposed ) {
 						return;
 					}
 
 					adapter = createWebMcpAdapter( {
-						toolProvider: createWebMcpToolProvider( withRegistryAbilities( toolProvider ) ),
+						toolProvider: withServerAbilities(
+							withBlockEditCorrections(
+								withRegistryAbilities( withoutChatToolCalls( toolProvider ) )
+							)
+						),
 						modelContext,
 					} );
 

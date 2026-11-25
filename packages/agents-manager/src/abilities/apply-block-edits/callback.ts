@@ -106,7 +106,7 @@ const createAgentMessage = (
 
 type Resolver = Pick< ApplyEditsOptions, 'resolve' | 'onReplaced' >;
 
-// A caller's own map is read first, as the WebMCP adapter's; the rest are the
+// A caller's own map is read first, as WebMCP's; the rest are the
 // page structure's. A replaced block keeps its id for the rest of the call.
 /**
  * What to tell the model about the reference blocks it asked to see.
@@ -184,7 +184,12 @@ function failedResult( error: unknown ): ApplyBlockEditsResultData {
 
 async function applyEditsAction(
 	edits: BlockEdits,
-	{ toolCallId, summary, resolve, onReplaced }: Resolver & { toolCallId?: string; summary?: string }
+	{
+		toolCallId,
+		summary,
+		resolve,
+		onReplaced,
+	}: Resolver & { toolCallId?: string | null; summary?: string }
 ): Promise< { result: ApplyBlockEditsResultData; insertedClientIds: string[] } > {
 	const hasBlockEdits = hasRequestedBlockEdits( edits );
 	const hasCustomCss = edits.customCSS !== undefined;
@@ -348,9 +353,11 @@ export async function applyBlockEditsCallback(
 	const suppliedToolCallId =
 		typeof input.toolCallId === 'string' && input.toolCallId ? input.toolCallId : undefined;
 	const toolCallId =
-		suppliedToolCallId ??
-		getToolCallIdFromConversationHistory( APPLY_BLOCK_EDITS_TOOL_ID ) ??
-		undefined;
+		input.toolCallId === null
+			? null
+			: ( suppliedToolCallId ??
+				getToolCallIdFromConversationHistory( APPLY_BLOCK_EDITS_TOOL_ID ) ??
+				undefined );
 	const summary =
 		typeof input.summary === 'string' && input.summary.trim() ? input.summary.trim() : undefined;
 	const resolver = createResolver( input.reverseMap );

@@ -1,0 +1,177 @@
+/**
+ * @vitest-environment jsdom
+ */
+
+import { sitePHPVersionQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { render } from '../../../../../../../test-utils';
+import PHPVersionSettings from '../index';
+import type { Site } from '@automattic/api-core';
+
+const site = {
+	ID: 1,
+	slug: 'test-site.wordpress.com',
+	is_wpcom_atomic: true,
+	plan: {
+		product_slug: 'business-bundle',
+		product_name_short: 'Business',
+		is_free: false,
+		features: {
+			active: [ 'atomic', 'sftp' ],
+		},
+	},
+} as Site;
+
+function mockSite( mockedSite: Site ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/rest/v1.1/sites/${ mockedSite.slug }` )
+		.query( true )
+		.reply( 200, mockedSite );
+}
+
+function mockPHPVersion( version: string, siteId: number = site.ID ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( `/wpcom/v2/sites/${ siteId }/hosting/php-version` )
+		.query( true )
+		.reply( 200, JSON.stringify( version ), { 'Content-Type': 'application/json' } );
+}
+
+function mockPHPVersionSaved( expectedVersion: string ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.post( `/wpcom/v2/sites/${ site.ID }/hosting/php-version`, ( body ) => {
+			expect( body ).toEqual( { version: expectedVersion } );
+			return true;
+		} )
+		.reply( 200 );
+}
+
+describe( '<PHPVersionSettings>', () => {
+	test( 'renders and saves the form for a site that has the hosting feature', async () => {
+		const user = userEvent.setup();
+
+		mockSite( site );
+		mockPHPVersion( '8.2' );
+
+		// The route loader awaits the PHP version before the page renders.
+		const queryClient = new QueryClient();
+		await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } />, { queryClient } );
+		await screen.findByRole( 'heading', { name: 'PHP' } );
+
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
+		expect( versionSelect ).toHaveDisplayValue( '8.2' );
+
+		await user.selectOptions( versionSelect, '8.3' );
+		const scope = mockPHPVersionSaved( '8.3' );
+
+		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+		await user.click( saveButton );
+
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
+	} );
+
+	test( 'preselects and saves the recommended version when no version has been set', async () => {
+		const user = userEvent.setup();
+
+		mockSite( site );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/${ site.ID }/hosting/php-version` )
+			.query( true )
+			.reply( 200, 'null', { 'Content-Type': 'application/json' } );
+
+		const queryClient = new QueryClient();
+		await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } />, { queryClient } );
+
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
+		expect( versionSelect ).toHaveDisplayValue( '8.4 (Recommended)' );
+
+		const scope = mockPHPVersionSaved( '8.4' );
+		const saveButton = screen.getByRole( 'button', { name: 'Save' } );
+		expect( saveButton ).toBeEnabled();
+		await user.click( saveButton );
+
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
+	} );
+
+	test( 'saves PHP 8.5 when it is selected', async () => {
+		const user = userEvent.setup();
+
+		mockSite( site );
+		mockPHPVersion( '8.4' );
+
+		const queryClient = new QueryClient();
+		await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } />, { queryClient } );
+
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
+		await user.selectOptions( versionSelect, '8.5' );
+		const scope = mockPHPVersionSaved( '8.5' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		await waitFor( () => {
+			expect( scope.isDone() ).toBe( true );
+		} );
+	} );
+
+	test( 'does not offer PHP 8.2 to sites that are not using it', async () => {
+		mockSite( site );
+		mockPHPVersion( '8.3' );
+
+		const queryClient = new QueryClient();
+		await queryClient.ensureQueryData( sitePHPVersionQuery( site.ID ) );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } />, { queryClient } );
+
+		const versionSelect = await screen.findByRole( 'combobox', { name: 'PHP version' } );
+		expect( versionSelect ).toHaveDisplayValue( '8.3' );
+		expect(
+			within( versionSelect ).getByRole( 'option', { name: '8.4 (Recommended)' } )
+		).toBeVisible();
+		expect(
+			within( versionSelect ).queryByRole( 'option', { name: '8.2' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'renders upsell when the site does not have the plan feature', async () => {
+		mockSite( {
+			...site,
+			plan: {
+				product_slug: 'personal-bundle',
+				product_name_short: 'Personal',
+				is_free: false,
+				features: { active: [] },
+			},
+		} as unknown as Site );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'PHP' } );
+
+		expect(
+			screen.getByText( 'Sites on the Personal plan run on our recommended PHP version.' )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'renders activation callout when the site has the plan feature but is not Atomic', async () => {
+		mockSite( { ...site, is_wpcom_atomic: false } as Site );
+
+		render( <PHPVersionSettings siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'PHP' } );
+
+		expect( screen.getByRole( 'button', { name: 'Activate' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Save' } ) ).not.toBeInTheDocument();
+	} );
+} );

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import config from '@automattic/calypso-config';
@@ -9,15 +9,16 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import PasswordlessSignupForm from '../passwordless';
 
-jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
-	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+vi.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: vi.fn().mockResolvedValue( undefined ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/blackbox-challenge' );
+vi.mock( 'calypso/blocks/login/blackbox-challenge' );
 
 describe( 'createAccountError', () => {
 	const mockStore = configureStore( [ thunk ] );
@@ -36,7 +37,7 @@ describe( 'createAccountError', () => {
 	} );
 
 	const renderFormAndSubmit = async () => {
-		const onCreateAccountError = jest.fn();
+		const onCreateAccountError = vi.fn();
 		const store = mockStore( {} );
 
 		render(
@@ -199,7 +200,7 @@ describe( 'Blackbox integration', () => {
 	} );
 
 	it( 'resets Blackbox when the signup request fails', async () => {
-		window.Blackbox = { reset: jest.fn() };
+		window.Blackbox = { reset: vi.fn() };
 		interceptUsersNew( 500, { error: 'internal_server_error' } );
 
 		renderFormAndSubmit();
@@ -225,7 +226,7 @@ describe( 'Blackbox integration', () => {
 
 		it( 'attaches blackbox_session_id to the submitForm payload', async () => {
 			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
-			const submitForm = jest.fn();
+			const submitForm = vi.fn();
 
 			renderStandaloneFormAndSubmit( submitForm );
 
@@ -240,7 +241,7 @@ describe( 'Blackbox integration', () => {
 
 		it( 'omits blackbox_session_id when no session is available', async () => {
 			getBlackboxSessionId.mockResolvedValue( undefined );
-			const submitForm = jest.fn();
+			const submitForm = vi.fn();
 
 			renderStandaloneFormAndSubmit( submitForm );
 
@@ -249,9 +250,9 @@ describe( 'Blackbox integration', () => {
 		} );
 
 		it( 'resets Blackbox when the parent reports a submit error', async () => {
-			window.Blackbox = { reset: jest.fn() };
+			window.Blackbox = { reset: vi.fn() };
 			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
-			const submitForm = jest.fn();
+			const submitForm = vi.fn();
 
 			renderStandaloneFormAndSubmit( submitForm );
 			await waitFor( () => expect( submitForm ).toHaveBeenCalledTimes( 1 ) );
@@ -263,9 +264,9 @@ describe( 'Blackbox integration', () => {
 		} );
 
 		it( 'does not reset Blackbox when the parent submit succeeds', async () => {
-			window.Blackbox = { reset: jest.fn() };
+			window.Blackbox = { reset: vi.fn() };
 			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
-			const submitForm = jest.fn();
+			const submitForm = vi.fn();
 
 			renderStandaloneFormAndSubmit( submitForm );
 			await waitFor( () => expect( submitForm ).toHaveBeenCalledTimes( 1 ) );
@@ -310,7 +311,7 @@ describe( 'email domain validation', () => {
 
 	// A prefilled address can carry whitespace that the email input would strip if typed.
 	it( 'submits the trimmed address when the prefilled email has surrounding whitespace', async () => {
-		const submitForm = jest.fn();
+		const submitForm = vi.fn();
 		render(
 			<Provider store={ mockStore( {} ) }>
 				<PasswordlessSignupForm

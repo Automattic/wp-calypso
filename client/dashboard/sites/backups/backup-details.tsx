@@ -4,10 +4,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
+	VisuallyHidden,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { useCallback } from 'react';
+import { useCallback, useId, useState } from 'react';
 import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { useAnalytics } from '../../app/analytics';
@@ -18,11 +19,13 @@ import Grid from '../../components/grid';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import { ImagePreview } from './image-preview';
+import KnownThreatsNotice from './known-threats/known-threats-notice';
 import type { ActivityLogEntry, Site } from '@automattic/api-core';
 
 interface BackupDetailsProps {
 	backup: ActivityLogEntry;
 	site: Site;
+	restoreLinkTo?: string;
 	timezoneString?: string;
 	gmtOffset?: number;
 	onRequestRestore?: () => void;
@@ -33,6 +36,7 @@ interface BackupDetailsProps {
 export function BackupDetails( {
 	backup,
 	site,
+	restoreLinkTo,
 	timezoneString,
 	gmtOffset,
 	onRequestRestore,
@@ -90,7 +94,21 @@ export function BackupDetails( {
 		onGranularDownloadReady,
 	] );
 
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	// Keyed by backup, so selecting another backup asks again.
+	const [ acknowledgedRewindId, setAcknowledgedRewindId ] = useState< string | null >( null );
+	const acknowledged = acknowledgedRewindId === backup.rewind_id;
+	const handleAcknowledgedChange = useCallback(
+		( value: boolean ) => setAcknowledgedRewindId( value ? backup.rewind_id : null ),
+		[ backup.rewind_id ]
+	);
+
 	const hasSelectedFiles = selectedFilesCount > 0;
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
+	const acknowledgementHintId = useId();
+	const acknowledgementHint = __(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
 	const showActions = !! ( onRequestRestore || onRequestDownload );
 	const actions =
 		showActions && backup.rewind_id ? (
@@ -107,16 +125,23 @@ export function BackupDetails( {
 						? _n( 'Download selected file', 'Download selected files', selectedFilesCount )
 						: __( 'Download backup' ) }
 				</Button>
+				{ /* The warning's checkbox shows why it's off; screen readers get it from the description. */ }
 				<Button
 					variant="primary"
 					size={ isSmallViewport ? 'default' : 'compact' }
 					onClick={ onRequestRestore }
 					style={ { justifyContent: 'center' } }
+					disabled={ awaitingAcknowledgement }
+					accessibleWhenDisabled
+					aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
 				>
 					{ hasSelectedFiles
 						? _n( 'Restore selected file', 'Restore selected files', selectedFilesCount )
 						: __( 'Restore to this point' ) }
 				</Button>
+				{ awaitingAcknowledgement && (
+					<VisuallyHidden id={ acknowledgementHintId }>{ acknowledgementHint }</VisuallyHidden>
+				) }
 			</ButtonStack>
 		) : null;
 
@@ -142,6 +167,27 @@ export function BackupDetails( {
 							</Text>
 						) }
 					</HStack>
+					<KnownThreatsNotice
+						site={ site }
+						rewindId={ backup.rewind_id }
+						restoreLinkTo={ restoreLinkTo }
+						requireAcknowledgement={ !! onRequestRestore }
+						acknowledged={ acknowledged }
+						onAcknowledgedChange={ handleAcknowledgedChange }
+						onKnownThreatsChange={ setHasKnownThreats }
+						// The restore button comes before the checkbox, in the panel header.
+						acknowledgedMessage={
+							hasSelectedFiles
+								? _n(
+										'You can now restore this backup with "Restore selected file", at the top of this panel.',
+										'You can now restore this backup with "Restore selected files", at the top of this panel.',
+										selectedFilesCount
+									)
+								: __(
+										'You can now restore this backup with "Restore to this point", at the top of this panel.'
+									)
+						}
+					/>
 					<Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap="md">
 						{ backup.streams ? (
 							backup.streams.map( ( item, index ) => (
@@ -159,6 +205,7 @@ export function BackupDetails( {
 								siteId={ site.ID }
 								siteSlug={ site.slug }
 								isRestoreEnabled={ !! onRequestRestore }
+								restoreDisabledHint={ awaitingAcknowledgement ? acknowledgementHint : undefined }
 								onTrackEvent={ recordTracksEvent }
 								source="dashboard"
 								onRequestGranularRestore={ onRequestRestore }

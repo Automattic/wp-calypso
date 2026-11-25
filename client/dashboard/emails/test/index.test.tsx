@@ -20,6 +20,8 @@ vi.mock( '@automattic/calypso-config', async () => {
 	return { ...config, default: config, serverEnvId };
 } );
 
+let mockSearch: { domainName?: string } = {};
+
 vi.mock( '../../app/router/emails', async () => {
 	const actual =
 		await vi.importActual< typeof import( '../../app/router/emails' ) >(
@@ -29,7 +31,7 @@ vi.mock( '../../app/router/emails', async () => {
 		...actual,
 		emailsRoute: {
 			...actual.emailsRoute,
-			useSearch: () => ( {} ),
+			useSearch: () => mockSearch,
 		},
 	};
 } );
@@ -98,6 +100,10 @@ function mockApi( {
 }
 
 describe( '<Emails>', () => {
+	beforeEach( () => {
+		mockSearch = {};
+	} );
+
 	// DOTMSD-1477
 	test( 'lists forwards on a domain the user administers but does not own', async () => {
 		mockApi( { domains: [ nonOwnedDomain ], accounts: [ forwardingAccount ] } );
@@ -217,6 +223,108 @@ describe( '<Emails>', () => {
 		expect(
 			await screen.findByRole( 'dialog', { name: `DNS records for ${ DOMAIN }` } )
 		).toBeVisible();
+	} );
+
+	describe( 'with a mailbox whose domain is no longer on WordPress.com', () => {
+		const disconnectedAccount = ( warnings: { warning_slug: string }[] ) =>
+			( {
+				account_type: EmailProvider.Google,
+				can_user_add_email: false,
+				status: 'active',
+				maximum_mailboxes: 1,
+				warnings: warnings.map( ( w ) => ( {
+					warning_type: 'action_required',
+					message: '',
+					...w,
+				} ) ),
+				domains: [ { domain: 'removed.example', is_primary: true } ],
+				emails: [
+					{
+						mailbox: 'hello',
+						domain: 'removed.example',
+						email_type: 'email',
+						role: 'standard',
+						warnings: [],
+					},
+				],
+			} ) as unknown as EmailAccount;
+
+		test( 'shows the mailbox as not connected', async () => {
+			mockApi( {
+				domains: [ nonOwnedDomain ],
+				accounts: [ disconnectedAccount( [ { warning_slug: 'domain_not_connected' } ] ) ],
+			} );
+			render( <Emails /> );
+
+			expect( await screen.findByText( 'hello@removed.example' ) ).toBeVisible();
+			expect( screen.getByText( 'Domain removed' ) ).toBeVisible();
+		} );
+
+		test( 'prefers the not connected status over pending Google terms', async () => {
+			mockApi( {
+				domains: [ nonOwnedDomain ],
+				accounts: [
+					disconnectedAccount( [
+						{ warning_slug: 'google_pending_tos_acceptance' },
+						{ warning_slug: 'domain_not_connected' },
+					] ),
+				],
+			} );
+			render( <Emails /> );
+
+			expect( await screen.findByText( 'Domain removed' ) ).toBeVisible();
+			expect( screen.queryByText( 'Action required' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'lists the mailbox instead of the no-domain state when the user has no domains', async () => {
+			mockApi( {
+				domains: [],
+				accounts: [ disconnectedAccount( [ { warning_slug: 'domain_not_connected' } ] ) ],
+			} );
+			render( <Emails /> );
+
+			expect( await screen.findByText( 'hello@removed.example' ) ).toBeVisible();
+			expect( screen.queryByText( 'You need a domain to set up email' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'can filter by the removed domain', async () => {
+			mockSearch = { domainName: 'removed.example' };
+			mockApi( {
+				domains: [],
+				accounts: [ disconnectedAccount( [ { warning_slug: 'domain_not_connected' } ] ) ],
+			} );
+			render( <Emails /> );
+
+			expect(
+				await screen.findByRole( 'button', { name: 'Domain includes: removed.example' } )
+			).toBeVisible();
+		} );
+
+		test( 'hides Titan actions that need the domain', async () => {
+			mockApi( {
+				domains: [ nonOwnedDomain ],
+				accounts: [
+					{
+						...disconnectedAccount( [ { warning_slug: 'domain_not_connected' } ] ),
+						account_type: EmailProvider.Titan,
+						product_slug: 'wp_titan_mail_premium_yearly',
+					} as EmailAccount,
+				],
+			} );
+			render( <Emails /> );
+
+			await userEvent.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
+			expect( await screen.findByRole( 'menuitem', { name: /^Delete mailbox/ } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'menuitem', { name: /^Manage all mailboxes/ } )
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'menuitem', { name: /^Upgrade mailbox/ } )
+			).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'menuitem', { name: /^View DNS records/ } )
+			).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'with Titan tiers', () => {

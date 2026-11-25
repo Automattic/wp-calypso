@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import ExpandedCard from '../expanded-card';
 
 describe( 'ExpandedCard', () => {
 	const header = 'Test Header';
 	const children = <div>Test Children</div>;
 	const emptyContent = 'Test Empty Content';
-	const onClick = jest.fn();
+	const onClick = vi.fn();
 	const href = 'https://example.com';
 
 	test( 'should render header and children when enabled', () => {

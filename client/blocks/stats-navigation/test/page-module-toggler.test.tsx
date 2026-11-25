@@ -1,43 +1,48 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import PageModuleToggler from '../page-module-toggler';
 import type { ChangeEvent, ReactNode } from 'react';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 let mockHasVideoPress = true;
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-jest.mock( 'react-redux', () => ( {
+vi.mock( 'react-redux', () => ( {
 	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/site-has-feature', () => jest.fn( () => mockHasVideoPress ) );
+vi.mock( 'calypso/state/selectors/site-has-feature', () => ( {
+	default: vi.fn( () => mockHasVideoPress ),
+} ) );
 
-jest.mock( 'calypso/state/stats/module-toggles/actions', () => ( {
-	updateModuleToggles: jest.fn( ( siteId, payload ) => ( {
+vi.mock( 'calypso/state/stats/module-toggles/actions', () => ( {
+	updateModuleToggles: vi.fn( ( siteId, payload ) => ( {
 		type: 'STATS_MODULE_TOGGLES_UPDATE',
 		siteId,
 		payload,
 	} ) ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	translate: ( text: string ) => text,
-	useTranslate: () => ( text: string ) => text,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		translate: ( text: string ) => text,
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	Popover: ( { isVisible, children }: { isVisible: boolean; children: ReactNode } ) =>
 		isVisible ? <div>{ children }</div> : null,
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	FormToggle: ( {
 		checked,
 		onChange,
@@ -51,7 +56,7 @@ jest.mock( '@wordpress/components', () => ( {
 	),
 } ) );
 
-jest.mock( '@wordpress/icons', () => ( {
+vi.mock( '@wordpress/icons', () => ( {
 	Icon: () => <span />,
 	cog: 'cog',
 	commentAuthorAvatar: 'commentAuthorAvatar',
@@ -78,7 +83,7 @@ function getToggle( label: string ) {
 
 describe( 'PageModuleToggler', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockHasVideoPress = true;
 	} );
 
@@ -119,76 +124,5 @@ describe( 'PageModuleToggler', () => {
 				traffic: { authors: true, 'search-terms': false, videos: true },
 			},
 		} );
-	} );
-
-	it( 'renders no extra section without menu items', async () => {
-		const user = userEvent.setup();
-
-		renderToggler( {} );
-
-		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
-
-		expect( document.querySelector( '.page-modules-settings-menu' ) ).toBeNull();
-	} );
-
-	it( 'lists menu items in their own section and closes the menu on select', async () => {
-		const user = userEvent.setup();
-		const onSelect = jest.fn();
-
-		render(
-			<PageModuleToggler
-				{ ...defaultProps }
-				moduleToggles={ {} }
-				menuItems={ [
-					{
-						key: 'preview',
-						label: 'Try the new Stats',
-						icon: <svg />,
-						onSelect,
-					},
-				] }
-			/>
-		);
-
-		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
-
-		const item = screen.getByRole( 'button', { name: 'Try the new Stats' } );
-		expect( item.closest( '.page-modules-settings-menu' ) ).not.toBeNull();
-		expect( getToggle( 'Authors' ) ).toBeChecked();
-
-		await user.click( item );
-
-		expect( onSelect ).toHaveBeenCalledTimes( 1 );
-		expect( screen.queryByRole( 'button', { name: 'Try the new Stats' } ) ).not.toBeInTheDocument();
-		// Whatever the action opens returns focus here once it closes.
-		expect( screen.getByRole( 'button', { name: 'Settings' } ) ).toHaveFocus();
-	} );
-
-	it( 'shows a menu item description without folding it into the name', async () => {
-		const user = userEvent.setup();
-
-		render(
-			<PageModuleToggler
-				{ ...defaultProps }
-				moduleToggles={ {} }
-				menuItems={ [
-					{
-						key: 'preview',
-						label: 'Try the new Stats',
-						description: 'Clearer charts, and widgets you can move and resize.',
-						icon: <svg />,
-						onSelect: jest.fn(),
-					},
-				] }
-			/>
-		);
-
-		await user.click( screen.getByRole( 'button', { name: 'Settings' } ) );
-
-		const item = screen.getByRole( 'button', { name: 'Try the new Stats' } );
-		expect( item ).toHaveAccessibleDescription(
-			'Clearer charts, and widgets you can move and resize.'
-		);
-		expect( item ).toHaveTextContent( 'Clearer charts, and widgets you can move and resize.' );
 	} );
 } );

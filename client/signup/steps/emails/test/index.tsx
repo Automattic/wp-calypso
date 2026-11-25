@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,6 +8,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import * as queryProductsList from 'calypso/components/data/query-products-list';
 import EmailStep from '../index';
 
@@ -25,7 +26,7 @@ const initialState = {
 	},
 };
 
-const productListQuerySpy = jest.spyOn( queryProductsList, 'default' );
+const productListQuerySpy = vi.spyOn( queryProductsList, 'default' );
 
 describe( 'Email Step', () => {
 	test( 'should request a complete product list', () => {

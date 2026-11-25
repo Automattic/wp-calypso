@@ -14,7 +14,7 @@ export function testOverlay() {
 			mainFields: [ 'module', 'main' ],
 			alias: [
 				{
-					find: /^@automattic\/calypso-config$/,
+					find: /^(@automattic\/calypso-config|calypso\/server\/config)$/,
 					replacement: path.join( setupDir, 'calypso-config.ts' ),
 				},
 				// Externalized, the CJS browser build `require()`s @emotion/react through Node, loading a

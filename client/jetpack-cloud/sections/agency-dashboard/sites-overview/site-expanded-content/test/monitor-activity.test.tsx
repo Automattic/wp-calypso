@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,18 +8,21 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { site } from '../../test/test-utils/constants';
 import MonitorActivity from '../monitor-activity';
 
-jest.mock( 'calypso/data/agency-dashboard/use-fetch-monitor-data', () => {
-	return jest.fn().mockReturnValue( {
-		data: [
-			{
-				date: '2023-04-07',
-				status: 'up',
-			},
-		],
-	} );
+vi.mock( 'calypso/data/agency-dashboard/use-fetch-monitor-data', () => {
+	return {
+		default: vi.fn().mockReturnValue( {
+			data: [
+				{
+					date: '2023-04-07',
+					status: 'up',
+				},
+			],
+		} ),
+	};
 } );
 
 describe( 'MonitorActivity component', () => {
@@ -44,7 +47,7 @@ describe( 'MonitorActivity component', () => {
 		</Provider>
 	);
 
-	const trackEvent = jest.fn();
+	const trackEvent = vi.fn();
 	const hasMonitor = true;
 
 	test( 'renders the header and content', async () => {

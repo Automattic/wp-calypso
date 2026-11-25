@@ -51,6 +51,7 @@ export function BackupsListPage() {
 							...listRoute,
 							search: ( query: Record< string, string > ) => query,
 						} ),
+			restoreLinkTo: siteBackupRestoreRoute.fullPath,
 			requestRestore: ( id ) =>
 				router.navigate( {
 					to: siteBackupRestoreRoute.fullPath,

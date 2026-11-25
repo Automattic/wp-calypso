@@ -1,34 +1,37 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ResurrectedWelcomeModalGate } from '..';
 import { WELCOME_BACK_VARIATIONS } from '../../../lib/resurrected-users/constants';
 
-const mockRecordTracksEvent = jest.fn();
-const mockUseLastDraftQuery = jest.fn();
-const mockUseResurrectedFreeUserEligibility = jest.fn();
+const mockRecordTracksEvent = vi.fn();
+const mockUseLastDraftQuery = vi.fn();
+const mockUseResurrectedFreeUserEligibility = vi.fn();
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
+vi.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string, options?: { args?: Record< string, string > } ) =>
-		Object.entries( options?.args ?? {} ).reduce(
-			( translated, [ key, value ] ) => translated.replace( `%(${ key })s`, value ),
-			text
-		),
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string, options?: { args?: Record< string, string > } ) =>
+			Object.entries( options?.args ?? {} ).reduce(
+				( translated, [ key, value ] ) => translated.replace( `%(${ key })s`, value ),
+				text
+			),
+	} )
+);
 
-jest.mock( 'calypso/data/posts/use-last-draft-query', () => ( {
+vi.mock( 'calypso/data/posts/use-last-draft-query', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseLastDraftQuery( ...args ),
 } ) );
 
-jest.mock( 'calypso/lib/resurrected-users', () => ( {
+vi.mock( 'calypso/lib/resurrected-users', () => ( {
 	useResurrectedFreeUserEligibility: () => mockUseResurrectedFreeUserEligibility(),
 } ) );
 

@@ -30,6 +30,9 @@ export function register(): typeof STORE_KEY {
 				'subject',
 				'loggedOutOdieChat',
 				'loggedOutOdieChats',
+				// A reload reopens the Help Center on the chat it showed, which must stay in the
+				// checkout support experiment's group. Opening it from anywhere else still clears it.
+				'checkoutSupportVariation',
 			],
 			// Don't persist the open state for e2e users, because parallel tests will start interfering with each other.
 			resolvers: enabledPersistedOpenState ? resolvers : undefined,

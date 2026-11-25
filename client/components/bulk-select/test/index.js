@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { BulkSelect } from '../index';
 
 const noop = () => {};
@@ -101,7 +102,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should be call onToggle when clicked', async () => {
-		const handleToggle = jest.fn();
+		const handleToggle = vi.fn();
 
 		const { container } = render(
 			<BulkSelect
@@ -116,7 +117,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should be call onToggle with the new state when there are no selected elements', async () => {
-		const onToggle = jest.fn();
+		const onToggle = vi.fn();
 		const { container } = render(
 			<BulkSelect
 				translate={ translate }
@@ -131,7 +132,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should be call onToggle with the new state when there are some selected elements', async () => {
-		const onToggle = jest.fn();
+		const onToggle = vi.fn();
 		const { container } = render(
 			<BulkSelect
 				translate={ translate }
@@ -146,7 +147,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should be call onToggle with the new state when there all elements are selected', async () => {
-		const onToggle = jest.fn();
+		const onToggle = vi.fn();
 		const { container } = render(
 			<BulkSelect
 				translate={ translate }

@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { waitFor } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import useProductsById from '../use-products-by-id';
 import type { ReferralProduct } from '../../../client/types';
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { get: jest.fn() } },
+	default: { req: { get: vi.fn() } },
 } ) );
 
-const mockedGet = wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get >;
+const mockedGet = wpcom.req.get as MockedFunction< typeof wpcom.req.get >;
 
 const PRODUCT_FAMILIES = [
 	{
@@ -42,7 +43,7 @@ const referrals = ( ...ids: number[] ): ReferralProduct[] =>
 
 describe( 'useProductsById', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockedGet.mockResolvedValue( PRODUCT_FAMILIES );
 	} );
 

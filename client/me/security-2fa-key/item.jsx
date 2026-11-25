@@ -1,8 +1,6 @@
 import { CompactCard } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { recordGoogleEvent } from '../../state/analytics/actions';
 import Security2faDeleteButton from './delete-item-button';
 
 function Security2faKeyItem( props ) {
@@ -25,6 +23,4 @@ Security2faKeyItem.propTypes = {
 	securityKey: PropTypes.object.isRequired,
 };
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( Security2faKeyItem ) );
+export default localize( Security2faKeyItem );

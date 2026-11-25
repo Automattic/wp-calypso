@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useSelector, useDispatch } from 'react-redux';
+import { vi } from 'vitest';
 import GlobalNotices from '..';
 
-jest.mock( 'react-redux', () => ( {
-	useSelector: jest.fn( () => [] ),
-	useDispatch: jest.fn(),
+vi.mock( 'react-redux', () => ( {
+	useSelector: vi.fn( () => [] ),
+	useDispatch: vi.fn(),
 } ) );
 
-beforeEach( jest.clearAllMocks );
+beforeEach( vi.clearAllMocks );
 
 describe( '<GlobalNotices />', () => {
 	test( 'should not render without notices', () => {
@@ -20,7 +21,7 @@ describe( '<GlobalNotices />', () => {
 	} );
 
 	test( 'should render notices with the expected structure', () => {
-		jest.mocked( useSelector ).mockReturnValue( [
+		vi.mocked( useSelector ).mockReturnValue( [
 			{
 				noticeId: 'testing-notice',
 				showDismiss: true,
@@ -36,7 +37,7 @@ describe( '<GlobalNotices />', () => {
 	} );
 
 	test( 'should use provided id', () => {
-		jest.mocked( useSelector ).mockReturnValue( [
+		vi.mocked( useSelector ).mockReturnValue( [
 			{
 				noticeId: 'testing-notice',
 				showDismiss: true,
@@ -52,16 +53,16 @@ describe( '<GlobalNotices />', () => {
 		const notices = [
 			{
 				noticeId: 'testing-notice',
-				onDismissClick: jest.fn(),
+				onDismissClick: vi.fn(),
 				showDismiss: true,
 				status: 'is-success',
 				text: 'A test notice',
 			},
 		];
-		jest.mocked( useSelector ).mockReturnValue( notices );
+		vi.mocked( useSelector ).mockReturnValue( notices );
 
-		const dispatch = jest.fn();
-		jest.mocked( useDispatch ).mockReturnValue( dispatch );
+		const dispatch = vi.fn();
+		vi.mocked( useDispatch ).mockReturnValue( dispatch );
 
 		render( <GlobalNotices id="test-id" /> );
 

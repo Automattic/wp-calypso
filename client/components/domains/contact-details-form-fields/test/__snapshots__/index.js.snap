@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ContactDetailsFormFields default fields should render 1`] = `
+exports[`ContactDetailsFormFields > default fields > should render 1`] = `
 <fieldset
   class="contact-details-form-fields form-fieldset"
   role="group"

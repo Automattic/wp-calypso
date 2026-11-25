@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import useSubscribedNewsletterCategories from '../use-subscribed-newsletter-categories-query';
 
-const mockGet = jest.fn();
-jest.mock( 'calypso/lib/wp', () => {
+const mockGet = vi.fn();
+vi.mock( 'calypso/lib/wp', () => {
 	return {
 		__esModule: true,
 		default: {
@@ -41,7 +42,7 @@ describe( 'useSubscribedNewsletterCategories', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should return expected data when successful', async () => {

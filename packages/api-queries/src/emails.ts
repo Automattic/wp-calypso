@@ -82,6 +82,7 @@ export const createTitanMailboxMutation = () => {
 			} ),
 		onSuccess: () => {
 			queryClient.resetQueries( userMailboxesQuery() );
+			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
 		},
 	} );
 };
@@ -105,6 +106,7 @@ export const deleteTitanMailboxMutation = () => {
 			deleteTitanMailbox( vars.domainName, vars.mailbox ),
 		onSuccess: () => {
 			queryClient.resetQueries( userMailboxesQuery() );
+			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
 		},
 	} );
 };

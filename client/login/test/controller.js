@@ -1,38 +1,39 @@
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
 import { redirectJetpack, login } from '../controller';
 
-jest.mock( 'calypso/state/oauth2-clients/actions', () => ( {
-	...jest.requireActual( 'calypso/state/oauth2-clients/actions' ),
-	fetchOAuth2ClientData: jest.fn(),
+vi.mock( 'calypso/state/oauth2-clients/actions', async () => ( {
+	...( await vi.importActual( 'calypso/state/oauth2-clients/actions' ) ),
+	fetchOAuth2ClientData: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/oauth2-clients/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/oauth2-clients/selectors' ),
-	getOAuth2Client: jest.fn(),
+vi.mock( 'calypso/state/oauth2-clients/selectors', async () => ( {
+	...( await vi.importActual( 'calypso/state/oauth2-clients/selectors' ) ),
+	getOAuth2Client: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/oauth2-clients', () => ( {
-	...jest.requireActual( 'calypso/lib/oauth2-clients' ),
-	isWooOAuth2Client: jest.fn(),
+vi.mock( 'calypso/lib/oauth2-clients', async () => ( {
+	...( await vi.importActual( 'calypso/lib/oauth2-clients' ) ),
+	isWooOAuth2Client: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/oauth2-clients/ui/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/oauth2-clients/ui/selectors' ),
-	getCurrentOAuth2Client: jest.fn(),
+vi.mock( 'calypso/state/oauth2-clients/ui/selectors', async () => ( {
+	...( await vi.importActual( 'calypso/state/oauth2-clients/ui/selectors' ) ),
+	getCurrentOAuth2Client: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-is-blaze-pro', () => ( {
+vi.mock( 'calypso/state/selectors/get-is-blaze-pro', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/selectors/is-woo-jpc-flow', () => ( {
+vi.mock( 'calypso/state/selectors/is-woo-jpc-flow', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-router' );
+vi.mock( '@automattic/calypso-router' );
 
 describe( 'redirectJetpack', () => {
 	it( 'preserves legacy migration login when its entry is a top-level query argument', () => {
@@ -43,9 +44,9 @@ describe( 'redirectJetpack', () => {
 				from: 'wpcom-migration',
 				redirect_to: '/jetpack/connect/authorize?plugins=wpcom-migration',
 			},
-			redirect: jest.fn(),
+			redirect: vi.fn(),
 		};
-		const next = jest.fn();
+		const next = vi.fn();
 		redirectJetpack( context, next );
 		expect( context.redirect ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();
@@ -64,9 +65,9 @@ describe( 'redirectJetpack', () => {
 			query: {
 				redirect_to: `/jetpack/connect/authorize?from=${ from }&plugins=wpcom-migration&redirect_after_auth=https%3A%2F%2Fexample.com%2Fwp-admin%2Fadmin.php%3Fpage%3Dwpcom-migration-status`,
 			},
-			redirect: jest.fn(),
+			redirect: vi.fn(),
 		};
-		const next = jest.fn();
+		const next = vi.fn();
 		redirectJetpack( context, next );
 		expect( context.redirect.mock.calls ).toEqual( redirects ? [ [ '/log-in/jetpack' ] ] : [] );
 		expect( next ).toHaveBeenCalledTimes( redirects ? 0 : 1 );
@@ -81,7 +82,7 @@ describe( 'redirectJetpack', () => {
 				throw new Error( `Browser redirected to unexpected path '${ path }'` );
 			},
 		};
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectJetpack( context, next );
 
@@ -103,14 +104,14 @@ describe( 'login', () => {
 		context = {
 			query: {},
 			store: {
-				getState: jest.fn().mockReturnValue( state ),
-				dispatch: jest.fn(),
+				getState: vi.fn().mockReturnValue( state ),
+				dispatch: vi.fn(),
 			},
 			params: {
 				flow: 'login',
 			},
 		};
-		next = jest.fn();
+		next = vi.fn();
 	} );
 
 	it( 'should replace page and return if context.hash and context.hash.client_id exist', async () => {

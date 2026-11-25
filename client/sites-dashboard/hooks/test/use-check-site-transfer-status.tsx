@@ -1,26 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useCheckSiteTransferStatus } from '../use-check-site-transfer-status';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 let mockTransfer: { status: string; is_stuck?: boolean } | undefined;
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
 
-jest.mock( 'calypso/state/atomic/transfers/selectors', () => ( {
+vi.mock( 'calypso/state/atomic/transfers/selectors', () => ( {
 	getLatestAtomicTransfer: () => ( { transfer: mockTransfer } ),
 } ) );
 
-jest.mock( 'calypso/state/atomic/transfers/actions', () => ( {
+vi.mock( 'calypso/state/atomic/transfers/actions', () => ( {
 	requestLatestAtomicTransfer: ( siteId: number ) => ( { type: 'REQUEST_TRANSFER', siteId } ),
 } ) );
 
-jest.mock( 'calypso/state/sites/actions', () => ( {
+vi.mock( 'calypso/state/sites/actions', () => ( {
 	requestSite: ( siteId: number ) => ( { type: 'REQUEST_SITE', siteId } ),
 } ) );
 
@@ -30,7 +31,7 @@ const POLL_MS = 5000;
 const elapse = async ( ms: number ) => {
 	for ( let elapsed = 0; elapsed < ms; elapsed += POLL_MS ) {
 		await act( async () => {
-			jest.advanceTimersByTime( POLL_MS );
+			vi.advanceTimersByTime( POLL_MS );
 			await Promise.resolve();
 		} );
 	}
@@ -46,11 +47,11 @@ const renderStatus = ( siteId = 1 ) =>
 
 describe( 'useCheckSiteTransferStatus', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.useFakeTimers();
+		vi.clearAllMocks();
+		vi.useFakeTimers();
 		mockTransfer = { status: 'active' };
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'polls while the transfer is running', async () => {
 		const { result } = renderStatus();

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import FollowButtonContainer from '../index';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -108,7 +109,7 @@ describe( 'FollowButtonContainer', () => {
 					data,
 				} );
 
-			const onFollowToggle = jest.fn();
+			const onFollowToggle = vi.fn();
 			renderButton( actions, onFollowToggle );
 			await userEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
@@ -158,8 +159,8 @@ describe( 'FollowButtonContainer', () => {
 					subscribed: true,
 					subscription: { ID: '123', URL: 'https://example.com/feed' },
 				} );
-			const onFollowToggle = jest.fn();
-			const onFollowSuccess = jest.fn();
+			const onFollowToggle = vi.fn();
+			const onFollowSuccess = vi.fn();
 
 			renderButton( [], onFollowToggle, { emailVerified: true, onFollowSuccess } );
 			await userEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
@@ -179,10 +180,10 @@ describe( 'FollowButtonContainer', () => {
 					subscribed: true,
 					subscription: { ID: '123', URL: 'https://example.com/feed' },
 				} );
-			const firstOnFollowSuccess = jest.fn();
-			const laterOnFollowSuccess = jest.fn();
+			const firstOnFollowSuccess = vi.fn();
+			const laterOnFollowSuccess = vi.fn();
 
-			const { rerenderWithFollowSuccess } = renderButton( [], jest.fn(), {
+			const { rerenderWithFollowSuccess } = renderButton( [], vi.fn(), {
 				emailVerified: true,
 				onFollowSuccess: firstOnFollowSuccess,
 			} );
@@ -199,9 +200,9 @@ describe( 'FollowButtonContainer', () => {
 				.post( '/rest/v1.1/read/following/mine/new' )
 				.reply( 500, { error: 'unknown', message: 'Something went wrong' } );
 			const actions: NoticeAction[] = [];
-			const onFollowSuccess = jest.fn();
+			const onFollowSuccess = vi.fn();
 
-			renderButton( actions, jest.fn(), { emailVerified: true, onFollowSuccess } );
+			renderButton( actions, vi.fn(), { emailVerified: true, onFollowSuccess } );
 			await userEvent.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
 			await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
@@ -237,9 +238,9 @@ describe( 'FollowButtonContainer', () => {
 			const unfollowScope = nock( BASE )
 				.post( '/rest/v1.1/read/following/mine/delete' )
 				.reply( 200, { subscribed: false } );
-			const onFollowSuccess = jest.fn();
+			const onFollowSuccess = vi.fn();
 
-			renderButton( [], jest.fn(), { emailVerified: true, onFollowSuccess } );
+			renderButton( [], vi.fn(), { emailVerified: true, onFollowSuccess } );
 			await userEvent.click( await screen.findByRole( 'button', { name: 'Unsubscribe' } ) );
 
 			await waitFor( () => expect( unfollowScope.isDone() ).toBe( true ) );
@@ -251,9 +252,9 @@ describe( 'FollowButtonContainer', () => {
 				.post( '/rest/v1.1/read/following/mine/delete' )
 				.delay( 250 )
 				.reply( 200, { subscribed: false } );
-			const onFollowSuccess = jest.fn();
+			const onFollowSuccess = vi.fn();
 
-			const { unmount } = renderButton( [], jest.fn(), { emailVerified: true, onFollowSuccess } );
+			const { unmount } = renderButton( [], vi.fn(), { emailVerified: true, onFollowSuccess } );
 			await userEvent.click( await screen.findByRole( 'button', { name: 'Unsubscribe' } ) );
 			unmount();
 

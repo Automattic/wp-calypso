@@ -1,22 +1,23 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	getProductDisplayCost,
 	isProductsListFetching,
 	getProductsByBillingSlug,
 } from '../selectors';
 
-jest.mock( 'calypso/state/products-list/selectors/get-product-sale-coupon-discount', () => ( {
-	getProductSaleCouponDiscount: jest.fn( () => null ),
+vi.mock( 'calypso/state/products-list/selectors/get-product-sale-coupon-discount', () => ( {
+	getProductSaleCouponDiscount: vi.fn( () => null ),
 } ) );
 
-jest.mock( 'calypso/state/products-list/selectors/get-product-price-tiers', () => ( {
-	getProductPriceTierList: jest.fn( () => null ),
+vi.mock( 'calypso/state/products-list/selectors/get-product-price-tiers', () => ( {
+	getProductPriceTierList: vi.fn( () => null ),
 } ) );
 
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
-	applyTestFiltersToPlansList: jest.fn( ( x ) => x ),
-	getPlan: jest.fn(),
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-products' ) ),
+	applyTestFiltersToPlansList: vi.fn( ( x ) => x ),
+	getPlan: vi.fn(),
 } ) );
 
 describe( 'selectors', () => {

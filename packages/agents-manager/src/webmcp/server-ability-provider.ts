@@ -17,7 +17,11 @@ function markServerRegistered( ability: Ability ): Ability {
 	};
 }
 
-export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProvider {
+/**
+ * Adds the allowlisted server abilities from the site's Abilities REST API, in place of any
+ * same-named ability, and runs them over GET.
+ */
+export function withServerAbilities( toolProvider: ToolProvider ): ToolProvider {
 	let serverAbilitiesPromise: Promise< Ability[] > | undefined;
 	let didWarnAboutServerAbilities = false;
 
@@ -75,10 +79,6 @@ export function createWebMcpToolProvider( toolProvider: ToolProvider ): ToolProv
 			const ability = ( await getServerAbilities() ).find( ( item ) => item.name === name );
 			if ( ! ability ) {
 				throw new Error( `WebMCP server ability is unavailable: ${ name }` );
-			}
-
-			if ( ability.meta?.annotations?.readonly !== true ) {
-				throw new Error( `WebMCP runs only read-only server abilities: ${ name }` );
 			}
 
 			return apiFetch( {

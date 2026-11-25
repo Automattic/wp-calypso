@@ -1,7 +1,7 @@
 # Experimental WebMCP editor tools
 
 Agents Manager can expose a small set of editor abilities to browser agents through the draft
-WebMCP API. The browser agent supplies the model and all reasoning. This adapter does not create an
+WebMCP API. The browser agent supplies the model and all reasoning, so a tool call doesn't create an
 Agenttic agent, open Agents Manager chat, or call the WordPress.com AI orchestrator.
 
 This is a staff-testing proof of concept, not a production-supported integration. It is disabled by
@@ -19,15 +19,33 @@ clash, the provider's ability wins and runs through the merged provider, which a
 precedence and the canvas guard. Registry-only abilities run through the registry's
 `executeAbility()`.
 
+`adapter.ts` builds, registers and syncs the tools. `tool-calls.ts` prepares each call's input
+(`prepareToolInput()`), remembers the block-tree IDs (`rememberBlockClientIds()`) and adapts the
+result (`adaptToolResult()`).
+
+`withBlockEditCorrections()` (`block-edit-correction-provider.ts`) sends each block edit, with the
+live block tree, to the server's `wpcom/correct-block-edits` before applying it, so it gets the
+checks and fixes the chat's block edits get. It applies the corrected edits, or returns the server's
+`unchanged` result or error without applying anything. It also refuses the edits if the editor moved
+to another page meanwhile. Sites that don't serve the ability, such as Atomic sites, apply the edits
+as sent.
+
+Provider calls carry `toolCallId: null` (`withoutChatToolCalls()` in `non-chat-call-provider.ts`),
+so a WebMCP edit takes no undo checkpoint and never adds to the chat's. A chat Undo still restores
+its whole snapshot, so it also removes later edits to the same part of the page, the user's or a
+WebMCP agent's. WebMCP edits stay unsaved for review, and block edits land on the editor's own undo
+stack.
+
 The allowlisted server abilities (`WEBMCP_SERVER_ABILITY_NAMES`) are fetched by
-`createWebMcpToolProvider()` (`server-ability-provider.ts`) from `/wp-abilities/v1/abilities`
+`withServerAbilities()` (`server-ability-provider.ts`) from `/wp-abilities/v1/abilities`
 (`webmcp=1`), replace any same-named ability, and run against
 `/wp-abilities/v1/abilities/{name}/run` over GET.
 
-Client abilities must set the flag and be client-registered or carry a client callback. Server
-abilities must be in the server allowlist, marked server-registered (which the WebMCP provider
-sets on what it fetches), and annotated read-only. The flag doesn't expose a server-registered
-ability, and the server allowlist doesn't expose a client one.
+Client abilities must set the flag and carry a client callback. Server abilities must be in the
+server allowlist, marked server-registered (which `withServerAbilities()` sets on what it fetches),
+and annotated read-only. The flag doesn't expose a server-registered ability, and the server
+allowlist doesn't expose a client one. A flagged ability off the server allowlist that isn't exposed
+logs one `[AgentsManager]` console warning that says why.
 
 WebMCP calls use the original slash-based ability name. The backend route settings don't apply
 here: they scope only the agent's own tools.
@@ -50,7 +68,7 @@ The exposed tools are:
 
 - `agents-manager/get-block-tree`: an Agents Manager-owned, client-only ability that reads the live
   Gutenberg tree. It returns real client IDs, block names, serializable attributes, nesting, the
-  current selection, and a block count. The WebMCP adapter remembers these IDs for the matching
+  current selection, and a block count. WebMCP remembers these IDs for the matching
   edit call. It is annotated as read-only and idempotent.
 
 - `big-sky/apply-block-edits`: an Agents Manager-owned, client-only ability that deterministically
@@ -64,7 +82,7 @@ The exposed tools are:
 - `big-sky/show-template`: an Agents Manager-owned, client-only ability that turns on the editor's
   Show template mode. Use it when the block-tree result does not contain the requested header or
   footer, then read the tree again before editing. Repeated calls are safe, and it does not save or
-  publish content. The WebMCP adapter translates the ability's Big Sky-specific next-step reference
+  publish content. WebMCP translates the ability's Big Sky-specific next-step reference
   to `agents_manager__get_block_tree`.
 
 - `big-sky/apply-update-theme`: an Agents Manager-owned, client-only ability that merges theme.json
@@ -74,7 +92,7 @@ The exposed tools are:
 - `big-sky/edit-entity-record`: an Agents Manager-owned ability that, through WebMCP, only changes
   the title or excerpt of the post or page open in the editor. The full ability also creates,
   deletes and saves records across the site, so the WebMCP contract replaces its schema with
-  `title` and `excerpt` alone, and the adapter targets the open post itself, refusing anything else.
+  `title` and `excerpt` alone, and WebMCP targets the open post itself, refusing anything else.
   The edit stays unsaved. Renaming a page also relabels the navigation menu items that point to it,
   as it does in chat.
 
@@ -84,10 +102,10 @@ The exposed tools are:
   block and stays unsaved.
 
 - `wpcom/get-block-schemas`, `wpcom/get-content-guidelines`, and `core/get-site-info`:
-  read-only server abilities fetched by the WebMCP provider from the current site's Abilities REST
-  API. Their existing input schemas, permission checks, and authenticated site-specific execution
-  path are preserved. The adapter also includes each ability's server-provided instructions in the
-  WebMCP description when present.
+  read-only server abilities that `withServerAbilities()` fetches from the current site's Abilities
+  REST API. Their existing input schemas, permission checks, and authenticated site-specific
+  execution path are preserved. Their WebMCP descriptions also include each ability's
+  server-provided instructions when present.
 
 ## Adding a tool
 
@@ -98,8 +116,8 @@ choose between two names for the same call. Keep saving and publishing a user ac
 saves as a side effect, such as `big-sky/editor-navigate`, does not belong here.
 
 To add another tool, verify its complete implementation, permissions, annotations, and execution
-path. Set `meta.webmcp.public: true` on a client ability, or add a REST-backed tool to
-`WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`).
+path. Set `meta.webmcp.public: true` on a client ability with a callback, or add a REST-backed tool
+to `WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`).
 
 Write the ability's `description` for both agents: name another tool only if both have it, or if
 only browser agents read the description, as with `big-sky/apply-block-edits`.
@@ -127,6 +145,8 @@ DevTools or call `document.modelContext` directly for this path.
    `big_sky__show_template`, then reads the tree again.
 3. Ask the agent to change a block, or insert a small test block on an empty page. Confirm it uses a
    client ID from the latest tree, and that the expected block and attributes are on the canvas.
+   Ask it to delete the only button in a buttons block, and confirm the whole buttons block goes, as
+   `wpcom/correct-block-edits` corrects it.
 4. Ask the agent to add a section, such as a heading and a paragraph, as block markup. Confirm it
    passes the markup to `big_sky__apply_block_edits` as `inserts[0].blockMarkup` and that the blocks
    appear on the canvas in order.
@@ -148,10 +168,11 @@ DevTools or call `document.modelContext` directly for this path.
 3. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.
-4. Register a flagged ability, for example with
+4. Register a flagged ability with a callback, for example with
    `wp.data.dispatch( 'core/abilities' ).registerAbility()` and `meta: { webmcp: { public: true } }`
    (its category must be registered first). Confirm it appears as a tool without a reload, and
-   disappears when it is unregistered.
+   disappears when it is unregistered. Register one without a callback, and confirm it stays
+   absent and logs one `[AgentsManager]` warning that says why.
 5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
 6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
 7. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.

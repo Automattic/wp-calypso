@@ -1,28 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getNewRailcarId, recordTracksEvent } from '@automattic/calypso-analytics';
 import { act } from '@testing-library/react';
 import { createElement, useEffect } from 'react';
+import { type MockedFunction, vi } from 'vitest';
 import { renderHookWithProvider, renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { recordSearchFormSubmit, recordSearchFormView } from '../analytics';
 import { useWPCOMDomainSearchEvents } from '../use-wpcom-domain-search-events';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
-	getNewRailcarId: jest.fn().mockReturnValue( 'railcar-id' ),
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >(
+		'@automattic/calypso-analytics'
+	) ),
+	getNewRailcarId: vi.fn().mockReturnValue( 'railcar-id' ),
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '../analytics', () => ( {
-	...jest.requireActual( '../analytics' ),
-	recordSearchFormSubmit: jest.fn().mockReturnValue( {
+vi.mock( '../analytics', async () => ( {
+	...( await vi.importActual< typeof import( '../analytics' ) >( '../analytics' ) ),
+	recordSearchFormSubmit: vi.fn().mockReturnValue( {
 		type: 'test',
 	} ),
 } ) );
 
-const mockGetNewRailcarId = getNewRailcarId as jest.MockedFunction< typeof getNewRailcarId >;
+const mockGetNewRailcarId = getNewRailcarId as MockedFunction< typeof getNewRailcarId >;
 
 const railcarIdGenerator = () => {
 	let i = 0;
@@ -44,13 +47,13 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 		const START = new Date( '2026-09-22T10:00:00Z' ).getTime();
 
 		beforeEach( () => {
-			jest.useFakeTimers();
-			jest.setSystemTime( START );
-			jest.mocked( recordSearchFormSubmit ).mockClear();
+			vi.useFakeTimers();
+			vi.setSystemTime( START );
+			vi.mocked( recordSearchFormSubmit ).mockClear();
 		} );
 
 		afterEach( () => {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		const renderEvents = ( props = defaultProps ) =>
@@ -66,10 +69,10 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 
 			result.current.onSearchStart( 'coffee', 'prefilled' );
 
-			jest.advanceTimersByTime( 9_999 );
+			vi.advanceTimersByTime( 9_999 );
 			expect( recordSearchFormSubmit ).not.toHaveBeenCalled();
 
-			jest.advanceTimersByTime( 1 );
+			vi.advanceTimersByTime( 1 );
 			expect( recordSearchFormSubmit ).toHaveBeenCalledTimes( 1 );
 			expect( recordSearchFormSubmit ).toHaveBeenCalledWith(
 				'coffee',
@@ -87,9 +90,9 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			const { result } = renderEvents();
 
 			result.current.onSearchStart( 'coffee', 'prefilled' );
-			jest.advanceTimersByTime( 5_000 );
+			vi.advanceTimersByTime( 5_000 );
 			result.current.onSearchStart( 'tea', 'submit' );
-			jest.advanceTimersByTime( 10_000 );
+			vi.advanceTimersByTime( 10_000 );
 
 			expect( recordSearchFormSubmit ).toHaveBeenCalledTimes( 1 );
 			expect( recordSearchFormSubmit ).toHaveBeenCalledWith(
@@ -108,7 +111,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			const { result, unmount } = renderEvents();
 
 			result.current.onSearchStart( 'coffee', 'submit' );
-			jest.advanceTimersByTime( 3_000 );
+			vi.advanceTimersByTime( 3_000 );
 			unmount();
 
 			expect( recordSearchFormSubmit ).toHaveBeenCalledTimes( 1 );
@@ -128,7 +131,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			const { result, unmount } = renderEvents();
 
 			result.current.onSearchStart( 'coffee', 'cached' );
-			jest.advanceTimersByTime( 3_000 );
+			vi.advanceTimersByTime( 3_000 );
 
 			act( () => {
 				window.dispatchEvent( new Event( 'pagehide' ) );
@@ -147,7 +150,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			);
 
 			unmount();
-			jest.advanceTimersByTime( 10_000 );
+			vi.advanceTimersByTime( 10_000 );
 
 			expect( recordSearchFormSubmit ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -164,13 +167,13 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			const { result } = renderEvents();
 
 			result.current.onSearchStart( 'coffee', 'submit' );
-			jest.advanceTimersByTime( 15_000 );
+			vi.advanceTimersByTime( 15_000 );
 			result.current.onSearchStart( 'tea', 'submit' );
-			jest.advanceTimersByTime( 25_000 );
+			vi.advanceTimersByTime( 25_000 );
 			result.current.onSearchStart( 'coffee', 'submit' );
-			jest.advanceTimersByTime( 10_000 );
+			vi.advanceTimersByTime( 10_000 );
 
-			expect( jest.mocked( recordSearchFormSubmit ).mock.calls ).toEqual( [
+			expect( vi.mocked( recordSearchFormSubmit ).mock.calls ).toEqual( [
 				[ 'coffee', 'analytics-section', 0, 1, 'vendor', 'flow-name', 'submit', START ],
 				[ 'tea', 'analytics-section', 15, 2, 'vendor', 'flow-name', 'submit', START + 15_000 ],
 				[ 'coffee', 'analytics-section', 25, 3, 'vendor', 'flow-name', 'submit', START + 40_000 ],
@@ -183,7 +186,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			result.current.onQueryChange( 'coffee' );
 			result.current.onFilterApplied( { tlds: [ 'com' ], exactSldMatchesOnly: false } );
 			result.current.onFilterReset( { tlds: [], exactSldMatchesOnly: false }, [ 'tlds' ] );
-			jest.advanceTimersByTime( 10_000 );
+			vi.advanceTimersByTime( 10_000 );
 
 			expect( recordSearchFormSubmit ).not.toHaveBeenCalled();
 		} );
@@ -193,7 +196,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 
 			result.current.onSearchStart( 'coffee', 'submit' );
 			rerender( { ...defaultProps, flowName: 'other-flow' } );
-			jest.advanceTimersByTime( 10_000 );
+			vi.advanceTimersByTime( 10_000 );
 
 			expect( recordSearchFormSubmit ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -211,7 +214,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 				createElement( Child, { events: useWPCOMDomainSearchEvents( defaultProps ) } );
 
 			renderWithProvider( createElement( Parent ) );
-			jest.advanceTimersByTime( 10_000 );
+			vi.advanceTimersByTime( 10_000 );
 
 			expect( recordSearchFormSubmit ).toHaveBeenCalledTimes( 1 );
 			expect( recordSearchFormSubmit ).toHaveBeenCalledWith(
@@ -282,7 +285,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			const store = {
 				getState: () => ( { currentUser: { id: null } } ),
 				subscribe: () => () => {},
-				dispatch: jest.fn(),
+				dispatch: vi.fn(),
 			};
 
 			return store;
@@ -310,7 +313,7 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 		const bundle = { bundle_group_id: 'group', domains: [ {}, {} ] };
 
 		beforeEach( () => {
-			jest.mocked( recordTracksEvent ).mockClear();
+			vi.mocked( recordTracksEvent ).mockClear();
 		} );
 
 		it( 'marks every classic Tracks event as legacy_v1 when Name Pulse is off', () => {
@@ -393,11 +396,12 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 			);
 		} );
 
-		it( 'records a Name Pulse search right away and ignores the debounced one', () => {
-			jest.useFakeTimers();
-			jest
-				.mocked( recordSearchFormSubmit )
-				.mockImplementationOnce( jest.requireActual( '../analytics' ).recordSearchFormSubmit );
+		it( 'records a Name Pulse search right away and ignores the debounced one', async () => {
+			vi.useFakeTimers();
+			vi.mocked( recordSearchFormSubmit ).mockImplementationOnce(
+				( await vi.importActual< typeof import( '../analytics' ) >( '../analytics' ) )
+					.recordSearchFormSubmit
+			);
 			const { events, store } = renderEvents( true );
 
 			events.onSearchStart( 'coffee', 'input_changed' );
@@ -405,8 +409,8 @@ describe( 'useWPCOMDomainSearchEvents', () => {
 				search_id: 'search-1',
 				query_shape: 'single',
 			} );
-			jest.advanceTimersByTime( 10_000 );
-			jest.useRealTimers();
+			vi.advanceTimersByTime( 10_000 );
+			vi.useRealTimers();
 
 			expect( getDispatchedTracksProperties( store ) ).toEqual( [
 				expect.objectContaining( {

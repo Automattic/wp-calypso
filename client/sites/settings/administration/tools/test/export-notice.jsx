@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import ExportNotice from '../export-notice';
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	translate: jest.fn( ( key ) => key ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual( 'i18n-calypso' ) ),
+	translate: vi.fn( ( key ) => key ),
 } ) );
 
 describe( 'ExportNotice', () => {

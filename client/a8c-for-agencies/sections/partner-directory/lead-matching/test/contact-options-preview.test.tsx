@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { getLeadMatchingProfileQueryKey } from 'calypso/a8c-for-agencies/data/partner-directory/use-lead-matching-profile';
 import { useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -22,7 +23,7 @@ import type { AgencyLeadMatchingProfile, AgencyLeadMatchingResponse } from '../.
 
 const API = 'https://public-api.wordpress.com';
 
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 afterEach( () => nock.cleanAll() );
 

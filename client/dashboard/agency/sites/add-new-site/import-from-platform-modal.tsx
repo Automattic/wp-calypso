@@ -57,7 +57,7 @@ function ImportProgress( {
 				</Text>
 				<Text variant="muted">
 					{ __(
-						'We are building it on your new development site. This usually takes a few minutes. The site is in Sites, and we email you if the move fails.'
+						'Moving a site can take up to an hour. You don’t need to wait here. We’ll email you when it’s ready.'
 					) }
 				</Text>
 				<ButtonStack justify="flex-end">

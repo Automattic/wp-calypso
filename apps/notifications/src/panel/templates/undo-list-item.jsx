@@ -120,7 +120,7 @@ export class UndoListItem extends Component {
 		wpcom()
 			.site( this.props.note.meta.ids.site )
 			.comment( this.props.note.meta.ids.comment )
-			.del( ( error ) => {
+			.update( { status: 'trash' }, ( error ) => {
 				if ( error ) {
 					reportRequestError( 'trash', error );
 				}

@@ -242,12 +242,6 @@ export function getNav2026Menus( {
 							label: __( 'Docs', __i18n_text_domain__ ),
 							url: localizeUrl( '//developer.wordpress.com/docs/' ),
 						},
-						{
-							label: __( 'Studio', __i18n_text_domain__ ),
-							url: localizeUrl( '//developer.wordpress.com/studio/' ),
-							target: '_self',
-							isExternal: true,
-						},
 					],
 				},
 				{
@@ -260,10 +254,6 @@ export function getNav2026Menus( {
 						{
 							label: __( 'Plugins', __i18n_text_domain__ ),
 							url: localizeUrl( '//wordpress.com/plugins', locale, isLoggedIn, true ),
-						},
-						{
-							label: __( 'Patterns', __i18n_text_domain__ ),
-							url: localizeUrl( '//wordpress.com/patterns', locale, isLoggedIn, true ),
 						},
 						{
 							label: __( 'View all features', __i18n_text_domain__ ),

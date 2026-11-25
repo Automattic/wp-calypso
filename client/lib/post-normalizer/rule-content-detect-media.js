@@ -89,18 +89,20 @@ const getEmbedType = ( iframe ) => {
 	let matches;
 
 	do {
-		if ( ! node.className ) {
+		// Not `className`, which is an `SVGAnimatedString` on SVG ancestors.
+		const className = node.getAttribute?.( 'class' );
+		if ( ! className ) {
 			continue;
 		}
 
 		// Match elements like <span class="embed-youtube"><iframe ... /></span>
-		matches = node.className.match( /\bembed-([-a-zA-Z0-9_]+)\b/ );
+		matches = className.match( /\bembed-([-a-zA-Z0-9_]+)\b/ );
 		if ( matches ) {
 			return matches[ 1 ];
 		}
 
 		// Match elements like <figure class="wp-block-video wp-block-embed is-type-video is-provider-videopress">...</figure>
-		matches = node.className.match( /\bis-provider-([-a-zA-Z0-9_]+)\b/ );
+		matches = className.match( /\bis-provider-([-a-zA-Z0-9_]+)\b/ );
 		if ( matches ) {
 			return matches[ 1 ];
 		}

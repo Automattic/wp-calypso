@@ -1,40 +1,48 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { fetchWooCommerceLicenseSites } from '@automattic/api-core';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import a8cForAgencies from 'calypso/state/a8c-for-agencies/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import LicensePreview from '../index';
 import type { License } from 'calypso/state/partner-portal/types';
 
-jest.mock( 'calypso/a8c-for-agencies/hooks/use-help-center', () => ( {
-	__esModule: true,
-	default: () => ( { showSupportGuide: jest.fn() } ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+	fetchWooCommerceLicenseSites: vi.fn(),
 } ) );
 
-jest.mock( '../../../payment-methods/hooks/use-payment-method', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/hooks/use-help-center', () => ( {
+	__esModule: true,
+	default: () => ( { showSupportGuide: vi.fn() } ),
+} ) );
+
+vi.mock( '../../../payment-methods/hooks/use-payment-method', () => ( {
 	__esModule: true,
 	default: () => ( { paymentMethodRequired: false } ),
 } ) );
 
-jest.mock( 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback', () => ( {
 	__esModule: true,
 	default: () => ( { isFeedbackShown: true } ),
 } ) );
 
-jest.mock( '../../license-details', () => ( {
+vi.mock( '../../license-details', () => ( {
 	__esModule: true,
 	default: () => <div>License details panel</div>,
 } ) );
 
-jest.mock( '../../license-details/bundle-details', () => ( {
+vi.mock( '../../license-details/bundle-details', () => ( {
 	__esModule: true,
 	default: () => <div>Bundle details panel</div>,
 } ) );
 
-jest.mock( '../license-bundle-dropdown', () => ( {
+vi.mock( '../license-bundle-dropdown', () => ( {
 	__esModule: true,
 	default: () => <div>Bundle dropdown</div>,
 } ) );
@@ -93,6 +101,7 @@ const initialState = {
 };
 
 function renderPreview( license: License, licenseType = LicenseType.Partner ) {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	return renderWithProvider(
 		<LicensePreview
 			license={ license }
@@ -103,7 +112,7 @@ function renderPreview( license: License, licenseType = LicenseType.Partner ) {
 			quantity={ license.quantity }
 			meta={ license.meta }
 		/>,
-		{ initialState, reducers: { a8cForAgencies } }
+		{ initialState, reducers: { a8cForAgencies }, queryClient }
 	);
 }
 
@@ -167,5 +176,39 @@ describe( 'LicensePreview', () => {
 		renderPreview( baseLicense );
 
 		expect( screen.queryByText( 'Standard license' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'Woo license site', () => {
+		const wooLicense: License = {
+			...baseLicense,
+			licenseKey: 'woocommerce-subscriptions_abc',
+			product: 'WooCommerce Subscriptions',
+			siteUrl: 'https://old-store.example',
+			attachedAt: '2026-10-02 00:00:00',
+		};
+
+		it( 'shows the store WooCommerce.com has the license on', async () => {
+			vi.mocked( fetchWooCommerceLicenseSites ).mockResolvedValue( {
+				[ wooLicense.licenseId ]: { site_url: 'https://new-store.example' },
+			} );
+			renderPreview( wooLicense );
+
+			expect( await screen.findByText( 'new-store.example' ) ).toBeVisible();
+			expect( screen.queryByText( 'old-store.example' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows no site while the store is looked up', () => {
+			vi.mocked( fetchWooCommerceLicenseSites ).mockReturnValue( new Promise( () => {} ) );
+			renderPreview( wooLicense );
+
+			expect( screen.queryByText( 'old-store.example' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'falls back to the license’s own site when the lookup fails', async () => {
+			vi.mocked( fetchWooCommerceLicenseSites ).mockRejectedValue( new Error( 'Unavailable' ) );
+			renderPreview( wooLicense );
+
+			expect( await screen.findByText( 'old-store.example' ) ).toBeVisible();
+		} );
 	} );
 } );

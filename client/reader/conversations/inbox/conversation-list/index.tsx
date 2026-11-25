@@ -33,6 +33,7 @@ interface Props {
 	onLoadMore?: () => void;
 	tab: InboxTab;
 	onTabChange: ( tab: InboxTab ) => void;
+	onTabHover?: ( tab: InboxTab ) => void;
 	search: string;
 	onSearchChange: ( search: string ) => void;
 	density: Density;
@@ -63,6 +64,7 @@ export function ConversationList( {
 	onLoadMore,
 	tab,
 	onTabChange,
+	onTabHover,
 	search,
 	onSearchChange,
 	density,
@@ -182,7 +184,12 @@ export function ConversationList( {
 				</Heading>
 				<KeyboardShortcuts isOpen={ isShortcutsOpen } onToggle={ onShortcutsToggle } />
 			</HStack>
-			<ConversationListTabs tab={ tab } unreadCount={ unreadCount } onChange={ onTabChange }>
+			<ConversationListTabs
+				tab={ tab }
+				unreadCount={ unreadCount }
+				onChange={ onTabChange }
+				onHover={ onTabHover }
+			>
 				<ConversationListToolbar
 					search={ search }
 					onSearchChange={ onSearchChange }

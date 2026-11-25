@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { UnconnectedPageViewTracker as PageViewTracker } from '../';
 
 describe( 'PageViewTracker', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	} );
 
 	afterEach( () => {
-		jest.runOnlyPendingTimers();
-		jest.useRealTimers();
+		vi.runOnlyPendingTimers();
+		vi.useRealTimers();
 	} );
 
 	test( 'should immediately fire off event when given no delay', () => {
-		const recorder = jest.fn();
+		const recorder = vi.fn();
 
 		render(
 			<PageViewTracker path="/test" title="test" recorder={ recorder } hasSelectedSiteLoaded />
@@ -25,7 +26,7 @@ describe( 'PageViewTracker', () => {
 	} );
 
 	test( 'should wait for the delay before firing off the event', () => {
-		const recorder = jest.fn();
+		const recorder = vi.fn();
 
 		render(
 			<PageViewTracker
@@ -39,13 +40,13 @@ describe( 'PageViewTracker', () => {
 
 		expect( recorder ).not.toHaveBeenCalled();
 
-		jest.advanceTimersByTime( 500 );
+		vi.advanceTimersByTime( 500 );
 
 		expect( recorder ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should pass the appropriate event information', () => {
-		const recorder = jest.fn();
+		const recorder = vi.fn();
 		const properties = {};
 		const options = {};
 

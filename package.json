@@ -145,7 +145,7 @@
 		"translate-if-languages-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || yarn run translate",
 		"typecheck": "run-p 'typecheck-*'",
 		"typecheck-client": "tsc --project client",
-		"typecheck-apps": "find apps -depth 2 -name tsconfig.json | xargs -n 1 -P 4 -I {} yarn tsc --noEmit --project {}",
+		"typecheck-apps": "node bin/typecheck-apps.mjs",
 		"typecheck-packages": "tsc --build packages/tsconfig.json",
 		"vite-check": "node build-tools/vite/check.mjs",
 		"vscode:link": "node bin/set-up-vs-code.js",
@@ -235,6 +235,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/calypso-jest": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
+		"@automattic/create-calypso-config": "workspace:^",
 		"@automattic/eslint-plugin-json": "workspace:^",
 		"@babel/code-frame": "^8.0.6",
 		"@babel/core": "^8.1.0",
@@ -372,8 +373,6 @@
 		"@wordpress/deprecated": "5.2.0",
 		"@wordpress/dom-ready": "5.2.0",
 		"@wordpress/dom": "5.2.0",
-		"@wordpress/edit-post": "9.2.0",
-		"@wordpress/edit-site": "8.2.0",
 		"@wordpress/editor": "16.2.0",
 		"@wordpress/element": "10.2.0",
 		"@wordpress/escape-html": "4.2.0",
@@ -391,7 +390,6 @@
 		"@wordpress/latex-to-mathml": "2.2.0",
 		"@wordpress/media-utils": "6.2.0",
 		"@wordpress/notices": "6.2.0",
-		"@wordpress/npm-package-json-lint-config": "6.2.0",
 		"@wordpress/plugins": "8.2.0",
 		"@wordpress/preferences": "5.2.0",
 		"@wordpress/prettier-config": "5.2.0",
@@ -414,7 +412,6 @@
 		"@wordpress/theme": "5.0.0",
 		"@wordpress/ui": "patch:@wordpress/ui@npm%3A0.27.0#~/.yarn/patches/@wordpress-ui-npm-0.27.0-91caa5b31d.patch",
 		"@wordpress/warning": "4.2.0",
-		"@wordpress/widgets": "5.2.0",
 		"@wordpress/wordcount": "5.2.0",
 		"@wordpress/global-styles-ui": "2.2.0",
 		"@wordpress/worker-threads": "2.2.0",
@@ -422,9 +419,36 @@
 		"marked@npm:^18.0.3": "18.1.1",
 		"wemoji": "patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch"
 	},
-	"packageManager": "yarn@4.2.2",
+	"packageManager": "yarn@4.18.1",
 	"dependenciesMeta": {
-		"@react-spring/core@9.3.0": {
+		"@parcel/watcher": {
+			"built": false
+		},
+		"@playwright/browser-chromium": {
+			"built": true
+		},
+		"@playwright/browser-firefox": {
+			"built": true
+		},
+		"@swc/core": {
+			"built": false
+		},
+		"core-js": {
+			"built": false
+		},
+		"core-js-pure": {
+			"built": false
+		},
+		"dtrace-provider": {
+			"built": false
+		},
+		"esbuild": {
+			"built": false
+		},
+		"msw": {
+			"built": false
+		},
+		"unrs-resolver": {
 			"built": false
 		}
 	}

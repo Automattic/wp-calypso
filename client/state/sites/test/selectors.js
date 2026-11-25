@@ -1,5 +1,6 @@
 import { WPCOM_FEATURES_WORDADS } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import canJetpackSiteAutoUpdateFiles from 'calypso/state/sites/selectors/can-jetpack-site-auto-update-files';
 import canJetpackSiteUpdateFiles from 'calypso/state/sites/selectors/can-jetpack-site-update-files';
@@ -40,17 +41,17 @@ import {
 	getCustomizerUrl,
 } from '../selectors';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const configMock = () => '';
-	configMock.isEnabled = jest.fn( () => true );
-	return configMock;
+	configMock.isEnabled = vi.fn( () => true );
+	return { ...configMock, default: configMock };
 } );
 
-jest.mock( 'calypso/sections-filter', () => {
+vi.mock( 'calypso/sections-filter', () => {
 	const mock = () => '';
-	mock.isSectionEnabled = jest.fn( () => true );
-	mock.isSectionNameEnabled = jest.fn( () => true );
-	return mock;
+	mock.isSectionEnabled = vi.fn( () => true );
+	mock.isSectionNameEnabled = vi.fn( () => true );
+	return { ...mock, default: mock };
 } );
 
 describe( 'selectors', () => {

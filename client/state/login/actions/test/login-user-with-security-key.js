@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { get as webauthnGet } from '@github/webauthn-json';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import { TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE } from 'calypso/state/action-types';
 import loginReducer from 'calypso/state/login/reducer';
 import { HTTPError, postLoginRequest } from 'calypso/state/login/utils';
@@ -12,21 +13,21 @@ import { loginUserWithSecurityKey } from '../login-user-with-security-key';
 
 // Only the network call is mocked. The real HTTPError and decoder run, so these tests
 // catch the action misclassifying HTTP failures as browser errors.
-jest.mock( 'calypso/state/login/utils', () => ( {
-	...jest.requireActual( 'calypso/state/login/utils' ),
-	postLoginRequest: jest.fn(),
+vi.mock( 'calypso/state/login/utils', async () => ( {
+	...( await vi.importActual( 'calypso/state/login/utils' ) ),
+	postLoginRequest: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/login/actions/remote-login-user', () => ( {
-	remoteLoginUser: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/state/login/actions/remote-login-user', () => ( {
+	remoteLoginUser: vi.fn( () => Promise.resolve() ),
 } ) );
 
-jest.mock( '@github/webauthn-json', () => ( {
-	get: jest.fn( () => Promise.resolve( { response: {} } ) ),
+vi.mock( '@github/webauthn-json', () => ( {
+	get: vi.fn( () => Promise.resolve( { response: {} } ) ),
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	...jest.requireActual( 'calypso/state/analytics/actions' ),
+vi.mock( 'calypso/state/analytics/actions', async () => ( {
+	...( await vi.importActual( 'calypso/state/analytics/actions' ) ),
 	recordTracksEventWithClientId: ( name, properties ) => ( {
 		type: 'TEST_RECORD_TRACKS_EVENT',
 		name,
@@ -82,7 +83,7 @@ const dispatchFailingSecurityKey = async () => {
 
 describe( 'loginUserWithSecurityKey', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		postLoginRequest.mockResolvedValue( { body: { data: { token_links: [] } } } );
 	} );
 

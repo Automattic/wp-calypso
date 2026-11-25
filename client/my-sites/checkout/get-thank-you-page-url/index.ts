@@ -183,9 +183,14 @@ export default function getThankYouPageUrl( {
 	// (i.e. on WordPress.com), the same site as the cart's site, a Jetpack cloud URL,
 	// or a Jetpack or WP.com site's block editor (in wp-admin). This is required for Jetpack's
 	// (and WP.com's) paid blocks Upgrade Nudge.
-	if ( redirectTo && ! connectAfterCheckout ) {
-		const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo );
-
+	// `javascript://<host>/%0A…` has the host of the site or of an allowed one, so only http(s)
+	// and relative URLs are followed.
+	const { protocol, hostname, port, pathname, searchParams } = getUrlParts( redirectTo ?? '' );
+	if (
+		redirectTo &&
+		! connectAfterCheckout &&
+		( ! protocol || protocol === 'http:' || protocol === 'https:' )
+	) {
 		if ( resemblesUrl( redirectTo ) && isRedirectSameSite( redirectTo, siteSlug ) ) {
 			debug( 'has same site redirectTo, so returning that', redirectTo );
 			return redirectTo;
@@ -229,19 +234,18 @@ export default function getThankYouPageUrl( {
 	}
 
 	// Note: this function is called early on for redirect payment methods like
-	// PayPal, when the receipt isn't set yet.
+	// Bancontact, when the receipt isn't set yet.
 	//
-	// For redirect payment methods like Bancontact or PayPal, the `return_url`
-	// submitted to the payment partner (Stripe or PayPal) actually redirects to
-	// a pseudo-endpoint (`/me/transactions/source-payment` or
-	// `/me/transactions/paypal-express`) on `public-api.wordpress.com`.
+	// For redirect payment methods like Bancontact, the `return_url` submitted
+	// to the payment partner (Stripe) actually redirects to a pseudo-endpoint
+	// (`/me/transactions/source-payment`) on `public-api.wordpress.com`.
 	//
 	// That pseudo-endpoint performs various duties and then uses a 302 redirect
 	// to send the browser to the `success_url` originally sent by checkout to
-	// start the transaction (to either the `/me/transactions` or
-	// `/me/paypal-express-url` endpoint). That URL sometimes is for the calypso
-	// "pending" page (`/checkout/thank-you/:site/pending/:orderId`) which
-	// requires an order ID and its own `redirectTo` query param.
+	// start the transaction (to the `/me/transactions` endpoint). That URL
+	// sometimes is for the calypso "pending" page
+	// (`/checkout/thank-you/:site/pending/:orderId`) which requires an order ID
+	// and its own `redirectTo` query param.
 	//
 	// The pseudo-endpoint modifies the `success_url` to add that order ID and to
 	// replace the `:receiptId` placeholder with the actual receipt ID for the

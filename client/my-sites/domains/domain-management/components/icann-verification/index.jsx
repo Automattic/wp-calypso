@@ -8,7 +8,6 @@ import QueryWhois from 'calypso/components/data/query-whois';
 import { resendIcannVerification } from 'calypso/lib/domains';
 import EmailVerificationCard from 'calypso/my-sites/domains/domain-management/components/email-verification';
 import { domainManagementEditContactInfo } from 'calypso/my-sites/domains/paths';
-import { errorNotice } from 'calypso/state/notices/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getRegistrantWhois from 'calypso/state/selectors/get-registrant-whois';
 
@@ -98,12 +97,9 @@ class IcannVerificationCard extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		return {
-			currentRoute: getCurrentRoute( state ),
-			contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
-		};
-	},
-	{ errorNotice }
-)( localize( IcannVerificationCard ) );
+export default connect( ( state, ownProps ) => {
+	return {
+		currentRoute: getCurrentRoute( state ),
+		contactDetails: getRegistrantWhois( state, ownProps.selectedDomainName ),
+	};
+}, {} )( localize( IcannVerificationCard ) );

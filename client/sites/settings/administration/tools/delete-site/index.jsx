@@ -13,7 +13,6 @@ import { Panel, PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import withP2HubP2Count from 'calypso/data/p2/with-p2-hub-p2-count';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { navigateToLandingPage } from 'calypso/lib/landing-page';
-import { resetBreadcrumbs, updateBreadcrumbs } from 'calypso/state/breadcrumb/actions';
 import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -263,8 +262,6 @@ export default connect(
 	{
 		deleteSite,
 		setSelectedSiteId,
-		updateBreadcrumbs,
-		resetBreadcrumbs,
 		navigateToLandingPage,
 	}
 )( localize( withP2HubP2Count( DeleteSite ) ) );

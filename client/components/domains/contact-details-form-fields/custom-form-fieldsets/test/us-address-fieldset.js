@@ -1,15 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UsAddressFieldset from '../us-address-fieldset';
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( x ) => x,
-	translate: ( x ) => x,
-	useTranslate: () => ( x ) => x,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		localize: ( x ) => x,
+		translate: ( x ) => x,
+		useTranslate: () => ( x ) => x,
+	} )
+);
 
 describe( 'US Address Fieldset', () => {
 	const defaultProps = {

@@ -3,6 +3,7 @@ import Smooch from 'smooch';
 import { type Mock, vi } from 'vitest';
 import { useOdieAssistantContext } from '../../context';
 import { useCreateZendeskConversation } from '../use-create-zendesk-conversation';
+import type { Message } from '../../types';
 
 /**
  * Mutable state backing the mocked dependencies. Each test mutates these in
@@ -312,5 +313,38 @@ describe( 'useCreateZendeskConversation — conversation tags', () => {
 		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata ).not.toHaveProperty(
 			'zen:ticket:tags'
 		);
+	} );
+} );
+
+describe( 'useCreateZendeskConversation — first message', () => {
+	const firstMessage = {
+		content: 'My card was declined',
+		role: 'user',
+		type: 'message',
+		metadata: { temporary_id: 'temp-1' },
+	} as Message;
+
+	it( 'starts the conversation with the user’s first message', async () => {
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+
+		await result.current( { createdFrom: 'direct_url', firstMessage } );
+
+		expect( smoochCreateConversation.mock.lastCall?.[ 0 ].messages ).toEqual( [
+			{ type: 'text', text: 'My card was declined' },
+		] );
+	} );
+
+	it( 'keeps the first message in the chat when the conversation can’t start', async () => {
+		smoochCreateConversation.mockRejectedValueOnce( new Error( 'TypeError: Failed to fetch' ) );
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+
+		await result.current( { createdFrom: 'direct_url', firstMessage } );
+
+		const chat = mockSetChat.mock.lastCall?.[ 0 ];
+		expect( chat.messages.map( ( message: Message ) => message.content ) ).toEqual( [
+			'My card was declined',
+			'try-again',
+		] );
 	} );
 } );

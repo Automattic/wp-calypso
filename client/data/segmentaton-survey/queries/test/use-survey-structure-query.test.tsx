@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { QuestionType } from 'calypso/components/survey-container/types';
 import wpcom from 'calypso/lib/wp';
 import useSurveyStructureQuery from '../use-survey-structure-query';
@@ -42,18 +43,20 @@ const mockResponse = [
 	},
 ];
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+		},
+	} )
+);
 
 describe( 'useSurveyStructureQuery', () => {
 	let queryClient: QueryClient;
 	let wrapper: React.FC< React.PropsWithChildren< any > >;
 
 	beforeEach( () => {
-		jest.mocked( wpcom.req.get ).mockReset();
+		vi.mocked( wpcom.req.get ).mockReset();
 
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -69,11 +72,11 @@ describe( 'useSurveyStructureQuery', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should call wpcom.req.get with the right parameters', async () => {
-		jest.mocked( wpcom.req.get ).mockResolvedValue( mockResponse );
+		vi.mocked( wpcom.req.get ).mockResolvedValue( mockResponse );
 
 		const { result } = renderHook( () => useSurveyStructureQuery( { surveyKey: 'test-key' } ), {
 			wrapper,
@@ -88,7 +91,7 @@ describe( 'useSurveyStructureQuery', () => {
 	} );
 
 	it( 'should return expected data when successful', async () => {
-		jest.mocked( wpcom.req.get ).mockResolvedValue( mockResponse );
+		vi.mocked( wpcom.req.get ).mockResolvedValue( mockResponse );
 
 		const { result } = renderHook( () => useSurveyStructureQuery( { surveyKey: 'test-key' } ), {
 			wrapper,

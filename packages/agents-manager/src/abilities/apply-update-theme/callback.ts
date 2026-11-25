@@ -12,7 +12,7 @@ interface ApplyUpdateThemeInput {
 	settings?: unknown;
 	styles?: unknown;
 	summary?: string;
-	toolCallId?: string;
+	toolCallId?: string | null;
 }
 
 /**

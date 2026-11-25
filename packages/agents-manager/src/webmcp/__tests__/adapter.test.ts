@@ -42,6 +42,7 @@ const createAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 		},
 		...flaggedMeta,
 	},
+	callback: vi.fn(),
 	...overrides,
 } );
 
@@ -55,6 +56,7 @@ const createBlockTreeAbility = (): Ability => ( {
 		annotations: { clientRegistered: true, readonly: true, idempotent: true },
 		webmcp: { public: true },
 	},
+	callback: vi.fn(),
 } );
 
 const createShowTemplateAbility = (): Ability => ( {
@@ -67,6 +69,7 @@ const createShowTemplateAbility = (): Ability => ( {
 		annotations: { clientRegistered: true, readonly: false, idempotent: true },
 		webmcp: { public: true },
 	},
+	callback: vi.fn(),
 } );
 
 const createEditEntityRecordAbility = (): Ability =>
@@ -127,6 +130,8 @@ describe( 'WebMCP adapter', () => {
 		vi.mocked( blocks.parse ).mockReset().mockReturnValue( [] );
 	} );
 
+	afterEach( () => vi.restoreAllMocks() );
+
 	it( 'normalizes missing and malformed input schemas', () => {
 		expect( normalizeInputSchema( undefined ) ).toEqual( { type: 'object', properties: {} } );
 		expect( normalizeInputSchema( 'invalid' ) ).toEqual( { type: 'object', properties: {} } );
@@ -144,11 +149,7 @@ describe( 'WebMCP adapter', () => {
 	} );
 
 	it.each< [ string, Ability ] >( [
-		[ 'a flagged client-registered ability', createAbility() ],
-		[
-			'a flagged ability with a client callback',
-			createAbility( { meta: flaggedMeta, callback: vi.fn() } ),
-		],
+		[ 'a flagged ability with a client callback', createAbility() ],
 		...WEBMCP_SERVER_ABILITY_NAMES.map( ( name ): [ string, Ability ] => [
 			`the read-only server ability ${ name }`,
 			createServerAbility( name ),
@@ -172,7 +173,10 @@ describe( 'WebMCP adapter', () => {
 				meta: { ...flaggedMeta, annotations: { serverRegistered: true, clientRegistered: true } },
 			} ),
 		],
-		[ 'a flagged ability without a client callback', createAbility( { meta: flaggedMeta } ) ],
+		[
+			'a flagged client-registered ability without a callback',
+			createAbility( { callback: undefined } ),
+		],
 		[
 			'a flagged server ability off the server allowlist',
 			createServerAbility( 'wpcom/delete-site', {
@@ -194,6 +198,45 @@ describe( 'WebMCP adapter', () => {
 		],
 	] )( 'hides %s', ( _case, ability ) => {
 		expect( shouldExposeWebMcpAbility( ability ) ).toBe( false );
+	} );
+
+	it.each< [ string, Ability, string ] >( [
+		[
+			'server-registered',
+			createAbility( { meta: { ...flaggedMeta, annotations: { serverRegistered: true } } } ),
+			'it is server-registered',
+		],
+		[
+			'missing a client callback',
+			createAbility( { callback: undefined } ),
+			'it has no client callback',
+		],
+	] )( 'warns once about a flagged ability that is %s', async ( _case, ability, reason ) => {
+		// eslint-disable-next-line no-console
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const harness = createHarness( [ ability ] );
+
+		await harness.adapter.sync();
+		await harness.adapter.sync();
+
+		expect( warn ).toHaveBeenCalledTimes( 1 );
+		expect( warn ).toHaveBeenCalledWith(
+			expect.stringContaining( `WebMCP doesn't expose big-sky/apply-block-edits: ${ reason }` )
+		);
+	} );
+
+	it( "doesn't warn about exposed or unflagged abilities", async () => {
+		// eslint-disable-next-line no-console
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const harness = createHarness( [
+			createAbility(),
+			createAbility( { name: 'big-sky/unflagged', meta: {} } ),
+			createServerAbility( 'wpcom/get-block-schemas' ),
+		] );
+
+		await harness.adapter.sync();
+
+		expect( warn ).not.toHaveBeenCalled();
 	} );
 
 	it( 'registers a server ability with its schema and executes through the provider', async () => {
@@ -540,23 +583,38 @@ describe( 'WebMCP adapter', () => {
 		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
 	} );
 
-	it.each< [ string, Ability[] ] >( [
-		[ 'removed', [] ],
+	it.each< [ string, string, Ability, Ability[] ] >( [
+		[ 'removed', 'big_sky__apply_block_edits', createAbility(), [] ],
 		[
 			'replaced by an unflagged ability',
+			'big_sky__apply_block_edits',
+			createAbility(),
 			[ createAbility( { meta: { annotations: { clientRegistered: true } } } ) ],
 		],
-	] )( 'refuses a tool whose ability was %s before the next sync', async ( _case, next ) => {
-		const harness = createHarness();
-		await harness.adapter.sync();
-		harness.setAbilities( next );
+		[
+			'no longer read-only on the server',
+			'wpcom__get_block_schemas',
+			createServerAbility( 'wpcom/get-block-schemas' ),
+			[
+				createServerAbility( 'wpcom/get-block-schemas', {
+					meta: { annotations: { serverRegistered: true, readonly: false } },
+				} ),
+			],
+		],
+	] )(
+		'refuses a tool whose ability was %s before the next sync',
+		async ( _case, toolName, ability, next ) => {
+			const harness = createHarness( [ ability ] );
+			await harness.adapter.sync();
+			harness.setAbilities( next );
 
-		await expect(
-			harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {} )
-		).rejects.toThrow( 'no longer available' );
+			await expect( harness.tools.get( toolName )?.execute( {} ) ).rejects.toThrow(
+				'no longer available'
+			);
 
-		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
-	} );
+			expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+		}
+	);
 
 	it( 'reconciles late, removed, and changed abilities without duplicates', async () => {
 		const harness = createHarness( [] );

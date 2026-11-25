@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { TitleFormatEditor } from '..';
 
 describe( 'TitleFormatEditor', () => {
 	beforeAll( () => {
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	test( 'adds a token to the Draft.js editor state', () => {
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 
 		render(
 			<TitleFormatEditor

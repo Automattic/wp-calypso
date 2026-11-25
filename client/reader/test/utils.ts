@@ -5,6 +5,7 @@ import { FRESHLY_PRESSED_TAB } from '../discover/helper';
 import { DISCOVER_PREFIX } from '../discover/routes';
 import {
 	getSafeImageUrlForReader,
+	showFullXPost,
 	showSelectedPost,
 	getCurrentTabFromURL,
 	getPostTitleFallback,
@@ -104,6 +105,89 @@ describe( 'reader utils', () => {
 			expect( windowOpen ).not.toHaveBeenCalled();
 			expect( page ).not.toHaveBeenCalled();
 		} );
+	} );
+
+	describe( '#showSelectedPost with a cross-post that only has a permalink', () => {
+		const windowOpen = jest.fn();
+
+		const cacheXPost = ( permalinkKey: string, permalink: string ) => {
+			mockQueryClient = new QueryClient();
+			upsertPostCache( mockQueryClient, [
+				{
+					ID: 1,
+					site_ID: 100,
+					global_ID: 'global-1',
+					tags: { 'p2-xpost': {} },
+					metadata: [ { key: permalinkKey, value: permalink } ],
+				},
+			] );
+		};
+
+		beforeEach( () => {
+			Object.defineProperty( globalThis, 'window', {
+				configurable: true,
+				value: { open: windowOpen },
+			} );
+		} );
+
+		afterEach( () => {
+			Reflect.deleteProperty( globalThis, 'window' );
+		} );
+
+		test( 'opens the original post in a new tab', () => {
+			cacheXPost( '_xpost_original_permalink', 'https://example.com/original-post/' );
+
+			showSelectedPost( { postKey: { blogId: 100, postId: 1 } } )();
+
+			expect( windowOpen ).toHaveBeenCalledWith(
+				'https://example.com/original-post/',
+				'_blank',
+				'noopener,noreferrer'
+			);
+			expect( page ).not.toHaveBeenCalled();
+		} );
+
+		test.each( [
+			[ '_xpost_original_permalink', 'javascript://x/%0Aalert(1)' ],
+			[ 'xcomment_original_permalink', 'javascript://x/%0Aalert(1)#comment-1' ],
+		] )( 'shows the x-post itself instead of opening a %s of %j', ( permalinkKey, permalink ) => {
+			cacheXPost( permalinkKey, permalink );
+
+			showSelectedPost( { postKey: { blogId: 100, postId: 1 } } )();
+
+			expect( windowOpen ).not.toHaveBeenCalled();
+			expect( page as ( url: string ) => void ).toHaveBeenCalledWith( '/reader/blogs/100/posts/1' );
+		} );
+	} );
+
+	describe( '#showFullXPost', () => {
+		const windowOpen = jest.fn();
+
+		beforeEach( () => {
+			Object.defineProperty( globalThis, 'window', {
+				configurable: true,
+				value: { open: windowOpen },
+			} );
+		} );
+
+		afterEach( () => {
+			Reflect.deleteProperty( globalThis, 'window' );
+		} );
+
+		test.each( [ 'javascript://x/%0Aalert(1)', null ] )(
+			'does not open a post URL of %j',
+			( postURL ) => {
+				const opened = showFullXPost( {
+					blogId: null,
+					postId: null,
+					postURL,
+					siteURL: null,
+					commentURL: null,
+				} );
+				expect( opened ).toBe( false );
+				expect( windowOpen ).not.toHaveBeenCalled();
+			}
+		);
 	} );
 
 	describe( 'getSafeImageUrlForReader', () => {

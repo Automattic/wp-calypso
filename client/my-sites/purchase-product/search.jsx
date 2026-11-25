@@ -10,10 +10,10 @@ import searchSites from 'calypso/components/search-sites';
 import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 import { urlToSlug } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
+import { checkUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
-import { getSiteByUrl, isRequestingSites } from 'calypso/state/sites/selectors';
+import { getSiteByUrl } from 'calypso/state/sites/selectors';
 import { ALREADY_CONNECTED } from '../../jetpack-connect/connection-notice-types';
 import { IS_DOT_COM_GET_SEARCH } from '../../jetpack-connect/constants';
 import ExistingSearchNotice from '../../jetpack-connect/existing-search-notice';
@@ -209,17 +209,14 @@ const connectComponent = connect(
 			// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 			getSiteByUrl: ( url ) => getSiteByUrl( state, url ),
 			isMobileAppFlow,
-			isRequestingSites: isRequestingSites( state ),
 			jetpackConnectSite,
 			mobileAppRedirect,
 			skipRemoteInstall,
-			siteHomeUrl: siteData.urlAfterRedirects || jetpackConnectSite.url,
 			sites,
 		};
 	},
 	{
 		checkUrl,
-		dismissUrl,
 		recordTracksEvent,
 	}
 );

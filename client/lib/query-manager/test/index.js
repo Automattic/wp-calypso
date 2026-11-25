@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import QueryManager, { DELETE_PATCH_KEY } from '../';
 
 describe( 'QueryManager', () => {
@@ -5,7 +6,7 @@ describe( 'QueryManager', () => {
 
 	beforeEach( () => {
 		manager = new QueryManager();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	describe( '#constructor()', () => {
@@ -285,7 +286,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should omit an item that returns undefined from #mergeItem()', () => {
 			manager = manager.receive( { ID: 144 } );
-			jest.spyOn( QueryManager, 'mergeItem' ).mockImplementation( () => undefined );
+			vi.spyOn( QueryManager, 'mergeItem' ).mockImplementation( () => undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).toEqual( [ { ID: 144 } ] );
@@ -294,7 +295,7 @@ describe( 'QueryManager', () => {
 
 		test( "should do nothing if #mergeItem() returns undefined but the item didn't exist", () => {
 			manager = manager.receive();
-			jest.spyOn( QueryManager, 'mergeItem' ).mockImplementation( () => undefined );
+			vi.spyOn( QueryManager, 'mergeItem' ).mockImplementation( () => undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager ).toBe( newManager );
@@ -343,7 +344,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should remove a tracked query item when it no longer matches', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
-			jest.spyOn( QueryManager, 'matches' ).mockImplementation( () => false );
+			vi.spyOn( QueryManager, 'matches' ).mockImplementation( () => false );
 			const newManager = manager.receive( { ID: 144, changed: true } );
 
 			expect( manager.getItems() ).toEqual( [ { ID: 144 } ] );
@@ -361,7 +362,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should remove a tracked query item when it is omitted from items', () => {
 			manager = manager.receive( { ID: 144 }, { query: {} } );
-			jest.spyOn( QueryManager, 'mergeItem' ).mockImplementation( () => undefined );
+			vi.spyOn( QueryManager, 'mergeItem' ).mockImplementation( () => undefined );
 			const newManager = manager.receive( { ID: 144 } );
 
 			expect( manager.getItems() ).toEqual( [ { ID: 144 } ] );
@@ -380,7 +381,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should compare items appended to query set', () => {
 			manager = manager.receive( [ { ID: 140 }, { ID: 160 } ], { query: {} } );
-			jest.spyOn( QueryManager, 'compare' ).mockImplementation( ( query, a, b ) => a.ID - b.ID );
+			vi.spyOn( QueryManager, 'compare' ).mockImplementation( ( query, a, b ) => a.ID - b.ID );
 			manager = manager.receive( { ID: 150 } );
 
 			expect( manager.getItems( {} ) ).toEqual( [ { ID: 140 }, { ID: 150 }, { ID: 160 } ] );
@@ -431,7 +432,7 @@ describe( 'QueryManager', () => {
 
 		test( 'should decrement found count if removing an unmatched item', () => {
 			manager = manager.receive( { ID: 144 }, { query: {}, found: 1 } );
-			jest.spyOn( QueryManager, 'matches' ).mockImplementation( () => false );
+			vi.spyOn( QueryManager, 'matches' ).mockImplementation( () => false );
 			const newManager = manager.receive( { ID: 144, changed: true } );
 
 			expect( manager.getFound( {} ) ).toBe( 1 );
@@ -448,7 +449,7 @@ describe( 'QueryManager', () => {
 		} );
 
 		test( 'should sort items when merging queries', () => {
-			jest.spyOn( QueryManager, 'compare' ).mockImplementation( ( query, a, b ) => a.ID - b.ID );
+			vi.spyOn( QueryManager, 'compare' ).mockImplementation( ( query, a, b ) => a.ID - b.ID );
 			[ { ID: 4 }, { ID: 2 }, { ID: 3 } ].forEach(
 				( item ) =>
 					( manager = manager.receive( item, {

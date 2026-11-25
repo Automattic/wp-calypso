@@ -1,17 +1,6 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( 'calypso/components/data/document-head', () => 'document-head' );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'page-view-tracker' );
-jest.mock( 'calypso/components/feature-example', () => ( { children } ) => {
-	return <div data-testid="feature-example-wrapper">{ children }</div>;
-} );
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
-} ) );
-
 import {
 	FEATURE_SFTP,
 	FEATURE_SITE_STAGING_SITES,
@@ -26,9 +15,25 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import wp from 'calypso/lib/wp';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import Hosting from '../main';
+
+vi.mock( 'calypso/components/data/document-head', () => ( { default: 'document-head' } ) );
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( { default: 'page-view-tracker' } ) );
+vi.mock( 'calypso/components/feature-example', () => ( {
+	default: ( { children } ) => {
+		return <div data-testid="feature-example-wrapper">{ children }</div>;
+	},
+} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+		},
+	} )
+);
 
 const wpcomGetStub = wp.req.get;
 
@@ -136,35 +141,41 @@ const renderComponentWithStoreAndQueryClient = ( store ) => {
 const stringsForBasicFeatureCards = [ 'Restore plugins and themes', 'Clear all caches' ];
 
 describe( 'Hosting Configuration', () => {
-	beforeAll( () => {
+	beforeAll( async () => {
+		// The upsell nudge lazy-loads this. Under load, loading it on first render takes longer than
+		// `findByText()` waits.
+		await import( 'calypso/my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper' );
+
 		// Mock the missing `window.matchMedia` function that's not even in JSDOM
 		Object.defineProperty( window, 'matchMedia', {
 			writable: true,
-			value: jest.fn().mockImplementation( ( query ) => ( {
+			value: vi.fn().mockImplementation( ( query ) => ( {
 				matches: false,
 				media: query,
 				onchange: null,
-				addListener: jest.fn(), // deprecated
-				removeListener: jest.fn(), // deprecated
-				addEventListener: jest.fn(),
-				removeEventListener: jest.fn(),
-				dispatchEvent: jest.fn(),
+				addListener: vi.fn(), // deprecated
+				removeListener: vi.fn(), // deprecated
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				dispatchEvent: vi.fn(),
 			} ) ),
 		} );
 
 		// Mock `ResizeObserver`, which isn't currently supported in JSDOM
 		Object.defineProperty( global, 'ResizeObserver', {
 			writable: false,
-			value: jest.fn().mockImplementation( () => ( {
-				observe: jest.fn(),
-				unobserve: jest.fn(),
-				disconnect: jest.fn(),
-			} ) ),
+			value: vi.fn().mockImplementation( function () {
+				return {
+					observe: vi.fn(),
+					unobserve: vi.fn(),
+					disconnect: vi.fn(),
+				};
+			} ),
 		} );
 	} );
 
 	afterAll( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	describe( 'Site on free plan', () => {

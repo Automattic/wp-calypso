@@ -1,34 +1,38 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import { DASHBOARD_SITES_QUERY_KEY } from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
 import wpcom from 'calypso/lib/wp';
 import agencyReducer from 'calypso/state/a8c-for-agencies/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ImportFromWPCOMModal from '..';
 
-jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn() } } ) );
-jest.mock( 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount', () => jest.fn() );
-jest.mock(
-	'../wpcom-sites-table',
-	() =>
-		function MockWPCOMSitesTable( {
-			setSelectedSites,
-		}: {
-			setSelectedSites: ( blogIds: number[] ) => void;
-		} ) {
-			return <button onClick={ () => setSelectedSites( [ 42 ] ) }>Select site</button>;
-		}
-);
+vi.mock( 'calypso/lib/wp', () => ( {
+	default: { req: { post: vi.fn() } },
+	wpcomJetpackLicensing: { req: { post: vi.fn() } },
+} ) );
+vi.mock( 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount', () => ( {
+	default: vi.fn(),
+} ) );
+vi.mock( '../wpcom-sites-table', () => ( {
+	default: function MockWPCOMSitesTable( {
+		setSelectedSites,
+	}: {
+		setSelectedSites: ( blogIds: number[] ) => void;
+	} ) {
+		return <button onClick={ () => setSelectedSites( [ 42 ] ) }>Select site</button>;
+	},
+} ) );
 
-const mockPost = wpcom.req.post as jest.Mock;
+const mockPost = wpcom.req.post as Mock;
 
-function renderModal( onClose = jest.fn() ) {
+function renderModal( onClose = vi.fn() ) {
 	const queryClient = new QueryClient();
-	const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+	const invalidateQueries = vi.spyOn( queryClient, 'invalidateQueries' );
 
 	renderWithProvider( <ImportFromWPCOMModal onClose={ onClose } />, {
 		queryClient,
@@ -48,7 +52,7 @@ async function addSelectedSite() {
 
 describe( 'ImportFromWPCOMModal', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'refreshes the sites dashboard after a successful import', async () => {

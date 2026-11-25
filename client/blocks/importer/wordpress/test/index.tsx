@@ -1,18 +1,19 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { WordpressImporter } from '..';
 import type { SiteDetails } from '@automattic/data-stores';
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
 } ) );
 
-jest.mock( 'calypso/state/imports/url-analyzer/selectors', () => ( {
+vi.mock( 'calypso/state/imports/url-analyzer/selectors', () => ( {
 	getUrlData: () => null,
 } ) );
 
-jest.mock( '../import-content-only', () => () => <div>Import content</div> );
+vi.mock( '../import-content-only', () => ( { default: () => <div>Import content</div> } ) );
 
 const atomicSite = {
 	ID: 123,

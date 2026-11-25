@@ -1,13 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { sendVerificationSignal } from 'calypso/lib/user/verification-checker';
 import emailVerification from '..';
 
-jest.mock( 'calypso/lib/user/verification-checker', () => ( {
-	sendVerificationSignal: jest.fn(),
-} ) );
+vi.mock( 'calypso/lib/user/verification-checker', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		sendVerificationSignal: vi.fn(),
+	} )
+);
 
 // Opting out keeps the result on this dashboard, which is where the notices below are shown.
 const OPTED_OUT = {
@@ -21,11 +24,11 @@ const contextFor = ( pathname, query, preferences = OPTED_OUT ) => ( {
 	pathname,
 	canonicalPath: pathname,
 	query,
-	page: { replace: jest.fn() },
+	page: { replace: vi.fn() },
 	store: {
 		getState: () => ( { preferences } ),
-		dispatch: jest.fn(),
-		subscribe: jest.fn( () => jest.fn() ),
+		dispatch: vi.fn(),
+		subscribe: vi.fn( () => vi.fn() ),
 	},
 } );
 
@@ -33,16 +36,16 @@ const noticesFrom = ( context ) =>
 	context.store.dispatch.mock.calls.filter( ( [ action ] ) => action?.type === 'NOTICE_CREATE' );
 
 describe( 'emailVerification', () => {
-	beforeEach( () => jest.useFakeTimers() );
-	afterEach( () => jest.useRealTimers() );
+	beforeEach( () => vi.useFakeTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	// Announcing on both this route and the one it forwards to leaves two identical notices.
 	it( 'leaves an email change result to the route it is forwarded to', () => {
 		const context = contextFor( '/settings/account', { new_email_result: '0' } );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		emailVerification( context, next );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( noticesFrom( context ) ).toHaveLength( 0 );
 		expect( context.page.replace ).not.toHaveBeenCalled();
@@ -52,7 +55,7 @@ describe( 'emailVerification', () => {
 
 	it( 'hands the route on once when the dashboard preference has not been read', () => {
 		const context = contextFor( '/me/account', { new_email_result: '0' }, UNRESOLVED );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		emailVerification( context, next );
 
@@ -63,8 +66,8 @@ describe( 'emailVerification', () => {
 	it( 'still reports an email change result anywhere else it lands', () => {
 		const context = contextFor( '/home', { new_email_result: '0' } );
 
-		emailVerification( context, jest.fn() );
-		jest.runAllTimers();
+		emailVerification( context, vi.fn() );
+		vi.runAllTimers();
 
 		expect( noticesFrom( context ) ).toHaveLength( 1 );
 	} );
@@ -72,11 +75,11 @@ describe( 'emailVerification', () => {
 	it( 'reports a failed email change once it reaches that route', () => {
 		const context = contextFor( '/me/account', { new_email_result: '0' } );
 
-		emailVerification( context, jest.fn() );
+		emailVerification( context, vi.fn() );
 		// Notices dispatched during the page load are cleared by it, so this one waits.
 		expect( noticesFrom( context ) ).toHaveLength( 0 );
 
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		const [ [ action ] ] = noticesFrom( context );
 		expect( action.notice.status ).toBe( 'is-error' );
@@ -90,8 +93,8 @@ describe( 'emailVerification', () => {
 			new_email_error: 'email_in_use',
 		} );
 
-		emailVerification( context, jest.fn() );
-		jest.runAllTimers();
+		emailVerification( context, vi.fn() );
+		vi.runAllTimers();
 
 		const [ [ action ] ] = noticesFrom( context );
 		expect( action.notice.text ).toMatch( /already used by another WordPress\.com account/ );
@@ -104,8 +107,8 @@ describe( 'emailVerification', () => {
 			new_email_error: 'something_new',
 		} );
 
-		emailVerification( context, jest.fn() );
-		jest.runAllTimers();
+		emailVerification( context, vi.fn() );
+		vi.runAllTimers();
 
 		const [ [ action ] ] = noticesFrom( context );
 		expect( action.notice.text ).toMatch( /invalid or has expired/ );
@@ -114,8 +117,8 @@ describe( 'emailVerification', () => {
 	it( 'confirms an email change that worked', () => {
 		const context = contextFor( '/me/account', { new_email_result: '1' } );
 
-		emailVerification( context, jest.fn() );
-		jest.runAllTimers();
+		emailVerification( context, vi.fn() );
+		vi.runAllTimers();
 
 		const [ [ action ] ] = noticesFrom( context );
 		expect( action.notice.status ).toBe( 'is-success' );
@@ -127,8 +130,8 @@ describe( 'emailVerification', () => {
 	it( 'reports a verification link that did not work', () => {
 		const context = contextFor( '/me/account', { verified: '0' } );
 
-		emailVerification( context, jest.fn() );
-		jest.runAllTimers();
+		emailVerification( context, vi.fn() );
+		vi.runAllTimers();
 
 		const [ [ action ] ] = noticesFrom( context );
 		expect( action.notice.status ).toBe( 'is-error' );
@@ -143,8 +146,8 @@ describe( 'emailVerification', () => {
 		} );
 		const context = contextFor( '/me/account', { verified: '1' } );
 
-		expect( () => emailVerification( context, jest.fn() ) ).not.toThrow();
-		jest.runAllTimers();
+		expect( () => emailVerification( context, vi.fn() ) ).not.toThrow();
+		vi.runAllTimers();
 
 		expect( noticesFrom( context ) ).toHaveLength( 1 );
 	} );
@@ -153,8 +156,8 @@ describe( 'emailVerification', () => {
 	it( 'still reports a verified email on the route it lands on', () => {
 		const context = contextFor( '/settings/account', { verified: '1' } );
 
-		emailVerification( context, jest.fn() );
-		jest.runAllTimers();
+		emailVerification( context, vi.fn() );
+		vi.runAllTimers();
 
 		expect( noticesFrom( context ) ).toHaveLength( 1 );
 	} );

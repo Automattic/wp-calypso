@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { site } from '../../test/test-utils/constants';
 import InsightsStats from '../insights-stats';
 
 describe( 'InsightsStats', () => {
 	const stats = site.site_stats;
-	const trackEventMock = jest.fn();
+	const trackEventMock = vi.fn();
 
 	beforeEach( () => {
 		render(

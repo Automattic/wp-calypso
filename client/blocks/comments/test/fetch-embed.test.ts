@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import nock from 'nock';
 import { fetchEmbed } from '../load-comment-editor';

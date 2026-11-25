@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,6 +8,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import DashboardDataContext from '../../../sites-overview/dashboard-data-context';
 import ContactList from '../index';
 
@@ -35,7 +36,7 @@ describe( 'ContactList', () => {
 		verifiedContacts: {
 			emails: [],
 			phoneNumbers: [],
-			refetchIfFailed: jest.fn(),
+			refetchIfFailed: vi.fn(),
 		},
 		products: [
 			{
@@ -64,8 +65,8 @@ describe( 'ContactList', () => {
 	);
 
 	it( 'should render the add email button', () => {
-		const mockedOnAction = jest.fn();
-		const mockedRecordEvent = jest.fn();
+		const mockedOnAction = vi.fn();
+		const mockedRecordEvent = vi.fn();
 		render(
 			<ContactList
 				onAction={ mockedOnAction }
@@ -87,7 +88,7 @@ describe( 'ContactList', () => {
 	} );
 
 	it( 'should show the upgrade path for email', () => {
-		const mockedOnAction = jest.fn();
+		const mockedOnAction = vi.fn();
 		render(
 			<DashboardDataContext.Provider value={ dashboardContextValue }>
 				<ContactList
@@ -120,7 +121,7 @@ describe( 'ContactList', () => {
 	} );
 
 	it( 'should render the add phone number button', () => {
-		const mockedOnAction = jest.fn();
+		const mockedOnAction = vi.fn();
 		render( <ContactList onAction={ mockedOnAction } type="sms" items={ [] } />, {
 			wrapper: Wrapper,
 		} );
@@ -134,7 +135,7 @@ describe( 'ContactList', () => {
 	} );
 
 	it( 'should not render the add phone number button if there is one contact added', () => {
-		const mockedOnAction = jest.fn();
+		const mockedOnAction = vi.fn();
 		render( <ContactList onAction={ mockedOnAction } type="sms" items={ mockedPhoneItems } />, {
 			wrapper: Wrapper,
 		} );

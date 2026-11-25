@@ -61,6 +61,7 @@
 		"@automattic/languages": "workspace:^",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
 		"@automattic/wp-oxc-makepot": "workspace:^",
+		"@types/react": "^19.3.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^7.2.0",
 		"autoprefixer": "^10.4.21",
 		"gettext-parser": "^6.0.0",

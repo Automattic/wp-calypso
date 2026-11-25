@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { vi } from 'vitest';
 import {
 	RESURRECTED_EVENT,
 	RESURRECTED_EVENT_3M,
@@ -20,15 +21,15 @@ function render( el, options ) {
 	} );
 }
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn( () => ( {
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn( () => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
 	} ) ),
 } ) );
 
 describe( 'TrackResurrections', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should not call recordTracksEvent if fetching', () => {

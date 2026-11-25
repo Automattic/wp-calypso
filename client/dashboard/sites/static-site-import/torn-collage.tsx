@@ -3,8 +3,8 @@ import { useEffect, useRef } from 'react';
 // The same capture signup asks mShots for when the address is entered, so it's usually ready by now.
 const MSHOT_PARAMS = 'vpw=1440&vph=1440&w=1440&h=1462&screen_height=1440&scale=2';
 // mShots answers with a 400×300 placeholder while it's still taking the shot.
-const MSHOT_PLACEHOLDER = { width: 400, height: 300 };
-const MSHOT_TRIES = 10;
+export const MSHOT_PLACEHOLDER = { width: 400, height: 300 };
+export const MSHOT_TRIES = 10;
 
 const COLUMNS = 5;
 const ROWS = 4;

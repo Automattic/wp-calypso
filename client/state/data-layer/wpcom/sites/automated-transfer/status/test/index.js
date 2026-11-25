@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { SITE_REQUEST } from 'calypso/state/action-types';
 import {
 	automatedTransferStatusFetchingFailure,
@@ -44,10 +45,10 @@ const settledResponse = ( status ) => ( {
 
 describe( 'requestStatus', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		clearPollDeadlines();
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	test( 'should dispatch an http request', () => {
 		expect( requestStatus( { siteId } ) ).toEqual(
@@ -64,12 +65,12 @@ describe( 'requestStatus', () => {
 
 	test( 'should restart the polling deadline when requested', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
+		vi.setSystemTime( start );
 		requestStatus( { siteId, pollingMode: 'start' } );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 
 		requestStatus( { siteId, pollingMode: 'start' } );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		requestingStatusFailure( { siteId, pollingMode: 'start' } )( dispatch );
 
 		expect( dispatch ).not.toHaveBeenCalledWith(
@@ -80,10 +81,10 @@ describe( 'requestStatus', () => {
 
 describe( 'requestingStatusFailure', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		clearPollDeadlines();
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	test( 'should retry failed requests at the polling cadence when the wait opted in', () => {
 		const response = {
@@ -92,10 +93,10 @@ describe( 'requestingStatusFailure', () => {
 			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
 		};
 		requestStatus( { siteId, pollingMode: 'start' } );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 
 		requestingStatusFailure( response )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			automatedTransferStatusFetchingFailure( {
@@ -108,16 +109,16 @@ describe( 'requestingStatusFailure', () => {
 
 	test( 'should not retry or time out a failure when the wait did not opt in', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
+		vi.setSystemTime( start );
 		requestStatus( { siteId } );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		const dispatch = vi.fn();
 
 		requestingStatusFailure( {
 			siteId,
 			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
 		} )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).toHaveBeenCalledWith(
 			automatedTransferStatusFetchingFailure( { siteId, error: 'Service unavailable' } )
@@ -130,10 +131,10 @@ describe( 'requestingStatusFailure', () => {
 
 	test( 'should time out repeated request failures against the original request', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
+		vi.setSystemTime( start );
 		requestStatus( { siteId, pollingMode: 'start' } );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		const dispatch = vi.fn();
 
 		requestingStatusFailure( { siteId, pollingMode: 'start' } )( dispatch );
 
@@ -149,11 +150,11 @@ describe( 'requestingStatusFailure', () => {
 			meta: { dataLayer: { error: { message: NO_TRANSFER_RECORD_ERROR } } },
 		};
 		requestStatus( { siteId, pollingMode: 'start' } );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 
 		for ( let attempt = 0; attempt < MISSING_RECORD_ATTEMPTS; attempt++ ) {
 			requestingStatusFailure( response )( dispatch );
-			jest.runAllTimers();
+			vi.runAllTimers();
 		}
 
 		const retries = dispatch.mock.calls.filter(
@@ -168,10 +169,10 @@ describe( 'requestingStatusFailure', () => {
 
 	test( 'should recognize a missing transfer record by its error code alone', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
+		vi.setSystemTime( start );
 		requestStatus( { siteId, pollingMode: 'start' } );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		const dispatch = vi.fn();
 
 		requestingStatusFailure( {
 			siteId,
@@ -200,10 +201,10 @@ describe( 'requestingStatusFailure', () => {
 
 	test( 'should not turn a missing transfer record into a client timeout at the deadline', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
+		vi.setSystemTime( start );
 		requestStatus( { siteId, pollingMode: 'start' } );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		const dispatch = vi.fn();
 
 		requestingStatusFailure( {
 			siteId,
@@ -218,17 +219,17 @@ describe( 'requestingStatusFailure', () => {
 
 	test( 'should not leave deadline state behind after a fail-once request', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
+		vi.setSystemTime( start );
 		requestStatus( { siteId } );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		requestingStatusFailure( {
 			siteId,
 			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
 		} )( dispatch );
 
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 60000 );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 60000 );
 		requestStatus( { siteId, pollingMode: 'start' } );
-		const waitDispatch = jest.fn();
+		const waitDispatch = vi.fn();
 		receiveStatus( { siteId, pollingMode: 'start' }, IN_PROGRESS_RESPONSE )( waitDispatch );
 
 		expect( waitDispatch ).not.toHaveBeenCalledWith(
@@ -241,13 +242,13 @@ describe( 'requestingStatusFailure', () => {
 
 	test( 'should not let a concurrent wait opt other dispatchers into retries', () => {
 		requestStatus( { siteId, pollingMode: 'start' } );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 
 		requestingStatusFailure( {
 			siteId,
 			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
 		} )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).not.toHaveBeenCalledWith(
 			expect.objectContaining( { type: fetchAutomatedTransferStatus( siteId ).type } )
@@ -256,16 +257,16 @@ describe( 'requestingStatusFailure', () => {
 
 	test( 'should not let a stale failure resurrect a wait that has settled', () => {
 		requestStatus( { siteId, pollingMode: 'start' } );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		receiveStatus( { siteId, pollingMode: 'continue' }, settledResponse( 'complete' ) )( dispatch );
 
-		const staleDispatch = jest.fn();
+		const staleDispatch = vi.fn();
 		requestingStatusFailure( {
 			siteId,
 			pollingMode: 'start',
 			meta: { dataLayer: { error: { message: 'Service unavailable' } } },
 		} )( staleDispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( staleDispatch ).not.toHaveBeenCalledWith(
 			expect.objectContaining( { type: fetchAutomatedTransferStatus( siteId ).type } )
@@ -277,10 +278,10 @@ describe( 'requestingStatusFailure', () => {
 
 	test( 'should not retry a failed single recovery check', () => {
 		requestStatus( { siteId, pollingMode: 'single' } );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 
 		requestingStatusFailure( { siteId, pollingMode: 'single' } )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).not.toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
@@ -288,15 +289,15 @@ describe( 'requestingStatusFailure', () => {
 
 describe( 'receiveStatus', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		clearPollDeadlines();
 	} );
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	test( 'should dispatch set status action', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
 		expect( dispatch ).toHaveBeenCalledTimes( 2 );
 		expect( dispatch ).toHaveBeenCalledWith(
@@ -305,7 +306,7 @@ describe( 'receiveStatus', () => {
 	} );
 
 	test( 'should refetch the site if complete', () => {
-		const dispatch = jest.fn( ( thunkDispatch ) => {
+		const dispatch = vi.fn( ( thunkDispatch ) => {
 			if ( thunkDispatch instanceof Function ) {
 				thunkDispatch( dispatch );
 			}
@@ -316,34 +317,34 @@ describe( 'receiveStatus', () => {
 	} );
 
 	test( 'should request status again if not complete', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).toHaveBeenCalledTimes( 2 );
 		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
 	test( 'should not open a polling chain for a single recovery check', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		receiveStatus( { siteId, pollingMode: 'single' }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).not.toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
 	test( 'should not let a single recovery check clobber a running chain deadline', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		requestStatus( { siteId } );
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS - 1000 );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS - 1000 );
 		receiveStatus( { siteId, pollingMode: 'single' }, IN_PROGRESS_RESPONSE )( dispatch );
 
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 
 		expect( dispatch ).toHaveBeenLastCalledWith(
@@ -352,14 +353,14 @@ describe( 'receiveStatus', () => {
 	} );
 
 	test( 'should keep the wait polling mode when the transfer record changes mid-wait', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 
 		receiveStatus( { siteId, pollingMode: 'start' }, IN_PROGRESS_RESPONSE )( dispatch );
 		receiveStatus(
 			{ siteId, pollingMode: 'continue' },
 			{ ...IN_PROGRESS_RESPONSE, transfer_id: 2 }
 		)( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		const scheduled = dispatch.mock.calls.filter(
 			( [ action ] ) => action?.type === fetchAutomatedTransferStatus( siteId ).type
@@ -370,13 +371,13 @@ describe( 'receiveStatus', () => {
 
 	test( 'should keep polling until the deadline arrives', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS - 1 );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS - 1 );
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 		expect( dispatch ).not.toHaveBeenCalledWith(
@@ -386,11 +387,11 @@ describe( 'receiveStatus', () => {
 
 	test( 'should set client timeout when the deadline expires', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 
 		expect( dispatch ).toHaveBeenLastCalledWith(
@@ -400,18 +401,18 @@ describe( 'receiveStatus', () => {
 
 	test( 'should stay timed out rather than reopening the window', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.runAllTimers();
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		vi.runAllTimers();
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 
 		// Screens keep fetching after the error appears; none of those may revive the wait.
 		dispatch.mockClear();
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).toHaveBeenCalledTimes( 1 );
 		expect( dispatch ).toHaveBeenCalledWith(
@@ -421,11 +422,11 @@ describe( 'receiveStatus', () => {
 
 	test( 'should let the transfer finishing clear a timed-out wait', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS );
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 
 		dispatch.mockClear();
@@ -438,16 +439,16 @@ describe( 'receiveStatus', () => {
 
 	test( 'should not apply a deadline left behind by a previous transfer', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		// A wait whose polling died at the HTTP layer leaves its deadline behind.
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 
 		// Much later, a genuinely new transfer starts. It must get its own five minutes.
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
 		receiveStatus( { siteId }, { ...IN_PROGRESS_RESPONSE, transfer_id: 2 } )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).not.toHaveBeenCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )
@@ -457,16 +458,16 @@ describe( 'receiveStatus', () => {
 
 	test( 'should not let a poll scheduled by an ended wait time out the next one', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		// A wait runs long, then ends.
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS - 1 );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS - 1 );
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
 
 		// A poll it had already scheduled lands afterwards, during a new wait.
-		jest.runAllTimers();
+		vi.runAllTimers();
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 
 		expect( dispatch ).not.toHaveBeenCalledWith(
@@ -483,11 +484,11 @@ describe( 'receiveStatus', () => {
 		transferStates.REVERTED,
 	] )( 'should prefer the settled status %s over an expired deadline', ( status ) => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
 		receiveStatus( { siteId }, settledResponse( status ) )( dispatch );
 
 		expect( dispatch ).not.toHaveBeenCalledWith(
@@ -501,24 +502,24 @@ describe( 'receiveStatus', () => {
 		transferStates.CONFLICTS,
 		transferStates.REVERTED,
 	] )( 'should stop polling on the settled status %s', ( status ) => {
-		jest.setSystemTime( 1000000 );
-		const dispatch = jest.fn();
+		vi.setSystemTime( 1000000 );
+		const dispatch = vi.fn();
 
 		receiveStatus( { siteId }, settledResponse( status ) )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).not.toHaveBeenCalledWith( fetchAutomatedTransferStatus( siteId ) );
 	} );
 
 	test( 'should bound a wait across requests that each look like a fresh start', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		// Consumers re-dispatch on every status change. Each of those must join the wait already
 		// in progress rather than opening a fresh window, or the wait is never bounded.
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 
 		expect( dispatch ).toHaveBeenLastCalledWith(
@@ -528,15 +529,15 @@ describe( 'receiveStatus', () => {
 
 	test( 'should give a later wait a fresh deadline once one has settled', () => {
 		const start = 1000000;
-		jest.setSystemTime( start );
-		const dispatch = jest.fn();
+		vi.setSystemTime( start );
+		const dispatch = vi.fn();
 
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
 		receiveStatus( { siteId }, COMPLETE_RESPONSE )( dispatch );
 
-		jest.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
+		vi.setSystemTime( start + TRANSFER_STATUS_POLL_DEADLINE_MS + 1 );
 		receiveStatus( { siteId }, IN_PROGRESS_RESPONSE )( dispatch );
-		jest.runAllTimers();
+		vi.runAllTimers();
 
 		expect( dispatch ).not.toHaveBeenCalledWith(
 			setAutomatedTransferStatus( siteId, transferStates.CLIENT_TIMEOUT, 'hello-dolly' )

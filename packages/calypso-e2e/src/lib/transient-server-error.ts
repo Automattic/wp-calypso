@@ -1,3 +1,4 @@
+import { errors } from 'playwright';
 import type { Page, Response } from 'playwright';
 
 // Upstream gateway statuses that indicate a transient infra failure rather than
@@ -12,6 +13,9 @@ export const TRANSIENT_UPSTREAM_STATUSES = [ 502, 503, 504 ];
 // the same 502. The 35s of backoff leaves room in the 120s per-test budget for
 // the attempts themselves.
 export const TRANSIENT_RETRY_DELAYS = [ 5_000, 10_000, 20_000 ];
+
+// How often waitForURLWithRetry() stops waiting to look for an error page.
+const URL_CHECK_INTERVAL = 5_000;
 
 /**
  * Which server-error pages isServerErrorPage() matches.
@@ -94,6 +98,71 @@ export async function gotoWithRetry(
 			`${ url } attempt ${ attempt }/${ maxAttempts } returned a transient server error (status ${ status }), retrying in ${ delay }ms.`
 		);
 		await page.waitForTimeout( delay );
+	}
+}
+
+/**
+ * Waits for the page to reach a URL, reloading with backoff while it sits on a
+ * transient upstream error page (502/503/504). Once the reloads run out this
+ * throws rather than keep waiting on the error page.
+ *
+ * Only use it where reloading the page is safe, e.g. a GET-rendered page that
+ * resumes its work after a reload.
+ *
+ * @param {Page} page The page to watch.
+ * @param url The URL to wait for, as `page.waitForURL` takes it.
+ * @param options Options for the wait.
+ * @param {number} options.timeout The overall timeout, backoff and reloads included.
+ */
+export async function waitForURLWithRetry(
+	page: Page,
+	url: Parameters< Page[ 'waitForURL' ] >[ 0 ],
+	{ timeout }: { timeout: number }
+): Promise< void > {
+	const deadline = Date.now() + timeout;
+	const maxAttempts = TRANSIENT_RETRY_DELAYS.length + 1;
+	let attempt = 1;
+	for (;;) {
+		const remaining = deadline - Date.now();
+		// Playwright reads a 0 timeout as no timeout.
+		if ( remaining <= 0 ) {
+			throw new errors.TimeoutError(
+				`Timeout ${ timeout }ms exceeded waiting for the URL, on ${ page.url() }.`
+			);
+		}
+
+		try {
+			await page.waitForURL( url, { timeout: Math.min( URL_CHECK_INTERVAL, remaining ) } );
+			return;
+		} catch ( error ) {
+			if ( ! ( error instanceof errors.TimeoutError ) ) {
+				throw error;
+			}
+		}
+
+		if ( ! ( await isServerErrorPage( page ) ) ) {
+			continue;
+		}
+
+		if ( attempt >= maxAttempts ) {
+			throw new Error(
+				`${ page.url() } still showed a transient server error after ${ maxAttempts } attempts.`
+			);
+		}
+
+		const delay = TRANSIENT_RETRY_DELAYS[ attempt - 1 ];
+		const left = deadline - Date.now();
+		// No time to back off and reload before the deadline: wait it out.
+		if ( delay >= left ) {
+			continue;
+		}
+
+		console.warn(
+			`${ page.url() } attempt ${ attempt }/${ maxAttempts } showed a transient server error, reloading in ${ delay }ms.`
+		);
+		await page.waitForTimeout( delay );
+		await page.reload( { timeout: left - delay } );
+		attempt++;
 	}
 }
 
