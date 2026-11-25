@@ -67,6 +67,7 @@ describe( 'index', () => {
 		expect( [ ...loadedModules ].filter( ( name ) => ! mappedModules.has( name ) ) ).toEqual( [] );
 	} );
 
+	// Loads every step module, which takes a while on a cold cache while other tests run.
 	test( 'Every step module loader should resolve its module', async () => {
 		const unresolvedModules = [];
 		await Promise.all(
@@ -82,7 +83,7 @@ describe( 'index', () => {
 		);
 
 		expect( unresolvedModules ).toEqual( [] );
-	} );
+	}, 30_000 );
 
 	test( 'Every step directory should have a loader, and every loader a step directory', () => {
 		const stepDirectories = fs

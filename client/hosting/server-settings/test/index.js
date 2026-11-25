@@ -141,7 +141,11 @@ const renderComponentWithStoreAndQueryClient = ( store ) => {
 const stringsForBasicFeatureCards = [ 'Restore plugins and themes', 'Clear all caches' ];
 
 describe( 'Hosting Configuration', () => {
-	beforeAll( () => {
+	beforeAll( async () => {
+		// The upsell nudge lazy-loads this. Under load, loading it on first render takes longer than
+		// `findByText()` waits.
+		await import( 'calypso/my-sites/checkout/purchase-modal/is-eligible-for-one-click-checkout-wrapper' );
+
 		// Mock the missing `window.matchMedia` function that's not even in JSDOM
 		Object.defineProperty( window, 'matchMedia', {
 			writable: true,
