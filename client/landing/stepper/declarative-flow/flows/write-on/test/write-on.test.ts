@@ -1,53 +1,54 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import writeOn, { ANON_DRAFT_STORAGE_KEY, MAX_DRAFT_SIZE } from '../write-on';
 
-const mockIsEnabled = jest.fn( ( flag: string ) => flag === 'calypso/write-on-flow' );
+const mockIsEnabled = vi.fn( ( flag: string ) => flag === 'calypso/write-on-flow' );
 
 let mockSearch = '';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const fn = Object.assign( ( key: string ) => key, {
 		isEnabled: ( flag: string ) => mockIsEnabled( flag ),
 	} );
 	return { __esModule: true, default: fn };
 } );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	WRITE_ON_FLOW: 'write-on',
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { post: jest.fn() } },
+	default: { req: { post: vi.fn() } },
 } ) );
 
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 } ) );
 
-jest.mock( '../../../../hooks/use-query', () => ( {
+vi.mock( '../../../../hooks/use-query', () => ( {
 	useQuery: () => new URLSearchParams( mockSearch ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/steps-with-required-login', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/steps-with-required-login', () => ( {
 	stepsWithRequiredLogin: ( steps: unknown ) => steps,
 } ) );
 
-jest.mock( '../../../internals/steps', () => ( {
+vi.mock( '../../../internals/steps', () => ( {
 	STEPS: {
 		SITE_CREATION_STEP: { slug: 'create-site' },
 		PROCESSING: { slug: 'processing' },
@@ -55,7 +56,7 @@ jest.mock( '../../../internals/steps', () => ( {
 } ) );
 
 const submitFor = ( step: 'create-site' | 'processing', providedDependencies: object ) => {
-	const navigation = writeOn.useStepNavigation( step, jest.fn() );
+	const navigation = writeOn.useStepNavigation( step, vi.fn() );
 	return navigation.submit?.( {
 		slug: step,
 		providedDependencies,
@@ -63,16 +64,16 @@ const submitFor = ( step: 'create-site' | 'processing', providedDependencies: ob
 };
 
 describe( 'write-on flow', () => {
-	const wpcomPostMock = wpcom.req.post as jest.Mock;
+	const wpcomPostMock = wpcom.req.post as Mock;
 	const originalLocation = window.location;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSearch = '';
 		mockIsEnabled.mockImplementation( ( flag: string ) => flag === 'calypso/write-on-flow' );
 		window.localStorage.clear();
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn(), replace: jest.fn() },
+			value: { assign: vi.fn(), replace: vi.fn() },
 			writable: true,
 			configurable: true,
 		} );
@@ -105,7 +106,7 @@ describe( 'write-on flow', () => {
 	} );
 
 	it( 'navigates from create-site to processing', async () => {
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const { submit } = writeOn.useStepNavigation( 'create-site', navigate );
 
 		await submit?.( {

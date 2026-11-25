@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { persistSignupDestination } from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
@@ -11,68 +12,70 @@ import aiSiteBuilderOnboarding from '../ai-site-builder-onboarding';
 
 let mockQueryParams = new URLSearchParams();
 
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', () => ( {
 	isPersonalPlan: ( slug: string ) => slug.startsWith( 'personal-bundle' ),
 	isPremiumPlan: ( slug: string ) => slug.startsWith( 'value_bundle' ),
 	isBusinessPlan: ( slug: string ) => slug.startsWith( 'business-bundle' ),
 	isEcommercePlan: ( slug: string ) => slug.startsWith( 'ecommerce-bundle' ),
 } ) );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_ONBOARDING_FLOW: 'ai-site-builder-onboarding',
-	clearStepPersistedState: jest.fn(),
+	clearStepPersistedState: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	Onboard: { SiteIntent: { AIAssembler: 'ai-assembler' } },
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: { post: jest.fn(), get: jest.fn() },
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: { post: vi.fn(), get: vi.fn() },
+	} )
+);
+
+vi.mock( '@wordpress/data', () => ( {
+	dispatch: () => ( { resetOnboardStore: vi.fn() } ),
+	useDispatch: vi.fn(),
+	useSelect: vi.fn(),
+	resolveSelect: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
-	dispatch: () => ( { resetOnboardStore: jest.fn() } ),
-	useDispatch: jest.fn(),
-	useSelect: jest.fn(),
-	resolveSelect: jest.fn(),
-} ) );
-
-jest.mock( '../../../../hooks/use-query', () => ( {
+vi.mock( '../../../../hooks/use-query', () => ( {
 	useQuery: () => mockQueryParams,
 } ) );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 	SITE_STORE: 'SITE_STORE',
 } ) );
 
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	setSignupCompleteSlug: jest.fn(),
-	persistSignupDestination: jest.fn(),
-	setSignupCompleteFlowName: jest.fn(),
-	setSignupCompleteSiteID: jest.fn(),
-	clearSignupDestinationCookie: jest.fn(),
-	clearSignupCompleteFlowName: jest.fn(),
-	clearSignupCompleteSlug: jest.fn(),
-	clearSignupCompleteSiteID: jest.fn(),
-	getSignupCompleteSiteID: jest.fn(),
-	getSignupCompleteSlug: jest.fn(),
+vi.mock( 'calypso/signup/storageUtils', () => ( {
+	setSignupCompleteSlug: vi.fn(),
+	persistSignupDestination: vi.fn(),
+	setSignupCompleteFlowName: vi.fn(),
+	setSignupCompleteSiteID: vi.fn(),
+	clearSignupDestinationCookie: vi.fn(),
+	clearSignupCompleteFlowName: vi.fn(),
+	clearSignupCompleteSlug: vi.fn(),
+	clearSignupCompleteSiteID: vi.fn(),
+	getSignupCompleteSiteID: vi.fn(),
+	getSignupCompleteSlug: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/ui/actions', () => ( {
-	setSelectedSiteId: jest.fn(),
+vi.mock( 'calypso/state/ui/actions', () => ( {
+	setSelectedSiteId: vi.fn(),
 } ) );
 
-jest.mock( '../../../../utils/steps-with-required-login', () => ( {
+vi.mock( '../../../../utils/steps-with-required-login', () => ( {
 	stepsWithRequiredLogin: ( steps: unknown ) => steps,
 } ) );
 
 describe( 'ai-site-builder-onboarding flow', () => {
-	const isEnabled = jest.spyOn( config, 'isEnabled' );
+	const isEnabled = vi.spyOn( config, 'isEnabled' );
 
 	it( 'initializes domain → plans → create-site → processing → error', async () => {
-		const reduxStore = { dispatch: jest.fn(), getState: jest.fn() } as never;
+		const reduxStore = { dispatch: vi.fn(), getState: vi.fn() } as never;
 		const steps = await aiSiteBuilderOnboarding.initialize( reduxStore );
 
 		expect( steps.map( ( step ) => step.slug ) ).toEqual( [
@@ -85,11 +88,11 @@ describe( 'ai-site-builder-onboarding flow', () => {
 	} );
 
 	describe( 'processing → checkout', () => {
-		const setStaticHomepageOnSite = jest.fn();
-		const setIntentOnSite = jest.fn();
+		const setStaticHomepageOnSite = vi.fn();
+		const setIntentOnSite = vi.fn();
 
 		const runProcessingSubmit = async () => {
-			const navigate = jest.fn();
+			const navigate = vi.fn();
 			const { submit } = aiSiteBuilderOnboarding.useStepNavigation(
 				STEPS.PROCESSING.slug,
 				navigate
@@ -107,33 +110,31 @@ describe( 'ai-site-builder-onboarding flow', () => {
 		};
 
 		const getCheckoutParams = () =>
-			new URL(
-				( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ],
-				'https://wordpress.com'
-			).searchParams;
+			new URL( ( window.location.assign as Mock ).mock.calls[ 0 ][ 0 ], 'https://wordpress.com' )
+				.searchParams;
 
 		const getRedirectTo = () => getCheckoutParams().get( 'redirect_to' ) as string;
 
 		const setPlan = ( productSlug: string ) =>
-			( useSelect as jest.Mock ).mockReturnValue( { product_slug: productSlug } );
+			( useSelect as Mock ).mockReturnValue( { product_slug: productSlug } );
 
 		beforeEach( () => {
-			jest.clearAllMocks();
+			vi.clearAllMocks();
 			mockQueryParams = new URLSearchParams();
 			isEnabled.mockReturnValue( true );
 			setPlan( 'business-bundle' );
-			( wpcom.req.get as jest.Mock ).mockResolvedValue( [ { id: 7 } ] );
+			( wpcom.req.get as Mock ).mockResolvedValue( [ { id: 7 } ] );
 
-			( useDispatch as jest.Mock ).mockReturnValue( {
+			( useDispatch as Mock ).mockReturnValue( {
 				setStaticHomepageOnSite,
 				setIntentOnSite,
 			} );
-			( resolveSelect as jest.Mock ).mockReturnValue( {
-				getSite: jest.fn().mockResolvedValue( { URL: 'https://example.wordpress.com' } ),
+			( resolveSelect as Mock ).mockReturnValue( {
+				getSite: vi.fn().mockResolvedValue( { URL: 'https://example.wordpress.com' } ),
 			} );
 
 			Object.defineProperty( window, 'location', {
-				value: { assign: jest.fn(), replace: jest.fn() },
+				value: { assign: vi.fn(), replace: vi.fn() },
 				writable: true,
 			} );
 		} );
@@ -144,8 +145,8 @@ describe( 'ai-site-builder-onboarding flow', () => {
 			} );
 
 			it( 'creates and sets a Home page when the site has none yet', async () => {
-				( wpcom.req.get as jest.Mock ).mockResolvedValue( [] );
-				( wpcom.req.post as jest.Mock ).mockResolvedValue( { id: 42 } );
+				( wpcom.req.get as Mock ).mockResolvedValue( [] );
+				( wpcom.req.post as Mock ).mockResolvedValue( { id: 42 } );
 
 				await runProcessingSubmit();
 
@@ -323,29 +324,29 @@ describe( 'ai-site-builder-onboarding flow', () => {
 		const originalLocation = window.location;
 
 		const submitFrom = async ( slug: string, providedDependencies: Record< string, unknown > ) => {
-			const navigate = jest.fn();
+			const navigate = vi.fn();
 			const { submit } = aiSiteBuilderOnboarding.useStepNavigation( slug as never, navigate );
 			await submit?.( { slug, providedDependencies } as never );
 			return navigate;
 		};
 
 		beforeEach( () => {
-			jest.clearAllMocks();
+			vi.clearAllMocks();
 			mockQueryParams = new URLSearchParams();
 			isEnabled.mockReturnValue( true );
-			( useSelect as jest.Mock ).mockReturnValue( { product_slug: 'business-bundle' } );
-			( useDispatch as jest.Mock ).mockReturnValue( {
-				setStaticHomepageOnSite: jest.fn(),
-				setIntentOnSite: jest.fn(),
+			( useSelect as Mock ).mockReturnValue( { product_slug: 'business-bundle' } );
+			( useDispatch as Mock ).mockReturnValue( {
+				setStaticHomepageOnSite: vi.fn(),
+				setIntentOnSite: vi.fn(),
 			} );
 			Object.defineProperty( window, 'location', {
-				value: { assign: jest.fn(), replace: jest.fn() },
+				value: { assign: vi.fn(), replace: vi.fn() },
 				writable: true,
 			} );
 		} );
 
 		afterEach( () => {
-			( resolveSelect as jest.Mock ).mockReset();
+			( resolveSelect as Mock ).mockReset();
 			Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
 		} );
 
@@ -390,8 +391,8 @@ describe( 'ai-site-builder-onboarding flow', () => {
 		} );
 
 		it( 'names the cause when the created site cannot be loaded', async () => {
-			( resolveSelect as jest.Mock ).mockReturnValue( {
-				getSite: jest.fn().mockResolvedValue( undefined ),
+			( resolveSelect as Mock ).mockReturnValue( {
+				getSite: vi.fn().mockResolvedValue( undefined ),
 			} );
 
 			const navigate = await submitFrom( STEPS.PROCESSING.slug, {

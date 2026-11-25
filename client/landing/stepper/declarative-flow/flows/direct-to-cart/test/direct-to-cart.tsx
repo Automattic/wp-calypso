@@ -1,23 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import directToCart from '../direct-to-cart';
 
-jest.mock( 'calypso/my-sites/checkout/get-thank-you-page-url', () => ( {
-	getAllowedExternalRedirectHosts: () => [ 'allowed.example' ],
-} ) );
+vi.mock( 'calypso/my-sites/checkout/get-thank-you-page-url', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		getAllowedExternalRedirectHosts: () => [ 'allowed.example' ],
+	} )
+);
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { get: jest.fn() } },
+	default: { req: { get: vi.fn() } },
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
 
-jest.mock( '../../../../hooks/use-query', () => ( {
+vi.mock( '../../../../hooks/use-query', () => ( {
 	useQuery: () => new URLSearchParams( 'plan=business-bundle' ),
 } ) );
 
@@ -66,7 +69,7 @@ describe( 'direct-to-cart flow — initialize', () => {
 
 describe( 'direct-to-cart flow — navigation', () => {
 	const submitProcessing = ( providedDependencies: Record< string, unknown > ) => {
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const { submit } = directToCart.useStepNavigation( STEPS.PROCESSING.slug as never, navigate );
 		submit?.( { slug: STEPS.PROCESSING.slug, providedDependencies } as never );
 		return navigate;

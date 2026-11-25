@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { addProductsToCart } from '@automattic/onboarding';
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import wpcom from 'calypso/lib/wp';
 import domainAndPlan from '../domain-and-plan';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-const mockSetDomainCartItem = jest.fn();
-const mockSetDomainCartItems = jest.fn();
-const mockGetDomainCartItems = jest.fn( (): MinimalRequestCartProduct[] => [] );
-const mockGetPlanCartItem = jest.fn( (): MinimalRequestCartProduct | null => null );
+const mockSetDomainCartItem = vi.fn();
+const mockSetDomainCartItems = vi.fn();
+const mockGetDomainCartItems = vi.fn( (): MinimalRequestCartProduct[] => [] );
+const mockGetPlanCartItem = vi.fn( (): MinimalRequestCartProduct | null => null );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setDomainCartItem: mockSetDomainCartItem,
 		setDomainCartItems: mockSetDomainCartItems,
-		setSignupDomainOrigin: jest.fn(),
-		setHideFreePlan: jest.fn(),
+		setSignupDomainOrigin: vi.fn(),
+		setHideFreePlan: vi.fn(),
 	} ),
 	useSelect: () => ( {
 		getDomainCartItems: mockGetDomainCartItems,
@@ -26,39 +27,41 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@automattic/launchpad', () => ( {
-	updateLaunchpadSettings: jest.fn(),
+vi.mock( '@automattic/launchpad', () => ( {
+	updateLaunchpadSettings: vi.fn(),
 	useLaunchpad: () => ( { data: {} } ),
 } ) );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	DOMAIN_AND_PLAN_FLOW: 'domain-and-plan',
-	addProductsToCart: jest.fn(),
+	addProductsToCart: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/signup', () => ( {
+vi.mock( 'calypso/lib/analytics/signup', () => ( {
 	SIGNUP_DOMAIN_ORIGIN: { USE_YOUR_DOMAIN: 'use-your-domain' },
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: { post: jest.fn( () => Promise.resolve( {} ) ) },
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: { post: vi.fn( () => Promise.resolve( {} ) ) },
+	} )
+);
 
 let mockQueryArgs = '';
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => new URLSearchParams( mockQueryArgs ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
 	useSiteSlug: () => 'example.wordpress.com',
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
-	useSite: jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+	useSite: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 } ) );
 
@@ -103,7 +106,7 @@ const SITE_WITHOUT_PLAN_FEATURES = {
 const PLAN_CART_ITEM = { product_slug: 'value_bundle' };
 
 const submitStep = async ( step: string, providedDependencies: Record< string, unknown > = {} ) => {
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 	const { result } = renderHook( () =>
 		// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
 		domainAndPlan.useStepNavigation.call(
@@ -126,7 +129,7 @@ const submitUseMyDomain = ( providedDependencies: Record< string, unknown > ) =>
  * goBack have to share one render to observe it.
  */
 const submitUseMyDomainThenGoBack = async ( providedDependencies: Record< string, unknown > ) => {
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 	let currentStep = 'use-my-domain';
 
 	const { result, rerender } = renderHook( () =>
@@ -153,8 +156,8 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 		Object.defineProperty( window, 'location', {
 			value: {
 				...originalLocation,
-				assign: jest.fn(),
-				replace: jest.fn(),
+				assign: vi.fn(),
+				replace: vi.fn(),
 				href: 'https://wordpress.com/setup/domain-and-plan/use-my-domain',
 				origin: 'https://wordpress.com',
 			},
@@ -172,14 +175,14 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockQueryArgs = '';
 		mockGetDomainCartItems.mockReturnValue( [] );
 		mockGetPlanCartItem.mockReturnValue( null );
 	} );
 
 	it( 'connects the domain directly and lands on the connection setup page when mapping is included in the plan', async () => {
-		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
+		( useSite as Mock ).mockReturnValue( PAID_ANNUAL_SITE );
 
 		const { navigate } = await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
 
@@ -193,7 +196,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	} );
 
 	it( 'lands on the connection setup page when the step already created the mapping after ownership verification', async () => {
-		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
+		( useSite as Mock ).mockReturnValue( PAID_ANNUAL_SITE );
 
 		await submitUseMyDomain( { ownershipVerificationCompleted: true, domain: 'example.com' } );
 
@@ -204,7 +207,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	} );
 
 	it( 'stores the domain and goes to the plans step when the site has no qualifying plan', async () => {
-		( useSite as jest.Mock ).mockReturnValue( FREE_SITE );
+		( useSite as Mock ).mockReturnValue( FREE_SITE );
 
 		const { navigate } = await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
 
@@ -215,7 +218,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	} );
 
 	it( 'adds a domain transfer to the cart before redirecting to checkout', async () => {
-		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
+		( useSite as Mock ).mockReturnValue( PAID_ANNUAL_SITE );
 		mockGetDomainCartItems.mockReturnValue( [ TRANSFER_CART_ITEM ] );
 
 		await submitUseMyDomain( { domainCartItem: TRANSFER_CART_ITEM } );
@@ -232,7 +235,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	} );
 
 	it( 'goes to the plans step when the user must buy a plan before connecting', async () => {
-		( useSite as jest.Mock ).mockReturnValue( FREE_SITE );
+		( useSite as Mock ).mockReturnValue( FREE_SITE );
 
 		const { navigate } = await submitUseMyDomain( { skipToPlan: true } );
 
@@ -241,8 +244,8 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	} );
 
 	it( 'sends a paying customer to checkout, not the plans step, when the mapping request fails', async () => {
-		( useSite as jest.Mock ).mockReturnValue( PAID_MONTHLY_SITE );
-		( wpcom.req.post as jest.Mock ).mockRejectedValueOnce( new Error( 'nope' ) );
+		( useSite as Mock ).mockReturnValue( PAID_MONTHLY_SITE );
+		( wpcom.req.post as Mock ).mockRejectedValueOnce( new Error( 'nope' ) );
 		mockGetDomainCartItems.mockReturnValue( [ MAPPING_CART_ITEM ] );
 
 		const { navigate } = await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
@@ -257,7 +260,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	} );
 
 	it( 'keeps the plans-step back button pointed at domain search after skipping to plans', async () => {
-		( useSite as jest.Mock ).mockReturnValue( FREE_SITE );
+		( useSite as Mock ).mockReturnValue( FREE_SITE );
 
 		const { goBackFromPlans } = await submitUseMyDomainThenGoBack( { skipToPlan: true } );
 
@@ -266,7 +269,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	} );
 
 	it( 'does not throw when the plan is missing its features list', async () => {
-		( useSite as jest.Mock ).mockReturnValue( SITE_WITHOUT_PLAN_FEATURES );
+		( useSite as Mock ).mockReturnValue( SITE_WITHOUT_PLAN_FEATURES );
 
 		const { navigate } = await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
 
@@ -280,7 +283,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 		[ 'backslash protocol-relative', '/\\evil.example/%s' ],
 	] )( 'ignores a malicious connection setup URL (%s)', async ( _label, template ) => {
 		mockQueryArgs = `domainConnectionSetupUrl=${ encodeURIComponent( template ) }`;
-		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
+		( useSite as Mock ).mockReturnValue( PAID_ANNUAL_SITE );
 
 		await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
 
@@ -291,7 +294,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 
 	it( 'checks the connection setup URL after the domain is filled in', async () => {
 		mockQueryArgs = 'domainConnectionSetupUrl=%25s';
-		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
+		( useSite as Mock ).mockReturnValue( PAID_ANNUAL_SITE );
 
 		await submitUseMyDomain( {
 			ownershipVerificationCompleted: true,
@@ -307,7 +310,7 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 	it( 'uses the connection setup URL supplied by the entry point when there is one', async () => {
 		mockQueryArgs =
 			'domainConnectionSetupUrl=https%3A%2F%2Fmy.wordpress.com%2Fdomains%2F%25s%2Fdomain-connection-setup';
-		( useSite as jest.Mock ).mockReturnValue( PAID_ANNUAL_SITE );
+		( useSite as Mock ).mockReturnValue( PAID_ANNUAL_SITE );
 
 		await submitUseMyDomain( { domainCartItem: MAPPING_CART_ITEM } );
 
@@ -324,8 +327,8 @@ describe( 'domain-and-plan flow post-checkout destination', () => {
 		Object.defineProperty( window, 'location', {
 			value: {
 				...originalLocation,
-				assign: jest.fn(),
-				replace: jest.fn(),
+				assign: vi.fn(),
+				replace: vi.fn(),
 				href: 'https://wordpress.com/setup/domain-and-plan/plans',
 				origin: 'https://wordpress.com',
 			},
@@ -343,9 +346,9 @@ describe( 'domain-and-plan flow post-checkout destination', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockQueryArgs = '';
-		( useSite as jest.Mock ).mockReturnValue( FREE_SITE );
+		( useSite as Mock ).mockReturnValue( FREE_SITE );
 		mockGetDomainCartItems.mockReturnValue( [] );
 		mockGetPlanCartItem.mockReturnValue( PLAN_CART_ITEM );
 	} );

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -12,6 +12,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
@@ -20,16 +21,16 @@ import SiteSubscriptionRow from '../site-subscription-row';
 import type { SiteSubscriptionItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
-const mockUnsubscribe = jest.fn();
+const mockUnsubscribe = vi.fn();
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	ExternalLink: ( { children, ...props }: { children: ReactNode } ) => (
 		<a { ...props }>{ children }</a>
 	),
 	TimeSince: () => <span />,
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	Reader: {
 		EmailDeliveryFrequency: {
 			Instantly: 'instantly',
@@ -38,48 +39,50 @@ jest.mock( '@automattic/data-stores', () => ( {
 	},
 	SubscriptionManager: {
 		useIsLoggedIn: () => ( { isLoggedIn: true } ),
-		useSiteDeliveryFrequencyMutation: () => ( { mutate: jest.fn(), isPending: false } ),
-		useSiteEmailMeNewCommentsMutation: () => ( { mutate: jest.fn(), isPending: false } ),
-		useSiteEmailMeNewPostsMutation: () => ( { mutate: jest.fn(), isPending: false } ),
-		useSiteNotifyMeOfNewPostsMutation: () => ( { mutate: jest.fn(), isPending: false } ),
-		useSiteSubscribeMutation: () => ( { mutate: jest.fn(), isPending: false } ),
+		useSiteDeliveryFrequencyMutation: () => ( { mutate: vi.fn(), isPending: false } ),
+		useSiteEmailMeNewCommentsMutation: () => ( { mutate: vi.fn(), isPending: false } ),
+		useSiteEmailMeNewPostsMutation: () => ( { mutate: vi.fn(), isPending: false } ),
+		useSiteNotifyMeOfNewPostsMutation: () => ( { mutate: vi.fn(), isPending: false } ),
+		useSiteSubscribeMutation: () => ( { mutate: vi.fn(), isPending: false } ),
 		useSiteUnsubscribeMutation: () => ( { mutate: mockUnsubscribe, isPending: false } ),
 	},
 } ) );
 
-jest.mock( 'calypso/blocks/site-icon', () => ( {
-	SiteIcon: () => <span />,
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SiteIcon: () => <span />,
+	} )
+);
+
+vi.mock( 'calypso/data/reader/use-feed-recommendations-mutation', () => ( {
+	useFeedRecommendationsMutation: () => ( { isRecommended: false, toggleRecommended: vi.fn() } ),
 } ) );
 
-jest.mock( 'calypso/data/reader/use-feed-recommendations-mutation', () => ( {
-	useFeedRecommendationsMutation: () => ( { isRecommended: false, toggleRecommended: jest.fn() } ),
-} ) );
-
-jest.mock( 'calypso/landing/subscriptions/tracks', () => ( {
+vi.mock( 'calypso/landing/subscriptions/tracks', () => ( {
 	SOURCE_SUBSCRIPTIONS_SITE_LIST: 'subscriptions-site-list',
 	SOURCE_SUBSCRIPTIONS_UNSUBSCRIBED_NOTICE: 'subscriptions-unsubscribed-notice',
-	useRecordCommentEmailsToggle: () => jest.fn(),
-	useRecordNotificationsToggle: () => jest.fn(),
-	useRecordPostEmailsSetFrequency: () => jest.fn(),
-	useRecordPostEmailsToggle: () => jest.fn(),
-	useRecordRecommendToggle: () => jest.fn(),
-	useRecordSiteIconClicked: () => jest.fn(),
-	useRecordSiteResubscribed: () => jest.fn(),
-	useRecordSiteTitleClicked: () => jest.fn(),
-	useRecordSiteUnsubscribed: () => jest.fn(),
-	useRecordSiteUrlClicked: () => jest.fn(),
+	useRecordCommentEmailsToggle: () => vi.fn(),
+	useRecordNotificationsToggle: () => vi.fn(),
+	useRecordPostEmailsSetFrequency: () => vi.fn(),
+	useRecordPostEmailsToggle: () => vi.fn(),
+	useRecordRecommendToggle: () => vi.fn(),
+	useRecordSiteIconClicked: () => vi.fn(),
+	useRecordSiteResubscribed: () => vi.fn(),
+	useRecordSiteTitleClicked: () => vi.fn(),
+	useRecordSiteUnsubscribed: () => vi.fn(),
+	useRecordSiteUrlClicked: () => vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	getCurrentUserName: jest.fn( () => 'test-user' ),
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	getCurrentUserName: vi.fn( () => 'test-user' ),
 } ) );
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
-	removeNotice: jest.fn( ( id ) => ( { type: 'REMOVE_NOTICE', id } ) ),
-	successNotice: jest.fn( ( text, options ) => ( { type: 'SUCCESS_NOTICE', text, options } ) ),
+vi.mock( 'calypso/state/notices/actions', () => ( {
+	removeNotice: vi.fn( ( id ) => ( { type: 'REMOVE_NOTICE', id } ) ),
+	successNotice: vi.fn( ( text, options ) => ( { type: 'SUCCESS_NOTICE', text, options } ) ),
 } ) );
 
-jest.mock( '../../settings', () => ( {
+vi.mock( '../../settings', () => ( {
 	SiteSettingsPopover: () => null,
 } ) );
 
@@ -202,7 +205,7 @@ const renderRow = ( queryClient: QueryClient, overrides: Partial< SiteSubscripti
 
 describe( 'SiteSubscriptionRow', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUnsubscribe.mockImplementation( ( params ) => params.onSuccess?.() );
 	} );
 

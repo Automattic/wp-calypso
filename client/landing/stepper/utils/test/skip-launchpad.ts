@@ -1,22 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { updateLaunchpadSettings } from '@automattic/launchpad';
+import { vi } from 'vitest';
 import { skipLaunchpad } from '../skip-launchpad';
 
 // Mock the data-stores module
-jest.mock( '@automattic/launchpad', () => ( {
-	updateLaunchpadSettings: jest.fn(),
+vi.mock( '@automattic/launchpad', () => ( {
+	updateLaunchpadSettings: vi.fn(),
 } ) );
 
 describe( 'skipLaunchpad', () => {
 	beforeEach( () => {
 		// Clear all mocks before each test
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Properly mock window.location
 		delete window.location;
-		window.location = { assign: jest.fn() } as unknown as Location;
+		window.location = { assign: vi.fn() } as unknown as Location;
 	} );
 
 	it( 'should update launchpad settings and redirect to siteId by default', async () => {
