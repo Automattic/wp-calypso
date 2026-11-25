@@ -233,6 +233,26 @@ describe( 'cart helpers', () => {
 				message: 'Example.com is no longer available.',
 			} );
 		} );
+
+		test( 'addProductsToCart does not take a message about a longer domain that contains the missing domain', async () => {
+			mockGetCartState.mockReturnValue( {
+				responseCart: {
+					products: [ { product_slug: 'personal-bundle', meta: '' } ],
+					messages: {
+						errors: [
+							{ code: 'invalid-product', message: 'A stale product cannot be purchased.' },
+							{ code: 'domain-unavailable', message: 'myexample.com is no longer available.' },
+						],
+					},
+				},
+			} );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', [ ...cartItems, domainItem ], {
+					throwOnError: true,
+				} )
+			).rejects.toBe( responseError );
+		} );
 	} );
 
 	describe( 'with a cart connection error', () => {

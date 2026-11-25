@@ -355,6 +355,25 @@ function checkCartForRequestedItems(
 	};
 }
 
+// A longer domain can contain the domain, as `myexample.com` and `example.com.au` contain
+// `example.com`, so a match must not touch another character of a domain name.
+function messageNamesDomain( message: string, domain: string ): boolean {
+	const text = message.toLowerCase();
+	const name = domain.toLowerCase();
+
+	let index = text.indexOf( name );
+	while ( index !== -1 ) {
+		const isInsideLongerName =
+			/[a-z0-9.-]$/.test( text.slice( 0, index ) ) ||
+			/^\.?[a-z0-9-]/.test( text.slice( index + name.length ) );
+		if ( ! isInsideLongerName ) {
+			return true;
+		}
+		index = text.indexOf( name, index + 1 );
+	}
+	return false;
+}
+
 // A cart message has no reference to an item, and the cart manager rejects with the first message
 // only. The first message can be about a stale product while the user's domain was the item that
 // was dropped, so look for a message that names a missing item.
@@ -365,8 +384,7 @@ function findMessageForMissingItems(
 	return errorMessages.find( ( errorMessage ) =>
 		missingItems.some(
 			( missingItem ) =>
-				!! missingItem.meta &&
-				errorMessage.message.toLowerCase().includes( missingItem.meta.toLowerCase() )
+				!! missingItem.meta && messageNamesDomain( errorMessage.message, missingItem.meta )
 		)
 	);
 }
