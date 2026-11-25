@@ -8,7 +8,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { isBlackFriday2026Active } from 'calypso/lib/promotions/black-friday-2026';
+import { useBlackFriday2026Offer } from 'calypso/lib/promotions/use-black-friday-2026-offer';
 import { useAnalytics } from '../../app/analytics';
 import OfferCard from '../../components/offer-card';
 import { wpcomLink } from '../../utils/link';
@@ -20,6 +20,7 @@ import './style.scss';
 
 function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 	const { recordTracksEvent } = useAnalytics();
+	const blackFridayOffer = useBlackFriday2026Offer();
 
 	const wordpressClick = () => {
 		recordTracksEvent( 'calypso_dashboard_sites_new_site_action_click_add' );
@@ -83,8 +84,8 @@ function AddNewSite( { context = 'unknown' }: AddNewSiteProps ) {
 				/>
 			</Column>
 
-			{ isBlackFriday2026Active() ? (
-				<BlackFridayOfferCard onClick={ offerClick } />
+			{ blackFridayOffer ? (
+				<BlackFridayOfferCard offer={ blackFridayOffer } onClick={ offerClick } />
 			) : (
 				<OfferCard layout="stacked" onClick={ offerClick } />
 			) }

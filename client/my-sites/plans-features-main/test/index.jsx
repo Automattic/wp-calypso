@@ -70,8 +70,8 @@ jest.mock( '@automattic/data-stores', () => ( {
 
 jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
 jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
-jest.mock( 'calypso/blocks/black-friday-2026-banner', () => () => (
-	<div data-testid="black-friday-2026-banner" />
+jest.mock( 'calypso/blocks/black-friday-2026-banner', () => ( { offer } ) => (
+	<div data-testid="black-friday-2026-banner" data-percent={ offer?.percent } />
 ) );
 
 import {
@@ -94,6 +94,7 @@ import { Plans } from '@automattic/data-stores';
 import { act, screen } from '@testing-library/react';
 import {
 	BLACK_FRIDAY_2026_COUPON,
+	BLACK_FRIDAY_2026_LIFECYCLE_COUPON,
 	BLACK_FRIDAY_2026_START,
 } from 'calypso/lib/promotions/black-friday-2026';
 import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
@@ -595,7 +596,21 @@ describe( 'PlansFeaturesMain', () => {
 		test( 'renders when the grid prices the sale coupon', async () => {
 			renderWithProvider( <PlansFeaturesMain { ...props } coupon={ BLACK_FRIDAY_2026_COUPON } /> );
 
-			expect( await screen.findByTestId( 'black-friday-2026-banner' ) ).toBeVisible();
+			expect( await screen.findByTestId( 'black-friday-2026-banner' ) ).toHaveAttribute(
+				'data-percent',
+				'25'
+			);
+		} );
+
+		test( 'renders when the grid prices the lifecycle coupon', async () => {
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } coupon={ BLACK_FRIDAY_2026_LIFECYCLE_COUPON } />
+			);
+
+			expect( await screen.findByTestId( 'black-friday-2026-banner' ) ).toHaveAttribute(
+				'data-percent',
+				'30'
+			);
 		} );
 
 		test.each( [

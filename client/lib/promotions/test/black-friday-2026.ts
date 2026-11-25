@@ -1,8 +1,13 @@
 import config from '@automattic/calypso-config';
 import { type Mock, vi } from 'vitest';
 import {
+	BLACK_FRIDAY_2026_COUPON,
 	BLACK_FRIDAY_2026_END,
+	BLACK_FRIDAY_2026_LIFECYCLE_COUPON,
+	BLACK_FRIDAY_2026_PUBLIC_OFFER,
 	BLACK_FRIDAY_2026_START,
+	getBlackFriday2026OfferForCoupon,
+	getBlackFriday2026OfferForVariation,
 	isBlackFriday2026Active,
 } from '../black-friday-2026';
 
@@ -36,5 +41,37 @@ describe( 'isBlackFriday2026Active', () => {
 		);
 		expect( isBlackFriday2026Active( BLACK_FRIDAY_2026_START - 1 ) ).toBe( true );
 		expect( isBlackFriday2026Active( BLACK_FRIDAY_2026_END ) ).toBe( true );
+	} );
+} );
+
+describe( 'getBlackFriday2026OfferForVariation', () => {
+	it( 'gives the lifecycle treatment group the 30% offer', () => {
+		expect( getBlackFriday2026OfferForVariation( 'treatment' ) ).toEqual( {
+			coupon: BLACK_FRIDAY_2026_LIFECYCLE_COUPON,
+			percent: 30,
+			isLifecycle: true,
+		} );
+	} );
+
+	it.each( [ 'control', null, undefined, 'something_else' ] )(
+		'gives the control group and everyone outside the experiment the public offer (%s)',
+		( variation ) => {
+			expect( getBlackFriday2026OfferForVariation( variation ) ).toBe(
+				BLACK_FRIDAY_2026_PUBLIC_OFFER
+			);
+		}
+	);
+} );
+
+describe( 'getBlackFriday2026OfferForCoupon', () => {
+	it( 'maps each sale coupon to its offer', () => {
+		expect( getBlackFriday2026OfferForCoupon( BLACK_FRIDAY_2026_COUPON )?.percent ).toBe( 25 );
+		expect( getBlackFriday2026OfferForCoupon( BLACK_FRIDAY_2026_LIFECYCLE_COUPON )?.percent ).toBe(
+			30
+		);
+	} );
+
+	it.each( [ 'OTHER', '', null, undefined ] )( 'has no offer for %s', ( coupon ) => {
+		expect( getBlackFriday2026OfferForCoupon( coupon ) ).toBeNull();
 	} );
 } );

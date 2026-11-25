@@ -2,6 +2,7 @@ import { useId } from 'react';
 import adBg from './ad-bg.png';
 import adStipple from './ad-stipple.png';
 import tileGreen from './tile-green.png';
+import tileLilac30 from './tile-lilac-30.png';
 import tileLilac from './tile-lilac.png';
 
 import './style.scss';
@@ -19,10 +20,16 @@ const LILAC_OFFSET = 124;
 
 /**
  * The Black Friday 2026 "25% OFF / SALE" ribbons artwork used by the in-product
- * promo cards. Decorative only. The lettering drifts along each ribbon unless
+ * promo cards, with "30% OFF" for the lifecycle offer. Decorative only. The lettering drifts along each ribbon unless
  * the viewer prefers reduced motion.
  */
-export default function BlackFriday2026Artwork( { className }: { className?: string } ) {
+export default function BlackFriday2026Artwork( {
+	className,
+	percent = 25,
+}: {
+	className?: string;
+	percent?: 25 | 30;
+} ) {
 	const id = useId();
 	const greenPattern = `${ id }-green`;
 	const lilacPattern = `${ id }-lilac`;
@@ -53,7 +60,11 @@ export default function BlackFriday2026Artwork( { className }: { className?: str
 					width={ LILAC_PERIOD }
 					height={ RIBBON_HEIGHT }
 				>
-					<image href={ tileLilac } width={ LILAC_PERIOD } height={ RIBBON_HEIGHT } />
+					<image
+						href={ percent === 30 ? tileLilac30 : tileLilac }
+						width={ LILAC_PERIOD }
+						height={ RIBBON_HEIGHT }
+					/>
 				</pattern>
 				<clipPath id={ frameClip }>
 					<rect width={ WIDTH } height={ HEIGHT } rx="12" />
