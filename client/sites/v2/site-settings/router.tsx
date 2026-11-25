@@ -45,7 +45,7 @@ const aiToolsIndexRoute = createRoute( {
 	path: '/',
 	getParentRoute: () => aiToolsLayoutRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-ai-tools' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'ai-tools' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -57,7 +57,7 @@ const aiToolsReadRoute = createRoute( {
 	getParentRoute: () => aiToolsLayoutRoute,
 	head: () => ( { meta: [ { title: __( 'Read' ) } ] } ),
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-ai-tools/read' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/ai-tools/read' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-read-v2' )( {
 			component: d.default,
 		} )
@@ -69,7 +69,7 @@ const aiToolsWriteRoute = createRoute( {
 	getParentRoute: () => aiToolsLayoutRoute,
 	head: () => ( { meta: [ { title: __( 'Write' ) } ] } ),
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-ai-tools/write' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/ai-tools/write' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-write-v2' )( {
 			component: d.default,
 		} )
@@ -81,7 +81,7 @@ const aiToolsSetupRoute = createRoute( {
 	getParentRoute: () => aiToolsLayoutRoute,
 	head: () => ( { meta: [ { title: __( 'Connect AI agent' ) } ] } ),
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-ai-tools/setup' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/ai-tools/setup' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-setup-v2' )( {
 			component: d.default,
 		} )
@@ -92,10 +92,11 @@ const subscriptionGiftingRoute = createRoute( {
 	...appRouterSites.siteSettingsSubscriptionGiftingRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-subscription-gifting' ).then( ( d ) =>
-		createLazyRoute( 'subscription-gifting' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/subscription-gifting' ).then(
+		( d ) =>
+			createLazyRoute( 'subscription-gifting' )( {
+				component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			} )
 	)
 );
 
@@ -137,7 +138,7 @@ const agencyRoute = createRoute( {
 	...appRouterSites.siteSettingsAgencyRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-agency' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/agency' ).then( ( d ) =>
 		createLazyRoute( 'agency' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -148,10 +149,11 @@ const hundredYearPlanRoute = createRoute( {
 	...appRouterSites.siteSettingsHundredYearPlanRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-hundred-year-plan' ).then( ( d ) =>
-		createLazyRoute( 'hundred-year-plan' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
-		} )
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/hundred-year-plan' ).then(
+		( d ) =>
+			createLazyRoute( 'hundred-year-plan' )( {
+				component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			} )
 	)
 );
 
