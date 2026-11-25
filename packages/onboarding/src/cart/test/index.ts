@@ -248,14 +248,40 @@ describe( 'cart helpers', () => {
 			} );
 		} );
 
-		test( 'addProductsToCart does not take a message about a longer domain that contains the missing domain', async () => {
+		test.each( [
+			[ 'a longer name before it', 'myexample.com is no longer available.' ],
+			[ 'a longer name after it', 'example.com.au is no longer available.' ],
+		] )(
+			'addProductsToCart does not take a message that names the missing domain inside %s',
+			async ( _case, message ) => {
+				mockGetCartState.mockReturnValue( {
+					responseCart: {
+						products: [ { product_slug: 'personal-bundle', meta: '' } ],
+						messages: {
+							errors: [
+								{ code: 'invalid-product', message: 'A stale product cannot be purchased.' },
+								{ code: 'domain-unavailable', message },
+							],
+						},
+					},
+				} );
+
+				await expect(
+					addProductsToCart( 'example.wordpress.com', 'domain', [ ...cartItems, domainItem ], {
+						throwOnError: true,
+					} )
+				).rejects.toBe( responseError );
+			}
+		);
+
+		test( 'addProductsToCart takes a message that names the missing domain at the end of a sentence', async () => {
 			mockGetCartState.mockReturnValue( {
 				responseCart: {
 					products: [ { product_slug: 'personal-bundle', meta: '' } ],
 					messages: {
 						errors: [
 							{ code: 'invalid-product', message: 'A stale product cannot be purchased.' },
-							{ code: 'domain-unavailable', message: 'myexample.com is no longer available.' },
+							{ code: 'domain-unavailable', message: 'Cannot register example.com.' },
 						],
 					},
 				},
@@ -265,7 +291,10 @@ describe( 'cart helpers', () => {
 				addProductsToCart( 'example.wordpress.com', 'domain', [ ...cartItems, domainItem ], {
 					throwOnError: true,
 				} )
-			).rejects.toBe( responseError );
+			).rejects.toMatchObject( {
+				code: 'domain-unavailable',
+				message: 'Cannot register example.com.',
+			} );
 		} );
 	} );
 
