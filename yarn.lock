@@ -17482,15 +17482,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:3.1.0":
-  version: 3.1.0
-  resolution: "debug@npm:3.1.0"
-  dependencies:
-    ms: "npm:2.0.0"
-  checksum: 10c0/5bff34a352d7b2eaa31886eeaf2ee534b5461ec0548315b2f9f80bd1d2533cab7df1fa52e130ce27bc31c3945fbffb0fc72baacdceb274b95ce853db89254ea4
-  languageName: node
-  linkType: hard
-
 "debug@npm:4, debug@npm:^4.0.0, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.4, debug@npm:^4.3.7, debug@npm:^4.4.0, debug@npm:^4.4.1, debug@npm:^4.4.3":
   version: 4.4.3
   resolution: "debug@npm:4.4.3"
@@ -32945,15 +32936,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wpcom-oauth-cors@npm:^1.0.2-beta":
-  version: 1.0.2-beta
-  resolution: "wpcom-oauth-cors@npm:1.0.2-beta"
-  dependencies:
-    debug: "npm:3.1.0"
-  checksum: 10c0/80f6fadb3346582601637e0186f88aab53c4dc84d21e95782a5f32485fab1559d1d831e657a72b77e51632b830f5cf5d712551e595b6241c05c9f822a3855365
-  languageName: node
-  linkType: hard
-
 "wpcom-proxy-request@npm:^7.0.5, wpcom-proxy-request@workspace:^, wpcom-proxy-request@workspace:packages/wpcom-proxy-request":
   version: 0.0.0-use.local
   resolution: "wpcom-proxy-request@workspace:packages/wpcom-proxy-request"
@@ -33000,7 +32982,6 @@ __metadata:
     qs: "npm:^6.17.1"
     webpack: "npm:^5.111.1"
     webpack-cli: "npm:^7.2.3"
-    wpcom-oauth-cors: "npm:^1.0.2-beta"
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
