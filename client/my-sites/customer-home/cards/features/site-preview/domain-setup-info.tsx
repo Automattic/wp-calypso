@@ -9,6 +9,15 @@ import type { DomainSummary } from '@automattic/api-core';
 
 import './style.scss';
 
+// Expired or expiring domains aren't being set up, and `pending_transfer` is an outgoing transfer.
+const SETUP_STATUSES: DomainStatus[] = [
+	DomainStatus.IN_PROGRESS,
+	DomainStatus.PENDING_REGISTRATION,
+	DomainStatus.TRANSFER_PENDING,
+	DomainStatus.CONNECTION_ERROR,
+	DomainStatus.TRANSFER_ERROR,
+];
+
 export function getPendingCustomDomain( domains: DomainSummary[], siteDomain: string ) {
 	const customDomains = domains.filter(
 		( domain ) =>
@@ -16,15 +25,14 @@ export function getPendingCustomDomain( domains: DomainSummary[], siteDomain: st
 			domain.subtype.id !== DomainSubtype.SITE_REDIRECT
 	);
 	const primaryDomain = customDomains.find( ( { primary_domain } ) => primary_domain );
+	// `set_primary_domain_pending` can stay true for days after the site already serves from the domain.
 	const servedDomain = siteDomain.replace( /^www\./, '' );
 
-	// When the site already serves from the custom domain, statuses like "expiring soon"
-	// don't mean the displayed address differs from the one the user bought.
 	// A new registration can already report "active" while it's still being made the primary address.
 	return ( primaryDomain ? [ primaryDomain ] : customDomains ).find(
 		( domain ) =>
 			domain.domain !== servedDomain &&
-			( domain.domain_status?.id !== DomainStatus.ACTIVE ||
+			( SETUP_STATUSES.includes( domain.domain_status?.id ) ||
 				domain.set_primary_domain_pending === true )
 	);
 }

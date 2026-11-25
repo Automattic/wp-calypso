@@ -5,12 +5,12 @@ import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import DomainSetupInfo from '../domain-setup-info';
 import type { DomainSummary } from '@automattic/api-core';
 
 const SITE_ID = 123;
 const SITE_DOMAIN = 'example.wordpress.com';
+const SITE_SLUG = 'example-slug.wordpress.com';
 
 let mockDomains: DomainSummary[] = [];
 
@@ -42,7 +42,7 @@ function renderDomainSetupInfo( siteDomain = SITE_DOMAIN ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	render(
 		<QueryClientProvider client={ queryClient }>
-			<DomainSetupInfo siteId={ SITE_ID } siteSlug={ SITE_DOMAIN } siteDomain={ siteDomain } />
+			<DomainSetupInfo siteId={ SITE_ID } siteSlug={ SITE_SLUG } siteDomain={ siteDomain } />
 		</QueryClientProvider>
 	);
 	return queryClient;
@@ -84,11 +84,8 @@ describe( 'DomainSetupInfo', () => {
 			mockDomains = [
 				defaultAddress,
 				buildDomain( {
-					domain_status: {
-						id: DomainStatus.EXPIRING_SOON,
-						label: 'Expiring soon',
-						type: 'warning',
-					},
+					domain_status: { id: DomainStatus.IN_PROGRESS, label: 'In progress', type: 'warning' },
+					set_primary_domain_pending: true,
 				} ),
 			];
 			await waitForDomains( renderDomainSetupInfo( siteDomain ) );
@@ -133,6 +130,22 @@ describe( 'DomainSetupInfo', () => {
 		}
 	);
 
+	it.each( [ DomainStatus.EXPIRED, DomainStatus.EXPIRING_SOON ] )(
+		'does not show the info icon for a non-primary domain that is %s',
+		async ( status ) => {
+			mockDomains = [
+				defaultAddress,
+				buildDomain( {
+					primary_domain: false,
+					domain_status: { id: status, label: status, type: 'warning' },
+				} ),
+			];
+			await waitForDomains( renderDomainSetupInfo() );
+
+			expect( queryIcon() ).not.toBeInTheDocument();
+		}
+	);
+
 	it( 'does not show the info icon for a domain that belongs to another site', async () => {
 		mockDomains = [
 			defaultAddress,
@@ -161,7 +174,10 @@ describe( 'DomainSetupInfo', () => {
 
 		const link = screen.getByRole( 'link', { name: 'View domain status' } );
 
-		expect( link ).toHaveAttribute( 'href', domainManagementEdit( SITE_DOMAIN, 'new.com' ) );
+		expect( link ).toHaveAttribute(
+			'href',
+			'/domains/manage/new.com/edit/example-slug.wordpress.com'
+		);
 	} );
 
 	it( 'shows the explanation when the icon is clicked', async () => {
