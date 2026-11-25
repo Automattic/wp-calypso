@@ -1,6 +1,6 @@
 ## Unreleased
 
-- `logToLogstash()` no longer rejects when the log can't be sent, for example when the endpoint returns a 503; the log is dropped.
+- `logToLogstash()` no longer rejects when the log can't be delivered (a network error or a 5xx answer such as 503); the log is dropped. It still rejects on a 4xx answer or params that can't be serialized.
 - Breaking: Require `@wordpress/dataviews` ^22.1.0, `@wordpress/html-entities` ^5.2.0, `@wordpress/i18n` ^7.2.0 and `@wordpress/url` ^5.2.0.
 - Breaking: Removed `'commerce-garden'` from `FetchSiteType`.
 - Breaking: Removed the `garden` option from `fetchDomains()` and the `FetchDomainsOptions` type.
