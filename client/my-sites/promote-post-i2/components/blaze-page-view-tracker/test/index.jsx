@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import BlazePageViewTracker from '../';
 
-const mockPageViewTrackerProps = jest.fn();
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => ( {
-	...jest.requireActual( 'calypso/lib/analytics/page-view-tracker' ),
+const mockPageViewTrackerProps = vi.fn();
+vi.mock( 'calypso/lib/analytics/page-view-tracker', async () => ( {
+	...( await vi.importActual( 'calypso/lib/analytics/page-view-tracker' ) ),
 	UnconnectedPageViewTracker: ( props ) => {
 		mockPageViewTrackerProps( props );
 		return null;
@@ -53,9 +54,7 @@ describe( 'BlazePageViewTracker', () => {
 		originalWindowLocation = global.window.location;
 		delete global.window.location;
 
-		jest
-			.spyOn( config, 'isEnabled' )
-			.mockImplementation( ( flag ) => features.indexOf( flag ) > -1 );
+		vi.spyOn( config, 'isEnabled' ).mockImplementation( ( flag ) => features.indexOf( flag ) > -1 );
 	} );
 	afterAll( () => {
 		global.window.location = originalWindowLocation;

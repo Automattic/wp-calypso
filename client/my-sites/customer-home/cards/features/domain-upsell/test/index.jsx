@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import DomainUpsell from '../';
 
 const initialState = {
@@ -60,7 +61,7 @@ const initialState = {
 };
 
 let pageLink = '';
-jest.mock( '@automattic/calypso-router', () => ( link ) => ( pageLink = link ) );
+vi.mock( '@automattic/calypso-router', () => ( { default: ( link ) => ( pageLink = link ) } ) );
 
 const domainUpsellHeadingFreePlan = 'Own a domain. Build a site.';
 const domainUpsellHeadingPaidPlan = 'That perfect domain is waiting';

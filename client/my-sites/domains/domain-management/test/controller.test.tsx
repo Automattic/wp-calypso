@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,28 +7,29 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import domainController from '../controller';
 import { DOMAIN_OVERVIEW } from '../domain-overview-pane/constants';
 
-jest.mock( 'calypso/state/ui/selectors' );
-jest.mock( 'calypso/state/sites/selectors' );
+vi.mock( 'calypso/state/ui/selectors' );
+vi.mock( 'calypso/state/sites/selectors' );
 
-jest.mock( 'calypso/components/data/domain-management', () => {
+vi.mock( 'calypso/components/data/domain-management', () => {
 	const DomainManagementData = ( { children } ) => <div>{ children }</div>;
-	return DomainManagementData;
+	return { ...DomainManagementData, default: DomainManagementData };
 } );
 
-jest.mock( 'calypso/components/file-picker/component-file-picker', () => () => (
-	<div>File Picker</div>
-) );
+vi.mock( 'calypso/components/file-picker/component-file-picker', () => ( {
+	default: () => <div>File Picker</div>,
+} ) );
 
 describe( 'domainManagementV2', () => {
-	const mockNext = jest.fn();
+	const mockNext = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'sets up page context with decoded domain name', () => {
@@ -84,19 +85,19 @@ describe( 'domainManagementV2', () => {
 } );
 
 // Mock dependencies
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { show: jest.fn() },
+	default: { show: vi.fn() },
 } ) );
 
-window.IntersectionObserver = jest.fn( () => ( {
-	observe: jest.fn(),
-	disconnect: jest.fn(),
+window.IntersectionObserver = vi.fn( () => ( {
+	observe: vi.fn(),
+	disconnect: vi.fn(),
 	root: null,
 	rootMargin: '',
 	thresholds: [],
-	takeRecords: jest.fn(),
-	unobserve: jest.fn(),
+	takeRecords: vi.fn(),
+	unobserve: vi.fn(),
 } ) );
 
 function createState( siteId = 1 ) {
@@ -120,12 +121,12 @@ function createState( siteId = 1 ) {
 }
 
 describe( 'domainManagementPaneView', () => {
-	const mockNext = jest.fn();
+	const mockNext = vi.fn();
 	const mockStore = configureStore();
 	const testStore = mockStore( createState() );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		getSelectedSiteSlug.mockImplementation( () => 'example.wordpress.com' );
 		getSite.mockImplementation( () => ( {
 			ID: 123,

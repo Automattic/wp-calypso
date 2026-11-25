@@ -1,19 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import * as appRouterMe from 'calypso/dashboard/app/router/me';
 import { isJetpackCloud } from 'calypso/dashboard/utils/jetpack';
 import { getJetpackCloudExternalUrl } from '../router';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
 	const config = ( key: string ) => actual( key );
 	config.isEnabled = ( flag: string ) =>
 		flag === 'purchases/site-transfer' || actual.isEnabled( flag );
-	return config;
+	return { ...config, default: config };
 } );
-jest.mock( 'calypso/dashboard/utils/jetpack', () => ( {
-	isJetpackCloud: jest.fn( () => false ),
+vi.mock( 'calypso/dashboard/utils/jetpack', () => ( {
+	isJetpackCloud: vi.fn( () => false ),
 } ) );
 
 /**
@@ -45,7 +48,7 @@ describe( 'site-level purchases backport router', () => {
 
 describe( 'getJetpackCloudExternalUrl', () => {
 	afterEach( () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( false );
+		vi.mocked( isJetpackCloud ).mockReturnValue( false );
 	} );
 
 	it( 'leaves every path to page.js outside Jetpack Cloud', () => {
@@ -54,7 +57,7 @@ describe( 'getJetpackCloudExternalUrl', () => {
 
 	describe( 'on Jetpack Cloud', () => {
 		beforeEach( () => {
-			jest.mocked( isJetpackCloud ).mockReturnValue( true );
+			vi.mocked( isJetpackCloud ).mockReturnValue( true );
 		} );
 
 		it.each( [

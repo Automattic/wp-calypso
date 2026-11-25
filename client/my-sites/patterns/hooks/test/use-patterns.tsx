@@ -1,19 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { usePatterns } from '../use-patterns';
 
-jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn() } } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { get: vi.fn() } } )
+);
 
 describe( 'usePatterns', () => {
 	let wrapper: React.FC< React.PropsWithChildren >;
 
 	beforeEach( () => {
-		jest.mocked( wpcom.req.get ).mockReset();
+		vi.mocked( wpcom.req.get ).mockReset();
 
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -23,11 +26,11 @@ describe( 'usePatterns', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'calls the API endpoint with the right parameters', async () => {
-		jest.mocked( wpcom.req.get ).mockResolvedValue( [] );
+		vi.mocked( wpcom.req.get ).mockResolvedValue( [] );
 
 		const { result } = renderHook( () => usePatterns( 'fr', 'intro' ), { wrapper } );
 
@@ -50,7 +53,7 @@ describe( 'usePatterns', () => {
 			},
 		];
 
-		jest.mocked( wpcom.req.get ).mockResolvedValue( patterns );
+		vi.mocked( wpcom.req.get ).mockResolvedValue( patterns );
 
 		const { result } = renderHook( () => usePatterns( 'en', 'about' ), { wrapper } );
 
