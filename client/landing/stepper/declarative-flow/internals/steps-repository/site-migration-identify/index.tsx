@@ -8,7 +8,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback, useRef } from 'react';
 import CaptureInput from 'calypso/blocks/import/capture/capture-input';
-import { CAPTURE_URL_RGX, convertPlatformName } from 'calypso/blocks/import/util';
+import { getUrlValidationError } from 'calypso/blocks/import/capture/url-validation-message-helper';
+import { convertPlatformName } from 'calypso/blocks/import/util';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
 	seedAnalyzeUrlQuery,
@@ -308,7 +309,7 @@ const SiteMigrationIdentify: StepType< {
 
 	const [ siteURL, setSiteURL ] = useState( () => {
 		const from = urlQueryParams.get( 'from' ) || '';
-		return checkOnArrival && ! isManualWordPress && CAPTURE_URL_RGX.test( from ) ? from : '';
+		return checkOnArrival && ! isManualWordPress && ! getUrlValidationError( from ) ? from : '';
 	} );
 	const [ isVisible, setIsVisible ] = useState( ! siteURL );
 	const [ connectionIssue, setConnectionIssue ] = useState< ConnectionIssue >();
