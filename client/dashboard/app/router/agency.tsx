@@ -1828,7 +1828,7 @@ const agencySiteSettingsAIToolsIndexRoute = createRoute( {
 	getParentRoute: () => agencySiteSettingsAIToolsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/settings-ai-tools' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-ai-tools' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -1865,7 +1865,7 @@ const agencySiteSettingsAIToolsReadRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-ai-tools/read' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/ai-tools/read' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-ai-tools-read' )( {
 			component: d.default,
 		} )
@@ -1884,7 +1884,7 @@ const agencySiteSettingsAIToolsWriteRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-ai-tools/write' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/ai-tools/write' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-ai-tools-write' )( {
 			component: d.default,
 		} )
@@ -1903,7 +1903,7 @@ const agencySiteSettingsAIToolsSetupRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-ai-tools/setup' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/ai-tools/setup' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-ai-tools-setup' )( {
 			component: d.default,
 		} )
@@ -1923,7 +1923,7 @@ const agencySiteSettingsRedirectRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-redirect' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/site-redirect' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-redirect' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -1950,7 +1950,7 @@ const agencySiteSettingsSubscriptionGiftingRoute = createRoute( {
 		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-subscription-gifting' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-subscription-gifting' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -1985,7 +1985,7 @@ const agencySiteSettingsAgencyRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-agency' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/agency' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-agency' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -2012,7 +2012,7 @@ const agencySiteSettingsHundredYearPlanRoute = createRoute( {
 		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-hundred-year-plan' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/hundred-year-plan' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-hundred-year-plan' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
