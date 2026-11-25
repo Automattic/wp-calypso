@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { addQueryArgs } from '@wordpress/url';
 import wpcom from 'calypso/lib/wp';
 
 export type RedesignError = { code: string; message: string; retryable?: boolean };
@@ -132,8 +133,9 @@ export function errorCode( error: unknown ): string | null {
 
 /**
  * The checkout URL from a 402 on apply, only when it stays on this origin and goes to checkout.
+ * With `entryRef`, the page checkout returns to keeps it, so the funnel's source survives checkout.
  */
-export function getCheckoutUrl( error: unknown ): string | null {
+export function getCheckoutUrl( error: unknown, entryRef: string | null = null ): string | null {
 	if ( errorCode( error ) !== 'site_redesign_upgrade_required' ) {
 		return null;
 	}
@@ -143,9 +145,17 @@ export function getCheckoutUrl( error: unknown ): string | null {
 	}
 	try {
 		const parsed = new URL( url, window.location.origin );
-		return parsed.origin === window.location.origin && parsed.pathname.startsWith( '/checkout/' )
-			? parsed.pathname + parsed.search
-			: null;
+		if (
+			parsed.origin !== window.location.origin ||
+			! parsed.pathname.startsWith( '/checkout/' )
+		) {
+			return null;
+		}
+		const back = parsed.searchParams.get( 'redirect_to' );
+		if ( entryRef && back ) {
+			parsed.searchParams.set( 'redirect_to', addQueryArgs( back, { ref: entryRef } ) );
+		}
+		return parsed.pathname + parsed.search;
 	} catch {
 		return null;
 	}
