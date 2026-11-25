@@ -35,6 +35,9 @@ export class Client {
 		this.lastSeenTime = 0;
 		// Latches once the server has no older notes left, so load-more stops paging.
 		this.allNotesLoaded = false;
+		// Latches once the unfiltered list has loaded. Until then a failed load shows
+		// an error, and the client keeps polling even while subscribed to live updates.
+		this.listLoaded = false;
 		// Active tab's server-side filter (e.g. `{ unread: 1 }`), or null for the
 		// unfiltered "all" list. When set, getFilteredNotes fetches matching notes.
 		this.filter = null;
@@ -82,7 +85,7 @@ function main() {
 
 	// subscribers call main() when the subscription delivers a message
 	const notes = getAllNotes( store.getState() );
-	if ( notes.length && this.subscribed && ! this.inbox.length ) {
+	if ( notes.length && this.subscribed && this.listLoaded && ! this.inbox.length ) {
 		return debug( 'main: subscribed, no new messages; sleeping' );
 	}
 
@@ -125,7 +128,9 @@ function reschedule( refresh_ms ) {
 		clearTimeout( this.timeout );
 		this.timeout = false;
 	}
-	if ( this.subscribed ) {
+	// Live updates only announce new notes, so they can't bring back a list that
+	// never loaded: keep polling until it has.
+	if ( this.subscribed && this.listLoaded ) {
 		debug( 'reschedule', 'subscribed; not polling' );
 	} else {
 		debug( 'reschedule', 'refresh_ms =', refresh_ms );
@@ -302,11 +307,21 @@ function getNotes( before, livePushMessages = [] ) {
 			);
 			debug( 'getNotes error, using backoff_ms=%d', backoff_ms );
 			this.noteList = [];
+			// A list that never loaded has nothing to show, so it shows an error with
+			// "Try again" instead of spinning; a failed refresh keeps the notes on screen.
+			store.dispatch( this.listLoaded ? actions.ui.loadedNotes() : actions.ui.loadNotesFailed() );
 			this.reschedule( backoff_ms );
 			return;
 		}
 
 		const previousNotes = getAllNotes( store.getState() );
+		if ( ! before && ! this.listLoaded ) {
+			this.listLoaded = true;
+			// Stop the polling that retried the first load, now live updates can take over.
+			if ( this.subscribed ) {
+				this.reschedule();
+			}
+		}
 		store.dispatch( actions.ui.loadedNotes() );
 
 		// Short page (fewer than requested) means the server has nothing more.
@@ -420,6 +435,11 @@ function getNotesList() {
 				settings.max_refresh_ms
 			);
 			debug( 'getNotesList error, using backoff_ms=%d', backoff_ms );
+			// Notes from a filtered tab or a push can start this poll before the list
+			// ever loaded. Its failure then ends a "Try again" like getNotes' does.
+			if ( ! this.listLoaded ) {
+				store.dispatch( actions.ui.loadNotesFailed() );
+			}
 			return this.reschedule( backoff_ms );
 		}
 
@@ -567,7 +587,14 @@ function getFilteredNotes( before ) {
 			if ( before ) {
 				scheduleLoadMoreRetry.call( this, key );
 			}
-			store.dispatch( actions.ui.loadedNotes( { filter: key } ) );
+			// A tab that never loaded shows an error with "Try again"; a failed refresh
+			// or older page keeps the tab's notes on screen.
+			const hasLoaded = getFilteredNoteIds( store.getState(), key ) !== undefined;
+			store.dispatch(
+				before || hasLoaded
+					? actions.ui.loadedNotes( { filter: key } )
+					: actions.ui.loadNotesFailed( { filter: key } )
+			);
 			if ( activeTabNeedsFetch ) {
 				this.getFilteredNotes();
 			}
@@ -931,7 +958,9 @@ function loadMore() {
 		return;
 	}
 
-	if ( this.gettingNotes || ! this.hasMoreNotes() ) {
+	// Older pages extend the list, so wait until it has loaded: a filtered fetch or
+	// a push can put notes in the store before then, but they aren't the list.
+	if ( this.gettingNotes || ! this.listLoaded || ! this.hasMoreNotes() ) {
 		return;
 	}
 
@@ -1024,6 +1053,29 @@ function setVisibility( { isShowing, isVisible } ) {
 	resumeLoadMoreRetry.call( this );
 }
 
+/**
+ * Loads a tab again, after its first load failed, when the person asks to.
+ *
+ * Sends at most one request: none while one for the tab is already in flight, whose
+ * answer then settles the tab. The tab shows its loading state until then.
+ * @param {string} [filterName] The tab whose "Try again" was pressed (see getFilters).
+ */
+function retryLoad( filterName = 'all' ) {
+	if ( ! getFilters()[ filterName ]?.query ) {
+		store.dispatch( actions.ui.loadNotes() );
+		this.getNotes();
+		return;
+	}
+
+	store.dispatch( actions.ui.loadNotes( { filter: filterName } ) );
+	// Another surface sharing this client, like the panel opened over the full
+	// page, may have made a different tab active since this one failed.
+	if ( filterName !== this.filterName ) {
+		this.setFilter( filterName );
+	}
+	this.getFilteredNotes();
+}
+
 function setLocale( locale ) {
 	this.locale = locale;
 }
@@ -1045,6 +1097,7 @@ Client.prototype.loadMore = loadMore;
 Client.prototype.hasMoreNotes = hasMoreNotes;
 Client.prototype.refreshNotes = refreshNotes;
 Client.prototype.setVisibility = setVisibility;
+Client.prototype.retryLoad = retryLoad;
 Client.prototype.setLocale = setLocale;
 
 export default Client;
