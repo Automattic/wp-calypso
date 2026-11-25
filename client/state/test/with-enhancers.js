@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { withEnhancers } from 'calypso/state/utils';
 
 describe( '#withEnhancers', () => {
@@ -88,7 +89,7 @@ describe( '#withEnhancers', () => {
 		const enhancedThunkThunkCreator = withEnhancers( thunkThunkCreator, enhancer );
 
 		// mocks the base Redux dispatch function that handles plain actions
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		// mock the Redux Thunk enhanced dispatch function that handles thunks, too
 		const thunkDispatch = ( action ) => {
 			if ( typeof action === 'function' ) {
