@@ -50,12 +50,6 @@ export const setUnreadCount = ( count: number ) =>
 		count,
 	} ) as const;
 
-export const setOdieInitialPromptText = ( text: string ) =>
-	( {
-		type: 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT',
-		text,
-	} ) as const;
-
 export const setOdieBotNameSlug = ( odieBotNameSlug: string ) =>
 	( {
 		type: 'HELP_CENTER_SET_ODIE_BOT_NAME_SLUG',
@@ -358,7 +352,6 @@ export type HelpCenterAction =
 			| typeof setSupportTypingStatus
 			| typeof setZendeskConnectionStatus
 			| typeof setNavigateToRoute
-			| typeof setOdieInitialPromptText
 			| typeof setHelpCenterRouterHistory
 			| typeof setIsMinimized
 			| typeof setOdieBotNameSlug

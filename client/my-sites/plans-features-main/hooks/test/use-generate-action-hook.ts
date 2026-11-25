@@ -42,6 +42,7 @@ import {
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
@@ -429,6 +430,70 @@ describe( 'useGenerateActionHook', () => {
 		expect( action.primary.text ).toBe( 'Upgrade' );
 	} );
 
+	describe( 'buttons that change the plan', () => {
+		const cases = [
+			[
+				'a longer term of the current plan',
+				PLAN_BUSINESS,
+				{ planSlug: PLAN_BUSINESS_2_YEARS },
+				'Upgrade to Biennial',
+			],
+			[
+				'a sticky upgrade',
+				PLAN_BUSINESS,
+				{ planSlug: PLAN_ECOMMERCE, isStuck: true, priceString: '$45' },
+				'Upgrade ⋅ %(priceString)s',
+			],
+			[
+				'a shorter term of the current plan',
+				PLAN_PREMIUM,
+				{ planSlug: PLAN_PREMIUM_MONTHLY, currentPlanBillingPeriod: 365, billingPeriod: 31 },
+				'Contact support',
+			],
+			[
+				'a plan for a Woo Express store',
+				PLAN_WOOEXPRESS_MEDIUM,
+				{ planSlug: PLAN_BUSINESS },
+				'Get %(plan)s',
+			],
+		];
+
+		const renderAction = ( mockSelector, sitePlanSlug, args ) => {
+			( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( { planSlug: sitePlanSlug } );
+			( useSelector as jest.Mock ).mockImplementation( mockSelector );
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { isInSignup: false, isLaunchPage: false, siteId: mockSiteId } )
+			);
+			return result.current( { ...args, availableForPurchase: true } );
+		};
+
+		it.each( cases )(
+			"disables %s for someone who isn't the plan owner",
+			( _case, sitePlanSlug, args, text ) => {
+				const action = renderAction( currentPlanIsNotOwnerMockSelector, sitePlanSlug, args );
+
+				expect( action.primary.text ).toBe( text );
+				expect( action.primary.status ).toBe( 'disabled' );
+			}
+		);
+
+		it.each( cases )( 'enables %s for the plan owner', ( _case, sitePlanSlug, args, text ) => {
+			const action = renderAction( currentPlanIsOwnerMockSelector, sitePlanSlug, args );
+
+			expect( action.primary.text ).toBe( text );
+			expect( action.primary.status ).toBe( 'enabled' );
+		} );
+
+		it( "keeps the current plan viewable for someone who isn't the plan owner", () => {
+			const action = renderAction( currentPlanIsNotOwnerMockSelector, PLAN_BUSINESS, {
+				planSlug: PLAN_BUSINESS,
+			} );
+
+			expect( action.primary.text ).toBe( 'View plan' );
+			expect( action.primary.status ).toBe( 'enabled' );
+		} );
+	} );
+
 	it( 'should handle business trial upgrade', () => {
 		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
 			planSlug: PLAN_HOSTING_TRIAL_MONTHLY,
@@ -483,11 +548,13 @@ describe( 'useGenerateActionHook', () => {
 		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
 			planSlug: PLAN_PERSONAL_MONTHLY,
 		} );
+		( useSelector as jest.Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
 
 		const { result } = renderHook( () =>
 			useGenerateActionHook( {
 				isInSignup: false,
 				isLaunchPage: false,
+				siteId: mockSiteId,
 				plansIntent: 'plans-upgrade',
 			} )
 		);
