@@ -253,6 +253,32 @@ describe( 'cart helpers', () => {
 				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
 			).rejects.toBe( connectionError );
 		} );
+
+		// A fetch that ends in a response error still makes the state the server cart.
+		test( 'addProductsToCart resolves when the cart fetch has a response error and the server cart holds every requested item', async () => {
+			mockGetCartState.mockReturnValue( { responseCart: { products: [] } } );
+			mockCartActions.reloadFromServer.mockImplementation( async () => {
+				mockGetCartState.mockReturnValue( {
+					responseCart: { products: [ { product_slug: 'personal-bundle', meta: '' } ] },
+				} );
+				throw new CartActionResponseError(
+					'A stale product cannot be purchased.',
+					'invalid-product'
+				);
+			} );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).resolves.toBeUndefined();
+		} );
+
+		test( 'replaceProductsInCart rejects when the server cart does not hold a requested item', async () => {
+			serverCartHolds( [] );
+
+			await expect(
+				replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
+			).rejects.toBe( connectionError );
+		} );
 	} );
 } );
 
