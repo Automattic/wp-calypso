@@ -2204,7 +2204,7 @@ const agencySiteSettingsDatabaseRoute = createRoute( {
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'database',
 } ).lazy( () =>
-	import( '../../sites/settings-database' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/database' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-database' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -2238,7 +2238,7 @@ const agencySiteSettingsPrimaryDataCenterRoute = createRoute( {
 		await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-primary-data-center' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/primary-data-center' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-primary-data-center' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -2257,7 +2257,7 @@ const agencySiteSettingsStaticFile404Route = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-static-file-404' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-static-file-404' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -2276,7 +2276,7 @@ const agencySiteSettingsCachingRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-caching' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/caching' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-caching' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -2363,7 +2363,7 @@ const agencySiteSettingsDefensiveModeRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-defensive-mode' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/defensive-mode' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-defensive-mode' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )

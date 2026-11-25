@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ButtonStack } from '../../components/button-stack';
+import { ButtonStack } from '../../../../components/button-stack';
 
 interface ResetPasswordModalProps {
 	siteId: number;

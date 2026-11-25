@@ -4,8 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
-import RouterLinkSummaryButton from '../../components/router-link-summary-button';
-import { hasHostingFeature } from '../../utils/site-features';
+import RouterLinkSummaryButton from '../../../../components/router-link-summary-button';
+import { hasHostingFeature } from '../../../../utils/site-features';
 import type { DataCenterOption, Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 

@@ -1224,7 +1224,7 @@ export const siteSettingsDatabaseRoute = createRoute( {
 	getParentRoute: () => siteSettingsRoute,
 	path: 'database',
 } ).lazy( () =>
-	import( '../../sites/settings-database' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/database' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-database' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1335,7 +1335,7 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 		await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-primary-data-center' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/primary-data-center' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-primary-data-center' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1360,7 +1360,7 @@ export const siteSettingsStaticFile404Route = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-static-file-404' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-static-file-404' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1385,7 +1385,7 @@ export const siteSettingsCachingRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-caching' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/caching' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-caching' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1437,7 +1437,7 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-defensive-mode' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/defensive-mode' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-defensive-mode' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

@@ -5,11 +5,11 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
-import Breadcrumbs from '../../app/breadcrumbs';
-import { Card } from '../../components/card';
-import Notice from '../../components/notice';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
+import Breadcrumbs from '../../../../../../app/breadcrumbs';
+import { Card } from '../../../../../../components/card';
+import Notice from '../../../../../../components/notice';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
 import type { DataCenterOption } from '@automattic/api-core';
 
 export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: string } ) {
