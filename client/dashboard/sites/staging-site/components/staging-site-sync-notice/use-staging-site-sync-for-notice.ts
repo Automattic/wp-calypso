@@ -5,7 +5,7 @@ import {
 	hasStagingSite,
 	hasStagingSiteSyncFailed,
 	isStagingSiteSyncing,
-} from '../../utils/site-staging-site';
+} from '../../utils';
 import type { Site, StagingSiteSyncState } from '@automattic/api-core';
 
 const FAILED_SYNC_NOTICE_FOR_MS = 24 * 60 * 60 * 1000;

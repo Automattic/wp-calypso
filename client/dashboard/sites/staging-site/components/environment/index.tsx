@@ -4,7 +4,7 @@ import {
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { staging, production } from '../icons';
+import { staging, production } from '../../../../components/icons';
 
 export type EnvironmentType = 'production' | 'staging';
 

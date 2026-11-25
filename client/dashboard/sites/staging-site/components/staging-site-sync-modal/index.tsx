@@ -23,22 +23,22 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
 import { useState, useCallback, useMemo } from 'react';
-import useRewindableActivityLogQuery from '../../../data/activity-log/use-rewindable-activity-log-query';
-import { SUCCESSFUL_BACKUP_ACTIVITIES } from '../../../lib/jetpack/backup-utils';
-import FileBrowser from '../../../my-sites/backup/backup-contents-page/file-browser';
+import useRewindableActivityLogQuery from '../../../../../data/activity-log/use-rewindable-activity-log-query';
+import { SUCCESSFUL_BACKUP_ACTIVITIES } from '../../../../../lib/jetpack/backup-utils';
+import FileBrowser from '../../../../../my-sites/backup/backup-contents-page/file-browser';
 import {
 	FileBrowserProvider,
 	useFileBrowserContext,
-} from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
-import { useAnalytics } from '../../app/analytics';
-import { useIntlLocale, useLocale } from '../../app/locale';
-import { ButtonStack } from '../../components/button-stack';
-import { CardDivider } from '../../components/card';
-import Environment, { EnvironmentType } from '../../components/environment';
-import InlineSupportLink from '../../components/inline-support-link';
-import { Notice } from '../../components/notice';
-import { wpcomLink } from '../../utils/link';
-import type { FileBrowserConfig } from '../../../my-sites/backup/backup-contents-page/file-browser';
+} from '../../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { useAnalytics } from '../../../../app/analytics';
+import { useIntlLocale, useLocale } from '../../../../app/locale';
+import { ButtonStack } from '../../../../components/button-stack';
+import { CardDivider } from '../../../../components/card';
+import InlineSupportLink from '../../../../components/inline-support-link';
+import { Notice } from '../../../../components/notice';
+import { wpcomLink } from '../../../../utils/link';
+import Environment, { EnvironmentType } from '../environment';
+import type { FileBrowserConfig } from '../../../../../my-sites/backup/backup-contents-page/file-browser';
 import type { Field } from '@wordpress/dataviews';
 
 // File browser config used for granular selection

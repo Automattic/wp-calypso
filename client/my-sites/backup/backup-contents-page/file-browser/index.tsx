@@ -18,7 +18,7 @@ export interface FileBrowserConfig {
 	showFileCard?: boolean;
 	/**
 	 * @deprecated This prop will be removed once the new Staging Sync Modal
-	 * in the V2 dashboard (client/dashboard/sites/staging-site-sync-modal/index.tsx) is live.
+	 * in the V2 dashboard (client/dashboard/sites/staging-site/components/staging-site-sync-modal/index.tsx) is live.
 	 * The backup time display is now handled directly in the modal components.
 	 */
 	showBackupTime?: boolean;
@@ -40,7 +40,7 @@ interface FileBrowserProps {
 	restoreDisabledHint?: string;
 	/**
 	 * @deprecated This prop will be removed once the new Staging Sync Modal
-	 * in the V2 dashboard (client/dashboard/sites/staging-site-sync-modal/index.tsx) is live.
+	 * in the V2 dashboard (client/dashboard/sites/staging-site/components/staging-site-sync-modal/index.tsx) is live.
 	 * The backup time display is now handled directly in the modal components.
 	 */
 	displayBackupDate?: string;
@@ -84,7 +84,7 @@ function FileBrowser( {
 	return (
 		<div>
 			{ ( fileBrowserConfig?.showHeader ?? true ) && <FileBrowserHeader rewindId={ rewindId } /> }
-			{ /* @TODO: remove this block once the new Staging Sync Modal in the V2 dashboard (client/dashboard/sites/staging-site-sync-modal/index.tsx) is live */ }
+			{ /* @TODO: remove this block once the new Staging Sync Modal in the V2 dashboard (client/dashboard/sites/staging-site/components/staging-site-sync-modal/index.tsx) is live */ }
 			{ fileBrowserConfig?.showBackupTime && displayBackupDate && (
 				<HStack alignment="left" spacing={ 1 }>
 					<Text

@@ -6,12 +6,12 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
-import useRewindableActivityLogQuery from '../../../../data/activity-log/use-rewindable-activity-log-query';
-import { render } from '../../../test-utils';
+import useRewindableActivityLogQuery from '../../../../../../data/activity-log/use-rewindable-activity-log-query';
+import { render } from '../../../../../test-utils';
 import StagingSiteSyncModal from '../index';
 import type { Site } from '@automattic/api-core';
 
-vi.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', () => ( {
+vi.mock( '../../../../../../data/activity-log/use-rewindable-activity-log-query', () => ( {
 	default: vi.fn( () => ( {
 		data: [
 			{
@@ -23,18 +23,18 @@ vi.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', () =
 	} ) ),
 } ) );
 
-vi.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );
 
-vi.mock( '../../../components/inline-support-link', () => {
+vi.mock( '../../../../../components/inline-support-link', () => {
 	return { default: vi.fn( ( { children } ) => <button>{ children }</button> ) };
 } );
 
 // Mock file browser context with a real Provider using state so updates re-render the tree
 vi.mock(
-	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
+	'../../../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
 	async () => {
 		const { createContext, useContext, createElement, useState } =
 			await vi.importActual< typeof import( 'react' ) >( 'react' );

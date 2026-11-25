@@ -1,15 +1,15 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { useIntlLocale } from '../../app/locale';
-import { useFormattedTime } from '../../components/formatted-time';
-import { Notice } from '../../components/notice';
-import { formatDate } from '../../utils/datetime';
+import { useAnalytics } from '../../../../app/analytics';
+import { useIntlLocale } from '../../../../app/locale';
+import { useFormattedTime } from '../../../../components/formatted-time';
+import { Notice } from '../../../../components/notice';
+import { formatDate } from '../../../../utils/datetime';
 import {
 	STAGING_SITE_SYNC_TIMEOUT_MS,
 	hasStagingSiteSyncFailed,
 	hasStagingSiteSyncTimedOut,
-} from '../../utils/site-staging-site';
+} from '../../utils';
 import type { Site, StagingSiteSyncState } from '@automattic/api-core';
 
 export { useStagingSiteSyncForNotice } from './use-staging-site-sync-for-notice';

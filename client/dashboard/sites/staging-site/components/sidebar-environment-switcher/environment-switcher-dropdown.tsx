@@ -7,10 +7,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, plus } from '@wordpress/icons';
-import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-link';
-import Environment from '../../components/environment';
-import RouterLinkMenuItem from '../../components/router-link-menu-item';
-import { canManageSite, canCreateStagingSite } from '../features';
+import useBuildCurrentRouteLink from '../../../../app/hooks/use-build-current-route-link';
+import RouterLinkMenuItem from '../../../../components/router-link-menu-item';
+import { canManageSite, canCreateStagingSite } from '../../../features';
+import Environment from '../environment';
 import type { Site } from '@automattic/api-core';
 
 const StagingSiteActionButton = ( {

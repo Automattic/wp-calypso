@@ -14,14 +14,14 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { useHelpCenter } from '../../app/help-center';
+import { useAnalytics } from '../../../app/analytics';
+import { useHelpCenter } from '../../../app/help-center';
 import {
 	isAtomicTransferInProgress,
 	isAtomicTransferredSite,
-} from '../../utils/site-atomic-transfers';
-import { getProductionSiteId, getStagingSiteId } from '../../utils/site-staging-site';
-import type { EnvironmentType } from '../../components/environment';
+} from '../../../utils/site-atomic-transfers';
+import { getProductionSiteId, getStagingSiteId } from '../utils';
+import type { EnvironmentType } from '../components/environment';
 import type { Site } from '@automattic/api-core';
 
 export default function useStagingSite( site: Site ) {
