@@ -4,6 +4,7 @@
 const path = require( 'node:path' );
 
 const directories = [
+	'a8c-for-agencies',
 	'blocks',
 	'boot',
 	'components',
@@ -11,6 +12,7 @@ const directories = [
 	'data',
 	'document',
 	'hosting',
+	'jetpack-cloud',
 	'jetpack-connect',
 	'layout',
 	'lib',
