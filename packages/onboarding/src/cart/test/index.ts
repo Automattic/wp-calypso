@@ -80,9 +80,21 @@ describe( 'cart helpers', () => {
 		mockCartActions.replaceProductsInCart.mockRejectedValue( cartError );
 	} );
 
-	afterEach( () => vi.clearAllMocks() );
+	afterEach( () => {
+		vi.clearAllMocks();
+		mockGetCartState.mockReset();
+	} );
 
-	test( 'addProductsToCart rejects with the cart error when throwOnError is set', async () => {
+	// The cart holds every requested item, so only the error type can make the helper reject.
+	function cartHoldsRequestedItems() {
+		mockGetCartState.mockReturnValue( {
+			responseCart: { products: [ { product_slug: 'personal-bundle', meta: '' } ] },
+		} );
+	}
+
+	test( 'addProductsToCart rejects with an error that is not a cart action error, even when the cart holds every requested item', async () => {
+		cartHoldsRequestedItems();
+
 		await expect(
 			addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
 		).rejects.toBe( cartError );
@@ -95,7 +107,9 @@ describe( 'cart helpers', () => {
 		expect( mockCartActions.addProductsToCart ).toHaveBeenCalled();
 	} );
 
-	test( 'replaceProductsInCart rejects with the cart error when throwOnError is set', async () => {
+	test( 'replaceProductsInCart rejects with an error that is not a cart action error, even when the cart holds every requested item', async () => {
+		cartHoldsRequestedItems();
+
 		await expect(
 			replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
 		).rejects.toBe( cartError );
