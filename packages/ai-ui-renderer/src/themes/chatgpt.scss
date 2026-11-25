@@ -19,6 +19,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+@use '../theme';
+
 /* Token values adapted from OpenAI Apps SDK UI under the MIT license above. */
 [data-ai-ui-theme='chatgpt'] {
 	--ai-ui-theme-font: var(
@@ -66,3 +68,5 @@ SOFTWARE.
 	--ai-ui-theme-heading-3-size: var( --font-heading-xs-size, 1rem );
 	--ai-ui-theme-heading-3-line-height: var( --font-heading-xs-line-height, 1.5rem );
 }
+
+@include theme.preset( chatgpt );

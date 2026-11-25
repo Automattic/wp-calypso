@@ -44,6 +44,7 @@ main .ai-ui-renderer .ai-ui-renderer__image--header {
 .ai-ui-renderer__modal {
 	z-index: 1000;
 }
+// A host's own preset. Extending ChatGPT's also extends its `theme.preset()` rules.
 [data-ai-ui-theme='another-client'] {
 	@extend [data-ai-ui-theme='chatgpt'];
 	--ai-ui-theme-font: Georgia, serif;

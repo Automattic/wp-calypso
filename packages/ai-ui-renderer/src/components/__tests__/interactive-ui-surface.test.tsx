@@ -262,6 +262,33 @@ it( 'keeps an open modal in sync with its surface theme', async () => {
 	);
 } );
 
+it( 'keeps an open modal in sync when only the host changes its theme', async () => {
+	const surface = createSurface( [
+		{ id: 'root', component: 'Modal', trigger: 'trigger', content: 'details' },
+		{ id: 'trigger', component: 'Button', child: 'label', action: { event: { name: 'open' } } },
+		{ id: 'label', component: 'Text', text: 'Open details' },
+		{ id: 'details', component: 'Text', text: 'About this site' },
+	] );
+
+	render( <InteractiveUiSurface surface={ surface } theme="chatgpt" /> );
+	const trigger = screen.getByRole( 'button', { name: 'Open details' } );
+	const root = trigger.closest< HTMLElement >( '.ai-ui-renderer' );
+
+	fireEvent.click( trigger );
+
+	const dialog = await screen.findByRole( 'dialog', { name: 'Details' } );
+	const overlay = dialog.closest< HTMLElement >( '.ai-ui-renderer__modal' );
+
+	expect( screen.getByText( 'About this site' ).closest( '.ai-ui-renderer' ) ).toHaveAttribute(
+		'data-ai-ui-theme',
+		'chatgpt'
+	);
+
+	root?.style.setProperty( 'color-scheme', 'dark' );
+
+	await waitFor( () => expect( overlay?.style.getPropertyValue( 'color-scheme' ) ).toBe( 'dark' ) );
+} );
+
 it( 'titles a modal with its accessibility label', async () => {
 	const surface = createSurface( [
 		{

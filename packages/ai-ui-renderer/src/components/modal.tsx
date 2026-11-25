@@ -23,25 +23,26 @@ export const Modal = createComponentImplementation(
 		const [ isOpen, setIsOpen ] = useState( false );
 		const triggerRef = useRef< HTMLElement | null >( null );
 		const popupRef = useRef< HTMLDivElement | null >( null );
-		const overlayRef = useRef< HTMLDivElement | null >( null );
+		// State rather than a ref, since the portal can mount after the render that opens it.
+		const [ overlay, setOverlay ] = useState< HTMLDivElement | null >( null );
 		const { className, theme, rootRef } = useInteractiveUiSurface();
 
 		// The modal renders outside the host, so it takes the theme its surface resolved.
 		const copySurfaceTheme = useCallback(
-			( overlay: HTMLDivElement | null ) => {
-				overlayRef.current = overlay;
-				if ( overlay && rootRef?.current ) {
-					copyTheme( rootRef.current, overlay );
+			( element: HTMLDivElement | null ) => {
+				setOverlay( element );
+				if ( element && rootRef?.current ) {
+					copyTheme( rootRef.current, element );
 				}
 			},
 			[ rootRef ]
 		);
 
 		useEffect( () => {
-			if ( isOpen && rootRef?.current && overlayRef.current ) {
-				return observeTheme( rootRef.current, overlayRef.current );
+			if ( rootRef?.current && overlay ) {
+				return observeTheme( rootRef.current, overlay );
 			}
-		}, [ isOpen, rootRef, theme, className ] );
+		}, [ overlay, rootRef, theme, className ] );
 
 		return (
 			<Dialog.Root open={ isOpen } onOpenChange={ setIsOpen }>
@@ -86,7 +87,9 @@ export const Modal = createComponentImplementation(
 						</Dialog.Action>
 					</Dialog.Header>
 					<Dialog.Content>
-						<div className="ai-ui-renderer">{ buildChild( props.content ) }</div>
+						<div className="ai-ui-renderer" data-ai-ui-theme={ theme || undefined }>
+							{ buildChild( props.content ) }
+						</div>
 					</Dialog.Content>
 				</Dialog.Popup>
 			</Dialog.Root>

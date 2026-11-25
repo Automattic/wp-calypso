@@ -19,7 +19,8 @@ state, which the components that change something read: inputs, and buttons that
 Style colors with A2UI's `--a2ui-*` tokens and their defaults, keeping `THEME_PROPERTIES` in
 `utils/theme.ts` in sync with `style.scss`. Keep host-specific chat isolation, token values and
 modal and chart tooltip stacking rules in consumers. Optional shared theme presets live in
-`src/themes/`; their `--ai-ui-theme-*` tokens map onto the components through `theme.scss`.
+`src/themes/`; each includes `theme.scss`'s `preset()` mixin for its own name, which maps its
+`--ai-ui-theme-*` tokens onto the components.
 Keep the default WordPress appearance unchanged when no theme is selected. The host selects
 the theme; MCP client detection stays outside this package.
 

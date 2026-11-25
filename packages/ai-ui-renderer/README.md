@@ -87,12 +87,12 @@ The shared `style.scss` includes their CSS regardless of the selected theme.
 
 ```json
 {
-  "id": "sites",
-  "component": "Grid",
-  "catalogId": "urn:automattic:ai-ui-renderer:layouts:v1",
-  "minColumnWidth": 248,
-  "gap": "lg",
-  "children": ["first-site", "second-site"]
+	"id": "sites",
+	"component": "Grid",
+	"catalogId": "urn:automattic:ai-ui-renderer:layouts:v1",
+	"minColumnWidth": 248,
+	"gap": "lg",
+	"children": [ "first-site", "second-site" ]
 }
 ```
 
@@ -344,18 +344,33 @@ No theme preserves the WordPress appearance. The host chooses a theme from its M
 information and may update it while a surface or modal is open. The renderer does not inspect
 user agents, tool arguments or transport globals. Unknown clients should use the default theme.
 
-`theme` accepts a CSS preset name, rather than a fixed list of clients. Add another preset by
-setting `--ai-ui-theme-*` variables on `[data-ai-ui-theme="your-client"]` and importing its CSS.
-It can live in a consumer or be shared alongside `themes/chatgpt.scss`. Use the same contract:
+`theme` accepts a preset name, rather than a fixed list of clients. A preset sets the
+`--ai-ui-theme-*` variables below on `[data-ai-ui-theme="your-client"]` and includes the
+`preset()` mixin for its name, which applies them to the components. A theme whose preset isn't
+loaded keeps the WordPress appearance. A preset can live in a consumer or be shared alongside
+`themes/chatgpt.scss`:
 
-| Tokens (prefix `--ai-ui-theme-`) | Purpose |
-| --- | --- |
-| `font`, `font-size`, `line-height`, `small-size`, `small-line-height` | Body and control typography |
-| `heading-1-size`, `heading-1-line-height`, `heading-2-size`, `heading-2-line-height`, `heading-3-size`, `heading-3-line-height` | Markdown headings |
-| `text`, `text-secondary`, `text-disabled`, `danger` | Text and validation colors |
-| `surface`, `input`, `inverse`, `on-inverse`, `hover` | Cards, inputs and primary actions |
-| `border`, `control-border`, `ring` | Borders and focus indicators |
-| `control-height`, `control-radius`, `card-radius`, `space` | Component geometry and spacing unit |
+```scss
+@use '@automattic/ai-ui-renderer/theme.scss';
+
+[data-ai-ui-theme='your-client'] {
+	--ai-ui-theme-text: #1e1e1e;
+	// …and the other tokens below.
+}
+
+@include theme.preset( your-client );
+```
+
+Use the same contract:
+
+| Tokens (prefix `--ai-ui-theme-`)                                                                                                | Purpose                             |
+| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| `font`, `font-size`, `line-height`, `small-size`, `small-line-height`                                                           | Body and control typography         |
+| `heading-1-size`, `heading-1-line-height`, `heading-2-size`, `heading-2-line-height`, `heading-3-size`, `heading-3-line-height` | Markdown headings                   |
+| `text`, `text-secondary`, `text-disabled`, `danger`                                                                             | Text and validation colors          |
+| `surface`, `input`, `inverse`, `on-inverse`, `hover`                                                                            | Cards, inputs and primary actions   |
+| `border`, `control-border`, `ring`                                                                                              | Borders and focus indicators        |
+| `control-height`, `control-radius`, `card-radius`, `space`                                                                      | Component geometry and spacing unit |
 
 The optional ChatGPT preset adapts the MIT-licensed OpenAI Apps SDK UI tokens at
 [`0f00143c7a639906f1621fe58e1b6be7b5bea46d`](https://github.com/openai/apps-sdk-ui/tree/0f00143c7a639906f1621fe58e1b6be7b5bea46d/src/styles).

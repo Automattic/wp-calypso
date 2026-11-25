@@ -46,13 +46,17 @@
 
 .ai-ui-renderer__grid,
 .ai-ui-renderer__stack {
+	// Each layout sets its own gap, so one with an unknown size doesn't take its parent's.
+	--ai-ui-layout-gap: 16px;
 	gap: var( --ai-ui-layout-gap );
 
 	> * {
 		min-width: 0;
 	}
 
-	@each $name, $size in ( none: 0, xs: 4px, sm: 8px, md: 12px, lg: 16px, xl: 24px ) {
+	// The grid's `calc()` needs a length, which a unitless 0 isn't.
+	// stylelint-disable-next-line length-zero-no-unit
+	@each $name, $size in ( none: 0px, xs: 4px, sm: 8px, md: 12px, lg: 16px, xl: 24px ) {
 		&[data-gap='#{$name}'] {
 			--ai-ui-layout-gap: #{$size};
 		}
