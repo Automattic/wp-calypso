@@ -73,6 +73,11 @@
 		height: 1.25rem;
 		margin: 0;
 	}
+
+	.reader-site-notification-settings__popout-toggle
+		.components-toggle-control:has(.components-toggle-control__help) {
+		height: auto;
+	}
 }
 
 .reader-site-notification-settings__popout-toggle,
@@ -92,8 +97,8 @@
 	}
 }
 
-.reader-site-notification-settings__popout-toggle .notify-new-posts-toggle__hint {
-	width: 220px;
+.reader-site-notification-settings__popout-toggle .components-toggle-control__help {
+	max-width: 220px;
 }
 
 .reader-site-notification-settings__popout-toggle .email-new-posts-toggle__hint,

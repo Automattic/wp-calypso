@@ -3,11 +3,12 @@
  */
 import { Reader } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { vi } from 'vitest';
+import { getSubscribedNewsletterCategoriesKey } from 'calypso/data/newsletter-categories/use-subscribed-newsletter-categories-query';
 import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
@@ -51,7 +52,8 @@ const renderReaderSiteSubscription = (
 		},
 		sites: { items: [] },
 		siteSettings: { items: [] },
-	}
+	},
+	client = queryClient
 ) => {
 	const store = mockStore( storeValue );
 	act( () => {
@@ -59,7 +61,7 @@ const renderReaderSiteSubscription = (
 			wrapper: ( props ) => {
 				return (
 					<Provider store={ store }>
-						<QueryClientProvider client={ queryClient }>
+						<QueryClientProvider client={ client }>
 							<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Reader }>
 								<SiteSubscriptionContext.Provider value={ siteSubscriptionContextValue }>
 									{ props.children }
@@ -74,6 +76,64 @@ const renderReaderSiteSubscription = (
 };
 
 describe( 'ReaderSiteSubscription', () => {
+	it( 'renders separators only for visible subscription sections', async () => {
+		const client = new QueryClient( {
+			defaultOptions: { queries: { staleTime: Infinity, retry: false } },
+		} );
+		const queryKey = getSubscribedNewsletterCategoriesKey( 123 );
+		const disabledCategories = { enabled: false, newsletterCategories: [] };
+		client.setQueryData( queryKey, disabledCategories );
+
+		renderReaderSiteSubscription(
+			mockSiteSubscriptionContext( {
+				delivery_methods: {
+					email: {
+						send_posts: true,
+						post_delivery_frequency: Reader.EmailDeliveryFrequency.Instantly,
+					},
+				},
+			} ),
+			undefined,
+			client
+		);
+
+		expect(
+			screen.queryByRole( 'heading', { name: 'Newsletter categories' } )
+		).not.toBeInTheDocument();
+		expect( screen.getAllByRole( 'separator' ) ).toHaveLength( 1 );
+
+		act( () => {
+			client.setQueryData( queryKey, {
+				enabled: true,
+				newsletterCategories: [
+					{
+						id: 1,
+						name: 'News',
+						slug: 'news',
+						description: '',
+						parent: 0,
+						subscribed: true,
+					},
+				],
+			} );
+		} );
+
+		expect( await screen.findByRole( 'heading', { name: 'Newsletter categories' } ) ).toBeVisible();
+		expect( screen.getByRole( 'checkbox', { name: 'News' } ) ).toBeChecked();
+		expect( screen.getAllByRole( 'separator' ) ).toHaveLength( 2 );
+
+		act( () => {
+			client.setQueryData( queryKey, disabledCategories );
+		} );
+
+		await waitFor( () => {
+			expect(
+				screen.queryByRole( 'heading', { name: 'Newsletter categories' } )
+			).not.toBeInTheDocument();
+		} );
+		expect( screen.getAllByRole( 'separator' ) ).toHaveLength( 1 );
+	} );
+
 	// Tests that the component renders with default props and no errors
 	it( 'should render with default props and no errors', () => {
 		const date = Intl.DateTimeFormat( 'en', { dateStyle: 'medium' } ).format(

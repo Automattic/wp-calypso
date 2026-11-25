@@ -63,6 +63,7 @@ const ReaderSiteSubscription = ( { transition }: ReaderSiteSubscriptionProps ) =
 	return (
 		<div className="site-subscription-page">
 			<Button
+				__next40pxDefaultSize
 				className="site-subscription-page__back-button"
 				onClick={ () => navigate( Path.ManageAllSubscriptions ) }
 				icon={ <Gridicon icon="chevron-left" size={ 12 } /> }

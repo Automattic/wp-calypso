@@ -280,10 +280,7 @@ const SiteSubscriptionDetails = ( {
 					) }
 
 					{ !! deliveryMethods.email?.send_posts && (
-						<>
-							<SubscribeToNewsletterCategories siteId={ blogId } />
-							<hr className="subscriptions__separator" />
-						</>
+						<SubscribeToNewsletterCategories siteId={ blogId } />
 					) }
 
 					{ /* TODO: Move to SiteSubscriptionInfo component when payment details are in. */ }
