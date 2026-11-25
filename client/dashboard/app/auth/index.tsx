@@ -1,7 +1,7 @@
 import { fetchUser, isWpError, logoutUser, User } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { setUser } from '@automattic/calypso-sentry';
+import { captureException, setUser } from '@automattic/calypso-sentry';
 import { isSupportUserSession } from '@automattic/calypso-support-session';
 import { magnificentNonEnLocales } from '@automattic/i18n-utils';
 import {
@@ -429,19 +429,64 @@ async function endWpcomSession( logoutUrl: string ): Promise< string > {
 	}
 }
 
+const SESSION_CLEANUP_TIMEOUT_MS = 3000;
+
+/**
+ * Leaves the dashboard once the session is over, dropping what this browser stored for
+ * the user. The dashboard cannot render without a session, so this is a full page load.
+ *
+ * It never rejects and always navigates: someone whose session has already ended must
+ * not be left on a page they cannot use because the cleanup failed or stalled.
+ *
+ * `leave` defaults to a plain page load. Pass one to navigate another way, e.g. past
+ * the router's blockers.
+ */
+export async function redirectAfterSessionEnd(
+	destination: string,
+	leave: ( href: string ) => void = ( href ) => {
+		window.location.href = href;
+	}
+): Promise< void > {
+	let timeout: ReturnType< typeof setTimeout > | undefined;
+	await Promise.race( [
+		clearLocalSession(),
+		new Promise( ( resolve ) => {
+			timeout = setTimeout( resolve, SESSION_CLEANUP_TIMEOUT_MS );
+		} ),
+	] );
+	clearTimeout( timeout );
+
+	leave( destination );
+}
+
+// Each step runs on its own, so one failing doesn't skip the rest: leaving matters more
+// than what is left behind.
+async function clearLocalSession(): Promise< void > {
+	try {
+		disablePersistQueryClient();
+	} catch ( error ) {
+		captureException( error );
+	}
+
+	try {
+		clearQueryClient();
+	} catch ( error ) {
+		captureException( error );
+	}
+
+	try {
+		// Dynamically import Calypso v1 cleanup code because it includes a number
+		// of dependencies we don't want included in the Hosting Dashboard bundle.
+		const { disablePersistence, clearStore } = await import( 'calypso/lib/user/store' );
+		disablePersistence();
+		await clearStore();
+	} catch ( error ) {
+		captureException( error );
+	}
+}
+
 export async function logout( user: User ): Promise< void > {
-	const destination = await endSession( user );
-
-	disablePersistQueryClient();
-	clearQueryClient();
-
-	// Dynamically import Calypso v1 cleanup code because it includes a number
-	// of dependencies we don't want included in the Hosting Dashboard bundle.
-	const { disablePersistence, clearStore } = await import( 'calypso/lib/user/store' );
-	disablePersistence();
-	clearStore();
-
-	window.location.href = destination;
+	await redirectAfterSessionEnd( await endSession( user ) );
 }
 
 /**
