@@ -13,15 +13,13 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DashboardOptInInvitation from '..';
 
 vi.mock( '@automattic/calypso-config', async () => {
-	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
-		'@automattic/calypso-config'
-	);
-	const config = ( key: string ) => actual( key );
-	return {
-		default: Object.assign( config, actual, {
-			isEnabled: ( flag: string ) => flag === 'a4a-dashboard-opt-in' || actual.isEnabled( flag ),
-		} ),
-	};
+	const { default: actual } = await vi.importActual<
+		typeof import( '@automattic/calypso-config' )
+	>( '@automattic/calypso-config' );
+	const config = Object.assign( ( key: string ) => actual( key ), actual, {
+		isEnabled: ( flag: string ) => flag === 'a4a-dashboard-opt-in' || actual.isEnabled( flag ),
+	} );
+	return { ...config, default: config };
 } );
 
 const API = 'https://public-api.wordpress.com';

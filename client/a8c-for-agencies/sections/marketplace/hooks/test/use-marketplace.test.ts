@@ -13,12 +13,10 @@ import {
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
 
 vi.mock( '@automattic/calypso-config', () => {
-	const config = vi.fn();
-	return {
-		default: Object.assign( config, {
-			isEnabled: ( flag: string ) => [ 'a4a-bd-checkout', 'a4a-bd-term-pricing' ].includes( flag ),
-		} ),
-	};
+	const config = Object.assign( vi.fn(), {
+		isEnabled: ( flag: string ) => [ 'a4a-bd-checkout', 'a4a-bd-term-pricing' ].includes( flag ),
+	} );
+	return { ...config, default: config };
 } );
 
 vi.mock( 'calypso/a8c-for-agencies/data/marketplace/use-products-query', () => ( {

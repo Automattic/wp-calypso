@@ -10,7 +10,8 @@ import wpcom from 'calypso/lib/wp';
 import useFetchBenchmarksAggregates from '../use-fetch-benchmarks-aggregates';
 import type { ReactNode } from 'react';
 
-vi.mock( 'react-redux', () => ( {
+vi.mock( 'react-redux', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( 'react-redux' ) >() ),
 	useSelector: vi.fn(),
 } ) );
 

@@ -10,15 +10,15 @@ import useClientCheckout from '../../../hooks/use-client-checkout';
 import ClientCheckoutV2 from '../index';
 import type { ReactNode } from 'react';
 
-const passthrough = ( { children }: { children?: ReactNode } ) => <>{ children }</>;
+const { passthrough } = vi.hoisted( () => ( {
+	passthrough: ( { children }: { children?: ReactNode } ) => <>{ children }</>,
+} ) );
 vi.mock( '@automattic/calypso-stripe', () => ( { StripeHookProvider: passthrough } ) );
 vi.mock( '@automattic/composite-checkout', () => ( { CheckoutErrorBoundary: passthrough } ) );
 vi.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => ( {
-	...passthrough,
 	default: passthrough,
 } ) );
 vi.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => ( {
-	...passthrough,
 	default: passthrough,
 } ) );
 vi.mock( 'calypso/a8c-for-agencies/components/a4a-logo', () => ( { default: () => null } ) );

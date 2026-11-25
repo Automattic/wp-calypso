@@ -16,15 +16,17 @@ import SitesOverview from '../index';
 
 vi.mock( '@automattic/viewport' );
 
-window.IntersectionObserver = vi.fn( () => ( {
-	observe: vi.fn(),
-	disconnect: vi.fn(),
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	takeRecords: vi.fn(),
-	unobserve: vi.fn(),
-} ) );
+window.IntersectionObserver = vi.fn( function () {
+	return {
+		observe: vi.fn(),
+		disconnect: vi.fn(),
+		root: null,
+		rootMargin: '',
+		thresholds: [],
+		takeRecords: vi.fn(),
+		unobserve: vi.fn(),
+	};
+} );
 
 describe( '<SitesOverview>', () => {
 	const initialState = {

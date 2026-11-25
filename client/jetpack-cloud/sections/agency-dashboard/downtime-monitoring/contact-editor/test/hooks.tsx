@@ -4,6 +4,7 @@
 
 import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
+import { useSelector } from 'calypso/state';
 import {
 	useContactModalTitleAndSubtitle,
 	useContactFormInputHelpText,
@@ -68,6 +69,7 @@ describe( 'useContactFormInputHelpText', () => {
 	} );
 } );
 
+vi.mock( 'calypso/state', { spy: true } );
 vi.mock( 'calypso/data/geo/use-geolocation-query', () => ( {
 	useGeoLocationQuery: vi.fn( () => ( { data: { country_short: 'US' } } ) ),
 } ) );
@@ -80,7 +82,7 @@ describe( 'useGetSupportedSMSCountries', () => {
 		];
 
 		// Mock the useSelector function to return the countries
-		vi.spyOn( require( 'calypso/state' ), 'useSelector' ).mockReturnValue( countries );
+		vi.mocked( useSelector ).mockReturnValue( countries );
 
 		const { result } = renderHook( () => useGetSupportedSMSCountries() );
 

@@ -4,6 +4,8 @@
 
 import { renderHook } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
+import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
+import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import useSitesMenuItems from '../use-sites-menu-items';
 
 vi.mock( 'i18n-calypso', () =>
@@ -18,11 +20,8 @@ vi.mock( 'calypso/my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: ( link: string, path: string ) => link === path,
 } ) );
 
-const mockUseFetchPendingSites = (
-	await import( 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites' )
-).default;
-const mockUseNoActiveSite = ( await import( 'calypso/a8c-for-agencies/hooks/use-no-active-site' ) )
-	.default;
+const mockUseFetchPendingSites = useFetchPendingSites as Mock;
+const mockUseNoActiveSite = useNoActiveSite as Mock;
 
 const pendingSite = {
 	features: {

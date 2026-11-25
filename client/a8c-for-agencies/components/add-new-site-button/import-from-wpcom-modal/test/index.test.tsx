@@ -11,9 +11,10 @@ import agencyReducer from 'calypso/state/a8c-for-agencies/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ImportFromWPCOMModal from '..';
 
-vi.mock( 'calypso/lib/wp', () =>
-	( ( m ) => ( { ...m, default: m } ) )( { req: { post: vi.fn() } } )
-);
+vi.mock( 'calypso/lib/wp', () => ( {
+	default: { req: { post: vi.fn() } },
+	wpcomJetpackLicensing: { req: { post: vi.fn() } },
+} ) );
 vi.mock( 'calypso/a8c-for-agencies/hooks/use-minimize-help-center-on-mount', () => ( {
 	default: vi.fn(),
 } ) );

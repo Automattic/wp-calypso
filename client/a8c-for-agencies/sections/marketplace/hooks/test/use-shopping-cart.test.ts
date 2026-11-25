@@ -9,12 +9,10 @@ import { SELECTED_ITEMS_SESSION_STORAGE_KEY } from '../../lib/shopping-cart-stor
 import useShoppingCart from '../use-shopping-cart';
 
 vi.mock( '@automattic/calypso-config', () => {
-	const config = vi.fn();
-	return {
-		default: Object.assign( config, {
-			isEnabled: ( flag: string ) => flag === 'a4a-bd-checkout',
-		} ),
-	};
+	const config = Object.assign( vi.fn(), {
+		isEnabled: ( flag: string ) => flag === 'a4a-bd-checkout',
+	} );
+	return { ...config, default: config };
 } );
 
 // One array across renders, as the query returns: the cart restores whenever it changes.

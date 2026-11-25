@@ -43,15 +43,15 @@ vi.mock( 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart', ()
 	} ),
 } ) );
 
-const passthrough = ( { children }: { children?: ReactNode } ) => <>{ children }</>;
+const { passthrough } = vi.hoisted( () => ( {
+	passthrough: ( { children }: { children?: ReactNode } ) => <>{ children }</>,
+} ) );
 vi.mock( '@automattic/calypso-stripe', () => ( { StripeHookProvider: passthrough } ) );
 vi.mock( '@automattic/composite-checkout', () => ( { CheckoutErrorBoundary: passthrough } ) );
 vi.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => ( {
-	...passthrough,
 	default: passthrough,
 } ) );
 vi.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => ( {
-	...passthrough,
 	default: passthrough,
 } ) );
 vi.mock( 'calypso/my-sites/checkout/src/components/cart-message-cleanup', () => ( {

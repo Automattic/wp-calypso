@@ -68,7 +68,7 @@ describe( 'updateSitesDashboardUrl returns correct URL', () => {
 			...defaultSitesParams,
 		} );
 
-		expect( setCategoryMock ).toHaveBeenCalledTimes( 1 );
+		expect( setCategoryMock ).not.toHaveBeenCalled();
 		expect( updatedUrl ).toBe( '/sites/overview/elegantsuperbly.wpcomstaging.com/jetpack-backup' );
 	} );
 

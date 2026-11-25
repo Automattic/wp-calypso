@@ -18,6 +18,7 @@ vi.mock( '@automattic/calypso-config', () => {
 } );
 vi.mock( '@automattic/calypso-router', () => ( { __esModule: true, default: vi.fn() } ) );
 vi.mock( 'calypso/controller/index.web', () => ( {
+	clientRouter: vi.fn(),
 	redirectLoggedOut: vi.fn(),
 	setSectionMiddleware: () => vi.fn(),
 } ) );

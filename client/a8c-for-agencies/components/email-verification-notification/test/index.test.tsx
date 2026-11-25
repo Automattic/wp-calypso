@@ -5,6 +5,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type MockedFunction, vi } from 'vitest';
+import { resendThrottleRetryAfter } from 'calypso/dashboard/utils/email-verification-resend';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import EmailVerificationNotification from '..';
 import type { ReactNode } from 'react';
@@ -224,10 +225,7 @@ describe( 'EmailVerificationNotification', () => {
 	} );
 
 	it( 'holds the cooldown on a throttled error', async () => {
-		const { resendThrottleRetryAfter } = jest.requireMock(
-			'calypso/dashboard/utils/email-verification-resend'
-		);
-		resendThrottleRetryAfter.mockReturnValue( 600 );
+		vi.mocked( resendThrottleRetryAfter ).mockReturnValue( 600 );
 		mockSendVerificationEmail.mockRejectedValue( {
 			error: 'throttled',
 			data: { retry_after: 600 },
