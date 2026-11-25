@@ -15,7 +15,7 @@ import {
 	AI_SITE_BUILDER_FLOW,
 } from '../';
 import wpcomRequest from '../wpcom-request';
-import cartManagerClient from './create-cart-manager-client';
+import cartManagerClient, { wpcomGetCart } from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type {
 	CartKey,
@@ -322,17 +322,18 @@ type CartCheck = {
 	errorMessages: ResponseCartMessage[];
 };
 
+function getCartFromManager( cartKey: CartKey ): ResponseCart | undefined {
+	try {
+		return cartManagerClient.forCartKey( cartKey ).getState().responseCart;
+	} catch {
+		return undefined;
+	}
+}
+
 function checkCartForRequestedItems(
-	cartKey: CartKey,
+	responseCart: ResponseCart | undefined,
 	requestedItems: MinimalRequestCartProduct[]
 ): CartCheck {
-	let responseCart: ResponseCart | undefined;
-	try {
-		responseCart = cartManagerClient.forCartKey( cartKey ).getState().responseCart;
-	} catch {
-		responseCart = undefined;
-	}
-
 	const cartProducts = responseCart?.products;
 	if ( ! Array.isArray( cartProducts ) ) {
 		return { hasOtherItems: false, errorMessages: [] };
@@ -389,23 +390,26 @@ function findMessageForMissingItems(
 	);
 }
 
-const CART_RELOAD_TIME_LIMIT_MS = 10000;
+const CART_FETCH_TIME_LIMIT_MS = 10000;
 
 // The cart endpoint can leave a request without an answer, and the fetch has no time limit of its
 // own. Without this limit, a fetch that never answers keeps the processing step waiting forever.
-function reloadCartWithTimeLimit( cartKey: CartKey ): Promise< unknown > {
+//
+// The fetch does not go through the cart manager. A manager reload that never answers leaves the
+// manager waiting for its cart, and the manager queues every later action while it waits. The
+// manager is shared, so the next add from the same page would never run.
+function fetchServerCartWithTimeLimit( cartKey: CartKey ): Promise< ResponseCart > {
 	let timeoutId: ReturnType< typeof setTimeout > | undefined;
 	const timeLimit = new Promise< never >( ( _resolve, reject ) => {
 		timeoutId = setTimeout(
 			() => reject( new Error( 'The cart fetch did not answer in time.' ) ),
-			CART_RELOAD_TIME_LIMIT_MS
+			CART_FETCH_TIME_LIMIT_MS
 		);
 	} );
 
-	return Promise.race( [
-		cartManagerClient.forCartKey( cartKey ).actions.reloadFromServer(),
-		timeLimit,
-	] ).finally( () => clearTimeout( timeoutId ) );
+	return Promise.race( [ wpcomGetCart( cartKey ), timeLimit ] ).finally( () =>
+		clearTimeout( timeoutId )
+	);
 }
 
 // A response error can be about another item in the cart, such as a stale invalid product. The
@@ -423,39 +427,36 @@ async function getCartErrorToThrow(
 	requestedItems: MinimalRequestCartProduct[],
 	{ isReplace }: { isReplace: boolean }
 ): Promise< unknown > {
-	let fallbackError = error;
+	let responseCart: ResponseCart | undefined;
 
 	if ( error instanceof CartActionConnectionError ) {
 		try {
-			await reloadCartWithTimeLimit( cartKey );
-		} catch ( reloadError ) {
-			// A response error still comes with the server cart. A second failed request does not.
-			if ( ! ( reloadError instanceof CartActionResponseError ) ) {
-				return error;
-			}
-			// The server answered, so its message tells the user more than the network error does.
-			fallbackError = reloadError;
+			responseCart = await fetchServerCartWithTimeLimit( cartKey );
+		} catch {
+			return error;
 		}
-	} else if ( ! ( error instanceof CartActionResponseError ) ) {
+	} else if ( error instanceof CartActionResponseError ) {
+		responseCart = getCartFromManager( cartKey );
+	} else {
 		return error;
 	}
 
 	const { missingItems, hasOtherItems, errorMessages } = checkCartForRequestedItems(
-		cartKey,
+		responseCart,
 		requestedItems
 	);
 
 	if ( ! missingItems ) {
-		return fallbackError;
+		return error;
 	}
 
 	if ( missingItems.length > 0 ) {
 		const message = findMessageForMissingItems( errorMessages, missingItems );
-		return message ? new CartActionResponseError( message.message, message.code ) : fallbackError;
+		return message ? new CartActionResponseError( message.message, message.code ) : error;
 	}
 
 	if ( isReplace && hasOtherItems ) {
-		return fallbackError;
+		return error;
 	}
 
 	return undefined;

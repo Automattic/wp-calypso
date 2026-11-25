@@ -9,13 +9,14 @@ import wpcomRequest from '../../wpcom-request';
 const mockCartActions = vi.hoisted( () => ( {
 	addProductsToCart: vi.fn(),
 	replaceProductsInCart: vi.fn(),
-	reloadFromServer: vi.fn(),
 } ) );
 const mockGetCartState = vi.hoisted( () => vi.fn() );
+const mockGetServerCart = vi.hoisted( () => vi.fn() );
 
 vi.mock( 'calypso/lib/wp', () => ( { default: { req: { post: vi.fn() } } } ) );
 vi.mock( '../../wpcom-request', () => ( { default: vi.fn() } ) );
 vi.mock( '../create-cart-manager-client', () => ( {
+	wpcomGetCart: mockGetServerCart,
 	default: {
 		getCartKeyForSiteSlug: vi.fn( async () => 123 ),
 		forCartKey: () => ( { actions: mockCartActions, getState: mockGetCartState } ),
@@ -309,32 +310,33 @@ describe( 'cart helpers', () => {
 			mockCartActions.replaceProductsInCart.mockRejectedValue( connectionError );
 		} );
 
-		// clearAllMocks keeps a mocked implementation, so the reload of one test would stay for the next.
+		// clearAllMocks keeps a mocked implementation, so the fetch of one test would stay for the next.
 		afterEach( () => {
 			mockGetCartState.mockReset();
-			mockCartActions.reloadFromServer.mockReset();
+			mockGetServerCart.mockReset();
 		} );
 
-		// The state before the reload is the cart from before the request, which does not hold the
-		// requested items. Only the reload makes the state the server cart, so these mocks set the
-		// state from inside the reload.
-		function serverCartHolds( products: Array< { product_slug: string; meta: string } > ) {
-			mockGetCartState.mockReturnValue( { responseCart: { products: [] } } );
-			mockCartActions.reloadFromServer.mockImplementation( async () => {
-				mockGetCartState.mockReturnValue( { responseCart: { products } } );
-			} );
+		type CartProducts = Array< { product_slug: string; meta: string } >;
+		const requestedProducts: CartProducts = [ { product_slug: 'personal-bundle', meta: '' } ];
+
+		// The manager state is the cart from before the request. Each test gives it the opposite of
+		// the server cart, so a helper that reads the manager state gets the wrong answer.
+		function carts( { server, manager }: { server: CartProducts; manager: CartProducts } ) {
+			mockGetServerCart.mockResolvedValue( { products: server } );
+			mockGetCartState.mockReturnValue( { responseCart: { products: manager } } );
 		}
 
 		test( 'addProductsToCart resolves when the server cart holds every requested item', async () => {
-			serverCartHolds( [ { product_slug: 'personal-bundle', meta: '' } ] );
+			carts( { server: requestedProducts, manager: [] } );
 
 			await expect(
 				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
 			).resolves.toBeUndefined();
+			expect( mockGetServerCart ).toHaveBeenCalledWith( 123 );
 		} );
 
 		test( 'addProductsToCart rejects when the server cart does not hold a requested item', async () => {
-			serverCartHolds( [] );
+			carts( { server: [], manager: requestedProducts } );
 
 			await expect(
 				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
@@ -342,10 +344,8 @@ describe( 'cart helpers', () => {
 		} );
 
 		test( 'addProductsToCart rejects when the cart fetch fails too', async () => {
-			mockGetCartState.mockReturnValue( { responseCart: { products: cartItems } } );
-			mockCartActions.reloadFromServer.mockRejectedValue(
-				new CartActionConnectionError( 'Network failure.', 'GET_SERVER_CART_ERROR' )
-			);
+			mockGetCartState.mockReturnValue( { responseCart: { products: requestedProducts } } );
+			mockGetServerCart.mockRejectedValue( new Error( 'Network failure.' ) );
 
 			await expect(
 				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
@@ -355,8 +355,8 @@ describe( 'cart helpers', () => {
 		test( 'addProductsToCart rejects when the cart fetch does not answer in time', async () => {
 			vi.useFakeTimers();
 			try {
-				mockGetCartState.mockReturnValue( { responseCart: { products: cartItems } } );
-				mockCartActions.reloadFromServer.mockReturnValue( new Promise( () => {} ) );
+				mockGetCartState.mockReturnValue( { responseCart: { products: requestedProducts } } );
+				mockGetServerCart.mockReturnValue( new Promise( () => {} ) );
 
 				const assertion = expect(
 					addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
@@ -368,39 +368,8 @@ describe( 'cart helpers', () => {
 			}
 		} );
 
-		// A fetch that ends in a response error still makes the state the server cart.
-		test( 'addProductsToCart resolves when the cart fetch has a response error and the server cart holds every requested item', async () => {
-			mockGetCartState.mockReturnValue( { responseCart: { products: [] } } );
-			mockCartActions.reloadFromServer.mockImplementation( async () => {
-				mockGetCartState.mockReturnValue( {
-					responseCart: { products: [ { product_slug: 'personal-bundle', meta: '' } ] },
-				} );
-				throw new CartActionResponseError(
-					'A stale product cannot be purchased.',
-					'invalid-product'
-				);
-			} );
-
-			await expect(
-				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
-			).resolves.toBeUndefined();
-		} );
-
-		test( 'addProductsToCart rejects with the response error of the cart fetch when a requested item is missing', async () => {
-			const reloadError = new CartActionResponseError(
-				'A stale product cannot be purchased.',
-				'invalid-product'
-			);
-			mockGetCartState.mockReturnValue( { responseCart: { products: [] } } );
-			mockCartActions.reloadFromServer.mockRejectedValue( reloadError );
-
-			await expect(
-				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
-			).rejects.toBe( reloadError );
-		} );
-
 		test( 'replaceProductsInCart rejects when the server cart does not hold a requested item', async () => {
-			serverCartHolds( [] );
+			carts( { server: [], manager: requestedProducts } );
 
 			await expect(
 				replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
