@@ -1,5 +1,6 @@
 import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
 import { Gridicon, Spinner } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -23,6 +24,11 @@ interface DowngradeConfirmationModalProps {
 	 * performed immediately. The confirm button reflects the scheduled nature.
 	 */
 	isDelayedDowngrade?: boolean;
+	/**
+	 * When true, the customer picked this change to make now, but it can't be, so
+	 * the modal explains why it is being scheduled instead.
+	 */
+	isChangeNowRefused?: boolean;
 	/**
 	 * Pre-formatted, localized date of the next renewal (e.g. "January 1, 2026"),
 	 * when the scheduled downgrade will take effect. Shown for delayed downgrades.
@@ -63,6 +69,7 @@ function ModalBody( {
 	lostFeatures,
 	isInstantDowngrade,
 	isDelayedDowngrade,
+	isChangeNowRefused,
 	renewalDate,
 	isTermChange,
 	isChangeToMonthly,
@@ -77,6 +84,7 @@ function ModalBody( {
 	lostFeatures: { feature_id: string; title: string }[];
 	isInstantDowngrade?: boolean;
 	isDelayedDowngrade?: boolean;
+	isChangeNowRefused?: boolean;
 	renewalDate?: string;
 	isTermChange?: boolean;
 	isChangeToMonthly?: boolean;
@@ -86,6 +94,7 @@ function ModalBody( {
 	changePaymentMethodUrl?: string;
 } ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	if ( isLoading ) {
 		return (
@@ -128,6 +137,25 @@ function ModalBody( {
 	if ( isDelayedDowngrade ) {
 		return (
 			<>
+				{ isChangeNowRefused &&
+					// The scheduling copy below stands on its own, so this can wait for a translation.
+					hasEnTranslation(
+						'This change can’t be made right away with a refund, but you can schedule it for your next renewal.'
+					) && (
+						<Notice
+							status="info"
+							isDismissible={ false }
+							className="downgrade-confirmation-modal__payment-notice"
+						>
+							{ translate(
+								'This change can’t be made right away with a refund, but you can schedule it for your next renewal.',
+								{
+									comment:
+										'Notice shown when a plan change offered now turns out to be possible only at renewal, for example because the new plan costs more than the refund',
+								}
+							) }
+						</Notice>
+					) }
 				{ isRechargeable === false && (
 					<Notice
 						status="warning"
@@ -294,6 +322,7 @@ const DowngradeConfirmationModal = ( {
 	purchaseId,
 	isInstantDowngrade,
 	isDelayedDowngrade,
+	isChangeNowRefused,
 	renewalDate,
 	isTermChange,
 	renewalPriceText,
@@ -387,6 +416,7 @@ const DowngradeConfirmationModal = ( {
 				lostFeatures={ lostFeatures }
 				isInstantDowngrade={ isInstantDowngrade }
 				isDelayedDowngrade={ isDelayedDowngrade }
+				isChangeNowRefused={ isChangeNowRefused }
 				renewalDate={ renewalDate }
 				isTermChange={ isTermChange }
 				isChangeToMonthly={ !! cancelFeaturesData?.is_change_to_monthly }

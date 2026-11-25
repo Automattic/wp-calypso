@@ -418,8 +418,15 @@ const PlansFeaturesMain = ( {
 		refetchOnWindowFocus: false,
 		staleTime: Infinity,
 	} );
+	// The plans list offers a change now without pricing it, so the quote can still
+	// refuse it, eg: when the new plan costs more than the refund. Such a change can
+	// only be scheduled for the renewal.
+	const isChangeNowRefused = downgradeMode === 'instant' && downgradeInfo?.can_change_now === false;
+	if ( isChangeNowRefused ) {
+		downgradeMode = 'delayed';
+	}
 	const downgradeRefundText =
-		downgradeInfo && downgradeInfo.refund_integer > 0
+		downgradeInfo?.can_change_now && downgradeInfo.refund_integer > 0
 			? formatCurrency( downgradeInfo.refund_integer, downgradeInfo.refund_currency, {
 					isSmallestUnit: true,
 				} )
@@ -1627,6 +1634,7 @@ const PlansFeaturesMain = ( {
 					purchaseId={ currentPlan?.purchaseId }
 					isInstantDowngrade={ downgradeMode === 'instant' }
 					isDelayedDowngrade={ downgradeMode === 'delayed' }
+					isChangeNowRefused={ isChangeNowRefused }
 					renewalDate={ downgradeRenewalDate }
 					isTermChange={ isPendingDowngradeTermChange }
 					renewalPriceText={
