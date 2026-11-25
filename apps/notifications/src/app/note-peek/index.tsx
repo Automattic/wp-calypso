@@ -3,7 +3,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { Popover, VisuallyHidden } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
@@ -14,7 +14,7 @@ import NoteIcon from '../note-icon';
 import { isPostNote } from '../note-simplified';
 import { formatNoteTime } from '../note-simplified/format-note-time';
 import type { Note } from '../types';
-import type { FocusEvent, PointerEvent, SyntheticEvent } from 'react';
+import type { FocusEvent, MouseEvent, PointerEvent, SyntheticEvent } from 'react';
 
 import './style.scss';
 
@@ -168,8 +168,9 @@ export function useNotePeek( {
 }
 
 /**
- * A preview of a note beside its row: who and when on one line, then what the row has
- * only a line or two of, in the note's own formatting.
+ * What the row is missing, beside it: what a note answers or is on, and when, then the
+ * reply, the passage that mentions you, the people who liked something, or a post's
+ * opening. The row already shows who, so the card doesn't repeat them.
  */
 export default function NotePeek( {
 	note,
@@ -177,22 +178,48 @@ export default function NotePeek( {
 	anchor,
 	isMove,
 	onClose,
+	onOpen,
 }: {
 	note: Note;
 	isOpen: boolean;
 	anchor: Element;
 	isMove?: boolean;
 	onClose: () => void;
+	onOpen: () => void;
 } ) {
 	const { locale } = useAppContext();
-	const actor = note.meta?.actor;
-	// The post a comment is on, which its row doesn't name. A post's own title is in its row.
-	const postTitle = ! isPostNote( note ) && note.meta?.post?.title;
+	const { post, parent_comment: repliedTo, actor_count: actorCount } = note.meta ?? {};
+	const isLikes = note.type === 'like' || note.type === 'comment_like';
+	const isReply = note.type === 'comment' && !! repliedTo;
 	// The comment or post itself, where the row shows a line or two of it. Its ranges mark
-	// the headings, paragraphs and emphasis, as in the open note.
-	const block =
-		note.body.find( ( { type } ) => type === 'comment' || type === 'post' ) ??
-		( note.meta?.parent_comment && { text: note.meta.parent_comment.text } );
+	// the headings, paragraphs, emphasis and, in a mention, where you're named.
+	const block = isLikes
+		? undefined
+		: note.body.find( ( { type } ) => type === 'comment' || type === 'post' );
+	const people = isLikes ? note.body.filter( ( { type } ) => type === 'user' ) : [];
+	const otherCount = Math.max( 0, ( actorCount ?? 0 ) - people.length );
+
+	let context;
+	if ( isReply ) {
+		/* translators: %s is the name of the person whose comment was replied to. */
+		context = sprintf( __( 'In reply to %s' ), repliedTo.author_name );
+	} else if ( isPostNote( note ) ) {
+		// A post's title is in its row, so say how long it is instead.
+		const minutes = Math.max( 1, Math.round( ( block?.text.split( /\s+/ ).length ?? 0 ) / 200 ) );
+		/* translators: %d is how many minutes a post takes to read. */
+		context = sprintf( _n( '%d min read', '%d min read', minutes ), minutes );
+	} else if ( post?.title ) {
+		/* translators: %s is the title of the post a note is on. */
+		context = sprintf( __( 'On %s' ), post.title );
+	}
+
+	// Opens the note, like its row. Not when following a link or selecting text in the card.
+	const openNote = ( event: MouseEvent< HTMLElement > ) => {
+		if ( ( event.target as Element ).closest( 'a' ) || window.getSelection()?.toString() ) {
+			return;
+		}
+		onOpen();
+	};
 
 	return (
 		<Popover.Root open={ isOpen } onOpenChange={ ( open: boolean ) => ! open && onClose() }>
@@ -200,6 +227,7 @@ export default function NotePeek( {
 				className="wpnc-peek"
 				initialFocus={ false }
 				finalFocus={ false }
+				onClick={ openNote }
 				positioner={
 					<Popover.Positioner
 						className={ clsx( 'wpnc-peek__positioner', { 'is-moving': isMove } ) }
@@ -214,27 +242,40 @@ export default function NotePeek( {
 					{ __( 'Notification preview' ) }
 				</VisuallyHidden>
 				<VStack spacing={ 2 }>
-					{ /* Who's speaking, on one line, so the text doesn't read as nobody's. The row's
-					     icon is this person, and already loaded. */ }
-					<HStack spacing={ 1.5 } justify="flex-start">
-						<NoteIcon icon={ note.icon || actor?.avatar } size={ 16 } />
-						<Text className="wpnc-peek__byline" size={ 12 } lineHeight="16px" variant="muted">
-							<span className="wpnc-simplified__card-author wpnc-peek__author">
-								{ actor?.name }
-							</span>{ ' ' }
-							{ postTitle &&
-								sprintf(
-									/* translators: %s is the title of the post a comment is on. */
-									__( 'on %s' ),
-									postTitle
-								) }
+					<HStack spacing={ 2 }>
+						<Text className="wpnc-peek__context" size={ 12 } lineHeight="16px" variant="muted">
+							{ context }
 						</Text>
 						<Text className="wpnc-peek__time" size={ 12 } lineHeight="16px" variant="muted">
 							{ formatNoteTime( note.timestamp, locale ) }
 						</Text>
 					</HStack>
+					{ isReply &&
+						p(
+							html( repliedTo.content ?? { text: repliedTo.text } ),
+							'wpnc-peek__quote wpnc-simplified__quiet-links'
+						) }
 					{ block?.text.trim() &&
 						p( html( block ), 'wpnc-peek__text wpnc-simplified__quiet-links' ) }
+					{ people.length > 0 && (
+						<VStack spacing={ 2 }>
+							<HStack className="wpnc-peek__faces" spacing={ 0 } justify="flex-start">
+								{ people.map( ( person, index ) => (
+									<NoteIcon key={ index } icon={ person.media?.[ 0 ]?.url } size={ 20 } />
+								) ) }
+							</HStack>
+							<Text size={ 13 } lineHeight="20px">
+								{ otherCount > 0
+									? sprintf(
+											/* translators: %1$s is a list of names, %2$d how many more people there are. */
+											_n( '%1$s and %2$d other', '%1$s and %2$d others', otherCount ),
+											people.map( ( { text } ) => text ).join( ', ' ),
+											otherCount
+										)
+									: people.map( ( { text } ) => text ).join( ', ' ) }
+							</Text>
+						</VStack>
+					) }
 				</VStack>
 			</Popover.Popup>
 		</Popover.Root>

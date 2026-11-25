@@ -73,7 +73,13 @@ const renderList = ( {
 	isPeekEnabled = true,
 	selectedNoteId,
 	notes = [ commentNote ],
-}: { isPeekEnabled?: boolean; selectedNoteId?: string; notes?: object[] } = {} ) => {
+	setSelectedNoteId = noop,
+}: {
+	isPeekEnabled?: boolean;
+	selectedNoteId?: string;
+	notes?: object[];
+	setSelectedNoteId?: ( noteId?: string ) => void;
+} = {} ) => {
 	const store = initStore();
 	store.dispatch( actions.notes.addNotes( notes ) );
 	store.dispatch( actions.ui.loadedNotes() );
@@ -89,7 +95,7 @@ const renderList = ( {
 				<NoteList
 					filterName={ 'all' as FilterName }
 					selectedNoteId={ selectedNoteId }
-					setSelectedNoteId={ noop }
+					setSelectedNoteId={ setSelectedNoteId }
 				/>
 			</AppProvider>
 		</Provider>
@@ -115,7 +121,7 @@ describe( 'NotePeek', () => {
 		await hoverRow( user );
 
 		expect( await screen.findByText( COMMENT ) ).toBeVisible();
-		expect( screen.getByText( 'on The tide tables' ) ).toBeVisible();
+		expect( screen.getByText( 'On The tide tables' ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_notification_peek', {
 			note_type: 'comment',
 		} );
@@ -138,6 +144,67 @@ describe( 'NotePeek', () => {
 		const card = await screen.findByRole( 'dialog' );
 		expect( within( card ).getByText( COMMENT ) ).toBeVisible();
 		expect( within( card ).queryByText( /The tide tables/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'quotes the comment a reply answers', async () => {
+		const user = userEvent.setup();
+		renderList( {
+			notes: [
+				{
+					...commentNote,
+					meta: {
+						...commentNote.meta,
+						parent_comment: {
+							text: 'Are the tides still out in May?',
+							author_name: 'Ana Ruiz',
+							author_avatar: null,
+							date: null,
+							url: '',
+						},
+					},
+				},
+			],
+		} );
+
+		await hoverRow( user );
+
+		const card = await screen.findByRole( 'dialog' );
+		expect( within( card ).getByText( 'In reply to Ana Ruiz' ) ).toBeVisible();
+		expect( within( card ).getByText( 'Are the tides still out in May?' ) ).toBeVisible();
+		expect( within( card ).getByText( COMMENT ) ).toBeVisible();
+	} );
+
+	it( 'lists the people who liked something', async () => {
+		const user = userEvent.setup();
+		renderList( {
+			notes: [
+				{
+					...commentNote,
+					type: 'like',
+					body: [
+						{ text: 'Ben Quah', ranges: [], media: [], type: 'user' },
+						{ text: 'Ana Ruiz', ranges: [], media: [], type: 'user' },
+					],
+					meta: { ...commentNote.meta, actor_count: 5 },
+				},
+			],
+		} );
+
+		await hoverRow( user );
+
+		const card = await screen.findByRole( 'dialog' );
+		expect( within( card ).getByText( 'Ben Quah, Ana Ruiz and 3 others' ) ).toBeVisible();
+	} );
+
+	it( 'opens the note when the preview is clicked', async () => {
+		const user = userEvent.setup();
+		const setSelectedNoteId = vi.fn();
+		renderList( { setSelectedNoteId } );
+
+		await hoverRow( user );
+		await user.click( await screen.findByText( COMMENT ) );
+
+		expect( setSelectedNoteId ).toHaveBeenCalledWith( '1' );
 	} );
 
 	it( 'closes the preview on Escape', async () => {
@@ -172,17 +239,6 @@ describe( 'NotePeek', () => {
 		fireEvent.scroll( container.querySelector( '.dataviews-view-list' ) as Element );
 
 		await waitFor( () => expect( screen.queryByText( COMMENT ) ).not.toBeInTheDocument() );
-	} );
-
-	it( 'keeps the preview open when it is clicked', async () => {
-		const user = userEvent.setup();
-		renderList();
-
-		await hoverRow( user );
-		await user.click( await screen.findByText( COMMENT ) );
-		await new Promise( ( resolve ) => setTimeout( resolve, 200 ) );
-
-		expect( screen.getByText( COMMENT ) ).toBeVisible();
 	} );
 
 	it( 'previews the row the arrow keys move to', async () => {

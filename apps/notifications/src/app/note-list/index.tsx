@@ -375,6 +375,7 @@ const NoteList = ( {
 					anchor={ peek.anchor }
 					isMove={ peek.isMove }
 					onClose={ peek.close }
+					onOpen={ () => setSelectedNoteId( peekNote.id.toString() ) }
 				/>
 			) }
 		</div>
