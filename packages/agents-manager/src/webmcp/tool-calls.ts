@@ -79,9 +79,13 @@ function prepareApplyBlockEditsInput(
 
 				const { blockMarkup: _blockMarkup, block: _block, ...placement } = insert;
 
+				// `big-sky/apply-block-edits` inserts at index 0 by default, so without an index here
+				// each block would land above the one before it.
+				const firstIndex = typeof placement.index === 'number' ? placement.index : 0;
+
 				return blocks.map( ( block, offset ) => ( {
 					...placement,
-					...( typeof placement.index === 'number' ? { index: placement.index + offset } : {} ),
+					index: firstIndex + offset,
 					block: toBlockData( block ),
 				} ) );
 			} )
