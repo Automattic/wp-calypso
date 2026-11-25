@@ -1,6 +1,7 @@
 # Note: a pull request that changes this file or the Renovate config runs Renovate as a full dry
-# run, without saving its cache, so a new version or setting can be checked in the log before it
-# acts on the repository.
+# run, without saving its cache, so a new Renovate version or global setting can be checked in the
+# log before it acts on the repository. The dry run reads renovate.json5 from trunk, so the pull
+# request's copy is only checked by the validation step.
 
 name: Renovate
 on:
