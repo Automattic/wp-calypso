@@ -198,6 +198,41 @@ describe( 'cart helpers', () => {
 				replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
 			).rejects.toBe( responseError );
 		} );
+
+		test( 'replaceProductsInCart rejects when the cart also holds an item that was not requested', async () => {
+			cartHolds( [
+				{ product_slug: 'personal-bundle', meta: '' },
+				{ product_slug: 'dotcom_domain', meta: 'other.com' },
+			] );
+
+			await expect(
+				replaceProductsInCart( 'example.wordpress.com', cartItems, { throwOnError: true } )
+			).rejects.toBe( responseError );
+		} );
+
+		// The cart manager rejects with the first message, which here is about the stale product.
+		test( 'addProductsToCart rejects with the cart message that names the missing domain', async () => {
+			mockGetCartState.mockReturnValue( {
+				responseCart: {
+					products: [ { product_slug: 'personal-bundle', meta: '' } ],
+					messages: {
+						errors: [
+							{ code: 'invalid-product', message: 'A stale product cannot be purchased.' },
+							{ code: 'domain-unavailable', message: 'Example.com is no longer available.' },
+						],
+					},
+				},
+			} );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', [ ...cartItems, domainItem ], {
+					throwOnError: true,
+				} )
+			).rejects.toMatchObject( {
+				code: 'domain-unavailable',
+				message: 'Example.com is no longer available.',
+			} );
+		} );
 	} );
 
 	describe( 'with a cart connection error', () => {
@@ -270,6 +305,19 @@ describe( 'cart helpers', () => {
 			await expect(
 				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
 			).resolves.toBeUndefined();
+		} );
+
+		test( 'addProductsToCart rejects with the response error of the cart fetch when a requested item is missing', async () => {
+			const reloadError = new CartActionResponseError(
+				'A stale product cannot be purchased.',
+				'invalid-product'
+			);
+			mockGetCartState.mockReturnValue( { responseCart: { products: [] } } );
+			mockCartActions.reloadFromServer.mockRejectedValue( reloadError );
+
+			await expect(
+				addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+			).rejects.toBe( reloadError );
 		} );
 
 		test( 'replaceProductsInCart rejects when the server cart does not hold a requested item', async () => {

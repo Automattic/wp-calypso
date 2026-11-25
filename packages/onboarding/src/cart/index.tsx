@@ -20,6 +20,8 @@ import type { DomainSuggestion } from '@automattic/api-core';
 import type {
 	CartKey,
 	MinimalRequestCartProduct,
+	ResponseCart,
+	ResponseCartMessage,
 	ResponseCartProduct,
 } from '@automattic/shopping-cart';
 
@@ -303,31 +305,69 @@ function isSameMeta( cartMeta: string | undefined, requestedMeta: string ): bool
 	return ( cartMeta ?? '' ).toLowerCase() === requestedMeta.toLowerCase();
 }
 
-// A response error can be about another item in the cart, such as a stale invalid product. The
-// server keeps the valid items, so the flow can continue when every requested item is present.
-// When the cart state cannot be read, treat the items as missing so the caller still sees the error.
-function isRequestedItemMissingFromCart(
+function isMatchingCartProduct(
+	cartProduct: ResponseCartProduct,
+	requestedItem: MinimalRequestCartProduct
+): boolean {
+	return (
+		cartProduct.product_slug === requestedItem.product_slug &&
+		( ! requestedItem.meta || isSameMeta( cartProduct.meta, requestedItem.meta ) )
+	);
+}
+
+type CartCheck = {
+	// Undefined when the cart state cannot be read.
+	missingItems?: MinimalRequestCartProduct[];
+	hasOtherItems: boolean;
+	errorMessages: ResponseCartMessage[];
+};
+
+function checkCartForRequestedItems(
 	cartKey: CartKey,
 	requestedItems: MinimalRequestCartProduct[]
-): boolean {
-	let cartProducts: ResponseCartProduct[];
+): CartCheck {
+	let responseCart: ResponseCart | undefined;
 	try {
-		cartProducts = cartManagerClient.forCartKey( cartKey ).getState().responseCart.products;
+		responseCart = cartManagerClient.forCartKey( cartKey ).getState().responseCart;
 	} catch {
-		return true;
+		responseCart = undefined;
 	}
 
+	const cartProducts = responseCart?.products;
 	if ( ! Array.isArray( cartProducts ) ) {
-		return true;
+		return { hasOtherItems: false, errorMessages: [] };
 	}
 
-	return requestedItems.some(
-		( requestedItem ) =>
-			! cartProducts.some(
-				( cartProduct ) =>
-					cartProduct.product_slug === requestedItem.product_slug &&
-					( ! requestedItem.meta || isSameMeta( cartProduct.meta, requestedItem.meta ) )
-			)
+	return {
+		missingItems: requestedItems.filter(
+			( requestedItem ) =>
+				! cartProducts.some( ( cartProduct ) =>
+					isMatchingCartProduct( cartProduct, requestedItem )
+				)
+		),
+		hasOtherItems: cartProducts.some(
+			( cartProduct ) =>
+				! requestedItems.some( ( requestedItem ) =>
+					isMatchingCartProduct( cartProduct, requestedItem )
+				)
+		),
+		errorMessages: responseCart?.messages?.errors ?? [],
+	};
+}
+
+// A cart message has no reference to an item, and the cart manager rejects with the first message
+// only. The first message can be about a stale product while the user's domain was the item that
+// was dropped, so look for a message that names a missing item.
+function findMessageForMissingItems(
+	errorMessages: ResponseCartMessage[],
+	missingItems: MinimalRequestCartProduct[]
+): ResponseCartMessage | undefined {
+	return errorMessages.find( ( errorMessage ) =>
+		missingItems.some(
+			( missingItem ) =>
+				!! missingItem.meta &&
+				errorMessage.message.toLowerCase().includes( missingItem.meta.toLowerCase() )
+		)
 	);
 }
 
@@ -350,32 +390,57 @@ function reloadCartWithTimeLimit( cartKey: CartKey ): Promise< unknown > {
 	] ).finally( () => clearTimeout( timeoutId ) );
 }
 
+// A response error can be about another item in the cart, such as a stale invalid product. The
+// server keeps the valid items, so the flow can continue when every requested item is present.
+// A replace must also leave no other items, because a replace exists to remove them.
+//
 // A failed request does not tell whether the server applied the change. After that failure the
-// manager state is the cart from before the request, which cannot show whether the change was
-// applied, so the helper fetches the server cart before it looks for the requested items. Every
-// other error that is not a response error stops the caller.
-async function shouldThrowCartError(
+// manager state is the cart from before the request, so the helper fetches the server cart before
+// it checks the items. Every other error that is not a response error stops the caller.
+//
+// Returns the error to throw, or undefined when the flow can continue.
+async function getCartErrorToThrow(
 	error: unknown,
 	cartKey: CartKey,
-	requestedItems: MinimalRequestCartProduct[]
-): Promise< boolean > {
+	requestedItems: MinimalRequestCartProduct[],
+	{ isReplace }: { isReplace: boolean }
+): Promise< unknown > {
+	let fallbackError = error;
+
 	if ( error instanceof CartActionConnectionError ) {
 		try {
 			await reloadCartWithTimeLimit( cartKey );
 		} catch ( reloadError ) {
 			// A response error still comes with the server cart. A second failed request does not.
 			if ( ! ( reloadError instanceof CartActionResponseError ) ) {
-				return true;
+				return error;
 			}
+			// The server answered, so its message tells the user more than the network error does.
+			fallbackError = reloadError;
 		}
-		return isRequestedItemMissingFromCart( cartKey, requestedItems );
+	} else if ( ! ( error instanceof CartActionResponseError ) ) {
+		return error;
 	}
 
-	if ( error instanceof CartActionResponseError ) {
-		return isRequestedItemMissingFromCart( cartKey, requestedItems );
+	const { missingItems, hasOtherItems, errorMessages } = checkCartForRequestedItems(
+		cartKey,
+		requestedItems
+	);
+
+	if ( ! missingItems ) {
+		return fallbackError;
 	}
 
-	return true;
+	if ( missingItems.length > 0 ) {
+		const message = findMessageForMissingItems( errorMessages, missingItems );
+		return message ? new CartActionResponseError( message.message, message.code ) : fallbackError;
+	}
+
+	if ( isReplace && hasOtherItems ) {
+		return fallbackError;
+	}
+
+	return undefined;
 }
 
 export async function replaceProductsInCart(
@@ -394,10 +459,13 @@ export async function replaceProductsInCart(
 	} catch ( error ) {
 		debug( 'product replace request had an error', error );
 		if ( options.throwOnError ) {
-			if ( await shouldThrowCartError( error, cartKey, cartItems ) ) {
-				throw error;
+			const errorToThrow = await getCartErrorToThrow( error, cartKey, cartItems, {
+				isReplace: true,
+			} );
+			if ( errorToThrow ) {
+				throw errorToThrow;
 			}
-			debug( 'the cart holds every requested item, so the cart error does not throw' );
+			debug( 'the cart holds only the requested items, so the cart error does not throw' );
 		}
 	}
 }
@@ -425,8 +493,11 @@ export async function addProductsToCart(
 		} catch ( error ) {
 			debug( 'product add request had an error', error );
 			if ( options.throwOnError ) {
-				if ( await shouldThrowCartError( error, cartKey, cartItemsToAdd ) ) {
-					throw error;
+				const errorToThrow = await getCartErrorToThrow( error, cartKey, cartItemsToAdd, {
+					isReplace: false,
+				} );
+				if ( errorToThrow ) {
+					throw errorToThrow;
 				}
 				debug( 'the cart holds every requested item, so the cart error does not throw' );
 			}
