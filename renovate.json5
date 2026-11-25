@@ -11,9 +11,9 @@
 		},
 		{
 			groupName: 'nodejs',
-			matchPackagePatterns: [ '/node$' ],
+			matchPackageNames: [ '//node$/' ],
 			matchDepNames: [ 'node', 'cimg/node' ],
-			matchDatasources: [ 'docker', 'node' ],
+			matchDatasources: [ 'docker', 'node-version' ],
 			prPriority: 2,
 		},
 		{
@@ -33,19 +33,15 @@
 		{
 			extends: [ 'monorepo:react', ':widenPeerDependencies' ],
 			prPriority: 2,
-			ignorePaths: [ 'packages/interpolate-components' ],
 		},
 		{
 			groupName: 'redux-related packages',
-			matchPackagePatterns: [ 'redux' ],
-			matchPackageNames: [ 'react-redux' ],
-			excludePackageNames: [ '@wordpress/redux-routine' ],
+			matchPackageNames: [ 'react-redux', '/redux/', '!@wordpress/redux-routine' ],
 			prPriority: 2,
 		},
 		{
 			groupName: 'typescript-related packages',
-			matchPackagePatterns: [ 'typescript-eslint' ],
-			matchPackageNames: [ 'typescript' ],
+			matchPackageNames: [ 'typescript', '/typescript-eslint/' ],
 			prPriority: 2,
 		},
 		{
@@ -65,9 +61,14 @@
 		{
 			groupName: 'webpack packages',
 			extends: [ ':widenPeerDependencies' ],
-			matchPackageNames: [ 'html-loader', 'postcss-loader', 'css-loader' ],
-			matchPackagePatterns: [ 'webpack', 'terser' ],
-			excludePackagePatterns: [ '^@storybook' ],
+			matchPackageNames: [
+				'html-loader',
+				'postcss-loader',
+				'css-loader',
+				'/webpack/',
+				'/terser/',
+				'!/^@storybook/',
+			],
 			prPriority: 2,
 		},
 		{
@@ -83,6 +84,19 @@
 		},
 		{ extends: [ 'monorepo:babel' ], prPriority: 1 },
 		{ extends: [ 'monorepo:lodash' ], prPriority: 1 },
+		{
+			// Resolutions pin a version on purpose, and one keyed by a range, such as
+			// "undici@npm:^6.25.0", must stay inside it. Patch and minor refreshes are fine.
+			matchDepTypes: [ 'resolutions' ],
+			matchUpdateTypes: [ 'major' ],
+			enabled: false,
+		},
+		{
+			// Registries such as ghcr.io don't publish release dates, and without one Renovate holds an
+			// update forever, including Renovate's own image.
+			matchDatasources: [ 'docker' ],
+			minimumReleaseAgeBehaviour: 'timestamp-optional',
+		},
 		// Disable maven -- it only exists because of TeamCity, which we don't update.
 		{
 			matchManagers: [ 'maven' ],
@@ -155,25 +169,28 @@
 		// See: https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/916
 		'@pmmmwh/react-refresh-webpack-plugin',
 	],
-	regexManagers: [
+	customManagers: [
 		// Update the renovate-version in the action itself.
 		// See also https://github.com/renovatebot/github-action/issues/756
 		{
-			fileMatch: [ '^\\.github/workflows/renovate\\.yml$' ],
+			customType: 'regex',
+			managerFilePatterns: [ '/^\\.github/workflows/renovate\\.yml$/' ],
 			matchStrings: [ 'RENOVATE_VERSION: (?<currentValue>[^\\s]+)' ],
 			datasourceTemplate: 'docker',
 			depNameTemplate: 'renovate',
 			packageNameTemplate: 'ghcr.io/renovatebot/renovate',
 		},
 		{
-			fileMatch: [ '^Dockerfile(\\..+)?$' ],
+			customType: 'regex',
+			managerFilePatterns: [ '/^Dockerfile(\\..+)?$/' ],
 			matchStrings: [ 'ARG node_version=(?<currentValue>.*?)\\n' ],
 			depNameTemplate: 'node',
-			datasourceTemplate: 'node',
+			datasourceTemplate: 'node-version',
 		},
 		// Renovate's Buildkite manager only reads plugin versions, not `image:` lines.
 		{
-			fileMatch: [ '^\\.buildkite/pipeline\\.yml$' ],
+			customType: 'regex',
+			managerFilePatterns: [ '/^\\.buildkite/pipeline\\.yml$/' ],
 			matchStrings: [ 'image: (?<depName>cimg/node):(?<currentValue>[^\\s]+)' ],
 			datasourceTemplate: 'docker',
 		},
@@ -202,14 +219,10 @@
 	reviewers: [ 'team:@automattic/calypso-dependency-updates' ],
 	branchPrefix: 'renovate/',
 	gitAuthor: 'Renovate Bot (self-hosted) <bot@renovateapp.com>',
-	platform: 'github',
 	semanticCommits: 'enabled',
 	semanticCommitType: 'chore',
-	repositories: [ 'Automattic/wp-calypso' ],
 
 	// --- Misc Settings ---
-	allowPlugins: true,
-	allowScripts: true,
 	ignoreScripts: false,
-	dependencyDashboardTitle: 'Renovate Dependency Updates',
+	dependencyDashboard: { title: 'Renovate Dependency Updates' },
 }

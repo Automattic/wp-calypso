@@ -1,0 +1,7 @@
+// Self-hosted Renovate settings that can't go in the repository's renovate.json5.
+{
+	platform: 'github',
+	repositories: [ 'Automattic/wp-calypso' ],
+	allowPlugins: true,
+	allowScripts: true,
+}
