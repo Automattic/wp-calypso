@@ -76,8 +76,8 @@
 			matchPackageNames: [ '@size-limit/file', 'size-limit' ],
 		},
 		{ extends: [ 'monorepo:storybook' ], prPriority: 2 },
-		{ extends: [ 'packages:linters' ], groupName: 'linters', prPriority: 2 },
 		{
+			extends: [ 'packages:linters' ],
 			// Prettier is installed as `npm:wp-prettier`, and rules match the real package name.
 			matchPackageNames: [ 'wp-prettier' ],
 			groupName: 'linters',
