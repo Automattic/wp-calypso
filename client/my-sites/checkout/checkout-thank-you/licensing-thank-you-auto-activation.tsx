@@ -171,7 +171,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			if ( destinationSiteId === 0 && reasonCode === 'jetpack_pro_lower_limits' ) {
 				return setError(
 					translate(
-						"This site has a Jetpack product with higher limits than Jetpack Pro, so Pro can't replace it. You can use this license on another site, or contact us for a refund."
+						"This site has a Jetpack product that includes more than Jetpack Pro, so Pro can't replace it. You can use this license on another site, or contact us for a refund."
 					)
 				);
 			}

@@ -14,7 +14,7 @@ describe( 'LicensingActivationThankYou', () => {
 	it.each( [
 		[
 			'jetpack_pro_lower_limits',
-			'This site has a Jetpack product with higher limits than Jetpack Pro',
+			'This site has a Jetpack product that includes more than Jetpack Pro',
 		],
 		[
 			'jetpack_pro_other_owner',
