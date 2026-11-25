@@ -108,21 +108,10 @@
 		{ extends: [ 'monorepo:babel' ], prPriority: 1 },
 		{ extends: [ 'monorepo:lodash' ], prPriority: 1 },
 		{
-			// These resolutions are keyed by a range, such as "undici@npm:^6.25.0", which a major
-			// would leave. Renovate drops the range from the name, so a new one needs adding here.
+			// A resolution keyed by a range, such as "undici@npm:^6.25.0", must stay inside it, so it
+			// gets no majors. Renovate drops the range from the name, so this checks the original key.
 			matchDepTypes: [ 'resolutions' ],
-			matchPackageNames: [
-				'@tootallnate/once',
-				'dompurify',
-				'fast-uri',
-				'immutable',
-				'js-yaml',
-				'marked',
-				'shell-quote',
-				'tar',
-				'undici',
-				'uuid',
-			],
+			matchJsonata: [ "$contains(managerData.key, '@npm:')" ],
 			matchUpdateTypes: [ 'major' ],
 			enabled: false,
 		},

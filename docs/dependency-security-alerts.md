@@ -132,8 +132,6 @@ Manual remediation order:
 
 Dismissal is the last resort. Prefer removing the vulnerable path.
 
-A targeted override keyed by a range in the root `resolutions`, such as `"undici@npm:^6.25.0"`, also needs its package name in the `resolutions` rule in `renovate.json5`. Otherwise Renovate proposes majors that leave that range.
-
 ## Dependency age rule
 
 Do not rush newly published packages.
