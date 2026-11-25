@@ -24,7 +24,13 @@ const RestorePlanSoftwareAction = ( { site }: { site: Site } ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const mutation = useMutation(
 		withSnackbar( sitePlanSoftwareRestoreMutation( site.ID ), {
-			success: __( 'Requested restoration of plugins and themes that come with your plan.' ),
+			success: hasEnTranslation(
+				'Restoration requested. The plugins and themes included with your plan should be restored within a few minutes.'
+			)
+				? __(
+						'Restoration requested. The plugins and themes included with your plan should be restored within a few minutes.'
+					)
+				: __( 'Requested restoration of plugins and themes that come with your plan.' ),
 			error: __( 'Failed to request restoration of plan plugin and themes.' ),
 		} )
 	);
@@ -55,9 +61,10 @@ const RestorePlanSoftwareAction = ( { site }: { site: Site } ) => {
 					<Button
 						variant="secondary"
 						size="compact"
+						disabled={ mutation.isSuccess }
 						onClick={ () => setIsRestoreModalOpen( true ) }
 					>
-						{ __( 'Restore' ) }
+						{ mutation.isSuccess ? __( 'Requested' ) : __( 'Restore' ) }
 					</Button>
 				}
 			/>
@@ -201,7 +208,7 @@ export default function DangerZone( { site }: { site: Site } ) {
 
 	const actions = [
 		site.is_wpcom_atomic && ! site.is_wpcom_staging_site && (
-			<RestorePlanSoftwareAction key="restore-plan-software" site={ site } />
+			<RestorePlanSoftwareAction key={ `restore-plan-software-${ site.ID }` } site={ site } />
 		),
 		canTransferSite( site, user ) && <SiteTransferAction key="transfer-site" site={ site } />,
 		canLeaveSite( site ) && <SiteLeaveAction key="leave-site" site={ site } />,
