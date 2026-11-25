@@ -199,7 +199,7 @@ describe( 'VerifyContactForm', () => {
 		} );
 
 		const codeLabel = /please enter the code you received via email/i;
-		expect( screen.getByText( codeLabel ) ).toBeInTheDocument();
+		expect( await screen.findByText( codeLabel ) ).toBeInTheDocument();
 
 		const saveLaterButton = screen.getByRole( 'button', { name: /later/i } );
 		expect( saveLaterButton ).toBeInTheDocument();
@@ -236,7 +236,7 @@ describe( 'VerifyContactForm', () => {
 		expect( verifyButton ).toHaveAttribute( 'disabled' );
 
 		const codeLabel = /please enter the code you received via email/i;
-		fireEvent.change( screen.getByLabelText( codeLabel ), {
+		fireEvent.change( await screen.findByLabelText( codeLabel ), {
 			target: { value: '123456' },
 		} );
 
