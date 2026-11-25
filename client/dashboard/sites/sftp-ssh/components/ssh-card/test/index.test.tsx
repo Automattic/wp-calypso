@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { useState } from 'react';
 import { render } from '../../../../../test-utils';
 import SshCard from '../index';
 
@@ -120,6 +121,45 @@ describe( '<SshCard>', () => {
 				} ),
 			] )
 		);
+	} );
+
+	test( 'updates the connection command when the site changes', async () => {
+		const stagingSiteId = 456;
+		nock( 'https://public-api.wordpress.com' ).get( '/wpcom/v2/me/ssh-keys' ).reply( 200, [] );
+		const stagingSshKeysRequest = nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/${ stagingSiteId }/hosting/ssh-keys` )
+			.reply( 200, { ssh_keys: [] } );
+
+		const SiteSwitcher = () => {
+			const [ isStaging, setIsStaging ] = useState( false );
+			return (
+				<>
+					<button onClick={ () => setIsStaging( true ) }>Switch to staging</button>
+					<SshCard
+						siteId={ isStaging ? stagingSiteId : siteId }
+						sftpUsers={
+							isStaging
+								? [ { username: 'staging.example.wordpress.com', password: '' } ]
+								: sftpUsers
+						}
+						sshEnabled
+					/>
+				</>
+			);
+		};
+		const user = userEvent.setup();
+		render( <SiteSwitcher /> );
+
+		expect( await screen.findByRole( 'textbox', { name: 'Connection command' } ) ).toHaveValue(
+			'ssh example.wordpress.com@ssh.wp.com'
+		);
+
+		await user.click( screen.getByRole( 'button', { name: 'Switch to staging' } ) );
+
+		expect( screen.getByRole( 'textbox', { name: 'Connection command' } ) ).toHaveValue(
+			'ssh staging.example.wordpress.com@ssh.wp.com'
+		);
+		await waitFor( () => expect( stagingSshKeysRequest.isDone() ).toBe( true ) );
 	} );
 
 	const userSshKey = ( name: string, label?: string ) => ( {
