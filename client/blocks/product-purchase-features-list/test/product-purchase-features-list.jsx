@@ -35,6 +35,7 @@ vi.mock( '../video-audio-posts', () => ( {
 vi.mock( 'calypso/components/data/query-active-theme', () => ( {
 	default: () => 'QueryActiveTheme',
 } ) );
+vi.mock( 'calypso/components/inline-support-link', () => ( { default: () => null } ) );
 
 describe( 'ProductPurchaseFeaturesList basic tests', () => {
 	const props = {
