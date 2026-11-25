@@ -72,7 +72,50 @@ function App() {
 				component: 'Stack',
 				catalogId: LAYOUT_CATALOG_ID,
 				gap: 'xl',
-				children: [ 'heading', 'search_row', 'grid', 'split_heading', 'split', 'modal' ],
+				children: [ 'heading', 'search_row', 'grid', 'split_heading', 'split', 'start', 'modal' ],
+			},
+			{
+				id: 'start',
+				component: 'Stack',
+				catalogId: LAYOUT_CATALOG_ID,
+				gap: 'md',
+				children: [ 'start_heading', 'brief', 'site_type', 'features' ],
+			},
+			{ id: 'start_heading', component: 'Text', text: '### Start a site' },
+			{
+				id: 'brief',
+				component: 'TextField',
+				label: 'What’s your site for?',
+				placeholder: 'For example, a bakery in Leeds with online pre-orders',
+				value: { '@path': '/brief' },
+			},
+			{
+				id: 'site_type',
+				component: 'ChoicePicker',
+				label: 'Type of site',
+				displayStyle: 'chips',
+				options: [ 'Business', 'Portfolio', 'Blog', 'Online store', 'Restaurant', 'Personal' ].map(
+					( label ) => ( { label, value: label.toLowerCase().replace( ' ', '_' ) } )
+				),
+				value: { '@path': '/site_type' },
+			},
+			{
+				id: 'features',
+				component: 'ChoicePicker',
+				label: 'Features',
+				variant: 'multipleSelection',
+				displayStyle: 'chips',
+				options: [ 'Newsletter', 'Contact form', 'Bookings', 'Gallery' ].map( ( label ) => ( {
+					label,
+					value: label.toLowerCase().replace( ' ', '_' ),
+				} ) ),
+				value: { '@path': '/features' },
+				checks: [
+					{
+						condition: { '@call': 'required', args: { value: { '@path': '/features' } } },
+						message: 'Pick at least one feature.',
+					},
+				],
 			},
 			{ id: 'split_heading', component: 'Text', text: '### Responsive detail layout' },
 			{

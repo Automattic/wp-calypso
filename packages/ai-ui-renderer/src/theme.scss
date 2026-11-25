@@ -141,6 +141,12 @@
 		color: var( --ai-ui-theme-danger );
 	}
 
+	#{$theme}
+		.ai-ui-renderer__field--error
+		.ai-ui-renderer__choice-chip:has( [aria-invalid='true']:not( [data-checked] ) ) {
+		border-color: var( --ai-ui-theme-danger );
+	}
+
 	#{$theme} :is( input, textarea )[aria-invalid='true'] {
 		outline: 1px solid var( --ai-ui-theme-danger );
 		outline-offset: 2px;

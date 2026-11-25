@@ -37,6 +37,10 @@
   disabled surface. Its title, which also names the dialog, is its `accessibility.label`, or
   "Details" without one. Its inputs share the surface's data model and are disabled with it. Its own
   buttons send their actions and leave it open; only the person closes it.
+- A `TextField`'s `placeholder` shows in the empty field, as an example of what to enter; it
+  never replaces the `label`. A `ChoicePicker` with `displayStyle: "chips"` shows its options as a
+  wrapping row of pills, in either variant, for a short list of short options. The default,
+  `checkbox`, shows a column of radio buttons or check boxes.
 - Text fields keep their values as strings, choice pickers as string arrays, and date/time inputs
   as local ISO strings. A slider moves in whole numbers from its `min`, or in `steps` equal parts.
 - `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider` and `DateTimeInput` take A2UI's

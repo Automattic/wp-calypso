@@ -421,6 +421,105 @@ it( 'disables a disabled surface’s inputs and actions, but not its tabs or mod
 	expect( within( dialog ).getByRole( 'textbox', { name: 'Name' } ) ).toBeDisabled();
 } );
 
+it.each( [
+	[ 'shortText', 'textbox' ],
+	[ 'longText', 'textbox' ],
+] )( 'shows a %s TextField’s placeholder', ( variant, role ) => {
+	const surface = createSurface( [
+		{
+			id: 'root',
+			component: 'TextField',
+			label: 'Brief',
+			variant,
+			placeholder: 'For example, a bakery',
+		},
+	] );
+
+	render( <InteractiveUiSurface surface={ surface } /> );
+
+	expect( screen.getByRole( role, { name: 'Brief' } ) ).toHaveAttribute(
+		'placeholder',
+		'For example, a bakery'
+	);
+} );
+
+describe( 'chips', () => {
+	it( 'picks one option when a person clicks its chip', async () => {
+		const surface = createSurface( [
+			{
+				id: 'root',
+				component: 'ChoicePicker',
+				label: 'Type of site',
+				displayStyle: 'chips',
+				options: [
+					{ label: 'Blog', value: 'blog' },
+					{ label: 'Shop', value: 'shop' },
+				],
+				value: { '@path': '/type' },
+			},
+		] );
+
+		const { container } = render( <InteractiveUiSurface surface={ surface } /> );
+
+		expect( container.querySelector( '.ai-ui-renderer__choice-picker--chips' ) ).not.toBeNull();
+
+		fireEvent.click( screen.getByText( 'Blog' ) );
+		fireEvent.click( screen.getByText( 'Shop' ) );
+
+		await waitFor( () => expect( surface.dataModel.get( '/type' ) ).toEqual( [ 'shop' ] ) );
+		expect( screen.getByRole( 'radio', { name: 'Shop' } ) ).toBeChecked();
+		expect( screen.getByRole( 'radio', { name: 'Blog' } ) ).not.toBeChecked();
+	} );
+
+	it( 'picks several options in a multiple-selection picker', async () => {
+		const surface = createSurface( [
+			{
+				id: 'root',
+				component: 'ChoicePicker',
+				label: 'Topics',
+				variant: 'multipleSelection',
+				displayStyle: 'chips',
+				options: [
+					{ label: 'News', value: 'news' },
+					{ label: 'Sport', value: 'sport' },
+				],
+				value: { '@path': '/topics' },
+			},
+		] );
+
+		render( <InteractiveUiSurface surface={ surface } /> );
+
+		fireEvent.click( screen.getByText( 'News' ) );
+		fireEvent.click( screen.getByText( 'Sport' ) );
+
+		await waitFor( () =>
+			expect( surface.dataModel.get( '/topics' ) ).toEqual( [ 'news', 'sport' ] )
+		);
+		expect( screen.getByRole( 'checkbox', { name: 'News' } ) ).toBeChecked();
+	} );
+
+	it.each( [
+		[ 'mutuallyExclusive', 'radio' ],
+		[ 'multipleSelection', 'checkbox' ],
+	] )( 'disables a %s picker’s chips on a disabled surface', ( variant, role ) => {
+		const surface = createSurface( [
+			{
+				id: 'root',
+				component: 'ChoicePicker',
+				label: 'Topics',
+				variant,
+				displayStyle: 'chips',
+				options: [ { label: 'News', value: 'news' } ],
+				value: [],
+			},
+		] );
+
+		render( <InteractiveUiSurface surface={ surface } disabled /> );
+
+		expect( screen.getByRole( role, { name: 'News' } ) ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
+} );
+
 it( 'shows the fallback instead of a surface with a component its catalog lacks', () => {
 	const surface = createSurface( [ { id: 'root', component: 'Missing' } ] );
 

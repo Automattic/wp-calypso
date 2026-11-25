@@ -300,6 +300,88 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 		margin: 0;
 	}
 
+	// A chip is its option's label, drawn as a pill. Its radio or check box stays in the chip,
+	// hidden but focusable, so the keyboard, checks and screen readers work as they do unstyled.
+	.ai-ui-renderer__choice-picker--chips .ai-ui-renderer__choice-chip {
+		position: relative;
+		display: flex;
+		border: var( --wpds-border-width-xs, 1px ) solid var( --wpds-color-stroke-interactive-neutral );
+		border-radius: 24px;
+		background-color: var( --wpds-color-background-interactive-neutral-weak );
+		color: var( --wpds-color-foreground-interactive-neutral );
+
+		&:not( :has( [data-disabled] ) ):hover {
+			border-color: var( --wpds-color-stroke-interactive-neutral-active );
+			background-color: var( --wpds-color-background-interactive-neutral-weak-active );
+		}
+
+		&:has( :focus-visible ) {
+			outline: 2px solid var( --wpds-color-stroke-focus );
+			outline-offset: 2px;
+		}
+
+		&:has( [data-checked] ) {
+			border-color: var( --wpds-color-background-interactive-brand-strong );
+			background-color: var( --wpds-color-background-interactive-brand-strong );
+			color: var( --wpds-color-foreground-interactive-brand-strong );
+		}
+
+		&:not( :has( [data-disabled] ) ):has( [data-checked] ):hover {
+			border-color: var( --wpds-color-background-interactive-brand-strong-active );
+			background-color: var( --wpds-color-background-interactive-brand-strong-active );
+		}
+
+		&:has( [data-disabled] ) {
+			border-color: var( --wpds-color-stroke-interactive-neutral-disabled );
+			color: var( --wpds-color-foreground-interactive-neutral-disabled );
+		}
+
+		&:has( [data-disabled][data-checked] ) {
+			background-color: var( --wpds-color-background-interactive-brand-strong-disabled );
+		}
+
+		@media ( forced-colors: active ) {
+			&:has( [data-checked] ) {
+				forced-color-adjust: none;
+				border-color: Highlight;
+				background-color: Highlight;
+				color: HighlightText;
+			}
+		}
+	}
+
+	.ai-ui-renderer__choice-picker--chips .ai-ui-renderer__choice-chip-control {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset( 50% );
+		white-space: nowrap;
+	}
+
+	// Outranks a theme preset's rule for field labels: a chip's text is its option, not a label.
+	.ai-ui-renderer__choice-picker--chips
+		.ai-ui-renderer__choice-chip
+		.ai-ui-renderer__choice-chip-label {
+		display: flex;
+		align-items: center;
+		min-height: var( --wpds-dimension-size-lg, 40px );
+		padding-inline: var( --wpds-dimension-padding-md, 12px );
+		font-size: inherit;
+		font-weight: inherit;
+		line-height: inherit;
+		color: inherit;
+		letter-spacing: normal;
+		text-transform: none;
+		cursor: pointer;
+	}
+
+	.ai-ui-renderer__choice-picker--chips
+		.ai-ui-renderer__choice-chip:has( [data-disabled] )
+		.ai-ui-renderer__choice-chip-label {
+		cursor: default;
+	}
+
 	.ai-ui-renderer__slider-control {
 		flex: 1;
 		min-width: 0;
@@ -335,7 +417,8 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 
 		:is(
 			:has( > input[aria-invalid='true'], > textarea[aria-invalid='true'] ),
-			:is( [role='checkbox'], [role='radio'] )[aria-invalid='true']:not( [data-checked] )
+			:is( [role='checkbox'], [role='radio'] )[aria-invalid='true']:not( [data-checked] ),
+			.ai-ui-renderer__choice-chip:has( [aria-invalid='true']:not( [data-checked] ) )
 		) {
 			border-color: $error-color;
 		}
