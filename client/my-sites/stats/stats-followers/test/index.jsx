@@ -1,24 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import StatModuleFollowers from '..';
 
 let mockStatsListCardProps;
-jest.mock( '../../stats-list/stats-list-card', () => ( props ) => {
-	mockStatsListCardProps = props;
-	return null;
-} );
-
-jest.mock( '../../hooks/use-subscribers-totals-query', () => () => ( {
-	data: { subscribers: [] },
-	isLoading: false,
-	isError: false,
+vi.mock( '../../stats-list/stats-list-card', () => ( {
+	default: ( props ) => {
+		mockStatsListCardProps = props;
+		return null;
+	},
 } ) );
 
-jest.mock( 'calypso/lib/subscribers/get-subscribers-url', () => ( {
+vi.mock( '../../hooks/use-subscribers-totals-query', () => ( {
+	default: () => ( {
+		data: { subscribers: [] },
+		isLoading: false,
+		isError: false,
+	} ),
+} ) );
+
+vi.mock( 'calypso/lib/subscribers/get-subscribers-url', () => ( {
 	getSubscribersUrl: () => '/subscribers/example.com',
 } ) );
 

@@ -1,7 +1,8 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useCategories } from '../use-categories';
 import type { ReactNode } from 'react';
 
@@ -11,10 +12,10 @@ const state = {
 	sites: { items: { 1: { ID: 1, jetpack: false } } },
 };
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( value: typeof state ) => unknown ) => selector( state ),
 } ) );
-jest.mock( 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled', () => ( {
+vi.mock( 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled', () => ( {
 	useIsMarketplaceRedesignEnabled: () => false,
 } ) );
 

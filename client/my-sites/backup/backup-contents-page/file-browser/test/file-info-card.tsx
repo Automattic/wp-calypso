@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import FileInfoCard from '../file-info-card';
 import type { FileBrowserItem } from '../types';
 
-const mockSetNodeCheckState = jest.fn();
+const mockSetNodeCheckState = vi.fn();
 
-jest.mock( '../file-browser-context', () => ( {
+vi.mock( '../file-browser-context', () => ( {
 	useFileBrowserContext: () => ( {
 		fileBrowserState: { setNodeCheckState: mockSetNodeCheckState },
 		locale: 'en',
-		notices: { showError: jest.fn(), showSuccess: jest.fn() },
+		notices: { showError: vi.fn(), showSuccess: vi.fn() },
 	} ),
 } ) );
 
-jest.mock( '../use-backup-path-info-query', () => ( {
+vi.mock( '../use-backup-path-info-query', () => ( {
 	useBackupPathInfoQuery: () => ( {
 		isSuccess: true,
 		isLoading: false,
@@ -26,8 +27,8 @@ jest.mock( '../use-backup-path-info-query', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../use-prepare-download', () => ( {
-	usePrepareDownload: () => ( { prepareDownload: jest.fn() } ),
+vi.mock( '../use-prepare-download', () => ( {
+	usePrepareDownload: () => ( { prepareDownload: vi.fn() } ),
 } ) );
 
 const item: FileBrowserItem = {
@@ -41,7 +42,7 @@ const item: FileBrowserItem = {
 const hint = 'To restore this backup, confirm that you understand it contains known threats.';
 
 const renderCard = ( props: { isRestoreEnabled?: boolean; restoreDisabledHint?: string } ) => {
-	const onRequestGranularRestore = jest.fn();
+	const onRequestGranularRestore = vi.fn();
 	render(
 		<FileInfoCard
 			siteId={ 123 }
@@ -49,7 +50,7 @@ const renderCard = ( props: { isRestoreEnabled?: boolean; restoreDisabledHint?: 
 			rewindId={ 1792244435 }
 			path="/wp-content/a.php"
 			siteSlug="test-site"
-			onTrackEvent={ jest.fn() }
+			onTrackEvent={ vi.fn() }
 			source="dashboard"
 			onRequestGranularRestore={ onRequestGranularRestore }
 			{ ...props }

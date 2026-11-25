@@ -1,27 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-const mockDispatch = jest.fn();
-
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: () => mockDispatch,
-	useSelector: jest.fn(),
-} ) );
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
-jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import DateButton from '../date-button';
 
+const mockDispatch = vi.fn();
+
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useDispatch: () => mockDispatch,
+	useSelector: vi.fn(),
+} ) );
+vi.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
+vi.mock( 'calypso/state/selectors/get-site-gmt-offset' );
+vi.mock( 'calypso/state/selectors/get-site-timezone-value' );
+
 describe( 'Test Backup Date Picker', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 	test( 'Records a tracks event when the date picker is opened', async () => {
 		render( <DateButton selectedDate={ moment() }></DateButton> );

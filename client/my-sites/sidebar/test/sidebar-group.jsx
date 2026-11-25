@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { ADMIN_SIDEBAR_GROUP_SET_EXPANDED } from 'calypso/state/action-types';
 import { useCustomizeContext } from '../customize';
 import { MySitesSidebarUnifiedSidebarGroup } from '../sidebar-group';
 
-jest.mock( '../customize', () => ( {
-	useCustomizeContext: jest.fn(),
+vi.mock( '../customize', () => ( {
+	useCustomizeContext: vi.fn(),
 } ) );
 
 const mockUseCustomizeContext = useCustomizeContext;
@@ -147,16 +148,17 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 	} );
 
 	it( 'invokes onToggle prop and dispatches a window resize on toggle click', () => {
-		const onToggle = jest.fn();
+		const onToggle = vi.fn();
 		// Force requestAnimationFrame to be synchronous in this test so the
 		// scheduled resize dispatch fires inline. The component intentionally
 		// schedules via rAF to let React flush; without the override the
 		// resize event would land on the next browser frame.
-		const rafSpy = jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( cb ) => {
+		const rafSpy = vi.spyOn( window, 'requestAnimationFrame' ).mockImplementation( ( cb ) => {
 			cb( 0 );
 			return 0;
 		} );
-		const dispatchSpy = jest.spyOn( window, 'dispatchEvent' );
+		const onResize = vi.fn();
+		window.addEventListener( 'resize', onResize );
 
 		renderInProvider(
 			<MySitesSidebarUnifiedSidebarGroup
@@ -169,12 +171,9 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 		);
 		fireEvent.click( screen.getByRole( 'button', { name: /My Plugins/i } ) );
 		expect( onToggle ).toHaveBeenCalledTimes( 1 );
-		const dispatchedResize = dispatchSpy.mock.calls.some(
-			( [ event ] ) => event?.type === 'resize'
-		);
-		expect( dispatchedResize ).toBe( true );
+		expect( onResize ).toHaveBeenCalled();
 		rafSpy.mockRestore();
-		dispatchSpy.mockRestore();
+		window.removeEventListener( 'resize', onResize );
 	} );
 
 	it( 'falls back to default_expanded when no stored or prop value is provided', () => {
@@ -239,7 +238,7 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 	it( 'locks the plugins group expanded during customize mode', () => {
 		mockUseCustomizeContext.mockReturnValue( {
 			isCustomizing: true,
-			enter: jest.fn(),
+			enter: vi.fn(),
 		} );
 		const { container, store } = renderInProvider(
 			<MySitesSidebarUnifiedSidebarGroup group={ pluginsGroup }>

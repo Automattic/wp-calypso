@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import ThemeSectionHeader from '../theme-section-header';
 
 describe( 'ThemeSectionHeader', () => {
@@ -10,11 +11,11 @@ describe( 'ThemeSectionHeader', () => {
 		title: 'Our Favorites',
 		subtitle: 'Hand-picked themes we love',
 		buttonLabel: 'See all',
-		onButtonClick: jest.fn(),
+		onButtonClick: vi.fn(),
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders title and subtitle', () => {
@@ -72,7 +73,7 @@ describe( 'ThemeSectionHeader', () => {
 	} );
 
 	test( 'renders as a link with onClick when both buttonHref and onButtonClick are provided', async () => {
-		const handleClick = jest.fn();
+		const handleClick = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<ThemeSectionHeader

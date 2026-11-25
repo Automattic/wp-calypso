@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Modal from 'react-modal';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import membershipsReducer from 'calypso/state/memberships/reducer';
 import siteSettingsReducer from 'calypso/state/site-settings/reducer';
@@ -15,9 +16,9 @@ import { TYPE_TIER } from '../constants';
 import RecurringPaymentsPlanDeleteModal from '../delete-plan-modal';
 import ProductsList from '../products-list';
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { post: jest.fn() } },
+	default: { req: { post: vi.fn() } },
 } ) );
 
 const productData = {
@@ -292,7 +293,7 @@ describe( 'ProductsList', () => {
 				<RecurringPaymentsPlanDeleteModal
 					product={ { ...tierWithoutDescription, is_read_only: monthlyReadOnly } }
 					annualProduct={ { ...annualTier, is_read_only: annualReadOnly } }
-					closeDialog={ jest.fn() }
+					closeDialog={ vi.fn() }
 				/>,
 				{ initialState, reducers: { ui: uiReducer, memberships: membershipsReducer } }
 			);

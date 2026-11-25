@@ -1,29 +1,32 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
 
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn(),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn(),
 } ) );
 
-jest.mock( '../../plugin-management-v2/hooks/use-plugin-version-info', () => {
-	return jest.fn().mockImplementation( () => {
-		return {
-			currentVersionsRange: {
-				min: '1.0.0',
-				max: null,
-			},
-			updatedVersions: [ '1.0.0' ],
-			hasUpdate: true,
-		};
-	} );
+vi.mock( '../../plugin-management-v2/hooks/use-plugin-version-info', () => {
+	return {
+		default: vi.fn().mockImplementation( () => {
+			return {
+				currentVersionsRange: {
+					min: '1.0.0',
+					max: null,
+				},
+				updatedVersions: [ '1.0.0' ],
+				hasUpdate: true,
+			};
+		} ),
+	};
 } );
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const fn = ( key ) => {
 		if ( 'magnificent_non_en_locales' === key ) {
 			return [
@@ -46,8 +49,8 @@ jest.mock( '@automattic/calypso-config', () => {
 			];
 		}
 	};
-	fn.isEnabled = jest.fn();
-	return fn;
+	fn.isEnabled = vi.fn();
+	return { ...fn, default: fn };
 } );
 
 const plugin = {

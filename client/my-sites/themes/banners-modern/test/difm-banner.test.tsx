@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import DIFMBanner from '../difm-banner';
 
-const mockRecordTracksEvent = jest.fn();
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+const mockRecordTracksEvent = vi.fn();
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 

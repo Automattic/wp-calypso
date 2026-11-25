@@ -1,16 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import redirectToWpAdminStats from '../redirect-to-wp-admin-stats';
 
-jest.mock( '@automattic/calypso-router', () => ( { current: '' } ) );
-jest.mock( 'calypso/lib/user/support-user-interop', () => ( { isSupportSession: jest.fn() } ) );
-jest.mock( 'calypso/state/jetpack/modules/actions', () => ( {
+vi.mock( '@automattic/calypso-router', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { current: '' } )
+);
+vi.mock( 'calypso/lib/user/support-user-interop', () => ( { isSupportSession: vi.fn() } ) );
+vi.mock( 'calypso/state/jetpack/modules/actions', () => ( {
 	fetchModuleList: ( siteId ) => ( { type: 'FETCH_MODULE_LIST', siteId } ),
 } ) );
-jest.mock( 'calypso/state/sites/actions', () => ( {
+vi.mock( 'calypso/state/sites/actions', () => ( {
 	requestSite: ( siteFragment ) => ( { type: 'REQUEST_SITE', siteFragment } ),
 } ) );
 
@@ -78,7 +81,7 @@ function makeContext( {
 		params: { site },
 		store: {
 			getState: () => state,
-			dispatch: jest.fn( async ( action ) => {
+			dispatch: vi.fn( async ( action ) => {
 				if ( action.type === 'REQUEST_SITE' ) {
 					if ( ! siteLoadable ) {
 						throw new Error( 'unknown_blog' );
@@ -98,10 +101,10 @@ describe( 'redirectToWpAdminStats()', () => {
 	let next;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		isSupportSession.mockReturnValue( false );
-		replace = jest.fn();
-		next = jest.fn();
+		replace = vi.fn();
+		next = vi.fn();
 		Object.defineProperty( window, 'location', { value: { replace }, writable: true } );
 	} );
 

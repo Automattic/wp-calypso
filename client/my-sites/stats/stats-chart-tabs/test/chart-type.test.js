@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { isMobile } from '@automattic/viewport';
+import { vi } from 'vitest';
 import { readChartType, saveChartType } from '../chart-type';
 
-jest.mock( '@automattic/viewport', () => ( { isMobile: jest.fn( () => false ) } ) );
+vi.mock( '@automattic/viewport', () => ( { isMobile: vi.fn( () => false ) } ) );
 
 describe( 'readChartType', () => {
 	afterEach( () => {
 		localStorage.clear();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		isMobile.mockReturnValue( false );
 	} );
 
@@ -54,7 +55,7 @@ describe( 'readChartType', () => {
 	} );
 
 	it( 'falls back to the default where site data is blocked', () => {
-		jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
+		vi.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
 			throw new DOMException( 'blocked', 'SecurityError' );
 		} );
 		expect( readChartType( 7 ) ).toBe( 'bar' );
@@ -64,7 +65,7 @@ describe( 'readChartType', () => {
 describe( 'saveChartType', () => {
 	afterEach( () => {
 		localStorage.clear();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'saves the choice for this site', () => {
@@ -74,7 +75,7 @@ describe( 'saveChartType', () => {
 	} );
 
 	it( 'gives up quietly where site data is blocked', () => {
-		jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+		vi.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 			throw new DOMException( 'blocked', 'SecurityError' );
 		} );
 		expect( () => saveChartType( 7, 'line' ) ).not.toThrow();

@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import useNoticeVisibilityMutation from '../use-notice-visibility-mutation';
 import { noticesVisibilityQueryKey } from '../use-notice-visibility-query';
 
-const mockPost = jest.fn();
-jest.mock( 'calypso/lib/wp', () => ( {
+const mockPost = vi.fn();
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: { req: { post: ( ...args: unknown[] ) => mockPost( ...args ) } },
 } ) );
@@ -30,7 +31,7 @@ describe( 'useNoticeVisibilityMutation', () => {
 	let client: QueryClient;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		client = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 		mockPost.mockResolvedValue( { updated: true } );
 	} );
@@ -48,7 +49,7 @@ describe( 'useNoticeVisibilityMutation', () => {
 	} );
 
 	it( 'refetches the notices once the write lands', async () => {
-		const invalidate = jest.spyOn( client, 'invalidateQueries' );
+		const invalidate = vi.spyOn( client, 'invalidateQueries' );
 		const { result } = renderMutation( client );
 
 		await result.current.mutateAsync();

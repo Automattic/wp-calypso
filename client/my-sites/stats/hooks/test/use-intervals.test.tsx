@@ -1,30 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { STATS_PERIOD } from 'calypso/my-sites/stats/constants';
 import { useSelector } from 'calypso/state';
 import useIntervals from '../use-intervals';
 
 // Mock dependencies
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
 } ) );
 
-const mockShouldGateStats = jest.fn( () => false );
-jest.mock( '../use-should-gate-stats', () => ( {
+const mockShouldGateStats = vi.fn( () => false );
+vi.mock( '../use-should-gate-stats', () => ( {
 	shouldGateStats: () => mockShouldGateStats(),
 } ) );
 
 describe( 'useIntervals', () => {
 	beforeEach( () => {
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) => selector( {}, 123 ) );
+		( useSelector as Mock ).mockImplementation( ( selector ) => selector( {}, 123 ) );
 		mockShouldGateStats.mockReturnValue( false );
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should return memoized intervals when nothing changes', () => {

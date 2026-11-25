@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AddNewSite from '../add-new-site';
 
-jest.mock( 'calypso/lib/paths/use-add-new-site-url', () => ( {
+vi.mock( 'calypso/lib/paths/use-add-new-site-url', () => ( {
 	useAddNewSiteUrl: () => '/start',
 } ) );
 

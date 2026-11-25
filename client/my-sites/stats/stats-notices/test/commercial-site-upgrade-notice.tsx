@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import CommercialSiteUpgradeNotice from '../commercial-site-upgrade-notice';
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: () => false,
 } ) );
 
-jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
+vi.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
 	__esModule: true,
-	default: () => ( { mutateAsync: jest.fn() } ),
+	default: () => ( { mutateAsync: vi.fn() } ),
 } ) );
 
-jest.mock( 'calypso/my-sites/stats/hooks/use-plan-usage-query', () => ( {
+vi.mock( 'calypso/my-sites/stats/hooks/use-plan-usage-query', () => ( {
 	__esModule: true,
 	default: () => ( { data: { upgrade_deadline_date: '2026-07-21' } } ),
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
 
 const renderNotice = ( showPaywallNotice: boolean ) =>
 	render(

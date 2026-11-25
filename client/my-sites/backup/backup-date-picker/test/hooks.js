@@ -1,22 +1,23 @@
-jest.mock( 'react', () => ( {
-	...jest.requireActual( 'react' ),
-	useCallback: jest.fn( ( fn ) => fn ),
-} ) );
-jest.mock( 'calypso/components/localized-moment' );
-jest.mock( 'calypso/lib/jetpack/hooks/use-date-with-offset' );
-jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
-	...jest.requireActual( 'calypso/my-sites/backup/hooks' ),
-} ) );
-
 import moment from 'moment';
 import { useCallback } from 'react';
+import { vi } from 'vitest';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useCanGoToDate } from '../hooks';
 
+vi.mock( 'react', async () => ( {
+	...( await vi.importActual( 'react' ) ),
+	useCallback: vi.fn( ( fn ) => fn ),
+} ) );
+vi.mock( 'calypso/components/localized-moment' );
+vi.mock( 'calypso/lib/jetpack/hooks/use-date-with-offset' );
+vi.mock( 'calypso/my-sites/backup/hooks', async () => ( {
+	...( await vi.importActual( 'calypso/my-sites/backup/hooks' ) ),
+} ) );
+
 describe( 'useCanGoToDate', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		useCallback.mockImplementation( ( fn ) => fn );
 		useLocalizedMoment.mockImplementation( () => moment );

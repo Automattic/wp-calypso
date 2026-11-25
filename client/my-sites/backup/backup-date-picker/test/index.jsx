@@ -1,6 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+
+import { useQuery } from '@tanstack/react-query';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
+import { useSelector, useDispatch } from 'react-redux';
+import { vi } from 'vitest';
+import BackupDatePicker from '..';
+import { useCanGoToDate } from '../hooks';
 
 /**
  * Default mock implementations
@@ -11,46 +21,37 @@ const mockUseTranslate = () => ( text ) => text;
 const mockUseCanGoToDate = () => () => true;
 const mockUseQuery = () => () => ( { isLoading: true, data: null } );
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useTranslate: jest.fn(),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual( 'i18n-calypso' ) ),
+	useTranslate: vi.fn(),
 } ) );
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual( '@tanstack/react-query' ) ),
+	useQuery: vi.fn(),
 } ) );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn(),
-	useDispatch: jest.fn(),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn(),
+	useDispatch: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
-jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
-jest.mock( '../hooks', () => ( {
-	...jest.requireActual( '../hooks' ),
-	useCanGoToDate: jest.fn(),
+vi.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
+vi.mock( 'calypso/state/selectors/get-site-gmt-offset' );
+vi.mock( 'calypso/state/selectors/get-site-timezone-value' );
+vi.mock( '../hooks', async () => ( {
+	...( await vi.importActual( '../hooks' ) ),
+	useCanGoToDate: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/selectors/get-rewind-backups' );
+vi.mock( 'calypso/state/selectors/get-rewind-backups' );
 
-jest.mock( 'calypso/state/rewind/selectors/site-has-backups', () =>
-	jest.fn().mockImplementation( () => true )
-);
-
-import { useQuery } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
-import { useSelector, useDispatch } from 'react-redux';
-import BackupDatePicker from '..';
-import { useCanGoToDate } from '../hooks';
+vi.mock( 'calypso/state/rewind/selectors/site-has-backups', () => ( {
+	default: vi.fn().mockImplementation( () => true ),
+} ) );
 
 const realDateNow = Date.now;
 
 describe( 'BackupDatePicker', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		// Re-mock dependencies
 		Date.now = realDateNow;
@@ -64,7 +65,7 @@ describe( 'BackupDatePicker', () => {
 	// --- DATE DISPLAY ---
 
 	test( "Shows 'Yesterday' as the previous date if the current date is today", () => {
-		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
+		Date.now = vi.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 
 		const today = moment();
 		const { container } = render(
@@ -76,7 +77,7 @@ describe( 'BackupDatePicker', () => {
 
 	test( "Shows only the month and date for the previous date if it's the same year as today", () => {
 		// Mock the definition of 'now,' so that our test date is always in the same year
-		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
+		Date.now = vi.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const november4Of2020 = moment().subtract( 1, 'month' );
 
 		const { container } = render(
@@ -87,7 +88,7 @@ describe( 'BackupDatePicker', () => {
 	} );
 
 	test( "Shows month, date, and year for the previous date if it's not the same year as today", () => {
-		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
+		Date.now = vi.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const oneYearAgo = moment().subtract( 1, 'year' );
 
 		const { container } = render(
@@ -99,7 +100,7 @@ describe( 'BackupDatePicker', () => {
 
 	test( "Shows month and date for the next date if it's in the same year as today", () => {
 		// Mock the definition of 'now,' so that our test date is always in the same year
-		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
+		Date.now = vi.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const december4Of2020 = moment();
 
 		const { container } = render(
@@ -125,7 +126,7 @@ describe( 'BackupDatePicker', () => {
 	} );
 
 	test( "Shows month, date, and year for the next date if it's not the same year as today", () => {
-		Date.now = jest.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
+		Date.now = vi.fn().mockReturnValue( new Date( '2020-12-04T12:00:00.000Z' ) );
 		const twoYearsAgo = moment().subtract( 2, 'years' );
 
 		const { container } = render(
@@ -141,7 +142,7 @@ describe( 'BackupDatePicker', () => {
 		const user = userEvent.setup();
 
 		const selectedDate = moment( '2020-01-01' );
-		const onDateChange = jest.fn();
+		const onDateChange = vi.fn();
 
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
@@ -155,7 +156,7 @@ describe( 'BackupDatePicker', () => {
 		const user = userEvent.setup();
 
 		const selectedDate = moment( '2020-01-01' );
-		const onDateChange = jest.fn();
+		const onDateChange = vi.fn();
 
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 		const button = screen.getByText( 'Jan 2, 2020' );
@@ -169,7 +170,7 @@ describe( 'BackupDatePicker', () => {
 		const user = userEvent.setup();
 
 		const selectedDate = moment( '2020-01-01' );
-		const onDateChange = jest.fn();
+		const onDateChange = vi.fn();
 
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
@@ -185,7 +186,7 @@ describe( 'BackupDatePicker', () => {
 		const user = userEvent.setup();
 
 		const selectedDate = moment( '2020-01-01' );
-		const onDateChange = jest.fn();
+		const onDateChange = vi.fn();
 
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ onDateChange } /> );
 
@@ -203,7 +204,7 @@ describe( 'BackupDatePicker', () => {
 		const user = userEvent.setup();
 		const selectedDate = moment( '2020-01-01' );
 
-		const dispatchMock = jest.fn();
+		const dispatchMock = vi.fn();
 		useDispatch.mockImplementation( () => dispatchMock );
 
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );
@@ -227,7 +228,7 @@ describe( 'BackupDatePicker', () => {
 		const user = userEvent.setup();
 		const selectedDate = moment( '2020-01-01' );
 
-		const dispatchMock = jest.fn();
+		const dispatchMock = vi.fn();
 		useDispatch.mockImplementation( () => dispatchMock );
 
 		render( <BackupDatePicker selectedDate={ selectedDate } onDateChange={ () => {} } /> );

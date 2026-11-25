@@ -8,19 +8,20 @@
  * fixtures cover both.
  */
 import { isEnabled } from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import { STAT_TYPE_CLICKS, STATS_FEATURE_DATE_CONTROL_LAST_30_DAYS } from '../../constants';
 import ALL_STATS_NOTICES from '../../stats-notices/all-notice-definitions';
 import { shouldGateStats } from '../use-should-gate-stats';
 import { shouldShowPaywallAfterGracePeriod, shouldShowPaywallNotice } from '../use-stats-purchases';
 
-jest.mock( 'calypso/state/stats/plan-usage/constants', () => ( {
+vi.mock( 'calypso/state/stats/plan-usage/constants', () => ( {
 	COMMERCIAL_PAYWALL_KILLED: false,
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
-	config.isEnabled = jest.fn();
-	return config;
+	config.isEnabled = vi.fn();
+	return { ...config, default: config };
 } );
 
 const siteId = 123;
@@ -47,7 +48,7 @@ const walledCommercialSiteState = {
 
 describe( 'with COMMERCIAL_PAYWALL_KILLED flipped back to false', () => {
 	beforeAll( () => {
-		( isEnabled as jest.Mock ).mockImplementation( () => false );
+		( isEnabled as Mock ).mockImplementation( () => false );
 	} );
 
 	it( 'reports the paywall again for a walled commercial site', () => {
