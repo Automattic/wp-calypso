@@ -16,7 +16,7 @@ const plugins: Plugin[] = [
 		enforce: 'pre',
 		load( id ) {
 			const file = id.split( '?' )[ 0 ];
-			if ( /\.(gif|jpe?g|png|svg|webp|mp4)$/.test( file ) && ! file.includes( '/node_modules/' ) ) {
+			if ( /\.(gif|jpe?g|png|svg|webp|mp4)$/.test( file ) ) {
 				return `export default ${ JSON.stringify( path.basename( file ) ) };`;
 			}
 		},
