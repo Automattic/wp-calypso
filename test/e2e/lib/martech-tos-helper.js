@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { DataHelper } from '@automattic/calypso-e2e';
-import { BlobReader, Uint8ArrayWriter, ZipWriter } from '@zip.js/zip.js';
+import { Uint8ArrayReader, Uint8ArrayWriter, ZipWriter } from '@zip.js/zip.js';
 import FormData from 'form-data';
 
 // Note: the media/new upload endpoint for the ToS destination blog is
@@ -9,9 +9,9 @@ import FormData from 'form-data';
 // tos-screenshots specs only pass from a CI agent with a valid IP. The
 // screenshot capture steps themselves run fine anywhere.
 export default async function uploadScreenshotsToBlog( zipFilename, globPattern ) {
-	const zip = new ZipWriter( new Uint8ArrayWriter(), { level: 9 } );
+	const zip = new ZipWriter( new Uint8ArrayWriter() );
 	for ( const file of fs.globSync( globPattern ) ) {
-		await zip.add( file, new BlobReader( new Blob( [ fs.readFileSync( file ) ] ) ) );
+		await zip.add( file, new Uint8ArrayReader( fs.readFileSync( file ) ) );
 	}
 	fs.writeFileSync( zipFilename, await zip.close() );
 
