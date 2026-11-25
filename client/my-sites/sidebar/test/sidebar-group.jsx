@@ -157,7 +157,8 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 			cb( 0 );
 			return 0;
 		} );
-		const dispatchSpy = vi.spyOn( window, 'dispatchEvent' );
+		const onResize = vi.fn();
+		window.addEventListener( 'resize', onResize );
 
 		renderInProvider(
 			<MySitesSidebarUnifiedSidebarGroup
@@ -170,12 +171,9 @@ describe( '<MySitesSidebarUnifiedSidebarGroup>', () => {
 		);
 		fireEvent.click( screen.getByRole( 'button', { name: /My Plugins/i } ) );
 		expect( onToggle ).toHaveBeenCalledTimes( 1 );
-		const dispatchedResize = dispatchSpy.mock.calls.some(
-			( [ event ] ) => event?.type === 'resize'
-		);
-		expect( dispatchedResize ).toBe( true );
+		expect( onResize ).toHaveBeenCalled();
 		rafSpy.mockRestore();
-		dispatchSpy.mockRestore();
+		window.removeEventListener( 'resize', onResize );
 	} );
 
 	it( 'falls back to default_expanded when no stored or prop value is provided', () => {

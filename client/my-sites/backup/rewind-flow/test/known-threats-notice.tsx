@@ -23,7 +23,8 @@ vi.mock( '@wordpress/a11y', async () => ( {
 	...( await vi.importActual< typeof import( '@wordpress/a11y' ) >( '@wordpress/a11y' ) ),
 	speak: vi.fn(),
 } ) );
-vi.mock( 'calypso/state/analytics/actions/record', () => ( {
+vi.mock( 'calypso/state/analytics/actions/record', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( 'calypso/state/analytics/actions/record' ) >() ),
 	recordTracksEvent: vi.fn( () => ( { type: 'TEST_NOOP' } ) ),
 } ) );
 vi.mock( 'calypso/state/selectors/get-rewind-state', () => {
@@ -32,7 +33,7 @@ vi.mock( 'calypso/state/selectors/get-rewind-state', () => {
 	return { __esModule: true, default: () => rewindState };
 } );
 function mockSelector( value: unknown ) {
-	return { __esModule: true, default: () => value };
+	return () => value;
 }
 vi.mock( 'calypso/state/jetpack/credentials/selectors', () => ( {
 	areJetpackCredentialsInvalid: () => false,

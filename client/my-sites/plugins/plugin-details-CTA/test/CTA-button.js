@@ -11,7 +11,7 @@ import { onClickInstallPlugin } from '../CTA-button';
 // The module is a callable config function carrying isEnabled; keep it callable.
 vi.mock( '@automattic/calypso-config', async () => {
 	const actual = await vi.importActual( '@automattic/calypso-config' );
-	const config = ( key ) => actual( key );
+	const config = ( key ) => actual.default( key );
 	config.isEnabled = vi.fn();
 	return { ...config, default: config };
 } );

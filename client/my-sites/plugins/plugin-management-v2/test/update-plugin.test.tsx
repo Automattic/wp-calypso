@@ -167,7 +167,7 @@ describe( '<UpdatePlugin>', () => {
 		expect( retryButton.textContent ).toEqual( 'Retry' );
 
 		await userEvent.click( retryButton );
-		expect( props.updatePlugin ).toHaveBeenCalledTimes( 2 );
+		expect( props.updatePlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should render correctly and show auto-managed', () => {

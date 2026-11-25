@@ -72,7 +72,6 @@ vi.mock( 'calypso/state/rewind/selectors/get-backup-staging-sites', () => ( {
 vi.mock( 'calypso/state/rewind/selectors/get-backup-last-backup-failed' );
 vi.mock( 'calypso/state/rewind/selectors/has-fetched-staging-sites-list' );
 vi.mock( 'calypso/state/rewind/selectors/is-fetching-staging-sites-list' );
-vi.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query' );
 vi.mock( 'calypso/state/selectors/get-rewind-state' );
 vi.mock( 'calypso/state/selectors/get-restore-progress' );
 vi.mock( 'calypso/state/selectors/get-site-gmt-offset' );

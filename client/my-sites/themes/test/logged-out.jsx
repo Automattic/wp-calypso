@@ -25,21 +25,22 @@ vi.mock(
 	'calypso/my-sites/themes/theme-preview',
 	() => import( 'calypso/components/empty-component' )
 );
-vi.mock( 'calypso/components/data/query-themes', () => ( {
-	__esModule: true,
-	default: require( 'calypso/components/empty-component' ).default,
+vi.mock( 'calypso/components/data/query-themes', async () => ( {
+	default: ( await import( 'calypso/components/empty-component' ) ).default,
 	useQueryThemes: vi.fn(),
 } ) );
 
-window.IntersectionObserver = vi.fn( () => ( {
-	observe: vi.fn(),
-	disconnect: vi.fn(),
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	takeRecords: vi.fn(),
-	unobserve: vi.fn(),
-} ) );
+window.IntersectionObserver = vi.fn( function () {
+	return {
+		observe: vi.fn(),
+		disconnect: vi.fn(),
+		root: null,
+		rootMargin: '',
+		thresholds: [],
+		takeRecords: vi.fn(),
+		unobserve: vi.fn(),
+	};
+} );
 
 Element.prototype.scrollBy = vi.fn();
 

@@ -20,7 +20,8 @@ vi.mock( 'calypso/dashboard/sites/difm/hooks/use-difm-offer', async () => ( {
 	useDifmOffer: vi.fn(),
 } ) );
 
-vi.mock( 'calypso/state/analytics/actions', () => ( {
+vi.mock( 'calypso/state/analytics/actions', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( 'calypso/state/analytics/actions' ) >() ),
 	recordTracksEvent: vi.fn( () => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
 	} ) ),

@@ -48,7 +48,7 @@ const renderHome = ( productSlug = 'personal-bundle-monthly' ) =>
 		reducers: { ui: uiReducer, memberships: membershipsReducer },
 	} );
 
-const lastDestination = () => new URL( mockedPage.mock.lastCall[ 0 ], window.location.origin );
+const lastDestination = () => new URL( mockedPage.mock.lastCall?.[ 0 ], window.location.origin );
 
 const referAFriendUpgradeButton = () =>
 	within(

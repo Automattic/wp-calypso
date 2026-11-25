@@ -11,10 +11,11 @@ vi.mock( '@automattic/calypso-config', async () => {
 	const original = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
 		'@automattic/calypso-config'
 	);
-	return {
-		...original,
+	const config = Object.assign( ( key: string ) => original.default( key ), {
+		...original.default,
 		isEnabled: vi.fn(),
-	};
+	} );
+	return { ...config, default: config };
 } );
 
 vi.mock( 'react-redux', () => ( {
