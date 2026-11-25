@@ -92,25 +92,26 @@ export const useSiteCopy = (
 		options.enabled && hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases
 	);
 
+	const prepareCopyCart = useCallback(
+		( productSlug?: string ) => {
+			if ( ! site?.ID || ! plan || isLoadingPurchases ) {
+				return false;
+			}
+			setPlanCartItem( productSlug ? { product_slug: productSlug } : getPlanProduct( plan ) );
+			setProductCartItems( getMarketplaceProducts( purchases, site.ID ) );
+			return true;
+		},
+		[ site?.ID, plan, isLoadingPurchases, purchases, setPlanCartItem, setProductCartItems ]
+	);
+
 	const startSiteCopy = useCallback( () => {
 		if ( ! shouldShowSiteCopyItem || ! site?.ID ) {
 			return;
 		}
 		clearSignupDestinationCookie();
 		resetOnboardStore();
-		const planProduct = getPlanProduct( plan );
-		setPlanCartItem( planProduct );
-		const marketplaceProducts = getMarketplaceProducts( purchases, site?.ID );
-		setProductCartItems( marketplaceProducts );
-	}, [
-		shouldShowSiteCopyItem,
-		site?.ID,
-		resetOnboardStore,
-		plan,
-		setPlanCartItem,
-		purchases,
-		setProductCartItems,
-	] );
+		prepareCopyCart();
+	}, [ shouldShowSiteCopyItem, site?.ID, resetOnboardStore, prepareCopyCart ] );
 
 	const resumeSiteCopy = useCallback(
 		async ( destinationSiteSlug: string ) => {
@@ -129,6 +130,7 @@ export const useSiteCopy = (
 		() => ( {
 			shouldShowSiteCopyItem,
 			startSiteCopy,
+			prepareCopyCart,
 			resumeSiteCopy,
 			isFetching: isLoadingPurchases || isFetchingSiteFeatures || requestingSiteFeatures,
 		} ),
@@ -139,6 +141,7 @@ export const useSiteCopy = (
 			resumeSiteCopy,
 			shouldShowSiteCopyItem,
 			startSiteCopy,
+			prepareCopyCart,
 		]
 	);
 };
