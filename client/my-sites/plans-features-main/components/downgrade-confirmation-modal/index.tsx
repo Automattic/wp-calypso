@@ -1,5 +1,6 @@
 import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
 import { Gridicon, Spinner } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -93,6 +94,7 @@ function ModalBody( {
 	changePaymentMethodUrl?: string;
 } ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	if ( isLoading ) {
 		return (
@@ -135,21 +137,25 @@ function ModalBody( {
 	if ( isDelayedDowngrade ) {
 		return (
 			<>
-				{ isChangeNowRefused && (
-					<Notice
-						status="info"
-						isDismissible={ false }
-						className="downgrade-confirmation-modal__payment-notice"
-					>
-						{ translate(
-							'This change can’t be made right away with a refund, but you can schedule it for your next renewal.',
-							{
-								comment:
-									'Notice shown when a plan change offered now turns out to be possible only at renewal, for example because the new plan costs more than the refund',
-							}
-						) }
-					</Notice>
-				) }
+				{ isChangeNowRefused &&
+					// The scheduling copy below stands on its own, so this can wait for a translation.
+					hasEnTranslation(
+						'This change can’t be made right away with a refund, but you can schedule it for your next renewal.'
+					) && (
+						<Notice
+							status="info"
+							isDismissible={ false }
+							className="downgrade-confirmation-modal__payment-notice"
+						>
+							{ translate(
+								'This change can’t be made right away with a refund, but you can schedule it for your next renewal.',
+								{
+									comment:
+										'Notice shown when a plan change offered now turns out to be possible only at renewal, for example because the new plan costs more than the refund',
+								}
+							) }
+						</Notice>
+					) }
 				{ isRechargeable === false && (
 					<Notice
 						status="warning"
