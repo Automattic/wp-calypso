@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -34,19 +35,21 @@ import {
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-jest.mock( 'calypso/lib/navigate' );
+vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+vi.mock( 'calypso/lib/navigate' );
 // Spy on errorNotice so we can assert the message text; keep every other
 // notices action real so the rest of the suite behaves normally.
-jest.mock( 'calypso/state/notices/actions', () => {
-	const actual = jest.requireActual( 'calypso/state/notices/actions' );
+vi.mock( 'calypso/state/notices/actions', async () => {
+	const actual = await vi.importActual< typeof import( 'calypso/state/notices/actions' ) >(
+		'calypso/state/notices/actions'
+	);
 	return {
 		...actual,
-		errorNotice: jest.fn( actual.errorNotice ),
+		errorNotice: vi.fn( actual.errorNotice ),
 	};
 } );
 
@@ -55,7 +58,7 @@ jest.mock( 'calypso/state/notices/actions', () => {
 // rather that each iteration?), so we need to increase the timeout for their
 // operation. The standard timeout (at the time of writing) is 5 seconds so
 // we are increasing this to 12 seconds.
-jest.setTimeout( 12000 );
+vi.setConfig( { testTimeout: 12000 } );
 
 describe( 'Checkout contact step VAT form', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
@@ -83,7 +86,7 @@ describe( 'Checkout contact step VAT form', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
-		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
+		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
@@ -623,7 +626,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 
-		const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+		const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
 
 		render(
 			<MockCheckout
@@ -675,7 +678,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 
-		const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+		const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
 
 		render(
 			<MockCheckout
@@ -724,7 +727,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const user = userEvent.setup();
 		const cartChanges = { products: [ planWithoutDomain ] };
 
-		const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+		const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
 
 		render(
 			<MockCheckout
@@ -800,7 +803,7 @@ describe( 'Checkout contact step VAT form', () => {
 		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
 		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
 		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
-		( errorNotice as jest.Mock ).mockClear();
+		( errorNotice as Mock ).mockClear();
 		await user.click( screen.getByText( 'Continue to payment' ) );
 		await waitFor( () =>
 			expect( errorNotice ).toHaveBeenCalledWith(
@@ -829,7 +832,7 @@ describe( 'Checkout contact step VAT form', () => {
 		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
 		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
 		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
-		( errorNotice as jest.Mock ).mockClear();
+		( errorNotice as Mock ).mockClear();
 		await user.click( screen.getByText( 'Continue to payment' ) );
 		await waitFor( () =>
 			expect( errorNotice ).toHaveBeenCalledWith(

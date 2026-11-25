@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { usePostTransferPluginRecovery } from '../use-post-transfer-plugin-recovery';
 
-const mockDispatch = jest.fn();
-jest.mock( 'calypso/state', () => ( {
+const mockDispatch = vi.fn();
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
-jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
-	fetchSitePlugins: jest.fn( ( siteId: number ) => ( { type: 'FETCH_SITE_PLUGINS', siteId } ) ),
-	activatePlugin: jest.fn( ( siteId: number, plugin: unknown ) => ( {
+vi.mock( 'calypso/state/plugins/installed/actions', () => ( {
+	fetchSitePlugins: vi.fn( ( siteId: number ) => ( { type: 'FETCH_SITE_PLUGINS', siteId } ) ),
+	activatePlugin: vi.fn( ( siteId: number, plugin: unknown ) => ( {
 		type: 'ACTIVATE_PLUGIN',
 		siteId,
 		plugin,
@@ -20,16 +21,15 @@ jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
 // Capture what useInterval was scheduled with, and let the test drive the tick.
 let mockIntervalCallback: ( () => void ) | null = null;
 let mockIntervalDelay: number | null = null;
-jest.mock( 'calypso/lib/interval', () => ( {
+vi.mock( 'calypso/lib/interval', () => ( {
 	useInterval: ( callback: () => void, delay: number | null ) => {
 		mockIntervalCallback = callback;
 		mockIntervalDelay = delay;
 	},
 } ) );
 
-const { fetchSitePlugins, activatePlugin } = jest.requireMock(
-	'calypso/state/plugins/installed/actions'
-);
+const { fetchSitePlugins, activatePlugin } =
+	await import( 'calypso/state/plugins/installed/actions' );
 
 const INSTALLED = { slug: 'sensei-pro', id: 'sensei-pro/sensei-pro' };
 
@@ -49,16 +49,16 @@ const tick = () => act( () => mockIntervalCallback?.() );
 // The in-flight guard clears in the dispatched thunk's `.finally`, a microtask; let it settle.
 const settle = () => act( () => Promise.resolve() );
 // Backoff is measured on the wall clock, which modern fake timers move with them.
-const elapse = ( ms: number ) => act( () => jest.advanceTimersByTime( ms ) );
+const elapse = ( ms: number ) => act( () => vi.advanceTimersByTime( ms ) );
 
 describe( 'usePostTransferPluginRecovery', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.clearAllMocks();
+		vi.useFakeTimers();
+		vi.clearAllMocks();
 		mockIntervalCallback = null;
 		mockIntervalDelay = null;
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'lists the site plugins as soon as it is enabled, then on an interval', () => {
 		render( { installedPlugin: null } );

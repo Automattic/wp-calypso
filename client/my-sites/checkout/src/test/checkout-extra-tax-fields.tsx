@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -35,18 +36,18 @@ import { MockCheckout } from './util/mock-checkout';
 import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-jest.mock( 'calypso/lib/navigate' );
+vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+vi.mock( 'calypso/lib/navigate' );
 
 // These tests are particularly slow: each case renders the full checkout tree
 // and drives it through many userEvent interactions, every one of which forces a
 // re-render. Under React 19's (slower) dev-mode renderer the heaviest cases creep
 // up further, and on CI agents they cross the previous 12s cap, so we give them
 // more headroom here.
-jest.setTimeout( 30000 );
+vi.setConfig( { testTimeout: 30000 } );
 
 type TestProductType = 'google workspace' | 'plan' | 'plan with domain';
 
@@ -57,7 +58,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 		initialCart,
 	};
 
-	( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+	( getPlansBySiteId as Mock ).mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
 	} ) );
 	mockGetSiteDomainsEndpoint( [] );
@@ -71,7 +72,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
-		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
+		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
@@ -226,7 +227,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 			const user = userEvent.setup();
 			const cartChanges = { products: getCartProducts( product as TestProductType ) };
 
-			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+			const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
 
 			render(
 				<MockCheckout
@@ -285,7 +286,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 					? { products: [ planWithoutDomain ] }
 					: { products: [ planWithBundledDomain, domainProduct ] };
 
-			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+			const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
 
 			render(
 				<MockCheckout
@@ -355,7 +356,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 					? { products: [ planWithoutDomain ] }
 					: { products: [ planWithBundledDomain, domainProduct ] };
 
-			const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+			const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
 
 			render(
 				<MockCheckout

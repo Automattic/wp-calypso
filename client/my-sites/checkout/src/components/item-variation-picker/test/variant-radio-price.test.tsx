@@ -1,18 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { ThemeProvider } from '@emotion/react';
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { ItemVariantRadioPrice } from '../variant-radio-price';
 import type { WPCOMProductVariant } from '../types';
 
-jest.mock( '@automattic/shopping-cart', () => ( {
-	...jest.requireActual( '@automattic/shopping-cart' ),
-	useShoppingCart: jest.fn(),
+vi.mock( '@automattic/shopping-cart', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
+		'@automattic/shopping-cart'
+	) ),
+	useShoppingCart: vi.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => () => 'no-site' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( { default: () => 'no-site' } ) );
 
 const yearly: WPCOMProductVariant = {
 	priceInteger: 12000,
@@ -49,7 +52,7 @@ function renderPrice() {
 
 describe( 'ItemVariantRadioPrice', () => {
 	beforeEach( () => {
-		( useShoppingCart as jest.Mock ).mockReturnValue( { couponStatus: 'idle' } );
+		( useShoppingCart as Mock ).mockReturnValue( { couponStatus: 'idle' } );
 	} );
 
 	it( 'shows the per-month price with a space before /mo and the discount badge after it', () => {

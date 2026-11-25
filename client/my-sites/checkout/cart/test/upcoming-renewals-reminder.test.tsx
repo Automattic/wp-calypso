@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { sitePurchasesQuery } from '@automattic/api-queries';
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
@@ -11,6 +11,7 @@ import Modal from 'react-modal';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
+import { type Mock, vi } from 'vitest';
 import {
 	getPlanExpiryUrgency,
 	hasPlanExpiryNotice,
@@ -27,41 +28,43 @@ import type { PartialCart } from 'calypso/my-sites/checkout/src/components/secon
 
 import 'calypso/my-sites/checkout/src/test/util';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 // `TrackComponentView` still records through Redux.
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( ( name, props ) => ( {
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( ( name, props ) => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
 		name,
 		props,
 	} ) ),
-	bumpStat: jest.fn( () => ( { type: 'ANALYTICS_STAT_BUMP' } ) ),
+	bumpStat: vi.fn( () => ( { type: 'ANALYTICS_STAT_BUMP' } ) ),
 } ) );
 
-jest.mock( 'calypso/state/preferences/actions', () => ( {
-	savePreference: jest.fn( ( key, value ) => ( { type: 'PREFERENCE_SET', key, value } ) ),
-	setPreference: jest.fn( ( key, value ) => ( { type: 'PREFERENCE_SET', key, value } ) ),
+vi.mock( 'calypso/state/preferences/actions', () => ( {
+	savePreference: vi.fn( ( key, value ) => ( { type: 'PREFERENCE_SET', key, value } ) ),
+	setPreference: vi.fn( ( key, value ) => ( { type: 'PREFERENCE_SET', key, value } ) ),
 } ) );
 
-jest.mock( 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice', () => ( {
-	...jest.requireActual( 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice' ),
-	getPlanExpiryUrgency: jest.fn(),
-	hasPlanExpiryNotice: jest.fn(),
+vi.mock( 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice', async () => ( {
+	...( await vi.importActual<
+		typeof import( 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice' )
+	>( 'calypso/dashboard/components/plan-expiry-notice/get-plan-expiry-notice' ) ),
+	getPlanExpiryUrgency: vi.fn(),
+	hasPlanExpiryNotice: vi.fn(),
 } ) );
 
-jest.mock(
+vi.mock(
 	'calypso/dashboard/me/billing-purchases/purchase-settings/should-show-expiring-notice',
-	() => ( { shouldShowExpiringNotice: jest.fn() } )
+	() => ( { shouldShowExpiringNotice: vi.fn() } )
 );
 
-const mockRecordTracksEvent = recordTracksEvent as unknown as jest.Mock;
-const mockSavePreference = savePreference as unknown as jest.Mock;
-const mockGetPlanExpiryUrgency = getPlanExpiryUrgency as unknown as jest.Mock;
-const mockHasPlanExpiryNotice = hasPlanExpiryNotice as unknown as jest.Mock;
-const mockShouldShowExpiringNotice = shouldShowExpiringNotice as unknown as jest.Mock;
+const mockRecordTracksEvent = recordTracksEvent as unknown as Mock;
+const mockSavePreference = savePreference as unknown as Mock;
+const mockGetPlanExpiryUrgency = getPlanExpiryUrgency as unknown as Mock;
+const mockHasPlanExpiryNotice = hasPlanExpiryNotice as unknown as Mock;
+const mockShouldShowExpiringNotice = shouldShowExpiringNotice as unknown as Mock;
 
 const SITE_ID = 123;
 const SITE = {
@@ -157,12 +160,12 @@ function renderReminder( {
 	purchases,
 	preferences = PREFS_LOADED,
 	cart = { products: [] },
-	addItemToCart = jest.fn(),
+	addItemToCart = vi.fn(),
 }: {
 	purchases: Record< string, unknown >[];
 	preferences?: PreferencesState;
 	cart?: PartialCart;
-	addItemToCart?: jest.Mock;
+	addItemToCart?: Mock;
 } ) {
 	const reducer = () => ( { ...storeData(), preferences } );
 	const store = applyMiddleware( thunk )( createStore )( reducer );

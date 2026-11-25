@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { PRODUCT_AI_CREDITS_LIFETIME, PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';

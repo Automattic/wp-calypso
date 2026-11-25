@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, waitFor } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -24,11 +25,11 @@ import { MockCheckout } from './util/mock-checkout';
 
 /* eslint-disable jest/no-conditional-expect */
 
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-jest.mock( 'calypso/lib/navigate' );
+vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+vi.mock( 'calypso/lib/navigate' );
 
 describe( 'Checkout payment methods list', () => {
 	const initialCart = getBasicCart();
@@ -41,13 +42,13 @@ describe( 'Checkout payment methods list', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		getPlansBySiteId.mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
 		mockGetSiteDomainsEndpoint( [] );
 		isMarketplaceProduct.mockImplementation( () => false );
-		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
+		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();

@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StudioHandoff from '../studio-handoff';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
 
 const STUDIO_SITE_ID = 'b419d647-95e0-4b32-95fc-6ee255aa465d';
 
@@ -19,7 +20,7 @@ function setLocation( search: string ) {
 
 describe( 'StudioHandoff', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		setLocation( `?studioSiteId=${ STUDIO_SITE_ID }` );
 	} );
 

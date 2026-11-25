@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useDelayedCondition } from '../use-delayed-condition';
 
 const DELAY = 2000;
@@ -13,12 +14,12 @@ const renderDelayed = ( condition: boolean ) =>
 
 const advance = ( ms: number ) =>
 	act( () => {
-		jest.advanceTimersByTime( ms );
+		vi.advanceTimersByTime( ms );
 	} );
 
 describe( 'useDelayedCondition', () => {
-	beforeEach( () => jest.useFakeTimers() );
-	afterEach( () => jest.useRealTimers() );
+	beforeEach( () => vi.useFakeTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'reports only once the condition has held for the whole delay', () => {
 		const { result } = renderDelayed( true );
@@ -56,6 +57,6 @@ describe( 'useDelayedCondition', () => {
 	it( 'leaves no pending timer behind on unmount', () => {
 		const { unmount } = renderDelayed( true );
 		unmount();
-		expect( jest.getTimerCount() ).toBe( 0 );
+		expect( vi.getTimerCount() ).toBe( 0 );
 	} );
 } );

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -16,6 +16,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider as ReduxProvider } from 'react-redux';
+import { vi } from 'vitest';
 import {
 	createTestSite,
 	mockCartEndpoint,
@@ -31,7 +32,7 @@ import UpsellNudge, { PROFESSIONAL_EMAIL_UPSELL } from '../index';
 import type { Site } from '@automattic/api-core';
 import type { StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 const mockCountries: CountryListItem[] = [
 	{ code: 'US', has_postal_codes: true, name: 'United States', vat_supported: false },
 ];
@@ -201,7 +202,7 @@ describe( 'UpsellNudge', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 		currentData.cards = [ card ];
 		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/tax-contact-information/validate' )
@@ -216,7 +217,7 @@ describe( 'UpsellNudge', () => {
 	} );
 
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'displays the email purchase modal when a stored card is available', async () => {

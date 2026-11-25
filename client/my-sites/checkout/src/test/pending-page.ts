@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import {
 	addUrlToPendingPageRedirect,
 	redirectThroughPending,
@@ -10,7 +11,7 @@ import {
 } from '../lib/pending-page';
 import { SUCCESS, ERROR, FAILURE, UNKNOWN, PROCESSING } from '../types/order-transaction';
 
-jest.mock( '@automattic/calypso-router' );
+vi.mock( '@automattic/calypso-router' );
 
 // This seems to be the default origin for jsdom + Jest.
 const currentWindowOrigin = 'https://example.com';
@@ -19,7 +20,7 @@ const encodedReceiptPlaceholder = encodeURIComponent( ':receiptId' );
 
 describe( 'addUrlToPendingPageRedirect', () => {
 	beforeAll( () => {
-		jest.spyOn( window, 'scrollTo' ).mockImplementation();
+		vi.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
 	} );
 
 	it( 'returns a relative URL when in relative mode', () => {
@@ -155,8 +156,8 @@ describe( 'addUrlToPendingPageRedirect', () => {
 
 describe( 'redirectThroughPending', () => {
 	it( 'navigates to a relative URL when source is relative', () => {
-		const redirectSpy = jest.fn();
-		jest.mocked( page ).mockImplementation( redirectSpy );
+		const redirectSpy = vi.fn();
+		vi.mocked( page ).mockImplementation( redirectSpy );
 		const finalUrl = '/foo/bar/baz';
 		const siteSlug = 'example2.com';
 		const orderId = '12345';
@@ -373,7 +374,7 @@ describe( 'getRedirectFromPendingPage', () => {
 		'/\\example.com/home',
 		'/\t/example.com/home',
 		'\\/example.com',
-	] )( 'returns a generic no-site url for the scheme-relative url %p', ( redirectTo ) => {
+	] )( 'returns a generic no-site url for the scheme-relative url %o', ( redirectTo ) => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
 			redirectTo,

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import config from '@automattic/calypso-config';
@@ -17,6 +17,7 @@ import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
+import { type Mock, vi } from 'vitest';
 import {
 	mockGetCartEndpointWith,
 	mockSetCartEndpointWith,
@@ -33,11 +34,11 @@ import type {
 } from '@automattic/shopping-cart';
 import type { CartBundleLineItem } from '@automattic/wpcom-checkout';
 
-const mockConfig = config as unknown as { isEnabled: jest.Mock };
-jest.mock( '@automattic/calypso-config', () => {
+const mockConfig = config as unknown as { isEnabled: Mock };
+vi.mock( '@automattic/calypso-config', () => {
 	const mock = () => '';
-	mock.isEnabled = jest.fn();
-	return mock;
+	mock.isEnabled = vi.fn();
+	return { ...mock, default: mock };
 } );
 
 function buildDomainProduct( overrides: {

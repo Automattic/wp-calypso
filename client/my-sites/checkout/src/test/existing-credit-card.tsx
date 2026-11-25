@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import {
@@ -16,6 +16,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { vi } from 'vitest';
 import { CheckoutSubmitButtonContent } from 'calypso/my-sites/checkout/src/components/checkout-submit-button-content';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
 import { createReduxStore } from 'calypso/state/create-store';
@@ -27,13 +28,15 @@ const mockResponseCart = {
 	currency: 'USD',
 };
 
-jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
+vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
 	__esModule: true,
 	default: () => 'no-site',
 } ) );
 
-jest.mock( '@automattic/shopping-cart', () => {
-	const actual = jest.requireActual( '@automattic/shopping-cart' );
+vi.mock( '@automattic/shopping-cart', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
+		'@automattic/shopping-cart'
+	);
 	return {
 		...actual,
 		useShoppingCart: () => ( {
@@ -142,7 +145,7 @@ describe( 'Existing credit card payment methods', () => {
 	it( 'submits the existing card data to the processor when the submit button is pressed if tax location is not required', async () => {
 		mockTaxLocationEndpoint();
 		const existingCard = getExistingCardPaymentMethod();
-		const existingCardProcessor = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		const existingCardProcessor = vi.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render(
 			<TestWrapper
 				paymentMethods={ [ existingCard ] }
@@ -163,7 +166,7 @@ describe( 'Existing credit card payment methods', () => {
 
 	it( 'submits the existing card data to the processor when the submit button is pressed if tax location is required and set', async () => {
 		mockTaxLocationEndpoint( { isSet: true } );
-		const existingCardProcessor = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		const existingCardProcessor = vi.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		const existingCard = getExistingCardPaymentMethod( {
 			isTaxInfoRequired: true,
 		} );
@@ -187,7 +190,7 @@ describe( 'Existing credit card payment methods', () => {
 
 	it( 'does not submit the existing card data to the processor when the submit button is pressed if tax location is required and not set', async () => {
 		mockTaxLocationEndpoint( { isSet: false } );
-		const existingCardProcessor = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		const existingCardProcessor = vi.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		const existingCard = getExistingCardPaymentMethod( {
 			isTaxInfoRequired: true,
 		} );

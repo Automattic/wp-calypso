@@ -1,3 +1,4 @@
+import { type MockedFunction, vi } from 'vitest';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import {
 	CHECKOUT_SUPPORT_ASSIGNMENT_TIMEOUT_MS,
@@ -5,11 +6,11 @@ import {
 	loadCheckoutSupportAssignment,
 } from '../checkout-support-routing';
 
-jest.mock( 'calypso/lib/explat', () => ( {
-	loadExperimentAssignment: jest.fn(),
+vi.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: vi.fn(),
 } ) );
 
-const mockLoadExperimentAssignment = loadExperimentAssignment as jest.MockedFunction<
+const mockLoadExperimentAssignment = loadExperimentAssignment as MockedFunction<
 	typeof loadExperimentAssignment
 >;
 
@@ -22,11 +23,11 @@ const assignment = ( variationName: string | null ) => ( {
 
 describe( 'loadCheckoutSupportAssignment', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'returns the variation the user is assigned to', async () => {
@@ -70,13 +71,13 @@ describe( 'loadCheckoutSupportAssignment', () => {
 	} );
 
 	it( 'says how long the assignment took', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockLoadExperimentAssignment.mockReturnValue(
 			new Promise( ( resolve ) => setTimeout( () => resolve( assignment( 'hybrid' ) ), 300 ) )
 		);
 
 		const result = loadCheckoutSupportAssignment();
-		await jest.advanceTimersByTimeAsync( 300 );
+		await vi.advanceTimersByTimeAsync( 300 );
 
 		await expect( result ).resolves.toEqual( {
 			variation: 'hybrid',
@@ -86,11 +87,11 @@ describe( 'loadCheckoutSupportAssignment', () => {
 	} );
 
 	it( 'returns no variation when the assignment takes too long, and says it timed out', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockLoadExperimentAssignment.mockReturnValue( new Promise( () => {} ) );
 
 		const result = loadCheckoutSupportAssignment();
-		await jest.advanceTimersByTimeAsync( CHECKOUT_SUPPORT_ASSIGNMENT_TIMEOUT_MS );
+		await vi.advanceTimersByTimeAsync( CHECKOUT_SUPPORT_ASSIGNMENT_TIMEOUT_MS );
 
 		await expect( result ).resolves.toEqual( {
 			variation: undefined,

@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import MarketplaceThankYou from '../marketplace-thank-you';
 
-const mockRestart = jest.fn();
-const mockComplete = jest.fn();
-const mockRetryAtomic = jest.fn();
-const mockRetryPlugins = jest.fn();
-const mockRetryThemes = jest.fn();
-const mockSetShowProgressBar = jest.fn();
+const mockRestart = vi.fn();
+const mockComplete = vi.fn();
+const mockRetryAtomic = vi.fn();
+const mockRetryPlugins = vi.fn();
+const mockRetryThemes = vi.fn();
+const mockSetShowProgressBar = vi.fn();
 let mockState = {
 	siteId: 1,
 	transferStatus: transferStates.ACTIVE as string | null,
@@ -28,64 +29,66 @@ let mockWait = {
 	complete: mockComplete,
 };
 
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '@automattic/components', () => ( {
 	Button: ( { children, ...props }: React.ButtonHTMLAttributes< HTMLButtonElement > ) => (
 		<button { ...props }>{ children }</button>
 	),
 } ) );
-jest.mock( '@emotion/react', () => ( {
+vi.mock( '@emotion/react', () => ( {
 	ThemeProvider: ( { children }: { children: React.ReactNode } ) => children,
 	Global: () => null,
 	css: () => null,
 } ) );
-jest.mock( 'i18n-calypso', () => ( { useTranslate: () => ( text: string ) => text } ) );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( 'calypso/components/main', () => ( { children }: { children: React.ReactNode } ) => (
-	<main>{ children }</main>
-) );
-jest.mock( 'calypso/components/notice', () => ( { text }: { text: React.ReactNode } ) => (
-	<div role="alert">{ text }</div>
-) );
-jest.mock( 'calypso/components/thank-you-v2', () => () => null );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => null );
-jest.mock( 'calypso/my-sites/marketplace/components/progressbar', () => () => null );
-jest.mock( 'calypso/my-sites/marketplace/theme', () => ( {} ) );
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { useTranslate: () => ( text: string ) => text } )
+);
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/main', () => ( {
+	default: ( { children }: { children: React.ReactNode } ) => <main>{ children }</main>,
+} ) );
+vi.mock( 'calypso/components/notice', () => ( {
+	default: ( { text }: { text: React.ReactNode } ) => <div role="alert">{ text }</div>,
+} ) );
+vi.mock( 'calypso/components/thank-you-v2', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( { default: () => null } ) );
+vi.mock( 'calypso/my-sites/marketplace/components/progressbar', () => ( { default: () => null } ) );
+vi.mock( 'calypso/my-sites/marketplace/theme', () => ( ( m ) => ( { ...m, default: m } ) )( {} ) );
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
 	useSelector: ( selector: ( state: typeof mockState ) => unknown ) => selector( mockState ),
 } ) );
-jest.mock( 'calypso/state/admin-menu/actions', () => ( { requestAdminMenu: jest.fn() } ) );
-jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
+vi.mock( 'calypso/state/admin-menu/actions', () => ( { requestAdminMenu: vi.fn() } ) );
+vi.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 	getAutomatedTransferStatus: ( state: typeof mockState ) => state.transferStatus,
 } ) );
-jest.mock( 'calypso/state/plugins/installed/selectors', () => ( { isRequesting: () => false } ) );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
+vi.mock( 'calypso/state/plugins/installed/selectors', () => ( { isRequesting: () => false } ) );
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
-jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( {
 	__esModule: true,
 	default: ( state: typeof mockState ) => state.isWpcomAtomic,
 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteAdminUrl: () => null,
 	isJetpackSite: () => false,
 } ) );
-jest.mock( 'calypso/state/themes/actions', () => ( { setThemePreviewOptions: jest.fn() } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/themes/actions', () => ( { setThemePreviewOptions: vi.fn() } ) );
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: ( state: typeof mockState ) => state.siteId,
 } ) );
-jest.mock( '../marketplace-go-back-section', () => ( { MarketplaceGoBackSection: () => null } ) );
-jest.mock( '../use-page-texts', () => ( { usePageTexts: () => [ '', '' ] } ) );
-jest.mock( '../use-thank-you-footer', () => ( { useThankYouFoooter: () => null } ) );
-jest.mock( '../use-thank-you-steps', () => ( {
+vi.mock( '../marketplace-go-back-section', () => ( { MarketplaceGoBackSection: () => null } ) );
+vi.mock( '../use-page-texts', () => ( { usePageTexts: () => [ '', '' ] } ) );
+vi.mock( '../use-thank-you-footer', () => ( { useThankYouFoooter: () => null } ) );
+vi.mock( '../use-thank-you-steps', () => ( {
 	useThankYouSteps: () => ( { steps: [], additionalSteps: [] } ),
 } ) );
-jest.mock( '../use-thank-you-deadline', () => ( {
+vi.mock( '../use-thank-you-deadline', () => ( {
 	useThankYouDeadline: () => mockWait,
 } ) );
-jest.mock( '../use-plugins-thank-you-data', () => ( {
+vi.mock( '../use-plugins-thank-you-data', () => ( {
 	__esModule: true,
 	default: () => ( {
 		pluginsSection: [],
@@ -100,7 +103,7 @@ jest.mock( '../use-plugins-thank-you-data', () => ( {
 		retry: mockRetryPlugins,
 	} ),
 } ) );
-jest.mock( '../use-atomic-transfer', () => ( {
+vi.mock( '../use-atomic-transfer', () => ( {
 	useAtomicTransfer: () => ( {
 		isAtomicTransferCheckComplete: mockState.isPageReady,
 		currentStep: 0,
@@ -111,7 +114,7 @@ jest.mock( '../use-atomic-transfer', () => ( {
 		retry: mockRetryAtomic,
 	} ),
 } ) );
-jest.mock( '../use-themes-thank-you-data', () => ( {
+vi.mock( '../use-themes-thank-you-data', () => ( {
 	useThemesThankYouData: () => ( {
 		firstTheme: null,
 		themesSection: [],
@@ -139,7 +142,7 @@ const renderPage = () =>
 
 describe( 'MarketplaceThankYou errors', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockState = {
 			siteId: 1,
 			transferStatus: transferStates.ACTIVE,
@@ -191,7 +194,7 @@ describe( 'MarketplaceThankYou errors', () => {
 
 describe( 'MarketplaceThankYou admin menu refresh', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockState = {
 			siteId: 1,
 			transferStatus: null,

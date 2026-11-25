@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { getEmptyResponseCart } from '@automattic/shopping-cart';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { renderWithProvider, renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import {
@@ -17,9 +18,11 @@ import {
 } from '../hooks/use-has-wrong-account-renewal-error';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/current-user/actions', () => ( {
-	...jest.requireActual( 'calypso/state/current-user/actions' ),
-	redirectToLogout: jest.fn( () => ( { type: 'REDIRECT_TO_LOGOUT_MOCK' } ) ),
+vi.mock( 'calypso/state/current-user/actions', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/state/current-user/actions' ) >(
+		'calypso/state/current-user/actions'
+	) ),
+	redirectToLogout: vi.fn( () => ( { type: 'REDIRECT_TO_LOGOUT_MOCK' } ) ),
 } ) );
 
 function getCartWithErrorCodes( codes: string[] ): ResponseCart {
