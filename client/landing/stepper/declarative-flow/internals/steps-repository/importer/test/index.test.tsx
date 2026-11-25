@@ -4,10 +4,18 @@
 import { render, screen } from '@testing-library/react';
 import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { isImporterStatusHydrated } from 'calypso/state/imports/selectors';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { appStates } from 'calypso/state/imports/constants';
+import {
+	getImporterStatusForSiteId,
+	isImporterStatusHydrated,
+} from 'calypso/state/imports/selectors';
 import { withImporterWrapper } from '..';
 import type { ImporterCompType } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { Importer as ImporterType, ImportJob } from 'calypso/blocks/importer/types';
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( { useSiteQuery: jest.fn() } ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( { useSiteData: jest.fn() } ) );
@@ -31,7 +39,7 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUser: () => ( { ID: 1 } ),
 } ) );
 jest.mock( 'calypso/state/imports/selectors', () => ( {
-	getImporterStatusForSiteId: () => [],
+	getImporterStatusForSiteId: jest.fn(),
 	isImporterStatusHydrated: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/imports/url-analyzer/selectors', () => ( { getUrlData: () => null } ) );
@@ -47,15 +55,25 @@ jest.mock( 'calypso/blocks/importer/components/not-authorized', () => () => (
 const Importer = ( () => <div>Importer</div> ) as unknown as ImporterCompType;
 const ImporterWrapper = withImporterWrapper( Importer );
 
-const renderWrapper = () =>
-	render(
-		<ImporterWrapper
-			importer="wordpress"
-			flow="site-setup"
-			navigation={ { submit: jest.fn() } }
-			stepName="importerWordpress"
-		/>
-	);
+const wrapperElement = ( importer: ImporterType = 'wordpress' ) => (
+	<ImporterWrapper
+		importer={ importer }
+		flow="site-setup"
+		navigation={ { submit: jest.fn() } }
+		stepName="importerWordpress"
+	/>
+);
+
+const renderWrapper = ( importer?: ImporterType ) => render( wrapperElement( importer ) );
+
+const createJob = ( overrides: Partial< ImportJob > & { file?: { size: number } } = {} ) => ( {
+	importerId: 'wordpress-1',
+	type: 'importer-type-wordpress',
+	site: { ID: 123 },
+	importerState: appStates.READY_FOR_UPLOAD,
+	importerFileType: 'content',
+	...overrides,
+} );
 
 const mockSite = ( {
 	site,
@@ -85,7 +103,168 @@ const isLoaderVisible = ( container: HTMLElement ) =>
 
 describe( 'withImporterWrapper', () => {
 	beforeEach( () => {
+		jest.clearAllMocks();
+		jest.mocked( getImporterStatusForSiteId ).mockReturnValue( [] );
 		jest.mocked( isImporterStatusHydrated ).mockReturnValue( true );
+	} );
+
+	describe( 'importer state events', () => {
+		beforeEach( () => {
+			mockSite( { site: { ID: 123, site_owner: 1 } } );
+		} );
+
+		it.each( [
+			[ appStates.READY_FOR_UPLOAD, 'calypso_importer_view' ],
+			[ appStates.UPLOADING, 'calypso_importer_upload_start' ],
+			[ appStates.UPLOAD_SUCCESS, 'calypso_importer_upload_success' ],
+			[ appStates.MAP_AUTHORS, 'calypso_importer_map_authors_view' ],
+			[ appStates.IMPORTING, 'calypso_importer_import_start' ],
+			[ appStates.IMPORT_SUCCESS, 'calypso_importer_import_success' ],
+		] )( 'records %s once despite repeated status polls', ( importerState, eventName ) => {
+			jest
+				.mocked( getImporterStatusForSiteId )
+				.mockReturnValue( [ createJob( { importerState } ) ] );
+			const { rerender } = renderWrapper();
+			jest
+				.mocked( getImporterStatusForSiteId )
+				.mockReturnValue( [ createJob( { importerState } ) ] );
+			rerender( wrapperElement() );
+			rerender( wrapperElement() );
+
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+			expect( recordTracksEvent ).toHaveBeenCalledWith( eventName, {
+				importer_id: 'importer-type-wordpress',
+			} );
+		} );
+
+		it( 'records upload failure, retry, upload success and import progression in order', () => {
+			const { rerender } = renderWrapper();
+			for ( const importerState of [
+				appStates.UPLOADING,
+				appStates.UPLOAD_FAILURE,
+				appStates.UPLOADING,
+				appStates.UPLOAD_PROCESSING,
+				appStates.UPLOAD_SUCCESS,
+				appStates.MAP_AUTHORS,
+				appStates.IMPORTING,
+				appStates.IMPORT_SUCCESS,
+			] ) {
+				jest
+					.mocked( getImporterStatusForSiteId )
+					.mockReturnValue( [ createJob( { importerState } ) ] );
+				rerender( wrapperElement() );
+			}
+
+			expect( jest.mocked( recordTracksEvent ).mock.calls.map( ( [ name ] ) => name ) ).toEqual( [
+				'calypso_importer_upload_start',
+				'calypso_importer_upload_fail',
+				'calypso_importer_upload_start',
+				'calypso_importer_upload_success',
+				'calypso_importer_map_authors_view',
+				'calypso_importer_import_start',
+				'calypso_importer_import_success',
+			] );
+		} );
+
+		it.each( [ appStates.UPLOAD_FAILURE, appStates.IMPORT_FAILURE ] )(
+			'includes structured failure details for %s without the error description',
+			( importerState ) => {
+				jest.mocked( getImporterStatusForSiteId ).mockReturnValue( [
+					createJob( {
+						importerState,
+						importerFileType: 'playground',
+						errorData: { type: 'uploadError', code: 'invalid_file', description: 'file details' },
+						file: { size: 150 * 1024 * 1024 },
+					} ),
+				] );
+				renderWrapper();
+
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					importerState === appStates.UPLOAD_FAILURE
+						? 'calypso_importer_upload_fail'
+						: 'calypso_importer_import_fail',
+					{
+						importer_id: 'importer-type-wordpress',
+						error_type: 'uploadError',
+						error_code: 'invalid_file',
+						importer_file_type: 'playground',
+						...( importerState === appStates.UPLOAD_FAILURE && { filesize_range: '100—200MB' } ),
+					}
+				);
+			}
+		);
+
+		it( 'records a failure again when its error code changes, but not on identical polls', () => {
+			const { rerender } = renderWrapper();
+			for ( const code of [ undefined, 'invalid_file', 'invalid_file', 'file_too_large' ] ) {
+				jest.mocked( getImporterStatusForSiteId ).mockReturnValue( [
+					createJob( {
+						importerState: appStates.UPLOAD_FAILURE,
+						errorData: { type: 'uploadError', code, description: '' },
+					} ),
+				] );
+				rerender( wrapperElement() );
+			}
+
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 3 );
+			expect( recordTracksEvent ).toHaveBeenLastCalledWith( 'calypso_importer_upload_fail', {
+				importer_id: 'importer-type-wordpress',
+				error_type: 'uploadError',
+				error_code: 'file_too_large',
+				importer_file_type: 'content',
+				filesize_range: null,
+			} );
+		} );
+
+		it( 'tracks a new job even if it starts in the same state as the previous job', () => {
+			jest.mocked( getImporterStatusForSiteId ).mockReturnValue( [ createJob() ] );
+			const { rerender } = renderWrapper();
+			jest
+				.mocked( getImporterStatusForSiteId )
+				.mockReturnValue( [ createJob( { importerId: 'wordpress-2' } ) ] );
+			rerender( wrapperElement() );
+
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 2 );
+		} );
+
+		it.each< ImporterType >( [ 'wordpress', 'medium', 'squarespace', 'substack', 'wix' ] )(
+			'tracks only the selected %s importer',
+			( importer ) => {
+				jest
+					.mocked( getImporterStatusForSiteId )
+					.mockReturnValue( [
+						createJob( { type: 'another-importer' } ),
+						createJob( { type: `importer-type-${ importer }`, importerId: `${ importer }-1` } ),
+					] );
+				renderWrapper( importer );
+
+				expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+				expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_importer_view', {
+					importer_id: `importer-type-${ importer }`,
+				} );
+			}
+		);
+
+		it( 'waits for importer hydration before tracking an existing job', () => {
+			jest.mocked( getImporterStatusForSiteId ).mockReturnValue( [ createJob() ] );
+			jest.mocked( isImporterStatusHydrated ).mockReturnValue( false );
+			const { rerender } = renderWrapper();
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
+
+			jest.mocked( isImporterStatusHydrated ).mockReturnValue( true );
+			rerender( wrapperElement() );
+			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'does not track a job when the site is loading or the user lacks permission', () => {
+			jest.mocked( getImporterStatusForSiteId ).mockReturnValue( [ createJob() ] );
+			mockSite( { site: { ID: 123 }, isLoading: true } );
+			const { rerender } = renderWrapper();
+			mockSite( { site: { ID: 123, site_owner: 2 } } );
+			rerender( wrapperElement() );
+
+			expect( recordTracksEvent ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'shows the loader while the site is loading', () => {
