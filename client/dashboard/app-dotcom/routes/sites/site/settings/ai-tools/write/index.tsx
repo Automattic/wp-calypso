@@ -19,7 +19,9 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Fragment, useDeferredValue, useMemo, useState } from 'react';
+import { getOrdinaryTools } from '../../../../../../../../me/mcp/group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../../../../../me/mcp/groups';
+import { getMcpBulkHelp, McpToolToggle } from '../../../../../../../../me/mcp/opt-in-controls';
 import { useMcpTracksAudienceProps } from '../../../../../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
@@ -28,8 +30,8 @@ import {
 	getSiteMcpAbilities,
 	getSiteRemoteGroups,
 	getSiteLevelEnabled,
-	isRemoteAbilityEnabled,
-	isRemoteKeyEnabled,
+	isRemoteAbilityOptIn,
+	isSiteMcpToolEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../../../../../../me/mcp/utils';
 import { useAnalytics } from '../../../../../../../app/analytics';
@@ -45,6 +47,8 @@ import { isWriteTool, sortTools } from '../../../../../../../me/mcp/categories';
 import McpGroupCard from '../../../../../../../sites/ai-tools/components/mcp-group-card';
 import RemoteAbilitiesSection, {
 	collectNamespaces,
+	getRemoteBulkKeys,
+	isRemoteBulkEnabled,
 } from '../../../../../../../sites/ai-tools/components/remote-abilities-section';
 import type { McpAbility, McpGroupDescriptor } from '@automattic/api-core';
 
@@ -82,21 +86,23 @@ export default function SiteAIToolsWrite() {
 
 	// When there are no site-specific overrides, use site_level_enabled_default as the effective
 	// enabled state for every tool. True when account MCP is on, false when it's disabled for sites.
+	// The site default never turns on an opt-in tool, so it keeps its account state.
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled =
 		( userSettings as any )?.mcp_abilities?.site_level_enabled_default ?? false;
-	const mcpAbilities = hasSiteAbilityOverrides
-		? mergedAbilities
-		: Object.fromEntries(
-				Object.entries( mergedAbilities ).map( ( [ id, tool ] ) => [
-					id,
-					{ ...tool, enabled: defaultToolEnabled },
-				] )
-			);
-
-	const allTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > )
+	const allTools = ( Object.entries( mergedAbilities ) as Array< [ string, McpAbility ] > )
 		.filter( ( [ , tool ] ) => tool.visible !== false )
-		.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
+		.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) )
+		.map( ( [ id, tool ] ): [ string, McpAbility ] => [
+			id,
+			{
+				...tool,
+				enabled: isSiteMcpToolEnabled( tool, hasSiteAbilityOverrides, defaultToolEnabled ),
+			},
+		] );
+	const ordinaryTools = getOrdinaryTools( allTools );
+	const allOrdinaryEnabled =
+		ordinaryTools.length > 0 && ordinaryTools.every( ( [ , tool ] ) => tool.enabled );
 
 	// Tool search: fuzzy-filters the wpcom tools on this page and is passed down
 	// to the site-published section.
@@ -132,33 +138,23 @@ export default function SiteAIToolsWrite() {
 		() => collectNamespaces( remoteAbilities, savedRemoteGroups, TOOL_CATEGORY ),
 		[ remoteAbilities, savedRemoteGroups ]
 	);
-	const remoteGroupKeys = [ ...remoteNamespaces.values() ].flatMap( ( group ) => group.keys );
-	const remoteAbilityKeys = [ ...remoteNamespaces.values() ].flatMap(
-		( group ) => group.abilityKeys
-	);
+	const remoteOptIn = userSettings?.mcp_abilities?.remote_abilities_requiring_opt_in;
+	const remoteGroups = [ ...remoteNamespaces.values() ];
+	const remoteKeys = remoteGroups.flatMap( ( group ) => getRemoteBulkKeys( group, remoteOptIn ) );
+	const remoteOptInCount = remoteGroups
+		.flatMap( ( group ) => group.abilities )
+		.filter( ( ability ) => isRemoteAbilityOptIn( ability.name, remoteOptIn ) ).length;
 
 	// Site-published abilities with no saved choice follow the user's MCP access:
-	// on when MCP is on for this site and every tool of this category is enabled.
+	// on when MCP is on for this site and every tool of this category is enabled,
+	// leaving out opt-in tools.
 	const remoteDefaultEnabled =
-		getSiteLevelEnabled( userSettings || {}, site.ID ) &&
-		allTools.length > 0 &&
-		allTools.every( ( [ , tool ] ) => tool.enabled );
+		getSiteLevelEnabled( userSettings || {}, site.ID ) && allOrdinaryEnabled;
 
 	const pageAllEnabled =
-		allTools.length > 0 &&
-		allTools.every( ( [ , tool ] ) => tool.enabled ) &&
-		[ ...remoteGroupKeys, ...remoteAbilityKeys ].every( ( key ) =>
-			isRemoteKeyEnabled( savedRemoteGroups, key, remoteDefaultEnabled )
-		) &&
-		[ ...remoteNamespaces.values() ].every( ( group ) =>
-			group.abilities.every( ( ability ) =>
-				isRemoteAbilityEnabled(
-					savedRemoteGroups,
-					ability.name,
-					ability.meta?.annotations,
-					remoteDefaultEnabled
-				)
-			)
+		allOrdinaryEnabled &&
+		remoteGroups.every( ( group ) =>
+			isRemoteBulkEnabled( group, savedRemoteGroups, remoteDefaultEnabled, remoteOptIn )
 		);
 
 	const mutation = useMutation(
@@ -169,13 +165,14 @@ export default function SiteAIToolsWrite() {
 	);
 
 	// When there are no existing overrides, materialize the implicit default alongside the change
-	// so subsequent edits have a full baseline to work from.
+	// so subsequent edits have a full baseline to work from. Opt-in tools are left out: the site
+	// default never covers them, so writing it would grant one nobody turned on.
 	const buildAbilities = ( overrides: Record< string, boolean > ): Record< string, boolean > => {
 		if ( hasSiteAbilityOverrides ) {
 			return overrides;
 		}
 		const defaults: Record< string, boolean > = {};
-		allTools.forEach( ( [ id ] ) => {
+		ordinaryTools.forEach( ( [ id ] ) => {
 			defaults[ id ] = defaultToolEnabled;
 		} );
 		return { ...defaults, ...overrides };
@@ -216,12 +213,11 @@ export default function SiteAIToolsWrite() {
 
 	const handlePageToggle = ( enabled: boolean ) => {
 		const overrides: Record< string, boolean > = {};
-		allTools.forEach( ( [ toolId ] ) => {
+		ordinaryTools.forEach( ( [ toolId ] ) => {
 			overrides[ toolId ] = enabled;
 		} );
 		// Both directions write group keys and saved ability-level keys:
 		// ability-level trues actively allow, so disabling must clear them too.
-		const remoteKeys = [ ...remoteGroupKeys, ...remoteAbilityKeys ];
 		mutation.mutate(
 			{
 				mcp_abilities: {
@@ -254,12 +250,9 @@ export default function SiteAIToolsWrite() {
 			<div key={ toolId } id={ toolId }>
 				<HStack justify="space-between" alignment="flex-start" spacing={ 2 }>
 					<div style={ { flex: 1, minWidth: 0 } }>
-						<ToggleControl
-							__nextHasNoMarginBottom
-							checked={ tool.enabled }
+						<McpToolToggle
+							tool={ tool }
 							disabled={ mutation.isPending }
-							label={ tool.title }
-							help={ tool.description }
 							onChange={ ( checked ) => handleToolChange( toolId, checked ) }
 						/>
 					</div>
@@ -303,7 +296,7 @@ export default function SiteAIToolsWrite() {
 			<ComponentViewTracker eventName="calypso_dashboard_site_ai_tools_write_view" />
 			<div className="mcp-tools-page">
 				<div className="mcp-tools-toolbar">
-					{ allTools.length > 0 ? (
+					{ ordinaryTools.length > 0 && (
 						<Card>
 							<CardBody>
 								<ToggleControl
@@ -311,11 +304,15 @@ export default function SiteAIToolsWrite() {
 									checked={ pageAllEnabled }
 									disabled={ mutation.isPending }
 									label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
+									help={ getMcpBulkHelp(
+										allTools.length - ordinaryTools.length + remoteOptInCount
+									) }
 									onChange={ handlePageToggle }
 								/>
 							</CardBody>
 						</Card>
-					) : (
+					) }
+					{ allTools.length === 0 && (
 						<Card>
 							<CardBody>
 								<Text variant="muted">
@@ -335,7 +332,7 @@ export default function SiteAIToolsWrite() {
 				</div>
 				{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 					const groupKey = descriptor?.name ?? '__other__';
-					const allGroupEnabled = groupTools.every( ( [ , tool ] ) => tool.enabled );
+					const ordinaryGroupTools = getOrdinaryTools( groupTools );
 
 					return (
 						<McpGroupCard
@@ -344,10 +341,15 @@ export default function SiteAIToolsWrite() {
 							title={ label }
 							description={ descriptor?.description }
 							toolAnchors={ groupTools.map( ( [ toolId ] ) => toolId ) }
-							allEnabled={ allGroupEnabled }
+							allEnabled={ ordinaryGroupTools.every( ( [ , tool ] ) => tool.enabled ) }
+							enableAllHelp={ getMcpBulkHelp( groupTools.length - ordinaryGroupTools.length ) }
 							disabled={ mutation.isPending }
 							forceOpen={ query.length > 0 }
-							onEnableAll={ ( checked ) => handleGroupEnableAll( groupTools, checked ) }
+							onEnableAll={
+								ordinaryGroupTools.length > 0
+									? ( checked ) => handleGroupEnableAll( ordinaryGroupTools, checked )
+									: undefined
+							}
 						>
 							{ renderToolsContent( groupTools ) }
 						</McpGroupCard>

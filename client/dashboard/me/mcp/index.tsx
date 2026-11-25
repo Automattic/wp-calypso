@@ -5,7 +5,11 @@ import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, globe } from '@wordpress/icons';
-import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
+import {
+	getOrdinaryTools,
+	getOverridesToMatch,
+	groupIntentKey,
+} from '../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
@@ -129,8 +133,13 @@ function McpComponent() {
 	);
 
 	const handleMcpToggle = ( enabled: boolean, source: 'toggle' | 'connect_notice' = 'toggle' ) => {
-		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled ) as
-			Record< string, boolean > | undefined;
+		// Turning access on leaves opt-in tools alone. Turning it off includes them:
+		// the server keeps an explicit per-tool choice until it's overwritten.
+		const tools = Object.entries( mcpAbilities );
+		const overrides = getOverridesToMatch(
+			enabled ? getOrdinaryTools( tools ) : tools,
+			enabled
+		) as Record< string, boolean > | undefined;
 
 		const groupIntents: Record< string, boolean > = { read: enabled, write: enabled };
 		if ( ! enabled ) {

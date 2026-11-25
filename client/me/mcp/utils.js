@@ -1,3 +1,5 @@
+import { requiresOptIn } from './group-intents';
+
 /**
  * Get account-level MCP abilities from user settings
  * This is for the /me/mcp route which manages account-level settings
@@ -162,6 +164,11 @@ export function getRemoteAbilityKey( name, annotations = {} ) {
 	) }`.toLowerCase();
 }
 
+export function isRemoteAbilityOptIn( name, remoteOptIn = [] ) {
+	// The settings client ships before the server returns this field.
+	return name === 'jetpack-stats/get-subscribers' || remoteOptIn.includes( name );
+}
+
 /**
  * Whether a remote ability is enabled in a saved allowlist: the ability-level
  * key when present, otherwise the group key, otherwise the default.
@@ -169,18 +176,22 @@ export function getRemoteAbilityKey( name, annotations = {} ) {
  * @param {string} name - Ability name
  * @param {Object} [annotations] - Published annotations
  * @param {boolean} [defaultEnabled] - State when nothing is saved for the ability or its group
+ * @param {string[]} [remoteOptIn] - Published abilities requiring individual opt-in
  * @returns {boolean}
  */
 export function isRemoteAbilityEnabled(
 	savedGroups,
 	name,
 	annotations = {},
-	defaultEnabled = false
+	defaultEnabled = false,
+	remoteOptIn = []
 ) {
+	const individual = savedGroups[ getRemoteAbilityKey( name, annotations ) ];
+	if ( isRemoteAbilityOptIn( name, remoteOptIn ) ) {
+		return individual === true;
+	}
 	return (
-		savedGroups[ getRemoteAbilityKey( name, annotations ) ] ??
-		savedGroups[ getRemoteAbilityGroupKey( name, annotations ) ] ??
-		defaultEnabled
+		individual ?? savedGroups[ getRemoteAbilityGroupKey( name, annotations ) ] ?? defaultEnabled
 	);
 }
 
@@ -212,6 +223,21 @@ export function mergeSiteMcpAbilities( accountAbilities, siteAbilities ) {
 			},
 		] )
 	);
+}
+
+/**
+ * An opt-in tool with no site overrides is enabled only if site access is on and
+ * it was enabled at account level.
+ * @param {import('@automattic/api-core').McpAbility} tool
+ * @param {boolean} hasSiteAbilityOverrides
+ * @param {boolean} defaultEnabled
+ * @returns {boolean}
+ */
+export function isSiteMcpToolEnabled( tool, hasSiteAbilityOverrides, defaultEnabled ) {
+	if ( hasSiteAbilityOverrides ) {
+		return tool.enabled;
+	}
+	return defaultEnabled && ( ! requiresOptIn( tool ) || tool.enabled );
 }
 
 /**
