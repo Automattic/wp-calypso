@@ -1,18 +1,19 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { NavigationLink } from '../';
 const signupUtils = require( 'calypso/signup/utils' );
 
-jest.mock( 'calypso/signup/utils', () => ( {
-	getStepUrl: jest.fn(),
-	getFilteredSteps: jest.fn(),
-	getPreviousStepName: jest.fn(),
-	isFirstStepInFlow: jest.fn(),
+vi.mock( 'calypso/signup/utils', () => ( {
+	getStepUrl: vi.fn(),
+	getFilteredSteps: vi.fn(),
+	getPreviousStepName: vi.fn(),
+	isFirstStepInFlow: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/components/src/gridicon', () => {
-	return ( { icon } ) => <div data-testid={ `gridicon-${ icon }` } />;
+vi.mock( '@automattic/components/src/gridicon', () => {
+	return { default: ( { icon } ) => <div data-testid={ `gridicon-${ icon }` } /> };
 } );
 
 const noop = () => {};
@@ -31,8 +32,8 @@ describe( 'NavigationLink', () => {
 		},
 		recordTracksEvent: noop,
 		submitSignupStep: noop,
-		goToPreviousStep: jest.fn(),
-		goToNextStep: jest.fn(),
+		goToPreviousStep: vi.fn(),
+		goToNextStep: vi.fn(),
 		translate: ( str ) => `translated:${ str }`,
 		userLoggedIn: true,
 	};

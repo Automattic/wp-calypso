@@ -1,26 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { useAchievementsQuery } from '../use-achievements-query';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+		},
+	} )
+);
 
-const mockGet = jest.mocked( wpcom.req.get );
+const mockGet = vi.mocked( wpcom.req.get );
 
 describe( 'useAchievementsQuery', () => {
 	let queryClient: QueryClient;
 	let wrapper: React.FC< React.PropsWithChildren< unknown > >;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		queryClient = new QueryClient( {
 			defaultOptions: { queries: { retry: false } },

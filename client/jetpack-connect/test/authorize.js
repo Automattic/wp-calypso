@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import deepFreeze from 'deep-freeze';
 import { translate } from 'i18n-calypso';
+import { vi } from 'vitest';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import * as isUserConnectedActions from 'calypso/state/jetpack-connect/actions/is-user-connected';
 import purchasesReducer from 'calypso/state/purchases/reducer';
@@ -75,8 +76,8 @@ const DEFAULT_PROPS = deepFreeze( {
 
 const APPROVE_SSO_CLIENT_ID = 99821;
 
-jest.mock( '../persistence-utils', () => ( {
-	...jest.requireActual( '../persistence-utils' ),
+vi.mock( '../persistence-utils', async () => ( {
+	...( await vi.importActual( '../persistence-utils' ) ),
 	isSsoApproved: ( clientId ) => clientId === APPROVE_SSO_CLIENT_ID,
 } ) );
 
@@ -94,7 +95,7 @@ function renderWithRedux( ui ) {
 let windowOpenSpy;
 
 beforeEach( () => {
-	windowOpenSpy = jest.spyOn( global.window, 'open' ).mockImplementation( jest.fn() );
+	windowOpenSpy = vi.spyOn( global.window, 'open' ).mockImplementation( vi.fn() );
 } );
 
 afterEach( () => {
@@ -598,7 +599,7 @@ describe( 'JetpackAuthorize', () => {
 		let authorizeMock;
 
 		beforeEach( () => {
-			authorizeMock = jest.fn();
+			authorizeMock = vi.fn();
 		} );
 
 		test( 'should authorize if isSso', () => {
@@ -851,7 +852,7 @@ describe( 'JetpackAuthorize', () => {
 		} );
 
 		test( 'should check the user connection again when the authorize step restarts', () => {
-			const isUserConnectedSpy = jest
+			const isUserConnectedSpy = vi
 				.spyOn( isUserConnectedActions, 'isUserConnected' )
 				.mockReturnValue( { type: 'TEST_IS_USER_CONNECTED' } );
 
@@ -1090,7 +1091,7 @@ describe( 'JetpackAuthorize', () => {
 
 		test( 'should redirect to url that returns from props.logoutUser', async () => {
 			const redirectTo = 'http://www.example.com/redirect';
-			const logoutUser = jest.fn().mockResolvedValue( {
+			const logoutUser = vi.fn().mockResolvedValue( {
 				redirect_to: redirectTo,
 			} );
 			renderWithRedux(
@@ -1160,7 +1161,7 @@ describe( 'JetpackAuthorize', () => {
 		};
 
 		test( "the screen views carry the site's plugins", () => {
-			const recordTracksEvent = jest.fn();
+			const recordTracksEvent = vi.fn();
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
@@ -1178,7 +1179,7 @@ describe( 'JetpackAuthorize', () => {
 		} );
 
 		test( 'the approve click carries from, site and plugins', async () => {
-			const recordTracksEvent = jest.fn();
+			const recordTracksEvent = vi.fn();
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
@@ -1200,7 +1201,7 @@ describe( 'JetpackAuthorize', () => {
 		} );
 
 		test( 'leaves plugins out when the site sent none', async () => {
-			const recordTracksEvent = jest.fn();
+			const recordTracksEvent = vi.fn();
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
@@ -1281,7 +1282,7 @@ describe( 'JetpackAuthorize', () => {
 		} );
 
 		test( 'authorizes on its own when the site sends the user back', () => {
-			const authorize = jest.fn();
+			const authorize = vi.fn();
 			renderWithRedux(
 				<JetpackAuthorize { ...DEFAULT_PROPS } authorize={ authorize } calypsoStartedConnection />
 			);

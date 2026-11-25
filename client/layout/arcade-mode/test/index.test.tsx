@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import { activateArcadeMode } from '../activate';
 import { installKonamiListener } from '../detect';
 
-jest.mock( '../activate', () => ( {
-	activateArcadeMode: jest.fn(),
+vi.mock( '../activate', () => ( {
+	activateArcadeMode: vi.fn(),
 } ) );
 
-const mockUnlockAchievement = jest.fn();
+const mockUnlockAchievement = vi.fn();
 
-jest.mock( '@automattic/api-core', () => ( {
+vi.mock( '@automattic/api-core', () => ( {
 	unlockAchievement: ( ...args: unknown[] ) => mockUnlockAchievement( ...args ),
 } ) );
 
-jest.mock( 'calypso/state/query-client', () => ( {
+vi.mock( 'calypso/state/query-client', () => ( {
 	getCalypsoQueryClient: () => null,
 } ) );
 
-const realActivate = jest.requireActual< typeof import( '../activate' ) >( '../activate' );
+const realActivate = await vi.importActual< typeof import( '../activate' ) >( '../activate' );
 
 const KONAMI_KEYS = [
 	'ArrowUp',
@@ -63,7 +64,7 @@ describe( 'installKonamiListener', () => {
 	let uninstall: () => void;
 
 	beforeEach( () => {
-		( activateArcadeMode as jest.Mock ).mockClear();
+		( activateArcadeMode as Mock ).mockClear();
 		uninstall = installKonamiListener();
 	} );
 

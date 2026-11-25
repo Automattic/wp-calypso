@@ -1,22 +1,27 @@
 import fs from 'fs';
 import path from 'path';
 import { isEmpty } from '@automattic/js-utils';
+import { vi } from 'vitest';
 import flows from '../flows';
 import { generateFlows } from '../flows-pure';
 import { getStepModuleLoaders, getStepModuleMap } from '../step-components';
 import steps from '../steps';
 import { generateSteps } from '../steps-pure';
 
-jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
-jest.mock( 'calypso/components/file-picker/component-file-picker', () => <div></div> );
-jest.mock( 'calypso/lib/explat', () => {
+vi.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
+vi.mock( 'calypso/components/file-picker/component-file-picker', () => ( {
+	default: <div></div>,
+} ) );
+vi.mock( 'calypso/lib/explat', () => {
 	() => {
 		return [ false, null ];
 	};
 } );
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: () => true,
-} ) );
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isEnabled: () => true,
+	} )
+);
 
 describe( 'index', () => {
 	// eslint-disable-next-line jest/expect-expect

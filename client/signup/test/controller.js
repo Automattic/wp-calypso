@@ -1,20 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { updateDependencies } from 'calypso/state/signup/actions';
 import controller from '../controller';
 
-jest.mock( '../main', () => () => null );
-jest.mock( 'calypso/signup/config/flows', () => ( {
-	getFlow: () => ( { steps: [ 'plans-site-selected-legacy' ] } ),
-} ) );
-jest.mock( '../config/step-components', () => ( {
+vi.mock( '../main', () => ( { default: () => null } ) );
+vi.mock( 'calypso/signup/config/flows', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		getFlow: () => ( { steps: [ 'plans-site-selected-legacy' ] } ),
+	} )
+);
+vi.mock( '../config/step-components', () => ( {
 	getStepComponent: async () => () => null,
 } ) );
-jest.mock( '../utils', () => ( {
-	...jest.requireActual( '../utils' ),
+vi.mock( '../utils', async () => ( {
+	...( await vi.importActual( '../utils' ) ),
 	getFlowName: ( params ) => params.flowName,
 	getStepName: ( params ) => params.stepName,
 	getStepSectionName: () => undefined,
@@ -26,7 +29,7 @@ describe( 'redirectLegacyFlow', () => {
 
 	beforeEach( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, replace: jest.fn() },
+			value: { ...originalLocation, replace: vi.fn() },
 			writable: true,
 			configurable: true,
 		} );
@@ -41,7 +44,7 @@ describe( 'redirectLegacyFlow', () => {
 	} );
 
 	const run = ( params, query = {}, dependencyStore = {} ) => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const store = { getState: () => ( { signup: { dependencyStore } } ) };
 		controller.redirectLegacyFlow( { params, query, store }, next );
 		return next;
@@ -100,7 +103,7 @@ describe( 'redirectLegacyFlow', () => {
 	} );
 
 	it( 'sends the retired website-design-services flow to DIFM with its query and locale', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		controller.redirectLegacyFlow(
 			{
 				params: { flowName: 'website-design-services', stepName: 'difm-options', lang: 'es' },
@@ -116,7 +119,7 @@ describe( 'redirectLegacyFlow', () => {
 	} );
 
 	it( 'sends /start/student to the Student flow with its query and locale', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		controller.redirectLegacyFlow(
 			{
 				params: { flowName: 'student', lang: 'es' },
@@ -149,11 +152,11 @@ describe( 'start', () => {
 	// `start` reads the query from a module-level context saved on first entry, so each run loads
 	// the controller fresh.
 	const run = async ( flowName, query ) => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const store = { dispatch, getState: () => ( { currentUser: { id: 1 } } ) };
 		const context = { params: { flowName, stepName: 'plans' }, query, store };
 
-		await jest.isolateModulesAsync( async () => {
+		await vi.isolateModulesAsync( async () => {
 			const { default: isolatedController } = await import( '../controller' );
 			isolatedController.saveInitialContext( context, () => {} );
 			await isolatedController.start( context, () => {} );
@@ -188,7 +191,7 @@ describe( 'saveInitialContext', () => {
 	const flowName = 'onboarding-with-email';
 
 	it( 'keeps the entry query across steps and refreshes it when the flow is entered again', async () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const store = { dispatch, getState: () => ( { currentUser: { id: 1 } } ) };
 		const visit = async ( isolatedController, stepName, query ) => {
 			const context = { params: { flowName, stepName }, query, store };
@@ -196,7 +199,7 @@ describe( 'saveInitialContext', () => {
 			await isolatedController.start( context, () => {} );
 		};
 
-		await jest.isolateModulesAsync( async () => {
+		await vi.isolateModulesAsync( async () => {
 			const { default: isolatedController } = await import( '../controller' );
 
 			await visit( isolatedController, undefined, { ref: 'first' } );
@@ -213,8 +216,8 @@ describe( 'saveInitialContext', () => {
 
 describe( 'redirectWithoutLocaleIfLoggedIn', () => {
 	it( 'keeps the entry query when dropping the locale', () => {
-		jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
-		const redirect = jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
+		vi.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+		const redirect = vi.spyOn( page, 'redirect' ).mockImplementation( () => {} );
 		const store = { getState: () => ( { currentUser: { id: 1 } } ) };
 
 		controller.redirectWithoutLocaleIfLoggedIn(
@@ -224,7 +227,7 @@ describe( 'redirectWithoutLocaleIfLoggedIn', () => {
 				querystring: 'tier=premium',
 				store,
 			},
-			jest.fn()
+			vi.fn()
 		);
 
 		expect( redirect ).toHaveBeenCalledWith( '/start/onboarding-with-email?tier=premium' );

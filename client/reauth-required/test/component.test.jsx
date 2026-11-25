@@ -1,33 +1,36 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import ReauthRequired from '../component';
 
 const mockListeners = [];
 
-jest.mock( 'calypso/lib/two-step-authorization', () => ( {
-	on: ( event, listener ) => mockListeners.push( listener ),
-	off: () => {},
-	isReauthRequired: () => false,
+vi.mock( 'calypso/lib/two-step-authorization', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		on: ( event, listener ) => mockListeners.push( listener ),
+		off: () => {},
+		isReauthRequired: () => false,
+	} )
+);
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
-} ) );
-jest.mock( 'calypso/me/reauth-required', () => () => null );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/me/reauth-required', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
 describe( 'ReauthRequired', () => {
 	const originalLocation = window.location;
 
 	beforeEach( () => {
 		mockListeners.length = 0;
-		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
 		window.location = originalLocation;
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	function completeReauth( redirectTo ) {

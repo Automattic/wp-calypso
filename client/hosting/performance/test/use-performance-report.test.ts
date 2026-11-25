@@ -1,33 +1,34 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook, act } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
 import { usePerformanceReport } from '../hooks/usePerformanceReport';
 
-jest.mock( 'calypso/data/site-profiler/use-url-basic-metrics-query' );
-jest.mock( 'calypso/data/site-profiler/use-url-basic-metrics-query' );
-jest.mock( 'calypso/data/site-profiler/use-url-performance-insights' );
+vi.mock( 'calypso/data/site-profiler/use-url-basic-metrics-query' );
+vi.mock( 'calypso/data/site-profiler/use-url-basic-metrics-query' );
+vi.mock( 'calypso/data/site-profiler/use-url-performance-insights' );
 
 describe( 'usePerformanceReport', () => {
-	const mockSetIsSaving = jest.fn();
-	const mockRefetchPages = jest.fn();
-	const mockSavePerformanceReportUrl = jest.fn().mockResolvedValue( undefined );
+	const mockSetIsSaving = vi.fn();
+	const mockRefetchPages = vi.fn();
+	const mockSavePerformanceReportUrl = vi.fn().mockResolvedValue( undefined );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
-		( useUrlBasicMetricsQuery as jest.Mock ).mockReturnValue( {
+		( useUrlBasicMetricsQuery as Mock ).mockReturnValue( {
 			data: null,
 			isError: false,
 			isFetched: false,
 			isLoading: false,
-			refetch: jest.fn(),
+			refetch: vi.fn(),
 		} );
 
-		( useUrlPerformanceInsightsQuery as jest.Mock ).mockReturnValue( {
+		( useUrlPerformanceInsightsQuery as Mock ).mockReturnValue( {
 			data: null,
 			status: 'idle',
 			isError: false,
@@ -36,7 +37,7 @@ describe( 'usePerformanceReport', () => {
 	} );
 
 	it( 'should not call savePerformanceReportUrl when finalUrl is not a valid URL but token exists', () => {
-		( useUrlBasicMetricsQuery as jest.Mock ).mockReturnValue( {
+		( useUrlBasicMetricsQuery as Mock ).mockReturnValue( {
 			data: {
 				final_url: 'false',
 				token: 'some-token',
@@ -44,7 +45,7 @@ describe( 'usePerformanceReport', () => {
 			isError: false,
 			isFetched: true,
 			isLoading: false,
-			refetch: jest.fn(),
+			refetch: vi.fn(),
 		} );
 
 		renderHook( () =>
@@ -65,7 +66,7 @@ describe( 'usePerformanceReport', () => {
 
 	it( 'should call savePerformanceReportUrl when finalUrl is a valid URL and token exists', () => {
 		// Mock the basic metrics query to return valid finalUrl and token
-		( useUrlBasicMetricsQuery as jest.Mock ).mockReturnValue( {
+		( useUrlBasicMetricsQuery as Mock ).mockReturnValue( {
 			data: {
 				final_url: 'https://final-url.com',
 				token: 'valid-token',
@@ -73,7 +74,7 @@ describe( 'usePerformanceReport', () => {
 			isError: false,
 			isFetched: true,
 			isLoading: false,
-			refetch: jest.fn(),
+			refetch: vi.fn(),
 		} );
 
 		renderHook( () =>
@@ -97,14 +98,14 @@ describe( 'usePerformanceReport', () => {
 
 	it( 'should not save performance report when testAgain() returns an invalid URL', async () => {
 		// Setup mock for basic metrics query with invalid URL
-		const mockRefetch = jest.fn().mockResolvedValue( {
+		const mockRefetch = vi.fn().mockResolvedValue( {
 			data: {
 				final_url: 'false',
 				token: 'new-token',
 			},
 		} );
 
-		( useUrlBasicMetricsQuery as jest.Mock ).mockReturnValue( {
+		( useUrlBasicMetricsQuery as Mock ).mockReturnValue( {
 			data: null,
 			isError: false,
 			isFetched: true,
@@ -154,7 +155,7 @@ describe( 'usePerformanceReport', () => {
 	} );
 
 	it( 'should set isLoading=false and isError=true when report fails', () => {
-		( useUrlPerformanceInsightsQuery as jest.Mock ).mockReturnValue( {
+		( useUrlPerformanceInsightsQuery as Mock ).mockReturnValue( {
 			data: {
 				pagespeed: {
 					mobile: 'failed',
@@ -183,7 +184,7 @@ describe( 'usePerformanceReport', () => {
 	} );
 
 	it( 'should handle successful report correctly', () => {
-		( useUrlPerformanceInsightsQuery as jest.Mock ).mockReturnValue( {
+		( useUrlPerformanceInsightsQuery as Mock ).mockReturnValue( {
 			data: {
 				pagespeed: {
 					mobile: {
@@ -217,7 +218,7 @@ describe( 'usePerformanceReport', () => {
 	} );
 
 	it( 'should call reportCompletedCallback with correct parameters when report status is completed', () => {
-		const mockReportCompletedCallback = jest.fn();
+		const mockReportCompletedCallback = vi.fn();
 		const mockPageSpeedReport = {
 			status: 'completed',
 			mobile: {
@@ -230,7 +231,7 @@ describe( 'usePerformanceReport', () => {
 			},
 		};
 
-		( useUrlPerformanceInsightsQuery as jest.Mock ).mockReturnValue( {
+		( useUrlPerformanceInsightsQuery as Mock ).mockReturnValue( {
 			data: {
 				pagespeed: mockPageSpeedReport,
 			},
@@ -260,14 +261,14 @@ describe( 'usePerformanceReport', () => {
 	} );
 
 	it( 'should not call reportCompletedCallback when report status is not completed', () => {
-		const mockReportCompletedCallback = jest.fn();
+		const mockReportCompletedCallback = vi.fn();
 		const mockPageSpeedReport = {
 			status: 'pending',
 			mobile: 'pending',
 			desktop: 'pending',
 		};
 
-		( useUrlPerformanceInsightsQuery as jest.Mock ).mockReturnValue( {
+		( useUrlPerformanceInsightsQuery as Mock ).mockReturnValue( {
 			data: {
 				pagespeed: mockPageSpeedReport,
 			},

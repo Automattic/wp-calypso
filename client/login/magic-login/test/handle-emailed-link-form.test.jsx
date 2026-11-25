@@ -1,14 +1,15 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import page from '@automattic/calypso-router';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { HandleEmailedLinkForm } from '../handle-emailed-link-form';
 
-const mockIsWebAuthnSupported = jest.fn();
+const mockIsWebAuthnSupported = vi.fn();
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( '../emailed-login-link-expired', () => () => null );
-jest.mock( 'calypso/lib/webauthn', () => ( {
-	...jest.requireActual( 'calypso/lib/webauthn' ),
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( '../emailed-login-link-expired', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/webauthn', async () => ( {
+	...( await vi.importActual( 'calypso/lib/webauthn' ) ),
 	isWebAuthnSupported: () => mockIsWebAuthnSupported(),
 } ) );
 
@@ -31,19 +32,19 @@ function buildInstance( props = {} ) {
 		redirectToSanitized: null,
 		oauth2Client: {},
 		wccomFrom: undefined,
-		rebootAfterLogin: jest.fn(),
-		showMagicLoginLinkExpiredPage: jest.fn(),
+		rebootAfterLogin: vi.fn(),
+		showMagicLoginLinkExpiredPage: vi.fn(),
 		...props,
 	} );
 	// We invoke lifecycle methods directly on an unmounted instance, so stub setState.
-	instance.setState = jest.fn();
+	instance.setState = vi.fn();
 	instance.state = { hasSubmitted: true, isRedirecting: false };
 	return instance;
 }
 
 describe( 'HandleEmailedLinkForm 2FA handoff', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsWebAuthnSupported.mockReturnValue( false );
 	} );
 
@@ -180,13 +181,13 @@ describe( 'HandleEmailedLinkForm view tracking', () => {
 		oauth2Client: {},
 		initialQuery: {},
 		translate: ( text ) => text,
-		fetchMagicLoginAuthenticate: jest.fn(),
-		showMagicLoginLinkExpiredPage: jest.fn(),
-		rebootAfterLogin: jest.fn(),
+		fetchMagicLoginAuthenticate: vi.fn(),
+		showMagicLoginLinkExpiredPage: vi.fn(),
+		rebootAfterLogin: vi.fn(),
 	};
 
 	it( 'records the view event once across re-renders', () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		const { rerender } = render(
 			<HandleEmailedLinkForm { ...baseProps } recordTracksEvent={ recordTracksEvent } />
 		);
@@ -202,7 +203,7 @@ describe( 'HandleEmailedLinkForm view tracking', () => {
 	} );
 
 	it( 'does not record the view event when the link is already expired on mount', () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 
 		render(
 			<HandleEmailedLinkForm { ...baseProps } recordTracksEvent={ recordTracksEvent } isExpired />
@@ -212,7 +213,7 @@ describe( 'HandleEmailedLinkForm view tracking', () => {
 	} );
 
 	it( 'does not record the view event when the link has no token', () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 
 		render(
 			<HandleEmailedLinkForm { ...baseProps } recordTracksEvent={ recordTracksEvent } token="" />

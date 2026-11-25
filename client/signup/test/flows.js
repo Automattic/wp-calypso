@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import flows from 'calypso/signup/config/flows';
 import mockedFlows from './fixtures/flows';
 
 describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {
 		beforeAll( () => {
-			jest.spyOn( flows, 'getFlows' ).mockReturnValue( mockedFlows );
+			vi.spyOn( flows, 'getFlows' ).mockReturnValue( mockedFlows );
 		} );
 
 		test( 'should return the full flow when the user is not logged in', () => {
@@ -21,7 +22,7 @@ describe( 'Signup Flows Configuration', () => {
 
 	describe( 'excludeSteps', () => {
 		beforeAll( () => {
-			jest.spyOn( flows, 'getFlows' ).mockReturnValue( mockedFlows );
+			vi.spyOn( flows, 'getFlows' ).mockReturnValue( mockedFlows );
 		} );
 
 		afterAll( () => {
@@ -36,7 +37,7 @@ describe( 'Signup Flows Configuration', () => {
 
 	describe( 'site-selected destination', () => {
 		beforeAll( () => {
-			jest.restoreAllMocks();
+			vi.restoreAllMocks();
 		} );
 
 		const getDestination = ( dependencies, localeSlug ) =>
@@ -97,12 +98,12 @@ describe( 'Signup Flows Configuration', () => {
 		// Mock the required modules
 		beforeAll( () => {
 			// Mock getQueryArgs to return empty object
-			jest.doMock( 'calypso/lib/query-args', () => ( {
+			vi.doMock( 'calypso/lib/query-args', () => ( {
 				getQueryArgs: () => ( {} ),
 			} ) );
 
 			// Mock pathToUrl to return the path as-is
-			jest.doMock( 'calypso/lib/url', () => ( {
+			vi.doMock( 'calypso/lib/url', () => ( {
 				addQueryArgs: jest.requireActual( 'calypso/lib/url' ).addQueryArgs,
 				pathToUrl: ( path ) => `https://wordpress.com${ path }`,
 			} ) );
