@@ -1,32 +1,33 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { ConnectForm } from '../connect-form';
 
 describe( 'ConnectForm', () => {
 	it( 'renders the prose intro describing what the user gets', () => {
-		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
+		render( <ConnectForm onSubmit={ vi.fn() } isSubmitting={ false } error={ null } /> );
 		expect(
 			screen.getByText( /your Mastodon timeline appears alongside your blog feeds/i )
 		).toBeVisible();
 	} );
 
 	it( 'renders the instance helper text describing the OAuth handoff', () => {
-		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
+		render( <ConnectForm onSubmit={ vi.fn() } isSubmitting={ false } error={ null } /> );
 		expect( screen.getByText( /hand you off to sign in there/i ) ).toBeVisible();
 		expect( screen.getByText( /never see your password/i ) ).toBeVisible();
 	} );
 
 	it( 'disables submit while instance is empty', () => {
-		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting={ false } error={ null } /> );
+		render( <ConnectForm onSubmit={ vi.fn() } isSubmitting={ false } error={ null } /> );
 		expect( screen.getByRole( 'button', { name: /continue/i } ) ).toBeDisabled();
 	} );
 
 	it( 'calls onSubmit with the trimmed instance', async () => {
 		const user = userEvent.setup();
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 		render( <ConnectForm onSubmit={ onSubmit } isSubmitting={ false } error={ null } /> );
 		await user.type( screen.getByLabelText( /instance/i ), '  mastodon.social  ' );
 		await user.click( screen.getByRole( 'button', { name: /continue/i } ) );
@@ -41,7 +42,7 @@ describe( 'ConnectForm', () => {
 		[ 'Mastodon.Social', 'mastodon.social' ],
 	] )( 'normalizes %s to %s before submitting', async ( typed, expected ) => {
 		const user = userEvent.setup();
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 		render( <ConnectForm onSubmit={ onSubmit } isSubmitting={ false } error={ null } /> );
 		await user.type( screen.getByLabelText( /instance/i ), typed );
 		await user.click( screen.getByRole( 'button', { name: /continue/i } ) );
@@ -49,7 +50,7 @@ describe( 'ConnectForm', () => {
 	} );
 
 	it( 'disables submit and shows busy state while submitting', () => {
-		render( <ConnectForm onSubmit={ jest.fn() } isSubmitting error={ null } /> );
+		render( <ConnectForm onSubmit={ vi.fn() } isSubmitting error={ null } /> );
 		const button = screen.getByRole( 'button', { name: /continue/i } );
 		expect( button ).toBeDisabled();
 	} );
@@ -57,7 +58,7 @@ describe( 'ConnectForm', () => {
 	it( 'renders invalid_instance message', () => {
 		render(
 			<ConnectForm
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				isSubmitting={ false }
 				error={ { kind: 'invalid_instance' } }
 			/>
@@ -67,22 +68,14 @@ describe( 'ConnectForm', () => {
 
 	it( 'renders rate_limited message', () => {
 		render(
-			<ConnectForm
-				onSubmit={ jest.fn() }
-				isSubmitting={ false }
-				error={ { kind: 'rate_limited' } }
-			/>
+			<ConnectForm onSubmit={ vi.fn() } isSubmitting={ false } error={ { kind: 'rate_limited' } } />
 		);
 		expect( screen.getByText( /slow down/i ) ).toBeVisible();
 	} );
 
 	it( 'renders auth_failed message', () => {
 		render(
-			<ConnectForm
-				onSubmit={ jest.fn() }
-				isSubmitting={ false }
-				error={ { kind: 'auth_failed' } }
-			/>
+			<ConnectForm onSubmit={ vi.fn() } isSubmitting={ false } error={ { kind: 'auth_failed' } } />
 		);
 		expect( screen.getByText( /couldn’t start the authorization/i ) ).toBeVisible();
 	} );
@@ -90,7 +83,7 @@ describe( 'ConnectForm', () => {
 	it( 'renders upstream_unavailable message', () => {
 		render(
 			<ConnectForm
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				isSubmitting={ false }
 				error={ { kind: 'upstream_unavailable' } }
 			/>
@@ -101,7 +94,7 @@ describe( 'ConnectForm', () => {
 	it( 'renders bad_request message', () => {
 		render(
 			<ConnectForm
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				isSubmitting={ false }
 				error={ { kind: 'bad_request', message: 'nope' } }
 			/>
@@ -112,7 +105,7 @@ describe( 'ConnectForm', () => {
 	it( 'renders connection_not_found message', () => {
 		render(
 			<ConnectForm
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				isSubmitting={ false }
 				error={ { kind: 'connection_not_found' } }
 			/>
@@ -123,7 +116,7 @@ describe( 'ConnectForm', () => {
 	it( 'renders unknown error message', () => {
 		render(
 			<ConnectForm
-				onSubmit={ jest.fn() }
+				onSubmit={ vi.fn() }
 				isSubmitting={ false }
 				error={ { kind: 'unknown', cause: null } }
 			/>

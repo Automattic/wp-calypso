@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfileTabs, useAuthorProfileFilter } from '../author-profile-tabs';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
 	default: {
-		replace: jest.fn(),
-		show: jest.fn(),
+		replace: vi.fn(),
+		show: vi.fn(),
 	},
 } ) );
 
-const replace = page.replace as jest.Mock;
-const showFn = page.show as jest.Mock;
+const replace = page.replace as Mock;
+const showFn = page.show as Mock;
 
 function setLocation( search: string ) {
 	window.history.replaceState( {}, '', '/reader/atmosphere/42/profile/alice.bsky.social' + search );
@@ -40,14 +41,14 @@ afterAll( () => {
 beforeEach( () => {
 	replace.mockReset();
 	showFn.mockReset();
-	jest
-		.spyOn( analytics, 'recordReaderTracksEvent' )
-		.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+		() => ( { type: '@@TEST/NOOP' } ) as never
+	);
 	setLocation( '' );
 } );
 
 afterEach( () => {
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 describe( 'useAuthorProfileFilter', () => {

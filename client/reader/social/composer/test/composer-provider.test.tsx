@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import {
 	ComposerProvider,
 	useComposer,
@@ -39,7 +40,7 @@ function wrapper( config: ComposerConfig< any, any, any > = testComposerConfig )
 describe( '<ComposerProvider>', () => {
 	it( 'useComposer throws when called outside a provider', () => {
 		// Suppress the React error-boundary console.error noise.
-		const consoleSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		expect( () => renderHook( () => useComposer() ) ).toThrow(
 			'useComposer must be called inside <ComposerProvider>'

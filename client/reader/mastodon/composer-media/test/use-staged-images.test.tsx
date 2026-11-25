@@ -1,16 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useStagedImages } from '../use-staged-images';
 
-jest.mock( '@automattic/api-queries', () => {
-	const actual = jest.requireActual( '@automattic/api-queries' );
+vi.mock( '@automattic/api-queries', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+			'@automattic/api-queries'
+		);
 	return {
 		...actual,
-		uploadMastodonMediaMutation: jest.fn( () => ( {
-			mutationFn: jest.fn( async ( { file } ) => ( {
+		uploadMastodonMediaMutation: vi.fn( () => ( {
+			mutationFn: vi.fn( async ( { file } ) => ( {
 				id: `id-${ ( file as File ).name }`,
 				type: 'image',
 				url: 'u',
@@ -34,12 +38,12 @@ function makeFile( name: string, type: string, size = 1000 ): File {
 
 beforeEach( () => {
 	const urls = new Set< string >();
-	URL.createObjectURL = jest.fn( () => {
+	URL.createObjectURL = vi.fn( () => {
 		const id = `blob:${ Math.random().toString( 36 ).slice( 2 ) }`;
 		urls.add( id );
 		return id;
 	} );
-	URL.revokeObjectURL = jest.fn( ( u ) => urls.delete( u ) );
+	URL.revokeObjectURL = vi.fn( ( u ) => urls.delete( u ) );
 } );
 
 describe( 'useStagedImages', () => {
@@ -165,8 +169,8 @@ describe( 'useStagedImages', () => {
 
 	it( 'uploadAllNow rejects with the underlying error when any single upload fails', async () => {
 		const { uploadMastodonMediaMutation } = await import( '@automattic/api-queries' );
-		( uploadMastodonMediaMutation as jest.Mock ).mockReturnValueOnce( {
-			mutationFn: jest.fn( async ( { file } ) =>
+		( uploadMastodonMediaMutation as Mock ).mockReturnValueOnce( {
+			mutationFn: vi.fn( async ( { file } ) =>
 				( file as File ).name === 'b.jpg'
 					? Promise.reject( { kind: 'media_too_large' } )
 					: { id: 'id-a', type: 'image', url: 'u', preview_url: 'p', description: '' }

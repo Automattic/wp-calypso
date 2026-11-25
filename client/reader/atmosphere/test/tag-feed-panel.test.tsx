@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { type Mock, vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
+import { mockAllIsIntersecting } from 'calypso/test-helpers/intersection-observer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { TagFeedPanel } from '../tag-feed-panel';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
 const connection: AtmosphereConnection = {
@@ -56,14 +57,14 @@ function makeQueryClient() {
 
 describe( 'TagFeedPanel', () => {
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'renders the hashtag heading after the first page resolves', async () => {
@@ -133,7 +134,7 @@ describe( 'TagFeedPanel', () => {
 	} );
 
 	it( 'fires the tag_feed_viewed Tracks event when data resolves', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE )
 			.get( PATH )
 			.reply( 200, { items: [], cursor: null, tag: { name: 'rust' } } );
@@ -151,7 +152,7 @@ describe( 'TagFeedPanel', () => {
 	} );
 
 	it( 're-fires tag_feed_viewed when the hashtag changes within the same mount', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE )
 			.get( PATH )
 			.reply( 200, { items: [], cursor: null, tag: { name: 'rust' } } );
@@ -182,7 +183,7 @@ describe( 'TagFeedPanel', () => {
 	} );
 
 	it( 'fires tag_feed_error_shown when the query fails', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE ).get( PATH ).reply( 429, { error: 'atmosphere_rate_limited' } );
 
 		renderWithProvider( <TagFeedPanel connection={ connection } hashtag="rust" />, {
@@ -202,7 +203,7 @@ describe( 'TagFeedPanel', () => {
 	} );
 
 	it( 'fires tag_feed_retry_clicked and refetches when the retry button is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		const user = userEvent.setup();
 		// rate_limited is a terminal error kind — the query factory does not
 		// auto-retry, so a single fail-then-success pair is enough.
@@ -230,7 +231,7 @@ describe( 'TagFeedPanel', () => {
 	} );
 
 	it( 'fires tag_feed_back_to_timeline_clicked when the back button is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		const user = userEvent.setup();
 		nock( BASE )
 			.get( PATH )

@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
@@ -48,8 +49,8 @@ function makeQueryClient() {
 
 function renderMenu( {
 	ownerDid = 'did:plc:caller',
-	onClick = jest.fn(),
-}: { ownerDid?: string; onClick?: jest.Mock } = {} ) {
+	onClick = vi.fn(),
+}: { ownerDid?: string; onClick?: Mock } = {} ) {
 	return {
 		onClick,
 		...renderWithProvider(
@@ -66,7 +67,7 @@ function renderMenu( {
 describe( '<PostActionsMenu>', () => {
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'renders the kebab when ownerDid matches post.author.did', () => {
@@ -92,7 +93,7 @@ describe( '<PostActionsMenu>', () => {
 		const scope = nock( BASE )
 			.delete( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/posts/${ RKEY }` )
 			.reply( 204 );
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		renderMenu( { onClick } );
 		await user.click( screen.getByRole( 'button', { name: /post actions/i } ) );
 		await user.click( await screen.findByRole( 'menuitem', { name: /delete/i } ) );
@@ -109,8 +110,8 @@ describe( '<PostActionsMenu>', () => {
 		nock( BASE )
 			.delete( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/posts/${ RKEY }` )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
-		const errorNotice = jest.spyOn( notices, 'errorNotice' );
-		const onClick = jest.fn();
+		const errorNotice = vi.spyOn( notices, 'errorNotice' );
+		const onClick = vi.fn();
 		renderMenu( { onClick } );
 		await user.click( screen.getByRole( 'button', { name: /post actions/i } ) );
 		await user.click( await screen.findByRole( 'menuitem', { name: /delete/i } ) );
@@ -140,8 +141,8 @@ describe( '<PostActionsMenu>', () => {
 		nock( BASE )
 			.delete( `/wpcom/v2/reader/atmosphere/connections/${ CONNECTION_ID }/posts/${ RKEY }` )
 			.reply( 404, { error: 'atmosphere_not_found' } );
-		const errorNotice = jest.spyOn( notices, 'errorNotice' );
-		const onClick = jest.fn();
+		const errorNotice = vi.spyOn( notices, 'errorNotice' );
+		const onClick = vi.fn();
 		renderMenu( { onClick } );
 		await user.click( screen.getByRole( 'button', { name: /post actions/i } ) );
 		await user.click( await screen.findByRole( 'menuitem', { name: /delete/i } ) );
@@ -183,7 +184,7 @@ describe( '<PostActionsMenu>', () => {
 				value={ {
 					source: 'atmosphere',
 					connectionId: CONNECTION_ID,
-					onClick: jest.fn(),
+					onClick: vi.fn(),
 					ownerDid: 'did:plc:caller',
 				} }
 			>

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, renderHook } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';

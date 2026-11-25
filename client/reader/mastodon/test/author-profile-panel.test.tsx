@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as logstash from 'calypso/lib/logstash';
 import * as notices from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
@@ -12,12 +13,12 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { MastodonAuthorProfilePanel } from '../author-profile-panel';
 import type { MastodonAuthorProfile, MastodonConnection } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 
 // `logToLogstash` fires a real HTTPS request — mute it so the
 // follow-error path doesn't trigger an unmocked-request alarm in nock.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
 
 // NavTabs (rendered via MastodonAuthorProfileTabs inside the panel) uses
@@ -69,14 +70,14 @@ describe( 'MastodonAuthorProfilePanel', () => {
 		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while letting spies observe call-site arguments.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		// Reset URL between tests so a previous test's `?tab=` doesn't leak
 		// into the useTabSlug hook on the next render.
 		window.history.replaceState( {}, '', '/' );
@@ -131,7 +132,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		await waitFor( () => {
 			const viewedCalls = (
-				analytics.recordReaderTracksEvent as unknown as jest.Mock
+				analytics.recordReaderTracksEvent as unknown as Mock
 			 ).mock.calls.filter( ( c ) => c[ 0 ] === 'calypso_reader_mastodon_profile_viewed' );
 			expect( viewedCalls ).toHaveLength( 1 );
 			expect( viewedCalls[ 0 ][ 1 ] ).toMatchObject( {
@@ -193,7 +194,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 		// Give the feed query a moment to settle into the error state.
 		await waitFor( () =>
 			expect(
-				( analytics.recordReaderTracksEvent as unknown as jest.Mock ).mock.calls.some(
+				( analytics.recordReaderTracksEvent as unknown as Mock ).mock.calls.some(
 					( c ) =>
 						c[ 0 ] === 'calypso_reader_mastodon_profile_error_shown' && c[ 1 ].surface === 'feed'
 				)
@@ -393,7 +394,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		it( 'POSTs to /follows on click and switches to the Following state', async () => {
 			const user = userEvent.setup();
-			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 			nock( BASE )
 				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
 				.reply(
@@ -440,7 +441,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		it( 'flows was_locked: true through to the follow_clicked Tracks payload for locked accounts', async () => {
 			const user = userEvent.setup();
-			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 			nock( BASE )
 				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
 				.reply(
@@ -482,8 +483,8 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		it( 'DELETEs /follows on Unfollow click and switches back to Follow with unfollow_clicked Tracks payload', async () => {
 			const user = userEvent.setup();
-			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-			const removeSpy = jest.spyOn( notices, 'removeNotice' );
+			const spy = analytics.recordReaderTracksEvent as unknown as Mock;
+			const removeSpy = vi.spyOn( notices, 'removeNotice' );
 			nock( BASE )
 				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
 				.reply(
@@ -526,7 +527,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		it( 'cancels a pending follow request and emits was_requested: true when clicking Cancel', async () => {
 			const user = userEvent.setup();
-			const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 			nock( BASE )
 				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
 				.reply(
@@ -570,8 +571,8 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		it( 'fires _follow_error with action: unfollow on a 502 unfollow response', async () => {
 			const user = userEvent.setup();
-			const tracksSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-			const noticeSpy = jest.spyOn( notices, 'errorNotice' );
+			const tracksSpy = analytics.recordReaderTracksEvent as unknown as Mock;
+			const noticeSpy = vi.spyOn( notices, 'errorNotice' );
 			nock( BASE )
 				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
 				.reply(
@@ -628,7 +629,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		it( 'shows the unfollow-specific not_found copy on a 404 unfollow response', async () => {
 			const user = userEvent.setup();
-			const noticeSpy = jest.spyOn( notices, 'errorNotice' );
+			const noticeSpy = vi.spyOn( notices, 'errorNotice' );
 			nock( BASE )
 				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
 				.reply(
@@ -666,8 +667,8 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		it( 'fires _follow_error and an errorNotice toast on a 502 follow response', async () => {
 			const user = userEvent.setup();
-			const tracksSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-			const noticeSpy = jest.spyOn( notices, 'errorNotice' );
+			const tracksSpy = analytics.recordReaderTracksEvent as unknown as Mock;
+			const noticeSpy = vi.spyOn( notices, 'errorNotice' );
 			nock( BASE )
 				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
 				.reply(
@@ -730,7 +731,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		it( 'shows the follow-specific not_found copy on a 404', async () => {
 			const user = userEvent.setup();
-			const noticeSpy = jest.spyOn( notices, 'errorNotice' );
+			const noticeSpy = vi.spyOn( notices, 'errorNotice' );
 			nock( BASE )
 				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
 				.reply(
@@ -766,7 +767,7 @@ describe( 'MastodonAuthorProfilePanel', () => {
 
 		it( 'clears the stale follow-error toast on a successful retry', async () => {
 			const user = userEvent.setup();
-			const removeSpy = jest.spyOn( notices, 'removeNotice' );
+			const removeSpy = vi.spyOn( notices, 'removeNotice' );
 			nock( BASE )
 				.get( '/wpcom/v2/reader/mastodon/connections/7/profile/108020' )
 				.reply(

@@ -1,31 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-// `logToLogstash` fires a real HTTPS request. Mute it so error tests don't
-// trip an unmocked nock request.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
-} ) );
 
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { FollowersView } from '../followers-view';
 import type React from 'react';
 
+// `logToLogstash` fires a real HTTPS request. Mute it so error tests don't
+// trip an unmocked nock request.
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
+} ) );
+
 // `ReaderMain` mounts shared Reader shell concerns that are outside this
 // test's scope. Stub it to a passthrough.
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: React.ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: React.ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
 const BASE = 'https://public-api.wordpress.com';
 const CONNECTIONS_URL = '/wpcom/v2/reader/fediverse/connections';

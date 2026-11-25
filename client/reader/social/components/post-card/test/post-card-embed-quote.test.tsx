@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { PostCardEmbedQuote } from '../post-card-embed-quote';
 import type { SocialEmbedQuote, SocialPost } from '../../../types';
@@ -103,7 +104,7 @@ describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
 	function wrap(
 		ui: React.ReactNode,
 		getThreadUrl?: ( uri: string ) => string | null,
-		onClick = jest.fn()
+		onClick = vi.fn()
 	) {
 		return (
 			<SocialAnalyticsProvider
@@ -158,7 +159,7 @@ describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
 	} );
 
 	it( 'fires quote_clicked with destination discriminator', async () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		const getThreadUrl = ( uri: string ) =>
 			uri === quotedPost.uri ? '/reader/atmosphere/7/thread/did:plc:def/3kdef' : null;
 		render(
@@ -204,7 +205,7 @@ describe( 'PostCardEmbedQuote getThreadUrl rewiring', () => {
 	} );
 
 	it( 'does not fire _quote_clicked when an inner body link is clicked', async () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		const quotedWithLink: SocialPost = makeSocialPost( {
 			html: '<p>quoted with <a href="https://example.com">a link</a></p>',
 		} );
