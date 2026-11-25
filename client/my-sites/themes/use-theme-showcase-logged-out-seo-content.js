@@ -4,6 +4,7 @@ import {
 	PLAN_PERSONAL,
 	getPlan,
 } from '@automattic/calypso-products';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useIsThemeShowcaseModernEnabled } from './hooks/use-is-theme-showcase-modern-enabled';
@@ -18,6 +19,7 @@ function findParsedFilter( filter, content ) {
 export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	const translate = useTranslate();
 	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
+	const localizeUrl = useLocalizeUrl();
 
 	/**
 	 * SEO content:
@@ -27,8 +29,12 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	 * - metaDescription: optional <meta> description override, when it should differ from the sub-heading.
 	 *   Required when the sub-heading contains markup (e.g. a link), since the <meta> needs plain text.
 	 */
-	const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = useMemo(
-		() => ( {
+	const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = useMemo( () => {
+		const localizedLink = ( url ) => (
+			<a href={ localizeUrl( url, undefined, false ) } rel="external" />
+		);
+
+		return {
 			recommended: {
 				all: {
 					title: translate( 'Free WordPress Themes — 1,000+ designs' ),
@@ -54,7 +60,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					),
 					description: translate(
 						'Browse all free themes for WordPress.com. Try one or {{link}}try them all{{/link}}. Risk-free.',
-						{ components: { link: <a href="/themes" /> } }
+						{ components: { link: localizedLink( 'https://wordpress.com/themes/' ) } }
 					),
 				},
 				premium: {
@@ -90,7 +96,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					),
 					description: translate(
 						"{{link}}Start your blog{{/link}} with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you.",
-						{ components: { link: <a href="/create-blog/" /> } }
+						{ components: { link: localizedLink( 'https://wordpress.com/create-blog/' ) } }
 					),
 				},
 				free: {
@@ -133,7 +139,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					),
 					description: translate(
 						"Start your {{link}}business website{{/link}} with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you.",
-						{ components: { link: <a href="/business/" /> } }
+						{ components: { link: localizedLink( 'https://wordpress.com/business/' ) } }
 					),
 				},
 				free: {
@@ -922,9 +928,8 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					),
 				},
 			},
-		} ),
-		[ isThemeShowcaseModern, translate ]
-	);
+		};
+	}, [ isThemeShowcaseModern, localizeUrl, translate ] );
 
 	const parsedFilter =
 		findParsedFilter( filter, THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT ) || 'recommended';
