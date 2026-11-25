@@ -87,6 +87,8 @@ export function isJetpackCrmLicenseKey( key: string ): boolean {
 	return (
 		key.startsWith( 'jetpack-complete' ) ||
 		key.startsWith( 'jetpack_complete' ) ||
+		key.startsWith( 'jetpack-pro_' ) ||
+		key.startsWith( 'jetpack_pro_' ) ||
 		key.startsWith( 'jetpack-crm' ) ||
 		key.startsWith( 'jetpack_crm' )
 	);

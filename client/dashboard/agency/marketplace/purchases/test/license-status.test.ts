@@ -165,9 +165,11 @@ describe( 'getLicenseProductName', () => {
 } );
 
 describe( 'subscription and bundle helpers', () => {
-	test( 'detects Jetpack CRM products, including Complete', () => {
+	test( 'detects Jetpack CRM products, including Complete and Pro', () => {
 		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-crm_x' } ) ) ).toBe( true );
 		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-complete_x' } ) ) ).toBe( true );
+		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-pro_x' } ) ) ).toBe( true );
+		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-product_x' } ) ) ).toBe( false );
 		expect( isJetpackCrmLicense( license() ) ).toBe( false );
 	} );
 
