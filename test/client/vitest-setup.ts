@@ -43,14 +43,14 @@ if ( isJsdom ) {
 	}
 }
 
-// nock patches `http` on import, and Vitest runs neither `beforeAll` nor `afterAll` in a file whose
-// tests are all skipped, so patch it only in `beforeAll`. Otherwise that file's nock stays in `http`.
+// nock patches `http` and `fetch` on import. Vitest runs no `beforeAll` or `afterAll` in a file
+// whose tests are all skipped, so activate nock in `beforeAll`, or that file's nock stays in `http`.
+// By then the test file has loaded, and if it mocked `fetch` itself, it keeps its mock.
 nock.restore();
 const unpatchedFetch = globalThis.fetch;
 beforeAll( () => {
 	const fetch = globalThis.fetch;
 	nock.activate();
-	// Keep a `fetch` mock that the test file set when it loaded.
 	if ( fetch !== unpatchedFetch ) {
 		globalThis.fetch = fetch;
 	}
