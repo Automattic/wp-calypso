@@ -1,6 +1,8 @@
 import { productsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button, FormInputValidation, Gridicon, SelectDropdown } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
@@ -168,17 +170,26 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			);
 		}
 		if ( supportTicketRequestStatus === 'success' && destinationSiteId !== undefined ) {
+			const contactSupportLink = (
+				<a
+					href={ localizeUrl( JETPACK_CONTACT_SUPPORT ) }
+					target="_blank"
+					rel="noopener noreferrer"
+				/>
+			);
 			if ( destinationSiteId === 0 && reasonCode === 'jetpack_pro_lower_limits' ) {
 				return setError(
 					translate(
-						"This site has a Jetpack product that includes more than Jetpack Pro, so Pro can't replace it. You can use this license on another site, or contact us for a refund."
+						"This site has a Jetpack product that includes more than Jetpack Pro, so Pro can't replace it. You can use this license on another site, or {{a}}contact us{{/a}}.",
+						{ components: { a: contactSupportLink } }
 					)
 				);
 			}
 			if ( destinationSiteId === 0 && reasonCode === 'jetpack_pro_other_owner' ) {
 				return setError(
 					translate(
-						"A Jetpack product on this site belongs to another WordPress.com account, so Jetpack Pro can't be activated here. Contact us and we'll help you sort it out."
+						"A Jetpack product on this site belongs to another WordPress.com account, so Jetpack Pro can't be activated here. {{a}}Contact us{{/a}} and we'll help you sort it out.",
+						{ components: { a: contactSupportLink } }
 					)
 				);
 			}
