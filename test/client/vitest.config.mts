@@ -11,12 +11,17 @@ const jsonValidMock = path.join( client, '__mocks__/is-my-json-valid.js' );
 
 const plugins: Plugin[] = [
 	{
-		// Matches Jest's asset transform, which exports the file's basename.
+		// Matches Jest's asset transform, which exports the file's basename. Client code imports
+		// `flag-icons` SVGs and the `gridicons` sprite, and tests and snapshots expect file names.
 		name: 'asset-basename',
 		enforce: 'pre',
 		load( id ) {
 			const file = id.split( '?' )[ 0 ];
-			if ( /\.(gif|jpe?g|png|svg|webp|mp4)$/.test( file ) ) {
+			if (
+				/\.(gif|jpe?g|png|svg|webp|mp4)$/.test( file ) &&
+				( ! file.includes( '/node_modules/' ) ||
+					/\/node_modules\/(flag-icons|gridicons)\//.test( file ) )
+			) {
 				return `export default ${ JSON.stringify( path.basename( file ) ) };`;
 			}
 		},
