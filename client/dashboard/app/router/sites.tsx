@@ -1468,7 +1468,7 @@ export const siteSettingsSftpSshRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-sftp-ssh' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/sftp-ssh' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-sftp-ssh' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

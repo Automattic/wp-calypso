@@ -16,12 +16,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import React, { useEffect, useState } from 'react';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
-import ClipboardInputControl from '../../components/clipboard-input-control';
-import InlineSupportLink from '../../components/inline-support-link';
-import { SectionHeader } from '../../components/section-header';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Card, CardBody } from '../../../../components/card';
+import ClipboardInputControl from '../../../../components/clipboard-input-control';
+import InlineSupportLink from '../../../../components/inline-support-link';
+import { SectionHeader } from '../../../../components/section-header';
 import type { SftpUser } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 

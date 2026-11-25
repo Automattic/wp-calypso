@@ -5,9 +5,9 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import Snackbars from '../../../app/snackbars';
-import { render } from '../../../test-utils';
-import SftpCard from '../sftp-card';
+import Snackbars from '../../../../../app/snackbars';
+import { render } from '../../../../../test-utils';
+import SftpCard from '../index';
 
 const siteId = 123;
 const username = 'example.wordpress.com';

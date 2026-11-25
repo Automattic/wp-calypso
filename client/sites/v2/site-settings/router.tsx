@@ -204,7 +204,7 @@ const sftpSshRoute = createRoute( {
 	...appRouterSites.siteSettingsSftpSshRoute.options,
 	getParentRoute: () => settingsRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/settings-sftp-ssh' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site/settings/sftp-ssh' ).then( ( d ) =>
 		createLazyRoute( 'sftp-ssh' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

@@ -10,11 +10,11 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
-import InlineSupportLink from '../../components/inline-support-link';
-import { SectionHeader } from '../../components/section-header';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Card, CardBody } from '../../../../components/card';
+import InlineSupportLink from '../../../../components/inline-support-link';
+import { SectionHeader } from '../../../../components/section-header';
 
 const FILEZILLA_URL = 'https://filezilla-project.org/';
 
