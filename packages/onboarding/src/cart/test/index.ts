@@ -309,6 +309,22 @@ describe( 'cart helpers', () => {
 			).rejects.toBe( connectionError );
 		} );
 
+		test( 'addProductsToCart rejects when the cart fetch does not answer in time', async () => {
+			vi.useFakeTimers();
+			try {
+				mockGetCartState.mockReturnValue( { responseCart: { products: cartItems } } );
+				mockCartActions.reloadFromServer.mockReturnValue( new Promise( () => {} ) );
+
+				const assertion = expect(
+					addProductsToCart( 'example.wordpress.com', 'domain', cartItems, { throwOnError: true } )
+				).rejects.toBe( connectionError );
+				await vi.advanceTimersByTimeAsync( 10000 );
+				await assertion;
+			} finally {
+				vi.useRealTimers();
+			}
+		} );
+
 		// A fetch that ends in a response error still makes the state the server cart.
 		test( 'addProductsToCart resolves when the cart fetch has a response error and the server cart holds every requested item', async () => {
 			mockGetCartState.mockReturnValue( { responseCart: { products: [] } } );
