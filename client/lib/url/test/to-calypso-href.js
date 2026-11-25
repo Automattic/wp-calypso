@@ -1,15 +1,15 @@
 /**
  * @vitest-environment jsdom
  */
+import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
+import toCalypsoHref from '../to-calypso-href';
+
 vi.mock( '@automattic/calypso-config', () => {
 	const configApi = () => '';
 	configApi.isEnabled = vi.fn( () => false );
 	return { ...configApi, default: configApi };
 } );
-
-import config from '@automattic/calypso-config';
-import { vi } from 'vitest';
-import toCalypsoHref from '../to-calypso-href';
 
 const enableOdyssey = ( enabled ) =>
 	config.isEnabled.mockImplementation( ( flag ) => flag === 'is_odyssey' && enabled );

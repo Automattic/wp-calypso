@@ -41,7 +41,7 @@ describe( 'useWindowResizeCallback', () => {
 		vi.useRealTimers();
 	} );
 
-	// eslint-disable-next-line jest/expect-expect
+	// eslint-disable-next-line vitest/expect-expect
 	it( 'does not throw an error there is no callback', () => {
 		const TestComponent = function () {
 			const ref = useWindowResizeCallback();

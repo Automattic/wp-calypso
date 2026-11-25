@@ -114,7 +114,7 @@ describe( 'flow-controller', () => {
 			} );
 		} );
 
-		// eslint-disable-next-line jest/expect-expect
+		// eslint-disable-next-line vitest/expect-expect
 		test( 'should call apiRequestFunction on steps with that property', () => {
 			return new Promise( ( done ) => {
 				store.dispatch(
@@ -229,7 +229,7 @@ describe( 'flow-controller', () => {
 			} ).toThrow();
 		} );
 
-		// eslint-disable-next-line jest/expect-expect
+		// eslint-disable-next-line vitest/expect-expect
 		test( 'should run `onComplete` once all steps are submitted without an error', () => {
 			return new Promise( ( done ) => {
 				const store = createSignupStore();
@@ -246,7 +246,7 @@ describe( 'flow-controller', () => {
 	} );
 
 	describe( 'controlling a flow with optional dependencies', () => {
-		// eslint-disable-next-line jest/expect-expect
+		// eslint-disable-next-line vitest/expect-expect
 		test( 'should run `onComplete` once all steps are submitted, including optional dependency', () => {
 			return new Promise( ( done ) => {
 				const store = createSignupStore();
@@ -272,7 +272,7 @@ describe( 'flow-controller', () => {
 			} );
 		} );
 
-		// eslint-disable-next-line jest/expect-expect
+		// eslint-disable-next-line vitest/expect-expect
 		test( 'should run `onComplete` once all steps are submitted, excluding optional dependency', () => {
 			return new Promise( ( done ) => {
 				const store = createSignupStore();

@@ -1,10 +1,10 @@
 import { vi } from 'vitest';
+import { startPerformanceTracking } from '../lib';
+import { performanceTrackerStart } from '../performance-tracker-start';
+
 vi.mock( '../lib', () => ( {
 	startPerformanceTracking: vi.fn(),
 } ) );
-
-import { startPerformanceTracking } from '../lib';
-import { performanceTrackerStart } from '../performance-tracker-start';
 
 describe( 'performance-tracker-start', () => {
 	afterEach( () => {

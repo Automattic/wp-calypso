@@ -2,16 +2,27 @@
  * @vitest-environment jsdom
  */
 
-// Mock dependencies before importing the module
+import config from '@automattic/calypso-config';
+import {
+	shouldLoadSurvicate,
+	loadSurvicateScript,
+	isSurvicateScriptLoaded,
+	setSurvicateVisitorTraits,
+	getAccountAgeInDays,
+} from '@automattic/survicate';
+import { isMobile } from '@automattic/viewport';
+import { vi } from 'vitest';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+
 vi.mock( '@automattic/calypso-config', () => {
-	const config = vi.fn();
+	const configMock = vi.fn();
 
 	return {
-		...Object.assign( config, {
+		...Object.assign( configMock, {
 			__esModule: true,
-			default: config,
-			isEnabled: config,
-			config,
+			default: configMock,
+			isEnabled: configMock,
+			config: configMock,
 		} ),
 	};
 } );
@@ -38,18 +49,6 @@ vi.mock( '@automattic/survicate', () => ( {
 // Mock debug module used transitively by calypso-config.
 vi.mock( 'debug', () => ( { default: () => vi.fn() } ) );
 
-import config from '@automattic/calypso-config';
-import {
-	shouldLoadSurvicate,
-	loadSurvicateScript,
-	isSurvicateScriptLoaded,
-	setSurvicateVisitorTraits,
-	getAccountAgeInDays,
-} from '@automattic/survicate';
-import { isMobile } from '@automattic/viewport';
-import { vi } from 'vitest';
-import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-
 const flushPromises = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 const mockUserData = {
@@ -62,16 +61,15 @@ describe( 'survicate', () => {
 	let mayWeLoadSurvicateScript;
 	let addSurvicate;
 
-	beforeEach( () => {
+	beforeEach( async () => {
 		// Reset all mocks
 		vi.clearAllMocks();
 
 		// Set up fresh module imports
-		vi.isolateModules( () => {
-			const survicateModule = require( 'calypso/lib/analytics/survicate' );
-			mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
-			addSurvicate = survicateModule.addSurvicate;
-		} );
+		vi.resetModules();
+		const survicateModule = await import( 'calypso/lib/analytics/survicate' );
+		mayWeLoadSurvicateScript = survicateModule.mayWeLoadSurvicateScript;
+		addSurvicate = survicateModule.addSurvicate;
 	} );
 
 	describe( 'mayWeLoadSurvicateScript', () => {

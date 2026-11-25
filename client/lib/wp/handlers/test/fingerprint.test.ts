@@ -3,6 +3,8 @@
  */
 
 import { type Mock, vi } from 'vitest';
+import { injectFingerprint } from '../fingerprint';
+
 const MOCK_VISITOR_ID = 'mock-visitor-id-123';
 
 vi.mock( '@fingerprintjs/fingerprintjs', () =>
@@ -14,8 +16,6 @@ vi.mock( '@fingerprintjs/fingerprintjs', () =>
 		),
 	} )
 );
-
-import { injectFingerprint } from '../fingerprint';
 
 describe( '#injectFingerprint', () => {
 	let wpcom: { request: Mock };

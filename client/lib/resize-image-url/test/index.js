@@ -4,8 +4,8 @@ describe( 'resizeImageUrl()', () => {
 		'https://testonesite2014.files.wordpress.com/2014/11/image5.jpg?w=1000&h=1000&resize=foo&fit=meh';
 
 	let resizeImageUrl;
-	beforeAll( () => {
-		resizeImageUrl = require( '..' ).default;
+	beforeAll( async () => {
+		resizeImageUrl = ( await import( '..' ) ).default;
 	} );
 
 	test( 'should return non-string URLs unmodified', () => {
@@ -162,18 +162,18 @@ describe( 'resizeImageUrl()', () => {
 	} );
 
 	describe( 'high pixel density', () => {
-		beforeAll( () => {
+		beforeAll( async () => {
 			global.window = { devicePixelRatio: 2 };
 			// We need to reset module under test to recompute image scale factor
 			vi.resetModules();
-			resizeImageUrl = require( '..' ).default;
+			resizeImageUrl = ( await import( '..' ) ).default;
 		} );
 
-		afterAll( () => {
+		afterAll( async () => {
 			global.window = undefined;
 			// We need to reset module under test to recompute image scale factor
 			vi.resetModules();
-			resizeImageUrl = require( '..' ).default;
+			resizeImageUrl = ( await import( '..' ) ).default;
 		} );
 
 		test( 'should append resize argument', () => {

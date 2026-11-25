@@ -31,7 +31,7 @@ import { domForHtml, externalLinkParagraph } from '../utils';
 
 vi.mock( '@automattic/calypso-url', async () => ( {
 	...( await vi.importActual( '@automattic/calypso-url' ) ),
-	safeImageUrl: require( './mocks/lib/safe-image-url' ).default,
+	safeImageUrl: ( await vi.importActual( './mocks/lib/safe-image-url' ) ).default,
 } ) );
 
 describe( 'index', () => {

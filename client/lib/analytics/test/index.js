@@ -158,7 +158,7 @@ describe( 'Analytics', () => {
 	} );
 	describe( 'initialize', () => {
 		beforeEach( () => {
-			loadScript.mockReset();
+			loadScript.mockReset().mockResolvedValue();
 
 			cookie.parse.mockImplementation( () => ( {} ) );
 			cookie.serialize.mockImplementation( () => {} );
@@ -217,8 +217,8 @@ describe( 'Analytics', () => {
 				);
 			} );
 
-			test( 'should add _superProps if they are initialized', () => {
-				initializeAnalytics( {}, () => {
+			test( 'should add _superProps if they are initialized', async () => {
+				const initialized = initializeAnalytics( {}, () => {
 					return { super: 'prop' };
 				} );
 				recordTracksEvent( 'calypso_abc_def' );
@@ -228,6 +228,7 @@ describe( 'Analytics', () => {
 					'calypso_abc_def',
 					{ super: 'prop' },
 				] );
+				await initialized;
 			} );
 
 			test( 'should notify listeners when event is recorded', () => {

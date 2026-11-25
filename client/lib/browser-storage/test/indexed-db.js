@@ -23,14 +23,12 @@ describe( 'lib/browser-storage', () => {
 		} );
 
 		it( 'should set and get a numeric item', async () => {
-			expect( async () => await setStoredItem( 'number', 42 ) ).not.toThrow();
+			await setStoredItem( 'number', 42 );
 			expect( await getStoredItem( 'number' ) ).toBe( 42 );
 		} );
 
 		it( 'should set and get an object', async () => {
-			expect(
-				async () => await setStoredItem( 'object', { string: 'example', number: 42 } )
-			).not.toThrow();
+			await setStoredItem( 'object', { string: 'example', number: 42 } );
 			expect( await getStoredItem( 'object' ) ).toEqual( { string: 'example', number: 42 } );
 		} );
 
@@ -39,17 +37,17 @@ describe( 'lib/browser-storage', () => {
 		} );
 
 		it( 'should clear the store correctly', async () => {
-			expect( async () => await setStoredItem( 'number', 42 ) ).not.toThrow();
+			await setStoredItem( 'number', 42 );
 			expect( await getStoredItem( 'number' ) ).toBe( 42 );
-			expect( async () => await clearStorage() ).not.toThrow();
+			await clearStorage();
 			expect( await getStoredItem( 'number' ) ).toBe( undefined );
 		} );
 
 		it( 'should set and retrieve all items', async () => {
-			expect( async () => await setStoredItem( 'item1', 1 ) ).not.toThrow();
-			expect( async () => await setStoredItem( 'item2', 2 ) ).not.toThrow();
-			expect( async () => await setStoredItem( 'item3', 3 ) ).not.toThrow();
-			expect( async () => await setStoredItem( 'itemA', 'A' ) ).not.toThrow();
+			await setStoredItem( 'item1', 1 );
+			await setStoredItem( 'item2', 2 );
+			await setStoredItem( 'item3', 3 );
+			await setStoredItem( 'itemA', 'A' );
 
 			expect( await getAllStoredItems() ).toEqual( {
 				item1: 1,
@@ -60,10 +58,10 @@ describe( 'lib/browser-storage', () => {
 		} );
 
 		it( 'should set and retrieve all items that follow a pattern', async () => {
-			expect( async () => await setStoredItem( 'item1', 1 ) ).not.toThrow();
-			expect( async () => await setStoredItem( 'item2', 2 ) ).not.toThrow();
-			expect( async () => await setStoredItem( 'item3', 3 ) ).not.toThrow();
-			expect( async () => await setStoredItem( 'itemA', 'A' ) ).not.toThrow();
+			await setStoredItem( 'item1', 1 );
+			await setStoredItem( 'item2', 2 );
+			await setStoredItem( 'item3', 3 );
+			await setStoredItem( 'itemA', 'A' );
 
 			expect( await getAllStoredItems( /item\d/ ) ).toEqual( {
 				item1: 1,
