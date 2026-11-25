@@ -28,15 +28,26 @@ import {
 	mockGetPaymentMethodsEndpoint,
 	mockUserSignupValidationEndpoint,
 	mockSetCachedContactDetailsEndpoint,
+	mockSetCartEndpointWith,
+	normalAllowedPaymentMethods,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
-import type { CartKey } from '@automattic/shopping-cart';
+import type { CartKey, SetCart } from '@automattic/shopping-cart';
+import type { StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+// Stripe must load for the card payment methods, new and saved, to be offered.
+jest.mock( '@stripe/react-stripe-js', () => ( {
+	...jest.requireActual( '@stripe/react-stripe-js' ),
+	...jest.requireActual( './util' ).mockStripeElements(),
+} ) );
+jest.mock( '@stripe/stripe-js', () => ( {
+	loadStripe: async () => jest.requireActual( './util' ).mockStripeElements().useStripe(),
+} ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
 	recordTracksEvent: jest.fn(),
@@ -56,6 +67,63 @@ describe( 'Checkout contact step', () => {
 		initialCart,
 	};
 
+	// A saved card needs no input, so autocomplete completes the payment step too
+	// and leaves no step active.
+	const storedCard: StoredPaymentMethodCard = {
+		stored_details_id: '1234',
+		user_id: '1',
+		name: 'Test User',
+		country_code: 'US',
+		payment_partner: 'stripe',
+		payment_partner_reference: 'pm_test',
+		payment_partner_source_id: '',
+		mp_ref: 'mp_ref_test',
+		email: 'test@example.com',
+		card_expiry_year: '2099',
+		card_expiry_month: '12',
+		expiry: '2099-12-31',
+		remember: true,
+		source: null,
+		original_stored_details_id: '1234',
+		is_rechargeable: true,
+		payment_type: 'card',
+		is_expired: false,
+		is_backup: false,
+		tax_location: null,
+		card_type: 'visa',
+		card_iin: '424242',
+		card_last_4: '4242',
+		card_zip: '10001',
+		display_brand: null,
+	};
+	let storedPaymentMethods: StoredPaymentMethodCard[] = [];
+
+	const renderCheckoutWithSavedCard = () => {
+		storedPaymentMethods = [ storedCard ];
+		const allowedPaymentMethods = [
+			...normalAllowedPaymentMethods,
+			'WPCOM_Billing_MoneyPress_Stored',
+		];
+		const mockSetCart = mockSetCartEndpointWith( {
+			currency: initialCart.currency,
+			locale: initialCart.locale,
+		} );
+		const setCart: SetCart = async ( cartKey, requestCart ) => ( {
+			...( await mockSetCart( cartKey, requestCart ) ),
+			allowed_payment_methods: allowedPaymentMethods,
+		} );
+		render(
+			<MockCheckout
+				{ ...defaultPropsForMockCheckout }
+				cartChanges={ {
+					products: [ planWithoutDomain ],
+					allowed_payment_methods: allowedPaymentMethods,
+				} }
+				setCart={ setCart }
+			/>
+		);
+	};
+
 	const getTracksCalls = ( eventName: string ) =>
 		( recordTracksEvent as jest.Mock ).mock.calls.filter( ( [ event ] ) => event === eventName );
 
@@ -72,7 +140,8 @@ describe( 'Checkout contact step', () => {
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
-		mockGetPaymentMethodsEndpoint( [] );
+		storedPaymentMethods = [];
+		mockGetPaymentMethodsEndpoint( () => storedPaymentMethods );
 		mockLogStashEndpoint();
 		mockPayPalConfigurationEndpoint();
 		mockSetCachedContactDetailsEndpoint();
@@ -115,14 +184,13 @@ describe( 'Checkout contact step', () => {
 			postal_code: '10001',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		renderCheckoutWithSavedCard();
 		await screen.findByTestId( 'payment-method-step--visible' );
 
 		expect( getTracksCalls( 'calypso_checkout_composite_first_step_complete' ) ).toEqual( [
 			[
 				'calypso_checkout_composite_first_step_complete',
-				{ payment_method: 'WPCOM_Billing_PayPal_Express' },
+				{ payment_method: 'WPCOM_Billing_MoneyPress_Stored' },
 			],
 		] );
 	} );
@@ -138,8 +206,7 @@ describe( 'Checkout contact step', () => {
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const cartChanges = { products: [ planWithoutDomain ] };
-		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+		renderCheckoutWithSavedCard();
 		await screen.findByTestId( 'payment-method-step--visible' );
 
 		await user.click( await screen.findByLabelText( 'Edit the payment method' ) );
@@ -174,7 +241,7 @@ describe( 'Checkout contact step', () => {
 		expect( getTracksCalls( 'calypso_checkout_composite_first_step_complete' ) ).toEqual( [
 			[
 				'calypso_checkout_composite_first_step_complete',
-				{ payment_method: 'WPCOM_Billing_PayPal_Express' },
+				{ payment_method: 'WPCOM_Billing_Stripe_Payment_Method' },
 			],
 		] );
 	} );
