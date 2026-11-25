@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { transferDomainToSite } from '@automattic/api-core';
 import { Site } from '@automattic/data-stores';
 import { addProductsToCart, createSite } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useFlowState } from '../../../state-manager/store';
 import CreateSite from '../index';
@@ -27,23 +28,23 @@ const registeredMove = {
 };
 
 // The step passes createSite's aiLaunchpadEnabled parameter last (see its call in ../index.tsx).
-const getAiLaunchpadEnabledArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -1 );
-const getSignupRefArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -3 );
+const getAiLaunchpadEnabledArg = () => ( createSite as Mock ).mock.calls[ 0 ].at( -1 );
+const getSignupRefArg = () => ( createSite as Mock ).mock.calls[ 0 ].at( -3 );
 
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', () => ( {
 	isEcommerce: () => false,
 	isDomainMoveInternal: ( { product_slug }: { product_slug: string } ) =>
 		product_slug === 'domain_move_internal',
 } ) );
 
-jest.mock( '@automattic/api-core', () => ( { transferDomainToSite: jest.fn() } ) );
+vi.mock( '@automattic/api-core', () => ( { transferDomainToSite: vi.fn() } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	Site: { Visibility: { PublicIndexed: 1, PublicNotIndexed: 0 } },
 	Onboard: { SiteIntent: { Sell: 'sell', Build: 'build' } },
 } ) );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_FLOW: 'ai-site-builder',
 	SITE_MIGRATION_FLOW: 'site-migration',
 	STUDENT_FLOW: 'student',
@@ -56,13 +57,13 @@ jest.mock( '@automattic/onboarding', () => ( {
 	WRITE_ON_FLOW: 'write-on',
 	StepContainer: () => null,
 	Step: { Loading: () => null },
-	addProductsToCart: jest.fn(),
-	createSite: jest.fn( async () => ( {
+	addProductsToCart: vi.fn(),
+	createSite: vi.fn( async () => ( {
 		siteId: 111,
 		siteSlug: 'brand-new.wordpress.com',
 		domainItem: undefined,
 	} ) ),
-	setThemeOnSite: jest.fn(),
+	setThemeOnSite: vi.fn(),
 	isAIBuilderOnboardingFlow: () => false,
 	isCopySiteFlow: () => false,
 	isEntrepreneurFlow: () => false,
@@ -73,11 +74,11 @@ jest.mock( '@automattic/onboarding', () => ( {
 	isNewSiteMigrationFlow: () => false,
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
+vi.mock( '@tanstack/react-query', () => ( {
 	useQueryClient: () => ( { getQueryData: mockReadFlowState } ),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setPendingAction: ( action: () => Promise< unknown > ) => {
 			pendingAction = action;
@@ -99,54 +100,60 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@wordpress/react-i18n', () => ( { useI18n: () => ( { __: ( s: string ) => s } ) } ) );
+vi.mock( '@wordpress/react-i18n', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { useI18n: () => ( { __: ( s: string ) => s } ) } )
+);
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( 'calypso/components/loading', () => () => null );
-jest.mock( 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation', () => () => ( {
-	mutateAsync: jest.fn(),
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/loading', () => ( { default: () => null } ) );
+vi.mock( 'calypso/data/ecommerce/use-add-ecommerce-trial-mutation', () => ( {
+	default: () => ( {
+		mutateAsync: vi.fn(),
+	} ),
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => mockQueryParams,
 } ) );
-jest.mock( 'calypso/landing/stepper/stores', () => ( { ONBOARD_STORE: 'ONBOARD_STORE' } ) );
-jest.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( { ONBOARD_STORE: 'ONBOARD_STORE' } ) );
+vi.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
 	getWowFunnelArgs: () => ( {} ),
 	getWowFunnelFromWfm: () => false,
 	getWowFunnelSlug: () => '',
-	logWowFunnelEvent: jest.fn(),
+	logWowFunnelEvent: vi.fn(),
 	wowFunnelSiteIsPaid: () => false,
 } ) );
-jest.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
-	startWowFunnelSite: jest.fn(),
+vi.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
+	startWowFunnelSite: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn(), post: jest.fn() } } ) );
-jest.mock( 'calypso/signup/storageUtils', () => ( {
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { get: vi.fn(), post: vi.fn() } } )
+);
+vi.mock( 'calypso/signup/storageUtils', () => ( {
 	retrieveSignupDestination: () => null,
 	getSignupCompleteFlowName: () => null,
 	wasSignupCheckoutPageUnloaded: () => false,
 	getSignupCompleteSlug: () => null,
 } ) );
-jest.mock( 'calypso/state', () => ( { useSelector: () => undefined } ) );
-jest.mock( 'calypso/state/imports/url-analyzer/selectors', () => ( { getUrlData: jest.fn() } ) );
-jest.mock( '../../../../../hooks/use-simplified-onboarding', () => ( {
+vi.mock( 'calypso/state', () => ( { useSelector: () => undefined } ) );
+vi.mock( 'calypso/state/imports/url-analyzer/selectors', () => ( { getUrlData: vi.fn() } ) );
+vi.mock( '../../../../../hooks/use-simplified-onboarding', () => ( {
 	useSimplifiedOnboarding: () => [ false, mockIsSimplifiedOnboarding ],
 } ) );
-jest.mock( '../../../../helpers/should-use-step-container-v2', () => ( {
+vi.mock( '../../../../helpers/should-use-step-container-v2', () => ( {
 	shouldUseStepContainerV2: () => true,
 } ) );
-jest.mock( '../../../state-manager/store', () => ( { useFlowState: jest.fn() } ) );
-jest.mock( '../early-provisioning', () => ( {
+vi.mock( '../../../state-manager/store', () => ( { useFlowState: vi.fn() } ) );
+vi.mock( '../early-provisioning', () => ( {
 	EARLY_PROVISION_TARGET_WPCOM_ATOMIC: 'wpcom-atomic',
 	getEarlyCreatedSiteId: () => null,
-	pollForAtomicProvisioning: jest.fn(),
+	pollForAtomicProvisioning: vi.fn(),
 } ) );
 
 // Mounts the step and hands back the action it registered, which is what the processing step runs.
 const runStep = async ( { flow = 'onboarding' }: { flow?: string } = {} ) => {
 	const StepComponent = CreateSite as unknown as React.ComponentType< Record< string, unknown > >;
-	render( <StepComponent navigation={ { submit: jest.fn() } } flow={ flow } /> );
+	render( <StepComponent navigation={ { submit: vi.fn() } } flow={ flow } /> );
 
 	await waitFor( () => expect( pendingAction ).toBeDefined() );
 
@@ -163,8 +170,8 @@ describe( 'create-site', () => {
 		mockIsSimplifiedOnboarding = false;
 		mockDomainCartItems = [];
 		mockPlanCartItem = null;
-		jest.clearAllMocks();
-		( useFlowState as jest.Mock ).mockImplementation( () => ( {
+		vi.clearAllMocks();
+		( useFlowState as Mock ).mockImplementation( () => ( {
 			get: ( key: string ) => flowStateStore[ key ],
 			sessionId: 'migration-session',
 			queryKey: [ 'stepper-state-item', 'site-migration', 'migration-session', 'v1' ],
@@ -203,7 +210,7 @@ describe( 'create-site', () => {
 
 	it( 'reuses an unnamed migration site', async () => {
 		mockSiteUrl = '';
-		( useFlowState as jest.Mock ).mockImplementation( () => ( {
+		( useFlowState as Mock ).mockImplementation( () => ( {
 			get: () => undefined,
 			sessionId: 'migration-session',
 			queryKey: [ 'migration-session' ],
@@ -241,7 +248,7 @@ describe( 'create-site', () => {
 	// action again whenever it mounts again, so this is the double-POST seen in production.
 	it( 'asks /sites/new once when a second run starts while the first is still creating', async () => {
 		let finishFirstCreate: ( site: unknown ) => void = () => {};
-		( createSite as jest.Mock ).mockImplementationOnce(
+		( createSite as Mock ).mockImplementationOnce(
 			() =>
 				new Promise( ( resolve ) => {
 					finishFirstCreate = resolve;
@@ -249,7 +256,7 @@ describe( 'create-site', () => {
 		);
 
 		const StepComponent = CreateSite as unknown as React.ComponentType< Record< string, unknown > >;
-		render( <StepComponent navigation={ { submit: jest.fn() } } flow="onboarding" /> );
+		render( <StepComponent navigation={ { submit: vi.fn() } } flow="onboarding" /> );
 		await waitFor( () => expect( pendingAction ).toBeDefined() );
 
 		const firstRun = pendingAction!();
@@ -277,10 +284,10 @@ describe( 'create-site', () => {
 	// every later run for the same name — Back from the error step, or another mount of the
 	// processing step — joins the old rejection instead of asking again.
 	it( 'asks /sites/new again after a failed creation instead of joining the stale rejection', async () => {
-		( createSite as jest.Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
+		( createSite as Mock ).mockRejectedValueOnce( new Error( 'boom' ) );
 
 		const StepComponent = CreateSite as unknown as React.ComponentType< Record< string, unknown > >;
-		render( <StepComponent navigation={ { submit: jest.fn() } } flow="onboarding" /> );
+		render( <StepComponent navigation={ { submit: vi.fn() } } flow="onboarding" /> );
 		await waitFor( () => expect( pendingAction ).toBeDefined() );
 
 		await expect( pendingAction!() ).rejects.toThrow( 'boom' );
@@ -318,7 +325,7 @@ describe( 'create-site', () => {
 	// The site works without the domain, so a failed move must not stop the signup.
 	it( 'finishes the signup and records the failure when the move fails', async () => {
 		mockDomainCartItems = [ registeredMove ];
-		( transferDomainToSite as jest.Mock ).mockRejectedValueOnce( { error: 'dispute_flag' } );
+		( transferDomainToSite as Mock ).mockRejectedValueOnce( { error: 'dispute_flag' } );
 
 		await expect( runStep() ).resolves.toMatchObject( { siteCreated: true } );
 
@@ -341,7 +348,7 @@ describe( 'create-site', () => {
 	} );
 
 	it( 'rejects with "Failed to create site" when /sites/new returns nothing', async () => {
-		( createSite as jest.Mock ).mockResolvedValueOnce( undefined );
+		( createSite as Mock ).mockResolvedValueOnce( undefined );
 
 		await expect( runStep() ).rejects.toThrow( 'Failed to create site' );
 	} );
@@ -351,9 +358,7 @@ describe( 'create-site', () => {
 		mockQueryParams = new URLSearchParams( 'blog_post=https://example.blog/a-post/' );
 		await runStep();
 		await waitFor( () => expect( createSite ).toHaveBeenCalled() );
-		expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ 2 ] ).toBe(
-			Site.Visibility.PublicIndexed
-		);
+		expect( ( createSite as Mock ).mock.calls[ 0 ][ 2 ] ).toBe( Site.Visibility.PublicIndexed );
 	} );
 
 	// Without this, imported posts land next to the theme's demo content and a "build" checklist.
@@ -363,7 +368,7 @@ describe( 'create-site', () => {
 		await runStep();
 		await waitFor( () => expect( createSite ).toHaveBeenCalled() );
 
-		const args = ( createSite as jest.Mock ).mock.calls[ 0 ];
+		const args = ( createSite as Mock ).mock.calls[ 0 ];
 		expect( args[ 5 ] ).toBe( false ); // useThemeHeadstart
 		expect( args[ 10 ] ).toBe( '' ); // siteIntent
 		expect( getAiLaunchpadEnabledArg() ).toBe( false );

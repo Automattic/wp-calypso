@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { SiteDetails } from '@automattic/data-stores';
 import { renderHook, act, fireEvent, render, screen } from '@testing-library/react';
 import { createElement, lazy, Suspense, useState, type ChangeEvent } from 'react';
+import { type Mock, vi } from 'vitest';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { lazyCache, tryPreload, usePreloadSteps } from '../../use-preload-steps';
 import type { Flow, StepperStep } from '../../../types';
 
 // Mock dependencies
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	isUserLoggedIn: jest.fn(),
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	isUserLoggedIn: vi.fn(),
 } ) );
 
-jest.mock( 'debug', () => () => jest.fn() );
+vi.mock( 'debug', () => ( { default: () => vi.fn() } ) );
 
 const PRELOAD_DELAY_MS = 5000;
 
@@ -70,10 +71,10 @@ describe( 'tryPreload', () => {
 
 describe( 'usePreloadSteps', () => {
 	// Mock step components
-	const mockAsyncComponent1 = jest.fn().mockResolvedValue( { default: null } );
-	const mockAsyncComponent2 = jest.fn().mockResolvedValue( { default: null } );
-	const mockAsyncComponent3 = jest.fn().mockResolvedValue( { default: null } );
-	const mockUserAsyncComponent = jest.fn().mockResolvedValue( { default: null } );
+	const mockAsyncComponent1 = vi.fn().mockResolvedValue( { default: null } );
+	const mockAsyncComponent2 = vi.fn().mockResolvedValue( { default: null } );
+	const mockAsyncComponent3 = vi.fn().mockResolvedValue( { default: null } );
+	const mockUserAsyncComponent = vi.fn().mockResolvedValue( { default: null } );
 
 	// Mock flow steps
 	const mockFlowSteps = [
@@ -92,9 +93,9 @@ describe( 'usePreloadSteps', () => {
 	} as SiteDetails;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.useFakeTimers();
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) => {
+		vi.clearAllMocks();
+		vi.useFakeTimers();
+		( useSelector as Mock ).mockImplementation( ( selector ) => {
 			if ( selector === isUserLoggedIn ) {
 				return false;
 			}
@@ -103,13 +104,13 @@ describe( 'usePreloadSteps', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'should not preload anything if siteSlugOrId is provided but selectedSite is not', async () => {
 		renderHook( () => usePreloadSteps( 'site-slug', null, 'step1', mockFlowSteps, mockFlow ) );
 
-		await act( () => jest.advanceTimersByTime( PRELOAD_DELAY_MS ) );
+		await act( () => vi.advanceTimersByTime( PRELOAD_DELAY_MS ) );
 
 		expect( mockAsyncComponent1 ).not.toHaveBeenCalled();
 		expect( mockAsyncComponent2 ).not.toHaveBeenCalled();
@@ -121,7 +122,7 @@ describe( 'usePreloadSteps', () => {
 			usePreloadSteps( 'site-slug', mockSiteDetails, 'step1', mockFlowSteps, mockFlow )
 		);
 
-		jest.advanceTimersByTime( PRELOAD_DELAY_MS - 1 );
+		vi.advanceTimersByTime( PRELOAD_DELAY_MS - 1 );
 
 		expect( mockAsyncComponent2 ).not.toHaveBeenCalled();
 		expect( mockAsyncComponent3 ).not.toHaveBeenCalled();
@@ -132,7 +133,7 @@ describe( 'usePreloadSteps', () => {
 			usePreloadSteps( 'site-slug', mockSiteDetails, 'step1', mockFlowSteps, mockFlow )
 		);
 
-		await act( () => jest.advanceTimersByTime( PRELOAD_DELAY_MS ) );
+		await act( () => vi.advanceTimersByTime( PRELOAD_DELAY_MS ) );
 
 		expect( mockAsyncComponent2 ).toHaveBeenCalled();
 		expect( mockAsyncComponent3 ).toHaveBeenCalled();
@@ -143,13 +144,13 @@ describe( 'usePreloadSteps', () => {
 			usePreloadSteps( 'site-slug', mockSiteDetails, 'step1', mockFlowSteps, mockFlow )
 		);
 
-		await act( () => jest.advanceTimersByTime( PRELOAD_DELAY_MS ) );
+		await act( () => vi.advanceTimersByTime( PRELOAD_DELAY_MS ) );
 
 		expect( mockUserAsyncComponent ).toHaveBeenCalled();
 	} );
 
 	it( 'should not preload the user step if user is already logged in', async () => {
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) => {
+		( useSelector as Mock ).mockImplementation( ( selector ) => {
 			if ( selector === isUserLoggedIn ) {
 				return true;
 			}
@@ -160,7 +161,7 @@ describe( 'usePreloadSteps', () => {
 			usePreloadSteps( 'site-slug', mockSiteDetails, 'step1', mockFlowSteps, mockFlow )
 		);
 
-		await act( () => jest.advanceTimersByTime( PRELOAD_DELAY_MS ) );
+		await act( () => vi.advanceTimersByTime( PRELOAD_DELAY_MS ) );
 
 		expect( mockUserAsyncComponent ).not.toHaveBeenCalled();
 	} );
@@ -170,7 +171,7 @@ describe( 'usePreloadSteps', () => {
 			usePreloadSteps( 'site-slug', mockSiteDetails, 'user', mockFlowSteps, mockFlow )
 		);
 
-		await act( () => jest.advanceTimersByTime( PRELOAD_DELAY_MS ) );
+		await act( () => vi.advanceTimersByTime( PRELOAD_DELAY_MS ) );
 
 		expect( mockAsyncComponent2 ).toHaveBeenCalled(); // First step requiring authentication
 		expect( mockAsyncComponent3 ).toHaveBeenCalled(); // Next step after that
@@ -181,7 +182,7 @@ describe( 'usePreloadSteps', () => {
 			usePreloadSteps( 'site-slug', mockSiteDetails, 'non-existent-step', mockFlowSteps, mockFlow )
 		);
 
-		await act( () => jest.advanceTimersByTime( PRELOAD_DELAY_MS ) );
+		await act( () => vi.advanceTimersByTime( PRELOAD_DELAY_MS ) );
 
 		expect( mockAsyncComponent1 ).not.toHaveBeenCalled();
 		expect( mockAsyncComponent2 ).not.toHaveBeenCalled();
@@ -193,7 +194,7 @@ describe( 'usePreloadSteps', () => {
 			usePreloadSteps( 'site-slug', mockSiteDetails, 'step3', mockFlowSteps, mockFlow )
 		);
 
-		await act( () => jest.advanceTimersByTime( PRELOAD_DELAY_MS ) );
+		await act( () => vi.advanceTimersByTime( PRELOAD_DELAY_MS ) );
 
 		// No error should be thrown
 		expect( mockAsyncComponent1 ).not.toHaveBeenCalled();
@@ -207,7 +208,7 @@ describe( 'usePreloadSteps', () => {
 		);
 
 		unmount();
-		await act( () => jest.advanceTimersByTime( PRELOAD_DELAY_MS ) );
+		await act( () => vi.advanceTimersByTime( PRELOAD_DELAY_MS ) );
 
 		expect( mockAsyncComponent2 ).not.toHaveBeenCalled();
 		expect( mockAsyncComponent3 ).not.toHaveBeenCalled();

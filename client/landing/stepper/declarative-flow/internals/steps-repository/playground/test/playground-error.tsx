@@ -1,26 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { PlaygroundError } from '../components/playground-error';
 import { BlueprintLoadError } from '../lib/blueprint-load-error';
 import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
 // Mock the React Router hooks
 const mockSearchParams = {
-	get: jest.fn().mockReturnValue( 'invalid-id' ),
+	get: vi.fn().mockReturnValue( 'invalid-id' ),
 };
 
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useSearchParams: () => [ mockSearchParams ],
 } ) );
 
 // Mock the useEffect and setTimeout
 const originalSetTimeout = global.setTimeout;
-global.setTimeout = jest.fn().mockImplementation( ( cb ) => {
+global.setTimeout = vi.fn().mockImplementation( ( cb ) => {
 	// Execute the callback immediately for testing purposes
 	return originalSetTimeout( cb, 0 );
 } );
@@ -40,15 +41,15 @@ const renderError = ( error, props = {} ) =>
 	render(
 		<PlaygroundError
 			error={ error }
-			createNewPlayground={ jest.fn() }
-			retry={ jest.fn() }
+			createNewPlayground={ vi.fn() }
+			retry={ vi.fn() }
 			{ ...props }
 		/>
 	);
 
 describe( 'PlaygroundError', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( 'playground not found', () => {
@@ -71,15 +72,15 @@ describe( 'PlaygroundError', () => {
 
 		it( 'should call createNewPlayground when countdown reaches zero', () => {
 			// Create a special version of setTimeout that triggers the callback immediately
-			const mockCreateNewPlayground = jest.fn();
+			const mockCreateNewPlayground = vi.fn();
 
 			// Mock the setState to immediately set countdown to 0
-			jest.spyOn( React, 'useState' ).mockImplementation( ( initialState ) => {
+			vi.spyOn( React, 'useState' ).mockImplementation( ( initialState ) => {
 				if ( initialState === 5 ) {
 					// When countdown is initialized, immediately return 0 to trigger the effect
-					return [ 0, jest.fn() ];
+					return [ 0, vi.fn() ];
 				}
-				return [ initialState, jest.fn() ];
+				return [ initialState, vi.fn() ];
 			} );
 
 			renderError( notFoundError, { createNewPlayground: mockCreateNewPlayground } );
@@ -91,7 +92,7 @@ describe( 'PlaygroundError', () => {
 
 	describe( 'blueprint not found', () => {
 		it( 'should display the blueprint URL and not auto-create a playground', () => {
-			const mockCreateNewPlayground = jest.fn();
+			const mockCreateNewPlayground = vi.fn();
 			renderError( blueprintError, { createNewPlayground: mockCreateNewPlayground } );
 
 			expect( screen.getByText( 'Blueprint Not Found' ) ).toBeInTheDocument();
@@ -103,7 +104,7 @@ describe( 'PlaygroundError', () => {
 		} );
 
 		it( 'should call createNewPlayground when the button is clicked', () => {
-			const mockCreateNewPlayground = jest.fn();
+			const mockCreateNewPlayground = vi.fn();
 			renderError( blueprintError, { createNewPlayground: mockCreateNewPlayground } );
 
 			fireEvent.click( screen.getByRole( 'button', { name: 'Start a new playground' } ) );
@@ -114,7 +115,7 @@ describe( 'PlaygroundError', () => {
 
 	describe( 'unknown error', () => {
 		it( 'should offer to retry', () => {
-			const mockRetry = jest.fn();
+			const mockRetry = vi.fn();
 			renderError( new Error( 'network down' ), { retry: mockRetry } );
 
 			expect( screen.getByText( 'Something went wrong' ) ).toBeInTheDocument();

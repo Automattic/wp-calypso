@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useLoadingMessageIndex } from '../use-loading-message-index';
 import type { LoadingMessage } from '../types';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 const THREE_MESSAGES: LoadingMessage[] = [
 	{ title: 'First', duration: 1000 },
@@ -20,29 +21,29 @@ describe( 'useLoadingMessageIndex', () => {
 
 		expect( result.current ).toBe( 0 );
 
-		act( () => void jest.advanceTimersByTime( 1000 ) );
+		act( () => void vi.advanceTimersByTime( 1000 ) );
 		expect( result.current ).toBe( 1 );
 
-		act( () => void jest.advanceTimersByTime( 1000 ) );
+		act( () => void vi.advanceTimersByTime( 1000 ) );
 		expect( result.current ).toBe( 2 );
 	} );
 
 	test( 'holds on the last message instead of wrapping', () => {
 		const { result } = renderHook( () => useLoadingMessageIndex( THREE_MESSAGES ) );
 
-		act( () => void jest.advanceTimersByTime( 60000 ) );
+		act( () => void vi.advanceTimersByTime( 60000 ) );
 
 		expect( result.current ).toBe( 2 );
 	} );
 
 	test( 'stops scheduling once the terminal message is reached', () => {
-		const setIntervalSpy = jest.spyOn( window, 'setInterval' );
+		const setIntervalSpy = vi.spyOn( window, 'setInterval' );
 		renderHook( () => useLoadingMessageIndex( THREE_MESSAGES ) );
 
-		act( () => void jest.advanceTimersByTime( 60000 ) );
+		act( () => void vi.advanceTimersByTime( 60000 ) );
 		const callsAtHold = setIntervalSpy.mock.calls.length;
 
-		act( () => void jest.advanceTimersByTime( 60000 ) );
+		act( () => void vi.advanceTimersByTime( 60000 ) );
 
 		expect( setIntervalSpy.mock.calls.length ).toBe( callsAtHold );
 		setIntervalSpy.mockRestore();
@@ -58,13 +59,13 @@ describe( 'useLoadingMessageIndex', () => {
 			{ initialProps: { messages: THREE_MESSAGES } }
 		);
 
-		act( () => void jest.advanceTimersByTime( 2000 ) );
+		act( () => void vi.advanceTimersByTime( 2000 ) );
 		expect( result.current ).toBe( 2 );
 
 		rerender( { messages: shortList } );
 		expect( result.current ).toBe( 0 );
 
-		act( () => void jest.advanceTimersByTime( 1000 ) );
+		act( () => void vi.advanceTimersByTime( 1000 ) );
 		expect( result.current ).toBe( 1 );
 	} );
 
@@ -76,10 +77,10 @@ describe( 'useLoadingMessageIndex', () => {
 		];
 		const { result } = renderHook( () => useLoadingMessageIndex( badDurations ) );
 
-		act( () => void jest.advanceTimersByTime( 5000 ) );
+		act( () => void vi.advanceTimersByTime( 5000 ) );
 		expect( result.current ).toBe( 1 );
 
-		act( () => void jest.advanceTimersByTime( 5000 ) );
+		act( () => void vi.advanceTimersByTime( 5000 ) );
 		expect( result.current ).toBe( 2 );
 	} );
 

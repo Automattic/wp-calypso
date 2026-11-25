@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { Step } from '@automattic/onboarding';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MockInstance, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import PlaygroundStep from '..';
@@ -16,18 +17,18 @@ import { initializeWordPressPlayground } from '../lib/initialize-playground';
 import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
 // Mock the initializeWordPressPlayground function
-jest.mock( '../lib/initialize-playground' );
+vi.mock( '../lib/initialize-playground' );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
 
 // Mock the PlaygroundError component to simplify testing
-jest.mock( '../components/playground-error', () => ( {
+vi.mock( '../components/playground-error', () => ( {
 	PlaygroundError: ( { error, createNewPlayground } ) => (
 		<div data-testid="playground-error">
 			{ error.name }
@@ -37,7 +38,7 @@ jest.mock( '../components/playground-error', () => ( {
 } ) );
 
 let mockPlaygroundClientInstance;
-let getClientRectsSpy: jest.SpyInstance;
+let getClientRectsSpy: MockInstance;
 
 const renderPlaygroundStep = (
 	props?: Partial< StepProps >,
@@ -47,7 +48,7 @@ const renderPlaygroundStep = (
 		...mockStepProps( {
 			flow: 'onboarding',
 			stepName: 'playground',
-			navigation: { submit: jest.fn() },
+			navigation: { submit: vi.fn() },
 			...props,
 		} ),
 	};
@@ -60,17 +61,17 @@ const getSaveStoreButton = () => screen.getByRole( 'button', { name: 'Save my st
 
 describe( 'Playground', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		recordTracksEvent.mockReset();
 		mockPlaygroundClientInstance = {
-			run: jest.fn().mockImplementation( () => Promise.resolve( { text: 'plans-playground' } ) ),
+			run: vi.fn().mockImplementation( () => Promise.resolve( { text: 'plans-playground' } ) ),
 		};
 		initializeWordPressPlayground.mockResolvedValue( {
 			blueprint: null,
 			client: mockPlaygroundClientInstance,
 		} );
 		// jsdom has no layout, so the Modal can't find a tabbable element to focus on mount.
-		getClientRectsSpy = jest
+		getClientRectsSpy = vi
 			.spyOn( HTMLElement.prototype, 'getClientRects' )
 			.mockReturnValue( [ {} ] as unknown as DOMRectList );
 	} );
@@ -93,7 +94,7 @@ describe( 'Playground', () => {
 		} );
 
 		it( 'should change page when the user clicks the launch button', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 
 			await act( async () => {
 				renderPlaygroundStep(
@@ -219,7 +220,7 @@ describe( 'Playground', () => {
 					eventName === 'calypso_playground_launch_site'
 			);
 
-		const renderWooPlaygroundStep = async ( submit = jest.fn() ) => {
+		const renderWooPlaygroundStep = async ( submit = vi.fn() ) => {
 			await act( async () => {
 				renderPlaygroundStep( { navigation: { submit } }, { initialEntry: wooEntry } );
 			} );
@@ -231,7 +232,7 @@ describe( 'Playground', () => {
 		};
 
 		it( 'should launch directly without the save modal outside the WooCommerce entry', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 
 			await act( async () => {
 				renderPlaygroundStep(
@@ -261,7 +262,7 @@ describe( 'Playground', () => {
 		} );
 
 		it( 'should open the save modal instead of launching', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			await renderWooPlaygroundStep( submit );
 
 			await openSaveModal();
@@ -308,7 +309,7 @@ describe( 'Playground', () => {
 				},
 			],
 		] )( 'should keep building and return focus when dismissed with %s', async ( _, dismiss ) => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			await renderWooPlaygroundStep( submit );
 
 			await openSaveModal();
@@ -325,7 +326,7 @@ describe( 'Playground', () => {
 		} );
 
 		it( 'should launch the site once when continuing to save', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			await renderWooPlaygroundStep( submit );
 
 			await openSaveModal();
@@ -380,7 +381,7 @@ describe( 'Playground', () => {
 		} );
 
 		it( 'should submit straight away and leave the wait for Tracks to the flow', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			await renderWooPlaygroundStep( submit );
 
 			await openSaveModal();
@@ -396,7 +397,7 @@ describe( 'Playground', () => {
 				);
 
 			it( 'should let the user try again and record the failure', async () => {
-				const submit = jest
+				const submit = vi
 					.fn()
 					.mockImplementationOnce( () => {
 						throw new Error( 'Submit failed' );
@@ -437,7 +438,7 @@ describe( 'Playground', () => {
 			} );
 
 			it( 'should not stay busy when recording the launch event throws', async () => {
-				const submit = jest.fn();
+				const submit = vi.fn();
 				recordTracksEvent.mockImplementation( ( eventName ) => {
 					if ( eventName === 'calypso_playground_launch_site' ) {
 						throw new Error( 'Tracks failed' );
@@ -461,7 +462,7 @@ describe( 'Playground', () => {
 		} );
 
 		it( 'should close the modal when the page is restored from the back/forward cache', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			await renderWooPlaygroundStep( submit );
 
 			await openSaveModal();
@@ -488,7 +489,7 @@ describe( 'Playground', () => {
 	describe( 'leaving the WooCommerce playground', () => {
 		const wooEntry = '/setup/onboarding/playground?blueprint=123&playground=1&intent=woocommerce';
 		const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' );
-		const assign = jest.fn();
+		const assign = vi.fn();
 
 		const getBackButton = () => screen.getByRole( 'button', { name: 'Back' } );
 		const getExitButton = () => screen.getByRole( 'button', { name: 'Exit' } );
@@ -528,7 +529,7 @@ describe( 'Playground', () => {
 							{ ...mockStepProps( {
 								flow: 'onboarding',
 								stepName: 'playground',
-								navigation: { submit: jest.fn() },
+								navigation: { submit: vi.fn() },
 								...props,
 							} ) }
 						/>
@@ -741,7 +742,7 @@ describe( 'Playground', () => {
 		} );
 
 		it( 'should not let the user leave while the store is being saved', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			await renderWooPlaygroundStep( { navigation: { submit } } );
 
 			await userEvent.click( getSaveStoreButton() );
@@ -790,7 +791,7 @@ describe( 'Playground', () => {
 		} );
 
 		it( 'should not let the user save the store while leaving', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			await renderWooPlaygroundStep( { navigation: { submit } } );
 
 			await continueWithoutSaving();

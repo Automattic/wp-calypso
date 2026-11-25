@@ -1,26 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import wp from 'calypso/lib/wp';
 import SiteMigrationCredentials from '..';
 import { StepProps } from '../../../types';
 import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-		post: jest.fn(),
-	},
-} ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+			post: vi.fn(),
+		},
+	} )
+);
+vi.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
-( useSiteSlugParam as jest.Mock ).mockImplementation( () => 'site-url.wordpress.com' );
+( useSiteSlugParam as Mock ).mockImplementation( () => 'site-url.wordpress.com' );
 
 const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions ) => {
 	const combinedProps = { ...mockStepProps( props ) };
@@ -57,12 +60,12 @@ const siteInfoUsingWordPress = {
 describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWordPress );
+		vi.clearAllMocks();
+		( wp.req.get as Mock ).mockResolvedValue( siteInfoUsingWordPress );
 	} );
 
 	it( 'creates an automated migration ticket', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		const initialEntry = '/site-migration-credentials?from=site-url.com';
 
 		render( { navigation: { submit } }, { initialEntry } );
@@ -100,7 +103,7 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'asks our team for help and leaves the flow without the fields filled in', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		await userEvent.click( skipButton() );
@@ -114,8 +117,8 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'asks only once, and still leaves the flow, when asking for help fails', async () => {
-		const submit = jest.fn();
-		( wp.req.post as jest.Mock ).mockRejectedValueOnce( new Error( 'Ticket failed' ) );
+		const submit = vi.fn();
+		( wp.req.post as Mock ).mockRejectedValueOnce( new Error( 'Ticket failed' ) );
 		render( { navigation: { submit } } );
 
 		await userEvent.dblClick( skipButton() );
@@ -125,10 +128,10 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
-		( wp.req.post as jest.Mock ).mockRejectedValue( {
+		( wp.req.post as Mock ).mockRejectedValue( {
 			code: 'rest_invalid_param',
 			data: {
 				params: {
@@ -149,10 +152,10 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'shows an error message when the server returns a generic error', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
-		( wp.req.post as jest.Mock ).mockRejectedValue( {
+		( wp.req.post as Mock ).mockRejectedValue( {
 			code: 'rest_other_error',
 			message: 'Error message from backend',
 		} );
@@ -167,10 +170,10 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'tells the customer they reached today’s limit instead of the server message', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
-		( wp.req.post as jest.Mock ).mockRejectedValue( {
+		( wp.req.post as Mock ).mockRejectedValue( {
 			code: 'too_many_requests',
 			message: 'Error message from backend',
 		} );
@@ -186,10 +189,10 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'shows an generic error when server doesn`t return error and shows normal Continue button', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
-		( wp.req.post as jest.Mock ).mockRejectedValue( {} );
+		( wp.req.post as Mock ).mockRejectedValue( {} );
 
 		await fillAllFields();
 		await userEvent.click( continueButton() );
@@ -204,7 +207,7 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'shows a notice when URL contains error=ticket-creation', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		const initialEntry = '/site-migration-credentials?error=ticket-creation';
 
 		render( { navigation: { submit } }, { initialEntry } );
@@ -219,11 +222,11 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'shows "Verifying credentials" on the Continue button during submission', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 		const pendingPromise = new Promise( () => {} );
 
-		( wp.req.post as jest.Mock ).mockImplementation( () => pendingPromise );
+		( wp.req.post as Mock ).mockImplementation( () => pendingPromise );
 
 		await fillAllFields();
 		userEvent.click( continueButton() );
@@ -243,12 +246,12 @@ describe( 'SiteMigrationCredentials', () => {
 			errorMessage: 'Check your password.',
 		},
 	] )(
-		'shows error message for %p verification error',
+		'shows error message for %o verification error',
 		async ( { response_code, errorMessage } ) => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			render( { navigation: { submit } } );
 
-			( wp.req.post as jest.Mock ).mockRejectedValue( {
+			( wp.req.post as Mock ).mockRejectedValue( {
 				code: 'automated_migration_tools_login_and_get_cookies_test_failed',
 				data: {
 					response_code,
@@ -271,13 +274,13 @@ describe( 'SiteMigrationCredentials', () => {
 	);
 
 	it( 'shows "Verifying credentials" on the Continue button during site info verification', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 		const pendingPromise = new Promise( () => {} );
 
 		await fillAllFields();
 
-		( wp.req.post as jest.Mock ).mockImplementation( () => pendingPromise );
+		( wp.req.post as Mock ).mockImplementation( () => pendingPromise );
 
 		await userEvent.click( continueButton() );
 

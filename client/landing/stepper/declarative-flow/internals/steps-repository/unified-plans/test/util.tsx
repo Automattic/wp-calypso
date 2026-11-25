@@ -1,10 +1,11 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_FREE } from '@automattic/calypso-products';
+import { vi } from 'vitest';
 import { buildUpgradeFunction } from '../util';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 const getCartItems = ( overrides?: { [ key: string ]: string } ) => [
@@ -19,18 +20,18 @@ describe( 'buildUpgradeFunction', () => {
 		flowName: 'onboarding',
 		stepName: 'Step name',
 		stepSectionName: 'Step section name',
-		submitSignupStep: jest.fn(),
-		goToNextStep: jest.fn(),
+		submitSignupStep: vi.fn(),
+		goToNextStep: vi.fn(),
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'Should call goToNextStep', () => {
 		const myProps = {
 			...tplProps,
-			goToNextStep: jest.fn(),
+			goToNextStep: vi.fn(),
 		};
 		const cartItems = getCartItems();
 		buildUpgradeFunction( myProps, cartItems );
@@ -38,7 +39,7 @@ describe( 'buildUpgradeFunction', () => {
 	} );
 
 	test( 'Should call submitSignupStep with step details', () => {
-		const submitSignupStep = jest.fn();
+		const submitSignupStep = vi.fn();
 		const cartItems = getCartItems();
 		const myProps = { ...tplProps, submitSignupStep };
 		buildUpgradeFunction( myProps, cartItems );
@@ -53,7 +54,7 @@ describe( 'buildUpgradeFunction', () => {
 	} );
 
 	test( 'Should call submitSignupStep with additionalStepData if specified', () => {
-		const submitSignupStep = jest.fn();
+		const submitSignupStep = vi.fn();
 		const myProps = {
 			...tplProps,
 			additionalStepData: { test: 23 },
@@ -69,7 +70,7 @@ describe( 'buildUpgradeFunction', () => {
 	} );
 
 	test( 'Should call submitSignupStep with correct providedDependencies', () => {
-		const submitSignupStep = jest.fn();
+		const submitSignupStep = vi.fn();
 		const myProps = { ...tplProps, submitSignupStep };
 		const cartItems = getCartItems();
 		buildUpgradeFunction( myProps, cartItems );

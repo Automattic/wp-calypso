@@ -1,12 +1,13 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
+import { type Mock, vi } from 'vitest';
 import { preparePreviewDocument } from '../stream/html-preview-document';
 import { HTML_PREVIEW_RUNTIME } from '../stream/html-preview-runtime';
 
 type TestPort = {
 	onmessage: ( ( event: MessageEvent ) => void ) | null;
-	postMessage: jest.Mock;
-	start: jest.Mock;
-	close: jest.Mock;
+	postMessage: Mock;
+	start: Mock;
+	close: Mock;
 };
 
 const channel = 'private-channel';
@@ -18,16 +19,16 @@ let previousObserver: typeof ResizeObserver;
 let previousReplaceSync: PropertyDescriptor | undefined;
 
 beforeEach( () => {
-	jest.useFakeTimers();
+	vi.useFakeTimers();
 	roots = [];
-	port = { onmessage: null, postMessage: jest.fn(), start: jest.fn(), close: jest.fn() };
+	port = { onmessage: null, postMessage: vi.fn(), start: vi.fn(), close: vi.fn() };
 	const script = document.createElement( 'script' );
 	script.dataset.channel = channel;
 	script.dataset.parentOrigin = window.location.origin;
 	restoreScript = Object.getOwnPropertyDescriptor( document, 'currentScript' );
 	Object.defineProperty( document, 'currentScript', { configurable: true, value: script } );
 	previousMatchMedia = window.matchMedia;
-	window.matchMedia = jest.fn().mockReturnValue( { matches: true, addEventListener: jest.fn() } );
+	window.matchMedia = vi.fn().mockReturnValue( { matches: true, addEventListener: vi.fn() } );
 	previousReplaceSync = Object.getOwnPropertyDescriptor( CSSStyleSheet.prototype, 'replaceSync' );
 	Object.defineProperty( CSSStyleSheet.prototype, 'replaceSync', {
 		configurable: true,
@@ -40,7 +41,7 @@ beforeEach( () => {
 		disconnect() {}
 	};
 	const attach = Element.prototype.attachShadow;
-	jest.spyOn( Element.prototype, 'attachShadow' ).mockImplementation( function (
+	vi.spyOn( Element.prototype, 'attachShadow' ).mockImplementation( function (
 		this: Element,
 		options: ShadowRootInit
 	) {
@@ -53,8 +54,8 @@ beforeEach( () => {
 
 afterEach( () => {
 	window.dispatchEvent( new Event( 'pagehide' ) );
-	jest.restoreAllMocks();
-	jest.useRealTimers();
+	vi.restoreAllMocks();
+	vi.useRealTimers();
 	window.matchMedia = previousMatchMedia;
 	global.ResizeObserver = previousObserver;
 	if ( previousReplaceSync ) {
@@ -191,7 +192,7 @@ async function settle() {
 }
 
 function useMotion() {
-	( window.matchMedia as jest.Mock ).mock.results[ 0 ].value.matches = false;
+	( window.matchMedia as Mock ).mock.results[ 0 ].value.matches = false;
 }
 
 describe( 'assets and completion', () => {
@@ -266,15 +267,15 @@ describe( 'assets and completion', () => {
 		await completeWith( imagePage );
 		expect( document.querySelector( '.is-polished' ) ).toBeNull();
 		roots[ 0 ].querySelector( 'img' )!.dispatchEvent( new Event( 'error' ) );
-		jest.advanceTimersByTime( 20 );
+		vi.advanceTimersByTime( 20 );
 		expect( document.querySelector( '.is-polished' ) ).not.toBeNull();
 	} );
 
 	it( 'bounds the wait for a missing image so the cue starts before the host redirect', async () => {
 		await completeWith( imagePage );
-		jest.advanceTimersByTime( 1200 );
+		vi.advanceTimersByTime( 1200 );
 		expect( document.querySelector( '.is-polished' ) ).toBeNull();
-		jest.advanceTimersByTime( 100 );
+		vi.advanceTimersByTime( 100 );
 		expect( document.querySelector( '.is-polished' ) ).not.toBeNull();
 	} );
 
@@ -315,12 +316,12 @@ describe( 'assets and completion', () => {
 	it( 'decodes a late background before using it, then reveals that element once', async () => {
 		useMotion();
 		let decoded: () => void = () => {};
-		const decode = jest.fn( () => new Promise< void >( ( resolve ) => ( decoded = resolve ) ) );
+		const decode = vi.fn( () => new Promise< void >( ( resolve ) => ( decoded = resolve ) ) );
 		Object.defineProperty( HTMLImageElement.prototype, 'decode', {
 			configurable: true,
 			value: decode,
 		} );
-		const animate = jest.fn( () => ( { finished: Promise.resolve(), cancel: jest.fn() } ) );
+		const animate = vi.fn( () => ( { finished: Promise.resolve(), cancel: vi.fn() } ) );
 		Object.defineProperty( Element.prototype, 'animate', { configurable: true, value: animate } );
 		const id = assetId( 7 );
 		connect();
@@ -519,14 +520,14 @@ describe( 'homepage-first presentation', () => {
 } );
 
 describe( 'homepage section presentation', () => {
-	let animate: jest.Mock;
+	let animate: Mock;
 	let previousAnimate: PropertyDescriptor | undefined;
 	let previousRangeRects: PropertyDescriptor | undefined;
 
 	beforeEach( () => {
-		jest.mocked( window.matchMedia ).mock.results[ 0 ].value.matches = false;
+		vi.mocked( window.matchMedia ).mock.results[ 0 ].value.matches = false;
 		const computedStyle = window.getComputedStyle;
-		jest.spyOn( window, 'getComputedStyle' ).mockImplementation( ( element ) => {
+		vi.spyOn( window, 'getComputedStyle' ).mockImplementation( ( element ) => {
 			const style = computedStyle( element );
 			if ( ! style.opacity ) {
 				style.opacity = '1';
@@ -544,14 +545,14 @@ describe( 'homepage section presentation', () => {
 			height: 300,
 			toJSON: () => ( {} ),
 		};
-		jest.spyOn( Element.prototype, 'getBoundingClientRect' ).mockReturnValue( bounds );
+		vi.spyOn( Element.prototype, 'getBoundingClientRect' ).mockReturnValue( bounds );
 		previousRangeRects = Object.getOwnPropertyDescriptor( Range.prototype, 'getClientRects' );
 		Object.defineProperty( Range.prototype, 'getClientRects', {
 			configurable: true,
 			value: () => [ bounds ],
 		} );
 		previousAnimate = Object.getOwnPropertyDescriptor( Element.prototype, 'animate' );
-		animate = jest.fn( () => ( { finished: Promise.resolve(), cancel: jest.fn() } ) );
+		animate = vi.fn( () => ( { finished: Promise.resolve(), cancel: vi.fn() } ) );
 		Object.defineProperty( Element.prototype, 'animate', { configurable: true, value: animate } );
 		const viewport = document.querySelector( '.preview-viewport' )!;
 		Object.defineProperty( viewport, 'clientWidth', { configurable: true, value: 1090 } );
@@ -580,13 +581,13 @@ describe( 'homepage section presentation', () => {
 
 	it( 'features the hero received behind the design card once the preview becomes active', async () => {
 		render( 1, first );
-		await jest.advanceTimersByTimeAsync( 1500 );
+		await vi.advanceTimersByTimeAsync( 1500 );
 		expect( flights() ).toHaveLength( 0 );
 		send( { type: 'config', active: true, generating: true, complete: false } );
-		await jest.advanceTimersByTimeAsync( 20 );
+		await vi.advanceTimersByTimeAsync( 20 );
 		expect( flights() ).toHaveLength( 1 );
 		render( 2, first.replace( 'Real generated content', 'Updated generated content' ) );
-		await jest.advanceTimersByTimeAsync( 1500 );
+		await vi.advanceTimersByTimeAsync( 1500 );
 		expect( flights() ).toHaveLength( 1 );
 	} );
 
@@ -595,14 +596,14 @@ describe( 'homepage section presentation', () => {
 			'<main class="site"><section id="welcome"><h1>A meaningful first homepage</h1></section></main>';
 		render( 1, heading );
 		send( { type: 'config', active: true, generating: true, complete: false } );
-		await jest.advanceTimersByTimeAsync( 1500 );
+		await vi.advanceTimersByTimeAsync( 1500 );
 		expect( flights() ).toHaveLength( 0 );
 		render( 2, first );
-		await jest.advanceTimersByTimeAsync( 700 );
+		await vi.advanceTimersByTimeAsync( 700 );
 		render( 3, first.replace( 'Real generated content', 'The composed section content' ) );
-		await jest.advanceTimersByTimeAsync( 700 );
+		await vi.advanceTimersByTimeAsync( 700 );
 		expect( flights() ).toHaveLength( 0 );
-		await jest.advanceTimersByTimeAsync( 600 );
+		await vi.advanceTimersByTimeAsync( 600 );
 		expect( flights() ).toHaveLength( 1 );
 		expect( roots.at( -1 )!.textContent ).toContain( 'The composed section content' );
 	} );
@@ -612,7 +613,7 @@ describe( 'homepage section presentation', () => {
 			'<main class="site"><section id="welcome"><h1>A meaningful first homepage with only a heading</h1></section><section id="decoration"></section></main>';
 		render( 1, heading );
 		send( { type: 'config', active: true, generating: true, complete: false } );
-		await jest.advanceTimersByTimeAsync( 1500 );
+		await vi.advanceTimersByTimeAsync( 1500 );
 		expect( flights() ).toHaveLength( 0 );
 		send( {
 			type: 'render',
@@ -623,7 +624,7 @@ describe( 'homepage section presentation', () => {
 			ready: true,
 			html: preparePreviewDocument( heading )!.html,
 		} );
-		await jest.advanceTimersByTimeAsync( 20 );
+		await vi.advanceTimersByTimeAsync( 20 );
 		expect( flights() ).toHaveLength( 1 );
 	} );
 
@@ -638,7 +639,7 @@ describe( 'homepage section presentation', () => {
 			'hidden'
 		);
 		send( { type: 'config', active: true, generating: false, complete: true } );
-		await jest.advanceTimersByTimeAsync( 1500 );
+		await vi.advanceTimersByTimeAsync( 1500 );
 		expect( flights() ).toHaveLength( 0 );
 		expect( roots[ 0 ].querySelector< HTMLElement >( '#welcome' )!.style.visibility ).toBe( '' );
 	} );
@@ -672,10 +673,10 @@ describe( 'homepage section presentation', () => {
 		} );
 		send( { type: 'config', active: true, generating: true, complete: false } );
 		story( 1, '' );
-		await jest.advanceTimersByTimeAsync( 5000 );
+		await vi.advanceTimersByTimeAsync( 5000 );
 		expect( scene.dataset.presentation ).toBe( 'showcase' );
 		story( 2, hours );
-		await jest.advanceTimersByTimeAsync( 2000 );
+		await vi.advanceTimersByTimeAsync( 2000 );
 		expect( roots[ 1 ].textContent ).toContain( 'Opening hours' );
 		expect( viewport.scrollTop ).toBe( 0 );
 	} );
@@ -710,14 +711,14 @@ describe( 'homepage section presentation', () => {
 		} );
 		send( { type: 'config', active: true, generating: true, complete: false } );
 		story( 1, '' );
-		await jest.advanceTimersByTimeAsync( 5000 );
+		await vi.advanceTimersByTimeAsync( 5000 );
 		expect( scene.dataset.presentation ).toBe( 'showcase' );
 		story( 2, hours );
-		await jest.advanceTimersByTimeAsync( 100 );
+		await vi.advanceTimersByTimeAsync( 100 );
 		viewport.dispatchEvent( new Event( 'wheel' ) );
-		await jest.advanceTimersByTimeAsync( 2000 );
+		await vi.advanceTimersByTimeAsync( 2000 );
 		story( 3, hours + cakes );
-		await jest.advanceTimersByTimeAsync( 2000 );
+		await vi.advanceTimersByTimeAsync( 2000 );
 		expect( roots[ 1 ].textContent ).toContain( 'Cakes to order' );
 	} );
 
@@ -740,7 +741,7 @@ describe( 'homepage section presentation', () => {
 			epoch: '1:1',
 			html: preparePreviewDocument( first )!.html,
 		} );
-		await jest.advanceTimersByTimeAsync( 5000 );
+		await vi.advanceTimersByTimeAsync( 5000 );
 		expect( document.querySelector< HTMLElement >( '.preview-scene' )!.dataset.presentation ).toBe(
 			'showcase'
 		);
@@ -783,18 +784,18 @@ describe( 'homepage section presentation', () => {
 		send( { type: 'focus', route: '/story/' } );
 		writes.length = 0;
 		send( { type: 'config', active: true, generating: true, complete: false, finishing: true } );
-		await jest.advanceTimersByTimeAsync( 1000 );
+		await vi.advanceTimersByTimeAsync( 1000 );
 		expect( scene.classList.contains( 'is-touring' ) ).toBe( true );
 		expect( tourMessages().pop() ).toMatchObject( { title: 'Home' } );
 		const walked = tourMessages().length;
-		await jest.advanceTimersByTimeAsync( 7000 );
+		await vi.advanceTimersByTimeAsync( 7000 );
 		expect( scene.classList.contains( 'is-touring' ) ).toBe( false );
 		expect( Math.max( ...writes ) ).toBeGreaterThan( 0 );
 		expect( writes.at( -1 ) ).toBe( 0 );
 		const settled = writes.length;
 		// Past the chip timer, the user's resume timer and several idle lulls.
 		viewport.dispatchEvent( new Event( 'wheel' ) );
-		await jest.advanceTimersByTimeAsync( 30000 );
+		await vi.advanceTimersByTimeAsync( 30000 );
 		expect( scene.classList.contains( 'is-touring' ) ).toBe( false );
 		expect( writes ).toHaveLength( settled );
 		const later = tourMessages().slice( walked );
@@ -819,11 +820,11 @@ describe( 'homepage section presentation', () => {
 			epoch: '1:1',
 			html: preparePreviewDocument( first )!.html,
 		} );
-		await jest.advanceTimersByTimeAsync( 3000 );
+		await vi.advanceTimersByTimeAsync( 3000 );
 		const story = document.querySelectorAll< HTMLElement >( '.preview-page' )[ 1 ];
 		expect( story.hidden ).toBe( true );
 		send( { type: 'config', active: true, generating: true, complete: false, finishing: true } );
-		await jest.advanceTimersByTimeAsync( 6000 );
+		await vi.advanceTimersByTimeAsync( 6000 );
 		expect( story.hidden ).toBe( false );
 		expect( document.querySelector< HTMLElement >( '.preview-scene' )!.dataset.presentation ).toBe(
 			'showcase'
@@ -833,7 +834,7 @@ describe( 'homepage section presentation', () => {
 	it( 'starts the idle walk even while re-renders that change nothing keep arriving', async () => {
 		await showcaseWithStory();
 		for ( let revision = 2; revision <= 5; revision++ ) {
-			await jest.advanceTimersByTimeAsync( 2000 );
+			await vi.advanceTimersByTimeAsync( 2000 );
 			send( {
 				type: 'render',
 				route: '/story/',
@@ -843,7 +844,7 @@ describe( 'homepage section presentation', () => {
 				html: preparePreviewDocument( first )!.html,
 			} );
 		}
-		await jest.advanceTimersByTimeAsync( 1000 );
+		await vi.advanceTimersByTimeAsync( 1000 );
 		expect( tourMessages().map( ( message ) => message.title ) ).toContain( 'Home' );
 	} );
 } );

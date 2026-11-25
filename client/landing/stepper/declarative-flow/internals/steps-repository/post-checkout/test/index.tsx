@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { FEATURE_BIG_SKY } from '@automattic/calypso-products';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { mockStepProps, renderStep } from '../../test/helpers';
 import PostCheckoutOnboarding from '../post-checkout-onboarding';
 
-const mockGetSite = jest.fn();
-const mockSetPendingAction = jest.fn();
-const mockSetIntentOnSite = jest.fn();
-const mockSetGoalsOnSite = jest.fn();
-const mockSaveSiteSettings = jest.fn();
-const mockWaitForLatestSiteData = jest.fn( async () => {} );
+const mockGetSite = vi.fn();
+const mockSetPendingAction = vi.fn();
+const mockSetIntentOnSite = vi.fn();
+const mockSetGoalsOnSite = vi.fn();
+const mockSaveSiteSettings = vi.fn();
+const mockWaitForLatestSiteData = vi.fn( async () => {} );
 const mockOnboardState = { intent: '', goals: [] as string[] };
 const mockSiteTransferStatus = { isTransferring: false };
 
@@ -25,52 +26,60 @@ const withOverrides = ( actual: Record< string, unknown >, overrides: Record< st
 		get: ( target, key: string ) => ( key in overrides ? overrides[ key ] : target[ key ] ),
 	} );
 
-jest.mock( '@automattic/api-queries', () =>
-	withOverrides( jest.requireActual( '@automattic/api-queries' ), {
-		siteBySlugQuery: ( siteSlug: string ) => ( {
-			queryKey: [ 'site-by-slug', siteSlug ],
-			queryFn: () => mockGetSite(),
-		} ),
-	} )
-);
+vi.mock( '@automattic/api-queries', async () => ( {
+	default: withOverrides(
+		await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+			'@automattic/api-queries'
+		),
+		{
+			siteBySlugQuery: ( siteSlug: string ) => ( {
+				queryKey: [ 'site-by-slug', siteSlug ],
+				queryFn: () => mockGetSite(),
+			} ),
+		}
+	),
+} ) );
 
-jest.mock( '@wordpress/data', () =>
-	withOverrides( jest.requireActual( '@wordpress/data' ), {
-		// Mirrors the real onboard store's empty state; anything else this tree selects is unset.
-		useSelect: ( selector: ( select: () => unknown ) => unknown ) =>
-			selector(
-				() =>
-					new Proxy(
-						{
-							getIntent: () => mockOnboardState.intent,
-							getGoals: () => mockOnboardState.goals,
-						} as Record< string, () => unknown >,
-						{ get: ( target, key: string ) => target[ key ] ?? ( () => undefined ) }
-					)
-			),
-		useDispatch: () => ( {
-			setPendingAction: mockSetPendingAction,
-			setIntentOnSite: mockSetIntentOnSite,
-			setGoalsOnSite: mockSetGoalsOnSite,
-			saveSiteSettings: mockSaveSiteSettings,
-		} ),
-	} )
-);
+vi.mock( '@wordpress/data', async () => ( {
+	default: withOverrides(
+		await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' ),
+		{
+			// Mirrors the real onboard store's empty state; anything else this tree selects is unset.
+			useSelect: ( selector: ( select: () => unknown ) => unknown ) =>
+				selector(
+					() =>
+						new Proxy(
+							{
+								getIntent: () => mockOnboardState.intent,
+								getGoals: () => mockOnboardState.goals,
+							} as Record< string, () => unknown >,
+							{ get: ( target, key: string ) => target[ key ] ?? ( () => undefined ) }
+						)
+				),
+			useDispatch: () => ( {
+				setPendingAction: mockSetPendingAction,
+				setIntentOnSite: mockSetIntentOnSite,
+				setGoalsOnSite: mockSetGoalsOnSite,
+				saveSiteSettings: mockSaveSiteSettings,
+			} ),
+		}
+	),
+} ) );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'automattic/onboard',
 	SITE_STORE: 'automattic/site',
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-slug-param', () => ( {
 	useSiteSlugParam: () => 'example.wordpress.com',
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-marketplace-theme-products', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-marketplace-theme-products', () => ( {
 	useMarketplaceThemeProducts: () => ( { isLoading: false, isError: false } ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-transfer-status-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-transfer-status-query', () => ( {
 	useSiteTransferStatusQuery: () => ( {
 		data: mockSiteTransferStatus,
 		isLoading: false,
@@ -78,7 +87,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-transfer-status-query', () =>
 	} ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-wait-for-atomic', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-wait-for-atomic', () => ( {
 	useWaitForAtomic: () => ( {
 		waitForTransfer: async () => {},
 		waitForFeature: async () => {},
@@ -86,12 +95,12 @@ jest.mock( 'calypso/landing/stepper/hooks/use-wait-for-atomic', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/wait-for-plugins-active', () => ( {
-	waitForPluginsActive: jest.fn( async () => {} ),
+vi.mock( 'calypso/landing/stepper/utils/wait-for-plugins-active', () => ( {
+	waitForPluginsActive: vi.fn( async () => {} ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 const siteWithPlan = ( product_slug: string, active: string[] = [] ) => ( {
@@ -102,7 +111,7 @@ const siteWithPlan = ( product_slug: string, active: string[] = [] ) => ( {
 
 describe( 'PostCheckoutOnboarding', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockOnboardState.intent = '';
 		mockOnboardState.goals = [];
 		mockSiteTransferStatus.isTransferring = false;
@@ -180,7 +189,7 @@ describe( 'PostCheckoutOnboarding', () => {
 	} );
 
 	it( 'skips the chooser when WooCommerce is still not active on a Commerce site', async () => {
-		( waitForPluginsActive as jest.Mock ).mockRejectedValueOnce(
+		( waitForPluginsActive as Mock ).mockRejectedValueOnce(
 			new Error( 'plugin check timeout exceeded 300s' )
 		);
 		const props = renderWithFreshSite( siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] ) );

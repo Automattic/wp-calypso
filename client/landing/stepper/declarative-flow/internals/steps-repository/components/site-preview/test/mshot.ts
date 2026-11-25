@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { createSitePreviewScreenshot } from '../mshot';
 
 describe( 'createSitePreviewScreenshot', () => {
 	it( 'asks mShots for the desktop capture the site checks show', () => {
-		const open = jest.spyOn( XMLHttpRequest.prototype, 'open' ).mockImplementation( () => {} );
-		const send = jest.spyOn( XMLHttpRequest.prototype, 'send' ).mockImplementation( () => {} );
+		const open = vi.spyOn( XMLHttpRequest.prototype, 'open' ).mockImplementation( () => {} );
+		const send = vi.spyOn( XMLHttpRequest.prototype, 'send' ).mockImplementation( () => {} );
 
 		createSitePreviewScreenshot( 'https://example.com' );
 

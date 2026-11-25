@@ -1,19 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import wp from 'calypso/lib/wp';
 import SiteMigrationSupportInstructions from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-		post: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+			post: vi.fn(),
+		},
+	} )
+);
 
 const render = () =>
 	renderStep( <SiteMigrationSupportInstructions { ...mockStepProps() } />, {
@@ -26,11 +29,10 @@ const tryAgainMessage =
 	/We couldn’t send your migration request just now. Please try again in a few minutes./;
 
 describe( 'SiteMigrationSupportInstructions', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'lets the customer try again when the migration request could not be sent', async () => {
-		jest
-			.mocked( wp.req.post )
+		vi.mocked( wp.req.post )
 			.mockRejectedValueOnce( { code: 'internal_error' } )
 			.mockResolvedValueOnce( { success: true } );
 
@@ -51,7 +53,7 @@ describe( 'SiteMigrationSupportInstructions', () => {
 	} );
 
 	it( 'does not ask the customer to try again when wpcom refused the request', async () => {
-		jest.mocked( wp.req.post ).mockRejectedValue( { code: 'migration_request_not_submitted' } );
+		vi.mocked( wp.req.post ).mockRejectedValue( { code: 'migration_request_not_submitted' } );
 
 		render();
 

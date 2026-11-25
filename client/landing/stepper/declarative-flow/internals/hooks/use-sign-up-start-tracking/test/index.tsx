@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import recordSignupStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start';
 import { adTrackSignupStart } from 'calypso/lib/analytics/ad-tracking';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -31,11 +32,11 @@ const signUpFlow: Flow = {
 	isSignupFlow: true,
 };
 
-jest.mock( '@automattic/calypso-analytics' );
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start' );
-jest.mock( 'calypso/lib/analytics/ad-tracking' );
-jest.mock( 'calypso/lib/analytics/ga' );
-jest.mock( 'calypso/signup/storageUtils' );
+vi.mock( '@automattic/calypso-analytics' );
+vi.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-signup-start' );
+vi.mock( 'calypso/lib/analytics/ad-tracking' );
+vi.mock( 'calypso/lib/analytics/ga' );
+vi.mock( 'calypso/signup/storageUtils' );
 
 const render = ( { flow, queryParams = {} } ) => {
 	return renderHookWithProvider(
@@ -58,7 +59,7 @@ const render = ( { flow, queryParams = {} } ) => {
 
 describe( 'useSignUpTracking', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'does not track event when the flow is not a isSignupFlow', () => {
