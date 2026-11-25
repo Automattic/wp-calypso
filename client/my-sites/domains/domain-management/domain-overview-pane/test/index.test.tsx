@@ -24,15 +24,17 @@ vi.mock( 'calypso/state/sites/hooks', () => ( {
 	} ),
 } ) );
 
-window.IntersectionObserver = vi.fn( () => ( {
-	observe: vi.fn(),
-	disconnect: vi.fn(),
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	takeRecords: vi.fn(),
-	unobserve: vi.fn(),
-} ) ) as unknown as typeof IntersectionObserver;
+window.IntersectionObserver = vi.fn( function () {
+	return {
+		observe: vi.fn(),
+		disconnect: vi.fn(),
+		root: null,
+		rootMargin: '',
+		thresholds: [],
+		takeRecords: vi.fn(),
+		unobserve: vi.fn(),
+	};
+} ) as unknown as typeof IntersectionObserver;
 
 function createState( siteId = 1 ) {
 	return {

@@ -1151,7 +1151,9 @@ describe( 'SiteRedesign', () => {
 			await act( async () => {
 				await vi.advanceTimersByTimeAsync( 3000 );
 			} );
-			expect( screen.getByRole( 'heading', { name: 'Your new design is ready' } ) ).toBeVisible();
+			expect(
+				await screen.findByRole( 'heading', { name: 'Your new design is ready' } )
+			).toBeVisible();
 		} finally {
 			unmount();
 			queryClient.clear();

@@ -7,9 +7,11 @@ import { isJetpackCloud } from 'calypso/dashboard/utils/jetpack';
 import { getJetpackCloudExternalUrl } from '../router';
 
 vi.mock( '@automattic/calypso-config', async () => {
-	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
-		'@automattic/calypso-config'
-	);
+	const actual = (
+		await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+			'@automattic/calypso-config'
+		)
+	).default;
 	const config = ( key: string ) => actual( key );
 	config.isEnabled = ( flag: string ) =>
 		flag === 'purchases/site-transfer' || actual.isEnabled( flag );

@@ -78,6 +78,7 @@ vi.mock( 'calypso/signup/wpcom-login-form', () => ( {
 
 vi.mock( 'calypso/state/invites/actions', () => ( {
 	createAccount: vi.fn(),
+	createSocialAccount: vi.fn(),
 	acceptInvite: vi.fn(),
 } ) );
 

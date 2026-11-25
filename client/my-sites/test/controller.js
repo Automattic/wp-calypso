@@ -483,7 +483,7 @@ describe( 'redirectToPrimary', () => {
 		const path = '/path';
 		const siteFragment = 'site';
 		const query = 'a=b';
-		const spy = vi.spyOn( page, 'redirect' );
+		const spy = vi.spyOn( page, 'redirect' ).mockImplementation( () => {} );
 
 		redirectToPrimary( { pathname: `${ path }/no-site`, querystring: query }, siteFragment );
 

@@ -90,15 +90,17 @@ vi.mock( '@automattic/calypso-router', () => ( {
 	default: { show: vi.fn() },
 } ) );
 
-window.IntersectionObserver = vi.fn( () => ( {
-	observe: vi.fn(),
-	disconnect: vi.fn(),
-	root: null,
-	rootMargin: '',
-	thresholds: [],
-	takeRecords: vi.fn(),
-	unobserve: vi.fn(),
-} ) );
+window.IntersectionObserver = vi.fn( function () {
+	return {
+		observe: vi.fn(),
+		disconnect: vi.fn(),
+		root: null,
+		rootMargin: '',
+		thresholds: [],
+		takeRecords: vi.fn(),
+		unobserve: vi.fn(),
+	};
+} );
 
 function createState( siteId = 1 ) {
 	return {

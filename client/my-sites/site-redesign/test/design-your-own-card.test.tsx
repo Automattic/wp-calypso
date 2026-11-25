@@ -11,9 +11,11 @@ vi.mock( '@automattic/calypso-config', async () => ( {
 		'@automattic/calypso-config'
 	) ),
 	__esModule: true,
-	default: await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
-		'@automattic/calypso-config'
-	),
+	default: (
+		await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+			'@automattic/calypso-config'
+		)
+	).default,
 	isEnabled: vi.fn(),
 } ) );
 vi.mock( '@wordpress/compose', async () => ( {

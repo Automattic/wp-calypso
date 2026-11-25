@@ -1,12 +1,15 @@
-/** @jest-environment jsdom */
-jest.mock( 'calypso/components/data/query-site-settings', () => () => null );
-jest.mock( 'calypso/components/data/query-jetpack-modules', () => () => null );
-jest.mock( 'calypso/my-sites/site-settings/jetpack-module-toggle', () => () => null );
-jest.mock( 'calypso/components/support-info', () => () => null );
-jest.mock( 'calypso/components/inline-support-link', () => () => null );
-
+/** @vitest-environment jsdom */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { SiteVerification } from '../site-verification';
+
+vi.mock( 'calypso/components/data/query-site-settings', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-jetpack-modules', () => ( { default: () => null } ) );
+vi.mock( 'calypso/my-sites/site-settings/jetpack-module-toggle', () => ( {
+	default: () => null,
+} ) );
+vi.mock( 'calypso/components/support-info', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/inline-support-link', () => ( { default: () => null } ) );
 
 const noop = () => {};
 
