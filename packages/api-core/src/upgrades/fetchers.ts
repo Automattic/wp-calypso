@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { Purchase, RawPurchase, RefundOptions, UpgradesCancelFeaturesResponse } from './types';
+import type { DowngradeInfo, Purchase, RawPurchase, UpgradesCancelFeaturesResponse } from './types';
 
 /**
  * Some data from the purchases endpoints are currently numeric strings but we
@@ -68,15 +68,15 @@ export async function hasExtendedPurchase( purchaseId: number ): Promise< boolea
  * Fetches the refund for changing a purchase to another product now, through
  * the cancel endpoint's downgrade. Rejects for a change that can't be made now.
  *
- * GET /wpcom/v2/upgrades/{purchaseId}/downgrade-refund
+ * GET /wpcom/v2/upgrades/{purchaseId}/downgrade-info
  */
-export async function fetchDowngradeRefund(
+export async function fetchDowngradeInfo(
 	purchaseId: number,
 	toProductId: number
-): Promise< RefundOptions > {
+): Promise< DowngradeInfo > {
 	return await wpcom.req.get(
 		{
-			path: `/upgrades/${ purchaseId }/downgrade-refund`,
+			path: `/upgrades/${ purchaseId }/downgrade-info`,
 			apiNamespace: 'wpcom/v2',
 		},
 		{ to_product_id: toProductId }

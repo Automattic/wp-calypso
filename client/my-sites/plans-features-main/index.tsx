@@ -1,6 +1,6 @@
 import {
 	cancelAndRefundPurchaseMutation,
-	downgradeRefundQuery,
+	downgradeInfoQuery,
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	setDelayedDowngradeMutation,
@@ -410,18 +410,19 @@ const PlansFeaturesMain = ( {
 	const downgradeTargetProductId = pendingDowngradePlanSlug
 		? getPlan( pendingDowngradePlanSlug )?.getProductId()
 		: undefined;
-	const { data: downgradeRefund, isLoading: isDowngradeRefundLoading } = useQuery( {
-		...downgradeRefundQuery( currentPlanPurchaseId ?? 0, downgradeTargetProductId ?? 0 ),
+	const { data: downgradeInfo, isLoading: isDowngradeInfoLoading } = useQuery( {
+		...downgradeInfoQuery( currentPlanPurchaseId ?? 0, downgradeTargetProductId ?? 0 ),
 		enabled: !! currentPlanPurchaseId && !! downgradeTargetProductId && downgradeMode === 'instant',
 		// The dialog stays open with its loader until the redirect after the change,
 		// when a refetch would quote a change that has already been made.
 		refetchOnWindowFocus: false,
 		staleTime: Infinity,
 	} );
-	const downgradeRefundAmount = downgradeRefund?.refund_amount ?? 0;
 	const downgradeRefundText =
-		currentPurchase && downgradeRefundAmount > 0
-			? formatCurrency( downgradeRefundAmount, currentPurchase.currency_code )
+		downgradeInfo && downgradeInfo.refund_integer > 0
+			? formatCurrency( downgradeInfo.refund_integer, downgradeInfo.refund_currency, {
+					isSmallestUnit: true,
+				} )
 			: undefined;
 
 	// The date a delayed downgrade will take effect. `renew_date` is the next
@@ -1632,7 +1633,7 @@ const PlansFeaturesMain = ( {
 						downgradeRenewalPriceText ? String( downgradeRenewalPriceText ) : undefined
 					}
 					refundText={ downgradeRefundText }
-					isRefundLoading={ isDowngradeRefundLoading }
+					isRefundLoading={ isDowngradeInfoLoading }
 					isConfirming={ cancelAndRefundMutation.isPending || isDowngrading }
 					isRechargeable={ currentPurchase?.is_rechargeable ?? false }
 					changePaymentMethodUrl={
