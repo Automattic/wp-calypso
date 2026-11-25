@@ -1,33 +1,36 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import ReactModal from 'react-modal';
+import { vi } from 'vitest';
 import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
 import { RelatedSite } from 'calypso/data/reader/use-related-sites';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
 import ReaderSuggestedFollowsDialog from '../dialog';
 import { useRecommendOrRelatedSitesQuery } from '../hooks/use-recommend-or-related-sites-query';
 
-jest.mock( '../hooks/use-recommend-or-related-sites-query' );
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( '../hooks/use-recommend-or-related-sites-query' );
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
 } ) );
-jest.mock( 'calypso/reader/sites-list', () => ( {
+vi.mock( 'calypso/reader/sites-list', () => ( {
 	ReaderSitesList: ( { sites }: { sites: ReaderSite[] } ) => (
 		<div>{ sites.map( ( site ) => site.name ).join( ', ' ) }</div>
 	),
 } ) );
 
-jest.mock( 'calypso/blocks/reader-suggested-follows', () => ( {
-	SuggestedFollowItem: ( { site }: { site: RelatedSite } ) => <div>{ site.name }</div>,
-} ) );
+vi.mock( 'calypso/blocks/reader-suggested-follows', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SuggestedFollowItem: ( { site }: { site: RelatedSite } ) => <div>{ site.name }</div>,
+	} )
+);
 
 ReactModal.setAppElement( '*' );
 
 describe( 'ReaderSuggestedFollowsDialog', () => {
 	beforeEach( () => {
-		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
+		vi.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
 			data: [],
 			isLoading: true,
 			resourceType: null,
@@ -38,7 +41,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 	it( 'renders nothing when isVisible is false', () => {
 		const { container } = render(
 			<ReaderSuggestedFollowsDialog
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 				siteId={ 1 }
 				postId={ 2 }
 				isVisible={ false }
@@ -48,14 +51,14 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 	} );
 
 	it( 'closes the modal automatically when all requests are completed and there are no results', () => {
-		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
+		vi.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			resourceType: null,
 			isFetched: true,
 		} );
 
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		render(
 			<ReaderSuggestedFollowsDialog
 				onClose={ onClose }
@@ -69,14 +72,14 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 	} );
 
 	it( 'closes the modal automatically when all data returned is undefined', () => {
-		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
+		vi.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
 			data: undefined,
 			isLoading: false,
 			resourceType: null,
 			isFetched: true,
 		} );
 
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		render(
 			<ReaderSuggestedFollowsDialog onClose={ onClose } siteId={ 1 } postId={ 2 } isVisible />
 		);
@@ -84,7 +87,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 	} );
 
 	it( 'renders the loading state', () => {
-		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
+		vi.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
 			data: [],
 			isLoading: true,
 			resourceType: null,
@@ -92,13 +95,13 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 		} );
 
 		render(
-			<ReaderSuggestedFollowsDialog onClose={ jest.fn() } siteId={ 1 } postId={ 2 } isVisible />
+			<ReaderSuggestedFollowsDialog onClose={ vi.fn() } siteId={ 1 } postId={ 2 } isVisible />
 		);
 		expect( screen.getByLabelText( 'Loading suggested blogs' ) ).toBeVisible();
 	} );
 
 	it( 'renders the recommended feeds', () => {
-		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
+		vi.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
 			data: [
 				{ ID: '1', feedId: '1', name: 'Nice Recommended Blog', feedUrl: 'https://test.com' },
 			] as FeedRecommendation[],
@@ -109,7 +112,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 
 		render(
 			<ReaderSuggestedFollowsDialog
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 				author={ { name: 'Test Author', username: 'test-author' } }
 				siteId={ 1 }
 				postId={ 2 }
@@ -123,7 +126,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 	} );
 
 	it( 'renders the related sites', () => {
-		jest.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
+		vi.mocked( useRecommendOrRelatedSitesQuery ).mockReturnValue( {
 			data: [ { global_ID: '1', name: 'Related blog' } ] as RelatedSite[],
 			isLoading: false,
 			resourceType: 'related',
@@ -131,7 +134,7 @@ describe( 'ReaderSuggestedFollowsDialog', () => {
 		} );
 
 		render(
-			<ReaderSuggestedFollowsDialog onClose={ jest.fn() } siteId={ 1 } postId={ 2 } isVisible />
+			<ReaderSuggestedFollowsDialog onClose={ vi.fn() } siteId={ 1 } postId={ 2 } isVisible />
 		);
 
 		expect( screen.getByText( 'Suggested blogs' ) ).toBeVisible();

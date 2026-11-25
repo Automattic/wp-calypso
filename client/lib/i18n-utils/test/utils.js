@@ -13,73 +13,76 @@ import {
 	isMagnificentLocale,
 } from '@automattic/i18n-utils';
 import { getWpI18nLocaleSlug } from '@automattic/i18n-utils/src/locale-context';
+import { vi } from 'vitest';
 
-jest.mock( '@automattic/i18n-utils/src/locale-context', () => {
-	const originalModule = jest.requireActual( '@automattic/i18n-utils/src/locale-context' );
+vi.mock( '@automattic/i18n-utils/src/locale-context', async () => {
+	const originalModule = await vi.importActual( '@automattic/i18n-utils/src/locale-context' );
 	return {
 		__esModule: true,
 		...originalModule,
-		getWpI18nLocaleSlug: jest.fn( () => '' ),
+		getWpI18nLocaleSlug: vi.fn( () => '' ),
 	};
 } );
 
-jest.mock( '@automattic/calypso-config', () => ( key ) => {
-	if ( 'i18n_default_locale_slug' === key ) {
-		return 'en';
-	}
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: ( key ) => {
+		if ( 'i18n_default_locale_slug' === key ) {
+			return 'en';
+		}
 
-	if ( 'support_site_locales' === key ) {
-		return [ 'en', 'es', 'de', 'ja', 'pt-br' ];
-	}
+		if ( 'support_site_locales' === key ) {
+			return [ 'en', 'es', 'de', 'ja', 'pt-br' ];
+		}
 
-	if ( 'forum_locales' === key ) {
-		return [ 'en', 'es', 'de', 'ja', 'pt-br', 'th' ];
-	}
+		if ( 'forum_locales' === key ) {
+			return [ 'en', 'es', 'de', 'ja', 'pt-br', 'th' ];
+		}
 
-	if ( 'magnificent_non_en_locales' === key ) {
-		return [
-			'es',
-			'pt-br',
-			'de',
-			'fr',
-			'he',
-			'ja',
-			'it',
-			'nl',
-			'ru',
-			'tr',
-			'id',
-			'zh-cn',
-			'zh-tw',
-			'ko',
-			'ar',
-			'sv',
-		];
-	}
+		if ( 'magnificent_non_en_locales' === key ) {
+			return [
+				'es',
+				'pt-br',
+				'de',
+				'fr',
+				'he',
+				'ja',
+				'it',
+				'nl',
+				'ru',
+				'tr',
+				'id',
+				'zh-cn',
+				'zh-tw',
+				'ko',
+				'ar',
+				'sv',
+			];
+		}
 
-	if ( 'jetpack_com_locales' === key ) {
-		return [
-			'en',
-			'ar',
-			'de',
-			'es',
-			'fr',
-			'he',
-			'id',
-			'it',
-			'ja',
-			'ko',
-			'nl',
-			'pt-br',
-			'ro',
-			'ru',
-			'sv',
-			'tr',
-			'zh-cn',
-			'zh-tw',
-		];
-	}
-} );
+		if ( 'jetpack_com_locales' === key ) {
+			return [
+				'en',
+				'ar',
+				'de',
+				'es',
+				'fr',
+				'he',
+				'id',
+				'it',
+				'ja',
+				'ko',
+				'nl',
+				'pt-br',
+				'ro',
+				'ru',
+				'sv',
+				'tr',
+				'zh-cn',
+				'zh-tw',
+			];
+		}
+	},
+} ) );
 
 describe( 'utils', () => {
 	describe( '#isDefaultLocale', () => {

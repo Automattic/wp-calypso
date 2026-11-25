@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import SocialSignupForm from 'calypso/blocks/signup-form/social';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( ( key ) => {
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn( ( key ) => {
 		if ( key === 'wpcom_signup_id' ) {
 			return 'test-id';
 		}
@@ -17,18 +18,18 @@ jest.mock( '@automattic/calypso-config', () => {
 		}
 		return null;
 	} );
-	config.isEnabled = jest.fn( ( feature ) => {
+	config.isEnabled = vi.fn( ( feature ) => {
 		if ( feature === 'sign-in-with-paypal' ) {
 			return true;
 		}
 		return false;
 	} );
-	return config;
+	return { ...config, default: config };
 } );
 
 const defaultProps = {
-	handleResponse: jest.fn(),
-	setCurrentStep: jest.fn(),
+	handleResponse: vi.fn(),
+	setCurrentStep: vi.fn(),
 };
 
 const render = ( el, options ) =>

@@ -1,7 +1,8 @@
+import { type Mock, vi } from 'vitest';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import getBackupStatusById from '../get-backup-status-by-id';
 
-jest.mock( 'calypso/state/selectors/get-rewind-backups' );
+vi.mock( 'calypso/state/selectors/get-rewind-backups' );
 
 describe( 'getBackupStatusById', () => {
 	const TEST_SITE_ID = 123;
@@ -9,11 +10,11 @@ describe( 'getBackupStatusById', () => {
 	const mockState = {};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should return null when no backups are found', () => {
-		( getRewindBackups as jest.Mock ).mockReturnValue( null );
+		( getRewindBackups as Mock ).mockReturnValue( null );
 
 		const result = getBackupStatusById( mockState, TEST_SITE_ID, TEST_BACKUP_ID );
 
@@ -22,7 +23,7 @@ describe( 'getBackupStatusById', () => {
 	} );
 
 	test( 'should return null when the backups array is empty', () => {
-		( getRewindBackups as jest.Mock ).mockReturnValue( [] );
+		( getRewindBackups as Mock ).mockReturnValue( [] );
 
 		const result = getBackupStatusById( mockState, TEST_SITE_ID, TEST_BACKUP_ID );
 
@@ -35,7 +36,7 @@ describe( 'getBackupStatusById', () => {
 			{ id: 123, status: 'finished' },
 			{ id: 789, status: 'failed' },
 		];
-		( getRewindBackups as jest.Mock ).mockReturnValue( mockBackups );
+		( getRewindBackups as Mock ).mockReturnValue( mockBackups );
 
 		const result = getBackupStatusById( mockState, TEST_SITE_ID, TEST_BACKUP_ID );
 
@@ -45,7 +46,7 @@ describe( 'getBackupStatusById', () => {
 
 	test( 'should correctly identify a backup in progress with status "started"', () => {
 		const mockBackup = { id: TEST_BACKUP_ID, status: 'started' };
-		( getRewindBackups as jest.Mock ).mockReturnValue( [ mockBackup ] );
+		( getRewindBackups as Mock ).mockReturnValue( [ mockBackup ] );
 
 		const result = getBackupStatusById( mockState, TEST_SITE_ID, TEST_BACKUP_ID );
 
@@ -61,7 +62,7 @@ describe( 'getBackupStatusById', () => {
 
 	test( 'should correctly identify a successfully completed backup with status "finished"', () => {
 		const mockBackup = { id: TEST_BACKUP_ID, status: 'finished' };
-		( getRewindBackups as jest.Mock ).mockReturnValue( [ mockBackup ] );
+		( getRewindBackups as Mock ).mockReturnValue( [ mockBackup ] );
 
 		const result = getBackupStatusById( mockState, TEST_SITE_ID, TEST_BACKUP_ID );
 
@@ -77,7 +78,7 @@ describe( 'getBackupStatusById', () => {
 
 	test( 'should correctly identify a failed backup with status "error"', () => {
 		const mockBackup = { id: TEST_BACKUP_ID, status: 'error' };
-		( getRewindBackups as jest.Mock ).mockReturnValue( [ mockBackup ] );
+		( getRewindBackups as Mock ).mockReturnValue( [ mockBackup ] );
 
 		const result = getBackupStatusById( mockState, TEST_SITE_ID, TEST_BACKUP_ID );
 
@@ -93,7 +94,7 @@ describe( 'getBackupStatusById', () => {
 
 	test( 'should correctly identify a failed backup with status "not-accessible"', () => {
 		const mockBackup = { id: TEST_BACKUP_ID, status: 'not-accessible' };
-		( getRewindBackups as jest.Mock ).mockReturnValue( [ mockBackup ] );
+		( getRewindBackups as Mock ).mockReturnValue( [ mockBackup ] );
 
 		const result = getBackupStatusById( mockState, TEST_SITE_ID, TEST_BACKUP_ID );
 
@@ -113,7 +114,7 @@ describe( 'getBackupStatusById', () => {
 			{ id: TEST_BACKUP_ID, status: 'started' },
 			{ id: 789, status: 'failed' },
 		];
-		( getRewindBackups as jest.Mock ).mockReturnValue( mockBackups );
+		( getRewindBackups as Mock ).mockReturnValue( mockBackups );
 
 		const result = getBackupStatusById( mockState, TEST_SITE_ID, TEST_BACKUP_ID );
 

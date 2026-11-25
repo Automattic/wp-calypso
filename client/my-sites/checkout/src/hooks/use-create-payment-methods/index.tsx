@@ -25,7 +25,6 @@ import {
 	createCreditCardMethod,
 } from '../../payment-methods/credit-card';
 import { createFreePaymentMethod } from '../../payment-methods/free-purchase';
-import { createPayPalMethod } from '../../payment-methods/paypal';
 import { createPayPal } from '../../payment-methods/paypal-js';
 import {
 	createPixPaymentMethod,
@@ -43,20 +42,6 @@ import type { ReactNode } from 'react';
 
 export { useCreateExistingCards };
 export { default as useCreateExistingPayPalPPCP } from './use-create-existing-paypal-ppcp';
-
-export function useCreatePayPalExpress( {
-	labelText,
-	shouldShowTaxFields,
-}: {
-	labelText?: string | null;
-	shouldShowTaxFields?: boolean;
-} ): PaymentMethod | null {
-	const paypalMethod = useMemo(
-		() => createPayPalMethod( { labelText, shouldShowTaxFields } ),
-		[ labelText, shouldShowTaxFields ]
-	);
-	return paypalMethod;
-}
 
 export function useCreatePayPalPPCP( {
 	hasExistingPayPalPPCPMethods,
@@ -485,7 +470,6 @@ export default function useCreatePaymentMethods( {
 	const hasExistingPayPalPPCPMethods =
 		existingPayPalPPCPMethods && existingPayPalPPCPMethods.length > 0;
 
-	const paypalExpressMethod = useCreatePayPalExpress( {} );
 	const paypalPPCPMethod = useCreatePayPalPPCP( { hasExistingPayPalPPCPMethods } );
 
 	const shouldUseEbanx = responseCart.allowed_payment_methods.includes(
@@ -541,10 +525,9 @@ export default function useCreatePaymentMethods( {
 	// In Germany, PayPal is the preferred option, so we display it before
 	// credit cards. See https://wp.me/pxLjZ-9aA
 	const shouldPreferPayPal = currentTaxCountryCode?.toUpperCase() === 'DE';
-	const payPalMethods = [ paypalExpressMethod, paypalPPCPMethod ];
 	const cardAndPayPalMethods = shouldPreferPayPal
-		? [ ...payPalMethods, stripeMethod, freePaymentMethod ]
-		: [ stripeMethod, freePaymentMethod, ...payPalMethods ];
+		? [ paypalPPCPMethod, stripeMethod, freePaymentMethod ]
+		: [ stripeMethod, freePaymentMethod, paypalPPCPMethod ];
 
 	// The order of this array is the order that Payment Methods will be
 	// displayed in Checkout, although not all payment methods here will be

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	PUSH_NOTIFICATIONS_RECEIVE_UNREGISTER_DEVICE,
 	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
@@ -11,7 +12,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( 'receiveUnregisterDevice()', () => {

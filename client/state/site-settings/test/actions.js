@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
@@ -32,7 +33,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( 'receiveSiteSettings()', () => {

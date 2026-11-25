@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { withStorageKey } from '@automattic/state-utils';
+import { vi } from 'vitest';
 import * as browserStorage from 'calypso/lib/browser-storage';
 import { isSupportSession } from 'calypso/lib/user/support-user-interop';
 import { addReducerToStore } from 'calypso/state/add-reducer';
@@ -21,8 +22,8 @@ const initialReducer = combineReducers( {
 	postTypes,
 } );
 
-jest.mock( 'calypso/lib/user/support-user-interop', () => ( {
-	isSupportSession: jest.fn().mockReturnValue( false ),
+vi.mock( 'calypso/lib/user/support-user-interop', () => ( {
+	isSupportSession: vi.fn().mockReturnValue( false ),
 } ) );
 
 describe( 'initial-state', () => {
@@ -52,8 +53,8 @@ describe( 'initial-state', () => {
 					beforeAll( async () => {
 						isSupportSession.mockReturnValue( true );
 						window.initialReduxState = { currentUser: { currencyCode: 'USD' } };
-						consoleErrorSpy = jest.spyOn( global.console, 'error' );
-						getStoredItemSpy = jest
+						consoleErrorSpy = vi.spyOn( global.console, 'error' );
+						getStoredItemSpy = vi
 							.spyOn( browserStorage, 'getAllStoredItems' )
 							.mockResolvedValue( savedState );
 						await loadPersistedState();
@@ -117,8 +118,8 @@ describe( 'initial-state', () => {
 
 				beforeAll( async () => {
 					window.initialReduxState = serverState;
-					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getStoredItemSpy = jest
+					consoleErrorSpy = vi.spyOn( global.console, 'error' );
+					getStoredItemSpy = vi
 						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
 					await loadPersistedState();
@@ -180,8 +181,8 @@ describe( 'initial-state', () => {
 
 				beforeAll( async () => {
 					window.initialReduxState = serverState;
-					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getStoredItemSpy = jest
+					consoleErrorSpy = vi.spyOn( global.console, 'error' );
+					getStoredItemSpy = vi
 						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
 					await loadPersistedState();
@@ -235,8 +236,8 @@ describe( 'initial-state', () => {
 
 				beforeAll( async () => {
 					window.initialReduxState = serverState;
-					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getStoredItemSpy = jest
+					consoleErrorSpy = vi.spyOn( global.console, 'error' );
+					getStoredItemSpy = vi
 						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
 					await loadPersistedState();
@@ -293,8 +294,8 @@ describe( 'initial-state', () => {
 
 				beforeAll( async () => {
 					window.initialReduxState = serverState;
-					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getStoredItemSpy = jest
+					consoleErrorSpy = vi.spyOn( global.console, 'error' );
+					getStoredItemSpy = vi
 						.spyOn( browserStorage, 'getAllStoredItems' )
 						.mockResolvedValue( savedState );
 					await loadPersistedState();
@@ -348,8 +349,8 @@ describe( 'initial-state', () => {
 
 			beforeAll( async () => {
 				window.initialReduxState = serverState;
-				consoleErrorSpy = jest.spyOn( global.console, 'error' );
-				getStoredItemSpy = jest
+				consoleErrorSpy = vi.spyOn( global.console, 'error' );
+				getStoredItemSpy = vi
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( storedState );
 
@@ -417,8 +418,8 @@ describe( 'initial-state', () => {
 
 			beforeAll( async () => {
 				window.initialReduxState = serverState;
-				consoleErrorSpy = jest.spyOn( global.console, 'error' );
-				getStoredItemSpy = jest
+				consoleErrorSpy = vi.spyOn( global.console, 'error' );
+				getStoredItemSpy = vi
 					.spyOn( browserStorage, 'getAllStoredItems' )
 					.mockResolvedValue( storedState );
 
@@ -477,8 +478,8 @@ describe( 'initial-state', () => {
 		beforeEach( async () => {
 			// we use fake timers from Sinon (aka Lolex) because `throttle` also uses `Date.now()`
 			// and relies on it returning a mocked value. Jest fake timers don't mock `Date`, Lolex does.
-			jest.useFakeTimers();
-			setStoredItemSpy = jest
+			vi.useFakeTimers();
+			setStoredItemSpy = vi
 				.spyOn( browserStorage, 'setStoredItem' )
 				.mockImplementation( ( value ) => Promise.resolve( value ) );
 
@@ -496,7 +497,7 @@ describe( 'initial-state', () => {
 				data: 1,
 			} );
 
-			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
+			vi.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -507,14 +508,14 @@ describe( 'initial-state', () => {
 				data: 1,
 			} );
 
-			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
+			vi.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			store.dispatch( {
 				type: 'foo',
 				data: 2,
 			} );
 
-			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
+			vi.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 2 );
 		} );
@@ -525,14 +526,14 @@ describe( 'initial-state', () => {
 				data: 1,
 			} );
 
-			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
+			vi.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			store.dispatch( {
 				type: 'foo',
 				data: 1,
 			} );
 
-			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
+			vi.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -553,7 +554,7 @@ describe( 'initial-state', () => {
 				data: 3,
 			} );
 
-			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
+			vi.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			store.dispatch( {
 				type: 'foo',
@@ -565,7 +566,7 @@ describe( 'initial-state', () => {
 				data: 5,
 			} );
 
-			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
+			vi.advanceTimersByTime( SERIALIZE_THROTTLE );
 
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 2 );
 			expect( setStoredItemSpy ).toHaveBeenCalledWith(
@@ -583,7 +584,7 @@ describe( 'initial-state', () => {
 				type: 'foo',
 				data: 1,
 			} );
-			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
+			vi.advanceTimersByTime( SERIALIZE_THROTTLE );
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 );
 
 			stopPersisting();
@@ -592,7 +593,7 @@ describe( 'initial-state', () => {
 				type: 'foo',
 				data: 1,
 			} );
-			jest.advanceTimersByTime( SERIALIZE_THROTTLE );
+			vi.advanceTimersByTime( SERIALIZE_THROTTLE );
 			expect( setStoredItemSpy ).toHaveBeenCalledTimes( 1 ); // no new call
 		} );
 	} );
@@ -655,7 +656,7 @@ describe( 'loading stored state with dynamic reducers', () => {
 		};
 
 		// `lib/browser-storage` mock to return mock IndexedDB state
-		getStoredItemSpy = jest
+		getStoredItemSpy = vi
 			.spyOn( browserStorage, 'getAllStoredItems' )
 			.mockResolvedValue( storedState );
 	} );

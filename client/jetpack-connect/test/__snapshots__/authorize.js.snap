@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`JetpackAuthorize renders as expected 1`] = `
+exports[`JetpackAuthorize > renders as expected 1`] = `
 <div>
   <main
     class="jetpack-connect__main main"

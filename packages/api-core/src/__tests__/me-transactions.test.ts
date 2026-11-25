@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { confirmPayPalPPCPPayment, createPayPalExpressUrl } from '../me-paypal-payments';
+import { confirmPayPalPPCPPayment } from '../me-paypal-payments';
 import { createTransaction } from '../me-transactions';
 import { tokenizeEbanxCardWithVgs } from '../transact-vgs';
 import { createUser } from '../users';
@@ -33,29 +33,6 @@ describe( 'transaction submission', () => {
 
 		expect( body ).toEqual( request );
 		expect( result ).toEqual( { success: true, receipt_id: 1234, order_id: 5678 } );
-	} );
-
-	test( 'requests a PayPal Express URL from v1.2', async () => {
-		let body: Record< string, unknown > | undefined;
-		nock( BASE )
-			.post( '/rest/v1.2/me/paypal-express-url', ( requestBody ) => {
-				body = requestBody;
-				return true;
-			} )
-			.reply( 200, { redirect_url: 'https://paypal.example/redirect' } );
-
-		const request = {
-			success_url: 'https://example.com/success',
-			cancel_url: 'https://example.com/cancel',
-			cart: { blog_id: 1, products: [], tax: null, coupon: '', temporary: false as const },
-			domain_details: null,
-			country: 'US',
-			postal_code: '10001',
-		};
-		const result = await createPayPalExpressUrl( request );
-
-		expect( body ).toEqual( request );
-		expect( result ).toEqual( { redirect_url: 'https://paypal.example/redirect' } );
 	} );
 
 	test( 'confirms a PayPal PPCP payment', async () => {

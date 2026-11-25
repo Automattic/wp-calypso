@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useSetCompPlanMutation } from '../use-set-comp-plan-mutation';
 import type { ReactNode } from 'react';
 
-const mockPost = jest.fn();
-jest.mock( 'calypso/lib/wp', () => ( {
+const mockPost = vi.fn();
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: {
 		req: {

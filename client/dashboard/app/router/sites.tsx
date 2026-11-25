@@ -344,7 +344,7 @@ export const siteDeploymentsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
 } ).lazy( () =>
-	import( '../../sites/deployments' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/deployments/layout' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
 			component: d.default,
 		} )
@@ -359,7 +359,7 @@ export const siteDeploymentsListRoute = createRoute( {
 		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/deployments-list' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments-list' )( {
 			component: d.default,
 		} )
@@ -948,7 +948,7 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-site-visibility' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-site-visibility' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1180,7 +1180,7 @@ export const siteSettingsWordPressRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-wordpress' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/wordpress' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-wordpress' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1205,7 +1205,7 @@ export const siteSettingsPHPRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-php' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/php' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-php' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1224,7 +1224,7 @@ export const siteSettingsDatabaseRoute = createRoute( {
 	getParentRoute: () => siteSettingsRoute,
 	path: 'database',
 } ).lazy( () =>
-	import( '../../sites/settings-database' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/database' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-database' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1335,7 +1335,7 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 		await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-primary-data-center' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/primary-data-center' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-primary-data-center' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1360,7 +1360,7 @@ export const siteSettingsStaticFile404Route = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-static-file-404' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-static-file-404' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1385,7 +1385,7 @@ export const siteSettingsCachingRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-caching' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/caching' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-caching' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1412,7 +1412,7 @@ export const siteSettingsApmRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-apm' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/apm' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-apm' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1437,7 +1437,7 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-defensive-mode' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/defensive-mode' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-defensive-mode' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1468,7 +1468,7 @@ export const siteSettingsSftpSshRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-sftp-ssh' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/sftp-ssh' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-sftp-ssh' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1502,7 +1502,7 @@ export const siteSettingsCrontabIndexRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1520,7 +1520,7 @@ export const siteSettingsCrontabAddRoute = createRoute( {
 	getParentRoute: () => siteSettingsCrontabRoute,
 	path: 'add',
 } ).lazy( () =>
-	import( '../../sites/settings-crontab/add-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab/add' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab-add' )( {
 			component: d.default,
 		} )
@@ -1545,7 +1545,7 @@ export const siteSettingsCrontabEditRoute = createRoute( {
 		await queryClient.ensureQueryData( siteCrontabsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-crontab/edit-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab/cron/edit' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab-edit' )( {
 			component: d.default,
 		} )
@@ -1604,7 +1604,7 @@ export const siteSettingsWebApplicationFirewallRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-web-application-firewall' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/web-application-firewall' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-web-application-firewall' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1632,7 +1632,7 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-wpcom-login' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/wpcom-login' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-wpcom-login' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1661,7 +1661,7 @@ export const siteSettingsRepositoriesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/repositories' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories' )( {
 			component: d.default,
 		} )
@@ -1682,7 +1682,7 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 		queryClient.prefetchQuery( githubInstallationsQuery() );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/repositories/connect' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-connect' )( {
 			component: d.default,
 		} )
@@ -1707,10 +1707,11 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 		await queryClient.ensureQueryData( codeDeploymentQuery( site.ID, deploymentId ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-repositories-manage' )( {
-			component: d.default,
-		} )
+	import( '../../app-dotcom/routes/sites/site/settings/repositories/manage/deployment' ).then(
+		( d ) =>
+			createLazyRoute( 'site-settings-repositories-manage' )( {
+				component: d.default,
+			} )
 	)
 );
 

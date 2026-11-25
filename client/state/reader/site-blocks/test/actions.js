@@ -1,5 +1,6 @@
 import { readSiteQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
+import { vi } from 'vitest';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_SITE_BLOCK,
@@ -12,8 +13,8 @@ import {
 	unblockSite,
 } from 'calypso/state/reader/site-blocks/actions';
 
-jest.mock( 'calypso/state/query-client', () => ( {
-	getCalypsoQueryClient: jest.fn(),
+vi.mock( 'calypso/state/query-client', () => ( {
+	getCalypsoQueryClient: vi.fn(),
 } ) );
 
 describe( 'actions', () => {

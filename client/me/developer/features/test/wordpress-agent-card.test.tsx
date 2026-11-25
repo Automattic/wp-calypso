@@ -1,26 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { WordPressAgentCard } from '../wordpress-agent-card';
 import type { ComponentType, MouseEvent as ReactMouseEvent } from 'react';
 
-const mockHandleClickLink = jest.fn( ( event: ReactMouseEvent< HTMLAnchorElement > ) =>
+const mockHandleClickLink = vi.fn( ( event: ReactMouseEvent< HTMLAnchorElement > ) =>
 	event.preventDefault()
 );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Component: ComponentType ) => Component,
-	useTranslate: () => ( text: string ) => text,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		localize: ( Component: ComponentType ) => Component,
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
 
-jest.mock( 'calypso/dashboard/utils/link', () => ( {
+vi.mock( 'calypso/dashboard/utils/link', () => ( {
 	dashboardLink: ( path: string ) => `http://my.localhost:3000${ path }`,
 } ) );
 
-jest.mock( '../use-handle-click-link', () => ( {
+vi.mock( '../use-handle-click-link', () => ( {
 	useHandleClickLink: () => mockHandleClickLink,
 } ) );
 

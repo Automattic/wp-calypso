@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
+import { vi } from 'vitest';
 import {
 	LicenseFilter,
 	LicenseSortDirection,
@@ -21,7 +22,7 @@ describe( 'actions', () => {
 	describe( '#requestLicenses()', () => {
 		test( 'should return a thunk which dispatches 2 actions when called', () => {
 			const { requestLicenses } = actions;
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 
 			const thunk = requestLicenses(
 				LicenseFilter.Detached,

@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import CloseOnEscape from '../';
 
 const simulateEscapeKeydown = () =>
@@ -17,7 +18,7 @@ describe( 'CloseOnEscape', () => {
 
 	describe( 'escape keydown event', () => {
 		test( 'calls the `onEscape` method of stacked components in LIFO order on each escape keydown', () => {
-			const onEscapeSpy = jest.fn();
+			const onEscapeSpy = vi.fn();
 
 			const wrapper1 = render(
 				<CloseOnEscape

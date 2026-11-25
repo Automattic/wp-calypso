@@ -129,7 +129,7 @@ function redactIfString< T >( value: T ): T {
 	return ( typeof value === 'string' ? redactUrl( value ) : value ) as T;
 }
 
-function redactQueryString( query: SentryApi.Request[ 'query_string' ] ) {
+function redactQueryString( query: NonNullable< SentryApi.Event[ 'request' ] >[ 'query_string' ] ) {
 	if ( typeof query === 'string' ) {
 		return redactUrl( `?${ query }` ).slice( 1 );
 	}

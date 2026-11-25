@@ -2,17 +2,8 @@
 import { basename, dirname, resolve } from 'node:path';
 import util from 'node:util';
 import glob from 'glob';
+import { APPS_EXCLUDED_FROM_TYPE_CHECK } from './apps-excluded-from-type-check.mjs';
 import runTask from './teamcity-task-runner.mjs';
-
-// TEMPORARY: These apps *should* be type-checked, but there are existing issues that need to be
-// resolved.
-const APPS_EXCLUDED_FROM_TYPE_CHECK = [
-	'happy-blocks',
-	'o2-blocks',
-	'odyssey-stats',
-	'notifications',
-	'wpcom-block-editor',
-];
 
 const globPromise = util.promisify( glob );
 
@@ -126,9 +117,10 @@ const testApps = withVitestInfo( 'test-apps --maxWorkers=4', 'test_apps' );
 
 const testPackagesVitest = withVitestInfo( 'test-packages --maxWorkers=4', 'test_packages_vitest' );
 const testDashboard = withVitestInfo( 'test-dashboard --maxWorkers=4', 'test_dashboard' );
-// The client tests that have moved from Jest (see test/client/vitest-directories.js).
+// The client tests that have moved from Jest (see test/client/vitest-directories.js). They run
+// after the Jest client tests, with the same workers.
 const testClientVitest = withVitestInfo(
-	'test-client:vitest --maxWorkers=4',
+	'test-client:vitest --maxWorkers=8',
 	'test_client_vitest'
 );
 
@@ -150,7 +142,12 @@ try {
 	// Since this task is so much larger than the others, we give it a large amount
 	// of CPU and run it by itself. We let other tasks complete in parallel with
 	// less CPU since they'll still finish much more quickly.
-	const testClientTask = runTask( testClient );
+	// The client tests on Vitest follow on the same CPU budget, rather than lengthening the serial
+	// chain below, which is the longest.
+	const testClientTask = ( async () => {
+		await runTask( testClient );
+		await runVitestTask( testClientVitest );
+	} )();
 
 	// Runs alongside the client tests, which take longer than the rest, so it stays off the critical path.
 	const testDashboardTask = runVitestTask( testDashboard );
@@ -180,7 +177,6 @@ try {
 		await runVitestTask( testPackagesVitest );
 		await runTask( testWorkspaces );
 		await runVitestTask( testApps );
-		await runVitestTask( testClientVitest );
 	} )();
 
 	await completeTasks( [ testClientTask, testDashboardTask, tscTasks, otherTestTasks ] );

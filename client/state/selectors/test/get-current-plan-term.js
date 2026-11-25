@@ -4,16 +4,17 @@ import {
 	TERM_BIENNIALLY,
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
+import { vi } from 'vitest';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import getCurrentPlanTerm from '../get-current-plan-term';
 
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	getSitePlan: jest.fn( () => ( {} ) ),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	getSitePlan: vi.fn( () => ( {} ) ),
 } ) );
 
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
-	getPlan: jest.fn( () => ( {} ) ),
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-products' ) ),
+	getPlan: vi.fn( () => ( {} ) ),
 } ) );
 
 describe( 'getCurrentPlanTerm', () => {

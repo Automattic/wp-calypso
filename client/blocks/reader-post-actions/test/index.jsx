@@ -1,22 +1,33 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import ReaderPostActions from '../index';
 
 let mockSavedPostsEnabled = false;
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: ( flag ) => flag === 'reader/saved-posts' && mockSavedPostsEnabled,
-} ) );
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isEnabled: ( flag ) => flag === 'reader/saved-posts' && mockSavedPostsEnabled,
+	} )
+);
 
 // Mock the components that are complex to test
-jest.mock( 'calypso/blocks/comment-button', () => () => <div data-testid="comment-button" /> );
-jest.mock( 'calypso/blocks/reader-share', () => () => <div data-testid="share-button" /> );
-jest.mock( 'calypso/blocks/reader-save-button', () => () => <div data-testid="save-button" /> );
-jest.mock( 'calypso/reader/like-button', () => () => <div data-testid="like-button" /> );
+vi.mock( 'calypso/blocks/comment-button', () => ( {
+	default: () => <div data-testid="comment-button" />,
+} ) );
+vi.mock( 'calypso/blocks/reader-share', () => ( {
+	default: () => <div data-testid="share-button" />,
+} ) );
+vi.mock( 'calypso/blocks/reader-save-button', () => ( {
+	default: () => <div data-testid="save-button" />,
+} ) );
+vi.mock( 'calypso/reader/like-button', () => ( {
+	default: () => <div data-testid="like-button" />,
+} ) );
 
 // Simple mock store
 const createMockStore = ( initialState = {} ) => {
@@ -38,7 +49,7 @@ const defaultProps = {
 		URL: 'https://example.com/post',
 	},
 	site: { ID: 456 },
-	onCommentClick: jest.fn(),
+	onCommentClick: vi.fn(),
 };
 
 describe( 'ReaderPostActions', () => {

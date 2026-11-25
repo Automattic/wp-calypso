@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useCountdown } from '../use-countdown';
 
 describe( 'useCountdown', () => {
@@ -11,21 +12,21 @@ describe( 'useCountdown', () => {
 	beforeEach( () => {
 		perfNow = 0;
 		dateNow = 1_000_000_000_000;
-		jest.useFakeTimers();
-		jest.spyOn( performance, 'now' ).mockImplementation( () => perfNow );
-		jest.spyOn( Date, 'now' ).mockImplementation( () => dateNow );
+		vi.useFakeTimers();
+		vi.spyOn( performance, 'now' ).mockImplementation( () => perfNow );
+		vi.spyOn( Date, 'now' ).mockImplementation( () => dateNow );
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
-		jest.restoreAllMocks();
+		vi.useRealTimers();
+		vi.restoreAllMocks();
 	} );
 
 	const advance = ( ms: number ) => {
 		perfNow += ms;
 		dateNow += ms;
 		act( () => {
-			jest.advanceTimersByTime( ms );
+			vi.advanceTimersByTime( ms );
 		} );
 	};
 

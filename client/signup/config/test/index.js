@@ -1,25 +1,41 @@
 import fs from 'fs';
 import path from 'path';
 import { isEmpty } from '@automattic/js-utils';
+import { vi } from 'vitest';
 import flows from '../flows';
 import { generateFlows } from '../flows-pure';
 import { getStepModuleLoaders, getStepModuleMap } from '../step-components';
 import steps from '../steps';
 import { generateSteps } from '../steps-pure';
 
-jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
-jest.mock( 'calypso/components/file-picker/component-file-picker', () => <div></div> );
-jest.mock( 'calypso/lib/explat', () => {
+vi.mock( 'calypso/lib/signup/step-actions', () => ( {
+	addPlanToCart: vi.fn(),
+	addWithThemePlanToCart: vi.fn(),
+	addWithPluginPlanToCart: vi.fn(),
+	createAccount: vi.fn(),
+	createSiteOrDomain: vi.fn(),
+	createSiteWithCart: vi.fn(),
+	isPlanFulfilled: vi.fn(),
+	isMailboxFulfilled: vi.fn(),
+	createSiteAndAddDIFMToCart: vi.fn(),
+	submitWebsiteContent: vi.fn(),
+} ) );
+vi.mock( 'calypso/components/file-picker/component-file-picker', () => ( {
+	default: <div></div>,
+} ) );
+vi.mock( 'calypso/lib/explat', () => {
 	() => {
 		return [ false, null ];
 	};
 } );
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: () => true,
-} ) );
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isEnabled: () => true,
+	} )
+);
 
 describe( 'index', () => {
-	// eslint-disable-next-line jest/expect-expect
+	// eslint-disable-next-line vitest/expect-expect
 	test( 'should not have overlapping step/flow names', () => {
 		const flowNames = Object.keys( flows.getFlows() );
 		const overlappingNames = Object.keys( steps ).filter( ( name ) => flowNames.includes( name ) );
@@ -51,6 +67,7 @@ describe( 'index', () => {
 		expect( [ ...loadedModules ].filter( ( name ) => ! mappedModules.has( name ) ) ).toEqual( [] );
 	} );
 
+	// Loads every step module, which takes a while on a cold cache while other tests run.
 	test( 'Every step module loader should resolve its module', async () => {
 		const unresolvedModules = [];
 		await Promise.all(
@@ -66,7 +83,7 @@ describe( 'index', () => {
 		);
 
 		expect( unresolvedModules ).toEqual( [] );
-	} );
+	}, 30_000 );
 
 	test( 'Every step directory should have a loader, and every loader a step directory', () => {
 		const stepDirectories = fs

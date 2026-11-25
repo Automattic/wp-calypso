@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MockInstance, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	BLACK_FRIDAY_2026_END,
@@ -10,13 +11,13 @@ import {
 } from 'calypso/lib/promotions/black-friday-2026';
 import BlackFriday2026Banner from '..';
 
-const mockIsEnabled = jest.fn< boolean, [ string ] >( () => false );
-jest.mock( '@automattic/calypso-config', () => {
+const mockIsEnabled = vi.fn< ( ...args: [ string ] ) => boolean >( () => false );
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => undefined;
 	config.isEnabled = ( flag: string ) => mockIsEnabled( flag );
 	return { __esModule: true, default: config, isEnabled: config.isEnabled };
 } );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
 
 const HEADLINE = 'Until December 1: 25% off annual and multi-year plans.';
 const DAY = 24 * 60 * 60 * 1000;
@@ -24,16 +25,16 @@ const DAY = 24 * 60 * 60 * 1000;
 const TEN_DAYS_LEFT = BLACK_FRIDAY_2026_END - ( 10 * DAY + 6 * 3600000 + 23 * 60000 + 54000 );
 
 describe( 'BlackFriday2026Banner', () => {
-	let nowSpy: jest.SpyInstance;
+	let nowSpy: MockInstance;
 
 	beforeEach( () => {
 		mockIsEnabled.mockReturnValue( false );
-		nowSpy = jest.spyOn( Date, 'now' ).mockReturnValue( BLACK_FRIDAY_2026_START + 1000 );
+		nowSpy = vi.spyOn( Date, 'now' ).mockReturnValue( BLACK_FRIDAY_2026_START + 1000 );
 	} );
 
 	afterEach( () => {
 		nowSpy.mockRestore();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'renders during the sale and records a view', async () => {
@@ -91,21 +92,21 @@ describe( 'BlackFriday2026Banner', () => {
 	} );
 
 	it( 'hides when the sale ends while the page is open', () => {
-		jest.useFakeTimers( { doNotFake: [ 'Date' ] } );
+		vi.useFakeTimers( { toNotFake: [ 'Date' ] } );
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_END - 5000 );
 		render( <BlackFriday2026Banner /> );
 		expect( screen.getByText( HEADLINE, { exact: false } ) ).toBeVisible();
 
 		nowSpy.mockReturnValue( BLACK_FRIDAY_2026_END );
 		act( () => {
-			jest.advanceTimersByTime( 6000 );
+			vi.advanceTimersByTime( 6000 );
 		} );
 		expect( screen.queryByText( HEADLINE, { exact: false } ) ).not.toBeInTheDocument();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'ticks every second and clears the timer on unmount', () => {
-		jest.useFakeTimers( { doNotFake: [ 'Date' ] } );
+		vi.useFakeTimers( { toNotFake: [ 'Date' ] } );
 		mockIsEnabled.mockReturnValue( true );
 		nowSpy.mockReturnValue( TEN_DAYS_LEFT );
 		const { unmount } = render( <BlackFriday2026Banner /> );
@@ -113,13 +114,13 @@ describe( 'BlackFriday2026Banner', () => {
 
 		nowSpy.mockReturnValue( TEN_DAYS_LEFT + 1000 );
 		act( () => {
-			jest.advanceTimersByTime( 1000 );
+			vi.advanceTimersByTime( 1000 );
 		} );
 		expect( screen.getByText( '06:23:53' ) ).toBeVisible();
 
 		unmount();
-		expect( jest.getTimerCount() ).toBe( 0 );
-		jest.useRealTimers();
+		expect( vi.getTimerCount() ).toBe( 0 );
+		vi.useRealTimers();
 	} );
 
 	it( 'never goes negative', async () => {

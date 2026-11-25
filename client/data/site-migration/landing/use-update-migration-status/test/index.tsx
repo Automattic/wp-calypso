@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config' );
 
 describe( 'useUpdateMigrationStatus', () => {
 	beforeEach( () => {

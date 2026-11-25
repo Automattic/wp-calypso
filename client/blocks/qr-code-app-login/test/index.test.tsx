@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import QRCodeAppLogin from '../index';
 import { useApprove } from '../use-approve';
 import { useCountdown } from '../use-countdown';
@@ -11,27 +12,27 @@ import { useCreateToken } from '../use-create-token';
 import { useDocumentVisible } from '../use-document-visible';
 import { useStatus } from '../use-status';
 
-jest.mock( '../use-create-token' );
-jest.mock( '../use-status' );
-jest.mock( '../use-approve' );
-jest.mock( '../use-document-visible' );
-jest.mock( '../use-countdown' );
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '../use-create-token' );
+vi.mock( '../use-status' );
+vi.mock( '../use-approve' );
+vi.mock( '../use-document-visible' );
+vi.mock( '../use-countdown' );
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 // qrcode.react renders an <svg>; not relevant to these tests.
-jest.mock( '../qr-code', () => ( {
+vi.mock( '../qr-code', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="qr-code" />,
 	QRCodePlaceholder: () => <div data-testid="qr-code-placeholder" />,
 } ) );
 
-const mockedUseCreateToken = jest.mocked( useCreateToken );
-const mockedUseStatus = jest.mocked( useStatus );
-const mockedUseApprove = jest.mocked( useApprove );
-const mockedUseDocumentVisible = jest.mocked( useDocumentVisible );
-const mockedUseCountdown = jest.mocked( useCountdown );
+const mockedUseCreateToken = vi.mocked( useCreateToken );
+const mockedUseStatus = vi.mocked( useStatus );
+const mockedUseApprove = vi.mocked( useApprove );
+const mockedUseDocumentVisible = vi.mocked( useDocumentVisible );
+const mockedUseCountdown = vi.mocked( useCountdown );
 
 type CreateTokenReturn = ReturnType< typeof useCreateToken >;
 type StatusReturn = ReturnType< typeof useStatus >;
@@ -39,30 +40,30 @@ type ApproveReturn = ReturnType< typeof useApprove >;
 
 const idleCreateToken = (): CreateTokenReturn =>
 	( {
-		mutate: jest.fn(),
+		mutate: vi.fn(),
 		data: undefined,
 		isPending: false,
 		isError: false,
-		reset: jest.fn(),
+		reset: vi.fn(),
 	} ) as unknown as CreateTokenReturn;
 
 const idleStatus = (): StatusReturn =>
 	( { data: undefined, isError: false } ) as unknown as StatusReturn;
 
 const idleApprove = (): ApproveReturn =>
-	( { mutate: jest.fn(), isPending: false } ) as unknown as ApproveReturn;
+	( { mutate: vi.fn(), isPending: false } ) as unknown as ApproveReturn;
 
 type ApproveError = { code?: string; message?: string };
 
 interface CapturingApprove {
 	mock: ApproveReturn;
 	triggerError: ( error: ApproveError ) => void;
-	mutate: jest.Mock;
+	mutate: Mock;
 }
 
 const buildCapturingApprove = (): CapturingApprove => {
 	let captured: { onError?: ( e: ApproveError ) => void } = {};
-	const mutate = jest.fn( ( _args, options ) => {
+	const mutate = vi.fn( ( _args, options ) => {
 		captured = options ?? {};
 	} );
 	return {
@@ -94,7 +95,7 @@ const renderWithGenerateClicked = async () => {
 };
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockedUseCreateToken.mockReturnValue( idleCreateToken() );
 	mockedUseStatus.mockReturnValue( idleStatus() );
 	mockedUseApprove.mockReturnValue( idleApprove() );
@@ -104,7 +105,7 @@ beforeEach( () => {
 
 describe( 'QRCodeAppLogin', () => {
 	it( 'renders the intent screen by default and does not request a token', () => {
-		const mutate = jest.fn();
+		const mutate = vi.fn();
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
 			mutate,
@@ -117,7 +118,7 @@ describe( 'QRCodeAppLogin', () => {
 	} );
 
 	it( 'requests a token only after the user clicks Generate code', async () => {
-		const mutate = jest.fn();
+		const mutate = vi.fn();
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
 			mutate,
@@ -181,7 +182,7 @@ describe( 'QRCodeAppLogin', () => {
 	} );
 
 	it( 'calls approve when a number-match button is tapped', async () => {
-		const mutate = jest.fn();
+		const mutate = vi.fn();
 		mockedUseCreateToken.mockReturnValue( {
 			...idleCreateToken(),
 			data: { token: 't', encrypted: 'e', expires: 9_999_999_999 },

@@ -25,6 +25,7 @@ import {
 	countryList,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	gSuiteProduct,
@@ -74,6 +75,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetVatInfoEndpoint( {} );

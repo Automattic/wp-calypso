@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Scan History Jetpack Benefit Block If product is standalone scan, the expanded standalone card is rendered 1`] = `
+exports[`Scan History Jetpack Benefit Block > If product is standalone scan, the expanded standalone card is rendered 1`] = `
 <div>
   <div
     class="jetpack-benefits__card jetpack-benefits__card--standalone card"

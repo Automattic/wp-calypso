@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import FormattedBlock from '..';
 
 describe( 'FormattedBlock', () => {
-	beforeEach( () => jest.resetAllMocks() );
+	beforeEach( () => vi.resetAllMocks() );
 
 	test( 'renders string content as-is', () => {
 		const content = 'my content';

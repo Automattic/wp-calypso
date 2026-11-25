@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import preferences from 'calypso/state/preferences/reducer';
 import ui from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -31,7 +32,7 @@ describe( 'index', () => {
 
 		test( 'with multiple sites, should toggle the dropdown when it is clicked', async () => {
 			const user = userEvent.setup();
-			const toggleOpenSpy = jest.spyOn( SitesDropdown.prototype, 'toggleOpen' );
+			const toggleOpenSpy = vi.spyOn( SitesDropdown.prototype, 'toggleOpen' );
 
 			const { container } = render( <SitesDropdown { ...props } hasMultipleSites /> );
 
@@ -47,7 +48,7 @@ describe( 'index', () => {
 
 		test( 'with only one site, nothing should happen when it is clicked', async () => {
 			const user = userEvent.setup();
-			const toggleOpenSpy = jest.spyOn( SitesDropdown.prototype, 'toggleOpen' );
+			const toggleOpenSpy = vi.spyOn( SitesDropdown.prototype, 'toggleOpen' );
 
 			const { container } = render( <SitesDropdown { ...props } hasMultipleSites={ false } /> );
 
@@ -80,8 +81,8 @@ describe( 'index', () => {
 
 	describe( 'selectSite', () => {
 		test( 'should do nothing when disabled', () => {
-			const setStateSpy = jest.fn();
-			const siteSelectedSpy = jest.fn();
+			const setStateSpy = vi.fn();
+			const siteSelectedSpy = vi.fn();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
@@ -97,8 +98,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should update the `selectedSiteSlug`, and `open` state properties', () => {
-			const setStateSpy = jest.fn();
-			const siteSelectedSpy = jest.fn();
+			const setStateSpy = vi.fn();
+			const siteSelectedSpy = vi.fn();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
@@ -118,7 +119,7 @@ describe( 'index', () => {
 
 	describe( 'onClose', () => {
 		test( 'should set `open` state property to false', () => {
-			const setStateSpy = jest.fn();
+			const setStateSpy = vi.fn();
 			const fakeContext = {
 				setState: setStateSpy,
 				props: {
@@ -133,7 +134,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should run the component `onClose` hook, when it is provided', () => {
-			const onCloseSpy = jest.fn();
+			const onCloseSpy = vi.fn();
 			const fakeContext = {
 				setState: noop,
 				props: {
@@ -178,7 +179,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should apply custom filter after hideDeleted check', () => {
-			const customFilter = jest.fn().mockReturnValue( true );
+			const customFilter = vi.fn().mockReturnValue( true );
 			const fakeContext = {
 				props: {
 					hideDeleted: true,
@@ -193,7 +194,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should not call custom filter for deleted sites when hideDeleted is true', () => {
-			const customFilter = jest.fn().mockReturnValue( true );
+			const customFilter = vi.fn().mockReturnValue( true );
 			const fakeContext = {
 				props: {
 					hideDeleted: true,

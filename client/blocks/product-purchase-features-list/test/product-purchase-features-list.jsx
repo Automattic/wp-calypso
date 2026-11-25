@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import {
 	PLAN_FREE,
 	PLAN_BUSINESS,
@@ -20,6 +20,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import themes from 'calypso/state/themes/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -28,10 +29,12 @@ import { ProductPurchaseFeaturesList } from '../index';
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui, themes } } );
 
-jest.mock( '../video-audio-posts', () => ( props ) => (
-	<div data-testid="video-audio-posts">{ JSON.stringify( props ) }</div>
-) );
-jest.mock( 'calypso/components/data/query-active-theme', () => () => 'QueryActiveTheme' );
+vi.mock( '../video-audio-posts', () => ( {
+	default: ( props ) => <div data-testid="video-audio-posts">{ JSON.stringify( props ) }</div>,
+} ) );
+vi.mock( 'calypso/components/data/query-active-theme', () => ( {
+	default: () => 'QueryActiveTheme',
+} ) );
 
 describe( 'ProductPurchaseFeaturesList basic tests', () => {
 	const props = {
@@ -80,8 +83,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP blogger features for WP blogger plans - 1y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBloggerFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBloggerFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BLOGGER } />
@@ -92,8 +95,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP blogger features for WP blogger plans - 2y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBloggerFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBloggerFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BLOGGER_2_YEARS } />
@@ -104,8 +107,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP personal features for WP personal plans - 1y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_PERSONAL } />
@@ -116,8 +119,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP personal features for WP personal plans - 2y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_PERSONAL_2_YEARS } />
@@ -128,8 +131,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP premium features for WP premium plans - 1y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPremiumFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getPremiumFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM } />
@@ -140,8 +143,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP premium features for WP premium plans - 2y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPremiumFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getPremiumFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_PREMIUM_2_YEARS } />
@@ -152,8 +155,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP business features for WP business plans - 1y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS } />
@@ -164,8 +167,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP business features for WP business plans - 2y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getPersonalFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_BUSINESS_2_YEARS } />
@@ -176,8 +179,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP ecommerce features for WP ecommerce plans - 1y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getEcommerceFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getEcommerceFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_ECOMMERCE } />
@@ -188,8 +191,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render WP ecommerce features for WP ecommerce plans - 2y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getEcommerceFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getEcommerceFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_ECOMMERCE_2_YEARS } />
@@ -200,8 +203,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render Jetpack free features for jetpack free plans', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackFreeFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackFreeFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_FREE } />
@@ -212,8 +215,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render Jetpack personal features for jetpack personal plans - 1y', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_PERSONAL } />
@@ -224,8 +227,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render Jetpack personal features for jetpack personal plans - monthly', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_PERSONAL_MONTHLY } />
@@ -236,8 +239,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render Jetpack premium features for jetpack premium plans - yearly', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPremiumFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPremiumFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_PREMIUM } />
@@ -248,8 +251,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render Jetpack premium features for jetpack premium plans - monthly', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPremiumFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPremiumFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_PREMIUM_MONTHLY } />
@@ -260,8 +263,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render Jetpack business features for jetpack business plans - yearly', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_BUSINESS } />
@@ -272,8 +275,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 	} );
 
 	test( 'should render Jetpack business features for jetpack business plans - monthly', () => {
-		spy = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
-		spyWrong = jest.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
+		spy = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackBusinessFeatures' );
+		spyWrong = vi.spyOn( ProductPurchaseFeaturesList.prototype, 'getJetpackPersonalFeatures' );
 
 		const { container } = render(
 			<ProductPurchaseFeaturesList { ...props } plan={ PLAN_JETPACK_BUSINESS_MONTHLY } />

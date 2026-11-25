@@ -1,13 +1,14 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { LoginContext } from 'calypso/login/login-context';
 import { RequestLoginEmailForm } from '../request-login-email-form';
 
 describe( 'RequestLoginEmailForm connect-screen usage', () => {
 	const baseProps = {
-		sendEmailLogin: jest.fn(),
-		hideMagicLoginRequestNotice: jest.fn(),
+		sendEmailLogin: vi.fn(),
+		hideMagicLoginRequestNotice: vi.fn(),
 		translate: ( text ) => text,
 		isGravPoweredClient: false,
 		showCheckYourEmail: false,
@@ -20,7 +21,7 @@ describe( 'RequestLoginEmailForm connect-screen usage', () => {
 
 	const renderForm = ( props = {} ) => {
 		return render(
-			<LoginContext.Provider value={ { setHeaders: jest.fn() } }>
+			<LoginContext.Provider value={ { setHeaders: vi.fn() } }>
 				<RequestLoginEmailForm { ...baseProps } { ...props } />
 			</LoginContext.Provider>
 		);

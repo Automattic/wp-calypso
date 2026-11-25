@@ -1,7 +1,8 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { resetImport, startImport } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import { importSite } from 'calypso/state/imports/site-importer/actions';
@@ -9,34 +10,32 @@ import ImportContentOnly from '..';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { ImportJob } from 'calypso/blocks/importer/types';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-jest.mock( 'calypso/state/imports/actions', () => ( {
-	startImport: jest.fn( () => ( { type: 'START_IMPORT' } ) ),
-	startImporting: jest.fn( () => ( { type: 'START_IMPORTING' } ) ),
-	resetImport: jest.fn( () => ( { type: 'RESET_IMPORT' } ) ),
+vi.mock( 'calypso/state/imports/actions', () => ( {
+	startImport: vi.fn( () => ( { type: 'START_IMPORT' } ) ),
+	startImporting: vi.fn( () => ( { type: 'START_IMPORTING' } ) ),
+	resetImport: vi.fn( () => ( { type: 'RESET_IMPORT' } ) ),
 } ) );
 
-jest.mock( 'calypso/state/imports/site-importer/actions', () => ( {
-	importSite: jest.fn( () => ( { type: 'IMPORT_SITE' } ) ),
+vi.mock( 'calypso/state/imports/site-importer/actions', () => ( {
+	importSite: vi.fn( () => ( { type: 'IMPORT_SITE' } ) ),
 } ) );
 
-jest.mock(
-	'../../../components/complete-screen',
-	() =>
-		( { onImportAnotherClick }: { onImportAnotherClick?: () => void } ) =>
-			onImportAnotherClick ? (
-				<button onClick={ onImportAnotherClick }>Start another import</button>
-			) : null
-);
-jest.mock( '../../../components/error-message', () => () => null );
-jest.mock( '../../../components/importer-drag', () => () => <div>Upload</div> );
-jest.mock( '../../../components/migration-plans-grid', () => () => null );
-jest.mock( '../../../components/progress-screen', () => () => null );
+vi.mock( '../../../components/complete-screen', () => ( {
+	default: ( { onImportAnotherClick }: { onImportAnotherClick?: () => void } ) =>
+		onImportAnotherClick ? (
+			<button onClick={ onImportAnotherClick }>Start another import</button>
+		) : null,
+} ) );
+vi.mock( '../../../components/error-message', () => ( { default: () => null } ) );
+vi.mock( '../../../components/importer-drag', () => ( { default: () => <div>Upload</div> } ) );
+vi.mock( '../../../components/migration-plans-grid', () => ( { default: () => null } ) );
+vi.mock( '../../../components/progress-screen', () => ( { default: () => null } ) );
 
 const site = { ID: 123, plan: { features: { active: [] } } } as unknown as SiteDetails;
 
@@ -53,7 +52,7 @@ const renderImporter = ( job?: ImportJob ) =>
 
 describe( 'ImportContentOnly', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'creates an import job when there is none', () => {

@@ -1,14 +1,15 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import loginReducer from 'calypso/state/login/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { GravPoweredEmailCodeVerification } from '..';
 
-const mockIsWebAuthnSupported = jest.fn();
+const mockIsWebAuthnSupported = vi.fn();
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( 'calypso/lib/webauthn', () => ( {
-	...jest.requireActual( 'calypso/lib/webauthn' ),
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/lib/webauthn', async () => ( {
+	...( await vi.importActual( 'calypso/lib/webauthn' ) ),
 	isWebAuthnSupported: () => mockIsWebAuthnSupported(),
 } ) );
 
@@ -24,15 +25,15 @@ const baseProps = {
 	isSecondaryEmail: false,
 	isNewAccount: false,
 	verificationCodeInputValue: '123456',
-	handleGravPoweredCodeInputChange: jest.fn(),
-	handleGravPoweredCodeSubmit: jest.fn(),
-	handleGravPoweredEmailCodeSend: jest.fn(),
+	handleGravPoweredCodeInputChange: vi.fn(),
+	handleGravPoweredCodeSubmit: vi.fn(),
+	handleGravPoweredEmailCodeSend: vi.fn(),
 	resendEmailCountdown: 0,
 	isRequestingEmail: false,
 	shouldShowSwitchEmail: true,
-	resetResendEmailCountdown: jest.fn(),
-	handleGravPoweredEmailSwitch: jest.fn(),
-	recordTracksEvent: jest.fn(),
+	resetResendEmailCountdown: vi.fn(),
+	handleGravPoweredEmailSwitch: vi.fn(),
+	recordTracksEvent: vi.fn(),
 };
 
 // The state once the code is accepted for an account with two-step authentication.
@@ -49,7 +50,7 @@ const renderAfterCodeAccepted = ( twoFactorAuth ) =>
 
 describe( 'GravPoweredEmailCodeVerification 2FA handoff', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsWebAuthnSupported.mockReturnValue( false );
 	} );
 

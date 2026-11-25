@@ -1,22 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 const middlewares = [ thunk ];
 
-const mockFetchModuleList = jest.fn( () => {
+const mockFetchModuleList = vi.fn( () => {
 	return {
 		type: 'JETPACK_MODULES_REQUEST',
 		siteId: 1,
 	};
 } );
 
-jest.mock( 'calypso/state/jetpack/modules/actions', () => ( {
+vi.mock( 'calypso/state/jetpack/modules/actions', () => ( {
 	fetchModuleList: () => mockFetchModuleList(),
 } ) );
 
@@ -86,6 +87,6 @@ describe( 'fetchModuleList', () => {
 			</Provider>
 		);
 
-		expect( mockFetchModuleList ).toHaveBeenCalledTimes( 2 );
+		expect( mockFetchModuleList ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

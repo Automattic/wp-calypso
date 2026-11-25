@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`actions createNotice() should use default options when none provided 1`] = `
+exports[`actions > createNotice() > should use default options when none provided 1`] = `
 Object {
   "noticeId": "fake-uuid",
   "showDismiss": true,
@@ -9,7 +9,7 @@ Object {
 }
 `;
 
-exports[`actions status helpers errorNotice dispatches expected action 1`] = `
+exports[`actions > status helpers > errorNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
     "noticeId": "fake-uuid",
@@ -21,7 +21,7 @@ Object {
 }
 `;
 
-exports[`actions status helpers infoNotice dispatches expected action 1`] = `
+exports[`actions > status helpers > infoNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
     "noticeId": "fake-uuid",
@@ -33,7 +33,7 @@ Object {
 }
 `;
 
-exports[`actions status helpers plainNotice dispatches expected action 1`] = `
+exports[`actions > status helpers > plainNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
     "noticeId": "fake-uuid",
@@ -45,7 +45,7 @@ Object {
 }
 `;
 
-exports[`actions status helpers successNotice dispatches expected action 1`] = `
+exports[`actions > status helpers > successNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
     "noticeId": "fake-uuid",
@@ -57,7 +57,7 @@ Object {
 }
 `;
 
-exports[`actions status helpers warningNotice dispatches expected action 1`] = `
+exports[`actions > status helpers > warningNotice dispatches expected action 1`] = `
 Object {
   "notice": Object {
     "noticeId": "fake-uuid",

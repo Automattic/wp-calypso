@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
@@ -7,17 +7,18 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import PostComments from '..';
 
-jest.mock( '../form-root', () => () => <textarea aria-label="Add a comment" /> );
+vi.mock( '../form-root', () => ( { default: () => <textarea aria-label="Add a comment" /> } ) );
 
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: () => ( { type: 'READER_TRACKS_EVENT_MOCK' } ),
 } ) );
 
-jest.mock( '../post-comment', () => ( props ) => (
-	<li data-testid="post-comment">{ props.commentId }</li>
-) );
+vi.mock( '../post-comment', () => ( {
+	default: ( props ) => <li data-testid="post-comment">{ props.commentId }</li>,
+} ) );
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -136,7 +137,7 @@ describe( 'PostComments', () => {
 		const retryResponse = new Promise( ( resolve ) => {
 			releaseRetry = resolve;
 		} );
-		const onRequest = jest.fn();
+		const onRequest = vi.fn();
 		nock( BASE )
 			.get( '/rest/v1.1/sites/123/posts/456/replies' )
 			.query( true )
@@ -738,7 +739,7 @@ describe( 'PostComments', () => {
 	} );
 
 	it( 'does not render comments while the post identity is missing', async () => {
-		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleErrorSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		nock( BASE )
 			.get( '/rest/v1.1/sites/123/posts/456/replies' )

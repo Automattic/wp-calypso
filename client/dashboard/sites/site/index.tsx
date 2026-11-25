@@ -11,10 +11,10 @@ import {
 	mayBeAwaitingAtomicTransfer,
 } from '../../utils/site-atomic-transfers';
 import { SitePermissionError } from '../../utils/site-permissions';
-import { hasStagingSite } from '../../utils/site-staging-site';
 import { canManageSite, isSiteMember } from '../features';
 import SiteLaunchCelebrationModal from '../site-launch-modal/celebration-modal';
 import StagingSiteSyncMonitor from '../staging-site/components/staging-site-sync-monitor';
+import { hasStagingSite } from '../staging-site/utils';
 
 function Site() {
 	const { siteSlug } = siteRoute.useParams();

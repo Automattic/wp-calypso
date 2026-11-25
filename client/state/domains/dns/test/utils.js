@@ -6,7 +6,7 @@ describe( 'utils', () => {
 		test.each( [
 			[ 'ns1.wordpress.com', false ],
 			[ 'ns1.mywordpress.com', true ],
-		] )( 'only rejects NS records on a wordpress.com subdomain: %p', ( data, isValid ) => {
+		] )( 'only rejects NS records on a wordpress.com subdomain: %o', ( data, isValid ) => {
 			const errors = validateAllFields( { type: 'NS', name: 'example.foo.com', data } );
 
 			expect( Object.values( errors ).every( isEmpty ) ).toBe( isValid );

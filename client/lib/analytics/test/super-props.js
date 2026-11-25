@@ -1,35 +1,36 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getConnectionSpeedData } from '@automattic/calypso-analytics';
+import { vi } from 'vitest';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getSuperProps from '../super-props';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	getConnectionSpeedData: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	getConnectionSpeedData: vi.fn(),
 	NO_SITE_CONTEXT: 'none',
 } ) );
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( ( key ) => key );
-	config.isEnabled = jest.fn( () => false );
-	return config;
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn( ( key ) => key );
+	config.isEnabled = vi.fn( () => false );
+	return { ...config, default: config };
 } );
-jest.mock( 'calypso/lib/analytics/utils', () => ( {
-	shouldReportOmitBlogId: jest.fn( ( path ) => path === '/me' ),
+vi.mock( 'calypso/lib/analytics/utils', () => ( {
+	shouldReportOmitBlogId: vi.fn( ( path ) => path === '/me' ),
 } ) );
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	getCurrentUserSiteCount: jest.fn(),
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	getCurrentUserSiteCount: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/selectors/get-current-route', () => jest.fn() );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	getSite: jest.fn(),
+vi.mock( 'calypso/state/selectors/get-current-route', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	getSite: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSite: jest.fn(),
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: vi.fn(),
 } ) );
 
 const state = {};
@@ -49,7 +50,7 @@ const explicitSite = {
 
 describe( 'analytics super props', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		getConnectionSpeedData.mockReturnValue( {} );
 		getCurrentUserSiteCount.mockReturnValue( 2 );
 		getCurrentRoute.mockReturnValue( '/home/example.wordpress.com' );

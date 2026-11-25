@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, within } from '@testing-library/react';
+import { vi } from 'vitest';
 import { JetpackConnectMainWrapper } from '../main-wrapper';
 
-jest.mock( 'calypso/components/data/document-head', () => () => 'DocumentHead' );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => 'DocumentHead' } ) );
 
 describe( 'JetpackConnectMainWrapper', () => {
 	const translate = ( string ) => string;

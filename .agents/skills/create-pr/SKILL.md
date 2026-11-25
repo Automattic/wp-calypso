@@ -42,7 +42,7 @@ If the change adds new translatable strings, add this warning next, so a human r
 
 ```
 > [!IMPORTANT]
-> This PR introduces new translatable strings. Remember to add the `[Status] String Freeze` label before merging.
+> This PR introduces new translatable strings. To ship them translated, add the `[Status] String Freeze` label as soon as they are final.
 ```
 
 Next, add a `## What` heading with how the whole change solves the problem, starting with a verb in the imperative, in as many sentences as that needs.

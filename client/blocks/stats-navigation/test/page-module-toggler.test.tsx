@@ -1,43 +1,48 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import PageModuleToggler from '../page-module-toggler';
 import type { ChangeEvent, ReactNode } from 'react';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 let mockHasVideoPress = true;
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-jest.mock( 'react-redux', () => ( {
+vi.mock( 'react-redux', () => ( {
 	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/site-has-feature', () => jest.fn( () => mockHasVideoPress ) );
+vi.mock( 'calypso/state/selectors/site-has-feature', () => ( {
+	default: vi.fn( () => mockHasVideoPress ),
+} ) );
 
-jest.mock( 'calypso/state/stats/module-toggles/actions', () => ( {
-	updateModuleToggles: jest.fn( ( siteId, payload ) => ( {
+vi.mock( 'calypso/state/stats/module-toggles/actions', () => ( {
+	updateModuleToggles: vi.fn( ( siteId, payload ) => ( {
 		type: 'STATS_MODULE_TOGGLES_UPDATE',
 		siteId,
 		payload,
 	} ) ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	translate: ( text: string ) => text,
-	useTranslate: () => ( text: string ) => text,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		translate: ( text: string ) => text,
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	Popover: ( { isVisible, children }: { isVisible: boolean; children: ReactNode } ) =>
 		isVisible ? <div>{ children }</div> : null,
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	FormToggle: ( {
 		checked,
 		onChange,
@@ -51,7 +56,7 @@ jest.mock( '@wordpress/components', () => ( {
 	),
 } ) );
 
-jest.mock( '@wordpress/icons', () => ( {
+vi.mock( '@wordpress/icons', () => ( {
 	Icon: () => <span />,
 	cog: 'cog',
 	commentAuthorAvatar: 'commentAuthorAvatar',
@@ -78,7 +83,7 @@ function getToggle( label: string ) {
 
 describe( 'PageModuleToggler', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockHasVideoPress = true;
 	} );
 

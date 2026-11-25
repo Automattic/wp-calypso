@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import { JETPACK_SCAN_REQUEST } from 'calypso/state/action-types';
 import * as jetpackScanActions from 'calypso/state/jetpack-scan/actions';
 
 function setup( siteId ) {
 	// Set spy on action creator to verify it gets called when the component renders.
-	const requestScanStatusActionSpy = jest.spyOn( jetpackScanActions, 'requestScanStatus' );
+	const requestScanStatusActionSpy = vi.spyOn( jetpackScanActions, 'requestScanStatus' );
 
 	const initialState = {
 		jetpackScan: { requestStatus: siteId },

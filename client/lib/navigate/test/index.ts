@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { type MockInstance, vi } from 'vitest';
 import { navigate } from '..';
 
 describe( 'navigate', () => {
 	let originalLocation: Location;
-	let showSpy: jest.SpyInstance;
-	let openSpy: jest.SpyInstance;
+	let showSpy: MockInstance;
+	let openSpy: MockInstance;
 
 	beforeEach( () => {
 		originalLocation = window.location;
@@ -20,8 +21,8 @@ describe( 'navigate', () => {
 				pathname: '/sites',
 			},
 		} );
-		showSpy = jest.spyOn( page, 'show' ).mockImplementation( () => undefined as never );
-		openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		showSpy = vi.spyOn( page, 'show' ).mockImplementation( () => undefined as never );
+		openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 	} );
 
 	afterEach( () => {

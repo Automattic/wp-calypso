@@ -42,7 +42,7 @@ const siteSettingsPHPRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../sites/settings-php' ).then( ( d ) =>
+	import( '../app-dotcom/routes/sites/site/settings/php' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-php' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

@@ -1,4 +1,5 @@
 import { when } from 'jest-when';
+import { vi } from 'vitest';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
@@ -6,15 +7,15 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isEligibleForFreeToPaidUpsell from '../is-eligible-for-free-to-paid-upsell';
 
-jest.mock( 'calypso/state/selectors/can-current-user', () => ( {
-	canCurrentUser: jest.fn(),
+vi.mock( 'calypso/state/selectors/can-current-user', () => ( {
+	canCurrentUser: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	isJetpackSite: jest.fn(),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	isJetpackSite: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/selectors/is-mapped-domain-site', () => jest.fn() );
-jest.mock( 'calypso/state/selectors/is-site-on-free-plan', () => jest.fn() );
-jest.mock( 'calypso/state/selectors/is-vip-site', () => jest.fn() );
+vi.mock( 'calypso/state/selectors/is-mapped-domain-site', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/state/selectors/is-site-on-free-plan', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/state/selectors/is-vip-site', () => ( { default: vi.fn() } ) );
 
 describe( 'isEligibleForFreeToPaidUpsell', () => {
 	const state = 'state';

@@ -1,31 +1,32 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { CommentEditorContext } from '../comment-editor-context';
 import PostCommentForm from '../form';
 
-jest.mock( 'calypso/blocks/user-mentions', () => ( {
+vi.mock( 'calypso/blocks/user-mentions', () => ( {
 	__esModule: true,
 	default: ( Component ) => Component,
 	withUserMentions: ( Component ) => Component,
 } ) );
 
 // The editor's script stays loading, so the form keeps the markup it was given.
-jest.mock( '../load-comment-editor', () => ( {
-	...jest.requireActual( '../load-comment-editor' ),
+vi.mock( '../load-comment-editor', async () => ( {
+	...( await vi.importActual( '../load-comment-editor' ) ),
 	loadCommentEditor: () => new Promise( () => {} ),
 } ) );
 
-jest.mock( 'calypso/reader/stats', () => ( {
+vi.mock( 'calypso/reader/stats', () => ( {
 	getLocation: () => 'reader',
-	recordAction: jest.fn(),
-	recordGaEvent: jest.fn(),
-	recordTrackForPost: jest.fn(),
+	recordAction: vi.fn(),
+	recordGaEvent: vi.fn(),
+	recordTrackForPost: vi.fn(),
 } ) );
 
 const defaultPost = {
@@ -40,8 +41,8 @@ const defaultPost = {
 
 const defaultProps = {
 	post: defaultPost,
-	onUpdateCommentText: jest.fn(),
-	onCommentSubmit: jest.fn(),
+	onUpdateCommentText: vi.fn(),
+	onCommentSubmit: vi.fn(),
 };
 
 const renderForm = ( props = {}, { inbox = false } = {} ) => {
@@ -90,7 +91,7 @@ describe( 'PostCommentForm', () => {
 					post: { ID: 123 },
 					status: 'approved',
 				} );
-			const onUpdateCommentText = jest.fn();
+			const onUpdateCommentText = vi.fn();
 
 			renderForm( { commentText: 'Hello API', onUpdateCommentText } );
 

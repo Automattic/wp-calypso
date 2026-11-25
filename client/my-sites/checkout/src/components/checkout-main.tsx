@@ -57,7 +57,6 @@ import { getSitelessCheckoutTypeFromCart } from '../lib/get-siteless-checkout-ty
 import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import { isWpcomSitelessCheckoutType } from '../lib/is-wpcom-siteless-checkout-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
-import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
@@ -627,7 +626,6 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-paypal-ppcp': ( transactionData: unknown ) =>
 				existingPayPalPPCPProcessor( transactionData, dataForProcessor ),
-			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
 		} ),

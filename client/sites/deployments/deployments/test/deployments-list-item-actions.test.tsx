@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { createDeployment, createDeploymentRun } from '../../test-utils';
 import { DeploymentsListItemActions } from '../deployments-list-item-actions';
 
@@ -31,7 +32,7 @@ const initialState = {
 
 describe( 'DeploymentsListItemActions', () => {
 	test( 'does not let the user see logs if there are no runs', () => {
-		const onManualDeployment = jest.fn();
+		const onManualDeployment = vi.fn();
 
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
@@ -42,7 +43,7 @@ describe( 'DeploymentsListItemActions', () => {
 					siteSlug={ siteSlug }
 					deployment={ createDeployment() }
 					onManualDeployment={ onManualDeployment }
-					onDisconnectRepository={ jest.fn() }
+					onDisconnectRepository={ vi.fn() }
 				/>
 			</Provider>
 		);
@@ -57,7 +58,7 @@ describe( 'DeploymentsListItemActions', () => {
 	} );
 
 	test( 'lets the user see logs if there is at least one run', () => {
-		const onManualDeployment = jest.fn();
+		const onManualDeployment = vi.fn();
 
 		const mockStore = configureStore();
 		const store = mockStore( initialState );
@@ -70,7 +71,7 @@ describe( 'DeploymentsListItemActions', () => {
 						current_deployment_run: createDeploymentRun(),
 					} ) }
 					onManualDeployment={ onManualDeployment }
-					onDisconnectRepository={ jest.fn() }
+					onDisconnectRepository={ vi.fn() }
 				/>
 			</Provider>
 		);

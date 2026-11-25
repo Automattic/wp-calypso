@@ -1,9 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+import { waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import DocumentHead from 'calypso/components/data/document-head';
+import documentHeadReducer from 'calypso/state/document-head/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ONBOARD_STORE } from '../../../../stores';
 import { STEPS } from '../../../internals/steps';
@@ -201,5 +205,40 @@ describe( 'Student Flow', () => {
 		renderWithProvider( <SideEffect /> );
 
 		expect( select( ONBOARD_STORE ).getPlanCartItem() ).toBeFalsy();
+	} );
+
+	/**
+	 * The flow's `DocumentHead` and the eligibility screen's mount in the same render here, as on
+	 * a direct visit to the eligibility URL.
+	 */
+	it( 'puts the flow title back in the tab after the eligibility step', async () => {
+		( dispatch( ONBOARD_STORE ) as OnboardActions ).setPlanCartItem( {
+			product_slug: STUDENT_PLAN_SLUG,
+		} );
+		const FlowWithTitles = ( { currentStepSlug }: { currentStepSlug: string } ) => {
+			studentFlow.useSideEffect?.(
+				currentStepSlug as Parameters< NonNullable< typeof studentFlow.useSideEffect > >[ 0 ],
+				jest.fn()
+			);
+
+			return (
+				<>
+					<DocumentHead title="Create a site" />
+					{ currentStepSlug === STEPS.STUDENT_PLAN_ELIGIBILITY.slug && (
+						<DocumentHead title="Confirm your email to get the Student plan" />
+					) }
+				</>
+			);
+		};
+
+		const { rerender } = renderWithProvider(
+			<FlowWithTitles currentStepSlug={ STEPS.STUDENT_PLAN_ELIGIBILITY.slug } />,
+			{ reducers: { documentHead: documentHeadReducer, ui: uiReducer } }
+		);
+		await waitFor( () => expect( document.title ).toMatch( /^Confirm your email/ ) );
+
+		rerender( <FlowWithTitles currentStepSlug={ STEPS.DOMAIN_SEARCH.slug } /> );
+
+		await waitFor( () => expect( document.title ).toMatch( /^Create a site — / ) );
 	} );
 } );

@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
 import { useDispatch } from 'react-redux';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useHandleClickLink } from '../use-handle-click-link';
 
-jest.mock( 'react-redux', () => ( {
-	useDispatch: jest.fn(),
+vi.mock( 'react-redux', () => ( {
+	useDispatch: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 describe( 'useHandleClickLink', () => {
 	const tracksHandle = 'calypso_me_developer_learn_more';
 
 	beforeAll( () => {
-		useDispatch.mockReturnValue( jest.fn() );
+		useDispatch.mockReturnValue( vi.fn() );
 	} );
 
 	describe( 'ensure track events report correct property', () => {

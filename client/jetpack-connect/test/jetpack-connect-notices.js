@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { JetpackConnectNotices } from '../jetpack-connect-notices';
 
 const terminalErrorNoticeType = 'siteBlocked';
@@ -17,7 +18,7 @@ describe( 'JetpackConnectNotices', () => {
 	} );
 
 	test( 'Should not render terminal notice if callback supplied', () => {
-		const onTerminalError = jest.fn();
+		const onTerminalError = vi.fn();
 		const { container } = render(
 			<JetpackConnectNotices
 				{ ...requiredProps }
@@ -29,7 +30,7 @@ describe( 'JetpackConnectNotices', () => {
 	} );
 
 	test( 'Should call callback on terminal error', () => {
-		const onTerminalError = jest.fn();
+		const onTerminalError = vi.fn();
 		render(
 			<JetpackConnectNotices
 				{ ...requiredProps }
@@ -41,7 +42,7 @@ describe( 'JetpackConnectNotices', () => {
 	} );
 
 	test( 'Should render non-terminal notice if callback supplied', () => {
-		const onTerminalError = jest.fn();
+		const onTerminalError = vi.fn();
 		const { container } = render(
 			<JetpackConnectNotices
 				{ ...requiredProps }

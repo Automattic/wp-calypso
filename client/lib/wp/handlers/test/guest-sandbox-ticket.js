@@ -1,11 +1,12 @@
 import store from 'store';
+import { vi } from 'vitest';
 import {
 	deleteOldTicket,
 	GUEST_TICKET_LOCALFORAGE_KEY,
 	injectGuestSandboxTicketHandler,
 } from '../guest-sandbox-ticket';
 
-jest.mock( 'store', () => require( './mocks/store' ) );
+vi.mock( 'store', () => import( './mocks/store' ) );
 
 describe( 'guest-sandbox-ticket', () => {
 	beforeEach( () => {

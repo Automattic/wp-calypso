@@ -54,7 +54,7 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import ThemeSiteSelectorModal from 'calypso/components/theme-site-selector-modal';
 import ThemeTierBadge from 'calypso/components/theme-tier/theme-tier-badge';
-import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
+import { getProductionSiteId } from 'calypso/dashboard/sites/staging-site/utils';
 import { HOSTING_THEME_SELCETED_HASH } from 'calypso/hosting/constants';
 import { withCompleteLaunchpadTasksWithNotice } from 'calypso/launchpad/hooks/with-complete-launchpad-tasks-with-notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';

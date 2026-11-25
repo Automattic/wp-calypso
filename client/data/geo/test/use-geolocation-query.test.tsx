@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { when } from 'jest-when';
 import { ReactNode } from 'react';
+import { vi } from 'vitest';
 import { useGeoLocationQuery, GeoLocationData } from '../use-geolocation-query';
 
 describe( 'useGeoLocationQuery', () => {
@@ -23,7 +24,7 @@ describe( 'useGeoLocationQuery', () => {
 	};
 
 	beforeAll( () => {
-		when( jest.spyOn( globalThis, 'fetch' ) )
+		when( vi.spyOn( globalThis, 'fetch' ) )
 			.calledWith( 'https://public-api.wordpress.com/geo/' )
 			.mockResolvedValue( { json: () => Promise.resolve( mockGeoData ) } as Response );
 	} );

@@ -1,18 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { type MockedFunction, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import LinkPreview from '../link-preview';
 
 // Mock wpcom
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
-} ) );
-const mockWpcomGet = wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get >;
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+		},
+	} )
+);
+const mockWpcomGet = wpcom.req.get as MockedFunction< typeof wpcom.req.get >;
 
 // Helper function to create mock API response data
 const createMockApiResponse = ( title: string, description: string, additionalData = {} ) => ( {

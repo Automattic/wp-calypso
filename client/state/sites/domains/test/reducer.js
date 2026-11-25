@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	DOMAIN_PRIVACY_ENABLE_SUCCESS,
 	DOMAIN_PRIVACY_DISABLE_SUCCESS,
@@ -30,11 +31,11 @@ import {
 
 describe( 'reducer', () => {
 	beforeAll( () => {
-		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 	} );
 
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should export expected reducer keys', () => {

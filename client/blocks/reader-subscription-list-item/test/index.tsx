@@ -1,32 +1,33 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
 import { ComponentProps } from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { type Mock, vi } from 'vitest';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
 import ReaderSubscriptionListItem from '..';
 
-jest.mock( 'calypso/reader/data/feed', () => ( {
-	useFeedQuery: jest.fn(),
+vi.mock( 'calypso/reader/data/feed', () => ( {
+	useFeedQuery: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
-	getFollowingSource: jest.fn(),
-	useSiteSubscriptionForFeed: jest.fn(),
-	useFollowSite: jest.fn( () => ( { mutate: jest.fn(), isPending: false } ) ),
-	useIsSubscribed: jest.fn( () => false ),
-	useUnfollowSite: jest.fn( () => ( { mutate: jest.fn(), isPending: false } ) ),
+vi.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	getFollowingSource: vi.fn(),
+	useSiteSubscriptionForFeed: vi.fn(),
+	useFollowSite: vi.fn( () => ( { mutate: vi.fn(), isPending: false } ) ),
+	useIsSubscribed: vi.fn( () => false ),
+	useUnfollowSite: vi.fn( () => ( { mutate: vi.fn(), isPending: false } ) ),
 } ) );
 
 const defaultStoreState = {
 	currentUser: { id: 123 },
 };
 
-const mockUseFeedQuery = useFeedQuery as jest.Mock;
-const mockUseFollowForFeed = useSiteSubscriptionForFeed as jest.Mock;
+const mockUseFeedQuery = useFeedQuery as Mock;
+const mockUseFollowForFeed = useSiteSubscriptionForFeed as Mock;
 
 const renderComponent = (
 	props: ComponentProps< typeof ReaderSubscriptionListItem > = {},
@@ -37,7 +38,7 @@ const renderComponent = (
 		feedId: 123,
 		siteId: 456,
 		followSource: 'test-source',
-		onItemClick: jest.fn(),
+		onItemClick: vi.fn(),
 		...props,
 	};
 

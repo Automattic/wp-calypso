@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { JSDOM } from 'jsdom';
 import fixtures from '../malformed-html-fixtures';
