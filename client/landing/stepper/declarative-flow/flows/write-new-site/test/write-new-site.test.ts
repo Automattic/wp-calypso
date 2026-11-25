@@ -1,29 +1,30 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import writeNewSite from '../write-new-site';
 
 let mockSearch = '';
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	WRITE_NEW_SITE_FLOW: 'write-new-site',
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '../../../../hooks/use-query', () => ( {
+vi.mock( '../../../../hooks/use-query', () => ( {
 	useQuery: () => new URLSearchParams( mockSearch ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/steps-with-required-login', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/steps-with-required-login', () => ( {
 	stepsWithRequiredLogin: ( steps: unknown ) => steps,
 } ) );
 
-jest.mock( '../../../internals/steps', () => ( {
+vi.mock( '../../../internals/steps', () => ( {
 	STEPS: {
 		SITE_CREATION_STEP: { slug: 'create-site' },
 		PROCESSING: { slug: 'processing' },
@@ -31,7 +32,7 @@ jest.mock( '../../../internals/steps', () => ( {
 } ) );
 
 const submitFor = ( step: 'create-site' | 'processing', providedDependencies: object ) => {
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 	const navigation = writeNewSite.useStepNavigation( step, navigate );
 	const result = navigation.submit?.( {
 		slug: step,
@@ -44,10 +45,10 @@ describe( 'write-new-site flow', () => {
 	const originalLocation = window.location;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSearch = '';
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn(), replace: jest.fn() },
+			value: { assign: vi.fn(), replace: vi.fn() },
 			writable: true,
 			configurable: true,
 		} );

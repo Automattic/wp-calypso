@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import * as noticesActions from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -13,12 +14,12 @@ import {
 } from '../../subscription-manager-context';
 import { AddSitesButton } from '../index';
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	isCurrentUserEmailVerified: vi.fn().mockReturnValue( true ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 describe( 'AddSitesButton', () => {
@@ -35,8 +36,8 @@ describe( 'AddSitesButton', () => {
 	} );
 
 	it( 'triggers a notice when the user is not email verified', async () => {
-		( isCurrentUserEmailVerified as jest.Mock ).mockReturnValue( false );
-		jest.spyOn( noticesActions, 'errorNotice' );
+		( isCurrentUserEmailVerified as Mock ).mockReturnValue( false );
+		vi.spyOn( noticesActions, 'errorNotice' );
 
 		renderWithProvider(
 			<SubscriptionManagerContextProvider portal={ SubscriptionsPortal.Subscriptions }>

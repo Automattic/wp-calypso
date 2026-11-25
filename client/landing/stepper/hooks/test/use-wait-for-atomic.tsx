@@ -1,40 +1,41 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { useWaitForAtomic, type FailureInfo } from '../use-wait-for-atomic';
 
 let mockSearchParams = 'feature=sftp';
-const mockReduxDispatch = jest.fn();
-const mockRequestLatestAtomicTransfer = jest.fn();
-const mockGetSiteLatestAtomicTransfer = jest.fn();
-const mockGetSiteLatestAtomicTransferError = jest.fn();
+const mockReduxDispatch = vi.fn();
+const mockRequestLatestAtomicTransfer = vi.fn();
+const mockGetSiteLatestAtomicTransfer = vi.fn();
+const mockGetSiteLatestAtomicTransferError = vi.fn();
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockReduxDispatch,
 } ) );
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { requestLatestAtomicTransfer: mockRequestLatestAtomicTransfer } ),
 	useSelect: () => ( {
 		getSiteLatestAtomicTransfer: mockGetSiteLatestAtomicTransfer,
 		getSiteLatestAtomicTransferError: mockGetSiteLatestAtomicTransferError,
 	} ),
 } ) );
-jest.mock( 'react-router-dom', () => ( {
+vi.mock( 'react-router-dom', () => ( {
 	useSearchParams: () => [ new URLSearchParams( mockSearchParams ) ],
 } ) );
-jest.mock( 'calypso/landing/stepper/stores', () => ( { SITE_STORE: 'site-store' } ) );
-jest.mock( '../use-site-data', () => ( { useSiteData: () => ( { siteId: 123 } ) } ) );
-jest.mock( 'calypso/state/sites/actions', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( { SITE_STORE: 'site-store' } ) );
+vi.mock( '../use-site-data', () => ( { useSiteData: () => ( { siteId: 123 } ) } ) );
+vi.mock( 'calypso/state/sites/actions', () => ( {
 	requestSite: ( siteId: number ) => ( { type: 'REQUEST_SITE', siteId } ),
 } ) );
-jest.mock( 'calypso/state/sites/features/actions', () => ( {
-	fetchSiteFeatures: jest.fn( ( siteId: number ) => ( { type: 'FETCH_FEATURES', siteId } ) ),
+vi.mock( 'calypso/state/sites/features/actions', () => ( {
+	fetchSiteFeatures: vi.fn( ( siteId: number ) => ( { type: 'FETCH_FEATURES', siteId } ) ),
 } ) );
-jest.mock( 'calypso/state/themes/actions', () => ( {
-	initiateThemeTransfer: jest.fn(),
+vi.mock( 'calypso/state/themes/actions', () => ( {
+	initiateThemeTransfer: vi.fn(),
 } ) );
 
 const SITE_ID = 123;
@@ -57,7 +58,7 @@ const startedNow = () => new Date().toISOString().replace( 'T', ' ' ).slice( 0, 
 describe( 'useWaitForAtomic', () => {
 	beforeEach( () => {
 		mockSearchParams = 'feature=sftp';
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockReduxDispatch.mockReset();
 		mockRequestLatestAtomicTransfer.mockReset();
 		mockGetSiteLatestAtomicTransfer.mockReset();
@@ -65,7 +66,7 @@ describe( 'useWaitForAtomic', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	describe( 'waitForInitiateTransfer', () => {
@@ -132,11 +133,11 @@ describe( 'useWaitForAtomic', () => {
 					status: 'completed',
 					created_at: '2026-08-12 13:11:10',
 				} );
-			const onTransferStatusChange = jest.fn();
+			const onTransferStatusChange = vi.fn();
 
 			const { result } = renderWaitForAtomic();
 			const promise = result.current.waitForTransfer( { onTransferStatusChange } );
-			await jest.advanceTimersByTimeAsync( 6000 );
+			await vi.advanceTimersByTimeAsync( 6000 );
 
 			await expect( promise ).resolves.toBeUndefined();
 			expect( onTransferStatusChange ).toHaveBeenNthCalledWith(
@@ -161,7 +162,7 @@ describe( 'useWaitForAtomic', () => {
 			const { result, failures } = renderWaitForAtomic();
 			const promise = result.current.waitForTransfer();
 			promise.catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 310_000 );
+			await vi.advanceTimersByTimeAsync( 310_000 );
 
 			await expect( promise ).rejects.toThrow( /taking longer than expected/i );
 			expect( failures ).toEqual( [
@@ -176,11 +177,11 @@ describe( 'useWaitForAtomic', () => {
 				status: 'active',
 				created_at: startedNow(),
 			} );
-			const onDeadlineExceeded = jest.fn();
+			const onDeadlineExceeded = vi.fn();
 
 			const { result, failures } = renderWaitForAtomic();
 			const promise = result.current.waitForTransfer( { onDeadlineExceeded } );
-			await jest.advanceTimersByTimeAsync( 310_000 );
+			await vi.advanceTimersByTimeAsync( 310_000 );
 
 			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
 			expect( failures ).toEqual( [
@@ -192,7 +193,7 @@ describe( 'useWaitForAtomic', () => {
 				status: 'completed',
 				created_at: startedNow(),
 			} );
-			await jest.advanceTimersByTimeAsync( 11_000 );
+			await vi.advanceTimersByTimeAsync( 11_000 );
 
 			await expect( promise ).resolves.toBeUndefined();
 			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
@@ -209,11 +210,11 @@ describe( 'useWaitForAtomic', () => {
 				status: 'active',
 				created_at: startedSixMinutesAgo,
 			} );
-			const onDeadlineExceeded = jest.fn();
+			const onDeadlineExceeded = vi.fn();
 
 			const { result } = renderWaitForAtomic();
 			result.current.waitForTransfer( { onDeadlineExceeded } ).catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 4000 );
+			await vi.advanceTimersByTimeAsync( 4000 );
 
 			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -234,11 +235,11 @@ describe( 'useWaitForAtomic', () => {
 					status: 'completed',
 					created_at: startedSixMinutesAgo,
 				} );
-			const onDeadlineExceeded = jest.fn();
+			const onDeadlineExceeded = vi.fn();
 
 			const { result, failures } = renderWaitForAtomic();
 			const promise = result.current.waitForTransfer( { onDeadlineExceeded } );
-			await jest.advanceTimersByTimeAsync( 6000 );
+			await vi.advanceTimersByTimeAsync( 6000 );
 
 			await expect( promise ).resolves.toBeUndefined();
 			expect( onDeadlineExceeded ).not.toHaveBeenCalled();
@@ -262,11 +263,11 @@ describe( 'useWaitForAtomic', () => {
 					status: 'active',
 					created_at: newTransferStartedAt,
 				} );
-			const onDeadlineExceeded = jest.fn();
+			const onDeadlineExceeded = vi.fn();
 
 			const { result, failures } = renderWaitForAtomic();
 			const promise = result.current.waitForTransfer( { onDeadlineExceeded } );
-			await jest.advanceTimersByTimeAsync( 70_000 );
+			await vi.advanceTimersByTimeAsync( 70_000 );
 
 			expect( onDeadlineExceeded ).not.toHaveBeenCalled();
 			expect( failures ).toEqual( [] );
@@ -276,7 +277,7 @@ describe( 'useWaitForAtomic', () => {
 				status: 'completed',
 				created_at: newTransferStartedAt,
 			} );
-			await jest.advanceTimersByTimeAsync( 3000 );
+			await vi.advanceTimersByTimeAsync( 3000 );
 
 			await expect( promise ).resolves.toBeUndefined();
 			expect( onDeadlineExceeded ).not.toHaveBeenCalled();
@@ -294,11 +295,11 @@ describe( 'useWaitForAtomic', () => {
 				status: 'relocating_switcheroo',
 				created_at: startedSixMinutesAgo,
 			} );
-			const onDeadlineExceeded = jest.fn();
+			const onDeadlineExceeded = vi.fn();
 
 			const { result } = renderWaitForAtomic();
 			result.current.waitForTransfer( { onDeadlineExceeded } ).catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 4000 );
+			await vi.advanceTimersByTimeAsync( 4000 );
 
 			expect( onDeadlineExceeded ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -313,11 +314,11 @@ describe( 'useWaitForAtomic', () => {
 				status: 'cleanup',
 				created_at: revertedLongAgo,
 			} );
-			const onDeadlineExceeded = jest.fn();
+			const onDeadlineExceeded = vi.fn();
 
 			const { result } = renderWaitForAtomic();
 			result.current.waitForTransfer( { onDeadlineExceeded } ).catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 4000 );
+			await vi.advanceTimersByTimeAsync( 4000 );
 
 			expect( onDeadlineExceeded ).not.toHaveBeenCalled();
 		} );
@@ -331,16 +332,16 @@ describe( 'useWaitForAtomic', () => {
 			} );
 
 			const { result, failures } = renderWaitForAtomic();
-			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: vi.fn() } );
 			promise.catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 4000 );
+			await vi.advanceTimersByTimeAsync( 4000 );
 
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'reverted',
 				created_at: startedNow(),
 			} );
-			await jest.advanceTimersByTimeAsync( 4000 );
+			await vi.advanceTimersByTimeAsync( 4000 );
 
 			expect( failures ).not.toContainEqual(
 				expect.objectContaining( { type: 'transfer_reverted' } )
@@ -352,7 +353,7 @@ describe( 'useWaitForAtomic', () => {
 				status: 'completed',
 				created_at: startedNow(),
 			} );
-			await jest.advanceTimersByTimeAsync( 4000 );
+			await vi.advanceTimersByTimeAsync( 4000 );
 
 			await expect( promise ).resolves.toBeUndefined();
 		} );
@@ -365,17 +366,17 @@ describe( 'useWaitForAtomic', () => {
 			} );
 
 			const { result, failures } = renderWaitForAtomic();
-			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: vi.fn() } );
 			promise.catch( () => {} );
 			// Stop just short of the cap, then let the next poll bring the completion.
-			await jest.advanceTimersByTimeAsync( 890_000 );
+			await vi.advanceTimersByTimeAsync( 890_000 );
 
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'completed',
 				created_at: startedNow(),
 			} );
-			await jest.advanceTimersByTimeAsync( 30_000 );
+			await vi.advanceTimersByTimeAsync( 30_000 );
 
 			await expect( promise ).resolves.toBeUndefined();
 			expect( failures ).not.toContainEqual(
@@ -391,9 +392,9 @@ describe( 'useWaitForAtomic', () => {
 			} );
 
 			const { result, failures } = renderWaitForAtomic();
-			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: vi.fn() } );
 			promise.catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 920_000 );
+			await vi.advanceTimersByTimeAsync( 920_000 );
 
 			await expect( promise ).rejects.toThrow( /taking longer than expected/i );
 			expect( failures ).toEqual( [
@@ -418,17 +419,17 @@ describe( 'useWaitForAtomic', () => {
 			} );
 
 			const { result, failures } = renderWaitForAtomic();
-			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: vi.fn() } );
 			promise.catch( () => {} );
 
 			// The wait is still up while it takes its own look at the transfer.
-			await jest.advanceTimersByTimeAsync( 20_000 );
+			await vi.advanceTimersByTimeAsync( 20_000 );
 			expect( failures ).not.toContainEqual(
 				expect.objectContaining( { type: 'transfer_grace_timeout' } )
 			);
 
 			// It does not get another fifteen minutes, though.
-			await jest.advanceTimersByTimeAsync( 20_000 );
+			await vi.advanceTimersByTimeAsync( 20_000 );
 			await expect( promise ).rejects.toThrow( /taking longer than expected/i );
 			expect( failures ).toContainEqual(
 				expect.objectContaining( { type: 'transfer_grace_timeout' } )
@@ -447,16 +448,16 @@ describe( 'useWaitForAtomic', () => {
 			} );
 
 			const { result } = renderWaitForAtomic();
-			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: vi.fn() } );
 			promise.catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 4000 );
+			await vi.advanceTimersByTimeAsync( 4000 );
 
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'completed',
 				created_at: startedTwentyMinutesAgo,
 			} );
-			await jest.advanceTimersByTimeAsync( 11_000 );
+			await vi.advanceTimersByTimeAsync( 11_000 );
 
 			await expect( promise ).resolves.toBeUndefined();
 		} );
@@ -469,16 +470,16 @@ describe( 'useWaitForAtomic', () => {
 			} );
 
 			const { result, failures } = renderWaitForAtomic();
-			const promise = result.current.waitForTransfer( { onDeadlineExceeded: jest.fn() } );
+			const promise = result.current.waitForTransfer( { onDeadlineExceeded: vi.fn() } );
 			promise.catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 310_000 );
+			await vi.advanceTimersByTimeAsync( 310_000 );
 
 			mockGetSiteLatestAtomicTransfer.mockReturnValue( {
 				atomic_transfer_id: 1,
 				status: 'error',
 				created_at: startedNow(),
 			} );
-			await jest.advanceTimersByTimeAsync( 11_000 );
+			await vi.advanceTimersByTimeAsync( 11_000 );
 
 			await expect( promise ).rejects.toThrow( /something went wrong/i );
 			expect( failures ).toEqual( [
@@ -496,7 +497,7 @@ describe( 'useWaitForAtomic', () => {
 
 			const { result } = renderWaitForAtomic();
 			const promise = result.current.waitForFeature();
-			await jest.advanceTimersByTimeAsync( 2000 );
+			await vi.advanceTimersByTimeAsync( 2000 );
 
 			await expect( promise ).resolves.toBeUndefined();
 			expect( fetchSiteFeatures ).toHaveBeenCalledWith( SITE_ID );
@@ -508,7 +509,7 @@ describe( 'useWaitForAtomic', () => {
 			const { result, failures } = renderWaitForAtomic();
 			const promise = result.current.waitForFeature();
 			promise.catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 10_000 );
+			await vi.advanceTimersByTimeAsync( 10_000 );
 
 			await expect( promise ).rejects.toThrow();
 			expect( failures ).toEqual( [
@@ -523,7 +524,7 @@ describe( 'useWaitForAtomic', () => {
 			const { result, failures } = renderWaitForAtomic();
 			const promise = result.current.waitForFeature();
 			promise.catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 181_000 );
+			await vi.advanceTimersByTimeAsync( 181_000 );
 
 			await expect( promise ).rejects.toThrow();
 			expect( failures ).toEqual( [
@@ -543,7 +544,7 @@ describe( 'useWaitForAtomic', () => {
 
 			const { result } = renderWaitForAtomic();
 			const promise = result.current.waitForLatestSiteData();
-			await jest.advanceTimersByTimeAsync( 2000 );
+			await vi.advanceTimersByTimeAsync( 2000 );
 
 			await expect( promise ).resolves.toMatchObject( { capabilities: { manage_options: true } } );
 		} );
@@ -557,7 +558,7 @@ describe( 'useWaitForAtomic', () => {
 			const { result, failures } = renderWaitForAtomic();
 			const promise = result.current.waitForLatestSiteData();
 			promise.catch( () => {} );
-			await jest.advanceTimersByTimeAsync( 181_000 );
+			await vi.advanceTimersByTimeAsync( 181_000 );
 
 			await expect( promise ).rejects.toThrow();
 			expect( failures ).toEqual( [

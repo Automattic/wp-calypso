@@ -1,22 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import { sanitizeDirectToCartRedirect } from '../sanitize-redirect';
 
-jest.mock( 'calypso/my-sites/checkout/get-thank-you-page-url', () => ( {
-	getAllowedExternalRedirectHosts: () => [ 'allowed.example', 'my.wordpress.com' ],
-} ) );
+vi.mock( 'calypso/my-sites/checkout/get-thank-you-page-url', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		getAllowedExternalRedirectHosts: () => [ 'allowed.example', 'my.wordpress.com' ],
+	} )
+);
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actualConfigFn = jest.requireActual( '@automattic/calypso-config' );
-	const configFn = jest.fn( ( key ) => actualConfigFn( key ) );
+vi.mock( '@automattic/calypso-config', async () => {
+	const actualConfigFn = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
+	const configFn = vi.fn( ( key ) => actualConfigFn( key ) );
 	Object.assign( configFn, actualConfigFn );
-	return configFn;
+	return { ...configFn, default: configFn };
 } );
 
 describe( 'sanitizeDirectToCartRedirect', () => {
-	const mockedConfig = config as unknown as jest.Mock;
+	const mockedConfig = config as unknown as Mock;
 
 	beforeEach( () => {
 		mockedConfig.mockImplementation( ( key: string ) => {

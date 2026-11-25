@@ -1,26 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import aiSiteBuilderSpec from '../ai-site-builder-spec';
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: { isEnabled: jest.fn( () => true ) },
+	default: { isEnabled: vi.fn( () => true ) },
 } ) );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_SPEC_FLOW: 'ai-site-builder-spec',
 	ONBOARDING_FLOW: 'onboarding',
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
-	useQuery: jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+	useQuery: vi.fn(),
 } ) );
-jest.mock( 'calypso/state', () => ( { useSelector: jest.fn() } ) );
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	getCurrentUser: jest.fn(),
+vi.mock( 'calypso/state', () => ( { useSelector: vi.fn() } ) );
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	getCurrentUser: vi.fn(),
 } ) );
 
 describe( 'ai-site-builder-spec flow', () => {
@@ -57,14 +58,14 @@ describe( 'ai-site-builder-spec flow', () => {
 
 	describe( 'navigation', () => {
 		const originalLocation = window.location;
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const submitFrom = ( slug: string, providedDependencies: Record< string, unknown > = {} ) =>
 			aiSiteBuilderSpec
 				.useStepNavigation( slug as never, navigate )
 				.submit( { slug, providedDependencies } as never );
 
 		beforeEach( () => {
-			jest.clearAllMocks();
+			vi.clearAllMocks();
 		} );
 
 		afterEach( () => {
@@ -89,7 +90,7 @@ describe( 'ai-site-builder-spec flow', () => {
 		} );
 
 		it( 'hands off to the built site once the wait resolves', () => {
-			const assign = jest.fn();
+			const assign = vi.fn();
 			Object.defineProperty( window, 'location', {
 				value: { assign },
 				writable: true,

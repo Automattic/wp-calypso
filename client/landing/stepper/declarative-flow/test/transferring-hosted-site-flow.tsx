@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import transferringHostedSite from '../flows/transferring-hosted-site-flow/transferring-hosted-site-flow';
 import { ProcessingResult } from '../internals/steps-repository/processing-step/constants';
 import { getFlowLocation, renderFlow } from './helpers';
@@ -19,44 +20,47 @@ const mockSite = {
 	},
 };
 
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	isAdminInterfaceWPAdmin: jest.fn( () => mockIsAdminInterfaceWPAdminMock ),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	isAdminInterfaceWPAdmin: vi.fn( () => mockIsAdminInterfaceWPAdminMock ),
 } ) );
-jest.mock( 'calypso/dashboard/utils/link', () => ( {
-	dashboardLink: jest.fn( ( path: string ) => `https://my.wordpress.com${ path }` ),
+vi.mock( 'calypso/dashboard/utils/link', () => ( {
+	dashboardLink: vi.fn( ( path: string ) => `https://my.wordpress.com${ path }` ),
 } ) );
-jest.mock( '../../hooks/use-site', () => ( {
-	useSite: jest.fn( () => mockSite ),
+vi.mock( '../../hooks/use-site', () => ( {
+	useSite: vi.fn( () => mockSite ),
 } ) );
 
-jest.mock( '@wordpress/data', () => {
-	const actualModule = jest.requireActual( '@wordpress/data' );
+vi.mock( '@wordpress/data', async () => {
+	const actualModule =
+		await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' );
 
-	return new Proxy( actualModule, {
-		get: ( target, property ) => {
-			switch ( property ) {
-				case 'useSelect': {
-					return jest.fn( () => {
-						return {
-							options: {
-								admin_url: 'https://mysite.com/wp-admin',
-							},
-						};
-					} );
+	return {
+		default: new Proxy( actualModule, {
+			get: ( target, property ) => {
+				switch ( property ) {
+					case 'useSelect': {
+						return vi.fn( () => {
+							return {
+								options: {
+									admin_url: 'https://mysite.com/wp-admin',
+								},
+							};
+						} );
+					}
+					// fallback to the original module
+					default: {
+						return target[ property ];
+					}
 				}
-				// fallback to the original module
-				default: {
-					return target[ property ];
-				}
-			}
-		},
-	} );
+			},
+		} ),
+	};
 } );
 
 describe( 'Transferring hosted site flow submit redirects', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn() },
 		} );
 	} );
 

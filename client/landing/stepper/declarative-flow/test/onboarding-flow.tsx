@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { PLAN_ECOMMERCE, PLAN_PREMIUM } from '@automattic/calypso-products';
@@ -7,6 +7,7 @@ import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { addSurvicate } from 'calypso/lib/analytics/survicate';
 import { retrieveSignupDestination } from 'calypso/signup/storageUtils';
@@ -21,26 +22,32 @@ let mockSiteOptions: Record< string, unknown > = {};
 // A lazy Proxy, not a spread of requireActual: eagerly spreading '@wordpress/data' here recurses
 // into its own mock factory while the module is still initializing (via @wordpress/rich-text's
 // store, which the flow pulls in transitively) and crashes before any test runs.
-jest.mock( '@wordpress/data', () => {
-	const actualModule = jest.requireActual( '@wordpress/data' );
+vi.mock( '@wordpress/data', async () => {
+	const actualModule =
+		await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' );
 
-	return new Proxy( actualModule, {
-		get: ( target, property ) => {
-			if ( property === 'resolveSelect' ) {
-				return () => ( {
-					getSite: async () => ( {
-						options: { admin_url: 'https://test-site.wordpress.com/wp-admin/', ...mockSiteOptions },
-					} ),
-				} );
-			}
-			return target[ property as keyof typeof target ];
-		},
-	} );
+	return {
+		default: new Proxy( actualModule, {
+			get: ( target, property ) => {
+				if ( property === 'resolveSelect' ) {
+					return () => ( {
+						getSite: async () => ( {
+							options: {
+								admin_url: 'https://test-site.wordpress.com/wp-admin/',
+								...mockSiteOptions,
+							},
+						} ),
+					} );
+				}
+				return target[ property as keyof typeof target ];
+			},
+		} ),
+	};
 } );
 
 const originalLocation = window.location;
 
-jest.mock( '../../hooks/use-marketplace-theme-products', () => ( {
+vi.mock( '../../hooks/use-marketplace-theme-products', () => ( {
 	useMarketplaceThemeProducts: () => ( {
 		isLoading: false,
 		selectedMarketplaceProduct: '',
@@ -51,26 +58,26 @@ jest.mock( '../../hooks/use-marketplace-theme-products', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../hooks/use-simplified-onboarding', () => ( {
+vi.mock( '../../hooks/use-simplified-onboarding', () => ( {
 	isSimplifiedOnboarding: () => Promise.resolve( false ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/survicate', () => ( {
-	addSurvicate: jest.fn(),
+vi.mock( 'calypso/lib/analytics/survicate', () => ( {
+	addSurvicate: vi.fn(),
 } ) );
 
 // Only the plans-page experiment still uses ExPlat here; stub it so the flow's unconditional
 // loadExperimentAssignment side effect never hits a real network fetch.
-jest.mock( 'calypso/lib/explat', () => ( {
-	loadExperimentAssignment: jest.fn( () => Promise.resolve( { variationName: null } ) ),
+vi.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: vi.fn( () => Promise.resolve( { variationName: null } ) ),
 } ) );
 
 describe( 'Onboarding Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
 			value: {
-				assign: jest.fn(),
-				replace: jest.fn(),
+				assign: vi.fn(),
+				replace: vi.fn(),
 				pathname: '/setup/onboarding',
 				search: '',
 				href: 'http://wordpress.com/setup/onboarding',
@@ -84,7 +91,7 @@ describe( 'Onboarding Flow', () => {
 	} );
 
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		mockSiteOptions = {};
 	} );
 
@@ -339,7 +346,7 @@ describe( 'Onboarding Flow', () => {
 				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 				const checkoutUrl = decodeURIComponent(
-					( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ]
+					( window.location.replace as Mock ).mock.calls[ 0 ][ 0 ]
 				);
 				expect( checkoutUrl ).toContain( '/checkout/test-site.wordpress.com' );
 				expect( checkoutUrl ).toContain( 'checkoutBackUrl=' );
@@ -366,7 +373,7 @@ describe( 'Onboarding Flow', () => {
 				} );
 				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-				return ( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ];
+				return ( window.location.replace as Mock ).mock.calls[ 0 ][ 0 ];
 			};
 
 			// Without this, a free site eligible for the AI builder stops at the setup chooser.
@@ -395,7 +402,7 @@ describe( 'Onboarding Flow', () => {
 				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 				const resumeUrl = new URL(
-					( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+					( window.location.replace as Mock ).mock.calls[ 0 ][ 0 ],
 					'http://x'
 				);
 				expect( resumeUrl.pathname ).toBe( '/setup/onboarding/post-checkout-onboarding' );
@@ -432,7 +439,7 @@ describe( 'Onboarding Flow', () => {
 				} );
 				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-				return ( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ];
+				return ( window.location.replace as Mock ).mock.calls[ 0 ][ 0 ];
 			};
 
 			// Without this, a free site stops at the setup chooser instead of bringing its content over.

@@ -1,27 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import redirectPathIfNecessary, { isRemovedFlow } from '../flow-redirect-handler';
 
 // `@automattic/calypso-products` calls `isEnabled` while it loads, before a top-level
 // `mockIsEnabled` would exist, so the mock is created inside the factory.
-jest.mock( '@automattic/calypso-config', () =>
-	Object.assign( jest.fn(), { isEnabled: jest.fn( () => false ) } )
-);
-const mockIsEnabled = isEnabled as jest.Mock;
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: Object.assign( vi.fn(), { isEnabled: vi.fn( () => false ) } ),
+} ) );
+const mockIsEnabled = isEnabled as Mock;
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 describe( 'flow redirect handler', () => {
-	const replace = jest.fn();
+	const replace = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsEnabled.mockReturnValue( false );
 		window.sessionStorage.clear();
 		Object.defineProperty( window, 'location', {
@@ -113,7 +114,7 @@ describe( 'flow redirect handler', () => {
 			'/home/example.wordpress.com?siteSlug=example.wordpress.com',
 		],
 		[ '', '/home' ],
-	] )( 'sends update-options links with %p to that site’s Home', ( search, expected ) => {
+	] )( 'sends update-options links with %o to that site’s Home', ( search, expected ) => {
 		redirectPathIfNecessary( '/setup/update-options', search );
 
 		expect( window.location.href ).toBe( expected );

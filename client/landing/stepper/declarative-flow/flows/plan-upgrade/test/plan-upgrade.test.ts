@@ -1,38 +1,39 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import { STEPS } from '../../../internals/steps';
 import planUpgradeFlow from '../plan-upgrade';
 
 let mockQuery: Record< string, string > = {};
 let mockSitePlan = 'personal-bundle';
 
-jest.mock( '@automattic/onboarding', () => ( { PLAN_UPGRADE_FLOW: 'plan-upgrade' } ) );
-jest.mock( 'calypso/landing/stepper/stores', () => ( { SITE_STORE: 'SITE_STORE' } ) );
+vi.mock( '@automattic/onboarding', () => ( { PLAN_UPGRADE_FLOW: 'plan-upgrade' } ) );
+vi.mock( 'calypso/landing/stepper/stores', () => ( { SITE_STORE: 'SITE_STORE' } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => ( { get: ( key: string ) => mockQuery[ key ] ?? null } ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => ( {
 		plan: { product_slug: mockSitePlan },
 		options: { admin_url: 'https://example.wordpress.com/wp-admin/' },
 	} ),
 } ) );
 
-const mockClearSignupDestination = jest.fn();
-jest.mock( 'calypso/signup/storageUtils', () => ( {
+const mockClearSignupDestination = vi.fn();
+vi.mock( 'calypso/signup/storageUtils', () => ( {
 	clearSignupDestinationCookie: () => mockClearSignupDestination(),
 } ) );
 
 const submitPlan = ( plan: string ) =>
-	planUpgradeFlow.useStepNavigation( STEPS.UNIFIED_PLANS.slug, jest.fn() ).submit( {
+	planUpgradeFlow.useStepNavigation( STEPS.UNIFIED_PLANS.slug, vi.fn() ).submit( {
 		slug: STEPS.UNIFIED_PLANS.slug,
 		providedDependencies: { stepName: 'plans', cartItems: [ { product_slug: plan } ] },
 	} );
 
-const checkoutUrl = () => ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
+const checkoutUrl = () => ( window.location.assign as Mock ).mock.calls[ 0 ][ 0 ];
 
 const goBack = () => {
 	const stepsProps = planUpgradeFlow.useStepsProps!() as Record<
@@ -40,16 +41,16 @@ const goBack = () => {
 		{ wrapperProps: { goBack: () => void } }
 	>;
 	stepsProps[ STEPS.UNIFIED_PLANS.slug ].wrapperProps.goBack();
-	return ( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ];
+	return ( window.location.assign as Mock ).mock.calls[ 0 ][ 0 ];
 };
 
 describe( 'plan-upgrade flow', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockQuery = { siteSlug: 'example.wordpress.com' };
 		mockSitePlan = 'personal-bundle';
 		Object.defineProperty( window, 'location', {
-			value: { ...window.location, assign: jest.fn() },
+			value: { ...window.location, assign: vi.fn() },
 			writable: true,
 		} );
 	} );

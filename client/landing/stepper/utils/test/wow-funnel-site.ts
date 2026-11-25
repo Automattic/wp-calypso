@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { createSite } from '@automattic/onboarding';
+import { type Mock, vi } from 'vitest';
 import {
 	adoptWowFunnelSite,
 	discardPendingWowFunnelSite,
@@ -11,10 +12,10 @@ import {
 	wowFunnelSiteHasCartItems,
 } from '../wow-funnel-site';
 
-const mockGet = jest.fn();
-const mockPost = jest.fn();
+const mockGet = vi.fn();
+const mockPost = vi.fn();
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: {
 		req: {
@@ -26,11 +27,11 @@ jest.mock( 'calypso/lib/wp', () => ( {
 
 // The barrels this module pulls in for site creation are irrelevant to the throttle helpers, and
 // loading them for real drags i18n-calypso into the test.
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	ONBOARDING_FLOW: 'onboarding',
-	createSite: jest.fn(),
+	createSite: vi.fn(),
 } ) );
-jest.mock( '@automattic/data-stores/src/site/types', () => ( {
+vi.mock( '@automattic/data-stores/src/site/types', () => ( {
 	Visibility: { PublicNotIndexed: 0 },
 } ) );
 
@@ -158,7 +159,7 @@ describe( 'discardPendingWowFunnelSite', () => {
 } );
 
 describe( 'startWowFunnelSite when the server holds a pending site', () => {
-	const mockCreateSite = createSite as jest.Mock;
+	const mockCreateSite = createSite as Mock;
 
 	beforeEach( () => {
 		// The module keeps a resolved start per run in memory, so an earlier test's site would be
