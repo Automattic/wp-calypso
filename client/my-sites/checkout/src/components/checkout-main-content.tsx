@@ -118,6 +118,7 @@ import JetpackAkismetCheckoutSidebarPlanUpsell from './jetpack-akismet-checkout-
 import { LeaveCheckoutModal, useCheckoutLeaveModal } from './leave-checkout-modal';
 import { NonRenewableDomain, SearchForNewDomainButton } from './non-renewable-domain';
 import BeforeSubmitCheckoutHeader from './payment-method-step';
+import PaymentMethodStepTitle from './payment-method-step-title';
 import { PaymentMethodFilter } from './payment-methods-filter';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import WPCheckoutOrderReview, { CouponFieldArea } from './wp-checkout-order-review';
@@ -1021,6 +1022,7 @@ export default function CheckoutMainContent( {
 						/>
 					) }
 					<PaymentMethodStep
+						titleContent={ <PaymentMethodStepTitle currency={ responseCart.currency } /> }
 						activeStepHeader={
 							<PaymentMethodFilter
 								areStoredCardsFiltered={ areStoredCardsFiltered }
