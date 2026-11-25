@@ -77,8 +77,8 @@ async function waitForSuggestedAddress() {
 	);
 }
 
-// Each keystroke re-renders the whole form, so typing an address takes several
-// seconds on a busy CI agent.
+// Addresses are pasted: typing re-renders the whole form on each keystroke. A
+// busy CI agent can still push these tests past the default 5s timeout.
 const TYPING_TIMEOUT = 15000;
 
 describe( '<SiteConfigurationModal>', () => {
@@ -202,61 +202,69 @@ describe( '<SiteConfigurationModal>', () => {
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
-	test( 'offers a free address when the one typed is taken', async () => {
-		mockPendingSites( [
-			{ id: 7, features: { wpcom_atomic: { license_key: LICENSE_KEY, state: 'pending' } } },
-		] );
-		mockAddressSuggestion( 'ramblingthoughts' );
-		nock( API )
-			.persist()
-			.post( '/wpcom/v2/agency/1/validate-site-address' )
-			.reply( 200, { valid: false } );
-		const { user } = renderModal();
+	test(
+		'offers a free address when the one typed is taken',
+		async () => {
+			mockPendingSites( [
+				{ id: 7, features: { wpcom_atomic: { license_key: LICENSE_KEY, state: 'pending' } } },
+			] );
+			mockAddressSuggestion( 'ramblingthoughts' );
+			nock( API )
+				.persist()
+				.post( '/wpcom/v2/agency/1/validate-site-address' )
+				.reply( 200, { valid: false } );
+			const { user } = renderModal();
 
-		const input = await screen.findByLabelText( 'Site address' );
-		await waitFor( () => expect( input ).toHaveValue( 'ramblingthoughts' ) );
+			const input = await screen.findByLabelText( 'Site address' );
+			await waitFor( () => expect( input ).toHaveValue( 'ramblingthoughts' ) );
 
-		await user.clear( input );
-		await user.type( input, 'takenname' );
+			await user.clear( input );
+			await user.paste( 'takenname' );
 
-		expect(
-			await screen.findByRole( 'button', { name: 'ramblingthoughts' }, { timeout: 3000 } )
-		).toBeVisible();
-		await waitFor( () => expect( input ).toBeInvalid() );
-		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
-	}, TYPING_TIMEOUT );
+			expect(
+				await screen.findByRole( 'button', { name: 'ramblingthoughts' }, { timeout: 3000 } )
+			).toBeVisible();
+			await waitFor( () => expect( input ).toBeInvalid() );
+			expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
+		},
+		TYPING_TIMEOUT
+	);
 
 	// An address is only verified by the check, so one that never came back must
 	// not leave the button offering to create a site at it.
-	test( 'keeps the button disabled when the address check fails', async () => {
-		mockPendingSites( [
-			{ id: 7, features: { wpcom_atomic: { license_key: LICENSE_KEY, state: 'pending' } } },
-		] );
-		mockAddressSuggestion( 'ramblingthoughts' );
-		const scope = nock( API )
-			.persist()
-			.post( '/wpcom/v2/agency/1/validate-site-address' )
-			.reply( 500, { message: 'Nope' } );
-		const { user } = renderModal();
+	test(
+		'keeps the button disabled when the address check fails',
+		async () => {
+			mockPendingSites( [
+				{ id: 7, features: { wpcom_atomic: { license_key: LICENSE_KEY, state: 'pending' } } },
+			] );
+			mockAddressSuggestion( 'ramblingthoughts' );
+			const scope = nock( API )
+				.persist()
+				.post( '/wpcom/v2/agency/1/validate-site-address' )
+				.reply( 500, { message: 'Nope' } );
+			const { user } = renderModal();
 
-		await waitForSuggestedAddress();
+			await waitForSuggestedAddress();
 
-		const input = screen.getByLabelText( 'Site address' );
-		await user.clear( input );
-		await user.type( input, 'uncheckedname' );
+			const input = screen.getByLabelText( 'Site address' );
+			await user.clear( input );
+			await user.paste( 'uncheckedname' );
 
-		expect( await screen.findByText( 'Checking availability…' ) ).toBeVisible();
-		await waitFor(
-			() =>
-				expect(
-					screen.getByText( 'You can connect a custom domain once the site is created.' )
-				).toBeVisible(),
-			{ timeout: 3000 }
-		);
+			expect( await screen.findByText( 'Checking availability…' ) ).toBeVisible();
+			await waitFor(
+				() =>
+					expect(
+						screen.getByText( 'You can connect a custom domain once the site is created.' )
+					).toBeVisible(),
+				{ timeout: 3000 }
+			);
 
-		expect( scope.isDone() ).toBe( true );
-		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
-	}, TYPING_TIMEOUT );
+			expect( scope.isDone() ).toBe( true );
+			expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
+		},
+		TYPING_TIMEOUT
+	);
 
 	// The suggested address is taken on trust until it isn't: it is only claimed
 	// by the provision itself, so a failure there has to send it back for a check.
@@ -298,27 +306,31 @@ describe( '<SiteConfigurationModal>', () => {
 		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
 	} );
 
-	test( 'rejects an address with unsupported characters', async () => {
-		mockPendingSites( [
-			{ id: 7, features: { wpcom_atomic: { license_key: LICENSE_KEY, state: 'pending' } } },
-		] );
-		mockAddressSuggestion( 'ramblingthoughts' );
-		const { user } = renderModal();
+	test(
+		'rejects an address with unsupported characters',
+		async () => {
+			mockPendingSites( [
+				{ id: 7, features: { wpcom_atomic: { license_key: LICENSE_KEY, state: 'pending' } } },
+			] );
+			mockAddressSuggestion( 'ramblingthoughts' );
+			const { user } = renderModal();
 
-		const input = await screen.findByLabelText( 'Site address' );
-		await waitFor( () => expect( input ).toHaveValue( 'ramblingthoughts' ) );
+			const input = await screen.findByLabelText( 'Site address' );
+			await waitFor( () => expect( input ).toHaveValue( 'ramblingthoughts' ) );
 
-		await user.clear( input );
-		await user.type( input, 'not valid' );
-		// Validity messages show once the field has been left.
-		await user.tab();
+			await user.clear( input );
+			await user.paste( 'not valid' );
+			// Validity messages show once the field has been left.
+			await user.tab();
 
-		expect(
-			await screen.findByText( 'Your site address can only contain letters and numbers.' )
-		).toBeVisible();
-		await waitFor( () => expect( input ).toBeInvalid() );
-		expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
-	}, TYPING_TIMEOUT );
+			expect(
+				await screen.findByText( 'Your site address can only contain letters and numbers.' )
+			).toBeVisible();
+			await waitFor( () => expect( input ).toBeInvalid() );
+			expect( screen.getByRole( 'button', { name: 'Create site' } ) ).toBeDisabled();
+		},
+		TYPING_TIMEOUT
+	);
 } );
 
 describe( '<DevSiteConfigurationModal>', () => {
