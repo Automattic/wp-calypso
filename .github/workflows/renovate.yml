@@ -104,6 +104,7 @@ jobs:
 
       # If we don't compress it, the upload takes 100x longer. (Not a joke!)
       - name: Compress renovate cache
+        if: github.event_name != 'pull_request' && github.event.inputs.repoCache != 'disabled'
         run: |
           ls $cache_dir
           # The -C is important -- otherwise we end up extracting the files with
