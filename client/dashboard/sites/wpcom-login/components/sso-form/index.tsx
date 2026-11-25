@@ -11,10 +11,10 @@ import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
-import { NavigationBlocker } from '../../app/navigation-blocker';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
-import { isJetpackModuleActivated } from '../../utils/site-jetpack-modules';
+import { NavigationBlocker } from '../../../../app/navigation-blocker';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Card, CardBody } from '../../../../components/card';
+import { isJetpackModuleActivated } from '../../../../utils/site-jetpack-modules';
 import type { Field } from '@wordpress/dataviews';
 
 type WpcomLoginFormData = {

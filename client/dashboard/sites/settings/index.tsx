@@ -25,12 +25,12 @@ import HundredYearPlanSettingsSummary from '../settings-hundred-year-plan/summar
 import PlanSettingsSummary from '../settings-plan/summary';
 import SiteRedirectSettingsSummary from '../settings-redirect/summary';
 import SubscriptionGiftingSettingsSummary from '../settings-subscription-gifting/summary';
-import WebApplicationFirewallSettingsSummary from '../settings-web-application-firewall/summary';
-import WpcomLoginSettingsSummary from '../settings-wpcom-login/summary';
 import SftpSshSettingsSummary from '../sftp-ssh/components/sftp-ssh-summary';
 import StaticFile404SettingsSummary from '../static-file-404/components/static-file-404-summary';
 import SiteVisibilitySettingsSummary from '../visibility/components/visibility-summary';
+import WebApplicationFirewallSettingsSummary from '../web-application-firewall/components/web-application-firewall-summary';
 import WordPressSettingsSummary from '../wordpress-version/components/wordpress-version-summary';
+import WpcomLoginSettingsSummary from '../wpcom-login/components/wpcom-login-summary';
 import DangerZone from './danger-zone';
 import SiteActions from './site-actions';
 import type { SiteSettings } from '@automattic/api-core';

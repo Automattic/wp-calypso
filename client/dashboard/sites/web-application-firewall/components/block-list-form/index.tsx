@@ -1,38 +1,36 @@
+import { JetpackModules } from '@automattic/api-core';
 import { siteJetpackSettingsQuery, siteJetpackSettingsMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	TextareaControl,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+import { TextareaControl, __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
-import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { ButtonStack } from '../../components/button-stack';
-import { Card, CardBody } from '../../components/card';
-import { SectionHeader } from '../../components/section-header';
+import { NavigationBlocker } from '../../../../app/navigation-blocker';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Card, CardBody } from '../../../../components/card';
+import { SectionHeader } from '../../../../components/section-header';
+import { hasJetpackModule } from '../../../../utils/site-features';
+import { isSelfHostedJetpackConnected } from '../../../../utils/site-types';
 import type { JetpackSettings, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< JetpackSettings >[] = [
 	{
-		id: 'jetpack_waf_ip_allow_list_enabled',
-		label: __( 'Enable allowing specific IP addresses' ),
+		id: 'jetpack_waf_ip_block_list_enabled',
+		label: __( 'Enable blocking specific IP addresses' ),
 		Edit: 'checkbox',
 	},
 	{
-		id: 'jetpack_waf_ip_allow_list',
-		label: __( 'Allowed IP addresses' ),
+		id: 'jetpack_waf_ip_block_list',
+		label: __( 'Blocked IP addresses' ),
 		type: 'text',
 		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
 			const { id, getValue } = field;
 			return (
 				<TextareaControl
 					__nextHasNoMarginBottom
-					disabled={ ! data.jetpack_waf_ip_allow_list_enabled }
+					disabled={ ! data.jetpack_waf_ip_block_list_enabled }
 					// eslint-disable-next-line @wordpress/i18n-hyphenated-range
 					help={ __(
 						'IPv4 and IPv6 are acceptable. To specify a range, enter the low value and high value separated by a dash. Example: 12.12.12.1-12.12.12.100'
@@ -49,24 +47,30 @@ const fields: Field< JetpackSettings >[] = [
 
 const form = {
 	layout: { type: 'regular' as const },
-	fields: [ 'jetpack_waf_ip_allow_list_enabled', 'jetpack_waf_ip_allow_list' ],
+	fields: [ 'jetpack_waf_ip_block_list_enabled', 'jetpack_waf_ip_block_list' ],
 };
 
-export default function AllowListForm( { site }: { site: Site } ) {
+export default function BlockListForm( { site }: { site: Site } ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
 	const mutation = useMutation(
 		withSnackbar( siteJetpackSettingsMutation( site.ID ), {
-			success: __( 'Allowed IP addresses saved.' ),
-			error: __( 'Failed to save allowed IP addresses.' ),
+			success: __( 'Blocked IP addresses saved.' ),
+			error: __( 'Failed to save blocked IP addresses.' ),
 		} )
 	);
 
-	const currentEnabled = jetpackSettings?.jetpack_waf_ip_allow_list_enabled ?? false;
-	const currentList = jetpackSettings?.jetpack_waf_ip_allow_list ?? '';
+	// The WAF module is only supported on self-hosted Jetpack sites, and not supported on VIP
+	const isFirewallModuleSupported =
+		hasJetpackModule( site, JetpackModules.WAF ) &&
+		isSelfHostedJetpackConnected( site ) &&
+		! site.is_vip;
+
+	const currentEnabled = jetpackSettings?.jetpack_waf_ip_block_list_enabled ?? false;
+	const currentList = jetpackSettings?.jetpack_waf_ip_block_list ?? '';
 
 	const [ formData, setFormData ] = useState< JetpackSettings >( {
-		jetpack_waf_ip_allow_list_enabled: currentEnabled,
-		jetpack_waf_ip_allow_list: currentList,
+		jetpack_waf_ip_block_list_enabled: currentEnabled,
+		jetpack_waf_ip_block_list: currentList,
 	} );
 
 	const handleSubmit = ( e: React.FormEvent ) => {
@@ -75,11 +79,13 @@ export default function AllowListForm( { site }: { site: Site } ) {
 	};
 
 	const isDirty =
-		formData.jetpack_waf_ip_allow_list_enabled !== currentEnabled ||
-		formData.jetpack_waf_ip_allow_list !== currentList;
+		formData.jetpack_waf_ip_block_list_enabled !== currentEnabled ||
+		formData.jetpack_waf_ip_block_list !== currentList;
 	const { isPending } = mutation;
 
-	const ipAddress = window?.app?.clientIp || __( 'Unknown' );
+	if ( ! isFirewallModuleSupported ) {
+		return null;
+	}
 
 	return (
 		<Card>
@@ -87,12 +93,13 @@ export default function AllowListForm( { site }: { site: Site } ) {
 				<form onSubmit={ handleSubmit }>
 					<VStack spacing={ 4 }>
 						<SectionHeader
-							title={ __( 'Always allow specific IP addresses' ) }
+							title={ __( 'Block specific IP addresses' ) }
 							description={ __(
-								'IP addresses added to this list will never be blocked by Jetpack’s security features.'
+								'IP addresses added to this list will be blocked from accessing your site.'
 							) }
 							level={ 3 }
 						/>
+						<NavigationBlocker shouldBlock={ isDirty } />
 						<DataForm< JetpackSettings >
 							data={ formData }
 							fields={ fields }
@@ -101,16 +108,6 @@ export default function AllowListForm( { site }: { site: Site } ) {
 								setFormData( ( data ) => ( { ...data, ...edits } ) );
 							} }
 						/>
-						<Text>
-							{ createInterpolateElement(
-								sprintf(
-									/* translators: %s: IP address */
-									__( 'Your current IP address is: <strong>%s</strong>' ),
-									ipAddress
-								),
-								{ strong: <strong /> }
-							) }
-						</Text>
 						<ButtonStack justify="flex-start">
 							<Button
 								variant="primary"
