@@ -76,6 +76,7 @@ function renderPluginsBrowser( context ) {
 	context.primary = createElement( PluginBrowser, {
 		path: context.path,
 		pathname: context.pathname,
+		lang: context.params.lang,
 		category,
 		search: searchTerm,
 		page: getCategoryPage( context.query.page ),

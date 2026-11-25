@@ -74,7 +74,14 @@ const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isL
 	return null;
 };
 
-const PluginsBrowser = ( { trackPageViews = true, category, search, page = 1, pathname } ) => {
+const PluginsBrowser = ( {
+	trackPageViews = true,
+	category,
+	search,
+	page = 1,
+	pathname,
+	lang,
+} ) => {
 	const {
 		isAboveElement,
 		targetRef: searchHeaderRef,
@@ -116,7 +123,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, page = 1, pa
 	const translate = useTranslate();
 	const categories = useCategories();
 	const categoryName = category ? getCategoryName( categories, category ) : __( 'Plugins' );
-	const isPaginated = ! isLoggedIn && !! pathname && ! search && isPaginatedCategory( category );
+	const isPaginated =
+		! isLoggedIn && !! pathname && ! search && isPaginatedCategory( category, lang );
 	const categoryPage = isPaginated ? page : 1;
 	const dashboardOptIn = useSelector( ( state ) => hasDashboardOptIn( state ) );
 	const shouldUseLoggedInView =

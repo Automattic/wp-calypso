@@ -39,7 +39,7 @@ const PluginsCategoryResultsPage = ( {
 		staleTime: isPaginated ? 2 * BASE_STALE_TIME : undefined,
 	} );
 
-	// Past the last page (the server sent a 404), but not on a search error: show the first page.
+	// Past the last page, but not on a search error: show the first page, which is the canonical URL.
 	const isPastLastPage = isPaginated && currentPage > 1 && isSuccess && ! plugins.length;
 	useEffect( () => {
 		if ( isPastLastPage ) {

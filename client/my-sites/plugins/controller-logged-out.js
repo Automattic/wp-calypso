@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { DEFAULT_PAGE_SIZE } from 'calypso/data/marketplace/constants';
 import { getESPluginsInfiniteQueryParams } from 'calypso/data/marketplace/use-es-query';
 import {
 	getWPCOMFeaturedPluginsQueryParams,
@@ -202,7 +203,17 @@ export async function fetchPlugins( context, next ) {
 	next();
 }
 
-/** Redirect `?page=1` to the bare URL, 404 any page that doesn't exist, and SSR the rest. */
+/** The requested page of a paginated category, or null when `page` is invalid or out of range. */
+const getRequestedCategoryPage = ( context ) => {
+	const page = parseCategoryPage( context.query?.[ CATEGORY_PAGE_QUERY_ARG ] );
+	const category = getCategoryForPluginsBrowser( context );
+
+	return page && page <= MAX_CATEGORY_PAGE && isPaginatedCategory( category, context.params.lang )
+		? page
+		: null;
+};
+
+/** Redirect `?page=1` to the bare URL, point out-of-range pages at it, and SSR the rest. */
 export function validateCategoryPage( context, next ) {
 	const rawPage = context.query?.[ CATEGORY_PAGE_QUERY_ARG ];
 
@@ -216,12 +227,10 @@ export function validateCategoryPage( context, next ) {
 		return context.res.redirect( 301, url.pathname + url.search );
 	}
 
-	const page = parseCategoryPage( rawPage );
-	const category = getCategoryForPluginsBrowser( context );
-
-	// Not-found pages skip SSR, so they never fill the markup and state caches.
-	if ( ! page || page > MAX_CATEGORY_PAGE || ! isPaginatedCategory( category ) ) {
-		context.res.status( 404 );
+	// The client shows the first page for these, so they're canonical to it. They skip SSR,
+	// so they never fill the markup and state caches.
+	if ( ! getRequestedCategoryPage( context ) ) {
+		context.excludeSearchFromCanonicalUrl = true;
 		return next();
 	}
 
@@ -263,10 +272,7 @@ export async function fetchCategoryPlugins( context, next ) {
 	const categoryTags = categories[ category || '' ]?.tags || [ category ];
 	const tag = categoryTags.join( ',' );
 
-	const isNotFound = context.res.statusCode === 404;
-	const page = isNotFound
-		? 1
-		: ( parseCategoryPage( context.query?.[ CATEGORY_PAGE_QUERY_ARG ] ) ?? 1 );
+	let page = getRequestedCategoryPage( context ) ?? 1;
 
 	const options = {
 		...getQueryOptions( context ),
@@ -277,13 +283,6 @@ export async function fetchCategoryPlugins( context, next ) {
 		page: page > 1 ? page : undefined,
 	};
 
-	// DocumentHead also sets the title, but doesn't run when the markup comes from the cache.
-	if ( ! context.query?.s ) {
-		const translate = context.i18n.translate.bind( context.i18n );
-		const title = getCategoryTitle( translate, getCategoryName( categories, category ), page );
-		store.dispatch( setDocumentHeadTitle( title ) );
-	}
-
 	const dataOrError = await prefetchTimebox(
 		[
 			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
@@ -293,25 +292,36 @@ export async function fetchCategoryPlugins( context, next ) {
 		context
 	);
 
-	if ( isNotFound || ! isPaginatedCategory( category ) ) {
-		return next();
+	if ( isPaginatedCategory( category, context.params.lang ) ) {
+		const { queryKey } = getESPluginsInfiniteQueryParams( { ...options, infinite: true }, true );
+		const firstPage =
+			dataOrError instanceof Error
+				? undefined
+				: queryClient.getQueryData( queryKey )?.pages?.[ 0 ]?.data;
+		const total = firstPage?.total || 0;
+
+		if ( ! firstPage ) {
+			// The prefetch swallows search errors, so skip SSR rather than cache an empty page.
+			context.serverSideRender = false;
+		} else if ( page > 1 && total > 0 && ( page - 1 ) * DEFAULT_PAGE_SIZE >= total ) {
+			// Past the last page, the client moves to the first page, so it's canonical to it.
+			context.excludeSearchFromCanonicalUrl = true;
+			context.serverSideRender = false;
+			page = 1;
+		} else if ( page > 1 && ! firstPage.results?.length ) {
+			// An empty page within the total is a bad response: drop it so the next request refetches.
+			queryClient.removeQueries( { queryKey, exact: true } );
+			context.serverSideRender = false;
+		} else {
+			setCategoryPaginationLinks( context, { page, hasNextPage: !! firstPage.page_handle } );
+		}
 	}
 
-	const firstPage =
-		dataOrError instanceof Error
-			? undefined
-			: queryClient.getQueryData(
-					getESPluginsInfiniteQueryParams( { ...options, infinite: true }, true ).queryKey
-				)?.pages?.[ 0 ]?.data;
-
-	if ( ! firstPage ) {
-		// The prefetch swallows search errors, so skip SSR rather than cache an empty page.
-		context.serverSideRender = false;
-	} else if ( page > 1 && ! firstPage.results?.length ) {
-		context.res.status( 404 );
-		context.serverSideRender = false;
-	} else {
-		setCategoryPaginationLinks( context, { page, hasNextPage: !! firstPage.page_handle } );
+	// DocumentHead also sets the title, but doesn't run when the markup comes from the cache.
+	if ( ! context.query?.s ) {
+		const translate = context.i18n.translate.bind( context.i18n );
+		const title = getCategoryTitle( translate, getCategoryName( categories, category ), page );
+		store.dispatch( setDocumentHeadTitle( title ) );
 	}
 
 	next();
@@ -330,11 +340,7 @@ export async function fetchCategoryPlugins( context, next ) {
  * so Googlebot can recrawl and observe the directive.
  */
 export function setBrowsePluginsNoindex( context, next ) {
-	if (
-		! context.isServerSide ||
-		isUserLoggedIn( context.store.getState() ) ||
-		context.res?.statusCode === 404
-	) {
+	if ( ! context.isServerSide || isUserLoggedIn( context.store.getState() ) ) {
 		return next();
 	}
 

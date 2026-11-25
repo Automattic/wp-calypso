@@ -11,17 +11,17 @@ export const MAX_CATEGORY_PAGE = Math.floor( ES_MAX_RESULT_OFFSET / DEFAULT_PAGE
 // Premium and featured plugins come from unpaginated WordPress.com lists, not the search API.
 const UNPAGINATED_CATEGORIES = [ 'paid', 'featured' ];
 
-/** Only curated, search-backed categories are paginated; tag pages stay one noindexed page. */
-export function isPaginatedCategory( category?: string ): boolean {
-	if ( ! category ) {
+/**
+ * Only curated, search-backed categories are paginated; tag pages stay one noindexed page.
+ * The slug must match exactly, since each casing would be its own set of SSR cache entries,
+ * and only English pages (no `lang` route param) are paginated for now.
+ */
+export function isPaginatedCategory( category?: string, lang?: string ): boolean {
+	if ( ! category || lang ) {
 		return false;
 	}
 
-	const slug = category.toLowerCase();
-	return (
-		! UNPAGINATED_CATEGORIES.includes( slug ) &&
-		ALLOWED_CATEGORIES.some( ( allowed ) => allowed.toLowerCase() === slug )
-	);
+	return ! UNPAGINATED_CATEGORIES.includes( category ) && ALLOWED_CATEGORIES.includes( category );
 }
 
 /** The page number in a `page` query arg, or null unless it's a positive integer. */
