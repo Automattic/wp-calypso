@@ -4,6 +4,7 @@ import { NewSiteSuccessResponse, Site } from '@automattic/data-stores';
 import { SiteGoal } from '@automattic/data-stores/src/onboard';
 import { getTld, isFreeSubdomainQuery } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
+import { CartActionConnectionError, CartActionResponseError } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
@@ -14,9 +15,15 @@ import {
 	AI_SITE_BUILDER_FLOW,
 } from '../';
 import wpcomRequest from '../wpcom-request';
-import cartManagerClient from './create-cart-manager-client';
+import cartManagerClient, { wpcomGetCart } from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type {
+	CartKey,
+	MinimalRequestCartProduct,
+	ResponseCart,
+	ResponseCartMessage,
+	ResponseCartProduct,
+} from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -291,9 +298,174 @@ function prepareItemForAddingToCart( item: MinimalRequestCartProduct, lastKnownF
 	};
 }
 
+type CartHelperOptions = { throwOnError?: boolean };
+
+// The server lower-cases the domain in a cart item's meta, so the comparison ignores case.
+function isSameMeta( cartMeta: string | undefined, requestedMeta: string ): boolean {
+	return ( cartMeta ?? '' ).toLowerCase() === requestedMeta.toLowerCase();
+}
+
+function isMatchingCartProduct(
+	cartProduct: ResponseCartProduct,
+	requestedItem: MinimalRequestCartProduct
+): boolean {
+	return (
+		cartProduct.product_slug === requestedItem.product_slug &&
+		( ! requestedItem.meta || isSameMeta( cartProduct.meta, requestedItem.meta ) )
+	);
+}
+
+type CartCheck = {
+	// Undefined when the cart state cannot be read.
+	missingItems?: MinimalRequestCartProduct[];
+	hasOtherItems: boolean;
+	errorMessages: ResponseCartMessage[];
+};
+
+function getCartFromManager( cartKey: CartKey ): ResponseCart | undefined {
+	try {
+		return cartManagerClient.forCartKey( cartKey ).getState().responseCart;
+	} catch {
+		return undefined;
+	}
+}
+
+function checkCartForRequestedItems(
+	responseCart: ResponseCart | undefined,
+	requestedItems: MinimalRequestCartProduct[]
+): CartCheck {
+	const cartProducts = responseCart?.products;
+	if ( ! Array.isArray( cartProducts ) ) {
+		return { hasOtherItems: false, errorMessages: [] };
+	}
+
+	return {
+		missingItems: requestedItems.filter(
+			( requestedItem ) =>
+				! cartProducts.some( ( cartProduct ) =>
+					isMatchingCartProduct( cartProduct, requestedItem )
+				)
+		),
+		hasOtherItems: cartProducts.some(
+			( cartProduct ) =>
+				! requestedItems.some( ( requestedItem ) =>
+					isMatchingCartProduct( cartProduct, requestedItem )
+				)
+		),
+		errorMessages: responseCart?.messages?.errors ?? [],
+	};
+}
+
+// A longer domain can contain the domain, as `myexample.com` and `example.com.au` contain
+// `example.com`, so a match must not touch another character of a domain name.
+function messageNamesDomain( message: string, domain: string ): boolean {
+	const text = message.toLowerCase();
+	const name = domain.toLowerCase();
+
+	let index = text.indexOf( name );
+	while ( index !== -1 ) {
+		const isInsideLongerName =
+			/[a-z0-9.-]$/.test( text.slice( 0, index ) ) ||
+			/^\.?[a-z0-9-]/.test( text.slice( index + name.length ) );
+		if ( ! isInsideLongerName ) {
+			return true;
+		}
+		index = text.indexOf( name, index + 1 );
+	}
+	return false;
+}
+
+// A cart message has no reference to an item, and the cart manager rejects with the first message
+// only. The first message can be about a stale product while the user's domain was the item that
+// was dropped, so look for a message that names a missing item.
+function findMessageForMissingItems(
+	errorMessages: ResponseCartMessage[],
+	missingItems: MinimalRequestCartProduct[]
+): ResponseCartMessage | undefined {
+	return errorMessages.find( ( errorMessage ) =>
+		missingItems.some(
+			( missingItem ) =>
+				!! missingItem.meta && messageNamesDomain( errorMessage.message, missingItem.meta )
+		)
+	);
+}
+
+const CART_FETCH_TIME_LIMIT_MS = 10000;
+
+// The cart endpoint can leave a request without an answer, and the fetch has no time limit of its
+// own. Without this limit, a fetch that never answers keeps the processing step waiting forever.
+//
+// The fetch does not go through the cart manager. A manager reload that never answers leaves the
+// manager waiting for its cart, and the manager queues every later action while it waits. The
+// manager is shared, so the next add from the same page would never run.
+function fetchServerCartWithTimeLimit( cartKey: CartKey ): Promise< ResponseCart > {
+	let timeoutId: ReturnType< typeof setTimeout > | undefined;
+	const timeLimit = new Promise< never >( ( _resolve, reject ) => {
+		timeoutId = setTimeout(
+			() => reject( new Error( 'The cart fetch did not answer in time.' ) ),
+			CART_FETCH_TIME_LIMIT_MS
+		);
+	} );
+
+	return Promise.race( [ wpcomGetCart( cartKey ), timeLimit ] ).finally( () =>
+		clearTimeout( timeoutId )
+	);
+}
+
+// A response error can be about another item in the cart, such as a stale invalid product. The
+// server keeps the valid items, so the flow can continue when every requested item is present.
+// A replace must also leave no other items, because a replace exists to remove them.
+//
+// A failed request does not tell whether the server applied the change. After that failure the
+// manager state is the cart from before the request, so the helper fetches the server cart before
+// it checks the items. Every other error that is not a response error stops the caller.
+//
+// Returns the error to throw, or undefined when the flow can continue.
+async function getCartErrorToThrow(
+	error: unknown,
+	cartKey: CartKey,
+	requestedItems: MinimalRequestCartProduct[],
+	{ isReplace }: { isReplace: boolean }
+): Promise< unknown > {
+	let responseCart: ResponseCart | undefined;
+
+	if ( error instanceof CartActionConnectionError ) {
+		try {
+			responseCart = await fetchServerCartWithTimeLimit( cartKey );
+		} catch {
+			return error;
+		}
+	} else if ( error instanceof CartActionResponseError ) {
+		responseCart = getCartFromManager( cartKey );
+	} else {
+		return error;
+	}
+
+	const { missingItems, hasOtherItems, errorMessages } = checkCartForRequestedItems(
+		responseCart,
+		requestedItems
+	);
+
+	if ( ! missingItems ) {
+		return error;
+	}
+
+	if ( missingItems.length > 0 ) {
+		const message = findMessageForMissingItems( errorMessages, missingItems );
+		return message ? new CartActionResponseError( message.message, message.code ) : error;
+	}
+
+	if ( isReplace && hasOtherItems ) {
+		return error;
+	}
+
+	return undefined;
+}
+
 export async function replaceProductsInCart(
 	siteSlug: string,
-	cartItems: MinimalRequestCartProduct[]
+	cartItems: MinimalRequestCartProduct[],
+	options: CartHelperOptions = {}
 ) {
 	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
 
@@ -305,13 +477,23 @@ export async function replaceProductsInCart(
 		debug( 'product replace request complete', updatedCart );
 	} catch ( error ) {
 		debug( 'product replace request had an error', error );
+		if ( options.throwOnError ) {
+			const errorToThrow = await getCartErrorToThrow( error, cartKey, cartItems, {
+				isReplace: true,
+			} );
+			if ( errorToThrow ) {
+				throw errorToThrow;
+			}
+			debug( 'the cart holds only the requested items, so the cart error does not throw' );
+		}
 	}
 }
 
 export async function addProductsToCart(
 	siteSlug: string,
 	flowName: string,
-	cartItems: MinimalRequestCartProduct[] | null
+	cartItems: MinimalRequestCartProduct[] | null,
+	options: CartHelperOptions = {}
 ) {
 	if ( Array.isArray( cartItems ) ) {
 		const cartItemsToAdd = cartItems.map( ( cartItem ) =>
@@ -329,6 +511,15 @@ export async function addProductsToCart(
 			debug( 'product add request complete', updatedCart );
 		} catch ( error ) {
 			debug( 'product add request had an error', error );
+			if ( options.throwOnError ) {
+				const errorToThrow = await getCartErrorToThrow( error, cartKey, cartItemsToAdd, {
+					isReplace: false,
+				} );
+				if ( errorToThrow ) {
+					throw errorToThrow;
+				}
+				debug( 'the cart holds every requested item, so the cart error does not throw' );
+			}
 		}
 	}
 }
