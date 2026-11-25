@@ -13,7 +13,8 @@ const PLAYGROUND_NAVIGATION_TIMEOUT = 60 * 1000;
 
 // Pre-Release, Nov 16-24 2026: the slowest passing attempt took 4.8 min end to
 // end (TeamCity build 20773273); the import in build 20781633's retry took 101s,
-// 62s of them at convert_to_atomic. A stalled Atomic transfer never finishes.
+// 62s of them at convert_to_atomic, after its first attempt's Atomic transfer
+// stalled for the full 10 min.
 const IMPORT_STEP_TIMEOUT = 3 * 60 * 1000;
 const IMPORT_TIMEOUT = 5 * 60 * 1000;
 

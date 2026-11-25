@@ -266,9 +266,23 @@ describe( 'watchImportFailure stall detection', () => {
 	test( 'rejects when the import never reports a step', async () => {
 		vi.useFakeTimers();
 
-		const error = await watchPolls( [ [ STEP_TIMEOUT, step() ] ] );
+		const error = await watchPolls( [
+			[ 0, step() ],
+			[ STEP_TIMEOUT, step() ],
+		] );
 
 		expect( error?.message ).toBe( 'The import stalled on WordPress.com at unset for 180s' );
+	} );
+
+	test( 'starts timing at the first poll', async () => {
+		vi.useFakeTimers();
+
+		const error = await watchPolls( [
+			[ STEP_TIMEOUT * 2, step() ],
+			[ STEP_TIMEOUT - 1000, step() ],
+		] );
+
+		expect( error ).toBeNull();
 	} );
 
 	test( 'restarts the timeout on each new step', async () => {

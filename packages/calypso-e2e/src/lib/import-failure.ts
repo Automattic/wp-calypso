@@ -64,7 +64,8 @@ function describeFailure( entry: ImportEntry ): string | null {
  * WordPress.com reports a failed import with `errorData`, sometimes while
  * `importStatus` is still `?` and the Calypso importer shows no error screen.
  *
- * @param body The parsed JSON body of a `GET /sites/{id}/imports/` response.
+ * @param body The parsed JSON body of a `GET /sites/{id}/imports/` or
+ *             `GET /sites/{id}/imports/{importId}` response.
  */
 export function getImportFailure( body: unknown ): string | null {
 	const unwrapped = unwrapEnvelope( body );
@@ -99,8 +100,8 @@ function getImportStep( body: unknown ): string | null {
 
 /**
  * Watches the importer's status poll and rejects `failed` as soon as it reports
- * a failed import, or once an import step has lasted `stepTimeoutMs`. Call
- * `stop` once done waiting.
+ * a failed import, or once an import step has lasted `stepTimeoutMs`, timing
+ * from the first poll. Call `stop` once done waiting.
  *
  * @param page          The page running the importer.
  * @param stepTimeoutMs How long an import step, unset included, may last.
@@ -116,7 +117,7 @@ export function watchImportFailure(
 	// Nobody awaits `failed` once the import has succeeded.
 	failed.catch( () => {} );
 
-	let currentStep = UNSET_STEP;
+	let currentStep: string | null = null;
 	let stallTimer: NodeJS.Timeout | undefined;
 	const timeStep = ( step: string ) => {
 		currentStep = step;
@@ -133,7 +134,6 @@ export function watchImportFailure(
 			);
 		}, stepTimeoutMs );
 	};
-	timeStep( UNSET_STEP );
 
 	const onResponse = async ( response: Response ) => {
 		if ( response.request().method() !== GET_METHOD ) {
@@ -159,8 +159,8 @@ export function watchImportFailure(
 			return;
 		}
 
-		const step = getImportStep( body );
-		if ( step && step !== currentStep ) {
+		const step = getImportStep( body ) ?? currentStep ?? UNSET_STEP;
+		if ( step !== currentStep ) {
 			timeStep( step );
 		}
 	};
