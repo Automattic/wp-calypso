@@ -503,7 +503,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 			if ( additionalCartItems.length > 0 ) {
 				await addProductsToCart( site.siteSlug, flow, additionalCartItems, {
-					cartKey: site.siteId,
+					// /sites/new sends the blog ID as a string, and the cart helper takes only a number.
+					cartKey: Number( site.siteId ),
 				} );
 			}
 
