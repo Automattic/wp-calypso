@@ -1,3 +1,4 @@
+/// <reference types="vitest/jsdom" />
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
@@ -11,6 +12,8 @@ const mockTrackEvent = vi.fn();
 
 const SUPPORT_ARTICLE_URL = 'https://wordpress.com/support/domains/';
 const WOO_DOC_URL = 'https://woocommerce.com/document/managing-orders/';
+const PAGE_URL = window.location.href;
+const onWooCommerceCom = () => jsdom.reconfigure( { url: 'https://woocommerce.com/my-account/' } );
 
 vi.mock( '@automattic/components', () => ( {
 	FoldableCard: ( { children }: { children: ReactNode } ) => <div>{ children }</div>,
@@ -47,6 +50,10 @@ describe( 'Sources', () => {
 		mockTrackEvent.mockClear();
 	} );
 
+	afterEach( () => {
+		jsdom.reconfigure( { url: PAGE_URL } );
+	} );
+
 	it( 'opens a WordPress.com source in the Help Center article view', async () => {
 		renderSources( SUPPORT_ARTICLE_URL );
 
@@ -58,7 +65,8 @@ describe( 'Sources', () => {
 	} );
 
 	/** The article view can't load WooCommerce.com docs, so it showed an empty Support guide. */
-	it( 'opens a WooCommerce.com source in a new tab', async () => {
+	it( 'opens a WooCommerce.com source in a new tab on WooCommerce.com', async () => {
+		onWooCommerceCom();
 		renderSources( WOO_DOC_URL );
 
 		const link = screen.getByRole( 'link', { name: 'Managing Orders (opens in a new tab)' } );
@@ -70,7 +78,19 @@ describe( 'Sources', () => {
 		expect( mockNavigate ).not.toHaveBeenCalled();
 	} );
 
+	/** Outside WooCommerce.com, sources open as they always have. */
+	it( 'keeps a WooCommerce.com source in the article view outside WooCommerce.com', async () => {
+		renderSources( WOO_DOC_URL );
+
+		const link = screen.getByRole( 'link', { name: 'Managing Orders' } );
+		await userEvent.click( link );
+
+		expect( link ).not.toHaveAttribute( 'target' );
+		expect( mockNavigate ).toHaveBeenCalledWith( `/post?link=${ WOO_DOC_URL }` );
+	} );
+
 	it( 'records the click on a source that opens in a new tab', async () => {
+		onWooCommerceCom();
 		renderSources( WOO_DOC_URL );
 
 		await userEvent.click( screen.getByRole( 'link', { name: /Managing Orders/ } ) );

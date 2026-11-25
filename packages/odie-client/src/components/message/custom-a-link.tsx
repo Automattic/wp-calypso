@@ -6,7 +6,7 @@ import { Children, isValidElement, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { uriTransformer } from './uri-transformer';
-import { isWooCommerceComLink } from './utils/is-woocommerce-com-link';
+import { isOnWooCommerceCom } from './utils/is-woocommerce-com-link';
 
 // This component will be extended in the future to support other types of links.
 // For now, it only supports prompt:// links. But in the future might be more protocols like:
@@ -34,13 +34,10 @@ const CustomALink = ( {
 		( child ) => isValidElement( child ) && child.type === 'img'
 	);
 	const isSupportArticleLink = isThisASupportArticleLink( transformedHref );
-	// Keep the chat open: links to other sites open in a new tab, and so do WooCommerce.com
-	// links, which are on the same site when the Help Center runs on WooCommerce.com.
+	// On WooCommerce.com, a link that opens in the same tab replaces the page the chat is on, so web
+	// links open in a new tab there. Support articles keep the article view.
 	const opensInNewTab =
-		/^https?:\/\//.test( transformedHref ) &&
-		! isSupportArticleLink &&
-		( isWooCommerceComLink( transformedHref ) ||
-			new URL( transformedHref ).origin !== window.location.origin );
+		isOnWooCommerceCom() && /^https?:\/\//.test( transformedHref ) && ! isSupportArticleLink;
 	const effectiveTarget = wrapsImage || opensInNewTab ? '_blank' : target;
 
 	// A `blob:` link is a file the user just sent, held by the browser. Save it under its name

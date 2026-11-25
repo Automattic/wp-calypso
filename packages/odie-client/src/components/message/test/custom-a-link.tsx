@@ -7,8 +7,10 @@ import { vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import CustomALink from '../custom-a-link';
 
+let mockIsSupportArticleLink = false;
+
 vi.mock( '@automattic/urls', () => ( {
-	isThisASupportArticleLink: () => false,
+	isThisASupportArticleLink: () => mockIsSupportArticleLink,
 } ) );
 
 vi.mock( 'react-router-dom', () => ( {
@@ -26,6 +28,7 @@ const PAGE_URL = window.location.href;
 describe( 'CustomALink', () => {
 	afterEach( () => {
 		jsdom.reconfigure( { url: PAGE_URL } );
+		mockIsSupportArticleLink = false;
 	} );
 
 	it( 'saves a file the user just sent under its name', () => {
@@ -56,13 +59,12 @@ describe( 'CustomALink', () => {
 		expect( link ).toHaveAttribute( 'target', '_blank' );
 	} );
 
-	/** A link to another site in the same tab replaced the page the chat is on. */
-	it( 'opens a link to another site in a new tab', () => {
-		render( <CustomALink href="https://jetpack.com/upgrade/backup/">Jetpack Backup</CustomALink> );
+	/** Outside WooCommerce.com, links open as they always have, in WordPress.com and wp-admin alike. */
+	it( 'keeps a link to another site in the same tab outside WooCommerce.com', () => {
+		jsdom.reconfigure( { url: 'https://example.wordpress.com/wp-admin/' } );
+		render( <CustomALink href="https://wordpress.com/plans/">Plans</CustomALink> );
 
-		expect(
-			screen.getByRole( 'link', { name: 'Jetpack Backup (opens in a new tab)' } )
-		).toHaveAttribute( 'target', '_blank' );
+		expect( screen.getByRole( 'link', { name: 'Plans' } ) ).toHaveAttribute( 'target', '_self' );
 	} );
 
 	/** On WooCommerce.com, Woo doc links are on the same site and still replaced the page. */
@@ -75,10 +77,12 @@ describe( 'CustomALink', () => {
 		expect( link ).toHaveAttribute( 'target', '_blank' );
 	} );
 
-	/** Links within Calypso keep navigating in the same tab. */
-	it( 'keeps a link to the same site in the same tab', () => {
-		render( <CustomALink href={ `${ window.location.origin }/plans/` }>Plans</CustomALink> );
+	/** WordPress.com support articles keep opening in the Help Center article view. */
+	it( 'keeps a support article in the article view on WooCommerce.com', () => {
+		jsdom.reconfigure( { url: 'https://woocommerce.com/my-account/' } );
+		mockIsSupportArticleLink = true;
+		render( <CustomALink href="https://wordpress.com/support/domains/">Domains</CustomALink> );
 
-		expect( screen.getByRole( 'link', { name: 'Plans' } ) ).toHaveAttribute( 'target', '_self' );
+		expect( screen.getByRole( 'link', { name: 'Domains' } ) ).toHaveAttribute( 'target', '_self' );
 	} );
 } );
