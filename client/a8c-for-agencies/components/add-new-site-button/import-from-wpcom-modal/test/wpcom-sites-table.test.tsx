@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import agencyReducer from 'calypso/state/a8c-for-agencies/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import WPCOMSitesTable from '../wpcom-sites-table';
 
-jest.mock( 'calypso/data/agency-dashboard/use-fetch-dashboard-sites', () =>
-	jest.fn( () => ( { data: { total: 0, sites: [] }, isPending: false } ) )
-);
-jest.mock( '@automattic/viewport-react', () => ( {
-	...jest.requireActual( '@automattic/viewport-react' ),
+vi.mock( 'calypso/data/agency-dashboard/use-fetch-dashboard-sites', () => ( {
+	default: vi.fn( () => ( { data: { total: 0, sites: [] }, isPending: false } ) ),
+} ) );
+vi.mock( '@automattic/viewport-react', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/viewport-react' ) >(
+		'@automattic/viewport-react'
+	) ),
 	useDesktopBreakpoint: () => true,
 } ) );
 
@@ -25,7 +28,7 @@ const makeSite = ( ID: number, name: string, URL: string ) => ( {
 
 function renderTable() {
 	return renderWithProvider(
-		<WPCOMSitesTable selectedSites={ [] } setSelectedSites={ jest.fn() } />,
+		<WPCOMSitesTable selectedSites={ [] } setSelectedSites={ vi.fn() } />,
 		{
 			reducers: { a8cForAgencies: agencyReducer },
 			initialState: {

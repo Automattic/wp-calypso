@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { Site, SiteData } from '../../../types';
 import * as useIsMultisiteSupported from '../use-is-multisite-supported';
 import useRowMetadata from '../use-row-metadata';
@@ -115,7 +116,7 @@ const rows: SiteData = {
 
 describe( 'useRowMetadata', () => {
 	it( 'should return the expected site metadata', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'site', true ) );
@@ -123,7 +124,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Backup metadata', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'backup', true ) );
@@ -142,7 +143,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Backup metadata for atomic sites.', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
 		const {
 			result: { current: metadata },
 		} = renderHook( () =>
@@ -182,7 +183,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Scan metadata', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'scan', true ) );
@@ -201,7 +202,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Scan metadata for atomic sites.', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
 		const {
 			result: { current: metadata },
 		} = renderHook( () =>
@@ -232,7 +233,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Monitor metadata', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'monitor', false ) );
@@ -251,7 +252,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected plugin metadata', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'plugin', false ) );
@@ -270,7 +271,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Stats metadata', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'stats', false ) );
@@ -289,7 +290,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return the expected Boost metadata', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( true );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'boost', false ) );
@@ -308,7 +309,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return not multisite supported for backup with license', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( false );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () =>
@@ -323,7 +324,7 @@ describe( 'useRowMetadata', () => {
 	} );
 
 	it( 'should return not multisite supported for scan', () => {
-		jest.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( false );
+		vi.spyOn( useIsMultisiteSupported, 'default' ).mockReturnValue( false );
 		const {
 			result: { current: metadata },
 		} = renderHook( () => useRowMetadata( rows, 'scan', true ) );

@@ -1,47 +1,48 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fetchWooCommerceLicenseSites } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import a8cForAgencies from 'calypso/state/a8c-for-agencies/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import LicensePreview from '../index';
 import type { License } from 'calypso/state/partner-portal/types';
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	fetchWooCommerceLicenseSites: jest.fn(),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+	fetchWooCommerceLicenseSites: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/a8c-for-agencies/hooks/use-help-center', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/hooks/use-help-center', () => ( {
 	__esModule: true,
-	default: () => ( { showSupportGuide: jest.fn() } ),
+	default: () => ( { showSupportGuide: vi.fn() } ),
 } ) );
 
-jest.mock( '../../../payment-methods/hooks/use-payment-method', () => ( {
+vi.mock( '../../../payment-methods/hooks/use-payment-method', () => ( {
 	__esModule: true,
 	default: () => ( { paymentMethodRequired: false } ),
 } ) );
 
-jest.mock( 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/components/a4a-feedback/hooks/use-show-a4a-feedback', () => ( {
 	__esModule: true,
 	default: () => ( { isFeedbackShown: true } ),
 } ) );
 
-jest.mock( '../../license-details', () => ( {
+vi.mock( '../../license-details', () => ( {
 	__esModule: true,
 	default: () => <div>License details panel</div>,
 } ) );
 
-jest.mock( '../../license-details/bundle-details', () => ( {
+vi.mock( '../../license-details/bundle-details', () => ( {
 	__esModule: true,
 	default: () => <div>Bundle details panel</div>,
 } ) );
 
-jest.mock( '../license-bundle-dropdown', () => ( {
+vi.mock( '../license-bundle-dropdown', () => ( {
 	__esModule: true,
 	default: () => <div>Bundle dropdown</div>,
 } ) );
@@ -187,7 +188,7 @@ describe( 'LicensePreview', () => {
 		};
 
 		it( 'shows the store WooCommerce.com has the license on', async () => {
-			jest.mocked( fetchWooCommerceLicenseSites ).mockResolvedValue( {
+			vi.mocked( fetchWooCommerceLicenseSites ).mockResolvedValue( {
 				[ wooLicense.licenseId ]: { site_url: 'https://new-store.example' },
 			} );
 			renderPreview( wooLicense );
@@ -197,14 +198,14 @@ describe( 'LicensePreview', () => {
 		} );
 
 		it( 'shows no site while the store is looked up', () => {
-			jest.mocked( fetchWooCommerceLicenseSites ).mockReturnValue( new Promise( () => {} ) );
+			vi.mocked( fetchWooCommerceLicenseSites ).mockReturnValue( new Promise( () => {} ) );
 			renderPreview( wooLicense );
 
 			expect( screen.queryByText( 'old-store.example' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'falls back to the license’s own site when the lookup fails', async () => {
-			jest.mocked( fetchWooCommerceLicenseSites ).mockRejectedValue( new Error( 'Unavailable' ) );
+			vi.mocked( fetchWooCommerceLicenseSites ).mockRejectedValue( new Error( 'Unavailable' ) );
 			renderPreview( wooLicense );
 
 			expect( await screen.findByText( 'old-store.example' ) ).toBeVisible();

@@ -1,33 +1,34 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { isEnabled } from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import { redirectToNewDashboardContext, requireAccessContext } from '../controller';
 import { isPathAllowed } from '../lib/permission';
 import type { AgencyDashboardOptInValue } from '@automattic/api-core';
 import type { Context } from '@automattic/calypso-router';
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	isEnabled: jest.fn(),
+	default: vi.fn(),
+	isEnabled: vi.fn(),
 } ) );
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { redirect: jest.fn() },
+	default: { redirect: vi.fn() },
 } ) );
-jest.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: jest.fn() } ) );
-jest.mock( 'calypso/dashboard/app/routing', () => ( {
+vi.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: vi.fn() } ) );
+vi.mock( 'calypso/dashboard/app/routing', () => ( {
 	buildDashboardLink: ( _dashboard: string, path: string ) => `https://msd.test${ path }`,
 } ) );
-jest.mock( '../lib/permission', () => ( {
-	isPathAllowed: jest.fn( () => true ),
+vi.mock( '../lib/permission', () => ( {
+	isPathAllowed: vi.fn( () => true ),
 	isPathAllowedForTier: () => true,
 } ) );
-jest.mock( '../sections/agency-tier/tier-permission-error', () => () => null );
+vi.mock( '../sections/agency-tier/tier-permission-error', () => ( { default: () => null } ) );
 
-const replace = jest.fn();
+const replace = vi.fn();
 
 function buildContext(
 	pathname: string,
@@ -53,12 +54,12 @@ describe( 'requireAccessContext', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( isEnabled as jest.Mock ).mockReturnValue( true );
+		vi.clearAllMocks();
+		( isEnabled as Mock ).mockReturnValue( true );
 	} );
 
 	it( 'sends an opted-in agency to the matching Multi-site Dashboard page', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 
 		requireAccessContext( buildContext( '/agency-tier', 'opt-in' ), next );
 
@@ -67,7 +68,7 @@ describe( 'requireAccessContext', () => {
 	} );
 
 	it( 'sends an opted-in agency to Prospect reports on the Multi-site Dashboard', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 
 		requireAccessContext( buildContext( '/prospect-reports', 'opt-in' ), next );
 
@@ -78,7 +79,7 @@ describe( 'requireAccessContext', () => {
 	it.each( [ 'opt-out', 'forced-opt-out', 'unset' ] as const )(
 		'keeps a %s agency here',
 		( value ) => {
-			const next = jest.fn();
+			const next = vi.fn();
 
 			requireAccessContext( buildContext( '/agency-tier', value ), next );
 
@@ -88,7 +89,7 @@ describe( 'requireAccessContext', () => {
 	);
 
 	it( 'keeps a legacy-billing agency here even when opted in', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 
 		requireAccessContext( buildContext( '/agency-tier', 'opt-in', 'legacy' ), next );
 
@@ -97,8 +98,8 @@ describe( 'requireAccessContext', () => {
 	} );
 
 	it( 'keeps everyone here while the feature is off', () => {
-		( isEnabled as jest.Mock ).mockReturnValue( false );
-		const next = jest.fn();
+		( isEnabled as Mock ).mockReturnValue( false );
+		const next = vi.fn();
 
 		requireAccessContext( buildContext( '/agency-tier', 'opt-in' ), next );
 
@@ -109,12 +110,12 @@ describe( 'requireAccessContext', () => {
 
 describe( 'redirectToNewDashboardContext', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( isEnabled as jest.Mock ).mockReturnValue( true );
+		vi.clearAllMocks();
+		( isEnabled as Mock ).mockReturnValue( true );
 	} );
 
 	it( 'forwards an opted-in agency without checking the path', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToNewDashboardContext(
 			buildContext( '/sites/all/example.com/jetpack-backup', 'opt-in' ),
@@ -127,8 +128,8 @@ describe( 'redirectToNewDashboardContext', () => {
 	} );
 
 	it( 'does nothing while the feature is off', () => {
-		( isEnabled as jest.Mock ).mockReturnValue( false );
-		const next = jest.fn();
+		( isEnabled as Mock ).mockReturnValue( false );
+		const next = vi.fn();
 
 		redirectToNewDashboardContext(
 			buildContext( '/sites/all/example.com/jetpack-backup', 'opt-in' ),

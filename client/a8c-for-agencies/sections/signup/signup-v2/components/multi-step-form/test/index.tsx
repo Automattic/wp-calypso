@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import MultiStepForm from '../index';
 import type { AgencyDetailsSignupPayload } from 'calypso/a8c-for-agencies/sections/signup/types';
 
-jest.mock( '../contact-form', () => ( {
+vi.mock( '../contact-form', () => ( {
 	__esModule: true,
 	default: ( {
 		onContinue,
@@ -20,24 +21,24 @@ jest.mock( '../contact-form', () => ( {
 	),
 } ) );
 
-jest.mock( '../hooks/use-submit-signup', () => ( {
+vi.mock( '../hooks/use-submit-signup', () => ( {
 	__esModule: true,
-	default: () => jest.fn(),
+	default: () => vi.fn(),
 } ) );
 
-jest.mock( '../../../../hooks/use-create-signup-mutation', () => ( {
+vi.mock( '../../../../hooks/use-create-signup-mutation', () => ( {
 	__esModule: true,
-	default: () => ( { mutate: jest.fn(), isPending: false } ),
+	default: () => ( { mutate: vi.fn(), isPending: false } ),
 } ) );
 
-jest.mock(
+vi.mock(
 	'calypso/a8c-for-agencies/sections/signup/agency-details-form/hooks/use-countries-and-states',
 	() => ( {
 		useCountriesAndStates: () => ( { countryOptions: [] } ),
 	} )
 );
 
-jest.mock( 'calypso/a8c-for-agencies/hooks/use-is-dark-mode', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/hooks/use-is-dark-mode', () => ( {
 	useIsDarkMode: () => false,
 } ) );
 

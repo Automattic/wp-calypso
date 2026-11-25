@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -9,22 +9,23 @@ import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import SiteContent from '../index';
 
-jest.mock( '@automattic/viewport-react', () => ( {
+vi.mock( '@automattic/viewport-react', () => ( {
 	useDesktopBreakpoint: () => true,
 	useMobileBreakpoint: () => false,
 	useBreakpoint: () => true,
 } ) );
 
-jest.mock(
+vi.mock(
 	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-backup-staging',
-	() => 'span'
+	() => ( { default: 'span' } )
 );
 
-jest.mock(
+vi.mock(
 	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-table-row/index',
-	() => () => <tr />
+	() => ( { default: () => <tr /> } )
 );
 
 describe( '<SiteContent>', () => {

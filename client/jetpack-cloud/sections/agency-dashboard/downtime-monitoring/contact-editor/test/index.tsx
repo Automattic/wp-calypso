@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,13 +8,14 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import {
 	AllowedMonitorContactTypes,
 	AllowedMonitorContactActions,
 } from '../../../sites-overview/types';
 import ContactEditor from '../index';
 
-jest.mock( 'calypso/data/geo/use-geolocation-query', () => ( {
+vi.mock( 'calypso/data/geo/use-geolocation-query', () => ( {
 	useGeoLocationQuery: () => ( {
 		isLoading: false,
 		data: {},
@@ -25,10 +26,10 @@ describe( 'ContactEditor', () => {
 	const defaultProps = {
 		type: 'email' as AllowedMonitorContactTypes,
 		contacts: [],
-		setContacts: jest.fn(),
-		setVerifiedContact: jest.fn(),
-		recordEvent: jest.fn(),
-		onClose: jest.fn(),
+		setContacts: vi.fn(),
+		setVerifiedContact: vi.fn(),
+		recordEvent: vi.fn(),
+		onClose: vi.fn(),
 		sites: [],
 	};
 

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	useContactModalTitleAndSubtitle,
 	useContactFormInputHelpText,
@@ -67,8 +68,8 @@ describe( 'useContactFormInputHelpText', () => {
 	} );
 } );
 
-jest.mock( 'calypso/data/geo/use-geolocation-query', () => ( {
-	useGeoLocationQuery: jest.fn( () => ( { data: { country_short: 'US' } } ) ),
+vi.mock( 'calypso/data/geo/use-geolocation-query', () => ( {
+	useGeoLocationQuery: vi.fn( () => ( { data: { country_short: 'US' } } ) ),
 } ) );
 
 describe( 'useGetSupportedSMSCountries', () => {
@@ -79,7 +80,7 @@ describe( 'useGetSupportedSMSCountries', () => {
 		];
 
 		// Mock the useSelector function to return the countries
-		jest.spyOn( require( 'calypso/state' ), 'useSelector' ).mockReturnValue( countries );
+		vi.spyOn( require( 'calypso/state' ), 'useSelector' ).mockReturnValue( countries );
 
 		const { result } = renderHook( () => useGetSupportedSMSCountries() );
 

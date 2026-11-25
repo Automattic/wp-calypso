@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import SetAsPrimaryPaymentMethod from '../set-as-primary-payment-method';
 
 describe( '<SetAsPrimaryPaymentMethod>', () => {
@@ -16,7 +17,7 @@ describe( '<SetAsPrimaryPaymentMethod>', () => {
 		const props = {
 			isChecked: true,
 			isDisabled: false,
-			onChange: jest.fn(),
+			onChange: vi.fn(),
 		};
 
 		render(

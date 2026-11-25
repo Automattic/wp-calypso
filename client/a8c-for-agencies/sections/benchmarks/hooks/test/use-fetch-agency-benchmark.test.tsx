@@ -1,29 +1,30 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useSelector } from 'react-redux';
+import { type Mock, type MockedFunction, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import useFetchAgencyBenchmark from '../use-fetch-agency-benchmark';
 import type { ReactNode } from 'react';
 
-jest.mock( 'react-redux', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'react-redux', () => ( {
+	useSelector: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: {
 		req: {
-			get: jest.fn(),
+			get: vi.fn(),
 		},
 	},
 } ) );
 
-const mockedGet = wpcom.req.get as jest.MockedFunction< typeof wpcom.req.get >;
-const mockedUseSelector = useSelector as unknown as jest.Mock;
+const mockedGet = wpcom.req.get as MockedFunction< typeof wpcom.req.get >;
+const mockedUseSelector = useSelector as unknown as Mock;
 
 function wrapper( { children }: { children: ReactNode } ) {
 	const queryClient = new QueryClient( {
@@ -34,7 +35,7 @@ function wrapper( { children }: { children: ReactNode } ) {
 
 describe( 'useFetchAgencyBenchmark', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockedUseSelector.mockReturnValue( 42 ); // agencyId
 	} );
 

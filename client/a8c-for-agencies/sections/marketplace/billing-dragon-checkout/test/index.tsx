@@ -1,54 +1,67 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { act, render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import BillingDragonCheckout from '..';
 import type { ReactNode } from 'react';
 
-jest.mock( '@automattic/shopping-cart', () => ( {
-	...jest.requireActual( '@automattic/shopping-cart' ),
-	useShoppingCart: jest.fn(),
+vi.mock( '@automattic/shopping-cart', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
+		'@automattic/shopping-cart'
+	) ),
+	useShoppingCart: vi.fn(),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
 	useTranslate: () => ( text: string ) => text,
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
-jest.mock( 'calypso/state/analytics/actions', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( 'calypso/state/analytics/actions', () => ( { recordTracksEvent: vi.fn() } ) );
 
-jest.mock( 'calypso/state/a8c-for-agencies/agency/selectors', () => ( {
+vi.mock( 'calypso/state/a8c-for-agencies/agency/selectors', () => ( {
 	getActiveAgency: () => ( { id: 42 } ),
 } ) );
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserLocale: () => 'en',
 } ) );
-jest.mock( 'calypso/state/selectors/has-loaded-sites', () => () => true );
-jest.mock( 'calypso/state/sites/selectors/get-site', () => () => undefined );
+vi.mock( 'calypso/state/selectors/has-loaded-sites', () => ( { default: () => true } ) );
+vi.mock( 'calypso/state/sites/selectors/get-site', () => ( { default: () => undefined } ) );
 
-jest.mock( 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart', () => () => ( {
-	productsForCart: [],
-	isLoading: false,
-	error: null,
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart', () => ( {
+	default: () => ( {
+		productsForCart: [],
+		isLoading: false,
+		error: null,
+	} ),
 } ) );
 
 const passthrough = ( { children }: { children?: ReactNode } ) => <>{ children }</>;
-jest.mock( '@automattic/calypso-stripe', () => ( { StripeHookProvider: passthrough } ) );
-jest.mock( '@automattic/composite-checkout', () => ( { CheckoutErrorBoundary: passthrough } ) );
-jest.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => passthrough );
-jest.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => passthrough );
-jest.mock( 'calypso/my-sites/checkout/src/components/cart-message-cleanup', () => () => null );
-jest.mock( 'calypso/my-sites/checkout/src/components/checkout-main', () =>
-	jest.fn( () => <div data-testid="checkout-main" /> )
-);
+vi.mock( '@automattic/calypso-stripe', () => ( { StripeHookProvider: passthrough } ) );
+vi.mock( '@automattic/composite-checkout', () => ( { CheckoutErrorBoundary: passthrough } ) );
+vi.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => ( {
+	...passthrough,
+	default: passthrough,
+} ) );
+vi.mock( 'calypso/my-sites/checkout/checkout-query-client-provider', () => ( {
+	...passthrough,
+	default: passthrough,
+} ) );
+vi.mock( 'calypso/my-sites/checkout/src/components/cart-message-cleanup', () => ( {
+	default: () => null,
+} ) );
+vi.mock( 'calypso/my-sites/checkout/src/components/checkout-main', () => ( {
+	default: vi.fn( () => <div data-testid="checkout-main" /> ),
+} ) );
 
-const replaceProductsInCart = jest.fn();
+const replaceProductsInCart = vi.fn();
 const successUrl =
 	'https://my.pressable.com/titan_email/checkout_return?agency_id=42&checkout_status=SUCCESS&signature=a%2Bb%2fc%3D';
 const cancelUrl =
@@ -66,8 +79,7 @@ const pressableProduct = {
 
 function setFormSubmitting( isFormSubmitting: boolean ) {
 	act( () => {
-		jest
-			.mocked( CheckoutMain )
+		vi.mocked( CheckoutMain )
 			.mock.calls.at( -1 )?.[ 0 ]
 			.onFormSubmittingChange?.( isFormSubmitting );
 	} );
@@ -82,7 +94,7 @@ function mockCart( {
 	loadingError?: string | null;
 	products?: { extra?: Record< string, unknown > }[];
 } ) {
-	( useShoppingCart as jest.Mock ).mockReturnValue( {
+	( useShoppingCart as Mock ).mockReturnValue( {
 		isLoading,
 		loadingError,
 		responseCart: { products },
@@ -97,7 +109,7 @@ function renderPrepared() {
 describe( 'BillingDragonCheckout in prepared cart mode', () => {
 	beforeEach( () => {
 		replaceProductsInCart.mockReset();
-		jest.mocked( CheckoutMain ).mockClear();
+		vi.mocked( CheckoutMain ).mockClear();
 	} );
 
 	it( 'hides Back while the prepared cart loads even if products are available', () => {
@@ -140,7 +152,7 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		mockCart( { products: [ pressableProduct ] } );
 		renderPrepared();
 
-		expect( jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].redirectTo ).toBe( successUrl );
+		expect( vi.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].redirectTo ).toBe( successUrl );
 		expect( screen.getByRole( 'link', { name: 'Back to Pressable' } ) ).toHaveAttribute(
 			'href',
 			cancelUrl
@@ -167,7 +179,7 @@ describe( 'BillingDragonCheckout in prepared cart mode', () => {
 		mockCart( { products: [ { extra: { isA4ASitelessCheckout: true, agency_id: 42 } } ] } );
 		renderPrepared();
 
-		expect( jest.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].redirectTo ).toBe(
+		expect( vi.mocked( CheckoutMain ).mock.calls.at( -1 )?.[ 0 ].redirectTo ).toBe(
 			`${ window.location.origin }/purchases/licenses`
 		);
 		expect( screen.queryByText( 'Back to Pressable' ) ).not.toBeInTheDocument();

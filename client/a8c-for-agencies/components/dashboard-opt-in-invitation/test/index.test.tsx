@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import GlobalNotices from 'calypso/components/global-notices';
 import agencyReducer from 'calypso/state/a8c-for-agencies/reducer';
 import noticesReducer from 'calypso/state/notices/reducer';
@@ -11,12 +12,16 @@ import preferencesReducer from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DashboardOptInInvitation from '..';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
 	const config = ( key: string ) => actual( key );
-	return Object.assign( config, actual, {
-		isEnabled: ( flag: string ) => flag === 'a4a-dashboard-opt-in' || actual.isEnabled( flag ),
-	} );
+	return {
+		default: Object.assign( config, actual, {
+			isEnabled: ( flag: string ) => flag === 'a4a-dashboard-opt-in' || actual.isEnabled( flag ),
+		} ),
+	};
 } );
 
 const API = 'https://public-api.wordpress.com';
