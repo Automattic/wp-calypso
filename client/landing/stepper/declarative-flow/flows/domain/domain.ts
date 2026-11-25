@@ -304,9 +304,12 @@ const domain: FlowV2< typeof initialize > = {
 						}
 
 						setPendingAction( async () => {
-							await addProductsToCart( siteSlug, this.name, [
-								providedDependencies.domainCartItem,
-							] );
+							await addProductsToCart(
+								siteSlug,
+								this.name,
+								[ providedDependencies.domainCartItem ],
+								{ throwOnError: true }
+							);
 
 							return {
 								siteSlug,
@@ -383,12 +386,15 @@ const domain: FlowV2< typeof initialize > = {
 							}
 
 							if ( isCiab ) {
-								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems );
+								await replaceProductsInCart( providedDependencies.siteSlug, domainCartItems, {
+									throwOnError: true,
+								} );
 							} else {
 								await addProductsToCart(
 									providedDependencies.siteSlug,
 									this.name,
-									domainCartItems
+									domainCartItems,
+									{ throwOnError: true }
 								);
 							}
 						}
@@ -422,9 +428,13 @@ const domain: FlowV2< typeof initialize > = {
 							];
 
 							if ( isCiab ) {
-								await replaceProductsInCart( siteSlug, aggregatedCartItems );
+								await replaceProductsInCart( siteSlug, aggregatedCartItems, {
+									throwOnError: true,
+								} );
 							} else {
-								await addProductsToCart( siteSlug, this.name, aggregatedCartItems );
+								await addProductsToCart( siteSlug, this.name, aggregatedCartItems, {
+									throwOnError: true,
+								} );
 							}
 
 							return {
@@ -484,9 +494,13 @@ const domain: FlowV2< typeof initialize > = {
 						// replace the location to delete processing step from history.
 						window.location.replace( destination );
 					} else {
-						return navigate( STEPS.ERROR.slug, {
-							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
-						} );
+						// Replaced so Back skips processing. Pushed, Back re-runs the pending action,
+						// which fails again and pushes the error step again.
+						return navigate(
+							STEPS.ERROR.slug,
+							{ errorReason: getProcessingErrorReason( providedDependencies.processingResult ) },
+							true
+						);
 					}
 					return;
 				}
