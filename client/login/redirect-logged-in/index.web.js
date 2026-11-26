@@ -55,15 +55,12 @@ export default function redirectLoggedIn( context, next ) {
 	if ( userLoggedIn ) {
 		const params = context?.querystring ? context.query : context?.state || context?.query || {};
 
-		if ( isConfirmSubscriptionRedirect( params.redirect_to ) ) {
-			const linkEmail =
-				( typeof params.email === 'string' && params.email.trim() ) ||
-				new URL( params.redirect_to ).searchParams.get( 'email' );
-
-			if ( isDifferentEmail( getCurrentUserEmail( state ), linkEmail ) ) {
-				next();
-				return;
-			}
+		if (
+			isConfirmSubscriptionRedirect( params.redirect_to ) &&
+			isDifferentEmail( getCurrentUserEmail( state ), params.email )
+		) {
+			next();
+			return;
 		}
 
 		// force full page reload to avoid SSR hydration issues.
