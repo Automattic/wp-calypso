@@ -2,12 +2,11 @@ import { updateSiteRedirectMutation, userPurchasesQuery } from '@automattic/api-
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAppContext } from '../../../../app/context';
 import { purchaseSettingsRoute } from '../../../../app/router/me';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../../components/card';
 import SiteRedirectForm, { SiteRedirectFormData } from '../site-redirect-form';
 
@@ -18,9 +17,11 @@ interface ManageSiteRedirectProps {
 
 export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageSiteRedirectProps ) {
 	const { supports } = useAppContext();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: updateSiteRedirect, isPending } = useMutation(
-		updateSiteRedirectMutation( siteId )
+		withSnackbar( updateSiteRedirectMutation( siteId ), {
+			success: __( 'Site redirect updated successfully.' ),
+			error: __( 'Failed to update site redirect.' ),
+		} )
 	);
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const purchase = purchases?.find(
@@ -28,18 +29,7 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 	);
 
 	const handleSubmit = ( formData: SiteRedirectFormData ) => {
-		updateSiteRedirect( formData.redirect ?? '', {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Site redirect updated successfully.' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to update site redirect.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		updateSiteRedirect( formData.redirect ?? '' );
 	};
 
 	return (

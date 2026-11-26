@@ -2,12 +2,11 @@ import { siteOwnerTransferConfirmMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { ExternalLink, Spinner } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import Notice from '../../../../components/notice';
 import { wpcomLink } from '../../../../utils/link';
 import type { Site, SiteOwnerTransferConfirmation } from '@automattic/api-core';
@@ -21,8 +20,20 @@ export function InvitationEmailSent( {
 } ) {
 	const [ newOwnerEmail, setNewOwnerEmail ] = useState( '' );
 	const [ error, setError ] = useState( '' );
-	const mutation = useMutation( siteOwnerTransferConfirmMutation( site.ID ) );
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	const mutation = useMutation(
+		withSnackbar( siteOwnerTransferConfirmMutation( site.ID ), {
+			success: ( { transfer, new_owner_email } ) =>
+				transfer
+					? sprintf(
+							/* translators: %(newOwnerEmail)s - the new owner's email */
+							__( 'The site has been successfully transferred to %(newOwnerEmail)s.' ),
+							{
+								newOwnerEmail: new_owner_email,
+							}
+						)
+					: undefined,
+		} )
+	);
 	const router = useRouter();
 
 	// The page is accessed via the confirmation email, so this is the only place where the request can be triggered.
@@ -35,16 +46,6 @@ export function InvitationEmailSent( {
 			{
 				onSuccess: ( { transfer, new_owner_email }: SiteOwnerTransferConfirmation ) => {
 					if ( transfer ) {
-						createSuccessNotice(
-							sprintf(
-								/* translators: %(newOwnerEmail)s - the new owner's email */
-								__( 'The site has been successfully transferred to %(newOwnerEmail)s.' ),
-								{
-									newOwnerEmail: new_owner_email,
-								}
-							),
-							{ type: 'snackbar' }
-						);
 						router.navigate( { to: '/sites', replace: true } );
 						return;
 					}

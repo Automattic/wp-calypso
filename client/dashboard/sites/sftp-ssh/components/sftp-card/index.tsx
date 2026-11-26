@@ -52,14 +52,20 @@ export default function SftpCard( {
 	sshState?: SftpCardSshState;
 } ) {
 	const { username = '', password = '' } = sftpUsers[ 0 ] ?? {};
-	const mutation = useMutation( siteSftpUsersResetPasswordMutation( siteId ) );
+	const mutation = useMutation(
+		withSnackbar( siteSftpUsersResetPasswordMutation( siteId ), {
+			error: __(
+				'Sorry, we had a problem retrieving your SFTP user details. Please refresh the page and try again.'
+			),
+		} )
+	);
 	const deleteMutation = useMutation(
 		withSnackbar( siteSftpUsersDeleteMutation( siteId ), {
 			success: __( 'SFTP/SSH credentials deleted.' ),
 			error: __( 'Failed to delete SFTP/SSH credentials. Please refresh the page and try again.' ),
 		} )
 	);
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ showResetPasswordConfirmDialog, setShowResetPasswordConfirmDialog ] = useState( false );
 	const [ showDeleteConfirmDialog, setShowDeleteConfirmDialog ] = useState( false );
 	const [ isResetPasswordRateLimited, setIsResetPasswordRateLimited ] = useState( false );
@@ -155,14 +161,6 @@ export default function SftpCard( {
 		mutation.mutate( username, {
 			onError: () => {
 				setIsResetPasswordRateLimited( false );
-				createErrorNotice(
-					__(
-						'Sorry, we had a problem retrieving your SFTP user details. Please refresh the page and try again.'
-					),
-					{
-						type: 'snackbar',
-					}
-				);
 			},
 		} );
 

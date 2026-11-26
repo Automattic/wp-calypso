@@ -2,12 +2,11 @@ import { deleteSiteMigrationPendingStatusQuery } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Modal } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import { Text } from '../../../../components/text';
 import { wpcomLink } from '../../../../utils/link';
@@ -26,8 +25,11 @@ const getContinueMigrationUrl = ( site: Site ) =>
 function CancellationModal( { site, onClose }: { site: Site; onClose: () => void } ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
-	const { createErrorNotice } = useDispatch( noticesStore );
-	const mutation = useMutation( deleteSiteMigrationPendingStatusQuery( site.ID ) );
+	const mutation = useMutation(
+		withSnackbar( deleteSiteMigrationPendingStatusQuery( site.ID ), {
+			error: { source: 'server' },
+		} )
+	);
 
 	const handleConfirmCancel = () => {
 		recordTracksEvent( 'calypso_dashboard_migration_in_progress_cancellation_modal_confirm_click' );
@@ -36,9 +38,8 @@ function CancellationModal( { site, onClose }: { site: Site; onClose: () => void
 				recordTracksEvent( 'calypso_dashboard_migration_in_progress_cancellation_modal_success' );
 				navigate( { to: '/sites/$siteSlug', params: { siteSlug: site.slug } } );
 			},
-			onError: ( error: Error ) => {
+			onError: () => {
 				recordTracksEvent( 'calypso_dashboard_migration_in_progress_cancellation_modal_failure' );
-				createErrorNotice( error.message, { type: 'snackbar' } );
 			},
 		} );
 	};

@@ -5,10 +5,9 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import type { Site } from '@automattic/api-core';
@@ -19,32 +18,29 @@ interface SiteRestoreContentInfoProps {
 }
 
 export default function SiteRestoreContentInfo( { site, onClose }: SiteRestoreContentInfoProps ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const mutation = useMutation( siteRestoreMutation( site.ID ) );
 	const siteSlug = getSiteDisplayUrl( site );
+	const mutation = useMutation(
+		withSnackbar( siteRestoreMutation( site.ID ), {
+			success: sprintf(
+				/* translators: %s: site domain */
+				__( '%s has been restored.' ),
+				siteSlug
+			),
+			error: ( error: Error & { status?: number } ) =>
+				error.status === 403
+					? __( 'Only an administrator can restore a deleted site.' )
+					: __( 'Failed to restore site' ),
+		} )
+	);
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 
 		mutation.mutate( undefined, {
 			onSuccess: () => {
-				createSuccessNotice(
-					/* translators: %s: site domain */
-					sprintf( __( '%s has been restored.' ), siteSlug ),
-					{ type: 'snackbar' }
-				);
-
 				onClose();
 			},
-			onError: ( error: Error & { status?: number } ) => {
-				if ( error.status === 403 ) {
-					createErrorNotice( __( 'Only an administrator can restore a deleted site.' ), {
-						type: 'snackbar',
-					} );
-				} else {
-					createErrorNotice( __( 'Failed to restore site' ), { type: 'snackbar' } );
-				}
-
+			onError: () => {
 				onClose();
 			},
 		} );
