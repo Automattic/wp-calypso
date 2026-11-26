@@ -1,5 +1,5 @@
 import { DotcomFeatures } from '@automattic/api-core';
-import { PerformanceCallout } from 'calypso/dashboard/sites/performance/performance-callout';
+import { PerformanceCallout } from 'calypso/dashboard/sites/performance/components/performance-callout';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
 import { getRouteFromContext } from 'calypso/utils';

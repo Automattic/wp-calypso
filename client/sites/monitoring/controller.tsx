@@ -1,5 +1,5 @@
 import { DotcomFeatures } from '@automattic/api-core';
-import { MonitoringCallout } from 'calypso/dashboard/sites/monitoring/monitoring-callout';
+import { MonitoringCallout } from 'calypso/dashboard/sites/monitoring/components/monitoring-callout';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { hostingFeaturesCallout } from 'calypso/sites/hosting/controller';
 import { SiteMonitoring } from './components/site-monitoring';
