@@ -524,8 +524,7 @@ object RunAllUnitTests : BuildType({
 				}
 
 				# Hardened mode fails on, or rewrites, yarn.lock entries whose version or dependencies the
-				# registry wouldn't give. It can't run with `--immutable`, so a rewrite fails
-				# prevent_uncommitted_changes instead.
+				# registry wouldn't give. It can't run with `--immutable`, so a rewrite shows up as a diff.
 				function prevent_unverified_resolutions {
 					# Hardened mode ignores an npm entry's `::__archiveUrl=` (plain or URL-encoded), which can
 					# point at any tarball, so allow no parameters except a patch entry's own.
@@ -545,7 +544,7 @@ object RunAllUnitTests : BuildType({
 						process.exit( bad.length ? 1 : 0 );
 					'; then
 						echo "yarn.lock has resolutions with parameters the registry check can't verify, listed above."
-						echo "Regenerate the affected entries with 'yarn' instead of editing yarn.lock by hand."
+						echo "Delete those entries from yarn.lock, run 'yarn' to regenerate them, and commit the result."
 						return 1
 					fi
 
@@ -563,11 +562,19 @@ object RunAllUnitTests : BuildType({
 						echo ""
 						echo "${'$'}RESOLUTION_ERRORS"
 						echo ""
-						echo "Regenerate the affected entries with 'yarn' instead of editing yarn.lock by hand."
+						echo "Delete the affected entries from yarn.lock, run 'yarn' to regenerate them, and commit the result."
 						return 1
-					else
-						echo "yarn.lock resolutions match the registry."
 					fi
+
+					# Plain `yarn` keeps locked entries as they are, so point at the command that rewrites them.
+					if ! git diff --quiet -- yarn.lock; then
+						echo "yarn.lock has entries whose dependencies differ from the registry's: "
+						git --no-pager diff -- yarn.lock
+						echo "Run 'YARN_ENABLE_HARDENED_MODE=1 yarn install --mode=update-lockfile' and commit the result."
+						return 1
+					fi
+
+					echo "yarn.lock resolutions match the registry."
 				}
 
 				status=0
