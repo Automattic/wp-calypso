@@ -8,12 +8,11 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { useIntlLocale } from '../../../../app/locale';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ActionList } from '../../../../components/action-list';
 import ConfirmModal from '../../../../components/confirm-modal';
 import { SectionHeader } from '../../../../components/section-header';
@@ -84,28 +83,24 @@ export default function ApplicationPasswords() {
 	const { data: applicationPasswords } = useQuery( twoStepAuthApplicationPasswordsQuery() );
 
 	const { mutate: deleteApplicationPassword, isPending: isDeletingApplicationPassword } =
-		useMutation( deleteTwoStepAuthApplicationPasswordMutation() );
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+		useMutation(
+			withSnackbar( deleteTwoStepAuthApplicationPasswordMutation(), {
+				success: ( _data, passwordId ) => {
+					const password = applicationPasswords?.find( ( { ID } ) => ID === passwordId );
+					return (
+						password &&
+						/* translators: %s is the application name */
+						sprintf( __( 'Application password "%s" removed.' ), password.name )
+					);
+				},
+				error: __( 'Failed to remove application password.' ),
+			} )
+		);
 
 	const handleRemove = () => {
 		if ( selectedKeyToRemove ) {
 			recordTracksEvent( 'calypso_dashboard_security_application_passwords_remove_password_click' );
 			deleteApplicationPassword( selectedKeyToRemove.ID, {
-				onSuccess: () => {
-					createSuccessNotice(
-						/* translators: %s is the application name */
-						sprintf( __( 'Application password "%s" removed.' ), selectedKeyToRemove.name ),
-						{
-							type: 'snackbar',
-						}
-					);
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to remove application password.' ), {
-						type: 'snackbar',
-					} );
-				},
 				onSettled: () => {
 					setSelectedKeyToRemove( null );
 				},

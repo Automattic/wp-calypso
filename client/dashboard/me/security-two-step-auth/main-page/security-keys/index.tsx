@@ -9,10 +9,8 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
@@ -108,7 +106,6 @@ const SecurityKeysList = ( {
 
 export default function SecurityKeys() {
 	const { recordTracksEvent } = useAnalytics();
-	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const [ isAddKeyModalOpen, setIsAddKeyModalOpen ] = useState( false );
 	const [ selectedKeyToRemove, setSelectedKeyToRemove ] =
@@ -121,6 +118,7 @@ export default function SecurityKeys() {
 	const { mutate: deleteSecurityKey, isPending: isDeletingSecurityKey } = useMutation(
 		withSnackbar( deleteTwoStepAuthSecurityKeyMutation(), {
 			success: __( 'Security key deleted.' ),
+			error: { source: 'server' },
 		} )
 	);
 
@@ -134,13 +132,6 @@ export default function SecurityKeys() {
 			deleteSecurityKey(
 				{ credential_id: selectedKeyToRemove.id },
 				{
-					onError: ( error ) => {
-						let errorMessage: string = __( 'Failed to delete security key.' );
-						if ( error instanceof Error ) {
-							errorMessage = error.message;
-						}
-						createErrorNotice( errorMessage, { type: 'snackbar' } );
-					},
 					onSettled: () => {
 						setSelectedKeyToRemove( null );
 					},

@@ -74,7 +74,7 @@ describe( '<EmailVerificationBanner>', () => {
 	test( 'confirms a pending resend that finishes after the banner has gone', async () => {
 		const user = userEvent.setup();
 
-		const { unmount } = render(
+		const { unmount, queryClient: client } = render(
 			<>
 				<EmailVerificationBanner userSettings={ pendingSettings } isEmailVerified />
 				<Snackbars />
@@ -99,7 +99,8 @@ describe( '<EmailVerificationBanner>', () => {
 		unmount();
 		deliverReply!();
 
-		render( <Snackbars /> );
+		// The app keeps one client for its whole life, so the request outlives the banner there.
+		render( <Snackbars />, { queryClient: client } );
 		await waitFor( () =>
 			expect( notificationSnackBar() ).toHaveTextContent( 'pending@example.com' )
 		);

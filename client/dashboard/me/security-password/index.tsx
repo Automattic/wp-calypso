@@ -3,13 +3,12 @@ import { userSettingsMutation } from '@automattic/api-queries';
 import { generatePassword } from '@automattic/generate-password';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
@@ -50,8 +49,9 @@ const form: Form = {
 export default function SecurityPassword() {
 	const { recordTracksEvent } = useAnalytics();
 
-	const mutation = useMutation( userSettingsMutation() );
-	const { createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), { error: { source: 'server' } } )
+	);
 	const [ isReloading, setIsReloading ] = useState( false );
 
 	const [ formData, setFormData, debouncedFormData ] =
@@ -75,11 +75,6 @@ export default function SecurityPassword() {
 				onSuccess: () => {
 					setIsReloading( true );
 					reloadWithFlashMessage( 'password' );
-				},
-				onError: ( error: Error ) => {
-					createErrorNotice( error.message || __( 'Failed to save password.' ), {
-						type: 'snackbar',
-					} );
 				},
 			}
 		);

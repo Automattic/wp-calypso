@@ -1,10 +1,9 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../../components/card';
 import { SectionHeader } from '../../../../components/section-header';
 
@@ -15,36 +14,24 @@ export default function EnhancedSecurity() {
 
 	const { two_step_enhanced_security_forced, two_step_enhanced_security } = userSettings;
 
-	const { mutate: updateUserSettings, isPending: isUpdatingUserSettings } =
-		useMutation( userSettingsMutation() );
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: updateUserSettings, isPending: isUpdatingUserSettings } = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: ( _data, { two_step_enhanced_security: isEnabled } ) =>
+				isEnabled
+					? __( 'Enhanced account security enabled.' )
+					: __( 'Enhanced account security disabled.' ),
+			error: ( _error, { two_step_enhanced_security: isEnabled } ) =>
+				isEnabled
+					? __( 'Failed to enable enhanced account security.' )
+					: __( 'Failed to disable enhanced account security.' ),
+		} )
+	);
 
 	const handleChange = ( isEnabled: boolean ) => {
 		recordTracksEvent( 'calypso_dashboard_security_enhanced_security_change_click', {
 			two_step_enhanced_security: isEnabled,
 		} );
-		updateUserSettings(
-			{ two_step_enhanced_security: isEnabled },
-			{
-				onSuccess: () => {
-					createSuccessNotice(
-						isEnabled
-							? __( 'Enhanced account security enabled.' )
-							: __( 'Enhanced account security disabled.' ),
-						{ type: 'snackbar' }
-					);
-				},
-				onError: () => {
-					createErrorNotice(
-						isEnabled
-							? __( 'Failed to enable enhanced account security.' )
-							: __( 'Failed to disable enhanced account security.' ),
-						{ type: 'snackbar' }
-					);
-				},
-			}
-		);
+		updateUserSettings( { two_step_enhanced_security: isEnabled } );
 	};
 
 	return (

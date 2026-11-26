@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { wpcomLink } from '../../utils/link';
 import type { SocialLoginButtonProps } from './types';
 
@@ -25,7 +26,11 @@ export default function GoogleLogin( {
 
 	const { createErrorNotice } = useDispatch( noticesStore );
 
-	const { mutate: postLoginRequest } = useMutation( postLoginRequestMutation() );
+	const { mutate: postLoginRequest } = useMutation(
+		withSnackbar( postLoginRequestMutation(), {
+			error: __( 'Something went wrong when trying to connect with Google. Please try again.' ),
+		} )
+	);
 
 	const [ showLoading, setShowLoading ] = useState( false );
 
@@ -72,14 +77,6 @@ export default function GoogleLogin( {
 				onSuccess: ( response ) => {
 					const { access_token, id_token } = response.body.data as ConnectSocialUserArgs;
 					responseHandler( { service: 'google', access_token, id_token } );
-				},
-				onError: () => {
-					createErrorNotice(
-						__( 'Something went wrong when trying to connect with Google. Please try again.' ),
-						{
-							type: 'snackbar',
-						}
-					);
 				},
 				onSettled: () => {
 					setShowLoading( false );
