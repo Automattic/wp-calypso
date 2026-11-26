@@ -26,6 +26,7 @@
 		"ad-tracking": true,
 		"akismet/checkout-quantity-dropdown": true,
 		"bilmur-script": true,
+		"bilmur-spa": true,
 		"blackbox": true,
 		"blackbox-login": true,
 		"blackbox-lost-password": true,
