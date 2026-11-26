@@ -110,11 +110,13 @@ export function useVideoClipSuggestions( {
 			let currentPostId: string | number | null = null;
 			let rawContent = '';
 			try {
-				const editorSelect = storeSelect( 'core/editor' ) as unknown as {
-					getCurrentPostId?: () => string | number | null;
-					getEditedPostContent?: () => string;
-					getEditedPostAttribute?: ( attr: string ) => unknown;
-				};
+				const editorSelect = storeSelect( 'core/editor' ) as
+					| {
+							getCurrentPostId?: () => string | number | null;
+							getEditedPostContent?: () => string;
+							getEditedPostAttribute?: ( attr: string ) => unknown;
+					  }
+					| undefined;
 				currentPostId = editorSelect?.getCurrentPostId?.() ?? null;
 				rawContent = editorSelect?.getEditedPostContent?.() ?? '';
 				if ( ! rawContent ) {
