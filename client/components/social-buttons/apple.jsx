@@ -94,6 +94,11 @@ export class AppleLoginButton extends Component {
 			}
 		}
 
+		// Some blockers serve an empty stand-in, which loads without defining AppleID.
+		if ( ! window.AppleID ) {
+			return null;
+		}
+
 		const nonce = crypto.randomUUID();
 		window.sessionStorage.setItem( 'siwa_state', nonce );
 

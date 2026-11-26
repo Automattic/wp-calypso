@@ -46,6 +46,12 @@ export default function AppleLogin( {
 			}
 		}
 
+		// Some blockers serve an empty stand-in, which loads without defining AppleID.
+		if ( ! windowObj.AppleID ) {
+			setShowLoading( false );
+			return null;
+		}
+
 		const nonce = crypto.randomUUID();
 		windowObj.sessionStorage.setItem( 'siwa_state', nonce );
 
