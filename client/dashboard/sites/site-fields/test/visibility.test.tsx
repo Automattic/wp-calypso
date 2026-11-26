@@ -41,7 +41,7 @@ describe( '<Visibility>', () => {
 		const { container, getByRole } = render(
 			<Visibility site={ site } visibility="private" status={ null } isLaunched={ false } />
 		);
-		expect( container ).toHaveTextContent( 'Finish setup↗' );
+		expect( container ).toHaveTextContent( 'Finish setup' );
 		expect( getByRole( 'link', { name: /Finish setup/ } ) ).toHaveAttribute(
 			'href',
 			wpcomLink( '/home/test.wordpress.com' )

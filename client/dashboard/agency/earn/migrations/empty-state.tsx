@@ -1,6 +1,7 @@
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useCallback } from 'react';
 import EmptyState from '../../../components/empty-state';
 import type { RecordTracksEvent } from './types';
@@ -54,7 +55,8 @@ export default function MigrationsCommissionsEmptyState( {
 													),
 													{
 														a: (
-															<ExternalLink
+															<Link
+																openInNewTab
 																children={ null }
 																href={ a4aPluginUrl }
 																onClick={ () => {

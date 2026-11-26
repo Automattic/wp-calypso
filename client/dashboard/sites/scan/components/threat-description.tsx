@@ -1,7 +1,8 @@
 import { Threat, type Site } from '@automattic/api-core';
-import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../../app/analytics';
 import MarkedLines from '../../../components/marked-lines';
 import { Text } from '../../../components/text';
@@ -119,12 +120,13 @@ export function ThreatDescription( { threat, site }: { threat: Threat; site: Sit
 								),
 								{
 									codeable: (
-										<ExternalLink
+										<Link
+											openInNewTab
 											href={ CODEABLE_JETPACK_SCAN_URL }
 											onClick={ handleCodeableClick }
 										>
 											Codeable
-										</ExternalLink>
+										</Link>
 									),
 								}
 							) }
@@ -148,9 +150,9 @@ export function ThreatDescription( { threat, site }: { threat: Threat; site: Sit
 			{ ! threat.source && <Text variant="muted">{ threat.description }</Text> }
 			{ threat.payload_description && <Text>{ threat.payload_description }</Text> }
 			{ threat.source && (
-				<ExternalLink href={ threat.source }>
+				<Link openInNewTab href={ threat.source }>
 					{ __( 'Learn more about this vulnerability' ) }
-				</ExternalLink>
+				</Link>
 			) }
 			{ ( threat.filename || threat.context || threat.diff || threat.rows ) && (
 				<Text size="medium" weight={ 500 }>

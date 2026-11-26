@@ -1,11 +1,11 @@
 import {
 	Button,
-	ExternalLink,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../../app/analytics';
 import { useHelpCenter } from '../../../app/help-center';
 import { Notice } from '../../../components/notice';
@@ -46,7 +46,8 @@ export default function WooPaymentsDetails() {
 						),
 						{
 							a: (
-								<ExternalLink
+								<Link
+									openInNewTab
 									href={ PROGRAM_INCENTIVES_URL }
 									onClick={ () =>
 										recordTracksEvent(
@@ -55,7 +56,7 @@ export default function WooPaymentsDetails() {
 									}
 								>
 									{ null }
-								</ExternalLink>
+								</Link>
 							),
 						}
 					) }

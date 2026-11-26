@@ -7,7 +7,6 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
 	Button,
-	ExternalLink,
 	Modal,
 	Icon,
 	__experimentalText as Text,
@@ -22,6 +21,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
+import { Link as UILink } from '@wordpress/ui';
 import { useState, useCallback, useMemo } from 'react';
 import useRewindableActivityLogQuery from '../../../../../data/activity-log/use-rewindable-activity-log-query';
 import { SUCCESSFUL_BACKUP_ACTIVITIES } from '../../../../../lib/jetpack/backup-utils';
@@ -406,7 +406,8 @@ function StagingSiteSyncModalInner( {
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
 						a: (
-							<ExternalLink
+							<UILink
+								openInNewTab
 								href={ wpcomLink( `/activity-log/${ targetSiteSlug }` ) }
 								children={ null }
 							/>
@@ -448,7 +449,8 @@ function StagingSiteSyncModalInner( {
 											),
 											{
 												a: (
-													<ExternalLink
+													<UILink
+														openInNewTab
 														href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
 														children={ null }
 													/>
@@ -558,7 +560,8 @@ function StagingSiteSyncModalInner( {
 													),
 													{
 														a: (
-															<ExternalLink
+															<UILink
+																openInNewTab
 																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
 																children={ null }
 															/>

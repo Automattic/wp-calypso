@@ -5,11 +5,11 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	Button,
-	ExternalLink,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState, useEffect } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import InlineSupportLink from '../../../components/inline-support-link';
@@ -72,7 +72,8 @@ export function Login( {
 												{
 													em: <em />,
 													a: (
-														<ExternalLink
+														<Link
+															openInNewTab
 															href="https://wordpress.com/site-profiler"
 															children={ null }
 														/>

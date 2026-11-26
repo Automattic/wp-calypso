@@ -1,7 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import agencyTiersDrawing from './images/tour/agency-tiers.svg';
 import growthCallDrawing from './images/tour/growth-call.svg';
 import marketplaceDrawing from './images/tour/marketplace.svg';
@@ -167,7 +167,7 @@ export function getOnboardingTourSections( links: OnboardingTourLinks ): Onboard
 					__(
 						'Earn recurring revenue share on client store sales when they use WooPayments. <a>Rates vary based on whether the store is new or pre-existing — see details</a>.'
 					),
-					{ a: <ExternalLink href={ WOOPAYMENTS_RATES_URL } children={ null } /> }
+					{ a: <Link openInNewTab href={ WOOPAYMENTS_RATES_URL } children={ null } /> }
 				),
 				__(
 					'We’ve made it easy for you to learn about WooPayments, copy and paste a pitch to send to your clients, and track your earnings from your referrals all in one place.'
@@ -187,19 +187,32 @@ export function getOnboardingTourSections( links: OnboardingTourLinks ): Onboard
 					),
 					{
 						woo: (
-							<ExternalLink
+							<Link
+								openInNewTab
 								href="https://woocommerce.com/development-services/"
 								children={ null }
 							/>
 						),
 						pressable: (
-							<ExternalLink href="https://pressable.com/development-services/" children={ null } />
+							<Link
+								openInNewTab
+								href="https://pressable.com/development-services/"
+								children={ null }
+							/>
 						),
 						wpcom: (
-							<ExternalLink href="https://wordpress.com/development-services/" children={ null } />
+							<Link
+								openInNewTab
+								href="https://wordpress.com/development-services/"
+								children={ null }
+							/>
 						),
 						jetpack: (
-							<ExternalLink href="https://jetpack.com/development-services/" children={ null } />
+							<Link
+								openInNewTab
+								href="https://jetpack.com/development-services/"
+								children={ null }
+							/>
 						),
 					}
 				),

@@ -1,8 +1,9 @@
 import { Domain } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
-import { ExternalLink, Notice } from '@wordpress/components';
+import { Notice } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { addQueryArgs } from '@wordpress/url';
 import { wpcomLink } from '../../utils/link';
 
@@ -29,8 +30,8 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerNoticeProps
 
 	const selectedDomainName = domain?.domain ?? '';
 	const elements = {
-		contactSupportLink: <ExternalLink href={ SUPPORT_CONTACT_URL } children={ null } />,
-		loginLink: <ExternalLink href={ loginUrl } children={ null } />,
+		contactSupportLink: <Link openInNewTab href={ SUPPORT_CONTACT_URL } children={ null } />,
+		loginLink: <Link openInNewTab href={ loginUrl } children={ null } />,
 		reachOutLink: isPrivacyAvailable ? (
 			<a href={ contactOwnerUrl } rel="noopener noreferrer" target="_blank" />
 		) : (

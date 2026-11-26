@@ -5,7 +5,6 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
-	ExternalLink,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Icon,
@@ -13,6 +12,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../../../app/analytics';
 import { useAppContext } from '../../../../app/context';
 import { useLocale } from '../../../../app/locale';
@@ -97,12 +97,13 @@ function SeeAllPurchasesLink( { site }: { site: Site } ) {
 
 	if ( ! hasBillingRoutes ) {
 		return (
-			<ExternalLink
+			<Link
+				openInNewTab
 				href={ wpcomLink( `/purchases/subscriptions/${ site.slug }` ) }
 				onClick={ handleClick }
 			>
 				{ __( 'See all purchases' ) }
-			</ExternalLink>
+			</Link>
 		);
 	}
 

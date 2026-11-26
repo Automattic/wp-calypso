@@ -1,13 +1,14 @@
 import { blockedSitesInfiniteQuery, unblockSiteMutation } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useInfiniteQuery } from '@tanstack/react-query';
-import { ExternalLink, Icon } from '@wordpress/components';
+import { Icon } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { DataViewsCard } from '../../components/dataviews';
@@ -50,9 +51,9 @@ const fields: Field< BlockedSite >[] = [
 		id: 'URL',
 		getValue: ( { item } ) => item.URL,
 		render: ( { item } ) => (
-			<ExternalLink className="dataviews-url-field" href={ item.URL }>
+			<Link openInNewTab className="dataviews-url-field" href={ item.URL }>
 				{ getHostname( item.URL ) }
-			</ExternalLink>
+			</Link>
 		),
 	},
 ];

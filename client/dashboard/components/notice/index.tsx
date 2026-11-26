@@ -20,7 +20,7 @@ import './style.scss';
  *
  * ```jsx
  * import { Notice, NoticeActionButton } from 'calypso/dashboard/components/notice';
- * import { ExternalLink } from '@wordpress/components';
+ * import { Link } from '@wordpress/ui';
  *
  * function MyComponent() {
  * 	return (
@@ -28,7 +28,7 @@ import './style.scss';
  * 			title="Title"
  * 			actions={ <NoticeActionButton variant="solid">Label</NoticeActionButton> }
  * 		>
- * 			<>Hello, I’m a notice with an inline <ExternalLink href="#">link</ExternalLink></>
+ * 			<>Hello, I’m a notice with an inline <Link openInNewTab href="#">link</Link></>
  * 		</Notice>
  * 	);
  * }

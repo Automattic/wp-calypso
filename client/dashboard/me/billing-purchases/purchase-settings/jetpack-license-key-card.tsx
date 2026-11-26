@@ -1,8 +1,8 @@
 import { jetpackUserLicenseQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { key } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import OverviewCard from '../../../components/overview-card';
 
@@ -36,9 +36,12 @@ export default function JetpackLicenseKeyCard( { purchaseId }: JetpackLicenseKey
 				/>
 			}
 			description={
-				<ExternalLink href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/">
+				<Link
+					openInNewTab
+					href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
+				>
 					{ __( 'How to activate' ) }
-				</ExternalLink>
+				</Link>
 			}
 			isLoading={ isLoading }
 		/>

@@ -11,7 +11,6 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 	Modal,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -19,6 +18,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -148,7 +148,8 @@ export default function TransferDomainToOtherUser() {
 					),
 					{
 						domainRegistrationAgreement: (
-							<ExternalLink
+							<Link
+								openInNewTab
 								href="https://wordpress.com/automattic-domain-name-registration-agreement/"
 								children={ null }
 							/>

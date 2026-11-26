@@ -6,10 +6,10 @@ import {
 	Modal,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	ExternalLink,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
@@ -156,7 +156,9 @@ export default function SelectIpsTag( { domain, isDomainLocked }: SelectIpsTagPr
 					{ registrarUrl && (
 						<>
 							{ ' ' }
-							<ExternalLink href={ registrarUrl }>{ __( 'Open' ) }</ExternalLink>
+							<Link openInNewTab href={ registrarUrl }>
+								{ __( 'Open' ) }
+							</Link>
 						</>
 					) }
 				</Text>

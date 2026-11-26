@@ -1,6 +1,5 @@
 import { Domain, DomainConnectionSetupMode } from '@automattic/api-core';
 import {
-	ExternalLink,
 	Icon,
 	Button,
 	__experimentalText as Text,
@@ -10,7 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { layout, swatch, atSymbol, published } from '@wordpress/icons';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useAppContext } from '../../app/context';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
@@ -90,7 +89,9 @@ export default function DomainConnectionVerification( {
 											domainName: <>{ domainName }</>,
 											appName: <>{ appName }</>,
 											cloudflare: (
-												<ExternalLink href="https://www.cloudflare.com/">Cloudflare</ExternalLink>
+												<Link openInNewTab href="https://www.cloudflare.com/">
+													Cloudflare
+												</Link>
 											),
 										}
 									)

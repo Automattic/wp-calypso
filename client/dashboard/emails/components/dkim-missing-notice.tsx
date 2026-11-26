@@ -1,8 +1,9 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { ADDING_TITAN_TO_YOUR_SITE } from '@automattic/urls';
-import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { Notice, NoticeActionButton } from '../../components/notice';
 import { Text } from '../../components/text';
@@ -77,7 +78,9 @@ const DkimMissingNotice = ( {
 			<VStack spacing={ 3 }>
 				<Text as="p">
 					{ createInterpolateElement( description, {
-						learnMoreLink: <ExternalLink href={ ADDING_TITAN_TO_YOUR_SITE } children={ null } />,
+						learnMoreLink: (
+							<Link openInNewTab href={ ADDING_TITAN_TO_YOUR_SITE } children={ null } />
+						),
 					} ) }
 				</Text>
 				{ showTryLater && (

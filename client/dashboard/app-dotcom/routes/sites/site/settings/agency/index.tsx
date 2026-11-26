@@ -1,14 +1,10 @@
 import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	Button,
-	CheckboxControl,
-	ExternalLink,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import Breadcrumbs from '../../../../../../app/breadcrumbs';
 import { NavigationBlocker } from '../../../../../../app/navigation-blocker';
@@ -127,14 +123,18 @@ export default function SettingsAgency( { siteSlug }: { siteSlug: string } ) {
 						),
 						{
 							helpCenterLink: (
-								// @ts-expect-error children prop is injected by createInterpolateElement
-								// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-								<ExternalLink href="https://wordpress.com/support/help-support-options/#how-to-contact-us" />
+								<Link
+									openInNewTab
+									// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
+									href="https://wordpress.com/support/help-support-options/#how-to-contact-us"
+								/>
 							),
 							hostingFeaturesLink: (
-								// @ts-expect-error children prop is injected by createInterpolateElement
 								// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
-								<ExternalLink href="https://developer.wordpress.com/docs/developer-tools/web-server-settings/" />
+								<Link
+									openInNewTab
+									href="https://developer.wordpress.com/docs/developer-tools/web-server-settings/"
+								/>
 							),
 						}
 					) }

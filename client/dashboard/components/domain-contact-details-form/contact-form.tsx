@@ -2,7 +2,6 @@ import { type DomainContactDetails, DomainContactValidationResponse } from '@aut
 import { countryListQuery, statesListQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
-	ExternalLink,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
@@ -11,6 +10,7 @@ import { debounce } from '@wordpress/compose';
 import { DataForm, Field, useFormValidity, FormField } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ButtonStack } from '../button-stack';
 import { Card, CardBody } from '../card';
@@ -304,9 +304,12 @@ export default function ContactForm( {
 									{
 										strong: <strong />,
 										agreementlink: (
-											<ExternalLink href="https://wordpress.com/automattic-domain-name-registration-agreement/">
+											<Link
+												openInNewTab
+												href="https://wordpress.com/automattic-domain-name-registration-agreement/"
+											>
 												{ __( 'Domain Registration Agreement' ) }
-											</ExternalLink>
+											</Link>
 										),
 										agentlink: <InlineSupportLink supportContext="domain-designated-agent" />,
 									}

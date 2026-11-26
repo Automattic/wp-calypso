@@ -2,11 +2,11 @@ import { WPCOM_DIFM_LITE } from '@automattic/api-core';
 import { productsQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
-import { Button, ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, published } from '@wordpress/icons';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import ComponentViewTracker from '../component-view-tracker';
 import { Text } from '../text';
 
@@ -98,9 +98,9 @@ export function OfferStep( {
 				</ul>
 			</VStack>
 			<div className="difm-offer-modal__footer">
-				<ExternalLink href={ DIFM_OFFER_FAQ_URL } onClick={ onHowItWorksClick }>
+				<Link openInNewTab href={ DIFM_OFFER_FAQ_URL } onClick={ onHowItWorksClick }>
 					{ __( 'How it works' ) }
-				</ExternalLink>
+				</Link>
 				<Button variant="primary" __next40pxDefaultSize onClick={ onContinue }>
 					{ __( 'Tell us about your site' ) }
 				</Button>

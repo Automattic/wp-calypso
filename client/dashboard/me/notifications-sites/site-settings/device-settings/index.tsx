@@ -11,12 +11,12 @@ import {
 	SelectControl,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
-	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
 import { useAnalytics } from '../../../../app/analytics';
@@ -182,7 +182,8 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 						),
 						{
 							link: (
-								<ExternalLink
+								<Link
+									openInNewTab
 									href={ localizeUrl( 'https://apps.wordpress.com/mobile' ) }
 									children={ null }
 								/>

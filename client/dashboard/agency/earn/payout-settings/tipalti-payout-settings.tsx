@@ -1,6 +1,7 @@
-import { __experimentalVStack as VStack, ExternalLink, Spinner } from '@wordpress/components';
+import { __experimentalVStack as VStack, Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useEffect, useState } from 'react';
 import { Text } from '../../../components/text';
 
@@ -52,7 +53,7 @@ export function TipaltiPayoutSettings( {
 						'Enter your bank details to start receiving payments through <a>Tipalti</a>, our secure payments platform.'
 					),
 					{
-						a: <ExternalLink href="https://tipalti.com/" children={ null } />,
+						a: <Link openInNewTab href="https://tipalti.com/" children={ null } />,
 					}
 				) }
 			</Text>

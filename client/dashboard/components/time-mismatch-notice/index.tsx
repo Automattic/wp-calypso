@@ -1,8 +1,8 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../app/analytics';
 import Notice from '../notice';
 
@@ -69,7 +69,8 @@ export const TimeMismatchNotice = ( {
 		),
 		{
 			settingsLink: (
-				<ExternalLink
+				<Link
+					openInNewTab
 					href={ settingsUrl || '#' }
 					onClick={ () =>
 						recordTracksEvent( 'calypso_dashboard_time_mismatch_banner_settings_link_click', {

@@ -1,7 +1,7 @@
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { Card, CardBody, CardHeader } from '../../../components/card';
 import { Notice } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
@@ -69,7 +69,7 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 						{ author: plugin.author }
 					),
 					{
-						link: <ExternalLink href={ plugin.authorUrl } children={ null } />,
+						link: <Link openInNewTab href={ plugin.authorUrl } children={ null } />,
 					}
 				)
 			: sprintf(

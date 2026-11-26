@@ -3,14 +3,13 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 	Popover,
 	Tooltip,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { useLocale } from '../../../../app/locale';
 import RouterLinkButton from '../../../../components/router-link-button';
@@ -68,9 +67,9 @@ function CancellationInfo( { expiry }: { expiry?: string } ) {
 							) }
 						</Text>
 						<Text>
-							<ExternalLink href={ localizeUrl( CANCELLATION_SUPPORT_URL ) }>
+							<Link openInNewTab href={ localizeUrl( CANCELLATION_SUPPORT_URL ) }>
 								{ __( 'Learn more about cancelations' ) }
-							</ExternalLink>
+							</Link>
 						</Text>
 					</VStack>
 				</Popover>
@@ -90,9 +89,9 @@ export default function PurchaseSiteDetails( {
 
 	if ( licenseKey.startsWith( 'pressable-' ) ) {
 		return (
-			<ExternalLink { ...crossoverLinkProps( 'pressable' ) }>
+			<Link openInNewTab { ...crossoverLinkProps( 'pressable' ) }>
 				{ __( 'Manage in Pressable' ) }
-			</ExternalLink>
+			</Link>
 		);
 	}
 

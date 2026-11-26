@@ -8,12 +8,12 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronUp, published } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -444,6 +444,5 @@ function withDomain( text: string, sourceHost: string, elements?: Record< string
 }
 
 function linkTo( url?: string ) {
-	// @ts-expect-error children prop is injected by createInterpolateElement
-	return <ExternalLink href={ url ?? '' } />;
+	return <Link openInNewTab href={ url ?? '' } />;
 }

@@ -1,12 +1,13 @@
 import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
+import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
@@ -84,7 +85,8 @@ export default function UsageInformationCard() {
 										),
 										{
 											privacyLink: (
-												<ExternalLink
+												<Link
+													openInNewTab
 													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 													href="https://automattic.com/privacy/"
 													children={ null }
@@ -100,7 +102,8 @@ export default function UsageInformationCard() {
 										),
 										{
 											cookiesLink: (
-												<ExternalLink
+												<Link
+													openInNewTab
 													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 													href="https://automattic.com/cookies/"
 													children={ null }
@@ -116,7 +119,8 @@ export default function UsageInformationCard() {
 										),
 										{
 											jetpackPrivacyLink: (
-												<ExternalLink
+												<Link
+													openInNewTab
 													href={ localizeUrl( 'https://jetpack.com/support/privacy/' ) }
 													children={ null }
 												/>

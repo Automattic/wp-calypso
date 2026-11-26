@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router';
-import { ExternalLink, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link as UILink } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
 import { titleFieldTextOverflowStyles } from '../../../sites/site-fields';
 import { useIsSiteUnreachable } from '../../../sites/site-fields/site-unreachable-status';
@@ -90,13 +90,14 @@ export function getSiteUrlField(): Field< AgencySite > {
 		enableGlobalSearch: true,
 		getValue: ( { item } ) => getDisplayUrl( item ),
 		render: ( { item } ) => (
-			<ExternalLink
+			<UILink
+				openInNewTab
 				className="dataviews-url-field"
 				style={ titleFieldTextOverflowStyles }
 				href={ getSiteUrl( item ) }
 			>
 				{ getDisplayUrl( item ) }
-			</ExternalLink>
+			</UILink>
 		),
 	};
 }

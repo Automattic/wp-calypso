@@ -1,7 +1,7 @@
 import { wowFunnelPendingQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { addQueryArgs } from '@wordpress/url';
 import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
@@ -153,7 +153,8 @@ export function PlanPreview( { site }: { site: Site } ) {
 
 	return (
 		<Text>
-			<ExternalLink
+			<Link
+				openInNewTab
 				href={ getPreviewLaunchUrl( site ) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_dashboard_sites_plan_preview_click', {
@@ -162,7 +163,7 @@ export function PlanPreview( { site }: { site: Site } ) {
 				}
 			>
 				{ __( 'Choose a plan' ) }
-			</ExternalLink>
+			</Link>
 		</Text>
 	);
 }
@@ -172,7 +173,8 @@ export function PlanAwaitingCheckout( { pending }: { pending: WowFunnelPendingSi
 
 	return (
 		<Text>
-			<ExternalLink
+			<Link
+				openInNewTab
 				href={ getFinishSetupUrl( pending ) }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_dashboard_sites_plan_finish_setup_click', {
@@ -182,7 +184,7 @@ export function PlanAwaitingCheckout( { pending }: { pending: WowFunnelPendingSi
 				}
 			>
 				{ __( 'Finish setup' ) }
-			</ExternalLink>
+			</Link>
 		</Text>
 	);
 }

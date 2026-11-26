@@ -6,9 +6,10 @@ import {
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useEffect, useMemo, useState } from 'react';
 import Notice from '../../components/notice';
 import { wpcomLink } from '../../utils/link';
@@ -196,9 +197,9 @@ export default function ProvisioningSiteNotices() {
 										),
 										{
 											address: (
-												<ExternalLink href={ overviewUrl }>
+												<Link openInNewTab href={ overviewUrl }>
 													{ getSiteSlug( site.url ) }
-												</ExternalLink>
+												</Link>
 											),
 										}
 									)

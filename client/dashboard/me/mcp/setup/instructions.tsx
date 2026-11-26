@@ -1,7 +1,6 @@
 import { speak } from '@wordpress/a11y';
 import {
 	Button,
-	ExternalLink,
 	TextareaControl,
 	SelectControl,
 	__experimentalVStack as VStack,
@@ -11,6 +10,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { copy, check } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
@@ -125,9 +125,9 @@ export default function McpSetupInstructions() {
 												__( 'Open the <ClaudeConnector/> page in Claude.' ),
 												{
 													ClaudeConnector: (
-														<ExternalLink href={ CLAUDE_CONNECTOR_URL }>
+														<Link openInNewTab href={ CLAUDE_CONNECTOR_URL }>
 															{ __( 'WordPress.com connector' ) }
-														</ExternalLink>
+														</Link>
 													),
 												}
 											) }
@@ -198,9 +198,9 @@ export default function McpSetupInstructions() {
 												__( 'Open the <ChatGptPlugin/> page in ChatGPT.' ),
 												{
 													ChatGptPlugin: (
-														<ExternalLink href={ CHATGPT_PLUGIN_URL }>
+														<Link openInNewTab href={ CHATGPT_PLUGIN_URL }>
 															{ __( 'WordPress plugin' ) }
-														</ExternalLink>
+														</Link>
 													),
 												}
 											) }
@@ -224,9 +224,9 @@ export default function McpSetupInstructions() {
 													__( 'Open the <CursorPlugin/> page on the Cursor Marketplace.' ),
 													{
 														CursorPlugin: (
-															<ExternalLink href={ CURSOR_PLUGIN_URL }>
+															<Link openInNewTab href={ CURSOR_PLUGIN_URL }>
 																{ __( 'WordPress plugin' ) }
-															</ExternalLink>
+															</Link>
 														),
 													}
 												) }
@@ -282,9 +282,9 @@ export default function McpSetupInstructions() {
 								onChange={ () => {} }
 								readOnly
 							/>
-							<ExternalLink href={ CLIENT_DOCUMENTATION[ selectedMcpClient ] }>
+							<Link openInNewTab href={ CLIENT_DOCUMENTATION[ selectedMcpClient ] }>
 								{ clientDocumentationLabels[ selectedMcpClient ] }
-							</ExternalLink>
+							</Link>
 						</VStack>
 					</CardBody>
 				</Card>

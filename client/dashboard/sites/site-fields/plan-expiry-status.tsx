@@ -2,7 +2,7 @@ import './style.scss';
 
 import { userPurchasesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -69,7 +69,8 @@ export function PlanExpiryStatus( { site }: { site: Site } ) {
 			/>
 			<Text intent={ status.intent } title={ status.href ? undefined : status.title }>
 				{ status.href ? (
-					<ExternalLink
+					<Link
+						openInNewTab
 						className="site-plan-expiry-status__renew-link"
 						// On the link rather than the wrapper, so that it describes the
 						// link to a screen reader as well as showing on hover.
@@ -83,7 +84,7 @@ export function PlanExpiryStatus( { site }: { site: Site } ) {
 						}
 					>
 						{ status.text }
-					</ExternalLink>
+					</Link>
 				) : (
 					status.text
 				) }

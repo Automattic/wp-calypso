@@ -9,7 +9,6 @@ import {
 	BaseControl,
 	Button,
 	ComboboxControl,
-	ExternalLink,
 	SelectControl,
 	TextareaControl,
 	TextControl,
@@ -18,6 +17,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../components/button-stack';
@@ -216,7 +216,7 @@ export default function PartnerDirectoryDetailsContent( {
 		openSupportGuide ? (
 			<Button variant="link" onClick={ () => openSupportGuide( url ) } children={ null } />
 		) : (
-			<ExternalLink href={ url } children={ null } />
+			<Link openInNewTab href={ url } children={ null } />
 		);
 
 	return (
@@ -321,7 +321,7 @@ export default function PartnerDirectoryDetailsContent( {
 										{ createInterpolateElement(
 											__( 'Basic Markdown syntax is supported. <a>Learn more about Markdown.</a>' ),
 											{
-												a: <ExternalLink href={ MARKDOWN_HELP_URL } children={ null } />,
+												a: <Link openInNewTab href={ MARKDOWN_HELP_URL } children={ null } />,
 											}
 										) }
 									</Text>

@@ -5,9 +5,10 @@ import {
 	siteUpdateRetentionDaysMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { __experimentalHeading as Heading, Button, ExternalLink } from '@wordpress/components';
+import { __experimentalHeading as Heading, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useEffect, useState, useCallback } from 'react';
 import { useAnalytics } from '../../../../../app/analytics';
 import { ButtonStack } from '../../../../../components/button-stack';
@@ -146,7 +147,8 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 							),
 							{
 								ExternalLink: (
-									<ExternalLink
+									<Link
+										openInNewTab
 										children={ null }
 										href="https://jetpack.com/support/backup/jetpack-vaultpress-backup-storage-and-retention/"
 									/>

@@ -1,6 +1,7 @@
 import { DotcomPlans, getPlanNames } from '@automattic/api-core';
-import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { Fragment } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -197,7 +198,9 @@ export function ErrorContentInfo( { errors }: { errors: AutomatedTransferEligibi
 						{ blocking.supportUrl && (
 							<>
 								{ ' ' }
-								<ExternalLink href={ blocking.supportUrl }>{ __( 'Learn more' ) }</ExternalLink>
+								<Link openInNewTab href={ blocking.supportUrl }>
+									{ __( 'Learn more' ) }
+								</Link>
 							</>
 						) }
 					</Notice>
@@ -226,7 +229,9 @@ export function ErrorContentInfo( { errors }: { errors: AutomatedTransferEligibi
 										{ hold.supportUrl && (
 											<>
 												{ ' ' }
-												<ExternalLink href={ hold.supportUrl }>{ __( 'Learn more' ) }</ExternalLink>
+												<Link openInNewTab href={ hold.supportUrl }>
+													{ __( 'Learn more' ) }
+												</Link>
 											</>
 										) }
 									</Text>

@@ -5,12 +5,12 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 	__experimentalText as Text,
-	ExternalLink,
 	ToggleControl,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
@@ -88,9 +88,9 @@ export function DisconnectRepositoryModalContent( {
 						__( 'You are about to disconnect your repository <repositoryName />' ),
 						{
 							repositoryName: (
-								<ExternalLink href={ `https://github.com/${ deployment.repository_name }` }>
+								<Link openInNewTab href={ `https://github.com/${ deployment.repository_name }` }>
 									{ deployment.repository_name }
-								</ExternalLink>
+								</Link>
 							),
 						}
 					) }

@@ -3,11 +3,12 @@ import {
 	formatNumberCompact,
 	getCurrencyObject,
 } from '@automattic/number-formatters';
-import { Button, ExternalLink, __experimentalHeading as Heading } from '@wordpress/components';
+import { Button, __experimentalHeading as Heading } from '@wordpress/components';
 import { useCopyToClipboard } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, check, copy, external } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { useEffect, useState, type ReactNode } from 'react';
 import cartImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cart.webp';
 import ccImage from 'calypso/assets/images/a8c-for-agencies/woopayments/cc-image.webp';
@@ -417,7 +418,8 @@ function Benefits() {
 		const elements = Object.fromEntries(
 			Object.entries( links ).map( ( [ tag, link ] ) => [
 				tag,
-				<ExternalLink
+				<Link
+					openInNewTab
 					key={ tag }
 					href={ link.href }
 					onClick={ () => recordTracksEvent( link.event ) }

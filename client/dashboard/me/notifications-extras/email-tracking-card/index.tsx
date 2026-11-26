@@ -3,11 +3,12 @@ import {
 	userNotificationsSettingsQuery,
 } from '@automattic/api-queries';
 import { useIsMutating, useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { ExternalLink, ToggleControl } from '@wordpress/components';
+import { ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../../app/analytics';
 import { Card, CardBody } from '../../../components/card';
 
@@ -65,7 +66,8 @@ export const EmailTrackingCard = ( { source }: { source: 'extras' | 'privacy' } 
 						),
 						{
 							learnMoreLink: (
-								<ExternalLink
+								<Link
+									openInNewTab
 									// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 									href="https://automattic.com/privacy/#information-we-collect-automatically"
 									children={ null }
