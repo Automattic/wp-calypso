@@ -3,6 +3,7 @@ import {
 	userPreferenceMutation,
 	userPreferenceQuery,
 } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { _n, __, sprintf } from '@wordpress/i18n';
 import {
@@ -63,13 +64,13 @@ export default function NotApprovedNotice( {
 					DIRECTORY_NAMES[ rejectedDirectories[ 0 ] ]
 				)
 			: sprintf(
-					/* translators: %d is the number of Partner Directories, always 2 or more. */
+					/* translators: %s is the number of Partner Directories, always 2 or more. */
 					_n(
-						'Your agency wasn’t approved for %d directory.',
-						'Your agency wasn’t approved for %d directories.',
+						'Your agency wasn’t approved for %s directory.',
+						'Your agency wasn’t approved for %s directories.',
 						rejectedDirectories.length
 					),
-					rejectedDirectories.length
+					formatNumber( rejectedDirectories.length )
 				);
 
 	const onUpdateClick = () =>
