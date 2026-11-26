@@ -7,7 +7,7 @@ import { useLocale } from '../../../app/locale';
 import { ActivityActor } from '../../../components/logs-activity/activity-actor';
 import { ActivityEvent } from '../../../components/logs-activity/activity-event';
 import { Activity } from '../../../components/logs-activity/types';
-import { KnownThreatsBadge } from '../../backups/known-threats/known-threats-badge';
+import { KnownThreatsBadge } from '../../backups/components/known-threats-badge';
 import { formatDateCell, getDateTimeLabel } from '../../logs/utils';
 import type { ActivityLogGroupCountResponse, BackupsKnownThreatsPage } from '@automattic/api-core';
 import type { Field, Operator } from '@wordpress/dataviews';

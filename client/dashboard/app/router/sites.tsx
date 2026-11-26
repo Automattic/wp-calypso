@@ -513,7 +513,7 @@ export const siteScanActiveThreatsRoute = createRoute( {
 	getParentRoute: () => siteScanRoute,
 	path: 'active',
 } ).lazy( () =>
-	import( '../../sites/scan' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/scan' ).then( ( d ) =>
 		createLazyRoute( 'site-scan-active-threats' )( {
 			component: () => <d.default scanTab="active" />,
 		} )
@@ -531,7 +531,7 @@ export const siteScanHistoryRoute = createRoute( {
 	getParentRoute: () => siteScanRoute,
 	path: 'history',
 } ).lazy( () =>
-	import( '../../sites/scan' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/scan' ).then( ( d ) =>
 		createLazyRoute( 'site-scan-history' )( {
 			component: () => <d.default scanTab="history" />,
 		} )
@@ -565,7 +565,7 @@ export const siteBackupsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/backups' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups/layout' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
 			component: d.default,
 		} )
@@ -576,9 +576,9 @@ export const siteBackupsIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/backups' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups-index' )( {
-			component: d.BackupsListPage,
+			component: d.default,
 		} )
 	)
 );
@@ -599,9 +599,9 @@ export const siteBackupDetailIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupDetailRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/backups' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-detail' )( {
-			component: d.BackupsListPage,
+			component: d.default,
 		} )
 	)
 );
@@ -617,7 +617,7 @@ export const siteBackupRestoreRoute = createRoute( {
 	getParentRoute: () => siteBackupDetailRoute,
 	path: 'restore',
 } ).lazy( () =>
-	import( '../../sites/backup-restore' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups/backup/restore' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-restore' )( {
 			component: d.default,
 		} )
@@ -641,7 +641,7 @@ export const siteBackupDownloadRoute = createRoute( {
 		};
 	},
 } ).lazy( () =>
-	import( '../../sites/backup-download' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups/backup/download' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-download' )( {
 			component: d.default,
 		} )

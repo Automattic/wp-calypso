@@ -3,7 +3,7 @@ import { Icon } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { FormattedTime } from '../../../components/formatted-time';
 import { gridiconToWordPressIcon } from '../../../utils/gridicons';
-import { KnownThreatsBadge } from '../known-threats/known-threats-badge';
+import { KnownThreatsBadge } from '../components/known-threats-badge';
 import type {
 	ActivityLogEntry,
 	ActivityLogGroupCountResponse,
