@@ -114,6 +114,10 @@ vi.mock( 'calypso/lib/oauth2-clients', () => ( {
 	isWooOAuth2Client: vi.fn(),
 } ) );
 
+// The first `buildApp()` transforms the whole app's module graph, which can take longer than
+// Vitest's default 10 s hook timeout on a busy CI machine.
+vi.setConfig( { hookTimeout: 60000 } );
+
 const createMockStore = () => ( {
 	dispatch: vi.fn(),
 	getState: vi.fn( () => ( { documentHead: { meta: [] } } ) ),
