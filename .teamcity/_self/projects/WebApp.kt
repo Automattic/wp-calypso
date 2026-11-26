@@ -526,8 +526,15 @@ object RunAllUnitTests : BuildType({
 				# Yarn's hardened mode checks that every yarn.lock entry is what the registry resolves for its
 				# range, with the registry's checksum, so a hand-edited lockfile can't swap in another package.
 				# `--immutable` can't be combined with `--mode=update-lockfile`, so a rewritten entry shows up
-				# in prevent_uncommitted_changes, which runs after it.
+				# in prevent_uncommitted_changes, which runs after it. It refetches registry metadata for every
+				# package, so it only runs when the branch changes what Yarn resolves; if the trunk ref is
+				# missing, `git diff` exits 128 and the check runs anyway.
 				function prevent_unverified_resolutions {
+					if git diff --quiet refs/remotes/origin/trunk...HEAD -- yarn.lock .yarnrc.yml; then
+						echo "yarn.lock and .yarnrc.yml are unchanged from trunk; skipping the resolution check."
+						return 0
+					fi
+
 					if ! RESOLUTION_ERRORS=${'$'}(
 						set +e
 						YARN_ENABLE_HARDENED_MODE=1 yarn install --mode=update-lockfile 2>&1
