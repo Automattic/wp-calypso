@@ -1535,13 +1535,10 @@ export function mockMatchMediaOnWindow(): void {
 }
 
 // Add the below custom Jest assertion to TypeScript.
-declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
-	namespace jest {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		interface Matchers< R > {
-			toNeverAppear(): Promise< CustomMatcherResult >;
-		}
+declare module 'vitest' {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Must match Vitest's declaration.
+	interface Matchers< T = any > {
+		toNeverAppear(): Promise< T >;
 	}
 }
 
@@ -1738,15 +1735,15 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 /**
  * Helper to prepare to mock Stripe Elements.
  *
- * To use this, you'll need to call it inside `jest.mock()` as follows:
+ * To use this, you'll need to call it inside `vi.mock()` as follows:
  *
  * ```
- * jest.mock( '@stripe/react-stripe-js', () => {
- *   const stripe = jest.requireActual( '@stripe/react-stripe-js' );
+ * vi.mock( '@stripe/react-stripe-js', async () => {
+ *   const stripe = await vi.importActual( '@stripe/react-stripe-js' );
  *   return { ...stripe, ...mockStripeElements() };
  * } );
  *
- * jest.mock( '@stripe/stripe-js', () => {
+ * vi.mock( '@stripe/stripe-js', () => {
  *   return {
  *     loadStripe: async () => mockStripeElements().useStripe(),
  *   };
