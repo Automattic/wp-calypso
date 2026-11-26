@@ -4,6 +4,7 @@ import {
 	userPreferenceQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -24,6 +25,7 @@ import { TEAM_ROUTE } from '../team/paths';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { isOnboardingTourSectionId } from './section-ids';
 import { useOnboardingTourHash } from './use-onboarding-tour-hash';
+import type { OnboardingTourSectionId } from './section-ids';
 import type { OnboardingTourLinks } from './sections';
 import type { ReactNode } from 'react';
 
@@ -72,7 +74,11 @@ export default function AgencyOnboardingTour( { children }: { children: ReactNod
 	const { mutate: saveCurrentSection } = useMutation(
 		userPreferenceOptimisticMutation( CURRENT_SECTION_PREFERENCE )
 	);
+	const { mutate: saveExploredSection, isPending: isExploring } = useMutation(
+		userPreferenceOptimisticMutation( CURRENT_SECTION_PREFERENCE )
+	);
 	const { createInfoNotice, removeNotice } = useDispatch( noticesStore );
+	const router = useRouter();
 
 	// Opening the tour picks it back up, so the saved section is no longer needed. It is cleared
 	// once, as soon as the preferences have loaded: a link can open the tour before they do, and
@@ -134,6 +140,18 @@ export default function AgencyOnboardingTour( { children }: { children: ReactNod
 		close();
 	}, [ scheduleCall, close ] );
 
+	const onExplore = useCallback(
+		( exploredSectionId: OnboardingTourSectionId, href: string ) => {
+			saveExploredSection( exploredSectionId, {
+				onSettled: () => {
+					close();
+					router.navigate( { to: href } );
+				},
+			} );
+		},
+		[ saveExploredSection, close, router ]
+	);
+
 	const contextValue = useMemo( () => ( { openTour: () => open() } ), [ open ] );
 
 	return (
@@ -145,7 +163,8 @@ export default function AgencyOnboardingTour( { children }: { children: ReactNod
 						links={ LINKS }
 						sectionId={ sectionId }
 						onSectionChange={ open }
-						onExplore={ saveCurrentSection }
+						onExplore={ onExplore }
+						isExploring={ isExploring }
 						onClose={ close }
 						onScheduleCall={ onScheduleCall }
 						isSchedulingCall={ isSchedulingCall }
