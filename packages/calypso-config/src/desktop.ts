@@ -22,6 +22,7 @@ const features = {
 	'signup/social-first': false,
 	'login/magic-login': false,
 	'bilmur-script': false,
+	'bilmur-spa': false,
 	blackbox: false,
 	'blackbox-login': false,
 	'blackbox-lost-password': false,
