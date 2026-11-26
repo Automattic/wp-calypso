@@ -42,6 +42,7 @@
 		"js-yaml": "5.4.1",
 		"playwright": "1.57.0",
 		"semver": "^7.8.6",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0",
 		"webpack": "^5.111.1",
 		"webpack-cli": "^7.2.3",
