@@ -253,7 +253,7 @@ export function PurchaseExpiryStatus( {
 		purchase.is_iap_purchase &&
 		purchase.iap_purchase_management_link
 	) {
-		return getInAppPurchaseText( <a href={ purchase.iap_purchase_management_link } /> );
+		return getInAppPurchaseText( <Link href={ purchase.iap_purchase_management_link } /> );
 	}
 
 	const status = describePurchaseExpiry( purchase, locale, hasEnTranslation );

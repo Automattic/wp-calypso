@@ -1,10 +1,11 @@
 import { HostingFeatures } from '@automattic/api-core';
-import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useHelpCenter } from '../../../../app/help-center';
 import { Notice } from '../../../../components/notice';
+import RouterLink from '../../../../components/router-link';
 import { getBackupUrl } from '../../../../utils/site-backup';
 import { hasHostingFeature } from '../../../../utils/site-features';
 import { isRelativeUrl } from '../../../../utils/url';
@@ -45,9 +46,9 @@ export function BetaProgramNotice( { site, wpVersion }: BetaProgramNoticeProps )
 						{
 							support: <Button variant="link" onClick={ () => setShowHelpCenter( true ) } />,
 							backup: isRelativeUrl( backupUrl ) ? (
-								<Link to={ backupUrl } />
+								<RouterLink to={ backupUrl } />
 							) : (
-								<a href={ backupUrl } />
+								<Link href={ backupUrl } />
 							),
 						}
 					) }

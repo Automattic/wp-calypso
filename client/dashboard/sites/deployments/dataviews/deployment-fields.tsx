@@ -1,4 +1,4 @@
-import { Link, useParams } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -6,9 +6,10 @@ import {
 	Tooltip,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Badge, Link as UILink } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { useLocale } from '../../../app/locale';
+import RouterLink from '../../../components/router-link';
 import TimeSince from '../../../components/time-since';
 import { BranchDisplay } from '../components/branch-display';
 import {
@@ -49,11 +50,11 @@ export function useFields( {
 					const [ , repo ] = item.repository_name.split( '/' );
 
 					return (
-						<Link
+						<RouterLink
 							to={ `/sites/${ siteSlug }/settings/repositories/manage/${ item.code_deployment_id }` }
 						>
 							{ repo }
-						</Link>
+						</RouterLink>
 					);
 				},
 			},
@@ -85,7 +86,7 @@ export function useFields( {
 								{ commit_message }
 							</Text>
 							<HStack spacing={ 3 } alignment="left" style={ { width: 'max-content' } }>
-								<UILink
+								<Link
 									openInNewTab
 									href={ `https://github.com/${ installation }/${ repo }/commit/${ commit_sha }` }
 								>
@@ -96,7 +97,7 @@ export function useFields( {
 									>
 										{ shortSha }
 									</Text>
-								</UILink>
+								</Link>
 								<BranchDisplay branchName={ item.branch_name } />
 								<HStack spacing={ 1.5 } alignment="left" expanded={ false }>
 									<img

@@ -1,6 +1,5 @@
 import { userPreferenceOptimisticMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -8,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
 import { Card, CardBody } from '../../../components/card';
+import RouterLink from '../../../components/router-link';
 
 export const AchievementsCard = () => {
 	const { recordTracksEvent } = useAnalytics();
@@ -52,7 +52,7 @@ export const AchievementsCard = () => {
 			'Receive notifications when you unlock new achievements. This setting overrides <link>site-level settings</link>.'
 		),
 		{
-			link: <Link to="/me/notifications/sites" />,
+			link: <RouterLink to="/me/notifications/sites" />,
 		}
 	);
 

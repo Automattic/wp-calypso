@@ -1,5 +1,4 @@
 import { Domain, Purchase } from '@automattic/api-core';
-import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -8,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { Card, CardBody } from '../../../components/card';
 import InlineSupportLink from '../../../components/inline-support-link';
+import RouterLink from '../../../components/router-link';
 import SegmentedBar, { type SegmentedBarSegment } from '../../../components/segmented-bar';
 import { Text } from '../../../components/text';
 import { shouldShowRemoveAction } from '../../domain-overview/actions.utils';
@@ -83,9 +83,12 @@ export const InboundTransferStep = ( {
 								{ __( 'Contact support' ) }
 							</InlineSupportLink>
 							{ purchase && shouldShowRemoveAction( domain, purchase ) && (
-								<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } }>
+								<RouterLink
+									to={ purchaseSettingsRoute.fullPath }
+									params={ { purchaseId: purchase.ID } }
+								>
 									{ __( 'Cancel transfer' ) }
-								</Link>
+								</RouterLink>
 							) }
 						</VStack>
 					</VStack>

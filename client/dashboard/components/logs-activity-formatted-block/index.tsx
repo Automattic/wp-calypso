@@ -13,6 +13,7 @@
  * });
  * // Renders: Updated <a href="/reader/blogs/123/posts/456">Hello World</a>
  */
+
 import { Link as UILink } from '@wordpress/ui';
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
@@ -94,9 +95,9 @@ const Post: BlockRenderer = ( { content, children, onClick } ) => {
 		: `/reader/blogs/${ siteId }/posts/${ postId }`;
 
 	return (
-		<a href={ wpcomLink( href ) } onClick={ onClick }>
+		<UILink href={ wpcomLink( href ) } onClick={ onClick }>
 			{ children }
-		</a>
+		</UILink>
 	);
 };
 
@@ -112,12 +113,12 @@ const Comment: BlockRenderer = ( { content, children, onClick } ) => {
 	}
 
 	return (
-		<a
+		<UILink
 			href={ wpcomLink( `/reader/blogs/${ siteId }/posts/${ postId }#comment-${ commentId }` ) }
 			onClick={ onClick }
 		>
 			{ children }
-		</a>
+		</UILink>
 	);
 };
 
@@ -133,7 +134,7 @@ const Person: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	}
 
 	return (
-		<a
+		<UILink
 			href={ wpcomLink( `/people/edit/${ siteId }/${ name }` ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
@@ -141,7 +142,7 @@ const Person: BlockRenderer = ( { content, children, onClick, meta } ) => {
 			data-intent={ intent ?? meta.intent ?? 'edit' }
 		>
 			<strong>{ children }</strong>
-		</a>
+		</UILink>
 	);
 };
 
@@ -160,20 +161,15 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	const isBackport = isDashboardBackport();
 	const href = isBackport ? url : wpcomLink( url );
 
-	const linkProps = {
-		href,
-		onClick,
-		'data-activity': activity ?? meta.activity,
-		'data-section': section ?? meta.section ?? 'plugins',
-		'data-intent': intent ?? meta.intent ?? 'view',
-	};
-
-	if ( isBackport ) {
-		return <a { ...linkProps }>{ children }</a>;
-	}
-
 	return (
-		<UILink openInNewTab { ...linkProps }>
+		<UILink
+			openInNewTab={ ! isBackport }
+			href={ href }
+			onClick={ onClick }
+			data-activity={ activity ?? meta.activity }
+			data-section={ section ?? meta.section ?? 'plugins' }
+			data-intent={ intent ?? meta.intent ?? 'view' }
+		>
 			{ children }
 		</UILink>
 	);
@@ -196,7 +192,7 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		}
 
 		return (
-			<a
+			<UILink
 				href={ wpcomLink( `/theme/${ themeSlug }/${ siteSlug }` ) }
 				onClick={ onClick }
 				data-activity={ activity ?? meta.activity }
@@ -204,14 +200,14 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 				data-intent={ intent ?? meta.intent ?? 'view' }
 			>
 				{ children }
-			</a>
+			</UILink>
 		);
 	}
 
 	return (
-		<a
+		<UILink
 			href={ themeUri }
-			target="_blank"
+			openInNewTab
 			rel="noopener noreferrer"
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
@@ -219,7 +215,7 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 			data-intent={ intent ?? meta.intent ?? 'view' }
 		>
 			{ children }
-		</a>
+		</UILink>
 	);
 };
 
@@ -233,7 +229,7 @@ const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	}
 
 	return (
-		<a
+		<UILink
 			href={ getWpcomHref( href ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
@@ -241,7 +237,7 @@ const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
 			data-intent={ intent ?? meta.intent ?? 'view' }
 		>
 			{ children }
-		</a>
+		</UILink>
 	);
 };
 

@@ -1,11 +1,11 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
-import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
+import RouterLink from '../../../components/router-link';
 import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../../utils/datetime';
 import {
 	isIncludedWithPlan,
@@ -72,7 +72,10 @@ export function PurchaseExpiringNotice( {
 					),
 					{
 						managePurchase: (
-							<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } } />
+							<RouterLink
+								to={ purchaseSettingsRoute.fullPath }
+								params={ { purchaseId: purchase.ID } }
+							/>
 						),
 					}
 				) }

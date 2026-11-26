@@ -4,7 +4,6 @@ import {
 	paginatedAgencySitesQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { speak } from '@wordpress/a11y';
 import {
 	Button,
@@ -26,6 +25,7 @@ import { ButtonStack } from '../../../components/button-stack';
 import { DataViews, DataViewsCard } from '../../../components/dataviews';
 import InlineSupportLink from '../../../components/inline-support-link';
 import Notice, { NoticeActionLinkButton } from '../../../components/notice';
+import RouterLink from '../../../components/router-link';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import { openWooDownload } from './woo-download/store';
 import type { AgencySite } from '@automattic/api-core';
@@ -345,7 +345,7 @@ export default function AssignLicenseModal( {
 							__(
 								'If you don’t see the site in the list, connect it first via the <a>Sites Dashboard</a>.'
 							),
-							{ a: <Link to="/sites" /> }
+							{ a: <RouterLink to="/sites" /> }
 						) }
 					</Text>
 				</VStack>

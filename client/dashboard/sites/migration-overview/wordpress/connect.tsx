@@ -386,7 +386,7 @@ function getConnectStep( {
 				/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
 				__( 'Is <domain /> not the site you’re migrating from? <link>Change the address</link>' ),
 				sourceHost,
-				{ link: <a href={ changeSourceUrl } /> }
+				{ link: <Link href={ changeSourceUrl } /> }
 			),
 		],
 	};

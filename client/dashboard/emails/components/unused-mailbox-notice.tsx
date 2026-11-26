@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -7,6 +6,7 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { setUpMailboxRoute } from '../../app/router/emails';
 import { Notice } from '../../components/notice';
+import RouterLink from '../../components/router-link';
 
 export interface DomainWithUnusedMailboxes {
 	domain: string;
@@ -42,13 +42,13 @@ const UnusedMailboxNotice = ( { domains }: UnusedMailboxNoticeProps ) => {
 				<VStack spacing={ 2 }>
 					{ domains.map( ( { domain } ) => (
 						<HStack key={ domain }>
-							<Link to={ setUpMailboxRoute.to } params={ { domain } }>
+							<RouterLink to={ setUpMailboxRoute.to } params={ { domain } }>
 								{ sprintf(
 									// translators: %s is a domain name
 									__( 'Set up mailbox for %s' ),
 									domain
 								) }
-							</Link>
+							</RouterLink>
 						</HStack>
 					) ) }
 				</VStack>

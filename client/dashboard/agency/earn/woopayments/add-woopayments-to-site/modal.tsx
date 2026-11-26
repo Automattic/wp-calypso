@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -8,7 +7,9 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
+import RouterLink from '../../../../components/router-link';
 import AddWooPaymentsToSiteTable, { type WooPaymentsSiteItem } from './add-site-table';
 import type { RecordTracksEvent } from '../types';
 
@@ -64,9 +65,9 @@ export default function AddWooPaymentsToSiteModal( {
 						),
 						{
 							a: shouldUseRouterLink ? (
-								<Link to={ A4A_SITES_LINK } onClick={ onSitesDashboardClick } />
+								<RouterLink to={ A4A_SITES_LINK } onClick={ onSitesDashboardClick } />
 							) : (
-								<a href={ A4A_SITES_LINK } onClick={ onSitesDashboardClick } />
+								<Link href={ A4A_SITES_LINK } onClick={ onSitesDashboardClick } />
 							),
 						}
 					) }

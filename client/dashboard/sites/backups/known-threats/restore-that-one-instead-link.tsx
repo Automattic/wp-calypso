@@ -4,12 +4,12 @@ import {
 	siteSettingsQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { Tooltip } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { cloneElement, useCallback } from 'react';
 import { useIntlLocale } from '../../../app/locale';
+import RouterLink from '../../../components/router-link';
 import { formatDate, formatDateWithOffset } from '../../../utils/datetime';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -157,6 +157,6 @@ export function RestoreThatOneInsteadLink( {
 	return createInterpolateElement(
 		// translators: Follows the warning that the backup being viewed has known threats.
 		__( 'Instead, restore the <link>latest backup without known threats</link>.' ),
-		{ link: <LinkWithTooltip link={ <Link { ...target } /> } tooltip={ title } /> }
+		{ link: <LinkWithTooltip link={ <RouterLink { ...target } /> } tooltip={ title } /> }
 	);
 }

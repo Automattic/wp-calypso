@@ -1,5 +1,4 @@
 import { DomainStatus, DomainStatusCta } from '@automattic/api-core';
-import { Link } from '@tanstack/react-router';
 import {
 	Tooltip,
 	__experimentalHStack as HStack,
@@ -13,6 +12,7 @@ import {
 	domainTransferSetupRoute,
 } from '../../app/router/domains';
 import { purchaseSettingsRoute } from '../../app/router/me';
+import RouterLink from '../../components/router-link';
 import { Text } from '../../components/text';
 import { useDomainSslDetails, useIsDomainActivating } from './use-domain-activation';
 import type { DomainSummary } from '@automattic/api-core';
@@ -21,33 +21,39 @@ const getCtaLink = ( domain: DomainSummary ) => {
 	switch ( domain.domain_status?.cta ) {
 		case DomainStatusCta.VIEW_DOMAIN:
 			return (
-				<Link to={ domainOverviewRoute.fullPath } params={ { domainName: domain.domain } }>
+				<RouterLink to={ domainOverviewRoute.fullPath } params={ { domainName: domain.domain } }>
 					{ __( 'Needs attention' ) }
-				</Link>
+				</RouterLink>
 			);
 		case DomainStatusCta.VIEW_PURCHASE:
 			if ( domain.subscription_id === null ) {
 				return null;
 			}
 			return (
-				<Link
+				<RouterLink
 					to={ purchaseSettingsRoute.fullPath }
 					params={ { purchaseId: domain.subscription_id } }
 				>
 					{ __( 'Needs attention' ) }
-				</Link>
+				</RouterLink>
 			);
 		case DomainStatusCta.VIEW_DOMAIN_SETUP:
 			return (
-				<Link to={ domainConnectionSetupRoute.fullPath } params={ { domainName: domain.domain } }>
+				<RouterLink
+					to={ domainConnectionSetupRoute.fullPath }
+					params={ { domainName: domain.domain } }
+				>
 					{ __( 'Setup connection' ) }
-				</Link>
+				</RouterLink>
 			);
 		case DomainStatusCta.VIEW_TRANSFER_SETUP:
 			return (
-				<Link to={ domainTransferSetupRoute.fullPath } params={ { domainName: domain.domain } }>
+				<RouterLink
+					to={ domainTransferSetupRoute.fullPath }
+					params={ { domainName: domain.domain } }
+				>
 					{ __( 'Setup transfer' ) }
-				</Link>
+				</RouterLink>
 			);
 		default:
 			return null;

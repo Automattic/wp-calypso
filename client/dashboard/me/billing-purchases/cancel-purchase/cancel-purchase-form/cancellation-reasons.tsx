@@ -2,6 +2,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { UPDATE_NAMESERVERS, TRANSFER_DOMAIN_REGISTRATION } from '@automattic/urls';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import * as React from 'react';
 
 // This type represents things that React can render, but which also exist. (E.g.
@@ -490,7 +491,7 @@ export const DOMAIN_REGISTRATION_CANCELLATION_REASONS: CancellationReason[] = [
 			),
 			{
 				a: (
-					<a href={ localizeUrl( UPDATE_NAMESERVERS ) } target="_blank" rel="noopener noreferrer" />
+					<Link openInNewTab href={ localizeUrl( UPDATE_NAMESERVERS ) } rel="noopener noreferrer" />
 				),
 			}
 		),
@@ -508,9 +509,9 @@ export const DOMAIN_REGISTRATION_CANCELLATION_REASONS: CancellationReason[] = [
 			),
 			{
 				a: (
-					<a
+					<Link
+						openInNewTab
 						href={ localizeUrl( TRANSFER_DOMAIN_REGISTRATION ) }
-						target="_blank"
 						rel="noopener noreferrer"
 					/>
 				),

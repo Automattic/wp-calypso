@@ -1,6 +1,6 @@
 import { domainsQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
@@ -18,6 +18,7 @@ import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { usePendingPrimaryDomain } from '../../components/pending-primary-domain-notice';
+import RouterLink from '../../components/router-link';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
 	DOMAINS_TABLE_CLASS_NAME,
@@ -168,7 +169,7 @@ function SiteDomains() {
 										site: <b>{ site.slug }</b>,
 										redirect: <b>{ redirect.location }</b>,
 										link: (
-											<Link
+											<RouterLink
 												to={ siteSettingsRedirectRoute.fullPath }
 												params={ { siteSlug: site.slug } }
 											/>

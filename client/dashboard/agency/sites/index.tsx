@@ -4,7 +4,6 @@ import {
 	agencyPendingSitesQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
@@ -21,6 +20,7 @@ import {
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLink from '../../components/router-link';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
 import { AgencyNotices } from '../components/agency-notices';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
@@ -107,7 +107,9 @@ function NeedsSetupDescription( { count }: { count: number } ) {
 		),
 		{
 			count: <>{ count }</>,
-			link: <Link to="/purchases" search={ { status: 'unassigned', search: 'WordPress.com' } } />,
+			link: (
+				<RouterLink to="/purchases" search={ { status: 'unassigned', search: 'WordPress.com' } } />
+			),
 		}
 	);
 }

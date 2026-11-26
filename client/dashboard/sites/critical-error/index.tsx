@@ -1,7 +1,7 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -10,7 +10,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, envelope, folder, formatListBullets, help, wordpress } from '@wordpress/icons';
-import { Link as UILink } from '@wordpress/ui';
+import { Link } from '@wordpress/ui';
 import { Fragment, useEffect } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -18,6 +18,7 @@ import { Card, CardBody, CardDivider } from '../../components/card';
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLink from '../../components/router-link';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 import { hasHostingFeature } from '../../utils/site-features';
@@ -120,7 +121,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 				// translators: <a/> is a link to the site's wp-admin with the text "Visit your site"
 				__( '<a>Visit your site</a> to check available recovery options.' ),
 				{
-					a: <UILink openInNewTab href={ site.options.admin_url } children={ null } />,
+					a: <Link openInNewTab href={ site.options.admin_url } children={ null } />,
 				}
 			),
 		} );
@@ -133,9 +134,12 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 				__( '<phpLogsLink/> to locate any fatal errors on your site.' ),
 				{
 					phpLogsLink: (
-						<Link to={ `/sites/${ siteSlug }/logs/php` } search={ { severity: 'Fatal error' } }>
+						<RouterLink
+							to={ `/sites/${ siteSlug }/logs/php` }
+							search={ { severity: 'Fatal error' } }
+						>
 							{ __( 'Review the PHP logs' ) }
-						</Link>
+						</RouterLink>
 					),
 				}
 			),
@@ -149,7 +153,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 				__( '<sftpLink/> to edit the files responsible for the error.' ),
 				{
 					sftpLink: (
-						<Link
+						<RouterLink
 							to={ `/sites/${ siteSlug }/settings/sftp-ssh` }
 							onClick={ () =>
 								recordTracksEvent( 'calypso_dashboard_critical_error_sftp_click', {
@@ -158,7 +162,7 @@ const SiteCriticalError = ( { siteSlug }: { siteSlug: string } ) => {
 							}
 						>
 							{ __( 'Connect over SFTP/SSH' ) }
-						</Link>
+						</RouterLink>
 					),
 				}
 			),

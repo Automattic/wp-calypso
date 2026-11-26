@@ -51,16 +51,8 @@ const InlineSupportLink = ( {
 		onClick: handleClick,
 	};
 
-	if ( supportDocData?.postId ) {
-		return (
-			<a { ...linkProps } target="_blank" rel="noopener noreferrer">
-				{ children }
-			</a>
-		);
-	}
-
-	if ( forceOpenInHelpCenter ) {
-		return <a { ...linkProps }>{ children }</a>;
+	if ( opensInPanel ) {
+		return <Link { ...linkProps }>{ children }</Link>;
 	}
 
 	return (

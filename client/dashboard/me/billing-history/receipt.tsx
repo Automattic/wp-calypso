@@ -8,7 +8,6 @@ import {
 } from '@automattic/api-queries';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	Flex,
@@ -29,6 +28,7 @@ import { Card, CardBody } from '../../components/card';
 import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLink from '../../components/router-link';
 import { isAkismetPro500Plan } from '../../utils/akismet';
 import { getTaxName } from '../../utils/tax';
 import {
@@ -352,7 +352,7 @@ export function UserVatDetails( { receipt }: { receipt: Receipt } ) {
 							'You can edit your VAT details <vatDetailsLink>on this page</vatDetailsLink>. This is not an official VAT receipt. For an official VAT receipt, <emailReceiptButton>email yourself a copy</emailReceiptButton>.'
 						),
 						{
-							vatDetailsLink: <Link to={ taxDetailsRoute.fullPath } />,
+							vatDetailsLink: <RouterLink to={ taxDetailsRoute.fullPath } />,
 							emailReceiptButton: (
 								<Button
 									className="receipt-email-button"

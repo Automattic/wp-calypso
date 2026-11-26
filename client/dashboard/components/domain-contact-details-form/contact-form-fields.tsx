@@ -10,6 +10,7 @@ import {
 import { type Field, type DataFormControlProps } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useEffect, useState } from 'react';
 import InlineSupportLink from '../inline-support-link';
 import Notice from '../notice';
@@ -143,13 +144,13 @@ function OrganizationNotice() {
 function EmailNotice() {
 	const hasEnTranslation = useHasEnTranslation();
 	const icannLink = (
-		<a
+		<Link
 			href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
-			target="_blank"
+			openInNewTab
 			rel="noopener noreferrer"
 		>
 			ICANN
-		</a>
+		</Link>
 	);
 
 	return (

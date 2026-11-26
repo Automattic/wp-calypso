@@ -1,8 +1,8 @@
-import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { domainNameServersRoute } from '../../app/router/domains';
 import { Notice } from '../../components/notice';
+import RouterLink from '../../components/router-link';
 import type { Domain } from '@automattic/api-core';
 
 interface DnsSecNameserversNoticeProps {
@@ -31,7 +31,7 @@ export const DnsSecNameserversNotice = ( { domainName, domain }: DnsSecNameserve
 				),
 				{
 					updateNameServersLink: (
-						<Link to={ domainNameServersRoute.fullPath } params={ { domainName } } />
+						<RouterLink to={ domainNameServersRoute.fullPath } params={ { domainName } } />
 					),
 				}
 			) }

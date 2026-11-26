@@ -179,7 +179,7 @@ export default function TransferDomainToOtherUser() {
 							'You can transfer this domain to any administrator on this site. If the user you want to transfer is not currently an administrator, please <link>add them to the site first</link>.'
 						),
 						{
-							link: <a href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
+							link: <Link href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
 						}
 					) }
 				</Text>
@@ -203,7 +203,7 @@ export default function TransferDomainToOtherUser() {
 							'You can transfer this domain connection to any administrator on this site. If the user you want to transfer is not currently an administrator, please <link>add them to the site first</link>.'
 						),
 						{
-							link: <a href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
+							link: <Link href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
 						}
 					) }
 				</Text>

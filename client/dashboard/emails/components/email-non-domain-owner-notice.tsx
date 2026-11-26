@@ -33,7 +33,7 @@ export const EmailNonDomainOwnerNotice = ( props: EmailNonDomainOwnerNoticeProps
 		contactSupportLink: <Link openInNewTab href={ SUPPORT_CONTACT_URL } children={ null } />,
 		loginLink: <Link openInNewTab href={ loginUrl } children={ null } />,
 		reachOutLink: isPrivacyAvailable ? (
-			<a href={ contactOwnerUrl } rel="noopener noreferrer" target="_blank" />
+			<Link openInNewTab href={ contactOwnerUrl } rel="noopener noreferrer" children={ null } />
 		) : (
 			<></>
 		),

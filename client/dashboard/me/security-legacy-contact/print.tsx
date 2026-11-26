@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
@@ -65,7 +66,7 @@ function LegacyContactDetails( { legacyContactId }: { legacyContactId: number } 
 							'To request access, your legacy contact should visit <link>wordpress.com/digital-legacy</link> and follow the instructions there. They’ll need the access key above.'
 						),
 						{
-							link: <a href="https://wordpress.com/digital-legacy" />,
+							link: <Link href="https://wordpress.com/digital-legacy" />,
 						}
 					) }
 				</Text>

@@ -7,6 +7,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Text } from '../../../components/text';
@@ -181,7 +182,7 @@ export const MailboxForm = ( {
 							{
 								strong: <strong />,
 								passwordChangeLink: (
-									<a
+									<Link
 										href="#change-password"
 										onClick={ ( e ) => {
 											e.preventDefault();

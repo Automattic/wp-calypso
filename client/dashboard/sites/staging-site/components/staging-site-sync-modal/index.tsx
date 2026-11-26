@@ -4,7 +4,6 @@ import {
 	pullFromStagingMutation,
 } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	Modal,
@@ -21,7 +20,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { chevronRight, chevronLeft } from '@wordpress/icons';
-import { Link as UILink } from '@wordpress/ui';
+import { Link } from '@wordpress/ui';
 import { useState, useCallback, useMemo } from 'react';
 import useRewindableActivityLogQuery from '../../../../../data/activity-log/use-rewindable-activity-log-query';
 import { SUCCESSFUL_BACKUP_ACTIVITIES } from '../../../../../lib/jetpack/backup-utils';
@@ -36,6 +35,7 @@ import { ButtonStack } from '../../../../components/button-stack';
 import { CardDivider } from '../../../../components/card';
 import InlineSupportLink from '../../../../components/inline-support-link';
 import { Notice } from '../../../../components/notice';
+import RouterLink from '../../../../components/router-link';
 import { wpcomLink } from '../../../../utils/link';
 import Environment, { EnvironmentType } from '../environment';
 import type { FileBrowserConfig } from '../../../../../my-sites/backup/backup-contents-page/file-browser';
@@ -406,7 +406,7 @@ function StagingSiteSyncModalInner( {
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
 						a: (
-							<UILink
+							<Link
 								openInNewTab
 								href={ wpcomLink( `/activity-log/${ targetSiteSlug }` ) }
 								children={ null }
@@ -449,7 +449,7 @@ function StagingSiteSyncModalInner( {
 											),
 											{
 												a: (
-													<UILink
+													<Link
 														openInNewTab
 														href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
 														children={ null }
@@ -517,12 +517,12 @@ function StagingSiteSyncModalInner( {
 														date: <span>{ displayBackupDate }</span>,
 													}
 												) }{ ' ' }
-												<Link
+												<RouterLink
 													to="/sites/$siteSlug/backups"
 													params={ { siteSlug: querySiteSlug as string } }
 												>
 													{ __( 'Create new backup' ) }
-												</Link>
+												</RouterLink>
 											</Text>
 										</HStack>
 									) }
@@ -560,7 +560,7 @@ function StagingSiteSyncModalInner( {
 													),
 													{
 														a: (
-															<UILink
+															<Link
 																openInNewTab
 																href="https://developer.wordpress.com/docs/developer-tools/staging-sites/sync-staging-production/#staging-to-production"
 																children={ null }

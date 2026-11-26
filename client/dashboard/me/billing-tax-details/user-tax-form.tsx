@@ -319,7 +319,7 @@ export default function UserTaxForm() {
 									nameOfTax: <span>{ taxName ?? fallbackTaxName }</span>,
 									countryName: <span>{ selectedCountry.name }</span>,
 									contactSupportLink: (
-										<a
+										<Link
 											href={ wpcomLink( '/help' ) }
 											title={ contactSupportLinkTitle }
 											onClick={ handleOpenCenterChat }
@@ -342,7 +342,7 @@ export default function UserTaxForm() {
 							),
 							{
 								contactSupportLink: (
-									<a
+									<Link
 										href={ wpcomLink( '/help' ) }
 										title={ contactSupportLinkTitle }
 										onClick={ handleOpenCenterChat }

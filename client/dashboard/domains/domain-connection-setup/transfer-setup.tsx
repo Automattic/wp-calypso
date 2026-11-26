@@ -6,7 +6,7 @@ import {
 	siteByIdQuery,
 } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -17,7 +17,7 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { Link as UILink } from '@wordpress/ui';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { domainTransferSetupRoute } from '../../app/router/domains';
 import { purchaseSettingsRoute } from '../../app/router/me';
@@ -28,6 +28,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import RouterLink from '../../components/router-link';
 import { shouldShowRemoveAction } from '../domain-overview/actions.utils';
 import DomainRegistrarBanner from './domain-registrar-banner';
 import SetupStep from './setup-step';
@@ -86,10 +87,10 @@ export default function DomainTransferSetup() {
 						{
 							registrar:
 								! isReseller && registrar_url ? (
-									<UILink openInNewTab href={ registrar_url }>
+									<Link openInNewTab href={ registrar_url }>
 										{ ' ' }
 										{ registrar }{ ' ' }
-									</UILink>
+									</Link>
 								) : (
 									<>{ registrar || __( 'your domain name provider' ) }</>
 								),
@@ -268,12 +269,12 @@ export default function DomainTransferSetup() {
 									{ __( 'Contact support' ) }
 								</InlineSupportLink>
 								{ purchase && shouldShowRemoveAction( domain, purchase ) && (
-									<Link
+									<RouterLink
 										to={ purchaseSettingsRoute.fullPath }
 										params={ { purchaseId: purchase.ID } }
 									>
 										{ __( 'Cancel transfer' ) }
-									</Link>
+									</RouterLink>
 								) }
 							</VStack>
 						</VStack>

@@ -10,7 +10,7 @@ import {
 	useQueryClient,
 	type UseQueryResult,
 } from '@tanstack/react-query';
-import { Link, useParams, useSearch } from '@tanstack/react-router';
+import { useParams, useSearch } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -27,6 +27,7 @@ import {
 import InlineSupportLink from '../../../../../components/inline-support-link';
 import { PageHeader } from '../../../../../components/page-header';
 import PageLayout from '../../../../../components/page-layout';
+import RouterLink from '../../../../../components/router-link';
 import RouterLinkButton from '../../../../../components/router-link-button';
 import { SitesNoticeArbiter } from '../../../../../sites/components/notice-arbiter';
 import { DeploymentLogsModalContent } from '../../../../../sites/deployments/components/deployment-logs-modal-content';
@@ -50,7 +51,7 @@ function DeploymentsEmptyState( { view, siteSlug }: { view: View; siteSlug: stri
 			'Deployments from your <repositoriesLink>connected repositories</repositoriesLink> will appear here.'
 		),
 		{
-			repositoriesLink: <Link to={ `/sites/${ siteSlug }/settings/repositories` } />,
+			repositoriesLink: <RouterLink to={ `/sites/${ siteSlug }/settings/repositories` } />,
 		}
 	);
 
