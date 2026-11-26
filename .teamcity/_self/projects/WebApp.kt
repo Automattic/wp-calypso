@@ -494,7 +494,7 @@ object RunAllUnitTests : BuildType({
 			"""
 		}
 		bashNodeScript {
-			name = "Check for yarn.lock changes and duplicated packages"
+			name = "Check for yarn.lock changes, duplicated packages and unverified resolutions"
 			scriptContent = """
 				function prevent_uncommitted_changes {
 					DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
@@ -523,8 +523,65 @@ object RunAllUnitTests : BuildType({
 					fi
 				}
 
-				prevent_uncommitted_changes & prevent_duplicated_packages
-				wait
+				# Hardened mode fails on, or rewrites, yarn.lock entries whose version or dependencies the
+				# registry wouldn't give. It can't run with `--immutable`, so a rewrite shows up as a diff.
+				function prevent_unverified_resolutions {
+					# Hardened mode ignores an npm entry's `::__archiveUrl=` (plain or URL-encoded), which can
+					# point at any tarball, so allow no parameters except a patch entry's own.
+					if ! node -e '
+						const bad = require( "fs" ).readFileSync( "yarn.lock", "utf8" ).split( "\n" )
+							.filter( ( line ) => line.startsWith( "  resolution: " ) )
+							.filter( ( line ) => {
+								try {
+									const decoded = decodeURIComponent( line );
+									const own = line.includes( "@patch:" ) ? decoded.slice( 0, decoded.lastIndexOf( "::" ) ) : decoded;
+									return own.includes( "::" ) || decoded.includes( "__archiveUrl" );
+								} catch {
+									return true;
+								}
+							} );
+						bad.forEach( ( line ) => console.log( line.trim() ) );
+						process.exit( bad.length ? 1 : 0 );
+					'; then
+						echo "yarn.lock has resolutions with parameters the registry check can't verify, listed above."
+						echo "Delete those entries from yarn.lock, run 'yarn' to regenerate them, and commit the result."
+						return 1
+					fi
+
+					# It refetches all registry metadata, so skip it when Yarn's inputs are unchanged.
+					if git diff --quiet refs/remotes/origin/trunk...HEAD -- yarn.lock .yarnrc.yml; then
+						echo "yarn.lock and .yarnrc.yml are unchanged from trunk; skipping the resolution check."
+						return 0
+					fi
+
+					if ! RESOLUTION_ERRORS=${'$'}(
+						set +e
+						YARN_ENABLE_HARDENED_MODE=1 yarn install --mode=update-lockfile 2>&1
+					); then
+						echo "yarn.lock doesn't match what the registry resolves: "
+						echo ""
+						echo "${'$'}RESOLUTION_ERRORS"
+						echo ""
+						echo "Delete the affected entries from yarn.lock, run 'yarn' to regenerate them, and commit the result."
+						return 1
+					fi
+
+					# Plain `yarn` keeps locked entries as they are, so point at the command that rewrites them.
+					if ! git diff --quiet -- yarn.lock; then
+						echo "yarn.lock has entries whose dependencies differ from the registry's: "
+						git --no-pager diff -- yarn.lock
+						echo "Run 'YARN_ENABLE_HARDENED_MODE=1 yarn install --mode=update-lockfile' and commit the result."
+						return 1
+					fi
+
+					echo "yarn.lock resolutions match the registry."
+				}
+
+				status=0
+				prevent_unverified_resolutions || status=1
+				prevent_uncommitted_changes || status=1
+				prevent_duplicated_packages || status=1
+				exit ${'$'}status
 			""".trimIndent()
 		}
 		bashNodeScript {
