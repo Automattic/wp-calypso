@@ -35,15 +35,13 @@ const localDateTime = () => {
 
 module.exports = async function ( window ) {
 	const onZipped = ( file ) =>
-		function () {
-			dialog.showMessageBox( window, {
-				type: 'info',
-				buttons: [ 'OK' ],
-				title: 'Application logs saved to your desktop',
-				message: 'Application logs saved to your desktop' + '\n\n' + `${ path.basename( file ) }`,
-				detail: 'For help with an issue, please contact help@wordpress.com and share your logs.',
-			} );
-		};
+		dialog.showMessageBox( window, {
+			type: 'info',
+			buttons: [ 'OK' ],
+			title: 'Application logs saved to your desktop',
+			message: 'Application logs saved to your desktop' + '\n\n' + `${ path.basename( file ) }`,
+			detail: 'For help with an issue, please contact help@wordpress.com and share your logs.',
+		} );
 
 	const onError = ( error ) =>
 		dialog.showMessageBox( window, {
@@ -65,7 +63,8 @@ module.exports = async function ( window ) {
 		const desktop = app.getPath( 'desktop' );
 		const dst = path.join( desktop, `wpdesktop-${ timestamp }.zip` );
 
-		zipContents( [ logPath, settingsPath ], dst, onZipped( dst ) );
+		await zipContents( [ logPath, settingsPath ], dst );
+		onZipped( dst );
 	} catch ( error ) {
 		log.error( 'Failed to zip logs: ', error );
 		onError( error );
