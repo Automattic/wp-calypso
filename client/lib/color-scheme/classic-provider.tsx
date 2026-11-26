@@ -1,7 +1,6 @@
-import { useCallback, useLayoutEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
-import { clearPrePaintTheme, readColorSchemeHint } from './pre-paint';
 import {
 	ColorSchemeContextProvider,
 	DEFAULT_SCHEME,
@@ -21,33 +20,23 @@ export function ClassicColorSchemeProvider( {
 } ) {
 	const isReady = useSelector( hasReceivedRemotePreferences );
 	const savedColorScheme = useSelector( ( state ) => getPreference( state, PREFERENCE_KEY ) );
-	const [ hint ] = useState( readColorSchemeHint );
-	const hintedScheme = ! isReady && isColorScheme( hint ) ? hint : null;
-	const hasHint = hintedScheme !== null;
-	const savedScheme = isColorScheme( savedColorScheme ) ? savedColorScheme : DEFAULT_SCHEME;
-	const colorScheme = hintedScheme ?? savedScheme;
+	const colorScheme = isColorScheme( savedColorScheme ) ? savedColorScheme : DEFAULT_SCHEME;
 
 	const setColorScheme = useCallback< ColorSchemeContextType[ 'setColorScheme' ] >(
 		() => undefined,
 		[]
 	);
 
-	useLayoutEffect( () => {
-		if ( ! enabled ) {
-			clearPrePaintTheme();
-		}
-	}, [ enabled ] );
-
 	return (
 		<ColorSchemeContextProvider
 			colorScheme={ colorScheme }
 			enabled={ enabled }
-			isReady={ isReady || hasHint }
+			isReady={ isReady }
 			restoreOnUnmount
 			setColorScheme={ setColorScheme }
 			waitForReady={ false }
 		>
-			{ enabled && ( isReady || hasHint ) && <ColorSchemeThemeProvider enabled /> }
+			{ enabled && isReady && <ColorSchemeThemeProvider enabled /> }
 			{ children }
 		</ColorSchemeContextProvider>
 	);

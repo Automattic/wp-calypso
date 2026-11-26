@@ -2,18 +2,8 @@ import { LIGHT_SEEDS } from 'calypso/lib/color-scheme/seeds';
 import { ColorSchemeThemeProvider } from 'calypso/lib/color-scheme/theme-provider';
 import type { ReactNode } from 'react';
 
-const LIGHT_SEEDS = {
-	background: '#fcfcfc',
-	primary: '#3858e9',
-};
-
-const DARK_SEEDS = {
-	background: '#181818',
-	primary: '#93aef8',
-};
-
 /**
- * Applies the WPDS theme for the user's color scheme to the whole document.
+ * Applies the WPDS theme for the user's color scheme to the whole document, or nothing when the app has no color schemes.
  */
 export function DashboardThemeProvider( {
 	children,
@@ -22,8 +12,12 @@ export function DashboardThemeProvider( {
 	children: ReactNode;
 	enabled: boolean;
 } ) {
+	if ( ! enabled ) {
+		return children;
+	}
+
 	return (
-		<ColorSchemeThemeProvider enabled={ enabled } lightSeeds={ LIGHT_SEEDS }>
+		<ColorSchemeThemeProvider enabled lightSeeds={ LIGHT_SEEDS }>
 			{ children }
 		</ColorSchemeThemeProvider>
 	);

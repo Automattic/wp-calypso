@@ -1,8 +1,7 @@
 import { useMediaQuery } from '@wordpress/compose';
 import { ThemeProvider } from '@wordpress/theme';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { COLOR_SCHEME_STORAGE_KEY, clearPrePaintTheme } from './pre-paint';
 import { DARK_SEEDS } from './seeds';
 import { useColorScheme } from './shared';
 import type { LIGHT_SEEDS } from './seeds';
@@ -47,14 +46,6 @@ export function ColorSchemeThemeProvider( {
 		enabled &&
 		! isPrint &&
 		( colorScheme === 'dark' || ( colorScheme === 'system' && prefersDark ) );
-
-	useEffect( () => {
-		try {
-			window.localStorage.setItem( COLOR_SCHEME_STORAGE_KEY, enabled ? colorScheme : 'light' );
-		} catch {}
-	}, [ enabled, colorScheme ] );
-
-	useLayoutEffect( clearPrePaintTheme, [] );
 
 	return (
 		<ThemeProvider isRoot color={ isDark ? DARK_SEEDS : lightSeeds }>
