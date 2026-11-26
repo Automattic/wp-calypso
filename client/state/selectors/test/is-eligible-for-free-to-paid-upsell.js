@@ -1,4 +1,4 @@
-import { when } from 'jest-when';
+import { isDeepStrictEqual } from 'node:util';
 import { vi } from 'vitest';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isMappedDomainSite from 'calypso/state/selectors/is-mapped-domain-site';
@@ -17,45 +17,53 @@ vi.mock( 'calypso/state/selectors/is-mapped-domain-site', () => ( { default: vi.
 vi.mock( 'calypso/state/selectors/is-site-on-free-plan', () => ( { default: vi.fn() } ) );
 vi.mock( 'calypso/state/selectors/is-vip-site', () => ( { default: vi.fn() } ) );
 
+// Makes the mocked selector return `value` when it's called with `args`, and `undefined` otherwise.
+const returnWhenCalledWith = ( selector, args, value ) =>
+	vi
+		.mocked( selector )
+		.mockImplementation( ( ...actual ) =>
+			isDeepStrictEqual( actual, args ) ? value : undefined
+		);
+
 describe( 'isEligibleForFreeToPaidUpsell', () => {
 	const state = 'state';
 	const siteId = 'siteId';
 
 	const meetAllConditions = () => {
-		when( canCurrentUser ).calledWith( state, siteId, 'manage_options' ).mockReturnValue( true );
-		when( isJetpackSite ).calledWith( state, siteId ).mockReturnValue( false );
-		when( isMappedDomainSite ).calledWith( state, siteId ).mockReturnValue( false );
-		when( isSiteOnFreePlan ).calledWith( state, siteId ).mockReturnValue( true );
-		when( isVipSite ).calledWith( state, siteId ).mockReturnValue( false );
+		returnWhenCalledWith( canCurrentUser, [ state, siteId, 'manage_options' ], true );
+		returnWhenCalledWith( isJetpackSite, [ state, siteId ], false );
+		returnWhenCalledWith( isMappedDomainSite, [ state, siteId ], false );
+		returnWhenCalledWith( isSiteOnFreePlan, [ state, siteId ], true );
+		returnWhenCalledWith( isVipSite, [ state, siteId ], false );
 	};
 
 	test( 'should return false when user can not manage options', () => {
 		meetAllConditions();
-		when( canCurrentUser ).calledWith( state, siteId, 'manage_options' ).mockReturnValue( false );
+		returnWhenCalledWith( canCurrentUser, [ state, siteId, 'manage_options' ], false );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site is Jetpack', () => {
 		meetAllConditions();
-		when( isJetpackSite ).calledWith( state, siteId ).mockReturnValue( true );
+		returnWhenCalledWith( isJetpackSite, [ state, siteId ], true );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site has mapped domain', () => {
 		meetAllConditions();
-		when( isMappedDomainSite ).calledWith( state, siteId ).mockReturnValue( true );
+		returnWhenCalledWith( isMappedDomainSite, [ state, siteId ], true );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site is not on a free plan', () => {
 		meetAllConditions();
-		when( isSiteOnFreePlan ).calledWith( state, siteId ).mockReturnValue( false );
+		returnWhenCalledWith( isSiteOnFreePlan, [ state, siteId ], false );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
 	test( 'should return false when site is a vip site', () => {
 		meetAllConditions();
-		when( isVipSite ).calledWith( state, siteId ).mockReturnValue( true );
+		returnWhenCalledWith( isVipSite, [ state, siteId ], true );
 		expect( isEligibleForFreeToPaidUpsell( state, siteId ) ).toBe( false );
 	} );
 
