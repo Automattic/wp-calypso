@@ -78,21 +78,22 @@ export function isSectionAnswered(
 export type LeadMatchingStatus = 'not-accepting' | 'not-started' | 'in-progress' | 'eligible';
 
 /**
- * Agencies not accepting new clients get no leads, whatever they answered.
+ * Agencies that haven't answered anything are not set up, whatever their availability. Once they
+ * have, those not accepting new clients get no leads.
  */
 export function getLeadMatchingStatus(
 	formData: LeadMatchingFormData,
 	isAcceptingClients: boolean
 ): LeadMatchingStatus {
+	const answered = getAnsweredRequiredFieldCount( formData );
+
+	if ( answered === 0 ) {
+		return 'not-started';
+	}
+
 	if ( ! isAcceptingClients ) {
 		return 'not-accepting';
 	}
 
-	const answered = getAnsweredRequiredFieldCount( formData );
-
-	if ( answered === REQUIRED_LEAD_MATCHING_FIELDS.length ) {
-		return 'eligible';
-	}
-
-	return answered === 0 ? 'not-started' : 'in-progress';
+	return answered === REQUIRED_LEAD_MATCHING_FIELDS.length ? 'eligible' : 'in-progress';
 }
