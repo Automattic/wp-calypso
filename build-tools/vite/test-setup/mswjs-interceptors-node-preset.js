@@ -27,9 +27,9 @@ const interceptors = [
 
 // Each test file gets its own copy of `nock`, but they all patch the same Node `http` module. Remove
 // this copy's patches once the file is done, otherwise it keeps handling requests from later files
-// that run in the same worker. Jest doesn't run `afterAll` hooks in files where every test is
-// skipped, so also clean up whatever the previous file left behind before this copy patches `http`.
-const kActive = Symbol.for( 'calypso-jest.mswjs-interceptors' );
+// that run in the same worker. A file whose every test is skipped may not run its `afterAll` hooks,
+// so also clean up whatever the previous file left behind before this copy patches `http`.
+const kActive = Symbol.for( 'calypso.mswjs-interceptors' );
 
 function dispose( active ) {
 	active.interceptors.forEach( ( interceptor ) => interceptor.dispose() );
