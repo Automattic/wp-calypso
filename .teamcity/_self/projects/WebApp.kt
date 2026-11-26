@@ -461,10 +461,12 @@ object RunAllUnitTests : BuildType({
 
 				# Generate a JSON array of the errors we care about:
 				# 1. Select warning YN0002 (Missing peer dependencies.)
-				# 2. Select warning ZN0060 (Invalid peer dependency.)
-				# 3. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
-				# 4. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
-				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 60 or .name == 68 or (.type == "error" and .name != 0)) ]')
+				# 2. Select warning YN0004 (A dependency's install script was skipped without a decision.)
+				#    Add it to `dependenciesMeta` in the root package.json, with `built: true` or `built: false`.
+				# 3. Select warning ZN0060 (Invalid peer dependency.)
+				# 4. Select warning YN0068 (A yarnrc.yml entry needs to be removed.)
+				# 5. Select any errors which aren't code 0. (Which shows the error summary, not individual problems.)
+				yarn_errors=${'$'}(cat "${'$'}yarn_out" | jq '[ .[] | select(.name == 2 or .name == 4 or .name == 60 or .name == 68 or (.type == "error" and .name != 0)) ]')
 
 				num_errors=${'$'}(jq length <<< "${'$'}yarn_errors")
 				if [ "${'$'}num_errors" -gt 0 ] ; then
