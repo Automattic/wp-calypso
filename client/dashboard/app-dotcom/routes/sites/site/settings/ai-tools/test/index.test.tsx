@@ -16,8 +16,8 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
+import AIToolsSettings, { getAgentEmailAddress, getAgentEmailVCard } from '..';
 import { render } from '../../../../../../../test-utils';
-import AIToolsSettings, { getAgentEmailAddress, getAgentEmailVCard } from '../index';
 import type { Site, UserSettings } from '@automattic/api-core';
 
 const site = {

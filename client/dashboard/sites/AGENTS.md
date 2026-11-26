@@ -48,6 +48,6 @@
 ### Reference implementations
 
 - `client/dashboard/app-dotcom/routes/sites/site/index.tsx` — `InaccessibleJetpackNotice` vs `StorageWarningBanner`
-- `client/dashboard/sites/domains/index.tsx` — `PrimaryDomainSelectorNotice` vs the redirect warning, with eligibility settled in the `siteDomainsRoute` loader; the bulk-update progress notice is action feedback rendered beside the arbiter
+- `client/dashboard/app-dotcom/routes/sites/site/domains/index.tsx` — `PrimaryDomainSelectorNotice` vs the redirect warning, with eligibility settled in the `siteDomainsRoute` loader; the bulk-update progress notice is action feedback rendered beside the arbiter
 - `client/dashboard/app-dotcom/routes/sites/site/logs/index.tsx` — Jetpack-error UTC notice vs `TimeMismatchNotice`; the auto-refresh warning is action feedback rendered beside the arbiter
 - `client/dashboard/sites/backups/index.tsx` — `BackupNotices` (backup progress/result) is action feedback rendered beside the arbiter

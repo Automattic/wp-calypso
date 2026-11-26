@@ -17,15 +17,15 @@ import { __, sprintf } from '@wordpress/i18n';
 import { check, chevronLeft, lineSolid } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import React, { Fragment, useState } from 'react';
-import { useHelpCenter } from '../../app/help-center';
-import { siteRoute, sitePlansRoute } from '../../app/router/sites';
-import { Card, CardBody } from '../../components/card';
-import InlineSupportLink from '../../components/inline-support-link';
-import { Notice } from '../../components/notice';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { dashboardLink, wpcomLink } from '../../utils/link';
-import { isRelativeUrl } from '../../utils/url';
+import { useHelpCenter } from '../../../../../app/help-center';
+import { siteRoute, sitePlansRoute } from '../../../../../app/router/sites';
+import { Card, CardBody } from '../../../../../components/card';
+import InlineSupportLink from '../../../../../components/inline-support-link';
+import { Notice } from '../../../../../components/notice';
+import { PageHeader } from '../../../../../components/page-header';
+import PageLayout from '../../../../../components/page-layout';
+import { dashboardLink, wpcomLink } from '../../../../../utils/link';
+import { isRelativeUrl } from '../../../../../utils/url';
 import type {
 	PlanProductComparisonGroup,
 	SiteContextualPlan,

@@ -5,9 +5,9 @@
 import { startSiteCollisionListener } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import Sites from '..';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../../app/context';
 import { render } from '../../../../test-utils';
-import Sites from '../index';
 import type { AppConfig } from '../../../../app/context';
 import type { Site, User } from '@automattic/api-core';
 

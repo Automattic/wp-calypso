@@ -5,8 +5,8 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import ApmSettings from '..';
 import { render } from '../../../../../../../test-utils';
-import ApmSettings from '../index';
 import type { Site } from '@automattic/api-core';
 
 const siteSlug = 'test-site.wordpress.com';

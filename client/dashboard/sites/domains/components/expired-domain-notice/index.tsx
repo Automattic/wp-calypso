@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { useLocale } from '../../app/locale';
-import { Notice, NoticeActionButton } from '../../components/notice';
-import { formatDate } from '../../utils/datetime';
-import { getRenewalUrlFromPurchase } from '../../utils/purchase';
+import { useAnalytics } from '../../../../app/analytics';
+import { useLocale } from '../../../../app/locale';
+import { Notice, NoticeActionButton } from '../../../../components/notice';
+import { formatDate } from '../../../../utils/datetime';
+import { getRenewalUrlFromPurchase } from '../../../../utils/purchase';
 import type { DomainSummary } from '@automattic/api-core';
 
 export default function ExpiredDomainNotice( { domain }: { domain: DomainSummary } ) {
