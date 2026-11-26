@@ -275,7 +275,6 @@ function App() {
 				<button onClick={ () => pending.current?.fail() }>Fail request</button>
 			</nav>
 			<main
-				className={ dark ? 'a2ui-dark' : 'a2ui-light' }
 				style={ {
 					width: narrow ? 358 : 'auto',
 					background: dark ? '#212121' : 'white',
@@ -285,6 +284,7 @@ function App() {
 				<div className="outside-control">Host content outside the themed surface</div>
 				<InteractiveUiSurface
 					surface={ runtime.getSurface( 'preview' )! }
+					className={ dark ? 'a2ui-dark' : 'a2ui-light' }
 					theme={ theme || undefined }
 					disabled={ busy }
 					fallback={ <p>Preview failed</p> }

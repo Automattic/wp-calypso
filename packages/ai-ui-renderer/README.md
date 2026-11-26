@@ -323,7 +323,8 @@ An unset primary or input token, or its `on-` pair, keeps the host's WordPress c
 token gets that palette default directly. The input, surface and border defaults follow the light
 or dark mode. A custom `--a2ui-color-primary` without its own `-hover` and `-dark` gets them derived
 from it, as A2UI does.
-The modal renders outside the host, so it copies its surface's theme when it opens.
+The modal renders outside the host, so it copies its surface's theme when it opens, and again
+when the surface's `theme` or `className` changes.
 
 The renderer derives its own colors from those, which follow the light or dark mode:
 
@@ -382,8 +383,11 @@ The optional ChatGPT preset adapts the MIT-licensed OpenAI Apps SDK UI tokens at
 Its license is preserved in the SCSS header. It uses MCP host style variables when provided,
 with light/dark fallback values. It adds no OpenAI React or Tailwind dependency.
 
-Styles are scoped to the selected surface and its portaled modal. An open modal follows theme
-changes, host ancestor class/style changes and system color-scheme changes. Page backgrounds,
+Styles are scoped to the selected surface and its portaled modal. The modal renders on `<body>`,
+so a preset's tokens reach it only from the preset itself or from host variables set on the
+document root, not on an element around the surface. Pass light or dark mode as `a2ui-dark` or
+`a2ui-light` in `className`, or set `color-scheme` on the document root. An open modal follows a
+change to `theme` or `className`; it picks up other host changes when it next opens. Page backgrounds,
 root resets, branding and overlay stacking remain the consumer's responsibility. The optional
 `--ai-ui-theme-page` token is available to hosts that need a matching page background.
 

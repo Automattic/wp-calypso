@@ -1,6 +1,6 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { ComponentIdSchema } from '@a2ui/web_core/v1_0';
-import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
+import { useLayoutEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import { Dialog } from '@wordpress/ui';
@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import { z } from 'zod';
 import { ModalTriggerContext, useInteractiveUiSurface } from '../contexts/surface';
 import { StringValueSchema } from '../utils/schemas';
-import { copyTheme, observeTheme } from '../utils/theme';
+import { copyTheme } from '../utils/theme';
 
 export const Modal = createComponentImplementation(
 	{
@@ -27,20 +27,12 @@ export const Modal = createComponentImplementation(
 		const [ overlay, setOverlay ] = useState< HTMLDivElement | null >( null );
 		const { className, theme, rootRef } = useInteractiveUiSurface();
 
-		// The modal renders outside the host, so it takes the theme its surface resolved.
-		const copySurfaceTheme = useCallback(
-			( element: HTMLDivElement | null ) => {
-				setOverlay( element );
-				if ( element && rootRef?.current ) {
-					copyTheme( rootRef.current, element );
-				}
-			},
-			[ rootRef ]
-		);
-
-		useEffect( () => {
-			if ( rootRef?.current && overlay ) {
-				return observeTheme( rootRef.current, overlay );
+		// The modal renders outside the host, so it takes the theme its surface resolved, again when
+		// the host changes the surface's theme or classes. Changes the host makes elsewhere, such as
+		// on an ancestor, apply when the modal next opens.
+		useLayoutEffect( () => {
+			if ( overlay && rootRef?.current ) {
+				copyTheme( rootRef.current, overlay );
 			}
 		}, [ overlay, rootRef, theme, className ] );
 
@@ -65,7 +57,7 @@ export const Modal = createComponentImplementation(
 						// within ui's overlay layer, a stacking context of its own.
 						<Dialog.Portal
 							container={ document.body }
-							ref={ copySurfaceTheme }
+							ref={ setOverlay }
 							className={ clsx( 'ai-ui-renderer__modal', className ) }
 							data-ai-ui-theme={ theme || undefined }
 						/>
@@ -87,6 +79,7 @@ export const Modal = createComponentImplementation(
 						</Dialog.Action>
 					</Dialog.Header>
 					<Dialog.Content>
+						{ /* The theme too, since `.ai-ui-renderer` sets the accent colors again here. */ }
 						<div className="ai-ui-renderer" data-ai-ui-theme={ theme || undefined }>
 							{ buildChild( props.content ) }
 						</div>
