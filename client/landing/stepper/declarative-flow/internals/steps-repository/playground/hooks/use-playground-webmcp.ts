@@ -1,10 +1,6 @@
-import { isAutomatticianQuery } from '@automattic/api-queries';
 import { loadScript } from '@automattic/load-script';
-import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { PlaygroundClient } from '../lib/types';
 
 const WEBMCP_ORIGIN_TRIAL_SCRIPT = 'https://s0.wp.com/wp-content/js/webmcp-origin-trial.js';
@@ -18,16 +14,11 @@ export function usePlaygroundWebMcp( {
 	slug: string | null;
 	launch: () => boolean;
 } ): void {
-	const isLoggedIn = useSelector( isUserLoggedIn );
-	const { data: isAutomattician = false } = useQuery( {
-		...isAutomatticianQuery(),
-		enabled: isLoggedIn && Boolean( client && slug ),
-	} );
 	const launchRef = useRef( launch );
 	launchRef.current = launch;
 
 	useEffect( () => {
-		if ( ! client || ! slug || ! isLoggedIn || ! isAutomattician ) {
+		if ( ! client || ! slug ) {
 			return;
 		}
 
@@ -99,5 +90,5 @@ export function usePlaygroundWebMcp( {
 			unregisterTools?.();
 			stopProxy?.();
 		};
-	}, [ client, slug, isLoggedIn, isAutomattician ] );
+	}, [ client, slug ] );
 }
