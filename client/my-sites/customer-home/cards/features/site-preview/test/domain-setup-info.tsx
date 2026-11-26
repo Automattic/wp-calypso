@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import DomainSetupInfo from '../domain-setup-info';
 import type { DomainSummary } from '@automattic/api-core';
 
@@ -14,7 +15,7 @@ const SITE_SLUG = 'example-slug.wordpress.com';
 
 let mockDomains: DomainSummary[] = [];
 
-jest.mock( '@automattic/api-queries', () => ( {
+vi.mock( '@automattic/api-queries', () => ( {
 	domainsQuery: () => ( {
 		queryKey: [ 'domains' ],
 		queryFn: async () => mockDomains,
