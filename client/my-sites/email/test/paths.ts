@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { GOOGLE_WORKSPACE_PRODUCT_TYPE, GSUITE_PRODUCT_TYPE } from 'calypso/lib/gsuite/constants';
 import {
 	domainsManagementPrefix,
@@ -26,7 +27,9 @@ import {
 const siteName = 'hello.wordpress.com';
 const domainName = 'hello.com';
 
-jest.mock( '@automattic/calypso-config', () => ( { isEnabled: () => true } ) );
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { isEnabled: () => true } )
+);
 
 describe( 'path helper functions', () => {
 	it( 'getAddEmailForwardsPath', () => {

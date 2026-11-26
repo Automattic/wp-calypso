@@ -47,8 +47,8 @@
 		"@automattic/color-studio": "^4.1.0",
 		"@emotion/react": "^11.11.1",
 		"@emotion/styled": "^11.11.0",
-		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/react-i18n": "^4.48.0",
+		"@wordpress/i18n": "^7.2.0",
+		"@wordpress/react-i18n": "^5.2.0",
 		"debug": "^4.4.3",
 		"prop-types": "^15.8.1"
 	},
@@ -58,14 +58,15 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
-		"@testing-library/user-event": "^14.6.8",
+		"@testing-library/user-event": "^14.6.10",
 		"@types/prop-types": "^15.7.15",
+		"@types/react": "^19.3.0",
 		"jsdom": "^20.0.3",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
-		"vite": "^8.3.7",
+		"vite": "^8.3.8",
 		"vitest": "^5.1.0"
 	},
 	"peerDependencies": {

@@ -72,28 +72,8 @@ export const items = withPersistence( itemsReducer );
 
 // export const items = itemsReducer;
 
-export function listsPagination( state = {}, action ) {
-	const { category, pagination } = action;
-	switch ( action.type ) {
-		case PLUGINS_WPORG_LIST_RECEIVE:
-			if ( pagination ) {
-				if ( category ) {
-					return {
-						...state,
-						category: {
-							...state.category,
-							[ category ]: pagination,
-						},
-					};
-				}
-			}
-	}
-	return state;
-}
-
 export default combineReducers( {
 	fetchingItems,
 	fetchingLists,
 	items,
-	listsPagination,
 } );

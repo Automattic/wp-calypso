@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fetchShoppingCart, launchSite } from '@automattic/api-core';
 import { addProductsToCart, clearStepPersistedState } from '@automattic/onboarding';
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { buildDashboardLink } from 'calypso/dashboard/app/routing';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
@@ -37,37 +38,50 @@ let mockSetupError: { error?: string } = {};
 let mockDomains: unknown[] | Error = [];
 let mockCart: unknown = { products: [] };
 let mockUserId: number | null = 1;
+let mockPending: { preview_sites?: { blog_id: number; share_url?: string }[] } | undefined;
 
 // Both packages import themselves while loading, so the real exports are read lazily rather than spread.
-const lazilyOverride = ( moduleName: string, overrides: Record< string, unknown > ) =>
-	new Proxy( overrides, {
-		get: ( target, key: string ) =>
-			key in target ? target[ key ] : jest.requireActual( moduleName )[ key ],
-	} );
+const { lazilyOverride } = vi.hoisted( () => ( {
+	lazilyOverride: async ( moduleName: string, overrides: Record< string, unknown > ) => {
+		const actual = await vi.importActual< Record< string, unknown > >( moduleName );
+		return new Proxy( actual, {
+			get: ( target, key: string ) => ( key in overrides ? overrides[ key ] : target[ key ] ),
+			has: ( target, key ) => key in overrides || key in target,
+		} );
+	},
+} ) );
 
-jest.mock( '@automattic/onboarding', () =>
+vi.mock( '@automattic/onboarding', () =>
 	lazilyOverride( '@automattic/onboarding', {
 		LAUNCH_SITE_FLOW: 'launch-site',
-		addProductsToCart: jest.fn( () => Promise.resolve() ),
-		clearStepPersistedState: jest.fn(),
+		addProductsToCart: vi.fn( () => Promise.resolve() ),
+		clearStepPersistedState: vi.fn(),
 	} )
 );
 
-const mockResetOnboardStore = jest.fn();
+const mockResetOnboardStore = vi.fn();
 
-jest.mock( '@automattic/api-core', () =>
+vi.mock( '@automattic/api-core', () =>
 	lazilyOverride( '@automattic/api-core', {
-		launchSite: jest.fn( () => Promise.resolve() ),
-		fetchShoppingCart: jest.fn( () => Promise.resolve( mockCart ) ),
+		launchSite: vi.fn( () => Promise.resolve() ),
+		fetchShoppingCart: vi.fn( () => Promise.resolve( mockCart ) ),
 	} )
 );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( '@tanstack/react-query', () =>
+	lazilyOverride( '@tanstack/react-query', {
+		useQuery: ( { enabled }: { enabled?: boolean } ) => ( {
+			data: enabled ? mockPending : undefined,
+		} ),
+	} )
+);
+
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 	SITE_STORE: 'SITE_STORE',
 } ) );
 
-jest.mock( '@wordpress/data', () => {
+vi.mock( '@wordpress/data', () => {
 	const selectors = {
 		getDomainCartItem: () => mockOnboard.domainCartItem,
 		getDomainCartItems: () => mockOnboard.domainCartItems,
@@ -120,33 +134,35 @@ jest.mock( '@wordpress/data', () => {
 	return lazilyOverride( '@wordpress/data', overrides );
 } );
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: unknown ) => unknown ) =>
 		selector( { productsList: { items: mockProductsList }, currentUser: { id: mockUserId } } ),
 } ) );
 
-jest.mock( 'calypso/components/data/query-products-list', () => ( {
-	useQueryProductsList: jest.fn(),
-} ) );
+vi.mock( 'calypso/components/data/query-products-list', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useQueryProductsList: vi.fn(),
+	} )
+);
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => ( { get: ( key: string ) => mockQuery[ key ] ?? null } ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/get-current-query-params', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/get-current-query-params', () => ( {
 	getCurrentQueryParams: () => new URLSearchParams( mockQuery ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
 
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	clearSignupCompleteFlowName: jest.fn(),
-	clearSignupCompleteSiteID: jest.fn(),
-	clearSignupCompleteSlug: jest.fn(),
-	clearSignupDestinationCookie: jest.fn(),
-	persistSignupDestination: jest.fn(),
-	setSignupCompleteFlowName: jest.fn(),
-	setSignupCompleteSlug: jest.fn(),
+vi.mock( 'calypso/signup/storageUtils', () => ( {
+	clearSignupCompleteFlowName: vi.fn(),
+	clearSignupCompleteSiteID: vi.fn(),
+	clearSignupCompleteSlug: vi.fn(),
+	clearSignupDestinationCookie: vi.fn(),
+	persistSignupDestination: vi.fn(),
+	setSignupCompleteFlowName: vi.fn(),
+	setSignupCompleteSlug: vi.fn(),
 } ) );
 
 const ALL_STEPS = [
@@ -172,7 +188,7 @@ const storageItem = {
 const launched = { processingResult: ProcessingResult.SUCCESS };
 
 // The submit handler is typed per step; the tests drive it with whatever each step submits.
-const submit = ( currentStep: string, providedDependencies?: unknown, navigate = jest.fn() ) => {
+const submit = ( currentStep: string, providedDependencies?: unknown, navigate = vi.fn() ) => {
 	const { submit: submitStep } = launchSiteFlow.useStepNavigation(
 		currentStep as Parameters< typeof launchSiteFlow.useStepNavigation >[ 0 ],
 		navigate
@@ -208,15 +224,15 @@ const initializeWith = ( site: unknown, domains: unknown[] | Error ) => {
 	return launchSiteFlow.initialize( reduxStore );
 };
 
-const assigned = () => ( window.location.assign as jest.Mock ).mock.calls[ 0 ]?.[ 0 ];
-const replaced = () => ( window.location.replace as jest.Mock ).mock.calls[ 0 ]?.[ 0 ];
+const assigned = () => ( window.location.assign as Mock ).mock.calls[ 0 ]?.[ 0 ];
+const replaced = () => ( window.location.replace as Mock ).mock.calls[ 0 ]?.[ 0 ];
 const checkoutParam = ( name: string ) =>
 	new URL( replaced(), 'http://localhost/' ).searchParams.get( name );
 const originalLocation = window.location;
 
 describe( 'launch-site flow', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockQuery = { siteSlug: 'example.wordpress.com' };
 		mockUserId = 1;
 		mockOnboard = {};
@@ -236,12 +252,13 @@ describe( 'launch-site flow', () => {
 				...window.location,
 				href: 'http://localhost/setup/launch-site/domains?siteSlug=example.wordpress.com',
 				search: '?siteSlug=example.wordpress.com',
-				assign: jest.fn(),
-				replace: jest.fn(),
+				assign: vi.fn(),
+				replace: vi.fn(),
 			},
 			writable: true,
 		} );
 		mockSite = null;
+		mockPending = undefined;
 		mockDomains = [];
 		mockCart = { products: [] };
 		setFlowSteps( ALL_STEPS );
@@ -340,7 +357,7 @@ describe( 'launch-site flow', () => {
 	describe( 'back', () => {
 		const goBack = ( currentStep: string, search: string ) => {
 			window.location.href = `http://localhost/setup/launch-site/${ currentStep }?siteSlug=example.wordpress.com${ search }`;
-			const navigate = jest.fn();
+			const navigate = vi.fn();
 			const { goBack: goBackStep } = launchSiteFlow.useStepNavigation(
 				currentStep as Parameters< typeof launchSiteFlow.useStepNavigation >[ 0 ],
 				navigate
@@ -442,6 +459,60 @@ describe( 'launch-site flow', () => {
 			} );
 		} );
 
+		it( 'lets a preview site skip the plans', () => {
+			mockSite = freeSite;
+			mockPending = {
+				preview_sites: [ { blog_id: 1, share_url: 'https://example.com/?share=x' } ],
+			};
+
+			expect( launchSiteFlow.useStepsProps?.()[ STEPS.UNIFIED_PLANS.slug ] ).toMatchObject( {
+				skippable: true,
+			} );
+		} );
+
+		it.each( [
+			[ 'a site that is not a preview', { preview_sites: [ { blog_id: 2 } ] } ],
+			[ 'a user without previews', { preview_sites: undefined } ],
+		] )( 'does not let %s skip the plans', ( _name, pending ) => {
+			mockSite = freeSite;
+			mockPending = pending;
+
+			expect( launchSiteFlow.useStepsProps?.()[ STEPS.UNIFIED_PLANS.slug ] ).not.toHaveProperty(
+				'skippable'
+			);
+		} );
+
+		it( 'opens the preview at its share link when the plans are skipped', () => {
+			mockSite = freeSite;
+			mockPending = {
+				preview_sites: [ { blog_id: 1, share_url: 'https://example.com/?share=x' } ],
+			};
+
+			const { navigate } = submit( STEPS.UNIFIED_PLANS.slug, {
+				stepName: 'plans',
+				cartItems: null,
+				action: 'skip_plan',
+			} );
+
+			expect( assigned() ).toBe( 'https://example.com/?share=x' );
+			expect( navigate ).not.toHaveBeenCalled();
+			expect( mockOnboard.pendingAction ).toBeUndefined();
+		} );
+
+		it( 'opens the preview’s Overview when a skipped preview has no share link yet', () => {
+			mockSite = freeSite;
+			mockPending = { preview_sites: [ { blog_id: 1 } ] };
+			mockQuery.back_to = '/sites';
+
+			submit( STEPS.UNIFIED_PLANS.slug, {
+				stepName: 'plans',
+				cartItems: null,
+				action: 'skip_plan',
+			} );
+
+			expect( assigned() ).toBe( buildDashboardLink( 'dotcom', '/sites/example.wordpress.com' ) );
+		} );
+
 		it( 'returns to where the user came from on Back when plans is the first step', () => {
 			setFlowSteps( [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING, STEPS.ERROR ] );
 			mockQuery.back_to = '/sites';
@@ -470,7 +541,7 @@ describe( 'launch-site flow', () => {
 			[ 'stops on the refusal with Free', null, 'preview_site_unpaid' ],
 		] )( 'for a preview nobody has bought, %s', async ( _name, cartItems, outcome ) => {
 			mockSite = freeSite;
-			( launchSite as jest.Mock ).mockRejectedValueOnce(
+			( launchSite as Mock ).mockRejectedValueOnce(
 				Object.assign( new Error( 'Choose a plan' ), { error: 'preview_site_unpaid' } )
 			);
 			submit( STEPS.UNIFIED_PLANS.slug, { cartItems } );
@@ -485,7 +556,7 @@ describe( 'launch-site flow', () => {
 
 		it( 'lets the processing step see a failed launch', async () => {
 			mockSite = freeSite;
-			( launchSite as jest.Mock ).mockRejectedValueOnce( new Error( 'launch failed' ) );
+			( launchSite as Mock ).mockRejectedValueOnce( new Error( 'launch failed' ) );
 			submit( STEPS.UNIFIED_PLANS.slug, { cartItems: null } );
 
 			await expect( mockOnboard.pendingAction?.() ).rejects.toThrow( 'launch failed' );
@@ -583,7 +654,7 @@ describe( 'launch-site flow', () => {
 
 		it( 'still goes to checkout when the cart cannot be updated', async () => {
 			mockOnboard.planCartItem = planItem;
-			( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'no cart key' ) );
+			( addProductsToCart as Mock ).mockRejectedValueOnce( new Error( 'no cart key' ) );
 
 			await submit( STEPS.PROCESSING.slug, launched ).result;
 
@@ -637,7 +708,7 @@ describe( 'launch-site flow', () => {
 		it( 'waits for the cart before going to checkout', async () => {
 			mockOnboard.planCartItem = planItem;
 			let finishAdding = () => {};
-			( addProductsToCart as jest.Mock ).mockImplementationOnce(
+			( addProductsToCart as Mock ).mockImplementationOnce(
 				() => new Promise< void >( ( resolve ) => ( finishAdding = resolve ) )
 			);
 
@@ -731,7 +802,7 @@ describe( 'launch-site flow', () => {
 
 			it( 'keeps the launch destination when adding to the cart fails', async () => {
 				mockCart = { products: [] };
-				( addProductsToCart as jest.Mock ).mockRejectedValueOnce( new Error( 'no cart key' ) );
+				( addProductsToCart as Mock ).mockRejectedValueOnce( new Error( 'no cart key' ) );
 
 				await submit( STEPS.PROCESSING.slug, launched ).result;
 
@@ -739,7 +810,7 @@ describe( 'launch-site flow', () => {
 			} );
 
 			it( 'keeps the launch destination, without asking again, when the cart answers with an error', async () => {
-				( fetchShoppingCart as jest.Mock ).mockRejectedValueOnce( new Error( 'offline' ) );
+				( fetchShoppingCart as Mock ).mockRejectedValueOnce( new Error( 'offline' ) );
 
 				await submit( STEPS.PROCESSING.slug, launched ).result;
 
@@ -751,18 +822,18 @@ describe( 'launch-site flow', () => {
 				const unanswered = () => new Promise( () => {} );
 
 				beforeEach( () => {
-					jest.useFakeTimers();
+					vi.useFakeTimers();
 				} );
 
 				afterEach( () => {
-					jest.useRealTimers();
+					vi.useRealTimers();
 				} );
 
 				it( 'asks again and lands on the connection setup once it answers', async () => {
-					( fetchShoppingCart as jest.Mock ).mockReturnValueOnce( unanswered() );
+					( fetchShoppingCart as Mock ).mockReturnValueOnce( unanswered() );
 
 					const { result } = submit( STEPS.PROCESSING.slug, launched );
-					await jest.advanceTimersByTimeAsync( 1000 );
+					await vi.advanceTimersByTimeAsync( 1000 );
 					await result;
 
 					expect( fetchShoppingCart ).toHaveBeenCalledTimes( 2 );
@@ -770,13 +841,13 @@ describe( 'launch-site flow', () => {
 				} );
 
 				it( 'keeps the launch destination after three silent attempts', async () => {
-					( fetchShoppingCart as jest.Mock )
+					( fetchShoppingCart as Mock )
 						.mockReturnValueOnce( unanswered() )
 						.mockReturnValueOnce( unanswered() )
 						.mockReturnValueOnce( unanswered() );
 
 					const { result } = submit( STEPS.PROCESSING.slug, launched );
-					await jest.advanceTimersByTimeAsync( 3000 );
+					await vi.advanceTimersByTimeAsync( 3000 );
 					await result;
 
 					expect( fetchShoppingCart ).toHaveBeenCalledTimes( 3 );
@@ -797,7 +868,7 @@ describe( 'launch-site flow', () => {
 	describe( 'entering the flow', () => {
 		it( 'starts from a clean slate at the flow root', () => {
 			renderHook( () =>
-				launchSiteFlow.useSideEffect?.( undefined as unknown as SideEffectStep, jest.fn() )
+				launchSiteFlow.useSideEffect?.( undefined as unknown as SideEffectStep, vi.fn() )
 			);
 
 			expect( mockResetOnboardStore ).toHaveBeenCalled();
@@ -809,7 +880,7 @@ describe( 'launch-site flow', () => {
 		} );
 
 		it( 'keeps the selections on a later step', () => {
-			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.UNIFIED_PLANS.slug, jest.fn() ) );
+			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.UNIFIED_PLANS.slug, vi.fn() ) );
 
 			expect( mockResetOnboardStore ).not.toHaveBeenCalled();
 			expect( clearStepPersistedState ).not.toHaveBeenCalled();
@@ -822,7 +893,7 @@ describe( 'launch-site flow', () => {
 			mockSite = { ...freeSite, URL: 'https://launchcompare4murdmici.wordpress.com' };
 			mockOnboard = { domainCartItem: { product_slug: 'domain_reg', meta: 'launchcompare4.blog' } };
 
-			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.DOMAIN_SEARCH.slug, jest.fn() ) );
+			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.DOMAIN_SEARCH.slug, vi.fn() ) );
 
 			expect( mockOnboard.siteUrl ).toBe( 'launchcompare4murdmici.wordpress.com' );
 		} );
@@ -831,7 +902,7 @@ describe( 'launch-site flow', () => {
 			mockQuery = { siteSlug: 'example.wordpress.com' };
 			mockSite = undefined;
 
-			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.UNIFIED_PLANS.slug, jest.fn() ) );
+			renderHook( () => launchSiteFlow.useSideEffect?.( STEPS.UNIFIED_PLANS.slug, vi.fn() ) );
 
 			expect( mockOnboard.siteUrl ).toBe( 'example.wordpress.com' );
 		} );
@@ -840,7 +911,7 @@ describe( 'launch-site flow', () => {
 			mockSite = { ...freeSite, URL: 'https://example.wordpress.com' };
 
 			renderHook( () =>
-				launchSiteFlow.useSideEffect?.( undefined as unknown as SideEffectStep, jest.fn() )
+				launchSiteFlow.useSideEffect?.( undefined as unknown as SideEffectStep, vi.fn() )
 			);
 
 			expect( mockOnboard.siteUrl ).toBeUndefined();

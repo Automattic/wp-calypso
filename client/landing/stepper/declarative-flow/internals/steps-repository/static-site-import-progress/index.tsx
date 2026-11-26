@@ -3,16 +3,16 @@ import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useEffectEvent, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useRef } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
 	StaticSiteImportPreviewSteps,
 	StaticSiteImportPreviewWindow,
-} from 'calypso/dashboard/sites/overview-static-site-import/moving-card';
+} from 'calypso/dashboard/sites/static-site-import/moving-card';
 import {
 	getSourceHost,
 	useStaticSiteImport,
-} from 'calypso/dashboard/sites/overview-static-site-import/use-static-site-import';
+} from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
@@ -21,9 +21,6 @@ import './style.scss';
 
 export type StaticSiteImportProgressStepSubmits =
 	{ action: 'finished'; previewUrl?: string } | { action: 'stopped' };
-
-// The share link is made when the build lands, so wait a little for it before going on without it.
-const PREVIEW_URL_WAIT = 30_000;
 
 const StaticSiteImportProgressStep: StepType< {
 	accepts: {
@@ -46,12 +43,13 @@ const StaticSiteImportProgressStep: StepType< {
 	const email = useSelector( getCurrentUserEmail );
 	// The preview was built for this move, which already names it as the destination.
 	const siteImport = useStaticSiteImport( siteId ?? 0, importSessionId, { approve: false } );
-	const [ hasWaitedForPreviewUrl, setHasWaitedForPreviewUrl ] = useState( false );
 	const hasSubmitted = useRef( false );
 
 	const status = siteImport?.status;
 	const isRefused = siteImport?.isRefused;
-	const isPreview = siteImport?.isPreview;
+	const isFinished = status === 'finished';
+
+	// The share link gets past Coming Soon, so a finished move waits until WordPress.com reports it.
 	const previewUrl = siteImport?.previewUrl;
 
 	const submit = useEffectEvent( ( result: StaticSiteImportProgressStepSubmits ) => {
@@ -62,21 +60,12 @@ const StaticSiteImportProgressStep: StepType< {
 		navigation.submit?.( result );
 	} );
 
-	const isFinished = status === 'finished';
-	useEffect( () => {
-		if ( ! isFinished || previewUrl ) {
-			return;
-		}
-		const timer = setTimeout( () => setHasWaitedForPreviewUrl( true ), PREVIEW_URL_WAIT );
-		return () => clearTimeout( timer );
-	}, [ isFinished, previewUrl ] );
-
 	useEffect( () => {
 		if ( ! siteId || ! importSessionId ) {
 			return submit( { action: 'stopped' } );
 		}
-		if ( status === 'finished' ) {
-			if ( previewUrl || isPreview === false || hasWaitedForPreviewUrl ) {
+		if ( isFinished ) {
+			if ( previewUrl ) {
 				submit( { action: 'finished', previewUrl } );
 			}
 			return;
@@ -85,15 +74,7 @@ const StaticSiteImportProgressStep: StepType< {
 		if ( isRefused || ( status && status !== 'moving' ) ) {
 			submit( { action: 'stopped' } );
 		}
-	}, [
-		siteId,
-		importSessionId,
-		status,
-		isRefused,
-		isPreview,
-		previewUrl,
-		hasWaitedForPreviewUrl,
-	] );
+	}, [ siteId, importSessionId, status, isFinished, isRefused, previewUrl ] );
 
 	const sourceHost = getSourceHost( from );
 	const search = { importSessionId, from, platform };

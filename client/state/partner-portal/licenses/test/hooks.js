@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { useDispatch } from 'react-redux';
+import { vi } from 'vitest';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import {
 	LicenseSortDirection,
@@ -24,9 +25,9 @@ import useRefreshLicenseList from 'calypso/state/partner-portal/licenses/hooks/u
 import useRevokeLicenseMutation from 'calypso/state/partner-portal/licenses/hooks/use-revoke-license-mutation';
 import useTOSConsentMutation from 'calypso/state/partner-portal/licenses/hooks/use-tos-consent-mutation';
 
-jest.mock( 'react-redux', () => ( {
-	useDispatch: jest.fn( () => null ),
-	useSelector: jest.fn(),
+vi.mock( 'react-redux', () => ( {
+	useDispatch: vi.fn( () => null ),
+	useSelector: vi.fn(),
 } ) );
 
 describe( 'useRefreshLicenseList', () => {
@@ -38,7 +39,7 @@ describe( 'useRefreshLicenseList', () => {
 			sortDirection: LicenseSortDirection.Ascending,
 			currentPage: 2,
 		};
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const wrapper = ( { children } ) => (
 			<LicenseListContext.Provider value={ stub }>{ children }</LicenseListContext.Provider>
 		);
@@ -313,12 +314,12 @@ describe( 'useProductsQuery', () => {
 			.get( '/wpcom/v2/jetpack-licensing/partner/product-families' )
 			.reply( 500, { code: 'could_not_retrieve_subscription', message: '' } );
 
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		useDispatch.mockReturnValue( dispatch );
 
 		// Prevent console.error from being loud during testing because of the test 500 error.
 		const consoleError = global.console.error;
-		global.console.error = jest.fn();
+		global.console.error = vi.fn();
 		const { result } = renderHook( () => useProductsQuery(), {
 			wrapper,
 		} );
@@ -511,7 +512,7 @@ describe( 'useBillingDashboardQuery', () => {
 				code: 'no_billing_invoice_available',
 			} );
 
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		useDispatch.mockReturnValue( dispatch );
 
 		const { result } = renderHook( () => useBillingDashboardQuery( { retry: false } ), {
@@ -539,7 +540,7 @@ describe( 'useBillingDashboardQuery', () => {
 			.get( '/wpcom/v2/jetpack-licensing/licenses/billing' )
 			.reply( 403 );
 
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		useDispatch.mockReturnValue( dispatch );
 
 		const { result } = renderHook( () => useBillingDashboardQuery( { retry: false } ), {

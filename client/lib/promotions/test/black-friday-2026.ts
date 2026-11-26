@@ -1,18 +1,19 @@
 import config from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import {
 	BLACK_FRIDAY_2026_END,
 	BLACK_FRIDAY_2026_START,
 	isBlackFriday2026Active,
 } from '../black-friday-2026';
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: Object.assign( jest.fn(), { isEnabled: jest.fn() } ),
+	default: Object.assign( vi.fn(), { isEnabled: vi.fn() } ),
 } ) );
 
 describe( 'isBlackFriday2026Active', () => {
 	beforeEach( () => {
-		( config.isEnabled as jest.Mock ).mockReturnValue( false );
+		( config.isEnabled as Mock ).mockReturnValue( false );
 	} );
 
 	it( 'is active inside the window', () => {
@@ -30,7 +31,7 @@ describe( 'isBlackFriday2026Active', () => {
 	} );
 
 	it( 'is active outside the window when the flag is on', () => {
-		( config.isEnabled as jest.Mock ).mockImplementation(
+		( config.isEnabled as Mock ).mockImplementation(
 			( flag: string ) => flag === 'black-friday-2026'
 		);
 		expect( isBlackFriday2026Active( BLACK_FRIDAY_2026_START - 1 ) ).toBe( true );

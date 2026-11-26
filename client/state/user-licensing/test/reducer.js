@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -10,16 +10,6 @@ import {
 import * as reducers from 'calypso/state/user-licensing/reducer';
 
 describe( 'reducer', () => {
-	describe( '#hasFetchedLicenses', () => {
-		test( 'should return true on request success', () => {
-			const { hasFetchedLicenses } = reducers;
-
-			const state = undefined;
-			const action = { type: USER_LICENSES_RECEIVE };
-			expect( hasFetchedLicenses( state, action ) ).toEqual( true );
-		} );
-	} );
-
 	describe( '#licensesFetching', () => {
 		test( 'should return true on request start', () => {
 			const { licensesFetching } = reducers;

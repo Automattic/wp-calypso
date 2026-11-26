@@ -12,6 +12,7 @@ import {
 	CheckoutStep,
 	CheckoutStepGroup,
 	CheckoutStepBody,
+	createCheckoutStepGroupStore,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -32,6 +33,7 @@ import {
 	getContactDetailsType,
 	ContactDetailsType,
 	RestorableProductsProvider,
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
 } from '@automattic/wpcom-checkout';
 import { css, keyframes } from '@emotion/react';
 import { useViewportMatch } from '@wordpress/compose';
@@ -110,7 +112,6 @@ import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
 import badgeSecurity from './assets/icons/security.svg';
 import CheckoutNextSteps from './checkout-next-steps';
-import CheckoutPayLaterButton from './checkout-pay-later-button';
 import { CheckoutSidebarPlanUpsell } from './checkout-sidebar-plan-upsell';
 import DIFMOfferRequestNotice from './difm-offer-request-notice';
 import { EmptyCart, shouldShowEmptyCartPage } from './empty-cart';
@@ -614,6 +615,10 @@ export default function CheckoutMainContent( {
 
 	const { transactionStatus } = useTransactionStatus();
 	const paymentMethod = usePaymentMethod();
+	// A ref so the contact step's async callback reads the current method, not a stale one.
+	const paymentMethodIdRef = useRef( paymentMethod?.id );
+	paymentMethodIdRef.current = paymentMethod?.id;
+	const [ stepGroupStore ] = useState( createCheckoutStepGroupStore );
 
 	const hasMarketplaceProduct =
 		useDoesCartHaveMarketplaceProductRequiringConfirmation( responseCart );
@@ -825,15 +830,10 @@ export default function CheckoutMainContent( {
 
 	// Control (and the non-portaled mobile fallback below) shows the money-back
 	// guarantee under the submit button.
-	const mobileSubmitButtonFooter = (
-		<>
-			<CheckoutPayLaterButton />
-			{ hasCartJetpackProductsOnly ? (
-				<JetpackCheckoutSeals />
-			) : (
-				<CheckoutMoneyBackGuarantee cart={ responseCart } />
-			) }
-		</>
+	const mobileSubmitButtonFooter = hasCartJetpackProductsOnly ? (
+		<JetpackCheckoutSeals />
+	) : (
+		<CheckoutMoneyBackGuarantee cart={ responseCart } />
 	);
 	// In the sticky bar the terms line rides above the CTA (header slot). The
 	// money-back guarantee is surfaced up in the payment step instead (see
@@ -872,6 +872,7 @@ export default function CheckoutMainContent( {
 					</WPCheckoutTitle>
 				) }
 				<CheckoutStepGroup
+					store={ stepGroupStore }
 					loadingHeader={ loadingHeader }
 					onStepChanged={ onStepChanged }
 					scrollToStepOnForwardNavigation={ ! isLargeViewport }
@@ -981,10 +982,29 @@ export default function CheckoutMainContent( {
 										prepareDomainContactValidationRequest( contactInfo )
 									);
 
+									// This callback also runs when the contact step isn't active: clicking
+									// Edit on a later step after every step is complete re-validates this
+									// one first. To avoid recording an extra "first step complete" event
+									// when the user didn't actually go back and touch the first step, we
+									// skip recording calypso_checkout_composite_first_step_complete unless
+									// the contact step is actually active. (It might make sense to do that
+									// for calypso_checkout_composite_step_complete too, but for backwards
+									// compatibility reasons we currently aren't.)
+									const isContactStepActive =
+										stepGroupStore.state.activeStepNumber ===
+										stepGroupStore.actions.getStepNumberFromId( 'contact-form' );
 									recordTracksEvent( 'calypso_checkout_composite_step_complete', {
 										step: 1,
 										step_name: 'contact-form',
 									} );
+									if ( isContactStepActive ) {
+										recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
+											payment_method:
+												translateCheckoutPaymentMethodToWpcomPaymentMethod(
+													paymentMethodIdRef.current ?? ''
+												) || '',
+										} );
+									}
 								}
 								return validationResponse;
 							} }

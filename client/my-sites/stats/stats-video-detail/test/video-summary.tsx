@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import VideoSummary from '../video-summary';
 import type { ReactNode } from 'react';
 
-jest.mock( 'calypso/components/data/query-site-stats', () => () => null );
-jest.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 123 } ) );
+vi.mock( 'calypso/components/data/query-site-stats', () => ( { default: () => null } ) );
+vi.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 123 } ) );
 
 let mockData: unknown;
-jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
+vi.mock( 'calypso/state/stats/lists/selectors', () => ( {
 	getSiteStatsNormalizedData: () => mockData,
 	hasSiteStatsQueryFailed: () => false,
 	isRequestingSiteStatsForQuery: () => false,
@@ -20,29 +21,34 @@ jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
 
 // The site's "today", read through the site-zone moment the header clamps on.
 let mockSiteToday = '2026-07-02';
-jest.mock( '../../hooks/use-moment-site-zone', () => ( {
-	useMomentInSite: () => ( dateInput?: string ) =>
-		jest.requireActual( 'moment' )( dateInput ?? mockSiteToday ),
+vi.mock( '../../hooks/use-moment-site-zone', async () => {
+	const { default: moment } = await vi.importActual< { default: typeof import( 'moment' ) } >(
+		'moment'
+	);
+	return {
+		useMomentInSite: () => ( dateInput?: string ) => moment( dateInput ?? mockSiteToday ),
+	};
+} );
+
+vi.mock( '../../stats-period-navigation', () => ( {
+	default: ( { children }: { children: ReactNode } ) => children,
 } ) );
 
-jest.mock(
-	'../../stats-period-navigation',
-	() =>
-		( { children }: { children: ReactNode } ) =>
-			children
-);
-
 let mockDateLabelProps: { dateRange?: { chartStart: string; chartEnd: string } };
-jest.mock( '../../stats-date-label', () => ( props: typeof mockDateLabelProps ) => {
-	mockDateLabelProps = props;
-	return null;
-} );
+vi.mock( '../../stats-date-label', () => ( {
+	default: ( props: typeof mockDateLabelProps ) => {
+		mockDateLabelProps = props;
+		return null;
+	},
+} ) );
 
 let mockChartProps: { data: Array< { formattedValue?: string } > };
-jest.mock( '../../stats-summary', () => ( props: typeof mockChartProps ) => {
-	mockChartProps = props;
-	return null;
-} );
+vi.mock( '../../stats-summary', () => ( {
+	default: ( props: typeof mockChartProps ) => {
+		mockChartProps = props;
+		return null;
+	},
+} ) );
 
 function renderSummary( rows: Array< Record< string, string | number | null > > ) {
 	mockData = {

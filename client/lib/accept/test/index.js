@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act } from '@testing-library/react';
+import { vi } from 'vitest';
 import accept from '../';
 
 describe( '#accept()', () => {
@@ -24,7 +25,7 @@ describe( '#accept()', () => {
 	} );
 
 	test( 'should trigger the callback with an accepted prompt', async () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 
 		await act( async () => {
 			accept( 'Are you sure?', callback );
@@ -38,7 +39,7 @@ describe( '#accept()', () => {
 	} );
 
 	test( 'should trigger the callback with a denied prompt', async () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 
 		await act( async () => {
 			accept( 'Are you sure?', callback );

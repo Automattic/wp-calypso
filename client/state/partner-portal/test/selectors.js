@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import * as selectors from 'calypso/state/partner-portal/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
-jest.mock( 'calypso/state/selectors/get-current-route', () => jest.fn() );
+vi.mock( 'calypso/state/selectors/get-current-route', () => ( { default: vi.fn() } ) );
 
 describe( 'selectors', () => {
 	describe( '#isPartnerPortal()', () => {

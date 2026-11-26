@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { siteCommentsInfiniteQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,11 +8,12 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { vi } from 'vitest';
 import { useComments } from 'calypso/reader/data/comments';
 import { READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN } from 'calypso/state/reader-ui/action-types';
 import CommentLikeButtonContainer from '../comment-likes';
 
-jest.mock( 'calypso/reader/components/icons/like-icon', () => () => <span /> );
+vi.mock( 'calypso/reader/components/icons/like-icon', () => ( { default: () => <span /> } ) );
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -55,7 +56,7 @@ const CommentsBackedLikeButton = () => {
 			commentId={ 5 }
 			comment={ comment }
 			tagName="button"
-			onLikeToggle={ jest.fn() }
+			onLikeToggle={ vi.fn() }
 		/>
 	);
 };
@@ -77,7 +78,7 @@ describe( 'CommentLikeButtonContainer', () => {
 				commentId={ 5 }
 				comment={ { ID: 5, i_like: true, like_count: 7 } }
 				tagName="button"
-				onLikeToggle={ jest.fn() }
+				onLikeToggle={ vi.fn() }
 			/>
 		);
 
@@ -86,7 +87,7 @@ describe( 'CommentLikeButtonContainer', () => {
 	} );
 
 	it( 'accepts string comment ids', () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 		renderWithRedux(
 			<CommentLikeButtonContainer
@@ -95,7 +96,7 @@ describe( 'CommentLikeButtonContainer', () => {
 				commentId="placeholder-5"
 				comment={ { ID: 'placeholder-5', i_like: false, like_count: 0 } }
 				tagName="button"
-				onLikeToggle={ jest.fn() }
+				onLikeToggle={ vi.fn() }
 			/>
 		);
 
@@ -113,7 +114,7 @@ describe( 'CommentLikeButtonContainer', () => {
 				commentId={ 5 }
 				comment={ { ID: 5, i_like: true, like_count: 7 } }
 				tagName="button"
-				onLikeToggle={ jest.fn() }
+				onLikeToggle={ vi.fn() }
 			/>,
 			{
 				state: {
@@ -157,26 +158,27 @@ describe( 'CommentLikeButtonContainer', () => {
 			],
 			pageParams: [ undefined ],
 		} );
+		let releaseLike = () => {};
+		const likeReleased = new Promise( ( resolve ) => {
+			releaseLike = resolve;
+		} );
 		const likeScope = nock( BASE )
 			.post( '/rest/v1.1/sites/100/comments/5/likes/new', {} )
-			.delay( 1000 )
-			.reply( 200, {
-				success: true,
-				like_count: '8',
+			.reply( async () => {
+				await likeReleased;
+				return [ 200, { success: true, like_count: '8' } ];
 			} );
 
 		renderWithRedux( <CommentsBackedLikeButton />, { queryClient } );
 
 		screen.getByRole( 'button', { name: 'Like' } ).click();
 
-		await waitFor(
-			() => {
-				expect( screen.getByRole( 'button', { name: 'Liked' } ) ).toHaveClass( 'is-liked' );
-				expect( screen.getByText( '8' ) ).toBeVisible();
-			},
-			{ timeout: 50 }
-		);
+		await waitFor( () => {
+			expect( screen.getByRole( 'button', { name: 'Liked' } ) ).toHaveClass( 'is-liked' );
+			expect( screen.getByText( '8' ) ).toBeVisible();
+		} );
 
+		releaseLike();
 		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
 	} );
 

@@ -1,26 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import WooPaymentsDashboard from '..';
 
-jest.mock( 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour', () => ( {
 	LayoutWithGuidedTour: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 } ) );
-jest.mock(
-	'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification',
-	() =>
-		( { children }: { children: React.ReactNode } ) => <div>{ children }</div>
-);
-jest.mock(
-	'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation',
-	() => () => null
-);
+vi.mock( 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification', () => ( {
+	default: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+} ) );
+vi.mock( 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation', () => ( {
+	default: () => null,
+} ) );
 
 const API = 'https://public-api.wordpress.com';
 const AGENCY_ID = 123;

@@ -1,35 +1,36 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { translate } from 'i18n-calypso';
+import { vi } from 'vitest';
 import JetpackProductInfo from '../index';
 import type { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
 	useTranslate: () => ( text: string ) => text,
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
 } ) );
 
-jest.mock( 'react-redux', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'react-redux', () => ( {
+	useDispatch: () => vi.fn(),
 } ) );
 
-jest.mock( '../hooks/use-included-product-description-map', () => ( {
+vi.mock( '../hooks/use-included-product-description-map', () => ( {
 	useIncludedProductDescriptionMap: () => ( {} ),
 } ) );
 
-jest.mock( 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product', () => ( {
+vi.mock( 'calypso/jetpack-cloud/sections/partner-portal/lib/is-woocommerce-product', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
 
-jest.mock( 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon', () => ( {
+vi.mock( 'calypso/my-sites/plans/jetpack-plans/product-store/utils/get-product-icon', () => ( {
 	__esModule: true,
 	default: () => '/test-icon.svg',
 } ) );
@@ -54,7 +55,7 @@ const product = {
 
 describe( 'JetpackProductInfo', () => {
 	beforeEach( () => {
-		Element.prototype.scrollIntoView = jest.fn();
+		Element.prototype.scrollIntoView = vi.fn();
 	} );
 
 	it( 'opens an internal disclaimer FAQ without navigating', async () => {

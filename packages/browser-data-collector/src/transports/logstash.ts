@@ -12,5 +12,8 @@ export const send = async ( payload: Record< string, unknown > ): Promise< boole
 				properties: payload,
 			} ),
 		},
-	} );
+	} ).then(
+		() => true,
+		() => false
+	);
 };

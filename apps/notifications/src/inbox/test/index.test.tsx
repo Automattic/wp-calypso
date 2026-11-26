@@ -1,7 +1,8 @@
-import { act, render, screen, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import { getClient, showNotes } from '../../app/client';
+import { getClient, initClient, showNotes } from '../../app/client';
+import { listNotes } from '../../panel/rest-client/wpcom';
 import { store, init as initState } from '../../panel/state';
 import actions from '../../panel/state/actions';
 import getIsPanelOpen from '../../panel/state/selectors/get-is-panel-open';
@@ -25,6 +26,7 @@ vi.mock( '../../panel/rest-client', () => ( {
 } ) );
 vi.mock( '../../panel/rest-client/wpcom', () => ( {
 	init: vi.fn(),
+	listNotes: vi.fn( async () => ( { notes: [] } ) ),
 	markReadStatus: vi.fn(),
 	markPostAsSeen: vi.fn(),
 } ) );
@@ -53,6 +55,7 @@ const renderInbox = (
 		setSelectedNoteId = () => {},
 		onViewSettings,
 		isMarkAsUnreadEnabled,
+		tracksSurface,
 	}: Partial<
 		Pick<
 			InboxProps,
@@ -61,6 +64,7 @@ const renderInbox = (
 			| 'setSelectedNoteId'
 			| 'onViewSettings'
 			| 'isMarkAsUnreadEnabled'
+			| 'tracksSurface'
 		>
 	> = {}
 ) =>
@@ -74,6 +78,7 @@ const renderInbox = (
 			setSelectedNoteId={ setSelectedNoteId }
 			onViewSettings={ onViewSettings }
 			isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+			tracksSurface={ tracksSurface }
 			renderLayout={ ( { list, detail } ) => (
 				<>
 					<section aria-label="List">{ list }</section>
@@ -137,6 +142,19 @@ describe( 'NotificationsInbox', () => {
 			'Subscribers',
 			'Likes',
 		] );
+	} );
+
+	it( 'offers to mark every unread notification as read', async () => {
+		vi.mocked( listNotes ).mockResolvedValueOnce( { notes: [ { id: 801 }, { id: 900 } ] } );
+		loadNotes( makeNote( 801, 'First comment' ) );
+
+		renderInbox();
+
+		expect(
+			await within( screen.getByRole( 'region', { name: 'List' } ) ).findByRole( 'button', {
+				name: 'Mark 2 as read',
+			} )
+		).toBeVisible();
 	} );
 
 	it( 'leaves out the panel settings and keyboard shortcuts buttons when the host cannot open the settings', async () => {
@@ -229,6 +247,30 @@ describe( 'NotificationsInbox', () => {
 		expect( setSelectedNoteId ).not.toHaveBeenCalled();
 	} );
 
+	it( 'names the surface the host gives in the events it records, until it is unmounted', async () => {
+		const user = userEvent.setup();
+		const tracks = window as unknown as { _tkq: unknown[][] };
+		tracks._tkq = [];
+		loadNotes( makeNote( 801, 'First comment' ) );
+		const { unmount } = renderInbox( undefined, { tracksSurface: 'dashboard_page' } );
+
+		await user.click( await screen.findByRole( 'tab', { name: 'Comments' } ) );
+		expect( tracks._tkq ).toContainEqual( [
+			'recordEvent',
+			'calypso_notification_tab_select',
+			{ tab: 'comments', source: 'tab', surface: 'dashboard_page' },
+		] );
+
+		unmount();
+		renderInbox();
+		await user.click( await screen.findByRole( 'tab', { name: 'Likes' } ) );
+		expect( tracks._tkq ).toContainEqual( [
+			'recordEvent',
+			'calypso_notification_tab_select',
+			{ tab: 'likes', source: 'tab' },
+		] );
+	} );
+
 	it( 'shows no open note until one is selected', () => {
 		loadNotes( makeNote( 801, 'First comment' ) );
 
@@ -244,6 +286,67 @@ describe( 'NotificationsInbox', () => {
 
 		expect( getClient().getNote ).toHaveBeenCalledWith( 999 );
 		expect( screen.getByRole( 'region', { name: 'Open note' } ) ).toBeEmptyDOMElement();
+	} );
+
+	it( 'leaves the host to show its empty state when a selected note cannot be loaded', async () => {
+		initClient( {} );
+		vi.mocked( getClient().getNote ).mockResolvedValueOnce( false );
+		const setSelectedNoteId = vi.fn();
+		loadNotes( makeNote( 801, 'First comment' ) );
+
+		renderInbox( '999', { setSelectedNoteId } );
+
+		await waitFor( () => expect( setSelectedNoteId ).toHaveBeenCalledWith( undefined ) );
+	} );
+
+	it( 'keeps a selected note that the server returns', async () => {
+		initClient( {} );
+		const found = Promise.resolve( true );
+		vi.mocked( getClient().getNote ).mockReturnValueOnce( found );
+		const setSelectedNoteId = vi.fn();
+
+		renderInbox( '999', { setSelectedNoteId } );
+		await act( () => found );
+
+		expect( setSelectedNoteId ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the selection when the note may still load', async () => {
+		initClient( {} );
+		const found = Promise.resolve( undefined );
+		vi.mocked( getClient().getNote ).mockReturnValueOnce( found );
+		const setSelectedNoteId = vi.fn();
+
+		renderInbox( '999', { setSelectedNoteId } );
+		await act( () => found );
+
+		expect( setSelectedNoteId ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the newer selection when a note that cannot be loaded was selected before it', async () => {
+		initClient( {} );
+		let answer: ( found: boolean ) => void = () => {};
+		vi.mocked( getClient().getNote ).mockReturnValueOnce(
+			new Promise( ( resolve ) => ( answer = resolve ) )
+		);
+		const setSelectedNoteId = vi.fn();
+		loadNotes( makeNote( 801, 'First comment' ) );
+		const { rerender } = renderInbox( '999', { setSelectedNoteId } );
+
+		rerender(
+			<NotificationsInbox
+				wpcom={ {} }
+				locale="en"
+				filterName={ undefined }
+				setFilterName={ () => {} }
+				selectedNoteId="801"
+				setSelectedNoteId={ setSelectedNoteId }
+				renderLayout={ ( { detail } ) => <section aria-label="Open note">{ detail }</section> }
+			/>
+		);
+		await act( async () => answer( false ) );
+
+		expect( setSelectedNoteId ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not fetch a selected note that is already loaded', () => {

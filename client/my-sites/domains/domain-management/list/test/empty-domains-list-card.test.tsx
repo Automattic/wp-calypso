@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { PLAN_100_YEARS } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { useDomainToPlanCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import EmptyDomainsListCard from '../empty-domains-list-card';
@@ -27,20 +28,22 @@ const hundredYearSite = {
 	slug: 'example.com',
 };
 
-jest.mock( 'calypso/state/purchases/selectors/fetching', () => ( {
-	isFetchingUserPurchases: jest.fn().mockReturnValue( false ),
+vi.mock( 'calypso/state/purchases/selectors/fetching', () => ( {
+	isFetchingUserPurchases: vi.fn().mockReturnValue( false ),
 } ) );
 
-jest.mock( 'calypso/components/data/query-products-list', () => {
-	return function MockQueryProductsList() {
-		return null;
+vi.mock( 'calypso/components/data/query-products-list', () => {
+	return {
+		default: function MockQueryProductsList() {
+			return null;
+		},
 	};
 } );
 
-jest.mock(
+vi.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable',
 	() => ( {
-		useDomainToPlanCreditsApplicable: jest.fn().mockReturnValue( null ),
+		useDomainToPlanCreditsApplicable: vi.fn().mockReturnValue( null ),
 	} )
 );
 

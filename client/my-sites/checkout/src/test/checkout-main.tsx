@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
@@ -9,6 +9,7 @@ import { render, screen, within, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import * as Tracks from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -16,7 +17,11 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import * as PrePurchaseNotices from '../components/prepurchase-notices';
-import { contactDetailsActions, resetCheckoutStores } from '../lib/checkout-stores';
+import {
+	contactDetailsActions,
+	resolvedRenewalDataStore,
+	resetCheckoutStores,
+} from '../lib/checkout-stores';
 import {
 	domainProduct,
 	planWithoutDomain,
@@ -30,21 +35,24 @@ import {
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-jest.mock( 'calypso/lib/navigate' );
-jest.mock( 'calypso/state/notices/actions' );
-jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
-	const { useEffect } = jest.requireActual( 'react' );
-	return ( { onSubmitBlockedChange } ) => {
-		useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
-		return null;
+vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+vi.mock( 'calypso/lib/navigate' );
+vi.mock( 'calypso/state/notices/actions' );
+vi.mock( 'calypso/blocks/login/blackbox-challenge', async () => {
+	const { useEffect } = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	return {
+		default: function MockBlackboxChallenge( { onSubmitBlockedChange } ) {
+			useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
+			return null;
+		},
 	};
 } );
 
@@ -59,22 +67,23 @@ describe( 'CheckoutMain', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
-		jest.clearAllMocks();
-		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+		vi.clearAllMocks();
+		( getPlansBySiteId as Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
-		( errorNotice as jest.Mock ).mockImplementation( ( value ) => {
+		( errorNotice as Mock ).mockImplementation( ( value ) => {
 			return {
 				type: 'errorNotice',
 				value,
 			};
 		} );
 		mockGetSiteDomainsEndpoint( [] );
-		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
-		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
+		( isMarketplaceProduct as Mock ).mockImplementation( () => false );
+		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockGetVatInfoEndpoint( {} );
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockMatchMediaOnWindow();
@@ -105,8 +114,8 @@ describe( 'CheckoutMain', () => {
 				</>
 			);
 		}
-		const notices = jest.spyOn( PrePurchaseNotices, 'default' ).mockImplementation( FormControls );
-		const onFormSubmittingChange = jest.fn();
+		const notices = vi.spyOn( PrePurchaseNotices, 'default' ).mockImplementation( FormControls );
+		const onFormSubmittingChange = vi.fn();
 		const user = userEvent.setup();
 		try {
 			render(
@@ -209,7 +218,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'records a Tracks event each time the checkout summary is toggled', async () => {
-		const recordTracksEvent = jest.spyOn( Tracks, 'recordTracksEvent' );
+		const recordTracksEvent = vi.spyOn( Tracks, 'recordTracksEvent' );
 		const toggleEvents = () =>
 			recordTracksEvent.mock.calls.filter(
 				( [ eventName ] ) => eventName === 'calypso_checkout_summary_toggle'
@@ -435,7 +444,7 @@ describe( 'CheckoutMain', () => {
 	it.each( [ undefined, 'jetpack' ] )(
 		'shows an error for an empty product slug in %s checkout without updating the cart',
 		async ( sitelessCheckoutType ) => {
-			const setCart = jest.fn( mockSetCartEndpoint );
+			const setCart = vi.fn( mockSetCartEndpoint );
 			render(
 				<MockCheckout
 					initialCart={ initialCart }
@@ -854,7 +863,7 @@ describe( 'CheckoutMain', () => {
 			isGiftPurchase: true,
 		};
 
-		( useCartKey as jest.Mock ).mockImplementation( () => 'no-site' );
+		( useCartKey as Mock ).mockImplementation( () => 'no-site' );
 		render(
 			<MockCheckout
 				cartChanges={ cartChanges }
@@ -875,6 +884,80 @@ describe( 'CheckoutMain', () => {
 		expect( ( await screen.findAllByText( 'Gift' ) ).length ).toBeGreaterThan( 0 );
 		expect( errorNotice ).not.toHaveBeenCalled();
 	} );
+
+	it.each( [
+		[ [ 'isAkismetSitelessCheckout' ], 'akismet_siteless_checkout', 'akismet' ],
+		[ [ 'isMarketplaceSitelessCheckout' ], 'marketplace_siteless_checkout', 'marketplace' ],
+		[ [ 'isWpcomSitelessCheckout' ], 'wpcom_siteless_checkout', 'wpcom' ],
+		// The server sends both flags on a Studio product.
+		[
+			[ 'isWpcomSitelessCheckout', 'isStudioSitelessCheckout' ],
+			'wpcom_siteless_checkout',
+			'studio',
+		],
+	] )(
+		'takes the siteless type of a renewal by subscription ID from the cart flags %s',
+		async ( cartFlags, expectedCheckoutFlow, expectedSitelessCheckoutType ) => {
+			const recordTracksEvent = vi.spyOn( Tracks, 'recordTracksEvent' );
+			// The server flags a renewal of a purchase on a holding site; the URL has no product.
+			const setCartWithHoldingSiteRenewal: typeof mockSetCartEndpoint = ( cartKey, requestCart ) =>
+				mockSetCartEndpoint( cartKey, {
+					...requestCart,
+					products: requestCart.products.map( ( product ) =>
+						product.extra.purchaseType === 'renewal'
+							? {
+									...product,
+									product_slug: 'personal-bundle',
+									extra: {
+										...product.extra,
+										...Object.fromEntries( cartFlags.map( ( flag ) => [ flag, true ] ) ),
+									},
+								}
+							: product
+					),
+				} );
+			( useCartKey as Mock ).mockImplementation( () => 'no-site' );
+
+			try {
+				const { unmount } = render(
+					<MockCheckout
+						cartChanges={ { products: [] } }
+						additionalProps={ {
+							purchaseId: '12345',
+							productAliasFromUrl: undefined,
+							siteId: 0,
+							siteSlug: 'no-site',
+							sitelessCheckoutType: undefined,
+						} }
+						initialCart={ initialCart }
+						setCart={ setCartWithHoldingSiteRenewal }
+					/>
+				);
+
+				expect(
+					await screen.findByText( /WordPress.com Personal/, {
+						ignore: '.cost-overrides-list-product__title',
+					} )
+				).toBeInTheDocument();
+				await waitFor( () => {
+					expect( recordTracksEvent ).toHaveBeenCalledWith(
+						'calypso_checkout_page_view',
+						expect.objectContaining( { checkout_flow: expectedCheckoutFlow } )
+					);
+				} );
+				// The checkout header brands itself from this.
+				expect( resolvedRenewalDataStore.get() ).toEqual( {
+					sitelessCheckoutType: expectedSitelessCheckoutType,
+				} );
+
+				// A later checkout must not take this renewal's brand.
+				unmount();
+				expect( resolvedRenewalDataStore.get() ).toBeNull();
+			} finally {
+				recordTracksEvent.mockRestore();
+			}
+		}
+	);
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -911,7 +994,7 @@ describe( 'CheckoutMain', () => {
 	} );
 
 	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
-		( useCartKey as jest.Mock ).mockImplementation( () => undefined );
+		( useCartKey as Mock ).mockImplementation( () => undefined );
 		await act( async () => {
 			render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
 		} );

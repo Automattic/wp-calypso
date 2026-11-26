@@ -30,6 +30,10 @@ export default function DomainOverviewSslStatus( { domain }: { domain: Domain } 
 		return null;
 	}
 
+	if ( domain.ssl_status === 'failed' ) {
+		return <Badge intent="high">{ sslStatusLabels.failed }</Badge>;
+	}
+
 	const isPending = domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending';
 
 	return (

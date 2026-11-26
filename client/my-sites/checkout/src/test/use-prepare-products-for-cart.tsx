@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
 
 function renderPrepareProducts( {
 	productAliasFromUrl,
@@ -57,7 +58,18 @@ describe( 'usePrepareProductsForCart for WordPress.com siteless checkout', () =>
 		expect( result.current.productsForCart[ 0 ].extra.isWpcomSitelessCheckout ).toBe( true );
 	} );
 
-	it( 'only the wpcom type sets isWpcomSitelessCheckout', () => {
+	it( 'marks a Studio product as both a WordPress.com and a Studio siteless checkout', () => {
+		const { result } = renderPrepareProducts( {
+			productAliasFromUrl: 'studio-cloud-monthly',
+			sitelessCheckoutType: 'studio',
+		} );
+
+		expect( result.current.productsForCart ).toHaveLength( 1 );
+		expect( result.current.productsForCart[ 0 ].extra.isWpcomSitelessCheckout ).toBe( true );
+		expect( result.current.productsForCart[ 0 ].extra.isStudioSitelessCheckout ).toBe( true );
+	} );
+
+	it( 'only the wpcom and studio types set isWpcomSitelessCheckout', () => {
 		const { result } = renderPrepareProducts( {
 			productAliasFromUrl: 'ak_pro5h_yearly',
 			sitelessCheckoutType: 'akismet',
@@ -65,6 +77,7 @@ describe( 'usePrepareProductsForCart for WordPress.com siteless checkout', () =>
 
 		expect( result.current.productsForCart[ 0 ].extra.isWpcomSitelessCheckout ).toBeFalsy();
 		expect( result.current.productsForCart[ 0 ].extra.isAkismetSitelessCheckout ).toBe( true );
+		expect( result.current.productsForCart[ 0 ].extra.isStudioSitelessCheckout ).toBeFalsy();
 	} );
 
 	it( 'reads the quantity from a :-q- suffix on the URL slug', () => {
@@ -80,7 +93,7 @@ describe( 'usePrepareProductsForCart for WordPress.com siteless checkout', () =>
 	// Without 'wpcom' in `doNotStripProducts`, `useStripProductsFromUrl` rewrites the
 	// URL and the product is lost on reload.
 	it( 'leaves the product in the URL', () => {
-		const replaceState = jest.spyOn( window.history, 'replaceState' );
+		const replaceState = vi.spyOn( window.history, 'replaceState' );
 		window.history.replaceState( null, '', '/checkout/wpcom/personal-bundle' );
 		replaceState.mockClear();
 

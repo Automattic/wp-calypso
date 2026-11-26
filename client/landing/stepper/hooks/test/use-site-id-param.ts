@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useSiteIdParam } from '../use-site-id-param';
 
-jest.mock( 'react-router-dom', () => ( {
-	useLocation: jest.fn().mockImplementation( () => ( {
+vi.mock( 'react-router-dom', () => ( {
+	useLocation: vi.fn().mockImplementation( () => ( {
 		pathname: '/setup',
 		search: '?siteId=2053432885',
 		hash: '',

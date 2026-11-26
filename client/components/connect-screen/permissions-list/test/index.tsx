@@ -1,27 +1,30 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { render, screen, fireEvent } from '@testing-library/react';
 import { check, pencil, cog } from '@wordpress/icons';
 import React from 'react';
+import { vi } from 'vitest';
 import { PermissionsList } from '../index';
 
 // Mock i18n-calypso
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => {
-		const translate = (
-			singular: string,
-			_plural?: string,
-			options?: { args?: Record< string, unknown > }
-		) => {
-			if ( options?.args?.count !== undefined ) {
-				return `${ options.args.count } more`;
-			}
-			return singular;
-		};
-		return translate;
-	},
-	localize: ( Component: React.ComponentType ) => Component,
-	withRtl: ( Component: React.ComponentType ) => Component,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => {
+			const translate = (
+				singular: string,
+				_plural?: string,
+				options?: { args?: Record< string, unknown > }
+			) => {
+				if ( options?.args?.count !== undefined ) {
+					return `${ options.args.count } more`;
+				}
+				return singular;
+			};
+			return translate;
+		},
+		localize: ( Component: React.ComponentType ) => Component,
+		withRtl: ( Component: React.ComponentType ) => Component,
+	} )
+);
 
 describe( 'PermissionsList', () => {
 	const mockPermissions = [
@@ -65,7 +68,7 @@ describe( 'PermissionsList', () => {
 		} );
 
 		it( 'uses getIconForPermission callback to resolve icons by name', () => {
-			const mockGetIcon = jest.fn( ( name: string ) => {
+			const mockGetIcon = vi.fn( ( name: string ) => {
 				if ( name === 'users' ) {
 					return check;
 				}
@@ -97,7 +100,7 @@ describe( 'PermissionsList', () => {
 		} );
 
 		it( 'prioritizes direct icon prop over getIconForPermission', () => {
-			const mockGetIcon = jest.fn( () => pencil );
+			const mockGetIcon = vi.fn( () => pencil );
 			const permissionsWithBoth = [ { icon: check, name: 'test', label: 'Test permission' } ];
 
 			const { container } = render(

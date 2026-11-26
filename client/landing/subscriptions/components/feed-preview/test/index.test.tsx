@@ -1,14 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { Reader } from '@automattic/data-stores';
 import { render, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
+import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from '../index';
 
 // Mock wpcom API
-const mockWpcomGet = jest.fn();
-jest.mock( 'calypso/lib/wp', () => ( {
+const mockWpcomGet = vi.fn();
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: {
 		req: {
@@ -18,22 +20,24 @@ jest.mock( 'calypso/lib/wp', () => ( {
 } ) );
 
 // Mock useDebounce to return value immediately for testing
-jest.mock( 'use-debounce', () => ( {
+vi.mock( 'use-debounce', () => ( {
 	useDebounce: ( value: string ) => [ value ],
 } ) );
 
-jest.mock( 'calypso/reader/stream', () => {
-	return jest.fn( () => <div data-testid="mock-stream" data-restore-scroll="false" /> );
+vi.mock( 'calypso/reader/stream', () => {
+	return { default: vi.fn( () => <div data-testid="mock-stream" data-restore-scroll="false" /> ) };
 } );
 
-jest.mock( 'calypso/blocks/reader-feed-item', () => {
-	return jest.fn( ( { feed }: { feed: Reader.FeedItem } ) => (
-		<div
-			data-testid="mock-reader-feed-item"
-			data-feed-id={ feed.feed_ID }
-			data-source="test-source"
-		/>
-	) );
+vi.mock( 'calypso/blocks/reader-feed-item', () => {
+	return {
+		default: vi.fn( ( { feed }: { feed: Reader.FeedItem } ) => (
+			<div
+				data-testid="mock-reader-feed-item"
+				data-feed-id={ feed.feed_ID }
+				data-source="test-source"
+			/>
+		) ),
+	};
 } );
 
 const mockFeed: Partial< Reader.FeedItem > = {
@@ -44,7 +48,7 @@ const mockFeed: Partial< Reader.FeedItem > = {
 
 describe( 'FeedPreview', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'renders null when URL is empty', () => {
@@ -116,7 +120,7 @@ describe( 'FeedPreview', () => {
 
 	describe( 'callbacks', () => {
 		it( 'calls onChangeFeedPreview with true when feed loads successfully', async () => {
-			const onChangeFeedPreview = jest.fn();
+			const onChangeFeedPreview = vi.fn();
 			mockWpcomGet.mockResolvedValue( { feeds: [ mockFeed ] } );
 
 			render(
@@ -133,7 +137,7 @@ describe( 'FeedPreview', () => {
 		} );
 
 		it( 'calls onChangeFeedPreview with false when no feed is found', async () => {
-			const onChangeFeedPreview = jest.fn();
+			const onChangeFeedPreview = vi.fn();
 			mockWpcomGet.mockResolvedValue( { feeds: [] } );
 
 			render(
@@ -150,10 +154,8 @@ describe( 'FeedPreview', () => {
 		} );
 
 		it( 'passes onChangeSubscribe to ReaderFeedItem', async () => {
-			const onChangeSubscribe = jest.fn();
+			const onChangeSubscribe = vi.fn();
 			mockWpcomGet.mockResolvedValue( { feeds: [ mockFeed ] } );
-
-			const ReaderFeedItem = jest.requireMock( 'calypso/blocks/reader-feed-item' );
 
 			render(
 				<FeedPreview
@@ -164,7 +166,7 @@ describe( 'FeedPreview', () => {
 			);
 
 			await waitFor( () => {
-				expect( jest.mocked( ReaderFeedItem ).mock.lastCall?.[ 0 ] ).toEqual(
+				expect( vi.mocked( ReaderFeedItem ).mock.lastCall?.[ 0 ] ).toEqual(
 					expect.objectContaining( { onChangeSubscribe } )
 				);
 			} );

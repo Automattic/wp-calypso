@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import flows from 'calypso/signup/config/flows';
 import {
 	canResumeFlow,
@@ -13,9 +14,11 @@ import {
 	isPlanSelectionAvailableLaterInFlow,
 } from '../utils';
 
-jest.mock( 'calypso/signup/config/flows-pure', () => ( {
-	generateFlows: () => require( './fixtures/flows' ).default,
-} ) );
+vi.mock( 'calypso/signup/config/flows-pure', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		generateFlows: () => require( './fixtures/flows' ).default,
+	} )
+);
 
 describe( 'utils', () => {
 	const defaultFlowName = flows.defaultFlowName;

@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useSite } from '../use-site';
 import { withSite, type WithSiteProps } from '../with-site';
 
-jest.mock( '../use-site', () => ( {
-	useSite: jest.fn(),
+vi.mock( '../use-site', () => ( {
+	useSite: vi.fn(),
 } ) );
 
 describe( 'withSite', () => {
 	beforeEach( () => {
-		jest.mocked( useSite ).mockReturnValue( {
+		vi.mocked( useSite ).mockReturnValue( {
 			site: undefined,
 			siteError: undefined,
 			isLoading: false,

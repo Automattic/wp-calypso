@@ -209,7 +209,7 @@ export class LoginForm extends Component {
 			nextProps.socialAccountIsLinking
 		) {
 			this.setState( { usernameOrEmail: nextProps.socialAccountLinkEmail } );
-			this.props.getAuthAccountType( nextProps.socialAccountLinkEmail );
+			this.props.getAuthAccountType( nextProps.socialAccountLinkEmail, this.props.blackbox );
 		}
 
 		if ( this.props.hasAccountTypeLoaded && ! nextProps.hasAccountTypeLoaded ) {
@@ -362,7 +362,7 @@ export class LoginForm extends Component {
 			// the DOM as a workaround.
 			const usernameOrEmail = this.usernameOrEmail.value;
 
-			this.props.getAuthAccountType( usernameOrEmail );
+			this.props.getAuthAccountType( usernameOrEmail, this.props.blackbox );
 
 			this.setState( {
 				usernameOrEmail,
@@ -444,7 +444,7 @@ export class LoginForm extends Component {
 		event.preventDefault();
 		document.activeElement.blur();
 		if ( ! this.props.hasAccountTypeLoaded ) {
-			this.props.getAuthAccountType( this.state.usernameOrEmail );
+			this.props.getAuthAccountType( this.state.usernameOrEmail, this.props.blackbox );
 			return;
 		}
 		this.recordWooCommerceLoginTracks( 'email' );
@@ -1095,8 +1095,6 @@ export default connect(
 			hasAccountTypeLoaded: accountType !== null,
 			isFormDisabled: isFormDisabledSelector( state ),
 			oauth2Client,
-			isFromAutomatticForAgenciesPlugin:
-				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from,
 			allowedSocialServices: getPartnerAllowedSocialServices( oauth2Client ),
 			isWooJPC: isWooJPCFlow( state ),
 			isWoo: getIsWoo( state ),
@@ -1109,7 +1107,6 @@ export default connect(
 				props.userEmail ||
 				getInitialQueryArguments( state )?.email_address ||
 				getParamFromUrlOrOauth2Redirect( state, 'email_address' ),
-			socialService: getInitialQueryArguments( state )?.service,
 			wccomFrom: getWccomFrom( state ),
 			currentQuery,
 			isBlazePro: getIsBlazePro( state ),

@@ -14,7 +14,6 @@ import wpcom from 'calypso/lib/wp';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { cancelImport, setUploadStartState } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import {
@@ -280,7 +279,6 @@ export default compose(
 			validatedSiteUrl: getValidatedSiteUrl( state ),
 		} ),
 		{
-			recordTracksEvent,
 			importSite,
 			validateSiteIsImportable,
 			resetSiteImporterImport,

@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { Visibility } from '@automattic/data-stores';
+import { vi } from 'vitest';
 import { persistSignupDestination, setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { goToUnifiedCheckout } from '../checkout';
 
-jest.mock( 'calypso/signup/storageUtils' );
+vi.mock( 'calypso/signup/storageUtils' );
 
 const originalLocation = window.location;
-const assign = jest.fn();
+const assign = vi.fn();
 const options = {
 	flowName: 'static-site-import',
 	plan: 'business-bundle',
@@ -32,7 +33,7 @@ describe( 'goToUnifiedCheckout', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		window.localStorage.clear();
 		window.location.search = '';
 	} );

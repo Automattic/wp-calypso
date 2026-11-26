@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { MediaGrid, type MediaGridItem } from '../media-grid';
 
 interface Item {
@@ -21,10 +22,10 @@ type AtmoFixture = MediaGridItem & {
 const baseProps = {
 	max: 4,
 	accept: 'image/jpeg,image/png',
-	onPickFiles: jest.fn(),
-	onRemove: jest.fn(),
-	onRetry: jest.fn(),
-	onSetAlt: jest.fn(),
+	onPickFiles: vi.fn(),
+	onRemove: vi.fn(),
+	onRetry: vi.fn(),
+	onSetAlt: vi.fn(),
 	isPending: ( i: Item ) => i.state === 'pending',
 	canEditAlt: ( i: Item ) => i.state === 'staged' || i.state === 'pending',
 	isFailed: ( i: Item ) => i.state === 'failed',
@@ -55,7 +56,7 @@ describe( 'MediaGrid', () => {
 	} );
 
 	it( 'renders error pane and retry button when isFailed(item) is true', async () => {
-		const onRetry = jest.fn();
+		const onRetry = vi.fn();
 		const items: Item[] = [ { localId: 'a', previewUrl: 'blob:a', alt: '', state: 'failed' } ];
 		const user = userEvent.setup();
 		render( <MediaGrid items={ items } { ...baseProps } onRetry={ onRetry } /> );
@@ -65,7 +66,7 @@ describe( 'MediaGrid', () => {
 	} );
 
 	it( 'fires onRemove when × is clicked', async () => {
-		const onRemove = jest.fn();
+		const onRemove = vi.fn();
 		const items: Item[] = [ { localId: 'a', previewUrl: 'blob:a', alt: '', state: 'staged' } ];
 		const user = userEvent.setup();
 		render( <MediaGrid items={ items } { ...baseProps } onRemove={ onRemove } /> );
@@ -91,7 +92,7 @@ describe( 'MediaGrid', () => {
 	} );
 
 	it( 'fires onPickFiles with the picked files and resets the input', async () => {
-		const onPickFiles = jest.fn();
+		const onPickFiles = vi.fn();
 		const items: Item[] = [ { localId: 'a', previewUrl: 'blob:a', alt: '', state: 'staged' } ];
 		render( <MediaGrid items={ items } { ...baseProps } onPickFiles={ onPickFiles } /> );
 		const input = screen
@@ -116,10 +117,10 @@ describe( 'MediaGrid', () => {
 				items={ items }
 				max={ 4 }
 				accept="image/jpeg"
-				onPickFiles={ jest.fn() }
-				onRemove={ jest.fn() }
-				onRetry={ jest.fn() }
-				onSetAlt={ jest.fn() }
+				onPickFiles={ vi.fn() }
+				onRemove={ vi.fn() }
+				onRetry={ vi.fn() }
+				onSetAlt={ vi.fn() }
 				isPending={ ( i ) => i.kind === 'compressing' || i.kind === 'uploading' }
 				canEditAlt={ ( i ) => i.kind === 'uploading' || i.kind === 'uploaded' }
 				isFailed={ ( i ) => i.kind === 'failed' }

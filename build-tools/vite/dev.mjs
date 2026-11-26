@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
+import postcssRtlCss from 'postcss-rtlcss';
 import { mergeConfig } from 'vite';
 import { CALYPSO_SRC, calypsoBase, client, root } from './base.mjs';
 
@@ -66,6 +67,20 @@ function reactPreamble() {
 	};
 }
 
+/**
+ * With `BUILD_RTL_CSS=true`, adds an RTL rule next to each direction-specific LTR one, scoped by
+ * the `dir` attribute. `:where()` keeps each selector's specificity unchanged.
+ * @returns {import('postcss').AcceptedPlugin[]}
+ */
+function rtlCssPlugins() {
+	if ( process.env.BUILD_RTL_CSS !== 'true' ) {
+		return [];
+	}
+	return [
+		postcssRtlCss( { ltrPrefix: ':where([dir="ltr"])', rtlPrefix: ':where([dir="rtl"])' } ),
+	];
+}
+
 function calypsoEnv() {
 	return process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
 }
@@ -84,6 +99,26 @@ export function enabledSections() {
 	);
 }
 
+// Characters `JSON.stringify` leaves as is that can end a line or a script elsewhere.
+const unsafeCharEscapes = {
+	'<': '\\u003C',
+	'>': '\\u003E',
+	'\u2028': '\\u2028',
+	'\u2029': '\\u2029',
+};
+
+/**
+ * A value as a JavaScript literal for generated code.
+ * @param {unknown} value
+ * @returns {string}
+ */
+function toCodeString( value ) {
+	return JSON.stringify( value ).replace(
+		/[<>\u2028\u2029]/g,
+		( char ) => unsafeCharEscapes[ char ]
+	);
+}
+
 /**
  * Like `build-tools/webpack/sections-loader.js` for the browser: each section loads with `import()`.
  * @param {Object[]} sections
@@ -98,9 +133,9 @@ function sectionsPlugin( sections ) {
 				return;
 			}
 			const list = sections.map( ( section ) =>
-				JSON.stringify( section ).replace(
+				toCodeString( section ).replace(
 					/}$/,
-					`, "load": () => import( ${ JSON.stringify( section.module ) } ) }`
+					`, "load": () => import( ${ toCodeString( section.module ) } ) }`
 				)
 			);
 			return { code: `export default [\n${ list.join( ',\n' ) }\n];`, map: null };
@@ -165,6 +200,7 @@ export function devOverlay( { entries, sections = [], httpServer } ) {
 			],
 		},
 		css: {
+			postcss: { plugins: rtlCssPlugins() },
 			preprocessorOptions: {
 				scss: {
 					quietDeps: true,

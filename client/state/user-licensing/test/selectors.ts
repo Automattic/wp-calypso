@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,10 +8,8 @@ import * as selectors from 'calypso/state/user-licensing/selectors';
 const userLicensingState = {
 	userLicensing: {
 		licensesFetching: false,
-		hasFetchedLicenses: false,
 		licenses: null,
 		countsFetching: false,
-		hasFetchedLicenseCounts: true,
 		counts: null,
 	},
 };
@@ -33,20 +31,6 @@ const countsResponse = {
 };
 
 describe( 'selectors', () => {
-	describe( '#hasFetchedUserLicenses()', () => {
-		test( 'should return the value of hasFetchedLicenses', () => {
-			const { hasFetchedUserLicenses } = selectors;
-			const state = {
-				...userLicensingState,
-			};
-
-			expect( hasFetchedUserLicenses( state ) ).toEqual( false );
-
-			state.userLicensing.hasFetchedLicenses = true;
-			expect( hasFetchedUserLicenses( state ) ).toEqual( true );
-		} );
-	} );
-
 	describe( '#isFetchingUserLicenses()', () => {
 		test( 'should return the value of licensesFetching', () => {
 			const { isFetchingUserLicenses } = selectors;
@@ -144,22 +128,6 @@ describe( 'selectors', () => {
 			};
 			state.userLicensing.counts = counts;
 			expect( getUserLicensesCounts( state ) ).toEqual( counts );
-		} );
-	} );
-
-	describe( '#hasFetchedUserLicensesCounts()', () => {
-		test( 'should return the value of hasFetchedLicenseCounts', () => {
-			const { hasFetchedUserLicensesCounts } = selectors;
-			const state = {
-				...userLicensingState,
-			};
-
-			expect( hasFetchedUserLicensesCounts( state ) ).toEqual(
-				userLicensingState.userLicensing.hasFetchedLicenseCounts
-			);
-
-			state.userLicensing.hasFetchedLicenseCounts = true;
-			expect( hasFetchedUserLicensesCounts( state ) ).toEqual( true );
 		} );
 	} );
 

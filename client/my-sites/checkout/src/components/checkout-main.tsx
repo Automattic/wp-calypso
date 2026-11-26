@@ -14,7 +14,7 @@ import { VGSCollectProvider } from '@vgs/collect-js-react';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -44,14 +44,19 @@ import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redi
 import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent, convertErrorToString } from '../lib/analytics';
 import blikProcessor from '../lib/blik-processor';
-import { recaptchaClientIdStore, useContactDetails } from '../lib/checkout-stores';
+import {
+	recaptchaClientIdStore,
+	resolvedRenewalDataStore,
+	useContactDetails,
+} from '../lib/checkout-stores';
 import existingCardProcessor from '../lib/existing-card-processor';
 import existingPayPalPPCPProcessor from '../lib/existing-paypal-ppcp-processor';
 import freePurchaseProcessor from '../lib/free-purchase-processor';
 import genericRedirectProcessor from '../lib/generic-redirect-processor';
+import { getSitelessCheckoutTypeFromCart } from '../lib/get-siteless-checkout-type-from-cart';
 import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
+import { isWpcomSitelessCheckoutType } from '../lib/is-wpcom-siteless-checkout-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
-import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
@@ -95,10 +100,7 @@ export interface CheckoutMainProps {
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
-	disabledThankYouPage?: boolean;
 	sitelessCheckoutType?: SitelessCheckoutType;
-	akismetSiteSlug?: string;
-	marketplaceSiteSlug?: string;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
@@ -115,7 +117,6 @@ export interface CheckoutMainProps {
 	 */
 	fromSiteSlug?: string;
 	adminUrl?: string;
-	hostingIntent?: string | undefined;
 }
 
 export default function CheckoutMain( {
@@ -133,10 +134,7 @@ export default function CheckoutMain( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	isGiftPurchase,
-	disabledThankYouPage,
 	sitelessCheckoutType,
-	akismetSiteSlug,
-	marketplaceSiteSlug,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
@@ -145,7 +143,6 @@ export default function CheckoutMain( {
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
-	hostingIntent,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -204,25 +201,19 @@ export default function CheckoutMain( {
 			return jetpackSiteSlug;
 		}
 
-		// Currently, the `akismetSiteSlug` prop is not being passed to this component anywhere
-		// We are not doing any site specific things with akismet checkout, so this should always be undefined for now
-		// If this was not here to return `undefined`, the akismet routes would get messed with due to `siteSlug` returning "no-user" in akismet siteless checkout
-		if ( sitelessCheckoutType === 'akismet' ) {
-			return akismetSiteSlug;
-		}
-
-		if ( sitelessCheckoutType === 'marketplace' ) {
-			return marketplaceSiteSlug;
-		}
-
-		// Unified and WordPress.com siteless checkout have no site, so siteSlug would
-		// otherwise fall back to "no-user".
-		if ( sitelessCheckoutType === 'unified' || sitelessCheckoutType === 'wpcom' ) {
+		// These siteless checkouts have no site, so siteSlug would otherwise fall
+		// back to "no-user".
+		if (
+			sitelessCheckoutType === 'akismet' ||
+			sitelessCheckoutType === 'marketplace' ||
+			sitelessCheckoutType === 'unified' ||
+			isWpcomSitelessCheckoutType( sitelessCheckoutType )
+		) {
 			return undefined;
 		}
 
 		return siteSlug;
-	}, [ akismetSiteSlug, jetpackSiteSlug, marketplaceSiteSlug, sitelessCheckoutType, siteSlug ] );
+	}, [ jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
 		( error: TranslateResult ) => {
@@ -235,14 +226,6 @@ export default function CheckoutMain( {
 		},
 		[ reduxDispatch, translate ]
 	);
-
-	const checkoutFlow = useCheckoutFlowTrackKey( {
-		hasJetpackSiteSlug: !! jetpackSiteSlug,
-		sitelessCheckoutType,
-		isJetpackNotAtomic,
-		isLoggedOutCart,
-		isUserComingFromLoginForm,
-	} );
 
 	const countriesList = useCountryList();
 
@@ -263,7 +246,6 @@ export default function CheckoutMain( {
 		source: productSourceFromUrl,
 		aiSessionId: aiSessionIdFromUrl,
 		isGiftPurchase,
-		hostingIntent,
 	} );
 
 	const {
@@ -297,6 +279,32 @@ export default function CheckoutMain( {
 		applyCoupon,
 		addProductsToCart,
 		addingRenewals,
+	} );
+
+	// A renewal by subscription ID alone has no siteless type in its URL, so
+	// checkout's own analytics and the header take it from the cart. Google
+	// Analytics still follows the URL: its Akismet property is only configured
+	// on Akismet paths.
+	const isRenewalBySubscriptionId =
+		!! purchaseId && ! productAliasFromUrl && ! sitelessCheckoutType;
+	const resolvedSitelessCheckoutType = isRenewalBySubscriptionId
+		? getSitelessCheckoutTypeFromCart( responseCart )
+		: sitelessCheckoutType;
+
+	useEffect( () => {
+		if ( ! isRenewalBySubscriptionId || isInitialCartLoading ) {
+			return;
+		}
+		resolvedRenewalDataStore.set( { sitelessCheckoutType: resolvedSitelessCheckoutType } );
+		return () => resolvedRenewalDataStore.reset();
+	}, [ isRenewalBySubscriptionId, isInitialCartLoading, resolvedSitelessCheckoutType ] );
+
+	const checkoutFlow = useCheckoutFlowTrackKey( {
+		hasJetpackSiteSlug: !! jetpackSiteSlug,
+		sitelessCheckoutType: resolvedSitelessCheckoutType,
+		isJetpackNotAtomic,
+		isLoggedOutCart,
+		isUserComingFromLoginForm,
 	} );
 
 	useRecordCartLoaded( {
@@ -469,10 +477,11 @@ export default function CheckoutMain( {
 	const { analyticsPath, analyticsProps } = getAnalyticsPath(
 		purchaseId,
 		productAliasFromUrl,
-		updatedSiteSlug,
+		// Siteless checkouts have no site slug, as on their own renewal paths.
+		resolvedSitelessCheckoutType !== sitelessCheckoutType ? undefined : updatedSiteSlug,
 		feature,
 		plan,
-		sitelessCheckoutType,
+		resolvedSitelessCheckoutType,
 		checkoutFlow
 	);
 
@@ -599,7 +608,6 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-paypal-ppcp': ( transactionData: unknown ) =>
 				existingPayPalPPCPProcessor( transactionData, dataForProcessor ),
-			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
 		} ),
@@ -745,7 +753,6 @@ export default function CheckoutMain( {
 		purchaseId,
 		feature,
 		isComingFromUpsell,
-		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
 		connectAfterCheckout,
@@ -753,28 +760,11 @@ export default function CheckoutMain( {
 		fromSiteSlug,
 	} );
 
-	const handleStepChanged = useCallback(
-		( {
-			stepNumber,
-			previousStepNumber,
-			paymentMethodId,
-		}: {
-			stepNumber: number | null;
-			previousStepNumber: number;
-			paymentMethodId: string;
-		} ) => {
-			if ( stepNumber === 2 && previousStepNumber === 1 ) {
-				recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
-					payment_method:
-						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
-				} );
-			}
-			recordTracksEvent( 'calypso_checkout_composite_step_changed', {
-				step: stepNumber,
-			} );
-		},
-		[]
-	);
+	const handleStepChanged = useCallback( ( { stepNumber }: { stepNumber: number | null } ) => {
+		recordTracksEvent( 'calypso_checkout_composite_step_changed', {
+			step: stepNumber,
+		} );
+	}, [] );
 
 	const handlePaymentMethodChanged = useCallback( ( method: string ) => {
 		logStashEvent( 'payment_method_select', { newMethodId: String( method ) }, 'info' );
@@ -856,15 +846,18 @@ export default function CheckoutMain( {
 
 	return (
 		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
-			<PageViewTracker
-				path={ analyticsPath }
-				title="Checkout"
-				properties={ analyticsProps }
-				options={ {
-					useJetpackGoogleAnalytics: sitelessCheckoutType === 'jetpack' || isJetpackNotAtomic,
-					useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
-				} }
-			/>
+			{ /* Waits for the cart when the path depends on it: a later path change records a second view. */ }
+			{ ( ! isRenewalBySubscriptionId || ! isInitialCartLoading ) && (
+				<PageViewTracker
+					path={ analyticsPath }
+					title="Checkout"
+					properties={ analyticsProps }
+					options={ {
+						useJetpackGoogleAnalytics: sitelessCheckoutType === 'jetpack' || isJetpackNotAtomic,
+						useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
+					} }
+				/>
+			) }
 			<VGSCollectProvider>
 				<CheckoutProvider
 					onPaymentComplete={ handlePaymentSubmitted }

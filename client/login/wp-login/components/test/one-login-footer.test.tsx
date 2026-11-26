@@ -1,7 +1,7 @@
 /**
  * Run with:
  * yarn test-client client/login/wp-login/components/test/one-login-footer.test.tsx
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import oauth2ClientsReducer from 'calypso/state/oauth2-clients/reducer';

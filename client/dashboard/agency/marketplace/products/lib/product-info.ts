@@ -154,6 +154,35 @@ const getProductInfoMap = (): Record< string, ProductInfo > => ( {
 		],
 		recommendedFor: [],
 	},
+	'jetpack-pro': {
+		benefits: [
+			__( 'Protect your revenue stream and content' ),
+			__( 'Learn about issues before your customers are impacted' ),
+			__( 'Restore your site in one click from desktop or mobile' ),
+			__( 'Fix your site without a developer' ),
+			__( 'Protect Woo order and customer data' ),
+			__( 'Save time manually reviewing spam' ),
+			__( 'Grow your business with video, social, and CRM tools' ),
+			__( 'Best-in-class support from WordPress experts' ),
+		],
+		recommendedFor: [
+			__( 'WooCommerce stores' ),
+			__( 'News organizations' ),
+			__( 'Membership sites' ),
+		],
+		includes: [
+			'jetpack_backup_t1_yearly',
+			'jetpack_scan',
+			'jetpack_anti_spam',
+			'jetpack_videopress',
+			'jetpack_boost_yearly',
+			'jetpack_social_advanced_yearly',
+			'jetpack_search',
+			'jetpack_stats_yearly',
+			'jetpack_ai_yearly',
+			'jetpack_crm',
+		],
+	},
 	'jetpack-scan': {
 		benefits: [
 			__( 'Protect your revenue stream and content' ),

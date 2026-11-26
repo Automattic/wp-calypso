@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { PLAN_BUSINESS, PLAN_PREMIUM, WPCOM_DIFM_LITE } from '@automattic/calypso-products';

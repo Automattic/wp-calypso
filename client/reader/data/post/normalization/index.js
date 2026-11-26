@@ -13,7 +13,9 @@ import linkJetpackCarousels from 'calypso/lib/post-normalizer/rule-content-link-
 import makeEmbedsSafe from 'calypso/lib/post-normalizer/rule-content-make-embeds-safe';
 import makeImagesSafe from 'calypso/lib/post-normalizer/rule-content-make-images-safe';
 import makeContentLinksSafe from 'calypso/lib/post-normalizer/rule-content-make-links-safe';
-import removeElementsBySelector from 'calypso/lib/post-normalizer/rule-content-remove-elements-by-selector';
+import removeElementsBySelector, {
+	removeNoscript,
+} from 'calypso/lib/post-normalizer/rule-content-remove-elements-by-selector';
 import removeEventHandlers from 'calypso/lib/post-normalizer/rule-content-remove-event-handlers';
 import removeStyles from 'calypso/lib/post-normalizer/rule-content-remove-styles';
 import createBetterExcerpt from 'calypso/lib/post-normalizer/rule-create-better-excerpt';
@@ -122,7 +124,8 @@ function identifyRedditPost( post ) {
 }
 
 // Order matters here: `removeEventHandlers` has to precede `detectMedia`, which snapshots markup
-// into post fields that are later rendered with `dangerouslySetInnerHTML`, and `makeContentLinksSafe`
+// into post fields that are later rendered with `dangerouslySetInnerHTML`; `removeNoscript` has to
+// follow `detectMedia` and `detectPolls`, which read `noscript` fallbacks; and `makeContentLinksSafe`
 // runs last so that it also sees the links the rules before it build.
 export const contentDomRules = [
 	convertVideoPressBlocks,
@@ -136,8 +139,20 @@ export const contentDomRules = [
 	detectMedia,
 	detectPolls,
 	detectSurveys,
+	removeNoscript,
 	linkJetpackCarousels,
 	addImageWrapperElement,
+	makeContentLinksSafe,
+];
+
+// Applied again to the string the Reader renders, until parsing it no longer changes it. They have
+// to be idempotent, and leave alone markup they have already passed.
+export const contentSanitizers = [
+	removeStyles,
+	removeElementsBySelector,
+	removeNoscript,
+	removeEventHandlers,
+	makeEmbedsSafe,
 	makeContentLinksSafe,
 ];
 
@@ -149,7 +164,7 @@ const fastPostNormalizationRules = flow( [
 	pickPrimaryTag,
 	safeImageProperties( READER_CONTENT_WIDTH ),
 	makeLinksSafe,
-	withContentDom( contentDomRules ),
+	withContentDom( contentDomRules, contentSanitizers ),
 	createBetterExcerpt,
 	addMinutesToRead,
 	pickCanonicalImage,

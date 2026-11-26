@@ -1,10 +1,4 @@
-/** @jest-environment jsdom */
-
-jest.mock( 'calypso/blocks/upsell-nudge', () => ( { plan, title, feature } ) => (
-	<div data-testid="upsell-nudge" data-plan={ plan } data-feature={ feature }>
-		{ title }
-	</div>
-) );
+/** @vitest-environment jsdom */
 
 import {
 	FEATURE_INSTALL_PLUGINS,
@@ -15,9 +9,18 @@ import {
 } from '@automattic/calypso-products';
 import { merge } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UpgradeNudge from '../upgrade-nudge';
+
+vi.mock( 'calypso/blocks/upsell-nudge', () => ( {
+	default: ( { plan, title, feature } ) => (
+		<div data-testid="upsell-nudge" data-plan={ plan } data-feature={ feature }>
+			{ title }
+		</div>
+	),
+} ) );
 
 const siteId = 1;
 

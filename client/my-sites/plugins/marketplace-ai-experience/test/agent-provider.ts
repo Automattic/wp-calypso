@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { createToolProvider } from '../agent-provider';
 import { deliverPicks } from '../picks-store';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( '@wordpress/abilities', () => {
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( '@wordpress/abilities', () => {
 	const abilities = new Map();
 	return {
-		registerAbilityCategory: jest.fn(),
-		registerAbility: jest.fn( ( ability ) => abilities.set( ability.name, ability ) ),
+		registerAbilityCategory: vi.fn(),
+		registerAbility: vi.fn( ( ability ) => abilities.set( ability.name, ability ) ),
 		getAbilities: () => Array.from( abilities.values() ),
 		executeAbility: ( name: string, args: unknown ) => abilities.get( name ).callback( args ),
 	};
 } );
 
 it( 'delivers normalized recommendations to the marketplace and opens Describe', async () => {
-	const onPicks = jest.fn( ( picks ) => deliverPicks( picks, 'example.com' ) );
+	const onPicks = vi.fn( ( picks ) => deliverPicks( picks, 'example.com' ) );
 	const provider = createToolProvider( { onPicks } );
 	const [ ability ] = await provider.getAbilities();
 	expect( ability.callback ).toEqual( expect.any( Function ) );
@@ -37,8 +38,8 @@ it( 'delivers normalized recommendations to the marketplace and opens Describe',
 } );
 
 it( 'delivers recommendations only to the provider executing the ability', async () => {
-	const firstOnPicks = jest.fn();
-	const secondOnPicks = jest.fn();
+	const firstOnPicks = vi.fn();
+	const secondOnPicks = vi.fn();
 	const firstProvider = createToolProvider( { onPicks: firstOnPicks } );
 	const secondProvider = createToolProvider( { onPicks: secondOnPicks } );
 	await firstProvider.getAbilities();
@@ -52,7 +53,7 @@ it( 'delivers recommendations only to the provider executing the ability', async
 } );
 
 it( 'trims product URLs while preserving query parameters', async () => {
-	const onPicks = jest.fn();
+	const onPicks = vi.fn();
 	const provider = createToolProvider( { onPicks } );
 	const [ ability ] = await provider.getAbilities();
 	expect( ability.input_schema?.properties.picks.items.properties.url ).toMatchObject( {
@@ -76,9 +77,9 @@ it( 'trims product URLs while preserving query parameters', async () => {
 } );
 
 it.each( [ '', '   ', 123, true, { href: 'https://example.com' } ] )(
-	'omits an empty or non-string product URL without dropping the recommendation: %p',
+	'omits an empty or non-string product URL without dropping the recommendation: %o',
 	async ( url ) => {
-		const onPicks = jest.fn();
+		const onPicks = vi.fn();
 		const provider = createToolProvider( { onPicks } );
 
 		await expect(

@@ -2,7 +2,6 @@ import {
 	MAGIC_LOGIN_HIDE_REQUEST_FORM,
 	MAGIC_LOGIN_HIDE_REQUEST_NOTICE,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-	MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_ERROR,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
@@ -12,12 +11,7 @@ import {
 	MAGIC_LOGIN_REQUEST_AUTH_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 } from 'calypso/state/action-types';
-import {
-	CHECK_YOUR_EMAIL_PAGE,
-	INTERSTITIAL_PAGE,
-	LINK_EXPIRED_PAGE,
-	REQUEST_FORM,
-} from '../constants';
+import { CHECK_YOUR_EMAIL_PAGE, LINK_EXPIRED_PAGE, REQUEST_FORM } from '../constants';
 import reducer, {
 	isFetchingAuth,
 	isFetchingEmail,
@@ -265,13 +259,6 @@ describe( 'reducer', () => {
 				type: MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
 			} );
 			expect( state ).toEqual( CHECK_YOUR_EMAIL_PAGE );
-		} );
-
-		test( 'should be interstitial page on show interstitial', () => {
-			const state = currentView( undefined, {
-				type: MAGIC_LOGIN_SHOW_INTERSTITIAL_PAGE,
-			} );
-			expect( state ).toEqual( INTERSTITIAL_PAGE );
 		} );
 
 		test( 'should be null on hide request form', () => {

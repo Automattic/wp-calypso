@@ -1,3 +1,4 @@
+import { keepRedirectInBrowser } from 'calypso/lib/login/keep-redirect-in-browser';
 import { clearStore, getStoredUserId } from 'calypso/lib/user/store';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getRedirectToSanitized, isTwoFactorEnabled } from 'calypso/state/login/selectors';
@@ -33,5 +34,5 @@ export const rebootAfterLogin =
 			return;
 		}
 
-		window.location.href = url;
+		window.location.href = keepRedirectInBrowser( url );
 	};

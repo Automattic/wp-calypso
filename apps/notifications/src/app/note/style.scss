@@ -487,17 +487,6 @@
 	}
 }
 
-// Approving is the job on a pending comment, so it takes the Pending badge's
-// amber text rather than Like's gray.
-.wpnc__action-link.wpnc__approve-action {
-	--wpnc-action__color: oklch(from var(--wpnc-pending) 0.44 c h);
-	--wpnc-action__color-hover: var(--wpnc-action__color);
-
-	@include ui-mixins.when-dark-theme {
-		--wpnc-action__color: oklch(from var(--wpnc-pending) 0.88 calc(c * 0.7) h);
-	}
-}
-
 .wpnc__actions-menu-dropdown {
 	flex-shrink: 0;
 
@@ -646,7 +635,7 @@
 	@include ui-mixins.when-dark-theme {
 		--wpnc-quote__border-color: var( --wp-components-color-gray-600, #758095 );
 		--wpnc-quote__text-color: var( --wp-components-color-gray-700, #9aa2b1 );
-		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
+		--wpnc-divider__color: var( --wpds-color-stroke-surface-neutral, #424855 );
 		--wpnc-action__color: var( --wp-components-color-gray-700, #9aa2b1 );
 		--wpnc-action__color-hover: var( --dashboard__text-color, #f0f0f1 );
 		// The dark theme maps the neutral tokens but not a disabled solid button's,
@@ -656,9 +645,9 @@
 
 		// Code blocks: a subtly raised surface against the dark panel, with a
 		// neutral border and light text that keeps AA contrast.
-		--wpnc-code__background-color: var( --wp-components-color-gray-800, #2c3338 );
-		--wpnc-code__border-color: var( --wp-components-color-gray-600, #758095 );
-		--wpnc-code__text-color: var( --wp-components-color-gray-100, #f0f0f1 );
+		--wpnc-code__background-color: var( --wpds-color-background-surface-neutral-weak, #2c3338 );
+		--wpnc-code__border-color: var( --wpds-color-stroke-surface-neutral, #758095 );
+		--wpnc-code__text-color: var( --wpds-color-foreground-content-neutral, #f0f0f1 );
 
 		// The list/detail pane separator ($wpnc-pane-border) misses the dashboard's
 		// border handling. Route it to the same gray-400 divider as the rest of the panel.
@@ -667,4 +656,30 @@
 			border-color: var( --wpnc-divider__color );
 		}
 	}
+}
+
+// Below the two-pane width the title is also the Back button, in the heading's type. Its arrow's
+// box starts on the padding edge (past the 1px button border), and as a block it keeps the
+// heading at 24px, centred on the icons at the other end. A long title wraps and the button
+// grows with it, as the heading did, breaking a word too long for the line. Four classes, to outweigh Button's own size and padding
+// rules whichever stylesheet loads last.
+.components-card__header .wpnc__note-back.components-button.has-text {
+	display: flex;
+	height: auto;
+	min-height: var(--wpds-dimension-size-sm, 24px);
+	margin-inline-start: -1px;
+	padding-block: 0;
+	padding-inline-start: 0;
+	font: inherit;
+	text-align: start;
+	overflow-wrap: anywhere;
+
+	svg {
+		margin-block: -1px;
+	}
+}
+
+// Lighter than Button's hover and pressed rules, so those still show.
+.wpnc__note-back.components-button {
+	color: inherit;
 }

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import {
 	addUrlToPendingPageRedirect,
 	redirectThroughPending,
@@ -10,7 +11,7 @@ import {
 } from '../lib/pending-page';
 import { SUCCESS, ERROR, FAILURE, UNKNOWN, PROCESSING } from '../types/order-transaction';
 
-jest.mock( '@automattic/calypso-router' );
+vi.mock( '@automattic/calypso-router' );
 
 // This seems to be the default origin for jsdom + Jest.
 const currentWindowOrigin = 'https://example.com';
@@ -19,7 +20,7 @@ const encodedReceiptPlaceholder = encodeURIComponent( ':receiptId' );
 
 describe( 'addUrlToPendingPageRedirect', () => {
 	beforeAll( () => {
-		jest.spyOn( window, 'scrollTo' ).mockImplementation();
+		vi.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
 	} );
 
 	it( 'returns a relative URL when in relative mode', () => {
@@ -155,8 +156,8 @@ describe( 'addUrlToPendingPageRedirect', () => {
 
 describe( 'redirectThroughPending', () => {
 	it( 'navigates to a relative URL when source is relative', () => {
-		const redirectSpy = jest.fn();
-		jest.mocked( page ).mockImplementation( redirectSpy );
+		const redirectSpy = vi.fn();
+		vi.mocked( page ).mockImplementation( redirectSpy );
 		const finalUrl = '/foo/bar/baz';
 		const siteSlug = 'example2.com';
 		const orderId = '12345';
@@ -232,6 +233,26 @@ describe( 'getRedirectFromPendingPage', () => {
 				siteSlug: 'example.com',
 			} )
 		).toEqual( { url: '/checkout/thank-you/example.com/12345#section' } );
+	} );
+
+	it( 'returns a Studio url with the receipt interpolated', () => {
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				redirectTo: 'https://app.wordpress.studio/purchase-complete?receipt=:receiptId',
+				receiptId: 12345,
+			} )
+		).toEqual( { url: 'https://app.wordpress.studio/purchase-complete?receipt=12345' } );
+	} );
+
+	it( 'falls back to the thank-you page for a host that only starts with a Studio host', () => {
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				redirectTo: 'https://wordpress.studio.example.com/?receipt=:receiptId',
+				receiptId: 12345,
+			} )
+		).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
 	} );
 
 	it( 'returns a receipt interpolated relative url if there is also a receipt', () => {
@@ -353,7 +374,7 @@ describe( 'getRedirectFromPendingPage', () => {
 		'/\\example.com/home',
 		'/\t/example.com/home',
 		'\\/example.com',
-	] )( 'returns a generic no-site url for the scheme-relative url %p', ( redirectTo ) => {
+	] )( 'returns a generic no-site url for the scheme-relative url %o', ( redirectTo ) => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,
 			redirectTo,

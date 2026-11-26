@@ -20,7 +20,7 @@ Opening this flow without a supported source sends the user to that identify ste
 There is no preview or address/domain selection step. Unified checkout creates the destination
 site and returns its ID to the authenticated reading step. That step starts the import session
 and immediately opens the site’s Overview in the dashboard
-(`client/dashboard/sites/overview-static-site-import`). Overview records delivery intent and
+(`client/dashboard/sites/static-site-import`). Overview records delivery intent and
 tracks capture and import in the background, then offers the finished site with a way to hand the
 move to our migrations team.
 

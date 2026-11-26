@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import {
 	customizeClientDataForRequest,
 	shouldServerSideRender,
@@ -29,12 +30,12 @@ function remock( newReturnValues ) {
 	);
 }
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const fn = ( key ) => fn.values[ key ];
 	fn.values = {};
 	fn.isEnabled = ( feature_key ) =>
 		feature_key === 'server-side-rendering' ? mockReturnValues.configServerSideRender : false;
-	return fn;
+	return { ...fn, default: fn };
 } );
 
 const ssrCompatibleContext = {
@@ -107,7 +108,7 @@ describe( 'shouldServerSideRender', () => {
 
 describe( 'setShouldServerSideRender', () => {
 	test( 'when query is empty, then sets context.serverSideRender to TRUE - and calls next()', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const contextWithoutQueryKeys = {
 			query: {},
 		};
@@ -118,7 +119,7 @@ describe( 'setShouldServerSideRender', () => {
 	} );
 
 	test( 'when query has values, then sets context.serverSideRender to FALSE - and calls next()', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const contextWithQueryKeys = {
 			query: {
 				hello: 'world',

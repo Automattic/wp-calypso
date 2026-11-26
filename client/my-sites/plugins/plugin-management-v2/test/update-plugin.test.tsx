@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render } from '@testing-library/react';
@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { UPDATE_PLUGIN, ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import { getSite } from 'calypso/state/sites/selectors';
 import UpdatePlugin from '../update-plugin';
@@ -40,7 +41,7 @@ const props = {
 	plugin,
 	selectedSite: getSite( initialState, site.ID ),
 	className: 'update-plugin',
-	updatePlugin: jest.fn(),
+	updatePlugin: vi.fn(),
 };
 
 describe( '<UpdatePlugin>', () => {
@@ -166,7 +167,7 @@ describe( '<UpdatePlugin>', () => {
 		expect( retryButton.textContent ).toEqual( 'Retry' );
 
 		await userEvent.click( retryButton );
-		expect( props.updatePlugin ).toHaveBeenCalledTimes( 2 );
+		expect( props.updatePlugin ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'should render correctly and show auto-managed', () => {

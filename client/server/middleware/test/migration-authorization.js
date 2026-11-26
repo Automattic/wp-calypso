@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import migrationAuthorization, { migrationAuthorizationPath } from '../migration-authorization';
 
 const page = '/sites/destination.wordpress.com/migration-overview/share-access';
 const state = '3254ec89-90f1-4bf6-ab04-74d63cdb8063';
 
 function handle( query ) {
-	const res = { set: jest.fn(), status: jest.fn().mockReturnThis(), end: jest.fn() };
+	const res = { set: vi.fn(), status: vi.fn().mockReturnThis(), end: vi.fn() };
 	const params = migrationAuthorizationPath.exec( page + '/authorize' ).slice( 1 );
 	migrationAuthorization( { params, query }, res );
 	return res;

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { buildStudioCheckoutReturnUrl, openStudioCheckoutReturn } from '../deep-link';
@@ -38,6 +38,15 @@ describe( 'buildStudioCheckoutReturnUrl', () => {
 
 		expect( url ).not.toContain( 'studioReturnTo' );
 		expect( url ).not.toContain( 'undefined' );
+	} );
+
+	it( 'omits studioSiteId when Studio did not supply one', () => {
+		expect(
+			buildStudioCheckoutReturnUrl( {
+				checkoutResult: 'success',
+				studioReturnTo: 'settings',
+			} )
+		).toBe( 'wp-studio://checkout-return?checkoutResult=success&studioReturnTo=settings' );
 	} );
 
 	// This, not any format check on the way in, is what stops a crafted checkout URL from

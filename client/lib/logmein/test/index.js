@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import {
 	logmeinUrl,
 	attachLogmein,
@@ -11,10 +12,10 @@ import {
 	setLogmeinReduxStore,
 } from '../';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const fn = () => '';
-	fn.isEnabled = jest.fn( () => true );
-	return fn;
+	fn.isEnabled = vi.fn( () => true );
+	return { ...fn, default: fn };
 } );
 
 const store = createStore( ( state ) => state, {
@@ -205,7 +206,7 @@ describe( 'logmein', () => {
 
 	describe( 'attachLogmein', () => {
 		const handlers = [];
-		jest.spyOn( document, 'addEventListener' ).mockImplementation( ( event ) => {
+		vi.spyOn( document, 'addEventListener' ).mockImplementation( ( event ) => {
 			handlers.push( event );
 			return true;
 		} );

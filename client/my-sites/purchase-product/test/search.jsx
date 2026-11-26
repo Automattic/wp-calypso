@@ -1,19 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
+import { vi } from 'vitest';
 import purchases from 'calypso/state/purchases/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SearchPurchase } from '../search';
 
-jest.mock(
-	'calypso/jetpack-connect/main-wrapper',
-	() =>
-		( { children } ) =>
-			children
-);
-jest.mock( 'calypso/jetpack-connect/main-header', () => () => null );
+vi.mock( 'calypso/jetpack-connect/main-wrapper', () => ( {
+	default: ( { children } ) => children,
+} ) );
+vi.mock( 'calypso/jetpack-connect/main-header', () => ( { default: () => null } ) );
 
 const SITE_URL = 'https://example.com';
 const NOTICE_PRODUCT = /This site already has a Jetpack Search subscription\./;

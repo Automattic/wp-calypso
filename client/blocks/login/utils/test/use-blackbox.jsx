@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
 import { useRef } from 'react';
+import { vi } from 'vitest';
 import { createBlackboxInstance } from '../__mocks__/blackbox-instance';
 import { loadBlackboxSdk } from '../blackbox-sdk';
 import { useBlackbox } from '../use-blackbox';
 
-jest.mock( '../blackbox-sdk', () => ( {
-	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
+vi.mock( '../blackbox-sdk', () => ( {
+	loadBlackboxSdk: vi.fn( () => Promise.resolve() ),
 } ) );
 
 function TestComponent( { enabled = true, apiKey = 'test-api-key', flow = 'login' } ) {
@@ -33,7 +34,7 @@ describe( 'useBlackbox', () => {
 	let sdk;
 	let resize;
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		loadBlackboxSdk.mockReset().mockResolvedValue( undefined );
 		sdk = createBlackboxInstance();
 		window.Blackbox = sdk.api;
@@ -46,7 +47,7 @@ describe( 'useBlackbox', () => {
 		};
 	} );
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		delete window.Blackbox;
 		delete window.ResizeObserver;
 	} );
@@ -80,9 +81,9 @@ describe( 'useBlackbox', () => {
 		sdk.setState( { status: 'loading' } );
 		render( <TestComponent /> );
 		await act( async () => {} );
-		act( () => jest.advanceTimersByTime( 4999 ) );
+		act( () => vi.advanceTimersByTime( 4999 ) );
 		expect( screen.getByTestId( 'state' ) ).toHaveTextContent( 'loading/inactive' );
-		act( () => jest.advanceTimersByTime( 1 ) );
+		act( () => vi.advanceTimersByTime( 1 ) );
 		expect( screen.getByTestId( 'state' ) ).toHaveTextContent( 'ready/inactive' );
 		act( () => sdk.setState( { status: 'challenge', sessionId: 'sid' } ) );
 		expect( screen.getByTestId( 'state' ) ).toHaveTextContent( 'ready/active' );
@@ -97,7 +98,7 @@ describe( 'useBlackbox', () => {
 		);
 		delete window.Blackbox;
 		render( <TestComponent /> );
-		act( () => jest.advanceTimersByTime( 5000 ) );
+		act( () => vi.advanceTimersByTime( 5000 ) );
 		window.Blackbox = sdk.api;
 		await act( async () => loaded() );
 		act( () => sdk.setState( { status: 'challenge', sessionId: 'sid' } ) );

@@ -1,4 +1,5 @@
 import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -102,6 +103,21 @@ export default function UsageInformationCard() {
 												<ExternalLink
 													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 													href="https://automattic.com/cookies/"
+													children={ null }
+												/>
+											),
+										}
+									) }
+								</Text>
+								<Text variant="muted" lineHeight="20px">
+									{ createInterpolateElement(
+										__(
+											'This setting also covers how you use Jetpack on sites connected to your WordPress.com account. The <jetpackPrivacyLink>Jetpack Privacy Center</jetpackPrivacyLink> explains how specific Jetpack features use data.'
+										),
+										{
+											jetpackPrivacyLink: (
+												<ExternalLink
+													href={ localizeUrl( 'https://jetpack.com/support/privacy/' ) }
 													children={ null }
 												/>
 											),

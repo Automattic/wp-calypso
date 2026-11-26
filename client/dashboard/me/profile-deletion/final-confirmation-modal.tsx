@@ -66,7 +66,13 @@ export default function FinalConfirmationModal( {
 	};
 
 	return (
-		<Modal title={ __( 'Confirm account deletion' ) } onRequestClose={ onClose }>
+		<Modal
+			title={ __( 'Confirm account deletion' ) }
+			onRequestClose={ onClose }
+			isDismissible={ ! isDeleting }
+			shouldCloseOnEsc={ ! isDeleting }
+			shouldCloseOnClickOutside={ ! isDeleting }
+		>
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 6 }>
 					<Text>

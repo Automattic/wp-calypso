@@ -1,12 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
-
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
 import { useState } from 'react';
+import { type Mock, vi } from 'vitest';
 import {
 	adaptReadConversation,
 	adaptReadConversationOwnComment,
@@ -19,6 +18,8 @@ import type { InboxItem } from '../list-item';
 import type { InboxTab } from '../tabs';
 import type { Density } from '../toolbar';
 
+vi.mock( '@wordpress/a11y', () => ( { speak: vi.fn() } ) );
+
 const conversations = [
 	makeConversation( {
 		postId: 100,
@@ -30,7 +31,12 @@ const conversations = [
 ].map( adaptReadConversation );
 
 const ownComments = [
-	makeOwnComment( { postId: 300, commentId: 31, title: 'Commented post', newCommentCount: 3 } ),
+	makeOwnComment( {
+		postId: 300,
+		commentId: 31,
+		title: 'Commented post',
+		unreadNoteIds: [ 7, 8, 9 ],
+	} ),
 	makeOwnComment( { postId: 301, commentId: 32, title: 'Commented post', excerpt: 'Again' } ),
 ].map( adaptReadConversationOwnComment );
 
@@ -54,14 +60,14 @@ function ControlledList( {
 			density={ density }
 			onDensityChange={ setDensity }
 			sort="newest"
-			onSortChange={ jest.fn() }
+			onSortChange={ vi.fn() }
 			isShortcutsOpen={ isShortcutsOpen }
 			onShortcutsToggle={ setIsShortcutsOpen }
 			openOnFocus
 			followFocus
 			markAllCount={ 2 }
-			onMarkAllRead={ jest.fn() }
-			onSelect={ jest.fn() }
+			onMarkAllRead={ vi.fn() }
+			onSelect={ vi.fn() }
 			{ ...props }
 			items={ items }
 		/>
@@ -69,7 +75,7 @@ function ControlledList( {
 }
 
 const renderList = ( props: React.ComponentProps< typeof ControlledList > = {} ) => {
-	const onSelect = jest.fn();
+	const onSelect = vi.fn();
 	const { rerender } = renderWithProvider( <ControlledList onSelect={ onSelect } { ...props } /> );
 	return {
 		onSelect,
@@ -79,11 +85,11 @@ const renderList = ( props: React.ComponentProps< typeof ControlledList > = {} )
 };
 
 describe( 'ConversationList', () => {
-	let scrollIntoView: jest.Mock;
+	let scrollIntoView: Mock;
 
 	beforeEach( () => {
 		// jsdom does not implement scrollIntoView.
-		scrollIntoView = jest.fn();
+		scrollIntoView = vi.fn();
 		window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
 	} );
 
@@ -120,7 +126,7 @@ describe( 'ConversationList', () => {
 		expect( rows[ 0 ] ).not.toHaveTextContent( 'You commented' );
 		expect( rows[ 0 ] ).toHaveTextContent( 'My comment' );
 		expect( rows[ 0 ] ).toHaveTextContent( '3 new' );
-		expect( rows[ 0 ] ).not.toHaveClass( 'is-unread' );
+		expect( rows[ 0 ] ).toHaveClass( 'is-unread' );
 		expect( rows[ 1 ] ).not.toHaveTextContent( 'new' );
 
 		await user.click( rows[ 1 ] );
@@ -155,7 +161,7 @@ describe( 'ConversationList', () => {
 
 	it( 'retries a page that failed to load', async () => {
 		const user = userEvent.setup();
-		const onLoadMore = jest.fn();
+		const onLoadMore = vi.fn();
 		renderList( { hasMore: true, isLoadMoreError: true, onLoadMore } );
 
 		await user.click( screen.getByRole( 'button', { name: 'Retry' } ) );

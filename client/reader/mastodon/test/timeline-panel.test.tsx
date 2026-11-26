@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { type Mock, vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
+import { mockAllIsIntersecting } from 'calypso/test-helpers/intersection-observer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { TimelinePanel } from '../timeline-panel';
 import type { MastodonConnection } from '@automattic/api-core';
@@ -55,14 +56,14 @@ describe( 'Mastodon TimelinePanel', () => {
 		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'renders the skeleton, then the first page of posts', async () => {
@@ -81,7 +82,7 @@ describe( 'Mastodon TimelinePanel', () => {
 	} );
 
 	it( 'fires the timeline_viewed Tracks event on mount', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider( <TimelinePanel connection={ CONNECTION } />, {
@@ -125,7 +126,7 @@ describe( 'Mastodon TimelinePanel', () => {
 	} );
 
 	it( 'fires error_shown on upstream_unavailable + recovers via Retry', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		// upstream_unavailable retries up to 2 times (per the hook's retry
 		// policy), so allow up to 3 502s before the failure surfaces.
 		nock( BASE )
@@ -160,7 +161,7 @@ describe( 'Mastodon TimelinePanel', () => {
 	}, 15_000 );
 
 	it( 'fires post_clicked when the timestamp anchor is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
@@ -189,7 +190,7 @@ describe( 'Mastodon TimelinePanel', () => {
 	} );
 
 	it( 'fires author_clicked when the author anchor is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE )
 			.get( PATH )
 			.query( {} )

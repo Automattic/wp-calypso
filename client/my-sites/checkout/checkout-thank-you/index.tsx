@@ -63,6 +63,7 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { logStashEvent } from '../src/lib/analytics';
+import { STUDIO_CHECKOUT_TYPE } from '../studio-return/round-trip';
 import CheckoutThankYouHeader from './header';
 import HundredYearThankYou from './hundred-year-thank-you';
 import { useCheckoutReceipt } from './receipt';
@@ -74,6 +75,7 @@ import JetpackSearchThankYou from './redesign-v2/pages/jetpack-search';
 import PlanOnlyThankYou from './redesign-v2/pages/plan-only';
 import { isRefactoredForThankYouV2 } from './redesign-v2/utils';
 import StudioHandoff from './studio-handoff';
+import StudioThankYou from './studio-thank-you';
 import TransferPending from './transfer-pending';
 import './style.scss';
 import {
@@ -339,6 +341,10 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
+	// Any thank-you URL can carry `checkout_type=studio`, so a site's page keeps its own next steps.
+	isStudioThankYou = () =>
+		this.props.checkoutType === STUDIO_CHECKOUT_TYPE && ! this.props.selectedSite;
+
 	isGenericReceipt = () => {
 		return ! this.props.receiptId;
 	};
@@ -536,7 +542,9 @@ export class CheckoutThankYou extends Component<
 				isGSuiteOrExtraLicenseOrGoogleWorkspace
 			);
 
-			if ( this.props.receipt && isOnlyDomainTransfers( purchases ) ) {
+			if ( this.isStudioThankYou() ) {
+				pageContent = <StudioThankYou purchases={ purchases } />;
+			} else if ( this.props.receipt && isOnlyDomainTransfers( purchases ) ) {
 				pageContent = (
 					<DomainBulkTransferThankYou
 						purchases={ purchases }

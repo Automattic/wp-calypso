@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { useSelector } from 'calypso/state';
 import accountRecoveryReducer from 'calypso/state/account-recovery/reducer';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
@@ -11,7 +12,9 @@ import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AccountEmailField from '../account-email-field';
 
-jest.mock( 'calypso/components/data/query-account-recovery-settings', () => () => null );
+vi.mock( 'calypso/components/data/query-account-recovery-settings', () => ( {
+	default: () => null,
+} ) );
 
 type RecoveryState = {
 	isReady?: boolean;
@@ -159,7 +162,7 @@ describe( 'AccountEmailField TLD validation', () => {
 	}
 
 	const renderAndType = async ( email: string ) => {
-		const emailValidationHandler = jest.fn();
+		const emailValidationHandler = vi.fn();
 		renderWithProvider(
 			<EditableAccountEmailField emailValidationHandler={ emailValidationHandler } />,
 			{

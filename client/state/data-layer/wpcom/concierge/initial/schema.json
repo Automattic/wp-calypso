@@ -35,12 +35,6 @@
 		},
 		"is_blocked": {
 			"type": "boolean"
-		},
-		"available_sessions": {
-			"type": "array",
-			"items": {
-				"type": "integer"
-			}
 		}
 	}
 }

@@ -4,11 +4,7 @@ import { trackPageLoad } from 'calypso/reader/controller-helper';
 import { ConversationsInboxPlaceholder } from 'calypso/reader/conversations/inbox/placeholder';
 import { recordTrack } from 'calypso/reader/stats';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-
-const loadInbox = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-reader-conversations-inbox" */ 'calypso/reader/conversations/inbox'
-	).then( ( { ConversationsInbox } ) => ( { default: ConversationsInbox } ) );
+import { loadInbox } from './preload';
 
 export function conversationsInbox( context, next ) {
 	// Same key as the inbox's first query. Opening a conversation runs this again, so only fetch

@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 
 let settled: Promise< void > | undefined;
 
-// Once the page has loaded and the browser has a quiet moment, so the comment editor's
-// downloads don't compete with the Reader's own.
-const whenSettled = () =>
+// Once the page has loaded and the browser has a quiet moment, so deferred downloads, like the
+// comment editor's, don't compete with the Reader's own.
+export const whenSettled = () =>
 	( settled ??= new Promise( ( resolve ) => {
 		const wait = () =>
 			window.requestIdleCallback

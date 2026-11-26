@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { navigate } from 'calypso/lib/navigate';
 import { leaveCheckout } from '../lib/leave-checkout';
 
 // Mock dependencies
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/navigate', () => ( {
-	navigate: jest.fn(),
+vi.mock( 'calypso/lib/navigate', () => ( {
+	navigate: vi.fn(),
 } ) );
 
 describe( 'leaveCheckout', () => {
 	beforeEach( () => {
 		// Reset all mocks before each test
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Setup window.location
 		Object.defineProperty( window, 'location', {
 			value: {
@@ -29,7 +30,7 @@ describe( 'leaveCheckout', () => {
 		} );
 		Object.defineProperty( window, 'history', {
 			value: {
-				back: jest.fn(),
+				back: vi.fn(),
 			},
 			writable: true,
 		} );
@@ -106,6 +107,28 @@ describe( 'leaveCheckout', () => {
 				userHasClearedCart: true,
 			} );
 
+			expect( navigate ).toHaveBeenCalledWith( '/plans/test.wordpress.com' );
+		} );
+
+		it.each( [ 'https://wordpress.studio/pricing', 'https://app.wordpress.studio/' ] )(
+			'should redirect to cancel_to when it is a Studio URL: %s',
+			( cancelTo ) => {
+				window.location.search = `?cancel_to=${ encodeURIComponent( cancelTo ) }`;
+
+				leaveCheckout( { tracksEvent: 'checkout_cancel' } );
+
+				expect( window.location.href ).toBe( cancelTo );
+				expect( navigate ).not.toHaveBeenCalled();
+			}
+		);
+
+		it( 'should not redirect to cancel_to on a host that only starts with a Studio host', () => {
+			const cancelTo = 'https://wordpress.studio.example.com/pricing';
+			window.location.search = `?cancel_to=${ encodeURIComponent( cancelTo ) }`;
+
+			leaveCheckout( { siteSlug: 'test.wordpress.com', tracksEvent: 'checkout_cancel' } );
+
+			expect( window.location.href ).not.toBe( cancelTo );
 			expect( navigate ).toHaveBeenCalledWith( '/plans/test.wordpress.com' );
 		} );
 

@@ -352,7 +352,8 @@ $conversations-inbox-post-card-shadow:
 		}
 
 		// Clicking an action shouldn't leave a focus ring; keyboard focus still shows it.
-		.components-button:focus:not( :focus-visible ) {
+		.components-button:focus:not( :focus-visible ),
+		.reader-share__button:focus:not( :focus-visible ) {
 			box-shadow: none;
 			outline: none;
 		}
@@ -420,7 +421,7 @@ $conversations-inbox-post-card-shadow:
 		}
 
 		.comments__collapsed-replies {
-			color: var( --color-neutral-40 );
+			color: var( --color-text-subtle );
 		}
 
 		&:hover .comments__collapsed-replies {

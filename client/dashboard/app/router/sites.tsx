@@ -55,6 +55,11 @@ import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tan
 import { __ } from '@wordpress/i18n';
 import { ensureSiteExpiryNoticeData } from '../../components/site-expiry-notice';
 import {
+	canViewApm,
+	hasBackendAccess,
+	prefetchApmAccess,
+} from '../../sites/apm/utils/backend-access';
+import {
 	canManageSite,
 	canSwitchWordPressVersion,
 	canTransferSite,
@@ -62,11 +67,6 @@ import {
 	isSiteMember,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
-import {
-	canViewApm,
-	hasBackendAccess,
-	prefetchApmAccess,
-} from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
 	isAwaitingAtomicTransfer,
@@ -97,9 +97,9 @@ import {
 	redirectIfTwoStepReauthRequired,
 } from './redirect';
 import { rootRoute } from './root';
-import type { MigrationCompletedSearch } from '../../sites/overview/migration-completed-notice';
-import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
-import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
+import type { DifmOfferSearch } from '../../sites/difm/components/difm-offer-card/thank-you';
+import type { MigrationCompletedSearch } from '../../sites/migration/components/migration-completed-notice';
+import type { StaticSiteImportSearch } from '../../sites/static-site-import';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -320,9 +320,14 @@ export const siteOverviewRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/overview' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site' ).then( ( d ) =>
 		createLazyRoute( 'site-overview' )( {
-			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+			component: () => (
+				<d.default
+					siteSlug={ siteRoute.useParams().siteSlug }
+					search={ siteOverviewRoute.useSearch() }
+				/>
+			),
 		} )
 	)
 );
@@ -339,7 +344,7 @@ export const siteDeploymentsRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'deployments',
 } ).lazy( () =>
-	import( '../../sites/deployments' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/deployments/layout' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments' )( {
 			component: d.default,
 		} )
@@ -354,7 +359,7 @@ export const siteDeploymentsListRoute = createRoute( {
 		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/deployments-list' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/deployments' ).then( ( d ) =>
 		createLazyRoute( 'site-deployments-list' )( {
 			component: d.default,
 		} )
@@ -373,7 +378,7 @@ export const siteMonitoringRoute = createRoute( {
 	getParentRoute: () => siteRoute,
 	path: 'monitoring',
 } ).lazy( () =>
-	import( '../../sites/monitoring' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/monitoring' ).then( ( d ) =>
 		createLazyRoute( 'site-monitoring' )( {
 			component: d.default,
 		} )
@@ -417,7 +422,7 @@ export const siteLogsPhpRoute = createRoute( {
 		severity: VALUES_SEVERITY.find( ( v ) => v === search.severity ),
 	} ),
 } ).lazy( () =>
-	import( '../../sites/logs' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-php' )( {
 			component: () => (
 				<d.default logType={ LogType.PHP } siteSlug={ siteRoute.useParams().siteSlug } />
@@ -438,7 +443,7 @@ export const siteLogsServerRoute = createRoute( {
 	path: 'server',
 	loader: loadSiteLogsRoute,
 } ).lazy( () =>
-	import( '../../sites/logs' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-server' )( {
 			component: () => (
 				<d.default logType={ LogType.SERVER } siteSlug={ siteRoute.useParams().siteSlug } />
@@ -459,7 +464,7 @@ export const siteLogsActivityRoute = createRoute( {
 	path: 'activity',
 	loader: loadSiteLogsRoute,
 } ).lazy( () =>
-	import( '../../sites/logs' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/logs' ).then( ( d ) =>
 		createLazyRoute( 'site-logs-activity' )( {
 			component: () => (
 				<d.default logType={ LogType.ACTIVITY } siteSlug={ siteRoute.useParams().siteSlug } />
@@ -508,7 +513,7 @@ export const siteScanActiveThreatsRoute = createRoute( {
 	getParentRoute: () => siteScanRoute,
 	path: 'active',
 } ).lazy( () =>
-	import( '../../sites/scan' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/scan' ).then( ( d ) =>
 		createLazyRoute( 'site-scan-active-threats' )( {
 			component: () => <d.default scanTab="active" />,
 		} )
@@ -526,7 +531,7 @@ export const siteScanHistoryRoute = createRoute( {
 	getParentRoute: () => siteScanRoute,
 	path: 'history',
 } ).lazy( () =>
-	import( '../../sites/scan' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/scan' ).then( ( d ) =>
 		createLazyRoute( 'site-scan-history' )( {
 			component: () => <d.default scanTab="history" />,
 		} )
@@ -560,7 +565,7 @@ export const siteBackupsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/backups' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups/layout' ).then( ( d ) =>
 		createLazyRoute( 'site-backups' )( {
 			component: d.default,
 		} )
@@ -571,9 +576,9 @@ export const siteBackupsIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/backups' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backups-index' )( {
-			component: d.BackupsListPage,
+			component: d.default,
 		} )
 	)
 );
@@ -594,9 +599,9 @@ export const siteBackupDetailIndexRoute = createRoute( {
 	getParentRoute: () => siteBackupDetailRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/backups' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-detail' )( {
-			component: d.BackupsListPage,
+			component: d.default,
 		} )
 	)
 );
@@ -612,7 +617,7 @@ export const siteBackupRestoreRoute = createRoute( {
 	getParentRoute: () => siteBackupDetailRoute,
 	path: 'restore',
 } ).lazy( () =>
-	import( '../../sites/backup-restore' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups/backup/restore' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-restore' )( {
 			component: d.default,
 		} )
@@ -636,7 +641,7 @@ export const siteBackupDownloadRoute = createRoute( {
 		};
 	},
 } ).lazy( () =>
-	import( '../../sites/backup-download' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/backups/backup/download' ).then( ( d ) =>
 		createLazyRoute( 'site-backup-download' )( {
 			component: d.default,
 		} )
@@ -689,7 +694,7 @@ export const sitePerformanceRoute = createRoute( {
 	path: 'performance',
 	loader: () => prefetchApmAccess(),
 } ).lazy( () =>
-	import( '../../sites/performance' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/layout' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
 			component: d.default,
 		} )
@@ -708,7 +713,7 @@ export const sitePerformanceFrontendRoute = createRoute( {
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'frontend',
 } ).lazy( () =>
-	import( '../../sites/performance/frontend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/frontend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-frontend' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -740,7 +745,7 @@ async function prefetchApmAggregate( siteSlug: string ) {
 	const [ { siteApmAggregateRollingQuery }, { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } ] =
 		await Promise.all( [
 			import( '@automattic/api-queries' ),
-			import( '../../sites/performance/backend/timeframe' ),
+			import( '../../sites/apm/utils/timeframe' ),
 		] );
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
@@ -751,7 +756,7 @@ export const sitePerformanceBackendIndexRoute = createRoute( {
 	path: '/',
 	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="overview" />,
 		} )
@@ -770,7 +775,7 @@ export const sitePerformanceBackendTransactionsRoute = createRoute( {
 	path: 'transactions',
 	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-transactions' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="transactions" />,
 		} )
@@ -789,7 +794,7 @@ export const sitePerformanceBackendDatabaseRoute = createRoute( {
 	path: 'database',
 	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-database' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="database" />,
 		} )
@@ -808,7 +813,7 @@ export const sitePerformanceBackendExternalRequestsRoute = createRoute( {
 	path: 'external-requests',
 	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-external-requests' )( {
 			component: () => (
 				<d.default siteSlug={ siteRoute.useParams().siteSlug } tab="external-requests" />
@@ -829,7 +834,7 @@ export const sitePerformanceBackendWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: ( { params: { siteSlug } } ) => prefetchApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-wordpress' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } tab="wordpress" />,
 		} )
@@ -857,7 +862,7 @@ export const sitePerformanceBackendRequestDetailRoute = createRoute( {
 		const [ { siteApmDetailQuery }, { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } ] =
 			await Promise.all( [
 				import( '@automattic/api-queries' ),
-				import( '../../sites/performance/backend/timeframe' ),
+				import( '../../sites/apm/utils/timeframe' ),
 			] );
 		const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 		await queryClient.ensureQueryData(
@@ -865,7 +870,7 @@ export const sitePerformanceBackendRequestDetailRoute = createRoute( {
 		);
 	},
 } ).lazy( () =>
-	import( '../../sites/performance/backend/request-detail' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend/requests' ).then( ( d ) =>
 		createLazyRoute( 'site-performance-backend-request-detail' )( {
 			component: () => {
 				const { siteSlug } = siteRoute.useParams();
@@ -913,7 +918,7 @@ export const siteSettingsIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/settings' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings' ).then( ( d ) =>
 		createLazyRoute( 'site-settings' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -943,7 +948,7 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-site-visibility' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/site-visibility' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-site-visibility' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -990,7 +995,7 @@ export const siteSettingsAIToolsIndexRoute = createRoute( {
 	getParentRoute: () => siteSettingsAIToolsRoute,
 	path: '/',
 } ).lazy( () =>
-	import( '../../sites/settings-ai-tools' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/ai-tools' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1033,7 +1038,7 @@ export const siteSettingsAIToolsReadRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-ai-tools/read' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/ai-tools/read' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-read' )( {
 			component: d.default,
 		} )
@@ -1058,7 +1063,7 @@ export const siteSettingsAIToolsWriteRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-ai-tools/write' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/ai-tools/write' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-write' )( {
 			component: d.default,
 		} )
@@ -1083,7 +1088,7 @@ export const siteSettingsAIToolsSetupRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-ai-tools/setup' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/ai-tools/setup' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-ai-tools-setup' )( {
 			component: d.default,
 		} )
@@ -1109,7 +1114,7 @@ export const siteSettingsRedirectRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-redirect' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/site-redirect' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-redirect' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1142,7 +1147,7 @@ export const siteSettingsSubscriptionGiftingRoute = createRoute( {
 		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-subscription-gifting' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/subscription-gifting' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-subscription-gifting' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1175,7 +1180,7 @@ export const siteSettingsWordPressRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-wordpress' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/wordpress' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-wordpress' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1200,7 +1205,7 @@ export const siteSettingsPHPRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-php' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/php' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-php' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1219,7 +1224,7 @@ export const siteSettingsDatabaseRoute = createRoute( {
 	getParentRoute: () => siteSettingsRoute,
 	path: 'database',
 } ).lazy( () =>
-	import( '../../sites/settings-database' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/database' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-database' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1257,7 +1262,7 @@ export const siteSettingsAgencyRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-agency' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/agency' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-agency' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1290,7 +1295,7 @@ export const siteSettingsHundredYearPlanRoute = createRoute( {
 		await queryClient.ensureQueryData( siteSettingsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-hundred-year-plan' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/hundred-year-plan' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-hundred-year-plan' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1330,7 +1335,7 @@ export const siteSettingsPrimaryDataCenterRoute = createRoute( {
 		await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-primary-data-center' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/primary-data-center' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-primary-data-center' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1355,7 +1360,7 @@ export const siteSettingsStaticFile404Route = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-static-file-404' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/static-file-404' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-static-file-404' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1380,7 +1385,7 @@ export const siteSettingsCachingRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-caching' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/caching' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-caching' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1407,7 +1412,7 @@ export const siteSettingsApmRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-apm' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/apm' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-apm' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1432,7 +1437,7 @@ export const siteSettingsDefensiveModeRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-defensive-mode' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/defensive-mode' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-defensive-mode' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1463,7 +1468,7 @@ export const siteSettingsSftpSshRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-sftp-ssh' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/sftp-ssh' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-sftp-ssh' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1497,7 +1502,7 @@ export const siteSettingsCrontabIndexRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1515,7 +1520,7 @@ export const siteSettingsCrontabAddRoute = createRoute( {
 	getParentRoute: () => siteSettingsCrontabRoute,
 	path: 'add',
 } ).lazy( () =>
-	import( '../../sites/settings-crontab/add-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab/add' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab-add' )( {
 			component: d.default,
 		} )
@@ -1540,7 +1545,7 @@ export const siteSettingsCrontabEditRoute = createRoute( {
 		await queryClient.ensureQueryData( siteCrontabsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-crontab/edit-crontab' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/crontab/cron/edit' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-crontab-edit' )( {
 			component: d.default,
 		} )
@@ -1569,7 +1574,7 @@ export const siteSettingsTransferSiteRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-transfer-site' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/transfer-site' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-transfer-site' )( {
 			component: () => (
 				<d.default siteSlug={ siteRoute.useParams().siteSlug } context="dashboard_v2" />
@@ -1599,7 +1604,7 @@ export const siteSettingsWebApplicationFirewallRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-web-application-firewall' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/web-application-firewall' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-web-application-firewall' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1627,7 +1632,7 @@ export const siteSettingsWpcomLoginRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-wpcom-login' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/wpcom-login' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-wpcom-login' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1656,7 +1661,7 @@ export const siteSettingsRepositoriesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( codeDeploymentsQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/repositories' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories' )( {
 			component: d.default,
 		} )
@@ -1677,7 +1682,7 @@ export const siteSettingsRepositoriesConnectRoute = createRoute( {
 		queryClient.prefetchQuery( githubInstallationsQuery() );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories/connect-repository' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/settings/repositories/connect' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-repositories-connect' )( {
 			component: d.default,
 		} )
@@ -1702,10 +1707,11 @@ export const siteSettingsRepositoriesManageRoute = createRoute( {
 		await queryClient.ensureQueryData( codeDeploymentQuery( site.ID, deploymentId ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/settings-repositories/configure-repository' ).then( ( d ) =>
-		createLazyRoute( 'site-settings-repositories-manage' )( {
-			component: d.default,
-		} )
+	import( '../../app-dotcom/routes/sites/site/settings/repositories/manage/deployment' ).then(
+		( d ) =>
+			createLazyRoute( 'site-settings-repositories-manage' )( {
+				component: d.default,
+			} )
 	)
 );
 

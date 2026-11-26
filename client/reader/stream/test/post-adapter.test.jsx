@@ -1,22 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import ReaderPostCardAdapter from '../post';
 
-jest.mock( 'calypso/blocks/reader-post-card', () => ( props ) => (
-	<div
-		data-testid="reader-post-card"
-		data-comments-api-disabled={ String( props.commentsApiDisabled ) }
-	>
-		{ props.children }
-	</div>
-) );
+vi.mock( 'calypso/blocks/reader-post-card', () => ( {
+	default: ( props ) => (
+		<div
+			data-testid="reader-post-card"
+			data-comments-api-disabled={ String( props.commentsApiDisabled ) }
+		>
+			{ props.children }
+		</div>
+	),
+} ) );
 
-jest.mock( 'calypso/reader/data/site', () => ( {
+vi.mock( 'calypso/reader/data/site', () => ( {
 	withSite: ( WrappedComponent ) => ( props ) => <WrappedComponent { ...props } />,
 } ) );
 

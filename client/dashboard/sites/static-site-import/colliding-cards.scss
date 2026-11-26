@@ -1,0 +1,160 @@
+@use 'sass:math';
+
+// The winning card's hit slides the screenshot toward it, and the other card's hit slides it back
+// half as far, so it creeps across. Once the left card has it all, the roles swap to bring it home.
+$push: 8;
+$recoil: 3;
+$hits-to-win: 2 * math.ceil( math.div( 100 - $push, $push - $recoil ) ) + 1;
+$hits: $hits-to-win * 2;
+// How much of the time between hits the slide takes, coming to rest before the next one.
+$slide-share: 0.6;
+
+@function won-after( $hit ) {
+	$rounds: math.floor( math.div( $hit, 2 ) );
+	@return math.min( $rounds * ( $push - $recoil ) + ( $hit % 2 ) * $push, 100 );
+}
+
+@function slid-after( $hit ) {
+	@if $hit <= $hits-to-win {
+		@return won-after( $hit ) * 1%;
+	}
+	@return ( 100 - won-after( $hit - $hits-to-win ) ) * 1%;
+}
+
+@mixin slide-from( $start ) {
+	@for $hit from 0 to $hits {
+		#{math.percentage( math.div( $hit, $hits ) )} {
+			transform: translateX( $start - slid-after( $hit ) );
+			animation-timing-function: cubic-bezier( 0.16, 1, 0.3, 1 );
+		}
+
+		#{math.percentage( math.div( $hit + $slide-share, $hits ) )} {
+			transform: translateX( $start - slid-after( $hit + 1 ) );
+			animation-timing-function: linear;
+		}
+	}
+
+	100% {
+		transform: translateX( $start );
+	}
+}
+
+.static-site-import-colliding-cards {
+	// The time from one hit to the next.
+	--static-site-import-collide-beat: var( --static-site-import-collide-duration, 4s );
+
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	// The cards swing away from each other, whichever way the page reads.
+	direction: ltr;
+	overflow: hidden;
+	background: color-mix( in srgb, var( --color-text ) 10%, var( --color-surface ) );
+}
+
+.static-site-import-colliding-cards__card {
+	position: relative;
+	flex: none;
+	// Wide enough that the window crops each card, framing the line where they meet.
+	width: 90%;
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+	border-radius: 16px;
+	background: var( --color-surface );
+	box-shadow: 0 4px 16px color-mix( in srgb, var( --color-text ) 8%, transparent );
+
+	&.is-left {
+		--static-site-import-collide-side: -1;
+		transform-origin: 100% 100%;
+	}
+
+	&.is-right {
+		--static-site-import-collide-side: 1;
+		transform-origin: 0 100%;
+	}
+}
+
+// Centered on the part of the left card that the window doesn't crop.
+.static-site-import-colliding-cards__watermark {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 72.2%;
+	width: auto;
+	height: 34%;
+	aspect-ratio: 1;
+	fill: color-mix( in srgb, var( --color-text ) 8%, var( --color-surface ) );
+	pointer-events: none;
+	transform: translate( -50%, -50% );
+}
+
+// Each card holds a copy of the screenshot, one card-width apart, so together they read as one
+// image sliding across the line.
+.static-site-import-colliding-cards__image {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: top;
+
+	.is-left > & {
+		transform: translateX( 100% );
+	}
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	.static-site-import-colliding-cards__card {
+		animation: static-site-import-colliding-cards__swing
+			calc( var( --static-site-import-collide-beat ) * 2 ) infinite;
+
+		&.is-left {
+			animation-delay: calc( var( --static-site-import-collide-beat ) * -1 );
+		}
+	}
+
+	// Delayed by one beat, so the first slide starts at the first hit.
+	.is-right > .static-site-import-colliding-cards__image {
+		animation: static-site-import-colliding-cards__slide-right
+			calc( var( --static-site-import-collide-beat ) * #{$hits} )
+			var( --static-site-import-collide-beat ) infinite;
+	}
+
+	.is-left > .static-site-import-colliding-cards__image {
+		animation: static-site-import-colliding-cards__slide-left
+			calc( var( --static-site-import-collide-beat ) * #{$hits} )
+			var( --static-site-import-collide-beat ) infinite;
+	}
+}
+
+// Each card has the first half of the loop to swing out and strike, and rests for the second.
+@keyframes static-site-import-colliding-cards__swing {
+	0% {
+		transform: translateX( 0 ) rotate( 0deg );
+		animation-timing-function: cubic-bezier( 0.12, 0.72, 0.3, 1 );
+	}
+
+	25% {
+		transform: translateX( calc( var( --static-site-import-collide-side ) * 2.5% ) )
+			rotate(
+				calc(
+					var( --static-site-import-collide-side ) * var( --static-site-import-collide-swing, 5deg )
+				)
+			);
+		animation-timing-function: cubic-bezier( 0.7, 0, 0.88, 0.28 );
+	}
+
+	50%,
+	100% {
+		transform: translateX( 0 ) rotate( 0deg );
+	}
+}
+
+@keyframes static-site-import-colliding-cards__slide-right {
+	@include slide-from( 0% );
+}
+
+@keyframes static-site-import-colliding-cards__slide-left {
+	@include slide-from( 100% );
+}

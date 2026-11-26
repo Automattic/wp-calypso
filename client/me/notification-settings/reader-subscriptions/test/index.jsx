@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
 import moment from 'moment';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import {
 	USER_SETTINGS_REQUEST_FAILURE,
 	USER_SETTINGS_REQUEST_SUCCESS,
@@ -12,25 +13,25 @@ import {
 import userSettings from 'calypso/state/user-settings/reducer';
 import ConnectedNotificationSubscriptions, { NotificationSubscriptions } from '../';
 
-jest.mock( 'calypso/components/data/with-reader-teams', () => ( {
+vi.mock( 'calypso/components/data/with-reader-teams', () => ( {
 	withReaderTeams: ( component ) => component,
 } ) );
-jest.mock( 'calypso/components/inline-support-link', () => () => null );
-jest.mock( 'calypso/components/localized-moment', () => ( {
+vi.mock( 'calypso/components/inline-support-link', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/localized-moment', () => ( {
 	withLocalizedMoment: ( component ) => component,
 } ) );
-jest.mock( 'calypso/components/navigation-header', () => () => null );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => null );
-jest.mock( 'calypso/lib/protect-form', () => ( {
+vi.mock( 'calypso/components/navigation-header', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/protect-form', () => ( {
 	protectForm: ( component ) => component,
 } ) );
-jest.mock( 'calypso/lib/two-step-authorization', () => ( {} ) );
-jest.mock( 'calypso/me/notification-settings/navigation', () => () => null );
-jest.mock( 'calypso/me/reauth-required', () => () => null );
-jest.mock( 'calypso/reader/following/hooks/use-non-self-subscriptions-count', () => ( {
+vi.mock( 'calypso/lib/two-step-authorization', () => ( ( m ) => ( { ...m, default: m } ) )( {} ) );
+vi.mock( 'calypso/me/notification-settings/navigation', () => ( { default: () => null } ) );
+vi.mock( 'calypso/me/reauth-required', () => ( { default: () => null } ) );
+vi.mock( 'calypso/reader/following/hooks/use-non-self-subscriptions-count', () => ( {
 	useNonSelfSubscriptionsCount: () => ( { nonSelfSubscriptionsCount: 0 } ),
 } ) );
-jest.mock( '../../subscription-management-back-button', () => () => null );
+vi.mock( '../../subscription-management-back-button', () => ( { default: () => null } ) );
 
 test( 'shows a blank choice before fetching, a placeholder while loading, and saved delivery choices', () => {
 	const settings = {
@@ -44,8 +45,8 @@ test( 'shows a blank choice before fetching, a placeholder while loading, and sa
 	const props = {
 		getSetting: ( name ) => settings[ name ] ?? '',
 		getDisabledState: () => false,
-		updateSetting: jest.fn(),
-		submitForm: jest.fn(),
+		updateSetting: vi.fn(),
+		submitForm: vi.fn(),
 		translate: ( text ) => text,
 		locale: 'en',
 		teams: [],

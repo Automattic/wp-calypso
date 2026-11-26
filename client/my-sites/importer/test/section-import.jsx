@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { appStates } from 'calypso/state/imports/constants';
 import { SectionImport } from '../section-import';
 
 const renderSectionImport = ( siteImports ) => {
 	const props = {
 		canImport: false,
-		cancelImport: jest.fn(),
-		fetchImporterState: jest.fn(),
-		recordTracksEvent: jest.fn(),
+		cancelImport: vi.fn(),
+		fetchImporterState: vi.fn(),
+		recordTracksEvent: vi.fn(),
 		siteId: 1,
 		siteImports,
 		translate: ( text ) => text,

@@ -10,7 +10,6 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
 import SitesMigrationTrialBadge from 'calypso/sites-dashboard/components/sites-migration-trial-badge';
 import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -234,6 +233,4 @@ function mapStateToProps( state, ownProps ) {
 	};
 }
 
-export default connect( mapStateToProps, {
-	recordTracksEvent,
-} )( localize( Site ) );
+export default connect( mapStateToProps, {} )( localize( Site ) );

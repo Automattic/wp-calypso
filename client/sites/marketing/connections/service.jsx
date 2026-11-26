@@ -35,7 +35,6 @@ import {
 import {
 	getBrokenSiteUserConnectionsForService,
 	getSiteUserConnectionsForService,
-	isFetchingConnections,
 } from 'calypso/state/sharing/publicize/selectors';
 import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/sharing/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -66,7 +65,6 @@ export class SharingService extends Component {
 		deleteSiteConnection: PropTypes.func,
 		errorNotice: PropTypes.func,
 		fetchConnection: PropTypes.func,
-		isFetching: PropTypes.bool,
 		keyringConnections: PropTypes.arrayOf( PropTypes.object ),
 		recordGoogleEvent: PropTypes.func,
 		recordTracksEvent: PropTypes.func,
@@ -90,7 +88,6 @@ export class SharingService extends Component {
 		deleteSiteConnection: () => {},
 		errorNotice: () => {},
 		fetchConnection: () => {},
-		isFetching: false,
 		keyringConnections: [],
 		recordGoogleEvent: () => {},
 		requestKeyringConnections: () => {},
@@ -406,10 +403,7 @@ export class SharingService extends Component {
 	getConnectionStatus( service, serviceStatus = 'ok' ) {
 		let status;
 
-		if ( this.props.isFetching ) {
-			// When connections are still loading, we don't know the status
-			status = 'unknown';
-		} else if (
+		if (
 			! ( this.getConnections() ?? [] ).some( ( connection ) => connection.service === service )
 		) {
 			// If no connections exist, the service isn't connected
@@ -672,11 +666,7 @@ export class SharingService extends Component {
 							: action
 					}
 				>
-					<div
-						className={ clsx( 'sharing-service__content', {
-							'is-placeholder': this.props.isFetching,
-						} ) }
-					>
+					<div className="sharing-service__content">
 						{ 'not-connected' === connectionStatus && (
 							<ServiceExamples
 								service={ this.props.service }
@@ -745,7 +735,6 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 			const props = {
 				availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
 				brokenConnections: brokenPublicizeConnections.concat( refreshableConnections ),
-				isFetching: isFetchingConnections( state, siteId ),
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),
 				path: getCurrentRouteParameterized( state, siteId ),

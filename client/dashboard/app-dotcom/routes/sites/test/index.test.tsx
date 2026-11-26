@@ -57,6 +57,20 @@ describe( '<Sites>', () => {
 			.reply( 200, { teams: [] } );
 	} );
 
+	describe( 'header', () => {
+		beforeEach( () => {
+			mockPreferences();
+		} );
+
+		test( 'shows the add new site button', async () => {
+			mockSites();
+
+			render( <Sites />, { user: { site_count: sites.length } as User } );
+
+			expect( await screen.findByRole( 'button', { name: 'Add new site' } ) ).toBeVisible();
+		} );
+	} );
+
 	describe( 'notices', () => {
 		beforeEach( () => {
 			mockSites();
@@ -72,7 +86,8 @@ describe( '<Sites>', () => {
 
 		test( 'shows the security key notice when the key needs to be re-registered', async () => {
 			mockPreferences( { two_step_security_key_reregister_required: true } );
-			render( <Sites search={ {} } />, {
+
+			render( <Sites />, {
 				user: { site_count: sites.length } as User,
 				config: configWithMeSupport,
 			} );
@@ -82,7 +97,8 @@ describe( '<Sites>', () => {
 
 		test( 'shows the account email bouncing notice when the account email is bouncing', async () => {
 			mockPreferences();
-			render( <Sites search={ {} } />, {
+
+			render( <Sites />, {
 				user: { site_count: sites.length, email_bouncing: true } as User,
 				config: configWithMeSupport,
 			} );
@@ -94,7 +110,8 @@ describe( '<Sites>', () => {
 
 		test( 'shows the recovery email notice when the recovery email matches the account email', async () => {
 			mockPreferences();
-			render( <Sites search={ {} } />, {
+
+			render( <Sites />, {
 				user: { site_count: sites.length, recovery_email_matches_account_email: true } as User,
 				config: configWithMeSupport,
 			} );
@@ -112,7 +129,8 @@ describe( '<Sites>', () => {
 
 		test( 'lists sites', async () => {
 			mockSites();
-			render( <Sites search={ {} } />, { user: { site_count: 2 } as User } );
+
+			render( <Sites />, { user: { site_count: 2 } as User } );
 
 			expect( await screen.findByText( 'My First Site' ) ).toBeVisible();
 			expect( screen.getByText( 'My Second Site' ) ).toBeVisible();
@@ -120,15 +138,10 @@ describe( '<Sites>', () => {
 
 		test( 'requests deleted sites as well when the is_deleted query param is set', async () => {
 			const deletedSite = { ...sites[ 1 ], ID: 3, name: 'My Deleted Site', is_deleted: true };
-
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/rest/v1.3/me/sites' )
 				.query( ( query ) => query.site_visibility === 'all' )
 				.reply( 200, { sites: [ sites[ 0 ], deletedSite ], total: 2 } );
-			nock( 'https://public-api.wordpress.com' )
-				.get( '/rest/v1.3/me/sites' )
-				.query( true )
-				.reply( 200, { sites: [ deletedSite ], total: 1 } );
 
 			render( <Sites search={ { is_deleted: true } } />, { user: { site_count: 2 } as User } );
 
@@ -175,7 +188,7 @@ describe( '<Sites>', () => {
 					],
 				} );
 
-			const { queryClient } = render( <Sites search={ {} } />, {
+			const { queryClient } = render( <Sites />, {
 				user: { site_count: 2 } as User,
 			} );
 
@@ -206,7 +219,8 @@ describe( '<Sites>', () => {
 
 		test( 'offers to restore a deleted site when the user has only deleted sites', async () => {
 			mockDeletedSitesCount( 1 );
-			render( <Sites search={ {} } />, { user: { site_count: 0 } as User } );
+
+			render( <Sites />, { user: { site_count: 0 } as User } );
 
 			expect(
 				await screen.findByRole( 'heading', { name: 'You don’t have any active sites' } )
@@ -222,7 +236,8 @@ describe( '<Sites>', () => {
 
 		test( 'offers only to create a site when the user has no deleted sites', async () => {
 			mockDeletedSitesCount( 0 );
-			render( <Sites search={ {} } />, { user: { site_count: 0 } as User } );
+
+			render( <Sites />, { user: { site_count: 0 } as User } );
 
 			expect(
 				await screen.findByRole( 'heading', { name: 'You don’t have any sites yet' } )

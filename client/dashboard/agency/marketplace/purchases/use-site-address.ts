@@ -6,7 +6,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
-import useDebouncedState from '../../../app/hooks/use-debounced-state';
+import useDebouncedState from '../../../hooks/use-debounced-state';
 
 const MIN_LENGTH = 4;
 const MAX_LENGTH = 50;

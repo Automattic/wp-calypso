@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,6 +8,8 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
+import { deleteSite } from 'calypso/state/sites/actions';
 import DeleteSite from '../index';
 
 const initialState = {
@@ -40,24 +42,24 @@ const initialState = {
 	preferences: {},
 };
 
-const mockDeleteSite = jest.fn();
-
-jest.mock( 'calypso/components/data/query-site-purchases', () => {
-	return () => {};
+vi.mock( 'calypso/components/data/query-site-purchases', () => {
+	return { default: () => {} };
 } );
-jest.mock( 'calypso/components/inline-support-link', () => {
-	return () => {
-		<>InlineSupportLink</>;
+vi.mock( 'calypso/components/inline-support-link', () => {
+	return {
+		default: () => {
+			<>InlineSupportLink</>;
+		},
+	};
+} );
+
+vi.mock( 'calypso/state/sites/actions', () => {
+	return {
+		deleteSite: vi.fn(),
 	};
 } );
 
 describe( 'index', () => {
-	jest.mock( 'calypso/state/sites/actions', () => {
-		return {
-			deleteSite: mockDeleteSite,
-		};
-	} );
-
 	test( 'Check DeleteSite renders as expected', async () => {
 		const mockStore = configureStore( [ thunk ] );
 		const store = mockStore( initialState );
@@ -95,7 +97,7 @@ describe( 'index', () => {
 
 		const deleteButton = await screen.getByRole( 'button', { name: /Delete site/ } );
 		expect( deleteButton ).not.toBeDisabled();
-		expect( mockDeleteSite ).not.toHaveBeenCalled();
+		expect( deleteSite ).not.toHaveBeenCalled();
 	} );
 
 	test( 'Check will show purchases message', async () => {

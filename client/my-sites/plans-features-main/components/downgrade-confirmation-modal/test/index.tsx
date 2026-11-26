@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { useQuery } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import DowngradeConfirmationModal from '../index';
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useQuery: vi.fn(),
 } ) );
 
 const mockFeatures = ( data: object ) =>
-	( useQuery as jest.Mock ).mockReturnValue( { data, isLoading: false } );
+	( useQuery as Mock ).mockReturnValue( { data, isLoading: false } );
 
 const defaultProps = {
 	isOpen: true,
@@ -22,8 +25,8 @@ const defaultProps = {
 	isDelayedDowngrade: true,
 	renewalDate: 'May 9, 2027',
 	isRechargeable: true,
-	onClose: jest.fn(),
-	onConfirm: jest.fn(),
+	onClose: vi.fn(),
+	onConfirm: vi.fn(),
 };
 
 describe( 'DowngradeConfirmationModal', () => {
@@ -72,6 +75,67 @@ describe( 'DowngradeConfirmationModal', () => {
 		expect(
 			within( screen.getByRole( 'dialog' ) ).queryByText( /Monthly plans don’t include/ )
 		).toBeNull();
+	} );
+
+	test( 'describes a term change made now, with its refund and the monthly warning', () => {
+		mockFeatures( {
+			features: [ { feature_id: 'domain-credit', title: 'Free domain for one year' } ],
+			is_change_to_monthly: true,
+		} );
+
+		render(
+			<DowngradeConfirmationModal
+				{ ...defaultProps }
+				isDelayedDowngrade={ false }
+				isInstantDowngrade
+				isTermChange
+				renewalPriceText="$8/month"
+				refundText="$40"
+			/>
+		);
+
+		const dialog = within( screen.getByRole( 'dialog' ) );
+		expect( screen.getByRole( 'heading', { name: 'Confirm plan change' } ) ).toBeVisible();
+		expect( dialog.getByText( /Monthly plans don’t include some benefits/ ) ).toBeVisible();
+		expect( dialog.getByText( /now, and you’ll pay \$8\/month when it renews/ ) ).toBeVisible();
+		expect( dialog.getByText( 'Free domain for one year' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Change plan and refund $40' } ) ).toBeVisible();
+	} );
+
+	test( 'explains scheduling a change that was picked to make now but can’t be', () => {
+		mockFeatures( { features: [], is_change_to_monthly: false } );
+
+		render(
+			<DowngradeConfirmationModal
+				{ ...defaultProps }
+				isTermChange
+				isChangeNowRefused
+				renewalPriceText="$70/month"
+			/>
+		);
+
+		expect(
+			within( screen.getByRole( 'dialog' ) ).getByText(
+				/can’t be made right away with a refund, but you can schedule it/
+			)
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Schedule change' } ) ).toBeEnabled();
+	} );
+
+	test( 'cannot confirm a change made now until its refund has loaded', () => {
+		mockFeatures( { features: [], is_change_to_monthly: true } );
+
+		render(
+			<DowngradeConfirmationModal
+				{ ...defaultProps }
+				isDelayedDowngrade={ false }
+				isInstantDowngrade
+				isTermChange
+				isRefundLoading
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'Change plan' } ) ).toBeDisabled();
 	} );
 
 	test( 'shows no monthly warning outside a term change', () => {

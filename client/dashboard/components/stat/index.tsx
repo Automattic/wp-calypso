@@ -28,8 +28,8 @@ interface StatProps {
 	metric?: string;
 
 	/**
-	 * The color of the progress bar. If none is provided the admin theme colour
-	 * will be used.
+	 * The color of the progress bar. If none is provided the default indicator
+	 * color will be used.
 	 */
 	progressColor?: 'alert-yellow' | 'alert-red' | 'alert-green';
 
@@ -50,6 +50,12 @@ interface StatProps {
 	 */
 	strapline?: string;
 }
+
+const PROGRESS_COLORS = {
+	'alert-yellow': 'var( --dashboard__background-color-warning )',
+	'alert-red': 'var( --dashboard__background-color-error )',
+	'alert-green': 'var( --dashboard__background-color-success )',
+};
 
 export function Stat( {
 	density = 'low',
@@ -89,7 +95,7 @@ export function Stat( {
 			</HStack>
 			{ progressValue !== undefined && (
 				<Progress.Root
-					className={ `dashboard-stat__progress-bar dashboard-stat__progress-bar--${ progressColor }` }
+					className="dashboard-stat__progress-bar"
 					value={ progressValue }
 					aria-labelledby={ strapline ? straplineId : undefined }
 					aria-label={ strapline ? undefined : progressLabel }
@@ -97,7 +103,7 @@ export function Stat( {
 					aria-hidden={ isLoading }
 				>
 					<Progress.Track>
-						<Progress.Indicator />
+						<Progress.Indicator color={ progressColor && PROGRESS_COLORS[ progressColor ] } />
 					</Progress.Track>
 				</Progress.Root>
 			) }

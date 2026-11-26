@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { useInstallProgress } from '../use-install-progress';
 
 describe( 'useInstallProgress', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( new Date( '2026-08-17T10:00:00Z' ) );
+		vi.useFakeTimers();
+		vi.setSystemTime( new Date( '2026-08-17T10:00:00Z' ) );
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
-	const advance = ( ms: number ) => act( () => jest.advanceTimersByTime( ms ) );
+	const advance = ( ms: number ) => act( () => vi.advanceTimersByTime( ms ) );
 
 	it( 'measures elapsed from the transfer start when known, not from mount', () => {
 		const startedAt = Date.now() - 12_000;

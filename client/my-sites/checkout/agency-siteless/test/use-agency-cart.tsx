@@ -1,18 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import useAgencyCart from '../use-agency-cart';
 import type { AgencyCartEntry } from '../../agency-checkout/lib/agency-checkout-params';
 import type { Agency, AgencyProduct } from '@automattic/api-core';
 import type { PropsWithChildren } from 'react';
 
-jest.mock( '@automattic/shopping-cart', () => ( {
-	...jest.requireActual( '@automattic/shopping-cart' ),
-	useShoppingCart: jest.fn(),
+vi.mock( '@automattic/shopping-cart', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
+		'@automattic/shopping-cart'
+	) ),
+	useShoppingCart: vi.fn(),
 } ) );
 
 const AGENCY_ID = 42;
@@ -30,7 +33,7 @@ const products = [
 	{ slug: 'pressable-addon-php-memory-512', product_id: 4001, site_domain: 'two.example.com' },
 ] as AgencyProduct[];
 
-const replaceProductsInCart = jest.fn();
+const replaceProductsInCart = vi.fn();
 const EXIT_URL = 'https://agencies-beta.automattic.com/products';
 
 function renderCart(
@@ -65,7 +68,7 @@ function addedLines() {
 describe( 'useAgencyCart', () => {
 	beforeEach( () => {
 		replaceProductsInCart.mockReset().mockResolvedValue( {} );
-		( useShoppingCart as jest.Mock ).mockReturnValue( { replaceProductsInCart } );
+		( useShoppingCart as Mock ).mockReturnValue( { replaceProductsInCart } );
 	} );
 
 	it( 'adds one line per unit, each with its own index, for the agency of the user', async () => {
@@ -78,7 +81,7 @@ describe( 'useAgencyCart', () => {
 
 		expect( result.current.error ).toBeNull();
 		expect( replaceProductsInCart ).toHaveBeenCalledTimes( 1 );
-		const extra = { isA4ASitelessCheckout: true, agency_id: AGENCY_ID };
+		const extra = { isA4ASitelessCheckout: true, agency_id: AGENCY_ID, mergeIdenticalItems: true };
 		expect( addedLines() ).toEqual( [
 			{
 				product_id: 1010,
@@ -152,7 +155,7 @@ describe( 'useAgencyCart', () => {
 
 	it( 'sends an agency that is not approved back to the dashboard without filling the cart', async () => {
 		const { location } = window;
-		const replace = jest.fn();
+		const replace = vi.fn();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			value: { ...location, replace },

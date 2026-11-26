@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { PromoteWidgetStatus, showDSP, usePromoteWidget } from '../';
 import { getHotjarSiteSettings, mayWeLoadHotJarScript } from '../../analytics/hotjar';
 
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 const sites = [];
 sites[ 1 ] = {
@@ -99,7 +100,7 @@ describe( 'index', () => {
 		global.window.BlazePress = {};
 		let mockBlazePressMockCall = null;
 
-		global.window.BlazePress.render = jest.fn( ( args ) => {
+		global.window.BlazePress.render = vi.fn( ( args ) => {
 			mockBlazePressMockCall = args;
 			args.onLoaded();
 		} );

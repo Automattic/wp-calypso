@@ -1,5 +1,7 @@
 import { type NotificationNote } from '@automattic/api-core';
+import { readConversationsCommentsQuery, readConversationsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -45,7 +47,7 @@ const MAX_SEARCH_LENGTH = 100;
 
 type Unread = Pick< Conversation, 'unreadNoteIds' | 'unreadCommentIds' >;
 
-// Your comments can open a post the All pages haven't loaded yet, so its unread notes come from the notes.
+// The URL can open a post the loaded pages don't list, so its unread notes come from the notes.
 const getUnreadFromNotes = (
 	notes: NotificationNote[] | undefined,
 	{ siteId, postId }: Pick< Conversation, 'siteId' | 'postId' >
@@ -100,17 +102,17 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		// Its cached pages still serve those lookups while Unread runs its own query.
 		enabled: tab !== 'unread',
 	} );
+	const ownCommentsParams = { sort, search: debouncedSearch };
+	const unreadParams = { ...ownCommentsParams, scope: 'unread' as const };
 	const unreadQuery = useConversations( {
-		sort,
-		search: debouncedSearch,
-		scope: 'unread',
+		...unreadParams,
 		refetchInterval: REFRESH_INTERVAL,
 		enabled: tab === 'unread',
 	} );
 	const ownCommentsQuery = useOwnComments( {
-		sort,
-		search: debouncedSearch,
+		...ownCommentsParams,
 		enabled: tab === 'yours',
+		refetchInterval: REFRESH_INTERVAL,
 	} );
 	const conversationsShownQuery = tab === 'unread' ? unreadQuery : conversationsQuery;
 	const { conversations } = conversationsShownQuery;
@@ -151,9 +153,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const newCommentIds = union( activeOpened?.unread?.unreadCommentIds, selected?.unreadCommentIds );
 	// A post opened before the notes loaded gets its unread notes, and is marked read, once they do.
 	const isWaitingForNotes = !! activeOpened && ! activeOpened.unread;
-	// Only posts outside the loaded pages need the notes, and only Your comments opens those.
 	const { data: notes } = useCommentNotes( {
-		enabled: tab === 'yours' || isWaitingForNotes,
+		enabled: isWaitingForNotes,
 		refetchInterval: REFRESH_INTERVAL,
 	} );
 
@@ -161,11 +162,15 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_inbox_viewed' ) );
 	}, [ dispatch ] );
 
+	const isPickingFirst = ! isNarrow && ! selectedKey && conversations.length > 0;
+	// Cached conversations can be old, so the latest is picked once they're refreshed.
+	const isRefreshing =
+		conversationsShownQuery.isFetching && ! conversationsShownQuery.isFetchedAfterMount;
 	useEffect( () => {
-		if ( ! isNarrow && ! selectedKey && conversations.length ) {
+		if ( isPickingFirst && ! isRefreshing ) {
 			page.replace( getConversationPath( conversations[ 0 ] ) );
 		}
-	}, [ isNarrow, selectedKey, conversations ] );
+	}, [ isPickingFirst, isRefreshing, conversations ] );
 
 	useEffect( () => {
 		if ( ! isWaitingForNotes ) {
@@ -197,18 +202,18 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	// A conversation opened from the URL, or as the first one, is read like one picked from the list.
 	useEffect( () => {
 		// A conversation opened from the list sets `opened` before the URL catches up.
-		if ( ! selectedKey || opened || ( ! found && conversationsShownQuery.isLoading ) ) {
+		// Cached unread notes can be out of date, so it waits for the refresh too.
+		if ( ! selectedKey || opened || isRefreshing ) {
 			return;
 		}
 		open( { key: selectedKey, unread: found, conversation: found } );
-	}, [ selectedKey, opened, found, conversationsShownQuery.isLoading, open ] );
+	}, [ selectedKey, opened, found, isRefreshing, open ] );
 
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
 		setHasOpened( true );
 		const key = getConversationKey( item.siteId, item.postId );
 		const conversation = findConversation( key );
-		const unread: Unread | undefined = conversation ?? getUnreadFromNotes( notes, item );
-		const unreadNoteIds = unread?.unreadNoteIds;
+		const row = conversation ?? item;
 		const previous = key === opened?.key ? opened.unread : undefined;
 		open(
 			{
@@ -216,14 +221,14 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 				// Opening it again adds any notes that came in since, such as past the route's 50 ids.
 				unread: previous
 					? {
-							unreadNoteIds: union( previous.unreadNoteIds, unread?.unreadNoteIds ),
-							unreadCommentIds: union( previous.unreadCommentIds, unread?.unreadCommentIds ),
+							unreadNoteIds: union( previous.unreadNoteIds, row.unreadNoteIds ),
+							unreadCommentIds: union( previous.unreadCommentIds, row.unreadCommentIds ),
 						}
-					: unread,
+					: row,
 				anchor: 'commentId' in item ? { commentId: item.commentId } : undefined,
 				conversation,
 			},
-			unreadNoteIds
+			row.unreadNoteIds
 		);
 		if ( key === selectedKey ) {
 			return;
@@ -231,7 +236,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_conversation_opened', {
 				source,
-				unread_count: conversation?.unreadCount ?? unreadNoteIds?.length ?? 0,
+				unread_count: row.unreadCount,
 			} )
 		);
 		page.show( getConversationPath( item ) );
@@ -267,6 +272,23 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 				source,
 			} )
 		);
+	};
+
+	const queryClient = useQueryClient();
+	// Only a tab that has never loaded is fetched, since a refetch reloads every page.
+	const prefetchOptions = { staleTime: Infinity, retry: false };
+	const prefetchTab = ( next: InboxTab ) => {
+		if ( next === 'unread' ) {
+			queryClient.prefetchInfiniteQuery( {
+				...readConversationsQuery( unreadParams ),
+				...prefetchOptions,
+			} );
+		} else if ( next === 'yours' ) {
+			queryClient.prefetchInfiniteQuery( {
+				...readConversationsCommentsQuery( ownCommentsParams ),
+				...prefetchOptions,
+			} );
+		}
 	};
 
 	const selectSort = ( next: SortOrder ) => {
@@ -343,6 +365,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					onLoadMore={ loadMore }
 					tab={ tab }
 					onTabChange={ ( next ) => selectTab( next, 'click' ) }
+					onTabHover={ prefetchTab }
 					search={ search }
 					onSearchChange={ setSearch }
 					density={ density }
@@ -358,7 +381,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					followFocus={ hasOpened }
 					onSelect={ openConversation }
 				/>
-				{ ! hasConversation && ! isNarrow && listQuery.isLoading && (
+				{ ! hasConversation && ! isNarrow && ( listQuery.isLoading || isPickingFirst ) && (
 					<ConversationDetailPlaceholder />
 				) }
 				{ hasConversation && (

@@ -1,15 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement } from 'react';
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import usePlanUsageQuery, { getUsageLimitStatus, PlanUsage } from '../use-plan-usage-query';
 
-jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn() } } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { get: vi.fn() } } )
+);
 
-const get = wpcom.req.get as jest.Mock;
+const get = wpcom.req.get as Mock;
 
 const renderUsageQuery = ( siteId: number | null ) => {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );

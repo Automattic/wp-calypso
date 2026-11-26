@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import actions from '../state/actions';
 import getFilterName from '../state/selectors/get-filter-name';
 import getIsLoading from '../state/selectors/get-is-loading';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
@@ -455,11 +454,4 @@ const mapStateToProps = ( state ) => ( {
 	filterName: getFilterName( state ),
 } );
 
-const mapDispatchToProps = {
-	selectNote: actions.ui.selectNote,
-	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
-};
-
-export default connect( mapStateToProps, mapDispatchToProps, null, { forwardRef: true } )(
-	localize( NoteList )
-);
+export default connect( mapStateToProps, {}, null, { forwardRef: true } )( localize( NoteList ) );

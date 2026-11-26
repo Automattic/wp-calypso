@@ -108,6 +108,13 @@ export default function DomainDns() {
 			error: { source: 'server' },
 		} )
 	);
+	const restoreDefaultCnameRecordMutation = useMutation(
+		withSnackbar( domainDnsMutation( domainName ), {
+			/* translators: %s is the domain name */
+			success: sprintf( __( 'Default CNAME record restored for %s.' ), domainName ),
+			error: { source: 'server' },
+		} )
+	);
 	const restoreDefaultEmailRecordsMutation = useMutation(
 		withSnackbar( domainDnsEmailMutation( domainName ), {
 			/* translators: %s is the domain name */
@@ -210,7 +217,7 @@ export default function DomainDns() {
 			domain: domainName,
 		} );
 
-		updateDnsMutation.mutate(
+		restoreDefaultCnameRecordMutation.mutate(
 			{
 				recordsToRemove,
 				recordsToAdd: recordsToAdd as DnsRecord[],
@@ -455,7 +462,7 @@ export default function DomainDns() {
 			<RestoreDefaultCnameRecord
 				onConfirm={ handleRestoreDefaultCnameRecord }
 				onCancel={ () => setIsRestoreDefaultCnameRecordDialogOpen( false ) }
-				isBusy={ updateDnsMutation.isPending }
+				isBusy={ restoreDefaultCnameRecordMutation.isPending }
 				isOpen={ isRestoreDefaultCnameRecordDialogOpen }
 			/>
 			<RestoreDefaultEmailRecords

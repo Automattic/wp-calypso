@@ -9,8 +9,6 @@ import 'calypso/state/automated-transfer/init';
  */
 export { getAutomatedTransfer } from 'calypso/state/automated-transfer/selectors/get-automated-transfer';
 export { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors/get-automated-transfer-status';
-export { isAutomatedTransferActive } from 'calypso/state/automated-transfer/selectors/is-automated-transfer-active';
-export { isAutomatedTransferFailed } from 'calypso/state/automated-transfer/selectors/is-automated-transfer-failed';
 export { default as isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors/is-fetching-automated-transfer-status';
 
 export interface DomainNames {

@@ -6,10 +6,7 @@ import { getShortcuts } from 'calypso/components/date-range/use-shortcuts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { NAVIGATION_METHOD_ARROW } from 'calypso/my-sites/stats/constants';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
-import {
-	getSiteStatsQueryDate,
-	isRequestingSiteStatsForQuery,
-} from 'calypso/state/stats/lists/selectors';
+import { getSiteStatsQueryDate } from 'calypso/state/stats/lists/selectors';
 import { isAutoRefreshAllowedForQuery } from 'calypso/state/stats/lists/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DateLabelDrill from './date-label-drill';
@@ -302,9 +299,6 @@ const connectComponent = connect( ( state, { query, statsType, showQueryDate } )
 	const siteId = getSelectedSiteId( state );
 	return {
 		queryDate: showQueryDate ? getSiteStatsQueryDate( state, siteId, statsType, query ) : null,
-		requesting: showQueryDate
-			? isRequestingSiteStatsForQuery( state, siteId, statsType, query )
-			: false,
 		reduxState: state,
 		momentSiteZone: getMomentSiteZone( state, siteId ),
 	};

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import wpcomRequest from '@automattic/data-stores/src/wpcom-request';
@@ -7,6 +7,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
 	recordMigrationStartEvent,
@@ -17,9 +18,9 @@ import SiteMigrationHowToMigrate from '../';
 import { defaultSiteDetails } from '../../launchpad/test/lib/fixtures';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 
-const navigation = { submit: jest.fn(), goBack: jest.fn() };
-const mockCancelMigration = jest.fn();
-const mockDeleteMigrationSticker = jest.fn();
+const navigation = { submit: vi.fn(), goBack: vi.fn() };
+const mockCancelMigration = vi.fn();
+const mockDeleteMigrationSticker = vi.fn();
 
 type Props = ComponentProps< typeof SiteMigrationHowToMigrate >;
 
@@ -29,27 +30,23 @@ const render = ( props?: Partial< Props >, renderOptions?: RenderStepOptions ) =
 	return renderStep( <SiteMigrationHowToMigrate { ...combinedProps } />, renderOptions );
 };
 
-jest.mock( 'calypso/state/sites/actions', () => ( {
-	requestSite: jest.fn(),
+vi.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
+vi.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	canAccessWpcomApis: jest.fn( () => true ),
+	default: vi.fn(),
+	canAccessWpcomApis: vi.fn( () => true ),
 } ) );
 
-jest.mock( 'calypso/lib/presales-chat', () => ( {
-	usePresalesChat: () => {},
-} ) );
+vi.mock( 'calypso/lib/analytics/ad-tracking/record-migration-events' );
 
-jest.mock( 'calypso/lib/analytics/ad-tracking/record-migration-events' );
-
-jest.mock( 'calypso/data/site-migration/landing/use-migration-cancellation', () => ( {
+vi.mock( 'calypso/data/site-migration/landing/use-migration-cancellation', () => ( {
 	useMigrationCancellation: () => ( { mutate: mockCancelMigration } ),
 } ) );
 
-jest.mock( 'calypso/data/site-migration/use-migration-sticker', () => ( {
+vi.mock( 'calypso/data/site-migration/use-migration-sticker', () => ( {
 	useMigrationStickerMutation: () => ( { deleteMigrationSticker: mockDeleteMigrationSticker } ),
 } ) );
 
@@ -67,23 +64,23 @@ const setSite = ( site ) => {
 
 describe( 'SiteMigrationHowToMigrate', () => {
 	beforeEach( () => {
-		jest.mocked( requestSite ).mockImplementation( () => jest.fn() );
+		vi.mocked( requestSite ).mockImplementation( () => vi.fn() );
 		dispatch( SITE_STORE ).reset();
 		dispatch( SITE_STORE ).invalidateResolutionForStore();
-		jest.mocked( wpcomRequest ).mockResolvedValue( undefined );
+		vi.mocked( wpcomRequest ).mockResolvedValue( undefined );
 		setSite( defaultSiteDetails );
 	} );
 
 	afterEach( () => {
-		jest.resetAllMocks();
-		jest.restoreAllMocks();
+		vi.resetAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it.each( [ 0, 1 ] )(
 		'cancels and uses browser Back without a navigation handler at history index %i',
 		async ( idx ) => {
-			jest.spyOn( history, 'state', 'get' ).mockReturnValue( { idx } );
-			const back = jest.spyOn( history, 'back' ).mockImplementation( () => {} );
+			vi.spyOn( history, 'state', 'get' ).mockReturnValue( { idx } );
+			const back = vi.spyOn( history, 'back' ).mockImplementation( () => {} );
 			render( { navigation: { submit: navigation.submit } } );
 
 			await userEvent.click( screen.getByRole( 'button', { name: /Back/ } ) );
@@ -121,8 +118,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		const retryResponse = new Promise( ( resolve ) => {
 			resolveRetry = resolve;
 		} );
-		jest
-			.mocked( wpcomRequest )
+		vi.mocked( wpcomRequest )
 			.mockRejectedValueOnce( { error: 'http_request_failed', message: 'Request failed' } )
 			.mockReturnValueOnce( retryResponse );
 		render( { navigation }, { initialEntry } );
@@ -169,7 +165,7 @@ describe( 'SiteMigrationHowToMigrate', () => {
 
 	it( 'offers a way back when the destination lookup fails without cancelling a migration', async () => {
 		setSite( null );
-		jest.mocked( wpcomRequest ).mockRejectedValue( {
+		vi.mocked( wpcomRequest ).mockRejectedValue( {
 			error: 'http_request_failed',
 			message: 'Request failed',
 		} );
@@ -198,11 +194,11 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		'uses browser Back without cancelling when the destination is unavailable at %s',
 		async ( initialEntry ) => {
 			setSite( null );
-			jest.mocked( wpcomRequest ).mockRejectedValue( {
+			vi.mocked( wpcomRequest ).mockRejectedValue( {
 				error: 'http_request_failed',
 				message: 'Request failed',
 			} );
-			const back = jest.spyOn( history, 'back' ).mockImplementation( () => {} );
+			const back = vi.spyOn( history, 'back' ).mockImplementation( () => {} );
 			render( { navigation: { submit: navigation.submit } }, { initialEntry } );
 			await screen.findByRole( 'heading', { name: "We couldn't load your site" } );
 

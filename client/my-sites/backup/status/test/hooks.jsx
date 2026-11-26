@@ -1,33 +1,33 @@
-const mockUseSelector = ( func ) => func();
-const mockUseMemo = ( func ) => func();
-
-jest.mock( 'react', () => ( {
-	...jest.requireActual( 'react' ),
-	useMemo: jest.fn( ( fn ) => fn ),
-} ) );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn(),
-} ) );
-jest.mock( 'calypso/my-sites/backup/hooks', () => ( {
-	...jest.requireActual( 'calypso/my-sites/backup/hooks' ),
-	useMatchingBackupAttemptsInRange: jest.fn(),
-} ) );
-jest.mock( 'calypso/components/localized-moment' );
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
-jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
-
 import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { vi } from 'vitest';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useMatchingBackupAttemptsInRange } from 'calypso/my-sites/backup/hooks';
 import { useDatesWithNoSuccessfulBackups } from 'calypso/my-sites/backup/status/hooks';
 
+const mockUseSelector = ( func ) => func();
+const mockUseMemo = ( func ) => func();
+
+vi.mock( 'react', async () => ( {
+	...( await vi.importActual( 'react' ) ),
+	useMemo: vi.fn( ( fn ) => fn ),
+} ) );
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn(),
+} ) );
+vi.mock( 'calypso/my-sites/backup/hooks', async () => ( {
+	...( await vi.importActual( 'calypso/my-sites/backup/hooks' ) ),
+	useMatchingBackupAttemptsInRange: vi.fn(),
+} ) );
+vi.mock( 'calypso/components/localized-moment' );
+vi.mock( 'calypso/state/selectors/get-site-gmt-offset' );
+vi.mock( 'calypso/state/selectors/get-site-timezone-value' );
+
 describe( 'useDatesWithNoSuccessfulBackups', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		useMemo.mockImplementation( mockUseMemo );
 		useSelector.mockImplementation( mockUseSelector );

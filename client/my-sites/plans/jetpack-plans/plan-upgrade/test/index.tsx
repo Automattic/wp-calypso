@@ -1,16 +1,17 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 // @ts-nocheck - TODO: Fix TypeScript issues
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSiteId: jest.fn( () => 100 ),
-} ) );
-
 import { TERM_ANNUALLY, TERM_MONTHLY } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import * as currentUserSelectors from 'calypso/state/currency-code/selectors';
 import productsList from 'calypso/state/products-list/reducer';
 import { reducer as purchases } from 'calypso/state/purchases/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PlanUpgradeSection from '../index';
+
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSiteId: vi.fn( () => 100 ),
+} ) );
 
 const initialState = {
 	sites: {
@@ -27,7 +28,7 @@ const initialState = {
 
 describe( '<PlanUpgradeSection />', () => {
 	beforeAll( () => {
-		jest.spyOn( currentUserSelectors, 'getCurrentUserCurrencyCode' ).mockReturnValue( 'USD' );
+		vi.spyOn( currentUserSelectors, 'getCurrentUserCurrencyCode' ).mockReturnValue( 'USD' );
 	} );
 	it( 'renders one legacy product card and one new plan product card', () => {
 		renderWithProvider(

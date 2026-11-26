@@ -1,25 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { initialStreamState } from '../stream/reducer';
 import { SiteGenerationView, TINT_HOLD_MS } from '../view';
 import type { BuildWowStreamView } from '../stream/use-build-wow-stream';
 import type { SiteGenerationState, SiteGenerationStep } from '../use-site-generation';
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Component: unknown ) => Component,
-	useTranslate: () => ( text: string, options?: { args?: Record< string, string | number > } ) =>
-		Object.entries( options?.args ?? {} ).reduce(
-			( translated, [ key, value ] ) =>
-				translated
-					.replace( `%(${ key })s`, String( value ) )
-					.replace( `%(${ key })d`, String( value ) ),
-			text
-		),
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		localize: ( Component: unknown ) => Component,
+		useTranslate: () => ( text: string, options?: { args?: Record< string, string | number > } ) =>
+			Object.entries( options?.args ?? {} ).reduce(
+				( translated, [ key, value ] ) =>
+					translated
+						.replace( `%(${ key })s`, String( value ) )
+						.replace( `%(${ key })d`, String( value ) ),
+				text
+			),
+	} )
+);
 
 const idleState = {
 	retryBuild: null,
@@ -53,7 +56,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 	it( 'uses live graph progress for an opted-in build and keeps the synthetic preview out', () => {
 		const { container } = render(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ { ...idleState, status: 'working', steps: [] } }
 				stream={ progressStream }
 			/>
@@ -70,7 +73,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 	it( 'keeps the existing synthetic preview when there is no active stream', () => {
 		const { container } = render(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ { ...idleState, status: 'working', steps: [] } }
 			/>
 		);
@@ -82,7 +85,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 	it( 'uses the live canvas empty state immediately when streaming is opted in', () => {
 		const { container } = render(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ { ...idleState, status: 'working', steps: [] } }
 				streamRequested
 			/>
@@ -130,7 +133,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		render(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				siteSlug="example.wpcomstaging.com"
 				state={ { ...idleState, status: 'working', steps: [] } }
 				stream={ stream }
@@ -179,7 +182,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		render(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ { ...idleState, status: 'working', steps: [] } }
 				stream={ stream }
 			/>
@@ -216,7 +219,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 	it( 'hides undecided design fields when the graph does not advertise design', () => {
 		render(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ { ...idleState, status: 'working', steps: [] } }
 				stream={ {
 					...progressStream,
@@ -263,7 +266,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		render(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ {
 					...idleState,
 					status: 'working',
@@ -305,7 +308,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 		};
 		const { rerender } = render(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ { ...idleState, status: 'working', steps: [] } }
 				stream={ stream }
 			/>
@@ -316,7 +319,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		rerender(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ { ...idleState, status: 'working', steps: [] } }
 				stream={ progressStream }
 			/>
@@ -329,13 +332,13 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 	} );
 
 	it( 'shows an accessible elapsed time for the active step and updates it every second', () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( new Date( '2026-08-07T12:00:00Z' ) );
+		vi.useFakeTimers();
+		vi.setSystemTime( new Date( '2026-08-07T12:00:00Z' ) );
 
 		try {
 			const { getByText, rerender } = render(
 				<SiteGenerationView
-					onReload={ jest.fn() }
+					onReload={ vi.fn() }
 					state={ {
 						...idleState,
 						status: 'working',
@@ -356,7 +359,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 			rerender(
 				<SiteGenerationView
-					onReload={ jest.fn() }
+					onReload={ vi.fn() }
 					state={ {
 						...idleState,
 						status: 'working',
@@ -374,16 +377,16 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 			expect( getByText( '3m 12s' ) ).toBeVisible();
 
-			act( () => jest.advanceTimersByTime( 1000 ) );
+			act( () => vi.advanceTimersByTime( 1000 ) );
 
 			expect( getByText( '3m 13s' ) ).toBeVisible();
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 
 	it( 'uses the calm reload fallback for failed builds and timeouts', () => {
-		const onReload = jest.fn();
+		const onReload = vi.fn();
 		const { getByRole, getByText, rerender } = render(
 			<SiteGenerationView
 				onReload={ onReload }
@@ -431,7 +434,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		const { getAllByRole, getByRole, rerender } = render(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ { ...idleState, status: 'working', steps: steps( 0 ) } }
 			/>
 		);
@@ -440,7 +443,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		rerender(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ { ...idleState, status: 'working', steps: steps( 2 ) } }
 			/>
 		);
@@ -449,7 +452,7 @@ describe( 'SiteGenerationView progress and fallback states', () => {
 
 		rerender(
 			<SiteGenerationView
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 				state={ {
 					...idleState,
 					status: 'failed',
@@ -473,7 +476,7 @@ const failedState: SiteGenerationState = {
 	failureLabel: 'We couldn’t finish building your site',
 	failureDetail: 'You can start the build again right away.',
 	steps: [],
-	retryBuild: jest.fn(),
+	retryBuild: vi.fn(),
 	isRetryingBuild: false,
 };
 
@@ -485,7 +488,7 @@ describe( 'SiteGenerationView wait estimate', () => {
 	};
 
 	it( 'promises up to 4 minutes on the DSL graph', () => {
-		render( <SiteGenerationView graph="dsl" onReload={ jest.fn() } state={ workingState } /> );
+		render( <SiteGenerationView graph="dsl" onReload={ vi.fn() } state={ workingState } /> );
 
 		expect( screen.getByText( /This can take up to 4 minutes\./ ) ).toBeInTheDocument();
 	} );
@@ -493,9 +496,7 @@ describe( 'SiteGenerationView wait estimate', () => {
 	it.each( [ 'blocks-first' as const, undefined ] )(
 		'promises a few minutes when the graph is %s',
 		( graph ) => {
-			render(
-				<SiteGenerationView graph={ graph } onReload={ jest.fn() } state={ workingState } />
-			);
+			render( <SiteGenerationView graph={ graph } onReload={ vi.fn() } state={ workingState } /> );
 
 			expect( screen.getByText( /This usually takes a few minutes\./ ) ).toBeVisible();
 		}
@@ -504,7 +505,7 @@ describe( 'SiteGenerationView wait estimate', () => {
 
 describe( 'SiteGenerationView server recovery', () => {
 	it( 'offers a reload when the site is ready but the editor is unavailable', async () => {
-		const onReload = jest.fn();
+		const onReload = vi.fn();
 		render(
 			<SiteGenerationView
 				state={ { ...idleState, status: 'failed', failureReason: 'editor-unavailable', steps: [] } }
@@ -522,10 +523,8 @@ describe( 'SiteGenerationView server recovery', () => {
 	} );
 
 	it( 'renders the server failure copy and starts the rebuild', async () => {
-		const retryBuild = jest.fn();
-		render(
-			<SiteGenerationView state={ { ...failedState, retryBuild } } onReload={ jest.fn() } />
-		);
+		const retryBuild = vi.fn();
+		render( <SiteGenerationView state={ { ...failedState, retryBuild } } onReload={ vi.fn() } /> );
 
 		expect( screen.getByText( 'We couldn’t finish building your site' ) ).toBeVisible();
 		expect( screen.getByText( 'You can start the build again right away.' ) ).toBeVisible();
@@ -535,7 +534,7 @@ describe( 'SiteGenerationView server recovery', () => {
 	} );
 
 	it( 'falls back to reload when no server retry is offered', async () => {
-		const onReload = jest.fn();
+		const onReload = vi.fn();
 		render(
 			<SiteGenerationView state={ { ...failedState, retryBuild: null } } onReload={ onReload } />
 		);
@@ -554,7 +553,7 @@ describe( 'SiteGenerationView server recovery', () => {
 					failureDetail: undefined,
 					retryBuild: null,
 				} }
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 			/>
 		);
 
@@ -566,7 +565,7 @@ describe( 'SiteGenerationView server recovery', () => {
 		render(
 			<SiteGenerationView
 				state={ { ...failedState, isRetryingBuild: true } }
-				onReload={ jest.fn() }
+				onReload={ vi.fn() }
 			/>
 		);
 
@@ -583,7 +582,7 @@ describe( 'SiteGenerationView canvas tint', () => {
 
 	it( 'tints the canvas with a new hue on every tap of the preview', () => {
 		const { container } = render(
-			<SiteGenerationView onReload={ jest.fn() } state={ workingState } />
+			<SiteGenerationView onReload={ vi.fn() } state={ workingState } />
 		);
 		const editor = screen.getByRole( 'region', { name: 'Site generation' } );
 		const preview = container.querySelector( '.site-generation__page-preview' ) as HTMLElement;
@@ -605,21 +604,21 @@ describe( 'SiteGenerationView canvas tint', () => {
 	} );
 
 	it( 'holds the tint, then fades it back to the default palette', () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		try {
 			const { container } = render(
-				<SiteGenerationView onReload={ jest.fn() } state={ workingState } />
+				<SiteGenerationView onReload={ vi.fn() } state={ workingState } />
 			);
 			const editor = screen.getByRole( 'region', { name: 'Site generation' } );
 			const preview = container.querySelector( '.site-generation__page-preview' ) as HTMLElement;
 
 			fireEvent.pointerUp( preview );
-			act( () => jest.advanceTimersByTime( TINT_HOLD_MS - 1 ) );
+			act( () => vi.advanceTimersByTime( TINT_HOLD_MS - 1 ) );
 			expect( editor ).toHaveAttribute( 'data-tinted', 'true' );
 			expect( editor ).toHaveAttribute( 'data-tint-fading', 'false' );
 
-			act( () => jest.advanceTimersByTime( 1 ) );
+			act( () => vi.advanceTimersByTime( 1 ) );
 			expect( editor ).toHaveAttribute( 'data-tinted', 'false' );
 			expect( editor ).toHaveAttribute( 'data-tint-fading', 'true' );
 			expect( container.querySelector( '.site-generation__tint' ) ).toBeVisible();
@@ -632,7 +631,7 @@ describe( 'SiteGenerationView canvas tint', () => {
 			expect( editor.style.getPropertyValue( '--site-generation-hue' ) ).toBe( '' );
 			expect( container.querySelector( '.site-generation__tint' ) ).toBeNull();
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 } );

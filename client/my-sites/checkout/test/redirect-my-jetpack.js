@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import addQueryArgs from 'calypso/lib/url/add-query-args';
 import { redirectMyJetpack } from '../controller';
 
-jest.mock( '@automattic/calypso-router' );
+vi.mock( '@automattic/calypso-router' );
 
 const mockStore = configureStore();
 
@@ -41,8 +42,8 @@ describe( 'redirectMyJetpack', () => {
 	};
 
 	beforeEach( () => {
-		pageSpy = jest.spyOn( page, 'default' );
-		next = jest.fn();
+		pageSpy = vi.spyOn( page, 'default' );
+		next = vi.fn();
 	} );
 
 	afterEach( () => {

@@ -3,8 +3,6 @@ import {
 	STATS_UTM_METRICS_RECEIVE,
 	STATS_UTM_METRICS_RECEIVE_BY_POST,
 	STATS_UTM_METRICS_REQUEST_FAILURE,
-	STATS_UTM_TOP_POSTS_REQUEST,
-	STATS_UTM_TOP_POSTS_RECEIVE,
 } from 'calypso/state/action-types';
 import 'calypso/state/data-layer/wpcom/sites/stats/utm-metrics';
 import 'calypso/state/stats/init';
@@ -63,35 +61,5 @@ export function receiveMetricsByPost( siteId: number, postId: number, data: obje
 		siteId,
 		postId,
 		data,
-	};
-}
-
-export function requestTopPosts(
-	siteId: number,
-	utmParam: string,
-	paramValues: string,
-	siteSlug: string
-) {
-	return {
-		type: STATS_UTM_TOP_POSTS_REQUEST,
-		siteId,
-		utmParam,
-		paramValues,
-		siteSlug,
-	};
-}
-
-export function receiveTopPosts(
-	siteId: number,
-	paramValues: string,
-	data: object,
-	siteSlug: string
-) {
-	return {
-		type: STATS_UTM_TOP_POSTS_RECEIVE,
-		siteId,
-		paramValues,
-		data,
-		siteSlug,
 	};
 }

@@ -150,7 +150,12 @@
 
 	.conversation-menu__notification-toggle {
 
+		// On wp-admin the Help Center uses WordPress's components, which color the track; components
+		// 45 draws the checked fill and ring from these tokens.
 		.components-form-toggle.is-checked {
+			--wpds-color-background-interactive-brand-strong: #{$help-center-blue};
+			--wpds-color-stroke-interactive-brand: #{$help-center-blue};
+
 			.components-form-toggle__track {
 				background-color: $help-center-blue;
 				border-color: $help-center-blue;

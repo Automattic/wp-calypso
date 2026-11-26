@@ -21,6 +21,10 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
+import {
+	START_ON_MESSAGE_PARAM,
+	useIsPendingDirectChat,
+} from '../../hooks/use-is-pending-direct-chat';
 import { useLoggedOutSession } from '../../hooks/use-logged-out-session';
 import { useOpenInteractionStatusMap } from '../../hooks/use-open-interaction-status-map';
 import { getOpenLiveInteractions } from '../../utils/get-open-live-interactions';
@@ -32,7 +36,7 @@ import { ThinkingPlaceholder } from './thinking-placeholder';
 import { getMessageUniqueIdentifier } from './utils/get-message-unique-identifier';
 import { ZendeskTypingIndicator } from './zendesk-typing-indicator';
 import ChatMessage from '.';
-import type { CurrentUser, Message } from '../../types';
+import type { CurrentUser, HumanSupportChatValues, Message } from '../../types';
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
 }
@@ -65,6 +69,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
 	const isStartingDirectChat = isForwardingToZendesk && canRequestHuman && ! chat.conversationId;
+	const isPendingDirectChat = useIsPendingDirectChat();
 	const isWaitingForChatClient = isStartingDirectChat && ! forceEmailSupport && ! isChatLoaded;
 	const [ hasChatClientTimedOut, setHasChatClientTimedOut ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
@@ -186,6 +191,12 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 		searchParams.delete( 'id' );
 		setSearchParams( searchParams );
+
+		// The first message starts this chat. Opening it starts nothing.
+		if ( searchParams.has( START_ON_MESSAGE_PARAM ) ) {
+			return;
+		}
+
 		requestHumanSupport( {
 			createdFrom: 'direct_url',
 			flags: NO_HUMAN_SUPPORT_FLAGS,
@@ -208,18 +219,23 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	] );
 
 	const RoutingStep = humanSupportRouting?.Step;
-	const startRoutedChat = () => {
+	const startRoutedChat = ( values?: HumanSupportChatValues ) => {
 		if ( ! pendingHumanSupportRequest ) {
 			return;
 		}
 		const { createdFrom, isFromError, errorReason, escalationOnSecondAttempt } =
 			pendingHumanSupportRequest;
+		// Only the known values, in case a step passes `startChat` straight to `onClick`.
+		const { siteUrl, ticketFields, tags } = values ?? {};
 		setPendingHumanSupportRequest( null );
 		createZendeskConversation( {
 			createdFrom,
 			isFromError,
 			errorReason,
 			escalationOnSecondAttempt,
+			siteUrl,
+			ticketFields,
+			tags,
 		} );
 	};
 
@@ -250,7 +266,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				>
 					<Spinner />
 				</div>
-				{ ( chat.odieId || chat.provider !== 'zendesk' ) && (
+				{ ( chat.odieId || ( chat.provider !== 'zendesk' && ! isPendingDirectChat ) ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
 							currentUser?.display_name,

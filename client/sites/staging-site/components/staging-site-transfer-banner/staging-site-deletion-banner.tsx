@@ -13,7 +13,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
-import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
+import { getProductionSiteId } from 'calypso/dashboard/sites/staging-site/utils';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
 import deleteStagingSiteIllustration from './delete-staging-site-illustration.svg';

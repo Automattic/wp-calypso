@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { FEATURE_SFTP, FEATURE_SSH } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { SftpCard } from '../card';
 
-jest.mock( '@automattic/components/src/spinner', () => ( {
+vi.mock( '@automattic/components/src/spinner', () => ( {
 	__esModule: true,
 	Spinner: () => <div data-testid="spinner" />,
 } ) );
 
-jest.mock( 'calypso/launchpad/hooks/use-complete-launchpad-tasks-with-notice', () => ( {
-	useCompleteLaunchpadTasksWithNotice: () => jest.fn(),
+vi.mock( 'calypso/launchpad/hooks/use-complete-launchpad-tasks-with-notice', () => ( {
+	useCompleteLaunchpadTasksWithNotice: () => vi.fn(),
 } ) );
 
 const INITIAL_STATE = {
@@ -37,15 +38,15 @@ describe( 'SftpCard', () => {
 		// Mock the missing `window.matchMedia` function that's not even in JSDOM
 		Object.defineProperty( window, 'matchMedia', {
 			writable: true,
-			value: jest.fn().mockImplementation( ( query ) => ( {
+			value: vi.fn().mockImplementation( ( query ) => ( {
 				matches: false,
 				media: query,
 				onchange: null,
-				addListener: jest.fn(), // deprecated
-				removeListener: jest.fn(), // deprecated
-				addEventListener: jest.fn(),
-				removeEventListener: jest.fn(),
-				dispatchEvent: jest.fn(),
+				addListener: vi.fn(), // deprecated
+				removeListener: vi.fn(), // deprecated
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				dispatchEvent: vi.fn(),
 			} ) ),
 		} );
 	} );

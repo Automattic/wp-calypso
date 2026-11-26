@@ -22,7 +22,7 @@ const siteOverviewRoute = createRoute( {
 	...appRouterSites.siteOverviewRoute.options,
 	getParentRoute: () => siteRoute,
 } ).lazy( () =>
-	import( 'calypso/dashboard/sites/overview' ).then( ( d ) =>
+	import( 'calypso/dashboard/app-dotcom/routes/sites/site' ).then( ( d ) =>
 		createLazyRoute( 'overview' )( {
 			component: function SiteOverview() {
 				const siteSlug = siteRoute.useParams().siteSlug;
@@ -36,7 +36,13 @@ const siteOverviewRoute = createRoute( {
 				const breakpoints = isWide
 					? { large: 'wide' as WPBreakpoint, small: 'wide' as WPBreakpoint }
 					: { large: 'medium' as WPBreakpoint, small: 'medium' as WPBreakpoint };
-				return <d.default siteSlug={ siteSlug } breakpoints={ breakpoints } />;
+				return (
+					<d.default
+						siteSlug={ siteSlug }
+						search={ siteOverviewRoute.useSearch() }
+						breakpoints={ breakpoints }
+					/>
+				);
 			},
 		} )
 	)

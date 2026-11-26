@@ -1,44 +1,47 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
-const mockGetBuildWowSiteIdentifier = jest.fn();
-const mockRequestBuildWowSite = jest.fn();
+const mockGetBuildWowSiteIdentifier = vi.fn();
+const mockRequestBuildWowSite = vi.fn();
 
-jest.mock( 'calypso/landing/stepper/utils/build-wow', () => ( {
-	...jest.requireActual( 'calypso/landing/stepper/utils/build-wow' ),
+vi.mock( 'calypso/landing/stepper/utils/build-wow', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/landing/stepper/utils/build-wow' ) >(
+		'calypso/landing/stepper/utils/build-wow'
+	) ),
 	getBuildWowSiteIdentifier: ( ...args: unknown[] ) => mockGetBuildWowSiteIdentifier( ...args ),
 	requestBuildWowSite: ( ...args: unknown[] ) => mockRequestBuildWowSite( ...args ),
-	logBuildWowEvent: jest.fn(),
+	logBuildWowEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
-	clearSessionStorageQuery: jest.fn(),
+vi.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
+	clearSessionStorageQuery: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	MaterialIcon: () => null,
 	ExternalLink: () => null,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		resetOnboardStore: jest.fn(),
-		setDomain: jest.fn(),
-		setDomainCartItem: jest.fn(),
-		setDomainCartItems: jest.fn(),
-		setPlanCartItem: jest.fn(),
-		setProductCartItems: jest.fn(),
-		setSiteUrl: jest.fn(),
-		setSignupDomainOrigin: jest.fn(),
-		setHideFreePlan: jest.fn(),
+		resetOnboardStore: vi.fn(),
+		setDomain: vi.fn(),
+		setDomainCartItem: vi.fn(),
+		setDomainCartItems: vi.fn(),
+		setPlanCartItem: vi.fn(),
+		setProductCartItems: vi.fn(),
+		setSiteUrl: vi.fn(),
+		setSignupDomainOrigin: vi.fn(),
+		setHideFreePlan: vi.fn(),
 	} ),
 	// Run the real selector callback against a stubbed store so the flow's own
 	// `getDomainCartItem` call is what feeds the test, not a hand-built result.
-	useSelect: jest.fn( ( selector: ( select: ( store: string ) => unknown ) => unknown ) =>
+	useSelect: vi.fn( ( selector: ( select: ( store: string ) => unknown ) => unknown ) =>
 		selector( () => ( {
 			getSignupDomainOrigin: () => undefined,
 			getPlanCartItem: () => null,
@@ -47,75 +50,76 @@ jest.mock( '@wordpress/data', () => ( {
 			getBlueprint: () => undefined,
 		} ) )
 	),
-	resolveSelect: jest.fn( () => ( { getSite: async () => ( { options: {} } ) } ) ),
+	resolveSelect: vi.fn( () => ( { getSite: async () => ( { options: {} } ) } ) ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
-	useQuery: jest.fn( () => new URLSearchParams( '' ) ),
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+	useQuery: vi.fn( () => new URLSearchParams( '' ) ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
-	useFlowLocale: jest.fn( () => 'en' ),
+vi.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
+	useFlowLocale: vi.fn( () => 'en' ),
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
+	useDispatch: () => vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/survicate', () => ( { addSurvicate: jest.fn() } ) );
-jest.mock( 'calypso/lib/analytics/signup', () => ( { SIGNUP_DOMAIN_ORIGIN: {} } ) );
-jest.mock( 'calypso/lib/explat', () => ( {
-	loadExperimentAssignment: jest.fn(),
-	useExperiment: jest.fn( () => [ false, null ] ),
+vi.mock( 'calypso/lib/analytics/survicate', () => ( { addSurvicate: vi.fn() } ) );
+vi.mock( 'calypso/lib/analytics/signup', () => ( { SIGNUP_DOMAIN_ORIGIN: {} } ) );
+vi.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: vi.fn(),
+	useExperiment: vi.fn( () => [ false, null ] ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 	SITE_STORE: 'SITE_STORE',
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {} ) );
+vi.mock( '@automattic/data-stores', () => ( {} ) );
 
-jest.mock(
+vi.mock(
 	'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification',
 	() => ( {
-		usePurchasePlanNotification: jest.fn( () => ( { setShouldShowNotification: jest.fn() } ) ),
+		usePurchasePlanNotification: vi.fn( () => ( { setShouldShowNotification: vi.fn() } ) ),
 	} )
 );
 
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	persistSignupDestination: jest.fn(),
-	setSignupCompleteFlowName: jest.fn(),
-	setSignupCompleteSlug: jest.fn(),
-	clearSignupCompleteSlug: jest.fn(),
-	clearSignupCompleteFlowName: jest.fn(),
-	clearSignupDestinationCookie: jest.fn(),
-	clearSignupCompleteSiteID: jest.fn(),
+vi.mock( 'calypso/signup/storageUtils', () => ( {
+	persistSignupDestination: vi.fn(),
+	setSignupCompleteFlowName: vi.fn(),
+	setSignupCompleteSlug: vi.fn(),
+	clearSignupCompleteSlug: vi.fn(),
+	clearSignupCompleteFlowName: vi.fn(),
+	clearSignupDestinationCookie: vi.fn(),
+	clearSignupCompleteSiteID: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
+	NEW_HOSTED_SITE_FLOW: 'new-hosted-site',
 	ONBOARDING_FLOW: 'onboarding',
 	SITE_SETUP_FLOW: 'site-setup',
-	clearStepPersistedState: jest.fn(),
+	clearStepPersistedState: vi.fn(),
 	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 } ) );
 
-jest.mock( 'calypso/lib/url', () => ( { pathToUrl: ( path: string ) => path } ) );
+vi.mock( 'calypso/lib/url', () => ( { pathToUrl: ( path: string ) => path } ) );
 
-jest.mock( 'calypso/dashboard/utils/link', () => ( {
+vi.mock( 'calypso/dashboard/utils/link', () => ( {
 	dashboardLink: ( path: string ) => `https://my.wordpress.com${ path }`,
 } ) );
 
-jest.mock( '../../../helpers/get-onboarding-post-checkout-destination', () => ( {
-	getOnboardingPostCheckoutDestination: jest.fn( () => [
+vi.mock( '../../../helpers/get-onboarding-post-checkout-destination', () => ( {
+	getOnboardingPostCheckoutDestination: vi.fn( () => [
 		'/home/example.wordpress.com',
 		null,
 		null,
 	] ),
 } ) );
 
-jest.mock( '../step-counter-config', () => ( {
+vi.mock( '../step-counter-config', () => ( {
 	getOnboardingStepperPosition: () => ( { current: 3, total: 3 } ),
 } ) );
 
@@ -123,7 +127,7 @@ type Submit = NonNullable< ReturnType< typeof onboarding.useStepNavigation >[ 's
 
 // Submits `slug` with `providedDependencies` and returns the navigate spy.
 const submitStep = async ( slug: string, providedDependencies: Record< string, unknown > = {} ) => {
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 	const { result } = renderHook( () =>
 		onboarding.useStepNavigation.call(
 			onboarding,
@@ -139,7 +143,7 @@ const submitStep = async ( slug: string, providedDependencies: Record< string, u
 
 describe( 'onboarding navigations to the error step', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'labels a failed WoW funnel handoff', async () => {
@@ -214,10 +218,10 @@ describe( 'onboarding navigations to the error step', () => {
 
 describe( 'onboarding build-wow site spec hand-off', () => {
 	const originalLocation = window.location;
-	const assign = jest.fn();
+	const assign = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetBuildWowSiteIdentifier.mockReturnValue( 'example.wordpress.com' );
 		mockRequestBuildWowSite.mockResolvedValue( {} );
 		Object.defineProperty( window, 'location', {

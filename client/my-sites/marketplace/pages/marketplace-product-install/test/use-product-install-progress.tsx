@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { setAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import automatedTransferReducer from 'calypso/state/automated-transfer/reducer';
@@ -18,16 +19,18 @@ import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { INSTALL_DEADLINE_MS } from '../use-install-deadline';
 import { useProductInstall } from '../use-product-install';
 
-const mockFetchLatestAtomicTransfer = jest.fn();
+const mockFetchLatestAtomicTransfer = vi.fn();
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
 	fetchLatestAtomicTransfer: ( siteId: number ) => mockFetchLatestAtomicTransfer( siteId ),
 } ) );
 
 // Keep the post-transfer site fetch off the network, leaving the rest of the package intact.
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
+vi.mock( '@automattic/api-queries', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+		'@automattic/api-queries'
+	) ),
 	siteByIdQuery: ( siteId: number ) => ( {
 		queryKey: [ 'site', siteId ],
 		queryFn: async () => null,
@@ -35,61 +38,67 @@ jest.mock( '@automattic/api-queries', () => ( {
 } ) );
 
 // Replace the initiators with inert, assertable actions; keep the rest of each module real.
-jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
-	...jest.requireActual( 'calypso/state/plugins/installed/actions' ),
-	installPlugin: jest.fn( ( siteId: number, plugin: unknown, active: boolean ) => ( {
+vi.mock( 'calypso/state/plugins/installed/actions', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/state/plugins/installed/actions' ) >(
+		'calypso/state/plugins/installed/actions'
+	) ),
+	installPlugin: vi.fn( ( siteId: number, plugin: unknown, active: boolean ) => ( {
 		type: 'MOCK_INSTALL_PLUGIN',
 		siteId,
 		plugin,
 		active,
 	} ) ),
-	activatePlugin: jest.fn( ( siteId: number, plugin: unknown ) => ( {
+	activatePlugin: vi.fn( ( siteId: number, plugin: unknown ) => ( {
 		type: 'MOCK_ACTIVATE_PLUGIN',
 		siteId,
 		plugin,
 	} ) ),
-	fetchSitePlugins: jest.fn( ( siteId: number ) => ( {
+	fetchSitePlugins: vi.fn( ( siteId: number ) => ( {
 		type: 'MOCK_FETCH_SITE_PLUGINS',
 		siteId,
 	} ) ),
 } ) );
-jest.mock( 'calypso/state/themes/actions', () => ( {
+vi.mock( 'calypso/state/themes/actions', () => ( {
 	// Emit the real action so the transfer status moves to START, as in production.
-	initiateThemeTransfer: jest.fn( ( siteId: number ) => ( {
+	initiateThemeTransfer: vi.fn( ( siteId: number ) => ( {
 		type: 'THEME_TRANSFER_INITIATE_REQUEST',
 		siteId,
 	} ) ),
-	installAndActivateTheme: jest.fn( ( themeId: string, siteId: number ) => ( {
+	installAndActivateTheme: vi.fn( ( themeId: string, siteId: number ) => ( {
 		type: 'MOCK_INSTALL_ACTIVATE_THEME',
 		themeId,
 		siteId,
 	} ) ),
-	requestActiveTheme: jest.fn( ( siteId: number ) => ( {
+	requestActiveTheme: vi.fn( ( siteId: number ) => ( {
 		type: 'MOCK_REQUEST_ACTIVE_THEME',
 		siteId,
 	} ) ),
-	requestTheme: jest.fn( () => ( { type: 'MOCK_REQUEST_THEME' } ) ),
+	requestTheme: vi.fn( () => ( { type: 'MOCK_REQUEST_THEME' } ) ),
 } ) );
-jest.mock( 'calypso/state/atomic/transfers/actions', () => ( {
-	initiateAtomicTransfer: jest.fn( ( siteId: number, options: unknown ) => ( {
+vi.mock( 'calypso/state/atomic/transfers/actions', () => ( {
+	initiateAtomicTransfer: vi.fn( ( siteId: number, options: unknown ) => ( {
 		type: 'MOCK_INITIATE_ATOMIC_TRANSFER',
 		siteId,
 		options,
 	} ) ),
 } ) );
-jest.mock( 'calypso/state/plugins/wporg/actions', () => ( {
-	...jest.requireActual( 'calypso/state/plugins/wporg/actions' ),
-	fetchPluginData: jest.fn( () => ( { type: 'MOCK_FETCH_PLUGIN_DATA' } ) ),
+vi.mock( 'calypso/state/plugins/wporg/actions', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/state/plugins/wporg/actions' ) >(
+		'calypso/state/plugins/wporg/actions'
+	) ),
+	fetchPluginData: vi.fn( () => ( { type: 'MOCK_FETCH_PLUGIN_DATA' } ) ),
 } ) );
 
-const { installPlugin, activatePlugin } = jest.requireMock(
-	'calypso/state/plugins/installed/actions'
+const { installPlugin, activatePlugin } = vi.mocked(
+	await import( 'calypso/state/plugins/installed/actions' )
 );
 // initiateThemeTransfer is the (confusingly named) action that starts a plugin's Atomic transfer.
-const { initiateThemeTransfer: initiatePluginTransfer, installAndActivateTheme } = jest.requireMock(
-	'calypso/state/themes/actions'
+const { initiateThemeTransfer: initiatePluginTransfer, installAndActivateTheme } = vi.mocked(
+	await import( 'calypso/state/themes/actions' )
 );
-const { initiateAtomicTransfer } = jest.requireMock( 'calypso/state/atomic/transfers/actions' );
+const { initiateAtomicTransfer } = vi.mocked(
+	await import( 'calypso/state/atomic/transfers/actions' )
+);
 
 const reducers = {
 	plugins: pluginsReducer,
@@ -122,7 +131,7 @@ const renderProgress = (
 // needs the microtask queue drained — hence async act.
 const advance = async ( ms: number ) =>
 	act( async () => {
-		jest.advanceTimersByTime( ms );
+		vi.advanceTimersByTime( ms );
 	} );
 
 const wporgItems = { give: { slug: 'give', fetched: true, name: 'GiveWP' } };
@@ -204,7 +213,7 @@ const beginAtomicPluginTransfer = async () => {
 
 describe( 'useProductInstall progression', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		window.sessionStorage.clear();
 		mockFetchLatestAtomicTransfer.mockReset();
 		mockFetchLatestAtomicTransfer.mockRejectedValue(
@@ -216,7 +225,7 @@ describe( 'useProductInstall progression', () => {
 		installAndActivateTheme.mockClear();
 		initiateAtomicTransfer.mockClear();
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'installs in place, advances to the install step, then activates on completion', async () => {
 		const { result, store } = renderProgress(

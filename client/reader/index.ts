@@ -51,14 +51,6 @@ function forceTeamA8C( context: Context, next: () => void ): void {
 
 export async function lazyLoadDependencies(): Promise< void > {
 	addMiddleware( postCacheMiddleware );
-
-	const isBrowser = typeof window === 'object';
-	if ( isBrowser && config.isEnabled( 'lasagna' ) ) {
-		const lasagnaMiddleware = await import(
-			/* webpackChunkName: "lasagnaMiddleware" */ 'calypso/state/lasagna/middleware.js'
-		);
-		addMiddleware( lasagnaMiddleware.default );
-	}
 }
 
 export default async function (): Promise< void > {

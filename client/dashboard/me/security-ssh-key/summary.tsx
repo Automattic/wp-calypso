@@ -27,7 +27,7 @@ export default function SecuritySshKeySummary( { density }: { density?: Density 
 	const badges: SummaryButtonBadgeProps[] = [
 		{
 			text: getBadgeText( keyCount ),
-			intent: keyCount ? 'stable' : 'draft',
+			intent: keyCount ? 'stable' : 'none',
 		},
 	];
 

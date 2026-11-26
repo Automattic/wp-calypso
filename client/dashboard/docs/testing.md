@@ -52,8 +52,8 @@ Follow these tests as examples:
 
 - [`sites/test/index.test.tsx`](../sites/test/index.test.tsx): assertions on a DataViews list.
 - [`sites/overview/test/index.test.tsx`](../sites/overview/test/index.test.tsx): assertions on the cards and sections of a screen.
-- [`sites/settings-php/test/index.test.tsx`](../sites/settings-php/test/index.test.tsx): submitting a form.
-- [`app/hooks/test/use-visit-counter.test.tsx`](../app/hooks/test/use-visit-counter.test.tsx): a hook.
+- [`app-dotcom/routes/sites/site/settings/php/test/index.test.tsx`](../app-dotcom/routes/sites/site/settings/php/test/index.test.tsx): submitting a form.
+- [`app/survicate/test/use-visit-counter.test.tsx`](../app/survicate/test/use-visit-counter.test.tsx): a hook.
 - [`domains/dataviews/test/field-domain-name.test.tsx`](../domains/dataviews/test/field-domain-name.test.tsx): a component that needs the real route tree.
 
 ### File Naming and Structure
@@ -161,6 +161,7 @@ nock( 'https://public-api.wordpress.com' )
 
 - Avoid `nock.delay()` — it leaves open handles that keep the test run from exiting.
 - Use `scope.isDone()` to assert the request was actually made.
+- Before asserting that asynchronous UI is absent, wait for the relevant query result or data-dependent UI to settle. `scope.isDone()` only proves the request matched; React may still show its initial state. To test that something disappears, first observe it, trigger the change, then wait for it to clear.
 - Use `.query( true )` when you don't care about specific query string values.
 - To test a refetch, wait until the screen shows data from the first response, then replace the mock and call `invalidateQueries()`. While a query has no data, TanStack Query keeps the fetch that is in flight instead of sending a second request.
 

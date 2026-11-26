@@ -7,13 +7,13 @@ import getDefaultQueryParams from './default-query-params';
  * The site setting the dashboard's opt-in is registered under, exposed through core's settings
  * route. Absent from the response on a Jetpack too old to register it.
  */
-export const PREMIUM_ANALYTICS_ENABLED_SETTING = 'jetpack_premium_analytics_enabled';
+const PREMIUM_ANALYTICS_ENABLED_SETTING = 'jetpack_premium_analytics_enabled';
 
 type SiteSettings = {
 	[ PREMIUM_ANALYTICS_ENABLED_SETTING ]?: boolean;
 };
 
-export const premiumAnalyticsStatusQueryKey = ( siteId: number | null ) => [
+const premiumAnalyticsStatusQueryKey = ( siteId: number | null ) => [
 	'stats',
 	'premium-analytics-status',
 	siteId,
@@ -39,8 +39,7 @@ export const premiumAnalyticsStatusRequest = ( siteId: number | null ) =>
  * Three answers, not two: `true` and `false` come from the site, and `undefined` means it never
  * offered the setting at all — a Jetpack too old to register it — which is not the same as off.
  *
- * The site answers this itself: the opt-in is a local option there, and a sticker we set can
- * enable the dashboard without ever touching it.
+ * The site answers this itself, since the opt-in is a local option there.
  * @param siteId Site to query.
  * @param enabled Whether to run the query at all.
  */

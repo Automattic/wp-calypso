@@ -4,8 +4,6 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { useDateRange } from '../../../app/hooks/use-date-range';
-import { useSiteTimezoneWithJetpackFallback } from '../../../app/hooks/use-site-timezone';
 import { useIntlLocale } from '../../../app/locale';
 import { agencySiteActivityRoute, agencySiteRoute } from '../../../app/router/agency';
 import { Card, CardBody } from '../../../components/card';
@@ -13,7 +11,9 @@ import { DateRangePicker } from '../../../components/date-range-picker';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import SiteActivityLogsDataViews from '../../../sites/logs-activity/dataviews';
+import SiteActivityLogsDataViews from '../../../sites/activity/components/activity-logs-dataviews';
+import { useDateRange } from '../../../sites/hooks/use-date-range';
+import { useSiteTimezoneWithJetpackFallback } from '../../../sites/hooks/use-site-timezone';
 import { hasHostingFeature, hasPlanFeature } from '../../../utils/site-features';
 
 export default function AgencySiteActivity() {

@@ -1,33 +1,37 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type MockedFunction, vi } from 'vitest';
+import { resendThrottleRetryAfter } from 'calypso/dashboard/utils/email-verification-resend';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import EmailVerificationNotification from '..';
 import type { ReactNode } from 'react';
 
-const mockDispatch = jest.fn( ( action ) => action );
+const mockDispatch = vi.fn( ( action ) => action );
 let mockEmailToVerify: string | null = null;
 let mockIsEmailChangePending = false;
 let mockSecondsUntilResend = 0;
-const mockHoldResend = jest.fn();
-const mockSendVerificationEmail = jest.fn();
+const mockHoldResend = vi.fn();
+const mockSendVerificationEmail = vi.fn();
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string, options?: { args?: Record< string, unknown > } ) => {
-		if ( options?.args ) {
-			return Object.entries( options.args ).reduce(
-				( result, [ key, value ] ) => result.replace( `%(${ key })s`, String( value ) ),
-				text
-			);
-		}
-		return text;
-	},
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string, options?: { args?: Record< string, unknown > } ) => {
+			if ( options?.args ) {
+				return Object.entries( options.args ).reduce(
+					( result, [ key, value ] ) => result.replace( `%(${ key })s`, String( value ) ),
+					text
+				);
+			}
+			return text;
+		},
+	} )
+);
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		children,
 		disabled,
@@ -51,7 +55,7 @@ jest.mock( '@wordpress/components', () => ( {
 	VisuallyHidden: ( { children }: { children: ReactNode } ) => <span>{ children }</span>,
 } ) );
 
-jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
 	__esModule: true,
 	default: ( {
 		actions,
@@ -72,53 +76,53 @@ jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/components/email-verification/hooks/use-get-email-to-verify', () => ( {
+vi.mock( 'calypso/components/email-verification/hooks/use-get-email-to-verify', () => ( {
 	__esModule: true,
 	default: () => mockEmailToVerify,
 } ) );
 
-jest.mock( 'calypso/state/selectors/is-pending-email-change', () => ( {
+vi.mock( 'calypso/state/selectors/is-pending-email-change', () => ( {
 	__esModule: true,
 	default: () => mockIsEmailChangePending,
 } ) );
 
-jest.mock( 'calypso/dashboard/utils/use-resend-cooldown', () => ( {
+vi.mock( 'calypso/dashboard/account/hooks/use-resend-cooldown', () => ( {
 	useResendCooldown: () => ( {
 		secondsUntilResend: mockSecondsUntilResend,
 		hold: mockHoldResend,
 	} ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-send-email-verification', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-send-email-verification', () => ( {
 	useSendEmailVerification: () => mockSendVerificationEmail,
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
-	errorNotice: jest.fn( ( text ) => ( { type: 'ERROR_NOTICE', text } ) ),
-	successNotice: jest.fn( ( text ) => ( { type: 'SUCCESS_NOTICE', text } ) ),
+vi.mock( 'calypso/state/notices/actions', () => ( {
+	errorNotice: vi.fn( ( text ) => ( { type: 'ERROR_NOTICE', text } ) ),
+	successNotice: vi.fn( ( text ) => ( { type: 'SUCCESS_NOTICE', text } ) ),
 } ) );
 
-jest.mock( 'calypso/state/user-settings/actions', () => ( {
-	fetchUserSettings: jest.fn( () => ( { type: 'USER_SETTINGS_REQUEST' } ) ),
+vi.mock( 'calypso/state/user-settings/actions', () => ( {
+	fetchUserSettings: vi.fn( () => ( { type: 'USER_SETTINGS_REQUEST' } ) ),
 } ) );
 
-jest.mock( 'calypso/dashboard/utils/email-verification-resend', () => ( {
-	formatCooldown: jest.fn( ( seconds: number ) => `${ Math.floor( seconds / 60 ) }:00` ),
-	resendAcceptedRetryAfter: jest.fn( () => 300 ),
-	resendThrottleRetryAfter: jest.fn( () => null ),
+vi.mock( 'calypso/dashboard/utils/email-verification-resend', () => ( {
+	formatCooldown: vi.fn( ( seconds: number ) => `${ Math.floor( seconds / 60 ) }:00` ),
+	resendAcceptedRetryAfter: vi.fn( () => 300 ),
+	resendThrottleRetryAfter: vi.fn( () => null ),
 } ) );
 
-const mockedErrorNotice = errorNotice as jest.MockedFunction< typeof errorNotice >;
-const mockedSuccessNotice = successNotice as jest.MockedFunction< typeof successNotice >;
+const mockedErrorNotice = errorNotice as MockedFunction< typeof errorNotice >;
+const mockedSuccessNotice = successNotice as MockedFunction< typeof successNotice >;
 
 describe( 'EmailVerificationNotification', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockEmailToVerify = 'user@example.com';
 		mockIsEmailChangePending = false;
 		mockSecondsUntilResend = 0;
@@ -221,10 +225,7 @@ describe( 'EmailVerificationNotification', () => {
 	} );
 
 	it( 'holds the cooldown on a throttled error', async () => {
-		const { resendThrottleRetryAfter } = jest.requireMock(
-			'calypso/dashboard/utils/email-verification-resend'
-		);
-		resendThrottleRetryAfter.mockReturnValue( 600 );
+		vi.mocked( resendThrottleRetryAfter ).mockReturnValue( 600 );
 		mockSendVerificationEmail.mockRejectedValue( {
 			error: 'throttled',
 			data: { retry_after: 600 },

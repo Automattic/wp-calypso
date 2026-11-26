@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { formatCurrency } from '@automattic/number-formatters';
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import useCartKey from '../../use-cart-key';
@@ -23,6 +24,7 @@ import {
 	getPlanSubtitleTextForInterval,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockGetVatInfoEndpoint,
@@ -32,20 +34,20 @@ import {
 import { MockCheckout } from './util/mock-checkout';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/state/products-list/selectors' );
-jest.mock( 'calypso/state/selectors/get-intro-offer-price' );
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/state/products-list/selectors' );
+vi.mock( 'calypso/state/selectors/get-intro-offer-price' );
+vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 
 // These tests seem to be particularly slow (it might be because of using
 // it.each; it's not clear but the timeout might apply to the whole loop
 // rather that each iteration?), so we need to increase the timeout for their
 // operation. The standard timeout (at the time of writing) is 5 seconds so
 // we are increasing this to 12 seconds.
-jest.setTimeout( 12000 );
+vi.setConfig( { testTimeout: 12000 } );
 
-/* eslint-disable jest/no-conditional-expect */
+/* eslint-disable vitest/no-conditional-expect */
 
 describe.skip( 'CheckoutMain with a variant picker', () => {
 	const initialCart = getBasicCart();
@@ -53,16 +55,17 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
-		jest.clearAllMocks();
-		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+		vi.clearAllMocks();
+		( getPlansBySiteId as Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
 		mockGetSiteDomainsEndpoint( [] );
-		( isMarketplaceProduct as unknown as jest.Mock ).mockImplementation( () => false );
-		( useCartKey as unknown as jest.Mock ).mockImplementation( () => mainCartKey );
+		( isMarketplaceProduct as unknown as Mock ).mockImplementation( () => false );
+		( useCartKey as unknown as Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetVatInfoEndpoint( {} );
 		mockMatchMediaOnWindow();
@@ -78,7 +81,7 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 	] )(
 		'renders the variant picker with a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
-			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+			( getPlansBySiteId as Mock ).mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
 			const user = userEvent.setup();
@@ -104,7 +107,7 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 	] )(
 		'renders the variant picker with a $expectedVariant variant when the cart initially contains $initialPlan and then is changed to $cartPlan',
 		async ( { initialPlan, cartPlan, expectedVariant } ) => {
-			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+			( getPlansBySiteId as Mock ).mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( 'none' ),
 			} ) );
 			const user = userEvent.setup();
@@ -142,7 +145,7 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 	] )(
 		'renders the variant picker without a $expectedVariant variant when the cart contains a $cartPlan plan and the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
-			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+			( getPlansBySiteId as Mock ).mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
 			const user = userEvent.setup();
@@ -211,7 +214,7 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 	it.each( [ { activePlan: 'none', cartPlan: 'yearly', expectedVariant: 'two-year' } ] )(
 		'renders the $expectedVariant variant with a discount percentage for a $cartPlan plan when the current plan is $activePlan',
 		async ( { activePlan, cartPlan, expectedVariant } ) => {
-			( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+			( getPlansBySiteId as Mock ).mockImplementation( () => ( {
 				data: getActivePersonalPlanDataForType( activePlan ),
 			} ) );
 			const user = userEvent.setup();
@@ -267,7 +270,7 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 	} );
 
 	it( 'does not render the variant picker when userAgent is Woo mobile', async () => {
-		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
+		( getPlansBySiteId as Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'none' ),
 		} ) );
 		const cartChanges = { products: [ getBusinessPlanForInterval( 'yearly' ) ] };

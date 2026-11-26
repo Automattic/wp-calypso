@@ -1,23 +1,19 @@
+import { getQueryArg } from '@wordpress/url';
+import { vi } from 'vitest';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import {
 	saveUserSettingsSuccess,
 	clearUnsavedUserSettings,
 } from 'calypso/state/user-settings/actions';
-import {
-	requestUserSettings,
-	storeFetchedUserSettings,
-	fromApi,
-	userSettingsSave,
-	userSettingsSaveSuccess,
-} from '../';
+import { requestUserSettings, userSettingsSave, userSettingsSaveSuccess } from '../';
 
-jest.mock( 'calypso/state/current-user/actions', () => ( {
-	fetchCurrentUser: jest.fn(),
+vi.mock( 'calypso/state/current-user/actions', () => ( {
+	fetchCurrentUser: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/url', () => ( {
-	getQueryArg: jest.fn().mockReturnValue( null ),
+vi.mock( '@wordpress/url', () => ( {
+	getQueryArg: vi.fn().mockReturnValue( null ),
 } ) );
 
 describe( 'wpcom-api', () => {
@@ -38,49 +34,12 @@ describe( 'wpcom-api', () => {
 				);
 			} );
 		} );
-
-		describe( '#storeFetchedUserSettings', () => {
-			test( 'should dispatch user settings update', () => {
-				const action = { type: 'DUMMY' };
-
-				const result = storeFetchedUserSettings( action, {
-					language: 'qix',
-				} );
-
-				expect( result ).toEqual(
-					saveUserSettingsSuccess( {
-						language: 'qix',
-					} )
-				);
-			} );
-
-			test( 'should decode HTML entities returned in some fields of HTTP response', () => {
-				const action = { type: 'DUMMY' };
-
-				const result = storeFetchedUserSettings(
-					action,
-					fromApi( {
-						display_name: 'baz &amp; qix',
-						description: 'foo &amp; bar',
-						user_URL: 'http://example.com?a=b&amp;c=d',
-					} )
-				);
-
-				expect( result ).toEqual(
-					saveUserSettingsSuccess( {
-						display_name: 'baz & qix',
-						description: 'foo & bar',
-						user_URL: 'http://example.com?a=b&c=d',
-					} )
-				);
-			} );
-		} );
 	} );
 
 	describe( 'user settings save', () => {
 		describe( '#userSettingsSave', () => {
 			test( 'should dispatch POST request to me/settings using unsavedSettings from state', () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const getState = () => ( {
 					userSettings: {
 						settings: { foo: 'bar' },
@@ -106,7 +65,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should dispatch POST request to me/settings using explicit settingsOverride', () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const getState = () => ( {} );
 				const action = {
 					type: 'DUMMY',
@@ -130,7 +89,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should not dispatch any HTTP request when there are no unsaved settings', () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const getState = () => ( {
 					userSettings: {
 						settings: {},
@@ -146,15 +105,13 @@ describe( 'wpcom-api', () => {
 		} );
 
 		describe( '#userSettingsSaveSuccess', () => {
-			const { getQueryArg } = require( '@wordpress/url' );
-
 			beforeEach( () => {
 				getQueryArg.mockReset();
 				getQueryArg.mockReturnValue( null );
 			} );
 
 			test( 'should dispatch user settings update and clear all unsaved settings on full save', async () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const action = { type: 'DUMMY' };
 
 				await userSettingsSaveSuccess( action, {
@@ -176,7 +133,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should not show success notice when ref=reader-onboarding', async () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const action = { type: 'DUMMY' };
 				getQueryArg.mockReturnValue( 'reader-onboarding' );
 
@@ -199,7 +156,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should dispatch user settings update and clear only one unsaved setting on partial save', async () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const data = {
 					language: 'qix',
 				};
@@ -222,7 +179,7 @@ describe( 'wpcom-api', () => {
 			} );
 
 			test( 'should decode HTML entities returned in some fields of HTTP response', () => {
-				const dispatch = jest.fn();
+				const dispatch = vi.fn();
 				const action = { type: 'DUMMY' };
 
 				userSettingsSaveSuccess( action, {

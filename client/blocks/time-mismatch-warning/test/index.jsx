@@ -1,32 +1,32 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
+import { vi } from 'vitest';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import { TimeMismatchWarning } from '../index';
 
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn( ( func ) => func() ),
-	useDispatch: jest.fn( () => null ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn( ( func ) => func() ),
+	useDispatch: vi.fn( () => null ),
 } ) );
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useTranslate: jest.fn( () => ( text ) => text ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual( 'i18n-calypso' ) ),
+	useTranslate: vi.fn( () => ( text ) => text ),
 } ) );
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () => jest.fn( () => -4 ) );
-jest.mock( 'calypso/state/sites/selectors/get-site-slug', () => jest.fn( () => 'wordpress.test' ) );
-jest.mock( 'calypso/state/preferences/selectors', () => ( {
-	hasReceivedRemotePreferences: jest.fn( () => true ),
-	getPreference: jest.fn( () => false ),
+vi.mock( 'calypso/state/selectors/get-site-gmt-offset', () => ( { default: vi.fn( () => -4 ) } ) );
+vi.mock( 'calypso/state/preferences/selectors', () => ( {
+	hasReceivedRemotePreferences: vi.fn( () => true ),
+	getPreference: vi.fn( () => false ),
 } ) );
 
 describe( 'TimeMismatchWarning', () => {
 	beforeAll( () => {
-		jest.spyOn( global.Date.prototype, 'getTimezoneOffset' ).mockImplementation( () => 240 );
+		vi.spyOn( global.Date.prototype, 'getTimezoneOffset' ).mockImplementation( () => 240 );
 	} );
 
 	test( 'to render nothing if no site ID is provided', () => {
@@ -64,7 +64,7 @@ describe( 'TimeMismatchWarning', () => {
 	} );
 
 	test( 'to render the passed site settings URL', () => {
-		const translate = jest.fn( ( text ) => text );
+		const translate = vi.fn( ( text ) => text );
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
 		useTranslate.mockImplementationOnce( () => translate );
 		render( <TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" /> );
@@ -84,7 +84,7 @@ describe( 'TimeMismatchWarning', () => {
 	} );
 
 	test( 'to dispatch user preference setting on dismiss click', () => {
-		const dispatch = jest.fn( () => null );
+		const dispatch = vi.fn( () => null );
 		useDispatch.mockReturnValueOnce( dispatch );
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
 		render( <TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" /> );

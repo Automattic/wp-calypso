@@ -1,4 +1,3 @@
-import { createSelector } from '@automattic/state-utils';
 import treeSelect from '@automattic/tree-select';
 import { getMomentSiteZone } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
 import { getSite } from 'calypso/state/sites/selectors';
@@ -259,11 +258,6 @@ export function getSiteStatsViewSummary( state, siteId ) {
 	return viewSummary;
 }
 
-export const getSiteStatsViewSummaryMemoized = createSelector(
-	getSiteStatsViewSummary,
-	( state, siteId ) => [ siteId ]
-);
-
 export const getMostPopularDatetime = ( state, siteId, query ) => {
 	const insightsData = getSiteStatsNormalizedData( state, siteId, 'statsInsights', query );
 	return {
@@ -322,20 +316,4 @@ export const getTopPostAndPage = ( state, siteId, query ) => {
 		post: sortedTopPosts.find( ( { type } ) => type === 'post' ),
 		page: sortedTopPosts.find( ( { type } ) => type === 'page' ),
 	};
-};
-
-export const getTopPostAndPages = ( state, siteId, query ) => {
-	const data = getSiteStatsForQuery( state, siteId, 'statsTopPosts', query );
-
-	if ( ! data ) {
-		return null;
-	}
-
-	const sortedTopPosts = getSortedPostsAndPages( data );
-
-	if ( ! sortedTopPosts.length ) {
-		return null;
-	}
-
-	return sortedTopPosts;
 };

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import {
 	getBuildWowGraph,
@@ -9,21 +10,21 @@ import {
 	requestBuildWowSite,
 } from '../build-wow';
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: { isEnabled: jest.fn( () => false ) },
+	default: { isEnabled: vi.fn( () => false ) },
 } ) );
 
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: {
 		req: {
-			get: jest.fn(),
-			post: jest.fn(),
+			get: vi.fn(),
+			post: vi.fn(),
 		},
 	},
 } ) );
@@ -133,7 +134,7 @@ describe( 'build-wow utilities', () => {
 	} );
 
 	it( 'sends the design candidate only on the call that queues a build', async () => {
-		const post = wpcom.req.post as jest.Mock;
+		const post = wpcom.req.post as Mock;
 		post.mockReset();
 		post.mockResolvedValue( {} );
 
@@ -149,7 +150,7 @@ describe( 'build-wow utilities', () => {
 	} );
 
 	it( 'sends the graph only on the call that queues a build', async () => {
-		const post = wpcom.req.post as jest.Mock;
+		const post = wpcom.req.post as Mock;
 		post.mockReset();
 		post.mockResolvedValue( {} );
 
@@ -166,16 +167,16 @@ describe( 'build-wow utilities', () => {
 	} );
 
 	describe( 'live feed opt-in', () => {
-		const post = wpcom.req.post as jest.Mock;
+		const post = wpcom.req.post as Mock;
 
 		beforeEach( () => {
 			post.mockReset();
 			post.mockResolvedValue( {} );
-			jest.mocked( config.isEnabled ).mockReturnValue( true );
+			vi.mocked( config.isEnabled ).mockReturnValue( true );
 		} );
 
 		afterEach( () => {
-			jest.mocked( config.isEnabled ).mockReturnValue( false );
+			vi.mocked( config.isEnabled ).mockReturnValue( false );
 		} );
 
 		it( 'asks for the feed where streaming is on, whoever builds', async () => {
@@ -196,7 +197,7 @@ describe( 'build-wow utilities', () => {
 		} );
 
 		it( 'does not ask for the feed where streaming is off', async () => {
-			jest.mocked( config.isEnabled ).mockReturnValue( false );
+			vi.mocked( config.isEnabled ).mockReturnValue( false );
 
 			await requestBuildWowSite( '123', 'spec-1' );
 

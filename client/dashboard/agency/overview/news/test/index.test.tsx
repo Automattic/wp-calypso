@@ -120,10 +120,12 @@ describe( '<NewsCard>', () => {
 		await user.click( screen.getByRole( 'link', { name: 'View promo details' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_news_item_open', {
+			placement: 'overview',
 			announcement_id: '2',
 			announcement_type: 'announcement',
 		} );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_event_cta_click', {
+			placement: 'overview',
 			announcement_id: '2',
 			announcement_type: 'announcement',
 			cta_id: 'primary',
@@ -144,6 +146,47 @@ describe( '<NewsCard>', () => {
 
 		expect( await screen.findByText( 'Watch an audit run start to finish.' ) ).toBeVisible();
 		expect( screen.getByText( 'Nov 5' ) ).toBeVisible();
+	} );
+
+	test( 'maps dashboard paths with getCtaUrl and leaves external links alone', async () => {
+		const user = userEvent.setup();
+		mockAnnouncements( [ event, announcement ] );
+		render(
+			<NewsCard
+				agencyId={ AGENCY_ID }
+				shouldUseRouterLink={ false }
+				getCtaUrl={ ( url ) => `/marketplace${ url }` }
+			/>
+		);
+
+		expect( await screen.findByRole( 'link', { name: /Save your spot/ } ) ).toHaveAttribute(
+			'href',
+			'https://example.com/register'
+		);
+
+		const [ row ] = await screen.findAllByRole( 'button', { name: /Free Pressable\shosting/ } );
+		await user.click( row );
+		expect( screen.getByRole( 'link', { name: 'View promo details' } ) ).toHaveAttribute(
+			'href',
+			'/marketplace/hosting/pressable'
+		);
+	} );
+
+	test( 'drops actions whose links aren’t https or a dashboard path', async () => {
+		mockAnnouncements( [
+			{
+				...event,
+				// eslint-disable-next-line no-script-url
+				primaryCta: { label: 'Run a script', url: 'javascript:alert(1)', isExternal: true },
+				// Browsers drop the tab, so this is `//example.com/elsewhere`.
+				secondaryCta: { label: 'Leave the dashboard', url: '/\t/example.com/elsewhere' },
+			} as AgencyAnnouncement,
+		] );
+		render( <NewsCard agencyId={ AGENCY_ID } shouldUseRouterLink={ false } /> );
+
+		expect( await screen.findByText( 'Watch an audit run start to finish.' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /Run a script/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /Leave the dashboard/ } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows nothing when there are no announcements', async () => {

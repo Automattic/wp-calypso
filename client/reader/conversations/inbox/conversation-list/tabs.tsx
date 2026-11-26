@@ -12,10 +12,11 @@ interface Props {
 	tab: InboxTab;
 	unreadCount: number;
 	onChange: ( tab: InboxTab ) => void;
+	onHover?: ( tab: InboxTab ) => void;
 	children: ReactNode;
 }
 
-export function ConversationListTabs( { tab, unreadCount, onChange, children }: Props ) {
+export function ConversationListTabs( { tab, unreadCount, onChange, onHover, children }: Props ) {
 	const translate = useTranslate();
 
 	const tabs: { name: InboxTab; label: string; count?: number }[] = [
@@ -33,7 +34,7 @@ export function ConversationListTabs( { tab, unreadCount, onChange, children }: 
 			<div className="conversations-inbox__tabs">
 				<Tabs.List variant="minimal" className="conversations-inbox__tab-list">
 					{ tabs.map( ( { name, label, count } ) => (
-						<Tabs.Tab key={ name } value={ name }>
+						<Tabs.Tab key={ name } value={ name } onPointerEnter={ () => onHover?.( name ) }>
 							<HStack as="span" spacing={ 1.5 } expanded={ false }>
 								<span>{ label }</span>
 								{ !! count && (

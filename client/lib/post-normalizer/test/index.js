@@ -1,8 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { safeImageUrl as safeImageUrlFake } from '@automattic/calypso-url';
 import { flow } from '@automattic/js-utils';
+import { vi } from 'vitest';
+import convertVideoPressBlocks from '../rule-content-convert-videopress-blocks';
 import detectMedia from '../rule-content-detect-media';
 import detectPolls from '../rule-content-detect-polls';
 import detectSurveys from '../rule-content-detect-surveys';
@@ -27,9 +29,9 @@ import stripHtml from '../rule-strip-html';
 import withContentDOM from '../rule-with-content-dom';
 import { domForHtml, externalLinkParagraph } from '../utils';
 
-jest.mock( '@automattic/calypso-url', () => ( {
-	...jest.requireActual( '@automattic/calypso-url' ),
-	safeImageUrl: require( './mocks/lib/safe-image-url' ).default,
+vi.mock( '@automattic/calypso-url', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-url' ) ),
+	safeImageUrl: ( await vi.importActual( './mocks/lib/safe-image-url' ) ).default,
 } ) );
 
 describe( 'index', () => {
@@ -339,6 +341,60 @@ describe( 'index', () => {
 			const normalized = withContentDOM( [ detectTimeTransform ] )( post );
 			expect( normalized ).toBeTruthy();
 		} );
+
+		describe( 'with sanitizers', () => {
+			// An HTML `xmp` keeps its contents as text, but serialized inside an `svg` it is parsed
+			// again as an SVG element, and the `img` in its text breaks out as a real element.
+			function appendXmpToSvg( post, dom ) {
+				const xmp = dom.ownerDocument.createElement( 'xmp' );
+				xmp.textContent = '<img src="https://example.com/x" onerror="alert(1)">';
+				dom.querySelector( 'svg' ).appendChild( xmp );
+				return post;
+			}
+
+			function render( html ) {
+				const container = document.createElement( 'div' );
+				container.innerHTML = html;
+				return container;
+			}
+
+			test( 'applies them to the parse the browser makes of the serialized content', () => {
+				const post = { content: '<svg><g></g></svg>' };
+
+				const unchecked = withContentDOM( [ appendXmpToSvg ] )( { ...post } );
+				expect( render( unchecked.content ).querySelector( '[onerror]' ) ).not.toBeNull();
+
+				const checked = withContentDOM( [ appendXmpToSvg ], [ removeEventHandlers ] )( post );
+				expect( render( checked.content ).querySelector( '[onerror]' ) ).toBeNull();
+			} );
+
+			test( 'returns markup that a parse rearranges in its settled form', () => {
+				function wrapInDiv( post, dom ) {
+					const div = dom.ownerDocument.createElement( 'div' );
+					div.textContent = 'b';
+					dom.querySelector( 'p' ).appendChild( div );
+					return post;
+				}
+				const post = { content: '<p>a</p>' };
+
+				const normalized = withContentDOM( [ wrapInDiv ], [ removeEventHandlers ] )( post );
+
+				expect( normalized.content ).toBe( '<p>a</p><div>b</div><p></p>' );
+			} );
+
+			test( 'renders content that never settles as text', () => {
+				let round = 0;
+				function neverSettles( post, dom ) {
+					dom.querySelector( 'p' )?.setAttribute( 'data-round', String( round++ ) );
+					return post;
+				}
+				const post = { content: '<p>a &lt;b&gt;</p>' };
+
+				const normalized = withContentDOM( [], [ neverSettles ] )( post );
+
+				expect( normalized.content ).toBe( 'a &lt;b&gt;' );
+			} );
+		} );
 	} );
 
 	describe( 'content.removeStyles', () => {
@@ -481,6 +537,38 @@ describe( 'index', () => {
 
 			expect( normalized.content ).toBe( '<svg><a><text>hi there</text></a></svg>' );
 		} );
+
+		test( 'removes an unsafe href from an image map area', () => {
+			const post = {
+				content:
+					'<map name="m"><area shape="default" href="javascript:alert(1)"></map>' +
+					'<map name="n"><area shape="default" href="https://example.com/"></map>',
+			};
+			const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+			expect( normalized.content ).toBe(
+				'<map name="m"><area shape="default"></map>' +
+					'<map name="n"><area shape="default" href="https://example.com/"></map>'
+			);
+		} );
+
+		test.each( [ 'href', 'xlink:href' ] )(
+			'removes SVG animations that rewrite %j',
+			( attributeName ) => {
+				const post = {
+					content:
+						'<svg><a href="https://example.com/">' +
+						`<set attributeName="${ attributeName }" to="javascript:alert(1)"></set>` +
+						`<animate attributeName="${ attributeName }" values="javascript:alert(1)"></animate>` +
+						'<text>hi there</text></a></svg>',
+				};
+				const normalized = withContentDOM( [ makeContentLinksSafe ] )( post );
+
+				expect( normalized.content ).toBe(
+					'<svg><a href="https://example.com/"><text>hi there</text></a></svg>'
+				);
+			}
+		);
 
 		test( 'keeps a safe plain href on an SVG anchor', () => {
 			// SVG 2 anchors use `href` rather than `xlink:href`, and their `href` IDL property is an
@@ -828,9 +916,55 @@ describe( 'index', () => {
 			const normalized = withContentDOM( [ makeEmbedsSafe ] )( post );
 			expect( normalized.content ).toBe( '' );
 		} );
+
+		test( 'removes objects and embeds from posts not flagged as external or Jetpack', () => {
+			// The single-post Reader API sends Jetpack and Atomic posts with `is_external: false`
+			// and no `is_jetpack`, so neither flag can be relied on.
+			const post = {
+				is_external: false,
+				content:
+					'<p>a</p><object type="text/html" data="https://example.com/x.html"></object>' +
+					'<embed src="https://example.com/x.swf">',
+			};
+			const normalized = withContentDOM( [ makeEmbedsSafe ] )( post );
+			expect( normalized.content ).toBe( '<p>a</p>' );
+		} );
+	} );
+
+	describe( 'content.convertVideoPressBlocks', () => {
+		const block = ( tag, wrapper ) =>
+			`<${ tag } class="wp-block-video wp-block-embed is-type-video is-provider-videopress">` +
+			`<${ wrapper } class="wp-block-embed__wrapper">https://videopress.com/v/abc</${ wrapper }></${ tag }>`;
+
+		test( 'replaces a VideoPress block with an iframe', () => {
+			const post = { content: block( 'figure', 'div' ) };
+			const normalized = withContentDOM( [ convertVideoPressBlocks ] )( post );
+
+			expect( domForHtml( normalized.content ).querySelector( 'iframe' )?.src ).toBe(
+				'https://videopress.com/v/abc'
+			);
+		} );
+
+		test( 'leaves a VideoPress block marker inside SVG alone', () => {
+			const post = { content: `<svg>${ block( 'g', 'text' ) }</svg>` };
+			const normalized = withContentDOM( [ convertVideoPressBlocks ] )( { ...post } );
+
+			expect( normalized.content ).toBe( post.content );
+		} );
 	} );
 
 	describe( 'content.detectMedia', () => {
+		test( 'detects an iframe that has an SVG ancestor', () => {
+			const post = {
+				content:
+					'<svg><foreignObject><iframe width="100" height="50" src="https://youtube.com">' +
+					'</iframe></foreignObject></svg>',
+			};
+			const normalized = withContentDOM( [ detectMedia ] )( post );
+
+			expect( normalized.content_embeds ).toHaveLength( 1 );
+		} );
+
 		test( 'detects "allowed" iframes', () => {
 			const post = {
 				content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>',
@@ -1059,6 +1193,9 @@ describe( 'index', () => {
 					<select><option>nope</option></select>
 					<button>hi</button>
 					<textarea>noooope</textarea>
+					<base href="https://example.com/">
+					<meta http-equiv="refresh" content="0;url=https://example.com/">
+					<link rel="stylesheet" href="https://example.com/style.css">
 					`,
 			};
 			const normalized = withContentDOM( [ removeElementsBySelector ] )( post );

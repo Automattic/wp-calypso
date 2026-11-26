@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen } from '@testing-library/react';
@@ -8,12 +8,6 @@ import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import SubpageWrapper from '../index';
 import { ADD_FORWARDING_EMAIL, ADD_DNS_RECORD, EDIT_DNS_RECORD } from '../subpages';
-
-jest.mock( 'calypso/components/file-picker/component-file-picker', () => {
-	const MockFilePicker = () => <div>File Picker</div>;
-	MockFilePicker.displayName = 'MockFilePicker';
-	return MockFilePicker;
-} );
 
 const initialState = {
 	sites: {

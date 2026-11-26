@@ -1,25 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { successNotice } from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PrimaryBlogCard from '../index';
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
+vi.mock( 'calypso/state/notices/actions', () => ( {
 	__esModule: true,
-	successNotice: jest.fn( ( text: string, options: { duration: number } ) => ( {
+	successNotice: vi.fn( ( text: string, options: { duration: number } ) => ( {
 		type: 'NOTICE/SUCCESS',
 		text,
 		options,
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/reader/follow-button', () => ( {
+vi.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
-	default: jest.fn( ( { className }: { className: string } ) => (
+	default: vi.fn( ( { className }: { className: string } ) => (
 		<button data-testid="follow-button" className={ className }>
 			Follow
 		</button>
@@ -48,7 +49,7 @@ describe( 'PrimaryBlogCard', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'returns null when user has no primary blog', () => {
@@ -118,7 +119,7 @@ describe( 'PrimaryBlogCard', () => {
 		// Assert only on the props (first argument). React 18 calls function
 		// components with a second argument (legacy context), React 19 does not,
 		// so checking the call's first argument keeps this version-agnostic.
-		expect( jest.mocked( ReaderFollowButton ).mock.lastCall?.[ 0 ] ).toEqual(
+		expect( vi.mocked( ReaderFollowButton ).mock.lastCall?.[ 0 ] ).toEqual(
 			expect.objectContaining( {
 				siteUrl: 'https://testblog.com',
 				feedId: 200,
@@ -129,8 +130,8 @@ describe( 'PrimaryBlogCard', () => {
 	} );
 
 	describe( 'onFollowSuccess', () => {
-		const mockedReaderFollowButton = jest.mocked( ReaderFollowButton );
-		const mockedSuccessNotice = jest.mocked( successNotice );
+		const mockedReaderFollowButton = vi.mocked( ReaderFollowButton );
+		const mockedSuccessNotice = vi.mocked( successNotice );
 
 		function fireOnFollowSuccess( followed: boolean ) {
 			return mockedReaderFollowButton.mock.calls[ 0 ][ 0 ].onFollowSuccess?.( followed );

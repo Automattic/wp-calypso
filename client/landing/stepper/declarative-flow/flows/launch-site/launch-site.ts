@@ -1,9 +1,11 @@
 import { DomainProductSlugs, fetchShoppingCart, launchSite } from '@automattic/api-core';
+import { wowFunnelPendingQuery } from '@automattic/api-queries';
 import {
 	addProductsToCart,
 	clearStepPersistedState,
 	LAUNCH_SITE_FLOW,
 } from '@automattic/onboarding';
+import { useQuery as useApiQuery } from '@tanstack/react-query';
 import { resolveSelect, select, useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
@@ -22,6 +24,10 @@ import {
 	supportsPrivacyProtectionPurchase,
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
+import {
+	BLACK_FRIDAY_2026_COUPON,
+	isBlackFriday2026Active,
+} from 'calypso/lib/promotions/black-friday-2026';
 import {
 	getLaunchCheckoutUrl,
 	getLaunchDestination,
@@ -100,7 +106,33 @@ function recordExcludedStep( step: 'domains-launch' | 'plans-launch', value: str
 	} );
 }
 
+/**
+ * During the Black Friday sale, a preview's launch link gets the sale coupon, unless it brings its
+ * own. Only preview links send `hide_free_plan`. The coupon goes in the URL, where the plans step
+ * and checkout read it.
+ */
+function addBlackFridayCoupon() {
+	const query = getCurrentQueryParams();
+
+	if (
+		! isBlackFriday2026Active() ||
+		query.get( 'hide_free_plan' ) !== '1' ||
+		query.get( 'coupon' )
+	) {
+		return;
+	}
+
+	window.history.replaceState(
+		window.history.state,
+		'',
+		addQueryArgs( window.location.href, { coupon: BLACK_FRIDAY_2026_COUPON } )
+	);
+}
+
 async function initialize( reduxStore: Store ) {
+	// Before the login check, so the coupon survives the trip to log in.
+	addBlackFridayCoupon();
+
 	// Logged-out users are sent to log in, which comes back with a page load that runs this again.
 	if ( ! isUserLoggedIn( reduxStore.getState() ) ) {
 		return stepsWithRequiredLogin( getLaunchSiteSteps( null, null ) );
@@ -182,6 +214,24 @@ function useLaunchParams(): LaunchParams {
 	};
 }
 
+/**
+ * The site being launched, when it's an unpaid preview: WordPress.com lists those apart, each with
+ * the address that gets past Coming Soon.
+ */
+function usePreviewSite() {
+	const siteSlug = useQuery().get( 'siteSlug' ) ?? '';
+	const siteId = useSelect(
+		( select ) =>
+			siteSlug ? ( select( SITE_STORE ) as SiteSelect ).getSite( siteSlug )?.ID : undefined,
+		[ siteSlug ]
+	);
+	const { data } = useApiQuery( { ...wowFunnelPendingQuery(), enabled: !! siteId } );
+
+	return siteId
+		? data?.preview_sites?.find( ( preview ) => preview.blog_id === siteId )
+		: undefined;
+}
+
 const launchSiteFlow: FlowV2< typeof initialize > = {
 	name: LAUNCH_SITE_FLOW,
 	title: __( 'Launch your site' ),
@@ -229,6 +279,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 	useStepsProps() {
 		const launchParams = useLaunchParams();
+		const previewSite = usePreviewSite();
 		const isPlansFirstStep = ! getStepSlugs( this ).includes( STEPS.DOMAIN_SEARCH.slug );
 		// The step ignores `hideFreePlan` when Free is de-emphasized, and offers it as a link in the
 		// subheader instead.
@@ -241,6 +292,8 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				isCustomDomainAllowedOnFreePlan: true,
 				deemphasizeFreePlan: ! hideFreePlan,
 				...( hideFreePlan && { hideFreePlan } ),
+				// A preview can be looked around without a plan, so it can leave the plans for now.
+				...( previewSite && { skippable: true } ),
 				...( isPlansFirstStep && {
 					wrapperProps: {
 						goBack: () => window.location.assign( getLaunchReturnUrl( launchParams ) ),
@@ -252,6 +305,7 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 	useStepNavigation( currentStepSlug, navigate ) {
 		const launchParams = useLaunchParams();
+		const previewSite = usePreviewSite();
 		const stepSlugs = getStepSlugs( this );
 		const productsList = useSelector( getProductsList );
 		const { getDomainCartItem, getDomainCartItems, getPlanCartItem, getProductCartItems } =
@@ -442,6 +496,15 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				}
 
 				case STEPS.UNIFIED_PLANS.slug: {
+					// Skipping leaves the preview unlaunched, so it goes back to the preview itself, or to its
+					// Overview until its first build gives it a share link.
+					if ( providedDependencies?.action === 'skip_plan' ) {
+						return window.location.assign(
+							previewSite?.share_url ||
+								buildDashboardLink( 'dotcom', `/sites/${ launchParams.siteSlug }` )
+						);
+					}
+
 					const [ planCartItem, ...productCartItems ] = providedDependencies?.cartItems ?? [];
 
 					setPlanCartItem( planCartItem ?? null );

@@ -7,17 +7,17 @@ import { useState } from 'react';
 import { Experiment } from 'calypso/lib/explat';
 import AccountEmailBouncingNotice, {
 	useShouldShowAccountEmailBouncingNotice,
-} from '../../../app/account-email-bouncing-notice';
+} from '../../../account/components/account-email-bouncing-notice';
+import RecoveryEmailMatchesAccountEmailNotice, {
+	useShouldShowRecoveryEmailMatchesAccountEmailNotice,
+} from '../../../account/components/recovery-email-matches-account-email-notice';
+import SecurityKeyReregisterNotice, {
+	useShouldShowSecurityKeyReregisterNotice,
+} from '../../../account/components/security-key-reregister-notice';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useAppContext } from '../../../app/context';
 import { usePersistentView } from '../../../app/hooks/use-persistent-view';
-import RecoveryEmailMatchesAccountEmailNotice, {
-	useShouldShowRecoveryEmailMatchesAccountEmailNotice,
-} from '../../../app/recovery-email-matches-account-email-notice';
-import SecurityKeyReregisterNotice, {
-	useShouldShowSecurityKeyReregisterNotice,
-} from '../../../app/security-key-reregister-notice';
 import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -54,7 +54,7 @@ function filterSortAndPaginateSites( sites: Site[], view: View, totalItems: numb
 	};
 }
 
-export default function Sites( { search }: { search: SitesSearch } ) {
+export default function Sites( { search = {} }: { search?: SitesSearch } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const isRestoringAccount = !! search.restored;
 

@@ -8,7 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
 	type ResponseCart,
 	type RemoveCouponFromCart,
@@ -17,6 +17,7 @@ import {
 } from '@automattic/shopping-cart';
 import {
 	A4ATitanInboxMeta,
+	mergeIdenticalLineItems,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
@@ -697,6 +698,52 @@ export function BundleProductAndCostOverridesList( {
 	);
 }
 
+/**
+ * Identical lines of one product as one row in the order summary: the product
+ * with the total for all of them, and the count with the price of one.
+ */
+function MergedProductAndCostOverridesList( {
+	products,
+	isCartUpdating,
+}: {
+	products: ResponseCartProduct[];
+	isCartUpdating?: boolean;
+} ) {
+	const translate = useTranslate();
+	const [ firstProduct ] = products;
+	const format = ( amount: number ) =>
+		formatCurrency( amount, firstProduct.currency, { isSmallestUnit: true, stripZeros: true } );
+	const totalInteger = products.reduce(
+		( total, product ) => total + getItemSubtotalExcludingCoupon( product ),
+		0
+	);
+
+	return (
+		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
+			<WPCheckoutCheckIcon />
+			<ProductTitleAreaForCostOverridesList>
+				<span className="cost-overrides-list-product__title">{ getLabel( firstProduct ) }</span>
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<SimplifiedLineItemPrice actualAmount={ format( totalInteger ) } />
+				) }
+			</ProductTitleAreaForCostOverridesList>
+			<BundleMemberList>
+				<span>
+					{ translate( 'Quantity: %(count)s at %(price)s each', {
+						args: {
+							count: formatNumber( products.length ),
+							price: format( getItemSubtotalExcludingCoupon( firstProduct ) ),
+						},
+						comment: '%(price)s is the price of one, such as "$149".',
+					} ) }
+				</span>
+			</BundleMemberList>
+		</SimplifiedSingleProductAndCostOverridesListWrapper>
+	);
+}
+
 export function ProductsAndCostOverridesList( {
 	responseCart,
 	isCartUpdating,
@@ -706,13 +753,24 @@ export function ProductsAndCostOverridesList( {
 } ) {
 	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
 	// every product renders on its own line exactly as before.
-	const groupedLineItems = config.isEnabled( 'domain-bundling' )
+	const bundledLineItems = config.isEnabled( 'domain-bundling' )
 		? groupBundleLineItems( responseCart.products )
 		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
+	// Identical lines that ask to be merged show as one row.
+	const groupedLineItems = mergeIdenticalLineItems( bundledLineItems );
 
 	return (
 		<ProductsAndCostOverridesListWrapper className="wp-checkout-order-summary__products-list">
 			{ groupedLineItems.map( ( entry ) => {
+				if ( entry.type === 'merged' ) {
+					return (
+						<MergedProductAndCostOverridesList
+							products={ entry.products }
+							key={ `merged-${ entry.key }` }
+							isCartUpdating={ isCartUpdating }
+						/>
+					);
+				}
 				if ( entry.type === 'bundle' ) {
 					return (
 						<BundleProductAndCostOverridesList

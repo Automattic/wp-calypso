@@ -97,6 +97,21 @@ export const markReadStatus = ( noteId, isRead, callback ) => {
 export const isReadStatusPending = ( noteId ) => readStatusQueues.has( String( noteId ) );
 
 /**
+ * Marks every unread note on the account as read, without listing them.
+ *
+ * The server refuses any body parameter other than `time` and `source`.
+ * @param time UNIX timestamp in seconds. Notes newer than it stay unread.
+ */
+export const markAllAsRead = ( time ) =>
+	wpcom().req.post(
+		{
+			path: '/notifications/read/all',
+		},
+		null,
+		{ time }
+	);
+
+/**
  * Mark post as seen using the new more granular per post API.
  * @param blogId blog identifier
  * @param postId post identifier

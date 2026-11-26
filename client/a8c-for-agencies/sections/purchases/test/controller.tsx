@@ -1,24 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { licensesContext } from '../controller';
 import type { Context } from '@automattic/calypso-router';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { replace: jest.fn(), show: jest.fn(), redirect: jest.fn() },
+	default: { replace: vi.fn(), show: vi.fn(), redirect: vi.fn() },
 } ) );
 
-jest.mock( 'calypso/a8c-for-agencies/components/sidebar-menu/purchases', () => () => null );
-jest.mock( 'calypso/a8c-for-agencies/components/a4a-page-view-tracker', () => () => null );
-jest.mock( '../licenses/licenses-overview', () => () => null );
-jest.mock( '../billing/billing-dashboard', () => () => null );
-jest.mock( '../invoices/invoices-overview', () => () => null );
-jest.mock( '../payment-methods/payment-method-add', () => () => null );
-jest.mock( '../payment-methods/payment-method-overview', () => () => null );
-jest.mock( '../crm-downloads', () => () => null );
+vi.mock( 'calypso/a8c-for-agencies/components/sidebar-menu/purchases', () => ( {
+	default: () => null,
+} ) );
+vi.mock( 'calypso/a8c-for-agencies/components/a4a-page-view-tracker', () => ( {
+	default: () => null,
+} ) );
+vi.mock( '../licenses/licenses-overview', () => ( { default: () => null } ) );
+vi.mock( '../billing/billing-dashboard', () => ( { default: () => null } ) );
+vi.mock( '../invoices/invoices-overview', () => ( { default: () => null } ) );
+vi.mock( '../payment-methods/payment-method-add', () => ( { default: () => null } ) );
+vi.mock( '../payment-methods/payment-method-overview', () => ( { default: () => null } ) );
+vi.mock( '../crm-downloads', () => ( { default: () => null } ) );
 
 function buildContext( canonicalPath: string, query: Record< string, string > ): Context {
 	return { canonicalPath, path: canonicalPath, params: {}, query } as unknown as Context;
@@ -26,7 +31,7 @@ function buildContext( canonicalPath: string, query: Record< string, string > ):
 
 describe( 'licensesContext', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	// Changing the router's path mid-dispatch makes Calypso Router abandon the
@@ -35,7 +40,7 @@ describe( 'licensesContext', () => {
 		const context = buildContext( '/purchases/licenses?receipt_id=12345', {
 			receipt_id: '12345',
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		licensesContext( context, next );
 

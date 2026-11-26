@@ -7,6 +7,7 @@ import { useEffect, useMemo, useReducer } from 'react';
 import { getCartProductByBillingIntentId } from 'calypso/data/marketplace/use-marketplace-billing-intents';
 import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
+import { isWpcomSitelessCheckoutType } from '../lib/is-wpcom-siteless-checkout-type';
 import useStripProductsFromUrl from './use-strip-products-from-url';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -50,7 +51,6 @@ export default function usePrepareProductsForCart( {
 	source,
 	aiSessionId,
 	isGiftPurchase,
-	hostingIntent,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -63,7 +63,6 @@ export default function usePrepareProductsForCart( {
 	source?: string;
 	aiSessionId?: string;
 	isGiftPurchase?: boolean;
-	hostingIntent?: string | undefined;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -115,7 +114,6 @@ export default function usePrepareProductsForCart( {
 		jetpackPurchaseToken,
 		source,
 		aiSessionId,
-		hostingIntent,
 	} );
 	useAddProductFromBillingIntent( {
 		intentId: productAliasFromUrl,
@@ -153,7 +151,7 @@ export default function usePrepareProductsForCart( {
 		sitelessCheckoutType === 'marketplace' ||
 		sitelessCheckoutType === 'a4a' ||
 		sitelessCheckoutType === 'unified' ||
-		sitelessCheckoutType === 'wpcom' ||
+		isWpcomSitelessCheckoutType( sitelessCheckoutType ) ||
 		isGiftPurchase
 	);
 	useStripProductsFromUrl( siteSlug, doNotStripProducts );
@@ -240,7 +238,7 @@ function chooseAddHandler( {
 		sitelessCheckoutType === 'jetpack' ||
 		sitelessCheckoutType === 'akismet' ||
 		sitelessCheckoutType === 'unified' ||
-		sitelessCheckoutType === 'wpcom'
+		isWpcomSitelessCheckoutType( sitelessCheckoutType )
 	) {
 		return 'addProductFromSlug';
 	}
@@ -532,7 +530,6 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken,
 	source,
 	aiSessionId,
-	hostingIntent,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -542,7 +539,6 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	aiSessionId?: string;
-	hostingIntent?: string | undefined;
 } ) {
 	const translate = useTranslate();
 
@@ -597,7 +593,6 @@ function useAddProductFromSlug( {
 				jetpackPurchaseToken,
 				source,
 				aiSessionId,
-				hostingIntent,
 			} )
 		);
 		debug( 'preparing products that were requested in url', productAliasFromUrl, cartProducts );
@@ -611,7 +606,6 @@ function useAddProductFromSlug( {
 		dispatch,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
-		hostingIntent,
 		source,
 		aiSessionId,
 	] );
@@ -740,7 +734,6 @@ function createItemToAddToCart( {
 	jetpackPurchaseToken,
 	source,
 	aiSessionId,
-	hostingIntent,
 }: {
 	productSlug: string;
 	productAlias: string;
@@ -749,7 +742,6 @@ function createItemToAddToCart( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	aiSessionId?: string;
-	hostingIntent?: string | undefined;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
 	// using a colon between the product slug and the meta.
@@ -776,7 +768,8 @@ function createItemToAddToCart( {
 			sitelessCheckoutType,
 			isDomainOnlySitelessCheckout: sitelessCheckoutType === 'domainonly',
 			isUnifiedSitelessCheckout: sitelessCheckoutType === 'unified',
-			isWpcomSitelessCheckout: sitelessCheckoutType === 'wpcom',
+			isWpcomSitelessCheckout: isWpcomSitelessCheckoutType( sitelessCheckoutType ),
+			isStudioSitelessCheckout: sitelessCheckoutType === 'studio',
 			isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 			isJetpackCheckout: sitelessCheckoutType === 'jetpack',
 			jetpackSiteSlug,
@@ -784,7 +777,6 @@ function createItemToAddToCart( {
 			context: 'calypstore',
 			source: source ?? undefined,
 			ai_session_id: aiSessionId || undefined,
-			hosting_intent: hostingIntent,
 			...( TITAN_MAIL_PRODUCT_SLUGS.includes( productSlug )
 				? { new_quantity: getTitanNewQuantity( quantity ) }
 				: {} ),

@@ -5,10 +5,7 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
-import {
-	deleteStoredKeyringConnection,
-	requestKeyringConnections,
-} from 'calypso/state/sharing/keyring/actions';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 import {
 	getKeyringConnectionsByName,
 	isKeyringConnectionsFetching,
@@ -208,7 +205,6 @@ export default connect(
 		};
 	},
 	{
-		deleteStoredKeyringConnection,
 		requestKeyringConnections,
 	}
 )( localize( KeyringConnectButton ) );

@@ -25,7 +25,9 @@ import {
 	isIosOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
+import { isStudioCheckoutRedirect } from 'calypso/lib/studio/checkout-urls';
 import { useSelector } from 'calypso/state';
+import { getRedirectToOriginal } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getIsAkismet from 'calypso/state/selectors/get-is-akismet';
@@ -69,6 +71,9 @@ export const useHeadingLogo = ( {
 	const isWoo = useSelector( getIsWoo );
 	const isAkismet = useSelector( getIsAkismet );
 	const isPassport = useSelector( getIsPassport );
+	const isStudioCheckout = useSelector( ( state ) =>
+		isStudioCheckoutRedirect( getRedirectToOriginal( state ) )
+	);
 	const isJetpackApp = useSelector( getIsJetpackApp );
 	const currentRoute = useSelector( getCurrentRoute );
 	const { hasCustomBranding } = usePartnerBranding();
@@ -84,7 +89,7 @@ export const useHeadingLogo = ( {
 	let logo = null;
 	if ( isPushTwoFactor ) {
 		logo = <img src={ JETPACK_PUSH_LOGO_URL } alt="Jetpack" />;
-	} else if ( isStudioAppOAuth2Client( oauth2Client ) ) {
+	} else if ( isStudioAppOAuth2Client( oauth2Client ) || isStudioCheckout ) {
 		logo = <img src={ studioAppLogo } alt="Studio App Logo" />;
 	} else if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 		logo = <img src={ crowdsignalLogo } alt="Crowdsignal Logo" />;

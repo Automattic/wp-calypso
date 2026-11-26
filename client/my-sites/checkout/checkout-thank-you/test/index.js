@@ -1,53 +1,68 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { PLAN_ECOMMERCE, PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import CheckoutThankYouHeader from '../header';
-import { CheckoutThankYou } from '../index';
+import CheckoutThankYouWithReceipt, { CheckoutThankYou } from '../index';
+import { useCheckoutReceipt } from '../receipt';
 
-jest.unmock( '@automattic/calypso-products' );
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
+vi.unmock( '@automattic/calypso-products' );
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-products' ) ),
 	shouldFetchSitePlans: () => false,
-	isDotComPlan: jest.fn( () => false ),
-	isDIFMProduct: jest.fn( () => false ),
+	isDotComPlan: vi.fn( () => false ),
+	isDIFMProduct: vi.fn( () => false ),
 } ) );
 
-jest.unmock( '@automattic/help-center/src/hooks' );
-jest.mock( '@automattic/help-center/src/hooks', () => ( {
-	...jest.requireActual( '@automattic/help-center/src/hooks' ),
-	useProductsWithPremiumSupport: jest.fn( () => false ),
+vi.unmock( '@automattic/help-center/src/hooks' );
+vi.mock( '@automattic/help-center/src/hooks', async () => ( {
+	...( await vi.importActual( '@automattic/help-center/src/hooks' ) ),
+	useProductsWithPremiumSupport: vi.fn( () => false ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
-jest.mock( '../header', () =>
-	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
-);
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( {
+	default: () => 'page-view-tracker',
+} ) );
+vi.mock( '../header', () => ( {
+	default: vi.fn( ( { children } ) => (
+		<div data-testid="checkout-thank-you-header">{ children }</div>
+	) ),
+} ) );
 // eslint-disable-next-line react/display-name
-jest.mock( 'calypso/components/happiness-support', () => () => (
-	<div data-testid="happiness-support" />
-) );
-jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
+vi.mock( 'calypso/components/happiness-support', () => ( {
+	default: () => <div data-testid="happiness-support" />,
+} ) );
+vi.mock( '../transfer-pending/', () => ( { default: () => 'transfer-pending' } ) );
 // eslint-disable-next-line react/display-name
-jest.mock( '../redesign-v2/pages/plan-only', () => () => (
-	<div data-testid="component--plan-only-thank-you" />
-) );
+vi.mock( '../redesign-v2/pages/plan-only', () => ( {
+	default: () => <div data-testid="component--plan-only-thank-you" />,
+} ) );
 // eslint-disable-next-line react/display-name
-jest.mock( '../redesign-v2/pages/generic', () => () => (
-	<div data-testid="component--generic-thank-you" />
-) );
+vi.mock( '../redesign-v2/pages/generic', () => ( {
+	default: () => <div data-testid="component--generic-thank-you" />,
+} ) );
 // eslint-disable-next-line react/display-name
-jest.mock( '../redesign-v2/pages/domain-only', () => ( {
+vi.mock( '../redesign-v2/pages/domain-only', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="component--domain-only-thank-you" />,
+} ) );
+vi.mock( '../receipt', async () => ( {
+	...( await vi.importActual( '../receipt' ) ),
+	useCheckoutReceipt: vi.fn(),
+} ) );
+vi.mock( '../studio-thank-you', () => ( {
+	__esModule: true,
+	default: () => <div data-testid="component--studio-thank-you" />,
 } ) );
 
 const translate = ( x ) => x;
@@ -248,6 +263,104 @@ describe( 'CheckoutThankYou', () => {
 
 			expect( screen.queryByTestId( 'component--domain-only-thank-you' ) ).not.toBeInTheDocument();
 			expect( screen.getByTestId( 'component--generic-thank-you' ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'Studio checkout', () => {
+		const props = {
+			...defaultProps,
+			receiptId: 12,
+			hasLoadedReceipts: true,
+			domainOnlySiteFlow: true,
+			receipt: {
+				purchases: [ { productSlug: 'studio-cloud-monthly', productName: 'Studio Cloud' } ],
+				currency: 'USD',
+			},
+			refreshSitePlans: () => {},
+		};
+
+		it( 'renders the Studio thank-you page when checkout_type is studio', () => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } checkoutType="studio" />
+				</Provider>
+			);
+
+			expect( screen.getByTestId( 'component--studio-thank-you' ) ).toBeVisible();
+			expect( screen.queryByTestId( 'component--generic-thank-you' ) ).not.toBeInTheDocument();
+		} );
+
+		it( "keeps a site's own thank-you page when checkout_type is studio", () => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou
+						{ ...props }
+						domainOnlySiteFlow={ false }
+						selectedSite={ { ID: 12, slug: 'example.com' } }
+						sitePlans={ { hasLoadedFromServer: true } }
+						checkoutType="studio"
+					/>
+				</Provider>
+			);
+
+			expect( screen.queryByTestId( 'component--studio-thank-you' ) ).not.toBeInTheDocument();
+			expect( screen.getByTestId( 'component--generic-thank-you' ) ).toBeVisible();
+		} );
+
+		it( 'renders the generic thank-you page for the same purchase without the flag', () => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou { ...props } />
+				</Provider>
+			);
+
+			expect( screen.getByTestId( 'component--generic-thank-you' ) ).toBeVisible();
+		} );
+
+		describe( 'with the receipt loaded', () => {
+			function renderWithReceiptCheckoutType( receiptCheckoutType, extraProps = {} ) {
+				useCheckoutReceipt.mockImplementation( ( receiptId ) =>
+					receiptId
+						? {
+								data: { ...props.receipt, checkoutType: receiptCheckoutType },
+								isLoading: false,
+								isSuccess: true,
+							}
+						: { data: undefined, isLoading: false, isSuccess: false }
+				);
+
+				render(
+					<QueryClientProvider client={ new QueryClient() }>
+						<Provider store={ store }>
+							<CheckoutThankYouWithReceipt
+								{ ...defaultProps }
+								receiptId={ 12 }
+								domainOnlySiteFlow
+								checkoutType="studio"
+								{ ...extraProps }
+							/>
+						</Provider>
+					</QueryClientProvider>
+				);
+			}
+
+			it( 'renders the Studio page when the receipt records a studio checkout', () => {
+				renderWithReceiptCheckoutType( 'studio', { checkoutType: undefined } );
+
+				expect( screen.getByTestId( 'component--studio-thank-you' ) ).toBeVisible();
+			} );
+
+			it( 'lets a wpcom receipt win over a studio flag in the URL', () => {
+				renderWithReceiptCheckoutType( 'wpcom' );
+
+				expect( screen.queryByTestId( 'component--studio-thank-you' ) ).not.toBeInTheDocument();
+			} );
+
+			it( 'keeps the URL flag until the receipt says otherwise', () => {
+				renderWithReceiptCheckoutType( undefined );
+
+				expect( screen.getByTestId( 'component--studio-thank-you' ) ).toBeVisible();
+			} );
 		} );
 	} );
 } );

@@ -7,6 +7,7 @@ import {
 	WPCOM_FEATURES_SCAN_SELF_SERVE,
 	WPCOM_FEATURES_VIDEOPRESS,
 } from '@automattic/calypso-products';
+import { vi } from 'vitest';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import isBackupPluginActive from 'calypso/state/sites/selectors/is-backup-plugin-active';
@@ -14,13 +15,13 @@ import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import isSearchPluginActive from 'calypso/state/sites/selectors/is-search-plugin-active';
 // Mocks
-jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic' );
-jest.mock( 'calypso/state/selectors/site-has-feature' );
-jest.mock( 'calypso/state/sites/selectors/get-site-slug' );
-jest.mock( 'calypso/state/sites/selectors/is-backup-plugin-active' );
-jest.mock( 'calypso/state/sites/selectors/is-jetpack-site' );
-jest.mock( 'calypso/state/sites/selectors/is-jetpack-site-multi-site' );
-jest.mock( 'calypso/state/sites/selectors/is-search-plugin-active' );
+vi.mock( 'calypso/state/selectors/is-site-wpcom-atomic' );
+vi.mock( 'calypso/state/selectors/site-has-feature' );
+vi.mock( 'calypso/state/sites/selectors/get-site-slug' );
+vi.mock( 'calypso/state/sites/selectors/is-backup-plugin-active' );
+vi.mock( 'calypso/state/sites/selectors/is-jetpack-site' );
+vi.mock( 'calypso/state/sites/selectors/is-jetpack-site-multi-site' );
+vi.mock( 'calypso/state/sites/selectors/is-search-plugin-active' );
 // Functions under test
 import { getLandingPath, isSiteEligibleForJetpackCloud } from '../selectors';
 
@@ -33,7 +34,7 @@ const mockSiteFeatures =
 
 describe( 'getLandingPath', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it.each( [ [ undefined ], [ null ], [ Infinity ], [ 4.2 ], [ true ], [ 'abc' ] ] )(
@@ -162,7 +163,7 @@ describe( 'getLandingPath', () => {
 
 describe( 'isSiteEligibleForJetpackCloud', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'should return false for multisites', () => {

@@ -1,5 +1,7 @@
 import { safeLinkRe } from './utils';
 
+const HTML_NS = 'http://www.w3.org/1999/xhtml';
+
 /**
  * The linkJetpackCarousels rule modifies all of the WordPress galleries in the content
  * to link you to their host website's carousel instead of the permalink for that specific image.
@@ -40,6 +42,10 @@ export default function linkJetpackCarousels( post, dom ) {
 		// find all the links and rewrite them to point to the carousel instead of the permalink
 		const links = gallery.querySelectorAll( '.tiled-gallery-item > a' );
 		Array.from( links ).forEach( ( link ) => {
+			// An SVG anchor's `href` is read-only, so assigning to it throws.
+			if ( link.namespaceURI !== HTML_NS ) {
+				return;
+			}
 			const img = link.querySelector( 'img' );
 			const attachmentId = img && img.getAttribute( 'data-attachment-id' );
 			if ( attachmentId ) {

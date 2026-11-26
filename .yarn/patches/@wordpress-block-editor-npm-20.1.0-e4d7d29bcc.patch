@@ -1,0 +1,17 @@
+diff --git a/package.json b/package.json
+index 7535ed8430db386522596e8d47ed381eb4fa3bc0..6d1afc1168053c47e2ab84724005967daa630832 100644
+--- a/package.json
++++ b/package.json
+@@ -38,7 +38,11 @@
+ 			"require": "./build/index.cjs"
+ 		},
+ 		"./package.json": "./package.json",
+-		"./build-style/*": "./build-style/*"
++		"./build-style/*": "./build-style/*",
++		"./build-module/components/iframe/get-compatibility-styles": {
++			"import": "./build-module/components/iframe/get-compatibility-styles.mjs",
++			"require": "./build/components/iframe/get-compatibility-styles.cjs"
++		}
+ 	},
+ 	"wpScript": true,
+ 	"wpScriptModuleExports": {

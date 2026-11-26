@@ -1,5 +1,5 @@
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { PREFERENCE_BASE_NAME, CounterType, initialCount } from './constants';
+import { PREFERENCE_BASE_NAME, CounterType } from './constants';
 import { getCounter, getCounterName } from './selectors';
 import type { AppState } from 'calypso/types';
 
@@ -25,40 +25,6 @@ export const incrementPreference = (
 		[ keyedCounterName ]: {
 			count: thisCounter.count + 1,
 			lastUpdated: Date.now(),
-		},
-	};
-};
-
-export const decrementPreference = (
-	state: AppState,
-	counterName: string,
-	keyedToSiteId = false
-): CounterType => {
-	const fullPref = getPreference( state, PREFERENCE_BASE_NAME ) ?? {};
-	const thisCounter = getCounter( state, counterName, keyedToSiteId );
-	const keyedCounterName = getCounterName( state, counterName, keyedToSiteId );
-
-	return {
-		...fullPref,
-		[ keyedCounterName ]: {
-			count: thisCounter.count <= 0 ? 0 : thisCounter.count - 1,
-			lastUpdated: Date.now(),
-		},
-	};
-};
-
-export const resetPreference = (
-	state: AppState,
-	counterName: string,
-	keyedToSiteId = false
-): CounterType => {
-	const fullPref = getPreference( state, PREFERENCE_BASE_NAME ) ?? {};
-	const keyedCounterName = getCounterName( state, counterName, keyedToSiteId );
-
-	return {
-		...fullPref,
-		[ keyedCounterName ]: {
-			...initialCount,
 		},
 	};
 };

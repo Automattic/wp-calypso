@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Removed the unused `babel.config.js`. The build already compiles with `@automattic/calypso-babel-config`'s default preset, so the published files don't change.
+- Removed the unused `wpcom-oauth-cors` devDependency. It was never imported; the README still links it as a separate package you can pair with `wpcom.js`.
 
 ## 7.1.1 / 2025-10-31
 

@@ -1,3 +1,7 @@
+## Unreleased
+
+- Breaking: Require `@wordpress/compose` ^9.2.0.
+
 ## 1.0.3
 
 - Use an npm-installable `@wordpress/compose` dependency range for package consumers.

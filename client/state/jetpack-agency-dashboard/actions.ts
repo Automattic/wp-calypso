@@ -61,10 +61,6 @@ export const updateDashboardURLQueryArgs = ( {
 	);
 };
 
-export const setFilter = ( filter: AgencyDashboardFilterOption[] ) => () => {
-	updateDashboardURLQueryArgs( { filter } );
-};
-
 export const updateFilter = ( filter: AgencyDashboardFilterOption[] ) => () => {
 	updateDashboardURLQueryArgs( { filter } );
 };

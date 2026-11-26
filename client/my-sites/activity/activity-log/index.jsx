@@ -29,7 +29,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Pagination from 'calypso/components/pagination';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
-import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
+import { getProductionSiteId } from 'calypso/dashboard/sites/staging-site/utils';
 import useActivityLogQuery from 'calypso/data/activity-log/use-activity-log-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

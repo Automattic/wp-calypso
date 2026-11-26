@@ -1,15 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
-import {
-	Notices,
-	NoticeDismissStatus,
-	noticesVisibilityQueryKey,
-} from './use-notice-visibility-query';
+import { Notices, noticesVisibilityQueryKey } from './use-notice-visibility-query';
 
-export interface NoticeUpdate {
-	status: NoticeDismissStatus;
-	postponedFor?: number;
-}
+type NoticeDismissStatus = 'dismissed' | 'postponed';
 
 export function dismissNotice(
 	siteId: number | null,
@@ -28,10 +21,6 @@ export function dismissNotice(
 	} );
 }
 
-/**
- * The hook arguments are the default update. `mutate()` may pass a `NoticeUpdate` for notices
- * whose next step depends on the saved record; each field it omits falls back to the hook argument.
- */
 export default function useNoticeVisibilityMutation(
 	siteId: number | null,
 	noticeId: keyof Notices,
@@ -41,13 +30,7 @@ export default function useNoticeVisibilityMutation(
 	const queryClient = useQueryClient();
 	return useMutation( {
 		mutationKey: noticesVisibilityQueryKey( siteId ),
-		mutationFn: ( update: NoticeUpdate | void ) =>
-			dismissNotice(
-				siteId,
-				noticeId,
-				update?.status ?? status,
-				update?.postponedFor ?? postponedFor
-			),
+		mutationFn: () => dismissNotice( siteId, noticeId, status, postponedFor ),
 		retry: 1,
 		retryDelay: 3 * 1000, // 3 seconds
 		// Mutation-level rather than per-call: query-core only runs mutate()'s own

@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useThankYouRedirect } from '../use-thank-you-redirect';
@@ -9,7 +10,7 @@ import { useThankYouRedirect } from '../use-thank-you-redirect';
 // Capture what the recovery hook is wired with.
 let mockRecoveryProps:
 	{ enabled: boolean; canActivate: boolean; ownsActivation: boolean } | undefined;
-jest.mock( '../use-post-transfer-plugin-recovery', () => ( {
+vi.mock( '../use-post-transfer-plugin-recovery', () => ( {
 	usePostTransferPluginRecovery: ( props: typeof mockRecoveryProps ) => {
 		mockRecoveryProps = props;
 	},
@@ -17,9 +18,11 @@ jest.mock( '../use-post-transfer-plugin-recovery', () => ( {
 
 // Control the post-transfer site fetch.
 let mockFreshSite: unknown;
-const mockFetchFreshSite = jest.fn( () => Promise.resolve( mockFreshSite ) );
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
+const mockFetchFreshSite = vi.fn( () => Promise.resolve( mockFreshSite ) );
+vi.mock( '@automattic/api-queries', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+		'@automattic/api-queries'
+	) ),
 	siteByIdQuery: () => ( {
 		queryKey: [ 'tyr-site' ],
 		queryFn: () => mockFetchFreshSite(),
@@ -81,7 +84,7 @@ describe( 'useThankYouRedirect', () => {
 	let originalLocation: Location;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockRecoveryProps = undefined;
 		mockFreshSite = null;
 		originalLocation = window.location;

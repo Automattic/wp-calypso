@@ -1,85 +1,93 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-jest.mock( '@automattic/composite-checkout', () => ( {
+import { useFormStatus } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
+import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
+import { useGetProductVariants } from '../../hooks/product-variants';
+import { CheckoutSidebarPlanUpsell } from '../checkout-sidebar-plan-upsell';
+import type { WPCOMProductVariant } from '../item-variation-picker/types';
+import type React from 'react';
+
+vi.mock( '@automattic/composite-checkout', () => ( {
 	FormStatus: {
 		READY: 'ready',
 		LOADING: 'loading',
 		VALIDATING: 'validating',
 		SUBMITTING: 'submitting',
 	},
-	useFormStatus: jest.fn(),
+	useFormStatus: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/shopping-cart', () => ( {
-	useShoppingCart: jest.fn(),
+vi.mock( '@automattic/shopping-cart', () => ( {
+	useShoppingCart: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
+vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '../../hooks/product-variants', () => ( {
-	useGetProductVariants: jest.fn(),
+vi.mock( '../../hooks/product-variants', () => ( {
+	useGetProductVariants: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/react-i18n', () => ( {
-	useI18n: jest.fn( () => ( { __: ( s: string ) => s } ) ),
-} ) );
+vi.mock( '@wordpress/react-i18n', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useI18n: vi.fn( () => ( { __: ( s: string ) => s } ) ),
+	} )
+);
 
-jest.mock( '../wp-checkout-order-summary', () => ( {
+vi.mock( '../wp-checkout-order-summary', () => ( {
 	CheckoutSummaryFeaturedList: () => null,
 } ) );
 
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/calypso-products' ) >() ),
 	isPlan: ( product: { product_slug: string } ) => product.product_slug === 'personal-bundle',
 	isJetpackPlan: () => false,
 } ) );
 
-jest.mock( 'calypso/components/promo-section/promo-card', () => {
-	return function MockPromoCard( props: {
-		title: React.ReactNode;
-		children: React.ReactNode;
-		className?: string;
-	} ) {
-		// eslint-disable-next-line @typescript-eslint/no-require-imports -- jest.mock factories cannot use imports
-		const React = require( 'react' );
-		return React.createElement(
-			'div',
-			{ className: props.className },
-			props.title,
-			props.children
-		);
+vi.mock( 'calypso/components/promo-section/promo-card', () => {
+	return {
+		default: function MockPromoCard( props: {
+			title: React.ReactNode;
+			children: React.ReactNode;
+			className?: string;
+		} ) {
+			// eslint-disable-next-line @typescript-eslint/no-require-imports -- vi.mock factories cannot use imports
+			const React = require( 'react' );
+			return React.createElement(
+				'div',
+				{ className: props.className },
+				props.title,
+				props.children
+			);
+		},
 	};
 } );
 
-jest.mock( 'calypso/components/promo-section/promo-card/cta', () => {
-	return function MockPromoCardCTA( props: {
-		cta: { text: React.ReactNode; action: () => void; disabled: boolean };
-	} ) {
-		// eslint-disable-next-line @typescript-eslint/no-require-imports -- jest.mock factories cannot use imports
-		const React = require( 'react' );
-		return React.createElement(
-			'button',
-			{ onClick: props.cta.action, disabled: props.cta.disabled },
-			props.cta.text
-		);
+vi.mock( 'calypso/components/promo-section/promo-card/cta', () => {
+	return {
+		default: function MockPromoCardCTA( props: {
+			cta: { text: React.ReactNode; action: () => void; disabled: boolean };
+		} ) {
+			// eslint-disable-next-line @typescript-eslint/no-require-imports -- vi.mock factories cannot use imports
+			const React = require( 'react' );
+			return React.createElement(
+				'button',
+				{ onClick: props.cta.action, disabled: props.cta.disabled },
+				props.cta.text
+			);
+		},
 	};
 } );
-
-import { useFormStatus } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
-import { render, screen } from '@testing-library/react';
-import { useGetProductVariants } from '../../hooks/product-variants';
-import { CheckoutSidebarPlanUpsell } from '../checkout-sidebar-plan-upsell';
-import type { WPCOMProductVariant } from '../item-variation-picker/types';
-import type React from 'react';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -120,20 +128,20 @@ function makeCartWithPlan( productId: number ) {
 
 describe( 'CheckoutSidebarPlanUpsell', () => {
 	beforeEach( () => {
-		( useFormStatus as jest.Mock ).mockReturnValue( { formStatus: 'ready' } );
-		( useShoppingCart as jest.Mock ).mockReturnValue( {
+		( useFormStatus as Mock ).mockReturnValue( { formStatus: 'ready' } );
+		( useShoppingCart as Mock ).mockReturnValue( {
 			responseCart: makeCartWithPlan( 1009 ),
-			replaceProductInCart: jest.fn(),
+			replaceProductInCart: vi.fn(),
 		} );
-		( useGetProductVariants as jest.Mock ).mockReturnValue( [] );
+		( useGetProductVariants as Mock ).mockReturnValue( [] );
 	} );
 
 	it( 'renders nothing when the cart has no plan', () => {
-		( useShoppingCart as jest.Mock ).mockReturnValue( {
+		( useShoppingCart as Mock ).mockReturnValue( {
 			responseCart: {
 				products: [ { product_slug: 'domain_reg', product_id: 6, uuid: 'd-001' } ],
 			},
-			replaceProductInCart: jest.fn(),
+			replaceProductInCart: vi.fn(),
 		} );
 		const { container } = render( <CheckoutSidebarPlanUpsell /> );
 		expect( container ).toBeEmptyDOMElement();
@@ -141,7 +149,7 @@ describe( 'CheckoutSidebarPlanUpsell', () => {
 
 	it( 'renders nothing when there is no higher billing term to upsell to', () => {
 		// Only one variant — no higher term exists.
-		( useGetProductVariants as jest.Mock ).mockReturnValue( [
+		( useGetProductVariants as Mock ).mockReturnValue( [
 			makeVariant( { productBillingTermInMonths: 12, termIntervalInMonths: 12, productId: 1009 } ),
 		] );
 		const { container } = render( <CheckoutSidebarPlanUpsell /> );
@@ -151,7 +159,7 @@ describe( 'CheckoutSidebarPlanUpsell', () => {
 	it( 'renders nothing when the upsell plan offers no savings over the current plan', () => {
 		// Both variants have equal regularPricePerMonth (derived from priceBeforeDiscounts)
 		// and no intro offers, so calculateDiscountPercentage returns undefined → percentSavings=0.
-		( useGetProductVariants as jest.Mock ).mockReturnValue( [
+		( useGetProductVariants as Mock ).mockReturnValue( [
 			makeVariant( {
 				productBillingTermInMonths: 1,
 				termIntervalInMonths: 1,
@@ -186,7 +194,7 @@ describe( 'CheckoutSidebarPlanUpsell', () => {
 		// Displayed upsell price uses upsellVariant.priceInteger directly = $120.
 
 		beforeEach( () => {
-			( useGetProductVariants as jest.Mock ).mockReturnValue( [
+			( useGetProductVariants as Mock ).mockReturnValue( [
 				makeVariant( {
 					productBillingTermInMonths: 1,
 					termIntervalInMonths: 1,
@@ -243,7 +251,7 @@ describe( 'CheckoutSidebarPlanUpsell', () => {
 		// The new code uses getPlanPriceForDuration(currentInfo, currentInfo.termMonths) = $120.
 
 		beforeEach( () => {
-			( useGetProductVariants as jest.Mock ).mockReturnValue( [
+			( useGetProductVariants as Mock ).mockReturnValue( [
 				makeVariant( {
 					productBillingTermInMonths: 12,
 					termIntervalInMonths: 12,
@@ -297,7 +305,7 @@ describe( 'CheckoutSidebarPlanUpsell', () => {
 			// priceInteger=10000¢, termIntervalInMonths=12: 10000/12 = 833.33¢/month.
 			// getPlanPriceForDuration would accumulate 12 × 833 = 9996¢ = $99.96 (rounded down by 4¢).
 			// The component must show the exact priceInteger = 10000¢ = $100.00 instead.
-			( useGetProductVariants as jest.Mock ).mockReturnValue( [
+			( useGetProductVariants as Mock ).mockReturnValue( [
 				makeVariant( {
 					productBillingTermInMonths: 12,
 					termIntervalInMonths: 12,

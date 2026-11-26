@@ -24,9 +24,10 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools } from './categories';
-import { getOverridesToMatch, groupIntentKey } from './group-intents';
+import { getOrdinaryTools, getOverridesToMatch, groupIntentKey } from './group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from './groups';
 import { useMcpPageChrome } from './mcp-page-header';
+import { getMcpBulkHelp, McpToolToggle } from './opt-in-controls';
 import { useMcpTracksAudienceProps } from './tracks';
 import { getAccountMcpAbilities, getGroupDescriptors } from './utils';
 
@@ -120,6 +121,7 @@ export default function McpToolsSubpage( {
 	const tools = filterVisibleTools( Object.entries( mcpAbilities ) ).filter( ( [ , tool ] ) =>
 		filterTool( tool )
 	);
+	const ordinaryTools = getOrdinaryTools( tools );
 	const groupDescriptors = getGroupDescriptors( userSettings || {} );
 	const groups = groupToolsByGroup( tools, groupDescriptors );
 
@@ -147,7 +149,7 @@ export default function McpToolsSubpage( {
 	};
 
 	const handlePageToggle = ( enabled ) => {
-		const overrides = getOverridesToMatch( tools, enabled );
+		const overrides = getOverridesToMatch( ordinaryTools, enabled );
 		const groupIntents = { [ toolCategory ]: enabled };
 		if ( ! enabled ) {
 			// Disabling: also clear this category's per-group intents so a future
@@ -224,7 +226,8 @@ export default function McpToolsSubpage( {
 		return null;
 	}
 
-	const pageAllEnabled = tools.length > 0 && tools.every( ( [ , tool ] ) => tool.enabled );
+	const pageAllEnabled =
+		ordinaryTools.length > 0 && ordinaryTools.every( ( [ , tool ] ) => tool.enabled );
 
 	return (
 		<Main wideLayout className="mcp mcp-tools-subpage">
@@ -250,8 +253,9 @@ export default function McpToolsSubpage( {
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ pageAllEnabled }
-									disabled={ mutation.isPending || tools.length === 0 }
+									disabled={ mutation.isPending || ordinaryTools.length === 0 }
 									label={ <Text weight="600">{ translate( 'Enable all' ) }</Text> }
+									help={ getMcpBulkHelp( tools.length - ordinaryTools.length ) }
 									onChange={ handlePageToggle }
 								/>
 							</VStack>
@@ -262,7 +266,7 @@ export default function McpToolsSubpage( {
 						<VStack spacing={ 3 }>
 							{ groups.map( ( { group: descriptor, label, tools: groupTools } ) => {
 								const groupKey = descriptor?.name ?? '__other__';
-								const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
+								const ordinaryGroupTools = getOrdinaryTools( groupTools );
 								const isOpen = openGroups.has( groupKey );
 
 								return (
@@ -279,17 +283,26 @@ export default function McpToolsSubpage( {
 														</Text>
 													) }
 												</VStack>
-												<div className="mcp-tools-subpage__group-toggle">
-													<ToggleControl
-														__nextHasNoMarginBottom
-														checked={ allGroupEnabled }
-														disabled={ mutation.isPending }
-														label={ translate( 'Enable all' ) }
-														onChange={ ( checked ) =>
-															handleGroupEnableAll( descriptor?.name ?? null, groupTools, checked )
-														}
-													/>
-												</div>
+												{ ordinaryGroupTools.length > 0 && (
+													<div className="mcp-tools-subpage__group-toggle">
+														<ToggleControl
+															__nextHasNoMarginBottom
+															checked={ ordinaryGroupTools.every( ( [ , tool ] ) => tool.enabled ) }
+															disabled={ mutation.isPending }
+															label={ translate( 'Enable all' ) }
+															help={ getMcpBulkHelp(
+																groupTools.length - ordinaryGroupTools.length
+															) }
+															onChange={ ( checked ) =>
+																handleGroupEnableAll(
+																	descriptor?.name ?? null,
+																	ordinaryGroupTools,
+																	checked
+																)
+															}
+														/>
+													</div>
+												) }
 												<Button
 													className="mcp-tools-subpage__group-chevron"
 													icon={ isOpen ? chevronUp : chevronDown }
@@ -314,13 +327,10 @@ export default function McpToolsSubpage( {
 															>
 																<VStack spacing={ 4 }>
 																	{ subTools.map( ( [ toolId, tool ] ) => (
-																		<ToggleControl
+																		<McpToolToggle
 																			key={ toolId }
-																			__nextHasNoMarginBottom
-																			checked={ tool.enabled }
+																			tool={ tool }
 																			disabled={ mutation.isPending }
-																			label={ tool.title }
-																			help={ tool.description }
 																			onChange={ ( checked ) =>
 																				handleToolChange(
 																					toolId,

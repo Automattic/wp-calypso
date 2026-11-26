@@ -153,3 +153,32 @@ export function getDashboardUrl( pathname: string, query: Query = {} ): string |
 	const path = getDashboardPath( pathname, query );
 	return path === null ? null : buildDashboardLink( 'a4a', path );
 }
+
+// Multi-site Dashboard paths and the pages of this app they came from. The
+// first page listed for a path wins.
+const CLASSIC_PATHS = new Map< string, string >();
+for ( const [ prefix, target ] of DASHBOARD_PATHS ) {
+	if ( typeof target === 'string' && ! CLASSIC_PATHS.has( target ) ) {
+		CLASSIC_PATHS.set( target, prefix );
+	}
+}
+
+/**
+ * Returns this app's URL for a Multi-site Dashboard path, keeping its query and
+ * hash. Absolute URLs and paths with no other page here come back unchanged.
+ */
+export function getClassicPath( url: string ): string {
+	const match = url.match( /^(\/(?!\/)[^?#]*)(.*)$/ );
+	if ( ! match ) {
+		return url;
+	}
+	const [ , pathname, suffix ] = match;
+	const path = pathname.replace( /\/+$/, '' ) || '/';
+
+	if ( path === '/hosting' || path.startsWith( '/hosting/' ) ) {
+		return A4A_MARKETPLACE_HOSTING_LINK + path.slice( '/hosting'.length ) + suffix;
+	}
+
+	const classicPath = CLASSIC_PATHS.get( path );
+	return classicPath ? classicPath + suffix : url;
+}

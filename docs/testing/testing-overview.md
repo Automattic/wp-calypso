@@ -1,21 +1,21 @@
 ## Server side tests
 
-This test configuration contains unit tests that verify code located in `server` top level folder.
+This test configuration contains unit tests that verify code located in the `client/server` folder.
 
 It supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
 
-Tests can be run in 3 different modes:
+Tests can be run in 2 different modes:
 
 ```bash
 > # run the entire server suite
 > yarn run test-server
-> # run a configuration customized to work with continuous integration
-> yarn run test-server:ci
 > # run tests in watch mode, by default it executes tests for the modified files only
-> yarn run test-client:watch
+> yarn run test-server:watch
 ```
 
 Those tests are executed on every push on continuous integration (we use TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
+
+The server tests run on Vitest, as do the `build-tools` tests (`yarn run test-build-tools`). Arguments are Vitest's, for example a path to run a subset of the tests.
 
 _Check also how to write [unit tests](unit-tests.md)._
 
@@ -25,29 +25,18 @@ This test configuration contains unit and component tests that verify code locat
 
 It supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
 
-Tests can be run in 3 different modes:
+Tests can be run in 2 different modes:
 
 ```bash
 > # run the entire client suite
 > yarn run test-client
-> # run a configuration customized to work with continuous integration
-> yarn run test-server:ci
 > # run tests in watch mode, by default it executes tests for the modified files only
 > yarn run test-client:watch
 ```
 
 They are executed on every push on continuous integration (TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
 
-The client tests are moving from Jest to Vitest one directory at a time. The directories listed in `test/client/vitest-directories.js` run on Vitest, and `yarn run test-client` skips them:
-
-```bash
-> # run the client tests that have moved to Vitest; arguments are Vitest's, for example a path
-> yarn run test-client:vitest [ path ]
-> # watch them
-> yarn run test-client:vitest:watch [ path ]
-```
-
-To move a directory, add it to that list, run `node test/client/jest-to-vitest-codemod.mjs` to rewrite its tests for Vitest, and fix what it reports. A test that can't move yet stays on Jest through the list's `onJest`. Tests in the listed directories can't use the `jest` global: import `vi` from `vitest` instead.
+The client tests run on Vitest. Arguments are Vitest's, for example a path to run a subset of the tests. Import `vi` from `vitest` instead of using the `jest` global.
 
 Often your changes will affect other parts of the application, so it's a good idea to run all the unit tests locally before checking in.
 
@@ -65,23 +54,6 @@ This test configuration contains unit tests for the packages in the `packages` t
 > # run one package's tests, if it has a `test` script
 > yarn workspace <package name> test
 ```
-
-## Integration tests
-
-This test configuration contains integration tests that verify code located in `bin`, `client`, `server` and `test` top level folders. They should test how a group of components or a larger part of business logic works together.
-
-It supports automatic test discovery. We only need to put a test file into a `integration` subfolder, next to the files we want to test.
-
-Tests can be run in 2 different modes:
-
-```bash
-> # run the entire integration suite
-> yarn run test-integration
-> # run a configuration customized to work with continuous integration
-> yarn run test-integration:ci
-```
-
-They run daily on continuous integration (TeamCity), because they can use network connection or memory intensive processing and therefore can have longer runtime.
 
 ## End-to-end tests
 

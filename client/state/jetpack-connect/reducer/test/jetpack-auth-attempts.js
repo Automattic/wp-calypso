@@ -1,7 +1,4 @@
-import {
-	JETPACK_CONNECT_COMPLETE_FLOW,
-	JETPACK_CONNECT_RETRY_AUTH,
-} from 'calypso/state/jetpack-connect/action-types';
+import { JETPACK_CONNECT_RETRY_AUTH } from 'calypso/state/jetpack-connect/action-types';
 import reducer, { authAttempts } from '../jetpack-auth-attempts';
 
 describe( '#authAttempts()', () => {
@@ -43,18 +40,6 @@ describe( '#authAttempts()', () => {
 		);
 
 		expect( state ).toMatchObject( { attempt: 2 } );
-	} );
-
-	test( 'should clear state on completion', () => {
-		const state = authAttempts(
-			{ timestamp: Date.now(), attempt: 1 },
-			{
-				type: JETPACK_CONNECT_COMPLETE_FLOW,
-				slug: 'example.com',
-			}
-		);
-
-		expect( state ).not.toBeDefined();
 	} );
 } );
 

@@ -25,10 +25,6 @@ export interface StatsNoticeProps {
 	isOverLimit?: boolean;
 	isNearLimit?: boolean;
 	hasWpcomUpsell?: boolean;
-	canManageOptions?: boolean;
-	hasCommercialStats?: boolean;
-	isPremiumAnalyticsEnabled?: boolean;
-	premiumAnalyticsDashboardUrl?: string | null;
 }
 
 export interface NoticeBodyProps {

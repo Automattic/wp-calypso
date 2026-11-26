@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render } from '@testing-library/react';
 import { Component, createRef } from 'react';
+import { vi } from 'vitest';
 import { DropZone } from '../';
 
 class Wrapper extends Component {
@@ -30,10 +31,12 @@ describe( 'index', () => {
 	}
 
 	beforeAll( () => {
-		window.MutationObserver = jest.fn( () => ( {
-			observe: jest.fn(),
-			disconnect: jest.fn(),
-		} ) );
+		window.MutationObserver = vi.fn( function () {
+			return {
+				observe: vi.fn(),
+				disconnect: vi.fn(),
+			};
+		} );
 	} );
 
 	afterAll( () => {
@@ -44,7 +47,7 @@ describe( 'index', () => {
 
 	afterEach( () => {
 		// Restore the instance and HTMLElement.prototype.contains spies some tests install.
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	test( 'should render as a child of its container by default', () => {
@@ -133,7 +136,7 @@ describe( 'index', () => {
 
 	test( 'should further highlight the drop zone when dragging over the element', () => {
 		const tree = renderDropZone();
-		jest.spyOn( tree, 'isWithinZoneBounds' ).mockReturnValue( true );
+		vi.spyOn( tree, 'isWithinZoneBounds' ).mockReturnValue( true );
 
 		act( () => {
 			window.dispatchEvent( new window.MouseEvent( 'dragenter' ) );
@@ -155,8 +158,8 @@ describe( 'index', () => {
 	} );
 
 	test( 'should call onDrop with the raw event data when a drop occurs', () => {
-		const spyDrop = jest.fn();
-		jest.spyOn( window.HTMLElement.prototype, 'contains' ).mockReturnValue( true );
+		const spyDrop = vi.fn();
+		vi.spyOn( window.HTMLElement.prototype, 'contains' ).mockReturnValue( true );
 
 		renderDropZone( { onDrop: spyDrop } );
 
@@ -170,8 +173,8 @@ describe( 'index', () => {
 	} );
 
 	test( 'should call onFilesDrop with the files array when a drop occurs', () => {
-		const spyDrop = jest.fn();
-		jest.spyOn( window.HTMLElement.prototype, 'contains' ).mockReturnValue( true );
+		const spyDrop = vi.fn();
+		vi.spyOn( window.HTMLElement.prototype, 'contains' ).mockReturnValue( true );
 
 		renderDropZone( { onFilesDrop: spyDrop } );
 
@@ -186,7 +189,7 @@ describe( 'index', () => {
 	} );
 
 	test( 'should not call onFilesDrop if onVerifyValidTransfer returns false', () => {
-		const spyDrop = jest.fn();
+		const spyDrop = vi.fn();
 
 		renderDropZone( {
 			fullScreen: true, // bypass a Node.contains check on the drop event

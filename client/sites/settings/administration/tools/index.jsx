@@ -12,7 +12,6 @@ import {
 	getPurchasesError,
 } from 'calypso/state/purchases/selectors';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
-import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -272,7 +271,6 @@ export default connect(
 			showStartSiteTransfer,
 			showLeaveSite,
 			siteId,
-			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
 		};
 	},
 	{

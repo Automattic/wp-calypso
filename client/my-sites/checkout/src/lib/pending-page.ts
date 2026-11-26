@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { determineUrlType, isAllowedRedirectUrl, URL_TYPE } from '@automattic/calypso-url';
+import { STUDIO_WEB_HOSTS } from 'calypso/lib/studio/checkout-urls';
 import { SUCCESS, ERROR, FAILURE, PROCESSING, ASYNC_PENDING } from '../types/order-transaction';
 import type { OrderTransaction } from '../types/order-transaction';
 import type { Receipt } from '@automattic/api-core';
@@ -308,6 +309,7 @@ function isRedirectAllowed( url: string, siteSlug: string | undefined ): boolean
 		'agencies-beta.automattic.com',
 		'agencies.localhost',
 		'my.pressable.com',
+		...STUDIO_WEB_HOSTS,
 		...( siteSlug ? [ siteSlug.includes( '::' ) ? siteSlug.split( '::' )[ 0 ] : siteSlug ] : [] ),
 	];
 

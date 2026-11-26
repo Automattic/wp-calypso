@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
@@ -96,5 +96,25 @@ describe( 'getHeaderText client-name casing', () => {
 		expect( clientName ).toBeVisible();
 		expect( clientName ).not.toHaveClass( 'is-exact-case' );
 		expect( clientName ).toHaveTextContent( 'crowdsignal' );
+	} );
+
+	test( 'names WordPress Studio when the login returns to the Studio checkout', () => {
+		const headerText = getHeaderText( {
+			isSocialFirst: true,
+			twoFactorAuthType: null,
+			isManualRenewalImmediateLoginAttempt: false,
+			socialConnect: false,
+			linkingSocialService: '',
+			action: 'login',
+			currentQuery: {},
+			oauth2Client: { id: 0 },
+			isFromStudioCheckout: true,
+			translate: translate as unknown as ( arg0: string, arg1?: object ) => TranslateResult,
+		} as Parameters< typeof getHeaderText >[ 0 ] );
+		const { container } = render( <div>{ headerText }</div> );
+		const clientName = container.querySelector( '.wp-login__one-login-header-client-name' );
+
+		expect( clientName ).toHaveClass( 'is-exact-case' );
+		expect( clientName ).toHaveTextContent( 'WordPress Studio' );
 	} );
 } );

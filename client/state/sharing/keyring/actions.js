@@ -2,7 +2,6 @@ import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
 	KEYRING_CONNECTION_DELETE,
-	KEYRING_CONNECTION_DELETE_FAILURE,
 	KEYRING_CONNECTIONS_RECEIVE,
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
@@ -12,7 +11,6 @@ import {
 	P2_CONNECTIONS_REQUEST_FAILURE,
 	P2_CONNECTIONS_REQUEST_SUCCESS,
 	P2_CONNECTION_DELETE,
-	P2_CONNECTION_DELETE_FAILURE,
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
@@ -106,11 +104,6 @@ export function deleteStoredKeyringConnection( connection ) {
 					dispatch( deleteKeyringConnectionSuccess( connection ) );
 				}
 
-				dispatch( {
-					type: KEYRING_CONNECTION_DELETE_FAILURE,
-					error: { ...error, label: connection.label },
-				} );
-
 				dispatch(
 					errorNotice(
 						translate( 'The %(service)s account was unable to be disconnected.', {
@@ -190,11 +183,6 @@ export function deleteP2KeyringConnection( connection, siteId ) {
 					} );
 					dispatch( deleteKeyringConnectionSuccess( connection ) );
 				}
-
-				dispatch( {
-					type: P2_CONNECTION_DELETE_FAILURE,
-					error: { ...error, label: connection.label },
-				} );
 
 				dispatch(
 					errorNotice(

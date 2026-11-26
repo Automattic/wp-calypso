@@ -8,25 +8,26 @@ import {
 } from '@automattic/calypso-products';
 import deepFreeze from 'deep-freeze';
 import moment from 'moment';
+import { vi } from 'vitest';
 import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
+import getECommerceTrialDaysLeft from 'calypso/state/sites/plans/selectors/trials/get-ecommerce-trial-days-left';
+import getMigrationTrialDaysLeft from 'calypso/state/sites/plans/selectors/trials/get-migration-trial-days-left';
+import getMigrationTrialExpiration from 'calypso/state/sites/plans/selectors/trials/get-migration-trial-expiration';
+import isECommerceTrialExpired from 'calypso/state/sites/plans/selectors/trials/is-ecommerce-trial-expired';
+import isMigrationTrialExpired from 'calypso/state/sites/plans/selectors/trials/is-migration-trial-expired';
 import {
-	getECommerceTrialDaysLeft,
 	getECommerceTrialExpiration,
-	getMigrationTrialDaysLeft,
-	getMigrationTrialExpiration,
-	isECommerceTrialExpired,
-	isMigrationTrialExpired,
 	isSiteOnECommerceTrial,
 	isSiteOnMigrationTrial,
 	isSiteOnWooExpressEcommerceTrial,
 } from '../selectors';
 
 // Mock the config system
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const mock = () => '';
-	mock.isEnabled = jest.fn( () => true );
+	mock.isEnabled = vi.fn( () => true );
 
-	return mock;
+	return { ...mock, default: mock };
 } );
 
 // Mock the Migration Trial feature flag (plans/migration-trial)
@@ -41,7 +42,7 @@ describe( 'trials', () => {
 	} );
 
 	afterEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	function getState( plan, siteId ) {
@@ -197,7 +198,7 @@ describe( 'trials', () => {
 
 	describe( '#getECommerceTrialDaysLeft()', () => {
 		const siteId = 1337;
-		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
+		vi.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
 
 		test( 'Should return the correct number of days left before the trial expires', () => {
 			const expiryDate = '2022-02-10T00:00:00+00:00';
@@ -210,7 +211,7 @@ describe( 'trials', () => {
 
 	describe( '#isECommerceTrialExpired()', () => {
 		const siteId = 1337;
-		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
+		vi.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
 
 		test( 'The trial period should be expired', () => {
 			const expiryDate = '2022-01-09T00:00:00+00:00';
@@ -276,7 +277,7 @@ describe( 'trials', () => {
 
 	describe( '#getMigrationTrialDaysLeft()', () => {
 		const siteId = 1337;
-		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
+		vi.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
 
 		test( 'Should return the correct number of days left before the trial expires', () => {
 			const expiryDate = '2022-02-10T00:00:00+00:00';
@@ -293,7 +294,7 @@ describe( 'trials', () => {
 
 	describe( '#isMigrationTrialExpired()', () => {
 		const siteId = 1337;
-		jest.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
+		vi.useFakeTimers().setSystemTime( new Date( '2022-01-10T00:00:00+00:00' ) );
 
 		test( 'The trial period should be expired', () => {
 			const expiryDate = '2022-01-09T00:00:00+00:00';

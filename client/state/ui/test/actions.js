@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	NOTIFICATIONS_PANEL_TOGGLE,
 	MOST_RECENTLY_SELECTED_SITE_SET,
@@ -14,7 +15,7 @@ import {
 describe( 'actions', () => {
 	describe( 'setAllSitesSelected()', () => {
 		test( 'should dispatch actions for clearing the selected site ID', () => {
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 
 			setAllSitesSelected()( dispatch );
 
@@ -43,7 +44,7 @@ describe( 'actions', () => {
 	describe( 'setSelectedSiteId()', () => {
 		test( 'should dispatch actions for selected site IDs', () => {
 			const siteId = 2916284;
-			const dispatch = jest.fn();
+			const dispatch = vi.fn();
 
 			setSelectedSiteId( siteId )( dispatch );
 

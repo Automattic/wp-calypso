@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Sparkline should have className if provided, as well as sparkline class 1`] = `
+exports[`Sparkline > should have className if provided, as well as sparkline class 1`] = `
 <div>
   <div
     class="d3-base sparkline test__foobar"
@@ -8,7 +8,7 @@ exports[`Sparkline should have className if provided, as well as sparkline class
 </div>
 `;
 
-exports[`Sparkline should have sparkline class 1`] = `
+exports[`Sparkline > should have sparkline class 1`] = `
 <div>
   <div
     class="d3-base sparkline"

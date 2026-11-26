@@ -1,15 +1,16 @@
+import { vi } from 'vitest';
 import { createTransientMedia, validateMediaItem } from 'calypso/lib/media/utils';
 import * as syncActions from 'calypso/state/media/actions';
 import { createTransientMediaItems as createTransientMediaItemsThunk } from 'calypso/state/media/thunks/create-transient-media-items';
 import * as dateUtils from 'calypso/state/media/utils/transient-date';
 
-jest.mock( 'calypso/lib/media/utils', () => ( {
-	createTransientMedia: jest.fn(),
-	validateMediaItem: jest.fn(),
+vi.mock( 'calypso/lib/media/utils', () => ( {
+	createTransientMedia: vi.fn(),
+	validateMediaItem: vi.fn(),
 } ) );
 
 describe( 'media - thunks - createTransientMediaItems', () => {
-	const dispatch = jest.fn();
+	const dispatch = vi.fn();
 
 	const transientDate = Symbol( 'transient date' );
 	const siteId = 1343323;
@@ -25,12 +26,12 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 		createTransientMediaItemsThunk( ...args )( dispatch );
 
 	afterEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		createTransientMedia.mockImplementation( ( x ) => x );
 	} );
 
 	it( 'should return the list of transient items', () => {
-		jest.spyOn( dateUtils, 'getTransientDate' ).mockReturnValue( transientDate );
+		vi.spyOn( dateUtils, 'getTransientDate' ).mockReturnValue( transientDate );
 		createTransientMedia.mockReturnValueOnce( { transient: true } );
 		const result = createTransientMediaItems( [ file ], site );
 		expect( result ).toEqual( [
@@ -44,7 +45,7 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 
 	describe( 'actions', () => {
 		it( 'should dispatch createMediaItem', () => {
-			const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
+			const createMediaItem = vi.spyOn( syncActions, 'createMediaItem' );
 			createTransientMediaItems( [ file ], site );
 
 			expect( createMediaItem ).toHaveBeenCalledTimes( 1 );
@@ -55,7 +56,7 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 		it( 'should skip the file if validation returns errors', () => {
 			validateMediaItem.mockReturnValueOnce( [ 'an error' ] );
 
-			const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
+			const createMediaItem = vi.spyOn( syncActions, 'createMediaItem' );
 
 			// upon failure we return undefined for that file rather than throwing
 			expect( createTransientMediaItems( [ file ], site ) ).toEqual( [ undefined ] );
@@ -74,7 +75,7 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 			( nonError ) => {
 				validateMediaItem.mockReturnValueOnce( nonError );
 
-				const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
+				const createMediaItem = vi.spyOn( syncActions, 'createMediaItem' );
 
 				createTransientMediaItems( [ file ], site );
 
@@ -94,7 +95,7 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 		it( 'should generate a transient ID', () => {
 			createTransientMedia.mockReturnValueOnce( { ID: generatedId } );
 
-			const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
+			const createMediaItem = vi.spyOn( syncActions, 'createMediaItem' );
 
 			const { ID, ...fileWithoutPassedInId } = file;
 
@@ -111,7 +112,7 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 		it( 'should override the generated transient ID with the one passed in', () => {
 			// just a descriptive alias
 			const { ID: passedInId } = file;
-			const createMediaItem = jest.spyOn( syncActions, 'createMediaItem' );
+			const createMediaItem = vi.spyOn( syncActions, 'createMediaItem' );
 
 			createTransientMediaItems( [ file ], site );
 

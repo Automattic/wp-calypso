@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import * as selectors from 'calypso/state/partner-portal/partner/selectors';
@@ -175,24 +175,6 @@ describe( 'selectors', () => {
 
 			state.partnerPortal.partner.current = { keys: [] };
 			expect( getCurrentPartner( state ) ).toEqual( state.partnerPortal.partner.current );
-		} );
-	} );
-
-	describe( '#getPartnerRequestError()', () => {
-		test( 'should return the value of error', () => {
-			const { getPartnerRequestError } = selectors;
-			const state = {
-				partnerPortal: {
-					partner: {
-						error: '',
-					},
-				},
-			};
-
-			expect( getPartnerRequestError( state ) ).toEqual( state.partnerPortal.partner.error );
-
-			state.partnerPortal.partner.error = 'Foo';
-			expect( getPartnerRequestError( state ) ).toEqual( state.partnerPortal.partner.error );
 		} );
 	} );
 

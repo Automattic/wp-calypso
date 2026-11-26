@@ -9,7 +9,9 @@ import {
 	WPCOM_FEATURES_PARTNER_THEMES,
 } from '@automattic/calypso-products';
 import { getQueryArgs } from '@wordpress/url';
+import { vi } from 'vitest';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
+import { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 import {
 	getTheme,
 	getCanonicalTheme,
@@ -18,20 +20,13 @@ import {
 	getThemesForQuery,
 	getLastThemeQuery,
 	isRequestingThemesForQuery,
-	getThemesFoundForQuery,
-	getThemesLastPageForQuery,
 	isThemesLastPageForQuery,
 	getThemesForQueryIgnoringPage,
-	isRequestingThemesForQueryIgnoringPage,
 	getThemeDetailsUrl,
-	getThemeSupportUrl,
-	getThemeHelpUrl,
 	getThemeCustomizeUrl,
 	getThemeSignupUrl,
 	getThemeDemoUrl,
-	getThemeForumUrl,
 	getPremiumThemePrice,
-	getPurchasedThemes,
 	getActiveTheme,
 	isRequestingActiveTheme,
 	isWporgTheme,
@@ -132,12 +127,12 @@ const nokul = {
 	},
 };
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
-	mock.isEnabled = jest.fn( () => {
+	mock.isEnabled = vi.fn( () => {
 		return true;
 	} );
-	return mock;
+	return { ...mock, default: mock };
 } );
 
 describe( 'themes selectors', () => {
@@ -145,7 +140,6 @@ describe( 'themes selectors', () => {
 		getTheme.memoizedSelector.cache.clear();
 		getThemesForQuery.memoizedSelector.cache.clear();
 		getThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
-		isRequestingThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
 	} );
 
 	describe( '#getTheme()', () => {
@@ -518,72 +512,6 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isRequesting ).toBe( false );
-		} );
-	} );
-
-	describe( '#getThemesFoundForQuery()', () => {
-		test( 'should return null if the site query is not tracked', () => {
-			const found = getThemesFoundForQuery(
-				{
-					themes: {
-						queries: {},
-					},
-				},
-				2916284,
-				{ search: 'Sixteen' }
-			);
-
-			expect( found ).toBeNull();
-		} );
-
-		test( 'should return the found items for a site query', () => {
-			const found = getThemesFoundForQuery(
-				{
-					themes: {
-						queries: {
-							2916284: new ThemeQueryManager( {
-								items: {
-									twentysixteen,
-								},
-								queries: {
-									'[["search","Sixteen"]]': {
-										itemKeys: [ 'twentysixteen' ],
-										found: 1,
-									},
-								},
-							} ),
-						},
-					},
-				},
-				2916284,
-				{ search: 'Sixteen' }
-			);
-
-			expect( found ).toEqual( 1 );
-		} );
-
-		test( 'should return zero if in-fact there are zero items', () => {
-			const found = getThemesFoundForQuery(
-				{
-					themes: {
-						queries: {
-							2916284: new ThemeQueryManager( {
-								items: {},
-								queries: {
-									'[["search","Umpteen"]]': {
-										itemKeys: [],
-										found: 0,
-									},
-								},
-							} ),
-						},
-					},
-				},
-				2916284,
-				{ search: 'Umpteen' }
-			);
-
-			expect( found ).toEqual( 0 );
 		} );
 	} );
 
@@ -963,54 +891,6 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	describe( '#isRequestingThemesForQueryIgnoringPage()', () => {
-		test( 'should return false if not requesting for query', () => {
-			const isRequesting = isRequestingThemesForQueryIgnoringPage(
-				{
-					themes: {
-						queryRequests: {},
-					},
-				},
-				2916284,
-				{ search: 'twen' }
-			);
-
-			expect( isRequesting ).toBe( false );
-		} );
-
-		test( 'should return true requesting for query at exact page', () => {
-			const isRequesting = isRequestingThemesForQueryIgnoringPage(
-				{
-					themes: {
-						queryRequests: {
-							'2916284:{"search":"twen","page":4}': true,
-						},
-					},
-				},
-				2916284,
-				{ search: 'twen', page: 4 }
-			);
-
-			expect( isRequesting ).toBe( true );
-		} );
-
-		test( 'should return true requesting for query without page specified', () => {
-			const isRequesting = isRequestingThemesForQueryIgnoringPage(
-				{
-					themes: {
-						queryRequests: {
-							'2916284:{"search":"twen","page":4}': true,
-						},
-					},
-				},
-				2916284,
-				{ search: 'twen' }
-			);
-
-			expect( isRequesting ).toBe( true );
-		} );
-	} );
-
 	describe( '#getThemeDetailsUrl', () => {
 		test( 'given a theme and no site ID, should return the Calypso theme sheet URL', () => {
 			const detailsUrl = getThemeDetailsUrl(
@@ -1045,205 +925,6 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 			expect( detailsUrl ).toEqual( '/theme/twentysixteen/example.wordpress.com' );
-		} );
-	} );
-
-	describe( '#getThemeSupportUrl', () => {
-		describe( 'for a premium theme', () => {
-			test( 'given no site ID, should return the support URL', () => {
-				const supportUrl = getThemeSupportUrl(
-					{
-						sites: {
-							items: {
-								2916284: {
-									ID: 2916284,
-									URL: 'https://example.wordpress.com',
-								},
-							},
-						},
-						themes: {
-							queries: {
-								wpcom: new ThemeQueryManager( {
-									items: { mood },
-								} ),
-							},
-						},
-					},
-					'mood'
-				);
-				expect( supportUrl ).toEqual( '/theme/mood/setup' );
-			} );
-
-			test( 'given a wpcom site ID, should return the support URL', () => {
-				const supportUrl = getThemeSupportUrl(
-					{
-						sites: {
-							items: {
-								2916284: {
-									ID: 2916284,
-									URL: 'https://example.wordpress.com',
-								},
-							},
-						},
-						themes: {
-							queries: {
-								wpcom: new ThemeQueryManager( {
-									items: { mood },
-								} ),
-							},
-						},
-					},
-					'mood',
-					2916284
-				);
-				expect( supportUrl ).toEqual( '/theme/mood/setup/example.wordpress.com' );
-			} );
-		} );
-
-		describe( 'for a free theme', () => {
-			test( 'given no site ID, should return null', () => {
-				const supportUrl = getThemeSupportUrl(
-					{
-						sites: {
-							items: {
-								2916284: {
-									ID: 2916284,
-									URL: 'https://example.wordpress.com',
-								},
-							},
-						},
-						themes: {
-							queries: {
-								wpcom: new ThemeQueryManager( {
-									items: { twentysixteen },
-								} ),
-							},
-						},
-					},
-					'twentysixteen'
-				);
-				expect( supportUrl ).toBeNull();
-			} );
-
-			test( 'given a wpcom site ID, should return null', () => {
-				const supportUrl = getThemeSupportUrl(
-					{
-						sites: {
-							items: {
-								2916284: {
-									ID: 2916284,
-									URL: 'https://example.wordpress.com',
-								},
-							},
-						},
-						themes: {
-							queries: {
-								wpcom: new ThemeQueryManager( {
-									items: { twentysixteen },
-								} ),
-							},
-						},
-					},
-					'twentysixteen',
-					2916284
-				);
-				expect( supportUrl ).toBeNull();
-			} );
-
-			test( 'given a Jetpack site ID, should return null', () => {
-				const supportUrl = getThemeSupportUrl(
-					{
-						sites: {
-							items: {
-								77203074: {
-									ID: 77203074,
-									URL: 'https://example.net',
-									jetpack: true,
-									options: {
-										admin_url: 'https://example.net/wp-admin/',
-									},
-								},
-							},
-						},
-						themes: {
-							queries: {
-								wpcom: new ThemeQueryManager( {
-									items: { twentysixteen },
-								} ),
-							},
-						},
-					},
-					'twentysixteen',
-					77203074
-				);
-				expect( supportUrl ).toBeNull();
-			} );
-		} );
-	} );
-
-	describe( '#getThemeHelpUrl', () => {
-		test( 'given a theme and no site ID, should return the help URL', () => {
-			const helpUrl = getThemeHelpUrl(
-				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								URL: 'https://example.wordpress.com',
-							},
-						},
-					},
-				},
-				'mood'
-			);
-			expect( helpUrl ).toEqual( '/theme/mood/support' );
-		} );
-
-		test( 'given a theme and a wpcom site ID, should return the correct help URL', () => {
-			const helpUrl = getThemeHelpUrl(
-				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								URL: 'https://example.wordpress.com',
-							},
-						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { mood },
-							} ),
-						},
-					},
-				},
-				'mood',
-				2916284
-			);
-			expect( helpUrl ).toEqual( '/theme/mood/support/example.wordpress.com' );
-		} );
-
-		test( 'given a theme and Jetpack site ID, should return the help url', () => {
-			const helpUrl = getThemeHelpUrl(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-								options: {
-									admin_url: 'https://example.net/wp-admin/',
-								},
-							},
-						},
-					},
-				},
-				'twentysixteen',
-				77203074
-			);
-			expect( helpUrl ).toEqual( '/theme/twentysixteen/support/example.net' );
 		} );
 	} );
 
@@ -1552,147 +1233,6 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( demoUrl ).toEqual( 'https://wp-themes.com/twentyseventeen' );
-		} );
-	} );
-
-	describe( '#getThemeForumUrl', () => {
-		describe( 'on a WP.com site', () => {
-			test( 'given a free theme, should return the general support forum URL', () => {
-				const forumUrl = getThemeForumUrl(
-					{
-						sites: {
-							items: {},
-						},
-						themes: {
-							queries: {
-								wpcom: new ThemeQueryManager( {
-									items: { twentysixteen },
-								} ),
-							},
-						},
-					},
-					'twentysixteen'
-				);
-
-				expect( forumUrl ).toEqual( '//wordpress.com/forums/' );
-			} );
-
-			test( 'given a premium theme, should return the general support forum URL', () => {
-				const forumUrl = getThemeForumUrl(
-					{
-						sites: {
-							items: {},
-						},
-						themes: {
-							queries: {
-								wpcom: new ThemeQueryManager( {
-									items: { mood },
-								} ),
-							},
-						},
-					},
-					'mood'
-				);
-
-				expect( forumUrl ).toEqual( '//wordpress.com/forums/' );
-			} );
-		} );
-
-		describe( 'on a Jetpack site', () => {
-			test( "given a theme that's found on neither WP.com nor WP.org, should return null", () => {
-				const forumUrl = getThemeForumUrl(
-					{
-						sites: {
-							items: {
-								77203074: {
-									ID: 77203074,
-									URL: 'https://example.net',
-									jetpack: true,
-								},
-							},
-						},
-						themes: {
-							queries: {},
-						},
-					},
-					'twentysixteen',
-					77203074
-				);
-
-				expect( forumUrl ).toBeNull();
-			} );
-
-			test( "given a theme that's found on WP.com, should return the generic WP.com support forum URL", () => {
-				const forumUrl = getThemeForumUrl(
-					{
-						sites: {
-							items: {
-								77203074: {
-									ID: 77203074,
-									URL: 'https://example.net',
-									jetpack: true,
-								},
-							},
-						},
-						themes: {
-							queries: {
-								wpcom: new ThemeQueryManager( {
-									items: { twentysixteen },
-								} ),
-							},
-						},
-					},
-					'twentysixteen',
-					77203074
-				);
-
-				expect( forumUrl ).toEqual( '//wordpress.com/forums/' );
-			} );
-
-			test( "given a theme that's found on WP.org, should return the correspoding WP.org theme forum URL", () => {
-				const jetpackTheme = {
-					id: 'twentyseventeen',
-					name: 'Twenty Seventeen',
-					author: 'the WordPress team',
-				};
-				const wporgTheme = {
-					demo_uri: 'https://wp-themes.com/twentyseventeen',
-					download: 'http://downloads.wordpress.org/theme/twentyseventeen.1.1.zip',
-					taxonomies: {
-						theme_feature: {
-							'custom-header': 'Custom Header',
-						},
-					},
-				};
-
-				const forumUrl = getThemeForumUrl(
-					{
-						sites: {
-							items: {
-								77203074: {
-									ID: 77203074,
-									URL: 'https://example.net',
-									jetpack: true,
-								},
-							},
-						},
-						themes: {
-							queries: {
-								77203074: new ThemeQueryManager( {
-									items: { twentyseventeen: jetpackTheme },
-								} ),
-								wporg: new ThemeQueryManager( {
-									items: { twentyseventeen: wporgTheme },
-								} ),
-							},
-						},
-					},
-					'twentyseventeen',
-					77203074
-				);
-
-				expect( forumUrl ).toEqual( '//wordpress.org/support/theme/twentyseventeen' );
-			} );
 		} );
 	} );
 
@@ -2227,68 +1767,6 @@ describe( 'themes selectors', () => {
 			);
 
 			expect( isPurchased ).toBe( true );
-		} );
-	} );
-
-	describe( '#getPurchasedThemes', () => {
-		test( 'given 2 purchased themes, return 2 theme names', () => {
-			const purchases = getPurchasedThemes(
-				{
-					purchases: {
-						data: [
-							{
-								ID: 1234567,
-								blog_id: 2916284,
-								meta: 'mood',
-								product_type: 'theme',
-							},
-							{
-								ID: 1234568,
-								blog_id: 2916284,
-								meta: 'skivers',
-								product_type: 'theme',
-							},
-						],
-					},
-				},
-				2916284
-			);
-			expect( purchases ).toEqual( [ 'mood', 'skivers' ] );
-		} );
-		test( 'given 0 purchased themes, return empty array', () => {
-			const purchases = getPurchasedThemes(
-				{
-					purchases: {
-						data: [],
-					},
-				},
-				2916284
-			);
-			expect( purchases ).toEqual( [] );
-		} );
-		test( 'given 2 purchased themes and a query against a different blog, return empty array', () => {
-			const purchases = getPurchasedThemes(
-				{
-					purchases: {
-						data: [
-							{
-								ID: 1234567,
-								blog_id: 2916284,
-								meta: 'mood',
-								product_type: 'theme',
-							},
-							{
-								ID: 1234568,
-								blog_id: 2916284,
-								meta: 'skivers',
-								product_type: 'theme',
-							},
-						],
-					},
-				},
-				11111
-			);
-			expect( purchases ).toEqual( [] );
 		} );
 	} );
 

@@ -1,34 +1,48 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( '@automattic/calypso-router', () => ( {
+import { readConversationsQuery } from '@automattic/api-queries';
+import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { vi } from 'vitest';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { ConversationsInbox } from '..';
+import { makeConversation, makeOwnComment } from '../test/helpers';
+
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { show: jest.fn(), replace: jest.fn() },
+	default: { show: vi.fn(), replace: vi.fn() },
 } ) );
 
 let mockIsNarrow = false;
 
-jest.mock( '@automattic/viewport-react', () => ( {
-	useBreakpoint: jest.fn( () => mockIsNarrow ),
+vi.mock( '@automattic/viewport-react', () => ( {
+	useBreakpoint: vi.fn( () => mockIsNarrow ),
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-jest.mock( 'calypso/reader/stream/use-selected-post-commands', () => ( {
-	useSelectedPostCommands: () => ( { toggleSelectedLike: jest.fn() } ),
+vi.mock( 'calypso/reader/stream/use-selected-post-commands', () => ( {
+	useSelectedPostCommands: () => ( { toggleSelectedLike: vi.fn() } ),
 } ) );
 
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: jest.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: vi.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
 } ) );
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
-	errorNotice: jest.fn( () => ( { type: 'NOTICE_TEST' } ) ),
+vi.mock( 'calypso/state/notices/actions', () => ( {
+	errorNotice: vi.fn( () => ( { type: 'NOTICE_TEST' } ) ),
 } ) );
 
-jest.mock( '../conversation-list', () => ( {
+vi.mock( '../conversation-list', () => ( {
 	ConversationList: ( props: {
-		items: { key: string }[];
+		items: { key: string; unreadCount: number }[];
 		unreadCount: number;
 		selectedKey?: string;
 		followFocus: boolean;
@@ -43,13 +57,15 @@ jest.mock( '../conversation-list', () => ( {
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
 			<p>Follows focus: { props.followFocus ? 'yes' : 'no' }</p>
+			<p>Unread: { props.unreadCount }</p>
 			{ props.markAllCount > 0 && (
 				<button onClick={ props.onMarkAllRead }>Mark { props.markAllCount } as read</button>
 			) }
 			{ props.items.map( ( item ) => (
-				<button key={ item.key } onClick={ () => props.onSelect( item, 'click' ) }>
-					{ item.key }
-				</button>
+				<div key={ item.key }>
+					<button onClick={ () => props.onSelect( item, 'click' ) }>{ item.key }</button>
+					<span>{ `${ item.key }: ${ item.unreadCount } new` }</span>
+				</div>
 			) ) }
 			<button onClick={ () => props.onTabChange( 'yours' ) }>Your comments</button>
 			<button onClick={ () => props.onTabChange( 'unread' ) }>Unread</button>
@@ -60,7 +76,7 @@ jest.mock( '../conversation-list', () => ( {
 	),
 } ) );
 
-jest.mock( '../conversation-detail', () => ( {
+vi.mock( '../conversation-detail', () => ( {
 	ConversationDetail: ( props: {
 		siteId: number;
 		postId: number;
@@ -82,18 +98,6 @@ jest.mock( '../conversation-detail', () => ( {
 		</div>
 	),
 } ) );
-
-import page from '@automattic/calypso-router';
-import { useBreakpoint } from '@automattic/viewport-react';
-import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import nock from 'nock';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { ConversationsInbox } from '..';
-import { makeConversation, makeOwnComment } from '../test/helpers';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -117,13 +121,24 @@ const conversationsPage = ( items = conversations, nextCursor: string | null = n
 
 let requests: string[];
 let replyConversations: ( uri: string ) => object;
+let holdConversations: Promise< void > | undefined;
 let markReadStatus: number;
 let markReadBodies: { counts: Record< string, number > }[];
 
 let queryClient: QueryClient | undefined;
 
-const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) => {
+const renderInbox = (
+	props: { siteId?: string; postId?: string } = {},
+	staleConversations?: typeof conversations
+) => {
 	queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	if ( staleConversations ) {
+		queryClient.setQueryData(
+			readConversationsQuery().queryKey,
+			{ pages: [ conversationsPage( staleConversations ) ], pageParams: [ undefined ] },
+			{ updatedAt: 0 }
+		);
+	}
 	return renderWithProvider( <ConversationsInbox { ...props } />, { queryClient } );
 };
 
@@ -132,19 +147,21 @@ const findRow = ( key: string ) => screen.findByRole( 'button', { name: key } );
 
 beforeEach( () => {
 	mockIsNarrow = false;
-	jest.mocked( page.show ).mockReset();
-	jest.mocked( page.replace ).mockReset();
-	jest.mocked( recordReaderTracksEvent ).mockClear();
+	vi.mocked( page.show ).mockReset();
+	vi.mocked( page.replace ).mockReset();
+	vi.mocked( recordReaderTracksEvent ).mockClear();
 	requests = [];
 	replyConversations = () => conversationsPage();
+	holdConversations = undefined;
 	markReadStatus = 200;
 	markReadBodies = [];
 	nock( BASE )
 		.persist()
 		.get( '/wpcom/v2/read/conversations' )
 		.query( true )
-		.reply( 200, ( uri ) => {
+		.reply( 200, async ( uri ) => {
 			requests.push( uri );
+			await holdConversations;
 			return replyConversations( uri );
 		} )
 		.get( '/wpcom/v2/read/conversations/comments' )
@@ -155,7 +172,7 @@ beforeEach( () => {
 				comments: [
 					makeOwnComment( { postId: 300, commentId: 31 } ),
 					makeOwnComment( { postId: 300, commentId: 32 } ),
-					makeOwnComment( { postId: 400, commentId: 41 } ),
+					makeOwnComment( { postId: 400, commentId: 41, unreadNoteIds: [ 3 ] } ),
 				],
 				next_cursor: null,
 			};
@@ -207,6 +224,15 @@ describe( 'ConversationsInbox', () => {
 		await user.keyboard( 'j' );
 
 		expect( screen.getByText( 'Follows focus: yes' ) ).toBeVisible();
+	} );
+
+	it( 'auto-selects the latest conversation once a cached list is refreshed', async () => {
+		renderInbox( {}, [ conversations[ 2 ], conversations[ 0 ], conversations[ 1 ] ] );
+
+		await waitFor( () =>
+			expect( page.replace ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' )
+		);
+		expect( page.replace ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'selects the conversation from the URL without replacing it', async () => {
@@ -266,6 +292,20 @@ describe( 'ConversationsInbox', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 
 		expect( requests ).toHaveLength( 1 );
+	} );
+
+	it( 'refetches a cached list whose refresh marking a conversation read cancelled', async () => {
+		mockIsNarrow = true;
+		let release = () => {};
+		holdConversations = new Promise( ( resolve ) => ( release = resolve ) );
+		const user = userEvent.setup();
+		renderInbox( {}, [ conversations[ 1 ] ] );
+
+		await waitFor( () => expect( requests ).toHaveLength( 1 ) );
+		await user.click( await findRow( '10-p-200' ) );
+		release();
+
+		expect( await findRow( '10-p-100' ) ).toBeVisible();
 	} );
 
 	it( 'refetches the list when a conversation has more unread notes than it lists', async () => {
@@ -376,15 +416,23 @@ describe( 'ConversationsInbox', () => {
 		expect( await findRow( '10-p-300' ) ).toBeVisible();
 	} );
 
-	it( 'marks a comment read on a post the list has not loaded', async () => {
+	it( 'marks a post only Your comments lists read and clears its count and the badge', async () => {
 		const user = userEvent.setup();
+		// The total counts post 400, which All hasn't paged to.
+		replyConversations = () => ( { ...conversationsPage(), unread_total: 3 } );
 		renderInbox( { siteId: '10', postId: '300' } );
 
 		await findRow( '10-p-300' );
+		expect( screen.getByText( 'Unread: 3' ) ).toBeVisible();
 		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
-		await user.click( await findRow( '10-p-400' ) );
+		await findRow( '10-p-400' );
+		expect( screen.getByText( '10-p-400: 1 new' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: '10-p-400' } ) );
 
 		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 3 ] ] ) );
+		expect( screen.getByText( '10-p-400: 0 new' ) ).toBeVisible();
+		expect( screen.getByText( 'Unread: 2' ) ).toBeVisible();
 	} );
 
 	it( 'lists each post once on Your comments and opens it at your latest comment', async () => {
@@ -426,7 +474,7 @@ describe( 'ConversationsInbox', () => {
 
 	describe( 'Tracks', () => {
 		const tracked = ( name: string ) =>
-			jest
+			vi
 				.mocked( recordReaderTracksEvent )
 				.mock.calls.filter( ( [ eventName ] ) => eventName === name )
 				.map( ( [ , properties ] ) => properties );

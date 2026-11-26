@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import {
 	ComposerProvider,
 	useComposer,
@@ -23,7 +24,7 @@ function Spy( { onMode }: { onMode: ( m: ActiveMode ) => void } ) {
 describe( '<ComposeFab>', () => {
 	it( 'opens the composer in standalone mode with entry_point=fab', async () => {
 		const user = userEvent.setup();
-		const onMode = jest.fn();
+		const onMode = vi.fn();
 		render(
 			<ComposerProvider connectionId={ 7 } config={ testComposerConfig }>
 				<ComposeFab />
@@ -44,7 +45,7 @@ describe( '<ComposeFab>', () => {
 
 	it( 'forwards initialText into the standalone mode payload', async () => {
 		const user = userEvent.setup();
-		const onMode = jest.fn();
+		const onMode = vi.fn();
 		render(
 			<ComposerProvider connectionId={ 7 } config={ testComposerConfig }>
 				<ComposeFab initialText="@alice.bsky.social " />

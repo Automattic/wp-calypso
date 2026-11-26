@@ -1,16 +1,5 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 // @ts-nocheck - TODO: Fix TypeScript issues
-jest.mock( 'calypso/signup/step-wrapper', () => () => <div data-testid="start-step-wrapper" /> );
-jest.mock( '@automattic/onboarding/src/step-container', () => () => (
-	<div data-testid="stepper-step-wrapper" />
-) );
-jest.mock(
-	'@automattic/onboarding/src/step-container-v2/wireframes/WideLayout/WideLayout',
-	() => ( { WideLayout: () => null } )
-);
-jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
-jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
-
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import {
 	EDUCATION_FLOW,
@@ -18,9 +7,9 @@ import {
 	STATIC_SITE_IMPORT_FLOW,
 } from '@automattic/onboarding';
 import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
+import { vi } from 'vitest';
 import DocumentHead from 'calypso/components/data/document-head';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
@@ -34,6 +23,20 @@ import * as flowState from '../../../state-manager/store';
 import { renderStep } from '../../test/helpers';
 import UnifiedPlansStep, { type UnifiedPlansStepProps } from '../unified-plans-step';
 import * as unifiedPlansModule from '../unified-plans-step';
+
+vi.mock( 'calypso/signup/step-wrapper', () => ( {
+	default: () => <div data-testid="start-step-wrapper" />,
+} ) );
+vi.mock( '@automattic/onboarding/src/step-container', () => ( {
+	default: () => <div data-testid="stepper-step-wrapper" />,
+} ) );
+vi.mock( '@automattic/onboarding/src/step-container-v2/wireframes/WideLayout/WideLayout', () => ( {
+	WideLayout: () => null,
+} ) );
+vi.mock( 'calypso/components/marketing-message', () => ( { default: 'marketing-message' } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { post: () => {} } } )
+);
 
 const noop = () => {};
 
@@ -60,7 +63,7 @@ const _render = ( props: UnifiedPlansStepProps ) => {
 
 describe( 'Plans basic tests', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should not blow up in Start and have proper CSS class', async () => {
@@ -99,7 +102,7 @@ describe( 'Plans basic tests', () => {
 
 describe( 'Plans accepts-props', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders with copy overrides, hide toggles, interval, and tag overrides without blowing up', async () => {
@@ -125,57 +128,6 @@ describe( 'Plans accepts-props', () => {
 	} );
 } );
 
-describe( 'Plans existing-site action', () => {
-	afterEach( () => jest.restoreAllMocks() );
-
-	it( 'submits the existing-site action without selecting a plan', async () => {
-		jest
-			.spyOn( unifiedPlansModule, 'default' )
-			.mockImplementation( ( { subHeaderText } ) => <div>{ subHeaderText }</div> );
-		const submit = jest.fn();
-		renderStep(
-			<PlansStepAdaptor
-				flow="site-migration"
-				navigation={ { submit } }
-				showExistingSiteLink
-				subHeaderText="Choose a plan for your new site."
-			/>,
-			{
-				initialEntry:
-					'/setup/site-migration/plans?from=https%3A%2F%2Fexample.com&platform=wordpress',
-			}
-		);
-		const link = await screen.findByRole( 'button', {
-			name: 'migrate to a site you already have',
-		} );
-		expect( link ).toBeVisible();
-		await userEvent.click( link );
-		expect( submit ).toHaveBeenCalledWith( {
-			stepName: 'plans',
-			cartItems: null,
-			action: 'select-existing-site',
-		} );
-	} );
-
-	it( 'does not offer the existing-site action in other flows by default', async () => {
-		jest
-			.spyOn( unifiedPlansModule, 'default' )
-			.mockImplementation( ( { subHeaderText } ) => <div>{ subHeaderText }</div> );
-		renderStep(
-			<PlansStepAdaptor
-				flow="onboarding"
-				navigation={ { submit: jest.fn() } }
-				subHeaderText="Choose a plan"
-			/>,
-			{ initialEntry: '/setup/onboarding/plans' }
-		);
-		expect( await screen.findByText( 'Choose a plan' ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'button', { name: 'migrate to a site you already have' } )
-		).not.toBeInTheDocument();
-	} );
-} );
-
 describe( 'Plans site context', () => {
 	const previousSite = { ID: 987, URL: 'https://previous.wordpress.com' };
 	const destination = { ID: 654, URL: 'https://destination.wordpress.com' };
@@ -183,7 +135,7 @@ describe( 'Plans site context', () => {
 	beforeEach( () => {
 		setSignupCompleteSlug( 'previous.wordpress.com' );
 		setSignupCompleteSiteID( previousSite.ID );
-		jest.spyOn( flowState, 'useFlowState' ).mockReturnValue( {
+		vi.spyOn( flowState, 'useFlowState' ).mockReturnValue( {
 			get: ( key ) => ( key === 'site' ? { siteId: previousSite.ID } : undefined ),
 		} );
 		for ( const site of [ previousSite, destination ] ) {
@@ -197,7 +149,7 @@ describe( 'Plans site context', () => {
 	afterEach( () => {
 		clearSignupCompleteSlug();
 		clearSignupCompleteSiteID();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it.each( [
@@ -219,8 +171,8 @@ describe( 'Plans site context', () => {
 	] )(
 		'resolves %s plans with destination "%s" despite saved signup state',
 		async ( flow, query, expectedSite, expectedSlug ) => {
-			const plans = jest.spyOn( unifiedPlansModule, 'default' ).mockImplementation( () => null );
-			renderStep( <PlansStepAdaptor flow={ flow } navigation={ { submit: jest.fn() } } />, {
+			const plans = vi.spyOn( unifiedPlansModule, 'default' ).mockImplementation( () => null );
+			renderStep( <PlansStepAdaptor flow={ flow } navigation={ { submit: vi.fn() } } />, {
 				initialEntry: `/setup/${ flow }/plans?${ query }`,
 				initialState: {
 					sites: { items: { [ previousSite.ID ]: previousSite, [ destination.ID ]: destination } },

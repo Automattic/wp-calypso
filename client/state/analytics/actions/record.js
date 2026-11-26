@@ -18,12 +18,6 @@ export const recordGoogleEvent = ( category, action, label, value ) =>
 export const recordTracksEvent = ( name, properties ) =>
 	recordEvent( 'tracks', { name, properties } );
 
-export const recordCustomFacebookConversionEvent = ( name, properties ) =>
-	recordEvent( 'fb', { name, properties } );
-
-export const recordCustomAdWordsRemarketingEvent = ( properties ) =>
-	recordEvent( 'adwords', { properties } );
-
 export const recordPageView = ( url, title, service, properties = {}, options = {} ) => ( {
 	type: ANALYTICS_PAGE_VIEW_RECORD,
 	meta: {
@@ -41,5 +35,3 @@ export const recordPageView = ( url, title, service, properties = {}, options = 
 		],
 	},
 } );
-
-export const recordGooglePageView = ( url, title ) => recordPageView( url, title, 'ga' );

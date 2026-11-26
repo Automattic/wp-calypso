@@ -1,29 +1,34 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderToString } from 'react-dom/server';
 import { Provider as ReduxProvider } from 'react-redux';
+import { vi } from 'vitest';
 import { createReduxStore } from 'calypso/state/create-store';
 import { setStore } from 'calypso/state/redux-store';
-import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
+import { receiveTheme } from 'calypso/state/themes/actions';
+import { themeRequestFailure } from 'calypso/state/themes/actions/theme-request-failure';
 import ThemeSheetComponent from '../main';
 
-jest.mock( '@automattic/odie-client/src/data', () => ( {
-	useManageSupportInteraction: jest.fn().mockReturnValue( {
-		startNewInteraction: jest.fn(),
-		resolveInteraction: jest.fn(),
-		addEventToInteraction: jest.fn(),
+vi.mock( '@automattic/odie-client/src/data', () => ( {
+	useManageSupportInteraction: vi.fn().mockReturnValue( {
+		startNewInteraction: vi.fn(),
+		resolveInteraction: vi.fn(),
+		addEventToInteraction: vi.fn(),
 	} ),
-	useGetZendeskConversation: jest.fn(),
-	useOdieChat: jest.fn(),
-	broadcastOdieMessage: jest.fn(),
+	useGetZendeskConversation: vi.fn(),
+	useOdieChat: vi.fn(),
+	broadcastOdieMessage: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
-	require( 'calypso/components/empty-component' )
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+vi.mock(
+	'calypso/my-sites/themes/theme-preview',
+	() => import( 'calypso/components/empty-component' )
 );
-jest.mock( 'dompurify', () => ( {
-	sanitize: jest.fn().mockImplementation( ( text ) => text ),
-} ) );
+vi.mock( 'dompurify', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		sanitize: vi.fn().mockImplementation( ( text ) => text ),
+	} )
+);
 
 const mockWindow = {
 	location: {

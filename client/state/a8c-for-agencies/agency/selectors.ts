@@ -16,10 +16,6 @@ export function getActiveAgencyId( state: A4AStore ): number | undefined {
 	return state.a8cForAgencies.agencies.activeAgency?.id;
 }
 
-export function hasActiveAgencyKey( state: A4AStore ): boolean {
-	return !! getActiveAgencyId( state );
-}
-
 export function hasFetchedAgency( state: A4AStore ): boolean {
 	return state.a8cForAgencies.agencies.hasFetched;
 }

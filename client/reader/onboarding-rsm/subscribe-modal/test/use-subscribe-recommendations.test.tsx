@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, waitFor } from '@testing-library/react';
 import { getLocaleSlug } from 'i18n-calypso';
+import { type MockedFunction, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { useFollowedTags } from 'calypso/reader/data/tags';
@@ -24,29 +25,31 @@ const readFeedQueryTestHarness = {
 
 const mockReadSiteResponses = new Map< number, 'success' | 'error' | 'pending' >();
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+		},
+	} )
+);
+
+vi.mock( 'calypso/reader/data/tags', () => ( {
+	useFollowedTags: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/data/tags', () => ( {
-	useFollowedTags: jest.fn(),
+vi.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	useSiteSubscriptions: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
-	useSiteSubscriptions: jest.fn(),
-} ) );
-
-jest.mock( 'i18n-calypso', () => {
-	const actual = jest.requireActual( 'i18n-calypso' );
+vi.mock( 'i18n-calypso', async () => {
+	const actual = await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' );
 	return {
 		...actual,
-		getLocaleSlug: jest.fn( () => 'en' ),
+		getLocaleSlug: vi.fn( () => 'en' ),
 	};
 } );
 
-jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
+vi.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 	curatedBlogs: {
 		food: [
 			{
@@ -93,8 +96,11 @@ jest.mock( 'calypso/reader/onboarding-rsm/curated-blogs', () => ( {
 // `enrich` harness enables targeted `readFeedQuery` responses (see feed_URL test).
 // Site validation uses `readSiteQuery`, so this mock also exposes a tiny
 // per-site success/error/pending control surface.
-jest.mock( '@automattic/api-queries', () => {
-	const actual = jest.requireActual( '@automattic/api-queries' );
+vi.mock( '@automattic/api-queries', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+			'@automattic/api-queries'
+		);
 	return {
 		...actual,
 		readFeedQuery: ( feedId: number ) => {
@@ -119,7 +125,7 @@ jest.mock( '@automattic/api-queries', () => {
 			const status = mockReadSiteResponses.get( siteId ) ?? 'pending';
 			return {
 				...actual.readSiteQuery( siteId ),
-				queryFn: jest.fn( () => {
+				queryFn: vi.fn( () => {
 					if ( status === 'success' ) {
 						return Promise.resolve( {
 							ID: siteId,
@@ -141,12 +147,12 @@ jest.mock( '@automattic/api-queries', () => {
 	};
 } );
 
-const mockUseFollowedTags = useFollowedTags as jest.MockedFunction< typeof useFollowedTags >;
-const mockUseSiteSubscriptions = useSiteSubscriptions as jest.MockedFunction<
+const mockUseFollowedTags = useFollowedTags as MockedFunction< typeof useFollowedTags >;
+const mockUseSiteSubscriptions = useSiteSubscriptions as MockedFunction<
 	typeof useSiteSubscriptions
 >;
-const mockGetLocaleSlug = getLocaleSlug as jest.MockedFunction< typeof getLocaleSlug >;
-const mockGet = jest.mocked( wpcom.req.get );
+const mockGetLocaleSlug = getLocaleSlug as MockedFunction< typeof getLocaleSlug >;
+const mockGet = vi.mocked( wpcom.req.get );
 
 const tagsLoading = () =>
 	( {
@@ -217,7 +223,7 @@ const renderHook = (
 };
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	readFeedQueryTestHarness.mode = 'state';
 	readFeedQueryTestHarness.feedByFeedId = {};
 	readFeedQueryTestHarness.enrichmentByFeedId = {};

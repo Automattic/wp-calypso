@@ -7,7 +7,6 @@ import calypso, {
 import vitest from '@vitest/eslint-plugin';
 import { defineConfig } from 'eslint/config';
 import jest from 'eslint-plugin-jest';
-import { eslintFiles, eslintIgnores } from '../test/client/vitest-directories.js';
 
 const [ , { patterns } ] = restrictedImports;
 
@@ -55,37 +54,23 @@ export default defineConfig(
 			},
 		},
 		{ ...nodeConfig, files: [ 'webpack.*.js', 'server/**', '**/test/**' ] },
-		// ESLint rejects an empty `files`.
-		...( eslintFiles.length
-			? [
-					{
-						name: 'calypso/client/vitest',
-						files: eslintFiles,
-						ignores: eslintIgnores,
-						plugins: { vitest },
-						rules: {
-							...Object.fromEntries(
-								Object.keys( jest.rules ).map( ( rule ) => [ `jest/${ rule }`, 'off' ] )
-							),
-							...vitest.configs.recommended.rules,
-							'vitest/no-mocks-import': 'off',
-							'no-restricted-globals': [
-								'error',
-								{
-									name: 'jest',
-									message:
-										'These tests run on Vitest (see test/client/vitest-directories.js). Use `vi` from `vitest` instead.',
-								},
-							],
-						},
-					},
-				]
-			: [] ),
 		{
-			files: [ '**/docs/example.jsx' ],
+			name: 'calypso/client/vitest',
+			files: [ '**/test/**/*.{js,jsx,ts,tsx}' ],
+			plugins: { vitest },
 			rules: {
-				// We use a log of console.log() in examples.
-				'no-console': 'off',
+				...Object.fromEntries(
+					Object.keys( jest.rules ).map( ( rule ) => [ `jest/${ rule }`, 'off' ] )
+				),
+				...vitest.configs.recommended.rules,
+				'vitest/no-mocks-import': 'off',
+				'no-restricted-globals': [
+					'error',
+					{
+						name: 'jest',
+						message: 'These tests run on Vitest. Use `vi` from `vitest` instead.',
+					},
+				],
 			},
 		},
 		{

@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { getEmptyResponseCart } from '@automattic/shopping-cart';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider, renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { NonRenewableDomain, SearchForNewDomainButton } from '../components/non-renewable-domain';
@@ -15,7 +16,7 @@ import {
 } from '../hooks/use-has-non-renewable-domain-error';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 
 function getCartWithErrorCodes( codes: string[] ): ResponseCart {
 	return {
@@ -96,7 +97,7 @@ describe( 'NonRenewableDomain', () => {
 
 describe( 'SearchForNewDomainButton', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'sends the customer to domain search for the selected site', async () => {

@@ -1,33 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-/**
- * Default mock implementations
- */
-jest.mock( 'react-redux', () => ( {
-	useSelector: jest.fn(),
-} ) );
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
-	Plans: {
-		useCurrentPlan: jest.fn(),
-		useCurrentPlanExpiryDate: jest.fn(),
-		usePricingMetaForGridPlans: jest.fn(),
-	},
-} ) );
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => jest.fn( ( text ) => text ),
-	localize: jest.fn(),
-	translate: jest.fn(),
-} ) );
-jest.mock( '@wordpress/data' );
-jest.mock( '../use-generate-action-callback', () => () => jest.fn() );
-jest.mock( '../../scheduled-term-change', () => ( {
-	...jest.requireActual( '../../scheduled-term-change' ),
-	isScheduledTermChangeEnabled: jest.fn(),
-} ) );
-
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -46,8 +20,42 @@ import {
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
+import { type Mock, vi } from 'vitest';
 import { isScheduledTermChangeEnabled } from '../../scheduled-term-change';
 import useGenerateActionHook from '../use-generate-action-hook';
+
+/**
+ * Default mock implementations
+ */
+vi.mock( 'react-redux', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( 'react-redux' ) >() ),
+	useSelector: vi.fn(),
+} ) );
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+		'@automattic/data-stores'
+	) ),
+	Plans: {
+		useCurrentPlan: vi.fn(),
+		useCurrentPlanExpiryDate: vi.fn(),
+		usePricingMetaForGridPlans: vi.fn(),
+	},
+} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => vi.fn( ( text ) => text ),
+		localize: vi.fn(),
+		translate: vi.fn(),
+	} )
+);
+vi.mock( '@wordpress/data' );
+vi.mock( '../use-generate-action-callback', () => ( { default: () => vi.fn() } ) );
+vi.mock( '../../scheduled-term-change', async () => ( {
+	...( await vi.importActual< typeof import( '../../scheduled-term-change' ) >(
+		'../../scheduled-term-change'
+	) ),
+	isScheduledTermChangeEnabled: vi.fn(),
+} ) );
 
 describe( 'useGenerateActionHook', () => {
 	const mockSiteId = 100;
@@ -100,9 +108,9 @@ describe( 'useGenerateActionHook', () => {
 		} );
 
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+		( useSelector as Mock ).mockImplementation( ( selector ) =>
 			selector( {
 				ui: {},
 				sites: {
@@ -118,8 +126,8 @@ describe( 'useGenerateActionHook', () => {
 			} )
 		);
 
-		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => null );
-		( Plans.usePricingMetaForGridPlans as jest.Mock ).mockImplementation( () => ( {} ) );
+		( Plans.useCurrentPlan as Mock ).mockImplementation( () => null );
+		( Plans.usePricingMetaForGridPlans as Mock ).mockImplementation( () => ( {} ) );
 	} );
 
 	it( 'should handle enterprise plans', () => {
@@ -186,7 +194,7 @@ describe( 'useGenerateActionHook', () => {
 	 * for how to restore this test.
 	 */
 	it.skip( 'should handle signup actions for business plan with ineligible free hosting trial', () => {
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+		( useSelector as Mock ).mockImplementation( ( selector ) =>
 			selector( {
 				ui: {},
 				current_user: {
@@ -239,7 +247,7 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle current free plan', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( { planSlug: PLAN_FREE } );
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( { planSlug: PLAN_FREE } );
 
 		const { result } = renderHook( () =>
 			useGenerateActionHook( { isInSignup: false, isLaunchPage: false } )
@@ -252,7 +260,7 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle upgrade with sticky buttons', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_PERSONAL,
 		} );
 
@@ -271,7 +279,7 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle upgrade to longer billing period - annual', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS_MONTHLY,
 		} );
 
@@ -288,7 +296,7 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle upgrade to longer billing period - Biennial', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS_MONTHLY,
 		} );
 
@@ -305,7 +313,7 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle upgrade to longer billing period - Triennial', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS_MONTHLY,
 		} );
 
@@ -322,10 +330,10 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle current plan for plan owner', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS,
 		} );
-		( useSelector as jest.Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
+		( useSelector as Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
 
 		const { result } = renderHook( () =>
 			useGenerateActionHook( {
@@ -341,10 +349,10 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle current plan for non-plan owner', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS,
 		} );
-		( useSelector as jest.Mock ).mockImplementation( currentPlanIsNotOwnerMockSelector );
+		( useSelector as Mock ).mockImplementation( currentPlanIsNotOwnerMockSelector );
 
 		const { result } = renderHook( () =>
 			useGenerateActionHook( {
@@ -360,13 +368,11 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle expired current plan for plan owner', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS,
 		} );
-		( useSelector as jest.Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
-		( Plans.useCurrentPlanExpiryDate as jest.Mock ).mockReturnValue(
-			new Date( Date.now() - 86400000 )
-		); // yesterday
+		( useSelector as Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
+		( Plans.useCurrentPlanExpiryDate as Mock ).mockReturnValue( new Date( Date.now() - 86400000 ) ); // yesterday
 
 		const { result } = renderHook( () =>
 			useGenerateActionHook( {
@@ -382,10 +388,10 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle current plan for domainFromHomeUpsellFlow', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS,
 		} );
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+		( useSelector as Mock ).mockImplementation( ( selector ) =>
 			selector( {
 				ui: {},
 				sites: {
@@ -411,10 +417,10 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle higher plan for non-plan owner', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_BUSINESS,
 		} );
-		( useSelector as jest.Mock ).mockImplementation( currentPlanIsNotOwnerMockSelector );
+		( useSelector as Mock ).mockImplementation( currentPlanIsNotOwnerMockSelector );
 
 		const { result } = renderHook( () =>
 			useGenerateActionHook( {
@@ -430,7 +436,7 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle business trial upgrade', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_HOSTING_TRIAL_MONTHLY,
 		} );
 
@@ -444,7 +450,7 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should handle downgrade actions', () => {
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+		( useSelector as Mock ).mockImplementation( ( selector ) =>
 			selector( {
 				ui: {},
 				sites: {
@@ -480,7 +486,7 @@ describe( 'useGenerateActionHook', () => {
 		expect( action.primary.variant ).toBe( 'secondary' );
 	} );
 	it( 'should offer a term upgrade on the current plan tier in the plans-upgrade intent', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_PERSONAL_MONTHLY,
 		} );
 
@@ -502,7 +508,7 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should show the current plan as owned in the plans-upgrade intent when the term matches', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_PERSONAL_MONTHLY,
 		} );
 
@@ -521,10 +527,10 @@ describe( 'useGenerateActionHook', () => {
 	} );
 
 	it( 'should offer a higher tier at the same term in the plans-upgrade intent', () => {
-		( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( {
+		( Plans.useCurrentPlan as Mock ).mockReturnValue( {
 			planSlug: PLAN_PERSONAL_MONTHLY,
 		} );
-		( useSelector as jest.Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
+		( useSelector as Mock ).mockImplementation( currentPlanIsOwnerMockSelector );
 
 		const { result } = renderHook( () =>
 			useGenerateActionHook( {
@@ -551,7 +557,7 @@ describe( 'useGenerateActionHook', () => {
 			isInstantDowngradeAvailable: false,
 		};
 		const mockSitePlans = ( data ) =>
-			( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+			( useSelector as Mock ).mockImplementation( ( selector ) =>
 				selector( {
 					ui: {},
 					sites: { items: [], plans: { [ mockSiteId ]: { data } } },
@@ -560,7 +566,7 @@ describe( 'useGenerateActionHook', () => {
 			);
 
 		beforeEach( () => {
-			( isScheduledTermChangeEnabled as jest.Mock ).mockReturnValue( true );
+			( isScheduledTermChangeEnabled as Mock ).mockReturnValue( true );
 		} );
 
 		it( 'offers a shorter term as a change at renewal', () => {
@@ -640,7 +646,7 @@ describe( 'useGenerateActionHook', () => {
 		} );
 
 		it( 'keeps the downgrade label without the feature flag', () => {
-			( isScheduledTermChangeEnabled as jest.Mock ).mockReturnValue( false );
+			( isScheduledTermChangeEnabled as Mock ).mockReturnValue( false );
 			mockSitePlans( [
 				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
 				{ productSlug: PLAN_PREMIUM_MONTHLY, interval: 31, ...scheduledOnly },
@@ -690,7 +696,7 @@ describe( 'useGenerateActionHook', () => {
 				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
 				{ productSlug: PLAN_PREMIUM_MONTHLY, interval: 31, ...scheduledOnly },
 			] );
-			( Plans.useCurrentPlan as jest.Mock ).mockReturnValue( { planSlug: PLAN_PREMIUM } );
+			( Plans.useCurrentPlan as Mock ).mockReturnValue( { planSlug: PLAN_PREMIUM } );
 
 			const { result } = renderHook( () =>
 				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
@@ -703,6 +709,31 @@ describe( 'useGenerateActionHook', () => {
 			} );
 
 			expect( action.primary.text ).toBe( 'Switch at renewal' );
+		} );
+
+		it( 'offers a higher tier on a shorter term now inside the refund window', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+				{
+					productSlug: PLAN_BUSINESS_MONTHLY,
+					interval: 31,
+					...scheduledOnly,
+					isInstantDowngradeAvailable: true,
+				},
+			] );
+			( Plans.useCurrentPlan as Mock ).mockReturnValue( { planSlug: PLAN_PREMIUM } );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_BUSINESS_MONTHLY,
+				availableForPurchase: true,
+				currentPlanBillingPeriod: 365,
+				billingPeriod: 31,
+			} );
+
+			expect( action.primary.text ).toBe( 'Switch now' );
 		} );
 	} );
 } );

@@ -5,7 +5,7 @@ import Breadcrumbs from '../../../app/breadcrumbs';
 import { agencySiteBackupRestoreRoute } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import { BackupRestoreFlow } from '../../../sites/backup-restore/flow';
+import { BackupRestoreFlow } from '../../../sites/backups/components/backup-restore-flow';
 
 export default function AgencySiteBackupRestore() {
 	const { siteSlug, rewindId } = agencySiteBackupRestoreRoute.useParams();
@@ -18,7 +18,11 @@ export default function AgencySiteBackupRestore() {
 				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Site restore' ) } />
 			}
 		>
-			<BackupRestoreFlow site={ site } rewindId={ rewindId } />
+			<BackupRestoreFlow
+				site={ site }
+				rewindId={ rewindId }
+				restoreLinkTo={ agencySiteBackupRestoreRoute.fullPath }
+			/>
 		</PageLayout>
 	);
 }

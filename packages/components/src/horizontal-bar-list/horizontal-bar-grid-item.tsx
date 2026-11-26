@@ -1,6 +1,6 @@
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import { decodeEntities } from '@wordpress/html-entities';
-import { Icon, chevronDown, chevronUp, tag, file } from '@wordpress/icons';
+import { Icon, chevronDown, chevronUp, tag, folder } from '@wordpress/icons';
 import clsx from 'clsx';
 import React, { Fragment, useState } from 'react';
 import type { HorizontalBarListItemProps } from './types';
@@ -73,7 +73,7 @@ const HorizontalBarListItem = ( {
 							<Fragment key={ index }>
 								<Icon
 									className="stats-icon"
-									icon={ item.labelIcon === 'folder' ? file : tag }
+									icon={ item.labelIcon === 'folder' ? folder : tag }
 									size={ 22 }
 								/>
 								<span>{ decodeEntities( item.label ) }</span>

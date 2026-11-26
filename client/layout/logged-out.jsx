@@ -329,7 +329,7 @@ const LayoutLoggedOut = ( {
 						loadFailureFallback={ null }
 						id="notices"
 					/>
-					<div id="primary" className="layout__primary">
+					<div id="primary" className="layout__primary" data-bilmur-route-region="">
 						{ primary }
 					</div>
 					<div id="secondary" className="layout__secondary">

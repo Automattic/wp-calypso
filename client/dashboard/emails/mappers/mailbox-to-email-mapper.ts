@@ -22,7 +22,9 @@ export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): 
 
 	if ( box.warnings.length > 0 || emailAccount.warnings.length > 0 ) {
 		status = 'pending';
-		if ( accountHasWarningWithSlug( 'google_pending_tos_acceptance', emailAccount ) ) {
+		if ( accountHasWarningWithSlug( 'domain_not_connected', emailAccount ) ) {
+			status = 'domain_not_connected';
+		} else if ( accountHasWarningWithSlug( 'google_pending_tos_acceptance', emailAccount ) ) {
 			status = 'google_pending_tos_acceptance';
 		} else if ( accountHasWarningWithSlug( 'unverified_forwards', emailAccount ) ) {
 			status = 'unverified_forwards';

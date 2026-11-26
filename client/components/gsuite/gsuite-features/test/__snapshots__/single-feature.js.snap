@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`GSuiteSingleFeature it renders GSuiteSingleFeature 1`] = `
+exports[`GSuiteSingleFeature > it renders GSuiteSingleFeature 1`] = `
 <div
   class="gsuite-features__feature"
 >

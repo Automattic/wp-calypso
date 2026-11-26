@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import { getSiteOption, isWpcomSite } from 'calypso/state/sites/selectors';
 import useStatsPurchases from '../../../hooks/use-stats-purchases';
 import useIsPricingGridEligible from '../use-eligibility';
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn( ( selector ) => selector( {} ) ),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn( ( selector ) => selector( {} ) ),
 } ) );
-jest.mock( 'calypso/state/purchases/selectors' );
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( '../../../hooks/use-stats-purchases' );
+vi.mock( 'calypso/state/purchases/selectors' );
+vi.mock( 'calypso/state/sites/selectors' );
+vi.mock( '../../../hooks/use-stats-purchases' );
 
 const SITE_ID = 123;
 const POST_LAUNCH_DATE = '2026-09-01T00:00:00+00:00';
@@ -26,10 +27,10 @@ function mockSite( {
 	isWpcom = false,
 	purchasesError = null as object | null,
 } = {} ) {
-	( getSiteOption as jest.Mock ).mockReturnValue( connectedAt );
-	( isWpcomSite as unknown as jest.Mock ).mockReturnValue( isWpcom );
-	( getPurchasesError as unknown as jest.Mock ).mockReturnValue( purchasesError );
-	( useStatsPurchases as jest.Mock ).mockReturnValue( {
+	( getSiteOption as Mock ).mockReturnValue( connectedAt );
+	( isWpcomSite as unknown as Mock ).mockReturnValue( isWpcom );
+	( getPurchasesError as unknown as Mock ).mockReturnValue( purchasesError );
+	( useStatsPurchases as Mock ).mockReturnValue( {
 		hasAnyPlan,
 		isLoading: isLoadingPurchases,
 	} );
@@ -37,7 +38,7 @@ function mockSite( {
 
 describe( 'useIsPricingGridEligible', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'is eligible for a newly connected site without a plan', () => {

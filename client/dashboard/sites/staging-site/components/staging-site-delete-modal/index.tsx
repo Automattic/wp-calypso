@@ -1,0 +1,123 @@
+import {
+	siteByIdQuery,
+	stagingSiteDeleteMutation,
+	stagingSiteSyncStateQuery,
+} from '@automattic/api-queries';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
+import {
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+	Modal,
+} from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
+import { useAnalytics } from '../../../../app/analytics';
+import { ButtonStack } from '../../../../components/button-stack';
+import Notice from '../../../../components/notice';
+import { isDashboardBackport } from '../../../../utils/is-dashboard-backport';
+import { getProductionSiteId, isStagingSiteSyncing } from '../../utils';
+import type { Site } from '@automattic/api-core';
+
+export default function StagingSiteDeleteModal( {
+	site,
+	onClose,
+}: {
+	site: Site;
+	onClose: () => void;
+} ) {
+	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
+	const navigate = useNavigate();
+	const { recordTracksEvent } = useAnalytics();
+
+	const productionSiteId = getProductionSiteId( site );
+	const { data: productionSite, isLoading: isLoadingProductionSite } = useQuery( {
+		...siteByIdQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
+	} );
+	const productionSiteSlug = productionSite?.slug;
+
+	const { data: stagingSiteSyncState } = useQuery( {
+		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
+		enabled: !! productionSiteId,
+	} );
+	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
+
+	const mutation = useMutation( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ) );
+	const isDisabled = mutation.isPending || isLoadingProductionSite;
+
+	if ( ! productionSiteId ) {
+		return null;
+	}
+
+	const handleDelete = () => {
+		recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_click' );
+		mutation.mutate( undefined, {
+			onError: ( error: Error ) => {
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure' );
+				createErrorNotice( error.message || __( 'Failed to delete staging site' ), {
+					type: 'snackbar',
+				} );
+			},
+			onSuccess: () => {
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
+				if ( ! isDashboardBackport() ) {
+					createSuccessNotice(
+						__( 'We are deleting your staging site. We will notify you when it is done.' ),
+						{ type: 'snackbar' }
+					);
+					onClose();
+					if ( productionSiteSlug ) {
+						navigate( {
+							to: '/sites/$siteSlug',
+							params: { siteSlug: productionSiteSlug },
+						} );
+					}
+				}
+			},
+		} );
+	};
+
+	return (
+		<Modal title={ __( 'Delete staging site' ) } size="medium" onRequestClose={ onClose }>
+			<VStack spacing={ 4 }>
+				{ isSyncing && (
+					<Notice variant="warning">
+						<Text>
+							{ __(
+								'A sync is currently in progress. Deleting this staging site will cancel the sync and any unfinished changes will be lost.'
+							) }
+						</Text>
+					</Notice>
+				) }
+				<Text as="p">
+					{ __(
+						'Are you sure you want to delete this staging site? This action cannot be undone and will permanently remove all staging site content.'
+					) }
+				</Text>
+				<ButtonStack justify="flex-end">
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						disabled={ mutation.isPending }
+						onClick={ onClose }
+					>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						isDestructive
+						isBusy={ isDisabled }
+						disabled={ isDisabled }
+						onClick={ handleDelete }
+					>
+						{ __( 'Delete staging site' ) }
+					</Button>
+				</ButtonStack>
+			</VStack>
+		</Modal>
+	);
+}

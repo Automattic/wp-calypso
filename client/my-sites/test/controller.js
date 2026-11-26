@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import page from '@automattic/calypso-router';
@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import EmptyContent from 'calypso/components/empty-content';
 import * as pageView from 'calypso/lib/analytics/page-view';
 import * as tracks from 'calypso/lib/analytics/tracks';
@@ -23,14 +24,14 @@ import {
 	noSite,
 } from '../controller';
 
-jest.mock( 'calypso/state/sites/actions', () => ( {
-	...jest.requireActual( 'calypso/state/sites/actions' ),
-	requestSite: jest.fn(),
+vi.mock( 'calypso/state/sites/actions', async () => ( {
+	...( await vi.importActual( 'calypso/state/sites/actions' ) ),
+	requestSite: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/current-user/actions', () => ( {
-	...jest.requireActual( 'calypso/state/current-user/actions' ),
-	redirectToLogout: jest.fn( () => ( { type: 'REDIRECT_TO_LOGOUT_MOCK' } ) ),
+vi.mock( 'calypso/state/current-user/actions', async () => ( {
+	...( await vi.importActual( 'calypso/state/current-user/actions' ) ),
+	redirectToLogout: vi.fn( () => ( { type: 'REDIRECT_TO_LOGOUT_MOCK' } ) ),
 } ) );
 
 const middlewares = [ thunk ];
@@ -174,7 +175,7 @@ describe( 'recordNoVisibleSitesPageView', () => {
 		const path = '/path';
 		const siteFragment = 'site';
 		const title = 'Title';
-		const spy = jest.spyOn( pageView, 'recordPageView' );
+		const spy = vi.spyOn( pageView, 'recordPageView' );
 
 		recordNoVisibleSitesPageView( { path: `${ path }/${ siteFragment }` }, siteFragment, title );
 
@@ -190,7 +191,7 @@ describe( 'recordNoSitesPageView', () => {
 	it( 'should record the page view', () => {
 		const path = '/path';
 		const siteFragment = 'site';
-		const spy = jest.spyOn( pageView, 'recordPageView' );
+		const spy = vi.spyOn( pageView, 'recordPageView' );
 
 		recordNoSitesPageView( { path: `${ path }/${ siteFragment }` }, siteFragment );
 
@@ -245,7 +246,7 @@ describe( 'siteSelection', () => {
 	}
 
 	function selectSite( getState, overrides ) {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = {
 			store: mockStore( getState ),
 			path: `/home/${ SITE_SLUG }`,
@@ -263,17 +264,17 @@ describe( 'siteSelection', () => {
 	}
 
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		requestSite.mockReset();
 		redirectToLogout.mockClear();
 		respondWithSite( { site_owner: USER_ID } );
 		// page.js builds a Context that reaches for the document, which this environment lacks.
-		jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
+		vi.spyOn( page, 'redirect' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
-		jest.restoreAllMocks();
+		vi.useRealTimers();
+		vi.restoreAllMocks();
 		page.current = '';
 		window.history.replaceState( {}, '', '/' );
 	} );
@@ -282,7 +283,7 @@ describe( 'siteSelection', () => {
 		let state = unmanageableSiteState;
 		const { next, context } = selectSite( () => state );
 
-		await jest.advanceTimersByTimeAsync( 0 );
+		await vi.advanceTimersByTimeAsync( 0 );
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
 		// Nothing is rendered while we wait, so the page the user is on stays put.
@@ -290,7 +291,7 @@ describe( 'siteSelection', () => {
 
 		// Capabilities propagate, so the retry lands the site in the state.
 		state = manageableSiteState;
-		await jest.advanceTimersByTimeAsync( 1000 );
+		await vi.advanceTimersByTimeAsync( 1000 );
 
 		expect( requestSite ).toHaveBeenCalledTimes( 2 );
 		expect( next ).toHaveBeenCalled();
@@ -302,11 +303,11 @@ describe( 'siteSelection', () => {
 		let state = wasAdminState;
 		const { next } = selectSite( () => state );
 
-		await jest.advanceTimersByTimeAsync( 0 );
+		await vi.advanceTimersByTimeAsync( 0 );
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 
 		state = manageableSiteState;
-		await jest.advanceTimersByTimeAsync( 1000 );
+		await vi.advanceTimersByTimeAsync( 1000 );
 
 		expect( requestSite ).toHaveBeenCalledTimes( 2 );
 		expect( next ).toHaveBeenCalled();
@@ -317,7 +318,7 @@ describe( 'siteSelection', () => {
 
 		const { next } = selectSite( () => unmanageableSiteState );
 
-		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
+		await vi.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
 
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
@@ -325,11 +326,11 @@ describe( 'siteSelection', () => {
 
 	it( 'should offer to select a different site when the user lacks access', async () => {
 		respondWithSite( { site_owner: USER_ID + 1 } );
-		const spy = jest.spyOn( tracks, 'recordTracksEvent' );
+		const spy = vi.spyOn( tracks, 'recordTracksEvent' );
 
 		const { context } = selectSite( () => unmanageableSiteState );
 
-		await jest.advanceTimersByTimeAsync( 0 );
+		await vi.advanceTimersByTimeAsync( 0 );
 
 		expect( context.primary.type ).toBe( EmptyContent );
 		expect( context.primary.props ).toEqual( {
@@ -345,15 +346,15 @@ describe( 'siteSelection', () => {
 		const checkoutUrl = `https://example.com${ CHECKOUT_PATH }?redirect_to=https%3A%2F%2Fexample.com%2Fwp-admin%2F&cancel_to=https%3A%2F%2Fexample.com%2Fwp-admin%2F`;
 		window.history.pushState( {}, '', checkoutUrl );
 		respondWithSite( { site_owner: USER_ID + 1 } );
-		const spy = jest.spyOn( tracks, 'recordTracksEvent' );
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const spy = vi.spyOn( tracks, 'recordTracksEvent' );
+		const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 
 		const { context } = selectSite( () => unmanageableSiteState, {
 			path: CHECKOUT_PATH,
 			pathname: CHECKOUT_PATH,
 		} );
 
-		await jest.advanceTimersByTimeAsync( 0 );
+		await vi.advanceTimersByTimeAsync( 0 );
 		render( context.primary );
 
 		await user.click( screen.getByRole( 'button', { name: 'Log in with a different account' } ) );
@@ -376,7 +377,7 @@ describe( 'siteSelection', () => {
 			pathname: CHECKOUT_PATH,
 		} );
 
-		await jest.advanceTimersByTimeAsync( 0 );
+		await vi.advanceTimersByTimeAsync( 0 );
 
 		expect( context.primary.props ).toEqual( {
 			title: "You don't have access to that site",
@@ -397,7 +398,7 @@ describe( 'siteSelection', () => {
 			pathname: renewalPath,
 		} );
 
-		await jest.advanceTimersByTimeAsync( 0 );
+		await vi.advanceTimersByTimeAsync( 0 );
 
 		expect( context.primary.props ).toEqual( {
 			title: "You don't have access to that site",
@@ -417,7 +418,7 @@ describe( 'siteSelection', () => {
 			{ path: CHECKOUT_PATH, pathname: CHECKOUT_PATH }
 		);
 
-		await jest.advanceTimersByTimeAsync( 0 );
+		await vi.advanceTimersByTimeAsync( 0 );
 
 		expect( context.primary.props ).toEqual( {
 			title: "You don't have access to that site",
@@ -435,7 +436,7 @@ describe( 'siteSelection', () => {
 			query: { unlinked: '1' },
 		} );
 
-		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
+		await vi.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
 
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
@@ -446,7 +447,7 @@ describe( 'siteSelection', () => {
 	it( 'should give up retrying once the backoff is exhausted', async () => {
 		const { next } = selectSite( () => unmanageableSiteState );
 
-		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
+		await vi.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
 
 		expect( requestSite ).toHaveBeenCalledTimes( REQUESTS_WHEN_EXHAUSTED );
 		expect( next ).not.toHaveBeenCalled();
@@ -455,9 +456,9 @@ describe( 'siteSelection', () => {
 	it( 'should stop retrying when the user navigates away', async () => {
 		const { next } = selectSite( () => unmanageableSiteState );
 
-		await jest.advanceTimersByTimeAsync( 0 );
+		await vi.advanceTimersByTimeAsync( 0 );
 		page.current = '/reader';
-		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
+		await vi.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
 
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 		expect( next ).not.toHaveBeenCalled();
@@ -470,7 +471,7 @@ describe( 'siteSelection', () => {
 		// The in-flight request comes back with a perfectly selectable site.
 		state = manageableSiteState;
 		page.current = '/reader';
-		await jest.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
+		await vi.advanceTimersByTimeAsync( LONGER_THAN_THE_WHOLE_BACKOFF );
 
 		expect( next ).not.toHaveBeenCalled();
 		expect( context.store.getActions() ).toEqual( [] );
@@ -482,7 +483,7 @@ describe( 'redirectToPrimary', () => {
 		const path = '/path';
 		const siteFragment = 'site';
 		const query = 'a=b';
-		const spy = jest.spyOn( page, 'redirect' );
+		const spy = vi.spyOn( page, 'redirect' ).mockImplementation( () => {} );
 
 		redirectToPrimary( { pathname: `${ path }/no-site`, querystring: query }, siteFragment );
 
@@ -533,14 +534,14 @@ describe( 'siteSelection — site fetch failure fallback', () => {
 		requestSite.mockReturnValue( () =>
 			Promise.reject( new Error( 'intermittent site fetch failure' ) )
 		);
-		redirect = jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
+		redirect = vi.spyOn( page, 'redirect' ).mockImplementation( () => {} );
 		// `page.redirect` schedules a real `page.replace` on a timer; neutralize it so a
 		// leaked navigation cannot tear down the jsdom document while promises flush.
-		jest.spyOn( page, 'replace' ).mockImplementation( () => {} );
+		vi.spyOn( page, 'replace' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		page.current = '';
 	} );
 
@@ -554,7 +555,7 @@ describe( 'siteSelection — site fetch failure fallback', () => {
 			querystring,
 			siteFragment,
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		siteSelection( context, next );
 		await flushPromises();
@@ -575,7 +576,7 @@ describe( 'siteSelection — site fetch failure fallback', () => {
 			// A prior SPA navigation left an unrelated site selected.
 			selectedSiteId: 999,
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		siteSelection( context, next );
 		await flushPromises();
@@ -598,7 +599,7 @@ describe( 'siteSelection — site fetch failure fallback', () => {
 			querystring,
 			siteFragment,
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		siteSelection( context, next );
 		await flushPromises();
@@ -620,7 +621,18 @@ describe( 'noSite', () => {
 	// `isWpcomCheckoutFlow` exception this would fall through to the site selector.
 	it( 'lets the WordPress.com siteless checkout route through without a site', () => {
 		const pathname = '/checkout/wpcom/a.product';
-		const next = jest.fn();
+		const next = vi.fn();
+		const store = mockStore( stateWithSites );
+
+		noSite( { store, path: pathname, pathname, params: {}, query: {}, section: {} }, next );
+
+		expect( next ).toHaveBeenCalled();
+		expect( store.getActions() ).toContainEqual( expect.objectContaining( { siteId: null } ) );
+	} );
+
+	it( 'lets the Studio checkout route through without a site', () => {
+		const pathname = '/checkout/studio/a.product';
+		const next = vi.fn();
 		const store = mockStore( stateWithSites );
 
 		noSite( { store, path: pathname, pathname, params: {}, query: {}, section: {} }, next );

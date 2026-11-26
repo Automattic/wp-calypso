@@ -57,14 +57,15 @@ describe( '<Notifications> with the inbox', () => {
 		expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'keeps the panel closed while the inbox is shown', async () => {
+	test( 'opens the panel while the inbox is shown, without a full view button', async () => {
 		const user = userEvent.setup();
 		render( <Notifications isInboxShown onOpenInbox={ () => {} } /> );
 
 		await openPanel( user );
 
-		expect(
-			screen.queryByRole( 'region', { name: 'Notifications panel' } )
-		).not.toBeInTheDocument();
+		await waitFor( () =>
+			expect( screen.getByRole( 'region', { name: 'Notifications panel' } ) ).toBeVisible()
+		);
+		expect( screen.queryByRole( 'button', { name: 'Open full view' } ) ).not.toBeInTheDocument();
 	} );
 } );

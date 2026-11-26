@@ -1,38 +1,48 @@
 import { IncomingMessage } from 'http';
 import mockFs from 'mock-fs';
+import { vi } from 'vitest';
 import sections from 'calypso/sections';
 
-jest.mock( 'child_process', () => ( {
-	execSync: jest.fn(),
-} ) );
+vi.mock( 'child_process', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		execSync: vi.fn(),
+	} )
+);
 
-jest.mock( 'superagent', () => jest.fn() );
+vi.mock( 'superagent', () => ( { default: vi.fn() } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const impl = jest.fn();
-	impl.isEnabled = jest.fn();
-	return impl;
+vi.mock( '@automattic/calypso-config', () => {
+	const impl = vi.fn();
+	impl.isEnabled = vi.fn();
+	return {
+		default: impl,
+		isEnabled: impl.isEnabled,
+		// `buildApp()` sets the environment on the default export.
+		get serverEnvId() {
+			return impl.serverEnvId;
+		},
+	};
 } );
 
-jest.mock( 'calypso/server/sanitize', () => jest.fn() );
+vi.mock( 'calypso/server/sanitize', () => ( { default: vi.fn() } ) );
 
-jest.mock( 'calypso/sections', () => {
+vi.mock( 'calypso/sections', async () => {
 	// eslint-disable-next-line no-shadow
-	const sections = jest.requireActual( 'calypso/sections' );
+	const { default: sections } = await vi.importActual( 'calypso/sections' );
 	sections
 		.filter( ( section ) => section.isomorphic )
 		.forEach( ( section ) => {
-			section.load = jest.fn( () => ( {
-				default: jest.fn(),
+			section.load = vi.fn( () => ( {
+				default: vi.fn(),
 			} ) );
 		} );
-	return sections;
+	return { default: sections };
 } );
 
-jest.mock( 'calypso/sections-filter', () => jest.fn( () => true ) );
+vi.mock( 'calypso/sections-filter', () => ( { default: vi.fn( () => true ) } ) );
 
-jest.mock( 'calypso/login', () => {
-	const impl = jest.fn();
+vi.mock( 'calypso/login', () => {
+	const impl = vi.fn();
 	impl.LOGIN_SECTION_DEFINITION = {
 		name: 'login',
 		paths: [ '/log-in' ],
@@ -40,73 +50,73 @@ jest.mock( 'calypso/login', () => {
 		enableLoggedOut: true,
 		isomorphic: true,
 	};
-	return impl;
+	return { ...impl, default: impl };
 } );
 
-jest.mock( 'calypso/server/isomorphic-routing', () => ( {
-	serverRouter: jest.fn(),
-	getNormalizedPath: jest.fn(),
-	getCacheKey: jest.fn(),
+vi.mock( 'calypso/server/isomorphic-routing', () => ( {
+	serverRouter: vi.fn(),
+	getNormalizedPath: vi.fn(),
+	getCacheKey: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/server/render', () => ( {
-	serverRender: jest.fn(),
-	renderJsx: jest.fn(),
-	attachBuildTimestamp: jest.fn(),
-	attachHead: jest.fn(),
-	attachI18n: jest.fn(),
-	bumpStat: jest.fn(),
-	customizeClientDataForRequest: jest.fn(),
+vi.mock( 'calypso/server/render', () => ( {
+	serverRender: vi.fn(),
+	renderJsx: vi.fn(),
+	attachBuildTimestamp: vi.fn(),
+	attachHead: vi.fn(),
+	attachI18n: vi.fn(),
+	bumpStat: vi.fn(),
+	customizeClientDataForRequest: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/server/state-cache', () => new Map() );
+vi.mock( 'calypso/server/state-cache', () => ( { default: new Map() } ) );
 
-jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
+vi.mock( 'calypso/server/user-bootstrap', () => ( { default: vi.fn() } ) );
 
-jest.mock( 'calypso/state/create-store', () => ( {
-	createReduxStore: jest.fn(),
+vi.mock( 'calypso/state/create-store', () => ( {
+	createReduxStore: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/redux-store', () => ( {
-	setStore: jest.fn(),
-	registerReducer: jest.fn(),
+vi.mock( 'calypso/state/redux-store', () => ( {
+	setStore: vi.fn(),
+	registerReducer: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/reducer', () => jest.fn() );
+vi.mock( 'calypso/state/reducer', () => ( { default: vi.fn() } ) );
 
-jest.mock( 'calypso/state/current-user/actions', () => ( {
-	setCurrentUser: jest.fn(),
+vi.mock( 'calypso/state/current-user/actions', () => ( {
+	setCurrentUser: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/paths', () => ( {
-	login: jest.fn(),
+vi.mock( 'calypso/lib/paths', () => ( {
+	login: vi.fn(),
 } ) );
 
-jest.mock( './analytics', () => ( {
-	logSectionResponse: jest.fn(),
-} ) );
+vi.mock( 'calypso/server/lib/analytics', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		tracks: {
+			recordEvent: vi.fn(),
+		},
+		logstash: {
+			log: vi.fn(),
+		},
+	} )
+);
 
-jest.mock( 'calypso/server/lib/analytics', () => ( {
-	tracks: {
-		recordEvent: jest.fn(),
-	},
-	logstash: {
-		log: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/i18n-utils', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		getLanguage: vi.fn( ( lang ) => ( { langSlug: lang } ) ),
+		filterLanguageRevisions: vi.fn(),
+	} )
+);
 
-jest.mock( 'calypso/lib/i18n-utils', () => ( {
-	getLanguage: jest.fn( ( lang ) => ( { langSlug: lang } ) ),
-	filterLanguageRevisions: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/lib/oauth2-clients', () => ( {
-	isWooOAuth2Client: jest.fn(),
+vi.mock( 'calypso/lib/oauth2-clients', () => ( {
+	isWooOAuth2Client: vi.fn(),
 } ) );
 
 const createMockStore = () => ( {
-	dispatch: jest.fn(),
-	getState: jest.fn( () => ( { documentHead: { meta: [] } } ) ),
+	dispatch: vi.fn(),
+	getState: vi.fn( () => ( { documentHead: { meta: [] } } ) ),
 } );
 
 /**
@@ -116,74 +126,69 @@ const createMockStore = () => ( {
  * effect perform when `../index.js` is imported, so it is tricky to mock. Instead of spreading
  * this logic across all tests, we have a builder pattern to load the app.
  *
- * As it uses isolated registries, any mock set outside this builder won't be visible for the
- * built app. That's why we need to require mocks here and expose them via getMocks();
+ * As it resets the module registry, any mock set outside this builder won't be visible for the
+ * built app. That's why we need to import mocks here and expose them via getMocks();
  * @param environment the environment
  */
-const buildApp = ( environment ) => {
+const buildApp = async ( environment ) => {
 	let mocks = {};
 	const tearDown = [];
 	let defaultUrl = '/';
 	const defaultCookies = {};
 	let userAgent = '';
 
-	// We need to restore modules and filesystem so requiring modules inside `isolatedModules` works
+	// We need to restore modules and filesystem so importing modules below works
 	mockFs.restore();
-	jest.resetModules();
+	vi.resetModules();
 
-	// Load the app
-	let appFactory;
-	jest.isolateModules( () => {
-		// When the app requries these modules, they are loaded from its isolated registry.
-		// Requiring them here will give us the same instance used by the app, this will allow
-		// us to change the mock implementation later or make assertions about it.
-		mocks.config = require( '@automattic/calypso-config' );
-		const {
-			attachBuildTimestamp,
-			attachI18n,
-			attachHead,
-			bumpStat,
-			customizeClientDataForRequest,
-			renderJsx,
-			serverRender,
-		} = require( 'calypso/server/render' );
-		mocks = {
-			...mocks,
-			attachBuildTimestamp,
-			attachI18n,
-			attachHead,
-			bumpStat,
-			customizeClientDataForRequest,
-			renderJsx,
-			serverRender,
-		};
-		mocks.sanitize = require( 'calypso/server/sanitize' );
-		mocks.createReduxStore = require( 'calypso/state/create-store' ).createReduxStore;
-		mocks.createReduxStore.mockImplementation( createMockStore );
-		mocks.execSync = require( 'child_process' ).execSync;
-		mocks.login = require( 'calypso/lib/paths' ).login;
-		mocks.getBootstrappedUser = require( 'calypso/server/user-bootstrap' );
-		mocks.setCurrentUser = require( 'calypso/state/current-user/actions' ).setCurrentUser;
-		mocks.analytics = require( 'calypso/server/lib/analytics' );
+	// Load the app. Importing these modules after resetting the registry gives us the instances the
+	// app uses, so we can change their mock implementation later or make assertions about them.
+	mocks.config = ( await import( '@automattic/calypso-config' ) ).default;
+	const {
+		attachBuildTimestamp,
+		attachI18n,
+		attachHead,
+		bumpStat,
+		customizeClientDataForRequest,
+		renderJsx,
+		serverRender,
+	} = await import( 'calypso/server/render' );
+	mocks = {
+		...mocks,
+		attachBuildTimestamp,
+		attachI18n,
+		attachHead,
+		bumpStat,
+		customizeClientDataForRequest,
+		renderJsx,
+		serverRender,
+	};
+	mocks.sanitize = ( await import( 'calypso/server/sanitize' ) ).default;
+	mocks.createReduxStore = ( await import( 'calypso/state/create-store' ) ).createReduxStore;
+	mocks.createReduxStore.mockImplementation( createMockStore );
+	mocks.execSync = ( await import( 'child_process' ) ).execSync;
+	mocks.login = ( await import( 'calypso/lib/paths' ) ).login;
+	mocks.getBootstrappedUser = ( await import( 'calypso/server/user-bootstrap' ) ).default;
+	mocks.setCurrentUser = ( await import( 'calypso/state/current-user/actions' ) ).setCurrentUser;
+	mocks.analytics = ( await import( 'calypso/server/lib/analytics' ) ).default;
 
-		// Set the environment. This has to be done before requiring `../index.js`
-		mocks.config.serverEnvId = environment;
-		mocks.config.mockImplementation(
-			( key ) =>
-				( {
-					hostname: 'valid.hostname',
-					magnificent_non_en_locales: [ 'ar', 'es' ],
-					port: 3000,
-					env_id: environment,
-					rtl: false,
-					i18n_default_locale_slug: 'en',
-					favicon_url: 'http://favicon.url/',
-					enable_all_sections: true,
-				} )[ key ]
-		);
+	// Set the environment. This has to be done before importing `../index.js`
+	mocks.config.serverEnvId = environment;
+	mocks.config.mockImplementation(
+		( key ) =>
+			( {
+				hostname: 'valid.hostname',
+				magnificent_non_en_locales: [ 'ar', 'es' ],
+				port: 3000,
+				env_id: environment,
+				rtl: false,
+				i18n_default_locale_slug: 'en',
+				favicon_url: 'http://favicon.url/',
+				enable_all_sections: true,
+			} )[ key ]
+	);
 
-		appFactory = require( '../index' ).default;
-	} );
+	const { default: appFactory } = await import( '../index' );
 	const app = appFactory();
 
 	return {
@@ -324,31 +329,31 @@ const buildApp = ( environment ) => {
 					},
 					url: defaultUrl,
 					method: 'GET',
-					get: jest.fn(),
+					get: vi.fn(),
 					socket: {},
 					logger: {
-						error: jest.fn(),
+						error: vi.fn(),
 					},
 					...request,
 				} );
 
 				const mockResponse = {
-					setHeader: jest.fn(),
-					getHeader: jest.fn(),
-					clearCookie: jest.fn(),
-					send: jest.fn( () => {
+					setHeader: vi.fn(),
+					getHeader: vi.fn(),
+					clearCookie: vi.fn(),
+					send: vi.fn( () => {
 						resolve( {
 							request: mockRequest,
 							response: mockResponse,
 						} );
 					} ),
-					end: jest.fn( () => {
+					end: vi.fn( () => {
 						resolve( {
 							request: mockRequest,
 							response: mockResponse,
 						} );
 					} ),
-					redirect: jest.fn( () => {
+					redirect: vi.fn( () => {
 						resolve( {
 							request: mockRequest,
 							response: mockResponse,
@@ -370,12 +375,17 @@ const buildApp = ( environment ) => {
 	};
 };
 
+// The first build loads the app's modules, which can take longer than a hook's 10s timeout on a busy
+// CI agent. Building one at the top level loads them outside any timeout, and the builds in the hooks
+// below reuse them.
+await buildApp( 'production' );
+
 const assertDefaultContext = ( { url, entry } ) => {
 	let app;
 
-	beforeAll( () => {
+	beforeAll( async () => {
 		// Building an app is expensive, so we build it once here and set its mocks before each test.
-		app = buildApp( 'production' );
+		app = await buildApp( 'production' );
 	} );
 
 	beforeEach( () => {
@@ -529,7 +539,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 	} );
 
 	it( 'debug mode is enabled for development environment', async () => {
-		const customApp = buildApp( 'development' );
+		const customApp = await buildApp( 'development' );
 		customApp.withServerRender( '' );
 		customApp.withMockFilesystem();
 		customApp.withEvergreenBrowser();
@@ -538,7 +548,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 	} );
 
 	it( 'debug mode is enabled for jetpack-cloud-development environment', async () => {
-		const customApp = buildApp( 'jetpack-cloud-development' );
+		const customApp = await buildApp( 'jetpack-cloud-development' );
 		customApp.withServerRender( '' );
 		customApp.withMockFilesystem();
 		customApp.withEvergreenBrowser();
@@ -549,8 +559,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment wpcalypso', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'wpcalypso' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'wpcalypso' );
 		} );
 
 		beforeEach( () => {
@@ -572,8 +582,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'on calypso.live', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'horizon' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'horizon' );
 		} );
 
 		beforeEach( () => {
@@ -624,8 +634,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment horizon', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'horizon' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'horizon' );
 		} );
 
 		beforeEach( () => {
@@ -652,8 +662,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment stage', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'stage' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'stage' );
 		} );
 
 		beforeEach( () => {
@@ -675,8 +685,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment development', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'development' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'development' );
 		} );
 
 		beforeEach( () => {
@@ -712,8 +722,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment jetpack-cloud-stage', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'jetpack-cloud-stage' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'jetpack-cloud-stage' );
 		} );
 
 		beforeEach( () => {
@@ -735,8 +745,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment jetpack-cloud-development', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'jetpack-cloud-development' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'jetpack-cloud-development' );
 		} );
 
 		beforeEach( () => {
@@ -772,8 +782,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment jetpack-cloud-production', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'jetpack-cloud-production' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'jetpack-cloud-production' );
 		} );
 
 		beforeEach( () => {
@@ -832,9 +842,9 @@ const assertDefaultContext = ( { url, entry } ) => {
 const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 	let app;
 
-	beforeAll( () => {
+	beforeAll( async () => {
 		// Building an app is expensive, so we build it once here and set its mocks before each test.
-		app = buildApp( 'production' );
+		app = await buildApp( 'production' );
 	} );
 
 	beforeEach( () => {
@@ -921,7 +931,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		it( 'gets the redirect url for https requests', async () => {
 			await app.run( {
 				request: {
-					get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'https' : undefined ) ),
+					get: vi.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'https' : undefined ) ),
 				},
 			} );
 			expect( app.getMocks().login ).toHaveBeenCalledWith( {
@@ -932,7 +942,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		it( 'gets the redirect url for http requests', async () => {
 			await app.run( {
 				request: {
-					get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'http' : undefined ) ),
+					get: vi.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'http' : undefined ) ),
 				},
 			} );
 			expect( app.getMocks().login ).toHaveBeenCalledWith( {
@@ -972,7 +982,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 				app.withFailedBootstrapUser( { error: 'authorization_required' } );
 				app.getMocks().login.mockImplementation( ( { redirectTo } ) => redirectTo );
 				// Even after the redirect, it will log the error. Silence the error output to make Jest happy.
-				jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+				vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 				const { response } = await app.run();
 
@@ -1013,9 +1023,9 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 describe( 'main app', () => {
 	let app;
 
-	beforeAll( () => {
+	beforeAll( async () => {
 		// Building an app is expensive, so we build it once here and set its mocks before each test.
-		app = buildApp( 'production' );
+		app = await buildApp( 'production' );
 	} );
 
 	beforeEach( () => {
@@ -1026,14 +1036,14 @@ describe( 'main app', () => {
 	} );
 
 	afterEach( async () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		app.reset();
 	} );
 
 	describe( 'Middleware loggedInContext', () => {
 		it( 'detects if it is a support session based on a header', async () => {
 			const { request } = await app.run( {
-				request: { get: jest.fn( ( header ) => header === 'x-support-session' ) },
+				request: { get: vi.fn( ( header ) => header === 'x-support-session' ) },
 			} );
 			expect( request.context.isSupportSession ).toBe( true );
 		} );
@@ -1241,6 +1251,11 @@ describe( 'main app', () => {
 				302,
 				'/fr/discover/tags?selectedTag=travel'
 			);
+		} );
+
+		it( 'drops a locale prefix Calypso does not know', async () => {
+			const { response } = await app.run( { request: { url: '/xx/tag/travel' } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, '/discover/tags?selectedTag=travel' );
 		} );
 
 		it( 'does not redirect logged-in users', async () => {
@@ -1529,7 +1544,7 @@ describe( 'main app', () => {
 				request: {
 					url: '/start/launch-site/domains-launch',
 					query: { ...query, retry: '1' },
-					get: jest.fn( ( header ) => headers[ header ] ),
+					get: vi.fn( ( header ) => headers[ header ] ),
 				},
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
@@ -1551,7 +1566,7 @@ describe( 'main app', () => {
 				request: {
 					url: '/start/launch-site',
 					query,
-					get: jest.fn( ( header ) => ( header === 'Referer' ? 'not a url' : undefined ) ),
+					get: vi.fn( ( header ) => ( header === 'Referer' ? 'not a url' : undefined ) ),
 				},
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
@@ -1599,7 +1614,7 @@ describe( 'main app', () => {
 		} );
 
 		it( 'does not record outside production', async () => {
-			const devApp = buildApp( 'development' );
+			const devApp = await buildApp( 'development' );
 			devApp.withServerRender( '' );
 			devApp.withMockFilesystem();
 			devApp.withEvergreenBrowser();
@@ -1671,8 +1686,8 @@ describe( 'main app', () => {
 	describe( 'Route /cspreport', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'production' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'production' );
 		} );
 
 		beforeEach( () => {
@@ -1793,7 +1808,7 @@ describe( 'main app', () => {
 		} );
 
 		it( 'renders authorized page in development mode', async () => {
-			const customApp = buildApp( 'development' );
+			const customApp = await buildApp( 'development' );
 			customApp.withRenderJSX( 'content' );
 			customApp.withEvergreenBrowser();
 			customApp.withMockFilesystem();
@@ -1872,7 +1887,7 @@ describe( 'main app', () => {
 			// place to simulate an error in the current implementation of the app
 			return app.run( {
 				response: {
-					redirect: jest.fn( () => {
+					redirect: vi.fn( () => {
 						throw { error: 'fake error' };
 					} ),
 				},
@@ -1889,7 +1904,7 @@ describe( 'main app', () => {
 			app.withRenderJSX( 'content' );
 			app.withUrl( '/' );
 
-			jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+			vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		} );
 
 		it( 'returns a 500', async () => {
@@ -1920,8 +1935,8 @@ describe( 'main app', () => {
 describe( 'dashboard app', () => {
 	let app;
 
-	beforeAll( () => {
-		app = buildApp( 'dashboard-production' );
+	beforeAll( async () => {
+		app = await buildApp( 'dashboard-production' );
 	} );
 
 	beforeEach( () => {
@@ -1929,11 +1944,11 @@ describe( 'dashboard app', () => {
 		app.withServerRender( '' );
 		app.withMockFilesystem();
 		app.withEvergreenBrowser();
-		app.withReduxStore( { dispatch: jest.fn(), getState: jest.fn( () => ( {} ) ) } );
+		app.withReduxStore( { dispatch: vi.fn(), getState: vi.fn( () => ( {} ) ) } );
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		app.reset();
 	} );
 

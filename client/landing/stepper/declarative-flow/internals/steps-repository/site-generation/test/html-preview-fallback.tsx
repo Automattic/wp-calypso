@@ -1,6 +1,7 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { act, render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { BuildHtmlPreviewFallback } from '../stream/html-preview-fallback';
 import { initialStreamState } from '../stream/reducer';
 import type { StreamPreview } from '../stream/reducer';
@@ -44,7 +45,7 @@ const stream: BuildWowStreamView = {
 const content =
 	'<main class="site"><section id="welcome"><h1>A warm welcome to our bakery</h1><p>Good things are taking shape here.</p></section></main>';
 const originalFetch = global.fetch;
-let fetchMock: jest.Mock;
+let fetchMock: Mock;
 
 function documentResponse( route: string, html = content, runId = 'run-1', epoch = '1:1' ) {
 	return {
@@ -63,7 +64,7 @@ function documentResponse( route: string, html = content, runId = 'run-1', epoch
 }
 
 beforeEach( () => {
-	fetchMock = jest
+	fetchMock = vi
 		.fn()
 		.mockImplementation( async ( url: string ) =>
 			documentResponse( new URL( url ).searchParams.get( 'route' )! )
@@ -73,7 +74,7 @@ beforeEach( () => {
 
 afterEach( () => {
 	global.fetch = originalFetch;
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 it( 'shows the homepage first and actual named pages without a selector', async () => {
@@ -181,7 +182,7 @@ it( 'does not present header-only or omitted documents as available pages', asyn
 } );
 
 it( 'retains the last valid document through failed updates', async () => {
-	jest.useFakeTimers();
+	vi.useFakeTimers();
 	const { rerender } = render( <BuildHtmlPreviewFallback stream={ stream } /> );
 	const iframe = await screen.findByTitle( 'Homepage — static preview' );
 	const previous = iframe.getAttribute( 'srcdoc' );
@@ -198,7 +199,7 @@ it( 'retains the last valid document through failed updates', async () => {
 		/>
 	);
 	await act( async () => {
-		await jest.advanceTimersByTimeAsync( 8000 );
+		await vi.advanceTimersByTimeAsync( 8000 );
 	} );
 	expect( screen.getByTitle( 'Homepage — static preview' ) ).toBe( iframe );
 	expect( iframe.getAttribute( 'srcdoc' ) ).toBe( previous );

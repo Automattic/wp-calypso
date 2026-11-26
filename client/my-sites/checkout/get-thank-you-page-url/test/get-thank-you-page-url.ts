@@ -1,6 +1,6 @@
 /**
  * This is required to prevent "ReferenceError: window is not defined"
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -24,6 +24,7 @@ import {
 	ResponseCart,
 	CartKey,
 } from '@automattic/shopping-cart';
+import { type Mock, vi } from 'vitest';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -31,24 +32,25 @@ import getThankYouPageUrl, {
 	getAllowedExternalRedirectHosts,
 } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
-jest.mock( '@automattic/calypso-products', () => ( {
-	...( jest.requireActual( '@automattic/calypso-products' ) as object ),
-	redirectCheckoutToWpAdmin: jest.fn(),
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => ( { default: vi.fn() } ) );
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( ( await vi.importActual< typeof import( '@automattic/calypso-products' ) >(
+		'@automattic/calypso-products'
+	) ) as object ),
+	redirectCheckoutToWpAdmin: vi.fn(),
 } ) );
-jest.mock( 'calypso/dashboard/app/routing', () => ( {
-	getDashboardFromQuery: jest.fn(),
+vi.mock( 'calypso/dashboard/app/routing', () => ( {
+	getDashboardFromQuery: vi.fn(),
 } ) );
-jest.mock( '@automattic/calypso-config', () => {
-	// In tests, '@automattic/calypso-config' is module-mapped to
-	// `client/server/config/index.js`, a CJS module whose module.exports is the
-	// config function itself (with isEnabled/enable/etc. attached).
-	const actualConfigFn = jest.requireActual( '@automattic/calypso-config' );
-	const configFn = jest.fn( ( key ) => actualConfigFn( key ) );
+vi.mock( '@automattic/calypso-config', async () => {
+	const { default: actualConfigFn } = await vi.importActual<
+		typeof import( '@automattic/calypso-config' )
+	>( '@automattic/calypso-config' );
+	const configFn = vi.fn( ( key ) => actualConfigFn( key ) );
 	// Preserve attached methods (isEnabled, enable, disable, etc.) so consumers
 	// like `config.isEnabled(...)` keep working through the spy.
 	Object.assign( configFn, actualConfigFn );
-	return configFn;
+	return { ...configFn, default: configFn };
 } );
 
 const samplePurchaseId = 12342424241;
@@ -58,8 +60,8 @@ function getMockCart(): ResponseCart {
 }
 
 const defaultArgs = {
-	getUrlFromCookie: jest.fn( () => undefined ),
-	saveUrlToCookie: jest.fn(),
+	getUrlFromCookie: vi.fn( () => undefined ),
+	saveUrlToCookie: vi.fn(),
 };
 
 function mockWindowLocation(): void {
@@ -84,9 +86,9 @@ function mockWindowLocation(): void {
 
 describe( 'getThankYouPageUrl', () => {
 	beforeEach( () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( false );
-		jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( false );
-		jest.mocked( getDashboardFromQuery ).mockReturnValue( undefined );
+		vi.mocked( isJetpackCloud ).mockReturnValue( false );
+		vi.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( false );
+		vi.mocked( getDashboardFromQuery ).mockReturnValue( undefined );
 	} );
 
 	it( 'redirects to the root page when no site is set', () => {
@@ -219,7 +221,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic jetpack product', () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( true );
+		vi.mocked( isJetpackCloud ).mockReturnValue( true );
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -233,7 +235,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic jetpack product in the cart', () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( true );
+		vi.mocked( isJetpackCloud ).mockReturnValue( true );
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -255,7 +257,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic Jetpack Security plan', () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( true );
+		vi.mocked( isJetpackCloud ).mockReturnValue( true );
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -269,7 +271,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic Jetpack Security plan is in the cart', () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( true );
+		vi.mocked( isJetpackCloud ).mockReturnValue( true );
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -291,7 +293,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the Jetpack Redirect API if checkout is on Jetpack Cloud and there is a non-atomic Jetpack Complete plan is in the cart', () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( true );
+		vi.mocked( isJetpackCloud ).mockReturnValue( true );
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
 			siteSlug: 'foo.bar',
@@ -313,8 +315,8 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and adminPageRedirect is omitted', () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( true );
-		jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
+		vi.mocked( isJetpackCloud ).mockReturnValue( true );
+		vi.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
 		const adminUrl = 'https://my.site/wp-admin/';
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
@@ -337,8 +339,8 @@ describe( 'getThankYouPageUrl', () => {
 	it.each( [ 'jetpack_pro_yearly', 'jetpack_pro_bi_yearly' ] )(
 		'redirects to My Jetpack if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and %s is in the cart',
 		( productSlug ) => {
-			jest.mocked( isJetpackCloud ).mockReturnValue( true );
-			jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
+			vi.mocked( isJetpackCloud ).mockReturnValue( true );
+			vi.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
 			const url = getThankYouPageUrl( {
 				...defaultArgs,
 				siteSlug: 'foo.bar',
@@ -359,8 +361,8 @@ describe( 'getThankYouPageUrl', () => {
 	);
 
 	it( 'redirects to the sites wp-admin with adminPageRedirect if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and adminPageRedirect is supplied', () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( true );
-		jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
+		vi.mocked( isJetpackCloud ).mockReturnValue( true );
+		vi.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
 		const adminUrl = 'https://my.site/wp-admin/';
 		const adminPageRedirect = 'admin.php?page=jetpack-backup';
 		const url = getThankYouPageUrl( {
@@ -383,8 +385,8 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to the sites wp-admin if checkout is on Jetpack Cloud and if redirectCheckoutToWpAdmin() flag is true and there is a non-atomic jetpack product and redirectTo is defined', () => {
-		jest.mocked( isJetpackCloud ).mockReturnValue( true );
-		jest.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
+		vi.mocked( isJetpackCloud ).mockReturnValue( true );
+		vi.mocked( redirectCheckoutToWpAdmin ).mockReturnValue( true );
 		const adminUrl = 'https://my.site/wp-admin/';
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
@@ -663,7 +665,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'does not redirect to url from cookie if cart contains a Google Apps product without a domain receipt', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -683,7 +685,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'does redirect to url from cookie if cart contains a Google Apps product with a domain receipt', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -706,7 +708,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'Redirects to root if there is no purchase and cart contains a Google Apps product without a domain receipt', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -728,7 +730,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to afterPurchaseUrl if set even if there is a url from a cookie', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -749,7 +751,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to url from cookie with notice type set to "purchase-success"', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -769,7 +771,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'Should store the current URL in the redirect cookie when called from the editor', () => {
-		const saveUrlToCookie = jest.fn();
+		const saveUrlToCookie = vi.fn();
 		const cart = {
 			...getMockCart(),
 			products: [],
@@ -791,7 +793,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'Should store the thank you URL in the redirect cookie when called from the editor with an e-commerce plan', () => {
-		const saveUrlToCookie = jest.fn();
+		const saveUrlToCookie = vi.fn();
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -812,7 +814,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to url from cookie followed by purchase id if there is no site', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -834,7 +836,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to url from cookie followed by receipt id if there is no site', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -851,7 +853,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to url from cookie followed by receipt id if there is a site but wpcom_signup_complete_flow_name from session storage is equal to "domain"', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		window.sessionStorage.setItem( 'wpcom_signup_complete_flow_name', 'domain' );
 		const cart = {
 			...getMockCart(),
@@ -873,7 +875,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to url from cookie followed by receipt id placeholder if there is no site', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -894,7 +896,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to url from cookie followed by placeholder receiptId if there is no site, and there is no receipt', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -915,7 +917,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to url from cookie followed by receipt id and Gravatar domain parameter', () => {
-		const getUrlFromCookie = jest.fn( () => '/cookie' );
+		const getUrlFromCookie = vi.fn( () => '/cookie' );
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -974,7 +976,7 @@ describe( 'getThankYouPageUrl', () => {
 	} );
 
 	it( 'redirects to thank-you page with dashboard query param if present', () => {
-		jest.mocked( getDashboardFromQuery ).mockReturnValue( 'a4a' );
+		vi.mocked( getDashboardFromQuery ).mockReturnValue( 'a4a' );
 		const cart = {
 			...getMockCart(),
 			cart_key: 'no-site' as CartKey,
@@ -1549,6 +1551,46 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/no-site/12342424241' );
 	} );
 
+	it( 'ignores a non-http redirectTo that names the site as its host', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			receiptId: 12342424241,
+			redirectTo: 'javascript://foo.bar/%0Aalert(1)',
+		} );
+		expect( url ).not.toContain( 'javascript:' );
+	} );
+
+	it( 'ignores a non-http redirectTo that names an allowed host', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			receiptId: 12342424241,
+			redirectTo: 'javascript://jetpack.com/%0Aalert(1)',
+		} );
+		expect( url ).not.toContain( 'javascript:' );
+	} );
+
+	it( 'returns a Studio redirectTo as is, keeping the receipt placeholder for the pending page', () => {
+		const redirectTo = 'https://app.wordpress.studio/purchase-complete?receipt=:receiptId';
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			redirectTo,
+			sitelessCheckoutType: 'studio',
+		} );
+		expect( url ).toBe( redirectTo );
+	} );
+
+	it( 'ignores a redirectTo on a host that only starts with a Studio host', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			receiptId: 12342424241,
+			redirectTo: 'https://wordpress.studio.example.com/',
+			sitelessCheckoutType: 'studio',
+		} );
+		expect( url ).toBe( '/checkout/thank-you/no-site/12342424241' );
+	} );
+
 	it( 'redirects to the jetpack checkout thank you with `no_product` when jetpack checkout arg is set and the cart is empty', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
@@ -1585,7 +1627,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Does not offers discounted annual business plan for tailored flows (https://wp.me/p58i-cBr).', () => {
 			[ NEWSLETTER_FLOW ].forEach( ( flowName ) => {
-				const getUrlFromCookie = jest.fn( () => '/cookie' );
+				const getUrlFromCookie = vi.fn( () => '/cookie' );
 
 				// set a tailored flow name
 				sessionStorage.setItem( 'wpcom_signup_complete_flow_name', flowName );
@@ -2032,7 +2074,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	describe( 'Unified siteless checkout', () => {
 		it( 'should redirect to the cookie URL with siteId when cookie contains post-checkout-onboarding path', () => {
-			const getUrlFromCookie = jest.fn(
+			const getUrlFromCookie = vi.fn(
 				() => '/setup/onboarding-unified/post-checkout-onboarding/step'
 			);
 			const siteId = 12345;
@@ -2048,7 +2090,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'should append siteId to existing query parameters when cookie URL already has them', () => {
-			const getUrlFromCookie = jest.fn(
+			const getUrlFromCookie = vi.fn(
 				() => '/setup/onboarding-unified/post-checkout-onboarding?existing=param'
 			);
 			const siteId = 67890;
@@ -2066,7 +2108,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'should return /?checkout_type=unified fallback when cookie URL does not contain post-checkout-onboarding path even if siteSlug is provided', () => {
-			const getUrlFromCookie = jest.fn( () => '/some/other/path' );
+			const getUrlFromCookie = vi.fn( () => '/some/other/path' );
 			const siteId = 12345;
 
 			const url = getThankYouPageUrl( {
@@ -2081,7 +2123,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'should return /?checkout_type=unified fallback when no cookie URL is available even if siteSlug is provided', () => {
-			const getUrlFromCookie = jest.fn( () => undefined );
+			const getUrlFromCookie = vi.fn( () => undefined );
 			const siteId = 12345;
 
 			const url = getThankYouPageUrl( {
@@ -2096,7 +2138,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'should return /?checkout_type=unified fallback when cookie URL is empty string even if siteSlug is provided', () => {
-			const getUrlFromCookie = jest.fn( () => '' );
+			const getUrlFromCookie = vi.fn( () => '' );
 			const siteId = 12345;
 
 			const url = getThankYouPageUrl( {
@@ -2111,9 +2153,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'should redirect to checkout thank you page when cart has ecommerce plan', () => {
-			const getUrlFromCookie = jest.fn(
-				() => '/setup/onboarding-unified/post-checkout-onboarding'
-			);
+			const getUrlFromCookie = vi.fn( () => '/setup/onboarding-unified/post-checkout-onboarding' );
 			const siteId = 12345;
 			const receiptId = 67890;
 			const cart = {
@@ -2139,9 +2179,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'should follow normal cookie logic when cart has non-ecommerce plan', () => {
-			const getUrlFromCookie = jest.fn(
-				() => '/setup/onboarding-unified/post-checkout-onboarding'
-			);
+			const getUrlFromCookie = vi.fn( () => '/setup/onboarding-unified/post-checkout-onboarding' );
 			const siteId = 12345;
 			const cart = {
 				...getMockCart(),
@@ -2165,9 +2203,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'should append :siteId placeholder when cookie URL contains post-checkout-onboarding path but siteId is undefined', () => {
-			const getUrlFromCookie = jest.fn(
-				() => '/setup/onboarding-unified/post-checkout-onboarding'
-			);
+			const getUrlFromCookie = vi.fn( () => '/setup/onboarding-unified/post-checkout-onboarding' );
 
 			const url = getThankYouPageUrl( {
 				...defaultArgs,
@@ -2180,7 +2216,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'should append :siteId placeholder after existing query params when siteId is undefined', () => {
-			const getUrlFromCookie = jest.fn(
+			const getUrlFromCookie = vi.fn(
 				() => '/setup/onboarding-unified/post-checkout-onboarding?existing=param'
 			);
 
@@ -2197,9 +2233,7 @@ describe( 'getThankYouPageUrl', () => {
 		} );
 
 		it( 'should use :siteId placeholder in ecommerce thank-you URL when siteId is undefined', () => {
-			const getUrlFromCookie = jest.fn(
-				() => '/setup/onboarding-unified/post-checkout-onboarding'
-			);
+			const getUrlFromCookie = vi.fn( () => '/setup/onboarding-unified/post-checkout-onboarding' );
 			const receiptId = 67890;
 			const cart = {
 				...getMockCart(),
@@ -2226,8 +2260,14 @@ describe( 'getThankYouPageUrl', () => {
 } );
 
 describe( 'getAllowedExternalRedirectHosts', () => {
-	const mockedConfig = config as unknown as jest.Mock;
-	const actualConfig = jest.requireActual( '@automattic/calypso-config' );
+	const mockedConfig = config as unknown as Mock;
+	let actualConfig: typeof config;
+
+	beforeAll( async () => {
+		( { default: actualConfig } = await vi.importActual<
+			typeof import( '@automattic/calypso-config' )
+		>( '@automattic/calypso-config' ) );
+	} );
 
 	afterEach( () => {
 		mockedConfig.mockImplementation( ( key ) => actualConfig( key ) );
@@ -2247,6 +2287,13 @@ describe( 'getAllowedExternalRedirectHosts', () => {
 		const hosts = getAllowedExternalRedirectHosts();
 		expect( hosts ).toContain( 'my.wordpress.com' );
 		expect( hosts ).toContain( 'jetpack.com' );
+	} );
+
+	it( 'includes the Studio return hosts in every environment', () => {
+		mockConfig( undefined );
+		const hosts = getAllowedExternalRedirectHosts();
+		expect( hosts ).toContain( 'wordpress.studio' );
+		expect( hosts ).toContain( 'app.wordpress.studio' );
 	} );
 
 	it( 'appends entries from checkout_additional_allowed_redirect_hosts', () => {

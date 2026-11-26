@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	SITE_CONNECTION_STATUS_RECEIVE,
 	SITE_CONNECTION_STATUS_REQUEST,
@@ -9,11 +10,11 @@ import reducer, { items, requesting } from '../reducer';
 
 describe( 'reducer', () => {
 	beforeAll( () => {
-		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 	} );
 
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should export expected reducer keys', () => {

@@ -1,23 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import { resolvedRenewalDataStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 import CheckoutMasterbar from '../checkout';
 import type { PropsWithChildren } from 'react';
 
-jest.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => ( {
+vi.mock( 'calypso/my-sites/checkout/calypso-shopping-cart-provider', () => ( {
 	__esModule: true,
 	default: ( { children }: PropsWithChildren ) => children,
 } ) );
-jest.mock( 'calypso/my-sites/checkout/src/components/leave-checkout-modal', () => ( {
+vi.mock( 'calypso/my-sites/checkout/src/components/leave-checkout-modal', () => ( {
 	LeaveCheckoutModal: () => null,
-	useCheckoutLeaveModal: () => ( { clickClose: jest.fn(), isLeaveDisabled: false } ),
+	useCheckoutLeaveModal: () => ( { clickClose: vi.fn(), isLeaveDisabled: false } ),
 } ) );
-jest.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center', () => ( {
-	useCheckoutHelpCenter: () => ( { toggleHelpCenter: jest.fn() } ),
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center', () => ( {
+	useCheckoutHelpCenter: () => ( { toggleHelpCenter: vi.fn() } ),
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( '../masterbar', () => ( {
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '../masterbar', () => ( {
 	__esModule: true,
 	default: ( { children }: PropsWithChildren ) => <header>{ children }</header>,
 } ) );
@@ -28,6 +30,10 @@ function renderAt( url: string ) {
 }
 
 describe( 'CheckoutMasterbar', () => {
+	beforeEach( () => {
+		resolvedRenewalDataStore.reset();
+	} );
+
 	it( 'links Back to the agency dashboard page the cart came from', () => {
 		const cancelTo = 'https://agencies-beta.automattic.com/products?category=jetpack';
 		renderAt( `/checkout/agency/purchase?cancel_to=${ encodeURIComponent( cancelTo ) }` );
@@ -58,10 +64,17 @@ describe( 'CheckoutMasterbar', () => {
 		expect( screen.queryByRole( 'link', { name: 'Back' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'offers the leave prompt on the Studio checkout', () => {
+		renderAt( '/checkout/studio/studio-cloud-monthly' );
+
+		expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
+	} );
+
 	it.each( [
 		[ '/checkout/akismet/ak_plus_yearly_2', '.akismet-logo' ],
 		[ '/checkout/jetpack/jetpack_backup_t1_yearly', '.jetpack-logo' ],
 		[ '/checkout/passport/passport_yearly', '.passport-logo' ],
+		[ '/checkout/studio/studio-cloud-monthly', '.masterbar__studio-logo' ],
 	] )( 'shows the brand logo instead of the WordPress logo at %s', ( url, logoSelector ) => {
 		const { container } = renderAt( url );
 
@@ -87,5 +100,53 @@ describe( 'CheckoutMasterbar', () => {
 		expect(
 			container.querySelector( '.step-container-v2__top-bar-wordpress-logo-wrapper' )
 		).toBeVisible();
+	} );
+
+	describe( 'on a renewal by subscription ID', () => {
+		const wordPressLogoSelector = '.step-container-v2__top-bar-wordpress-logo-wrapper';
+
+		it( 'shows no logo and no Back button until the cart has loaded', () => {
+			const { container } = renderAt( '/checkout/renew/12345' );
+
+			expect( container.querySelector( wordPressLogoSelector ) ).not.toBeInTheDocument();
+			expect( container.querySelector( '.akismet-logo' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows the Akismet logo once the cart says it is an Akismet renewal', () => {
+			const { container } = renderAt( '/checkout/renew/12345' );
+
+			act( () => resolvedRenewalDataStore.set( { sitelessCheckoutType: 'akismet' } ) );
+
+			expect( container.querySelector( '.akismet-logo' ) ).toBeVisible();
+			expect( container.querySelector( wordPressLogoSelector ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Back' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows the Studio logo once the cart says it is a Studio renewal', () => {
+			const { container } = renderAt( '/checkout/renew/12345' );
+
+			act( () => resolvedRenewalDataStore.set( { sitelessCheckoutType: 'studio' } ) );
+
+			expect( container.querySelector( '.masterbar__studio-logo' ) ).toBeVisible();
+			expect( container.querySelector( wordPressLogoSelector ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows the WordPress logo and Back button once the cart says it is a site renewal', () => {
+			const { container } = renderAt( '/checkout/renew/12345' );
+
+			act( () => resolvedRenewalDataStore.set( { sitelessCheckoutType: undefined } ) );
+
+			expect( container.querySelector( wordPressLogoSelector ) ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Back' } ) ).toBeVisible();
+		} );
+
+		it( 'ignores the cart on other checkout paths', () => {
+			resolvedRenewalDataStore.set( { sitelessCheckoutType: 'akismet' } );
+			const { container } = renderAt( '/checkout/example.com' );
+
+			expect( container.querySelector( wordPressLogoSelector ) ).toBeVisible();
+			expect( container.querySelector( '.akismet-logo' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );

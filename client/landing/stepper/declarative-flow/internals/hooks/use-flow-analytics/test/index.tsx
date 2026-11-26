@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import { DURATION, useFlowAnalytics } from '../';
 import { recordFlowStart } from '../../../analytics/record-flow-start';
 
-jest.mock( '../../../analytics/record-flow-start' );
+vi.mock( '../../../analytics/record-flow-start' );
 
 describe( 'useFlowAnalytics', () => {
 	const buildWrapper =
@@ -28,12 +29,12 @@ describe( 'useFlowAnalytics', () => {
 
 	beforeEach( () => {
 		sessionStorage.clear();
-		jest.clearAllMocks();
-		jest.useFakeTimers();
+		vi.clearAllMocks();
+		vi.useFakeTimers();
 	} );
 
 	afterAll( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'tracks the flow start', () => {
@@ -87,7 +88,7 @@ describe( 'useFlowAnalytics', () => {
 
 	it( 'tracks the same flow after 20 min', () => {
 		render();
-		jest.advanceTimersByTime( DURATION + 100 );
+		vi.advanceTimersByTime( DURATION + 100 );
 		render();
 
 		expect( recordFlowStart ).toHaveBeenCalledTimes( 2 );

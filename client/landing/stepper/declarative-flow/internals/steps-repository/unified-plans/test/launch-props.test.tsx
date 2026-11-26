@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PLAN_PREMIUM, PLAN_PREMIUM_2_YEARS } from '@automattic/calypso-products';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import PlansStepAdaptor from '../index';
 
 let mockReceivedProps: Record< string, unknown > = {};
 let mockSite: { plan: { product_slug: string } } | null = null;
 
-jest.mock( '../unified-plans-step', () => ( {
+vi.mock( '../unified-plans-step', () => ( {
 	__esModule: true,
 	default: ( props: Record< string, unknown > ) => {
 		mockReceivedProps = props;
@@ -17,31 +18,33 @@ jest.mock( '../unified-plans-step', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: () => null,
 } ) );
 
-jest.mock( 'calypso/components/data/query-theme', () => ( {
-	useQueryTheme: jest.fn(),
-} ) );
+vi.mock( 'calypso/components/data/query-theme', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useQueryTheme: vi.fn(),
+	} )
+);
 
-jest.mock( 'calypso/landing/stepper/hooks/use-blueprint-suggested-plans', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-blueprint-suggested-plans', () => ( {
 	useBlueprintSuggestedPlans: () => ( { suggestedPlans: [], isLoading: false } ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => new URLSearchParams(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => mockSite,
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
 	useSiteSlug: () => 'example.wordpress.com',
 } ) );
 
-jest.mock( 'calypso/lib/plans/use-visual-split-experiment', () => ( {
+vi.mock( 'calypso/lib/plans/use-visual-split-experiment', () => ( {
 	useIsVisualSplitEnabled: () => [ false, null ],
 } ) );
 
@@ -49,7 +52,7 @@ const renderAdaptor = ( extraProps: Record< string, unknown > = {}, search?: str
 	const props = {
 		flow: 'launch-site',
 		stepName: 'plans',
-		navigation: { submit: jest.fn(), goBack: jest.fn() },
+		navigation: { submit: vi.fn(), goBack: vi.fn() },
 		...extraProps,
 	} as unknown as Parameters< typeof PlansStepAdaptor >[ 0 ];
 
@@ -83,6 +86,31 @@ describe( 'PlansStepAdaptor launch props', () => {
 				deemphasizeFreePlan: true,
 			} )
 		);
+	} );
+} );
+
+describe( 'PlansStepAdaptor skippable', () => {
+	beforeEach( () => {
+		mockReceivedProps = {};
+	} );
+
+	it( 'submits a skip without a plan when the step is skippable', () => {
+		const navigation = { submit: vi.fn(), goBack: vi.fn() };
+		renderAdaptor( { skippable: true, navigation } );
+
+		( mockReceivedProps.onSkip as () => void )();
+
+		expect( navigation.submit ).toHaveBeenCalledWith( {
+			stepName: 'plans',
+			cartItems: null,
+			action: 'skip_plan',
+		} );
+	} );
+
+	it( 'offers no skip otherwise', () => {
+		renderAdaptor();
+
+		expect( mockReceivedProps.onSkip ).toBeUndefined();
 	} );
 } );
 

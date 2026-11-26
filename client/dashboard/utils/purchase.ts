@@ -176,6 +176,10 @@ export function isExpiredWithNoAutoRenewAttemptsLeft( purchase: Purchase ): bool
 	return isExpiredAndInGracePeriod( purchase ) && purchase.is_past_last_auto_renew_attempt_date;
 }
 
+export function isRetryingFailedRenewal( purchase: Purchase ): boolean {
+	return purchase.is_past_first_auto_renew_attempt_date && mightStillAutoRenew( purchase );
+}
+
 export function isIncludedWithPlan( purchase: Purchase ) {
 	return 'included' === purchase.expiry_status;
 }

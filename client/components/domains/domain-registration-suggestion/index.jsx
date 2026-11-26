@@ -21,7 +21,6 @@ import {
 import { getDomainPrice, getDomainSalePrice } from 'calypso/lib/domains';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import PremiumBadge from './premium-badge';
@@ -635,7 +634,6 @@ const mapStateToProps = ( state, props ) => {
 		renewCost,
 		productSaleCost,
 		flowName,
-		currentUser: getCurrentUser( state ),
 	};
 };
 

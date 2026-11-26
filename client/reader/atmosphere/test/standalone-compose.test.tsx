@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  *
  * End-to-end integration smoke tests for the standalone-compose stack.
  *
@@ -24,6 +24,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as noticeActions from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -32,22 +33,20 @@ import { TIMELINE_TAB } from '../helper';
 import type React from 'react';
 
 // `<ReaderMain>` pulls in a Redux subtree the test store doesn't seed.
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: React.ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: React.ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
 // Calypso router: page() is invoked by the View button in the success
 // notice. Keep it as a Jest mock so we can spy on / assert against it
 // without performing real navigation.
-jest.mock( '@automattic/calypso-router', () => {
-	const replace = jest.fn();
-	const fn = jest.fn() as jest.Mock & { replace: jest.Mock };
+vi.mock( '@automattic/calypso-router', () => {
+	const replace = vi.fn();
+	const fn = vi.fn() as Mock & { replace: Mock };
 	fn.replace = replace;
 	return { __esModule: true, default: fn };
 } );
@@ -102,22 +101,22 @@ describe( 'Standalone compose end-to-end', () => {
 		// the test store doesn't provide that slice. Replace it with a no-op
 		// action creator so dispatch() doesn't throw, while still letting
 		// spies observe call-site arguments.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
-		jest.spyOn( noticeActions, 'successNotice' );
-		( page as unknown as jest.Mock ).mockReset();
-		( page.replace as jest.Mock ).mockReset();
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
+		vi.spyOn( noticeActions, 'successNotice' );
+		( page as unknown as Mock ).mockReset();
+		( page.replace as Mock ).mockReset();
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'FAB happy path: typed text optimistically appears, then the placeholder is swapped for the server-confirmed item, the modal closes, and a "View" success notice is dispatched', async () => {
-		const successSpy = noticeActions.successNotice as unknown as jest.Mock;
-		const pageMock = page as unknown as jest.Mock;
+		const successSpy = noticeActions.successNotice as unknown as Mock;
+		const pageMock = page as unknown as Mock;
 
 		mockConnections();
 		mockTimelineEmpty();
@@ -190,7 +189,7 @@ describe( 'Standalone compose end-to-end', () => {
 	} );
 
 	it( 'pill happy path: opens the standalone composer with entry_point=timeline_inline, posts, and closes', async () => {
-		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
 
 		mockConnections();
 		mockTimelineEmpty();
@@ -238,7 +237,7 @@ describe( 'Standalone compose end-to-end', () => {
 	} );
 
 	it( 'optimistic-then-error: 502 rolls back the placeholder, keeps the modal + draft, renders the inline error, and fires _compose_error_shown once', async () => {
-		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
 
 		mockConnections();
 		mockTimelineEmpty();

@@ -1,68 +1,4 @@
-/** @jest-environment jsdom */
-
-jest.mock( '@automattic/calypso-router' );
-jest.mock( 'calypso/components/async-load', () => ( { require } ) => (
-	<div data-testid="async-load" data-loader={ require.name } />
-) );
-jest.mock( 'calypso/lib/wporg', () => ( {
-	getWporgLocaleCode: () => 'it_US',
-	fetchPluginsList: () => Promise.resolve( [] ),
-} ) );
-jest.mock( 'calypso/lib/url-search', () => ( Component ) => ( props ) => (
-	<Component { ...props } doSearch={ jest.fn() } />
-) );
-jest.mock( 'calypso/blocks/upsell-nudge', () => ( { plan } ) => (
-	<div data-testid="upsell-nudge">{ plan }</div>
-) );
-
-let mockPlugins = [];
-jest.mock( 'calypso/data/marketplace/use-wporg-plugin-query', () => ( {
-	useWPORGPlugins: jest.fn( () => ( { data: { plugins: mockPlugins } } ) ),
-	useWPORGInfinitePlugins: jest.fn( () => ( {
-		data: { plugins: mockPlugins },
-		fetchNextPage: jest.fn(),
-	} ) ),
-} ) );
-
-jest.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
-	useWPCOMPluginsList: () => ( { data: [] } ),
-	useWPCOMFeaturedPlugins: () => ( { data: [] } ),
-} ) );
-
-jest.mock( 'calypso/data/marketplace/use-es-query', () => ( {
-	useSiteSearchPlugins: jest.fn( () => ( {
-		data: { plugins: mockPlugins },
-		fetchNextPage: jest.fn(),
-	} ) ),
-	useESPluginsInfinite: jest.fn( () => ( {
-		data: { plugins: mockPlugins },
-		fetchNextPage: jest.fn(),
-	} ) ),
-} ) );
-
-jest.mock( '@automattic/languages', () => [
-	{
-		value: 1,
-		langSlug: 'it',
-		name: 'Italian English',
-		wpLocale: 'it_US',
-		popular: 1,
-		territories: [ '019' ],
-	},
-] );
-
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
-	isFetchingSitePurchases: jest.fn( () => false ),
-} ) );
-
-jest.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () =>
-	jest.fn( () => ( { usePreinstalledPremiumPlugin: jest.fn() } ) )
-);
-
-jest.mock( 'calypso/lib/route/path', () => ( {
-	...jest.requireActual( 'calypso/lib/route/path' ),
-	getMessagePathForJITM: jest.fn( () => '/plugins/' ),
-} ) );
+/** @vitest-environment jsdom */
 
 import {
 	FEATURE_INSTALL_PLUGINS,
@@ -77,6 +13,7 @@ import { merge } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';
 import { applyMiddleware, createStore as createReduxStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { vi } from 'vitest';
 import documentHead from 'calypso/state/document-head/reducer';
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import { reducer as jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
@@ -87,6 +24,70 @@ import siteConnection from 'calypso/state/site-connection/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PluginsBrowser from '../';
+
+vi.mock( '@automattic/calypso-router' );
+vi.mock( 'calypso/components/async-load', () => ( {
+	default: ( { require } ) => <div data-testid="async-load" data-loader={ require.name } />,
+} ) );
+vi.mock( 'calypso/lib/wporg', () => ( {
+	getWporgLocaleCode: () => 'it_US',
+	fetchPluginsList: () => Promise.resolve( [] ),
+} ) );
+vi.mock( 'calypso/blocks/upsell-nudge', () => ( {
+	default: ( { plan } ) => <div data-testid="upsell-nudge">{ plan }</div>,
+} ) );
+
+let mockPlugins = [];
+vi.mock( 'calypso/data/marketplace/use-wporg-plugin-query', () => ( {
+	useWPORGPlugins: vi.fn( () => ( { data: { plugins: mockPlugins } } ) ),
+	useWPORGInfinitePlugins: vi.fn( () => ( {
+		data: { plugins: mockPlugins },
+		fetchNextPage: vi.fn(),
+	} ) ),
+} ) );
+
+vi.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
+	useWPCOMPluginsList: () => ( { data: [] } ),
+	useWPCOMFeaturedPlugins: () => ( { data: [] } ),
+} ) );
+
+vi.mock( 'calypso/data/marketplace/use-es-query', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	useSiteSearchPlugins: vi.fn( () => ( {
+		data: { plugins: mockPlugins },
+		fetchNextPage: vi.fn(),
+	} ) ),
+	useESPluginsInfinite: vi.fn( () => ( {
+		data: { plugins: mockPlugins },
+		fetchNextPage: vi.fn(),
+	} ) ),
+} ) );
+
+vi.mock( '@automattic/languages', () => ( {
+	default: [
+		{
+			value: 1,
+			langSlug: 'it',
+			name: 'Italian English',
+			wpLocale: 'it_US',
+			popular: 1,
+			territories: [ '019' ],
+		},
+	],
+} ) );
+
+vi.mock( 'calypso/state/purchases/selectors', () => ( {
+	isFetchingSitePurchases: vi.fn( () => false ),
+} ) );
+
+vi.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () => ( {
+	default: vi.fn( () => ( { usePreinstalledPremiumPlugin: vi.fn() } ) ),
+} ) );
+
+vi.mock( 'calypso/lib/route', async () => ( {
+	...( await vi.importActual( 'calypso/lib/route' ) ),
+	getMessagePathForJITM: vi.fn( () => '/plugins/' ),
+} ) );
 
 const initialReduxState = {
 	plugins: {
@@ -114,7 +115,9 @@ const render = ( el, options = {} ) =>
 	} );
 
 window.__i18n_text_domain__ = JSON.stringify( 'default' );
-window.IntersectionObserver = jest.fn( () => ( { observe: jest.fn(), disconnect: jest.fn() } ) );
+window.IntersectionObserver = vi.fn( function () {
+	return { observe: vi.fn(), disconnect: vi.fn() };
+} );
 
 describe( 'Search view', () => {
 	const myProps = {

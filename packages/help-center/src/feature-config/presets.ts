@@ -15,6 +15,7 @@ const wpcomPreset: HelpCenterFeatureConfig = {
 		skipSupportStatus: false,
 		zendeskIntegrationKey: null,
 		zendeskConversationTags: [],
+		humanSupportRouting: null,
 	},
 	home: {
 		recentConversations: true,
@@ -46,6 +47,7 @@ const a4aPreset: HelpCenterFeatureConfig = {
 		skipSupportStatus: false,
 		zendeskIntegrationKey: null,
 		zendeskConversationTags: [],
+		humanSupportRouting: null,
 	},
 	home: {
 		recentConversations: false,
@@ -82,6 +84,8 @@ const wooPreset: HelpCenterFeatureConfig = {
 		zendeskIntegrationKey: 'woo',
 		// Routes the conversation to the Woo queue (Zendesk trigger, WOOPUBR-2382).
 		zendeskConversationTags: [ 'woo_support_flow_help_center' ],
+		// Off until the routes beyond chat are built (WOOPUBR-2404).
+		humanSupportRouting: null,
 	},
 	home: {
 		recentConversations: true,

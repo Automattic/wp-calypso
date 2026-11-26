@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { getPlan, JETPACK_PRO_PLANS } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';

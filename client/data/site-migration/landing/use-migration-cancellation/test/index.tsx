@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config' );
 
 describe( 'useMigrationCancellation', () => {
 	beforeEach( () => {

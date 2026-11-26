@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { isEnabled } from '@automattic/calypso-config';
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { ReaderSidebar } from '../index';
 import type { ReactNode } from 'react';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn();
-	const isEnabledMock = jest.fn( () => false );
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn();
+	const isEnabledMock = vi.fn( () => false );
 	return {
 		__esModule: true,
 		default: Object.assign( config, { isEnabled: isEnabledMock } ),
@@ -18,30 +19,38 @@ jest.mock( '@automattic/calypso-config', () => {
 	};
 } );
 
-jest.mock( 'calypso/reader/components/app-title', () => () => <div>Reader</div> );
-jest.mock( 'calypso/reader/sidebar/reader-sidebar-recent', () => () => <div>Following</div> );
-jest.mock( 'calypso/reader/sidebar/reader-sidebar-lists', () => () => <li>Lists</li> );
-jest.mock( 'calypso/reader/sidebar/reader-sidebar-tags', () => () => <li>Tags</li> );
-jest.mock( 'calypso/reader/sidebar/reader-sidebar-connections', () => () => <li>Connections</li> );
-jest.mock( 'calypso/reader/sidebar/reader-sidebar-organizations', () => () => (
-	<li>Organizations</li>
-) );
-jest.mock( 'calypso/layout/sidebar/menu', () => ( { children }: { children: ReactNode } ) => (
-	<ul>{ children }</ul>
-) );
-jest.mock( 'calypso/layout/sidebar/item', () => ( { label }: { label: ReactNode } ) => (
-	<li>{ label }</li>
-) );
-jest.mock( 'calypso/layout/sidebar/separator', () => () => <li aria-hidden="true" /> );
+vi.mock( 'calypso/reader/components/app-title', () => ( { default: () => <div>Reader</div> } ) );
+vi.mock( 'calypso/reader/sidebar/reader-sidebar-recent', () => ( {
+	default: () => <div>Following</div>,
+} ) );
+vi.mock( 'calypso/reader/sidebar/reader-sidebar-lists', () => ( {
+	default: () => <li>Lists</li>,
+} ) );
+vi.mock( 'calypso/reader/sidebar/reader-sidebar-tags', () => ( { default: () => <li>Tags</li> } ) );
+vi.mock( 'calypso/reader/sidebar/reader-sidebar-connections', () => ( {
+	default: () => <li>Connections</li>,
+} ) );
+vi.mock( 'calypso/reader/sidebar/reader-sidebar-organizations', () => ( {
+	default: () => <li>Organizations</li>,
+} ) );
+vi.mock( 'calypso/layout/sidebar/menu', () => ( {
+	default: ( { children }: { children: ReactNode } ) => <ul>{ children }</ul>,
+} ) );
+vi.mock( 'calypso/layout/sidebar/item', () => ( {
+	default: ( { label }: { label: ReactNode } ) => <li>{ label }</li>,
+} ) );
+vi.mock( 'calypso/layout/sidebar/separator', () => ( {
+	default: () => <li aria-hidden="true" />,
+} ) );
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordAction: jest.fn(),
-	recordGaEvent: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordAction: vi.fn(),
+	recordGaEvent: vi.fn(),
 } ) );
 
 describe( 'ReaderSidebar', () => {
-	const mockRecordReaderTracksEvent: jest.Mock = jest.fn();
-	const mockRecordTracksEvent: jest.Mock = jest.fn();
+	const mockRecordReaderTracksEvent: Mock = vi.fn();
+	const mockRecordTracksEvent: Mock = vi.fn();
 	const defaultProps = {
 		path: '/reader',
 		translate: ( text: string ) => text,
@@ -51,17 +60,17 @@ describe( 'ReaderSidebar', () => {
 		isFollowingOpen: false,
 		isListsOpen: false,
 		isTagsOpen: false,
-		toggleFollowingVisibility: jest.fn(),
-		toggleListsVisibility: jest.fn(),
-		toggleTagsVisibility: jest.fn(),
+		toggleFollowingVisibility: vi.fn(),
+		toggleListsVisibility: vi.fn(),
+		toggleTagsVisibility: vi.fn(),
 		recordReaderTracksEvent: mockRecordReaderTracksEvent,
 		recordTracksEvent: mockRecordTracksEvent,
-		setNextLayoutFocus: jest.fn(),
+		setNextLayoutFocus: vi.fn(),
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.mocked( isEnabled ).mockImplementation( () => false );
+		vi.clearAllMocks();
+		vi.mocked( isEnabled ).mockImplementation( () => false );
 	} );
 
 	it( 'renders the four section labels as presentational headings', () => {
@@ -81,7 +90,6 @@ describe( 'ReaderSidebar', () => {
 			render( instance.renderSidebarMenu() );
 
 			expect( screen.getAllByText( 'Conversations' ) ).toHaveLength( 1 );
-			expect( screen.queryByText( 'Conversations (WIP)' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'sits in the main group above Feeds', () => {
@@ -103,9 +111,9 @@ describe( 'ReaderSidebar', () => {
 
 	describe( 'Saved', () => {
 		it( 'is shown once the saved posts feature is on', () => {
-			jest
-				.mocked( isEnabled )
-				.mockImplementation( ( feature: string ) => feature === 'reader/saved-posts' );
+			vi.mocked( isEnabled ).mockImplementation(
+				( feature: string ) => feature === 'reader/saved-posts'
+			);
 
 			render( new ReaderSidebar( defaultProps ).renderSidebarMenu() );
 

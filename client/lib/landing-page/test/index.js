@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { getLoggedInLandingPage, goToLandingPage } from '../index';
 
 // The resolver's own thunks only fetch data that these fixtures already provide,
 // so a no-op dispatch matches how the state would look once they resolved.
 function createStore( state ) {
-	return { getState: jest.fn( () => state ), dispatch: jest.fn() };
+	return { getState: vi.fn( () => state ), dispatch: vi.fn() };
 }
 
 describe( 'getLoggedInLandingPage', () => {
@@ -192,7 +193,7 @@ describe( 'goToLandingPage', () => {
 			ui: {},
 			sites: { items: { 1: { ID: 1, URL: 'https://test.wordpress.com' } } },
 		};
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 
 		await goToLandingPage( createStore( state ), navigate );
 
@@ -216,9 +217,9 @@ describe( 'goToLandingPage', () => {
 				},
 			},
 		};
-		const assign = jest.fn();
+		const assign = vi.fn();
 		Object.defineProperty( window, 'location', { value: { assign }, configurable: true } );
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 
 		await goToLandingPage( createStore( state ), navigate );
 

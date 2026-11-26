@@ -29,7 +29,7 @@ import WebPreview from 'calypso/components/web-preview';
 import { protectForm } from 'calypso/lib/protect-form';
 import { getFirstConflictingPlugin } from 'calypso/lib/seo';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { removeNotice } from 'calypso/state/notices/actions';
 import { getFilteredAndSortedPlugins } from 'calypso/state/plugins/installed/selectors-ts';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -37,8 +37,6 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import {
-	isSiteSettingsSaveSuccessful,
-	getSiteSettingsSaveError,
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
 } from 'calypso/state/site-settings/selectors';
@@ -425,8 +423,6 @@ const mapStateToProps = ( state ) => {
 		isAtomic: isAtomicSite( state, siteId ),
 		showWebsiteMeta: !! ( selectedSite?.options?.advanced_seo_front_page_description ?? '' ),
 		isSeoToolsActive: isJetpackModuleActive( state, siteId, 'seo-tools' ),
-		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
-		saveError: getSiteSettingsSaveError( state, siteId ),
 		path: getCurrentRouteParameterized( state, siteId ),
 		isFetchingSettings: isRequestingSiteSettings( state, siteId ),
 		isSavingSettings: isSavingSiteSettings( state, siteId ),
@@ -434,7 +430,6 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = {
-	errorNotice,
 	removeNotice,
 	refreshSiteData: requestSite,
 	requestSiteSettings,

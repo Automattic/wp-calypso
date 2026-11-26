@@ -3,6 +3,7 @@
  */
 import { randomUUID } from 'crypto';
 import config from '@automattic/calypso-config';
+import { captureException } from '@automattic/calypso-sentry';
 import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
@@ -16,6 +17,7 @@ import {
 	authQueryFn,
 	getOAuthToken,
 	logout,
+	redirectAfterSessionEnd,
 	requestOAuthToken,
 	sessionStateQuery,
 	updateCurrentUser,
@@ -30,6 +32,16 @@ vi.mock( '../../analytics', async () => ( {
 } ) );
 
 const mockedBumpStat = vi.mocked( bumpStat );
+
+vi.mock( '@automattic/calypso-sentry', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/calypso-sentry' ) >() ),
+	captureException: vi.fn(),
+} ) );
+
+vi.mock( 'calypso/lib/user/store', async ( importOriginal ) => {
+	const actual = await importOriginal< typeof import( 'calypso/lib/user/store' ) >();
+	return { ...actual, clearStore: vi.fn( actual.clearStore ) };
+} );
 
 const testUser = { ID: 1, username: 'testuser', language: 'en' } as User;
 
@@ -588,6 +600,24 @@ describe( 'logout', () => {
 		expect( window.location.href ).toBe( 'https://wordpress.com/?apppromo' );
 	} );
 
+	test( 'still leaves when the local cleanup fails', async () => {
+		nock( 'https://wordpress.com' )
+			.post( '/wp-login.php' )
+			.query( { action: 'logout-endpoint' } )
+			.reply( 200, { success: true, data: { redirect_to: 'https://wordpress.com/?apppromo' } } );
+		const removeItem = vi.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {
+			throw new Error( 'storage is unavailable' );
+		} );
+
+		try {
+			await logout( user );
+		} finally {
+			removeItem.mockRestore();
+		}
+
+		expect( window.location.href ).toBe( 'https://wordpress.com/?apppromo' );
+	} );
+
 	test( 'falls back to logout_URL when the logout endpoint fails', async () => {
 		const scope = nock( 'https://wordpress.com' )
 			.post( '/wp-login.php' )
@@ -598,5 +628,58 @@ describe( 'logout', () => {
 
 		expect( scope.isDone() ).toBe( true );
 		expect( window.location.href ).toBe( user.logout_URL );
+	} );
+} );
+
+describe( 'redirectAfterSessionEnd', () => {
+	beforeEach( () => {
+		Object.defineProperty( window, 'location', {
+			writable: true,
+			value: { href: 'https://my.wordpress.com/me/account', origin: 'https://my.wordpress.com' },
+		} );
+	} );
+
+	afterEach( () => {
+		vi.useRealTimers();
+	} );
+
+	test( 'still clears the classic user store when an earlier step fails', async () => {
+		store.set( 'wpcom_user_id', 1 );
+		const removeItem = vi.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {
+			throw new Error( 'storage is unavailable' );
+		} );
+
+		try {
+			await redirectAfterSessionEnd( 'https://wordpress.com/me/account/closed' );
+		} finally {
+			removeItem.mockRestore();
+		}
+
+		expect( store.get( 'wpcom_user_id' ) ).toBeUndefined();
+		expect( window.location.href ).toBe( 'https://wordpress.com/me/account/closed' );
+		expect( captureException ).toHaveBeenCalledWith( new Error( 'storage is unavailable' ) );
+	} );
+
+	test( 'leaves after a few seconds when the cleanup stalls', async () => {
+		vi.useFakeTimers();
+		const { clearStore } = await import( 'calypso/lib/user/store' );
+		vi.mocked( clearStore ).mockReturnValueOnce( new Promise( () => {} ) );
+
+		const done = redirectAfterSessionEnd( 'https://wordpress.com/me/account/closed' );
+		await vi.advanceTimersByTimeAsync( 2900 );
+		expect( window.location.href ).toBe( 'https://my.wordpress.com/me/account' );
+
+		await vi.advanceTimersByTimeAsync( 100 );
+		await done;
+		expect( window.location.href ).toBe( 'https://wordpress.com/me/account/closed' );
+	} );
+
+	test( 'leaves the way the caller asks', async () => {
+		const leave = vi.fn();
+
+		await redirectAfterSessionEnd( 'https://wordpress.com/me/account/closed', leave );
+
+		expect( leave ).toHaveBeenCalledWith( 'https://wordpress.com/me/account/closed' );
+		expect( window.location.href ).toBe( 'https://my.wordpress.com/me/account' );
 	} );
 } );

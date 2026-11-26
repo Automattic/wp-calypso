@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { isEnabled } from '@automattic/calypso-config';
@@ -6,18 +6,21 @@ import { PLAN_FREE } from '@automattic/calypso-products';
 import { useCurrentPlan } from '@automattic/data-stores/src/plans';
 import { screen, within, act } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import PlansWrapper from 'calypso/my-sites/plans/main';
 import purchasesReducer from 'calypso/state/purchases/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( '@automattic/calypso-config' );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
-jest.mock( 'calypso/components/data/query-sites', () => jest.fn() );
-jest.mock( 'calypso/components/data/query-site-purchases', () => jest.fn() );
-jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
-jest.mock( '@automattic/data-stores/src/plans/hooks/use-current-plan', () => jest.fn() );
+vi.mock( '@automattic/calypso-config' );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-active-promotions', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/components/data/query-sites', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/components/data/query-site-purchases', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/components/data/query-products-list', () => ( { default: vi.fn() } ) );
+vi.mock( '@automattic/data-stores/src/plans/hooks/use-current-plan', () => ( {
+	default: vi.fn(),
+} ) );
 
 const mockPlan = {
 	planSlug: PLAN_FREE,
@@ -57,10 +60,10 @@ describe( '/plans/:siteSlug', () => {
 	beforeAll( () => {
 		originalScrollTo = window.scrollTo;
 		window.scrollTo = () => null;
-		window.IntersectionObserver = jest.fn( () => ( {
-			observe: jest.fn(),
-			unobserve: jest.fn(),
-			disconnect: jest.fn(),
+		window.IntersectionObserver = vi.fn( () => ( {
+			observe: vi.fn(),
+			unobserve: vi.fn(),
+			disconnect: vi.fn(),
 		} ) );
 	} );
 
@@ -80,12 +83,12 @@ describe( '/plans/:siteSlug', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		const configMock = ( values ) => ( key ) => values[ key ];
-		( isEnabled as jest.Mock ).mockImplementation( configMock( { 'untangling/plans': true } ) );
+		( isEnabled as Mock ).mockImplementation( configMock( { 'untangling/plans': true } ) );
 
-		( useCurrentPlan as jest.Mock ).mockReturnValue( mockPlan );
+		( useCurrentPlan as Mock ).mockReturnValue( mockPlan );
 	} );
 
 	describe( "'Manage add-ons' button", () => {

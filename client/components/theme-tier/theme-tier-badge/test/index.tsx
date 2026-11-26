@@ -1,14 +1,15 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { WPCOM_FEATURES_PREMIUM_THEMES_LIMITED } from '@automattic/calypso-products';
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import wpcomProxyRequest from 'wpcom-proxy-request';
 import ThemeTierBadge from '../index';
 import { PERSONAL_PLAN } from './helpers/fixtures';
 import { render } from './helpers/utils';
 
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
+vi.mock( 'wpcom-proxy-request', () => ( { default: vi.fn() } ) );
 
 describe( 'ThemeTierBadge', () => {
 	it( 'should render the free badge when seeing a free theme', () => {
@@ -125,7 +126,7 @@ describe( 'ThemeTierBadge', () => {
 	} );
 
 	it( 'should render upgrade badge for non-allowed themes', async () => {
-		jest.mocked( wpcomProxyRequest ).mockResolvedValue( [ PERSONAL_PLAN ] );
+		vi.mocked( wpcomProxyRequest ).mockResolvedValue( [ PERSONAL_PLAN ] );
 
 		render(
 			<ThemeTierBadge
@@ -142,7 +143,7 @@ describe( 'ThemeTierBadge', () => {
 	} );
 
 	it( 'should upsell Personal for a premium-tier theme', async () => {
-		jest.mocked( wpcomProxyRequest ).mockResolvedValue( [ PERSONAL_PLAN ] );
+		vi.mocked( wpcomProxyRequest ).mockResolvedValue( [ PERSONAL_PLAN ] );
 
 		render(
 			<ThemeTierBadge

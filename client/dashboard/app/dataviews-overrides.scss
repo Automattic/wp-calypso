@@ -24,7 +24,7 @@
 a.dataviews-url-field {
 	&,
 	&:visited {
-		color: $gray-700;
+		color: var( --wpds-color-foreground-content-neutral-weak );
 	}
 
 	&:hover {
@@ -67,4 +67,21 @@ a.dataviews-url-field {
 // its compact buttons keep a 32px box that sits below everything else in the row.
 .dataviews-view-table tbody .dataviews-item-actions .components-button.is-compact {
 	height: var( --wpds-dimension-size-sm, 24px );
+}
+
+// `@wordpress/dataviews` hardcodes these light colors; remove once it uses WPDS tokens.
+.dataviews-view-grid .dataviews-view-grid__media::after,
+.dataviews-view-grid-infinite-scroll .dataviews-view-grid__media::after,
+.dataviews-view-list .dataviews-view-list__media-wrapper::after,
+.dataviews-column-primary__media::after,
+.dataviews-view-picker-grid .dataviews-view-picker-grid__media::after {
+	box-shadow: inset 0 0 0 var(--wpds-border-width-xs, 1px) var(--wpds-color-stroke-surface-neutral);
+}
+
+.dataviews__view-actions--infinite-scroll {
+	background-color: var( --wpds-color-background-surface-neutral-strong );
+}
+
+.dataviews-filters__search-widget-filter-combobox__wrapper .dataviews-filters__search-widget-filter-combobox__input::placeholder {
+	color: var( --wpds-color-foreground-content-neutral-weak );
 }

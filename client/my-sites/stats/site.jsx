@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { eye } from '@automattic/components/src/icons';
-import { Icon, people, starEmpty, commentContent, settings, chartBar } from '@wordpress/icons';
+import { Icon, people, starEmpty, commentContent, settings } from '@wordpress/icons';
 import clsx from 'clsx';
 import { localize, translate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import titlecase from 'to-title-case';
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
@@ -31,7 +31,6 @@ import {
 	STATS_PRODUCT_NAME,
 } from 'calypso/my-sites/stats/constants';
 import { useMomentInSite } from 'calypso/my-sites/stats/hooks/use-moment-site-zone';
-import usePremiumAnalyticsPreviewInvitation from 'calypso/my-sites/stats/hooks/use-premium-analytics-preview-invitation';
 import { recordCurrentScreen } from 'calypso/my-sites/stats/hooks/use-stats-navigation-history';
 import { getChartRangeParams } from 'calypso/my-sites/stats/utils';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -66,7 +65,7 @@ import useStatsStrings from './hooks/use-stats-strings';
 import MiniCarousel from './mini-carousel';
 import { StatsGlobalValuesContext } from './pages/providers/global-provider';
 import StatsModuleListing from './pages/shared/stats-module-listing';
-import PremiumAnalyticsPreviewSwitchOnDialog from './premium-analytics-preview/switch-on-dialog';
+import DashboardHiddenContext from './pricing-grid/dashboard-hidden-context';
 import PromoCards from './promo-cards';
 import StatsCardUpdateJetpackVersion from './stats-card-upsell/stats-card-update-jetpack-version';
 import ChartTabs from './stats-chart-tabs';
@@ -177,6 +176,7 @@ function moduleVisibilityWithUserConfiguration( userConfig, hasVideoPress ) {
 
 function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...props } ) {
 	const dispatch = useDispatch();
+	const isHidden = useContext( DashboardHiddenContext );
 	const {
 		supportsPlanUsage,
 		supportsUTMStats: supportsUTMStatsFeature,
@@ -209,31 +209,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 	const moduleVisibility = useMemo(
 		() => moduleVisibilityWithUserConfiguration( moduleToggles, hasVideoPress ),
 		[ hasVideoPress, moduleToggles ]
-	);
-
-	// The way into the preview that outlives the banner: an entry in the modules menu.
-	const { isInvited: isInvitedToPreview, dashboardUrl: previewDashboardUrl } =
-		usePremiumAnalyticsPreviewInvitation( siteId );
-	const [ isPreviewDialogOpen, setIsPreviewDialogOpen ] = useState( false );
-	useEffect( () => {
-		setIsPreviewDialogOpen( false );
-	}, [ siteId ] );
-	const pageModulesMenuItems = useMemo(
-		() =>
-			isInvitedToPreview && previewDashboardUrl
-				? [
-						{
-							key: 'premium-analytics-preview',
-							label: translate( 'Try the new Stats' ),
-							description: translate(
-								'Clearer charts and movable widgets. Switch it off at any time.'
-							),
-							icon: chartBar,
-							onSelect: () => setIsPreviewDialogOpen( true ),
-						},
-					]
-				: [],
-		[ isInvitedToPreview, previewDashboardUrl ]
 	);
 
 	// Find the applied shortcut with shortcut ID from the URL.
@@ -586,13 +561,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				isOdysseyStats={ isOdysseyStats }
 				statsPurchaseSuccess={ context.query.statsPurchaseSuccess }
 			/>
-			{ isPreviewDialogOpen && previewDashboardUrl && (
-				<PremiumAnalyticsPreviewSwitchOnDialog
-					siteId={ siteId }
-					dashboardUrl={ previewDashboardUrl }
-					onClose={ () => setIsPreviewDialogOpen( false ) }
-				/>
-			) }
 			<StickyPanel headerId={ isRunningOnWPAdmin ? 'wpadminbar' : 'header' }>
 				<StatsPeriodHeader>
 					<StatsPeriodNavigation
@@ -617,7 +585,6 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 									moduleToggles={ moduleToggles }
 									siteId={ siteId }
 									customToggleIcon={ <Icon className="gridicon" icon={ settings } /> }
-									menuItems={ pageModulesMenuItems }
 								/>
 							)
 						}
@@ -808,11 +775,15 @@ function StatsBody( { siteId, chartTab = 'views', date, context, isInternal, ...
 				<StatsPlanUsage siteId={ siteId } isOdysseyStats={ isOdysseyStats } />
 			) }
 			{ ! shouldShowUpsells ? null : <AsyncLoad require={ loadJetpackUpsellSection } /> }
-			{ ! wpcomShowUpsell && (
-				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+			{ ! isHidden && (
+				<>
+					{ ! wpcomShowUpsell && (
+						<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
+					) }
+					{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
+					<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
+				</>
 			) }
-			{ supportUserFeedback && <StatsFeedbackPresentor siteId={ siteId } /> }
-			<AsyncLoad require={ loadTrackResurrections } placeholder={ null } />
 		</div>
 	);
 }
@@ -909,6 +880,7 @@ const StatsSite = ( props ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const slug = useSelector( getSelectedSiteSlug );
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	const isHidden = useContext( DashboardHiddenContext );
 
 	useEffect(
 		() =>
@@ -952,10 +924,12 @@ const StatsSite = ( props ) => {
 			{ /* Odyssey: if Stats module is not enabled, the page will not be rendered. */ }
 			{ ! isOdysseyStats && isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 			<DocumentHead title={ STATS_PRODUCT_NAME } />
-			<PageViewTracker
-				path={ `/stats/${ period }/:site` }
-				title={ `Stats > ${ titlecase( period ) }` }
-			/>
+			{ ! isHidden && (
+				<PageViewTracker
+					path={ `/stats/${ period }/:site` }
+					title={ `Stats > ${ titlecase( period ) }` }
+				/>
+			) }
 			<StatsGlobalValuesContext.Consumer>
 				{ ( isInternal ) => (
 					<StatsBodyAccessCheck isInternal={ isInternal } siteId={ siteId } { ...props } />

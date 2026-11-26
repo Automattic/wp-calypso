@@ -4,7 +4,6 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	WORDADS_SITE_APPROVE_REQUEST_FAILURE,
 	WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-	WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/wordads/init';
@@ -35,9 +34,5 @@ export const requestWordAdsApproval = ( siteId ) => ( dispatch ) => {
 
 export const dismissWordAdsError = ( siteId ) => ( {
 	type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_ERROR,
-	siteId,
-} );
-export const dismissWordAdsSuccess = ( siteId ) => ( {
-	type: WORDADS_SITE_APPROVE_REQUEST_DISMISS_SUCCESS,
 	siteId,
 } );

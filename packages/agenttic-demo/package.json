@@ -20,12 +20,15 @@
 		"@automattic/agenttic-client": "workspace:^",
 		"@automattic/agenttic-ui": "workspace:^",
 		"@automattic/calypso-eslint-config": "workspace:^",
+		"@testing-library/dom": "^10.4.2",
+		"@testing-library/react": "^16.3.3",
 		"@types/react": "^18.0.0 || ^19.0.0",
 		"@types/react-dom": "^18.0.0 || ^19.0.0",
-		"@vitejs/plugin-react": "^6.2.1",
+		"@vitejs/plugin-react": "^6.3.0",
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
 		"typescript": "^5.9.3",
-		"vite": "^8.3.7"
+		"vite": "^8.3.8",
+		"vitest": "^5.1.0"
 	}
 }

@@ -1,33 +1,36 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import { fetch, onError, onSuccess } from 'calypso/state/data-layer/wpcom/sites/stats/visits';
 import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import chartTabsReducer from 'calypso/state/stats/chart-tabs/reducer';
 import StatModuleChartTabs from '../';
 
-jest.mock( '@automattic/viewport-react', () => ( {
+vi.mock( '@automattic/viewport-react', () => ( {
 	withMobileBreakpoint: ( component ) => component,
 } ) );
-jest.mock( 'calypso/lib/performance-tracking', () => ( {
-	withPerformanceTrackerStop: ( component ) => component,
+vi.mock( 'calypso/lib/performance-tracking', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		withPerformanceTrackerStop: ( component ) => component,
+	} )
+);
+vi.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 1 } ) );
+vi.mock( 'calypso/state/sites/selectors', () => ( { getSiteOption: () => 0 } ) );
+vi.mock( '../../stats-tabs', () => ( { default: () => null } ) );
+vi.mock( '../chart-header', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/chart', () => ( {
+	default: ( { data } ) => <div data-testid="traffic-chart">{ data[ 0 ]?.value } views</div>,
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 1 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( { getSiteOption: () => 0 } ) );
-jest.mock( '../../stats-tabs', () => () => null );
-jest.mock( '../chart-header', () => () => null );
-jest.mock( 'calypso/components/chart', () => ( { data } ) => (
-	<div data-testid="traffic-chart">{ data[ 0 ]?.value } views</div>
-) );
 
 describe( 'Stats chart request recovery', () => {
-	beforeEach( () => jest.useFakeTimers() );
+	beforeEach( () => vi.useFakeTimers() );
 	afterEach( () => {
-		jest.clearAllTimers();
-		jest.useRealTimers();
+		vi.clearAllTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'replaces the spinner with an error after failure and shows data after a successful retry', () => {
@@ -52,7 +55,7 @@ describe( 'Stats chart request recovery', () => {
 					queryDate={ query.date }
 					customQuantity={ 1 }
 					customRange={ { chartStart: query.date, chartEnd: query.date, daysInRange: 1 } }
-					onChangeLegend={ jest.fn() }
+					onChangeLegend={ vi.fn() }
 				/>
 			</Provider>
 		);

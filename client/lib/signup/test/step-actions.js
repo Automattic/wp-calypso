@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -10,6 +10,7 @@ import {
 } from '@automattic/calypso-products';
 import { DIFM_FLOW, DIFM_FLOW_STORE } from '@automattic/onboarding';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import flows from 'calypso/signup/config/flows';
 import {
@@ -22,12 +23,10 @@ import {
 	pickMarketplacePluginVariant,
 } from '../step-actions';
 
-jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'calypso/signup/config/flows-pure', () =>
-	require( './mocks/signup/config/flows-pure' )
-);
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+vi.mock( 'calypso/signup/config/steps', () => import( './mocks/signup/config/steps' ) );
+vi.mock( 'calypso/signup/config/flows', () => import( './mocks/signup/config/flows' ) );
+vi.mock( 'calypso/signup/config/flows-pure', () => import( './mocks/signup/config/flows-pure' ) );
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
 
 // A Promise wrapper around the callback which resolves after the callback completes
 // to ensure jest waits for the test to finish.
@@ -122,7 +121,7 @@ describe( 'createSiteAndAddDIFMToCart()', () => {
 } );
 
 describe( 'isMailboxFulfilled()', () => {
-	const submitSignupStep = jest.fn();
+	const submitSignupStep = vi.fn();
 	const domainItem = { meta: 'example.com', product_slug: 'dotcom_domain' };
 
 	beforeEach( () => {
@@ -170,14 +169,14 @@ describe( 'isMailboxFulfilled()', () => {
 
 describe( 'addPlanToCart()', () => {
 	test( 'adds the email item for the currently selected domain', async () => {
-		const addProductsToCart = jest.fn().mockResolvedValue( {} );
-		jest.spyOn( cartManagerClient, 'getCartKeyForSiteSlug' ).mockResolvedValue( 123 );
-		jest
-			.spyOn( cartManagerClient, 'forCartKey' )
-			.mockReturnValue( { actions: { addProductsToCart } } );
+		const addProductsToCart = vi.fn().mockResolvedValue( {} );
+		vi.spyOn( cartManagerClient, 'getCartKeyForSiteSlug' ).mockResolvedValue( 123 );
+		vi.spyOn( cartManagerClient, 'forCartKey' ).mockReturnValue( {
+			actions: { addProductsToCart },
+		} );
 		const reduxStore = {
 			getState: () => ( { currentUser: { id: null }, productsList: { items: {} } } ),
-			dispatch: jest.fn(),
+			dispatch: vi.fn(),
 		};
 		const dependencies = {
 			siteSlug: 'example.wordpress.com',
@@ -199,7 +198,7 @@ describe( 'addPlanToCart()', () => {
 } );
 
 describe( 'isPlanFulfilled()', () => {
-	const submitSignupStep = jest.fn();
+	const submitSignupStep = vi.fn();
 
 	beforeEach( () => {
 		flows.excludeStep.mockClear();

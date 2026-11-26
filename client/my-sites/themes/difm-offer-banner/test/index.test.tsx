@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useDifmOffer } from 'calypso/dashboard/utils/difm-offer';
+import { type Mock, vi } from 'vitest';
+import { useDifmOffer } from 'calypso/dashboard/sites/difm/hooks/use-difm-offer';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import preferencesReducer from 'calypso/state/preferences/reducer';
@@ -12,23 +13,28 @@ import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DifmOfferBanner from '../index';
 
-jest.mock( 'calypso/dashboard/utils/difm-offer', () => ( {
-	...jest.requireActual( 'calypso/dashboard/utils/difm-offer' ),
-	useDifmOffer: jest.fn(),
+vi.mock( 'calypso/dashboard/sites/difm/hooks/use-difm-offer', async () => ( {
+	...( await vi.importActual<
+		typeof import( 'calypso/dashboard/sites/difm/hooks/use-difm-offer' )
+	>( 'calypso/dashboard/sites/difm/hooks/use-difm-offer' ) ),
+	useDifmOffer: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( () => ( {
+vi.mock( 'calypso/state/analytics/actions', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( 'calypso/state/analytics/actions' ) >() ),
+	recordTracksEvent: vi.fn( () => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
 	} ) ),
 } ) );
 
 // Store the value locally without the API request, as the real thunk does first.
-jest.mock( 'calypso/state/preferences/actions', () => {
-	const actual = jest.requireActual( 'calypso/state/preferences/actions' );
+vi.mock( 'calypso/state/preferences/actions', async () => {
+	const actual = await vi.importActual< typeof import( 'calypso/state/preferences/actions' ) >(
+		'calypso/state/preferences/actions'
+	);
 	return {
 		...actual,
-		savePreference: jest.fn( ( key, value ) => actual.setPreference( key, value ) ),
+		savePreference: vi.fn( ( key, value ) => actual.setPreference( key, value ) ),
 	};
 } );
 
@@ -71,12 +77,12 @@ function renderBanner(
 }
 
 function mockOffer( result: ReturnType< typeof useDifmOffer > ) {
-	( useDifmOffer as jest.Mock ).mockReturnValue( result );
+	( useDifmOffer as Mock ).mockReturnValue( result );
 }
 
 describe( 'DifmOfferBanner', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders the variation copy for an eligible assigned user', () => {
@@ -129,13 +135,13 @@ describe( 'DifmOfferBanner', () => {
 	test( 'records a hover on the banner with the location', () => {
 		mockOffer( { isEligible: true, isLoading: false, variation: 'no_time_to_build' } );
 		const { container } = renderBanner();
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		fireEvent.pointerEnter(
 			container.querySelector( '.themes__difm-offer-banner' )?.parentElement as Element
 		);
-		act( () => jest.advanceTimersByTime( 500 ) );
-		jest.useRealTimers();
+		act( () => vi.advanceTimersByTime( 500 ) );
+		vi.useRealTimers();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_difm_offer_banner_hover', {
 			upsell_id: 'themes-difm-offer',

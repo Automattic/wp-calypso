@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SiteSettingsSecurity } from '../main';
@@ -16,11 +17,14 @@ const props = {
 	translate: ( x ) => x,
 };
 
-jest.mock( 'calypso/my-sites/site-settings/form-security', () => () => null );
-jest.mock( 'calypso/my-sites/site-settings/form-jetpack-monitor', () => () => null );
-jest.mock( 'calypso/my-sites/site-settings/jetpack-dev-mode-notice', () => () => null );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( 'calypso/components/empty-content', () => () => <div data-testid="empty-content" /> );
+vi.mock( 'calypso/my-sites/site-settings/form-security', () => ( { default: () => null } ) );
+vi.mock( 'calypso/my-sites/site-settings/jetpack-dev-mode-notice', () => ( {
+	default: () => null,
+} ) );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/empty-content', () => ( {
+	default: () => <div data-testid="empty-content" />,
+} ) );
 
 describe( 'SiteSettingsSecurity basic tests', () => {
 	test( 'error page should not show if active security settings feature', () => {

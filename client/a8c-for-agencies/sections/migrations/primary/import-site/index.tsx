@@ -96,7 +96,7 @@ function ImportProgress( {
 			</h2>
 			<p>
 				{ translate(
-					'We are building it on your new development site. This usually takes a few minutes. You can leave this page: the site is in Sites, and we email you if the move fails.'
+					'Moving a site can take up to an hour. You don’t need to wait here. We’ll email you when it’s ready.'
 				) }
 			</p>
 		</div>

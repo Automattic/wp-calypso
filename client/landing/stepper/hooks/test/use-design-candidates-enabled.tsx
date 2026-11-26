@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useDesignCandidatesEnabled } from '../use-design-candidates-enabled';
 import type { ReactNode } from 'react';
 
 let mockFlagOn = false;
-const mockIsAutomattician = jest.fn();
+const mockIsAutomattician = vi.fn();
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: { isEnabled: ( flag: string ) => mockFlagOn && flag === 'site-spec/design-candidates' },
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
+vi.mock( '@automattic/api-queries', () => ( {
 	isAutomatticianQuery: () => ( {
 		queryKey: [ 'is-automattician' ],
 		queryFn: () => mockIsAutomattician(),

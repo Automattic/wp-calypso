@@ -1,26 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import wpcomRequest from '@automattic/data-stores/src/wpcom-request';
 import { getAssemblerDesign } from '@automattic/design-picker';
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useDispatch } from 'calypso/state';
 import { useActivateDesign } from '../use-activate-design';
 import { useSiteData } from '../use-site-data';
 
-jest.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
+vi.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	canAccessWpcomApis: jest.fn( () => true ),
+	default: vi.fn(),
+	canAccessWpcomApis: vi.fn( () => true ),
 } ) );
 
-jest.mock( 'calypso/state', () => ( { useDispatch: jest.fn() } ) );
-jest.mock( '../use-site-data', () => ( { useSiteData: jest.fn() } ) );
+vi.mock( 'calypso/state', () => ( { useDispatch: vi.fn() } ) );
+vi.mock( '../use-site-data', () => ( { useSiteData: vi.fn() } ) );
 
 it( 'rejects activation without site details before making a request', async () => {
-	const reduxDispatch = jest.fn();
-	jest.mocked( useDispatch ).mockReturnValue( reduxDispatch );
-	jest.mocked( useSiteData ).mockReturnValue( {
+	const reduxDispatch = vi.fn();
+	vi.mocked( useDispatch ).mockReturnValue( reduxDispatch );
+	vi.mocked( useSiteData ).mockReturnValue( {
 		site: null,
 		siteId: 123,
 		siteSlug: 'test.wordpress.com',

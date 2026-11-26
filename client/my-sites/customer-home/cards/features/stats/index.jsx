@@ -11,7 +11,7 @@ import CardHeading from 'calypso/components/card-heading';
 import Chart from 'calypso/components/chart';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import InlineSupportLink from 'calypso/components/inline-support-link';
-import { useStatsAdminUrl } from 'calypso/dashboard/app/hooks/use-stats-admin-url';
+import { useStatsAdminUrl } from 'calypso/dashboard/sites/hooks/use-stats-admin-url';
 import { preventWidows } from 'calypso/lib/formatting';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';

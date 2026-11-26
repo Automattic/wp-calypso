@@ -1,5 +1,6 @@
 import deepFreeze from 'deep-freeze';
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
@@ -31,7 +32,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch properly when receiving a valid response', async () => {
-			const dispatchSpy = jest.fn( ( arg ) => arg );
+			const dispatchSpy = vi.fn( ( arg ) => arg );
 			const request = requestUserSuggestions( siteId )( dispatchSpy );
 
 			expect( dispatchSpy ).toHaveBeenCalledWith( {

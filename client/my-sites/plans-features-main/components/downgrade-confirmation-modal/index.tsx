@@ -1,5 +1,6 @@
 import { purchaseCancelFeaturesQuery } from '@automattic/api-queries';
 import { Gridicon, Spinner } from '@automattic/components';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -24,23 +25,30 @@ interface DowngradeConfirmationModalProps {
 	 */
 	isDelayedDowngrade?: boolean;
 	/**
+	 * When true, the customer picked this change to make now, but it can't be, so
+	 * the modal explains why it is being scheduled instead.
+	 */
+	isChangeNowRefused?: boolean;
+	/**
 	 * Pre-formatted, localized date of the next renewal (e.g. "January 1, 2026"),
 	 * when the scheduled downgrade will take effect. Shown for delayed downgrades.
 	 */
 	renewalDate?: string;
 	/**
-	 * When true, the scheduled change moves to a shorter billing term (e.g.
-	 * annual to monthly), so the copy talks about a plan change rather than a
-	 * downgrade and names the new price.
+	 * When true, the change moves to a shorter billing term (e.g. annual to
+	 * monthly), so the copy talks about a plan change rather than a downgrade,
+	 * names the new price, and warns about moving to monthly.
 	 */
 	isTermChange?: boolean;
 	/**
-	 * Pre-formatted, localized price the renewal will charge with its term (e.g.
+	 * Pre-formatted, localized price the new plan renews at with its term (e.g.
 	 * "$8/month"). Shown for term changes.
 	 */
 	renewalPriceText?: string;
 	/** Pre-formatted, localized refund amount (e.g. "$48.00"). */
 	refundText?: string;
+	/** When true, the refund is still being fetched; show the loader and disable confirming. */
+	isRefundLoading?: boolean;
 	/** When true, the confirm action is in flight; disable buttons and show a spinner. */
 	isConfirming?: boolean;
 	/**
@@ -61,6 +69,7 @@ function ModalBody( {
 	lostFeatures,
 	isInstantDowngrade,
 	isDelayedDowngrade,
+	isChangeNowRefused,
 	renewalDate,
 	isTermChange,
 	isChangeToMonthly,
@@ -75,6 +84,7 @@ function ModalBody( {
 	lostFeatures: { feature_id: string; title: string }[];
 	isInstantDowngrade?: boolean;
 	isDelayedDowngrade?: boolean;
+	isChangeNowRefused?: boolean;
 	renewalDate?: string;
 	isTermChange?: boolean;
 	isChangeToMonthly?: boolean;
@@ -84,6 +94,7 @@ function ModalBody( {
 	changePaymentMethodUrl?: string;
 } ) {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	if ( isLoading ) {
 		return (
@@ -93,9 +104,58 @@ function ModalBody( {
 		);
 	}
 
+	const monthlyWarning = isTermChange && isChangeToMonthly && (
+		<Notice
+			status="warning"
+			isDismissible={ false }
+			className="downgrade-confirmation-modal__payment-notice"
+		>
+			{ translate(
+				'Monthly plans don’t include some benefits that come with yearly and longer plans. Check what you’ll lose below before you switch.',
+				{
+					comment: 'Warning shown when changing from a yearly or longer plan to a monthly plan',
+				}
+			) }
+		</Notice>
+	);
+
+	const lostFeatureList = lostFeatures.length > 0 && (
+		<ul className="downgrade-confirmation-modal__feature-list">
+			{ lostFeatures.map( ( feature ) => (
+				<li key={ feature.feature_id } className="downgrade-confirmation-modal__feature-item">
+					<Gridicon
+						icon="cross-small"
+						size={ 24 }
+						className="downgrade-confirmation-modal__feature-icon"
+					/>
+					<span className="downgrade-confirmation-modal__feature-text">{ feature.title }</span>
+				</li>
+			) ) }
+		</ul>
+	);
+
 	if ( isDelayedDowngrade ) {
 		return (
 			<>
+				{ isChangeNowRefused &&
+					// The scheduling copy below stands on its own, so this can wait for a translation.
+					hasEnTranslation(
+						'This change can’t be made right away with a refund, but you can schedule it for your next renewal.'
+					) && (
+						<Notice
+							status="info"
+							isDismissible={ false }
+							className="downgrade-confirmation-modal__payment-notice"
+						>
+							{ translate(
+								'This change can’t be made right away with a refund, but you can schedule it for your next renewal.',
+								{
+									comment:
+										'Notice shown when a plan change offered now turns out to be possible only at renewal, for example because the new plan costs more than the refund',
+								}
+							) }
+						</Notice>
+					) }
 				{ isRechargeable === false && (
 					<Notice
 						status="warning"
@@ -117,21 +177,7 @@ function ModalBody( {
 						) }
 					</Notice>
 				) }
-				{ isChangeToMonthly && (
-					<Notice
-						status="warning"
-						isDismissible={ false }
-						className="downgrade-confirmation-modal__payment-notice"
-					>
-						{ translate(
-							'Monthly plans don’t include some benefits that come with yearly and longer plans. Check what you’ll lose below before you switch.',
-							{
-								comment:
-									'Warning shown when scheduling a change from a yearly or longer plan to a monthly plan',
-							}
-						) }
-					</Notice>
-				) }
+				{ monthlyWarning }
 				{ isTermChange && renewalDate && renewalPriceText ? (
 					<p className="downgrade-confirmation-modal__description">
 						{ translate(
@@ -181,23 +227,7 @@ function ModalBody( {
 									'Intro line before the list of features that will be lost at the delayed downgrade',
 							} ) }
 						</p>
-						<ul className="downgrade-confirmation-modal__feature-list">
-							{ lostFeatures.map( ( feature ) => (
-								<li
-									key={ feature.feature_id }
-									className="downgrade-confirmation-modal__feature-item"
-								>
-									<Gridicon
-										icon="cross-small"
-										size={ 24 }
-										className="downgrade-confirmation-modal__feature-icon"
-									/>
-									<span className="downgrade-confirmation-modal__feature-text">
-										{ feature.title }
-									</span>
-								</li>
-							) ) }
-						</ul>
+						{ lostFeatureList }
 					</>
 				) }
 			</>
@@ -212,6 +242,42 @@ function ModalBody( {
 			} ) }
 		</p>
 	);
+
+	if ( isInstantDowngrade && isTermChange ) {
+		return (
+			<>
+				{ monthlyWarning }
+				<p className="downgrade-confirmation-modal__description">
+					{ renewalPriceText
+						? translate(
+								'Your plan will change from %(currentPlan)s to %(targetPlan)s now, and you’ll pay %(price)s when it renews.',
+								{
+									args: {
+										currentPlan: currentPlanName,
+										targetPlan: targetPlanName,
+										price: renewalPriceText,
+									},
+									comment:
+										'Message shown when changing now to a shorter billing term. %(price)s includes the term, e.g. "$8/month".',
+								}
+							)
+						: translate( 'Your plan will change from %(currentPlan)s to %(targetPlan)s now.', {
+								args: { currentPlan: currentPlanName, targetPlan: targetPlanName },
+								comment: 'Message shown when changing now to a shorter billing term',
+							} ) }
+				</p>
+				{ lostFeatures.length > 0 && (
+					<p className="downgrade-confirmation-modal__description">
+						{ translate( 'Here’s what you’ll lose:', {
+							comment: 'Intro line before the list of features that will be lost by a plan change',
+						} ) }
+					</p>
+				) }
+				{ lostFeatureList }
+				{ refundLine }
+			</>
+		);
+	}
 
 	if ( lostFeatures.length === 0 ) {
 		return (
@@ -242,18 +308,7 @@ function ModalBody( {
 					}
 				) }
 			</p>
-			<ul className="downgrade-confirmation-modal__feature-list">
-				{ lostFeatures.map( ( feature ) => (
-					<li key={ feature.feature_id } className="downgrade-confirmation-modal__feature-item">
-						<Gridicon
-							icon="cross-small"
-							size={ 24 }
-							className="downgrade-confirmation-modal__feature-icon"
-						/>
-						<span className="downgrade-confirmation-modal__feature-text">{ feature.title }</span>
-					</li>
-				) ) }
-			</ul>
+			{ lostFeatureList }
 			{ refundLine }
 		</>
 	);
@@ -267,10 +322,12 @@ const DowngradeConfirmationModal = ( {
 	purchaseId,
 	isInstantDowngrade,
 	isDelayedDowngrade,
+	isChangeNowRefused,
 	renewalDate,
 	isTermChange,
 	renewalPriceText,
 	refundText,
+	isRefundLoading,
 	isConfirming,
 	isRechargeable,
 	changePaymentMethodUrl,
@@ -297,10 +354,14 @@ const DowngradeConfirmationModal = ( {
 	const lostFeatures = cancelFeaturesData?.features ?? [];
 
 	const isScheduledTermChange = isDelayedDowngrade && isTermChange;
+	const isInstantTermChange = isInstantDowngrade && isTermChange;
 
 	const title = ( () => {
 		if ( isScheduledTermChange ) {
 			return String( translate( 'Schedule plan change' ) );
+		}
+		if ( isInstantTermChange ) {
+			return String( translate( 'Confirm plan change' ) );
 		}
 		return isDelayedDowngrade
 			? String( translate( 'Schedule downgrade' ) )
@@ -317,6 +378,17 @@ const DowngradeConfirmationModal = ( {
 			return translate( 'Schedule downgrade', {
 				comment: 'Button label to confirm scheduling a plan downgrade for end of billing term',
 			} );
+		}
+		if ( isInstantTermChange ) {
+			return refundText
+				? translate( 'Change plan and refund %(refundText)s', {
+						args: { refundText },
+						comment:
+							'Button label to confirm changing now to a shorter billing term, with a refund of the given amount',
+					} )
+				: translate( 'Change plan', {
+						comment: 'Button label to confirm changing now to a shorter billing term',
+					} );
 		}
 		if ( isInstantDowngrade && refundText ) {
 			return translate( 'Downgrade and refund %(refundText)s', {
@@ -338,15 +410,16 @@ const DowngradeConfirmationModal = ( {
 			size="medium"
 		>
 			<ModalBody
-				isLoading={ isLoading }
+				isLoading={ isLoading || !! isRefundLoading }
 				currentPlanName={ currentPlanName }
 				targetPlanName={ targetPlanName }
 				lostFeatures={ lostFeatures }
 				isInstantDowngrade={ isInstantDowngrade }
 				isDelayedDowngrade={ isDelayedDowngrade }
+				isChangeNowRefused={ isChangeNowRefused }
 				renewalDate={ renewalDate }
-				isTermChange={ isScheduledTermChange }
-				isChangeToMonthly={ isScheduledTermChange && !! cancelFeaturesData?.is_change_to_monthly }
+				isTermChange={ isTermChange }
+				isChangeToMonthly={ !! cancelFeaturesData?.is_change_to_monthly }
 				renewalPriceText={ renewalPriceText }
 				refundText={ refundText }
 				isRechargeable={ isRechargeable }
@@ -375,7 +448,9 @@ const DowngradeConfirmationModal = ( {
 						variant="primary"
 						onClick={ onConfirm }
 						isBusy={ isConfirming }
-						disabled={ isConfirming || ( isDelayedDowngrade && isRechargeable === false ) }
+						disabled={
+							isConfirming || isRefundLoading || ( isDelayedDowngrade && isRechargeable === false )
+						}
 					>
 						{ confirmButtonLabel }
 					</Button>

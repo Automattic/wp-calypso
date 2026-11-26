@@ -57,6 +57,7 @@ import CheckoutPending from './checkout-thank-you/pending';
 import StudioReturn from './studio-return';
 import {
 	buildStudioCancelTo,
+	buildStudioCheckoutRedirectTo,
 	buildStudioRedirectTo,
 	getStudioCheckoutParams,
 } from './studio-return/round-trip';
@@ -148,6 +149,13 @@ export function checkoutUnifiedSiteless( context, next ) {
 
 export function checkoutWpcomSiteless( context, next ) {
 	sitelessCheckout( context, next, { sitelessCheckoutType: 'wpcom' } );
+}
+
+export function checkoutStudioSiteless( context, next ) {
+	sitelessCheckout( context, next, {
+		sitelessCheckoutType: 'studio',
+		redirectTo: context.query.redirect_to || buildStudioCheckoutRedirectTo( context.query ),
+	} );
 }
 
 export function checkoutRenewalBySubscriptionId( context, next ) {
@@ -884,7 +892,7 @@ export function studentCheckoutRedirect( context ) {
 export function studioCheckoutReturn( context, next ) {
 	const studioCheckoutParams = getStudioCheckoutParams( context.query );
 
-	// Without a valid `studioSiteId` there is nothing to hand back to, so there is no page worth
+	// Without valid Studio params there is nothing to hand back to, so there is no page worth
 	// rendering.
 	if ( ! studioCheckoutParams ) {
 		page.redirect( '/sites' );

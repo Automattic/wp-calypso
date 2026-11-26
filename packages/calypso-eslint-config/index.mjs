@@ -157,6 +157,11 @@ function build( rootDir ) {
 				jsdoc: {
 					mode: 'typescript',
 				},
+				// The tests run on Vitest, whose API matches Jest's. Jest isn't installed for the plugin to
+				// read its version from.
+				jest: {
+					version: 30,
+				},
 				'import/internal-regex': '^calypso/',
 				// Workspace packages resolve to their real folders. Keep them external for `import/order`
 				// in root-level files too, as they are when reached through `node_modules`.
@@ -492,7 +497,6 @@ function build( rootDir ) {
 				'@typescript-eslint/camelcase': 'off',
 
 				// TypeScript compiler already takes care of these errors
-				'import/no-extraneous-dependencies': 'off',
 				'import/named': 'off',
 				'import/namespace': 'off',
 				'import/default': 'off',

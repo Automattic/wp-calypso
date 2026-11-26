@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, mutationOptions } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as noticeActions from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -98,14 +99,14 @@ describe( '<ComposerModal>', () => {
 		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
-		jest.spyOn( noticeActions, 'successNotice' );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
+		vi.spyOn( noticeActions, 'successNotice' );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'returns null when mode is null', () => {
@@ -139,7 +140,7 @@ describe( '<ComposerModal>', () => {
 	} );
 
 	it( 'passes config.headerIcon to the Modal and calls config.useAuthorHandle for the title', () => {
-		const useAuthorHandle = jest.fn( ( id: number | null ) =>
+		const useAuthorHandle = vi.fn( ( id: number | null ) =>
 			id === 7 ? 'jordesign.bsky.social' : null
 		);
 		const config: ComposerConfig< TestError, TestParams, TestResult > = {
@@ -181,7 +182,7 @@ describe( '<ComposerModal>', () => {
 	} );
 
 	it( 'fires tracks.opened on mount when a mode is active', () => {
-		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
 		renderModal( testComposerConfig );
 
 		act( () => openFn?.( replyMode ) );
@@ -259,7 +260,7 @@ describe( '<ComposerModal>', () => {
 
 	it( 'submits on Cmd+Enter when the text is valid', async () => {
 		const user = userEvent.setup();
-		const mutationFn = jest.fn(
+		const mutationFn = vi.fn(
 			() =>
 				new Promise< TestResult >( () => {
 					/* never resolves */
@@ -283,8 +284,8 @@ describe( '<ComposerModal>', () => {
 
 	it( 'on success, fires tracks.published, dispatches successNotice, and closes the composer', async () => {
 		const user = userEvent.setup();
-		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-		const successSpy = noticeActions.successNotice as unknown as jest.Mock;
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
+		const successSpy = noticeActions.successNotice as unknown as Mock;
 
 		const config: ComposerConfig< TestError, TestParams, TestResult > = {
 			...testComposerConfig,
@@ -312,7 +313,7 @@ describe( '<ComposerModal>', () => {
 
 	it( 'on error, shows config.errorMessage and fires tracks.errorShown', async () => {
 		const user = userEvent.setup();
-		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
 
 		const config: ComposerConfig< TestError, TestParams, TestResult > = {
 			...testComposerConfig,
@@ -373,7 +374,7 @@ describe( '<ComposerModal>', () => {
 		const extendPromise = new Promise( ( resolve ) => {
 			resolveExtend = resolve;
 		} );
-		const mutationFn = jest.fn( async ( params: TestParams ): Promise< TestResult > => {
+		const mutationFn = vi.fn( async ( params: TestParams ): Promise< TestResult > => {
 			void params;
 			return { uri: 'at://posted' };
 		} );
@@ -416,10 +417,10 @@ describe( '<ComposerModal>', () => {
 
 	it( 'surfaces an extendBuildParams rejection as a composer error: errorMessage shown, tracks.errorShown fired, mutation.mutate not called', async () => {
 		const user = userEvent.setup();
-		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-		const errorMessageSpy = jest.fn( ( error: TestError ) => `error: ${ error.kind }` );
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
+		const errorMessageSpy = vi.fn( ( error: TestError ) => `error: ${ error.kind }` );
 
-		const mutationFn = jest.fn( async ( params: TestParams ): Promise< TestResult > => {
+		const mutationFn = vi.fn( async ( params: TestParams ): Promise< TestResult > => {
 			void params;
 			return { uri: 'at://posted' };
 		} );
@@ -508,7 +509,7 @@ describe( '<ComposerModal>', () => {
 
 	it( 'merges getTracksProps() into the published tracks event props', async () => {
 		const user = userEvent.setup();
-		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
 
 		const config: ComposerConfig< TestError, TestParams, TestResult > = {
 			...testComposerConfig,
@@ -544,7 +545,7 @@ describe( '<ComposerModal>', () => {
 
 	it( 'canonical tracks props win when getTracksProps() returns a colliding key', async () => {
 		const user = userEvent.setup();
-		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
 
 		const config: ComposerConfig< TestError, TestParams, TestResult > = {
 			...testComposerConfig,
@@ -577,7 +578,7 @@ describe( '<ComposerModal>', () => {
 
 	it( 'fires config.logBadRequest when an error of kind bad_request arrives', async () => {
 		const user = userEvent.setup();
-		const logBadRequest = jest.fn();
+		const logBadRequest = vi.fn();
 		const error: TestError = { kind: 'bad_request', message: 'why' };
 
 		const config: ComposerConfig< TestError, TestParams, TestResult > = {
@@ -608,14 +609,14 @@ describe( '<ComposerModal> — markOverLimit', () => {
 		openFn = null;
 		closeFn = null;
 
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
-		jest.spyOn( noticeActions, 'successNotice' );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
+		vi.spyOn( noticeActions, 'successNotice' );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'sets hasBeenOverLimit on the context once the user types past the limit', async () => {
@@ -657,16 +658,16 @@ afterEach( () => nock.cleanAll() );
 describe( '<ComposerModal> — overflow handoff visibility', () => {
 	beforeEach( () => {
 		// Re-establish spies for the new describe block (Jest doesn't share `beforeEach` across siblings).
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
-		jest.spyOn( noticeActions, 'successNotice' );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
+		vi.spyOn( noticeActions, 'successNotice' );
 		openFn = null;
 		closeFn = null;
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'shows the overflow section after typing past the limit and keeps it visible after trimming back under', async () => {

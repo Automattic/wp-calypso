@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	Product,
 	SubscribersStepContent,
@@ -16,9 +17,9 @@ import CompSubscribers, {
 	willGrantComps,
 } from '../comp-subscribers';
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { post: jest.fn() } },
+	default: { req: { post: vi.fn() } },
 } ) );
 
 const monthlyAnchor = {

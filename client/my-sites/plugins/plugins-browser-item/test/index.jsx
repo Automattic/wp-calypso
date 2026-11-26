@@ -1,27 +1,27 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import PluginsBrowserListElement from '../';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'calypso/state/ui/selectors' );
-jest.mock( 'calypso/state/plugins/installed/selectors' );
-jest.mock( 'calypso/state/products-list/selectors' );
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
-jest.mock( 'calypso/state/selectors/site-has-feature' );
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn().mockImplementation( () => {} ),
-	useSelector: jest.fn().mockImplementation( ( selector ) => selector( {} ) ),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+vi.mock( 'calypso/state/ui/selectors' );
+vi.mock( 'calypso/state/plugins/installed/selectors' );
+vi.mock( 'calypso/state/products-list/selectors' );
+vi.mock( 'calypso/state/sites/selectors' );
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer' );
+vi.mock( 'calypso/state/selectors/site-has-feature' );
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useDispatch: vi.fn().mockImplementation( () => {} ),
+	useSelector: vi.fn().mockImplementation( ( selector ) => selector( {} ) ),
 } ) );
-jest.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () =>
-	jest.fn( () => ( { usePreinstalledPremiumPlugin: jest.fn() } ) )
-);
-jest.mock( 'calypso/state/plugins/last-visited/selectors', () => ( {
+vi.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () => ( {
+	default: vi.fn( () => ( { usePreinstalledPremiumPlugin: vi.fn() } ) ),
+} ) );
+vi.mock( 'calypso/state/plugins/last-visited/selectors', () => ( {
 	isLastVisitedPlugin: () => {},
 } ) );
 

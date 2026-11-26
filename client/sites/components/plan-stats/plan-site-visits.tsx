@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useCallback, useLayoutEffect, useState } from 'react'; // eslint-disable-line no-unused-vars -- used in the jsdoc types
-import { useStatsAdminUrl } from 'calypso/dashboard/app/hooks/use-stats-admin-url';
+import { useStatsAdminUrl } from 'calypso/dashboard/sites/hooks/use-stats-admin-url';
 import wpcom from 'calypso/lib/wp';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';

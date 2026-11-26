@@ -11,6 +11,13 @@ import { apiCancelAtomicPlan, apiCloseAccount, recordAccountLeakMarker } from '.
 
 const PLAYGROUND_NAVIGATION_TIMEOUT = 60 * 1000;
 
+// Pre-Release, Nov 16-24 2026: the slowest passing attempt took 4.8 min end to
+// end (TeamCity build 20773273); the import in build 20781633's retry took 101s,
+// 62s of them at convert_to_atomic, after its first attempt's Atomic transfer
+// stalled for the full 10 min.
+const IMPORT_STEP_TIMEOUT = 3 * 60 * 1000;
+const IMPORT_TIMEOUT = 5 * 60 * 1000;
+
 test.describe(
 	DataHelper.createSuiteTitle( 'Onboarding: Publish a Playground site to Atomic' ),
 	{ tag: [ tags.CALYPSO_RELEASE, tags.IMPORTS, tags.DESKTOP_ONLY ] },
@@ -164,17 +171,18 @@ test.describe(
 			} );
 
 			await test.step( 'And the import completes in wp-admin', async () => {
-				// WordPress.com can fail the import without the step showing an error
-				// screen, so also stop waiting as soon as its status poll reports a failure.
-				const importFailure = watchImportFailure( page );
+				// WordPress.com can fail or stall the import without the step showing an
+				// error screen, so also stop waiting as soon as its status poll reports a
+				// failure or stays on one step too long.
+				const importFailure = watchImportFailure( page, IMPORT_STEP_TIMEOUT );
 				const errorHeading = page.getByRole( 'heading', {
 					name: 'Your site could not be imported',
 				} );
 				// The import hands over to My Home, which sends a new site on to wp-admin.
 				const importOutcome = page.waitForURL( ( url ) => url.pathname.startsWith( '/wp-admin/' ), {
-					timeout: 10 * 60 * 1000,
+					timeout: IMPORT_TIMEOUT,
 				} );
-				const errorShown = errorHeading.waitFor( { timeout: 10 * 60 * 1000 } ).then( () => {
+				const errorShown = errorHeading.waitFor( { timeout: IMPORT_TIMEOUT } ).then( () => {
 					throw new Error( 'The Playground import failed on WordPress.com' );
 				} );
 				importOutcome.catch( () => {} );

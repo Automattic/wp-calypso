@@ -1,34 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
-
-jest.mock( 'calypso/state/notices/actions', () => {
-	const actual = jest.requireActual( 'calypso/state/notices/actions' );
-	return {
-		...actual,
-		errorNotice: jest.fn( actual.errorNotice ),
-		successNotice: jest.fn( actual.successNotice ),
-	};
-} );
-jest.mock( 'calypso/reader/data/post', () => ( {
-	usePost: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/blocks/comments', () => ( {
-	__esModule: true,
-	default: jest.fn( ( props ) => (
-		<div
-			role="feed"
-			aria-label={ `${ props.commentCount } comments, starting at ${ props.startingCommentId }` }
-		/>
-	) ),
-} ) );
-
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Comments from 'calypso/blocks/comments';
 import { adaptReadConversation } from 'calypso/reader/data/conversations';
 import { usePost } from 'calypso/reader/data/post';
@@ -39,7 +16,33 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationDetail } from '..';
 import { makeConversation } from '../../test/helpers';
 
-const mockedUsePost = jest.mocked( usePost );
+vi.mock( '@wordpress/a11y', () => ( { speak: vi.fn() } ) );
+
+vi.mock( 'calypso/state/notices/actions', async () => {
+	const actual = await vi.importActual< typeof import( 'calypso/state/notices/actions' ) >(
+		'calypso/state/notices/actions'
+	);
+	return {
+		...actual,
+		errorNotice: vi.fn( actual.errorNotice ),
+		successNotice: vi.fn( actual.successNotice ),
+	};
+} );
+vi.mock( 'calypso/reader/data/post', () => ( {
+	usePost: vi.fn(),
+} ) );
+
+vi.mock( 'calypso/blocks/comments', () => ( {
+	__esModule: true,
+	default: vi.fn( ( props ) => (
+		<div
+			role="feed"
+			aria-label={ `${ props.commentCount } comments, starting at ${ props.startingCommentId }` }
+		/>
+	) ),
+} ) );
+
+const mockedUsePost = vi.mocked( usePost );
 
 const conversation = adaptReadConversation(
 	makeConversation( { blogId: 10, postId: 100, title: 'A post title' } )
@@ -68,8 +71,8 @@ const renderDetail = ( props: Partial< React.ComponentProps< typeof Conversation
 
 beforeEach( () => {
 	mockedUsePost.mockReset();
-	jest.mocked( errorNotice ).mockClear();
-	jest.mocked( successNotice ).mockClear();
+	vi.mocked( errorNotice ).mockClear();
+	vi.mocked( successNotice ).mockClear();
 } );
 
 describe( 'ConversationDetail', () => {
@@ -84,7 +87,7 @@ describe( 'ConversationDetail', () => {
 	it( 'shows the post card once the post has loaded', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
-		jest.mocked( speak ).mockClear();
+		vi.mocked( speak ).mockClear();
 
 		renderDetail();
 
@@ -116,7 +119,7 @@ describe( 'ConversationDetail', () => {
 	it( 'keeps the title for screen readers only next to the back button', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
-		renderDetail( { onBack: jest.fn() } );
+		renderDetail( { onBack: vi.fn() } );
 
 		expect( screen.getByRole( 'button', { name: 'Conversations' } ) ).toBeVisible();
 		expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveClass(
@@ -196,7 +199,7 @@ describe( 'ConversationDetail', () => {
 		} as never );
 
 		const { rerender } = renderDetail( { conversation: withDetails } );
-		const commentsPost = () => jest.mocked( Comments ).mock.calls.at( -1 )![ 0 ].post;
+		const commentsPost = () => vi.mocked( Comments ).mock.calls.at( -1 )![ 0 ].post;
 
 		expect( isRebloggable( commentsPost(), true ) ).toBe( false );
 		expect( mockedUsePost ).toHaveBeenLastCalledWith( { blogId: 10, postId: 100 } );
@@ -267,8 +270,8 @@ describe( 'ConversationDetail', () => {
 
 	it( 'calls onPrevious and onNext when their buttons are enabled and clicked', async () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-		const onPrevious = jest.fn();
-		const onNext = jest.fn();
+		const onPrevious = vi.fn();
+		const onNext = vi.fn();
 		const user = userEvent.setup();
 
 		renderDetail( { onPrevious, onNext } );
@@ -285,12 +288,31 @@ describe( 'ConversationDetail', () => {
 		expect( onNext ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'starts the thread at the given comment instead of the latest one', () => {
+	it( 'starts the thread at the given comment instead of the unread or latest one', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
-		renderDetail( { startingCommentId: 77 } );
+		renderDetail( { startingCommentId: 77, highlightedCommentIds: [ 51 ] } );
 
 		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 77' } ) ).toBeVisible();
+	} );
+
+	it( 'starts the thread at the oldest unread comment and keeps it there as more come in', () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+
+		const { rerender } = renderDetail( { highlightedCommentIds: [ 52, 51 ] } );
+
+		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 51' } ) ).toBeVisible();
+
+		rerender(
+			<ConversationDetail
+				siteId={ 10 }
+				postId={ 100 }
+				conversation={ conversation }
+				highlightedCommentIds={ [ 52, 51, 53 ] }
+			/>
+		);
+
+		expect( screen.getByRole( 'feed', { name: '3 comments, starting at 51' } ) ).toBeVisible();
 	} );
 
 	it.each( [

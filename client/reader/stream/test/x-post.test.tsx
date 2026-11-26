@@ -1,12 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { CrossPost } from '../x-post';
 import type { Post } from 'calypso/reader/data/post/cache';
 
-jest.mock( 'calypso/blocks/user-avatar', () => () => <div data-testid="user-avatar" /> );
+vi.mock( 'calypso/blocks/user-avatar', () => ( {
+	default: () => <div data-testid="user-avatar" />,
+} ) );
 
 const post: Post = {
 	title: 'X-post: Test post',
@@ -19,14 +22,14 @@ const post: Post = {
 describe( 'CrossPost', () => {
 	it( 'marks the feed item as seen on opening its source post', async () => {
 		const user = userEvent.setup();
-		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeen = vi.fn();
 		const { container } = render(
 			<CrossPost
 				post={ post }
 				postKey={ { feedId: 100, postId: 200 } }
 				canMarkSeen
 				requestMarkAsSeen={ requestMarkAsSeen }
-				handleClick={ jest.fn() }
+				handleClick={ vi.fn() }
 			/>
 		);
 		const article = container.querySelector( 'article' );
@@ -43,14 +46,14 @@ describe( 'CrossPost', () => {
 
 	it( 'does not mark the feed item as seen when marking is not allowed', async () => {
 		const user = userEvent.setup();
-		const requestMarkAsSeen = jest.fn();
+		const requestMarkAsSeen = vi.fn();
 		const { container } = render(
 			<CrossPost
 				post={ post }
 				postKey={ { feedId: 100, postId: 200 } }
 				canMarkSeen={ false }
 				requestMarkAsSeen={ requestMarkAsSeen }
-				handleClick={ jest.fn() }
+				handleClick={ vi.fn() }
 			/>
 		);
 
@@ -66,8 +69,8 @@ describe( 'CrossPost', () => {
 				postKey={ { feedId: 100, postId: 200 } }
 				canMarkSeen={ false }
 				isUnread
-				requestMarkAsSeen={ jest.fn() }
-				handleClick={ jest.fn() }
+				requestMarkAsSeen={ vi.fn() }
+				handleClick={ vi.fn() }
 			/>
 		);
 
@@ -81,8 +84,8 @@ describe( 'CrossPost', () => {
 				postKey={ { feedId: 100, postId: 200 } }
 				canMarkSeen
 				isUnread={ false }
-				requestMarkAsSeen={ jest.fn() }
-				handleClick={ jest.fn() }
+				requestMarkAsSeen={ vi.fn() }
+				handleClick={ vi.fn() }
 			/>
 		);
 

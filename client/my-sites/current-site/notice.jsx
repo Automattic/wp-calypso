@@ -14,12 +14,10 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
-import { isHostingTrialSite, isMigrationTrialSite } from 'calypso/sites-dashboard/utils';
 import getActiveDiscount from 'calypso/state/selectors/get-active-discount';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 
 const loadJitm = () =>
 	import( /* webpackChunkName: "async-load-calypso-blocks-jitm" */ 'calypso/blocks/jitm' );
@@ -156,14 +154,11 @@ export class SiteNotice extends Component {
 }
 
 export default connect( ( state, ownProps ) => {
-	const { site } = ownProps;
 	const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 	return {
-		currentPlan: getCurrentPlan( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, siteId ),
 		activeDiscount: getActiveDiscount( state ),
 		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
-		isTrialSite: isMigrationTrialSite( site ) || isHostingTrialSite( site ),
 	};
 } )( localize( SiteNotice ) );

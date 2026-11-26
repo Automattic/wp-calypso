@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SocialAccountRow } from '../account-row';
 
 describe( 'SocialAccountRow', () => {
@@ -40,8 +41,8 @@ describe( 'SocialAccountRow', () => {
 				followState={ {
 					isFollowing: false,
 					isFollowedBy: true,
-					onFollow: jest.fn(),
-					onUnfollow: jest.fn(),
+					onFollow: vi.fn(),
+					onUnfollow: vi.fn(),
 				} }
 			/>
 		);
@@ -56,8 +57,8 @@ describe( 'SocialAccountRow', () => {
 				followState={ {
 					isFollowing: false,
 					isFollowedBy: true,
-					onFollow: jest.fn(),
-					onUnfollow: jest.fn(),
+					onFollow: vi.fn(),
+					onUnfollow: vi.fn(),
 				} }
 			/>
 		);
@@ -75,7 +76,7 @@ describe( 'SocialAccountRow', () => {
 
 	it( 'calls onFollow without navigating when follow button is clicked', async () => {
 		const user = userEvent.setup();
-		const onFollow = jest.fn();
+		const onFollow = vi.fn();
 		render(
 			<SocialAccountRow
 				{ ...baseProps }
@@ -83,7 +84,7 @@ describe( 'SocialAccountRow', () => {
 					isFollowing: false,
 					isFollowedBy: false,
 					onFollow,
-					onUnfollow: jest.fn(),
+					onUnfollow: vi.fn(),
 				} }
 			/>
 		);
@@ -98,8 +99,8 @@ describe( 'SocialAccountRow', () => {
 
 	it( 'calls onUnfollow when the follow button is clicked while following', async () => {
 		const user = userEvent.setup();
-		const onFollow = jest.fn();
-		const onUnfollow = jest.fn();
+		const onFollow = vi.fn();
+		const onUnfollow = vi.fn();
 		render(
 			<SocialAccountRow
 				{ ...baseProps }
@@ -123,8 +124,8 @@ describe( 'SocialAccountRow', () => {
 				followState={ {
 					isFollowing: false,
 					isFollowedBy: true,
-					onFollow: jest.fn(),
-					onUnfollow: jest.fn(),
+					onFollow: vi.fn(),
+					onUnfollow: vi.fn(),
 				} }
 			/>
 		);
@@ -133,7 +134,7 @@ describe( 'SocialAccountRow', () => {
 
 	it( 'does not nest the follow button inside the profile link', async () => {
 		const user = userEvent.setup();
-		const onFollow = jest.fn();
+		const onFollow = vi.fn();
 		render(
 			<SocialAccountRow
 				{ ...baseProps }
@@ -141,7 +142,7 @@ describe( 'SocialAccountRow', () => {
 					isFollowing: false,
 					isFollowedBy: false,
 					onFollow,
-					onUnfollow: jest.fn(),
+					onUnfollow: vi.fn(),
 				} }
 			/>
 		);
@@ -155,7 +156,7 @@ describe( 'SocialAccountRow', () => {
 
 		// Clicking the button does not bubble to the anchor (they are siblings),
 		// so a click on the follow button cannot trigger profile navigation.
-		const linkClick = jest.fn();
+		const linkClick = vi.fn();
 		link.addEventListener( 'click', linkClick );
 		await user.click( button );
 		expect( onFollow ).toHaveBeenCalledTimes( 1 );
@@ -169,8 +170,8 @@ describe( 'SocialAccountRow', () => {
 				followState={ {
 					isFollowing: true,
 					isFollowedBy: false,
-					onFollow: jest.fn(),
-					onUnfollow: jest.fn(),
+					onFollow: vi.fn(),
+					onUnfollow: vi.fn(),
 				} }
 			/>
 		);

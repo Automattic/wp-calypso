@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { render, screen } from '@testing-library/react';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
 

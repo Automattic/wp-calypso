@@ -1,19 +1,26 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { isEnabled } from '@automattic/calypso-config';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import ui from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { DesignYourOwnCard } from '../design-your-own-card';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	...jest.requireActual( '@automattic/calypso-config' ),
+vi.mock( '@automattic/calypso-config', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	) ),
 	__esModule: true,
-	default: jest.requireActual( '@automattic/calypso-config' ),
-	isEnabled: jest.fn(),
+	default: (
+		await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+			'@automattic/calypso-config'
+		)
+	).default,
+	isEnabled: vi.fn(),
 } ) );
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useResizeObserver: () => jest.fn(),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useResizeObserver: () => vi.fn(),
 } ) );
 
 const freeSite = {
@@ -43,7 +50,7 @@ function renderCard( {
 }
 
 beforeEach( () => {
-	jest.mocked( isEnabled ).mockImplementation( ( flag ) => flag === 'themes/site-redesign' );
+	vi.mocked( isEnabled ).mockImplementation( ( flag ) => flag === 'themes/site-redesign' );
 } );
 
 test( 'links a Free site to the four-design route without starting an agent', () => {
@@ -58,7 +65,7 @@ test( 'links a Free site to the four-design route without starting an agent', ()
 } );
 
 test( 'hides the card when the feature flag is disabled', () => {
-	jest.mocked( isEnabled ).mockReturnValue( false );
+	vi.mocked( isEnabled ).mockReturnValue( false );
 	renderCard();
 	expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
 } );

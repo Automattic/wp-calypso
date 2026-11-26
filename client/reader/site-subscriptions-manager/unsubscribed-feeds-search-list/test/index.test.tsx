@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
@@ -10,47 +10,55 @@ import nock from 'nock';
 import { ComponentProps } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { type Mock, vi } from 'vitest';
 import ReaderFeedItem from 'calypso/blocks/reader-feed-item';
 import FeedPreview from 'calypso/landing/subscriptions/components/feed-preview';
 import { UnsubscribedFeedsSearchList } from '../index';
 
-const mockUseSiteUnsubscribeMutation = SubscriptionManager.useSiteUnsubscribeMutation as jest.Mock;
+const mockUseSiteUnsubscribeMutation = SubscriptionManager.useSiteUnsubscribeMutation as Mock;
 
-jest.mock( '@automattic/data-stores', () => {
-	const actual = jest.requireActual( '@automattic/data-stores' );
+vi.mock( '@automattic/data-stores', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+			'@automattic/data-stores'
+		);
 	return {
 		...actual,
 		SubscriptionManager: {
 			...actual.SubscriptionManager,
-			useSiteUnsubscribeMutation: jest.fn(),
+			useSiteUnsubscribeMutation: vi.fn(),
 		},
 	};
 } );
 
 // Mock recordTrainTracksRender
-const mockRecordTrainTracksRender = jest.fn();
-jest.mock( '@automattic/calypso-analytics', () => ( {
+const mockRecordTrainTracksRender = vi.fn();
+vi.mock( '@automattic/calypso-analytics', () => ( {
 	recordTrainTracksRender: ( ...args: unknown[] ) => mockRecordTrainTracksRender( ...args ),
-	getDoNotTrack: jest.fn(),
+	getDoNotTrack: vi.fn(),
 } ) );
 
 // Mock FeedPreview component
-jest.mock( 'calypso/landing/subscriptions/components/feed-preview', () => {
-	return jest.fn( ( { url, source }: ComponentProps< typeof FeedPreview > ) => (
-		<div data-testid="mock-feed-preview" data-url={ url } data-source={ source } />
-	) );
+vi.mock( 'calypso/landing/subscriptions/components/feed-preview', () => {
+	return {
+		default: vi.fn( ( { url, source }: ComponentProps< typeof FeedPreview > ) => (
+			<div data-testid="mock-feed-preview" data-url={ url } data-source={ source } />
+		) ),
+	};
 } );
 
 // Mock ReaderFeedItem component
-jest.mock( 'calypso/blocks/reader-feed-item', () => {
-	return jest.fn( ( { feed, source }: ComponentProps< typeof ReaderFeedItem > ) => (
-		<div
-			data-testid="mock-reader-feed-item"
-			data-feed-id={ feed.feed_ID }
-			data-blog-id={ feed.blog_ID }
-			data-source={ source }
-		/>
-	) );
+vi.mock( 'calypso/blocks/reader-feed-item', () => {
+	return {
+		default: vi.fn( ( { feed, source }: ComponentProps< typeof ReaderFeedItem > ) => (
+			<div
+				data-testid="mock-reader-feed-item"
+				data-feed-id={ feed.feed_ID }
+				data-blog-id={ feed.blog_ID }
+				data-source={ source }
+			/>
+		) ),
+	};
 } );
 
 const createMockFeedItem = ( overrides = {} ): Partial< Reader.FeedItem > => ( {
@@ -132,7 +140,7 @@ const render = (
 
 describe( 'UnsubscribedFeedsSearchList', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		nock.disableNetConnect();
 	} );
 

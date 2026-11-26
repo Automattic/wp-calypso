@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import { getRedirectAfterAccept, isSameEmail } from '../utils';
 
-jest.mock( 'calypso/lib/logmein', () => ( {
+vi.mock( 'calypso/lib/logmein', () => ( {
 	logmeinUrl: ( _host: string, backUrl: string ) => backUrl,
 } ) );
 
-jest.mock( 'calypso/dashboard/utils/link', () => ( {
+vi.mock( 'calypso/dashboard/utils/link', () => ( {
 	dashboardLink: ( path: string ) => `/dashboard${ path }`,
 } ) );
 

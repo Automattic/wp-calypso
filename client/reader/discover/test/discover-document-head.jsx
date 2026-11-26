@@ -1,11 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { DiscoverDocumentHead } from '../discover-document-head';
 
-const mockDocumentHead = jest.fn( () => null );
-jest.mock( 'calypso/components/data/document-head', () => ( props ) => mockDocumentHead( props ) );
+const mockDocumentHead = vi.fn( () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( {
+	default: ( props ) => mockDocumentHead( props ),
+} ) );
 
 const getMeta = () => mockDocumentHead.mock.calls[ 0 ][ 0 ].meta;
 

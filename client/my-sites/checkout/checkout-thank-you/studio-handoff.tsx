@@ -14,17 +14,10 @@ interface StudioHandoffProps {
 }
 
 /**
- * Hands the user back to the Studio app after a purchase they started there.
- *
- * Renders nothing at all unless the thank-you URL carries a valid `studioSiteId`, so ordinary
- * checkouts are unaffected.
- *
- * The surrounding page waits for the receipt to load, so the handoff fires after that rather than
- * on first paint.
+ * The Studio round-trip params on this thank-you URL, and the one way to hand the buyer back to
+ * Studio with them, so every "Open Studio" records the same `calypso_studio_checkout_return`.
  */
-const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( { siteId, receiptId } ) => {
-	const translate = useTranslate();
-
+function useStudioCheckoutReturn( { siteId, receiptId }: { siteId?: number; receiptId?: number } ) {
 	// The query string does not change while this page is mounted.
 	const studioCheckoutParams = useMemo( () => getStudioCheckoutParams( getQueryArgs() ), [] );
 
@@ -48,6 +41,22 @@ const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( { siteId, recei
 		},
 		[ studioCheckoutParams, siteId, receiptId ]
 	);
+
+	return { studioCheckoutParams, openStudio };
+}
+
+/**
+ * Hands the user back to the Studio app after a purchase they started there.
+ *
+ * Renders nothing at all unless the thank-you URL carries valid Studio params, so ordinary
+ * checkouts are unaffected.
+ *
+ * The surrounding page waits for the receipt to load, so the handoff fires after that rather than
+ * on first paint.
+ */
+const StudioHandoff: FunctionComponent< StudioHandoffProps > = ( { siteId, receiptId } ) => {
+	const translate = useTranslate();
+	const { studioCheckoutParams, openStudio } = useStudioCheckoutReturn( { siteId, receiptId } );
 
 	const hasAttemptedHandoff = useRef( false );
 	useEffect( () => {

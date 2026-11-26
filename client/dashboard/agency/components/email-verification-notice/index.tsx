@@ -1,11 +1,11 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
+import { useEmailVerificationResend } from '../../../account/hooks/use-email-verification-resend';
 import { useAuth } from '../../../app/auth';
 import { Notice, NoticeActionButton, NoticeActionLinkButton } from '../../../components/notice';
 import { formatCooldown } from '../../../utils/email-verification-resend';
 import { wpcomLink } from '../../../utils/link';
-import { useEmailVerificationResend } from '../../../utils/use-email-verification-resend';
 
 export function useEmailToVerify() {
 	const { user } = useAuth();

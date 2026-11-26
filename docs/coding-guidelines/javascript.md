@@ -765,12 +765,6 @@ _These instructions assume Sublime Text 3_
 
 If you are using Sublime Text, you can use the `SublimeLinter-eslint` plugin to visually highlight linting errors in your code. Dan Abramov has a great [instructional blog post](https://medium.com/@dan_abramov/lint-like-it-s-2015-6987d44c5b48#b355) to get up and running with ESLint in Sublime Text.
 
-Before following these instructions, you'll want to globally install ESLint and related dependencies by running the following command in your terminal:
-
-```bash
-yarn global add eslint eslint-plugin-react eslint-plugin-wpcalypso
-```
-
 #### Identifying Spaces with Sublime Text
 
 When you install the `SublimeLinter` package, it will identify mixed spaces and tabs in your code, but it won't identify lines whose leading characters are comprised of only spaces.
