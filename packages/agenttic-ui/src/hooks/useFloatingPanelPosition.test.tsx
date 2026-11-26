@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
-import { animate, type PanInfo, useMotionValue } from 'framer-motion';
+import { animate, MotionGlobalConfig, type PanInfo, useMotionValue } from 'framer-motion';
 import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest';
 import { STYLE_CONSTANTS } from '../utils/constants';
 import {
 	useFloatingPanelPosition,
@@ -754,6 +754,13 @@ describe( 'useFloatingPanelPosition', () => {
 		} );
 
 		it( 'leaves the minimize animation running — it targets state, not the viewport', async () => {
+			// Freeze the frame clock so the minimize spring can't settle before the resize, which it
+			// did on busy CI agents, where its few hundred milliseconds could pass between two `act` calls.
+			MotionGlobalConfig.useManualTiming = true;
+			onTestFinished( () => {
+				MotionGlobalConfig.useManualTiming = false;
+			} );
+
 			harness = renderHook( { freeDrag: true, chatState: 'expanded' } );
 			await harness.render();
 			const result = harness.captured.current!;
