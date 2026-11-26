@@ -211,6 +211,7 @@ export const CommissionEligibilityColumn = ( {
 						size="small"
 						icon={ info }
 						iconSize={ 16 }
+						__next40pxDefaultSize
 						aria-label={ __( 'More information about commission eligibility' ) }
 						onClick={ () => setShowPopover( ( visible ) => ! visible ) }
 					/>
