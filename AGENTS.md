@@ -72,7 +72,6 @@ yarn test-apps                                  # Run apps unit tests
 yarn test-packages [path]                       # Run packages unit tests on Vitest
 yarn workspace @automattic/<package> test       # Run a package's own tests, e.g. for packages with a vitest.config
 yarn test-server                                # Run server unit tests
-yarn test-server:coverage                       # Run server unit tests with coverage info
 
 yarn test-client:watch                          # Run unit tests for client in watch mode
 yarn test-client <path_to_test_directory>       # Run client unit tests from a specific directory

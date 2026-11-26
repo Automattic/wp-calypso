@@ -13,7 +13,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PREMIUM_3_YEARS,
 	PLAN_PREMIUM_MONTHLY,
-} from '@automattic/calypso-products';
+} from '@automattic/calypso-products/constants/wpcom';
 
 /**
  * The legacy `/start/<plan>` signup flows, which exist only to preselect a plan, plus
