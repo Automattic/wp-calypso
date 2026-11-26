@@ -55,14 +55,12 @@ class TagStream extends Component {
 			this.props.initialTitle ||
 			titleCase( this.props.decodedTagSlug.replace( /-/g, ' ' ) );
 
-		const { encodedTagSlug } = this.props;
-
 		if ( this.props.isNotFound ) {
 			return (
 				<ReaderMain className="tag-stream__main">
 					<TagStreamHeader
 						title={ titleText }
-						encodedTagSlug={ encodedTagSlug }
+						decodedTagSlug={ this.props.decodedTagSlug }
 						// Should not be necessary because the user shouldn't have been able to
 						// subscribe to a missing tag, but still give them a route to unfollow
 						// if that's somehow the case.
@@ -79,7 +77,7 @@ class TagStream extends Component {
 			<TagStreamHeader
 				title={ titleText }
 				description={ this.props.description }
-				encodedTagSlug={ encodedTagSlug }
+				decodedTagSlug={ this.props.decodedTagSlug }
 				showFollow={ !! ( tag && tag.id ) }
 				following={ this.isSubscribed() }
 				onFollowToggle={ this.toggleFollowing }
