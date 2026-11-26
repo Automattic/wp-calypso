@@ -3,7 +3,7 @@ const ipc = require( '../../lib/calypso-commands' );
 const Config = require( '../../lib/config' );
 const isCalypso = require( '../../lib/is-calypso' );
 const log = require( '../../lib/logger' )( 'desktop:navigation' );
-const session = require( '../../lib/session' );
+const session = require( '../../lib/session' ).default;
 
 const webBase = Config.baseURL();
 

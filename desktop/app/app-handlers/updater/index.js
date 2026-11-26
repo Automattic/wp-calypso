@@ -3,7 +3,7 @@ const Config = require( '../../lib/config' );
 const log = require( '../../lib/logger' )( 'desktop:updater' );
 const platform = require( '../../lib/platform' );
 const settings = require( '../../lib/settings' );
-const AutoUpdater = require( './auto-updater' );
+const AutoUpdater = require( './auto-updater' ).default;
 const ManualUpdater = require( './manual-updater' );
 
 let updater = false;
