@@ -18,14 +18,19 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 
 export const DevicesSettings = () => {
 	const { recordTracksEvent } = useAnalytics();
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { mutate: updateSettings } = useMutation( userNotificationsSettingsMutation() );
+	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { mutate: updateSettings } = useMutation(
+		withSnackbar( userNotificationsSettingsMutation(), {
+			error: __( 'There was a problem saving your changes. Please, try again.' ),
+		} )
+	);
 
 	//Currently, the update settings endpoint is taking a very long time to update the settings,
 	//so we are using the useIsMutating hook to check if the mutation is in progress on by any component and block the UI to prevent
@@ -82,11 +87,6 @@ export const DevicesSettings = () => {
 							type: 'snackbar',
 						}
 					);
-				},
-				onError: () => {
-					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
-						type: 'snackbar',
-					} );
 				},
 			}
 		);

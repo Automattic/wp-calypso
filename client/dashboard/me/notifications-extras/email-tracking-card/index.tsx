@@ -4,19 +4,25 @@ import {
 } from '@automattic/api-queries';
 import { useIsMutating, useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { ExternalLink, ToggleControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 
 export const EmailTrackingCard = ( { source }: { source: 'extras' | 'privacy' } ) => {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
-	const { mutate: updateSettings } = useMutation( userNotificationsSettingsMutation() );
+	const { mutate: updateSettings } = useMutation(
+		withSnackbar( userNotificationsSettingsMutation(), {
+			success: ( _data, variables ) =>
+				variables.data.wpcom?.email_tracking
+					? __( 'Email tracking turned on.' )
+					: __( 'Email tracking turned off.' ),
+			error: __( 'Failed to save email tracking settings.' ),
+		} )
+	);
 
 	const isMutating =
 		useIsMutating( {
@@ -36,15 +42,6 @@ export const EmailTrackingCard = ( { source }: { source: 'extras' | 'privacy' } 
 					recordTracksEvent( 'calypso_dashboard_notifications_email_tracking_updated', {
 						setting_value: nextValue,
 						source,
-					} );
-					createSuccessNotice(
-						nextValue ? __( 'Email tracking turned on.' ) : __( 'Email tracking turned off.' ),
-						{ type: 'snackbar' }
-					);
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to save email tracking settings.' ), {
-						type: 'snackbar',
 					} );
 				},
 			}

@@ -37,7 +37,6 @@ import {
 	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, _x, sprintf } from '@wordpress/i18n';
@@ -50,7 +49,6 @@ import {
 	info,
 	check,
 } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -1112,8 +1110,12 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 		error,
 		isPending: isMutationPending,
 		variables: pendingAutoRenew,
-	} = useMutation( userPurchaseSetAutoRenewQuery() );
-	const { createSuccessNotice } = useDispatch( noticesStore );
+	} = useMutation(
+		withSnackbar( userPurchaseSetAutoRenewQuery(), {
+			success: ( _data, { autoRenew } ) =>
+				autoRenew ? __( 'Auto-renew has been enabled.' ) : __( 'Auto-renew has been disabled.' ),
+		} )
+	);
 	const { user } = useAuth();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
@@ -1161,18 +1163,10 @@ export function ManageSubscriptionCard( { purchase }: { purchase: Purchase } ) {
 								} );
 								return;
 							}
-							setAutoRenew(
-								{ purchaseId: purchase.ID, autoRenew: newData.is_auto_renew_enabled },
-								{
-									onSuccess: ( _data, { autoRenew } ) =>
-										createSuccessNotice(
-											autoRenew
-												? __( 'Auto-renew has been enabled.' )
-												: __( 'Auto-renew has been disabled.' ),
-											{ type: 'snackbar' }
-										),
-								}
-							);
+							setAutoRenew( {
+								purchaseId: purchase.ID,
+								autoRenew: newData.is_auto_renew_enabled,
+							} );
 						}
 					} }
 				/>
