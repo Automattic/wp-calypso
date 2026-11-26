@@ -16,6 +16,7 @@ import {
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
+import { navigationStore } from '../navigation-blocker/navigation-blocker-store';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import { getSavedToken, markOAuthFlow } from './token-storage';
 import type { WPError } from '@automattic/api-core';
@@ -486,6 +487,11 @@ async function clearLocalSession(): Promise< void > {
 }
 
 export async function logout( user: User ): Promise< void > {
+	if ( ! navigationStore.confirmLeave() ) {
+		return;
+	}
+	navigationStore.clear();
+
 	await redirectAfterSessionEnd( await endSession( user ) );
 }
 
