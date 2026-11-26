@@ -15,6 +15,7 @@ import { createPluginsRoutes } from './plugins';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 import { createSitesRoutes } from './sites';
+import { handleSkippedViewTransitions } from './view-transitions';
 import type { SiteTypeFeature } from '../../utils/site-type-feature-support';
 import type { AppConfig } from '../context';
 import type { AgencyCapability } from '@automattic/api-core';
@@ -115,6 +116,7 @@ export const createRouteTree = ( config: AppConfig ) => {
 };
 
 export const getRouter = ( config: AppConfig ) => {
+	handleSkippedViewTransitions();
 	const routeTree = createRouteTree( config );
 	const router = createRouter( {
 		routeTree,
