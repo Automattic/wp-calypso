@@ -47,6 +47,8 @@ body {
 
 a {
 	color: var( --wp-admin-theme-color );
+	text-underline-offset: 0.2em;
+	text-decoration-thickness: from-font;
 }
 
 // Charts and their tooltips in dashboard colors, in light and dark mode. The chat's charts
