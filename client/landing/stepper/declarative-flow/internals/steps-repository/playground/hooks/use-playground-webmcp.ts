@@ -3,8 +3,6 @@ import { useEffect, useRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { PlaygroundClient } from '../lib/types';
 
-const WEBMCP_ORIGIN_TRIAL_SCRIPT = 'https://s0.wp.com/wp-content/js/webmcp-origin-trial.js';
-
 export function usePlaygroundWebMcp( {
 	client,
 	slug,
@@ -28,10 +26,9 @@ export function usePlaygroundWebMcp( {
 
 		void ( async () => {
 			if ( ! document.modelContext?.registerTool ) {
-				await loadScript( WEBMCP_ORIGIN_TRIAL_SCRIPT );
+				await loadScript( 'https://s0.wp.com/wp-content/js/webmcp-origin-trial.js' );
 			}
-			const modelContext = document.modelContext;
-			if ( controller.signal.aborted || ! modelContext?.registerTool ) {
+			if ( ! document.modelContext?.registerTool ) {
 				return;
 			}
 
@@ -49,7 +46,7 @@ export function usePlaygroundWebMcp( {
 
 			const proxy = startWebMCPSiteToolProxy( playground );
 			stopProxy = () => proxy.stop();
-			const launchRegistration = modelContext.registerTool(
+			const launchRegistration = document.modelContext?.registerTool(
 				{
 					name: 'wpcom_launch_site',
 					description:
