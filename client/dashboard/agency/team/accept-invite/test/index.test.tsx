@@ -10,7 +10,9 @@ import AcceptTeamInvite from '../index';
 const API = 'https://public-api.wordpress.com';
 const INVITE_PATH = '/wpcom/v2/agency/5/user-invites/7';
 
-function mockUserAgencies( agencies: Array< { id: number; name: string } > ) {
+function mockUserAgencies(
+	agencies: Array< { id: number; name: string; user?: { capabilities: string[]; role: string } } >
+) {
 	nock( API )
 		.persist()
 		.get( '/wpcom/v2/agency' )
@@ -69,6 +71,32 @@ describe( '<AcceptTeamInvite>', () => {
 			screen.getByRole( 'link', { name: 'Team members Knowledge Base article' } )
 		).toHaveAttribute( 'href', expect.stringContaining( 'invite-and-manage-team-members' ) );
 		expect( screen.getByRole( 'button', { name: 'Contact support' } ) ).toBeVisible();
+	} );
+
+	test( 'tells an agency owner to transfer ownership before leaving', async () => {
+		mockUserAgencies( [
+			{
+				id: 1,
+				name: 'Current Agency',
+				user: { capabilities: [], role: 'a4a_administrator' },
+			},
+		] );
+		nock( API ).post( INVITE_PATH ).reply( 403, alreadyMemberError() );
+
+		render( <AcceptTeamInvite agencyId={ 5 } inviteId={ 7 } secret="a-secret" /> );
+
+		expect(
+			await screen.findByText(
+				'To join Target Agency, first transfer ownership of Current Agency to another team member, then leave its dashboard.'
+			)
+		).toBeVisible();
+		expect( screen.getByText( 'Transfer ownership of Current Agency' ) ).toBeVisible();
+		expect( screen.getByText( 'Then remove yourself in the Team section.' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Go to Team' } ) ).toHaveAttribute(
+			'href',
+			'/agency/team'
+		);
+		expect( screen.getByText( 'No other team members? Contact support for help.' ) ).toBeVisible();
 	} );
 
 	test( 'sends a member of the invited agency to the overview without using the invite', async () => {
