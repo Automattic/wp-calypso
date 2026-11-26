@@ -1,0 +1,171 @@
+// Maps a preset's `--ai-ui-theme-*` tokens onto the components. Each preset includes it for its own
+// name, so a theme whose preset isn't loaded keeps the WordPress appearance.
+@mixin preset( $name ) {
+	$theme: ":is( .ai-ui-renderer, .ai-ui-renderer__modal )[data-ai-ui-theme='#{$name}']";
+
+	#{$theme} {
+		--a2ui-color-primary: var( --ai-ui-theme-inverse );
+		--a2ui-color-primary-hover: var( --ai-ui-theme-text-secondary );
+		--a2ui-color-primary-dark: var( --ai-ui-theme-text-secondary );
+		--a2ui-color-on-primary: var( --ai-ui-theme-on-inverse );
+		--a2ui-color-surface: var( --ai-ui-theme-surface );
+		--a2ui-color-on-surface: var( --ai-ui-theme-text );
+		--a2ui-color-input: var( --ai-ui-theme-input );
+		--a2ui-color-on-input: var( --ai-ui-theme-text );
+		--a2ui-color-border: var( --ai-ui-theme-border );
+		--ai-ui-renderer-accent-text: var( --ai-ui-theme-text );
+		--ai-ui-renderer-accent-text-hover: var( --ai-ui-theme-text );
+		--ai-ui-renderer-accent-line: var( --ai-ui-theme-ring );
+		font-family: var( --ai-ui-theme-font );
+		font-size: var( --ai-ui-theme-font-size );
+		line-height: var( --ai-ui-theme-line-height );
+		color: var( --ai-ui-theme-text );
+	}
+
+	#{$theme} :where( * ) {
+		--wpds-typography-font-family-body: var( --ai-ui-theme-font );
+		--wpds-typography-font-family-heading: var( --ai-ui-theme-font );
+		--wpds-typography-font-size-xs: var( --ai-ui-theme-small-size );
+		--wpds-typography-font-size-sm: var( --ai-ui-theme-small-size );
+		--wpds-typography-font-size-md: var( --ai-ui-theme-font-size );
+		--wpds-typography-font-size-lg: 1rem;
+		--wpds-typography-font-size-xl: var( --ai-ui-theme-heading-2-size, 18px );
+		--wpds-typography-font-size-2xl: 1.25rem;
+		--wpds-typography-line-height-xs: var( --ai-ui-theme-small-line-height );
+		--wpds-typography-line-height-sm: var( --ai-ui-theme-line-height );
+		--wpds-typography-line-height-md: 1.5rem;
+		--wpds-typography-line-height-lg: 1.625rem;
+		--wpds-typography-font-weight-default: 400;
+		--wpds-typography-font-weight-emphasis: 500;
+		--wpds-dimension-size-2xs: 1rem;
+		--wpds-dimension-size-sm: 1.5rem;
+		--wpds-dimension-size-md: 1.75rem;
+		--wpds-dimension-size-lg: var( --ai-ui-theme-control-height );
+		--wpds-dimension-padding-xs: var( --ai-ui-theme-space );
+		--wpds-dimension-padding-sm: calc( 2 * var( --ai-ui-theme-space ) );
+		--wpds-dimension-padding-md: calc( 3 * var( --ai-ui-theme-space ) );
+		--wpds-dimension-padding-lg: calc( 4 * var( --ai-ui-theme-space ) );
+		--wpds-dimension-padding-xl: calc( 5 * var( --ai-ui-theme-space ) );
+		--wpds-dimension-padding-2xl: calc( 4 * var( --ai-ui-theme-space ) );
+		--wpds-dimension-gap-xs: var( --ai-ui-theme-space );
+		--wpds-dimension-gap-sm: calc( 2 * var( --ai-ui-theme-space ) );
+		--wpds-dimension-gap-md: calc( 3 * var( --ai-ui-theme-space ) );
+		--wpds-dimension-gap-lg: calc( 4 * var( --ai-ui-theme-space ) );
+		--wpds-dimension-gap-xl: calc( 4 * var( --ai-ui-theme-space ) );
+		--wpds-border-radius-sm: var( --ai-ui-theme-control-radius );
+		--wpds-border-radius-md: 0.75rem;
+		--wpds-border-radius-lg: var( --ai-ui-theme-card-radius );
+		--wpds-color-foreground-content-neutral: var( --ai-ui-theme-text );
+		--wpds-color-foreground-content-neutral-weak: var( --ai-ui-theme-text-secondary );
+		--wpds-color-foreground-interactive-neutral: var( --ai-ui-theme-text );
+		--wpds-color-foreground-interactive-neutral-active: var( --ai-ui-theme-text );
+		--wpds-color-foreground-interactive-neutral-weak: var( --ai-ui-theme-text-secondary );
+		--wpds-color-foreground-interactive-neutral-disabled: var( --ai-ui-theme-text-disabled );
+		--wpds-color-foreground-interactive-brand: var( --ai-ui-theme-text );
+		--wpds-color-foreground-interactive-brand-active: var( --ai-ui-theme-text );
+		--wpds-color-foreground-interactive-brand-disabled: var( --ai-ui-theme-text-disabled );
+		--wpds-color-foreground-interactive-brand-strong: var( --ai-ui-theme-on-inverse );
+		--wpds-color-foreground-interactive-brand-strong-active: var( --ai-ui-theme-on-inverse );
+		--wpds-color-foreground-interactive-brand-strong-disabled: var( --ai-ui-theme-text-disabled );
+		--wpds-color-background-surface-neutral-strong: var( --ai-ui-theme-surface );
+		--wpds-color-background-interactive-neutral: var( --ai-ui-theme-input );
+		--wpds-color-background-interactive-neutral-active: var( --ai-ui-theme-hover );
+		--wpds-color-background-interactive-neutral-disabled: var( --ai-ui-theme-input );
+		--wpds-color-background-interactive-neutral-weak: transparent;
+		--wpds-color-background-interactive-neutral-weak-active: var( --ai-ui-theme-hover );
+		--wpds-color-background-interactive-neutral-weak-disabled: transparent;
+		--wpds-color-background-interactive-brand-strong: var( --ai-ui-theme-inverse );
+		--wpds-color-background-interactive-brand-strong-active: var( --ai-ui-theme-text-secondary );
+		--wpds-color-background-interactive-brand-strong-disabled: var( --ai-ui-theme-input );
+		--wpds-color-background-interactive-brand-weak: transparent;
+		--wpds-color-background-interactive-brand-weak-active: var( --ai-ui-theme-hover );
+		--wpds-color-background-interactive-brand-weak-disabled: transparent;
+		--wpds-color-stroke-interactive-neutral: var( --ai-ui-theme-control-border );
+		--wpds-color-stroke-interactive-neutral-active: var( --ai-ui-theme-text-secondary );
+		--wpds-color-stroke-interactive-neutral-disabled: var( --ai-ui-theme-border );
+		--wpds-color-stroke-interactive-brand: var( --ai-ui-theme-control-border );
+		--wpds-color-stroke-interactive-brand-active: var( --ai-ui-theme-text-secondary );
+		--wpds-color-stroke-interactive-brand-disabled: var( --ai-ui-theme-border );
+		--wpds-color-stroke-surface-neutral: var( --ai-ui-theme-border );
+		--wpds-color-stroke-focus: var( --ai-ui-theme-ring );
+	}
+
+	#{$theme} .ai-ui-renderer__text :is( h1, h2, h3, h4, h5, h6 ) {
+		font-family: var( --ai-ui-theme-font );
+		font-weight: 600;
+		letter-spacing: -0.01em;
+	}
+
+	#{$theme} .ai-ui-renderer__text h1 {
+		font-size: var( --ai-ui-theme-heading-1-size, 1.25rem );
+		line-height: var( --ai-ui-theme-heading-1-line-height, 1.625rem );
+	}
+
+	#{$theme} .ai-ui-renderer__text h2 {
+		font-size: var( --ai-ui-theme-heading-2-size, 18px );
+		line-height: var( --ai-ui-theme-heading-2-line-height, 1.625rem );
+	}
+
+	#{$theme} .ai-ui-renderer__text :is( h3, h4, h5, h6 ) {
+		font-size: var( --ai-ui-theme-heading-3-size, 1rem );
+		line-height: var( --ai-ui-theme-heading-3-line-height, 1.5rem );
+	}
+
+	#{$theme} .ai-ui-renderer__text strong {
+		font-weight: 600;
+	}
+
+	#{$theme} .ai-ui-renderer__button {
+		width: fit-content;
+		font-size: var( --ai-ui-theme-font-size );
+		line-height: var( --ai-ui-theme-line-height );
+		min-height: var( --ai-ui-theme-control-height );
+		border-radius: var( --ai-ui-theme-control-radius );
+	}
+
+	#{$theme} label {
+		font-family: var( --ai-ui-theme-font );
+		font-size: var( --ai-ui-theme-small-size );
+		line-height: var( --ai-ui-theme-small-line-height );
+		font-weight: 500;
+		letter-spacing: normal;
+		text-transform: none;
+		color: var( --ai-ui-theme-text-secondary );
+	}
+
+	#{$theme} .ai-ui-renderer__field--error {
+		color: var( --ai-ui-theme-danger );
+	}
+
+	#{$theme} .ai-ui-renderer__field--error p {
+		color: var( --ai-ui-theme-danger );
+	}
+
+	#{$theme}
+		.ai-ui-renderer__field--error
+		.ai-ui-renderer__choice-chip:has( [aria-invalid='true']:not( [data-checked] ) ) {
+		border-color: var( --ai-ui-theme-danger );
+	}
+
+	#{$theme}
+		.ai-ui-renderer__choice-picker--chips
+		.ai-ui-renderer__choice-chip:not( :has( [data-checked], [data-disabled] ) ) {
+		color: var( --ai-ui-theme-chip-text, var( --ai-ui-theme-text ) );
+
+		&:hover {
+			border-color: var( --ai-ui-theme-chip-border-hover, var( --ai-ui-theme-text-secondary ) );
+			background-color: var( --ai-ui-theme-chip-hover, var( --ai-ui-theme-hover ) );
+			color: var( --ai-ui-theme-text );
+		}
+	}
+
+	#{$theme} .ai-ui-renderer__choice-picker--chips .ai-ui-renderer__choice-chip-label {
+		padding-inline: var( --ai-ui-theme-chip-padding, var( --wpds-dimension-padding-md ) );
+		font-weight: var( --ai-ui-theme-chip-font-weight, inherit );
+	}
+
+	#{$theme} :is( input, textarea )[aria-invalid='true'] {
+		outline: 1px solid var( --ai-ui-theme-danger );
+		outline-offset: 2px;
+	}
+}
