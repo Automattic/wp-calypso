@@ -40,6 +40,7 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -318,7 +319,9 @@ function CancelPurchaseInner() {
 	const userHasCompletedCancelSurveyForPurchase = Boolean( userPreferenceForSurveyComplete );
 
 	// Mutations (continued)
-	const extendWithFreeMonthMutation = useMutation( extendPurchaseWithFreeMonthMutation() );
+	const extendWithFreeMonthMutation = useMutation(
+		withSnackbar( extendPurchaseWithFreeMonthMutation(), { error: { source: 'server' } } )
+	);
 	const surveyCompletedMutator = useMutation(
 		userPreferenceMutation( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
 	);
@@ -622,8 +625,7 @@ function CancelPurchaseInner() {
 					}
 					setState( ( state ) => ( { ...state, isLoading: false } ) );
 				},
-				onError: ( error ) => {
-					createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
+				onError: () => {
 					setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
 				},
 			} );

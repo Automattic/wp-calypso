@@ -2,22 +2,29 @@ import { userPreferenceOptimisticMutation, userPreferenceQuery } from '@automatt
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { ToggleControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 
 export const AchievementsCard = () => {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { data: notifications } = useSuspenseQuery(
 		userPreferenceQuery( 'achievements-global-notifications' )
 	);
 	const { mutate: setNotifications, isPending } = useMutation(
-		userPreferenceOptimisticMutation( 'achievements-global-notifications' )
+		withSnackbar( userPreferenceOptimisticMutation( 'achievements-global-notifications' ), {
+			success: sprintf(
+				/* translators: %s is the name of the settings */ __( '"%s" settings saved.' ),
+				__( 'Achievements' )
+			),
+			error: sprintf(
+				/* translators: %s is the name of the setting */ __( 'Failed to save %s settings.' ),
+				__( 'Achievements' )
+			),
+		} )
 	);
 
 	const handleChange = ( nextValue: boolean ) => {
@@ -25,26 +32,7 @@ export const AchievementsCard = () => {
 			setting_value: nextValue,
 		} );
 
-		setNotifications( nextValue ? 'enabled' : 'disabled', {
-			onSuccess: () => {
-				createSuccessNotice(
-					sprintf(
-						/* translators: %s is the name of the settings */ __( '"%s" settings saved.' ),
-						__( 'Achievements' )
-					),
-					{ type: 'snackbar' }
-				);
-			},
-			onError: () => {
-				createErrorNotice(
-					sprintf(
-						/* translators: %s is the name of the setting */ __( 'Failed to save %s settings.' ),
-						__( 'Achievements' )
-					),
-					{ type: 'snackbar' }
-				);
-			},
-		} );
+		setNotifications( nextValue ? 'enabled' : 'disabled' );
 	};
 
 	const helpText = createInterpolateElement(

@@ -7,6 +7,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { type SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { useSiteSettings } from '../../hooks';
 import { getFieldLabel } from '../../utils/translations';
 import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
@@ -14,12 +15,16 @@ import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-a
 export const WebSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: blogSettings } = useSiteSettings( siteId );
 	const { mutate: updateSettings, isPending: isUpdating } = useMutation(
-		userNotificationsSettingsMutation()
+		withSnackbar( userNotificationsSettingsMutation(), {
+			success: ( _data, { applyToAll } ) =>
+				applyToAll ? __( 'Settings saved successfully.' ) : undefined,
+			error: __( 'There was a problem saving your changes. Please, try again.' ),
+		} )
 	);
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
 	const timelineSettings = useMemo( () => blogSettings?.timeline ?? null, [ blogSettings ] );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const handleChange = ( updated: SettingsOption ) => {
 		updateSettings(
@@ -51,11 +56,6 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 						site_id: siteId,
 					} );
 				},
-				onError: () => {
-					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
-						type: 'snackbar',
-					} );
-				},
 			}
 		);
 	};
@@ -83,8 +83,6 @@ export const WebSettings = ( { siteId }: { siteId: number } ) => {
 						stream: 'timeline',
 						site_to_be_used_as_template: siteId,
 					} );
-					createSuccessNotice( __( 'Settings saved successfully.' ), { type: 'snackbar' } );
-
 					setIsConfirmDialogOpen( false );
 				},
 			}
