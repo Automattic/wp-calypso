@@ -37,7 +37,13 @@ export default function AppleLogin( {
 		};
 
 		if ( ! windowObj.AppleID ) {
-			await loadScript( APPLE_CLIENT_URL );
+			try {
+				await loadScript( APPLE_CLIENT_URL );
+			} catch {
+				// Content blockers often block Apple's script; the button then does nothing.
+				setShowLoading( false );
+				return null;
+			}
 		}
 
 		const nonce = crypto.randomUUID();
@@ -93,7 +99,7 @@ export default function AppleLogin( {
 		e.preventDefault();
 		setShowLoading( true );
 		recordTracksEvent( 'calypso_dashboard_security_social_logins_apple_login_click' );
-		loadAppleClient().then( ( AppleID ) => AppleID.auth.signIn() );
+		loadAppleClient().then( ( AppleID ) => AppleID?.auth.signIn() );
 	};
 
 	return (
