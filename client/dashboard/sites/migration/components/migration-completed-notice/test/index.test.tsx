@@ -8,11 +8,11 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
 import { vi } from 'vitest';
+import { MigrationCompletedNotice, useShouldShowMigrationCompletedNotice } from '..';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../../../app/context';
 import { createDomainsRoutes } from '../../../../../app/router/domains';
 import { rootRoute } from '../../../../../app/router/root';
 import { render } from '../../../../../test-utils';
-import { MigrationCompletedNotice, useShouldShowMigrationCompletedNotice } from '../index';
 import type { Site } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 

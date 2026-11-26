@@ -1,8 +1,8 @@
 import { __experimentalVStack as VStack, Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { ButtonStack } from '../../../components/button-stack';
-import { Text } from '../../../components/text';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Text } from '../../../../components/text';
 
 export function MigrationCancellation( {
 	onConfirm,

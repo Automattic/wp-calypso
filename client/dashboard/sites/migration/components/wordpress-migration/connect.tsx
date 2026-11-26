@@ -15,11 +15,11 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronUp, published } from '@wordpress/icons';
 import { useState } from 'react';
-import { withSnackbar } from '../../../app/snackbars/with-snackbar';
-import ClipboardInputControl from '../../../components/clipboard-input-control';
-import ConfirmModal from '../../../components/confirm-modal';
-import Notice, { NoticeActionButton } from '../../../components/notice';
-import { Text } from '../../../components/text';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
+import ClipboardInputControl from '../../../../components/clipboard-input-control';
+import ConfirmModal from '../../../../components/confirm-modal';
+import Notice, { NoticeActionButton } from '../../../../components/notice';
+import { Text } from '../../../../components/text';
 import { MigrationCard, StatusIcon, getChangeSourceUrl } from './migration-card';
 import type {
 	Site,

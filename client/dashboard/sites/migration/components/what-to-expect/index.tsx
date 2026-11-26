@@ -1,8 +1,8 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { globe, group, scheduled } from '@wordpress/icons';
-import { Text } from '../../components/text';
-import { IconList } from './wordpress/migration-card';
+import { Text } from '../../../../components/text';
+import { IconList } from '../wordpress-migration/migration-card';
 
 const GUIDE_LIST = [
 	{

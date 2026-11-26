@@ -5,8 +5,8 @@
 import { siteBySlugQuery, siteWordPressMigrationStatusQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { render } from '../../../test-utils';
-import SiteMigrationOverview from '../index';
+import SiteMigrationOverview from '..';
+import { render } from '../../../../../../test-utils';
 import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
 
 const siteSlug = 'test-site.wordpress.com';

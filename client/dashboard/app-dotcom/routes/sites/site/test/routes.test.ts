@@ -7,7 +7,7 @@ import nock from 'nock';
 import { mockPreferences, renderRoute } from '../../../test-utils/render-route';
 import '../critical-error';
 import '../site-building-in-progress';
-import '../../../../../sites/migration-overview';
+import '../migration-overview';
 import '..';
 import '../layout';
 import '../error';

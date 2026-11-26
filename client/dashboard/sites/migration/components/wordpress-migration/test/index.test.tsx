@@ -11,8 +11,8 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { render } from '../../../../test-utils';
-import { WordPressMigration } from '../index';
+import { WordPressMigration } from '..';
+import { render } from '../../../../../test-utils';
 import type { Site } from '@automattic/api-core';
 
 const site = {
