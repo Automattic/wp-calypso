@@ -150,5 +150,5 @@ test( 'should render with locale suggestions if locale is provided', () => {
 } );
 ```
 
-[snapshot testing]: https://facebook.github.io/jest/docs/en/snapshot-testing.html
+[snapshot testing]: https://vitest.dev/guide/snapshot.html
 [update snapshots]: https://vitest.dev/guide/snapshot.html#updating-snapshots
