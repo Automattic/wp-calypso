@@ -6,6 +6,8 @@ import { Icon, published, error } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import type { Snackbar } from './with-snackbar';
+import type { Mutation } from '@tanstack/react-query';
 import './style.scss';
 
 const statusIcon: Record< string, React.JSX.Element > = {
@@ -21,19 +23,30 @@ export default function Snackbars() {
 	// Displays snackbars which have been requested through the `meta` option of
 	// the `useMutation` hook.
 	useEffect( () => {
+		// `useMutation()` hands each render's options to a mutation in flight, so its `meta`
+		// can change before it settles. The message describes what the user did, so use the
+		// snackbar it had when `mutate()` was called.
+		const snackbarsAtStart = new WeakMap< Mutation, Snackbar< unknown, unknown, unknown > >();
+
 		return queryClient.getMutationCache().subscribe( ( event ) => {
 			const { type, mutation } = event;
-			if ( type === 'updated' ) {
+			if ( type === 'added' ) {
+				const snackbar = mutation.meta?.snackbar;
+				if ( snackbar ) {
+					snackbarsAtStart.set( mutation, snackbar );
+				}
+			} else if ( type === 'updated' ) {
 				const { variables } = mutation.state;
+				const snackbar = snackbarsAtStart.get( mutation ) ?? mutation.meta?.snackbar;
 				if ( event.action.type === 'success' ) {
-					const success = mutation.meta?.snackbar?.success;
+					const success = snackbar?.success;
 					const message =
 						typeof success === 'function' ? success( event.action.data, variables ) : success;
 					if ( message ) {
 						createSuccessNotice( message, { type: 'snackbar' } );
 					}
 				} else if ( event.action.type === 'error' ) {
-					const error = mutation.meta?.snackbar?.error;
+					const error = snackbar?.error;
 					let errorMessage;
 					if ( typeof error === 'function' ) {
 						errorMessage = error( event.action.error, variables );

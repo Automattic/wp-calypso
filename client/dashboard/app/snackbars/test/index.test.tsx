@@ -233,4 +233,31 @@ describe( 'Snackbars', () => {
 
 		expect( mockCreateSuccessNotice ).not.toHaveBeenCalled();
 	} );
+
+	test( 'uses the snackbar from when the mutation started, even if a render changes it', async () => {
+		const queryClient = renderSnackbars();
+		let settle: () => void = () => {};
+		const observer = new MutationObserver< unknown, Error, unknown >( queryClient, {
+			mutationFn: () => new Promise< void >( ( resolve ) => ( settle = resolve ) ),
+			// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
+			meta: { snackbar: { success: 'Saved when started.' } },
+		} );
+
+		const pending = observer.mutate( undefined );
+		// What `useMutation()` does when the component re-renders while the request is in flight.
+		observer.setOptions( {
+			mutationFn: () => Promise.resolve(),
+			// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
+			meta: { snackbar: { success: 'Changed by a later render.' } },
+		} );
+		await act( async () => {
+			settle();
+			await pending;
+		} );
+
+		expect( mockCreateSuccessNotice ).toHaveBeenCalledTimes( 1 );
+		expect( mockCreateSuccessNotice ).toHaveBeenCalledWith( 'Saved when started.', {
+			type: 'snackbar',
+		} );
+	} );
 } );

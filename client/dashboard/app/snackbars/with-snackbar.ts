@@ -5,7 +5,8 @@ import type { UseMutationOptions } from '@tanstack/react-query';
  * The snackbars to show when a mutation settles. A message is a string, or a
  * function of the mutation's result that returns one. A function that returns
  * `undefined` shows no snackbar. `{ source: 'server' }` shows the error's own
- * message, or a generic one when it is empty.
+ * message, or a generic one when it is empty. Messages use the values from the
+ * render that called `mutate()`, even if the component re-renders before it settles.
  */
 export interface Snackbar< TData = unknown, TError = Error, TVariables = unknown > {
 	success?: string | ( ( data: TData, variables: TVariables ) => string | undefined );
