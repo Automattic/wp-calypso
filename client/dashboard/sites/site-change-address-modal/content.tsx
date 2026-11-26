@@ -14,6 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, closeSmall, globe } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { ButtonStack } from '../../components/button-stack';
@@ -100,7 +101,7 @@ const CustomDomainSuggestion = ( { site }: { site: Site } ) => {
 								'Before changing site address, consider <link>adding a custom domain</link> instead?'
 							),
 					{
-						link: <a href={ addSiteDomainUrl } />,
+						link: <Link href={ addSiteDomainUrl } />,
 					}
 				) }
 			</Text>

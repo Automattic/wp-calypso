@@ -1,6 +1,5 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import {
-	ExternalLink,
 	Icon,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -9,6 +8,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, code, lock, plus, trendingUp } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import enterpriseTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.webp';
 import enterpriseTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-2.webp';
 import premierTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.webp';
@@ -252,9 +252,9 @@ export function Testimonials( { brand }: { brand: HostingBrand } ) {
 								<VStack spacing={ 0.5 }>
 									<Text weight={ 600 }>{ testimonial.name }</Text>
 									<Text variant="muted">{ testimonial.title }</Text>
-									<ExternalLink href={ testimonial.link.url }>
+									<Link openInNewTab href={ testimonial.link.url }>
 										{ testimonial.link.label }
-									</ExternalLink>
+									</Link>
 								</VStack>
 							</HStack>
 						</VStack>
@@ -331,7 +331,8 @@ export function JetpackComplete() {
 						__( 'CRM Entrepreneur' ),
 						createInterpolateElement( __( '<a>All Jetpack Complete features</a>' ), {
 							a: (
-								<ExternalLink
+								<Link
+									openInNewTab
 									href="https://jetpack.com/complete/"
 									onClick={ () =>
 										recordTracksEvent( 'a4a_hosting_premier_jetpack_complete_more_link_click' )

@@ -9,11 +9,12 @@ import {
 } from '@automattic/api-queries';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Link, useRouter } from '@tanstack/react-router';
+import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { differenceInCalendarDays } from 'date-fns';
 import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
@@ -30,6 +31,7 @@ import {
 	hasPlanExpiryNotice,
 	isEligibleForPlanExpiryNotice,
 } from '../../../components/plan-expiry-notice';
+import RouterLink from '../../../components/router-link';
 import { wpcomLink } from '../../../utils/link';
 import {
 	isExpiredOrRemoved,
@@ -489,7 +491,10 @@ function ExpiredRenewNotice( {
 				} ),
 				{
 					managePurchase: (
-						<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } } />
+						<RouterLink
+							to={ purchaseSettingsRoute.fullPath }
+							params={ { purchaseId: purchase.ID } }
+						/>
 					),
 				}
 			) }
@@ -529,7 +534,7 @@ function InAppPurchaseNotice( { purchase }: { purchase: Purchase } ) {
 					'This product is an in-app purchase. You can manage it from within <managePurchase/>the app store</managePurchase>.'
 				),
 				{
-					managePurchase: <a href={ purchase.iap_purchase_management_link ?? undefined } />,
+					managePurchase: <Link href={ purchase.iap_purchase_management_link ?? undefined } />,
 				}
 			) }
 		</Notice>
@@ -649,7 +654,9 @@ function CreditCardExpiringNotice( { purchase }: { purchase: Purchase } ) {
 	};
 
 	const linkComponent = {
-		link: <Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId: purchase.ID } } />,
+		link: (
+			<RouterLink to={ changePaymentMethodRoute.fullPath } params={ { purchaseId: purchase.ID } } />
+		),
 	};
 
 	const translatedMessage = creditCardHasAlreadyExpired( purchase )

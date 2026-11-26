@@ -1,11 +1,12 @@
 import { siteOwnerTransferConfirmMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { ExternalLink, Spinner } from '@wordpress/components';
+import { Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useEffect, useState } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import Notice from '../../../../components/notice';
@@ -76,10 +77,7 @@ export function InvitationEmailSent( {
 						'There was an error confirming the site transfer. Please <link>contact our support team</link> for help.'
 					),
 					{
-						link: (
-							// @ts-expect-error children prop is injected by createInterpolateElement
-							<ExternalLink href={ wpcomLink( '/support' ) } />
-						),
+						link: <Link openInNewTab href={ wpcomLink( '/support' ) } />,
 					}
 				) }
 			</Notice>

@@ -1,5 +1,5 @@
-import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import React from 'react';
 import useSupportDocData from 'calypso/components/inline-support-link/use-support-doc-data'; // eslint-disable-line no-restricted-imports
 import type { SupportDocData } from 'calypso/components/inline-support-link/types'; // eslint-disable-line no-restricted-imports
@@ -51,19 +51,15 @@ const InlineSupportLink = ( {
 		onClick: handleClick,
 	};
 
-	if ( supportDocData?.postId ) {
-		return (
-			<a { ...linkProps } target="_blank" rel="noopener noreferrer">
-				{ children }
-			</a>
-		);
+	if ( opensInPanel ) {
+		return <Link { ...linkProps }>{ children }</Link>;
 	}
 
-	if ( forceOpenInHelpCenter ) {
-		return <a { ...linkProps }>{ children }</a>;
-	}
-
-	return <ExternalLink { ...linkProps }>{ children }</ExternalLink>;
+	return (
+		<Link { ...linkProps } openInNewTab>
+			{ children }
+		</Link>
+	);
 };
 
 export default InlineSupportLink;

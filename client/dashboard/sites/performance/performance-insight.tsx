@@ -11,7 +11,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { thumbsUp, thumbsDown } from '@wordpress/icons';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
 import { useAnalytics } from '../../app/analytics';
@@ -291,7 +291,7 @@ export const PerformanceInsight = ( {
 							<Markdown
 								components={ {
 									a( props ) {
-										return <a target="_blank" { ...props } />;
+										return <Link openInNewTab { ...props } />;
 									},
 								} }
 							>

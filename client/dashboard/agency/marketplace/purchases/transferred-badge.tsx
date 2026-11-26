@@ -1,12 +1,11 @@
 import {
-	ExternalLink,
 	Popover,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useEffect, useRef, useState } from 'react';
 import { CardBody } from '../../../components/card';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
@@ -77,9 +76,9 @@ export default function TransferredBadge( { billedFrom, locale }: TransferredBad
 								{ date: <strong>{ formatDate( parseDateAsUTC( billedFrom ), locale ) }</strong> }
 							) }
 						</Text>
-						<ExternalLink href={ BILLING_GUIDE_URL }>
+						<Link openInNewTab href={ BILLING_GUIDE_URL }>
 							{ __( 'Learn about billing for transferred sites' ) }
-						</ExternalLink>
+						</Link>
 					</CardBody>
 				</Popover>
 			) }

@@ -4,13 +4,13 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { purchaseSettingsRoute, purchasesRoute } from '../../app/router/me';
@@ -154,8 +154,10 @@ function ContentConfirmDisconnect( {
 						{
 							siteDomain: <strong>{ site.slug }</strong>,
 							link: (
-								// @ts-expect-error children prop is injected by createInterpolateElement
-								<ExternalLink href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/" />
+								<Link
+									openInNewTab
+									href="https://jetpack.com/support/why-the-wordpress-com-connection-is-important-for-jetpack/"
+								/>
 							),
 						}
 					) }

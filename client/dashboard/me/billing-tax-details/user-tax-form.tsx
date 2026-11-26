@@ -9,7 +9,6 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
 	Button,
-	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
@@ -22,6 +21,7 @@ import { DataForm, type DataFormControlProps, type Field } from '@wordpress/data
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { createContext, useContext, useState, useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
@@ -100,7 +100,8 @@ function VatIdControl( { data, field, onChange }: UserTaxFormControlProps ) {
 			),
 			{
 				contactSupportLink: (
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ SUPPORT_CONTACT_URL }
 						children={ null }
 						onClick={ () => {
@@ -318,7 +319,7 @@ export default function UserTaxForm() {
 									nameOfTax: <span>{ taxName ?? fallbackTaxName }</span>,
 									countryName: <span>{ selectedCountry.name }</span>,
 									contactSupportLink: (
-										<a
+										<Link
 											href={ wpcomLink( '/help' ) }
 											title={ contactSupportLinkTitle }
 											onClick={ handleOpenCenterChat }
@@ -341,7 +342,7 @@ export default function UserTaxForm() {
 							),
 							{
 								contactSupportLink: (
-									<a
+									<Link
 										href={ wpcomLink( '/help' ) }
 										title={ contactSupportLinkTitle }
 										onClick={ handleOpenCenterChat }

@@ -1,5 +1,6 @@
-import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { Text } from '../../components/text';
 
 export default function ReportFooter() {
@@ -16,9 +17,9 @@ export default function ReportFooter() {
 				) }
 			</Text>
 			<Text as="p">
-				<ExternalLink href="https://developer.chrome.com/docs/crux">
+				<Link openInNewTab href="https://developer.chrome.com/docs/crux">
 					{ __( 'Learn more about the Chrome UX Report' ) }
-				</ExternalLink>
+				</Link>
 			</Text>
 		</VStack>
 	);

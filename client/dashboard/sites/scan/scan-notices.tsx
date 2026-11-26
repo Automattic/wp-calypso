@@ -1,7 +1,7 @@
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState, useEffect } from 'react';
 import { Notice, NoticeActionLinkButton } from '../../components/notice';
 import type { ScanStatusType } from './use-scan-state';
@@ -42,7 +42,9 @@ export function ScanNotices( { status, threatCount }: ScanNoticesProps ) {
 						'Please check to see if your site is down – if it’s not, try again. If it is, or if the scan process is still having problems, <external>check our help guide</external> or contact our support team.'
 					),
 					{
-						external: <ExternalLink href="https://jetpack.com/support/scan/" children={ null } />,
+						external: (
+							<Link openInNewTab href="https://jetpack.com/support/scan/" children={ null } />
+						),
 					}
 				) }
 			</Notice>

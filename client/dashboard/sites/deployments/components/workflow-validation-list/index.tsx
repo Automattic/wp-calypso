@@ -8,11 +8,11 @@ import {
 	Icon,
 	Notice,
 	Spinner,
-	ExternalLink,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { useState, useMemo } from 'react';
 import { Card, CardBody } from '../../../../components/card';
 import { CodeHighlighter } from '../../../../components/code-highlighter';
@@ -118,12 +118,20 @@ export const WorkflowValidationList = ( {
 		const message =
 			workflowChecks.conclusion === 'success'
 				? createInterpolateElement( __( 'Your workflow <filename /> is good to go!' ), {
-						filename: <ExternalLink href={ workflowUrl }>{ workflowFile }</ExternalLink>,
+						filename: (
+							<Link openInNewTab href={ workflowUrl }>
+								{ workflowFile }
+							</Link>
+						),
 					} )
 				: createInterpolateElement(
 						__( 'Please edit <filename /> and fix the problems we found.' ),
 						{
-							filename: <ExternalLink href={ workflowUrl }>{ workflowFile }</ExternalLink>,
+							filename: (
+								<Link openInNewTab href={ workflowUrl }>
+									{ workflowFile }
+								</Link>
+							),
 						}
 					);
 

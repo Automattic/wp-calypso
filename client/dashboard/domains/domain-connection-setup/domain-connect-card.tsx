@@ -1,11 +1,11 @@
 import {
 	Button,
-	ExternalLink,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -76,7 +76,10 @@ export default function DomainConnectCard( {
 						{
 							b: <b />,
 							registrar: registrar_url ? (
-								<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
+								<Link openInNewTab href={ registrar_url }>
+									{ ' ' }
+									{ registrar }{ ' ' }
+								</Link>
 							) : (
 								<>{ registrar || __( 'Your domain name provider' ) }</>
 							),

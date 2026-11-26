@@ -5,12 +5,12 @@ import {
 	__experimentalItem as Item,
 	__experimentalItemGroup as ItemGroup,
 	Button,
-	ExternalLink,
 	FlexBlock,
 	Notice,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useCallback, useEffect } from 'react';
 import { useAuth } from '../../app/auth';
 import { emailsRoute, mailboxesReadyRoute } from '../../app/router/emails';
@@ -56,7 +56,7 @@ const MailboxesReadyNotice = () => {
 						}
 					),
 					{
-						link: <ExternalLink href={ SUPPORT_CONTACT_URL } children={ null } />,
+						link: <Link openInNewTab href={ SUPPORT_CONTACT_URL } children={ null } />,
 						strong: <strong />,
 					}
 				) }

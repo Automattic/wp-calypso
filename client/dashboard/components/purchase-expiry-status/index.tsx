@@ -3,10 +3,11 @@ import './style.scss';
 import { SubscriptionBillPeriod } from '@automattic/api-core';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
-import { Button, ExternalLink, Icon } from '@wordpress/components';
+import { Button, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { arrowUpRight } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { useHelpCenter } from '../../app/help-center';
@@ -192,9 +193,12 @@ export function PurchaseExpiryStatus( {
 			<>
 				<span>{ __( 'Activate your product license key' ) }</span>
 				<br />
-				<ExternalLink href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/">
+				<Link
+					openInNewTab
+					href="https://jetpack.com/support/activate-a-jetpack-product-via-license-key/"
+				>
 					{ __( 'Learn more' ) }
-				</ExternalLink>
+				</Link>
 			</>
 		);
 	}
@@ -249,7 +253,7 @@ export function PurchaseExpiryStatus( {
 		purchase.is_iap_purchase &&
 		purchase.iap_purchase_management_link
 	) {
-		return getInAppPurchaseText( <a href={ purchase.iap_purchase_management_link } /> );
+		return getInAppPurchaseText( <Link href={ purchase.iap_purchase_management_link } /> );
 	}
 
 	const status = describePurchaseExpiry( purchase, locale, hasEnTranslation );

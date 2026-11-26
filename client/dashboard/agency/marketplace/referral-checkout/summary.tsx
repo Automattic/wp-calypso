@@ -9,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, Icon } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
@@ -228,7 +229,7 @@ export default function ReferralSummary( {
 								__(
 									'Please verify your <a>account’s email</a> in order to begin referring products to clients.'
 								),
-								{ a: <a href={ wpcomLink( '/me' ) } target="_blank" rel="noreferrer" /> }
+								{ a: <Link href={ wpcomLink( '/me' ) } openInNewTab rel="noreferrer" /> }
 							) }
 						</Text>
 					) }

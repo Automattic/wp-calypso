@@ -1,7 +1,7 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import InlineSupportLink from '../../../components/inline-support-link';
 
 interface TosTextProps {
@@ -20,7 +20,8 @@ export default function TosText( {
 			<>
 				{ createInterpolateElement( __( 'You agree to our <tosLink>Terms of Service</tosLink>.' ), {
 					tosLink: (
-						<ExternalLink
+						<Link
+							openInNewTab
 							href={ localizeUrl( 'https://automattic.com/tos/' ) }
 							rel="noopener noreferrer"
 							children={ undefined }
@@ -39,7 +40,8 @@ export default function TosText( {
 				),
 				{
 					tosLink: (
-						<ExternalLink
+						<Link
+							openInNewTab
 							href={
 								isAkismetPurchase
 									? localizeUrl( 'https://akismet.com/tos/' )

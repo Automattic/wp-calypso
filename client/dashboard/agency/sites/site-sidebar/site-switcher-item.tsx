@@ -2,10 +2,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronUpDown } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { SidebarMenuSwitcherItem } from '../../../components/sidebar';
 import { Text } from '../../../components/text';
 import { getDisplayUrl, getSiteName, getSiteUrl } from '../dataviews/site-data';
@@ -45,12 +45,13 @@ export default function AgencySiteSwitcherItem( { site }: { site: AgencySite } )
 					<Text weight={ 500 } truncate numberOfLines={ 1 }>
 						{ getSiteName( site ) }
 					</Text>
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ getSiteUrl( site ) }
 						style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
 					>
 						{ getDisplayUrl( site ) }
-					</ExternalLink>
+					</Link>
 				</VStack>
 			</HStack>
 		</SidebarMenuSwitcherItem>

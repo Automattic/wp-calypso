@@ -1,10 +1,11 @@
 import { userSettingsMutation } from '@automattic/api-queries';
 import { getTrackingPrefs, setTrackingPrefs } from '@automattic/calypso-analytics';
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
+import { __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../app/analytics';
 import { useIsRegionInCcpaZone } from '../../app/analytics/country-code-cookie-gdpr';
 import { Card, CardBody } from '../../components/card';
@@ -84,14 +85,16 @@ export default function DoNotSellCard() {
 										),
 										{
 											privacyLink: (
-												<ExternalLink
+												<Link
+													openInNewTab
 													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 													href="https://automattic.com/privacy/"
 													children={ null }
 												/>
 											),
 											cookiesLink: (
-												<ExternalLink
+												<Link
+													openInNewTab
 													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 													href="https://automattic.com/cookies/"
 													children={ null }
@@ -122,7 +125,8 @@ export default function DoNotSellCard() {
 										),
 										{
 											emailLink: (
-												<ExternalLink
+												<Link
+													openInNewTab
 													// eslint-disable-next-line wpcalypso/i18n-unlocalized-url
 													href="mailto:contact@automattic.com"
 													children={ null }

@@ -11,7 +11,6 @@ import { useNavigate } from '@tanstack/react-router';
 import {
 	Button,
 	CheckboxControl,
-	ExternalLink,
 	Modal,
 	Spinner,
 	__experimentalText as Text,
@@ -20,6 +19,7 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useEffect, useState } from 'react';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { useAnalytics } from '../../../app/analytics';
@@ -252,7 +252,7 @@ export function SiteConfigurationForm( props: SiteConfigurationFormProps ) {
 					'The PHP version can be changed after your site is created via <link>Web Server Settings</link>.'
 				),
 				{
-					link: <ExternalLink href={ HOSTING_FEATURES_URL } children={ null } />,
+					link: <Link openInNewTab href={ HOSTING_FEATURES_URL } children={ null } />,
 				}
 			),
 			Edit: 'select',

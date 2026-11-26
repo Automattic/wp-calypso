@@ -2,13 +2,13 @@ import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries'
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import {
-	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { dashboardLink } from '../../../utils/link';
 import { getPressablePlanInfo } from '../hosting/lib/pressable-plans';
 import { matchesProduct } from '../hosting/lib/pressable-products';
@@ -99,13 +99,14 @@ export default function HostingPlanLoss( { license }: { license: JetpackLicense 
 		<VStack spacing={ 2 }>
 			<Text weight={ 500 }>{ __( 'When you cancel you’ll immediately lose access to' ) }</Text>
 			{ isPressable ? <PressablePlanLoss license={ license } /> : <WpcomPlanLoss /> }
-			<ExternalLink
+			<Link
+				openInNewTab
 				href={ dashboardLink(
 					getMarketplaceHostingSectionRoute( isPressable ? 'pressable' : 'wpcom' )
 				) }
 			>
 				{ __( 'And more' ) }
-			</ExternalLink>
+			</Link>
 		</VStack>
 	);
 }

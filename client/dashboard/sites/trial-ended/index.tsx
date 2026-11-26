@@ -3,12 +3,12 @@ import { sitePlanBySlugQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
-	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { addQueryArgs } from '@wordpress/url';
 import { useState, Suspense, lazy } from 'react';
 import { getCurrentDashboard } from '../../app/routing';
@@ -122,9 +122,9 @@ const SiteTrialEnded = ( { siteSlug }: { siteSlug: string } ) => {
 				</Card>
 				<HStack spacing={ 3 } justify="flex-start">
 					<Text variant="muted">{ __( 'Not ready to upgrade?' ) }</Text>
-					<ExternalLink href={ wpcomLink( `/export/${ site.slug }` ) }>
+					<Link openInNewTab href={ wpcomLink( `/export/${ site.slug }` ) }>
 						{ __( 'Export your content' ) }
-					</ExternalLink>
+					</Link>
 					<Button variant="link" isDestructive onClick={ () => setIsSiteDeleteModalOpen( true ) }>
 						{ __( 'Delete your site permanently' ) }
 					</Button>

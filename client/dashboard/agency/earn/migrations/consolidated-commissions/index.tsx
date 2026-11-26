@@ -1,10 +1,7 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import {
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-	ExternalLink,
-} from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import ConsolidatedStatCard from '../../../../components/consolidated-stat-card';
 import Grid from '../../../../components/grid';
 import type { TaggedSite } from '../types';
@@ -54,7 +51,9 @@ export default function MigrationsConsolidatedCommissions( { items }: { items: T
 							) }
 						</Text>
 						<Text>
-							<ExternalLink href={ PROGRAM_INCENTIVES_URL }>{ __( 'Learn more' ) }</ExternalLink>
+							<Link openInNewTab href={ PROGRAM_INCENTIVES_URL }>
+								{ __( 'Learn more' ) }
+							</Link>
 						</Text>
 					</VStack>
 				}

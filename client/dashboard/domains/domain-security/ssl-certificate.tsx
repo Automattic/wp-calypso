@@ -1,7 +1,6 @@
 import { provisionSslCertificateMutation } from '@automattic/api-queries';
 import { CONTACT } from '@automattic/urls';
 import { useMutation } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -19,6 +18,7 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
+import RouterLink from '../../components/router-link';
 import { SectionHeader } from '../../components/section-header';
 import { parseDateAsUTC } from '../../utils/datetime';
 import { useSslStatusLabels } from './use-ssl-status-labels';
@@ -287,7 +287,7 @@ export default function SslCertificate( { domainName, domain, sslDetails }: SslC
 										),
 										{
 											link: (
-												<Link
+												<RouterLink
 													to={ domainSecurityRoute.fullPath }
 													params={ {
 														domainName: domain?.subdomain_part

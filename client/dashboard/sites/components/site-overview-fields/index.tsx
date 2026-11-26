@@ -1,10 +1,11 @@
 import { siteAgencyBlogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
+import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
+import RouterLink from '../../../components/router-link';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
@@ -58,9 +59,9 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 						__( 'Redirects to <link />' ),
 						{
 							link: (
-								<ExternalLink href={ site.URL } style={ { overflowWrap: 'anywhere' } }>
+								<Link openInNewTab href={ site.URL } style={ { overflowWrap: 'anywhere' } }>
 									{ getSiteDisplayUrl( site ) }
-								</ExternalLink>
+								</Link>
 							),
 						}
 					) }
@@ -75,7 +76,7 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 				{ isSelfHostedJetpackConnected( site ) ? (
 					<Text variant="muted">{ wpVersion }</Text>
 				) : (
-					<Link to={ `/sites/${ site.slug }/settings/wordpress` }>{ wpVersion }</Link>
+					<RouterLink to={ `/sites/${ site.slug }/settings/wordpress` }>{ wpVersion }</RouterLink>
 				) }
 			</MetadataItem>
 		);
@@ -84,9 +85,9 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 	if ( canViewPHPVersion( site ) && ! site.__inaccessible_jetpack_error ) {
 		fields.push(
 			<MetadataItem key="php" title={ __( 'PHP' ) }>
-				<Link to={ `/sites/${ site.slug }/settings/php` }>
+				<RouterLink to={ `/sites/${ site.slug }/settings/php` }>
 					<PHPVersion site={ site } />
-				</Link>
+				</RouterLink>
 			</MetadataItem>
 		);
 	}

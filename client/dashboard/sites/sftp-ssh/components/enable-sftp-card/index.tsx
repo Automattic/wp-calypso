@@ -4,12 +4,12 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	ExternalLink,
 	Panel,
 	PanelBody,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import { Card, CardBody } from '../../../../components/card';
@@ -62,7 +62,7 @@ export default function EnableSftpCard( {
 										'For more information see <supportLink>SFTP on WordPress.com</supportLink>.'
 								),
 								{
-									filezillaLink: <ExternalLink href={ FILEZILLA_URL } children={ null } />,
+									filezillaLink: <Link openInNewTab href={ FILEZILLA_URL } children={ null } />,
 									supportLink: <InlineSupportLink supportContext="hosting-sftp" />,
 								}
 							) }

@@ -1,7 +1,8 @@
-import { useNavigate, Link } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf, _x } from '@wordpress/i18n';
 import { changePaymentMethodRoute } from '../../app/router/me';
+import RouterLink from '../../components/router-link';
 import {
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	isAkismetFreeProduct,
@@ -51,9 +52,9 @@ export function PurchasePaymentMethod( {
 	if ( ! purchase.is_rechargeable ) {
 		return (
 			<div>
-				<Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId: purchase.ID } }>
+				<RouterLink to={ changePaymentMethodRoute.fullPath } params={ { purchaseId: purchase.ID } }>
 					{ __( 'Add payment method' ) }
-				</Link>
+				</RouterLink>
 			</div>
 		);
 	}

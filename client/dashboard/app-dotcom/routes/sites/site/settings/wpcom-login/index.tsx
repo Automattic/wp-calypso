@@ -5,9 +5,10 @@ import {
 	siteJetpackModulesQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
+import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import Breadcrumbs from '../../../../../../app/breadcrumbs';
 import InlineSupportLink from '../../../../../../components/inline-support-link';
 import Notice from '../../../../../../components/notice';
@@ -67,7 +68,8 @@ export default function WpcomLoginSettings( { siteSlug }: { siteSlug: string } )
 								),
 								{
 									link: (
-										<ExternalLink
+										<Link
+											openInNewTab
 											href="https://jetpack.com/support/offline-mode/"
 											children={ null }
 										/>

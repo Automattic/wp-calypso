@@ -2,13 +2,13 @@ import { githubWorkflowTemplatesQuery } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import {
-	ExternalLink,
 	SelectControl,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { NewWorkflowWizard } from '../new-workflow-wizard';
 import { WorkflowValidationList } from '../workflow-validation-list';
@@ -104,7 +104,8 @@ export const AdvancedWorkflowStyle = ( {
 						),
 						{
 							a: (
-								<ExternalLink
+								<Link
+									openInNewTab
 									href={ localizeUrl(
 										'https://wordpress.com/support/github-deployments/workflow-recipes/'
 									) }

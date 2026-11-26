@@ -2,13 +2,10 @@ import { siteAgencyBlogQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from '@tanstack/react-router';
-import {
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-	ExternalLink,
-} from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../../../../agency/marketplace/paths';
 import { getSiteLaunchCheckoutUrl } from '../../../../agency/marketplace/products/lib/checkout-url';
 import { useAppContext } from '../../../../app/context';
@@ -38,7 +35,8 @@ function getAgencyBillingMessage(
 			),
 			{
 				learnMoreLink: (
-					<ExternalLink
+					<Link
+						openInNewTab
 						href="https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/"
 						children={ null }
 					/>
@@ -73,7 +71,8 @@ function getAgencyBillingMessage(
 		),
 		{
 			learnMoreLink: (
-				<ExternalLink
+				<Link
+					openInNewTab
 					href="https://agencieshelp.automattic.com/knowledge-base/free-development-licenses-for-wordpress-com-hosting/"
 					children={ null }
 				/>

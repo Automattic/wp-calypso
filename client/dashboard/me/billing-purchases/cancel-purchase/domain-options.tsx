@@ -3,6 +3,7 @@ import { UPDATE_NAMESERVERS } from '@automattic/urls';
 import { RadioControl, CheckboxControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState, useCallback } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import type { CancelPurchaseState } from './types';
@@ -328,9 +329,9 @@ const CancelPurchaseDomainOptions = ( {
 							),
 							{
 								a: (
-									<a
+									<Link
+										openInNewTab
 										href={ localizeUrl( UPDATE_NAMESERVERS ) }
-										target="_blank"
 										rel="noopener noreferrer"
 									/>
 								),

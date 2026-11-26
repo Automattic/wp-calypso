@@ -1,12 +1,12 @@
 import { DomainSubtype, Domain } from '@automattic/api-core';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { domainNameServersRoute } from '../../app/router/domains';
 import { siteDomainsRoute } from '../../app/router/sites';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
+import RouterLink from '../../components/router-link';
 
 interface DomainForwardingNoticeProps {
 	domainName: string;
@@ -41,7 +41,7 @@ export const DomainForwardingNotice = ( {
 						'This means that the Domain Forwarding records you’re editing won’t be in effect until you switch to use WordPress.com name servers. <link>You can update your name servers here</link>'
 					),
 					{
-						link: <Link to={ domainNameServersRoute.fullPath } params={ { domainName } } />,
+						link: <RouterLink to={ domainNameServersRoute.fullPath } params={ { domainName } } />,
 					}
 				) }
 			</Notice>
@@ -59,7 +59,7 @@ export const DomainForwardingNotice = ( {
 							{
 								domainName: <>{ domainName }</>,
 								link: (
-									<Link
+									<RouterLink
 										to={ siteDomainsRoute.fullPath }
 										params={ { siteSlug: domainData?.site_slug } }
 									/>
@@ -72,7 +72,7 @@ export const DomainForwardingNotice = ( {
 							),
 							{
 								link: (
-									<Link
+									<RouterLink
 										to={ siteDomainsRoute.fullPath }
 										params={ { siteSlug: domainData?.site_slug } }
 									/>

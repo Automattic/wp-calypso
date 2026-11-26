@@ -5,9 +5,10 @@ import {
 	siteJetpackModulesQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
+import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import Breadcrumbs from '../../../../../../app/breadcrumbs';
 import InlineSupportLink from '../../../../../../components/inline-support-link';
 import Notice from '../../../../../../components/notice';
@@ -69,8 +70,7 @@ export default function WebApplicationFirewallSettings( { siteSlug }: { siteSlug
 									'The web application firewall (WAF) is disabled because your site is in offline mode. <link>Learn more</link>'
 								),
 								{
-									// @ts-ignore - ExternalLink's children is not missing but it's provided by the createInterpolateElement above.
-									link: <ExternalLink href="https://jetpack.com/support/offline-mode/" />,
+									link: <Link openInNewTab href="https://jetpack.com/support/offline-mode/" />,
 								}
 							) }
 						</Text>

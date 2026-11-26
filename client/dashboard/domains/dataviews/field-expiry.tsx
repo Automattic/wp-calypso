@@ -1,11 +1,11 @@
 import { DomainSubtype, DomainStatus } from '@automattic/api-core';
 import { userPurchasesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { purchaseSettingsRoute } from '../../app/router/me';
+import RouterLink from '../../components/router-link';
 import { Text } from '../../components/text';
 import { canEnableAutoRenew, needsPaymentMethodToAutoRenew } from '../../utils/domain';
 import type { DomainSummary } from '@automattic/api-core';
@@ -50,7 +50,7 @@ export const DomainExpiryField = ( {
 	const renewLabel = domain.auto_renewing
 		? autoRenewOnLabel
 		: canEnableAutoRenew( domain ) && (
-				<Link
+				<RouterLink
 					to={ purchaseSettingsRoute.fullPath }
 					params={ { purchaseId: domain.subscription_id } }
 					onClick={ () =>
@@ -60,7 +60,7 @@ export const DomainExpiryField = ( {
 					}
 				>
 					{ __( 'Turn on auto-renew' ) }
-				</Link>
+				</RouterLink>
 			);
 
 	return (

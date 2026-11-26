@@ -1,6 +1,5 @@
 import { resendIcannVerificationEmailMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	__experimentalText as Text,
@@ -13,6 +12,7 @@ import { useLocale } from '../../app/locale';
 import { domainContactInfoRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
+import RouterLink from '../../components/router-link';
 import { formatDate } from '../../utils/datetime';
 import type { Domain } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -155,7 +155,7 @@ export default function IcannSuspensionNotice( { domain }: { domain: Domain } ) 
 				__(
 					'If you no longer have access to it, <link>change the contact email address</link> and we’ll send a new verification email.'
 				),
-				{ link: <Link to={ domainContactInfoRoute.fullPath } params={ { domainName } } /> }
+				{ link: <RouterLink to={ domainContactInfoRoute.fullPath } params={ { domainName } } /> }
 			)
 		);
 	}

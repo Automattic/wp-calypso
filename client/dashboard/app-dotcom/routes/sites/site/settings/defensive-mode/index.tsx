@@ -6,7 +6,6 @@ import {
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import {
-	ExternalLink,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
@@ -16,6 +15,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import Breadcrumbs from '../../../../../../app/breadcrumbs';
 import { ButtonStack } from '../../../../../../components/button-stack';
@@ -148,8 +148,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 									'We’ve enabled defensive mode to protect your site. <link>Contact a Happiness Engineer</link> if you need assistance.'
 								),
 								{
-									// @ts-expect-error children prop is injected by createInterpolateElement
-									link: <ExternalLink href={ wpcomLink( '/support/contact' ) } />,
+									link: <Link openInNewTab href={ wpcomLink( '/support/contact' ) } />,
 								}
 							) }
 						</Text>

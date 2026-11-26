@@ -79,12 +79,12 @@ a.is-link.billing-purchases__site-name {
 	font-weight: 500;
 }
 
-a.components-external-link.billing-purchases__site-url {
-	> span.components-external-link__contents {
+a.billing-purchases__site-url {
+	> span {
 		text-decoration: none;
 	}
 
-	> .components-external-link__icon {
+	> span[role='img'] {
 		display: none;
 	}
 }

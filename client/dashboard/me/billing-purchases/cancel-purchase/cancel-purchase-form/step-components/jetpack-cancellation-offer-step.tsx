@@ -4,6 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useMemo } from 'react';
 import AkismetLogo from '../../../../../components/akismet-logo';
 import InlineSupportLink from '../../../../../components/inline-support-link';
@@ -187,9 +188,9 @@ const JetpackCancellationOfferStep: FC< JetpackCancellationOfferStepProps > = ( 
 					),
 					{
 						tosLink: (
-							<a
+							<Link
+								openInNewTab
 								href={ localizeUrl( 'https://automattic.com/tos/' ) }
-								target="_blank"
 								rel="noopener noreferrer"
 							/>
 						),

@@ -2,6 +2,7 @@ import { SiteResetContentSummary } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { wpcomLink } from '../../utils/link';
 
 interface ContentItem {
@@ -63,9 +64,9 @@ export default function ContentInfo( {
 					if ( url ) {
 						return (
 							<li key={ text }>
-								<a style={ { fontSize: '13px' } } href={ url }>
+								<Link style={ { fontSize: '13px' } } href={ url }>
 									{ text }
-								</a>
+								</Link>
 							</li>
 						);
 					}

@@ -1,8 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState, useEffect } from 'react';
 import { useFormattedTime } from '../../components/formatted-time';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -109,7 +109,8 @@ export function BackupNotices( {
 					),
 					{
 						external: isSelfHostedJetpackConnected( site ) ? (
-							<ExternalLink
+							<Link
+								openInNewTab
 								href={ localizeUrl( 'https://jetpack.com/support/backup/' ) }
 								children={ null }
 							/>

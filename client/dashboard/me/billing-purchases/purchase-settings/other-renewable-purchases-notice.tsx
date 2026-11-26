@@ -1,5 +1,4 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
-import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -9,6 +8,7 @@ import Notice, {
 	NoticeActionButton,
 	RouterNoticeActionLinkButton,
 } from '../../../components/notice';
+import RouterLink from '../../../components/router-link';
 import { getRelativeDayString, isWithinNext } from '../../../utils/datetime';
 import {
 	isExpiring,
@@ -251,7 +251,7 @@ export function OtherRenewablePurchasesNotice( {
 	const openUpcomingRenewalsDialog = () => setUpcomingRenewalsDialogVisible( true );
 	const link = <Button variant="link" onClick={ () => openUpcomingRenewalsDialog() } />;
 	const managePurchase = (
-		<Link to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } } />
+		<RouterLink to={ purchaseSettingsRoute.fullPath } params={ { purchaseId: purchase.ID } } />
 	);
 
 	// Scenario 1: current-expires-soon-others-expire-soon

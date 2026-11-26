@@ -1,10 +1,10 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute } from '../../../app/router/me';
 import ConfirmModal from '../../../components/confirm-modal';
+import RouterLink from '../../../components/router-link';
 import { formatDate } from '../../../utils/datetime';
 import { getTitanTierName } from '../../utils/titan-tiers';
 import type { TitanDowngradeMode } from '../../hooks/use-titan-downgrade';
@@ -110,7 +110,7 @@ export function TitanDowngradeModal( {
 						'Your new plan is charged at your next renewal, so a payment method is required. <link>Add a payment method</link> to schedule this change.'
 					),
 					{
-						link: <Link to={ changePaymentMethodRoute.fullPath } params={ { purchaseId } } />,
+						link: <RouterLink to={ changePaymentMethodRoute.fullPath } params={ { purchaseId } } />,
 					}
 				)
 			: null;

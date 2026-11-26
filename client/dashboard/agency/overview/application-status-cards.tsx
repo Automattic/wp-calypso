@@ -8,6 +8,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { error, published } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
@@ -139,7 +140,7 @@ export function RejectedTierCard( {
 									} }
 								/>
 							) : (
-								<a href={ contactSupport } onClick={ onContactSupportClick } />
+								<Link href={ contactSupport } onClick={ onContactSupportClick } />
 							),
 					}
 				) }

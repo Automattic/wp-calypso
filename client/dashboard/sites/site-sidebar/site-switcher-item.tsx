@@ -2,10 +2,10 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronUpDown } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { Suspense, lazy } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { SidebarMenuSwitcherItem } from '../../components/sidebar';
@@ -53,7 +53,8 @@ export default function SiteSwitcherItem( { site }: { site: Site } ) {
 					<Text weight={ 500 } truncate numberOfLines={ 1 }>
 						{ getSiteDisplayName( site ) }
 					</Text>
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ site.URL }
 						style={ { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }
 						onClick={ () => {
@@ -61,7 +62,7 @@ export default function SiteSwitcherItem( { site }: { site: Site } ) {
 						} }
 					>
 						{ getSiteDisplayUrl( site ) }
-					</ExternalLink>
+					</Link>
 				</VStack>
 			</HStack>
 		</SidebarMenuSwitcherItem>

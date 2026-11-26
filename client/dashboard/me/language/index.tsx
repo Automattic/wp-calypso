@@ -7,7 +7,6 @@ import {
 	Notice,
 	Button,
 	__experimentalVStack as VStack,
-	ExternalLink,
 	ComboboxControl,
 	CheckboxControl,
 } from '@wordpress/components';
@@ -16,6 +15,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
@@ -140,7 +140,8 @@ export default function Language() {
 							),
 							{
 								externalLink: (
-									<ExternalLink
+									<Link
+										openInNewTab
 										href={ `https://translate.wordpress.com/translators/?contributor_locale=${ lang.langSlug }` }
 										children={ null }
 									/>
@@ -227,9 +228,9 @@ export default function Language() {
 							__( 'This allows you to help translate WordPress.com. <LearnMore/>' ),
 							{
 								LearnMore: (
-									<ExternalLink href="https://translate.wordpress.com/community-translator/">
+									<Link openInNewTab href="https://translate.wordpress.com/community-translator/">
 										{ __( 'Learn more' ) }
-									</ExternalLink>
+									</Link>
 								),
 							}
 						) }

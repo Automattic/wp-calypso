@@ -4,6 +4,7 @@ import { __experimentalHStack as HStack, Icon, Popover, Button } from '@wordpres
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { brush, cloud, code, envelope, globe, info, plugins } from '@wordpress/icons';
+import { Link as UILink } from '@wordpress/ui';
 import { useState, useMemo } from 'react';
 import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import jetpackIcon from 'calypso/assets/images/icons/jetpack-icon.svg';
@@ -11,6 +12,7 @@ import passportIcon from 'calypso/assets/images/icons/passport-icon.svg';
 import { useAuth } from '../../app/auth';
 import { paymentMethodsRoute, purchaseSettingsRoute } from '../../app/router/me';
 import { PurchaseExpiryStatus } from '../../components/purchase-expiry-status';
+import RouterLink from '../../components/router-link';
 import SiteIcon from '../../components/site-icon';
 import {
 	mightStillAutoRenew,
@@ -169,7 +171,7 @@ function BackupPaymentMethodNotice() {
 	const noticeText = createInterpolateElement(
 		__( 'If the renewal fails, a <link>backup payment method</link> may be used.' ),
 		{
-			link: <Link to={ paymentMethodsRoute.fullPath } />,
+			link: <RouterLink to={ paymentMethodsRoute.fullPath } />,
 		}
 	);
 	return <BillingPurchaseInfoPopover>{ noticeText }</BillingPurchaseInfoPopover>;
@@ -196,7 +198,7 @@ function OwnerInfo( {
 				),
 				{
 					domain: <strong>{ purchase.domain || purchase.site_slug || __( 'a site' ) }</strong>,
-					link: <a href={ JETPACK_CONTACT_SUPPORT } target="_blank" rel="noopener noreferrer" />,
+					link: <UILink openInNewTab href={ JETPACK_CONTACT_SUPPORT } rel="noopener noreferrer" />,
 				}
 			) }
 		</span>

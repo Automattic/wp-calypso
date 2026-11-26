@@ -11,7 +11,6 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 	Modal,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -19,6 +18,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -148,7 +148,8 @@ export default function TransferDomainToOtherUser() {
 					),
 					{
 						domainRegistrationAgreement: (
-							<ExternalLink
+							<Link
+								openInNewTab
 								href="https://wordpress.com/automattic-domain-name-registration-agreement/"
 								children={ null }
 							/>
@@ -178,7 +179,7 @@ export default function TransferDomainToOtherUser() {
 							'You can transfer this domain to any administrator on this site. If the user you want to transfer is not currently an administrator, please <link>add them to the site first</link>.'
 						),
 						{
-							link: <a href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
+							link: <Link href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
 						}
 					) }
 				</Text>
@@ -202,7 +203,7 @@ export default function TransferDomainToOtherUser() {
 							'You can transfer this domain connection to any administrator on this site. If the user you want to transfer is not currently an administrator, please <link>add them to the site first</link>.'
 						),
 						{
-							link: <a href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
+							link: <Link href={ wpcomLink( `/people/new/${ domain.site_slug }` ) } />,
 						}
 					) }
 				</Text>

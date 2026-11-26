@@ -5,6 +5,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { domainTransferToOtherSiteRoute } from '../../app/router/domains';
 import { siteRoute } from '../../app/router/sites';
+import RouterLink from '../../components/router-link';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import type { DomainSummary } from '@automattic/api-core';
@@ -17,9 +18,12 @@ export const DomainSiteField = ( { domain, value }: { domain: DomainSummary; val
 
 	if ( domain.is_domain_only_site ) {
 		return (
-			<Link to={ domainTransferToOtherSiteRoute.fullPath } params={ { domainName: domain.domain } }>
+			<RouterLink
+				to={ domainTransferToOtherSiteRoute.fullPath }
+				params={ { domainName: domain.domain } }
+			>
 				{ __( 'Attach site' ) }
-			</Link>
+			</RouterLink>
 		);
 	}
 

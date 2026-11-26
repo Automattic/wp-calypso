@@ -22,7 +22,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS } from '@automattic/urls';
 import { useQuery, useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { Link, useNavigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -33,7 +33,6 @@ import {
 	Button,
 	ToggleControl,
 	Notice,
-	ExternalLink,
 	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -51,6 +50,7 @@ import {
 	check,
 } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -75,6 +75,7 @@ import OverviewCard from '../../../components/overview-card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { getPlanExpiryUrgency, hasPlanExpiryNotice } from '../../../components/plan-expiry-notice';
+import RouterLink from '../../../components/router-link';
 import SiteIcon from '../../../components/site-icon';
 import SiteBandwidthStat from '../../../sites/plan/components/plan-card/site-bandwidth-stat';
 import SiteStorageStat from '../../../sites/storage/components/site-storage-stat';
@@ -285,9 +286,9 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 		const text = __( 'Domain settings' );
 		return (
 			<MetadataItem>
-				<Link to={ domainRoute.to } params={ { domainName: purchase.meta } }>
+				<RouterLink to={ domainRoute.to } params={ { domainName: purchase.meta } }>
 					{ text }
-				</Link>
+				</RouterLink>
 			</MetadataItem>
 		);
 	}
@@ -296,7 +297,7 @@ function ProductLink( { purchase }: { purchase: Purchase } ) {
 		const text = __( 'Email settings' );
 		return (
 			<MetadataItem>
-				<Link to={ emailsRoute.to }>{ text }</Link>
+				<RouterLink to={ emailsRoute.to }>{ text }</RouterLink>
 			</MetadataItem>
 		);
 	}
@@ -1263,9 +1264,9 @@ function DomainRegistrationAgreement( { purchase }: { purchase: Purchase } ) {
 	}
 	return (
 		<MetadataItem>
-			<ExternalLink rel="noreferrer" href={ purchase.domain_registration_agreement_url }>
+			<Link openInNewTab rel="noreferrer" href={ purchase.domain_registration_agreement_url }>
 				{ __( 'Domain Registration Agreement' ) }
-			</ExternalLink>
+			</Link>
 		</MetadataItem>
 	);
 }
@@ -1326,13 +1327,13 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 	const extraPageCount = purchase.renewal_price_tier_usage_quantity - tier0.maximum_units;
 
 	const BBESupportLink = (
-		<a
+		<Link
 			href={ `mailto:services+express@wordpress.com?subject=${ encodeURIComponent(
 				`I have a question about my project: ${ purchase.site_slug }`
 			) }` }
 		>
 			{ __( 'Contact us' ) }
-		</a>
+		</Link>
 	);
 
 	return (
@@ -1384,13 +1385,13 @@ function BBEPurchaseDescription( { purchase }: { purchase: Purchase } ) {
 							),
 							{
 								SubmitContent: (
-									<a
+									<Link
 										href={ wpcomLink(
 											`/start/site-content-collection/website-content?siteSlug=${ purchase.site_slug }`
 										) }
 									>
 										{ __( 'Submit content' ) }
-									</a>
+									</Link>
 								),
 								ContactUs: BBESupportLink,
 							}
@@ -1429,7 +1430,7 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 					),
 					{
 						a: (
-							<a
+							<Link
 								href={ wpcomLink(
 									domainManagementEdit( purchase.site_slug, domain.domain, null )
 								) }
@@ -1452,7 +1453,7 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 					__( 'You need to <a>start the domain transfer</a> for your domain.' ),
 					{
 						a: (
-							<a
+							<Link
 								href={ wpcomLink(
 									domainUseMyDomain(
 										purchase.site_slug,
@@ -1473,12 +1474,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 			<Text>
 				{ createInterpolateElement( __( 'Transfer failed. Learn the possible <ReasonsWhy />.' ), {
 					LearnMore: (
-						<ExternalLink
+						<Link
+							openInNewTab
 							href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 							rel="noopener noreferrer"
 						>
 							{ __( 'reasons why' ) }
-						</ExternalLink>
+						</Link>
 					),
 				} ) }
 			</Text>
@@ -1499,12 +1501,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 							</strong>
 						),
 						LearnMore: (
-							<ExternalLink
+							<Link
+								openInNewTab
 								href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 								rel="noopener noreferrer"
 							>
 								{ __( 'Learn more' ) }
-							</ExternalLink>
+							</Link>
 						),
 					}
 				) }
@@ -1521,12 +1524,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 					),
 					{
 						LearnMore: (
-							<ExternalLink
+							<Link
+								openInNewTab
 								href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 								rel="noopener noreferrer"
 							>
 								{ __( 'Learn more' ) }
-							</ExternalLink>
+							</Link>
 						),
 					}
 				) }
@@ -1546,12 +1550,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 							</strong>
 						),
 						LearnMore: (
-							<ExternalLink
+							<Link
+								openInNewTab
 								href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 								rel="noopener noreferrer"
 							>
 								{ __( 'Learn more' ) }
-							</ExternalLink>
+							</Link>
 						),
 					}
 				) }
@@ -1879,14 +1884,14 @@ export default function PurchaseSettings() {
 									}
 									if ( isIncluded && purchase.attached_to_purchase_id ) {
 										return (
-											<Link
+											<RouterLink
 												to={ purchaseSettingsRoute.fullPath }
 												params={ { purchaseId: purchase.attached_to_purchase_id } }
 											>
 												{ parentPurchase && ! parentWillRenew
 													? __( 'Expires with plan' )
 													: __( 'Renews with plan' ) }
-											</Link>
+											</RouterLink>
 										);
 									}
 									if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {

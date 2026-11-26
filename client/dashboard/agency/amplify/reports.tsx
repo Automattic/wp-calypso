@@ -2,7 +2,6 @@ import { archiveAmplifyReportMutation, retryAmplifyReportMutation } from '@autom
 import { useIsMutating, useMutation } from '@tanstack/react-query';
 import {
 	Button,
-	ExternalLink,
 	Modal,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -12,7 +11,7 @@ import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { box as archiveBoxIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useIntlLocale } from '../../app/locale';
@@ -272,9 +271,9 @@ export default function AmplifyReportsList( {
 				getValue: ( { item } ) => displayUrl( item.url ),
 				render: ( { item } ) => (
 					<VStack spacing={ 0 }>
-						<ExternalLink className="dataviews-url-field" href={ item.url }>
+						<Link openInNewTab className="dataviews-url-field" href={ item.url }>
 							{ displayUrl( item.url ) }
-						</ExternalLink>
+						</Link>
 						{ item.status === 'failed' && (
 							<Text intent="error" size={ 12 }>
 								{ __(

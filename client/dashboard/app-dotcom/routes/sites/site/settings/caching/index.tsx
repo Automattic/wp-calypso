@@ -9,7 +9,6 @@ import {
 	siteBySlugQuery,
 } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
@@ -30,6 +29,7 @@ import InlineSupportLink from '../../../../../../components/inline-support-link'
 import Notice from '../../../../../../components/notice';
 import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
+import RouterLink from '../../../../../../components/router-link';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from '../../../../../../sites/caching/utils';
 import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
 import { hasHostingFeature, hasPlanFeature } from '../../../../../../utils/site-features';
@@ -145,7 +145,7 @@ export default function CachingSettings( { siteSlug }: { siteSlug: string } ) {
 						</Text>
 						<Text as="p">
 							{ createInterpolateElement( __( '<a>Review site visibility settings</a>.' ), {
-								a: <Link to={ `/sites/${ siteSlug }/settings/site-visibility` } />,
+								a: <RouterLink to={ `/sites/${ siteSlug }/settings/site-visibility` } />,
 							} ) }
 						</Text>
 					</VStack>

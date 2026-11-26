@@ -1,6 +1,5 @@
 import {
 	Button,
-	ExternalLink,
 	Icon,
 	Modal,
 	__experimentalHStack as HStack,
@@ -10,6 +9,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { check, closeSmall, store } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { Card, CardBody } from '../../../components/card';
 import { isPressableAddon, isWooCommerceProduct } from './lib/product-categories';
 import { getWooPaymentsCardCopy } from './lib/product-copy';
@@ -96,9 +96,9 @@ export default function ProductDetailsModal( {
 											__( 'By <a />' ),
 											{
 												a: (
-													<ExternalLink href={ vendor.vendorUrl }>
+													<Link openInNewTab href={ vendor.vendorUrl }>
 														{ vendor.vendorName }
-													</ExternalLink>
+													</Link>
 												),
 											}
 										) }
@@ -164,16 +164,22 @@ export default function ProductDetailsModal( {
 								__(
 									'Only sites that have the <a>Automattic for Agencies</a> plugin installed and connected are eligible for revenue share with WooPayments.'
 								),
-								{ a: <ExternalLink href={ CLIENT_PLUGIN_HELP_URL }>{ null }</ExternalLink> }
+								{
+									a: (
+										<Link openInNewTab href={ CLIENT_PLUGIN_HELP_URL }>
+											{ null }
+										</Link>
+									),
+								}
 							) }
 						</Text>
 					) }
 
 					{ wooUrl && (
 						<div className="dashboard-marketplace-products__modal-footer">
-							<ExternalLink href={ wooUrl }>
+							<Link openInNewTab href={ wooUrl }>
 								{ __( 'View all details on WooCommerce.com' ) }
-							</ExternalLink>
+							</Link>
 						</div>
 					) }
 				</VStack>

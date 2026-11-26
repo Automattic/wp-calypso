@@ -1,11 +1,11 @@
 import { activeAgencyQuery, tipaltiPayeeQuery } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalHStack as HStack, Button, ExternalLink, Icon } from '@wordpress/components';
+import { __experimentalHStack as HStack, Button, Icon } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import EmptyState from '../../../components/empty-state';
@@ -113,7 +113,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									<Text key={ accountStatus?.statusReason ? 'reason' : 'tipalti' } variant="muted">
 										{ accountStatus?.statusReason ??
 											createInterpolateElement( __( 'With <a>Tipalti</a>, our secure platform.' ), {
-												a: <ExternalLink href="https://tipalti.com/" children={ null } />,
+												a: <Link openInNewTab href="https://tipalti.com/" children={ null } />,
 											} ) }
 									</Text>
 								}

@@ -1,12 +1,12 @@
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
-	ExternalLink,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
@@ -429,7 +429,11 @@ export default function PressableSection( {
 						<Text variant="muted" size={ 12 }>
 							{ createInterpolateElement( __( '*Limited time only. <a>See details</a>' ), {
 								a: (
-									<ExternalLink href={ PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL } children={ null } />
+									<Link
+										openInNewTab
+										href={ PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL }
+										children={ null }
+									/>
 								),
 							} ) }
 						</Text>

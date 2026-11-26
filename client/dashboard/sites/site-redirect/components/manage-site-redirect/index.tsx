@@ -1,6 +1,5 @@
 import { updateSiteRedirectMutation, userPurchasesQuery } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, __experimentalText as Text } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -9,6 +8,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useAppContext } from '../../../../app/context';
 import { purchaseSettingsRoute } from '../../../../app/router/me';
 import { Card, CardBody } from '../../../../components/card';
+import RouterLink from '../../../../components/router-link';
 import SiteRedirectForm, { SiteRedirectFormData } from '../site-redirect-form';
 
 interface ManageSiteRedirectProps {
@@ -56,7 +56,7 @@ export default function ManageSiteRedirect( { siteId, currentRedirect }: ManageS
 						<Text>
 							{ createInterpolateElement( __( '<link>Manage</link> your site redirect upgrade.' ), {
 								link: (
-									<Link
+									<RouterLink
 										to={ purchaseSettingsRoute.fullPath }
 										params={ { purchaseId: purchase.ID } }
 									/>

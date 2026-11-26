@@ -25,7 +25,7 @@
 		min-width: 0;
 		width: 100%;
 
-		.components-external-link__contents {
+		> span:not( [role='img'] ) {
 			max-width: 170px;
 			text-decoration: none;
 			text-overflow: ellipsis;

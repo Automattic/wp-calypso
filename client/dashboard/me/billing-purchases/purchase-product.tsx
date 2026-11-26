@@ -1,6 +1,6 @@
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { purchasesRoute } from '../../app/router/me';
 import RouterLinkButton from '../../components/router-link-button';
 import { getSubtitleForDisplay } from '../../utils/purchase';
@@ -49,14 +49,15 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 								</RouterLinkButton>
 							),
 							siteDomain: (
-								<ExternalLink
+								<Link
+									openInNewTab
 									className="billing-purchases__site-url"
 									href={ 'https://' + site.slug }
 									rel="noreferrer"
 									title={ linkTitle }
 								>
 									{ linkText }
-								</ExternalLink>
+								</Link>
 							),
 						}
 					) }
@@ -89,14 +90,15 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 								</RouterLinkButton>
 							),
 							viewSite: (
-								<ExternalLink
+								<Link
+									openInNewTab
 									className="billing-purchases__site-url"
 									href={ 'https://' + site.slug }
 									rel="noreferrer"
 									title={ __( 'View site' ) }
 								>
 									{ __( 'View site' ) }
-								</ExternalLink>
+								</Link>
 							),
 						}
 					) }
@@ -136,14 +138,15 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 								</RouterLinkButton>
 							),
 							viewSite: (
-								<ExternalLink
+								<Link
+									openInNewTab
 									className="billing-purchases__site-url"
 									href={ 'https://' + site.slug }
 									rel="noreferrer"
 									title={ linkTitle }
 								>
 									{ linkText }
-								</ExternalLink>
+								</Link>
 							),
 						}
 					) }
@@ -166,14 +169,15 @@ export function PurchaseProduct( { purchase, site }: { purchase: Purchase; site?
 					),
 					{
 						viewSite: (
-							<ExternalLink
+							<Link
+								openInNewTab
 								className="billing-purchases__site-url"
 								href={ 'https://' + purchase.domain }
 								rel="noreferrer"
 								title={ __( 'View site' ) }
 							>
 								{ __( 'View site' ) }
-							</ExternalLink>
+							</Link>
 						),
 					}
 				) }
