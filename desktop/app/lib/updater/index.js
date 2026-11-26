@@ -1,8 +1,10 @@
-const { EventEmitter } = require( 'events' );
-const { app, dialog, shell, BrowserWindow } = require( 'electron' );
-const config = require( '../../lib/config' );
-const log = require( '../../lib/logger' )( 'desktop:updater' );
-const platform = require( '../../lib/platform' );
+import { EventEmitter } from 'events';
+import { app, dialog, shell, BrowserWindow } from 'electron';
+import config from '../../lib/config';
+import makeLogger from '../../lib/logger';
+import platform from '../../lib/platform';
+
+const log = makeLogger( 'desktop:updater' );
 
 const isMacOSBigSur =
 	process.platform === 'darwin' && process.getSystemVersion().startsWith( '11' );
@@ -147,4 +149,4 @@ class Updater extends EventEmitter {
 	}
 }
 
-module.exports = Updater;
+export default Updater;
