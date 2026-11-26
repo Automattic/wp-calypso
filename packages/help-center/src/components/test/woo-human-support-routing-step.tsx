@@ -1,8 +1,10 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import apiFetch from '@wordpress/api-fetch';
 import { vi } from 'vitest';
 import { WooHumanSupportRoutingStep } from '../woo-human-support-routing-step';
 import type { WooHandoff } from '../../data/use-woo-handoff';
@@ -24,6 +26,24 @@ const loaded = ( data: WooHandoffData | null, isSupportBlocked = false ) => ( {
 vi.mock( '../../hooks/use-help-center-tracks-event', () => ( {
 	useHelpCenterTracksEvent: () => mockRecordTracksEvent,
 } ) );
+
+vi.mock( '@automattic/odie-client', () => ( {
+	useOdieAssistantContext: () => ( {
+		chat: {
+			odieId: 7873852,
+			messages: [ { role: 'user', type: 'message', content: 'I need help with my store' } ],
+		},
+	} ),
+} ) );
+
+// WooCommerce.com's support form endpoints, which file the ticket.
+vi.mock( '@wordpress/api-fetch', () => ( { default: vi.fn() } ) );
+
+const ticketRequests = () =>
+	vi
+		.mocked( apiFetch )
+		.mock.calls.filter( ( [ options ] ) => options.path === '/wccom/support-form/create-ticket' )
+		.map( ( [ options ] ) => options.data );
 
 const store = ( domain: string ) => ( { url: `https://${ domain }`, domain } );
 
@@ -61,14 +81,22 @@ const request: HumanSupportRequest = {
 const startChat = vi.fn();
 const dismiss = vi.fn();
 
-const renderStep = ( humanSupportRequest = request ) =>
-	render(
+const renderStep = ( humanSupportRequest = request ) => {
+	const queryClient = new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
+
+	return render(
 		<WooHumanSupportRoutingStep
 			request={ humanSupportRequest }
 			startChat={ startChat }
 			dismiss={ dismiss }
-		/>
+		/>,
+		{
+			wrapper: ( { children } ) => (
+				<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
+			),
+		}
 	);
+};
 
 const question = () => screen.getByLabelText( 'What do you need help with?' );
 const continueButton = () => screen.getByRole( 'button', { name: 'Continue' } );
@@ -81,6 +109,7 @@ const lastDecision = () =>
 beforeEach( () => {
 	vi.clearAllMocks();
 	mockHandoff = loaded( merchant() );
+	vi.mocked( apiFetch ).mockResolvedValue( { success: true, data: 'Sent' } );
 } );
 
 describe( 'WooHumanSupportRoutingStep', () => {
@@ -338,11 +367,20 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		} );
 	} );
 
-	it( "sends the bot's unknown charges to a ticket without asking anything", () => {
-		renderStep( { ...request, flags: { ...request.flags, isUnknownCharge: true } } );
+	/** The step decides on every render, so a second ticket would file the same charge twice. */
+	it( "files one ticket for the bot's unknown charge without asking anything", async () => {
+		const unknownCharge = { ...request, flags: { ...request.flags, isUnknownCharge: true } };
+		const { rerender } = renderStep( unknownCharge );
+		rerender(
+			<WooHumanSupportRoutingStep
+				request={ unknownCharge }
+				startChat={ startChat }
+				dismiss={ dismiss }
+			/>
+		);
 
+		expect( await screen.findByText( 'Request sent' ) ).toBeInTheDocument();
 		expect( screen.queryByLabelText( 'What do you need help with?' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
 		expect( lastDecision() ).toMatchObject( {
 			route: 'ticket',
 			row_id: 2,
@@ -351,15 +389,22 @@ describe( 'WooHumanSupportRoutingStep', () => {
 			has_store: false,
 			is_unknown_charge: true,
 		} );
-		expect( startChat ).toHaveBeenCalledTimes( 1 );
+		expect( ticketRequests() ).toHaveLength( 1 );
+		expect( ticketRequests()[ 0 ] ).toMatchObject( { helpCategory: 'account' } );
+		expect( startChat ).not.toHaveBeenCalled();
 	} );
 
-	it( "sends the bot's account recovery to the email form without asking anything", () => {
+	it( "sends the bot's account recovery to the contact form without asking anything", () => {
 		renderStep( { ...request, flags: { ...request.flags, routeToEmail: true } } );
 
 		expect( screen.queryByLabelText( 'What do you need help with?' ) ).not.toBeInTheDocument();
 		expect( lastDecision() ).toMatchObject( { route: 'email-form', row_id: 1 } );
-		expect( startChat ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByRole( 'link', { name: 'Contact us' } ) ).toHaveAttribute(
+			'href',
+			'https://woocommerce.com/my-account/contact-support/'
+		);
+		expect( startChat ).not.toHaveBeenCalled();
+		expect( ticketRequests() ).toHaveLength( 0 );
 	} );
 
 	it( "waits for the merchant's details before going on without the questions", () => {
@@ -380,7 +425,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		);
 
 		expect( lastDecision() ).toMatchObject( { route: 'email-form', row_id: 1 } );
-		expect( startChat ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByText( 'Contact us by email' ) ).toBeInTheDocument();
 	} );
 
 	it( 'turns away a blocked merchant even when the bot decides the route', () => {
@@ -401,6 +446,90 @@ describe( 'WooHumanSupportRoutingStep', () => {
 
 		expect( dismiss ).toHaveBeenCalled();
 		expect( startChat ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'files a ticket', () => {
+		it( 'files the ticket and says it was sent', async () => {
+			renderStep();
+
+			// A paying Tier 2 merchant starting or scaling a store gets a ticket (row 13).
+			await userEvent.selectOptions( question(), 'start-scale-store' );
+			await userEvent.click( continueButton() );
+
+			expect( await screen.findByText( 'Request sent' ) ).toBeInTheDocument();
+			expect( ticketRequests() ).toEqual( [
+				expect.objectContaining( {
+					helpCategory: 'start-scale-store',
+					subject: 'I need help with my store',
+					tags: [ 'woo_support_flow_help_center' ],
+					aiChatId: 7873852,
+				} ),
+			] );
+			expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_helpcenter_human_support_ticket_created',
+				{ row_id: 13, help_category: 'start-scale-store', ssr_refreshed: null }
+			);
+			expect( startChat ).not.toHaveBeenCalled();
+		} );
+
+		/** A failed ticket must say why and let the merchant send it again, or they're stuck. */
+		it( 'shows why the ticket failed, and sends it again', async () => {
+			vi.mocked( apiFetch ).mockRejectedValueOnce( {
+				success: false,
+				data: [ "Something went wrong and we couldn't submit your ticket! Please try again." ],
+			} );
+			renderStep();
+
+			await userEvent.selectOptions( question(), 'start-scale-store' );
+			await userEvent.click( continueButton() );
+
+			expect(
+				await screen.findByText(
+					"Something went wrong and we couldn't submit your ticket! Please try again."
+				)
+			).toBeInTheDocument();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+
+			expect( await screen.findByText( 'Request sent' ) ).toBeInTheDocument();
+			expect( ticketRequests() ).toHaveLength( 2 );
+		} );
+
+		/** The vendor gets the conversation and the store address by email, so the merchant agrees first. */
+		it( "asks before sending the ticket to a product's vendor", async () => {
+			mockHandoff = loaded(
+				merchant( {
+					supportedProducts: [
+						{
+							slug: 'vendor-extension',
+							name: 'Vendor Extension',
+							supportType: 'third_party',
+							isRevShare: false,
+						},
+					],
+				} )
+			);
+			renderStep();
+
+			await userEvent.selectOptions( question(), 'technical-support' );
+			await userEvent.selectOptions( screen.getByLabelText( 'Product' ), 'vendor-extension' );
+			await userEvent.selectOptions( screen.getByLabelText( 'Store' ), 'https://one.example' );
+			await userEvent.click( continueButton() );
+
+			expect(
+				screen.getByText( 'Send your request to the Vendor Extension team?' )
+			).toBeInTheDocument();
+			expect( ticketRequests() ).toHaveLength( 0 );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
+
+			expect(
+				await screen.findByText( 'The Vendor Extension team will reply to you by email.' )
+			).toBeInTheDocument();
+			expect( ticketRequests() ).toEqual( [
+				expect.objectContaining( { helpCategory: 'broken', productSlug: 'vendor-extension' } ),
+			] );
+		} );
 	} );
 
 	describe( 'routes the Help Center answers itself', () => {
