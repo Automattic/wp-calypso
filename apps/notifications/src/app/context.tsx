@@ -12,6 +12,8 @@ export type AppContextData = {
 	locale: string;
 	isViewSettingsEnabled: boolean;
 	isMarkAsUnreadEnabled: boolean;
+	/** Previews a note beside its row when the pointer rests on it. */
+	isPeekEnabled: boolean;
 	/** Shows more of a comment's actions as buttons, for a host with room for them. */
 	hasExpandedActions: boolean;
 	onOpenFullView?: ( view: FullView ) => void;
@@ -22,6 +24,7 @@ const AppContext = createContext< AppContextData >( {
 	locale: 'en',
 	isViewSettingsEnabled: false,
 	isMarkAsUnreadEnabled: false,
+	isPeekEnabled: false,
 	hasExpandedActions: false,
 } );
 
@@ -30,6 +33,7 @@ export const AppProvider = ( {
 	locale,
 	isViewSettingsEnabled = false,
 	isMarkAsUnreadEnabled = false,
+	isPeekEnabled = false,
 	hasExpandedActions = false,
 	onOpenFullView,
 	children,
@@ -38,6 +42,7 @@ export const AppProvider = ( {
 	locale: string;
 	isViewSettingsEnabled?: boolean;
 	isMarkAsUnreadEnabled?: boolean;
+	isPeekEnabled?: boolean;
 	hasExpandedActions?: boolean;
 	onOpenFullView?: ( view: FullView ) => void;
 	children: React.ReactNode;
@@ -48,6 +53,7 @@ export const AppProvider = ( {
 			locale,
 			isViewSettingsEnabled,
 			isMarkAsUnreadEnabled,
+			isPeekEnabled,
 			hasExpandedActions,
 			onOpenFullView,
 		} ),
@@ -56,6 +62,7 @@ export const AppProvider = ( {
 			locale,
 			isViewSettingsEnabled,
 			isMarkAsUnreadEnabled,
+			isPeekEnabled,
 			hasExpandedActions,
 			onOpenFullView,
 		]

@@ -1,0 +1,119 @@
+.wpnc-peek {
+	width: 360px;
+	// The card opens its note, like the row.
+	cursor: pointer;
+
+	.wpnc__note-icon {
+		flex-shrink: 0;
+	}
+
+	// The panel's 8% hairline around avatars, drawn inside so they keep their size.
+	.wpnc__note-icon > :first-child {
+		outline: 1px solid color-mix(in srgb, var(--wpds-color-foreground-content-neutral, #1e1e1e) 8%, transparent);
+		outline-offset: -1px;
+	}
+}
+
+// What the note answers or is on, cut short before the time is.
+.wpnc-peek__context {
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.wpnc-peek__time {
+	flex-shrink: 0;
+}
+
+// The comment a reply answers, quieter than the reply and cut at two lines.
+.wpnc-peek__quote {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	padding-inline-start: 8px;
+	box-shadow: inset 2px 0 0 var(--wp-components-color-gray-400, #c3c4c7);
+	color: var(--wp-components-color-gray-700, #757575);
+	font-size: 13px;
+	line-height: 20px;
+
+	* {
+		margin: 0;
+		font-size: inherit;
+	}
+
+	:is(h1, h2, h3, h4, h5, h6, strong, b, th) {
+		font-weight: 500;
+	}
+}
+
+// The people who liked something, overlapping a little, each ringed in the card's white.
+.wpnc-peek__faces > .wpnc__note-icon + .wpnc__note-icon {
+	margin-inline-start: -4px;
+}
+
+.wpnc-peek__faces img {
+	box-shadow: 0 0 0 1.5px var(--wpds-color-background-surface-neutral-strong, #fff);
+}
+
+// Glides to the next row rather than jumping to it. Only between rows: on opening, Base
+// UI places the card at the corner of the page until it's measured.
+.wpnc-peek__positioner.is-moving {
+	@media not (prefers-reduced-motion) {
+		transition: transform var(--wpds-motion-duration-md) var(--wpds-motion-easing-expressive);
+	}
+}
+
+// The note's own formatting at the card's size: headings set off by weight alone, and
+// the text cut at eight lines.
+.wpnc-peek__text {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 8;
+	overflow: hidden;
+	font-size: 13px;
+	line-height: 20px;
+	overflow-wrap: anywhere;
+
+	// One size throughout, and one weight for anything bold.
+	* {
+		font-size: inherit;
+	}
+
+	:is(h1, h2, h3, h4, h5, h6) {
+		margin: 0;
+	}
+
+	:is(h1, h2, h3, h4, h5, h6, strong, b, th) {
+		font-weight: 500;
+	}
+
+	:is(p, ul, ol, blockquote, figure) {
+		margin: 0;
+	}
+
+	// A little air between paragraphs, lists and quotes, none under a heading.
+	:is(p, ul, ol, blockquote) + :is(p, ul, ol, blockquote) {
+		margin-block-start: 4px;
+	}
+
+	:is(ul, ol) {
+		padding-inline-start: 20px;
+	}
+
+	blockquote {
+		padding-inline-start: 8px;
+		box-shadow: inset 2px 0 0 var(--wp-components-color-gray-400, #c3c4c7);
+	}
+
+	:is(img:not(.emoji), figure, hr) {
+		display: none;
+	}
+
+	// Where a mention names you.
+	.wpnc__match {
+		border-radius: 2px;
+		background: color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
+	}
+}

@@ -157,6 +157,7 @@ const NotificationApp = ( {
 	constrainTabbing = false,
 	isViewSettingsEnabled = false,
 	isMarkAsUnreadEnabled = false,
+	isPeekEnabled = false,
 	onOpenFullView,
 	tracksSurface,
 	actionHandlers = {},
@@ -167,6 +168,7 @@ const NotificationApp = ( {
 	constrainTabbing?: boolean;
 	isViewSettingsEnabled?: boolean;
 	isMarkAsUnreadEnabled?: boolean;
+	isPeekEnabled?: boolean;
 	onOpenFullView?: ( view: FullView ) => void;
 	/** Where the host shows the panel, added to the Tracks events the panel records. */
 	tracksSurface?: TracksSurface;
@@ -263,6 +265,7 @@ const NotificationApp = ( {
 					locale={ locale }
 					isViewSettingsEnabled={ isViewSettingsEnabled }
 					isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
+					isPeekEnabled={ isPeekEnabled }
 					onOpenFullView={ onOpenFullView }
 				>
 					<NotificationContent

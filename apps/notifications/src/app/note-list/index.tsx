@@ -4,9 +4,11 @@ import {
 	ExternalLink,
 	Spinner,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { recordTracksEvent } from '../../panel/helpers/stats';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading';
 import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-ids';
@@ -14,6 +16,8 @@ import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
+import NotePeek, { useNotePeek } from '../note-peek';
+import { hasNoteContext } from '../note-simplified';
 import { getFields, SelectedNoteIdContext } from './dataviews';
 import { useNoteListFocusOnNoteClose, useNoteListNavigationKeyboardShortcuts } from './hooks';
 import type { FilterName, Note } from '../types';
@@ -44,6 +48,8 @@ type NoteListProps = {
 };
 
 const ARROW_KEYS = [ 'ArrowUp', 'ArrowDown' ];
+
+const getRowNoteId = ( row: Element ) => row.id.match( /-(\d+)-item-wrapper$/ )?.[ 1 ];
 
 /**
  * Returns the tab's notes with the open note kept at its chronological position.
@@ -84,7 +90,8 @@ const NoteList = ( {
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );
-	const { client, isViewSettingsEnabled } = useAppContext();
+	const { client, isViewSettingsEnabled, isPeekEnabled } = useAppContext();
+	const isPeekViewport = useViewportMatch( 'large' );
 
 	// Everything the render needs that depends on which tab is active, derived in
 	// one place so the All-vs-filtered split lives here and nowhere else.
@@ -143,7 +150,7 @@ const NoteList = ( {
 			return;
 		}
 		isArrowKeyNavigationRef.current = false;
-		const noteId = event.target.id.match( /-(\d+)-item-wrapper$/ )?.[ 1 ];
+		const noteId = getRowNoteId( event.target );
 		if ( noteId && noteId !== selectedNoteId ) {
 			setSelectedNoteId( noteId );
 		}
@@ -241,6 +248,22 @@ const NoteList = ( {
 
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
+	const findNote = ( noteId: string | undefined ) =>
+		visibleNotes.find( ( { id } ) => id.toString() === noteId );
+
+	// A preview only fits beside the list, and only while no note is open there.
+	const peek = useNotePeek( {
+		isEnabled: isPeekEnabled && isPeekViewport && selectedNoteId === undefined,
+		getNoteId: ( row ) => {
+			const noteId = getRowNoteId( row );
+			const note = findNote( noteId );
+			return note && hasNoteContext( note ) ? noteId : undefined;
+		},
+		onShow: ( noteId ) =>
+			recordTracksEvent( 'calypso_notification_peek', { note_type: findNote( noteId )?.type } ),
+	} );
+	const peekNote = findNote( peek.noteId );
+
 	useNoteListFocusOnNoteClose( { noteListRef, notes, selectedNoteId } );
 	useNoteListNavigationKeyboardShortcuts( {
 		noteListRef,
@@ -291,7 +314,13 @@ const NoteList = ( {
 			onPointerDownCapture={ () => {
 				isArrowKeyNavigationRef.current = false;
 			} }
-			onFocus={ openFocusedNote }
+			onFocus={ ( event ) => {
+				if ( isArrowKeyNavigationRef.current ) {
+					peek.preview( event.target );
+				}
+				openFocusedNote( event );
+			} }
+			{ ...peek.listProps }
 		>
 			<SelectedNoteIdContext.Provider value={ selectedNoteId }>
 				<DataViews< Note >
@@ -338,6 +367,17 @@ const NoteList = ( {
 					) }
 				</DataViews>
 			</SelectedNoteIdContext.Provider>
+			{ peekNote && peek.anchor && (
+				// Inside the list, so leaving the list for the card doesn't count as leaving.
+				<NotePeek
+					note={ peekNote }
+					isOpen={ peek.isOpen }
+					anchor={ peek.anchor }
+					isMove={ peek.isMove }
+					onClose={ peek.close }
+					onOpen={ () => setSelectedNoteId( peekNote.id.toString() ) }
+				/>
+			) }
 		</div>
 	);
 };
