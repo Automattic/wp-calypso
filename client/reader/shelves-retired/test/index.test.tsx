@@ -1,20 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-jest.mock( '@automattic/calypso-router', () => ( {
-	__esModule: true,
-	default: { replace: jest.fn() },
-} ) );
-
 import page from '@automattic/calypso-router';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { combineReducers, createStore } from 'redux';
+import { vi } from 'vitest';
 import { ROUTE_SET } from 'calypso/state/action-types';
 import routeReducer from 'calypso/state/route/reducer';
 import { ShelvesRetiredModal } from '..';
+
+vi.mock( '@automattic/calypso-router', () => ( {
+	__esModule: true,
+	default: { replace: vi.fn() },
+} ) );
 
 function navigate( store: ReturnType< typeof createStore >, query: Record< string, string > ) {
 	window.history.replaceState( null, '', `/reader?${ new URLSearchParams( query ) }` );
@@ -36,7 +36,7 @@ function renderOnReader( query: Record< string, string > = {} ) {
 
 describe( 'ShelvesRetiredModal', () => {
 	beforeEach( () => {
-		jest.mocked( page.replace ).mockReset();
+		vi.mocked( page.replace ).mockReset();
 	} );
 
 	it( 'renders nothing on a regular Reader visit', () => {

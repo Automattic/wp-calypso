@@ -156,12 +156,10 @@ interface MatchExternalFlowParams {
 	path: string;
 	query: URLSearchParams | Record< string, Primitive > | null;
 }
-declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
-	namespace jest {
-		interface Matchers {
-			toMatchDestination( expected: MatchDestinationParams ): CustomMatcherResult;
-		}
+declare module 'vitest' {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Must match Vitest's declaration.
+	interface Matchers< T = any > {
+		toMatchDestination( expected: MatchDestinationParams ): T;
 	}
 }
 

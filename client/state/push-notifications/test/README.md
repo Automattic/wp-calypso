@@ -1,3 +1,3 @@
 # Push Notification Testing
 
-`yarn run test-client -- --grep "state push-notifications"`
+`yarn run test-client client/state/push-notifications`

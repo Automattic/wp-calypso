@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 import {
 	SAVED_OLDEST_PUBLISHED_STREAM_KEY,

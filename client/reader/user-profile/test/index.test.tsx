@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import page from '@automattic/calypso-router';
@@ -7,54 +7,55 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
+import { vi } from 'vitest';
 import { UserProfile, UserProfileProps } from '../index';
 import type { UserResponse } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => ( {
-	replace: jest.fn(),
-	current: '/reader/users/testuser',
+vi.mock( '@automattic/calypso-router', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		replace: vi.fn(),
+		current: '/reader/users/testuser',
+	} )
+);
+
+vi.mock( 'calypso/reader/user-profile/components/user-profile-header', () => ( {
+	default: () => <div data-testid="user-profile-header">User Profile Header</div>,
 } ) );
 
-jest.mock( 'calypso/reader/user-profile/components/user-profile-header', () => () => (
-	<div data-testid="user-profile-header">User Profile Header</div>
-) );
+vi.mock( 'calypso/reader/user-profile/views/posts', () => ( {
+	default: () => <div data-testid="user-posts">User Posts</div>,
+} ) );
 
-jest.mock( 'calypso/reader/user-profile/views/posts', () => () => (
-	<div data-testid="user-posts">User Posts</div>
-) );
+vi.mock( 'calypso/reader/user-profile/views/lists', () => ( {
+	default: () => <div data-testid="user-lists">User Lists</div>,
+} ) );
 
-jest.mock( 'calypso/reader/user-profile/views/lists', () => () => (
-	<div data-testid="user-lists">User Lists</div>
-) );
+vi.mock( 'calypso/reader/user-profile/views/recommended-blogs', () => ( {
+	default: () => <div data-testid="user-recommended-blogs">User Recommended Blogs</div>,
+} ) );
 
-jest.mock( 'calypso/reader/user-profile/views/recommended-blogs', () => () => (
-	<div data-testid="user-recommended-blogs">User Recommended Blogs</div>
-) );
+vi.mock( 'calypso/reader/user-profile/views/sites', () => ( {
+	default: () => <div data-testid="user-sites">User Sites</div>,
+} ) );
 
-jest.mock( 'calypso/reader/user-profile/views/sites', () => () => (
-	<div data-testid="user-sites">User Sites</div>
-) );
+vi.mock( 'calypso/reader/user-profile/views/settings', () => ( {
+	default: () => <div data-testid="user-settings">User Settings</div>,
+} ) );
 
-jest.mock( 'calypso/reader/user-profile/views/settings', () => () => (
-	<div data-testid="user-settings">User Settings</div>
-) );
-
-const mockUseProfileTabVisibility = jest.fn();
-jest.mock( 'calypso/reader/data/user-profile/use-profile-tab-visibility', () => ( {
+const mockUseProfileTabVisibility = vi.fn();
+vi.mock( 'calypso/reader/data/user-profile/use-profile-tab-visibility', () => ( {
 	useProfileTabVisibility: () => mockUseProfileTabVisibility(),
 } ) );
 
-jest.mock( 'calypso/reader/components/back-button', () => () => (
-	<button data-testid="back-button">Back</button>
-) );
+vi.mock( 'calypso/reader/components/back-button', () => ( {
+	default: () => <button data-testid="back-button">Back</button>,
+} ) );
 
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		( { children }: { children: React.ReactNode } ) => (
-			<div data-testid="reader-main">{ children }</div>
-		)
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: ( { children }: { children: React.ReactNode } ) => (
+		<div data-testid="reader-main">{ children }</div>
+	),
+} ) );
 
 describe( 'UserProfile', () => {
 	const defaultProps: UserProfileProps = {
@@ -79,7 +80,7 @@ describe( 'UserProfile', () => {
 	let queryClient: QueryClient;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUseProfileTabVisibility.mockReturnValue( {
 			isOwnProfile: false,
 			showPosts: true,

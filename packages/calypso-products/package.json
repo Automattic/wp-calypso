@@ -12,6 +12,12 @@
 			"types": "./dist/types/index.d.ts",
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
+		},
+		"./constants/wpcom": {
+			"calypso:src": "./src/constants/wpcom.ts",
+			"types": "./dist/types/constants/wpcom.d.ts",
+			"import": "./dist/esm/constants/wpcom.js",
+			"require": "./dist/cjs/constants/wpcom.js"
 		}
 	},
 	"sideEffects": false,

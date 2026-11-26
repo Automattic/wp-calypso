@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { getReadSiteRecommendationsInfiniteQueryKey } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,6 +8,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import RecommendedSite from '..';
 import { seed as recommendedSitesSeed } from '../../constants';
 import type { ReadSiteRecommendationsResponse } from '@automattic/api-core';
@@ -16,9 +17,11 @@ import type { ComponentType, ReactElement } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
 
-jest.mock( 'calypso/blocks/site-icon', () => ( {
-	SiteIcon: () => <span data-testid="site-icon" />,
-} ) );
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SiteIcon: () => <span data-testid="site-icon" />,
+	} )
+);
 
 type MockConnectSiteProps = {
 	feedId?: number;
@@ -27,9 +30,8 @@ type MockConnectSiteProps = {
 	site?: unknown;
 };
 
-jest.mock(
-	'calypso/lib/reader-connect-site',
-	() => ( Component: ComponentType< MockConnectSiteProps > ) => {
+vi.mock( 'calypso/lib/reader-connect-site', () => ( {
+	default: ( Component: ComponentType< MockConnectSiteProps > ) => {
 		return function MockConnectSite( props: MockConnectSiteProps ) {
 			return (
 				<Component
@@ -52,32 +54,32 @@ jest.mock(
 				/>
 			);
 		};
-	}
-);
+	},
+} ) );
 
-jest.mock( 'calypso/landing/subscriptions/components/subscription-manager-context', () => ( {
+vi.mock( 'calypso/landing/subscriptions/components/subscription-manager-context', () => ( {
 	useSubscriptionManagerContext: () => ( { isReaderPortal: false } ),
 } ) );
 
-jest.mock( 'calypso/landing/subscriptions/tracks', () => ( {
-	useRecordSiteIconClicked: () => jest.fn(),
-	useRecordSiteTitleClicked: () => jest.fn(),
-	useRecordSiteUrlClicked: () => jest.fn(),
-	useRecordRecommendedSiteSubscribed: () => jest.fn(),
-	useRecordRecommendedSiteDismissed: () => jest.fn(),
+vi.mock( 'calypso/landing/subscriptions/tracks', () => ( {
+	useRecordSiteIconClicked: () => vi.fn(),
+	useRecordSiteTitleClicked: () => vi.fn(),
+	useRecordSiteUrlClicked: () => vi.fn(),
+	useRecordRecommendedSiteSubscribed: () => vi.fn(),
+	useRecordRecommendedSiteDismissed: () => vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTrainTracksRender: jest.fn(),
-	recordTrainTracksInteract: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTrainTracksRender: vi.fn(),
+	recordTrainTracksInteract: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/ga', () => ( {
-	gaRecordEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/ga', () => ( {
+	gaRecordEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/mc', () => ( {
-	bumpStat: jest.fn(),
+vi.mock( 'calypso/lib/analytics/mc', () => ( {
+	bumpStat: vi.fn(),
 } ) );
 
 const makeStore = () => {

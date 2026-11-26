@@ -8,7 +8,7 @@ describe( 'compressImage', () => {
 	let toBlobSpy: MockInstance;
 
 	beforeEach( () => {
-		// Force <canvas> fallback (jest-canvas-mock polyfills HTMLCanvasElement,
+		// Force <canvas> fallback (vitest-canvas-mock polyfills HTMLCanvasElement,
 		// not OffscreenCanvas).
 		// @ts-expect-error - intentional cleanup of any prior polyfill.
 		delete global.OffscreenCanvas;
@@ -21,7 +21,7 @@ describe( 'compressImage', () => {
 			const width = match ? parseInt( match[ 1 ], 10 ) : 1200;
 			const height = match ? parseInt( match[ 2 ], 10 ) : 800;
 			// `new ImageBitmap()` isn't constructible — fabricate an instance whose
-			// prototype satisfies `instanceof ImageBitmap` (jest-canvas-mock's
+			// prototype satisfies `instanceof ImageBitmap` (vitest-canvas-mock's
 			// `drawImage` checks via `instanceof`).
 			const bitmap = Object.assign( Object.create( ImageBitmap.prototype ) as ImageBitmap, {
 				width,

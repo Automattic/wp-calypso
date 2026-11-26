@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { usePaginatedStream } from 'calypso/reader/data/stream';
 import { OnThisDay } from 'calypso/reader/on-this-day';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import type { View } from '@wordpress/dataviews';
 import type { StreamListItem } from 'calypso/reader/data/stream/types';
 
-jest.mock( '@automattic/viewport-react', () => ( {
+vi.mock( '@automattic/viewport-react', () => ( {
 	useBreakpoint: () => false,
 } ) );
 
-jest.mock( '@wordpress/dataviews', () => ( {
+vi.mock( '@wordpress/dataviews', async () => ( {
 	DataViews: ( {
 		view,
 		data,
@@ -38,35 +39,39 @@ jest.mock( '@wordpress/dataviews', () => ( {
 			</output>
 		</div>
 	),
-	filterSortAndPaginate: jest.requireActual( '@wordpress/dataviews' ).filterSortAndPaginate,
+	filterSortAndPaginate: (
+		await vi.importActual< typeof import( '@wordpress/dataviews' ) >( '@wordpress/dataviews' )
+	).filterSortAndPaginate,
 } ) );
 
-jest.mock( 'calypso/reader/data/stream', () => {
-	const { isPaddingStreamItem } = jest.requireActual( 'calypso/reader/data/stream/types' );
-	return { isPaddingStreamItem, usePaginatedStream: jest.fn() };
+vi.mock( 'calypso/reader/data/stream', async () => {
+	const { isPaddingStreamItem } = await vi.importActual<
+		typeof import( 'calypso/reader/data/stream/types' )
+	>( 'calypso/reader/data/stream/types' );
+	return { isPaddingStreamItem, usePaginatedStream: vi.fn() };
 } );
 
-jest.mock( 'calypso/reader/data/post/cache', () => {
+vi.mock( 'calypso/reader/data/post/cache', () => {
 	const posts: undefined[] = [];
 	return { useCachedPosts: () => posts };
 } );
 
-jest.mock( 'calypso/reader/data/site-subscriptions', () => {
+vi.mock( 'calypso/reader/data/site-subscriptions', () => {
 	const subscriptions: never[] = [];
 	return { useSiteSubscriptions: () => ( { subscriptions } ) };
 } );
 
-jest.mock( 'calypso/state/reader-ui/actions', () => ( {
+vi.mock( 'calypso/state/reader-ui/actions', () => ( {
 	viewStream: () => ( { type: 'TEST_VIEW_STREAM' } ),
 } ) );
 
-jest.mock( 'calypso/components/async-load', () => () => null );
-jest.mock( 'calypso/components/navigation-header', () => () => null );
-jest.mock( 'calypso/reader/stream/empty', () => () => null );
-jest.mock( 'calypso/reader/on-this-day/on-this-day-post-field', () => ( {
+vi.mock( 'calypso/components/async-load', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/navigation-header', () => ( { default: () => null } ) );
+vi.mock( 'calypso/reader/stream/empty', () => ( { default: () => null } ) );
+vi.mock( 'calypso/reader/on-this-day/on-this-day-post-field', () => ( {
 	OnThisDayPostField: () => null,
 } ) );
-jest.mock( 'calypso/reader/on-this-day/on-this-day-post-skeleton', () => ( {
+vi.mock( 'calypso/reader/on-this-day/on-this-day-post-skeleton', () => ( {
 	OnThisDayPostSkeleton: () => null,
 } ) );
 
@@ -84,7 +89,7 @@ describe( 'On This Day pagination', () => {
 			isRequesting: true,
 			error: null,
 		};
-		jest.mocked( usePaginatedStream ).mockReturnValue( streamData );
+		vi.mocked( usePaginatedStream ).mockReturnValue( streamData );
 
 		const { rerender } = renderWithProvider( <OnThisDay streamKey="on_this_day" /> );
 		const pageTwoIds = Array.from( { length: 14 }, ( _, index ) => String( 315 + index ) );
@@ -101,7 +106,7 @@ describe( 'On This Day pagination', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Page 2' } ) );
 		expectRows( [ ...pageTwoIds, 'padding-29' ] );
 
-		jest.mocked( usePaginatedStream ).mockReturnValue( { ...streamData, isRequesting: false } );
+		vi.mocked( usePaginatedStream ).mockReturnValue( { ...streamData, isRequesting: false } );
 		rerender( <OnThisDay streamKey="on_this_day" /> );
 		expectRows( pageTwoIds );
 

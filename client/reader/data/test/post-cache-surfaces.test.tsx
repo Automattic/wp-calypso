@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import { OnThisDay } from 'calypso/reader/on-this-day';
 import Recent from 'calypso/reader/recent';
 import type { ReactNode } from 'react';
@@ -14,11 +15,11 @@ type DataViewField = {
 	render: ( props: { item: Record< string, unknown > } ) => ReactNode;
 };
 
-jest.mock( '@automattic/viewport-react', () => ( {
+vi.mock( '@automattic/viewport-react', () => ( {
 	useBreakpoint: () => false,
 } ) );
 
-jest.mock( '@wordpress/dataviews', () => ( {
+vi.mock( '@wordpress/dataviews', () => ( {
 	DataViews: ( {
 		data,
 		fields,
@@ -42,28 +43,30 @@ jest.mock( '@wordpress/dataviews', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/blocks/reader-featured-image', () => () => (
-	<div data-testid="reader-featured-image" />
-) );
-
-jest.mock( 'calypso/blocks/site-icon', () => ( {
-	SiteIcon: () => <div data-testid="site-icon" />,
+vi.mock( 'calypso/blocks/reader-featured-image', () => ( {
+	default: () => <div data-testid="reader-featured-image" />,
 } ) );
 
-jest.mock( 'calypso/components/async-load', () => () => <div data-testid="async-load" /> );
-
-jest.mock(
-	'calypso/reader/recent/engagement-bar',
-	() =>
-		( { commentsApiDisabled }: { commentsApiDisabled?: boolean } ) => (
-			<div
-				data-testid="engagement-bar"
-				data-comments-api-disabled={ String( commentsApiDisabled ) }
-			/>
-		)
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SiteIcon: () => <div data-testid="site-icon" />,
+	} )
 );
 
-jest.mock( 'calypso/components/navigation-header', () => ( {
+vi.mock( 'calypso/components/async-load', () => ( {
+	default: () => <div data-testid="async-load" />,
+} ) );
+
+vi.mock( 'calypso/reader/recent/engagement-bar', () => ( {
+	default: ( { commentsApiDisabled }: { commentsApiDisabled?: boolean } ) => (
+		<div
+			data-testid="engagement-bar"
+			data-comments-api-disabled={ String( commentsApiDisabled ) }
+		/>
+	),
+} ) );
+
+vi.mock( 'calypso/components/navigation-header', () => ( {
 	__esModule: true,
 	default: ( {
 		title,
@@ -82,13 +85,15 @@ jest.mock( 'calypso/components/navigation-header', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/reader/stream/empty', () => () => <div data-testid="empty-stream" /> );
+vi.mock( 'calypso/reader/stream/empty', () => ( {
+	default: () => <div data-testid="empty-stream" />,
+} ) );
 
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+vi.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: () => ( { subscriptions: [] } ),
 } ) );
 
-jest.mock( 'calypso/state/reader-ui/actions', () => ( {
+vi.mock( 'calypso/state/reader-ui/actions', () => ( {
 	viewStream: ( streamKey: string, path: string ) => ( {
 		type: 'TEST_VIEW_STREAM',
 		streamKey,
@@ -96,7 +101,7 @@ jest.mock( 'calypso/state/reader-ui/actions', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-current-query-arguments', () => {
+vi.mock( 'calypso/state/selectors/get-current-query-arguments', () => {
 	const emptyQueryArgs = {};
 	return {
 		__esModule: true,

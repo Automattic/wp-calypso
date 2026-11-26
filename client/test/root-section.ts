@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
 import pageLibrary from '@automattic/calypso-router';
 import { waitFor } from '@testing-library/dom';
+import { vi } from 'vitest';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import initRootSection from '../root';
 
@@ -13,7 +14,7 @@ const originalLocation = window.location;
 // the hosting dashboard (an absolute URL, so `root` uses `location.assign`
 // rather than the in-app router).
 function mockLocationAssign() {
-	const assign = jest.fn();
+	const assign = vi.fn();
 	Object.defineProperty( window, 'location', { value: { assign }, configurable: true } );
 	return assign;
 }
@@ -23,8 +24,8 @@ afterEach( () => {
 } );
 
 function initRouter( { state }: { state: any } ) {
-	const dispatch = jest.fn();
-	const getState = jest.fn( () => state );
+	const dispatch = vi.fn();
+	const getState = vi.fn( () => state );
 
 	const page = pageLibrary.create();
 	page( '*', ( context, next ) => {
@@ -210,7 +211,7 @@ describe( 'Logged In Landing Page', () => {
 
 		Object.defineProperty( window, 'location', {
 			value: {
-				assign: jest.fn(),
+				assign: vi.fn(),
 			},
 		} );
 

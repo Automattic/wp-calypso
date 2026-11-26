@@ -13,7 +13,7 @@ import {
 	PLAN_UPGRADE_FLOW,
 	LAUNCH_SITE_FLOW,
 	DOMAIN_TRANSFER,
-} from '@automattic/onboarding';
+} from '@automattic/onboarding/flows';
 
 const FLOWS_USING_STEP_CONTAINER_V2 = [
 	SITE_SETUP_FLOW,

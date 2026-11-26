@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { type Mock, vi } from 'vitest';
 import { setupRedirectRoutes } from '../utils';
 
-jest.mock( '@automattic/calypso-router', () => {
-	const page = Object.assign( jest.fn(), { redirect: jest.fn() } );
+vi.mock( '@automattic/calypso-router', () => {
+	const page = Object.assign( vi.fn(), { redirect: vi.fn() } );
 	return {
 		__esModule: true,
 		default: page,
@@ -14,8 +15,8 @@ jest.mock( '@automattic/calypso-router', () => {
 
 describe( 'setupRedirectRoutes', () => {
 	beforeEach( () => {
-		jest.mocked( page ).mockClear();
-		jest.mocked( page.redirect ).mockClear();
+		vi.mocked( page ).mockClear();
+		vi.mocked( page.redirect ).mockClear();
 	} );
 
 	it( 'stops the middleware chain after a regex redirect matches', () => {
@@ -27,12 +28,12 @@ describe( 'setupRedirectRoutes', () => {
 			},
 		] );
 
-		const pageMock = page as unknown as jest.Mock;
+		const pageMock = page as unknown as Mock;
 		const handler = pageMock.mock.calls[ 0 ][ 1 ] as (
 			context: { path: string; params: Record< string, string > },
 			next: () => void
 		) => void;
-		const next = jest.fn();
+		const next = vi.fn();
 
 		handler( { path: '/reader/feeds/123/posts', params: { feed_id: '123' } }, next );
 

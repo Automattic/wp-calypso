@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import { WriteButton } from '../write-button';
 
-const mockRecordReaderTracksEvent = jest.fn();
-jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
+const mockRecordReaderTracksEvent = vi.fn();
+vi.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 

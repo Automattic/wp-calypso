@@ -1,15 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { UserSitesResponse } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import UserTopSites from '..';
 
-jest.mock( 'calypso/blocks/site-icon', () => ( {
-	SiteIcon: ( { siteId }: { siteId: number } ) => <span data-testid={ `site-icon-${ siteId }` } />,
-} ) );
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SiteIcon: ( { siteId }: { siteId: number } ) => (
+			<span data-testid={ `site-icon-${ siteId }` } />
+		),
+	} )
+);
 
 describe( 'UserTopSites', () => {
 	const defaultProps = {

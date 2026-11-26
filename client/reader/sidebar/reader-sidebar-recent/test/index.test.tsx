@@ -1,37 +1,38 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { SiteSubscriptionItem } from '@automattic/data-stores/src/reader/types';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import readerUi from 'calypso/state/reader-ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSidebarRecent from '../index';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: Object.assign( jest.fn(), { replace: jest.fn() } ),
+	default: Object.assign( vi.fn(), { replace: vi.fn() } ),
 } ) );
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordAction: jest.fn(),
-	recordGaEvent: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordAction: vi.fn(),
+	recordGaEvent: vi.fn(),
 } ) );
 
 let mockSeenPostsUiEnabled = true;
-jest.mock( 'calypso/reader/data/seen-posts', () => ( {
+vi.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useSeenPostsPreferenceEnabled: () => mockSeenPostsUiEnabled,
-	useMarkAllAsSeenMutation: () => ( { mutate: jest.fn() } ),
+	useMarkAllAsSeenMutation: () => ( { mutate: vi.fn() } ),
 } ) );
 
 let mockSubscribedSites: Partial< SiteSubscriptionItem >[] = [];
 let mockSubscribedFeedsInfo = { unseenCount: 0, feedIds: [], feedUrls: [] };
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+vi.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSubscribedSites: () => mockSubscribedSites,
 	useSubscribedFeedsInfo: () => mockSubscribedFeedsInfo,
 } ) );
 
-jest.mock( 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo', () => ( {
-	useUnsubscribeWithUndo: () => jest.fn(),
+vi.mock( 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo', () => ( {
+	useUnsubscribeWithUndo: () => vi.fn(),
 } ) );
 
 function createSubscriptionItem(
@@ -48,7 +49,7 @@ function createSubscriptionItem(
 function renderRecentDropdown( sites: Partial< SiteSubscriptionItem >[] ) {
 	mockSubscribedSites = sites;
 	return renderWithProvider(
-		<ReaderSidebarRecent isOpen onClick={ jest.fn() } path="/reader" className="test-recent" />,
+		<ReaderSidebarRecent isOpen onClick={ vi.fn() } path="/reader" className="test-recent" />,
 		{ reducers: { readerUi } }
 	);
 }

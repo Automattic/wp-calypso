@@ -1,7 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expectNothingRuns", "expect"] }] */
+/* eslint vitest/expect-expect: ["error", { "assertFunctionNames": ["verifyClassification", "expectNothingRuns", "expect"] }] */
 
 import detectMedia from 'calypso/lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'calypso/lib/post-normalizer/rule-content-detect-polls';

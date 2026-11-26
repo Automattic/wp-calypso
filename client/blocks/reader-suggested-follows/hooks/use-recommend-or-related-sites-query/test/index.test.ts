@@ -1,9 +1,9 @@
 /**
  * @vitest-environment jsdom
  */
+import { isDeepStrictEqual } from 'node:util';
 import { UseQueryResult } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
-import { when } from 'jest-when';
 import { type Mock, vi } from 'vitest';
 import { useFeedRecommendationsQuery } from 'calypso/data/reader/use-feed-recommendations-query';
 import { RelatedSite, useRelatedSites } from 'calypso/data/reader/use-related-sites';
@@ -162,13 +162,16 @@ describe( 'useRecommendOrRelatedSitesQuery', () => {
 		} );
 
 		//It only returns the related sites when enabled is true
-		when( useRelatedSites )
-			.calledWith( 123, 456, { enabled: true } )
-			.mockReturnValue( {
-				data: mockRelatedSites,
-				isLoading: false,
-				isFetched: true,
-			} as unknown as UseQueryResult< RelatedSite[] | null > );
+		vi.mocked( useRelatedSites ).mockImplementation(
+			( ...args ) =>
+				( isDeepStrictEqual( args, [ 123, 456, { enabled: true } ] )
+					? {
+							data: mockRelatedSites,
+							isLoading: false,
+							isFetched: true,
+						}
+					: undefined ) as unknown as UseQueryResult< RelatedSite[] | null >
+		);
 
 		const { result } = renderHook( () =>
 			useRecommendOrRelatedSitesQuery( { siteId: 123, postId: 456 } )

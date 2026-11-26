@@ -142,10 +142,6 @@ describe( '<Sites>', () => {
 				.get( '/rest/v1.3/me/sites' )
 				.query( ( query ) => query.site_visibility === 'all' )
 				.reply( 200, { sites: [ sites[ 0 ], deletedSite ], total: 2 } );
-			nock( 'https://public-api.wordpress.com' )
-				.get( '/rest/v1.3/me/sites' )
-				.query( true )
-				.reply( 200, { sites: [ deletedSite ], total: 1 } );
 
 			render( <Sites search={ { is_deleted: true } } />, { user: { site_count: 2 } as User } );
 
