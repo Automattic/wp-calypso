@@ -46,6 +46,10 @@ import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-log
 import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
 import getWccomFrom from 'calypso/state/selectors/get-wccom-from';
 import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
+import {
+	isConfirmSubscriptionRedirect,
+	isDifferentEmail,
+} from '../redirect-logged-in/confirm-subscription';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
 export class HandleEmailedLinkForm extends Component {
 	static propTypes = {
@@ -102,10 +106,19 @@ export class HandleEmailedLinkForm extends Component {
 		if (
 			this.props.clientId === config( 'wpcom_signup_id' ) &&
 			! this.props.isImmediateLoginAttempt &&
-			! wooDnaConfig( this.props.initialQuery ).isWooDnaFlow()
+			! wooDnaConfig( this.props.initialQuery ).isWooDnaFlow() &&
+			! this.isConfirmSubscriptionAccountMismatch()
 		) {
 			this.handleSubmit();
 		}
+	}
+
+	isConfirmSubscriptionAccountMismatch() {
+		return Boolean(
+			this.props.activate &&
+			isConfirmSubscriptionRedirect( this.props.redirectTo ) &&
+			isDifferentEmail( this.props.currentUser?.email, this.props.emailAddress )
+		);
 	}
 
 	handleSubmit = ( event ) => {
@@ -122,7 +135,11 @@ export class HandleEmailedLinkForm extends Component {
 			? getGravatarOAuth2Flow( this.props.oauth2Client )
 			: null;
 
-		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal, flow );
+		this.props.fetchMagicLoginAuthenticate(
+			this.props.token,
+			this.props.redirectToOriginal || this.props.redirectTo,
+			flow
+		);
 	};
 
 	// Accepts `props` because `this.props` is not yet updated when called from
@@ -296,7 +313,9 @@ export class HandleEmailedLinkForm extends Component {
 			);
 		}
 
-		const showLoadingLogo = isFetching || transition || this.state.isRedirecting;
+		const isConfirmSubscriptionMismatch = this.isConfirmSubscriptionAccountMismatch();
+		const showLoadingLogo =
+			isFetching || ( transition && ! isConfirmSubscriptionMismatch ) || this.state.isRedirecting;
 		// transition is a GET parameter for when the user is transitioning from email user to WPCom user
 		if ( showLoadingLogo ) {
 			if ( isWCCOM ) {
@@ -304,6 +323,55 @@ export class HandleEmailedLinkForm extends Component {
 			}
 
 			return <WordPressLogo size={ 72 } className="wpcom-site__logo" />;
+		}
+
+		if ( isConfirmSubscriptionMismatch ) {
+			return (
+				<EmptyContent
+					action={
+						<Button
+							primary
+							className="empty-content__action"
+							disabled={ this.state.hasSubmitted }
+							onClick={ this.handleSubmit }
+						>
+							{ translate( 'Switch accounts and confirm' ) }
+						</Button>
+					}
+					className="magic-login__handle-link"
+					line={
+						<>
+							<p>
+								{ translate(
+									'This link confirms the subscription for {{strong}}%(emailAddress)s{{/strong}}, but you’re signed in as {{strong}}%(currentUserEmail)s{{/strong}}.',
+									{
+										args: {
+											emailAddress,
+											currentUserEmail: currentUser.email,
+										},
+										components: { strong: <strong /> },
+									}
+								) }
+							</p>
+							<p>
+								{ translate(
+									'Continuing will sign you out of {{strong}}%(currentUserEmail)s{{/strong}} to confirm the subscription as {{strong}}%(emailAddress)s{{/strong}}. To stay signed in, open this link in a private window.',
+									{
+										args: {
+											emailAddress,
+											currentUserEmail: currentUser.email,
+										},
+										components: { strong: <strong /> },
+									}
+								) }
+							</p>
+						</>
+					}
+					secondaryAction={ translate( 'Cancel' ) }
+					secondaryActionURL="/home"
+					title={ translate( 'You’re signed in to a different account' ) }
+				/>
+			);
 		}
 
 		return (
