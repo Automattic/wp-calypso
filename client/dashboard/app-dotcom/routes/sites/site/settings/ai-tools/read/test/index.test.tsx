@@ -217,7 +217,8 @@ describe( '<SiteAIToolsRead>', () => {
 		render( <SiteAIToolsRead />, { queryClient } );
 
 		const [ pageToggle, groupToggle ] = screen.getAllByRole( 'checkbox', { name: 'Enable all' } );
-		const help = 'Doesn’t change 1 locked tool. Turn it on or off individually.';
+		const help =
+			'This switch skips 1 tool that needs separate approval. Turn it on or off by itself.';
 		expect( pageToggle ).toHaveAccessibleDescription( help );
 		expect( groupToggle ).toHaveAccessibleDescription( help );
 
@@ -225,11 +226,32 @@ describe( '<SiteAIToolsRead>', () => {
 		await user.click( groupButton );
 		const optInToggle = screen.getByRole( 'checkbox', { name: 'List subscribers' } );
 		expect( optInToggle ).toHaveAccessibleDescription(
-			'List the subscribers of your sites. This tool needs individual approval, so “Enable all” skips it.'
+			'List the subscribers of your sites. This tool needs separate approval, so “Enable all” skips it.'
 		);
-		await user.click( screen.getByRole( 'button', { name: 'Turn on individually' } ) );
-		expect( screen.getByRole( 'dialog', { name: 'Turn on individually' } ) ).toBeVisible();
+		await user.click( screen.getByRole( 'button', { name: 'Turn on separately' } ) );
+		const dialog = screen.getByRole( 'dialog', { name: 'Turn on separately' } );
+		expect( dialog ).toBeVisible();
+		expect( dialog ).toHaveTextContent(
+			'This tool needs separate approval, so “Enable all” skips it.'
+		);
 		expect( optInToggle ).not.toBeChecked();
+	} );
+
+	test( 'uses the plural skipped-tools copy when a scope has multiple opt-in tools', () => {
+		seed( {
+			...OPT_IN_TOOL,
+			'wpcom-mcp/subscribers-export': {
+				...OPT_IN_TOOL[ 'wpcom-mcp/subscribers-list' ],
+				title: 'Export subscribers',
+			},
+		} );
+		render( <SiteAIToolsRead />, { queryClient } );
+
+		const [ pageToggle, groupToggle ] = screen.getAllByRole( 'checkbox', { name: 'Enable all' } );
+		const pluralHelp =
+			'This switch skips 2 tools that need separate approval. Turn them on or off one at a time.';
+		expect( pageToggle ).toHaveAccessibleDescription( pluralHelp );
+		expect( groupToggle ).toHaveAccessibleDescription( pluralHelp );
 	} );
 
 	test( 'a group of only opt-in tools has no Enable all switch', () => {

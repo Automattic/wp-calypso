@@ -22,7 +22,7 @@ export function McpToolToggle( {
 } ) {
 	const optIn = requiresOptIn( tool );
 	const explanation = optIn
-		? __( 'This tool needs individual approval, so “Enable all” skips it.' )
+		? __( 'This tool needs separate approval, so “Enable all” skips it.' )
 		: undefined;
 
 	const toggle = (
@@ -47,7 +47,7 @@ export function McpToolToggle( {
 		return toggle;
 	}
 
-	const badgeLabel = __( 'Turn on individually' );
+	const badgeLabel = __( 'Turn on separately' );
 	return (
 		<HStack alignment="baseline" justify="flex-start" wrap>
 			{ toggle }
@@ -79,10 +79,10 @@ export function getMcpBulkHelp( optInCount: number ) {
 	}
 
 	return sprintf(
-		/* translators: %s is the number of MCP tools that require individual approval. */
+		/* translators: %s is the number of MCP tools that need separate approval. */
 		_n(
-			'Doesn’t change %s locked tool. Turn it on or off individually.',
-			'Doesn’t change %s locked tools. Turn them on or off individually.',
+			'This switch skips %s tool that needs separate approval. Turn it on or off by itself.',
+			'This switch skips %s tools that need separate approval. Turn them on or off one at a time.',
 			optInCount
 		),
 		formatNumber( optInCount )

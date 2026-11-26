@@ -264,13 +264,14 @@ export default function McpRead() {
 							const groupKey = descriptor?.name ?? '__other__';
 							const ordinaryGroupTools = getOrdinaryTools( groupTools );
 							const isOpen = openGroups.has( groupKey ) || query.length > 0;
+							const groupHelp = getMcpBulkHelp( groupTools.length - ordinaryGroupTools.length );
 							const groupToggle = ordinaryGroupTools.length > 0 && (
 								<ToggleControl
 									__nextHasNoMarginBottom
 									checked={ ordinaryGroupTools.every( ( [ , tool ] ) => tool.enabled ) }
 									disabled={ mutation.isPending }
 									label={ __( 'Enable all' ) }
-									help={ getMcpBulkHelp( groupTools.length - ordinaryGroupTools.length ) }
+									help={ groupHelp }
 									onChange={ ( checked ) =>
 										handleGroupEnableAll( descriptor?.name ?? null, ordinaryGroupTools, checked )
 									}
@@ -280,7 +281,7 @@ export default function McpRead() {
 							return (
 								<Card key={ groupKey } id={ groupKey } className="mcp-tools-anchor">
 									<CardBody>
-										{ isDesktop ? (
+										{ isDesktop && ! groupHelp ? (
 											<HStack justify="space-between" alignment="center" spacing={ 4 }>
 												<VStack spacing={ 1 } style={ { flex: 1, minWidth: 0 } }>
 													<Text truncate weight={ 600 } size={ 14 }>

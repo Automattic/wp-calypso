@@ -268,51 +268,52 @@ export default function McpToolsSubpage( {
 								const groupKey = descriptor?.name ?? '__other__';
 								const ordinaryGroupTools = getOrdinaryTools( groupTools );
 								const isOpen = openGroups.has( groupKey );
+								const groupHelp = getMcpBulkHelp( groupTools.length - ordinaryGroupTools.length );
+								const groupToggle = ordinaryGroupTools.length > 0 && (
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ ordinaryGroupTools.every( ( [ , tool ] ) => tool.enabled ) }
+										disabled={ mutation.isPending }
+										label={ translate( 'Enable all' ) }
+										help={ groupHelp }
+										onChange={ ( checked ) =>
+											handleGroupEnableAll( descriptor?.name ?? null, ordinaryGroupTools, checked )
+										}
+									/>
+								);
 
 								return (
 									<Card key={ groupKey }>
 										<CardBody>
-											<div className="mcp-tools-subpage__group-header">
-												<VStack spacing={ 1 } className="mcp-tools-subpage__group-info">
-													<Text truncate weight={ 600 } size={ 14 }>
-														{ label }
-													</Text>
-													{ descriptor?.description && (
-														<Text truncate variant="muted" size={ 12 }>
-															{ descriptor.description }
+											<VStack spacing={ 2 }>
+												<div className="mcp-tools-subpage__group-header">
+													<VStack spacing={ 1 } className="mcp-tools-subpage__group-info">
+														<Text truncate weight={ 600 } size={ 14 }>
+															{ label }
 														</Text>
+														{ descriptor?.description && (
+															<Text truncate variant="muted" size={ 12 }>
+																{ descriptor.description }
+															</Text>
+														) }
+													</VStack>
+													{ ! groupHelp && groupToggle && (
+														<div className="mcp-tools-subpage__group-toggle">{ groupToggle }</div>
 													) }
-												</VStack>
-												{ ordinaryGroupTools.length > 0 && (
-													<div className="mcp-tools-subpage__group-toggle">
-														<ToggleControl
-															__nextHasNoMarginBottom
-															checked={ ordinaryGroupTools.every( ( [ , tool ] ) => tool.enabled ) }
-															disabled={ mutation.isPending }
-															label={ translate( 'Enable all' ) }
-															help={ getMcpBulkHelp(
-																groupTools.length - ordinaryGroupTools.length
-															) }
-															onChange={ ( checked ) =>
-																handleGroupEnableAll(
-																	descriptor?.name ?? null,
-																	ordinaryGroupTools,
-																	checked
-																)
-															}
-														/>
-													</div>
-												) }
-												<Button
-													className="mcp-tools-subpage__group-chevron"
-													icon={ isOpen ? chevronUp : chevronDown }
-													label={
-														isOpen ? translate( 'Hide operations' ) : translate( 'Show operations' )
-													}
-													aria-expanded={ isOpen }
-													onClick={ () => toggleGroupOpen( groupKey, descriptor?.name ?? null ) }
-												/>
-											</div>
+													<Button
+														className="mcp-tools-subpage__group-chevron"
+														icon={ isOpen ? chevronUp : chevronDown }
+														label={
+															isOpen
+																? translate( 'Hide operations' )
+																: translate( 'Show operations' )
+														}
+														aria-expanded={ isOpen }
+														onClick={ () => toggleGroupOpen( groupKey, descriptor?.name ?? null ) }
+													/>
+												</div>
+												{ groupHelp && groupToggle }
+											</VStack>
 											{ isOpen &&
 												groupToolsBySubCategory( groupTools ).map(
 													( { subCategory, tools: subTools }, subIndex ) => (
