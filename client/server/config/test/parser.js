@@ -2,17 +2,16 @@ import fs from 'fs';
 import parser from '@automattic/calypso-config/parser';
 import { vi } from 'vitest';
 
-vi.mock( 'fs', () =>
-	( ( m ) => ( { ...m, default: m } ) )( {
-		existsSync: vi.fn(),
-		readFileSync: vi.fn(),
-	} )
-);
-
+// The parser `require()`s `fs`, which `vi.mock()` doesn't reach, so the tests spy on the shared
+// module instead.
 function mockFs( files ) {
-	fs.existsSync.mockImplementation( ( path ) => !! files[ path ] );
-	fs.readFileSync.mockImplementation( ( path ) => files[ path ] );
+	vi.spyOn( fs, 'existsSync' ).mockImplementation( ( path ) => !! files[ path ] );
+	vi.spyOn( fs, 'readFileSync' ).mockImplementation( ( path ) => files[ path ] );
 }
+
+afterEach( () => {
+	vi.restoreAllMocks();
+} );
 
 const withEnv = ( env = {} ) => {
 	for ( const [ k, v ] of Object.entries( env ) ) {
@@ -81,8 +80,6 @@ describe( 'parser', () => {
 	} );
 
 	afterEach( () => {
-		fs.readFileSync.mockReset();
-		fs.readFileSync.mockReset();
 		process.env = { ...realProcessEnv };
 	} );
 

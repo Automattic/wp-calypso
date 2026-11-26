@@ -5,8 +5,8 @@ import { vi } from 'vitest';
 let mockStdout;
 let getLogger;
 
-beforeEach( () => {
-	( { getLogger } = require( '../index' ) );
+beforeEach( async () => {
+	( { getLogger } = await import( '../index' ) );
 	mockStdout = vi.spyOn( process.stdout, 'write' ).mockImplementation( () => true );
 	mockFs( {
 		'/tmp': {

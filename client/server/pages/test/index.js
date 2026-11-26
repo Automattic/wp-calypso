@@ -14,14 +14,21 @@ vi.mock( 'superagent', () => ( { default: vi.fn() } ) );
 vi.mock( '@automattic/calypso-config', () => {
 	const impl = vi.fn();
 	impl.isEnabled = vi.fn();
-	return { ...impl, default: impl };
+	return {
+		default: impl,
+		isEnabled: impl.isEnabled,
+		// `buildApp()` sets the environment on the default export.
+		get serverEnvId() {
+			return impl.serverEnvId;
+		},
+	};
 } );
 
 vi.mock( 'calypso/server/sanitize', () => ( { default: vi.fn() } ) );
 
 vi.mock( 'calypso/sections', async () => {
 	// eslint-disable-next-line no-shadow
-	const sections = await vi.importActual( 'calypso/sections' );
+	const { default: sections } = await vi.importActual( 'calypso/sections' );
 	sections
 		.filter( ( section ) => section.isomorphic )
 		.forEach( ( section ) => {
@@ -29,7 +36,7 @@ vi.mock( 'calypso/sections', async () => {
 				default: vi.fn(),
 			} ) );
 		} );
-	return { ...sections, default: sections };
+	return { default: sections };
 } );
 
 vi.mock( 'calypso/sections-filter', () => ( { default: vi.fn( () => true ) } ) );
@@ -119,74 +126,69 @@ const createMockStore = () => ( {
  * effect perform when `../index.js` is imported, so it is tricky to mock. Instead of spreading
  * this logic across all tests, we have a builder pattern to load the app.
  *
- * As it uses isolated registries, any mock set outside this builder won't be visible for the
- * built app. That's why we need to require mocks here and expose them via getMocks();
+ * As it resets the module registry, any mock set outside this builder won't be visible for the
+ * built app. That's why we need to import mocks here and expose them via getMocks();
  * @param environment the environment
  */
-const buildApp = ( environment ) => {
+const buildApp = async ( environment ) => {
 	let mocks = {};
 	const tearDown = [];
 	let defaultUrl = '/';
 	const defaultCookies = {};
 	let userAgent = '';
 
-	// We need to restore modules and filesystem so requiring modules inside `isolatedModules` works
+	// We need to restore modules and filesystem so importing modules below works
 	mockFs.restore();
 	vi.resetModules();
 
-	// Load the app
-	let appFactory;
-	vi.isolateModules( () => {
-		// When the app requries these modules, they are loaded from its isolated registry.
-		// Requiring them here will give us the same instance used by the app, this will allow
-		// us to change the mock implementation later or make assertions about it.
-		mocks.config = require( '@automattic/calypso-config' );
-		const {
-			attachBuildTimestamp,
-			attachI18n,
-			attachHead,
-			bumpStat,
-			customizeClientDataForRequest,
-			renderJsx,
-			serverRender,
-		} = require( 'calypso/server/render' );
-		mocks = {
-			...mocks,
-			attachBuildTimestamp,
-			attachI18n,
-			attachHead,
-			bumpStat,
-			customizeClientDataForRequest,
-			renderJsx,
-			serverRender,
-		};
-		mocks.sanitize = require( 'calypso/server/sanitize' );
-		mocks.createReduxStore = require( 'calypso/state/create-store' ).createReduxStore;
-		mocks.createReduxStore.mockImplementation( createMockStore );
-		mocks.execSync = require( 'child_process' ).execSync;
-		mocks.login = require( 'calypso/lib/paths' ).login;
-		mocks.getBootstrappedUser = require( 'calypso/server/user-bootstrap' );
-		mocks.setCurrentUser = require( 'calypso/state/current-user/actions' ).setCurrentUser;
-		mocks.analytics = require( 'calypso/server/lib/analytics' );
+	// Load the app. Importing these modules after resetting the registry gives us the instances the
+	// app uses, so we can change their mock implementation later or make assertions about them.
+	mocks.config = ( await import( '@automattic/calypso-config' ) ).default;
+	const {
+		attachBuildTimestamp,
+		attachI18n,
+		attachHead,
+		bumpStat,
+		customizeClientDataForRequest,
+		renderJsx,
+		serverRender,
+	} = await import( 'calypso/server/render' );
+	mocks = {
+		...mocks,
+		attachBuildTimestamp,
+		attachI18n,
+		attachHead,
+		bumpStat,
+		customizeClientDataForRequest,
+		renderJsx,
+		serverRender,
+	};
+	mocks.sanitize = ( await import( 'calypso/server/sanitize' ) ).default;
+	mocks.createReduxStore = ( await import( 'calypso/state/create-store' ) ).createReduxStore;
+	mocks.createReduxStore.mockImplementation( createMockStore );
+	mocks.execSync = ( await import( 'child_process' ) ).execSync;
+	mocks.login = ( await import( 'calypso/lib/paths' ) ).login;
+	mocks.getBootstrappedUser = ( await import( 'calypso/server/user-bootstrap' ) ).default;
+	mocks.setCurrentUser = ( await import( 'calypso/state/current-user/actions' ) ).setCurrentUser;
+	mocks.analytics = ( await import( 'calypso/server/lib/analytics' ) ).default;
 
-		// Set the environment. This has to be done before requiring `../index.js`
-		mocks.config.serverEnvId = environment;
-		mocks.config.mockImplementation(
-			( key ) =>
-				( {
-					hostname: 'valid.hostname',
-					magnificent_non_en_locales: [ 'ar', 'es' ],
-					port: 3000,
-					env_id: environment,
-					rtl: false,
-					i18n_default_locale_slug: 'en',
-					favicon_url: 'http://favicon.url/',
-					enable_all_sections: true,
-				} )[ key ]
-		);
+	// Set the environment. This has to be done before importing `../index.js`
+	mocks.config.serverEnvId = environment;
+	mocks.config.mockImplementation(
+		( key ) =>
+			( {
+				hostname: 'valid.hostname',
+				magnificent_non_en_locales: [ 'ar', 'es' ],
+				port: 3000,
+				env_id: environment,
+				rtl: false,
+				i18n_default_locale_slug: 'en',
+				favicon_url: 'http://favicon.url/',
+				enable_all_sections: true,
+			} )[ key ]
+	);
 
-		appFactory = require( '../index' ).default;
-	} );
+	const { default: appFactory } = await import( '../index' );
 	const app = appFactory();
 
 	return {
@@ -376,9 +378,9 @@ const buildApp = ( environment ) => {
 const assertDefaultContext = ( { url, entry } ) => {
 	let app;
 
-	beforeAll( () => {
+	beforeAll( async () => {
 		// Building an app is expensive, so we build it once here and set its mocks before each test.
-		app = buildApp( 'production' );
+		app = await buildApp( 'production' );
 	} );
 
 	beforeEach( () => {
@@ -532,7 +534,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 	} );
 
 	it( 'debug mode is enabled for development environment', async () => {
-		const customApp = buildApp( 'development' );
+		const customApp = await buildApp( 'development' );
 		customApp.withServerRender( '' );
 		customApp.withMockFilesystem();
 		customApp.withEvergreenBrowser();
@@ -541,7 +543,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 	} );
 
 	it( 'debug mode is enabled for jetpack-cloud-development environment', async () => {
-		const customApp = buildApp( 'jetpack-cloud-development' );
+		const customApp = await buildApp( 'jetpack-cloud-development' );
 		customApp.withServerRender( '' );
 		customApp.withMockFilesystem();
 		customApp.withEvergreenBrowser();
@@ -552,8 +554,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment wpcalypso', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'wpcalypso' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'wpcalypso' );
 		} );
 
 		beforeEach( () => {
@@ -575,8 +577,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'on calypso.live', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'horizon' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'horizon' );
 		} );
 
 		beforeEach( () => {
@@ -627,8 +629,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment horizon', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'horizon' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'horizon' );
 		} );
 
 		beforeEach( () => {
@@ -655,8 +657,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment stage', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'stage' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'stage' );
 		} );
 
 		beforeEach( () => {
@@ -678,8 +680,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment development', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'development' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'development' );
 		} );
 
 		beforeEach( () => {
@@ -715,8 +717,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment jetpack-cloud-stage', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'jetpack-cloud-stage' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'jetpack-cloud-stage' );
 		} );
 
 		beforeEach( () => {
@@ -738,8 +740,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment jetpack-cloud-development', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'jetpack-cloud-development' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'jetpack-cloud-development' );
 		} );
 
 		beforeEach( () => {
@@ -775,8 +777,8 @@ const assertDefaultContext = ( { url, entry } ) => {
 	describe( 'with environment jetpack-cloud-production', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'jetpack-cloud-production' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'jetpack-cloud-production' );
 		} );
 
 		beforeEach( () => {
@@ -835,9 +837,9 @@ const assertDefaultContext = ( { url, entry } ) => {
 const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 	let app;
 
-	beforeAll( () => {
+	beforeAll( async () => {
 		// Building an app is expensive, so we build it once here and set its mocks before each test.
-		app = buildApp( 'production' );
+		app = await buildApp( 'production' );
 	} );
 
 	beforeEach( () => {
@@ -1016,9 +1018,9 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 describe( 'main app', () => {
 	let app;
 
-	beforeAll( () => {
+	beforeAll( async () => {
 		// Building an app is expensive, so we build it once here and set its mocks before each test.
-		app = buildApp( 'production' );
+		app = await buildApp( 'production' );
 	} );
 
 	beforeEach( () => {
@@ -1607,7 +1609,7 @@ describe( 'main app', () => {
 		} );
 
 		it( 'does not record outside production', async () => {
-			const devApp = buildApp( 'development' );
+			const devApp = await buildApp( 'development' );
 			devApp.withServerRender( '' );
 			devApp.withMockFilesystem();
 			devApp.withEvergreenBrowser();
@@ -1679,8 +1681,8 @@ describe( 'main app', () => {
 	describe( 'Route /cspreport', () => {
 		let customApp;
 
-		beforeAll( () => {
-			customApp = buildApp( 'production' );
+		beforeAll( async () => {
+			customApp = await buildApp( 'production' );
 		} );
 
 		beforeEach( () => {
@@ -1801,7 +1803,7 @@ describe( 'main app', () => {
 		} );
 
 		it( 'renders authorized page in development mode', async () => {
-			const customApp = buildApp( 'development' );
+			const customApp = await buildApp( 'development' );
 			customApp.withRenderJSX( 'content' );
 			customApp.withEvergreenBrowser();
 			customApp.withMockFilesystem();
@@ -1928,8 +1930,8 @@ describe( 'main app', () => {
 describe( 'dashboard app', () => {
 	let app;
 
-	beforeAll( () => {
-		app = buildApp( 'dashboard-production' );
+	beforeAll( async () => {
+		app = await buildApp( 'dashboard-production' );
 	} );
 
 	beforeEach( () => {

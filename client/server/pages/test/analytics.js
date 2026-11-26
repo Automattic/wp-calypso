@@ -6,7 +6,7 @@ const THREE_SECONDS = 3000;
 
 const noop = () => {};
 
-// Always-enabled config; a factory so it survives the `jest.resetModules()` below.
+// Always-enabled config; a factory so it survives the `vi.resetModules()` below.
 vi.mock( '@automattic/calypso-config', () => ( { default: () => true } ) );
 
 describe( 'index', () => {
@@ -14,13 +14,13 @@ describe( 'index', () => {
 	let statsdUtils;
 	let logSectionResponse;
 
-	beforeEach( () => {
+	beforeEach( async () => {
 		// Fresh module registry per test so analytics.js's module-level throttle
 		// starts clean; re-acquire deps from the same registry so the spy applies.
 		vi.resetModules();
 		vi.useFakeTimers();
-		statsdUtils = require( 'calypso/lib/analytics/statsd-utils' );
-		( { logSectionResponse } = require( 'calypso/server/pages/analytics' ) );
+		statsdUtils = await import( 'calypso/lib/analytics/statsd-utils' );
+		( { logSectionResponse } = await import( 'calypso/server/pages/analytics' ) );
 		fetchMock = vi.spyOn( globalThis, 'fetch' ).mockResolvedValue( undefined );
 	} );
 
