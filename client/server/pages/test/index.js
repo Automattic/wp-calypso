@@ -1,9 +1,6 @@
 import { IncomingMessage } from 'http';
 import mockFs from 'mock-fs';
 import { vi } from 'vitest';
-// The app imports this, which loads `@automattic/onboarding`'s barrel: seconds to transform.
-// Importing it with the test file keeps that out of the first `buildApp()`, whose hook has a timeout.
-import 'calypso/layout/utils';
 import sections from 'calypso/sections';
 
 vi.mock( 'child_process', () =>
