@@ -313,7 +313,7 @@ export default defineConfig( [
 			'me/billing-purchases/test/purchase-removed-notice.test.tsx',
 			'me/notifications-emails/subscription-settings/test/index.test.tsx',
 			'sites/activity/components/activity-logs-dataviews/test/index.test.tsx',
-			'sites/migration-overview/test/started-difm-content-info.test.tsx',
+			'sites/migration/components/started-difm-content-info/test/index.test.tsx',
 			'sites/staging-site/components/staging-site-delete-modal/test/index.test.tsx',
 		],
 		rules: {

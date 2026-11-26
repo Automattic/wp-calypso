@@ -11,11 +11,11 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useState } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { ButtonStack } from '../../components/button-stack';
-import { Text } from '../../components/text';
-import { WhatToExpect } from './what-to-expect';
-import { MigrationCard, StatusIcon } from './wordpress/migration-card';
+import { useAnalytics } from '../../../../app/analytics';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Text } from '../../../../components/text';
+import { WhatToExpect } from '../what-to-expect';
+import { MigrationCard, StatusIcon } from '../wordpress-migration/migration-card';
 import type { Site } from '@automattic/api-core';
 
 function CancellationModal( {

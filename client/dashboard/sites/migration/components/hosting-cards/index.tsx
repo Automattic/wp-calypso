@@ -1,9 +1,9 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Card, CardBody } from '../../components/card';
-import Grid from '../../components/grid';
-import { Text } from '../../components/text';
+import { Card, CardBody } from '../../../../components/card';
+import Grid from '../../../../components/grid';
+import { Text } from '../../../../components/text';
 
 const GRID_CARDS = [
 	{

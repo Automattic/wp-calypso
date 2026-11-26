@@ -1,8 +1,8 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { HostingCards } from './hosting-cards';
-import { MigrationCard, StatusIcon } from './wordpress/migration-card';
+import { HostingCards } from '../hosting-cards';
+import { MigrationCard, StatusIcon } from '../wordpress-migration/migration-card';
 import type { Site } from '@automattic/api-core';
 
 export function InProgressContentInfo( { site }: { site: Site } ) {

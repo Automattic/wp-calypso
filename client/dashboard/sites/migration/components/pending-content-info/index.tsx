@@ -7,12 +7,12 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { ButtonStack } from '../../components/button-stack';
-import { Text } from '../../components/text';
-import { wpcomLink } from '../../utils/link';
-import { HostingCards } from './hosting-cards';
-import { MigrationCard, StatusIcon } from './wordpress/migration-card';
+import { useAnalytics } from '../../../../app/analytics';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Text } from '../../../../components/text';
+import { wpcomLink } from '../../../../utils/link';
+import { HostingCards } from '../hosting-cards';
+import { MigrationCard, StatusIcon } from '../wordpress-migration/migration-card';
 import type { Site } from '@automattic/api-core';
 
 // Only DIFM migrations from before the assisted hand-off still reach this view.

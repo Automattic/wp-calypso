@@ -5,12 +5,12 @@ import {
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import RouterLinkButton from '../../components/router-link-button';
-import { Text } from '../../components/text';
-import { WhatToExpect } from './what-to-expect';
-import { MigrationCard, StatusIcon } from './wordpress/migration-card';
-import { MIGRATION_STEPS } from './wordpress/running';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
+import RouterLinkButton from '../../../../components/router-link-button';
+import { Text } from '../../../../components/text';
+import { WhatToExpect } from '../what-to-expect';
+import { MigrationCard, StatusIcon } from '../wordpress-migration/migration-card';
+import { MIGRATION_STEPS } from '../wordpress-migration/running';
 import type {
 	Site,
 	WordPressMigrationFinding,

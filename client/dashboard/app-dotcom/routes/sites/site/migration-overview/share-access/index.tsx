@@ -21,15 +21,18 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useLocale } from '../../../app/locale';
-import { ButtonStack } from '../../../components/button-stack';
-import Notice from '../../../components/notice';
-import { PageHeader } from '../../../components/page-header';
-import PageLayout from '../../../components/page-layout';
-import { Text } from '../../../components/text';
-import { getSiteDisplayName } from '../../../utils/site-name';
-import { MigrationCard } from '../wordpress/migration-card';
-import { getMigrationAuthorizationUrl, takeMigrationAuthorization } from './authorization';
+import { useLocale } from '../../../../../../app/locale';
+import { ButtonStack } from '../../../../../../components/button-stack';
+import Notice from '../../../../../../components/notice';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
+import { Text } from '../../../../../../components/text';
+import { MigrationCard } from '../../../../../../sites/migration/components/wordpress-migration/migration-card';
+import {
+	getMigrationAuthorizationUrl,
+	takeMigrationAuthorization,
+} from '../../../../../../sites/migration/utils';
+import { getSiteDisplayName } from '../../../../../../utils/site-name';
 import type { Site } from '@automattic/api-core';
 import type { FormEvent } from 'react';
 

@@ -1863,7 +1863,7 @@ export const siteMigrationOverviewRoute = createRoute( {
 		site: await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
 	} ),
 } ).lazy( () =>
-	import( '../../sites/migration-overview' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/migration-overview' ).then( ( d ) =>
 		createLazyRoute( 'migration-overview' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1893,7 +1893,7 @@ export const siteMigrationAssistedIntroRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/migration-overview/assisted-intro' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/migration-overview/assisted' ).then( ( d ) =>
 		createLazyRoute( 'migration-overview-assisted' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1921,7 +1921,7 @@ export const siteMigrationShareAccessRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/migration-overview/share-access' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/migration-overview/share-access' ).then( ( d ) =>
 		createLazyRoute( 'migration-overview-share-access' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

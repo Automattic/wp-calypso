@@ -2,20 +2,20 @@ import { siteBySlugQuery, siteWordPressMigrationStatusQuery } from '@automattic/
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { getSiteDisplayName } from '../../utils/site-name';
+import { PageHeader } from '../../../../../components/page-header';
+import PageLayout from '../../../../../components/page-layout';
+import { AssistedWordPressMigration } from '../../../../../sites/migration/components/assisted-wordpress-migration';
+import { InProgressContentInfo } from '../../../../../sites/migration/components/in-progress-content-info';
+import { PendingContentInfo } from '../../../../../sites/migration/components/pending-content-info';
+import { StartedDIFMContentInfo } from '../../../../../sites/migration/components/started-difm-content-info';
+import { WordPressMigration } from '../../../../../sites/migration/components/wordpress-migration';
+import { getSiteDisplayName } from '../../../../../utils/site-name';
 import {
 	getSiteMigrationState,
 	isAssistedWordPressMigration,
 	isSiteMigrationInProgress,
 	isWordPressMigration,
-} from '../../utils/site-status';
-import { AssistedWordPressMigration } from './assisted-wordpress';
-import { InProgressContentInfo } from './in-progress-content-info';
-import { PendingContentInfo } from './pending-content-info';
-import { StartedDIFMContentInfo } from './started-difm-content-info';
-import { WordPressMigration } from './wordpress';
+} from '../../../../../utils/site-status';
 import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
 
 export default function SiteMigrationOverview( { siteSlug }: { siteSlug: string } ) {

@@ -5,13 +5,17 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { check, copy, shield } from '@wordpress/icons';
 import { useEffect } from 'react';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
-import { getSiteDisplayName } from '../../utils/site-name';
-import { isWordPressMigration } from '../../utils/site-status';
-import { IconList, MigrationCard, StatusIcon } from './wordpress/migration-card';
+import { withSnackbar } from '../../../../../../app/snackbars/with-snackbar';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
+import RouterLinkButton from '../../../../../../components/router-link-button';
+import {
+	IconList,
+	MigrationCard,
+	StatusIcon,
+} from '../../../../../../sites/migration/components/wordpress-migration/migration-card';
+import { getSiteDisplayName } from '../../../../../../utils/site-name';
+import { isWordPressMigration } from '../../../../../../utils/site-status';
 
 const WHAT_OUR_TEAM_DOES = [
 	{

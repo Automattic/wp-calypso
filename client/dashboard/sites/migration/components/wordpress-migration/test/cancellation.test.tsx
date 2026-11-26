@@ -6,12 +6,12 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { render } from '../../../../test-utils';
-import { WordPressMigration } from '../index';
+import { WordPressMigration } from '..';
+import { render } from '../../../../../test-utils';
 import type { Site, WordPressMigrationStatus } from '@automattic/api-core';
 
 const { setShowHelpCenter } = vi.hoisted( () => ( { setShowHelpCenter: vi.fn() } ) );
-vi.mock( '../../../../app/help-center', () => ( {
+vi.mock( '../../../../../app/help-center', () => ( {
 	useHelpCenter: () => ( { setShowHelpCenter } ),
 } ) );
 

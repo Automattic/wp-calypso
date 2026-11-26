@@ -8,8 +8,8 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { render } from '../../../test-utils';
-import { StartedDIFMContentInfo } from '../started-difm-content-info';
+import { StartedDIFMContentInfo } from '..';
+import { render } from '../../../../../test-utils';
 import type { Site } from '@automattic/api-core';
 
 const mockNavigate = vi.fn();

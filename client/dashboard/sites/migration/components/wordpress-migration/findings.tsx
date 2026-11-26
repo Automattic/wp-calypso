@@ -4,11 +4,11 @@ import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { useHelpCenter } from '../../../app/help-center';
-import { getCurrentDashboard } from '../../../app/routing';
-import { withSnackbar } from '../../../app/snackbars/with-snackbar';
-import Notice from '../../../components/notice';
-import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
+import { useHelpCenter } from '../../../../app/help-center';
+import { getCurrentDashboard } from '../../../../app/routing';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
+import Notice from '../../../../components/notice';
+import { redirectToDashboardLink, wpcomLink } from '../../../../utils/link';
 import { MigrationCard, StatusIcon, getChangeSourceUrl } from './migration-card';
 import type {
 	Site,

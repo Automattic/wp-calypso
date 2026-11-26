@@ -7,10 +7,13 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { ShareAccessForm } from '..';
-import { render } from '../../../../test-utils';
-import AssistedIntro from '../../assisted-intro';
-import { AssistedWordPressMigration } from '../../assisted-wordpress';
-import { captureMigrationAuthorization, getMigrationAuthorizationUrl } from '../authorization';
+import { AssistedWordPressMigration } from '../../../../../../../sites/migration/components/assisted-wordpress-migration';
+import {
+	captureMigrationAuthorization,
+	getMigrationAuthorizationUrl,
+} from '../../../../../../../sites/migration/utils';
+import { render } from '../../../../../../../test-utils';
+import AssistedIntro from '../../assisted';
 import type { Site } from '@automattic/api-core';
 
 const siteSlug = 'destination.wordpress.com';
