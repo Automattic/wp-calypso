@@ -5,8 +5,8 @@
 	outline-offset: 0;
 }
 
-/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- `@wordpress/components` 45 reads WPDS tokens where it read the accent variables;
-   these map them back so sections with their own accent keep it. Remove once those sections set their accent through the theme provider. */
+// `@wordpress/components` 45 reads WPDS tokens where it read the accent variables;
+// these map them back so sections with their own accent keep it. Remove once those sections set their accent through the theme provider.
 // Checkboxes, toggles and radios fill with this token before the components accent, and
 // `@wordpress/theme` pins it to the default blue, so they'd ignore the dark theme's accent.
 .components-checkbox-control__input,
@@ -45,7 +45,6 @@
 	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-foreground-inverted, #fff);
 }
 
-/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 .components-menu-item__button:is(:focus, [aria-selected="true"]):not(:disabled, [aria-disabled="true"]) .components-text {
 	color: inherit;
 }
