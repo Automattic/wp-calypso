@@ -28,8 +28,8 @@
 		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS:-} build --publish never",
 		"build:main": "yarn run build:config && webpack --stats-preset errors-only",
 		"build:config": "node bin/build-desktop-config.js",
-		"test:e2e": "jest -c test/e2e/config/jest.config.js",
-		"test:unit": "jest -c test/unit/jest.config.js"
+		"test:e2e": "vitest run -c test/e2e/config/vitest.config.mjs",
+		"test:unit": "vitest run -c test/unit/vitest.config.mjs"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
@@ -39,10 +39,10 @@
 		"cross-env": "^7.0.3",
 		"electron": "42.11.18",
 		"electron-builder": "26.15.7",
-		"jest": "^30.5.2",
 		"js-yaml": "5.4.1",
 		"playwright": "1.57.0",
 		"semver": "^7.8.6",
+		"vitest": "^5.1.0",
 		"webpack": "^5.111.1",
 		"webpack-cli": "^7.2.3",
 		"winston": "^3.3.3"

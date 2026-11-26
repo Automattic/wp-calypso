@@ -1,4 +1,8 @@
-const { resolveSigner, buildSignToolArgs } = require( '../../bin/windows-signing-core' );
+import { createRequire } from 'node:module';
+import { vi } from 'vitest';
+
+const nodeRequire = createRequire( import.meta.url );
+const { resolveSigner, buildSignToolArgs } = nodeRequire( '../../bin/windows-signing-core' );
 
 const AZURE_ENV = {
 	AZURE_CODE_SIGNING_DLIB: 'C:\\dlib\\Azure.CodeSigning.Dlib.dll',
@@ -49,21 +53,20 @@ describe( 'win.sign callback', () => {
 		} else {
 			process.env.CI = originalCI;
 		}
-		jest.dontMock( '../../bin/windows-signing-core' );
+		vi.restoreAllMocks();
 	} );
 
 	const mockSigner = { kind: 'azure' };
 
+	// electron-builder `require()`s the hook, so it stays CommonJS, which `vi.mock()` doesn't reach.
+	// The test spies on the core module the hook shares, then loads the hook again so it picks up
+	// the spies.
 	function loadSignWithMockedCore() {
-		jest.resetModules();
-		jest.doMock( '../../bin/windows-signing-core', () => ( {
-			resolveSigner: jest.fn( () => mockSigner ),
-			signFile: jest.fn(),
-		} ) );
-		return {
-			core: require( '../../bin/windows-signing-core' ),
-			sign: require( '../../bin/windows-sign' ),
-		};
+		const core = nodeRequire( '../../bin/windows-signing-core' );
+		vi.spyOn( core, 'resolveSigner' ).mockReturnValue( mockSigner );
+		vi.spyOn( core, 'signFile' ).mockResolvedValue();
+		delete nodeRequire.cache[ nodeRequire.resolve( '../../bin/windows-sign' ) ];
+		return { core, sign: nodeRequire( '../../bin/windows-sign' ) };
 	}
 
 	it( 'skips the SHA1 pass without signing', async () => {
