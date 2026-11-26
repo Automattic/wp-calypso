@@ -1,4 +1,4 @@
-import { parsePatch } from 'diff/lib/patch/parse';
+import { parsePatch } from 'diff';
 import { Fragment } from 'react';
 
 import './style.scss';
@@ -124,7 +124,7 @@ export const DiffViewer = ( { diff } ) => (
 					<div className="diff-viewer__lines">
 						{ file.hunks.map( ( hunk, hunkIndex ) =>
 							hunk.lines.map( ( line, index ) => {
-								const output = line.slice( 1 ).replace( /^\s*$/, '\u00a0' );
+								const output = line.slice( 1 ).replace( /\r$/, '' ).replace( /^\s*$/, '\u00a0' );
 								const key = `${ hunkIndex }-${ index }`;
 
 								switch ( line[ 0 ] ) {
