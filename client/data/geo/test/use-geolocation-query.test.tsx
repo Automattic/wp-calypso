@@ -4,7 +4,6 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
-import { when } from 'jest-when';
 import { ReactNode } from 'react';
 import { vi } from 'vitest';
 import { useGeoLocationQuery, GeoLocationData } from '../use-geolocation-query';
@@ -24,9 +23,11 @@ describe( 'useGeoLocationQuery', () => {
 	};
 
 	beforeAll( () => {
-		when( vi.spyOn( globalThis, 'fetch' ) )
-			.calledWith( 'https://public-api.wordpress.com/geo/' )
-			.mockResolvedValue( { json: () => Promise.resolve( mockGeoData ) } as Response );
+		vi.spyOn( globalThis, 'fetch' ).mockImplementation( async ( url ) =>
+			url === 'https://public-api.wordpress.com/geo/'
+				? ( { json: () => Promise.resolve( mockGeoData ) } as Response )
+				: ( undefined as unknown as Response )
+		);
 	} );
 
 	it( 'should fetch geolocation data', async () => {

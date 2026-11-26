@@ -1,18 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { ReaderUser, UserSitesResponse } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
+import { useSelector } from 'calypso/state';
 import UserSites from '..';
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
+vi.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
 	__esModule: true,
 	default: ( { title }: { title: string } ) => (
 		<div data-testid="private-tab-notice">{ title }</div>
@@ -20,7 +22,7 @@ jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( 
 } ) );
 
 // Mocking ReaderSitesList because it uses useDispatch internally which would require a full Redux store setup.
-jest.mock( 'calypso/reader/sites-list', () => ( {
+vi.mock( 'calypso/reader/sites-list', () => ( {
 	ReaderSitesList: ( { sites }: { sites: ReaderSite[] } ) => (
 		<div data-testid="reader-sites-list">
 			{ sites.map( ( site ) => (
@@ -31,7 +33,6 @@ jest.mock( 'calypso/reader/sites-list', () => ( {
 } ) );
 
 describe( 'UserSites', () => {
-	const { useSelector } = jest.requireMock( 'calypso/state' );
 	const defaultUser: ReaderUser = {
 		ID: 123,
 		user_login: 'test_user',
@@ -47,8 +48,8 @@ describe( 'UserSites', () => {
 	let queryClient: QueryClient;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		useSelector.mockReturnValue( null );
+		vi.clearAllMocks();
+		vi.mocked( useSelector ).mockReturnValue( null );
 		nock.disableNetConnect();
 		queryClient = new QueryClient( {
 			defaultOptions: {
@@ -104,7 +105,7 @@ describe( 'UserSites', () => {
 	} );
 
 	test( 'should show "Create your first site" button when viewing own empty profile', async () => {
-		useSelector.mockReturnValue( { username: 'test_user' } );
+		vi.mocked( useSelector ).mockReturnValue( { username: 'test_user' } );
 
 		nockGetUserSites( defaultUser.ID, { sites: [], total: 0, primary_site_id: 0 } );
 
@@ -194,7 +195,7 @@ describe( 'UserSites', () => {
 	} );
 
 	test( "should exclude the owner's hidden sites based on their preference", async () => {
-		useSelector.mockReturnValue( { username: 'test_user' } );
+		vi.mocked( useSelector ).mockReturnValue( { username: 'test_user' } );
 
 		const mockSites: UserSitesResponse[ 'sites' ] = [
 			{
@@ -235,7 +236,7 @@ describe( 'UserSites', () => {
 	} );
 
 	test( 'renders the private-tab notice for the owner', async () => {
-		useSelector.mockReturnValue( { username: 'test_user' } );
+		vi.mocked( useSelector ).mockReturnValue( { username: 'test_user' } );
 		nockGetUserSites( defaultUser.ID, { sites: [], total: 0, primary_site_id: 0 } );
 
 		renderWithClient( <UserSites user={ defaultUser } /> );

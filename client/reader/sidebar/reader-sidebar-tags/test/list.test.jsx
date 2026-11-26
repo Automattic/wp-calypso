@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSidebarTagsList from '../list';
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	...jest.requireActual( 'calypso/reader/stats' ),
-	recordAction: jest.fn(),
-	recordGaEvent: jest.fn(),
+vi.mock( 'calypso/reader/stats', async () => ( {
+	...( await vi.importActual( 'calypso/reader/stats' ) ),
+	recordAction: vi.fn(),
+	recordGaEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( () => ( { type: 'ANALYTICS_EVENT_RECORD' } ) ),
 } ) );
 
 // jsdom cannot navigate, so keep link clicks from logging "Not implemented" errors.
@@ -30,7 +31,7 @@ describe( 'ReaderSidebarTagsList', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'records a tracks event when the "See all tags" link is clicked', async () => {

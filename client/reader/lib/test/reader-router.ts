@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page, { createRouteRegistry } from '@automattic/calypso-router';
 import { readerPage, isKnownReaderRoute } from '../reader-router';

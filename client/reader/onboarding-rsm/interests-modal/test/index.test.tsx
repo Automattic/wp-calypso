@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React, { useState } from 'react';
+import { vi } from 'vitest';
 import { READER_ONBOARDING_FOLLOW_SOURCE } from 'calypso/reader/onboarding-rsm/constants';
 import { recordFollow } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -13,7 +14,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import InterestsModal from '../index';
 import { getTopicGroups } from '../topic-groups';
 
-const mockFollowMutate = jest.fn();
+const mockFollowMutate = vi.fn();
 
 // The parent owns `hasFollowed` and `relaxedPackCriteria` so they persist
 // across remounts of this modal. Most tests don't care about those flags and
@@ -45,22 +46,22 @@ const InterestsModalWithFollowedState = (
 
 // ── External data hooks ──────────────────────────────────────────────────────
 
-jest.mock( 'calypso/data/reader/use-reader-interest-tags', () => ( {
+vi.mock( 'calypso/data/reader/use-reader-interest-tags', () => ( {
 	useReaderInterestTags: () => [],
 } ) );
 
-jest.mock( 'calypso/reader/data/tags', () => ( {
+vi.mock( 'calypso/reader/data/tags', () => ( {
 	useFollowedTags: () => ( { data: [] } ),
 } ) );
 
 // ── Internal helpers / child components ─────────────────────────────────────
 
-jest.mock( '../topic-groups', () => ( {
-	getTopicGroups: jest.fn( () => [] ),
+vi.mock( '../topic-groups', () => ( {
+	getTopicGroups: vi.fn( () => [] ),
 } ) );
 
-jest.mock( '../topic-group-card', () => {
-	const React = jest.requireActual( 'react' );
+vi.mock( '../topic-group-card', async () => {
+	const React = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	return {
 		__esModule: true,
 		default: ( {
@@ -87,40 +88,40 @@ jest.mock( '../topic-group-card', () => {
 } );
 
 // Give the nudge a stable test-id so tests can assert on its presence.
-jest.mock( '../verificationNudge', () => ( {
+vi.mock( '../verificationNudge', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="interests-verification-nudge" />,
 } ) );
 
 // ── State hooks ──────────────────────────────────────────────────────────────
 
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
-	getFollowingSource: jest.fn( () => 'test-source' ),
-	useFollowSite: jest.fn( () => ( {
+vi.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	getFollowingSource: vi.fn( () => 'test-source' ),
+	useFollowSite: vi.fn( () => ( {
 		mutate: mockFollowMutate,
 		mutateAsync: mockFollowMutate,
 		isPending: false,
 	} ) ),
-	useUnfollowSite: jest.fn(),
-	useIsSubscribed: jest.fn( () => false ),
-	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [], refetch: jest.fn() } ) ),
+	useUnfollowSite: vi.fn(),
+	useIsSubscribed: vi.fn( () => false ),
+	useSiteSubscriptions: vi.fn( () => ( { subscriptions: [], refetch: vi.fn() } ) ),
 } ) );
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
-	errorNotice: jest.fn( () => ( { type: 'NOTICES_ERROR' } ) ),
+vi.mock( 'calypso/state/notices/actions', () => ( {
+	errorNotice: vi.fn( () => ( { type: 'NOTICES_ERROR' } ) ),
 } ) );
 
 // ── Analytics / i18n ────────────────────────────────────────────────────────
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 // Mock as a thunk action creator so `dispatch( recordReaderTracksEvent(...) )`
 // still works inside `renderWithProvider`, while letting tests assert on the
 // call arguments.
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: jest.fn(
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: vi.fn(
 		( name: string, properties: Record< string, unknown > ) => () => ( {
 			type: 'READER_RECORD_TRACKS_EVENT',
 			name,
@@ -129,30 +130,32 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordFollow: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordFollow: vi.fn(),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
 	fixMe: ( { newCopy }: { newCopy: string } ) => newCopy,
 } ) );
 
 // ── TanStack / mutations ─────────────────────────────────────────────────────
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useMutation: () => ( { mutateAsync: jest.fn().mockResolvedValue( undefined ) } ),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useMutation: () => ( { mutateAsync: vi.fn().mockResolvedValue( undefined ) } ),
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
-	followReadTagMutation: jest.fn(),
-	unfollowReadTagMutation: jest.fn(),
+vi.mock( '@automattic/api-queries', () => ( {
+	followReadTagMutation: vi.fn(),
+	unfollowReadTagMutation: vi.fn(),
 } ) );
 
 // ── Shared step indicator (not under test here) ──────────────────────────────
 
-jest.mock( 'calypso/reader/components/step-indicator', () => ( {
+vi.mock( 'calypso/reader/components/step-indicator', () => ( {
 	StepIndicator: () => null,
 } ) );
 
@@ -162,10 +165,10 @@ describe( 'InterestsModal – verification nudge', () => {
 	it( 'does not render the verification nudge when promptVerification is false', () => {
 		renderWithProvider(
 			<InterestsModal
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification={ false }
 				hasFollowed={ false }
-				onFollowed={ jest.fn() }
+				onFollowed={ vi.fn() }
 			/>
 		);
 
@@ -175,10 +178,10 @@ describe( 'InterestsModal – verification nudge', () => {
 	it( 'renders the verification nudge when promptVerification is true', () => {
 		renderWithProvider(
 			<InterestsModal
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification
 				hasFollowed={ false }
-				onFollowed={ jest.fn() }
+				onFollowed={ vi.fn() }
 			/>
 		);
 
@@ -188,10 +191,10 @@ describe( 'InterestsModal – verification nudge', () => {
 	it( 'removes interest controls from keyboard access while verification is required', () => {
 		renderWithProvider(
 			<InterestsModal
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification
 				hasFollowed={ false }
-				onFollowed={ jest.fn() }
+				onFollowed={ vi.fn() }
 			/>
 		);
 
@@ -203,10 +206,10 @@ describe( 'InterestsModal – verification nudge', () => {
 	it( 'disables the Continue button when promptVerification is true', () => {
 		renderWithProvider(
 			<InterestsModal
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification
 				hasFollowed={ false }
-				onFollowed={ jest.fn() }
+				onFollowed={ vi.fn() }
 			/>
 		);
 
@@ -219,14 +222,14 @@ describe( 'InterestsModal – verification nudge', () => {
 
 	it( 'does not invoke onContinue when Continue is clicked while verification is required', async () => {
 		const user = userEvent.setup();
-		const onContinue = jest.fn();
+		const onContinue = vi.fn();
 
 		renderWithProvider(
 			<InterestsModal
 				onContinue={ onContinue }
 				promptVerification
 				hasFollowed={ false }
-				onFollowed={ jest.fn() }
+				onFollowed={ vi.fn() }
 			/>
 		);
 
@@ -240,10 +243,10 @@ describe( 'InterestsModal – verification nudge', () => {
 	it( 'disables the Continue button from tag count when promptVerification is false and no tags are followed', () => {
 		renderWithProvider(
 			<InterestsModal
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification={ false }
 				hasFollowed={ false }
-				onFollowed={ jest.fn() }
+				onFollowed={ vi.fn() }
 			/>
 		);
 
@@ -260,10 +263,10 @@ describe( 'InterestsModal – verification nudge', () => {
 		// the user already subscribed in an earlier visit to this step.
 		renderWithProvider(
 			<InterestsModal
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification={ false }
 				hasFollowed
-				onFollowed={ jest.fn() }
+				onFollowed={ vi.fn() }
 			/>
 		);
 
@@ -285,13 +288,13 @@ describe( 'InterestsModal – most subscribed pack', () => {
 	} ) );
 
 	afterEach( () => {
-		jest.mocked( getTopicGroups ).mockReset().mockReturnValue( [] );
+		vi.mocked( getTopicGroups ).mockReset().mockReturnValue( [] );
 	} );
 
 	it( 'renders the tagless pack with blog count from packBlogsById and enables Continue after subscribe', async () => {
 		const user = userEvent.setup();
 
-		jest.mocked( getTopicGroups ).mockReturnValue( [
+		vi.mocked( getTopicGroups ).mockReturnValue( [
 			{
 				id: 'most-subscribed',
 				title: 'Most Subscribed',
@@ -308,7 +311,7 @@ describe( 'InterestsModal – most subscribed pack', () => {
 		// than computed inside `InterestsModal` via `getPackBlogs`.
 		renderWithProvider(
 			<InterestsModalWithFollowedState
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification={ false }
 				packBlogsById={ new Map( [ [ 'most-subscribed', fivePackBlogs ] ] ) }
 			/>
@@ -338,20 +341,20 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 	} ) );
 
 	beforeEach( () => {
-		jest.mocked( recordTracksEvent ).mockClear();
-		jest.mocked( recordFollow ).mockClear();
-		jest.mocked( recordReaderTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordFollow ).mockClear();
+		vi.mocked( recordReaderTracksEvent ).mockClear();
 		mockFollowMutate.mockClear();
 	} );
 
 	afterEach( () => {
-		jest.mocked( getTopicGroups ).mockReset().mockReturnValue( [] );
+		vi.mocked( getTopicGroups ).mockReset().mockReturnValue( [] );
 	} );
 
 	it( 'records pack_subscribed with pack_id when a pack is subscribed', async () => {
 		const user = userEvent.setup();
 
-		jest.mocked( getTopicGroups ).mockReturnValue( [
+		vi.mocked( getTopicGroups ).mockReturnValue( [
 			{
 				id: 'most-subscribed',
 				title: 'Most Subscribed',
@@ -363,7 +366,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 
 		renderWithProvider(
 			<InterestsModalWithFollowedState
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification={ false }
 				packBlogsById={ new Map( [ [ 'most-subscribed', packBlogs ] ] ) }
 			/>
@@ -384,7 +387,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 	it( 'records calypso_reader_site_followed with reader-onboarding-modal follow_source for each pack blog', async () => {
 		const user = userEvent.setup();
 
-		jest.mocked( getTopicGroups ).mockReturnValue( [
+		vi.mocked( getTopicGroups ).mockReturnValue( [
 			{
 				id: 'most-subscribed',
 				title: 'Most Subscribed',
@@ -396,7 +399,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 
 		renderWithProvider(
 			<InterestsModalWithFollowedState
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification={ false }
 				packBlogsById={ new Map( [ [ 'most-subscribed', packBlogs ] ] ) }
 			/>
@@ -420,7 +423,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 	it( 'records calypso_reader_reader_tag_followed via recordReaderTracksEvent for each tag in the pack', async () => {
 		const user = userEvent.setup();
 
-		jest.mocked( getTopicGroups ).mockReturnValue( [
+		vi.mocked( getTopicGroups ).mockReturnValue( [
 			{
 				id: 'tech',
 				title: 'Tech',
@@ -432,7 +435,7 @@ describe( 'InterestsModal – analytics for pack subscribe', () => {
 
 		renderWithProvider(
 			<InterestsModalWithFollowedState
-				onContinue={ jest.fn() }
+				onContinue={ vi.fn() }
 				promptVerification={ false }
 				packBlogsById={ new Map( [ [ 'tech', [] ] ] ) }
 			/>

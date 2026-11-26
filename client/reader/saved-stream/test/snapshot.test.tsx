@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, within } from '@testing-library/react';
@@ -8,53 +8,57 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { type Mock, type MockInstance, vi } from 'vitest';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { INITIAL_FETCH } from 'calypso/reader/data/stream';
 import SavedPostsStream from '../main';
 import type { ReactNode } from 'react';
 
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
-jest.mock( 'calypso/lib/with-dimensions', () => ( Component: React.ComponentType ) => Component );
-jest.mock( 'calypso/components/infinite-list', () => {
-	const { forwardRef, useImperativeHandle, useRef } = jest.requireActual( 'react' );
-	return forwardRef( function InfiniteList(
-		{
-			items,
-			renderItem,
-		}: {
-			items: unknown[];
-			renderItem: ( item: unknown, idx: number ) => ReactNode;
-		},
-		ref: React.Ref< unknown >
-	) {
-		const node = useRef( null );
-		const itemsRef = useRef( items );
-		itemsRef.current = items;
-		useImperativeHandle(
-			ref,
-			() => ( {
-				getDOMNode: () => node.current,
-				getVisibleItemIndexes: () =>
-					itemsRef.current.map( ( _item: unknown, index: number ) => ( {
-						index,
-						bounds: { top: 1 + index },
-					} ) ),
-			} ),
-			[]
-		);
-		return <div ref={ node }>{ items.map( ( item, idx ) => renderItem( item, idx ) ) }</div>;
-	} );
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
+vi.mock( 'calypso/lib/with-dimensions', () => ( {
+	default: ( Component: React.ComponentType ) => Component,
+} ) );
+vi.mock( 'calypso/components/infinite-list', async () => {
+	const { forwardRef, useImperativeHandle, useRef } =
+		await vi.importActual< typeof import( 'react' ) >( 'react' );
+	return {
+		default: forwardRef( function InfiniteList(
+			{
+				items,
+				renderItem,
+			}: {
+				items: unknown[];
+				renderItem: ( item: unknown, idx: number ) => ReactNode;
+			},
+			ref: React.Ref< unknown >
+		) {
+			const node = useRef( null );
+			const itemsRef = useRef( items );
+			itemsRef.current = items;
+			useImperativeHandle(
+				ref,
+				() => ( {
+					getDOMNode: () => node.current,
+					getVisibleItemIndexes: () =>
+						itemsRef.current.map( ( _item: unknown, index: number ) => ( {
+							index,
+							bounds: { top: 1 + index },
+						} ) ),
+				} ),
+				[]
+			);
+			return <div ref={ node }>{ items.map( ( item, idx ) => renderItem( item, idx ) ) }</div>;
+		} ),
+	};
 } );
-jest.mock( '@automattic/calypso-router', () => {
-	const fn = jest.fn() as jest.Mock & { replace: jest.Mock; show: jest.Mock };
-	fn.replace = jest.fn();
-	fn.show = jest.fn();
+vi.mock( '@automattic/calypso-router', () => {
+	const fn = vi.fn() as Mock & { replace: Mock; show: Mock };
+	fn.replace = vi.fn();
+	fn.show = vi.fn();
 	return { __esModule: true, default: fn };
 } );
 
@@ -157,7 +161,7 @@ function renderSavedStream() {
 	render(
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
-				<SavedPostsStream streamKey="saved" trackScrollPage={ jest.fn() } />
+				<SavedPostsStream streamKey="saved" trackScrollPage={ vi.fn() } />
 			</Provider>
 		</QueryClientProvider>
 	);
@@ -193,10 +197,10 @@ async function selectFirstCard( user: ReturnType< typeof userEvent.setup >, titl
 const unmatchedPaths: string[] = [];
 const recordUnmatched = ( request: { path: string } ) => unmatchedPaths.push( request.path );
 const originalScrollTo = window.scrollTo;
-let windowOpen: jest.SpyInstance;
+let windowOpen: MockInstance;
 
 beforeAll( () => {
-	Object.defineProperty( window, 'scrollTo', { writable: true, value: jest.fn() } );
+	Object.defineProperty( window, 'scrollTo', { writable: true, value: vi.fn() } );
 } );
 
 afterAll( () => {
@@ -206,7 +210,7 @@ afterAll( () => {
 beforeEach( () => {
 	unmatchedPaths.length = 0;
 	nock.emitter.on( 'no match', recordUnmatched );
-	windowOpen = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+	windowOpen = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 	nock( BASE ).get( '/wpcom/v2/read/saved/keys' ).query( true ).reply( 200, SAVED_KEYS ).persist();
 } );
 
@@ -313,7 +317,7 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 		const title = await renderSnapshots( [ URL_SAVE ] );
 		const user = userEvent.setup();
 		await selectFirstCard( user, title );
-		const titleClick = jest.fn();
+		const titleClick = vi.fn();
 		title.addEventListener( 'click', titleClick );
 
 		await user.keyboard( '{Enter}' );

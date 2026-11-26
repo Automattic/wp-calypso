@@ -1,49 +1,51 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
+import { useSelector } from 'calypso/state';
 import UserPosts from '../posts';
 import type { ReaderUser } from '@automattic/api-core';
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
 } ) );
 
-jest.mock(
-	'calypso/reader/stream',
-	() =>
-		( {
-			streamKey,
-			className,
-			emptyContent,
-			showFollowButton,
-			showSiteNameOnCards,
-			sidebarTabTitle,
-			useCompactCards,
-		} ) => (
-			<div data-testid="reader-stream" data-stream-key={ streamKey } className={ className }>
-				<div data-testid="stream-props">
-					<span data-prop="showFollowButton">{ String( showFollowButton ) }</span>
-					<span data-prop="showSiteNameOnCards">{ String( showSiteNameOnCards ) }</span>
-					<span data-prop="sidebarTabTitle">{ sidebarTabTitle }</span>
-					<span data-prop="useCompactCards">{ String( useCompactCards ) }</span>
-				</div>
-				{ emptyContent && <div data-testid="empty-content">{ emptyContent() }</div> }
+vi.mock( 'calypso/reader/stream', () => ( {
+	default: ( {
+		streamKey,
+		className,
+		emptyContent,
+		showFollowButton,
+		showSiteNameOnCards,
+		sidebarTabTitle,
+		useCompactCards,
+	} ) => (
+		<div data-testid="reader-stream" data-stream-key={ streamKey } className={ className }>
+			<div data-testid="stream-props">
+				<span data-prop="showFollowButton">{ String( showFollowButton ) }</span>
+				<span data-prop="showSiteNameOnCards">{ String( showSiteNameOnCards ) }</span>
+				<span data-prop="sidebarTabTitle">{ sidebarTabTitle }</span>
+				<span data-prop="useCompactCards">{ String( useCompactCards ) }</span>
 			</div>
-		)
-);
+			{ emptyContent && <div data-testid="empty-content">{ emptyContent() }</div> }
+		</div>
+	),
+} ) );
 
-jest.mock( 'calypso/components/empty-content', () => ( { icon, line } ) => (
-	<div data-testid="empty-content-component">
-		{ icon && <div data-testid="empty-content-icon">{ icon }</div> }
-		{ line && <p data-testid="empty-content-line">{ line }</p> }
-	</div>
-) );
+vi.mock( 'calypso/components/empty-content', () => ( {
+	default: ( { icon, line } ) => (
+		<div data-testid="empty-content-component">
+			{ icon && <div data-testid="empty-content-icon">{ icon }</div> }
+			{ line && <p data-testid="empty-content-line">{ line }</p> }
+		</div>
+	),
+} ) );
 
-jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
+vi.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
 	__esModule: true,
 	default: ( { title }: { title: string } ) => (
 		<div data-testid="private-tab-notice">{ title }</div>
@@ -51,7 +53,6 @@ jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( 
 } ) );
 
 describe( 'UserPosts', () => {
-	const { useSelector } = jest.requireMock( 'calypso/state' );
 	const defaultUser: ReaderUser = {
 		ID: 123,
 		user_login: 'test_user',
@@ -65,9 +66,9 @@ describe( 'UserPosts', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Default to a public viewer (not the profile owner).
-		useSelector.mockReturnValue( null );
+		vi.mocked( useSelector ).mockReturnValue( null );
 	} );
 
 	test( 'should render Stream component with correct props', () => {
@@ -124,7 +125,7 @@ describe( 'UserPosts', () => {
 	} );
 
 	test( 'should render the private-tab notice for the profile owner', () => {
-		useSelector.mockReturnValue( { username: defaultUser.user_login } );
+		vi.mocked( useSelector ).mockReturnValue( { username: defaultUser.user_login } );
 
 		render( <UserPosts user={ defaultUser } /> );
 

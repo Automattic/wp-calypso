@@ -3,6 +3,7 @@ import {
 	recordTrainTracksInteract,
 	recordTrainTracksRender,
 } from '@automattic/calypso-analytics';
+import { vi } from 'vitest';
 import {
 	NEW_BLOGS_ACTIONS,
 	NEW_BLOGS_FETCH_ALGO,
@@ -13,16 +14,16 @@ import {
 } from '../tracks';
 import type { ReadNewBlogsRec } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	getNewRailcarId: jest.fn( () => 'abc123-recommendation' ),
-	recordTrainTracksRender: jest.fn(),
-	recordTrainTracksInteract: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	getNewRailcarId: vi.fn( () => 'abc123-recommendation' ),
+	recordTrainTracksRender: vi.fn(),
+	recordTrainTracksInteract: vi.fn(),
 } ) );
 
 const bare: ReadNewBlogsRec = { blogId: 7, postId: 70, score: 0.5 };
 
 describe( 'new-blogs tracks', () => {
-	afterEach( () => jest.clearAllMocks() );
+	afterEach( () => vi.clearAllMocks() );
 
 	test( 'buildRailcar mints an id and stamps the recommender + rank', () => {
 		expect( buildRailcar( bare, 3 ) ).toEqual( {

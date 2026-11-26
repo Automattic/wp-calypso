@@ -1,5 +1,7 @@
-const { app, session } = require( 'electron' );
-const log = require( '../../lib/logger' )( 'desktop:cookie-flush' );
+import { app, session } from 'electron';
+import makeLogger from '../../lib/logger';
+
+const log = makeLogger( 'desktop:cookie-flush' );
 
 // Never hold up quitting for longer than this, even if the flush stalls.
 const FLUSH_TIMEOUT_MS = 2000;
@@ -9,7 +11,7 @@ const FLUSH_TIMEOUT_MS = 2000;
  * (e.g. the login cookie) can be lost. Defer the first `before-quit` until the
  * cookie store has been flushed, then resume quitting.
  */
-module.exports = function () {
+export default function () {
 	let flushing = false;
 	let resumingQuit = false;
 
@@ -58,4 +60,4 @@ module.exports = function () {
 				app.quit();
 			} );
 	} );
-};
+}

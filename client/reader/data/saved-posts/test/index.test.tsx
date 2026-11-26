@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { readSavedKeysQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { canSavePost, savedKeyForPost, savedKeysForPost, useIsPostSaved, useSavePost } from '..';
 import type { ReadSavedKeysResponse } from '@automattic/api-core';
 import type { Post } from 'calypso/reader/data/post';
@@ -331,7 +332,7 @@ describe( 'useSavePost', () => {
 			.reply( 200, { saved: false, key: { blog_id: 123, post_id: 45 }, total: 1 } )
 			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
 			.reply( 200, { saved: false, key: { feed_item_id: 6000 }, total: 0 } );
-		const onSuccess = jest.fn();
+		const onSuccess = vi.fn();
 		const result = renderSavePost( client, JETPACK_POST );
 
 		act( () => result.current.unsavePost( JETPACK_POST, { onSuccess } ) );
@@ -354,7 +355,7 @@ describe( 'useSavePost', () => {
 				.reply( blogPostStatus )
 				.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
 				.reply( feedItemStatus );
-			const onError = jest.fn();
+			const onError = vi.fn();
 			const result = renderSavePost( client, JETPACK_POST );
 
 			act( () => result.current.unsavePost( JETPACK_POST, { onError } ) );
@@ -392,7 +393,7 @@ describe( 'useSavePost', () => {
 		nock( BASE )
 			.post( '/wpcom/v2/read/saved/new' )
 			.reply( 403, { error: 'saved_limit_reached', message: 'Limit reached.' } );
-		const onError = jest.fn();
+		const onError = vi.fn();
 		const result = renderSavePost( client );
 
 		act( () => result.current.savePost( WPCOM_POST, { onError } ) );

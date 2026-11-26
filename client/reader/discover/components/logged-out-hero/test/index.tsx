@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { DiscoverLoggedOutHero } from '../index';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 describe( 'DiscoverLoggedOutHero', () => {

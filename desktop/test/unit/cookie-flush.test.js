@@ -1,15 +1,18 @@
+import { vi } from 'vitest';
 const { EventEmitter } = require( 'events' );
 
-jest.mock( '../../app/lib/logger', () => () => ( {
-	info: jest.fn(),
-	warn: jest.fn(),
-	error: jest.fn(),
+vi.mock( '../../app/lib/logger', () => ( {
+	default: () => ( {
+		info: vi.fn(),
+		warn: vi.fn(),
+		error: vi.fn(),
+	} ),
 } ) );
 
 function createApp() {
 	const app = new EventEmitter();
-	app.quit = jest.fn( () => {
-		const event = { defaultPrevented: false, preventDefault: jest.fn() };
+	app.quit = vi.fn( () => {
+		const event = { defaultPrevented: false, preventDefault: vi.fn() };
 		event.preventDefault.mockImplementation( () => ( event.defaultPrevented = true ) );
 		app.emit( 'before-quit', event );
 		return event;
@@ -23,19 +26,19 @@ describe( 'cookie-flush', () => {
 	let flushStore;
 	let electron;
 
-	beforeEach( () => {
-		jest.resetModules();
-		flushStore = jest.fn( () => Promise.resolve() );
+	beforeEach( async () => {
+		vi.resetModules();
+		flushStore = vi.fn( () => Promise.resolve() );
 		electron = {
 			app: createApp(),
 			session: { defaultSession: { cookies: { flushStore } } },
 		};
-		jest.doMock( 'electron', () => electron, { virtual: true } );
-		require( '../../app/app-handlers/cookie-flush' )();
+		vi.doMock( 'electron', () => electron );
+		( await import( '../../app/app-handlers/cookie-flush' ) ).default();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'defers the quit until cookies are flushed, then quits again', async () => {
@@ -58,7 +61,7 @@ describe( 'cookie-flush', () => {
 	} );
 
 	it( 'does not start a second flush while one is in progress', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		flushStore.mockReturnValue( new Promise( () => {} ) );
 
 		electron.app.quit();
@@ -90,14 +93,14 @@ describe( 'cookie-flush', () => {
 	} );
 
 	it( 'quits after a timeout when the flush never finishes', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		flushStore.mockReturnValue( new Promise( () => {} ) );
 
 		electron.app.quit();
-		await jest.advanceTimersByTimeAsync( 1999 );
+		await vi.advanceTimersByTimeAsync( 1999 );
 		expect( electron.app.quit ).toHaveBeenCalledTimes( 1 );
 
-		await jest.advanceTimersByTimeAsync( 1 );
+		await vi.advanceTimersByTimeAsync( 1 );
 		expect( electron.app.quit ).toHaveBeenCalledTimes( 2 );
 		expect( electron.app.quit.mock.results[ 1 ].value.defaultPrevented ).toBe( false );
 	} );

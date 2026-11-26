@@ -1,50 +1,53 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { redirectLoggedOutToDiscoverTags } from 'calypso/reader/controller';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import initTags from '../index';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	getAnyLanguageRouteParam: () => ':lang([a-z]{2,3}|[a-z]{2}-[a-z]{2})',
 	getLanguageRouteParam: () => ':lang(en|fr)?',
 } ) );
 
-jest.mock( 'calypso/controller', () => ( {
-	makeLayout: jest.fn(),
-	redirectInvalidLanguage: jest.fn(),
-	redirectWithoutLocaleParamInFrontIfLoggedIn: jest.fn(),
-	render: jest.fn(),
+vi.mock( 'calypso/controller', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		makeLayout: vi.fn(),
+		redirectInvalidLanguage: vi.fn(),
+		redirectWithoutLocaleParamInFrontIfLoggedIn: vi.fn(),
+		render: vi.fn(),
+	} )
+);
+
+vi.mock( 'calypso/controller/shared', () => ( {
+	setLocaleMiddleware: vi.fn( () => vi.fn() ),
 } ) );
 
-jest.mock( 'calypso/controller/shared', () => ( {
-	setLocaleMiddleware: jest.fn( () => jest.fn() ),
+vi.mock( 'calypso/reader/controller', () => ( {
+	redirectLoggedOutToDiscoverTags: vi.fn(),
+	sidebar: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/controller', () => ( {
-	redirectLoggedOutToDiscoverTags: jest.fn(),
-	sidebar: jest.fn(),
+vi.mock( 'calypso/reader/lib/reader-router', () => ( {
+	readerNotFound: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/lib/reader-router', () => ( {
-	readerNotFound: jest.fn(),
-} ) );
-
-jest.mock( '../controller', () => ( {
-	fetchAlphabeticTags: jest.fn(),
-	fetchTrendingTags: jest.fn(),
-	tagsListing: jest.fn(),
+vi.mock( '../controller', () => ( {
+	fetchAlphabeticTags: vi.fn(),
+	fetchTrendingTags: vi.fn(),
+	tagsListing: vi.fn(),
 } ) );
 
 describe( 'reader tags routes', () => {
 	it( 'registers the tags catch-all through the injected router', () => {
-		const router = jest.fn();
+		const router = vi.fn();
 
 		initTags( router );
 

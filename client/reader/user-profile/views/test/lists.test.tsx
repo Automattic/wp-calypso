@@ -1,21 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { readUserListsQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
+import { vi } from 'vitest';
 import { List } from 'calypso/reader/list-manage/types';
 import { UserLists } from '../lists';
 import type { ReaderUser } from '@automattic/api-core';
 
-jest.mock( 'calypso/components/empty-content', () => ( { icon, line }: any ) => (
-	<div data-testid="empty-content">
-		{ icon && <div data-testid="empty-content-icon">{ icon }</div> }
-		{ line && <p data-testid="empty-content-line">{ line }</p> }
-	</div>
-) );
+vi.mock( 'calypso/components/empty-content', () => ( {
+	default: ( { icon, line }: any ) => (
+		<div data-testid="empty-content">
+			{ icon && <div data-testid="empty-content-icon">{ icon }</div> }
+			{ line && <p data-testid="empty-content-line">{ line }</p> }
+		</div>
+	),
+} ) );
 
 const defaultUser: ReaderUser = {
 	ID: 123,

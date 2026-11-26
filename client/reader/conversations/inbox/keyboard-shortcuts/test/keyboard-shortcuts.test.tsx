@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { KeyboardShortcuts } from '..';
 
 describe( 'KeyboardShortcuts', () => {
 	it( 'asks to open when the button is clicked', async () => {
 		const user = userEvent.setup();
-		const onToggle = jest.fn();
+		const onToggle = vi.fn();
 		render( <KeyboardShortcuts isOpen={ false } onToggle={ onToggle } /> );
 
 		await user.click( screen.getByRole( 'button', { name: 'Keyboard shortcuts' } ) );
@@ -17,7 +18,7 @@ describe( 'KeyboardShortcuts', () => {
 	} );
 
 	it( 'lists every shortcut while open', () => {
-		render( <KeyboardShortcuts isOpen onToggle={ jest.fn() } /> );
+		render( <KeyboardShortcuts isOpen onToggle={ vi.fn() } /> );
 
 		for ( const label of [
 			'Next',
@@ -34,7 +35,7 @@ describe( 'KeyboardShortcuts', () => {
 	} );
 
 	it( 'hides the list while closed', () => {
-		render( <KeyboardShortcuts isOpen={ false } onToggle={ jest.fn() } /> );
+		render( <KeyboardShortcuts isOpen={ false } onToggle={ vi.fn() } /> );
 
 		expect( screen.queryByText( 'View unread' ) ).not.toBeInTheDocument();
 	} );

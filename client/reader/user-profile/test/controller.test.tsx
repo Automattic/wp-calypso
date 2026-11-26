@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { redirectMeToCurrentUser } from '../controller';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { redirect: jest.fn() },
+	default: { redirect: vi.fn() },
 } ) );
 
 const mockStore = configureStore();
 
 describe( 'redirectMeToCurrentUser', () => {
-	const next = jest.fn();
+	const next = vi.fn();
 
 	const buildContext = ( path: string, username: string | null = 'deansas' ) =>
 		( {
@@ -28,7 +29,7 @@ describe( 'redirectMeToCurrentUser', () => {
 		} ) as unknown as Parameters< typeof redirectMeToCurrentUser >[ 0 ];
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'redirects /reader/users/me to the current user profile path', () => {

@@ -15,7 +15,8 @@
 			"node",
 			"@types/gtag.js",
 			"@emotion/react/types/css-prop",
-			"@testing-library/jest-dom"
+			"vitest/globals",
+			"@testing-library/jest-dom/vitest"
 		],
 		"paths": {
 			"calypso/*": [ "./*" ]

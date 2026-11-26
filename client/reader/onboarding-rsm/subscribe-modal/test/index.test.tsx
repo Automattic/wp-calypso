@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import { prefetchInfiniteStream } from 'calypso/reader/data/stream';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import SubscribeModal from '../index';
@@ -23,29 +24,29 @@ const defaultRecommendationsHookValue = {
 	isValidating: false,
 	hasNoRecommendations: false,
 	followedTagSlugs: [] as string[],
-	markSessionFollow: jest.fn(),
+	markSessionFollow: vi.fn(),
 };
 
-const mockedRecommendationsHook = jest.fn( () => defaultRecommendationsHookValue );
+const mockedRecommendationsHook = vi.fn( () => defaultRecommendationsHookValue );
 
-jest.mock( '../use-subscribe-recommendations', () => ( {
+vi.mock( '../use-subscribe-recommendations', () => ( {
 	useSubscribeRecommendations: () => mockedRecommendationsHook(),
 } ) );
 
 // ── Heavy UI dependencies ────────────────────────────────────────────────────
 
-jest.mock( 'calypso/reader/stream', () => ( {
+vi.mock( 'calypso/reader/stream', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/reader/data/stream', () => ( {
-	prefetchInfiniteStream: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/reader/data/stream', () => ( {
+	prefetchInfiniteStream: vi.fn( () => Promise.resolve() ),
 } ) );
 
 // Render the list item as a button so tests can click it and exercise the
 // `onItemClick` callback (which is what fires the site-previewed event).
-jest.mock( 'calypso/blocks/reader-subscription-list-item/connected', () => ( {
+vi.mock( 'calypso/blocks/reader-subscription-list-item/connected', () => ( {
 	__esModule: true,
 	default: ( {
 		feedId,
@@ -62,9 +63,11 @@ jest.mock( 'calypso/blocks/reader-subscription-list-item/connected', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/blocks/site-icon', () => ( {
-	SiteIcon: () => null,
-} ) );
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SiteIcon: () => null,
+	} )
+);
 
 // Track each mount of the preview follow button (keyed by feedId) so a test
 // can assert that switching previews remounts it. The `key={ feed_ID }` on the
@@ -83,35 +86,35 @@ function MockFollowButton( { feedId }: { feedId: number } ) {
 	return null;
 }
 
-jest.mock( 'calypso/reader/follow-button', () => ( {
+vi.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
 	default: MockFollowButton,
 } ) );
 
-jest.mock( 'calypso/reader/controller-helper', () => ( {
-	trackScrollPage: jest.fn(),
+vi.mock( 'calypso/reader/controller-helper', () => ( {
+	trackScrollPage: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	LoadingPlaceholder: () => null,
 } ) );
 
 // ── Give the nudge a stable test-id so tests can assert on its presence ──────
 
-jest.mock( '../verificationNudge', () => ( {
+vi.mock( '../verificationNudge', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="subscribe-verification-nudge" />,
 } ) );
 
 // ── Analytics ────────────────────────────────────────────────────────────────
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 // ── Shared step indicator (not under test here) ──────────────────────────────
 
-jest.mock( 'calypso/reader/components/step-indicator', () => ( {
+vi.mock( 'calypso/reader/components/step-indicator', () => ( {
 	StepIndicator: () => null,
 } ) );
 
@@ -119,19 +122,19 @@ jest.mock( 'calypso/reader/components/step-indicator', () => ( {
 
 describe( 'SubscribeModal – verification nudge', () => {
 	it( 'does not render the verification nudge when promptVerification is false', () => {
-		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider( <SubscribeModal onFinish={ vi.fn() } promptVerification={ false } /> );
 
 		expect( screen.queryByTestId( 'subscribe-verification-nudge' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders the verification nudge when promptVerification is true', () => {
-		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification /> );
+		renderWithProvider( <SubscribeModal onFinish={ vi.fn() } promptVerification /> );
 
 		expect( screen.getByTestId( 'subscribe-verification-nudge' ) ).toBeVisible();
 	} );
 
 	it( 'disables the Finish button when promptVerification is true', () => {
-		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification /> );
+		renderWithProvider( <SubscribeModal onFinish={ vi.fn() } promptVerification /> );
 
 		// accessibleWhenDisabled renders aria-disabled instead of the native disabled attribute.
 		expect( screen.getByRole( 'button', { name: 'Finish' } ) ).toHaveAttribute(
@@ -142,7 +145,7 @@ describe( 'SubscribeModal – verification nudge', () => {
 
 	it( 'does not invoke onFinish when Finish is clicked while verification is required', async () => {
 		const user = userEvent.setup();
-		const onFinish = jest.fn();
+		const onFinish = vi.fn();
 
 		renderWithProvider( <SubscribeModal onFinish={ onFinish } promptVerification /> );
 
@@ -153,7 +156,7 @@ describe( 'SubscribeModal – verification nudge', () => {
 
 	it( 'invokes onFinish when Finish is clicked and verification is not required', async () => {
 		const user = userEvent.setup();
-		const onFinish = jest.fn();
+		const onFinish = vi.fn();
 
 		renderWithProvider( <SubscribeModal onFinish={ onFinish } promptVerification={ false } /> );
 
@@ -187,7 +190,7 @@ describe( 'SubscribeModal – verification nudge', () => {
 			recommendations,
 		} );
 
-		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification /> );
+		renderWithProvider( <SubscribeModal onFinish={ vi.fn() } promptVerification /> );
 
 		const content = document.querySelector( '.subscribe-modal__content' );
 		expect( content ).toHaveAttribute( 'inert' );
@@ -197,7 +200,7 @@ describe( 'SubscribeModal – verification nudge', () => {
 	} );
 
 	it( 'enables the Finish button when promptVerification is false', () => {
-		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider( <SubscribeModal onFinish={ vi.fn() } promptVerification={ false } /> );
 
 		const button = screen.getByRole( 'button', { name: 'Finish' } );
 		expect( button ).not.toHaveAttribute( 'aria-disabled', 'true' );
@@ -217,8 +220,8 @@ describe( 'SubscribeModal – site preview analytics', () => {
 	} );
 
 	beforeEach( () => {
-		jest.mocked( recordTracksEvent ).mockClear();
-		jest.mocked( prefetchInfiniteStream ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( prefetchInfiniteStream ).mockClear();
 		mockedRecommendationsHook.mockReturnValue( defaultRecommendationsHookValue );
 		mockFollowButtonMounts.length = 0;
 	} );
@@ -232,7 +235,7 @@ describe( 'SubscribeModal – site preview analytics', () => {
 			recommendations,
 		} );
 
-		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider( <SubscribeModal onFinish={ vi.fn() } promptVerification={ false } /> );
 
 		// The first recommendation is auto-selected on mount.
 		expect( mockFollowButtonMounts ).toEqual( [ 100 ] );
@@ -258,12 +261,12 @@ describe( 'SubscribeModal – site preview analytics', () => {
 			recommendations,
 		} );
 
-		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider( <SubscribeModal onFinish={ vi.fn() } promptVerification={ false } /> );
 
 		// First recommendation is auto-selected on mount, so clicking it again is
 		// a no-op and must NOT fire the previewed event. Clicking a *different*
 		// site is what should fire it.
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByTestId( 'reader-list-item-101' ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -285,11 +288,11 @@ describe( 'SubscribeModal – site preview analytics', () => {
 			recommendations,
 		} );
 
-		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider( <SubscribeModal onFinish={ vi.fn() } promptVerification={ false } /> );
 
 		// First (and only) recommendation is auto-selected; clicking it should not
 		// fire a duplicate previewed event.
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByTestId( 'reader-list-item-100' ) );
 
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
@@ -307,7 +310,7 @@ describe( 'SubscribeModal – site preview analytics', () => {
 		} );
 
 		const { container } = renderWithProvider(
-			<SubscribeModal onFinish={ jest.fn() } promptVerification={ false } />
+			<SubscribeModal onFinish={ vi.fn() } promptVerification={ false } />
 		);
 
 		const scrollContainer = container.querySelector< HTMLElement >(
@@ -338,7 +341,7 @@ describe( 'SubscribeModal – site preview analytics', () => {
 			recommendations,
 		} );
 
-		renderWithProvider( <SubscribeModal onFinish={ jest.fn() } promptVerification={ false } /> );
+		renderWithProvider( <SubscribeModal onFinish={ vi.fn() } promptVerification={ false } /> );
 
 		expect( prefetchInfiniteStream ).toHaveBeenCalledWith( expect.anything(), expect.anything(), {
 			streamKey: 'feed:100',

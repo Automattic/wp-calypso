@@ -1,26 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import MoreMenuActions from '../index';
 
-const mockMarkAllAsSeen = jest.fn();
+const mockMarkAllAsSeen = vi.fn();
 let mockSeenPostsUiEnabled = true;
-jest.mock( 'calypso/reader/data/seen-posts', () => ( {
+vi.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
 	useSeenPostsPreferenceEnabled: () => mockSeenPostsUiEnabled,
 } ) );
 
-const mockRecordReaderTracksEvent = jest.fn();
-jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
+const mockRecordReaderTracksEvent = vi.fn();
+vi.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 
-const mockUnsubscribeWithUndo = jest.fn();
-jest.mock( 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo', () => ( {
+const mockUnsubscribeWithUndo = vi.fn();
+vi.mock( 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo', () => ( {
 	useUnsubscribeWithUndo: () => mockUnsubscribeWithUndo,
 } ) );
 
@@ -63,7 +64,7 @@ async function openMoreActionsMenu( user: ReturnType< typeof userEvent.setup > )
 
 describe( 'MoreMenuActions', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSeenPostsUiEnabled = true;
 	} );
 
@@ -188,7 +189,7 @@ describe( 'MoreMenuActions', () => {
 
 		test( 'unsubscribes the feed and notifies the host', async () => {
 			const user = userEvent.setup();
-			const onUnsubscribed = jest.fn();
+			const onUnsubscribed = vi.fn();
 			renderMoreMenuActions( { ...singleFeedProps, onUnsubscribed } );
 
 			await openMoreActionsMenu( user );
