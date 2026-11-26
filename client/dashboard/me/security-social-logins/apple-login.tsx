@@ -37,16 +37,10 @@ export default function AppleLogin( {
 		};
 
 		if ( ! windowObj.AppleID ) {
-			try {
-				await loadScript( APPLE_CLIENT_URL );
-			} catch {
-				// Content blockers often block Apple's script; the button then does nothing.
-				setShowLoading( false );
-				return null;
-			}
+			await loadScript( APPLE_CLIENT_URL ).catch( () => {} );
 		}
 
-		// Some blockers serve an empty stand-in, which loads without defining AppleID.
+		// Content blockers block Apple's script or serve an empty stand-in; the button then does nothing.
 		if ( ! windowObj.AppleID ) {
 			setShowLoading( false );
 			return null;

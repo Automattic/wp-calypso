@@ -86,15 +86,10 @@ export class AppleLoginButton extends Component {
 		}
 
 		if ( ! window.AppleID ) {
-			try {
-				await loadScript( appleClientUrl );
-			} catch {
-				// Content blockers often block Apple's script; the button then does nothing.
-				return null;
-			}
+			await loadScript( appleClientUrl ).catch( () => {} );
 		}
 
-		// Some blockers serve an empty stand-in, which loads without defining AppleID.
+		// Content blockers block Apple's script or serve an empty stand-in; the button then does nothing.
 		if ( ! window.AppleID ) {
 			return null;
 		}
