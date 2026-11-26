@@ -190,8 +190,8 @@ describe( 'Snackbars', () => {
 			{
 				// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
 				snackbar: {
-					success: ( data: { name: string }, enabled: boolean ) =>
-						`${ data.name } ${ enabled ? 'enabled' : 'disabled' }.`,
+					success: ( data, enabled ) =>
+						`${ ( data as { name: string } ).name } ${ enabled ? 'enabled' : 'disabled' }.`,
 				},
 			},
 			undefined,
@@ -211,7 +211,7 @@ describe( 'Snackbars', () => {
 			{
 				// eslint-disable-next-line no-restricted-syntax -- see above: we're testing the snackbar behaviour itself.
 				snackbar: {
-					error: ( error: Error, email: string ) => `${ error.message } (${ email })`,
+					error: ( error, email ) => `${ ( error as Error ).message } (${ email })`,
 				},
 			},
 			new Error( 'Invalid email.' ),

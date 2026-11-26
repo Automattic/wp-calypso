@@ -17,10 +17,7 @@ export interface Snackbar< TData = unknown, TError = Error, TVariables = unknown
 
 declare module '@automattic/api-queries' {
 	interface ApiQueriesMutationMeta {
-		// `meta` is shared by every mutation, so it can't carry one mutation's types.
-		// `withSnackbar()` checks them against the factory instead.
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		snackbar?: Snackbar< any, any, any >;
+		snackbar?: Snackbar< unknown, unknown, unknown >;
 	}
 }
 
@@ -38,6 +35,10 @@ export function withSnackbar< T extends { meta?: ApiQueriesMutationMeta } >(
 	options: T,
 	snackbar: SnackbarFor< T >
 ): T {
+	// `meta` is shared by every mutation, so it can't keep this one's types. The
+	// callbacks were checked against the factory, and the handler only ever calls
+	// them with this mutation's own result.
+	const stored = snackbar as Snackbar< unknown, unknown, unknown >;
 	// eslint-disable-next-line no-restricted-syntax -- this is the merge the rule points at.
-	return { ...options, meta: { ...options.meta, snackbar } };
+	return { ...options, meta: { ...options.meta, snackbar: stored } };
 }
