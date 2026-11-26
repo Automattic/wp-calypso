@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { Callout } from 'calypso/dashboard/components/callout';
-import HostingFeatureList from 'calypso/dashboard/sites/hosting-feature-list';
+import HostingFeatureList from 'calypso/dashboard/sites/hosting-features/components/hosting-feature-list';
 import {
 	isAtomicTransferInProgress,
 	isAtomicTransferredSite,

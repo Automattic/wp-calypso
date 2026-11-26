@@ -3,11 +3,11 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { useHelpCenter } from '../../app/help-center';
-import { ButtonStack } from '../../components/button-stack';
-import ComponentViewTracker from '../../components/component-view-tracker';
-import { Text } from '../../components/text';
+import { useAnalytics } from '../../../../app/analytics';
+import { useHelpCenter } from '../../../../app/help-center';
+import { ButtonStack } from '../../../../components/button-stack';
+import ComponentViewTracker from '../../../../components/component-view-tracker';
+import { Text } from '../../../../components/text';
 import { DataCenterForm } from './data-center-form';
 import {
 	hasAnyBlockingError as getHasAnyBlockingError,

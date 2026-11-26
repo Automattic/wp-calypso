@@ -15,7 +15,7 @@ import InlineSupportLink from '../../../../../../components/inline-support-link'
 import Notice from '../../../../../../components/notice';
 import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { BetaProgramNotice } from '../../../../../../sites/wordpress-version/components/beta-program-notice';
 import { EarlyAccessNotice } from '../../../../../../sites/wordpress-version/components/early-access-notice';
 import { LatestVersionNotice } from '../../../../../../sites/wordpress-version/components/latest-version-notice';

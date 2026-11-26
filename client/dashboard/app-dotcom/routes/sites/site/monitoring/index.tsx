@@ -15,7 +15,7 @@ import { siteRoute } from '../../../../../app/router/sites';
 import { PageHeader } from '../../../../../components/page-header';
 import PageLayout from '../../../../../components/page-layout';
 import { SitesNoticeArbiter } from '../../../../../sites/components/notice-arbiter';
-import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { getMonitoringCalloutProps } from '../../../../../sites/monitoring/components/monitoring-callout';
 import MonitoringHttpResponsesCard from '../../../../../sites/monitoring/components/monitoring-http-responses-card';
 import {

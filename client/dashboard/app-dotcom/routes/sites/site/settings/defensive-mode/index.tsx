@@ -25,7 +25,7 @@ import Notice, { NoticeActionButton } from '../../../../../../components/notice'
 import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
 import { SectionHeader } from '../../../../../../components/section-header';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { wpcomLink } from '../../../../../../utils/link';
 import { hasHostingFeature } from '../../../../../../utils/site-features';
 import type { DefensiveModeSettingsUpdate } from '@automattic/api-core';

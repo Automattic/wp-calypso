@@ -11,7 +11,7 @@ import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
 import { getBackendCalloutProps } from '../../../../../../sites/apm/components/backend-callout';
 import { hasBackendAccess } from '../../../../../../sites/apm/utils/backend-access';
-import UpsellCallout from '../../../../../../sites/hosting-feature-gated-with-callout/upsell';
+import UpsellCallout from '../../../../../../sites/hosting-features/components/hosting-feature-upsell-callout';
 
 function ApmToggle( { site }: { site: Site } ) {
 	const enabled = !! site.options?.apm_enabled;
