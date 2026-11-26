@@ -15,22 +15,6 @@ export function isConfirmSubscriptionRedirect( url ) {
 	}
 }
 
-export function getConfirmSubscriptionEmail( params, redirectTo ) {
-	if ( typeof params?.email === 'string' && params.email.trim() ) {
-		return params.email;
-	}
-
-	if ( ! redirectTo || typeof redirectTo !== 'string' ) {
-		return '';
-	}
-
-	try {
-		return new URL( redirectTo ).searchParams.get( 'email' ) || '';
-	} catch {
-		return '';
-	}
-}
-
 export function isDifferentEmail( currentUserEmail, linkEmail ) {
 	const normalize = ( email ) => ( typeof email === 'string' ? email.trim().toLowerCase() : '' );
 	const normalizedCurrent = normalize( currentUserEmail );

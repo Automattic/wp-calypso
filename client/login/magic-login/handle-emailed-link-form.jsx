@@ -114,8 +114,7 @@ export class HandleEmailedLinkForm extends Component {
 	}
 
 	isConfirmSubscriptionAccountMismatch() {
-		return Boolean(
-			this.props.activate &&
+		return (
 			isConfirmSubscriptionRedirect( this.props.redirectTo ) &&
 			isDifferentEmail( this.props.currentUser?.email, this.props.emailAddress )
 		);
@@ -328,16 +327,9 @@ export class HandleEmailedLinkForm extends Component {
 		if ( isConfirmSubscriptionMismatch ) {
 			return (
 				<EmptyContent
-					action={
-						<Button
-							primary
-							className="empty-content__action"
-							disabled={ this.state.hasSubmitted }
-							onClick={ this.handleSubmit }
-						>
-							{ translate( 'Switch accounts and confirm' ) }
-						</Button>
-					}
+					action={ translate( 'Switch accounts and confirm' ) }
+					actionCallback={ this.handleSubmit }
+					actionDisabled={ this.state.hasSubmitted }
 					className="magic-login__handle-link"
 					line={
 						<>
