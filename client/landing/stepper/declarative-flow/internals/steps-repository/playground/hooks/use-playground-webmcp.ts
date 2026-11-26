@@ -1,6 +1,13 @@
+import { isAutomatticianQuery } from '@automattic/api-queries';
+import { loadScript } from '@automattic/load-script';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { PlaygroundClient } from '../lib/types';
+
+const WEBMCP_ORIGIN_TRIAL_SCRIPT = 'https://s0.wp.com/wp-content/js/webmcp-origin-trial.js';
 
 export function usePlaygroundWebMcp( {
 	client,
@@ -11,11 +18,16 @@ export function usePlaygroundWebMcp( {
 	slug: string | null;
 	launch: () => boolean;
 } ): void {
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const { data: isAutomattician = false } = useQuery( {
+		...isAutomatticianQuery(),
+		enabled: isLoggedIn && Boolean( client && slug ),
+	} );
 	const launchRef = useRef( launch );
 	launchRef.current = launch;
 
 	useEffect( () => {
-		if ( ! client || ! slug || ! document.modelContext?.registerTool ) {
+		if ( ! client || ! slug || ! isLoggedIn || ! isAutomattician ) {
 			return;
 		}
 
@@ -24,6 +36,14 @@ export function usePlaygroundWebMcp( {
 		let unregisterTools: ( () => void ) | undefined;
 
 		void ( async () => {
+			if ( ! document.modelContext?.registerTool ) {
+				await loadScript( WEBMCP_ORIGIN_TRIAL_SCRIPT );
+			}
+			const modelContext = document.modelContext;
+			if ( controller.signal.aborted || ! modelContext?.registerTool ) {
+				return;
+			}
+
 			const { registerWebMCPTools, unregisterWebMCPTools, startWebMCPSiteToolProxy } = await import(
 				/* webpackChunkName: "playground-webmcp" */ '@wp-playground/mcp/client'
 			);
@@ -38,7 +58,7 @@ export function usePlaygroundWebMcp( {
 
 			const proxy = startWebMCPSiteToolProxy( playground );
 			stopProxy = () => proxy.stop();
-			const launchRegistration = document.modelContext?.registerTool(
+			const launchRegistration = modelContext.registerTool(
 				{
 					name: 'wpcom_launch_site',
 					description:
@@ -79,5 +99,5 @@ export function usePlaygroundWebMcp( {
 			unregisterTools?.();
 			stopProxy?.();
 		};
-	}, [ client, slug ] );
+	}, [ client, slug, isLoggedIn, isAutomattician ] );
 }
