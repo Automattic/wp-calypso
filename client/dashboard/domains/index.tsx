@@ -67,12 +67,19 @@ function Domains() {
 		queryParams: searchParams,
 		sanitizeFields: sanitizeDomainFields,
 	} );
-	const view = sanitizeDomainsListPageSize( sanitizeDomainsListLayout( persistentView ) );
+	const savedView = sanitizeDomainsListPageSize( sanitizeDomainsListLayout( persistentView ) );
 	const {
+		view,
+		getViewToSave,
 		layouts,
 		recordLayoutChoice,
 		resetView: resetViewAndLayoutChoice,
-	} = useDomainsListLayouts( { slug: 'domains', domainCount: domains.length, view, resetView } );
+	} = useDomainsListLayouts( {
+		slug: 'domains',
+		domainCount: domains.length,
+		view: savedView,
+		resetView,
+	} );
 
 	const actions = useActions( { sites, layout: view.type } );
 	const tableActions = useMemo( () => getTableActions( actions ), [ actions ] );
@@ -113,7 +120,7 @@ function Domains() {
 							onChangeView={ ( nextView ) => {
 								recordDomainViewChanges( view, nextView, recordTracksEvent );
 								recordLayoutChoice( view, nextView );
-								updateView( nextView );
+								updateView( getViewToSave( nextView ) );
 							} }
 							onReset={ resetViewAndLayoutChoice }
 							view={ view }
@@ -146,10 +153,10 @@ function Domains() {
 					</DataViewsCard>
 				) }
 			</PageLayout>
-			{ view.type !== persistentView.type && (
+			{ savedView.type !== persistentView.type && (
 				<ComponentViewTracker
 					eventName="calypso_dashboard_domains_saved_layout_fallback"
-					properties={ { saved_layout: persistentView.type, fallback_layout: view.type } }
+					properties={ { saved_layout: persistentView.type, fallback_layout: savedView.type } }
 				/>
 			) }
 			<PerformanceTrackerStop />
