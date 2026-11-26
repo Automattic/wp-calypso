@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import ProfileVisibilityCard from '../profile-visibility-card';
 
 describe( 'ProfileVisibilityCard', () => {
-	const onChange = jest.fn();
-	const onChangeAchievements = jest.fn();
+	const onChange = vi.fn();
+	const onChangeAchievements = vi.fn();
 
 	function renderCard(
 		props: Partial< React.ComponentProps< typeof ProfileVisibilityCard > > = {}
@@ -25,7 +26,7 @@ describe( 'ProfileVisibilityCard', () => {
 	}
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'reports the inverse via onChange when toggled off', async () => {

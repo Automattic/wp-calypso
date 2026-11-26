@@ -1,26 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { ReadList } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSidebarLists from '../index';
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordAction: jest.fn(),
-	recordGaEvent: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordAction: vi.fn(),
+	recordGaEvent: vi.fn(),
 } ) );
 
-const mockMarkAllAsSeen = jest.fn();
+const mockMarkAllAsSeen = vi.fn();
 let mockSeenPostsUiEnabled = true;
-jest.mock( 'calypso/reader/data/seen-posts', () => ( {
+vi.mock( 'calypso/reader/data/seen-posts', () => ( {
 	useMarkAllAsSeenMutation: () => ( { mutate: mockMarkAllAsSeen } ),
 	useSeenPostsPreferenceEnabled: () => mockSeenPostsUiEnabled,
 } ) );
 
-const mockRecordReaderTracksEvent = jest.fn();
-jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
+const mockRecordReaderTracksEvent = vi.fn();
+vi.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 
@@ -162,7 +163,7 @@ describe( 'ReaderSidebarLists', () => {
 
 	describe( 'mark all as read', () => {
 		beforeEach( () => {
-			jest.clearAllMocks();
+			vi.clearAllMocks();
 		} );
 		it( 'marks every feed across all lists as read from the header action', async () => {
 			const user = userEvent.setup();

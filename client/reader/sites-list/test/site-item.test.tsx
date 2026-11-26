@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import { useSite } from 'calypso/reader/data/site';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -10,8 +11,8 @@ import readerReducer from 'calypso/state/reader/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ReaderSite, ReaderSiteItem } from '../site-item';
 
-jest.mock( 'calypso/reader/data/site', () => ( {
-	useSite: jest.fn( () => ( {
+vi.mock( 'calypso/reader/data/site', () => ( {
+	useSite: vi.fn( () => ( {
 		site: undefined,
 		siteError: undefined,
 		isLoading: false,
@@ -20,14 +21,14 @@ jest.mock( 'calypso/reader/data/site', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/components/data/query-sites', () => ( {
+vi.mock( 'calypso/components/data/query-sites', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
+vi.mock( 'calypso/state/notices/actions', () => ( {
 	__esModule: true,
-	successNotice: jest.fn( ( text: string, options: { duration: number } ) => ( {
+	successNotice: vi.fn( ( text: string, options: { duration: number } ) => ( {
 		type: 'NOTICE/SUCCESS',
 		text,
 		options,
@@ -35,19 +36,17 @@ jest.mock( 'calypso/state/notices/actions', () => ( {
 } ) );
 
 // Mock ReaderFollowButton - requires complex Redux state (reader, route, currentUser) and has side effects (analytics, API calls for follow/unfollow).
-jest.mock( 'calypso/reader/follow-button', () => ( {
+vi.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
-	default: jest.fn(
-		( { isButtonOnly, className }: { isButtonOnly: boolean; className: string } ) => (
-			<button
-				data-testid="follow-button"
-				data-is-button-only={ isButtonOnly }
-				className={ className }
-			>
-				{ isButtonOnly ? null : 'Subscribe' }
-			</button>
-		)
-	),
+	default: vi.fn( ( { isButtonOnly, className }: { isButtonOnly: boolean; className: string } ) => (
+		<button
+			data-testid="follow-button"
+			data-is-button-only={ isButtonOnly }
+			className={ className }
+		>
+			{ isButtonOnly ? null : 'Subscribe' }
+		</button>
+	) ),
 } ) );
 
 describe( 'RecommendedFeedItem', () => {
@@ -69,7 +68,7 @@ describe( 'RecommendedFeedItem', () => {
 		props = defaultProps,
 		siteData?: object
 	): ReturnType< typeof renderWithProvider > => {
-		jest.mocked( useSite ).mockReturnValue( {
+		vi.mocked( useSite ).mockReturnValue( {
 			site: siteData as ReturnType< typeof useSite >[ 'site' ],
 			siteError: undefined,
 			isLoading: false,
@@ -83,7 +82,7 @@ describe( 'RecommendedFeedItem', () => {
 
 	beforeAll( () => {
 		// Mock IntersectionObserver for SiteIcon's lazy loading
-		const mockIntersectionObserver = jest.fn();
+		const mockIntersectionObserver = vi.fn();
 		mockIntersectionObserver.mockReturnValue( {
 			observe: () => null,
 			unobserve: () => null,
@@ -185,8 +184,8 @@ describe( 'RecommendedFeedItem', () => {
 	} );
 
 	describe( 'onFollowSuccess', () => {
-		const mockedReaderFollowButton = jest.mocked( ReaderFollowButton );
-		const mockedSuccessNotice = jest.mocked( successNotice );
+		const mockedReaderFollowButton = vi.mocked( ReaderFollowButton );
+		const mockedSuccessNotice = vi.mocked( successNotice );
 
 		beforeEach( () => {
 			mockedReaderFollowButton.mockClear();

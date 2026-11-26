@@ -153,7 +153,7 @@ patches React Query caches, walk this list:
   Otherwise it fires real HTTPS requests to wpcom and nock will
   complain about an unmocked request:
   ```ts
-  jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+  vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
   ```
 - **Connection-scoped state, not global.** When connection identity
   matters for action-correctness (writing via a user's connected

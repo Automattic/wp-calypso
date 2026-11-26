@@ -12,8 +12,8 @@ However, if the change was intentional, follow these steps to update the snapsho
 1. Run the following to update the snapshots:
 
    ```
-   # --testPathPatterns is optional but will be much faster by only running matching tests
-   yarn run test-client -- --updateSnapshot --testPathPatterns client/components
+   # the path is optional but will be much faster by only running matching tests
+   yarn run test-client --update client/components
    ```
 
 1. Review the diff and ensure the changes are expected and intentional
@@ -95,17 +95,17 @@ what snapshots excel at!
 <h2>Working with snapshots</h2>
 
 You might be blindsided by CI tests failing when snapshots don't match. You'll need to
-[update snapshots] if the changes are expected. The quick and dirty solution is to invoke Jest with
-`--updateSnapshot`. In Calypso you can do that as follows:
+[update snapshots] if the changes are expected. The quick and dirty solution is to invoke Vitest with
+`--update`. In Calypso you can do that as follows:
 
 ```sh
-yarn run test-client -- --updateSnapshot --testPathPatterns path/to/match
+yarn run test-client --update path/to/match
 ```
 
-`--testPathPatterns` is not required, but specifying a path will avoid running the whole suite and
-run much faster.
+The path is not required, but specifying one will avoid running the whole suite and run much
+faster.
 
-I strongly recommend that you keep `yarn run test-client:watch` in the background as you work. Jest
+I strongly recommend that you keep `yarn run test-client:watch` in the background as you work. Vitest
 will run only the relevant tests for changed files, and when snapshot tests fail, just hit `u` to
 update a snapshot!
 
@@ -151,4 +151,4 @@ test( 'should render with locale suggestions if locale is provided', () => {
 ```
 
 [snapshot testing]: https://facebook.github.io/jest/docs/en/snapshot-testing.html
-[update snapshots]: https://facebook.github.io/jest/docs/en/snapshot-testing.html#updating-snapshots
+[update snapshots]: https://vitest.dev/guide/snapshot.html#updating-snapshots

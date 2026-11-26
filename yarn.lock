@@ -21957,16 +21957,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-canvas-mock@npm:^2.5.8":
-  version: 2.5.8
-  resolution: "jest-canvas-mock@npm:2.5.8"
-  dependencies:
-    cssfontparser: "npm:^1.2.1"
-    moo-color: "npm:^1.0.2"
-  checksum: 10c0/25e621650bebb0a7c86fa6cf0ba8ab463dd784514a922875b2707e458d29aef943de5b9f3032d378f089c15d6676bd10f4542b822a67d9e715eb93c4ae11c51e
-  languageName: node
-  linkType: hard
-
 "jest-changed-files@npm:30.5.1":
   version: 30.5.1
   resolution: "jest-changed-files@npm:30.5.1"
@@ -24714,7 +24704,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moo-color@npm:^1.0.2, moo-color@npm:^1.0.3":
+"moo-color@npm:^1.0.3":
   version: 1.0.3
   resolution: "moo-color@npm:1.0.3"
   dependencies:
@@ -32556,7 +32546,6 @@ __metadata:
     i18n-calypso: "workspace:^"
     i18n-calypso-cli: "workspace:^"
     jest: "npm:^30.5.2"
-    jest-canvas-mock: "npm:^2.5.8"
     jest-environment-jsdom: "npm:^30.5.2"
     jest-teamcity: "npm:^1.12.0"
     jsdom: "npm:^20.0.3"

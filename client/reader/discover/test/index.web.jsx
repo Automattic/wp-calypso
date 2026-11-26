@@ -1,92 +1,95 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { readerNotFound } from 'calypso/reader/lib/reader-router';
 import initDiscover from '../index.web';
 
-jest.mock( '@automattic/calypso-router', () => {
-	const pageMock = Object.assign( jest.fn(), { redirect: jest.fn() } );
+vi.mock( '@automattic/calypso-router', () => {
+	const pageMock = Object.assign( vi.fn(), { redirect: vi.fn() } );
 	return {
 		__esModule: true,
 		default: pageMock,
 	};
 } );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	getAnyLanguageRouteParam: () => ':lang([a-z]{2,3}|[a-z]{2}-[a-z]{2})',
 } ) );
 
-jest.mock( 'calypso/components/async-load', () => () => null );
+vi.mock( 'calypso/components/async-load', () => ( { default: () => null } ) );
 
-jest.mock( 'calypso/controller', () => ( {
-	makeLayout: jest.fn(),
-	redirectInvalidLanguage: jest.fn(),
-	redirectLoggedOutToSignup: jest.fn(),
-	redirectWithoutLocaleParamInFrontIfLoggedIn: jest.fn(),
-	render: jest.fn(),
+vi.mock( 'calypso/controller', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		makeLayout: vi.fn(),
+		redirectInvalidLanguage: vi.fn(),
+		redirectLoggedOutToSignup: vi.fn(),
+		redirectWithoutLocaleParamInFrontIfLoggedIn: vi.fn(),
+		render: vi.fn(),
+	} )
+);
+
+vi.mock( 'calypso/controller/shared', () => ( {
+	setLocaleMiddleware: vi.fn( () => vi.fn() ),
 } ) );
 
-jest.mock( 'calypso/controller/shared', () => ( {
-	setLocaleMiddleware: jest.fn( () => jest.fn() ),
+vi.mock( 'calypso/lib/route', () => ( {
+	sectionify: vi.fn( ( path ) => path ),
 } ) );
 
-jest.mock( 'calypso/lib/route', () => ( {
-	sectionify: jest.fn( ( path ) => path ),
+vi.mock( 'calypso/reader/controller', () => ( {
+	sidebar: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/controller', () => ( {
-	sidebar: jest.fn(),
+vi.mock( 'calypso/reader/controller-helper', () => ( {
+	trackPageLoad: vi.fn(),
+	trackScrollPage: vi.fn(),
+	trackUpdatesLoaded: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/controller-helper', () => ( {
-	trackPageLoad: jest.fn(),
-	trackScrollPage: jest.fn(),
-	trackUpdatesLoaded: jest.fn(),
+vi.mock( 'calypso/reader/lib/reader-router', () => ( {
+	readerNotFound: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/lib/reader-router', () => ( {
-	readerNotFound: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordTrack: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordTrack: jest.fn(),
+vi.mock( 'calypso/reader/utils', () => ( {
+	getCurrentTabFromURL: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/utils', () => ( {
-	getCurrentTabFromURL: jest.fn(),
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	isUserLoggedIn: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	isUserLoggedIn: jest.fn(),
+vi.mock( 'calypso/state/selectors/get-current-query-arguments', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/state/selectors/get-current-route', () => ( { default: vi.fn() } ) );
+
+vi.mock( '../components/logged-out-hero', () => ( {
+	setDiscoverLoggedOutHero: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-current-query-arguments', () => jest.fn() );
-jest.mock( 'calypso/state/selectors/get-current-route', () => jest.fn() );
-
-jest.mock( '../components/logged-out-hero', () => ( {
-	setDiscoverLoggedOutHero: jest.fn(),
-} ) );
-
-jest.mock( '../discover-document-head', () => ( {
+vi.mock( '../discover-document-head', () => ( {
 	DiscoverDocumentHead: () => null,
 } ) );
 
-jest.mock( '../search-controller', () => ( {
-	fetchTrendingTagsIfLoggedOut: jest.fn(),
-	search: jest.fn(),
+vi.mock( '../search-controller', () => ( {
+	fetchTrendingTagsIfLoggedOut: vi.fn(),
+	search: vi.fn(),
 } ) );
 
-jest.mock( '../routes', () => ( {
-	getDiscoverRoutes: jest.fn( () => [ '/discover' ] ),
-	getPrivateRoutes: jest.fn( () => [ '/discover/site' ] ),
-	getSearchRoutes: jest.fn( () => [ '/discover/search' ] ),
-	getSelectedTab: jest.fn(),
+vi.mock( '../routes', () => ( {
+	getDiscoverRoutes: vi.fn( () => [ '/discover' ] ),
+	getPrivateRoutes: vi.fn( () => [ '/discover/site' ] ),
+	getSearchRoutes: vi.fn( () => [ '/discover/search' ] ),
+	getSelectedTab: vi.fn(),
 } ) );
 
 describe( 'reader discover routes', () => {
 	it( 'registers the discover catch-all through the injected router', () => {
-		const router = jest.fn();
+		const router = vi.fn();
 
 		initDiscover( router );
 
@@ -121,7 +124,7 @@ describe( 'reader discover routes', () => {
 		},
 	] )( 'redirects a retired reddit url to $expected', ( { params, querystring, expected } ) => {
 		page.redirect.mockClear();
-		const router = jest.fn();
+		const router = vi.fn();
 		initDiscover( router );
 		const handler = router.mock.calls.find(
 			( [ paths ] ) => Array.isArray( paths ) && paths.includes( '/discover/reddit' )

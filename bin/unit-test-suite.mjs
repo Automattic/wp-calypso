@@ -107,7 +107,6 @@ const tscCommands = [
 // to result in the fastest overall completion time.
 //
 // --workerIdleMemoryLimit=512MB is added because of https://github.com/jestjs/jest/issues/11956
-const testClient = withUnitTestInfo( 'test-client --maxWorkers=8 --workerIdleMemoryLimit=1GB' );
 const testServer = withUnitTestInfo( 'test-server --maxWorkers=4 --workerIdleMemoryLimit=1GB' );
 const testBuildTools = withUnitTestInfo(
 	'test-build-tools --maxWorkers=4 --workerIdleMemoryLimit=1GB'
@@ -117,12 +116,7 @@ const testApps = withVitestInfo( 'test-apps --maxWorkers=4', 'test_apps' );
 
 const testPackagesVitest = withVitestInfo( 'test-packages --maxWorkers=4', 'test_packages_vitest' );
 const testDashboard = withVitestInfo( 'test-dashboard --maxWorkers=4', 'test_dashboard' );
-// The client tests that have moved from Jest (see test/client/vitest-directories.js). They run
-// after the Jest client tests, with the same workers.
-const testClientVitest = withVitestInfo(
-	'test-client:vitest --maxWorkers=8',
-	'test_client_vitest'
-);
+const testClient = withVitestInfo( 'test-client --maxWorkers=8', 'test_client' );
 
 // Checks for drift between the webpack and Vite configurations while both bundlers live in the repo:
 // fails when the Vite dev server can no longer serve the Dashboard, which webpack builds don't notice.
@@ -142,12 +136,7 @@ try {
 	// Since this task is so much larger than the others, we give it a large amount
 	// of CPU and run it by itself. We let other tasks complete in parallel with
 	// less CPU since they'll still finish much more quickly.
-	// The client tests on Vitest follow on the same CPU budget, rather than lengthening the serial
-	// chain below, which is the longest.
-	const testClientTask = ( async () => {
-		await runTask( testClient );
-		await runVitestTask( testClientVitest );
-	} )();
+	const testClientTask = runVitestTask( testClient );
 
 	// Runs alongside the client tests, which take longer than the rest, so it stays off the critical path.
 	const testDashboardTask = runVitestTask( testDashboard );
