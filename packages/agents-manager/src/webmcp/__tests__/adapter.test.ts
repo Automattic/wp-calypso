@@ -127,10 +127,14 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 
 describe( 'WebMCP adapter', () => {
 	beforeEach( () => {
+		document.body.className = 'site-editor-php';
 		vi.mocked( blocks.parse ).mockReset().mockReturnValue( [] );
 	} );
 
-	afterEach( () => vi.restoreAllMocks() );
+	afterEach( () => {
+		delete window.pagenow;
+		vi.restoreAllMocks();
+	} );
 
 	it( 'normalizes missing and malformed input schemas', () => {
 		expect( normalizeInputSchema( undefined ) ).toEqual( { type: 'object', properties: {} } );
@@ -200,6 +204,34 @@ describe( 'WebMCP adapter', () => {
 		expect( shouldExposeWebMcpAbility( ability ) ).toBe( false );
 	} );
 
+	it( 'exposes a flagged ability only on the screens it lists', () => {
+		const ordersTool = createAbility( {
+			name: 'woocommerce/update-order',
+			meta: {
+				annotations: { clientRegistered: true },
+				webmcp: { public: true, screens: [ 'woocommerce_page_wc-orders' ] },
+			},
+		} );
+		document.body.className = 'wp-admin';
+		window.pagenow = 'woocommerce_page_wc-orders';
+
+		expect( shouldExposeWebMcpAbility( ordersTool ) ).toBe( true );
+
+		window.pagenow = 'edit-product';
+
+		expect( shouldExposeWebMcpAbility( ordersTool ) ).toBe( false );
+	} );
+
+	it( 'hides the tools that list no screens outside the editors', () => {
+		document.body.className = 'wp-admin';
+		window.pagenow = 'woocommerce_page_wc-orders';
+
+		expect( shouldExposeWebMcpAbility( createAbility() ) ).toBe( false );
+		expect(
+			shouldExposeWebMcpAbility( createServerAbility( WEBMCP_SERVER_ABILITY_NAMES[ 0 ] ) )
+		).toBe( false );
+	} );
+
 	it.each< [ string, Ability, string ] >( [
 		[
 			'server-registered',
@@ -223,6 +255,28 @@ describe( 'WebMCP adapter', () => {
 		expect( warn ).toHaveBeenCalledWith(
 			expect.stringContaining( `WebMCP doesn't expose big-sky/apply-block-edits: ${ reason }` )
 		);
+	} );
+
+	it( 'warns about a refused flagged ability only on the screens it lists', async () => {
+		// eslint-disable-next-line no-console
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const harness = createHarness( [
+			createAbility( {
+				callback: undefined,
+				meta: { webmcp: { public: true, screens: [ 'woocommerce_page_wc-orders' ] } },
+			} ),
+		] );
+		document.body.className = 'wp-admin';
+		window.pagenow = 'edit-product';
+
+		await harness.adapter.sync();
+
+		expect( warn ).not.toHaveBeenCalled();
+
+		window.pagenow = 'woocommerce_page_wc-orders';
+		await harness.adapter.sync();
+
+		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'it has no client callback' ) );
 	} );
 
 	it( "doesn't warn about exposed or unflagged abilities", async () => {

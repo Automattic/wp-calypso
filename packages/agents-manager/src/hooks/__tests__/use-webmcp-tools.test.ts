@@ -136,6 +136,37 @@ describe( 'useWebMcpTools', () => {
 		);
 	} );
 
+	it( 'registers only the tools listed for a screen outside the editors', async () => {
+		const registerTool = vi.fn();
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool },
+		} );
+		const ordersTool = {
+			...ability,
+			name: 'woocommerce/update-order',
+			meta: { webmcp: { public: true, screens: [ 'woocommerce_page_wc-orders' ] } },
+		};
+		const toolProvider: ToolProvider = {
+			getAbilities: vi.fn( async () => [ ability, ordersTool ] ),
+			executeAbility: vi.fn(),
+		};
+		document.body.className = 'wp-admin';
+		window.pagenow = 'woocommerce_page_wc-orders';
+		onTestFinished( () => {
+			delete window.pagenow;
+		} );
+
+		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		onTestFinished( unmount );
+
+		await waitFor( () => expect( registerTool ).toHaveBeenCalledTimes( 1 ) );
+		expect( registerTool ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'woocommerce__update_order' } ),
+			expect.anything()
+		);
+	} );
+
 	it( 'runs provider tools as calls no chat made, over any id the agent sends', async () => {
 		const tools: WebMcpTool[] = [];
 		Object.defineProperty( document, 'modelContext', {
