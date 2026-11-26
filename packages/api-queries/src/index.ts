@@ -133,6 +133,7 @@ export * from './site-backup-known-threats';
 export * from './site-backups';
 export * from './site-cache';
 export * from './site-crontab';
+export * from './site-data-center';
 export * from './site-database';
 export * from './site-defensive-mode';
 export * from './site-deployments';
