@@ -202,6 +202,20 @@ This mixin generates alias variables for a color palette. For example, the
 	--wpds-color-foreground-interactive-neutral: var( --wp-components-color-foreground );
 	--wpds-color-foreground-interactive-neutral-active: var( --wp-components-color-foreground );
 	--wpds-color-background-interactive-neutral-weak-active: var( --wp-components-color-gray-200 );
+	--wpds-color-foreground-interactive-brand-strong: var( --wp-components-color-accent-inverted );
+	--wpds-color-foreground-interactive-brand-strong-active: var( --wp-components-color-accent-inverted );
+	// Input placeholders and a toggle's off mark. Without it they keep the light default, too dim here.
+	--wpds-color-foreground-interactive-neutral-weak: var( --dashboard__text-muted-color );
+	// An unchecked toggle's track, under its light knob; disabled toggles dim both.
+	--wpds-color-background-track-neutral: var( --wp-components-color-gray-300 );
+	--wpds-color-background-track-neutral-disabled: var( --wp-components-color-gray-200 );
+	--wpds-color-background-thumb-neutral-disabled: var( --wp-components-color-gray-400 );
+	--wpds-color-background-interactive-neutral: transparent;
+	--wpds-color-background-interactive-neutral-active: transparent;
+	--wpds-color-background-interactive-neutral-disabled: var( --dashboard-surface__background-color );
+	--wpds-color-stroke-interactive-neutral: var( --dashboard-field__border-color );
+	--wpds-color-stroke-interactive-neutral-active: var( --wp-components-color-gray-700 );
+	--wpds-color-stroke-interactive-neutral-disabled: var( --dashboard-surface__border-color );
 	--wp-components-color-gray-800: #e0e0e0;
 	--wp-components-color-gray-700: #bdbdbd;
 	--wp-components-color-gray-600: #8a8a8a;
@@ -247,6 +261,13 @@ This mixin generates alias variables for a color palette. For example, the
 	--dashboard-menu-item__color: #bdbdbd;
 	--dashboard-menu-item-active__color: #fff;
 	--dashboard-overview__divider-color: #2f2f2f;
+	--dashboard-header__divider-color: #3a3a3a;
+	--dashboard-surface__border-color: #4a4a4a;
+	--dashboard__foreground-color-success: #75d488;
+	--dashboard__foreground-color-warning: #f5c15c;
+	--dashboard-danger__color: #ff8080;
+	--dashboard-danger__color-hover: #ff9b9b;
+	--dashboard-danger__color-active: #ffb3b3;
 }
 
 @mixin color-scheme-dark-theme-calypso-tokens {
