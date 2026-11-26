@@ -3,7 +3,6 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -33,6 +32,7 @@ import {
 	normalAllowedPaymentMethods,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
+import { setupUser } from './util/setup-user';
 import type { CartKey, SetCart } from '@automattic/shopping-cart';
 import type { StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 
@@ -204,7 +204,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'records the first step complete event again only when the contact step is edited after autocompleting', async () => {
-		const user = userEvent.setup();
+		const user = setupUser();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'US',
 			postal_code: '10001',
@@ -234,7 +234,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'records the first step complete event when the contact step is completed manually', async () => {
-		const user = userEvent.setup();
+		const user = setupUser();
 		mockCachedContactDetailsEndpoint( {} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -284,7 +284,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'shows the existing-account error on the email field when it loses focus while logged-out', async () => {
-		const user = userEvent.setup();
+		const user = setupUser();
 		mockCachedContactDetailsEndpoint( { country_code: '', postal_code: '' } );
 		mockUserSignupValidationEndpoint( () => [
 			200,
@@ -338,7 +338,7 @@ describe( 'Checkout contact step', () => {
 			email: 'fails' | 'passes';
 			logged: 'in' | 'out';
 		} ) => {
-			const user = userEvent.setup();
+			const user = setupUser();
 
 			const product = ( () => {
 				switch ( name ) {

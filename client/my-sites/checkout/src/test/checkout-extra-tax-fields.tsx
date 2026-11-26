@@ -4,7 +4,6 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
@@ -33,6 +32,7 @@ import {
 	mockSetCachedContactDetailsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
+import { setupUser } from './util/setup-user';
 import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
@@ -224,7 +224,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 					success: true,
 				}
 			);
-			const user = userEvent.setup();
+			const user = setupUser();
 			const cartChanges = { products: getCartProducts( product as TestProductType ) };
 
 			const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
@@ -280,7 +280,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 			mockContactDetailsValidationEndpoint( product === 'plan' ? 'tax' : 'domain', {
 				success: true,
 			} );
-			const user = userEvent.setup();
+			const user = setupUser();
 			const cartChanges =
 				product === 'plan'
 					? { products: [ planWithoutDomain ] }
@@ -350,7 +350,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 			mockContactDetailsValidationEndpoint( product === 'plan' ? 'tax' : 'domain', {
 				success: true,
 			} );
-			const user = userEvent.setup();
+			const user = setupUser();
 			const cartChanges =
 				product === 'plan'
 					? { products: [ planWithoutDomain ] }
