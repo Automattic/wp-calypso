@@ -32,7 +32,7 @@ import {
 	normalAllowedPaymentMethods,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
-import { setupUser } from './util/setup-user';
+import { setupUserNoPointerEvents } from './util/setup-user';
 import type { CartKey, SetCart } from '@automattic/shopping-cart';
 import type { StoredPaymentMethodCard } from '@automattic/wpcom-checkout';
 
@@ -204,7 +204,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'records the first step complete event again only when the contact step is edited after autocompleting', async () => {
-		const user = setupUser();
+		const user = setupUserNoPointerEvents();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'US',
 			postal_code: '10001',
@@ -234,7 +234,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'records the first step complete event when the contact step is completed manually', async () => {
-		const user = setupUser();
+		const user = setupUserNoPointerEvents();
 		mockCachedContactDetailsEndpoint( {} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		const cartChanges = { products: [ planWithoutDomain ] };
@@ -284,7 +284,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'shows the existing-account error on the email field when it loses focus while logged-out', async () => {
-		const user = setupUser();
+		const user = setupUserNoPointerEvents();
 		mockCachedContactDetailsEndpoint( { country_code: '', postal_code: '' } );
 		mockUserSignupValidationEndpoint( () => [
 			200,
@@ -338,7 +338,7 @@ describe( 'Checkout contact step', () => {
 			email: 'fails' | 'passes';
 			logged: 'in' | 'out';
 		} ) => {
-			const user = setupUser();
+			const user = setupUserNoPointerEvents();
 
 			const product = ( () => {
 				switch ( name ) {

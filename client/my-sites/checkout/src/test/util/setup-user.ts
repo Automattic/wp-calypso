@@ -1,11 +1,9 @@
 import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event';
 
 /**
- * Sets up `userEvent` without its `pointer-events` check. Before each pointer action, the check
- * reads the computed style of the target and of every ancestor, which jsdom works out by matching
- * all the styles checkout injects. In the contact step tests, that took half of the time, and on
- * busy CI agents it pushed them past their timeouts.
+ * Skips user-event's `pointer-events` check, which reads the computed style of every ancestor on
+ * each pointer action. With checkout's styles that is slow enough in jsdom to time tests out in CI.
  */
-export function setupUser() {
+export function setupUserNoPointerEvents() {
 	return userEvent.setup( { pointerEventsCheck: PointerEventsCheckLevel.Never } );
 }
