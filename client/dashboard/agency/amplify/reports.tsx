@@ -30,7 +30,7 @@ const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
 		layout: {
 			density: 'balanced',
-			styles: { actions: { align: 'end' } },
+			styles: { status: { align: 'end' } },
 		},
 		showMedia: true,
 		mediaField: 'icon',
@@ -47,7 +47,7 @@ const DEFAULT_VIEW: View = {
 	mediaField: 'icon',
 	titleField: 'site',
 	descriptionField: 'url',
-	layout: { density: 'balanced', styles: { actions: { align: 'end' } } },
+	layout: { density: 'balanced', styles: { status: { align: 'end' } } },
 	fields: [ 'humanScore', 'aiScore', 'status' ],
 	filters: [],
 	sort: { field: 'created', direction: 'desc' },
