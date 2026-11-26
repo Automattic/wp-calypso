@@ -51,8 +51,11 @@ export const getWooTicketHelpCategory = (
 	question: HumanSupportQuestionType | null
 ): WooTicketHelpCategory => ( question ? HELP_CATEGORIES[ question ] : 'account' );
 
+// Messages loaded from the AI chat's history have no `type`. Only those sent from the page do.
 const getText = ( message: Message ) =>
-	message.type === 'message' && typeof message.content === 'string' ? message.content.trim() : '';
+	( ! message.type || message.type === 'message' ) && typeof message.content === 'string'
+		? message.content.trim()
+		: '';
 
 const truncate = ( text: string, length: number ) =>
 	text.length > length ? `${ text.slice( 0, length - 1 ).trimEnd() }…` : text;

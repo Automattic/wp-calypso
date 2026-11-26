@@ -16,12 +16,16 @@ const message = ( role: Message[ 'role' ], content: string ): Message => ( {
 	type: 'message',
 } );
 
+/** Messages loaded from the AI chat's history have no `type`. Only those sent from the page do. */
+const historyMessage = ( role: Message[ 'role' ], content: string ) =>
+	( { role, content } ) as Message;
+
 const chat = {
 	odieId: 7873852,
 	messages: [
 		{ role: 'bot', content: 'Howdy', type: 'introduction' } as Message,
-		message( 'user', 'My checkout is broken' ),
-		message( 'bot', 'Which store is this about?' ),
+		historyMessage( 'user', 'My checkout is broken' ),
+		historyMessage( 'bot', 'Which store is this about?' ),
 		message( 'user', 'The connected one.' ),
 	],
 };
