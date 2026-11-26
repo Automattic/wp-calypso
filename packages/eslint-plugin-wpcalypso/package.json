@@ -27,9 +27,9 @@
 		"@eslint/js": "^9.39.5"
 	},
 	"peerDependencies": {
-		"eslint": "^10.14.0",
+		"eslint": "^10.15.0",
 		"eslint-plugin-inclusive-language": "^2.2.1",
-		"eslint-plugin-jsdoc": "^65.4.4",
+		"eslint-plugin-jsdoc": "^65.5.3",
 		"eslint-plugin-react": "^7.37.5",
 		"eslint-plugin-react-hooks": "^7.1.1"
 	},
@@ -44,8 +44,8 @@
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@typescript-eslint/parser": "^8.72.1",
-		"eslint": "^10.14.0",
+		"@typescript-eslint/parser": "^8.74.0",
+		"eslint": "^10.15.0",
 		"espree": "^11.2.0",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.8",

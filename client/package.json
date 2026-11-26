@@ -251,7 +251,7 @@
 		"autoprefixer": "^10.4.21",
 		"chroma-js": "^2.6.0",
 		"dotenv-webpack": "^9.0.0",
-		"eslint": "^10.14.0",
+		"eslint": "^10.15.0",
 		"html-loader": "^5.1.0",
 		"ignore-loader": "^0.1.2",
 		"pkg-dir": "^5.0.0",
