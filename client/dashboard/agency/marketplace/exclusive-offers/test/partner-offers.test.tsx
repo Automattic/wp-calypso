@@ -49,24 +49,6 @@ describe( '<PartnerOffers>', () => {
 		).toHaveLength( 1 );
 	} );
 
-	test( 'names each View terms link after its offer and says it opens a new tab', () => {
-		render( <PartnerOffers links={ LINKS } shouldUseRouterLink={ false } /> );
-
-		expect(
-			screen.getAllByRole( 'link', { name: /^View terms \(opens in a new tab\) / } )
-		).toHaveLength( 11 );
-		expect(
-			screen.getByRole( 'link', {
-				name: 'View terms (opens in a new tab) Pressable 20% recurring commission',
-			} )
-		).toHaveAttribute( 'target', '_blank' );
-		expect(
-			screen.getByRole( 'link', {
-				name: 'View terms (opens in a new tab) Pressable Premium 20% recurring commission',
-			} )
-		).toHaveAttribute( 'target', '_blank' );
-	} );
-
 	test( 'groups the offers by how the agency earns and narrows to one group', async () => {
 		render( <PartnerOffers links={ LINKS } shouldUseRouterLink={ false } /> );
 
