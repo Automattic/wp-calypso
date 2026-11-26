@@ -11,13 +11,12 @@ import {
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../../../../../app/breadcrumbs';
+import { withSnackbar } from '../../../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../../../components/button-stack';
 import { Card, CardBody } from '../../../../../../components/card';
 import InlineSupportLink from '../../../../../../components/inline-support-link';
@@ -74,8 +73,13 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 		...siteDefensiveModeSettingsQuery( site.ID ),
 		enabled: hasHostingFeature( site, HostingFeatures.DEFENSIVE_MODE ),
 	} );
-	const mutation = useMutation( siteDefensiveModeSettingsMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation(
+		withSnackbar( siteDefensiveModeSettingsMutation( site.ID ), {
+			success: ( _data, variables ) =>
+				variables.active ? __( 'Defensive mode enabled.' ) : __( 'Defensive mode disabled.' ),
+			error: __( 'Failed to save defensive mode settings.' ),
+		} )
+	);
 
 	const [ formData, setFormData ] = useState< { ttl: string } >( {
 		ttl: availableTtls[ 0 ].value,
@@ -84,19 +88,7 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 	const { isPending } = mutation;
 
 	const handleSubmit = ( data: DefensiveModeSettingsUpdate ) => {
-		mutation.mutate( data, {
-			onSuccess: () => {
-				createSuccessNotice(
-					data.active ? __( 'Defensive mode enabled.' ) : __( 'Defensive mode disabled.' ),
-					{ type: 'snackbar' }
-				);
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to save defensive mode settings.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		mutation.mutate( data );
 	};
 
 	const renderEnabled = () => {

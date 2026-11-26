@@ -21,6 +21,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../../../../../app/breadcrumbs';
 import { useLocale } from '../../../../../../app/locale';
+import { withSnackbar } from '../../../../../../app/snackbars/with-snackbar';
 import ConfirmModal from '../../../../../../components/confirm-modal';
 import { DataViewsCard } from '../../../../../../components/dataviews';
 import InlineSupportLink from '../../../../../../components/inline-support-link';
@@ -118,18 +119,15 @@ export default function CrontabSettings( { siteSlug }: { siteSlug: string } ) {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
 	const { mutate: deleteCrontab, isPending: isDeletingCrontab } = useMutation(
-		siteCrontabDeleteMutation( site.ID )
+		withSnackbar( siteCrontabDeleteMutation( site.ID ), {
+			success: __( 'Scheduled job deleted.' ),
+			error: __( 'Failed to delete scheduled job.' ),
+		} )
 	);
 
 	const handleDelete = () => {
 		if ( selectedCrontabToRemove ) {
 			deleteCrontab( selectedCrontabToRemove.cron_id, {
-				onSuccess: () => {
-					createSuccessNotice( __( 'Scheduled job deleted.' ), { type: 'snackbar' } );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to delete scheduled job.' ), { type: 'snackbar' } );
-				},
 				onSettled: () => {
 					setSelectedCrontabToRemove( null );
 				},

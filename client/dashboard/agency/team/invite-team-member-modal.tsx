@@ -1,12 +1,11 @@
 import { agencyTeamInviteMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button, Modal, __experimentalVStack as VStack } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import type { Field, Form } from '@wordpress/dataviews';
 
@@ -57,8 +56,15 @@ export default function InviteTeamMemberModal( {
 }: InviteTeamMemberModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ formData, setFormData ] = useState< InviteFormData >( { login: '', message: '' } );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const invite = useMutation( agencyTeamInviteMutation( agencyId ) );
+	const invite = useMutation(
+		withSnackbar( agencyTeamInviteMutation( agencyId ), {
+			success: __( 'The invitation has been successfully sent.' ),
+			error: ( error: Error & { code?: string } ) =>
+				error.code === 'a4a_user_invite_automattician'
+					? __( 'Automattician accounts cannot be invited as agency team members.' )
+					: error.message || __( 'Failed to send the invitation.' ),
+		} )
+	);
 	const { validity, isValid } = useFormValidity( formData, fields, form );
 
 	const onSubmit = ( event: React.FormEvent ) => {
@@ -78,21 +84,12 @@ export default function InviteTeamMemberModal( {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_a4a_team_invite_success' );
-					createSuccessNotice( __( 'The invitation has been successfully sent.' ), {
-						type: 'snackbar',
-					} );
 					onSent( trimmedLogin );
 				},
 				onError: ( error: Error & { code?: string } ) => {
 					recordTracksEvent( 'calypso_a4a_team_invite_error', {
 						error: error.code || 'api_error',
 					} );
-					createErrorNotice(
-						error.code === 'a4a_user_invite_automattician'
-							? __( 'Automattician accounts cannot be invited as agency team members.' )
-							: error.message || __( 'Failed to send the invitation.' ),
-						{ type: 'snackbar' }
-					);
 				},
 			}
 		);

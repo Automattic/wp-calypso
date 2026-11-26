@@ -10,6 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Text } from '../../../components/text';
 import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
@@ -21,10 +22,17 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 		// Using a modal to confirm deletion
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
+			const email = items[ 0 ];
 			const { mutateAsync: deleteTitanMailbox, isPending } = useMutation(
-				deleteTitanMailboxMutation()
+				withSnackbar( deleteTitanMailboxMutation(), {
+					success: sprintf(
+						/* translators: %s is the email address. */
+						__( 'Mailbox %s has been scheduled for removal.' ),
+						email.emailAddress
+					),
+				} )
 			);
-			const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+			const { createErrorNotice } = useDispatch( noticesStore );
 			const { recordTracksEvent } = useAnalytics();
 
 			useEffect( () => {
@@ -32,7 +40,6 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 					action_id: 'delete-titan-mailbox',
 				} );
 			}, [ recordTracksEvent ] );
-			const email = items[ 0 ];
 
 			const mailbox = email.emailAddress.split( '@' )[ 0 ];
 			const onConfirm = async () => {
@@ -41,14 +48,6 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 				} );
 				try {
 					await deleteTitanMailbox( { domainName: email.domainName, mailbox: mailbox } );
-					createSuccessNotice(
-						sprintf(
-							/* translators: %s is the email address. */
-							__( 'Mailbox %s has been scheduled for removal.' ),
-							email.emailAddress
-						),
-						{ type: 'snackbar' }
-					);
 					onActionPerformed?.( items );
 					closeModal?.();
 				} catch ( _e ) {

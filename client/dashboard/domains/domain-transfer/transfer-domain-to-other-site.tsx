@@ -7,12 +7,11 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainTransferToOtherSiteRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
@@ -29,10 +28,11 @@ export default function DomainTransferToOtherSite() {
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 
 	const { mutate: transferDomainToSite, isPending: isTransferringDomain } = useMutation(
-		transferDomainToSiteMutation( domainName, domain?.blog_id ?? 0 )
+		withSnackbar( transferDomainToSiteMutation( domainName, domain?.blog_id ?? 0 ), {
+			success: __( 'Domain transferred successfully.' ),
+			error: { source: 'server' },
+		} )
 	);
-
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const onConfirmTransfer = () => {
 		if ( ! selectedSite ) {
@@ -40,14 +40,8 @@ export default function DomainTransferToOtherSite() {
 		}
 		transferDomainToSite( selectedSite.ID, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Domain transferred successfully.' ), { type: 'snackbar' } );
 				setIsConfirmDialogOpen( false );
 				navigate( { to: domainRoute.fullPath, params: { domainName } } );
-			},
-			onError: ( e ) => {
-				createErrorNotice( e.message || __( 'An error occurred while transferring the domain.' ), {
-					type: 'snackbar',
-				} );
 			},
 		} );
 	};
