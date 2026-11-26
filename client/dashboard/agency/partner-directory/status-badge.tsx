@@ -4,7 +4,6 @@ import type { DirectoryStatusBadge } from './lib';
 
 interface StatusBadgeProps {
 	badge: DirectoryStatusBadge;
-	showPopoverOnLoad: boolean;
 	expertiseUrl: string;
 	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	shouldUseRouterLink?: boolean;
@@ -16,7 +15,6 @@ interface StatusBadgeProps {
  */
 export default function StatusBadge( {
 	badge,
-	showPopoverOnLoad,
 	expertiseUrl,
 	recordTracksEvent,
 	shouldUseRouterLink,
@@ -27,7 +25,6 @@ export default function StatusBadge( {
 
 	return (
 		<NotApprovedPopover
-			showOnLoad={ showPopoverOnLoad }
 			expertiseUrl={ expertiseUrl }
 			recordTracksEvent={ recordTracksEvent }
 			shouldUseRouterLink={ shouldUseRouterLink }
