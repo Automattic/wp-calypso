@@ -67,9 +67,12 @@ describe( 'CustomALink', () => {
 		expect( screen.getByRole( 'link', { name: 'Plans' } ) ).toHaveAttribute( 'target', '_self' );
 	} );
 
-	/** On WooCommerce.com, Woo doc links are on the same site and still replaced the page. */
-	it( 'opens a WooCommerce.com link in a new tab on WooCommerce.com', () => {
-		jsdom.reconfigure( { url: 'https://woocommerce.com/my-account/' } );
+	/** On WooCommerce.com, and on a local copy of it, Woo doc links still replaced the page. */
+	it.each( [
+		[ 'WooCommerce.com', 'https://woocommerce.com/my-account/' ],
+		[ 'a local WooCommerce.com', 'https://woocommerce.test/my-account/' ],
+	] )( 'opens a WooCommerce.com link in a new tab on %s', ( _site, pageUrl ) => {
+		jsdom.reconfigure( { url: pageUrl } );
 		render( <CustomALink href={ WOO_DOC_URL }>Managing Orders</CustomALink> );
 
 		const link = screen.getByRole( 'link', { name: 'Managing Orders (opens in a new tab)' } );

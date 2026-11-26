@@ -6,7 +6,9 @@ export const isWooCommerceComLink = ( href: string ) =>
 	/^https?:\/\/(?:[\w-]+\.)*woocommerce\.com(?:[/?#:]|$)/i.test( href );
 
 /**
- * Whether the Help Center runs on WooCommerce.com. Only there do chat links open in a new tab:
- * everywhere else they behave as before.
+ * Whether the Help Center runs on WooCommerce.com, its staging site or a local copy
+ * (`woocommerce.test`). Only there do chat links open in a new tab: everywhere else they behave
+ * as before.
  */
-export const isOnWooCommerceCom = () => isWooCommerceComLink( window.location.href );
+export const isOnWooCommerceCom = () =>
+	/(?:^|\.)woocommerce\.(?:com|test)$/i.test( window.location.hostname );
