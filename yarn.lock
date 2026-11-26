@@ -19099,7 +19099,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"glob@npm:^7.0.3, glob@npm:^7.0.5, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0, glob@npm:^7.2.3":
+"glob@npm:^7.0.3, glob@npm:^7.0.5, glob@npm:^7.1.3, glob@npm:^7.1.4, glob@npm:^7.1.6, glob@npm:^7.2.0":
   version: 7.2.3
   resolution: "glob@npm:7.2.3"
   dependencies:
@@ -19342,7 +19342,7 @@ __metadata:
     "@wordpress/url": "npm:^5.2.0"
     clsx: "npm:^2.1.1"
     copy-webpack-plugin: "npm:^14.0.0"
-    glob: "npm:^7.2.3"
+    glob: "npm:^14.0.0"
     i18n-calypso: "workspace:^"
     postcss: "npm:^8.5.32"
     react: "npm:^18.3.1"
@@ -30738,7 +30738,7 @@ __metadata:
     eslint-plugin-wpcalypso: "workspace:^"
     fsevents: "npm:^2.3.3"
     gettext-parser: "npm:^4.0.3"
-    glob: "npm:^7.2.3"
+    glob: "npm:^14.0.0"
     globals: "npm:^14.0.0"
     http-proxy-middleware: "npm:^4.2.1"
     husky: "npm:^7.0.4"

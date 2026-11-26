@@ -46,7 +46,7 @@
 		"@wordpress/i18n": "^7.2.0",
 		"@wordpress/url": "^5.2.0",
 		"clsx": "^2.1.1",
-		"glob": "^7.2.3",
+		"glob": "^14.0.0",
 		"i18n-calypso": "workspace:^",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
@@ -60,7 +60,7 @@
 		"@testing-library/react": "^16.3.3",
 		"@wordpress/readable-js-assets-webpack-plugin": "^4.2.0",
 		"copy-webpack-plugin": "^14.0.0",
-		"glob": "^7.2.3",
+		"glob": "^14.0.0",
 		"postcss": "^8.5.32",
 		"webpack": "^5.111.1"
 	}
