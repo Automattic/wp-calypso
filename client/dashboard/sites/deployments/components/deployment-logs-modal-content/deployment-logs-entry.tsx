@@ -87,23 +87,19 @@ export const DeploymentLogsEntry = ( {
 		<HStack spacing={ 3 }>
 			<VStack spacing={ 2 }>
 				<Text
-					style={ {
-						color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
-						whiteSpace: 'pre-wrap',
-					} }
+					className="deployment-logs-entry__text"
+					style={ { whiteSpace: 'pre-wrap' } }
 					as="code"
 				>
-					<Text style={ { color: 'var(--wp-components-color-gray-700, #757575)' } }>
+					<Text className="deployment-logs-entry__timestamp">
 						{ formatDate( new Date( entry.timestamp ), locale, { timeStyle: 'medium' } ) }
 					</Text>{ ' ' }
 					{ entry.level.toUpperCase() } { entry.message }
 					{ hasDetail && (
 						<Button
 							variant="link"
-							style={ {
-								color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
-								marginInlineStart: '4px',
-							} }
+							className="deployment-logs-entry__text"
+							style={ { marginInlineStart: '4px' } }
 							onClick={ toggleExpandDetail }
 							disabled={ ! hasDetail }
 						>
@@ -113,10 +109,8 @@ export const DeploymentLogsEntry = ( {
 				</Text>
 				{ detailExpanded && (
 					<Text
-						style={ {
-							color: 'var(--wp-components-color-accent-inverted, #FBFBFB)',
-							whiteSpace: 'pre-wrap',
-						} }
+						className="deployment-logs-entry__text"
+						style={ { whiteSpace: 'pre-wrap' } }
 						as="code"
 					>
 						{ getDetail() }

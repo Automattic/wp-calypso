@@ -16,7 +16,7 @@
 		margin: -$grid-unit-20 0;
 	}
 	.action-item {
-		border-bottom: 1px solid $gray-100;
+		border-bottom: 1px solid var( --wpds-color-stroke-surface-neutral-weak );
 		padding: $grid-unit-20 0;
 		&:last-child {
 			border-bottom: none;
