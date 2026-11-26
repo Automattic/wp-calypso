@@ -1,4 +1,5 @@
 @import '@automattic/calypso-color-schemes/root-only';
+@import '@wordpress/theme/design-tokens.css';
 
 .omnibar__cart-popover {
 	// `@automattic/mini-cart` reads Calypso's light color scheme; map the roles it uses to WPDS tokens.
