@@ -14,10 +14,10 @@ screens (see below).
 
 A client ability becomes a WebMCP tool when it sets `meta.webmcp.public: true`. It can come from
 the merged `ToolProvider` of `loadExternalProviders()` or from the `@wordpress/abilities` registry
-(`registry-ability-provider.ts`), so a plugin that isn't a provider can add a tool too. On a name
-clash, the provider's ability wins and runs through the merged provider, which applies the provider
-precedence and the canvas guard. Registry-only abilities run through the registry's
-`executeAbility()`.
+(`registry-ability-provider.ts`), so a plugin that isn't a provider can add a tool too, even on a
+site with no agent provider. On a name clash, the provider's ability wins and runs through the
+merged provider, which applies the provider precedence and the canvas guard. Registry-only abilities
+run through the registry's `executeAbility()`.
 
 An ability lists its screens as wp-admin screen IDs in `meta.webmcp.screens`, matched against
 `window.pagenow` (`isAbilityOnCurrentScreen()` in `eligibility.ts`). Without the list, it belongs to
@@ -59,11 +59,12 @@ here: they scope only the agent's own tools.
 A tool's description is its ability's own `description`, the text the Agents Manager agent also
 reads when its route allows the ability. A client ability's `meta.instructions` stay with the chat.
 
-Eligibility is checked when Agents Manager mounts and whenever the scope or tool provider changes;
-such a change, or unmounting, aborts all registrations. While eligible, the adapter syncs the tools
-whenever the `@wordpress/abilities` registry changes, which covers abilities registered there by
-later React effects. Anything else, such as an ability only a provider lists, a server ability fetch
-that failed or a tool the browser rejected, is picked up on the next registry or scope change.
+Eligibility is checked once the providers load and whenever the scope or the loaded providers
+change; such a change, or unmounting, aborts all registrations. While eligible, the adapter syncs
+the tools whenever the `@wordpress/abilities` registry changes, which covers abilities registered
+there by later React effects. Anything else, such as an ability only a provider lists, a server
+ability fetch that failed or a tool the browser rejected, is picked up on the next registry or
+scope change.
 
 A rejected tool doesn't stop the others from registering. A call to a tool whose ability was
 removed or is no longer exposed, or whose signal was aborted, is refused before it runs. An
