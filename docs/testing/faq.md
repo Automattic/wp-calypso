@@ -2,11 +2,11 @@
 
 ### What tools and libraries are used?
 
-We use [Jest](https://facebook.github.io/jest/) testing tool to execute all test configurations located in Calypso repository. It's highly recommended to use Jest's very flexible [API](https://facebook.github.io/jest/docs/en/api.html) together with [expect matchers](https://facebook.github.io/jest/docs/en/expect.html) and [mock functions](https://facebook.github.io/jest/docs/en/mock-function-api.html).
+We use [Vitest](https://vitest.dev/) to run the unit tests in the Calypso repository. Use its [test API](https://vitest.dev/api/) together with its [expect matchers](https://vitest.dev/api/expect.html) and [mock functions](https://vitest.dev/api/mock.html), imported from `vitest`.
 
-Historically we have been using [Mocha](https://mochajs.org/) with [Chai assertions](http://chaijs.com/) and [Sinon mocks](http://sinonjs.org/). We no longer support Chai and Sinon, so Jest equivalents must be used whenever new tests are added.
+Historically we have been using [Mocha](https://mochajs.org/) with [Chai assertions](http://chaijs.com/) and [Sinon mocks](http://sinonjs.org/). We no longer support Chai and Sinon, so Vitest equivalents must be used whenever new tests are added.
 
-End-to-end tests use [Playwright](https://playwright.dev/docs/intro) to interact with the browser, and Jest to write and drive the testing scripts.
+End-to-end tests use [Playwright Test](https://playwright.dev/docs/intro) to drive the browser and write the testing scripts.
 
 ### How to run all tests?
 
@@ -32,9 +32,9 @@ Example for client:
 ### How to run specified suite or test-case
 
 The exclusivity feature allows you to run only the specified suite or test-case by appending `.only()` to the function.
-It works with `describe` and `it` functions. More details in [Jest documentation](https://facebook.github.io/jest/docs/api.html).
+It works with `describe` and `it` functions. More details in [Vitest documentation](https://vitest.dev/api/#test-only).
 
-Using `only` is a little bit dangerous, as you may end up committing the `only`, which would cause the test suite to only run your test on the build server. So be sure to look for stray only calls when reviewing a test. We have [ESLint rules](https://github.com/jest-community/eslint-plugin-jest) that should catch them for you.
+Using `only` is a little bit dangerous, as you may end up committing the `only`, which would cause the test suite to only run your test on the build server. So be sure to look for stray only calls when reviewing a test. We have ESLint rules that should catch them for you.
 
 Example:
 

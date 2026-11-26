@@ -86,7 +86,7 @@ const tscCommands = [
 	} ) ),
 ].map( withTscInfo );
 
-// When Jest runs without --maxWorkers, each instance of Jest will try to use all
+// When a test runner runs without --maxWorkers, each instance will try to use all
 // cores available. (Which is a lot in our CI.) This isn't a problem per se, because
 // everything ends up completing pretty quickly. However, with 100% CPU usage for
 // most of the test, it's possible for some tests which rely on i/o to time out.
