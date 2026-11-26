@@ -49,10 +49,11 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		mockLeadMatchingSave( ( body ) => ( savedProfile = body ) );
 
 		render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
+		const bookingLink = await screen.findByRole( 'textbox', { name: 'Booking link (optional)' } );
 		expect(
 			await screen.findByText( /phone number field is temporarily unavailable/ )
 		).toBeVisible();
-		await user.click( screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ) );
+		await user.click( bookingLink );
 		await user.paste( 'booking.example.com/intro?source=A4A' );
 		const serviceLevel = await screen.findByRole( 'combobox', {
 			name: 'Which max service level are you most comfortable with right now?',
