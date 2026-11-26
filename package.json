@@ -327,6 +327,7 @@
 		"webpack": "5.111.1",
 		"@types/react": "19.3.0",
 		"@types/react-dom": "19.3.0",
+		"@joshwooding/vite-plugin-react-docgen-typescript@npm:^0.7.0": "0.9.1",
 		"@tootallnate/once@npm:1": "2.0.1",
 		"node-abi": "3.35.0",
 		"form-data": "^4.0.6",
