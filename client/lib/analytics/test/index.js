@@ -168,6 +168,10 @@ describe( 'Analytics', () => {
 				expect( loadScript ).toHaveBeenCalledWith( expect.stringMatching( /\/nostats.js/ ) );
 			} );
 		} );
+		test( 'resolves when nostats.js is blocked too', async () => {
+			loadScript.mockRejectedValueOnce( new Error( 'Failed to load script' ) );
+			await expect( initializeAnalytics() ).resolves.toBeUndefined();
+		} );
 	} );
 	describe( 'tracks', () => {
 		describe( 'recordEvent', () => {
