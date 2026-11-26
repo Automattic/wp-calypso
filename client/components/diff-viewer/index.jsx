@@ -1,4 +1,4 @@
-import { parsePatch } from 'diff';
+import { parsePatch } from 'diff/lib/patch/parse';
 import { Fragment } from 'react';
 
 import './style.scss';
@@ -93,17 +93,9 @@ const filename = ( { oldFileName, newFileName } ) => {
 	);
 };
 
-const parseDiff = ( diff ) => {
-	try {
-		return parsePatch( diff );
-	} catch {
-		return [];
-	}
-};
-
 export const DiffViewer = ( { diff } ) => (
 	<div className="diff-viewer">
-		{ parseDiff( diff ).map( ( file, fileIndex ) => (
+		{ parsePatch( diff ).map( ( file, fileIndex ) => (
 			<Fragment key={ fileIndex }>
 				<div key={ `file-${ fileIndex }` } className="diff-viewer__filename">
 					{ filename( file ) }
@@ -132,7 +124,7 @@ export const DiffViewer = ( { diff } ) => (
 					<div className="diff-viewer__lines">
 						{ file.hunks.map( ( hunk, hunkIndex ) =>
 							hunk.lines.map( ( line, index ) => {
-								const output = line.slice( 1 ).replace( /\r$/, '' ).replace( /^\s*$/, '\u00a0' );
+								const output = line.slice( 1 ).replace( /^\s*$/, '\u00a0' );
 								const key = `${ hunkIndex }-${ index }`;
 
 								switch ( line[ 0 ] ) {

@@ -15395,7 +15395,7 @@ __metadata:
     debug: "npm:^4.4.3"
     deep-freeze: "npm:^0.0.1"
     deepmerge: "npm:^4.3.1"
-    diff: "npm:^8.0.3"
+    diff: "npm:^4.0.4"
     dompurify: "npm:3.4.17"
     dotenv: "npm:^14.3.2"
     dotenv-webpack: "npm:^9.0.0"
@@ -17450,6 +17450,13 @@ __metadata:
     asap: "npm:^2.0.0"
     wrappy: "npm:1"
   checksum: 10c0/8a870ed42eade9a397e6141fe5c025148a59ed52f1f28b1db5de216b4d57f0af7a257070c3af7ce3d5508c1ce9dd5009028a76f4b2cc9370dc56551d2355fad8
+  languageName: node
+  linkType: hard
+
+"diff@npm:^4.0.4":
+  version: 4.0.4
+  resolution: "diff@npm:4.0.4"
+  checksum: 10c0/855fb70b093d1d9643ddc12ea76dca90dc9d9cdd7f82c08ee8b9325c0dc5748faf3c82e2047ced5dcaa8b26e58f7903900be2628d0380a222c02d79d8de385df
   languageName: node
   linkType: hard
 
