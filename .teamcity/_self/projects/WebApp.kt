@@ -523,9 +523,32 @@ object RunAllUnitTests : BuildType({
 					fi
 				}
 
-				# Hardened mode rejects yarn.lock entries the registry wouldn't resolve. It can't run with
-				# `--immutable`, so an entry it rewrites fails prevent_uncommitted_changes instead.
+				# Hardened mode fails on, or rewrites, yarn.lock entries whose version or dependencies the
+				# registry wouldn't give. It can't run with `--immutable`, so a rewrite fails
+				# prevent_uncommitted_changes instead.
 				function prevent_unverified_resolutions {
+					# Hardened mode ignores an npm entry's `::__archiveUrl=` (plain or URL-encoded), which can
+					# point at any tarball, so allow no parameters except a patch entry's own.
+					if ! node -e '
+						const bad = require( "fs" ).readFileSync( "yarn.lock", "utf8" ).split( "\n" )
+							.filter( ( line ) => line.startsWith( "  resolution: " ) )
+							.filter( ( line ) => {
+								try {
+									const decoded = decodeURIComponent( line );
+									const own = line.includes( "@patch:" ) ? decoded.slice( 0, decoded.lastIndexOf( "::" ) ) : decoded;
+									return own.includes( "::" ) || decoded.includes( "__archiveUrl" );
+								} catch {
+									return true;
+								}
+							} );
+						bad.forEach( ( line ) => console.log( line.trim() ) );
+						process.exit( bad.length ? 1 : 0 );
+					'; then
+						echo "yarn.lock has resolutions with parameters the registry check can't verify, listed above."
+						echo "Regenerate the affected entries with 'yarn' instead of editing yarn.lock by hand."
+						return 1
+					fi
+
 					# It refetches all registry metadata, so skip it when Yarn's inputs are unchanged.
 					if git diff --quiet refs/remotes/origin/trunk...HEAD -- yarn.lock .yarnrc.yml; then
 						echo "yarn.lock and .yarnrc.yml are unchanged from trunk; skipping the resolution check."
