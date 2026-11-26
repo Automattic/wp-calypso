@@ -15,14 +15,19 @@ import { type Mock, vi } from 'vitest';
 import useGenerateActionCallback from '../use-generate-action-callback';
 import type { CheckoutAttribution } from '../use-generate-action-callback';
 
-const { mockState, setNewMessagingChat } = vi.hoisted( () => ( {
+const { mockState, setNewMessagingChat, mockLocale } = vi.hoisted( () => ( {
 	mockState: { sites: { plans: {} as Record< number, { data: unknown[] } > } },
 	setNewMessagingChat: vi.fn(),
+	mockLocale: { isEnglish: true },
 } ) );
 
 vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
 vi.mock( '@automattic/help-center/src/stores', () => ( { HELP_CENTER_STORE: 'help-center' } ) );
+vi.mock( '@automattic/i18n-utils', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/i18n-utils' ) >() ),
+	useIsEnglishLocale: () => mockLocale.isEnglish,
+} ) );
 vi.mock( '@automattic/zendesk-client', () => ( {
 	useCanConnectToZendeskMessaging: () => ( { data: true } ),
 } ) );
@@ -140,9 +145,10 @@ describe( 'useGenerateActionCallback term changes limited to once every 12 month
 	beforeEach( () => {
 		vi.clearAllMocks();
 		mockState.sites.plans = {};
+		mockLocale.isEnglish = true;
 	} );
 
-	it( 'opens a support chat instead of the downgrade modals', async () => {
+	async function clickLimitedPremiumMonthly( showModalAndExit = vi.fn() ) {
 		mockState.sites.plans = {
 			1: {
 				data: [
@@ -157,7 +163,6 @@ describe( 'useGenerateActionCallback term changes limited to once every 12 month
 				],
 			},
 		};
-		const showModalAndExit = vi.fn();
 		const { result } = renderHook( () =>
 			useGenerateActionCallback( {
 				currentPlan: { productSlug: PLAN_PREMIUM } as never,
@@ -173,11 +178,26 @@ describe( 'useGenerateActionCallback term changes limited to once every 12 month
 			cartItemForPlan: { product_slug: PLAN_PREMIUM_MONTHLY },
 			availableForPurchase: false,
 		} as never )();
+	}
+
+	it( 'opens a support chat instead of the downgrade modals', async () => {
+		const showModalAndExit = vi.fn();
+		await clickLimitedPremiumMonthly( showModalAndExit );
 
 		expect( showModalAndExit ).not.toHaveBeenCalled();
 		expect( page ).not.toHaveBeenCalled();
 		expect( setNewMessagingChat ).toHaveBeenCalledWith( {
 			initialMessage: 'I would like to change my plan to WordPress.com Premium (monthly).',
+			siteUrl: 'https://example.wordpress.com',
+		} );
+	} );
+
+	it( 'falls back to the translated downgrade message until the new one is translated', async () => {
+		mockLocale.isEnglish = false;
+		await clickLimitedPremiumMonthly();
+
+		expect( setNewMessagingChat ).toHaveBeenCalledWith( {
+			initialMessage: 'I would like to downgrade my plan to WordPress.com Premium (monthly).',
 			siteUrl: 'https://example.wordpress.com',
 		} );
 	} );

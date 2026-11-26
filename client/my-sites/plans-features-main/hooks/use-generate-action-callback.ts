@@ -9,9 +9,11 @@ import {
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
+import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -231,6 +233,7 @@ function useGenerateActionCallback( {
 	} );
 	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 	const sitePlans = useSelector( ( state: IAppState ) =>
 		siteId ? getPlansBySiteId( state, siteId ).data : null
 	);
@@ -248,14 +251,20 @@ function useGenerateActionCallback( {
 					current_plan: sitePlanSlug,
 					changing_to: planSlug,
 				} );
+				const plan = getSitePlanNameWithTerm( targetSitePlan, translate );
 				handleDowngradeClick(
 					planSlug,
 					String(
-						translate( 'I would like to change my plan to %(plan)s.', {
-							args: { plan: getSitePlanNameWithTerm( targetSitePlan, translate ) },
-							comment:
-								'%(plan)s is a plan name with its billing term, e.g. "WordPress.com Premium (monthly)"',
-						} )
+						isEnglishLocale || hasTranslation( 'I would like to change my plan to %(plan)s.' )
+							? translate( 'I would like to change my plan to %(plan)s.', {
+									args: { plan },
+									comment:
+										'%(plan)s is a plan name with its billing term, e.g. "WordPress.com Premium (monthly)"',
+								} )
+							: translate( 'I would like to downgrade my plan to %s.', {
+									args: [ plan ],
+									comment: '%s is the plan name, e.g. "Starter"',
+								} )
 					)
 				);
 				return;
