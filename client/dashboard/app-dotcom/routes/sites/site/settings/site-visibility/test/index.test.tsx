@@ -7,10 +7,10 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
+import SiteVisibilitySettings from '..';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../../../../../app/context';
 import { render } from '../../../../../../../test-utils';
 import { isDashboardBackport } from '../../../../../../../utils/is-dashboard-backport';
-import SiteVisibilitySettings from '../index';
 import type { Site, SiteSettings } from '@automattic/api-core';
 
 vi.mock( '../../../../../../../utils/is-dashboard-backport', async () => {

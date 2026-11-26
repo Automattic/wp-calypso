@@ -12,10 +12,12 @@ import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading
 import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-ids';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
+import hasLoadFailed from '../../panel/state/selectors/has-load-failed';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields, SelectedNoteIdContext } from './dataviews';
 import { useNoteListFocusOnNoteClose, useNoteListNavigationKeyboardShortcuts } from './hooks';
+import LoadError from './load-error';
 import type { FilterName, Note } from '../types';
 import type { View } from '@wordpress/dataviews';
 
@@ -84,6 +86,7 @@ const NoteList = ( {
 	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
 	const isLoading = useSelector( ( state ) => getIsLoading( state ) );
 	const filteredLoading = useSelector( ( state ) => getFilteredLoading( state ) );
+	const loadFailed = useSelector( ( state ) => hasLoadFailed( state, filterName ) );
 	const { client, isViewSettingsEnabled } = useAppContext();
 
 	// Everything the render needs that depends on which tab is active, derived in
@@ -112,8 +115,8 @@ const NoteList = ( {
 		// done, a filtered tab once its cached list exists (even empty).
 		const hasInitiallyLoaded = isAllTab ? ! loading : cachedNoteIds !== undefined;
 
-		return { notes, isLoading: loading, hasInitiallyLoaded };
-	}, [ isAllTab, allNotes, cachedNoteIds, isLoading, filteredLoading, filterName ] );
+		return { notes, isLoading: loading, hasInitiallyLoaded, hasLoadFailed: loadFailed };
+	}, [ isAllTab, allNotes, cachedNoteIds, isLoading, filteredLoading, filterName, loadFailed ] );
 
 	const notes = keepSelectedNote( tab.notes, allNotes, selectedNoteId );
 
@@ -249,6 +252,24 @@ const NoteList = ( {
 		setSelectedNoteId,
 	} );
 
+	// "Try again" goes away once the tab loads, which would drop its focus.
+	const retryHadFocusRef = useRef( false );
+	useEffect( () => {
+		if ( ! retryHadFocusRef.current || tab.hasLoadFailed ) {
+			return;
+		}
+		retryHadFocusRef.current = false;
+		const { activeElement, body } = document;
+		if ( activeElement && activeElement !== body ) {
+			return;
+		}
+		const list = noteListRef.current;
+		const target =
+			list?.querySelector< HTMLElement >( '.dataviews-view-list__item' ) ??
+			list?.closest< HTMLElement >( '[role="tabpanel"]' );
+		target?.focus();
+	}, [ tab.hasLoadFailed ] );
+
 	// Spinner instead of an empty message while the view may still be filling: more
 	// notes to page, this tab's fetch in flight, or a tab never fetched yet (no
 	// cached list).
@@ -262,13 +283,25 @@ const NoteList = ( {
 	const showLoadMore = hasMoreNotes && visibleNotes.length > 0 && tab.isLoading;
 
 	// Full-panel spinner until this tab's first load settles; after that DataViews
-	// is mounted and in-flight loading shows in the `empty` slot or the foot.
-	if ( ! hasInitiallyLoadedRef.current ) {
+	// is mounted and in-flight loading shows in the `empty` slot or the foot. If the
+	// first load failed, an error with "Try again" takes the spinner's place, even
+	// over notes other tabs have loaded, since those aren't this tab's list.
+	if ( tab.hasLoadFailed || ! hasInitiallyLoadedRef.current ) {
 		return (
 			<div ref={ noteListRef } className="wpnc__note-list">
-				<VStack alignment="center" style={ { padding: '40px 0' } }>
-					<Spinner />
-				</VStack>
+				{ tab.hasLoadFailed ? (
+					<LoadError
+						isRetrying={ tab.isLoading }
+						onRetry={ () => {
+							retryHadFocusRef.current = true;
+							client?.retryLoad( filterName );
+						} }
+					/>
+				) : (
+					<VStack alignment="center" style={ { padding: '40px 0' } }>
+						<Spinner />
+					</VStack>
+				) }
 			</div>
 		);
 	}

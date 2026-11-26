@@ -12,8 +12,8 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import SiteAIToolsRead from '..';
 import { render } from '../../../../../../../../test-utils';
-import SiteAIToolsRead from '../index';
 import type { Site, UserSettings } from '@automattic/api-core';
 
 const JETPACK_SITE = {

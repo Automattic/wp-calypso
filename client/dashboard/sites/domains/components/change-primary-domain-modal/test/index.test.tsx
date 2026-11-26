@@ -7,9 +7,9 @@ import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
 import { vi } from 'vitest';
-import Snackbars from '../../../app/snackbars';
-import { render } from '../../../test-utils';
-import ChangePrimaryDomainModal from '../change-primary-domain-modal';
+import ChangePrimaryDomainModal from '..';
+import Snackbars from '../../../../../app/snackbars';
+import { render } from '../../../../../test-utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
 const site = { ID: 123, slug: 'primary-domain-test.wordpress.com' } as Site;

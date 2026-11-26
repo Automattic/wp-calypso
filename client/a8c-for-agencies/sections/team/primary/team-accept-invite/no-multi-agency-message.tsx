@@ -12,9 +12,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 type Props = {
 	currentAgency: Agency;
 	targetAgency: Agency;
+	isOwner: boolean;
 };
 
-export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: Props ) {
+export default function NoMultiAgencyMessage( { currentAgency, targetAgency, isOwner }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const { showSupportGuide } = useHelpCenter();
@@ -41,49 +42,92 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 			</div>
 
 			<div className="team-accept-invite__subtitle">
-				{ translate(
-					'To join %(targetAgencyName)s, first leave the %(currentAgencyName)s dashboard.',
-					{
-						args: {
-							targetAgencyName: targetAgency?.name,
-							currentAgencyName: currentAgency?.name,
-						},
-						comment: '%(targetAgencyName)s and %(currentAgencyName)s are agency names',
-					}
-				) }
+				{ isOwner
+					? translate(
+							'To join %(targetAgencyName)s, first transfer ownership of %(currentAgencyName)s to another team member, then leave its dashboard.',
+							{
+								args: {
+									targetAgencyName: targetAgency?.name,
+									currentAgencyName: currentAgency?.name,
+								},
+								comment: '%(targetAgencyName)s and %(currentAgencyName)s are agency names',
+							}
+						)
+					: translate(
+							'To join %(targetAgencyName)s, first leave the %(currentAgencyName)s dashboard.',
+							{
+								args: {
+									targetAgencyName: targetAgency?.name,
+									currentAgencyName: currentAgency?.name,
+								},
+								comment: '%(targetAgencyName)s and %(currentAgencyName)s are agency names',
+							}
+						) }
 			</div>
 
 			<StepSection heading={ translate( 'How to fix this:' ) }>
+				{ isOwner && (
+					<StepSectionItem
+						stepNumber={ 1 }
+						heading={
+							translate( 'Transfer ownership of %(currentAgencyName)s', {
+								args: { currentAgencyName: currentAgency.name },
+								comment: '%(currentAgencyName)s is an agency name',
+							} ) as string
+						}
+						description={ translate(
+							'In the {{a}}Team section{{/a}}, make another active team member the owner. You’ll become a regular team member.',
+							{
+								components: {
+									a: (
+										<a
+											className="team-accept-invite__link"
+											href={ A4A_TEAM_LINK }
+											target="_blank"
+											rel="noreferrer"
+											onClick={ onCurrentAgencyLinkClick }
+										/>
+									),
+								},
+							}
+						) }
+					/>
+				) }
+
 				<StepSectionItem
-					stepNumber={ 1 }
+					stepNumber={ isOwner ? 2 : 1 }
 					heading={
 						translate( 'Leave the %(currentAgencyName)s dashboard', {
 							args: { currentAgencyName: currentAgency.name },
 							comment: '%(currentAgencyName)s is an agency name',
 						} ) as string
 					}
-					description={ translate(
-						'Visit the {{a}}%(currentAgencyName)s{{/a}} dashboard and remove yourself in the Team section.',
-						{
-							args: { currentAgencyName: currentAgency.name },
-							comment: '%(currentAgencyName)s is an agency name',
-							components: {
-								a: (
-									<a
-										className="team-accept-invite__link"
-										href={ A4A_TEAM_LINK }
-										target="_blank"
-										rel="noreferrer"
-										onClick={ onCurrentAgencyLinkClick }
-									/>
-								),
-							},
-						}
-					) }
+					description={
+						isOwner
+							? translate( 'Then remove yourself in the Team section.' )
+							: translate(
+									'Visit the {{a}}%(currentAgencyName)s{{/a}} dashboard and remove yourself in the Team section.',
+									{
+										args: { currentAgencyName: currentAgency.name },
+										comment: '%(currentAgencyName)s is an agency name',
+										components: {
+											a: (
+												<a
+													className="team-accept-invite__link"
+													href={ A4A_TEAM_LINK }
+													target="_blank"
+													rel="noreferrer"
+													onClick={ onCurrentAgencyLinkClick }
+												/>
+											),
+										},
+									}
+								)
+					}
 				/>
 
 				<StepSectionItem
-					stepNumber={ 2 }
+					stepNumber={ isOwner ? 3 : 2 }
 					heading={
 						translate( 'Join the %(targetAgencyName)s dashboard', {
 							args: { targetAgencyName: targetAgency?.name },
@@ -99,6 +143,12 @@ export default function NoMultiAgencyMessage( { currentAgency, targetAgency }: P
 					) }
 				/>
 			</StepSection>
+
+			{ isOwner && (
+				<div className="team-accept-invite__subtitle">
+					{ translate( 'No other team members? Contact support for help.' ) }
+				</div>
+			) }
 
 			<StepSection heading={ translate( 'Learn more about Agency membership' ) }>
 				<Button

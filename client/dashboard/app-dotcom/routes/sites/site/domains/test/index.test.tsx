@@ -7,9 +7,9 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { SITE_CONTEXT_VIEW } from '../../../domains/dataviews/views';
-import { render } from '../../../test-utils';
-import SiteDomains from '../index';
+import SiteDomains from '..';
+import { SITE_CONTEXT_VIEW } from '../../../../../../domains/dataviews/views';
+import { render } from '../../../../../../test-utils';
 import type { Site, User } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 
@@ -23,9 +23,9 @@ vi.mock( '@automattic/i18n-utils', async () => ( {
 	useHasEnTranslation: () => () => mockHasEnTranslation,
 } ) );
 
-vi.mock( '../../../app/router/sites', async () => {
-	const actual = await vi.importActual< typeof import( '../../../app/router/sites' ) >(
-		'../../../app/router/sites'
+vi.mock( '../../../../../../app/router/sites', async () => {
+	const actual = await vi.importActual< typeof import( '../../../../../../app/router/sites' ) >(
+		'../../../../../../app/router/sites'
 	);
 	return {
 		...actual,
