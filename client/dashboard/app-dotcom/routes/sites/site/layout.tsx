@@ -3,18 +3,18 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { Suspense } from 'react';
-import { useAuth } from '../../app/auth';
-import { siteRoute } from '../../app/router/sites';
-import FlashMessage from '../../components/flash-message';
+import { useAuth } from '../../../../app/auth';
+import { siteRoute } from '../../../../app/router/sites';
+import FlashMessage from '../../../../components/flash-message';
+import { canManageSite, isSiteMember } from '../../../../sites/features';
+import SiteLaunchCelebrationModal from '../../../../sites/site-launch-modal/celebration-modal';
+import StagingSiteSyncMonitor from '../../../../sites/staging-site/components/staging-site-sync-monitor';
+import { hasStagingSite } from '../../../../sites/staging-site/utils';
 import {
 	isAwaitingAtomicTransfer,
 	mayBeAwaitingAtomicTransfer,
-} from '../../utils/site-atomic-transfers';
-import { SitePermissionError } from '../../utils/site-permissions';
-import { canManageSite, isSiteMember } from '../features';
-import SiteLaunchCelebrationModal from '../site-launch-modal/celebration-modal';
-import StagingSiteSyncMonitor from '../staging-site/components/staging-site-sync-monitor';
-import { hasStagingSite } from '../staging-site/utils';
+} from '../../../../utils/site-atomic-transfers';
+import { SitePermissionError } from '../../../../utils/site-permissions';
 
 function Site() {
 	const { siteSlug } = siteRoute.useParams();

@@ -253,9 +253,9 @@ export const siteRoute = createRoute( {
 
 		return { site };
 	},
-	errorComponent: lazyRouteComponent( () => import( '../../sites/site/error' ) ),
+	errorComponent: lazyRouteComponent( () => import( '../../app-dotcom/routes/sites/site/error' ) ),
 } ).lazy( () =>
-	import( '../../sites/site' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/layout' ).then( ( d ) =>
 		createLazyRoute( 'site' )( {
 			component: d.default,
 		} )

@@ -15,7 +15,7 @@ import {
 } from '../../../../../../test-utils/render-route';
 import '..';
 import '../../../layout';
-import '../../../../../../../../sites/site';
+import '../../../../layout';
 import type { Site } from '@automattic/api-core';
 
 describe( '/sites/$siteSlug/performance/backend/requests', () => {

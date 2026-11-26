@@ -5,8 +5,8 @@
 import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { render } from '../../../test-utils';
-import { InaccessibleJetpackNotice } from '../notices';
+import { render } from '../../../../test-utils';
+import { InaccessibleJetpackNotice } from '../index';
 import type { Site } from '@automattic/api-core';
 
 const site = {
