@@ -66,11 +66,7 @@ describe( '<AmplifyReportsList>', () => {
 			.reply( 200, { filename: 'amplify-report-1.pdf', data: btoa( '%PDF-1.4' ) } );
 
 		renderList( [ completedReport ] );
-		await userEvent.click(
-			await screen.findByRole( 'button', {
-				name: 'Download PDF for oliveandember.example',
-			} )
-		);
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Download PDF' } ) );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		await waitFor( () => expect( URL.createObjectURL ).toHaveBeenCalled() );
@@ -97,11 +93,7 @@ describe( '<AmplifyReportsList>', () => {
 			} );
 
 		renderList( [ failedReport ] );
-		await userEvent.click(
-			await screen.findByRole( 'button', {
-				name: 'Retry report for oliveandember.example',
-			} )
-		);
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Retry' } ) );
 
 		expect(
 			await findSnackbar( 'This report was already retried. Start a new report instead.' )
@@ -114,11 +106,7 @@ describe( '<AmplifyReportsList>', () => {
 			.reply( 202, { ...failedReport, status: 'pending', failure_reason: null } );
 
 		renderList( [ failedReport ] );
-		await userEvent.click(
-			await screen.findByRole( 'button', {
-				name: 'Retry report for oliveandember.example',
-			} )
-		);
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Retry' } ) );
 
 		expect(
 			await findSnackbar( 'Report restarted. Retries don’t count toward your allowance.' )
