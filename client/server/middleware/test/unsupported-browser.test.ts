@@ -1,19 +1,20 @@
 import config from '@automattic/calypso-config';
 import { type Request, type Response, type NextFunction } from 'express';
 import userAgent, { type AgentDetails as UserAgentDetails } from 'express-useragent';
+import { type Mock, vi } from 'vitest';
 import unsupportedBrowserMiddleware from '../../middleware/unsupported-browser';
 
 const parseUserAgent = ( source: string ) => userAgent.parse( source );
 
-jest.mock( '@automattic/calypso-config', () =>
-	Object.assign(
-		jest.fn().mockImplementation( ( key ) => {
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: Object.assign(
+		vi.fn().mockImplementation( ( key ) => {
 			if ( key === 'magnificent_non_en_locales' ) {
 				return [ 'es' ];
 			}
 		} ),
 		{
-			isEnabled: jest.fn().mockImplementation( ( feature ) => {
+			isEnabled: vi.fn().mockImplementation( ( feature ) => {
 				if ( feature === 'redirect-fallback-browsers' ) {
 					return true;
 				}
@@ -23,22 +24,24 @@ jest.mock( '@automattic/calypso-config', () =>
 				return false;
 			} ),
 		}
-	)
-);
-
-jest.mock( 'calypso/server/lib/analytics', () => ( {
-	tracks: {
-		recordEvent: jest.fn(),
-	},
+	),
 } ) );
+
+vi.mock( 'calypso/server/lib/analytics', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		tracks: {
+			recordEvent: vi.fn(),
+		},
+	} )
+);
 
 describe( 'unsupported-browser', () => {
 	let req: Partial< Request > & { useragent: UserAgentDetails };
-	let res: Partial< Response > & { redirect: jest.Mock; cookie: jest.Mock };
+	let res: Partial< Response > & { redirect: Mock; cookie: Mock };
 	let next: NextFunction;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		req = {
 			useragent: {} as UserAgentDetails,
@@ -49,15 +52,15 @@ describe( 'unsupported-browser', () => {
 		};
 
 		res = {
-			redirect: jest.fn(),
-			cookie: jest.fn(),
+			redirect: vi.fn(),
+			cookie: vi.fn(),
 		};
 
-		next = jest.fn();
+		next = vi.fn();
 	} );
 
 	it( 'should call next() if feature flag is disabled', () => {
-		( config.isEnabled as jest.Mock ).mockReturnValueOnce( false );
+		( config.isEnabled as Mock ).mockReturnValueOnce( false );
 
 		unsupportedBrowserMiddleware()( req, res, next );
 
@@ -205,7 +208,7 @@ describe( 'unsupported-browser', () => {
 
 	it( 'should force redirect when test flag is enabled', () => {
 		// Override config.isEnabled for this test to enable test mode
-		( config.isEnabled as jest.Mock ).mockImplementation(
+		( config.isEnabled as Mock ).mockImplementation(
 			( feature ) =>
 				feature === 'redirect-fallback-browsers' || feature === 'redirect-fallback-browsers/test'
 		);

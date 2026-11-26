@@ -1,4 +1,5 @@
 import events from 'events';
+import { vi } from 'vitest';
 
 const TWO_SECONDS = 2000;
 const THREE_SECONDS = 3000;
@@ -6,7 +7,7 @@ const THREE_SECONDS = 3000;
 const noop = () => {};
 
 // Always-enabled config; a factory so it survives the `jest.resetModules()` below.
-jest.mock( '@automattic/calypso-config', () => () => true );
+vi.mock( '@automattic/calypso-config', () => ( { default: () => true } ) );
 
 describe( 'index', () => {
 	let fetchMock;
@@ -16,16 +17,16 @@ describe( 'index', () => {
 	beforeEach( () => {
 		// Fresh module registry per test so analytics.js's module-level throttle
 		// starts clean; re-acquire deps from the same registry so the spy applies.
-		jest.resetModules();
-		jest.useFakeTimers();
+		vi.resetModules();
+		vi.useFakeTimers();
 		statsdUtils = require( 'calypso/lib/analytics/statsd-utils' );
 		( { logSectionResponse } = require( 'calypso/server/pages/analytics' ) );
-		fetchMock = jest.spyOn( globalThis, 'fetch' ).mockResolvedValue( undefined );
+		fetchMock = vi.spyOn( globalThis, 'fetch' ).mockResolvedValue( undefined );
 	} );
 
 	afterEach( () => {
 		fetchMock.mockRestore();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	describe( 'logSectionResponse middleware', () => {
@@ -59,7 +60,7 @@ describe( 'index', () => {
 				logSectionResponse( request, response, next );
 
 				// Move time forward and mock the "close" event
-				jest.advanceTimersByTime( TWO_SECONDS );
+				vi.advanceTimersByTime( TWO_SECONDS );
 				response.emit( 'close' );
 
 				// Check the information sent to boom.gif.
@@ -72,7 +73,7 @@ describe( 'index', () => {
 				logSectionResponse( request, response, next );
 
 				// Move time forward and mock the "close" event
-				jest.advanceTimersByTime( THREE_SECONDS );
+				vi.advanceTimersByTime( THREE_SECONDS );
 				response.emit( 'close' );
 
 				// Check the information sent to boom.gif.
@@ -89,7 +90,7 @@ describe( 'index', () => {
 			test( 'throttles calls to log analytics', () => {
 				// We only want to mock this for one test, as it will prevent our
 				// fetch spy above from working.
-				const analyticsMock = jest.spyOn( statsdUtils, 'logServerEvent' );
+				const analyticsMock = vi.spyOn( statsdUtils, 'logServerEvent' );
 
 				logSectionResponse( request, response, next );
 				logSectionResponse( request2, response2, next );
@@ -99,7 +100,7 @@ describe( 'index', () => {
 
 				expect( statsdUtils.logServerEvent ).toHaveBeenCalledTimes( 1 );
 
-				jest.advanceTimersByTime( TWO_SECONDS );
+				vi.advanceTimersByTime( TWO_SECONDS );
 				response.emit( 'close' );
 				response2.emit( 'close' );
 
@@ -110,7 +111,7 @@ describe( 'index', () => {
 
 		describe( 'when not rendering a section', () => {
 			beforeEach( () => {
-				jest.spyOn( statsdUtils, 'logServerEvent' );
+				vi.spyOn( statsdUtils, 'logServerEvent' );
 			} );
 
 			test( 'does not log response time analytics', () => {

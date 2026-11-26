@@ -1,38 +1,41 @@
 import { IncomingMessage } from 'http';
 import mockFs from 'mock-fs';
+import { vi } from 'vitest';
 import sections from 'calypso/sections';
 
-jest.mock( 'child_process', () => ( {
-	execSync: jest.fn(),
-} ) );
+vi.mock( 'child_process', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		execSync: vi.fn(),
+	} )
+);
 
-jest.mock( 'superagent', () => jest.fn() );
+vi.mock( 'superagent', () => ( { default: vi.fn() } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const impl = jest.fn();
-	impl.isEnabled = jest.fn();
-	return impl;
+vi.mock( '@automattic/calypso-config', () => {
+	const impl = vi.fn();
+	impl.isEnabled = vi.fn();
+	return { ...impl, default: impl };
 } );
 
-jest.mock( 'calypso/server/sanitize', () => jest.fn() );
+vi.mock( 'calypso/server/sanitize', () => ( { default: vi.fn() } ) );
 
-jest.mock( 'calypso/sections', () => {
+vi.mock( 'calypso/sections', async () => {
 	// eslint-disable-next-line no-shadow
-	const sections = jest.requireActual( 'calypso/sections' );
+	const sections = await vi.importActual( 'calypso/sections' );
 	sections
 		.filter( ( section ) => section.isomorphic )
 		.forEach( ( section ) => {
-			section.load = jest.fn( () => ( {
-				default: jest.fn(),
+			section.load = vi.fn( () => ( {
+				default: vi.fn(),
 			} ) );
 		} );
-	return sections;
+	return { ...sections, default: sections };
 } );
 
-jest.mock( 'calypso/sections-filter', () => jest.fn( () => true ) );
+vi.mock( 'calypso/sections-filter', () => ( { default: vi.fn( () => true ) } ) );
 
-jest.mock( 'calypso/login', () => {
-	const impl = jest.fn();
+vi.mock( 'calypso/login', () => {
+	const impl = vi.fn();
 	impl.LOGIN_SECTION_DEFINITION = {
 		name: 'login',
 		paths: [ '/log-in' ],
@@ -40,69 +43,73 @@ jest.mock( 'calypso/login', () => {
 		enableLoggedOut: true,
 		isomorphic: true,
 	};
-	return impl;
+	return { ...impl, default: impl };
 } );
 
-jest.mock( 'calypso/server/isomorphic-routing', () => ( {
-	serverRouter: jest.fn(),
-	getNormalizedPath: jest.fn(),
-	getCacheKey: jest.fn(),
+vi.mock( 'calypso/server/isomorphic-routing', () => ( {
+	serverRouter: vi.fn(),
+	getNormalizedPath: vi.fn(),
+	getCacheKey: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/server/render', () => ( {
-	serverRender: jest.fn(),
-	renderJsx: jest.fn(),
-	attachBuildTimestamp: jest.fn(),
-	attachHead: jest.fn(),
-	attachI18n: jest.fn(),
-	bumpStat: jest.fn(),
-	customizeClientDataForRequest: jest.fn(),
+vi.mock( 'calypso/server/render', () => ( {
+	serverRender: vi.fn(),
+	renderJsx: vi.fn(),
+	attachBuildTimestamp: vi.fn(),
+	attachHead: vi.fn(),
+	attachI18n: vi.fn(),
+	bumpStat: vi.fn(),
+	customizeClientDataForRequest: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/server/state-cache', () => new Map() );
+vi.mock( 'calypso/server/state-cache', () => ( { default: new Map() } ) );
 
-jest.mock( 'calypso/server/user-bootstrap', () => jest.fn() );
+vi.mock( 'calypso/server/user-bootstrap', () => ( { default: vi.fn() } ) );
 
-jest.mock( 'calypso/state/create-store', () => ( {
-	createReduxStore: jest.fn(),
+vi.mock( 'calypso/state/create-store', () => ( {
+	createReduxStore: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/redux-store', () => ( {
-	setStore: jest.fn(),
-	registerReducer: jest.fn(),
+vi.mock( 'calypso/state/redux-store', () => ( {
+	setStore: vi.fn(),
+	registerReducer: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/reducer', () => jest.fn() );
+vi.mock( 'calypso/state/reducer', () => ( { default: vi.fn() } ) );
 
-jest.mock( 'calypso/state/current-user/actions', () => ( {
-	setCurrentUser: jest.fn(),
+vi.mock( 'calypso/state/current-user/actions', () => ( {
+	setCurrentUser: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/paths', () => ( {
-	login: jest.fn(),
+vi.mock( 'calypso/lib/paths', () => ( {
+	login: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/server/lib/analytics', () => ( {
-	tracks: {
-		recordEvent: jest.fn(),
-	},
-	logstash: {
-		log: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/server/lib/analytics', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		tracks: {
+			recordEvent: vi.fn(),
+		},
+		logstash: {
+			log: vi.fn(),
+		},
+	} )
+);
 
-jest.mock( 'calypso/lib/i18n-utils', () => ( {
-	getLanguage: jest.fn( ( lang ) => ( { langSlug: lang } ) ),
-	filterLanguageRevisions: jest.fn(),
-} ) );
+vi.mock( 'calypso/lib/i18n-utils', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		getLanguage: vi.fn( ( lang ) => ( { langSlug: lang } ) ),
+		filterLanguageRevisions: vi.fn(),
+	} )
+);
 
-jest.mock( 'calypso/lib/oauth2-clients', () => ( {
-	isWooOAuth2Client: jest.fn(),
+vi.mock( 'calypso/lib/oauth2-clients', () => ( {
+	isWooOAuth2Client: vi.fn(),
 } ) );
 
 const createMockStore = () => ( {
-	dispatch: jest.fn(),
-	getState: jest.fn( () => ( { documentHead: { meta: [] } } ) ),
+	dispatch: vi.fn(),
+	getState: vi.fn( () => ( { documentHead: { meta: [] } } ) ),
 } );
 
 /**
@@ -125,11 +132,11 @@ const buildApp = ( environment ) => {
 
 	// We need to restore modules and filesystem so requiring modules inside `isolatedModules` works
 	mockFs.restore();
-	jest.resetModules();
+	vi.resetModules();
 
 	// Load the app
 	let appFactory;
-	jest.isolateModules( () => {
+	vi.isolateModules( () => {
 		// When the app requries these modules, they are loaded from its isolated registry.
 		// Requiring them here will give us the same instance used by the app, this will allow
 		// us to change the mock implementation later or make assertions about it.
@@ -320,31 +327,31 @@ const buildApp = ( environment ) => {
 					},
 					url: defaultUrl,
 					method: 'GET',
-					get: jest.fn(),
+					get: vi.fn(),
 					socket: {},
 					logger: {
-						error: jest.fn(),
+						error: vi.fn(),
 					},
 					...request,
 				} );
 
 				const mockResponse = {
-					setHeader: jest.fn(),
-					getHeader: jest.fn(),
-					clearCookie: jest.fn(),
-					send: jest.fn( () => {
+					setHeader: vi.fn(),
+					getHeader: vi.fn(),
+					clearCookie: vi.fn(),
+					send: vi.fn( () => {
 						resolve( {
 							request: mockRequest,
 							response: mockResponse,
 						} );
 					} ),
-					end: jest.fn( () => {
+					end: vi.fn( () => {
 						resolve( {
 							request: mockRequest,
 							response: mockResponse,
 						} );
 					} ),
-					redirect: jest.fn( () => {
+					redirect: vi.fn( () => {
 						resolve( {
 							request: mockRequest,
 							response: mockResponse,
@@ -917,7 +924,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		it( 'gets the redirect url for https requests', async () => {
 			await app.run( {
 				request: {
-					get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'https' : undefined ) ),
+					get: vi.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'https' : undefined ) ),
 				},
 			} );
 			expect( app.getMocks().login ).toHaveBeenCalledWith( {
@@ -928,7 +935,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		it( 'gets the redirect url for http requests', async () => {
 			await app.run( {
 				request: {
-					get: jest.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'http' : undefined ) ),
+					get: vi.fn( ( header ) => ( header === 'X-Forwarded-Proto' ? 'http' : undefined ) ),
 				},
 			} );
 			expect( app.getMocks().login ).toHaveBeenCalledWith( {
@@ -968,7 +975,7 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 				app.withFailedBootstrapUser( { error: 'authorization_required' } );
 				app.getMocks().login.mockImplementation( ( { redirectTo } ) => redirectTo );
 				// Even after the redirect, it will log the error. Silence the error output to make Jest happy.
-				jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+				vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 
 				const { response } = await app.run();
 
@@ -1022,14 +1029,14 @@ describe( 'main app', () => {
 	} );
 
 	afterEach( async () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		app.reset();
 	} );
 
 	describe( 'Middleware loggedInContext', () => {
 		it( 'detects if it is a support session based on a header', async () => {
 			const { request } = await app.run( {
-				request: { get: jest.fn( ( header ) => header === 'x-support-session' ) },
+				request: { get: vi.fn( ( header ) => header === 'x-support-session' ) },
 			} );
 			expect( request.context.isSupportSession ).toBe( true );
 		} );
@@ -1530,7 +1537,7 @@ describe( 'main app', () => {
 				request: {
 					url: '/start/launch-site/domains-launch',
 					query: { ...query, retry: '1' },
-					get: jest.fn( ( header ) => headers[ header ] ),
+					get: vi.fn( ( header ) => headers[ header ] ),
 				},
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
@@ -1552,7 +1559,7 @@ describe( 'main app', () => {
 				request: {
 					url: '/start/launch-site',
 					query,
-					get: jest.fn( ( header ) => ( header === 'Referer' ? 'not a url' : undefined ) ),
+					get: vi.fn( ( header ) => ( header === 'Referer' ? 'not a url' : undefined ) ),
 				},
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
@@ -1873,7 +1880,7 @@ describe( 'main app', () => {
 			// place to simulate an error in the current implementation of the app
 			return app.run( {
 				response: {
-					redirect: jest.fn( () => {
+					redirect: vi.fn( () => {
 						throw { error: 'fake error' };
 					} ),
 				},
@@ -1890,7 +1897,7 @@ describe( 'main app', () => {
 			app.withRenderJSX( 'content' );
 			app.withUrl( '/' );
 
-			jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+			vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		} );
 
 		it( 'returns a 500', async () => {
@@ -1930,11 +1937,11 @@ describe( 'dashboard app', () => {
 		app.withServerRender( '' );
 		app.withMockFilesystem();
 		app.withEvergreenBrowser();
-		app.withReduxStore( { dispatch: jest.fn(), getState: jest.fn( () => ( {} ) ) } );
+		app.withReduxStore( { dispatch: vi.fn(), getState: vi.fn( () => ( {} ) ) } );
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		app.reset();
 	} );
 

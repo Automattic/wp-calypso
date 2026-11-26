@@ -1,12 +1,13 @@
 import fs from 'fs';
 import mockFs from 'mock-fs';
+import { vi } from 'vitest';
 
 let mockStdout;
 let getLogger;
 
 beforeEach( () => {
 	( { getLogger } = require( '../index' ) );
-	mockStdout = jest.spyOn( process.stdout, 'write' ).mockImplementation( () => true );
+	mockStdout = vi.spyOn( process.stdout, 'write' ).mockImplementation( () => true );
 	mockFs( {
 		'/tmp': {
 			'calypso.log': '',
@@ -15,7 +16,7 @@ beforeEach( () => {
 } );
 
 afterEach( () => {
-	jest.resetModules();
+	vi.resetModules();
 	mockStdout.mockRestore();
 	delete process.env.CALYPSO_LOGFILE;
 	mockFs.restore();

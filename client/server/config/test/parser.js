@@ -1,10 +1,13 @@
 import fs from 'fs';
 import parser from '@automattic/calypso-config/parser';
+import { vi } from 'vitest';
 
-jest.mock( 'fs', () => ( {
-	existsSync: jest.fn(),
-	readFileSync: jest.fn(),
-} ) );
+vi.mock( 'fs', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		existsSync: vi.fn(),
+		readFileSync: vi.fn(),
+	} )
+);
 
 function mockFs( files ) {
 	fs.existsSync.mockImplementation( ( path ) => !! files[ path ] );
@@ -203,7 +206,7 @@ describe( 'parser', () => {
 
 	test( 'should explicitly set user-bootstrapping to false if there are no real secrets', () => {
 		setEmptySecrets();
-		const errorSpy = jest.fn();
+		const errorSpy = vi.fn();
 		global.console = { error: errorSpy };
 
 		const { serverData, clientData } = parser( '/valid-path' );
