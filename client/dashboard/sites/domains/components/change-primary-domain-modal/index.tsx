@@ -14,16 +14,16 @@ import { __, sprintf } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useId, useState } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { ButtonStack } from '../../components/button-stack';
-import { Notice } from '../../components/notice';
-import { Text } from '../../components/text';
-import { isSubdomain } from '../../utils/domain';
-import { getPrimaryDomainErrorMessage } from '../../utils/primary-domain-error';
+import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../../../components/button-stack';
+import { Notice } from '../../../../components/notice';
+import { Text } from '../../../../components/text';
+import { isSubdomain } from '../../../../utils/domain';
+import { getPrimaryDomainErrorMessage } from '../../../../utils/primary-domain-error';
 import PrimaryAddressIllustration from './primary-address-illustration';
 import type { DomainSummary, Site } from '@automattic/api-core';
-import './change-primary-domain-modal.scss';
+import './style.scss';
 
 interface ChangePrimaryDomainModalProps {
 	site: Site;

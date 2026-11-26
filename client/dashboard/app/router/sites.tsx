@@ -674,7 +674,7 @@ export const siteDomainsRoute = createRoute( {
 		] );
 	},
 } ).lazy( () =>
-	import( '../../sites/domains' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/domains' ).then( ( d ) =>
 		createLazyRoute( 'site-domains' )( {
 			component: d.default,
 		} )
@@ -1951,7 +1951,7 @@ export const sitePlansRoute = createRoute( {
 		await queryClient.ensureQueryData( sitePlansQuery( site.ID ) );
 	},
 } ).lazy( () =>
-	import( '../../sites/site-plans' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/plans' ).then( ( d ) =>
 		createLazyRoute( 'site-plans' )( {
 			component: d.default,
 		} )

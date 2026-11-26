@@ -4,21 +4,25 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useCallback, useMemo, useState } from 'react';
-import { useAuth } from '../../app/auth';
-import { usePersistentView } from '../../app/hooks/use-persistent-view';
-import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
+import { useAuth } from '../../../../../app/auth';
+import { usePersistentView } from '../../../../../app/hooks/use-persistent-view';
+import { PerformanceTrackerStop } from '../../../../../app/performance-tracking';
+import {
+	siteRoute,
+	siteDomainsRoute,
+	siteSettingsRedirectRoute,
+} from '../../../../../app/router/sites';
 import {
 	DataViews,
 	DataViewsActionModal,
 	DataViewsCard,
 	useDeepLinkedDataViewsAction,
-} from '../../components/dataviews';
-import { Notice } from '../../components/notice';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { usePendingPrimaryDomain } from '../../components/pending-primary-domain-notice';
-import AddDomainButton from '../../domains/add-domain-button';
+} from '../../../../../components/dataviews';
+import { Notice } from '../../../../../components/notice';
+import { PageHeader } from '../../../../../components/page-header';
+import PageLayout from '../../../../../components/page-layout';
+import { usePendingPrimaryDomain } from '../../../../../components/pending-primary-domain-notice';
+import AddDomainButton from '../../../../../domains/add-domain-button';
 import {
 	DOMAINS_TABLE_CLASS_NAME,
 	DomainCardsLayout,
@@ -33,17 +37,17 @@ import {
 	useBulkActionsProgressNotice,
 	useDomainsListLayouts,
 	withDomainsListDefaultLayout,
-} from '../../domains/dataviews';
+} from '../../../../../domains/dataviews';
+import { SitesNoticeArbiter } from '../../../../../sites/components/notice-arbiter';
+import ChangePrimaryDomainModal from '../../../../../sites/domains/components/change-primary-domain-modal';
+import ExpiredDomainNotice from '../../../../../sites/domains/components/expired-domain-notice';
+import PrimaryDomainSelectorNotice from '../../../../../sites/domains/components/primary-domain-selector-notice';
 import {
 	canUserSetPrimaryDomain,
 	isDomainRenewable,
 	isPendingPrimaryDomain,
 	isPrimaryDomainCandidate,
-} from '../../utils/domain';
-import { SitesNoticeArbiter } from '../components/notice-arbiter';
-import ChangePrimaryDomainModal from './change-primary-domain-modal';
-import ExpiredDomainNotice from './expired-domain-notice';
-import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
+} from '../../../../../utils/domain';
 import type { DomainSummary } from '@automattic/api-core';
 
 function getDomainId( domain: DomainSummary ) {

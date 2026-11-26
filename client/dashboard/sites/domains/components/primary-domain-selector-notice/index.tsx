@@ -7,14 +7,14 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
-import InlineSupportLink from '../../components/inline-support-link';
-import { Notice } from '../../components/notice';
-import UpsellCTAButton from '../../components/upsell-cta-button';
-import { canUserSetPrimaryDomain, isPrimaryDomainCandidate } from '../../utils/domain';
-import { getSitePlanUpgradeUrl } from '../../utils/site-url';
-import ChangePrimaryDomainModal from './change-primary-domain-modal';
+import InlineSupportLink from '../../../../components/inline-support-link';
+import { Notice } from '../../../../components/notice';
+import UpsellCTAButton from '../../../../components/upsell-cta-button';
+import { canUserSetPrimaryDomain, isPrimaryDomainCandidate } from '../../../../utils/domain';
+import { getSitePlanUpgradeUrl } from '../../../../utils/site-url';
+import ChangePrimaryDomainModal from '../change-primary-domain-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
-import './primary-domain-selector-notice.scss';
+import './style.scss';
 
 interface PrimaryDomainSelectorNoticeProps {
 	domains: DomainSummary[];
