@@ -86,7 +86,12 @@ export class AppleLoginButton extends Component {
 		}
 
 		if ( ! window.AppleID ) {
-			await loadScript( appleClientUrl );
+			await loadScript( appleClientUrl ).catch( () => {} );
+		}
+
+		// Content blockers block Apple's script or serve an empty stand-in; the button then does nothing.
+		if ( ! window.AppleID ) {
+			return null;
 		}
 
 		const nonce = crypto.randomUUID();
@@ -123,7 +128,7 @@ export class AppleLoginButton extends Component {
 		}
 
 		if ( this.getUxMode() === 'redirect' ) {
-			this.loadAppleClient().then( ( AppleID ) => AppleID.auth.signIn() );
+			this.loadAppleClient().then( ( AppleID ) => AppleID?.auth.signIn() );
 			return;
 		}
 	};
