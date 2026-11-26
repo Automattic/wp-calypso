@@ -44,7 +44,6 @@
 		"@wordpress/compose": "^9.2.0",
 		"@wordpress/data": "^11.2.0",
 		"@wordpress/dom-ready": "^5.2.0",
-		"@wordpress/editor": "^16.2.0",
 		"@wordpress/i18n": "^7.2.0",
 		"@wordpress/icons": "^21.0.0",
 		"@wordpress/plugins": "^8.2.0",

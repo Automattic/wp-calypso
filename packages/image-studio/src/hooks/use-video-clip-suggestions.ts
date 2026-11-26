@@ -1,6 +1,5 @@
 import { type Suggestion } from '@automattic/agenttic-client';
 import { useSelect } from '@wordpress/data';
-import { store as editorStore } from '@wordpress/editor';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
 import { ImageStudioMode } from '../types';
 import { formatSuggestionIds } from '../utils/agenttic-tracking';
@@ -111,7 +110,7 @@ export function useVideoClipSuggestions( {
 			let currentPostId: string | number | null = null;
 			let rawContent = '';
 			try {
-				const editorSelect = storeSelect( editorStore ) as unknown as {
+				const editorSelect = storeSelect( 'core/editor' ) as unknown as {
 					getCurrentPostId?: () => string | number | null;
 					getEditedPostContent?: () => string;
 					getEditedPostAttribute?: ( attr: string ) => unknown;

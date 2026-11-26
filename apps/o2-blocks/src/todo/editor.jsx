@@ -1,6 +1,6 @@
+import { RichText } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
 import { Button } from '@wordpress/components';
-import { RichText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, plus } from '@wordpress/icons';
