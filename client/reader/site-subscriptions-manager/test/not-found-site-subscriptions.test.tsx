@@ -1,25 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { SubscriptionManager } from '@automattic/data-stores';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import NotFoundSiteSubscriptions from '../not-found-site-subscriptions';
 
-jest.mock( '@automattic/data-stores', () => {
-	const actual = jest.requireActual( '@automattic/data-stores' );
+vi.mock( '@automattic/data-stores', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+			'@automattic/data-stores'
+		);
 	return {
 		...actual,
 		SubscriptionManager: {
 			...actual.SubscriptionManager,
-			useSiteSubscriptionsQuery: jest.fn(),
+			useSiteSubscriptionsQuery: vi.fn(),
 		},
 	};
 } );
 
-const mockUseSiteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery as jest.Mock;
+const mockUseSiteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery as Mock;
 
 const Wrapper =
 	( {
@@ -59,7 +63,7 @@ const Wrapper =
 
 describe( 'NotFoundSiteSubscriptions', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		nock.disableNetConnect();
 	} );
 

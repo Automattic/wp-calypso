@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { setDiscoverTagNoindex } from '../set-discover-tag-noindex';
 
 function makeContext( query, meta = [] ) {
@@ -19,7 +20,7 @@ const robotsMeta = ( context ) =>
 
 describe( 'setDiscoverTagNoindex', () => {
 	test( 'adds a noindex robots meta when a tag is selected', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makeContext( { selectedTag: 'food' } );
 
 		setDiscoverTagNoindex( context, next );
@@ -34,7 +35,7 @@ describe( 'setDiscoverTagNoindex', () => {
 			{ name: 'robots', content: 'index' },
 		] );
 
-		setDiscoverTagNoindex( context, jest.fn() );
+		setDiscoverTagNoindex( context, vi.fn() );
 
 		expect( context.dispatched[ 0 ].meta ).toEqual( [
 			{ name: 'description', content: 'Discover' },
@@ -43,7 +44,7 @@ describe( 'setDiscoverTagNoindex', () => {
 	} );
 
 	test( 'does nothing for the bare /discover/tags page', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = makeContext( {} );
 
 		setDiscoverTagNoindex( context, next );

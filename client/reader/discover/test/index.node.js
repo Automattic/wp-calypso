@@ -1,36 +1,39 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
+import { vi } from 'vitest';
 import initDiscover from '../index.node';
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	getAnyLanguageRouteParam: () => ':lang([a-z]{2,3}|[a-z]{2}-[a-z]{2})',
 } ) );
 
-jest.mock( 'calypso/controller', () => ( {
-	makeLayout: jest.fn(),
-	ssrSetupLocale: jest.fn(),
+vi.mock( 'calypso/controller', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		makeLayout: vi.fn(),
+		ssrSetupLocale: vi.fn(),
+	} )
+);
+
+vi.mock( 'calypso/reader/stream/post-placeholder', () => ( { default: () => null } ) );
+
+vi.mock( '../components/header-and-navigation', () => ( { default: () => null } ) );
+
+vi.mock( '../components/logged-out-hero', () => ( {
+	setDiscoverLoggedOutHero: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/stream/post-placeholder', () => () => null );
-
-jest.mock( '../components/header-and-navigation', () => () => null );
-
-jest.mock( '../components/logged-out-hero', () => ( {
-	setDiscoverLoggedOutHero: jest.fn(),
-} ) );
-
-jest.mock( '../discover-document-head', () => ( {
+vi.mock( '../discover-document-head', () => ( {
 	DiscoverDocumentHead: () => null,
 } ) );
 
-jest.mock( '../routes', () => ( {
-	getLocalizedRoutes: jest.fn( () => [] ),
-	getSelectedTab: jest.fn(),
+vi.mock( '../routes', () => ( {
+	getLocalizedRoutes: vi.fn( () => [] ),
+	getSelectedTab: vi.fn(),
 } ) );
 
-jest.mock( '../set-discover-tag-noindex', () => ( {
-	setDiscoverTagNoindex: jest.fn(),
+vi.mock( '../set-discover-tag-noindex', () => ( {
+	setDiscoverTagNoindex: vi.fn(),
 } ) );
 
 describe( 'retired reddit discover redirect', () => {
@@ -56,12 +59,12 @@ describe( 'retired reddit discover redirect', () => {
 			expected: '/fr/discover/add-new?flags=reader',
 		},
 	] )( 'redirects $originalUrl to $expected', ( { params, originalUrl, expected } ) => {
-		const router = jest.fn();
+		const router = vi.fn();
 		initDiscover( router );
 		const handler = router.mock.calls.find(
 			( [ paths ] ) => Array.isArray( paths ) && paths.includes( '/discover/reddit' )
 		)[ 1 ];
-		const redirect = jest.fn();
+		const redirect = vi.fn();
 
 		handler( { params, originalUrl, res: { redirect } } );
 

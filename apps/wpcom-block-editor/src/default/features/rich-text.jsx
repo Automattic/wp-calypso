@@ -1,6 +1,6 @@
 /* global wpcomGutenberg */
 import { RichTextToolbarButton } from '@wordpress/block-editor';
-import { getBlockType } from '@wordpress/blocks';
+import { hasBlockSupport } from '@wordpress/blocks';
 import { compose, ifCondition } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { registerFormatType } from '@wordpress/rich-text';
@@ -24,10 +24,7 @@ const RichTextJustifyButton = ( {
 		const baseClassName = className.replace( 'has-text-align-justify', '' );
 
 		// TODO: Remove this once we know all Atomic sites are on Gutenberg 22.1 or higher
-		const isDeprecatedAlignAttribute =
-			getBlockType( 'core/paragraph' ).attributes.align !== undefined;
-
-		if ( isDeprecatedAlignAttribute ) {
+		if ( ! hasBlockSupport( 'core/paragraph', 'typography.textAlign' ) ) {
 			const newAlignValue = deprecatedIsBlockJustified ? undefined : 'justify';
 
 			const newClassName = clsx(

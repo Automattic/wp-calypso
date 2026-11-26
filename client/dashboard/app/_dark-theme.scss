@@ -127,8 +127,15 @@
 	// Row separators: `stroke-surface-neutral-weak` is ~1:1 against cards.
 	.dataviews-view-list div[role='row'],
 	.dataviews-view-list div[role='article'],
-	.dataviews-view-table tr {
+	.dataviews-view-table tr,
+	.plugin-switcher-item:not( .is-selected, .is-selected + .plugin-switcher-item ) {
 		border-top-color: var( --wpds-color-stroke-surface-neutral );
+	}
+
+	.action-list .action-item,
+	.summary-button.has-density-medium,
+	.summary-button.has-density-medium-low {
+		border-bottom-color: var( --wpds-color-stroke-surface-neutral );
 	}
 
 	// Selected rows: `background-interactive-brand-weak-active` reads as a block, `stroke-surface-brand` is 2.55:1.

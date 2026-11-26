@@ -1,9 +1,10 @@
 /*
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	buildCommentsTreeForDisplay,
 	isCommentsApiDisabledError,
@@ -685,7 +686,7 @@ describe( 'usePostCommentActions', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'adds a placeholder while creating a root comment and replaces it on success', async () => {

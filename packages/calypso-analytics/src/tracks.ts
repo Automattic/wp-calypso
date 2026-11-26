@@ -106,7 +106,10 @@ function checkForBlockedTracks(): Promise< void > {
 		debug( 'Loading /nostats.js', { _ut, _ui } );
 		return loadScript(
 			'/nostats.js?_ut=' + encodeURIComponent( _ut ) + '&_ui=' + encodeURIComponent( _ui )
-		);
+		).catch( () => {
+			// Blockers that stop w.js usually stop nostats.js too, and there's nothing left to fall back to.
+			debug( 'Failed to load /nostats.js' );
+		} );
 	} );
 }
 

@@ -8,7 +8,7 @@ describe( 'resolveWindowOpen', () => {
 		expect( resolveWindowOpen( url, '' ) ).toEqual( { action: 'deny', urlToLoad: url } );
 	} );
 
-	it.each( [ 'about:blank', '' ] )( 'falls back to the hovered link for %p', ( url ) => {
+	it.each( [ 'about:blank', '' ] )( 'falls back to the hovered link for %o', ( url ) => {
 		const targetURL = 'https://example.wordpress.com/?p=1&preview=true';
 		expect( resolveWindowOpen( url, targetURL ) ).toEqual( {
 			action: 'deny',
@@ -27,7 +27,7 @@ describe( 'resolveWindowOpen', () => {
 		'https://example.com/https://accounts.google.com/o/oauth2/auth',
 		'https://accounts.google.com/o/oauth2/authx',
 		'https://accounts.google.com/o/oauth2/auth-preview',
-	] )( 'loads look-alike Google login URLs in the main view: %p', ( url ) => {
+	] )( 'loads look-alike Google login URLs in the main view: %o', ( url ) => {
 		expect( resolveWindowOpen( url, '' ) ).toEqual( { action: 'deny', urlToLoad: url } );
 	} );
 } );

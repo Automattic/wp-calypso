@@ -1,6 +1,7 @@
 ## Unreleased
 
 - Read the `_ut`, `_ui` and `_tkl` URL parameters with `URLSearchParams`, so a malformed percent-escape no longer throws.
+- `initializeAnalytics` resolves instead of rejecting when both `w.js` and `/nostats.js` fail to load.
 
 ## 1.1.4
 

@@ -169,8 +169,8 @@ export default function InfluencedRevenue( {
 				value={ value }
 				aria-label={ label }
 			>
-				<Progress.Track>
-					<Progress.Indicator />
+				<Progress.Track className="agency-tiers-influenced-revenue-bar__track">
+					<Progress.Indicator color="color-mix( in srgb, var( --wp-admin-theme-color ) 90%, transparent )" />
 				</Progress.Track>
 			</Progress.Root>
 			<Text variant="muted" size={ 12 } lineHeight="20px" style={ { textWrap: 'balance' } }>

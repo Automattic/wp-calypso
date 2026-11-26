@@ -1,5 +1,5 @@
 /*
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
@@ -7,6 +7,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { vi } from 'vitest';
 import { getCachedPost, upsertPostCache } from 'calypso/reader/data/post/cache';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { READER_CONVERSATION_UPDATE_FOLLOW_STATUS } from 'calypso/state/reader/action-types';
@@ -117,7 +118,7 @@ describe( 'usePost', () => {
 
 		const queryClient = buildQueryClient();
 		const store = buildStore( queryClient );
-		const dispatchSpy = jest.spyOn( store, 'dispatch' );
+		const dispatchSpy = vi.spyOn( store, 'dispatch' );
 		const wrapper = ( { children }: { children: ReactNode } ) => (
 			<QueryClientProvider client={ queryClient }>
 				<Provider store={ store }>{ children }</Provider>

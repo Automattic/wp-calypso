@@ -1,38 +1,40 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import DiscoverNewBlogs from '../index';
 import type { NewBlogRec } from '../tracks';
 
 // Mock the card: it hydrates through the Reader post store and needs
 // redux / react-query / a real post.
-jest.mock(
-	'../card',
-	() => ( props: { rec: NewBlogRec; onDismiss: () => void; onImpression: () => void } ) => (
+vi.mock( '../card', () => ( {
+	default: ( props: { rec: NewBlogRec; onDismiss: () => void; onImpression: () => void } ) => (
 		<li data-testid="new-blog-card">
 			<span>{ `Post ${ props.rec.postId }` }</span>
 			<button onClick={ props.onDismiss }>dismiss</button>
 			<button onClick={ props.onImpression }>impression</button>
 		</li>
-	)
-);
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+	),
 } ) );
-const mockRecordReaderTracksEvent = jest.fn();
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
+} ) );
+const mockRecordReaderTracksEvent = vi.fn();
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
 } ) );
-const mockRecordNewBlogInteract = jest.fn();
-jest.mock( '../tracks', () => ( {
-	...jest.requireActual( '../tracks' ),
+const mockRecordNewBlogInteract = vi.fn();
+vi.mock( '../tracks', async () => ( {
+	...( await vi.importActual< typeof import( '../tracks' ) >( '../tracks' ) ),
 	recordNewBlogInteract: ( ...args: unknown[] ) => mockRecordNewBlogInteract( ...args ),
 } ) );
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( str: string ) => str,
-} ) );
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( str: string ) => str,
+	} )
+);
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( props: { children: React.ReactNode; onClick: () => void } ) => (
 		<button onClick={ props.onClick }>{ props.children }</button>
 	),
@@ -52,12 +54,12 @@ const makeRec = ( n: number ): NewBlogRec => ( {
 } );
 
 const renderModule = ( recs: NewBlogRec[], overrides = {} ) => {
-	const props = { recs, dismissBlog: jest.fn(), hide: jest.fn(), ...overrides };
+	const props = { recs, dismissBlog: vi.fn(), hide: vi.fn(), ...overrides };
 	return { ...render( <DiscoverNewBlogs { ...props } /> ), props };
 };
 
 describe( 'DiscoverNewBlogs', () => {
-	afterEach( () => jest.clearAllMocks() );
+	afterEach( () => vi.clearAllMocks() );
 
 	it( 'renders nothing when there are no recs', () => {
 		const { container } = renderModule( [] );
@@ -114,14 +116,14 @@ describe( 'DiscoverNewBlogs', () => {
 	it( 'falls back to the previous page when the current page is dismissed away', () => {
 		const recs = [ 1, 2, 3, 4 ].map( makeRec );
 		const { rerender } = render(
-			<DiscoverNewBlogs recs={ recs } dismissBlog={ jest.fn() } hide={ jest.fn() } />
+			<DiscoverNewBlogs recs={ recs } dismissBlog={ vi.fn() } hide={ vi.fn() } />
 		);
 		fireEvent.click( screen.getByRole( 'button', { name: 'More like this' } ) );
 		expect( screen.getByText( 'Post 40' ) ).toBeVisible();
 
 		// Blog 4 dismissed: page 2 is now empty, so page 1 should show again.
 		rerender(
-			<DiscoverNewBlogs recs={ recs.slice( 0, 3 ) } dismissBlog={ jest.fn() } hide={ jest.fn() } />
+			<DiscoverNewBlogs recs={ recs.slice( 0, 3 ) } dismissBlog={ vi.fn() } hide={ vi.fn() } />
 		);
 		expect( screen.getAllByTestId( 'new-blog-card' ) ).toHaveLength( 3 );
 		expect( screen.getByText( 'Post 10' ) ).toBeVisible();

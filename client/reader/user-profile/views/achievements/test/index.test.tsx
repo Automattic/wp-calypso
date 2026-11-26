@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import useAchievementsVisibility from 'calypso/reader/components/achievements/use-achievements-visibility';
 import UserAchievements from '../index';
 import type { ReaderUser } from '@automattic/api-core';
 
-jest.mock( 'calypso/reader/components/achievements/use-achievements-visibility' );
+vi.mock( 'calypso/reader/components/achievements/use-achievements-visibility' );
 
-jest.mock( 'calypso/data/reader/use-achievements-query' );
+vi.mock( 'calypso/data/reader/use-achievements-query' );
 
-const mockAchievementsGridProps = jest.fn();
-jest.mock( '../achievements-grid', () => ( {
+const mockAchievementsGridProps = vi.fn();
+vi.mock( '../achievements-grid', () => ( {
 	__esModule: true,
 	default: ( props: { userLogin: string; isOwnProfile: boolean } ) => {
 		mockAchievementsGridProps( props );
@@ -20,19 +21,19 @@ jest.mock( '../achievements-grid', () => ( {
 	},
 } ) );
 
-jest.mock( '../achievements-settings', () => ( {
+vi.mock( '../achievements-settings', () => ( {
 	__esModule: true,
 	default: () => <button data-testid="achievements-settings">Settings</button>,
 } ) );
 
-jest.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
+vi.mock( 'calypso/reader/user-profile/components/private-tab-notice', () => ( {
 	__esModule: true,
 	default: ( { title }: { title: string } ) => (
 		<div data-testid="private-tab-notice">{ title }</div>
 	),
 } ) );
-const mockActivityStreakProps = jest.fn();
-jest.mock( '../activity-streak', () => ( {
+const mockActivityStreakProps = vi.fn();
+vi.mock( '../activity-streak', () => ( {
 	__esModule: true,
 	ActivityStreak: ( props: { streak?: { current_streak: number }; isOwnProfile: boolean } ) => {
 		mockActivityStreakProps( props );
@@ -40,8 +41,8 @@ jest.mock( '../activity-streak', () => ( {
 	},
 } ) );
 
-const mockUseAchievementsVisibility = jest.mocked( useAchievementsVisibility );
-const mockUseAchievementsQuery = jest.mocked( useAchievementsQuery );
+const mockUseAchievementsVisibility = vi.mocked( useAchievementsVisibility );
+const mockUseAchievementsQuery = vi.mocked( useAchievementsQuery );
 
 const getAchievementsVisibility = (
 	overrides: Partial< ReturnType< typeof useAchievementsVisibility > > = {}
@@ -66,7 +67,7 @@ const getAchievementsQuery = (
 	isError: false,
 	hasNextPage: false,
 	isFetchingNextPage: false,
-	fetchNextPage: jest.fn(),
+	fetchNextPage: vi.fn(),
 	...overrides,
 } );
 
@@ -84,7 +85,7 @@ describe( 'UserAchievements', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockAchievementsGridProps.mockClear();
 		mockActivityStreakProps.mockClear();
 		mockUseAchievementsQuery.mockReturnValue(

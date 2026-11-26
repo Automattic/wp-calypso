@@ -1,13 +1,14 @@
+import { vi } from 'vitest';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { pageViewForPost } from 'calypso/reader/stats';
 import { markPostSeen, resetSeenPostGlobalIdsForTests } from '../mark-post-seen';
 
-jest.mock( 'calypso/lib/analytics/mc', () => ( {
-	bumpStat: jest.fn(),
+vi.mock( 'calypso/lib/analytics/mc', () => ( {
+	bumpStat: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	pageViewForPost: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	pageViewForPost: vi.fn(),
 } ) );
 
 describe( 'markPostSeen', () => {

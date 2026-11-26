@@ -1,22 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { UserSitesResponse } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import SitesVisibilityCard from '../sites-visibility-card';
 
-jest.mock( 'calypso/blocks/site-icon', () => ( {
-	SiteIcon: ( { siteId }: { siteId: number } ) => <span data-testid={ `site-icon-${ siteId }` } />,
-} ) );
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SiteIcon: ( { siteId }: { siteId: number } ) => (
+			<span data-testid={ `site-icon-${ siteId }` } />
+		),
+	} )
+);
 
-const mockSetSiteHidden = jest.fn();
-const mockSetAllHidden = jest.fn();
+const mockSetSiteHidden = vi.fn();
+const mockSetAllHidden = vi.fn();
 let mockPendingSiteId: number | null = null;
 let mockIsPending = false;
-jest.mock( 'calypso/reader/data/user-profile/use-set-hidden-sites', () => ( {
+vi.mock( 'calypso/reader/data/user-profile/use-set-hidden-sites', () => ( {
 	useSetHiddenSites: () => ( {
 		setSiteHidden: mockSetSiteHidden,
 		setAllHidden: mockSetAllHidden,
@@ -75,7 +80,7 @@ describe( 'SitesVisibilityCard', () => {
 	let queryClient: QueryClient;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockPendingSiteId = null;
 		mockIsPending = false;
 		nock.disableNetConnect();

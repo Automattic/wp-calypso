@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import UserProfilePrivateTabNotice from '../index';
 
-const mockUseQuery = jest.fn();
-jest.mock( '@tanstack/react-query', () => ( {
+const mockUseQuery = vi.fn();
+vi.mock( '@tanstack/react-query', () => ( {
 	useQuery: ( options: unknown ) => mockUseQuery( options ),
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
+vi.mock( '@automattic/api-queries', () => ( {
 	userPreferenceQuery: ( key: string ) => ( { queryKey: [ 'user-preference', key ] } ),
 } ) );
 
-const mockRecordReaderTracksEvent = jest.fn();
-jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
+const mockRecordReaderTracksEvent = vi.fn();
+vi.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 
@@ -26,7 +27,7 @@ const defaultProps = {
 
 describe( 'UserProfilePrivateTabNotice', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders nothing when visibility is public', () => {

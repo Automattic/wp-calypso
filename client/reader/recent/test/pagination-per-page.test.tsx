@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { type Mock, vi } from 'vitest';
 import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { usePaginatedStream, type StreamListItem } from 'calypso/reader/data/stream';
 import Recent from 'calypso/reader/recent';
@@ -17,15 +18,15 @@ const TARGET_PER_PAGE = 30;
 
 let mockIsWide = false;
 
-jest.mock( '@automattic/viewport-react', () => ( {
+vi.mock( '@automattic/viewport-react', () => ( {
 	useBreakpoint: () => mockIsWide,
 } ) );
 
 // Minimal DataViews stand-in that surfaces the current `view` and lets the test
 // drive `onChangeView` / `onChangeSelection` directly, mirroring how the real
 // per-page control and row selection call back into `Recent`.
-jest.mock( '@wordpress/dataviews', () => {
-	const React = jest.requireActual( 'react' );
+vi.mock( '@wordpress/dataviews', async () => {
+	const React = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	return {
 		DataViews: ( {
 			view,
@@ -117,8 +118,8 @@ jest.mock( '@wordpress/dataviews', () => {
 
 // Render just the post title so the list's row content is observable without
 // pulling in the real featured-image/block dependencies.
-jest.mock( 'calypso/reader/recent/recent-post-field', () => {
-	const { forwardRef } = jest.requireActual( 'react' );
+vi.mock( 'calypso/reader/recent/recent-post-field', async () => {
+	const { forwardRef } = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	return {
 		__esModule: true,
 		default: forwardRef( ( { post }: { post?: { title?: string } }, ref: Ref< HTMLDivElement > ) =>
@@ -127,9 +128,11 @@ jest.mock( 'calypso/reader/recent/recent-post-field', () => {
 	};
 } );
 
-jest.mock( 'calypso/components/async-load', () => () => <div data-testid="async-load" /> );
+vi.mock( 'calypso/components/async-load', () => ( {
+	default: () => <div data-testid="async-load" />,
+} ) );
 
-jest.mock( 'calypso/components/navigation-header', () => ( {
+vi.mock( 'calypso/components/navigation-header', () => ( {
 	__esModule: true,
 	default: ( { title, children }: { title: string; children?: ReactNode } ) => (
 		<header>
@@ -139,21 +142,23 @@ jest.mock( 'calypso/components/navigation-header', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/reader/stream/empty', () => () => <div data-testid="empty-stream" /> );
+vi.mock( 'calypso/reader/stream/empty', () => ( {
+	default: () => <div data-testid="empty-stream" />,
+} ) );
 
-jest.mock( 'calypso/reader/recent/engagement-bar', () => () => (
-	<div data-testid="engagement-bar" />
-) );
+vi.mock( 'calypso/reader/recent/engagement-bar', () => ( {
+	default: () => <div data-testid="engagement-bar" />,
+} ) );
 
-jest.mock( 'calypso/reader/recent/recent-post-skeleton', () => () => (
-	<div data-testid="recent-post-skeleton" />
-) );
+vi.mock( 'calypso/reader/recent/recent-post-skeleton', () => ( {
+	default: () => <div data-testid="recent-post-skeleton" />,
+} ) );
 
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+vi.mock( 'calypso/reader/data/site-subscriptions', () => ( {
 	useSiteSubscriptions: () => ( { subscriptions: [] } ),
 } ) );
 
-jest.mock( 'calypso/state/reader-ui/actions', () => ( {
+vi.mock( 'calypso/state/reader-ui/actions', () => ( {
 	viewStream: ( streamKey: string, path: string ) => ( {
 		type: 'TEST_VIEW_STREAM',
 		streamKey,
@@ -163,12 +168,14 @@ jest.mock( 'calypso/state/reader-ui/actions', () => ( {
 
 // Require `isPaddingStreamItem` from the leaf `types` module rather than the
 // barrel to avoid a circular-import evaluation error when the mock factory runs.
-jest.mock( 'calypso/reader/data/stream', () => {
-	const { isPaddingStreamItem } = jest.requireActual( 'calypso/reader/data/stream/types' );
+vi.mock( 'calypso/reader/data/stream', async () => {
+	const { isPaddingStreamItem } = await vi.importActual<
+		typeof import( 'calypso/reader/data/stream/types' )
+	>( 'calypso/reader/data/stream/types' );
 	return {
 		__esModule: true,
 		isPaddingStreamItem,
-		usePaginatedStream: jest.fn(),
+		usePaginatedStream: vi.fn(),
 	};
 } );
 
@@ -200,7 +207,7 @@ const renderRecent = () => {
 
 describe( 'Recent per-page pagination', () => {
 	beforeEach( () => {
-		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+		( usePaginatedStream as Mock ).mockReturnValue( {
 			items: buildStreamItems(),
 			pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
 			isRequesting: false,
@@ -209,7 +216,7 @@ describe( 'Recent per-page pagination', () => {
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsWide = false;
 	} );
 
@@ -218,7 +225,7 @@ describe( 'Recent per-page pagination', () => {
 		mockIsWide = true;
 		const items = buildStreamItems();
 		items[ 29 ] = { isPadding: true, postId: 'padding-29' };
-		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+		( usePaginatedStream as Mock ).mockReturnValue( {
 			items,
 			pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
 			isRequesting: false,
@@ -243,7 +250,7 @@ describe( 'Recent per-page pagination', () => {
 		const user = userEvent.setup();
 		const items = buildStreamItems();
 		items[ 29 ] = { isPadding: true, postId: 'padding-29' };
-		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+		( usePaginatedStream as Mock ).mockReturnValue( {
 			items,
 			pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
 			isRequesting: true,
@@ -254,7 +261,7 @@ describe( 'Recent per-page pagination', () => {
 		await user.click( screen.getByRole( 'button', { name: 'page 2' } ) );
 		expect( screen.getAllByRole( 'button', { name: /^select \d+$/ } ) ).toHaveLength( 15 );
 
-		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+		( usePaginatedStream as Mock ).mockReturnValue( {
 			items,
 			pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
 			isRequesting: false,
@@ -321,7 +328,7 @@ describe( 'Recent per-page pagination', () => {
 
 		// Simulate the new page size still fetching: the paginated stream list is
 		// momentarily empty while `isRequesting` is true.
-		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+		( usePaginatedStream as Mock ).mockReturnValue( {
 			items: [],
 			pagination: { totalItems: 0, totalPages: 0 },
 			isRequesting: true,
@@ -372,7 +379,7 @@ describe( 'Recent per-page pagination', () => {
 
 		// Simulate the new page size still fetching: the paginated stream list is
 		// momentarily empty while `isRequesting` is true.
-		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+		( usePaginatedStream as Mock ).mockReturnValue( {
 			items: [],
 			pagination: { totalItems: 0, totalPages: 0 },
 			isRequesting: true,
@@ -436,7 +443,7 @@ describe( 'Recent per-page pagination', () => {
 
 			// Navigate to page 3 while only page-1 data is loaded (its rows aren't
 			// present yet). The selection clears so the full-post pane shows loading.
-			( usePaginatedStream as jest.Mock ).mockReturnValue( {
+			( usePaginatedStream as Mock ).mockReturnValue( {
 				items: buildStreamItems( 15 ),
 				pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
 				isRequesting: true,
@@ -449,7 +456,7 @@ describe( 'Recent per-page pagination', () => {
 			expect( screen.queryByTestId( 'async-load' ) ).not.toBeInTheDocument();
 
 			// Once the page settles, its first item is selected.
-			( usePaginatedStream as jest.Mock ).mockReturnValue( {
+			( usePaginatedStream as Mock ).mockReturnValue( {
 				items: buildStreamItems( 45 ),
 				pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
 				isRequesting: false,
@@ -470,7 +477,7 @@ describe( 'Recent per-page pagination', () => {
 			expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-320' );
 
 			// The refetch is in flight: no rows yet.
-			( usePaginatedStream as jest.Mock ).mockReturnValue( {
+			( usePaginatedStream as Mock ).mockReturnValue( {
 				items: [],
 				pagination: { totalItems: 0, totalPages: 0 },
 				isRequesting: true,
@@ -485,7 +492,7 @@ describe( 'Recent per-page pagination', () => {
 			// per-page intent flag must keep the original selection instead.
 			const settled = buildStreamItems( 45 );
 			[ settled[ 20 ], settled[ 35 ] ] = [ settled[ 35 ], settled[ 20 ] ];
-			( usePaginatedStream as jest.Mock ).mockReturnValue( {
+			( usePaginatedStream as Mock ).mockReturnValue( {
 				items: settled,
 				pagination: { totalItems: TOTAL_ITEMS, totalPages: 2 },
 				isRequesting: false,
