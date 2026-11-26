@@ -1,4 +1,4 @@
-import { DATA_CENTER_OPTIONS, getDataCenterOptions } from '@automattic/api-core';
+import { getDataCenterOptions } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import SummaryButton from '@automattic/components/src/summary-button';
 import { useSuspenseQuery } from '@tanstack/react-query';
@@ -31,9 +31,7 @@ function CopyToDataCenter( {
 	available: DataCenterOption[];
 } ) {
 	const dataCenterOptions = getDataCenterOptions();
-	const targets = ( available.length ? available : DATA_CENTER_OPTIONS ).filter(
-		( dataCenter ) => dataCenter !== current
-	);
+	const targets = available.filter( ( dataCenter ) => dataCenter !== current );
 	const [ target, setTarget ] = useState< DataCenterOption | undefined >(
 		recommended && targets.includes( recommended ) ? recommended : targets[ 0 ]
 	);
@@ -89,7 +87,11 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 
 	const dataCenterOptions = getDataCenterOptions();
 	const badges = current ? [ { text: dataCenterOptions[ current ] } ] : undefined;
-	const canCopy = !! current && ! site.is_wpcom_staging_site && canDuplicateSite( site, user );
+	const canCopy =
+		!! current &&
+		!! available?.some( ( dataCenter ) => dataCenter !== current ) &&
+		! site.is_wpcom_staging_site &&
+		canDuplicateSite( site, user );
 	const showRecommendation = !! current && !! recommended && recommended !== current;
 
 	return (
@@ -137,7 +139,7 @@ export default function PrimaryDataCenterSettings( { siteSlug }: { siteSlug: str
 						/>
 					</VStack>
 				</Card>
-				{ canCopy && user && (
+				{ canCopy && available && (
 					<CopyToDataCenter
 						site={ site }
 						current={ current }

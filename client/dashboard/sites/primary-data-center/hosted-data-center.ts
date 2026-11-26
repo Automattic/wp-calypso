@@ -34,6 +34,7 @@ export function useHostedDataCenter( site: Site ) {
 	return {
 		current: dataCenter?.current ?? primaryDataCenter ?? null,
 		recommended: dataCenter?.recommended ?? null,
-		available: dataCenter?.available ?? [],
+		// Undefined without the endpoint: older backends also ignore a data center for a copy.
+		available: dataCenter?.available,
 	};
 }
