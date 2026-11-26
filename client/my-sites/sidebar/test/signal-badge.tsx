@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  *
  * Component tests for `<SignalBadge>`. Each test maps the public plugin's
  * v0.1.4 signal-rendering behaviour (signal.js + styles.css) to the React

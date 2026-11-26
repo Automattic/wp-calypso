@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAuthorProfileTabs } from '../author-profile-tabs';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { replace: jest.fn() },
+	default: { replace: vi.fn() },
 } ) );
-const pageReplace = jest.mocked( page.replace );
+const pageReplace = vi.mocked( page.replace );
 
 const tabs = [
 	{ slug: 'posts', title: 'Posts', path: '/x?tab=posts' },
@@ -38,7 +39,7 @@ beforeEach( () => pageReplace.mockClear() );
 describe( 'SocialAuthorProfileTabs', () => {
 	it( 'fires onTabClick + page.replace on a plain left click', async () => {
 		const user = userEvent.setup();
-		const onTabClick = jest.fn();
+		const onTabClick = vi.fn();
 		renderWithProvider(
 			<SocialAuthorProfileTabs tabs={ tabs } activeSlug="posts" onTabClick={ onTabClick } />
 		);
@@ -49,7 +50,7 @@ describe( 'SocialAuthorProfileTabs', () => {
 
 	it( 'no-ops when the active tab is clicked', async () => {
 		const user = userEvent.setup();
-		const onTabClick = jest.fn();
+		const onTabClick = vi.fn();
 		renderWithProvider(
 			<SocialAuthorProfileTabs tabs={ tabs } activeSlug="posts" onTabClick={ onTabClick } />
 		);
@@ -60,7 +61,7 @@ describe( 'SocialAuthorProfileTabs', () => {
 
 	it( 'passes through modifier-clicks', async () => {
 		const user = userEvent.setup();
-		const onTabClick = jest.fn();
+		const onTabClick = vi.fn();
 		renderWithProvider(
 			<SocialAuthorProfileTabs tabs={ tabs } activeSlug="posts" onTabClick={ onTabClick } />
 		);

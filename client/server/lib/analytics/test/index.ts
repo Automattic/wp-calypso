@@ -1,21 +1,22 @@
 import { type Request } from 'express';
 import superagent, { type SuperAgentRequest } from 'superagent';
+import { type Mock, vi } from 'vitest';
 import analytics from '../index';
 
 describe( 'Server-Side Analytics', () => {
 	describe( 'tracks.recordEvent', () => {
 		beforeAll( () => {
-			jest.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } as SuperAgentRequest );
-			jest.useFakeTimers();
-			jest.setSystemTime( 1704067200000 );
+			vi.spyOn( superagent, 'get' ).mockReturnValue( { end: () => {} } as SuperAgentRequest );
+			vi.useFakeTimers();
+			vi.setSystemTime( 1704067200000 );
 		} );
 
 		afterAll( () => {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 
 		afterEach( () => {
-			( superagent.get as jest.Mock ).mockClear();
+			( superagent.get as Mock ).mockClear();
 		} );
 
 		const req = {
@@ -38,7 +39,7 @@ describe( 'Server-Side Analytics', () => {
 			analytics.tracks.recordEvent( 'calypso_test', { a: 'foo' }, req );
 
 			expect( superagent.get ).toHaveBeenCalled();
-			const url = new URL( ( superagent.get as jest.Mock ).mock.calls[ 0 ][ 0 ] );
+			const url = new URL( ( superagent.get as Mock ).mock.calls[ 0 ][ 0 ] );
 			expect( url.origin ).toBe( 'http://pixel.wp.com' );
 			expect( url.pathname ).toBe( '/t.gif' );
 			expect( url.searchParams.get( '_en' ) ).toBe( 'calypso_test' );
@@ -67,7 +68,7 @@ describe( 'Server-Side Analytics', () => {
 			analytics.tracks.recordEvent( 'calypso_user_test', { b: 'bar' }, reqWithCookie );
 
 			expect( superagent.get ).toHaveBeenCalled();
-			const url = new URL( ( superagent.get as jest.Mock ).mock.calls[ 0 ][ 0 ] );
+			const url = new URL( ( superagent.get as Mock ).mock.calls[ 0 ][ 0 ] );
 			expect( url.origin ).toBe( 'http://pixel.wp.com' );
 			expect( url.pathname ).toBe( '/t.gif' );
 			expect( url.searchParams.get( '_en' ) ).toBe( 'calypso_user_test' );
@@ -97,7 +98,7 @@ describe( 'Server-Side Analytics', () => {
 			analytics.tracks.recordEvent( 'calypso_query_test', { c: 'baz' }, reqWithQuery );
 
 			expect( superagent.get ).toHaveBeenCalled();
-			const url = new URL( ( superagent.get as jest.Mock ).mock.calls[ 0 ][ 0 ] );
+			const url = new URL( ( superagent.get as Mock ).mock.calls[ 0 ][ 0 ] );
 			expect( url.origin ).toBe( 'http://pixel.wp.com' );
 			expect( url.pathname ).toBe( '/t.gif' );
 			expect( url.searchParams.get( '_en' ) ).toBe( 'calypso_query_test' );
@@ -119,7 +120,7 @@ describe( 'Server-Side Analytics', () => {
 			analytics.tracks.recordEvent( 'calypso_test', { a: undefined }, req );
 
 			expect( superagent.get ).toHaveBeenCalled();
-			const url = new URL( ( superagent.get as jest.Mock ).mock.calls[ 0 ][ 0 ] );
+			const url = new URL( ( superagent.get as Mock ).mock.calls[ 0 ][ 0 ] );
 			expect( url.searchParams.get( 'a' ) ).toBeNull();
 		} );
 	} );

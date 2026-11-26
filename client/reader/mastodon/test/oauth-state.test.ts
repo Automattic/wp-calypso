@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { clearOauthState, isSafeReturnPath, readOauthState, saveOauthState } from '../oauth-state';
 
 const STORAGE_KEY = 'reader.mastodon.oauthState';
@@ -79,7 +80,7 @@ describe( 'oauth-state', () => {
 		} );
 
 		it( 'returns null when getItem throws', () => {
-			const spy = jest.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
+			const spy = vi.spyOn( Storage.prototype, 'getItem' ).mockImplementation( () => {
 				throw new Error( 'storage unavailable' );
 			} );
 			try {
@@ -92,7 +93,7 @@ describe( 'oauth-state', () => {
 
 	describe( 'saveOauthState failure modes', () => {
 		it( 'returns false (and does not throw) when setItem throws', () => {
-			const spy = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+			const spy = vi.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 				throw new Error( 'QuotaExceededError' );
 			} );
 			try {
@@ -195,7 +196,7 @@ describe( 'oauth-state', () => {
 		} );
 
 		it( 'swallows removeItem failures', () => {
-			const spy = jest.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {
+			const spy = vi.spyOn( Storage.prototype, 'removeItem' ).mockImplementation( () => {
 				throw new Error( 'storage unavailable' );
 			} );
 			try {

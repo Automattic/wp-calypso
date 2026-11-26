@@ -4,6 +4,7 @@ import { Card, CardBody } from '../../components/card';
 import { Text } from '../../components/text';
 import AmplifyReportCreator from './report-creator';
 import AmplifyReportsList from './reports';
+import ProspectReportsSpacefastBanner from './spacefast-banner';
 import { AmplifyUsageCard } from './usage-meter';
 import type { AmplifyTiersLink } from './types';
 import type { AmplifyPage } from './use-amplify-page';
@@ -43,6 +44,7 @@ export default function AmplifyContent( {
 						tierId={ tierId }
 						tiersLink={ tiersLink }
 					/>
+					<ProspectReportsSpacefastBanner reports={ page.reports } />
 					<AmplifyReportsList agencyId={ agencyId } reports={ page.reports } />
 				</VStack>
 			) }

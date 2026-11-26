@@ -9,7 +9,7 @@ import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from './app/context';
 import type { AppConfig } from './app/context';
 import type { User } from '@automattic/api-core';
 
-const defaultUser = {
+export const defaultUser = {
 	ID: 1,
 	username: 'testuser',
 	email: 'test@example.com',

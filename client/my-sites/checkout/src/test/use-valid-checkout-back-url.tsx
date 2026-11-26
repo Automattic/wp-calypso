@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { siteByIdQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useSelector } from 'calypso/state';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
 import { getSiteId } from 'calypso/state/sites/selectors';
@@ -12,11 +13,11 @@ import { createTestSite } from './util';
 import type { Site } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/selectors/get-initial-query-arguments' );
-jest.mock( 'calypso/state/sites/selectors' );
+vi.mock( 'calypso/state/selectors/get-initial-query-arguments' );
+vi.mock( 'calypso/state/sites/selectors' );
 
 const siteSlug = 'example-site.com';
 const siteId = 654;
@@ -34,10 +35,10 @@ function renderWithSite( site: Partial< Site > ) {
 
 describe( 'useValidCheckoutBackUrl', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) => selector( {} ) );
-		( getInitialQueryArguments as jest.Mock ).mockReturnValue( { checkoutBackUrl: undefined } );
-		( getSiteId as jest.Mock ).mockReturnValue( siteId );
+		vi.clearAllMocks();
+		( useSelector as Mock ).mockImplementation( ( selector ) => selector( {} ) );
+		( getInitialQueryArguments as Mock ).mockReturnValue( { checkoutBackUrl: undefined } );
+		( getSiteId as Mock ).mockReturnValue( siteId );
 	} );
 
 	it( 'returns a jetpack pricing back url for jetpack sites', () => {
@@ -63,10 +64,10 @@ describe( 'useValidCheckoutBackUrl on the Studio checkout', () => {
 	}
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( useSelector as jest.Mock ).mockImplementation( ( selector ) => selector( {} ) );
-		( getInitialQueryArguments as jest.Mock ).mockReturnValue( {} );
-		( getSiteId as jest.Mock ).mockReturnValue( null );
+		vi.clearAllMocks();
+		( useSelector as Mock ).mockImplementation( ( selector ) => selector( {} ) );
+		( getInitialQueryArguments as Mock ).mockReturnValue( {} );
+		( getSiteId as Mock ).mockReturnValue( null );
 	} );
 
 	afterEach( () => {
@@ -126,7 +127,7 @@ describe( 'useValidCheckoutBackUrl on the Studio checkout', () => {
 
 	it( 'accepts a checkoutBackUrl on a Studio host', () => {
 		window.history.pushState( {}, '', '/checkout/studio/studio-cloud-monthly' );
-		( getInitialQueryArguments as jest.Mock ).mockReturnValue( {
+		( getInitialQueryArguments as Mock ).mockReturnValue( {
 			checkoutBackUrl: 'https://wordpress.studio/pricing',
 		} );
 

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render } from '@testing-library/react';
 import StatsListVideoThumbnail from '../stats-list-video-thumbnail';

@@ -7,6 +7,7 @@ import type {
 	JetpackLicenseCounts,
 	JetpackLicenseDownloadUrl,
 	JetpackLicensesPage,
+	WooCommerceLicenseSites,
 } from './types';
 
 const FETCH_SIZE = 100;
@@ -96,6 +97,18 @@ export async function fetchAgencyDevLicenses( agencyId: number ): Promise< Agenc
 		{
 			apiNamespace: 'wpcom/v2',
 			path: '/jetpack-licensing/dev-licenses',
+		},
+		{ agency_id: agencyId }
+	);
+}
+
+export async function fetchWooCommerceLicenseSites(
+	agencyId: number
+): Promise< WooCommerceLicenseSites > {
+	return wpcom.req.get(
+		{
+			apiNamespace: 'wpcom/v2',
+			path: '/agency/license/woocommerce-sites',
 		},
 		{ agency_id: agencyId }
 	);

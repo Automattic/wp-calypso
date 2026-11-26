@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { FEATURE_SEO_PREVIEW_TOOLS, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { vi } from 'vitest';
 import { getUpgradeNudgeHref } from '../index';
 
-jest.mock( 'calypso/components/data/query-products-list', () => () => null );
-jest.mock( 'calypso/blocks/upsell-nudge', () => () => null );
+vi.mock( 'calypso/components/data/query-products-list', () => ( { default: () => null } ) );
+vi.mock( 'calypso/blocks/upsell-nudge', () => ( { default: () => null } ) );
 
 describe( 'getUpgradeNudgeHref', () => {
 	test( 'builds an absolute wordpress.com /plans URL in wp-admin (Odyssey)', () => {

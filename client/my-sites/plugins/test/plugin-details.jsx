@@ -1,43 +1,11 @@
-/** @jest-environment jsdom */
-
-jest.mock( '@automattic/calypso-router' );
-
-let mockWpComPlugin = { data: undefined, isFetched: false, isFetching: true };
-jest.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
-	useWPCOMPlugin: () => mockWpComPlugin,
-} ) );
-
-jest.mock( 'calypso/data/marketplace/use-es-query', () => ( {
-	useESPlugin: () => ( { data: {} } ),
-} ) );
-
-jest.mock( 'calypso/my-sites/plugins/use-plugin-is-maintained', () => ( {
-	usePluginIsMaintained: () => true,
-} ) );
-
-jest.mock( 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled', () => ( {
-	useIsMarketplaceRedesignEnabled: () => false,
-} ) );
-
-// The tests drive the installed-plugins fetch lifecycle through the store, so
-// the query component must not start a real request.
-jest.mock( 'calypso/components/data/query-plugins', () => () => null );
-
-// `localizePath` prefixes the locale for logged-out visitors on a magnificent
-// locale. The stub makes that prefix visible without loading translations.
-let mockLocalePrefix = '';
-jest.mock( 'calypso/my-sites/plugins/utils', () => ( {
-	...jest.requireActual( 'calypso/my-sites/plugins/utils' ),
-	useLocalizedPlugins: () => ( {
-		localizePath: ( path ) => `${ mockLocalePrefix }${ path }`,
-	} ),
-} ) );
+/** @vitest-environment jsdom */
 
 import page from '@automattic/calypso-router';
 import { merge } from '@automattic/js-utils';
 import { act } from '@testing-library/react';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -54,6 +22,39 @@ import siteConnection from 'calypso/state/site-connection/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PluginDetails from '../plugin-details';
+
+vi.mock( '@automattic/calypso-router' );
+
+let mockWpComPlugin = { data: undefined, isFetched: false, isFetching: true };
+vi.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
+	useWPCOMPlugin: () => mockWpComPlugin,
+} ) );
+
+vi.mock( 'calypso/data/marketplace/use-es-query', () => ( {
+	useESPlugin: () => ( { data: {} } ),
+} ) );
+
+vi.mock( 'calypso/my-sites/plugins/use-plugin-is-maintained', () => ( {
+	usePluginIsMaintained: () => true,
+} ) );
+
+vi.mock( 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled', () => ( {
+	useIsMarketplaceRedesignEnabled: () => false,
+} ) );
+
+// The tests drive the installed-plugins fetch lifecycle through the store, so
+// the query component must not start a real request.
+vi.mock( 'calypso/components/data/query-plugins', () => ( { default: () => null } ) );
+
+// `localizePath` prefixes the locale for logged-out visitors on a magnificent
+// locale. The stub makes that prefix visible without loading translations.
+let mockLocalePrefix = '';
+vi.mock( 'calypso/my-sites/plugins/utils', async () => ( {
+	...( await vi.importActual( 'calypso/my-sites/plugins/utils' ) ),
+	useLocalizedPlugins: () => ( {
+		localizePath: ( path ) => `${ mockLocalePrefix }${ path }`,
+	} ),
+} ) );
 
 // Start Booking: the marketplace product slug differs from the slug the plugin
 // is installed under, which is what the installed-plugins state uses.
@@ -156,7 +157,7 @@ const receiveInstalledPlugins = ( store, installedPlugins ) => {
 
 describe( 'PluginDetails retired product redirect', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockLocalePrefix = '';
 		window.__i18n_text_domain__ = JSON.stringify( 'default' );
 	} );

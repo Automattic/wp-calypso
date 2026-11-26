@@ -1,71 +1,74 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import FreeSiteUpgradeNotice from '../free-site-upgrade-notice';
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: () => false,
 } ) );
 
-jest.mock( 'react-redux', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'react-redux', () => ( {
+	useDispatch: () => vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	combineReducers: ( reducers: unknown ) => reducers,
-	createReduxStore: jest.fn(),
+	createReduxStore: vi.fn(),
 	createRegistrySelector: ( selector: unknown ) => selector,
 	createSelector: ( selector: unknown ) => selector,
-	register: jest.fn(),
-	select: jest.fn(),
-	dispatch: jest.fn(),
-	subscribe: jest.fn(),
-	useSelect: jest.fn(),
-	useDispatch: () => ( { setShowHelpCenter: jest.fn(), setShowSupportDoc: jest.fn() } ),
+	register: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
+	subscribe: vi.fn(),
+	useSelect: vi.fn(),
+	useDispatch: () => ( { setShowHelpCenter: vi.fn(), setShowSupportDoc: vi.fn() } ),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { register: () => 'help-center' },
 } ) );
 
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', () => ( {
 	PLAN_PREMIUM: 'value_bundle',
 	getPlan: () => ( { getTitle: () => 'Explorer' } ),
 } ) );
 
-jest.mock( 'calypso/state/stats/paid-stats-upsell/actions', () => ( {
-	toggleUpsellModal: jest.fn(),
+vi.mock( 'calypso/state/stats/paid-stats-upsell/actions', () => ( {
+	toggleUpsellModal: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/my-sites/stats/utils', () => ( {
-	trackStatsAnalyticsEvent: jest.fn(),
+vi.mock( 'calypso/my-sites/stats/utils', () => ( {
+	trackStatsAnalyticsEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/selectors/is-site-wpcom', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-wpcom', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: () => undefined,
 	isEnabled: () => false,
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	localizeUrl: ( url: string ) => url,
 } ) );
 
-const mockUseNoticeVisibilityMutation = jest.fn< { mutateAsync: jest.Mock }, unknown[] >( () => ( {
-	mutateAsync: jest.fn(),
-} ) );
-jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
+const mockUseNoticeVisibilityMutation = vi.fn< ( ...args: unknown[] ) => { mutateAsync: Mock } >(
+	() => ( {
+		mutateAsync: vi.fn(),
+	} )
+);
+vi.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-mutation', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockUseNoticeVisibilityMutation( ...args ),
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
 
 const renderNotice = ( hasFreeStats = false ) =>
 	render(

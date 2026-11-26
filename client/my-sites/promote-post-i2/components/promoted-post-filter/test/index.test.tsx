@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { requestDSP } from 'calypso/lib/promote-post';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PromotePostTabBar from '../index';
 
-jest.mock( 'calypso/lib/promote-post', () => ( {
-	requestDSP: jest.fn(),
+vi.mock( 'calypso/lib/promote-post', () => ( {
+	requestDSP: vi.fn(),
 } ) );
 
 describe( 'PromotePostTabBar', () => {
 	test( 'fetches the credit balance once when there are credits to show', async () => {
-		jest.mocked( requestDSP ).mockResolvedValue( {
+		vi.mocked( requestDSP ).mockResolvedValue( {
 			balance: '200',
 			history: [ { amount: 200, expires: '2099-01-01T00:00:00Z' } ],
 		} );

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { MEDIA_ITEM_REQUEST } from 'calypso/state/action-types';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
@@ -18,8 +19,8 @@ import {
 
 describe( 'media request', () => {
 	test( 'should dispatch SUCCESS action when request completes', () => {
-		const dispatch = jest.fn();
-		const getState = jest.fn( () => ( {
+		const dispatch = vi.fn();
+		const getState = vi.fn( () => ( {
 			media: {
 				fetching: {
 					2916284: {

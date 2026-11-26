@@ -10,7 +10,6 @@ import { useState } from 'react';
 import { useIntlLocale } from '../../../../app/locale';
 import { ErrorBoundary } from '../../../../components/error-boundary';
 import { Stat } from '../../../../components/stat';
-import { hasStagingSite } from '../../../../utils/site-staging-site';
 import {
 	formatStorage,
 	getSharedStorageTotal,
@@ -18,6 +17,7 @@ import {
 	getStorageUsagePercent,
 } from '../../../../utils/site-storage';
 import { isStagingSite } from '../../../../utils/site-types';
+import { hasStagingSite } from '../../../staging-site/utils';
 import { AddStorageModal } from '../add-storage-modal';
 import type { Site } from '@automattic/api-core';
 

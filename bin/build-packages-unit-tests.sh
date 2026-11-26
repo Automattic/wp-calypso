@@ -3,7 +3,7 @@
 set -e
 
 # The CI Unit tests build skips the full `build-packages` postinstall step
-# because Jest and tsc resolve workspace packages from source. Only four
+# because Vitest and tsc resolve workspace packages from source. Only four
 # packages need pre-compilation:
 #
 # - agenttic-ui: tests import its built `dist/index.css`, and the agents-manager

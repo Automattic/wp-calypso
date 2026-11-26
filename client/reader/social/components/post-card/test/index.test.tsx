@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { SocialPostCard } from '../index';
@@ -202,7 +203,7 @@ describe( 'SocialPostCard compact + cardLink', () => {
 	};
 
 	it( 'wraps the compact card in a PostCardLink and renders the timestamp as an anchor when cardLink is set', () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		const { container } = render(
 			<SocialPostCard
 				post={ compactPost }
@@ -273,7 +274,7 @@ describe( 'SocialPostCard post-actions kebab', () => {
 				value={ {
 					source: 'atmosphere',
 					connectionId: 42,
-					onClick: jest.fn(),
+					onClick: vi.fn(),
 					ownerDid: 'did:plc:caller',
 				} }
 			>
@@ -290,7 +291,7 @@ describe( 'SocialPostCard post-actions kebab', () => {
 				value={ {
 					source: 'atmosphere',
 					connectionId: 42,
-					onClick: jest.fn(),
+					onClick: vi.fn(),
 					ownerDid: 'did:plc:caller',
 				} }
 			>
@@ -307,7 +308,7 @@ describe( 'SocialPostCard post-actions kebab', () => {
 				value={ {
 					source: 'atmosphere',
 					connectionId: 42,
-					onClick: jest.fn(),
+					onClick: vi.fn(),
 					ownerDid: 'did:plc:someoneelse',
 				} }
 			>

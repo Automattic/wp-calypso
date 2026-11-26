@@ -5,25 +5,26 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
+import { vi } from 'vitest';
 import { activeDiscounts } from 'calypso/lib/discounts';
 import { hasActivePromotion } from 'calypso/state/active-promotions/selectors';
 import getActiveDiscount, { isDiscountActive } from 'calypso/state/selectors/get-active-discount';
 import { getSitePlanSlug } from 'calypso/state/sites/selectors';
 
-jest.mock( 'calypso/state/active-promotions/selectors', () => ( {
-	hasActivePromotion: jest.fn( () => null ),
+vi.mock( 'calypso/state/active-promotions/selectors', () => ( {
+	hasActivePromotion: vi.fn( () => null ),
 } ) );
 
-jest.mock( 'calypso/lib/discounts', () => ( {
+vi.mock( 'calypso/lib/discounts', () => ( {
 	activeDiscounts: [],
 } ) );
 
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	getSitePlanSlug: jest.fn( () => null ),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	getSitePlanSlug: vi.fn( () => null ),
 } ) );
 
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSiteId: jest.fn( () => 1 ),
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSiteId: vi.fn( () => 1 ),
 } ) );
 
 const DatePlusTime = ( time ) => {

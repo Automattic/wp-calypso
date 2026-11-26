@@ -1,20 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	FeedRecommendation,
 	useFeedRecommendationsQuery,
 } from 'calypso/data/reader/use-feed-recommendations-query';
 import { ReaderSite } from 'calypso/reader/sites-list/site-item';
+import { useDispatch } from 'calypso/state';
 import UserRecommendedBlogs from '../recommended-blogs';
 import type { ReaderUser } from '@automattic/api-core';
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	LoadingPlaceholder: () => <div data-testid="loading-placeholder">Loading...</div>,
 } ) );
 
-jest.mock( 'calypso/reader/sites-list', () => ( {
+vi.mock( 'calypso/reader/sites-list', () => ( {
 	ReaderSitesList: ( { sites }: { sites: ReaderSite[] } ) => (
 		<div>
 			{ sites.map( ( site, index ) => (
@@ -24,23 +26,23 @@ jest.mock( 'calypso/reader/sites-list', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/components/empty-content', () => ( {
+vi.mock( 'calypso/components/empty-content', () => ( {
 	__esModule: true,
 	default: ( { line }: { line: string } ) => <div data-testid="empty-content">{ line }</div>,
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
-	useDispatch: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
+	useDispatch: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/data/reader/use-feed-recommendations-query', () => ( {
-	useFeedRecommendationsQuery: jest.fn(),
+vi.mock( 'calypso/data/reader/use-feed-recommendations-query', () => ( {
+	useFeedRecommendationsQuery: vi.fn(),
 } ) );
 
 describe( 'UserRecommendedBlogs', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	const defaultUser: ReaderUser = {
@@ -55,16 +57,15 @@ describe( 'UserRecommendedBlogs', () => {
 		profile_URL: '',
 	};
 
-	const mockDispatch = jest.fn();
-	const { useDispatch } = jest.requireMock( 'calypso/state' );
+	const mockDispatch = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		useDispatch.mockReturnValue( mockDispatch );
+		vi.clearAllMocks();
+		vi.mocked( useDispatch ).mockReturnValue( mockDispatch );
 	} );
 
 	test( 'should render LoadingPlaceholder when no recommended blogs and still expecting request', () => {
-		jest.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
+		vi.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
 			data: [],
 			isLoading: true,
 			isFetched: false,
@@ -78,7 +79,7 @@ describe( 'UserRecommendedBlogs', () => {
 	} );
 
 	test( 'should render EmptyContent when no recommended blogs and request has completed', () => {
-		jest.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
+		vi.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
 			data: [],
 			isLoading: false,
 			isFetched: true,
@@ -105,7 +106,7 @@ describe( 'UserRecommendedBlogs', () => {
 			},
 		] as FeedRecommendation[];
 
-		jest.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
+		vi.mocked( useFeedRecommendationsQuery ).mockReturnValue( {
 			data: mockRecommendedBlogs,
 			isLoading: false,
 			isFetched: true,

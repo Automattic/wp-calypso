@@ -1,22 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import ReaderFeedHeader from '..';
 
 // Render a lightweight stand-in for SiteIcon that exposes the icon URL the
 // header resolved, so we can assert on the fallback logic without pulling in
 // SiteIcon's Redux dependencies.
-jest.mock( 'calypso/blocks/site-icon', () => ( props ) => {
-	const img = props?.site?.icon?.img;
-	return img ? <img alt="site-icon" src={ img } /> : <span data-testid="default-site-icon" />;
-} );
+vi.mock( 'calypso/blocks/site-icon', () => ( {
+	default: ( props ) => {
+		const img = props?.site?.icon?.img;
+		return img ? <img alt="site-icon" src={ img } /> : <span data-testid="default-site-icon" />;
+	},
+} ) );
 
 // Connected/query children that are irrelevant to icon resolution.
-jest.mock( 'calypso/components/data/query-user-settings', () => () => null );
-jest.mock( 'calypso/blocks/blog-stickers', () => () => null );
-jest.mock( '../follow', () => () => null );
-jest.mock( '../badge', () => () => null );
+vi.mock( 'calypso/components/data/query-user-settings', () => ( { default: () => null } ) );
+vi.mock( 'calypso/blocks/blog-stickers', () => ( { default: () => null } ) );
+vi.mock( '../follow', () => ( { default: () => null } ) );
+vi.mock( '../badge', () => ( { default: () => null } ) );
 
 const feedImage = 'https://example.com/rss-channel-image.png';
 

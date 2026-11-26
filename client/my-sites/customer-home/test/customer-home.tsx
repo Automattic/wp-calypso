@@ -1,25 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CustomerHome from '../main';
 import type { SiteDetails } from '@automattic/data-stores';
 
-jest.mock( '@wordpress/api-fetch' );
+vi.mock( '@wordpress/api-fetch' );
 
-jest.mock( '../components/home-content', () => () => (
-	<div data-testid="home-content">Home Content</div>
-) );
-
-jest.mock( 'calypso/state/sites/actions', () => ( {
-	requestSite: jest.fn().mockReturnValue( () => {} ),
+vi.mock( '../components/home-content', () => ( {
+	default: () => <div data-testid="home-content">Home Content</div>,
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => null );
+vi.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: vi.fn().mockReturnValue( () => {} ),
+} ) );
+
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( { default: () => null } ) );
 
 function makeTestSite( site: Partial< SiteDetails > = {} ): SiteDetails {
 	return {

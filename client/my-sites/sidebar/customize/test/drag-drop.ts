@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { attachDragDrop, positionForElement } from '../drag-drop';
 
 /**
@@ -110,10 +111,10 @@ describe( 'positionForElement', () => {
 describe( 'attachDragDrop', () => {
 	let detach: ( () => void ) | null = null;
 	const controller = {
-		commitMove: jest.fn(),
-		beginDrag: jest.fn(),
-		endDrag: jest.fn(),
-		announce: jest.fn(),
+		commitMove: vi.fn(),
+		beginDrag: vi.fn(),
+		endDrag: vi.fn(),
+		announce: vi.fn(),
 	};
 
 	beforeEach( () => {
@@ -180,7 +181,7 @@ describe( 'attachDragDrop', () => {
 		sidebar.appendChild( groupContainer );
 		document.body.appendChild( sidebar );
 
-		source.getBoundingClientRect = jest.fn( () => ( {
+		source.getBoundingClientRect = vi.fn( () => ( {
 			top: 0,
 			left: 0,
 			width: 200,
@@ -189,9 +190,9 @@ describe( 'attachDragDrop', () => {
 			right: 200,
 			x: 0,
 			y: 0,
-			toJSON: jest.fn(),
+			toJSON: vi.fn(),
 		} ) );
-		expandableWrapper.getBoundingClientRect = jest.fn( () => ( {
+		expandableWrapper.getBoundingClientRect = vi.fn( () => ( {
 			top: 100,
 			left: 0,
 			width: 200,
@@ -200,9 +201,9 @@ describe( 'attachDragDrop', () => {
 			right: 200,
 			x: 0,
 			y: 100,
-			toJSON: jest.fn(),
+			toJSON: vi.fn(),
 		} ) );
-		document.elementsFromPoint = jest.fn( () => [ expandableWrapper ] );
+		document.elementsFromPoint = vi.fn( () => [ expandableWrapper ] );
 
 		detach = attachDragDrop( controller );
 		source.dispatchEvent( makePointerDown() );
@@ -236,7 +237,7 @@ describe( 'attachDragDrop', () => {
 		sidebar.appendChild( after );
 		document.body.appendChild( sidebar );
 
-		source.getBoundingClientRect = jest.fn( () => ( {
+		source.getBoundingClientRect = vi.fn( () => ( {
 			top: 0,
 			left: 0,
 			width: 200,
@@ -245,9 +246,9 @@ describe( 'attachDragDrop', () => {
 			right: 200,
 			x: 0,
 			y: 0,
-			toJSON: jest.fn(),
+			toJSON: vi.fn(),
 		} ) );
-		expandableWrapper.getBoundingClientRect = jest.fn( () => ( {
+		expandableWrapper.getBoundingClientRect = vi.fn( () => ( {
 			top: 100,
 			left: 0,
 			width: 200,
@@ -256,10 +257,10 @@ describe( 'attachDragDrop', () => {
 			right: 200,
 			x: 0,
 			y: 100,
-			toJSON: jest.fn(),
+			toJSON: vi.fn(),
 		} ) );
 		const innerLi = expandableWrapper.querySelector( 'li.sidebar__menu-item-parent' )!;
-		document.elementsFromPoint = jest.fn( () => [ innerLi ] );
+		document.elementsFromPoint = vi.fn( () => [ innerLi ] );
 
 		detach = attachDragDrop( controller );
 		source.dispatchEvent( makePointerDown() );
@@ -298,7 +299,7 @@ describe( 'attachDragDrop', () => {
 		sidebar.appendChild( groupContainer );
 		document.body.appendChild( sidebar );
 
-		source.getBoundingClientRect = jest.fn( () => ( {
+		source.getBoundingClientRect = vi.fn( () => ( {
 			top: 0,
 			left: 0,
 			width: 200,
@@ -307,9 +308,9 @@ describe( 'attachDragDrop', () => {
 			right: 200,
 			x: 0,
 			y: 0,
-			toJSON: jest.fn(),
+			toJSON: vi.fn(),
 		} ) );
-		expandableWrapper.getBoundingClientRect = jest.fn( () => ( {
+		expandableWrapper.getBoundingClientRect = vi.fn( () => ( {
 			top: 100,
 			left: 0,
 			width: 200,
@@ -318,10 +319,10 @@ describe( 'attachDragDrop', () => {
 			right: 200,
 			x: 0,
 			y: 100,
-			toJSON: jest.fn(),
+			toJSON: vi.fn(),
 		} ) );
 		const innerLi = expandableWrapper.querySelector( 'li.sidebar__menu-item-parent' )!;
-		document.elementsFromPoint = jest.fn( () => [ innerLi ] );
+		document.elementsFromPoint = vi.fn( () => [ innerLi ] );
 
 		detach = attachDragDrop( controller );
 		source.dispatchEvent( makePointerDown() );
@@ -359,7 +360,7 @@ describe( 'attachDragDrop', () => {
 		sidebar.append( skip, settings, separator, group, source, collapse );
 		document.body.appendChild( sidebar );
 
-		source.getBoundingClientRect = jest.fn( () => ( {
+		source.getBoundingClientRect = vi.fn( () => ( {
 			top: 200,
 			left: 0,
 			width: 200,
@@ -368,9 +369,9 @@ describe( 'attachDragDrop', () => {
 			right: 200,
 			x: 0,
 			y: 200,
-			toJSON: jest.fn(),
+			toJSON: vi.fn(),
 		} ) );
-		settings.getBoundingClientRect = jest.fn( () => ( {
+		settings.getBoundingClientRect = vi.fn( () => ( {
 			top: 100,
 			left: 0,
 			width: 200,
@@ -379,10 +380,10 @@ describe( 'attachDragDrop', () => {
 			right: 200,
 			x: 0,
 			y: 100,
-			toJSON: jest.fn(),
+			toJSON: vi.fn(),
 		} ) );
 		const innerLi = settings.querySelector( 'li' )!;
-		document.elementsFromPoint = jest.fn( () => [ innerLi ] );
+		document.elementsFromPoint = vi.fn( () => [ innerLi ] );
 
 		detach = attachDragDrop( controller );
 		source.dispatchEvent( makePointerDown() );
@@ -419,7 +420,7 @@ describe( 'attachDragDrop', () => {
 		sidebar.appendChild( groupContainer );
 		document.body.appendChild( sidebar );
 
-		source.getBoundingClientRect = jest.fn( () => ( {
+		source.getBoundingClientRect = vi.fn( () => ( {
 			top: 0,
 			left: 0,
 			width: 200,
@@ -428,9 +429,9 @@ describe( 'attachDragDrop', () => {
 			right: 200,
 			x: 0,
 			y: 0,
-			toJSON: jest.fn(),
+			toJSON: vi.fn(),
 		} ) );
-		document.elementsFromPoint = jest.fn( () => [ header, groupContainer ] );
+		document.elementsFromPoint = vi.fn( () => [ header, groupContainer ] );
 
 		detach = attachDragDrop( controller );
 		source.dispatchEvent( makePointerDown() );

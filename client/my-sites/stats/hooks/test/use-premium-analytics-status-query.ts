@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { premiumAnalyticsStatusRequest } from '../use-premium-analytics-status-query';
 
-const mockIsEnabled = jest.fn();
-jest.mock( '@automattic/calypso-config', () => ( {
+const mockIsEnabled = vi.fn();
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: () => undefined,
 	isEnabled: ( flag: string ) => mockIsEnabled( flag ),
 } ) );
 
 describe( 'premiumAnalyticsStatusRequest', () => {
-	afterEach( () => jest.clearAllMocks() );
+	afterEach( () => vi.clearAllMocks() );
 
 	it( 'goes through the WordPress.com proxy in Calypso, with the site in the path', () => {
 		mockIsEnabled.mockReturnValue( false );

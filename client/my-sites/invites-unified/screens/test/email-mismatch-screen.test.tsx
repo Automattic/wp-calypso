@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import { EmailMismatchScreen } from '../email-mismatch-screen';
 
-const mockCenteredColumnLayout = jest.fn(
+const mockCenteredColumnLayout = vi.fn(
 	( {
 		children,
 		heading,
@@ -24,37 +25,33 @@ const mockCenteredColumnLayout = jest.fn(
 	)
 );
 
-jest.mock(
-	'@automattic/onboarding',
-	() => ( {
-		Step: {
-			Heading: ( { text, subText }: { text: string; subText: string } ) => (
-				<div data-testid="step-heading">
-					<h1>{ text }</h1>
-					<p>{ subText }</p>
-				</div>
-			),
-			TopBar: ( { logo }: { logo?: React.ReactNode } ) => (
-				<div data-testid="step-topbar">{ logo }</div>
-			),
-			CenteredColumnLayout: ( props: {
-				children: React.ReactNode;
-				heading: React.ReactNode;
-				topBar: React.ReactNode;
-				columnWidth: number;
-				verticalAlign: string;
-			} ) => mockCenteredColumnLayout( props ),
-		},
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/onboarding', () => ( {
+	Step: {
+		Heading: ( { text, subText }: { text: string; subText: string } ) => (
+			<div data-testid="step-heading">
+				<h1>{ text }</h1>
+				<p>{ subText }</p>
+			</div>
+		),
+		TopBar: ( { logo }: { logo?: React.ReactNode } ) => (
+			<div data-testid="step-topbar">{ logo }</div>
+		),
+		CenteredColumnLayout: ( props: {
+			children: React.ReactNode;
+			heading: React.ReactNode;
+			topBar: React.ReactNode;
+			columnWidth: number;
+			verticalAlign: string;
+		} ) => mockCenteredColumnLayout( props ),
+	},
+} ) );
 
-jest.mock( '@wordpress/url', () => ( {
+vi.mock( '@wordpress/url', () => ( {
 	addQueryArgs: ( url: string, query: { email_address: string } ) =>
 		`${ url }&email_address=${ encodeURIComponent( query.email_address ) }`,
 } ) );
 
-jest.mock( 'calypso/components/connect-screen/action-buttons', () => ( {
+vi.mock( 'calypso/components/connect-screen/action-buttons', () => ( {
 	ActionButtons: ( {
 		primaryLabel,
 		primaryOnClick,
@@ -64,36 +61,36 @@ jest.mock( 'calypso/components/connect-screen/action-buttons', () => ( {
 	} ) => <button onClick={ primaryOnClick }>{ primaryLabel }</button>,
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => ( {
+vi.mock( 'calypso/components/data/document-head', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/layout/body-section-css-class', () => ( {
+vi.mock( 'calypso/layout/body-section-css-class', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-const mockRecordTracksEvent = jest.fn();
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+const mockRecordTracksEvent = vi.fn();
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 
-const mockNavigate = jest.fn();
-jest.mock( 'calypso/lib/navigate', () => ( {
+const mockNavigate = vi.fn();
+vi.mock( 'calypso/lib/navigate', () => ( {
 	navigate: ( url: string ) => mockNavigate( url ),
 } ) );
 
-jest.mock( 'calypso/lib/paths', () => ( {
+vi.mock( 'calypso/lib/paths', () => ( {
 	login: ( { redirectTo }: { redirectTo: string } ) =>
 		`/log-in?redirect_to=${ encodeURIComponent( redirectTo ) }`,
 } ) );
 
-jest.mock( '../style.scss', () => ( {} ) );
+vi.mock( '../style.scss', () => ( {} ) );
 
 describe( 'EmailMismatchScreen', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockCenteredColumnLayout.mockClear();
 	} );
 

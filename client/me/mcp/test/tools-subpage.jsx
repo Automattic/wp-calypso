@@ -1,23 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import McpToolsSubpage from '../tools-subpage';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+const mockSaveSettings = vi.fn( async () => ( {} ) );
+let mockOrdinaryToolEnabled = false;
+let mockOptInToolEnabled = false;
+
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( ( key ) => ( key === 'env_id' ? 'production' : null ) );
-	config.isEnabled = jest.fn( () => true );
-	return config;
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn( ( key ) => ( key === 'env_id' ? 'production' : null ) );
+	config.isEnabled = vi.fn( () => true );
+	return { ...config, default: config };
 } );
 
-jest.mock( '@automattic/api-queries', () => ( {
+vi.mock( '@automattic/api-queries', () => ( {
 	isAutomatticianQuery: () => ( {
 		queryKey: [ 'read', 'teams' ],
 		queryFn: async () => true,
@@ -32,10 +37,17 @@ jest.mock( '@automattic/api-queries', () => ( {
 			mcp_abilities: {
 				account: {
 					'wpcom-mcp/posts-list': {
-						enabled: false,
+						enabled: mockOrdinaryToolEnabled,
 						readonly: true,
 						title: 'List posts',
 						description: 'List posts on your sites.',
+					},
+					'wpcom/sensitive-read': {
+						enabled: mockOptInToolEnabled,
+						requires_opt_in: true,
+						readonly: true,
+						title: 'Sensitive read',
+						description: 'Read sensitive account data.',
 					},
 				},
 				groups: [],
@@ -44,42 +56,42 @@ jest.mock( '@automattic/api-queries', () => ( {
 		} ),
 	} ),
 	userSettingsMutation: () => ( {
-		mutationFn: async () => ( {} ),
+		mutationFn: ( settings ) => mockSaveSettings( settings ),
 	} ),
 } ) );
 
-jest.mock( 'calypso/lib/two-step-authorization', () => ( {
+vi.mock( 'calypso/lib/two-step-authorization', () => ( {
 	__esModule: true,
 	default: {
 		isReauthRequired: () => false,
-		on: jest.fn(),
-		off: jest.fn(),
+		on: vi.fn(),
+		off: vi.fn(),
 	},
 } ) );
 
-jest.mock( 'calypso/me/reauth-required', () => ( {
+vi.mock( 'calypso/me/reauth-required', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( '../mcp-page-header', () => ( {
+vi.mock( '../mcp-page-header', () => ( {
 	useMcpPageChrome: () => ( {
 		documentTitle: 'AI and MCP',
 		navigationHeaderProps: {},
 	} ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => ( {
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => ( {
+vi.mock( 'calypso/components/data/document-head', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/components/navigation-header', () => ( {
+vi.mock( 'calypso/components/navigation-header', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
@@ -89,7 +101,8 @@ async function toggleFirstTool( props ) {
 	renderWithProvider( <McpToolsSubpage { ...props } /> );
 
 	// Groups render collapsed; expand the "Other" bucket to reach the tool toggle.
-	await user.click( await screen.findByRole( 'button', { name: 'Show operations' } ) );
+	const [ otherGroupButton ] = await screen.findAllByRole( 'button', { name: 'Show operations' } );
+	await user.click( otherGroupButton );
 	await user.click( await screen.findByRole( 'checkbox', { name: 'List posts' } ) );
 }
 
@@ -100,7 +113,68 @@ function getToolToggledPayload( eventName ) {
 
 describe( 'client/me/mcp/tools-subpage Tracks payloads', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
+		mockOrdinaryToolEnabled = false;
+		mockOptInToolEnabled = false;
+	} );
+
+	it.each( [
+		[ 'page', 0, false ],
+		[ 'group', 1, false ],
+		[ 'page', 0, true ],
+		[ 'group', 1, true ],
+	] )(
+		'toggles ordinary tools without opting in sensitive tools (%s, switch %i, initially %s)',
+		async ( scope, toggleIndex, initiallyEnabled ) => {
+			mockOrdinaryToolEnabled = initiallyEnabled;
+			mockOptInToolEnabled = initiallyEnabled;
+			const user = userEvent.setup();
+			renderWithProvider(
+				<McpToolsSubpage
+					path="/me/mcp/read"
+					pageViewTitle="MCP Read Access"
+					headerTitle="Read"
+					filterTool={ () => true }
+					toolCategory="read"
+				/>
+			);
+			const switches = await screen.findAllByRole( 'checkbox', { name: 'Enable all' } );
+			await user.click( switches[ toggleIndex ] );
+
+			await waitFor( () =>
+				expect( mockSaveSettings ).toHaveBeenCalledWith( {
+					mcp_abilities: {
+						account: { 'wpcom-mcp/posts-list': ! initiallyEnabled },
+						...( scope === 'page' && { group_intents: { read: ! initiallyEnabled } } ),
+					},
+				} )
+			);
+		}
+	);
+
+	it( 'labels an opt-in tool in its group and saves an individual grant', async () => {
+		const user = userEvent.setup();
+		renderWithProvider(
+			<McpToolsSubpage
+				path="/me/mcp/read"
+				pageViewTitle="MCP Read Access"
+				headerTitle="Read"
+				filterTool={ () => true }
+				toolCategory="read"
+			/>
+		);
+		await user.click( await screen.findByRole( 'button', { name: 'Show operations' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Turn on individually' } ) );
+		expect( mockSaveSettings ).not.toHaveBeenCalled();
+		await user.keyboard( '{Escape}' );
+		const optInToggle = screen.getByRole( 'checkbox', { name: 'Sensitive read' } );
+		await user.click( optInToggle );
+
+		await waitFor( () =>
+			expect( mockSaveSettings ).toHaveBeenCalledWith( {
+				mcp_abilities: { account: { 'wpcom/sensitive-read': true } },
+			} )
+		);
 	} );
 
 	it( 'fires calypso_dashboard_mcp_read_tool_toggled with ability_name and path', async () => {

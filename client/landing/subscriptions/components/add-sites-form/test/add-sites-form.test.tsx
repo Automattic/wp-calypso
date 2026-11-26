@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { SubscriptionManager } from '@automattic/data-stores';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	SubscriptionManagerContextProvider,
@@ -13,17 +14,20 @@ import {
 } from '../../subscription-manager-context';
 import AddSitesForm from '../add-sites-form';
 
-jest.mock( '@automattic/calypso-router' );
+vi.mock( '@automattic/calypso-router' );
 
-const mockSubscribeMutate = jest.fn();
+const mockSubscribeMutate = vi.fn();
 
-jest.mock( '@automattic/data-stores', () => {
-	const actual = jest.requireActual( '@automattic/data-stores' );
+vi.mock( '@automattic/data-stores', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+			'@automattic/data-stores'
+		);
 	return {
 		...actual,
 		SubscriptionManager: {
 			...actual.SubscriptionManager,
-			useSiteSubscribeMutation: jest.fn(),
+			useSiteSubscribeMutation: vi.fn(),
 		},
 	};
 } );
@@ -40,20 +44,20 @@ const renderWithContextProvider = ( component: React.ReactNode ) => {
 
 describe( 'AddSitesForm', () => {
 	const mockProps: Props = {
-		onChangeSubscribe: jest.fn(),
+		onChangeSubscribe: vi.fn(),
 		source: 'test-source',
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( SubscriptionManager.useSiteSubscribeMutation as jest.Mock ).mockReturnValue( {
+		vi.clearAllMocks();
+		( SubscriptionManager.useSiteSubscribeMutation as Mock ).mockReturnValue( {
 			mutate: mockSubscribeMutate,
 			isPending: false,
 		} );
 	} );
 
 	it( 'calls onChange when input value changes', async () => {
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		const inputValue = 'test';
 
 		renderWithContextProvider( <AddSitesForm { ...mockProps } onChange={ onChange } /> );
@@ -149,7 +153,7 @@ describe( 'AddSitesForm', () => {
 	} );
 
 	it( 'clears the shared search term after a successful subscribe', async () => {
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		const user = userEvent.setup();
 		mockSubscribeMutate.mockImplementation( ( _params, options ) => {
 			options.onSuccess( {

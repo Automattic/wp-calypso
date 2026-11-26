@@ -1,58 +1,61 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import TransferPending from '..';
 
-const mockDispatch = jest.fn();
-const mockPage = jest.fn();
+const mockDispatch = vi.fn();
+const mockPage = vi.fn();
 let mockTransfer: { status?: string } = {};
 let mockAdminUrl: string | null = 'https://example.wordpress.com/wp-admin/';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
 	default: ( ...args: unknown[] ) => mockPage( ...args ),
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-atomic-transfer', () => ( {
+vi.mock( 'calypso/state/selectors/get-atomic-transfer', () => ( {
 	__esModule: true,
 	default: () => mockTransfer,
 } ) );
 
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'example.wordpress.com',
 	getSiteAdminUrl: () => mockAdminUrl,
 } ) );
 
-jest.mock( '@wordpress/react-i18n', () => ( {
-	useI18n: () => ( { __: ( text: string ) => text } ),
-} ) );
+vi.mock( '@wordpress/react-i18n', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useI18n: () => ( { __: ( text: string ) => text } ),
+	} )
+);
 
-jest.mock( 'calypso/components/loading', () => ( {
+vi.mock( 'calypso/components/loading', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/lib/analytics/wait-heartbeat', () => ( {
-	useWaitHeartbeat: jest.fn(),
+vi.mock( 'calypso/lib/analytics/wait-heartbeat', () => ( {
+	useWaitHeartbeat: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/interval', () => ( {
-	useInterval: jest.fn(),
+vi.mock( 'calypso/lib/interval', () => ( {
+	useInterval: vi.fn(),
 } ) );
 
 describe( 'TransferPending', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockTransfer = {};
 		mockAdminUrl = 'https://example.wordpress.com/wp-admin/';
 	} );

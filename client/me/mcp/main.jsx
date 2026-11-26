@@ -24,7 +24,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { filterVisibleTools, isReadTool, isWriteTool } from './categories';
-import { getOverridesToMatch, groupIntentKey } from './group-intents';
+import { getOrdinaryTools, getOverridesToMatch, groupIntentKey } from './group-intents';
 import { getAccessSummaryBadge, getWriteAccessBadge } from './hub-helpers';
 import { useMcpPageChrome } from './mcp-page-header';
 import { useMcpTracksAudienceProps } from './tracks';
@@ -100,7 +100,10 @@ function McpComponent( { path } ) {
 		// currently-known ability that disagrees with the new state, in addition to
 		// the read/write group intents (so abilities added later still inherit the
 		// "on"/"off" state automatically without a future settings write).
-		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled );
+		// Turning access on leaves opt-in tools alone. Turning it off includes them,
+		// since the server would otherwise keep their explicit "on".
+		const tools = Object.entries( mcpAbilities );
+		const overrides = getOverridesToMatch( enabled ? getOrdinaryTools( tools ) : tools, enabled );
 
 		const groupIntents = { read: enabled, write: enabled };
 		if ( ! enabled ) {

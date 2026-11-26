@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import memoizeLast, { once } from '../';
 
 describe( 'memoizeLast', () => {
@@ -9,7 +10,7 @@ describe( 'memoizeLast', () => {
 	let memoizedFunction;
 
 	beforeEach( () => {
-		mockFunction = jest.fn( ( a, b, c ) => ( {
+		mockFunction = vi.fn( ( a, b, c ) => ( {
 			result: a + b + c,
 		} ) );
 		memoizedFunction = memoizeLast( mockFunction );
@@ -56,7 +57,7 @@ describe( 'once', () => {
 	let memoizedFunction;
 
 	beforeEach( () => {
-		mockFunction = jest.fn( () => ( { foo: 'bar' } ) );
+		mockFunction = vi.fn( () => ( { foo: 'bar' } ) );
 		memoizedFunction = once( mockFunction );
 	} );
 

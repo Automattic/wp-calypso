@@ -1,29 +1,32 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { UserCard } from '../index';
 
 // Mock i18n-calypso
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => {
-		const translate = (
-			singular: string,
-			plural?: string,
-			options?: { count?: number; args?: Record< string, unknown > }
-		) => {
-			if ( plural && options?.count !== undefined ) {
-				const template = options.count === 1 ? singular : plural;
-				return template
-					.replace( '%(username)s', String( options.args?.username ) )
-					.replace( '%(count)d', String( options.args?.count ) );
-			}
-			return singular;
-		};
-		return translate;
-	},
-	localize: ( Component: React.ComponentType ) => Component,
-	withRtl: ( Component: React.ComponentType ) => Component,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => {
+			const translate = (
+				singular: string,
+				plural?: string,
+				options?: { count?: number; args?: Record< string, unknown > }
+			) => {
+				if ( plural && options?.count !== undefined ) {
+					const template = options.count === 1 ? singular : plural;
+					return template
+						.replace( '%(username)s', String( options.args?.username ) )
+						.replace( '%(count)d', String( options.args?.count ) );
+				}
+				return singular;
+			};
+			return translate;
+		},
+		localize: ( Component: React.ComponentType ) => Component,
+		withRtl: ( Component: React.ComponentType ) => Component,
+	} )
+);
 
 describe( 'UserCard', () => {
 	const mockUser = {

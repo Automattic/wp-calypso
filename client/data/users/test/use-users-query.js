@@ -1,18 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import useUsersQuery, { getUsersQueryKey } from '../use-users-query';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+		},
+	} )
+);
 
-const get = jest.requireMock( 'calypso/lib/wp' ).req.get;
+const get = ( await import( 'calypso/lib/wp' ) ).req.get;
 
 const user = ( ID ) => ( { ID, login: `user${ ID }` } );
 

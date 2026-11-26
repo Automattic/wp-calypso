@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import WPiFrameResize from '../wp-iframe-resize';
 

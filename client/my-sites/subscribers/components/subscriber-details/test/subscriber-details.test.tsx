@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import SubscriberDetails from '../subscriber-details';
 
-jest.mock( '../../../hooks', () => ( {
+vi.mock( '../../../hooks', () => ( {
 	useSubscriptionPlans: () => [
 		{ title: 'Free', plan: 'Free Plan', is_free: true, is_complimentary: false },
 	],
@@ -42,7 +43,7 @@ function renderDetails( props = {} ) {
 
 describe( 'SubscriberDetails', () => {
 	it( 'shows the comp button when onCompSubscription is provided', () => {
-		renderDetails( { onCompSubscription: jest.fn() } );
+		renderDetails( { onCompSubscription: vi.fn() } );
 
 		expect( screen.getByRole( 'button', { name: 'Comp a subscription' } ) ).toBeVisible();
 	} );

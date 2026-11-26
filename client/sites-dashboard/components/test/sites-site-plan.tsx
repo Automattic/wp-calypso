@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { SitePlan } from '../sites-site-plan';
 
 const siteOwnerId = 1;
@@ -60,11 +61,12 @@ const expiredTrialSite = {
 
 describe( '<SitePlan>', () => {
 	beforeEach( () => {
-		const mockIntersectionObserver = jest.fn();
-		mockIntersectionObserver.mockReturnValue( {
-			observe: () => null,
-			unobserve: () => null,
-			disconnect: () => null,
+		const mockIntersectionObserver = vi.fn( function () {
+			return {
+				observe: () => null,
+				unobserve: () => null,
+				disconnect: () => null,
+			};
 		} );
 		window.IntersectionObserver = mockIntersectionObserver;
 	} );

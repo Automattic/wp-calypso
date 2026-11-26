@@ -1,77 +1,85 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { legacy_createStore as createStore } from 'redux';
+import { vi } from 'vitest';
 import PluginUpload from '../index';
 
 let mockUploadMethod = null;
 let mockInProgress = false;
 let mockUploadedPluginId = null;
 
-const mockPage = jest.fn();
+const mockPage = vi.fn();
 
-jest.mock( '@automattic/calypso-router', () => {
+vi.mock( '@automattic/calypso-router', () => {
 	const page = ( ...args ) => mockPage( ...args );
 	page.back = () => {};
-	return page;
+	return { ...page, default: page };
 } );
 
-jest.mock( 'calypso/state/selectors/get-plugin-upload-method', () => () => mockUploadMethod );
-jest.mock( 'calypso/state/selectors/is-plugin-upload-in-progress', () => () => mockInProgress );
-jest.mock(
-	'calypso/state/selectors/is-plugin-upload-complete',
-	() => () => ! mockInProgress && !! mockUploadedPluginId
-);
-jest.mock( 'calypso/state/selectors/get-uploaded-plugin-id', () => () => mockUploadedPluginId );
-jest.mock( 'calypso/state/selectors/get-plugin-upload-error', () => () => null );
-jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => () => true );
-jest.mock( 'calypso/state/selectors/site-has-feature', () => () => true );
+vi.mock( 'calypso/state/selectors/get-plugin-upload-method', () => ( {
+	default: () => mockUploadMethod,
+} ) );
+vi.mock( 'calypso/state/selectors/is-plugin-upload-in-progress', () => ( {
+	default: () => mockInProgress,
+} ) );
+vi.mock( 'calypso/state/selectors/is-plugin-upload-complete', () => ( {
+	default: () => ! mockInProgress && !! mockUploadedPluginId,
+} ) );
+vi.mock( 'calypso/state/selectors/get-uploaded-plugin-id', () => ( {
+	default: () => mockUploadedPluginId,
+} ) );
+vi.mock( 'calypso/state/selectors/get-plugin-upload-error', () => ( { default: () => null } ) );
+vi.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( { default: () => true } ) );
+vi.mock( 'calypso/state/selectors/site-has-feature', () => ( { default: () => true } ) );
 
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteAdminUrl: () => 'https://example.wordpress.com/wp-admin/',
 	isJetpackSite: () => false,
 	isJetpackSiteMultiSite: () => false,
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: () => 77203074,
 	getSelectedSite: () => ( { ID: 77203074, slug: 'example.wordpress.com' } ),
 	getSelectedSiteSlug: () => 'example.wordpress.com',
 } ) );
-jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
+vi.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 	getEligibility: () => ( { eligibilityHolds: [], eligibilityWarnings: [] } ),
 	isEligibleForAutomatedTransfer: () => true,
 } ) );
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
+vi.mock( 'calypso/state/purchases/selectors', () => ( {
 	isFetchingSitePurchases: () => false,
 	hasLoadedSitePurchasesFromServer: () => true,
 } ) );
-jest.mock( 'calypso/sites-dashboard/utils', () => ( { isHostingTrialSite: () => false } ) );
+vi.mock( 'calypso/sites-dashboard/utils', () => ( { isHostingTrialSite: () => false } ) );
 
-jest.mock( 'calypso/state/plugins/upload/actions', () => ( {
+vi.mock( 'calypso/state/plugins/upload/actions', () => ( {
 	uploadPlugin: () => ( { type: 'PLUGIN_UPLOAD' } ),
 	clearPluginUpload: ( siteId ) => ( { type: 'PLUGIN_UPLOAD_CLEAR', siteId } ),
 } ) );
-jest.mock( 'calypso/state/automated-transfer/actions', () => ( {
+vi.mock( 'calypso/state/automated-transfer/actions', () => ( {
 	fetchAutomatedTransferStatus: () => ( { type: 'FETCH_TRANSFER_STATUS' } ),
 	initiateAutomatedTransferWithPluginZip: () => ( { type: 'INITIATE_TRANSFER' } ),
 } ) );
-jest.mock( 'calypso/state/marketplace/purchase-flow/actions', () => ( {
+vi.mock( 'calypso/state/marketplace/purchase-flow/actions', () => ( {
 	productToBeInstalled: () => ( { type: 'PRODUCT_TO_BE_INSTALLED' } ),
 } ) );
-jest.mock( 'calypso/state/notices/actions', () => ( {
+vi.mock( 'calypso/state/notices/actions', () => ( {
 	successNotice: () => ( { type: 'SUCCESS_NOTICE' } ),
 } ) );
 
-jest.mock( 'calypso/blocks/upload-drop-zone', () => () => <div>Drop zone</div> );
-jest.mock( 'calypso/blocks/eligibility-warnings', () => () => null );
-jest.mock( 'calypso/blocks/upsell-nudge', () => () => null );
-jest.mock( 'calypso/components/data/query-atat-eligibility', () => () => null );
-jest.mock( 'calypso/components/data/query-site-purchases', () => () => null );
-jest.mock( 'calypso/hosting/server-settings/hosting-activate-status', () => () => null );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => null );
-jest.mock( 'calypso/components/navigation-header', () => () => null );
+vi.mock( 'calypso/blocks/upload-drop-zone', () => ( { default: () => <div>Drop zone</div> } ) );
+vi.mock( 'calypso/blocks/eligibility-warnings', () => ( { default: () => null } ) );
+vi.mock( 'calypso/blocks/upsell-nudge', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-atat-eligibility', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-site-purchases', () => ( { default: () => null } ) );
+vi.mock( 'calypso/hosting/server-settings/hosting-activate-status', () => ( {
+	default: () => null,
+} ) );
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/navigation-header', () => ( { default: () => null } ) );
 
 // The store's contents do not matter — every selector is mocked — but a real one lets a dispatch
 // push the new upload state through connect, which is what the page reacts to.
@@ -89,7 +97,7 @@ const renderUploadPage = () => {
 
 describe( 'PluginUpload', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUploadMethod = null;
 		mockInProgress = false;
 		mockUploadedPluginId = null;

@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { disable, enable } from '@automattic/calypso-config';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { type MockedFunction, vi } from 'vitest';
 import { useExperiment } from 'calypso/lib/explat';
 import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
@@ -17,11 +18,11 @@ import {
 import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-eligibility';
 import type { ExperimentAssignment } from '@automattic/explat-client';
 
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: jest.fn(),
+vi.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: vi.fn(),
 } ) );
 
-const mockUseExperiment = useExperiment as jest.MockedFunction< typeof useExperiment >;
+const mockUseExperiment = useExperiment as MockedFunction< typeof useExperiment >;
 
 const DAY_IN_SECONDS = 24 * 60 * 60;
 

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE, CUSTOM_PAGE } from 'calypso/signup/difm/constants';
 import { selectWebsiteContent } from '../hooks/use-get-website-content-query';

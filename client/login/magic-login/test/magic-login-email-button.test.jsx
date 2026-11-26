@@ -1,16 +1,17 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { MagicLoginEmailButton } from '../magic-login-email/magic-login-email-wrapper';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 describe( 'MagicLoginEmailButton', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'links to the inbox of a known email provider in a new tab', () => {

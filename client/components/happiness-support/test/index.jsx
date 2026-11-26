@@ -1,14 +1,17 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { JETPACK_CONTACT_SUPPORT, JETPACK_SUPPORT, SUPPORT_ROOT } from '@automattic/urls';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { HappinessSupport } from '..';
 
-jest.mock( 'calypso/components/support-button', () => ( { onClick, children } ) => (
-	<button data-testid="support-button" onClick={ onClick }>
-		{ children }
-	</button>
-) );
+vi.mock( 'calypso/components/support-button', () => ( {
+	default: ( { onClick, children } ) => (
+		<button data-testid="support-button" onClick={ onClick }>
+			{ children }
+		</button>
+	),
+} ) );
 
 const noop = () => {};
 
@@ -93,7 +96,7 @@ describe( 'HappinessSupport', () => {
 
 		test( 'should fire tracks event with given event name when clicked', async () => {
 			const user = userEvent.setup();
-			const recordTracksEvent = jest.fn();
+			const recordTracksEvent = vi.fn();
 
 			render(
 				<HappinessSupport
@@ -110,7 +113,7 @@ describe( 'HappinessSupport', () => {
 
 		test( 'should not fire tracks event when no event name is passed even if clicked', async () => {
 			const user = userEvent.setup();
-			const recordTracksEvent = jest.fn();
+			const recordTracksEvent = vi.fn();
 
 			render(
 				<HappinessSupport translate={ translate } recordTracksEvent={ recordTracksEvent } />

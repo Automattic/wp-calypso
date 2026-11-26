@@ -1,41 +1,54 @@
-jest.mock( 'electron', () => ( {
-	app: { getVersion: () => '8.2.5' },
-	dialog: { showMessageBox: jest.fn( () => Promise.resolve( { response: 1 } ) ) },
-	shell: { openExternal: jest.fn() },
-	BrowserWindow: { getFocusedWindow: () => null },
-} ) );
-
-jest.mock( 'electron-updater', () => {
-	const { EventEmitter } = require( 'events' );
-	const autoUpdater = new EventEmitter();
-	autoUpdater.checkForUpdates = jest.fn( () => Promise.resolve() );
-	autoUpdater.downloadUpdate = jest.fn( () => Promise.resolve() );
-	autoUpdater.quitAndInstall = jest.fn();
-	return { autoUpdater };
-} );
-
-jest.mock( '../../app/lib/config', () => ( {
-	appName: 'WordPress.com',
-	updater: { downloadUrl: 'https://example.com/download/' },
-} ) );
-jest.mock( '../../app/lib/desktop-analytics', () => ( {
-	bumpStat: jest.fn(),
-	sanitizeVersion: ( version ) => version,
-	getPlatform: () => 'osx',
-} ) );
-jest.mock( '../../app/lib/debug-tools', () => ( { dialog: jest.fn() } ) );
-jest.mock( '../../app/lib/logger', () => () => ( {
-	info: jest.fn(),
-	error: jest.fn(),
-} ) );
+import { dialog, shell } from 'electron';
+import { autoUpdater } from 'electron-updater';
+import { vi } from 'vitest';
+import AutoUpdater from '../../app/app-handlers/updater/auto-updater';
+import AppQuit from '../../app/lib/app-quit';
 
 // Electron adds this to `process`; the updater reads it when it loads.
-process.getSystemVersion = () => '26.0.0';
+vi.hoisted( () => {
+	process.getSystemVersion = () => '26.0.0';
+} );
 
-const { dialog, shell } = require( 'electron' );
-const { autoUpdater } = require( 'electron-updater' );
-const AutoUpdater = require( '../../app/app-handlers/updater/auto-updater' );
-const AppQuit = require( '../../app/lib/app-quit' );
+vi.mock( 'electron', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		app: { getVersion: () => '8.2.5' },
+		dialog: { showMessageBox: vi.fn( () => Promise.resolve( { response: 1 } ) ) },
+		shell: { openExternal: vi.fn() },
+		BrowserWindow: { getFocusedWindow: () => null },
+	} )
+);
+
+vi.mock( 'electron-updater', async () => {
+	const { EventEmitter } = await vi.importActual( 'events' );
+	const updater = new EventEmitter();
+	updater.checkForUpdates = vi.fn( () => Promise.resolve() );
+	updater.downloadUpdate = vi.fn( () => Promise.resolve() );
+	updater.quitAndInstall = vi.fn();
+	return { autoUpdater: updater };
+} );
+
+vi.mock( '../../app/lib/config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		appName: 'WordPress.com',
+		updater: { downloadUrl: 'https://example.com/download/' },
+	} )
+);
+vi.mock( '../../app/lib/desktop-analytics', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		bumpStat: vi.fn(),
+		sanitizeVersion: ( version ) => version,
+		getPlatform: () => 'osx',
+	} )
+);
+vi.mock( '../../app/lib/debug-tools', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { dialog: vi.fn() } )
+);
+vi.mock( '../../app/lib/logger', () => ( {
+	default: () => ( {
+		info: vi.fn(),
+		error: vi.fn(),
+	} ),
+} ) );
 
 const flushPromises = () => new Promise( ( resolve ) => setImmediate( resolve ) );
 
@@ -46,7 +59,7 @@ describe( 'AutoUpdater', () => {
 	beforeEach( () => {
 		delete process.env.DEBUG;
 		autoUpdater.removeAllListeners();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		AppQuit.disallowQuit();
 		updater = new AutoUpdater();
 	} );

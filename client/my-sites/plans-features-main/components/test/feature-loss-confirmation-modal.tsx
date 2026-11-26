@@ -1,13 +1,14 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import FeatureLossConfirmationModal from 'calypso/my-sites/plans-features-main/components/feature-loss-confirmation-modal';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 const defaultProps = {
@@ -20,12 +21,12 @@ const defaultProps = {
 		{ feature: 'donations', in_use: true },
 		{ feature: 'payment-buttons', in_use: null },
 	],
-	onClose: jest.fn(),
-	onConfirm: jest.fn(),
+	onClose: vi.fn(),
+	onConfirm: vi.fn(),
 };
 
 describe( 'FeatureLossConfirmationModal', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	test( 'names every feature the upgrade would remove', () => {
 		renderWithProvider( <FeatureLossConfirmationModal { ...defaultProps } /> );

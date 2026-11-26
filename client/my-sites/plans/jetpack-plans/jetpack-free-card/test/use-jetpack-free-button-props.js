@@ -1,31 +1,32 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn(),
-	useSelector: jest.fn( ( fn ) => fn() ),
-} ) );
-
-jest.mock( 'calypso/jetpack-connect/persistence-utils', () => ( {
-	...jest.requireActual( 'calypso/jetpack-connect/persistence-utils' ),
-	storePlan: jest.fn(),
-} ) );
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
-jest.mock( 'calypso/lib/jetpack/use-track-callback' );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/ui/selectors' ),
-	getSelectedSite: jest.fn(),
-} ) );
-
 import { PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 import { storePlan } from 'calypso/jetpack-connect/persistence-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import useJetpackFreeButtonProps from '../use-jetpack-free-button-props';
+
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useDispatch: vi.fn(),
+	useSelector: vi.fn( ( fn ) => fn() ),
+} ) );
+
+vi.mock( 'calypso/jetpack-connect/persistence-utils', async () => ( {
+	...( await vi.importActual( 'calypso/jetpack-connect/persistence-utils' ) ),
+	storePlan: vi.fn(),
+} ) );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+vi.mock( 'calypso/lib/jetpack/use-track-callback' );
+vi.mock( 'calypso/state/ui/selectors', async () => ( {
+	...( await vi.importActual( 'calypso/state/ui/selectors' ) ),
+	getSelectedSite: vi.fn(),
+} ) );
 
 const siteId = 1;
 const siteFragment = 'bored-sheep.jurassic.ninja';
@@ -131,7 +132,7 @@ describe( 'useJetpackFreeButtonProps', () => {
 	} );
 
 	it( 'should send a tracking event when onClick is called', () => {
-		const trackingSpy = jest.fn();
+		const trackingSpy = vi.fn();
 		useTrackCallback.mockReturnValue( trackingSpy );
 
 		const { result } = renderHook( () => useJetpackFreeButtonProps( siteId ) );
@@ -146,7 +147,7 @@ describe( 'useJetpackFreeButtonProps', () => {
 	} );
 
 	it( 'should store Jetpack Free in session storage when onClick is called', () => {
-		useTrackCallback.mockReturnValue( jest.fn() );
+		useTrackCallback.mockReturnValue( vi.fn() );
 
 		const { result } = renderHook( () => useJetpackFreeButtonProps( siteId ) );
 		result.current.onClick();

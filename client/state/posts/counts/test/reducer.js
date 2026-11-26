@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	POST_COUNTS_RECEIVE,
 	POST_COUNTS_REQUEST,
@@ -11,7 +12,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import reducer, { requesting, counts } from '../reducer';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(

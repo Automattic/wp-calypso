@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import scrollTo from '../';
 
 describe( 'scroll-to', () => {
 	beforeAll( () => {
-		jest.spyOn( window, 'scrollTo' ).mockImplementation();
+		vi.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
 	} );
 
 	test( 'window position x', () => {

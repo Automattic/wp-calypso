@@ -1,34 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-jest.mock( 'calypso/blocks/login/blackbox-challenge' );
-jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
-	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
-} ) );
-jest.mock( 'calypso/lib/partner-branding', () => ( {
-	usePartnerBranding: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
-	recordTracksEvent: jest.fn(),
-} ) );
-
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
-} ) );
-
-jest.mock( '../use-branded-account-layout', () => ( {
-	__esModule: true,
-	default: jest.fn( jest.requireActual( '../use-branded-account-layout' ).default ),
-} ) );
 
 import { fireEvent, screen, waitFor } from '@testing-library/dom';
 import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router-dom';
+import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import loginReducer from 'calypso/state/login/reducer';
@@ -37,9 +15,40 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep, { type UserStepAccepts } from '..';
 import useBrandedAccountLayout from '../use-branded-account-layout';
 
-const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
-const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
-const mockUseBrandedAccountLayout = useBrandedAccountLayout as unknown as jest.Mock;
+vi.mock( 'calypso/blocks/login/blackbox-challenge' );
+vi.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: vi.fn().mockResolvedValue( undefined ),
+} ) );
+vi.mock( 'calypso/lib/partner-branding', () => ( {
+	usePartnerBranding: vi.fn(),
+} ) );
+
+vi.mock( 'calypso/lib/analytics/tracks', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/lib/analytics/tracks' ) >(
+		'calypso/lib/analytics/tracks'
+	) ),
+	recordTracksEvent: vi.fn(),
+} ) );
+
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
+} ) );
+
+vi.mock( '../use-branded-account-layout', async () => ( {
+	__esModule: true,
+	default: vi.fn(
+		(
+			await vi.importActual< typeof import( '../use-branded-account-layout' ) >(
+				'../use-branded-account-layout'
+			)
+		).default
+	),
+} ) );
+
+const mockUseViewportMatch = useViewportMatch as unknown as Mock;
+const mockUsePartnerBranding = usePartnerBranding as unknown as Mock;
+const mockUseBrandedAccountLayout = useBrandedAccountLayout as unknown as Mock;
 
 // isMobileViewport is useViewportMatch( 'small', '<' ) at 600px and isLargeViewport is
 // useViewportMatch( 'large' ) at 960px. Pass both to reach the band in between.
@@ -80,7 +89,7 @@ describe( 'User email signup step', () => {
 	) => {
 		return renderWithProvider(
 			<MemoryRouter initialEntries={ [ url ] }>
-				<UserStep flow={ flow } stepName="user" navigation={ { submit: jest.fn() } } { ...props } />
+				<UserStep flow={ flow } stepName="user" navigation={ { submit: vi.fn() } } { ...props } />
 			</MemoryRouter>,
 			{ reducers: { login: loginReducer, route: routeReducer } }
 		);
@@ -115,7 +124,7 @@ describe( 'User email signup step', () => {
 
 	describe( 'Log in link tracking', () => {
 		beforeEach( () => {
-			( recordTracksEvent as jest.Mock ).mockClear();
+			( recordTracksEvent as Mock ).mockClear();
 		} );
 
 		it.each( [
@@ -325,9 +334,13 @@ describe( 'User email signup step', () => {
 			mockUseBrandedAccountLayout.mockReturnValue( false );
 		} );
 
-		afterEach( () => {
+		afterEach( async () => {
 			mockUseBrandedAccountLayout.mockImplementation(
-				jest.requireActual( '../use-branded-account-layout' ).default
+				(
+					await vi.importActual< typeof import( '../use-branded-account-layout' ) >(
+						'../use-branded-account-layout'
+					)
+				).default
 			);
 		} );
 

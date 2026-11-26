@@ -1,12 +1,13 @@
 import { IncomingMessage } from 'http';
 import config from '@automattic/calypso-config';
 import nock from 'nock';
+import { vi } from 'vitest';
 import getBootstrappedUser from '../index';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const impl = jest.fn();
-	impl.isEnabled = jest.fn();
-	return impl;
+vi.mock( '@automattic/calypso-config', () => {
+	const impl = vi.fn();
+	impl.isEnabled = vi.fn();
+	return { ...impl, default: impl };
 } );
 
 const mockRequest = ( { cookies = {}, headers = {} } = {} ) => {
@@ -16,7 +17,7 @@ const mockRequest = ( { cookies = {}, headers = {} } = {} ) => {
 		query: {},
 		params: {},
 		originalUrl: '/',
-		get: jest.fn().mockImplementation( ( key ) => headers[ key ] ),
+		get: vi.fn().mockImplementation( ( key ) => headers[ key ] ),
 	} );
 };
 
@@ -52,7 +53,7 @@ describe( 'User bootstrap', () => {
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'throws if there is no auth cookie', async () => {

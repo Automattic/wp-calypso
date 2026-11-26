@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { merge } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';

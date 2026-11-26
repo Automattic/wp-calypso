@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import usePluginsThankYouData from '../use-plugins-thank-you-data';
 import { THANK_YOU_RECOVERY_INTERVAL_MS } from '../use-thank-you-deadline';
 
 const PLUGIN_SLUG = 'sensei-pro';
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 let mockState = {
 	siteId: 1 as number | null,
 	siteSlug: 'example.wordpress.com',
@@ -29,60 +30,62 @@ let mockState = {
 	isRequestingPlugins: false,
 };
 
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( '@automattic/components', () => ( { Button: () => null } ) );
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
-} ) );
-jest.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '@automattic/components', () => ( { Button: () => null } ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
+vi.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
 	useWPCOMPlugins: ( slugs: string[] ) =>
 		slugs.map( ( slug ) => ( { data: { software_slug: slug } } ) ),
 } ) );
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( state: typeof mockState ) => unknown ) => selector( mockState ),
 } ) );
-jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
+vi.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 	getAutomatedTransferStatus: ( state: typeof mockState ) => state.transferStatus,
 } ) );
-jest.mock( 'calypso/state/marketplace/purchase-flow/actions', () => ( {
-	pluginInstallationStateChange: jest.fn( () => ( { type: 'PLUGIN_INSTALLATION_STATE_CHANGE' } ) ),
+vi.mock( 'calypso/state/marketplace/purchase-flow/actions', () => ( {
+	pluginInstallationStateChange: vi.fn( () => ( { type: 'PLUGIN_INSTALLATION_STATE_CHANGE' } ) ),
 } ) );
-jest.mock( 'calypso/state/plugins/installed/actions', () => ( {
-	fetchSitePlugins: jest.fn( ( siteId: number ) => ( { type: 'FETCH_SITE_PLUGINS', siteId } ) ),
+vi.mock( 'calypso/state/plugins/installed/actions', () => ( {
+	fetchSitePlugins: vi.fn( ( siteId: number ) => ( { type: 'FETCH_SITE_PLUGINS', siteId } ) ),
 } ) );
-jest.mock( 'calypso/state/plugins/installed/selectors', () => ( {
+vi.mock( 'calypso/state/plugins/installed/selectors', () => ( {
 	getPluginsOnSite: ( state: typeof mockState ) => state.pluginsOnSite,
 	isRequesting: ( state: typeof mockState ) => state.isRequestingPlugins,
 } ) );
-jest.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
+vi.mock( 'calypso/state/plugins/installed/selectors-ts', () => ( {
 	isPluginActive: ( state: typeof mockState, _siteId: number, slug: string ) =>
 		state.activePluginSlugs.has( slug ),
 } ) );
-jest.mock( 'calypso/state/plugins/wporg/actions', () => ( {
-	fetchPluginData: jest.fn( ( slug: string ) => ( { type: 'FETCH_PLUGIN_DATA', slug } ) ),
+vi.mock( 'calypso/state/plugins/wporg/actions', () => ( {
+	fetchPluginData: vi.fn( ( slug: string ) => ( { type: 'FETCH_PLUGIN_DATA', slug } ) ),
 } ) );
-jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
+vi.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 	areFetched: ( state: typeof mockState ) => state.wporgFetched,
 	areFetching: ( state: typeof mockState ) => state.wporgFetching,
 	getPlugins: ( state: typeof mockState ) => state.wporgPlugins,
 } ) );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
 	default: ( state: typeof mockState ) => state.isAtomic,
 } ) );
-jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( {
 	__esModule: true,
 	default: ( state: typeof mockState ) => state.isWpcomAtomic,
 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	isJetpackSite: ( state: typeof mockState ) => state.isJetpack,
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: ( state: typeof mockState ) => state.siteId,
 	getSelectedSiteSlug: ( state: typeof mockState ) => state.siteSlug,
 } ) );
-jest.mock( '../marketplace-thank-you-plugin-section', () => ( {
+vi.mock( '../marketplace-thank-you-plugin-section', () => ( {
 	ThankYouPluginSection: () => null,
 } ) );
 
@@ -94,9 +97,9 @@ const renderPlugins = ( pluginSlugs: string[] = [ PLUGIN_SLUG ], isRecoveryMode 
 
 describe( 'usePluginsThankYouData', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( new Date( '2026-08-13T12:00:00Z' ) );
-		jest.clearAllMocks();
+		vi.useFakeTimers();
+		vi.setSystemTime( new Date( '2026-08-13T12:00:00Z' ) );
+		vi.clearAllMocks();
 		mockState = {
 			...defaultState,
 			pluginsOnSite: [ ...defaultState.pluginsOnSite ],
@@ -108,14 +111,14 @@ describe( 'usePluginsThankYouData', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'polls installed plugins every three seconds after transfer completion', () => {
 		renderPlugins();
 		expect( fetchSitePlugins ).toHaveBeenCalledTimes( 1 );
 
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		act( () => vi.advanceTimersByTime( 3000 ) );
 
 		expect( fetchSitePlugins ).toHaveBeenCalledTimes( 2 );
 		expect( fetchSitePlugins ).toHaveBeenLastCalledWith( 1 );
@@ -123,16 +126,16 @@ describe( 'usePluginsThankYouData', () => {
 
 	it( 'skips a poll tick while a plugin request is in flight', () => {
 		const { rerender } = renderPlugins();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		mockState.isRequestingPlugins = true;
 		rerender( { slugs: [ PLUGIN_SLUG ], recovery: false } );
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		act( () => vi.advanceTimersByTime( 3000 ) );
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 
 		mockState.isRequestingPlugins = false;
 		rerender( { slugs: [ PLUGIN_SLUG ], recovery: false } );
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		act( () => vi.advanceTimersByTime( 3000 ) );
 		expect( fetchSitePlugins ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -140,7 +143,7 @@ describe( 'usePluginsThankYouData', () => {
 		mockState.transferStatus = transferStates.ACTIVE;
 		renderPlugins();
 
-		act( () => jest.advanceTimersByTime( 10000 ) );
+		act( () => vi.advanceTimersByTime( 10000 ) );
 
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 	} );
@@ -152,7 +155,7 @@ describe( 'usePluginsThankYouData', () => {
 
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
 
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		act( () => vi.advanceTimersByTime( 3000 ) );
 		expect( fetchSitePlugins ).toHaveBeenCalledTimes( 2 );
 	} );
 
@@ -160,7 +163,7 @@ describe( 'usePluginsThankYouData', () => {
 		mockState.transferStatus = null;
 		renderPlugins();
 
-		act( () => jest.advanceTimersByTime( 10000 ) );
+		act( () => vi.advanceTimersByTime( 10000 ) );
 
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 	} );
@@ -169,7 +172,7 @@ describe( 'usePluginsThankYouData', () => {
 		mockState.activePluginSlugs.add( PLUGIN_SLUG );
 		renderPlugins();
 
-		act( () => jest.advanceTimersByTime( 10000 ) );
+		act( () => vi.advanceTimersByTime( 10000 ) );
 
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 	} );
@@ -177,7 +180,7 @@ describe( 'usePluginsThankYouData', () => {
 	it( 'does not poll when no plugins were purchased', () => {
 		renderPlugins( [] );
 
-		act( () => jest.advanceTimersByTime( 10000 ) );
+		act( () => vi.advanceTimersByTime( 10000 ) );
 
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
 	} );
@@ -191,17 +194,17 @@ describe( 'usePluginsThankYouData', () => {
 
 	it( 'uses slow background checks after the page deadline', () => {
 		renderPlugins( [ PLUGIN_SLUG ], true );
-		jest.mocked( fetchSitePlugins ).mockClear();
+		vi.mocked( fetchSitePlugins ).mockClear();
 
-		act( () => jest.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS - 1 ) );
+		act( () => vi.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS - 1 ) );
 		expect( fetchSitePlugins ).not.toHaveBeenCalled();
-		act( () => jest.advanceTimersByTime( 1 ) );
+		act( () => vi.advanceTimersByTime( 1 ) );
 		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
 	} );
 
 	it( 'offers an immediate plugin refresh for explicit retry', () => {
 		const { result } = renderPlugins();
-		jest.mocked( fetchSitePlugins ).mockClear();
+		vi.mocked( fetchSitePlugins ).mockClear();
 
 		act( () => result.current.retry() );
 

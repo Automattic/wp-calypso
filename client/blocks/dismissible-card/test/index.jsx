@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import preferencesReducer from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DismissibleCard from '../index';
@@ -23,7 +24,7 @@ function renderCard( props ) {
 describe( 'DismissibleCard', () => {
 	test( 'calls onCardClick when the card body is clicked', async () => {
 		const user = userEvent.setup();
-		const onCardClick = jest.fn();
+		const onCardClick = vi.fn();
 		renderCard( { onCardClick } );
 
 		await user.click( screen.getByText( 'Card body' ) );
@@ -33,8 +34,8 @@ describe( 'DismissibleCard', () => {
 
 	test( 'does not call onCardClick when the dismiss button is clicked', async () => {
 		const user = userEvent.setup();
-		const onCardClick = jest.fn();
-		const onClick = jest.fn();
+		const onCardClick = vi.fn();
+		const onClick = vi.fn();
 		renderCard( { onCardClick, onClick } );
 
 		await user.click( screen.getByLabelText( 'Dismiss' ) );
@@ -45,9 +46,9 @@ describe( 'DismissibleCard', () => {
 
 	test( 'lets a dismiss click reach document-level listeners', async () => {
 		const user = userEvent.setup();
-		const documentListener = jest.fn();
+		const documentListener = vi.fn();
 		document.addEventListener( 'click', documentListener );
-		renderCard( { onCardClick: jest.fn() } );
+		renderCard( { onCardClick: vi.fn() } );
 
 		await user.click( screen.getByLabelText( 'Dismiss' ) );
 

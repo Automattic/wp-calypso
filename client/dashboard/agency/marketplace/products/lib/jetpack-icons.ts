@@ -29,6 +29,7 @@ const ICONS_BY_PREFIX: [ string, string ][] = [
 	[ 'jetpack-creator', creator ],
 	[ 'jetpack-growth', growth ],
 	[ 'jetpack-complete', complete ],
+	[ 'jetpack-pro', security ],
 ];
 
 export function getJetpackProductIcon( slug: string ): string | undefined {

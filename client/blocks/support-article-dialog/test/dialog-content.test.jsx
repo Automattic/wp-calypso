@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -7,20 +7,21 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { vi } from 'vitest';
 import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import DialogContent from '../dialog-content';
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	EmbedContainer: ( { children } ) => <div>{ children }</div>,
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	useLocale: () => 'en',
 } ) );
 
-jest.mock( '@automattic/support-articles', () => ( {
+vi.mock( '@automattic/support-articles', () => ( {
 	SupportArticleHeader: ( { post, isLoading } ) => (
 		<div data-testid="support-article-header" data-loading={ String( isLoading ) }>
 			{ post?.title }
@@ -28,8 +29,8 @@ jest.mock( '@automattic/support-articles', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/state/reader/conversations/actions', () => ( {
-	updateConversationFollowStatus: jest.fn( ( payload ) => ( {
+vi.mock( 'calypso/state/reader/conversations/actions', () => ( {
+	updateConversationFollowStatus: vi.fn( ( payload ) => ( {
 		type: 'UPDATE_CONVERSATION_FOLLOW_STATUS',
 		payload,
 	} ) ),

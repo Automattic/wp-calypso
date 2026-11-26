@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
 import wpcomRequest from '@automattic/data-stores/src/wpcom-request';
@@ -7,6 +7,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import { dispatch, select, useSelect } from '@wordpress/data';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import AutomatedCopySite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/automated-copy-site';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -18,19 +19,23 @@ import { renderHookWithProvider, renderWithProvider } from 'calypso/test-helpers
 import copySite from '../copy-site';
 import type { OnboardActions, SiteDetails } from '@automattic/data-stores';
 
-const mockLegacySiteGet = jest.fn();
+const mockLegacySiteGet = vi.fn();
 
-jest.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
+vi.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	canAccessWpcomApis: jest.fn( () => true ),
+	default: vi.fn(),
+	canAccessWpcomApis: vi.fn( () => true ),
 } ) );
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: { get: jest.fn(), post: jest.fn() },
-	site: jest.fn( ( siteFragment ) => ( { get: () => mockLegacySiteGet( siteFragment ) } ) ),
-} ) );
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: { get: vi.fn(), post: vi.fn() },
+		site: vi.fn( ( siteFragment ) => ( { get: () => mockLegacySiteGet( siteFragment ) } ) ),
+	} )
+);
+vi.mock( '@automattic/api-queries', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+		'@automattic/api-queries'
+	) ),
 	userPurchasesQuery: () => ( {
 		queryKey: [ 'purchases' ],
 		queryFn: async () => [],
@@ -68,7 +73,7 @@ const source = {
 } satisfies SiteDetails;
 const destination = { ID: 2, URL: `https://${ destinationSlug }` };
 const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' )!;
-const navigate = jest.fn();
+const navigate = vi.fn();
 
 function renderAssertions( source = sourceSlug ) {
 	return renderHookWithProvider(
@@ -133,14 +138,14 @@ function renderEntry( features = {}, mountCopyStep = false ) {
 beforeAll( () => {
 	Object.defineProperty( window, 'location', {
 		configurable: true,
-		value: { ...window.location, assign: jest.fn() },
+		value: { ...window.location, assign: vi.fn() },
 	} );
 } );
 
 afterAll( () => Object.defineProperty( window, 'location', locationDescriptor ) );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	const siteActions = dispatch( SITE_STORE );
 	siteActions.reset();
 	siteActions.invalidateResolutionForStore();
@@ -148,12 +153,12 @@ beforeEach( () => {
 	mockLegacySiteGet.mockImplementation( ( siteFragment ) =>
 		Promise.resolve( siteFragment === destinationSlug ? destination : source )
 	);
-	jest.mocked( wpcom.req.post ).mockResolvedValue( undefined );
+	vi.mocked( wpcom.req.post ).mockResolvedValue( undefined );
 } );
 
 describe( 'copy site source validation', () => {
 	it( 'rejects a missing source without validating the destination as the source', async () => {
-		jest.mocked( wpcomRequest ).mockResolvedValue( destination );
+		vi.mocked( wpcomRequest ).mockResolvedValue( destination );
 		const { result } = renderAssertions( '' );
 		await waitFor( () => expect( result.current?.state ).toBe( AssertConditionState.FAILURE ) );
 		expect( result.current?.message ).toBe( 'Copy Site flow requires a valid source site.' );
@@ -168,7 +173,7 @@ describe( 'copy site source validation', () => {
 			const sourceRequest = Promise.withResolvers< typeof source >();
 			const destinationRequest = Promise.withResolvers< typeof destination >();
 			const featuresRequest = Promise.withResolvers< { active: string[] } >();
-			jest.mocked( wpcomRequest ).mockImplementation( ( { path } ) => {
+			vi.mocked( wpcomRequest ).mockImplementation( ( { path } ) => {
 				if ( path === `/sites/${ sourceSlug }` ) {
 					return sourceRequest.promise;
 				}
@@ -177,7 +182,7 @@ describe( 'copy site source validation', () => {
 				}
 				return Promise.resolve( source );
 			} );
-			jest.mocked( wpcom.req.get ).mockReturnValue( featuresRequest.promise );
+			vi.mocked( wpcom.req.get ).mockReturnValue( featuresRequest.promise );
 			const { result } = renderAssertions();
 			await waitFor( () => expect( wpcomRequest ).toHaveBeenCalledTimes( 2 ) );
 			expect( result.current?.state ).toBe( AssertConditionState.CHECKING );
@@ -210,13 +215,11 @@ describe( 'copy site source validation', () => {
 	);
 
 	it( 'rejects a failed source request', async () => {
-		jest
-			.mocked( wpcomRequest )
-			.mockImplementation( ( { path } ) =>
-				path === `/sites/${ sourceSlug }`
-					? Promise.reject( new Error( 'Source unavailable' ) )
-					: Promise.resolve( destination )
-			);
+		vi.mocked( wpcomRequest ).mockImplementation( ( { path } ) =>
+			path === `/sites/${ sourceSlug }`
+				? Promise.reject( new Error( 'Source unavailable' ) )
+				: Promise.resolve( destination )
+		);
 		const { result } = renderAssertions();
 		await waitFor( () => expect( result.current?.state ).toBe( AssertConditionState.FAILURE ) );
 		expect( result.current?.message ).toBe( 'Copy Site flow couldn´t fetch source site details.' );
@@ -226,15 +229,13 @@ describe( 'copy site source validation', () => {
 	it.each( [ 'unavailable feature', 'failed features request' ] )(
 		'rejects the source: %s',
 		async ( outcome ) => {
-			jest
-				.mocked( wpcomRequest )
-				.mockImplementation( ( { path } ) =>
-					Promise.resolve( path === `/sites/${ destinationSlug }` ? destination : source )
-				);
+			vi.mocked( wpcomRequest ).mockImplementation( ( { path } ) =>
+				Promise.resolve( path === `/sites/${ destinationSlug }` ? destination : source )
+			);
 			if ( outcome === 'failed features request' ) {
-				jest.mocked( wpcom.req.get ).mockRejectedValue( new Error( 'Features unavailable' ) );
+				vi.mocked( wpcom.req.get ).mockRejectedValue( new Error( 'Features unavailable' ) );
 			} else {
-				jest.mocked( wpcom.req.get ).mockResolvedValue( { active: [] } );
+				vi.mocked( wpcom.req.get ).mockResolvedValue( { active: [] } );
 			}
 			const { result } = renderAssertions();
 			await waitFor( () => expect( result.current?.state ).toBe( AssertConditionState.FAILURE ) );
@@ -246,12 +247,10 @@ describe( 'copy site source validation', () => {
 describe( 'copy site failure handling', () => {
 	it( 'waits for the destination lookup and starts the copy when it succeeds', async () => {
 		const request = Promise.withResolvers< typeof destination >();
-		jest
-			.mocked( wpcomRequest )
-			.mockImplementation( ( { path } ) =>
-				path === `/sites/${ destinationSlug }` ? request.promise : Promise.resolve( source )
-			);
-		jest.mocked( wpcom.req.get ).mockResolvedValue( { active: [ WPCOM_FEATURES_COPY_SITE ] } );
+		vi.mocked( wpcomRequest ).mockImplementation( ( { path } ) =>
+			path === `/sites/${ destinationSlug }` ? request.promise : Promise.resolve( source )
+		);
+		vi.mocked( wpcom.req.get ).mockResolvedValue( { active: [ WPCOM_FEATURES_COPY_SITE ] } );
 		renderEntry( {}, true );
 		await waitFor( () =>
 			expect( screen.getByTestId( 'validation' ) ).toHaveTextContent( AssertConditionState.SUCCESS )
@@ -275,16 +274,12 @@ describe( 'copy site failure handling', () => {
 		const firstRequest = Promise.withResolvers< { active: string[] } >();
 		const secondRequest = Promise.withResolvers< { active: string[] } >();
 		const secondSite = { ...source, ID: 2, URL: destination.URL };
-		jest
-			.mocked( wpcomRequest )
-			.mockImplementation( ( { path } ) =>
-				Promise.resolve( path === '/sites/2' ? secondSite : source )
-			);
-		jest
-			.mocked( wpcom.req.get )
-			.mockImplementation( ( path: string ) =>
-				path === '/sites/1/features' ? firstRequest.promise : secondRequest.promise
-			);
+		vi.mocked( wpcomRequest ).mockImplementation( ( { path } ) =>
+			Promise.resolve( path === '/sites/2' ? secondSite : source )
+		);
+		vi.mocked( wpcom.req.get ).mockImplementation( ( path: string ) =>
+			path === '/sites/1/features' ? firstRequest.promise : secondRequest.promise
+		);
 		const { result, rerender } = renderHookWithProvider(
 			( { site }: { site: typeof source } ) => useSiteCopy( site ),
 			{ initialProps: { site: source }, initialState: { currentUser: { id: 123 } } }
@@ -302,12 +297,10 @@ describe( 'copy site failure handling', () => {
 		'waits for fresh eligibility without redirecting when entering with cached %s',
 		async ( cached ) => {
 			const request = Promise.withResolvers< { active: string[] } >();
-			jest
-				.mocked( wpcomRequest )
-				.mockImplementation( ( { path } ) =>
-					Promise.resolve( path === `/sites/${ destinationSlug }` ? destination : source )
-				);
-			jest.mocked( wpcom.req.get ).mockReturnValue( request.promise );
+			vi.mocked( wpcomRequest ).mockImplementation( ( { path } ) =>
+				Promise.resolve( path === `/sites/${ destinationSlug }` ? destination : source )
+			);
+			vi.mocked( wpcom.req.get ).mockReturnValue( request.promise );
 			dispatch( SITE_STORE ).receiveSite( source.ID, source );
 			const features = {
 				[ source.ID ]: {
@@ -332,14 +325,12 @@ describe( 'copy site failure handling', () => {
 	);
 
 	it( 'exits to the sites list when the destination lookup fails without rejecting the source', async () => {
-		jest
-			.mocked( wpcomRequest )
-			.mockImplementation( ( { path } ) =>
-				path === `/sites/${ destinationSlug }`
-					? Promise.reject( new Error( 'Destination unavailable' ) )
-					: Promise.resolve( source )
-			);
-		jest.mocked( wpcom.req.get ).mockResolvedValue( { active: [ WPCOM_FEATURES_COPY_SITE ] } );
+		vi.mocked( wpcomRequest ).mockImplementation( ( { path } ) =>
+			path === `/sites/${ destinationSlug }`
+				? Promise.reject( new Error( 'Destination unavailable' ) )
+				: Promise.resolve( source )
+		);
+		vi.mocked( wpcom.req.get ).mockResolvedValue( { active: [ WPCOM_FEATURES_COPY_SITE ] } );
 		const view = renderEntry( {}, true );
 		await waitFor( () =>
 			expect( screen.getByTestId( 'validation' ) ).toHaveTextContent( AssertConditionState.SUCCESS )
@@ -350,7 +341,7 @@ describe( 'copy site failure handling', () => {
 		expect( navigate ).not.toHaveBeenCalled();
 		expect( select( ONBOARD_STORE ).getPendingAction() ).toBeUndefined();
 		expect(
-			jest
+			vi
 				.mocked( wpcomRequest )
 				.mock.calls.filter( ( [ request ] ) => request.path === `/sites/${ destinationSlug }` )
 		).toHaveLength( 1 );

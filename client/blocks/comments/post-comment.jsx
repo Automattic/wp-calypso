@@ -323,6 +323,7 @@ class PostComment extends PureComponent {
 			hidePingbacksAndTrackbacks,
 			shouldHighlightNew,
 			highlightedCommentIds,
+			currentUser,
 		} = this.props;
 
 		const comment = commentsTree?.[ commentId ]?.data;
@@ -371,12 +372,17 @@ class PostComment extends PureComponent {
 
 		const isNew = highlightedCommentIds.includes( commentId );
 		// The animation runs once when the class is added, so unread comments flash as they mount.
+		// The reader's own comment isn't new to them, and it mounts twice: as a placeholder, then
+		// under its saved ID.
 		const isHighlighted =
 			isNew ||
-			( shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000 );
+			( shouldHighlightNew &&
+				comment.author?.ID !== currentUser?.ID &&
+				new Date().getTime() - new Date( comment.date ).getTime() < 10000 );
 		const canCollapse = this.canCollapse();
 		const { isCollapsed } = this.state;
-		const collapsedCount = canCollapse ? this.getAllChildrenIds( commentId ).length : 0;
+		const collapsedCount =
+			canCollapse && isCollapsed ? this.getAllChildrenIds( commentId ).length : 0;
 
 		const postCommentClassnames = clsx( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3

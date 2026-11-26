@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { MastodonAuthorProfileTabs } from '../author-profile-tabs';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { replace: jest.fn() },
+	default: { replace: vi.fn() },
 } ) );
 
 // NavTabs uses IntersectionObserver which jsdom does not provide.
@@ -28,13 +29,13 @@ afterAll( () => {
 } );
 
 beforeEach( () => {
-	jest
-		.spyOn( analytics, 'recordReaderTracksEvent' )
-		.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
-	jest.mocked( page.replace ).mockReset();
+	vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+		() => ( { type: '@@TEST/NOOP' } ) as never
+	);
+	vi.mocked( page.replace ).mockReset();
 } );
 
-afterEach( () => jest.restoreAllMocks() );
+afterEach( () => vi.restoreAllMocks() );
 
 describe( 'MastodonAuthorProfileTabs', () => {
 	it( 'navigates to /reader/mastodon/<id>/profile/<actor>?tab=<slug> on click', async () => {

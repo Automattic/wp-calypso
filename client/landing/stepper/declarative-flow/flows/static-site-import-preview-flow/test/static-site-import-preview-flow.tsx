@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - the flow test helpers are untyped
 import config from '@automattic/calypso-config';
 import { MemoryRouter } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { runFlowNavigation } from 'calypso/landing/stepper/declarative-flow/test/helpers';
@@ -11,8 +12,8 @@ import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import staticSiteImportPreviewFlow from '../static-site-import-preview-flow';
 
-jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store' );
+vi.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
+vi.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store' );
 
 const originalLocation = window.location;
 
@@ -37,7 +38,7 @@ const overviewExit = ( source ) => ( {
 let flowState: Record< string, unknown >;
 
 const lastExit = () => {
-	const url = String( ( window.location.replace as jest.Mock ).mock.calls.at( -1 )?.[ 0 ] ?? '' );
+	const url = String( ( window.location.replace as Mock ).mock.calls.at( -1 )?.[ 0 ] ?? '' );
 	const [ path, query = '' ] = url.split( '?' );
 	return { path, query: Object.fromEntries( new URLSearchParams( query ) ) };
 };
@@ -47,7 +48,7 @@ const slugs = ( steps ) => steps.map( ( step ) => step.slug );
 describe( 'Static site import preview flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn(), replace: vi.fn() },
 		} );
 	} );
 
@@ -58,12 +59,12 @@ describe( 'Static site import preview flow', () => {
 	beforeEach( () => {
 		config.enable( 'migration/non-wordpress-source' );
 		window.location.search = '';
-		jest.clearAllMocks();
-		jest.mocked( useFlowLocale ).mockReturnValue( 'en' );
+		vi.clearAllMocks();
+		vi.mocked( useFlowLocale ).mockReturnValue( 'en' );
 		flowState = {};
-		jest.mocked( useFlowState ).mockReturnValue( {
+		vi.mocked( useFlowState ).mockReturnValue( {
 			get: ( key ) => flowState[ key ],
-			set: jest.fn( ( key, value ) => ( flowState[ key ] = value ) ),
+			set: vi.fn( ( key, value ) => ( flowState[ key ] = value ) ),
 		} );
 	} );
 

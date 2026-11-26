@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useOnboardingStepCounter } from '../use-onboarding-step-counter';
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
 	useViewportMatch: () => true,
 } ) );
 

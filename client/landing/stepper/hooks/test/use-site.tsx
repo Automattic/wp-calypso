@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import wpcomRequest from '@automattic/data-stores/src/wpcom-request';
 import { act, waitFor } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import { defaultSiteDetails } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/test/lib/fixtures';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -17,17 +18,17 @@ let mockCreatedSiteId: number | undefined;
 const site = { ...defaultSiteDetails, ID: 123, URL: 'https://destination.wordpress.com' };
 const siteActions = dispatch( SITE_STORE );
 
-jest.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
+vi.mock( '@automattic/data-stores/src/wpcom-request', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	canAccessWpcomApis: jest.fn( () => true ),
+	default: vi.fn(),
+	canAccessWpcomApis: vi.fn( () => true ),
 } ) );
 
-jest.mock( 'calypso/state/sites/actions', () => ( {
-	requestSite: jest.fn(),
+vi.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
+vi.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
 	useFlowState: () => ( {
 		get: () => ( mockCreatedSiteId ? { siteId: mockCreatedSiteId } : undefined ),
 	} ),
@@ -54,12 +55,12 @@ const renderSite = (
 
 describe( 'useSiteQuery', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
-		jest.mocked( requestSite ).mockImplementation( () => jest.fn() );
+		vi.resetAllMocks();
+		vi.mocked( requestSite ).mockImplementation( () => vi.fn() );
 		mockCreatedSiteId = undefined;
 		siteActions.reset();
 		siteActions.invalidateResolutionForStore();
-		jest.mocked( wpcomRequest ).mockImplementation( () => new Promise( () => {} ) );
+		vi.mocked( wpcomRequest ).mockImplementation( () => new Promise( () => {} ) );
 	} );
 
 	it.each( [
@@ -72,7 +73,7 @@ describe( 'useSiteQuery', () => {
 		'resolves %s at %s with session site %s using %s',
 		async ( fragment, entry, createdSiteId, key ) => {
 			mockCreatedSiteId = createdSiteId;
-			jest.mocked( wpcomRequest ).mockResolvedValue( site );
+			vi.mocked( wpcomRequest ).mockResolvedValue( site );
 			const { result } = renderSite( fragment, entry );
 
 			expect( result.current.details.isLoading ).toBe( true );
@@ -99,8 +100,7 @@ describe( 'useSiteQuery', () => {
 			const retry = new Promise< SiteDetails >( ( resolve ) => {
 				resolveRetry = resolve;
 			} );
-			jest
-				.mocked( wpcomRequest )
+			vi.mocked( wpcomRequest )
 				.mockRejectedValueOnce( { error: 'http_request_failed', message: 'Request failed' } )
 				.mockReturnValueOnce( retry );
 			const { result } = renderSite( 123, '/setup?siteId=123', requesting );
@@ -108,12 +108,12 @@ describe( 'useSiteQuery', () => {
 			await waitFor( () => expect( result.current.details.isError ).toBe( true ) );
 			expect( result.current.details.isLoading ).toBe( false );
 			expect( result.current.legacy ).toBeNull();
-			jest.mocked( requestSite ).mockClear();
+			vi.mocked( requestSite ).mockClear();
 			act( () => {
 				result.current.details.refetch();
 			} );
 			await waitFor( () => expect( wpcomRequest ).toHaveBeenCalledTimes( 2 ) );
-			expect( jest.mocked( requestSite ).mock.calls ).toEqual( requesting ? [] : [ [ 123 ] ] );
+			expect( vi.mocked( requestSite ).mock.calls ).toEqual( requesting ? [] : [ [ 123 ] ] );
 			expect( result.current.details.isLoading ).toBe( true );
 			expect( result.current.details.isError ).toBe( false );
 			await act( async () => resolveRetry( site ) );
@@ -124,13 +124,11 @@ describe( 'useSiteQuery', () => {
 	);
 
 	it( 'keeps concurrent lookups independent when one fails', async () => {
-		jest
-			.mocked( wpcomRequest )
-			.mockImplementation( ( { path } ) =>
-				path === '/sites/456'
-					? Promise.reject( { error: 'unknown_blog', message: 'Unknown blog' } )
-					: new Promise( () => {} )
-			);
+		vi.mocked( wpcomRequest ).mockImplementation( ( { path } ) =>
+			path === '/sites/456'
+				? Promise.reject( { error: 'unknown_blog', message: 'Unknown blog' } )
+				: new Promise( () => {} )
+		);
 		const destination = renderSite( 123 );
 		const source = renderSite( 456 );
 
@@ -140,7 +138,7 @@ describe( 'useSiteQuery', () => {
 	} );
 
 	it( 'resets lookup state when the requested site changes', async () => {
-		jest.mocked( wpcomRequest ).mockRejectedValueOnce( {
+		vi.mocked( wpcomRequest ).mockRejectedValueOnce( {
 			error: 'unknown_blog',
 			message: 'Unknown blog',
 		} );
@@ -176,7 +174,7 @@ describe( 'useSiteQuery', () => {
 				...site,
 				URL: typeof fragment === 'string' ? `https://${ fragment }` : site.URL,
 			};
-			jest.mocked( wpcomRequest ).mockResolvedValue( requestedSite );
+			vi.mocked( wpcomRequest ).mockResolvedValue( requestedSite );
 			const { result, rerender } = renderHookWithProvider(
 				( { enabled }: { enabled: boolean } ) => useSiteQuery( fragment, { enabled } ),
 				{
@@ -206,8 +204,8 @@ describe( 'useSiteQuery', () => {
 				query: 'force=wpcom',
 			} );
 			expect( requestSite ).toHaveBeenCalledWith( fragment ?? '123' );
-			jest.mocked( wpcomRequest ).mockClear();
-			jest.mocked( requestSite ).mockClear();
+			vi.mocked( wpcomRequest ).mockClear();
+			vi.mocked( requestSite ).mockClear();
 
 			rerender( { enabled: false } );
 			expect( result.current ).toEqual( idleResult );

@@ -1,10 +1,11 @@
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { isBilmurSpaEnabled } from '../bilmur';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mock = jest.fn();
-	mock.isEnabled = jest.fn();
-	return mock;
+vi.mock( '@automattic/calypso-config', () => {
+	const mock = vi.fn();
+	mock.isEnabled = vi.fn();
+	return { ...mock, default: mock };
 } );
 
 describe( 'isBilmurSpaEnabled', () => {

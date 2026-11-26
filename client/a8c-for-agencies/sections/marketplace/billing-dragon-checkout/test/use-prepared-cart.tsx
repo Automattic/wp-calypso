@@ -1,16 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import usePreparedCart from '../use-prepared-cart';
 
-jest.mock( '@automattic/shopping-cart', () => ( {
-	...jest.requireActual( '@automattic/shopping-cart' ),
-	useShoppingCart: jest.fn(),
+vi.mock( '@automattic/shopping-cart', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
+		'@automattic/shopping-cart'
+	) ),
+	useShoppingCart: vi.fn(),
 } ) );
 
-const replaceProductsInCart = jest.fn();
+const replaceProductsInCart = vi.fn();
 
 function mockCart( {
 	isLoading = false,
@@ -21,7 +24,7 @@ function mockCart( {
 	loadingError?: string | null;
 	products?: { extra?: Record< string, unknown > }[];
 } ) {
-	( useShoppingCart as jest.Mock ).mockReturnValue( {
+	( useShoppingCart as Mock ).mockReturnValue( {
 		isLoading,
 		loadingError,
 		responseCart: { products },

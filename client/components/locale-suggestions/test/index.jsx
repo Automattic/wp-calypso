@@ -1,21 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import { getLocaleSlug } from 'i18n-calypso';
+import { vi } from 'vitest';
 import { LocaleSuggestions } from '../';
 
-jest.mock( 'i18n-calypso', () => ( {
-	getLocaleSlug: jest.fn( () => '' ),
-	localize: jest.fn( ( component ) => component ),
-	translate: jest.fn( ( text ) => text ),
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		getLocaleSlug: vi.fn( () => '' ),
+		localize: vi.fn( ( component ) => component ),
+		translate: vi.fn( ( text ) => text ),
+	} )
+);
+vi.mock( 'calypso/components/notice', () => ( {
+	default: ( { children } ) => <>{ children }</>,
 } ) );
-jest.mock( 'calypso/components/notice', () => ( { children } ) => <>{ children }</> );
 
 describe( 'LocaleSuggestions', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	const defaultProps = {
@@ -26,7 +31,7 @@ describe( 'LocaleSuggestions', () => {
 			{ locale: 'fr', name: 'Français', availability_text: 'Également disponible en' },
 			{ locale: 'en', name: 'English', availability_text: 'Also available in' },
 		],
-		setLocale: jest.fn(),
+		setLocale: vi.fn(),
 	};
 
 	test( 'should not render without suggestions', () => {

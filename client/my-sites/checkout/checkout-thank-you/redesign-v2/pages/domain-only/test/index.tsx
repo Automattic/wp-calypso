@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import {
@@ -21,38 +22,42 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DomainOnly from '../index';
 import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
-jest.mock( '@automattic/calypso-analytics' );
+vi.mock( '@automattic/calypso-analytics' );
 
-const mockQuerySites = jest.fn();
+const mockQuerySites = vi.fn();
 
-jest.mock( 'calypso/components/data/query-sites', () => ( props: { siteId: number } ) => {
-	mockQuerySites( props );
-	return null;
-} );
-
-jest.mock( 'calypso/state/dashboard/selectors', () => ( {
-	hasDashboardOptIn: jest.fn(),
+vi.mock( 'calypso/components/data/query-sites', () => ( {
+	default: ( props: { siteId: number } ) => {
+		mockQuerySites( props );
+		return null;
+	},
 } ) );
 
-jest.mock( 'calypso/state/selectors/can-any-site-connect-domains', () => ( {
-	canAnySiteConnectDomains: jest.fn(),
+vi.mock( 'calypso/state/dashboard/selectors', () => ( {
+	hasDashboardOptIn: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/sites/selectors/is-current-plan-paid', () => ( {
+vi.mock( 'calypso/state/selectors/can-any-site-connect-domains', () => ( {
+	canAnySiteConnectDomains: vi.fn(),
+} ) );
+
+vi.mock( 'calypso/state/sites/selectors/is-current-plan-paid', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-jest.mock(
+vi.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-domain-to-plan-credits-applicable',
 	() => ( {
-		useDomainToPlanCreditsApplicable: jest.fn(),
+		useDomainToPlanCreditsApplicable: vi.fn(),
 	} )
 );
 
-jest.mock( 'calypso/dashboard/app/routing', () => ( {
-	...jest.requireActual( 'calypso/dashboard/app/routing' ),
-	getDashboardFromQuery: jest.fn(),
+vi.mock( 'calypso/dashboard/app/routing', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/dashboard/app/routing' ) >(
+		'calypso/dashboard/app/routing'
+	) ),
+	getDashboardFromQuery: vi.fn(),
 } ) );
 
 const mockDomainPurchase: ReceiptPurchase = {
@@ -81,21 +86,21 @@ describe( 'DomainOnly', () => {
 		// Suppress the console for navigation errors, which are not implemented by JSDom
 		const consoleError = console.error;
 
-		jest.spyOn( console, 'error' ).mockImplementation( ( message ) => {
+		vi.spyOn( console, 'error' ).mockImplementation( ( message ) => {
 			if ( ! message.toString().includes( 'Not implemented: navigation' ) ) {
 				consoleError( message );
 			}
 		} );
 
-		jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
-		jest.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
-		jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
-		jest.mocked( isCurrentPlanPaid ).mockReturnValue( false );
+		vi.mocked( hasDashboardOptIn ).mockReturnValue( false );
+		vi.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
+		vi.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
+		vi.mocked( isCurrentPlanPaid ).mockReturnValue( false );
 		mockQuerySites.mockClear();
 	} );
 
 	afterEach( () => {
-		jest.spyOn( console, 'error' ).mockRestore();
+		vi.spyOn( console, 'error' ).mockRestore();
 	} );
 
 	describe( 'Start a new site', () => {
@@ -109,21 +114,21 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'is visible when the domain’s site does not have a paid plan', () => {
-			jest.mocked( isCurrentPlanPaid ).mockReturnValue( false );
+			vi.mocked( isCurrentPlanPaid ).mockReturnValue( false );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Start a new site/ } ) ).toBeVisible();
 		} );
 
 		it( 'is not visible when the domain’s site already has a paid plan', () => {
-			jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+			vi.mocked( isCurrentPlanPaid ).mockReturnValue( true );
 			renderComponent();
 
 			expect( screen.queryByRole( 'link', { name: /Start a new site/ } ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'is not visible while the site plan status is loading', () => {
-			jest.mocked( isCurrentPlanPaid ).mockReturnValue( null );
+			vi.mocked( isCurrentPlanPaid ).mockReturnValue( null );
 			renderComponent();
 
 			expect( screen.queryByRole( 'link', { name: /Start a new site/ } ) ).not.toBeInTheDocument();
@@ -155,7 +160,7 @@ describe( 'DomainOnly', () => {
 
 	describe( 'Plan upgrade credits', () => {
 		it( 'renders the upgrade credits benefit when useDomainToPlanCreditsApplicable returns a value', () => {
-			jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( 1000 );
+			vi.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( 1000 );
 			renderComponent( { currency: 'USD' } );
 
 			expect(
@@ -164,7 +169,7 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'renders the upgrade credits benefit when useDomainToPlanCreditsApplicable returns a value in a different currency', () => {
-			jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( 1000 );
+			vi.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( 1000 );
 			renderComponent( { currency: 'EUR' } );
 
 			expect(
@@ -173,7 +178,7 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'does not render upgrade credits when useDomainToPlanCreditsApplicable returns null', () => {
-			jest.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
+			vi.mocked( useDomainToPlanCreditsApplicable ).mockReturnValue( null );
 			renderComponent();
 
 			expect(
@@ -184,7 +189,7 @@ describe( 'DomainOnly', () => {
 
 	describe( 'Add a mailbox', () => {
 		it( 'links to the Calypso domain email upsell when the user does not have dashboard opt-in', () => {
-			jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
+			vi.mocked( hasDashboardOptIn ).mockReturnValue( false );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Add a mailbox/ } ) ).toHaveAttribute(
@@ -194,7 +199,7 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'links to the dashboard email solution when the user has dashboard opt-in', () => {
-			jest.mocked( hasDashboardOptIn ).mockReturnValue( true );
+			vi.mocked( hasDashboardOptIn ).mockReturnValue( true );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Add a mailbox/ } ) ).toHaveAttribute(
@@ -229,7 +234,7 @@ describe( 'DomainOnly', () => {
 
 	describe( 'Attach to an existing site', () => {
 		it( 'is not visible when the user has no eligible sites', () => {
-			jest.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
+			vi.mocked( canAnySiteConnectDomains ).mockReturnValue( false );
 			renderComponent();
 
 			expect(
@@ -238,15 +243,15 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'is visible when the user has eligible sites', () => {
-			jest.mocked( canAnySiteConnectDomains ).mockReturnValue( true );
+			vi.mocked( canAnySiteConnectDomains ).mockReturnValue( true );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Attach to an existing site/ } ) ).toBeVisible();
 		} );
 
 		it( 'links to the Calypso transfer page when the user does not have dashboard opt-in', () => {
-			jest.mocked( canAnySiteConnectDomains ).mockReturnValue( true );
-			jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
+			vi.mocked( canAnySiteConnectDomains ).mockReturnValue( true );
+			vi.mocked( hasDashboardOptIn ).mockReturnValue( false );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Attach to an existing site/ } ) ).toHaveAttribute(
@@ -256,8 +261,8 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'links to the dashboard transfer page when the user has dashboard opt-in', () => {
-			jest.mocked( canAnySiteConnectDomains ).mockReturnValue( true );
-			jest.mocked( hasDashboardOptIn ).mockReturnValue( true );
+			vi.mocked( canAnySiteConnectDomains ).mockReturnValue( true );
+			vi.mocked( hasDashboardOptIn ).mockReturnValue( true );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Attach to an existing site/ } ) ).toHaveAttribute(
@@ -267,7 +272,7 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'records a tracks event when the user clicks the "Attach to an existing site" link', async () => {
-			jest.mocked( canAnySiteConnectDomains ).mockReturnValue( true );
+			vi.mocked( canAnySiteConnectDomains ).mockReturnValue( true );
 
 			const user = userEvent.setup();
 			renderComponent();
@@ -286,7 +291,7 @@ describe( 'DomainOnly', () => {
 
 	describe( 'Use the domain name only', () => {
 		it( 'links to the Calypso domain management list when the user does not have dashboard opt-in', () => {
-			jest.mocked( hasDashboardOptIn ).mockReturnValue( false );
+			vi.mocked( hasDashboardOptIn ).mockReturnValue( false );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Use the domain name only/ } ) ).toHaveAttribute(
@@ -296,7 +301,7 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'links to the dashboard domain page when the user has dashboard opt-in', () => {
-			jest.mocked( hasDashboardOptIn ).mockReturnValue( true );
+			vi.mocked( hasDashboardOptIn ).mockReturnValue( true );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Use the domain name only/ } ) ).toHaveAttribute(
@@ -332,7 +337,7 @@ describe( 'DomainOnly', () => {
 		} );
 
 		it( 'links to the site migration setup flow with dashboard query param if present', () => {
-			jest.mocked( getDashboardFromQuery ).mockReturnValue( 'a4a' );
+			vi.mocked( getDashboardFromQuery ).mockReturnValue( 'a4a' );
 			renderComponent();
 
 			expect( screen.getByRole( 'link', { name: /Migrate an existing site/ } ) ).toHaveAttribute(

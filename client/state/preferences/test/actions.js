@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	PREFERENCES_RECEIVE,
 	PREFERENCES_FETCH,
@@ -14,7 +15,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	const responseShape = {

@@ -19,6 +19,7 @@ import Smooch from 'smooch';
 import { HELP_CENTER_STORE } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
+import { useIsWaitingForFirstMessage } from '../../hooks/use-is-pending-direct-chat';
 import { AgentUIFooter } from '../chat-footer';
 import { EmailFallbackNotice } from '../email-fallback-notice';
 import { useMessageSizeErrorNotice } from '../notices';
@@ -80,6 +81,7 @@ export const OdieSendMessageButton = ( { aiDisclosureId }: { aiDisclosureId?: st
 			! canConnectToZendesk ) ??
 		false;
 	const { sendMessage } = useSendChatMessage();
+	const isWaitingForFirstMessage = useIsWaitingForFirstMessage();
 	const [ searchParams ] = useSearchParams();
 	// Until a chat with a human has started, a message would go to the AI instead, so hold it.
 	const isStartingHumanChat =
@@ -157,7 +159,8 @@ export const OdieSendMessageButton = ( { aiDisclosureId }: { aiDisclosureId?: st
 		setInputValue,
 		hasAttachments,
 		isChatBusy,
-		chat,
+		// The first message of a chat that waited for it goes to a person, so it counts as one to a person.
+		chat: isWaitingForFirstMessage ? { ...chat, provider: 'zendesk' } : chat,
 		sendAttachments,
 		textareaRef,
 		trackEvent,

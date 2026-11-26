@@ -8,9 +8,9 @@ import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
-import { getFormattedWordPressVersion } from '../../../utils/wp-version';
 import { canViewPHPVersion } from '../../features';
-import { PHPVersion } from '../../site-fields';
+import { PHPVersion } from '../../php-version/components/php-version-field';
+import { getFormattedWordPressVersion } from '../../wordpress-version/utils';
 import type { Site } from '@automattic/api-core';
 
 const HostingProvider = ( { site }: { site: Site } ) => {

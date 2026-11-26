@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import { interlaceThemes, shouldEnableThemesColorScheme } from 'calypso/my-sites/themes/helpers';
 
-jest.mock( 'calypso/lib/analytics/ga', () => ( {
-	gaRecordEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/ga', () => ( {
+	gaRecordEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/components/theme-tier/constants', () => ( {
+vi.mock( 'calypso/components/theme-tier/constants', () => ( {
 	THEME_TIERS: {
 		free: {},
 		premium: {},

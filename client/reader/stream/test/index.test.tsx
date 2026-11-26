@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	getSiteSubscriptionsQueryKey,
@@ -13,116 +13,123 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { type Mock, vi } from 'vitest';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { ANALYTICS_EVENT_RECORD, NOTICE_CREATE } from 'calypso/state/action-types';
 import Stream from '../index';
 import type { SiteSubscriptionItem } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
-jest.mock( 'calypso/reader/stream/post-lifecycle', () => {
-	const ReactLib = jest.requireActual< typeof import( 'react' ) >( 'react' );
-	return class PostLifecycle extends ReactLib.Component< {
-		postKey: { postId: number };
-		isSelected: boolean;
-		handleClick: ( args: Record< string, unknown > ) => void;
-	} > {
-		render() {
-			if ( 'isPromptBlock' in this.props.postKey ) {
-				return <div data-testid="prompt-block" />;
-			}
-			if ( 'isRecommendationBlock' in this.props.postKey ) {
-				return <div data-testid="recommendation-block" />;
-			}
-			return (
-				// eslint-disable-next-line jsx-a11y/click-events-have-key-events
-				<div
-					data-testid={ `post-${ this.props.postKey.postId }` }
-					className={ this.props.isSelected ? 'card is-selected' : 'card' }
-					onClick={ () => this.props.handleClick( {} ) }
-					role="button"
-					tabIndex={ 0 }
-				>
-					<a href="#post" data-testid={ `post-${ this.props.postKey.postId }-link` }>
-						link
-					</a>
-					<button
-						type="button"
-						data-testid={ `post-${ this.props.postKey.postId }-comments` }
-						onClick={ ( event ) => {
-							event.stopPropagation();
-							this.props.handleClick( { comments: true } );
-						} }
+vi.mock( 'calypso/reader/stream/post-lifecycle', async () => {
+	const ReactLib = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	return {
+		default: class PostLifecycle extends ReactLib.Component< {
+			postKey: { postId: number };
+			isSelected: boolean;
+			handleClick: ( args: Record< string, unknown > ) => void;
+		} > {
+			render() {
+				if ( 'isPromptBlock' in this.props.postKey ) {
+					return <div data-testid="prompt-block" />;
+				}
+				if ( 'isRecommendationBlock' in this.props.postKey ) {
+					return <div data-testid="recommendation-block" />;
+				}
+				return (
+					// eslint-disable-next-line jsx-a11y/click-events-have-key-events
+					<div
+						data-testid={ `post-${ this.props.postKey.postId }` }
+						className={ this.props.isSelected ? 'card is-selected' : 'card' }
+						onClick={ () => this.props.handleClick( {} ) }
+						role="button"
+						tabIndex={ 0 }
 					>
-						comments
-					</button>
-				</div>
-			);
-		}
-	};
-} );
-jest.mock(
-	'calypso/reader/stream/post-placeholder',
-	() =>
-		function PostPlaceholder() {
-			return <div data-testid="post-placeholder" />;
-		}
-);
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: ReactNode } ) {
-			return <div data-testid="reader-main">{ children }</div>;
-		}
-);
-jest.mock( 'calypso/lib/with-dimensions', () => ( Component: React.ComponentType ) => Component );
-jest.mock( 'calypso/components/infinite-list', () => {
-	const ReactLib = jest.requireActual< typeof import( 'react' ) >( 'react' );
-	return class InfiniteList extends ReactLib.Component< {
-		items: Array< { postId: number } >;
-		fetchingNextPage?: boolean;
-		// Mirror the real signature: the third argument is the callback ref the
-		// list hands to consumers so they can register their item's DOM node.
-		renderItem: (
-			postKey: { postId: number },
-			idx: number,
-			registerItemRef: ( node: HTMLElement | null ) => void
-		) => ReactNode;
-		renderLoadingPlaceholders?: () => ReactNode;
-	} > {
-		containerRef = ReactLib.createRef< HTMLDivElement >();
-		itemRefs = new Map< number, HTMLElement >();
-		scrollToTop = jest.fn();
-		getVisibleItemIndexes = jest.fn( () => [] );
-		getDOMNode = () => this.containerRef.current;
-
-		setItemRef = ( key: number ) => ( node: HTMLElement | null ) => {
-			if ( node ) {
-				this.itemRefs.set( key, node );
-			} else {
-				this.itemRefs.delete( key );
+						<a href="#post" data-testid={ `post-${ this.props.postKey.postId }-link` }>
+							link
+						</a>
+						<button
+							type="button"
+							data-testid={ `post-${ this.props.postKey.postId }-comments` }
+							onClick={ ( event ) => {
+								event.stopPropagation();
+								this.props.handleClick( { comments: true } );
+							} }
+						>
+							comments
+						</button>
+					</div>
+				);
 			}
-		};
-
-		render() {
-			const { items, fetchingNextPage, renderItem, renderLoadingPlaceholders } = this.props;
-			const showPlaceholders = items.length === 0 && fetchingNextPage;
-			return (
-				<div ref={ this.containerRef } data-testid="infinite-list" style={ { overflowY: 'auto' } }>
-					{ showPlaceholders
-						? renderLoadingPlaceholders?.()
-						: items.map( ( item, idx ) => (
-								<div key={ idx }>{ renderItem( item, idx, this.setItemRef( idx ) ) }</div>
-							) ) }
-				</div>
-			);
-		}
+		},
 	};
 } );
-jest.mock( '@automattic/calypso-router', () => {
-	const replace = jest.fn();
-	const fn = jest.fn() as jest.Mock & { replace: jest.Mock; show: jest.Mock };
+vi.mock( 'calypso/reader/stream/post-placeholder', () => ( {
+	default: function PostPlaceholder() {
+		return <div data-testid="post-placeholder" />;
+	},
+} ) );
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: ReactNode } ) {
+		return <div data-testid="reader-main">{ children }</div>;
+	},
+} ) );
+vi.mock( 'calypso/lib/with-dimensions', () => ( {
+	default: ( Component: React.ComponentType ) => Component,
+} ) );
+vi.mock( 'calypso/components/infinite-list', async () => {
+	const ReactLib = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	return {
+		default: class InfiniteList extends ReactLib.Component< {
+			items: Array< { postId: number } >;
+			fetchingNextPage?: boolean;
+			// Mirror the real signature: the third argument is the callback ref the
+			// list hands to consumers so they can register their item's DOM node.
+			renderItem: (
+				postKey: { postId: number },
+				idx: number,
+				registerItemRef: ( node: HTMLElement | null ) => void
+			) => ReactNode;
+			renderLoadingPlaceholders?: () => ReactNode;
+		} > {
+			containerRef = ReactLib.createRef< HTMLDivElement >();
+			itemRefs = new Map< number, HTMLElement >();
+			scrollToTop = vi.fn();
+			getVisibleItemIndexes = vi.fn( () => [] );
+			getDOMNode = () => this.containerRef.current;
+
+			setItemRef = ( key: number ) => ( node: HTMLElement | null ) => {
+				if ( node ) {
+					this.itemRefs.set( key, node );
+				} else {
+					this.itemRefs.delete( key );
+				}
+			};
+
+			render() {
+				const { items, fetchingNextPage, renderItem, renderLoadingPlaceholders } = this.props;
+				const showPlaceholders = items.length === 0 && fetchingNextPage;
+				return (
+					<div
+						ref={ this.containerRef }
+						data-testid="infinite-list"
+						style={ { overflowY: 'auto' } }
+					>
+						{ showPlaceholders
+							? renderLoadingPlaceholders?.()
+							: items.map( ( item, idx ) => (
+									<div key={ idx }>{ renderItem( item, idx, this.setItemRef( idx ) ) }</div>
+								) ) }
+					</div>
+				);
+			}
+		},
+	};
+} );
+vi.mock( '@automattic/calypso-router', () => {
+	const replace = vi.fn();
+	const fn = vi.fn() as Mock & { replace: Mock; show: Mock };
 	fn.replace = replace;
-	fn.show = jest.fn();
+	fn.show = vi.fn();
 	return { __esModule: true, default: fn };
 } );
 
@@ -133,17 +140,17 @@ const originalIntersectionObserver = ( window as unknown as { IntersectionObserv
 	.IntersectionObserver;
 
 class IntersectionObserverStub {
-	observe = jest.fn();
-	unobserve = jest.fn();
-	disconnect = jest.fn();
-	takeRecords = jest.fn( () => [] );
+	observe = vi.fn();
+	unobserve = vi.fn();
+	disconnect = vi.fn();
+	takeRecords = vi.fn( () => [] );
 	root = null;
 	rootMargin = '';
 	thresholds: number[] = [];
 }
 
 beforeAll( () => {
-	Object.defineProperty( window, 'scrollTo', { writable: true, value: jest.fn() } );
+	Object.defineProperty( window, 'scrollTo', { writable: true, value: vi.fn() } );
 	// `<SectionNav>` (rendered in narrow-viewport layouts) installs an
 	// IntersectionObserver to detect tab overflow; jsdom doesn't ship one.
 	( window as unknown as { IntersectionObserver: unknown } ).IntersectionObserver =
@@ -261,7 +268,7 @@ function renderStream(
 	const utils = render(
 		<QueryClientProvider client={ queryClient }>
 			<Provider store={ store }>
-				<Stream streamKey="likes" trackScrollPage={ jest.fn() } { ...extraProps } />
+				<Stream streamKey="likes" trackScrollPage={ vi.fn() } { ...extraProps } />
 			</Provider>
 		</QueryClientProvider>
 	);
@@ -305,7 +312,7 @@ describe( 'Stream — render states', () => {
 
 	it( 'renders the empty state when the API returns no posts', async () => {
 		mockLikesEndpoint( [] );
-		const emptyContent = jest.fn( () => <div data-testid="empty">no posts</div> );
+		const emptyContent = vi.fn( () => <div data-testid="empty">no posts</div> );
 
 		renderStream( { emptyContent } );
 
@@ -459,7 +466,7 @@ describe( 'Stream — keyboard navigation', () => {
 		// TypeError instead of short-circuiting — `j` must still advance the
 		// selection by querying the list's own DOM node.
 		const origGetComputedStyle = window.getComputedStyle.bind( window );
-		const spy = jest.spyOn( window, 'getComputedStyle' ).mockImplementation( ( el, pseudo ) => {
+		const spy = vi.spyOn( window, 'getComputedStyle' ).mockImplementation( ( el, pseudo ) => {
 			const style = origGetComputedStyle( el, pseudo );
 			if ( el instanceof HTMLElement && el.dataset.testid === 'infinite-list' ) {
 				return { ...style, overflowY: 'visible' } as CSSStyleDeclaration;

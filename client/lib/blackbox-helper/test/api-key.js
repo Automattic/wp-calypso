@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import {
 	getBlackboxDevApiKeyOverride,
 	resolveBlackboxApiKey,
@@ -10,7 +11,7 @@ import {
 
 describe( 'blackbox-helper/api-key', () => {
 	const originalNodeEnv = process.env.NODE_ENV;
-	const reload = jest.fn();
+	const reload = vi.fn();
 
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {

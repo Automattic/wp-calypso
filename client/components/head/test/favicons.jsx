@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Favicons from '../favicons';
 
-jest.mock( 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies' );
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
+vi.mock( 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies' );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 
 describe( 'Favicons', () => {
 	beforeEach( () => {

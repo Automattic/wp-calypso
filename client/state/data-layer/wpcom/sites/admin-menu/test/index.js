@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { addQueryArgs } from 'calypso/lib/url';
 import { requestAdminMenu, receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -32,7 +33,7 @@ describe( 'handlers', () => {
 	} );
 
 	test( 'should create correct success action on fetch success', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const menuData = {};
 		const action = receiveAdminMenu( 73738, menuData );
 		handleSuccess( { siteId: 73738 }, menuData )( dispatch, getState );
@@ -41,7 +42,7 @@ describe( 'handlers', () => {
 	} );
 
 	test( 'should keep dashboard URLs and pin them', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const menu = [
 			{
 				slug: 'hosting',
@@ -69,7 +70,7 @@ describe( 'handlers', () => {
 	} );
 
 	test( 'should sanitize menu URLs', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const unsafeMenu = [
 			{
 				icon: 'dashicons-warning',
@@ -130,7 +131,7 @@ describe( 'handlers', () => {
 	} );
 
 	test( 'should normalize WordPress.com admin shell links', () => {
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		const menu = [
 			{
 				icon: 'dashicons-admin-home',

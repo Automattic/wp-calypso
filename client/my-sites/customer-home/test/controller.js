@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getAiLaunchpadStatus } from '@automattic/api-core';
@@ -8,54 +8,55 @@ import { fetchLaunchpad } from '@automattic/launchpad';
 import { QueryClient } from '@tanstack/react-query';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import { prefetchHomeLayout } from 'calypso/data/home/use-home-layout-query';
 import { getLoggedInLandingPage } from 'calypso/lib/landing-page';
 import { canCurrentUserUseCustomerHome } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { maybeRedirect, redirectToLandingPage } from '../controller';
 
-jest.mock( 'calypso/lib/landing-page', () => ( {
-	...jest.requireActual( 'calypso/lib/landing-page' ),
-	getLoggedInLandingPage: jest.fn(),
+vi.mock( 'calypso/lib/landing-page', async () => ( {
+	...( await vi.importActual( 'calypso/lib/landing-page' ) ),
+	getLoggedInLandingPage: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/launchpad', () => ( {
-	...jest.requireActual( '@automattic/launchpad' ),
-	fetchLaunchpad: jest.fn(),
+vi.mock( '@automattic/launchpad', async () => ( {
+	...( await vi.importActual( '@automattic/launchpad' ) ),
+	fetchLaunchpad: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/data/home/use-home-layout-query', () => ( {
-	...jest.requireActual( 'calypso/data/home/use-home-layout-query' ),
-	prefetchHomeLayout: jest.fn( () => Promise.resolve( { primary: [] } ) ),
+vi.mock( 'calypso/data/home/use-home-layout-query', async () => ( {
+	...( await vi.importActual( 'calypso/data/home/use-home-layout-query' ) ),
+	prefetchHomeLayout: vi.fn( () => Promise.resolve( { primary: [] } ) ),
 } ) );
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	getAiLaunchpadStatus: jest.fn( () => null ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual( '@automattic/api-core' ) ),
+	getAiLaunchpadStatus: vi.fn( () => null ),
 } ) );
 
-jest.mock( 'calypso/state/sites/actions', () => ( {
-	requestSite: jest.fn( () => ( { type: 'SITE_REQUEST' } ) ),
+vi.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: vi.fn( () => ( { type: 'SITE_REQUEST' } ) ),
 } ) );
 
-jest.mock( 'calypso/state/sites/plans/selectors/is-site-big-sky-trial', () =>
-	jest.fn( () => false )
-);
-
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	canCurrentUserUseCustomerHome: jest.fn( () => true ),
-	getSiteAdminUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/index.php' ),
-	getSiteUrl: jest.fn( () => 'https://example.wordpress.com' ),
+vi.mock( 'calypso/state/sites/plans/selectors/is-site-big-sky-trial', () => ( {
+	default: vi.fn( () => false ),
 } ) );
 
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSite: jest.fn( () => ( { ID: 1, launch_status: 'launched' } ) ),
-	getSelectedSiteId: jest.fn( () => 1 ),
-	getSelectedSiteSlug: jest.fn( () => 'test.wordpress.com' ),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	canCurrentUserUseCustomerHome: vi.fn( () => true ),
+	getSiteAdminUrl: vi.fn( () => 'https://example.wordpress.com/wp-admin/index.php' ),
+	getSiteUrl: vi.fn( () => 'https://example.wordpress.com' ),
 } ) );
 
-jest.mock( 'calypso/utils', () => ( {
-	redirectToLaunchpad: jest.fn(),
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: vi.fn( () => ( { ID: 1, launch_status: 'launched' } ) ),
+	getSelectedSiteId: vi.fn( () => 1 ),
+	getSelectedSiteSlug: vi.fn( () => 'test.wordpress.com' ),
+} ) );
+
+vi.mock( 'calypso/utils', () => ( {
+	redirectToLaunchpad: vi.fn(),
 } ) );
 
 const mockStore = configureStore( [ thunk ] );
@@ -85,19 +86,19 @@ describe( 'redirectToLandingPage', () => {
 	let redirect;
 
 	beforeEach( () => {
-		redirect = jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
+		redirect = vi.spyOn( page, 'redirect' ).mockImplementation( () => {} );
 		// Neutralize the timer `page.redirect` schedules, so a leaked navigation
 		// cannot tear down the jsdom document while promises flush.
-		jest.spyOn( page, 'replace' ).mockImplementation( () => {} );
+		vi.spyOn( page, 'replace' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'sends a multi-site Customer Home account to their primary site', async () => {
 		getLoggedInLandingPage.mockResolvedValue( '/home/test.wordpress.com' );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToLandingPage( buildContext(), next );
 		await flushPromises();
@@ -108,7 +109,7 @@ describe( 'redirectToLandingPage', () => {
 
 	it( 'honors the sites-as-landing-page preference', async () => {
 		getLoggedInLandingPage.mockResolvedValue( '/sites' );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToLandingPage( buildContext(), next );
 		await flushPromises();
@@ -120,9 +121,9 @@ describe( 'redirectToLandingPage', () => {
 	it( 'sends an absolute hosting-dashboard destination through a full page load', async () => {
 		const destination = 'https://my.wordpress.com/sites';
 		getLoggedInLandingPage.mockResolvedValue( destination );
-		const assign = jest.fn();
+		const assign = vi.fn();
 		Object.defineProperty( window, 'location', { value: { assign }, configurable: true } );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToLandingPage( buildContext(), next );
 		await flushPromises();
@@ -134,9 +135,9 @@ describe( 'redirectToLandingPage', () => {
 
 	it( 'carries the querystring across to an absolute destination', async () => {
 		getLoggedInLandingPage.mockResolvedValue( 'https://my.wordpress.com/sites' );
-		const assign = jest.fn();
+		const assign = vi.fn();
 		Object.defineProperty( window, 'location', { value: { assign }, configurable: true } );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToLandingPage( buildContext( { querystring: 'verified=1' } ), next );
 		await flushPromises();
@@ -146,7 +147,7 @@ describe( 'redirectToLandingPage', () => {
 
 	it( 'carries the querystring across to the resolved destination', async () => {
 		getLoggedInLandingPage.mockResolvedValue( '/home/test.wordpress.com' );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToLandingPage( buildContext( { querystring: 'verified=1' } ), next );
 		await flushPromises();
@@ -156,7 +157,7 @@ describe( 'redirectToLandingPage', () => {
 
 	it( 'falls through to the site picker when the resolver produces nothing usable', async () => {
 		getLoggedInLandingPage.mockResolvedValue( undefined );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToLandingPage( buildContext(), next );
 		await flushPromises();
@@ -167,7 +168,7 @@ describe( 'redirectToLandingPage', () => {
 
 	it( 'falls through to the site picker when the resolver throws', async () => {
 		getLoggedInLandingPage.mockRejectedValue( new Error( 'resolver failed' ) );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToLandingPage( buildContext(), next );
 		await flushPromises();
@@ -178,7 +179,7 @@ describe( 'redirectToLandingPage', () => {
 
 	it( 'falls through rather than redirecting to the route it is already on', async () => {
 		getLoggedInLandingPage.mockResolvedValue( '/home' );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		redirectToLandingPage( buildContext(), next );
 		await flushPromises();
@@ -200,19 +201,19 @@ describe( 'maybeRedirect', () => {
 	const originalLocation = window.location;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		canCurrentUserUseCustomerHome.mockReturnValue( true );
-		jest.spyOn( page, 'redirect' ).mockImplementation( () => {} );
-		jest.spyOn( page, 'replace' ).mockImplementation( () => {} );
+		vi.spyOn( page, 'redirect' ).mockImplementation( () => {} );
+		vi.spyOn( page, 'replace' ).mockImplementation( () => {} );
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn(), replace: jest.fn() },
+			value: { assign: vi.fn(), replace: vi.fn() },
 			writable: true,
 			configurable: true,
 		} );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		Object.defineProperty( window, 'location', {
 			value: originalLocation,
 			writable: true,
@@ -227,7 +228,7 @@ describe( 'maybeRedirect', () => {
 			capabilities: { manage_options: true },
 			options: { wpcom_ai_launchpad_no_guidance: true },
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
 
@@ -247,7 +248,7 @@ describe( 'maybeRedirect', () => {
 			options: { wpcom_ai_launchpad_no_guidance: true },
 		} );
 
-		await maybeRedirect( buildSiteContext(), jest.fn() );
+		await maybeRedirect( buildSiteContext(), vi.fn() );
 
 		expect( window.location.replace ).toHaveBeenCalledWith(
 			'https://example.wordpress.com/wp-admin/index.php?celebrate-launch=true'
@@ -269,7 +270,7 @@ describe( 'maybeRedirect', () => {
 			capabilities: { manage_options: true },
 			options,
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
 
@@ -284,7 +285,7 @@ describe( 'maybeRedirect', () => {
 			capabilities: { manage_options: true },
 			options: { wpcom_ai_launchpad_enabled: true, wpcom_ai_launchpad_dismissed: true },
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
 
@@ -305,7 +306,7 @@ describe( 'maybeRedirect', () => {
 			capabilities: { manage_options: false },
 			options,
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
 
@@ -323,7 +324,7 @@ describe( 'maybeRedirect', () => {
 			options: {},
 		} );
 		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
 
@@ -333,7 +334,7 @@ describe( 'maybeRedirect', () => {
 
 	it( 'renders the page when the launchpad request fails', async () => {
 		fetchLaunchpad.mockRejectedValue( new Error( 'network' ) );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
 		await flushPromises();
@@ -343,7 +344,7 @@ describe( 'maybeRedirect', () => {
 
 	it( 'requests the card layout from the route rather than leaving it to the cards', async () => {
 		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
 		await flushPromises();
@@ -355,7 +356,7 @@ describe( 'maybeRedirect', () => {
 	it( 'still renders the page when the card layout request fails', async () => {
 		fetchLaunchpad.mockResolvedValue( { launchpad_screen: 'off' } );
 		prefetchHomeLayout.mockRejectedValueOnce( new Error( 'network' ) );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
 		await flushPromises();
@@ -369,7 +370,7 @@ describe( 'maybeRedirect', () => {
 			site_intent: 'build',
 			checklist: [ { id: 'a', completed: false } ],
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		await maybeRedirect( buildSiteContext(), next );
 		await flushPromises();

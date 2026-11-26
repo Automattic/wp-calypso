@@ -25,6 +25,10 @@ import {
 	updatePrivacyForDomain,
 } from 'calypso/lib/cart-values/cart-items';
 import {
+	BLACK_FRIDAY_2026_COUPON,
+	isBlackFriday2026Active,
+} from 'calypso/lib/promotions/black-friday-2026';
+import {
 	getLaunchCheckoutUrl,
 	getLaunchDestination,
 	getLaunchReturnUrl,
@@ -102,7 +106,33 @@ function recordExcludedStep( step: 'domains-launch' | 'plans-launch', value: str
 	} );
 }
 
+/**
+ * During the Black Friday sale, a preview's launch link gets the sale coupon, unless it brings its
+ * own. Only preview links send `hide_free_plan`. The coupon goes in the URL, where the plans step
+ * and checkout read it.
+ */
+function addBlackFridayCoupon() {
+	const query = getCurrentQueryParams();
+
+	if (
+		! isBlackFriday2026Active() ||
+		query.get( 'hide_free_plan' ) !== '1' ||
+		query.get( 'coupon' )
+	) {
+		return;
+	}
+
+	window.history.replaceState(
+		window.history.state,
+		'',
+		addQueryArgs( window.location.href, { coupon: BLACK_FRIDAY_2026_COUPON } )
+	);
+}
+
 async function initialize( reduxStore: Store ) {
+	// Before the login check, so the coupon survives the trip to log in.
+	addBlackFridayCoupon();
+
 	// Logged-out users are sent to log in, which comes back with a page load that runs this again.
 	if ( ! isUserLoggedIn( reduxStore.getState() ) ) {
 		return stepsWithRequiredLogin( getLaunchSiteSteps( null, null ) );

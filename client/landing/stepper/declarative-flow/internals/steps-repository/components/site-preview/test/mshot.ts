@@ -1,12 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { createSitePreviewScreenshot } from '../mshot';
 
 describe( 'createSitePreviewScreenshot', () => {
+	afterEach( () => {
+		vi.unstubAllGlobals();
+	} );
+
 	it( 'asks mShots for the desktop capture the site checks show', () => {
-		const open = jest.spyOn( XMLHttpRequest.prototype, 'open' ).mockImplementation( () => {} );
-		const send = jest.spyOn( XMLHttpRequest.prototype, 'send' ).mockImplementation( () => {} );
+		// nock's interceptor wraps each request in a proxy that handles `send()` itself, so a spy on
+		// the prototype's `send()` isn't called.
+		const open = vi.fn();
+		const send = vi.fn();
+		vi.stubGlobal(
+			'XMLHttpRequest',
+			vi.fn( function () {
+				return { open, send };
+			} )
+		);
 
 		createSitePreviewScreenshot( 'https://example.com' );
 

@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import McpAddSitePage from '../mcp-add-site';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( () => null );
-	config.isEnabled = jest.fn( () => true );
-	return config;
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn( () => null );
+	config.isEnabled = vi.fn( () => true );
+	return { ...config, default: config };
 } );
 
 const SELF_HOSTED_SITE = {
@@ -26,7 +27,7 @@ const SELF_HOSTED_SITE = {
 
 let mockSites = [ SELF_HOSTED_SITE ];
 
-jest.mock( '@automattic/api-queries', () => ( {
+vi.mock( '@automattic/api-queries', () => ( {
 	sitesQuery: () => ( {
 		queryKey: [ 'sites' ],
 		queryFn: async () => mockSites,
@@ -52,46 +53,46 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/lib/two-step-authorization', () => ( {
+vi.mock( 'calypso/lib/two-step-authorization', () => ( {
 	__esModule: true,
 	default: {
 		isReauthRequired: () => false,
-		on: jest.fn(),
-		off: jest.fn(),
+		on: vi.fn(),
+		off: vi.fn(),
 	},
 } ) );
 
-jest.mock( 'calypso/me/reauth-required', () => ( {
+vi.mock( 'calypso/me/reauth-required', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/blocks/site-icon', () => ( {
+vi.mock( 'calypso/blocks/site-icon', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/components/header-cake', () => ( {
+vi.mock( 'calypso/components/header-cake', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/components/navigation-header', () => ( {
+vi.mock( 'calypso/components/navigation-header', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => ( {
+vi.mock( 'calypso/components/data/document-head', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => ( {
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( '../mcp-page-header', () => ( {
+vi.mock( '../mcp-page-header', () => ( {
 	useMcpPageChrome: () => ( {
 		documentTitle: 'AI and MCP',
 		navigationHeaderProps: {},

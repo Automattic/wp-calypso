@@ -1,39 +1,42 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import InviteFormHeaderLoggedOut from '../invite-form-header-logged-out';
 
-const mockGetPartnerSignupTosElement = jest.fn();
+const mockGetPartnerSignupTosElement = vi.fn();
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	localizeUrl: ( url ) => url,
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate:
-		() =>
-		( text, options = {} ) => {
-			const args = options.args || {};
-			return Object.entries( args ).reduce(
-				( result, [ key, value ] ) => result.replace( `%(${ key })s`, value ),
-				text
-			);
-		},
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate:
+			() =>
+			( text, options = {} ) => {
+				const args = options.args || {};
+				return Object.entries( args ).reduce(
+					( result, [ key, value ] ) => result.replace( `%(${ key })s`, value ),
+					text
+				);
+			},
+	} )
+);
 
-jest.mock( 'calypso/lib/partner-branding', () => ( {
+vi.mock( 'calypso/lib/partner-branding', () => ( {
 	getPartnerSignupTosElement: ( ...args ) => mockGetPartnerSignupTosElement( ...args ),
 } ) );
 
 describe( 'InviteFormHeaderLoggedOut', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetPartnerSignupTosElement.mockReturnValue( undefined );
 	} );
 

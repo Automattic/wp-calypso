@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import {
 	getVideoPressPlaysComplete,
 	isRequestingSiteStatsForQuery,
@@ -10,15 +11,15 @@ import { useShouldGateStats } from '../../hooks/use-should-gate-stats';
 import VideosPerformance from '../index';
 import type { StatsQueryType } from '../../features/modules/types';
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
-jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
-	getVideoPressPlaysComplete: jest.fn(),
-	isRequestingSiteStatsForQuery: jest.fn(),
+vi.mock( 'calypso/state/stats/lists/selectors', () => ( {
+	getVideoPressPlaysComplete: vi.fn(),
+	isRequestingSiteStatsForQuery: vi.fn(),
 } ) );
-jest.mock( '../../hooks/use-should-gate-stats', () => ( {
-	useShouldGateStats: jest.fn(),
+vi.mock( '../../hooks/use-should-gate-stats', () => ( {
+	useShouldGateStats: vi.fn(),
 } ) );
 
 const query: StatsQueryType = { date: '2026-01-01', period: 'day' };
@@ -30,9 +31,9 @@ const dataWithRows = {
 	},
 };
 
-const mockGate = useShouldGateStats as jest.Mock;
-const mockData = getVideoPressPlaysComplete as unknown as jest.Mock;
-const mockRequesting = isRequestingSiteStatsForQuery as jest.Mock;
+const mockGate = useShouldGateStats as Mock;
+const mockData = getVideoPressPlaysComplete as unknown as Mock;
+const mockRequesting = isRequestingSiteStatsForQuery as Mock;
 
 describe( 'VideosPerformance', () => {
 	beforeEach( () => {

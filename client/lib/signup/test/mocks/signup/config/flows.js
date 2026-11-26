@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import flows from './flows-pure';
 
 export default {
@@ -8,7 +9,7 @@ export default {
 	},
 
 	excludedSteps: [],
-	excludeStep: jest.fn(),
-	resetExcludedStep: jest.fn(),
-	resetExcludedSteps: jest.fn(),
+	excludeStep: vi.fn(),
+	resetExcludedStep: vi.fn(),
+	resetExcludedSteps: vi.fn(),
 };

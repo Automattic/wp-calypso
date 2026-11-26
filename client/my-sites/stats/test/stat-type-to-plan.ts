@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { PLAN_PERSONAL, PLAN_PREMIUM } from '@automattic/calypso-products';
+import { type Mock, vi } from 'vitest';
 import {
 	STAT_TYPE_CLICKS,
 	STAT_TYPE_SEARCH_TERMS,
@@ -7,15 +8,15 @@ import {
 } from '../constants';
 import { statTypeToPlan } from '../stat-type-to-plan';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
-	config.isEnabled = jest.fn();
-	return config;
+	config.isEnabled = vi.fn();
+	return { ...config, default: config };
 } );
 
 describe( 'statTypeToPlan', () => {
 	it( 'should always return premium when stats/paid-wpcom-v3 is not enabled', () => {
-		( config.isEnabled as jest.Mock ).mockImplementation( () => false );
+		( config.isEnabled as Mock ).mockImplementation( () => false );
 		// Search terms is a commercial stats feature that requires the premium plan
 		expect( statTypeToPlan( STAT_TYPE_SEARCH_TERMS ) ).toEqual( PLAN_PREMIUM );
 		// Clicks is a paid stats feature that requires the personal plan, test the fallback on premium anyway when v3 is disabled.
@@ -25,7 +26,7 @@ describe( 'statTypeToPlan', () => {
 	} );
 
 	it( 'should return personal when stats/paid-wpcom-v3 is enabled and the stat type is a personal plan feature', () => {
-		( config.isEnabled as jest.Mock ).mockImplementation( () => true );
+		( config.isEnabled as Mock ).mockImplementation( () => true );
 		// Search terms is a commercial stats feature that requires the premium plan
 		expect( statTypeToPlan( STAT_TYPE_SEARCH_TERMS ) ).toEqual( PLAN_PREMIUM );
 		// Clicks is a paid stats feature that requires the personal plan

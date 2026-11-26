@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PENDING_LIKE_URI } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { makeUseAtmosphereLikeAction } from 'calypso/reader/atmosphere/use-atmosphere-like-action';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -17,8 +18,8 @@ import type { SocialPost } from '../../../types';
 // `logToLogstash` fires a real HTTPS request — mute it so the
 // rkey-missing path in the atmosphere unlike adapter doesn't trigger
 // an unmocked nock request.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
 
 const BASE = 'https://public-api.wordpress.com';
@@ -57,10 +58,7 @@ function makeQueryClient() {
 	return new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 }
 
-function renderLikeButton(
-	post = makePost(),
-	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
-) {
+function renderLikeButton( post = makePost(), { onClick = vi.fn() }: { onClick?: Mock } = {} ) {
 	const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 42 );
 	return {
 		onClick,
@@ -84,7 +82,7 @@ function renderLikeButton(
 describe( '<LikeButton>', () => {
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'renders outlined heart and count when not liked', () => {
@@ -175,7 +173,7 @@ describe( '<LikeButton>', () => {
 	} );
 
 	it( 'create-like error dispatches errorNotice + Tracks error event', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/likes' )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
@@ -194,7 +192,7 @@ describe( '<LikeButton>', () => {
 	} );
 
 	it( 'delete-like error dispatches errorNotice + Tracks unlike-error event', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.delete( '/wpcom/v2/reader/atmosphere/connections/42/likes/3krkeyrkeyrke' )
 			.reply( 401, { error: 'atmosphere_unauthenticated' } );
@@ -221,7 +219,7 @@ describe( '<LikeButton>', () => {
 		const socialPost = makePost( { counts: { replies: 0, reposts: 0, likes: 9, quotes: 0 } } );
 		renderWithProvider(
 			<SocialAnalyticsProvider
-				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+				value={ { source: 'atmosphere', connectionId: 42, onClick: vi.fn() } }
 			>
 				<LikeProvider value={ useAtmosphereLikeAction }>
 					<LikeButton post={ socialPost } hideCount />
@@ -234,7 +232,7 @@ describe( '<LikeButton>', () => {
 	} );
 
 	it( 'click does not bubble to parent listener', async () => {
-		const onParentClick = jest.fn();
+		const onParentClick = vi.fn();
 		const user = userEvent.setup();
 		const useAtmosphereLikeAction = makeUseAtmosphereLikeAction( 42 );
 		renderWithProvider(
@@ -242,7 +240,7 @@ describe( '<LikeButton>', () => {
 				value={ {
 					source: 'atmosphere',
 					connectionId: 42,
-					onClick: jest.fn(),
+					onClick: vi.fn(),
 				} }
 			>
 				<LikeProvider value={ useAtmosphereLikeAction }>

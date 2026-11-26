@@ -7,6 +7,7 @@ import {
 	PREFERENCE_KEY,
 	isColorScheme,
 } from './shared';
+import { ColorSchemeThemeProvider } from './theme-provider';
 import type { ColorSchemeContextType } from './shared';
 import type { ReactNode } from 'react';
 
@@ -35,6 +36,7 @@ export function ClassicColorSchemeProvider( {
 			setColorScheme={ setColorScheme }
 			waitForReady={ false }
 		>
+			{ enabled && isReady && <ColorSchemeThemeProvider enabled /> }
 			{ children }
 		</ColorSchemeContextProvider>
 	);

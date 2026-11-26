@@ -94,3 +94,5 @@ export const BACKUP_STORAGE_FAMILY_SLUG = 'jetpack-backup-storage';
 export const JETPACK_PACKS_FAMILY_SLUG = 'jetpack-packs';
 
 export const JETPACK_COMPLETE_PRODUCT_SLUG = 'jetpack-complete';
+
+export const JETPACK_PRO_PRODUCT_SLUG = 'jetpack-pro';

@@ -1,19 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
+import { logToLogstash } from 'calypso/lib/logstash';
 import * as notices from 'calypso/state/notices/actions';
 import * as analyticsActions from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SiteHandoff } from '../site-handoff';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: jest.fn( () => ( { type: '@@TEST/NOOP' } ) ),
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: vi.fn( () => ( { type: '@@TEST/NOOP' } ) ),
 } ) );
 
 const ORIGIN = 'https://public-api.wordpress.com';
@@ -43,7 +45,7 @@ const siteA: Site = {
 
 afterEach( () => {
 	nock.cleanAll();
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 } );
 
 describe( 'SiteHandoff — single site', () => {
@@ -110,8 +112,8 @@ describe( 'SiteHandoff — multi-site picker', () => {
 describe( 'SiteHandoff — click', () => {
 	it( 'pre-opens a tab synchronously and redirects it to wp-admin on success', async () => {
 		const user = userEvent.setup();
-		const fakeWindow = { location: { href: '' }, close: jest.fn() } as unknown as Window;
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => fakeWindow );
+		const fakeWindow = { location: { href: '' }, close: vi.fn() } as unknown as Window;
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => fakeWindow );
 		nock( ORIGIN )
 			.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
 			.reply( 200, { ID: 555 } );
@@ -141,8 +143,8 @@ describe( 'SiteHandoff — click', () => {
 
 	it( 'shows a retry success notice when the popup is blocked', async () => {
 		const user = userEvent.setup();
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
-		const noticeSpy = jest
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
+		const noticeSpy = vi
 			.spyOn( notices, 'successNotice' )
 			.mockImplementation( () => ( { type: '@@TEST/NOTICE' } ) as never );
 		nock( ORIGIN )
@@ -183,10 +185,9 @@ describe( 'SiteHandoff — click', () => {
 
 	it( 'fires error notice + errorShown Tracks + logstash on save failure', async () => {
 		const user = userEvent.setup();
-		const fakeWindow = { location: { href: '' }, close: jest.fn() } as unknown as Window;
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => fakeWindow );
-		const { logToLogstash } = jest.requireMock( 'calypso/lib/logstash' );
-		const noticeSpy = jest
+		const fakeWindow = { location: { href: '' }, close: vi.fn() } as unknown as Window;
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => fakeWindow );
+		const noticeSpy = vi
 			.spyOn( notices, 'errorNotice' )
 			.mockImplementation( () => ( { type: '@@TEST/NOTICE' } ) as never );
 		nock( ORIGIN )
@@ -235,7 +236,7 @@ describe( 'SiteHandoff — click', () => {
 
 	it( 'disables the combobox while saving', async () => {
 		const user = userEvent.setup();
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 		nock( ORIGIN )
 			.get( /\/rest\/v1\.\d+\/me\/settings/ )
 			.reply( 200, { primary_site_ID: 100 } );

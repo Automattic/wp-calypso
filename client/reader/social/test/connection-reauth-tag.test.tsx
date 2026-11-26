@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ConnectionReauthTag } from '../connection-reauth-tag';
 
 describe( 'ConnectionReauthTag', () => {
@@ -42,7 +43,7 @@ describe( 'ConnectionReauthTag', () => {
 	} );
 
 	it( 'passes the connectionId to useAuthStatus', () => {
-		const useAuthStatus = jest.fn().mockReturnValue( { needsReauth: false } );
+		const useAuthStatus = vi.fn().mockReturnValue( { needsReauth: false } );
 		render(
 			<ConnectionReauthTag
 				connectionId={ 42 }

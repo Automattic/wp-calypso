@@ -1,35 +1,36 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-
-jest.mock( 'calypso/state/ui/selectors' );
-jest.mock( 'calypso/state/site-settings/selectors' );
-jest.mock( 'calypso/state/site-settings/actions', () => ( {
-	// Return a promise-returning thunk that resolves with a success-shaped
-	// response (`{ updated }`, mirroring the real save), so the component can
-	// chain `.then()` and treat the save as successful (it then refetches site
-	// settings to pick up the new server-rendered description).
-	saveSiteSettings: jest.fn( () => () => Promise.resolve( { updated: {} } ) ),
-	requestSiteSettings: jest.fn( () => ( { type: 'TEST_REQUEST_SITE_SETTINGS' } ) ),
-} ) );
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Modal from 'react-modal';
+import { vi } from 'vitest';
 import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import FreePlanModal from '../index';
 
-const closeDialog = jest.fn();
+vi.mock( 'calypso/state/ui/selectors' );
+vi.mock( 'calypso/state/site-settings/selectors' );
+vi.mock( 'calypso/state/site-settings/actions', () => ( {
+	// Return a promise-returning thunk that resolves with a success-shaped
+	// response (`{ updated }`, mirroring the real save), so the component can
+	// chain `.then()` and treat the save as successful (it then refetches site
+	// settings to pick up the new server-rendered description).
+	saveSiteSettings: vi.fn( () => () => Promise.resolve( { updated: {} } ) ),
+	requestSiteSettings: vi.fn( () => ( { type: 'TEST_REQUEST_SITE_SETTINGS' } ) ),
+} ) );
+
+const closeDialog = vi.fn();
 
 describe( 'FreePlanModal', () => {
 	let modalRoot;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		getSelectedSiteId.mockReturnValue( 1 );
 		getSiteSettings.mockReturnValue( {
 			subscription_options: { welcome: 'Hi', free_tier_description: '', hide_free_tier: false },

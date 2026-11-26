@@ -1,6 +1,7 @@
 import { createMastodonPostMutation } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import nock from 'nock';
+import { vi } from 'vitest';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -206,7 +207,7 @@ describe( 'createMastodonPostMutation — quote fallback', () => {
 				in_reply_to_id: null,
 			} );
 
-		const onQuoteFallback = jest.fn();
+		const onQuoteFallback = vi.fn();
 		const mutation = createMastodonPostMutation( makeQueryClient(), { onQuoteFallback } );
 		await mutation.mutationFn?.( {
 			connectionId: 7,
@@ -233,7 +234,7 @@ describe( 'createMastodonPostMutation — quote fallback', () => {
 				in_reply_to_id: null,
 			} );
 
-		const onQuoteFallback = jest.fn();
+		const onQuoteFallback = vi.fn();
 		const mutation = createMastodonPostMutation( makeQueryClient(), { onQuoteFallback } );
 		await mutation.mutationFn?.( {
 			connectionId: 7,
@@ -250,7 +251,7 @@ describe( 'createMastodonPostMutation — quote fallback', () => {
 			.post( '/wpcom/v2/reader/mastodon/connections/7/statuses', { status: 'plain' } )
 			.reply( 400, { error: 'reader_mastodon_bad_request' } );
 
-		const onQuoteFallback = jest.fn();
+		const onQuoteFallback = vi.fn();
 		const mutation = createMastodonPostMutation( makeQueryClient(), { onQuoteFallback } );
 		await expect(
 			mutation.mutationFn?.( { connectionId: 7, status: 'plain' } )
@@ -304,8 +305,8 @@ describe( 'createMastodonPostMutation — quote fallback', () => {
 			)
 			.reply( 400, { error: 'reader_mastodon_bad_request' } );
 
-		const onQuoteFallback = jest.fn();
-		const onQuoteFallbackFailed = jest.fn();
+		const onQuoteFallback = vi.fn();
+		const onQuoteFallbackFailed = vi.fn();
 		const mutation = createMastodonPostMutation( makeQueryClient(), {
 			onQuoteFallback,
 			onQuoteFallbackFailed,
@@ -347,7 +348,7 @@ describe( 'createMastodonPostMutation — quote fallback', () => {
 				in_reply_to_id: null,
 			} );
 
-		const onQuoteFallbackFailed = jest.fn();
+		const onQuoteFallbackFailed = vi.fn();
 		const mutation = createMastodonPostMutation( makeQueryClient(), { onQuoteFallbackFailed } );
 		await mutation.mutationFn?.( {
 			connectionId: 7,
@@ -435,7 +436,7 @@ describe( 'createMastodonPostMutation — quote fallback', () => {
 				in_reply_to_id: null,
 			} );
 
-		const onQuoteFallback = jest.fn( () => {
+		const onQuoteFallback = vi.fn( () => {
 			throw new Error( 'observability blew up' );
 		} );
 		const mutation = createMastodonPostMutation( makeQueryClient(), { onQuoteFallback } );

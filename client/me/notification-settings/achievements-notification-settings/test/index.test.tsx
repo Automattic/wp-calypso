@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { rawUserPreferencesQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AchievementsNotificationSettings from '../index';
 
-const mockMutationFn = jest.fn().mockResolvedValue( {} );
+const mockMutationFn = vi.fn().mockResolvedValue( {} );
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
+vi.mock( '@automattic/api-queries', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+		'@automattic/api-queries'
+	) ),
 	userPreferenceOptimisticMutation: () => ( { mutationFn: mockMutationFn } ),
 } ) );
 
@@ -32,7 +35,7 @@ function setup( savedValue?: 'enabled' | 'disabled' ) {
 
 describe( 'AchievementsNotificationSettings', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'renders the toggle checked when notifications are enabled', () => {

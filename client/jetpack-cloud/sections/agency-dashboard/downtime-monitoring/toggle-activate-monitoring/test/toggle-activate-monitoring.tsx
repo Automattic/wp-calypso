@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,14 +8,15 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { site } from '../../../sites-overview/test/test-utils/constants';
 import ToggleActivateMonitoring from '../index';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	config.isEnabled = ( property: string ) => true;
-	return config;
+	return { ...config, default: config };
 } );
 
 describe( 'ToggleActivateMonitoring', () => {

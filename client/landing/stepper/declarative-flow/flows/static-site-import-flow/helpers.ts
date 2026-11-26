@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isWordPressComPage } from 'calypso/blocks/import/capture/url-validation-message-helper';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
 export const canUseStaticSiteImport = (
@@ -8,7 +9,8 @@ export const canUseStaticSiteImport = (
 	config.isEnabled( 'migration/non-wordpress-source' ) &&
 	!! platform &&
 	platform !== 'wordpress' &&
-	Boolean( from );
+	!! from &&
+	! isWordPressComPage( from );
 
 /**
  * Whether this run is a customer coming back from checkout without paying, for a new destination.

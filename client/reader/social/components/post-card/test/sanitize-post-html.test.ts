@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import DOMPurify from 'dompurify';
 import { sanitizePostHtml } from '../sanitize-post-html';

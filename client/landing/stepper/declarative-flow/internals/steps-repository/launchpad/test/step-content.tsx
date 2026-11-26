@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
@@ -8,6 +8,7 @@ import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
+import { vi } from 'vitest';
 import { createReduxStore } from 'calypso/state/create-store';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
@@ -34,23 +35,23 @@ const stepContentProps = {
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
-jest.mock( '@automattic/data-stores/src/plugins', () => ( {
-	registerPlugins: jest.fn(),
+vi.mock( '@automattic/data-stores/src/plugins', () => ( {
+	registerPlugins: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-domains', () => ( {
-	useSiteDomainsForSlug: jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-site-domains', () => ( {
+	useSiteDomainsForSlug: vi.fn(),
 } ) );
 
-jest.mock( '@wordpress/data', () => {
+vi.mock( '@wordpress/data', () => {
 	return {
-		createSelector: jest.fn(),
-		createRegistrySelector: jest.fn(),
-		registerStore: jest.fn(),
-		combineReducers: jest.fn( () => ( { sites: { launch: { inProgress: jest.fn() } } } ) ),
-		createReduxStore: jest.fn( ( name ) => ( { name } ) ),
-		register: jest.fn(),
-		useSelect: jest.fn().mockImplementation( ( selectFunc ) => {
+		createSelector: vi.fn(),
+		createRegistrySelector: vi.fn(),
+		registerStore: vi.fn(),
+		combineReducers: vi.fn( () => ( { sites: { launch: { inProgress: vi.fn() } } } ) ),
+		createReduxStore: vi.fn( ( name ) => ( { name } ) ),
+		register: vi.fn(),
+		useSelect: vi.fn().mockImplementation( ( selectFunc ) => {
 			const select = ( store ) => {
 				const storeName = typeof store === 'string' ? store : store.name;
 				if ( storeName === 'automattic/onboard' ) {
@@ -91,13 +92,15 @@ jest.mock( '@wordpress/data', () => {
 	};
 } );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => mockSite,
 } ) );
 
-jest.mock( 'react-router-dom', () => ( {
-	...( jest.requireActual( 'react-router-dom' ) as object ),
-	useLocation: jest.fn().mockImplementation( () => ( {
+vi.mock( 'react-router-dom', async () => ( {
+	...( ( await vi.importActual< typeof import( 'react-router-dom' ) >(
+		'react-router-dom'
+	) ) as object ),
+	useLocation: vi.fn().mockImplementation( () => ( {
 		pathname: '/setup/launchpad',
 		search: '?flow=newsletter&siteSlug=testnewsletter.wordpress.com',
 		hash: '',
@@ -105,8 +108,10 @@ jest.mock( 'react-router-dom', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( '@automattic/launchpad/src/use-launchpad', () => ( {
-	...( jest.requireActual( '@automattic/launchpad/src/use-launchpad' ) as object ),
+vi.mock( '@automattic/launchpad/src/use-launchpad', async () => ( {
+	...( ( await vi.importActual< typeof import( '@automattic/launchpad/src/use-launchpad' ) >(
+		'@automattic/launchpad/src/use-launchpad'
+	) ) as object ),
 	useLaunchpad: ( siteSlug, siteIntentOption ): LaunchpadResponse => {
 		let checklist = [];
 

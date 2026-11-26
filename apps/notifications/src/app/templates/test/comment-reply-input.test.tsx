@@ -1,13 +1,15 @@
 /**
  * @vitest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import repliesCache from '../../../panel/comment-replies-cache';
 import { init as initWpcom } from '../../../panel/rest-client/wpcom';
+import { store } from '../../../panel/state';
+import actions from '../../../panel/state/actions';
 import { renderWithProvider } from '../../../testing-library';
-import { AppProvider } from '../../context';
+import { AppProvider, NoteOpenContext } from '../../context';
 import CommentReplyInput from '../comment-reply-input';
 
 const note = {
@@ -34,6 +36,52 @@ describe( 'CommentReplyInput', () => {
 			site: () => ( { comment: () => ( { reply } ) } ),
 			req: { get: vi.fn() },
 		} );
+	} );
+
+	const enableShortcuts = () =>
+		act( () => {
+			store.dispatch( actions.ui.enableKeyboardShortcuts() );
+		} );
+
+	it.each( [
+		[ 'r', 'r' ],
+		[ 'Shift+R', '{Shift>}R{/Shift}' ],
+	] )( 'goes to the reply box on %s', async ( _key, keys ) => {
+		const user = userEvent.setup();
+		renderReplyInput();
+		enableShortcuts();
+
+		await user.keyboard( keys );
+
+		expect( screen.getByPlaceholderText( 'Reply to Jane' ) ).toHaveFocus();
+		expect( screen.getByPlaceholderText( 'Reply to Jane' ) ).toHaveValue( '' );
+	} );
+
+	it( 'leaves the focus where it is on Ctrl+R, or with the shortcuts off', async () => {
+		const user = userEvent.setup();
+		renderReplyInput();
+
+		await user.keyboard( 'r' );
+		enableShortcuts();
+		await user.keyboard( '{Control>}r{/Control}' );
+
+		expect( screen.getByPlaceholderText( 'Reply to Jane' ) ).not.toHaveFocus();
+	} );
+
+	it( 'leaves the focus where it is on r once its note has closed', async () => {
+		const user = userEvent.setup();
+		renderWithProvider(
+			<AppProvider client={ null } locale="en">
+				<NoteOpenContext.Provider value={ false }>
+					<CommentReplyInput note={ note } defaultValue="Reply to Jane" />
+				</NoteOpenContext.Provider>
+			</AppProvider>
+		);
+		enableShortcuts();
+
+		await user.keyboard( 'r' );
+
+		expect( screen.getByPlaceholderText( 'Reply to Jane' ) ).not.toHaveFocus();
 	} );
 
 	it.each( [

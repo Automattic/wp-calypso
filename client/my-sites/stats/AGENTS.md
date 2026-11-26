@@ -32,8 +32,7 @@ client/my-sites/stats/
 ```bash
 yarn start                                           # Start Calypso dev server
 yarn test-client client/my-sites/stats               # Run stats unit tests
-yarn test-client --findRelatedTests <file>           # Run related tests
-yarn test-client --testNamePattern="<TestName>"      # Run specific test
+yarn test-client -t "<TestName>"                     # Run specific test
 ```
 
 ## State Management

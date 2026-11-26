@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -23,6 +24,7 @@ import {
 	mockCachedContactDetailsEndpoint,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	oneTimePurchase,
@@ -30,14 +32,14 @@ import {
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey, ResponseCart } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-jest.mock( 'calypso/lib/navigate' );
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
+vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+vi.mock( 'calypso/lib/navigate' );
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
 } ) );
 
 describe( 'Checkout contact step', () => {
@@ -53,16 +55,17 @@ describe( 'Checkout contact step', () => {
 	} ) );
 	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
+	( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
-		( useViewportMatch as jest.Mock ).mockReturnValue( false );
+		( useViewportMatch as Mock ).mockReturnValue( false );
 		resetCheckoutStores();
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockCachedContactDetailsEndpoint( {} );
 		mockGetVatInfoEndpoint( {} );
@@ -101,7 +104,7 @@ describe( 'Checkout contact step', () => {
 
 	it( 'disables the sidebar Continue button until cached contact details have prefilled', async () => {
 		// The sidebar submit area, which renders this Continue, is only used at large viewports.
-		( useViewportMatch as jest.Mock ).mockReturnValue( true );
+		( useViewportMatch as Mock ).mockReturnValue( true );
 		render( <MockCheckout { ...defaultPropsForMockCheckout } /> );
 		expect( await screen.findByText( 'Retrieving contact details…' ) ).toBeInTheDocument();
 		expect( await screen.findByLabelText( 'Continue to the next step' ) ).toBeDisabled();

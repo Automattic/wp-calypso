@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { recordTracksEvent } from '@automattic/calypso-analytics';
@@ -7,20 +7,21 @@ import { FEATURE_SET_PRIMARY_CUSTOM_DOMAIN } from '@automattic/calypso-products'
 import { render, screen, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureMockStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import PrimaryDomainSelector from '../index';
 
 // Mock dependencies
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
-jest.mock( 'calypso/components/inline-support-link' );
+vi.mock( 'calypso/components/inline-support-link' );
 
 const mockStore = configureMockStore();
 
 describe( 'PrimaryDomainSelector', () => {
 	const defaultProps = {
-		onSetPrimaryDomain: jest.fn(),
+		onSetPrimaryDomain: vi.fn(),
 		domains: [
 			{
 				domain: 'primary.com',
@@ -67,7 +68,7 @@ describe( 'PrimaryDomainSelector', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'renders the primary domain message', () => {

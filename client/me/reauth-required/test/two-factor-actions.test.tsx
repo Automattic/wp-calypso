@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import TwoFactorActions from '../two-factor-actions';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
 // Mock dispatched Redux actions, since in reality these are implemented as a thunk, but we're
 // primarily interested in testing whether the action was dispatched at all.
-jest.mock( 'calypso/state/analytics/actions', () => ( {
+vi.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEventWithClientId: ( event: string ) => ( {
 		type: 'MOCK_TRACKS_EVENT',
 		event,
@@ -23,7 +24,7 @@ jest.mock( 'calypso/state/analytics/actions', () => ( {
 } ) );
 
 describe( 'TwoFactorActions', () => {
-	const onChange = jest.fn();
+	const onChange = vi.fn();
 	const defaultProps = {
 		isAuthenticatorSupported: true,
 		isSecurityKeySupported: true,
@@ -34,7 +35,7 @@ describe( 'TwoFactorActions', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should render buttons based on available 2FA methods', () => {

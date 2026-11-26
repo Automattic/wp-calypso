@@ -1,6 +1,6 @@
 ## Server side tests
 
-This test configuration contains unit tests that verify code located in `server` top level folder.
+This test configuration contains unit tests that verify code located in the `client/server` folder.
 
 It supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
 
@@ -14,6 +14,8 @@ Tests can be run in 2 different modes:
 ```
 
 Those tests are executed on every push on continuous integration (we use TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
+
+The server tests run on Vitest, as do the `build-tools` tests (`yarn run test-build-tools`). Arguments are Vitest's, for example a path to run a subset of the tests.
 
 _Check also how to write [unit tests](unit-tests.md)._
 
@@ -34,16 +36,7 @@ Tests can be run in 2 different modes:
 
 They are executed on every push on continuous integration (TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
 
-The client tests are moving from Jest to Vitest one directory at a time. The directories listed in `test/client/vitest-directories.js` run on Vitest, and `yarn run test-client` skips them:
-
-```bash
-> # run the client tests that have moved to Vitest; arguments are Vitest's, for example a path
-> yarn run test-client:vitest [ path ]
-> # watch them
-> yarn run test-client:vitest:watch [ path ]
-```
-
-To move a directory, add it to that list, run `node test/client/jest-to-vitest-codemod.mjs` to rewrite its tests for Vitest, and fix what it reports. A test that can't move yet stays on Jest through the list's `onJest`. Tests in the listed directories can't use the `jest` global: import `vi` from `vitest` instead.
+The client tests run on Vitest. Arguments are Vitest's, for example a path to run a subset of the tests. Import `vi` from `vitest` instead of using the `jest` global.
 
 Often your changes will affect other parts of the application, so it's a good idea to run all the unit tests locally before checking in.
 

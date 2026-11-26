@@ -1,20 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { JetpackHeader } from '..';
 
-jest.mock( 'calypso/components/jetpack-logo', () => ( { size } ) => (
-	<div data-testid="jetpack-logo">
-		<div data-testid="jetpack-logo-size">{ size }</div>
-	</div>
-) );
-jest.mock( '../partner-logo-group', () => ( { width } ) => (
-	<div data-testid="jetpack-partner-logo-group">
-		<div data-testid="jetpack-partner-logo-group-size">{ width }</div>
-	</div>
-) );
+vi.mock( 'calypso/components/jetpack-logo', () => ( {
+	default: ( { size } ) => (
+		<div data-testid="jetpack-logo">
+			<div data-testid="jetpack-logo-size">{ size }</div>
+		</div>
+	),
+} ) );
+vi.mock( '../partner-logo-group', () => ( {
+	default: ( { width } ) => (
+		<div data-testid="jetpack-partner-logo-group">
+			<div data-testid="jetpack-partner-logo-group-size">{ width }</div>
+		</div>
+	),
+} ) );
 
 describe( 'JetpackHeader', () => {
 	test( 'renders default Jetpack logo when no partnerSlug prop', () => {

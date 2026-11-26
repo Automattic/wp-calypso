@@ -1,3 +1,4 @@
+import { type Mock, vi } from 'vitest';
 import { JETPACK_CURRENT_AGENCY_UPDATE } from '../action-types';
 import { updateActiveAgencyAvailability, updateActiveAgencyLeadMatching } from '../actions';
 import type { A4AStore, Agency } from '../../types';
@@ -196,7 +197,7 @@ describe( 'a8c-for-agencies agency actions', () => {
 				} )
 			);
 			const getState = () => state;
-			const dispatch: jest.Mock = jest.fn( ( actionOrThunk: unknown ) => {
+			const dispatch: Mock = vi.fn( ( actionOrThunk: unknown ) => {
 				if ( typeof actionOrThunk === 'function' ) {
 					return actionOrThunk( dispatch, getState, undefined );
 				}
@@ -269,7 +270,7 @@ describe( 'a8c-for-agencies agency actions', () => {
 				} )
 			);
 			const getState = () => state;
-			const dispatch: jest.Mock = jest.fn( ( actionOrThunk: unknown ) => {
+			const dispatch: Mock = vi.fn( ( actionOrThunk: unknown ) => {
 				if ( typeof actionOrThunk === 'function' ) {
 					return actionOrThunk( dispatch, getState, undefined );
 				}

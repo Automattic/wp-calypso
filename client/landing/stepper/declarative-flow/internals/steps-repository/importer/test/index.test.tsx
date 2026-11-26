@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { isImporterStatusHydrated } from 'calypso/state/imports/selectors';
@@ -9,40 +10,42 @@ import { withImporterWrapper } from '..';
 import type { ImporterCompType } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( { useSiteQuery: jest.fn() } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( { useSiteData: jest.fn() } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site', () => ( { useSiteQuery: vi.fn() } ) );
+vi.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( { useSiteData: vi.fn() } ) );
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => new URLSearchParams(),
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step', () => ( {
-	useSaveHostingFlowPathStep: jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-save-hosting-flow-path-step', () => ( {
+	useSaveHostingFlowPathStep: vi.fn(),
 } ) );
-jest.mock( '../hooks/use-atomic-transfer-query-param-update', () => ( {
-	useAtomicTransferQueryParamUpdate: jest.fn(),
+vi.mock( '../hooks/use-atomic-transfer-query-param-update', () => ( {
+	useAtomicTransferQueryParamUpdate: vi.fn(),
 } ) );
-jest.mock( '../hooks/use-initial-query-run', () => ( { useInitialQueryRun: () => false } ) );
-jest.mock( '../hooks/use-step-navigator', () => ( { useStepNavigator: () => ( {} ) } ) );
+vi.mock( '../hooks/use-initial-query-run', () => ( { useInitialQueryRun: () => false } ) );
+vi.mock( '../hooks/use-step-navigator', () => ( { useStepNavigator: () => ( {} ) } ) );
 
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
 	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
 } ) );
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUser: () => ( { ID: 1 } ),
 } ) );
-jest.mock( 'calypso/state/imports/selectors', () => ( {
+vi.mock( 'calypso/state/imports/selectors', () => ( {
 	getImporterStatusForSiteId: () => [],
-	isImporterStatusHydrated: jest.fn(),
+	isImporterStatusHydrated: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/imports/url-analyzer/selectors', () => ( { getUrlData: () => null } ) );
+vi.mock( 'calypso/state/imports/url-analyzer/selectors', () => ( { getUrlData: () => null } ) );
 
-jest.mock( 'calypso/components/data/query-sites', () => () => null );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
-jest.mock( 'calypso/blocks/importer/components/not-found', () => () => <div>Not found</div> );
-jest.mock( 'calypso/blocks/importer/components/not-authorized', () => () => (
-	<div>Not authorized</div>
-) );
+vi.mock( 'calypso/components/data/query-sites', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
+vi.mock( 'calypso/blocks/importer/components/not-found', () => ( {
+	default: () => <div>Not found</div>,
+} ) );
+vi.mock( 'calypso/blocks/importer/components/not-authorized', () => ( {
+	default: () => <div>Not authorized</div>,
+} ) );
 
 const Importer = ( () => <div>Importer</div> ) as unknown as ImporterCompType;
 const ImporterWrapper = withImporterWrapper( Importer );
@@ -52,7 +55,7 @@ const renderWrapper = () =>
 		<ImporterWrapper
 			importer="wordpress"
 			flow="site-setup"
-			navigation={ { submit: jest.fn() } }
+			navigation={ { submit: vi.fn() } }
 			stepName="importerWordpress"
 		/>
 	);
@@ -66,17 +69,17 @@ const mockSite = ( {
 	isLoading?: boolean;
 	isError?: boolean;
 } ) => {
-	jest.mocked( useSiteData ).mockReturnValue( {
+	vi.mocked( useSiteData ).mockReturnValue( {
 		site: site as SiteDetails,
 		siteId: site?.ID ?? 0,
 		siteSlug: 'example.wordpress.com',
 		siteSlugOrId: 'example.wordpress.com',
 	} );
-	jest.mocked( useSiteQuery ).mockReturnValue( {
+	vi.mocked( useSiteQuery ).mockReturnValue( {
 		data: ( site as SiteDetails ) ?? null,
 		isLoading,
 		isError,
-		refetch: jest.fn(),
+		refetch: vi.fn(),
 	} );
 };
 
@@ -85,7 +88,7 @@ const isLoaderVisible = ( container: HTMLElement ) =>
 
 describe( 'withImporterWrapper', () => {
 	beforeEach( () => {
-		jest.mocked( isImporterStatusHydrated ).mockReturnValue( true );
+		vi.mocked( isImporterStatusHydrated ).mockReturnValue( true );
 	} );
 
 	it( 'shows the loader while the site is loading', () => {
@@ -99,7 +102,7 @@ describe( 'withImporterWrapper', () => {
 
 	it( 'shows the loader until the importer status is hydrated', () => {
 		mockSite( { site: { ID: 123, site_owner: 1 } } );
-		jest.mocked( isImporterStatusHydrated ).mockReturnValue( false );
+		vi.mocked( isImporterStatusHydrated ).mockReturnValue( false );
 
 		const { container } = renderWrapper();
 
@@ -109,7 +112,7 @@ describe( 'withImporterWrapper', () => {
 
 	it( 'shows not found when the site lookup fails, even though the importer status never hydrates', () => {
 		mockSite( { site: null, isError: true } );
-		jest.mocked( isImporterStatusHydrated ).mockReturnValue( false );
+		vi.mocked( isImporterStatusHydrated ).mockReturnValue( false );
 
 		const { container } = renderWrapper();
 

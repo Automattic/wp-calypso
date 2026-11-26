@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen } from '@testing-library/react';
@@ -7,6 +7,7 @@ import { userEvent } from '@testing-library/user-event';
 import React from 'react';
 import { Provider, useDispatch } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import {
 	useEdgeCacheDefensiveModeQuery,
 	useEdgeCacheDefensiveModeMutation,
@@ -28,31 +29,33 @@ const INITIAL_STATE = {
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );
 
-jest.mock( 'calypso/components/inline-support-link', () => {
-	return () => {
-		<>InlineSupportLink</>;
+vi.mock( 'calypso/components/inline-support-link', () => {
+	return {
+		default: () => {
+			<>InlineSupportLink</>;
+		},
 	};
 } );
 
-jest.mock( 'react-redux', () => ( {
+vi.mock( 'react-redux', async () => ( {
 	__esModule: true,
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn(),
+	...( await vi.importActual< typeof import( 'react-redux' ) >( 'react-redux' ) ),
+	useDispatch: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/data/hosting/use-cache' );
+vi.mock( 'calypso/data/hosting/use-cache' );
 
 describe( 'DefensiveModeCard component', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
-		jest.mocked( useDispatch ).mockReturnValue( jest.fn() );
-		jest.mocked( useEdgeCacheDefensiveModeQuery ).mockReturnValue( {
+		vi.mocked( useDispatch ).mockReturnValue( vi.fn() );
+		vi.mocked( useEdgeCacheDefensiveModeQuery ).mockReturnValue( {
 			data: { enabled: false, enabled_until: 0 },
 			isLoading: false,
 		} );
-		jest.mocked( useEdgeCacheDefensiveModeMutation ).mockReturnValue( {
-			mutate: jest.fn(),
+		vi.mocked( useEdgeCacheDefensiveModeMutation ).mockReturnValue( {
+			mutate: vi.fn(),
 			isPending: false,
 		} );
 	} );
@@ -66,9 +69,7 @@ describe( 'DefensiveModeCard component', () => {
 	}
 
 	it( 'does not display controls when defensive mode is disabled', () => {
-		jest
-			.mocked( useEdgeCacheDefensiveModeQuery )
-			.mockReturnValue( { data: null, isLoading: true } );
+		vi.mocked( useEdgeCacheDefensiveModeQuery ).mockReturnValue( { data: null, isLoading: true } );
 
 		renderWithProvider();
 
@@ -83,8 +84,8 @@ describe( 'DefensiveModeCard component', () => {
 	} );
 
 	it( 'calls mutation when clicking enable button', async () => {
-		const mutateFnMock = jest.fn();
-		jest.mocked( useEdgeCacheDefensiveModeMutation ).mockReturnValue( {
+		const mutateFnMock = vi.fn();
+		vi.mocked( useEdgeCacheDefensiveModeMutation ).mockReturnValue( {
 			mutate: mutateFnMock,
 			isPending: false,
 		} );
@@ -101,13 +102,13 @@ describe( 'DefensiveModeCard component', () => {
 	} );
 
 	it( 'calls mutation when clicking disable button', async () => {
-		jest.mocked( useEdgeCacheDefensiveModeQuery ).mockReturnValue( {
+		vi.mocked( useEdgeCacheDefensiveModeQuery ).mockReturnValue( {
 			data: { enabled: true, enabled_until: 1726494798 },
 			isLoading: false,
 		} );
 
-		const mutateFnMock = jest.fn();
-		jest.mocked( useEdgeCacheDefensiveModeMutation ).mockReturnValue( {
+		const mutateFnMock = vi.fn();
+		vi.mocked( useEdgeCacheDefensiveModeMutation ).mockReturnValue( {
 			mutate: mutateFnMock,
 			isPending: false,
 		} );

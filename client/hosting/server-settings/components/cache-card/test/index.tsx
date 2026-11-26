@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen } from '@testing-library/react';
@@ -7,6 +7,7 @@ import { userEvent } from '@testing-library/user-event';
 import React from 'react';
 import { Provider, useDispatch } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import {
 	useEdgeCacheQuery,
 	useSetEdgeCacheMutation,
@@ -32,38 +33,40 @@ const INITIAL_STATE = {
 const mockStore = configureStore();
 const store = mockStore( INITIAL_STATE );
 
-jest.mock( 'calypso/components/inline-support-link', () => {
-	return () => {
-		<>InlineSupportLink</>;
+vi.mock( 'calypso/components/inline-support-link', () => {
+	return {
+		default: () => {
+			<>InlineSupportLink</>;
+		},
 	};
 } );
 
-jest.mock( 'react-redux', () => ( {
+vi.mock( 'react-redux', async () => ( {
 	__esModule: true,
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn(),
+	...( await vi.importActual< typeof import( 'react-redux' ) >( 'react-redux' ) ),
+	useDispatch: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/data/hosting/use-cache' );
-jest.mock( 'calypso/state/selectors/get-request' );
-jest.mock( 'calypso/state/selectors/should-rate-limit-atomic-cache-clear' );
-jest.mock( 'calypso/state/hosting/actions' );
+vi.mock( 'calypso/data/hosting/use-cache' );
+vi.mock( 'calypso/state/selectors/get-request' );
+vi.mock( 'calypso/state/selectors/should-rate-limit-atomic-cache-clear' );
+vi.mock( 'calypso/state/hosting/actions' );
 
 describe( 'CacheCard component', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
-		jest.mocked( useDispatch ).mockReturnValue( jest.fn() );
-		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: false, isLoading: false } );
-		jest.mocked( useSetEdgeCacheMutation ).mockReturnValue( {
-			toggleEdgeCache: jest.fn(),
+		vi.mocked( useDispatch ).mockReturnValue( vi.fn() );
+		vi.mocked( useEdgeCacheQuery ).mockReturnValue( { data: false, isLoading: false } );
+		vi.mocked( useSetEdgeCacheMutation ).mockReturnValue( {
+			toggleEdgeCache: vi.fn(),
 		} );
-		jest.mocked( useClearEdgeCacheMutation ).mockReturnValue( {
-			mutate: jest.fn(),
+		vi.mocked( useClearEdgeCacheMutation ).mockReturnValue( {
+			mutate: vi.fn(),
 			isPending: false,
 		} );
-		jest.mocked( getRequest ).mockReturnValue( { isLoading: false } );
-		jest.mocked( shouldRateLimitAtomicCacheClear ).mockReturnValue( false );
+		vi.mocked( getRequest ).mockReturnValue( { isLoading: false } );
+		vi.mocked( shouldRateLimitAtomicCacheClear ).mockReturnValue( false );
 	} );
 
 	function renderWithProvider() {
@@ -75,10 +78,11 @@ describe( 'CacheCard component', () => {
 	}
 
 	it( 'toggles edge cache state when edge cache checkbox is clicked', async () => {
-		const setEdgeCacheMock = jest.fn();
-		jest
-			.mocked( useSetEdgeCacheMutation )
-			.mockReturnValue( { setEdgeCache: setEdgeCacheMock, isLoading: false } );
+		const setEdgeCacheMock = vi.fn();
+		vi.mocked( useSetEdgeCacheMutation ).mockReturnValue( {
+			setEdgeCache: setEdgeCacheMock,
+			isLoading: false,
+		} );
 
 		renderWithProvider();
 		expect( setEdgeCacheMock ).not.toHaveBeenCalled();
@@ -89,20 +93,20 @@ describe( 'CacheCard component', () => {
 	} );
 
 	it( 'disables "Clear cache" button when isClearingCache prop is true', () => {
-		jest.mocked( getRequest ).mockReturnValue( { isLoading: true } );
+		vi.mocked( getRequest ).mockReturnValue( { isLoading: true } );
 
 		renderWithProvider();
 		expect( screen.queryByText( 'Clear all caches' ) ).toBeDisabled();
 	} );
 
 	it( 'clears all caches', async () => {
-		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: false } );
+		vi.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: false } );
 
-		const mutationMock = { mutate: jest.fn(), isPending: false };
-		jest.mocked( useClearEdgeCacheMutation ).mockReturnValue( mutationMock );
+		const mutationMock = { mutate: vi.fn(), isPending: false };
+		vi.mocked( useClearEdgeCacheMutation ).mockReturnValue( mutationMock );
 
-		const mockedDispatch = jest.fn();
-		jest.mocked( useDispatch ).mockReturnValue( mockedDispatch );
+		const mockedDispatch = vi.fn();
+		vi.mocked( useDispatch ).mockReturnValue( mockedDispatch );
 
 		renderWithProvider();
 
@@ -115,10 +119,8 @@ describe( 'CacheCard component', () => {
 	} );
 
 	it( 'shows the Clear Cache button', () => {
-		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: true } );
-		jest
-			.mocked( useClearEdgeCacheMutation )
-			.mockReturnValue( { mutate: jest.fn(), isPending: false } );
+		vi.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: true } );
+		vi.mocked( useClearEdgeCacheMutation ).mockReturnValue( { mutate: vi.fn(), isPending: false } );
 
 		renderWithProvider();
 
@@ -126,13 +128,13 @@ describe( 'CacheCard component', () => {
 	} );
 
 	it( 'clears object cache', async () => {
-		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: false } );
+		vi.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: false } );
 
-		const mutationMock = { mutate: jest.fn(), isPending: false };
-		jest.mocked( useClearEdgeCacheMutation ).mockReturnValue( mutationMock );
+		const mutationMock = { mutate: vi.fn(), isPending: false };
+		vi.mocked( useClearEdgeCacheMutation ).mockReturnValue( mutationMock );
 
-		const mockedDispatch = jest.fn();
-		jest.mocked( useDispatch ).mockReturnValue( mockedDispatch );
+		const mockedDispatch = vi.fn();
+		vi.mocked( useDispatch ).mockReturnValue( mockedDispatch );
 
 		renderWithProvider();
 
@@ -145,13 +147,13 @@ describe( 'CacheCard component', () => {
 	} );
 
 	it( 'clears edge cache', async () => {
-		jest.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: false } );
+		vi.mocked( useEdgeCacheQuery ).mockReturnValue( { data: true, isLoading: false } );
 
-		const mutationMock = { mutate: jest.fn(), isPending: false };
-		jest.mocked( useClearEdgeCacheMutation ).mockReturnValue( mutationMock );
+		const mutationMock = { mutate: vi.fn(), isPending: false };
+		vi.mocked( useClearEdgeCacheMutation ).mockReturnValue( mutationMock );
 
-		const mockedDispatch = jest.fn();
-		jest.mocked( useDispatch ).mockReturnValue( mockedDispatch );
+		const mockedDispatch = vi.fn();
+		vi.mocked( useDispatch ).mockReturnValue( mockedDispatch );
 
 		renderWithProvider();
 

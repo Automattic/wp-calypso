@@ -1,6 +1,7 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { LoginPageWrapper } from '../index';
 
 describe( 'LoginPageWrapper', () => {
@@ -26,7 +27,7 @@ describe( 'LoginPageWrapper', () => {
 	} );
 
 	it( 'renders configurable primary action label and handles click', () => {
-		const onPrimaryActionClick = jest.fn();
+		const onPrimaryActionClick = vi.fn();
 
 		render(
 			<LoginPageWrapper
@@ -97,7 +98,7 @@ describe( 'LoginPageWrapper', () => {
 	} );
 
 	it( 'calls onUsernameOrEmailChange with updated value', () => {
-		const onUsernameOrEmailChange = jest.fn();
+		const onUsernameOrEmailChange = vi.fn();
 
 		render(
 			<LoginPageWrapper title="Log in" onUsernameOrEmailChange={ onUsernameOrEmailChange }>
@@ -288,7 +289,7 @@ describe( 'LoginPageWrapper', () => {
 	} );
 
 	it( 'calls nav link onClick handlers', () => {
-		const onPrimaryClick = jest.fn();
+		const onPrimaryClick = vi.fn();
 
 		render(
 			<LoginPageWrapper

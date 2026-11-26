@@ -3,7 +3,7 @@ const yaml = require( 'js-yaml' );
 const semver = require( 'semver' );
 const { bumpStat, sanitizeVersion, getPlatform } = require( '../../../lib/desktop-analytics' );
 const log = require( '../../../lib/logger' )( 'desktop:updater:manual' );
-const Updater = require( '../../../lib/updater' );
+const Updater = require( '../../../lib/updater' ).default;
 
 const statsPlatform = getPlatform( process.platform );
 const sanitizedVersion = sanitizeVersion( app.getVersion() );

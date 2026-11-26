@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { act, configure, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode } from 'react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	activateRedesign,
@@ -19,19 +20,19 @@ import {
 } from '../api';
 import SiteRedesign, { installedPreviewUrl } from '../main';
 
-jest.mock( '@automattic/calypso-router', () => {
-	const mock = Object.assign( jest.fn(), { replace: jest.fn(), redirect: jest.fn() } );
+vi.mock( '@automattic/calypso-router', () => {
+	const mock = Object.assign( vi.fn(), { replace: vi.fn(), redirect: vi.fn() } );
 	return { __esModule: true, default: mock };
 } );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( '../api', () => ( {
-	...jest.requireActual( '../api' ),
-	fetchRedesign: jest.fn(),
-	fetchPreview: jest.fn(),
-	applyRedesign: jest.fn(),
-	openRedesign: jest.fn(),
-	generateRedesign: jest.fn(),
-	activateRedesign: jest.fn(),
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( '../api', async () => ( {
+	...( await vi.importActual< typeof import( '../api' ) >( '../api' ) ),
+	fetchRedesign: vi.fn(),
+	fetchPreview: vi.fn(),
+	applyRedesign: vi.fn(),
+	openRedesign: vi.fn(),
+	generateRedesign: vi.fn(),
+	activateRedesign: vi.fn(),
 } ) );
 
 const REDESIGN_ID = 'rd_' + '1'.repeat( 32 );
@@ -101,8 +102,8 @@ const selectDesign = async ( name: string, preview: string, { withBar = true } =
 
 describe( 'SiteRedesign', () => {
 	beforeEach( () => {
-		jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
-		jest.mocked( fetchPreview ).mockImplementation( ( _site, _id, generationId ) =>
+		vi.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
+		vi.mocked( fetchPreview ).mockImplementation( ( _site, _id, generationId ) =>
 			Promise.resolve( {
 				generation_id: generationId,
 				path: '/',
@@ -111,13 +112,13 @@ describe( 'SiteRedesign', () => {
 			} )
 		);
 	} );
-	afterEach( () => jest.clearAllMocks() );
+	afterEach( () => vi.clearAllMocks() );
 
 	it( 'automatically starts an empty first session once, including in Strict Mode', async () => {
-		jest
-			.mocked( openRedesign )
-			.mockResolvedValue( session( { status: 'interview', candidates: [] } ) );
-		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		vi.mocked( openRedesign ).mockResolvedValue(
+			session( { status: 'interview', candidates: [] } )
+		);
+		vi.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
 		renderWithProvider(
 			<StrictMode>
 				<SiteRedesign
@@ -139,7 +140,7 @@ describe( 'SiteRedesign', () => {
 	it.each( [ 'preview_ready', 'generating', 'failed', 'installed' ] as const )(
 		'resumes a %s session on entry without generating another batch',
 		async ( status ) => {
-			jest.mocked( openRedesign ).mockResolvedValue( session( { status } ) );
+			vi.mocked( openRedesign ).mockResolvedValue( session( { status } ) );
 			renderPage( false, null );
 
 			await waitFor( () =>
@@ -152,10 +153,10 @@ describe( 'SiteRedesign', () => {
 	);
 
 	it( 'starts an empty session reached by its saved URL', async () => {
-		jest
-			.mocked( fetchRedesign )
-			.mockResolvedValue( session( { status: 'interview', candidates: [] } ) );
-		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		vi.mocked( fetchRedesign ).mockResolvedValue(
+			session( { status: 'interview', candidates: [] } )
+		);
+		vi.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
 		renderPage();
 
 		expect( await screen.findByText( 'Making new designs from your content…' ) ).toHaveClass(
@@ -166,7 +167,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'does not generate when preview eligibility is denied', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			session( {
 				status: 'interview',
 				candidates: [],
@@ -190,13 +191,11 @@ describe( 'SiteRedesign', () => {
 				routes: null,
 			} ) ),
 		} );
-		jest.mocked( fetchRedesign ).mockResolvedValue( failed );
+		vi.mocked( fetchRedesign ).mockResolvedValue( failed );
 		// Like the API: without `new_batch`, a session that has a batch is answered as it is.
-		jest
-			.mocked( generateRedesign )
-			.mockImplementation( ( _site, _id, newBatch ) =>
-				Promise.resolve( newBatch ? session( { status: 'generating' } ) : failed )
-			);
+		vi.mocked( generateRedesign ).mockImplementation( ( _site, _id, newBatch ) =>
+			Promise.resolve( newBatch ? session( { status: 'generating' } ) : failed )
+		);
 		renderPage();
 
 		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
@@ -210,10 +209,8 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'offers generate without an error for a failed session from before candidates', async () => {
-		jest
-			.mocked( fetchRedesign )
-			.mockResolvedValue( session( { status: 'failed', candidates: [] } ) );
-		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'failed', candidates: [] } ) );
+		vi.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
 		renderPage();
 
 		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
@@ -224,9 +221,10 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'says it is not available, without Retry, when opening is refused', async () => {
-		jest
-			.mocked( openRedesign )
-			.mockRejectedValue( { code: 'site_redesign_not_permitted', message: 'Server words.' } );
+		vi.mocked( openRedesign ).mockRejectedValue( {
+			code: 'site_redesign_not_permitted',
+			message: 'Server words.',
+		} );
 		renderPage( false, null );
 
 		expect( await screen.findByText( 'This isn’t available for your account.' ) ).toBeVisible();
@@ -236,9 +234,10 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'says it is not available when loading a redesign is refused', async () => {
-		jest
-			.mocked( fetchRedesign )
-			.mockRejectedValue( { code: 'site_redesign_not_permitted', message: 'Server words.' } );
+		vi.mocked( fetchRedesign ).mockRejectedValue( {
+			code: 'site_redesign_not_permitted',
+			message: 'Server words.',
+		} );
 		renderPage(
 			false,
 			REDESIGN_ID,
@@ -250,10 +249,11 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'stops offering Retry once the batch limit is reached', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'failed' } ) );
-		jest
-			.mocked( generateRedesign )
-			.mockRejectedValue( { code: 'site_redesign_batch_limit', message: 'Server words.' } );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'failed' } ) );
+		vi.mocked( generateRedesign ).mockRejectedValue( {
+			code: 'site_redesign_batch_limit',
+			message: 'Server words.',
+		} );
 		renderPage();
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Retry' } ) );
@@ -266,7 +266,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'offers Retry after an opening error instead of looping', async () => {
-		jest.mocked( openRedesign ).mockRejectedValueOnce( new Error( 'Could not open redesign.' ) );
+		vi.mocked( openRedesign ).mockRejectedValueOnce( new Error( 'Could not open redesign.' ) );
 		renderPage( false, null );
 
 		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
@@ -274,7 +274,7 @@ describe( 'SiteRedesign', () => {
 			screen.getByText( 'Could not open redesign.', { selector: '.components-notice__content' } )
 		).toBeVisible();
 		expect( openRedesign ).toHaveBeenCalledTimes( 1 );
-		jest.mocked( openRedesign ).mockResolvedValue( session() );
+		vi.mocked( openRedesign ).mockResolvedValue( session() );
 		await userEvent.click( retry );
 		await waitFor( () => expect( page.replace ).toHaveBeenCalled() );
 		expect( openRedesign ).toHaveBeenCalledTimes( 2 );
@@ -283,7 +283,7 @@ describe( 'SiteRedesign', () => {
 
 	it( 'keeps a late response from navigating after the page is left', async () => {
 		let resolveOpen: ( value: Redesign ) => void = () => {};
-		jest.mocked( openRedesign ).mockReturnValue(
+		vi.mocked( openRedesign ).mockReturnValue(
 			new Promise< Redesign >( ( resolve ) => {
 				resolveOpen = resolve;
 			} )
@@ -302,7 +302,7 @@ describe( 'SiteRedesign', () => {
 	it( 'keeps a late response for one site from reaching the next site on the same page', async () => {
 		const SITE_B_ID = 'rd_' + '2'.repeat( 32 );
 		let resolveA: ( value: Redesign ) => void = () => {};
-		jest.mocked( openRedesign ).mockImplementation( ( siteId ) =>
+		vi.mocked( openRedesign ).mockImplementation( ( siteId ) =>
 			siteId === 1
 				? new Promise< Redesign >( ( resolve ) => {
 						resolveA = resolve;
@@ -334,18 +334,18 @@ describe( 'SiteRedesign', () => {
 		[ 'rolled_back', 'This redesign was rolled back.' ],
 		[ 'superseded', 'A newer redesign replaced this one.' ],
 	] as const )( 'explains a %s session without an inert Retry', async ( status, message ) => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session( { status } ) );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session( { status } ) );
 		renderPage();
 		expect( await screen.findByText( message ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Retry' } ) ).toBeNull();
 	} );
 
 	it( 'reconnects when another request has already started generation', async () => {
-		jest
-			.mocked( openRedesign )
-			.mockResolvedValue( session( { status: 'interview', candidates: [] } ) );
-		jest.mocked( generateRedesign ).mockRejectedValue( { code: 'site_redesign_busy' } );
-		jest.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		vi.mocked( openRedesign ).mockResolvedValue(
+			session( { status: 'interview', candidates: [] } )
+		);
+		vi.mocked( generateRedesign ).mockRejectedValue( { code: 'site_redesign_busy' } );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
 		renderPage( false, null );
 
 		await waitFor( () => expect( page.replace ).toHaveBeenCalled() );
@@ -355,15 +355,15 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'does not automatically repeat a failed generation request', async () => {
-		jest
-			.mocked( fetchRedesign )
-			.mockResolvedValue( session( { status: 'interview', candidates: [] } ) );
-		jest.mocked( generateRedesign ).mockRejectedValueOnce( new Error( 'Generation failed.' ) );
+		vi.mocked( fetchRedesign ).mockResolvedValue(
+			session( { status: 'interview', candidates: [] } )
+		);
+		vi.mocked( generateRedesign ).mockRejectedValueOnce( new Error( 'Generation failed.' ) );
 		renderPage();
 
 		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
 		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
-		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		vi.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
 		await userEvent.click( retry );
 		expect( await screen.findByText( 'Making new designs from your content…' ) ).toHaveClass(
 			'components-visually-hidden'
@@ -372,7 +372,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'shows the four candidates of the newest batch in opaque frames', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		renderPage();
 
 		await waitFor( () => expect( screen.getAllByTitle( /Preview of design/ ) ).toHaveLength( 4 ) );
@@ -388,7 +388,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'starts with nothing selected and the action disabled', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		renderPage();
 
 		expect( await screen.findByText( 'Select a design' ) ).toBeVisible();
@@ -399,7 +399,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'selects a design on click without choosing it', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		renderPage();
 
 		await selectDesign( 'Design 2 of 4', 'Preview of design 2' );
@@ -420,7 +420,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'selects from the keyboard', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		renderPage();
 
 		const third = await screen.findByRole( 'button', { name: 'Design 3 of 4' } );
@@ -433,9 +433,9 @@ describe( 'SiteRedesign', () => {
 
 	it( 'keeps the selected design when polling reorders the batch', async () => {
 		const queryClient = new QueryClient();
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		renderPage( false, REDESIGN_ID, queryClient );
-		jest.mocked( applyRedesign ).mockReturnValue( new Promise( () => {} ) );
+		vi.mocked( applyRedesign ).mockReturnValue( new Promise( () => {} ) );
 
 		await selectDesign( 'Design 2 of 4', 'Preview of design 2' );
 		act( () => {
@@ -458,7 +458,7 @@ describe( 'SiteRedesign', () => {
 
 	it( 'drops the selection when its design leaves the batch', async () => {
 		const queryClient = new QueryClient();
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		renderPage( false, REDESIGN_ID, queryClient );
 
 		await selectDesign( 'Design 4 of 4', 'Preview of design 4' );
@@ -474,7 +474,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'switches every preview between desktop and mobile without reloading it', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		const { container } = renderPage();
 
 		await selectDesign( 'Design 3 of 4', 'Preview of design 3' );
@@ -513,7 +513,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'previews every design at a tablet viewport too', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		const { container } = renderPage();
 
 		await selectDesign( 'Design 1 of 4', 'Preview of design 1' );
@@ -541,7 +541,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'switches the preview device from the keyboard', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		const { container } = renderPage();
 
 		await waitForBar();
@@ -563,7 +563,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'closes the device menu without scrolling when the current device is picked again', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		const { container } = renderPage();
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Preview: Desktop' } ) );
@@ -575,8 +575,8 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'shows the selected design is being chosen while the request runs', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
-		jest.mocked( applyRedesign ).mockReturnValue( new Promise( () => {} ) );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( applyRedesign ).mockReturnValue( new Promise( () => {} ) );
 		renderPage();
 
 		await selectDesign( 'Design 1 of 4', 'Preview of design 1' );
@@ -592,7 +592,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'keeps unfinished candidates from being chosen', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			session( {
 				status: 'generating',
 				candidates: [
@@ -643,8 +643,8 @@ describe( 'SiteRedesign', () => {
 			} );
 
 		it( 'lets a site that can apply choose the one that is ready', async () => {
-			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
-			jest.mocked( applyRedesign ).mockReturnValue( new Promise( () => {} ) );
+			vi.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
+			vi.mocked( applyRedesign ).mockReturnValue( new Promise( () => {} ) );
 			renderPage();
 
 			await selectDesign( 'Design 1 of 3', 'Preview of design 1' );
@@ -656,7 +656,7 @@ describe( 'SiteRedesign', () => {
 		} );
 
 		it( 'keeps the unfinished ones from being chosen', async () => {
-			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
+			vi.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
 			renderPage();
 
 			await selectDesign( 'Design 1 of 3', 'Preview of design 1' );
@@ -668,7 +668,7 @@ describe( 'SiteRedesign', () => {
 		} );
 
 		it( 'waits for the whole batch when the site cannot apply yet', async () => {
-			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( false ) );
+			vi.mocked( fetchRedesign ).mockResolvedValue( stillMaking( false ) );
 			renderPage();
 
 			await selectDesign( 'Design 1 of 3', 'Preview of design 1', { withBar: false } );
@@ -678,9 +678,9 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'keeps the bar away until every design is made and its preview is on screen', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 		const resolvers: Array< () => void > = [];
-		jest.mocked( fetchPreview ).mockImplementation(
+		vi.mocked( fetchPreview ).mockImplementation(
 			( _site, _id, generationId ) =>
 				new Promise( ( resolve ) => {
 					resolvers.push( () =>
@@ -710,21 +710,21 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'holds the bar back for 1.5s after the last preview, then keeps it', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		try {
 			const queryClient = new QueryClient();
-			jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+			vi.mocked( fetchRedesign ).mockResolvedValue( session() );
 			const { container } = renderPage( false, REDESIGN_ID, queryClient );
 			const bar = () => container.querySelector( '.step-container-v2__sticky-bottom-bar' );
 
 			await waitFor( () =>
 				expect( container.querySelectorAll( '.site-redesign__frame.is-loaded' ) ).toHaveLength( 4 )
 			);
-			act( () => jest.advanceTimersByTime( 1499 ) );
+			act( () => vi.advanceTimersByTime( 1499 ) );
 			expect( bar() ).toBeNull();
 			expect( screen.queryByRole( 'button', { name: 'Choose this one' } ) ).toBeNull();
 
-			act( () => jest.advanceTimersByTime( 1 ) );
+			act( () => vi.advanceTimersByTime( 1 ) );
 			const shown = bar();
 			expect( shown ).not.toBeNull();
 			expect( chooseButton() ).toBeDisabled();
@@ -733,15 +733,15 @@ describe( 'SiteRedesign', () => {
 			act( () => {
 				queryClient.setQueryData( [ 'site-redesign', 1, REDESIGN_ID ], session() );
 			} );
-			act( () => jest.advanceTimersByTime( 3000 ) );
+			act( () => vi.advanceTimersByTime( 3000 ) );
 			expect( bar() ).toBe( shown );
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 
 	it( 'brings the bar once the designs there are have loaded, past a failed one', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			session( {
 				candidates: [
 					candidate( 1 ),
@@ -755,7 +755,7 @@ describe( 'SiteRedesign', () => {
 				],
 			} )
 		);
-		jest.mocked( fetchPreview ).mockImplementation( ( _site, _id, generationId ) =>
+		vi.mocked( fetchPreview ).mockImplementation( ( _site, _id, generationId ) =>
 			generationId === candidate( 2 ).id
 				? Promise.reject( new Error( 'The preview took too long.' ) )
 				: Promise.resolve( {
@@ -782,7 +782,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'names each design by its state', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			session( {
 				status: 'generating',
 				candidates: [
@@ -815,7 +815,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'does not point to other designs when none of them is ready', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			session( {
 				candidates: [
 					{
@@ -834,7 +834,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'holds four placeholder slots behind a single status while the session opens', () => {
-		jest.mocked( openRedesign ).mockReturnValue( new Promise( () => {} ) );
+		vi.mocked( openRedesign ).mockReturnValue( new Promise( () => {} ) );
 		const { container } = renderPage( false, null );
 
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Getting your designs ready…' );
@@ -845,7 +845,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'keeps a placeholder over each design until its preview has loaded', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			session( {
 				status: 'generating',
 				candidates: [
@@ -862,7 +862,7 @@ describe( 'SiteRedesign', () => {
 			} )
 		);
 		let showPreview = () => {};
-		jest.mocked( fetchPreview ).mockReturnValue(
+		vi.mocked( fetchPreview ).mockReturnValue(
 			new Promise( ( resolve ) => {
 				showPreview = () =>
 					resolve( {
@@ -892,8 +892,8 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'sends the user to checkout with the URL from the 402', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
-		jest.mocked( applyRedesign ).mockRejectedValue( {
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( applyRedesign ).mockRejectedValue( {
 			code: 'site_redesign_upgrade_required',
 			message: 'Upgrade',
 			data: { status: 402, checkout_url: CHECKOUT_URL },
@@ -915,8 +915,8 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'refuses a checkout URL that leaves Calypso', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
-		jest.mocked( applyRedesign ).mockRejectedValue( {
+		vi.mocked( fetchRedesign ).mockResolvedValue( session() );
+		vi.mocked( applyRedesign ).mockRejectedValue( {
 			code: 'site_redesign_upgrade_required',
 			message: 'Upgrade to the Personal plan or higher to use this design.',
 			data: { status: 402, checkout_url: 'https://evil.example/checkout/x' },
@@ -936,7 +936,7 @@ describe( 'SiteRedesign', () => {
 
 	it( 'starts the pending apply once on the checkout return', async () => {
 		const pending = candidate( 3 ).id;
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			session( {
 				pending_apply: pending,
 				eligibility: {
@@ -947,11 +947,9 @@ describe( 'SiteRedesign', () => {
 				},
 			} )
 		);
-		jest
-			.mocked( applyRedesign )
-			.mockResolvedValue(
-				session( { status: 'applying', apply: { status: 'queued', error: null } } )
-			);
+		vi.mocked( applyRedesign ).mockResolvedValue(
+			session( { status: 'applying', apply: { status: 'queued', error: null } } )
+		);
 		renderPage( true );
 
 		expect( await screen.findByText( 'Getting your new design ready…' ) ).toBeVisible();
@@ -960,7 +958,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'tries the pending apply only once when it keeps failing', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			session( {
 				pending_apply: candidate( 3 ).id,
 				eligibility: {
@@ -971,7 +969,7 @@ describe( 'SiteRedesign', () => {
 				},
 			} )
 		);
-		jest.mocked( applyRedesign ).mockRejectedValue( {
+		vi.mocked( applyRedesign ).mockRejectedValue( {
 			code: 'site_redesign_not_ready',
 			message: 'This design is not ready yet.',
 		} );
@@ -986,9 +984,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'waits for the purchase instead of offering checkout again', async () => {
-		jest
-			.mocked( fetchRedesign )
-			.mockResolvedValue( session( { pending_apply: candidate( 3 ).id } ) );
+		vi.mocked( fetchRedesign ).mockResolvedValue( session( { pending_apply: candidate( 3 ).id } ) );
 		renderPage( true );
 
 		expect( await screen.findByText( 'Finishing your purchase…' ) ).toBeVisible();
@@ -997,17 +993,17 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'allows a full purchase wait after earlier generation polls', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const queryClient = new QueryClient();
 		const pending = session( { pending_apply: candidate( 3 ).id } );
 		for ( let i = 0; i < 45; i++ ) {
 			queryClient.setQueryData( [ 'site-redesign', 1, REDESIGN_ID ], pending );
 		}
-		jest.mocked( fetchRedesign ).mockResolvedValue( {
+		vi.mocked( fetchRedesign ).mockResolvedValue( {
 			...pending,
 			eligibility: { ...pending.eligibility, can_apply: true },
 		} );
-		jest.mocked( applyRedesign ).mockResolvedValue( session( { status: 'applying' } ) );
+		vi.mocked( applyRedesign ).mockResolvedValue( session( { status: 'applying' } ) );
 		const { unmount } = renderWithProvider(
 			<SiteRedesign
 				siteId={ 1 }
@@ -1020,47 +1016,44 @@ describe( 'SiteRedesign', () => {
 		try {
 			expect( screen.getByText( 'Finishing your purchase…' ) ).toBeVisible();
 			await act( async () => {
-				await jest.advanceTimersByTimeAsync( 3100 );
+				await vi.advanceTimersByTimeAsync( 3100 );
 			} );
 			expect( fetchRedesign ).toHaveBeenCalled();
 			expect( applyRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 3 ).id );
 		} finally {
 			unmount();
 			queryClient.clear();
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 
 	it( 'ends the purchase wait after two minutes', async () => {
-		jest.useFakeTimers();
-		jest
-			.mocked( fetchRedesign )
-			.mockResolvedValue( session( { pending_apply: candidate( 3 ).id } ) );
+		vi.useFakeTimers();
+		vi.mocked( fetchRedesign ).mockResolvedValue( session( { pending_apply: candidate( 3 ).id } ) );
 		const { unmount } = renderPage( true );
 		try {
 			await act( async () => {
-				await jest.advanceTimersByTimeAsync( 100 );
+				await vi.advanceTimersByTimeAsync( 100 );
 			} );
 			expect( screen.getByText( 'Finishing your purchase…' ) ).toBeVisible();
 			await act( async () => {
-				await jest.advanceTimersByTimeAsync( 120000 );
+				await vi.advanceTimersByTimeAsync( 120000 );
 			} );
 			expect( screen.getByText( /Your purchase is taking longer than usual/ ) ).toBeVisible();
-			const calls = jest.mocked( fetchRedesign ).mock.calls.length;
+			const calls = vi.mocked( fetchRedesign ).mock.calls.length;
 			await act( async () => {
-				await jest.advanceTimersByTimeAsync( 6000 );
+				await vi.advanceTimersByTimeAsync( 6000 );
 			} );
 			expect( fetchRedesign ).toHaveBeenCalledTimes( calls );
 		} finally {
 			unmount();
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 
 	it( 'polls when the purchase listener started the apply first', async () => {
 		const pending = candidate( 3 ).id;
-		jest
-			.mocked( fetchRedesign )
+		vi.mocked( fetchRedesign )
 			.mockResolvedValueOnce(
 				session( {
 					pending_apply: pending,
@@ -1075,7 +1068,7 @@ describe( 'SiteRedesign', () => {
 			.mockResolvedValue(
 				session( { status: 'applying', apply: { status: 'delivering', error: null } } )
 			);
-		jest.mocked( applyRedesign ).mockRejectedValue( {
+		vi.mocked( applyRedesign ).mockRejectedValue( {
 			code: 'site_redesign_busy',
 			message: 'This redesign is busy.',
 		} );
@@ -1086,11 +1079,9 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'shows the install as a full-page loading state with one status', async () => {
-		jest
-			.mocked( fetchRedesign )
-			.mockResolvedValue(
-				session( { status: 'applying', apply: { status: 'awaiting_atomic', error: null } } )
-			);
+		vi.mocked( fetchRedesign ).mockResolvedValue(
+			session( { status: 'applying', apply: { status: 'awaiting_atomic', error: null } } )
+		);
 		renderPage();
 
 		await screen.findByText( 'Preparing your site. This can take a few minutes.' );
@@ -1130,13 +1121,13 @@ describe( 'SiteRedesign', () => {
 		} );
 		const queryClient = new QueryClient();
 		const queryKey = [ 'site-redesign', 1, REDESIGN_ID ];
-		jest.mocked( fetchRedesign ).mockResolvedValue( ready );
-		jest.mocked( applyRedesign ).mockResolvedValue( applying );
+		vi.mocked( fetchRedesign ).mockResolvedValue( ready );
+		vi.mocked( applyRedesign ).mockResolvedValue( applying );
 		const { unmount } = renderPage( false, REDESIGN_ID, queryClient );
 		await selectDesign( 'Design 2 of 4', 'Preview of design 2' );
 
 		let finishRead: ( value: Redesign ) => void = () => {};
-		jest.mocked( fetchRedesign ).mockReturnValueOnce(
+		vi.mocked( fetchRedesign ).mockReturnValueOnce(
 			new Promise( ( resolve ) => {
 				finishRead = resolve;
 			} )
@@ -1146,9 +1137,9 @@ describe( 'SiteRedesign', () => {
 		} );
 		expect( queryClient.getQueryState( queryKey )?.fetchStatus ).toBe( 'fetching' );
 
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		try {
-			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 			await user.click( chooseButton() );
 			await screen.findByText( 'Getting your new design ready…' );
 			await act( async () => finishRead( ready ) );
@@ -1156,20 +1147,22 @@ describe( 'SiteRedesign', () => {
 			expect( queryClient.getQueryData( queryKey ) ).toEqual( applying );
 			expect( screen.getByText( 'Getting your new design ready…' ) ).toBeVisible();
 
-			jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
+			vi.mocked( fetchRedesign ).mockResolvedValue( installed() );
 			await act( async () => {
-				await jest.advanceTimersByTimeAsync( 3000 );
+				await vi.advanceTimersByTimeAsync( 3000 );
 			} );
-			expect( screen.getByRole( 'heading', { name: 'Your new design is ready' } ) ).toBeVisible();
+			expect(
+				await screen.findByRole( 'heading', { name: 'Your new design is ready' } )
+			).toBeVisible();
 		} finally {
 			unmount();
 			queryClient.clear();
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 
 	it( 'reviews the installed theme on the site itself before it goes live', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( installed() );
 		const { container } = renderPage( true );
 
 		const frame = await screen.findByTitle( 'Preview of your new design' );
@@ -1225,7 +1218,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'shows the stored preview even when the API gives no live link, and offers no link', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			installed( {
 				applied: {
 					mode: 'installed',
@@ -1245,10 +1238,10 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'says so when the chosen design’s preview cannot be loaded, and still offers the live tab', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
-		jest
-			.mocked( fetchPreview )
-			.mockRejectedValue( new Error( 'This design is no longer available.' ) );
+		vi.mocked( fetchRedesign ).mockResolvedValue( installed() );
+		vi.mocked( fetchPreview ).mockRejectedValue(
+			new Error( 'This design is no longer available.' )
+		);
 		renderPage(
 			false,
 			REDESIGN_ID,
@@ -1262,7 +1255,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'does not frame the site when no design is recorded as chosen', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( installed( { selected: null } ) );
+		vi.mocked( fetchRedesign ).mockResolvedValue( installed( { selected: null } ) );
 		renderPage();
 
 		expect(
@@ -1275,9 +1268,9 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'takes the site to its theme list once the new design is live', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
+		vi.mocked( fetchRedesign ).mockResolvedValue( installed() );
 		let finish: ( value: Redesign ) => void = () => {};
-		jest.mocked( activateRedesign ).mockReturnValue(
+		vi.mocked( activateRedesign ).mockReturnValue(
 			new Promise( ( resolve ) => {
 				finish = resolve;
 			} )
@@ -1309,11 +1302,9 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'goes straight to the theme list when the redesign is already live', async () => {
-		jest
-			.mocked( fetchRedesign )
-			.mockResolvedValue(
-				session( { status: 'applied', apply: { status: 'succeeded', error: null } } )
-			);
+		vi.mocked( fetchRedesign ).mockResolvedValue(
+			session( { status: 'applied', apply: { status: 'succeeded', error: null } } )
+		);
 		renderPage();
 
 		await waitFor( () =>
@@ -1324,10 +1315,10 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'keeps the review open and the action retryable when switching fails', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
-		jest
-			.mocked( activateRedesign )
-			.mockRejectedValueOnce( new Error( 'We couldn’t switch the theme.' ) );
+		vi.mocked( fetchRedesign ).mockResolvedValue( installed() );
+		vi.mocked( activateRedesign ).mockRejectedValueOnce(
+			new Error( 'We couldn’t switch the theme.' )
+		);
 		renderPage();
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Use this design' } ) );
@@ -1344,7 +1335,7 @@ describe( 'SiteRedesign', () => {
 	} );
 
 	it( 'shows the rollback message when the switch failed', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue(
+		vi.mocked( fetchRedesign ).mockResolvedValue(
 			session( {
 				status: 'installed',
 				apply: {

@@ -1,37 +1,44 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import PlanUpgradeBanner from '../plan-upgrade-banner';
 
-const mockRecordTracksEvent = jest.fn();
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+const mockRecordTracksEvent = vi.fn();
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+		'@automattic/data-stores'
+	) ),
 	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePricingMetaForGridPlans: jest.fn(),
+		...(
+			await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+				'@automattic/data-stores'
+			)
+		).Plans,
+		usePricingMetaForGridPlans: vi.fn(),
 	},
 } ) );
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn( () => null ),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn( () => null ),
 } ) );
-jest.mock(
+vi.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',
-	() => jest.fn()
+	() => ( { default: vi.fn() } )
 );
 
 const noDiscount = { monthly: null, full: null };
 const mockPricingMeta = (
 	pricing: Partial< Record< string, Partial< Plans.PricingMetaForGridPlan > > > = {}
 ) =>
-	( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+	( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 		[ PLAN_BUSINESS ]: {
 			currencyCode: 'USD',
 			originalPrice: { monthly: 2500, full: 30000 },
@@ -56,8 +63,10 @@ const yearlyIntroOffer = {
 
 // The banner resolves the plan path slug from the `/plans` query and keeps its
 // CTA disabled until that data loads, so provide it.
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
 	useQuery: () => ( {
 		data: [
 			{ product_slug: 'business-bundle', path_slug: 'business' },

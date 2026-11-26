@@ -1,9 +1,12 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { PublicMarketplaceFooter } from '../public-marketplace-footer';
 
-jest.mock( '@automattic/calypso-config', () => ( { isEnabled: () => true } ) );
-jest.mock( '../global-footer', () => ( {
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { isEnabled: () => true } )
+);
+vi.mock( '../global-footer', () => ( {
 	GlobalFooter: ( { isLoggedIn }: { isLoggedIn: boolean } ) => (
 		<footer aria-label={ isLoggedIn ? 'Member footer' : 'Visitor footer' } />
 	),

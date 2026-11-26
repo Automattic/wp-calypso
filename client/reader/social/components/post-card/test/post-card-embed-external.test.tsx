@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SocialAnalyticsProvider, type SocialAnalyticsContextValue } from '../analytics-context';
 import { PostCardEmbedExternal } from '../post-card-embed-external';
 import type { SocialEmbedExternal, SocialLongForm } from '../../../types';
@@ -273,7 +274,7 @@ describe( 'PostCardEmbedExternal', () => {
 
 	describe( 'analytics', () => {
 		function renderWithAnalytics( overrides?: Partial< SocialAnalyticsContextValue > ) {
-			const onClick = jest.fn();
+			const onClick = vi.fn();
 			const value: SocialAnalyticsContextValue = {
 				source: 'atmosphere',
 				connectionId: 42,

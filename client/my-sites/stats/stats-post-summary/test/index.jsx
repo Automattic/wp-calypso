@@ -1,49 +1,51 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import StatsPostSummary from '..';
 
-jest.mock( 'calypso/components/data/query-post-stats', () => () => null );
+vi.mock( 'calypso/components/data/query-post-stats', () => ( { default: () => null } ) );
 
 let mockStats;
-jest.mock( 'calypso/state/stats/posts/selectors', () => ( {
+vi.mock( 'calypso/state/stats/posts/selectors', () => ( {
 	getPostStats: () => mockStats,
 	isRequestingPostStats: () => false,
 } ) );
 
 // The site's "today", read through the site-zone moment the chart clamps on.
 let mockSiteToday;
-jest.mock( '../../hooks/use-moment-site-zone', () => ( {
-	getMomentSiteZone: () => ( dateInput ) =>
-		jest.requireActual( 'moment' )( dateInput ?? mockSiteToday ),
-} ) );
+vi.mock( '../../hooks/use-moment-site-zone', async () => {
+	const { default: moment } = await vi.importActual( 'moment' );
+	return {
+		getMomentSiteZone: () => ( dateInput ) => moment( dateInput ?? mockSiteToday ),
+	};
+} );
 
-jest.mock( '../../features/modules/stats-utm', () => () => null );
-jest.mock( '../../pages/providers/global-provider', () => ( {
-	StatsGlobalValuesContext: jest.requireActual( 'react' ).createContext( false ),
+vi.mock( '../../features/modules/stats-utm', () => ( { default: () => null } ) );
+vi.mock( '../../pages/providers/global-provider', async () => ( {
+	StatsGlobalValuesContext: ( await vi.importActual( 'react' ) ).createContext( false ),
 } ) );
-jest.mock(
-	'../../stats-period-navigation',
-	() =>
-		( { children } ) =>
-			children
-);
+vi.mock( '../../stats-period-navigation', () => ( { default: ( { children } ) => children } ) );
 
 let mockDateLabelProps;
-jest.mock( '../../stats-date-label', () => ( props ) => {
-	mockDateLabelProps = props;
-	return null;
-} );
+vi.mock( '../../stats-date-label', () => ( {
+	default: ( props ) => {
+		mockDateLabelProps = props;
+		return null;
+	},
+} ) );
 
 let mockChartProps;
-jest.mock( '../../stats-summary', () => ( props ) => {
-	mockChartProps = props;
-	return null;
-} );
+vi.mock( '../../stats-summary', () => ( {
+	default: ( props ) => {
+		mockChartProps = props;
+		return null;
+	},
+} ) );
 
 function renderSummary( stats, siteToday ) {
 	mockStats = { post: { post_date: '2026-08-15 10:00:00' }, ...stats };

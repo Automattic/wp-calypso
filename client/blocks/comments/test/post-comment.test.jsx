@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import PostComment from '../post-comment';
 
-jest.mock( 'calypso/blocks/user-avatar', () => () => null );
-jest.mock( '../comment-actions', () => () => null );
-jest.mock( '../post-comment-content', () => ( { content } ) => <p>{ content }</p> );
+vi.mock( 'calypso/blocks/user-avatar', () => ( { default: () => null } ) );
+vi.mock( '../comment-actions', () => ( { default: () => null } ) );
+vi.mock( '../post-comment-content', () => ( { default: ( { content } ) => <p>{ content }</p> } ) );
 
 const comment = ( ID, content, parent = false ) => ( {
 	ID,

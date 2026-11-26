@@ -128,11 +128,21 @@ describe( 'getOpenLiveInteractions', () => {
 		} );
 	} );
 
-	it( 'still excludes conversations with a csat message', () => {
+	it.each( [
+		[ 'our CSAT trigger', { type: 'text', metadata: { type: 'csat' } } ],
+		// Zendesk's native survey has no metadata; missing it left solved chats counted as open.
+		[
+			'a native Zendesk survey',
+			{
+				type: 'text',
+				role: 'business',
+				text: 'How would you rate the support you received?',
+				source: { type: 'zd:surveys' },
+			},
+		],
+	] )( 'excludes a conversation that ends with %s', ( _label, csatMessage ) => {
 		mockGetConversations.mockReturnValue( [
-			makeConversation( 'a', {
-				messages: [ { type: 'text', metadata: { type: 'csat' } } as never ],
-			} ),
+			makeConversation( 'a', { messages: [ csatMessage as never ] } ),
 			makeConversation( 'b' ),
 		] );
 

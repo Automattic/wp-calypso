@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { useAchievementsQuery } from 'calypso/data/reader/use-achievements-query';
 import AchievementsGrid from '../index';
 
-jest.mock( 'calypso/data/reader/use-achievements-query' );
+vi.mock( 'calypso/data/reader/use-achievements-query' );
 
-jest.mock( '../daily-post-streak-card', () => ( {
+vi.mock( '../daily-post-streak-card', () => ( {
 	__esModule: true,
 	default: ( { streak }: { streak: { blog_id: number; current_streak: number } } ) => (
 		<div
@@ -20,7 +21,7 @@ jest.mock( '../daily-post-streak-card', () => ( {
 	),
 } ) );
 
-const mockUseAchievementsQuery = useAchievementsQuery as jest.Mock;
+const mockUseAchievementsQuery = useAchievementsQuery as Mock;
 
 const earned = ( overrides: Record< string, unknown > = {} ) => ( {
 	achievement_id: 1,
@@ -79,7 +80,7 @@ const baseQueryReturn = {
 	isError: false,
 	hasNextPage: false,
 	isFetchingNextPage: false,
-	fetchNextPage: jest.fn(),
+	fetchNextPage: vi.fn(),
 };
 
 function renderGrid( props: { userLogin: string; isOwnProfile: boolean } ) {
@@ -93,7 +94,7 @@ function renderGrid( props: { userLogin: string; isOwnProfile: boolean } ) {
 
 describe( 'AchievementsGrid', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders the empty copy when both grids are empty', () => {

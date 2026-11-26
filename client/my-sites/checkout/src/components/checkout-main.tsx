@@ -57,7 +57,6 @@ import { getSitelessCheckoutTypeFromCart } from '../lib/get-siteless-checkout-ty
 import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import { isWpcomSitelessCheckoutType } from '../lib/is-wpcom-siteless-checkout-type';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
-import payPalProcessor from '../lib/paypal-express-processor';
 import { payPalJsProcessor } from '../lib/paypal-js-processor';
 import { pixAutomaticoProcessor } from '../lib/pix-automatico-processor';
 import { pixProcessor } from '../lib/pix-processor';
@@ -101,10 +100,7 @@ export interface CheckoutMainProps {
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
-	disabledThankYouPage?: boolean;
 	sitelessCheckoutType?: SitelessCheckoutType;
-	akismetSiteSlug?: string;
-	marketplaceSiteSlug?: string;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
@@ -121,7 +117,6 @@ export interface CheckoutMainProps {
 	 */
 	fromSiteSlug?: string;
 	adminUrl?: string;
-	hostingIntent?: string | undefined;
 }
 
 export default function CheckoutMain( {
@@ -139,10 +134,7 @@ export default function CheckoutMain( {
 	isLoggedOutCart,
 	isNoSiteCart,
 	isGiftPurchase,
-	disabledThankYouPage,
 	sitelessCheckoutType,
-	akismetSiteSlug,
-	marketplaceSiteSlug,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
@@ -151,7 +143,6 @@ export default function CheckoutMain( {
 	connectAfterCheckout,
 	fromSiteSlug,
 	adminUrl,
-	hostingIntent,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
 
@@ -210,20 +201,11 @@ export default function CheckoutMain( {
 			return jetpackSiteSlug;
 		}
 
-		// Currently, the `akismetSiteSlug` prop is not being passed to this component anywhere
-		// We are not doing any site specific things with akismet checkout, so this should always be undefined for now
-		// If this was not here to return `undefined`, the akismet routes would get messed with due to `siteSlug` returning "no-user" in akismet siteless checkout
-		if ( sitelessCheckoutType === 'akismet' ) {
-			return akismetSiteSlug;
-		}
-
-		if ( sitelessCheckoutType === 'marketplace' ) {
-			return marketplaceSiteSlug;
-		}
-
-		// Unified and WordPress.com siteless checkout have no site, so siteSlug would
-		// otherwise fall back to "no-user".
+		// These siteless checkouts have no site, so siteSlug would otherwise fall
+		// back to "no-user".
 		if (
+			sitelessCheckoutType === 'akismet' ||
+			sitelessCheckoutType === 'marketplace' ||
 			sitelessCheckoutType === 'unified' ||
 			isWpcomSitelessCheckoutType( sitelessCheckoutType )
 		) {
@@ -231,7 +213,7 @@ export default function CheckoutMain( {
 		}
 
 		return siteSlug;
-	}, [ akismetSiteSlug, jetpackSiteSlug, marketplaceSiteSlug, sitelessCheckoutType, siteSlug ] );
+	}, [ jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
 		( error: TranslateResult ) => {
@@ -264,7 +246,6 @@ export default function CheckoutMain( {
 		source: productSourceFromUrl,
 		aiSessionId: aiSessionIdFromUrl,
 		isGiftPurchase,
-		hostingIntent,
 	} );
 
 	const {
@@ -627,7 +608,6 @@ export default function CheckoutMain( {
 				existingCardProcessor( transactionData, dataForProcessor ),
 			'existing-paypal-ppcp': ( transactionData: unknown ) =>
 				existingPayPalPPCPProcessor( transactionData, dataForProcessor ),
-			'paypal-express': () => payPalProcessor( dataForProcessor ),
 			'paypal-js': ( transactionData: unknown ) =>
 				payPalJsProcessor( transactionData, dataForProcessor ),
 		} ),
@@ -773,7 +753,6 @@ export default function CheckoutMain( {
 		purchaseId,
 		feature,
 		isComingFromUpsell,
-		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
 		sitelessCheckoutType,
 		connectAfterCheckout,
@@ -781,28 +760,11 @@ export default function CheckoutMain( {
 		fromSiteSlug,
 	} );
 
-	const handleStepChanged = useCallback(
-		( {
-			stepNumber,
-			previousStepNumber,
-			paymentMethodId,
-		}: {
-			stepNumber: number | null;
-			previousStepNumber: number;
-			paymentMethodId: string;
-		} ) => {
-			if ( stepNumber === 2 && previousStepNumber === 1 ) {
-				recordTracksEvent( 'calypso_checkout_composite_first_step_complete', {
-					payment_method:
-						translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
-				} );
-			}
-			recordTracksEvent( 'calypso_checkout_composite_step_changed', {
-				step: stepNumber,
-			} );
-		},
-		[]
-	);
+	const handleStepChanged = useCallback( ( { stepNumber }: { stepNumber: number | null } ) => {
+		recordTracksEvent( 'calypso_checkout_composite_step_changed', {
+			step: stepNumber,
+		} );
+	}, [] );
 
 	const handlePaymentMethodChanged = useCallback( ( method: string ) => {
 		logStashEvent( 'payment_method_select', { newMethodId: String( method ) }, 'info' );

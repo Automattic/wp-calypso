@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { calculateOffset, getBlockStyle, getDimensions, getDimensionUpdates } from '..';
 
 beforeAll( () => {
 	const header = {
 		getBoundingClientRect: () => ( { height: 123 } ),
 	};
-	jest
-		.spyOn( document, 'getElementById' )
-		.mockImplementation( ( id ) => ( id === 'header' ? header : null ) );
-	jest.spyOn( window, 'getComputedStyle' ).mockImplementation( () => ( { position: 'fixed' } ) );
+	vi.spyOn( document, 'getElementById' ).mockImplementation( ( id ) =>
+		id === 'header' ? header : null
+	);
+	vi.spyOn( window, 'getComputedStyle' ).mockImplementation( () => ( { position: 'fixed' } ) );
 } );
 
 describe( 'calculateOffset', () => {
@@ -65,4 +66,4 @@ describe( 'getDimensionUpdates', () => {
 	} );
 } );
 
-afterAll( () => jest.restoreAllMocks() );
+afterAll( () => vi.restoreAllMocks() );

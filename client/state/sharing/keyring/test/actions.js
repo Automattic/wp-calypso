@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTIONS_RECEIVE,
@@ -16,7 +17,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( 'requestKeyringConnections()', () => {

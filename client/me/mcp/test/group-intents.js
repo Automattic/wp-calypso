@@ -1,4 +1,9 @@
-import { getOverridesToMatch, groupIntentKey } from '../group-intents';
+import {
+	getOrdinaryTools,
+	getOverridesToMatch,
+	groupIntentKey,
+	requiresOptIn,
+} from '../group-intents';
 
 describe( 'client/me/mcp/group-intents', () => {
 	describe( 'groupIntentKey', () => {
@@ -33,6 +38,31 @@ describe( 'client/me/mcp/group-intents', () => {
 
 		it( 'returns undefined for an empty tool list', () => {
 			expect( getOverridesToMatch( [], true ) ).toBeUndefined();
+		} );
+	} );
+
+	describe( 'getOrdinaryTools', () => {
+		it( 'drops every opt-in tool, whether it is on or off', () => {
+			const ordinary = [ 'wpcom/posts-list', { enabled: false, requires_opt_in: false } ];
+
+			expect(
+				getOrdinaryTools( [
+					[ 'wpcom/sensitive-read', { enabled: false, requires_opt_in: true } ],
+					ordinary,
+					[ 'wpcom/sensitive-write', { enabled: true, requires_opt_in: 1 } ],
+				] )
+			).toEqual( [ ordinary ] );
+		} );
+	} );
+
+	describe( 'requiresOptIn', () => {
+		it( 'fails closed on truthy values and open only on missing or falsy ones', () => {
+			expect( requiresOptIn( { requires_opt_in: true } ) ).toBe( true );
+			expect( requiresOptIn( { requires_opt_in: 1 } ) ).toBe( true );
+			expect( requiresOptIn( { requires_opt_in: '1' } ) ).toBe( true );
+			expect( requiresOptIn( { requires_opt_in: false } ) ).toBe( false );
+			expect( requiresOptIn( {} ) ).toBe( false );
+			expect( requiresOptIn( undefined ) ).toBe( false );
 		} );
 	} );
 } );

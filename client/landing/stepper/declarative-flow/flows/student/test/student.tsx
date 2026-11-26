@@ -1,9 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { type Mock, vi } from 'vitest';
+import DocumentHead from 'calypso/components/data/document-head';
+import documentHeadReducer from 'calypso/state/document-head/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ONBOARD_STORE } from '../../../../stores';
 import { STEPS } from '../../../internals/steps';
@@ -24,8 +29,8 @@ describe( 'Student Flow', () => {
 		Object.defineProperty( window, 'location', {
 			value: {
 				...originalLocation,
-				assign: jest.fn(),
-				replace: jest.fn(),
+				assign: vi.fn(),
+				replace: vi.fn(),
 				href: 'https://wordpress.com/setup/student',
 			},
 			writable: true,
@@ -42,7 +47,7 @@ describe( 'Student Flow', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
 	} );
 
@@ -80,7 +85,7 @@ describe( 'Student Flow', () => {
 	 * send an eligible account forward again.
 	 */
 	it( 'replaces the eligibility step in the history when it continues', () => {
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const Navigation = () => {
 			const { submit } = studentFlow.useStepNavigation(
 				STEPS.STUDENT_PLAN_ELIGIBILITY.slug,
@@ -127,7 +132,7 @@ describe( 'Student Flow', () => {
 		} );
 
 		const checkoutUrl = new URL(
-			( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+			( window.location.replace as Mock ).mock.calls[ 0 ][ 0 ],
 			'https://wordpress.com'
 		);
 
@@ -142,7 +147,7 @@ describe( 'Student Flow', () => {
 
 	describe( 'deep-link guard', () => {
 		const renderSideEffect = ( currentStepSlug: string ) => {
-			const navigate = jest.fn();
+			const navigate = vi.fn();
 			const SideEffect = () => {
 				studentFlow.useSideEffect?.(
 					currentStepSlug as Parameters< NonNullable< typeof studentFlow.useSideEffect > >[ 0 ],
@@ -193,7 +198,7 @@ describe( 'Student Flow', () => {
 		const SideEffect = () => {
 			studentFlow.useSideEffect?.(
 				currentStepSlug as Parameters< NonNullable< typeof studentFlow.useSideEffect > >[ 0 ],
-				jest.fn()
+				vi.fn()
 			);
 			return null;
 		};
@@ -201,5 +206,40 @@ describe( 'Student Flow', () => {
 		renderWithProvider( <SideEffect /> );
 
 		expect( select( ONBOARD_STORE ).getPlanCartItem() ).toBeFalsy();
+	} );
+
+	/**
+	 * The flow's `DocumentHead` and the eligibility screen's mount in the same render here, as on
+	 * a direct visit to the eligibility URL.
+	 */
+	it( 'puts the flow title back in the tab after the eligibility step', async () => {
+		( dispatch( ONBOARD_STORE ) as OnboardActions ).setPlanCartItem( {
+			product_slug: STUDENT_PLAN_SLUG,
+		} );
+		const FlowWithTitles = ( { currentStepSlug }: { currentStepSlug: string } ) => {
+			studentFlow.useSideEffect?.(
+				currentStepSlug as Parameters< NonNullable< typeof studentFlow.useSideEffect > >[ 0 ],
+				vi.fn()
+			);
+
+			return (
+				<>
+					<DocumentHead title="Create a site" />
+					{ currentStepSlug === STEPS.STUDENT_PLAN_ELIGIBILITY.slug && (
+						<DocumentHead title="Confirm your email to get the Student plan" />
+					) }
+				</>
+			);
+		};
+
+		const { rerender } = renderWithProvider(
+			<FlowWithTitles currentStepSlug={ STEPS.STUDENT_PLAN_ELIGIBILITY.slug } />,
+			{ reducers: { documentHead: documentHeadReducer, ui: uiReducer } }
+		);
+		await waitFor( () => expect( document.title ).toMatch( /^Confirm your email/ ) );
+
+		rerender( <FlowWithTitles currentStepSlug={ STEPS.DOMAIN_SEARCH.slug } /> );
+
+		await waitFor( () => expect( document.title ).toMatch( /^Create a site — / ) );
 	} );
 } );

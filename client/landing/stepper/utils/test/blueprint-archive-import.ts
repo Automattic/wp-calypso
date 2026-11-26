@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import {
 	isPrefillComplete,
@@ -18,17 +19,17 @@ import {
 	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { post: jest.fn(), get: jest.fn() } },
+	default: { req: { post: vi.fn(), get: vi.fn() } },
 } ) );
 
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
 
-const mockPost = wpcom.req.post as jest.Mock;
-const mockGet = wpcom.req.get as jest.Mock;
+const mockPost = wpcom.req.post as Mock;
+const mockGet = wpcom.req.get as Mock;
 
 describe( 'getStandaloneBlueprintArchiveSlug', () => {
 	it( 'returns the Blueprint archive slug for a standalone build_dest=wow flow', () => {
@@ -502,15 +503,15 @@ describe( 'getBlueprintArchiveSiteSpecUrl', () => {
 
 describe( 'waitForAtomicTransferComplete first-poll timing', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'waits a full interval before its first request by default', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockGet.mockResolvedValue( { status: 'completed' } );
 
 		const pending = waitForAtomicTransferComplete( 'site.example.com', { pollIntervalMs: 5000 } );
@@ -520,13 +521,13 @@ describe( 'waitForAtomicTransferComplete first-poll timing', () => {
 		await Promise.resolve();
 		expect( mockGet ).not.toHaveBeenCalled();
 
-		await jest.advanceTimersByTimeAsync( 5000 );
+		await vi.advanceTimersByTimeAsync( 5000 );
 		await pending;
 		expect( mockGet ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'asks immediately when initialDelayMs is 0, so an already-finished build hands over at once', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockGet.mockResolvedValue( { status: 'completed' } );
 
 		// The funnel's build starts before checkout; making the customer sit through a poll
@@ -540,7 +541,7 @@ describe( 'waitForAtomicTransferComplete first-poll timing', () => {
 	} );
 
 	it( 'still spaces out later polls when the first says not-yet', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockGet
 			.mockResolvedValueOnce( { status: 'relocating_switcheroo' } )
 			.mockResolvedValue( { status: 'completed' } );
@@ -554,7 +555,7 @@ describe( 'waitForAtomicTransferComplete first-poll timing', () => {
 		await Promise.resolve();
 		expect( mockGet ).toHaveBeenCalledTimes( 1 );
 
-		await jest.advanceTimersByTimeAsync( 5000 );
+		await vi.advanceTimersByTimeAsync( 5000 );
 		await pending;
 		expect( mockGet ).toHaveBeenCalledTimes( 2 );
 	} );
@@ -562,11 +563,11 @@ describe( 'waitForAtomicTransferComplete first-poll timing', () => {
 
 describe( 'waitForBlueprintImportComplete with no import record', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	/**
@@ -574,22 +575,22 @@ describe( 'waitForBlueprintImportComplete with no import record', () => {
 	 * It used to hold the customer on the loading screen for the full fifteen minutes.
 	 */
 	it( 'gives up after a minute of empty answers', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockGet.mockResolvedValue( [] );
 
 		const pending = waitForBlueprintImportComplete( 'site.example.com', {
 			pollIntervalMs: 5000,
 			initialDelayMs: 0,
 		} );
-		const outcome = expect( pending ).rejects.toThrow( 'no import record' );
-
-		await jest.advanceTimersByTimeAsync( 65000 );
-		await outcome;
+		await Promise.all( [
+			expect( pending ).rejects.toThrow( 'no import record' ),
+			vi.advanceTimersByTimeAsync( 65000 ),
+		] );
 		expect( mockGet.mock.calls.length ).toBeLessThan( 20 );
 	} );
 
 	it( 'keeps waiting on an import that is running', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockGet.mockResolvedValue( { importId: 'abc', importStatus: 'importing' } );
 
 		const pending = waitForBlueprintImportComplete( 'site.example.com', {
@@ -602,11 +603,11 @@ describe( 'waitForBlueprintImportComplete with no import record', () => {
 			() => ( settled = true )
 		);
 
-		await jest.advanceTimersByTimeAsync( 120000 );
+		await vi.advanceTimersByTimeAsync( 120000 );
 		expect( settled ).toBe( false );
 
 		mockGet.mockResolvedValue( { importId: 'abc', importStatus: 'importSuccess' } );
-		await jest.advanceTimersByTimeAsync( 5000 );
+		await vi.advanceTimersByTimeAsync( 5000 );
 		await expect( pending ).resolves.toBeUndefined();
 	} );
 } );

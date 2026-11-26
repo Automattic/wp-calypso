@@ -450,7 +450,7 @@ object RunAllUnitTests : BuildType({
 				echo -n "Yarn version: " && yarn --version
 				echo -n "NPM version: " && npm --version
 
-				# Jest and tsc read workspace packages from source, so skip the full
+				# Vitest and tsc read workspace packages from source, so skip the full
 				# postinstall build; the packages that still need theirs are built below.
 				export SKIP_CALYPSO_POSTINSTALL=true
 

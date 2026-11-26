@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import wpcomRequest from 'wpcom-proxy-request';
 import { updateImporter, uploadExportFile } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -12,26 +13,24 @@ import {
 } from '../lib/import-playground';
 import type { ImportJob } from 'calypso/blocks/importer/types';
 
-jest.mock( 'calypso/state/imports/actions', () => ( {
-	uploadExportFile: jest.fn(),
-	updateImporter: jest.fn(),
+vi.mock( 'calypso/state/imports/actions', () => ( {
+	uploadExportFile: vi.fn(),
+	updateImporter: vi.fn(),
 } ) );
 
-jest.mock( 'wpcom-proxy-request', () => jest.fn() );
+vi.mock( 'wpcom-proxy-request', () => ( { default: vi.fn() } ) );
 
-jest.mock(
-	'https://playground.wordpress.net/client/index.js',
-	() => ( {
+vi.mock( 'https://playground.wordpress.net/client/index.js', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
 		startPlaygroundAPI: async () => ( {
 			exportSavedSiteAsZip: async () => new Blob( [ 'zip' ] ),
 		} ),
-	} ),
-	{ virtual: true }
+	} )
 );
 
-const updateImporterMock = updateImporter as jest.Mock;
-const uploadExportFileMock = uploadExportFile as jest.Mock;
-const wpcomRequestMock = wpcomRequest as unknown as jest.Mock;
+const updateImporterMock = updateImporter as Mock;
+const uploadExportFileMock = uploadExportFile as Mock;
+const wpcomRequestMock = wpcomRequest as unknown as Mock;
 
 describe( 'ensureImportStarted', () => {
 	const siteId = 123;
@@ -44,7 +43,7 @@ describe( 'ensureImportStarted', () => {
 	} as ImportJob;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		updateImporterMock.mockResolvedValue( {} );
 	} );
 
@@ -95,7 +94,7 @@ describe( 'importPlaygroundSite', () => {
 	const siteId = 123;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		updateImporterMock.mockResolvedValue( {} );
 		uploadExportFileMock.mockImplementation( async ( _siteId, { onprogress } ) => {
 			onprogress( { lengthComputable: true, loaded: 25, total: 100 } );
@@ -120,7 +119,7 @@ describe( 'importPlaygroundSite', () => {
 			progress: { steps: { completed: 9, total: 9 } },
 			customData: { current_step: 'clean_up' },
 		} );
-		const onProgress = jest.fn();
+		const onProgress = vi.fn();
 
 		await expect( importPlaygroundSite( 'slug', siteId, onProgress ) ).resolves.toBe( 'import-id' );
 
@@ -160,13 +159,13 @@ describe( 'importPlaygroundSite', () => {
 			.mockResolvedValueOnce( poll( 'uploadProcessing' ) )
 			.mockResolvedValueOnce( poll( 'uploadSuccess' ) )
 			.mockResolvedValueOnce( poll( 'importSuccess' ) );
-		jest.useFakeTimers();
-		const onProgress = jest.fn();
+		vi.useFakeTimers();
+		const onProgress = vi.fn();
 
 		const result = importPlaygroundSite( 'slug', siteId, onProgress );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 		await expect( result ).resolves.toBe( 'import-id' );
-		jest.useRealTimers();
+		vi.useRealTimers();
 
 		const phases = onProgress.mock.calls.map( ( [ progress ] ) => progress.phase );
 		expect( phases.slice( phases.indexOf( 'starting' ) ) ).toEqual( [
@@ -206,13 +205,13 @@ describe( 'importPlaygroundSite', () => {
 				type: 'wordpress',
 				siteId,
 			} );
-		jest.useFakeTimers();
-		const onProgress = jest.fn();
+		vi.useFakeTimers();
+		const onProgress = vi.fn();
 
 		const result = importPlaygroundSite( 'slug', siteId, onProgress );
-		await jest.runAllTimersAsync();
+		await vi.runAllTimersAsync();
 		await expect( result ).resolves.toBe( 'import-id' );
-		jest.useRealTimers();
+		vi.useRealTimers();
 
 		expect( onProgress ).toHaveBeenCalledWith( {
 			phase: 'importing',

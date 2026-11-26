@@ -1,6 +1,7 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { BuildHtmlPreview } from '../stream/html-preview';
 import { htmlPreviewDocument, preparePreviewDocument } from '../stream/html-preview-document';
 import { createPreviewFrame, isPreviewFrameStatus } from '../stream/html-preview-frame';
@@ -43,11 +44,11 @@ const payload = {
 const originalFetch = global.fetch;
 afterEach( () => {
 	global.fetch = originalFetch;
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 it( 'fetches page HTML through site-scoped authentication', async () => {
-	global.fetch = jest.fn().mockResolvedValue( { ok: true, json: async () => payload } );
+	global.fetch = vi.fn().mockResolvedValue( { ok: true, json: async () => payload } );
 	const { result } = renderHook( () => useBuildHtmlPreview( reference, stream ) );
 	await waitFor( () => expect( result.current.html ).toBe( payload.html ) );
 	expect( global.fetch ).toHaveBeenCalledWith(
@@ -61,12 +62,12 @@ it( 'fetches page HTML through site-scoped authentication', async () => {
 } );
 
 it( 'keeps the previous document during an update, but clears it on page, epoch or run changes', async () => {
-	global.fetch = jest.fn().mockResolvedValue( { ok: true, json: async () => payload } );
+	global.fetch = vi.fn().mockResolvedValue( { ok: true, json: async () => payload } );
 	const { result, rerender } = renderHook( ( { ref, view } ) => useBuildHtmlPreview( ref, view ), {
 		initialProps: { ref: reference, view: stream },
 	} );
 	await waitFor( () => expect( result.current.html ).toBe( payload.html ) );
-	global.fetch = jest.fn().mockReturnValue( new Promise( () => {} ) );
+	global.fetch = vi.fn().mockReturnValue( new Promise( () => {} ) );
 	rerender( { ref: { ...reference, documentId: 'b'.repeat( 64 ) }, view: stream } );
 	expect( result.current.html ).toBe( payload.html );
 	rerender( { ref: { ...reference, route: '/about/' }, view: stream } );
@@ -84,7 +85,7 @@ it.each( [
 	{ format: 'unknown' },
 	{ html: 'é'.repeat( 131073 ) },
 ] )( 'rejects mismatched or oversized documents (case %#)', async ( invalid ) => {
-	global.fetch = jest
+	global.fetch = vi
 		.fn()
 		.mockResolvedValue( { ok: true, json: async () => ( { ...payload, ...invalid } ) } );
 	const { result } = renderHook( () => useBuildHtmlPreview( reference, stream ) );
@@ -94,15 +95,15 @@ it.each( [
 } );
 
 it( 'retries a transient failure without requiring another preview event', async () => {
-	jest.useFakeTimers();
-	global.fetch = jest
+	vi.useFakeTimers();
+	global.fetch = vi
 		.fn()
 		.mockRejectedValueOnce( new Error( 'Offline' ) )
 		.mockResolvedValue( { ok: true, json: async () => payload } );
 	const { result } = renderHook( () => useBuildHtmlPreview( reference, stream ) );
 	await act( async () => {} );
 	await act( async () => {
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 	} );
 	expect( result.current.html ).toBe( payload.html );
 } );
@@ -279,7 +280,7 @@ it( 'rewrites network URLs in SVG style elements', () => {
 } );
 
 it( 'uses an opaque frame with only a nonce-authorized bootstrap', async () => {
-	global.fetch = jest.fn().mockResolvedValue( { ok: true, json: async () => payload } );
+	global.fetch = vi.fn().mockResolvedValue( { ok: true, json: async () => payload } );
 	render( <BuildHtmlPreview stream={ stream } isActive isGenerating isComplete={ false } /> );
 	const iframe = await screen.findByTitle( 'Site preview' );
 	expect( iframe.getAttribute( 'sandbox' ) ).toBe( 'allow-scripts' );
@@ -289,7 +290,7 @@ it( 'uses an opaque frame with only a nonce-authorized bootstrap', async () => {
 } );
 
 it( 'loads the homepage and named companion routes concurrently without a picker', async () => {
-	global.fetch = jest.fn().mockImplementation( async ( url: string ) => ( {
+	global.fetch = vi.fn().mockImplementation( async ( url: string ) => ( {
 		ok: true,
 		json: async () => ( { ...payload, route: new URL( url ).searchParams.get( 'route' ) } ),
 	} ) );
@@ -330,8 +331,8 @@ it( 'loads the homepage and named companion routes concurrently without a picker
 } );
 
 it( 'keeps the first non-home route from becoming the homepage', async () => {
-	const onHomeReady = jest.fn();
-	global.fetch = jest
+	const onHomeReady = vi.fn();
+	global.fetch = vi
 		.fn()
 		.mockResolvedValue( { ok: true, json: async () => ( { ...payload, route: '/about/' } ) } );
 	render(
@@ -446,7 +447,7 @@ it.each( [
 ] )(
 	'drops invalid asset references from the authenticated response (case %#)',
 	async ( invalid ) => {
-		global.fetch = jest.fn().mockResolvedValue( {
+		global.fetch = vi.fn().mockResolvedValue( {
 			ok: true,
 			json: async () => ( {
 				...payload,
@@ -460,8 +461,8 @@ it.each( [
 );
 
 it( 'renews signed URLs without another build event and cancels renewal on unmount', async () => {
-	jest.useFakeTimers();
-	global.fetch = jest.fn().mockImplementation( async () => ( {
+	vi.useFakeTimers();
+	global.fetch = vi.fn().mockImplementation( async () => ( {
 		ok: true,
 		json: async () => ( {
 			...payload,
@@ -474,12 +475,12 @@ it( 'renews signed URLs without another build event and cancels renewal on unmou
 	expect( result.current.assets?.[ imageSource ] ).toEqual( imageAsset );
 	expect( global.fetch ).toHaveBeenCalledTimes( 1 );
 	await act( async () => {
-		jest.advanceTimersByTime( 300000 );
+		vi.advanceTimersByTime( 300000 );
 	} );
 	expect( global.fetch ).toHaveBeenCalledTimes( 2 );
 	unmount();
 	await act( async () => {
-		jest.advanceTimersByTime( 600000 );
+		vi.advanceTimersByTime( 600000 );
 	} );
 	expect( global.fetch ).toHaveBeenCalledTimes( 2 );
 } );
@@ -505,7 +506,7 @@ const localImageAsset = {
 };
 
 function respondWithAssets( assets: Record< string, unknown > ) {
-	global.fetch = jest.fn().mockResolvedValue( {
+	global.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: async () => ( { ...payload, assets } ),
 	} );
@@ -602,11 +603,11 @@ it( 'preserves missing image slots and background references without allowing ne
 } );
 
 it( 'keeps a slow asset request alive across document revisions and aborts on route unmount', async () => {
-	const load = jest.fn().mockReturnValue( new Promise( () => {} ) );
-	const factory = jest
+	const load = vi.fn().mockReturnValue( new Promise( () => {} ) );
+	const factory = vi
 		.spyOn( previewAssetLoader, 'createPreviewAssetLoader' )
-		.mockReturnValue( { load, dispose: jest.fn() } );
-	global.fetch = jest.fn().mockResolvedValue( {
+		.mockReturnValue( { load, dispose: vi.fn() } );
+	global.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: async () => ( { ...payload, assets: { [ imageSource ]: imageAsset } } ),
 	} );
@@ -638,26 +639,26 @@ it( 'keeps a slow asset request alive across document revisions and aborts on ro
 } );
 
 it( 'reports the generated images it loads, and releases them with the scene', async () => {
-	const created = jest.fn( () => 'blob:preview-image' );
-	const revoked = jest.fn();
+	const created = vi.fn( () => 'blob:preview-image' );
+	const revoked = vi.fn();
 	Object.assign( URL, { createObjectURL: created, revokeObjectURL: revoked } );
-	const load = jest.fn().mockImplementation( async ( request: Record< string, unknown > ) => {
+	const load = vi.fn().mockImplementation( async ( request: Record< string, unknown > ) => {
 		const source = Object.keys( request )[ 0 ];
 		return source === imageSource
 			? { [ source ]: { id: imageAsset.id, mimeType: 'image/png', bytes: new ArrayBuffer( 4 ) } }
 			: { [ source ]: { id: fontAsset.id, mimeType: 'font/woff2', bytes: new ArrayBuffer( 4 ) } };
 	} );
-	const factory = jest
+	const factory = vi
 		.spyOn( previewAssetLoader, 'createPreviewAssetLoader' )
-		.mockReturnValue( { load, dispose: jest.fn() } );
-	global.fetch = jest.fn().mockResolvedValue( {
+		.mockReturnValue( { load, dispose: vi.fn() } );
+	global.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: async () => ( {
 			...payload,
 			assets: { [ imageSource ]: imageAsset, [ fontSource ]: fontAsset },
 		} ),
 	} );
-	const onImages = jest.fn();
+	const onImages = vi.fn();
 	const { unmount } = render(
 		<BuildHtmlPreview
 			isActive
@@ -682,27 +683,27 @@ it( 'reports the generated images it loads, and releases them with the scene', a
 
 it( 'offers a declined asset again only after capacity frees, within a budget', async () => {
 	const loaded = { id: imageAsset.id, mimeType: 'image/png', bytes: new ArrayBuffer( 1 ) };
-	const load = jest.fn().mockImplementation( async () => ( {
+	const load = vi.fn().mockImplementation( async () => ( {
 		[ imageSource ]: { ...loaded, bytes: new ArrayBuffer( 1 ) },
 	} ) );
-	const factory = jest
+	const factory = vi
 		.spyOn( previewAssetLoader, 'createPreviewAssetLoader' )
-		.mockReturnValue( { load, dispose: jest.fn() } );
+		.mockReturnValue( { load, dispose: vi.fn() } );
 	const port = {
 		onmessage: null as ( ( event: MessageEvent ) => void ) | null,
-		postMessage: jest.fn(),
-		start: jest.fn(),
-		close: jest.fn(),
+		postMessage: vi.fn(),
+		start: vi.fn(),
+		close: vi.fn(),
 	};
 	const previousChannel = global.MessageChannel;
 	global.MessageChannel = class {
 		port1 = port;
 		port2 = {};
 	} as unknown as typeof MessageChannel;
-	const contentWindow = jest
+	const contentWindow = vi
 		.spyOn( HTMLIFrameElement.prototype, 'contentWindow', 'get' )
-		.mockReturnValue( { postMessage: jest.fn() } as unknown as Window );
-	global.fetch = jest.fn().mockResolvedValue( {
+		.mockReturnValue( { postMessage: vi.fn() } as unknown as Window );
+	global.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: async () => ( {
 			...payload,
@@ -763,7 +764,7 @@ it( 'offers a declined asset again only after capacity frees, within a budget', 
 } );
 
 it( 'waits for fetched readiness and refetches when ready changes without an HTML revision', async () => {
-	global.fetch = jest
+	global.fetch = vi
 		.fn()
 		.mockResolvedValue( { ok: true, json: async () => ( { ...payload, ready: false } ) } );
 	const { result, rerender } = renderHook( ( ref ) => useBuildHtmlPreview( ref, stream ), {
@@ -771,7 +772,7 @@ it( 'waits for fetched readiness and refetches when ready changes without an HTM
 	} );
 	await waitFor( () => expect( result.current.html ).toBe( payload.html ) );
 	let resolve: ( value: unknown ) => void = () => {};
-	global.fetch = jest.fn().mockReturnValue(
+	global.fetch = vi.fn().mockReturnValue(
 		new Promise( ( done ) => {
 			resolve = done;
 		} )

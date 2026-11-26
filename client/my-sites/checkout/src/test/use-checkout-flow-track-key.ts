@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';

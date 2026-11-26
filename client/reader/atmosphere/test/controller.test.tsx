@@ -1,25 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-const mockNext = jest.fn();
-
-jest.mock( '@automattic/calypso-router', () => ( {
-	__esModule: true,
-	default: { redirect: jest.fn() },
-} ) );
-
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn().mockReturnValue( true ),
-} ) );
-
+import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import {
 	atmosphereLanding,
 	atmosphereProfile,
 	atmosphereTagFeed,
 	atmosphereThread,
 } from '../controller';
+
+const mockNext = vi.fn();
+
+vi.mock( '@automattic/calypso-router', () => ( {
+	__esModule: true,
+	default: { redirect: vi.fn() },
+} ) );
+
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isEnabled: vi.fn().mockReturnValue( true ),
+	} )
+);
 
 const validDid = 'did:plc:abc234567defghi234567jkl';
 const validRkey = '3kabcdefghijk';
@@ -30,7 +34,7 @@ function makeContext( params: Record< string, string > ) {
 
 beforeEach( () => {
 	mockNext.mockReset();
-	jest.mocked( page.redirect ).mockReset();
+	vi.mocked( page.redirect ).mockReset();
 } );
 
 describe( 'atmosphereLanding controller', () => {
@@ -41,10 +45,7 @@ describe( 'atmosphereLanding controller', () => {
 	} );
 
 	it( 'redirects to /reader when the feature flag is off', () => {
-		const config = jest.requireMock( '@automattic/calypso-config' ) as {
-			isEnabled: jest.Mock;
-		};
-		config.isEnabled.mockReturnValueOnce( false );
+		vi.mocked( isEnabled ).mockReturnValueOnce( false );
 		atmosphereLanding();
 		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
 		expect( mockNext ).not.toHaveBeenCalled();
@@ -92,10 +93,7 @@ describe( 'atmosphereThread controller', () => {
 	} );
 
 	it( 'redirects to /reader when feature flag is off', () => {
-		const config = jest.requireMock( '@automattic/calypso-config' ) as {
-			isEnabled: jest.Mock;
-		};
-		config.isEnabled.mockReturnValueOnce( false );
+		vi.mocked( isEnabled ).mockReturnValueOnce( false );
 		const ctx = makeContext( { id: '7', did: validDid, rkey: validRkey } );
 		atmosphereThread( ctx, mockNext );
 		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
@@ -154,10 +152,7 @@ describe( 'atmosphereProfile', () => {
 	} );
 
 	it( 'redirects to /reader when the feature flag is off', () => {
-		const config = jest.requireMock( '@automattic/calypso-config' ) as {
-			isEnabled: jest.Mock;
-		};
-		config.isEnabled.mockReturnValueOnce( false );
+		vi.mocked( isEnabled ).mockReturnValueOnce( false );
 		const ctx = makeProfileContext( { id: '42', actor: 'alice.bsky.social' } );
 		atmosphereProfile( ctx, mockNext );
 		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );
@@ -213,10 +208,7 @@ describe( 'atmosphereTagFeed', () => {
 	} );
 
 	it( 'redirects to /reader when the feature flag is off', () => {
-		const config = jest.requireMock( '@automattic/calypso-config' ) as {
-			isEnabled: jest.Mock;
-		};
-		config.isEnabled.mockReturnValueOnce( false );
+		vi.mocked( isEnabled ).mockReturnValueOnce( false );
 		const ctx = makeTagContext( { id: '42', hashtag: 'rust' } );
 		atmosphereTagFeed( ctx, mockNext );
 		expect( page.redirect ).toHaveBeenCalledWith( '/reader' );

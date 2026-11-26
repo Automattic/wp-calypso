@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { ConnectionReauthGate } from '../connection-reauth-gate';
 
 describe( 'ConnectionReauthGate', () => {
@@ -53,7 +54,7 @@ describe( 'ConnectionReauthGate', () => {
 	} );
 
 	it( 'passes the connectionId to useAuthStatus', () => {
-		const useAuthStatus = jest.fn().mockReturnValue( { needsReauth: false } );
+		const useAuthStatus = vi.fn().mockReturnValue( { needsReauth: false } );
 		render(
 			<ConnectionReauthGate { ...baseProps } useAuthStatus={ useAuthStatus }>
 				<div>Timeline content</div>
@@ -64,7 +65,7 @@ describe( 'ConnectionReauthGate', () => {
 
 	it( 'calls onReconnect when the reconnect button is clicked', async () => {
 		const user = userEvent.setup();
-		const onReconnect = jest.fn();
+		const onReconnect = vi.fn();
 		const useAuthStatus = () => ( { needsReauth: true } );
 		render(
 			<ConnectionReauthGate
@@ -82,7 +83,7 @@ describe( 'ConnectionReauthGate', () => {
 
 	it( 'disables the button while isReconnecting and suppresses additional onReconnect calls', async () => {
 		const user = userEvent.setup();
-		const onReconnect = jest.fn();
+		const onReconnect = vi.fn();
 		const useAuthStatus = () => ( { needsReauth: true } );
 		render(
 			<ConnectionReauthGate

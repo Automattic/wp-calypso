@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { SubscribersStepContent } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import NoPlans from '../no-plans';
 import type { SiteDetails } from '@automattic/data-stores';
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
-	default: { req: { post: jest.fn(), get: jest.fn() } },
+	default: { req: { post: vi.fn(), get: vi.fn() } },
 } ) );
 
 const tier = {

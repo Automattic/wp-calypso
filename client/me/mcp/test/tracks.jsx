@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useMcpTracksAudienceProps } from '../tracks';
 
 let mockEnvId = 'production';
 let mockIsAutomattician = true;
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn( ( key ) => ( key === 'env_id' ? mockEnvId : null ) );
-	config.isEnabled = jest.fn( () => true );
-	return config;
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn( ( key ) => ( key === 'env_id' ? mockEnvId : null ) );
+	config.isEnabled = vi.fn( () => true );
+	return { ...config, default: config };
 } );
 
-jest.mock( '@automattic/api-queries', () => ( {
+vi.mock( '@automattic/api-queries', () => ( {
 	isAutomatticianQuery: () => ( {
 		queryKey: [ 'read', 'teams' ],
 		queryFn: async () => mockIsAutomattician,

@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import JetpackBenefitsSiteBackups from '../site-backups';
 
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn().mockImplementation( () => {} ),
-	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useDispatch: vi.fn().mockImplementation( () => {} ),
+	useSelector: vi.fn().mockImplementation( ( selector ) => selector() ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-rewind-backups' );
-jest.mock( 'calypso/state/sites/selectors' );
+vi.mock( 'calypso/state/selectors/get-rewind-backups' );
+vi.mock( 'calypso/state/sites/selectors' );
 
 describe( 'Jetpack Benefits site backups card', () => {
 	beforeEach( () => {

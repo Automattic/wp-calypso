@@ -1,30 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( '../controller', () => ( {
-	features: jest.fn(),
-	plans: jest.fn(),
-	redirectToCheckout: jest.fn(),
-	redirectToPlans: jest.fn(),
-	redirectToPlansIfNotJetpack: jest.fn(),
-} ) );
-jest.mock( '../current-plan/controller', () => ( {
-	currentPlan: jest.fn(),
-} ) );
-jest.mock( 'calypso/controller', () => ( {
-	makeLayout: jest.fn(),
-	render: jest.fn(),
-} ) );
-jest.mock( 'calypso/my-sites/controller', () => ( {
-	navigation: jest.fn(),
-	siteSelection: jest.fn(),
-	sites: jest.fn(),
-} ) );
-jest.mock( 'calypso/my-sites/plans/jetpack-plans', () => jest.fn() );
-
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	navigation,
@@ -45,6 +24,34 @@ import {
 } from '../controller';
 import { currentPlan } from '../current-plan/controller';
 import router from '../index';
+
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( '../controller', () => ( {
+	features: vi.fn(),
+	plans: vi.fn(),
+	redirectIfInvalidInterval: vi.fn(),
+	redirectToCheckout: vi.fn(),
+	redirectToPlans: vi.fn(),
+	redirectToPlansIfNotJetpack: vi.fn(),
+} ) );
+vi.mock( '../current-plan/controller', () => ( {
+	currentPlan: vi.fn(),
+} ) );
+vi.mock( 'calypso/controller', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		makeLayout: vi.fn(),
+		render: vi.fn(),
+	} )
+);
+vi.mock( 'calypso/my-sites/controller', () => ( {
+	navigation: vi.fn(),
+	p2RedirectToHubPlans: vi.fn(),
+	siteSelection: vi.fn(),
+	sites: vi.fn(),
+	stagingSiteNotSupportedRedirect: vi.fn(),
+	wpForTeamsP2PlusNotSupportedRedirect: vi.fn(),
+} ) );
+vi.mock( 'calypso/my-sites/plans/jetpack-plans', () => ( { default: vi.fn() } ) );
 
 const routes = {
 	'/plans': [

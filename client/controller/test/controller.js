@@ -1,19 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { maybeRedirectToMultiSiteDashboard, redirectLoggedOut } from '../index.web';
 
-jest.mock( '@automattic/calypso-router' );
-jest.mock( 'wpcom-proxy-request', () => ( {
-	isCookieAuthMissing: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-router' );
+vi.mock( 'wpcom-proxy-request', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isCookieAuthMissing: vi.fn( () => false ),
+	} )
+);
+vi.mock( 'calypso/dashboard/utils/link', () => ( {
+	dashboardLink: vi.fn( ( path ) => `https://my.wordpress.com${ path }` ),
 } ) );
-jest.mock( 'calypso/dashboard/utils/link', () => ( {
-	dashboardLink: jest.fn( ( path ) => `https://my.wordpress.com${ path }` ),
-} ) );
-jest.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: jest.fn() } ) );
+vi.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: vi.fn() } ) );
 
 const mockStore = configureStore();
 
@@ -39,8 +42,8 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 	let locationReplace;
 
 	beforeEach( () => {
-		next = jest.fn();
-		locationReplace = jest.fn();
+		next = vi.fn();
+		locationReplace = vi.fn();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			writable: true,
@@ -90,7 +93,7 @@ describe( 'redirectLoggedOut', () => {
 	let next;
 
 	beforeEach( () => {
-		next = jest.fn();
+		next = vi.fn();
 		Object.defineProperty( window, 'location', {
 			value: '',
 			writable: true,
@@ -146,9 +149,7 @@ describe( 'redirectLoggedOut', () => {
 	} );
 
 	it( 'removes return_to from Woo-origin QR login URLs for logged-in users', async () => {
-		const replaceState = jest
-			.spyOn( window.history, 'replaceState' )
-			.mockImplementation( () => {} );
+		const replaceState = vi.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
 		const context = {
 			store: mockStore( {
 				currentUser: {

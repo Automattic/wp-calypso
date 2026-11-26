@@ -1,18 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-// `logToLogstash` fires a real HTTPS request — mute it so the
-// rkey-missing/cid-missing observability paths in the atmosphere
-// repost adapter don't trigger unmocked nock requests.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
-} ) );
 
 import { PENDING_REPOST_URI } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { makeUseAtmosphereRepostAction } from 'calypso/reader/atmosphere/use-atmosphere-repost-action';
 import { mapAtmosphereFeedItemToSocialPost } from 'calypso/reader/social';
 import * as notices from 'calypso/state/notices/actions';
@@ -21,6 +16,13 @@ import { SocialAnalyticsProvider } from '../analytics-context';
 import { RepostButton } from '../repost-button';
 import { RepostProvider } from '../repost-context';
 import type { AtmosphereFeedItem } from '@automattic/api-core';
+
+// `logToLogstash` fires a real HTTPS request — mute it so the
+// rkey-missing/cid-missing observability paths in the atmosphere
+// repost adapter don't trigger unmocked nock requests.
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
+} ) );
 
 const BASE = 'https://public-api.wordpress.com';
 const POST_URI = 'at://did:plc:author/app.bsky.feed.post/3kabc';
@@ -60,10 +62,10 @@ function makeQueryClient() {
 function renderRepostButton(
 	post = makePost(),
 	{
-		onClick = jest.fn(),
+		onClick = vi.fn(),
 		onQuoteClick,
 		hideCount,
-	}: { onClick?: jest.Mock; onQuoteClick?: jest.Mock; hideCount?: boolean } = {}
+	}: { onClick?: Mock; onQuoteClick?: Mock; hideCount?: boolean } = {}
 ) {
 	const useRepostAction = makeUseAtmosphereRepostAction( 42 );
 	const socialPost = mapAtmosphereFeedItemToSocialPost( post );
@@ -91,7 +93,7 @@ function renderRepostButton(
 describe( '<RepostButton>', () => {
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'omits the visible count when hideCount is true but keeps the aria-label count', () => {
@@ -214,7 +216,7 @@ describe( '<RepostButton>', () => {
 		// the static fallback `<span class="...--static">` branch renders.
 		renderWithProvider(
 			<SocialAnalyticsProvider
-				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+				value={ { source: 'atmosphere', connectionId: 42, onClick: vi.fn() } }
 			>
 				<RepostButton post={ socialPost } />
 			</SocialAnalyticsProvider>,
@@ -246,7 +248,7 @@ describe( '<RepostButton>', () => {
 	} );
 
 	it( 'shows a rate-limit notice on rate_limited create errors', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
 			.reply( 429, { error: 'atmosphere_rate_limited' } );
@@ -264,7 +266,7 @@ describe( '<RepostButton>', () => {
 	} );
 
 	it( 'shows a connection-missing notice on connection_not_found errors', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
 			.reply( 404, { error: 'connection_not_found' } );
@@ -306,7 +308,7 @@ describe( '<RepostButton>', () => {
 	} );
 
 	it( 'create-repost error dispatches errorNotice + Tracks error event', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.post( '/wpcom/v2/reader/atmosphere/connections/42/reposts' )
 			.reply( 502, { error: 'atmosphere_upstream_unavailable' } );
@@ -328,7 +330,7 @@ describe( '<RepostButton>', () => {
 	} );
 
 	it( 'delete-repost error dispatches errorNotice + Tracks unrepost-error event', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.delete( '/wpcom/v2/reader/atmosphere/connections/42/reposts/3krkeyrkeyrke' )
 			.reply( 401, { error: 'atmosphere_unauthenticated' } );
@@ -359,7 +361,7 @@ describe( '<RepostButton>', () => {
 	} );
 
 	it( 'leaves "Quote post" disabled when the post is missing a cid', async () => {
-		const onQuoteClick = jest.fn();
+		const onQuoteClick = vi.fn();
 		const user = userEvent.setup();
 		const { onClick } = renderRepostButton( makePost( { cid: '' } ), { onQuoteClick } );
 		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
@@ -374,7 +376,7 @@ describe( '<RepostButton>', () => {
 	} );
 
 	it( 'enables "Quote post" and invokes onQuoteClick when the analytics context wires it', async () => {
-		const onQuoteClick = jest.fn();
+		const onQuoteClick = vi.fn();
 		const user = userEvent.setup();
 		const { onClick } = renderRepostButton( makePost(), { onQuoteClick } );
 		await user.click( screen.getByRole( 'button', { name: /repost, 4 reposts/i } ) );
@@ -393,7 +395,7 @@ describe( '<RepostButton>', () => {
 	} );
 
 	it( 'click does not bubble to a parent listener', async () => {
-		const onParentClick = jest.fn();
+		const onParentClick = vi.fn();
 		const user = userEvent.setup();
 		const useRepostAction = makeUseAtmosphereRepostAction( 42 );
 		const socialPost = mapAtmosphereFeedItemToSocialPost(
@@ -401,7 +403,7 @@ describe( '<RepostButton>', () => {
 		);
 		renderWithProvider(
 			<SocialAnalyticsProvider
-				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn() } }
+				value={ { source: 'atmosphere', connectionId: 42, onClick: vi.fn() } }
 			>
 				<RepostProvider value={ useRepostAction }>
 					<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ onParentClick }>

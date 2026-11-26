@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Theme rendering should match snapshot 1`] = `
+exports[`Theme > rendering > should match snapshot 1`] = `
 <div
   class="card theme-card theme-card--is-actionable is-clickable"
   data-e2e-theme="twenty-seventeen"

@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { ImageEditorToolbar } from '../image-editor-toolbar';
 
 describe( 'ImageEditorToolbar', () => {
 	const defaultProps = {
-		onShowNotice: jest.fn(),
+		onShowNotice: vi.fn(),
 		translate: ( string ) => string,
 	};
 

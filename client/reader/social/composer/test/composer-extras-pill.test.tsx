@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { ComposerExtrasPill } from '../composer-extras-pill';
 
 describe( 'ComposerExtrasPill', () => {
@@ -44,7 +45,7 @@ describe( 'ComposerExtrasPill', () => {
 
 	it( 'fires onOpen when the popover opens', async () => {
 		const user = userEvent.setup();
-		const onOpen = jest.fn();
+		const onOpen = vi.fn();
 		render(
 			<ComposerExtrasPill
 				icon={ null }

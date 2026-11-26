@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import wpcom from 'calypso/lib/wp';
 import SiteMigrationApplicationPasswordAuthorization from '..';
@@ -20,10 +21,12 @@ const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions
 	);
 };
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: { get: jest.fn(), post: jest.fn() },
-} ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: { get: vi.fn(), post: vi.fn() },
+	} )
+);
+vi.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
 const { getByRole, findByText, getByLabelText } = screen;
 
@@ -37,12 +40,12 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( useSiteSlugParam as jest.Mock ).mockReturnValue( 'site-url.wordpress.com' );
+		vi.clearAllMocks();
+		( useSiteSlugParam as Mock ).mockReturnValue( 'site-url.wordpress.com' );
 	} );
 
 	it( 'renders the loading state when the authorization is successful and the application password is not yet stored', async () => {
-		( wpcom.req.post as jest.Mock ).mockImplementation( () => new Promise( () => {} ) );
+		( wpcom.req.post as Mock ).mockImplementation( () => new Promise( () => {} ) );
 
 		const initialEntry = `/step?from=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&user_login=test&password=test`;
 		render( {}, { initialEntry } );
@@ -53,10 +56,10 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	} );
 
 	it( 'redirects to the next step when the application password is stored', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		const initialEntry = `/step?from=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&user_login=test&password=test`;
 
-		( wpcom.req.post as jest.Mock ).mockResolvedValue( {
+		( wpcom.req.post as Mock ).mockResolvedValue( {
 			status: 200,
 			body: {
 				data: { status: 200 },
@@ -70,7 +73,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	} );
 
 	it( 'renders the error state when the application password fails to be stored', async () => {
-		( wpcom.req.post as jest.Mock ).mockRejectedValue( {
+		( wpcom.req.post as Mock ).mockRejectedValue( {
 			status: 500,
 			body: {
 				code: 'no_ticket_found',
@@ -90,7 +93,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	} );
 
 	it( 'renders the alert notice when the authorization is rejected', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		const initialEntry = `/step?from=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }&success=false`;
 		render( { navigation: { submit } }, { initialEntry } );
 
@@ -104,7 +107,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	} );
 
 	it( 'the authorization button redirects to the source URL when clicked', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		const initialEntry = `/step?from=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }`;
 		render( { navigation: { submit } }, { initialEntry } );
 
@@ -114,7 +117,7 @@ describe( 'SiteMigrationApplicationPasswordAuthorization', () => {
 	} );
 
 	it( 'the share credentials button redirects to the fallback credentials step', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		const initialEntry = `/step?from=${ sourceUrl }&authorizationUrl=${ encodedAuthorizationUrl }`;
 		render( { navigation: { submit } }, { initialEntry } );
 

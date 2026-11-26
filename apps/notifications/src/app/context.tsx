@@ -67,6 +67,12 @@ export const AppProvider = ( {
 export const useAppContext = () => useContext( AppContext );
 
 /**
+ * Whether the note inside is open. A note that has closed stays on screen while it slides out of
+ * the panel, but its shortcuts must stop at once: the list's shortcuts use the same keys.
+ */
+export const NoteOpenContext = createContext( true );
+
+/**
  * Returns a function that opens the host's full view on the given tab and note, or nothing when the host has no full view.
  */
 export const useOpenFullView = ( { filterName, noteId }: FullView ) => {

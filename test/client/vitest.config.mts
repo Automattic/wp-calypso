@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { transformWithOxc, type Plugin } from 'vite';
 import { calypsoTestConfig } from '../../build-tools/vite/test.mjs';
-import { vitestExclude, vitestInclude } from './vitest-directories.js';
 
 process.env.TZ = 'UTC';
 
@@ -11,12 +10,17 @@ const jsonValidMock = path.join( client, '__mocks__/is-my-json-valid.js' );
 
 const plugins: Plugin[] = [
 	{
-		// Matches Jest's asset transform, which exports the file's basename.
+		// Matches Jest's asset transform, which exports the file's basename. Client code imports
+		// `flag-icons` SVGs and the `gridicons` sprite, and tests and snapshots expect file names.
 		name: 'asset-basename',
 		enforce: 'pre',
 		load( id ) {
 			const file = id.split( '?' )[ 0 ];
-			if ( /\.(gif|jpe?g|png|svg|webp|mp4)$/.test( file ) && ! file.includes( '/node_modules/' ) ) {
+			if (
+				/\.(gif|jpe?g|png|svg|webp|mp4)$/.test( file ) &&
+				( ! file.includes( '/node_modules/' ) ||
+					/\/node_modules\/(flag-icons|gridicons)\//.test( file ) )
+			) {
 				return `export default ${ JSON.stringify( path.basename( file ) ) };`;
 			}
 		},
@@ -41,8 +45,8 @@ const plugins: Plugin[] = [
 		},
 	},
 	{
-		// Jest picks up `client/__mocks__` for node modules by itself. The mock imports the real
-		// module, so it can't be an alias.
+		// Vitest doesn't pick up `client/__mocks__` for node modules by itself, as Jest did. The mock
+		// imports the real module, so it can't be an alias.
 		name: 'is-my-json-valid-mock',
 		enforce: 'pre',
 		resolveId( source, importer ) {
@@ -74,8 +78,8 @@ export default calypsoTestConfig( {
 		],
 	},
 	test: {
-		include: vitestInclude,
-		exclude: [ ...vitestExclude, 'dashboard/**', 'server/**', '**/node_modules/**' ],
+		include: [ '**/test/*.[jt]s?(x)' ],
+		exclude: [ 'dashboard/**', 'server/**', '**/node_modules/**' ],
 		passWithNoTests: true,
 		snapshotFormat: { escapeString: true, printBasicPrototype: true },
 		setupFiles: [ path.join( import.meta.dirname, 'vitest-setup.ts' ) ],

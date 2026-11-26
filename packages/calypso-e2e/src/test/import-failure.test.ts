@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events';
-import { describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { getImportFailure, watchImportFailure } from '../lib/import-failure';
 import type { Page } from 'playwright';
 
@@ -108,6 +108,12 @@ describe( 'getImportFailure', () => {
 
 const IMPORTS_URL = 'https://public-api.wordpress.com/rest/v1.1/sites/1/imports/?http_envelope=1';
 
+// The Playground importer polls its own import.
+const IMPORT_URL =
+	'https://public-api.wordpress.com/rest/v1.1/sites/1/imports/6abe46dd09088?http_envelope=1';
+
+const STEP_TIMEOUT = 3 * 60 * 1000;
+
 /**
  * A response as the watcher reads it: its method, URL and JSON body.
  */
@@ -124,7 +130,7 @@ async function watchResponses(
 	{ stopFirst = false } = {}
 ): Promise< { error: Error | null; listeners: number } > {
 	const page = new EventEmitter();
-	const { failed, stop } = watchImportFailure( page as unknown as Page );
+	const { failed, stop } = watchImportFailure( page as unknown as Page, STEP_TIMEOUT );
 	let error: Error | null = null;
 	failed.catch( ( rejection: Error ) => {
 		error = rejection;
@@ -167,6 +173,14 @@ describe( 'watchImportFailure', () => {
 		expect( error?.message ).toContain( 'ssh_exec_failed' );
 	} );
 
+	test( 'rejects when the Playground import poll reports a failure', async () => {
+		const { error } = await watchResponses( [
+			fakeResponse( IMPORT_URL, async () => SSH_EXEC_FAILED_ENVELOPE ),
+		] );
+
+		expect( error?.message ).toContain( 'ssh_exec_failed' );
+	} );
+
 	test.each( [
 		[ 'a healthy poll', fakeResponse( IMPORTS_URL, async () => HANDOVER_ENVELOPE ) ],
 		[
@@ -174,9 +188,9 @@ describe( 'watchImportFailure', () => {
 			fakeResponse( IMPORTS_URL, async () => SSH_EXEC_FAILED_ENVELOPE, 'POST' ),
 		],
 		[
-			'a failure from another imports endpoint',
+			'a failure from an endpoint nested under an import',
 			fakeResponse(
-				'https://public-api.wordpress.com/rest/v1.1/sites/1/imports/123/',
+				'https://public-api.wordpress.com/rest/v1.1/sites/1/imports/123/authors/',
 				async () => SSH_EXEC_FAILED_ENVELOPE
 			),
 		],
@@ -194,5 +208,134 @@ describe( 'watchImportFailure', () => {
 
 		expect( error ).toBeNull();
 		expect( listeners ).toBe( 0 );
+	} );
+} );
+
+/**
+ * Watches a fake page, emits each poll after its delay, wrapped in an HTTP
+ * envelope, and settles the reads, then reports whether the watch rejected and
+ * with what.
+ */
+async function watchPolls( polls: [ number, unknown ][] ): Promise< Error | null > {
+	const page = new EventEmitter();
+	const { failed, stop } = watchImportFailure( page as unknown as Page, STEP_TIMEOUT );
+	let error: Error | null = null;
+	failed.catch( ( rejection: Error ) => {
+		error = rejection;
+	} );
+
+	for ( const [ delay, body ] of polls ) {
+		await vi.advanceTimersByTimeAsync( delay );
+		page.emit(
+			'response',
+			fakeResponse( IMPORT_URL, async () => ( { code: 200, headers: [], body } ) )
+		);
+	}
+
+	await vi.advanceTimersByTimeAsync( 0 );
+	stop();
+
+	return error;
+}
+
+const step = ( current_step?: string ) => ( {
+	...IMPORTING,
+	customData: current_step ? { current_step, message: '' } : undefined,
+} );
+
+describe( 'watchImportFailure stall detection', () => {
+	afterEach( () => {
+		vi.useRealTimers();
+	} );
+
+	test( 'rejects naming the step that outlasts the step timeout', async () => {
+		vi.useFakeTimers();
+
+		const error = await watchPolls( [
+			[ 0, step() ],
+			[ 5000, step( 'convert_to_atomic' ) ],
+			[ STEP_TIMEOUT / 2, step( 'convert_to_atomic' ) ],
+			[ STEP_TIMEOUT / 2, step( 'convert_to_atomic' ) ],
+		] );
+
+		expect( error?.message ).toBe(
+			'The import stalled on WordPress.com at convert_to_atomic for 180s'
+		);
+	} );
+
+	test( 'rejects when the import never reports a step', async () => {
+		vi.useFakeTimers();
+
+		const error = await watchPolls( [
+			[ 0, step() ],
+			[ STEP_TIMEOUT, step() ],
+		] );
+
+		expect( error?.message ).toBe( 'The import stalled on WordPress.com at unset for 180s' );
+	} );
+
+	test( 'starts timing at the first poll', async () => {
+		vi.useFakeTimers();
+
+		const error = await watchPolls( [
+			[ STEP_TIMEOUT * 2, step() ],
+			[ STEP_TIMEOUT - 1000, step() ],
+		] );
+
+		expect( error ).toBeNull();
+	} );
+
+	test( 'restarts the timeout on each new step', async () => {
+		vi.useFakeTimers();
+
+		const error = await watchPolls( [
+			[ 0, step( 'convert_to_atomic' ) ],
+			[ STEP_TIMEOUT - 1000, step( 'download_archive' ) ],
+			[ STEP_TIMEOUT - 1000, step( 'unpack_file' ) ],
+			[ STEP_TIMEOUT - 1000, IMPORT_SUCCESS ],
+		] );
+
+		expect( error ).toBeNull();
+	} );
+
+	test( 'stops timing once the import succeeds', async () => {
+		vi.useFakeTimers();
+
+		const error = await watchPolls( [
+			[ 0, IMPORT_SUCCESS ],
+			[ STEP_TIMEOUT * 2, IMPORT_SUCCESS ],
+		] );
+
+		expect( error ).toBeNull();
+	} );
+
+	test.each( [
+		[ 'a list of imports', [ step( 'download_archive' ) ] ],
+		[ 'a poll that names no step', step() ],
+	] )( 'keeps timing the step past %s', async ( _name, body ) => {
+		vi.useFakeTimers();
+
+		const error = await watchPolls( [
+			[ 0, step( 'convert_to_atomic' ) ],
+			[ STEP_TIMEOUT - 1000, body ],
+			[ 1000, step( 'convert_to_atomic' ) ],
+		] );
+
+		expect( error?.message ).toContain( 'at convert_to_atomic' );
+	} );
+
+	test( 'stops timing once stopped', async () => {
+		vi.useFakeTimers();
+		const page = new EventEmitter();
+		const { failed, stop } = watchImportFailure( page as unknown as Page, STEP_TIMEOUT );
+		let error: Error | null = null;
+		failed.catch( ( rejection: Error ) => {
+			error = rejection;
+		} );
+
+		stop();
+		await vi.advanceTimersByTimeAsync( STEP_TIMEOUT * 2 );
+
+		expect( error ).toBeNull();
 	} );
 } );

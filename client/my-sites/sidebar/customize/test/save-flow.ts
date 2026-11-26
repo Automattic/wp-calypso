@@ -1,9 +1,10 @@
+import { type Mock, vi } from 'vitest';
 import { receiveAdminSidebarLayout } from 'calypso/state/admin-sidebar/layout/actions';
 import { saveLayout } from '../save-flow';
 import type { LayoutDelta } from 'calypso/state/admin-sidebar/layout/types';
 
-jest.mock( 'calypso/state/admin-sidebar/layout/actions', () => ( {
-	receiveAdminSidebarLayout: jest.fn( ( siteId, delta ) => ( {
+vi.mock( 'calypso/state/admin-sidebar/layout/actions', () => ( {
+	receiveAdminSidebarLayout: vi.fn( ( siteId, delta ) => ( {
 		type: 'ADMIN_SIDEBAR_LAYOUT_RECEIVE',
 		siteId,
 		delta,
@@ -23,13 +24,13 @@ const sampleDelta: LayoutDelta = {
 
 describe( 'customize save-flow', () => {
 	beforeEach( () => {
-		( receiveAdminSidebarLayout as jest.Mock ).mockClear();
+		( receiveAdminSidebarLayout as Mock ).mockClear();
 	} );
 
 	it( 'POSTs the working delta and dispatches the persisted delta on success', async () => {
 		const persisted: LayoutDelta = { ...sampleDelta, updated_at: 12345 };
-		const requestImpl = jest.fn().mockResolvedValue( persisted );
-		const dispatch = jest.fn();
+		const requestImpl = vi.fn().mockResolvedValue( persisted );
+		const dispatch = vi.fn();
 		const result = await saveLayout( dispatch, {
 			siteId: 12345,
 			delta: sampleDelta,
@@ -51,10 +52,10 @@ describe( 'customize save-flow', () => {
 	} );
 
 	it( 'rethrows with the server error message on failure', async () => {
-		const requestImpl = jest.fn().mockRejectedValue( {
+		const requestImpl = vi.fn().mockRejectedValue( {
 			message: 'overrides exceeds the maximum of 64.',
 		} );
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		await expect(
 			saveLayout( dispatch, { siteId: 12345, delta: sampleDelta, requestImpl } )
 		).rejects.toThrow( 'overrides exceeds the maximum of 64.' );
@@ -62,8 +63,8 @@ describe( 'customize save-flow', () => {
 	} );
 
 	it( 'rejects with a malformed-response error when the body is not a delta', async () => {
-		const requestImpl = jest.fn().mockResolvedValue( null );
-		const dispatch = jest.fn();
+		const requestImpl = vi.fn().mockResolvedValue( null );
+		const dispatch = vi.fn();
 		await expect(
 			saveLayout( dispatch, { siteId: 12345, delta: sampleDelta, requestImpl } )
 		).rejects.toThrow( /malformed/ );
@@ -71,8 +72,8 @@ describe( 'customize save-flow', () => {
 	} );
 
 	it( 'falls back to a generic message when the rejected error has no message', async () => {
-		const requestImpl = jest.fn().mockRejectedValue( {} );
-		const dispatch = jest.fn();
+		const requestImpl = vi.fn().mockRejectedValue( {} );
+		const dispatch = vi.fn();
 		await expect(
 			saveLayout( dispatch, { siteId: 12345, delta: sampleDelta, requestImpl } )
 		).rejects.toThrow( 'Save failed.' );

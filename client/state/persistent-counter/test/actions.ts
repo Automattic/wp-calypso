@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { PREFERENCE_BASE_NAME } from '../constants';
 import { isSameDay, incrementPreference } from '../helpers';
 
@@ -45,7 +46,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should cleanly update the preferences object without affecting other values', () => {
-			jest.spyOn( Date, 'now' ).mockReturnValueOnce( 9999 );
+			vi.spyOn( Date, 'now' ).mockReturnValueOnce( 9999 );
 
 			const result = incrementPreference(
 				{
@@ -94,7 +95,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should update lastUpdated on increment', () => {
-			jest.spyOn( Date, 'now' ).mockReturnValueOnce( 9999 );
+			vi.spyOn( Date, 'now' ).mockReturnValueOnce( 9999 );
 
 			const result = incrementPreference(
 				{

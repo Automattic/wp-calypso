@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { SELECTED_ITEMS_SESSION_STORAGE_KEY } from '../../lib/shopping-cart-storage';
 import useShoppingCart from '../use-shopping-cart';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn();
-	return Object.assign( config, {
+vi.mock( '@automattic/calypso-config', () => {
+	const config = Object.assign( vi.fn(), {
 		isEnabled: ( flag: string ) => flag === 'a4a-bd-checkout',
 	} );
+	return { ...config, default: config };
 } );
 
 // One array across renders, as the query returns: the cart restores whenever it changes.
@@ -24,7 +25,7 @@ const mockProducts = [
 	},
 ];
 
-jest.mock( 'calypso/a8c-for-agencies/data/marketplace/use-products-query', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/data/marketplace/use-products-query', () => ( {
 	__esModule: true,
 	default: () => ( { data: mockProducts } ),
 } ) );

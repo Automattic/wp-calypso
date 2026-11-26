@@ -1,37 +1,40 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, renderHook, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import { useBlackboxProtection } from '../use-blackbox-protection';
 import type { BlackboxState } from 'calypso/types';
 
-jest.mock( '../utils/blackbox-sdk', () => ( {
-	...jest.requireActual( '../utils/blackbox-sdk' ),
-	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
+vi.mock( '../utils/blackbox-sdk', async () => ( {
+	...( await vi.importActual< typeof import( '../utils/blackbox-sdk' ) >(
+		'../utils/blackbox-sdk'
+	) ),
+	loadBlackboxSdk: vi.fn( () => Promise.resolve() ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
-	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+vi.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: vi.fn().mockResolvedValue( undefined ),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = ( key: string ) => {
 		if ( key === 'blackbox_api_key' ) {
 			return 'login-key';
 		}
 		return undefined;
 	};
-	config.isEnabled = jest.fn( () => true );
-	return config;
+	config.isEnabled = vi.fn( () => true );
+	return { ...config, default: config };
 } );
 
 describe( 'useBlackboxProtection resetOnError', () => {
 	let sdk: { setState: ( state: BlackboxState ) => void };
-	let reset: jest.Mock;
+	let reset: Mock;
 
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		let snapshot: BlackboxState = { status: 'ready', sessionId: 'sid' };
 		const listeners = new Set< ( state: BlackboxState ) => void >();
 		sdk = {
@@ -40,11 +43,11 @@ describe( 'useBlackboxProtection resetOnError', () => {
 				listeners.forEach( ( listener ) => listener( snapshot ) );
 			},
 		};
-		reset = jest.fn( () => sdk.setState( { status: 'loading' } ) );
+		reset = vi.fn( () => sdk.setState( { status: 'loading' } ) );
 		window.Blackbox = {
-			configure: jest.fn(),
+			configure: vi.fn(),
 			reset,
-			flush: jest.fn(),
+			flush: vi.fn(),
 			getSnapshot: () => snapshot,
 			subscribe: ( listener ) => {
 				listeners.add( listener );
@@ -53,16 +56,16 @@ describe( 'useBlackboxProtection resetOnError', () => {
 					listeners.delete( listener );
 				};
 			},
-			collect: jest.fn(),
-			getSessionId: jest.fn(),
+			collect: vi.fn(),
+			getSessionId: vi.fn(),
 		};
-		( getBlackboxSessionId as jest.Mock ).mockReset();
-		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( undefined );
+		( getBlackboxSessionId as Mock ).mockReset();
+		( getBlackboxSessionId as Mock ).mockResolvedValue( undefined );
 	} );
 
 	afterEach( () => {
 		delete window.Blackbox;
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	function renderProtection( initialProps: {
@@ -193,7 +196,7 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		rerender( <ContinueButton resetOnError={ { code: 403 } } /> );
 
 		act( () => sdk.setState( { status: 'challenge', sessionId: 'replacement' } ) );
-		act( () => jest.advanceTimersByTime( 5000 ) );
+		act( () => vi.advanceTimersByTime( 5000 ) );
 		expect( screen.getByRole( 'button' ) ).toBeDisabled();
 
 		act( () => sdk.setState( { status: 'ready', sessionId: 'replacement' } ) );
@@ -205,17 +208,17 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		await act( async () => {} );
 		rerender( <ContinueButton resetOnError={ { code: 403 } } /> );
 
-		act( () => jest.advanceTimersByTime( 4999 ) );
+		act( () => vi.advanceTimersByTime( 4999 ) );
 		expect( screen.getByRole( 'button' ) ).toBeDisabled();
-		act( () => jest.advanceTimersByTime( 1 ) );
+		act( () => vi.advanceTimersByTime( 1 ) );
 		expect( screen.getByRole( 'button' ) ).toBeEnabled();
 	} );
 } );
 
 describe( 'useBlackboxProtection key', () => {
 	beforeEach( () => {
-		( getBlackboxSessionId as jest.Mock ).mockReset();
-		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		( getBlackboxSessionId as Mock ).mockReset();
+		( getBlackboxSessionId as Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 	} );
 
 	it.each( [ 'login', 'signup' ] as const )(

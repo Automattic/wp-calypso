@@ -1,21 +1,24 @@
 import { useLayoutEffect } from 'react';
 import { useSelector, useStore } from 'react-redux';
+import { vi } from 'vitest';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { stopPerformanceTracking } from '../lib';
 import { usePerformanceTrackerStop } from '../use-performance-tracker-stop';
 
-jest.mock( 'react', () => ( {
-	useLayoutEffect: jest.fn(),
+vi.mock( 'react', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useLayoutEffect: vi.fn(),
+	} )
+);
+vi.mock( 'react-redux', () => ( {
+	useSelector: vi.fn(),
+	useStore: vi.fn(),
 } ) );
-jest.mock( 'react-redux', () => ( {
-	useSelector: jest.fn(),
-	useStore: jest.fn(),
+vi.mock( '../lib', () => ( {
+	stopPerformanceTracking: vi.fn(),
 } ) );
-jest.mock( '../lib', () => ( {
-	stopPerformanceTracking: jest.fn(),
-} ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSectionName: jest.fn(),
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSectionName: vi.fn(),
 } ) );
 
 describe( 'usePerformanceTrackerStop hook', () => {
@@ -23,16 +26,16 @@ describe( 'usePerformanceTrackerStop hook', () => {
 
 	beforeEach( () => {
 		originalRequestAnimationFrame = global.requestAnimationFrame;
-		global.requestAnimationFrame = jest.fn( ( fn ) => fn() );
+		global.requestAnimationFrame = vi.fn( ( fn ) => fn() );
 		useLayoutEffect.mockImplementation( ( fn ) => fn() );
 		useSelector.mockImplementation( ( selector ) => selector() );
 		useStore.mockImplementation( () => ( {
-			getState: jest.fn( () => ( {} ) ),
+			getState: vi.fn( () => ( {} ) ),
 		} ) );
 	} );
 
 	afterEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		global.requestAnimationFrame = originalRequestAnimationFrame;
 	} );
 

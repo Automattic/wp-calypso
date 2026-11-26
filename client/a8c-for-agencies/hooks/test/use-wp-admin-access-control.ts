@@ -1,12 +1,13 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
+import { type MockedFunction, vi } from 'vitest';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { hasNoWPAdminAccess } from '../use-wp-admin-access-control';
 
-jest.mock( 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies' );
+vi.mock( 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies' );
 
-const mockedIsA8CForAgencies = isA8CForAgencies as jest.MockedFunction< typeof isA8CForAgencies >;
+const mockedIsA8CForAgencies = isA8CForAgencies as MockedFunction< typeof isA8CForAgencies >;
 
 describe( 'hasNoWPAdminAccess', () => {
 	beforeEach( () => {

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { act, screen, waitFor } from '@testing-library/react';
@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginForm from 'calypso/blocks/login/login-form';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
@@ -20,16 +21,18 @@ import initialReducer from 'calypso/state/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( 'cookie', () => ( {
-	parse: jest.fn( () => ( { last_used_authentication_method: '' } ) ),
-	serialize: jest.fn(),
+vi.mock( 'cookie', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		parse: vi.fn( () => ( { last_used_authentication_method: '' } ) ),
+		serialize: vi.fn(),
+	} )
+);
+
+vi.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: vi.fn().mockResolvedValue( undefined ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
-	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
-} ) );
-
-jest.mock( 'calypso/blocks/login/blackbox-challenge' );
+vi.mock( 'calypso/blocks/login/blackbox-challenge' );
 
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { login: loginReducer, route: routeReducer } } );
@@ -346,12 +349,12 @@ describe( 'LoginForm', () => {
 	} );
 
 	describe( 'Blackbox integration', () => {
-		const mockFetch = jest.fn();
+		const mockFetch = vi.fn();
 
 		// authAccountType 'regular' puts the form in password view so submitting
 		// dispatches loginUser() directly (no account-type round-trip).
 		const renderRegularLoginForm = () =>
-			render( <LoginForm isSocialFirst onSuccess={ jest.fn() } redirectTo="" />, {
+			render( <LoginForm isSocialFirst onSuccess={ vi.fn() } redirectTo="" />, {
 				initialState: { login: { authAccountType: 'regular' } },
 			} );
 
@@ -450,7 +453,7 @@ describe( 'LoginForm', () => {
 			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 			mockFetch.mockResolvedValueOnce( {
 				ok: true,
-				json: jest.fn().mockResolvedValue( { data: { two_step_notification_sent: 'app' } } ),
+				json: vi.fn().mockResolvedValue( { data: { two_step_notification_sent: 'app' } } ),
 			} );
 
 			renderRegularLoginForm();
@@ -467,7 +470,7 @@ describe( 'LoginForm', () => {
 			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 			mockFetch.mockResolvedValueOnce( {
 				ok: true,
-				json: jest.fn().mockResolvedValue( { data: { two_step_notification_sent: 'app' } } ),
+				json: vi.fn().mockResolvedValue( { data: { two_step_notification_sent: 'app' } } ),
 			} );
 
 			renderRegularLoginForm();
@@ -481,11 +484,11 @@ describe( 'LoginForm', () => {
 		} );
 
 		test( 'resets Blackbox when the login request fails', async () => {
-			window.Blackbox = { reset: jest.fn() };
+			window.Blackbox = { reset: vi.fn() };
 			mockFetch.mockResolvedValueOnce( {
 				ok: false,
 				status: 400,
-				text: jest.fn().mockResolvedValue( '' ),
+				text: vi.fn().mockResolvedValue( '' ),
 			} );
 
 			renderRegularLoginForm();
@@ -514,7 +517,7 @@ describe( 'LoginForm', () => {
 			mockFetch.mockResolvedValue( {
 				ok: false,
 				status: 400,
-				text: jest.fn().mockResolvedValue( '' ),
+				text: vi.fn().mockResolvedValue( '' ),
 			} );
 
 			renderRegularLoginForm();
