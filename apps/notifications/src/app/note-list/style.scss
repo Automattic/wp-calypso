@@ -18,7 +18,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 24px;
+		padding: var( --wpds-dimension-padding-2xl );
 	}
 
 	.wpnc__load-error-description {
