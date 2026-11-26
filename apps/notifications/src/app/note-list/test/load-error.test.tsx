@@ -11,7 +11,7 @@ import { AppProvider } from '../../context';
 import NoteList from '../index';
 import type { FilterName } from '../../types';
 
-const ERROR_MESSAGE = 'Couldn’t load your notifications.';
+const ERROR_MESSAGE = 'Notifications unavailable';
 
 const noop = () => {};
 

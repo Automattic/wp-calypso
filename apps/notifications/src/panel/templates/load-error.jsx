@@ -10,7 +10,8 @@ const TITLE_OFFSET = 38;
 export const LoadError = ( { height, isRetrying, onRetry, translate } ) => (
 	<div className="wpnc__empty-notes-container" style={ { height: height - TITLE_OFFSET + 'px' } }>
 		<div className="wpnc__empty-notes">
-			<h2>{ translate( 'Couldn’t load your notifications.' ) }</h2>
+			<h2>{ translate( 'Notifications unavailable' ) }</h2>
+			<p>{ translate( 'Something went wrong while loading them.' ) }</p>
 			<p>
 				<Button
 					__next40pxDefaultSize

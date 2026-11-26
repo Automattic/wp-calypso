@@ -10,7 +10,7 @@ import actions from '../../state/actions';
 import FilterBarController from '../filter-bar-controller';
 import NoteList from '../note-list';
 
-const ERROR_MESSAGE = 'Couldn’t load your notifications.';
+const ERROR_MESSAGE = 'Notifications unavailable';
 
 const noop = () => {};
 
