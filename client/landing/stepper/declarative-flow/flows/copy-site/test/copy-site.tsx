@@ -96,7 +96,7 @@ function renderAssertions( source = sourceSlug ) {
 	);
 }
 
-function renderEntry( features = {}, mountCopyStep = false ) {
+function renderEntry( features = {}, mountCopyStep = false, extraQuery = '' ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, gcTime: Infinity } },
 	} );
@@ -119,7 +119,7 @@ function renderEntry( features = {}, mountCopyStep = false ) {
 	const ui = (
 		<MemoryRouter
 			initialEntries={ [
-				`/setup/copy-site/automated-copy?sourceSlug=${ sourceSlug }&siteSlug=${ destinationSlug }`,
+				`/setup/copy-site/automated-copy?sourceSlug=${ sourceSlug }&siteSlug=${ destinationSlug }${ extraQuery }`,
 			] }
 		>
 			<Entry />
@@ -345,5 +345,55 @@ describe( 'copy site failure handling', () => {
 				.mocked( wpcomRequest )
 				.mock.calls.filter( ( [ request ] ) => request.path === `/sites/${ destinationSlug }` )
 		).toHaveLength( 1 );
+	} );
+} );
+
+describe( 'copy site data center', () => {
+	it.each( [
+		[ 'ams', { source_blog_id: source.ID, geo_affinity: 'ams' } ],
+		[ 'lhr', { source_blog_id: source.ID } ],
+	] )( 'starts the copy for dataCenter=%s with %o', async ( dataCenter, body ) => {
+		vi.mocked( wpcomRequest ).mockImplementation( ( { path } ) =>
+			Promise.resolve( path === `/sites/${ destinationSlug }` ? destination : source )
+		);
+		vi.mocked( wpcom.req.get ).mockResolvedValue( { active: [ WPCOM_FEATURES_COPY_SITE ] } );
+		renderEntry( {}, true, `&dataCenter=${ dataCenter }` );
+		await waitFor( () =>
+			expect( wpcom.req.post ).toHaveBeenCalledWith( {
+				path: '/sites/2/copy-from-site',
+				apiNamespace: 'wpcom/v2',
+				body,
+			} )
+		);
+	} );
+
+	it( 'keeps the chosen data center across checkout', async () => {
+		const { result } = renderHookWithProvider(
+			() => copySite.useStepNavigation( 'processing', navigate ),
+			{
+				wrapper: ( { children }: { children: React.ReactNode } ) => (
+					<MemoryRouter
+						initialEntries={ [
+							`/setup/copy-site/processing?sourceSlug=${ sourceSlug }&dataCenter=ams`,
+						] }
+					>
+						{ children }
+					</MemoryRouter>
+				),
+			}
+		);
+		await act( async () => {
+			await result.current.submit( { siteSlug: destinationSlug } );
+		} );
+		const checkoutUrl = new URL(
+			vi.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
+			'https://wordpress.com'
+		);
+		const afterCheckout = new URL(
+			checkoutUrl.searchParams.get( 'redirect_to' ) as string,
+			'https://wordpress.com'
+		);
+		expect( afterCheckout.pathname ).toBe( '/setup/copy-site/automated-copy' );
+		expect( afterCheckout.searchParams.get( 'dataCenter' ) ).toBe( 'ams' );
 	} );
 } );

@@ -9,6 +9,10 @@ import {
 	getTransferFailureMessage,
 	transferStates,
 } from 'calypso/landing/stepper/utils/atomic-transfer-outcome';
+import {
+	getCopyFromSiteBody,
+	getCopySiteDataCenter,
+} from 'calypso/landing/stepper/utils/copy-site-data-center';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
@@ -26,6 +30,7 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 	const sourceSlug = urlQueryParams.get( 'sourceSlug' );
 	const { data: sourceSite } = useSiteQuery( sourceSlug ?? undefined, { enabled: !! sourceSlug } );
 	const sourceSiteId = sourceSite?.ID;
+	const dataCenter = getCopySiteDataCenter( urlQueryParams );
 	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
@@ -49,15 +54,14 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 			return;
 		}
 		instanceRef.current = { siteId: site.ID, sourceSiteId };
+		const copyFromSiteBody = getCopyFromSiteBody( sourceSiteId, dataCenter );
 
 		async function initCopySite() {
 			try {
 				await wpcom.req.post( {
 					path: `/sites/${ site?.ID }/copy-from-site`,
 					apiNamespace: 'wpcom/v2',
-					body: {
-						source_blog_id: sourceSiteId,
-					},
+					body: copyFromSiteBody,
 				} );
 			} catch ( _error ) {
 				throw new Error( __( 'Error copying site' ) );
@@ -143,6 +147,7 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 
 		submit?.();
 	}, [
+		dataCenter,
 		exitFlow,
 		getSiteLatestAtomicTransfer,
 		getSiteLatestAtomicTransferError,

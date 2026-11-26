@@ -6,6 +6,10 @@ import { useDispatch } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import {
+	COPY_SITE_DATA_CENTER_PARAM,
+	getCopySiteDataCenter,
+} from 'calypso/landing/stepper/utils/copy-site-data-center';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import {
 	clearSignupDestinationCookie,
@@ -136,6 +140,7 @@ const copySite: Flow = {
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
 						sourceSlug: sourceSiteSlug,
 						siteSlug: siteSlug,
+						[ COPY_SITE_DATA_CENTER_PARAM ]: getCopySiteDataCenter( urlQueryParams ),
 					} );
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( siteSlug );
