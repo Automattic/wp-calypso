@@ -9,9 +9,9 @@ import InlineSupportLink from '../../../../../../components/inline-support-link'
 import Notice, { NoticeActionButton } from '../../../../../../components/notice';
 import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
+import { getBackendCalloutProps } from '../../../../../../sites/apm/components/backend-callout';
+import { hasBackendAccess } from '../../../../../../sites/apm/utils/backend-access';
 import UpsellCallout from '../../../../../../sites/hosting-feature-gated-with-callout/upsell';
-import { hasBackendAccess } from '../../../../../../sites/performance/backend-access';
-import { getBackendCalloutProps } from '../../../../../../sites/performance/backend-callout';
 
 function ApmToggle( { site }: { site: Site } ) {
 	const enabled = !! site.options?.apm_enabled;
