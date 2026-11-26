@@ -7,7 +7,7 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { render } from '../../../test-utils';
+import { render } from '../../../../../../test-utils';
 import SiteCriticalError from '../index';
 import type { Site } from '@automattic/api-core';
 

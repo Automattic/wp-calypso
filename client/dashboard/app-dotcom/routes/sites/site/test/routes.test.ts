@@ -5,13 +5,13 @@
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { mockPreferences, renderRoute } from '../../../test-utils/render-route';
-import '../../../../../sites/critical-error';
-import '../../../../../sites/difm-lite-in-progress';
+import '../critical-error';
+import '../site-building-in-progress';
 import '../../../../../sites/migration-overview';
 import '..';
 import '../../../../../sites/site';
 import '../../../../../sites/site/error';
-import '../../../../../sites/trial-ended';
+import '../trial-ended';
 import type { Site, User } from '@automattic/api-core';
 
 const user = { ID: 1, site_count: 1 } as User;
