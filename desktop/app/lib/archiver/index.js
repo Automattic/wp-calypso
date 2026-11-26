@@ -1,6 +1,6 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const { ZipArchive } = require( 'archiver' );
+const { Uint8ArrayReader, Uint8ArrayWriter, ZipWriter } = require( '@zip.js/zip.js' );
 const log = require( '../../lib/logger' )( 'desktop:lib:archiver' );
 
 module.exports = {
@@ -10,43 +10,33 @@ module.exports = {
 	 * @param {string} dst Path to destination archive
 	 * @param {function():void} onZipped Callback invoked when archive is complete
 	 */
-	zipContents: ( contents, dst, onZipped ) => {
-		const output = fs.createWriteStream( dst );
-		const archive = new ZipArchive( {
-			zlib: { level: 9 },
-		} );
+	zipContents: async ( contents, dst, onZipped ) => {
+		const zip = new ZipWriter( new Uint8ArrayWriter() );
+		const zipSubdir = path.basename( dst ).replace( '.zip', '' );
 
-		output.on( 'close', function () {
-			log.debug( 'Archive finalized: %s bytes written', archive.pointer() );
-			if ( typeof onZipped === 'function' ) {
-				onZipped();
-			}
-		} );
-
-		// Catch warnings (e.g. stat failures and other non-blocking errors)
-		archive.on( 'warning', function ( err ) {
-			log.warn( 'Unexpected error: ', err );
-		} );
-
-		archive.on( 'error', function ( err ) {
-			throw err;
-		} );
-
-		archive.pipe( output );
-
-		for ( let i = 0; i < contents.length; i++ ) {
-			const src = contents[ i ];
-			const zipSubdir = path.basename( dst ).replace( '.zip', '' );
-			const dstInZipSubdir = path.join( zipSubdir, path.basename( src ) );
-
-			const stat = fs.lstatSync( src );
+		// Zip entry names always use forward slashes, whatever the platform's separator.
+		const add = async ( src, name ) => {
+			const stat = fs.statSync( src );
 			if ( stat.isDirectory() ) {
-				archive.directory( path.join( src, path.sep ), dstInZipSubdir );
-				continue;
+				for ( const entry of fs.readdirSync( src ) ) {
+					await add( path.join( src, entry ), path.posix.join( name, entry ) );
+				}
+				return;
 			}
-			archive.file( src, { name: dstInZipSubdir } );
+			await zip.add( name, new Uint8ArrayReader( fs.readFileSync( src ) ), {
+				lastModDate: stat.mtime,
+			} );
+		};
+
+		for ( const src of contents ) {
+			await add( src, path.posix.join( zipSubdir, path.basename( src ) ) );
 		}
 
-		archive.finalize();
+		const data = await zip.close();
+		fs.writeFileSync( dst, data );
+		log.debug( 'Archive finalized: %s bytes written', data.length );
+		if ( typeof onZipped === 'function' ) {
+			onZipped();
+		}
 	},
 };

@@ -65,7 +65,7 @@ module.exports = async function ( window ) {
 		const desktop = app.getPath( 'desktop' );
 		const dst = path.join( desktop, `wpdesktop-${ timestamp }.zip` );
 
-		zipContents( [ logPath, settingsPath ], dst, onZipped( dst ) );
+		await zipContents( [ logPath, settingsPath ], dst, onZipped( dst ) );
 	} catch ( error ) {
 		log.error( 'Failed to zip logs: ', error );
 		onError( error );
