@@ -13,7 +13,7 @@ import InlineSupportLink from '../../../../../../components/inline-support-link'
 import Notice from '../../../../../../components/notice';
 import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import AllowListForm from '../../../../../../sites/web-application-firewall/components/allow-list-form';
 import AutomaticRulesForm from '../../../../../../sites/web-application-firewall/components/automatic-rules-form';
 import BlockListForm from '../../../../../../sites/web-application-firewall/components/block-list-form';

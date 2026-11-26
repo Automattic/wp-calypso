@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
+import { hasHostingFeature, hasPlanFeature } from '../../../../utils/site-features';
 import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
 export interface HostingFeatureGateProps {

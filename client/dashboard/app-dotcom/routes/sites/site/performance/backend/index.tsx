@@ -31,7 +31,7 @@ import {
 	usePersistedTimeframe,
 	type Timeframe,
 } from '../../../../../../sites/apm/utils/timeframe';
-import UpsellCallout from '../../../../../../sites/hosting-feature-gated-with-callout/upsell';
+import UpsellCallout from '../../../../../../sites/hosting-features/components/hosting-feature-upsell-callout';
 import PerformancePage from '../../../../../../sites/performance/components/performance-page';
 import { VIEWPORT_BREAKPOINTS } from '../../../../../../sites/performance/constants';
 import type { ApmTab } from '../../../../../../sites/apm/types';

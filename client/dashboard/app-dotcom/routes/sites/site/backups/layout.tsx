@@ -9,7 +9,7 @@ import { ThemedIllustration } from '../../../../../components/themed-illustratio
 import { BackupFileBrowserProvider } from '../../../../../sites/backups/components/backup-file-browser-provider';
 import illustrationDarkUrl from '../../../../../sites/backups/components/upsell-illustration/upsell-illustration-dark.svg';
 import illustrationUrl from '../../../../../sites/backups/components/upsell-illustration/upsell-illustration.svg';
-import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import '../../../../../sites/backups/style.scss';
 
 function SiteBackups() {

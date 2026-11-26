@@ -2,11 +2,11 @@ import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Fragment } from 'react';
-import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
-import ComponentViewTracker from '../../components/component-view-tracker';
-import { Notice } from '../../components/notice';
-import { Text } from '../../components/text';
-import type { NoticeVariant } from '../../components/notice/types';
+import { Card, CardBody, CardDivider, CardHeader } from '../../../../components/card';
+import ComponentViewTracker from '../../../../components/component-view-tracker';
+import { Notice } from '../../../../components/notice';
+import { Text } from '../../../../components/text';
+import type { NoticeVariant } from '../../../../components/notice/types';
 import type { AutomatedTransferEligibilityError } from '@automattic/api-core';
 
 export const EligibilityErrors = {

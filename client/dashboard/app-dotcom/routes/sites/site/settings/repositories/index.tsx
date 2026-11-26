@@ -26,7 +26,7 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 } from '../../../../../../sites/deployments/dataviews/repository-views';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { hasHostingFeature } from '../../../../../../utils/site-features';
 import type { RenderModalProps, Action } from '@wordpress/dataviews';
 

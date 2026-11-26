@@ -5,8 +5,8 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
-import InlineSupportLink from '../../components/inline-support-link';
-import { Text } from '../../components/text';
+import InlineSupportLink from '../../../../components/inline-support-link';
+import { Text } from '../../../../components/text';
 import type {
 	AutomatedTransferEligibilityWarning,
 	AutomatedTransferEligibilityWarningDomainNames,

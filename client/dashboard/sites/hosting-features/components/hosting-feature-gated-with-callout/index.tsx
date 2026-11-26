@@ -1,11 +1,11 @@
 import { useViewportMatch } from '@wordpress/compose';
-import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import EmptyState from '../../components/empty-state';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
+import { PerformanceTrackerStop } from '../../../../app/performance-tracking';
+import EmptyState from '../../../../components/empty-state';
+import { PageHeader } from '../../../../components/page-header';
+import PageLayout from '../../../../components/page-layout';
+import ActivationCallout from '../hosting-feature-activation-callout';
 import HostingFeatureGate from '../hosting-feature-gate';
-import ActivationCallout from './activation';
-import UpsellCallout, { UpsellCalloutProps } from './upsell';
+import UpsellCallout, { UpsellCalloutProps } from '../hosting-feature-upsell-callout';
 import type { HostingFeatureGateProps } from '../hosting-feature-gate';
 import type { ReactNode } from 'react';
 

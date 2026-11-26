@@ -28,7 +28,9 @@ vi.mock( 'calypso/state', () => ( { useDispatch: () => vi.fn() } ) );
 vi.mock( '@automattic/calypso-router', () =>
 	( ( m ) => ( { ...m, default: m } ) )( { replace: vi.fn(), show: vi.fn() } )
 );
-vi.mock( 'calypso/dashboard/sites/hosting-feature-list', () => ( { default: () => null } ) );
+vi.mock( 'calypso/dashboard/sites/hosting-features/components/hosting-feature-list', () => ( {
+	default: () => null,
+} ) );
 vi.mock( '../hosting-activation-button', () => ( {
 	default: ( { text }: { text: string } ) => <button>{ text }</button>,
 } ) );

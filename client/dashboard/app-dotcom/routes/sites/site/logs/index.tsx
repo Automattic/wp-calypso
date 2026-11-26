@@ -19,7 +19,7 @@ import TimeMismatchNotice, {
 import SiteActivityLogsDataViews from '../../../../../sites/activity/components/activity-logs-dataviews';
 import { SitesNoticeArbiter } from '../../../../../sites/components/notice-arbiter';
 import { useDateRange } from '../../../../../sites/hooks/use-date-range';
-import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { getLogsCalloutProps } from '../../../../../sites/logs/components/logs-callout';
 import SiteLogsDataViews from '../../../../../sites/logs/components/logs-dataviews';
 import { hasHostingFeature, hasPlanFeature } from '../../../../../utils/site-features';

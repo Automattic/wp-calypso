@@ -8,13 +8,13 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
-import { render } from '../../../test-utils';
-import ActivationCallout from '../activation';
+import ActivationCallout from '..';
+import { render } from '../../../../../test-utils';
 
 vi.mock( '@automattic/calypso-config', () => {
 	globalThis.window.configData = { env_id: 'dashboard-horizon' };
 	globalThis.window.electron = {};
-	return import( '../../../../../packages/calypso-config/src' );
+	return import( '../../../../../../../packages/calypso-config/src' );
 } );
 
 test( 'shows hosting eligibility in the standalone Desktop Dashboard without Redux', async () => {

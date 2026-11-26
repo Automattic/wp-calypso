@@ -3,7 +3,7 @@ import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chartBar } from '@wordpress/icons';
 import { ThemedIllustration } from '../../../../components/themed-illustration';
-import UpsellCallout from '../../../hosting-feature-gated-with-callout/upsell';
+import UpsellCallout from '../../../hosting-features/components/hosting-feature-upsell-callout';
 import illustrationDarkUrl from '../upsell-illustration/upsell-illustration-dark.svg';
 import illustrationUrl from '../upsell-illustration/upsell-illustration.svg';
 import type { Site } from '@automattic/api-core';

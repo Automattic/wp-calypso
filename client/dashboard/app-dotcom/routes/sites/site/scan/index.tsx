@@ -10,7 +10,7 @@ import TimeMismatchNotice, {
 } from '../../../../../components/time-mismatch-notice';
 import { SitesNoticeArbiter } from '../../../../../sites/components/notice-arbiter';
 import { useSiteTimezone } from '../../../../../sites/hooks/use-site-timezone';
-import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { ScanContent } from '../../../../../sites/scan/components/scan-content';
 import illustrationDarkUrl from '../../../../../sites/scan/components/upsell-illustration/upsell-illustration-dark.svg';
 import illustrationUrl from '../../../../../sites/scan/components/upsell-illustration/upsell-illustration.svg';

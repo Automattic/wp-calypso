@@ -1,7 +1,7 @@
 import { DotcomFeatures, HostingFeatures, Site } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
-import { Text } from '../../components/text';
-import { hasPlanFeature } from '../../utils/site-features';
+import { Text } from '../../../../components/text';
+import { hasPlanFeature } from '../../../../utils/site-features';
 
 export default function HostingFeatureList( { site }: { site: Site } ) {
 	const features = [

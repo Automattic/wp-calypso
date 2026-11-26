@@ -24,7 +24,7 @@ import { ThemedIllustration } from '../../../../../../components/themed-illustra
 import ResetPasswordModal from '../../../../../../sites/database/components/reset-password-modal';
 import upsellIllustrationDarkUrl from '../../../../../../sites/database/components/upsell-illustration/upsell-illustration-dark.svg';
 import upsellIllustrationUrl from '../../../../../../sites/database/components/upsell-illustration/upsell-illustration.svg';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { hasPlanFeature } from '../../../../../../utils/site-features';
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {

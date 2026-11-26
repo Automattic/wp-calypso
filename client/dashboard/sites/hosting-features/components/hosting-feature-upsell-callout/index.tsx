@@ -4,14 +4,14 @@ import { __, sprintf } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import React from 'react';
-import { getCurrentDashboard } from '../../app/routing';
-import { Callout } from '../../components/callout';
-import { ThemedIllustration } from '../../components/themed-illustration';
-import UpsellCTAButton from '../../components/upsell-cta-button';
-import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
-import illustrationDarkUrl from './upsell-illustration-dark.svg';
-import illustrationUrl from './upsell-illustration.svg';
-import type { CalloutProps } from '../../components/callout/types';
+import { getCurrentDashboard } from '../../../../app/routing';
+import { Callout } from '../../../../components/callout';
+import { ThemedIllustration } from '../../../../components/themed-illustration';
+import UpsellCTAButton from '../../../../components/upsell-cta-button';
+import { redirectToDashboardLink, wpcomLink } from '../../../../utils/link';
+import illustrationDarkUrl from '../upsell-illustration/upsell-illustration-dark.svg';
+import illustrationUrl from '../upsell-illustration/upsell-illustration.svg';
+import type { CalloutProps } from '../../../../components/callout/types';
 import type { HostingFeatureSlug, Site } from '@automattic/api-core';
 
 export interface UpsellCalloutProps {
