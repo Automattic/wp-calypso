@@ -14,6 +14,11 @@ export const WOO_CORE_PRODUCT_SLUG = 'wc-core';
 export type WooHandoffStore = {
 	url: string;
 	domain: string;
+	/**
+	 * The store's connection ID on WooCommerce.com, which `get-ssr` and a `connected-site` ticket
+	 * take. WooCommerce.com sends it from 26926-gh-Automattic/woocommerce.com on.
+	 */
+	id?: number;
 };
 
 export type WooHandoffProduct = {
@@ -107,7 +112,7 @@ export const normalizeStoreUrl = ( url: string ) =>
  * Zendesk's High priority trigger looks for `woo_emergency`. The type tag is for filtering and
  * reporting (WOOPUBR-2398).
  */
-function getWooEmergencyTags( { isEmergency, emergencyType }: HumanRoutingFlags ): string[] {
+export function getWooEmergencyTags( { isEmergency, emergencyType }: HumanRoutingFlags ): string[] {
 	if ( ! isEmergency ) {
 		return [];
 	}

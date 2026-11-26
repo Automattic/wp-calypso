@@ -1,8 +1,11 @@
+import { useOdieAssistantContext } from '@automattic/odie-client';
+import { useMutation } from '@tanstack/react-query';
 import { Button, ExternalLink, SelectControl, Spinner, TextControl } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { useWooHandoff } from '../data/use-woo-handoff';
+import { getWooTicketErrorMessage, sendWooTicket } from '../data/woo-ticket';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import {
 	getWooChatValues,
@@ -15,9 +18,14 @@ import {
 	getWooHumanSupportRoute,
 	getWooHumanSupportRouteFromFlags,
 } from '../human-routing/woo-human-routing';
-import { WooHumanSupportRouteOutcome } from './woo-human-support-route-outcome';
-import type { WooHumanSupportOutcome } from './woo-human-support-route-outcome';
+import { getWooTicketPlan } from '../human-routing/woo-ticket';
+import {
+	WooHumanSupportRouteOutcome,
+	WooHumanSupportTicket,
+} from './woo-human-support-route-outcome';
+import type { WooHumanSupportOutcome, WooTicketStatus } from './woo-human-support-route-outcome';
 import type { HumanRoutingDecision, HumanSupportQuestionType } from '../human-routing/types';
+import type { WooTicketPlan } from '../human-routing/woo-ticket';
 import type { HumanSupportRouting, HumanSupportRoutingStepProps } from '@automattic/odie-client';
 import './woo-human-support-routing-step.scss';
 
@@ -47,6 +55,32 @@ export function WooHumanSupportRoutingStep( {
 	const { data: handoff, isPending } = useWooHandoff();
 	const wooHandoff = handoff?.merchant ?? null;
 	const recordTracksEvent = useHelpCenterTracksEvent();
+	const { chat } = useOdieAssistantContext();
+	const [ ticket, setTicket ] = useState< {
+		plan: WooTicketPlan;
+		rowId: number;
+		/** Set when the product's vendor gets the ticket, which the merchant confirms first. */
+		vendorName: string | null;
+		isConfirmed: boolean;
+	} | null >( null );
+	const {
+		mutate: sendTicket,
+		status: sendStatus,
+		error: sendError,
+	} = useMutation( {
+		mutationFn: ( { plan }: { plan: WooTicketPlan; rowId: number } ) => sendWooTicket( plan ),
+		onSuccess: ( { ssrRefreshed }, { plan, rowId } ) =>
+			recordTracksEvent( 'calypso_helpcenter_human_support_ticket_created', {
+				row_id: rowId,
+				help_category: plan.request.helpCategory,
+				ssr_refreshed: ssrRefreshed,
+			} ),
+		onError: ( _error, { plan, rowId } ) =>
+			recordTracksEvent( 'calypso_helpcenter_human_support_ticket_failed', {
+				row_id: rowId,
+				help_category: plan.request.helpCategory,
+			} ),
+	} );
 	const [ question, setQuestion ] = useState< HumanSupportQuestionType | null >( null );
 	const [ productSlug, setProductSlug ] = useState< string | null >( null );
 	const [ storeChoice, setStoreChoice ] = useState< string | null >( null );
@@ -63,7 +97,7 @@ export function WooHumanSupportRoutingStep( {
 	// The chat only scrolls for new messages, so bring the questions, and then the outcome, into view.
 	useEffect( () => {
 		stepRef.current?.scrollIntoView?.( { behavior: 'smooth', block: 'nearest' } );
-	}, [ outcome ] );
+	}, [ outcome, ticket, sendStatus ] );
 
 	const stores = wooHandoff?.connectedStores ?? [];
 	const products = wooHandoff?.supportedProducts ?? [];
@@ -132,8 +166,30 @@ export function WooHumanSupportRoutingStep( {
 			return;
 		}
 
-		// Until the ticket and email routes are built (WOOPUBR-2404), they start a chat, as every
-		// request does today.
+		if ( route === 'email-form' ) {
+			setOutcome( { route } );
+			return;
+		}
+
+		if ( route === 'ticket' || route === 'vendor-ticket' ) {
+			const plan = getWooTicketPlan( {
+				question: answers.question,
+				product: showProduct ? product : null,
+				store: stores.find( ( { url } ) => url === storeUrl ) ?? null,
+				storeUrl,
+				flags: request.flags,
+				chat,
+				hasMerchantData: !! wooHandoff,
+			} );
+			const vendorName = route === 'vendor-ticket' ? ( product?.name ?? null ) : null;
+
+			setTicket( { plan, rowId, vendorName, isConfirmed: ! vendorName } );
+			if ( ! vendorName ) {
+				sendTicket( { plan, rowId } );
+			}
+			return;
+		}
+
 		startChat(
 			getWooChatValues( {
 				storeUrl,
@@ -186,6 +242,33 @@ export function WooHumanSupportRoutingStep( {
 						}
 					) }
 				</p>
+			</div>
+		);
+	}
+
+	if ( ticket ) {
+		let status: WooTicketStatus = 'sending';
+		if ( ! ticket.isConfirmed ) {
+			status = 'confirm';
+		} else if ( sendStatus === 'success' ) {
+			status = 'sent';
+		} else if ( sendStatus === 'error' ) {
+			status = 'failed';
+		}
+
+		return (
+			<div className="help-center-woo-routing-step" ref={ stepRef }>
+				<WooHumanSupportTicket
+					status={ status }
+					vendorName={ ticket.vendorName }
+					errorMessage={ status === 'failed' ? getWooTicketErrorMessage( sendError ) : null }
+					// Sends after the vendor question, and again after a failure, refreshing the SSR again.
+					onSend={ () => {
+						setTicket( { ...ticket, isConfirmed: true } );
+						sendTicket( { plan: ticket.plan, rowId: ticket.rowId } );
+					} }
+					onCancel={ dismiss }
+				/>
 			</div>
 		);
 	}
