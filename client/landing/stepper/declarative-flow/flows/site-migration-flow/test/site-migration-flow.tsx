@@ -2039,6 +2039,24 @@ describe( 'Site Migration Flow', () => {
 				expect( result.query.get( 'from' ) ).toBe( clearsSource ? '' : null );
 			} );
 
+			it( 'carries a coupon to checkout for an existing destination', async () => {
+				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+				nock( 'https://public-api.wordpress.com' )
+					.post( '/wpcom/v2/sites/123/wordpress-migration/configure', {
+						source_url: context.from,
+					} )
+					.reply( 200, {} );
+				runNavigation( {
+					from: STEPS.UNIFIED_PLANS,
+					query: { ...context, ...destination, coupon: 'SALE' },
+					dependencies: { cartItems: [ { product_slug: PLAN_BUSINESS_MONTHLY } ] },
+				} );
+				await waitFor( () => expect( goToCheckout ).toHaveBeenCalledTimes( 1 ) );
+				expect( vi.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ].extraQueryParams ).toEqual( {
+					coupon: 'SALE',
+				} );
+			} );
+
 			it( 'configures an existing destination before checkout after plans and retains it when cancelling', async () => {
 				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
 				const configure = nock( 'https://public-api.wordpress.com' )
@@ -2729,6 +2747,25 @@ describe( 'Site Migration Flow', () => {
 					plan: PLAN_BUSINESS_MONTHLY,
 					historyBack: true,
 				} );
+			} );
+
+			it( 'carries a coupon to checkout', () => {
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+					dependencies: {
+						plan: PLAN_BUSINESS_MONTHLY,
+					},
+					query: {
+						siteSlug: 'example.wordpress.com',
+						siteId: 123,
+						from: 'https://site-to-be-migrated.com',
+						coupon: 'SALE',
+					},
+				} );
+
+				expect( goToCheckout ).toHaveBeenCalledWith(
+					expect.objectContaining( { extraQueryParams: { coupon: 'SALE' } } )
+				);
 			} );
 
 			it( 'returns an assisted migration to the credentials step after checkout', () => {
