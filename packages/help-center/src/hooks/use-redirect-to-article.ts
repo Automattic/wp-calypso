@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-imports */
+import { isOnWooCommerceCom, isWooCommerceComLink } from '@automattic/odie-client';
 import { useCallback } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useNavigate } from 'react-router-dom';
@@ -15,8 +16,9 @@ type Options = {
 
 /**
  * Opens a search result: inside the Help Center when the result has a post id, in a new
- * tab otherwise. Only the new-tab case records an event, because the in-app route records
- * its own.
+ * tab otherwise. Only the no-post-id case records an event, because the in-app route records
+ * its own. On WooCommerce.com, its docs open in a new tab too: the article view can't load
+ * them yet.
  */
 export function useRedirectToArticle( { searchQuery, explicitSiteId }: Options ) {
 	const navigate = useNavigate();
@@ -36,6 +38,11 @@ export function useRedirectToArticle( { searchQuery, explicitSiteId }: Options )
 					// Article blog, not the site the user needs help with.
 					article_blog_id: result.blog_id,
 				} );
+				window.open( result.link, '_blank' );
+				return;
+			}
+
+			if ( isOnWooCommerceCom() && isWooCommerceComLink( result.link ) ) {
 				window.open( result.link, '_blank' );
 				return;
 			}
