@@ -5,12 +5,11 @@ import {
 	__experimentalText as Text,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import React, { useState } from 'react';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import Notice from '../../../../components/notice';
 import { SectionHeader } from '../../../../components/section-header';
@@ -79,9 +78,9 @@ export function StartSiteTransferForm( {
 		accept_undone: false,
 	} );
 
-	const mutation = useMutation( siteOwnerTransferMutation( site.ID ) );
-
-	const { createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation(
+		withSnackbar( siteOwnerTransferMutation( site.ID ), { error: { source: 'server' } } )
+	);
 
 	const isSaveDisabled = Object.values( formData ).some( ( value ) => ! value );
 
@@ -97,11 +96,6 @@ export function StartSiteTransferForm( {
 			{
 				onSuccess: () => {
 					onSubmit();
-				},
-				onError: ( error ) => {
-					createErrorNotice( error.message ?? __( 'Unable to start site transfer.' ), {
-						type: 'snackbar',
-					} );
 				},
 			}
 		);

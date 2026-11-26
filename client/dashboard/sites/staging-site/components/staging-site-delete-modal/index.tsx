@@ -11,10 +11,9 @@ import {
 	Button,
 	Modal,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import Notice from '../../../../components/notice';
 import { isDashboardBackport } from '../../../../utils/is-dashboard-backport';
@@ -28,7 +27,6 @@ export default function StagingSiteDeleteModal( {
 	site: Site;
 	onClose: () => void;
 } ) {
-	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 
@@ -45,7 +43,14 @@ export default function StagingSiteDeleteModal( {
 	} );
 	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
 
-	const mutation = useMutation( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ) );
+	const mutation = useMutation(
+		withSnackbar( stagingSiteDeleteMutation( site.ID, productionSiteId ?? 0 ), {
+			success: isDashboardBackport()
+				? undefined
+				: __( 'We are deleting your staging site. We will notify you when it is done.' ),
+			error: { source: 'server' },
+		} )
+	);
 	const isDisabled = mutation.isPending || isLoadingProductionSite;
 
 	if ( ! productionSiteId ) {
@@ -55,19 +60,12 @@ export default function StagingSiteDeleteModal( {
 	const handleDelete = () => {
 		recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_click' );
 		mutation.mutate( undefined, {
-			onError: ( error: Error ) => {
+			onError: () => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure' );
-				createErrorNotice( error.message || __( 'Failed to delete staging site' ), {
-					type: 'snackbar',
-				} );
 			},
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_success' );
 				if ( ! isDashboardBackport() ) {
-					createSuccessNotice(
-						__( 'We are deleting your staging site. We will notify you when it is done.' ),
-						{ type: 'snackbar' }
-					);
 					onClose();
 					if ( productionSiteSlug ) {
 						navigate( {

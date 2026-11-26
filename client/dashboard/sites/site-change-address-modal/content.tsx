@@ -16,6 +16,7 @@ import { check, closeSmall, globe } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import Notice, { NoticeActionLinkButton } from '../../components/notice';
@@ -272,10 +273,17 @@ const ConfirmNewSiteAddressForm = ( {
 	onBack: () => void;
 } ) => {
 	const router = useRouter();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const mutation = useMutation( changeSiteAddressChangeMutation() );
-
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const newSiteAddress = `${ newSubdomain }${ DOMAIN_SUFFIX }`;
+	const mutation = useMutation(
+		withSnackbar( changeSiteAddressChangeMutation(), {
+			success: sprintf(
+				/* translators: %s: site name */
+				__( 'The site address has been changed to %s successfully.' ),
+				newSiteAddress
+			),
+		} )
+	);
 
 	const [ formData, setFormData ] = useState( {
 		accept_undone: false,
@@ -319,15 +327,6 @@ const ConfirmNewSiteAddressForm = ( {
 					} );
 
 					onSubmit();
-
-					createSuccessNotice(
-						sprintf(
-							/* translators: %s: site name */
-							__( 'The site address has been changed to %s successfully.' ),
-							newSiteAddress
-						),
-						{ type: 'snackbar' }
-					);
 				},
 				onError: ( error: Error ) => {
 					const { text, link } = parseHtmlMessage( error.message ?? '' );

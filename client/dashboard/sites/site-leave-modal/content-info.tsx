@@ -10,15 +10,14 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import { purchaseSettingsRoute, purchasesRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import RouterLinkButton from '../../components/router-link-button';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
@@ -144,11 +143,19 @@ function ContentSiteOwner( { site, onClose }: ContentInfoProps ) {
 function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
 	const { data: me } = useQuery( siteCurrentUserQuery( site.ID ) );
-	const mutation = useMutation( siteUserDeleteMutation( site.ID ) );
+	const mutation = useMutation(
+		withSnackbar( siteUserDeleteMutation( site.ID ), {
+			success: sprintf(
+				/* translators: %s: site domain */
+				__( 'You have left %s successfully.' ),
+				site.slug
+			),
+			error: { source: 'server' },
+		} )
+	);
 
 	const [ formData, setFormData ] = useState< SiteLeaveFormData >( {
 		confirmed: false,
@@ -167,12 +174,6 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 		mutation.mutate( me.id, {
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_success' );
-				createSuccessNotice(
-					/* translators: %s: site domain */
-					sprintf( __( 'You have left %s successfully.' ), site.slug ),
-					{ type: 'snackbar' }
-				);
-
 				router.navigate( { to: '/sites' } );
 				onClose();
 			},
@@ -182,7 +183,6 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 					error: error.name,
 				} );
 
-				createErrorNotice( error.message, { type: 'snackbar' } );
 				onClose();
 			},
 		} );

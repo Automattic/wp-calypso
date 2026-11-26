@@ -8,11 +8,9 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { close } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useId, useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
@@ -39,7 +37,6 @@ export default function ChangePrimaryDomainModal( {
 	onClose,
 }: ChangePrimaryDomainModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const titleId = useId();
 	const primaryAddress = currentPrimaryDomain?.domain ?? '';
 	const addresses = [
@@ -78,6 +75,7 @@ export default function ChangePrimaryDomainModal( {
 		withSnackbar( siteSetPrimaryDomainMutation(), {
 			// The www request that follows shows the success message.
 			success: selected?.www ? undefined : snackbar.success,
+			error: ( error ) => getPrimaryDomainErrorMessage( error ),
 		} )
 	);
 	const setWwwMutation = useMutation( withSnackbar( setWwwPrimaryDomainMutation(), snackbar ) );
@@ -133,9 +131,6 @@ export default function ChangePrimaryDomainModal( {
 			{ siteId: site.ID, domain },
 			{
 				onSuccess: selected.www ? setWwwAfterPrimary : onClose,
-				onError: ( error ) => {
-					createErrorNotice( getPrimaryDomainErrorMessage( error ), { type: 'snackbar' } );
-				},
 			}
 		);
 	};
