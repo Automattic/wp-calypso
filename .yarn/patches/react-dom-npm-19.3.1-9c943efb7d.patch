@@ -1,0 +1,16 @@
+diff --git a/cjs/react-dom-client.development.js b/cjs/react-dom-client.development.js
+index 90a9293eb9d445819cfd7cdecc909a68e68973d2..3bf6d595e0cb099d58a30cfb0a602466d9a1925d 100644
+--- a/cjs/react-dom-client.development.js
++++ b/cjs/react-dom-client.development.js
+@@ -30028,7 +30028,10 @@
+       workInProgressRootDidIncludeRecursiveRenderUpdate = !1,
+       globalMostRecentFallbackTime = 0,
+       globalMostRecentTransitionTime = 0,
+-      FALLBACK_THROTTLE_MS = 300,
++      // Patched in wp-calypso: Vitest tests don't wait out the 300ms that React holds back
++      // Suspense content after showing a fallback.
++      FALLBACK_THROTTLE_MS =
++        "undefined" !== typeof process && process.env.VITEST ? 0 : 300,
+       workInProgressRootRenderTargetTime = Infinity,
+       RENDER_TIMEOUT_MS = 500,
+       workInProgressTransitions = null,

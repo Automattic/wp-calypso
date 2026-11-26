@@ -323,7 +323,7 @@
 		"@tanstack/router-core": "1.171.39",
 		"@tanstack/store": "0.11.2",
 		"react": "19.3.1",
-		"react-dom": "19.3.1",
+		"react-dom": "patch:react-dom@npm%3A19.3.1#~/.yarn/patches/react-dom-npm-19.3.1-9c943efb7d.patch",
 		"webpack": "5.111.1",
 		"@types/react": "19.3.0",
 		"@types/react-dom": "19.3.0",
