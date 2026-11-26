@@ -3,6 +3,7 @@ import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { MiniCart } from '@automattic/mini-cart';
 import { wpcomLink } from '../../../utils/link';
 import { useAnalytics } from '../../analytics';
+import { dashboardCheckoutTheme } from './checkout-theme';
 
 import './panel.scss';
 
@@ -39,6 +40,7 @@ export default function ShoppingCartNodePanel( {
 					} )
 				}
 				showBundleGrouping={ isEnabled( 'domain-bundling' ) }
+				theme={ dashboardCheckoutTheme }
 			/>
 		</CheckoutErrorBoundary>
 	);
