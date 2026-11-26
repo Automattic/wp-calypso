@@ -2,7 +2,11 @@
  * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain, type DnsRecord } from '@automattic/api-core';
-import { queryClient as appQueryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
+import {
+	queryClient as appQueryClient,
+	domainQuery,
+	rawUserPreferencesQuery,
+} from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -82,6 +86,15 @@ const mockDnsApiRequestPending = ( records: DnsRecord[] ) => {
 	return release;
 };
 
+// Loads the domain before rendering, as the domain route's loader does. Otherwise the page
+// suspends on it, and React holds back the content, and with it the DNS request, for 300ms.
+const renderDomainDns = async (
+	queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } )
+) => {
+	await queryClient.ensureQueryData( domainQuery( domainName ) );
+	return render( <DomainDns />, { queryClient } );
+};
+
 describe( 'DomainDns', () => {
 	afterEach( () => {
 		appQueryClient.clear();
@@ -90,7 +103,7 @@ describe( 'DomainDns', () => {
 	test( 'shows EmailSetup when domain has WordPress.com nameservers', async () => {
 		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect( await screen.findByText( 'Email setup' ) ).toBeVisible();
 	} );
@@ -98,7 +111,7 @@ describe( 'DomainDns', () => {
 	test( 'hides EmailSetup when domain does not have WordPress.com nameservers', async () => {
 		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: false } ) );
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect( await screen.findByText( 'Add record' ) ).toBeVisible();
 		expect( screen.queryByText( 'Email setup' ) ).not.toBeInTheDocument();
@@ -111,7 +124,7 @@ describe( 'DomainDns', () => {
 		const release = mockDnsApiRequestPending( [ defaultCnameRecord ] );
 		mockPreferencesApiRequest();
 
-		render( <DomainDns />, { queryClient: createQueryClientWithPreferences() } );
+		await renderDomainDns( createQueryClientWithPreferences() );
 
 		// The page chrome renders once the domain (suspense) query resolves, but the
 		// DNS query is still in flight at this point.
@@ -141,7 +154,7 @@ describe( 'DomainDns', () => {
 		const release = mockDnsApiRequestPending( [ defaultCnameRecord ] );
 		mockPreferencesApiRequest();
 
-		render( <DomainDns />, { queryClient } );
+		await renderDomainDns( queryClient );
 
 		await screen.findByText( 'Add record' );
 		expect( screen.queryByText( CNAME_WARNING ) ).not.toBeInTheDocument();
@@ -157,7 +170,7 @@ describe( 'DomainDns', () => {
 		mockDnsApiRequest( [ { type: 'A', name: domainName, data: '192.0.2.1' } ] );
 		mockPreferencesApiRequest();
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect( await screen.findByText( CNAME_WARNING ) ).toBeVisible();
 	} );
@@ -177,7 +190,7 @@ describe( 'DomainDns', () => {
 		const user = userEvent.setup();
 
 		// The dismissal is saved optimistically into the app's query client.
-		render( <DomainDns />, { queryClient: appQueryClient } );
+		await renderDomainDns( appQueryClient );
 
 		expect( await screen.findByText( A_RECORDS_WARNING ) ).toBeVisible();
 		expect( screen.getByText( CNAME_WARNING ) ).toBeVisible();
@@ -204,7 +217,7 @@ describe( 'DomainDns', () => {
 			.post( '/rest/v1.1/me/preferences' )
 			.reply( 200, { calypso_preferences: {} } );
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 		expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument();
@@ -234,7 +247,7 @@ describe( 'DomainDns', () => {
 		const user = userEvent.setup();
 
 		// The restore refetches the DNS records through the app's query client.
-		render( <DomainDns />, { queryClient: appQueryClient } );
+		await renderDomainDns( appQueryClient );
 
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 		expect( screen.queryByText( A_RECORDS_WARNING ) ).not.toBeInTheDocument();
@@ -262,7 +275,7 @@ describe( 'DomainDns', () => {
 			} )
 			.reply( 200, { calypso_preferences: {} } );
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect( await screen.findByText( 'www' ) ).toBeVisible();
 		await waitFor( () => expect( clearPreference.isDone() ).toBe( true ) );
@@ -277,7 +290,7 @@ describe( 'DomainDns', () => {
 		] );
 		const user = userEvent.setup();
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 		expect( screen.getByText( 'v=spf1 -all' ) ).toBeVisible();
@@ -295,7 +308,7 @@ describe( 'DomainDns', () => {
 		mockDnsApiRequest( [ { id: '2', type: 'A', name: domainName, data: '192.0.2.1' } ] );
 		const user = userEvent.setup();
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 
@@ -316,7 +329,7 @@ describe( 'DomainDns', () => {
 		] );
 		const user = userEvent.setup();
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect( await screen.findByText( '192.0.2.1' ) ).toBeVisible();
 
@@ -346,7 +359,7 @@ describe( 'DomainDns', () => {
 	test( 'shows the steps for pasting the verification value in email setup', async () => {
 		mockDomainApiRequest( getDefaultDomainData( { has_wpcom_nameservers: true } ) );
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect(
 			await screen.findByText(
@@ -366,7 +379,7 @@ describe( 'DomainDns', () => {
 			.reply( 200, {} );
 		const user = userEvent.setup();
 
-		render( <DomainDns /> );
+		await renderDomainDns();
 
 		expect( await screen.findByText( 'v=spf1 -all' ) ).toBeVisible();
 
