@@ -14,14 +14,13 @@ import {
 	ExternalLink,
 	TextControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { domainTransferSetupRoute } from '../../app/router/domains';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { siteDomainsRoute } from '../../app/router/sites';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -35,7 +34,6 @@ import SetupStep from './setup-step';
 export default function DomainTransferSetup() {
 	const { domainName } = domainTransferSetupRoute.useParams();
 	const navigate = useNavigate();
-	const { createSuccessNotice } = useDispatch( noticesStore );
 	const queryClient = useQueryClient();
 
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
@@ -58,7 +56,13 @@ export default function DomainTransferSetup() {
 	const [ error, setError ] = useState< string | null >( null );
 
 	const { mutate: startTransfer, isPending } = useMutation(
-		startDomainInboundTransferMutation( domainName, domain.blog_id )
+		withSnackbar( startDomainInboundTransferMutation( domainName, domain.blog_id ), {
+			success: sprintf(
+				// translators: %s is a domain name
+				__( 'Domain transfer for %s has started successfully.' ),
+				domainName
+			),
+		} )
 	);
 
 	const buttonIsDisabled = isPending || ! firstStepCompleted || authorizationCode.length === 0;
@@ -151,14 +155,6 @@ export default function DomainTransferSetup() {
 		startTransfer( authorizationCode, {
 			onSuccess: () => {
 				queryClient.invalidateQueries( domainQuery( domainName ) );
-				createSuccessNotice(
-					sprintf(
-						// translators: %s is a domain name
-						__( 'Domain transfer for %s has started successfully.' ),
-						domainName
-					),
-					{ type: 'snackbar' }
-				);
 				if ( site?.slug ) {
 					navigate( {
 						to: siteDomainsRoute.fullPath,

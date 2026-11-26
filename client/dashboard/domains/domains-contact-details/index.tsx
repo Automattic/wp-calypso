@@ -16,6 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainsContactInfoRoute, domainsIndexRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import {
 	isCaDomain,
 	mapWhoisExtraToCaContactExtra,
@@ -74,7 +75,7 @@ const getFieldMapping = ( field: string ) => {
 };
 
 export default function DomainsContactInfo() {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 
 	const { selectedDomains } = domainsContactInfoRoute.useLoaderDeps() as {
@@ -168,7 +169,10 @@ export default function DomainsContactInfo() {
 	} = useMutation( domainWhoisValidateMutation( selectedDomains ) );
 
 	const { mutate: bulkDomainsAction, isPending: isUpdatePending } = useMutation(
-		bulkDomainsActionMutation()
+		withSnackbar( bulkDomainsActionMutation(), {
+			success: __( 'Contact details saved.' ),
+			error: { source: 'server' },
+		} )
 	);
 
 	const handleSubmit = ( originalData: DomainContactDetails ) => {
@@ -186,13 +190,7 @@ export default function DomainsContactInfo() {
 						},
 						{
 							onSuccess: () => {
-								createSuccessNotice( __( 'Contact details saved.' ), { type: 'snackbar' } );
 								router.navigate( { to: domainsIndexRoute.fullPath } );
-							},
-							onError: ( error: Error ) => {
-								createErrorNotice( error.message, {
-									type: 'snackbar',
-								} );
 							},
 						}
 					);

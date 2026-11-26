@@ -13,10 +13,8 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useId, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
@@ -43,9 +41,16 @@ interface RevokeLicenseModalProps {
 
 export default function RevokeLicenseModal( { license, closeModal }: RevokeLicenseModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const revoke = useMutation( jetpackAgencyLicenseRevokeMutation( agency?.id ) );
+	const isBundle = isBundleParent( license );
+	const revoke = useMutation(
+		withSnackbar( jetpackAgencyLicenseRevokeMutation( agency?.id ), {
+			success: isBundle
+				? __( 'The bundle has been revoked.' )
+				: __( 'The license has been revoked.' ),
+			error: { source: 'server' },
+		} )
+	);
 	// The modal closes as soon as the revoke lands, so the snackbar has to live
 	// on the mutation rather than on the mutate() call.
 	const { mutate: fileChurnSurvey } = useMutation(
@@ -55,7 +60,6 @@ export default function RevokeLicenseModal( { license, closeModal }: RevokeLicen
 	);
 	const { scheduleCall, isLoading: isFetchingScheduleCallLink } = useScheduleCall( agency?.id );
 
-	const isBundle = isBundleParent( license );
 	const isAssignedChild = isChildLicense( license ) && getLicenseStatus( license ) === 'assigned';
 	const isHostingLicense = isPressableLicense( license ) || isWpcomHostingLicense( license );
 	const surveyId = isHostingLicense ? 'license-cancel-hosting' : 'license-cancel-product';
@@ -133,17 +137,8 @@ export default function RevokeLicenseModal( { license, closeModal }: RevokeLicen
 			onSuccess: () => {
 				// Only a revoke that went through counts as churn.
 				submitChurnSurvey();
-				createSuccessNotice(
-					isBundle ? __( 'The bundle has been revoked.' ) : __( 'The license has been revoked.' ),
-					{ type: 'snackbar' }
-				);
 				closeModal?.();
 			},
-			onError: ( error: Error ) =>
-				createErrorNotice(
-					error.message || __( 'Failed to revoke the license. Please try again.' ),
-					{ type: 'snackbar' }
-				),
 		} );
 	};
 

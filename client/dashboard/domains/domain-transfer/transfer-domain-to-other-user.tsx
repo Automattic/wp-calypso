@@ -14,15 +14,14 @@ import {
 	ExternalLink,
 	Modal,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { domainRoute, domainsIndexRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -77,9 +76,6 @@ export default function TransferDomainToOtherUser() {
 		siteUsersWpcomQuery( domain.blog_id, 'administrator' )
 	);
 	const { user: currentUser } = useAuth();
-	const { mutate: domainTransferToOtherUser, isPending: isDomainTransferringToOtherUser } =
-		useMutation( domainTransferToUserMutation( domainName, domain.blog_id ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ formData, setFormData ] = useState( {
 		user: '',
 	} );
@@ -102,6 +98,24 @@ export default function TransferDomainToOtherUser() {
 			( user ) => getWpcomUserId( user ) === parseInt( formData.user, 10 )
 		);
 	}, [ availableUsers, formData.user ] );
+	const { mutate: domainTransferToOtherUser, isPending: isDomainTransferringToOtherUser } =
+		useMutation(
+			withSnackbar( domainTransferToUserMutation( domainName, domain.blog_id ), {
+				success: sprintf(
+					/* Translators: %(selectedDomainName)s is the domain name, %(selectedUserDisplay)s is the selected user display */
+					__( '%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s' ),
+					{
+						selectedDomainName: domainName,
+						selectedUserDisplay: selectedUser ? getUserDisplayName( selectedUser ) : '',
+					}
+				),
+				error: sprintf(
+					/* Translators: %(selectedDomainName)s is the domain name */
+					__( 'Failed to transfer %(selectedDomainName)s, please try again or contact support.' ),
+					{ selectedDomainName: domainName }
+				),
+			} )
+		);
 
 	const isMapping = domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION;
 
@@ -113,27 +127,10 @@ export default function TransferDomainToOtherUser() {
 	const onConfirm = () => {
 		domainTransferToOtherUser( formData.user, {
 			onSuccess: () => {
-				createSuccessNotice(
-					sprintf(
-						/* Translators: %(selectedDomainName)s is the domain name, %(selectedUserDisplay)s is the selected user display */
-						__( '%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s' ),
-						{
-							selectedDomainName: domainName,
-							selectedUserDisplay: selectedUser ? getUserDisplayName( selectedUser ) : '',
-						}
-					)
-				);
 				setIsDialogOpen( false );
 				router.navigate( { to: domainsIndexRoute.fullPath, params: { domainName } } );
 			},
 			onError: () => {
-				createErrorNotice(
-					sprintf(
-						/* Translators: %(selectedDomainName)s is the domain name */
-						__( 'Failed to transfer %(selectedDomainName)s, please try again or contact support.' ),
-						{ selectedDomainName: domainName }
-					)
-				);
 				setIsDialogOpen( false );
 			},
 		} );

@@ -1,14 +1,13 @@
 import { siteBySlugQuery, siteSettingsMutation, siteSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import Breadcrumbs from '../../../../../../app/breadcrumbs';
 import { NavigationBlocker } from '../../../../../../app/navigation-blocker';
+import { withSnackbar } from '../../../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../../../components/button-stack';
 import { Card, CardBody } from '../../../../../../components/card';
 import InlineSupportLink from '../../../../../../components/inline-support-link';
@@ -43,10 +42,17 @@ const form = {
 };
 
 export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: string } ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data } = useSuspenseQuery( siteSettingsQuery( site.ID ) );
-	const mutation = useMutation( siteSettingsMutation( site.ID ) );
+	const mutation = useMutation(
+		withSnackbar( siteSettingsMutation( site.ID ), {
+			success: ( _data, variables ) =>
+				variables.wpcom_gifting_subscription
+					? __( 'Gift subscription enabled.' )
+					: __( 'Gift subscription disabled.' ),
+			error: __( 'Failed to save gift subscription settings.' ),
+		} )
+	);
 
 	const [ formData, setFormData ] = useState( {
 		wpcom_gifting_subscription: data.wpcom_gifting_subscription,
@@ -60,24 +66,7 @@ export default function SubscriptionGiftingSettings( { siteSlug }: { siteSlug: s
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate(
-			{ ...formData },
-			{
-				onSuccess: () => {
-					createSuccessNotice(
-						formData.wpcom_gifting_subscription
-							? __( 'Gift subscription enabled.' )
-							: __( 'Gift subscription disabled.' ),
-						{ type: 'snackbar' }
-					);
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to save gift subscription settings.' ), {
-						type: 'snackbar',
-					} );
-				},
-			}
-		);
+		mutation.mutate( { ...formData } );
 	};
 
 	return (

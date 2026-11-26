@@ -181,7 +181,7 @@ export default function AmplifyReportsList( {
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useIntlLocale();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const [ reportToArchive, setReportToArchive ] = useState< AmplifyReport | null >( null );
 	const reportsRef = useRef< HTMLDivElement >( null );
@@ -200,7 +200,15 @@ export default function AmplifyReportsList( {
 		mutate: retryReport,
 		isPending: isRetryPending,
 		variables: retryVariables,
-	} = useMutation( retryAmplifyReportMutation( agencyId ) );
+	} = useMutation(
+		withSnackbar( retryAmplifyReportMutation( agencyId ), {
+			success: __( 'Report restarted. Retries don’t count toward your allowance.' ),
+			error: ( error ) =>
+				( error as { code?: string } )?.code === 'amplify_report_retry_limit_reached'
+					? __( 'This report was already retried. Start a new report instead.' )
+					: __( 'Failed to restart the report.' ),
+		} )
+	);
 	const retryingId = isRetryPending ? retryVariables : null;
 	const { downloadReportPdf, downloadingId } = useDownloadReportPdf( agencyId );
 	const onDownload = useCallback(
@@ -223,22 +231,9 @@ export default function AmplifyReportsList( {
 				report_id: item.id,
 				mode: item.mode,
 			} );
-			retryReport( item.id, {
-				onSuccess: () =>
-					createSuccessNotice(
-						__( 'Report restarted. Retries don’t count toward your allowance.' ),
-						{ type: 'snackbar' }
-					),
-				onError: ( error ) =>
-					createErrorNotice(
-						( error as { code?: string } )?.code === 'amplify_report_retry_limit_reached'
-							? __( 'This report was already retried. Start a new report instead.' )
-							: __( 'Failed to restart the report.' ),
-						{ type: 'snackbar' }
-					),
-			} );
+			retryReport( item.id );
 		},
-		[ createErrorNotice, createSuccessNotice, recordTracksEvent, retryReport ]
+		[ recordTracksEvent, retryReport ]
 	);
 
 	const fields = useMemo< Field< AmplifyReport >[] >(
