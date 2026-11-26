@@ -241,10 +241,12 @@ export default function SshCard( {
 							return;
 						}
 					}
+					// eslint-disable-next-line no-restricted-syntax -- It waits for the SSH keys to load, and is skipped when the user is sent to reauthorize.
 					createSuccessNotice( __( 'SSH access has been successfully enabled for this site.' ), {
 						type: 'snackbar',
 					} );
 				} else {
+					// eslint-disable-next-line no-restricted-syntax -- It waits for the SSH keys to load, and is skipped when the user is sent to reauthorize.
 					createSuccessNotice( __( 'SSH access has been successfully disabled for this site.' ), {
 						type: 'snackbar',
 					} );

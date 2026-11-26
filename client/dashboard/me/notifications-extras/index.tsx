@@ -73,6 +73,7 @@ export default function NotificationsExtras() {
 				{
 					onSuccess: () => {
 						if ( origin === 'single' ) {
+							// eslint-disable-next-line no-restricted-syntax -- It names the setting from the change handler, and the mutation variables don't say which one changed.
 							createSuccessNotice(
 								sprintf(
 									/* translators: %s is the name of the settings */ __( '"%s" settings saved.' ),
@@ -83,6 +84,7 @@ export default function NotificationsExtras() {
 						}
 
 						if ( origin === 'subscribe-all' || origin === 'unsubscribe-all' ) {
+							// eslint-disable-next-line no-restricted-syntax -- The text depends on which control the change came from, which the mutation variables don't say.
 							createSuccessNotice( __( 'Subscriptions settings saved.' ), {
 								type: 'snackbar',
 							} );

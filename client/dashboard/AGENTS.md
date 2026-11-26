@@ -17,51 +17,9 @@ This is the new hosting dashboard for WordPress.com.
   2. If the behavior genuinely differs per dashboard variant, add a property to `AppConfig` that each variant provides, and branch on that property instead of the name.
   3. Before doing either, ask: if this UX is better for one variant, wouldn't it be better for all users? Prefer a single code path when possible.
 
-### Mutation snackbars
+### Mutations
 
-Use `withSnackbar()` from `app/snackbars/with-snackbar` to attach a snackbar to a mutation. Never write `meta: { snackbar }` by hand:
-
-```ts
-useMutation( withSnackbar( sitePHPVersionMutation( siteId ), { success: __( 'Saved.' ) } ) );
-```
-
-Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `eslint.config.mjs` enforces this.
-
-Show a mutation's snackbars through `withSnackbar()`, not with `createSuccessNotice()` or `createErrorNotice()` in `onSuccess` and `onError`. The app shows them even if the component unmounts before the mutation finishes, when callbacks passed to `mutate()` no longer run.
-
-When a success message depends on the result, pass a function. It gets the response and the variables passed to `mutate()`, and returns the text, or `undefined` for no snackbar:
-
-```ts
-useMutation(
-	withSnackbar( sitePHPVersionMutation( siteId ), {
-		success: ( _data, version ) =>
-			/* translators: %s: PHP version */
-			sprintf( __( 'PHP version changed to %s.' ), version ),
-		error: { source: 'server' },
-	} )
-);
-```
-
-For errors, in order of preference:
-
-1. `{ source: 'server' }`, the default: the server's message, or a generic one when it sends none.
-2. A string, when the server's text isn't fit for users.
-3. A function `( error, variables ) => string | undefined`, only when the text depends on the error's code or the variables.
-
-Write a notice by hand only when `withSnackbar()` can't express it, such as one with `actions` or a custom `id`.
-
-For component-specific handling, pass callbacks to `mutate()`:
-
-```ts
-const { mutate } = useMutation(
-	withSnackbar( sitePHPVersionMutation( siteId ), { success: __( 'Saved.' ) } )
-);
-mutate( version, {
-	onSuccess: () => {
-		/* … */
-	},
-} );
-```
+Show a mutation's snackbars with `withSnackbar()` from `app/snackbars/with-snackbar`. Its doc comment covers messages built from the result and which error option to pick, and lint rules flag the alternatives.
 
 Put component-specific `onSuccess` and `onError` handling on the `mutate()` call by default, e.g. if the component proceeds to another step after the mutation is complete. Set it on `useMutation()` only when it must run even if the component unmounts first, and then call the factory's own callback too, as the README example shows. See [Adding mutations](../../packages/api-queries/README.md#adding-mutations) for why.
 

@@ -102,6 +102,7 @@ export default function DomainConnection() {
 				setConnectionMode( data.mode );
 			},
 			onError: () => {
+				// eslint-disable-next-line no-restricted-syntax -- This mutation's call sites need different notices.
 				createErrorNotice( __( 'We could not verify your domain connection. Please try again.' ), {
 					type: 'snackbar',
 				} );
@@ -129,6 +130,7 @@ export default function DomainConnection() {
 				} );
 			},
 			onError: () => {
+				// eslint-disable-next-line no-restricted-syntax -- This mutation's call sites need different notices.
 				createErrorNotice( __( 'We could not restart your domain connection. Please try again.' ), {
 					type: 'snackbar',
 				} );

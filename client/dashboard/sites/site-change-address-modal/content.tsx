@@ -205,6 +205,7 @@ const NewSiteAddressForm = ( {
 						return;
 					}
 
+					// eslint-disable-next-line no-restricted-syntax -- It has `actions`, which `withSnackbar()` can't show.
 					createErrorNotice( text || __( 'Failed to validate site address.' ), {
 						type: 'snackbar',
 						actions: link ? [ link ] : undefined,
@@ -330,6 +331,7 @@ const ConfirmNewSiteAddressForm = ( {
 				},
 				onError: ( error: Error ) => {
 					const { text, link } = parseHtmlMessage( error.message ?? '' );
+					// eslint-disable-next-line no-restricted-syntax -- It has `actions`, which `withSnackbar()` can't show.
 					createErrorNotice( text || __( 'Failed to change site address.' ), {
 						type: 'snackbar',
 						actions: link ? [ link ] : undefined,

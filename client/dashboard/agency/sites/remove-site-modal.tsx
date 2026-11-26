@@ -83,6 +83,7 @@ export default function RemoveSiteModal( {
 				}
 
 				const finish = () => {
+					// eslint-disable-next-line no-restricted-syntax -- It's timed with the list refresh after removal.
 					createSuccessNotice( __( 'Site removed.' ), {
 						type: 'snackbar',
 					} );

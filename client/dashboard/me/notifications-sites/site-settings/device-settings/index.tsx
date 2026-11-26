@@ -70,6 +70,7 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 						setting_value: item.value,
 						site_id: siteId,
 					} );
+					// eslint-disable-next-line no-restricted-syntax -- It names the setting from the change handler, and the mutation variables don't say which one changed.
 					createSuccessNotice(
 						sprintf(
 							/* translators: %s is the name of the setting */

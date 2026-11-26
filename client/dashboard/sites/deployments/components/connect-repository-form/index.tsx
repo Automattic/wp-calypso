@@ -413,12 +413,14 @@ export const ConnectRepositoryForm = ( {
 
 		mutation.mutate( mutationData, {
 			onSuccess: () => {
+				// eslint-disable-next-line no-restricted-syntax -- The mutation and its messages come from the callers.
 				createSuccessNotice( successMessage, {
 					type: 'snackbar',
 				} );
 				navigate( { to: `/sites/${ siteSlug }/settings/repositories` } );
 			},
 			onError: ( error ) => {
+				// eslint-disable-next-line no-restricted-syntax -- The mutation and its messages come from the callers.
 				createErrorNotice( errorMessage( error.message ), {
 					type: 'snackbar',
 				} );

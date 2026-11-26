@@ -663,6 +663,7 @@ function CancelPurchaseInner() {
 				},
 				{
 					onError: ( error: Error ) => {
+						// eslint-disable-next-line no-restricted-syntax -- The same mutation also runs through `mutateAsync()`, whose caller shows its own notice.
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
 					},
 				}
@@ -674,6 +675,7 @@ function CancelPurchaseInner() {
 				{
 					onError: () => {
 						const purchaseName = marketplaceSubscription.product_name;
+						// eslint-disable-next-line no-restricted-syntax -- The purchase name comes from the loop, not the mutation variables.
 						createErrorNotice(
 							sprintf(
 								/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -931,6 +933,7 @@ function CancelPurchaseInner() {
 					isSubmitting: false,
 				} ) );
 				removeNotice( 'submit_marketing_survey_notice' );
+				// eslint-disable-next-line no-restricted-syntax -- It uses a custom notice `id`.
 				createErrorNotice( error.message, {
 					type: 'snackbar',
 					id: 'submit_marketing_survey_notice',
@@ -967,6 +970,7 @@ function CancelPurchaseInner() {
 						);
 					},
 					onError: ( error: Error ) => {
+						// eslint-disable-next-line no-restricted-syntax -- The same mutation also runs through `mutateAsync()`, whose caller shows its own notice.
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
 					},
 				}
@@ -986,6 +990,7 @@ function CancelPurchaseInner() {
 				},
 				onError: () => {
 					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
+					// eslint-disable-next-line no-restricted-syntax -- The purchase name comes from the handler, not the mutation variables.
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -1130,6 +1135,7 @@ function CancelPurchaseInner() {
 				},
 				onError: () => {
 					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
+					// eslint-disable-next-line no-restricted-syntax -- The purchase name comes from the handler, not the mutation variables.
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */

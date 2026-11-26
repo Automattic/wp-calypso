@@ -217,6 +217,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 				setTimeout( refreshSites, SITE_INDEXING_DELAY_MS );
 
 				if ( failed.length ) {
+					// eslint-disable-next-line no-restricted-syntax -- It reports a failure that the response returns on success.
 					createErrorNotice( getImportNotice( imported.length, failed.length ), {
 						type: 'snackbar',
 					} );

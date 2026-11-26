@@ -195,12 +195,14 @@ export default function DomainsContactInfo() {
 						}
 					);
 				} else {
+					// eslint-disable-next-line no-restricted-syntax -- It reports a failure that the response returns on success.
 					createErrorNotice( data.messages_simple.join( ' ' ), {
 						type: 'snackbar',
 					} );
 				}
 			},
 			onError: ( error: Error ) => {
+				// eslint-disable-next-line no-restricted-syntax -- The same mutation validates the form, where errors show on the fields.
 				createErrorNotice( error.message, {
 					type: 'snackbar',
 				} );

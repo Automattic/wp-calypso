@@ -26,6 +26,7 @@ export default function DpaCard() {
 	const handleClick = () => {
 		mutation.mutate( undefined, {
 			onSuccess: () => {
+				// eslint-disable-next-line no-restricted-syntax -- It has a custom `icon`.
 				createSuccessNotice( __( 'We’ve sent you our DPA via email.' ), {
 					// @wordpress/notices types `icon` as `string | null`, but the runtime (and the Dashboard snackbar) accepts a ReactNode.
 					icon: ( <Icon icon={ envelope } /> ) as unknown as string,

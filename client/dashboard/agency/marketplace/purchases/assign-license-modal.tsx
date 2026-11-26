@@ -174,6 +174,7 @@ export default function AssignLicenseModal( {
 						} );
 						return;
 					}
+					// eslint-disable-next-line no-restricted-syntax -- Whether it shows depends on the next step of the flow.
 					createSuccessNotice(
 						sprintf(
 							/* translators: %1$s is the product name, %2$s is the site URL. */
@@ -206,6 +207,7 @@ export default function AssignLicenseModal( {
 						);
 						return;
 					}
+					// eslint-disable-next-line no-restricted-syntax -- The error goes inline when it can; this snackbar is only the fallback.
 					createErrorNotice(
 						error.message || __( 'Failed to assign the license. Please try again.' ),
 						{ type: 'snackbar' }

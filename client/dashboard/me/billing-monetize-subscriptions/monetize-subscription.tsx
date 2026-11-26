@@ -192,9 +192,11 @@ function CancelOrRemoveButton( {
 		if ( showCancel ) {
 			disableAutoRenew( null, {
 				onSuccess: () => {
+					// eslint-disable-next-line no-restricted-syntax -- The toggle runs the same mutation without a notice.
 					createSuccessNotice( __( 'Auto-renew has been disabled.' ), { type: 'snackbar' } );
 				},
 				onError: () => {
+					// eslint-disable-next-line no-restricted-syntax -- It has `actions`, which `withSnackbar()` can't show.
 					createErrorNotice( __( 'Failed to update your subscription.' ), {
 						actions: [
 							{
@@ -215,6 +217,7 @@ function CancelOrRemoveButton( {
 			},
 			onError: () => {
 				if ( isProduct ) {
+					// eslint-disable-next-line no-restricted-syntax -- It has `actions`, which `withSnackbar()` can't show.
 					createErrorNotice( __( 'There was a problem while removing your product.' ), {
 						actions: [
 							{
@@ -225,6 +228,7 @@ function CancelOrRemoveButton( {
 						type: 'snackbar',
 					} );
 				} else {
+					// eslint-disable-next-line no-restricted-syntax -- It has `actions`, which `withSnackbar()` can't show.
 					createErrorNotice( __( 'There was a problem while stopping your subscription.' ), {
 						actions: [
 							{

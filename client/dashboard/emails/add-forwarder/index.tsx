@@ -221,6 +221,7 @@ function AddEmailForwarder() {
 						const message =
 							typeof resp.message === 'object' ? resp.message.error_message : resp.message;
 
+						// eslint-disable-next-line no-restricted-syntax -- It has `actions`, which `withSnackbar()` can't show.
 						createErrorNotice(
 							sprintf(
 								/* Translators: %(emailAddress)s is the email address the user was attempting to add a forwarder for, %(message)s is the error message returned by the API. */
@@ -238,6 +239,7 @@ function AddEmailForwarder() {
 							}
 						);
 					} else {
+						// eslint-disable-next-line no-restricted-syntax -- It has `actions`, which `withSnackbar()` can't show.
 						createErrorNotice(
 							sprintf(
 								/* Translators: %(emailAddress)s is the email address the user was attempting to add a forwarder for. */
