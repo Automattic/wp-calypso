@@ -79,7 +79,7 @@ describe( 'useWebMcpTools', () => {
 		};
 
 		const { rerender, unmount } = renderHook(
-			( { scope } ) => useWebMcpTools( { toolProvider, scope } ),
+			( { scope } ) => useWebMcpTools( { providers: { toolProvider }, scope } ),
 			{ initialProps: { scope: 'site-1' } }
 		);
 
@@ -110,7 +110,9 @@ describe( 'useWebMcpTools', () => {
 			getAbilities: vi.fn( async () => [] ),
 			executeAbility: vi.fn(),
 		};
-		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
 		onTestFinished( () => {
 			unmount();
 			unregisterAbility( 'test/late' );
@@ -131,6 +133,45 @@ describe( 'useWebMcpTools', () => {
 		await waitFor( () =>
 			expect( registerTool ).toHaveBeenCalledWith(
 				expect.objectContaining( { name: 'test__late' } ),
+				expect.anything()
+			)
+		);
+	} );
+
+	it( 'registers registry abilities once the providers load without a tool provider', async () => {
+		const registerTool = vi.fn();
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool },
+		} );
+		registerAbilityCategory( 'webmcp-test', { label: 'Test', description: 'Test abilities' } );
+		registerAbility( {
+			name: 'test/registry-only',
+			label: 'Registry only',
+			description: 'Registered by a plugin that is not a provider.',
+			category: 'webmcp-test',
+			callback: vi.fn(),
+			meta: { webmcp: { public: true } },
+		} );
+		const { rerender, unmount } = renderHook(
+			( { providers } ) => useWebMcpTools( { providers, scope: 'site-1' } ),
+			{ initialProps: { providers: null as { toolProvider?: ToolProvider } | null } }
+		);
+		onTestFinished( () => {
+			unmount();
+			unregisterAbility( 'test/registry-only' );
+			unregisterAbilityCategory( 'webmcp-test' );
+		} );
+
+		await import( '../../webmcp/adapter' );
+
+		expect( registerTool ).not.toHaveBeenCalled();
+
+		rerender( { providers: {} } );
+
+		await waitFor( () =>
+			expect( registerTool ).toHaveBeenCalledWith(
+				expect.objectContaining( { name: 'test__registry_only' } ),
 				expect.anything()
 			)
 		);
@@ -157,7 +198,9 @@ describe( 'useWebMcpTools', () => {
 			delete window.pagenow;
 		} );
 
-		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
 		onTestFinished( unmount );
 
 		await waitFor( () => expect( registerTool ).toHaveBeenCalledTimes( 1 ) );
@@ -177,7 +220,9 @@ describe( 'useWebMcpTools', () => {
 			getAbilities: vi.fn().mockResolvedValue( [ { ...ability, name: 'big-sky/set-site-logo' } ] ),
 			executeAbility: vi.fn(),
 		};
-		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
 		onTestFinished( unmount );
 		await waitFor( () => expect( tools ).toHaveLength( 1 ) );
 
@@ -200,7 +245,9 @@ describe( 'useWebMcpTools', () => {
 			getAbilities: vi.fn().mockResolvedValue( [ ability, blockTreeAbility ] ),
 			executeAbility: vi.fn().mockResolvedValue( { result: { details: { blocks: [] } } } ),
 		};
-		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
 		onTestFinished( unmount );
 		await waitFor( () => expect( tools ).toHaveLength( 1 ) );
 		vi.mocked( apiFetch ).mockResolvedValue( { edits: { deletes: [ 'block-1' ] } } );
@@ -230,7 +277,9 @@ describe( 'useWebMcpTools', () => {
 			executeAbility: vi.fn(),
 		};
 
-		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
 		await Promise.resolve();
 
 		expect( registerTool ).not.toHaveBeenCalled();
