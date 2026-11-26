@@ -1,6 +1,7 @@
 import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
 import { isEditorPage } from '../utils/is-editor-page';
 import type { WebMcpModelContext } from './types';
+import type { Ability } from '@wordpress/abilities';
 
 type ModelContextHost = {
 	modelContext?: unknown;
@@ -38,5 +39,15 @@ export function getWebMcpModelContext(
 }
 
 export function canExposeWebMcpTools(): boolean {
-	return isWebMcpExperimentEnabled() && isEditorPage() && !! getWebMcpModelContext();
+	return isWebMcpExperimentEnabled() && !! getWebMcpModelContext();
+}
+
+export function isAbilityOnCurrentScreen( ability: Ability ): boolean {
+	const screens: unknown = ability.meta?.webmcp?.screens;
+
+	if ( ! Array.isArray( screens ) ) {
+		return isEditorPage();
+	}
+
+	return !! window.pagenow && screens.includes( window.pagenow );
 }

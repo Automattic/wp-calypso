@@ -2,12 +2,13 @@ import { vi } from 'vitest';
 import {
 	canExposeWebMcpTools,
 	getWebMcpModelContext,
+	isAbilityOnCurrentScreen,
 	isWebMcpExperimentEnabled,
 } from '../eligibility';
+import type { Ability } from '@wordpress/abilities';
 
 describe( 'WebMCP eligibility', () => {
 	beforeEach( () => {
-		document.body.className = 'site-editor-php';
 		window.history.replaceState( {}, '', '/' );
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
 		Object.defineProperty( document, 'modelContext', { configurable: true, value: undefined } );
@@ -50,7 +51,7 @@ describe( 'WebMCP eligibility', () => {
 		expect( canExposeWebMcpTools() ).toBe( false );
 	} );
 
-	it( 'is a no-op on non-editor routes', () => {
+	it( 'qualifies on any screen when enabled in a supported browser', () => {
 		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
 			isDevMode: true,
 		};
@@ -59,17 +60,50 @@ describe( 'WebMCP eligibility', () => {
 			configurable: true,
 			value: { registerTool: vi.fn() },
 		} );
-		expect( canExposeWebMcpTools() ).toBe( false );
+		expect( canExposeWebMcpTools() ).toBe( true );
+	} );
+} );
+
+describe( 'WebMCP ability screens', () => {
+	const createAbility = ( webmcp: Record< string, unknown > ) =>
+		( { name: 'example/tool', meta: { webmcp } } ) as unknown as Ability;
+
+	beforeEach( () => {
+		document.body.className = 'wp-admin';
+		window.pagenow = 'woocommerce_page_wc-orders';
 	} );
 
-	it( 'qualifies only when enabled in a supported editor and browser', () => {
-		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
-			isDevMode: true,
-		};
-		Object.defineProperty( document, 'modelContext', {
-			configurable: true,
-			value: { registerTool: vi.fn() },
-		} );
-		expect( canExposeWebMcpTools() ).toBe( true );
+	afterEach( () => {
+		delete window.pagenow;
+	} );
+
+	it( 'keeps an ability without screens to the editors', () => {
+		const ability = createAbility( { public: true } );
+
+		expect( isAbilityOnCurrentScreen( ability ) ).toBe( false );
+
+		document.body.className = 'site-editor-php';
+		expect( isAbilityOnCurrentScreen( ability ) ).toBe( true );
+	} );
+
+	it( 'shows an ability only on the screens it lists', () => {
+		expect(
+			isAbilityOnCurrentScreen(
+				createAbility( { public: true, screens: [ 'woocommerce_page_wc-orders' ] } )
+			)
+		).toBe( true );
+		expect(
+			isAbilityOnCurrentScreen( createAbility( { public: true, screens: [ 'edit-product' ] } ) )
+		).toBe( false );
+	} );
+
+	it( 'hides a listed ability outside wp-admin', () => {
+		delete window.pagenow;
+
+		expect(
+			isAbilityOnCurrentScreen(
+				createAbility( { public: true, screens: [ 'woocommerce_page_wc-orders' ] } )
+			)
+		).toBe( false );
 	} );
 } );
