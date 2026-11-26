@@ -268,6 +268,7 @@ export default function McpToolsSubpage( {
 								const groupKey = descriptor?.name ?? '__other__';
 								const ordinaryGroupTools = getOrdinaryTools( groupTools );
 								const isOpen = openGroups.has( groupKey );
+								const groupHelp = getMcpBulkHelp( groupTools.length - ordinaryGroupTools.length );
 
 								return (
 									<Card key={ groupKey }>
@@ -284,15 +285,19 @@ export default function McpToolsSubpage( {
 													) }
 												</VStack>
 												{ ordinaryGroupTools.length > 0 && (
-													<div className="mcp-tools-subpage__group-toggle">
+													<div
+														className={
+															groupHelp
+																? 'mcp-tools-subpage__group-toggle mcp-tools-subpage__group-toggle--stacked'
+																: 'mcp-tools-subpage__group-toggle'
+														}
+													>
 														<ToggleControl
 															__nextHasNoMarginBottom
 															checked={ ordinaryGroupTools.every( ( [ , tool ] ) => tool.enabled ) }
 															disabled={ mutation.isPending }
 															label={ translate( 'Enable all' ) }
-															help={ getMcpBulkHelp(
-																groupTools.length - ordinaryGroupTools.length
-															) }
+															help={ groupHelp }
 															onChange={ ( checked ) =>
 																handleGroupEnableAll(
 																	descriptor?.name ?? null,
