@@ -4,11 +4,11 @@ Agents Manager can expose abilities to browser agents through the draft WebMCP A
 agent supplies the model and all reasoning, so a tool call doesn't create an Agenttic agent, open
 Agents Manager chat, or call the WordPress.com AI orchestrator.
 
-This is a staff-testing proof of concept, not a production-supported integration. It is disabled by
-default, and enabled only when the Agents Manager inline data reports `isDevMode: true`, in a
-browser that implements `document.modelContext.registerTool` (or the older `navigator.modelContext`),
-on any screen where Agents Manager loads. Each tool shows only on the screens it belongs to (see
-below).
+This is a staff-testing proof of concept, not a production-supported integration. It is off by
+default, and turns on only when the Agents Manager inline data reports `isDevMode: true`, in a
+browser that implements `document.modelContext.registerTool` (or the older
+`navigator.modelContext`), on any screen where Agents Manager loads. Each tool shows only on its own
+screens (see below).
 
 ## Execution and exposure
 
@@ -19,11 +19,11 @@ clash, the provider's ability wins and runs through the merged provider, which a
 precedence and the canvas guard. Registry-only abilities run through the registry's
 `executeAbility()`.
 
-A tool belongs to the block and site editors (a post, page, custom-post-type block editor or site
-editor screen, detected from the admin body classes by `isEditorPage()`), unless its ability lists
-the wp-admin screen IDs it belongs to in `meta.webmcp.screens`, matched against `window.pagenow`
-(`isAbilityOnCurrentScreen()` in `eligibility.ts`). The allowlisted server abilities list none, so
-they stay in the editors. A listed ability never shows outside wp-admin, which has no `pagenow`.
+An ability lists its screens as wp-admin screen IDs in `meta.webmcp.screens`, matched against
+`window.pagenow` (`isAbilityOnCurrentScreen()` in `eligibility.ts`). Without the list, it belongs to
+the block and site editors: a post, page, custom-post-type block editor or site editor screen,
+detected by `isEditorPage()`. The allowlisted server abilities list none, so they stay in the
+editors. Outside wp-admin there is no `pagenow`, so a listed ability never shows there.
 
 `adapter.ts` builds, registers and syncs the tools. `tool-calls.ts` prepares each call's input
 (`prepareToolInput()`), remembers the block-tree IDs (`rememberBlockClientIds()`) and adapts the
@@ -118,24 +118,24 @@ The exposed tools are:
 Expose a tool here only if it needs the open page: it reads or changes the live page state, such as
 the editor's, or its result feeds an edit on the canvas. General site and account operations, such
 as listing posts or reading stats, belong in the WordPress.com MCP server, and a second copy here
-only makes the agent choose between two names for the same call. Keep saving and publishing a user action: a tool that
-saves as a side effect, such as `big-sky/editor-navigate`, does not belong here.
+only makes the agent choose between two names for the same call. Keep saving and publishing a user
+action: a tool that saves as a side effect, such as `big-sky/editor-navigate`, does not belong here.
 
 To add another tool, verify its complete implementation, permissions, annotations, and execution
 path. Set `meta.webmcp.public: true` on a client ability with a callback, or add a REST-backed tool
 to `WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`).
 
 For a tool on another wp-admin screen, load Agents Manager there with Jetpack's
-`agents_manager_should_load` filter, and list the screen's ID in the ability's
-`meta.webmcp.screens`, for example `[ 'woocommerce_page_wc-orders' ]`. Read a screen's ID from
-`window.pagenow` in the browser console on that screen, or `get_current_screen()->id` in PHP.
-Without the list, the tool stays in the editors and is hidden on that screen without a warning.
+`agents_manager_should_load` filter, and list the screen's ID in `meta.webmcp.screens`, for example
+`[ 'woocommerce_page_wc-orders' ]`. Get the ID from `window.pagenow` in the browser console on that
+screen, or from `get_current_screen()->id` in PHP. Without the list, the tool stays in the editors,
+and that screen hides it without a warning.
 
-Calypso and the Dashboard don't offer WebMCP tools yet: they set neither `isDevMode` nor
+Calypso and the Dashboard don't offer WebMCP tools yet, because they set neither `isDevMode` nor
 `pagenow`. To add them, give `isWebMcpExperimentEnabled()` a dev-mode source there, and let
 `isAbilityOnCurrentScreen()` match `screens` against the app's own screen ID, prefixed so it can't
-collide with a wp-admin one (for example `calypso:plugins`). Tools then use the same
-`meta.webmcp.screens` field.
+clash with a wp-admin one (for example `calypso:plugins`). Tools keep the same `meta.webmcp.screens`
+field.
 
 Write the ability's `description` for both agents: name another tool only if both have it, or if
 only browser agents read the description, as with `big-sky/apply-block-edits`.
