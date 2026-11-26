@@ -1,13 +1,12 @@
 @import '@automattic/calypso-color-schemes/root-only';
-@import '@wordpress/theme/design-tokens.css';
 
 .omnibar__cart-popover {
 	// `@automattic/mini-cart` reads Calypso's light color scheme; map the roles it uses to WPDS tokens.
-	--color-text: var( --wpds-color-foreground-content-neutral );
-	--color-text-subtle: var( --wpds-color-foreground-content-neutral-weak );
-	--color-surface: var( --wpds-color-background-surface-neutral-strong );
-	--color-neutral-50: var( --wpds-color-foreground-content-neutral-weak );
-	--color-neutral-70: var( --wpds-color-foreground-content-neutral );
+	--color-text: var( --wpds-color-foreground-content-neutral, var( --studio-gray-80 ) );
+	--color-text-subtle: var( --wpds-color-foreground-content-neutral-weak, var( --studio-gray-50 ) );
+	--color-surface: var( --wpds-color-background-surface-neutral-strong, var( --studio-white ) );
+	--color-neutral-50: var( --wpds-color-foreground-content-neutral-weak, var( --studio-gray-50 ) );
+	--color-neutral-70: var( --wpds-color-foreground-content-neutral, var( --studio-gray-70 ) );
 
 	button {
 		appearance: none;
