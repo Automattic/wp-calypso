@@ -907,6 +907,10 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 			fill: #fff;
 		}
 
+		.lpc-header-nav-wrapper .masterbar .x-nav--2026-redesign .x-nav-item {
+			color: var( --dashboard__text-color, #fff );
+		}
+
 		.x-dropdown-link.x-dropdown-link {
 			&:hover,
 			&:focus {
