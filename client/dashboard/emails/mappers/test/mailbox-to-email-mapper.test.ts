@@ -36,12 +36,11 @@ describe( 'mapMailboxToEmail', () => {
 		expect( email.status ).toBe( 'domain_not_connected' );
 	} );
 
-	test( 'keeps the pending deletion status when the account has a warning', () => {
-		const email = mapMailboxToEmail( box, {
-			...account,
-			status: 'pending_deletion',
-			warnings: [ domainNotConnected ],
-		} );
+	test( 'keeps the pending deletion status of a mailbox when the account has a warning', () => {
+		const email = mapMailboxToEmail(
+			{ ...box, status: 'pending_deletion' },
+			{ ...account, warnings: [ domainNotConnected ] }
+		);
 
 		expect( email.status ).toBe( 'pending_deletion' );
 	} );

@@ -21,10 +21,9 @@ export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): 
 	let status: Email[ 'status' ] = emailAccount.status;
 
 	// A pending deletion wins over any warning, such as the domain being removed.
-	if (
-		status !== 'pending_deletion' &&
-		( box.warnings.length > 0 || emailAccount.warnings.length > 0 )
-	) {
+	if ( box.status === 'pending_deletion' ) {
+		status = 'pending_deletion';
+	} else if ( box.warnings.length > 0 || emailAccount.warnings.length > 0 ) {
 		status = 'pending';
 		if ( accountHasWarningWithSlug( 'domain_not_connected', emailAccount ) ) {
 			status = 'domain_not_connected';

@@ -72,6 +72,7 @@ export interface EmailBox {
 	email_type: 'email' | 'email_forward';
 	role: Role;
 	warnings: Warning[]; // often empty
+	status?: 'pending_deletion';
 }
 
 // Base account fields (shared)
@@ -84,7 +85,6 @@ export interface EmailAccount {
 	domains: DomainBinding[];
 	warnings: Warning[];
 	emails: EmailBox[];
-	status:
-		'active' | 'pending' | 'suspended' | 'no_subscription' | 'pending_deletion' | 'other_provider';
+	status: 'active' | 'pending' | 'suspended' | 'no_subscription' | 'other_provider';
 	can_user_add_email: boolean;
 }
