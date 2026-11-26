@@ -13,7 +13,7 @@ import {
 	testSite,
 } from '../../../../../../test-utils/render-route';
 import '..';
-import '../../../../../../../../sites/site';
+import '../../../../layout';
 
 describe( '/sites/$siteSlug/settings/ai-tools/write', () => {
 	beforeEach( () => {

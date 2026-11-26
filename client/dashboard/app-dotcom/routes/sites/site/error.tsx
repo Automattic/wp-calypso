@@ -2,16 +2,16 @@ import { isInaccessibleJetpackError } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import UnknownError from '../../app/500';
-import { siteRoute } from '../../app/router/sites';
-import Notice, { NoticeActionLink, RouterNoticeActionLink } from '../../components/notice';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import RouterLinkButton from '../../components/router-link-button';
-import { SitePermissionError } from '../../utils/site-permissions';
-import { isP2 } from '../../utils/site-types';
-import { toError } from '../../utils/to-error';
-import { InaccessibleJetpackNotice } from './notices';
+import UnknownError from '../../../../app/500';
+import { siteRoute } from '../../../../app/router/sites';
+import Notice, { NoticeActionLink, RouterNoticeActionLink } from '../../../../components/notice';
+import { PageHeader } from '../../../../components/page-header';
+import PageLayout from '../../../../components/page-layout';
+import RouterLinkButton from '../../../../components/router-link-button';
+import { InaccessibleJetpackNotice } from '../../../../sites/components/inaccessible-jetpack-notice';
+import { SitePermissionError } from '../../../../utils/site-permissions';
+import { isP2 } from '../../../../utils/site-types';
+import { toError } from '../../../../utils/to-error';
 import type { Site } from '@automattic/api-core';
 
 export default function Error( { error: thrown }: { error: unknown } ) {

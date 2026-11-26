@@ -11,7 +11,7 @@ import {
 	testSite,
 } from '../../../../../test-utils/render-route';
 import '..';
-import '../../../../../../../sites/site';
+import '../../../layout';
 
 describe( '/sites/$siteSlug/settings/static-file-404', () => {
 	beforeEach( () => {

@@ -9,8 +9,8 @@ import '../critical-error';
 import '../site-building-in-progress';
 import '../../../../../sites/migration-overview';
 import '..';
-import '../../../../../sites/site';
-import '../../../../../sites/site/error';
+import '../layout';
+import '../error';
 import '../trial-ended';
 import type { Site, User } from '@automattic/api-core';
 
