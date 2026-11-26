@@ -36,23 +36,13 @@ function isValidSuggestionsResponse(
  * Persists across component remounts but resets on page refresh.
  */
 const suggestionsCache = new Map< string, Suggestion[] >();
-
-/**
- * Builds the full system prompt sent to the model. Callers that need a
- * different framing than the loader's image-oriented default — e.g. the
- * video-clip flow — should provide one of these.
- */
-export type SystemPromptBuilder = ( suggestionPrompt: string, locale: string ) => string;
-
 interface UseAsyncSuggestionsLoaderOptions {
 	prompt: string;
 	cacheKey?: string | null;
 	enabled?: boolean;
-	buildSystemPrompt?: SystemPromptBuilder;
-	fallbackSuggestions?: Suggestion[];
 }
 
-function buildDefaultImageSystemPrompt( suggestionPrompt: string, locale: string ): string {
+function buildSystemPrompt( suggestionPrompt: string, locale: string ): string {
 	return `You are a creative assistant that generates image generation prompts based on user input.
 
 ${ suggestionPrompt }
@@ -80,21 +70,13 @@ export function useAsyncSuggestionsLoader(
 	options: UseAsyncSuggestionsLoaderOptions
 ): UseAsyncSuggestionsLoaderReturn {
 	const locale = ( getLocaleData()?.[ '' ] as { lang?: string } | undefined )?.lang ?? 'en';
-	const {
-		prompt: suggestionPrompt,
-		cacheKey,
-		enabled = true,
-		buildSystemPrompt,
-		fallbackSuggestions = DEFAULT_GENERATE_SUGGESTIONS,
-	} = options;
+	const { prompt: suggestionPrompt, cacheKey, enabled = true } = options;
 
 	const [ suggestions, setSuggestions ] = useState< Suggestion[] >( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const abortControllerRef = useRef< AbortController | null >( null );
-	const fallbackSuggestionsRef = useRef( fallbackSuggestions );
-	fallbackSuggestionsRef.current = fallbackSuggestions;
 
-	const prompt = ( buildSystemPrompt ?? buildDefaultImageSystemPrompt )( suggestionPrompt, locale );
+	const prompt = buildSystemPrompt( suggestionPrompt, locale );
 
 	/**
 	 * Abort suggestion loading request.
@@ -162,7 +144,7 @@ export function useAsyncSuggestionsLoader(
 
 				if ( ! isValidSuggestionsResponse( parsed ) ) {
 					window.console?.error?.( '[Image Studio] Invalid suggestions response:', response.text );
-					setSuggestions( fallbackSuggestionsRef.current );
+					setSuggestions( DEFAULT_GENERATE_SUGGESTIONS );
 					return;
 				}
 
@@ -186,7 +168,7 @@ export function useAsyncSuggestionsLoader(
 				}
 
 				window.console?.warn?.( '[Image Studio] Failed to fetch suggestions:', error );
-				setSuggestions( fallbackSuggestionsRef.current );
+				setSuggestions( DEFAULT_GENERATE_SUGGESTIONS );
 			} finally {
 				// Only clear loading state if this controller is still active
 				if ( abortControllerRef.current === abortController ) {

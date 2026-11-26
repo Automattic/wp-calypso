@@ -11,7 +11,6 @@ const OTHER_ENTRY_POINTS = [
 	ImageStudioEntryPoint.MediaLibrary,
 	ImageStudioEntryPoint.EditorBlock,
 	ImageStudioEntryPoint.JetpackAISocialMedia,
-	ImageStudioEntryPoint.PostEditorFeatureClip,
 	null,
 ];
 

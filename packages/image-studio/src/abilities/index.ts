@@ -5,4 +5,3 @@
  */
 
 export { registerUpdateCanvasImageAbility } from './update-canvas-image';
-export { registerUpdateCanvasVideoAbility } from './update-canvas-video';

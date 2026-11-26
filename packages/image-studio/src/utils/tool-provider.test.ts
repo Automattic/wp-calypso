@@ -3,7 +3,7 @@
  */
 import { getAbilities, executeAbility } from '@wordpress/abilities';
 import { type Mock, vi } from 'vitest';
-import { registerUpdateCanvasImageAbility, registerUpdateCanvasVideoAbility } from '../abilities';
+import { registerUpdateCanvasImageAbility } from '../abilities';
 import {
 	ALLOWED_ABILITIES,
 	initializeAbilities,
@@ -21,7 +21,6 @@ vi.mock( '@wordpress/abilities', () => ( {
 // Mock abilities registration
 vi.mock( '../abilities', () => ( {
 	registerUpdateCanvasImageAbility: vi.fn(),
-	registerUpdateCanvasVideoAbility: vi.fn(),
 } ) );
 
 // Mock console methods
@@ -42,7 +41,6 @@ describe( 'Tool Provider', () => {
 		it( 'should define allowed abilities list', () => {
 			expect( ALLOWED_ABILITIES ).toEqual( [
 				'image-studio/update-canvas-image',
-				'image-studio/update-canvas-video',
 				'image-studio/render-images',
 			] );
 		} );
@@ -53,7 +51,6 @@ describe( 'Tool Provider', () => {
 			await initializeAbilities();
 
 			expect( registerUpdateCanvasImageAbility ).toHaveBeenCalledTimes( 1 );
-			expect( registerUpdateCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
 			expect( consoleLogSpy ).toHaveBeenCalledWith( '[Image Studio] Abilities registered' );
 
 			// Call again - should not register again
@@ -61,7 +58,6 @@ describe( 'Tool Provider', () => {
 			await initializeAbilities();
 
 			expect( registerUpdateCanvasImageAbility ).toHaveBeenCalledTimes( 1 );
-			expect( registerUpdateCanvasVideoAbility ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
