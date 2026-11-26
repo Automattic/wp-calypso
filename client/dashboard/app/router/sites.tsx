@@ -1736,7 +1736,7 @@ export const siteTrialEndedRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/trial-ended' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/trial-ended' ).then( ( d ) =>
 		createLazyRoute( 'site-trial-ended' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1765,7 +1765,7 @@ export const siteCriticalErrorRoute = createRoute( {
 		}
 	},
 } ).lazy( () =>
-	import( '../../sites/critical-error' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/critical-error' ).then( ( d ) =>
 		createLazyRoute( 'site-critical-error' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )
@@ -1809,7 +1809,7 @@ export const siteDifmLiteInProgressRoute = createRoute( {
 		};
 	},
 } ).lazy( () =>
-	import( '../../sites/difm-lite-in-progress' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/site-building-in-progress' ).then( ( d ) =>
 		createLazyRoute( 'site-difm-lite-in-progress' )( {
 			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
 		} )

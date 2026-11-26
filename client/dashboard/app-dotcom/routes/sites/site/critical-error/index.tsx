@@ -12,21 +12,21 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, envelope, folder, formatListBullets, help, wordpress } from '@wordpress/icons';
 import { Fragment, useEffect } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { useHelpCenter } from '../../app/help-center';
-import { Card, CardBody, CardDivider } from '../../components/card';
-import { Notice } from '../../components/notice';
-import { PageHeader } from '../../components/page-header';
-import PageLayout from '../../components/page-layout';
-import { SectionHeader } from '../../components/section-header';
-import { Text } from '../../components/text';
-import { hasHostingFeature } from '../../utils/site-features';
+import { useAnalytics } from '../../../../../app/analytics';
+import { useHelpCenter } from '../../../../../app/help-center';
+import { Card, CardBody, CardDivider } from '../../../../../components/card';
+import { Notice } from '../../../../../components/notice';
+import { PageHeader } from '../../../../../components/page-header';
+import PageLayout from '../../../../../components/page-layout';
+import { SectionHeader } from '../../../../../components/section-header';
+import { Text } from '../../../../../components/text';
+import { hasHostingFeature } from '../../../../../utils/site-features';
 import {
 	getJetpackCriticalErrorMessage,
 	getJetpackRecoverySessionErrors,
 	isInJetpackCriticalErrorState,
-} from '../../utils/site-jetpack-critical-error';
-import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
+} from '../../../../../utils/site-jetpack-critical-error';
+import { siteTypeSupportsFeature } from '../../../../../utils/site-type-feature-support';
 import type { JetpackRecoverySessionError } from '@automattic/api-core';
 import type { ReactElement, ReactNode } from 'react';
 
