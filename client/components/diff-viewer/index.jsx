@@ -93,9 +93,17 @@ const filename = ( { oldFileName, newFileName } ) => {
 	);
 };
 
+const parseDiff = ( diff ) => {
+	try {
+		return parsePatch( diff );
+	} catch {
+		return [];
+	}
+};
+
 export const DiffViewer = ( { diff } ) => (
 	<div className="diff-viewer">
-		{ parsePatch( diff ).map( ( file, fileIndex ) => (
+		{ parseDiff( diff ).map( ( file, fileIndex ) => (
 			<Fragment key={ fileIndex }>
 				<div key={ `file-${ fileIndex }` } className="diff-viewer__filename">
 					{ filename( file ) }
