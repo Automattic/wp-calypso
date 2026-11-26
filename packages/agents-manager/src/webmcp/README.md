@@ -195,7 +195,8 @@ DevTools or call `document.modelContext` directly for this path.
 5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
 6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
 7. On a wp-admin screen outside the editors where Agents Manager loads, such as Plugins on a
-   WordPress.com site, repeat step 4 with `screens: [ window.pagenow ]` added to `meta.webmcp`.
-   Confirm it appears as a tool and that the nine editor tools don't. Repeat it without `screens`,
-   and with another screen's ID, and confirm the tool stays absent without a warning.
+   WordPress.com site, repeat step 4 with that screen's ID added to `meta.webmcp`, such as
+   `screens: [ 'plugins' ]`. Confirm it appears as a tool and that the nine editor tools don't.
+   Repeat it without `screens`, and with another screen's ID, and confirm the tool stays absent
+   without a warning.
 8. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
