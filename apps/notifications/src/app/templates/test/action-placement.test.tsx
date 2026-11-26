@@ -135,7 +135,7 @@ describe( 'comment action placement', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 
-		expect( await screen.findByRole( 'menuitem', { name: 'Edit' } ) ).toBeVisible();
+		await waitFor( () => expect( screen.getByRole( 'menuitem', { name: 'Edit' } ) ).toBeVisible() );
 		expect( screen.queryByRole( 'menuitem', { name: /approve/i } ) ).not.toBeInTheDocument();
 	} );
 
@@ -435,7 +435,9 @@ describe( 'comment action placement', () => {
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 
-			expect( await screen.findByRole( 'menuitem', { name: 'Edit' } ) ).toBeVisible();
+			await waitFor( () =>
+				expect( screen.getByRole( 'menuitem', { name: 'Edit' } ) ).toBeVisible()
+			);
 			expect( screen.getByRole( 'menuitem', { name: 'Move to trash' } ) ).toBeVisible();
 			expect( screen.queryByRole( 'menuitem', { name: 'Unapprove' } ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'menuitem', { name: 'Mark as spam' } ) ).not.toBeInTheDocument();
@@ -456,7 +458,9 @@ describe( 'comment action placement', () => {
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 
-			expect( await screen.findByRole( 'menuitem', { name: 'Edit' } ) ).toBeVisible();
+			await waitFor( () =>
+				expect( screen.getByRole( 'menuitem', { name: 'Edit' } ) ).toBeVisible()
+			);
 			expect( screen.queryByRole( 'menuitem', { name: 'Mark as spam' } ) ).not.toBeInTheDocument();
 		} );
 
@@ -477,7 +481,9 @@ describe( 'comment action placement', () => {
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 
-			expect( await screen.findByRole( 'menuitem', { name: 'Unapprove' } ) ).toBeVisible();
+			await waitFor( () =>
+				expect( screen.getByRole( 'menuitem', { name: 'Unapprove' } ) ).toBeVisible()
+			);
 			expect( screen.getByRole( 'menuitem', { name: 'Mark as spam' } ) ).toBeVisible();
 		} );
 
@@ -491,7 +497,9 @@ describe( 'comment action placement', () => {
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 
-			expect( await screen.findByRole( 'menuitem', { name: 'Unapprove' } ) ).toBeVisible();
+			await waitFor( () =>
+				expect( screen.getByRole( 'menuitem', { name: 'Unapprove' } ) ).toBeVisible()
+			);
 			expect( screen.getByRole( 'menuitem', { name: 'Mark as spam' } ) ).toBeVisible();
 		} );
 
