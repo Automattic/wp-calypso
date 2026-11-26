@@ -89,8 +89,8 @@ export default function DevToolSection( {
 						) ) }
 					</VStack>
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
-						size="compact"
 						href={ cta.href }
 						target="_blank"
 						rel="noreferrer"
