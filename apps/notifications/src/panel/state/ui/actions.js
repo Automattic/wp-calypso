@@ -3,6 +3,7 @@ import {
 	EDIT_COMMENT,
 	NOTES_LOADED,
 	NOTES_LOADING,
+	NOTES_LOAD_FAILED,
 	SELECT_NOTE,
 	SET_LAYOUT,
 	UNDO_ACTION,
@@ -34,6 +35,16 @@ export const loadNotes = ( { filter = null } = {} ) => ( {
  */
 export const loadedNotes = ( { filter = null } = {} ) => ( {
 	type: NOTES_LOADED,
+	filter,
+} );
+
+// A tab's first load failed, so it has nothing to show. Like loadedNotes, it ends
+// the loading state. See the `loadFailed` reducer.
+/**
+ * @param {{ filter?: string | null }} [options]
+ */
+export const loadNotesFailed = ( { filter = null } = {} ) => ( {
+	type: NOTES_LOAD_FAILED,
 	filter,
 } );
 
@@ -92,6 +103,7 @@ export default {
 	closePanel,
 	loadNotes,
 	loadedNotes,
+	loadNotesFailed,
 	selectNote,
 	setLayout,
 	undoAction,
