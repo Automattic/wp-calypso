@@ -14621,7 +14621,6 @@ __metadata:
     draft-js: "patch:draft-js@npm%3A0.11.7#~/.yarn/patches/draft-js-npm-0.11.7-ea66f83002.patch"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
     email-validator: "npm:^2.0.4"
-    emoji-text: "npm:^0.2.6"
     eslint: "npm:^10.14.0"
     express: "npm:^4.22.3"
     express-async-handler: "npm:^1.1.4"
@@ -17032,15 +17031,6 @@ __metadata:
   version: 9.2.2
   resolution: "emoji-regex@npm:9.2.2"
   checksum: 10c0/af014e759a72064cf66e6e694a7fc6b0ed3d8db680427b021a89727689671cefe9d04151b2cad51dbaf85d5ba790d061cd167f1cf32eb7b281f6368b3c181639
-  languageName: node
-  linkType: hard
-
-"emoji-text@npm:^0.2.6":
-  version: 0.2.6
-  resolution: "emoji-text@npm:0.2.6"
-  dependencies:
-    wemoji: "npm:^0.1.9"
-  checksum: 10c0/f6c7dcd91b980ec0f2ca1175fbff1870cea4840cd16f9a0489f3c803c7ad95c4a4ff5c2e91d42099d7e264bdf6efa30f131957802dc9dba47e0af417eb9bd48b
   languageName: node
   linkType: hard
 
@@ -30391,20 +30381,6 @@ __metadata:
   bin:
     webpack: bin/webpack.js
   checksum: 10c0/e14333a01f4a547950d4844f3da9de7311be3644ec6fedede569f203aa4289a2dab7323cdb88f746e2d3cbc7f8c465bd2b030b30292c2d6ef1e5d2ead39cead2
-  languageName: node
-  linkType: hard
-
-"wemoji@npm:0.1.9":
-  version: 0.1.9
-  resolution: "wemoji@npm:0.1.9"
-  checksum: 10c0/114256e3099ce34d446e2b0efaaa528dbc3c86cd04379beee8bc80783e7dc1fbc095914397f2a12b2639706a4f8d7e5a0437949017e1c914c181b7d6a52dad66
-  languageName: node
-  linkType: hard
-
-"wemoji@patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch":
-  version: 0.1.9
-  resolution: "wemoji@patch:wemoji@npm%3A0.1.9#~/.yarn/patches/wemoji-npm-0.1.9-1e0d0ecbb8.patch::version=0.1.9&hash=181f5a"
-  checksum: 10c0/17c4744d7bc9050dda716ca8416cdbc4cf043cc4d5dbe5ab27714d5d25629bdd3ab698a5b01ac33cc2827769e001de26b04d7ef4d9addbb72f3fb9217019fe27
   languageName: node
   linkType: hard
 
