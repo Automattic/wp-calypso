@@ -1,6 +1,6 @@
 ## Server side tests
 
-This test configuration contains unit tests that verify code located in `server` top level folder.
+This test configuration contains unit tests that verify code located in the `client/server` folder.
 
 It supports automatic test discovery. We only need to put a test file into a `test` subfolder, next to the files we want to test.
 
@@ -14,6 +14,8 @@ Tests can be run in 2 different modes:
 ```
 
 Those tests are executed on every push on continuous integration (we use TeamCity). This is why all individual tests need to be blazing fast. Please note that network connection is disabled for this configuration.
+
+The server tests run on Vitest, as do the `build-tools` tests (`yarn run test-build-tools`). Arguments are Vitest's, for example a path to run a subset of the tests.
 
 _Check also how to write [unit tests](unit-tests.md)._
 
