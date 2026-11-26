@@ -158,6 +158,13 @@ export interface SiteContextualPlan {
 	is_delayed_downgrade_available?: boolean;
 
 	/**
+	 * Whether moving to this plan would change the billing term a second time
+	 * within 12 months, which only a Happiness Engineer may do. When true, both
+	 * downgrade flags are false. Present on non-current plans.
+	 */
+	is_term_change_limited?: boolean;
+
+	/**
 	 * Whether this plan has passed its expiry date. If this is set on the
 	 * current plan, that means that the plan is still active but is now within
 	 * its grace period. Once the grace period ends, the plan will no longer be

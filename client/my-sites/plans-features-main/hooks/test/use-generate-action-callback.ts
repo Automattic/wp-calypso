@@ -4,6 +4,8 @@
 import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_PREMIUM_MONTHLY,
 	PLAN_WOO_HOSTED_BASIC,
 	PLAN_WOO_HOSTED_PRO,
 } from '@automattic/calypso-products';
@@ -13,18 +15,28 @@ import { type Mock, vi } from 'vitest';
 import useGenerateActionCallback from '../use-generate-action-callback';
 import type { CheckoutAttribution } from '../use-generate-action-callback';
 
+const { mockState, setNewMessagingChat, mockLocale } = vi.hoisted( () => ( {
+	mockState: { sites: { plans: {} as Record< number, { data: unknown[] } > } },
+	setNewMessagingChat: vi.fn(),
+	mockLocale: { isEnglish: true },
+} ) );
+
 vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
 vi.mock( '@automattic/help-center/src/stores', () => ( { HELP_CENTER_STORE: 'help-center' } ) );
+vi.mock( '@automattic/i18n-utils', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( '@automattic/i18n-utils' ) >() ),
+	useIsEnglishLocale: () => mockLocale.isEnglish,
+} ) );
 vi.mock( '@automattic/zendesk-client', () => ( {
-	useCanConnectToZendeskMessaging: () => ( { data: false } ),
+	useCanConnectToZendeskMessaging: () => ( { data: true } ),
 } ) );
 vi.mock( '@wordpress/data', async ( importOriginal ) => ( {
 	...( await importOriginal< typeof import( '@wordpress/data' ) >() ),
-	useDispatch: () => ( { setNewMessagingChat: vi.fn(), setNavigateToOdie: vi.fn() } ),
+	useDispatch: () => ( { setNewMessagingChat, setNavigateToOdie: vi.fn() } ),
 } ) );
 vi.mock( 'calypso/state', () => ( {
-	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
+	useSelector: ( selector: ( state: object ) => unknown ) => selector( mockState ),
 } ) );
 vi.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'example.wordpress.com',
@@ -126,5 +138,103 @@ describe( 'useGenerateActionCallback downgrades', () => {
 		} as never )();
 
 		expect( page ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'useGenerateActionCallback term changes limited to once every 12 months', () => {
+	beforeEach( () => {
+		vi.clearAllMocks();
+		mockState.sites.plans = {};
+		mockLocale.isEnglish = true;
+	} );
+
+	async function clickLimitedPremiumMonthly( showModalAndExit = vi.fn() ) {
+		mockState.sites.plans = {
+			1: {
+				data: [
+					{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+					{
+						productSlug: PLAN_PREMIUM_MONTHLY,
+						productName: 'WordPress.com Premium',
+						interval: 31,
+						availableForDowngrade: true,
+						isTermChangeLimited: true,
+					},
+				],
+			},
+		};
+		const { result } = renderHook( () =>
+			useGenerateActionCallback( {
+				currentPlan: { productSlug: PLAN_PREMIUM } as never,
+				eligibleForFreeHostingTrial: false,
+				sitePlanSlug: PLAN_PREMIUM,
+				siteId: 1,
+				showModalAndExit,
+			} )
+		);
+
+		await result.current( {
+			planSlug: PLAN_PREMIUM_MONTHLY,
+			cartItemForPlan: { product_slug: PLAN_PREMIUM_MONTHLY },
+			availableForPurchase: false,
+		} as never )();
+	}
+
+	it( 'opens a support chat instead of the downgrade modals', async () => {
+		const showModalAndExit = vi.fn();
+		await clickLimitedPremiumMonthly( showModalAndExit );
+
+		expect( showModalAndExit ).not.toHaveBeenCalled();
+		expect( page ).not.toHaveBeenCalled();
+		expect( setNewMessagingChat ).toHaveBeenCalledWith( {
+			initialMessage: 'I would like to change my plan to WordPress.com Premium (monthly).',
+			siteUrl: 'https://example.wordpress.com',
+		} );
+	} );
+
+	it( 'falls back to the translated downgrade message until the new one is translated', async () => {
+		mockLocale.isEnglish = false;
+		await clickLimitedPremiumMonthly();
+
+		expect( setNewMessagingChat ).toHaveBeenCalledWith( {
+			initialMessage: 'I would like to downgrade my plan to WordPress.com Premium (monthly).',
+			siteUrl: 'https://example.wordpress.com',
+		} );
+	} );
+
+	it( 'leaves a change that is not limited to the downgrade modals', async () => {
+		mockState.sites.plans = {
+			1: {
+				data: [
+					{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+					{
+						productSlug: PLAN_PREMIUM_MONTHLY,
+						interval: 31,
+						availableForDowngrade: true,
+						isDelayedDowngradeAvailable: true,
+						isTermChangeLimited: false,
+					},
+				],
+			},
+		};
+		const showModalAndExit = vi.fn( () => true );
+		const { result } = renderHook( () =>
+			useGenerateActionCallback( {
+				currentPlan: { productSlug: PLAN_PREMIUM } as never,
+				eligibleForFreeHostingTrial: false,
+				sitePlanSlug: PLAN_PREMIUM,
+				siteId: 1,
+				showModalAndExit,
+			} )
+		);
+
+		await result.current( {
+			planSlug: PLAN_PREMIUM_MONTHLY,
+			cartItemForPlan: { product_slug: PLAN_PREMIUM_MONTHLY },
+			availableForPurchase: false,
+		} as never )();
+
+		expect( showModalAndExit ).toHaveBeenCalledWith( PLAN_PREMIUM_MONTHLY );
+		expect( setNewMessagingChat ).not.toHaveBeenCalled();
 	} );
 } );

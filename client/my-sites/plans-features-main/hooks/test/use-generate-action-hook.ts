@@ -631,6 +631,31 @@ describe( 'useGenerateActionHook', () => {
 			expect( action.primary.text ).toBe( 'Downgrade' );
 		} );
 
+		it( 'offers support for a term change limited to once every 12 months', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true, userIsOwner: true },
+				{
+					productSlug: PLAN_PREMIUM_MONTHLY,
+					interval: 31,
+					availableForDowngrade: true,
+					isDelayedDowngradeAvailable: false,
+					isInstantDowngradeAvailable: false,
+					isTermChangeLimited: true,
+				},
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_PREMIUM_MONTHLY,
+				availableForPurchase: false,
+			} );
+
+			expect( action.primary.text ).toBe( 'Contact support' );
+			expect( action.primary.variant ).toBe( 'secondary' );
+		} );
+
 		it( 'labels a lower tier plan on the same billing term as a downgrade', () => {
 			mockSitePlans( [
 				{ productSlug: PLAN_BUSINESS, interval: 365, currentPlan: true },

@@ -9,17 +9,22 @@ import {
 import page from '@automattic/calypso-router';
 import { AddOns, Plans } from '@automattic/data-stores';
 import { HELP_CENTER_STORE } from '@automattic/help-center/src/stores';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
+import { hasTranslation } from '@wordpress/i18n';
+import { useTranslate } from 'i18n-calypso';
 import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import { cancelPurchase } from 'calypso/me/purchases/paths';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import { useSelector } from 'calypso/state';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { getSiteSlug, getSiteUrl, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { IAppState } from 'calypso/state/types';
+import { getSitePlanNameWithTerm, isTermChangeLimitedPlanChange } from '../scheduled-term-change';
 import useCurrentPlanManageHref from './use-current-plan-manage-href';
 import { useNonOwnerHandler } from './use-non-owner-handler';
 import type { PlansIntent, UseActionCallback } from '@automattic/plans-grid-next';
@@ -147,7 +152,7 @@ function useDowngradeHandler( {
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
 	return useCallback(
-		( planSlug: PlanSlug ) => {
+		( planSlug: PlanSlug, initialMessage = 'User wants to downgrade plan.' ) => {
 			// A downgrade to the free plan is essentially cancelling the current plan.
 			if ( isFreePlan( planSlug ) ) {
 				page( cancelPurchase( siteSlug, currentPlan?.purchaseId ) );
@@ -156,7 +161,7 @@ function useDowngradeHandler( {
 
 			if ( canConnectToZendeskMessaging ) {
 				setNewMessagingChat( {
-					initialMessage: 'User wants to downgrade plan.',
+					initialMessage,
 					siteUrl,
 				} );
 			} else {
@@ -227,11 +232,43 @@ function useGenerateActionCallback( {
 		currentPlan,
 	} );
 	const handleNonOwnerClick = useNonOwnerHandler( { siteId, currentPlan } );
+	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
+	const sitePlans = useSelector( ( state: IAppState ) =>
+		siteId ? getPlansBySiteId( state, siteId ).data : null
+	);
 
 	return ( { planSlug, cartItemForPlan, selectedStorageAddOn, availableForPurchase } ) =>
 		async () => {
 			const planConstantObj = applyTestFiltersToPlansList( planSlug, undefined );
 			const freeTrialPlanSlug = freeTrialPlanSlugs?.[ planConstantObj.type ];
+
+			// Only a Happiness Engineer may change the billing term again within 12
+			// months, so open a support chat instead of the downgrade modals.
+			const targetSitePlan = sitePlans?.find( ( p ) => p.productSlug === planSlug );
+			if ( targetSitePlan && isTermChangeLimitedPlanChange( targetSitePlan ) ) {
+				recordTracksEvent( 'calypso_plan_features_term_change_support_click', {
+					current_plan: sitePlanSlug,
+					changing_to: planSlug,
+				} );
+				const plan = getSitePlanNameWithTerm( targetSitePlan, translate );
+				handleDowngradeClick(
+					planSlug,
+					String(
+						isEnglishLocale || hasTranslation( 'I would like to change my plan to %(plan)s.' )
+							? translate( 'I would like to change my plan to %(plan)s.', {
+									args: { plan },
+									comment:
+										'%(plan)s is a plan name with its billing term, e.g. "WordPress.com Premium (monthly)"',
+								} )
+							: translate( 'I would like to downgrade my plan to %s.', {
+									args: [ plan ],
+									comment: '%s is the plan name, e.g. "Starter"',
+								} )
+					)
+				);
+				return;
+			}
 
 			const earlyReturn = await showModalAndExit?.( planSlug );
 			if ( earlyReturn ) {
