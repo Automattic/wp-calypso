@@ -3,8 +3,7 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, waitFor } from '@testing-library/react';
-import { type Mock, vi } from 'vitest';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { vi } from 'vitest';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { resetCheckoutStores } from '../lib/checkout-stores';
@@ -26,14 +25,12 @@ import { MockCheckout } from './util/mock-checkout';
 /* eslint-disable vitest/no-conditional-expect */
 
 vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
 vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 vi.mock( 'calypso/lib/navigate' );
 
 describe( 'Checkout payment methods list', () => {
 	const initialCart = getBasicCart();
-	const mainCartKey = 123456;
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,
@@ -48,7 +45,6 @@ describe( 'Checkout payment methods list', () => {
 		} ) );
 		mockGetSiteDomainsEndpoint( [] );
 		isMarketplaceProduct.mockImplementation( () => false );
-		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();

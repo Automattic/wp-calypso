@@ -8,7 +8,6 @@ import { useCallback } from 'react';
 import { hasEcommercePlan } from 'calypso/lib/cart-values/cart-items';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
@@ -33,6 +32,7 @@ import type {
 	PaymentEventCallback,
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
+import type { CartKey } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 
@@ -46,6 +46,7 @@ const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete'
  * `getThankYouUrl`.
  */
 export default function useCreatePaymentSubmittedAndProcessingCallback( {
+	cartKey,
 	createUserAndSiteBeforeTransaction,
 	productAliasFromUrl,
 	redirectTo,
@@ -60,6 +61,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	adminUrl: wpAdminUrl,
 	fromSiteSlug,
 }: {
+	cartKey: CartKey;
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
 	redirectTo?: string | undefined;
@@ -81,7 +83,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	 */
 	fromSiteSlug?: string;
 } ): PaymentEventCallback {
-	const cartKey = useCartKey();
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );

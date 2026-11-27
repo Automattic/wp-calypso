@@ -12,7 +12,7 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { useSelector } from 'calypso/state';
 import {
 	getCurrentUserEmail,
@@ -41,7 +41,7 @@ export default function DomainContactDetails( {
 	isLoggedOutCart: boolean;
 	emailOnly?: boolean;
 } ) {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const userEmail = useSelector( getCurrentUserEmail );
 	const isUserEmailVerified = useSelector( isCurrentUserEmailVerified );

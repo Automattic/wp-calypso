@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Fragment, useRef } from 'react';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import {
 	contactDetailsActions,
 	useContactDetails,
@@ -61,7 +61,7 @@ export default function ContactDetailsContainer( {
 	isLoggedOutCart: boolean;
 } ) {
 	const translate = useTranslate();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const domainNames: string[] = responseCart.products
 		.filter( ( product ) => isDomainProduct( product ) || isDomainTransfer( product ) )

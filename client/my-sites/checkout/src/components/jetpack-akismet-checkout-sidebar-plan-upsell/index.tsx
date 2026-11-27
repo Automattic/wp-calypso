@@ -11,7 +11,7 @@ import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { getItemVariantDiscount } from '../item-variation-picker/util';
 
@@ -32,7 +32,7 @@ const isJetpackAkismetProduct = ( product: ResponseCartProduct ) =>
 	isJetpackProduct( product ) || isJetpackPlan( product ) || isAkismetProduct( product );
 
 const useCurrentProductWithVariants = () => {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const product = responseCart.products.find( isJetpackAkismetProduct );
 	const variantsArray = useGetProductVariants( product );

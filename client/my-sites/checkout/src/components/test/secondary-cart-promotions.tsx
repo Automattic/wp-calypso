@@ -22,6 +22,7 @@ import {
 	mockGetCartEndpointWith,
 	mockSetCartEndpointWith,
 } from 'calypso/my-sites/checkout/src/test/util';
+import { CheckoutCartKeyProvider } from '../../hooks/use-checkout-cart-key';
 import SecondaryCartPromotions from '../secondary-cart-promotions';
 import { responseCartWithRenewal, storeData } from './lib/fixtures';
 
@@ -127,7 +128,9 @@ function TestWrapper( {
 		<ReduxProvider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
 				<ShoppingCartProvider managerClient={ managerClient }>
-					<ThemeProvider theme={ checkoutTheme }>{ children }</ThemeProvider>
+					<CheckoutCartKeyProvider cartKey={ 123 }>
+						<ThemeProvider theme={ checkoutTheme }>{ children }</ThemeProvider>
+					</CheckoutCartKeyProvider>
 				</ShoppingCartProvider>
 			</QueryClientProvider>
 		</ReduxProvider>

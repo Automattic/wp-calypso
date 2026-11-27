@@ -14,7 +14,7 @@ import { LoadingCopy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { preventWidows } from 'calypso/lib/formatting';
-import useCartKey from '../../../use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import {
 	Discount,
 	DoNotPayThis,
@@ -47,7 +47,7 @@ export const ItemVariantDropDownPrice: FunctionComponent< {
 	product: ResponseCartProduct;
 } > = ( { variant, compareTo, product } ) => {
 	const isMobile = useMobileBreakpoint();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { couponStatus } = useShoppingCart( cartKey );
 	const isApplyingCoupon = couponStatus === 'pending';
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;

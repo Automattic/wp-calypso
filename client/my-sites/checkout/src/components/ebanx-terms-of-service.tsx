@@ -3,11 +3,11 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 
 export function EbanxTermsOfService() {
 	const translate = useTranslate();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const currentPaymentMethod = usePaymentMethod();
 

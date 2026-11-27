@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
 	getAgencySiteCheckoutExitUrl,
 	getAgencySiteCheckoutParams,
@@ -22,6 +23,7 @@ interface Props {
  * after payment and the page the Back link leads to from the query string.
  */
 function AgencySiteCheckoutContent( { siteId, siteSlug, productSlug }: Props ) {
+	const cartKey = useCartKey();
 	const translate = useTranslate();
 	const { term, redirectTo, cancelTo } = useMemo(
 		() => getAgencySiteCheckoutParams( window.location.search, siteSlug ),
@@ -40,6 +42,7 @@ function AgencySiteCheckoutContent( { siteId, siteSlug, productSlug }: Props ) {
 
 	return (
 		<CheckoutMain
+			cartKey={ cartKey }
 			sitelessCheckoutType="a4a"
 			redirectTo={ redirectTo }
 			customizedPreviousPath={ cancelTo }

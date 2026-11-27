@@ -20,7 +20,7 @@ import {
 } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -77,7 +77,7 @@ export const useCheckoutHelpCenter = (): {
 			!! siteId && ( ! isJetpackSite( state, siteId ) || !! isAtomicSite( state, siteId ) )
 	);
 
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const {
 		responseCart,
 		isLoading: isCartLoading,

@@ -30,6 +30,7 @@ import {
 import styled from '@emotion/styled';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import useEquivalentMonthlyTotals, {
 	getSimulatedCostBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
@@ -38,7 +39,6 @@ import {
 	getIsOnboardingAffiliateFlow,
 	getIsOnboardingUnifiedFlow,
 } from 'calypso/state/signup/flow/selectors';
-import useCartKey from '../../use-cart-key';
 import { getAffiliateCouponLabel } from '../../utils';
 import { CheckIcon } from './check-icon';
 import type { Theme } from '@automattic/composite-checkout';
@@ -140,7 +140,7 @@ function LineItemIntroOfferCostOverrideDetail( {
 	product: ResponseCartProduct;
 	costOverride: LineItemCostOverrideForDisplay;
 } ) {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	if ( ! product.introductory_offer_terms?.enabled ) {

@@ -18,6 +18,7 @@ import { useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { vi } from 'vitest';
 import { CheckoutSubmitButtonContent } from 'calypso/my-sites/checkout/src/components/checkout-submit-button-content';
+import { CheckoutCartKeyProvider } from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
 import { createReduxStore } from 'calypso/state/create-store';
 
@@ -27,11 +28,6 @@ const mockResponseCart = {
 	sub_total_integer: 15600,
 	currency: 'USD',
 };
-
-vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
-	__esModule: true,
-	default: () => 'no-site',
-} ) );
 
 vi.mock( '@automattic/shopping-cart', async () => {
 	const actual = await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
@@ -52,16 +48,18 @@ function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
-				<CheckoutProvider
-					paymentMethods={ paymentMethods }
-					selectFirstAvailablePaymentMethod
-					paymentProcessors={ paymentProcessors ?? {} }
-				>
-					<CheckoutStepGroup>
-						<PaymentMethodStep />
-						<CheckoutFormSubmit />
-					</CheckoutStepGroup>
-				</CheckoutProvider>
+				<CheckoutCartKeyProvider cartKey="no-site">
+					<CheckoutProvider
+						paymentMethods={ paymentMethods }
+						selectFirstAvailablePaymentMethod
+						paymentProcessors={ paymentProcessors ?? {} }
+					>
+						<CheckoutStepGroup>
+							<PaymentMethodStep />
+							<CheckoutFormSubmit />
+						</CheckoutStepGroup>
+					</CheckoutProvider>
+				</CheckoutCartKeyProvider>
 			</QueryClientProvider>
 		</ReduxProvider>
 	);

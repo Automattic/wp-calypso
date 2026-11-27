@@ -5,7 +5,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { doesPurchaseHaveFullCredits } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import WordPressLogo from '../components/wordpress-logo';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
@@ -71,7 +71,7 @@ function ButtonContents( { formStatus }: { formStatus: FormStatus } ) {
 
 function WordPressFreePurchaseLabel() {
 	const { __ } = useI18n();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
 	const doesCartHaveRenewalWithPaymentMethod = responseCart.products.some(
@@ -127,7 +127,7 @@ function WordPressFreePurchaseLabel() {
 
 function WordPressFreePurchaseSummary() {
 	const { __ } = useI18n();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
 	if ( doesPurchaseHaveFullCredits( responseCart ) ) {

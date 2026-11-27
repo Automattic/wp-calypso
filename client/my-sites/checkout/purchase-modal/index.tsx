@@ -24,6 +24,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CheckoutQueryClientProvider from '../checkout-query-client-provider';
+import { CheckoutCartKeyProvider } from '../src/hooks/use-checkout-cart-key';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../src/hooks/use-checkout-site';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
@@ -122,7 +123,9 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 		showFeatureList,
 	} = props;
 
+	const cartKey = useCartKey();
 	const onPaymentSubmittedAndProcessing = useCreatePaymentSubmittedAndProcessingCallback( {
+		cartKey,
 		isComingFromUpsell: true,
 		siteSlug: siteSlug,
 		isInModal: disabledThankYouPage,
@@ -136,7 +139,6 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 
 	const { stripe, stripeConfiguration } = useStripe();
 	const reduxDispatch = useDispatch();
-	const cartKey = useCartKey();
 	const { responseCart, updateLocation, replaceProductsInCart, isPendingUpdate, applyCoupon } =
 		useShoppingCart( cartKey );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
@@ -251,23 +253,25 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	}, [ productToAdd.product_slug ] );
 
 	return (
-		<CheckoutProvider
-			paymentMethods={ [] }
-			onPaymentComplete={ handlePaymentComplete }
-			paymentProcessors={ {
-				'existing-card': ( transactionData ) =>
-					existingCardProcessor( transactionData, dataForProcessor ),
-			} }
-		>
-			<PurchaseModal
-				cards={ cards }
-				isLoading={ isPendingUpdate || ! countries?.length }
-				cart={ responseCart }
-				onClose={ handleOnClose }
-				siteSlug={ siteSlug }
-				showFeatureList={ showFeatureList }
-			/>
-		</CheckoutProvider>
+		<CheckoutCartKeyProvider cartKey={ cartKey }>
+			<CheckoutProvider
+				paymentMethods={ [] }
+				onPaymentComplete={ handlePaymentComplete }
+				paymentProcessors={ {
+					'existing-card': ( transactionData ) =>
+						existingCardProcessor( transactionData, dataForProcessor ),
+				} }
+			>
+				<PurchaseModal
+					cards={ cards }
+					isLoading={ isPendingUpdate || ! countries?.length }
+					cart={ responseCart }
+					onClose={ handleOnClose }
+					siteSlug={ siteSlug }
+					showFeatureList={ showFeatureList }
+				/>
+			</CheckoutProvider>
+		</CheckoutCartKeyProvider>
 	);
 }
 

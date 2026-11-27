@@ -1,7 +1,7 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import CheckoutTerms from '../components/checkout-terms';
 
 const CheckoutTermsWrapper = styled.div`
@@ -67,7 +67,7 @@ export function TaxNotCalculatedLineItem() {
 }
 
 export default function BeforeSubmitCheckoutHeader() {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
 	return (

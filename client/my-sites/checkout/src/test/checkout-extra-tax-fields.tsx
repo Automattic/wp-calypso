@@ -6,7 +6,6 @@ import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { resetCheckoutStores } from '../lib/checkout-stores';
@@ -37,7 +36,6 @@ import type { CartKey, ResponseCartProduct } from '@automattic/shopping-cart';
 import type { ContactDetailsType } from '@automattic/wpcom-checkout';
 
 vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
 vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 vi.mock( 'calypso/lib/navigate' );
@@ -56,6 +54,7 @@ describe( 'Checkout contact step extra tax fields', () => {
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
 		initialCart,
+		cartKey: mainCartKey,
 	};
 
 	( getPlansBySiteId as Mock ).mockImplementation( () => ( {
@@ -72,7 +71,6 @@ describe( 'Checkout contact step extra tax fields', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
-		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();

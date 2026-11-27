@@ -24,7 +24,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import versionCompare from 'calypso/lib/version-compare';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import {
 	getActivePlanSlug,
@@ -42,7 +42,7 @@ import './style.scss';
  */
 const PrePurchaseNotices = () => {
 	const siteId = useSelector( getSelectedSiteId );
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
 

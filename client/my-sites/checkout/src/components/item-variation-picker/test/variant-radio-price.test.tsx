@@ -15,7 +15,9 @@ vi.mock( '@automattic/shopping-cart', async () => ( {
 	) ),
 	useShoppingCart: vi.fn(),
 } ) );
-vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( { default: () => 'no-site' } ) );
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key', () => ( {
+	default: () => 'no-site',
+} ) );
 
 const yearly: WPCOMProductVariant = {
 	priceInteger: 12000,

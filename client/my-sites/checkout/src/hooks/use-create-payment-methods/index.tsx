@@ -17,7 +17,6 @@ import {
 	type ContactDetailsType,
 } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { CheckoutSubmitButtonContent } from '../../components/checkout-submit-button-content';
 import { contactDetailsStore } from '../../lib/checkout-stores';
 import {
@@ -392,6 +391,7 @@ function useCreateStripeWallet( {
  * dependent JS library is not loaded or if Apple Pay is not available).
  */
 export default function useCreatePaymentMethods( {
+	cartKey,
 	contactDetailsType,
 	currentTaxCountryCode,
 	isStripeLoading,
@@ -400,6 +400,7 @@ export default function useCreatePaymentMethods( {
 	stripe,
 	storedCards,
 }: {
+	cartKey: CartKey;
 	contactDetailsType: ContactDetailsType;
 	currentTaxCountryCode: string | undefined;
 	isStripeLoading: boolean;
@@ -408,7 +409,6 @@ export default function useCreatePaymentMethods( {
 	stripe: Stripe | null;
 	storedCards: StoredPaymentMethod[];
 } ): PaymentMethod[] {
-	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const { currency } = responseCart;
 

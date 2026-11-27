@@ -14,7 +14,7 @@ import debugFactory from 'debug';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { CheckoutSummaryFeaturedList } from '../wp-checkout-order-summary';
 import type { WPCOMProductVariant } from '../item-variation-picker';
@@ -98,7 +98,7 @@ export function CheckoutSidebarPlanUpsell() {
 	const isFormLoading = FormStatus.READY !== formStatus;
 	const [ isClicked, setIsClicked ] = useState( false );
 	const { __ } = useI18n();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const plan = responseCart.products.find(
 		( product ) => isPlan( product ) && ! isJetpackPlan( product )
