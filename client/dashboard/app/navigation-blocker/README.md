@@ -28,7 +28,7 @@ Mount `NavigationBlockerRegistry` at a high level in your app (for example, in y
 
 ```jsx
 // root.jsx
-import { NavigationBlockerRegistry } from 'client/dashboard/components/navigation-blocker';
+import { NavigationBlockerRegistry } from 'client/dashboard/app/navigation-blocker';
 
 const Root = () => {
 	return (
@@ -48,7 +48,7 @@ Use `NavigationBlocker` in any component that needs to prevent navigation (e.g. 
 
 ```jsx
 // form.jsx
-import { NavigationBlocker } from 'client/dashboard/components/navigation-blocker';
+import { NavigationBlocker } from 'client/dashboard/app/navigation-blocker';
 
 const Form = () => {
 	const isDirty = true;
@@ -63,3 +63,7 @@ const Form = () => {
 
 export default Form;
 ```
+
+### 3. Leave the page outside the router
+
+Code that can't navigate through the router, such as logout from the omnibar, asks first with `navigationStore.confirmLeave()`. Once the user agrees, it calls `navigationStore.clear()` before loading the next page, so the browser doesn't ask again.
