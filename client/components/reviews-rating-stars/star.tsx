@@ -94,7 +94,6 @@ const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 	const onFill = isChecked ? vars.yellow50 : vars.yellow20;
 	const offFill = vars.gray5;
 	const gradientId = 'gradient_' + crypto.randomUUID();
-	let gradientPercentage;
 	let halfFill = false;
 	let fill = offFill;
 
@@ -124,7 +123,7 @@ const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 		 greater than 0. That is to say it is a decimal value like 0.1 - 0.9, we then convert that
 		 decimal value to a percentage value.
 		 */
-		gradientPercentage = Math.floor( ( rating - Math.floor( rating ) ) * 100 );
+		const gradientPercentage = Math.floor( ( rating - Math.floor( rating ) ) * 100 );
 		// If we have 50% or less we fill the star half via an svg gradient.
 		if ( 50 >= gradientPercentage ) {
 			halfFill = true;
