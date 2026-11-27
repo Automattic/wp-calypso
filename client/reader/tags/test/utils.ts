@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getTagPath, getTagTitle, recoverTagTitle } from '../utils';
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	addLocaleToPathLocaleInFront: ( path: string ) => path,
 } ) );
 

@@ -1,6 +1,8 @@
 import { productsQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Button, FormInputValidation, Gridicon, SelectDropdown } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { useQuery } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
@@ -15,6 +17,7 @@ import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import { requestUpdateJetpackCheckoutSupportTicket } from 'calypso/state/jetpack-checkout/actions';
 import getJetpackCheckoutSupportTicketDestinationSiteId from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-destination-site-id';
 import getJetpackCheckoutSupportTicketIncompatibleProductIds from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-incompatible-products';
+import getJetpackCheckoutSupportTicketReasonCode from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-reason-code';
 import getSupportTicketRequestStatus from 'calypso/state/selectors/get-jetpack-checkout-support-ticket-status';
 import getJetpackSites from 'calypso/state/selectors/get-jetpack-sites';
 
@@ -72,6 +75,9 @@ const LicensingActivationThankYou: FC< Props > = ( {
 	);
 	const incompatibleProductIds = useSelector( ( state ) =>
 		getJetpackCheckoutSupportTicketIncompatibleProductIds( state, jetpackTemporarySiteId )
+	);
+	const reasonCode = useSelector( ( state ) =>
+		getJetpackCheckoutSupportTicketReasonCode( state, jetpackTemporarySiteId )
 	);
 
 	const [ selectedSite, setSelectedSite ] = useState( '' );
@@ -164,6 +170,29 @@ const LicensingActivationThankYou: FC< Props > = ( {
 			);
 		}
 		if ( supportTicketRequestStatus === 'success' && destinationSiteId !== undefined ) {
+			const contactSupportLink = (
+				<a
+					href={ localizeUrl( JETPACK_CONTACT_SUPPORT ) }
+					target="_blank"
+					rel="noopener noreferrer"
+				/>
+			);
+			if ( destinationSiteId === 0 && reasonCode === 'jetpack_pro_lower_limits' ) {
+				return setError(
+					translate(
+						"This site has a Jetpack product that includes more than Jetpack Pro, so Pro can't replace it. You can use this license on another site, or {{a}}contact us{{/a}}.",
+						{ components: { a: contactSupportLink } }
+					)
+				);
+			}
+			if ( destinationSiteId === 0 && reasonCode === 'jetpack_pro_other_owner' ) {
+				return setError(
+					translate(
+						"A Jetpack product on this site belongs to another WordPress.com account, so Jetpack Pro can't be activated here. {{a}}Contact us{{/a}} and we'll help you sort it out.",
+						{ components: { a: contactSupportLink } }
+					)
+				);
+			}
 			if ( incompatibleProductIds.length ) {
 				const incompatibleProductName =
 					Object.values( productsList ?? {} ).find( ( product ) =>
@@ -221,6 +250,7 @@ const LicensingActivationThankYou: FC< Props > = ( {
 		productName,
 		productsList,
 		productSlug,
+		reasonCode,
 		redirectTo,
 		selectedSite,
 		supportTicketRequestStatus,

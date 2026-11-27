@@ -1,15 +1,17 @@
 import fs from 'fs';
 import parser from '@automattic/calypso-config/parser';
+import { vi } from 'vitest';
 
-jest.mock( 'fs', () => ( {
-	existsSync: jest.fn(),
-	readFileSync: jest.fn(),
-} ) );
-
+// The parser `require()`s `fs`, which `vi.mock()` doesn't reach, so the tests spy on the shared
+// module instead.
 function mockFs( files ) {
-	fs.existsSync.mockImplementation( ( path ) => !! files[ path ] );
-	fs.readFileSync.mockImplementation( ( path ) => files[ path ] );
+	vi.spyOn( fs, 'existsSync' ).mockImplementation( ( path ) => !! files[ path ] );
+	vi.spyOn( fs, 'readFileSync' ).mockImplementation( ( path ) => files[ path ] );
 }
+
+afterEach( () => {
+	vi.restoreAllMocks();
+} );
 
 const withEnv = ( env = {} ) => {
 	for ( const [ k, v ] of Object.entries( env ) ) {
@@ -78,8 +80,6 @@ describe( 'parser', () => {
 	} );
 
 	afterEach( () => {
-		fs.readFileSync.mockReset();
-		fs.readFileSync.mockReset();
 		process.env = { ...realProcessEnv };
 	} );
 
@@ -203,7 +203,7 @@ describe( 'parser', () => {
 
 	test( 'should explicitly set user-bootstrapping to false if there are no real secrets', () => {
 		setEmptySecrets();
-		const errorSpy = jest.fn();
+		const errorSpy = vi.fn();
 		global.console = { error: errorSpy };
 
 		const { serverData, clientData } = parser( '/valid-path' );

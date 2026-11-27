@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { waitFor } from '@testing-library/react';
 import React, { useEffect, useState } from 'react';
 import { MemoryRouter, useNavigate } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
@@ -15,7 +16,7 @@ import type { StepperStep } from 'calypso/landing/stepper/declarative-flow/inter
 const SITE_ID = 123;
 const SITE_SLUG = 'ecom-example.wordpress.com';
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
 		site: null,
 		siteId: SITE_ID,
@@ -24,9 +25,9 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/data/segmentaton-survey', () => ( {
-	anonIdCache: { store: jest.fn(), get: jest.fn(), clear: jest.fn(), pop: jest.fn() },
-	useCachedAnswers: () => ( { clearAnswers: jest.fn() } ),
+vi.mock( 'calypso/data/segmentaton-survey', () => ( {
+	anonIdCache: { store: vi.fn(), get: vi.fn(), clear: vi.fn(), pop: vi.fn() },
+	useCachedAnswers: () => ( { clearAnswers: vi.fn() } ),
 } ) );
 
 /**
@@ -62,7 +63,7 @@ describe( 'Entrepreneur Flow', () => {
 
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn(), replace: vi.fn() },
 			writable: true,
 			configurable: true,
 		} );
@@ -77,7 +78,7 @@ describe( 'Entrepreneur Flow', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'sends a migrating user to the site-migration upgrade step for the trial site once WooCommerce is installed', async () => {
@@ -93,7 +94,7 @@ describe( 'Entrepreneur Flow', () => {
 		} );
 
 		const destination = new URL(
-			( window.location.assign as jest.Mock ).mock.calls[ 0 ][ 0 ],
+			( window.location.assign as Mock ).mock.calls[ 0 ][ 0 ],
 			'https://wordpress.com'
 		);
 

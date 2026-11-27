@@ -397,7 +397,7 @@ const BackupGranularRestoreFlow: FunctionComponent< Props > = ( {
 			}
 			return null;
 		}
-		let displayItems: FileBrowserCheckListInfo[] = [];
+		let displayItems: FileBrowserCheckListInfo[];
 		let extendedItems: FileBrowserCheckListInfo[] = [];
 		if ( items.length > fileDisplayLimit ) {
 			displayItems = items.slice( 0, fileDisplayLimit );

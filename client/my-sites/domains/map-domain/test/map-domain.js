@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import pageSpy from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import wpcom from 'calypso/lib/wp';
 import { domainManagementList } from 'calypso/my-sites/domains/paths';
@@ -16,15 +17,15 @@ import { MapDomain } from '..';
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { ui, productsList } } );
 
-jest.mock( '@automattic/calypso-router', () => {
-	const pageMock = jest.fn();
-	pageMock.redirect = jest.fn();
-	return pageMock;
+vi.mock( '@automattic/calypso-router', () => {
+	const pageMock = vi.fn();
+	pageMock.redirect = vi.fn();
+	return { ...pageMock, default: pageMock };
 } );
 
-jest.mock( 'calypso/components/domains/map-domain-step', () =>
-	jest.fn( () => <div data-testid="map-domain-step" /> )
-);
+vi.mock( 'calypso/components/domains/map-domain-step', () => ( {
+	default: vi.fn( () => <div data-testid="map-domain-step" /> ),
+} ) );
 
 describe( 'MapDomain component', () => {
 	const defaultProps = {
@@ -112,9 +113,9 @@ describe( 'MapDomain component', () => {
 
 		const mapDomainBtn = screen.getByTestId( 'map-domain-step' );
 
-		jest
-			.spyOn( wpcom.req, 'post' )
-			.mockImplementationOnce( () => Promise.reject( new Error( 'arbitrary failure' ) ) );
+		vi.spyOn( wpcom.req, 'post' ).mockImplementationOnce( () =>
+			Promise.reject( new Error( 'arbitrary failure' ) )
+		);
 
 		await userEvent.click( mapDomainBtn );
 

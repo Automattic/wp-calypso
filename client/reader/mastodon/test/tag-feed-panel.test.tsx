@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { MastodonTagFeedPanel } from '../tag-feed-panel';
 import type { MastodonConnection } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 
 beforeAll( () => {
 	global.IntersectionObserver = class IntersectionObserver {
@@ -40,14 +41,14 @@ function makeQueryClient() {
 
 describe( 'MastodonTagFeedPanel', () => {
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		window.history.replaceState( {}, '', '/' );
 	} );
 
@@ -62,7 +63,7 @@ describe( 'MastodonTagFeedPanel', () => {
 
 		await waitFor( () => expect( screen.getByRole( 'heading', { name: '#rust' } ) ).toBeVisible() );
 		await waitFor( () => {
-			const calls = ( analytics.recordReaderTracksEvent as unknown as jest.Mock ).mock.calls.filter(
+			const calls = ( analytics.recordReaderTracksEvent as unknown as Mock ).mock.calls.filter(
 				( c ) => c[ 0 ] === 'calypso_reader_mastodon_tag_feed_viewed'
 			);
 			expect( calls ).toHaveLength( 1 );

@@ -1,6 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { Notice } from '../../../../components/notice';
-import type { BackupState } from '../../../backups/use-backup-state';
+import type { BackupState } from '../../../backups/hooks/use-backup-state';
 
 interface VersionSwitchNoticeProps {
 	backupState: BackupState;

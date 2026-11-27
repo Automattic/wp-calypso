@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { MiniCartLineItems } from './mini-cart-line-items';
-import type { PaymentMethod } from '@automattic/composite-checkout';
+import type { PaymentMethod, Theme } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 const MiniCartWrapper = styled.div`
@@ -137,6 +137,7 @@ export function MiniCart( {
 	checkoutLabel,
 	emptyCart,
 	showBundleGrouping = false,
+	theme,
 }: {
 	selectedSiteSlug: string;
 	cartKey: number | undefined;
@@ -148,6 +149,7 @@ export function MiniCart( {
 	checkoutLabel?: string;
 	emptyCart?: React.ReactNode;
 	showBundleGrouping?: boolean;
+	theme?: Theme;
 } ) {
 	const {
 		responseCart,
@@ -180,6 +182,7 @@ export function MiniCart( {
 		<CheckoutProvider
 			paymentMethods={ emptyPaymentMethods }
 			paymentProcessors={ emptyPaymentProcessors }
+			theme={ theme }
 		>
 			<RestorableProductsProvider>
 				<MiniCartWrapper className="mini-cart">

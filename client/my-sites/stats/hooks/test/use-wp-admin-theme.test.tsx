@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import useWPAdminTheme from '../use-wp-admin-theme';
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: { isEnabled: jest.fn() },
+	default: { isEnabled: vi.fn() },
 } ) );
 
-const mockIsEnabled = config.isEnabled as jest.Mock;
+const mockIsEnabled = config.isEnabled as Mock;
 
 describe( 'useWPAdminTheme', () => {
 	beforeEach( () => {

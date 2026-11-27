@@ -1,6 +1,8 @@
-const EventEmitter = require( 'events' ).EventEmitter;
-const keychain = require( '../../lib/keychain' );
-const log = require( '../../lib/logger' )( 'desktop:session' );
+import { EventEmitter } from 'events';
+import keychain from '../../lib/keychain';
+import makeLogger from '../../lib/logger';
+
+const log = makeLogger( 'desktop:session' );
 
 /*
  * Module constants
@@ -130,4 +132,4 @@ async function keychainWrite( key, value ) {
 	return success;
 }
 
-module.exports = new SessionManager();
+export default new SessionManager();

@@ -25,6 +25,7 @@ import { DataViewsCard, DataViewsEmptyStateLayout } from '../../../components/da
 import Notice from '../../../components/notice';
 import SiteIcon from '../../../components/site-icon';
 import { Name, URL } from '../../../sites/site-fields';
+import { formatDate } from '../../../utils/datetime';
 import { getSiteDisplayName } from '../../../utils/site-name';
 import { getSiteDisplayUrl } from '../../../utils/site-url';
 import { getImportableSites } from './lib';
@@ -62,12 +63,7 @@ function getSiteTypeLabel( site: Site ): string {
 function formatCreatedAt( site: Site, locale: string ): string {
 	const createdAt = site.options?.created_at;
 
-	if ( ! createdAt ) {
-		return '';
-	}
-
-	const date = new Date( createdAt );
-	return Number.isNaN( date.getTime() ) ? '' : new Intl.DateTimeFormat( locale ).format( date );
+	return createdAt ? formatDate( new Date( createdAt ), locale ) : '';
 }
 
 function getImportNotice( importedCount: number, failedCount: number ): string {

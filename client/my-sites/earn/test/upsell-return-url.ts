@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { type MockedFunction, vi } from 'vitest';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getUpsellCheckoutQueryArgs, getUpsellReturnUrl } from '../upsell-return-url';
 
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => ( { default: vi.fn() } ) );
 
-const mockedIsJetpackCloud = isJetpackCloud as jest.MockedFunction< typeof isJetpackCloud >;
+const mockedIsJetpackCloud = isJetpackCloud as MockedFunction< typeof isJetpackCloud >;
 
 describe( 'getUpsellReturnUrl', () => {
 	beforeEach( () => {

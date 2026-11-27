@@ -48,6 +48,9 @@ vi.mock( '../i18n', () => ( {
 vi.mock( 'calypso/lib/color-scheme/with-color-scheme', () => ( {
 	withColorScheme: ( element: ReactNode ) => element,
 } ) );
+vi.mock( '../theme-provider', () => ( {
+	DashboardThemeProvider: ( { children }: PropsWithChildren ) => children,
+} ) );
 
 async function renderTracker(
 	app: AppConfig[ 'unifiedAdminPageViewApp' ] | null = 'msd',

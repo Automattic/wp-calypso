@@ -44,7 +44,7 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 				statusMeta = {
 					statusKey: 'not_payable',
 					statusType: 'warning',
-					status: __( 'Not Payable' ),
+					status: __( 'Not payable' ),
 					statusReason: getNotPayableReason( PayableReason ),
 				};
 				break;

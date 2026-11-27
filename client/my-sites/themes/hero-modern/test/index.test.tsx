@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import HeroModern from '../index';
 
-jest.mock( 'calypso/components/search-themes', () => ( {
+vi.mock( 'calypso/components/search-themes', () => ( {
 	SearchThemes: ( { query }: { query: string } ) => (
 		<input placeholder="Search themes…" defaultValue={ query } />
 	),
 } ) );
 
-jest.mock( '../../use-theme-showcase-logged-out-seo-content', () => ( {
+vi.mock( '../../use-theme-showcase-logged-out-seo-content', () => ( {
 	__esModule: true,
 	default: () => ( {
 		title: 'WordPress Themes | 1000s of Options for All WordPress Sites',
@@ -27,8 +28,8 @@ describe( 'HeroModern', () => {
 		filter: '',
 		searchQuery: '',
 		tier: '',
-		onSearch: jest.fn(),
-		onSearchTracksEvent: jest.fn(),
+		onSearch: vi.fn(),
+		onSearchTracksEvent: vi.fn(),
 	};
 
 	test( 'renders title and description', () => {

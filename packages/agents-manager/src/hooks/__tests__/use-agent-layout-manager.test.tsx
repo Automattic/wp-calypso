@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook, act, render as rtlRender } from '@testing-library/react';
 import { type MockInstance, vi } from 'vitest';
 import useAgentLayoutManager from '../use-agent-layout-manager/index';

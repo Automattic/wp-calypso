@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as logstash from 'calypso/lib/logstash';
 import * as notices from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
@@ -12,12 +13,12 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { FediverseAuthorProfilePanel } from '../author-profile-panel';
 import type { FediverseAuthorProfile, FediverseConnection } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 
 // `logToLogstash` fires a real HTTPS request; mute it so the follow-error
 // path doesn't trigger an unmocked-request alarm in nock.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn().mockResolvedValue( undefined ),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn().mockResolvedValue( undefined ),
 } ) );
 
 const BASE = 'https://public-api.wordpress.com';
@@ -98,14 +99,14 @@ describe( 'FediverseAuthorProfilePanel — follow / unfollow button', () => {
 		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while letting spies observe call-site arguments.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	// ---------------------------------------------------------------
@@ -148,7 +149,7 @@ describe( 'FediverseAuthorProfilePanel — follow / unfollow button', () => {
 
 	it( 'flows was_locked: true through to the follow_clicked Tracks payload for locked accounts', async () => {
 		const user = userEvent.setup();
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		stubProfile( {
 			locked: true,
 			viewer: { following: false, followed_by: false, requested: false },
@@ -179,7 +180,7 @@ describe( 'FediverseAuthorProfilePanel — follow / unfollow button', () => {
 
 	it( 'cancels a pending follow request and emits was_requested: true when clicking Cancel', async () => {
 		const user = userEvent.setup();
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		stubProfile( {
 			locked: true,
 			viewer: { following: false, followed_by: false, requested: true },
@@ -218,8 +219,8 @@ describe( 'FediverseAuthorProfilePanel — follow / unfollow button', () => {
 
 	it( 'fires _follow_error + scoped errorNotice + logstash on a 502 follow response', async () => {
 		const user = userEvent.setup();
-		const tracksSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
-		const noticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const tracksSpy = analytics.recordReaderTracksEvent as unknown as Mock;
+		const noticeSpy = vi.spyOn( notices, 'errorNotice' );
 		stubProfile( {
 			viewer: { following: false, followed_by: false, requested: false },
 			is_self: false,
@@ -272,7 +273,7 @@ describe( 'FediverseAuthorProfilePanel — follow / unfollow button', () => {
 
 	it( 'clears the stale follow-error toast on a successful retry', async () => {
 		const user = userEvent.setup();
-		const removeSpy = jest.spyOn( notices, 'removeNotice' );
+		const removeSpy = vi.spyOn( notices, 'removeNotice' );
 		stubProfile( {
 			viewer: { following: false, followed_by: false, requested: false },
 			is_self: false,

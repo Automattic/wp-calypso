@@ -27,7 +27,7 @@ const useSteps = ( {
 	isDestinationSetupSiteFlow,
 }: ProcessingScreenProps ) => {
 	const { __ } = useI18n();
-	let steps: Step[] = [];
+	let steps: Step[];
 
 	switch ( flowName ) {
 		case 'domain':

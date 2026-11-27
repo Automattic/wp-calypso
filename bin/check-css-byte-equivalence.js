@@ -326,7 +326,7 @@ async function copyFailureFile( sourceRoot, destination, prettyDestination, fail
 	fs.copyFileSync( sourceFile, destination );
 
 	const sourceCss = fs.readFileSync( sourceFile, 'utf8' );
-	let prettyCss = sourceCss;
+	let prettyCss;
 
 	try {
 		prettyCss = await formatCss( sourceCss );

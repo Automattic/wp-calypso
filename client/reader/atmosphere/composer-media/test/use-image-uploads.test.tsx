@@ -1,14 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
+import { compressImage } from '../compress-image';
 import { toAtmosphereError, useImageUploads } from '../use-image-uploads';
 
-jest.mock( '../compress-image', () => ( {
-	compressImage: jest.fn( async () => ( {
+vi.mock( '../compress-image', () => ( {
+	compressImage: vi.fn( async () => ( {
 		blob: new Blob( [ 'compressed' ], { type: 'image/jpeg' } ),
 		width: 1000,
 		height: 750,
@@ -37,15 +39,15 @@ describe( 'useImageUploads', () => {
 		// jsdom does not implement URL.createObjectURL / revokeObjectURL.
 		Object.defineProperty( URL, 'createObjectURL', {
 			configurable: true,
-			value: jest.fn( () => 'blob:mock' ),
+			value: vi.fn( () => 'blob:mock' ),
 		} );
 		Object.defineProperty( URL, 'revokeObjectURL', {
 			configurable: true,
-			value: jest.fn(),
+			value: vi.fn(),
 		} );
 	} );
 
-	afterEach( () => jest.restoreAllMocks() );
+	afterEach( () => vi.restoreAllMocks() );
 
 	it( 'transitions a picked file through compressing → uploading → uploaded', async () => {
 		// Mirrors `uploadBlobMutation` factory tests: nock can't drive the
@@ -54,7 +56,7 @@ describe( 'useImageUploads', () => {
 		// HTTP request goes out. Spying on `wpcom.req.post` keeps the hook's
 		// state-machine wiring under test without taking on the transport's
 		// stream plumbing.
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
 		const qc = new QueryClient();
 		const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {
@@ -84,7 +86,7 @@ describe( 'useImageUploads', () => {
 		// not both capture the same `images.length` and admit more files
 		// than `max`. Without a synchronous slot reservation, the second
 		// call would slice against a stale count and overflow the cap.
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
 		const qc = new QueryClient();
 		const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {
@@ -114,7 +116,7 @@ describe( 'useImageUploads', () => {
 		// Sibling to the concurrent-cap test: covers the single-call slice
 		// path. Six files into a max-of-four hook must drop the last two
 		// rather than admit them and rely on a downstream guard.
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
 		const qc = new QueryClient();
 		const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {
@@ -142,7 +144,7 @@ describe( 'useImageUploads', () => {
 		// upload uses a never-resolving promise so we can intercept it
 		// while it is still in the `uploading` state.
 		let resolveUpload: ( ( v: typeof okBlobResponse ) => void ) | undefined;
-		const uploadSpy = jest
+		const uploadSpy = vi
 			.spyOn( wpcom.req, 'post' )
 			.mockImplementationOnce(
 				() =>
@@ -171,7 +173,7 @@ describe( 'useImageUploads', () => {
 		if ( uploading.kind !== 'uploading' ) {
 			throw new Error( 'expected uploading' );
 		}
-		const abortSpy = jest.spyOn( uploading.abort, 'abort' );
+		const abortSpy = vi.spyOn( uploading.abort, 'abort' );
 
 		act( () => result.current.removeImage( uploading.localId ) );
 
@@ -203,7 +205,7 @@ describe( 'useImageUploads', () => {
 		// First attempt rejects (transport-level error) so the entry lands
 		// in `failed` carrying its `sourceFile`. `retryImage` re-enters
 		// `startOne` with that same file; the second mock resolves.
-		const uploadSpy = jest
+		const uploadSpy = vi
 			.spyOn( wpcom.req, 'post' )
 			.mockRejectedValueOnce( { kind: 'unknown', cause: new Error( 'down' ) } )
 			.mockResolvedValueOnce( okBlobResponse );
@@ -238,7 +240,7 @@ describe( 'useImageUploads', () => {
 		// The state-machine variants for `compressing` carry no alt field
 		// (no preview yet), so calling `setAlt` mid-compress must be a
 		// silent no-op rather than throw.
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
 		const qc = new QueryClient();
 		const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {
@@ -268,9 +270,9 @@ describe( 'useImageUploads', () => {
 	} );
 
 	it( 'fires _compose_media_picked when files are added', async () => {
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
-		const onTrack = jest.fn();
+		const onTrack = vi.fn();
 		const qc = new QueryClient();
 		const { result } = renderHook(
 			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
@@ -293,19 +295,18 @@ describe( 'useImageUploads', () => {
 	} );
 
 	it( 'fires _compose_media_uploaded with byte totals after all uploads finish', async () => {
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
 		// Override the default compressImage mock for this test so we
 		// can assert specific byte sizes ended up in the event payload.
-		const { compressImage } = jest.requireMock( '../compress-image' );
-		( compressImage as jest.Mock ).mockResolvedValueOnce( {
+		vi.mocked( compressImage ).mockResolvedValueOnce( {
 			blob: new Blob( [ 'x'.repeat( 25 ) ], { type: 'image/jpeg' } ),
 			width: 800,
 			height: 600,
 			size: 25,
 		} );
 
-		const onTrack = jest.fn();
+		const onTrack = vi.fn();
 		const qc = new QueryClient();
 		const { result } = renderHook(
 			() => useImageUploads( { connectionId: 9, max: 4, mode: 'reply', onTrack } ),
@@ -335,11 +336,12 @@ describe( 'useImageUploads', () => {
 		// re-throws is exercised in the mutation factory's own tests; here
 		// we only need the hook to forward the resulting `error.kind` into
 		// the Tracks event once per failed upload.
-		jest
-			.spyOn( wpcom.req, 'post' )
-			.mockRejectedValue( { kind: 'rate_limited', message: 'slow down' } );
+		vi.spyOn( wpcom.req, 'post' ).mockRejectedValue( {
+			kind: 'rate_limited',
+			message: 'slow down',
+		} );
 
-		const onTrack = jest.fn();
+		const onTrack = vi.fn();
 		const qc = new QueryClient();
 		const { result } = renderHook(
 			() => useImageUploads( { connectionId: 9, max: 4, mode: 'quote', onTrack } ),
@@ -370,9 +372,9 @@ describe( 'useImageUploads', () => {
 
 	it( 'fires _compose_media_removed with was_uploaded flag', async () => {
 		// Scenario 1: full upload then remove → was_uploaded: true.
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
-		const onTrack = jest.fn();
+		const onTrack = vi.fn();
 		const qc = new QueryClient();
 		const { result } = renderHook(
 			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
@@ -405,11 +407,10 @@ describe( 'useImageUploads', () => {
 		// stays in `compressing` while we issue `removeImage`. This is
 		// the only state where `kind !== 'uploaded'` is reachable
 		// synchronously from the test.
-		const { compressImage } = jest.requireMock( '../compress-image' );
-		( compressImage as jest.Mock ).mockImplementationOnce( () => new Promise( () => {} ) );
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.mocked( compressImage ).mockImplementationOnce( () => new Promise( () => {} ) );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
-		const onTrack = jest.fn();
+		const onTrack = vi.fn();
 		const qc = new QueryClient();
 		const { result } = renderHook(
 			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
@@ -440,9 +441,9 @@ describe( 'useImageUploads', () => {
 		// would all carry stale labels (mode/connection_id snap to defaults
 		// once the composer's `mode` flips to null) and aren't meaningful as
 		// "user removed an image" events anyway.
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
-		const onTrack = jest.fn();
+		const onTrack = vi.fn();
 		const qc = new QueryClient();
 		const { result } = renderHook(
 			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
@@ -478,9 +479,9 @@ describe( 'useImageUploads', () => {
 		// the cached embed's `<img src=blob:...>` stays valid past the
 		// timeline's 30s staleTime, where the next refetch replaces it with a
 		// real CDN URL.
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		try {
-			jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+			vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
 			const qc = new QueryClient();
 			const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {
@@ -495,7 +496,7 @@ describe( 'useImageUploads', () => {
 				expect( result.current.images.every( ( i ) => i.kind === 'uploaded' ) ).toBe( true )
 			);
 
-			( URL.revokeObjectURL as jest.Mock ).mockClear();
+			( URL.revokeObjectURL as Mock ).mockClear();
 			act( () => result.current.clearAll( { deferRevocation: true } ) );
 
 			// Immediate revocation MUST NOT happen — the placeholder embed in
@@ -505,11 +506,11 @@ describe( 'useImageUploads', () => {
 			// After the deferred timer fires (~60s later, longer than the 30s
 			// staleTime), the URL is finally revoked.
 			act( () => {
-				jest.advanceTimersByTime( 60_000 );
+				vi.advanceTimersByTime( 60_000 );
 			} );
 			expect( URL.revokeObjectURL ).toHaveBeenCalled();
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 
@@ -517,7 +518,7 @@ describe( 'useImageUploads', () => {
 		// Cancel / discard path keeps the legacy synchronous behavior so URLs
 		// are reclaimed the moment the user dismisses the composer without
 		// publishing.
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
 		const qc = new QueryClient();
 		const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {
@@ -532,7 +533,7 @@ describe( 'useImageUploads', () => {
 			expect( result.current.images.every( ( i ) => i.kind === 'uploaded' ) ).toBe( true )
 		);
 
-		( URL.revokeObjectURL as jest.Mock ).mockClear();
+		( URL.revokeObjectURL as Mock ).mockClear();
 		act( () => result.current.clearAll() );
 		expect( URL.revokeObjectURL ).toHaveBeenCalled();
 	} );
@@ -545,14 +546,14 @@ describe( 'useImageUploads', () => {
 		// once the composer closed, and the user-perceived action was a
 		// remove, not an upload-failure.
 		let rejectUpload: ( e: unknown ) => void = () => {};
-		jest.spyOn( wpcom.req, 'post' ).mockImplementation(
+		vi.spyOn( wpcom.req, 'post' ).mockImplementation(
 			() =>
 				new Promise( ( _resolve, reject ) => {
 					rejectUpload = reject;
 				} )
 		);
 
-		const onTrack = jest.fn();
+		const onTrack = vi.fn();
 		const qc = new QueryClient();
 		const { result } = renderHook(
 			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
@@ -587,12 +588,11 @@ describe( 'useImageUploads', () => {
 		// not ×, so `media_removed` would be wrong analytics — the entry
 		// hasn't been "removed" from the user's perspective, it's being
 		// retried.
-		jest
-			.spyOn( wpcom.req, 'post' )
+		vi.spyOn( wpcom.req, 'post' )
 			.mockRejectedValueOnce( { kind: 'unknown', cause: new Error( 'down' ) } )
 			.mockResolvedValueOnce( okBlobResponse );
 
-		const onTrack = jest.fn();
+		const onTrack = vi.fn();
 		const qc = new QueryClient();
 		const { result } = renderHook(
 			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
@@ -624,9 +624,9 @@ describe( 'useImageUploads', () => {
 	} );
 
 	it( 'fires _compose_alt_text_added with length only (never the text)', async () => {
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
-		const onTrack = jest.fn();
+		const onTrack = vi.fn();
 		const qc = new QueryClient();
 		const { result } = renderHook(
 			() => useImageUploads( { connectionId: 9, max: 4, mode: 'standalone', onTrack } ),
@@ -664,7 +664,7 @@ describe( 'useImageUploads', () => {
 	} );
 
 	it( 'isAllUploaded and isAnyPending reflect derived state', async () => {
-		jest.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
+		vi.spyOn( wpcom.req, 'post' ).mockResolvedValue( okBlobResponse );
 
 		const qc = new QueryClient();
 		const { result } = renderHook( () => useImageUploads( { connectionId: 9, max: 4 } ), {

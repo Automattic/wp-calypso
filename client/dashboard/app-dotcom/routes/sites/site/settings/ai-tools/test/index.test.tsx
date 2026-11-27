@@ -16,8 +16,8 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
+import AIToolsSettings, { getAgentEmailAddress, getAgentEmailVCard } from '..';
 import { render } from '../../../../../../../test-utils';
-import AIToolsSettings, { getAgentEmailAddress, getAgentEmailVCard } from '../index';
 import type { Site, UserSettings } from '@automattic/api-core';
 
 const site = {
@@ -241,8 +241,9 @@ describe( 'getAgentEmailVCard', () => {
 } );
 
 describe( '<AIToolsSettings>', () => {
-	test( 'shows the settings as disabled below the upgrade callout when unavailable', async () => {
+	test( 'keeps WordPress Agent gated while showing MCP settings when the Agent is unavailable', async () => {
 		const user = userEvent.setup();
+		queryClient.setQueryData( siteAbilitiesQuery( site.ID, 'en_US' ).queryKey, [] );
 		const { container } = renderAIToolsSettings( '', false, site, false, true );
 
 		expect( screen.getByText( 'Your dream site is just a prompt away' ) ).toBeVisible();
@@ -278,15 +279,28 @@ describe( '<AIToolsSettings>', () => {
 		expect( telegramButton ).toHaveClass( 'dashboard-summary-button' );
 		expect( telegramButton ).toHaveAttribute( 'aria-disabled', 'true' );
 
+		expect( screen.getByRole( 'heading', { name: 'External AI agent access' } ) ).toBeVisible();
 		expect(
-			screen.queryByRole( 'heading', { name: 'External AI agent access' } )
-		).not.toBeInTheDocument();
+			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+		).toBeEnabled();
+		expect( screen.getByRole( 'heading', { name: 'Connect an external AI agent' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'ChatGPT' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Claude' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Read/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Write/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Manual setup' } ) ).toBeVisible();
+	} );
+
+	test( 'shows the MCP connector and access toggle while access is off on a Free site', () => {
+		renderAIToolsSettings( '', false, simpleSite, false );
+
+		expect( screen.getByRole( 'heading', { name: 'Connect an external AI agent' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'ChatGPT' } ) ).toBeVisible();
+		expect( screen.getByText( 'MCP access is off for this site' ) ).toBeVisible();
 		expect(
-			screen.queryByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
-		).not.toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'heading', { name: 'Connect an external AI agent' } )
-		).not.toBeInTheDocument();
+			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+		).toBeEnabled();
+		expect( screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } ) ).toBeDisabled();
 	} );
 
 	test( 'shows MCP settings without upgrade badging when available', async () => {
@@ -307,6 +321,55 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.queryByText( 'MCP access is off for this site' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Upgrade required' ) ).not.toBeInTheDocument();
 	} );
+
+	test.each( [ false, true ] )(
+		'preserves individual consent when toggling site MCP from %s',
+		async ( initiallyEnabled ) => {
+			const user = userEvent.setup();
+			seedQueries( '', true, site, true, initiallyEnabled );
+			const settings = queryClient.getQueryData< UserSettings >( userSettingsQuery().queryKey )!;
+			const tool = {
+				name: 'wpcom-mcp/posts-list',
+				title: 'Read posts',
+				description: 'Read posts',
+				category: 'posts',
+				type: 'tool',
+				enabled: initiallyEnabled,
+				readonly: true,
+			};
+			queryClient.setQueryData( userSettingsQuery().queryKey, {
+				...settings,
+				mcp_abilities: {
+					...settings.mcp_abilities,
+					account: {
+						'wpcom-mcp/posts-list': tool,
+						'wpcom-mcp/subscribers-list': { ...tool, requires_opt_in: true },
+						'wpcom-mcp/posts-create': { ...tool, readonly: false },
+					},
+				},
+			} );
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings', ( body ) => {
+					expect( body.mcp_abilities.sites ).toEqual( [
+						{
+							blog_id: site.ID,
+							site_level_enabled: ! initiallyEnabled,
+							abilities: initiallyEnabled ? {} : { 'wpcom-mcp/posts-list': true },
+						},
+					] );
+					return true;
+				} )
+				.reply( 200, settings );
+			const { unmount } = render( <AIToolsSettings siteSlug={ site.slug } />, { queryClient } );
+
+			const control = initiallyEnabled
+				? screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+				: screen.getByRole( 'button', { name: 'Turn on MCP access' } );
+			await user.click( control );
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+			unmount();
+		}
+	);
 
 	test( 'shows the connect card while MCP is off, and turns MCP on for this site', async () => {
 		const save = nock( 'https://public-api.wordpress.com' )
@@ -379,6 +442,50 @@ describe( '<AIToolsSettings>', () => {
 		expect( screen.getByText( 'Disabled' ) ).toBeVisible();
 		expect( screen.queryByText( 'All enabled' ) ).not.toBeInTheDocument();
 	} );
+
+	test.each( [
+		[ 'with site overrides', { 'wpcom-mcp/posts-list': true } ],
+		[ 'without site overrides', {} ],
+	] )(
+		'%s, an opt-in tool counts as off and leaves unsaved site-published abilities on',
+		( _label, abilities ) => {
+			seedQueries( '', true, jetpackSite, true, true );
+			queryClient.setQueryData( userSettingsQuery().queryKey, {
+				mcp_abilities: {
+					site_level_enabled_default: true,
+					account: {
+						'wpcom-mcp/posts-list': {
+							enabled: true,
+							readonly: true,
+							visible: true,
+							title: 'List posts',
+							description: 'List posts on your sites.',
+						},
+						'wpcom-mcp/subscribers-list': {
+							enabled: false,
+							readonly: true,
+							visible: true,
+							requires_opt_in: true,
+							title: 'List subscribers',
+							description: 'List the subscribers of your sites.',
+						},
+					},
+					sites: [ { blog_id: jetpackSite.ID, site_level_enabled: true, abilities } ],
+				},
+			} as unknown as UserSettings );
+			queryClient.setQueryData( siteAbilitiesQuery( jetpackSite.ID, 'en_US' ).queryKey, [
+				{
+					name: 'jetpack-forms/get-form',
+					label: 'Get form',
+					meta: { annotations: { readonly: true } },
+				},
+			] );
+
+			render( <AIToolsSettings siteSlug={ jetpackSite.slug } />, { queryClient } );
+
+			expect( screen.getByText( '2 of 3 enabled' ) ).toBeVisible();
+		}
+	);
 
 	test( 'manages the WordPress Agent email address on an Atomic site', async () => {
 		const user = userEvent.setup();

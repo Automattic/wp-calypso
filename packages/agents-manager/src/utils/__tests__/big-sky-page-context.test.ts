@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { vi } from 'vitest';
 import { getAmEditorContentContext, getAmEditorPostContext } from '../../abilities';
 import { bigSkyPageContextProvider } from '../big-sky-page-context';

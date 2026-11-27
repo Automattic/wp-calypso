@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { PostCardBody } from '../post-card-body';
 import type { SocialPost } from '../../../types';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-const pageMock = jest.mocked( page );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+const pageMock = vi.mocked( page );
 
 function baseHtml( html: string ): SocialPost {
 	return {
@@ -35,7 +36,7 @@ function baseHtml( html: string ): SocialPost {
 	};
 }
 
-const onClick = jest.fn();
+const onClick = vi.fn();
 
 describe( 'PostCardBody', () => {
 	it( 'renders the sanitised html via DOMPurify', () => {
@@ -102,7 +103,7 @@ describe( 'PostCardBody', () => {
 
 		it( 'routes the click in-app when data-id resolves to an in-app URL', async () => {
 			const user = userEvent.setup();
-			const getProfileUrl = jest.fn( ( ref ) =>
+			const getProfileUrl = vi.fn( ( ref ) =>
 				ref.id ? `/reader/mastodon/7/profile/${ ref.id }` : null
 			);
 			const { getByText } = renderWithAnalytics(
@@ -115,7 +116,7 @@ describe( 'PostCardBody', () => {
 
 		it( 'leaves anchors without data-id alone (no in-app routing)', async () => {
 			const user = userEvent.setup();
-			const getProfileUrl = jest.fn( () => '/reader/mastodon/7/profile/108020' );
+			const getProfileUrl = vi.fn( () => '/reader/mastodon/7/profile/108020' );
 			const { getByText } = renderWithAnalytics(
 				'<p><a href="https://mastodon.social/@alice">@alice</a></p>',
 				getProfileUrl
@@ -127,7 +128,7 @@ describe( 'PostCardBody', () => {
 
 		it( 'fires *_mention_unresolved Tracks when data-id is present but resolver returns null', async () => {
 			const user = userEvent.setup();
-			const getProfileUrl = jest.fn( () => null );
+			const getProfileUrl = vi.fn( () => null );
 			const { getByText } = renderWithAnalytics(
 				'<p><a href="https://mastodon.social/@alice" data-id="bogus">@alice</a></p>',
 				getProfileUrl
@@ -146,7 +147,7 @@ describe( 'PostCardBody', () => {
 			// against HANDLE_RE — the click handler must populate all three
 			// fields so the resolver picks whichever it understands.
 			const user = userEvent.setup();
-			const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+			const getProfileUrl = vi.fn( ( ref: { handle?: string | null } ) =>
 				ref.handle ? `/reader/atmosphere/7/profile/${ ref.handle }` : null
 			);
 			const { getByText } = renderWithAnalytics(
@@ -165,7 +166,7 @@ describe( 'PostCardBody', () => {
 
 		it( 'passes through modifier-clicks (cmd) so users can open in a new tab', async () => {
 			const user = userEvent.setup();
-			const getProfileUrl = jest.fn( ( ref ) =>
+			const getProfileUrl = vi.fn( ( ref ) =>
 				ref.id ? `/reader/mastodon/7/profile/${ ref.id }` : null
 			);
 			const { getByText } = renderWithAnalytics(
@@ -185,7 +186,7 @@ describe( 'PostCardBody', () => {
 			// per-protocol resolvers can build a clean user-readable URL from
 			// the handle rather than the raw id.
 			const user = userEvent.setup();
-			const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+			const getProfileUrl = vi.fn( ( ref: { handle?: string | null } ) =>
 				ref.handle ? `/reader/fediverse/7/profile/${ ref.handle }` : null
 			);
 			const { getByText } = renderWithAnalytics(
@@ -205,7 +206,7 @@ describe( 'PostCardBody', () => {
 
 		it( 'routes when only data-handle is present (no data-id) — pure-webfinger anchor', async () => {
 			const user = userEvent.setup();
-			const getProfileUrl = jest.fn( ( ref: { handle?: string | null } ) =>
+			const getProfileUrl = vi.fn( ( ref: { handle?: string | null } ) =>
 				ref.handle ? `/reader/fediverse/7/profile/${ ref.handle }` : null
 			);
 			const { getByText } = renderWithAnalytics(
@@ -219,7 +220,7 @@ describe( 'PostCardBody', () => {
 
 		it( 'includes data_handle on the unresolved Tracks payload when present', async () => {
 			const user = userEvent.setup();
-			const getProfileUrl = jest.fn( () => null );
+			const getProfileUrl = vi.fn( () => null );
 			const { getByText } = renderWithAnalytics(
 				'<p><a href="https://example.com/@alice"' +
 					' data-id="https://example.com/users/alice"' +
@@ -279,7 +280,7 @@ describe( 'PostCardBody', () => {
 
 		it( 'routes the click in-app when data-tag resolves', async () => {
 			const user = userEvent.setup();
-			const getTagUrl = jest.fn( ( tag ) => `/reader/mastodon/7/tag/${ tag }` );
+			const getTagUrl = vi.fn( ( tag ) => `/reader/mastodon/7/tag/${ tag }` );
 			const { getByText } = renderWithGetTagUrl(
 				'<p><a href="https://mastodon.social/tags/rust" data-tag="rust">#rust</a></p>',
 				getTagUrl
@@ -290,7 +291,7 @@ describe( 'PostCardBody', () => {
 
 		it( 'fires *_timeline_tag_unresolved Tracks when resolver returns null', async () => {
 			const user = userEvent.setup();
-			const getTagUrl = jest.fn( () => null );
+			const getTagUrl = vi.fn( () => null );
 			const { getByText } = renderWithGetTagUrl(
 				'<p><a href="https://mastodon.social/tags/x" data-tag="bogus">#x</a></p>',
 				getTagUrl
@@ -305,10 +306,10 @@ describe( 'PostCardBody', () => {
 
 		it( 'data-id takes precedence when both attributes are on the same anchor', async () => {
 			const user = userEvent.setup();
-			const getProfileUrl = jest.fn( ( ref ) =>
+			const getProfileUrl = vi.fn( ( ref ) =>
 				ref.id ? `/reader/mastodon/7/profile/${ ref.id }` : null
 			);
-			const getTagUrl = jest.fn( () => '/reader/mastodon/7/tag/wrong' );
+			const getTagUrl = vi.fn( () => '/reader/mastodon/7/tag/wrong' );
 			const { getByText } = render(
 				<SocialAnalyticsProvider
 					value={ {

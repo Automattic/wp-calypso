@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { isEditorPage } from '../is-editor-page';
 
 describe( 'isEditorPage', () => {

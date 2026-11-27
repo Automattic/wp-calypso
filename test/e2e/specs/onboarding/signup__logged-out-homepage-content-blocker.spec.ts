@@ -192,7 +192,7 @@ test.describe(
 					new URL( environment.CALYPSO_BASE_URL ).origin ===
 					new URL( environment.WPCOM_BASE_URL ).origin
 				) {
-					await loggedOutHomePage.getStartedLink.click();
+					await loggedOutHomePage.clickHeaderGetStarted();
 					return;
 				}
 

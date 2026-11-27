@@ -1,6 +1,6 @@
 import { createComponentImplementation, MarkdownContext } from '@a2ui/react';
 import { ActionSchema, ComponentIdSchema } from '@a2ui/web_core/v1_0';
-import { flushSync, useId } from '@wordpress/element';
+import { flushSync, useId, useRef, useState } from '@wordpress/element';
 import { Button as WordPressButton, VisuallyHidden } from '@wordpress/ui';
 import { z } from 'zod';
 import { useInteractiveUiSurface, useModalTrigger } from '../contexts/surface';
@@ -21,12 +21,29 @@ export const Button = createComponentImplementation(
 	},
 	( { props, buildChild } ) => {
 		const descriptionId = useId();
+		const pending = useRef( false );
+		const [ isLoading, setIsLoading ] = useState( false );
 		const openModal = useModalTrigger();
 		const { disabled, showErrors } = useInteractiveUiSurface();
 		const isInvalid = props.isValid === false;
 		const canShowErrors = isInvalid && ! disabled;
 		// Opening a modal changes nothing, so its trigger stays usable on a disabled surface.
-		const isDisabled = isInvalid || ( disabled && ! openModal );
+		const isDisabled = isInvalid || isLoading || ( disabled && ! openModal );
+
+		const runAction = async () => {
+			if ( pending.current ) {
+				return;
+			}
+
+			pending.current = true;
+			setIsLoading( true );
+			try {
+				await props.action();
+			} finally {
+				pending.current = false;
+				setIsLoading( false );
+			}
+		};
 
 		// Shows the surface's errors and moves to the first one, skipping fields on hidden tabs.
 		const showFirstError = ( event: SyntheticEvent< HTMLElement > ) => {
@@ -54,13 +71,15 @@ export const Button = createComponentImplementation(
 					className="ai-ui-renderer__button"
 					variant={ VARIANTS[ props.variant ?? 'default' ] }
 					disabled={ isDisabled }
+					loading={ isLoading }
+					aria-busy={ isLoading || undefined }
 					focusableWhenDisabled
 					// Disabled buttons suppress activation, so validation runs during capture.
 					onClickCapture={ canShowErrors ? showFirstError : undefined }
 					onKeyDownCapture={ canShowErrors ? showFirstErrorOnKey( 'Enter' ) : undefined }
 					onKeyUpCapture={ canShowErrors ? showFirstErrorOnKey( ' ' ) : undefined }
 					aria-describedby={ isInvalid ? descriptionId : undefined }
-					onClick={ ( event ) => ( openModal ? openModal( event.currentTarget ) : props.action() ) }
+					onClick={ ( event ) => ( openModal ? openModal( event.currentTarget ) : runAction() ) }
 				>
 					<MarkdownContext.Provider value={ undefined }>
 						{ buildChild( props.child ) }

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
@@ -10,6 +10,7 @@ import themeReducer from 'calypso/state/themes/reducer';
 import { addQueryArgs } from '../../../../../lib/url';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import type { Flow, FlowV2, ProvidedDependencies, StepperStep } from '../../internals/types';
+import type { MockInstance } from 'vitest';
 
 export const getFlowLocation = () => {
 	return {
@@ -155,12 +156,10 @@ interface MatchExternalFlowParams {
 	path: string;
 	query: URLSearchParams | Record< string, Primitive > | null;
 }
-declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
-	namespace jest {
-		interface Matchers {
-			toMatchDestination( expected: MatchDestinationParams ): CustomMatcherResult;
-		}
+declare module 'vitest' {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Must match Vitest's declaration.
+	interface Matchers< T = any > {
+		toMatchDestination( expected: MatchDestinationParams ): T;
 	}
 }
 
@@ -182,7 +181,7 @@ const toObject = ( a: URLSearchParams | Record< string, Primitive > ) => {
 
 expect.extend( {
 	toMatchURL(
-		destination: jest.Spied< typeof window.location.assign >,
+		destination: MockInstance< typeof window.location.assign >,
 		expected: MatchExternalFlowParams
 	) {
 		const results = destination.mock.calls.map( ( [ destination ] ) => {

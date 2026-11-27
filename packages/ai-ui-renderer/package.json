@@ -25,6 +25,14 @@
 		"./style.scss": {
 			"calypso:src": "./src/style.scss",
 			"default": "./dist/esm/style.scss"
+		},
+		"./theme.scss": {
+			"calypso:src": "./src/theme.scss",
+			"default": "./dist/esm/theme.scss"
+		},
+		"./themes/*.scss": {
+			"calypso:src": "./src/themes/*.scss",
+			"default": "./dist/esm/themes/*.scss"
 		}
 	},
 	"sideEffects": [
@@ -42,6 +50,7 @@
 	],
 	"types": "dist/types",
 	"scripts": {
+		"preview": "vite serve preview --host 127.0.0.1",
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && yarn run -T copy-assets",
 		"prepack": "yarn run clean && yarn run build",

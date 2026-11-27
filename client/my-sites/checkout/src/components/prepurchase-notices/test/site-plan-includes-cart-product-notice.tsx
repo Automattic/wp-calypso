@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { sitePurchasesQuery } from '@automattic/api-queries';
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';

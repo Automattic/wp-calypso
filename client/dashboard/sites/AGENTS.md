@@ -42,12 +42,16 @@
 
 ### Exceptions
 
-- Error pages (e.g. `client/dashboard/sites/site/error.tsx`) render a single unconditional error notice directly via `notices=`; there is no competition to arbitrate and no healthy data context for the arbiter's shared candidates.
+- Error pages (e.g. `client/dashboard/app-dotcom/routes/sites/site/error.tsx`) render a single unconditional error notice directly via `notices=`; there is no competition to arbitrate and no healthy data context for the arbiter's shared candidates.
 - Inline contextual notices (validation messages inside forms, cards, or modals) are not top-of-page notices and are out of scope.
 
 ### Reference implementations
 
 - `client/dashboard/app-dotcom/routes/sites/site/index.tsx` — `InaccessibleJetpackNotice` vs `StorageWarningBanner`
-- `client/dashboard/sites/domains/index.tsx` — `PrimaryDomainSelectorNotice` vs the redirect warning, with eligibility settled in the `siteDomainsRoute` loader; the bulk-update progress notice is action feedback rendered beside the arbiter
-- `client/dashboard/sites/logs/index.tsx` — Jetpack-error UTC notice vs `TimeMismatchNotice`; the auto-refresh warning is action feedback rendered beside the arbiter
-- `client/dashboard/sites/backups/index.tsx` — `BackupNotices` (backup progress/result) is action feedback rendered beside the arbiter
+- `client/dashboard/app-dotcom/routes/sites/site/domains/index.tsx` — `PrimaryDomainSelectorNotice` vs the redirect warning, with eligibility settled in the `siteDomainsRoute` loader; the bulk-update progress notice is action feedback rendered beside the arbiter
+- `client/dashboard/app-dotcom/routes/sites/site/logs/index.tsx` — Jetpack-error UTC notice vs `TimeMismatchNotice`; the auto-refresh warning is action feedback rendered beside the arbiter
+- `client/dashboard/sites/backups/components/backups-page/index.tsx` — `BackupNotices` (backup progress/result) is action feedback rendered beside the arbiter
+
+## Site actions
+
+An action on a site that is only a confirmation modal, such as leaving, resetting, deleting or restoring the site, or disconnecting a Jetpack site, goes in `sites/site-actions/components/`, next to the Danger zone and the Site actions list that open most of them. An action with its own screen, or with several parts used from different places, is a sub-feature named for it, with the noun first: `sites/site-transfer`, `sites/site-launch`.

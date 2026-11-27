@@ -149,8 +149,6 @@ class ImageEditorCrop extends Component {
 
 		let imageWidth;
 		let imageHeight;
-		let finalWidth = newWidth;
-		let finalHeight = newHeight;
 
 		switch ( aspectRatio ) {
 			case AspectRatios.ORIGINAL: {
@@ -194,8 +192,8 @@ class ImageEditorCrop extends Component {
 
 		const ratio = Math.min( newWidth / imageWidth, newHeight / imageHeight );
 
-		finalWidth = imageWidth * ratio;
-		finalHeight = imageHeight * ratio;
+		const finalWidth = imageWidth * ratio;
+		const finalHeight = imageHeight * ratio;
 
 		if ( newValues.hasOwnProperty( 'top' ) ) {
 			newValues.top = newState.bottom - finalHeight;

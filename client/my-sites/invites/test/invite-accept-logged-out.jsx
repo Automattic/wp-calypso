@@ -1,42 +1,47 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import InviteAcceptLoggedOut from '../invite-accept-logged-out';
 
-const mockGetCiabConfigFromGarden = jest.fn();
+const mockGetCiabConfigFromGarden = vi.fn();
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Component ) => ( props ) => <Component { ...props } translate={ ( text ) => text } />,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		localize: ( Component ) => ( props ) => (
+			<Component { ...props } translate={ ( text ) => text } />
+		),
+	} )
+);
 
-jest.mock( 'calypso/blocks/signup-form', () => ( {
+vi.mock( 'calypso/blocks/signup-form', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="signup-form" />,
 } ) );
 
-jest.mock( 'calypso/components/forms/form-button', () => ( {
+vi.mock( 'calypso/components/forms/form-button', () => ( {
 	__esModule: true,
 	default: ( { children } ) => <button>{ children }</button>,
 } ) );
 
-jest.mock( 'calypso/components/logged-out-form/link-item', () => ( {
+vi.mock( 'calypso/components/logged-out-form/link-item', () => ( {
 	__esModule: true,
 	default: ( { children, onClick } ) => <button onClick={ onClick }>{ children }</button>,
 } ) );
 
-jest.mock( 'calypso/components/logged-out-form/links', () => ( {
+vi.mock( 'calypso/components/logged-out-form/links', () => ( {
 	__esModule: true,
 	default: ( { children } ) => <div>{ children }</div>,
 } ) );
 
-jest.mock( 'calypso/layout/body-section-css-class', () => ( {
+vi.mock( 'calypso/layout/body-section-css-class', () => ( {
 	__esModule: true,
 	default: ( { bodyClass } ) => (
 		<div data-testid="body-section-css-class">
@@ -45,43 +50,44 @@ jest.mock( 'calypso/layout/body-section-css-class', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/partner-branding', () => ( {
+vi.mock( 'calypso/lib/partner-branding', () => ( {
 	getPartnerConfigFromGarden: ( ...args ) => mockGetCiabConfigFromGarden( ...args ),
 } ) );
 
-jest.mock( 'calypso/lib/paths', () => ( {
-	login: jest.fn( () => '/log-in' ),
+vi.mock( 'calypso/lib/paths', () => ( {
+	login: vi.fn( () => '/log-in' ),
 } ) );
 
-jest.mock( 'calypso/lib/route', () => ( {
-	addQueryArgs: jest.fn(),
+vi.mock( 'calypso/lib/route', () => ( {
+	addQueryArgs: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/my-sites/invites/invite-form-header-logged-out', () => ( {
+vi.mock( 'calypso/my-sites/invites/invite-form-header-logged-out', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="invite-form-header-logged-out" />,
 } ) );
 
-jest.mock( 'calypso/signup/wpcom-login-form', () => ( {
+vi.mock( 'calypso/signup/wpcom-login-form', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/state/invites/actions', () => ( {
-	createAccount: jest.fn(),
-	acceptInvite: jest.fn(),
+vi.mock( 'calypso/state/invites/actions', () => ( {
+	createAccount: vi.fn(),
+	createSocialAccount: vi.fn(),
+	acceptInvite: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-current-query-arguments', () => ( {
+vi.mock( 'calypso/state/selectors/get-current-query-arguments', () => ( {
 	__esModule: true,
 	default: () => ( {} ),
 } ) );
 
-jest.mock( '../invite-accept-logged-out/style.scss', () => ( {} ) );
+vi.mock( '../invite-accept-logged-out/style.scss', () => ( {} ) );
 
 const mockStore = configureStore();
 
@@ -99,7 +105,7 @@ const buildInvite = ( siteOverrides = {} ) => ( {
 
 describe( 'InviteAcceptLoggedOut branding', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetCiabConfigFromGarden.mockReturnValue( null );
 	} );
 
@@ -170,7 +176,7 @@ describe( 'InviteAcceptLoggedOut branding', () => {
 
 describe( 'InviteAcceptLoggedOut footer links', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetCiabConfigFromGarden.mockReturnValue( null );
 	} );
 

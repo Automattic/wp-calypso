@@ -29,19 +29,6 @@
 
 .static-site-import-moving__progress {
 	width: 100%;
-	--wp-components-color-foreground: var( --wp-admin-theme-color );
-	// Progress paints its indicator and track with these tokens; mix them from the
-	// foreground color, as ProgressBar did before.
-	--wpds-color-background-indicator-neutral: color-mix(
-		in srgb,
-		var( --wp-components-color-foreground ) 90%,
-		transparent
-	);
-	--wpds-color-background-track-neutral: color-mix(
-		in srgb,
-		var( --wp-components-color-foreground ) 10%,
-		transparent
-	);
 }
 
 // A browser window onto the old site.
@@ -186,13 +173,6 @@
 	span:nth-child( 4 ) {
 		width: 45%;
 	}
-}
-
-.static-site-import-snapshot__collage {
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
 }
 
 .static-site-import-snapshot__image {

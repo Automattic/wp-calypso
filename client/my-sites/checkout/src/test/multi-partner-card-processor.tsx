@@ -1,5 +1,6 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { type Mock, vi } from 'vitest';
 import { createEbanxTokenVgs } from '../lib/create-ebanx-token-vgs';
 import multiPartnerCardProcessor from '../lib/multi-partner-card-processor';
 import {
@@ -27,12 +28,12 @@ import type {
 	PaymentMethod,
 } from '@stripe/stripe-js';
 
-jest.mock( '../lib/create-ebanx-token-vgs', () => ( {
-	createEbanxTokenVgs: jest.fn(),
+vi.mock( '../lib/create-ebanx-token-vgs', () => ( {
+	createEbanxTokenVgs: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
-	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+vi.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
+	getBlackboxSessionId: vi.fn().mockResolvedValue( undefined ),
 } ) );
 
 async function createMockStripeToken( {
@@ -571,7 +572,7 @@ describe( 'multiPartnerCardProcessor', () => {
 			phoneNumber: '1111111111',
 			document: 'ebanx-document-code',
 		};
-		( createEbanxTokenVgs as jest.Mock ).mockImplementation( createMockEbanxTokenVgs );
+		( createEbanxTokenVgs as Mock ).mockImplementation( createMockEbanxTokenVgs );
 
 		it( 'throws an error if there is no vgsTokens in the submitted data', async () => {
 			const submitData = {
@@ -716,7 +717,7 @@ describe( 'multiPartnerCardProcessor', () => {
 			};
 
 			beforeEach( () => {
-				( createEbanxTokenVgs as jest.Mock ).mockClear();
+				( createEbanxTokenVgs as Mock ).mockClear();
 			} );
 
 			it( 'creates an account once before tokenizing and sends the new site to the endpoint', async () => {
@@ -732,7 +733,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				expect( createAccountEndpoint ).toHaveBeenCalledWith( expectedCreateAccountRequest );
 				expect( createEbanxTokenVgs ).toHaveBeenCalledTimes( 1 );
 				expect( createAccountEndpoint.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
-					( createEbanxTokenVgs as jest.Mock ).mock.invocationCallOrder[ 0 ]
+					( createEbanxTokenVgs as Mock ).mock.invocationCallOrder[ 0 ]
 				);
 				expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 					...basicExpectedEbanxRequest,
@@ -767,7 +768,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				const createAccountEndpoint = mockCreateAccountEndpoint(
 					mockCreateAccountSiteCreatedResponse
 				);
-				( createEbanxTokenVgs as jest.Mock ).mockRejectedValueOnce(
+				( createEbanxTokenVgs as Mock ).mockRejectedValueOnce(
 					new Error( 'ebanx error: tokenization failed' )
 				);
 				const expected = { payload: 'ebanx error: tokenization failed', type: 'ERROR' };

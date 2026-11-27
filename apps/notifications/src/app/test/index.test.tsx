@@ -203,6 +203,46 @@ describe( 'NotificationApp', () => {
 		}
 	);
 
+	it( 'leaves typing in a field outside it alone, such as the command palette’s search', async () => {
+		const user = userEvent.setup();
+		store.dispatch(
+			actions.notes.addNotes( [
+				makePendingComment( 802, 'Eve' ),
+				makePendingComment( 801, 'Ben' ),
+			] )
+		);
+		store.dispatch( actions.ui.loadedNotes() );
+		render(
+			<>
+				<input aria-label="Search commands" />
+				<NotificationApp wpcom={ {} } />
+			</>
+		);
+		const search = screen.getByRole( 'textbox', { name: 'Search commands' } );
+		const dispatch = vi.spyOn( store, 'dispatch' );
+
+		// With no note open: the tab letters, `n`, `i` and the list's Down arrow.
+		await user.type( search, 'lucas ni{ArrowDown}' );
+
+		expect( search ).toHaveValue( 'lucas ni' );
+		expect( search ).toHaveFocus();
+		expect( screen.getByRole( 'tab', { name: 'All', selected: true } ) ).toBeVisible();
+		expect( dispatch ).not.toHaveBeenCalledWith( actions.ui.closePanel() );
+		expect( dispatch ).not.toHaveBeenCalledWith( actions.ui.toggleShortcutsPopover() );
+		dispatch.mockRestore();
+
+		// With a note open: its actions, and moving to the next note or back to the list.
+		await user.click( await screen.findByRole( 'button', { name: /^Ben commented/ } ) );
+		const pane = document.querySelector( '.wpnc-app__detail-pane' ) as HTMLElement;
+		await user.clear( search );
+		await user.type( search, 'last jk{ArrowDown}{ArrowRight}' );
+
+		expect( search ).toHaveValue( 'last jk' );
+		expect( commentRequests ).toEqual( [] );
+		expect( pane ).toHaveClass( 'is-open' );
+		expect( pane ).toHaveTextContent( 'Ben’s comment' );
+	} );
+
 	it( 'ignores a click, or Enter, on a closed note’s buttons while it slides out', async () => {
 		const user = userEvent.setup();
 		store.dispatch( actions.notes.addNotes( [ makePendingComment( 801, 'Ben' ) ] ) );

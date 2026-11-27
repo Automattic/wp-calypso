@@ -1,20 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
-} ) );
 
 import { QueryClient } from '@tanstack/react-query';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useEffect } from 'react';
+import { type Mock, vi } from 'vitest';
 import { ComposerProvider, useComposer, type ComposerConfig } from 'calypso/reader/social/composer';
 import { testComposerConfig } from 'calypso/reader/social/composer/test-config';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useFediverseComposerMedia } from '../use-fediverse-composer-media';
 import type { ReactNode } from 'react';
+
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
+} ) );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const configWithFediverseMedia: ComposerConfig< any, any, any > = {
@@ -27,13 +29,13 @@ const configWithFediverseMedia: ComposerConfig< any, any, any > = {
 // throws on click. Stub at file scope so every test is isolated from
 // the analytics pipeline.
 beforeEach( () => {
-	jest
-		.spyOn( analytics, 'recordReaderTracksEvent' )
-		.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+		() => ( { type: '@@TEST/NOOP' } ) as never
+	);
 } );
 
 afterEach( () => {
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 function renderTrigger() {
@@ -104,7 +106,7 @@ describe( 'useFediverseComposerMedia — click behaviour', () => {
 		const button = screen.getByRole( 'button', { name: /add media/i } );
 		await user.click( button );
 
-		const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
 		const clickedCalls = recordSpy.mock.calls.filter(
 			( call ) => call[ 0 ] === 'calypso_reader_fediverse_media_handoff_clicked'
 		);

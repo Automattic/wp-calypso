@@ -173,6 +173,7 @@ export interface Client {
 	isVisible: boolean;
 	isShowing: boolean;
 	lastSeenTime: number;
+	listLoaded: boolean;
 	filter: Record< string, unknown > | null;
 	filteredHasMore: Record< string, boolean >;
 	gettingFilteredNotes: boolean;
@@ -199,4 +200,5 @@ export interface Client {
 	hasMoreNotes: ( filterName?: FilterName ) => boolean;
 	refreshNotes: () => void;
 	setVisibility: ( { isShowing, isVisible }: { isShowing: boolean; isVisible: boolean } ) => void;
+	retryLoad: ( filterName?: FilterName ) => void;
 }

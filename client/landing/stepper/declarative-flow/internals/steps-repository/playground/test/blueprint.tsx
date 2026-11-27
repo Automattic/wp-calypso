@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { vi } from 'vitest';
 import {
 	getBlueprint,
 	getBlueprintArchiveIdentifier,
@@ -74,7 +75,7 @@ function setLocationHref( href: string ) {
 
 describe( 'getBlueprint', () => {
 	beforeEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		setLocationHref( 'https://example.com/' );
 	} );
 
@@ -197,7 +198,7 @@ describe( 'getBlueprint', () => {
 				setLocationHref( 'https://example.com/?blueprint-url=https://example.com/blueprint.json' );
 
 				// Mock the fetch function with a proper arrayBuffer() response
-				jest.spyOn( global, 'fetch' ).mockResolvedValue( {
+				vi.spyOn( global, 'fetch' ).mockResolvedValue( {
 					ok: true,
 					status: 200,
 					statusText: 'OK',
@@ -219,14 +220,14 @@ describe( 'getBlueprint', () => {
 	);
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		setLocationHref( 'https://example.com/' );
 	} );
 } );
 
 describe( 'getBlueprintID', () => {
 	beforeEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'returns blueprint ID from direct blueprint parameter when it is a number', () => {
@@ -338,7 +339,7 @@ describe( 'getBlueprintArchiveIdentifier', () => {
 
 describe( 'getBlueprintLabelForTracking', () => {
 	beforeEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'returns "unknown" for non-numeric predefined blueprint names like "woocommerce"', () => {

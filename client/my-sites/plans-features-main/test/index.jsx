@@ -1,78 +1,6 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-jest.mock( '@automattic/calypso-config', () => {
-	const actualModule = jest.requireActual( '@automattic/calypso-config' );
-	const actual = actualModule.default ?? actualModule;
-	const bf = { flag: false };
-	const config = Object.assign( ( key ) => actual( key ), actual );
-	config.isEnabled = ( flag ) =>
-		'black-friday-2026' === flag ? bf.flag : actual.isEnabled( flag );
-	return { __esModule: true, default: config, isEnabled: config.isEnabled, bf };
-} );
-const { bf: mockBf } = jest.requireMock( '@automattic/calypso-config' );
-jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( '@automattic/plans-grid-next', () => ( {
-	...jest.requireActual( '@automattic/plans-grid-next' ),
-	FeaturesGrid: ( { gridPlans } ) => (
-		<div data-testid="plan-features">
-			<div data-testid="visible-plans">
-				{ JSON.stringify( gridPlans.map( ( { planSlug } ) => planSlug ) ) }
-			</div>
-		</div>
-	),
-	PlanTypeSelector: () => <div>PlanTypeSelector</div>,
-	usePlanFeaturesForGridPlans: jest.fn(),
-	useRestructuredPlanFeaturesForComparisonGrid: jest.fn(),
-} ) );
-jest.mock( '../hooks/use-plan-intent-from-site-meta', () => jest.fn() );
-jest.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => () => ( {
-	wpcomFreeDomainSuggestion: { isLoading: false, result: { domain_name: 'suggestion.com' } },
-	invalidateDomainSuggestionCache: () => {},
-} ) );
-jest.mock( '../hooks/use-renewal-price-experiment', () => ( {
-	useRenewalPricingExperiment: jest.fn( () => [ false, null ] ),
-} ) );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment', () =>
-	jest.fn( () => ( {
-		isLoading: false,
-		variant: 'control',
-		usePlansGridRedesign: false,
-		showDifferentiatorHeader: false,
-		showEnterpriseBottomCard: false,
-		showWooCommerceBottomCard: false,
-		isExperimentEligible: false,
-	} ) )
-);
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment', () =>
-	jest.fn()
-);
-jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => jest.fn() );
-jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSiteId: jest.fn(),
-	getSelectedSite: jest.fn(),
-} ) );
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
-	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePlans: jest.fn(),
-		usePricingMetaForGridPlans: jest.fn(),
-		useCurrentPlan: jest.fn(),
-	},
-	AddOns: {
-		...jest.requireActual( '@automattic/data-stores' ).AddOns,
-		useStorageAddOns: jest.fn(),
-	},
-} ) );
-
-jest.mock( 'calypso/components/data/query-active-promotions', () => jest.fn() );
-jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
-jest.mock( 'calypso/blocks/black-friday-2026-banner', () => () => (
-	<div data-testid="black-friday-2026-banner" />
-) );
 
 import {
 	PLAN_FREE,
@@ -92,6 +20,7 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { act, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	BLACK_FRIDAY_2026_COUPON,
 	BLACK_FRIDAY_2026_START,
@@ -102,6 +31,82 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import useIntentFromSiteMeta from '../hooks/use-plan-intent-from-site-meta';
 import PlansFeaturesMain from '../index';
+
+vi.mock( '@automattic/calypso-config', async () => {
+	const actualModule = await vi.importActual( '@automattic/calypso-config' );
+	const actual = actualModule.default ?? actualModule;
+	const bf = { flag: false };
+	const config = Object.assign( ( key ) => actual( key ), actual );
+	config.isEnabled = ( flag ) =>
+		'black-friday-2026' === flag ? bf.flag : actual.isEnabled( flag );
+	return { __esModule: true, default: config, isEnabled: config.isEnabled, bf };
+} );
+const { bf: mockBf } = await import( '@automattic/calypso-config' );
+vi.mock( 'calypso/components/marketing-message', () => ( { default: () => null } ) );
+vi.mock( '@automattic/plans-grid-next', async () => ( {
+	...( await vi.importActual( '@automattic/plans-grid-next' ) ),
+	FeaturesGrid: ( { gridPlans } ) => (
+		<div data-testid="plan-features">
+			<div data-testid="visible-plans">
+				{ JSON.stringify( gridPlans.map( ( { planSlug } ) => planSlug ) ) }
+			</div>
+		</div>
+	),
+	PlanTypeSelector: () => <div>PlanTypeSelector</div>,
+	usePlanFeaturesForGridPlans: vi.fn(),
+	useRestructuredPlanFeaturesForComparisonGrid: vi.fn(),
+} ) );
+vi.mock( '../hooks/use-plan-intent-from-site-meta', () => ( { default: vi.fn() } ) );
+vi.mock( '../hooks/use-suggested-free-domain-from-paid-domain', () => ( {
+	default: () => ( {
+		wpcomFreeDomainSuggestion: { isLoading: false, result: { domain_name: 'suggestion.com' } },
+		invalidateDomainSuggestionCache: () => {},
+	} ),
+} ) );
+vi.mock( '../hooks/use-renewal-price-experiment', () => ( {
+	useRenewalPricingExperiment: vi.fn( () => [ false, null ] ),
+} ) );
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment', () => ( {
+	default: vi.fn( () => ( {
+		isLoading: false,
+		variant: 'control',
+		usePlansGridRedesign: false,
+		showDifferentiatorHeader: false,
+		showEnterpriseBottomCard: false,
+		showWooCommerceBottomCard: false,
+		isExperimentEligible: false,
+	} ) ),
+} ) );
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment', () => ( {
+	default: vi.fn(),
+} ) );
+vi.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => ( {
+	default: vi.fn(),
+} ) );
+vi.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSiteId: vi.fn(),
+	getSelectedSite: vi.fn(),
+} ) );
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual( '@automattic/data-stores' ) ),
+	Plans: {
+		...( await vi.importActual( '@automattic/data-stores' ) ).Plans,
+		usePlans: vi.fn(),
+		usePricingMetaForGridPlans: vi.fn(),
+		useCurrentPlan: vi.fn(),
+	},
+	AddOns: {
+		...( await vi.importActual( '@automattic/data-stores' ) ).AddOns,
+		useStorageAddOns: vi.fn(),
+	},
+} ) );
+
+vi.mock( 'calypso/components/data/query-active-promotions', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/components/data/query-products-list', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/blocks/black-friday-2026-banner', () => ( {
+	default: () => <div data-testid="black-friday-2026-banner" />,
+} ) );
 
 const props = {
 	selectedPlan: PLAN_FREE,
@@ -120,7 +125,7 @@ const emptyPlansIndexForMockedFeatures = {
 
 describe( 'PlansFeaturesMain', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		useIntentFromSiteMeta.mockImplementation( () => ( {
 			processing: false,
@@ -527,7 +532,7 @@ describe( 'PlansFeaturesMain', () => {
 
 	describe( 'PlansFeaturesMain. onIntentResolved', () => {
 		test( 'reports the intent prop', () => {
-			const onIntentResolved = jest.fn();
+			const onIntentResolved = vi.fn();
 
 			renderWithProvider(
 				<PlansFeaturesMain
@@ -541,7 +546,7 @@ describe( 'PlansFeaturesMain', () => {
 		} );
 
 		test( 'reports the default intent when no intent is provided', () => {
-			const onIntentResolved = jest.fn();
+			const onIntentResolved = vi.fn();
 
 			renderWithProvider(
 				<PlansFeaturesMain { ...props } onIntentResolved={ onIntentResolved } />
@@ -555,7 +560,7 @@ describe( 'PlansFeaturesMain', () => {
 				processing: false,
 				intent: 'plans-newsletter',
 			} ) );
-			const onIntentResolved = jest.fn();
+			const onIntentResolved = vi.fn();
 
 			renderWithProvider(
 				<PlansFeaturesMain { ...props } onIntentResolved={ onIntentResolved } />
@@ -570,7 +575,7 @@ describe( 'PlansFeaturesMain', () => {
 				processing: true,
 				intent: undefined,
 			} ) );
-			const onIntentResolved = jest.fn();
+			const onIntentResolved = vi.fn();
 
 			renderWithProvider(
 				<PlansFeaturesMain { ...props } onIntentResolved={ onIntentResolved } />
@@ -584,7 +589,7 @@ describe( 'PlansFeaturesMain', () => {
 		let nowSpy;
 
 		beforeEach( () => {
-			nowSpy = jest.spyOn( Date, 'now' ).mockReturnValue( BLACK_FRIDAY_2026_START + 1000 );
+			nowSpy = vi.spyOn( Date, 'now' ).mockReturnValue( BLACK_FRIDAY_2026_START + 1000 );
 			mockBf.flag = false;
 		} );
 

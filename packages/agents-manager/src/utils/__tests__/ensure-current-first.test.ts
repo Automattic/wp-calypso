@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import ensureCurrentFirst, { dedupeByTitle } from '../ensure-current-first';
 import type { StyleVariation } from '../../components/styles-preview';
 

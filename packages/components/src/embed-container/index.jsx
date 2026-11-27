@@ -200,14 +200,13 @@ function createSlideshow() {
 function embedSlideshow( domNode ) {
 	debug( 'processing slideshow for', domNode );
 
-	let slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
+	const slideshowCSSPresent = document.head.querySelector( `link[href="${ SLIDESHOW_URLS.CSS }"]` );
 	// set global variable required by JetpackSlideshow
 	window.jetpackSlideshowSettings = {
 		spinner: SLIDESHOW_URLS.SPINNER,
 	};
 
 	if ( ! slideshowCSSPresent ) {
-		slideshowCSSPresent = true;
 		loadCSS( SLIDESHOW_URLS.CSS );
 	}
 

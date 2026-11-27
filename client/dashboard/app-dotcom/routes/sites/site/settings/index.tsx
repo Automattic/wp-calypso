@@ -11,6 +11,7 @@ import { SummaryButtonList } from '../../../../../components/summary-button-list
 import AgencySettingsSummary from '../../../../../sites/agency-wpcom/components/agency-wpcom-summary';
 import AISiteToolsSettingsSummary from '../../../../../sites/ai-tools/components/ai-tools-summary';
 import ApmSettingsSummary from '../../../../../sites/apm/components/apm-summary';
+import { useCanViewApm } from '../../../../../sites/apm/utils/backend-access';
 import CachingSettingsSummary from '../../../../../sites/caching/components/caching-summary';
 import { SitesNoticeArbiter } from '../../../../../sites/components/notice-arbiter';
 import CrontabSettingsSummary from '../../../../../sites/crontab/components/crontab-summary';
@@ -18,7 +19,6 @@ import DatabaseSettingsSummary from '../../../../../sites/database/components/da
 import DefensiveModeSettingsSummary from '../../../../../sites/defensive-mode/components/defensive-mode-summary';
 import RepositoriesSettingsSummary from '../../../../../sites/deployments/components/repositories-summary';
 import HundredYearPlanSettingsSummary from '../../../../../sites/hundred-year-plan/components/hundred-year-plan-summary';
-import { useCanViewApm } from '../../../../../sites/performance/backend-access';
 import PHPSettingsSummary from '../../../../../sites/php-version/components/php-version-summary';
 import PlanSettingsSummary from '../../../../../sites/plan/components/plan-summary';
 import PrimaryDataCenterSettingsSummary from '../../../../../sites/primary-data-center/components/primary-data-center-summary';

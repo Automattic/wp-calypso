@@ -8,6 +8,10 @@ import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import McpToolsSubpage from '../tools-subpage';
 
+const mockSaveSettings = vi.fn( async () => ( {} ) );
+let mockOrdinaryToolEnabled = false;
+let mockOptInToolEnabled = false;
+
 vi.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: vi.fn(),
 } ) );
@@ -33,10 +37,17 @@ vi.mock( '@automattic/api-queries', () => ( {
 			mcp_abilities: {
 				account: {
 					'wpcom-mcp/posts-list': {
-						enabled: false,
+						enabled: mockOrdinaryToolEnabled,
 						readonly: true,
 						title: 'List posts',
 						description: 'List posts on your sites.',
+					},
+					'wpcom/sensitive-read': {
+						enabled: mockOptInToolEnabled,
+						requires_opt_in: true,
+						readonly: true,
+						title: 'Sensitive read',
+						description: 'Read sensitive account data.',
 					},
 				},
 				groups: [],
@@ -45,7 +56,7 @@ vi.mock( '@automattic/api-queries', () => ( {
 		} ),
 	} ),
 	userSettingsMutation: () => ( {
-		mutationFn: async () => ( {} ),
+		mutationFn: ( settings ) => mockSaveSettings( settings ),
 	} ),
 } ) );
 
@@ -90,7 +101,8 @@ async function toggleFirstTool( props ) {
 	renderWithProvider( <McpToolsSubpage { ...props } /> );
 
 	// Groups render collapsed; expand the "Other" bucket to reach the tool toggle.
-	await user.click( await screen.findByRole( 'button', { name: 'Show operations' } ) );
+	const [ otherGroupButton ] = await screen.findAllByRole( 'button', { name: 'Show operations' } );
+	await user.click( otherGroupButton );
 	await user.click( await screen.findByRole( 'checkbox', { name: 'List posts' } ) );
 }
 
@@ -102,6 +114,67 @@ function getToolToggledPayload( eventName ) {
 describe( 'client/me/mcp/tools-subpage Tracks payloads', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
+		mockOrdinaryToolEnabled = false;
+		mockOptInToolEnabled = false;
+	} );
+
+	it.each( [
+		[ 'page', 0, false ],
+		[ 'group', 1, false ],
+		[ 'page', 0, true ],
+		[ 'group', 1, true ],
+	] )(
+		'toggles ordinary tools without opting in sensitive tools (%s, switch %i, initially %s)',
+		async ( scope, toggleIndex, initiallyEnabled ) => {
+			mockOrdinaryToolEnabled = initiallyEnabled;
+			mockOptInToolEnabled = initiallyEnabled;
+			const user = userEvent.setup();
+			renderWithProvider(
+				<McpToolsSubpage
+					path="/me/mcp/read"
+					pageViewTitle="MCP Read Access"
+					headerTitle="Read"
+					filterTool={ () => true }
+					toolCategory="read"
+				/>
+			);
+			const switches = await screen.findAllByRole( 'checkbox', { name: 'Enable all' } );
+			await user.click( switches[ toggleIndex ] );
+
+			await waitFor( () =>
+				expect( mockSaveSettings ).toHaveBeenCalledWith( {
+					mcp_abilities: {
+						account: { 'wpcom-mcp/posts-list': ! initiallyEnabled },
+						...( scope === 'page' && { group_intents: { read: ! initiallyEnabled } } ),
+					},
+				} )
+			);
+		}
+	);
+
+	it( 'labels an opt-in tool in its group and saves an individual grant', async () => {
+		const user = userEvent.setup();
+		renderWithProvider(
+			<McpToolsSubpage
+				path="/me/mcp/read"
+				pageViewTitle="MCP Read Access"
+				headerTitle="Read"
+				filterTool={ () => true }
+				toolCategory="read"
+			/>
+		);
+		await user.click( await screen.findByRole( 'button', { name: 'Show operations' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Turn on separately' } ) );
+		expect( mockSaveSettings ).not.toHaveBeenCalled();
+		await user.keyboard( '{Escape}' );
+		const optInToggle = screen.getByRole( 'checkbox', { name: 'Sensitive read' } );
+		await user.click( optInToggle );
+
+		await waitFor( () =>
+			expect( mockSaveSettings ).toHaveBeenCalledWith( {
+				mcp_abilities: { account: { 'wpcom/sensitive-read': true } },
+			} )
+		);
 	} );
 
 	it( 'fires calypso_dashboard_mcp_read_tool_toggled with ability_name and path', async () => {

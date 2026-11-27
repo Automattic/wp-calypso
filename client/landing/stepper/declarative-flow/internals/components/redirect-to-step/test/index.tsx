@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { RedirectToStep } from '../';
 
-jest.mock( 'calypso/state/current-user/selectors' );
+vi.mock( 'calypso/state/current-user/selectors' );
 
 const LocationDisplay = () => {
 	const location = useLocation();
@@ -46,7 +47,7 @@ describe( 'RedirectToStep', () => {
 	} );
 
 	it( 'ignores the url language if the user is logged in', () => {
-		( isUserLoggedIn as jest.Mock ).mockReturnValue( true );
+		( isUserLoggedIn as Mock ).mockReturnValue( true );
 
 		render( { currentPath: '/setup/flow-name/old-step/es', stepToRedirect: 'new-step' } );
 

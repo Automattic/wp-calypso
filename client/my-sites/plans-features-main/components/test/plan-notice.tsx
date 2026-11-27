@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import {
 	PLAN_BUSINESS,
@@ -11,6 +11,7 @@ import {
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { useMarketingMessage } from 'calypso/components/marketing-message/use-marketing-message';
 import { getDiscountByName } from 'calypso/lib/discounts';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
@@ -25,42 +26,46 @@ import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
-	isProPlan: jest.fn(),
-	isStarterPlan: jest.fn(),
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-products' ) >(
+		'@automattic/calypso-products'
+	) ),
+	isProPlan: vi.fn(),
+	isStarterPlan: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
-	isCurrentUserCurrentPlanOwner: jest.fn(),
-	isRequestingSitePlans: jest.fn(),
-	getCurrentPlan: jest.fn(),
+vi.mock( 'calypso/state/sites/plans/selectors', () => ( {
+	isCurrentUserCurrentPlanOwner: vi.fn(),
+	isRequestingSitePlans: vi.fn(),
+	getCurrentPlan: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	isCurrentPlanPaid: jest.fn(),
-	getSitePlan: jest.fn(),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	isCurrentPlanPaid: vi.fn(),
+	getSitePlan: vi.fn(),
 } ) );
-jest.mock( 'calypso/components/marketing-message/use-marketing-message', () => ( {
-	useMarketingMessage: jest.fn(),
+vi.mock( 'calypso/components/marketing-message/use-marketing-message', () => ( {
+	useMarketingMessage: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/discounts', () => ( {
-	getDiscountByName: jest.fn(),
+vi.mock( 'calypso/lib/discounts', () => ( {
+	getDiscountByName: vi.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice', () => ( {
-	useUpgradeCreditsNoticeData: jest.fn(),
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice', () => ( {
+	useUpgradeCreditsNoticeData: vi.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
-	useMaxPlanUpgradeCredits: jest.fn(),
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
+	useMaxPlanUpgradeCredits: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/currency-code/selectors', () => ( {
-	getCurrentUserCurrencyCode: jest.fn(),
+vi.mock( 'calypso/state/currency-code/selectors', () => ( {
+	getCurrentUserCurrencyCode: vi.fn(),
 } ) );
-jest.mock( '@automattic/calypso-config' );
-jest.mock( 'calypso/state/purchases/selectors/get-raw-site-purchases', () => ( {
-	getRawSitePurchases: jest.fn(),
+vi.mock( '@automattic/calypso-config' );
+vi.mock( 'calypso/state/purchases/selectors/get-raw-site-purchases', () => ( {
+	getRawSitePurchases: vi.fn(),
 } ) );
-jest.mock( 'calypso/components/data/query-site-purchases', () => {
-	return function MockQuerySitePurchases() {
-		return null;
+vi.mock( 'calypso/components/data/query-site-purchases', () => {
+	return {
+		default: function MockQuerySitePurchases() {
+			return null;
+		},
 	};
 } );
 
@@ -80,23 +85,23 @@ const discount = {
 };
 describe( '<PlanNotice /> Tests', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 
-		jest.mocked( getDiscountByName ).mockReturnValue( false );
-		jest.mocked( useMarketingMessage ).mockReturnValue( [ false, [], () => ( {} ) ] );
-		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
-		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
-		jest.mocked( isRequestingSitePlans ).mockReturnValue( true );
-		jest.mocked( getCurrentUserCurrencyCode ).mockReturnValue( 'USD' );
-		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( { credits: 100, source: 'plan' } );
-		jest.mocked( getRawSitePurchases ).mockReturnValue( [] );
-		jest.mocked( isProPlan ).mockReturnValue( false );
+		vi.mocked( getDiscountByName ).mockReturnValue( false );
+		vi.mocked( useMarketingMessage ).mockReturnValue( [ false, [], () => ( {} ) ] );
+		vi.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		vi.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
+		vi.mocked( isRequestingSitePlans ).mockReturnValue( true );
+		vi.mocked( getCurrentUserCurrencyCode ).mockReturnValue( 'USD' );
+		vi.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( { credits: 100, source: 'plan' } );
+		vi.mocked( getRawSitePurchases ).mockReturnValue( [] );
+		vi.mocked( isProPlan ).mockReturnValue( false );
 	} );
 
 	test( 'A contact site owner <PlanNotice /> should be shown no matter what other conditions are met, when the current site owner is not logged in, and the site plan is paid', () => {
-		jest.mocked( getDiscountByName ).mockReturnValue( discount );
-		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
-		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( false );
+		vi.mocked( getDiscountByName ).mockReturnValue( discount );
+		vi.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		vi.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( false );
 
 		renderWithProvider(
 			<PlanNotice
@@ -112,9 +117,9 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'A discount <PlanNotice /> should be shown if the user is the site owner and no matter what other conditions are met', () => {
-		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
-		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
-		jest.mocked( getDiscountByName ).mockReturnValue( discount );
+		vi.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
+		vi.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		vi.mocked( getDiscountByName ).mockReturnValue( discount );
 
 		renderWithProvider(
 			<PlanNotice
@@ -128,17 +133,15 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'A marketing message <PlanNotice /> when no other notices are available and marketing messages are available and the user is not in signup', () => {
-		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
-		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
-		jest.mocked( getDiscountByName ).mockReturnValue( false );
-		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( null );
-		jest
-			.mocked( useMarketingMessage )
-			.mockReturnValue( [
-				false,
-				[ { id: '12121', text: 'An important marketing message' } ],
-				() => ( {} ),
-			] );
+		vi.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
+		vi.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		vi.mocked( getDiscountByName ).mockReturnValue( false );
+		vi.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( null );
+		vi.mocked( useMarketingMessage ).mockReturnValue( [
+			false,
+			[ { id: '12121', text: 'An important marketing message' } ],
+			() => ( {} ),
+		] );
 		//
 		renderWithProvider(
 			<PlanNotice
@@ -152,17 +155,15 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'No <PlanNotice /> should be shown when in signup', () => {
-		jest.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
-		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
-		jest.mocked( getDiscountByName ).mockReturnValue( false );
-		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( null );
-		jest
-			.mocked( useMarketingMessage )
-			.mockReturnValue( [
-				false,
-				[ { id: '12121', text: 'An important marketing message' } ],
-				() => ( {} ),
-			] );
+		vi.mocked( isCurrentUserCurrentPlanOwner ).mockReturnValue( true );
+		vi.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		vi.mocked( getDiscountByName ).mockReturnValue( false );
+		vi.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( null );
+		vi.mocked( useMarketingMessage ).mockReturnValue( [
+			false,
+			[ { id: '12121', text: 'An important marketing message' } ],
+			() => ( {} ),
+		] );
 		//
 		renderWithProvider(
 			<PlanNotice
@@ -176,7 +177,7 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Show retired plan <PlanNotice /> when the current site has the pro plan', () => {
-		jest.mocked( isProPlan ).mockReturnValue( true );
+		vi.mocked( isProPlan ).mockReturnValue( true );
 		renderWithProvider(
 			<PlanNotice
 				discountInformation={ { coupon: 'test', discountEndDate: new Date() } }
@@ -206,10 +207,8 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Shows "domain and other upgrades" copy when source is domain and the site has other upgrades purchased', () => {
-		jest
-			.mocked( useUpgradeCreditsNoticeData )
-			.mockReturnValue( { credits: 4600, source: 'domain' } );
-		jest.mocked( getRawSitePurchases ).mockReturnValue( [
+		vi.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( { credits: 4600, source: 'domain' } );
+		vi.mocked( getRawSitePurchases ).mockReturnValue( [
 			{
 				product_slug: 'premium_theme',
 			},
@@ -225,7 +224,7 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Shows "other upgrades" copy when source is other-upgrades', () => {
-		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( {
+		vi.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( {
 			credits: 4600,
 			source: 'other-upgrades',
 		} );
@@ -238,7 +237,7 @@ describe( '<PlanNotice /> Tests', () => {
 	} );
 
 	test( 'Shows "domain and other upgrades" copy when source is domain-and-other-upgrades', () => {
-		jest.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( {
+		vi.mocked( useUpgradeCreditsNoticeData ).mockReturnValue( {
 			credits: 4600,
 			source: 'domain-and-other-upgrades',
 		} );

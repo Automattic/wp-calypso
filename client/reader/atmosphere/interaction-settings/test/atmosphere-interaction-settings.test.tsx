@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { AtmosphereInteractionSettings } from '../atmosphere-interaction-settings';
 
 describe( 'AtmosphereInteractionSettings', () => {
@@ -11,7 +12,7 @@ describe( 'AtmosphereInteractionSettings', () => {
 			<AtmosphereInteractionSettings
 				initialReplyAllow={ { kind: 'anyone' } }
 				initialAllowQuotes
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -27,7 +28,7 @@ describe( 'AtmosphereInteractionSettings', () => {
 
 	it( 'stages changes locally — onSave is the only commit path', async () => {
 		const user = userEvent.setup();
-		const onSave = jest.fn();
+		const onSave = vi.fn();
 		render(
 			<AtmosphereInteractionSettings
 				initialReplyAllow={ { kind: 'anyone' } }
@@ -58,7 +59,7 @@ describe( 'AtmosphereInteractionSettings', () => {
 					mention: false,
 				} }
 				initialAllowQuotes
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -70,7 +71,7 @@ describe( 'AtmosphereInteractionSettings', () => {
 
 	it( 'unchecking the last combo flag returns to Anyone', async () => {
 		const user = userEvent.setup();
-		const onSave = jest.fn();
+		const onSave = vi.fn();
 		render(
 			<AtmosphereInteractionSettings
 				initialReplyAllow={ {

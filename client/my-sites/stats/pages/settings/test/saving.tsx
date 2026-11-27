@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import StatsSettingsPage from '..';
 import reloadPage from '../reload-page';
 
-const mockGet = jest.fn();
-const mockPost = jest.fn();
-jest.mock( 'calypso/lib/wp', () => ( {
+const mockGet = vi.fn();
+const mockPost = vi.fn();
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: {
 		req: {
@@ -18,29 +19,27 @@ jest.mock( 'calypso/lib/wp', () => ( {
 		},
 	},
 } ) );
-const mockDispatch = jest.fn();
-jest.mock( 'calypso/state', () => ( {
+const mockDispatch = vi.fn();
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: () => 123,
 	getSelectedSiteSlug: () => 'example.com',
 } ) );
-jest.mock( '../reload-page', () => ( { __esModule: true, default: jest.fn() } ) );
-jest.mock( '../../../hooks/default-query-params', () => ( {
+vi.mock( '../reload-page', () => ( { __esModule: true, default: vi.fn() } ) );
+vi.mock( '../../../hooks/default-query-params', () => ( {
 	__esModule: true,
 	default: () => ( { retry: false } ),
 } ) );
-jest.mock( '../can-manage-stats-settings', () => ( { __esModule: true, default: () => true } ) );
-jest.mock( 'calypso/blocks/stats-navigation', () => () => null );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( '../../../stats-page-view-tracker', () => () => null );
-jest.mock(
-	'calypso/my-sites/stats/components/stats-main',
-	() =>
-		( { children }: { children: React.ReactNode } ) => <div>{ children }</div>
-);
+vi.mock( '../can-manage-stats-settings', () => ( { __esModule: true, default: () => true } ) );
+vi.mock( 'calypso/blocks/stats-navigation', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( '../../../stats-page-view-tracker', () => ( { default: () => null } ) );
+vi.mock( 'calypso/my-sites/stats/components/stats-main', () => ( {
+	default: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+} ) );
 
 const settingsResponse = {
 	settings: {
@@ -98,7 +97,7 @@ describe( 'StatsSettingsPage saving', () => {
 		mockGet.mockReset().mockResolvedValue( settingsResponse );
 		mockPost.mockReset();
 		mockDispatch.mockReset();
-		( reloadPage as jest.Mock ).mockReset();
+		( reloadPage as Mock ).mockReset();
 		window.sessionStorage.clear();
 	} );
 
@@ -233,7 +232,7 @@ describe( 'StatsSettingsPage saving', () => {
 
 	it( 'ignores a saved notice request older than 30 seconds', async () => {
 		await saveAdminBarAndReload();
-		const later = jest.spyOn( Date, 'now' ).mockReturnValue( Date.now() + 31 * 1000 );
+		const later = vi.spyOn( Date, 'now' ).mockReturnValue( Date.now() + 31 * 1000 );
 		mockDispatch.mockReset();
 
 		try {

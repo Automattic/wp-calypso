@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useUnsubscribeWithUndo } from '../use-unsubscribe-with-undo';
 
-const mockFollowSite = jest.fn();
-const mockUnfollowSite = jest.fn();
-jest.mock( '../use-follow-mutations', () => ( {
+const mockFollowSite = vi.fn();
+const mockUnfollowSite = vi.fn();
+vi.mock( '../use-follow-mutations', () => ( {
 	useFollowSite: () => ( { mutate: mockFollowSite } ),
 	useUnfollowSite: () => ( { mutate: mockUnfollowSite } ),
 } ) );
 
-const mockRecordReaderTracksEvent = jest.fn();
-jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
+const mockRecordReaderTracksEvent = vi.fn();
+vi.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 
-const mockDispatch = jest.fn();
-jest.mock( 'calypso/state', () => ( {
-	...jest.requireActual( 'calypso/state' ),
+const mockDispatch = vi.fn();
+vi.mock( 'calypso/state', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/state' ) >( 'calypso/state' ) ),
 	useDispatch: () => mockDispatch,
 } ) );
 
@@ -36,7 +37,7 @@ const getNotice = () => mockDispatch.mock.calls[ 0 ][ 0 ].notice;
 
 describe( 'useUnsubscribeWithUndo', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'unsubscribes, records the tracks event, and shows an undo notice', () => {

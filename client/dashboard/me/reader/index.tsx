@@ -1,10 +1,9 @@
 import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -15,26 +14,13 @@ export default function ReaderPreferences() {
 		userPreferenceQuery( 'reader-seen-posts' )
 	);
 	const { mutate: saveSeenPostsPreference, isPending } = useMutation(
-		userPreferenceMutation( 'reader-seen-posts' )
+		withSnackbar( userPreferenceMutation( 'reader-seen-posts' ), {
+			success: ( _data, enabled ) =>
+				enabled ? __( 'Read status enabled.' ) : __( 'Read status disabled.' ),
+			error: ( _error, enabled ) =>
+				enabled ? __( 'Failed to enable read status.' ) : __( 'Failed to disable read status.' ),
+		} )
 	);
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
-	const handleToggle = ( enabled: boolean ) => {
-		saveSeenPostsPreference( enabled, {
-			onSuccess: () => {
-				createSuccessNotice(
-					enabled ? __( 'Read status enabled.' ) : __( 'Read status disabled.' ),
-					{ type: 'snackbar' }
-				);
-			},
-			onError: () => {
-				createErrorNotice(
-					enabled ? __( 'Failed to enable read status.' ) : __( 'Failed to disable read status.' ),
-					{ type: 'snackbar' }
-				);
-			},
-		} );
-	};
 
 	return (
 		<PageLayout
@@ -62,7 +48,7 @@ export default function ReaderPreferences() {
 							label={ __( 'Show read status' ) }
 							checked={ isSeenPostsEnabled }
 							disabled={ isPending }
-							onChange={ handleToggle }
+							onChange={ ( enabled ) => saveSeenPostsPreference( enabled ) }
 						/>
 					</VStack>
 				</CardBody>

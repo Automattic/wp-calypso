@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { TRANSFERRING_HOSTED_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { CartActionConnectionError, CartActionResponseError } from '@automattic/shopping-cart';
 import { act, screen, waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
 import React from 'react';
+import { vi } from 'vitest';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -16,29 +17,31 @@ import { mockStepProps, renderStep } from '../../test/helpers/index';
 import { ProcessingResult } from '../constants';
 import type { OnboardActions } from '@automattic/data-stores';
 
-const mockRecordSignupComplete = jest.fn();
-const mockCaptureFlowException = jest.fn();
+const mockRecordSignupComplete = vi.fn();
+const mockCaptureFlowException = vi.fn();
 
-jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
 	useRecordSignupComplete: () => mockRecordSignupComplete,
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-capture-flow-exception', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-capture-flow-exception', () => ( {
 	__esModule: true,
 	default: () => mockCaptureFlowException,
 } ) );
-jest.mock( 'calypso/landing/stepper/declarative-flow/registered-flows', () => ( {
-	onboarding: async () => ( { default: { isSignupFlow: true } } ),
+vi.mock( 'calypso/landing/stepper/declarative-flow/registered-flows', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		onboarding: async () => ( { default: { isSignupFlow: true } } ),
+	} )
+);
+vi.mock( 'calypso/lib/analytics/signup', () => ( {
+	recordSignupProcessingScreen: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/analytics/signup', () => ( {
-	recordSignupProcessingScreen: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
-} ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( { siteSlug: 'example.wordpress.com' } ),
 } ) );
 
@@ -50,7 +53,7 @@ describe( 'ProcessingStep', () => {
 		renderStep( <ProcessingStep { ...( mockStepProps( props ) as ProcessingStepProps ) } /> );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		onboardActions().setTransferStatus( null );
 		onboardActions().setTransferStartedAt( null );
 		onboardActions().setTransferTimedOut( false );
@@ -159,8 +162,8 @@ describe( 'ProcessingStep', () => {
 		// Some flows leave the page as soon as the step submits, so the step waits for the log
 		// request, but only up to a time limit.
 		it( 'submits the failure when the log request of a cart rejection does not settle', async () => {
-			jest.useFakeTimers();
-			jest.mocked( logToLogstash ).mockReturnValueOnce( new Promise( () => {} ) );
+			vi.useFakeTimers();
+			vi.mocked( logToLogstash ).mockReturnValueOnce( new Promise( () => {} ) );
 			onboardActions().setPendingAction( async () => {
 				throw unavailableDomainRejection();
 			} );
@@ -168,17 +171,17 @@ describe( 'ProcessingStep', () => {
 			renderStep( <ProcessingStep { ...stepProps } /> );
 
 			await act( async () => {
-				await jest.advanceTimersByTimeAsync( 999 );
+				await vi.advanceTimersByTimeAsync( 999 );
 			} );
 			expect( stepProps.navigation.submit ).not.toHaveBeenCalled();
 
 			await act( async () => {
-				await jest.advanceTimersByTimeAsync( 1 );
+				await vi.advanceTimersByTimeAsync( 1 );
 			} );
 			expect( stepProps.navigation.submit ).toHaveBeenCalledWith( {
 				processingResult: ProcessingResult.FAILURE,
 			} );
-			jest.useRealTimers();
+			vi.useRealTimers();
 		} );
 	} );
 
@@ -206,17 +209,17 @@ describe( 'ProcessingStep', () => {
 	} );
 
 	it( 'offers a way to the site once the transfer wait stalls', () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		onboardActions().setTransferStatus( transferStates.COMPLETE );
 
 		render( { flow: TRANSFERRING_HOSTED_SITE_FLOW } );
-		act( () => jest.advanceTimersByTime( 95_000 ) );
+		act( () => vi.advanceTimersByTime( 95_000 ) );
 
 		expect( screen.getByRole( 'link', { name: 'Go to your site' } ) ).toHaveAttribute(
 			'href',
 			'/sites/example.wordpress.com'
 		);
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'passes a timed-out wait through to the transfer card', () => {
@@ -237,7 +240,7 @@ describe( 'ProcessingStep', () => {
 	// per mount, so it carries how this mount came about: which component type the renderer handed
 	// React for the step, and how long after the route mounted the step itself did.
 	it( 'reports how the step came to mount on the wait heartbeat', () => {
-		const now = jest.spyOn( performance, 'now' );
+		const now = vi.spyOn( performance, 'now' );
 		now.mockReturnValue( 5000 );
 		recordStepRouteMount( 'processing' );
 		recordStepComponentType( 'processing', 'lazy' );

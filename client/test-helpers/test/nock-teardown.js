@@ -1,6 +1,6 @@
 /**
  * A request a test leaves in flight must be refused by nock, not passed through to the
- * network when `@automattic/calypso-jest` disposes the interceptors in `afterAll`. A leaked
+ * network when the test setup's interceptor preset disposes the interceptors in `afterAll`. A leaked
  * socket outlives the file and can fail whichever suite the worker runs next, e.g. with
  * `read EINVAL`.
  */

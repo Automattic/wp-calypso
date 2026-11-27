@@ -1,4 +1,4 @@
-import { DataHelper, TracksEventManager } from '@automattic/calypso-e2e';
+import { DataHelper, LoggedOutHomePage, TracksEventManager } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
 
 const lohpUrl: string = 'https://wordpress.com/?flags=a8c-analytics.on';
@@ -27,7 +27,7 @@ test.describe(
 			await pageViewPromise;
 
 			const didEventFirePromise = tracksEventManager.didEventFire( 'wpcom_homepage_link_click' );
-			await page.getByRole( 'link', { name: 'Get started' } ).first().click();
+			await new LoggedOutHomePage( page ).clickHeaderGetStarted();
 			expect( await didEventFirePromise ).toBe( true );
 		} );
 
@@ -45,7 +45,7 @@ test.describe(
 			const anonIdFromWpcomPageView = tracksEventManager.getParamFromUrl( '_ui', requestUrl );
 
 			requestUrlPromise = tracksEventManager.getRequestUrlForEvent( 'calypso_page_view' );
-			await page.getByRole( 'link', { name: 'Get started' } ).first().click();
+			await new LoggedOutHomePage( page ).clickHeaderGetStarted();
 
 			requestUrl = await requestUrlPromise;
 

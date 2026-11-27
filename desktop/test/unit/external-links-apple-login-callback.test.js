@@ -8,7 +8,7 @@ describe( 'isAppleLoginCallback', () => {
 		'https://wordpress.com/log-in/apple/callback?code=abc',
 		'https://wordpress.com/log-in/apple/callback/',
 		'https://wordpress.com/log-in/apple/callback/fr',
-	] )( 'matches the Apple login callback: %p', ( url ) => {
+	] )( 'matches the Apple login callback: %o', ( url ) => {
 		expect( isAppleLoginCallback( url ) ).toBe( true );
 	} );
 
@@ -21,7 +21,7 @@ describe( 'isAppleLoginCallback', () => {
 		'https://wordpress.com/log-in/apple/callback-preview',
 		'https://wordpress.com/log-in/apple/callbacks',
 		'',
-	] )( 'does not match other URLs: %p', ( url ) => {
+	] )( 'does not match other URLs: %o', ( url ) => {
 		expect( isAppleLoginCallback( url ) ).toBe( false );
 	} );
 } );

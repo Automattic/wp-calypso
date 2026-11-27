@@ -39,6 +39,15 @@
 	}
 }
 
+.dashboard-callout__content > :first-child {
+	color: var(--wpds-color-foreground-content-neutral);
+	fill: currentColor;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
 .dashboard-callout__title {
 	@include heading-large;
 	color: var(--dashboard__text-color);

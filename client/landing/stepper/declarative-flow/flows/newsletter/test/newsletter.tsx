@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
 import { resolveSelect } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { clearSignupCompleteFlowName, clearSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
@@ -10,11 +11,12 @@ import { runFlowNavigation } from '../../../test/helpers';
 import newsletterFlow from '../newsletter';
 
 // Spreading the real module drops its getters, which the data stores need when they register.
-jest.mock( '@wordpress/data', () => {
-	const actual = jest.requireActual( '@wordpress/data' );
-	const resolveSelect = jest.fn();
+vi.mock( '@wordpress/data', async () => {
+	const actual = await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' );
+	const resolveSelect = vi.fn();
 	return new Proxy( actual, {
-		get: ( target, key ) => ( key === 'resolveSelect' ? resolveSelect : target[ key ] ),
+		get: ( target, key ) =>
+			key === 'resolveSelect' ? resolveSelect : target[ key as keyof typeof target ],
 	} );
 } );
 
@@ -22,8 +24,8 @@ const ADMIN_URL = 'https://example.wordpress.com/wp-admin/';
 const SITE_SETUP_URL = `${ ADMIN_URL }admin.php?page=site-setup-wp-admin`;
 
 const mockSite = ( options?: Record< string, unknown > ) =>
-	( resolveSelect as jest.Mock ).mockReturnValue( {
-		getSite: jest.fn().mockResolvedValue( options ? { options } : undefined ),
+	( resolveSelect as Mock ).mockReturnValue( {
+		getSite: vi.fn().mockResolvedValue( options ? { options } : undefined ),
 	} );
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
@@ -36,8 +38,8 @@ describe( 'Newsletter Flow', () => {
 		Object.defineProperty( window, 'location', {
 			value: {
 				...originalLocation,
-				assign: jest.fn(),
-				replace: jest.fn(),
+				assign: vi.fn(),
+				replace: vi.fn(),
 				href: 'https://wordpress.com/setup/newsletter',
 			},
 			writable: true,
@@ -54,7 +56,7 @@ describe( 'Newsletter Flow', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		clearSignupCompleteSlug();
 		clearSignupCompleteFlowName();
 	} );

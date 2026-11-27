@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { dispatch, resolveSelect, select } from '@wordpress/data';
 import { type Mock, type MockInstance, vi } from 'vitest';
 import { bindToEditorPath } from '../../../utils/canvas-guard';

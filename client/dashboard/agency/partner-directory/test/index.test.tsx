@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import AgencyPartnerDirectory from '../index';
@@ -81,10 +82,13 @@ describe( '<AgencyPartnerDirectory>', () => {
 		expect( screen.getByText( 'WordPress.com' ) ).toBeVisible();
 	} );
 
-	test( 'opens the update-expertise popover when a directory was rejected', async () => {
+	test( 'names the rejected directory in a notice', async () => {
 		mockAgency( {
 			status: 'pending',
-			directories: [ { directory: 'wordpress', status: 'rejected', urls: [], note: '' } ],
+			directories: [
+				{ directory: 'wordpress', status: 'rejected', urls: [], note: '' },
+				{ directory: 'pressable', status: 'pending', urls: [], note: '' },
+			],
 			feedback_url: '',
 			is_published: false,
 		} );
@@ -92,19 +96,66 @@ describe( '<AgencyPartnerDirectory>', () => {
 
 		render( <AgencyPartnerDirectory /> );
 
-		expect( await screen.findByText( 'Not approved' ) ).toBeVisible();
-		await waitFor( () =>
-			expect(
-				screen.getByText(
-					'Your agency wasn’t approved. Please check your email for feedback from our review team.'
-				)
-			).toBeVisible()
-		);
+		expect(
+			await screen.findByText( 'Your agency wasn’t approved for WordPress.com.' )
+		).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Update my expertise' } ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'I’ll do it later' } ) ).toBeVisible();
 	} );
 
-	test( 'keeps the popover closed when it was dismissed before', async () => {
+	test( 'shows the notice when more than one directory was rejected', async () => {
+		mockAgency( {
+			status: 'pending',
+			directories: [
+				{ directory: 'wordpress', status: 'rejected', urls: [], note: '' },
+				{ directory: 'pressable', status: 'rejected', urls: [], note: '' },
+			],
+			feedback_url: '',
+			is_published: false,
+		} );
+		mockPreferences();
+
+		render( <AgencyPartnerDirectory /> );
+
+		expect(
+			await screen.findByText( 'Your agency wasn’t approved for 2 directories.' )
+		).toBeVisible();
+	} );
+
+	test( 'saves the dismissal when the notice is closed', async () => {
+		mockAgency( {
+			status: 'pending',
+			directories: [ { directory: 'wordpress', status: 'rejected', urls: [], note: '' } ],
+			feedback_url: '',
+			is_published: false,
+		} );
+		mockPreferences();
+		const saved = new Promise< void >( ( resolve ) => {
+			nock( API )
+				.post( '/rest/v1.1/me/preferences', ( body ) => {
+					if ( body.calypso_preferences?.[ 'a4a-dashboard-pd-not-approved-popover' ] === true ) {
+						resolve();
+						return true;
+					}
+					return false;
+				} )
+				.query( true )
+				.reply( 200, { calypso_preferences: { 'a4a-dashboard-pd-not-approved-popover': true } } );
+		} );
+
+		render( <AgencyPartnerDirectory /> );
+
+		await screen.findByText( 'Your agency wasn’t approved for WordPress.com.' );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+
+		await saved;
+		await waitFor( () =>
+			expect(
+				screen.queryByText( 'Your agency wasn’t approved for WordPress.com.' )
+			).not.toBeInTheDocument()
+		);
+	} );
+
+	test( 'keeps the notice hidden when it was dismissed before', async () => {
 		mockAgency( {
 			status: 'pending',
 			directories: [ { directory: 'wordpress', status: 'rejected', urls: [], note: '' } ],

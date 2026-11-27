@@ -23,7 +23,7 @@ export const useNextBackupSchedule = () => {
 		const currentTime = moment();
 		const backupTimeUtc = moment.utc().startOf( 'day' ).hour( data.scheduledHour );
 
-		let nextBackupDate = backupTimeUtc;
+		let nextBackupDate;
 
 		// Apply site offset if available
 		if ( timezone && gmtOffset ) {

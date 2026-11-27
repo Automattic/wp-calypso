@@ -5,16 +5,18 @@ import {
 	Button,
 	CheckboxControl,
 	TextControl,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { sprintf, __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { useRef } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
-import { DIRECTORY_NAMES } from '../lib';
+import { DIRECTORY_NAMES, getDirectoryStatusBadge } from '../lib';
 import LinkButton from '../link-button';
 import { getAvailableProducts, getAvailableServices, SELECTABLE_DIRECTORIES } from '../options';
 import TokenSelector from '../token-selector';
@@ -72,6 +74,7 @@ export default function PartnerDirectoryExpertiseContent( {
 		setDirectoryClientSamples,
 	} = useExpertiseForm( { initialFormData } );
 	const { validate, validationError, updateValidationError } = useExpertiseFormValidation();
+	const approvedBadge = getDirectoryStatusBadge( 'approved' );
 
 	const { mutate: submitApplication, isPending: isSubmitting } = useMutation(
 		withSnackbar( agencyPartnerDirectoryApplicationMutation( agency.id ), {
@@ -183,17 +186,21 @@ export default function PartnerDirectoryExpertiseContent( {
 							</VStack>
 							<VStack spacing={ 2 }>
 								{ SELECTABLE_DIRECTORIES.map( ( directory ) => (
-									<CheckboxControl
-										key={ directory }
-										__nextHasNoMarginBottom
-										label={ DIRECTORY_NAMES[ directory ] }
-										checked={ isDirectorySelected( directory ) }
-										disabled={ isDirectoryApproved( directory ) }
-										onChange={ ( checked ) => {
-											setDirectorySelected( directory, checked );
-											updateValidationError( { directories: undefined, clientSites: undefined } );
-										} }
-									/>
+									<HStack key={ directory } justify="flex-start" expanded={ false }>
+										<CheckboxControl
+											__nextHasNoMarginBottom
+											label={ DIRECTORY_NAMES[ directory ] }
+											checked={ isDirectorySelected( directory ) }
+											disabled={ isDirectoryApproved( directory ) }
+											onChange={ ( checked ) => {
+												setDirectorySelected( directory, checked );
+												updateValidationError( { directories: undefined, clientSites: undefined } );
+											} }
+										/>
+										{ isDirectoryApproved( directory ) && (
+											<Badge intent={ approvedBadge.intent }>{ approvedBadge.label }</Badge>
+										) }
+									</HStack>
 								) ) }
 							</VStack>
 							{ validationError.directories && (

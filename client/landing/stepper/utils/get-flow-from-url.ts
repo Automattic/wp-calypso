@@ -1,4 +1,4 @@
-import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_FLOW } from '@automattic/onboarding/flows';
 import { matchPath } from 'react-router';
 
 export const DEFAULT_FLOW = ONBOARDING_FLOW;

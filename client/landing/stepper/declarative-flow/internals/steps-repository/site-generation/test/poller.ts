@@ -1,16 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import config from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { fetchSiteEndpoint, getBuildWowApiOverride } from '../poller';
 
-jest.mock( '@automattic/calypso-config', () => jest.fn() );
-jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn() } } ) );
+vi.mock( '@automattic/calypso-config', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { get: vi.fn() } } )
+);
 
-const configMock = config as unknown as jest.Mock;
-const wpcomGetMock = wpcom.req.get as jest.Mock;
+const configMock = config as unknown as Mock;
+const wpcomGetMock = wpcom.req.get as Mock;
 const originalFetch = global.fetch;
 
 const API = 'http://127.0.0.1:4001/api/calypso';
@@ -89,7 +92,7 @@ describe( 'fetchSiteEndpoint', () => {
 	test( 'asks the named server for the same path and sends no credentials', async () => {
 		setSearch( search( API ) );
 		const status = { build_status: 'generating' };
-		global.fetch = jest.fn().mockResolvedValue( { ok: true, json: async () => status } );
+		global.fetch = vi.fn().mockResolvedValue( { ok: true, json: async () => status } );
 		const signal = new AbortController().signal;
 
 		await expect( fetchSiteEndpoint( 'amber-brook', 'build-wow/status', signal ) ).resolves.toBe(
@@ -105,7 +108,7 @@ describe( 'fetchSiteEndpoint', () => {
 
 	test( 'rejects a non-2xx response so the poller reports a request error', async () => {
 		setSearch( search( API ) );
-		global.fetch = jest.fn().mockResolvedValue( { ok: false, status: 404 } );
+		global.fetch = vi.fn().mockResolvedValue( { ok: false, status: 404 } );
 
 		await expect(
 			fetchSiteEndpoint( 'amber-brook', 'build-wow/status', new AbortController().signal )
@@ -114,7 +117,7 @@ describe( 'fetchSiteEndpoint', () => {
 
 	test( 'goes to WordPress.com when there is no override', async () => {
 		setSearch( '?build_wow=1' );
-		global.fetch = jest.fn();
+		global.fetch = vi.fn();
 		wpcomGetMock.mockResolvedValue( { build_status: 'live' } );
 		const signal = new AbortController().signal;
 

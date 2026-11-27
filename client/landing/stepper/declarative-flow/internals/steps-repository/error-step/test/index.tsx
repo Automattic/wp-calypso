@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { NavigationType, useNavigationType } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import { useSiteDomains } from 'calypso/landing/stepper/hooks/use-site-domains';
 import { useSiteSetupError } from 'calypso/landing/stepper/hooks/use-site-setup-error';
 import { bumpStat } from 'calypso/lib/analytics/mc';
@@ -15,18 +16,18 @@ import { isOnlyStepMounted } from '../../../step-mount-registry';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers/index';
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-domains' );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-setup-error' );
-jest.mock( 'calypso/lib/analytics/mc', () => ( {
-	bumpStat: jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-site-domains' );
+vi.mock( 'calypso/landing/stepper/hooks/use-site-setup-error' );
+vi.mock( 'calypso/lib/analytics/mc', () => ( {
+	bumpStat: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/logstash' );
-jest.mock( '../../../step-mount-registry', () => ( {
-	isOnlyStepMounted: jest.fn(),
+vi.mock( 'calypso/lib/logstash' );
+vi.mock( '../../../step-mount-registry', () => ( {
+	isOnlyStepMounted: vi.fn(),
 } ) );
-jest.mock( 'react-router', () => ( {
-	...jest.requireActual( 'react-router' ),
-	useNavigationType: jest.fn(),
+vi.mock( 'react-router', async () => ( {
+	...( await vi.importActual< typeof import( 'react-router' ) >( 'react-router' ) ),
+	useNavigationType: vi.fn(),
 } ) );
 
 describe( 'ErrorStep', () => {
@@ -47,19 +48,19 @@ describe( 'ErrorStep', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( useSiteDomains as jest.Mock ).mockReturnValue( null );
-		( isOnlyStepMounted as jest.Mock ).mockReturnValue( false );
+		vi.clearAllMocks();
+		( useSiteDomains as Mock ).mockReturnValue( null );
+		( isOnlyStepMounted as Mock ).mockReturnValue( false );
 		// `MemoryRouter` starts on a POP, but a flow reaches the error step with a push.
-		( useNavigationType as jest.Mock ).mockReturnValue( NavigationType.Push );
-		( useSiteSetupError as jest.Mock ).mockReturnValue( {
+		( useNavigationType as Mock ).mockReturnValue( NavigationType.Push );
+		( useSiteSetupError as Mock ).mockReturnValue( {
 			error: 'site_setup_failed',
 			message: 'Something went wrong',
 		} );
 	} );
 
 	it( 'retries only after the user clicks the enabled recovery action', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { showRetry: true, navigation: { submit } } );
 		expect( submit ).not.toHaveBeenCalled();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
@@ -109,7 +110,7 @@ describe( 'ErrorStep', () => {
 	} );
 
 	it( 'bumps the MC stat and logs a sentinel error code when there is no site setup error', () => {
-		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
+		( useSiteSetupError as Mock ).mockReturnValue( { error: undefined, message: undefined } );
 
 		render();
 
@@ -137,11 +138,11 @@ describe( 'ErrorStep', () => {
 		} );
 	} );
 
-	const loggedError = () => ( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].properties.error;
-	const loggedExtra = () => ( logToLogstash as jest.Mock ).mock.calls[ 0 ][ 0 ].extra;
+	const loggedError = () => ( logToLogstash as Mock ).mock.calls[ 0 ][ 0 ].properties.error;
+	const loggedExtra = () => ( logToLogstash as Mock ).mock.calls[ 0 ][ 0 ].extra;
 
 	it( 'logs the errorReason from the step data when nothing is stored', () => {
-		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
+		( useSiteSetupError as Mock ).mockReturnValue( { error: undefined, message: undefined } );
 
 		render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
 
@@ -155,7 +156,7 @@ describe( 'ErrorStep', () => {
 	} );
 
 	it( 'logs stored_message_without_code when a message is stored without a code', () => {
-		( useSiteSetupError as jest.Mock ).mockReturnValue( {
+		( useSiteSetupError as Mock ).mockReturnValue( {
 			error: undefined,
 			message: 'Request failed',
 		} );
@@ -166,8 +167,8 @@ describe( 'ErrorStep', () => {
 	} );
 
 	it( 'logs history_back_forward over a persisted errorReason for an in-document history arrival', () => {
-		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
-		( useNavigationType as jest.Mock ).mockReturnValue( NavigationType.Pop );
+		( useSiteSetupError as Mock ).mockReturnValue( { error: undefined, message: undefined } );
+		( useNavigationType as Mock ).mockReturnValue( NavigationType.Pop );
 
 		render( {
 			data: { previousStep: 'setup-your-site-ai', errorReason: 'build_wow_start_failed' },
@@ -182,8 +183,8 @@ describe( 'ErrorStep', () => {
 	} );
 
 	it( 'logs the errorReason for a flow arrival that replaces the history entry', () => {
-		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
-		( useNavigationType as jest.Mock ).mockReturnValue( NavigationType.Replace );
+		( useSiteSetupError as Mock ).mockReturnValue( { error: undefined, message: undefined } );
+		( useNavigationType as Mock ).mockReturnValue( NavigationType.Replace );
 
 		render( { data: { previousStep: 'processing', errorReason: 'processing_no_redirect' } } );
 
@@ -199,17 +200,17 @@ describe( 'ErrorStep', () => {
 		const originalGetEntriesByType = performance.getEntriesByType;
 
 		const setNavigationType = ( type?: string ) => {
-			performance.getEntriesByType = jest.fn( () => ( type ? [ { type } ] : [] ) ) as never;
+			performance.getEntriesByType = vi.fn( () => ( type ? [ { type } ] : [] ) ) as never;
 		};
 
 		beforeEach( () => {
-			( useSiteSetupError as jest.Mock ).mockReturnValue( {
+			( useSiteSetupError as Mock ).mockReturnValue( {
 				error: undefined,
 				message: undefined,
 			} );
-			( isOnlyStepMounted as jest.Mock ).mockImplementation( ( slug ) => slug === 'error' );
+			( isOnlyStepMounted as Mock ).mockImplementation( ( slug ) => slug === 'error' );
 			// The first location of a document is a POP.
-			( useNavigationType as jest.Mock ).mockReturnValue( NavigationType.Pop );
+			( useNavigationType as Mock ).mockReturnValue( NavigationType.Pop );
 		} );
 
 		afterEach( () => {
@@ -217,7 +218,7 @@ describe( 'ErrorStep', () => {
 		} );
 
 		it( 'logs a stored error code over a document arrival', () => {
-			( useSiteSetupError as jest.Mock ).mockReturnValue( { error: 'site_setup_failed' } );
+			( useSiteSetupError as Mock ).mockReturnValue( { error: 'site_setup_failed' } );
 			setNavigationType( 'reload' );
 
 			render();
@@ -239,7 +240,7 @@ describe( 'ErrorStep', () => {
 		} );
 
 		it( 'logs the persisted errorReason with a stored error on a document arrival', () => {
-			( useSiteSetupError as jest.Mock ).mockReturnValue( { error: 'Unsupported plan' } );
+			( useSiteSetupError as Mock ).mockReturnValue( { error: 'Unsupported plan' } );
 			setNavigationType( 'navigate' );
 
 			render( { data: { previousStep: 'processing', errorReason: 'processing_failed' } } );
@@ -264,7 +265,7 @@ describe( 'ErrorStep', () => {
 			render();
 			expect( loggedError() ).toBe( 'document_load' );
 
-			jest.clearAllMocks();
+			vi.clearAllMocks();
 			setNavigationType();
 			render();
 			expect( loggedError() ).toBe( 'document_load' );
@@ -287,7 +288,7 @@ describe( 'ErrorStep', () => {
 	} );
 
 	it( 'does not show the errorReason to the customer', () => {
-		( useSiteSetupError as jest.Mock ).mockReturnValue( { error: undefined, message: undefined } );
+		( useSiteSetupError as Mock ).mockReturnValue( { error: undefined, message: undefined } );
 
 		const { container } = render( {
 			data: { previousStep: 'processing', errorReason: 'processing_failed' },

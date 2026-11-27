@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { postLikesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -9,6 +9,7 @@ import nock from 'nock';
 import { act } from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { type MockedFunction, vi } from 'vitest';
 import { getCachedPost, upsertPostCache } from 'calypso/reader/data/post/cache';
 import { READER_CLEAR_LAST_ACTION_REQUIRES_LOGIN } from 'calypso/state/reader-ui/action-types';
 import { clearLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -16,10 +17,12 @@ import { ReaderPendingActionHandler } from '../pending-action-handler';
 
 const BASE = 'https://public-api.wordpress.com';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	const mockConfig = Object.assign( jest.fn(), {
-		isEnabled: actual.isEnabled ?? jest.fn( () => false ),
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
+	const mockConfig = Object.assign( vi.fn(), {
+		isEnabled: actual.isEnabled ?? vi.fn( () => false ),
 	} );
 
 	return {
@@ -29,7 +32,7 @@ jest.mock( '@automattic/calypso-config', () => {
 	};
 } );
 
-const mockConfig = config as jest.MockedFunction< typeof config >;
+const mockConfig = config as MockedFunction< typeof config >;
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
@@ -86,13 +89,13 @@ describe( 'ReaderPendingActionHandler', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		nock.cleanAll();
 		mockConfig.mockReset();
 	} );
 
 	it( 'replays a pending unlike through the Reader post like adapter', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const queryClient = makeQueryClient();
 		const clearedActions: Array< { type: string } > = [];
 		upsertPostCache( queryClient, [
@@ -130,7 +133,7 @@ describe( 'ReaderPendingActionHandler', () => {
 		);
 
 		act( () => {
-			jest.advanceTimersByTime( 2000 );
+			vi.advanceTimersByTime( 2000 );
 		} );
 
 		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
@@ -139,12 +142,12 @@ describe( 'ReaderPendingActionHandler', () => {
 		} );
 		expect( clearedActions ).toContainEqual( clearLastActionRequiresLogin() );
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 		await waitFor( () => expect( unlikeScope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'replays a pending like through the Reader post like adapter', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const queryClient = makeQueryClient();
 		const clearedActions: Array< { type: string } > = [];
 		upsertPostCache( queryClient, [
@@ -182,7 +185,7 @@ describe( 'ReaderPendingActionHandler', () => {
 		);
 
 		act( () => {
-			jest.advanceTimersByTime( 2000 );
+			vi.advanceTimersByTime( 2000 );
 		} );
 
 		expect( getCachedPost( queryClient, { blogId: 100, postId: 1 } ) ).toMatchObject( {
@@ -191,12 +194,12 @@ describe( 'ReaderPendingActionHandler', () => {
 		} );
 		expect( clearedActions ).toContainEqual( clearLastActionRequiresLogin() );
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'replays a pending comment like through the Reader comment like adapter', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const queryClient = makeQueryClient();
 		const clearedActions: Array< { type: string } > = [];
 
@@ -224,17 +227,17 @@ describe( 'ReaderPendingActionHandler', () => {
 		);
 
 		act( () => {
-			jest.advanceTimersByTime( 2000 );
+			vi.advanceTimersByTime( 2000 );
 		} );
 
 		expect( clearedActions ).toContainEqual( clearLastActionRequiresLogin() );
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'does not replay a pending comment like without a comment id', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const queryClient = makeQueryClient();
 		const clearedActions: Array< { type: string } > = [];
 
@@ -261,10 +264,10 @@ describe( 'ReaderPendingActionHandler', () => {
 		);
 
 		act( () => {
-			jest.advanceTimersByTime( 2000 );
+			vi.advanceTimersByTime( 2000 );
 		} );
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 		await waitFor( () => expect( queryClient.isMutating() ).toBe( 0 ) );
 
 		expect( malformedLikeScope.isDone() ).toBe( false );
@@ -272,7 +275,7 @@ describe( 'ReaderPendingActionHandler', () => {
 	} );
 
 	it( 'replays a pending site follow through the follows mutation', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const queryClient = makeQueryClient();
 		const clearedActions: Array< { type: string } > = [];
 		const followScope = nock( BASE )
@@ -309,17 +312,17 @@ describe( 'ReaderPendingActionHandler', () => {
 		);
 
 		act( () => {
-			jest.advanceTimersByTime( 2000 );
+			vi.advanceTimersByTime( 2000 );
 		} );
 
 		expect( clearedActions ).toContainEqual( clearLastActionRequiresLogin() );
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 		await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'shows a verify notice when a replayed follow is waiting on email verification', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		const queryClient = makeQueryClient();
 		const actions: Array< {
 			type: string;
@@ -358,10 +361,10 @@ describe( 'ReaderPendingActionHandler', () => {
 		);
 
 		act( () => {
-			jest.advanceTimersByTime( 2000 );
+			vi.advanceTimersByTime( 2000 );
 		} );
 
-		jest.useRealTimers();
+		vi.useRealTimers();
 		await waitFor( () => expect( followScope.isDone() ).toBe( true ) );
 		await waitFor( () =>
 			expect( actions ).toContainEqual(

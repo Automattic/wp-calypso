@@ -262,7 +262,7 @@ export async function getBlueprint(
 
 async function resolveBlueprintFromURL( url: URL ): Promise< BlueprintBundle > {
 	const q = url.searchParams;
-	let source: string | null = null;
+	let source: string | null;
 	let deprecationWarn = false;
 
 	const id = getBlueprintID( q );

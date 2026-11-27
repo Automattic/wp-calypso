@@ -1,13 +1,14 @@
+import { vi } from 'vitest';
 import { getCachedRuntimeStyles, getUsedRuntimeStyles } from '../runtime-styles';
 
 describe( 'getCachedRuntimeStyles', () => {
 	test( 'caches empty markup but retries after a failed render', () => {
-		const empty = jest.fn( () => '' );
+		const empty = vi.fn( () => '' );
 		getCachedRuntimeStyles( 'empty', empty );
 		getCachedRuntimeStyles( 'empty', empty );
 		expect( empty ).toHaveBeenCalledTimes( 1 );
 
-		const failed = jest.fn( () => undefined );
+		const failed = vi.fn( () => undefined );
 		getCachedRuntimeStyles( 'failed', failed );
 		getCachedRuntimeStyles( 'failed', failed );
 		expect( failed ).toHaveBeenCalledTimes( 2 );

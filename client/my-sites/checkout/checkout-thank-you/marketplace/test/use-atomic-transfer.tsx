@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { requestSite } from 'calypso/state/sites/actions';
 import { FAILURE_CONFIRM_ATTEMPTS, useAtomicTransfer } from '../use-atomic-transfer';
 import { THANK_YOU_RECOVERY_INTERVAL_MS } from '../use-thank-you-deadline';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 let mockState = {
 	siteId: 1 as number | null,
 	isSiteAtomic: false,
@@ -18,12 +19,12 @@ let mockState = {
 	transferStatus: transferStates.ACTIVE as string | null,
 };
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( state: typeof mockState ) => unknown ) => selector( mockState ),
 } ) );
-jest.mock( 'calypso/state/automated-transfer/actions', () => ( {
-	fetchAutomatedTransferStatus: jest.fn(
+vi.mock( 'calypso/state/automated-transfer/actions', () => ( {
+	fetchAutomatedTransferStatus: vi.fn(
 		(
 			siteId: number,
 			{ resetPolling = false, singleCheck = false, retryOnFailure = false } = {}
@@ -36,25 +37,25 @@ jest.mock( 'calypso/state/automated-transfer/actions', () => ( {
 		} )
 	),
 } ) );
-jest.mock( 'calypso/state/automated-transfer/selectors', () => ( {
+vi.mock( 'calypso/state/automated-transfer/selectors', () => ( {
 	getAutomatedTransferStatus: ( state: typeof mockState ) => state.transferStatus,
 	isFetchingAutomatedTransferStatus: ( state: typeof mockState ) => state.isFetchingTransferStatus,
 } ) );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
 	default: ( state: typeof mockState ) => state.isAtomic,
 } ) );
-jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( {
 	__esModule: true,
 	default: ( state: typeof mockState ) => state.isSiteAtomic,
 } ) );
-jest.mock( 'calypso/state/sites/actions', () => ( {
-	requestSite: jest.fn( ( siteId: number ) => ( { type: 'REQUEST_SITE', siteId } ) ),
+vi.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: vi.fn( ( siteId: number ) => ( { type: 'REQUEST_SITE', siteId } ) ),
 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	isJetpackSite: ( state: typeof mockState ) => state.isJetpack,
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: ( state: typeof mockState ) => state.siteId,
 } ) );
 
@@ -73,14 +74,14 @@ const observeStatus = ( rerender: () => void, status: string ) => {
 
 describe( 'useAtomicTransfer', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.clearAllMocks();
+		vi.useFakeTimers();
+		vi.clearAllMocks();
 		mockDispatch.mockReset();
 		mockState = { ...defaultState };
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'starts one transfer-status polling chain for the selected site', () => {
@@ -111,7 +112,7 @@ describe( 'useAtomicTransfer', () => {
 		const { result, rerender } = renderAtomic();
 		observeStatus( rerender, transferStates.COMPLETED );
 
-		act( () => jest.advanceTimersByTime( 2000 ) );
+		act( () => vi.advanceTimersByTime( 2000 ) );
 
 		expect( requestSite ).toHaveBeenCalledWith( 1 );
 		expect( result.current.currentStep ).toBe( 3 );
@@ -121,7 +122,7 @@ describe( 'useAtomicTransfer', () => {
 		mockState.transferStatus = transferStates.COMPLETE;
 		renderAtomic();
 
-		act( () => jest.advanceTimersByTime( 10000 ) );
+		act( () => vi.advanceTimersByTime( 10000 ) );
 
 		expect( requestSite ).not.toHaveBeenCalled();
 	} );
@@ -137,11 +138,11 @@ describe( 'useAtomicTransfer', () => {
 		const { rerender } = renderAtomic();
 		observeStatus( rerender, transferStates.COMPLETE );
 
-		act( () => jest.advanceTimersByTime( 10000 ) );
+		act( () => vi.advanceTimersByTime( 10000 ) );
 		expect( requestSite ).toHaveBeenCalledTimes( 1 );
 
 		await act( async () => resolveRequest() );
-		act( () => jest.advanceTimersByTime( 2000 ) );
+		act( () => vi.advanceTimersByTime( 2000 ) );
 		expect( requestSite ).toHaveBeenCalledTimes( 2 );
 	} );
 
@@ -149,9 +150,9 @@ describe( 'useAtomicTransfer', () => {
 		const { rerender } = renderAtomic( true );
 		observeStatus( rerender, transferStates.COMPLETE );
 
-		act( () => jest.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS - 1 ) );
+		act( () => vi.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS - 1 ) );
 		expect( requestSite ).not.toHaveBeenCalled();
-		act( () => jest.advanceTimersByTime( 1 ) );
+		act( () => vi.advanceTimersByTime( 1 ) );
 		expect( requestSite ).toHaveBeenCalledWith( 1 );
 	} );
 
@@ -160,7 +161,7 @@ describe( 'useAtomicTransfer', () => {
 		renderAtomic( true );
 
 		expect( fetchAutomatedTransferStatus ).not.toHaveBeenCalled();
-		act( () => jest.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS ) );
+		act( () => vi.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS ) );
 		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, 'single' );
 	} );
 
@@ -173,7 +174,7 @@ describe( 'useAtomicTransfer', () => {
 	it( 'restarts a failed status poll on explicit retry', () => {
 		mockState.transferStatus = transferStates.REQUEST_FAILURE;
 		const { result, rerender } = renderAtomic();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		act( () => result.current.retry() );
 
@@ -199,8 +200,8 @@ describe( 'useAtomicTransfer', () => {
 
 		expect( result.current.trustedTransferStatus ).toBeNull();
 
-		jest.clearAllMocks();
-		act( () => jest.advanceTimersByTime( 3000 ) );
+		vi.clearAllMocks();
+		act( () => vi.advanceTimersByTime( 3000 ) );
 		expect( fetchAutomatedTransferStatus ).toHaveBeenCalledWith( 1, 'start' );
 	} );
 
@@ -213,7 +214,7 @@ describe( 'useAtomicTransfer', () => {
 			mockState.isFetchingTransferStatus = false;
 			mockState.transferStatus = transferStates.ERROR;
 			rerender();
-			act( () => jest.advanceTimersByTime( 3000 ) );
+			act( () => vi.advanceTimersByTime( 3000 ) );
 		}
 
 		expect( result.current.trustedTransferStatus ).toBe( transferStates.ERROR );
@@ -237,7 +238,7 @@ describe( 'useAtomicTransfer', () => {
 		expect( result.current.trustedTransferStatus ).toBe( transferStates.ACTIVE );
 
 		for ( let attempt = 0; attempt < FAILURE_CONFIRM_ATTEMPTS; attempt++ ) {
-			act( () => jest.advanceTimersByTime( 3000 ) );
+			act( () => vi.advanceTimersByTime( 3000 ) );
 			mockState.isFetchingTransferStatus = true;
 			rerender();
 			mockState.isFetchingTransferStatus = false;
@@ -250,7 +251,7 @@ describe( 'useAtomicTransfer', () => {
 		mockState.transferStatus = transferStates.CLIENT_TIMEOUT;
 		mockState.isFetchingTransferStatus = true;
 		const { result, rerender } = renderAtomic();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		act( () => result.current.retry() );
 		expect( fetchAutomatedTransferStatus ).not.toHaveBeenCalled();
@@ -268,7 +269,7 @@ describe( 'useAtomicTransfer', () => {
 		const { result } = renderAtomic();
 
 		expect( result.current.isAtomicTransferCheckComplete ).toBe( true );
-		act( () => jest.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS ) );
+		act( () => vi.advanceTimersByTime( THANK_YOU_RECOVERY_INTERVAL_MS ) );
 		expect( requestSite ).not.toHaveBeenCalled();
 		expect( fetchAutomatedTransferStatus ).not.toHaveBeenCalled();
 	} );

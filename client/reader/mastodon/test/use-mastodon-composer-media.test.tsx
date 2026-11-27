@@ -1,16 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, renderHook, act, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useMastodonComposerMedia } from '../use-mastodon-composer-media';
 
-jest.mock( '@automattic/api-queries', () => {
-	const actual = jest.requireActual( '@automattic/api-queries' );
+vi.mock( '@automattic/api-queries', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+			'@automattic/api-queries'
+		);
 	return {
 		...actual,
-		uploadMastodonMediaMutation: jest.fn( () => ( {
-			mutationFn: jest.fn( async ( { file } ) => ( {
+		uploadMastodonMediaMutation: vi.fn( () => ( {
+			mutationFn: vi.fn( async ( { file } ) => ( {
 				id: `id-${ ( file as File ).name }`,
 				type: 'image',
 				url: 'u',
@@ -22,8 +26,8 @@ jest.mock( '@automattic/api-queries', () => {
 } );
 
 beforeEach( () => {
-	URL.createObjectURL = jest.fn( () => 'blob:fake' );
-	URL.revokeObjectURL = jest.fn();
+	URL.createObjectURL = vi.fn( () => 'blob:fake' );
+	URL.revokeObjectURL = vi.fn();
 } );
 
 const wrap =

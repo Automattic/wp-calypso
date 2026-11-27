@@ -200,7 +200,7 @@ function getSiteList( actionId: string, items: PluginListRow[], sitesById?: Map<
 
 	const [ plugin ] = items;
 
-	let sites: number[] = [];
+	let sites: number[];
 	switch ( actionId ) {
 		case 'activate':
 			sites = plugin.sitesWithPluginInactive;

@@ -1,9 +1,6 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
-} ) );
 
 import {
 	readerFediverseKeys,
@@ -12,8 +9,14 @@ import {
 } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useFediverseComposerExtras } from '../use-fediverse-composer-extras';
 import type { ActiveMode } from 'calypso/reader/social/composer';
+
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
+} ) );
 
 function seedConnections( client: QueryClient, response: FediverseConnectionsResponse ) {
 	client.setQueryData( readerFediverseKeys.connections(), response );
@@ -131,10 +134,7 @@ describe( 'useFediverseComposerExtras — extendBuildParams visibility merge', (
 	} );
 
 	it( 'logs a breadcrumb when `data.connections` is missing from the response', () => {
-		const { logToLogstash } = jest.requireMock( 'calypso/lib/logstash' ) as {
-			logToLogstash: jest.Mock;
-		};
-		logToLogstash.mockClear();
+		vi.mocked( logToLogstash ).mockClear();
 
 		const client = new QueryClient();
 		// Seed a malformed response — `data` present, `connections` missing.

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
@@ -11,6 +11,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
 import nock from 'nock';
 import { MemoryRouter, useLocation, useNavigate, useNavigationType } from 'react-router';
+import { type Mock, type MockInstance, vi } from 'vitest';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
 import { useFlowNavigation } from 'calypso/landing/stepper/declarative-flow/internals/hooks/use-flow-navigation';
@@ -52,43 +53,54 @@ import type { ReactNode } from 'react';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQueryClient: jest.fn( jest.requireActual( '@tanstack/react-query' ).useQueryClient ),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useQueryClient: vi.fn(
+		( await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' ) )
+			.useQueryClient
+	),
 } ) );
-jest.mock( 'calypso/landing/stepper/utils/checkout' );
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
-	useLocale: jest.fn( () => 'en' ),
+vi.mock( 'calypso/landing/stepper/utils/checkout' );
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
+	useLocale: vi.fn( () => 'en' ),
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/lib/analytics/tracks' ) >(
+		'calypso/lib/analytics/tracks'
+	) ),
+	recordTracksEvent: vi.fn(),
 } ) );
-jest.mock( '@automattic/data-stores/src/user/selectors' );
-jest.mock( 'calypso/state/current-user/selectors' );
-jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
-jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
-	...jest.requireActual( 'calypso/landing/stepper/hooks/use-site' ),
-	useSiteQuery: jest.fn(),
+vi.mock( '@automattic/data-stores/src/user/selectors' );
+vi.mock( 'calypso/state/current-user/selectors' );
+vi.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
+vi.mock( 'calypso/landing/stepper/hooks/use-site', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/landing/stepper/hooks/use-site' ) >(
+		'calypso/landing/stepper/hooks/use-site'
+	) ),
+	useSiteQuery: vi.fn(),
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-copy' );
-jest.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
-	triggerGuidesForStep: jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-site-copy' );
+vi.mock( 'calypso/lib/guides/trigger-guides-for-step', () => ( {
+	triggerGuidesForStep: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
-	useFlowState: jest.fn().mockReturnValue( {
-		get: jest.fn(),
-		set: jest.fn(),
+vi.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
+	useFlowState: vi.fn().mockReturnValue( {
+		get: vi.fn(),
+		set: vi.fn(),
 		sessionId: '123',
 		queryKey: [ 'stepper-state-item', 'site-migration', '123', 'v1' ],
 	} ),
 } ) );
 
-jest.mock( 'calypso/state/sites/selectors/get-site-option' );
-jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
-	useRecordSignupComplete: jest.fn().mockReturnValue( jest.fn() ),
+vi.mock( 'calypso/state/sites/selectors/get-site-option' );
+vi.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
+	useRecordSignupComplete: vi.fn().mockReturnValue( vi.fn() ),
 } ) );
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
@@ -129,7 +141,7 @@ const renderNavigation = ( initialEntries: string[], initialIndex = 0 ) =>
 describe( 'Site Migration Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn(), replace: vi.fn() },
 		} );
 	} );
 
@@ -137,35 +149,37 @@ describe( 'Site Migration Flow', () => {
 		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
-	beforeEach( () => {
-		jest
-			.mocked( useQueryClient )
-			.mockImplementation( jest.requireActual( '@tanstack/react-query' ).useQueryClient );
+	beforeEach( async () => {
+		vi.mocked( useQueryClient ).mockImplementation(
+			(
+				await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' )
+			).useQueryClient
+		);
 		// These cases cover the flag-off path for non-WordPress sources. The hand-off to the
 		// static-site import flow has its own cases below and enables the flag itself.
 		config.disable( 'migration/non-wordpress-source' );
-		( window.location.assign as jest.Mock ).mockClear();
-		( window.location.replace as jest.Mock ).mockClear();
-		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
-		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
-		jest.mocked( useLocale ).mockReturnValue( 'en' );
-		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
+		( window.location.assign as Mock ).mockClear();
+		( window.location.replace as Mock ).mockClear();
+		( isCurrentUserLoggedIn as Mock ).mockReturnValue( true );
+		vi.mocked( isUserLoggedIn ).mockReturnValue( true );
+		vi.mocked( useLocale ).mockReturnValue( 'en' );
+		( useIsSiteAdmin as Mock ).mockReturnValue( {
 			isAdmin: true,
 		} );
-		( getSiteOption as jest.Mock ).mockReturnValue( 'https://example.wpcomstaging.com/wp-admin/' );
-		jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
-		jest.mocked( useSiteQuery ).mockReturnValue( {
+		( getSiteOption as Mock ).mockReturnValue( 'https://example.wpcomstaging.com/wp-admin/' );
+		vi.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
+		vi.mocked( useSiteQuery ).mockReturnValue( {
 			data: null,
 			isLoading: false,
 			isError: false,
-			refetch: jest.fn(),
+			refetch: vi.fn(),
 		} );
-		jest.mocked( useSiteCopy ).mockReturnValue( {
+		vi.mocked( useSiteCopy ).mockReturnValue( {
 			shouldShowSiteCopyItem: false,
 			isFetching: false,
-			startSiteCopy: jest.fn(),
+			startSiteCopy: vi.fn(),
 		} );
-		jest.mocked( useFlowState().get ).mockReturnValue( undefined );
+		vi.mocked( useFlowState().get ).mockReturnValue( undefined );
 
 		const apiBaseUrl = 'https://public-api.wordpress.com';
 		const testSettingsEndpoint = '/rest/v1.4/sites/example.wordpress.com/settings';
@@ -182,7 +196,7 @@ describe( 'Site Migration Flow', () => {
 		it.each( [ 'squarespace' ] )(
 			'keeps the failed address through platform selection, Back and creation for %s',
 			( platform ) => {
-				jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+				vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
 				const { result } = renderNavigation( [
 					'/setup/site-migration/site-migration-identify?source=sites-dashboard&ref=new-site-popover&sessionId=escape&host=bluehost&isWpcom=true',
 				] );
@@ -238,7 +252,7 @@ describe( 'Site Migration Flow', () => {
 		it.each( [ '', 'https://new.example.com' ] )(
 			'returns to automatic detection after clearing the WordPress choice with address "%s"',
 			( from ) => {
-				jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+				vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
 				const { result } = renderNavigation( [
 					'/setup/site-migration/site-migration-identify?manualPlatform=wordpress&from=https://old.example.com&siteId=123',
 				] );
@@ -274,9 +288,9 @@ describe( 'Site Migration Flow', () => {
 		it.each( [ false, true ] )(
 			'takes WordPress picked from the platform list on to the Reprint site checks (destination: %s)',
 			( hasDestination ) => {
-				jest
-					.spyOn( config, 'isEnabled' )
-					.mockImplementation( ( flag ) => flag === 'migration/non-wordpress-source' );
+				vi.spyOn( config, 'isEnabled' ).mockImplementation(
+					( flag ) => flag === 'migration/non-wordpress-source'
+				);
 				const destination = hasDestination
 					? { siteId: '123', siteSlug: 'destination.wordpress.com' }
 					: {};
@@ -323,8 +337,8 @@ describe( 'Site Migration Flow', () => {
 		);
 
 		it( 'uses the entered WordPress.com site as the destination and asks for a new source', () => {
-			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
-			jest.mocked( useSiteQuery ).mockReturnValue( {
+			vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+			vi.mocked( useSiteQuery ).mockReturnValue( {
 				data: {
 					ID: 456,
 					slug: 'destination.example.com',
@@ -333,7 +347,7 @@ describe( 'Site Migration Flow', () => {
 				},
 				isLoading: false,
 			} );
-			const destinationSite = jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+			const destinationSite = vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 				siteId: 123,
 				siteSlug: 'previous.wordpress.com',
 			} );
@@ -410,8 +424,8 @@ describe( 'Site Migration Flow', () => {
 		it.each( [ 0, 2 ] )(
 			'opens platforms before the destination and supports Back with %s sites',
 			( siteCount ) => {
-				jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
-				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( siteCount );
+				vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+				vi.mocked( getCurrentUserSiteCount ).mockReturnValue( siteCount );
 				const context = new URLSearchParams( {
 					from: 'https://old.example.com',
 					platform: 'wordpress',
@@ -457,7 +471,7 @@ describe( 'Site Migration Flow', () => {
 		);
 
 		it( 'clears the destination through real Stepper navigation and restores it with Back', () => {
-			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+			vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
 			const context = new URLSearchParams( {
 				from: 'https://wordpress.org/',
 				platform: 'wordpress',
@@ -498,9 +512,9 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		it( 'returns through result, address and the entry page without keeping the picker', () => {
-			jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
-			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
-			const browserBack = jest.spyOn( window.history, 'back' ).mockImplementation( () => {} );
+			vi.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+			vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+			const browserBack = vi.spyOn( window.history, 'back' ).mockImplementation( () => {} );
 			const search =
 				'?source=sites-dashboard&ref=new-site-popover&sessionId=abc&flags=migration%2Fnon-wordpress-source';
 			const addressPath = '/site-migration/site-migration-identify';
@@ -550,8 +564,8 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		it( 'leaves the picker out of history after choosing to create a site', () => {
-			jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
-			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+			vi.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+			vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
 			const source = {
 				from: 'https://wordpress.org/',
 				platform: 'wordpress',
@@ -585,7 +599,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		it( 'returns a direct picker entry to the site checks when there is no history', () => {
-			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
+			vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
 			const search = '?from=https%3A%2F%2Fwordpress.org%2F&platform=wordpress&siteId=&siteSlug=';
 			window.location.search = search;
 			const { result } = renderNavigation( [ `/setup/site-migration/sitePicker${ search }` ] );
@@ -595,7 +609,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		it( 'replaces a direct result entry with address entry when there is no history', () => {
-			jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
+			vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
 			const search = '?from=https%3A%2F%2Fwordpress.org%2F&platform=wordpress&sessionId=abc';
 			window.location.search = search;
 			const { result } = renderNavigation( [
@@ -612,7 +626,7 @@ describe( 'Site Migration Flow', () => {
 
 	afterEach( () => {
 		// Restore the original implementation after each test
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	describe( 'initialize', () => {
@@ -623,11 +637,9 @@ describe( 'Site Migration Flow', () => {
 		it.each( [ false, true ] )(
 			'keeps the site checks and plans public until there’s a destination (static-site import: %s)',
 			( staticSiteImport ) => {
-				jest
-					.spyOn( config, 'isEnabled' )
-					.mockImplementation(
-						( flag ) => staticSiteImport && flag === 'migration/non-wordpress-source'
-					);
+				vi.spyOn( config, 'isEnabled' ).mockImplementation(
+					( flag ) => staticSiteImport && flag === 'migration/non-wordpress-source'
+				);
 				const publicSlugs = () =>
 					siteMigrationFlow
 						.initialize()
@@ -647,10 +659,10 @@ describe( 'Site Migration Flow', () => {
 		describe( 'landing page site picker entry', () => {
 			const landingPageSearch =
 				'?from=https%3A%2F%2Fexample.com&ref=move-lp&start=true&platform=wordpress';
-			let replaceState: jest.SpyInstance;
+			let replaceState: MockInstance;
 
 			beforeEach( () => {
-				replaceState = jest.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
+				replaceState = vi.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
 			} );
 
 			it( 'rewrites WordPress sources to the site checks in place', () => {
@@ -683,7 +695,7 @@ describe( 'Site Migration Flow', () => {
 		it.each( [ '', '/', '/pt-br', '/pt-br/' ] )(
 			'starts a removed instructions URL with suffix "%s" over at identify, preserving context',
 			( suffix ) => {
-				const replaceState = jest
+				const replaceState = vi
 					.spyOn( window.history, 'replaceState' )
 					.mockImplementation( () => {} );
 				const search = '?siteSlug=example.wordpress.com&siteId=123&ref=hosting-migration-overview';
@@ -753,7 +765,7 @@ describe( 'Site Migration Flow', () => {
 	describe( 'useAssertConditions', () => {
 		it( 'redirects the user to the start page when the user is not a site admin', () => {
 			const { runUseAssertionCondition } = renderFlow( siteMigrationFlow );
-			( useIsSiteAdmin as jest.Mock ).mockReturnValue( { isAdmin: false } );
+			( useIsSiteAdmin as Mock ).mockReturnValue( { isAdmin: false } );
 
 			runUseAssertionCondition( {
 				currentStep: STEPS.SITE_MIGRATION_IDENTIFY.slug,
@@ -785,7 +797,7 @@ describe( 'Site Migration Flow', () => {
 
 		describe( 'manual platform selection', () => {
 			beforeEach( () => {
-				jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
+				vi.spyOn( config, 'isEnabled' ).mockReturnValue( false );
 			} );
 
 			it.each(
@@ -801,12 +813,10 @@ describe( 'Site Migration Flow', () => {
 			)(
 				'returns WordPress selection to the address form (source: "$from", destination: $hasDestination, static import: $staticSiteImport)',
 				( { from, hasDestination, staticSiteImport } ) => {
-					jest
-						.mocked( config.isEnabled )
-						.mockImplementation(
-							( flag ) => staticSiteImport && flag === 'migration/non-wordpress-source'
-						);
-					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+					vi.mocked( config.isEnabled ).mockImplementation(
+						( flag ) => staticSiteImport && flag === 'migration/non-wordpress-source'
+					);
+					vi.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
 					const retained = {
 						...( hasDestination ? { siteId: '123', siteSlug: 'destination.wordpress.com' } : {} ),
 						from,
@@ -869,12 +879,10 @@ describe( 'Site Migration Flow', () => {
 			)(
 				'uses detected $platform after Continue (static import: $staticSiteImport)',
 				( { platform, staticSiteImport } ) => {
-					jest
-						.mocked( config.isEnabled )
-						.mockImplementation(
-							( flag ) => staticSiteImport && flag === 'migration/non-wordpress-source'
-						);
-					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+					vi.mocked( config.isEnabled ).mockImplementation(
+						( flag ) => staticSiteImport && flag === 'migration/non-wordpress-source'
+					);
+					vi.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
 					const { result } = renderNavigation( [
 						'/setup/site-migration/site-migration-identify',
 					] );
@@ -943,13 +951,11 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it( 'checks a handed-over address once, then shows the form on return', () => {
-				const state = jest.mocked( useFlowState )();
+				const state = vi.mocked( useFlowState )();
 				let checked: boolean | undefined;
-				jest
-					.mocked( state.get )
-					.mockImplementation( ( key ) =>
-						key === 'migrationArrivalChecked' ? checked : undefined
-					);
+				vi.mocked( state.get ).mockImplementation( ( key ) =>
+					key === 'migrationArrivalChecked' ? checked : undefined
+				);
 				const wrapper = ( { children }: { children: ReactNode } ) => (
 					<MemoryRouter initialEntries={ [ '/?from=https://example.com&start=true' ] }>
 						{ children }
@@ -965,7 +971,7 @@ describe( 'Site Migration Flow', () => {
 						checkOnArrival: true,
 					} );
 
-					const setQueryData = jest.spyOn( QueryClient.prototype, 'setQueryData' );
+					const setQueryData = vi.spyOn( QueryClient.prototype, 'setQueryData' );
 					runNavigation( {
 						from: STEPS.SITE_MIGRATION_IDENTIFY,
 						dependencies: { action: 'skip_platform_identification' },
@@ -987,7 +993,7 @@ describe( 'Site Migration Flow', () => {
 						checkOnArrival: false,
 					} );
 				} finally {
-					jest.mocked( state.get ).mockReset();
+					vi.mocked( state.get ).mockReset();
 				}
 			} );
 		} );
@@ -1133,8 +1139,8 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it( 'records signup complete when the site is created', () => {
-				const recordSignupComplete = jest.fn();
-				jest.mocked( useRecordSignupComplete ).mockReturnValue( recordSignupComplete );
+				const recordSignupComplete = vi.fn();
+				vi.mocked( useRecordSignupComplete ).mockReturnValue( recordSignupComplete );
 
 				runNavigation( {
 					from: STEPS.PROCESSING,
@@ -1147,7 +1153,7 @@ describe( 'Site Migration Flow', () => {
 
 		describe( 'Reprint address routes', () => {
 			it( 'passes the destination’s selected, current and default addresses to source validation', () => {
-				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+				vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 					siteId: 456,
 					siteSlug: 'selected.example.com',
 					site: {
@@ -1181,7 +1187,7 @@ describe( 'Site Migration Flow', () => {
 			] )(
 				'validates destination eligibility before offering or accepting the option: %s',
 				( _name, overrides, isLoading, canUseAsDestination ) => {
-					jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( { siteId: 0, siteSlug: '' } );
+					vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( { siteId: 0, siteSlug: '' } );
 					const site =
 						overrides === null
 							? null
@@ -1192,8 +1198,8 @@ describe( 'Site Migration Flow', () => {
 									capabilities: { manage_options: true },
 									...overrides,
 								};
-					jest.mocked( useSiteQuery ).mockReturnValue( { data: site, isLoading } );
-					const navigate = jest.fn();
+					vi.mocked( useSiteQuery ).mockReturnValue( { data: site, isLoading } );
+					const navigate = vi.fn();
 					const { result } = renderHookWithProvider(
 						() => ( {
 							props: siteMigrationFlow.useStepsProps()[ STEPS.SITE_MIGRATION_CHECK.slug ],
@@ -1237,18 +1243,20 @@ describe( 'Site Migration Flow', () => {
 					plan: { product_slug: 'business-bundle' },
 					options: { is_wpcom_atomic: true },
 				};
-				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+				vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 					siteId: 123,
 					siteSlug: 'destination.wordpress.com',
 					site: { plan: { product_slug: 'value_bundle' } },
 				} );
-				jest.mocked( useSiteQuery ).mockReturnValue( { data: source, isLoading: false } );
-				jest.mocked( getCurrentUserId ).mockReturnValue( source.site_owner );
-				jest
-					.mocked( useSiteCopy )
-					.mockImplementation(
-						jest.requireActual( 'calypso/landing/stepper/hooks/use-site-copy' ).useSiteCopy
-					);
+				vi.mocked( useSiteQuery ).mockReturnValue( { data: source, isLoading: false } );
+				vi.mocked( getCurrentUserId ).mockReturnValue( source.site_owner );
+				vi.mocked( useSiteCopy ).mockImplementation(
+					(
+						await vi.importActual< typeof import( 'calypso/landing/stepper/hooks/use-site-copy' ) >(
+							'calypso/landing/stepper/hooks/use-site-copy'
+						)
+					).useSiteCopy
+				);
 				dispatch( SITE_STORE ).receiveSite( source.ID, source );
 				dispatch( SITE_STORE ).finishResolution( 'getSite', [ source.ID ] );
 				nock( 'https://public-api.wordpress.com' )
@@ -1264,7 +1272,7 @@ describe( 'Site Migration Flow', () => {
 						{ blog_id: 456, product_type: 'plan', product_slug: 'business-bundle' },
 					] );
 				let cartAtRedirect;
-				jest.mocked( window.location.assign ).mockImplementationOnce( () => {
+				vi.mocked( window.location.assign ).mockImplementationOnce( () => {
 					cartAtRedirect = {
 						plan: select( ONBOARD_STORE ).getPlanCartItem(),
 						products: select( ONBOARD_STORE ).getProductCartItems(),
@@ -1277,7 +1285,7 @@ describe( 'Site Migration Flow', () => {
 							props: siteMigrationFlow.useStepsProps(),
 							navigation: siteMigrationFlow.useStepNavigation(
 								STEPS.SITE_MIGRATION_CHECK.slug,
-								jest.fn()
+								vi.fn()
 							),
 						};
 					},
@@ -1325,10 +1333,11 @@ describe( 'Site Migration Flow', () => {
 				'checks copy eligibility on the source: eligible=%s, loading=%s, fetching=%s',
 				( eligible, isLoading, isFetching, expected ) => {
 					const source = { ID: 456, site_owner: 789 };
-					jest.mocked( useSiteQuery ).mockReturnValue( { data: source, isLoading } );
-					jest
-						.mocked( useSiteCopy )
-						.mockReturnValue( { shouldShowSiteCopyItem: eligible, isFetching } );
+					vi.mocked( useSiteQuery ).mockReturnValue( { data: source, isLoading } );
+					vi.mocked( useSiteCopy ).mockReturnValue( {
+						shouldShowSiteCopyItem: eligible,
+						isFetching,
+					} );
 					const { result } = renderHookWithProvider( () => siteMigrationFlow.useStepsProps(), {
 						wrapper: ( { children } ) => (
 							<MemoryRouter
@@ -1400,7 +1409,7 @@ describe( 'Site Migration Flow', () => {
 			it.each( [ 'wordpress', 'unknown', 'squarespace' ] )(
 				'routes a detected %s source',
 				( platform ) => {
-					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+					vi.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
 					const source = {
 						from: 'https://example.com',
 						platform,
@@ -1451,7 +1460,7 @@ describe( 'Site Migration Flow', () => {
 		//TODO: Move it to the top be the first test group to follow the order of the flow
 		describe( 'SITE_MIGRATION_IDENTIFY', () => {
 			beforeEach( () => {
-				jest.clearAllMocks();
+				vi.clearAllMocks();
 			} );
 
 			describe( 'an assisted (how=difm) migration from the site checks', () => {
@@ -1472,7 +1481,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				it( 'goes to PICK_SITE when the user has other sites', () => {
-					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
+					vi.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
 
 					const destination = runNavigation( {
 						from: STEPS.SITE_MIGRATION_CHECK,
@@ -1506,8 +1515,8 @@ describe( 'Site Migration Flow', () => {
 
 			describe( 'signed out', () => {
 				it( 'defers the destination to PICK_SITE, as the account’s sites are unknown', () => {
-					jest.mocked( isUserLoggedIn ).mockReturnValue( false );
-					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( null );
+					vi.mocked( isUserLoggedIn ).mockReturnValue( false );
+					vi.mocked( getCurrentUserSiteCount ).mockReturnValue( null );
 					const source = {
 						from: 'https://example-to-be-migrated.com',
 						platform: 'squarespace',
@@ -1570,9 +1579,9 @@ describe( 'Site Migration Flow', () => {
 
 			describe( 'with static-site import enabled', () => {
 				beforeEach( () => {
-					jest
-						.spyOn( config, 'isEnabled' )
-						.mockImplementation( ( flag ) => flag === 'migration/non-wordpress-source' );
+					vi.spyOn( config, 'isEnabled' ).mockImplementation(
+						( flag ) => flag === 'migration/non-wordpress-source'
+					);
 				} );
 
 				it( 'hands a non-WordPress source to the static-site import flow', () => {
@@ -1593,8 +1602,8 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				it( 'preserves the signed-out visitor’s language at the handoff', () => {
-					jest.mocked( isUserLoggedIn ).mockReturnValue( false );
-					jest.mocked( useLocale ).mockReturnValue( 'es' );
+					vi.mocked( isUserLoggedIn ).mockReturnValue( false );
+					vi.mocked( useLocale ).mockReturnValue( 'es' );
 					runNavigation( {
 						from: STEPS.SITE_MIGRATION_IDENTIFY,
 						dependencies: {
@@ -1707,16 +1716,14 @@ describe( 'Site Migration Flow', () => {
 			};
 			let recoveryClient: QueryClient;
 			beforeEach( () => {
-				jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
+				vi.spyOn( config, 'isEnabled' ).mockReturnValue( false );
 				recoveryClient = new QueryClient();
-				jest.mocked( useQueryClient ).mockReturnValue( recoveryClient );
-				jest
-					.mocked( useFlowState().get )
-					.mockImplementation(
-						( key ) => recoveryClient.getQueryData( useFlowState().queryKey )?.[ key ]
-					);
+				vi.mocked( useQueryClient ).mockReturnValue( recoveryClient );
+				vi.mocked( useFlowState().get ).mockImplementation(
+					( key ) => recoveryClient.getQueryData( useFlowState().queryKey )?.[ key ]
+				);
 
-				jest.mocked( goToCheckout ).mockClear();
+				vi.mocked( goToCheckout ).mockClear();
 			} );
 
 			it.each( [
@@ -1741,7 +1748,7 @@ describe( 'Site Migration Flow', () => {
 			it.each( [ null, { features: { active: [] }, product_name_short: 'Free' } ] )(
 				'waits for plan data or opens plans for an ineligible supplied destination: %j',
 				( plan ) => {
-					jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+					vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 						siteId: 123,
 						siteSlug: 'example.wordpress.com',
 						site: plan ? { plan } : null,
@@ -1777,7 +1784,7 @@ describe( 'Site Migration Flow', () => {
 			);
 
 			it( 'sends a new site to unified checkout, which returns to set the migration up', () => {
-				jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+				vi.mocked( isUserLoggedIn ).mockReturnValue( false );
 				runNavigation( {
 					from: STEPS.UNIFIED_PLANS,
 					query: { ...context, siteId: '', siteSlug: '' },
@@ -1788,7 +1795,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 				expect( goToCheckout ).not.toHaveBeenCalled();
 				expect( goToUnifiedCheckout ).toHaveBeenCalledTimes( 1 );
-				const checkout = jest.mocked( goToUnifiedCheckout ).mock.calls[ 0 ][ 0 ];
+				const checkout = vi.mocked( goToUnifiedCheckout ).mock.calls[ 0 ][ 0 ];
 				expect( checkout ).toEqual(
 					expect.objectContaining( {
 						flowName: 'site-migration',
@@ -1873,13 +1880,13 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it( 'reports a destination that can’t be loaded instead of waiting on it', () => {
-				const refetch = jest.fn();
-				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+				const refetch = vi.fn();
+				vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 					siteId: 123,
 					siteSlug: 'example.wordpress.com',
 					site: null,
 				} as unknown as ReturnType< typeof siteData.useSiteData > );
-				jest.mocked( useSiteQuery ).mockReturnValue( {
+				vi.mocked( useSiteQuery ).mockReturnValue( {
 					data: null,
 					isLoading: false,
 					isError: true,
@@ -1905,10 +1912,10 @@ describe( 'Site Migration Flow', () => {
 			] )(
 				'offers picking another destination only with a site the picker lists (%s)',
 				( _, visibleSiteCount, jetpackVisibleSiteCount, canPickDestination ) => {
-					jest.mocked( getCurrentUserVisibleSiteCount ).mockReturnValue( visibleSiteCount );
-					jest
-						.mocked( getCurrentUserJetpackVisibleSiteCount )
-						.mockReturnValue( jetpackVisibleSiteCount );
+					vi.mocked( getCurrentUserVisibleSiteCount ).mockReturnValue( visibleSiteCount );
+					vi.mocked( getCurrentUserJetpackVisibleSiteCount ).mockReturnValue(
+						jetpackVisibleSiteCount
+					);
 					const { result: props } = renderHookWithProvider(
 						() => siteMigrationFlow.useStepsProps(),
 						{ wrapper: MemoryRouter }
@@ -1920,8 +1927,8 @@ describe( 'Site Migration Flow', () => {
 			);
 
 			it( 'leaves out picking a destination for a signed-out visitor', () => {
-				jest.mocked( isUserLoggedIn ).mockReturnValue( false );
-				jest.mocked( getCurrentUserVisibleSiteCount ).mockReturnValue( null );
+				vi.mocked( isUserLoggedIn ).mockReturnValue( false );
+				vi.mocked( getCurrentUserVisibleSiteCount ).mockReturnValue( null );
 				const { result: props } = renderHookWithProvider( () => siteMigrationFlow.useStepsProps(), {
 					wrapper: MemoryRouter,
 				} );
@@ -1931,9 +1938,9 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it( 'keeps the destination’s Change link while a destination is shown, whatever the site count', () => {
-				jest.mocked( getCurrentUserVisibleSiteCount ).mockReturnValue( 0 );
-				jest.mocked( getCurrentUserJetpackVisibleSiteCount ).mockReturnValue( 0 );
-				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+				vi.mocked( getCurrentUserVisibleSiteCount ).mockReturnValue( 0 );
+				vi.mocked( getCurrentUserJetpackVisibleSiteCount ).mockReturnValue( 0 );
+				vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 					siteId: 123,
 					siteSlug: 'example.wordpress.com',
 					site: null,
@@ -1947,9 +1954,9 @@ describe( 'Site Migration Flow', () => {
 			} );
 
 			it( 'configures an eligible destination before handing off to MSD with original entry context', async () => {
-				jest.mocked( useFlowState().get ).mockReturnValue( { entryPoint: 'move-lp' } );
+				vi.mocked( useFlowState().get ).mockReturnValue( { entryPoint: 'move-lp' } );
 				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
-				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+				vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 					...destination,
 					site: {
 						plan: { product_name_short: 'Personal', features: { active: [ 'install-plugins' ] } },
@@ -1993,7 +2000,7 @@ describe( 'Site Migration Flow', () => {
 
 			it( 'does not configure a destination that is also the source', () => {
 				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
-				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+				vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 					...destination,
 					site: {
 						URL: 'https://www.source.example.com',
@@ -2019,7 +2026,7 @@ describe( 'Site Migration Flow', () => {
 				[ 'keeps the existing return', 'https://destination.example.com', false ],
 			] )( '%s when returning to the address form', ( _name, destinationUrl, clearsSource ) => {
 				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
-				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+				vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 					...destination,
 					site: { URL: destinationUrl },
 				} );
@@ -2046,7 +2053,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 				await waitFor( () => expect( goToCheckout ).toHaveBeenCalledTimes( 1 ) );
 				expect( configure.isDone() ).toBe( true );
-				const checkout = jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
+				const checkout = vi.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
 				expect( checkout.historyBack ).toBeUndefined();
 				expect( checkout ).toEqual(
 					expect.objectContaining( {
@@ -2069,7 +2076,11 @@ describe( 'Site Migration Flow', () => {
 				for ( const [ key, value ] of Object.entries( { ...context, ...destination } ) ) {
 					expect( cancelUrl.searchParams.get( key ) ).toBe( String( value ) );
 				}
-				jest.requireActual( 'calypso/landing/stepper/utils/checkout' ).goToCheckout( checkout );
+				(
+					await vi.importActual< typeof import( 'calypso/landing/stepper/utils/checkout' ) >(
+						'calypso/landing/stepper/utils/checkout'
+					)
+				).goToCheckout( checkout );
 				const checkoutUrl = new URL(
 					window.location.replace.mock.lastCall[ 0 ],
 					'https://example.com'
@@ -2086,7 +2097,7 @@ describe( 'Site Migration Flow', () => {
 				'recovers a configure failure after $slug with an explicit retry on the same destination',
 				async ( step ) => {
 					const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
-					jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+					vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 						...destination,
 						site: { plan: { features: { active: [ 'install-plugins' ] } } },
 					} );
@@ -2179,7 +2190,7 @@ describe( 'Site Migration Flow', () => {
 				async ( leave ) => {
 					const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
 					let respond;
-					const requested = jest.fn();
+					const requested = vi.fn();
 					const configure = nock( 'https://public-api.wordpress.com' )
 						.post( '/wpcom/v2/sites/123/wordpress-migration/configure' )
 						.reply( ( uri, body, callback ) => {
@@ -2187,7 +2198,7 @@ describe( 'Site Migration Flow', () => {
 							respond = () => callback( null, [ 200, {} ] );
 						} );
 					const { result, rerender } = renderHookWithProvider(
-						( { step } ) => siteMigrationFlow.useStepNavigation( step, jest.fn() ),
+						( { step } ) => siteMigrationFlow.useStepNavigation( step, vi.fn() ),
 						{
 							initialProps: { step: STEPS.UNIFIED_PLANS.slug },
 							wrapper: ( { children } ) => (
@@ -2249,7 +2260,7 @@ describe( 'Site Migration Flow', () => {
 				} );
 
 				it( 'starts empty after using the entered WordPress.com site as the destination', () => {
-					jest.mocked( useSiteQuery ).mockReturnValue( {
+					vi.mocked( useSiteQuery ).mockReturnValue( {
 						data: {
 							ID: 456,
 							slug: savedAddress,
@@ -2281,7 +2292,7 @@ describe( 'Site Migration Flow', () => {
 				] )(
 					'%s after Back from a result for the destination site %s',
 					( _name, destinationUrl, expectedValue ) => {
-						jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+						vi.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
 							...destination,
 							site: { URL: destinationUrl },
 						} );
@@ -2302,7 +2313,7 @@ describe( 'Site Migration Flow', () => {
 
 		describe( 'PICK_SITE', () => {
 			it( 'replaces itself with CREATE_SITE when it forwards an account without sites', () => {
-				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
+				vi.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
 				const search = new URLSearchParams( {
 					from: 'https://example-to-be-migrated.com',
 					platform: 'squarespace',
@@ -2744,7 +2755,7 @@ describe( 'Site Migration Flow', () => {
 
 		describe( 'SITE_MIGRATION_CREDENTIALS', () => {
 			beforeEach( () => {
-				jest.clearAllMocks();
+				vi.clearAllMocks();
 			} );
 
 			it( 'redirects to site overview when the user skips', () => {
@@ -3039,7 +3050,7 @@ describe( 'Site Migration Flow', () => {
 			// window.location.assign() when it is an http(s) URL on the source (from) site.
 			describe( 'authorization action', () => {
 				const assignCalledWithScheme = ( scheme: string ) =>
-					( window.location.assign as jest.Mock ).mock.calls.some( ( [ url ] ) =>
+					( window.location.assign as Mock ).mock.calls.some( ( [ url ] ) =>
 						String( url ).trim().toLowerCase().startsWith( scheme )
 					);
 

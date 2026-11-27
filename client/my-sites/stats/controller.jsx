@@ -46,8 +46,8 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 	let numPeriodAgo;
 
 	switch ( period ) {
+		// The Hours tab's arrows move a day at a time, like the Days tab.
 		case 'hour':
-			numPeriodAgo = durationAgo.asHours();
 		case 'day':
 			numPeriodAgo = durationAgo.asDays();
 			break;

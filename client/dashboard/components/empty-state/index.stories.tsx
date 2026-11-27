@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { __experimentalText as Text, Button, Icon } from '@wordpress/components';
 import { cog, layout, page, settings } from '@wordpress/icons';
-import upsellIllustration from '../../sites/hosting-feature-gated-with-callout/upsell-illustration.svg';
+import upsellIllustration from '../../sites/hosting-features/components/upsell-illustration/upsell-illustration.svg';
 import { Callout } from '../callout';
 import EmptyState from './index';
 

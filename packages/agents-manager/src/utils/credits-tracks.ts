@@ -21,7 +21,7 @@ export type CreditsTracksEventName =
 	| 'calypso_agents_manager_credits_cta_clicked'
 	| 'calypso_agents_manager_credits_show_clicked';
 
-/** By the same rules as the meter and the notices, so it follows `CREDITS_LOW_BALANCE`. */
+/** By the same rules as the meter and the notices. */
 export function getCreditsState( status: CreditsStatus ): CreditsState {
 	if ( isCreditsExhausted( status ) ) {
 		return 'zero';

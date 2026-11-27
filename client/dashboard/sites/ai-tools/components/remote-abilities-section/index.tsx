@@ -9,10 +9,10 @@ import { useMutation, useSuspenseQuery, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	ToggleControl,
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { getMcpBulkHelp, McpToolToggle } from '../../../../../me/mcp/opt-in-controls';
 import { useMcpTracksAudienceProps } from '../../../../../me/mcp/tracks';
 import {
 	getRemoteAbilityCategory,
@@ -20,6 +20,7 @@ import {
 	getRemoteAbilityKey,
 	getSiteRemoteGroups,
 	isRemoteAbilityEnabled,
+	isRemoteAbilityOptIn,
 	isRemoteKeyEnabled,
 } from '../../../../../me/mcp/utils';
 import { useAnalytics } from '../../../../app/analytics';
@@ -98,6 +99,41 @@ export function collectNamespaces(
 	return new Map( [ ...namespaces.entries() ].sort( ( [ a ], [ b ] ) => a.localeCompare( b ) ) );
 }
 
+export function getRemoteBulkKeys( group: NamespaceGroup, remoteOptIn?: string[] ): string[] {
+	const individualKeys = group.abilityKeys.filter(
+		( key ) => ! isRemoteAbilityOptIn( key.split( ':' )[ 1 ], remoteOptIn )
+	);
+	const hasOnlyOptInAbilities =
+		group.abilities.length > 0 &&
+		group.abilities.every( ( ability ) => isRemoteAbilityOptIn( ability.name, remoteOptIn ) );
+	return hasOnlyOptInAbilities && individualKeys.length === 0
+		? []
+		: [ ...group.keys, ...individualKeys ];
+}
+
+export function isRemoteBulkEnabled(
+	group: NamespaceGroup,
+	savedGroups: Record< string, boolean >,
+	defaultEnabled: boolean,
+	remoteOptIn?: string[]
+): boolean {
+	return (
+		getRemoteBulkKeys( group, remoteOptIn ).every( ( key ) =>
+			isRemoteKeyEnabled( savedGroups, key, defaultEnabled )
+		) &&
+		group.abilities.every(
+			( ability ) =>
+				isRemoteAbilityOptIn( ability.name, remoteOptIn ) ||
+				isRemoteAbilityEnabled(
+					savedGroups,
+					ability.name,
+					ability.meta?.annotations,
+					defaultEnabled
+				)
+		)
+	);
+}
+
 export default function RemoteAbilitiesSection( {
 	site,
 	category,
@@ -125,6 +161,7 @@ export default function RemoteAbilitiesSection( {
 	} );
 
 	const savedGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
+	const remoteOptIn = userSettings?.mcp_abilities?.remote_abilities_requiring_opt_in;
 	const query = search.trim();
 	const filteredAbilities = useFuzzySearch( {
 		data: abilities ?? [],
@@ -202,36 +239,24 @@ export default function RemoteAbilitiesSection( {
 				) }
 			</VStack>
 			{ [ ...namespaces.entries() ].map( ( [ namespace, group ] ) => {
-				const namespaceEnabled =
-					group.keys.length > 0 &&
-					group.keys.every( ( key ) => isRemoteKeyEnabled( savedGroups, key, defaultEnabled ) ) &&
-					group.abilityKeys.every( ( key ) =>
-						isRemoteKeyEnabled( savedGroups, key, defaultEnabled )
-					) &&
-					group.abilities.every( ( ability ) =>
-						isRemoteAbilityEnabled(
-							savedGroups,
-							ability.name,
-							ability.meta?.annotations,
-							defaultEnabled
-						)
-					);
-				// Both directions write the group keys and any saved ability-level
-				// keys: enabling overwrites stale denies, and disabling clears
-				// ability-level trues too — those actively allow, so leaving them
-				// would keep the abilities on.
-				const intentKeys = [ ...group.keys, ...group.abilityKeys ];
+				const intentKeys = getRemoteBulkKeys( group, remoteOptIn );
+				const optInCount = group.abilities.filter( ( ability ) =>
+					isRemoteAbilityOptIn( ability.name, remoteOptIn )
+				).length;
 				return (
 					<McpGroupCard
 						key={ namespace }
 						id={ namespace }
 						title={ formatNamespace( namespace ) }
 						toolAnchors={ group.abilities.map( ( ability ) => ability.name ) }
-						allEnabled={ namespaceEnabled }
+						allEnabled={ isRemoteBulkEnabled( group, savedGroups, defaultEnabled, remoteOptIn ) }
+						enableAllHelp={ getMcpBulkHelp( optInCount ) }
 						disabled={ mutation.isPending }
 						forceOpen={ query.length > 0 }
-						onEnableAll={ ( checked ) =>
-							saveGroups( intentKeys, checked, `${ category }:${ namespace }` )
+						onEnableAll={
+							intentKeys.length > 0
+								? ( checked ) => saveGroups( intentKeys, checked, `${ category }:${ namespace }` )
+								: undefined
 						}
 					>
 						{ group.abilities.length > 0 ? (
@@ -242,17 +267,20 @@ export default function RemoteAbilitiesSection( {
 										<div key={ ability.name } id={ ability.name }>
 											<HStack justify="space-between" alignment="flex-start" spacing={ 2 }>
 												<div style={ { flex: 1, minWidth: 0 } }>
-													<ToggleControl
-														__nextHasNoMarginBottom
-														checked={ isRemoteAbilityEnabled(
-															savedGroups,
-															ability.name,
-															ability.meta?.annotations,
-															defaultEnabled
-														) }
+													<McpToolToggle
+														tool={ {
+															title: ability.label || ability.name,
+															description: ability.description ?? '',
+															enabled: isRemoteAbilityEnabled(
+																savedGroups,
+																ability.name,
+																ability.meta?.annotations,
+																defaultEnabled,
+																remoteOptIn
+															),
+															requires_opt_in: isRemoteAbilityOptIn( ability.name, remoteOptIn ),
+														} }
 														disabled={ mutation.isPending }
-														label={ ability.label || ability.name }
-														help={ ability.description }
 														onChange={ ( checked ) =>
 															saveGroups( [ abilityKey ], checked, abilityKey )
 														}

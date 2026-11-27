@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { isPlanSufficient } from '../unified-design-picker-preview';
 

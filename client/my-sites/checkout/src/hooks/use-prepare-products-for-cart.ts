@@ -51,7 +51,6 @@ export default function usePrepareProductsForCart( {
 	source,
 	aiSessionId,
 	isGiftPurchase,
-	hostingIntent,
 }: {
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
@@ -64,7 +63,6 @@ export default function usePrepareProductsForCart( {
 	source?: string;
 	aiSessionId?: string;
 	isGiftPurchase?: boolean;
-	hostingIntent?: string | undefined;
 } ): PreparedProductsForCart {
 	const [ state, dispatch ] = useReducer( preparedProductsReducer, initialPreparedProductsState );
 
@@ -116,7 +114,6 @@ export default function usePrepareProductsForCart( {
 		jetpackPurchaseToken,
 		source,
 		aiSessionId,
-		hostingIntent,
 	} );
 	useAddProductFromBillingIntent( {
 		intentId: productAliasFromUrl,
@@ -533,7 +530,6 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken,
 	source,
 	aiSessionId,
-	hostingIntent,
 }: {
 	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
@@ -543,7 +539,6 @@ function useAddProductFromSlug( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	aiSessionId?: string;
-	hostingIntent?: string | undefined;
 } ) {
 	const translate = useTranslate();
 
@@ -598,7 +593,6 @@ function useAddProductFromSlug( {
 				jetpackPurchaseToken,
 				source,
 				aiSessionId,
-				hostingIntent,
 			} )
 		);
 		debug( 'preparing products that were requested in url', productAliasFromUrl, cartProducts );
@@ -612,7 +606,6 @@ function useAddProductFromSlug( {
 		dispatch,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
-		hostingIntent,
 		source,
 		aiSessionId,
 	] );
@@ -741,7 +734,6 @@ function createItemToAddToCart( {
 	jetpackPurchaseToken,
 	source,
 	aiSessionId,
-	hostingIntent,
 }: {
 	productSlug: string;
 	productAlias: string;
@@ -750,7 +742,6 @@ function createItemToAddToCart( {
 	jetpackPurchaseToken?: string;
 	source?: string;
 	aiSessionId?: string;
-	hostingIntent?: string | undefined;
 } ): RequestCartProduct {
 	// Allow setting meta (theme name or domain name) from products in the URL by
 	// using a colon between the product slug and the meta.
@@ -786,7 +777,6 @@ function createItemToAddToCart( {
 			context: 'calypstore',
 			source: source ?? undefined,
 			ai_session_id: aiSessionId || undefined,
-			hosting_intent: hostingIntent,
 			...( TITAN_MAIL_PRODUCT_SLUGS.includes( productSlug )
 				? { new_quantity: getTitanNewQuantity( quantity ) }
 				: {} ),

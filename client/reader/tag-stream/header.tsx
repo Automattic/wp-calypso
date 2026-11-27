@@ -14,7 +14,7 @@ import { TagFollowButton } from './follow-tag-button';
 import type { JSX } from 'react';
 
 interface TagStreamHeaderProps {
-	encodedTagSlug: string;
+	decodedTagSlug: string;
 	description?: string;
 	following?: boolean;
 	followDisabled?: boolean;
@@ -29,7 +29,7 @@ interface TagStreamHeaderProps {
 export default function TagStreamHeader( props: TagStreamHeaderProps ): JSX.Element {
 	const {
 		description,
-		encodedTagSlug,
+		decodedTagSlug,
 		following,
 		followDisabled,
 		isPlaceholder,
@@ -66,7 +66,7 @@ export default function TagStreamHeader( props: TagStreamHeaderProps ): JSX.Elem
 
 		if ( recordReaderTracksEvent ) {
 			recordReaderTracksEvent( 'calypso_reader_clicked_tag_sort', {
-				tag: encodedTagSlug,
+				tag: decodedTagSlug,
 				sort,
 			} );
 		}

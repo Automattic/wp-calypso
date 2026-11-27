@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { isTyping, modifierKeyIsActive } from '../../panel/helpers/input';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
@@ -25,11 +25,12 @@ export function useNoteNavigation( {
 	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 } ): NoteNavigation {
-	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
+	const { client, hasNavigationShortcuts } = useAppContext();
+	const areKeyboardShortcutsEnabled =
+		useSelector( getKeyboardShortcutsEnabled ) && hasNavigationShortcuts;
 	const isLoading = useSelector( getIsLoading );
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as Note[] );
 	const hiddenNoteIds = useSelector( getHiddenNoteIds );
-	const { client } = useAppContext();
 
 	const filter = getFilters()[ filterName ];
 	// Keep the selected note in the navigation list at its natural position even
@@ -87,7 +88,7 @@ export function useNoteNavigation( {
 			if ( ! areKeyboardShortcutsEnabled ) {
 				return;
 			}
-			if ( modifierKeyIsActive( event ) ) {
+			if ( modifierKeyIsActive( event ) || isTyping( event ) ) {
 				return;
 			}
 			switch ( event.key ) {

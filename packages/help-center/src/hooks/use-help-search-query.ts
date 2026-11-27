@@ -24,7 +24,7 @@ const fetchArticlesAPI = async (
 	source: HelpCenterProduct,
 	{ siteId, primarySiteId }: FetchArticlesOptions
 ): Promise< SearchResult[] > => {
-	let searchResultResponse: SearchResult[] = [];
+	let searchResultResponse: SearchResult[];
 
 	const queryString = buildQueryString( { query: search, locale, section: sectionName, source } );
 	if ( canAccessWpcomApis() ) {

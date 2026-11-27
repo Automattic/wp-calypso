@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -7,6 +7,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import React from 'react';
+import { vi } from 'vitest';
 import SiteMigrationOtherPlatform from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
@@ -33,7 +34,7 @@ describe( 'Site Migration Other Platform Detected Import', () => {
 	};
 
 	it( 'submits with skip action', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		await userEvent.click( await skipButton() );
@@ -44,7 +45,7 @@ describe( 'Site Migration Other Platform Detected Import', () => {
 	} );
 
 	it( 'submits with importer destination', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 
 		render( { navigation: { submit } } );
 

@@ -1,25 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { resolveSelect } from '@wordpress/data';
+import { vi } from 'vitest';
 import onboarding from '../onboarding';
 
-const mockFetchPending = jest.fn();
-const mockHasCartItems = jest.fn();
-const mockAdopt = jest.fn();
-const mockGoToCheckout = jest.fn();
-const mockAssign = jest.fn();
+const mockFetchPending = vi.fn();
+const mockHasCartItems = vi.fn();
+const mockAdopt = vi.fn();
+const mockGoToCheckout = vi.fn();
+const mockAssign = vi.fn();
 let mockLoggedIn = true;
 
-jest.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
 	fetchPendingWowFunnelSite: ( ...args: unknown[] ) => mockFetchPending( ...args ),
 	wowFunnelSiteHasCartItems: ( ...args: unknown[] ) => mockHasCartItems( ...args ),
 	adoptWowFunnelSite: ( ...args: unknown[] ) => mockAdopt( ...args ),
-	startWowFunnelSite: jest.fn(),
-	forgetWowFunnelRun: jest.fn(),
+	startWowFunnelSite: vi.fn(),
+	forgetWowFunnelRun: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
 	getWowFunnelSlug: ( params: URLSearchParams ) => params.get( 'wow_funnel' ),
 	getWowFunnelArgs: () => ( {} ),
 	getWowFunnelDest: () => 'editor',
@@ -27,82 +28,82 @@ jest.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
 	isKnownWowFunnel: ( slug: string | null ) => Boolean( slug ),
 	isSameWowFunnelRun: ( run: { funnelSlug: string }, slug: string ) => run.funnelSlug === slug,
 	getRememberedWowFunnelSite: () => null,
-	clearWowFunnelSite: jest.fn(),
+	clearWowFunnelSite: vi.fn(),
 	wowFunnelSiteIsPaid: () => false,
-	logWowFunnelEvent: jest.fn(),
-	waitForWowFunnelReady: jest.fn(),
-	getWowFunnelHandoffUrl: jest.fn(),
+	logWowFunnelEvent: vi.fn(),
+	waitForWowFunnelReady: vi.fn(),
+	getWowFunnelHandoffUrl: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/checkout', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/checkout', () => ( {
 	goToCheckout: ( ...args: unknown[] ) => mockGoToCheckout( ...args ),
 } ) );
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
 	isUserLoggedIn: () => mockLoggedIn,
 	getCurrentUser: () => null,
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-current-locale-slug', () => ( {
+vi.mock( 'calypso/state/selectors/get-current-locale-slug', () => ( {
 	__esModule: true,
 	default: () => 'en',
 } ) );
 
-jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
-	clearSessionStorageQuery: jest.fn(),
+vi.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
+	clearSessionStorageQuery: vi.fn(),
 } ) );
 // The product catalog's feature list pulls @wordpress/components in through this, and that
 // chain needs a real @wordpress/data, which this file mocks. Only JSX uses these.
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	MaterialIcon: () => null,
 	ExternalLink: () => null,
 } ) );
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {} ),
-	useSelect: jest.fn( () => ( {} ) ),
-	resolveSelect: jest.fn(),
+	useSelect: vi.fn( () => ( {} ) ),
+	resolveSelect: vi.fn(),
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
-	useQuery: jest.fn( () => new URLSearchParams( '' ) ),
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+	useQuery: vi.fn( () => new URLSearchParams( '' ) ),
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
-	useFlowLocale: jest.fn( () => 'en' ),
+vi.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
+	useFlowLocale: vi.fn( () => 'en' ),
 } ) );
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
+	useDispatch: () => vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/analytics/survicate', () => ( { addSurvicate: jest.fn() } ) );
-jest.mock( 'calypso/lib/analytics/signup', () => ( { SIGNUP_DOMAIN_ORIGIN: {} } ) );
-jest.mock( 'calypso/lib/explat', () => ( {
-	loadExperimentAssignment: jest.fn(),
-	useExperiment: jest.fn( () => [ false, null ] ),
+vi.mock( 'calypso/lib/analytics/survicate', () => ( { addSurvicate: vi.fn() } ) );
+vi.mock( 'calypso/lib/analytics/signup', () => ( { SIGNUP_DOMAIN_ORIGIN: {} } ) );
+vi.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: vi.fn(),
+	useExperiment: vi.fn( () => [ false, null ] ),
 } ) );
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 	SITE_STORE: 'SITE_STORE',
 } ) );
-jest.mock( '@automattic/data-stores', () => ( {} ) );
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {} ) );
+vi.mock( '@automattic/onboarding', () => ( {
 	ONBOARDING_FLOW: 'onboarding',
 	SITE_SETUP_FLOW: 'site-setup',
-	clearStepPersistedState: jest.fn(),
+	clearStepPersistedState: vi.fn(),
 	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 } ) );
-jest.mock(
+vi.mock(
 	'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification',
 	() => ( {
-		usePurchasePlanNotification: jest.fn( () => ( { setShouldShowNotification: jest.fn() } ) ),
+		usePurchasePlanNotification: vi.fn( () => ( { setShouldShowNotification: vi.fn() } ) ),
 	} )
 );
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	persistSignupDestination: jest.fn(),
-	setSignupCompleteFlowName: jest.fn(),
-	setSignupCompleteSlug: jest.fn(),
-	clearSignupCompleteSlug: jest.fn(),
-	clearSignupCompleteFlowName: jest.fn(),
-	clearSignupDestinationCookie: jest.fn(),
-	clearSignupCompleteSiteID: jest.fn(),
+vi.mock( 'calypso/signup/storageUtils', () => ( {
+	persistSignupDestination: vi.fn(),
+	setSignupCompleteFlowName: vi.fn(),
+	setSignupCompleteSlug: vi.fn(),
+	clearSignupCompleteSlug: vi.fn(),
+	clearSignupCompleteFlowName: vi.fn(),
+	clearSignupDestinationCookie: vi.fn(),
+	clearSignupCompleteSiteID: vi.fn(),
 } ) );
 
 const PENDING = {
@@ -132,7 +133,7 @@ function enterAt( pathname: string ) {
  */
 describe( 'wow funnel resume', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockLoggedIn = true;
 		mockAdopt.mockReturnValue( { blogId: PENDING.blogId } );
 		enterAt( '/setup/onboarding' );
@@ -254,7 +255,7 @@ describe( 'preview site owner from a share link', () => {
 	const search = '?preview_site=preview.wpcomstaging.com&utm_source=share_link_preview';
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		delete ( window as unknown as { location?: unknown } ).location;
 		( window as unknown as { location: unknown } ).location = {
 			pathname: '/setup/onboarding',
@@ -275,10 +276,10 @@ describe( 'preview site owner from a share link', () => {
 		[ 'starts signup for a signed-out viewer', false, true, undefined ],
 	] )( '%s', async ( _label, loggedIn, canManage, redirect ) => {
 		mockLoggedIn = loggedIn;
-		const getSite = jest
+		const getSite = vi
 			.fn()
 			.mockResolvedValue( canManage ? { capabilities: { manage_options: true } } : undefined );
-		jest.mocked( resolveSelect ).mockReturnValue( { getSite } as never );
+		vi.mocked( resolveSelect ).mockReturnValue( { getSite } as never );
 
 		const steps = await onboarding.initialize( store );
 

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import {
@@ -11,6 +11,7 @@ import {
 	PLAN_FREE,
 	PlanSlug,
 } from '@automattic/calypso-products';
+import { vi } from 'vitest';
 import { useMaxPlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits';
 import { usePlanUpgradeCreditsApplicable } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-applicable';
 import isAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -18,19 +19,19 @@ import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	isCurrentPlanPaid: jest.fn(),
-	isJetpackSite: jest.fn(),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	isCurrentPlanPaid: vi.fn(),
+	isJetpackSite: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
-	getSitePlanSlug: jest.fn(),
+vi.mock( 'calypso/state/sites/plans/selectors', () => ( {
+	getSitePlanSlug: vi.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
-	useMaxPlanUpgradeCredits: jest.fn(),
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-max-plan-upgrade-credits', () => ( {
+	useMaxPlanUpgradeCredits: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
 const siteId = 1;
@@ -44,13 +45,13 @@ const plansList: PlanSlug[] = [
 ];
 describe( 'usePlanUpgradeCreditsApplicable hook', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 
-		jest.mocked( getSitePlanSlug ).mockReturnValue( 'TYPE_BUSINESS' );
-		jest.mocked( isCurrentPlanPaid ).mockReturnValue( true );
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 100 );
-		jest.mocked( isJetpackSite ).mockReturnValue( true );
-		jest.mocked( isAutomatedTransfer ).mockReturnValue( true );
+		vi.mocked( getSitePlanSlug ).mockReturnValue( 'TYPE_BUSINESS' );
+		vi.mocked( isCurrentPlanPaid ).mockReturnValue( true );
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( 100 );
+		vi.mocked( isJetpackSite ).mockReturnValue( true );
+		vi.mocked( isAutomatedTransfer ).mockReturnValue( true );
 	} );
 
 	test( 'Show a plans upgrade credit when the necessary conditions are met above', () => {
@@ -61,7 +62,7 @@ describe( 'usePlanUpgradeCreditsApplicable hook', () => {
 	} );
 
 	test( 'Plan upgrade credits should not be shown when a site is on the highest purchasable plan', () => {
-		jest.mocked( getSitePlanSlug ).mockReturnValue( PLAN_ECOMMERCE );
+		vi.mocked( getSitePlanSlug ).mockReturnValue( PLAN_ECOMMERCE );
 		const { result } = renderHookWithProvider( () =>
 			usePlanUpgradeCreditsApplicable( siteId, plansList )
 		);
@@ -69,8 +70,8 @@ describe( 'usePlanUpgradeCreditsApplicable hook', () => {
 	} );
 
 	test( 'A non atomic jetpack site is not shown the plan upgrade credit', () => {
-		jest.mocked( isAutomatedTransfer ).mockReturnValue( false );
-		jest.mocked( isJetpackSite ).mockReturnValue( true );
+		vi.mocked( isAutomatedTransfer ).mockReturnValue( false );
+		vi.mocked( isJetpackSite ).mockReturnValue( true );
 
 		const { result } = renderHookWithProvider( () =>
 			usePlanUpgradeCreditsApplicable( siteId, plansList )
@@ -79,7 +80,7 @@ describe( 'usePlanUpgradeCreditsApplicable hook', () => {
 	} );
 
 	test( 'Plan upgrade credit should NOT be shown if there are no discounts provided by the pricing API', () => {
-		jest.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( null );
+		vi.mocked( useMaxPlanUpgradeCredits ).mockReturnValue( null );
 
 		const { result } = renderHookWithProvider( () =>
 			usePlanUpgradeCreditsApplicable( siteId, plansList )
@@ -88,7 +89,7 @@ describe( 'usePlanUpgradeCreditsApplicable hook', () => {
 	} );
 
 	test( 'Site on a free plan should not show the plan upgrade credit', () => {
-		jest.mocked( isCurrentPlanPaid ).mockReturnValue( false );
+		vi.mocked( isCurrentPlanPaid ).mockReturnValue( false );
 
 		const { result } = renderHookWithProvider( () =>
 			usePlanUpgradeCreditsApplicable( siteId, plansList )

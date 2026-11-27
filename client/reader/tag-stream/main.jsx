@@ -17,34 +17,11 @@ import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
 
-// Matches emoji and keycap sequences (# / * / 0-9 + optional U+FE0F + U+20E3).
-const EMOJI_TITLE_PATTERN =
-	/\p{Emoji_Presentation}|\p{Extended_Pictographic}|[#*0-9]\uFE0F?\u20E3/u;
-
 class TagStream extends Component {
 	static propTypes = {
 		encodedTagSlug: PropTypes.string,
 		decodedTagSlug: PropTypes.string,
 	};
-
-	state = {
-		emojiText: null,
-	};
-
-	_isMounted = false;
-
-	componentDidMount() {
-		this._isMounted = true;
-		import( /* webpackChunkName: "async-load-emoji-text" */ 'emoji-text' ).then( ( emojiText ) => {
-			if ( this._isMounted ) {
-				this.setState( { emojiText: emojiText.default } );
-			}
-		} );
-	}
-
-	componentWillUnmount() {
-		this._isMounted = false;
-	}
 
 	isSubscribed = () => {
 		const tag = this.props.tags?.find( ( t ) => t.slug === this.props.encodedTagSlug );
@@ -78,23 +55,12 @@ class TagStream extends Component {
 			this.props.initialTitle ||
 			titleCase( this.props.decodedTagSlug.replace( /-/g, ' ' ) );
 
-		let encodedTagSlug = this.props.encodedTagSlug;
-
-		// If the tag contains emoji, convert to text equivalent
-		const isEmojiTitle =
-			!! this.props.decodedTagSlug && EMOJI_TITLE_PATTERN.test( this.props.decodedTagSlug );
-		if ( this.state.emojiText && isEmojiTitle ) {
-			encodedTagSlug = this.state.emojiText.convert( this.props.decodedTagSlug, {
-				delimiter: '',
-			} );
-		}
-
 		if ( this.props.isNotFound ) {
 			return (
 				<ReaderMain className="tag-stream__main">
 					<TagStreamHeader
 						title={ titleText }
-						encodedTagSlug={ encodedTagSlug }
+						decodedTagSlug={ this.props.decodedTagSlug }
 						// Should not be necessary because the user shouldn't have been able to
 						// subscribe to a missing tag, but still give them a route to unfollow
 						// if that's somehow the case.
@@ -111,7 +77,7 @@ class TagStream extends Component {
 			<TagStreamHeader
 				title={ titleText }
 				description={ this.props.description }
-				encodedTagSlug={ encodedTagSlug }
+				decodedTagSlug={ this.props.decodedTagSlug }
 				showFollow={ !! ( tag && tag.id ) }
 				following={ this.isSubscribed() }
 				onFollowToggle={ this.toggleFollowing }

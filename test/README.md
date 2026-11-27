@@ -6,4 +6,4 @@ At the moment we maintain several groups of tests. You can find configurations f
 - `server` - unit tests for code located in `server` top level folder.
 - `e2e` - automated tests for the entire project.
 
-Check [testing overview](../docs/testing/testing-overview.md) to learn more how all those test configurations are consumed by [Jest](https://facebook.github.io/jest/) testing platform to ensure proper code quality of Calypso codebase.
+Check [testing overview](../docs/testing/testing-overview.md) to learn more how all those test configurations are consumed by [Vitest](https://vitest.dev/) to ensure proper code quality of Calypso codebase.

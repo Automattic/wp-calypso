@@ -1,12 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-
 import { readerPostQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import preferences from 'calypso/state/preferences/reducer';
 import userSuggestions from 'calypso/state/user-suggestions/reducer';
@@ -14,13 +13,15 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationsInbox } from '..';
 import { makeConversation } from './helpers';
 
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+
 const BASE = 'https://public-api.wordpress.com';
 const postKey = { blogId: 10, postId: 100 };
 const queryKey = readerPostQuery( postKey, readerContentWidth() ).queryKey;
 const scrollIntoView = Element.prototype.scrollIntoView;
 
 beforeAll( () => {
-	Element.prototype.scrollIntoView = jest.fn();
+	Element.prototype.scrollIntoView = vi.fn();
 	nock.disableNetConnect();
 } );
 
@@ -85,7 +86,7 @@ describe.each( [ 'list details', 'no list details', 'absent from list' ] )( '%s'
 				firstException ??= event.error ?? event.message;
 			};
 			window.addEventListener( 'error', captureException );
-			const consoleError = jest.spyOn( console, 'error' );
+			const consoleError = vi.spyOn( console, 'error' );
 			let unmount: ( () => void ) | undefined;
 			try {
 				const view = renderWithProvider( <ConversationsInbox siteId="10" postId="100" />, {

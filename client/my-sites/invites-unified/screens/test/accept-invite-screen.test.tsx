@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { AcceptInviteScreen } from '../accept-invite-screen';
 import type { Invite } from '../../types';
 
-const mockCenteredColumnLayout = jest.fn(
+const mockCenteredColumnLayout = vi.fn(
 	( {
 		children,
 		heading,
@@ -27,49 +28,37 @@ const mockCenteredColumnLayout = jest.fn(
 );
 
 // Mock external dependencies
-jest.mock(
-	'@automattic/calypso-router',
-	() => ( {
-		__esModule: true,
-		default: jest.fn(),
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/calypso-router', () => ( {
+	__esModule: true,
+	default: vi.fn(),
+} ) );
 
-jest.mock(
-	'@automattic/i18n-utils',
-	() => ( {
-		localizeUrl: ( url: string ) => url,
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/i18n-utils', () => ( {
+	localizeUrl: ( url: string ) => url,
+} ) );
 
-jest.mock(
-	'@automattic/onboarding',
-	() => ( {
-		Step: {
-			Heading: ( { text, subText }: { text: string; subText: string } ) => (
-				<div data-testid="step-heading">
-					<h1>{ text }</h1>
-					<p>{ subText }</p>
-				</div>
-			),
-			TopBar: ( { logo }: { logo?: React.ReactNode } ) => (
-				<div data-testid="step-topbar">{ logo }</div>
-			),
-			CenteredColumnLayout: ( props: {
-				children: React.ReactNode;
-				heading: React.ReactNode;
-				topBar: React.ReactNode;
-				columnWidth: number;
-				verticalAlign: string;
-			} ) => mockCenteredColumnLayout( props ),
-		},
-	} ),
-	{ virtual: true }
-);
+vi.mock( '@automattic/onboarding', () => ( {
+	Step: {
+		Heading: ( { text, subText }: { text: string; subText: string } ) => (
+			<div data-testid="step-heading">
+				<h1>{ text }</h1>
+				<p>{ subText }</p>
+			</div>
+		),
+		TopBar: ( { logo }: { logo?: React.ReactNode } ) => (
+			<div data-testid="step-topbar">{ logo }</div>
+		),
+		CenteredColumnLayout: ( props: {
+			children: React.ReactNode;
+			heading: React.ReactNode;
+			topBar: React.ReactNode;
+			columnWidth: number;
+			verticalAlign: string;
+		} ) => mockCenteredColumnLayout( props ),
+	},
+} ) );
 
-jest.mock( 'calypso/components/connect-screen/action-buttons', () => ( {
+vi.mock( 'calypso/components/connect-screen/action-buttons', () => ( {
 	ActionButtons: ( {
 		primaryLabel,
 		primaryOnClick,
@@ -101,13 +90,13 @@ jest.mock( 'calypso/components/connect-screen/action-buttons', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/components/connect-screen/consent-text', () => ( {
+vi.mock( 'calypso/components/connect-screen/consent-text', () => ( {
 	ConsentText: ( { children }: { children: React.ReactNode } ) => (
 		<div data-testid="consent-text">{ children }</div>
 	),
 } ) );
 
-jest.mock( 'calypso/components/connect-screen/user-card', () => ( {
+vi.mock( 'calypso/components/connect-screen/user-card', () => ( {
 	UserCard: ( { user }: { user: { displayName: string; email: string } } ) => (
 		<div data-testid="user-card">
 			<span data-testid="user-display-name">{ user.displayName }</span>
@@ -116,28 +105,28 @@ jest.mock( 'calypso/components/connect-screen/user-card', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => ( {
+vi.mock( 'calypso/components/data/document-head', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( 'calypso/layout/body-section-css-class', () => ( {
+vi.mock( 'calypso/layout/body-section-css-class', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-const mockRecordTracksEvent = jest.fn();
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+const mockRecordTracksEvent = vi.fn();
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: ( ...args: unknown[] ) => mockRecordTracksEvent( ...args ),
 } ) );
 
-const mockNavigate = jest.fn();
-jest.mock( 'calypso/lib/navigate', () => ( {
+const mockNavigate = vi.fn();
+vi.mock( 'calypso/lib/navigate', () => ( {
 	navigate: ( url: string ) => mockNavigate( url ),
 } ) );
 
-const mockNavigateToLandingPage = jest.fn( () => ( { type: 'TEST_NAVIGATE_TO_LANDING_PAGE' } ) );
-jest.mock( 'calypso/lib/landing-page', () => ( {
+const mockNavigateToLandingPage = vi.fn( () => ( { type: 'TEST_NAVIGATE_TO_LANDING_PAGE' } ) );
+vi.mock( 'calypso/lib/landing-page', () => ( {
 	navigateToLandingPage: () => mockNavigateToLandingPage(),
 } ) );
 
@@ -157,7 +146,7 @@ const mockWooBranding = {
 	},
 };
 
-jest.mock( 'calypso/lib/partner-branding', () => ( {
+vi.mock( 'calypso/lib/partner-branding', () => ( {
 	detectPartnerConfig: () => null,
 	getPartnerConfigFromGarden: ( partner: string, name: string ) => {
 		if ( partner === 'woo' && name === 'commerce' ) {
@@ -171,54 +160,56 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 	) => `${ title } — ${ partnerConfig?.windowTitleSuffix || 'WordPress.com' }`,
 } ) );
 
-jest.mock( 'calypso/lib/paths', () => ( {
+vi.mock( 'calypso/lib/paths', () => ( {
 	login: ( { redirectTo }: { redirectTo: string } ) =>
 		`/log-in?redirect_to=${ encodeURIComponent( redirectTo ) }`,
 } ) );
 
-const mockGetRedirectAfterAccept = jest.fn( () => '/redirect-url' );
-jest.mock( 'calypso/my-sites/invites/utils', () => ( {
-	...jest.requireActual( 'calypso/my-sites/invites/utils' ),
+const mockGetRedirectAfterAccept = vi.fn( () => '/redirect-url' );
+vi.mock( 'calypso/my-sites/invites/utils', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/my-sites/invites/utils' ) >(
+		'calypso/my-sites/invites/utils'
+	) ),
 	getRedirectAfterAccept: ( ...args: Parameters< typeof mockGetRedirectAfterAccept > ) =>
 		mockGetRedirectAfterAccept( ...args ),
 } ) );
 
-const mockDispatch = jest.fn();
-jest.mock( 'calypso/state', () => ( {
+const mockDispatch = vi.fn();
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-const mockGetCurrentUser = jest.fn();
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
+const mockGetCurrentUser = vi.fn();
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUser: ( state: unknown ) => mockGetCurrentUser( state ),
 } ) );
 
-jest.mock( 'calypso/state/dashboard/selectors/has-dashboard-opt-in', () => ( {
+vi.mock( 'calypso/state/dashboard/selectors/has-dashboard-opt-in', () => ( {
 	hasDashboardOptIn: () => false,
 } ) );
 
-const mockAcceptInvite = jest.fn();
-jest.mock( 'calypso/state/invites/actions', () => ( {
+const mockAcceptInvite = vi.fn();
+vi.mock( 'calypso/state/invites/actions', () => ( {
 	acceptInvite: ( ...args: unknown[] ) => mockAcceptInvite( ...args ),
 } ) );
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
-	infoNotice: jest.fn(),
-	errorNotice: jest.fn(),
+vi.mock( 'calypso/state/notices/actions', () => ( {
+	infoNotice: vi.fn(),
+	errorNotice: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/ui/actions', () => ( {
-	hideMasterbar: jest.fn( () => ( { type: 'HIDE_MASTERBAR' } ) ),
+vi.mock( 'calypso/state/ui/actions', () => ( {
+	hideMasterbar: vi.fn( () => ( { type: 'HIDE_MASTERBAR' } ) ),
 } ) );
 
-jest.mock( '../email-mismatch-screen', () => ( {
+vi.mock( '../email-mismatch-screen', () => ( {
 	__esModule: true,
 	default: ( { inviteSentTo }: { inviteSentTo: string } ) => (
 		<div data-testid="email-mismatch-screen">Email mismatch: { inviteSentTo }</div>
 	),
 } ) );
 
-jest.mock( '../style.scss', () => ( {} ) );
+vi.mock( '../style.scss', () => ( {} ) );
 
 const mockStore = configureStore();
 
@@ -265,7 +256,7 @@ const setupUser = ( userOverrides = {} ) => {
 
 describe( 'AcceptInviteScreen', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockCenteredColumnLayout.mockClear();
 		mockAcceptInvite.mockReturnValue( { type: 'ACCEPT_INVITE' } );
 		mockDispatch.mockImplementation( ( action: unknown ) => {

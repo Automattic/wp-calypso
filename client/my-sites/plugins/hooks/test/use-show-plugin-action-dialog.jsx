@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook, cleanup, act, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { PluginActions } from '../types';
 import useShowPluginActionDialog from '../use-show-plugin-action-dialog';
 
@@ -9,16 +10,16 @@ const HEADING_TEXT = 'Heading';
 const MESSAGE_TEXT = 'Message';
 const CONFIRM_TEXT = 'OK';
 const CANCEL_TEXT = 'Cancel';
-jest.mock( '../use-get-dialog-text', () =>
-	jest.fn().mockReturnValue( () => ( {
+vi.mock( '../use-get-dialog-text', () => ( {
+	default: vi.fn().mockReturnValue( () => ( {
 		heading: HEADING_TEXT,
 		message: MESSAGE_TEXT,
 		cta: {
 			confirm: CONFIRM_TEXT,
 			cancel: CANCEL_TEXT,
 		},
-	} ) )
-);
+	} ) ),
+} ) );
 
 // `accept()` mounts each dialog into its own node on document.body — outside
 // React Testing Library's tracking, so it's queried with `screen` and won't be
@@ -74,7 +75,7 @@ describe( 'useShowPluginActionDialog', () => {
 	} );
 
 	it( 'calls the given callback with "true" parameter value when the accept button is clicked', async () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 
 		await openDialog( PluginActions.REMOVE, callback );
 		await clickButton( CONFIRM_TEXT );
@@ -83,7 +84,7 @@ describe( 'useShowPluginActionDialog', () => {
 	} );
 
 	it( 'calls the given callback with "false" parameter value when the cancel button is clicked', async () => {
-		const callback = jest.fn();
+		const callback = vi.fn();
 
 		await openDialog( PluginActions.REMOVE, callback );
 		await clickButton( CANCEL_TEXT );

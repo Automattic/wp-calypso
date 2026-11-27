@@ -1,20 +1,23 @@
 import EventEmitter from 'events';
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import loggerMiddleware from '../logger';
 
 const requestLogger = {
-	info: jest.fn(),
+	info: vi.fn(),
 };
 const mockRootLogger = {
-	child: jest.fn( () => requestLogger ),
+	child: vi.fn( () => requestLogger ),
 };
-jest.mock( 'calypso/server/lib/logger', () => ( {
+vi.mock( 'calypso/server/lib/logger', () => ( {
 	getLogger: () => mockRootLogger,
 } ) );
-jest.mock( '@automattic/calypso-config', () => jest.fn() );
-jest.mock( 'crypto', () => ( {
-	randomUUID: () => '00000000-0000-0000-0000-000000000000',
-} ) );
+vi.mock( '@automattic/calypso-config', () => ( { default: vi.fn() } ) );
+vi.mock( 'crypto', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		randomUUID: () => '00000000-0000-0000-0000-000000000000',
+	} )
+);
 
 const fakeRequest = ( { method, url, ip, httpVersion, headers = {} } = {} ) => {
 	const req = new EventEmitter();
@@ -58,7 +61,7 @@ const withEnv = ( env ) => {
 
 const simulateRequest = ( { req, res, delay = 0, finished = true } ) => {
 	loggerMiddleware()( req, res, () => {} );
-	jest.advanceTimersByTime( delay );
+	vi.advanceTimersByTime( delay );
 	res.finished = finished;
 	res.emit( 'close' );
 };
@@ -68,12 +71,12 @@ describe( 'Logger middleware', () => {
 	withCommitSha( 'abcd1234' );
 
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
-		jest.clearAllMocks();
+		vi.useRealTimers();
+		vi.clearAllMocks();
 	} );
 
 	it( 'Adds a `logger` property to the request with the request id', () => {

@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { PostCardEmbedGifv } from '../post-card-embed-gifv';
 import type { SocialEmbedGifv } from '../../../types';
 
@@ -18,8 +19,8 @@ const EMBED: SocialEmbedGifv = {
 // per-test from a beforeEach doesn't propagate. Mocking the hook keeps the
 // test focused on PostCardEmbedGifv's own branching.
 let mockReducedMotion = false;
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
 	useReducedMotion: () => mockReducedMotion,
 } ) );
 

@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
@@ -12,11 +13,13 @@ import SiteMigrationAlreadyWPCOM from '../';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers/index';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: { get: jest.fn(), post: jest.fn() },
-} ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
-jest.mock( 'calypso/lib/logstash' );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: { get: vi.fn(), post: vi.fn() },
+	} )
+);
+vi.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
+vi.mock( 'calypso/lib/logstash' );
 
 const continueButton = () => screen.getByRole( 'button', { name: 'Continue' } );
 const intentByName = ( intent: string ) => screen.getByRole( 'checkbox', { name: intent } );
@@ -29,9 +32,9 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( wpcom.req.post as jest.Mock ).mockResolvedValue( { success: true } );
-		( useSiteSlugParam as jest.Mock ).mockReturnValue( 'site-url.wordpress.com' );
+		vi.clearAllMocks();
+		( wpcom.req.post as Mock ).mockResolvedValue( { success: true } );
+		( useSiteSlugParam as Mock ).mockReturnValue( 'site-url.wordpress.com' );
 	} );
 
 	it( 'renders the site domain from the query params', () => {
@@ -40,7 +43,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 	} );
 
 	it( 'shows an error when the user does not select an option', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } }, { initialEntry: '/some-path?from=https://example.com' } );
 
 		await userEvent.click( continueButton() );
@@ -57,7 +60,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 	} );
 
 	it( 'navigate to next step when the submits an intent', async () => {
-		const navigation = { submit: jest.fn() };
+		const navigation = { submit: vi.fn() };
 		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
 
 		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
@@ -67,7 +70,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 	} );
 
 	it( 'navigate to next step when the user describes their needs manually', async () => {
-		const navigation = { submit: jest.fn() };
+		const navigation = { submit: vi.fn() };
 		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
 
 		await userEvent.click( intentByName( 'Other' ) );
@@ -81,7 +84,7 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 	} );
 
 	it( 'submits the request for the API properly', async () => {
-		const navigation = { submit: jest.fn() };
+		const navigation = { submit: vi.fn() };
 		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
 
 		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
@@ -112,10 +115,10 @@ describe( 'SiteMigrationAlreadyWPCOM', () => {
 	} );
 
 	it( 'shows error when something goes wrong in submission', async () => {
-		const navigation = { submit: jest.fn() };
+		const navigation = { submit: vi.fn() };
 		render( { navigation }, { initialEntry: '/some-path?from=https://example.com' } );
 
-		( wpcom.req.post as jest.Mock ).mockRejectedValue( new Error( 'Some error message' ) );
+		( wpcom.req.post as Mock ).mockRejectedValue( new Error( 'Some error message' ) );
 
 		await userEvent.click( intentByName( 'Transfer my domain to WordPress.com' ) );
 		await userEvent.click( intentByName( 'Other' ) );

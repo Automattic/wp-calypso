@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import ThemeUploadProgress from '../upload-progress';
 
-const mockSetOpenOdieWithContext = jest.fn();
+const mockSetOpenOdieWithContext = vi.fn();
 let mockIsWpMobileApp = false;
 
-jest.mock( 'calypso/lib/mobile-app', () => ( { isWpMobileApp: () => mockIsWpMobileApp } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( 'calypso/lib/analytics/wait-heartbeat', () => ( { useWaitHeartbeat: jest.fn() } ) );
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( 'calypso/lib/mobile-app', () => ( { isWpMobileApp: () => mockIsWpMobileApp } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( 'calypso/lib/analytics/wait-heartbeat', () => ( { useWaitHeartbeat: vi.fn() } ) );
+vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { register: () => 'automattic/help-center' },
 } ) );
 // `@automattic/components` pulls in `@wordpress/rich-text`, which registers a store on import, so
 // the mock has to cover the registration surface and not only the dispatch this component uses.
-jest.mock( '@wordpress/data', () => {
+vi.mock( '@wordpress/data', () => {
 	const noop = () => ( {} );
 	const identity = ( fn ) => fn;
 	return {
@@ -49,16 +50,16 @@ const defaults = {
 	progressTotal: 100,
 };
 const renderProgress = ( props ) => render( <ThemeUploadProgress { ...defaults } { ...props } /> );
-const elapse = ( ms ) => act( () => jest.advanceTimersByTime( ms ) );
+const elapse = ( ms ) => act( () => vi.advanceTimersByTime( ms ) );
 
 describe( 'ThemeUploadProgress', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsWpMobileApp = false;
-		jest.useFakeTimers();
-		jest.setSystemTime( new Date( '2026-08-26T10:00:00Z' ) );
+		vi.useFakeTimers();
+		vi.setSystemTime( new Date( '2026-08-26T10:00:00Z' ) );
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'counts real bytes while the file is still uploading', () => {
 		renderProgress( { installing: false, progressLoaded: 20, progressTotal: 100 } );
@@ -99,7 +100,7 @@ describe( 'ThemeUploadProgress', () => {
 	} );
 
 	it( 'opens the Help Center in place, carrying the site and the failure into the chat', async () => {
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 		renderProgress();
 		elapse( 181_000 );
 		const contact = screen.getByRole( 'button', { name: 'Contact support' } );
@@ -122,7 +123,7 @@ describe( 'ThemeUploadProgress', () => {
 
 	// The mobile app never mounts the Help Center, so the dispatch would be a dead click there.
 	it( 'links out to support instead in the mobile app, where the Help Center is absent', async () => {
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+		const user = userEvent.setup( { advanceTimers: vi.advanceTimersByTime } );
 		mockIsWpMobileApp = true;
 		renderProgress();
 		elapse( 181_000 );

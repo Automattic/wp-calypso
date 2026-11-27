@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import ZoomBlueprintStep from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 describe( 'ZoomBlueprintStep', () => {
 	it( 'submits once on mount, with nothing to ask', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 
 		const { rerender } = renderStep(
 			<ZoomBlueprintStep { ...mockStepProps( { navigation: { submit } } ) } />,
@@ -23,7 +24,7 @@ describe( 'ZoomBlueprintStep', () => {
 
 		// A re-render with a new submit identity is the common case in the flow; it must not
 		// submit the step twice.
-		rerender( <ZoomBlueprintStep { ...mockStepProps( { navigation: { submit: jest.fn() } } ) } /> );
+		rerender( <ZoomBlueprintStep { ...mockStepProps( { navigation: { submit: vi.fn() } } ) } /> );
 		expect( submit ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

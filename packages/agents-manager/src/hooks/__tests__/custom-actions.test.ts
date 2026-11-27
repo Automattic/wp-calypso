@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
 import { type MockedFunction, vi } from 'vitest';
 import { takeActionOrigin } from '../../utils/action-origin';

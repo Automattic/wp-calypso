@@ -234,8 +234,8 @@ export const useCreateZendeskConversation = () => {
 		}
 		const classificationWaitMs = Date.now() - classificationWaitStartedAt;
 
-		let conversation: ZendeskConversation | null = null;
-		let interaction = null;
+		let conversation: ZendeskConversation | null;
+		let interaction;
 
 		// The messaging user fields submitted above can take up to a minute to become
 		// visible to Zendesk's ticket-creation triggers, so tickets created within

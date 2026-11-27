@@ -327,6 +327,83 @@ describe( '<Emails>', () => {
 		} );
 	} );
 
+	describe( 'with a Titan mailbox', () => {
+		const titanAccount = ( mailbox: Record< string, unknown > ) =>
+			( {
+				account_type: EmailProvider.Titan,
+				can_user_add_email: true,
+				status: 'active',
+				maximum_mailboxes: 1,
+				warnings: [],
+				domains: [ { domain: DOMAIN, is_primary: true } ],
+				emails: [
+					{
+						mailbox: 'hello',
+						domain: DOMAIN,
+						email_type: 'email',
+						role: 'standard',
+						warnings: [],
+						...mailbox,
+					},
+				],
+			} ) as unknown as EmailAccount;
+
+		const refusedMessage =
+			'This mailbox is suspended, so we could not delete it. Please contact support.';
+
+		test( 'shows no deletion warning on a mailbox without warnings', async () => {
+			mockApi( { domains: [ nonOwnedDomain ], accounts: [ titanAccount( {} ) ] } );
+			render( <Emails /> );
+
+			expect( await screen.findByText( `hello@${ DOMAIN }` ) ).toBeVisible();
+			expect( screen.getByText( 'Active' ) ).toBeVisible();
+			expect( screen.queryByText( 'Action required' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'shows the deletion refused message and still offers to delete', async () => {
+			mockApi( {
+				domains: [ nonOwnedDomain ],
+				accounts: [
+					titanAccount( {
+						warnings: [
+							{
+								warning_type: 'action_required',
+								warning_slug: 'deletion_refused',
+								message: refusedMessage,
+							},
+						],
+					} ),
+				],
+			} );
+			render( <Emails /> );
+
+			const status = await screen.findByText( 'Action required' );
+			expect( status ).toBeVisible();
+
+			await userEvent.hover( status );
+			expect( await screen.findByText( refusedMessage ) ).toBeVisible();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
+			expect( await screen.findByRole( 'menuitem', { name: /^Delete mailbox/ } ) ).toBeVisible();
+		} );
+
+		test( 'hides the delete action on a mailbox that is pending deletion', async () => {
+			mockApi( {
+				domains: [ nonOwnedDomain ],
+				accounts: [ titanAccount( { status: 'pending_deletion' } ) ],
+			} );
+			render( <Emails /> );
+
+			expect( await screen.findByText( 'Pending deletion' ) ).toBeVisible();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Actions' } ) );
+			expect( await screen.findByRole( 'menuitem', { name: /^View DNS records/ } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'menuitem', { name: /^Delete mailbox/ } )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'with Titan tiers', () => {
 		const titanAccountWithSlug = ( productSlug: string ) =>
 			( {

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -7,6 +7,7 @@ import { waitFor } from '@testing-library/react';
 import { addQueryArgs } from '@wordpress/url';
 import React, { FC, Suspense, type JSX } from 'react';
 import { MemoryRouter } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import recordStepComplete from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete';
 import recordStepStart from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start';
 import { useIntent } from 'calypso/landing/stepper/hooks/use-intent';
@@ -26,17 +27,17 @@ import type {
 	NavigationControls,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 
-jest.mock( 'calypso/signup/storageUtils' );
-jest.mock( 'calypso/state/current-user/selectors' );
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start' );
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete' );
-jest.mock( 'calypso/landing/stepper/hooks/use-intent' );
-jest.mock( 'calypso/lib/analytics/page-view' );
-jest.mock( '../../../analytics/record-page-view' );
+vi.mock( 'calypso/signup/storageUtils' );
+vi.mock( 'calypso/state/current-user/selectors' );
+vi.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-start' );
+vi.mock( 'calypso/landing/stepper/declarative-flow/internals/analytics/record-step-complete' );
+vi.mock( 'calypso/landing/stepper/hooks/use-intent' );
+vi.mock( 'calypso/lib/analytics/page-view' );
+vi.mock( '../../../analytics/record-page-view' );
 
 const regularStep: StepperStep = {
 	slug: 'some-step-slug',
-	asyncComponent: jest.fn(), // For the purpose of this test, we don't need to render the using lazy strategy
+	asyncComponent: vi.fn(), // For the purpose of this test, we don't need to render the using lazy strategy
 };
 
 const requiresLoginStep: StepperStep = {
@@ -98,13 +99,13 @@ describe( 'StepRoute', () => {
 
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn() },
 		} );
-		( useIntent as jest.Mock ).mockReturnValue( 'build' );
+		( useIntent as Mock ).mockReturnValue( 'build' );
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	afterAll( () => {
@@ -139,7 +140,7 @@ describe( 'StepRoute', () => {
 		} );
 
 		it( 'renders the step content if the user is logged in', async () => {
-			( isUserLoggedIn as jest.Mock ).mockReturnValue( true );
+			( isUserLoggedIn as Mock ).mockReturnValue( true );
 			const { getByText } = render( { step: requiresLoginStep } );
 
 			await waitFor( () => expect( getByText( 'Step Content' ) ).toBeInTheDocument() );
@@ -148,7 +149,7 @@ describe( 'StepRoute', () => {
 
 	describe( 'tracking', () => {
 		it( 'records the route mount before the step reads it during its own first render', () => {
-			const now = jest.spyOn( performance, 'now' ).mockReturnValue( 1040 );
+			const now = vi.spyOn( performance, 'now' ).mockReturnValue( 1040 );
 			let seen: ReturnType< typeof describeStepMount > | undefined;
 			const ReadsMountOnRender: FC< StepProps > = ( { stepName } ) => {
 				seen = seen ?? describeStepMount( stepName );
@@ -191,8 +192,8 @@ describe( 'StepRoute', () => {
 		} );
 
 		it( 'records recordStepStart with additional props when the step is re-entered', () => {
-			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'some-flow' );
-			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-step-slug' );
+			( getSignupCompleteFlowName as Mock ).mockReturnValue( 'some-flow' );
+			( getSignupCompleteStepNameAndClear as Mock ).mockReturnValue( 'some-step-slug' );
 
 			render( { step: regularStep } );
 
@@ -206,8 +207,8 @@ describe( 'StepRoute', () => {
 		} );
 
 		it( 'records step-complete when the step is unmounted and step-start was previously recorded', () => {
-			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'some-other-flow' );
-			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
+			( getSignupCompleteFlowName as Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as Mock ).mockReturnValue( 'some-other-step-slug' );
 			const { unmount } = render( { step: regularStep } );
 
 			expect( recordStepComplete ).not.toHaveBeenCalled();
@@ -224,9 +225,9 @@ describe( 'StepRoute', () => {
 		} );
 
 		it( 'records skip_step_render on start, complete and page view when the login is required and the user is not logged in', async () => {
-			( isUserLoggedIn as jest.Mock ).mockReturnValue( false );
-			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'some-other-flow' );
-			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
+			( isUserLoggedIn as Mock ).mockReturnValue( false );
+			( getSignupCompleteFlowName as Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as Mock ).mockReturnValue( 'some-other-step-slug' );
 
 			const { unmount } = render( { step: requiresLoginStep } );
 
@@ -260,8 +261,8 @@ describe( 'StepRoute', () => {
 		} );
 
 		it( 'records skip_step_render on start, complete and page view when renderStep returns null', async () => {
-			( getSignupCompleteFlowName as jest.Mock ).mockReturnValue( 'some-other-flow' );
-			( getSignupCompleteStepNameAndClear as jest.Mock ).mockReturnValue( 'some-other-step-slug' );
+			( getSignupCompleteFlowName as Mock ).mockReturnValue( 'some-other-flow' );
+			( getSignupCompleteStepNameAndClear as Mock ).mockReturnValue( 'some-other-step-slug' );
 			const { unmount } = render( { step: regularStep, renderStep: () => null } );
 
 			expect( recordStepStart ).toHaveBeenCalledWith( 'some-flow', 'some-step-slug', {

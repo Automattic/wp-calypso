@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
@@ -7,13 +7,14 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { vi } from 'vitest';
 import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import readerReducer from 'calypso/state/reader/reducer';
 import EngagementBar from '../engagement-bar';
 import type { ReactNode } from 'react';
 
-jest.mock( 'calypso/blocks/reader-post-actions', () => ( {
+vi.mock( 'calypso/blocks/reader-post-actions', () => ( {
 	__esModule: true,
 	default: ( { post }: { post: { title?: string } } ) => (
 		<div data-testid="reader-post-actions">{ post.title }</div>

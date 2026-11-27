@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
@@ -320,6 +317,22 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		await userEvent.click( continueButton() );
 
 		expect( lastDecision() ).toMatchObject( { route: 'ticket', row_id: 4, is_emergency: true } );
+	} );
+
+	/** Without the tags, Zendesk's High priority trigger misses a paying merchant's emergency. */
+	it( "tags a paying merchant's emergency chat", async () => {
+		renderStep( {
+			...request,
+			flags: { ...request.flags, isEmergency: true, emergencyType: 'checkout_broken' },
+		} );
+
+		await userEvent.selectOptions( question(), 'account' );
+		await userEvent.click( continueButton() );
+
+		expect( lastDecision() ).toMatchObject( { route: 'chat', row_id: 3 } );
+		expect( startChat ).toHaveBeenCalledWith( {
+			tags: [ 'woo_emergency', 'woo_emergency_checkout_broken' ],
+		} );
 	} );
 
 	it( "sends the bot's unknown charges to a ticket without asking anything", () => {

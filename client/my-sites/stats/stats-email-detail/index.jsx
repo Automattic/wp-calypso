@@ -232,7 +232,7 @@ class StatsEmailDetail extends Component {
 			showNoDataInfo,
 			showViewLink,
 			previewUrl,
-			siteSlug,
+			editUrl,
 			breadcrumbTrail,
 		} = this.props;
 		const { maxBars } = this.state;
@@ -428,9 +428,7 @@ class StatsEmailDetail extends Component {
 								externalUrl={ previewUrl }
 								onClose={ this.closePreview }
 							>
-								<CoreButton href={ `/post/${ siteSlug }/${ postId }` }>
-									{ translate( 'Edit' ) }
-								</CoreButton>
+								<CoreButton href={ editUrl }>{ translate( 'Edit' ) }</CoreButton>
 							</WebPreview>
 						</>
 					) : (

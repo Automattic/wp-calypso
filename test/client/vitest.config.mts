@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { transformWithOxc, type Plugin } from 'vite';
 import { calypsoTestConfig } from '../../build-tools/vite/test.mjs';
-import { vitestExclude, vitestInclude } from './vitest-directories.js';
 
 process.env.TZ = 'UTC';
 
@@ -46,8 +45,8 @@ const plugins: Plugin[] = [
 		},
 	},
 	{
-		// Jest picks up `client/__mocks__` for node modules by itself. The mock imports the real
-		// module, so it can't be an alias.
+		// Vitest doesn't pick up `client/__mocks__` for node modules by itself, as Jest did. The mock
+		// imports the real module, so it can't be an alias.
 		name: 'is-my-json-valid-mock',
 		enforce: 'pre',
 		resolveId( source, importer ) {
@@ -79,8 +78,8 @@ export default calypsoTestConfig( {
 		],
 	},
 	test: {
-		include: vitestInclude,
-		exclude: [ ...vitestExclude, 'dashboard/**', 'server/**', '**/node_modules/**' ],
+		include: [ '**/test/*.[jt]s?(x)' ],
+		exclude: [ 'dashboard/**', 'server/**', '**/node_modules/**' ],
 		passWithNoTests: true,
 		snapshotFormat: { escapeString: true, printBasicPrototype: true },
 		setupFiles: [ path.join( import.meta.dirname, 'vitest-setup.ts' ) ],

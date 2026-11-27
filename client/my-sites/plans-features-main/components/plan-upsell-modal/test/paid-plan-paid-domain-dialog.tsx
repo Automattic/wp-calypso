@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import { PaidPlanPaidDomainDialog } from '../paid-plan-paid-domain-dialog';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '../components/paid-domain-suggested-plan-section', () => () => (
-	<div data-testid="suggested-plan-section" />
-) );
+vi.mock( '../components/paid-domain-suggested-plan-section', () => ( {
+	default: () => <div data-testid="suggested-plan-section" />,
+} ) );
 
 describe( 'PaidPlanPaidDomainDialog', () => {
 	const defaultProps = {
@@ -21,12 +22,12 @@ describe( 'PaidPlanPaidDomainDialog', () => {
 			isLoading: false,
 			result: { domain_name: 'yourgroovysite.wordpress.com' },
 		},
-		onFreePlanSelected: jest.fn(),
-		onPlanSelected: jest.fn(),
+		onFreePlanSelected: vi.fn(),
+		onPlanSelected: vi.fn(),
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'shows the onboarding copy and drops the domain by default', async () => {

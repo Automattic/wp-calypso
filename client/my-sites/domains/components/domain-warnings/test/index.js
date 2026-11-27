@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import {
@@ -9,11 +9,12 @@ import {
 } from '@automattic/urls';
 import moment from 'moment';
 import { createRef } from 'react';
+import { vi } from 'vitest';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { DomainWarnings } from '../';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 
 describe( 'index', () => {
 	const translate = ( string ) => string;

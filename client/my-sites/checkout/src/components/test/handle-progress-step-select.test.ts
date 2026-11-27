@@ -1,15 +1,16 @@
+import { type Mock, vi } from 'vitest';
 import { handleProgressStepSelect } from '../handle-progress-step-select';
 
 const DOMAINS_URL = 'https://example.wordpress.com/setup/onboarding/domains';
 const PLANS_URL = 'https://example.wordpress.com/setup/onboarding/plans';
 
 describe( 'handleProgressStepSelect', () => {
-	let clickStepBack: jest.Mock;
-	let clickClose: jest.Mock;
+	let clickStepBack: Mock;
+	let clickClose: Mock;
 
 	beforeEach( () => {
-		clickStepBack = jest.fn();
-		clickClose = jest.fn();
+		clickStepBack = vi.fn();
+		clickClose = vi.fn();
 	} );
 
 	it( 'steps back to the domains URL when the domains step is clicked', () => {

@@ -1,35 +1,34 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, type MockInstance, vi } from 'vitest';
 import * as noticeActions from 'calypso/state/notices/actions';
 import * as readerAnalytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { MastodonAuthorProfileView } from '../author-profile-view';
 import type React from 'react';
 
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
 
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: React.ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: React.ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-jest.mock( '../author-profile-panel', () => ( {
+vi.mock( '../author-profile-panel', () => ( {
 	MastodonAuthorProfilePanel: () => <div>Mastodon author profile placeholder</div>,
 } ) );
 
-jest.mock( '@automattic/calypso-router', () => {
-	const replace = jest.fn();
-	const fn = jest.fn() as jest.Mock & { replace: jest.Mock };
+vi.mock( '@automattic/calypso-router', () => {
+	const replace = vi.fn();
+	const fn = vi.fn() as Mock & { replace: Mock };
 	fn.replace = replace;
 	return { __esModule: true, default: fn };
 } );
@@ -59,9 +58,9 @@ function mockConnections() {
 }
 
 describe( 'MastodonAuthorProfileView reauth gate', () => {
-	let assignMock: jest.Mock;
+	let assignMock: Mock;
 	let originalLocation: Location;
-	let trackSpy: jest.SpyInstance;
+	let trackSpy: MockInstance;
 
 	beforeAll( () => {
 		global.IntersectionObserver = class IntersectionObserver {
@@ -77,12 +76,12 @@ describe( 'MastodonAuthorProfileView reauth gate', () => {
 	} );
 
 	beforeEach( () => {
-		trackSpy = jest
+		trackSpy = vi
 			.spyOn( readerAnalytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 
 		originalLocation = window.location;
-		assignMock = jest.fn();
+		assignMock = vi.fn();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			writable: true,
@@ -98,7 +97,7 @@ describe( 'MastodonAuthorProfileView reauth gate', () => {
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			writable: true,
@@ -215,7 +214,7 @@ describe( 'MastodonAuthorProfileView reauth gate', () => {
 
 	it( 'surfaces an error notice when the authorize endpoint fails', async () => {
 		const user = userEvent.setup();
-		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );
+		const errorSpy = vi.spyOn( noticeActions, 'errorNotice' );
 
 		mockConnections();
 		nock( BASE ).get( `${ listUrl }/42/auth-status` ).reply( 200, { needs_reauth: true } );

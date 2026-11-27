@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import SiteMigrationUpgradePlan from '../';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
 // Mock MigrationPlansGrid with a simplified version that triggers onUpgradeClick
-jest.mock( 'calypso/blocks/importer/components/migration-plans-grid', () => {
-	const { PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } = jest.requireActual(
-		'@automattic/calypso-products'
-	);
+vi.mock( 'calypso/blocks/importer/components/migration-plans-grid', async () => {
+	const { PLAN_BUSINESS, PLAN_BUSINESS_MONTHLY } = await vi.importActual<
+		typeof import( '@automattic/calypso-products' )
+	>( '@automattic/calypso-products' );
 	return {
 		__esModule: true,
 		default: ( {
@@ -34,12 +35,12 @@ jest.mock( 'calypso/blocks/importer/components/migration-plans-grid', () => {
 	};
 } );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site' );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site' );
+vi.mock( 'calypso/landing/stepper/hooks/use-site-slug', () => ( {
 	useSiteSlug: () => 'site-url.wordpress.com',
 } ) );
 
-( useSite as jest.Mock ).mockReturnValue( {
+( useSite as Mock ).mockReturnValue( {
 	ID: 'site-id',
 	URL: 'https://site-url.wordpress.com',
 } );
@@ -52,7 +53,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 	};
 
 	it( 'selects the monthly plan', async () => {
-		const navigation = { submit: jest.fn() };
+		const navigation = { submit: vi.fn() };
 		render( { navigation } );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: /Get Monthly/ } ) );
@@ -63,7 +64,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 	} );
 
 	it( 'selects annual plan', async () => {
-		const navigation = { submit: jest.fn() };
+		const navigation = { submit: vi.fn() };
 		render( { navigation } );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: /Get Yearly/ } ) );
@@ -74,7 +75,7 @@ describe( 'SiteMigrationUpgradePlan', () => {
 	} );
 
 	it( 'does not render a free trial button', () => {
-		const navigation = { submit: jest.fn() };
+		const navigation = { submit: vi.fn() };
 		render( { navigation } );
 
 		expect( screen.queryByRole( 'button', { name: /Try a free 7-day trial/ } ) ).toBeNull();

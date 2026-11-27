@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { mastodonAuthStatusQueryOptions } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
@@ -7,33 +7,32 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as noticeActions from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { MastodonOauthCallbackView } from '../mastodon-oauth-callback-view';
 import type React from 'react';
 
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: React.ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: React.ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-jest.mock( '@automattic/calypso-router', () => {
-	const replace = jest.fn();
-	const fn = jest.fn() as jest.Mock & { replace: jest.Mock };
+vi.mock( '@automattic/calypso-router', () => {
+	const replace = vi.fn();
+	const fn = vi.fn() as Mock & { replace: Mock };
 	fn.replace = replace;
 	return { __esModule: true, default: fn };
 } );
 
-const mockRecordReaderTracksEvent: jest.Mock = jest.fn( () => ( {
+const mockRecordReaderTracksEvent: Mock = vi.fn( () => ( {
 	type: 'TEST_TRACKS_EVENT',
 } ) );
 
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: ( ...args: unknown[] ) => mockRecordReaderTracksEvent( ...args ),
 } ) );
 
@@ -77,8 +76,8 @@ function mockCompleteSuccess(
 
 describe( 'MastodonOauthCallbackView', () => {
 	beforeEach( () => {
-		( page as unknown as jest.Mock ).mockClear();
-		( page.replace as jest.Mock ).mockClear();
+		( page as unknown as Mock ).mockClear();
+		( page.replace as Mock ).mockClear();
 		mockRecordReaderTracksEvent.mockClear();
 		window.sessionStorage.clear();
 	} );
@@ -189,7 +188,7 @@ describe( 'MastodonOauthCallbackView', () => {
 			} );
 			mockCompleteSuccess();
 
-			const successSpy = jest.spyOn( noticeActions, 'successNotice' );
+			const successSpy = vi.spyOn( noticeActions, 'successNotice' );
 			const client = makeClient();
 			renderWithProvider( <MastodonOauthCallbackView query={ { state: 'abc', code: 'xyz' } } />, {
 				queryClient: client,
@@ -230,7 +229,7 @@ describe( 'MastodonOauthCallbackView', () => {
 			storeState( 'abc', 'mastodon.social' );
 			mockCompleteSuccess();
 
-			const successSpy = jest.spyOn( noticeActions, 'successNotice' );
+			const successSpy = vi.spyOn( noticeActions, 'successNotice' );
 			renderWithProvider( <MastodonOauthCallbackView query={ { state: 'abc', code: 'xyz' } } />, {
 				queryClient: makeClient(),
 			} );
@@ -254,7 +253,7 @@ describe( 'MastodonOauthCallbackView', () => {
 			// the reauth handoff).
 			mockCompleteSuccess();
 
-			const successSpy = jest.spyOn( noticeActions, 'successNotice' );
+			const successSpy = vi.spyOn( noticeActions, 'successNotice' );
 			renderWithProvider( <MastodonOauthCallbackView query={ { state: 'abc', code: 'xyz' } } />, {
 				queryClient: makeClient(),
 			} );

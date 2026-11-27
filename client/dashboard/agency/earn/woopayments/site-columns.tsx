@@ -8,7 +8,7 @@ import {
 	Popover,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Icon, info } from '@wordpress/icons';
+import { info } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { memo, useState, ComponentProps } from 'react';
 import { urlToSlug } from '../../../utils/url';
@@ -208,11 +208,13 @@ export const CommissionEligibilityColumn = ( {
 				<>
 					<Button
 						ref={ setInfoIconAnchor }
+						size="small"
+						icon={ info }
+						iconSize={ 16 }
+						__next40pxDefaultSize
 						aria-label={ __( 'More information about commission eligibility' ) }
 						onClick={ () => setShowPopover( ( visible ) => ! visible ) }
-					>
-						<Icon icon={ info } size={ 16 } />
-					</Button>
+					/>
 					{ showPopover && (
 						<Popover
 							anchor={ infoIconAnchor }

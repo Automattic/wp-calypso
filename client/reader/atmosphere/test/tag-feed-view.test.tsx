@@ -1,30 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { TagFeedView } from '../tag-feed-view';
 import type React from 'react';
 
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: React.ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: React.ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
 
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: () => ( { type: '@@TEST/NOOP' } ),
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { replace: jest.fn() },
+	default: { replace: vi.fn() },
 } ) );
 
 const BASE = 'https://public-api.wordpress.com';
@@ -33,8 +32,8 @@ const FEED_PATH = '/wpcom/v2/reader/atmosphere/connections/42/tag/rust/feed';
 
 afterEach( () => {
 	nock.cleanAll();
-	jest.restoreAllMocks();
-	( page.replace as jest.Mock ).mockClear();
+	vi.restoreAllMocks();
+	( page.replace as Mock ).mockClear();
 } );
 
 describe( 'TagFeedView', () => {

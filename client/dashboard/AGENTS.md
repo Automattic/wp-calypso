@@ -10,7 +10,7 @@ This is the new hosting dashboard for WordPress.com.
 ## Conventions
 
 - Use TanStack Query and TanStack Router.
-- Declare the search params a page keeps (filters, date ranges, page numbers) in the route's `validateSearch`, and change them with `router.navigate`. The router parses search values as JSON before `validateSearch` runs, so `?id=123` arrives as a number: validate a numeric param as a number there, not as a string. Read and remove one-shot params (flash ids, callbacks, notice flags) with `useConsumeSearchParams` from `app/hooks/use-consume-search-params`. Remove any other param in the one `router.navigate( { search, replace: true } )` its event makes: the app always registers a navigation blocker, which defers history writes, so a second navigation in the same task starts from the old search and puts the param back. Don't write the URL with `window.history`: a write without the entry's state drops the router's key and index, which `useCanGoBack` and scroll restoration read, and a router navigation in progress overwrites it. The exceptions are code that runs before the router is created and components that also render outside the dashboard router, like `sites/site-launch-modal/celebration-modal`. Some older code still writes `window.history` directly; don't copy it.
+- Declare the search params a page keeps (filters, date ranges, page numbers) in the route's `validateSearch`, and change them with `router.navigate`. The router parses search values as JSON before `validateSearch` runs, so `?id=123` arrives as a number: validate a numeric param as a number there, not as a string. Read and remove one-shot params (flash ids, callbacks, notice flags) with `useConsumeSearchParams` from `app/hooks/use-consume-search-params`. Remove any other param in the one `router.navigate( { search, replace: true } )` its event makes: the app always registers a navigation blocker, which defers history writes, so a second navigation in the same task starts from the old search and puts the param back. Don't write the URL with `window.history`: a write without the entry's state drops the router's key and index, which `useCanGoBack` and scroll restoration read, and a router navigation in progress overwrites it. The exceptions are code that runs before the router is created and components that also render outside the dashboard router, like `sites/site-launch/components/site-launch-celebration-modal`. Some older code still writes `window.history` directly; don't copy it.
 - Don't use Redux and `calypso/state`.
 - **Never branch on `appConfig.name`** (e.g. `if (appConfig.name === 'dotcom')`). The dashboard has many variants; hardcoding behavior per variant doesn't scale. Some alternatives:
   1. If the behavior depends on the **site** (e.g. available features, capabilities), use `siteTypeSupportsFeature()` or extend `SiteTypeFeatureSupports` in `utils/site-type-feature-support.ts`.
@@ -22,16 +22,39 @@ This is the new hosting dashboard for WordPress.com.
 Use `withSnackbar()` from `app/snackbars/with-snackbar` to attach a snackbar to a mutation. Never write `meta: { snackbar }` by hand:
 
 ```ts
-useMutation( withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } ) );
+useMutation( withSnackbar( sitePHPVersionMutation( siteId ), { success: __( 'Saved.' ) } ) );
 ```
 
 Every `@automattic/api-queries` mutation carries a `meta.statId` naming its failure stat. Spreading a factory and then setting `meta` replaces the whole object rather than merging, so the `statId` is lost. `withSnackbar()` merges instead. A `no-restricted-syntax` rule in `eslint.config.mjs` enforces this.
+
+Show a mutation's snackbars through `withSnackbar()`, not with `createSuccessNotice()` or `createErrorNotice()` in `onSuccess` and `onError`. The app shows them even if the component unmounts before the mutation finishes, when callbacks passed to `mutate()` no longer run.
+
+When a success message depends on the result, pass a function. It gets the response and the variables passed to `mutate()`, and returns the text, or `undefined` for no snackbar:
+
+```ts
+useMutation(
+	withSnackbar( sitePHPVersionMutation( siteId ), {
+		success: ( _data, version ) =>
+			/* translators: %s: PHP version */
+			sprintf( __( 'PHP version changed to %s.' ), version ),
+		error: { source: 'server' },
+	} )
+);
+```
+
+For errors, in order of preference:
+
+1. `{ source: 'server' }`, the default: the server's message, or a generic one when it sends none.
+2. A string, when the server's text isn't fit for users.
+3. A function `( error, variables ) => string | undefined`, only when the text depends on the error's code or the variables.
+
+Write a notice by hand only when `withSnackbar()` can't express it, such as one with `actions` or a custom `id`.
 
 For component-specific handling, pass callbacks to `mutate()`:
 
 ```ts
 const { mutate } = useMutation(
-	withSnackbar( sitePhpVersionMutation( siteId ), { success: __( 'Saved.' ) } )
+	withSnackbar( sitePHPVersionMutation( siteId ), { success: __( 'Saved.' ) } )
 );
 mutate( version, {
 	onSuccess: () => {
@@ -64,7 +87,7 @@ Translators wrap translated text in `<font>` elements, reparenting nodes React t
 
 ### Dark mode
 
-- Shared dark-mode tokens and component-wide overrides for components used across multiple Calypso surfaces live in `client/lib/color-scheme/dark-theme.scss`. Add dashboard-only exceptions to `client/dashboard/app/_dark-theme.scss` using the existing `dashboard-dark-theme-*` mixins (or add a new one and `@include` it from `dashboard-dark-theme`) instead of writing ad-hoc `:root[data-theme='dark']` blocks elsewhere.
-- When adding a component that is not already used in a dark-mode-supported surface, verify it in dark mode and add or reuse overrides where needed. If the component is already covered by the existing dark-mode baseline, assume the shared styling holds unless the new usage introduces new variants, states, wrappers, or local CSS.
-- Prefer overriding the existing CSS custom properties (`--dashboard-*`, `--wp-components-*`, `--jp-*`) over hardcoding hex values in component styles.
-- For styles authored inside a CSS Module (`*.module.scss`), `:root`-based overrides cannot reach the scope-hashed class. Use the shared `when-dark-theme` mixin from `calypso/assets/stylesheets/shared/mixins/dark-theme` (defined in `client/assets/stylesheets/shared/mixins/_dark-theme.scss`).
+- Dark mode comes from the WPDS `ThemeProvider` (`app/theme-provider.tsx`), which generates every `--wpds-*` token for the user's color scheme. Style with `--wpds-*` tokens (or the `--dashboard-*` aliases of them) and the component works in both modes with no dark-specific CSS.
+- Don't add `:root[data-theme='dark']` blocks, `when-dark-theme` blocks or hex colors. If a component you don't own hardcodes a light color, map it to tokens in `app/wp-components-overrides.scss` or `app/_dark-theme.scss` with a one-line comment naming the limitation and what removes it.
+- Don't set `--wpds-*` properties; Stylelint rejects it. Pass a token to the component's color prop instead (for example `Progress.Indicator color`).
+- `client/lib/color-scheme/dark-theme.scss` is the legacy dark theme for Reader and /themes, which don't have the provider yet. Don't extend it for the Dashboard.

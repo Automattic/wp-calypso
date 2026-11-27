@@ -135,7 +135,7 @@ interface GetSiteNameArgs {
  * Given a feed, site, or post: output the best title to use for the owning site.
  */
 export const getSiteName = ( { feed, site, post }: GetSiteNameArgs = {} ): string | null => {
-	let siteName: string | null | undefined = null;
+	let siteName: string | null | undefined;
 	const isDefaultSiteTitle =
 		( site && site.name === translate( 'Site Title' ) ) ||
 		( feed && feed.name === translate( 'Site Title' ) );

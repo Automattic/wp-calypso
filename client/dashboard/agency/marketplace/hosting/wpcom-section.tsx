@@ -1,4 +1,4 @@
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
 	Button,
 	__experimentalHeading as Heading,
@@ -495,12 +495,25 @@ export default function WpcomSection( {
 								{ pricing.discountPercentage > 0 && ownedSites > 0 && (
 									<Text variant="muted">
 										{ sprintf(
-											/* translators: %1$d is the discount percentage, %2$d the total number of sites, %3$d the sites already owned. */
-											__( '%1$d%% off at %2$d total sites. Your %3$d existing sites count.' ),
+											/* translators: %1$d is the discount percentage, %2$s the total number of sites. */
+											_n(
+												'%1$d%% off at %2$s total site.',
+												'%1$d%% off at %2$s total sites.',
+												ownedSites + quantity
+											),
 											pricing.discountPercentage,
-											ownedSites + quantity,
-											ownedSites
-										) }
+											formatNumber( ownedSites + quantity )
+										) +
+											' ' +
+											sprintf(
+												/* translators: %s is the number of sites the agency already owns. */
+												_n(
+													'Your %s existing site counts.',
+													'Your %s existing sites count.',
+													ownedSites
+												),
+												formatNumber( ownedSites )
+											) }
 									</Text>
 								) }
 							</VStack>

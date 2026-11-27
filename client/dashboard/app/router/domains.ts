@@ -131,7 +131,9 @@ export const domainRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'domains/$domainName',
 	errorComponent: lazyRouteComponent( () => import( '../../domains/domain/error' ) ),
-	loader: async ( { params: { domainName }, location } ) => {
+	// The checks run in `beforeLoad` because it runs on every navigation. The loader of a route
+	// that stays matched doesn't run again when moving between its sub-routes.
+	beforeLoad: async ( { params: { domainName }, location, cause } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 		const isNameServersSubRoute = location.pathname.includes( '/name-servers' );
 		const isTransferSubRoute = location.pathname.includes( '/transfer' );
@@ -152,14 +154,16 @@ export const domainRoute = createRoute( {
 			try {
 				checkDomainTransferPermissions( domain );
 			} catch ( error ) {
-				dispatch( noticesStore ).createWarningNotice(
-					// Snackbars render plain text, so drop the {{strong}} interpolation markup.
-					error instanceof DomainPermissionError
-						? error.message.replace( /{{\/?strong}}/g, '' )
-						: __( 'You do not have permission to transfer this domain.' ),
-					// A fixed id replaces the previous notice instead of stacking one per click.
-					{ type: 'snackbar', id: 'domain-transfer-permission' }
-				);
+				if ( cause !== 'preload' ) {
+					dispatch( noticesStore ).createWarningNotice(
+						// Snackbars render plain text, so drop the {{strong}} interpolation markup.
+						error instanceof DomainPermissionError
+							? error.message.replace( /{{\/?strong}}/g, '' )
+							: __( 'You do not have permission to transfer this domain.' ),
+						// A fixed id replaces the previous notice instead of stacking one per click.
+						{ type: 'snackbar', id: 'domain-transfer-permission' }
+					);
+				}
 				throw dashboardRedirect( {
 					to: '/domains/$domainName',
 					params: { domainName },
@@ -183,9 +187,9 @@ export const domainRoute = createRoute( {
 		if ( isForwardingSubRoute || isSecuritySubRoute || isGlueRecordsSubRoute ) {
 			checkDomainNotPendingRegistration( domain );
 		}
-
-		return domain;
 	},
+	loader: ( { params: { domainName } } ) =>
+		queryClient.ensureQueryData( domainQuery( domainName ) ),
 	component: Outlet,
 } );
 

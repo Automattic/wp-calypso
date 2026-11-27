@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
+import NotificationApp from '../../app';
 import { getClient, initClient, showNotes } from '../../app/client';
 import { listNotes } from '../../panel/rest-client/wpcom';
 import { store, init as initState } from '../../panel/state';
@@ -24,11 +25,14 @@ vi.mock( '../../panel/rest-client', () => ( {
 		};
 	} ),
 } ) );
+const { post } = vi.hoisted( () => ( { post: vi.fn( async () => ( {} ) ) } ) );
 vi.mock( '../../panel/rest-client/wpcom', () => ( {
 	init: vi.fn(),
+	fetchSuggestions: vi.fn(),
 	listNotes: vi.fn( async () => ( { notes: [] } ) ),
 	markReadStatus: vi.fn(),
 	markPostAsSeen: vi.fn(),
+	wpcom: () => ( { req: { post } } ),
 } ) );
 
 const makeNote = ( id: number, label: string ) => ( {
@@ -42,7 +46,26 @@ const makeNote = ( id: number, label: string ) => ( {
 	body: [],
 } );
 
-const loadNotes = ( ...notes: ReturnType< typeof makeNote >[] ) => {
+const makeComment = ( id: number, label: string ) => {
+	const ids = { site: 10, post: 30, comment: 20 };
+	return {
+		...makeNote( id, label ),
+		subject: [ { text: label, ranges: [ { type: 'b', indices: [ 0, 0 ] } ], media: [] } ],
+		body: [
+			{
+				type: 'comment',
+				text: 'A short reply',
+				actions: { 'like-comment': false, 'replyto-comment': true },
+				meta: { ids },
+			},
+		],
+		meta: { ids },
+	};
+};
+
+const loadNotes = (
+	...notes: Array< ReturnType< typeof makeNote > | ReturnType< typeof makeComment > >
+) => {
 	store.dispatch( actions.notes.addNotes( notes ) );
 	store.dispatch( actions.ui.loadedNotes() );
 };
@@ -181,7 +204,7 @@ describe( 'NotificationsInbox', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	it( 'keeps one settings listener and calls the newest handler when the host passes a new one', async () => {
+	it( 'calls the newest settings handler when the host passes a new one', async () => {
 		const user = userEvent.setup();
 		const firstHandler = vi.fn();
 		const newestHandler = vi.fn();
@@ -197,27 +220,12 @@ describe( 'NotificationsInbox', () => {
 		const { rerender } = render(
 			<NotificationsInbox { ...inboxProps } onViewSettings={ firstHandler } />
 		);
-		const dispatch = vi.spyOn( store, 'dispatch' );
 
 		rerender( <NotificationsInbox { ...inboxProps } onViewSettings={ newestHandler } /> );
-
-		expect( dispatch ).not.toHaveBeenCalled();
-		dispatch.mockRestore();
-
 		await user.click( await screen.findByRole( 'button', { name: 'Settings' } ) );
 
 		expect( newestHandler ).toHaveBeenCalledTimes( 1 );
 		expect( firstHandler ).not.toHaveBeenCalled();
-	} );
-
-	it( 'stops answering the settings button once it is unmounted', () => {
-		const onViewSettings = vi.fn();
-		const { unmount } = renderInbox( undefined, { onViewSettings } );
-
-		unmount();
-		store.dispatch( actions.ui.viewSettings() );
-
-		expect( onViewSettings ).not.toHaveBeenCalled();
 	} );
 
 	it( 'opens on the tab the host names', async () => {
@@ -380,12 +388,126 @@ describe( 'NotificationsInbox', () => {
 		);
 	} );
 
-	it( 'turns off the panel keyboard shortcuts', () => {
-		store.dispatch( actions.ui.enableKeyboardShortcuts() );
+	describe( 'keyboard shortcuts', () => {
+		beforeEach( () => {
+			post.mockClear();
+		} );
 
-		renderInbox();
+		it( "leaves the panel's shortcut switch alone", () => {
+			// Off, as while the panel's reply box has focus.
+			store.dispatch( actions.ui.disableKeyboardShortcuts() );
 
-		expect( getKeyboardShortcutsEnabled( store.getState() ) ).toBe( false );
+			renderInbox();
+
+			expect( getKeyboardShortcutsEnabled( store.getState() ) ).toBe( false );
+
+			// On, as when the panel opens.
+			act( () => {
+				store.dispatch( actions.ui.enableKeyboardShortcuts() );
+			} );
+
+			expect( getKeyboardShortcutsEnabled( store.getState() ) ).toBe( true );
+		} );
+
+		it( 'likes the open comment with l', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+
+			await user.keyboard( 'l' );
+
+			expect( post ).toHaveBeenCalledWith( '/sites/10/comments/20/likes/new' );
+		} );
+
+		it( 'likes the open comment with l pressed on a control in the page', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+			act( () =>
+				within( screen.getByRole( 'region', { name: 'Open note' } ) )
+					.getByRole( 'button', { name: /^Like/ } )
+					.focus()
+			);
+
+			await user.keyboard( 'l' );
+
+			expect( post ).toHaveBeenCalledTimes( 1 );
+			expect( post ).toHaveBeenCalledWith( '/sites/10/comments/20/likes/new' );
+		} );
+
+		it( 'leaves l typed into a field elsewhere on the page alone', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+			render( <input aria-label="Search" /> );
+
+			await user.type( screen.getByRole( 'textbox', { name: 'Search' } ), 'l' );
+
+			expect( post ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves l typed into the reply box alone, whatever the shared switch says', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+			const reply = within( screen.getByRole( 'region', { name: 'Open note' } ) ).getByRole(
+				'textbox'
+			);
+			await user.click( reply );
+			// On, as when React misses the reply box getting the focus back.
+			act( () => {
+				store.dispatch( actions.ui.enableKeyboardShortcuts() );
+			} );
+
+			await user.keyboard( 'l' );
+
+			expect( reply ).toHaveValue( 'l' );
+			expect( post ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves the keys to a panel opened over the page, until it closes', async () => {
+			const user = userEvent.setup();
+			loadNotes( makeComment( 801, 'First comment' ) );
+			renderInbox( '801' );
+			const panel = render( <NotificationApp wpcom={ {} } /> );
+
+			await user.keyboard( 'l' );
+			act( () =>
+				within( screen.getByRole( 'region', { name: 'Open note' } ) )
+					.getByRole( 'button', { name: /^Like/ } )
+					.focus()
+			);
+			await user.keyboard( 'l' );
+
+			expect( post ).not.toHaveBeenCalled();
+
+			panel.unmount();
+			await user.keyboard( 'l' );
+
+			expect( post ).toHaveBeenCalledWith( '/sites/10/comments/20/likes/new' );
+		} );
+
+		it( "leaves moving through the notes and tabs to the page's own controls", async () => {
+			const user = userEvent.setup();
+			const setSelectedNoteId = vi.fn();
+			const setFilterName = vi.fn();
+			// On, as after the panel was opened.
+			store.dispatch( actions.ui.enableKeyboardShortcuts() );
+			loadNotes( makeNote( 801, 'First comment' ), makeNote( 802, 'Second comment' ) );
+			const { unmount } = renderInbox( '802', { setSelectedNoteId } );
+
+			await user.keyboard( 'j{ArrowDown}{ArrowRight}' );
+
+			expect( setSelectedNoteId ).not.toHaveBeenCalled();
+			expect( document.body ).toHaveFocus();
+			unmount();
+
+			renderInbox( undefined, { setFilterName } );
+
+			await user.keyboard( 'u' );
+
+			expect( setFilterName ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'opens a link from a note in a new tab', () => {
@@ -395,6 +517,48 @@ describe( 'NotificationsInbox', () => {
 		store.dispatch( { type: 'OPEN_LINK', href: 'https://example.com/post' } );
 
 		expect( open ).toHaveBeenCalledWith( 'https://example.com/post', '_blank', 'noopener' );
+		open.mockRestore();
+	} );
+
+	it( 'opens its own settings from its button, and leaves the settings of a panel opened over it to that panel', async () => {
+		const user = userEvent.setup();
+		const onViewSettings = vi.fn();
+		const openFromPanel = vi.fn();
+		renderInbox( undefined, { onViewSettings } );
+		render(
+			<NotificationApp wpcom={ {} } actionHandlers={ { VIEW_SETTINGS: [ openFromPanel ] } } />
+		);
+
+		store.dispatch( actions.ui.viewSettings() );
+
+		expect( openFromPanel ).toHaveBeenCalledTimes( 1 );
+		expect( onViewSettings ).not.toHaveBeenCalled();
+
+		const list = within( screen.getByRole( 'region', { name: 'List' } ) );
+		await user.click( await list.findByRole( 'button', { name: 'Settings' } ) );
+
+		expect( onViewSettings ).toHaveBeenCalledTimes( 1 );
+		expect( openFromPanel ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'leaves links to a panel opened over the page, which opens them itself', () => {
+		const open = vi.spyOn( window, 'open' ).mockReturnValue( null );
+		const openFromPanel = ( _store: unknown, { href }: { href: string } ) =>
+			window.open( href, '_blank', 'noopener' );
+		renderInbox();
+		const panel = render(
+			<NotificationApp wpcom={ {} } actionHandlers={ { EDIT_COMMENT: [ openFromPanel ] } } />
+		);
+
+		store.dispatch( { type: 'EDIT_COMMENT', href: 'https://example.com/edit' } );
+
+		expect( open ).toHaveBeenCalledTimes( 1 );
+		expect( open ).toHaveBeenCalledWith( 'https://example.com/edit', '_blank', 'noopener' );
+
+		panel.unmount();
+		store.dispatch( { type: 'EDIT_COMMENT', href: 'https://example.com/edit' } );
+
+		expect( open ).toHaveBeenCalledTimes( 2 );
 		open.mockRestore();
 	} );
 } );

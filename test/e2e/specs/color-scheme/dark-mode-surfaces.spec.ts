@@ -108,7 +108,7 @@ async function forceDarkModePreference( page: Page ) {
 			return;
 		}
 
-		let preferencesResponse: Record< string, unknown > = {};
+		let preferencesResponse: Record< string, unknown >;
 		try {
 			const response = await route.fetch();
 			preferencesResponse = await response.json();

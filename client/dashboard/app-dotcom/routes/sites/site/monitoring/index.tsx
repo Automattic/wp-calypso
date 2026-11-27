@@ -1,0 +1,158 @@
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
+import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
+import { useIntlLocale } from '../../../../../app/locale';
+import { PerformanceTrackerStop } from '../../../../../app/performance-tracking';
+import { siteRoute } from '../../../../../app/router/sites';
+import { PageHeader } from '../../../../../components/page-header';
+import PageLayout from '../../../../../components/page-layout';
+import { SitesNoticeArbiter } from '../../../../../sites/components/notice-arbiter';
+import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
+import { getMonitoringCalloutProps } from '../../../../../sites/monitoring/components/monitoring-callout';
+import MonitoringHttpResponsesCard from '../../../../../sites/monitoring/components/monitoring-http-responses-card';
+import {
+	useSuccessHttpCodeSeries,
+	useErrorHttpCodeSeries,
+} from '../../../../../sites/monitoring/components/monitoring-http-responses-card/http-codes';
+import MonitoringPerformanceCard from '../../../../../sites/monitoring/components/monitoring-performance-card';
+import MonitoringRequestMethodsCard from '../../../../../sites/monitoring/components/monitoring-request-methods-card';
+import MonitoringResponseTypesCard from '../../../../../sites/monitoring/components/monitoring-response-types-card';
+import type { HTTPCodeSerie } from '../../../../../sites/monitoring/components/monitoring-http-responses-card/http-codes';
+import type { Site } from '@automattic/api-core';
+
+const hoursMap: Record< string, number > = {
+	'6-hours': 6,
+	'24-hours': 24,
+	'3-days': 72,
+	'7-days': 168,
+};
+
+const getDateRange = ( range: string, locale: string ) => {
+	const now = new Date();
+
+	const hours = hoursMap[ range ] || 24;
+	const start = new Date( now.getTime() - hours * 60 * 60 * 1000 );
+
+	const formatDate = ( date: Date ) => {
+		return date.toLocaleDateString( locale, {
+			day: 'numeric',
+			month: 'long',
+			year: 'numeric',
+		} );
+	};
+
+	return `${ formatDate( start ) }–${ formatDate( now ) }`;
+};
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+function SiteMonitoringBody( {
+	site,
+	timeRange,
+	locale,
+}: {
+	site: Site;
+	timeRange: string;
+	locale: string;
+} ) {
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
+	const successHttpCodeSeries: HTTPCodeSerie[] = useSuccessHttpCodeSeries();
+	const errorHttpCodeSeries: HTTPCodeSerie[] = useErrorHttpCodeSeries();
+
+	return (
+		<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
+			{ /* Similar to the site overview page, we mark the page as loaded one the layout is looking correct */ }
+			<PerformanceTrackerStop />
+
+			<MonitoringPerformanceCard site={ site } timeRange={ hoursMap[ timeRange ] } />
+
+			<HStack wrap alignment="stretch" spacing={ isSmallViewport ? 4 : 8 }>
+				<MonitoringRequestMethodsCard site={ site } timeRange={ hoursMap[ timeRange ] } />
+				<MonitoringResponseTypesCard site={ site } timeRange={ hoursMap[ timeRange ] } />
+			</HStack>
+
+			<MonitoringHttpResponsesCard
+				site={ site }
+				timeRange={ hoursMap[ timeRange ] }
+				httpCodeSeries={ successHttpCodeSeries }
+				cardLabel={ __( 'Successful HTTP responses' ) }
+				cardDescription={ __( 'Requests per minute completed without errors by the server.' ) }
+			/>
+
+			<MonitoringHttpResponsesCard
+				site={ site }
+				timeRange={ hoursMap[ timeRange ] }
+				httpCodeSeries={ errorHttpCodeSeries }
+				cardLabel={ __( 'Unsuccessful HTTP responses' ) }
+				cardDescription={ __(
+					'Requests per minute that encountered errors or issues during processing.'
+				) }
+			/>
+		</VStack>
+	);
+}
+
+export function SiteMonitoringContent( { siteSlug }: { siteSlug: string } ) {
+	const { data: site } = useQuery( siteBySlugQuery( siteSlug ) );
+	const locale = useIntlLocale();
+
+	const [ timeRange, setTimeRange ] = useState( '24-hours' );
+
+	if ( ! site ) {
+		return;
+	}
+
+	const handleTimeRangeChange = ( value: string | number | undefined ) => {
+		if ( ! value ) {
+			return;
+		}
+
+		setTimeRange( value.toString() );
+	};
+
+	return (
+		<HostingFeatureGatedWithCallout site={ site } fullPage { ...getMonitoringCalloutProps() }>
+			<PageLayout
+				header={
+					<PageHeader
+						description={ getDateRange( timeRange, locale ) }
+						actions={
+							<ToggleGroupControl
+								value={ timeRange }
+								isBlock
+								__nextHasNoMarginBottom
+								__next40pxDefaultSize
+								onChange={ handleTimeRangeChange }
+								label={ __( 'Time period' ) }
+								hideLabelFromVision
+								style={ { textWrap: 'nowrap' } }
+							>
+								<ToggleGroupControlOption value="6-hours" label={ __( '6 hours' ) } />
+								<ToggleGroupControlOption value="24-hours" label={ __( '24 hours' ) } />
+								<ToggleGroupControlOption value="3-days" label={ __( '3 days' ) } />
+								<ToggleGroupControlOption value="7-days" label={ __( '7 days' ) } />
+							</ToggleGroupControl>
+						}
+					/>
+				}
+				notices={ <SitesNoticeArbiter /> }
+			>
+				<SiteMonitoringBody timeRange={ timeRange } site={ site } locale={ locale } />
+			</PageLayout>
+		</HostingFeatureGatedWithCallout>
+	);
+}
+
+function SiteMonitoring() {
+	const { siteSlug } = siteRoute.useParams();
+	return <SiteMonitoringContent siteSlug={ siteSlug } />;
+}
+
+export default SiteMonitoring;

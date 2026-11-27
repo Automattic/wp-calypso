@@ -67,7 +67,7 @@ export function AtomicRevertStep( props: AtomicRevertStepProps ) {
 	);
 
 	let subHeaderText: string;
-	let highlightWords: string[] = [];
+	let highlightWords: string[];
 	if ( isPlanPurchase ) {
 		if ( isRemovePlan ) {
 			subHeaderText = sprintf(

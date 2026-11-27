@@ -1,13 +1,4 @@
-/** @jest-environment jsdom */
-jest.mock( 'calypso/blocks/upsell-nudge', () =>
-	jest.fn( () => <div data-testid="UpsellNudge" /> )
-);
-jest.mock( 'calypso/components/data/query-site-settings', () => () => 'QuerySiteSettings' );
-jest.mock( 'calypso/components/data/query-jetpack-modules', () => () => 'QueryJetpackModules' );
-jest.mock( 'calypso/components/seo/meta-title-editor', () => () => (
-	<div data-testid="MetaTitleEditor" />
-) );
-
+/** @vitest-environment jsdom */
 import {
 	PLAN_FREE,
 	PLAN_BLOGGER,
@@ -21,8 +12,22 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { SiteSettingsFormSEO as SeoForm } from '../form';
+
+vi.mock( 'calypso/blocks/upsell-nudge', () => ( {
+	default: vi.fn( () => <div data-testid="UpsellNudge" /> ),
+} ) );
+vi.mock( 'calypso/components/data/query-site-settings', () => ( {
+	default: () => 'QuerySiteSettings',
+} ) );
+vi.mock( 'calypso/components/data/query-jetpack-modules', () => ( {
+	default: () => 'QueryJetpackModules',
+} ) );
+vi.mock( 'calypso/components/seo/meta-title-editor', () => ( {
+	default: () => <div data-testid="MetaTitleEditor" />,
+} ) );
 
 const props = {
 	refreshSiteData: ( x ) => x,

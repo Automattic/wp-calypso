@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import countryStatesReducer from 'calypso/state/country-states/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StateSelect from '../state-select';
@@ -25,7 +26,7 @@ describe( '<StateSelect />', () => {
 		label: 'State',
 		name: 'state',
 		countryCode: 'IN',
-		onChange: jest.fn(),
+		onChange: vi.fn(),
 	};
 
 	test( 'shows the placeholder rather than the first state when there is no value', () => {

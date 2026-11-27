@@ -45,7 +45,7 @@ export default function WPCOMPlanSlider( { quantity, ownedPlans, onChange, plan 
 		: undefined;
 
 	const options = useMemo( () => {
-		let sliderOptions = [];
+		let sliderOptions;
 
 		if ( isTermPricingEnabled && termPricing && plan ) {
 			// Use tiered prices when term pricing is enabled

@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - the flow test helpers are untyped
 import config from '@automattic/calypso-config';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import StepRoute from 'calypso/landing/stepper/declarative-flow/internals/components/step-route';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
@@ -24,12 +25,12 @@ import { renderHookWithProvider, renderWithProvider } from 'calypso/test-helpers
 import staticSiteImportFlow from '../static-site-import-flow';
 const originalLocation = window.location;
 
-jest.mock( 'calypso/landing/stepper/utils/checkout' );
-jest.mock( '@automattic/data-stores/src/user/selectors' );
-jest.mock( 'calypso/state/current-user/selectors' );
-jest.mock( 'calypso/landing/stepper/hooks/use-site' );
-jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
-jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
+vi.mock( 'calypso/landing/stepper/utils/checkout' );
+vi.mock( '@automattic/data-stores/src/user/selectors' );
+vi.mock( 'calypso/state/current-user/selectors' );
+vi.mock( 'calypso/landing/stepper/hooks/use-site' );
+vi.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
+vi.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( staticSiteImportFlow, options, 'forward' );
@@ -49,14 +50,14 @@ const parseUrl = ( url: string ) => {
 
 const lastExit = () => {
 	const calls = [
-		...( window.location.assign as jest.Mock ).mock.calls,
-		...( window.location.replace as jest.Mock ).mock.calls,
+		...( window.location.assign as Mock ).mock.calls,
+		...( window.location.replace as Mock ).mock.calls,
 	];
 	return parseUrl( String( calls.at( -1 )?.[ 0 ] ?? '' ) );
 };
 
 const renderPlansNavigation = ( url: string ) => {
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 	renderHookWithProvider(
 		() => staticSiteImportFlow.useStepNavigation( STEPS.UNIFIED_PLANS.slug, navigate ),
 		{
@@ -71,7 +72,7 @@ const renderPlansNavigation = ( url: string ) => {
 describe( 'Static site import flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn(), replace: vi.fn() },
 		} );
 	} );
 
@@ -85,12 +86,12 @@ describe( 'Static site import flow', () => {
 		config.enable( 'migration/non-wordpress-source' );
 		window.location.pathname = plansPath;
 		window.location.search = '';
-		jest.clearAllMocks();
-		jest.mocked( isCurrentUserLoggedIn ).mockReturnValue( true );
-		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
-		jest.mocked( useSite ).mockReturnValue( undefined );
-		jest.mocked( useFlowLocale ).mockReturnValue( 'en' );
-		jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: true, isFetching: false } );
+		vi.clearAllMocks();
+		vi.mocked( isCurrentUserLoggedIn ).mockReturnValue( true );
+		vi.mocked( isUserLoggedIn ).mockReturnValue( true );
+		vi.mocked( useSite ).mockReturnValue( undefined );
+		vi.mocked( useFlowLocale ).mockReturnValue( 'en' );
+		vi.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: true, isFetching: false } );
 	} );
 
 	describe( 'initialize', () => {
@@ -156,14 +157,14 @@ describe( 'Static site import flow', () => {
 
 	describe( 'authentication', () => {
 		beforeEach( () => {
-			jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+			vi.mocked( isUserLoggedIn ).mockReturnValue( false );
 			window.location.search = `?${ new URLSearchParams( SOURCE ) }`;
 		} );
 
 		const renderStep = ( slug: string ) => {
 			const steps = staticSiteImportFlow.initialize();
 			const step = steps && steps.find( ( step ) => step.slug === slug );
-			const navigate = jest.fn();
+			const navigate = vi.fn();
 			renderWithProvider(
 				<MemoryRouter initialEntries={ [ `/static-site-import/${ slug }` ] }>
 					<StepRoute
@@ -202,7 +203,7 @@ describe( 'Static site import flow', () => {
 
 	describe( 'destination checks', () => {
 		it( 'sends users who cannot manage the destination site to the start page', () => {
-			jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
+			vi.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
 
 			renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
 				currentStep: STEPS.STATIC_SITE_IMPORT_READING.slug,
@@ -216,7 +217,7 @@ describe( 'Static site import flow', () => {
 			[ `${ plansPath }?${ new URLSearchParams( SOURCE ) }`, AssertConditionState.SUCCESS ],
 			[ `${ readingPath }?siteId=42`, AssertConditionState.CHECKING ],
 		] )( 'waits for the destination site only when the URL names one (%s)', ( url, state ) => {
-			jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: null, isFetching: true } );
+			vi.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: null, isFetching: true } );
 
 			const result = renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
 				currentStep: STEPS.UNIFIED_PLANS.slug,
@@ -235,16 +236,16 @@ describe( 'Static site import flow', () => {
 		] )(
 			'uses unified checkout for a new destination, returning to reading paid or not ($locale)',
 			( { locale, suffix } ) => {
-				jest.mocked( useFlowLocale ).mockReturnValue( locale );
-				jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+				vi.mocked( useFlowLocale ).mockReturnValue( locale );
+				vi.mocked( isUserLoggedIn ).mockReturnValue( false );
 				// A previous signup must not turn this into an upgrade of another site.
-				jest.mocked( useSite ).mockReturnValue( PAID_SITE );
+				vi.mocked( useSite ).mockReturnValue( PAID_SITE );
 				const query = { ...SOURCE, coupon: 'TEST' };
 				runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: PLAN, query } );
 
 				expect( goToCheckout ).not.toHaveBeenCalled();
 				const { destination, cancelDestination, ...options } =
-					jest.mocked( goToUnifiedCheckout ).mock.calls[ 0 ][ 0 ];
+					vi.mocked( goToUnifiedCheckout ).mock.calls[ 0 ][ 0 ];
 				expect( options ).toEqual( {
 					flowName: 'static-site-import',
 					plan: 'business-bundle',
@@ -269,7 +270,7 @@ describe( 'Static site import flow', () => {
 
 			expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
 			const { destination, cancelDestination, siteSlug, plan } =
-				jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
+				vi.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
 			expect( siteSlug ).toBe( SITE.siteSlug );
 			expect( plan ).toBe( 'business-bundle' );
 			expect( parseUrl( destination ) ).toEqual( {
@@ -283,7 +284,7 @@ describe( 'Static site import flow', () => {
 		} );
 
 		it( 'skips plans and checkout for an existing paid destination', () => {
-			jest.mocked( useSite ).mockReturnValue( PAID_SITE );
+			vi.mocked( useSite ).mockReturnValue( PAID_SITE );
 
 			const navigate = renderPlansNavigation( `${ plansPath }?siteId=42` );
 
@@ -307,7 +308,7 @@ describe( 'Static site import flow', () => {
 
 	describe( 'reading', () => {
 		it( 'sends the started session to the paid destination’s overview', () => {
-			jest.mocked( useSite ).mockReturnValue( PAID_SITE );
+			vi.mocked( useSite ).mockReturnValue( PAID_SITE );
 
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
@@ -403,7 +404,7 @@ describe( 'Static site import flow', () => {
 	] )(
 		'goes back from $step.slug to source identification with the destination retained ($locale)',
 		( { step, locale, query } ) => {
-			jest.mocked( useFlowLocale ).mockReturnValue( locale );
+			vi.mocked( useFlowLocale ).mockReturnValue( locale );
 			runFlowNavigation( staticSiteImportFlow, { from: step, query }, 'back' );
 
 			expect( lastExit() ).toEqual( {

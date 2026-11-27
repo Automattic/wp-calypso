@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { ComposerTextarea } from '../composer-textarea';
 
 describe( '<ComposerTextarea>', () => {
@@ -35,7 +36,7 @@ describe( '<ComposerTextarea>', () => {
 	} );
 
 	it( 'submits on Cmd+Enter', async () => {
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<ComposerTextarea value="ready" onChange={ () => {} } onSubmit={ onSubmit } placeholder="x" />
@@ -45,7 +46,7 @@ describe( '<ComposerTextarea>', () => {
 	} );
 
 	it( 'does not submit on plain Enter', async () => {
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<ComposerTextarea value="ready" onChange={ () => {} } onSubmit={ onSubmit } placeholder="x" />

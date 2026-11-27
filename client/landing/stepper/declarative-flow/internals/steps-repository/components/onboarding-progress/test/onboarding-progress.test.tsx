@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { OnboardingProgress } from '..';
 
 describe( 'OnboardingProgress', () => {
 	it( 'calls onStepSelect with the clicked previous step on checkout', async () => {
-		const onStepSelect = jest.fn();
+		const onStepSelect = vi.fn();
 		render( <OnboardingProgress currentStep="checkout" onStepSelect={ onStepSelect } /> );
 
 		await userEvent.click( screen.getByRole( 'tab', { name: /Select a domain/ } ) );
@@ -25,7 +26,7 @@ describe( 'OnboardingProgress', () => {
 	} );
 
 	it( 'does not call onStepSelect for the current step', async () => {
-		const onStepSelect = jest.fn();
+		const onStepSelect = vi.fn();
 		render( <OnboardingProgress currentStep="checkout" onStepSelect={ onStepSelect } /> );
 
 		await userEvent.click( screen.getByRole( 'tab', { name: /Complete payment/ } ) );
@@ -33,7 +34,7 @@ describe( 'OnboardingProgress', () => {
 	} );
 
 	it( 'ignores clicks on the previous steps while step selection is disabled', async () => {
-		const onStepSelect = jest.fn();
+		const onStepSelect = vi.fn();
 		render(
 			<OnboardingProgress
 				currentStep="checkout"

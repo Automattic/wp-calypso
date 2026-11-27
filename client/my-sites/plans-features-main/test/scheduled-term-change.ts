@@ -3,6 +3,7 @@ import {
 	getSitePlanTermMonths,
 	isScheduledOnlyPlanChange,
 	isShorterTermPlanChange,
+	isTermChangeLimitedPlanChange,
 } from '../scheduled-term-change';
 import type { SitePlanData } from 'calypso/state/sites/plans/types';
 
@@ -73,6 +74,18 @@ describe( 'isScheduledOnlyPlanChange', () => {
 		expect( isScheduledOnlyPlanChange( sitePlan( { availableForDowngrade: true } ) ) ).toBe(
 			false
 		);
+	} );
+} );
+
+describe( 'isTermChangeLimitedPlanChange', () => {
+	test( 'is true only when the server limits the term change', () => {
+		expect( isTermChangeLimitedPlanChange( sitePlan( { isTermChangeLimited: true } ) ) ).toBe(
+			true
+		);
+		expect( isTermChangeLimitedPlanChange( sitePlan( { isTermChangeLimited: false } ) ) ).toBe(
+			false
+		);
+		expect( isTermChangeLimitedPlanChange( sitePlan() ) ).toBe( false );
 	} );
 } );
 

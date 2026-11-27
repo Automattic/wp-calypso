@@ -328,7 +328,7 @@ function getMessages( {
 
 	const purchase = renewablePurchasesNotAlreadyInCart[ 0 ];
 	const buttonLabel = translate( 'Add to cart' );
-	let message: TranslateResult = '';
+	let message: TranslateResult;
 	const translateOptions = {
 		comment:
 			'"expiry" is relative to the present time and it is already localized, eg. "in a year", "a week ago", "today"',

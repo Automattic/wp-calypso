@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
 
 function renderPrepareProducts( {
 	productAliasFromUrl,
@@ -92,7 +93,7 @@ describe( 'usePrepareProductsForCart for WordPress.com siteless checkout', () =>
 	// Without 'wpcom' in `doNotStripProducts`, `useStripProductsFromUrl` rewrites the
 	// URL and the product is lost on reload.
 	it( 'leaves the product in the URL', () => {
-		const replaceState = jest.spyOn( window.history, 'replaceState' );
+		const replaceState = vi.spyOn( window.history, 'replaceState' );
 		window.history.replaceState( null, '', '/checkout/wpcom/personal-bundle' );
 		replaceState.mockClear();
 

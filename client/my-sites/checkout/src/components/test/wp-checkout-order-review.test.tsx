@@ -1,22 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { siteByIdQuery } from '@automattic/api-queries';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { getEmptyResponseCart, useShoppingCart } from '@automattic/shopping-cart';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import WPCheckoutOrderReview from '../wp-checkout-order-review';
 import type { Site } from '@automattic/api-core';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
-jest.mock( '@automattic/shopping-cart', () => ( {
-	...jest.requireActual( '@automattic/shopping-cart' ),
-	useShoppingCart: jest.fn(),
+vi.mock( '@automattic/shopping-cart', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
+		'@automattic/shopping-cart'
+	) ),
+	useShoppingCart: vi.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => () => 'no-site' );
-jest.mock( '../wp-order-review-line-items', () => ( {
+vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( { default: () => 'no-site' } ) );
+vi.mock( '../wp-order-review-line-items', () => ( {
 	WPOrderReviewLineItems: () => null,
 	WPOrderReviewSection: ( { children }: { children: React.ReactNode } ) => children,
 } ) );
@@ -26,17 +29,17 @@ function renderOrderReview(
 	queryClient: QueryClient,
 	selectedSiteId: number | null = null
 ) {
-	( useShoppingCart as jest.Mock ).mockReturnValue( { responseCart: cart } );
+	( useShoppingCart as Mock ).mockReturnValue( { responseCart: cart } );
 	return renderWithProvider(
 		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
 			<WPCheckoutOrderReview
-				removeProductFromCart={ jest.fn() }
-				replaceProductInCart={ jest.fn() }
-				addProductsToCart={ jest.fn() }
+				removeProductFromCart={ vi.fn() }
+				replaceProductInCart={ vi.fn() }
+				addProductsToCart={ vi.fn() }
 				couponFieldStateProps={ {} as never }
-				removeCouponAndClearField={ jest.fn() }
+				removeCouponAndClearField={ vi.fn() }
 				isCouponFieldVisible={ false }
-				setCouponFieldVisible={ jest.fn() }
+				setCouponFieldVisible={ vi.fn() }
 				// What `CheckoutMainWrapper` passes when no site is selected.
 				siteUrl="no-site"
 			/>

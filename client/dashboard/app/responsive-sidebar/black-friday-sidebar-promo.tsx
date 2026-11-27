@@ -1,12 +1,14 @@
 import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import {
+	BLACK_FRIDAY_2026_COUPON,
 	BLACK_FRIDAY_2026_DISCOUNT_PERCENT,
 	BLACK_FRIDAY_2026_MONTHLY_SAVINGS_PERCENT,
-	BLACK_FRIDAY_2026_LANDING_URL,
 	isBlackFriday2026Active,
 } from 'calypso/lib/promotions/black-friday-2026';
 import SidebarPromoCard from '../../agency/components/sidebar-promo/sidebar-promo-card';
 import BlackFriday2026Artwork from '../../components/black-friday-2026-artwork';
+import { wpcomLink } from '../../utils/link';
 import { useAnalytics } from '../analytics';
 import { useAppContext } from '../context';
 
@@ -32,6 +34,9 @@ export function BlackFridaySidebarPromo() {
 	);
 	/* translators: %(percent)d is the discount percentage, e.g. 25 */
 	const ctaLabel = sprintf( __( 'Get %(percent)d%% off' ), { percent } );
+	const href = addQueryArgs( wpcomLink( '/setup/onboarding' ), {
+		coupon: BLACK_FRIDAY_2026_COUPON,
+	} );
 
 	return (
 		<SidebarPromoCard
@@ -39,7 +44,7 @@ export function BlackFridaySidebarPromo() {
 			media={ <BlackFriday2026Artwork /> }
 			title={ title }
 			description={ description }
-			cta={ { label: ctaLabel, href: BLACK_FRIDAY_2026_LANDING_URL } }
+			cta={ { label: ctaLabel, href } }
 			onView={ () => recordTracksEvent( 'calypso_bf2026_dashboard_sidebar_promo_view' ) }
 			onClick={ () => recordTracksEvent( 'calypso_bf2026_dashboard_sidebar_promo_click' ) }
 		/>

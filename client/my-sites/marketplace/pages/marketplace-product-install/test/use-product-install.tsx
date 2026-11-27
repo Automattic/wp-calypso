@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	PLUGIN_ACTIVATE_REQUEST,
@@ -53,19 +54,21 @@ const deadlineVerdict =
 
 const noDeadlineVerdict = deadlineVerdict( { hasTimedOut: false, hasTransferFailed: false } );
 
-const mockUseInstallDeadline = jest.fn( noDeadlineVerdict );
+const mockUseInstallDeadline = vi.fn( noDeadlineVerdict );
 
-jest.mock( '../use-install-deadline', () => ( {
-	...jest.requireActual( '../use-install-deadline' ),
+vi.mock( '../use-install-deadline', async () => ( {
+	...( await vi.importActual< typeof import( '../use-install-deadline' ) >(
+		'../use-install-deadline'
+	) ),
 	useInstallDeadline: ( args: DeadlineArgs ) => mockUseInstallDeadline( args ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 const errorViewEvents = () =>
-	jest
+	vi
 		.mocked( recordTracksEvent )
 		.mock.calls.filter( ( [ name ] ) => name === 'calypso_marketplace_install_error_view' );
 
@@ -167,8 +170,8 @@ const withReplaceCandidate = ( uploadError: object ) => ( {
 describe( 'useProductInstall', () => {
 	describe( 'who activates an uploaded plugin', () => {
 		// The upload step advances on a timer before activation is reached.
-		beforeEach( () => jest.useFakeTimers() );
-		afterEach( () => jest.useRealTimers() );
+		beforeEach( () => vi.useFakeTimers() );
+		afterEach( () => vi.useRealTimers() );
 
 		it( 'activates a direct upload itself', () => {
 			const { store } = renderHookWithProvider( () => useProductInstall( {} ), {
@@ -177,7 +180,7 @@ describe( 'useProductInstall', () => {
 			} );
 
 			act( () => {
-				jest.advanceTimersByTime( 2000 );
+				vi.advanceTimersByTime( 2000 );
 			} );
 
 			expect( activationOf( store ) ).toBe( 'ACTIVATE_PLUGIN' );
@@ -191,7 +194,7 @@ describe( 'useProductInstall', () => {
 			} );
 
 			act( () => {
-				jest.advanceTimersByTime( 2000 );
+				vi.advanceTimersByTime( 2000 );
 			} );
 
 			expect( activationOf( store ) ).toBeUndefined();
@@ -237,17 +240,17 @@ describe( 'useProductInstall', () => {
 		} );
 
 		it( 'reports the plan error once the grace period passes for a site that cannot install', () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			try {
 				const { result } = renderProductInstall( { pluginSlug: 'give' } );
 				expect( result.current.error ).toBeNull();
 
 				act( () => {
-					jest.advanceTimersByTime( 2000 );
+					vi.advanceTimersByTime( 2000 );
 				} );
 				expect( result.current.error ).toEqual( { type: 'non-installable-plan' } );
 			} finally {
-				jest.useRealTimers();
+				vi.useRealTimers();
 			}
 		} );
 
@@ -305,7 +308,7 @@ describe( 'useProductInstall', () => {
 
 		// Upload flow has no route slug; statuses live under the dispatched plugin id.
 		it( 'surfaces a failed activation instead of waiting out the deadline', () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			try {
 				const { result, store } = renderHookWithProvider( () => useProductInstall( {} ), {
 					reducers,
@@ -321,7 +324,7 @@ describe( 'useProductInstall', () => {
 				} );
 
 				act( () => {
-					jest.advanceTimersByTime( 2000 );
+					vi.advanceTimersByTime( 2000 );
 				} );
 				expect( result.current.error ).toBeNull();
 
@@ -337,12 +340,12 @@ describe( 'useProductInstall', () => {
 
 				expect( result.current.error ).toEqual( { type: 'generic' } );
 			} finally {
-				jest.useRealTimers();
+				vi.useRealTimers();
 			}
 		} );
 
 		it( 'ignores a failure left behind by an earlier attempt on a fresh mount', () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			try {
 				const staleFailure = uploadAwaitingActivation( 'direct' );
 				const { result } = renderHookWithProvider( () => useProductInstall( {} ), {
@@ -373,11 +376,11 @@ describe( 'useProductInstall', () => {
 
 				// The retry's request overwrites the status but keeps the stale `error` field.
 				act( () => {
-					jest.advanceTimersByTime( 2000 );
+					vi.advanceTimersByTime( 2000 );
 				} );
 				expect( result.current.error ).toBeNull();
 			} finally {
-				jest.useRealTimers();
+				vi.useRealTimers();
 			}
 		} );
 
@@ -506,20 +509,20 @@ describe( 'useProductInstall', () => {
 
 	describe( 'error view impression', () => {
 		beforeEach( () => {
-			jest.mocked( recordTracksEvent ).mockClear();
+			vi.mocked( recordTracksEvent ).mockClear();
 		} );
 		afterEach( () => {
 			mockUseInstallDeadline.mockImplementation( noDeadlineVerdict );
 		} );
 
 		it( 'fires once for a preflight error, which never reaches the wait telemetry', () => {
-			jest.useFakeTimers();
+			vi.useFakeTimers();
 			try {
 				const { rerender } = renderProductInstall( { pluginSlug: 'give' } );
 				expect( errorViewEvents() ).toHaveLength( 0 );
 
 				act( () => {
-					jest.advanceTimersByTime( 2000 );
+					vi.advanceTimersByTime( 2000 );
 				} );
 				rerender();
 
@@ -530,7 +533,7 @@ describe( 'useProductInstall', () => {
 					product_slug: 'give',
 				} );
 			} finally {
-				jest.useRealTimers();
+				vi.useRealTimers();
 			}
 		} );
 

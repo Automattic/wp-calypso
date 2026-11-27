@@ -13,10 +13,10 @@ import RouterLinkButton from '../../../../components/router-link-button';
 import { SectionHeader } from '../../../../components/section-header';
 import { Text } from '../../../../components/text';
 import { canTransferSite, canLeaveSite } from '../../../features';
-import SiteDeleteModal from '../../../site-delete-modal';
-import SiteLeaveModal from '../../../site-leave-modal';
-import SiteResetModal from '../../../site-reset-modal';
 import StagingSiteDeleteModal from '../../../staging-site/components/staging-site-delete-modal';
+import SiteDeleteModal from '../site-delete-modal';
+import SiteLeaveModal from '../site-leave-modal';
+import SiteResetModal from '../site-reset-modal';
 import type { Site } from '@automattic/api-core';
 
 const RestorePlanSoftwareAction = ( { site }: { site: Site } ) => {
@@ -24,7 +24,9 @@ const RestorePlanSoftwareAction = ( { site }: { site: Site } ) => {
 	const hasEnTranslation = useHasEnTranslation();
 	const mutation = useMutation(
 		withSnackbar( sitePlanSoftwareRestoreMutation( site.ID ), {
-			success: __( 'Requested restoration of plugins and themes that come with your plan.' ),
+			success: __(
+				'Restoring the plugins and themes that come with your plan. This may take a few minutes.'
+			),
 			error: __( 'Failed to request restoration of plan plugin and themes.' ),
 		} )
 	);

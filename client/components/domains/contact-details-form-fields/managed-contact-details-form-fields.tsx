@@ -169,11 +169,8 @@ export class ManagedContactDetailsFormFields extends Component<
 		phoneNumber: string;
 		countryCode: string;
 	} ): void => {
-		let phoneCountryCode = this.state.phoneCountryCode;
-
 		if ( countries[ countryCode as keyof typeof countries ] ) {
-			phoneCountryCode = countryCode;
-			this.setState( { phoneCountryCode, hasEditedPhone: true }, () => {
+			this.setState( { phoneCountryCode: countryCode, hasEditedPhone: true }, () => {
 				// We have to wait for the phoneCountryCode to be updated because it is
 				// used by updateParentState.
 				const updatedParentState: DomainContactDetailsData = {

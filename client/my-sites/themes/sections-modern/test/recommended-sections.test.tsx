@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import RecommendedSections from '../recommended-sections';
 import type { ReactNode } from 'react';
 
-jest.mock( 'calypso/my-sites/site-redesign/design-your-own-card', () => ( {
+vi.mock( 'calypso/my-sites/site-redesign/design-your-own-card', () => ( {
 	DesignYourOwnCard: () => <a href="/site-redesign/example">Design Your Own</a>,
 } ) );
 
-jest.mock( '../theme-section', () => {
+vi.mock( '../theme-section', () => {
 	return {
 		__esModule: true,
 		default: ( {
@@ -37,14 +38,14 @@ jest.mock( '../theme-section', () => {
 	};
 } );
 
-jest.mock( '../../banners-modern/ai-builder-banner', () => {
+vi.mock( '../../banners-modern/ai-builder-banner', () => {
 	return {
 		__esModule: true,
 		default: () => <div data-testid="ai-builder-banner">AI Builder Banner</div>,
 	};
 } );
 
-jest.mock( '../../banners-modern/difm-banner', () => {
+vi.mock( '../../banners-modern/difm-banner', () => {
 	return {
 		__esModule: true,
 		default: () => <div data-testid="difm-banner">DIFM Banner</div>,
@@ -52,9 +53,9 @@ jest.mock( '../../banners-modern/difm-banner', () => {
 } );
 
 const defaultProps = {
-	getActionLabel: jest.fn(),
-	getOptions: jest.fn(),
-	getScreenshotUrl: jest.fn(),
+	getActionLabel: vi.fn(),
+	getOptions: vi.fn(),
+	getScreenshotUrl: vi.fn(),
 };
 
 describe( 'RecommendedSections', () => {

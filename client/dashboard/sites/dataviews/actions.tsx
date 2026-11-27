@@ -14,9 +14,15 @@ import { canManageSite, canDisconnectSite, canLeaveSite, canRestoreSite } from '
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
-const JetpackSiteDisconnect = lazy( () => import( '../jetpack-site-disconnect' ) );
-const SiteLeaveContentInfo = lazy( () => import( '../site-leave-modal/content-info' ) );
-const SiteRestoreContentInfo = lazy( () => import( '../site-restore-modal/content-info' ) );
+const JetpackSiteDisconnect = lazy(
+	() => import( '../site-actions/components/jetpack-site-disconnect' )
+);
+const SiteLeaveContentInfo = lazy(
+	() => import( '../site-actions/components/site-leave-modal/content-info' )
+);
+const SiteRestoreContentInfo = lazy(
+	() => import( '../site-actions/components/site-restore-modal/content-info' )
+);
 
 const noop = () => undefined;
 
