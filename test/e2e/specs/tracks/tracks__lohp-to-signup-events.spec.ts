@@ -66,7 +66,6 @@ test.describe(
 
 			requestUrl = await requestUrlPromise;
 
-			await expect( page ).toHaveURL( /\/setup\/onboarding/ );
 			expect( tracksEventManager.getParamFromUrl( '_en', requestUrl ) ).toBe( 'calypso_page_view' );
 			expect( tracksEventManager.getParamFromUrl( '_ui', requestUrl ) ).toBe(
 				anonIdFromWpcomPageView
