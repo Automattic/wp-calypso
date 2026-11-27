@@ -1,5 +1,6 @@
 import { isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import {
+	PERSONAL_THEME,
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	BUNDLED_THEME,
@@ -196,7 +197,9 @@ function getWithThemeDestination( {
 } ) {
 	if (
 		! cartItems &&
-		[ DOT_ORG_THEME, PREMIUM_THEME, MARKETPLACE_THEME, BUNDLED_THEME ].includes( themeType )
+		[ DOT_ORG_THEME, PERSONAL_THEME, PREMIUM_THEME, MARKETPLACE_THEME, BUNDLED_THEME ].includes(
+			themeType
+		)
 	) {
 		return `/setup/site-setup/design-setup?siteSlug=${ siteSlug }`;
 	}
@@ -207,7 +210,7 @@ function getWithThemeDestination( {
 
 	const style = styleVariation ? `&styleVariation=${ styleVariation }` : '';
 
-	if ( [ MARKETPLACE_THEME, PREMIUM_THEME, BUNDLED_THEME ].includes( themeType ) ) {
+	if ( [ MARKETPLACE_THEME, PERSONAL_THEME, PREMIUM_THEME, BUNDLED_THEME ].includes( themeType ) ) {
 		return `/marketplace/thank-you/${ siteSlug }?onboarding=&themes=${ themeParameter }${ style }`;
 	}
 
