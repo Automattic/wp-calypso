@@ -47,8 +47,12 @@ function replaceUserInfoWithIds( customData ) {
 
 	return {
 		...customData,
+		// The import runs on WordPress.com, which needs WordPress.com user IDs. On Jetpack and
+		// Atomic sites, a user's `ID` is the site's own and `linked_user_ID` the WordPress.com one.
 		sourceAuthors: customData.sourceAuthors.map( ( author ) =>
-			author.mappedTo ? { ...author, mappedTo: author.mappedTo.ID } : author
+			author.mappedTo
+				? { ...author, mappedTo: author.mappedTo.linked_user_ID ?? author.mappedTo.ID }
+				: author
 		),
 	};
 }
