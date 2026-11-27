@@ -20,12 +20,12 @@ import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useSiteDomains from 'calypso/my-sites/checkout/src/hooks/use-site-domains';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector, useDispatch } from 'calypso/state';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
+import { CheckoutCartKeyProvider } from '../hooks/use-checkout-cart-key';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
 import useCountryList from '../hooks/use-country-list';
@@ -77,7 +77,7 @@ import type {
 	PaymentEventCallbackArguments,
 	PaymentMethod,
 } from '@automattic/composite-checkout';
-import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
+import type { CartKey, MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { TranslateResult } from 'i18n-calypso';
 
@@ -85,6 +85,7 @@ const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:checkout-main' );
 
 export interface CheckoutMainProps {
+	cartKey: CartKey;
 	siteSlug: string | undefined;
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
@@ -120,6 +121,7 @@ export interface CheckoutMainProps {
 }
 
 export default function CheckoutMain( {
+	cartKey,
 	siteSlug,
 	siteId,
 	productAliasFromUrl,
@@ -149,7 +151,6 @@ export default function CheckoutMain( {
 	const { data: site, isLoading: isSiteLoading } = useCheckoutSite( siteId );
 	const isJetpackNotAtomic = isJetpackNotAtomicSite( site ) || sitelessCheckoutType === 'jetpack';
 	const isGravatarDomain = useSelector( hasGravatarDomainQueryParam );
-	const cartKey = useCartKey();
 
 	/**
 	 * The definition of what makes "siteless checkout" varies considerably.
@@ -235,6 +236,7 @@ export default function CheckoutMain( {
 		error: cartProductPrepError,
 		addingRenewals,
 	} = usePrepareProductsForCart( {
+		cartKey,
 		productAliasFromUrl,
 		purchaseId,
 		siteSlug: updatedSiteSlug,
@@ -271,6 +273,7 @@ export default function CheckoutMain( {
 		: siteId;
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
+		cartKey,
 		isLoadingCart,
 		isCartPendingUpdate,
 		productsForCart,
@@ -410,6 +413,7 @@ export default function CheckoutMain( {
 
 	const { isRemovingProductFromCart, removeProductFromCartAndMaybeRedirect } =
 		useRemoveFromCartAndRedirect(
+			cartKey,
 			updatedSiteSlug,
 			createUserAndSiteBeforeTransaction,
 			customizedPreviousPath
@@ -444,6 +448,7 @@ export default function CheckoutMain( {
 	const currentTaxCountryCode = responseCart.tax.location.country_code;
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
+		cartKey,
 		contactDetailsType,
 		currentTaxCountryCode,
 		isStripeLoading,
@@ -747,6 +752,7 @@ export default function CheckoutMain( {
 	//
 	// DO NOT PUT POST-CHECKOUT BEHAVIOR IN HERE! IT'S NOT WHAT YOU THINK!
 	const onPaymentSubmittedAndProcessing = useCreatePaymentSubmittedAndProcessingCallback( {
+		cartKey,
 		createUserAndSiteBeforeTransaction,
 		productAliasFromUrl,
 		redirectTo,
@@ -845,71 +851,75 @@ export default function CheckoutMain( {
 	);
 
 	return (
-		<Step.StepContainerV2Provider value={ stepContainerV2Context }>
-			{ /* Waits for the cart when the path depends on it: a later path change records a second view. */ }
-			{ ( ! isRenewalBySubscriptionId || ! isInitialCartLoading ) && (
-				<PageViewTracker
-					path={ analyticsPath }
-					title="Checkout"
-					properties={ analyticsProps }
-					options={ {
-						useJetpackGoogleAnalytics: sitelessCheckoutType === 'jetpack' || isJetpackNotAtomic,
-						useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
-					} }
-				/>
-			) }
-			<VGSCollectProvider>
-				<CheckoutProvider
-					onPaymentComplete={ handlePaymentSubmitted }
-					onPaymentError={ handlePaymentError }
-					onPaymentRedirect={ handlePaymentRedirect }
-					onPageLoadError={ onPageLoadError }
-					onPaymentMethodChanged={ handlePaymentMethodChanged }
-					paymentMethods={ paymentMethods }
-					paymentProcessors={ paymentProcessors }
-					isLoading={ isCheckoutPageLoading }
-					isValidating={ isCartPendingUpdate }
-					theme={ theme }
-					selectFirstAvailablePaymentMethod
-					initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
-				>
-					<CheckoutMainContent
-						loadingHeader={
-							<CheckoutLoadingPlaceholder checkoutLoadingConditions={ checkoutLoadingConditions } />
-						}
-						onStepChanged={ handleStepChanged }
-						onFormSubmittingChange={ onFormSubmittingChange }
-						customizedPreviousPath={ customizedPreviousPath }
-						isRemovingProductFromCart={ isRemovingProductFromCart }
-						areThereErrors={ areThereErrors }
-						isWrongAccountRenewal={ isWrongAccountRenewal }
-						isNonRenewableDomain={ isNonRenewableDomain }
-						isInitialCartLoading={ isInitialCartLoading }
-						addItemToCart={ addItemAndLog }
-						changeSelection={ changeSelection }
-						countriesList={ countriesList }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						infoMessage={ <PrePurchaseNotices /> }
-						isLoggedOutCart={ !! isLoggedOutCart }
-						onPageLoadError={ onPageLoadError }
-						paymentMethods={ paymentMethods }
-						areStoredCardsFiltered={ areStoredCardsFiltered }
-						isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
-						removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
-						showErrorMessageBriefly={ showErrorMessageBriefly }
-						siteId={ updatedSiteId }
-						siteUrl={ updatedSiteSlug }
+		<CheckoutCartKeyProvider cartKey={ cartKey }>
+			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
+				{ /* Waits for the cart when the path depends on it: a later path change records a second view. */ }
+				{ ( ! isRenewalBySubscriptionId || ! isInitialCartLoading ) && (
+					<PageViewTracker
+						path={ analyticsPath }
+						title="Checkout"
+						properties={ analyticsProps }
+						options={ {
+							useJetpackGoogleAnalytics: sitelessCheckoutType === 'jetpack' || isJetpackNotAtomic,
+							useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
+						} }
 					/>
-					{
-						// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
-						<JetpackProRedirectModal
-							redirectTo={ redirectTo }
-							productSourceFromUrl={ productSourceFromUrl }
+				) }
+				<VGSCollectProvider>
+					<CheckoutProvider
+						onPaymentComplete={ handlePaymentSubmitted }
+						onPaymentError={ handlePaymentError }
+						onPaymentRedirect={ handlePaymentRedirect }
+						onPageLoadError={ onPageLoadError }
+						onPaymentMethodChanged={ handlePaymentMethodChanged }
+						paymentMethods={ paymentMethods }
+						paymentProcessors={ paymentProcessors }
+						isLoading={ isCheckoutPageLoading }
+						isValidating={ isCartPendingUpdate }
+						theme={ theme }
+						selectFirstAvailablePaymentMethod
+						initiallySelectedPaymentMethodId={ initiallySelectedPaymentMethodId }
+					>
+						<CheckoutMainContent
+							loadingHeader={
+								<CheckoutLoadingPlaceholder
+									checkoutLoadingConditions={ checkoutLoadingConditions }
+								/>
+							}
+							onStepChanged={ handleStepChanged }
+							onFormSubmittingChange={ onFormSubmittingChange }
+							customizedPreviousPath={ customizedPreviousPath }
+							isRemovingProductFromCart={ isRemovingProductFromCart }
+							areThereErrors={ areThereErrors }
+							isWrongAccountRenewal={ isWrongAccountRenewal }
+							isNonRenewableDomain={ isNonRenewableDomain }
+							isInitialCartLoading={ isInitialCartLoading }
+							addItemToCart={ addItemAndLog }
+							changeSelection={ changeSelection }
+							countriesList={ countriesList }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							infoMessage={ <PrePurchaseNotices /> }
+							isLoggedOutCart={ !! isLoggedOutCart }
+							onPageLoadError={ onPageLoadError }
+							paymentMethods={ paymentMethods }
+							areStoredCardsFiltered={ areStoredCardsFiltered }
+							isBusinessCardsFilterEmpty={ isBusinessCardsFilterEmpty }
+							removeProductFromCart={ removeProductFromCartAndMaybeRedirect }
+							showErrorMessageBriefly={ showErrorMessageBriefly }
+							siteId={ updatedSiteId }
+							siteUrl={ updatedSiteSlug }
 						/>
-					}
-				</CheckoutProvider>
-			</VGSCollectProvider>
-		</Step.StepContainerV2Provider>
+						{
+							// Redirect modal is displayed mainly to all the agency partners who are purchasing Jetpack plans
+							<JetpackProRedirectModal
+								redirectTo={ redirectTo }
+								productSourceFromUrl={ productSourceFromUrl }
+							/>
+						}
+					</CheckoutProvider>
+				</VGSCollectProvider>
+			</Step.StepContainerV2Provider>
+		</CheckoutCartKeyProvider>
 	);
 }
 

@@ -18,7 +18,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { PayPalLogo } from 'calypso/dashboard/components/paypal-logo';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
 import { convertErrorToString, logStashEvent } from '../lib/analytics';
 
@@ -81,7 +81,7 @@ function PayPalSubmitButtonWrapper( {
 	disabled?: boolean;
 	onClick?: ProcessPayment;
 } ) {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	return (
 		<PayPalProvider
@@ -108,7 +108,7 @@ function PayPalSubmitButton( {
 	const translate = useTranslate();
 	const togglePaymentMethod = useTogglePaymentMethod();
 	const [ forceReRender, setForceReRender ] = useState< number >( 0 );
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
 	// Wait for PayPal.js to load before marking this payment method as active.

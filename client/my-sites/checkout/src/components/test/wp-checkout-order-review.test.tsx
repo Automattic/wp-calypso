@@ -18,7 +18,9 @@ vi.mock( '@automattic/shopping-cart', async () => ( {
 	) ),
 	useShoppingCart: vi.fn(),
 } ) );
-vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( { default: () => 'no-site' } ) );
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key', () => ( {
+	default: () => 'no-site',
+} ) );
 vi.mock( '../wp-order-review-line-items', () => ( {
 	WPOrderReviewLineItems: () => null,
 	WPOrderReviewSection: ( { children }: { children: React.ReactNode } ) => children,

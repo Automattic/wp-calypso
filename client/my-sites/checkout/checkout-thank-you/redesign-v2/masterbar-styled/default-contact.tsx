@@ -1,7 +1,9 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { Button } from '@wordpress/components';
+import { CheckoutCartKeyProvider } from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 
 const ContactContainer = styled.div`
 	display: flex;
@@ -47,6 +49,15 @@ const ContactContainer = styled.div`
 `;
 
 export function DefaultMasterbarContact() {
+	const cartKey = useCartKey();
+	return (
+		<CheckoutCartKeyProvider cartKey={ cartKey }>
+			<DefaultMasterbarContactContent />
+		</CheckoutCartKeyProvider>
+	);
+}
+
+function DefaultMasterbarContactContent() {
 	const { helpCenterButtonCopy, helpCenterButtonLink, toggleHelpCenter } = useCheckoutHelpCenter();
 
 	return (

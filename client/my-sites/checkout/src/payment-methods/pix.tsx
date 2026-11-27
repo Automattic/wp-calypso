@@ -8,8 +8,8 @@ import {
 	getStateLabelText,
 	STATE_SELECT_TEXT,
 } from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { StateSelect } from 'calypso/my-sites/domains/components/form';
-import useCartKey from '../../use-cart-key';
 import { useCachedContactDetails } from '../hooks/use-cached-contact-details';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';
 
@@ -113,7 +113,7 @@ function useSubscribeToEventEmitter( state: PixPaymentMethodState ) {
 }
 
 function usePrefillState( state: PixPaymentMethodState ): void {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isLoggedOut = responseCart.cart_key === 'no-user';
 	const { contactDetails } = useCachedContactDetails( { isLoggedOut } );

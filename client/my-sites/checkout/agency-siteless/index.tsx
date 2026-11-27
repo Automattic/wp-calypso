@@ -2,6 +2,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import { buildA4ADashboardLink } from 'calypso/dashboard/app-a4a/routing';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getAgencyCheckoutParams } from '../agency-checkout/lib/agency-checkout-params';
 import { AgencyCheckoutPlaceholder, AgencyCheckoutShell } from '../agency-checkout/shell';
 import CheckoutMain from '../src/components/checkout-main';
@@ -15,6 +16,7 @@ import useAgencyCart from './use-agency-cart';
  * logged in.
  */
 function AgencySitelessCheckoutContent() {
+	const cartKey = useCartKey();
 	const translate = useTranslate();
 	const { entries, term, redirectTo, cancelTo } = useMemo(
 		() => getAgencyCheckoutParams( window.location.search ),
@@ -36,6 +38,7 @@ function AgencySitelessCheckoutContent() {
 
 	return (
 		<CheckoutMain
+			cartKey={ cartKey }
 			sitelessCheckoutType="a4a"
 			redirectTo={ redirectTo }
 			customizedPreviousPath={ cancelTo }

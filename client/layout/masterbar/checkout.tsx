@@ -20,9 +20,11 @@ import {
 	LeaveCheckoutModal,
 	useCheckoutLeaveModal,
 } from 'calypso/my-sites/checkout/src/components/leave-checkout-modal';
+import { CheckoutCartKeyProvider } from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 import { resolvedRenewalDataStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 import { useValueStore } from 'calypso/my-sites/checkout/src/lib/value-store';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import Masterbar from './masterbar';
 
 interface Props {
@@ -214,11 +216,14 @@ const CheckoutMasterbar = ( {
 };
 
 export default function CheckoutMasterbarWrapper( props: Props ) {
+	const cartKey = useCartKey();
 	return (
 		<CalypsoShoppingCartProvider>
-			<ThemeProvider theme={ checkoutTheme }>
-				<CheckoutMasterbar { ...props } />
-			</ThemeProvider>
+			<CheckoutCartKeyProvider cartKey={ cartKey }>
+				<ThemeProvider theme={ checkoutTheme }>
+					<CheckoutMasterbar { ...props } />
+				</ThemeProvider>
+			</CheckoutCartKeyProvider>
 		</CalypsoShoppingCartProvider>
 	);
 }

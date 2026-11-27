@@ -1,12 +1,12 @@
 import {
 	RequestCartProduct,
 	ApplyCouponToCart,
+	CartKey,
 	AddProductsToCart,
 	useShoppingCart,
 } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 import { useEffect, useRef, useState } from 'react';
-import useCartKey from '../../use-cart-key';
 
 const debug = debugFactory( 'calypso:use-add-products-from-url' );
 
@@ -22,6 +22,7 @@ export type IsPendingAddingProductsFromUrl = boolean;
  * nothing to add.
  */
 export default function useAddProductsFromUrl( {
+	cartKey,
 	isLoadingCart,
 	isCartPendingUpdate,
 	productsForCart,
@@ -31,6 +32,7 @@ export default function useAddProductsFromUrl( {
 	addProductsToCart,
 	addingRenewals,
 }: {
+	cartKey: CartKey;
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
 	productsForCart: RequestCartProduct[];
@@ -40,7 +42,6 @@ export default function useAddProductsFromUrl( {
 	addProductsToCart: AddProductsToCart;
 	addingRenewals: boolean;
 } ): IsPendingAddingProductsFromUrl {
-	const cartKey = useCartKey();
 	const { updateLocation, replaceProductsInCart } = useShoppingCart( cartKey );
 	const isMounted = useRef( true );
 	useEffect( () => {
@@ -66,7 +67,9 @@ export default function useAddProductsFromUrl( {
 			! isCartPendingUpdate
 		) {
 			debug( 'no products or coupons to add; skipping initial cart requests' );
-			isMounted.current && setIsLoading( false );
+			if ( isMounted.current ) {
+				setIsLoading( false );
+			}
 			return;
 		}
 	}, [
@@ -118,11 +121,15 @@ export default function useAddProductsFromUrl( {
 		Promise.allSettled( cartPromises )
 			.then( () => {
 				debug( 'initial cart requests have completed' );
-				isMounted.current && setIsLoading( false );
+				if ( isMounted.current ) {
+					setIsLoading( false );
+				}
 			} )
 			.catch( () => {
 				debug( 'initial cart requests have failed' );
-				isMounted.current && setIsLoading( false );
+				if ( isMounted.current ) {
+					setIsLoading( false );
+				}
 			} );
 		hasRequestedInitialProducts.current = true;
 	}, [

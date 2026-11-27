@@ -4,7 +4,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import useCartKey from '../../use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 
 const CreditCardPayButtonWrapper = styled.span`
 	display: inline-flex;
@@ -31,7 +31,7 @@ const StyledMaterialIcon = styled( MaterialIcon )`
  */
 export function CheckoutSubmitButtonContent( { last4 }: { last4?: string } = {} ) {
 	const { __, _x } = useI18n();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const { formStatus } = useFormStatus();

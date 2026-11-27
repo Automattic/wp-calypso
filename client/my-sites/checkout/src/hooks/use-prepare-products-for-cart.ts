@@ -5,11 +5,14 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
 import { getCartProductByBillingIntentId } from 'calypso/data/marketplace/use-marketplace-billing-intents';
-import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import { isWpcomSitelessCheckoutType } from '../lib/is-wpcom-siteless-checkout-type';
 import useStripProductsFromUrl from './use-strip-products-from-url';
-import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
+import type {
+	CartKey,
+	RequestCartProduct,
+	RequestCartProductExtra,
+} from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:use-prepare-products-for-cart' );
@@ -40,6 +43,7 @@ const initialPreparedProductsState: PreparedProductsForCart = {
  * it produces.
  */
 export default function usePrepareProductsForCart( {
+	cartKey,
 	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
 	siteSlug,
@@ -52,6 +56,7 @@ export default function usePrepareProductsForCart( {
 	aiSessionId,
 	isGiftPurchase,
 }: {
+	cartKey: CartKey;
 	productAliasFromUrl: string | null | undefined;
 	purchaseId: string | number | null | undefined;
 	siteSlug: string | undefined;
@@ -121,6 +126,7 @@ export default function usePrepareProductsForCart( {
 		addHandler,
 	} );
 	useAddRenewalItems( {
+		cartKey,
 		originalPurchaseId,
 		sitelessCheckoutType, // Akismet products can renew independently of a site
 		productAlias: productAliasFromUrl,
@@ -387,6 +393,7 @@ function useAddProductsFromLocalStorage( {
 }
 
 function useAddRenewalItems( {
+	cartKey,
 	originalPurchaseId,
 	sitelessCheckoutType,
 	productAlias,
@@ -394,6 +401,7 @@ function useAddRenewalItems( {
 	addHandler,
 	isGiftPurchase,
 }: {
+	cartKey: CartKey;
 	originalPurchaseId: string | number | null | undefined;
 	sitelessCheckoutType: SitelessCheckoutType;
 	productAlias: string | null | undefined;
@@ -402,7 +410,6 @@ function useAddRenewalItems( {
 	isGiftPurchase?: boolean;
 } ) {
 	const translate = useTranslate();
-	const cartKey = useCartKey();
 
 	useEffect( () => {
 		if ( addHandler !== 'addRenewalItems' ) {

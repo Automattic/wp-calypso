@@ -86,6 +86,7 @@ function BillingDragonCheckoutContent( {
 		isLoading: areProductsPreparing,
 		error: productsError,
 	} = usePrepareProductsForCart( {
+		cartKey,
 		productAliasFromUrl: planSlug,
 		purchaseId: null,
 		siteSlug,
@@ -308,6 +309,7 @@ function BillingDragonCheckoutContent( {
 				</div>
 			) }
 			<CheckoutMain
+				cartKey={ cartKey }
 				sitelessCheckoutType="a4a"
 				redirectTo={
 					successUrl ??

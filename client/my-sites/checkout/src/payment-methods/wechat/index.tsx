@@ -17,7 +17,7 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/src/components/summary-details';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import type { PaymentMethod, PaymentMethodSubmitButtonProps } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
@@ -139,7 +139,7 @@ function WeChatPayButton( {
 	state: WeChatPaymentMethodState;
 } ) {
 	const { formStatus } = useFormStatus();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
 	// This must be typed as optional because it's injected by cloning the

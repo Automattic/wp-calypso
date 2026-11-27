@@ -18,6 +18,10 @@ vi.mock( 'calypso/my-sites/checkout/src/components/leave-checkout-modal', () => 
 vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center', () => ( {
 	useCheckoutHelpCenter: () => ( { toggleHelpCenter: vi.fn() } ),
 } ) );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
+	__esModule: true,
+	default: () => 'no-site',
+} ) );
 vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
 vi.mock( '../masterbar', () => ( {
 	__esModule: true,

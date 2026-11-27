@@ -16,7 +16,7 @@ import {
 	createTestSite,
 } from './index';
 import type { Site } from '@automattic/api-core';
-import type { SetCart, ResponseCart } from '@automattic/shopping-cart';
+import type { CartKey, SetCart, ResponseCart } from '@automattic/shopping-cart';
 
 function seedTestSite( client: QueryClient, site?: Partial< Site > ) {
 	const { queryKey } = siteByIdQuery( siteId );
@@ -37,6 +37,7 @@ export function MockCheckout( {
 	setCart,
 	useUndefinedSiteId,
 	site,
+	cartKey = siteId,
 }: {
 	initialCart: ResponseCart;
 	cartChanges?: Partial< ResponseCart >;
@@ -44,6 +45,7 @@ export function MockCheckout( {
 	setCart?: SetCart;
 	useUndefinedSiteId?: boolean;
 	site?: Partial< Site >;
+	cartKey?: CartKey;
 } ) {
 	const reduxStore = createTestReduxStore();
 	const [ queryClient ] = useState( () =>
@@ -65,6 +67,7 @@ export function MockCheckout( {
 				<ShoppingCartProvider managerClient={ managerClient }>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 						<CheckoutMain
+							cartKey={ cartKey }
 							siteId={ useUndefinedSiteId ? undefined : siteId }
 							siteSlug="foo.com"
 							{ ...additionalProps }
