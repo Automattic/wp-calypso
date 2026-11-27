@@ -1,6 +1,5 @@
 import { normalizeAbilityName } from '../abilities/ability-name';
 import {
-	APPLY_BLOCK_EDITS_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
 	getWebMcpDescription,
 	getWebMcpInputSchema,
@@ -90,12 +89,17 @@ function createTool(
 		title: ability.label || ability.name,
 		description: getWebMcpDescription( ability ),
 		inputSchema: normalizeInputSchema( getWebMcpInputSchema( ability ) ),
+		// The WebMCP draft's `ToolAnnotations`, which has no MCP-style `destructiveHint` or
+		// `idempotentHint`.
 		annotations: {
 			readOnlyHint: ability.meta?.annotations?.readonly === true,
-			destructiveHint:
-				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ||
-				ability.meta?.annotations?.destructive === true,
-			idempotentHint: ability.meta?.annotations?.idempotent === true,
+			// Results carry site content and other plugins' output, which Agents Manager can't
+			// vouch for.
+			untrustedContentHint: true,
+			consequentialHint:
+				ability.meta?.annotations?.destructive === true ||
+				ability.meta?.webmcp?.consequential === true,
+			debugging: ability.meta?.webmcp?.debugging === true,
 		},
 		execute: async ( input, options ) => {
 			// The ability can change before the next sync replaces this tool, e.g. an unflagged one

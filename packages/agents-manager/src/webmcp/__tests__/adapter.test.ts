@@ -307,7 +307,7 @@ describe( 'WebMCP adapter', () => {
 		expect( tool ).toMatchObject( {
 			description: expect.stringContaining( 'Instructions for wpcom/get-block-schemas' ),
 			inputSchema: ability.input_schema,
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		await tool?.execute( { fields: 'summary' } );
@@ -334,7 +334,7 @@ describe( 'WebMCP adapter', () => {
 		const tool = harness.tools.get( 'big_sky__show_template' );
 		expect( tool ).toMatchObject( {
 			inputSchema: { type: 'object', properties: {}, additionalProperties: false },
-			annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		await expect( tool?.execute( {} ) ).resolves.toEqual( {
@@ -376,7 +376,7 @@ describe( 'WebMCP adapter', () => {
 				},
 				additionalProperties: false,
 			},
-			annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		const input = {
@@ -396,6 +396,41 @@ describe( 'WebMCP adapter', () => {
 				reverseMap: {},
 			}
 		);
+	} );
+
+	it( 'sends only the hints the WebMCP draft defines', async () => {
+		const harness = createHarness( [ createBlockTreeAbility() ] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'agents_manager__get_block_tree' )?.annotations ).toEqual( {
+			readOnlyHint: true,
+			untrustedContentHint: true,
+			consequentialHint: false,
+			debugging: false,
+		} );
+	} );
+
+	it.each< [ string, Ability[ 'meta' ] ] >( [
+		[ 'is annotated as destructive', { ...flaggedMeta, annotations: { destructive: true } } ],
+		[ 'sets `meta.webmcp.consequential`', { webmcp: { public: true, consequential: true } } ],
+	] )( 'marks the tool of an ability that %s as consequential', async ( _case, meta ) => {
+		const harness = createHarness( [ createAbility( { meta } ) ] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'big_sky__apply_block_edits' )?.annotations ).toMatchObject( {
+			consequentialHint: true,
+		} );
+	} );
+
+	it( 'marks the tool of an ability that sets `meta.webmcp.debugging` as a debugging tool', async () => {
+		const harness = createHarness( [
+			createAbility( { meta: { webmcp: { public: true, debugging: true } } } ),
+		] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'big_sky__apply_block_edits' )?.annotations ).toMatchObject( {
+			debugging: true,
+		} );
 	} );
 
 	it( 'pairs the block-tree IDs with the edit bridge', async () => {
@@ -426,7 +461,7 @@ describe( 'WebMCP adapter', () => {
 
 		const readTool = harness.tools.get( 'agents_manager__get_block_tree' );
 		expect( readTool ).toMatchObject( {
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		await readTool?.execute( {} );

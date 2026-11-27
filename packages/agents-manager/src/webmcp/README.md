@@ -59,6 +59,14 @@ here: they scope only the agent's own tools.
 A tool's description is its ability's own `description`, the text the Agents Manager agent also
 reads when its route allows the ability. A client ability's `meta.instructions` stay with the chat.
 
+A tool's annotations follow the WebMCP draft's `ToolAnnotations`. `readOnlyHint` comes from the
+ability's `readonly` annotation. Every tool sets `untrustedContentHint`, because results carry site
+content and other plugins' output, which Agents Manager can't vouch for. A tool sets
+`consequentialHint` when its ability is annotated `destructive` or sets
+`meta.webmcp.consequential: true`. No tool listed below does: their changes stay unsaved for review.
+A tool sets `debugging` when its ability sets `meta.webmcp.debugging: true`. The draft has no
+MCP-style `destructiveHint` or `idempotentHint`, so the `idempotent` annotation isn't sent.
+
 Eligibility is checked once the providers load and whenever the scope or the loaded providers
 change; such a change, or unmounting, aborts all registrations. While eligible, the adapter syncs
 the tools whenever the `@wordpress/abilities` registry changes, which covers abilities registered
@@ -129,7 +137,10 @@ action: a tool that saves as a side effect, such as `big-sky/editor-navigate`, d
 
 To add another tool, verify its complete implementation, permissions, annotations, and execution
 path. Set `meta.webmcp.public: true` on a client ability with a callback, or add a REST-backed tool
-to `WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`).
+to `WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`). If the tool's action is significant or can't be
+undone, such as sending a message or refunding an order, also set `meta.webmcp.consequential: true`,
+so a browser agent can ask the user to confirm it first. If the tool is for debugging or developer
+tooling rather than for end users, set `meta.webmcp.debugging: true`.
 
 For a tool on another wp-admin screen, load Agents Manager there with Jetpack's
 `agents_manager_should_load` filter, and list the screen's ID in `meta.webmcp.screens`, for example
@@ -191,7 +202,8 @@ DevTools or call `document.modelContext` directly for this path.
 
 1. Without opening Agents Manager chat, enumerate the page's tools through
    `document.modelContext.getTools()`.
-2. Confirm the same ten tools are present and that the three server tools expose input schemas.
+2. Confirm the same ten tools are present, that the three server tools expose input schemas, and
+   that each tool's `annotations` have `untrustedContentHint: true` and `consequentialHint: false`.
 3. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.

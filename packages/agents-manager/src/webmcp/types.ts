@@ -5,8 +5,9 @@ export type WebMcpTool = {
 	inputSchema: Record< string, unknown >;
 	annotations: {
 		readOnlyHint: boolean;
-		destructiveHint?: boolean;
-		idempotentHint?: boolean;
+		untrustedContentHint?: boolean;
+		consequentialHint?: boolean;
+		debugging?: boolean;
 	};
 	execute: (
 		input: Record< string, unknown >,
