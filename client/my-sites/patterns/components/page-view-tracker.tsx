@@ -49,7 +49,7 @@ export function PatternsPageViewTracker( {
 		view,
 	] );
 
-	let path: string = '';
+	let path: string;
 
 	if ( ! category ) {
 		path = '/patterns';

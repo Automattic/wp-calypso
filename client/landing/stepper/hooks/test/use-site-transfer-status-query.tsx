@@ -1,19 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import {
 	getSiteTransferStatusQueryKey,
 	useSiteTransferStatusQuery,
 } from '../use-site-transfer-status-query';
 
-const mockGetStatus = jest.fn();
+const mockGetStatus = vi.fn();
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: { get: ( ...args: unknown[] ) => mockGetStatus( ...args ) },
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: { get: ( ...args: unknown[] ) => mockGetStatus( ...args ) },
+	} )
+);
 
 // Test-mode constants: 300ms per poll, 6s watch on `none`, 30s transfer deadline.
 const POLL_MS = 300;
@@ -34,7 +37,7 @@ const renderQuery = ( siteId = 1, client = makeClient() ) =>
 const elapse = async ( ms: number ) => {
 	for ( let elapsed = 0; elapsed < ms; elapsed += POLL_MS ) {
 		await act( async () => {
-			jest.advanceTimersByTime( POLL_MS );
+			vi.advanceTimersByTime( POLL_MS );
 			await Promise.resolve();
 		} );
 	}
@@ -42,10 +45,10 @@ const elapse = async ( ms: number ) => {
 
 describe( 'useSiteTransferStatusQuery', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.useFakeTimers();
+		vi.clearAllMocks();
+		vi.useFakeTimers();
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'watches briefly for a transfer started in another tab', async () => {
 		respondWith( transferStates.NONE );

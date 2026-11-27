@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { FollowButton } from '../follow-button';
 
 describe( 'FollowButton', () => {
 	it( 'renders a Follow button when not following and not followed by, and triggers onFollow on click', async () => {
-		const onFollow = jest.fn();
+		const onFollow = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<FollowButton
 				isFollowing={ false }
 				isFollowedBy={ false }
 				onFollow={ onFollow }
-				onUnfollow={ jest.fn() }
+				onUnfollow={ vi.fn() }
 			/>
 		);
 		const button = screen.getByRole( 'button', { name: /^follow$/i } );
@@ -23,14 +24,14 @@ describe( 'FollowButton', () => {
 	} );
 
 	it( 'renders Follow back when followed by but not following', async () => {
-		const onFollow = jest.fn();
+		const onFollow = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<FollowButton
 				isFollowing={ false }
 				isFollowedBy
 				onFollow={ onFollow }
-				onUnfollow={ jest.fn() }
+				onUnfollow={ vi.fn() }
 			/>
 		);
 		await user.click( screen.getByRole( 'button', { name: /follow back/i } ) );
@@ -38,13 +39,13 @@ describe( 'FollowButton', () => {
 	} );
 
 	it( 'renders Following when isFollowing and triggers onUnfollow on click', async () => {
-		const onUnfollow = jest.fn();
+		const onUnfollow = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<FollowButton
 				isFollowing
 				isFollowedBy={ false }
-				onFollow={ jest.fn() }
+				onFollow={ vi.fn() }
 				onUnfollow={ onUnfollow }
 			/>
 		);
@@ -62,8 +63,8 @@ describe( 'FollowButton', () => {
 				isFollowing
 				isFollowedBy={ false }
 				actorHandle="alice.bsky.social"
-				onFollow={ jest.fn() }
-				onUnfollow={ jest.fn() }
+				onFollow={ vi.fn() }
+				onUnfollow={ vi.fn() }
 			/>
 		);
 		expect(
@@ -72,8 +73,8 @@ describe( 'FollowButton', () => {
 	} );
 
 	it( 'is disabled while isPending and does not trigger handlers', async () => {
-		const onFollow = jest.fn();
-		const onUnfollow = jest.fn();
+		const onFollow = vi.fn();
+		const onUnfollow = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<FollowButton
@@ -97,8 +98,8 @@ describe( 'FollowButton', () => {
 					isFollowedBy={ false }
 					isRequested
 					actorHandle="alice@mastodon.social"
-					onFollow={ jest.fn() }
-					onUnfollow={ jest.fn() }
+					onFollow={ vi.fn() }
+					onUnfollow={ vi.fn() }
 				/>
 			);
 
@@ -117,8 +118,8 @@ describe( 'FollowButton', () => {
 					isFollowing={ false }
 					isFollowedBy={ false }
 					isRequested
-					onFollow={ jest.fn() }
-					onUnfollow={ jest.fn() }
+					onFollow={ vi.fn() }
+					onUnfollow={ vi.fn() }
 				/>
 			);
 
@@ -127,13 +128,13 @@ describe( 'FollowButton', () => {
 
 		it( 'invokes onUnfollow when the Requested button is clicked', async () => {
 			const user = userEvent.setup();
-			const onUnfollow = jest.fn();
+			const onUnfollow = vi.fn();
 			render(
 				<FollowButton
 					isFollowing={ false }
 					isFollowedBy={ false }
 					isRequested
-					onFollow={ jest.fn() }
+					onFollow={ vi.fn() }
 					onUnfollow={ onUnfollow }
 				/>
 			);
@@ -145,7 +146,7 @@ describe( 'FollowButton', () => {
 
 		it( 'disables the Requested button while isPending and does not invoke onUnfollow', async () => {
 			const user = userEvent.setup();
-			const onUnfollow = jest.fn();
+			const onUnfollow = vi.fn();
 			render(
 				<FollowButton
 					isFollowing={ false }
@@ -153,7 +154,7 @@ describe( 'FollowButton', () => {
 					isRequested
 					isPending
 					actorHandle="alice@mastodon.social"
-					onFollow={ jest.fn() }
+					onFollow={ vi.fn() }
 					onUnfollow={ onUnfollow }
 				/>
 			);
@@ -171,8 +172,8 @@ describe( 'FollowButton', () => {
 					isFollowedBy={ false }
 					isRequested
 					actorHandle="alice@mastodon.social"
-					onFollow={ jest.fn() }
-					onUnfollow={ jest.fn() }
+					onFollow={ vi.fn() }
+					onUnfollow={ vi.fn() }
 				/>
 			);
 
@@ -190,8 +191,8 @@ describe( 'FollowButton', () => {
 					isFollowedBy
 					isRequested
 					actorHandle="alice@mastodon.social"
-					onFollow={ jest.fn() }
-					onUnfollow={ jest.fn() }
+					onFollow={ vi.fn() }
+					onUnfollow={ vi.fn() }
 				/>
 			);
 

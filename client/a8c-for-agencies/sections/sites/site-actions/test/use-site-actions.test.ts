@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import page from '@automattic/calypso-router';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useSiteActionsDataViews } from '../use-site-actions';
 import type { SiteData } from '../../../../../jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
-jest.mock( '@automattic/calypso-router', () => ( { __esModule: true, default: jest.fn() } ) );
+vi.mock( '@automattic/calypso-router', () => ( { __esModule: true, default: vi.fn() } ) );
 
 const mockState = {
 	a8cForAgencies: { agencies: { activeAgency: null, isAgencyClientUser: false } },
 	currentUser: { capabilities: {} },
 };
 
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
 	useSelector: ( selector: ( state: typeof mockState ) => unknown ) => selector( mockState ),
 } ) );
 
@@ -40,8 +41,8 @@ const getIssueLicenseAction = () => {
 		useSiteActionsDataViews( {
 			isLoading: false,
 			isLargeScreen: true,
-			setDataViewsState: jest.fn(),
-			setSelectedSiteFeature: jest.fn(),
+			setDataViewsState: vi.fn(),
+			setSelectedSiteFeature: vi.fn(),
 		} )
 	);
 

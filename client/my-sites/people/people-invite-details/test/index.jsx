@@ -1,24 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
+import { vi } from 'vitest';
 import invites from 'calypso/state/invites/reducer';
 import siteSettings from 'calypso/state/site-settings/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { PeopleInviteDetails } from '../index';
 
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { invites, siteSettings, ui } } );
 
-const mockGoBack = jest.fn();
-jest.mock( '@automattic/calypso-router', () => ( { back: mockGoBack } ) );
-jest.mock( 'calypso/data/external-contributors/use-external-contributors', () => () => false );
+const mockGoBack = vi.hoisted( () => vi.fn() );
+vi.mock( '@automattic/calypso-router', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { back: mockGoBack } )
+);
+vi.mock( 'calypso/data/external-contributors/use-external-contributors', () => ( {
+	default: () => false,
+} ) );
 
 describe( 'PeopleInviteDetails', () => {
-	let PeopleInviteDetails;
-
 	const mockTranslate = ( msg ) => msg;
 	const siteObject = { ID: 1337, slug: 'foo.wordpress.com' };
 
@@ -64,19 +68,13 @@ describe( 'PeopleInviteDetails', () => {
 		},
 	};
 
-	beforeAll( () => {
-		// Load the component here instead of via an `import` to ensure that it
-		// is loaded after we've mocked some of its dependencies.
-		PeopleInviteDetails = require( '../index' ).PeopleInviteDetails;
-	} );
-
 	beforeEach( () => {
 		mockGoBack.mockReset();
 	} );
 
 	it( 'should trigger deletion upon clicking Revoke Invite (pending invite)', async () => {
 		const user = userEvent.setup();
-		const mockDeleteInvite = jest.fn();
+		const mockDeleteInvite = vi.fn();
 
 		render(
 			<PeopleInviteDetails
@@ -103,7 +101,7 @@ describe( 'PeopleInviteDetails', () => {
 	} );
 
 	it( 'should trigger deletion upon clicking Clear Invite (accepted invite)', async () => {
-		const mockDeleteInvite = jest.fn();
+		const mockDeleteInvite = vi.fn();
 
 		render(
 			<PeopleInviteDetails

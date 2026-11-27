@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { loadVGSCollect } from '@vgs/collect-js';
 import { VGSCollectForm, useVGSCollectFormInstance } from '@vgs/collect-js-react';
+import { type MockedFunction, vi } from 'vitest';
 import { useVaultId } from '../hooks/use-vault-id';
 import { VgsCreditCardFields } from '../payment-methods/credit-card/vgs-credit-card-fields';
 
 // Mock dependencies
-jest.mock( '../hooks/use-vault-id' );
-jest.mock( '@vgs/collect-js', () => ( {
-	loadVGSCollect: jest.fn(),
+vi.mock( '../hooks/use-vault-id' );
+vi.mock( '@vgs/collect-js', () => ( {
+	loadVGSCollect: vi.fn(),
 	VGS: {
 		Css: {},
 	},
@@ -46,24 +47,24 @@ const createMockForm = () => ( {
 			errors: [],
 		},
 	},
-	submit: jest.fn(),
+	submit: vi.fn(),
 } );
 
-jest.mock( '@vgs/collect-js-react', () => ( {
-	VGSCollectForm: Object.assign( jest.fn(), {
-		CardNumberField: jest.fn(),
-		CardExpirationDateField: jest.fn(),
-		CardSecurityCodeField: jest.fn(),
+vi.mock( '@vgs/collect-js-react', () => ( {
+	VGSCollectForm: Object.assign( vi.fn(), {
+		CardNumberField: vi.fn(),
+		CardExpirationDateField: vi.fn(),
+		CardSecurityCodeField: vi.fn(),
 	} ),
-	useVGSCollectFormInstance: jest.fn(),
+	useVGSCollectFormInstance: vi.fn(),
 } ) );
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
 
-const mockUseVaultId = useVaultId as jest.MockedFunction< typeof useVaultId >;
-const mockLoadVGSCollect = loadVGSCollect as jest.MockedFunction< typeof loadVGSCollect >;
-const mockUseVGSCollectFormInstance = useVGSCollectFormInstance as jest.MockedFunction<
+const mockUseVaultId = useVaultId as MockedFunction< typeof useVaultId >;
+const mockLoadVGSCollect = loadVGSCollect as MockedFunction< typeof loadVGSCollect >;
+const mockUseVGSCollectFormInstance = useVGSCollectFormInstance as MockedFunction<
 	typeof useVGSCollectFormInstance
 >;
 
@@ -117,7 +118,7 @@ const MockVGSCollectForm = ( { children, vaultId, environment }: any ) => (
 );
 
 // Set up the mocked VGSCollectForm
-( VGSCollectForm as jest.MockedFunction< typeof VGSCollectForm > ).mockImplementation(
+( VGSCollectForm as MockedFunction< typeof VGSCollectForm > ).mockImplementation(
 	MockVGSCollectForm
 );
 ( VGSCollectForm as any ).CardNumberField.mockImplementation( MockCardNumberField );
@@ -178,7 +179,7 @@ describe( 'VgsCreditCardFields', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Use mockImplementation with Promise.resolve to ensure async state updates
 		// are properly handled within act() boundaries
 		mockLoadVGSCollect.mockImplementation( () => Promise.resolve( {} as any ) );
@@ -238,7 +239,7 @@ describe( 'VgsCreditCardFields', () => {
 
 	describe( 'Error Handling', () => {
 		it( 'should return null when vault configuration fails', () => {
-			const mockOnVgsFormError = jest.fn();
+			const mockOnVgsFormError = vi.fn();
 			mockUseVaultId.mockReturnValue( {
 				data: undefined,
 				isSuccess: false,
@@ -263,7 +264,7 @@ describe( 'VgsCreditCardFields', () => {
 		} );
 
 		it( 'should return null when VGS script loading fails', async () => {
-			const mockOnVgsFormError = jest.fn();
+			const mockOnVgsFormError = vi.fn();
 			mockUseVaultId.mockReturnValue( {
 				data: mockVaultConfig,
 				isSuccess: true,

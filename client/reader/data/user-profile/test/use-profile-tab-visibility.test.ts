@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { createElement } from 'react';
+import { vi } from 'vitest';
+import { useSelector } from 'calypso/state';
 import { useProfileTabVisibility } from '../use-profile-tab-visibility';
 import type { ReadProfileSettingsResponse } from '@automattic/api-core';
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
 } ) );
 
 describe( 'useProfileTabVisibility', () => {
-	const { useSelector } = jest.requireMock( 'calypso/state' );
 	let queryClient: QueryClient;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		useSelector.mockReturnValue( null );
+		vi.clearAllMocks();
+		vi.mocked( useSelector ).mockReturnValue( null );
 		nock.disableNetConnect();
 		queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	} );
@@ -51,7 +52,7 @@ describe( 'useProfileTabVisibility', () => {
 	}
 
 	test( "always shows the owner's own tabs, but reports the hidden ones as not public", async () => {
-		useSelector.mockReturnValue( { username: 'me' } );
+		vi.mocked( useSelector ).mockReturnValue( { username: 'me' } );
 		nockPreferences( {
 			'reader-profile-posts-visibility': 'public',
 			'reader-profile-sites-visibility': 'hidden',
@@ -67,7 +68,7 @@ describe( 'useProfileTabVisibility', () => {
 	} );
 
 	test( 'defaults the owner to all tabs visible and public while preferences load / when unset', () => {
-		useSelector.mockReturnValue( { username: 'me' } );
+		vi.mocked( useSelector ).mockReturnValue( { username: 'me' } );
 		nockPreferences( {} );
 
 		const { result } = renderHook( () => useProfileTabVisibility( 'me' ), { wrapper } );
@@ -126,7 +127,7 @@ describe( 'useProfileTabVisibility', () => {
 	} );
 
 	test( 'still shows the owner the Posts tab when they have hidden it, but reports it as not public', async () => {
-		useSelector.mockReturnValue( { username: 'me' } );
+		vi.mocked( useSelector ).mockReturnValue( { username: 'me' } );
 		nockPreferences( {
 			'reader-profile-posts-visibility': 'hidden',
 			'reader-profile-sites-visibility': 'public',
@@ -139,7 +140,7 @@ describe( 'useProfileTabVisibility', () => {
 	} );
 
 	test( 'still shows the owner the Sites tab when they have hidden it, but reports it as not public', async () => {
-		useSelector.mockReturnValue( { username: 'me' } );
+		vi.mocked( useSelector ).mockReturnValue( { username: 'me' } );
 		nockPreferences( {
 			'reader-profile-posts-visibility': 'public',
 			'reader-profile-sites-visibility': 'hidden',

@@ -1,4 +1,5 @@
 import nock from 'nock';
+import { vi } from 'vitest';
 import {
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
@@ -19,14 +20,15 @@ import {
 } from 'calypso/state/posts/actions';
 import { receivePost } from 'calypso/state/posts/actions/receive-post';
 import { receivePosts } from 'calypso/state/posts/actions/receive-posts';
+import { savePostSuccess } from 'calypso/state/posts/actions/save-post-success';
 
 describe( 'actions', () => {
 	let dispatch;
 	let getState;
 
 	beforeEach( () => {
-		dispatch = jest.fn();
-		getState = jest.fn( () => ( {
+		dispatch = vi.fn();
+		getState = vi.fn( () => ( {
 			posts: {
 				queries: {},
 			},
@@ -58,10 +60,6 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePostSuccess()', () => {
-		// eslint-disable-next-line no-shadow
-		const { savePostSuccess } = jest.requireActual(
-			'calypso/state/posts/actions/save-post-success'
-		);
 		test( 'should return an action object', () => {
 			const savedPost = { ID: 841, title: 'Hello World' };
 			const attributes = { status: 'draft' };

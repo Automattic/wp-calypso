@@ -1,11 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import i18n from 'i18n-calypso';
 import nock from 'nock';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import wp from 'calypso/lib/wp';
@@ -15,21 +17,23 @@ import { RenderStepOptions, mockStepProps, renderStep } from '../../test/helpers
 
 const mockFlowState = new Map< string, unknown >();
 
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
-	useFlowState: jest.fn( () => ( {
-		get: jest.fn( ( key: string ) => mockFlowState.get( key ) ),
-		set: jest.fn( ( key: string, value: unknown ) => mockFlowState.set( key, value ) ),
+vi.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
+	useFlowState: vi.fn( () => ( {
+		get: vi.fn( ( key: string ) => mockFlowState.get( key ) ),
+		set: vi.fn( ( key: string, value: unknown ) => mockFlowState.set( key, value ) ),
 	} ) ),
 } ) );
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-		post: jest.fn(),
-	},
-} ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+			post: vi.fn(),
+		},
+	} )
+);
+vi.mock( 'calypso/landing/stepper/hooks/use-site-slug-param' );
 
-( useSiteSlugParam as jest.Mock ).mockImplementation( () => 'site-url.wordpress.com' );
+( useSiteSlugParam as Mock ).mockImplementation( () => 'site-url.wordpress.com' );
 
 const render = ( props?: Partial< StepProps >, renderOptions?: RenderStepOptions ) => {
 	const combinedProps = { ...mockStepProps( props ) };
@@ -85,18 +89,18 @@ const siteInfoUsingWPCOM = {
 describe( 'SiteMigrationCredentials', () => {
 	beforeAll( () => nock.disableNetConnect() );
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockFlowState.clear();
-		( wp.req.get as jest.Mock ).mockResolvedValue( baseSiteInfo );
+		( wp.req.get as Mock ).mockResolvedValue( baseSiteInfo );
 	} );
 
 	it( 'starts the authorization flow when using application password', async () => {
-		jest.mocked( wp.req.post ).mockResolvedValue( {
+		vi.mocked( wp.req.post ).mockResolvedValue( {
 			application_passwords_enabled: true,
 			authorization_url: 'https://external-site-url.com/wp-admin/authorize-application.php',
 		} );
 
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		await fillAddressField();
@@ -111,7 +115,7 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'creates a credentials using backup file', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		mockFlowState.set( 'migrationSourceUrl', 'original.example.com' );
 		render( { navigation: { submit } } );
 
@@ -158,7 +162,7 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'skips the credential creation when the user does not fill the fields', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		await userEvent.click( skipButton() );
@@ -204,9 +208,9 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'shows error message when there is an error on the with the backup file', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 
-		( wp.req.post as jest.Mock ).mockRejectedValue( {
+		( wp.req.post as Mock ).mockRejectedValue( {
 			code: 'rest_invalid_param',
 			data: {
 				params: {
@@ -227,7 +231,7 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'shows a notice when URL contains error=ticket-creation', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		const initialEntry = '/site-migration-credentials?error=ticket-creation';
 
 		render( { navigation: { submit } }, { initialEntry } );
@@ -242,7 +246,7 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'links the logo to the homepage as its way out, without a Back button', () => {
-		render( { navigation: { goBack: jest.fn(), submit: jest.fn() } } );
+		render( { navigation: { goBack: vi.fn(), submit: vi.fn() } } );
 
 		expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
 			'href',
@@ -253,9 +257,9 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'shows "Scanning site" on the Continue button during submission with application password', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		const pendingPromise = new Promise( () => {} );
-		( wp.req.post as jest.Mock ).mockImplementation( () => pendingPromise );
+		( wp.req.post as Mock ).mockImplementation( () => pendingPromise );
 
 		render( { navigation: { submit } } );
 		await fillAddressField();
@@ -268,16 +272,16 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'shows "Scanning site" on the Continue button during submission when fetching site info with application password', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 
 		const pendingPromise = new Promise( () => {} );
 
-		( wp.req.post as jest.Mock ).mockResolvedValue( {
+		( wp.req.post as Mock ).mockResolvedValue( {
 			status: 200,
 			body: {},
 		} );
 
-		( wp.req.get as jest.Mock ).mockImplementation( () => pendingPromise );
+		( wp.req.get as Mock ).mockImplementation( () => pendingPromise );
 
 		render( { navigation: { submit } } );
 		await fillAddressField();
@@ -290,8 +294,8 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'submits credentials-required action when there is an error on to get the authorization path', async () => {
-		const submit = jest.fn();
-		( wp.req.post as jest.Mock ).mockRejectedValue( {
+		const submit = vi.fn();
+		( wp.req.post as Mock ).mockRejectedValue( {
 			code: 'failed_to_get_authorization_path',
 		} );
 
@@ -307,9 +311,9 @@ describe( 'SiteMigrationCredentials', () => {
 	} );
 
 	it( 'submits already-wpcom action when site is already WPCOM', async () => {
-		const submit = jest.fn();
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
-		( wp.req.post as jest.Mock ).mockResolvedValue( {
+		const submit = vi.fn();
+		( wp.req.get as Mock ).mockResolvedValue( siteInfoUsingWPCOM );
+		( wp.req.post as Mock ).mockResolvedValue( {
 			status: 200,
 			body: {},
 		} );
@@ -337,9 +341,61 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
+	it( 'asks for the site address instead of filing a request for a WordPress.com page', async () => {
+		const submit = vi.fn();
+		render( { navigation: { submit } } );
+
+		await userEvent.type( siteAddressInput(), 'https://wordpress.com/home/example.com' );
+		await userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+		} );
+		const postedPaths = vi.mocked( wp.req.post ).mock.calls.map( ( [ request ] ) => request.path );
+		expect( wp.req.get ).not.toHaveBeenCalled();
+		expect( postedPaths ).not.toContainEqual(
+			expect.stringMatching( /migration-ticket|automated-migration/ )
+		);
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'offers the support button when the address is a WordPress.com page', async () => {
+		render( {}, { initialState: { currentUser: { id: 1, user: { ID: 1 } } } } );
+
+		await userEvent.type( siteAddressInput(), 'wordpress.com/log-in' );
+		await userEvent.click( continueButton() );
+
+		const supportButton = await screen.findByRole( 'button', { name: 'contact our support' } );
+
+		expect( supportButton.parentElement ).toHaveTextContent(
+			"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com and you need help, contact our support."
+		);
+	} );
+
+	describe( 'when translations load after the WordPress.com page message shows', () => {
+		afterEach( () => i18n.setLocale( { '': { localeSlug: 'en' } } ) );
+
+		it( 'shows the translated sentence with its button, not the raw tag', async () => {
+			render( {}, { initialState: { currentUser: { id: 1, user: { ID: 1 } } } } );
+
+			await userEvent.type( siteAddressInput(), 'wordpress.com/log-in' );
+			await userEvent.click( continueButton() );
+			await screen.findByRole( 'button', { name: 'contact our support' } );
+
+			i18n.setLocale( {
+				'': { localeSlug: 'es', 'plural-forms': 'nplurals=2; plural=n != 1;' },
+				"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com and you need help, <supportLink>contact our support</supportLink>.":
+					[ 'Es una página de WordPress.com. <supportLink>Contacta con soporte</supportLink>.' ],
+			} );
+
+			expect( await screen.findByRole( 'button', { name: 'Contacta con soporte' } ) ).toBeVisible();
+			expect( document.body ).not.toHaveTextContent( '<supportLink>' );
+		} );
+	} );
+
 	it( 'submits site-is-not-using-wordpress action when platform is not wordpress', async () => {
-		const submit = jest.fn();
-		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingTumblr );
+		const submit = vi.fn();
+		( wp.req.get as Mock ).mockResolvedValue( siteInfoUsingTumblr );
 
 		render( { navigation: { submit } } );
 		await fillAddressField();
@@ -357,7 +413,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		beforeEach( () => {
 			mockFlowState.set( 'migrationSourceUrl', 'original.example.com' );
-			jest.mocked( wp.req.post ).mockResolvedValue( {
+			vi.mocked( wp.req.post ).mockResolvedValue( {
 				application_passwords_enabled: false,
 			} );
 		} );
@@ -366,7 +422,7 @@ describe( 'SiteMigrationCredentials', () => {
 			'remembers the confirmed edit %s while submitting the analyzed address',
 			async ( enteredUrl ) => {
 				const user = userEvent.setup();
-				const submit = jest.fn();
+				const submit = vi.fn();
 				render( { navigation: { submit } }, { initialEntry } );
 
 				await user.clear( siteAddressInput() );
@@ -386,7 +442,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		it( 'keeps the original entry when the redirected address is submitted unchanged', async () => {
 			const user = userEvent.setup();
-			const submit = jest.fn();
+			const submit = vi.fn();
 			render( { navigation: { submit } }, { initialEntry } );
 
 			expect( siteAddressInput() ).toHaveValue( 'https://redirected.example.com' );
@@ -398,7 +454,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		it( 'keeps the last confirmed entry while an edit is unsubmitted or invalid', async () => {
 			const user = userEvent.setup();
-			const submit = jest.fn();
+			const submit = vi.fn();
 			render( { navigation: { submit } }, { initialEntry } );
 
 			await user.clear( siteAddressInput() );
@@ -416,7 +472,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		it( 'remembers a confirmed edit back to the initial credentials address', async () => {
 			const user = userEvent.setup();
-			const submit = jest.fn();
+			const submit = vi.fn();
 			render( { navigation: { submit } }, { initialEntry } );
 
 			await user.clear( siteAddressInput() );
@@ -436,12 +492,12 @@ describe( 'SiteMigrationCredentials', () => {
 
 	describe( 'when our team can’t be sent the migration request', () => {
 		const rejectPath = ( path: string, error: object ) =>
-			( wp.req.post as jest.Mock ).mockImplementation( ( params ) =>
+			( wp.req.post as Mock ).mockImplementation( ( params ) =>
 				( params?.path ?? '' ).includes( path ) ? Promise.reject( error ) : Promise.resolve( {} )
 			);
 
 		it( 'tells the customer our team will reach out when wpcom refused the request', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			rejectPath( 'application-passwords/setup', {
 				code: 'migration_request_not_submitted',
 				message: 'Server message',
@@ -460,7 +516,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		it( 'tells the customer they reached today’s limit', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			rejectPath( 'application-passwords/setup', { code: 'too_many_requests' } );
 
 			render( { navigation: { submit } } );
@@ -474,7 +530,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		it( 'asks the customer to try again when the ticket could not be created', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			rejectPath( 'application-passwords/setup', { code: 'ticket_creation_failed' } );
 
 			render( { navigation: { submit } } );
@@ -490,7 +546,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		it( 'moves the customer on when the setup call fails for a reason unrelated to the ticket', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			rejectPath( 'application-passwords/setup', { code: 'rest_forbidden' } );
 
 			render( { navigation: { submit } } );
@@ -503,8 +559,8 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		it( 'keeps the customer on the step when the ticket for a WordPress.com site fails', async () => {
-			const submit = jest.fn();
-			( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingWPCOM );
+			const submit = vi.fn();
+			( wp.req.get as Mock ).mockResolvedValue( siteInfoUsingWPCOM );
 			rejectPath( '/help/migration-ticket/new', { code: 'internal_error' } );
 
 			render( { navigation: { submit } } );
@@ -520,8 +576,8 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		it( 'keeps the customer on the step when the ticket for a site not on WordPress fails', async () => {
-			const submit = jest.fn();
-			( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingTumblr );
+			const submit = vi.fn();
+			( wp.req.get as Mock ).mockResolvedValue( siteInfoUsingTumblr );
 			rejectPath( '/help/migration-ticket/new', { code: 'too_many_requests' } );
 
 			render( { navigation: { submit } } );
@@ -535,7 +591,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 
 		it( 'tells the customer our team will reach out when a backup request is refused', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			rejectPath( '/automated-migration?', {
 				code: 'migration_request_not_submitted',
 				message: 'Server message',

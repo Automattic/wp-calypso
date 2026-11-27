@@ -10,7 +10,7 @@ import { useTimeSince } from '../../../../components/time-since';
 import { getBackupUrl } from '../../../../utils/site-backup';
 import { isSimple } from '../../../../utils/site-types';
 import JetpackConnectionWarningCard from '../../../components/jetpack-connection-warning-card';
-import HostingFeatureGatedWithOverviewCard from '../../../hosting-feature-gated-with-overview-card';
+import HostingFeatureGatedWithOverviewCard from '../../../hosting-features/components/hosting-feature-gated-with-overview-card';
 import type { Site, SiteActivityLog } from '@automattic/api-core';
 
 const CARD_PROPS = {

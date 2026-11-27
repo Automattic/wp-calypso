@@ -58,6 +58,7 @@ interface InteractiveUiSurfaceProps {
 	disabled?: boolean;
 	/** Classes for the surface and its modal, such as A2UI's `a2ui-dark` or `a2ui-light`. */
 	className?: string;
+	theme?: string;
 	/** A change retries a surface that failed to render. */
 	revision?: number;
 	/** Shown instead of a surface that fails to render or uses a component its catalog lacks. */
@@ -79,6 +80,7 @@ export function InteractiveUiSurface( {
 	surface,
 	disabled = false,
 	className,
+	theme,
 	revision = 0,
 	fallback = null,
 	hostProps = NO_HOST_PROPS,
@@ -93,9 +95,10 @@ export function InteractiveUiSurface( {
 			isShowingErrors,
 			showErrors: () => setIsShowingErrors( true ),
 			className,
+			theme,
 			rootRef,
 		} ),
-		[ surface.id, disabled, isShowingErrors, className ]
+		[ surface.id, disabled, isShowingErrors, className, theme ]
 	);
 
 	const unknownComponentType = getUnknownComponentType( surface );
@@ -124,7 +127,11 @@ export function InteractiveUiSurface( {
 			<InteractiveUiSurfaceContext.Provider value={ surfaceContext }>
 				<InteractiveUiHostPropsContext.Provider value={ hostProps }>
 					<MarkdownContext.Provider value={ renderMarkdown }>
-						<div ref={ rootRef } className={ clsx( 'ai-ui-renderer', className ) }>
+						<div
+							ref={ rootRef }
+							className={ clsx( 'ai-ui-renderer', className ) }
+							data-ai-ui-theme={ theme || undefined }
+						>
 							<A2uiSurface surface={ surface } />
 						</div>
 					</MarkdownContext.Provider>

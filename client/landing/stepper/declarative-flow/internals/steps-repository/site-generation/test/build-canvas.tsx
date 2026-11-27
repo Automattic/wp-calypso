@@ -1,7 +1,8 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { BuildWowStreamCanvas } from '../stream/build-canvas';
 import { initialStreamState } from '../stream/reducer';
 import type { BuildWowStreamView } from '../stream/use-build-wow-stream';
@@ -21,8 +22,8 @@ const previewProps: { current: PreviewProps | null; mounts: number } = {
 	mounts: 0,
 };
 
-jest.mock( '../stream/html-preview', () => {
-	const { useEffect } = jest.requireActual( 'react' );
+vi.mock( '../stream/html-preview', async () => {
+	const { useEffect } = await vi.importActual< typeof import( 'react' ) >( 'react' );
 	return {
 		BuildHtmlPreview: ( props: PreviewProps ) => {
 			previewProps.current = props;
@@ -34,7 +35,7 @@ jest.mock( '../stream/html-preview', () => {
 	};
 } );
 
-jest.mock( '../stream/use-build-image-preview', () => ( {
+vi.mock( '../stream/use-build-image-preview', () => ( {
 	useBuildImagePreview: ( previewId: string | undefined ) =>
 		previewId ? `data:image/png;base64,${ previewId.slice( 0, 8 ) }` : null,
 } ) );
@@ -102,7 +103,7 @@ it( 'keeps palette names for screen readers and shows them in a tooltip on hover
 } );
 
 it( 'hands off to the site once the homepage is ready and reports it', () => {
-	const onPreviewReady = jest.fn();
+	const onPreviewReady = vi.fn();
 	render( <BuildWowStreamCanvas onPreviewReady={ onPreviewReady } stream={ streamView() } /> );
 	act( () => previewProps.current?.onHomeReady?.( true ) );
 	expect( screen.getByTestId( 'html-preview' ).parentElement ).toHaveAttribute(
@@ -138,7 +139,7 @@ describe( 'switching between the design and the site', () => {
 
 	it( 'goes back to the design brief and returns to the site without remounting the preview', async () => {
 		const user = userEvent.setup();
-		const onPreviewReady = jest.fn();
+		const onPreviewReady = vi.fn();
 		render( <BuildWowStreamCanvas onPreviewReady={ onPreviewReady } stream={ streamView() } /> );
 		act( () => previewProps.current?.onHomeReady?.( true ) );
 
@@ -223,7 +224,7 @@ it( 'waits for the first usable preview before offering navigation', () => {
 } );
 
 it( 'starts the handoff over when the preview epoch changes', () => {
-	const onPreviewReady = jest.fn();
+	const onPreviewReady = vi.fn();
 	const { rerender } = render(
 		<BuildWowStreamCanvas onPreviewReady={ onPreviewReady } stream={ streamView() } />
 	);

@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { readerAtmosphereKeys } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -16,9 +17,9 @@ import type { AtmosphereConnection, AtmosphereThreadResponse } from '@automattic
 // `page()` from @automattic/calypso-router pokes at window.history in a way
 // jsdom doesn't fully implement. Mock it so the Back-button click handler
 // in ThreadHeader can run without exploding inside the dispatched event.
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
 const connection: AtmosphereConnection = {
@@ -78,14 +79,14 @@ describe( 'ThreadPanel', () => {
 		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'renders skeleton then the thread tree on success', async () => {
@@ -276,7 +277,7 @@ describe( 'ThreadPanel', () => {
 	} );
 
 	it( 'renders upstream_unavailable with Retry, fires error_shown + retry_clicked, recovers', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		// Retry predicate retries upstream_unavailable up to 2 more times
 		// (3 total) before surrendering to the error UI.
 		nock( BASE )
@@ -315,7 +316,7 @@ describe( 'ThreadPanel', () => {
 	} );
 
 	it( 'fires thread_viewed on mount and back_to_timeline_clicked on Back button click', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 200, fixture() );
 
 		const user = userEvent.setup();
@@ -359,14 +360,14 @@ describe( 'ThreadPanel — slice 6 author chip + repost preface rewrites', () =>
 	}
 
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'author chip <a> href is the in-app profile URL (same-tab, no target/rel)', async () => {
@@ -404,7 +405,7 @@ describe( 'ThreadPanel — slice 6 author chip + repost preface rewrites', () =>
 	} );
 
 	it( 'fires author_clicked with destination=in_app after the rewrite', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 200, fixtureWithRepost() );
 
 		const user = userEvent.setup();
@@ -430,7 +431,7 @@ describe( 'ThreadPanel — slice 6 author chip + repost preface rewrites', () =>
 	} );
 
 	it( 'fires repost_author_clicked with destination=in_app when the reposter link is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE ).get( PATH ).query( { uri: TARGET_URI } ).reply( 200, fixtureWithRepost() );
 
 		const user = userEvent.setup();
@@ -455,14 +456,14 @@ describe( 'ThreadPanel — slice 6 author chip + repost preface rewrites', () =>
 
 describe( 'ThreadPanel — quote composer integration', () => {
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( "opens the composer in quote mode when the quotes count is clicked on the user's own post in the thread", async () => {

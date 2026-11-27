@@ -1,28 +1,35 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { usePlanUpsellInfo } from '../hooks/use-plan-upsell-info';
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+		'@automattic/data-stores'
+	) ),
 	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePricingMetaForGridPlans: jest.fn(),
+		...(
+			await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+				'@automattic/data-stores'
+			)
+		).Plans,
+		usePricingMetaForGridPlans: vi.fn(),
 	},
 } ) );
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn( () => null ),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn( () => null ),
 } ) );
-jest.mock(
+vi.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',
-	() => jest.fn()
+	() => ( { default: vi.fn() } )
 );
 
 const mockPricingMeta = ( pricing: Partial< Plans.PricingMetaForGridPlan > ) =>
-	( Plans.usePricingMetaForGridPlans as jest.Mock ).mockReturnValue( {
+	( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 		[ PLAN_PERSONAL ]: {
 			currencyCode: 'USD',
 			originalPrice: { monthly: 1000, full: 12000 },

@@ -1,51 +1,56 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { isDefaultLocale, getCurrentNonDefaultLocale } from '../utils';
 
-jest.mock( '@automattic/calypso-config', () => ( key ) => {
-	if ( 'i18n_default_locale_slug' === key ) {
-		return 'it';
-	}
-} );
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: ( key ) => {
+		if ( 'i18n_default_locale_slug' === key ) {
+			return 'it';
+		}
+	},
+} ) );
 
-jest.mock( '@automattic/languages', () => [
-	{
-		value: 1,
-		langSlug: 'it',
-		name: 'Italian English',
-		wpLocale: 'it_US',
-		popular: 1,
-		territories: [ '019' ],
-		calypsoPercentTranslated: 99,
-		isTranslatedIncompletely: false,
-	},
-	{
-		value: 465,
-		langSlug: 'mt',
-		name: 'Malti',
-		territories: [ '039' ],
-		calypsoPercentTranslated: 0,
-		isTranslatedIncompletely: true,
-	},
-	{
-		value: 455,
-		langSlug: 'tl',
-		name: 'Tagalog',
-		territories: [ '035' ],
-		calypsoPercentTranslated: 4,
-		isTranslatedIncompletely: true,
-	},
-	{
-		value: 73,
-		langSlug: 'uk',
-		name: 'Українська',
-		territories: [ '151' ],
-		calypsoPercentTranslated: 11,
-		isTranslatedIncompletely: true,
-	},
-] );
+vi.mock( '@automattic/languages', () => ( {
+	default: [
+		{
+			value: 1,
+			langSlug: 'it',
+			name: 'Italian English',
+			wpLocale: 'it_US',
+			popular: 1,
+			territories: [ '019' ],
+			calypsoPercentTranslated: 99,
+			isTranslatedIncompletely: false,
+		},
+		{
+			value: 465,
+			langSlug: 'mt',
+			name: 'Malti',
+			territories: [ '039' ],
+			calypsoPercentTranslated: 0,
+			isTranslatedIncompletely: true,
+		},
+		{
+			value: 455,
+			langSlug: 'tl',
+			name: 'Tagalog',
+			territories: [ '035' ],
+			calypsoPercentTranslated: 4,
+			isTranslatedIncompletely: true,
+		},
+		{
+			value: 73,
+			langSlug: 'uk',
+			name: 'Українська',
+			territories: [ '151' ],
+			calypsoPercentTranslated: 11,
+			isTranslatedIncompletely: true,
+		},
+	],
+} ) );
 
 describe( 'TranslatorInvite utils', () => {
 	describe( 'getCurrentNonDefaultLocale()', () => {

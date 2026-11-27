@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useTabSlug } from '../use-tab-slug';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { replace: jest.fn() },
+	default: { replace: vi.fn() },
 } ) );
-const pageReplace = jest.mocked( page.replace );
+const pageReplace = vi.mocked( page.replace );
 
 const ALLOWED = [ 'posts', 'replies', 'media' ] as const;
 

@@ -1,5 +1,6 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { vi } from 'vitest';
 import existingCardProcessor from '../lib/existing-card-processor';
 import {
 	mockTransactionsEndpoint,
@@ -22,7 +23,7 @@ describe( 'existingCardProcessor', () => {
 		is_domain_registration: true,
 	};
 	const cart = { ...getEmptyResponseCart(), products: [ product ] };
-	const mockConfirmCardPayment = jest
+	const mockConfirmCardPayment = vi
 		.fn()
 		.mockResolvedValue( { paymentIntent: 'test-payment-intent' } );
 	const stripe = {

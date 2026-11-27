@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import * as selectors from 'calypso/state/partner-portal/partner/selectors';

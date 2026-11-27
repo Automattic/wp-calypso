@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
@@ -13,7 +14,7 @@ import { serialize, deserialize } from 'calypso/state/utils';
 import { items, requesting, saveRequests } from '../reducer';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	describe( 'requesting()', () => {
 		test( 'should default to an empty object', () => {

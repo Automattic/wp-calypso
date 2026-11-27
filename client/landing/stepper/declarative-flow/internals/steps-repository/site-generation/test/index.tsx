@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import config from '@automattic/calypso-config';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { pollForBuildWowStatus } from '../build-status-poller';
 import SiteGeneration from '../index';
 import { useBuildWowStream } from '../stream/use-build-wow-stream';
@@ -13,57 +14,58 @@ import type { SiteGenerationState } from '../use-site-generation';
 
 let mockState: SiteGenerationState;
 
-jest.mock( '@automattic/calypso-config', () =>
-	Object.assign( jest.fn(), { isEnabled: jest.fn() } )
-);
+vi.mock( '@automattic/calypso-config', () => ( {
+	default: Object.assign( vi.fn(), { isEnabled: vi.fn() } ),
+} ) );
 
 let mockIsAutomattician = false;
 let mockIsAutomatticianLoading = false;
-jest.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
 	useDesignCandidatesEnabled: ( requested: boolean ) => ( {
 		isEnabled:
-			jest.requireMock( '@automattic/calypso-config' ).isEnabled( 'site-spec/design-candidates' ) ||
-			( requested && mockIsAutomattician ),
+			config.isEnabled( 'site-spec/design-candidates' ) || ( requested && mockIsAutomattician ),
 		isLoading: requested && mockIsAutomatticianLoading,
 	} ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
+
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+
+vi.mock( '../use-site-generation', () => ( {
+	useSiteGeneration: vi.fn( () => mockState ),
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-
-jest.mock( '../use-site-generation', () => ( {
-	useSiteGeneration: jest.fn( () => mockState ),
+vi.mock( '../build-status-poller', () => ( {
+	pollForBuildWowStatus: vi.fn( () => vi.fn() ),
 } ) );
 
-jest.mock( '../build-status-poller', () => ( {
-	pollForBuildWowStatus: jest.fn( () => jest.fn() ),
+vi.mock( '../stream/use-build-wow-stream', () => ( {
+	useBuildWowStream: vi.fn( () => null ),
 } ) );
 
-jest.mock( '../stream/use-build-wow-stream', () => ( {
-	useBuildWowStream: jest.fn( () => null ),
-} ) );
-
-jest.mock( '../view', () => ( {
-	SiteGenerationView: jest.fn( ( { onReload }: { onReload: () => void } ) => (
+vi.mock( '../view', () => ( {
+	SiteGenerationView: vi.fn( ( { onReload }: { onReload: () => void } ) => (
 		<button onClick={ onReload }>Recover</button>
 	) ),
 } ) );
 
 describe( 'SiteGeneration recovery', () => {
 	const originalLocation = window.location;
-	const navigation = { submit: jest.fn() };
-	const useSiteGenerationMock = useSiteGeneration as jest.Mock;
+	const navigation = { submit: vi.fn() };
+	const useSiteGenerationMock = useSiteGeneration as Mock;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsAutomattician = false;
 		mockIsAutomatticianLoading = false;
-		jest
-			.mocked( config.isEnabled )
-			.mockImplementation( ( flag ) => flag === 'site-spec/build-wow-streaming' );
+		vi.mocked( config.isEnabled ).mockImplementation(
+			( flag ) => flag === 'site-spec/build-wow-streaming'
+		);
 		useSiteGenerationMock.mockImplementation( () => mockState );
 		mockState = {
 			status: 'failed',
@@ -76,8 +78,8 @@ describe( 'SiteGeneration recovery', () => {
 			value: {
 				search:
 					'?build_wow=1&siteId=123&siteSlug=example.wordpress.com&specId=spec-1&editorUrl=https%3A%2F%2Fexample.wordpress.com%2Fwp-admin%2Fadmin.php%3Fpage%3Deasy-site-editor&ref=site-card&source=site-overview',
-				assign: jest.fn(),
-				reload: jest.fn(),
+				assign: vi.fn(),
+				reload: vi.fn(),
 			},
 			configurable: true,
 		} );
@@ -105,35 +107,42 @@ describe( 'SiteGeneration recovery', () => {
 		'https://old-domain.com/wp-admin/site-editor.php?source=old-source',
 		// eslint-disable-next-line no-script-url
 		'javascript:alert(1)',
-	] )( 'uses the API destination and ignores an old editorUrl parameter: %s', ( editorUrl ) => {
-		const query = new URLSearchParams( {
-			siteSlug: 'example.wordpress.com',
-			source: 'sites-dashboard',
-		} );
-		if ( editorUrl ) {
-			query.set( 'editorUrl', editorUrl );
-		}
-		window.location.search = `?${ query }`;
-		useSiteGenerationMock.mockImplementation(
-			jest.requireActual( '../use-site-generation' ).useSiteGeneration
-		);
-		renderStep();
+	] )(
+		'uses the API destination and ignores an old editorUrl parameter: %s',
+		async ( editorUrl ) => {
+			const query = new URLSearchParams( {
+				siteSlug: 'example.wordpress.com',
+				source: 'sites-dashboard',
+			} );
+			if ( editorUrl ) {
+				query.set( 'editorUrl', editorUrl );
+			}
+			window.location.search = `?${ query }`;
+			useSiteGenerationMock.mockImplementation(
+				(
+					await vi.importActual< typeof import( '../use-site-generation' ) >(
+						'../use-site-generation'
+					)
+				).useSiteGeneration
+			);
+			renderStep();
 
-		const statusPollMock = pollForBuildWowStatus as jest.Mock;
-		expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
-		expect( statusPollMock.mock.calls[ 0 ][ 0 ].siteIdentifier ).toBe( 'example.wordpress.com' );
-		expect( window.location.assign ).not.toHaveBeenCalled();
-		act( () =>
-			statusPollMock.mock.calls[ 0 ][ 0 ].onReady( {
-				build_status: 'live',
-				site_editor_url:
-					'https://new-domain.com/wp-admin/site-editor.php?p=%2Fpage%2F12&canvas=edit',
-			} )
-		);
-		expect( window.location.assign ).toHaveBeenCalledWith(
-			'https://new-domain.com/wp-admin/site-editor.php?p=%2Fpage%2F12&canvas=edit&source=sites-dashboard'
-		);
-	} );
+			const statusPollMock = pollForBuildWowStatus as Mock;
+			expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
+			expect( statusPollMock.mock.calls[ 0 ][ 0 ].siteIdentifier ).toBe( 'example.wordpress.com' );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+			act( () =>
+				statusPollMock.mock.calls[ 0 ][ 0 ].onReady( {
+					build_status: 'live',
+					site_editor_url:
+						'https://new-domain.com/wp-admin/site-editor.php?p=%2Fpage%2F12&canvas=edit',
+				} )
+			);
+			expect( window.location.assign ).toHaveBeenCalledWith(
+				'https://new-domain.com/wp-admin/site-editor.php?p=%2Fpage%2F12&canvas=edit&source=sites-dashboard'
+			);
+		}
+	);
 
 	it.each( [
 		[ true, '2' ],
@@ -141,13 +150,11 @@ describe( 'SiteGeneration recovery', () => {
 	] )(
 		'gives the picked design from the URL to the retry while the flag is %s',
 		( flagOn, expected ) => {
-			jest
-				.mocked( config.isEnabled )
-				.mockImplementation(
-					( flag ) =>
-						flag === 'site-spec/build-wow-streaming' ||
-						( flagOn && flag === 'site-spec/design-candidates' )
-				);
+			vi.mocked( config.isEnabled ).mockImplementation(
+				( flag ) =>
+					flag === 'site-spec/build-wow-streaming' ||
+					( flagOn && flag === 'site-spec/design-candidates' )
+			);
 			window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=2';
 			renderStep();
 
@@ -202,7 +209,7 @@ describe( 'SiteGeneration recovery', () => {
 	it.each( [ true, false ] )(
 		'waits for the server to advertise a stream with streaming enabled: %s',
 		( enabled ) => {
-			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
+			vi.mocked( config.isEnabled ).mockReturnValue( enabled );
 			window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
 			mockState = { ...mockState, status: 'working', streamInfo: null };
 			renderStep();
@@ -218,7 +225,7 @@ describe( 'SiteGeneration recovery', () => {
 	it.each( [ true, false ] )(
 		'gates a server-advertised stream with streaming enabled: %s',
 		( enabled ) => {
-			jest.mocked( config.isEnabled ).mockReturnValue( enabled );
+			vi.mocked( config.isEnabled ).mockReturnValue( enabled );
 			window.location.search = '?build_wow=1&siteSlug=example.wordpress.com';
 			mockState = {
 				...mockState,

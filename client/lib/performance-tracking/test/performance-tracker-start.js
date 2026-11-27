@@ -1,18 +1,19 @@
-jest.mock( '../lib', () => ( {
-	startPerformanceTracking: jest.fn(),
-} ) );
-
+import { vi } from 'vitest';
 import { startPerformanceTracking } from '../lib';
 import { performanceTrackerStart } from '../performance-tracker-start';
 
+vi.mock( '../lib', () => ( {
+	startPerformanceTracking: vi.fn(),
+} ) );
+
 describe( 'performance-tracker-start', () => {
 	afterEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'generates a middleware', () => {
 		const middleware = performanceTrackerStart( 'pageName' );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		middleware( {}, next );
 
@@ -20,13 +21,13 @@ describe( 'performance-tracker-start', () => {
 	} );
 
 	it( 'uses the name of the page', () => {
-		performanceTrackerStart( 'pageName' )( {}, jest.fn() );
+		performanceTrackerStart( 'pageName' )( {}, vi.fn() );
 
 		expect( startPerformanceTracking ).toHaveBeenCalledWith( 'pageName', expect.anything() );
 	} );
 
 	it( 'measures fullPageLoad if the page is an initial navigation', () => {
-		performanceTrackerStart( 'pageName' )( { init: true }, jest.fn() );
+		performanceTrackerStart( 'pageName' )( { init: true }, vi.fn() );
 
 		expect( startPerformanceTracking ).toHaveBeenCalledWith( expect.anything(), {
 			fullPageLoad: true,
@@ -34,7 +35,7 @@ describe( 'performance-tracker-start', () => {
 	} );
 
 	it( 'does not measure fullPageLoad if the page is not an initial navigation', () => {
-		performanceTrackerStart( 'pageName' )( { init: false }, jest.fn() );
+		performanceTrackerStart( 'pageName' )( { init: false }, vi.fn() );
 
 		expect( startPerformanceTracking ).toHaveBeenCalledWith( expect.anything(), {
 			fullPageLoad: false,

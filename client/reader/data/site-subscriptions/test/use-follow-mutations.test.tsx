@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	readSiteQuery,
@@ -12,6 +12,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { type MockedFunction, vi } from 'vitest';
 import {
 	getFollowingSource,
 	invalidateFollowSensitiveCaches,
@@ -32,8 +33,8 @@ const BASE = 'https://public-api.wordpress.com';
 const RECOMMENDATIONS_SEED = 1234;
 const RECOMMENDATIONS_NUMBER = 4;
 
-jest.mock( '@automattic/calypso-config', () => {
-	const mockConfig = jest.fn();
+vi.mock( '@automattic/calypso-config', () => {
+	const mockConfig = vi.fn();
 
 	return {
 		__esModule: true,
@@ -146,7 +147,7 @@ const getCachedRecommendedSiteIds = ( queryClient: QueryClient ) => {
 	return data?.pages.flatMap( ( page ) => page.sites.map( ( site ) => site.blog_id ) ) ?? [];
 };
 
-const mockConfig = config as jest.MockedFunction< typeof config >;
+const mockConfig = config as MockedFunction< typeof config >;
 
 describe( 'follow mutation cache helpers', () => {
 	beforeEach( () => {

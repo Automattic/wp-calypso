@@ -1,5 +1,4 @@
 import {
-	CREDITS_LOW_BALANCE,
 	CREDITS_UPGRADE_SOURCE,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
@@ -8,6 +7,7 @@ import {
 	getCreditsPurchaseOptions,
 	getCreditsTopUpsNotice,
 	getTopUpCreditsLeft,
+	isCreditsLow,
 	isCreditsOnTopUps,
 	parseCreditsAccess,
 	parseLiveCreditsStatus,
@@ -49,11 +49,11 @@ type PaidCreditsStatus = Extract< CreditsStatus, { plan: 'paid' } >;
 
 type SiteCreditsLevel = 'out' | 'low';
 
-export function getSiteCreditsLevel( remaining: number ): SiteCreditsLevel | null {
-	if ( remaining === 0 ) {
+export function getSiteCreditsLevel( status: PaidCreditsStatus ): SiteCreditsLevel | null {
+	if ( status.remaining === 0 ) {
 		return 'out';
 	}
-	return remaining < CREDITS_LOW_BALANCE ? 'low' : null;
+	return isCreditsLow( status ) ? 'low' : null;
 }
 
 const CREDITS_STATE_BY_LEVEL = { out: 'zero', low: 'low' } as const;
@@ -257,7 +257,7 @@ export function useAiCredits( {
 				return false;
 			}
 			latestStatus.current = next;
-			const level = getSiteCreditsLevel( next.remaining );
+			const level = getSiteCreditsLevel( next );
 			// A known balance running out opens the meter's details once. The first read stays quiet.
 			if ( level === 'out' && shown.current.level !== undefined && shown.current.level !== 'out' ) {
 				openMeter( next, level, 'exhausted' );
@@ -359,7 +359,7 @@ export function useAiCredits( {
 		}
 	} );
 
-	const level = status ? getSiteCreditsLevel( status.remaining ) : null;
+	const level = status ? getSiteCreditsLevel( status ) : null;
 	const { purchaseUrl, purchaseKind, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
 		status && blogId !== null ? getSitePurchaseLink( status, blogId ) : undefined,
 		access

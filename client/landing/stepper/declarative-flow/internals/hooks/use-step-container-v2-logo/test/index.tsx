@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, renderHook, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';

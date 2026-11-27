@@ -9,7 +9,7 @@ import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { Text } from '../../../components/text';
-import { BackupFileBrowserProvider } from '../../../sites/backups/backup-file-browser-provider';
+import { BackupFileBrowserProvider } from '../../../sites/backups/components/backup-file-browser-provider';
 
 import '../../../sites/backups/style.scss';
 

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { ComposerFooter } from '../composer-footer';
 
 const noop = () => {};
@@ -95,7 +96,7 @@ describe( '<ComposerFooter>', () => {
 	} );
 
 	it( 'fires onSubmit when Post is clicked', async () => {
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<ComposerFooter

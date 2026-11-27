@@ -29,7 +29,7 @@ import {
 import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
-import { useTranslate } from 'i18n-calypso';
+import { fixMe, useTranslate } from 'i18n-calypso';
 import {
 	useState,
 	PropsWithChildren,
@@ -244,27 +244,6 @@ const BundleMemberList = styled.div< { theme?: Theme } >`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-size: 14px;
 	line-height: 1.4;
-`;
-
-const BundleTermRow = styled.div< { theme?: Theme } >`
-	box-sizing: border-box;
-	width: 100%;
-	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
-	border-radius: 4px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	margin-top: 16px;
-	padding: 16px;
-	color: ${ ( props ) => props.theme.colors.textColorDark };
-	font-size: 14px;
-`;
-
-const BundleTermPrice = styled.span`
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
 `;
 
 const BundleRenewalNote = styled.div< { theme?: Theme } >`
@@ -580,7 +559,13 @@ export function BundleLineItem( {
 
 			<LineItemMeta>
 				<LineItemSublabelTitle>
-					{ translate( 'Domain Bundle Registration: billed annually' ) }
+					{ fixMe( {
+						text: 'Domain Bundle Registration: One-year registration, billed annually',
+						newCopy: translate(
+							'Domain Bundle Registration: One-year registration, billed annually'
+						),
+						oldCopy: translate( 'Domain Bundle Registration: billed annually' ),
+					} ) }
 				</LineItemSublabelTitle>
 				{ isBundleDiscounted && (
 					<DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>
@@ -592,14 +577,6 @@ export function BundleLineItem( {
 					<span key={ product.uuid }>{ product.meta }</span>
 				) ) }
 			</BundleMemberList>
-
-			<BundleTermRow>
-				<span>{ translate( 'One year' ) }</span>
-				<BundleTermPrice>
-					<span>{ bundleTotalDisplay }</span>
-					<Gridicon icon="chevron-down" size={ 16 } aria-hidden="true" />
-				</BundleTermPrice>
-			</BundleTermRow>
 
 			{ /* Bundle members renew at full price, so the renewal amount is the
 			     pre-discount group total. */ }
@@ -840,7 +817,7 @@ function returnModalCopy(
 				};
 			}
 			const title = String( translate( 'You are about to remove your plan from the cart' ) );
-			let description = '';
+			let description;
 
 			if ( createUserAndSiteBeforeTransaction ) {
 				description = String(

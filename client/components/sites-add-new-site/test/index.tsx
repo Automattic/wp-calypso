@@ -1,39 +1,43 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { SitesAddNewSitePopover } from '../index';
 
 // Mock dependencies
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
-	localize: ( x ) => x,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string ) => text,
+		localize: ( x ) => x,
+	} )
+);
 
 // Mock the AsyncContent component to avoid loading issues in tests
-jest.mock( '../async', () => ( {
+vi.mock( '../async', () => ( {
 	AsyncContent: () => <div data-testid="async-content">Async Content</div>,
 } ) );
 
 // Mock the analytics client to avoid needing a Redux store
-jest.mock( 'calypso/sites/v2/hooks/use-analytics-client', () => ( {
+vi.mock( 'calypso/sites/v2/hooks/use-analytics-client', () => ( {
 	useAnalyticsClient: () => ( {
-		recordTracksEvent: jest.fn(),
-		recordPageView: jest.fn(),
+		recordTracksEvent: vi.fn(),
+		recordPageView: vi.fn(),
 	} ),
 } ) );
 
 // Mock fetchUser to provide auth data
-jest.mock( '@automattic/api-core', () => ( {
-	fetchUser: jest.fn( () =>
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	fetchUser: vi.fn( () =>
 		Promise.resolve( {
 			ID: 123,
 			username: 'testuser',
@@ -55,7 +59,7 @@ describe( 'SitesAddNewSitePopover', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		queryClient = new QueryClient( {
 			defaultOptions: {
 				queries: { retry: false },

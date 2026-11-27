@@ -6,7 +6,7 @@
  * @returns {boolean}
  */
 function isNonDesktopLoginUrl( url ) {
-	let path = '';
+	let path;
 	try {
 		const u = new URL( url );
 		path = u.pathname.replace( u.search, '' );

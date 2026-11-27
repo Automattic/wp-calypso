@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { readFeedQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
+import { vi } from 'vitest';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderFullPostHeaderMeta from '../header-meta';
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	TimeSince: () => null,
 } ) );
 
-jest.mock( 'calypso/blocks/user-avatar', () => jest.fn( () => null ) );
+vi.mock( 'calypso/blocks/user-avatar', () => ( { default: vi.fn( () => null ) } ) );
 
-jest.mock( 'calypso/reader/components/achievements/author-achievement-badges', () => ( {
+vi.mock( 'calypso/reader/components/achievements/author-achievement-badges', () => ( {
 	AuthorAchievementBadges: () => null,
 } ) );
 
@@ -38,7 +39,7 @@ describe( 'ReaderFullPostHeaderMeta avatar fallback', () => {
 	const testAuthor = { name: 'Test Author', avatar_URL: 'https://example.com/author-avatar.png' };
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'keeps author avatar when one already exists', () => {

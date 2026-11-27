@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useSiteSubscriptions as useReaderSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
 import { useNonSelfSubscriptionsCount } from '../use-non-self-subscriptions-count';
 
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
-	useSiteSubscriptions: jest.fn(),
+vi.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	useSiteSubscriptions: vi.fn(),
 } ) );
 
-const mockUseReaderSiteSubscriptions = useReaderSiteSubscriptions as jest.Mock;
+const mockUseReaderSiteSubscriptions = useReaderSiteSubscriptions as Mock;
 
 const mockReaderSiteSubscriptions = ( {
 	subscriptions = [],
@@ -29,7 +30,7 @@ const mockReaderSiteSubscriptions = ( {
 
 describe( 'useNonSelfSubscriptionsCount', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should return loading state when site subscriptions are loading', () => {

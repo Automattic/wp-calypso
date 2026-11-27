@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { readerFediverseKeys, type FediverseConnectionsResponse } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

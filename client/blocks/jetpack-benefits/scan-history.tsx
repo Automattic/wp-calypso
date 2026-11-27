@@ -119,8 +119,8 @@ const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone }
 		);
 	}
 
-	let cardStat: TranslateResult = '';
-	let cardDescription: TranslateResult = '';
+	let cardStat: TranslateResult;
+	let cardDescription: TranslateResult;
 	if ( threats && threats.length > 0 ) {
 		cardStat = translate( '%(threatCount)d threat found', '%(threatCount)d threats found', {
 			count: threats.length,
@@ -146,7 +146,7 @@ const JetpackBenefitsScanHistory: React.FC< Props > = ( { siteId, isStandalone }
 	);
 };
 
-export default ( props: Props ) => {
+export default function JetpackBenefitsScanHistoryWithData( props: Props ) {
 	const { siteId } = props;
 	return (
 		<>
@@ -155,4 +155,4 @@ export default ( props: Props ) => {
 			<JetpackBenefitsScanHistory { ...props } />
 		</>
 	);
-};
+}

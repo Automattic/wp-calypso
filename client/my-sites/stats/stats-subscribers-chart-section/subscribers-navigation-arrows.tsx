@@ -42,18 +42,14 @@ const SubscribersNavigation = ( {
 	onDateChange,
 }: SubscribersNavigationProps ) => {
 	const handleArrowNext = () => {
-		let newDate = date;
-
-		newDate = calculateDate( date, period, quantity );
+		const newDate = calculateDate( date, period, quantity );
 
 		// if the calculated date is future date due to swapping periods - cut off with today
 		onDateChange( isPast( newDate ) ? newDate : new Date() );
 	};
 
 	const handleArrowPrevious = () => {
-		let newDate = date;
-
-		newDate = calculateDate( date, period, -quantity );
+		const newDate = calculateDate( date, period, -quantity );
 
 		onDateChange( newDate );
 	};

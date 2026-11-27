@@ -12,6 +12,7 @@ export const TextField = createComponentImplementation(
 		schema: z.object( {
 			label: StringValueSchema,
 			value: StringValueSchema.optional(),
+			placeholder: StringValueSchema.optional(),
 			variant: z.enum( [ 'shortText', 'longText', 'number', 'obscured' ] ).optional(),
 			checks: ChecksSchema,
 		} ),
@@ -49,6 +50,7 @@ export const TextField = createComponentImplementation(
 		const inputProps = {
 			...fieldProps,
 			label: props.label,
+			placeholder: props.placeholder,
 			value,
 			onValueChange: onChange,
 			onBlur: touch,

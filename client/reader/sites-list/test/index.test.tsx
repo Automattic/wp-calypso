@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import { FeedRecommendation } from 'calypso/data/reader/use-feed-recommendations-query';
 import { ReaderSitesList } from '../index';
 import { ReaderSiteItem } from '../site-item';
 
-jest.mock( '../site-item', () => ( {
+vi.mock( '../site-item', () => ( {
 	__esModule: true,
 	ReaderSiteItem: ( props: ComponentProps< typeof ReaderSiteItem > ) => (
 		<li

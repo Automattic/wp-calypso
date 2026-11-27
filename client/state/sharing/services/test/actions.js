@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	KEYRING_SERVICES_RECEIVE,
 	KEYRING_SERVICES_REQUEST,
@@ -11,7 +12,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 	const getState = () => ( { ui: { selectedSiteId: '2916284' } } );
 

@@ -1,4 +1,4 @@
-import { ONBOARDING_FLOW } from '@automattic/onboarding';
+import { ONBOARDING_FLOW } from '@automattic/onboarding/flows';
 
 /**
  * Whether the Playground step was entered from WooCommerce.com. Shared by the

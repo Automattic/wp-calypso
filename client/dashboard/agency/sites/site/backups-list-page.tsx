@@ -10,7 +10,10 @@ import {
 	agencySiteBackupRestoreRoute,
 	agencySiteBackupDownloadRoute,
 } from '../../../app/router/agency';
-import { BackupsPage, type BackupsNavigation } from '../../../sites/backups/backups-page';
+import {
+	BackupsPage,
+	type BackupsNavigation,
+} from '../../../sites/backups/components/backups-page';
 
 export default function AgencySiteBackupsListPage() {
 	const { siteSlug } = agencySiteRoute.useParams();

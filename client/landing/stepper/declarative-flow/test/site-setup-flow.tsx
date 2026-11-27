@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import siteSetupFlow from '../flows/site-setup-flow/site-setup-flow';
 import { useFlowState } from '../internals/state-manager/store';
@@ -12,15 +13,15 @@ import { getFlowLocation, renderFlow } from './helpers';
 const originalLocation = window.location;
 
 // Mock the signup utils
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	clearSignupDestinationCookie: jest.fn(),
+vi.mock( 'calypso/signup/storageUtils', () => ( {
+	clearSignupDestinationCookie: vi.fn(),
 } ) );
-jest.mock( '../internals/state-manager/store', () => ( { useFlowState: jest.fn() } ) );
+vi.mock( '../internals/state-manager/store', () => ( { useFlowState: vi.fn() } ) );
 
 describe( 'Site Setup Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { assign: jest.fn(), replace: jest.fn(), pathname: '' },
+			value: { assign: vi.fn(), replace: vi.fn(), pathname: '' },
 		} );
 	} );
 
@@ -29,12 +30,12 @@ describe( 'Site Setup Flow', () => {
 	} );
 
 	beforeEach( () => {
-		jest.resetAllMocks();
-		jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
-		jest.mocked( useFlowState ).mockReturnValue( { get: jest.fn() } );
+		vi.resetAllMocks();
+		vi.spyOn( config, 'isEnabled' ).mockReturnValue( false );
+		vi.mocked( useFlowState ).mockReturnValue( { get: vi.fn() } );
 	} );
 
-	afterEach( () => jest.restoreAllMocks() );
+	afterEach( () => vi.restoreAllMocks() );
 
 	describe( 'when the current step is importListing', () => {
 		it.each(
@@ -46,13 +47,11 @@ describe( 'Site Setup Flow', () => {
 		)(
 			'returns WordPress to address entry (source: "$from", wp-admin: $fromWpAdmin, static import: $staticImport)',
 			( { from, fromWpAdmin, staticImport } ) => {
-				jest
-					.mocked( config.isEnabled )
-					.mockImplementation(
-						( flag ) => staticImport && flag === 'migration/non-wordpress-source'
-					);
+				vi.mocked( config.isEnabled ).mockImplementation(
+					( flag ) => staticImport && flag === 'migration/non-wordpress-source'
+				);
 				const ref = fromWpAdmin ? 'wp-admin-importers-list' : 'new-site-popover';
-				jest.mocked( useFlowState ).mockReturnValue( {
+				vi.mocked( useFlowState ).mockReturnValue( {
 					get: () => ( { entryPoint: fromWpAdmin ? ref : undefined } ),
 				} );
 				const retained = {
@@ -230,7 +229,7 @@ describe( 'Site Setup Flow', () => {
 
 	describe( 'when finishing the Site Setup Flow', () => {
 		beforeEach( () => {
-			jest.clearAllMocks();
+			vi.clearAllMocks();
 		} );
 
 		it( 'exitFlow should clear signup destination cookie', () => {

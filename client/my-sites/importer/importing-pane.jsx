@@ -235,7 +235,6 @@ export class ImportingPane extends PureComponent {
 
 		let { percentComplete, statusMessage } = this.props.importerStatus;
 		const { progress } = this.props.importerStatus;
-		let blockingMessage;
 
 		if ( this.isError() ) {
 			/**
@@ -283,9 +282,6 @@ export class ImportingPane extends PureComponent {
 							</Progress.Track>
 						</Progress.Root>
 					</div>
-				) }
-				{ blockingMessage && (
-					<div className="importer__import-progress-message">{ blockingMessage }</div>
 				) }
 				<div>
 					<p className="importer__status-message">{ statusMessage }</p>

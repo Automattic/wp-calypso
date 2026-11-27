@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import {
 	EMAIL_WARNING_CODE_OTHER_USER_OWNS_DOMAIN_SUBSCRIPTION,
 	EMAIL_WARNING_CODE_OTHER_USER_OWNS_EMAIL,
@@ -12,97 +13,105 @@ import EmailProvidersStackedComparison from '..';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { ReactNode } from 'react';
 
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', () => ( {
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_MONTHLY: 'google-workspace-business-starter-monthly',
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY: 'google-workspace-business-starter-yearly',
 } ) );
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 
-jest.mock( '@wordpress/url', () => ( {
-	addQueryArgs: jest.fn( ( url ) => url ),
-	getQueryArgs: jest.fn( () => ( {} ) ),
+vi.mock( '@wordpress/url', () => ( {
+	addQueryArgs: vi.fn( ( url ) => url ),
+	getQueryArgs: vi.fn( () => ( {} ) ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( component: unknown ) => component,
-	translate: ( text: string ) => text,
-	useTranslate: () => ( text: string ) => text,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		localize: ( component: unknown ) => component,
+		translate: ( text: string ) => text,
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
 
-jest.mock( 'calypso/lib/domains', () => ( {
-	canCurrentUserAddEmail: jest.fn( ( domain ) => !! domain?.currentUserCanAddEmail ),
-	getCurrentUserCannotAddEmailReason: jest.fn( ( domain ) =>
+vi.mock( 'calypso/lib/domains', () => ( {
+	canCurrentUserAddEmail: vi.fn( ( domain ) => !! domain?.currentUserCanAddEmail ),
+	getCurrentUserCannotAddEmailReason: vi.fn( ( domain ) =>
 		domain && ! domain.currentUserCanAddEmail ? domain.currentUserCannotAddEmailReason : null
 	),
-	getSelectedDomain: jest.fn( ( { domains, selectedDomainName } ) =>
+	getSelectedDomain: vi.fn( ( { domains, selectedDomainName } ) =>
 		domains?.find( ( domain: ResponseDomain ) => domain.name === selectedDomainName )
 	),
 } ) );
 
-jest.mock( 'calypso/components/data/query-products-list', () => () => null );
-jest.mock( 'calypso/components/data/query-site-domains', () => () => null );
-jest.mock( 'calypso/components/data/query-site-products', () => () => null );
-jest.mock( 'calypso/components/gsuite/gsuite-price', () => ( {
-	hasDiscount: jest.fn( () => false ),
+vi.mock( 'calypso/components/data/query-products-list', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-site-domains', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-site-products', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/gsuite/gsuite-price', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		hasDiscount: vi.fn( () => false ),
+	} )
+);
+vi.mock( 'calypso/components/main', () => ( {
+	default: ( { children }: { children: ReactNode } ) => <main>{ children }</main>,
 } ) );
-jest.mock( 'calypso/components/main', () => ( { children }: { children: ReactNode } ) => (
-	<main>{ children }</main>
-) );
-jest.mock( 'calypso/layout/body-section-css-class', () => () => null );
-jest.mock( 'calypso/lib/analytics/track-component-view', () => () => null );
-jest.mock( 'calypso/my-sites/email/email-domain-state-restricted-message', () => ( {
+vi.mock( 'calypso/layout/body-section-css-class', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/analytics/track-component-view', () => ( { default: () => null } ) );
+vi.mock( 'calypso/my-sites/email/email-domain-state-restricted-message', () => ( {
 	EmailDomainStateRestrictedMessage: () => <div>Domain restricted</div>,
 } ) );
-jest.mock( 'calypso/my-sites/email/email-existing-forwards-notice', () => () => null );
-jest.mock( 'calypso/my-sites/email/email-existing-paid-service-notice', () => () => null );
-jest.mock( 'calypso/my-sites/email/email-non-domain-owner-message', () => ( {
+vi.mock( 'calypso/my-sites/email/email-existing-forwards-notice', () => ( {
+	default: () => null,
+} ) );
+vi.mock( 'calypso/my-sites/email/email-existing-paid-service-notice', () => ( {
+	default: () => null,
+} ) );
+vi.mock( 'calypso/my-sites/email/email-non-domain-owner-message', () => ( {
 	EmailNonDomainOwnerMessage: () => <div>Email service can only be purchased</div>,
 } ) );
-jest.mock( 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle', () => ( {
+vi.mock( 'calypso/my-sites/email/email-providers-comparison/billing-interval-toggle', () => ( {
 	BillingIntervalToggle: () => <div>Billing interval</div>,
 } ) );
-jest.mock( 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link', () => () => (
-	<div>Email forwarding link</div>
-) );
-jest.mock(
-	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation',
-	() => () => null
-);
-jest.mock(
-	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card',
-	() => () => <div>Google Workspace card</div>
-);
-jest.mock(
-	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card',
-	() => () => <div>Professional Email card</div>
-);
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: jest.fn(),
-	useSelector: jest.fn(),
+vi.mock( 'calypso/my-sites/email/email-providers-comparison/email-forwarding-link', () => ( {
+	default: () => <div>Email forwarding link</div>,
 } ) );
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( ( eventName, eventProperties ) => ( {
+vi.mock(
+	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/email-upsell-navigation',
+	() => ( { default: () => null } )
+);
+vi.mock(
+	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/google-workspace-card',
+	() => ( { default: () => <div>Google Workspace card</div> } )
+);
+vi.mock(
+	'calypso/my-sites/email/email-providers-comparison/stacked/provider-cards/professional-email-card',
+	() => ( { default: () => <div>Professional Email card</div> } )
+);
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: vi.fn(),
+	useSelector: vi.fn(),
+} ) );
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( ( eventName, eventProperties ) => ( {
 		eventName,
 		eventProperties,
 		type: 'TRACKS_EVENT',
 	} ) ),
 } ) );
-jest.mock( 'calypso/state/products-list/selectors', () => ( {
-	getProductBySlug: jest.fn( ( state ) => state.gSuiteProduct ),
+vi.mock( 'calypso/state/products-list/selectors', () => ( {
+	getProductBySlug: vi.fn( ( state ) => state.gSuiteProduct ),
 } ) );
-jest.mock( 'calypso/state/selectors/can-user-purchase-gsuite', () =>
-	jest.fn( ( state ) => state.canPurchaseGSuite )
-);
-jest.mock( 'calypso/state/selectors/get-current-route', () =>
-	jest.fn( ( state ) => state.currentRoute )
-);
-jest.mock( 'calypso/state/sites/domains/selectors', () => ( {
-	getDomainsBySiteId: jest.fn( ( state ) => state.domains ),
-	hasLoadedSiteDomains: jest.fn( ( state ) => state.hasLoadedDomains ),
+vi.mock( 'calypso/state/selectors/can-user-purchase-gsuite', () => ( {
+	default: vi.fn( ( state ) => state.canPurchaseGSuite ),
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSite: jest.fn( ( state ) => state.selectedSite ),
+vi.mock( 'calypso/state/selectors/get-current-route', () => ( {
+	default: vi.fn( ( state ) => state.currentRoute ),
+} ) );
+vi.mock( 'calypso/state/sites/domains/selectors', () => ( {
+	getDomainsBySiteId: vi.fn( ( state ) => state.domains ),
+	hasLoadedSiteDomains: vi.fn( ( state ) => state.hasLoadedDomains ),
+} ) );
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: vi.fn( ( state ) => state.selectedSite ),
 } ) );
 
 const selectedSite = {
@@ -133,8 +142,8 @@ const renderComparison = ( domain = nonOwnerDomainWithoutForwards ) => {
 		selectedSite,
 	};
 
-	( useDispatch as jest.Mock ).mockReturnValue( jest.fn() );
-	( useSelector as jest.Mock ).mockImplementation( ( selector ) => selector( state ) );
+	( useDispatch as Mock ).mockReturnValue( vi.fn() );
+	( useSelector as Mock ).mockImplementation( ( selector ) => selector( state ) );
 
 	return render(
 		<EmailProvidersStackedComparison
@@ -147,7 +156,7 @@ const renderComparison = ( domain = nonOwnerDomainWithoutForwards ) => {
 
 describe( 'EmailProvidersStackedComparison', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'keeps paid email disabled while showing the free forwarding link to site admins', () => {

@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { AuthFormHeader } from '../auth-form-header';
 
-jest.mock( 'calypso/blocks/site', () => () => 'Site' );
+vi.mock( 'calypso/blocks/site', () => ( { default: () => 'Site' } ) );
 
 const CLIENT_ID = 98765;
 const SITE_SLUG = 'an.example.site';

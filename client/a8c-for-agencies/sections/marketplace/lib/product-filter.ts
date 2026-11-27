@@ -59,8 +59,12 @@ import {
 	BACKUP_STORAGE_FAMILY_SLUG,
 	JETPACK_PACKS_FAMILY_SLUG,
 	JETPACK_COMPLETE_PRODUCT_SLUG,
+	JETPACK_PRO_PRODUCT_SLUG,
 } from './product-slugs';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
+
+// Plans that include every Jetpack product, so they belong in each Jetpack product category.
+const JETPACK_SUITE_PLAN_SLUGS = [ JETPACK_COMPLETE_PRODUCT_SLUG, JETPACK_PRO_PRODUCT_SLUG ];
 
 export type SelectedFilters = {
 	[ PRODUCT_FILTER_KEY_BRAND ]: string;
@@ -91,10 +95,8 @@ export function filterProductsAndPlans(
 		return productsAndPlans;
 	}
 
-	let filteredProductsAndBundles = [];
-
 	// List only products that matches the selected prices.
-	filteredProductsAndBundles = filterProductsAndPlansByPrices(
+	let filteredProductsAndBundles = filterProductsAndPlansByPrices(
 		productsAndPlans,
 		getSelectedFilters( PRODUCT_FILTER_KEY_PRICES, selectedFilters )
 	);
@@ -382,22 +384,22 @@ function filterProductsAndPlansByCategory(
 			);
 		case PRODUCT_CATEGORY_SECURITY:
 			return allProductsAndPlans.filter( ( { slug, family_slug } ) => {
-				const securitySlugs = [ ...SECURITY_PRODUCT_SLUGS, JETPACK_COMPLETE_PRODUCT_SLUG ];
+				const securitySlugs = [ ...SECURITY_PRODUCT_SLUGS, ...JETPACK_SUITE_PLAN_SLUGS ];
 				return securitySlugs.includes( slug ) || family_slug === BACKUP_STORAGE_FAMILY_SLUG;
 			} );
 		case PRODUCT_CATEGORY_PERFORMANCE:
 			return allProductsAndPlans.filter( ( { slug } ) => {
-				const performanceSlugs = [ ...PERFORMANCE_PRODUCT_SLUGS, JETPACK_COMPLETE_PRODUCT_SLUG ];
+				const performanceSlugs = [ ...PERFORMANCE_PRODUCT_SLUGS, ...JETPACK_SUITE_PLAN_SLUGS ];
 				return performanceSlugs.includes( slug );
 			} );
 		case PRODUCT_CATEGORY_SOCIAL:
 			return allProductsAndPlans.filter( ( { slug } ) => {
-				const socialSlugs = [ ...SOCIAL_PRODUCT_SLUGS, JETPACK_COMPLETE_PRODUCT_SLUG ];
+				const socialSlugs = [ ...SOCIAL_PRODUCT_SLUGS, ...JETPACK_SUITE_PLAN_SLUGS ];
 				return socialSlugs.includes( slug );
 			} );
 		case PRODUCT_CATEGORY_GROWTH:
 			return allProductsAndPlans.filter( ( { slug } ) => {
-				const growthSlugs = [ ...GROWTH_PRODUCT_SLUGS, JETPACK_COMPLETE_PRODUCT_SLUG ];
+				const growthSlugs = [ ...GROWTH_PRODUCT_SLUGS, ...JETPACK_SUITE_PLAN_SLUGS ];
 				return growthSlugs.includes( slug );
 			} );
 		case PRODUCT_CATEGORY_PAYMENTS:

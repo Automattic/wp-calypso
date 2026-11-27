@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { MastodonTagFeedTabs, useMastodonTagFilter } from '../tag-feed-tabs';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { replace: jest.fn() },
+	default: { replace: vi.fn() },
 } ) );
 
-const replace = page.replace as jest.Mock;
+const replace = page.replace as Mock;
 
 function setLocation( search: string ) {
 	window.history.replaceState( {}, '', '/reader/mastodon/7/tag/rust' + search );
@@ -34,13 +35,13 @@ afterAll( () => {
 
 beforeEach( () => {
 	replace.mockReset();
-	jest
-		.spyOn( analytics, 'recordReaderTracksEvent' )
-		.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+		() => ( { type: '@@TEST/NOOP' } ) as never
+	);
 	setLocation( '' );
 } );
 
-afterEach( () => jest.restoreAllMocks() );
+afterEach( () => vi.restoreAllMocks() );
 
 describe( 'useMastodonTagFilter', () => {
 	it( 'returns "all" when ?tab is absent', () => {

@@ -9,9 +9,6 @@ import type {
 /**
  * Submit a transaction to the WPCOM transactions endpoint.
  *
- * This is one of two transactions endpoint functions; also see
- * `wpcomPayPalExpress`.
- *
  * Please do not alter payload inside this function if possible to retain type
  * safety. Instead, alter `createTransactionEndpointRequestPayload` or add a
  * new type safe function that works similarly (see

@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - the flow test helpers are untyped
 import config from '@automattic/calypso-config';
 import { waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { runFlowNavigation } from 'calypso/landing/stepper/declarative-flow/test/helpers';
@@ -18,18 +19,20 @@ import staticSiteImportPreviewFlow, {
 	CHECKOUT_FIRST_VARIATION,
 } from '../static-site-import-preview-flow';
 
-jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store' );
-jest.mock( 'calypso/lib/explat', () => ( {
-	loadExperimentAssignment: jest.fn(),
-	useExperiment: jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
+vi.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store' );
+vi.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: vi.fn(),
+	useExperiment: vi.fn(),
 } ) );
-jest.mock( 'calypso/landing/stepper/utils/checkout' );
-jest.mock( 'calypso/state/current-user/selectors' );
+vi.mock( 'calypso/landing/stepper/utils/checkout' );
+vi.mock( 'calypso/state/current-user/selectors' );
 
-const mockCreateSession = jest.fn();
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
+const mockCreateSession = vi.hoisted( () => vi.fn() );
+vi.mock( '@automattic/api-queries', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+		'@automattic/api-queries'
+	) ),
 	createStaticSiteImportSessionMutation: () => ( { mutationFn: mockCreateSession } ),
 } ) );
 
@@ -57,8 +60,8 @@ const overviewExit = ( source ) => ( {
 let flowState: Record< string, unknown >;
 
 const assignVariation = ( variationName: string | null ) => {
-	jest.mocked( loadExperimentAssignment ).mockResolvedValue( { variationName } );
-	jest.mocked( useExperiment ).mockReturnValue( [ false, { variationName } ] );
+	vi.mocked( loadExperimentAssignment ).mockResolvedValue( { variationName } );
+	vi.mocked( useExperiment ).mockReturnValue( [ false, { variationName } ] );
 };
 
 const PLAN = { cartItems: [ { product_slug: 'personal-bundle' } ] };
@@ -70,7 +73,7 @@ const parseUrl = ( url: string ) => {
 };
 
 const lastExit = () => {
-	const url = String( ( window.location.replace as jest.Mock ).mock.calls.at( -1 )?.[ 0 ] ?? '' );
+	const url = String( ( window.location.replace as Mock ).mock.calls.at( -1 )?.[ 0 ] ?? '' );
 	const [ path, query = '' ] = url.split( '?' );
 	return { path, query: Object.fromEntries( new URLSearchParams( query ) ) };
 };
@@ -80,7 +83,7 @@ const slugs = ( steps ) => steps.map( ( step ) => step.slug );
 describe( 'Static site import preview flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn(), replace: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn(), replace: vi.fn() },
 		} );
 	} );
 
@@ -92,15 +95,15 @@ describe( 'Static site import preview flow', () => {
 		config.enable( 'migration/non-wordpress-source' );
 		window.location.search = '';
 		window.location.pathname = '/setup/static-site-import-preview';
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		assignVariation( null );
-		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
-		jest.mocked( useFlowLocale ).mockReturnValue( 'en' );
+		vi.mocked( isUserLoggedIn ).mockReturnValue( true );
+		vi.mocked( useFlowLocale ).mockReturnValue( 'en' );
 		flowState = {};
 		mockCreateSession.mockResolvedValue( { session_id: 'abc123', state: 'capture_queued' } );
-		jest.mocked( useFlowState ).mockReturnValue( {
+		vi.mocked( useFlowState ).mockReturnValue( {
 			get: ( key ) => flowState[ key ],
-			set: jest.fn( ( key, value ) => ( flowState[ key ] = value ) ),
+			set: vi.fn( ( key, value ) => ( flowState[ key ] = value ) ),
 		} );
 	} );
 
@@ -361,7 +364,7 @@ describe( 'Static site import preview flow', () => {
 				runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: PLAN } );
 
 				const { destination, cancelDestination, ...options } =
-					jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
+					vi.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
 				expect( options ).toEqual( {
 					flowName: 'static-site-import-preview',
 					stepName: STEPS.UNIFIED_PLANS.slug,
@@ -473,13 +476,13 @@ describe( 'Static site import preview flow', () => {
 
 		it( 'names the source, then checks out a new site that opens on the move', async () => {
 			identify();
-			jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+			vi.mocked( isUserLoggedIn ).mockReturnValue( false );
 			runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: PLAN } );
 
 			await waitFor( () => expect( goToUnifiedCheckout ).toHaveBeenCalled() );
 			expect( mockCreateSession.mock.calls[ 0 ][ 0 ] ).toBe( 'https://source.example.com' );
 			const { destination, cancelDestination, ...options } =
-				jest.mocked( goToUnifiedCheckout ).mock.calls[ 0 ][ 0 ];
+				vi.mocked( goToUnifiedCheckout ).mock.calls[ 0 ][ 0 ];
 			expect( options ).toEqual( {
 				flowName: 'static-site-import-preview',
 				plan: 'personal-bundle',

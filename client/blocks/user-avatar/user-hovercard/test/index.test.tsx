@@ -1,37 +1,40 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { UserResponse } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { UserAvatarInfo } from '../../index';
 import UserHovercard from '../index';
 import { useGravatarProfileV3Query } from '../queries/use-gravatar-profile-v3-query';
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useQuery: vi.fn(),
 } ) );
 
-jest.mock( '../queries/use-gravatar-profile-v3-query', () => ( {
-	useGravatarProfileV3Query: jest.fn(),
+vi.mock( '../queries/use-gravatar-profile-v3-query', () => ( {
+	useGravatarProfileV3Query: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/reader/follow-button', () => ( {
+vi.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
-	default: jest.fn( () => <button data-testid="follow-button">Follow</button> ),
+	default: vi.fn( () => <button data-testid="follow-button">Follow</button> ),
 } ) );
 
-jest.mock( '../recommended-blogs', () => ( {
+vi.mock( '../recommended-blogs', () => ( {
 	__esModule: true,
 	default: ( { userLogin }: { userLogin: string } ) => (
 		<div data-testid="recommended-blogs" data-user-login={ userLogin } />
 	),
 } ) );
 
-const mockUseQuery = jest.mocked( useQuery );
-const mockUseGravatarProfileV3Query = jest.mocked( useGravatarProfileV3Query );
+const mockUseQuery = vi.mocked( useQuery );
+const mockUseGravatarProfileV3Query = vi.mocked( useGravatarProfileV3Query );
 
 const defaultUserProp: UserAvatarInfo = {
 	wpcom_id: 123,
@@ -87,13 +90,13 @@ function renderUserHovercard(
 	props?: Partial< { user: UserAvatarInfo; onUserLoaded: ( user: UserResponse | null ) => void } >
 ) {
 	renderWithProvider(
-		<UserHovercard user={ defaultUserProp } onUserLoaded={ jest.fn() } { ...props } />
+		<UserHovercard user={ defaultUserProp } onUserLoaded={ vi.fn() } { ...props } />
 	);
 }
 
 describe( 'UserHovercard', () => {
 	beforeAll( () => {
-		window.IntersectionObserver = jest.fn().mockReturnValue( {
+		window.IntersectionObserver = vi.fn().mockReturnValue( {
 			observe: () => null,
 			unobserve: () => null,
 			disconnect: () => null,
@@ -101,7 +104,7 @@ describe( 'UserHovercard', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders spinner when wpcom data is loading', () => {
@@ -199,7 +202,7 @@ describe( 'UserHovercard', () => {
 	} );
 
 	test( 'does not call onUserLoaded while still loading', () => {
-		const onUserLoaded = jest.fn();
+		const onUserLoaded = vi.fn();
 		setupMocks( { wpcomLoading: true } );
 
 		renderUserHovercard( { onUserLoaded } );
@@ -208,7 +211,7 @@ describe( 'UserHovercard', () => {
 	} );
 
 	test( 'calls onUserLoaded with null when no user data is found', () => {
-		const onUserLoaded = jest.fn();
+		const onUserLoaded = vi.fn();
 		setupMocks( {} );
 
 		renderUserHovercard( { onUserLoaded } );
@@ -217,7 +220,7 @@ describe( 'UserHovercard', () => {
 	} );
 
 	test( 'calls onUserLoaded with user data when loading completes', () => {
-		const onUserLoaded = jest.fn();
+		const onUserLoaded = vi.fn();
 		setupMocks( { wpcomData: wpcomUserResponse } );
 
 		renderUserHovercard( { onUserLoaded } );

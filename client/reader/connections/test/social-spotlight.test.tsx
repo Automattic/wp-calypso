@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialSpotlight, type SpotlightConnection } from '../social-spotlight';
@@ -14,16 +15,17 @@ import type {
 	MastodonTimelinePage,
 } from '@automattic/api-core';
 
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
 
-const mockedLogToLogstash = logToLogstash as jest.MockedFunction< typeof logToLogstash >;
+const mockedLogToLogstash = logToLogstash as MockedFunction< typeof logToLogstash >;
 
-const mockAtmosphereTimeline = jest.fn();
-const mockMastodonTimeline = jest.fn();
-const mockFediverseTimeline = jest.fn();
+const mockAtmosphereTimeline = vi.fn();
+const mockMastodonTimeline = vi.fn();
+const mockFediverseTimeline = vi.fn();
 
-jest.mock( '@automattic/api-core', () => {
-	const actual = jest.requireActual( '@automattic/api-core' );
+vi.mock( '@automattic/api-core', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' );
 	return {
 		...actual,
 		getTimeline: ( ...args: unknown[] ) => mockAtmosphereTimeline( ...args ),

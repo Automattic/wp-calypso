@@ -1,16 +1,19 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux'; // eslint-disable-line no-restricted-imports
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import wp from 'calypso/lib/wp';
 import { startImport, startUpload, uploadExportFile } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
 import imports from 'calypso/state/imports/reducer';
 import { getImporterStatus } from 'calypso/state/imports/selectors';
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		post: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			post: vi.fn(),
+		},
+	} )
+);
 
 describe( 'uploadExportFile', () => {
 	const siteId = 123;
@@ -21,7 +24,7 @@ describe( 'uploadExportFile', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		wp.req.post.mockReturnValue( { upload: {} } );
 	} );
 

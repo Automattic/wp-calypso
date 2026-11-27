@@ -1,31 +1,4 @@
 import { wpcom } from './wpcom-fetcher';
-import type {
-	AdConversionDetails,
-	ToSAcceptanceTrackingDetails,
-	TransactionDomainContactDetails,
-} from './me-transactions';
-import type { RequestCart } from '@automattic/shopping-cart';
-
-export interface PayPalExpressUrlResponse {
-	redirect_url?: string;
-}
-
-export interface PayPalExpressEndpointRequestPayload {
-	success_url: string;
-	cancel_url: string;
-	cart: RequestCart;
-	domain_details: TransactionDomainContactDetails | null;
-	country: string;
-	postal_code: string;
-	tos?: ToSAcceptanceTrackingDetails;
-	ad_conversion?: AdConversionDetails;
-}
-
-export async function createPayPalExpressUrl(
-	body: PayPalExpressEndpointRequestPayload
-): Promise< PayPalExpressUrlResponse > {
-	return await wpcom.req.post( { path: '/me/paypal-express-url', apiVersion: '1.2', body } );
-}
 
 export type PayPalPPCPConfirmPaymentResponse =
 	| { success: true }

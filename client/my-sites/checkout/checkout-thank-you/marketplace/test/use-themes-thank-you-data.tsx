@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { fetchSitePurchases } from 'calypso/state/purchases/actions';
 import { requestTheme } from 'calypso/state/themes/actions';
 import { useThemesThankYouData } from '../use-themes-thank-you-data';
 
 const THEME_SLUG = 'twentytwentyfour';
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 let mockState = {
 	siteId: 1,
 	siteSlug: 'example.wordpress.com',
@@ -21,56 +22,62 @@ let mockState = {
 	hasExternallyManagedThemes: false,
 };
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
-} ) );
-jest.mock( 'calypso/components/data/query-site-purchases', () => ( {
-	useQuerySitePurchases: jest.fn(),
-} ) );
-jest.mock( 'calypso/components/data/query-theme', () => ( {
-	useQueryThemes: jest.fn(),
-} ) );
-jest.mock( 'calypso/state', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
+vi.mock( 'calypso/components/data/query-site-purchases', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useQuerySitePurchases: vi.fn(),
+	} )
+);
+vi.mock( 'calypso/components/data/query-theme', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useQueryThemes: vi.fn(),
+	} )
+);
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( state: typeof mockState ) => unknown ) => selector( mockState ),
 } ) );
-jest.mock( 'calypso/state/purchases/actions', () => ( {
-	fetchSitePurchases: jest.fn( ( siteId: number ) => ( {
+vi.mock( 'calypso/state/purchases/actions', () => ( {
+	fetchSitePurchases: vi.fn( ( siteId: number ) => ( {
 		type: 'FETCH_SITE_PURCHASES',
 		siteId,
 	} ) ),
 } ) );
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
+vi.mock( 'calypso/state/purchases/selectors', () => ( {
 	hasLoadedSitePurchasesFromServer: ( state: typeof mockState ) => state.hasLoadedSitePurchases,
 	isFetchingSitePurchases: ( state: typeof mockState ) => state.isRequestingSitePurchases,
 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	isJetpackSite: ( state: typeof mockState ) => state.isJetpack,
 	getSiteOption: ( state: typeof mockState ) => state.themeSlug,
 } ) );
-jest.mock( 'calypso/state/themes/actions', () => ( {
-	clearActivated: jest.fn( ( siteId: number ) => ( { type: 'THEMES_CLEAR_ACTIVATED', siteId } ) ),
-	requestTheme: jest.fn( ( themeId: string, siteId: string ) => ( {
+vi.mock( 'calypso/state/themes/actions', () => ( {
+	clearActivated: vi.fn( ( siteId: number ) => ( { type: 'THEMES_CLEAR_ACTIVATED', siteId } ) ),
+	requestTheme: vi.fn( ( themeId: string, siteId: string ) => ( {
 		type: 'THEME_REQUEST',
 		themeId,
 		siteId,
 	} ) ),
 } ) );
-jest.mock( 'calypso/state/themes/selectors', () => ( {
+vi.mock( 'calypso/state/themes/selectors', () => ( {
 	getThemes: ( state: typeof mockState, source: string ) =>
 		source === 'wpcom' ? state.dotComThemes : state.dotOrgThemes,
 	isMarketplaceThemeSubscribed: ( state: typeof mockState, themeId: string ) =>
 		state.subscribedThemes.includes( themeId ),
 } ) );
-jest.mock( 'calypso/state/themes/selectors/is-externally-managed-theme', () => ( {
+vi.mock( 'calypso/state/themes/selectors/is-externally-managed-theme', () => ( {
 	hasExternallyManagedThemes: ( state: typeof mockState ) => state.hasExternallyManagedThemes,
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: ( state: typeof mockState ) => state.siteId,
 	getSelectedSiteSlug: ( state: typeof mockState ) => state.siteSlug,
 } ) );
-jest.mock( '../marketplace-thank-you-theme-section', () => ( {
+vi.mock( '../marketplace-thank-you-theme-section', () => ( {
 	ThankYouThemeSection: () => null,
 } ) );
 
@@ -80,7 +87,7 @@ const renderThemes = ( themeSlugs: string[] = [ THEME_SLUG ] ) =>
 
 describe( 'useThemesThankYouData retry', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockState = { ...defaultState };
 	} );
 

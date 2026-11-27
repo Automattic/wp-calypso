@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { FreeDomainForAYearPromo } from '../free-domain-for-a-year-promo';
 
-jest.mock( '@automattic/domain-search', () => ( {
+vi.mock( '@automattic/domain-search', () => ( {
 	useDomainSuggestionContainer: () => ( {
 		containerRef: { current: null },
 		activeQuery: 'large',

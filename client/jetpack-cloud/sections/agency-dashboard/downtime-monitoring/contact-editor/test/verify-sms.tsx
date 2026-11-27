@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -9,6 +9,7 @@ import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import DashboardDataContext from '../../../sites-overview/dashboard-data-context';
 import {
 	AllowedMonitorContactTypes,
@@ -17,15 +18,15 @@ import {
 } from '../../../sites-overview/types';
 import VerifyContactForm from '../verify';
 
-jest.mock( 'calypso/data/geo/use-geolocation-query', () => ( {
+vi.mock( 'calypso/data/geo/use-geolocation-query', () => ( {
 	useGeoLocationQuery: () => ( {
 		isLoading: false,
 		data: {},
 	} ),
 } ) );
 
-jest.mock( '../hooks', () => ( {
-	...jest.requireActual( '../hooks' ),
+vi.mock( '../hooks', async () => ( {
+	...( await vi.importActual< typeof import( '../hooks' ) >( '../hooks' ) ),
 	useGetSupportedSMSCountries: () => [
 		// Alphabetical order
 		{
@@ -61,11 +62,11 @@ describe( 'VerifyContactForm', () => {
 	const defaultProps = {
 		type: 'sms' as AllowedMonitorContactTypes,
 		contacts: [],
-		setContacts: jest.fn(),
+		setContacts: vi.fn(),
 		action: 'add' as AllowedMonitorContactActions,
-		setVerifiedContact: jest.fn(),
-		recordEvent: jest.fn(),
-		onClose: jest.fn(),
+		setVerifiedContact: vi.fn(),
+		recordEvent: vi.fn(),
+		onClose: vi.fn(),
 		sites: [],
 	};
 
@@ -73,7 +74,7 @@ describe( 'VerifyContactForm', () => {
 		verifiedContacts: {
 			emails: [],
 			phoneNumbers: [ '+93774405234' ],
-			refetchIfFailed: jest.fn(),
+			refetchIfFailed: vi.fn(),
 		},
 		products: [],
 		isLargeScreen: true,
@@ -96,7 +97,7 @@ describe( 'VerifyContactForm', () => {
 	);
 
 	it( 'should render add phone number form', async () => {
-		const onAdd = jest.fn();
+		const onAdd = vi.fn();
 		render( <VerifyContactForm onAdd={ onAdd } { ...defaultProps } />, {
 			wrapper: Wrapper,
 		} );
@@ -122,7 +123,7 @@ describe( 'VerifyContactForm', () => {
 	} );
 
 	it( 'should show invalid phone number error', async () => {
-		const onAdd = jest.fn();
+		const onAdd = vi.fn();
 		render( <VerifyContactForm onAdd={ onAdd } { ...defaultProps } />, {
 			wrapper: Wrapper,
 		} );
@@ -146,7 +147,7 @@ describe( 'VerifyContactForm', () => {
 	} );
 
 	it( 'should add the phone number if already verified', async () => {
-		const onAdd = jest.fn();
+		const onAdd = vi.fn();
 		render(
 			<DashboardDataContext.Provider value={ dashboardContextValue }>
 				<VerifyContactForm onAdd={ onAdd } { ...defaultProps } />
@@ -194,7 +195,7 @@ describe( 'VerifyContactForm', () => {
 				},
 			] as Array< StateMonitoringSettingsContact >,
 		};
-		const onAdd = jest.fn();
+		const onAdd = vi.fn();
 		render( <VerifyContactForm onAdd={ onAdd } { ...props } />, {
 			wrapper: Wrapper,
 		} );
@@ -216,7 +217,7 @@ describe( 'VerifyContactForm', () => {
 	} );
 
 	it( 'should add the phone number if later is clicked', async () => {
-		const onAdd = jest.fn();
+		const onAdd = vi.fn();
 		render( <VerifyContactForm onAdd={ onAdd } { ...defaultProps } />, {
 			wrapper: Wrapper,
 		} );
@@ -264,7 +265,7 @@ describe( 'VerifyContactForm', () => {
 	} );
 
 	it( 'should verify the phone number', async () => {
-		const onAdd = jest.fn();
+		const onAdd = vi.fn();
 		render( <VerifyContactForm onAdd={ onAdd } { ...defaultProps } />, {
 			wrapper: Wrapper,
 		} );

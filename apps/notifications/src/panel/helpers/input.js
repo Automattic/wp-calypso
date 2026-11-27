@@ -9,3 +9,12 @@ export const keys = {
 export const modifierKeyIsActive = ( e ) => {
 	return e.altKey || e.ctrlKey || e.metaKey;
 };
+
+/**
+ * Whether a key press types into a field. Typing never runs a shortcut, whatever the shared switch
+ * says: the Dashboard's panel stays open while the focus moves to the omnibar, and from there into
+ * a field such as the command palette's search.
+ */
+export const isTyping = ( { target } ) =>
+	target instanceof HTMLElement &&
+	( target.isContentEditable || [ 'INPUT', 'SELECT', 'TEXTAREA' ].includes( target.tagName ) );

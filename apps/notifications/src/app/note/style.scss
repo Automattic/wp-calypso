@@ -635,7 +635,7 @@
 	@include ui-mixins.when-dark-theme {
 		--wpnc-quote__border-color: var( --wp-components-color-gray-600, #758095 );
 		--wpnc-quote__text-color: var( --wp-components-color-gray-700, #9aa2b1 );
-		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
+		--wpnc-divider__color: var( --wpds-color-stroke-surface-neutral, #424855 );
 		--wpnc-action__color: var( --wp-components-color-gray-700, #9aa2b1 );
 		--wpnc-action__color-hover: var( --dashboard__text-color, #f0f0f1 );
 		// The dark theme maps the neutral tokens but not a disabled solid button's,
@@ -645,9 +645,9 @@
 
 		// Code blocks: a subtly raised surface against the dark panel, with a
 		// neutral border and light text that keeps AA contrast.
-		--wpnc-code__background-color: var( --wp-components-color-gray-800, #2c3338 );
-		--wpnc-code__border-color: var( --wp-components-color-gray-600, #758095 );
-		--wpnc-code__text-color: var( --wp-components-color-gray-100, #f0f0f1 );
+		--wpnc-code__background-color: var( --wpds-color-background-surface-neutral-weak, #2c3338 );
+		--wpnc-code__border-color: var( --wpds-color-stroke-surface-neutral, #758095 );
+		--wpnc-code__text-color: var( --wpds-color-foreground-content-neutral, #f0f0f1 );
 
 		// The list/detail pane separator ($wpnc-pane-border) misses the dashboard's
 		// border handling. Route it to the same gray-400 divider as the rest of the panel.

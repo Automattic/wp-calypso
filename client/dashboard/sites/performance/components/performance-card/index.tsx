@@ -14,8 +14,8 @@ import {
 } from '../../../../utils/site-performance';
 import { getSiteVisibilityURL } from '../../../../utils/site-url';
 import JetpackConnectionWarningCard from '../../../components/jetpack-connection-warning-card';
-import HostingFeatureGatedWithOverviewCard from '../../../hosting-feature-gated-with-overview-card';
-import { useSitePerformanceData } from '../../use-site-performance-data';
+import HostingFeatureGatedWithOverviewCard from '../../../hosting-features/components/hosting-feature-gated-with-overview-card';
+import { useSitePerformanceData } from '../../hooks/use-site-performance-data';
 import type { SitePerformanceReport, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {

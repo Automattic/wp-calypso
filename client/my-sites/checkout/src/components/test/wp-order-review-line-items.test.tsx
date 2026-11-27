@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { RestorableProductsProvider } from '@automattic/wpcom-checkout';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { WPOrderReviewLineItems } from '../wp-order-review-line-items';
 import type { OnChangeItemVariant } from '../item-variation-picker';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/my-sites/checkout/src/hooks/product-variants', () => ( {
+vi.mock( 'calypso/my-sites/checkout/src/hooks/product-variants', () => ( {
 	useGetProductVariants: () => [
 		{ productSlug: 'jetpack_backup_t1_yearly', productId: 2100, termIntervalInMonths: 12 },
 		{ productSlug: 'jetpack_backup_t1_monthly', productId: 2101, termIntervalInMonths: 1 },
 	],
 } ) );
-jest.mock( '../item-variation-picker', () => ( {
+vi.mock( '../item-variation-picker', () => ( {
 	ItemVariationPicker: ( {
 		id,
 		onChangeItemVariant,
@@ -32,7 +33,7 @@ jest.mock( '../item-variation-picker', () => ( {
 		</button>
 	),
 } ) );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-renewal-price-experiment', () => ( {
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-renewal-price-experiment', () => ( {
 	useRenewalPricingExperiment: () => [ false, 'control' ],
 	isRenewalPricingTreatment: () => false,
 } ) );
@@ -50,7 +51,7 @@ function buildLicense( uuid: string, cartItemIndex: number ): ResponseCartProduc
 
 describe( 'WPOrderReviewLineItems', () => {
 	it( 'changes the term of every license merged into one line', async () => {
-		const onChangeSelection = jest.fn();
+		const onChangeSelection = vi.fn();
 		const responseCart = {
 			...getEmptyResponseCart(),
 			products: [ buildLicense( 'a', 0 ), buildLicense( 'b', 1 ), buildLicense( 'c', 2 ) ],
@@ -61,10 +62,10 @@ describe( 'WPOrderReviewLineItems', () => {
 				<RestorableProductsProvider>
 					<WPOrderReviewLineItems
 						responseCart={ responseCart }
-						removeProductFromCart={ jest.fn() }
-						replaceProductInCart={ jest.fn() }
-						addProductsToCart={ jest.fn() }
-						removeCoupon={ jest.fn() }
+						removeProductFromCart={ vi.fn() }
+						replaceProductInCart={ vi.fn() }
+						addProductsToCart={ vi.fn() }
+						removeCoupon={ vi.fn() }
 						onChangeSelection={ onChangeSelection }
 						isPwpoUser={ false }
 					/>

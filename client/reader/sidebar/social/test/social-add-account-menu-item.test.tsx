@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import { SocialAddAccountMenuItem } from '../social-add-account-menu-item';
 
@@ -15,7 +16,7 @@ describe( 'SocialAddAccountMenuItem', () => {
 
 	it( 'fires onClick when link is clicked', async () => {
 		const user = userEvent.setup();
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		render(
 			<SocialAddAccountMenuItem
 				label="Add account"

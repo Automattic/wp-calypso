@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PRODUCT_JETPACK_SCAN, FEATURE_TYPE_JETPACK_SCAN } from '@automattic/calypso-products';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import UpsellProductCard from 'calypso/components/jetpack/upsell-product-card';
 import SingleSiteUpsellLightbox from 'calypso/jetpack-cloud/sections/partner-portal/single-site-upsell-lightbox';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => jest.fn() );
+vi.mock( 'calypso/state/ui/selectors/get-selected-site-id', () => ( { default: vi.fn() } ) );
 
-jest.mock( 'calypso/my-sites/plans/jetpack-plans/use-item-price', () =>
-	jest.fn().mockReturnValue( {
+vi.mock( 'calypso/my-sites/plans/jetpack-plans/use-item-price', () => ( {
+	default: vi.fn().mockReturnValue( {
 		originalPrice: 10,
 		originalPriceTotal: 10,
 		discountedPrice: 5,
@@ -21,11 +22,11 @@ jest.mock( 'calypso/my-sites/plans/jetpack-plans/use-item-price', () =>
 		discountedPriceDuration: 1,
 		priceTierList: [ 'free', 'personal', 'premium', 'business' ],
 		isFetching: false,
-	} )
-);
+	} ),
+} ) );
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn( () => ( {
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn( () => ( {
 		type: 'ANALYTICS_EVENT_RECORD',
 	} ) ),
 } ) );
@@ -59,7 +60,7 @@ describe( 'SingleSiteUpsellLightbox', () => {
 		const mockStore = configureStore();
 		const store = mockStore( firstState );
 
-		const mockOnClick = jest.fn();
+		const mockOnClick = vi.fn();
 		// Render component
 		render(
 			<Provider store={ store }>
@@ -113,7 +114,7 @@ describe( 'SingleSiteUpsellLightbox', () => {
 		const mockStore = configureStore();
 		const store = mockStore( secondState );
 
-		const mockOnClick = jest.fn();
+		const mockOnClick = vi.fn();
 		// Render component
 		render(
 			<Provider store={ store }>
@@ -184,7 +185,7 @@ describe( 'SingleSiteUpsellLightbox', () => {
 		const mockStore = configureStore();
 		const store = mockStore( secondState );
 
-		const mockOnClose = jest.fn();
+		const mockOnClose = vi.fn();
 
 		// Render component
 		render(

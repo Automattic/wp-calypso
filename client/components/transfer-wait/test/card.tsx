@@ -1,20 +1,21 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, act, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import TransferWaitCard from '../card';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
 
 describe( 'TransferWaitCard', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.useFakeTimers();
-		jest.setSystemTime( new Date( '2026-08-17T10:00:00Z' ) );
+		vi.clearAllMocks();
+		vi.useFakeTimers();
+		vi.setSystemTime( new Date( '2026-08-17T10:00:00Z' ) );
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'narrates the preparing stage', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
@@ -59,13 +60,13 @@ describe( 'TransferWaitCard', () => {
 
 	it( 'does not show the overrun line before a stage runs long', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
-		act( () => jest.advanceTimersByTime( 30_000 ) );
+		act( () => vi.advanceTimersByTime( 30_000 ) );
 		expect( screen.queryByText( /taking longer than usual/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the overrun line once a stage runs well past its typical duration', () => {
 		render( <TransferWaitCard transferStatus={ transferStates.ACTIVE } fallbackStep={ 1 } /> );
-		act( () => jest.advanceTimersByTime( 45_000 ) );
+		act( () => vi.advanceTimersByTime( 45_000 ) );
 		expect( screen.getByText( /taking longer than usual/ ) ).toBeVisible();
 	} );
 
@@ -77,7 +78,7 @@ describe( 'TransferWaitCard', () => {
 				siteSlug="example.wordpress.com"
 			/>
 		);
-		act( () => jest.advanceTimersByTime( 45_000 ) );
+		act( () => vi.advanceTimersByTime( 45_000 ) );
 		expect( screen.getByText( /nothing is wrong/ ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Go to your plugins' } ) ).not.toBeInTheDocument();
 	} );
@@ -91,7 +92,7 @@ describe( 'TransferWaitCard', () => {
 				siteSlug="example.wordpress.com"
 			/>
 		);
-		act( () => jest.advanceTimersByTime( 95_000 ) );
+		act( () => vi.advanceTimersByTime( 95_000 ) );
 		expect( screen.getByText( /taking longer than it should/ ) ).toBeVisible();
 		expect( screen.queryByText( /nothing is wrong/ ) ).not.toBeInTheDocument();
 	} );
@@ -104,7 +105,7 @@ describe( 'TransferWaitCard', () => {
 				siteSlug="example.wordpress.com"
 			/>
 		);
-		act( () => jest.advanceTimersByTime( 95_000 ) );
+		act( () => vi.advanceTimersByTime( 95_000 ) );
 		expect( screen.getByRole( 'link', { name: 'Go to your plugins' } ) ).toHaveAttribute(
 			'href',
 			'/plugins/example.wordpress.com'
@@ -120,7 +121,7 @@ describe( 'TransferWaitCard', () => {
 				isPluginInstall={ false }
 			/>
 		);
-		act( () => jest.advanceTimersByTime( 95_000 ) );
+		act( () => vi.advanceTimersByTime( 95_000 ) );
 		expect(
 			screen.getByText( 'This is taking longer than it should. Your site is ready to use.' )
 		).toBeVisible();
@@ -141,7 +142,7 @@ describe( 'TransferWaitCard', () => {
 				siteSlug="example.wordpress.com"
 			/>
 		);
-		act( () => jest.advanceTimersByTime( 300_000 ) );
+		act( () => vi.advanceTimersByTime( 300_000 ) );
 		expect( screen.queryByRole( 'link', { name: 'Go to your plugins' } ) ).not.toBeInTheDocument();
 		expect( screen.getByText( /nothing is wrong/ ) ).toBeVisible();
 	} );
@@ -155,11 +156,11 @@ describe( 'TransferWaitCard', () => {
 				productSlug="sensei-pro"
 			/>
 		);
-		act( () => jest.advanceTimersByTime( 45_000 ) );
+		act( () => vi.advanceTimersByTime( 45_000 ) );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 
-		act( () => jest.advanceTimersByTime( 50_000 ) );
-		act( () => jest.advanceTimersByTime( 30_000 ) );
+		act( () => vi.advanceTimersByTime( 50_000 ) );
+		act( () => vi.advanceTimersByTime( 30_000 ) );
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_transfer_wait_stalled', {
 			wait_type: 'plugin_install',
@@ -177,7 +178,7 @@ describe( 'TransferWaitCard', () => {
 				isPluginInstall={ false }
 			/>
 		);
-		act( () => jest.advanceTimersByTime( 95_000 ) );
+		act( () => vi.advanceTimersByTime( 95_000 ) );
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_transfer_wait_stalled', {
 			wait_type: 'site_transfer',

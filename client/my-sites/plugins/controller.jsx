@@ -18,6 +18,7 @@ import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plan
 import { getSiteAdminUrl, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
+import { getCategoryPage } from './category-pagination';
 import { UNLISTED_PLUGINS } from './constants';
 import PlanSetup from './jetpack-plugins-setup';
 import { MailPoetUpgradePage } from './mailpoet-upgrade';
@@ -74,8 +75,11 @@ function renderPluginsBrowser( context ) {
 
 	context.primary = createElement( PluginBrowser, {
 		path: context.path,
+		pathname: context.pathname,
+		lang: context.params.lang,
 		category,
 		search: searchTerm,
+		page: getCategoryPage( context.query.page ),
 	} );
 }
 
@@ -266,10 +270,9 @@ export function browsePlugins( context, next ) {
 
 export function jetpackCanUpdate( context, next ) {
 	const selectedSites = getSelectedOrAllSitesWithPlugins( context.store.getState() );
-	let redirectToPlugins = false;
 
 	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
-		redirectToPlugins = ! selectedSites.some( function ( site ) {
+		const redirectToPlugins = ! selectedSites.some( function ( site ) {
 			return site && site.jetpack && site.canUpdateFiles;
 		} );
 

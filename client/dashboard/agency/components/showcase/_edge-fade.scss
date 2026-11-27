@@ -1,0 +1,33 @@
+// Fades a scrolling row's edges on the sides that can scroll. Pair with the
+// `can-back` and `can-forward` classes from `useRowScroll`.
+@mixin edge-fade( $back: 40px, $forward: 64px ) {
+	--fade-start: 0%;
+	--fade-end: 0%;
+	--fade-direction: to right;
+
+	mask-image: linear-gradient(
+		var( --fade-direction ),
+		transparent,
+		rgba( 0, 0, 0, 0.3 ) calc( var( --fade-start ) * 0.35 ),
+		rgba( 0, 0, 0, 0.75 ) calc( var( --fade-start ) * 0.7 ),
+		#000 var( --fade-start ),
+		#000 calc( 100% - var( --fade-end ) ),
+		rgba( 0, 0, 0, 0.75 ) calc( 100% - var( --fade-end ) * 0.7 ),
+		rgba( 0, 0, 0, 0.3 ) calc( 100% - var( --fade-end ) * 0.35 ),
+		transparent
+	);
+
+	// Gradients have no logical direction, so the fade runs from the
+	// inline start by hand.
+	[dir='rtl'] & {
+		--fade-direction: to left;
+	}
+
+	&.can-back {
+		--fade-start: #{$back};
+	}
+
+	&.can-forward {
+		--fade-end: #{$forward};
+	}
+}

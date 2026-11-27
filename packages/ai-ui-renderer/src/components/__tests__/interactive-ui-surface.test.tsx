@@ -1,7 +1,7 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
-import { BASIC_CATALOG_ID } from '../../capabilities';
-import { createInteractiveUiCatalog } from '../../utils/catalog';
+import { BASIC_CATALOG_ID, LAYOUT_CATALOG_ID } from '../../capabilities';
+import { LAYOUT_CATALOG, createInteractiveUiCatalog } from '../../utils/catalog';
 import { createInteractiveUiRuntime } from '../../utils/runtime';
 import { InteractiveUiSurface } from '../interactive-ui-surface';
 import type { InteractiveUiRuntime } from '../../utils/runtime';
@@ -97,6 +97,95 @@ function createSurface(
 	return surface;
 }
 
+it.each( [ 'resolve', 'reject' ] as const )(
+	'keeps only the activated button busy until its action %ss',
+	async ( outcome ) => {
+		runtime.dispose();
+		runtime = createInteractiveUiRuntime( {
+			catalogs: [ createInteractiveUiCatalog() ],
+			actionMode: 'tool-call',
+			onAction,
+			onError,
+		} );
+		let resolve!: () => void;
+		let reject!: ( error: Error ) => void;
+		onAction.mockReturnValue(
+			new Promise< void >( ( done, fail ) => {
+				resolve = done;
+				reject = fail;
+			} )
+		);
+		const surface = createSurface( [
+			{ id: 'root', component: 'Column', children: [ 'save', 'other' ] },
+			{ id: 'save', component: 'Button', child: 'label', action: { event: { name: 'save' } } },
+			{ id: 'label', component: 'Text', text: 'Save' },
+			{
+				id: 'other',
+				component: 'Button',
+				child: 'otherLabel',
+				action: { event: { name: 'other' } },
+			},
+			{ id: 'otherLabel', component: 'Text', text: 'Other' },
+		] );
+		const { rerender } = render( <InteractiveUiSurface surface={ surface } /> );
+		expect( onError ).not.toHaveBeenCalled();
+		const button = screen.getByRole( 'button', { name: 'Save' } );
+		fireEvent.click( button );
+		rerender( <InteractiveUiSurface surface={ surface } disabled /> );
+		expect( button ).toHaveAttribute( 'aria-busy', 'true' );
+		expect( screen.getByRole( 'button', { name: 'Other' } ) ).not.toHaveAttribute( 'aria-busy' );
+		fireEvent.click( button );
+		await waitFor( () => expect( onAction ).toHaveBeenCalledTimes( 1 ) );
+
+		await act( async () => {
+			if ( outcome === 'resolve' ) {
+				resolve();
+			} else {
+				reject( new Error( 'Request failed' ) );
+			}
+		} );
+		await waitFor( () => expect( button ).not.toHaveAttribute( 'aria-busy' ) );
+		rerender( <InteractiveUiSurface surface={ surface } /> );
+		expect( button ).not.toHaveAttribute( 'aria-disabled', 'true' );
+		expect( onError ).toHaveBeenCalledTimes( outcome === 'reject' ? 1 : 0 );
+	}
+);
+
+it( 'preserves edited action arguments inside nested shared layouts', async () => {
+	runtime.dispose();
+	runtime = createInteractiveUiRuntime( {
+		catalogs: [ createInteractiveUiCatalog( LAYOUT_CATALOG ) ],
+		onAction,
+		onError,
+	} );
+	const surface = createSurface(
+		[
+			{ id: 'root', component: 'Grid', children: [ 'form' ] },
+			{ id: 'form', component: 'Stack', children: [ 'name', 'save' ] },
+			{ id: 'name', component: 'TextField', label: 'Name', value: { '@path': '/name' } },
+			{
+				id: 'save',
+				component: 'Button',
+				child: 'label',
+				action: { event: { name: 'save', context: { name: { '@path': '/name' } } } },
+			},
+			{ id: 'label', component: 'Text', text: 'Save' },
+		],
+		LAYOUT_CATALOG_ID
+	);
+
+	render( <InteractiveUiSurface surface={ surface } hostProps={ { buildChild: () => null } } /> );
+	fireEvent.change( screen.getByRole( 'textbox', { name: 'Name' } ), { target: { value: 'Ada' } } );
+	fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+	await waitFor( () =>
+		expect( onAction ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'save', context: { name: 'Ada' } } )
+		)
+	);
+	expect( onError ).not.toHaveBeenCalled();
+} );
+
 it.each( [
 	[ undefined, 'ai-ui-renderer' ],
 	[ 'host a2ui-dark', 'ai-ui-renderer host a2ui-dark' ],
@@ -127,15 +216,17 @@ it.each( [
 	expect( onError ).not.toHaveBeenCalled();
 } );
 
-it( 'themes the modal like its surface', async () => {
+it( 'gives a modal its surface’s theme, and updates an open one with the surface’s props', async () => {
 	const surface = createSurface( [
 		{ id: 'root', component: 'Modal', trigger: 'trigger', content: 'details' },
 		{ id: 'trigger', component: 'Button', child: 'label', action: { event: { name: 'open' } } },
 		{ id: 'label', component: 'Text', text: 'Open details' },
-		{ id: 'details', component: 'Text', text: 'Details' },
+		{ id: 'details', component: 'Text', text: 'About this site' },
 	] );
 
-	const { container } = render( <InteractiveUiSurface surface={ surface } className="host" /> );
+	const { container, rerender } = render(
+		<InteractiveUiSurface surface={ surface } className="host a2ui-dark" theme="chatgpt" />
+	);
 	const trigger = screen.getByRole( 'button', { name: 'Open details' } );
 	const root = trigger.closest< HTMLElement >( '.ai-ui-renderer' );
 
@@ -146,12 +237,27 @@ it( 'themes the modal like its surface', async () => {
 
 	const dialog = await screen.findByRole( 'dialog', { name: 'Details' } );
 	const overlay = dialog.closest< HTMLElement >( '.ai-ui-renderer__modal' );
+	const content = screen.getByText( 'About this site' ).closest( '.ai-ui-renderer' );
 
 	expect( container ).not.toContainElement( dialog );
-	expect( overlay ).toHaveClass( 'host' );
+	expect( overlay ).toHaveClass( 'host', 'a2ui-dark' );
+	expect( overlay ).toHaveAttribute( 'data-ai-ui-theme', 'chatgpt' );
+	expect( content ).toHaveAttribute( 'data-ai-ui-theme', 'chatgpt' );
 	expect( overlay?.style.getPropertyValue( '--a2ui-color-surface' ) ).toBe( 'black' );
 	expect( overlay?.style.getPropertyValue( 'color-scheme' ) ).toBe( 'dark' );
 	expect( overlay?.style.getPropertyValue( '--ai-ui-renderer-host-accent' ) ).toBe( 'green' );
+
+	root?.style.setProperty( '--a2ui-color-surface', 'white' );
+	root?.style.setProperty( 'color-scheme', 'light' );
+	rerender(
+		<InteractiveUiSurface surface={ surface } className="host a2ui-light" theme="another-client" />
+	);
+
+	expect( overlay ).toHaveClass( 'host', 'a2ui-light' );
+	expect( overlay ).toHaveAttribute( 'data-ai-ui-theme', 'another-client' );
+	expect( content ).toHaveAttribute( 'data-ai-ui-theme', 'another-client' );
+	expect( overlay?.style.getPropertyValue( '--a2ui-color-surface' ) ).toBe( 'white' );
+	expect( overlay?.style.getPropertyValue( 'color-scheme' ) ).toBe( 'light' );
 } );
 
 it( 'titles a modal with its accessibility label', async () => {
@@ -284,6 +390,105 @@ it( 'disables a disabled surface’s inputs and actions, but not its tabs or mod
 	const dialog = await screen.findByRole( 'dialog', { name: 'Details' } );
 
 	expect( within( dialog ).getByRole( 'textbox', { name: 'Name' } ) ).toBeDisabled();
+} );
+
+it.each( [
+	[ 'shortText', 'textbox' ],
+	[ 'longText', 'textbox' ],
+] )( 'shows a %s TextField’s placeholder', ( variant, role ) => {
+	const surface = createSurface( [
+		{
+			id: 'root',
+			component: 'TextField',
+			label: 'Brief',
+			variant,
+			placeholder: 'For example, a bakery',
+		},
+	] );
+
+	render( <InteractiveUiSurface surface={ surface } /> );
+
+	expect( screen.getByRole( role, { name: 'Brief' } ) ).toHaveAttribute(
+		'placeholder',
+		'For example, a bakery'
+	);
+} );
+
+describe( 'chips', () => {
+	it( 'picks one option when a person clicks its chip', async () => {
+		const surface = createSurface( [
+			{
+				id: 'root',
+				component: 'ChoicePicker',
+				label: 'Type of site',
+				displayStyle: 'chips',
+				options: [
+					{ label: 'Blog', value: 'blog' },
+					{ label: 'Shop', value: 'shop' },
+				],
+				value: { '@path': '/type' },
+			},
+		] );
+
+		const { container } = render( <InteractiveUiSurface surface={ surface } /> );
+
+		expect( container.querySelector( '.ai-ui-renderer__choice-picker--chips' ) ).not.toBeNull();
+
+		fireEvent.click( screen.getByText( 'Blog' ) );
+		fireEvent.click( screen.getByText( 'Shop' ) );
+
+		await waitFor( () => expect( surface.dataModel.get( '/type' ) ).toEqual( [ 'shop' ] ) );
+		expect( screen.getByRole( 'radio', { name: 'Shop' } ) ).toBeChecked();
+		expect( screen.getByRole( 'radio', { name: 'Blog' } ) ).not.toBeChecked();
+	} );
+
+	it( 'picks several options in a multiple-selection picker', async () => {
+		const surface = createSurface( [
+			{
+				id: 'root',
+				component: 'ChoicePicker',
+				label: 'Topics',
+				variant: 'multipleSelection',
+				displayStyle: 'chips',
+				options: [
+					{ label: 'News', value: 'news' },
+					{ label: 'Sport', value: 'sport' },
+				],
+				value: { '@path': '/topics' },
+			},
+		] );
+
+		render( <InteractiveUiSurface surface={ surface } /> );
+
+		fireEvent.click( screen.getByText( 'News' ) );
+		fireEvent.click( screen.getByText( 'Sport' ) );
+
+		await waitFor( () =>
+			expect( surface.dataModel.get( '/topics' ) ).toEqual( [ 'news', 'sport' ] )
+		);
+		expect( screen.getByRole( 'checkbox', { name: 'News' } ) ).toBeChecked();
+	} );
+
+	it.each( [
+		[ 'mutuallyExclusive', 'radio' ],
+		[ 'multipleSelection', 'checkbox' ],
+	] )( 'disables a %s picker’s chips on a disabled surface', ( variant, role ) => {
+		const surface = createSurface( [
+			{
+				id: 'root',
+				component: 'ChoicePicker',
+				label: 'Topics',
+				variant,
+				displayStyle: 'chips',
+				options: [ { label: 'News', value: 'news' } ],
+				value: [],
+			},
+		] );
+
+		render( <InteractiveUiSurface surface={ surface } disabled /> );
+
+		expect( screen.getByRole( role, { name: 'News' } ) ).toHaveAttribute( 'aria-disabled', 'true' );
+	} );
 } );
 
 it( 'shows the fallback instead of a surface with a component its catalog lacks', () => {

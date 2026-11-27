@@ -27,7 +27,7 @@ export const PaymentMethodLogos = styled.span`
 `;
 
 export function PaymentLogo( { brand, isSummary }: { brand: string; isSummary?: boolean } ) {
-	let cardFieldIcon = null;
+	let cardFieldIcon;
 
 	switch ( brand ) {
 		case 'visa':

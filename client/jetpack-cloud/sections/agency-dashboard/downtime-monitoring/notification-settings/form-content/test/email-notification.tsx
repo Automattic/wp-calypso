@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,23 +8,24 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import EmailNotification from '../email-notification';
 import type { RestrictionType } from '../../../types';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	config.isEnabled = ( property: string ) => true;
-	return config;
+	return { ...config, default: config };
 } );
 
 describe( 'EmailNotification', () => {
 	const defaultProps = {
-		recordEvent: jest.fn(),
+		recordEvent: vi.fn(),
 		enableEmailNotification: true,
-		setEnableEmailNotification: jest.fn(),
+		setEnableEmailNotification: vi.fn(),
 		defaultUserEmailAddresses: [ 'example@example.com' ],
-		toggleAddEmailModal: jest.fn(),
+		toggleAddEmailModal: vi.fn(),
 		allEmailItems: [],
 		restriction: 'none' as RestrictionType,
 	};

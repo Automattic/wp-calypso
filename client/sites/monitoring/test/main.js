@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -7,13 +7,14 @@ import { renderHook } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { useSiteMetricsData } from '../components/site-monitoring';
 import { calculateTimeRange } from '../components/time-range-picker';
 import { useSiteMetricsQuery } from '../hooks/use-metrics-query';
 
-jest.mock( 'calypso/sites/monitoring/hooks/use-metrics-query.ts', () => ( {
+vi.mock( 'calypso/sites/monitoring/hooks/use-metrics-query.ts', () => ( {
 	__esModule: true,
-	useSiteMetricsQuery: jest.fn( () => {
+	useSiteMetricsQuery: vi.fn( () => {
 		return {
 			data: {
 				data: { periods: [] },
@@ -41,18 +42,18 @@ describe( 'useSiteMetrics test', () => {
 		// Mock the missing `window.matchMedia` function that's not even in JSDOM
 		Object.defineProperty( window, 'matchMedia', {
 			writable: true,
-			value: jest.fn().mockImplementation( ( query ) => ( {
+			value: vi.fn().mockImplementation( ( query ) => ( {
 				matches: false,
 				media: query,
 				onchange: null,
-				addListener: jest.fn(), // deprecated
-				removeListener: jest.fn(), // deprecated
-				addEventListener: jest.fn(),
-				removeEventListener: jest.fn(),
-				dispatchEvent: jest.fn(),
+				addListener: vi.fn(), // deprecated
+				removeListener: vi.fn(), // deprecated
+				addEventListener: vi.fn(),
+				removeEventListener: vi.fn(),
+				dispatchEvent: vi.fn(),
 			} ) ),
 		} );
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should return formattedData for the case with an empty array for dimension', () => {

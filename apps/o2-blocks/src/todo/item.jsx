@@ -1,5 +1,5 @@
+import { RichText } from '@wordpress/block-editor';
 import { Button } from '@wordpress/components';
-import { RichText } from '@wordpress/editor';
 import { Component } from '@wordpress/element';
 import { Icon, check, close, arrowDown, arrowUp } from '@wordpress/icons';
 

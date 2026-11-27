@@ -1,26 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	...jest.requireActual( '@automattic/calypso-analytics' ),
-	recordTracksEvent: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/state/selectors/is-woo-jpc-flow', () => jest.fn( () => false ) );
-
-jest.mock( 'calypso/lib/partner-branding', () => ( {
-	usePartnerBranding: jest.fn( () => ( { hasCustomBranding: false, topBarLogo: undefined } ) ),
-} ) );
-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { fireEvent, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import LoginContextProvider from 'calypso/login/login-context';
 import oauth2ClientsReducer from 'calypso/state/oauth2-clients/reducer';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import OneLoginLayout, { ensureHeadingProvided } from '../one-login-layout';
+
+vi.mock( '@automattic/calypso-analytics', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/calypso-analytics' ) >(
+		'@automattic/calypso-analytics'
+	) ),
+	recordTracksEvent: vi.fn(),
+} ) );
+
+vi.mock( 'calypso/state/selectors/is-woo-jpc-flow', () => ( { default: vi.fn( () => false ) } ) );
+
+vi.mock( 'calypso/lib/partner-branding', () => ( {
+	usePartnerBranding: vi.fn( () => ( { hasCustomBranding: false, topBarLogo: undefined } ) ),
+} ) );
 
 describe( 'ensureHeadingProvided', () => {
 	const originalEnv = process.env.NODE_ENV;
@@ -85,9 +87,9 @@ describe( 'OneLoginLayout logo link', () => {
 		);
 
 	afterEach( () => {
-		( recordTracksEvent as jest.Mock ).mockClear();
-		( isWooJPCFlow as unknown as jest.Mock ).mockReturnValue( false );
-		( usePartnerBranding as jest.Mock ).mockReturnValue( {
+		( recordTracksEvent as Mock ).mockClear();
+		( isWooJPCFlow as unknown as Mock ).mockReturnValue( false );
+		( usePartnerBranding as Mock ).mockReturnValue( {
 			hasCustomBranding: false,
 			topBarLogo: undefined,
 		} );
@@ -147,7 +149,7 @@ describe( 'OneLoginLayout logo link', () => {
 	} );
 
 	test( 'does not link the logo in the Woo JPC flow', () => {
-		( isWooJPCFlow as unknown as jest.Mock ).mockReturnValue( true );
+		( isWooJPCFlow as unknown as Mock ).mockReturnValue( true );
 		renderLayout( { linkLogoToHome: true } );
 		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
 	} );
@@ -164,7 +166,7 @@ describe( 'OneLoginLayout logo link', () => {
 	} );
 
 	test( 'does not link the logo with partner branding', () => {
-		( usePartnerBranding as jest.Mock ).mockReturnValue( {
+		( usePartnerBranding as Mock ).mockReturnValue( {
 			hasCustomBranding: true,
 			topBarLogo: undefined,
 		} );

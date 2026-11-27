@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import {
 	getWowFunnelHandoffUrl,
 	waitForWowFunnelReady,
@@ -14,7 +15,7 @@ const mockQueryParams = new URLSearchParams(
 	'wow_funnel=default&siteSlug=example.wordpress.com&siteId=123'
 );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	Step: {
 		Loading: ( { title }: { title: string } ) => <div>{ title }</div>,
 		TopBar: () => null,
@@ -39,64 +40,66 @@ jest.mock( '@automattic/onboarding', () => ( {
 	},
 } ) );
 
-jest.mock( '@wordpress/react-i18n', () => ( {
-	useI18n: () => ( { __: ( text: string ) => text } ),
+vi.mock( '@wordpress/react-i18n', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useI18n: () => ( { __: ( text: string ) => text } ),
+	} )
+);
+
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/loading', () => ( {
+	default: ( { title }: { title: string } ) => <div>{ title }</div>,
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( 'calypso/components/loading', () => ( { title }: { title: string } ) => (
-	<div>{ title }</div>
-) );
-
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => mockQueryParams,
 } ) );
 
-const mockSetSiteSetupError = jest.fn();
+const mockSetSiteSetupError = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { setSiteSetupError: mockSetSiteSetupError } ),
 } ) );
 
 // Stand-ins: the real library builds its own data stores on import, which the mock above
 // does not provide.
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: ( { children, onClick }: { children: ReactNode; onClick: () => void } ) => (
 		<button onClick={ onClick }>{ children }</button>
 	),
 	__experimentalHStack: ( { children }: { children: ReactNode } ) => <div>{ children }</div>,
 } ) );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	SITE_STORE: 'automattic/site',
 } ) );
 
-jest.mock( '../../../../helpers/should-use-step-container-v2', () => ( {
+vi.mock( '../../../../helpers/should-use-step-container-v2', () => ( {
 	shouldUseStepContainerV2: () => true,
 } ) );
 
 // Only what the step calls. The helpers' own rules, including how a timeout is told from a
 // failure, are covered in utils/test/wow-funnel.ts.
-jest.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
 	getWowFunnelSlug: ( queryParams: URLSearchParams ) => queryParams.get( 'wow_funnel' ),
 	isKnownWowFunnel: ( slug: string | null ) => !! slug,
 	getWowFunnelDest: () => 'editor',
 	isWowFunnelWaitTimeout: ( error: unknown ) =>
 		error instanceof Error && 'WowFunnelWaitTimeoutError' === error.name,
-	logWowFunnelEvent: jest.fn(),
-	waitForWowFunnelReady: jest.fn(),
-	getWowFunnelHandoffUrl: jest.fn(),
+	logWowFunnelEvent: vi.fn(),
+	waitForWowFunnelReady: vi.fn(),
+	getWowFunnelHandoffUrl: vi.fn(),
 } ) );
 
-const mockWait = waitForWowFunnelReady as jest.Mock;
-const mockHandoffUrl = getWowFunnelHandoffUrl as jest.Mock;
+const mockWait = waitForWowFunnelReady as Mock;
+const mockHandoffUrl = getWowFunnelHandoffUrl as Mock;
 
 const EDITOR_URL = 'https://example.wordpress.com/wp-admin/site-editor.php';
 
 describe( 'WowFunnelHandoff', () => {
 	const originalLocation = window.location;
-	const navigation = { submit: jest.fn() };
-	const replace = jest.fn();
+	const navigation = { submit: vi.fn() };
+	const replace = vi.fn();
 
 	const renderStep = () =>
 		render(
@@ -104,7 +107,7 @@ describe( 'WowFunnelHandoff', () => {
 		);
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockHandoffUrl.mockResolvedValue( EDITOR_URL );
 		Object.defineProperty( window, 'location', {
 			configurable: true,

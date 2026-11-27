@@ -27,6 +27,7 @@ img.payment-method-image {
 	// pre-selected payment method's label to match.
 	--checkout-single-payment-method-label-inline-padding: 12px;
 
+	// The shared Calypso checkout payment method selector hardcodes light colors; remove once it uses WPDS tokens.
 	@include ui-mixins.when-dark-theme {
 		.checkout-steps__submit-button-wrapper {
 			background: var( --dashboard-surface__background-color );

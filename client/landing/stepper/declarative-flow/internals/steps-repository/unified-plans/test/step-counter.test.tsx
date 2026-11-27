@@ -1,25 +1,27 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 // @ts-nocheck - TODO: Fix TypeScript issues
-jest.mock( 'calypso/signup/step-wrapper', () => () => null );
-jest.mock(
-	'@automattic/onboarding/src/step-container-v2/wireframes/WideLayout/WideLayout',
-	() => ( { WideLayout: ( { topBar } ) => <div>{ topBar }</div> } )
-);
-jest.mock( '@automattic/onboarding/src/step-container-v2/components/TopBar/TopBar', () => ( {
-	TopBar: ( { rightElement } ) => <div>{ rightElement }</div>,
-} ) );
-jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
-jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
-jest.mock( '../../../../flows/onboarding/use-onboarding-step-counter', () => ( {
-	useOnboardingStepCounter: jest.fn(),
-} ) );
-
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import { useOnboardingStepCounter } from '../../../../flows/onboarding/use-onboarding-step-counter';
 import { renderStep } from '../../test/helpers';
 import UnifiedPlansStep from '../unified-plans-step';
+
+vi.mock( 'calypso/signup/step-wrapper', () => ( { default: () => null } ) );
+vi.mock( '@automattic/onboarding/src/step-container-v2/wireframes/WideLayout/WideLayout', () => ( {
+	WideLayout: ( { topBar } ) => <div>{ topBar }</div>,
+} ) );
+vi.mock( '@automattic/onboarding/src/step-container-v2/components/TopBar/TopBar', () => ( {
+	TopBar: ( { rightElement } ) => <div>{ rightElement }</div>,
+} ) );
+vi.mock( 'calypso/components/marketing-message', () => ( { default: 'marketing-message' } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { post: () => {} } } )
+);
+vi.mock( '../../../../flows/onboarding/use-onboarding-step-counter', () => ( {
+	useOnboardingStepCounter: vi.fn(),
+} ) );
 
 const noop = () => {};
 
@@ -46,7 +48,7 @@ const render = ( flowName: string, extraProps = {} ) =>
 	);
 
 describe( 'Plans step counter', () => {
-	beforeEach( () => jest.clearAllMocks() );
+	beforeEach( () => vi.clearAllMocks() );
 
 	it( 'shows the counter outside onboarding when the hook returns one', async () => {
 		useOnboardingStepCounter.mockReturnValue( { current: 2, total: 3 } );
@@ -69,7 +71,7 @@ describe( 'Plans step skip', () => {
 	beforeEach( () => useOnboardingStepCounter.mockReturnValue( null ) );
 
 	it( 'offers a Skip button that calls onSkip', async () => {
-		const onSkip = jest.fn();
+		const onSkip = vi.fn();
 		render( 'launch-site', { onSkip } );
 
 		await userEvent.click( await screen.findByText( 'Skip' ) );

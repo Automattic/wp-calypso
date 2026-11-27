@@ -221,24 +221,41 @@ export function RenewalCell( { license, locale }: { license: JetpackLicense; loc
 	const badges = getRenewalBadges( license );
 	const labels = getRenewalBadgeLabels();
 	return (
-		<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
-			<DashboardText
-				intent={ badges.includes( 'expired' ) ? 'error' : undefined }
-				style={ { whiteSpace: 'nowrap' } }
-			>
-				{ formatDate( parseDateAsUTC( expiry ), locale, { dateStyle: 'medium', timeZone: 'UTC' } ) }
-			</DashboardText>
-			{ badges.length > 0 && (
-				<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
-					{ badges.map( ( badge ) => (
-						<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
-							{ labels[ badge ] }
-						</Badge>
-					) ) }
-				</HStack>
-			) }
-		</HStack>
+		<VStack spacing={ 0 }>
+			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
+				<DashboardText
+					intent={ badges.includes( 'expired' ) ? 'error' : undefined }
+					style={ { whiteSpace: 'nowrap' } }
+				>
+					{ formatDate( parseDateAsUTC( expiry ), locale, {
+						dateStyle: 'medium',
+						timeZone: 'UTC',
+					} ) }
+				</DashboardText>
+				{ badges.length > 0 && (
+					<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+						{ badges.map( ( badge ) => (
+							<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
+								{ labels[ badge ] }
+							</Badge>
+						) ) }
+					</HStack>
+				) }
+			</HStack>
+			<BillingTermLine license={ license } />
+		</VStack>
 	);
+}
+
+function BillingTermLine( { license }: { license: JetpackLicense } ) {
+	const unit = license.subscription?.billing_interval_unit;
+	if ( unit === 'year' ) {
+		return <Text variant="muted">{ __( 'Yearly' ) }</Text>;
+	}
+	if ( unit === 'month' ) {
+		return <Text variant="muted">{ __( 'Monthly' ) }</Text>;
+	}
+	return null;
 }
 
 function TitanTrialLine( { license, locale }: { license: JetpackLicense; locale: string } ) {

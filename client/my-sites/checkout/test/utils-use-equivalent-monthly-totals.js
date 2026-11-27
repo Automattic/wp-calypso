@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	PLAN_PERSONAL_MONTHLY,
@@ -9,20 +9,21 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { vi } from 'vitest';
 import useEquivalentMonthlyTotals from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock(
+vi.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',
-	() => jest.fn()
+	() => ( { default: vi.fn() } )
 );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual( '@automattic/data-stores' ) ),
 	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePricingMetaForGridPlans: jest.fn(),
+		...( await vi.importActual( '@automattic/data-stores' ) ).Plans,
+		usePricingMetaForGridPlans: vi.fn(),
 	},
 } ) );
 
@@ -74,7 +75,7 @@ describe( 'useEquivalentMonthlyTotals', () => {
 	};
 
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		useCheckPlanAvailabilityForPurchase.mockImplementation( ( { planSlugs } ) =>
 			planSlugs.reduce( ( acc, planSlug ) => {
 				return {

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, fireEvent } from '@testing-library/react';
 import Modal from 'react-modal';
+import { vi } from 'vitest';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import documentHead from 'calypso/state/document-head/reducer';
 import preferences from 'calypso/state/preferences/reducer';
@@ -46,39 +47,38 @@ const render = ( element ) =>
 		reducers: { ui, documentHead, preferences },
 	} );
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual( 'i18n-calypso' ) ),
 	localize: ( x ) => x,
 	translate: ( x ) => x,
-	useTranslate: jest.fn( () => ( text ) => text ),
+	useTranslate: vi.fn( () => ( text ) => text ),
 } ) );
 
-jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query', () =>
-	jest.fn().mockImplementation( () => {
+vi.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query', () => ( {
+	default: vi.fn().mockImplementation( () => {
 		return { isLoading: true, data: null };
-	} )
-);
-jest.mock( 'calypso/state/rewind/selectors/get-backup-staging-sites', () =>
-	jest.fn().mockImplementation( () => [
+	} ),
+} ) );
+vi.mock( 'calypso/state/rewind/selectors/get-backup-staging-sites', () => ( {
+	default: vi.fn().mockImplementation( () => [
 		{
 			blog_id: 'test',
 			siteurl: 'example.com',
 		},
-	] )
-);
+	] ),
+} ) );
 
 // Mock several data-fetching related selectors which may not be available.
-jest.mock( 'calypso/state/rewind/selectors/get-backup-last-backup-failed' );
-jest.mock( 'calypso/state/rewind/selectors/has-fetched-staging-sites-list' );
-jest.mock( 'calypso/state/rewind/selectors/is-fetching-staging-sites-list' );
-jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query' );
-jest.mock( 'calypso/state/selectors/get-rewind-state' );
-jest.mock( 'calypso/state/selectors/get-restore-progress' );
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset' );
-jest.mock( 'calypso/state/selectors/get-site-timezone-value' );
-jest.mock( 'calypso/state/selectors/get-jetpack-credentials-test-status' );
-jest.mock( 'calypso/state/selectors/is-requesting-site-credentials' );
-jest.mock( 'calypso/state/jetpack/credentials/selectors' );
+vi.mock( 'calypso/state/rewind/selectors/get-backup-last-backup-failed' );
+vi.mock( 'calypso/state/rewind/selectors/has-fetched-staging-sites-list' );
+vi.mock( 'calypso/state/rewind/selectors/is-fetching-staging-sites-list' );
+vi.mock( 'calypso/state/selectors/get-rewind-state' );
+vi.mock( 'calypso/state/selectors/get-restore-progress' );
+vi.mock( 'calypso/state/selectors/get-site-gmt-offset' );
+vi.mock( 'calypso/state/selectors/get-site-timezone-value' );
+vi.mock( 'calypso/state/selectors/get-jetpack-credentials-test-status' );
+vi.mock( 'calypso/state/selectors/is-requesting-site-credentials' );
+vi.mock( 'calypso/state/jetpack/credentials/selectors' );
 
 const mockLogData = {
 	data: [
@@ -182,7 +182,7 @@ function progressThroughFlow() {
 
 describe( 'BackupCloneFlow render', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'Render RewindFlowLoading if state is not initialized', () => {

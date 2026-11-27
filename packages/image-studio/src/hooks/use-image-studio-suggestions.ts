@@ -1,6 +1,5 @@
 import { type Suggestion } from '@automattic/agenttic-client';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { store as editorStore } from '@wordpress/editor';
 import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { store as imageStudioStore } from '../store';
 import { ImageStudioMode } from '../types';
@@ -139,7 +138,9 @@ export function useImageStudioSuggestions( {
 	const { suggestionState, postId } = useSelect( ( storeSelect ) => {
 		let currentPostId: string | number | null = null;
 		try {
-			currentPostId = storeSelect( editorStore )?.getCurrentPostId?.() ?? null;
+			const editorSelect = storeSelect( 'core/editor' ) as
+				{ getCurrentPostId?: () => string | number | null } | undefined;
+			currentPostId = editorSelect?.getCurrentPostId?.() ?? null;
 		} catch {
 			// eslint-disable-next-line no-console
 			console.debug( '[Image Studio] Failed to get current post ID from editor store.' );

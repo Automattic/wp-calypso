@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialNotificationsPanel } from '../social-notifications-panel';
 import type {
@@ -15,11 +16,10 @@ import type {
 // the per-`source` event-name interpolation; the test exists to pin that
 // contract — a future rename would surface here rather than only on the
 // per-protocol smoke tests.
-const mockRecordReaderTracksEvent = jest.fn<
-	{ type: string },
-	[ string, Record< string, unknown >? ]
+const mockRecordReaderTracksEvent = vi.fn<
+	( ...args: [ string, Record< string, unknown >? ] ) => { type: string }
 >( () => ( { type: '@@TEST/NOOP' } ) );
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: ( event: string, props?: Record< string, unknown > ) =>
 		mockRecordReaderTracksEvent( event, props ),
 } ) );
@@ -49,7 +49,7 @@ describe.each< [ SocialNotificationsSource ] >( [
 	beforeEach( () => mockRecordReaderTracksEvent.mockClear() );
 
 	it( 'invokes the provided hook with the connection id + filter', () => {
-		const useNotificationsInfiniteQuery = jest.fn( makeStubHook() );
+		const useNotificationsInfiniteQuery = vi.fn( makeStubHook() );
 		renderWithProvider(
 			<SocialNotificationsPanel
 				connectionId={ 42 }
@@ -81,7 +81,7 @@ describe.each< [ SocialNotificationsSource ] >( [
 	} );
 
 	it( 're-invokes the hook with the new filter when the chip changes', async () => {
-		const useNotificationsInfiniteQuery = jest.fn( makeStubHook() );
+		const useNotificationsInfiniteQuery = vi.fn( makeStubHook() );
 		const user = userEvent.setup();
 		renderWithProvider(
 			<SocialNotificationsPanel

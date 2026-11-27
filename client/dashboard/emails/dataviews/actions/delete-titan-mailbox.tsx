@@ -106,6 +106,7 @@ export const useDeleteTitanMailboxAction = (): Action< Email > => {
 				</VStack>
 			);
 		},
-		isEligible: ( item: Email ) => item.type === 'mailbox' && item.provider === 'titan',
+		isEligible: ( item: Email ) =>
+			item.type === 'mailbox' && item.provider === 'titan' && item.status !== 'pending_deletion',
 	};
 };

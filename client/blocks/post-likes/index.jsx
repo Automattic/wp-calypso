@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withPostLikes } from 'calypso/components/data/post-likes';
 import Gravatar from 'calypso/components/gravatar';
+import { toCalypsoHref } from 'calypso/lib/url';
 import { getUserProfileUrl } from 'calypso/reader/user-profile/user-profile.utils';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 import './style.scss';
 
@@ -23,16 +23,10 @@ class PostLikes extends PureComponent {
 		this.props.recordGoogleEvent( 'Post Likes', 'Clicked on Gravatar' );
 	};
 
-	// In case of Odyssey Stats, ensure that we return the absolute URL for redirect.
-	getCalypsoUrl = ( href ) => {
-		const baseUrl = window?.location?.hostname === this.props.slug ? 'https://wordpress.com' : '';
-		return baseUrl + href;
-	};
-
 	renderLike = ( like ) => {
 		const { showDisplayNames } = this.props;
 
-		const likeUrl = like.login ? this.getCalypsoUrl( getUserProfileUrl( like.login ) ) : null;
+		const likeUrl = like.login ? toCalypsoHref( getUserProfileUrl( like.login ) ) : null;
 		const LikeWrapper = likeUrl ? 'a' : 'span';
 
 		return (
@@ -133,14 +127,9 @@ class PostLikes extends PureComponent {
 
 export default compose(
 	connect(
-		( state, { siteId } ) => {
-			const currentUserId = getCurrentUserId( state );
-			const slug = getSiteSlug( state, siteId );
-			return {
-				currentUserId,
-				slug,
-			};
-		},
+		( state ) => ( {
+			currentUserId: getCurrentUserId( state ),
+		} ),
 		{ recordGoogleEvent }
 	),
 	localize,

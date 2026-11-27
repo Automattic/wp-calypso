@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { Provider, useSelector } from 'react-redux';
 import { getClient, initClient, showNotes } from '../app/client';
 import { AppProvider } from '../app/context';
@@ -7,12 +7,11 @@ import Note from '../app/note';
 import { useNoteNavigation } from '../app/note/hooks';
 import NotePanel, { getNotificationTabs } from '../app/note-panel';
 import NoteSettingsButton from '../app/note-panel/settings-button';
+import { isPanelMounted } from '../app/panel-mounted';
 import { useTracksSurface, type TracksSurface } from '../app/use-tracks-surface';
 import { store } from '../panel/state';
-import actions from '../panel/state/actions';
 import { addListeners, removeListeners } from '../panel/state/create-listener-middleware';
 import getAllNotes from '../panel/state/selectors/get-all-notes';
-import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { interceptLinks } from '../panel/utils/link-interceptor';
 import type { FilterName, Note as NoteObject } from '../app/types';
 
@@ -42,6 +41,10 @@ type NotificationsInboxProps = {
 };
 
 const openInNewTab = ( _store: unknown, action: unknown ) => {
+	// A panel opened over the page opens its own links, and the store runs both hosts' handlers.
+	if ( isPanelMounted() ) {
+		return;
+	}
 	const { href } = action as { href: string };
 	window.open( href, '_blank', 'noopener' );
 };
@@ -85,6 +88,7 @@ const toFilterName = ( name: string | undefined ): FilterName =>
 	( getNotificationTabs().find( ( tab ) => tab.name === name )?.name ?? 'all' ) as FilterName;
 
 function InboxPanes( {
+	rootRef,
 	filterName: requestedFilterName,
 	setFilterName,
 	selectedNoteId,
@@ -94,7 +98,9 @@ function InboxPanes( {
 }: Omit<
 	NotificationsInboxProps,
 	'wpcom' | 'locale' | 'isMarkAsUnreadEnabled' | 'tracksSurface'
-> ) {
+> & {
+	rootRef: RefObject< HTMLDivElement | null >;
+} ) {
 	const filterName = toFilterName( requestedFilterName );
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
 	const isSelectedNoteLoaded = useSelector( ( state ) =>
@@ -102,8 +108,6 @@ function InboxPanes( {
 			( note ) => String( note.id ) === selectedNoteId
 		)
 	);
-
-	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
 
 	const setSelectedNoteIdRef = useRef( setSelectedNoteId );
 
@@ -129,33 +133,9 @@ function InboxPanes( {
 		};
 	}, [ selectedNoteId, isSelectedNoteLoaded ] );
 
-	useEffect( () => {
-		if ( areKeyboardShortcutsEnabled ) {
-			store.dispatch( actions.ui.disableKeyboardShortcuts() );
-		}
-	}, [ areKeyboardShortcutsEnabled ] );
-
-	const canViewSettings = !! onViewSettings;
-	const onViewSettingsRef = useRef( onViewSettings );
-
-	useEffect( () => {
-		onViewSettingsRef.current = onViewSettings;
-	}, [ onViewSettings ] );
-
-	useEffect( () => {
-		if ( ! canViewSettings ) {
-			return;
-		}
-		const handlers = { VIEW_SETTINGS: [ () => onViewSettingsRef.current?.() ] };
-		store.dispatch( addListeners( handlers ) );
-
-		return () => {
-			store.dispatch( removeListeners( handlers ) );
-		};
-	}, [ canViewSettings ] );
-
 	return (
 		<div
+			ref={ rootRef }
 			className="wpnc-app"
 			onClick={ ( event ) => store.dispatch( interceptLinks( event ) ) }
 			role="presentation"
@@ -165,7 +145,9 @@ function InboxPanes( {
 					<ErrorBoundary>
 						<NotePanel
 							headingLevel={ 1 }
-							actions={ canViewSettings ? <NoteSettingsButton /> : null }
+							actions={
+								onViewSettings ? <NoteSettingsButton onViewSettings={ onViewSettings } /> : null
+							}
 							showMarkAllAsRead
 							filterName={ filterName }
 							setFilterName={ setFilterName }
@@ -200,6 +182,7 @@ export default function NotificationsInbox( {
 	...paneProps
 }: NotificationsInboxProps ) {
 	const isReady = useInboxClient( wpcom, locale );
+	const rootRef = useRef< HTMLDivElement >( null );
 	useTracksSurface( tracksSurface );
 
 	if ( ! isReady ) {
@@ -214,8 +197,11 @@ export default function NotificationsInbox( {
 				isViewSettingsEnabled
 				isMarkAsUnreadEnabled={ isMarkAsUnreadEnabled }
 				hasExpandedActions
+				// The list moves with its own arrow keys, which open each note they reach.
+				hasNavigationShortcuts={ false }
+				shortcutScope={ rootRef }
 			>
-				<InboxPanes { ...paneProps } />
+				<InboxPanes rootRef={ rootRef } { ...paneProps } />
 			</AppProvider>
 		</Provider>
 	);

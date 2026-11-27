@@ -77,7 +77,7 @@ fieldMasks.cvv = {
 // See isValidCPF()/isValidCNPJ() / ebanx.js
 fieldMasks.document = {
 	mask: function ( previousValue, nextValue ) {
-		let string = nextValue;
+		let string;
 
 		const digits = nextValue.replace( /[^0-9]/g, '' );
 

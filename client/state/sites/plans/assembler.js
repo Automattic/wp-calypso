@@ -16,6 +16,7 @@ export const createSitePlanObject = ( plan ) => {
 		availableForUpgrade: plan.available_for_upgrade,
 		isDelayedDowngradeAvailable: plan.is_delayed_downgrade_available,
 		isInstantDowngradeAvailable: plan.is_instant_downgrade_available,
+		isTermChangeLimited: plan.is_term_change_limited,
 		currentPlan: Boolean( plan.current_plan ),
 		currencyCode: plan.currency_code,
 		expired: plan.is_expired,

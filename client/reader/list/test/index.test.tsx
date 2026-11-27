@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import readerReducer from 'calypso/state/reader/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -11,7 +12,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderList from '..';
 
 // Stream has deep dependency chains (post cards, infinite scroll, data layer).
-jest.mock( 'calypso/reader/stream', () => ( {
+vi.mock( 'calypso/reader/stream', () => ( {
 	__esModule: true,
 	default: ( { children }: { children: React.ReactNode } ) => (
 		<div data-testid="stream">{ children }</div>
@@ -19,19 +20,19 @@ jest.mock( 'calypso/reader/stream', () => ( {
 } ) );
 
 // ListSites uses useInfiniteQuery with its own nock-based tests.
-jest.mock( 'calypso/reader/list/views/sites', () => ( {
+vi.mock( 'calypso/reader/list/views/sites', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="list-sites" />,
 } ) );
 
 // ReaderListHeader uses useQuery and IntersectionObserver, tested separately.
-jest.mock( 'calypso/reader/list/components/list-header', () => ( {
+vi.mock( 'calypso/reader/list/components/list-header', () => ( {
 	__esModule: true,
 	default: ( { view }: { view: string } ) => <div data-testid="list-header" data-view={ view } />,
 } ) );
 
 // ListEmpty uses data-layer query components, tested separately.
-jest.mock( 'calypso/reader/list/components/empty', () => ( {
+vi.mock( 'calypso/reader/list/components/empty', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="list-empty" />,
 } ) );

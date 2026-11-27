@@ -172,6 +172,17 @@ export function useProductDescription(
 					translate( 'Full Jetpack suite' )
 				);
 				break;
+			case 'jetpack-pro':
+				description = translate(
+					'Includes every Jetpack tool, with VaultPress Backup 50GB and Stats for 50k views a month.'
+				);
+				features.push(
+					translate( 'Every Jetpack tool' ),
+					translate( 'VaultPress Backup 50GB' ),
+					translate( '30-day activity log' ),
+					translate( 'Stats with 50k views a month' )
+				);
+				break;
 			case 'jetpack-security-t1':
 				description = translate(
 					'Includes VaultPress Backup 10GB, Scan Daily, and Akismet Anti-spam.'

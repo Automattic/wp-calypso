@@ -9,6 +9,7 @@ import { getDefaultTwoFactorAuthType } from 'calypso/blocks/login/two-factor-aut
 import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
+import { keepRedirectInBrowser } from 'calypso/lib/login/keep-redirect-in-browser';
 import { navigate } from 'calypso/lib/navigate';
 import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
@@ -93,7 +94,7 @@ const VerifyLoginCode = ( {
 			const redirectUrl = authSuccessData?.redirect_to;
 
 			if ( redirectUrl ) {
-				navigate( redirectUrl );
+				navigate( keepRedirectInBrowser( redirectUrl ) );
 			} else {
 				// Fall back to rebootAfterLogin which handles the default redirect to '/' and other edge cases
 				dispatch( rebootAfterLogin( { magic_login: 1 } ) );

@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { navigate } from 'calypso/lib/navigate';
 import { leaveCheckout } from '../lib/leave-checkout';
 
 // Mock dependencies
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/navigate', () => ( {
-	navigate: jest.fn(),
+vi.mock( 'calypso/lib/navigate', () => ( {
+	navigate: vi.fn(),
 } ) );
 
 describe( 'leaveCheckout', () => {
 	beforeEach( () => {
 		// Reset all mocks before each test
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Setup window.location
 		Object.defineProperty( window, 'location', {
 			value: {
@@ -29,7 +30,7 @@ describe( 'leaveCheckout', () => {
 		} );
 		Object.defineProperty( window, 'history', {
 			value: {
-				back: jest.fn(),
+				back: vi.fn(),
 			},
 			writable: true,
 		} );

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { useAtmosphereInteractionSettings } from '../use-atmosphere-interaction-settings';
 import type { ActiveMode, ComposerProtocolExtrasSlot } from 'calypso/reader/social/composer';
@@ -11,8 +12,8 @@ import type { ActiveMode, ComposerProtocolExtrasSlot } from 'calypso/reader/soci
 // which the default test store doesn't initialize. We don't assert on the
 // Tracks payload here — those are covered by the analytics action's own
 // tests — so neutralize the action creator.
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: jest.fn( () => ( { type: 'NOOP' } ) ),
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: vi.fn( () => ( { type: 'NOOP' } ) ),
 } ) );
 
 const STANDALONE_MODE: ActiveMode = {

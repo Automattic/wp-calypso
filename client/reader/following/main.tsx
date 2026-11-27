@@ -6,7 +6,7 @@ import AsyncLoad from 'calypso/components/async-load';
 import BloganuaryHeader from 'calypso/components/bloganuary-header';
 import NavigationHeader from 'calypso/components/navigation-header';
 import ResurrectedWelcomeModalGate from 'calypso/components/resurrected-welcome-modal';
-import NewBlogsExperimentSlot from 'calypso/reader/new-blogs/experiment-slot';
+import DiscoverNewBlogs from 'calypso/reader/new-blogs';
 import { useNewBlogs } from 'calypso/reader/new-blogs/use-new-blogs';
 import ReaderOnboardingGate from 'calypso/reader/onboarding-rsm/gate';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
@@ -62,8 +62,7 @@ function FollowingStream( {
 	// in the third spot (after two recent posts), per the READ-542 thread. Only
 	// on the "all subscriptions" feed, never on a single site's feed, and not
 	// mounted at all while loading, for cold-start users, or once hidden —
-	// all of which leave `recs` empty. The spot is where the READ-543 A/B
-	// assigns users, in both groups; only treatment sees the module.
+	// all of which leave `recs` empty.
 	const { recs, isHidden, dismissBlog, hide } = useNewBlogs();
 	const showNewBlogs =
 		isEnabled( 'reader/discover-new-blogs' ) && ! props.feedId && ! isHidden && recs.length > 0;
@@ -71,7 +70,7 @@ function FollowingStream( {
 	const newBlogsBlock = useMemo(
 		() =>
 			showNewBlogs ? (
-				<NewBlogsExperimentSlot recs={ recs } dismissBlog={ dismissBlog } hide={ hide } />
+				<DiscoverNewBlogs recs={ recs } dismissBlog={ dismissBlog } hide={ hide } />
 			) : null,
 		[ showNewBlogs, recs, dismissBlog, hide ]
 	);

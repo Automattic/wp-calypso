@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import OwnershipVerification from '../index';
 
 describe( 'OwnershipVerification', () => {
 	const defaultProps = {
 		domainName: 'example.com',
-		onConnect: jest.fn(),
+		onConnect: vi.fn(),
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should render the component with all required elements', () => {
@@ -56,7 +57,7 @@ describe( 'OwnershipVerification', () => {
 
 	test( 'should call onConnect with correct data when form is submitted', async () => {
 		const user = userEvent.setup();
-		const mockOnConnect = jest.fn( ( data, callback ) => {
+		const mockOnConnect = vi.fn( ( data, callback ) => {
 			setTimeout( () => callback( null ), 0 );
 		} );
 		const { getByRole } = render(
@@ -90,7 +91,7 @@ describe( 'OwnershipVerification', () => {
 
 	test( 'should disable the submit button while submitting', async () => {
 		const user = userEvent.setup();
-		const mockOnConnect = jest.fn();
+		const mockOnConnect = vi.fn();
 
 		const { getByRole } = render(
 			<OwnershipVerification { ...defaultProps } onConnect={ mockOnConnect } />
@@ -111,7 +112,7 @@ describe( 'OwnershipVerification', () => {
 	test( 'should display error message when onConnect callback returns an Error', async () => {
 		const user = userEvent.setup();
 		const errorMessage = 'Invalid authorization code';
-		const mockOnConnect = jest.fn( ( data, callback ) => {
+		const mockOnConnect = vi.fn( ( data, callback ) => {
 			setTimeout( () => callback( new Error( errorMessage ) ), 0 );
 		} );
 
@@ -131,7 +132,7 @@ describe( 'OwnershipVerification', () => {
 	test( 'should display error message when onConnect callback returns an error object with message', async () => {
 		const user = userEvent.setup();
 		const errorMessage = 'Domain verification failed';
-		const mockOnConnect = jest.fn( ( data, callback ) => {
+		const mockOnConnect = vi.fn( ( data, callback ) => {
 			setTimeout( () => callback( { message: errorMessage } ), 0 );
 		} );
 
@@ -151,7 +152,7 @@ describe( 'OwnershipVerification', () => {
 	test( 'should display error message when onConnect callback returns an error object with error property', async () => {
 		const user = userEvent.setup();
 		const errorMessage = 'Authentication failed';
-		const mockOnConnect = jest.fn( ( data, callback ) => {
+		const mockOnConnect = vi.fn( ( data, callback ) => {
 			setTimeout( () => callback( { error: errorMessage } ), 0 );
 		} );
 
@@ -170,7 +171,7 @@ describe( 'OwnershipVerification', () => {
 
 	test( 'should display generic error message when error object has no message or error property', async () => {
 		const user = userEvent.setup();
-		const mockOnConnect = jest.fn( ( data, callback ) => {
+		const mockOnConnect = vi.fn( ( data, callback ) => {
 			setTimeout( () => callback( {} ), 0 );
 		} );
 
@@ -191,7 +192,7 @@ describe( 'OwnershipVerification', () => {
 
 	test( 'should re-enable submit button after submission completes with error', async () => {
 		const user = userEvent.setup();
-		const mockOnConnect = jest.fn( ( data, callback ) => {
+		const mockOnConnect = vi.fn( ( data, callback ) => {
 			setTimeout( () => callback( new Error( 'Test error' ) ), 0 );
 		} );
 

@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { isRegionInCcpaZone } from '@automattic/calypso-analytics';
+import { vi } from 'vitest';
 import { mayWeTrackUserGpcInCcpaRegion } from '../utils';
 
 // Return a predictable value for whether the user is in a CCPA region.
-jest.mock( '@automattic/calypso-analytics' );
+vi.mock( '@automattic/calypso-analytics' );
 
-let windowSpy = jest.SpyInstance;
+let windowSpy = vi.SpyInstance;
 
 // Return a predictable value for window.navigator.globalPrivacyControl.
 const setMockGpcValue = ( gpcValue ) => {
@@ -20,7 +21,7 @@ const setMockGpcValue = ( gpcValue ) => {
 
 describe( 'global privacy control', () => {
 	beforeEach( () => {
-		windowSpy = jest.spyOn( global, 'window', 'get' );
+		windowSpy = vi.spyOn( global, 'window', 'get' );
 	} );
 
 	afterEach( () => {

@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
 import { Component, type ReactNode } from 'react';
+import { type MockInstance, vi } from 'vitest';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { logToLogstash } from 'calypso/lib/logstash';
 import AsyncLoad from '../index';
 
-jest.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: jest.fn() } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/lib/analytics/mc', () => ( { bumpStat: vi.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
 
 const Loaded = () => <div>loaded</div>;
@@ -51,17 +52,17 @@ class CatchBoundary extends Component< { children: ReactNode }, { error: Error |
 }
 
 describe( 'AsyncLoad', () => {
-	let consoleError: jest.SpyInstance;
+	let consoleError: MockInstance;
 
 	beforeEach( () => {
 		// Silence React's logging of caught render errors.
-		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {
 		consoleError.mockRestore();
-		jest.mocked( bumpStat ).mockClear();
-		jest.mocked( logToLogstash ).mockClear();
+		vi.mocked( bumpStat ).mockClear();
+		vi.mocked( logToLogstash ).mockClear();
 	} );
 
 	test( 'renders the loaded component on success', async () => {
@@ -122,7 +123,7 @@ describe( 'AsyncLoad', () => {
 	} );
 
 	test( 'renders loadFailureFallback when logstash rejects', async () => {
-		jest.mocked( logToLogstash ).mockRejectedValueOnce( new Error( 'logstash blocked' ) );
+		vi.mocked( logToLogstash ).mockRejectedValueOnce( new Error( 'logstash blocked' ) );
 
 		render(
 			<AsyncLoad

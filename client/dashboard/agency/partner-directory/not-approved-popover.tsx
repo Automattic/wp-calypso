@@ -1,11 +1,4 @@
 import {
-	rawUserPreferencesQuery,
-	userPreferenceMutation,
-	userPreferenceQuery,
-} from '@automattic/api-queries';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-	Button,
 	Popover,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -15,27 +8,21 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { CardBody } from '../../components/card';
 import LinkButton from './link-button';
-import type { UserPreferences } from '@automattic/api-core';
 import type { ReactNode } from 'react';
-
-const PREFERENCE_NAME = 'a4a-dashboard-pd-not-approved-popover';
 
 interface NotApprovedPopoverProps {
 	children: ReactNode;
-	showOnLoad: boolean;
 	expertiseUrl: string;
 	recordTracksEvent: ( eventName: string, properties?: Record< string, unknown > ) => void;
 	shouldUseRouterLink?: boolean;
 }
 
 /**
- * Anchors a popover to its children nudging the agency to update its
- * expertise after a rejected application. Shown once on load until
- * dismissed, and on hover afterwards.
+ * Anchors a popover to its children, shown on hover or focus, nudging the
+ * agency to update its expertise after a rejected application.
  */
 export default function NotApprovedPopover( {
 	children,
-	showOnLoad,
 	expertiseUrl,
 	recordTracksEvent,
 	shouldUseRouterLink,
@@ -43,55 +30,16 @@ export default function NotApprovedPopover( {
 	const [ anchor, setAnchor ] = useState< HTMLElement | null >( null );
 	const [ showPopover, setShowPopover ] = useState( false );
 
-	const queryClient = useQueryClient();
-	const { data: preferenceDismissed } = useQuery( {
-		...userPreferenceQuery( PREFERENCE_NAME ),
-		// The dismissal only ever changes through this popover, so avoid
-		// refetching the preferences on every visit to the screen.
-		staleTime: 5 * 60 * 1000,
-	} );
-	const { mutate: savePreference } = useMutation( userPreferenceMutation( PREFERENCE_NAME ) );
-
-	const popoverDismissed = !! preferenceDismissed;
-
-	useEffect( () => {
-		if ( showOnLoad && preferenceDismissed === false ) {
-			setShowPopover( true );
-		}
-	}, [ showOnLoad, preferenceDismissed ] );
-
-	const dismissPopover = ( eventName: string ) => {
-		setShowPopover( false );
-		// Write through the host app's query client: the mutation's own cache
-		// update targets the MSD singleton, which the classic app doesn't read.
-		queryClient.setQueryData< UserPreferences >(
-			rawUserPreferencesQuery().queryKey,
-			( previous ) => ( {
-				...previous,
-				[ PREFERENCE_NAME ]: true,
-			} )
-		);
-		savePreference( true );
-		recordTracksEvent( eventName );
-	};
-
-	const handleShowPopover = ( show: boolean ) => {
-		// While the on-load popover is up, only its own actions can close it.
-		if ( ! showOnLoad || popoverDismissed ) {
-			setShowPopover( show );
-		}
-	};
-
 	// The popover renders in a portal outside the anchor, so closing waits a
 	// beat to let the cursor travel from the badge into the popover.
 	const closeTimer = useRef< number | undefined >( undefined );
 	const openOnHover = () => {
 		window.clearTimeout( closeTimer.current );
-		handleShowPopover( true );
+		setShowPopover( true );
 	};
 	const closeOnHoverOut = () => {
 		window.clearTimeout( closeTimer.current );
-		closeTimer.current = window.setTimeout( () => handleShowPopover( false ), 150 );
+		closeTimer.current = window.setTimeout( () => setShowPopover( false ), 150 );
 	};
 	useEffect( () => () => window.clearTimeout( closeTimer.current ), [] );
 
@@ -105,8 +53,6 @@ export default function NotApprovedPopover( {
 			onFocus={ openOnHover }
 			onBlur={ closeOnHoverOut }
 			onKeyDown={ ( event: React.KeyboardEvent ) => {
-				// Escape always closes, even the on-load popover; the dismissal
-				// isn't persisted, so the nudge returns on the next visit.
 				if ( event.key === 'Escape' ) {
 					setShowPopover( false );
 				}
@@ -120,7 +66,7 @@ export default function NotApprovedPopover( {
 					offset={ 12 }
 					shift
 					focusOnMount={ false }
-					onFocusOutside={ () => handleShowPopover( false ) }
+					onFocusOutside={ () => setShowPopover( false ) }
 					onClose={ () => setShowPopover( false ) }
 				>
 					<CardBody
@@ -142,7 +88,7 @@ export default function NotApprovedPopover( {
 									size="compact"
 									href={ expertiseUrl }
 									onClick={ () =>
-										dismissPopover(
+										recordTracksEvent(
 											'calypso_a4a_partner_directory_dashboard_update_expertise_click'
 										)
 									}
@@ -150,17 +96,6 @@ export default function NotApprovedPopover( {
 								>
 									{ __( 'Update my expertise' ) }
 								</LinkButton>
-								{ ! popoverDismissed && (
-									<Button
-										variant="secondary"
-										size="compact"
-										onClick={ () =>
-											dismissPopover( 'calypso_a4a_partner_directory_dashboard_do_it_later_click' )
-										}
-									>
-										{ __( 'I’ll do it later' ) }
-									</Button>
-								) }
 							</HStack>
 						</VStack>
 					</CardBody>

@@ -87,9 +87,7 @@ async function requestJWTToken(
 
 	const apiNonce = window.JP_CONNECTION_INITIAL_STATE?.apiNonce;
 
-	let data: { token: string } = {
-		token: '',
-	};
+	let data: { token: string };
 
 	try {
 		if ( canAccessWpcomApis() ) {

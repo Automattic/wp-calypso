@@ -59,10 +59,6 @@ vi.mock( '@wordpress/data', () => {
 	};
 } );
 
-vi.mock( '@wordpress/editor', () => ( {
-	store: 'core/editor',
-} ) );
-
 vi.mock( '@wordpress/i18n', () => ( {
 	__: vi.fn( ( str ) => str ),
 } ) );

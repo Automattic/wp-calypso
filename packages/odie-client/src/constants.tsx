@@ -290,6 +290,17 @@ const getOdieIntroMessage = (
 			);
 };
 
+// The bold "Howdy" line that opens a greeting.
+const getHowdyHeading = ( displayName: string ): string =>
+	`**${ sprintf(
+		/* translators: %(name)s: the user's display name */
+		__( 'Howdy %(name)s', __i18n_text_domain__ ),
+		{
+			/* translators: fallback used when the user's display name isn't available */
+			name: displayName || __( 'there', __i18n_text_domain__ ),
+		}
+	).trim() } 👋**`;
+
 export const getOdieInitialMessage = (
 	displayName: string,
 	hasEnTranslation?: ( single: string, context?: string, domain?: string ) => boolean,
@@ -298,18 +309,31 @@ export const getOdieInitialMessage = (
 	const introMessage = getOdieIntroMessage( launcherContext, hasEnTranslation );
 
 	return {
-		content: `**${ sprintf(
-			/* translators: %(name)s: the user's display name */
-			__( 'Howdy %(name)s', __i18n_text_domain__ ),
-			{
-				/* translators: fallback used when the user's display name isn't available */
-				name: displayName || __( 'there', __i18n_text_domain__ ),
-			}
-		).trim() } 👋** \n\n ${ introMessage }`,
+		content: `${ getHowdyHeading( displayName ) } \n\n ${ introMessage }`,
 		role: 'bot',
 		type: 'introduction',
 	};
 };
+
+/**
+ * Greets the user and says what happens next while a chat that goes straight to a person waits for
+ * their first message. The chat shows it but doesn't keep it, so it's never sent or saved.
+ */
+export const getDirectChatWaitingMessage = ( displayName: string ): Message => ( {
+	content: `${ getHowdyHeading( displayName ) } \n\n ${ __(
+		"Send your question and a Happiness Engineer will reply as soon as they're available, here or by email.",
+		__i18n_text_domain__
+	) }`,
+	role: 'bot',
+	type: 'introduction',
+	context: {
+		flags: {
+			// A person answers this chat, not the AI.
+			show_ai_avatar: false,
+		},
+		site_id: null,
+	},
+} );
 
 export const getErrorMessageUnknownError = (): Message => {
 	return {

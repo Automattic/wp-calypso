@@ -1,14 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { render } from '@testing-library/react';
+import { type MockInstance, vi } from 'vitest';
 import { CheckoutSubmitButtonContent } from '../checkout-submit-button-content';
 
-jest.mock( '../../../use-cart-key', () => ( { __esModule: true, default: () => 'no-site' } ) );
-jest.mock( '@automattic/shopping-cart', () => ( {
-	...jest.requireActual( '@automattic/shopping-cart' ),
+vi.mock( '../../../use-cart-key', () => ( { __esModule: true, default: () => 'no-site' } ) );
+vi.mock( '@automattic/shopping-cart', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
+		'@automattic/shopping-cart'
+	) ),
 	useShoppingCart: () => ( { responseCart: { total_cost_integer: 1000 } } ),
 } ) );
 
@@ -35,16 +38,16 @@ function simulateTranslation( root: HTMLElement, text: string ) {
 }
 
 describe( 'CheckoutSubmitButtonContent under browser page-translation', () => {
-	let consoleError: jest.SpyInstance;
+	let consoleError: MockInstance;
 	beforeEach( () => {
-		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => undefined );
+		consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => undefined );
 	} );
 	afterEach( () => {
 		consoleError.mockRestore();
 	} );
 
 	test( 'survives the cart finishing validation', () => {
-		const onPageLoadError = jest.fn();
+		const onPageLoadError = vi.fn();
 		const ui = ( isValidating: boolean ) => (
 			<CheckoutProvider
 				paymentMethods={ [] }
@@ -66,7 +69,7 @@ describe( 'CheckoutSubmitButtonContent under browser page-translation', () => {
 	} );
 
 	test( 'survives the cart starting validation', () => {
-		const onPageLoadError = jest.fn();
+		const onPageLoadError = vi.fn();
 		const ui = ( isValidating: boolean ) => (
 			<CheckoutProvider
 				paymentMethods={ [] }

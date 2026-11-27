@@ -1,6 +1,6 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { ComponentIdSchema } from '@a2ui/web_core/v1_0';
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useLayoutEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import { Dialog } from '@wordpress/ui';
@@ -23,17 +23,18 @@ export const Modal = createComponentImplementation(
 		const [ isOpen, setIsOpen ] = useState( false );
 		const triggerRef = useRef< HTMLElement | null >( null );
 		const popupRef = useRef< HTMLDivElement | null >( null );
-		const { className, rootRef } = useInteractiveUiSurface();
+		// State rather than a ref, since the portal can mount after the render that opens it.
+		const [ overlay, setOverlay ] = useState< HTMLDivElement | null >( null );
+		const { className, theme, rootRef } = useInteractiveUiSurface();
 
-		// The modal renders outside the host, so it takes the theme its surface resolved.
-		const copySurfaceTheme = useCallback(
-			( overlay: HTMLDivElement | null ) => {
-				if ( overlay && rootRef?.current ) {
-					copyTheme( rootRef.current, overlay );
-				}
-			},
-			[ rootRef ]
-		);
+		// The modal renders outside the host, so it takes the theme its surface resolved, again when
+		// the host changes the surface's theme or classes. Changes the host makes elsewhere, such as
+		// on an ancestor, apply when the modal next opens.
+		useLayoutEffect( () => {
+			if ( overlay && rootRef?.current ) {
+				copyTheme( rootRef.current, overlay );
+			}
+		}, [ overlay, rootRef, theme, className ] );
 
 		return (
 			<Dialog.Root open={ isOpen } onOpenChange={ setIsOpen }>
@@ -56,8 +57,9 @@ export const Modal = createComponentImplementation(
 						// within ui's overlay layer, a stacking context of its own.
 						<Dialog.Portal
 							container={ document.body }
-							ref={ copySurfaceTheme }
+							ref={ setOverlay }
 							className={ clsx( 'ai-ui-renderer__modal', className ) }
+							data-ai-ui-theme={ theme || undefined }
 						/>
 					}
 				>
@@ -77,7 +79,10 @@ export const Modal = createComponentImplementation(
 						</Dialog.Action>
 					</Dialog.Header>
 					<Dialog.Content>
-						<div className="ai-ui-renderer">{ buildChild( props.content ) }</div>
+						{ /* The theme too, since `.ai-ui-renderer` sets the accent colors again here. */ }
+						<div className="ai-ui-renderer" data-ai-ui-theme={ theme || undefined }>
+							{ buildChild( props.content ) }
+						</div>
 					</Dialog.Content>
 				</Dialog.Popup>
 			</Dialog.Root>

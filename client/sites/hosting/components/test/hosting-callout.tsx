@@ -1,16 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { HostingActivationCallout } from '../hosting-callout';
 import type { Site } from '@automattic/api-core';
 
-const mockTransfer = jest.fn();
-const mockSite = jest.fn();
+const mockTransfer = vi.fn();
+const mockSite = vi.fn();
 
-jest.mock( '@automattic/api-queries', () => ( {
-	...jest.requireActual( '@automattic/api-queries' ),
+vi.mock( '@automattic/api-queries', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-queries' ) >(
+		'@automattic/api-queries'
+	) ),
 	siteLatestAtomicTransferQuery: ( siteId: number ) => ( {
 		queryKey: [ 'transfer', siteId ],
 		queryFn: () => mockTransfer(),
@@ -21,12 +24,16 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/state', () => ( { useDispatch: () => jest.fn() } ) );
-jest.mock( '@automattic/calypso-router', () => ( { replace: jest.fn(), show: jest.fn() } ) );
-jest.mock( 'calypso/dashboard/sites/hosting-feature-list', () => () => null );
-jest.mock( '../hosting-activation-button', () => ( { text }: { text: string } ) => (
-	<button>{ text }</button>
-) );
+vi.mock( 'calypso/state', () => ( { useDispatch: () => vi.fn() } ) );
+vi.mock( '@automattic/calypso-router', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { replace: vi.fn(), show: vi.fn() } )
+);
+vi.mock( 'calypso/dashboard/sites/hosting-features/components/hosting-feature-list', () => ( {
+	default: () => null,
+} ) );
+vi.mock( '../hosting-activation-button', () => ( {
+	default: ( { text }: { text: string } ) => <button>{ text }</button>,
+} ) );
 
 const site = { ID: 1, slug: 'example.wordpress.com' } as Site;
 
@@ -47,17 +54,17 @@ const renderCallout = ( siteId = 1 ) => {
 
 const elapse = async ( ms: number ) => {
 	await act( async () => {
-		await jest.advanceTimersByTimeAsync( ms );
+		await vi.advanceTimersByTimeAsync( ms );
 	} );
 };
 
 describe( 'HostingActivationCallout', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.useFakeTimers();
+		vi.clearAllMocks();
+		vi.useFakeTimers();
 		mockSite.mockResolvedValue( { ID: 1, is_wpcom_atomic: false } );
 	} );
-	afterEach( () => jest.useRealTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	it( 'shows the transfer as running while it is in progress', async () => {
 		mockTransfer.mockResolvedValue( { status: 'active' } );

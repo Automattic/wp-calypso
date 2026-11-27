@@ -1,10 +1,11 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import { serialize, deserialize } from 'calypso/state/utils';
 import { timezonesReceive } from '../actions';
 import timezonesReducer, { byContinents, labels, rawOffsets } from '../reducer';
 
 describe( 'reducer', () => {
-	jest.spyOn( console, 'warn' ).mockImplementation();
+	vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 
 	test( 'should export expected reducer keys', () => {
 		expect( Object.keys( timezonesReducer( undefined, {} ) ) ).toEqual(

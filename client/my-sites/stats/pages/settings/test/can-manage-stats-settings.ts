@@ -1,10 +1,11 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import canManageStatsSettings from '../can-manage-stats-settings';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = () => 'development';
-	config.isEnabled = jest.fn();
-	return config;
+	config.isEnabled = vi.fn();
+	return { ...config, default: config };
 } );
 
 const siteId = 123;
@@ -26,13 +27,13 @@ const makeState = ( { hasStatsSettings = true, canManageOptions = true } = {} ) 
 
 describe( 'canManageStatsSettings', () => {
 	beforeEach( () => {
-		( isEnabled as jest.Mock ).mockImplementation(
+		( isEnabled as Mock ).mockImplementation(
 			( flag: string ) => flag === 'is_running_in_jetpack_site'
 		);
 	} );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'allows an administrator on a site whose Stats serves the settings', () => {
@@ -52,7 +53,7 @@ describe( 'canManageStatsSettings', () => {
 	} );
 
 	it( 'hides the settings outside the wp-admin dashboard', () => {
-		( isEnabled as jest.Mock ).mockReturnValue( false );
+		( isEnabled as Mock ).mockReturnValue( false );
 
 		expect( canManageStatsSettings( makeState(), siteId ) ).toBe( false );
 	} );

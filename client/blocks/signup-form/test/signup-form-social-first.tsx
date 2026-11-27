@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import SignupFormSocialFirst, {
 	MobileCompactTosNotice,
 } from 'calypso/blocks/signup-form/signup-form-social-first';
@@ -12,14 +13,14 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
 // Mock the analytics module
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
-	getDoNotTrack: jest.fn( () => false ),
-	isPiiUrl: jest.fn( () => false ),
-	getCurrentUser: jest.fn( () => null ),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
+	getDoNotTrack: vi.fn( () => false ),
+	isPiiUrl: vi.fn( () => false ),
+	getCurrentUser: vi.fn( () => null ),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = ( key: string ) => {
 		if ( key === 'wpcom_signup_id' ) {
 			return 'test-id';
@@ -35,17 +36,17 @@ jest.mock( '@automattic/calypso-config', () => {
 		}
 		return false;
 	};
-	return config;
+	return { ...config, default: config };
 } );
 
 const defaultProps = {
-	goToNextStep: jest.fn(),
+	goToNextStep: vi.fn(),
 	stepName: 'user',
 	flowName: 'onboarding',
 	redirectToAfterLoginUrl: 'https://example.com',
 	logInUrl: '/log-in',
 	socialServiceResponse: {},
-	handleSocialResponse: jest.fn(),
+	handleSocialResponse: vi.fn(),
 	queryArgs: {},
 	userEmail: '',
 	notice: false as const,

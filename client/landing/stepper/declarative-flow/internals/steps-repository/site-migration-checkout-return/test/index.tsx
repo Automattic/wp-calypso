@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { recordSignupComplete } from 'calypso/lib/analytics/signup';
 import wpcom from 'calypso/lib/wp';
@@ -12,22 +13,24 @@ import {
 import SiteMigrationCheckoutReturn from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( { useSiteQuery: jest.fn() } ) );
-jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn().mockResolvedValue( {} ) } } ) );
-jest.mock( 'calypso/lib/analytics/signup', () => ( {
-	recordSignupComplete: jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-site', () => ( { useSiteQuery: vi.fn() } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { post: vi.fn().mockResolvedValue( {} ) } } )
+);
+vi.mock( 'calypso/lib/analytics/signup', () => ( {
+	recordSignupComplete: vi.fn(),
 	SIGNUP_DOMAIN_ORIGIN: { NOT_SET: 'not-set' },
 } ) );
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	clearSignupCompleteFlowName: jest.fn(),
-	clearSignupDestinationCookie: jest.fn(),
-	getSignupCompleteFlowName: jest.fn(),
-	getSignupIsNewUserAndClear: jest.fn(),
+vi.mock( 'calypso/signup/storageUtils', () => ( {
+	clearSignupCompleteFlowName: vi.fn(),
+	clearSignupDestinationCookie: vi.fn(),
+	getSignupCompleteFlowName: vi.fn(),
+	getSignupIsNewUserAndClear: vi.fn(),
 } ) );
 
 describe( 'SiteMigrationCheckoutReturn', () => {
 	const render = ( query = 'siteId=456&from=https%3A%2F%2Fexample.com&platform=wordpress' ) => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		renderStep(
 			<SiteMigrationCheckoutReturn { ...mockStepProps( { navigation: { submit } } ) } />,
 			{
@@ -38,15 +41,15 @@ describe( 'SiteMigrationCheckoutReturn', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.mocked( useSiteQuery ).mockReturnValue( {
+		vi.clearAllMocks();
+		vi.mocked( useSiteQuery ).mockReturnValue( {
 			data: { ID: 456, slug: 'new-site.wordpress.com', plan: { product_slug: 'personal-bundle' } },
 			isError: false,
 		} as unknown as ReturnType< typeof useSiteQuery > );
 	} );
 
 	it( 'sets the new site up for the migration on the return from this tab’s checkout', async () => {
-		jest.mocked( getSignupCompleteFlowName ).mockReturnValue( 'site-migration' );
+		vi.mocked( getSignupCompleteFlowName ).mockReturnValue( 'site-migration' );
 		const submit = render();
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith( {
@@ -74,7 +77,7 @@ describe( 'SiteMigrationCheckoutReturn', () => {
 	} );
 
 	it( 'only moves on to the site on any other visit', () => {
-		jest.mocked( getSignupCompleteFlowName ).mockReturnValue( 'onboarding' );
+		vi.mocked( getSignupCompleteFlowName ).mockReturnValue( 'onboarding' );
 		const submit = render();
 		expect( submit ).toHaveBeenCalledWith( {
 			action: 'continue',
@@ -90,7 +93,7 @@ describe( 'SiteMigrationCheckoutReturn', () => {
 		[ 'the site can’t be loaded', 'siteId=456', true ],
 		[ 'checkout named no site', 'from=https%3A%2F%2Fexample.com', false ],
 	] )( 'reports it when %s', ( _, query, isError ) => {
-		jest.mocked( useSiteQuery ).mockReturnValue( {
+		vi.mocked( useSiteQuery ).mockReturnValue( {
 			data: null,
 			isError,
 		} as unknown as ReturnType< typeof useSiteQuery > );

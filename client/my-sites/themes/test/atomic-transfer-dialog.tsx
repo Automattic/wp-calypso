@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { AtomicTransferDialog } from '../atomic-transfer-dialog';
 import type { Theme } from 'calypso/types';
 
-jest.mock( 'calypso/blocks/eligibility-warnings', () => ( {
+vi.mock( 'calypso/blocks/eligibility-warnings', () => ( {
 	__esModule: true,
 	default: ( { onProceed }: { onProceed: () => void } ) => (
 		<button onClick={ onProceed }>Continue</button>
@@ -18,12 +19,12 @@ const theme = { id: 'partner-theme' } as Theme;
 
 function renderDialog( props: { needsSubscription: boolean } ) {
 	const dispatchProps = {
-		dispatchAcceptAtomicTransferDialog: jest.fn(),
-		dispatchDismissAtomicTransferDialog: jest.fn(),
-		dispatchActivateTheme: jest.fn(),
-		dispatchAddExternalManagedThemeToCart: jest.fn(),
-		dispatchInitiateThemeTransfer: jest.fn(),
-		dispatchRequestSite: jest.fn(),
+		dispatchAcceptAtomicTransferDialog: vi.fn(),
+		dispatchDismissAtomicTransferDialog: vi.fn(),
+		dispatchActivateTheme: vi.fn(),
+		dispatchAddExternalManagedThemeToCart: vi.fn(),
+		dispatchInitiateThemeTransfer: vi.fn(),
+		dispatchRequestSite: vi.fn(),
 	};
 
 	render(

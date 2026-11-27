@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { FEATURE_CUSTOM_DOMAIN, FEATURE_SIMPLE_PAYMENTS } from '@automattic/calypso-products';
 import { renderHook } from '@testing-library/react';

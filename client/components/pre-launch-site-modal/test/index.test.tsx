@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { DomainSubtype } from '@automattic/api-core';
 import { queryClient } from '@automattic/api-queries';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ComponentProps } from 'react';
+import { vi } from 'vitest';
 import PreLaunchSiteModal from '../index';
 
 let mockSite: Record< string, unknown >;
@@ -14,8 +15,10 @@ let mockSiteError = false;
 let mockDomainsError = false;
 let mockIsPaid = true;
 
-jest.mock( '@automattic/api-queries', () => ( {
-	queryClient: new ( jest.requireActual( '@tanstack/react-query' ).QueryClient )( {
+vi.mock( '@automattic/api-queries', async () => ( {
+	queryClient: new (
+		await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' )
+	).QueryClient( {
 		defaultOptions: { queries: { retry: false } },
 	} ),
 	siteByIdQuery: ( siteId: number ) => ( {
@@ -38,15 +41,15 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/dashboard/sites/plans', () => ( {
+vi.mock( 'calypso/dashboard/sites/plans', () => ( {
 	isSitePlanPaid: () => mockIsPaid,
 } ) );
 
-jest.mock( 'calypso/dashboard/utils/site-plan', () => ( {
+vi.mock( 'calypso/dashboard/utils/site-plan', () => ( {
 	getSitePlanDisplayName: () => 'Business',
 } ) );
 
-jest.mock( 'calypso/dashboard/sites/site-preview', () => ( {
+vi.mock( 'calypso/dashboard/sites/site-preview/components/site-preview', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="site-preview" />,
 } ) );
@@ -54,7 +57,7 @@ jest.mock( 'calypso/dashboard/sites/site-preview', () => ( {
 // Stub the presentational package modal, but keep every prop the bridge is
 // responsible for wiring (name/domain/plan, the launch + close callbacks, and
 // the launching state) observable so this suite can assert the wiring.
-jest.mock( '@automattic/site-launch-modals', () => ( {
+vi.mock( '@automattic/site-launch-modals', () => ( {
 	__esModule: true,
 	PreLaunchModal: ( {
 		siteName,
@@ -103,7 +106,7 @@ function renderBridge( props: Partial< ComponentProps< typeof PreLaunchSiteModal
 		<PreLaunchSiteModal
 			siteId={ 1 }
 			isOpen
-			onClose={ jest.fn() }
+			onClose={ vi.fn() }
 			launchUrl={ LAUNCH_URL }
 			{ ...props }
 		/>
@@ -111,10 +114,10 @@ function renderBridge( props: Partial< ComponentProps< typeof PreLaunchSiteModal
 }
 
 describe( 'PreLaunchSiteModal', () => {
-	const assign = jest.fn();
+	const assign = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// The mocked queryClient is a module-level singleton, so clear its cache
 		// between tests to keep them isolated and order-independent.
 		queryClient.clear();
@@ -170,7 +173,7 @@ describe( 'PreLaunchSiteModal', () => {
 
 	it( 'passes the caller onClose through to the modal', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		renderBridge( { onClose } );
 
 		await screen.findByTestId( 'pre-launch-modal' );

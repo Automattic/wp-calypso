@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 import { type MockedFunction, vi } from 'vitest';

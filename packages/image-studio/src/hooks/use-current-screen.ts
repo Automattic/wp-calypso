@@ -7,12 +7,16 @@
 
 import { usePrevious } from '@wordpress/compose';
 import { useSelect } from '@wordpress/data';
-import { store as editorStore } from '@wordpress/editor';
 
 type ScreenContext = {
 	screen?: string;
 	postId?: number;
 	previousPostId?: number;
+};
+
+type EditorSelectors = {
+	getCurrentPostType?: () => string;
+	getCurrentPostId?: () => number | string;
 };
 
 declare global {
@@ -53,8 +57,15 @@ export default function useCurrentScreen() {
 		( currentScreen?.screen ?? '' ).includes( 'post' );
 	const screen = currentScreen?.screen ?? '';
 
-	const postType = useSelect( ( select ) => select( editorStore )?.getCurrentPostType?.(), [] );
-	const postId = useSelect( ( select ) => select( editorStore )?.getCurrentPostId?.(), [] );
+	const postType = useSelect(
+		( select ) =>
+			( select( 'core/editor' ) as EditorSelectors | undefined )?.getCurrentPostType?.(),
+		[]
+	);
+	const postId = useSelect(
+		( select ) => ( select( 'core/editor' ) as EditorSelectors | undefined )?.getCurrentPostId?.(),
+		[]
+	);
 	const previousPostId = usePrevious( postId );
 
 	return {

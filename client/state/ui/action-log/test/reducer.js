@@ -1,10 +1,11 @@
+import { vi } from 'vitest';
 import { ROUTE_SET } from 'calypso/state/action-types';
 import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( 1337 );
+		vi.useFakeTimers();
+		vi.setSystemTime( 1337 );
 	} );
 
 	test( 'should default to an empty list', () => {

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`BackupDatePicker Shows 'Yesterday' as the previous date if the current date is today 1`] = `
+exports[`BackupDatePicker > Shows 'Yesterday' as the previous date if the current date is today 1`] = `
 <div>
   <div
     class="backup-date-picker"
@@ -107,7 +107,7 @@ exports[`BackupDatePicker Shows 'Yesterday' as the previous date if the current 
 </div>
 `;
 
-exports[`BackupDatePicker Shows month and date for the next date if it's in the same year as today 1`] = `
+exports[`BackupDatePicker > Shows month and date for the next date if it's in the same year as today 1`] = `
 <div>
   <div
     class="backup-date-picker"
@@ -214,7 +214,7 @@ exports[`BackupDatePicker Shows month and date for the next date if it's in the 
 </div>
 `;
 
-exports[`BackupDatePicker Shows month, date, and year for the next date if it's not the same year as today 1`] = `
+exports[`BackupDatePicker > Shows month, date, and year for the next date if it's not the same year as today 1`] = `
 <div>
   <div
     class="backup-date-picker"
@@ -321,7 +321,7 @@ exports[`BackupDatePicker Shows month, date, and year for the next date if it's 
 </div>
 `;
 
-exports[`BackupDatePicker Shows month, date, and year for the previous date if it's not the same year as today 1`] = `
+exports[`BackupDatePicker > Shows month, date, and year for the previous date if it's not the same year as today 1`] = `
 <div>
   <div
     class="backup-date-picker"
@@ -428,7 +428,7 @@ exports[`BackupDatePicker Shows month, date, and year for the previous date if i
 </div>
 `;
 
-exports[`BackupDatePicker Shows only the month and date for the previous date if it's the same year as today 1`] = `
+exports[`BackupDatePicker > Shows only the month and date for the previous date if it's the same year as today 1`] = `
 <div>
   <div
     class="backup-date-picker"

@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import MigrationPlansGrid from '..';
 
 let mockFeaturesGridProps: Record< string, unknown > = {};
-const mockUseGridPlansForFeaturesGrid = jest.fn();
+const mockUseGridPlansForFeaturesGrid = vi.fn();
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: { isEnabled: () => true },
 	isEnabled: () => true,
 } ) );
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	Plans: { useCurrentPlan: () => undefined },
 } ) );
-jest.mock( '@automattic/plans-grid-next', () => ( {
+vi.mock( '@automattic/plans-grid-next', () => ( {
 	FeaturesGrid: ( props: Record< string, unknown > ) => {
 		mockFeaturesGridProps = props;
 		return <div data-testid="features-grid" />;
@@ -26,23 +27,22 @@ jest.mock( '@automattic/plans-grid-next', () => ( {
 	useGridPlansForFeaturesGrid: ( params: unknown ) => mockUseGridPlansForFeaturesGrid( params ),
 	usePlanBillingPeriod: () => 'TERM_ANNUALLY',
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock(
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',
-	() => jest.fn()
+	() => ( { default: vi.fn() } )
 );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs', () => ( {
-	useFreeTrialPlanSlugs: jest.fn(),
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs', () => ( {
+	useFreeTrialPlanSlugs: vi.fn(),
 } ) );
-jest.mock(
-	'calypso/my-sites/plans-features-main/hooks/use-generate-action-hook',
-	() => () => jest.fn()
-);
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment', () =>
-	jest.fn()
-);
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-generate-action-hook', () => ( {
+	default: () => vi.fn(),
+} ) );
+vi.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment', () => ( {
+	default: vi.fn(),
+} ) );
 
-const mockUsePlansGridRedesignExperiment = usePlansGridRedesignExperiment as jest.Mock;
+const mockUsePlansGridRedesignExperiment = usePlansGridRedesignExperiment as Mock;
 
 const REDESIGN_RESULT = {
 	isLoading: false,
@@ -54,8 +54,7 @@ const REDESIGN_RESULT = {
 	showWooCommerceBottomCard: false,
 };
 
-const renderGrid = () =>
-	render( <MigrationPlansGrid siteId={ 123 } onUpgradeClick={ jest.fn() } /> );
+const renderGrid = () => render( <MigrationPlansGrid siteId={ 123 } onUpgradeClick={ vi.fn() } /> );
 
 describe( 'MigrationPlansGrid', () => {
 	beforeEach( () => {

@@ -36,7 +36,7 @@ class Transfer extends Component {
 		const { locked, transferProhibited } = this.props.wapiDomainInfo.data;
 		const { currentUserCanManage, isPendingIcannVerification, transferAwayEligibleAt } =
 			getSelectedDomain( this.props ) ?? {};
-		let section = null;
+		let section;
 
 		if ( ! currentUserCanManage ) {
 			section = NonOwnerCard;

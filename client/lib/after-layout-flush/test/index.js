@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import afterLayoutFlush from '../';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 // Simple mocks for controlling requestAnimationFrame and cancelAnimationFrame.
 let pendingRafCallbacks = [];
@@ -30,7 +31,7 @@ function runAnimationFrame() {
 class PreserveThisTest {
 	constructor() {
 		this.foo = 'bar';
-		this.callback = jest.fn();
+		this.callback = vi.fn();
 	}
 }
 
@@ -45,8 +46,8 @@ function setupPreserveThisTest() {
 describe( 'afterLayoutFlush', () => {
 	describe( 'in browsers that support requestAnimationFrame', () => {
 		beforeAll( () => {
-			jest.spyOn( window, 'requestAnimationFrame' ).mockImplementation( requestAnimationFrameFake );
-			jest.spyOn( window, 'cancelAnimationFrame' ).mockImplementation( cancelAnimationFrameFake );
+			vi.spyOn( window, 'requestAnimationFrame' ).mockImplementation( requestAnimationFrameFake );
+			vi.spyOn( window, 'cancelAnimationFrame' ).mockImplementation( cancelAnimationFrameFake );
 		} );
 
 		beforeEach( () => {
@@ -54,7 +55,7 @@ describe( 'afterLayoutFlush', () => {
 		} );
 
 		test( 'should execute after a rAF followed by a timeout', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction();
 			expect( callback ).not.toHaveBeenCalled();
@@ -62,66 +63,66 @@ describe( 'afterLayoutFlush', () => {
 			runAnimationFrame();
 			expect( callback ).not.toHaveBeenCalled();
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 			expect( callback ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'should cancel execution if `cancel` is called before the rAF', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction();
 
 			wrappedFunction.cancel();
 			runAnimationFrame();
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( callback ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should cancel execution if `cancel` is called before the timeout', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction();
 
 			runAnimationFrame();
 			wrappedFunction.cancel();
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( callback ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not throw if `cancel` is called after execution', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction();
 
 			runAnimationFrame();
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( callback ).toHaveBeenCalled();
 			expect( () => wrappedFunction.cancel() ).not.toThrow();
 		} );
 
 		test( 'should preserve arguments passed to wrapped function', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction( 'foo', 'bar' );
 
 			runAnimationFrame();
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( callback ).toHaveBeenCalledTimes( 1 );
 			expect( callback ).toHaveBeenCalledWith( 'foo', 'bar' );
 		} );
 
 		test( 'should preserve the last arguments passed to wrapped function', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 
 			wrappedFunction( 1, 1 );
 			runAnimationFrame();
 			wrappedFunction( 2, 2 );
-			jest.runAllTimers();
+			vi.runAllTimers();
 			wrappedFunction( 3, 3 );
 
 			expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -134,7 +135,7 @@ describe( 'afterLayoutFlush', () => {
 			ptt.wrappedFunction();
 
 			runAnimationFrame();
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( ptt.callback ).toHaveBeenCalledTimes( 1 );
 			expect( ptt.callback ).toHaveBeenCalledWith( 'bar' );
@@ -153,56 +154,56 @@ describe( 'afterLayoutFlush', () => {
 		} );
 
 		test( 'should execute after a timeout', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction();
 			expect( callback ).not.toHaveBeenCalled();
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 			expect( callback ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		test( 'should cancel execution if `cancel` is called before the timeout', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction();
 
 			wrappedFunction.cancel();
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( callback ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should not throw if `cancel` is called after execution', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction();
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( callback ).toHaveBeenCalled();
 			expect( () => wrappedFunction.cancel() ).not.toThrow();
 		} );
 
 		test( 'should preserve arguments passed to wrapped function', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 			wrappedFunction( 'foo', 'bar' );
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( callback ).toHaveBeenCalledTimes( 1 );
 			expect( callback ).toHaveBeenCalledWith( 'foo', 'bar' );
 		} );
 
 		test( 'should preserve the last arguments passed to wrapped function', () => {
-			const callback = jest.fn();
+			const callback = vi.fn();
 			const wrappedFunction = afterLayoutFlush( callback );
 
 			wrappedFunction( 1, 1 );
 			wrappedFunction( 2, 2 );
-			jest.runAllTimers();
+			vi.runAllTimers();
 			wrappedFunction( 3, 3 );
 
 			expect( callback ).toHaveBeenCalledTimes( 1 );
@@ -214,7 +215,7 @@ describe( 'afterLayoutFlush', () => {
 			const ptt = new PreserveThisTest();
 			ptt.wrappedFunction();
 
-			jest.runAllTimers();
+			vi.runAllTimers();
 
 			expect( ptt.callback ).toHaveBeenCalledTimes( 1 );
 			expect( ptt.callback ).toHaveBeenCalledWith( 'bar' );

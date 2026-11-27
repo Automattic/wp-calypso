@@ -1,22 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import SiteMigrationCheck from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/current-user/selectors' ),
-	isUserLoggedIn: jest.fn(),
+vi.mock( 'calypso/state/current-user/selectors', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/state/current-user/selectors' ) >(
+		'calypso/state/current-user/selectors'
+	) ),
+	isUserLoggedIn: vi.fn(),
 } ) );
-jest.mock( 'calypso/data/site-profiler/use-analyze-url-query', () => ( {
-	useAnalyzeUrlQuery: jest.fn( () => ( { data: undefined, error: null } ) ),
+vi.mock( 'calypso/data/site-profiler/use-analyze-url-query', () => ( {
+	useAnalyzeUrlQuery: vi.fn( () => ( { data: undefined, error: null } ) ),
 } ) );
 
-jest.mock( '../../../components/site-preview-panel', () => ( {
+vi.mock( '../../../components/site-preview-panel', () => ( {
 	SitePreviewPanel: ( { children }: { children: React.ReactNode } ) => <aside>{ children }</aside>,
 	SiteWindow: ( {
 		url,
@@ -40,16 +43,16 @@ jest.mock( '../../../components/site-preview-panel', () => ( {
 
 describe( 'SiteMigrationCheck', () => {
 	beforeEach( () => {
-		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
-		jest.mocked( useAnalyzeUrlQuery ).mockReturnValue( {
+		vi.mocked( isUserLoggedIn ).mockReturnValue( true );
+		vi.mocked( useAnalyzeUrlQuery ).mockReturnValue( {
 			data: undefined,
 			error: null,
 		} as unknown as ReturnType< typeof useAnalyzeUrlQuery > );
 	} );
 
 	const renderDestination = ( needsUpgrade = false ) => {
-		const submit = jest.fn();
-		const goBack = jest.fn();
+		const submit = vi.fn();
+		const goBack = vi.fn();
 		renderStep(
 			<SiteMigrationCheck
 				{ ...mockStepProps( { navigation: { submit, goBack } } ) }
@@ -74,7 +77,7 @@ describe( 'SiteMigrationCheck', () => {
 		expect( screen.queryByText( 'What we’ll copy over' ) ).not.toBeInTheDocument();
 	};
 
-	const expectChangeLinks = async ( submit: jest.Mock, from = 'https://example.com' ) => {
+	const expectChangeLinks = async ( submit: Mock, from = 'https://example.com' ) => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Change the destination site' } ) );
 		expect( submit ).toHaveBeenLastCalledWith( {
 			action: 'select-existing-site',
@@ -102,8 +105,8 @@ describe( 'SiteMigrationCheck', () => {
 	} );
 
 	it( 'offers another site or a retry when the destination can’t be loaded', async () => {
-		const submit = jest.fn();
-		const retry = jest.fn();
+		const submit = vi.fn();
+		const retry = vi.fn();
 		renderStep(
 			<SiteMigrationCheck
 				{ ...mockStepProps( { navigation: { submit } } ) }
@@ -167,7 +170,7 @@ describe( 'SiteMigrationCheck', () => {
 			error: unknown;
 			isLoading?: boolean;
 		} ) =>
-			jest
+			vi
 				.mocked( useAnalyzeUrlQuery )
 				.mockReturnValue( result as unknown as ReturnType< typeof useAnalyzeUrlQuery > );
 
@@ -182,7 +185,7 @@ describe( 'SiteMigrationCheck', () => {
 
 		it( 'warns that the source couldn’t be reached but still continues', async () => {
 			analysis( { data: undefined, error: { code: 'http_request_failed' } as never } );
-			const submit = jest.fn();
+			const submit = vi.fn();
 			renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
 				initialEntry: manualEntry,
 			} );
@@ -207,7 +210,7 @@ describe( 'SiteMigrationCheck', () => {
 
 		it( 'warns that a source looks like another platform but still continues', async () => {
 			analysis( { data: { url: 'https://example.com', platform: 'wix' }, error: null } );
-			const submit = jest.fn();
+			const submit = vi.fn();
 			renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
 				initialEntry: manualEntry,
 			} );
@@ -281,7 +284,7 @@ describe( 'SiteMigrationCheck', () => {
 	} );
 
 	it( 'keeps a signed-out visitor’s source Change link only while a warning shows', () => {
-		jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+		vi.mocked( isUserLoggedIn ).mockReturnValue( false );
 		const { unmount } = renderStep(
 			<SiteMigrationCheck { ...mockStepProps() } canPickDestination={ false } />,
 			{ initialEntry: '/site-migration-check?from=https://example.com&platform=wordpress' }
@@ -289,7 +292,7 @@ describe( 'SiteMigrationCheck', () => {
 		expect( screen.queryByRole( 'button', { name: /^Change/ } ) ).not.toBeInTheDocument();
 		unmount();
 
-		jest.mocked( useAnalyzeUrlQuery ).mockReturnValue( {
+		vi.mocked( useAnalyzeUrlQuery ).mockReturnValue( {
 			data: undefined,
 			error: { code: 'http_request_failed' },
 		} as unknown as ReturnType< typeof useAnalyzeUrlQuery > );
@@ -333,7 +336,7 @@ describe( 'SiteMigrationCheck', () => {
 	it.each( [ false, true ] )(
 		'blocks a source that resolves to the destination (needs upgrade: %s)',
 		async ( needsUpgrade ) => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			renderStep(
 				<SiteMigrationCheck
 					{ ...mockStepProps( { navigation: { submit } } ) }
@@ -357,7 +360,7 @@ describe( 'SiteMigrationCheck', () => {
 	);
 
 	it( 'shows the supplied site and waits for Continue', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
 			initialEntry:
 				'/site-migration-check?from=https://example.com&platform=wordpress&host=bluehost',
@@ -390,7 +393,7 @@ describe( 'SiteMigrationCheck', () => {
 		'?from=javascript:alert(1)&platform=wordpress',
 		'?from=https://example.com&platform=wix',
 	] )( 'returns to address entry instead of rendering an invalid source: %s', ( query ) => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
 			initialEntry: `/site-migration-check${ query }`,
 		} );
@@ -403,7 +406,7 @@ describe( 'SiteMigrationCheck', () => {
 		'shows WordPress.com actions despite a failed destination with copy eligibility %s',
 		async ( copySiteEligibility ) => {
 			const canCopySite = copySiteEligibility === 'eligible';
-			const submit = jest.fn();
+			const submit = vi.fn();
 			renderStep(
 				<SiteMigrationCheck
 					{ ...mockStepProps( { navigation: { submit } } ) }
@@ -483,7 +486,7 @@ describe( 'SiteMigrationCheck', () => {
 	} );
 
 	it( 'shows a disabled copy action while eligibility is loading', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		renderStep(
 			<SiteMigrationCheck
 				{ ...mockStepProps( { navigation: { submit } } ) }

@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { getAgentsManagerInlineData } from '../get-agents-manager-inline-data';
 
 type WithBareGlobal = typeof globalThis & { agentsManagerData?: unknown };

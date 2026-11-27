@@ -536,7 +536,7 @@ export class CheckoutThankYou extends Component<
 
 		/** REFACTORED REDESIGN */
 		if ( isRefactoredForThankYouV2( this.props ) ) {
-			let pageContent = null;
+			let pageContent;
 			const domainPurchase = getDomainPurchase( purchases );
 			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
 				isGSuiteOrExtraLicenseOrGoogleWorkspace

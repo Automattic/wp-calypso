@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { useDispatch } from 'react-redux';
+import { vi } from 'vitest';
 import usePayInvoiceMutation from 'calypso/state/partner-portal/invoices/hooks/pay-invoice-mutation';
 import useInvoicesQuery from 'calypso/state/partner-portal/invoices/hooks/use-invoices-query';
 
-jest.mock( 'react-redux', () => ( {
-	useDispatch: jest.fn( () => null ),
+vi.mock( 'react-redux', () => ( {
+	useDispatch: vi.fn( () => null ),
 	useSelector: () => 1,
 } ) );
 
@@ -89,7 +90,7 @@ describe( 'usePayInvoiceMutation', () => {
 			.post( `/wpcom/v2/jetpack-licensing/partner/invoice/${ invoiceStub.id }/payment` )
 			.reply( 200, invoiceStub );
 
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		useDispatch.mockReturnValue( dispatch );
 
 		const { result } = renderHook( () => usePayInvoiceMutation(), {
@@ -123,7 +124,7 @@ describe( 'usePayInvoiceMutation', () => {
 			.post( `/wpcom/v2/jetpack-licensing/partner/invoice/${ invoiceStub.id }/payment` )
 			.reply( 500, stub );
 
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 		useDispatch.mockReturnValue( dispatch );
 
 		// Prevent console.error from being loud during testing because of the test 500 error.

@@ -1,6 +1,5 @@
-import { RichText } from '@wordpress/block-editor';
+import { InnerBlocks, RichText } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
-import { InnerBlocks } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import { transforms } from './transform';
 

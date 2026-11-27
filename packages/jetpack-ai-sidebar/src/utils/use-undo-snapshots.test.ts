@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
 import { type MockedFunction, vi } from 'vitest';
 import { undoBlockEdit } from './block-actions';

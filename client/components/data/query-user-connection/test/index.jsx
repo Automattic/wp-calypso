@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
 
-const mockIsUserConnected = jest.fn( () => ( { type: 'IS_USER_CONNECTED' } ) );
+const mockIsUserConnected = vi.fn( () => ( { type: 'IS_USER_CONNECTED' } ) );
 
-jest.mock( 'calypso/state/jetpack-connect/actions', () => ( {
+vi.mock( 'calypso/state/jetpack-connect/actions', () => ( {
 	isUserConnected: ( ...args ) => mockIsUserConnected( ...args ),
 } ) );
 

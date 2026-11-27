@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { Button } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { formatNumber } from '@automattic/number-formatters';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
@@ -15,6 +16,7 @@ import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
+import { toCalypsoHref } from 'calypso/lib/url';
 import Main from 'calypso/my-sites/stats/components/stats-main';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
@@ -193,8 +195,18 @@ class WordAds extends Component {
 									? translate( 'You are not authorized to view this page' )
 									: translate( 'WordAds is not enabled on your site' )
 							}
-							action={ canUpgradeToUseWordAds ? translate( 'Explore WordAds' ) : false }
-							actionURL={ '/earn/ads-settings/' + slug }
+							action={
+								canUpgradeToUseWordAds && (
+									// Not `actionURL`: it would put a locale in the absolute URL Odyssey needs.
+									<Button
+										primary
+										className="empty-content__action"
+										href={ toCalypsoHref( '/earn/ads-settings/' + slug ) }
+									>
+										{ translate( 'Explore WordAds' ) }
+									</Button>
+								)
+							}
 						/>
 					) }
 

@@ -25,7 +25,20 @@ describe( 'getHumanSupportFlags', () => {
 					route_to_email: false,
 				} )
 			)
-		).toEqual( { isEmergency: true, emergencyType: 'checkout_broken', routeToEmail: false } );
+		).toEqual( {
+			isEmergency: true,
+			emergencyType: 'checkout_broken',
+			routeToEmail: false,
+			isUnknownCharge: false,
+		} );
+	} );
+
+	it( 'reads an unknown charge apart from account recovery', () => {
+		expect(
+			getHumanSupportFlags(
+				botMessage( { forward_to_human_support: true, is_unknown_charge: true } )
+			)
+		).toEqual( { ...NO_HUMAN_SUPPORT_FLAGS, isUnknownCharge: true } );
 	} );
 
 	it( 'defaults to no flags', () => {
@@ -48,6 +61,7 @@ describe( 'getLatestHumanSupportFlags', () => {
 			isEmergency: true,
 			emergencyType: null,
 			routeToEmail: false,
+			isUnknownCharge: false,
 		} );
 	} );
 
@@ -82,7 +96,17 @@ describe( 'withHumanSupportFlags', () => {
 			isEmergency: true,
 			emergencyType: 'site_down',
 			routeToEmail: false,
+			isUnknownCharge: false,
 		} );
+	} );
+
+	it( 'carries an unknown charge too', () => {
+		const message = withHumanSupportFlags(
+			prompt,
+			botMessage( { forward_to_human_support: true, is_unknown_charge: true } )
+		);
+
+		expect( getLatestHumanSupportFlags( [ message ] ).isUnknownCharge ).toBe( true );
 	} );
 
 	it( 'leaves the message as it is when the bot sent no flags', () => {

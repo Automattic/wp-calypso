@@ -401,7 +401,7 @@ function InstalledInOrPricing( {
 		isWpcomPreinstalled ||
 		atomicSiteHasEquivalentFeatureToPlugin
 	) {
-		let installedText = '';
+		let installedText;
 		if ( isWpcomPreinstalled || currentSites?.length === 1 ) {
 			installedText = translate( 'Installed' );
 		} else {

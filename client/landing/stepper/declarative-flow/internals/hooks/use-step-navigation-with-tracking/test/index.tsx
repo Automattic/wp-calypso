@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { renderHook, act } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useStepNavigationWithTracking } from '../';
 import {
 	STEPPER_TRACKS_EVENT_STEP_NAV_EXIT_FLOW,
@@ -16,29 +17,29 @@ import { canUseAutomaticGoBack } from '../can-use-automatic-go-back';
 
 const EMPTY_GOALS = [];
 
-jest.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn( () => ( {
+vi.mock( '@wordpress/data', () => ( {
+	useSelect: vi.fn( () => ( {
 		intent: '',
 		goals: EMPTY_GOALS,
 	} ) ),
 } ) );
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: {},
 } ) );
-jest.mock( '../../../analytics/record-step-navigation', () => ( {
-	recordStepNavigation: jest.fn(),
+vi.mock( '../../../analytics/record-step-navigation', () => ( {
+	recordStepNavigation: vi.fn(),
 } ) );
 
-jest.mock( '../can-use-automatic-go-back', () => ( {
-	canUseAutomaticGoBack: jest.fn( () => true ),
+vi.mock( '../can-use-automatic-go-back', () => ( {
+	canUseAutomaticGoBack: vi.fn( () => true ),
 } ) );
 
 const stepNavControls = {
-	submit: jest.fn(),
-	exitFlow: jest.fn(),
-	goBack: jest.fn(),
-	goNext: jest.fn(),
-	goToStep: jest.fn(),
+	submit: vi.fn(),
+	exitFlow: vi.fn(),
+	goBack: vi.fn(),
+	goNext: vi.fn(),
+	goToStep: vi.fn(),
 };
 
 const stepNavControlsWithoutGoBack = {
@@ -77,12 +78,12 @@ const getDefaultProps = ( { flow, currentStepRoute } ) => ( {
 
 describe( 'useStepNavigationWithTracking', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	beforeAll( () => {
 		Object.defineProperty( window, 'history', {
-			value: { back: jest.fn() },
+			value: { back: vi.fn() },
 		} );
 	} );
 
@@ -109,14 +110,14 @@ describe( 'useStepNavigationWithTracking', () => {
 	} );
 
 	it( 'doesnt return goBack when the flow does not define a goBack handler and canUseAutomaticGoBack is false', () => {
-		( canUseAutomaticGoBack as jest.Mock ).mockReturnValue( false );
+		( canUseAutomaticGoBack as Mock ).mockReturnValue( false );
 		const { result } = renderHook( () => useStepNavigationWithTracking( FlowWithoutGoBack ) );
 
 		expect( result.current.goBack ).toBeUndefined();
 	} );
 
 	it( 'calls history.back when goBack is called and canUseAutomaticGoBack is true', () => {
-		( canUseAutomaticGoBack as jest.Mock ).mockReturnValue( true );
+		( canUseAutomaticGoBack as Mock ).mockReturnValue( true );
 		const { result } = renderHook( () => useStepNavigationWithTracking( FlowWithoutGoBack ) );
 		result.current.goBack?.();
 

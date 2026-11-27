@@ -1,23 +1,26 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { useFollowSite } from 'calypso/reader/data/site-subscriptions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { FourForFour } from '../index';
 
-const mockRecordReaderTracksEvent = jest.fn();
+const mockRecordReaderTracksEvent = vi.fn();
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 
 let mockHasPreview = true;
-jest.mock( '@wordpress/compose', () => {
-	const actual = jest.requireActual( '@wordpress/compose' );
-	const { FOUR_FOR_FOUR_PREVIEW_QUERY } = jest.requireActual( '../constants' );
+vi.mock( '@wordpress/compose', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' );
+	const { FOUR_FOR_FOUR_PREVIEW_QUERY } =
+		await vi.importActual< typeof import( '../constants' ) >( '../constants' );
 	return {
 		...actual,
 		useMediaQuery: ( query?: string ) =>
@@ -25,11 +28,11 @@ jest.mock( '@wordpress/compose', () => {
 	};
 } );
 
-jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
+vi.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
 
-jest.mock( 'calypso/reader/stream/typed', () => ( {
+vi.mock( 'calypso/reader/stream/typed', () => ( {
 	TypedStream: ( { streamKey }: { streamKey: string } ) => (
 		<div data-testid="preview-stream">{ streamKey }</div>
 	),
@@ -52,19 +55,21 @@ function MockFollowButton( {
 	);
 }
 
-jest.mock( 'calypso/reader/follow-button', () => ( {
+vi.mock( 'calypso/reader/follow-button', () => ( {
 	__esModule: true,
 	default: ( props: { siteUrl: string; followApiSource: string } ) => (
 		<MockFollowButton { ...props } />
 	),
 } ) );
 
-jest.mock( 'calypso/blocks/site-icon', () => ( {
-	SiteIcon: () => null,
-} ) );
+vi.mock( 'calypso/blocks/site-icon', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		SiteIcon: () => null,
+	} )
+);
 
-jest.mock( 'calypso/reader/controller-helper', () => ( {
-	trackScrollPage: jest.fn(),
+vi.mock( 'calypso/reader/controller-helper', () => ( {
+	trackScrollPage: vi.fn(),
 } ) );
 
 const API = 'https://public-api.wordpress.com';
@@ -155,7 +160,7 @@ describe( 'FourForFour', () => {
 			subscriptions: [],
 		} );
 		mockRecordReaderTracksEvent.mockClear();
-		jest.mocked( page ).mockClear();
+		vi.mocked( page ).mockClear();
 		mockHasPreview = true;
 	} );
 

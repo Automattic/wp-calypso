@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import {
 	readResumeRecord,
 	writeResumeRecord,
@@ -69,7 +70,7 @@ describe( 'resume-storage', () => {
 		} );
 
 		it( 'survives localStorage exceptions silently', () => {
-			const setItem = jest
+			const setItem = vi
 				.spyOn( window.localStorage.__proto__, 'setItem' )
 				.mockImplementation( () => {
 					throw new Error( 'quota exceeded' );

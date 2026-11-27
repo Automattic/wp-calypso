@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
 import useRegenerateAction from '../use-regenerate-action';

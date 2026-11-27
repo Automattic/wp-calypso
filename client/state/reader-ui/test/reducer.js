@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	READER_REGISTER_LAST_ACTION_REQUIRES_LOGIN,
 	READER_CLEAR_LAST_ACTION_REQUIRES_LOGIN,
@@ -17,9 +18,9 @@ describe( 'state/reader-ui/reducer', () => {
 		}
 
 		const localStorageMock = {
-			getItem: jest.fn(),
-			setItem: jest.fn(),
-			removeItem: jest.fn(),
+			getItem: vi.fn(),
+			setItem: vi.fn(),
+			removeItem: vi.fn(),
 		};
 
 		Object.defineProperty( window, 'localStorage', {
@@ -28,11 +29,11 @@ describe( 'state/reader-ui/reducer', () => {
 		} );
 
 		// Reset the Date.now to return a consistent value
-		jest.spyOn( Date, 'now' ).mockImplementation( () => 1610000000000 );
+		vi.spyOn( Date, 'now' ).mockImplementation( () => 1610000000000 );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		// Clean up the global window
 		if ( global.window ) {
 			delete global.window;

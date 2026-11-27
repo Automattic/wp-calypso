@@ -15,7 +15,7 @@ import noticon2gridicon from '../utils/noticon2gridicon';
  */
 function render_range( new_sub_text, new_sub_range, range_info, range_data, options ) {
 	// Its time to build the outer shell of the range we're recursing into.
-	let new_container = null;
+	let new_container;
 	let type_mappings;
 	const new_classes = [];
 
@@ -181,7 +181,7 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
  */
 function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 	let text_start = null;
-	let text_stop = null;
+	let text_stop;
 
 	const ranges = JSON.parse( JSON.stringify( sub_ranges ) ); // clone through serialization
 
@@ -203,7 +203,6 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 					document.createTextNode( sub_text.substring( text_start, text_stop ) )
 				);
 				text_start = null;
-				text_stop = null;
 			}
 
 			// At this point we have one or more ranges we could be entering. We need to decide

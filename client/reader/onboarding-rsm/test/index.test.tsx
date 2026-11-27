@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { flushOnboardingWelcomeDigest } from '@automattic/api-core';
@@ -8,30 +8,36 @@ import { isEnabled } from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
+import { useSiteSubscriptions } from 'calypso/reader/data/site-subscriptions';
+import { useFollowedTags } from 'calypso/reader/data/tags';
+import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import {
 	READER_ONBOARDING_DISMISSED_PREFERENCE_KEY,
 	READER_ONBOARDING_ELIGIBLE_REGISTRATION_DATE,
 	READER_ONBOARDING_PREFERENCE_KEY,
 	READER_ONBOARDING_TRACKS_EVENT_PREFIX,
 } from 'calypso/reader/onboarding-rsm/constants';
+import { getCurrentUserDate } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderOnboardingRsm from '../index';
 
 // ── Router ────────────────────────────────────────────────────────────────────
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: Object.assign( jest.fn(), { redirect: jest.fn() } ),
+	default: Object.assign( vi.fn(), { redirect: vi.fn() } ),
 } ) );
 
 // ── Heavy UI ──────────────────────────────────────────────────────────────────
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	CircularProgressBar: () => null,
 } ) );
 
-jest.mock( '@automattic/launchpad', () => ( {
+vi.mock( '@automattic/launchpad', () => ( {
 	Checklist: ( { children }: { children: React.ReactNode } ) => <>{ children }</>,
 	// Render each task as a div with data-attributes so tests can introspect
 	// `task.disabled` and `task.completed` without needing the real Checklist UI.
@@ -52,9 +58,9 @@ jest.mock( '@automattic/launchpad', () => ( {
 // are reachable via standard screen queries. Expose `onRequestClose` as a
 // dedicated "Close modal" button so tests can simulate the X / escape /
 // outside-click dismiss path that the real <Modal> wires up.
-jest.mock( '@wordpress/components', () => {
+vi.mock( '@wordpress/components', async () => {
 	const { Button } =
-		jest.requireActual< typeof import( '@wordpress/components' ) >( '@wordpress/components' );
+		await vi.importActual< typeof import( '@wordpress/components' ) >( '@wordpress/components' );
 	return {
 		Button,
 		Modal: ( {
@@ -80,17 +86,17 @@ jest.mock( '@wordpress/components', () => {
 // ── Interests-step helpers (called by ReaderOnboardingRsm to build the stable
 // blog map; mocked here to avoid webp/image imports in the test environment) ──
 
-jest.mock( 'calypso/reader/onboarding-rsm/interests-modal/topic-groups', () => ( {
-	getTopicGroups: jest.fn( () => [] ),
+vi.mock( 'calypso/reader/onboarding-rsm/interests-modal/topic-groups', () => ( {
+	getTopicGroups: vi.fn( () => [] ),
 } ) );
 
-jest.mock( 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs', () => ( {
-	getPackBlogs: jest.fn( () => [] ),
+vi.mock( 'calypso/reader/onboarding-rsm/interests-modal/get-pack-blogs', () => ( {
+	getPackBlogs: vi.fn( () => [] ),
 } ) );
 
 // ── Child modals (not under test here) ───────────────────────────────────────
 
-jest.mock( 'calypso/reader/onboarding-rsm/welcome-modal', () => ( {
+vi.mock( 'calypso/reader/onboarding-rsm/welcome-modal', () => ( {
 	__esModule: true,
 	default: ( { onContinue }: { onContinue: () => void } ) => (
 		<div data-testid="welcome-modal-content">
@@ -99,7 +105,7 @@ jest.mock( 'calypso/reader/onboarding-rsm/welcome-modal', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/reader/onboarding-rsm/interests-modal', () => ( {
+vi.mock( 'calypso/reader/onboarding-rsm/interests-modal', () => ( {
 	__esModule: true,
 	default: ( {
 		onContinue,
@@ -117,7 +123,7 @@ jest.mock( 'calypso/reader/onboarding-rsm/interests-modal', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
+vi.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 	__esModule: true,
 	default: ( { onFinish }: { onFinish: () => void } ) => (
 		<div data-testid="subscribe-modal-content">
@@ -128,32 +134,32 @@ jest.mock( 'calypso/reader/onboarding-rsm/subscribe-modal', () => ( {
 
 // ── Redux / selectors ─────────────────────────────────────────────────────────
 
-jest.mock( 'calypso/state/preferences/selectors', () => ( {
+vi.mock( 'calypso/state/preferences/selectors', () => ( {
 	// null = onboarding neither completed nor seen; triggers auto-open of welcome step.
-	getPreference: jest.fn().mockReturnValue( null ),
-	hasReceivedRemotePreferences: jest.fn().mockReturnValue( true ),
+	getPreference: vi.fn().mockReturnValue( null ),
+	hasReceivedRemotePreferences: vi.fn().mockReturnValue( true ),
 } ) );
 
-jest.mock( 'calypso/state/preferences/actions', () => ( {
-	savePreference: jest.fn( () => () => Promise.resolve() ),
+vi.mock( 'calypso/state/preferences/actions', () => ( {
+	savePreference: vi.fn( () => () => Promise.resolve() ),
 } ) );
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
 	// Default to a registration date well before the eligibility cutoff so the
 	// registration-date OR clause is OFF by default in tests — count-based
 	// cases stay isolated. Individual tests can override per-case.
-	getCurrentUserDate: jest.fn().mockReturnValue( '2020-01-01T00:00:00Z' ),
-	isCurrentUserEmailVerified: jest.fn().mockReturnValue( true ),
+	getCurrentUserDate: vi.fn().mockReturnValue( '2020-01-01T00:00:00Z' ),
+	isCurrentUserEmailVerified: vi.fn().mockReturnValue( true ),
 } ) );
 
-const mockRefreshFollowingStreams = jest.fn();
-jest.mock( '../use-refresh-following-streams', () => ( {
+const mockRefreshFollowingStreams = vi.fn();
+vi.mock( '../use-refresh-following-streams', () => ( {
 	useRefreshFollowingStreams: () => mockRefreshFollowingStreams,
 } ) );
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
-	flushOnboardingWelcomeDigest: jest.fn().mockResolvedValue( {
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+	flushOnboardingWelcomeDigest: vi.fn().mockResolvedValue( {
 		success: true,
 		sent: false,
 		blog_count: 0,
@@ -162,16 +168,16 @@ jest.mock( '@automattic/api-core', () => ( {
 
 // ── Data hooks ────────────────────────────────────────────────────────────────
 
-jest.mock( 'calypso/reader/data/tags', () => ( {
-	useFollowedTags: jest.fn( () => ( { data: [], isPending: false } ) ),
+vi.mock( 'calypso/reader/data/tags', () => ( {
+	useFollowedTags: vi.fn( () => ( { data: [], isPending: false } ) ),
 } ) );
 
-jest.mock( 'calypso/reader/data/site-subscriptions', () => ( {
-	useSiteSubscriptions: jest.fn( () => ( { subscriptions: [] } ) ),
+vi.mock( 'calypso/reader/data/site-subscriptions', () => ( {
+	useSiteSubscriptions: vi.fn( () => ( { subscriptions: [] } ) ),
 } ) );
 
-jest.mock( 'calypso/reader/following/hooks/use-non-self-subscriptions-count', () => ( {
-	useNonSelfSubscriptionsCount: jest.fn( () => ( {
+vi.mock( 'calypso/reader/following/hooks/use-non-self-subscriptions-count', () => ( {
+	useNonSelfSubscriptionsCount: vi.fn( () => ( {
 		isLoading: false,
 		nonSelfSubscriptionsCount: 0,
 	} ) ),
@@ -179,17 +185,17 @@ jest.mock( 'calypso/reader/following/hooks/use-non-self-subscriptions-count', ()
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
-jest.mock( '../get-reload-step', () => ( {
+vi.mock( '../get-reload-step', () => ( {
 	getReloadStep: () => null,
 } ) );
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const config = jest.fn();
-	const isEnabledMock = jest.fn( () => false );
+vi.mock( '@automattic/calypso-config', () => {
+	const config = vi.fn();
+	const isEnabledMock = vi.fn( () => false );
 	return {
 		__esModule: true,
 		default: Object.assign( config, { isEnabled: isEnabledMock } ),
@@ -201,39 +207,20 @@ jest.mock( '@automattic/calypso-config', () => {
 
 beforeEach( () => {
 	mockRefreshFollowingStreams.mockClear();
-	jest.mocked( flushOnboardingWelcomeDigest ).mockClear();
-	jest.mocked( savePreference ).mockClear();
-	jest.mocked( recordTracksEvent ).mockClear();
-	jest.mocked( isEnabled ).mockReturnValue( false );
+	vi.mocked( flushOnboardingWelcomeDigest ).mockClear();
+	vi.mocked( savePreference ).mockClear();
+	vi.mocked( recordTracksEvent ).mockClear();
+	vi.mocked( isEnabled ).mockReturnValue( false );
 
-	const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
-		getPreference: jest.Mock;
-	};
-	getPreference.mockReturnValue( null );
+	( getPreference as Mock ).mockReturnValue( null );
 
-	const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
-		useFollowedTags: jest.Mock;
-	};
-	const { useSiteSubscriptions: useCachedSiteSubscriptions } = jest.requireMock(
-		'calypso/reader/data/site-subscriptions'
-	) as {
-		useSiteSubscriptions: jest.Mock;
-	};
-	const { useNonSelfSubscriptionsCount } = jest.requireMock(
-		'calypso/reader/following/hooks/use-non-self-subscriptions-count'
-	) as {
-		useNonSelfSubscriptionsCount: jest.Mock;
-	};
-	const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
-		getCurrentUserDate: jest.Mock;
-	};
-	useFollowedTags.mockImplementation( () => ( { data: [], isPending: false } ) );
-	useCachedSiteSubscriptions.mockReturnValue( { subscriptions: [] } );
-	useNonSelfSubscriptionsCount.mockImplementation( () => ( {
+	( useFollowedTags as Mock ).mockImplementation( () => ( { data: [], isPending: false } ) );
+	( useSiteSubscriptions as Mock ).mockReturnValue( { subscriptions: [] } );
+	( useNonSelfSubscriptionsCount as Mock ).mockImplementation( () => ( {
 		isLoading: false,
 		nonSelfSubscriptionsCount: 0,
 	} ) );
-	getCurrentUserDate.mockReturnValue( '2020-01-01T00:00:00Z' );
+	( getCurrentUserDate as Mock ).mockReturnValue( '2020-01-01T00:00:00Z' );
 } );
 
 describe( 'ReaderOnboardingRsm – back button navigation', () => {
@@ -388,7 +375,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -405,7 +392,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -424,7 +411,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
 
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -443,7 +430,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
 
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Finish' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
@@ -459,7 +446,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 
 		await screen.findByTestId( 'welcome-modal-content' );
 
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'welcome' ) );
@@ -473,7 +460,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Pick your topics' } ) );
 		await screen.findByTestId( 'interests-modal-content' );
 
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'interests' ) );
@@ -489,7 +476,7 @@ describe( 'ReaderOnboardingRsm – step close vs navigation analytics', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
 
-		jest.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
 		await user.click( screen.getByRole( 'button', { name: 'Close modal' } ) );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( closeEventFor( 'discover' ) );
@@ -610,25 +597,16 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 	} );
 
 	it( 'records completed with followed_tags_count and followed_non_self_sites_count reflecting the user\u2019s current follows', async () => {
-		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
-			useFollowedTags: jest.Mock;
-		};
-
-		useFollowedTags.mockImplementation( () => ( {
+		( useFollowedTags as Mock ).mockImplementation( () => ( {
 			data: [ { slug: 'tech' }, { slug: 'food' } ],
 			isPending: false,
 		} ) );
-		const { useSiteSubscriptions } = jest.requireMock(
-			'calypso/reader/data/site-subscriptions'
-		) as {
-			useSiteSubscriptions: jest.Mock;
-		};
 		// Mix of active non-self, stale (unfollowed), and self-owned to verify
 		// the filter — only the two active non-self entries should be counted.
 		// `nonSelfSubscriptionsCount` defaults to 0 here (per beforeEach), so
 		// the reported count comes from the follows query, not the
 		// `nonSelfSubscriptionsCount` baseline.
-		useSiteSubscriptions.mockReturnValue( {
+		( useSiteSubscriptions as Mock ).mockReturnValue( {
 			subscriptions: [
 				{ is_following: true, is_owner: false },
 				{ is_following: true, is_owner: false },
@@ -657,10 +635,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		// if the follows query is empty (e.g. slow network, lazy load)
 		// but the non-self subscriptions count hook is already populated, the
 		// completion event should report that count rather than 0.
-		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
-		) as { useNonSelfSubscriptionsCount: jest.Mock };
-		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
+		( useNonSelfSubscriptionsCount as Mock ).mockImplementation( () => ( {
 			isLoading: false,
 			nonSelfSubscriptionsCount: 5,
 		} ) );
@@ -683,10 +658,7 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		// and click Finish again — the `completed` event should still fire so
 		// we can attribute the funnel, but the preference is already set so we
 		// skip the redundant write.
-		const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
-			getPreference: jest.Mock;
-		};
-		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
+		( getPreference as Mock ).mockImplementation( ( _state: unknown, key: string ) =>
 			key === READER_ONBOARDING_PREFERENCE_KEY ? true : null
 		);
 
@@ -702,23 +674,16 @@ describe( 'ReaderOnboardingRsm – onboarding completion', () => {
 		);
 		expect( savePreference ).not.toHaveBeenCalledWith( READER_ONBOARDING_PREFERENCE_KEY, true );
 
-		getPreference.mockReturnValue( null );
+		( getPreference as Mock ).mockReturnValue( null );
 	} );
 
 	it( 'does not auto-save completion when the user has enough follows without clicking Finish', async () => {
-		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
-		) as { useNonSelfSubscriptionsCount: jest.Mock };
-		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
-			useFollowedTags: jest.Mock;
-		};
-
 		// Rely on forceShow to surface the welcome step so we can assert that completion is not auto-saved
-		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
+		( useNonSelfSubscriptionsCount as Mock ).mockImplementation( () => ( {
 			isLoading: false,
 			nonSelfSubscriptionsCount: 0,
 		} ) );
-		useFollowedTags.mockReturnValue( {
+		( useFollowedTags as Mock ).mockReturnValue( {
 			data: [ { slug: 'a' }, { slug: 'b' }, { slug: 'c' } ],
 		} );
 
@@ -756,26 +721,16 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 		subscriptionsLoading?: boolean;
 		userRegistrationDate?: string | null;
 	} = {} ) => {
-		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
-			useFollowedTags: jest.Mock;
-		};
-		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
-		) as { useNonSelfSubscriptionsCount: jest.Mock };
-		const { getCurrentUserDate } = jest.requireMock( 'calypso/state/current-user/selectors' ) as {
-			getCurrentUserDate: jest.Mock;
-		};
-
-		useFollowedTags.mockImplementation( () => ( {
+		( useFollowedTags as Mock ).mockImplementation( () => ( {
 			data: tags.data ?? [],
 			isPending: tags.isPending ?? false,
 		} ) );
-		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
+		( useNonSelfSubscriptionsCount as Mock ).mockImplementation( () => ( {
 			isLoading: subscriptionsLoading,
 			nonSelfSubscriptionsCount,
 		} ) );
 		if ( userRegistrationDate !== undefined ) {
-			getCurrentUserDate.mockReturnValue( userRegistrationDate );
+			( getCurrentUserDate as Mock ).mockReturnValue( userRegistrationDate );
 		}
 
 		return { useNonSelfSubscriptionsCount };
@@ -807,7 +762,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 
 	it( 'does not render when the user starts with >= 4 sites AND >= 3 tags', async () => {
 		overrideMocks( { nonSelfSubscriptionsCount: 4, tags: { data: makeTags( 3 ) } } );
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 
@@ -823,7 +778,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 			nonSelfSubscriptionsCount: 4,
 			tags: { data: [], isPending: true },
 		} );
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 
@@ -836,7 +791,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 
 	it( 'does not render while the site subscriptions query is still loading', async () => {
 		overrideMocks( { subscriptionsLoading: true } );
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 
@@ -857,7 +812,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 
 		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
 
-		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
+		( useNonSelfSubscriptionsCount as Mock ).mockImplementation( () => ( {
 			isLoading: false,
 			nonSelfSubscriptionsCount: 10,
 		} ) );
@@ -884,7 +839,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 			tags: { data: makeTags( 3 ) },
 			userRegistrationDate: justBeforeCutoff,
 		} );
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 
@@ -901,7 +856,7 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 			tags: { data: makeTags( 3 ) },
 			userRegistrationDate: null,
 		} );
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 
@@ -915,28 +870,17 @@ describe( 'ReaderOnboardingRsm – eligibility', () => {
 
 describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 	const getUseNonSelfSubscriptionsCountMock = () => {
-		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
-		) as { useNonSelfSubscriptionsCount: jest.Mock };
 		return useNonSelfSubscriptionsCount;
 	};
 
-	const getPreferenceMock = () => {
-		const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
-			getPreference: jest.Mock;
-		};
-		return getPreference;
-	};
+	const getPreferenceMock = () => getPreference as Mock;
 
 	// Suppress meetsEligibility entirely so this suite only exercises forceShow.
 	// Tag count >= 3 makes the tag side of meetsEligibility false; the site side
 	// is controlled per-test via the `useNonSelfSubscriptionsCount` mock's
 	// `nonSelfSubscriptionsCount` (always seeded >= 4 here).
 	const seedAboveEligibilityThresholds = () => {
-		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
-			useFollowedTags: jest.Mock;
-		};
-		useFollowedTags.mockImplementation( () => ( {
+		( useFollowedTags as Mock ).mockImplementation( () => ( {
 			data: [ { slug: 'a' }, { slug: 'b' }, { slug: 'c' } ],
 			isPending: false,
 		} ) );
@@ -945,7 +889,7 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 	it( 'keeps the checklist visible mid-flow even when nonSelfSubscriptionsCount becomes non-zero', async () => {
 		seedAboveEligibilityThresholds();
 		const useNonSelfSubscriptionsCount = getUseNonSelfSubscriptionsCountMock();
-		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
+		( useNonSelfSubscriptionsCount as Mock ).mockImplementation( () => ( {
 			isLoading: false,
 			nonSelfSubscriptionsCount: 0,
 		} ) );
@@ -955,7 +899,7 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 		expect( await screen.findByTestId( 'welcome-modal-content' ) ).toBeVisible();
 
 		// Simulate the user subscribing to a site mid-flow.
-		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
+		( useNonSelfSubscriptionsCount as Mock ).mockImplementation( () => ( {
 			isLoading: false,
 			nonSelfSubscriptionsCount: 5,
 		} ) );
@@ -967,7 +911,7 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 	it( 'hides onboarding for the session after the user clicks Finish on the subscribe step', async () => {
 		seedAboveEligibilityThresholds();
 		const useNonSelfSubscriptionsCount = getUseNonSelfSubscriptionsCountMock();
-		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
+		( useNonSelfSubscriptionsCount as Mock ).mockImplementation( () => ( {
 			isLoading: false,
 			nonSelfSubscriptionsCount: 0,
 		} ) );
@@ -976,11 +920,11 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 		// `meetsEligibility` also remains false after this point without coupling
 		// to dispatch timing.
 		const getPreference = getPreferenceMock();
-		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
+		( getPreference as Mock ).mockImplementation( ( _state: unknown, key: string ) =>
 			key === READER_ONBOARDING_PREFERENCE_KEY ? false : null
 		);
 
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 
 		// Drive the user through to Finish.
@@ -991,7 +935,7 @@ describe( 'ReaderOnboardingRsm - forceShow snapshot', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		await screen.findByTestId( 'subscribe-modal-content' );
 
-		getPreference.mockImplementation( ( _state: unknown, key: string ) =>
+		( getPreference as Mock ).mockImplementation( ( _state: unknown, key: string ) =>
 			key === READER_ONBOARDING_PREFERENCE_KEY ? true : null
 		);
 
@@ -1096,12 +1040,7 @@ describe( 'ReaderOnboardingRsm – interests-step "has followed" state lifted to
 } );
 
 describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
-	const getPreferenceMock = () => {
-		const { getPreference } = jest.requireMock( 'calypso/state/preferences/selectors' ) as {
-			getPreference: jest.Mock;
-		};
-		return getPreference;
-	};
+	const getPreferenceMock = () => getPreference as Mock;
 
 	const overrideMocks = ( {
 		nonSelfSubscriptionsCount = 0,
@@ -1112,18 +1051,11 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 		tags?: { data?: Array< { slug: string } >; isPending?: boolean };
 		hasDismissedOnboarding?: boolean;
 	} = {} ) => {
-		const { useFollowedTags } = jest.requireMock( 'calypso/reader/data/tags' ) as {
-			useFollowedTags: jest.Mock;
-		};
-		const { useNonSelfSubscriptionsCount } = jest.requireMock(
-			'calypso/reader/following/hooks/use-non-self-subscriptions-count'
-		) as { useNonSelfSubscriptionsCount: jest.Mock };
-
-		useFollowedTags.mockImplementation( () => ( {
+		( useFollowedTags as Mock ).mockImplementation( () => ( {
 			data: tags.data ?? [],
 			isPending: tags.isPending ?? false,
 		} ) );
-		useNonSelfSubscriptionsCount.mockImplementation( () => ( {
+		( useNonSelfSubscriptionsCount as Mock ).mockImplementation( () => ( {
 			isLoading: false,
 			nonSelfSubscriptionsCount,
 		} ) );
@@ -1200,16 +1132,16 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 	it( 'permanently dismisses onboarding on confirm, closes open step modals, and records dismiss_confirm', async () => {
 		overrideMocks();
 		const getPreference = getPreferenceMock();
-		jest.mocked( savePreference ).mockImplementation( ( key, value ) => {
+		vi.mocked( savePreference ).mockImplementation( ( key, value ) => {
 			if ( key === READER_ONBOARDING_DISMISSED_PREFERENCE_KEY ) {
-				getPreference.mockImplementation( ( _state: unknown, prefKey: string ) =>
+				( getPreference as Mock ).mockImplementation( ( _state: unknown, prefKey: string ) =>
 					prefKey === READER_ONBOARDING_DISMISSED_PREFERENCE_KEY ? value : null
 				);
 			}
 			return () => Promise.resolve();
 		} );
 
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 		const user = userEvent.setup();
 		const { rerender } = renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 
@@ -1241,7 +1173,7 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 
 	it( 'does not render onboarding when the dismissed preference is set, even if otherwise eligible', async () => {
 		overrideMocks( { hasDismissedOnboarding: true } );
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 
@@ -1257,9 +1189,9 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 
 	it( 'still renders onboarding when reader/force-onboarding is enabled even if permanently dismissed', async () => {
 		overrideMocks( { hasDismissedOnboarding: true } );
-		jest
-			.mocked( isEnabled )
-			.mockImplementation( ( flag: string ) => flag === 'reader/force-onboarding' );
+		vi.mocked( isEnabled ).mockImplementation(
+			( flag: string ) => flag === 'reader/force-onboarding'
+		);
 
 		renderWithProvider( <ReaderOnboardingRsm /> );
 
@@ -1269,11 +1201,11 @@ describe( 'ReaderOnboardingRsm – permanent checklist dismiss', () => {
 
 	it( 'hides onboarding for the session when dismissed under reader/force-onboarding', async () => {
 		overrideMocks( { hasDismissedOnboarding: true } );
-		jest
-			.mocked( isEnabled )
-			.mockImplementation( ( flag: string ) => flag === 'reader/force-onboarding' );
+		vi.mocked( isEnabled ).mockImplementation(
+			( flag: string ) => flag === 'reader/force-onboarding'
+		);
 
-		const onRender = jest.fn();
+		const onRender = vi.fn();
 		const user = userEvent.setup();
 		renderWithProvider( <ReaderOnboardingRsm onRender={ onRender } /> );
 

@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	THEME_REQUEST,
@@ -57,7 +58,7 @@ const mood = {
 };
 
 describe( 'reducer', () => {
-	beforeEach( jest.restoreAllMocks );
+	beforeEach( vi.restoreAllMocks );
 
 	test( 'should include expected keys in return value', () => {
 		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual(
@@ -294,7 +295,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+			vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 			const original = deepFreeze( {
 				2916284: '{INVALID',
 			} );
@@ -608,7 +609,7 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should not load invalid persisted state', () => {
-			jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+			vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 			const original = deepFreeze( {
 				2916284: 1234,
 			} );

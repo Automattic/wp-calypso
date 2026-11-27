@@ -80,7 +80,7 @@ export default function SubscriptionsList() {
 					if ( isBillingTypeBD && item.status === 'error' ) {
 						return <EmptyValueIndicator />;
 					}
-					let amount = '';
+					let amount;
 					let currency = 'USD';
 					let interval = 'month';
 					if ( isBillingTypeBD ) {

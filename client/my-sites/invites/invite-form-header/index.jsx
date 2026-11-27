@@ -25,7 +25,7 @@ class InviteFormHeader extends Component {
 	};
 
 	getLoggedOutTitleForInvite = () => {
-		let title = '';
+		let title;
 		const { role, forceMatchingEmail, knownUser } = this.props;
 
 		if ( forceMatchingEmail && knownUser ) {
@@ -104,7 +104,7 @@ class InviteFormHeader extends Component {
 	};
 
 	getLoggedInTitleForInvite = () => {
-		let title = '';
+		let title;
 
 		const { role } = this.props;
 

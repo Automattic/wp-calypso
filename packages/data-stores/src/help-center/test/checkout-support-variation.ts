@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { dispatch, select } from '@wordpress/data';
@@ -61,6 +61,15 @@ describe( 'checkout support variation', () => {
 
 		expect( storeSelect.getCheckoutSupportVariation() ).toBeUndefined();
 		expect( storeSelect.getHasPremiumSupport() ).toBe( false );
+	} );
+
+	it( 'is kept across a reload, so a chat reopened by it stays in the group', async () => {
+		await openFromCheckout( 'human_only' );
+
+		const persisted = JSON.parse(
+			window.localStorage.getItem( 'WPCOM_7_DAYS_PERSISTENCE' ) ?? '{}'
+		);
+		expect( persisted[ storeKey ].checkoutSupportVariation ).toBe( 'human_only' );
 	} );
 
 	it( 'stays out of the merged Help Center options', async () => {

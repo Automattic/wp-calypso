@@ -16,6 +16,7 @@ import { DateTimeInput } from '../components/date-time-input';
 import { Divider } from '../components/divider';
 import { Icon } from '../components/icon';
 import { Image } from '../components/image';
+import { Grid, Stack } from '../components/layout';
 import { List } from '../components/list';
 import { Modal } from '../components/modal';
 import { Row } from '../components/row';
@@ -26,6 +27,7 @@ import { TextField } from '../components/text-field';
 import { Video } from '../components/video';
 import { CHARTS_CATALOG_DOCUMENT } from './charts-catalog';
 import { toComponentImplementation, toFunctionImplementation } from './definitions';
+import { LAYOUT_CATALOG_DOCUMENT } from './layout-catalog';
 import type { InteractiveUiCatalogDefinition } from './definitions';
 import type { ReactComponentImplementation } from '@a2ui/react';
 import type { FunctionImplementation } from '@a2ui/web_core';
@@ -81,6 +83,11 @@ const BASIC_FUNCTIONS: readonly FunctionImplementation[] = A2UI_BASIC_FUNCTIONS.
 );
 
 export type InteractiveUiCatalog = Catalog< ReactComponentImplementation >;
+
+export const LAYOUT_CATALOG: InteractiveUiCatalogDefinition = {
+	catalog: LAYOUT_CATALOG_DOCUMENT,
+	components: { Grid, Stack },
+};
 
 const CHART_RETRY_DELAY_MS = 500;
 

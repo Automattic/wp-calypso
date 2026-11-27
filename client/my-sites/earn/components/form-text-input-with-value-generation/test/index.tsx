@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import FormTextInputWithValueGeneration from '../index';
 
 describe( 'FormTextInputWithValueGeneration', () => {
@@ -31,7 +32,7 @@ describe( 'FormTextInputWithValueGeneration', () => {
 
 	test( 'should execute the onAction callback function when the action button is clicked', async () => {
 		const user = userEvent.setup();
-		const generateValueCallback = jest.fn();
+		const generateValueCallback = vi.fn();
 		render( <FormTextInputWithValueGeneration onAction={ generateValueCallback } /> );
 		const generateButton = getGenerateButton();
 
@@ -42,7 +43,7 @@ describe( 'FormTextInputWithValueGeneration', () => {
 	test( 'should display the value in text area after clicking action button on rerender', async () => {
 		let generatedValue = '';
 		const user = userEvent.setup();
-		const generateValueCallback = jest
+		const generateValueCallback = vi
 			.fn()
 			.mockImplementation( () => ( generatedValue = 'value generated from callback function' ) );
 		const { rerender } = render(

@@ -60,7 +60,7 @@ function LogoFileUpload( { displayUrl, onFileSelect }: LogoFileUploadProps ) {
 				return;
 			}
 
-			let isValidDimensions = false;
+			let isValidDimensions;
 			try {
 				isValidDimensions = await validateLogoDimensions( file, {
 					requiredWidth: A4A_LOGO_REQUIRED_WIDTH,

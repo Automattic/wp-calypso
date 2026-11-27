@@ -16,28 +16,20 @@ is `@automattic/api-core` `fetchReadNewBlogs` + `@automattic/api-queries`
 
 `reader/discover-new-blogs`
 
-On (`true`) in every environment for the READ-543 A/B: with the flag on, eligible
-users get an ExPlat assignment and only treatment sees the module, see
-"A/B (READ-543)" below. `?flags=-reader/discover-new-blogs` switches it off from
-the URL, and switching the flag off is the kill switch.
+On (`true`) in every environment, so every eligible user sees the module.
+`?flags=-reader/discover-new-blogs` switches it off from the URL, and switching
+the flag off is the kill switch.
 
 Mount point: `client/reader/following/main.tsx` calls `useNewBlogs()` and, when
 the flag is on, the view is the "all subscriptions" Recent stream (no `feedId`),
 the user has recs (none while loading or for cold-start) and has not hidden the
-module, passes `<NewBlogsExperimentSlot />` to `<ReaderStream>` as `inStreamBlock` at
+module, passes `<DiscoverNewBlogs />` to `<ReaderStream>` as `inStreamBlock` at
 `inStreamBlockPosition` 2, i.e. the third spot after two recent posts.
 
 ## A/B (READ-543)
 
-ExPlat experiment `calypso_reader_discover_new_blogs_202610_v1` (`control` / `treatment`).
-`NewBlogsExperimentSlot` (`experiment-slot.tsx`) calls `useExperiment` when the stream
-mounts the spot above, in both groups, so only users with recs are assigned and control
-is the same kind of user as treatment. Control renders nothing there; treatment renders
-`<DiscoverNewBlogs />`. To see a given variation, use the experiment's manual assignment
-bookmarklet in ExPlat (while the experiment is in staging, only Automatticians are assigned).
-
-The main readout is out-of-network follows and post opens across both groups, from the
-existing follow and open events. The module's own events (below) show how it does.
+The module was tested as ExPlat experiment `calypso_reader_discover_new_blogs_202610_v1`
+before it shipped to everyone with recs (READ-888).
 
 Placement note: the PRD said "never in the chronological follow feed", but the
 READ-542 thread (rob.pugh, Dave Martin, 2026-09-03) moved it to Recent so the
@@ -98,4 +90,3 @@ thing as the TrainTracks renders. Helpers live in `tracks.ts`.
 ## Wiring left to do
 
 1. Persist dismiss and Hide server-side instead of `localStorage` (READ-542 layer 3).
-2. ExPlat assignment for the A/B (READ-543) — needs the experiment name.

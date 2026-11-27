@@ -1,0 +1,666 @@
+import './style.scss';
+
+import { HostingFeatures, type McpAbility, type Site } from '@automattic/api-core';
+import {
+	bigSkyPluginMutation,
+	bigSkyPluginQuery,
+	siteAbilitiesQuery,
+	siteBySlugQuery,
+	sitePostByEmailSettingsMutation,
+	sitePostByEmailSettingsQuery,
+	userSettingsMutation,
+	userSettingsQuery,
+} from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
+import languages from '@automattic/languages';
+import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalText as Text,
+	Button,
+	Icon,
+	ToggleControl,
+	Tooltip,
+} from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
+import {
+	brush,
+	check,
+	comment,
+	help,
+	image,
+	pencil,
+	send,
+	seen,
+	termDescription,
+} from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
+import { useState } from 'react';
+import { getOrdinaryTools } from '../../../../../../../me/mcp/group-intents';
+import { useMcpTracksAudienceProps } from '../../../../../../../me/mcp/tracks';
+import {
+	getAccountMcpAbilities,
+	getSiteContextToolIds,
+	getSiteLevelEnabled,
+	getSiteMcpAbilities,
+	getSiteRemoteGroups,
+	isRemoteAbilityEnabled,
+	isRemoteKeyEnabled,
+	isSiteMcpToolEnabled,
+	mergeSiteMcpAbilities,
+} from '../../../../../../../me/mcp/utils';
+import { useAnalytics } from '../../../../../../app/analytics';
+import Breadcrumbs from '../../../../../../app/breadcrumbs';
+import { useHelpCenter } from '../../../../../../app/help-center';
+import { useLocale } from '../../../../../../app/locale';
+import { withSnackbar } from '../../../../../../app/snackbars/with-snackbar';
+import { Card, CardBody, CardDivider, CardFooter } from '../../../../../../components/card';
+import ClipboardInputControl from '../../../../../../components/clipboard-input-control';
+import ConfirmModal from '../../../../../../components/confirm-modal';
+import InlineSupportLink from '../../../../../../components/inline-support-link';
+import Notice from '../../../../../../components/notice';
+import { PageHeader } from '../../../../../../components/page-header';
+import PageLayout from '../../../../../../components/page-layout';
+import RouterLinkSummaryButton from '../../../../../../components/router-link-summary-button';
+import { SectionHeader } from '../../../../../../components/section-header';
+import SummaryButton from '../../../../../../components/summary-button';
+import { SummaryButtonList } from '../../../../../../components/summary-button-list';
+import { ThemedIllustration } from '../../../../../../components/themed-illustration';
+import { isWriteTool } from '../../../../../../me/mcp/categories';
+import McpConnectCard from '../../../../../../me/mcp/connect-card';
+import { collectNamespaces } from '../../../../../../sites/ai-tools/components/remote-abilities-section';
+import upsellIllustrationDarkUrl from '../../../../../../sites/ai-tools/components/upsell-illustration/upsell-illustration-dark.svg';
+import upsellIllustrationUrl from '../../../../../../sites/ai-tools/components/upsell-illustration/upsell-illustration.svg';
+import UpsellCallout from '../../../../../../sites/hosting-features/components/hosting-feature-upsell-callout';
+import {
+	getAgentEmailAddress,
+	getAgentEmailVCardDataUrl,
+	getAgentEmailVCardFileName,
+} from '../../../../../../utils/wordpress-agent-email';
+
+export {
+	getAgentEmailAddress,
+	getAgentEmailVCard,
+} from '../../../../../../utils/wordpress-agent-email';
+
+/**
+ * Badge for one access level, spanning wpcom tools and the site's published
+ * abilities on the same page.
+ */
+function getAccessBadge( total: number, enabledCount: number ) {
+	if ( total === 0 ) {
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
+	}
+	if ( enabledCount === total ) {
+		return { text: __( 'All enabled' ), intent: 'stable' as const };
+	}
+	if ( enabledCount === 0 ) {
+		return { text: __( 'Disabled' ), intent: 'none' as const };
+	}
+	return {
+		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
+		text: sprintf( __( '%1$d of %2$d enabled' ), enabledCount, total ),
+		intent: 'informational' as const,
+	};
+}
+
+const features = [
+	__( 'Get answers where you work so you‘re unstuck faster' ),
+	__( 'Update your site design with less effort' ),
+	__( 'Draft and revise content in one place' ),
+	__( 'Create beautiful images without leaving WordPress' ),
+];
+
+const upgradeRequiredText = __( 'Upgrade your plan to enable this setting.' );
+const upgradeRequiredBadge = { text: __( 'Upgrade required' ), intent: 'informational' as const };
+
+function UpgradeRequiredBadge() {
+	return (
+		<Tooltip text={ upgradeRequiredText } placement="top">
+			<Badge intent={ upgradeRequiredBadge.intent }>{ upgradeRequiredBadge.text }</Badge>
+		</Tooltip>
+	);
+}
+
+const TELEGRAM_CONNECTION_PATH = '/me/agent';
+
+function EmailAssistantCard( {
+	site,
+	recordTracksEvent,
+	isAgentEnabled = false,
+	disabled = false,
+}: {
+	site: Site;
+	recordTracksEvent: ReturnType< typeof useAnalytics >[ 'recordTracksEvent' ];
+	isAgentEnabled?: boolean;
+	disabled?: boolean;
+} ) {
+	const { data: postByEmailSettings, isLoading: isPostByEmailSettingsLoading } = useQuery( {
+		...sitePostByEmailSettingsQuery( site ),
+		enabled: ! disabled,
+	} );
+	const agentEmailAddress = getAgentEmailAddress( postByEmailSettings?.post_by_email_address );
+	const isAgentEmailEnabled = !! agentEmailAddress;
+	const vCardHref = agentEmailAddress
+		? getAgentEmailVCardDataUrl( site.slug, agentEmailAddress )
+		: undefined;
+	const vCardFileName = getAgentEmailVCardFileName( site.slug );
+
+	const emailAddressMutation = useMutation(
+		withSnackbar( sitePostByEmailSettingsMutation( site ), {
+			success: __( 'WordPress Agent email address settings saved.' ),
+			error: __( 'Failed to save WordPress Agent email address settings.' ),
+		} )
+	);
+	const isEmailAddressActionDisabled =
+		disabled || isPostByEmailSettingsLoading || emailAddressMutation.isPending;
+
+	const handleEmailAddressToggle = ( enabled: boolean ) => {
+		emailAddressMutation.mutate(
+			{
+				post_by_email_address: enabled ? 'create' : 'delete',
+			},
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_ai_tool_email_agent_toggled', {
+						enabled,
+						site_id: site.ID,
+					} );
+				},
+			}
+		);
+	};
+
+	const handleRegenerateAddress = () => {
+		emailAddressMutation.mutate(
+			{
+				post_by_email_address: 'regenerate',
+			},
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_ai_tool_email_agent_regenerated', {
+						site_id: site.ID,
+					} );
+				},
+			}
+		);
+	};
+
+	const handleCopyAddress = () => {
+		recordTracksEvent( 'calypso_dashboard_ai_tool_email_agent_copied', {
+			site_id: site.ID,
+		} );
+	};
+
+	const handleAddToContacts = () => {
+		recordTracksEvent( 'calypso_dashboard_ai_tool_email_agent_vcard_downloaded', {
+			site_id: site.ID,
+		} );
+	};
+
+	return (
+		<Card className={ disabled ? 'ai-tools-settings__locked-card' : undefined }>
+			<CardBody>
+				<VStack spacing={ 4 }>
+					<SectionHeader
+						title={ __( 'Email WordPress Agent' ) }
+						description={ __( 'Email this site’s WordPress Agent using a private address.' ) }
+						actions={ disabled ? <UpgradeRequiredBadge /> : undefined }
+						level={ 3 }
+					/>
+					<ToggleControl
+						__nextHasNoMarginBottom
+						checked={ isAgentEmailEnabled }
+						disabled={ isEmailAddressActionDisabled }
+						label={ __( 'Enable WordPress Agent email address' ) }
+						onChange={ handleEmailAddressToggle }
+					/>
+					{ ( isAgentEnabled || isAgentEmailEnabled ) && (
+						<Notice>
+							{ __(
+								'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
+							) }
+						</Notice>
+					) }
+					{ agentEmailAddress && (
+						<VStack spacing={ 3 }>
+							<ClipboardInputControl
+								label={ __( 'WordPress Agent email address' ) }
+								value={ agentEmailAddress }
+								readOnly
+								onCopy={ handleCopyAddress }
+							/>
+							<HStack justify="flex-start">
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									href={ vCardHref }
+									download={ vCardFileName }
+									onClick={ handleAddToContacts }
+								>
+									{ __( 'Add to contacts' ) }
+								</Button>
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									isBusy={ emailAddressMutation.isPending }
+									disabled={ isEmailAddressActionDisabled }
+									onClick={ handleRegenerateAddress }
+								>
+									{ __( 'Regenerate address' ) }
+								</Button>
+							</HStack>
+						</VStack>
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
+export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
+	const { recordTracksEvent } = useAnalytics();
+	const tracksAudienceProps = useMcpTracksAudienceProps();
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: pluginStatus } = useSuspenseQuery( bigSkyPluginQuery( site.ID ) );
+
+	const isEnabled = pluginStatus?.enabled ?? false;
+	const isAvailable = pluginStatus?.available ?? false;
+	const isFreeTrial = pluginStatus?.on_free_trial ?? false;
+
+	const [ isConfirmModalOpen, setIsConfirmModalOpen ] = useState( false );
+
+	const { setShowHelpCenter, setNavigateToRoute } = useHelpCenter();
+
+	// MCP settings for this site
+	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
+	const isMcpEnabled = getSiteLevelEnabled( userSettings || {}, site.ID );
+
+	const accountAbilities = getAccountMcpAbilities( userSettings || {} );
+	const siteContextToolIds = getSiteContextToolIds( userSettings || {} );
+	const siteAbilities = getSiteMcpAbilities( userSettings || {}, site.ID );
+	const siteAccountAbilities = siteContextToolIds.size
+		? Object.fromEntries(
+				Object.entries( accountAbilities ).filter( ( [ id ] ) => siteContextToolIds.has( id ) )
+			)
+		: accountAbilities;
+	const mcpAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
+	// When there are no site-specific overrides, use site_level_enabled_default as the effective
+	// state. True when account MCP is on for sites, false when disabled. The site default never
+	// turns on an opt-in tool, so it keeps its account state.
+	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
+	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
+	const availableTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > )
+		.filter( ( [ , tool ] ) => tool.visible !== false )
+		.map( ( [ toolId, tool ] ): [ string, McpAbility ] => [
+			toolId,
+			{
+				...tool,
+				enabled: isSiteMcpToolEnabled( tool, hasSiteAbilityOverrides, defaultToolEnabled ),
+			},
+		] );
+	const readTools = availableTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
+	const writeTools = availableTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
+	const ordinaryReadTools = getOrdinaryTools( readTools );
+	const ordinaryWriteTools = getOrdinaryTools( writeTools );
+	const enabledToolCount = ( tools: Array< [ string, McpAbility ] > ) =>
+		tools.filter( ( [ , tool ] ) => tool.enabled ).length;
+
+	// The badges span the site-published abilities on the subpages too, so "All
+	// enabled" can't appear while those groups are still off (their default).
+	const localeSlug = useLocale();
+	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
+	const savedRemoteGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
+	const remoteOptIn = userSettings?.mcp_abilities?.remote_abilities_requiring_opt_in;
+	const { data: remoteAbilities } = useQuery( {
+		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
+		enabled: config.isEnabled( 'mcp-settings' ) && isAvailable && isMcpEnabled && !! site.jetpack,
+	} );
+	// Count published abilities individually; an ability counts as enabled when
+	// its group key is allowed. Saved-only groups (catalog unreachable) fall
+	// back to counting their keys.
+	const remoteCounts = ( category: 'read' | 'write' ) => {
+		const ordinaryTools = category === 'read' ? ordinaryReadTools : ordinaryWriteTools;
+		const defaultEnabled =
+			isMcpEnabled &&
+			ordinaryTools.length > 0 &&
+			enabledToolCount( ordinaryTools ) === ordinaryTools.length;
+		let total = 0;
+		let enabled = 0;
+		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
+			if ( group.abilities.length > 0 ) {
+				total += group.abilities.length;
+				enabled += group.abilities.filter( ( ability ) =>
+					isRemoteAbilityEnabled(
+						savedRemoteGroups,
+						ability.name,
+						ability.meta?.annotations,
+						defaultEnabled,
+						remoteOptIn
+					)
+				).length;
+				return;
+			}
+			total += group.keys.length + group.abilityKeys.length;
+			enabled += [ ...group.keys, ...group.abilityKeys ].filter( ( key ) =>
+				isRemoteKeyEnabled( savedRemoteGroups, key, defaultEnabled )
+			).length;
+		} );
+		return { total, enabled };
+	};
+	const readRemote = remoteCounts( 'read' );
+	const writeRemote = remoteCounts( 'write' );
+	const readBadge = getAccessBadge(
+		readTools.length + readRemote.total,
+		enabledToolCount( readTools ) + readRemote.enabled
+	);
+	const writeBadge = getAccessBadge(
+		writeTools.length + writeRemote.total,
+		enabledToolCount( writeTools ) + writeRemote.enabled
+	);
+	const mcpMutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: isMcpEnabled
+				? __( 'MCP access disabled for this site.' )
+				: __( 'MCP access enabled for this site.' ),
+			error: __( 'Failed to save MCP settings.' ),
+		} )
+	);
+
+	const handleMcpToggle = ( enabled: boolean ) => {
+		const abilities: Record< string, boolean > = {};
+		if ( enabled ) {
+			// Auto-enable the ordinary read tools; leave write and opt-in tools unset (not explicitly disabled).
+			ordinaryReadTools.forEach( ( [ toolId ] ) => {
+				abilities[ toolId ] = true;
+			} );
+		}
+		// When disabling, send abilities: {} to clear all site-level tool access.
+		mcpMutation.mutate(
+			{
+				mcp_abilities: {
+					sites: [
+						{
+							blog_id: site.ID,
+							site_level_enabled: enabled,
+							abilities,
+						},
+					],
+				},
+			},
+			{
+				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_mcp_site_toggled', {
+						...tracksAudienceProps,
+						enabled,
+						site_id: site.ID,
+					} );
+				},
+			}
+		);
+	};
+
+	const mutation = useMutation(
+		withSnackbar( bigSkyPluginMutation( site.ID ), {
+			success: ! isEnabled ? __( 'WordPress Agent enabled.' ) : __( 'WordPress Agent disabled.' ),
+			error: __( 'Failed to save WordPress Agent settings.' ),
+		} )
+	);
+
+	const description = isAvailable
+		? createInterpolateElement(
+				__(
+					'Create content, transform designs, generate images, and get instant help with AI. <learnMoreLink />'
+				),
+				{
+					learnMoreLink: <InlineSupportLink supportContext="ai-tools" />,
+				}
+			)
+		: undefined;
+
+	const handleToggle = ( enable: boolean ) => {
+		if ( ! enable && isFreeTrial && ! isConfirmModalOpen ) {
+			setIsConfirmModalOpen( true );
+			return;
+		}
+
+		if ( enable ) {
+			recordTracksEvent( 'calypso_dashboard_ai_tool_ai_assistant_enabled' );
+		} else {
+			recordTracksEvent( 'calypso_dashboard_ai_tool_ai_assistant_disabled' );
+		}
+
+		mutation.mutate(
+			{ enable },
+			{
+				onSuccess: () => {
+					setIsConfirmModalOpen( false );
+				},
+			}
+		);
+	};
+
+	const renderSettings = () => {
+		return (
+			<>
+				<Card className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<SectionHeader
+								title={ __( 'WordPress Agent' ) }
+								description={ __( 'Helps with site setup, content, design, and more.' ) }
+								actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
+								level={ 3 }
+							/>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ isEnabled }
+								disabled={ ! isAvailable || mutation.isPending }
+								label={ __( 'Enable WordPress Agent' ) }
+								onChange={ handleToggle }
+							/>
+						</VStack>
+					</CardBody>
+					{ ! isEnabled && (
+						<CardFooter className="ai-tools-settings__features-footer">
+							<VStack as="ul" spacing={ 1 } style={ { padding: 0, margin: 0 } }>
+								{ features.map( ( feature, i ) => (
+									<HStack key={ i } as="li" justify="flex-start" spacing={ 3 }>
+										<Icon
+											icon={ check }
+											style={ {
+												flexShrink: 0,
+												alignSelf: 'flex-start',
+												color: 'var(--dashboard__foreground-color-success)',
+											} }
+										/>
+										<Text>{ feature }</Text>
+									</HStack>
+								) ) }
+							</VStack>
+						</CardFooter>
+					) }
+				</Card>
+				<EmailAssistantCard
+					site={ site }
+					recordTracksEvent={ recordTracksEvent }
+					isAgentEnabled={ isEnabled }
+					disabled={ ! isAvailable }
+				/>
+				{ config.isEnabled( 'dolly/telegram' ) && (
+					<div className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
+						<SummaryButton
+							href={ TELEGRAM_CONNECTION_PATH }
+							title={ __( 'Connect WordPress Agent to Telegram' ) }
+							description={ __(
+								'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+							) }
+							decoration={ <Icon icon={ send } size={ 24 } /> }
+							onClick={ () => {
+								recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
+									site_id: site.ID,
+								} );
+							} }
+							badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+							disabled={ ! isAvailable }
+						/>
+					</div>
+				) }
+				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
+					<>
+						<McpConnectCard
+							siteSlug={ siteSlug }
+							mcpEnabled={ isMcpEnabled }
+							onTurnOn={ () => handleMcpToggle( true ) }
+							isTurningOn={ mcpMutation.isPending }
+						/>
+						<Card className="mcp-settings__access-card">
+							<CardBody>
+								<VStack spacing={ 4 }>
+									<SectionHeader
+										title={ __( 'External AI agent access' ) }
+										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
+										level={ 3 }
+									/>
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ isMcpEnabled }
+										disabled={ mcpMutation.isPending }
+										label={ __( 'Enable MCP access for this site' ) }
+										onChange={ handleMcpToggle }
+									/>
+								</VStack>
+							</CardBody>
+							{ isMcpEnabled && (
+								<>
+									<CardDivider className="mcp-settings__sub-divider" />
+									<RouterLinkSummaryButton
+										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
+										density="medium"
+										title={ __( 'Read' ) }
+										decoration={ <Icon icon={ seen } size={ 24 } /> }
+										badges={ [ readBadge ] }
+									/>
+									<RouterLinkSummaryButton
+										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
+										density="medium"
+										title={ __( 'Write' ) }
+										decoration={ <Icon icon={ pencil } size={ 24 } /> }
+										badges={ [ writeBadge ] }
+									/>
+								</>
+							) }
+						</Card>
+					</>
+				) }
+				{ isFreeTrial && (
+					<ConfirmModal
+						isOpen={ isConfirmModalOpen }
+						onCancel={ () => setIsConfirmModalOpen( false ) }
+						onConfirm={ () => handleToggle( false ) }
+						confirmButtonProps={ {
+							label: __( 'Disable WordPress Agent' ),
+							isBusy: mutation.isPending,
+							disabled: mutation.isPending,
+						} }
+					>
+						{ __(
+							'You are on a free trial. If you disable WordPress Agent, you will not be able to turn it back on without a paid plan.'
+						) }
+					</ConfirmModal>
+				) }
+				{ isEnabled && (
+					<VStack
+						className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }
+						spacing={ 3 }
+					>
+						<SectionHeader
+							title={ __( 'Ways to get started' ) }
+							actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
+							level={ 3 }
+						/>
+						<SummaryButtonList>
+							<SummaryButton
+								title={ __( 'Get answers' ) }
+								decoration={ <Icon icon={ help } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+								disabled={ ! isAvailable }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_get_answers_click' );
+									setNavigateToRoute( '/odie' );
+									setShowHelpCenter( true );
+								} }
+							/>
+							<SummaryButton
+								href={ `${ site.options?.admin_url }site-editor.php?canvas=edit` }
+								title={ __( 'Update your site design' ) }
+								decoration={ <Icon icon={ brush } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+								disabled={ ! isAvailable }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_edit_site_click' );
+								} }
+							/>
+							<SummaryButton
+								href={ `${ site.options?.admin_url }post-new.php` }
+								title={ __( 'Draft and revise content' ) }
+								decoration={ <Icon icon={ termDescription } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+								disabled={ ! isAvailable }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_draft_post_click' );
+								} }
+							/>
+							<SummaryButton
+								href={ `${ site.options?.admin_url }upload.php?ai-assistant` }
+								title={ __( 'Create beautiful images' ) }
+								decoration={ <Icon icon={ image } /> }
+								badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
+								disabled={ ! isAvailable }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_create_images_click' );
+								} }
+							/>
+						</SummaryButtonList>
+					</VStack>
+				) }
+			</>
+		);
+	};
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 2 } /> }
+					title={ __( 'AI tools' ) }
+					description={ description }
+				/>
+			}
+		>
+			{ ! isAvailable && (
+				<UpsellCallout
+					site={ site }
+					feature={ HostingFeatures.BIG_SKY }
+					upsellId="ai-tools"
+					upsellPlanRequirement="any"
+					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
+					upsellDescription={ __(
+						'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
+					) }
+					upsellIcon={ comment }
+					upsellImage={
+						<ThemedIllustration
+							light={ upsellIllustrationUrl }
+							dark={ upsellIllustrationDarkUrl }
+						/>
+					}
+				/>
+			) }
+			{ renderSettings() }
+		</PageLayout>
+	);
+}

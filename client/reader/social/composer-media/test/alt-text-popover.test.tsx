@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { AltTextPopover } from '../alt-text-popover';
 
 describe( 'AltTextPopover', () => {
 	it( 'opens, edits, and saves alt text', async () => {
-		const onSave = jest.fn();
+		const onSave = vi.fn();
 		const user = userEvent.setup();
 		render( <AltTextPopover currentAlt="" onSave={ onSave } previewUrl="blob:fake" /> );
 
@@ -22,7 +23,7 @@ describe( 'AltTextPopover', () => {
 
 	it( 'shows existing alt text in the textarea on open', async () => {
 		const user = userEvent.setup();
-		render( <AltTextPopover currentAlt="prefilled" onSave={ jest.fn() } previewUrl="blob:fake" /> );
+		render( <AltTextPopover currentAlt="prefilled" onSave={ vi.fn() } previewUrl="blob:fake" /> );
 
 		await user.click( screen.getByRole( 'button', { name: /edit alt text/i } ) );
 

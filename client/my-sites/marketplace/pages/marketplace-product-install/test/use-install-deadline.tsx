@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { siteLatestAtomicTransferQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import React, { useState } from 'react';
+import { vi } from 'vitest';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { INSTALL_DEADLINE_MS, useInstallDeadline } from '../use-install-deadline';
 
-const mockFetchLatestAtomicTransfer = jest.fn();
+const mockFetchLatestAtomicTransfer = vi.fn();
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
 	fetchLatestAtomicTransfer: ( siteId: number ) => mockFetchLatestAtomicTransfer( siteId ),
 } ) );
 
@@ -52,21 +53,21 @@ const renderSwitchableDeadline = () => {
 // Modern fake timers move the wall clock along with the timers, which is what the hook re-reads.
 const advance = async ( ms: number ) => {
 	await act( async () => {
-		jest.advanceTimersByTime( ms );
+		vi.advanceTimersByTime( ms );
 	} );
 };
 
 describe( 'useInstallDeadline', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
-		jest.setSystemTime( new Date( '2026-08-06T12:00:00Z' ) );
+		vi.useFakeTimers();
+		vi.setSystemTime( new Date( '2026-08-06T12:00:00Z' ) );
 		mockFetchLatestAtomicTransfer.mockRejectedValue(
 			Object.assign( new Error( '404' ), { status: 404 } )
 		);
 	} );
 	afterEach( () => {
-		jest.useRealTimers();
-		jest.clearAllMocks();
+		vi.useRealTimers();
+		vi.clearAllMocks();
 	} );
 
 	it( 'does not time out inside the deadline', async () => {

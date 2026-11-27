@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( '@wordpress/compose', () => ( {
-	useViewportMatch: jest.fn(),
-} ) );
-
 import { renderHook } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
+import { type Mock, vi } from 'vitest';
 import { useShowOnboardingProgress } from '../use-show-onboarding-progress';
 
-const mockViewport = useViewportMatch as unknown as jest.Mock;
+vi.mock( '@wordpress/compose', () => ( {
+	useViewportMatch: vi.fn(),
+} ) );
+
+const mockViewport = useViewportMatch as unknown as Mock;
 
 describe( 'useShowOnboardingProgress', () => {
 	beforeEach( () => {

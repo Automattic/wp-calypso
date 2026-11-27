@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,12 +8,13 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import SitesOverviewContext from '../../../sites-overview/context';
 import UpgradePopover from '../index';
 
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn().mockImplementation( () => jest.fn() ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual< typeof import( 'react-redux' ) >( 'react-redux' ) ),
+	useDispatch: vi.fn().mockImplementation( () => vi.fn() ),
 } ) );
 
 describe( 'UpgradePopover', () => {
@@ -45,8 +46,8 @@ describe( 'UpgradePopover', () => {
 	} );
 
 	it( 'calls the right methods when Explore button is clicked', () => {
-		const mockShowLicenseInfo = jest.fn();
-		const onClose = jest.fn();
+		const mockShowLicenseInfo = vi.fn();
+		const onClose = vi.fn();
 
 		render(
 			// We need only the showLicenseInfo function from the context
@@ -69,7 +70,7 @@ describe( 'UpgradePopover', () => {
 	} );
 
 	it( 'renders the component when the popover is dismissible and show close button', () => {
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		render( <UpgradePopover dismissibleWithPreference onClose={ onClose } { ...defaultProps } />, {
 			wrapper: Wrapper,
 		} );

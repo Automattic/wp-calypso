@@ -9,6 +9,7 @@ import {
 	WPCOM_FEATURES_PARTNER_THEMES,
 } from '@automattic/calypso-products';
 import { getQueryArgs } from '@wordpress/url';
+import { vi } from 'vitest';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import { getThemesLastPageForQuery } from 'calypso/state/themes/selectors/get-themes-last-page-for-query';
 import {
@@ -126,12 +127,12 @@ const nokul = {
 	},
 };
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
-	mock.isEnabled = jest.fn( () => {
+	mock.isEnabled = vi.fn( () => {
 		return true;
 	} );
-	return mock;
+	return { ...mock, default: mock };
 } );
 
 describe( 'themes selectors', () => {

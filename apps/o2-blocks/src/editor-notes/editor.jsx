@@ -1,5 +1,5 @@
+import { RichText } from '@wordpress/block-editor';
 import { registerBlockType } from '@wordpress/blocks';
-import { RichText } from '@wordpress/editor';
 
 import './editor.scss';
 

@@ -214,7 +214,7 @@ export function SocialSpotlight( { connections }: Props ) {
 				return;
 			}
 			for ( const raw of page.items ) {
-				let post: SocialPost | null = null;
+				let post: SocialPost | null;
 				try {
 					if ( connection.protocol === 'atmosphere' ) {
 						post = mapAtmosphereFeedItemToSocialPost( raw as AtmosphereFeedItem );

@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { BackupKnownThreats } from '../known-threats';
 
-jest.mock( 'calypso/state/selectors/site-has-feature' );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/ui/selectors' ),
+vi.mock( 'calypso/state/selectors/site-has-feature' );
+vi.mock( 'calypso/state/ui/selectors', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/state/ui/selectors' ) >(
+		'calypso/state/ui/selectors'
+	) ),
 	getSelectedSiteSlug: () => 'example.wordpress.com',
 } ) );
 
@@ -126,7 +129,7 @@ const threatsBody = {
 
 describe( 'BackupKnownThreats', () => {
 	beforeEach( () => {
-		( siteHasFeature as jest.Mock ).mockReturnValue( true );
+		( siteHasFeature as Mock ).mockReturnValue( true );
 	} );
 	afterEach( () => nock.cleanAll() );
 
@@ -387,7 +390,7 @@ describe( 'BackupKnownThreats', () => {
 	} );
 
 	it( 'shows only the count without Scan and never requests details', async () => {
-		( siteHasFeature as jest.Mock ).mockReturnValue( false );
+		( siteHasFeature as Mock ).mockReturnValue( false );
 		mockList( [ backupWith( counts( 1 ) ) ] );
 		const details = nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderIt();

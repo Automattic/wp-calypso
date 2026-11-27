@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -11,13 +13,15 @@ import {
 import useNock from 'calypso/test-helpers/use-nock';
 import { deleteSite, receiveSite, receiveSites, requestSites, requestSite } from '../actions';
 
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud', { spy: true } );
+
 describe( 'actions', () => {
 	const mySitesPath =
 		'/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( '#receiveSite()', () => {
@@ -110,10 +114,7 @@ describe( 'actions', () => {
 			let isJetpackCloudMock;
 
 			beforeEach( () => {
-				isJetpackCloudMock = jest.spyOn(
-					require( 'calypso/lib/jetpack/is-jetpack-cloud' ),
-					'default'
-				);
+				isJetpackCloudMock = vi.mocked( isJetpackCloud );
 			} );
 
 			afterEach( () => {

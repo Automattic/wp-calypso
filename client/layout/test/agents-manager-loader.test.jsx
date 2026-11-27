@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { omnibarAgentsManagerEnabledQuery, queryClient } from '@automattic/api-queries';
 import { act, render, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import AsyncLoad from 'calypso/components/async-load';
 import { createToolProvider } from 'calypso/my-sites/plugins/marketplace-ai-experience/agent-provider';
 import {
@@ -15,25 +16,25 @@ import { getSelectedSite, getSelectedSiteSlug, isSiteSection } from 'calypso/sta
 import AgentsManagerLoader from '../agents-manager-loader';
 import { useHelpCenterSite } from '../use-help-center-site';
 
-jest.mock( 'react-redux', () => ( { useSelector: ( selector ) => selector() } ) );
-jest.mock( 'calypso/state', () => {
+vi.mock( 'react-redux', () => ( { useSelector: ( selector ) => selector() } ) );
+vi.mock( 'calypso/state', () => {
 	const store = { getState: () => ( {} ) };
 	return { useStore: () => store };
 } );
-jest.mock( 'calypso/components/async-load', () => jest.fn( () => null ) );
-jest.mock( 'calypso/state/current-user/selectors', () => ( { getCurrentUser: jest.fn() } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSite: jest.fn(),
-	getSelectedSiteSlug: jest.fn(),
-	isSiteSection: jest.fn(),
+vi.mock( 'calypso/components/async-load', () => ( { default: vi.fn( () => null ) } ) );
+vi.mock( 'calypso/state/current-user/selectors', () => ( { getCurrentUser: vi.fn() } ) );
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: vi.fn(),
+	getSelectedSiteSlug: vi.fn(),
+	isSiteSection: vi.fn(),
 } ) );
-jest.mock( '../use-help-center-site', () => ( { useHelpCenterSite: jest.fn() } ) );
-jest.mock( 'calypso/my-sites/plugins/marketplace-ai-experience/agent-provider', () => ( {
-	createToolProvider: jest.fn( ( options ) => options ),
+vi.mock( '../use-help-center-site', () => ( { useHelpCenterSite: vi.fn() } ) );
+vi.mock( 'calypso/my-sites/plugins/marketplace-ai-experience/agent-provider', () => ( {
+	createToolProvider: vi.fn( ( options ) => options ),
 } ) );
-jest.mock( 'calypso/my-sites/plugins/marketplace-ai-experience/picks-store', () => ( {
-	deliverPicks: jest.fn(),
-	setPicks: jest.fn(),
+vi.mock( 'calypso/my-sites/plugins/marketplace-ai-experience/picks-store', () => ( {
+	deliverPicks: vi.fn(),
+	setPicks: vi.fn(),
 } ) );
 
 const selectedSite = { ID: 1 };
@@ -42,7 +43,7 @@ const user = { ID: 3 };
 const loadedProps = () => AsyncLoad.mock.calls.at( -1 )[ 0 ];
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, false );
 	delete window.agentsManagerData;
 	getCurrentUser.mockReturnValue( user );

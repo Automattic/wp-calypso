@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
 import JetpackBenefitsScanHistory from '../scan-history';
 
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useDispatch: jest.fn().mockImplementation( () => {} ),
-	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useDispatch: vi.fn().mockImplementation( () => {} ),
+	useSelector: vi.fn().mockImplementation( ( selector ) => selector() ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-site-scan-state' );
-jest.mock( 'calypso/state/selectors/is-requesting-jetpack-scan' );
-jest.mock( 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts' );
-jest.mock( 'calypso/state/selectors/get-site-scan-progress' );
+vi.mock( 'calypso/state/selectors/get-site-scan-state' );
+vi.mock( 'calypso/state/selectors/is-requesting-jetpack-scan' );
+vi.mock( 'calypso/state/selectors/is-requesting-jetpack-scan-threat-counts' );
+vi.mock( 'calypso/state/selectors/get-site-scan-progress' );
 
 describe( 'Scan History Jetpack Benefit Block', () => {
 	beforeEach( () => {

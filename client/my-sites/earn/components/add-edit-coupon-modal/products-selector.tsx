@@ -45,7 +45,7 @@ const ProductsSelector = ( {
 			( event.target as HTMLInputElement ).value ??
 			( event.target.parentElement as HTMLInputElement )?.value ??
 			'';
-		let newList = [];
+		let newList;
 		if ( allowMultiple ) {
 			if ( COUPON_PRODUCTS_ANY === productId ) {
 				setSelectedPlanIds( [] );

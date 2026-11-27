@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook, act } from '@testing-library/react';
 import { vi } from 'vitest';
 import { useReaderFollowupSuggestions } from '../reader-followup-hook';

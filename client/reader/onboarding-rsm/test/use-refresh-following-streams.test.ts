@@ -1,20 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
+import { vi } from 'vitest';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useRefreshFollowingStreams } from '../use-refresh-following-streams';
 
-const mockGetCurrentQueryArguments = jest.fn();
-const mockInvalidateQueries = jest.fn();
+const mockGetCurrentQueryArguments = vi.fn();
+const mockInvalidateQueries = vi.fn();
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
 	useQueryClient: () => ( { invalidateQueries: mockInvalidateQueries } ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-current-query-arguments', () => ( {
+vi.mock( 'calypso/state/selectors/get-current-query-arguments', () => ( {
 	__esModule: true,
 	default: ( state: unknown ) => mockGetCurrentQueryArguments( state ),
 } ) );
@@ -31,7 +34,7 @@ const getInvalidatedQueryKeyCalls = ( queryKeys: readonly ( readonly unknown[] )
 let locationHrefBeforeTest: string;
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	locationHrefBeforeTest = window.location.href;
 	setPathname( '/sites' );
 	mockGetCurrentQueryArguments.mockReturnValue( null );

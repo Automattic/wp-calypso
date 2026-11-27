@@ -9,22 +9,22 @@ type DropdownOptionProps = {
 };
 
 const Container = styled.div`
-	& span.title,
-	&:visited span.title,
-	&:hover span.title {
-		color: var( --color-text );
-	}
-
-	span {
-		color: var( --studio-green-60 );
-	}
-
 	.title {
+		color: var( --color-text );
 		margin-right: 4px;
 		line-height: 20px;
 	}
-	.is-highlighted & {
-		background-color: #f6f7f7;
+
+	span:not( .title ) {
+		color: var( --studio-green-60 );
+	}
+
+	/*
+	 * CustomSelectControl gives the highlighted option a dark background and light text.
+	 * Inherit that text color so the title and discount stay readable on it.
+	 */
+	[data-active-item] & span {
+		color: inherit;
 	}
 `;
 

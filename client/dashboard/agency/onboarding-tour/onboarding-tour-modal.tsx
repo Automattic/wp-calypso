@@ -14,7 +14,6 @@ import { useEffect, useMemo, useRef } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Notice } from '../../components/notice';
 import PageDots from '../../components/page-dots';
-import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import NewTabLabel from '../components/new-tab-label';
 import glow from './images/tour/glow.jpg';
@@ -30,7 +29,8 @@ export interface OnboardingTourModalProps {
 	sectionId: OnboardingTourSectionId;
 	onSectionChange: ( sectionId: OnboardingTourSectionId ) => void;
 	/** Called when an explore button leaves the tour, so the host can offer to resume it. */
-	onExplore: ( sectionId: OnboardingTourSectionId ) => void;
+	onExplore: ( sectionId: OnboardingTourSectionId, href: string ) => void;
+	isExploring?: boolean;
 	onClose: () => void;
 	onScheduleCall: () => void;
 	isSchedulingCall?: boolean;
@@ -45,6 +45,7 @@ export default function OnboardingTourModal( {
 	sectionId: currentSectionId,
 	onSectionChange: goToSection,
 	onExplore,
+	isExploring,
 	onClose,
 	onScheduleCall,
 	isSchedulingCall,
@@ -142,19 +143,19 @@ export default function OnboardingTourModal( {
 		if ( currentSection.explore ) {
 			const { label: exploreLabel, href } = currentSection.explore;
 			secondaryAction = (
-				<RouterLinkButton
-					to={ href }
+				<Button
 					variant="secondary"
+					isBusy={ isExploring }
+					disabled={ isExploring }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_a4a_onboarding_tour_explore_feature_click', {
 							section: currentSectionId,
 						} );
-						onExplore( currentSectionId );
-						onClose();
+						onExplore( currentSectionId, href );
 					} }
 				>
 					{ label( exploreLabel ) }
-				</RouterLinkButton>
+				</Button>
 			);
 		}
 	}

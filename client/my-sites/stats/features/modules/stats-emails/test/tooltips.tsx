@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { OpensTooltipContent, ClicksTooltipContent, type EmailStatsItem } from '../tooltips';

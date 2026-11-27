@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, type MockInstance, vi } from 'vitest';
 import { ThreadHeader } from '../thread-header';
 import type { AtmosphereConnection } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
 const connection: AtmosphereConnection = {
@@ -21,14 +22,14 @@ const connection: AtmosphereConnection = {
 };
 
 describe( 'ThreadHeader', () => {
-	let backSpy: jest.SpyInstance;
-	let lengthSpy: jest.SpyInstance;
+	let backSpy: MockInstance;
+	let lengthSpy: MockInstance;
 
 	beforeEach( () => {
-		( page as unknown as jest.Mock ).mockReset();
-		backSpy = jest.spyOn( window.history, 'back' ).mockImplementation( () => {} );
+		( page as unknown as Mock ).mockReset();
+		backSpy = vi.spyOn( window.history, 'back' ).mockImplementation( () => {} );
 		// Default to a freshly-loaded-tab state; individual tests override.
-		lengthSpy = jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
+		lengthSpy = vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
 	} );
 
 	afterEach( () => {
@@ -59,7 +60,7 @@ describe( 'ThreadHeader', () => {
 	} );
 
 	it( 'invokes onBackToTimeline callback in the deep-link branch', async () => {
-		const onBackToTimeline = jest.fn();
+		const onBackToTimeline = vi.fn();
 		const user = userEvent.setup();
 		render( <ThreadHeader connection={ connection } onBackToTimeline={ onBackToTimeline } /> );
 		await user.click( screen.getByRole( 'button', { name: /back/i } ) );
@@ -69,7 +70,7 @@ describe( 'ThreadHeader', () => {
 
 	it( 'invokes onBackToTimeline callback in the in-app-history branch', async () => {
 		lengthSpy.mockReturnValue( 3 );
-		const onBackToTimeline = jest.fn();
+		const onBackToTimeline = vi.fn();
 		const user = userEvent.setup();
 		render( <ThreadHeader connection={ connection } onBackToTimeline={ onBackToTimeline } /> );
 		await user.click( screen.getByRole( 'button', { name: /back/i } ) );

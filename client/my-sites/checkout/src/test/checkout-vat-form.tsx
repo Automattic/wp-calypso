@@ -1,11 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { convertResponseCartToRequestCart } from '@automattic/shopping-cart';
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -25,27 +25,31 @@ import {
 	countryList,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockPayPalConfigurationEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockUserSignupValidationEndpoint,
 	mockSetCachedContactDetailsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
+import { setupUserNoPointerEvents } from './util/setup-user';
 import type { CartKey } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-jest.mock( 'calypso/lib/navigate' );
+vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+vi.mock( 'calypso/lib/navigate' );
 // Spy on errorNotice so we can assert the message text; keep every other
 // notices action real so the rest of the suite behaves normally.
-jest.mock( 'calypso/state/notices/actions', () => {
-	const actual = jest.requireActual( 'calypso/state/notices/actions' );
+vi.mock( 'calypso/state/notices/actions', async () => {
+	const actual = await vi.importActual< typeof import( 'calypso/state/notices/actions' ) >(
+		'calypso/state/notices/actions'
+	);
 	return {
 		...actual,
-		errorNotice: jest.fn( actual.errorNotice ),
+		errorNotice: vi.fn( actual.errorNotice ),
 	};
 } );
 
@@ -54,7 +58,7 @@ jest.mock( 'calypso/state/notices/actions', () => {
 // rather that each iteration?), so we need to increase the timeout for their
 // operation. The standard timeout (at the time of writing) is 5 seconds so
 // we are increasing this to 12 seconds.
-jest.setTimeout( 12000 );
+vi.setConfig( { testTimeout: 12000 } );
 
 describe( 'Checkout contact step VAT form', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
@@ -82,10 +86,11 @@ describe( 'Checkout contact step VAT form', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
-		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
+		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
+		mockPayPalConfigurationEndpoint();
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockMatchMediaOnWindow();
@@ -95,7 +100,7 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	it( 'does not render the VAT field checkbox if the selected country does not support VAT', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -104,7 +109,7 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	it( 'renders the VAT field checkbox if the selected country does support VAT', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -113,7 +118,7 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	it( 'does not render the VAT fields if the checkbox is not checked', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -123,7 +128,7 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	it( 'renders the VAT fields if the checkbox is checked', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -134,7 +139,7 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	it( 'does not render the Northern Ireland checkbox is if the VAT checkbox is checked and the country is EU', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -144,7 +149,7 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	it( 'renders the Northern Ireland checkbox is if the VAT checkbox is checked and the country is GB', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -154,7 +159,7 @@ describe( 'Checkout contact step VAT form', () => {
 	} );
 
 	it( 'hides the Northern Ireland checkbox is if the VAT checkbox is checked and the country is changed from GB to ES', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -170,6 +175,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -200,6 +206,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -231,6 +238,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -260,6 +268,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -272,7 +281,7 @@ describe( 'Checkout contact step VAT form', () => {
 			country: 'GB',
 		} );
 		const cartChanges = { products: [ planWithoutDomain ] };
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
 		// Wait for checkout to load.
@@ -298,7 +307,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryCode = 'GB';
 		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
@@ -327,7 +336,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryCode = 'GB';
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		mockSetVatInfoEndpoint();
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
@@ -358,7 +367,7 @@ describe( 'Checkout contact step VAT form', () => {
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
 		mockSetVatInfoEndpoint();
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render(
 			<MockCheckout
@@ -387,7 +396,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryCode = 'GB';
 		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
@@ -416,7 +425,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryCode = 'CH';
 		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
@@ -445,7 +454,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryCode = 'CH';
 		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
@@ -474,7 +483,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryCode = 'CH';
 		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
@@ -501,6 +510,7 @@ describe( 'Checkout contact step VAT form', () => {
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetSupportedCountriesEndpoint( countryList, 'en' );
 		mockGetPaymentMethodsEndpoint( [] );
+		mockPayPalConfigurationEndpoint();
 		const cachedContactCountry = 'ES';
 		mockCachedContactDetailsEndpoint( {
 			country_code: cachedContactCountry,
@@ -517,7 +527,7 @@ describe( 'Checkout contact step VAT form', () => {
 			address: vatAddress,
 			country: countryCode,
 		} );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 
@@ -557,7 +567,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryCode = 'GB';
 		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -584,7 +594,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryCode = 'GB';
 		const mockVatEndpoint = mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await screen.findByLabelText( 'Continue with the entered contact details' );
@@ -613,10 +623,10 @@ describe( 'Checkout contact step VAT form', () => {
 		const postalCode = 'NW1 4NP';
 		mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 
-		const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+		const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
 
 		render(
 			<MockCheckout
@@ -665,10 +675,10 @@ describe( 'Checkout contact step VAT form', () => {
 		const postalCode = 'NW1 4NP';
 		mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 
-		const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+		const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
 
 		render(
 			<MockCheckout
@@ -714,10 +724,10 @@ describe( 'Checkout contact step VAT form', () => {
 		const postalCode = 'NW1 4NP';
 		mockSetVatInfoEndpoint();
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 
-		const setCart = jest.fn().mockImplementation( mockSetCartEndpoint );
+		const setCart = vi.fn().mockImplementation( mockSetCartEndpoint );
 
 		render(
 			<MockCheckout
@@ -761,7 +771,7 @@ describe( 'Checkout contact step VAT form', () => {
 		const countryCode = 'GB';
 		nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/me/vat-info' ).reply( 400 );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
@@ -785,7 +795,7 @@ describe( 'Checkout contact step VAT form', () => {
 				'VAT validation for this country is temporarily unavailable. Please try again later.',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
@@ -793,7 +803,7 @@ describe( 'Checkout contact step VAT form', () => {
 		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
 		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
 		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
-		( errorNotice as jest.Mock ).mockClear();
+		( errorNotice as Mock ).mockClear();
 		await user.click( screen.getByText( 'Continue to payment' ) );
 		await waitFor( () =>
 			expect( errorNotice ).toHaveBeenCalledWith(
@@ -814,7 +824,7 @@ describe( 'Checkout contact step VAT form', () => {
 			message: 'Your VAT details are not valid. Please check each field and try again.',
 		} );
 		mockContactDetailsValidationEndpoint( 'tax', { success: true } );
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), countryCode );
@@ -822,7 +832,7 @@ describe( 'Checkout contact step VAT form', () => {
 		await user.type( await screen.findByLabelText( 'VAT ID' ), vatId );
 		await user.type( await screen.findByLabelText( 'Organization for VAT' ), vatName );
 		await user.type( await screen.findByLabelText( 'Address for VAT' ), vatAddress );
-		( errorNotice as jest.Mock ).mockClear();
+		( errorNotice as Mock ).mockClear();
 		await user.click( screen.getByText( 'Continue to payment' ) );
 		await waitFor( () =>
 			expect( errorNotice ).toHaveBeenCalledWith(

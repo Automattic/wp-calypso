@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import FilterBarModern from '../index';
 
 // Mock InView to control sticky state in tests
 let mockInViewOnChange: ( inView: boolean ) => void;
-jest.mock( 'react-intersection-observer', () => ( {
+vi.mock( 'react-intersection-observer', () => ( {
 	InView: ( {
 		children,
 		onChange,
@@ -21,7 +22,7 @@ jest.mock( 'react-intersection-observer', () => ( {
 } ) );
 
 // Mock Search component
-jest.mock( 'calypso/components/search', () => {
+vi.mock( 'calypso/components/search', () => {
 	const SearchMock = ( {
 		onSearch,
 		onSearchOpen,
@@ -62,8 +63,8 @@ jest.mock( 'calypso/components/search', () => {
 } );
 
 // Mock CategoryPillNavigation to avoid its internal dependencies (LocalizedLink, Redux, etc.)
-const mockOnSelect = jest.fn();
-jest.mock( 'calypso/components/category-pill-navigation', () => ( {
+const mockOnSelect = vi.fn();
+vi.mock( 'calypso/components/category-pill-navigation', () => ( {
 	CategoryPillNavigation: ( {
 		categories,
 		selectedCategoryId,
@@ -91,7 +92,7 @@ jest.mock( 'calypso/components/category-pill-navigation', () => ( {
 } ) );
 
 // Mock CustomSelectWrapper to avoid SSR/WP component dependencies
-jest.mock( 'calypso/my-sites/themes/custom-select-wrapper', () => ( {
+vi.mock( 'calypso/my-sites/themes/custom-select-wrapper', () => ( {
 	CustomSelectWrapper: ( {
 		options,
 		value,
@@ -136,18 +137,18 @@ describe( 'FilterBarModern', () => {
 			{ key: 'blog', text: 'Blog' },
 		],
 		selectedCategory: 'recommended',
-		onCategorySelect: jest.fn(),
+		onCategorySelect: vi.fn(),
 		tiers: [
 			{ key: 'all', name: 'All' },
 			{ key: 'free', name: 'Free' },
 			{ key: 'premium', name: 'Premium' },
 		],
 		selectedTier: 'all',
-		onTierSelect: jest.fn(),
+		onTierSelect: vi.fn(),
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'renders category pills via CategoryPillNavigation', () => {
@@ -195,7 +196,7 @@ describe( 'FilterBarModern', () => {
 		const propsWithSearch = {
 			...defaultProps,
 			searchQuery: 'hello',
-			onSearch: jest.fn(),
+			onSearch: vi.fn(),
 		};
 
 		test( 'does not render search when not sticky', () => {

@@ -1,27 +1,32 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import SubscribersChartSection from '..';
 
-jest.mock( '../../hooks/use-subscribers-query', () => () => ( {
-	isLoading: false,
-	isError: false,
-	data: undefined,
-	status: 'success',
+vi.mock( '../../hooks/use-subscribers-query', () => ( {
+	default: () => ( {
+		isLoading: false,
+		isError: false,
+		data: undefined,
+		status: 'success',
+	} ),
 } ) );
 
-jest.mock( '../../hooks/use-css-variable', () => () => '' );
+vi.mock( '../../hooks/use-css-variable', () => ( { default: () => '' } ) );
 
-jest.mock( 'calypso/blocks/stats-navigation/intervals', () => () => null );
+vi.mock( 'calypso/blocks/stats-navigation/intervals', () => ( { default: () => null } ) );
 
-jest.mock( '../../stats-period-header', () => ( { children } ) => <div>{ children }</div> );
+vi.mock( '../../stats-period-header', () => ( {
+	default: ( { children } ) => <div>{ children }</div>,
+} ) );
 
-jest.mock( '../subscribers-navigation-arrows', () => () => null );
+vi.mock( '../subscribers-navigation-arrows', () => ( { default: () => null } ) );
 
-jest.mock( 'calypso/lib/subscribers/get-subscribers-url', () => ( {
+vi.mock( 'calypso/lib/subscribers/get-subscribers-url', () => ( {
 	getSubscribersUrl: () => '/subscribers/example.com',
 } ) );
 

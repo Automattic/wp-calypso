@@ -11,9 +11,10 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
+import { useRowScroll } from '../components/showcase/row-arrows';
 import { ALL_TIERS, TARGET_INFLUENCED_REVENUE } from './constants';
 import getCurrentAgencyTier from './get-current-agency-tier';
 import type { AgencyTierType, AgencyTierStatus, RecordTracksEvent } from './types';
@@ -33,7 +34,7 @@ export default function TierCards( {
 } ) {
 	const currentTier = getCurrentAgencyTier( currentAgencyTierId );
 
-	const containerRef = useRef< HTMLDivElement >( null );
+	const { rowRef, canScroll } = useRowScroll< HTMLDivElement >();
 
 	const [ showEarlyAccessModal, setShowEarlyAccessModal ] = useState( false );
 	const [ showTierProtectedModal, setShowTierProtectedModal ] = useState( false );
@@ -69,7 +70,7 @@ export default function TierCards( {
 	// Scroll so the current tier stays selected while previous tiers remain visible.
 	// Level 0 is already at the natural scroll start — only scroll for higher tiers.
 	useEffect( () => {
-		const container = containerRef.current;
+		const container = rowRef.current;
 		if ( ! container || ! currentTier || currentTier.level === 0 ) {
 			return;
 		}
@@ -93,7 +94,7 @@ export default function TierCards( {
 
 			container.scrollLeft += scrollOffset;
 		}
-	}, [ currentTier ] );
+	}, [ currentTier, rowRef ] );
 
 	const cards = ALL_TIERS.map( ( tier ) => {
 		const hasLowerTier = currentTier && currentTier.level > tier.level;
@@ -192,10 +193,14 @@ export default function TierCards( {
 
 	return (
 		<>
-			<div className="tier-cards-scroll-wrapper">
-				<div ref={ containerRef } className="tier-cards-container">
-					{ cards }
-				</div>
+			<div
+				ref={ rowRef }
+				className={ clsx( 'tier-cards-container', {
+					'can-back': canScroll.back,
+					'can-forward': canScroll.forward,
+				} ) }
+			>
+				{ cards }
 			</div>
 			{ showEarlyAccessModal && currentTier && (
 				<Modal

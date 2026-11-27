@@ -1,5 +1,6 @@
 import { start, stop } from '@automattic/browser-data-collector';
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import {
 	getCurrentUserCountryCode,
 	getCurrentUserSiteCount,
@@ -13,31 +14,33 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { collectTranslationTimings, clearTranslationTimings } from '../collectors/translations';
 import { startPerformanceTracking, stopPerformanceTracking } from '../lib';
 
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isEnabled: vi.fn(),
+	} )
+);
+vi.mock( '@automattic/browser-data-collector', () => ( {
+	start: vi.fn(),
+	stop: vi.fn(),
 } ) );
-jest.mock( '@automattic/browser-data-collector', () => ( {
-	start: jest.fn(),
-	stop: jest.fn(),
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSiteId: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSiteId: jest.fn(),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	isJetpackSite: vi.fn(),
+	isSingleUserSite: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	isJetpackSite: jest.fn(),
-	isSingleUserSite: jest.fn(),
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	getCurrentUserCountryCode: vi.fn(),
+	getCurrentUserSiteCount: vi.fn(),
+	getCurrentUserVisibleSiteCount: vi.fn(),
+	isCurrentUserBootstrapped: vi.fn(),
+	getCurrentUserLocale: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	getCurrentUserCountryCode: jest.fn(),
-	getCurrentUserSiteCount: jest.fn(),
-	getCurrentUserVisibleSiteCount: jest.fn(),
-	isCurrentUserBootstrapped: jest.fn(),
-	getCurrentUserLocale: jest.fn(),
-} ) );
-jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => jest.fn() );
-jest.mock( '../collectors/translations', () => ( {
-	collectTranslationTimings: jest.fn(),
-	clearTranslationTimings: jest.fn(),
+vi.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( { default: vi.fn() } ) );
+vi.mock( '../collectors/translations', () => ( {
+	collectTranslationTimings: vi.fn(),
+	clearTranslationTimings: vi.fn(),
 } ) );
 
 const withFeatureEnabled = () =>
@@ -51,7 +54,7 @@ describe( 'startPerformanceTracking', () => {
 	} );
 
 	afterEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'starts measuring when the feature is enabled', () => {
@@ -109,7 +112,7 @@ describe( 'stopPerformanceTracking', () => {
 	} );
 
 	afterEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'stops measuring when the feature is enabled', () => {

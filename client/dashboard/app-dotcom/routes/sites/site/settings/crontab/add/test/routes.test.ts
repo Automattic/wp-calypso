@@ -1,0 +1,29 @@
+/**
+ * @vitest-environment jsdom
+ */
+
+import { screen } from '@testing-library/react';
+import {
+	mockPreferences,
+	mockSite,
+	mockSiteSettings,
+	renderRoute,
+	testSite,
+} from '../../../../../../test-utils/render-route';
+import '..';
+import '../../../../layout';
+
+describe( '/sites/$siteSlug/settings/crontab/add', () => {
+	beforeEach( () => {
+		mockPreferences();
+		mockSiteSettings();
+	} );
+
+	test( 'renders', async () => {
+		mockSite();
+
+		await renderRoute( `/sites/${ testSite.slug }/settings/crontab/add` );
+
+		expect( await screen.findByRole( 'heading', { name: 'Add scheduled job' } ) ).toBeVisible();
+	} );
+} );

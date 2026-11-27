@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import a8cForAgencies from 'calypso/state/a8c-for-agencies/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import LicenseDetailsActions from '../actions';
 
-jest.mock( '../../revoke-license-dialog/hooks/use-license-download-url-mutation', () => ( {
+vi.mock( '../../revoke-license-dialog/hooks/use-license-download-url-mutation', () => ( {
 	__esModule: true,
-	default: () => ( { mutate: jest.fn(), status: 'idle', error: null, data: null } ),
+	default: () => ( { mutate: vi.fn(), status: 'idle', error: null, data: null } ),
 } ) );
 
 const initialState = {

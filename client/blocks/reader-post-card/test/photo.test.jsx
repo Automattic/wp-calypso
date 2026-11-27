@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import PostPhoto from '../photo';
 
 // jsdom cannot navigate, so keep link clicks from logging "Not implemented" errors.
@@ -24,7 +25,7 @@ describe( 'PostPhoto', () => {
 		// Max expanded photo height is 900 - 176 = 724px.
 		Object.defineProperty( window, 'innerHeight', { configurable: true, value: 900 } );
 		// Only the post container reports the card width, so measuring any other element fails the tests.
-		jest.spyOn( Element.prototype, 'getClientRects' ).mockImplementation( function () {
+		vi.spyOn( Element.prototype, 'getClientRects' ).mockImplementation( function () {
 			if ( ! this.classList.contains( 'reader-post-card__post' ) ) {
 				return [];
 			}
@@ -34,7 +35,7 @@ describe( 'PostPhoto', () => {
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	const renderPhoto = ( { width, height, canonicalMedia, ...props } = {} ) =>
@@ -62,8 +63,8 @@ describe( 'PostPhoto', () => {
 
 	it( 'covers a large photo and expands it on click', async () => {
 		const user = userEvent.setup();
-		const expandCard = jest.fn();
-		const onClick = jest.fn();
+		const expandCard = vi.fn();
+		const onClick = vi.fn();
 		renderPhoto( { width: 1600, height: 1200, expandCard, onClick } );
 
 		const photo = getPhoto();
@@ -86,7 +87,7 @@ describe( 'PostPhoto', () => {
 
 	it( 'expands a small photo that is cut down to fit the collapsed frame', async () => {
 		const user = userEvent.setup();
-		const expandCard = jest.fn();
+		const expandCard = vi.fn();
 		renderPhoto( { width: 480, height: 360, expandCard } );
 
 		expect( getPhoto() ).toHaveClass( 'is-zoomable' );
@@ -97,7 +98,7 @@ describe( 'PostPhoto', () => {
 
 	it( 'expands a tall photo that is narrower than the card', async () => {
 		const user = userEvent.setup();
-		const expandCard = jest.fn();
+		const expandCard = vi.fn();
 		renderPhoto( { width: 500, height: 1500, expandCard } );
 
 		const photo = getPhoto();
@@ -110,8 +111,8 @@ describe( 'PostPhoto', () => {
 
 	it( 'opens the post instead of expanding a photo shown at its natural size', async () => {
 		const user = userEvent.setup();
-		const expandCard = jest.fn();
-		const onClick = jest.fn();
+		const expandCard = vi.fn();
+		const onClick = vi.fn();
 		renderPhoto( { width: 480, height: 240, expandCard, onClick } );
 
 		const photo = getPhoto();
@@ -191,7 +192,7 @@ describe( 'PostPhoto', () => {
 } );
 
 function renderMeasuredPhoto() {
-	const measureCard = jest.fn();
+	const measureCard = vi.fn();
 	class TestPhoto extends PostPhoto {
 		setCardWidth = measureCard;
 	}
@@ -205,8 +206,8 @@ describe( 'PostPhoto resize handling', () => {
 	let addEventListenerSpy;
 
 	beforeEach( () => {
-		jest.useFakeTimers();
-		addEventListenerSpy = jest.spyOn( window, 'addEventListener' );
+		vi.useFakeTimers();
+		addEventListenerSpy = vi.spyOn( window, 'addEventListener' );
 	} );
 
 	afterEach( () => {
@@ -216,9 +217,9 @@ describe( 'PostPhoto resize handling', () => {
 				window.removeEventListener( eventName, listener );
 			}
 		}
-		jest.clearAllTimers();
-		jest.useRealTimers();
-		jest.restoreAllMocks();
+		vi.clearAllTimers();
+		vi.useRealTimers();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'debounces resize measurements and stops listening after unmounting', () => {
@@ -226,14 +227,14 @@ describe( 'PostPhoto resize handling', () => {
 
 		window.dispatchEvent( new Event( 'resize' ) );
 		window.dispatchEvent( new Event( 'resize' ) );
-		jest.advanceTimersByTime( 49 );
+		vi.advanceTimersByTime( 49 );
 		expect( measureCard ).not.toHaveBeenCalled();
-		jest.advanceTimersByTime( 1 );
+		vi.advanceTimersByTime( 1 );
 		expect( measureCard ).toHaveBeenCalledTimes( 1 );
 
 		unmount();
 		window.dispatchEvent( new Event( 'resize' ) );
-		jest.advanceTimersByTime( 50 );
+		vi.advanceTimersByTime( 50 );
 
 		expect( measureCard ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -243,7 +244,7 @@ describe( 'PostPhoto resize handling', () => {
 
 		window.dispatchEvent( new Event( 'resize' ) );
 		unmount();
-		jest.advanceTimersByTime( 50 );
+		vi.advanceTimersByTime( 50 );
 
 		expect( measureCard ).not.toHaveBeenCalled();
 	} );
@@ -254,7 +255,7 @@ describe( 'PostPhoto resize handling', () => {
 
 		removedPhoto.unmount();
 		window.dispatchEvent( new Event( 'resize' ) );
-		jest.advanceTimersByTime( 50 );
+		vi.advanceTimersByTime( 50 );
 
 		expect( removedPhoto.measureCard ).not.toHaveBeenCalled();
 		expect( mountedPhoto.measureCard ).toHaveBeenCalledTimes( 1 );

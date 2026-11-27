@@ -1,19 +1,24 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { screen, render } from '@testing-library/react';
+import { vi } from 'vitest';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
-jest.mock( 'react-redux', () => ( {
-	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn().mockImplementation( ( selector ) => selector() ),
+vi.mock( 'react-redux', async () => ( {
+	...( await vi.importActual( 'react-redux' ) ),
+	useSelector: vi.fn().mockImplementation( ( selector ) => selector() ),
 } ) );
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
-jest.mock( 'calypso/state/selectors/get-rewind-state' );
-jest.mock( 'calypso/state/selectors/get-site-scan-state' );
-jest.mock( 'calypso/components/data/query-rewind-state', () => () => 'query-rewind-state' );
-jest.mock( 'calypso/components/data/query-jetpack-scan', () => () => 'query-jetpack-scan' );
+vi.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
+vi.mock( 'calypso/state/selectors/get-rewind-state' );
+vi.mock( 'calypso/state/selectors/get-site-scan-state' );
+vi.mock( 'calypso/components/data/query-rewind-state', () => ( {
+	default: () => 'query-rewind-state',
+} ) );
+vi.mock( 'calypso/components/data/query-jetpack-scan', () => ( {
+	default: () => 'query-jetpack-scan',
+} ) );
 
 const LoadingComponent = <div data-testid="loading" />;
 const TrueComponent = <div data-testid="true" />;

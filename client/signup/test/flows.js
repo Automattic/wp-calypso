@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import flows from 'calypso/signup/config/flows';
 import mockedFlows from './fixtures/flows';
 
 describe( 'Signup Flows Configuration', () => {
 	describe( 'getFlow', () => {
 		beforeAll( () => {
-			jest.spyOn( flows, 'getFlows' ).mockReturnValue( mockedFlows );
+			vi.spyOn( flows, 'getFlows' ).mockReturnValue( mockedFlows );
 		} );
 
 		test( 'should return the full flow when the user is not logged in', () => {
@@ -21,7 +22,7 @@ describe( 'Signup Flows Configuration', () => {
 
 	describe( 'excludeSteps', () => {
 		beforeAll( () => {
-			jest.spyOn( flows, 'getFlows' ).mockReturnValue( mockedFlows );
+			vi.spyOn( flows, 'getFlows' ).mockReturnValue( mockedFlows );
 		} );
 
 		afterAll( () => {
@@ -36,7 +37,7 @@ describe( 'Signup Flows Configuration', () => {
 
 	describe( 'site-selected destination', () => {
 		beforeAll( () => {
-			jest.restoreAllMocks();
+			vi.restoreAllMocks();
 		} );
 
 		const getDestination = ( dependencies, localeSlug ) =>
@@ -97,20 +98,19 @@ describe( 'Signup Flows Configuration', () => {
 		// Mock the required modules
 		beforeAll( () => {
 			// Mock getQueryArgs to return empty object
-			jest.doMock( 'calypso/lib/query-args', () => ( {
+			vi.doMock( 'calypso/lib/query-args', () => ( {
 				getQueryArgs: () => ( {} ),
 			} ) );
 
 			// Mock pathToUrl to return the path as-is
-			jest.doMock( 'calypso/lib/url', () => ( {
-				addQueryArgs: jest.requireActual( 'calypso/lib/url' ).addQueryArgs,
+			vi.doMock( 'calypso/lib/url', async () => ( {
+				addQueryArgs: ( await vi.importActual( 'calypso/lib/url' ) ).addQueryArgs,
 				pathToUrl: ( path ) => `https://wordpress.com${ path }`,
 			} ) );
 		} );
 
 		test( 'should not add celebrateLaunch=true to the checkout back URL', () => {
-			const flowsModule = require( 'calypso/signup/config/flows' );
-			const { filterDestination } = flowsModule.default;
+			const { filterDestination } = flows;
 
 			const dependencies = {
 				siteSlug: 'test-site',
@@ -130,8 +130,7 @@ describe( 'Signup Flows Configuration', () => {
 		test( 'should return to the plans grid with the plugin params for the with-plugin flow', () => {
 			// getQueryArgs is mocked to return {} above, so this also guards that the params come
 			// from the dependency store rather than the (empty) current URL query.
-			const flowsModule = require( 'calypso/signup/config/flows' );
-			const { filterDestination } = flowsModule.default;
+			const { filterDestination } = flows;
 
 			const dependencies = {
 				siteSlug: 'test-site',
@@ -150,8 +149,7 @@ describe( 'Signup Flows Configuration', () => {
 		} );
 
 		test( 'should return to My Home instead of the post-checkout step for the site-selected flow', () => {
-			const flowsModule = require( 'calypso/signup/config/flows' );
-			const { filterDestination } = flowsModule.default;
+			const { filterDestination } = flows;
 
 			const dependencies = {
 				siteSlug: 'test-site',
@@ -176,8 +174,7 @@ describe( 'Signup Flows Configuration', () => {
 		test( 'should still include an empty billing_period for a free plugin', () => {
 			// A free plugin has no billing period, but billing_period is a required query dependency,
 			// so the back URL must still carry it (empty) or the flow controller rejects the URL.
-			const flowsModule = require( 'calypso/signup/config/flows' );
-			const { filterDestination } = flowsModule.default;
+			const { filterDestination } = flows;
 
 			const dependencies = {
 				siteSlug: 'test-site',

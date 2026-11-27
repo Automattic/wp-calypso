@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 /* eslint-disable react/no-danger */
 import { render, waitFor } from '@testing-library/react';

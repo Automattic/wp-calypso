@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -11,8 +12,8 @@ import ConfidenceStep from '..';
 import { mockStepProps } from '../../test/helpers';
 
 const render = () => {
-	const submit = jest.fn();
-	const goBack = jest.fn();
+	const submit = vi.fn();
+	const goBack = vi.fn();
 	renderWithProvider(
 		<MemoryRouter>
 			<ConfidenceStep

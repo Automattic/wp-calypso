@@ -11,7 +11,6 @@ export default function DomainDiagnosticsSettingsSummary( {
 	domainDiagnostics: DomainDiagnostics;
 	onClick?: () => void;
 } ) {
-	let badges = [];
 	const emailDnsDiagnostics = domainDiagnostics.email_dns_records;
 
 	if (
@@ -22,7 +21,7 @@ export default function DomainDiagnosticsSettingsSummary( {
 		return null;
 	}
 
-	badges = [
+	const badges = [
 		{
 			text: __( 'Issues with DNS email records' ),
 			intent: domainDiagnostics.email_dns_records.dismissed_email_dns_issues_notice

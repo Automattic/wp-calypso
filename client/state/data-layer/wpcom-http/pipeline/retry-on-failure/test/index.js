@@ -1,10 +1,11 @@
 import { merge } from '@automattic/js-utils';
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { retryOnFailure as rof } from '../';
 import { noRetry, exponentialBackoff } from '../policies';
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 const retryOnFailure = rof();
 const retryWithDelay = ( delay ) => rof( () => delay );
@@ -26,7 +27,7 @@ const withRetries = ( retryCount ) => ( actionOrInbound ) =>
 			} )
 		: merge( actionOrInbound, { meta: { dataLayer: { retryCount } } } );
 
-const createMockStore = () => ( { dispatch: jest.fn() } );
+const createMockStore = () => ( { dispatch: vi.fn() } );
 
 describe( '#retryOnFailure', () => {
 	test( 'should pass through initially successful requests', () => {
@@ -34,7 +35,7 @@ describe( '#retryOnFailure', () => {
 
 		expect( retryOnFailure( inbound ) ).toEqual( inbound );
 
-		jest.advanceTimersByTime( 20000 );
+		vi.advanceTimersByTime( 20000 );
 		expect( inbound.store.dispatch ).not.toHaveBeenCalled();
 	} );
 
@@ -44,7 +45,7 @@ describe( '#retryOnFailure', () => {
 
 		expect( retryOnFailure( inbound ) ).toEqual( inbound );
 
-		jest.advanceTimersByTime( 20000 );
+		vi.advanceTimersByTime( 20000 );
 		expect( inbound.store.dispatch ).not.toHaveBeenCalled();
 	} );
 
@@ -54,7 +55,7 @@ describe( '#retryOnFailure', () => {
 
 		expect( retryOnFailure( inbound ) ).toEqual( inbound );
 
-		jest.advanceTimersByTime( 20000 );
+		vi.advanceTimersByTime( 20000 );
 		expect( inbound.store.dispatch ).not.toHaveBeenCalled();
 	} );
 
@@ -64,7 +65,7 @@ describe( '#retryOnFailure', () => {
 		expect( retryWithDelay( 1337 )( inbound ) ).toHaveProperty( 'shouldAbort', true );
 		expect( inbound.store.dispatch ).not.toHaveBeenCalled();
 
-		jest.advanceTimersByTime( 1337 );
+		vi.advanceTimersByTime( 1337 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledWith( withRetries( 1 )( getSites ) );
 	} );
 
@@ -77,7 +78,7 @@ describe( '#retryOnFailure', () => {
 		expect( retryIt( inbound ) ).toHaveProperty( 'shouldAbort', true );
 		expect( inbound.store.dispatch ).not.toHaveBeenCalled();
 
-		jest.advanceTimersByTime( 1337 );
+		vi.advanceTimersByTime( 1337 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledWith( withRetries( 1 )( originalRequest ) );
 
 		// retry 2
@@ -86,7 +87,7 @@ describe( '#retryOnFailure', () => {
 		).toHaveProperty( 'shouldAbort', true );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 1 );
 
-		jest.advanceTimersByTime( 1337 );
+		vi.advanceTimersByTime( 1337 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 2 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledWith( withRetries( 2 )( originalRequest ) );
 
@@ -96,7 +97,7 @@ describe( '#retryOnFailure', () => {
 		).toHaveProperty( 'shouldAbort', true );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 2 );
 
-		jest.advanceTimersByTime( 1337 );
+		vi.advanceTimersByTime( 1337 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 3 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledWith( withRetries( 3 )( originalRequest ) );
 
@@ -105,7 +106,7 @@ describe( '#retryOnFailure', () => {
 		expect( retryIt( finalRequest ) ).toEqual( finalRequest );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 3 );
 
-		jest.advanceTimersByTime( 1337 );
+		vi.advanceTimersByTime( 1337 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 3 );
 	} );
 
@@ -120,27 +121,27 @@ describe( '#retryOnFailure', () => {
 		expect( retryOnFailure( inbound ) ).toHaveProperty( 'shouldAbort', true );
 		expect( inbound.store.dispatch ).not.toHaveBeenCalled();
 
-		jest.advanceTimersByTime( 1000 + 3 * 1000 );
+		vi.advanceTimersByTime( 1000 + 3 * 1000 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 1 );
 
-		jest.advanceTimersByTime( 200000 );
+		vi.advanceTimersByTime( 200000 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 1 );
 
 		// retry 4 (should have much longer delay)
 		expect( retryOnFailure( withRetries( 4 )( inbound ) ) ).toHaveProperty( 'shouldAbort', true );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 1 );
 
-		jest.advanceTimersByTime( 1000 + 3 * 16000 );
+		vi.advanceTimersByTime( 1000 + 3 * 16000 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 2 );
 
-		jest.advanceTimersByTime( 200000 );
+		vi.advanceTimersByTime( 200000 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 2 );
 
 		// retry 5 (should not retry)
 		expect( retryOnFailure( withRetries( 5 )( inbound ) ) ).toEqual( withRetries( 5 )( inbound ) );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 2 );
 
-		jest.advanceTimersByTime( 200000 );
+		vi.advanceTimersByTime( 200000 );
 		expect( inbound.store.dispatch ).toHaveBeenCalledTimes( 2 );
 	} );
 } );

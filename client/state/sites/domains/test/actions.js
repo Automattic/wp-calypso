@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import useNock from 'calypso/test-helpers/use-nock';
 import {
 	domainsReceiveAction,
@@ -22,7 +23,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( 'Actions creators', () => {

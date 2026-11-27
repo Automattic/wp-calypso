@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import { useStaticSiteImport } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
@@ -14,13 +15,15 @@ import { mockStepProps } from '../../test/helpers';
 import type { StaticSiteImportProgressStartedImport } from '..';
 import type { StaticSiteImport } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 
-jest.mock( 'calypso/dashboard/sites/static-site-import/use-static-site-import', () => ( {
-	...jest.requireActual( 'calypso/dashboard/sites/static-site-import/use-static-site-import' ),
-	useStaticSiteImport: jest.fn(),
+vi.mock( 'calypso/dashboard/sites/static-site-import/use-static-site-import', async () => ( {
+	...( await vi.importActual<
+		typeof import( 'calypso/dashboard/sites/static-site-import/use-static-site-import' )
+	>( 'calypso/dashboard/sites/static-site-import/use-static-site-import' ) ),
+	useStaticSiteImport: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
-	startWowFunnelSite: jest.fn(),
+vi.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
+	startWowFunnelSite: vi.fn(),
 } ) );
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
@@ -38,8 +41,8 @@ const MOVE = { from: 'source.example.com', startedImport: STARTED };
 type Props = { from?: string; startedImport?: StaticSiteImportProgressStartedImport };
 
 const render = ( siteImport: StaticSiteImport | null, props: Props = MOVE ) => {
-	jest.mocked( useStaticSiteImport ).mockReturnValue( siteImport );
-	const submit = jest.fn();
+	vi.mocked( useStaticSiteImport ).mockReturnValue( siteImport );
+	const submit = vi.fn();
 	renderWithProvider(
 		<MemoryRouter>
 			<StaticSiteImportProgressStep
@@ -54,7 +57,7 @@ const render = ( siteImport: StaticSiteImport | null, props: Props = MOVE ) => {
 
 describe( 'StaticSiteImportProgressStep', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'shows the move’s steps beside a window onto the site', () => {
@@ -126,7 +129,7 @@ describe( 'StaticSiteImportProgressStep', () => {
 				.post( '/wpcom/v2/static-site-import-session' )
 				.query( true )
 				.reply( 200, { session_id: 'abc123', state: 'capture_queued' } );
-			jest.mocked( startWowFunnelSite ).mockResolvedValue( {
+			vi.mocked( startWowFunnelSite ).mockResolvedValue( {
 				blogId: 456,
 				siteSlug: 'preview.wpcomstaging.com',
 				funnelSlug: 'preview',
@@ -149,7 +152,7 @@ describe( 'StaticSiteImportProgressStep', () => {
 				.post( '/wpcom/v2/static-site-import-session' )
 				.query( true )
 				.reply( 200, { session_id: 'abc123', state: 'capture_queued' } );
-			jest.mocked( startWowFunnelSite ).mockRejectedValue( new Error( 'nope' ) );
+			vi.mocked( startWowFunnelSite ).mockRejectedValue( new Error( 'nope' ) );
 			const submit = render( null, { from: 'source.example.com' } );
 
 			await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'preview_failed' } ) );
