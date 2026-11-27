@@ -444,7 +444,7 @@ describe( 'ProductsList', () => {
 
 		expect(
 			screen.getByText(
-				"Set up a paid newsletter tier, recurring payment plan, or one-time offer. Only paid newsletter tiers unlock paid posts; donations, one-time payments, and other recurring plans don't."
+				"Set up a paid newsletter tier, recurring payment plan, or one-time sale. Only paid newsletter tiers unlock paid posts; donations, one-time sales, and other recurring plans don't."
 			)
 		).toBeVisible();
 
@@ -452,7 +452,7 @@ describe( 'ProductsList', () => {
 
 		expect(
 			within( await screen.findByRole( 'dialog' ) ).getByText(
-				"Turn this on to unlock paid posts and subscriber-only content. One-time payments, donations, and other recurring plans don't unlock paid posts."
+				"Turn this on to unlock paid posts for subscribers. One-time sales and other recurring plans don't unlock paid posts."
 			)
 		).toBeVisible();
 	} );

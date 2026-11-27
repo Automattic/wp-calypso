@@ -404,7 +404,7 @@ const RecurringPaymentsPlanAddEditModal = ( {
 						/>
 						<FormSettingExplanation>
 							{ translate(
-								"Turn this on to unlock paid posts and subscriber-only content. One-time payments, donations, and other recurring plans don't unlock paid posts."
+								"Turn this on to unlock paid posts for subscribers. One-time sales and other recurring plans don't unlock paid posts."
 							) }
 						</FormSettingExplanation>
 					</FormFieldset>
