@@ -1,4 +1,4 @@
-import { findBackup } from '../backups-browser';
+import { findBackup } from '..';
 import type { ActivityLogEntry } from '@automattic/api-core';
 
 const entry = ( name: string, rewindId: string ) =>

@@ -603,7 +603,7 @@ describe( 'BackupGranularRestoreFlow known threats gating', () => {
 describe( 'known threats refusal the lookup missed', () => {
 	beforeEach( () => {
 		mockRestoreProgress = null;
-		( siteHasFeature as jest.Mock ).mockReturnValue( true );
+		( siteHasFeature as Mock ).mockReturnValue( true );
 	} );
 	afterEach( () => nock.cleanAll() );
 

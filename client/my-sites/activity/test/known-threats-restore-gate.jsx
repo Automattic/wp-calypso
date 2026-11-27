@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import page from '@automattic/calypso-router';
@@ -8,39 +8,35 @@ import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
 import nock from 'nock';
 import { applyMiddleware, createStore } from 'redux';
+import { vi } from 'vitest';
 import { REWIND_RESTORE } from 'calypso/state/action-types';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import ActivityLogItem from '../activity-log-item';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( '@wordpress/a11y', () => ( {
-	...jest.requireActual( '@wordpress/a11y' ),
-	speak: jest.fn(),
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( '@wordpress/a11y', async () => ( {
+	...( await vi.importActual( '@wordpress/a11y' ) ),
+	speak: vi.fn(),
 } ) );
 let mockSiteSlug = 'example.wordpress.com';
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	getSite: () => ( { ID: 123, slug: 'example.wordpress.com' } ),
 	getSiteSlug: () => mockSiteSlug,
 } ) );
-jest.mock( 'calypso/state/selectors/get-rewind-state', () => ( {
-	__esModule: true,
+vi.mock( 'calypso/state/selectors/get-rewind-state', () => ( {
 	default: () => ( { state: 'active', canAutoconfigure: false } ),
 } ) );
-jest.mock( 'calypso/state/selectors/get-requested-rewind', () => ( {
-	__esModule: true,
+vi.mock( 'calypso/state/selectors/get-requested-rewind', () => ( {
 	default: () => 'activity-1',
 } ) );
-jest.mock( 'calypso/state/selectors/get-requested-backup', () => ( {
-	__esModule: true,
+vi.mock( 'calypso/state/selectors/get-requested-backup', () => ( {
 	default: () => null,
 } ) );
-jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () => ( {
-	__esModule: true,
+vi.mock( 'calypso/state/selectors/get-site-gmt-offset', () => ( {
 	default: () => 0,
 } ) );
-jest.mock( 'calypso/state/selectors/get-site-timezone-value', () => ( {
-	__esModule: true,
+vi.mock( 'calypso/state/selectors/get-site-timezone-value', () => ( {
 	default: () => 'UTC',
 } ) );
 
@@ -246,7 +242,7 @@ describe( 'Activity Log error banner retry', () => {
 			<ErrorBanner
 				errorCode="error"
 				failureReason="failed"
-				closeDialog={ jest.fn() }
+				closeDialog={ vi.fn() }
 				siteId={ SITE_ID }
 				requestedRestoreId={ REWIND_ID }
 				rewindRestore={ rewindRestore }
@@ -255,7 +251,7 @@ describe( 'Activity Log error banner retry', () => {
 
 	it( 'sends a flagged backup to the restore page instead of retrying', async () => {
 		mockBackups( counts( 3 ) );
-		const rewindRestore = jest.fn();
+		const rewindRestore = vi.fn();
 		renderBanner( rewindRestore );
 
 		const retry = screen.getByRole( 'button', { name: 'Try again' } );
@@ -269,7 +265,7 @@ describe( 'Activity Log error banner retry', () => {
 
 	it( 'holds Try again while the counts load', async () => {
 		const release = mockPendingBackups();
-		const rewindRestore = jest.fn();
+		const rewindRestore = vi.fn();
 		renderBanner( rewindRestore );
 
 		const retry = screen.getByRole( 'button', { name: 'Try again' } );
@@ -285,7 +281,7 @@ describe( 'Activity Log error banner retry', () => {
 
 	it( 'sends the user to the restore page when the counts fail to load', async () => {
 		backupsRequest().reply( 500 );
-		const rewindRestore = jest.fn();
+		const rewindRestore = vi.fn();
 		renderBanner( rewindRestore );
 
 		const retry = screen.getByRole( 'button', { name: 'Try again' } );
@@ -298,7 +294,7 @@ describe( 'Activity Log error banner retry', () => {
 
 	it( 'retries an unflagged backup as before', async () => {
 		mockBackups( counts( 0 ) );
-		const rewindRestore = jest.fn();
+		const rewindRestore = vi.fn();
 		renderBanner( rewindRestore );
 
 		await waitFor( () => expect( nock.isDone() ).toBe( true ) );
