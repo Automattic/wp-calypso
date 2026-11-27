@@ -68,6 +68,7 @@ test.describe(
 			await test.step( 'Select a Personal theme and start signup', async () => {
 				const loggedOutThemesPage = new LoggedOutThemesPage( page );
 				await loggedOutThemesPage.filterBy( 'Personal' );
+				await new ThemesPage( page ).search( 'full-site-editing' );
 				themeSlug = await loggedOutThemesPage.startWithFirstTheme();
 			} );
 
