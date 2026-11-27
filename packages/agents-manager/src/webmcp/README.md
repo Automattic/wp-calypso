@@ -78,6 +78,11 @@ The exposed tools are:
   current selection, and a block count. WebMCP remembers these IDs for the matching
   edit call. It is annotated as read-only and idempotent.
 
+- `agents-manager/get-editor-state`: an Agents Manager-owned, client-only ability that reads the
+  post, page or template the editor has open, if any, with its saved status, and every record with
+  unsaved changes, so the agent can tell the user what to review and save. It is annotated as
+  read-only and idempotent.
+
 - `big-sky/apply-block-edits`: an Agents Manager-owned, client-only ability that deterministically
   changes the current block-editor canvas. It does not save or publish the edit, so the result
   remains visible and reviewable. Its WebMCP contract supplies item-level schemas for updates,
@@ -156,10 +161,11 @@ only browser agents read the description, as with `big-sky/apply-block-edits`.
 Use any agent that can call the page's WebMCP tools, such as the Codex built-in browser. Don't use
 DevTools or call `document.modelContext` directly for this path.
 
-1. Ask the agent which tools the page offers. Confirm it finds all nine:
-   `agents_manager__get_block_tree`, `big_sky__show_template`, `big_sky__apply_block_edits`,
-   `big_sky__apply_update_theme`, `big_sky__edit_entity_record`, and `big_sky__set_site_logo`, plus
-   `wpcom__get_block_schemas`, `wpcom__get_content_guidelines`, and `core__get_site_info`.
+1. Ask the agent which tools the page offers. Confirm it finds all ten:
+   `agents_manager__get_block_tree`, `agents_manager__get_editor_state`, `big_sky__show_template`,
+   `big_sky__apply_block_edits`, `big_sky__apply_update_theme`, `big_sky__edit_entity_record`, and
+   `big_sky__set_site_logo`, plus `wpcom__get_block_schemas`, `wpcom__get_content_guidelines`, and
+   `core__get_site_info`.
 2. Ask the agent to read the block tree. If a requested template part is absent, confirm it calls
    `big_sky__show_template`, then reads the tree again.
 3. Ask the agent to change a block, or insert a small test block on an empty page. Confirm it uses a
@@ -172,18 +178,20 @@ DevTools or call `document.modelContext` directly for this path.
 5. Ask the agent to rename the open post or page with `big_sky__edit_entity_record`. Confirm the
    title changes in the editor and the post is not saved. Ask it to rename a different page, or to
    delete or publish one, and confirm the tool refuses.
-6. Ask the agent to change the site's background color with `big_sky__apply_update_theme`. Confirm
+6. Ask the agent what is unsaved. Confirm it calls `agents_manager__get_editor_state`, names the
+   open post or page and its status, and lists the renamed post as unsaved.
+7. Ask the agent to change the site's background color with `big_sky__apply_update_theme`. Confirm
    the canvas previews the new color and the global styles are not saved.
-7. Ask the agent to set the site logo to an image from the media library. Confirm it calls
+8. Ask the agent to set the site logo to an image from the media library. Confirm it calls
    `big_sky__set_site_logo` with that image's attachment ID, the Site Logo block previews it, and
    the site settings are not saved.
-8. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
+9. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
 
 ### From the console
 
 1. Without opening Agents Manager chat, enumerate the page's tools through
    `document.modelContext.getTools()`.
-2. Confirm the same nine tools are present and that the three server tools expose input schemas.
+2. Confirm the same ten tools are present and that the three server tools expose input schemas.
 3. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.
@@ -196,7 +204,7 @@ DevTools or call `document.modelContext` directly for this path.
 6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
 7. On a wp-admin screen outside the editors where Agents Manager loads, such as Plugins on a
    WordPress.com site, repeat step 4 with that screen's ID added to `meta.webmcp`, such as
-   `screens: [ 'plugins' ]`. Confirm it appears as a tool and that the nine editor tools don't.
+   `screens: [ 'plugins' ]`. Confirm it appears as a tool and that the ten editor tools don't.
    Repeat it without `screens`, and with another screen's ID, and confirm the tool stays absent
    without a warning.
 8. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
