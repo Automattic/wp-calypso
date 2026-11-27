@@ -17,20 +17,19 @@ import nock from 'nock';
 import { vi } from 'vitest';
 import { AnalyticsProvider } from '../../../app/analytics';
 import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from '../../../app/context';
-import { emailsRoute } from '../../../app/router/emails';
 import { render } from '../../../test-utils';
 import AddEmailForwarder from '../index';
 import type { EmailAccount } from '@automattic/api-core';
 
-// The shared test-utils router has no `/emails` route, so render the form at its
-// real URL with a router of its own whose `/emails` route validates search like the app's.
+// The shared test-utils router has no `/emails` route, so render the form at its real
+// URL with a small router of its own. The app's route objects stay out of it: adding them
+// to a router registers them for the whole file and breaks the tests that use `render()`.
 function renderAtUrl( url: string ) {
 	const root = createRootRoute( { component: Outlet } );
 	const emails = createRoute( {
 		getParentRoute: () => root,
 		path: 'emails',
 		component: Outlet,
-		validateSearch: emailsRoute.options.validateSearch,
 	} );
 	const addForwarder = createRoute( {
 		getParentRoute: () => emails,

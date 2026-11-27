@@ -53,7 +53,7 @@ describe( '<DomainEmailForwardingSettingsSummary>', () => {
 		renderSummary( 200, [
 			mockForward( 'me', 'a@other.com' ),
 			mockForward( 'me', 'b@other.com' ),
-			mockForward( 'info', 'a@other.com' ),
+			mockForward( 'info', 'c@other.com' ),
 		] );
 
 		expect( await screen.findByText( '2 forwarders' ) ).toBeVisible();

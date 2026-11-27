@@ -147,6 +147,7 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 
 		expect( await getOptionalRows() ).toEqual( [ SECURITY ] );
+		expect( screen.getByText( 'Email forwarding' ) ).toBeVisible();
 		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 3 );
 	} );
 
