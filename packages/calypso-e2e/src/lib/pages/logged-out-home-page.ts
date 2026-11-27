@@ -12,7 +12,6 @@ export class LoggedOutHomePage {
 	readonly menuMenuItem: Locator;
 	readonly navigationMenuGetStartedLink: Locator;
 	readonly exploreThemesLink: Locator;
-	readonly getStartedLink: Locator;
 	readonly heading: Locator;
 
 	/**
@@ -21,7 +20,11 @@ export class LoggedOutHomePage {
 	constructor( page: Page ) {
 		this.page = page;
 		this.logInMenuItem = this.page.getByRole( 'menuitem', { name: 'Log In' } );
-		this.getStartedMenuItem = this.page.getByRole( 'menuitem', { name: 'Get started' } );
+		// The collapsed mobile header hides it, but getStartedHref() still reads its href.
+		this.getStartedMenuItem = this.page.getByRole( 'menuitem', {
+			name: 'Get started',
+			includeHidden: true,
+		} );
 		this.menuMenuItem = this.page.getByRole( 'menuitem', { name: 'Menu' } );
 		this.navigationMenuGetStartedLink = this.page
 			.getByRole( 'menu', { name: 'Navigation Menu' } )
@@ -30,27 +33,22 @@ export class LoggedOutHomePage {
 			name: 'Explore themes',
 			exact: true,
 		} );
-		// The primary CTA repeats down the page; the first visible one is the hero button.
-		this.getStartedLink = this.page
-			.getByRole( 'link', { name: 'Get started', exact: true } )
-			.filter( { visible: true } )
-			.first();
 		this.heading = this.page.getByRole( 'heading', { name: 'WordPress' } ).first();
 	}
 
 	/**
-	 * Returns the href of the "Get started" call to action, the entry to onboarding.
+	 * Returns the href of the header's "Get started", the entry to onboarding.
 	 * returns {Promise<string>}
 	 */
 	async getStartedHref(): Promise< string > {
 		return waitForLocatorAttribute(
-			this.getStartedLink,
+			this.getStartedMenuItem,
 			'href',
 			/\/setup\/onboarding\/?(?:[?#].*)?$/,
 			{
 				timeout: 10_000,
-				description: 'Get started link',
-				state: 'visible',
+				description: 'header Get started menu item',
+				state: 'attached',
 			}
 		);
 	}
