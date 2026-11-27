@@ -1241,9 +1241,8 @@ export function createTestReduxStore() {
 				},
 			},
 			purchases: {},
-			countries: { payments: countryList, domains: countryList },
+			countries: { payments: countryList },
 			domains: { management: domainManagementReducer( state?.domains?.management ?? {}, action ) },
-			countryStates: { items: stateList },
 		};
 	};
 	return createStore( rootReducer, applyMiddleware( thunk ) );

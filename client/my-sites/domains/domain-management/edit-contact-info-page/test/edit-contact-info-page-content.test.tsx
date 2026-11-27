@@ -2,6 +2,7 @@
  * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -57,9 +58,11 @@ describe( 'EditContactInfoPageContent', () => {
 		const store = createStore( ( state ) => state, initialState );
 
 		return render(
-			<Provider store={ store }>
-				<EditContactInfoPageContent { ...defaultProps } { ...props } />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<EditContactInfoPageContent { ...defaultProps } { ...props } />
+				</Provider>
+			</QueryClientProvider>
 		);
 	};
 
@@ -178,9 +181,11 @@ describe( 'EditContactInfoPage', () => {
 		};
 
 		return render(
-			<Provider store={ store }>
-				<EditContactInfoPage { ...defaultProps } { ...props } />
-			</Provider>
+			<QueryClientProvider client={ new QueryClient() }>
+				<Provider store={ store }>
+					<EditContactInfoPage { ...defaultProps } { ...props } />
+				</Provider>
+			</QueryClientProvider>
 		);
 	};
 
