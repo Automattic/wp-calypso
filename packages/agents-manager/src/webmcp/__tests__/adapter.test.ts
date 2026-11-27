@@ -406,6 +406,7 @@ describe( 'WebMCP adapter', () => {
 			readOnlyHint: true,
 			untrustedContentHint: true,
 			consequentialHint: false,
+			debugging: false,
 		} );
 	} );
 
@@ -418,6 +419,17 @@ describe( 'WebMCP adapter', () => {
 
 		expect( harness.tools.get( 'big_sky__apply_block_edits' )?.annotations ).toMatchObject( {
 			consequentialHint: true,
+		} );
+	} );
+
+	it( 'marks the tool of an ability that sets `meta.webmcp.debugging` as a debugging tool', async () => {
+		const harness = createHarness( [
+			createAbility( { meta: { webmcp: { public: true, debugging: true } } } ),
+		] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'big_sky__apply_block_edits' )?.annotations ).toMatchObject( {
+			debugging: true,
 		} );
 	} );
 

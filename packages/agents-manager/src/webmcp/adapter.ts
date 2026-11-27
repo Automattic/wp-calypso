@@ -99,6 +99,7 @@ function createTool(
 			consequentialHint:
 				ability.meta?.annotations?.destructive === true ||
 				ability.meta?.webmcp?.consequential === true,
+			debugging: ability.meta?.webmcp?.debugging === true,
 		},
 		execute: async ( input, options ) => {
 			// The ability can change before the next sync replaces this tool, e.g. an unflagged one

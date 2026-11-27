@@ -64,8 +64,8 @@ ability's `readonly` annotation. Every tool sets `untrustedContentHint`, because
 content and other plugins' output, which Agents Manager can't vouch for. A tool sets
 `consequentialHint` when its ability is annotated `destructive` or sets
 `meta.webmcp.consequential: true`. No tool listed below does: their changes stay unsaved for review.
-The draft has no MCP-style `destructiveHint` or `idempotentHint`, so the `idempotent` annotation
-isn't sent, and its `debugging` hint isn't used.
+A tool sets `debugging` when its ability sets `meta.webmcp.debugging: true`. The draft has no
+MCP-style `destructiveHint` or `idempotentHint`, so the `idempotent` annotation isn't sent.
 
 Eligibility is checked once the providers load and whenever the scope or the loaded providers
 change; such a change, or unmounting, aborts all registrations. While eligible, the adapter syncs
@@ -139,7 +139,8 @@ To add another tool, verify its complete implementation, permissions, annotation
 path. Set `meta.webmcp.public: true` on a client ability with a callback, or add a REST-backed tool
 to `WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`). If the tool's action is significant or can't be
 undone, such as sending a message or refunding an order, also set `meta.webmcp.consequential: true`,
-so a browser agent can ask the user to confirm it first.
+so a browser agent can ask the user to confirm it first. If the tool is for debugging or developer
+tooling rather than for end users, set `meta.webmcp.debugging: true`.
 
 For a tool on another wp-admin screen, load Agents Manager there with Jetpack's
 `agents_manager_should_load` filter, and list the screen's ID in `meta.webmcp.screens`, for example
