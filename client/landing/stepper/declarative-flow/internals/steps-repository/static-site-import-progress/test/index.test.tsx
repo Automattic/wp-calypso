@@ -59,7 +59,7 @@ describe( 'StaticSiteImportProgressStep', () => {
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 
-	it( 'keeps the colliding cards up in place of the page list and screenshot', () => {
+	it( 'keeps the puzzle up in place of the page list and screenshot', () => {
 		render( {
 			status: 'moving',
 			session: {
@@ -69,13 +69,27 @@ describe( 'StaticSiteImportProgressStep', () => {
 			},
 		} as StaticSiteImport );
 
-		expect( document.querySelector( '.static-site-import-colliding-cards' ) ).toBeVisible();
+		expect( document.querySelector( '.static-site-import-puzzle' ) ).toBeVisible();
 		expect(
 			document.querySelector( '.static-site-import-snapshot__pages' )
 		).not.toBeInTheDocument();
 		expect(
 			document.querySelector( '.static-site-import-snapshot__image' )
 		).not.toBeInTheDocument();
+	} );
+
+	it.each( [
+		[ 'building', false ],
+		[ 'preview_ready', true ],
+	] )( 'settles the puzzle only once the preview is ready, when %s', ( state, isSettled ) => {
+		render( {
+			status: 'moving',
+			session: { state, progress: { pages: [ { path: '/', captured: true } ] } },
+		} as StaticSiteImport );
+
+		const tiles = document.querySelector( '.static-site-import-puzzle__tiles' );
+		expect( tiles ).toBeVisible();
+		expect( tiles?.classList.contains( 'is-settled' ) ).toBe( isSettled );
 	} );
 
 	it( 'submits a finished preview with its share link', () => {

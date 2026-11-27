@@ -1,0 +1,82 @@
+@import '@automattic/color-studio/dist/color-variables';
+@import '@wordpress/base-styles/colors';
+
+.static-site-import-puzzle {
+	// The tiles slice the screenshot and slide from left to right, whichever way the page reads. The
+	// RTL build honours `rtl:ignore` only while this is not the last declaration in the rule.
+	direction: ltr #{'/* rtl:ignore */'};
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+}
+
+.static-site-import-puzzle__image {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: top;
+}
+
+.static-site-import-puzzle__tiles {
+	--static-site-import-puzzle-scale: 0.96;
+
+	position: absolute;
+	inset: 0;
+	// Dark in any color scheme, so the tiles read as glass under a spotlight. The design's two greys
+	// sit between palette steps, hence the mixes.
+	background: radial-gradient(
+		ellipse at center,
+		rgba( mix( $studio-gray-80, $studio-gray-90, 27% ), 0.93 ),
+		rgba( mix( $black, $studio-gray-80, 58% ), 0.98 )
+	);
+	transition: opacity 0.36s ease 0.42s;
+
+	&.is-entering {
+		--static-site-import-puzzle-scale: 0.32;
+	}
+
+	&.is-settled {
+		--static-site-import-puzzle-scale: 1;
+		opacity: 0;
+	}
+}
+
+// The mShots screenshot's shape (1440 × 1462) across the full width, so the window crops its bottom,
+// as it crops the colliding cards.
+.static-site-import-puzzle__grid {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline: 0;
+	display: grid;
+	grid-template:
+		repeat( var( --static-site-import-puzzle-tiles ), 1fr ) /
+		repeat( var( --static-site-import-puzzle-tiles ), 1fr );
+	aspect-ratio: 1440 / 1462;
+}
+
+.static-site-import-puzzle__tile {
+	box-sizing: border-box;
+	background-repeat: no-repeat;
+	background-size: calc( var( --static-site-import-puzzle-tiles ) * 100% )
+		calc( var( --static-site-import-puzzle-tiles ) * 100% );
+	border: 0.5px solid rgba( $white, 0.06 );
+	border-radius: 3px;
+	box-shadow:
+		inset 0 1px 0 rgba( $white, 0.14 ),
+		inset 0 -1px 0 rgba( $black, 0.32 ),
+		0 4px 12px rgba( $black, 0.45 );
+	transition:
+		transform 0.58s cubic-bezier( 0.4, 0, 0.2, 1 ),
+		opacity 0.5s ease;
+	will-change: transform;
+
+	.is-entering & {
+		opacity: 0;
+	}
+
+	.is-waiting & {
+		background-color: rgba( $white, 0.08 );
+	}
+}
