@@ -1,8 +1,9 @@
 import { resolve } from 'path';
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { mergeConfig } from 'vitest/config';
+import base from '../../test/packages/vitest.config.mjs';
 
-export default defineConfig( {
+export default mergeConfig( base, {
 	plugins: [ react() ],
 	root: import.meta.dirname,
 	build: {
@@ -21,5 +22,8 @@ export default defineConfig( {
 		// Mock WordPress globals for development
 		'global.wp': '{}',
 		'global.wpcomGutenberg': '{}',
+	},
+	test: {
+		include: [ 'src/**/*.test.{ts,tsx}' ],
 	},
 } );
