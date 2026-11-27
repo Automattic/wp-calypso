@@ -10,7 +10,7 @@ export const getEditorStateAbility: Ability = {
 	label: __( 'Get Editor State', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
 	description:
-		'Reads what the editor has open and what is unsaved: the open post, page or template with its saved status (null when none is open), and every record with unsaved changes. If the open post\'s status is "publish", visitors already see it, so saving it changes the live site. Use this to tell the user what to review and save.',
+		'Reads what the editor has open and what is unsaved: the open post, page or template with its saved status, or null when nothing is open, and every record with unsaved changes. If the open post\'s status is "publish", visitors already see it, so saving it changes the live site. Use this to tell the user what to review and save.',
 	input_schema: {
 		type: 'object',
 		properties: {},
