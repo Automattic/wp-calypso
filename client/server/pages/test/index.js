@@ -839,7 +839,7 @@ const assertDefaultContext = ( { url, entry } ) => {
 	} );
 };
 
-const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
+const assertSection = ( { url, entry, sectionName, sectionGroup, meta } ) => {
 	let app;
 
 	beforeAll( async () => {
@@ -897,6 +897,24 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		expect( response.statusCode ).toBe( 200 );
 		expect( response.send ).toHaveBeenCalledWith( 'output' );
 	} );
+
+	if ( meta ) {
+		it( 'appends the section meta tags to the store ones', async () => {
+			const existingMeta = { property: 'og:site_name', content: 'WordPress.com' };
+			const theStore = {
+				dispatch: vi.fn(),
+				getState: vi.fn( () => ( { documentHead: { meta: [ existingMeta ] } } ) ),
+			};
+			app.withReduxStore( theStore );
+
+			await app.run();
+
+			expect( theStore.dispatch ).toHaveBeenCalledWith( {
+				type: 'DOCUMENT_HEAD_META_SET',
+				meta: [ existingMeta, ...meta ],
+			} );
+		} );
+	}
 
 	describe( 'for authenticated users', () => {
 		let theStore;
@@ -1372,6 +1390,7 @@ describe( 'main app', () => {
 			url: '/sites',
 			sectionName: 'sites-dashboard',
 			sectionGroup: 'sites-dashboard',
+			meta: [ { name: 'robots', content: 'noindex' } ],
 		} );
 	} );
 

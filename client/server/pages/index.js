@@ -76,7 +76,7 @@ import { LOCALE_SET } from 'calypso/state/action-types';
 import { createReduxStore } from 'calypso/state/create-store';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setDocumentHeadLink, setDocumentHeadMeta } from 'calypso/state/document-head/actions';
-import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
+import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors/get-document-head-meta';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { deserialize } from 'calypso/state/utils';
