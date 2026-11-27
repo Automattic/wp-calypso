@@ -178,7 +178,7 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 				intent: 'plans-default-wpcom',
 				hideFreePlan: true,
 				// Skipping signs the customer up and moves the site onto a free preview instead.
-				skippable: isCheckoutFirstRun,
+				skippable: true,
 			},
 			[ STEPS.CONFIDENCE_STEP.slug ]: {
 				from,
@@ -366,6 +366,10 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 								skippedPlans: '1',
 							} ) }`
 						);
+					}
+					// Preview-first already built the preview, whose Overview shows the move.
+					if ( providedDependencies?.action === 'skip_plan' ) {
+						return goToPreviewOverview();
 					}
 					const planCartItem = providedDependencies?.cartItems?.[ 0 ];
 					if ( ! planCartItem?.product_slug ) {

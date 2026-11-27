@@ -24,7 +24,7 @@ for this session, not in the URL. Opening the flow with `?from=<source>` (and op
 `&platform=`) skips identification and stores that source in the flow state the same way.
 
 Both variations offer the same plans grid: the default one, without Free, since the move needs a
-paid plan.
+paid plan, with **Skip**.
 
 ### Checkout first
 
@@ -59,7 +59,7 @@ in A.
 | `user`                        | Signup or login, skipped for a logged-in user                |
 | `site-migration-identify`     | The source's address, analyzed as in `site-migration`        |
 | `static-site-import-progress` | Starts the move onto a preview site, and shows it to the end |
-| `plans`                       | Plan selection for the preview                               |
+| `plans`                       | Plan selection for the preview, with Skip to its Overview    |
 | Checkout                      | Payment for the preview, then its Overview                   |
 
 The progress step starts a static site import session, then builds a preview site through the
@@ -106,9 +106,10 @@ For the preview-first variation (B), add `?variation=b` to the first URL:
    without Free.
 5. Pick a plan. Confirm checkout is for the preview site, and completing it opens the preview’s
    Overview.
-6. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
+6. Repeat, selecting **Skip** on plans. Confirm it opens the preview’s Overview.
+7. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
    skips the address step and shows the move’s progress the same way.
-7. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
+8. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
 
 For the checkout-first variation (A), add `?variation=a` to the first URL:
 

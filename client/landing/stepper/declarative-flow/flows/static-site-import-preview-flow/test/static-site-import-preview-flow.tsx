@@ -331,14 +331,14 @@ describe( 'Static site import preview flow', () => {
 		} );
 	} );
 
-	it( 'offers no way to skip plans in the preview-first variation', () => {
+	it( 'offers Skip on plans in the preview-first variation', () => {
 		const props = renderHookWithProvider( () => staticSiteImportPreviewFlow.useStepsProps(), {
 			wrapper: ( { children } ) => (
 				<MemoryRouter initialEntries={ [ '/plans' ] }>{ children }</MemoryRouter>
 			),
 		} ).result.current;
 
-		expect( props[ STEPS.UNIFIED_PLANS.slug ].skippable ).toBe( false );
+		expect( props[ STEPS.UNIFIED_PLANS.slug ].skippable ).toBe( true );
 	} );
 
 	describe( 'progress step', () => {
@@ -413,6 +413,14 @@ describe( 'Static site import preview flow', () => {
 				expect( query.ref ).toBe( 'static-site-import-preview' );
 				expect( cancelDestination ).toBe( '/setup/static-site-import-preview/plans' );
 				expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
+			} );
+
+			it( 'opens the preview’s Overview when plans are skipped', () => {
+				identify();
+				runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: { action: 'skip_plan' } } );
+
+				expect( lastExit() ).toEqual( overviewExit( SOURCE ) );
+				expect( goToCheckout ).not.toHaveBeenCalled();
 			} );
 
 			it( 'opens the preview’s Overview for a move that stopped', () => {
