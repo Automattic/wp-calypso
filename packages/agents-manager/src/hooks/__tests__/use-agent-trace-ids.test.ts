@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import useAgentTraceIds from '../use-agent-trace-ids';

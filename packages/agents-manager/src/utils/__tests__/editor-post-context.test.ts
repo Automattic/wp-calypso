@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { select } from '@wordpress/data';
 import { vi } from 'vitest';
 import { getEditorPostContext } from '../editor-post-context';

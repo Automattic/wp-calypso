@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook, act } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';

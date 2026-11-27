@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { subscribe } from '@wordpress/data';
 import { vi } from 'vitest';
 import { waitForStore } from '../wait-for-store';

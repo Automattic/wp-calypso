@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 // eslint-disable-next-line import/no-nodejs-modules
 import fs from 'fs';

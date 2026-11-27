@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { type Mock, vi } from 'vitest';
 import { withCheckpoint } from '../../../utils/checkpoints';
 import { hasSiteLogoBlock, setSiteLogo } from '../../../utils/site-logo';

@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
 import { useGetSupportInteractions } from '../use-get-support-interactions';

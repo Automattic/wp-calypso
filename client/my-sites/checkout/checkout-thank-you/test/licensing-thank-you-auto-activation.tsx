@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { JETPACK_CONTACT_SUPPORT } from '@automattic/urls';
 import { QueryClient } from '@tanstack/react-query';

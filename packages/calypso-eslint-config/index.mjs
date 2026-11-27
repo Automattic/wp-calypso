@@ -209,13 +209,7 @@ function build( rootDir ) {
 				'jsdoc/check-tag-names': [
 					'error',
 					{
-						definedTags: [
-							'jest-environment',
-							'jest-environment-options',
-							'vitest-environment',
-							'vitest-environment-options',
-							'jsxImportSource',
-						],
+						definedTags: [ 'vitest-environment', 'vitest-environment-options', 'jsxImportSource' ],
 					},
 				],
 

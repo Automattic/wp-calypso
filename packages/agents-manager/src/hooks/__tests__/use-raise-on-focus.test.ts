@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { fireEvent, renderHook } from '@testing-library/react';
 import useRaiseOnFocus from '../use-raise-on-focus';
 

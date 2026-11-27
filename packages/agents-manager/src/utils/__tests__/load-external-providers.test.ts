@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { type Mock, vi } from 'vitest';
 import { amToolProvider } from '../../abilities';
 import { applyBlockEditsAbility } from '../../abilities/apply-block-edits';

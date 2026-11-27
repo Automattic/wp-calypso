@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import StylesPreview from '../styles-preview';

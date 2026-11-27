@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { vi } from 'vitest';
 import { fetchSiteSetupTasks, getSiteSetupSiteId } from '../site-setup-tasks';
 

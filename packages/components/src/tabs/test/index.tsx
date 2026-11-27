@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { press, click } from '@ariakit/test';
 import { render } from '@ariakit/test/react';
