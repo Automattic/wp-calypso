@@ -1,6 +1,6 @@
 import { domainsQuery } from '@automattic/api-queries';
 import { parseAdminBarNodeTitle } from '@automattic/omnibar';
-import { useSiteLaunch } from '../../../sites/site-launch-button/use-site-launch';
+import { useSiteLaunch } from '../../../sites/site-launch/hooks/use-site-launch';
 import { dashboardLinkWithBackport } from '../../../utils/link';
 import { useAnalytics } from '../../analytics';
 import type { Site } from '@automattic/api-core';

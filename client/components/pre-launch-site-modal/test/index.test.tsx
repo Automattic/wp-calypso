@@ -49,7 +49,7 @@ vi.mock( 'calypso/dashboard/utils/site-plan', () => ( {
 	getSitePlanDisplayName: () => 'Business',
 } ) );
 
-vi.mock( 'calypso/dashboard/sites/site-preview', () => ( {
+vi.mock( 'calypso/dashboard/sites/site-preview/components/site-preview', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="site-preview" />,
 } ) );

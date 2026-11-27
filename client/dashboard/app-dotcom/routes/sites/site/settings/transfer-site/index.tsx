@@ -13,10 +13,10 @@ import PageLayout from '../../../../../../components/page-layout';
 import {
 	ConfirmNewOwnerForm,
 	ConfirmNewOwnerFormData,
-} from '../../../../../../sites/transfer-site/components/confirm-new-owner-form';
-import { EmailConfirmation } from '../../../../../../sites/transfer-site/components/email-confirmation';
-import { InvitationEmailSent } from '../../../../../../sites/transfer-site/components/invitation-email-sent';
-import { StartSiteTransferForm } from '../../../../../../sites/transfer-site/components/start-site-transfer-form';
+} from '../../../../../../sites/site-transfer/components/confirm-new-owner-form';
+import { EmailConfirmation } from '../../../../../../sites/site-transfer/components/email-confirmation';
+import { InvitationEmailSent } from '../../../../../../sites/site-transfer/components/invitation-email-sent';
+import { StartSiteTransferForm } from '../../../../../../sites/site-transfer/components/start-site-transfer-form';
 import type { SiteOwnerTransferContext } from '@automattic/api-core';
 
 const MIN_STEP = 0;
