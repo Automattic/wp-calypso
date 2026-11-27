@@ -404,4 +404,57 @@ describe( 'useUnsavedChangesConfirmation', () => {
 			removeEventListenerSpy.mockRestore();
 		} );
 	} );
+
+	describe( 'integration scenarios', () => {
+		it( 'handles a complete save flow from close request to Save & Exit', async () => {
+			mockGetHasUnsavedChanges.mockReturnValue( true );
+
+			const { result } = renderHook( () =>
+				useUnsavedChangesConfirmation( {
+					onSave: mockOnSave,
+					onDiscard: mockOnDiscard,
+					onExit: mockOnExit,
+				} )
+			);
+
+			act( () => {
+				result.current.handleRequestClose();
+			} );
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+
+			await act( async () => {
+				await result.current.handleConfirmSave();
+			} );
+
+			expect( mockOnSave ).toHaveBeenCalled();
+			expect( mockSetIsExitConfirmed ).toHaveBeenCalledWith( true );
+			expect( mockOnExit ).toHaveBeenCalledWith( true );
+		} );
+
+		it( 'handles a complete discard flow from close request to Discard', async () => {
+			mockGetHasUnsavedChanges.mockReturnValue( true );
+
+			const { result } = renderHook( () =>
+				useUnsavedChangesConfirmation( {
+					onSave: mockOnSave,
+					onDiscard: mockOnDiscard,
+					onExit: mockOnExit,
+				} )
+			);
+
+			act( () => {
+				result.current.handleRequestClose();
+			} );
+			expect( result.current.isConfirmDialogOpen ).toBe( true );
+
+			await act( async () => {
+				await result.current.handleConfirmDiscard();
+			} );
+
+			expect( mockOnDiscard ).toHaveBeenCalled();
+			expect( mockSetIsExitConfirmed ).toHaveBeenCalledWith( true );
+			expect( mockOnExit ).toHaveBeenCalledWith( true );
+			expect( result.current.isConfirmDialogOpen ).toBe( false );
+		} );
+	} );
 } );
