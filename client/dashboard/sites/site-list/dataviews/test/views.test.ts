@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { recordViewChanges } from '../dataviews/views';
+import { recordViewChanges } from '../views';
 import type { View } from '@wordpress/dataviews';
 
 describe( 'recordViewChanges', () => {

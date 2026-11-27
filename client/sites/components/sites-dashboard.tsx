@@ -20,7 +20,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import GuidedTour from 'calypso/components/guided-tour';
 import { GuidedTourContextProvider } from 'calypso/components/guided-tour/data/guided-tour-context';
 import { useCurrentRoute } from 'calypso/components/route';
-import { DEFAULT_PER_PAGE } from 'calypso/dashboard/sites/dataviews';
+import { DEFAULT_PER_PAGE } from 'calypso/dashboard/sites/site-list/dataviews';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
 import Layout from 'calypso/layout/hosting-dashboard';
 import LayoutColumn from 'calypso/layout/hosting-dashboard/column';

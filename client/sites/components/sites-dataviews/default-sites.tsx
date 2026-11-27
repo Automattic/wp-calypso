@@ -5,15 +5,15 @@ import { getQueryArgs } from '@wordpress/url';
 import { useCallback } from 'react';
 import { useBasePersistentView } from 'calypso/dashboard/app/hooks/use-persistent-view';
 import { DataViews } from 'calypso/dashboard/components/dataviews';
+import { canManageSite } from 'calypso/dashboard/sites/features';
 import {
 	DEFAULT_CONFIG,
 	useFields,
 	getDefaultView,
 	recordViewChanges,
 	sanitizeFields,
-} from 'calypso/dashboard/sites/dataviews';
-import { canManageSite } from 'calypso/dashboard/sites/features';
-import { useSiteListQuery } from 'calypso/dashboard/sites/hooks/use-site-list-query';
+} from 'calypso/dashboard/sites/site-list/dataviews';
+import { useSiteListQuery } from 'calypso/dashboard/sites/site-list/hooks/use-site-list-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';

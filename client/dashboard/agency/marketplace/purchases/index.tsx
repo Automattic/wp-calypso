@@ -15,7 +15,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../../co
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
-import { DEFAULT_CONFIG } from '../../../sites/dataviews/views';
+import { DEFAULT_CONFIG } from '../../../sites/site-list/dataviews/views';
 import { AgencyNotices } from '../../components/agency-notices';
 import PaymentRiskNotice, { hasPaymentRiskNotice } from '../../components/payment-risk-notice';
 import PressableUsageLimitNotice, {

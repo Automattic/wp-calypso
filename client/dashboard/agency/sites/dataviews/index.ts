@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useFields } from '../../../sites/dataviews';
+import { useFields } from '../../../sites/site-list/dataviews';
 import { getHostField, getPhpVersionField, getWpVersionField } from './endpoint-fields';
 import { toAgencyField } from './hydrate';
 import { withFullPlanName, withPressablePlan } from './plan-field';

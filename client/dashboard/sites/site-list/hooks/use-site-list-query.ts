@@ -7,7 +7,7 @@ import {
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import deepmerge from 'deepmerge';
 import { useEffect } from 'react';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
+import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import { STAGING_FILTER_FIELD } from '../dataviews';
 import type { FetchPaginatedSitesOptions, Site, DashboardFilters } from '@automattic/api-core';
 import type { View, Filter } from '@wordpress/dataviews';

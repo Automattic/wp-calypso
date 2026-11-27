@@ -3,25 +3,25 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, wordpress } from '@wordpress/icons';
 import { lazy, Suspense } from 'react';
-import { useAnalytics } from '../../app/analytics';
-import { siteDomainsRoute } from '../../app/router/sites';
-import ComponentViewTracker from '../../components/component-view-tracker';
-import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import { getSiteBlockingStatus } from '../../utils/site-status';
-import { siteTypeSupportsFeature } from '../../utils/site-type-feature-support';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { canManageSite, canDisconnectSite, canLeaveSite, canRestoreSite } from '../features';
+import { useAnalytics } from '../../../app/analytics';
+import { siteDomainsRoute } from '../../../app/router/sites';
+import ComponentViewTracker from '../../../components/component-view-tracker';
+import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
+import { getSiteBlockingStatus } from '../../../utils/site-status';
+import { siteTypeSupportsFeature } from '../../../utils/site-type-feature-support';
+import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
+import { canManageSite, canDisconnectSite, canLeaveSite, canRestoreSite } from '../../features';
 import type { Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
 const JetpackSiteDisconnect = lazy(
-	() => import( '../site-actions/components/jetpack-site-disconnect' )
+	() => import( '../../site-actions/components/jetpack-site-disconnect' )
 );
 const SiteLeaveContentInfo = lazy(
-	() => import( '../site-actions/components/site-leave-modal/content-info' )
+	() => import( '../../site-actions/components/site-leave-modal/content-info' )
 );
 const SiteRestoreContentInfo = lazy(
-	() => import( '../site-actions/components/site-restore-modal/content-info' )
+	() => import( '../../site-actions/components/site-restore-modal/content-info' )
 );
 
 const noop = () => undefined;

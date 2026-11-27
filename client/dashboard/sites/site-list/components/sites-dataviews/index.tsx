@@ -1,10 +1,10 @@
 import { __, _x } from '@wordpress/i18n';
-import { useAnalytics } from '../../app/analytics';
-import { PerformanceTrackerStop } from '../../app/performance-tracking';
-import { DataViews, DataViewsCard } from '../../components/dataviews';
-import { GuidedTourContextProvider, GuidedTourStep } from '../../components/guided-tour';
-import { SiteLink } from '../site-fields';
-import { DEFAULT_LAYOUTS, DEFAULT_CONFIG } from './views';
+import { useAnalytics } from '../../../../app/analytics';
+import { PerformanceTrackerStop } from '../../../../app/performance-tracking';
+import { DataViews, DataViewsCard } from '../../../../components/dataviews';
+import { GuidedTourContextProvider, GuidedTourStep } from '../../../../components/guided-tour';
+import { SiteLink } from '../../../site-fields';
+import { DEFAULT_LAYOUTS, DEFAULT_CONFIG } from '../../dataviews/views';
 import type { Site } from '@automattic/api-core';
 import type { Action, Field, View } from '@wordpress/dataviews';
 import type { ComponentProps, ReactNode } from 'react';
