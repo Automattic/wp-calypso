@@ -13,7 +13,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import useCartKey from '../../../use-cart-key';
+import useCheckoutCartKey from '../../hooks/use-checkout-cart-key';
 import useValidCheckoutBackUrl from '../../hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from '../../lib/leave-checkout';
 import { useCheckoutLeaveModal } from '../leave-checkout-modal';
@@ -27,7 +27,7 @@ import type {
 } from '@automattic/shopping-cart';
 import type { ReactNode } from 'react';
 
-vi.mock( '../../../use-cart-key', () => ( {
+vi.mock( '../../hooks/use-checkout-cart-key', () => ( {
 	__esModule: true,
 	default: vi.fn(),
 } ) );
@@ -151,10 +151,10 @@ function buildWrapper( client: ReturnType< typeof createShoppingCartManagerClien
 
 describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 	beforeEach( () => {
-		( useCartKey as Mock ).mockReset();
+		( useCheckoutCartKey as Mock ).mockReset();
 		( useValidCheckoutBackUrl as Mock ).mockReset();
 		( leaveCheckout as Mock ).mockReset();
-		( useCartKey as Mock ).mockReturnValue( NEW_SITE_CART_KEY );
+		( useCheckoutCartKey as Mock ).mockReturnValue( NEW_SITE_CART_KEY );
 		( useValidCheckoutBackUrl as Mock ).mockReturnValue(
 			'/start/domain/domain-only?skippedCheckout=1'
 		);
@@ -272,7 +272,7 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 		// When the user is checking out directly against `'no-site'` (no
 		// "New site" branch involved), the hook must not re-clear the same
 		// cart twice. Only one POST per distinct cart key should fire.
-		( useCartKey as Mock ).mockReturnValue( 'no-site' );
+		( useCheckoutCartKey as Mock ).mockReturnValue( 'no-site' );
 
 		const { getCart, setCart, setCallsByKey } = createFakeCartBackend( {
 			'no-site': [ domainProduct ],
@@ -304,11 +304,11 @@ describe( 'useCheckoutLeaveModal.clearCartAndLeave', () => {
 
 describe( 'useCheckoutLeaveModal Tracks events', () => {
 	beforeEach( () => {
-		( useCartKey as Mock ).mockReset();
+		( useCheckoutCartKey as Mock ).mockReset();
 		( useValidCheckoutBackUrl as Mock ).mockReset();
 		( leaveCheckout as Mock ).mockReset();
 		( recordTracksEvent as Mock ).mockReset();
-		( useCartKey as Mock ).mockReturnValue( NEW_SITE_CART_KEY );
+		( useCheckoutCartKey as Mock ).mockReturnValue( NEW_SITE_CART_KEY );
 		( useValidCheckoutBackUrl as Mock ).mockReturnValue( undefined );
 	} );
 
@@ -410,10 +410,10 @@ describe( 'useCheckoutLeaveModal Tracks events', () => {
 
 describe( 'useCheckoutLeaveModal.clickStepBack', () => {
 	beforeEach( () => {
-		( useCartKey as Mock ).mockReset();
+		( useCheckoutCartKey as Mock ).mockReset();
 		( useValidCheckoutBackUrl as Mock ).mockReset();
 		( leaveCheckout as Mock ).mockReset();
-		( useCartKey as Mock ).mockReturnValue( NEW_SITE_CART_KEY );
+		( useCheckoutCartKey as Mock ).mockReturnValue( NEW_SITE_CART_KEY );
 		( useValidCheckoutBackUrl as Mock ).mockReturnValue(
 			'https://mynewsite.wordpress.com/setup/onboarding/plans'
 		);
@@ -546,10 +546,10 @@ describe( 'useCheckoutLeaveModal gift checkout', () => {
 	}
 
 	beforeEach( () => {
-		( useCartKey as Mock ).mockReset();
+		( useCheckoutCartKey as Mock ).mockReset();
 		( useValidCheckoutBackUrl as Mock ).mockReset();
 		( leaveCheckout as Mock ).mockReset();
-		( useCartKey as Mock ).mockReturnValue( GIFT_CART_KEY );
+		( useCheckoutCartKey as Mock ).mockReturnValue( GIFT_CART_KEY );
 		( useValidCheckoutBackUrl as Mock ).mockReturnValue( undefined );
 		// The hook reads the gift checkout route off the path, the way
 		// `getProductSlugFromContext` does.
@@ -857,9 +857,9 @@ describe( 'useCheckoutLeaveModal isLeaveDisabled outside a gift checkout', () =>
 	const CART_KEY: CartKey = 'no-site';
 
 	beforeEach( () => {
-		( useCartKey as Mock ).mockReset();
+		( useCheckoutCartKey as Mock ).mockReset();
 		( useValidCheckoutBackUrl as Mock ).mockReset();
-		( useCartKey as Mock ).mockReturnValue( CART_KEY );
+		( useCheckoutCartKey as Mock ).mockReturnValue( CART_KEY );
 		( useValidCheckoutBackUrl as Mock ).mockReturnValue( undefined );
 		window.history.replaceState( {}, '', '/checkout/mysite.wordpress.com' );
 	} );

@@ -1,7 +1,7 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import styled from '@emotion/styled';
 import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { useContactDetails } from '../lib/checkout-stores';
 import { SummaryLine, SummaryDetails } from './summary-details';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -30,7 +30,7 @@ export default function WPContactFormSummary( {
 	isLoggedOutCart: boolean;
 } ) {
 	const contactInfo = useContactDetails();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isRenewal = hasOnlyRenewalItems( responseCart );
 

@@ -13,6 +13,7 @@ import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from './checkout-query-client-provider';
 import CheckoutMain from './src/components/checkout-main';
 import { logStashLoadErrorEvent } from './src/lib/analytics';
+import useCartKey from './use-cart-key';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
@@ -72,6 +73,7 @@ export default function CheckoutMainWrapper( {
 	const translate = useTranslate();
 	const locale = useSelector( getCurrentUserLocale );
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
+	const cartKey = useCartKey();
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
@@ -116,6 +118,7 @@ export default function CheckoutMainWrapper( {
 							locale={ locale }
 						>
 							<CheckoutMain
+								cartKey={ cartKey }
 								siteSlug={ siteSlug }
 								siteId={ selectedSiteId }
 								productAliasFromUrl={ productAliasFromUrl }

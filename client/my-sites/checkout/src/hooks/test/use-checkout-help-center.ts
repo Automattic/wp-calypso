@@ -80,7 +80,7 @@ vi.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key', () => ( {
 	__esModule: true,
 	default: () => 'cart-key',
 } ) );

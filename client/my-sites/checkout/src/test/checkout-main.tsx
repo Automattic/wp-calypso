@@ -12,7 +12,6 @@ import React from 'react';
 import { type Mock, vi } from 'vitest';
 import * as Tracks from 'calypso/lib/analytics/tracks';
 import { navigate } from 'calypso/lib/navigate';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -41,7 +40,6 @@ import { MockCheckout } from './util/mock-checkout';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
 vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 vi.mock( 'calypso/lib/navigate' );
@@ -58,7 +56,6 @@ vi.mock( 'calypso/blocks/login/blackbox-challenge', async () => {
 
 describe( 'CheckoutMain', () => {
 	const initialCart = getBasicCart();
-	const mainCartKey = 123456;
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,
@@ -79,7 +76,6 @@ describe( 'CheckoutMain', () => {
 		} );
 		mockGetSiteDomainsEndpoint( [] );
 		( isMarketplaceProduct as Mock ).mockImplementation( () => false );
-		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
@@ -863,9 +859,9 @@ describe( 'CheckoutMain', () => {
 			isGiftPurchase: true,
 		};
 
-		( useCartKey as Mock ).mockImplementation( () => 'no-site' );
 		render(
 			<MockCheckout
+				cartKey="no-site"
 				cartChanges={ cartChanges }
 				additionalProps={ additionalProps }
 				initialCart={ initialCart }
@@ -916,11 +912,10 @@ describe( 'CheckoutMain', () => {
 							: product
 					),
 				} );
-			( useCartKey as Mock ).mockImplementation( () => 'no-site' );
-
 			try {
 				const { unmount } = render(
 					<MockCheckout
+						cartKey="no-site"
 						cartChanges={ { products: [] } }
 						additionalProps={ {
 							purchaseId: '12345',
@@ -991,14 +986,6 @@ describe( 'CheckoutMain', () => {
 					expect( container ).toHaveTextContent( 'R$10' );
 				} );
 		} );
-	} );
-
-	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
-		( useCartKey as Mock ).mockImplementation( () => undefined );
-		await act( async () => {
-			render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
-		} );
-		expect( screen.getByText( 'Loading checkout' ) ).toBeInTheDocument();
 	} );
 
 	it( 'Disables email field in A4A express checkout', async () => {

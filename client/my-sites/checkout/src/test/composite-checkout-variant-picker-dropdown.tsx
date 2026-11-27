@@ -9,7 +9,6 @@ import userEvent from '@testing-library/user-event';
 import { type Mock, vi } from 'vitest';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import useCartKey from '../../use-cart-key';
 import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	domainProduct,
@@ -35,7 +34,6 @@ import { MockCheckout } from './util/mock-checkout';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
 vi.mock( 'calypso/state/products-list/selectors' );
 vi.mock( 'calypso/state/selectors/get-intro-offer-price' );
 vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
@@ -51,7 +49,6 @@ vi.setConfig( { testTimeout: 12000 } );
 
 describe.skip( 'CheckoutMain with a variant picker', () => {
 	const initialCart = getBasicCart();
-	const mainCartKey = 123456;
 
 	beforeEach( () => {
 		resetCheckoutStores();
@@ -61,7 +58,6 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 		} ) );
 		mockGetSiteDomainsEndpoint( [] );
 		( isMarketplaceProduct as unknown as Mock ).mockImplementation( () => false );
-		( useCartKey as unknown as Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();

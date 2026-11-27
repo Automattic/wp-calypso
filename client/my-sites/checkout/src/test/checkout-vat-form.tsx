@@ -7,7 +7,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -37,7 +36,6 @@ import type { CartKey } from '@automattic/shopping-cart';
 
 vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center' );
-vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
 vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 vi.mock( 'calypso/lib/navigate' );
@@ -65,6 +63,7 @@ describe( 'Checkout contact step VAT form', () => {
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
 		initialCart,
+		cartKey: mainCartKey,
 	};
 
 	getPlansBySiteId.mockImplementation( () => ( {
@@ -86,7 +85,6 @@ describe( 'Checkout contact step VAT form', () => {
 
 	beforeEach( () => {
 		resetCheckoutStores();
-		( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();

@@ -6,7 +6,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { resetCheckoutStores } from '../lib/checkout-stores';
@@ -33,7 +32,6 @@ import { setupUserNoPointerEvents } from './util/setup-user';
 import type { CartKey, ResponseCart } from '@automattic/shopping-cart';
 
 vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
 vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 vi.mock( 'calypso/lib/navigate' );
@@ -48,6 +46,7 @@ describe( 'Checkout contact step', () => {
 	const initialCart: ResponseCart = { ...getBasicCart(), cart_key: siteId };
 	const defaultPropsForMockCheckout = {
 		initialCart,
+		cartKey: mainCartKey,
 	};
 
 	getPlansBySiteId.mockImplementation( () => ( {
@@ -55,7 +54,6 @@ describe( 'Checkout contact step', () => {
 	} ) );
 	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {

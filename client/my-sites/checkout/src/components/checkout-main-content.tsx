@@ -77,6 +77,7 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import {
@@ -84,7 +85,6 @@ import {
 	useSubmitButtonSlot,
 } from 'calypso/my-sites/checkout/src/lib/submit-button-slot';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import SitePreview from 'calypso/my-sites/customer-home/cards/features/site-preview';
 import useOneDollarOfferTrack from 'calypso/my-sites/plans/hooks/use-onedollar-offer-track';
 import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
@@ -242,7 +242,7 @@ const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const contactDetailsType = getContactDetailsType( responseCart );
 
@@ -317,7 +317,7 @@ function CheckoutSidebarNudge( {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	areThereDomainProductsInCart: boolean;
 } ) {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isWcMobile = isWcMobileApp();
 	const isDIFMInCart = hasDIFMProduct( responseCart );
@@ -452,7 +452,7 @@ export default function CheckoutMainContent( {
 	showSitePreview?: boolean;
 } ) {
 	const translate = useTranslate();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const {
 		responseCart,
 		applyCoupon,
@@ -1611,7 +1611,7 @@ function CheckoutTermsAndCheckboxes( {
 	isSubmitted: boolean;
 	isLargeViewport: boolean;
 } ) {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const has100YearPlan = cartHas100YearPlan( responseCart );
 	const hasMarketplaceProduct =
@@ -1691,7 +1691,7 @@ function useDoesCartHaveMarketplaceProductRequiringConfirmation(
 }
 
 const JetpackCheckoutSeals = () => {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
 	const show7DayGuarantee = responseCart?.products?.every( isMonthlyProduct );

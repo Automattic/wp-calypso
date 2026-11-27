@@ -13,7 +13,7 @@ import { useEffect, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import { withoutHttp } from 'calypso/lib/url';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -119,7 +119,7 @@ export default function WPCheckoutOrderReview( {
 	createUserAndSiteBeforeTransaction?: boolean;
 } ) {
 	const translate = useTranslate();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 
 	const onRemoveProductCancel = useCallback( () => {

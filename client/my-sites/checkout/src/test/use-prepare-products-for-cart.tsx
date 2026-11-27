@@ -6,8 +6,6 @@ import { vi } from 'vitest';
 import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
-vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
-
 function renderPrepareProducts( {
 	productAliasFromUrl,
 	purchaseId,
@@ -23,6 +21,7 @@ function renderPrepareProducts( {
 } ) {
 	return renderHook( () =>
 		usePrepareProductsForCart( {
+			cartKey: 'no-site',
 			productAliasFromUrl,
 			purchaseId,
 			siteSlug: undefined,

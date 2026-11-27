@@ -9,7 +9,7 @@ export default function getCartKey( {
 	selectedSite: SiteDetails | undefined | null;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-} ): CartKey | undefined {
+} ): CartKey {
 	if ( ! selectedSite?.slug && ( isLoggedOutCart || isNoSiteCart ) ) {
 		return 'no-user';
 	}

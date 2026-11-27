@@ -7,7 +7,10 @@ import { render } from '@testing-library/react';
 import { type MockInstance, vi } from 'vitest';
 import { CheckoutSubmitButtonContent } from '../checkout-submit-button-content';
 
-vi.mock( '../../../use-cart-key', () => ( { __esModule: true, default: () => 'no-site' } ) );
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key', () => ( {
+	__esModule: true,
+	default: () => 'no-site',
+} ) );
 vi.mock( '@automattic/shopping-cart', async () => ( {
 	...( await vi.importActual< typeof import( '@automattic/shopping-cart' ) >(
 		'@automattic/shopping-cart'

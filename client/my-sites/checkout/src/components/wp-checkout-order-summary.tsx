@@ -40,7 +40,7 @@ import { useTranslate } from 'i18n-calypso';
 import * as React from 'react';
 import { hasFreeCouponTransfersOnly } from 'calypso/lib/cart-values/cart-items';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import useEquivalentMonthlyTotals, {
 	getSubtotalBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
@@ -76,7 +76,7 @@ export function WPCheckoutOrderSummary( {
 	showFeaturesList?: boolean;
 } ) {
 	const { formStatus } = useFormStatus();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
 	return (
@@ -150,7 +150,7 @@ function TaxNotCalculatedLineItem() {
 }
 
 function CheckoutSummaryPriceList() {
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const creditsLineItem = getCreditsLineItemFromCart( responseCart );
 	const taxLineItems = getTaxBreakdownLineItemsFromCart( responseCart );
@@ -348,7 +348,7 @@ export function CheckoutSummaryFeaturesList( props: {
 } ) {
 	const { siteId, nextDomainIsFree } = props;
 
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const hasDomainsInCart = responseCart.products.some(
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
@@ -564,7 +564,7 @@ function CheckoutSummaryPlanFeatures( props: {
 	const { hasDomainsInCart, nextDomainIsFree } = props;
 
 	const translate = useTranslate();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const planInCart = responseCart.products.find( ( product ) => isPlan( product ) );
 	const hasRenewalInCart = responseCart.products.some(

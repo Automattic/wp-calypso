@@ -8,6 +8,7 @@ import PressableCheckoutBack from 'calypso/a8c-for-agencies/sections/marketplace
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
@@ -21,6 +22,7 @@ import './style.scss';
  * Client Checkout Component using the WordPress.com checkout
  */
 function ClientCheckoutContent( { skipActiveCart }: { skipActiveCart: boolean } ) {
+	const cartKey = useCartKey();
 	const translate = useTranslate();
 	const [ isCheckoutFormSubmitting, setIsCheckoutFormSubmitting ] = useState( false );
 
@@ -94,6 +96,7 @@ function ClientCheckoutContent( { skipActiveCart }: { skipActiveCart: boolean } 
 				</div>
 			</div>
 			<CheckoutMain
+				cartKey={ cartKey }
 				sitelessCheckoutType="a4a"
 				redirectTo={ successUrl ?? redirectTo }
 				customizedPreviousPath="/client/subscriptions"

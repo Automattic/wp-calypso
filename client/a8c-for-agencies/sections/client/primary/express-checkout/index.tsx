@@ -5,6 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-query-client-provider';
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
+import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
@@ -15,6 +16,7 @@ import getClientCheckoutRedirectUrl from '../../lib/get-client-checkout-redirect
 const EXPRESS_CHECKOUT_REDIRECT_URL = 'https://agencies.automattic.com/client/subscriptions';
 
 function ClientExpressCheckoutContent() {
+	const cartKey = useCartKey();
 	const translate = useTranslate();
 	const userLoggedIn = useSelector( isUserLoggedIn );
 
@@ -37,6 +39,7 @@ function ClientExpressCheckoutContent() {
 
 	return (
 		<CheckoutMain
+			cartKey={ cartKey }
 			sitelessCheckoutType="a4a"
 			redirectTo={ redirectTo }
 			customizedPreviousPath={ EXPRESS_CHECKOUT_REDIRECT_URL }

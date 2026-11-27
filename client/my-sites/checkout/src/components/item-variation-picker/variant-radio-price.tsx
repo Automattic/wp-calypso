@@ -9,7 +9,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { LoadingCopy, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import useCartKey from '../../../use-cart-key';
+import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`
@@ -77,7 +77,7 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	compareTo?: WPCOMProductVariant;
 } > = ( { variant, compareTo } ) => {
 	const translate = useTranslate();
-	const cartKey = useCartKey();
+	const cartKey = useCheckoutCartKey();
 	const { couponStatus } = useShoppingCart( cartKey );
 	const isApplyingCoupon = couponStatus === 'pending';
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
