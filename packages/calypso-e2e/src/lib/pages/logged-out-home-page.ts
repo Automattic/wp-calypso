@@ -22,9 +22,13 @@ export class LoggedOutHomePage {
 			name: 'Explore themes',
 			exact: true,
 		} );
-		// The primary CTA repeats down the page; the first visible one is the hero button.
+		// A sale can replace the hero button, so take the first visible "Get started" that
+		// enters onboarding: the navigation's, a `menuitem`, on desktop and one further down
+		// the page on mobile, where the navigation's is inside the closed menu.
 		this.getStartedLink = this.page
 			.getByRole( 'link', { name: 'Get started', exact: true } )
+			.or( this.page.getByRole( 'menuitem', { name: 'Get started', exact: true } ) )
+			.and( this.page.locator( '[href*="/setup/onboarding"]' ) )
 			.filter( { visible: true } )
 			.first();
 		this.heading = this.page.getByRole( 'heading', { name: 'WordPress' } ).first();
