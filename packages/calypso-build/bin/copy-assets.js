@@ -12,20 +12,30 @@ const outputDirCJS = path.join( dir, 'dist', 'cjs' );
 
 const ASSET_FILE = /\.(gif|jpe?g|png|webp|svg|scss)$/;
 
-// Like the globs this replaces, skip dot-named entries and anything in a `test` folder.
-const assets = fs
-	.readdirSync( inputDir, { recursive: true } )
-	.filter(
-		( file ) =>
-			ASSET_FILE.test( file ) &&
-			! file.split( path.sep ).some( ( part ) => part === 'test' || part.startsWith( '.' ) )
-	);
+// Like the globs this replaces, skip dot-named entries and `test` folders, and don't follow
+// symlinked folders.
+function listAssets( relativeDir = '' ) {
+	return fs
+		.readdirSync( path.join( inputDir, relativeDir ), { withFileTypes: true } )
+		.flatMap( ( entry ) => {
+			const file = path.join( relativeDir, entry.name );
+			if ( entry.name.startsWith( '.' ) ) {
+				return [];
+			}
+			if ( entry.isDirectory() ) {
+				return entry.name === 'test' ? [] : listAssets( file );
+			}
+			return ASSET_FILE.test( entry.name ) ? [ file ] : [];
+		} );
+}
+
+const assets = listAssets();
 
 function copyAssets( outputDir ) {
 	for ( const asset of assets ) {
-		const dest = path.join( outputDir, asset );
-		fs.mkdirSync( path.dirname( dest ), { recursive: true } );
-		fs.cpSync( path.join( inputDir, asset ), dest, { verbatimSymlinks: true } );
+		fs.cpSync( path.join( inputDir, asset ), path.join( outputDir, asset ), {
+			verbatimSymlinks: true,
+		} );
 	}
 }
 
