@@ -18,7 +18,7 @@
 		"@automattic/calypso-eslint-overrides": "workspace:^",
 		"@automattic/eslint-plugin-json": "workspace:^",
 		"@eslint/compat": "^2.1.1",
-		"@eslint/markdown": "^8.0.3",
+		"@eslint/markdown": "^9.0.0",
 		"@tanstack/eslint-plugin-query": "^5.100.0",
 		"@typescript-eslint/eslint-plugin": "^8.74.0",
 		"@typescript-eslint/parser": "^8.74.0",
