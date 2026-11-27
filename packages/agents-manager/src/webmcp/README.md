@@ -19,6 +19,10 @@ site with no agent provider. On a name clash, the provider's ability wins and ru
 merged provider, which applies the provider precedence and the canvas guard. Registry-only abilities
 run through the registry's `executeAbility()`.
 
+Tool names replace `/` with `__` and `-` with `_`, so two abilities can share one, such as
+`demo/read--panel` and `demo/read/panel`. None of the abilities that share a tool name is exposed,
+and one `[AgentsManager]` console warning names them.
+
 An ability lists its screens as wp-admin screen IDs in `meta.webmcp.screens`, matched against
 `window.pagenow` (`isAbilityOnCurrentScreen()` in `eligibility.ts`). Without the list, it belongs to
 the block and site editors: a post, page, custom-post-type block editor or site editor screen,
@@ -74,10 +78,10 @@ there by later React effects. Anything else, such as an ability only a provider 
 ability fetch that failed or a tool the browser rejected, is picked up on the next registry or
 scope change.
 
-A rejected tool doesn't stop the others from registering. A call to a tool whose ability was
-removed or is no longer exposed, or whose signal was aborted, is refused before it runs. An
-in-flight provider execution cannot be cancelled, because `ToolProvider.executeAbility()` has no
-signal.
+A tool the browser rejects, or one whose schema can't be serialized, doesn't stop the others from
+registering. A call to a tool whose ability was removed or is no longer exposed, or whose signal
+was aborted, is refused before it runs. An in-flight provider execution cannot be cancelled,
+because `ToolProvider.executeAbility()` has no signal.
 
 The exposed tools are:
 
@@ -212,11 +216,13 @@ DevTools or call `document.modelContext` directly for this path.
    (its category must be registered first). Confirm it appears as a tool without a reload, and
    disappears when it is unregistered. Register one without a callback, and confirm it stays
    absent and logs one `[AgentsManager]` warning that says why.
-5. Confirm the Network panel shows no Agenttic/orchestrator/model request.
-6. Navigate to another editor/site and confirm the tool now targets only the current canvas.
-7. On a wp-admin screen outside the editors where Agents Manager loads, such as Plugins on a
+5. Register two flagged abilities whose names share a tool name, such as `webmcp-demo/a--b` and
+   `webmcp-demo/a/b`. Confirm neither appears and one `[AgentsManager]` warning names both.
+6. Confirm the Network panel shows no Agenttic/orchestrator/model request.
+7. Navigate to another editor/site and confirm the tool now targets only the current canvas.
+8. On a wp-admin screen outside the editors where Agents Manager loads, such as Plugins on a
    WordPress.com site, repeat step 4 with that screen's ID added to `meta.webmcp`, such as
    `screens: [ 'plugins' ]`. Confirm it appears as a tool and that the ten editor tools don't.
    Repeat it without `screens`, and with another screen's ID, and confirm the tool stays absent
    without a warning.
-8. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.
+9. Force `isDevMode: false` in the inline data and reload; confirm the tools are absent.

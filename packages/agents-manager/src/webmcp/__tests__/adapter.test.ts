@@ -728,6 +728,15 @@ describe( 'WebMCP adapter', () => {
 			[ createAbility( { meta: { annotations: { clientRegistered: true } } } ) ],
 		],
 		[
+			'joined by an ability with the same tool name',
+			'demo__read__panel',
+			createAbility( { name: 'demo/read--panel' } ),
+			[
+				createAbility( { name: 'demo/read--panel' } ),
+				createAbility( { name: 'demo/read/panel' } ),
+			],
+		],
+		[
 			'no longer read-only on the server',
 			'wpcom__get_block_schemas',
 			createServerAbility( 'wpcom/get-block-schemas' ),
@@ -827,5 +836,68 @@ describe( 'WebMCP adapter', () => {
 			'agents_manager__get_block_tree',
 			'big_sky__apply_block_edits',
 		] );
+	} );
+
+	it( 'registers the other tools when one cannot be serialized', async () => {
+		const cyclicSchema: Record< string, unknown > = { type: 'object' };
+		cyclicSchema.properties = { self: cyclicSchema };
+		const harness = createHarness( [
+			createAbility( { name: 'demo/cyclic', input_schema: cyclicSchema } ),
+			createBlockTreeAbility(),
+		] );
+
+		await expect( harness.adapter.sync() ).rejects.toThrow( 'demo/cyclic cannot be serialized' );
+
+		expect( [ ...harness.tools.keys() ] ).toEqual( [ 'agents_manager__get_block_tree' ] );
+	} );
+
+	it( 'removes a tool whose ability can no longer be serialized', async () => {
+		const harness = createHarness( [ createAbility( { name: 'demo/panel' } ) ] );
+		await harness.adapter.sync();
+		const signal = harness.signals.get( 'demo__panel' );
+		const cyclicSchema: Record< string, unknown > = { type: 'object' };
+		cyclicSchema.properties = { self: cyclicSchema };
+		harness.setAbilities( [ createAbility( { name: 'demo/panel', input_schema: cyclicSchema } ) ] );
+
+		await expect( harness.adapter.sync() ).rejects.toThrow( 'cannot be serialized' );
+
+		expect( signal?.aborted ).toBe( true );
+	} );
+
+	it( 'exposes none of the abilities that share a tool name, and warns once', async () => {
+		// eslint-disable-next-line no-console
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const harness = createHarness( [
+			createAbility( { name: 'demo/read--panel' } ),
+			createAbility( { name: 'demo/read/panel' } ),
+			createBlockTreeAbility(),
+		] );
+
+		await harness.adapter.sync();
+		await harness.adapter.sync();
+
+		expect( [ ...harness.tools.keys() ] ).toEqual( [ 'agents_manager__get_block_tree' ] );
+		expect( warn ).toHaveBeenCalledTimes( 1 );
+		expect( warn ).toHaveBeenCalledWith(
+			expect.stringContaining(
+				"WebMCP doesn't expose demo/read--panel, demo/read/panel: they share the tool name demo__read__panel"
+			)
+		);
+	} );
+
+	it( 'removes a tool once another ability shares its tool name', async () => {
+		vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const harness = createHarness( [ createAbility( { name: 'demo/read--panel' } ) ] );
+		await harness.adapter.sync();
+		const signal = harness.signals.get( 'demo__read__panel' );
+		harness.setAbilities( [
+			createAbility( { name: 'demo/read--panel' } ),
+			createAbility( { name: 'demo/read/panel' } ),
+		] );
+
+		await harness.adapter.sync();
+
+		expect( signal?.aborted ).toBe( true );
+		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
 	} );
 } );
