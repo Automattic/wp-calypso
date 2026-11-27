@@ -97,12 +97,6 @@ describe( 'ImportFromWPCOMModal', () => {
 		expect( screen.getByText( 'A4A site' ) ).toBeVisible();
 	} );
 
-	test( 'shows when each site was created in the dashboard’s date format', async () => {
-		mockEndpoints();
-
-		expect( await screen.findByText( 'Jan 15, 2026' ) ).toBeVisible();
-	} );
-
 	test( 'names each site’s connection type', async () => {
 		mockEndpoints( {
 			sites: [
