@@ -9,6 +9,8 @@ import {
 } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
@@ -20,6 +22,7 @@ import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils
 import { stepWithRequiredLogin } from 'calypso/landing/stepper/utils/step-with-required-login';
 import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
+import { getImporterByKey } from 'calypso/lib/importer/importer-config';
 import { addQueryArgs, addSchemeIfMissing } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -171,6 +174,8 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 		const { from, platform } = useSource();
 		const isCheckoutFirstRun = useIsCheckoutFirst();
 		const started = get( STEPS.STATIC_SITE_IMPORT_PROGRESS.slug );
+		const { __ } = useI18n();
+		const platformName = getImporterByKey( `importer-type-${ platform }` )?.title;
 		return {
 			// Both variations offer the same grid, without Free: the move needs a paid plan.
 			[ STEPS.UNIFIED_PLANS.slug ]: {
@@ -182,6 +187,21 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 			},
 			[ STEPS.CONFIDENCE_STEP.slug ]: {
 				from,
+				platform,
+				title: __( 'Ready to copy' ),
+				subTitle: platformName
+					? sprintf(
+							/* translators: %s is the platform the site is built on, e.g. Wix. */
+							__( 'Your site runs on %s. We’ll copy it to WordPress.com.' ),
+							platformName
+						)
+					: __( 'We’ll copy your site to WordPress.com.' ),
+				includesLabel: __( 'Why move to WordPress.com' ),
+				includes: [
+					__( 'Your site is yours, on the open web' ),
+					__( 'Your pages, as they look today' ),
+					__( 'All of your images and files' ),
+				],
 			},
 			[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ]: {
 				from,

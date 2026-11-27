@@ -331,6 +331,26 @@ describe( 'Static site import preview flow', () => {
 		} );
 	} );
 
+	it( 'tells the confidence step the source’s platform', () => {
+		window.location.search = '?from=source.example.com&platform=wix';
+		const props = renderHookWithProvider( () => staticSiteImportPreviewFlow.useStepsProps(), {
+			wrapper: ( { children } ) => (
+				<MemoryRouter
+					initialEntries={ [ '/confidence-step?from=source.example.com&platform=wix' ] }
+				>
+					{ children }
+				</MemoryRouter>
+			),
+		} ).result.current;
+
+		expect( props[ STEPS.CONFIDENCE_STEP.slug ] ).toMatchObject( {
+			platform: 'wix',
+			title: 'Ready to copy',
+			subTitle: 'Your site runs on Wix. We’ll copy it to WordPress.com.',
+			includesLabel: 'Why move to WordPress.com',
+		} );
+	} );
+
 	it( 'offers Skip on plans in the preview-first variation', () => {
 		const props = renderHookWithProvider( () => staticSiteImportPreviewFlow.useStepsProps(), {
 			wrapper: ( { children } ) => (
@@ -501,7 +521,7 @@ describe( 'Static site import preview flow', () => {
 				),
 			} ).result.current;
 
-			expect( props[ STEPS.CONFIDENCE_STEP.slug ] ).toEqual( { from: SOURCE.from } );
+			expect( props[ STEPS.CONFIDENCE_STEP.slug ] ).toMatchObject( { from: SOURCE.from } );
 		} );
 
 		it( 'offers the paid plans', () => {
