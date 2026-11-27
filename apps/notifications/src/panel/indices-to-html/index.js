@@ -203,7 +203,6 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 					document.createTextNode( sub_text.substring( text_start, text_stop ) )
 				);
 				text_start = null;
-				text_stop = null;
 			}
 
 			// At this point we have one or more ranges we could be entering. We need to decide

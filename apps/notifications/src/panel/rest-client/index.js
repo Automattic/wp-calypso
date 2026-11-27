@@ -730,7 +730,7 @@ function getLiveFollowCandidates( notes, pushMessages = [], previousNotes = [] )
 function ready( subscriberNotifications = [] ) {
 	const notes = getAllNotes( store.getState() );
 
-	let newNotes = notes.filter(
+	const newNotes = notes.filter(
 		( note ) => Date.parse( note.timestamp ) / 1000 > this.lastSeenTime
 	);
 
@@ -738,7 +738,6 @@ function ready( subscriberNotifications = [] ) {
 
 	if ( ! this.firstRender && this.lastSeenTime === 0 ) {
 		newNoteCount = 0;
-		newNotes = [];
 	}
 
 	const latestType = notes.slice( -1 )[ 0 ]?.type ?? null;

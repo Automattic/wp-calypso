@@ -300,7 +300,6 @@ describe( 'Checkout', () => {
 		let MyCheckout;
 		const mockMethod = createMockMethod();
 		const steps = createMockStepObjects();
-		let validateForm;
 
 		beforeEach( () => {
 			MyCheckout = ( props ) => {
@@ -318,7 +317,7 @@ describe( 'Checkout', () => {
 							<CheckoutStepGroup>
 								{ stepObjectsWithoutStepNumber.map( createStepFromStepObject ) }
 								{ stepObjectsWithStepNumber.map( createStepFromStepObject ) }
-								<CheckoutFormSubmit validateForm={ validateForm } />
+								<CheckoutFormSubmit />
 							</CheckoutStepGroup>
 						</CheckoutProvider>
 					</myContext.Provider>
