@@ -8,5 +8,10 @@
 		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json" ],
-	"exclude": [ "**/test/*", "**/*.test.ts", "**/*.test.tsx", "**/*.test.js", "**/__mocks__/**" ]
+	"exclude": [ "**/test/*", "**/*.test.ts", "**/*.test.tsx", "**/*.test.js", "**/__mocks__/**" ],
+	"references": [
+		{ "path": "../agenttic-client" },
+		{ "path": "../calypso-url" },
+		{ "path": "../components" }
+	]
 }

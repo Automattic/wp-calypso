@@ -15,6 +15,9 @@
 		{ "path": "../viewport" },
 		{ "path": "../i18n-utils" },
 		{ "path": "../js-utils" },
-		{ "path": "../search" }
+		{ "path": "../search" },
+		{ "path": "../api-core" },
+		{ "path": "../calypso-products" },
+		{ "path": "../urls" }
 	]
 }

@@ -7,5 +7,10 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../newsletter-urls" }, { "path": "../viewport" } ]
+	"references": [
+		{ "path": "../newsletter-urls" },
+		{ "path": "../viewport" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../i18n-utils" }
+	]
 }

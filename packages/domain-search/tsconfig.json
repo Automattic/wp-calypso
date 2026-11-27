@@ -13,6 +13,9 @@
 		{ "path": "../api-core" },
 		{ "path": "../api-queries" },
 		{ "path": "../explat-client" },
-		{ "path": "../explat-client-react-helpers" }
+		{ "path": "../explat-client-react-helpers" },
+		{ "path": "../calypso-products" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../urls" }
 	]
 }

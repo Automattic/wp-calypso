@@ -13,6 +13,10 @@
 		{ "path": "../calypso-config" },
 		{ "path": "../data-stores" },
 		{ "path": "../onboarding" },
-		{ "path": "../viewport" }
+		{ "path": "../viewport" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../calypso-products" },
+		{ "path": "../components" },
+		{ "path": "../shopping-cart" }
 	]
 }

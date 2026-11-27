@@ -17,6 +17,14 @@
 		{ "path": "../zendesk-client" },
 		{ "path": "../agents-manager" },
 		{ "path": "../support-articles" },
-		{ "path": "../launchpad" }
+		{ "path": "../launchpad" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../calypso-config" },
+		{ "path": "../calypso-products" },
+		{ "path": "../components" },
+		{ "path": "../data-stores" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../onboarding" },
+		{ "path": "../shopping-cart" }
 	]
 }

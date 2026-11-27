@@ -10,6 +10,7 @@
 	"references": [
 		{ "path": "../agenttic-ui" },
 		{ "path": "../data-stores" },
-		{ "path": "../calypso-config" }
+		{ "path": "../calypso-config" },
+		{ "path": "../calypso-analytics" }
 	]
 }
