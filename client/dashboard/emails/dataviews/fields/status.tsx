@@ -51,6 +51,16 @@ export const statusField: Field< Email > = {
 			return <Text intent="warning">{ __( 'Pending deletion' ) }</Text>;
 		}
 
+		if ( item.status === 'deletion_refused' ) {
+			return (
+				<Tooltip text={ item.deletionRefusedMessage }>
+					<Text intent="error" tabIndex={ 0 } className="emails-status-with-tooltip">
+						{ __( 'Action required' ) }
+					</Text>
+				</Tooltip>
+			);
+		}
+
 		return <Text>{ item.status }</Text>;
 	},
 	getValue: ( { item }: { item: Email } ) => item.status,

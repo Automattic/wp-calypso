@@ -20,9 +20,17 @@ export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): 
 	// Infer status from known subscriptions or warnings
 	let status: Email[ 'status' ] = emailAccount.status;
 
+	// Titan refused to delete this mailbox, so it still exists.
+	const deletionRefusedWarning =
+		provider === 'titan'
+			? ( box.warnings ?? [] ).find( ( warning ) => warning.warning_slug === 'deletion_refused' )
+			: undefined;
+
 	// A pending deletion wins over any warning, such as the domain being removed.
 	if ( box.status === 'pending_deletion' ) {
 		status = 'pending_deletion';
+	} else if ( deletionRefusedWarning ) {
+		status = 'deletion_refused';
 	} else if ( box.warnings.length > 0 || emailAccount.warnings.length > 0 ) {
 		status = 'pending';
 		if ( accountHasWarningWithSlug( 'domain_not_connected', emailAccount ) ) {
@@ -47,5 +55,6 @@ export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): 
 		providerDisplayName,
 		domainName: box.domain,
 		status,
+		deletionRefusedMessage: deletionRefusedWarning?.message,
 	};
 };

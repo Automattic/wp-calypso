@@ -14,6 +14,7 @@ export interface Email {
 	forwardingTo?: string;
 	storageUsed?: number;
 	storageLimit?: number;
+	deletionRefusedMessage?: string;
 	status:
 		| 'active'
 		| 'pending'
@@ -24,6 +25,7 @@ export interface Email {
 		| 'no_subscription'
 		| 'unused_mailboxes'
 		| 'pending_deletion'
+		| 'deletion_refused'
 		| 'other_provider'
 		| 'unknown';
 }
