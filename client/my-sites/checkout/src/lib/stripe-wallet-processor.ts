@@ -84,7 +84,7 @@ export default async function stripeWalletProcessor(
 	debug( 'sending stripe-wallet transaction', formattedTransactionData );
 
 	let clientSecret: string;
-	let orderId: number | '' = '';
+	let orderId: number | '';
 
 	try {
 		const response = await submitWpcomTransaction( formattedTransactionData, transactionOptions );

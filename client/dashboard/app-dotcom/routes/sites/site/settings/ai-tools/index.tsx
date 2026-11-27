@@ -1,6 +1,6 @@
 import './style.scss';
 
-import { HostingFeatures, type Site } from '@automattic/api-core';
+import { HostingFeatures, type McpAbility, type Site } from '@automattic/api-core';
 import {
 	bigSkyPluginMutation,
 	bigSkyPluginQuery,
@@ -38,6 +38,7 @@ import {
 } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useState } from 'react';
+import { getOrdinaryTools } from '../../../../../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../../../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
@@ -47,6 +48,7 @@ import {
 	getSiteRemoteGroups,
 	isRemoteAbilityEnabled,
 	isRemoteKeyEnabled,
+	isSiteMcpToolEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../../../../../me/mcp/utils';
 import { useAnalytics } from '../../../../../../app/analytics';
@@ -71,7 +73,7 @@ import McpConnectCard from '../../../../../../me/mcp/connect-card';
 import { collectNamespaces } from '../../../../../../sites/ai-tools/components/remote-abilities-section';
 import upsellIllustrationDarkUrl from '../../../../../../sites/ai-tools/components/upsell-illustration/upsell-illustration-dark.svg';
 import upsellIllustrationUrl from '../../../../../../sites/ai-tools/components/upsell-illustration/upsell-illustration.svg';
-import UpsellCallout from '../../../../../../sites/hosting-feature-gated-with-callout/upsell';
+import UpsellCallout from '../../../../../../sites/hosting-features/components/hosting-feature-upsell-callout';
 import {
 	getAgentEmailAddress,
 	getAgentEmailVCardDataUrl,
@@ -82,14 +84,6 @@ export {
 	getAgentEmailAddress,
 	getAgentEmailVCard,
 } from '../../../../../../utils/wordpress-agent-email';
-
-interface McpAbility {
-	title: string;
-	description: string;
-	enabled: boolean;
-	readonly?: boolean;
-	visible?: boolean;
-}
 
 /**
  * Badge for one access level, spanning wpcom tools and the site's published
@@ -293,27 +287,33 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 			)
 		: accountAbilities;
 	const mcpAbilities = mergeSiteMcpAbilities( siteAccountAbilities, siteAbilities );
-	const availableTools = (
-		Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] >
-	 ).filter( ( [ , tool ] ) => tool.visible !== false );
-	const readTools = availableTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
-	const writeTools = availableTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
 	// When there are no site-specific overrides, use site_level_enabled_default as the effective
-	// state. True when account MCP is on for sites, false when disabled.
+	// state. True when account MCP is on for sites, false when disabled. The site default never
+	// turns on an opt-in tool, so it keeps its account state.
 	const hasSiteAbilityOverrides = Object.keys( siteAbilities ).length > 0;
 	const defaultToolEnabled = userSettings?.mcp_abilities?.site_level_enabled_default ?? false;
-	const enabledToolCount = ( tools: Array< [ string, McpAbility ] > ) => {
-		if ( hasSiteAbilityOverrides ) {
-			return tools.filter( ( [ , tool ] ) => tool.enabled ).length;
-		}
-		return defaultToolEnabled ? tools.length : 0;
-	};
+	const availableTools = ( Object.entries( mcpAbilities ) as Array< [ string, McpAbility ] > )
+		.filter( ( [ , tool ] ) => tool.visible !== false )
+		.map( ( [ toolId, tool ] ): [ string, McpAbility ] => [
+			toolId,
+			{
+				...tool,
+				enabled: isSiteMcpToolEnabled( tool, hasSiteAbilityOverrides, defaultToolEnabled ),
+			},
+		] );
+	const readTools = availableTools.filter( ( [ toolId, tool ] ) => ! isWriteTool( toolId, tool ) );
+	const writeTools = availableTools.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
+	const ordinaryReadTools = getOrdinaryTools( readTools );
+	const ordinaryWriteTools = getOrdinaryTools( writeTools );
+	const enabledToolCount = ( tools: Array< [ string, McpAbility ] > ) =>
+		tools.filter( ( [ , tool ] ) => tool.enabled ).length;
 
 	// The badges span the site-published abilities on the subpages too, so "All
 	// enabled" can't appear while those groups are still off (their default).
 	const localeSlug = useLocale();
 	const wpLocale = languages.find( ( { langSlug } ) => langSlug === localeSlug )?.wpLocale;
 	const savedRemoteGroups = getSiteRemoteGroups( userSettings || {}, site.ID );
+	const remoteOptIn = userSettings?.mcp_abilities?.remote_abilities_requiring_opt_in;
 	const { data: remoteAbilities } = useQuery( {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
 		enabled: config.isEnabled( 'mcp-settings' ) && isAvailable && isMcpEnabled && !! site.jetpack,
@@ -322,11 +322,11 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// its group key is allowed. Saved-only groups (catalog unreachable) fall
 	// back to counting their keys.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
-		const categoryTools = category === 'read' ? readTools : writeTools;
+		const ordinaryTools = category === 'read' ? ordinaryReadTools : ordinaryWriteTools;
 		const defaultEnabled =
 			isMcpEnabled &&
-			categoryTools.length > 0 &&
-			enabledToolCount( categoryTools ) === categoryTools.length;
+			ordinaryTools.length > 0 &&
+			enabledToolCount( ordinaryTools ) === ordinaryTools.length;
 		let total = 0;
 		let enabled = 0;
 		collectNamespaces( remoteAbilities, savedRemoteGroups, category ).forEach( ( group ) => {
@@ -337,7 +337,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						savedRemoteGroups,
 						ability.name,
 						ability.meta?.annotations,
-						defaultEnabled
+						defaultEnabled,
+						remoteOptIn
 					)
 				).length;
 				return;
@@ -371,8 +372,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const handleMcpToggle = ( enabled: boolean ) => {
 		const abilities: Record< string, boolean > = {};
 		if ( enabled ) {
-			// Auto-enable all read tools; leave write tools unset (not explicitly disabled).
-			readTools.forEach( ( [ toolId ] ) => {
+			// Auto-enable the ordinary read tools; leave write and opt-in tools unset (not explicitly disabled).
+			ordinaryReadTools.forEach( ( [ toolId ] ) => {
 				abilities[ toolId ] = true;
 			} );
 		}

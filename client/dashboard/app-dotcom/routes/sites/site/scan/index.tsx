@@ -1,0 +1,69 @@
+import { HostingFeatures } from '@automattic/api-core';
+import { siteBySlugQuery } from '@automattic/api-queries';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { __ } from '@wordpress/i18n';
+import { shield } from '@wordpress/icons';
+import { siteRoute } from '../../../../../app/router/sites';
+import { ThemedIllustration } from '../../../../../components/themed-illustration';
+import TimeMismatchNotice, {
+	useShouldShowTimeMismatchNotice,
+} from '../../../../../components/time-mismatch-notice';
+import { SitesNoticeArbiter } from '../../../../../sites/components/notice-arbiter';
+import { useSiteTimezone } from '../../../../../sites/hooks/use-site-timezone';
+import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
+import { ScanContent } from '../../../../../sites/scan/components/scan-content';
+import illustrationDarkUrl from '../../../../../sites/scan/components/upsell-illustration/upsell-illustration-dark.svg';
+import illustrationUrl from '../../../../../sites/scan/components/upsell-illustration/upsell-illustration.svg';
+
+function SiteScan( { scanTab }: { scanTab: 'active' | 'history' } ) {
+	const { siteSlug } = siteRoute.useParams();
+
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+
+	const settingsUrl = site.options?.admin_url
+		? `${ site.options.admin_url }options-general.php`
+		: '';
+
+	const { gmtOffset, timezoneString } = useSiteTimezone( site.ID );
+
+	const showTimeMismatchNotice = useShouldShowTimeMismatchNotice( {
+		siteTime: gmtOffset,
+		siteId: site.ID,
+	} );
+
+	return (
+		<HostingFeatureGatedWithCallout
+			site={ site }
+			feature={ HostingFeatures.SCAN_SELF_SERVE }
+			fullPage
+			title={ __( 'Scan' ) }
+			upsellId="site-scan"
+			upsellIcon={ shield }
+			upsellTitle={ __( 'Scan for security threats' ) }
+			upsellImage={ <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } /> }
+			upsellDescription={ __(
+				'Automated daily scans check for malware and security vulnerabilities, with automated fixes for most issues.'
+			) }
+		>
+			<ScanContent
+				site={ site }
+				scanTab={ scanTab }
+				timezoneString={ timezoneString }
+				gmtOffset={ gmtOffset }
+				notices={
+					<SitesNoticeArbiter>
+						{ showTimeMismatchNotice && (
+							<TimeMismatchNotice
+								settingsUrl={ settingsUrl }
+								siteTime={ gmtOffset }
+								siteId={ site.ID }
+							/>
+						) }
+					</SitesNoticeArbiter>
+				}
+			/>
+		</HostingFeatureGatedWithCallout>
+	);
+}
+
+export default SiteScan;

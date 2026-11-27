@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { PostCardTimestamp } from '../post-card-timestamp';
 
@@ -82,7 +83,7 @@ describe( 'PostCardTimestamp', () => {
 
 	it( 'fires the external-post-clicked Tracks event on click', async () => {
 		const user = userEvent.setup();
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		render(
 			<SocialAnalyticsProvider
 				value={ {

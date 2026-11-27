@@ -200,7 +200,7 @@ export class UserSignupPage {
 			await this.emailInput.waitFor( { state: 'visible', timeout: 30_000 } );
 		};
 
-		let emailVisible = false;
+		let emailVisible;
 		try {
 			await this.emailInput.waitFor( { state: 'attached', timeout: 5_000 } );
 			emailVisible = await this.emailInput.isVisible();

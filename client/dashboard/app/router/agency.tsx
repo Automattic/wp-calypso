@@ -88,15 +88,15 @@ import { isPressableSite } from '../../agency/sites/lib';
 import { isTeamMemberWithoutSiteAccess } from '../../agency/sites/site/access';
 import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
 import {
+	canViewApm,
+	hasBackendAccess,
+	prefetchApmAccess,
+} from '../../sites/apm/utils/backend-access';
+import {
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
-import {
-	canViewApm,
-	hasBackendAccess,
-	prefetchApmAccess,
-} from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import { a4aLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
@@ -1542,7 +1542,7 @@ export const agencySitePerformanceFrontendRoute = createRoute( {
 	getParentRoute: () => agencySitePerformanceRoute,
 	path: 'frontend',
 } ).lazy( () =>
-	import( '../../sites/performance/frontend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/frontend' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance-frontend' )( {
 			component: () => <d.default siteSlug={ agencySiteRoute.useParams().siteSlug } />,
 		} )
@@ -1572,7 +1572,7 @@ async function prefetchAgencyApmAggregate( siteSlug: string ) {
 		return;
 	}
 	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } =
-		await import( '../../sites/performance/backend/timeframe' );
+		await import( '../../sites/apm/utils/timeframe' );
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 	await queryClient.ensureQueryData( siteApmAggregateRollingQuery( site.ID, windowSec ) );
 }
@@ -1582,7 +1582,7 @@ export const agencySitePerformanceBackendIndexRoute = createRoute( {
 	path: '/',
 	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance-backend' )( {
 			component: () => (
 				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="overview" />
@@ -1597,7 +1597,7 @@ export const agencySitePerformanceBackendTransactionsRoute = createRoute( {
 	path: 'transactions',
 	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance-backend-transactions' )( {
 			component: () => (
 				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="transactions" />
@@ -1612,7 +1612,7 @@ export const agencySitePerformanceBackendWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance-backend-wordpress' )( {
 			component: () => (
 				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="wordpress" />
@@ -1627,7 +1627,7 @@ export const agencySitePerformanceBackendDatabaseRoute = createRoute( {
 	path: 'database',
 	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance-backend-database' )( {
 			component: () => (
 				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="database" />
@@ -1642,7 +1642,7 @@ export const agencySitePerformanceBackendExternalRequestsRoute = createRoute( {
 	path: 'external-requests',
 	loader: ( { params: { siteSlug } } ) => prefetchAgencyApmAggregate( siteSlug ),
 } ).lazy( () =>
-	import( '../../sites/performance/backend' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance-backend-external-requests' )( {
 			component: () => (
 				<d.default siteSlug={ agencySiteRoute.useParams().siteSlug } tab="external-requests" />
@@ -1664,14 +1664,14 @@ export const agencySitePerformanceBackendRequestDetailRoute = createRoute( {
 	loader: async ( { params: { siteSlug }, deps: { method, route } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		const { TIMEFRAME_SECONDS, getStoredOrDefaultTimeframe } =
-			await import( '../../sites/performance/backend/timeframe' );
+			await import( '../../sites/apm/utils/timeframe' );
 		const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
 		await queryClient.ensureQueryData(
 			siteApmDetailQuery( site.ID, { method, route, windowSec } )
 		);
 	},
 } ).lazy( () =>
-	import( '../../sites/performance/backend/request-detail' ).then( ( d ) =>
+	import( '../../app-dotcom/routes/sites/site/performance/backend/requests' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance-backend-request-detail' )( {
 			component: () => {
 				const { siteSlug } = agencySiteRoute.useParams();

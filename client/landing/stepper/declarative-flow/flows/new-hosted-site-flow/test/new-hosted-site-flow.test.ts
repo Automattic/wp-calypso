@@ -1,31 +1,32 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import newHostedSiteFlow from '../new-hosted-site-flow';
 
 let mockSearch = '';
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	NEW_HOSTED_SITE_FLOW: 'new-hosted-site-flow',
-	clearStepPersistedState: jest.fn(),
+	clearStepPersistedState: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
 	useSelector: () => false,
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '../../../../stores', () => ( {
+vi.mock( '../../../../stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 } ) );
 
-jest.mock( '../../../../hooks/use-query', () => ( {
+vi.mock( '../../../../hooks/use-query', () => ( {
 	useQuery: () => new URLSearchParams( mockSearch ),
 } ) );
 
@@ -34,14 +35,14 @@ const renderSideEffect = ( currentStepSlug: string ) =>
 		( { stepSlug } ) =>
 			newHostedSiteFlow.useSideEffect?.(
 				stepSlug as Parameters< NonNullable< typeof newHostedSiteFlow.useSideEffect > >[ 0 ],
-				jest.fn()
+				vi.fn()
 			),
 		{ initialProps: { stepSlug: currentStepSlug } }
 	);
 
 describe( 'new-hosted-site flow side effects', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSearch = 'studioSiteId=123&autoOpenPush=true&section=studio-sync';
 	} );
 

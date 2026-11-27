@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { SiteThumbnail } from '@automattic/components';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { SitePreview } from '..';
 import { createSitePreviewScreenshot, SITE_PREVIEW_MSHOT } from '../mshot';
 
-jest.mock( '../mshot', () => ( {
-	...jest.requireActual( '../mshot' ),
-	createSitePreviewScreenshot: jest.fn(),
+vi.mock( '../mshot', async () => ( {
+	...( await vi.importActual< typeof import( '../mshot' ) >( '../mshot' ) ),
+	createSitePreviewScreenshot: vi.fn(),
 } ) );
-jest.mock( '@automattic/components', () => ( {
-	SiteThumbnail: jest.fn( ( props ) => {
+vi.mock( '@automattic/components', () => ( {
+	SiteThumbnail: vi.fn( ( props ) => {
 		const { className, alt } = props;
 		return (
 			<div { ...{ className, alt } }>
@@ -23,19 +24,21 @@ jest.mock( '@automattic/components', () => ( {
 	Spinner: () => <div>Mocked Spinner</div>,
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => jest.fn( ( key ) => key ),
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => vi.fn( ( key ) => key ),
+	} )
+);
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => ( {
-		get: jest.fn( () => 'https://example.com' ),
+		get: vi.fn( () => 'https://example.com' ),
 	} ),
 } ) );
 
 describe( 'SitePreview', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'previews the source from the address at desktop size', () => {
@@ -45,7 +48,7 @@ describe( 'SitePreview', () => {
 			'site-migration-preview__screenshot'
 		);
 		expect( screen.getByText( 'Mocked Spinner' ) ).toBeInTheDocument();
-		expect( jest.mocked( SiteThumbnail ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+		expect( vi.mocked( SiteThumbnail ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 			mShotsUrl: 'https://example.com',
 			alt: 'Preview of the site being imported',
 			mshotsOption: SITE_PREVIEW_MSHOT,
@@ -60,7 +63,7 @@ describe( 'SitePreview', () => {
 			<SitePreview url="https://destination.wordpress.com" label="Current destination site" />
 		);
 
-		expect( jest.mocked( SiteThumbnail ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
+		expect( vi.mocked( SiteThumbnail ).mock.calls[ 0 ][ 0 ] ).toMatchObject( {
 			mShotsUrl: 'https://destination.wordpress.com',
 			alt: 'Current destination site',
 			'aria-label': 'Current destination site',

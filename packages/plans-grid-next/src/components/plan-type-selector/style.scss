@@ -151,9 +151,6 @@
 		.components-custom-select-control__item {
 			grid-template-columns: auto min-content;
 			padding: 0;
-			.is-highlighted {
-				background-color: var(--studio-gray-0);
-			}
 			.a {
 				padding: 11.5px 16px;
 			}

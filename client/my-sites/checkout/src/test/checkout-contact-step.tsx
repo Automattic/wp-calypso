@@ -1,11 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
@@ -29,16 +29,17 @@ import {
 	oneTimePurchase,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
+import { setupUserNoPointerEvents } from './util/setup-user';
 import type { CartKey, ResponseCart } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
-jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
-jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
-jest.mock( 'calypso/lib/navigate' );
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
+vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
+vi.mock( 'calypso/my-sites/checkout/use-cart-key' );
+vi.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
+vi.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
+vi.mock( 'calypso/lib/navigate' );
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
 } ) );
 
 describe( 'Checkout contact step', () => {
@@ -54,11 +55,11 @@ describe( 'Checkout contact step', () => {
 	} ) );
 	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
+	( useCartKey as Mock ).mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
-		( useViewportMatch as jest.Mock ).mockReturnValue( false );
+		( useViewportMatch as Mock ).mockReturnValue( false );
 		resetCheckoutStores();
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
@@ -103,7 +104,7 @@ describe( 'Checkout contact step', () => {
 
 	it( 'disables the sidebar Continue button until cached contact details have prefilled', async () => {
 		// The sidebar submit area, which renders this Continue, is only used at large viewports.
-		( useViewportMatch as jest.Mock ).mockReturnValue( true );
+		( useViewportMatch as Mock ).mockReturnValue( true );
 		render( <MockCheckout { ...defaultPropsForMockCheckout } /> );
 		expect( await screen.findByText( 'Retrieving contact details…' ) ).toBeInTheDocument();
 		expect( await screen.findByLabelText( 'Continue to the next step' ) ).toBeDisabled();
@@ -163,7 +164,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
@@ -177,7 +178,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
@@ -186,7 +187,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
@@ -195,7 +196,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
@@ -206,7 +207,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'autodetects the phone country from a dialing code typed into the phone field', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		const { container } = render(
 			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />
@@ -219,7 +220,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );

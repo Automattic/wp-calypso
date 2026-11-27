@@ -1,20 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-const mockNext = jest.fn();
-
-jest.mock( '@automattic/calypso-router', () => ( {
-	__esModule: true,
-	default: { redirect: jest.fn() },
-} ) );
-
-jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn().mockReturnValue( true ),
-} ) );
 
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import {
 	mastodonConnect,
 	mastodonLanding,
@@ -24,14 +14,27 @@ import {
 	mastodonThread,
 } from '../controller';
 
+const mockNext = vi.fn();
+
+vi.mock( '@automattic/calypso-router', () => ( {
+	__esModule: true,
+	default: { redirect: vi.fn() },
+} ) );
+
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		isEnabled: vi.fn().mockReturnValue( true ),
+	} )
+);
+
 function makeContext( params: Record< string, string >, query: Record< string, string > = {} ) {
 	return { params, query, primary: null } as unknown as Parameters< typeof mastodonProfile >[ 0 ];
 }
 
 beforeEach( () => {
 	mockNext.mockReset();
-	jest.mocked( page.redirect ).mockReset();
-	jest.mocked( isEnabled ).mockReturnValue( true );
+	vi.mocked( page.redirect ).mockReset();
+	vi.mocked( isEnabled ).mockReturnValue( true );
 } );
 
 describe( 'mastodonLanding controller', () => {
@@ -142,7 +145,7 @@ describe( 'mastodonTagFeed controller', () => {
 
 describe( 'reader/social flag gating', () => {
 	beforeEach( () => {
-		jest.mocked( isEnabled ).mockReturnValue( false );
+		vi.mocked( isEnabled ).mockReturnValue( false );
 	} );
 
 	it( 'mastodonLanding redirects to /reader when flag is off', () => {

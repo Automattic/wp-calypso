@@ -1,11 +1,6 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-// `logToLogstash` fires a real HTTPS request. Mute it so the composer
-// optimistic-mutation tests don't trigger an unmocked nock request.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
-} ) );
 
 import {
 	PENDING_FEDIVERSE_POST_URI,
@@ -17,10 +12,17 @@ import {
 import { QueryClient, type InfiniteData } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
+import { mockAllIsIntersecting } from 'calypso/test-helpers/intersection-observer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { TimelinePanel } from '../timeline-panel';
+
+// `logToLogstash` fires a real HTTPS request. Mute it so the composer
+// optimistic-mutation tests don't trigger an unmocked nock request.
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
+} ) );
 
 const connection: FediverseConnection = {
 	id: 7,
@@ -69,9 +71,9 @@ describe( 'TimelinePanel — composer optimistic placeholder', () => {
 	beforeEach( () => {
 		// `recordReaderTracksEvent` is a thunk that reads the follows query cache.
 		// Stub to a no-op action so dispatch() doesn't throw in the test store.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 		// SocialFeedList uses an IntersectionObserver for sentinel pagination;
 		// jsdom doesn't ship one. `mockAllIsIntersecting(false)` registers the
 		// shim so the observe call doesn't blow up at mount.
@@ -80,7 +82,7 @@ describe( 'TimelinePanel — composer optimistic placeholder', () => {
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'renders an optimistic placeholder (sentinel id, empty url) alongside real items', async () => {

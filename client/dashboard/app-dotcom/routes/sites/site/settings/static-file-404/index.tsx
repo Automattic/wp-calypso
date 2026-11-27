@@ -16,7 +16,7 @@ import { ButtonStack } from '../../../../../../components/button-stack';
 import { Card, CardBody } from '../../../../../../components/card';
 import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { hasHostingFeature } from '../../../../../../utils/site-features';
 import type { Field } from '@wordpress/dataviews';
 

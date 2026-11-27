@@ -37,12 +37,12 @@
 			]
 		},
 		{
-			"name": "Debug Current Jest File",
+			"name": "Debug Current Client Test File",
 			"type": "node",
 			"request": "launch",
 			"runtimeExecutable": "yarn",
 			"runtimeArgs": [ "test-client" ],
-			"args": [ "${relativeFile}", "--", "--runInBand" ],
+			"args": [ "${relativeFile}", "--no-file-parallelism" ],
 			"console": "integratedTerminal",
 			"internalConsoleOptions": "neverOpen",
 			"sourceMaps": true

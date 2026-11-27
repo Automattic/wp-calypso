@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { PLAN_ECOMMERCE, PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
@@ -8,54 +8,59 @@ import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import CheckoutThankYouHeader from '../header';
 import CheckoutThankYouWithReceipt, { CheckoutThankYou } from '../index';
 import { useCheckoutReceipt } from '../receipt';
 
-jest.unmock( '@automattic/calypso-products' );
-jest.mock( '@automattic/calypso-products', () => ( {
-	...jest.requireActual( '@automattic/calypso-products' ),
+vi.unmock( '@automattic/calypso-products' );
+vi.mock( '@automattic/calypso-products', async () => ( {
+	...( await vi.importActual( '@automattic/calypso-products' ) ),
 	shouldFetchSitePlans: () => false,
-	isDotComPlan: jest.fn( () => false ),
-	isDIFMProduct: jest.fn( () => false ),
+	isDotComPlan: vi.fn( () => false ),
+	isDIFMProduct: vi.fn( () => false ),
 } ) );
 
-jest.unmock( '@automattic/help-center/src/hooks' );
-jest.mock( '@automattic/help-center/src/hooks', () => ( {
-	...jest.requireActual( '@automattic/help-center/src/hooks' ),
-	useProductsWithPremiumSupport: jest.fn( () => false ),
+vi.unmock( '@automattic/help-center/src/hooks' );
+vi.mock( '@automattic/help-center/src/hooks', async () => ( {
+	...( await vi.importActual( '@automattic/help-center/src/hooks' ) ),
+	useProductsWithPremiumSupport: vi.fn( () => false ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
-jest.mock( 'calypso/lib/analytics/page-view-tracker', () => () => 'page-view-tracker' );
-jest.mock( '../header', () =>
-	jest.fn( ( { children } ) => <div data-testid="checkout-thank-you-header">{ children }</div> )
-);
+vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( {
+	default: () => 'page-view-tracker',
+} ) );
+vi.mock( '../header', () => ( {
+	default: vi.fn( ( { children } ) => (
+		<div data-testid="checkout-thank-you-header">{ children }</div>
+	) ),
+} ) );
 // eslint-disable-next-line react/display-name
-jest.mock( 'calypso/components/happiness-support', () => () => (
-	<div data-testid="happiness-support" />
-) );
-jest.mock( '../transfer-pending/', () => () => 'transfer-pending' );
+vi.mock( 'calypso/components/happiness-support', () => ( {
+	default: () => <div data-testid="happiness-support" />,
+} ) );
+vi.mock( '../transfer-pending/', () => ( { default: () => 'transfer-pending' } ) );
 // eslint-disable-next-line react/display-name
-jest.mock( '../redesign-v2/pages/plan-only', () => () => (
-	<div data-testid="component--plan-only-thank-you" />
-) );
+vi.mock( '../redesign-v2/pages/plan-only', () => ( {
+	default: () => <div data-testid="component--plan-only-thank-you" />,
+} ) );
 // eslint-disable-next-line react/display-name
-jest.mock( '../redesign-v2/pages/generic', () => () => (
-	<div data-testid="component--generic-thank-you" />
-) );
+vi.mock( '../redesign-v2/pages/generic', () => ( {
+	default: () => <div data-testid="component--generic-thank-you" />,
+} ) );
 // eslint-disable-next-line react/display-name
-jest.mock( '../redesign-v2/pages/domain-only', () => ( {
+vi.mock( '../redesign-v2/pages/domain-only', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="component--domain-only-thank-you" />,
 } ) );
-jest.mock( '../receipt', () => ( {
-	...jest.requireActual( '../receipt' ),
-	useCheckoutReceipt: jest.fn(),
+vi.mock( '../receipt', async () => ( {
+	...( await vi.importActual( '../receipt' ) ),
+	useCheckoutReceipt: vi.fn(),
 } ) );
-jest.mock( '../studio-thank-you', () => ( {
+vi.mock( '../studio-thank-you', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="component--studio-thank-you" />,
 } ) );

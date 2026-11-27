@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import StatsNotices from '../index';
 import type { Notices } from '../../hooks/use-notice-visibility-query';
 
 // The flag store is created inside the factory and parked on `globalThis`: `calypso-products`
 // reads config while it is being imported, before any module-scope `const` here exists.
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const flags: Record< string, boolean > = {};
 	( globalThis as Record< string, unknown > ).__statsNoticesTestFlags = flags;
 	const isEnabled = ( flag: string ) => !! flags[ flag ];
@@ -17,14 +18,14 @@ jest.mock( '@automattic/calypso-config', () => {
 const mockFlags = () =>
 	( globalThis as Record< string, unknown > ).__statsNoticesTestFlags as Record< string, boolean >;
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
-	useDispatch: () => jest.fn(),
+	useDispatch: () => vi.fn(),
 } ) );
 
 // The registry is exercised by its own tests; here it stands in for "some notice wants to show",
 // so the only thing under test is whether the host gets far enough to ask.
-jest.mock( '../all-notice-definitions', () => ( {
+vi.mock( '../all-notice-definitions', () => ( {
 	__esModule: true,
 	default: [
 		{
@@ -36,17 +37,19 @@ jest.mock( '../all-notice-definitions', () => ( {
 	],
 } ) );
 
-jest.mock( 'calypso/components/data/query-site-stats', () => ( {
+vi.mock( 'calypso/components/data/query-site-stats', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
-jest.mock( '../jitm-wrapper', () => ( { __esModule: true, default: () => null } ) );
+vi.mock( '../jitm-wrapper', () => ( { __esModule: true, default: () => null } ) );
 
 const serverNoticesVisibility = {
 	tier_upgrade: true,
 } as unknown as Notices;
-jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-query', () => ( {
-	...jest.requireActual( 'calypso/my-sites/stats/hooks/use-notice-visibility-query' ),
+vi.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-query', async () => ( {
+	...( await vi.importActual<
+		typeof import( 'calypso/my-sites/stats/hooks/use-notice-visibility-query' )
+	>( 'calypso/my-sites/stats/hooks/use-notice-visibility-query' ) ),
 	useNoticesVisibilityQuery: () => ( {
 		isLoading: false,
 		isError: false,
@@ -54,79 +57,79 @@ jest.mock( 'calypso/my-sites/stats/hooks/use-notice-visibility-query', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/my-sites/stats/hooks/use-plan-usage-query', () => ( {
+vi.mock( 'calypso/my-sites/stats/hooks/use-plan-usage-query', () => ( {
 	__esModule: true,
 	default: () => ( { data: undefined } ),
 	getUsageLimitStatus: () => ( { isNearLimit: false, isOverLimit: false } ),
 } ) );
 
-jest.mock( 'calypso/my-sites/stats/hooks/use-should-gate-stats', () => ( {
+vi.mock( 'calypso/my-sites/stats/hooks/use-should-gate-stats', () => ( {
 	shouldGateStats: () => false,
 } ) );
 
-jest.mock( '../../hooks/use-stats-purchases', () => ( {
+vi.mock( '../../hooks/use-stats-purchases', () => ( {
 	__esModule: true,
 	default: () => ( { isRequestingSitePurchases: false, supportCommercialUse: true } ),
 	shouldShowPaywallNotice: () => false,
 } ) );
 
-jest.mock( 'calypso/state/purchases/actions', () => ( {
+vi.mock( 'calypso/state/purchases/actions', () => ( {
 	resetSiteState: () => ( { type: 'NOOP' } ),
 } ) );
-jest.mock( 'calypso/state/purchases/selectors', () => ( {
+vi.mock( 'calypso/state/purchases/selectors', () => ( {
 	hasLoadedSitePurchasesFromServer: () => true,
 } ) );
 
 let mockHasLoadedPlans = false;
-jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
+vi.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	hasLoadedSitePlansFromServer: () => mockHasLoadedPlans,
 } ) );
 
-jest.mock( 'calypso/state/sites/selectors/get-env-stats-feature-supports', () => ( {
+vi.mock( 'calypso/state/sites/selectors/get-env-stats-feature-supports', () => ( {
 	__esModule: true,
 	default: () => ( { supportsNewStatsNotices: true } ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/is-site-wpcom', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-wpcom', () => ( {
 	__esModule: true,
 	default: () => true,
 } ) );
-jest.mock( 'calypso/state/selectors/is-site-wpforteams', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-wpforteams', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
-jest.mock( 'calypso/state/selectors/is-vip-site', () => ( {
+vi.mock( 'calypso/state/selectors/is-vip-site', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
-jest.mock( 'calypso/state/selectors/site-has-feature', () => ( {
+vi.mock( 'calypso/state/selectors/site-has-feature', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
-jest.mock( 'calypso/state/sites/selectors/get-site-option', () => ( {
+vi.mock( 'calypso/state/sites/selectors/get-site-option', () => ( {
 	__esModule: true,
 	default: () => undefined,
 } ) );
-jest.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free', () => ( {
+vi.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-free', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
-jest.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid', () => ( {
+vi.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-paid', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
-jest.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-only', () => ( {
+vi.mock( 'calypso/state/sites/selectors/has-site-product-jetpack-stats-pwyw-only', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
-jest.mock( 'calypso/state/sites/selectors/is-jetpack-site', () => ( {
+vi.mock( 'calypso/state/sites/selectors/is-jetpack-site', () => ( {
 	__esModule: true,
 	default: () => false,
 } ) );
-jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
+vi.mock( 'calypso/state/stats/lists/selectors', () => ( {
 	getSiteStatsNormalizedData: () => ( {} ),
 } ) );
-jest.mock( 'calypso/state/ui/selectors/get-selected-site', () => ( {
+vi.mock( 'calypso/state/ui/selectors/get-selected-site', () => ( {
 	__esModule: true,
 	default: () => undefined,
 } ) );
@@ -140,7 +143,7 @@ const renderNotices = () => render( <StatsNotices siteId={ 123 } isOdysseyStats=
  */
 describe( 'StatsNotices loading gate', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockHasLoadedPlans = false;
 		delete mockFlags().is_odyssey;
 	} );

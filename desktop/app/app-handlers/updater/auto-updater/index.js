@@ -1,12 +1,14 @@
-const { app } = require( 'electron' );
-const { autoUpdater } = require( 'electron-updater' );
-const semver = require( 'semver' );
-const AppQuit = require( '../../../lib/app-quit' );
-const Config = require( '../../../lib/config' );
-const debugTools = require( '../../../lib/debug-tools' );
-const { bumpStat, sanitizeVersion, getPlatform } = require( '../../../lib/desktop-analytics' );
-const log = require( '../../../lib/logger' )( 'desktop:updater:auto' );
-const Updater = require( '../../../lib/updater' );
+import { app } from 'electron';
+import { autoUpdater } from 'electron-updater';
+import semver from 'semver';
+import AppQuit from '../../../lib/app-quit';
+import Config from '../../../lib/config';
+import debugTools from '../../../lib/debug-tools';
+import { bumpStat, sanitizeVersion, getPlatform } from '../../../lib/desktop-analytics';
+import makeLogger from '../../../lib/logger';
+import Updater from '../../../lib/updater';
+
+const log = makeLogger( 'desktop:updater:auto' );
 
 const statsPlatform = getPlatform( process.platform );
 const sanitizedVersion = sanitizeVersion( app.getVersion() );
@@ -156,4 +158,4 @@ class AutoUpdater extends Updater {
 	}
 }
 
-module.exports = AutoUpdater;
+export default AutoUpdater;

@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
+import { type Mock, vi } from 'vitest';
 import gotoCheckoutPage from '../stats-purchase-checkout-redirect';
 
 // `calypso-products` reads the named export at import time, so both shapes have to resolve to the
 // same mock or the module graph fails to load.
-jest.mock( '@automattic/calypso-config', () => {
-	const isEnabled = jest.fn();
+vi.mock( '@automattic/calypso-config', () => {
+	const isEnabled = vi.fn();
 	return { __esModule: true, default: { isEnabled }, isEnabled };
 } );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( '../../utils', () => ( { trackStatsAnalyticsEvent: jest.fn() } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( '../../utils', () => ( { trackStatsAnalyticsEvent: vi.fn() } ) );
 
 const ADMIN_URL = 'https://example.com/wp-admin/';
 const SITE_SLUG = 'example.com';
@@ -33,7 +34,7 @@ const checkoutUrl = ( overrides = {} ) =>
 
 /** Run inside wp-admin (Odyssey) rather than Calypso. */
 const inWpAdmin = ( enabled: boolean ) =>
-	( config.isEnabled as jest.Mock ).mockImplementation(
+	( config.isEnabled as Mock ).mockImplementation(
 		( feature: string ) => feature === 'is_running_in_jetpack_site' && enabled
 	);
 

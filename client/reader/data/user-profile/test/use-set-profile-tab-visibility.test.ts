@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { rawUserPreferencesQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { createElement } from 'react';
+import { vi } from 'vitest';
 import { useSetProfileTabVisibility } from '../use-set-profile-tab-visibility';
 import type { UserPreferences } from '@automattic/api-core';
 
-const mockDispatch = jest.fn();
-jest.mock( 'calypso/state', () => ( {
+const mockDispatch = vi.fn();
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 } ) );
 
-const mockRecordTracks = jest.fn();
-jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
+const mockRecordTracks = vi.fn();
+vi.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordTracks,
 } ) );
 
@@ -23,7 +24,7 @@ describe( 'useSetProfileTabVisibility', () => {
 	let queryClient: QueryClient;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		nock.disableNetConnect();
 		queryClient = new QueryClient( {
 			defaultOptions: { queries: { retry: false }, mutations: { retry: false } },

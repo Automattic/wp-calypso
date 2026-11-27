@@ -1,6 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import { vi } from 'vitest';
 import webpack from 'webpack';
 import OrderDependentRedirectPlugin from '../order-dependent-redirect-plugin';
 
@@ -71,7 +72,7 @@ const build = ( mode ) =>
 
 // The first build in a process also loads webpack, which can take longer than Jest's default
 // 5 s on a busy CI machine.
-jest.setTimeout( 60000 );
+vi.setConfig( { testTimeout: 60000 } );
 
 describe( 'OrderDependentRedirectPlugin', () => {
 	test( 'fails only a member read through a barrel in an import cycle', async () => {

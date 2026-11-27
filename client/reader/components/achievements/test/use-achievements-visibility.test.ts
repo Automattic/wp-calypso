@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import useAchievementsVisibility from '../use-achievements-visibility';
 
-const mockUseQuery = jest.fn();
-jest.mock( '@tanstack/react-query', () => ( {
+const mockUseQuery = vi.fn();
+vi.mock( '@tanstack/react-query', () => ( {
 	useQuery: ( options: unknown ) => mockUseQuery( options ),
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
+vi.mock( '@automattic/api-queries', () => ( {
 	readAchievementsSettingsQuery: ( userIdOrLogin: string ) => ( {
 		queryKey: [ 'read', 'achievements', userIdOrLogin, 'settings' ],
 	} ),
@@ -18,11 +19,11 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-const mockGetCurrentUser = jest.fn();
-jest.mock( 'calypso/state', () => ( {
+const mockGetCurrentUser = vi.fn();
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUser: ( state: unknown ) => mockGetCurrentUser( state ),
 } ) );
 
@@ -50,14 +51,14 @@ function setupUseQuery( {
 	} );
 }
 
-function findCall( mock: jest.Mock, predicate: ( options: QueryOptions ) => boolean ) {
+function findCall( mock: Mock, predicate: ( options: QueryOptions ) => boolean ) {
 	return mock.mock.calls.find( ( [ options ] ) => predicate( options as QueryOptions ) ) as
 		[ QueryOptions ] | undefined;
 }
 
 describe( 'useAchievementsVisibility', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetCurrentUser.mockReturnValue( { username: 'myself' } );
 		setupUseQuery();
 	} );

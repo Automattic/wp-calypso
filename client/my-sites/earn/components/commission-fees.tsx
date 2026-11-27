@@ -56,7 +56,7 @@ const CommissionFees = ( {
 			{ preventWidows(
 				<>
 					{ translate(
-						'With your current plan, the transaction fee for payments is %(commissionFee)d% (+ {{link}}Stripe fees{{/link}}).',
+						'With your current plan, the transaction fee for payments is %(commissionFee)d% (+ {{link}}Stripe fees{{/link}}; currency exchange fees can apply).',
 						{
 							args: {
 								commissionFee: commission * 100,

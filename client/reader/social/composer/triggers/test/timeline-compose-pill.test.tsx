@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { ComposerProvider, useComposer, type ActiveMode } from '../../composer-provider';
 import { testComposerConfig } from '../../test-config';
 import { TimelineComposePill } from '../timeline-compose-pill';
@@ -35,7 +36,7 @@ describe( '<TimelineComposePill>', () => {
 
 	it( 'opens the composer in standalone mode with entry_point=timeline_inline', async () => {
 		const user = userEvent.setup();
-		const onMode = jest.fn();
+		const onMode = vi.fn();
 		render(
 			<ComposerProvider connectionId={ 42 } config={ testComposerConfig }>
 				<TimelineComposePill avatar="https://example.test/a.jpg" entryPoint="timeline_inline" />
@@ -56,7 +57,7 @@ describe( '<TimelineComposePill>', () => {
 
 	it( 'forwards entryPoint=profile_inline to the standalone mode', async () => {
 		const user = userEvent.setup();
-		const onMode = jest.fn();
+		const onMode = vi.fn();
 		render(
 			<ComposerProvider connectionId={ 42 } config={ testComposerConfig }>
 				<TimelineComposePill avatar={ null } entryPoint="profile_inline" />

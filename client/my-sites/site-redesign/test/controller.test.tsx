@@ -1,43 +1,48 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { isEnabled } from '@automattic/calypso-config';
 import page, { type Context } from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { redirectIfCurrentUserCannot, redirectLoggedOut } from 'calypso/controller';
 import { siteSelection } from 'calypso/my-sites/controller';
 import { renderSiteRedesign } from '../controller';
 import registerSiteRedesign from '../index';
 
-jest.mock( '@automattic/calypso-config', () => ( { isEnabled: jest.fn() } ) );
-jest.mock( '@automattic/calypso-router', () => ( { __esModule: true, default: jest.fn() } ) );
-jest.mock( 'calypso/controller', () => ( {
-	makeLayout: jest.fn(),
-	render: jest.fn(),
-	redirectLoggedOut: jest.fn(),
-	redirectIfCurrentUserCannot: jest.fn( ( capability: string ) => `can:${ capability }` ),
+vi.mock( '@automattic/calypso-config', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { isEnabled: vi.fn() } )
+);
+vi.mock( '@automattic/calypso-router', () => ( { __esModule: true, default: vi.fn() } ) );
+vi.mock( 'calypso/controller', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		makeLayout: vi.fn(),
+		render: vi.fn(),
+		redirectLoggedOut: vi.fn(),
+		redirectIfCurrentUserCannot: vi.fn( ( capability: string ) => `can:${ capability }` ),
+	} )
+);
+vi.mock( 'calypso/my-sites/controller', () => ( {
+	navigation: vi.fn(),
+	sites: vi.fn(),
+	siteSelection: vi.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/controller', () => ( {
-	navigation: jest.fn(),
-	sites: jest.fn(),
-	siteSelection: jest.fn(),
-} ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: () => 1,
 	getSelectedSiteSlug: () => 'example.wordpress.com',
 } ) );
-jest.mock( '../main', () => () => null );
+vi.mock( '../main', () => ( { default: () => null } ) );
 
 const contextFor = ( query: Record< string, string > = {} ) =>
 	( { store: { getState: () => ( {} ) }, query } ) as unknown as Context;
 
 describe( 'site redesign route', () => {
-	afterEach( () => jest.clearAllMocks() );
+	afterEach( () => vi.clearAllMocks() );
 
 	it( 'requires login, a selected site and both theme capabilities before rendering', () => {
-		jest.mocked( isEnabled ).mockReturnValue( true );
+		vi.mocked( isEnabled ).mockReturnValue( true );
 		registerSiteRedesign();
 
-		const calls = jest.mocked( page ).mock.calls as unknown[][];
+		const calls = vi.mocked( page ).mock.calls as unknown[][];
 		const [ , ...handlers ] = calls.find( ( [ path ] ) => path === '/site-redesign/:site' ) ?? [];
 		expect( redirectIfCurrentUserCannot ).toHaveBeenCalledWith( 'manage_options' );
 		expect( redirectIfCurrentUserCannot ).toHaveBeenCalledWith( 'edit_theme_options' );
@@ -52,16 +57,16 @@ describe( 'site redesign route', () => {
 	} );
 
 	it( 'registers the route whatever the flag says', () => {
-		jest.mocked( isEnabled ).mockReturnValue( false );
+		vi.mocked( isEnabled ).mockReturnValue( false );
 		registerSiteRedesign();
-		const calls = jest.mocked( page ).mock.calls as unknown[][];
+		const calls = vi.mocked( page ).mock.calls as unknown[][];
 		expect( calls.some( ( [ path ] ) => path === '/site-redesign/:site' ) ).toBe( true );
 	} );
 
 	it( 'passes the redesign id and the checkout return on', () => {
 		const id = 'rd_' + 'a'.repeat( 32 );
 		const context = contextFor( { redesign: id, resume: 'apply' } );
-		renderSiteRedesign( context, jest.fn() );
+		renderSiteRedesign( context, vi.fn() );
 		expect( context.primary.props ).toMatchObject( {
 			siteId: 1,
 			siteSlug: 'example.wordpress.com',
@@ -72,18 +77,18 @@ describe( 'site redesign route', () => {
 
 	it( 'starts without a redesign when the URL has none', () => {
 		const context = contextFor();
-		renderSiteRedesign( context, jest.fn() );
+		renderSiteRedesign( context, vi.fn() );
 		expect( context.primary.props ).toMatchObject( { redesignId: null, resume: false } );
 	} );
 
 	it( 'renders without the site sidebar', () => {
 		const context = contextFor();
-		renderSiteRedesign( context, jest.fn() );
+		renderSiteRedesign( context, vi.fn() );
 		expect( context.secondary ).toBeNull();
 	} );
 
 	it( 'treats resume without a redesign id as a fresh start', () => {
-		const next = jest.fn();
+		const next = vi.fn();
 		const context = contextFor( { resume: 'apply' } ) as unknown as {
 			primary: { props: { resume: boolean; redesignId: string | null } };
 		};

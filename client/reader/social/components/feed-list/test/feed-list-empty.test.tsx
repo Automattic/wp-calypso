@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { FeedListEmpty } from '../feed-list-empty';
 import type { SocialError } from '../../../types';
 
@@ -34,7 +35,7 @@ describe( 'FeedListEmpty', () => {
 	} );
 
 	it( 'renders the rate-limited error with a Retry button that calls onRetry', async () => {
-		const onRetry = jest.fn();
+		const onRetry = vi.fn();
 		const user = userEvent.setup();
 		render(
 			<FeedListEmpty
@@ -79,7 +80,7 @@ describe( 'FeedListEmpty', () => {
 	} );
 
 	it( 'renders the auth-required error with override copy + Retry when authRequiredCopy is set', () => {
-		const onRetry = jest.fn();
+		const onRetry = vi.fn();
 		render(
 			<FeedListEmpty
 				error={ { kind: 'auth_required' } as SocialError }

@@ -1,5 +1,6 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import { vi } from 'vitest';
 import stripeWalletProcessor from '../lib/stripe-wallet-processor';
 import {
 	mockTransactionsEndpoint,
@@ -53,7 +54,7 @@ describe( 'stripeWalletProcessor', () => {
 			200,
 			{ order_id: 12345, message: { payment_intent_client_secret: 'test-client-secret' } },
 		] );
-		const confirmPayment = jest.fn().mockResolvedValue( {} );
+		const confirmPayment = vi.fn().mockResolvedValue( {} );
 		const stripe = { confirmPayment };
 
 		await expect(
@@ -71,8 +72,8 @@ describe( 'stripeWalletProcessor', () => {
 
 	it( 'returns an explicit error response and records telemetry if the transaction submission fails', async () => {
 		mockTransactionsEndpoint( () => [ 400, { error: 'test_error', message: 'test error' } ] );
-		const confirmPayment = jest.fn();
-		const reduxDispatch = jest.fn();
+		const confirmPayment = vi.fn();
+		const reduxDispatch = vi.fn();
 
 		await expect(
 			stripeWalletProcessor( submitData, { ...options, stripe: { confirmPayment }, reduxDispatch } )
@@ -100,7 +101,7 @@ describe( 'stripeWalletProcessor', () => {
 
 	it( 'returns an error response if the server does not return a client secret', async () => {
 		mockTransactionsEndpoint( () => [ 200, { order_id: 12345, message: {} } ] );
-		const confirmPayment = jest.fn();
+		const confirmPayment = vi.fn();
 
 		await expect(
 			stripeWalletProcessor( submitData, { ...options, stripe: { confirmPayment } } )
@@ -116,10 +117,10 @@ describe( 'stripeWalletProcessor', () => {
 			200,
 			{ order_id: 12345, message: { payment_intent_client_secret: 'test-client-secret' } },
 		] );
-		const confirmPayment = jest.fn().mockResolvedValue( {
+		const confirmPayment = vi.fn().mockResolvedValue( {
 			error: { message: 'Your card was declined.' },
 		} );
-		const reduxDispatch = jest.fn();
+		const reduxDispatch = vi.fn();
 
 		await expect(
 			stripeWalletProcessor( submitData, {

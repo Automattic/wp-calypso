@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import domain from '../domain';
 
-jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( { siteSlug: 'example.wordpress.com', site: { ID: 123 } } ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => new URLSearchParams(),
 } ) );
 
@@ -28,7 +29,7 @@ beforeEach( () => {
 
 test( 'sends an existing mapping to its connection setup without failing the submission', async () => {
 	const { result } = renderHook( () =>
-		domain.useStepNavigation.call( domain, 'use-my-domain', jest.fn() )
+		domain.useStepNavigation.call( domain, 'use-my-domain', vi.fn() )
 	);
 
 	await expect(
@@ -47,7 +48,7 @@ test( 'ignores a connection setup URL on another site', async () => {
 		'https://evil.example/%s'
 	) }`;
 	const { result } = renderHook( () =>
-		domain.useStepNavigation.call( domain, 'use-my-domain', jest.fn() )
+		domain.useStepNavigation.call( domain, 'use-my-domain', vi.fn() )
 	);
 
 	await result.current.submit( {

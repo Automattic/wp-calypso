@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, waitFor } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import {
 	applyBlueprintSpec,
 	getSiteAdminUrl,
@@ -25,11 +26,11 @@ let mockFlags = new Set( STREAMING_ONLY );
 let mockIsAutomattician = false;
 let mockIsAutomatticianLoading = false;
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	return {
 		__esModule: true,
 		default: Object.assign(
-			jest.fn( ( key: string ) => {
+			vi.fn( ( key: string ) => {
 				const values: Record< string, string > = {
 					wpcom_signup_id: 'signup-id',
 					wpcom_signup_key: 'signup-key',
@@ -42,7 +43,7 @@ jest.mock( '@automattic/calypso-config', () => {
 	};
 } );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
 	DESIGN_PICKER_QUERY_ARG: 'design_picker',
 	useDesignCandidatesEnabled: ( requested: boolean ) => {
 		const isFlagEnabled = mockFlags.has( 'site-spec/design-candidates' );
@@ -54,64 +55,64 @@ jest.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => 
 	},
 } ) );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	Step: { Loading: () => null },
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( text: string ) => text,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( text: string ) => text,
+	} )
+);
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
 	useQuery: () => mockQueryParams,
 } ) );
 
-jest.mock( 'calypso/lib/site-spec', () => ( {
-	useSiteSpec: jest.fn(),
+vi.mock( 'calypso/lib/site-spec', () => ( {
+	useSiteSpec: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
 
-jest.mock( 'calypso/lib/site-spec/utils', () => ( {
-	getBlueprintSiteSpecConfig: jest.fn( () => ( { agentId: 'blueprint-site-spec' } ) ),
-	getBuildWowSiteSpecConfig: jest.fn( () => ( { agentId: 'build-wow-site-spec' } ) ),
-	getCiabSiteSpecConfig: jest.fn( () => ( { agentId: 'ciab-site-spec' } ) ),
-	getEarlyProvisionSiteSpecConfig: jest.fn( () => ( { agentId: 'early-provision-site-spec' } ) ),
+vi.mock( 'calypso/lib/site-spec/utils', () => ( {
+	getBlueprintSiteSpecConfig: vi.fn( () => ( { agentId: 'blueprint-site-spec' } ) ),
+	getBuildWowSiteSpecConfig: vi.fn( () => ( { agentId: 'build-wow-site-spec' } ) ),
+	getCiabSiteSpecConfig: vi.fn( () => ( { agentId: 'ciab-site-spec' } ) ),
+	getEarlyProvisionSiteSpecConfig: vi.fn( () => ( { agentId: 'early-provision-site-spec' } ) ),
 } ) );
 
-const mockSetPendingAction = jest.fn();
-const mockSetSiteSetupError = jest.fn();
+const mockSetPendingAction = vi.fn();
+const mockSetSiteSetupError = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setPendingAction: mockSetPendingAction,
 		setSiteSetupError: mockSetSiteSetupError,
 	} ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'automattic/onboard',
 	SITE_STORE: 'automattic/site',
 } ) );
 
 // The wow-funnel helpers stay real so the funnel's readiness rules are exercised; only the
 // requests they make are stubbed.
-jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
 	BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM: 'blueprint_simple_import',
-	applyBlueprintSpec: jest.fn( () => Promise.resolve( { applied: true, adminUrl: null } ) ),
-	getBlueprintArchiveSiteIdentifier: jest.fn(
+	applyBlueprintSpec: vi.fn( () => Promise.resolve( { applied: true, adminUrl: null } ) ),
+	getBlueprintArchiveSiteIdentifier: vi.fn(
 		( { siteSlug, siteId }: { siteSlug?: string | null; siteId?: string | null } ) =>
 			siteSlug || ( siteId && String( siteId ) !== '0' ? String( siteId ) : null )
 	),
-	getSimpleSiteEditorUrl: jest.fn(
-		( adminUrl: string ) => `${ adminUrl }site-editor.php?simple=1`
-	),
-	getSiteAdminUrl: jest.fn( () => Promise.resolve( 'https://example.wordpress.com/wp-admin/' ) ),
-	getSiteEditorUrl: jest.fn( () => 'https://example.wordpress.com/wp-admin/site-editor.php' ),
+	getSimpleSiteEditorUrl: vi.fn( ( adminUrl: string ) => `${ adminUrl }site-editor.php?simple=1` ),
+	getSiteAdminUrl: vi.fn( () => Promise.resolve( 'https://example.wordpress.com/wp-admin/' ) ),
+	getSiteEditorUrl: vi.fn( () => 'https://example.wordpress.com/wp-admin/site-editor.php' ),
 	getSpecMetaFromQuery: ( queryParams: URLSearchParams ) => {
 		const url = queryParams.get( 'zoom_booking_url' );
 		const title = queryParams.get( 'site_title' );
@@ -122,35 +123,35 @@ jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
 	},
 	isPrefillComplete: ( prefill: string[], specMeta: Record< string, string > ) =>
 		prefill.length > 0 && prefill.every( ( name ) => typeof specMeta[ name ] === 'string' ),
-	lookupBlueprintArchive: jest.fn( () =>
+	lookupBlueprintArchive: vi.fn( () =>
 		Promise.resolve( { exists: true, title: '', suggestedPlans: [], prefill: [] } )
 	),
 	isBlueprintCustomThemeBuild: ( queryParams: URLSearchParams ) =>
 		queryParams.get( 'build' ) === 'custom-theme',
-	logBlueprintArchiveEvent: jest.fn(),
-	startBlueprintArchiveImport: jest.fn( () => Promise.resolve() ),
-	startBlueprintSimpleImport: jest.fn( () => Promise.resolve() ),
-	waitForAtomicTransferComplete: jest.fn( () => Promise.resolve() ),
-	waitForBlueprintImportComplete: jest.fn( () => Promise.resolve() ),
+	logBlueprintArchiveEvent: vi.fn(),
+	startBlueprintArchiveImport: vi.fn( () => Promise.resolve() ),
+	startBlueprintSimpleImport: vi.fn( () => Promise.resolve() ),
+	waitForAtomicTransferComplete: vi.fn( () => Promise.resolve() ),
+	waitForBlueprintImportComplete: vi.fn( () => Promise.resolve() ),
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: {
 		req: {
-			get: jest.fn(),
-			post: jest.fn(),
+			get: vi.fn(),
+			post: vi.fn(),
 		},
 	},
 } ) );
 
 describe( 'SiteSpec early provisioning step', () => {
 	const originalLocation = window.location;
-	const mockUseSiteSpec = useSiteSpec as jest.Mock;
-	const wpcomPostMock = wpcom.req.post as jest.Mock;
-	const logToLogstashMock = logToLogstash as jest.Mock;
+	const mockUseSiteSpec = useSiteSpec as Mock;
+	const wpcomPostMock = wpcom.req.post as Mock;
+	const logToLogstashMock = logToLogstash as Mock;
 	const navigation = {
-		submit: jest.fn(),
+		submit: vi.fn(),
 	};
 
 	const renderSiteSpec = () =>
@@ -159,7 +160,7 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		window.sessionStorage.clear();
 		mockFlags = new Set( STREAMING_ONLY );
 		mockIsAutomattician = false;
@@ -605,8 +606,8 @@ describe( 'SiteSpec early provisioning step', () => {
 } );
 
 describe( 'SiteSpec blueprint archive import', () => {
-	const mockUseSiteSpec = useSiteSpec as jest.Mock;
-	const navigation = { submit: jest.fn() };
+	const mockUseSiteSpec = useSiteSpec as Mock;
+	const navigation = { submit: vi.fn() };
 
 	const renderSiteSpec = () =>
 		render(
@@ -626,12 +627,12 @@ describe( 'SiteSpec blueprint archive import', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockQueryParams = new URLSearchParams(
 			'blueprint_archive_import=1&blueprint_slug=961&siteSlug=example.wordpress.com&wow_funnel=blueprint'
 		);
 		// The funnel's readiness wait ends by asking whether the customer can sign in to the site.
-		( wpcom.req.get as jest.Mock ).mockResolvedValue( { ready: true } );
+		( wpcom.req.get as Mock ).mockResolvedValue( { ready: true } );
 	} );
 
 	it( 'leaves the spec page for the waiting screen without waiting on the import first', async () => {
@@ -645,7 +646,7 @@ describe( 'SiteSpec blueprint archive import', () => {
 	} );
 
 	it( 'uses the admin URL from the apply response, so confirm does not fetch it', async () => {
-		( applyBlueprintSpec as jest.Mock ).mockResolvedValueOnce( {
+		( applyBlueprintSpec as Mock ).mockResolvedValueOnce( {
 			applied: true,
 			adminUrl: 'https://example.wpcomstaging.com/wp-admin/',
 		} );
@@ -664,7 +665,7 @@ describe( 'SiteSpec blueprint archive import', () => {
 
 	it( 'falls back to fetching the admin URL when the response has none', async () => {
 		// A wpcom that predates the field. The hand-off must still work, just a round trip slower.
-		( applyBlueprintSpec as jest.Mock ).mockResolvedValueOnce( { applied: true, adminUrl: null } );
+		( applyBlueprintSpec as Mock ).mockResolvedValueOnce( { applied: true, adminUrl: null } );
 
 		await confirmSpec();
 
@@ -696,7 +697,7 @@ describe( 'SiteSpec blueprint archive import', () => {
 	} );
 
 	it( 'reports a failed import to the waiting screen rather than swallowing it', async () => {
-		( waitForBlueprintImportComplete as jest.Mock ).mockRejectedValueOnce(
+		( waitForBlueprintImportComplete as Mock ).mockRejectedValueOnce(
 			new Error( 'Import failed' )
 		);
 
@@ -760,7 +761,7 @@ describe( 'SiteSpec blueprint archive import', () => {
 		// The partner's hand-off settled everything the blueprint asks: no interview, the
 		// import confirms the spec, and this page waits on it and hands over.
 		it( 'skips the interview and hands over after the import when the partner settled the spec', async () => {
-			( lookupBlueprintArchive as jest.Mock ).mockResolvedValueOnce( {
+			( lookupBlueprintArchive as Mock ).mockResolvedValueOnce( {
 				exists: true,
 				title: 'zoom test',
 				suggestedPlans: [],
@@ -798,7 +799,7 @@ describe( 'SiteSpec blueprint archive import', () => {
 
 		// The partner supplied only part of what the blueprint asks: the interview runs.
 		it( 'runs the interview when the partner settled only part of the spec', async () => {
-			( lookupBlueprintArchive as jest.Mock ).mockResolvedValueOnce( {
+			( lookupBlueprintArchive as Mock ).mockResolvedValueOnce( {
 				exists: true,
 				title: 'zoom test',
 				suggestedPlans: [],
@@ -823,7 +824,7 @@ describe( 'SiteSpec blueprint archive import', () => {
 
 		// The lookup is only a hint; a failing one must never keep the interview from mounting.
 		it( 'runs the interview when the blueprint lookup fails', async () => {
-			( lookupBlueprintArchive as jest.Mock ).mockRejectedValueOnce( new Error( 'network' ) );
+			( lookupBlueprintArchive as Mock ).mockRejectedValueOnce( new Error( 'network' ) );
 
 			renderSiteSpec();
 
@@ -841,15 +842,13 @@ describe( 'SiteSpec blueprint archive import', () => {
 		// With no site-spec step to report a failed import start, the interview is the way the
 		// customer learns about it: a partner run that cannot start its import falls back to it.
 		it( 'falls back to the interview when the import cannot be started on a partner run', async () => {
-			( lookupBlueprintArchive as jest.Mock ).mockResolvedValueOnce( {
+			( lookupBlueprintArchive as Mock ).mockResolvedValueOnce( {
 				exists: true,
 				title: 'zoom test',
 				suggestedPlans: [],
 				prefill: [ 'site_title' ],
 			} );
-			( startBlueprintSimpleImport as jest.Mock ).mockRejectedValueOnce(
-				new Error( 'import_exists' )
-			);
+			( startBlueprintSimpleImport as Mock ).mockRejectedValueOnce( new Error( 'import_exists' ) );
 			mockQueryParams = new URLSearchParams(
 				'blueprint_simple_import=1&blueprint_slug=zoom&siteSlug=example.wordpress.com&siteId=123&site_title=Cedar%20Keel'
 			);
@@ -894,7 +893,7 @@ describe( 'SiteSpec blueprint archive import', () => {
 	} );
 
 	describe( 'build=custom-theme', () => {
-		const wpcomPostMock = wpcom.req.post as jest.Mock;
+		const wpcomPostMock = wpcom.req.post as Mock;
 
 		beforeEach( () => {
 			mockQueryParams = new URLSearchParams(

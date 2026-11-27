@@ -44,7 +44,7 @@ async function pollMyAccountInformation(
 	timeoutMessage: string
 ): Promise< void > {
 	const deadline = Date.now() + POLL_TIMEOUT;
-	let lastError: unknown = null;
+	let lastError: unknown;
 	while ( true ) {
 		try {
 			if ( until( await client.getMyAccountInformation() ) ) {

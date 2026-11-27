@@ -1,11 +1,6 @@
-/*
- * These tests shouldn't require the jsdom environment,
- * but we're waiting for this PR to merge:
- * https://github.com/WordPress/gutenberg/pull/20486
- *
- * @jest-environment jsdom
+/**
+ * @vitest-environment jsdom
  */
-
 import { createResolvers } from '../resolvers';
 
 const { getCurrentUser } = createResolvers();

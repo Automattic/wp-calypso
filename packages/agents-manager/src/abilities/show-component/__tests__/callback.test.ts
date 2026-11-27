@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { vi } from 'vitest';
 import { hasCheckpoint, setCheckpoint } from '../../../utils/checkpoints';
 import { getToolCallIdFromConversationHistory } from '../../../utils/tool-call-history';

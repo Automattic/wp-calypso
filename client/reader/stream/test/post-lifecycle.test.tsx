@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -7,6 +7,7 @@ import { createRef } from 'react';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { vi } from 'vitest';
 import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import readerReducer from 'calypso/state/reader/reducer';
 import PostLifecycle from '../post-lifecycle';
@@ -21,24 +22,32 @@ const TestPostLifecycle = PostLifecycle as ForwardRefExoticComponent<
 	PostLifecycleProps & RefAttributes< unknown >
 >;
 
-jest.mock( '../post', () => ( props: { post: { title?: string } } ) => (
-	<div data-testid="stream-post">{ props.post.title }</div>
-) );
+vi.mock( '../post', () => ( {
+	default: ( props: { post: { title?: string } } ) => (
+		<div data-testid="stream-post">{ props.post.title }</div>
+	),
+} ) );
 
-jest.mock( 'calypso/components/blogging-prompt-card', () => () => (
-	<div data-testid="blogging-prompt-card" />
-) );
+vi.mock( 'calypso/components/blogging-prompt-card', () => ( {
+	default: () => <div data-testid="blogging-prompt-card" />,
+} ) );
 
-jest.mock( '../recommended-posts', () => () => <div data-testid="recommended-posts" /> );
-jest.mock( '../empty-search-recommended-post', () => () => (
-	<div data-testid="empty-search-recommended-post" />
-) );
-jest.mock( '../post-placeholder', () => () => <div data-testid="post-placeholder" /> );
-jest.mock( '../post-unavailable', () => () => <div data-testid="post-unavailable" /> );
-jest.mock( '../x-post', () => () => <div data-testid="x-post" /> );
-jest.mock( 'calypso/blocks/reader-post-card/blocked', () => () => (
-	<div data-testid="post-blocked" />
-) );
+vi.mock( '../recommended-posts', () => ( {
+	default: () => <div data-testid="recommended-posts" />,
+} ) );
+vi.mock( '../empty-search-recommended-post', () => ( {
+	default: () => <div data-testid="empty-search-recommended-post" />,
+} ) );
+vi.mock( '../post-placeholder', () => ( {
+	default: () => <div data-testid="post-placeholder" />,
+} ) );
+vi.mock( '../post-unavailable', () => ( {
+	default: () => <div data-testid="post-unavailable" />,
+} ) );
+vi.mock( '../x-post', () => ( { default: () => <div data-testid="x-post" /> } ) );
+vi.mock( 'calypso/blocks/reader-post-card/blocked', () => ( {
+	default: () => <div data-testid="post-blocked" />,
+} ) );
 
 function makeWrapper( queryClient: QueryClient ) {
 	const store = createStore(

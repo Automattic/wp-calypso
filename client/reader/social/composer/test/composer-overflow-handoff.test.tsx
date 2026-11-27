@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useEffect } from 'react';
+import { type Mock, type MockInstance, vi } from 'vitest';
 import * as notices from 'calypso/state/notices/actions';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -16,7 +17,7 @@ import type { ComposerConfig } from '../composer-config';
 import type { Site } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
 
 const ORIGIN = 'https://public-api.wordpress.com';
 
@@ -106,7 +107,7 @@ describe( 'ComposerOverflowHandoff — media-handoff trigger', () => {
 
 	it( 'saves a non-empty draft body when the composer is empty (CM-726 empty-text guard)', async () => {
 		const user = userEvent.setup();
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		try {
 			mockSitesQuery( [
@@ -349,12 +350,12 @@ describe( 'ComposerOverflowHandoff — multi-site picker', () => {
 } );
 
 describe( 'ComposerOverflowHandoff — Move to editor click', () => {
-	let openSpy: jest.SpyInstance;
-	let fakeWindow: { location: { href: string }; close: jest.Mock };
+	let openSpy: MockInstance;
+	let fakeWindow: { location: { href: string }; close: Mock };
 
 	beforeEach( () => {
-		fakeWindow = { location: { href: '' }, close: jest.fn() };
-		openSpy = jest
+		fakeWindow = { location: { href: '' }, close: vi.fn() };
+		openSpy = vi
 			.spyOn( window, 'open' )
 			.mockImplementation( () => fakeWindow as unknown as Window );
 	} );
@@ -412,7 +413,7 @@ describe( 'ComposerOverflowHandoff — Move to editor click', () => {
 		// Re-mock window.open to return null for this test only (popup-blocker
 		// case). The default fakeWindow mock from beforeEach is replaced.
 		openSpy.mockImplementation( () => null );
-		const successNoticeSpy = jest.spyOn( notices, 'successNotice' );
+		const successNoticeSpy = vi.spyOn( notices, 'successNotice' );
 		mockSitesQuery( [
 			{
 				ID: 100,
@@ -571,10 +572,10 @@ describe( 'ComposerOverflowHandoff — Tracks events', () => {
 		},
 	};
 
-	let recordSpy: jest.SpyInstance;
+	let recordSpy: MockInstance;
 
 	beforeEach( () => {
-		recordSpy = jest
+		recordSpy = vi
 			.spyOn( analytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 	} );
@@ -621,7 +622,7 @@ describe( 'ComposerOverflowHandoff — Tracks events', () => {
 
 	it( 'fires overflowHandoff.editorOpened with the chosen site_id on Move to editor click', async () => {
 		const user = userEvent.setup();
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		try {
 			mockSitesQuery( [
@@ -676,7 +677,7 @@ describe( 'ComposerOverflowHandoff — Tracks events', () => {
 
 	it( 'does not fire overflowHandoff Tracks events when the config omits the section', async () => {
 		const user = userEvent.setup();
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		try {
 			mockSitesQuery( [
@@ -761,7 +762,7 @@ describe( 'ComposerOverflowHandoff — picker disabled during mutation', () => {
 			return null;
 		}
 
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		try {
 			renderWithComposer(

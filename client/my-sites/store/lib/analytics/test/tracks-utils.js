@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { recordTrack } from '../tracks-utils';
 
 const noop = () => {};
@@ -5,7 +6,7 @@ const noop = () => {};
 describe( 'recordTrack', () => {
 	it( 'should curry the tracks object', () => {
 		const tracksSpy = {
-			recordTracksEvent: jest.fn(),
+			recordTracksEvent: vi.fn(),
 		};
 
 		expect( recordTrack( tracksSpy, noop ) ).toBeInstanceOf( Function );
@@ -13,7 +14,7 @@ describe( 'recordTrack', () => {
 
 	it( 'should call tracks to record an event with properties', () => {
 		const tracksSpy = {
-			recordTracksEvent: jest.fn(),
+			recordTracksEvent: vi.fn(),
 		};
 
 		const eventProps = {
@@ -31,7 +32,7 @@ describe( 'recordTrack', () => {
 	} );
 
 	it( 'should log tracks via debug', () => {
-		const debugSpy = jest.fn();
+		const debugSpy = vi.fn();
 
 		const eventProps = { a: 1 };
 
@@ -48,9 +49,9 @@ describe( 'recordTrack', () => {
 
 	it( 'should ignore and debug log tracks with an improper event name', () => {
 		const tracksSpy = {
-			recordTracksEvent: jest.fn(),
+			recordTracksEvent: vi.fn(),
 		};
-		const debugSpy = jest.fn();
+		const debugSpy = vi.fn();
 
 		recordTrack( tracksSpy, debugSpy )( 'calypso_somethingelse_invalid_name', { a: 1 } );
 

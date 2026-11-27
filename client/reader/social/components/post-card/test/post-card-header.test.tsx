@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { PostCardHeader } from '../post-card-header';
 import type { SocialPost } from '../../../types';
@@ -31,7 +32,7 @@ const base: SocialPost = {
 
 describe( 'PostCardHeader compact + timestampLink', () => {
 	it( 'renders the timestamp as an anchor when timestampLink is provided', () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		render(
 			<PostCardHeader
 				post={ base }
@@ -48,7 +49,7 @@ describe( 'PostCardHeader compact + timestampLink', () => {
 	} );
 
 	it( 'fires the supplied onClick when the timestamp is clicked', async () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		render(
 			<PostCardHeader
 				post={ base }
@@ -152,7 +153,7 @@ function makeSocialPost( overrides: Partial< SocialPost > = {} ): SocialPost {
 function wrap(
 	children: React.ReactNode,
 	getThreadUrl?: ( uri: string ) => string | null,
-	onClick = jest.fn()
+	onClick = vi.fn()
 ) {
 	return (
 		<SocialAnalyticsProvider
@@ -215,7 +216,7 @@ describe( 'PostCardHeader getThreadUrl rewiring', () => {
 	} );
 
 	it( 'fires reply-context Tracks event when the link is clicked', async () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		const getThreadUrl = ( uri: string ) =>
 			uri === post.reply_parent!.uri ? '/reader/atmosphere/7/thread/did:plc:def/3kdef' : null;
 		render( wrap( <PostCardHeader post={ post } variant="default" />, getThreadUrl, onClick ) );
@@ -237,7 +238,7 @@ describe( 'PostCardHeader — author chip with getProfileUrl resolver', () => {
 		post: SocialPost,
 		getProfileUrl: ( ref: { did?: string | null; handle?: string | null } ) => string | null
 	) {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		render(
 			<SocialAnalyticsProvider
 				value={ {
@@ -326,7 +327,7 @@ describe( 'PostCardHeader — author chip with getProfileUrl resolver', () => {
 		function renderRepost(
 			getProfileUrl?: ( ref: { did?: string | null; handle?: string | null } ) => string | null
 		) {
-			const onClick = jest.fn();
+			const onClick = vi.fn();
 			render(
 				<SocialAnalyticsProvider
 					value={ {
@@ -391,7 +392,7 @@ describe( 'PostCardHeader — author chip with getProfileUrl resolver', () => {
 		} );
 
 		it( 'does not render a preface when post.reason is null', () => {
-			const onClick = jest.fn();
+			const onClick = vi.fn();
 			render(
 				<SocialAnalyticsProvider value={ { source: 'atmosphere', connectionId: 42, onClick } }>
 					<PostCardHeader post={ basePost } variant="default" />

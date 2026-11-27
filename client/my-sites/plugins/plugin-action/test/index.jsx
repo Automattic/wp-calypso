@@ -1,14 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import PluginAction from '../plugin-action';
 
-jest.mock( 'calypso/components/info-popover', () =>
-	require( 'calypso/components/empty-component' )
-);
+vi.mock( 'calypso/components/info-popover', () => import( 'calypso/components/empty-component' ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	ToggleControl: () => <input type="checkbox" data-testid="toggle-control" />,
 } ) );
 

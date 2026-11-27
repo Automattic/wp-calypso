@@ -1,22 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type MockedFunction, vi } from 'vitest';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordCompletedPurchaseAnalytics } from '../record-completed-purchase-analytics';
 import type { Receipt, ReceiptItem } from '@automattic/api-core';
 
-jest.mock( 'calypso/lib/analytics/record-purchase', () => ( {
-	recordPurchase: jest.fn(),
+vi.mock( 'calypso/lib/analytics/record-purchase', () => ( {
+	recordPurchase: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
 
-const mockRecordPurchase = recordPurchase as jest.MockedFunction< typeof recordPurchase >;
+const mockRecordPurchase = recordPurchase as MockedFunction< typeof recordPurchase >;
 
 const makeReceipt = ( id: number, items: Partial< ReceiptItem >[] = [ {} ] ): Receipt =>
 	( {
@@ -27,7 +28,7 @@ const makeReceipt = ( id: number, items: Partial< ReceiptItem >[] = [ {} ] ): Re
 describe( 'recordCompletedPurchaseAnalytics', () => {
 	beforeEach( () => {
 		window.localStorage.clear();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockRecordPurchase.mockResolvedValue( undefined );
 	} );
 
@@ -65,7 +66,7 @@ describe( 'recordCompletedPurchaseAnalytics', () => {
 	} );
 
 	it( 'resolves and reports the error when recording fails', async () => {
-		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		mockRecordPurchase.mockRejectedValue( new Error( 'script failed' ) );
 		await expect( recordCompletedPurchaseAnalytics( makeReceipt( 1 ) ) ).resolves.toBeUndefined();
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_checkout_composite_error', {
@@ -75,11 +76,11 @@ describe( 'recordCompletedPurchaseAnalytics', () => {
 	} );
 
 	it( 'resolves after a timeout if recording does not finish', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockRecordPurchase.mockReturnValue( new Promise( () => {} ) );
 		const result = recordCompletedPurchaseAnalytics( makeReceipt( 1 ) );
-		jest.advanceTimersByTime( 3000 );
+		vi.advanceTimersByTime( 3000 );
 		await expect( result ).resolves.toBeUndefined();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 } );

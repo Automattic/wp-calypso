@@ -24,7 +24,7 @@ import { ThemedIllustration } from '../../../../../../components/themed-illustra
 import ResetPasswordModal from '../../../../../../sites/database/components/reset-password-modal';
 import upsellIllustrationDarkUrl from '../../../../../../sites/database/components/upsell-illustration/upsell-illustration-dark.svg';
 import upsellIllustrationUrl from '../../../../../../sites/database/components/upsell-illustration/upsell-illustration.svg';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { hasPlanFeature } from '../../../../../../utils/site-features';
 
 export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string } ) {
@@ -58,7 +58,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 
 	const handleResetPasswordSuccess = () => {
 		setIsResetPasswordModalOpen( false );
-		createSuccessNotice( __( 'Your database password has been restored.' ), {
+		createSuccessNotice( __( 'Your database password has been reset.' ), {
 			type: 'snackbar',
 		} );
 	};
@@ -66,7 +66,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 	const handleResetPasswordError = () => {
 		setIsResetPasswordModalOpen( false );
 		createErrorNotice(
-			__( 'Sorry, we had a problem restoring your database password. Please try again.' ),
+			__( 'Sorry, we had a problem resetting your database password. Please try again.' ),
 			{
 				type: 'snackbar',
 			}
@@ -128,23 +128,23 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 									) }
 								</Notice>
 							</VStack>
-							<ButtonStack justify="flex-start" expanded={ false } as="span">
+							<ButtonStack justify="flex-start" expanded={ false } as="span" wrap>
 								<Button
+									__next40pxDefaultSize
 									variant="primary"
 									isBusy={ isFetchingToken }
 									onClick={ handleOpenPhpMyAdmin }
 								>
 									{ __( 'Open phpMyAdmin ↗' ) }
 								</Button>
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									onClick={ handleResetPasswordClick }
+								>
+									{ __( 'Reset password' ) }
+								</Button>
 							</ButtonStack>
-							<Text variant="muted" lineHeight="20px">
-								{ createInterpolateElement(
-									__( 'Having problems with access? Try <link>resetting the password</link>.' ),
-									{
-										link: <Button variant="link" onClick={ handleResetPasswordClick } />,
-									}
-								) }
-							</Text>
 						</VStack>
 					</CardBody>
 				</Card>

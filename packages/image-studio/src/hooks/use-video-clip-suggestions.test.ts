@@ -18,10 +18,6 @@ vi.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-vi.mock( '@wordpress/editor', () => ( {
-	store: 'core/editor',
-} ) );
-
 vi.mock( './use-async-suggestions-loader', () => ( {
 	useAsyncSuggestionsLoader: ( opts: unknown ) => mockUseAsyncSuggestionsLoader( opts ),
 } ) );

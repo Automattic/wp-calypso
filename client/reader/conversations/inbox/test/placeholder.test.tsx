@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
+import { screen } from '@testing-library/react';
+import { speak } from '@wordpress/a11y';
+import { vi } from 'vitest';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { ConversationsInboxPlaceholder } from '../placeholder';
+
+vi.mock( '@wordpress/a11y', () => ( { speak: vi.fn() } ) );
 
 let mockIsNarrow = false;
 
-jest.mock( '@automattic/viewport-react', () => ( {
-	useBreakpoint: jest.fn( () => mockIsNarrow ),
+vi.mock( '@automattic/viewport-react', () => ( {
+	useBreakpoint: vi.fn( () => mockIsNarrow ),
 } ) );
-
-import { screen } from '@testing-library/react';
-import { speak } from '@wordpress/a11y';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { ConversationsInboxPlaceholder } from '../placeholder';
 
 describe( 'ConversationsInboxPlaceholder', () => {
 	beforeEach( () => {
 		mockIsNarrow = false;
-		jest.mocked( speak ).mockClear();
+		vi.mocked( speak ).mockClear();
 	} );
 
 	const renderPlaceholder = ( hasConversation: boolean ) => {

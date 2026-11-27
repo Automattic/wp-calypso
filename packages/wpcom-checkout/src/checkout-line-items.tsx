@@ -817,7 +817,7 @@ function returnModalCopy(
 				};
 			}
 			const title = String( translate( 'You are about to remove your plan from the cart' ) );
-			let description = '';
+			let description;
 
 			if ( createUserAndSiteBeforeTransaction ) {
 				description = String(

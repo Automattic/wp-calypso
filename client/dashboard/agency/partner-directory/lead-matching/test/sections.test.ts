@@ -17,9 +17,13 @@ const complete: LeadMatchingFormData = {
 };
 
 describe( 'lead matching sections', () => {
-	test( 'status follows availability first, then the answers', () => {
+	test( 'status is not set up until a question is answered, then follows availability', () => {
 		const empty = getEmptyLeadMatchingFormData();
 
+		expect( getLeadMatchingStatus( empty, false ) ).toBe( 'not-started' );
+		expect( getLeadMatchingStatus( { ...complete, languages: [] }, false ) ).toBe(
+			'not-accepting'
+		);
 		expect( getLeadMatchingStatus( complete, false ) ).toBe( 'not-accepting' );
 		expect( getLeadMatchingStatus( empty, true ) ).toBe( 'not-started' );
 		expect( getLeadMatchingStatus( { ...complete, languages: [] }, true ) ).toBe( 'in-progress' );

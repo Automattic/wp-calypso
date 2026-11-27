@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { usePostLikes } from 'calypso/components/data/post-likes';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { usePostLikeActions } from 'calypso/reader/data/post/likes';
@@ -11,21 +12,23 @@ import { getXPostMetadata } from 'calypso/reader/xpost-helper';
 import { useSelectedPostCommands } from '../use-selected-post-commands';
 import type { StreamItem } from 'calypso/reader/data/stream/types';
 
-jest.mock( 'calypso/reader/data/post/cache', () => ( { useCachedPost: jest.fn() } ) );
-jest.mock( 'calypso/components/data/post-likes', () => ( {
-	usePostLikes: jest.fn(),
+vi.mock( 'calypso/reader/data/post/cache', () => ( { useCachedPost: vi.fn() } ) );
+vi.mock( 'calypso/components/data/post-likes', () => ( {
+	usePostLikes: vi.fn(),
 } ) );
-jest.mock( 'calypso/reader/data/post/likes', () => ( { usePostLikeActions: jest.fn() } ) );
-jest.mock( 'calypso/reader/post/capabilities', () => ( { isLikeable: jest.fn() } ) );
-jest.mock( 'calypso/reader/utils', () => ( { showSelectedPost: jest.fn() } ) );
-jest.mock( 'calypso/reader/xpost-helper', () => ( { getXPostMetadata: jest.fn() } ) );
+vi.mock( 'calypso/reader/data/post/likes', () => ( { usePostLikeActions: vi.fn() } ) );
+vi.mock( 'calypso/reader/post/capabilities', () => ( { isLikeable: vi.fn() } ) );
+vi.mock( 'calypso/reader/utils', () => ( { showSelectedPost: vi.fn() } ) );
+vi.mock( 'calypso/reader/xpost-helper', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { getXPostMetadata: vi.fn() } )
+);
 
-const mockUseCachedPost = useCachedPost as jest.Mock;
-const mockUsePostLikeActions = usePostLikeActions as jest.Mock;
-const mockUsePostLikes = usePostLikes as jest.Mock;
-const mockIsLikeable = isLikeable as jest.Mock;
-const mockShowSelectedPost = showSelectedPost as jest.Mock;
-const mockGetXPostMetadata = getXPostMetadata as jest.Mock;
+const mockUseCachedPost = useCachedPost as Mock;
+const mockUsePostLikeActions = usePostLikeActions as Mock;
+const mockUsePostLikes = usePostLikes as Mock;
+const mockIsLikeable = isLikeable as Mock;
+const mockShowSelectedPost = showSelectedPost as Mock;
+const mockGetXPostMetadata = getXPostMetadata as Mock;
 
 const LIKEABLE_POST = { site_ID: 5, ID: 9, URL: 'https://example.com/hello', i_like: false };
 
@@ -41,8 +44,8 @@ function setup( {
 	selectedPostKey?: StreamItem | null;
 } = {} ) {
 	const actions = {
-		like: jest.fn(),
-		unlike: jest.fn(),
+		like: vi.fn(),
+		unlike: vi.fn(),
 		isLikePending: false,
 		isUnlikePending: false,
 		...likeActions,
@@ -55,16 +58,16 @@ function setup( {
 }
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockIsLikeable.mockReturnValue( true );
 	mockGetXPostMetadata.mockReturnValue( null );
-	mockShowSelectedPost.mockReturnValue( jest.fn() );
+	mockShowSelectedPost.mockReturnValue( vi.fn() );
 } );
 
 describe( 'useSelectedPostCommands', () => {
 	describe( 'openSelected', () => {
 		it( 'navigates to the selected post via showSelectedPost', () => {
-			const navigate = jest.fn();
+			const navigate = vi.fn();
 			mockShowSelectedPost.mockReturnValue( navigate );
 			const { result } = setup( {
 				selectedPostKey: { blogId: 5, postId: 9 } as unknown as StreamItem,
@@ -89,7 +92,7 @@ describe( 'useSelectedPostCommands', () => {
 
 	describe( 'openSelectedInNewTab', () => {
 		it( 'opens the post URL in a new tab', () => {
-			const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+			const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 			const { result } = setup();
 
 			result.current.openSelectedInNewTab();
@@ -103,7 +106,7 @@ describe( 'useSelectedPostCommands', () => {
 		} );
 
 		it( 'does nothing without a cached post or URL', () => {
-			const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+			const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 			const { result } = setup( { post: null } );
 
 			result.current.openSelectedInNewTab();

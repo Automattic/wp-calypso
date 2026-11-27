@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
@@ -12,7 +13,7 @@ import { BlogAboutModal } from '../blog-about-modal';
 import type { SocialPost } from '../../../types';
 import type { ReactNode } from 'react';
 
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
 
 const ORIGIN = 'https://public-api.wordpress.com';
 
@@ -111,7 +112,7 @@ describe( 'BlogAboutModal', () => {
 				],
 			} );
 
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		renderWithProvider(
 			<SocialAnalyticsProvider value={ { source: 'atmosphere', connectionId: 1, onClick } }>
 				<BlogAboutModal post={ post } onClose={ () => {} } />
@@ -133,8 +134,8 @@ describe( 'BlogAboutModal', () => {
 			.get( /\/rest\/v1\.\d+\/me\/sites/ )
 			.reply( 200, { sites: [] } );
 
-		const onClick = jest.fn();
-		const onClose = jest.fn();
+		const onClick = vi.fn();
+		const onClose = vi.fn();
 		renderWithProvider(
 			<SocialAnalyticsProvider value={ { source: 'atmosphere', connectionId: 1, onClick } }>
 				<BlogAboutModal post={ post } onClose={ onClose } />
@@ -154,8 +155,8 @@ describe( 'BlogAboutModal', () => {
 
 	it( 'closes the modal after a successful handoff without firing _dismissed', async () => {
 		const user = userEvent.setup();
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
-		const recordSpy = jest
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
+		const recordSpy = vi
 			.spyOn( analytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 
@@ -177,8 +178,8 @@ describe( 'BlogAboutModal', () => {
 			.post( /\/rest\/v1\.\d+\/sites\/100\/posts\/new/ )
 			.reply( 200, { ID: 555 } );
 
-		const onClick = jest.fn();
-		const onClose = jest.fn();
+		const onClick = vi.fn();
+		const onClose = vi.fn();
 		renderWithProvider(
 			<SocialAnalyticsProvider value={ { source: 'atmosphere', connectionId: 1, onClick } }>
 				<BlogAboutModal post={ post } onClose={ onClose } />
@@ -203,8 +204,8 @@ describe( 'BlogAboutModal', () => {
 
 	it( 'fires _blog_about_editor_opened via SiteHandoff on submit', async () => {
 		const user = userEvent.setup();
-		const openSpy = jest.spyOn( window, 'open' ).mockImplementation( () => null );
-		const recordSpy = jest
+		const openSpy = vi.spyOn( window, 'open' ).mockImplementation( () => null );
+		const recordSpy = vi
 			.spyOn( analytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 

@@ -281,7 +281,7 @@ class CommentReplyInput extends Component {
 
 	render() {
 		const value = this.state.value;
-		let submitLink = '';
+		let submitLink;
 		const sendText = this.props.translate( 'Send', { context: 'verb: imperative' } );
 
 		if ( this.state.isSubmitting ) {

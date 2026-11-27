@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { StripeHookProvider } from '@automattic/calypso-stripe';
@@ -15,6 +15,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { vi } from 'vitest';
 import GlobalNotices from 'calypso/components/global-notices';
 import {
 	createCreditCardPaymentMethodStore,
@@ -23,7 +24,7 @@ import {
 import { createTestReduxStore, fetchStripeConfiguration, stripeConfiguration } from './util';
 import type { CardStoreType } from 'calypso/my-sites/checkout/src/payment-methods/credit-card/types';
 
-jest.mock( '@stripe/react-stripe-js', () => {
+vi.mock( '@stripe/react-stripe-js', async () => {
 	const mockUseElements = () => ( {
 		getElement: () => {
 			// The credit card payment method submit button requires passing
@@ -38,7 +39,10 @@ jest.mock( '@stripe/react-stripe-js', () => {
 		},
 	} );
 
-	const stripe = jest.requireActual( '@stripe/react-stripe-js' );
+	const stripe =
+		await vi.importActual< typeof import( '@stripe/react-stripe-js' ) >(
+			'@stripe/react-stripe-js'
+		);
 	return { ...stripe, useElements: mockUseElements };
 } );
 
@@ -129,7 +133,7 @@ describe( 'Credit card payment method', () => {
 
 	it( 'submits the data to the processor when the submit button is pressed', async () => {
 		const user = userEvent.setup();
-		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		const processorFunction = vi.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render( <TestWrapper paymentProcessors={ { card: processorFunction } }></TestWrapper> );
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
 
@@ -157,7 +161,7 @@ describe( 'Credit card payment method', () => {
 	} );
 
 	it( 'does not submit the data to the processor when the submit button is pressed if fields are missing', async () => {
-		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		const processorFunction = vi.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render( <TestWrapper paymentProcessors={ { card: processorFunction } }></TestWrapper> );
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
 		await userEvent.click( await screen.findByText( activePayButtonText ) );
@@ -168,7 +172,7 @@ describe( 'Credit card payment method', () => {
 
 	it( 'displays error message overlay when a credit card field is empty and submit is clicked', async () => {
 		const user = userEvent.setup();
-		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		const processorFunction = vi.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render( <TestWrapper paymentProcessors={ { card: processorFunction } }></TestWrapper> );
 
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
@@ -193,7 +197,7 @@ describe( 'Credit card payment method', () => {
 
 	it( 'names the cardholder name in the error message when only that field is empty', async () => {
 		const user = userEvent.setup();
-		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		const processorFunction = vi.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render( <TestWrapper paymentProcessors={ { card: processorFunction } }></TestWrapper> );
 
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
@@ -211,7 +215,7 @@ describe( 'Credit card payment method', () => {
 
 	it( 'names the missing billing fields when using Ebanx', async () => {
 		const user = userEvent.setup();
-		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		const processorFunction = vi.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
 		render(
 			<TestWrapper
 				paymentProcessors={ { card: processorFunction } }

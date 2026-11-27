@@ -9,6 +9,7 @@ import {
 import { check } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { Card, CardBody, CardMedia } from '../../../components/card';
+import NewTabLabel from '../../components/new-tab-label';
 import type { CSSProperties } from 'react';
 
 export type DevToolImagePosition = 'center' | 'bottom-left' | 'bottom-right';
@@ -88,14 +89,14 @@ export default function DevToolSection( {
 						) ) }
 					</VStack>
 					<Button
+						__next40pxDefaultSize
 						variant="primary"
-						size="compact"
 						href={ cta.href }
 						target="_blank"
 						rel="noreferrer"
 						onClick={ cta.onClick }
 					>
-						{ cta.label }
+						<NewTabLabel>{ cta.label }</NewTabLabel>
 					</Button>
 				</VStack>
 			</CardBody>

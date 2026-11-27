@@ -1,28 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, type MockInstance, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AuthorProfileHeader } from '../author-profile-header';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-const pageMock = page as unknown as jest.Mock;
+const pageMock = page as unknown as Mock;
 
 describe( 'AuthorProfileHeader (shared)', () => {
-	let backSpy: jest.SpyInstance;
-	let lengthSpy: jest.SpyInstance;
+	let backSpy: MockInstance;
+	let lengthSpy: MockInstance;
 
 	beforeEach( () => {
 		pageMock.mockClear();
-		backSpy = jest.spyOn( window.history, 'back' ).mockImplementation( () => {} );
+		backSpy = vi.spyOn( window.history, 'back' ).mockImplementation( () => {} );
 		// Default to a freshly-loaded-tab state; individual tests override.
-		lengthSpy = jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
+		lengthSpy = vi.spyOn( window.history, 'length', 'get' ).mockReturnValue( 1 );
 	} );
 
 	afterEach( () => {
@@ -49,7 +50,7 @@ describe( 'AuthorProfileHeader (shared)', () => {
 
 	it( 'fires onBackToTimeline callback in the deep-link branch', async () => {
 		const user = userEvent.setup();
-		const onBack = jest.fn();
+		const onBack = vi.fn();
 		renderWithProvider(
 			<AuthorProfileHeader
 				timelineUrl="/reader/atmosphere/9/timeline"
@@ -64,7 +65,7 @@ describe( 'AuthorProfileHeader (shared)', () => {
 	it( 'fires onBackToTimeline callback in the in-app-history branch', async () => {
 		lengthSpy.mockReturnValue( 3 );
 		const user = userEvent.setup();
-		const onBack = jest.fn();
+		const onBack = vi.fn();
 		renderWithProvider(
 			<AuthorProfileHeader
 				timelineUrl="/reader/atmosphere/9/timeline"

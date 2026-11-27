@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useIsOnSale from '../../../use-is-on-sale';
 import { useProductLightbox } from '../use-product-lightbox';
 
-jest.mock( 'calypso/state', () => ( { useDispatch: () => jest.fn() } ) );
-jest.mock( '../../../use-is-on-sale', () => jest.fn() );
+vi.mock( 'calypso/state', () => ( { useDispatch: () => vi.fn() } ) );
+vi.mock( '../../../use-is-on-sale', () => ( { default: vi.fn() } ) );
 
 const openedFromHash = ( hash: string, ...slugsOnSale: string[] ) => {
 	window.location.hash = hash;
-	jest.mocked( useIsOnSale ).mockReturnValue( ( slug: string ) => slugsOnSale.includes( slug ) );
+	vi.mocked( useIsOnSale ).mockReturnValue( ( slug: string ) => slugsOnSale.includes( slug ) );
 	const { result } = renderHook( () => useProductLightbox() );
 	return result.current.currentProduct?.productSlug ?? null;
 };

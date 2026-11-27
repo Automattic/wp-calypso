@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../../social/components/post-card/analytics-context';
@@ -16,8 +17,8 @@ import type { SocialPost } from '../../social/types';
 // `logToLogstash` fires a real HTTPS request — mute it so the
 // pipeline-level error log in the Mastodon mutations doesn't trigger
 // an unmocked nock request during the error-path tests.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
 
 const BASE = 'https://public-api.wordpress.com';
@@ -55,10 +56,7 @@ function makeQueryClient() {
 	return new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 }
 
-function renderLikeButton(
-	post = makePost(),
-	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
-) {
+function renderLikeButton( post = makePost(), { onClick = vi.fn() }: { onClick?: Mock } = {} ) {
 	const useMastodonLikeAction = makeUseMastodonLikeAction( CONNECTION_ID );
 	return {
 		onClick,
@@ -82,7 +80,7 @@ function renderLikeButton(
 describe( 'makeUseMastodonLikeAction', () => {
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'isLiked is false when viewer.like is null', () => {
@@ -147,7 +145,7 @@ describe( 'makeUseMastodonLikeAction', () => {
 	} );
 
 	it( 'on like() error fires _favorite_error_shown Tracks with error_kind and direction', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes`, {
 				status_id: STATUS_ID,
@@ -173,7 +171,7 @@ describe( 'makeUseMastodonLikeAction', () => {
 	} );
 
 	it( 'on unlike() auth error fires _favorite_error_shown Tracks with auth error copy', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/likes/${ STATUS_ID }` )
 			.reply( 401, { error: 'not_authenticated' } );

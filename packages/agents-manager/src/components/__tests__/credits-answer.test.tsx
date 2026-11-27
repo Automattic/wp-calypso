@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { act, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';

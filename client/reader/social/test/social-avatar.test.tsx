@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { SocialAvatar } from '../avatar';

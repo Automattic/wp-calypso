@@ -28,7 +28,7 @@ describe( 'isPathAllowedForDIFMPreSubmitContentCollection', () => {
 	} );
 
 	test.each( [ [ undefined ], [ null ], [ true ], [ 0 ], [ 'false' ] ] )(
-		'fails safe and keeps paths locked when the submitted flag is %p (only explicit false unlocks)',
+		'fails safe and keeps paths locked when the submitted flag is %o (only explicit false unlocks)',
 		( flagValue ) => {
 			expect(
 				isPathAllowedForDIFMPreSubmitContentCollection( '/media/example.wordpress.com', flagValue )

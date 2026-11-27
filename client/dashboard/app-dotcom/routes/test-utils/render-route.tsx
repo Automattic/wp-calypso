@@ -8,8 +8,9 @@ import { AnalyticsProvider } from '../../../app/analytics';
 import { AUTH_QUERY_KEY, AuthContext } from '../../../app/auth';
 import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from '../../../app/context';
 import { createRouteTree } from '../../../app/router';
+import { defaultUser } from '../../../test-utils';
 import type { AppConfig } from '../../../app/context';
-import type { User } from '@automattic/api-core';
+import type { Site, User } from '@automattic/api-core';
 
 const config: AppConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,
@@ -30,7 +31,7 @@ beforeEach( () => {
 	queryClient.clear();
 } );
 
-export async function renderRoute( url: string, { user }: { user: User } ) {
+export async function renderRoute( url: string, { user = defaultUser }: { user?: User } = {} ) {
 	queryClient.setQueryData( AUTH_QUERY_KEY, user );
 
 	const router = createRouter( {
@@ -53,6 +54,32 @@ export async function renderRoute( url: string, { user }: { user: User } ) {
 	);
 
 	return { ...result, router };
+}
+
+export const testSite = {
+	ID: 1,
+	name: 'Test Site',
+	slug: 'test-site.wordpress.com',
+	URL: 'https://test-site.wordpress.com',
+	site_migration: {},
+	capabilities: { manage_options: true },
+	plan: { features: { active: [] } },
+} as unknown as Site;
+
+export function mockSite( site: Site = testSite ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/rest/v1.1/sites/${ site.slug }` )
+		.query( true )
+		.reply( 200, site );
+}
+
+export function mockSiteSettings( site: Site = testSite ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/rest/v1.4/sites/${ site.ID }/settings` )
+		.query( true )
+		.reply( 200, { settings: {} } );
 }
 
 export function mockPreferences( preferences: Record< string, unknown > = {} ) {

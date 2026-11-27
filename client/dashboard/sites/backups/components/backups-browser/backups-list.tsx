@@ -1,0 +1,109 @@
+import {
+	siteBackupActivityLogGroupCountsQuery,
+	siteBackupsKnownThreatsQuery,
+} from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import { filterSortAndPaginate } from '@wordpress/dataviews';
+import { __ } from '@wordpress/i18n';
+import { useMemo } from 'react';
+import { usePersistentView } from '../../../../app/hooks/use-persistent-view';
+import { DataViews, DataViewsCard } from '../../../../components/dataviews';
+import { buildTimeRangeForActivityLog } from '../../../../utils/site-activity-log';
+import { getFields } from '../../dataviews/fields';
+import type { ActivityLogEntry } from '@automattic/api-core';
+import type { View } from '@wordpress/dataviews';
+
+const defaultView: View = {
+	type: 'list',
+	fields: [ 'date', 'content_text' ],
+	mediaField: 'icon',
+	titleField: 'title',
+	perPage: 10,
+	sort: {
+		field: 'date',
+		direction: 'desc',
+	},
+	layout: {
+		density: 'balanced',
+	},
+	showLevels: false,
+};
+
+export function BackupsList( {
+	siteId,
+	searchParams,
+	selectedBackup,
+	setSelectedBackup,
+	dateRange,
+	timezoneString,
+	gmtOffset,
+	activityLog,
+	isLoadingActivityLog,
+}: {
+	siteId: number;
+	searchParams?: Record< string, unknown >;
+	selectedBackup: ActivityLogEntry | null;
+	setSelectedBackup: ( backup: ActivityLogEntry | null ) => void;
+	dateRange?: { start: Date; end: Date };
+	timezoneString?: string;
+	gmtOffset?: number;
+	activityLog: ActivityLogEntry[];
+	isLoadingActivityLog: boolean;
+} ) {
+	const { view, updateView, resetView } = usePersistentView( {
+		slug: 'site-backups',
+		defaultView,
+		queryParams: searchParams,
+	} );
+
+	const { after, before } = useMemo( () => {
+		if ( ! dateRange ) {
+			return { after: undefined, before: undefined };
+		}
+
+		return buildTimeRangeForActivityLog( dateRange.start, dateRange.end );
+	}, [ dateRange ] );
+
+	const { data: groupCountsData } = useQuery(
+		siteBackupActivityLogGroupCountsQuery( siteId, after, before )
+	);
+
+	const { data: knownThreatsPage } = useQuery( siteBackupsKnownThreatsQuery( siteId ) );
+
+	const fields = getFields( groupCountsData?.groups, timezoneString, gmtOffset, knownThreatsPage );
+	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
+
+	const onChangeSelection = ( selection: string[] ) => {
+		const backup =
+			selection.length > 0
+				? activityLog.find( ( item ) => item.activity_id === selection[ 0 ] ) || null
+				: null;
+		setSelectedBackup( backup );
+	};
+
+	return (
+		<DataViewsCard>
+			<DataViews< ActivityLogEntry >
+				getItemId={ ( item ) => item.activity_id }
+				data={ filteredData }
+				fields={ fields }
+				view={ view }
+				onChangeView={ updateView }
+				onReset={ resetView }
+				isLoading={ isLoadingActivityLog }
+				defaultLayouts={ { list: {} } }
+				paginationInfo={ paginationInfo }
+				searchLabel={ __( 'Search backups' ) }
+				onChangeSelection={ onChangeSelection }
+				selection={ selectedBackup ? [ selectedBackup.activity_id ] : [] }
+				empty={
+					<p>
+						{ view.search
+							? __( 'No results for this search term' )
+							: __( 'No results for this period' ) }
+					</p>
+				}
+			/>
+		</DataViewsCard>
+	);
+}

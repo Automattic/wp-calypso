@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render } from '@testing-library/react';
@@ -7,18 +7,21 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { buildDomainResponse } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/test/lib/fixtures';
 import { whoisType } from 'calypso/lib/domains/whois/constants';
 import EditContactInfoPageContent from '../edit-contact-info-page-content';
 import EditContactInfoPage from '../index';
 
-jest.mock( 'calypso/data/domains/transfers/use-domain-transfer-request-query', () => ( {
+vi.mock( 'calypso/data/domains/transfers/use-domain-transfer-request-query', () => ( {
 	__esModule: true,
 	default: () => ( { data: null } ),
 } ) );
 
-jest.mock( '@automattic/viewport-react', () => ( {
-	...jest.requireActual( '@automattic/viewport-react' ),
+vi.mock( '@automattic/viewport-react', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/viewport-react' ) >(
+		'@automattic/viewport-react'
+	) ),
 	useDesktopBreakpoint: () => true,
 } ) );
 

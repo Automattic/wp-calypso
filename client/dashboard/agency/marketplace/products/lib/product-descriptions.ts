@@ -34,6 +34,17 @@ export function getProductDescription( productSlug: string ): ProductDescription
 				__( 'Full Jetpack suite' )
 			);
 			break;
+		case 'jetpack-pro':
+			description = __(
+				'Includes every Jetpack tool, with VaultPress Backup 50GB and Stats for 50k views a month.'
+			);
+			features.push(
+				__( 'Every Jetpack tool' ),
+				__( 'VaultPress Backup 50GB' ),
+				__( '30-day activity log' ),
+				__( 'Stats with 50k views a month' )
+			);
+			break;
 		case 'jetpack-security-t1':
 			description = __( 'Includes VaultPress Backup 10GB, Scan Daily, and Akismet Anti-spam.' );
 			features.push(

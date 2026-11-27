@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider, focusManager } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { fetchCurrentUser, redirectToLogout } from 'calypso/state/current-user/actions';
 import StudentPlanEligibility from '..';
 import { StepProps } from '../../../types';
@@ -12,14 +13,16 @@ import { mockStepProps, renderStep } from '../../test/helpers';
 import type { StudentPlanEligibilityReason } from '../hooks/use-student-plan-eligibility';
 
 // The real actions send the browser to the logout page and fetch `/me`.
-jest.mock( 'calypso/state/current-user/actions', () => ( {
-	...jest.requireActual( 'calypso/state/current-user/actions' ),
-	redirectToLogout: jest.fn( () => ( { type: 'TEST_REDIRECT_TO_LOGOUT' } ) ),
-	fetchCurrentUser: jest.fn( () => ( { type: 'TEST_FETCH_CURRENT_USER' } ) ),
+vi.mock( 'calypso/state/current-user/actions', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/state/current-user/actions' ) >(
+		'calypso/state/current-user/actions'
+	) ),
+	redirectToLogout: vi.fn( () => ( { type: 'TEST_REDIRECT_TO_LOGOUT' } ) ),
+	fetchCurrentUser: vi.fn( () => ( { type: 'TEST_FETCH_CURRENT_USER' } ) ),
 } ) );
 
 // Short waits between the checks after a confirmation, so the tests don't sit through seconds.
-jest.mock( '../constants', () => ( { CONFIRMED_RECHECK_DELAYS_MS: [ 0, 10, 20, 30 ] } ) );
+vi.mock( '../constants', () => ( { CONFIRMED_RECHECK_DELAYS_MS: [ 0, 10, 20, 30 ] } ) );
 
 const ELIGIBILITY_PATH = '/wpcom/v2/me/student-plan-eligibility';
 const SEND_VERIFICATION_EMAIL_PATH = '/rest/v1.1/me/send-verification-email';
@@ -69,14 +72,14 @@ describe( 'StudentPlanEligibility', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		nock.cleanAll();
 	} );
 
 	afterAll( () => nock.enableNetConnect() );
 
 	it( 'continues the flow when the account is eligible', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		mockEligibility( 'eligible' );
 
 		render( { props: { navigation: { submit } } } );
@@ -105,7 +108,7 @@ describe( 'StudentPlanEligibility', () => {
 		 * A supported but unconfirmed email must never reach the not-supported screen.
 		 */
 		it( 'asks an unverified academic account to confirm its email', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			mockEligibility( 'unverified' );
 
 			render( { props: { navigation: { submit } } } );
@@ -189,7 +192,7 @@ describe( 'StudentPlanEligibility', () => {
 			render();
 
 			await screen.findByRole( 'heading', { name: 'Confirm your email to get the Student plan' } );
-			jest.mocked( fetchCurrentUser ).mockClear();
+			vi.mocked( fetchCurrentUser ).mockClear();
 
 			act( () => {
 				window.dispatchEvent( new Event( 'focus' ) );
@@ -223,14 +226,14 @@ describe( 'StudentPlanEligibility', () => {
 		 * The confirmation arrives while the screen is up: `/me` turns verified, and the polling stops.
 		 */
 		it( 'continues once `/me` reports the email as confirmed', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			mockEligibility( 'unverified' );
 			mockEligibility( 'eligible' );
 
 			render( { props: { navigation: { submit } } } );
 
 			await screen.findByRole( 'heading', { name: 'Confirm your email to get the Student plan' } );
-			jest.mocked( fetchCurrentUser ).mockReturnValueOnce( {
+			vi.mocked( fetchCurrentUser ).mockReturnValueOnce( {
 				type: 'CURRENT_USER_SET_EMAIL_VERIFIED',
 				verified: true,
 			} as never );
@@ -244,7 +247,7 @@ describe( 'StudentPlanEligibility', () => {
 		} );
 
 		it( 'checks eligibility on arrival when `/me` already reports the email as confirmed', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			mockEligibility( 'unverified' );
 			mockEligibility( 'eligible' );
 
@@ -258,7 +261,7 @@ describe( 'StudentPlanEligibility', () => {
 		 * The endpoint can lag behind `/me` for a moment after the confirmation.
 		 */
 		it( 'checks again while a confirmed email still reads as unverified', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			mockEligibility( 'unverified' );
 			mockEligibility( 'unverified' );
 			mockEligibility( 'unverified' );
@@ -271,7 +274,7 @@ describe( 'StudentPlanEligibility', () => {
 		} );
 
 		it( 'offers a retry, and stops polling, when a confirmed email keeps reading as unverified', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			// The first answer, then one for each of the four checks after the confirmation.
 			for ( let i = 0; i < 5; i++ ) {
 				mockEligibility( 'unverified' );
@@ -280,22 +283,25 @@ describe( 'StudentPlanEligibility', () => {
 
 			render( { props: { navigation: { submit } }, emailVerified: true } );
 
+			// The alert also shows in the moment between the last check starting and React Query
+			// reporting it as fetching, so wait for that check's answer first.
+			await waitFor( () => expect( nock.pendingMocks() ).toHaveLength( 1 ) );
 			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
 				'Your email is confirmed, but we couldn’t continue. Please try again.'
 			);
-			jest.mocked( fetchCurrentUser ).mockClear();
+			vi.mocked( fetchCurrentUser ).mockClear();
 			act( () => {
 				window.dispatchEvent( new Event( 'focus' ) );
 			} );
 			expect( fetchCurrentUser ).not.toHaveBeenCalled();
 
-			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+			await userEvent.click( await screen.findByRole( 'button', { name: 'Try again' } ) );
 
 			await waitFor( () => expect( submit ).toHaveBeenCalledWith( { eligible: true } ) );
 		} );
 
 		it( 'offers a retry when the check after the confirmation fails', async () => {
-			const submit = jest.fn();
+			const submit = vi.fn();
 			mockEligibility( 'unverified' );
 			mockApi().get( ELIGIBILITY_PATH ).query( true ).reply( 429, { code: 'rate_limit_exceeded' } );
 			mockEligibility( 'eligible' );
@@ -313,7 +319,7 @@ describe( 'StudentPlanEligibility', () => {
 	} );
 
 	it( 'explains the options to an account without a school email', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		mockEligibility( 'not_academic', 'gmail.com' );
 
 		render( { props: { navigation: { submit } }, email: 'student@gmail.com' } );
@@ -365,7 +371,7 @@ describe( 'StudentPlanEligibility', () => {
 	it( 'offers a retry when the check fails', async () => {
 		mockApi().get( ELIGIBILITY_PATH ).query( true ).reply( 500, { code: 'internal_server_error' } );
 		mockEligibility( 'eligible' );
-		const submit = jest.fn();
+		const submit = vi.fn();
 
 		render( { props: { navigation: { submit } } } );
 

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
@@ -10,6 +10,7 @@ import nock from 'nock';
 import React from 'react';
 import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
 import { createReduxStore } from 'calypso/state/create-store';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
@@ -18,15 +19,17 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Sidebar from '../sidebar';
 import { defaultSiteDetails, buildSiteDetails, buildDomainResponse } from './lib/fixtures';
 
-jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+vi.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
 	useSiteGlobalStylesStatus: () => ( {
 		shouldLimitGlobalStyles: false,
 		globalStylesInUse: false,
 	} ),
 } ) );
 
-jest.mock( '@automattic/launchpad/src/use-launchpad', () => ( {
-	...jest.requireActual( '@automattic/launchpad/src/use-launchpad' ),
+vi.mock( '@automattic/launchpad/src/use-launchpad', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/launchpad/src/use-launchpad' ) >(
+		'@automattic/launchpad/src/use-launchpad'
+	) ),
 	useLaunchpad: ( siteSlug, siteIntentOption ) => {
 		let checklist = [
 			{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },

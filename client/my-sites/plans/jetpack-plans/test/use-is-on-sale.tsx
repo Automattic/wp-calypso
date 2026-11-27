@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { act, renderHook } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import {
 	PRODUCTS_LIST_RECEIVE,
 	PRODUCTS_LIST_REQUEST,
@@ -16,7 +17,7 @@ import type { ReactNode } from 'react';
 import type { AnyAction } from 'redux';
 
 const setFlag = ( enabled: boolean ) =>
-	jest
+	vi
 		.spyOn( config, 'isEnabled' )
 		.mockImplementation( ( flag ) => enabled && flag === 'jetpack/pro-bundles' );
 

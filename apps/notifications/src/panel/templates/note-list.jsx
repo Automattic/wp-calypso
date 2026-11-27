@@ -7,10 +7,12 @@ import getIsLoading from '../state/selectors/get-is-loading';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
+import hasLoadFailed from '../state/selectors/has-load-failed';
 import EmptyMessage from './empty-message';
 import FilterBar from './filter-bar';
 import { getFilters } from './filters';
 import ListHeader from './list-header';
+import LoadError from './load-error';
 import Note from './note';
 import Spinner from './spinner';
 import StatusBar from './status-bar';
@@ -355,7 +357,16 @@ export class NoteList extends Component {
 
 		const filter = getFilters()[ this.props.filterName ];
 		const loadingIndicatorVisibility = { opacity: 0 };
-		if ( this.props.isLoading ) {
+		if ( this.props.loadFailed ) {
+			// The list never loaded. Notes a push brought in aren't the list, so the error replaces them.
+			notes = (
+				<LoadError
+					height={ this.props.height }
+					isRetrying={ this.props.isLoading }
+					onRetry={ () => this.props.client.retryLoad() }
+				/>
+			);
+		} else if ( this.props.isLoading ) {
 			loadingIndicatorVisibility.opacity = 1;
 			if ( emptyNoteList ) {
 				loadingIndicatorVisibility.height = this.props.height - TITLE_OFFSET + 'px';
@@ -422,7 +433,7 @@ export class NoteList extends Component {
 							{ ...notificationsListAriaProps }
 						>
 							{ notes }
-							{ this.props.isLoading && (
+							{ this.props.isLoading && ! this.props.loadFailed && (
 								<div style={ loadingIndicatorVisibility } className="wpnc__loading-indicator">
 									<Spinner />
 								</div>
@@ -452,6 +463,7 @@ const mapStateToProps = ( state ) => ( {
 	isPanelOpen: getIsPanelOpen( state ),
 	selectedNoteId: getSelectedNoteId( state ),
 	filterName: getFilterName( state ),
+	loadFailed: hasLoadFailed( state, 'all' ),
 } );
 
 export default connect( mapStateToProps, {}, null, { forwardRef: true } )( localize( NoteList ) );

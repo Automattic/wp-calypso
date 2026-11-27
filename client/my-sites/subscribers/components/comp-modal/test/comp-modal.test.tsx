@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import membershipsReducer from 'calypso/state/memberships/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import CompSubscriptionModal from '../comp-modal';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/memberships/comps/actions', () => ( {
-	requestAddComp: jest.fn( () => () => Promise.resolve() ),
+vi.mock( 'calypso/state/memberships/comps/actions', () => ( {
+	requestAddComp: vi.fn( () => () => Promise.resolve() ),
 } ) );
 
 const products = [
@@ -52,8 +53,8 @@ function renderModal( props = {} ) {
 		siteId,
 		userId: 123,
 		username: 'testuser',
-		onClose: jest.fn(),
-		onConfirm: jest.fn(),
+		onClose: vi.fn(),
+		onConfirm: vi.fn(),
 	};
 
 	return {

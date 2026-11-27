@@ -14,6 +14,25 @@ export function groupIntentKey( category, groupName ) {
 }
 
 /**
+ * Whether a tool can only be turned on by its own switch. Any truthy value
+ * counts, so an unexpected encoding fails closed.
+ * @param {Pick<import('@automattic/api-core').McpAbility, 'requires_opt_in'>} tool
+ * @returns {boolean}
+ */
+export function requiresOptIn( tool ) {
+	return Boolean( tool?.requires_opt_in );
+}
+
+/**
+ * The tools eligible for a bulk grant.
+ * @param {Array<[string, import('@automattic/api-core').McpAbility]>} tools
+ * @returns {Array<[string, import('@automattic/api-core').McpAbility]>}
+ */
+export function getOrdinaryTools( tools ) {
+	return tools.filter( ( [ , tool ] ) => ! requiresOptIn( tool ) );
+}
+
+/**
  * A group/read/write intent only sets the *default* for abilities with no
  * explicit per-op override — an explicit override from an earlier individual
  * toggle always wins (see SettingsHelper::is_ability_enabled() on the

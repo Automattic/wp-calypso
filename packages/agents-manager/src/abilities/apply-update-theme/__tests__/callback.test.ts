@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { type Mock, vi } from 'vitest';
 import { THEME_CHECKPOINT_KEYS, withCheckpoint } from '../../../utils/checkpoints';
 import { waitForEditedGlobalStyles } from '../../../utils/global-styles';

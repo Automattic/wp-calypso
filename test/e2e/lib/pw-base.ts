@@ -656,7 +656,8 @@ export const test = base.extend<
 		const importContentFromWordPressPage = new ImportContentFromWordPressPage( page );
 		await use( importContentFromWordPressPage );
 	},
-	pageIncognito: async ( { browser }, use ) => {
+	pageIncognito: async ( { browser, viewportName }, use ) => {
+		process.env.VIEWPORT_NAME = viewportName;
 		const incognitoPage = new IncognitoPage( browser );
 		await incognitoPage.spawn();
 		const flushThrottleWatchers = await watchForThrottle( incognitoPage.getPage().context() );

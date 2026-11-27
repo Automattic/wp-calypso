@@ -10,6 +10,7 @@ import { prettyDOM } from '@testing-library/react';
 import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import { thunk } from 'redux-thunk';
+import { type Mock, vi } from 'vitest';
 import { useExperiment } from 'calypso/lib/explat';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
 import noticesReducer from 'calypso/state/notices/reducer';
@@ -30,8 +31,8 @@ import type {
 	WPCOMPaymentMethod,
 } from '@automattic/wpcom-checkout';
 
-jest.mock( 'calypso/lib/explat' );
-( useExperiment as jest.Mock ).mockImplementation( () => [ false, undefined ] );
+vi.mock( 'calypso/lib/explat' );
+( useExperiment as Mock ).mockImplementation( () => [ false, undefined ] );
 
 export const normalAllowedPaymentMethods: WPCOMPaymentMethod[] = [
 	'WPCOM_Billing_PayPal_PPCP',
@@ -1295,7 +1296,7 @@ export function mockGetSiteDomainsEndpoint( response: unknown[] ) {
 }
 
 export function mockLogStashEndpoint() {
-	const endpoint = jest.fn();
+	const endpoint = vi.fn();
 	endpoint.mockReturnValue( true );
 
 	nock( 'https://public-api.wordpress.com' )
@@ -1307,7 +1308,7 @@ export function mockLogStashEndpoint() {
 }
 
 export function mockSetVatInfoEndpoint() {
-	const endpoint = jest.fn();
+	const endpoint = vi.fn();
 	endpoint.mockReturnValue( true );
 
 	nock( 'https://public-api.wordpress.com' )
@@ -1319,7 +1320,7 @@ export function mockSetVatInfoEndpoint() {
 }
 
 export function mockUserSignupValidationEndpoint( endpointResponse ) {
-	const endpoint = jest.fn();
+	const endpoint = vi.fn();
 	endpoint.mockReturnValue( true );
 
 	nock( 'https://public-api.wordpress.com' )
@@ -1345,7 +1346,7 @@ export function mockGetPaymentMethodsEndpoint( endpointResponse ) {
 }
 
 export function mockCreateAccountEndpoint( endpointResponse ) {
-	const endpoint = jest.fn();
+	const endpoint = vi.fn();
 	endpoint.mockReturnValue( true );
 
 	nock( 'https://public-api.wordpress.com' )
@@ -1357,7 +1358,7 @@ export function mockCreateAccountEndpoint( endpointResponse ) {
 }
 
 export function mockOrderEndpoint( orderId: number, endpointResponse ) {
-	const endpoint = jest.fn();
+	const endpoint = vi.fn();
 	endpoint.mockReturnValue( true );
 
 	nock( 'https://public-api.wordpress.com' )
@@ -1369,7 +1370,7 @@ export function mockOrderEndpoint( orderId: number, endpointResponse ) {
 }
 
 export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
-	const transactionsEndpoint = jest.fn();
+	const transactionsEndpoint = vi.fn();
 	transactionsEndpoint.mockReturnValue( true );
 
 	nock( 'https://public-api.wordpress.com' )
@@ -1383,7 +1384,7 @@ export function mockTransactionsEndpoint( transactionsEndpointResponse ) {
 
 export function setMockLocation( href: string ) {
 	const url = new URL( href );
-	jest.spyOn( window, 'location', 'get' ).mockReturnValue( url );
+	vi.spyOn( window, 'location', 'get' ).mockReturnValue( url );
 }
 
 export const mockCreateAccountSiteNotCreatedResponse = () => [ 200, { success: true } ];
@@ -1477,7 +1478,7 @@ export const expectedCreateAccountRequest = {
 };
 
 export function mockCachedContactDetailsEndpoint( responseData, responseCode = 200 ): void {
-	const endpoint = jest.fn();
+	const endpoint = vi.fn();
 	endpoint.mockReturnValue( true );
 	const mockDomainContactResponse = () => [ responseCode, responseData ];
 	nock( 'https://public-api.wordpress.com' )
@@ -1486,7 +1487,7 @@ export function mockCachedContactDetailsEndpoint( responseData, responseCode = 2
 }
 
 export function mockSetCachedContactDetailsEndpoint() {
-	const endpoint = jest.fn();
+	const endpoint = vi.fn();
 	endpoint.mockReturnValue( true );
 	nock( 'https://public-api.wordpress.com' )
 		.post( '/rest/v1.1/me/domain-contact-information', ( body ) => {
@@ -1520,27 +1521,24 @@ export function mockContactDetailsValidationEndpoint(
 export function mockMatchMediaOnWindow(): void {
 	Object.defineProperty( window, 'matchMedia', {
 		writable: true,
-		value: jest.fn().mockImplementation( ( query ) => ( {
+		value: vi.fn().mockImplementation( ( query ) => ( {
 			matches: false,
 			media: query,
 			onchange: null,
-			addListener: jest.fn(), // deprecated
-			removeListener: jest.fn(), // deprecated
-			addEventListener: jest.fn(),
-			removeEventListener: jest.fn(),
-			dispatchEvent: jest.fn(),
+			addListener: vi.fn(), // deprecated
+			removeListener: vi.fn(), // deprecated
+			addEventListener: vi.fn(),
+			removeEventListener: vi.fn(),
+			dispatchEvent: vi.fn(),
 		} ) ),
 	} );
 }
 
 // Add the below custom Jest assertion to TypeScript.
-declare global {
-	// eslint-disable-next-line @typescript-eslint/no-namespace
-	namespace jest {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		interface Matchers< R > {
-			toNeverAppear(): Promise< CustomMatcherResult >;
-		}
+declare module 'vitest' {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Must match Vitest's declaration.
+	interface Matchers< T = any > {
+		toNeverAppear(): Promise< T >;
 	}
 }
 
@@ -1737,15 +1735,15 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 /**
  * Helper to prepare to mock Stripe Elements.
  *
- * To use this, you'll need to call it inside `jest.mock()` as follows:
+ * To use this, you'll need to call it inside `vi.mock()` as follows:
  *
  * ```
- * jest.mock( '@stripe/react-stripe-js', () => {
- *   const stripe = jest.requireActual( '@stripe/react-stripe-js' );
+ * vi.mock( '@stripe/react-stripe-js', async () => {
+ *   const stripe = await vi.importActual( '@stripe/react-stripe-js' );
  *   return { ...stripe, ...mockStripeElements() };
  * } );
  *
- * jest.mock( '@stripe/stripe-js', () => {
+ * vi.mock( '@stripe/stripe-js', () => {
  *   return {
  *     loadStripe: async () => mockStripeElements().useStripe(),
  *   };
@@ -1754,35 +1752,35 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
  */
 export function mockStripeElements() {
 	const mockElement = () => ( {
-		mount: jest.fn(),
-		destroy: jest.fn(),
-		on: jest.fn(),
-		off: jest.fn(),
-		update: jest.fn(),
+		mount: vi.fn(),
+		destroy: vi.fn(),
+		on: vi.fn(),
+		off: vi.fn(),
+		update: vi.fn(),
 	} );
 
 	const mockElements = () => {
 		const elements = {};
 		return {
-			create: jest.fn( ( type ) => {
+			create: vi.fn( ( type ) => {
 				elements[ type ] = mockElement();
 				return elements[ type ];
 			} ),
-			getElement: jest.fn( ( type ) => {
+			getElement: vi.fn( ( type ) => {
 				return elements[ type ] || null;
 			} ),
 		};
 	};
 
 	const mockStripe = () => ( {
-		elements: jest.fn( () => mockElements() ),
-		createToken: jest.fn(),
-		createSource: jest.fn(),
-		createPaymentMethod: jest.fn(),
-		confirmCardPayment: jest.fn(),
-		confirmCardSetup: jest.fn(),
-		paymentRequest: jest.fn(),
-		_registerWrapper: jest.fn(),
+		elements: vi.fn( () => mockElements() ),
+		createToken: vi.fn(),
+		createSource: vi.fn(),
+		createPaymentMethod: vi.fn(),
+		confirmCardPayment: vi.fn(),
+		confirmCardSetup: vi.fn(),
+		paymentRequest: vi.fn(),
+		_registerWrapper: vi.fn(),
 	} );
 
 	return {

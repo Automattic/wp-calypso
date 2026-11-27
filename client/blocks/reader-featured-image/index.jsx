@@ -91,8 +91,8 @@ const ReaderFeaturedImage = ( {
 		hasExcerpt
 	);
 
-	let containerWidth = null;
-	let containerHeight = null;
+	let containerWidth;
+	let containerHeight;
 
 	switch ( featuredImageType ) {
 		case 'video-thumbnail':

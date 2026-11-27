@@ -1,30 +1,33 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createRoot } from 'react-dom/client';
+import { vi } from 'vitest';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordUnifiedAdminPageView } from 'calypso/lib/analytics/record-admin-page-view';
 import type { ReactNode } from 'react';
 
-jest.mock( 'react-dom/client', () => {
-	const actual = jest.requireActual< typeof import( 'react-dom/client' ) >( 'react-dom/client' );
-	return { ...actual, createRoot: jest.fn( actual.createRoot ) };
+vi.mock( 'react-dom/client', async () => {
+	const actual = await vi.importActual< typeof import( 'react-dom/client' ) >( 'react-dom/client' );
+	return { ...actual, createRoot: vi.fn( actual.createRoot ) };
 } );
-jest.mock( 'calypso/lib/user/shared-utils', () => ( {
+vi.mock( 'calypso/lib/user/shared-utils', () => ( {
 	initializeCurrentUser: async () => ( { ID: 123 } ),
 } ) );
-jest.mock( 'calypso/state/query-client', () => {
+vi.mock( 'calypso/state/query-client', async () => {
 	const { QueryClient } =
-		jest.requireActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' );
+		await vi.importActual< typeof import( '@tanstack/react-query' ) >( '@tanstack/react-query' );
 	return { createQueryClient: async () => ( { queryClient: new QueryClient() } ) };
 } );
-jest.mock( 'calypso/lib/analytics/page-view' );
-jest.mock( 'calypso/lib/analytics/record-admin-page-view' );
-jest.mock( '@automattic/data-stores', () => {
+vi.mock( 'calypso/lib/analytics/page-view' );
+vi.mock( 'calypso/lib/analytics/record-admin-page-view' );
+vi.mock( '@automattic/data-stores', async () => {
 	const actual =
-		jest.requireActual< typeof import( '@automattic/data-stores' ) >( '@automattic/data-stores' );
+		await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+			'@automattic/data-stores'
+		);
 	return {
 		...actual,
 		SubscriptionManager: {
@@ -38,7 +41,7 @@ jest.mock( '@automattic/data-stores', () => {
 } );
 
 let app: ReactNode;
-const recordView = jest.mocked( recordUnifiedAdminPageView );
+const recordView = vi.mocked( recordUnifiedAdminPageView );
 
 function renderSubscriptions( initialPath: string, ...history: string[] ) {
 	window.history.replaceState( null, '', initialPath );
@@ -64,9 +67,9 @@ async function goBack() {
 describe( 'Subscriptions unified page views', () => {
 	beforeAll( async () => {
 		const rendered = new Promise< ReactNode >( ( resolve ) => {
-			jest.mocked( createRoot ).mockReturnValueOnce( {
+			vi.mocked( createRoot ).mockReturnValueOnce( {
 				render: resolve,
-				unmount: jest.fn(),
+				unmount: vi.fn(),
 			} );
 		} );
 		await import( '../index' );
@@ -74,7 +77,7 @@ describe( 'Subscriptions unified page views', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		recordView.mockReset();
 	} );
 

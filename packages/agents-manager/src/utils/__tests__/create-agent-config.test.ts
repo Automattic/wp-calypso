@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { type Mock, vi } from 'vitest';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { DOLLY_AGENT_ID } from '../../constants';

@@ -1,5 +1,7 @@
 import {
+	getWooChatValues,
 	getWooRoutingInput,
+	normalizeStoreUrl,
 	isProductAsked,
 	isStoreAsked,
 	isStoreRequired,
@@ -134,5 +136,58 @@ describe( 'which questions are asked', () => {
 		expect( isStoreAsked( 'start-scale-store', null ) ).toBe( false );
 		expect( isStoreRequired( 'technical-support' ) ).toBe( true );
 		expect( isStoreRequired( 'pre-sales' ) ).toBe( false );
+	} );
+} );
+
+describe( 'getWooChatValues', () => {
+	const noFlags = {
+		isEmergency: false,
+		emergencyType: null,
+		routeToEmail: false,
+		isUnknownCharge: false,
+	};
+
+	it( 'sends the store as the Site URL and the product to the Product field', () => {
+		expect(
+			getWooChatValues( {
+				storeUrl: 'https://store.example',
+				product: { ...subscriptions, zendeskSlug: 'woocommerce_subscriptions' },
+				flags: noFlags,
+			} )
+		).toEqual( {
+			siteUrl: 'https://store.example',
+			ticketFields: { 25254766: 'woocommerce_subscriptions' },
+		} );
+	} );
+
+	it( 'sends nothing it doesn’t know', () => {
+		expect( getWooChatValues( { storeUrl: null, product: null, flags: noFlags } ) ).toEqual( {} );
+		// Without a Zendesk slug, the Product field stays empty rather than guessed.
+		expect(
+			getWooChatValues( { storeUrl: null, product: subscriptions, flags: noFlags } )
+		).toEqual( {} );
+	} );
+
+	/** Zendesk's High priority trigger needs `woo_emergency` on every emergency chat. */
+	it.each( [
+		[ 'site_down', [ 'woo_emergency', 'woo_emergency_site_down' ] ],
+		// The bot sends no type before its HALSAS-492 version.
+		[ null, [ 'woo_emergency' ] ],
+		// A type that isn't a plain slug would add tags of its own.
+		[ 'site_down,woo_vip', [ 'woo_emergency' ] ],
+	] )( 'tags an emergency of type %s', ( emergencyType, tags ) => {
+		expect(
+			getWooChatValues( {
+				storeUrl: null,
+				product: null,
+				flags: { ...noFlags, isEmergency: true, emergencyType },
+			} )
+		).toEqual( { tags } );
+	} );
+
+	it( 'adds https:// to a typed store address', () => {
+		expect( normalizeStoreUrl( 'store.example' ) ).toBe( 'https://store.example' );
+		expect( normalizeStoreUrl( 'http://store.example' ) ).toBe( 'http://store.example' );
+		expect( normalizeStoreUrl( 'HTTPS://store.example' ) ).toBe( 'HTTPS://store.example' );
 	} );
 } );

@@ -72,6 +72,7 @@ export interface EmailBox {
 	email_type: 'email' | 'email_forward';
 	role: Role;
 	warnings: Warning[]; // often empty
+	status?: 'pending_deletion';
 }
 
 // Base account fields (shared)

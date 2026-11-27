@@ -1,21 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import GenericThankYou from '../pages/generic';
 import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 let mockSelectedSiteSlug: string | null = null;
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: () => unknown ) => selector(),
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteSlug: () => mockSelectedSiteSlug,
 	getSelectedSiteId: () => null,
 } ) );
-jest.mock( 'calypso/state/selectors/get-current-route', () => () => '/checkout/thank-you' );
+vi.mock( 'calypso/state/selectors/get-current-route', () => ( {
+	default: () => '/checkout/thank-you',
+} ) );
 
 // A product with no thank-you page of its own, which is what falls through to the generic
 // "Manage purchase" button.

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
+exports[`Marketplace SignupSuccess > should render the page as expected 1`] = `
 <div>
   <header
     class="masterbar css-821uok"

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import {
 	SHORTCUTS_POPOVER_CLASS,
 	useInboxKeyboardShortcuts,
@@ -10,14 +11,14 @@ import {
 
 function makeHandlers() {
 	return {
-		onNext: jest.fn(),
-		onPrevious: jest.fn(),
-		onNextTab: jest.fn(),
-		onPreviousTab: jest.fn(),
-		onSelectTab: jest.fn(),
-		onToggleShortcuts: jest.fn(),
-		onToggleLike: jest.fn(),
-		onOpenNotifications: jest.fn(),
+		onNext: vi.fn(),
+		onPrevious: vi.fn(),
+		onNextTab: vi.fn(),
+		onPreviousTab: vi.fn(),
+		onSelectTab: vi.fn(),
+		onToggleShortcuts: vi.fn(),
+		onToggleLike: vi.fn(),
+		onOpenNotifications: vi.fn(),
 	};
 }
 
@@ -73,7 +74,7 @@ describe( 'useInboxKeyboardShortcuts', () => {
 		document.body.innerHTML = '<button type="button">Conversation</button>';
 		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
 
-		const bubbleListener = jest.fn();
+		const bubbleListener = vi.fn();
 		document.addEventListener( 'keydown', bubbleListener );
 
 		document.querySelector< HTMLButtonElement >( 'button' )?.focus();

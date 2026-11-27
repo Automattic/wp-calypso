@@ -20,7 +20,6 @@ import LicensingThankYouAutoActivation from 'calypso/my-sites/checkout/checkout-
 import LicensingThankYouAutoActivationCompleted from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-auto-activation-completed';
 import LicensingThankYouManualActivationInstructions from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-instructions';
 import LicensingThankYouManualActivationLicenseKey from 'calypso/my-sites/checkout/checkout-thank-you/licensing-thank-you-manual-activation-license-key';
-import PostCheckoutUpsellExperimentRedirector from 'calypso/my-sites/checkout/post-checkout-upsell-experiment-redirector';
 import { sites } from 'calypso/my-sites/controller';
 import {
 	retrieveSignupDestination,
@@ -691,37 +690,7 @@ export function upsellNudge( context, next ) {
 }
 
 export function upsellRedirect( context, next ) {
-	const { receiptId, site /*, upsellMeta, upsellType */ } = context.params;
-
 	setSectionMiddleware( { name: 'checkout-offer-redirect' } )( context );
-
-	let upsellExperimentName;
-	let upsellExperimentAssignmentName;
-	let upsellUrl;
-
-	/*
-	 * When next we need a redirect based on A/B test, add any logic based on upsellType here
-	 * While this code block is empty, this function is effectively a no-op.
-
-	if ( PROFESSIONAL_EMAIL_OFFER === upsellType ) {
-		upsellExperimentName = 'calypso_promote_professional_email_post_checkout_2022_02';
-		upsellExperimentAssignmentName = 'treatment';
-		upsellUrl = `/checkout/offer-professional-email/${ upsellMeta }/${ receiptId }/${ site }`;
-	}
-	*/
-
-	if ( upsellExperimentName && upsellExperimentAssignmentName && upsellUrl ) {
-		context.primary = (
-			<PostCheckoutUpsellExperimentRedirector
-				receiptId={ receiptId }
-				siteSlug={ site }
-				upsellExperimentName={ upsellExperimentName }
-				upsellExperimentAssignmentName={ upsellExperimentAssignmentName }
-				upsellUrl={ upsellUrl }
-			/>
-		);
-	}
-
 	next();
 }
 

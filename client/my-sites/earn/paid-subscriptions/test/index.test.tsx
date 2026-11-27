@@ -1,34 +1,35 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { getRequestKey } from 'calypso/state/data-layer/wpcom-http/utils';
 import { requestSubscribers } from 'calypso/state/memberships/subscribers/actions';
 import PaidSubscriptionsSection from '..';
 
-const mockDispatch = jest.fn();
+const mockDispatch = vi.fn();
 let mockState: Record< string, unknown >;
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockDispatch,
 	useSelector: ( selector: ( currentState: Record< string, unknown > ) => unknown ) =>
 		selector( mockState ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
 	useTranslate: () => ( text: string ) => text,
 } ) );
 
-jest.mock( 'calypso/components/localized-moment', () => ( {
+vi.mock( 'calypso/components/localized-moment', () => ( {
 	useLocalizedMoment: () => () => ( { format: () => '' } ),
 } ) );
 
-jest.mock( 'calypso/components/data/query-memberships-earnings', () => () => null );
-jest.mock( 'calypso/components/data/query-memberships-settings', () => () => null );
-jest.mock( 'calypso/components/gravatar', () => () => null );
-jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => () => false );
+vi.mock( 'calypso/components/data/query-memberships-earnings', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-memberships-settings', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/gravatar', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => ( { default: () => false } ) );
 
 const site = { ID: 1, slug: 'example.wordpress.com' };
 

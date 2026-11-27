@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import EducationStudentValidation from '..';
 import { StepProps } from '../../../types';
 import { mockStepProps, renderStep, RenderStepOptions } from '../../test/helpers';
 
-jest.mock( 'calypso/lib/analytics/tracks' );
+vi.mock( 'calypso/lib/analytics/tracks' );
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
@@ -43,7 +44,7 @@ describe( 'EducationStudentValidation', () => {
 	beforeAll( () => nock.disableNetConnect() );
 
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		nock.cleanAll();
 	} );
 
@@ -79,7 +80,7 @@ describe( 'EducationStudentValidation', () => {
 	} );
 
 	it( 'prefills the invite code from the `code` query parameter without submitting it', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } }, { initialEntry: '/setup/education?code=EDU-123' } );
 
 		expect( screen.getByLabelText( 'Invitation code' ) ).toHaveValue( 'EDU-123' );
@@ -106,7 +107,7 @@ describe( 'EducationStudentValidation', () => {
 	} );
 
 	it( 'validates the code and submits only the validation marker', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		const validationRequest = mockApi()
@@ -124,7 +125,7 @@ describe( 'EducationStudentValidation', () => {
 	} );
 
 	it( 'shows an error and records a Tracks event when the code is rejected', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		mockApi()
@@ -143,7 +144,7 @@ describe( 'EducationStudentValidation', () => {
 	} );
 
 	it( 'shows a rate limit error when the API returns 429', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		mockApi()
@@ -164,7 +165,7 @@ describe( 'EducationStudentValidation', () => {
 	} );
 
 	it( 'shows a generic error when the API fails', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		mockApi()
@@ -183,7 +184,7 @@ describe( 'EducationStudentValidation', () => {
 	} );
 
 	it( 'shows an error when the code resolves with success: false', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		mockApi()
@@ -198,7 +199,7 @@ describe( 'EducationStudentValidation', () => {
 	} );
 
 	it( 'keeps the code retryable after a rejection and clears the error on edit', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		render( { navigation: { submit } } );
 
 		mockApi()

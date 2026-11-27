@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	ACTIVATE_PLUGIN,
 	DEACTIVATE_PLUGIN,
@@ -18,11 +19,11 @@ import {
 import AllMessagesByAction from '../messages/by-action';
 import useStatusMessageText from '../use-status-message-text';
 
-jest.mock( '../messages/by-action', () => ( {
+vi.mock( '../messages/by-action', () => ( {
 	__esModule: true,
 	default: {
 		INSTALL_PLUGIN: {
-			inProgress: jest.fn(),
+			inProgress: vi.fn(),
 		},
 	},
 } ) );

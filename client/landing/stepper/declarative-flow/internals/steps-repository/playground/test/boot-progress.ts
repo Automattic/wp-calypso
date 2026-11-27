@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { createBootProgressCallbacks } from '../lib/boot-progress';
 
 const installWooCommerce = {
@@ -35,7 +36,7 @@ describe( 'createBootProgressCallbacks', () => {
 		],
 		[ 'the steps start when the blueprint has none', [], [ { stage: 'store', value: 50 } ] ],
 	] )( 'reports %s', ( _label, steps, expected ) => {
-		const onProgress = jest.fn();
+		const onProgress = vi.fn();
 		const { onBlueprintValidated, onBlueprintStepCompleted } =
 			createBootProgressCallbacks( onProgress );
 

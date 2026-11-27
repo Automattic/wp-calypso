@@ -44,9 +44,9 @@ See [testing-overview.md](testing-overview.md) on how to run Calypso tests.
 
 ## Writing tests
 
-We use [Jest](https://facebook.github.io/jest) testing framework for unit tests, and [Testing Library](https://testing-library.com/) for testing React components. You can find more information on testing components at [component tests](component-tests.md).
+We use [Vitest](https://vitest.dev/) for unit tests, and [Testing Library](https://testing-library.com/) for testing React components. You can find more information on testing components at [component tests](component-tests.md).
 
-Though you'll still see Chai assertions and Sinon spies/mocks throughout the code base, for all new tests we use the Jest API for [globals](https://facebook.github.io/jest/docs/en/api.html) (`describe`, `test`, `beforeEach` and so on) [assertions](http://facebook.github.io/jest/docs/en/expect.html), [mocks](http://facebook.github.io/jest/docs/en/mock-functions.html), [spies](http://facebook.github.io/jest/docs/en/jest-object.html#jestspyonobject-methodname) and [mock functions](https://facebook.github.io/jest/docs/en/mock-function-api.html).
+Though you'll still see Chai assertions and Sinon spies/mocks throughout the code base, for all new tests we use the Vitest API for [globals](https://vitest.dev/api/) (`describe`, `test`, `beforeEach` and so on), [assertions](https://vitest.dev/api/expect.html), [module mocks](https://vitest.dev/guide/mocking.html), [spies](https://vitest.dev/api/vi.html#vi-spyon) and [mock functions](https://vitest.dev/api/mock.html).
 
 ## Folder structure
 
@@ -109,9 +109,9 @@ Snapshot testing is useful for verifying that any data produced during a test is
 
 ### Setup and Teardown methods
 
-The Jest API includes some nifty [setup and teardown methods](https://facebook.github.io/jest/docs/en/setup-teardown.html) that allow you to perform tasks _before_ and _after_ each or all of your tests, or tests within a specific `describe` block.
+The Vitest API includes some nifty [setup and teardown methods](https://vitest.dev/api/#setup-and-teardown) that allow you to perform tasks _before_ and _after_ each or all of your tests, or tests within a specific `describe` block.
 
-These methods can handle asynchronous code to allow setup that you normally cannot do inline. As with [individual test cases](https://facebook.github.io/jest/docs/en/asynchronous.html#promises), you can return a Promise and Jest will wait for it to resolve:
+These methods can handle asynchronous code to allow setup that you normally cannot do inline. As with individual test cases, you can return a Promise and Vitest will wait for it to resolve:
 
 ```javascript
 // one-time setup for *all* tests
@@ -175,7 +175,7 @@ Because we're passing the list as an argument, we can pass mock `validValuesList
 
 #### Imported dependencies
 
-Often our code will use methods and properties from imported external and internal libraries in multiple places, which makes passing around arguments messy and impracticable. For these cases `jest.mock` offers a neat way to stub these dependencies.
+Often our code will use methods and properties from imported external and internal libraries in multiple places, which makes passing around arguments messy and impracticable. For these cases `vi.mock` offers a neat way to stub these dependencies.
 
 For instance, in Calypso, we use the ['config'](https://github.com/Automattic/wp-calypso/tree/HEAD/config) module to control a great deal of functionality via feature flags.
 
@@ -185,16 +185,17 @@ import config from '@automattic/calypso-config';
 export const isBilboVisible = () => ( config.isEnabled( 'the-ring' ) ? false : true );
 ```
 
-To test the behaviour under each condition, we stub the config object and use a jest mocking function to control the return value of `isEnabled`.
+To test the behaviour under each condition, we stub the config object and use a Vitest mock function to control the return value of `isEnabled`.
 
 ```javascript
 // test/bilbo.js
 import { isEnabled } from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { isBilboVisible } from '../bilbo';
 
-jest.mock( 'config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	// bilbo is visible by default
-	isEnabled: jest.fn( () => false ),
+	isEnabled: vi.fn( () => false ),
 } ) );
 
 describe( 'The bilbo module', () => {
@@ -211,19 +212,20 @@ describe( 'The bilbo module', () => {
 
 ### Testing globals
 
-We can use [Jest spies](http://facebook.github.io/jest/docs/en/jest-object.html#jestspyonobject-methodname) to test code that calls global methods.
+We can use [Vitest spies](https://vitest.dev/api/vi.html#vi-spyon) to test code that calls global methods.
 
-When stubbing DOM properties or methods in the global scope, make sure to include the `@jest-environment jsdom` comment to ensure there's a DOM to stub :)
+When stubbing DOM properties or methods in the global scope, make sure to include the `@vitest-environment jsdom` comment to ensure there's a DOM to stub :)
 
 ```javascript
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { myModuleFunctionThatOpensANewWindow } from '../my-module';
 
 describe( 'my module', () => {
 	beforeAll( () => {
-		jest.spyOn( global, 'open' ).mockImplementation( () => true );
+		vi.spyOn( global, 'open' ).mockImplementation( () => true );
 	} );
 
 	test( 'something', () => {
@@ -247,18 +249,18 @@ wpcom.someWpComMethod().then( ( error, data ) => {
 } );
 ```
 
-In this case you can use Jest to stub out such libraries:
+In this case you can use Vitest to stub out such libraries:
 
 ```javascript
 //
-jest.mock( 'lib/wp', () => ( {
-	someWpComMethod: jest.fn(),
+vi.mock( 'calypso/lib/wp', () => ( {
+	default: { someWpComMethod: vi.fn() },
 } ) );
 ```
 
 ## Further reading
 
-- [React testing with Jest](https://facebook.github.io/jest/docs/en/tutorial-react.html)
+- [Vitest documentation](https://vitest.dev/guide/)
 - [Testing Library documentation](https://testing-library.com/docs/)
 - [Test Contra-variance](http://blog.cleancoder.com/uncle-bob/2017/10/03/TestContravariance.html)
 - [The Failures of "Into to TDD"](http://blog.testdouble.com/posts/2014-01-25-the-failures-of-intro-to-tdd.html)

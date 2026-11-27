@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getEditorUrlFromStatus } from '../editor-url';
@@ -31,7 +31,7 @@ describe( 'getEditorUrlFromStatus', () => {
 		// eslint-disable-next-line no-script-url
 		'javascript://wordpress.com/%0aalert(1)',
 		'data:text/html,<script>alert(1)</script>',
-	] )( 'rejects an unusable API destination: %p', ( url ) => {
+	] )( 'rejects an unusable API destination: %o', ( url ) => {
 		expect( getEditorUrlFromStatus( url ) ).toBeNull();
 	} );
 

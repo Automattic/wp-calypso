@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import config from '@automattic/calypso-config';
 import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { SITE_SELECTED_REF, WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
@@ -17,7 +18,7 @@ let mockUntranslatedTexts: string[] = [];
 let mockAiToolExperiment = { isLoading: false, isTreatment: false };
 let mockIsLoadingSite = false;
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	BigSkyLogo: { CentralLogo: () => null },
 	SummaryButton: ( {
 		title,
@@ -37,12 +38,14 @@ jest.mock( '@automattic/components', () => ( {
 	),
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
-	useQuery: jest.fn(),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
+	useQuery: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	Step: {
 		CenteredColumnLayout: ( { children }: { children: React.ReactNode } ) => (
 			<div>{ children }</div>
@@ -52,7 +55,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	},
 } ) );
 
-jest.mock( 'i18n-calypso', () => ( {
+vi.mock( 'i18n-calypso', () => ( {
 	__esModule: true,
 	default: {
 		fixMe: ( { text, oldCopy }: { text: string; oldCopy: string } ) =>
@@ -61,26 +64,28 @@ jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => ( text: string ) => ! mockUntranslatedTexts.includes( text ),
 } ) );
 
-jest.mock( '../ai-tool-experiment', () => ( {
-	useAiToolExperiment: jest.fn( ( isEligible: boolean ) =>
+vi.mock( '../ai-tool-experiment', () => ( {
+	useAiToolExperiment: vi.fn( ( isEligible: boolean ) =>
 		isEligible ? mockAiToolExperiment : { isLoading: false, isTreatment: false }
 	),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	getSignupCompleteSlug: jest.fn(),
+vi.mock( 'calypso/signup/storageUtils', () => ( {
+	getSignupCompleteSlug: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => {
+vi.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => {
 	const isCommerce = ( slug?: string ) => /^ecommerce-(trial-)?bundle/.test( slug ?? '' );
 	return {
 		planSupportsBuildWow: ( slug?: string ) =>
@@ -89,30 +94,30 @@ jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => {
 	};
 } );
 
-jest.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
-	usePlanCartItem: jest.fn(),
+vi.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
+	usePlanCartItem: vi.fn(),
 } ) );
 
-jest.mock( '../../../../../hooks/use-query', () => ( {
+vi.mock( '../../../../../hooks/use-query', () => ( {
 	useQuery: () => mockQueryParams,
 } ) );
 
-jest.mock( '../../../../../hooks/use-site', () => ( {
+vi.mock( '../../../../../hooks/use-site', () => ( {
 	useSiteQuery: () => ( { isLoading: mockIsLoadingSite } ),
 } ) );
 
-jest.mock( '../../../../../hooks/use-site-data', () => ( {
-	useSiteData: jest.fn(),
+vi.mock( '../../../../../hooks/use-site-data', () => ( {
+	useSiteData: vi.fn(),
 } ) );
 
-jest.mock( '../../../hooks/use-purchase-plan-notification', () => ( {
-	usePurchasePlanNotification: jest.fn(),
+vi.mock( '../../../hooks/use-purchase-plan-notification', () => ( {
+	usePurchasePlanNotification: vi.fn(),
 } ) );
 
 describe( 'SetupYourSiteAIStep', () => {
-	const mockUseSiteData = useSiteData as jest.Mock;
-	const isEnabled = jest.spyOn( config, 'isEnabled' );
-	const navigation = { submit: jest.fn() };
+	const mockUseSiteData = useSiteData as Mock;
+	const isEnabled = vi.spyOn( config, 'isEnabled' );
+	const navigation = { submit: vi.fn() };
 
 	const renderStep = () =>
 		render(
@@ -136,17 +141,17 @@ describe( 'SetupYourSiteAIStep', () => {
 		} );
 
 	const setAutomattician = ( isAutomattician: boolean ) =>
-		( useDataQuery as jest.Mock ).mockImplementation( ( { enabled } ) => ( {
+		( useDataQuery as Mock ).mockImplementation( ( { enabled } ) => ( {
 			data: enabled ? isAutomattician : undefined,
 		} ) );
 
 	const setPlanCartItem = ( productSlug: string | null ) =>
-		( usePlanCartItem as jest.Mock ).mockReturnValue(
+		( usePlanCartItem as Mock ).mockReturnValue(
 			productSlug ? { product_slug: productSlug } : null
 		);
 
 	const tracksCallsFor = ( eventName: string ) =>
-		( recordTracksEvent as jest.Mock ).mock.calls.filter( ( [ name ] ) => name === eventName );
+		( recordTracksEvent as Mock ).mock.calls.filter( ( [ name ] ) => name === eventName );
 
 	const viewCalls = () => tracksCallsFor( 'calypso_onboarding_setup_your_site_with_ai_view' );
 
@@ -154,7 +159,7 @@ describe( 'SetupYourSiteAIStep', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Create a custom design' } ) );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockQueryParams = new URLSearchParams();
 		mockUntranslatedTexts = [];
 		mockAiToolExperiment = { isLoading: false, isTreatment: false };
@@ -166,7 +171,7 @@ describe( 'SetupYourSiteAIStep', () => {
 		setAutomattician( true );
 		setSitePlan( 'business-bundle' );
 		setPlanCartItem( null );
-		( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'example.wordpress.com' );
+		( getSignupCompleteSlug as Mock ).mockReturnValue( 'example.wordpress.com' );
 	} );
 
 	describe( 'card order', () => {
@@ -326,7 +331,7 @@ describe( 'SetupYourSiteAIStep', () => {
 		} );
 
 		it( 'ignores a cart item left over from a checkout for another site', () => {
-			( getSignupCompleteSlug as jest.Mock ).mockReturnValue( 'other.wordpress.com' );
+			( getSignupCompleteSlug as Mock ).mockReturnValue( 'other.wordpress.com' );
 			setSitePlan( 'pro-plan' );
 			setPlanCartItem( 'business-bundle' );
 

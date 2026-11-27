@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  *
  * Unit tests for `resolveItemSignal()`. Each test maps to a row in the
  * priority chain documented in `signal.js:108-156` (the public plugin's

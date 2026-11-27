@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import ReaderSidebarTagsListItem from '../list-item';
 
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordAction: jest.fn(),
-	recordGaEvent: jest.fn(),
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordAction: vi.fn(),
+	recordGaEvent: vi.fn(),
 } ) );
 
 const tag = {
@@ -22,7 +23,7 @@ describe( 'ReaderSidebarTagsListItem', () => {
 
 	beforeEach( () => {
 		// jsdom does not implement scrollIntoView.
-		scrollIntoView = jest.fn();
+		scrollIntoView = vi.fn();
 		window.HTMLElement.prototype.scrollIntoView = scrollIntoView;
 	} );
 

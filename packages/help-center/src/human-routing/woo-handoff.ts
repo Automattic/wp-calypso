@@ -1,3 +1,4 @@
+import { ZENDESK_CUSTOM_FIELD_PRODUCT } from '@automattic/zendesk-client';
 import type {
 	HumanRoutingFlags,
 	HumanRoutingInput,
@@ -5,6 +6,7 @@ import type {
 	ProductSupportType,
 	SupportTier,
 } from './types';
+import type { HumanSupportChatValues } from '@automattic/odie-client';
 
 /** The synthetic product the support form uses for WooCommerce Core itself. */
 export const WOO_CORE_PRODUCT_SLUG = 'wc-core';
@@ -21,6 +23,8 @@ export type WooHandoffProduct = {
 	isRevShare: boolean;
 	/** Where an externally supported product takes support requests. */
 	externalSupportUrl?: string | null;
+	/** The value of Zendesk's Product field for this product, as the support form sends it. */
+	zendeskSlug?: string | null;
 };
 
 /**
@@ -92,5 +96,46 @@ export function getWooRoutingInput( {
 			isRevShare: product.isRevShare,
 			isCore: product.slug === WOO_CORE_PRODUCT_SLUG,
 		},
+	};
+}
+
+/** A typed store address without a scheme gets one, as the support form does. */
+export const normalizeStoreUrl = ( url: string ) =>
+	/^https?:\/\//i.test( url ) ? url : `https://${ url }`;
+
+/**
+ * Zendesk's High priority trigger looks for `woo_emergency`. The type tag is for filtering and
+ * reporting (WOOPUBR-2398).
+ */
+function getWooEmergencyTags( { isEmergency, emergencyType }: HumanRoutingFlags ): string[] {
+	if ( ! isEmergency ) {
+		return [];
+	}
+
+	// Zendesk gets the tags as one comma-separated list, so only a plain slug can be a tag.
+	const hasType =
+		!! emergencyType && emergencyType !== 'none' && /^[a-z0-9_]+$/.test( emergencyType );
+
+	return hasType ? [ 'woo_emergency', `woo_emergency_${ emergencyType }` ] : [ 'woo_emergency' ];
+}
+
+/** What the merchant and the bot told the Help Center, sent to Zendesk when the chat is created. */
+export function getWooChatValues( {
+	storeUrl,
+	product,
+	flags,
+}: {
+	storeUrl: string | null;
+	product: WooHandoffProduct | null;
+	flags: HumanRoutingFlags;
+} ): HumanSupportChatValues {
+	const tags = getWooEmergencyTags( flags );
+
+	return {
+		...( storeUrl && { siteUrl: normalizeStoreUrl( storeUrl ) } ),
+		...( product?.zendeskSlug && {
+			ticketFields: { [ ZENDESK_CUSTOM_FIELD_PRODUCT ]: product.zendeskSlug },
+		} ),
+		...( tags.length > 0 && { tags } ),
 	};
 }

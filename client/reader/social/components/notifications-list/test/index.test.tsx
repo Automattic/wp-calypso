@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialNotificationsList } from '../index';
 import type { AtmosphereNotification } from '@automattic/api-core';
@@ -32,9 +33,9 @@ const defaultProps = {
 	isLoading: false,
 	isError: false,
 	hasMore: false,
-	onLoadMore: jest.fn(),
+	onLoadMore: vi.fn(),
 	filter: 'all' as const,
-	onFilterChange: jest.fn(),
+	onFilterChange: vi.fn(),
 };
 
 describe( 'SocialNotificationsList', () => {
@@ -59,7 +60,7 @@ describe( 'SocialNotificationsList', () => {
 	} );
 
 	it( 'shows Load more when hasMore is true and triggers onLoadMore', async () => {
-		const onLoadMore = jest.fn();
+		const onLoadMore = vi.fn();
 		const user = userEvent.setup();
 		renderWithProvider(
 			<SocialNotificationsList { ...defaultProps } hasMore onLoadMore={ onLoadMore } />
@@ -79,7 +80,7 @@ describe( 'SocialNotificationsList', () => {
 	} );
 
 	it( 'shows a retry footer when pagination errors with items present', async () => {
-		const onLoadMore = jest.fn();
+		const onLoadMore = vi.fn();
 		const user = userEvent.setup();
 		renderWithProvider(
 			<SocialNotificationsList { ...defaultProps } hasMore isError onLoadMore={ onLoadMore } />
@@ -97,7 +98,7 @@ describe( 'SocialNotificationsList', () => {
 				{ ...defaultProps }
 				items={ [] }
 				filter="likes"
-				onFilterChange={ jest.fn() }
+				onFilterChange={ vi.fn() }
 			/>
 		);
 		expect( screen.getByRole( 'radio', { name: /^likes$/i } ) ).toBeChecked();
@@ -109,7 +110,7 @@ describe( 'SocialNotificationsList', () => {
 				{ ...defaultProps }
 				items={ [] }
 				filter="likes"
-				onFilterChange={ jest.fn() }
+				onFilterChange={ vi.fn() }
 			/>
 		);
 		expect( screen.getByText( /no likes yet/i ) ).toBeVisible();
@@ -130,7 +131,7 @@ describe( 'SocialNotificationsList', () => {
 				{ ...defaultProps }
 				items={ [ item1, item2 ] }
 				filter="all"
-				onFilterChange={ jest.fn() }
+				onFilterChange={ vi.fn() }
 			/>
 		);
 		expect( screen.queryByRole( 'heading', { name: /today/i, level: 3 } ) ).toBeNull();
@@ -149,14 +150,14 @@ describe( 'SocialNotificationsList', () => {
 			makeNotification( { id: 'b', created_at: days( 3 ) } ), // this_week
 			makeNotification( { id: 'c', created_at: days( 15 ) } ), // earlier (again)
 		];
-		const errorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const errorSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		try {
 			renderWithProvider(
 				<SocialNotificationsList
 					{ ...defaultProps }
 					items={ items }
 					filter="all"
-					onFilterChange={ jest.fn() }
+					onFilterChange={ vi.fn() }
 				/>
 			);
 			const dupKeyCalls = errorSpy.mock.calls.filter( ( args ) =>

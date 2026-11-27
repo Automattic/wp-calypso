@@ -1,45 +1,44 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import StatsSettingsPage from '..';
 
-jest.mock( 'calypso/state', () => ( {
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useDispatch: () => vi.fn(),
 	useSelector: ( selector: ( state: object ) => unknown ) => selector( {} ),
 } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: () => 123,
 	getSelectedSiteSlug: () => 'example.com',
 } ) );
-const mockRedirect = jest.fn();
-jest.mock( '@automattic/calypso-router', () => ( {
+const mockRedirect = vi.fn();
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
 	default: { redirect: ( ...args: unknown[] ) => mockRedirect( ...args ) },
 } ) );
 let mockCanManage = true;
-jest.mock( '../can-manage-stats-settings', () => ( {
+vi.mock( '../can-manage-stats-settings', () => ( {
 	__esModule: true,
 	default: () => mockCanManage,
 } ) );
-jest.mock( 'calypso/blocks/stats-navigation', () => () => null );
-jest.mock( 'calypso/components/data/document-head', () => () => null );
-jest.mock( '../../../stats-page-view-tracker', () => () => null );
-const mockTrack = jest.fn();
-jest.mock( '../../../utils', () => ( {
-	...jest.requireActual( '../../../utils' ),
+vi.mock( 'calypso/blocks/stats-navigation', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
+vi.mock( '../../../stats-page-view-tracker', () => ( { default: () => null } ) );
+const mockTrack = vi.fn();
+vi.mock( '../../../utils', async () => ( {
+	...( await vi.importActual< typeof import( '../../../utils' ) >( '../../../utils' ) ),
 	trackStatsAnalyticsEvent: ( ...args: unknown[] ) => mockTrack( ...args ),
 } ) );
-jest.mock(
-	'calypso/my-sites/stats/components/stats-main',
-	() =>
-		( { children }: { children: React.ReactNode } ) => <div>{ children }</div>
-);
+vi.mock( 'calypso/my-sites/stats/components/stats-main', () => ( {
+	default: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+} ) );
 
-const mockSave = jest.fn();
+const mockSave = vi.fn();
 let mockSettings = {};
-jest.mock( '../../../hooks/use-stats-settings', () => ( {
+vi.mock( '../../../hooks/use-stats-settings', () => ( {
 	useStatsSettingsQuery: () => ( {
 		data: {
 			settings: mockSettings,

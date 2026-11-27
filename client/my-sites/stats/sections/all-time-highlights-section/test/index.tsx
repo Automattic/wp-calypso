@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen, within } from '@testing-library/react';
+import { vi } from 'vitest';
 import AllTimeHighlightsSection from '..';
 import { normalizers } from '../../../../../state/stats/lists/utils';
 import type { ReactNode } from 'react';
 
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	Card: ( { children }: { children: ReactNode } ) => <div>{ children }</div>,
 	DotPager: ( { children }: { children: ReactNode } ) => <div>{ children }</div>,
 	ComponentSwapper: ( {
@@ -15,21 +16,21 @@ jest.mock( '@automattic/components', () => ( {
 		breakpointInactiveComponent: ReactNode;
 	} ) => breakpointInactiveComponent,
 } ) );
-jest.mock( 'calypso/components/data/query-posts', () => () => null );
-jest.mock( 'calypso/components/data/query-site-stats', () => () => null );
-jest.mock( '../post-cards-group', () => () => null );
-jest.mock( '../../../stats-card-upsell', () => () => null );
-jest.mock( '../../../hooks/use-should-gate-stats', () => ( {
+vi.mock( 'calypso/components/data/query-posts', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-site-stats', () => ( { default: () => null } ) );
+vi.mock( '../post-cards-group', () => ( { default: () => null } ) );
+vi.mock( '../../../stats-card-upsell', () => ( { default: () => null } ) );
+vi.mock( '../../../hooks/use-should-gate-stats', () => ( {
 	useShouldGateStats: () => false,
 } ) );
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
 } ) );
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserLocale: () => 'en',
 } ) );
 let mockInsights: unknown;
-jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
+vi.mock( 'calypso/state/stats/lists/selectors', () => ( {
 	isRequestingSiteStatsForQuery: () => false,
 	getSiteStatsNormalizedData: ( _state: unknown, _siteId: number, statType: string ) =>
 		statType === 'statsInsights' ? mockInsights : {},

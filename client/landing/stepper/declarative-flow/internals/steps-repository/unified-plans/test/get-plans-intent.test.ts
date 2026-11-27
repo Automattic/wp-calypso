@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { ONBOARDING_FLOW, PLAN_UPGRADE_FLOW } from '@automattic/onboarding';
 import { getPlansIntent } from '../util/get-plans-intent';

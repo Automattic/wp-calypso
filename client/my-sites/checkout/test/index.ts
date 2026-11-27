@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { type Mock, vi } from 'vitest';
 import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
 import { noSite } from 'calypso/my-sites/controller';
 import {
@@ -12,32 +13,34 @@ import {
 } from '../controller';
 import registerCheckoutRoutes from '../index';
 
-const mockLocaleMiddleware = jest.fn();
+const mockLocaleMiddleware = vi.fn();
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/controller', () => ( {
-	makeLayout: jest.fn(),
-	redirectLoggedOut: jest.fn(),
-	render: jest.fn(),
-	setLocaleMiddleware: () => mockLocaleMiddleware,
-} ) );
+vi.mock( 'calypso/controller', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		makeLayout: vi.fn(),
+		redirectLoggedOut: vi.fn(),
+		render: vi.fn(),
+		setLocaleMiddleware: () => mockLocaleMiddleware,
+	} )
+);
 
-jest.mock( 'calypso/lib/siftscience' );
-jest.mock( 'calypso/my-sites/controller' );
-jest.mock( 'calypso/my-sites/email/paths' );
-jest.mock( '../controller' );
+vi.mock( 'calypso/lib/siftscience' );
+vi.mock( 'calypso/my-sites/controller' );
+vi.mock( 'calypso/my-sites/email/paths' );
+vi.mock( '../controller' );
 
 describe( 'checkout routes', () => {
 	beforeEach( () => {
-		jest.mocked( page ).mockClear();
+		vi.mocked( page ).mockClear();
 	} );
 
 	const registrationIndexOf = ( path: string ) =>
-		( page as unknown as jest.Mock ).mock.calls.findIndex( ( [ route ] ) => route === path );
+		( page as unknown as Mock ).mock.calls.findIndex( ( [ route ] ) => route === path );
 
 	it( 'guards the WordPress.com siteless route with redirectLoggedOut', () => {
 		registerCheckoutRoutes();

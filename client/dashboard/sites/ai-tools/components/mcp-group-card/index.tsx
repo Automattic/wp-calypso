@@ -16,10 +16,10 @@ import type { ReactNode } from 'react';
 /**
  * A collapsible group card for MCP tool settings, mirroring the account-level
  * /me/preferences/mcp pages: collapsed by default, with a group intent toggle
- * and a chevron that reveals the tools. `id` anchors the card itself and
- * `toolAnchors` the rows inside it, so a server response can deep-link a
- * group or a single tool: whenever the location hash matches, the card opens
- * and the target scrolls into view.
+ * (unless `onEnableAll` is omitted) and a chevron that reveals the tools. `id`
+ * anchors the card itself and `toolAnchors` the rows inside it, so a server
+ * response can deep-link a group or a single tool: whenever the location hash
+ * matches, the card opens and the target scrolls into view.
  */
 export default function McpGroupCard( {
 	id,
@@ -27,6 +27,7 @@ export default function McpGroupCard( {
 	description,
 	toolAnchors = [],
 	allEnabled,
+	enableAllHelp,
 	onEnableAll,
 	disabled,
 	forceOpen = false,
@@ -36,8 +37,9 @@ export default function McpGroupCard( {
 	title: string;
 	description?: string;
 	toolAnchors?: string[];
-	allEnabled: boolean;
-	onEnableAll: ( enabled: boolean ) => void;
+	allEnabled?: boolean;
+	enableAllHelp?: string;
+	onEnableAll?: ( enabled: boolean ) => void;
 	disabled?: boolean;
 	/** Renders the tools open regardless of the collapsed state (e.g. while searching). */
 	forceOpen?: boolean;
@@ -47,6 +49,7 @@ export default function McpGroupCard( {
 	const hash = ( location.hash ?? '' ).replace( /^#/, '' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const open = isOpen || forceOpen;
+	const stackToggle = Boolean( enableAllHelp );
 	// Auto-open once per matching hash value, so a manual collapse afterwards
 	// isn't fought, but a fresh anchor link opens the card again.
 	const handledHash = useRef( '' );
@@ -60,37 +63,44 @@ export default function McpGroupCard( {
 			document.getElementById( hash )?.scrollIntoView?.( { block: 'start' } );
 		}
 	}, [ hash, id, toolAnchors ] );
+	const bulkToggle = onEnableAll && (
+		<ToggleControl
+			__nextHasNoMarginBottom
+			checked={ allEnabled }
+			disabled={ disabled }
+			label={ __( 'Enable all' ) }
+			help={ enableAllHelp }
+			onChange={ onEnableAll }
+		/>
+	);
 
 	return (
 		<Card id={ id }>
 			<CardBody>
-				<HStack justify="space-between" alignment="center" spacing={ 4 }>
-					<VStack spacing={ 1 } style={ { flex: 1, minWidth: 0 } }>
-						<Heading level={ 3 } weight={ 600 } size={ 14 }>
-							{ title }
-						</Heading>
-						{ description && (
-							<Text truncate variant="muted" size={ 12 }>
-								{ description }
-							</Text>
+				<VStack spacing={ 2 }>
+					<HStack justify="space-between" alignment="center" spacing={ 4 }>
+						<VStack spacing={ 1 } style={ { flex: 1, minWidth: 0 } }>
+							<Heading level={ 3 } weight={ 600 } size={ 14 }>
+								{ title }
+							</Heading>
+							{ description && (
+								<Text truncate variant="muted" size={ 12 }>
+									{ description }
+								</Text>
+							) }
+						</VStack>
+						{ ! stackToggle && bulkToggle }
+						{ children != null && (
+							<Button
+								icon={ open ? chevronUp : chevronDown }
+								label={ open ? __( 'Hide operations' ) : __( 'Show operations' ) }
+								aria-expanded={ open }
+								onClick={ () => setIsOpen( ! isOpen ) }
+							/>
 						) }
-					</VStack>
-					<ToggleControl
-						__nextHasNoMarginBottom
-						checked={ allEnabled }
-						disabled={ disabled }
-						label={ __( 'Enable all' ) }
-						onChange={ onEnableAll }
-					/>
-					{ children != null && (
-						<Button
-							icon={ open ? chevronUp : chevronDown }
-							label={ open ? __( 'Hide operations' ) : __( 'Show operations' ) }
-							aria-expanded={ open }
-							onClick={ () => setIsOpen( ! isOpen ) }
-						/>
-					) }
-				</HStack>
+					</HStack>
+					{ stackToggle && bulkToggle }
+				</VStack>
 			</CardBody>
 			{ open && children != null && (
 				<>

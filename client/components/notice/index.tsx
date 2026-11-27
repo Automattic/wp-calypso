@@ -102,7 +102,7 @@ export default function Notice( {
 	} );
 
 	let iconNeedsDrop = false;
-	let renderedIcon: ReactNode = null;
+	let renderedIcon: ReactNode;
 
 	if ( icon && isValidElement( icon ) ) {
 		renderedIcon = icon;

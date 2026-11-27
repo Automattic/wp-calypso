@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import {
 	NOTES_LOADED,
 	NOTES_LOADING,
+	NOTES_LOAD_FAILED,
 	SELECT_NOTE,
 	SET_IS_SHOWING,
 	SET_FILTER,
@@ -14,7 +15,7 @@ export const isLoading = ( state = true, { type } ) => {
 		return true;
 	}
 
-	if ( NOTES_LOADED === type ) {
+	if ( NOTES_LOADED === type || NOTES_LOAD_FAILED === type ) {
 		return false;
 	}
 
@@ -38,8 +39,27 @@ export const filteredLoading = ( state = null, { type, filter } ) => {
 		return filter;
 	}
 
-	if ( NOTES_LOADED === type ) {
+	if ( NOTES_LOADED === type || NOTES_LOAD_FAILED === type ) {
 		return null;
+	}
+
+	return state;
+};
+
+// Tabs whose first load failed, keyed by tab name (`all` for the unfiltered list).
+// Such a tab shows an error with "Try again" instead of a spinner. It stays set
+// while the load is retried, so the error doesn't flash away during each retry,
+// and clears once a load for that tab succeeds.
+export const loadFailed = ( state = {}, { type, filter } ) => {
+	const tabName = filter ?? 'all';
+
+	if ( NOTES_LOAD_FAILED === type && ! state[ tabName ] ) {
+		return { ...state, [ tabName ]: true };
+	}
+
+	if ( NOTES_LOADED === type && state[ tabName ] ) {
+		const { [ tabName ]: cleared, ...rest } = state;
+		return rest;
 	}
 
 	return state;
@@ -90,6 +110,7 @@ export const shortcutsPopoverIsOpen = ( state = false, { type } ) => {
 export default combineReducers( {
 	isLoading,
 	filteredLoading,
+	loadFailed,
 	isPanelOpen,
 	selectedNoteId,
 	filterName,

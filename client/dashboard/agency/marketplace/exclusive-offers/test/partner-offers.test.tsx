@@ -38,14 +38,15 @@ describe( '<PartnerOffers>', () => {
 		render( <PartnerOffers links={ LINKS } shouldUseRouterLink={ false } /> );
 
 		expect( screen.getByRole( 'heading', { name: 'Trusted partners' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Explore ShipStation' } ) ).toHaveAttribute(
-			'href',
-			'https://www.shipstation.com/partnership-options/'
-		);
+		expect(
+			screen.getByRole( 'link', { name: 'Explore ShipStation (opens in a new tab)' } )
+		).toHaveAttribute( 'href', 'https://www.shipstation.com/partnership-options/' );
 		expect(
 			screen.queryByRole( 'link', { name: 'Explore Packlink PRO' } )
 		).not.toBeInTheDocument();
-		expect( screen.getAllByRole( 'link', { name: 'Explore Avalara' } ) ).toHaveLength( 1 );
+		expect(
+			screen.getAllByRole( 'link', { name: 'Explore Avalara (opens in a new tab)' } )
+		).toHaveLength( 1 );
 	} );
 
 	test( 'groups the offers by how the agency earns and narrows to one group', async () => {
@@ -71,7 +72,9 @@ describe( '<PartnerOffers>', () => {
 			/>
 		);
 
-		await userEvent.click( screen.getByRole( 'link', { name: 'Explore Avalara' } ) );
+		await userEvent.click(
+			screen.getByRole( 'link', { name: 'Explore Avalara (opens in a new tab)' } )
+		);
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_exclusive_offers_cta_click', {
 			offer_id: 'avalara-partner-program-refer',

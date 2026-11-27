@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { initialStreamState } from '../stream/reducer';
 import { useBuildImagePreview } from '../stream/use-build-image-preview';
 import type { BuildWowStreamView } from '../stream/use-build-wow-stream';
@@ -28,7 +29,7 @@ afterEach( () => {
 } );
 
 it( 'loads an authenticated run-scoped image without cookies or redirects', async () => {
-	const fetchPreview = jest.fn().mockResolvedValue( {
+	const fetchPreview = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: async () => ( { data_url: dataUrl } ),
 	} );
@@ -46,7 +47,7 @@ it( 'loads an authenticated run-scoped image without cookies or redirects', asyn
 } );
 
 it( 'drops the previous preview immediately when the run changes', async () => {
-	global.fetch = jest.fn().mockResolvedValue( {
+	global.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: async () => ( { data_url: dataUrl } ),
 	} );
@@ -57,13 +58,13 @@ it( 'drops the previous preview immediately when the run changes', async () => {
 		}
 	);
 	await waitFor( () => expect( result.current ).toBe( dataUrl ) );
-	global.fetch = jest.fn().mockReturnValue( new Promise( () => {} ) );
+	global.fetch = vi.fn().mockReturnValue( new Promise( () => {} ) );
 	rerender( { value: { ...stream, info: { ...stream.info, runId: 'new-run' } } } );
 	expect( result.current ).toBeNull();
 } );
 
 it( 'never accepts active documents or external URLs as image bytes', async () => {
-	global.fetch = jest.fn().mockResolvedValue( {
+	global.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: async () => ( { data_url: 'data:text/html;base64,aGVsbG8=' } ),
 	} );

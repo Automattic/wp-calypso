@@ -4,9 +4,9 @@
 
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import SiteOverview from '..';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../../../app/context';
 import { render } from '../../../../../test-utils';
-import SiteOverview from '../index';
 import type { AppConfig } from '../../../../../app/context';
 import type { Site, User } from '@automattic/api-core';
 

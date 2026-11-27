@@ -1,15 +1,6 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( 'calypso/blocks/upsell-nudge', () =>
-	jest.fn( () => <div data-testid="UpsellNudge" /> )
-);
-jest.mock( 'calypso/components/data/query-jetpack-modules', () => () => 'QueryJetpackModules' );
-jest.mock(
-	'calypso/my-sites/site-settings/jetpack-module-toggle',
-	() => () => 'JetpackModuleToggle'
-);
-
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
@@ -25,10 +16,21 @@ import {
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { GoogleAnalyticsForm } from '../analytics/form-google-analytics';
 import GoogleAnalyticsJetpackForm from '../analytics/form-google-analytics-jetpack';
 import GoogleAnalyticsSimpleForm from '../analytics/form-google-analytics-simple';
+
+vi.mock( 'calypso/blocks/upsell-nudge', () => ( {
+	default: vi.fn( () => <div data-testid="UpsellNudge" /> ),
+} ) );
+vi.mock( 'calypso/components/data/query-jetpack-modules', () => ( {
+	default: () => 'QueryJetpackModules',
+} ) );
+vi.mock( 'calypso/my-sites/site-settings/jetpack-module-toggle', () => ( {
+	default: () => 'JetpackModuleToggle',
+} ) );
 
 function renderWithStore( element ) {
 	const store = createStore( ( state ) => state, {} );
@@ -55,13 +57,13 @@ const store = createStore( ( state ) => state );
 
 describe( 'GoogleAnalyticsForm basic tests', () => {
 	beforeAll( () => {
-		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+		window.matchMedia = vi.fn().mockImplementation( ( query ) => {
 			return {
 				matches: true,
 				media: query,
 				onchange: null,
-				addListener: jest.fn(),
-				removeListener: jest.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
 			};
 		} );
 	} );

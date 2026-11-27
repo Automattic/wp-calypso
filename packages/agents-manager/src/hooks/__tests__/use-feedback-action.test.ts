@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { createFeedbackActions } from '@automattic/agenttic-ui';
 import { renderHook, act } from '@testing-library/react';
 import { type Mock, type MockedFunction, vi } from 'vitest';

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { getReadSiteRecommendationsInfiniteQueryKey } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,28 +8,35 @@ import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import { getCachedStreamItems, getStreamInfiniteQueryKey } from 'calypso/reader/data/stream';
 import { recordAction, recordTrackForPost } from 'calypso/reader/stats';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import RecommendedPosts from '../recommended-posts';
 
-jest.mock( 'i18n-calypso', () => ( {
-	translate: ( text ) => text,
-	localize: ( Component ) => ( props ) => <Component { ...props } translate={ ( text ) => text } />,
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		translate: ( text ) => text,
+		localize: ( Component ) => ( props ) => (
+			<Component { ...props } translate={ ( text ) => text } />
+		),
+	} )
+);
+
+vi.mock( 'calypso/blocks/reader-related-card', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		RelatedPostCard: ( { post } ) => <article>{ post?.title ?? 'Loading recommendation' }</article>,
+	} )
+);
+
+vi.mock( 'calypso/reader/stats', () => ( {
+	recordAction: vi.fn(),
+	recordTrackForPost: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/blocks/reader-related-card', () => ( {
-	RelatedPostCard: ( { post } ) => <article>{ post?.title ?? 'Loading recommendation' }</article>,
-} ) );
-
-jest.mock( 'calypso/reader/stats', () => ( {
-	recordAction: jest.fn(),
-	recordTrackForPost: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/state/notices/actions', () => ( {
-	errorNotice: jest.fn( ( text ) => ( { type: 'ERROR_NOTICE', text } ) ),
-	successNotice: jest.fn( ( text, options ) => ( { type: 'SUCCESS_NOTICE', text, options } ) ),
+vi.mock( 'calypso/state/notices/actions', () => ( {
+	errorNotice: vi.fn( ( text ) => ( { type: 'ERROR_NOTICE', text } ) ),
+	successNotice: vi.fn( ( text, options ) => ( { type: 'SUCCESS_NOTICE', text, options } ) ),
 } ) );
 
 const BASE = 'https://public-api.wordpress.com';
@@ -56,7 +63,7 @@ const recommendedSitesQueryKey = () =>
 describe( 'RecommendedPostsWithPosts', () => {
 	afterEach( () => {
 		nock.cleanAll();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'fetches recommended posts when they are not in the canonical cache yet', async () => {
@@ -179,7 +186,7 @@ describe( 'RecommendedPostsWithPosts', () => {
 			pageParams: [ 0 ],
 		} );
 		const store = createStore( ( state = {} ) => state );
-		jest.spyOn( store, 'dispatch' );
+		vi.spyOn( store, 'dispatch' );
 
 		render(
 			<RecommendedPosts
@@ -246,7 +253,7 @@ describe( 'RecommendedPostsWithPosts', () => {
 
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 		const store = createStore( ( state = {} ) => state );
-		jest.spyOn( store, 'dispatch' );
+		vi.spyOn( store, 'dispatch' );
 
 		render(
 			<RecommendedPosts

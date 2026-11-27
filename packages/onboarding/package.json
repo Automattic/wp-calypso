@@ -15,6 +15,12 @@
 			"import": "./dist/esm/index.js",
 			"require": "./dist/cjs/index.js"
 		},
+		"./flows": {
+			"calypso:src": "./src/utils/flows.ts",
+			"types": "./dist/types/utils/flows.d.ts",
+			"import": "./dist/esm/utils/flows.js",
+			"require": "./dist/cjs/utils/flows.js"
+		},
 		"./src/*": {
 			"types": [
 				"./src/*.ts",
@@ -85,8 +91,8 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
-		"@storybook/addon-a11y": "^10.6.5",
-		"@storybook/react": "^10.6.5",
+		"@storybook/addon-a11y": "^10.6.8",
+		"@storybook/react": "^10.6.8",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
@@ -99,7 +105,7 @@
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",
 		"sass-loader": "^16.0.8",
-		"storybook": "^10.6.5",
+		"storybook": "^10.6.8",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.8",
 		"vitest": "^5.1.0",

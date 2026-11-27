@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import { FreePlanDomainMoveDialog } from '../free-plan-domain-move-dialog';
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '../components/plan-upsell-button', () => () => <div /> );
+vi.mock( '../components/plan-upsell-button', () => ( { default: () => <div /> } ) );
 
 describe( 'FreePlanDomainMoveDialog', () => {
 	const defaultProps = {
@@ -19,12 +20,12 @@ describe( 'FreePlanDomainMoveDialog', () => {
 			isLoading: false,
 			result: { domain_name: 'yourgroovysite.wordpress.com' },
 		},
-		onFreePlanSelected: jest.fn(),
-		onPlanSelected: jest.fn(),
+		onFreePlanSelected: vi.fn(),
+		onPlanSelected: vi.fn(),
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'offers no free domain year and keeps the moved domain on the Free plan', async () => {

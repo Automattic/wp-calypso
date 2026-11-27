@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import apiFetch from '@wordpress/api-fetch';
 import React from 'react';
+import { vi } from 'vitest';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CustomerHomeLaunchPad from '../';
@@ -43,11 +44,11 @@ const initialState = {
 // Due to an unknown issue, the following mock is required to <prevent> the following error:
 // TypeError: (0 , _wpcomProxyRequest.canAccessWpcomApis) is not a function
 // Probably there is a test leaking a mock or something like that.
-jest.mock( 'wpcom-proxy-request', () => ( {
-	...jest.requireActual( 'wpcom-proxy-request' ),
+vi.mock( 'wpcom-proxy-request', async () => ( {
+	...( await vi.importActual< typeof import( 'wpcom-proxy-request' ) >( 'wpcom-proxy-request' ) ),
 } ) );
 
-jest.mock( '@wordpress/api-fetch' );
+vi.mock( '@wordpress/api-fetch' );
 
 const render = ( el ) => {
 	return renderWithProvider( el, {
@@ -95,7 +96,7 @@ const DEFAULT_TAKS_RESPONSE = {
 
 describe( 'CustomerHomeLaunchPad', () => {
 	beforeAll( () => {
-		jest.mocked( apiFetch ).mockResolvedValue( DEFAULT_TAKS_RESPONSE );
+		vi.mocked( apiFetch ).mockResolvedValue( DEFAULT_TAKS_RESPONSE );
 	} );
 
 	it( 'renders the launchpad title', async () => {
@@ -130,7 +131,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 				...DEFAULT_TAKS_RESPONSE,
 				is_dismissable: true,
 			};
-			jest.mocked( apiFetch ).mockResolvedValueOnce( data );
+			vi.mocked( apiFetch ).mockResolvedValueOnce( data );
 
 			render( <CustomerHomeLaunchPad checklistSlug="some-check-list" /> );
 
@@ -156,7 +157,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 		};
 
 		beforeEach( () => {
-			jest.mocked( apiFetch ).mockResolvedValueOnce( data );
+			vi.mocked( apiFetch ).mockResolvedValueOnce( data );
 		} );
 
 		it( "doesn't renders skip button", async () => {
@@ -188,7 +189,7 @@ describe( 'CustomerHomeLaunchPad', () => {
 		};
 
 		beforeAll( () => {
-			jest.mocked( apiFetch ).mockResolvedValue( dismissibleTask );
+			vi.mocked( apiFetch ).mockResolvedValue( dismissibleTask );
 		} );
 
 		it( 'renders the dismiss settings menu when the tasks are not completed', () => {

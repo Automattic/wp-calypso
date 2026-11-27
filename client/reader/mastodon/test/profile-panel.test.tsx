@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as readerAnalytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -12,7 +13,7 @@ import { mastodonComposerConfig } from '../composer-config';
 import { ProfilePanel } from '../profile-panel';
 import type { MastodonAuthorProfile, MastodonConnection } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 
 // MastodonAuthorProfileTabs (rendered inside MastodonAuthorProfilePanel)
 // uses IntersectionObserver, which jsdom doesn't provide.
@@ -95,14 +96,14 @@ describe( 'ProfilePanel', () => {
 		// recordReaderTracksEvent is a thunk that reads the follows query cache;
 		// the test store doesn't seed that slice. Replace with a no-op so
 		// dispatch() doesn't throw, while spies still observe arguments.
-		jest
-			.spyOn( readerAnalytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( readerAnalytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		window.history.replaceState( {}, '', '/' );
 	} );
 

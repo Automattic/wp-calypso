@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useRef } from 'react';
+import { useIsomorphicLayoutEffect } from '@wordpress/compose';
+import { createContext, useContext, useRef } from 'react';
 import type { ReactNode } from 'react';
 
 export type ColorScheme = 'light' | 'dark' | 'system';
@@ -39,7 +40,7 @@ function useDocumentColorScheme(
 		hasAppliedTheme.current = false;
 	};
 
-	useEffect( () => {
+	useIsomorphicLayoutEffect( () => {
 		if ( ! restoreOnUnmount || typeof document === 'undefined' ) {
 			return;
 		}
@@ -48,7 +49,7 @@ function useDocumentColorScheme(
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ restoreOnUnmount ] );
 
-	useEffect( () => {
+	useIsomorphicLayoutEffect( () => {
 		if ( typeof document === 'undefined' ) {
 			return;
 		}
