@@ -316,7 +316,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const remoteOptIn = userSettings?.mcp_abilities?.remote_abilities_requiring_opt_in;
 	const { data: remoteAbilities } = useQuery( {
 		...siteAbilitiesQuery( site.ID, wpLocale || undefined ),
-		enabled: config.isEnabled( 'mcp-settings' ) && isAvailable && isMcpEnabled && !! site.jetpack,
+		enabled: config.isEnabled( 'mcp-settings' ) && isMcpEnabled && !! site.jetpack,
 	} );
 	// Count published abilities individually; an ability counts as enabled when
 	// its group key is allowed. Saved-only groups (catalog unreachable) fall
@@ -508,7 +508,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						/>
 					</div>
 				) }
-				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
+				{ config.isEnabled( 'mcp-settings' ) && (
 					<>
 						<McpConnectCard
 							siteSlug={ siteSlug }

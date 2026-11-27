@@ -241,8 +241,9 @@ describe( 'getAgentEmailVCard', () => {
 } );
 
 describe( '<AIToolsSettings>', () => {
-	test( 'shows the settings as disabled below the upgrade callout when unavailable', async () => {
+	test( 'keeps WordPress Agent gated while showing MCP settings when the Agent is unavailable', async () => {
 		const user = userEvent.setup();
+		queryClient.setQueryData( siteAbilitiesQuery( site.ID, 'en_US' ).queryKey, [] );
 		const { container } = renderAIToolsSettings( '', false, site, false, true );
 
 		expect( screen.getByText( 'Your dream site is just a prompt away' ) ).toBeVisible();
@@ -278,15 +279,28 @@ describe( '<AIToolsSettings>', () => {
 		expect( telegramButton ).toHaveClass( 'dashboard-summary-button' );
 		expect( telegramButton ).toHaveAttribute( 'aria-disabled', 'true' );
 
+		expect( screen.getByRole( 'heading', { name: 'External AI agent access' } ) ).toBeVisible();
 		expect(
-			screen.queryByRole( 'heading', { name: 'External AI agent access' } )
-		).not.toBeInTheDocument();
+			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+		).toBeEnabled();
+		expect( screen.getByRole( 'heading', { name: 'Connect an external AI agent' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'ChatGPT' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Claude' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Read/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /^Write/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Manual setup' } ) ).toBeVisible();
+	} );
+
+	test( 'shows the MCP connector and access toggle while access is off on a Free site', () => {
+		renderAIToolsSettings( '', false, simpleSite, false );
+
+		expect( screen.getByRole( 'heading', { name: 'Connect an external AI agent' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'ChatGPT' } ) ).toBeVisible();
+		expect( screen.getByText( 'MCP access is off for this site' ) ).toBeVisible();
 		expect(
-			screen.queryByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
-		).not.toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'heading', { name: 'Connect an external AI agent' } )
-		).not.toBeInTheDocument();
+			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
+		).toBeEnabled();
+		expect( screen.getByRole( 'checkbox', { name: 'Enable WordPress Agent' } ) ).toBeDisabled();
 	} );
 
 	test( 'shows MCP settings without upgrade badging when available', async () => {
