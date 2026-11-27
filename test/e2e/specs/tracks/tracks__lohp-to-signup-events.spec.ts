@@ -27,7 +27,7 @@ test.describe(
 			await pageViewPromise;
 
 			const didEventFirePromise = tracksEventManager.didEventFire( 'wpcom_homepage_link_click' );
-			await page.getByRole( 'link', { name: 'Get started' } ).first().click();
+			await page.getByRole( 'menuitem', { name: 'Get started' } ).click();
 			expect( await didEventFirePromise ).toBe( true );
 		} );
 
@@ -45,7 +45,7 @@ test.describe(
 			const anonIdFromWpcomPageView = tracksEventManager.getParamFromUrl( '_ui', requestUrl );
 
 			requestUrlPromise = tracksEventManager.getRequestUrlForEvent( 'calypso_page_view' );
-			await page.getByRole( 'link', { name: 'Get started' } ).first().click();
+			await page.getByRole( 'menuitem', { name: 'Get started' } ).click();
 
 			requestUrl = await requestUrlPromise;
 
