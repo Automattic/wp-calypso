@@ -92,6 +92,12 @@ function createTool(
 		inputSchema: normalizeInputSchema( getWebMcpInputSchema( ability ) ),
 		annotations: {
 			readOnlyHint: ability.meta?.annotations?.readonly === true,
+			// Results carry site content and other plugins' output, which Agents Manager can't
+			// vouch for.
+			untrustedContentHint: true,
+			consequentialHint:
+				ability.meta?.annotations?.destructive === true ||
+				ability.meta?.webmcp?.consequential === true,
 			destructiveHint:
 				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ||
 				ability.meta?.annotations?.destructive === true,

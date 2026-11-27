@@ -398,6 +398,36 @@ describe( 'WebMCP adapter', () => {
 		);
 	} );
 
+	it( "marks every tool's results as untrusted, and no tool as consequential by default", async () => {
+		const harness = createHarness( [
+			createAbility(),
+			createBlockTreeAbility(),
+			createServerAbility( 'wpcom/get-block-schemas' ),
+		] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.size ).toBe( 3 );
+
+		for ( const tool of harness.tools.values() ) {
+			expect( tool.annotations ).toMatchObject( {
+				untrustedContentHint: true,
+				consequentialHint: false,
+			} );
+		}
+	} );
+
+	it.each< [ string, Ability[ 'meta' ] ] >( [
+		[ 'is annotated as destructive', { ...flaggedMeta, annotations: { destructive: true } } ],
+		[ 'sets `meta.webmcp.consequential`', { webmcp: { public: true, consequential: true } } ],
+	] )( 'marks the tool of an ability that %s as consequential', async ( _case, meta ) => {
+		const harness = createHarness( [ createAbility( { meta } ) ] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'big_sky__apply_block_edits' )?.annotations ).toMatchObject( {
+			consequentialHint: true,
+		} );
+	} );
+
 	it( 'pairs the block-tree IDs with the edit bridge', async () => {
 		const harness = createHarness( [ createBlockTreeAbility(), createAbility() ] );
 		( harness.toolProvider.executeAbility as Mock ).mockImplementation(
