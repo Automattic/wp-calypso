@@ -5,7 +5,6 @@ const lohpUrl: string = 'https://wordpress.com/?flags=a8c-analytics.on';
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' ),
-	// The mobile homepage shows no visible signup "Get started" for the click tests.
 	{ tag: [ tags.CALYPSO_RELEASE, tags.DESKTOP_ONLY ] },
 	() => {
 		test( 'Loading LOHP fires wpcom_page_view event', async ( { pageIncognito } ) => {
