@@ -47,11 +47,8 @@ function replaceUserInfoWithIds( customData ) {
 
 	return {
 		...customData,
-		// The import needs WordPress.com user IDs; site-only users on Atomic have `linked_user_ID: false`.
 		sourceAuthors: customData.sourceAuthors.map( ( author ) =>
-			author.mappedTo
-				? { ...author, mappedTo: author.mappedTo.linked_user_ID || author.mappedTo.ID }
-				: author
+			author.mappedTo ? { ...author, mappedTo: author.mappedTo.ID } : author
 		),
 	};
 }

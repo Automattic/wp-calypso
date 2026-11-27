@@ -63,6 +63,13 @@ export const resourcesRemaining = ( progress ) =>
 		.map( ( { completed, total } ) => total - completed )
 		.reduce( sum, 0 );
 
+// WordPress.com runs the import and, on Atomic only, converts WordPress.com user IDs to the
+// site's own. Users who exist only on the site have `linked_user_ID: false` and keep their ID.
+export const getImportTargetAuthor = ( site, user ) =>
+	site?.options?.is_wpcom_atomic && user.linked_user_ID
+		? { ...user, ID: user.linked_user_ID }
+		: user;
+
 export const hasProgressInfo = ( progress ) => {
 	if ( ! progress ) {
 		return false;
@@ -166,7 +173,11 @@ export class ImportingPane extends PureComponent {
 	};
 
 	handleOnMap = ( source, target ) =>
-		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
+		this.props.mapAuthor(
+			this.props.importerStatus.importerId,
+			source,
+			getImportTargetAuthor( this.props.site, target )
+		);
 
 	onClickSubstackDone = ( action ) => {
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
