@@ -7,7 +7,10 @@ const lohpUrl: string = 'https://wordpress.com/?flags=a8c-analytics.on';
 async function clickGetStarted( page: Page, viewportName: string ) {
 	if ( viewportName === 'mobile' ) {
 		await page.getByRole( 'menuitem', { name: 'Menu' } ).click();
-		await page.getByRole( 'link', { name: 'Get started' } ).first().click();
+		await page
+			.getByRole( 'menu', { name: 'Navigation Menu' } )
+			.getByRole( 'link', { name: 'Get started' } )
+			.click();
 	} else {
 		await page.getByRole( 'menuitem', { name: 'Get started' } ).click();
 	}
@@ -63,6 +66,7 @@ test.describe(
 
 			requestUrl = await requestUrlPromise;
 
+			await expect( page ).toHaveURL( /\/setup\/onboarding/ );
 			expect( tracksEventManager.getParamFromUrl( '_en', requestUrl ) ).toBe( 'calypso_page_view' );
 			expect( tracksEventManager.getParamFromUrl( '_ui', requestUrl ) ).toBe(
 				anonIdFromWpcomPageView
