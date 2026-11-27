@@ -154,7 +154,7 @@ describe( 'SiteMigrationCheck', () => {
 			/>,
 			{ initialEntry: `/site-migration-check?from=${ from }&platform=wordpress` }
 		);
-		const route = screen.getByText( 'From your WordPress site' ).closest( 'div' )?.parentElement;
+		const route = screen.getByText( 'From' ).closest( 'div' )?.parentElement;
 		expect( route ).toHaveClass( 'site-migration-confirm__route' );
 		expect( route?.classList.contains( 'site-migration-confirm__route--side-by-side' ) ).toBe(
 			isSideBySide
@@ -262,7 +262,7 @@ describe( 'SiteMigrationCheck', () => {
 			expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
 				'We couldn’t confirm this is a WordPress site'
 			);
-			expect( screen.getByText( 'From your WordPress site' ) ).toBeVisible();
+			expect( screen.getByText( 'From' ) ).toBeVisible();
 			expect(
 				screen.getByRole( 'button', { name: 'My site is WordPress, continue' } )
 			).toBeVisible();

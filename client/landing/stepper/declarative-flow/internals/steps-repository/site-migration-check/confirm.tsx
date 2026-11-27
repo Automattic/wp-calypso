@@ -206,7 +206,7 @@ export const SiteMigrationConfirm = ( {
 													args: { platform: sourcePlatformName },
 													comment: 'The platform the site seems to be built on, e.g. Wix.',
 												} )
-											: translate( 'From your WordPress site' ) }
+											: translate( 'From' ) }
 									</span>
 								) }
 								<span className="site-migration-confirm__address">

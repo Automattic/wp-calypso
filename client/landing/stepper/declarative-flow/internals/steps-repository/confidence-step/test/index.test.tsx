@@ -42,7 +42,7 @@ describe( 'ConfidenceStep', () => {
 		expect( screen.getByText( 'On Wix today' ) ).toBeVisible();
 		expect( screen.getByText( 'A new site' ) ).toBeVisible();
 		expect( screen.getByText( 'On WordPress.com' ) ).toBeVisible();
-		expect( screen.queryByText( 'From your WordPress site' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'From' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows the copy it’s given', () => {
