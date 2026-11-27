@@ -6,6 +6,7 @@ import { captureCanvasAbility } from '../../abilities/capture-canvas';
 import { editEntityRecordAbility } from '../../abilities/edit-entity-record';
 import { editorNavigateAbility } from '../../abilities/editor-navigate';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
+import { getEditorStateAbility } from '../../abilities/get-editor-state';
 import { openHelpCenterAbility } from '../../abilities/open-help-center';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
 import { saveChangesAbility } from '../../abilities/save-changes';
@@ -330,6 +331,7 @@ describe( 'loadExternalProviders', () => {
 				showComponentAbility,
 				streamPageDesignAbility,
 				getBlockTreeAbility,
+				getEditorStateAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 				createAbility( 'woocommerce/get-products' ),
@@ -374,6 +376,7 @@ describe( 'loadExternalProviders', () => {
 				showComponentAbility,
 				streamPageDesignAbility,
 				getBlockTreeAbility,
+				getEditorStateAbility,
 				showTemplateAbility,
 				createAbility( 'shared/action' ),
 			] )
@@ -435,6 +438,7 @@ describe( 'loadExternalProviders', () => {
 				showComponentAbility,
 				streamPageDesignAbility,
 				getBlockTreeAbility,
+				getEditorStateAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 			] )
@@ -1141,6 +1145,7 @@ describe( 'loadExternalProviders', () => {
 				showComponentAbility,
 				streamPageDesignAbility,
 				getBlockTreeAbility,
+				getEditorStateAbility,
 				showTemplateAbility,
 				createAbility( 'big-sky/compose-patterns' ),
 				createAbility( 'wpcom/manage-site' ),

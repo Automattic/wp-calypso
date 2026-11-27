@@ -20,6 +20,7 @@ import { BIG_SKY_ABILITY_CATEGORY } from './constants';
 import { editEntityRecordAbility } from './edit-entity-record';
 import { editorNavigateAbility } from './editor-navigate';
 import { getBlockTreeAbility } from './get-block-tree';
+import { getEditorStateAbility } from './get-editor-state';
 import { openHelpCenterAbility } from './open-help-center';
 import { restoreCheckpointAbility } from './restore-checkpoint';
 import { saveChangesAbility } from './save-changes';
@@ -44,6 +45,7 @@ export const EDITOR_ABILITIES: Ability[] = [
 	showComponentAbility,
 	streamPageDesignAbility,
 	getBlockTreeAbility,
+	getEditorStateAbility,
 	showTemplateAbility,
 ];
 
