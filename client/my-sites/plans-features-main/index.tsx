@@ -798,6 +798,8 @@ const PlansFeaturesMain = ( {
 	const { data: siteFeatures, isLoading: isSiteFeaturesLoading } = useQuery( {
 		...siteFeaturesQuery( siteId ?? 0 ),
 		enabled: isFilteringByFeature,
+		// The grid waits for this, and falls back to the plan definitions without it.
+		retry: 1,
 	} );
 	const plansWithSelectedFeature =
 		isFilteringByFeature && selectedFeature

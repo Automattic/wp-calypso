@@ -39,6 +39,12 @@ describe( 'isGridPlanVisible', () => {
 			[ PLAN_BUSINESS, PLAN_ECOMMERCE ],
 			[ PLAN_PERSONAL, PLAN_BUSINESS_MONTHLY, PLAN_ECOMMERCE_MONTHLY ],
 		],
+		[
+			'the site feature list over the plan definitions',
+			'antispam',
+			[ PLAN_BUSINESS, PLAN_ECOMMERCE ],
+			[ PLAN_PERSONAL, PLAN_BUSINESS_MONTHLY, PLAN_ECOMMERCE_MONTHLY ],
+		],
 		[ 'the plan definitions without a list', 'republicize', undefined, GRID_PLANS ],
 	] )(
 		'shows the current plan and the plans with the feature, from %s',
